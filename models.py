@@ -109,3 +109,51 @@ class UserProfile(models.Model):
         return self.user.date_joined
     date_joined.admin_order_field  = 'user__date_joined'
     date_joined.short_description = 'Registrace'
+
+
+
+class Payment(models.Model):
+    """Platba"""
+
+    class Meta:
+        verbose_name = "Platba"
+        verbose_name_plural = "Platby"
+
+    user = models.ForeignKey(UserProfile, null=False)
+    order_id = models.CharField(
+        verbose_name="Order ID",
+        max_length=50, null=False)
+    session_id = models.CharField(
+        verbose_name="Session ID",
+        max_length=50, null=False)
+    trans_id = models.CharField(
+        verbose_name="Transaction ID",
+        max_length=50, null=True)
+    amount = models.PositiveIntegerField(
+        verbose_name="Částka",
+        null=False)
+    description = models.CharField(
+        verbose_name="Popis",
+        max_length=500,
+        null=True)
+    created = models.DateTimeField(
+        verbose_name="Zadání platby",
+        default=datetime.datetime.now(),
+        null=False)
+    realized = models.DateTimeField(
+        verbose_name="Realizace",
+        null=True)
+    pay_type = models.CharField(
+        verbose_name="Typ platby",
+        max_length=50,
+        null=True)
+    status = models.CharField(
+        verbose_name="Status",
+        max_length=50,
+        null=True)
+    error = models.PositiveIntegerField(
+        verbose_name="Chyba",
+        null=True)
+
+    def __unicode__(self):
+        return self.trans_id

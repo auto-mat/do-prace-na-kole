@@ -2,7 +2,7 @@
 {% load url from future %}
 
 {% block content %}
-<form action="/registration/register_team/" method="post">{% csrf_token %}
+<form action="/registrace/registrace_tymu/" method="post">{% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Odeslat" />
 </form>

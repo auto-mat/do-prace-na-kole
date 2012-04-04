@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script language='JavaScript' type='text/JavaScript' src='https://www.payu.cz/jsgenerator/js/jquery-
+latest.js'></script>
+<script language='javascript' type='text/javascript' src='https://www.payu.cz/paygw/UTF/js/1116/ea/template:3/paytype.js'>
+</script>
+{% endblock %}
+
+{% block content %}
+<p>Platba</p>
+
+<form action="https://www.payu.cz/paygw/UTF/NewPayment" method="POST" target="_top"
+name="payform">
+Jméno: <input type="text" name="first_name" value="{{firstname}}" readonly="readonly"><br/>
+Příjmení: <input type="text" name="last_name" value="{{surname}}" readonly="readonly"><br/>
+Email: <input type="text" name="email" value="{{email}}" readonly="readonly"><br/>
+Startovné: <input type="text" name="amount_kc" value="{{amount}}" disabled="disabled"> Kč<br/>
+<input type="hidden" name="amount" value="{{amount_hal}}">
+<input type="hidden" name="pos_id" value="1116">
+<input type="hidden" name="pos_auth_key" value="NxFcSXh">
+<input type="hidden" name="session_id" value="{{session_id}}">
+Zvolte si typ platby:<br/>
+<script language='JavaScript' type='text/JavaScript'>
+PlnPrintTemplate();
+</script>
+<input type="hidden" name="desc" value="{{description}}">
+<input type="hidden" name="client_ip" value="{{client_ip}}">
+<input type="hidden" name="js" value="0">
+<input type="submit" value="Zaplatit">
+</form>
+<script language="JavaScript" type="text/javascript">
+<!--
+document.forms['payform'].js.value=1;
+-->
+</script>
+
+
+{% endblock %}

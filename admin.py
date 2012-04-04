@@ -24,7 +24,7 @@ from django.contrib import admin, messages
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 # Models
-from models import UserProfile, Team
+from models import UserProfile, Team, Payment
 # -- ADMIN FORMS --
 
 class UserProfileAdmin(admin.ModelAdmin):
@@ -35,9 +35,14 @@ class TeamAdmin(admin.ModelAdmin):
     list_display = ('name', 'company', 'password')
     fields = ('name', 'company', 'password')
 
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ('trans_id', 'user', 'amount', 'description', 'created', 'status')
+    fields = ('trans_id', 'user', 'amount', 'description', 'created', 'status', 'realized', 'pay_type', 'error')
+
 admin.site.unregister(User)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Team, TeamAdmin)
+admin.site.register(Payment, PaymentAdmin)
 
 from django.contrib.auth.models import Group
 admin.site.unregister(Group)
