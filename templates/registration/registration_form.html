@@ -3,9 +3,9 @@
 
 {% block content %}
 <p>
-Nemáte ještě žádný tým? <a href="/registration/register_team/">Založte si tým!</a>
+Nemáte ještě žádný tým? <a href="/registrace/registrace_tymu/">Založte si tým!</a>
 </p>
-<form action="/registration/register/" method="post">{% csrf_token %}
+<form action="/registrace/registrace/" method="post">{% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Odeslat" />
 </form>

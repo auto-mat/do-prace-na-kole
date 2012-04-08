@@ -28,16 +28,15 @@ from models import UserProfile, Team, Payment
 # -- ADMIN FORMS --
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('firstname', 'surname', 'sex', 'language', 'competition_city', 'team',
-                    'email', 'date_joined')
+    list_display = ('firstname', 'surname', 'sex', 'language', 'team', 'email', 'date_joined')
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'company', 'password')
-    fields = ('name', 'company', 'password')
+    list_display = ('name', 'company', 'city', 'password')
+    fields = ('name', 'company', 'city', 'password')
 
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('trans_id', 'user', 'amount', 'description', 'created', 'status')
-    fields = ('trans_id', 'user', 'amount', 'description', 'created', 'status', 'realized', 'pay_type', 'error')
+    list_display = ('trans_id', 'user', 'amount', 'pay_type', 'created', 'status')
+    fields = ('trans_id', 'user', 'amount', 'description', 'created', 'status', 'realized', 'pay_type', 'error', 'session_id')
 
 admin.site.unregister(User)
 admin.site.register(UserProfile, UserProfileAdmin)

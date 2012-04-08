@@ -34,12 +34,20 @@ class Team(models.Model):
         verbose_name = "Tým"
         verbose_name_plural = "Týmy"
 
+    CITIES = (2*('Praha',),
+              2*('Brno',),
+              2*('Liberec',))
+
     name = models.CharField(
-        verbose_name="Jméno",
+        verbose_name="Název týmu",
         max_length=50, null=False)
     company = models.CharField(
         verbose_name="Firma",
         max_length=50, null=False)
+    city = models.CharField(
+        verbose_name="Soutěžní město",
+        choices=CITIES,
+        max_length=40, null=False)
     password = models.CharField(
         verbose_name="Kódové slovo",
         max_length=20, null=False)
@@ -59,10 +67,6 @@ class UserProfile(models.Model):
 
     LANGUAGE = (('cs', "Čeština"),
                 ('en', "Angličtina"))
-
-    COMPETITION_CITY = (2*('Praha',),
-                        2*('Brno',),
-                        2*('Liberec',))
 
     firstname = models.CharField(
         verbose_name="Jméno",
@@ -86,10 +90,6 @@ class UserProfile(models.Model):
     telephone = models.CharField(
         verbose_name="Telefon",
         max_length=30, null=False)
-    competition_city = models.CharField(
-        verbose_name="Soutěžní město",
-        choices=COMPETITION_CITY,
-        max_length=40, null=False)
     team = models.ForeignKey(
         Team,
         verbose_name='Tým')
@@ -114,6 +114,31 @@ class UserProfile(models.Model):
 
 class Payment(models.Model):
     """Platba"""
+
+    STATUS = (
+        (1, 'Nová'),
+        (2, 'Zrušena'),
+        (3, 'Odmítnuta'),
+        (4, 'Zahájena'),
+        (5, 'Očekává potvrzení'),
+        (7, 'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU'),
+        (99, 'Přijata'),
+        (888, 'Nesprávný status -- kontaktovat PayU')
+        )
+
+    PAY_TYPES = (
+        ('mp', 'mPenize'),
+        ('kb', 'MojePlatba'),
+        ('rf', 'ePlatby pro eKonto'),
+        ('pg', 'GE Money Bank'),
+        ('pv', 'Volksbank'),
+        ('pf', 'Fio banka'),
+        ('c', 'Kreditní karta přes GPE'),
+        ('bt*', 'bankovní převod'),
+        ('pt*', 'převod přes poštu'),
+        ('sc', 'superCASH'),
+        ('t', 'testovací platba'),
+        )
 
     class Meta:
         verbose_name = "Platba"
@@ -145,10 +170,12 @@ class Payment(models.Model):
         null=True)
     pay_type = models.CharField(
         verbose_name="Typ platby",
+        choices=PAY_TYPES,
         max_length=50,
         null=True)
-    status = models.CharField(
+    status = models.PositiveIntegerField(
         verbose_name="Status",
+        choices=STATUS,
         max_length=50,
         null=True)
     error = models.PositiveIntegerField(
