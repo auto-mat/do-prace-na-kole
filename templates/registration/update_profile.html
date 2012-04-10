@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block content %}
+<form action="/registrace/upravit_profil/" method="post">{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Upravit" /><input type="button" value="Zpět" onclick="javascript:history.back()"/>
+</form>
+{% endblock %}
+

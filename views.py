@@ -21,7 +21,10 @@
 import time, random, httplib, urllib, hashlib
 # Django imports
 from django import forms, http
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
+import django.contrib.auth
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
 # Registration imports
 import registration.forms, registration.signals, registration.backends
 # Model imports
@@ -77,7 +80,11 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
 
     def clean_team_password(self):
         data = self.cleaned_data['team_password']
-        if data != 'tajemstvi':
+        try:
+            team = Team.objects.get(id=self.data['team'])
+        except Team.DoesNotExist, e:
+            raise forms.ValidationError("Neexistující tým")
+        if data != team.password:
             raise forms.ValidationError("Nesprávné heslo týmu")
         return data
 
@@ -94,11 +101,11 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
         form = form_class(data=request.POST, files=request.FILES)
         if form.is_valid():
             new_user = backend.register(request, **form.cleaned_data)
-            if success_url is None:
-                to, args, kwargs = backend.post_registration_redirect(request, new_user)
-                return redirect(to, *args, **kwargs)
-            else:
-                return redirect(success_url)
+            auth_user = django.contrib.auth.authenticate(
+                username=request.POST['username'],
+                password=request.POST['password1'])
+            django.contrib.auth.login(request, auth_user)
+            return redirect(success_url)
     else:
         form = form_class(request)
 
@@ -140,21 +147,25 @@ def register_team(request):
             'form': form,
             })
 
+@login_required
 def payment(request):
-    uid = 2 # uid
-    order_id = '2-1' #uid
-    session_id = "%sJ%d " % (order_id, int(time.time())) # uid
+    uid = request.user.id
+    order_id = '%s-1' % uid
+    session_id = "%sJ%d " % (order_id, int(time.time()))
+    # Save new payment record
     p = Payment(session_id=session_id,
-                user=UserProfile.objects.get(user__id=uid), # uid
+                user=UserProfile.objects.get(user=request.user),
                 order_id = order_id,
                 amount = 200,
                 description = "Účastnický poplatek Do práce na kole")
     p.save()
+    # Render form
+    profile = UserProfile.objects.get(user=request.user)
     return render_to_response('registration/payment.html',
                               {
-            'firstname': 'Hynek', # firstname
-            'surname': 'Hanke', # surname
-            'email': 'hanke@brailcom.org', # email
+            'firstname': profile.firstname, # firstname
+            'surname': profile.surname, # surname
+            'email': profile.email, # email
             'amount': p.amount,
             'amount_hal': p.amount * 100, # v halerich
             'description' : p.description,
@@ -236,3 +247,50 @@ def payment_status(request):
         p.save()
     # Return positive error code as per PayU protocol
     return http.HttpResponse("OK")
+
+def login(request):
+    return render_to_response('registration/payment_result.html',
+                              {
+            'pay_type': pay_type,
+            'message': msg
+            })
+
+@login_required
+def profile(request):
+    profile = UserProfile.objects.get(user=request.user)
+    # Render profile
+    payment_status = profile.payment_status()
+    team_members = ", ".join([str(p) for p in UserProfile.objects.filter(team=profile.team)])
+    return render_to_response('registration/profile.html',
+                              {
+            'user': request.user,
+            'profile': profile,
+            'team': profile.team,
+            'payment_status': payment_status,
+            'team_members': team_members,
+            })
+
+class ProfileUpdateForm(forms.ModelForm):
+
+    team_password = forms.CharField(
+        label="Heslo nového týmu (pokud měníte tým)",
+        max_length=20,
+        required=False)
+
+    class Meta:
+        model = UserProfile
+        fields = ('firstname', 'surname', 'telephone', 'team', 'team_password')
+
+@login_required
+def update_profile(request):
+    profile = UserProfile.objects.get(user=request.user)
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('/registrace/profil/')
+    else:
+        form = ProfileUpdateForm(instance=profile)
+    return render_to_response('registration/update_profile.html',
+                              {'form': form}
+                              )

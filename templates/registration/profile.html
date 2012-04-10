@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block content %}
+
+<table>
+<tr><th scope="row">Jméno</th><td>{{ profile.firstname }} {{ profile.surname }}</td></tr>
+<tr><th scope="row">Tým:</th><td>{{ team.name }}</td></tr>
+<tr><th scope="row">Město:</th><td>{{ team.city }}</td></tr>
+<tr><th scope="row">Firma:</th><td>{{ team.company }}</td></tr>
+<tr><th scope="row">Členové týmu:</th><td>{{ team_members }}</td></tr>
+<tr><th scope="row">Startovné:</th><td>
+{% if payment_status == 'done' %} Zaplaceno {% endif %}
+{% if payment_status == 'waiting' %} Čeká se na platbu {% endif %}
+{% if payment_status == None %} Příspěvek dosud nezaplacen. <a href="/registrace/platba/">Zaplatit</a> {% endif %}
+</td></tr>
+</table>
+<a href="/registrace/upravit_profil/">Upravit údaje</a> | <a href="/registrace/zmena_hesla/">Změnit heslo</a> | <a href="/registrace/logout/">Odhlásit</a>
+
+<h4>Moje jízdy</h4>
+
+Soutěž začíná 2. května 2012.
+
+{% endblock %}

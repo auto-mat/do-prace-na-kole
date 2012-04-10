@@ -110,7 +110,20 @@ class UserProfile(models.Model):
     date_joined.admin_order_field  = 'user__date_joined'
     date_joined.short_description = 'Registrace'
 
-
+    def payment_status(self):
+        # Check payment status for this user
+        payments = Payment.objects.filter(user=self)
+        p_status = [p.status for p in payments]
+        if 99 in p_status:
+            # Payment done
+            status = 'done'
+        elif (1 in p_status) or (4 in p_status) or (5 in p_status):
+            # A payment is still waiting
+            status = 'waiting'
+        else:
+            # No payment done and no waiting
+            status = None
+        return status
 
 class Payment(models.Model):
     """Platba"""
@@ -184,3 +197,4 @@ class Payment(models.Model):
 
     def __unicode__(self):
         return self.trans_id
+
