@@ -41,14 +41,11 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         label="Tým",
         queryset=Team.objects.all())
     team_password = forms.CharField(
-        label="Heslo týmu",
+        label="Tajný kód týmu",
         max_length=20)
-    sex = forms.ChoiceField(
-        label="Pohlaví",
-        choices=UserProfile.GENDER)
-    language = forms.ChoiceField(
-        label="Jazyk",
-        choices=UserProfile.LANGUAGE)
+    distance = forms.IntegerField(
+        label="Vzdálenost z domova do práce vzdušnou čarou (v km)")
+
     # -- Contacts
     telephone = forms.CharField(
         label="Telefon",
@@ -69,8 +66,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
             'surname',
             'team',
             'team_password',
-            'sex',
-            'language',
+            'distance',
             'email',
             'telephone',
             'username',
@@ -78,13 +74,19 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
             'password2'
             ]
 
+    def clean_team(self):
+        data = self.cleaned_data['team']
+        if len(UserProfile.objects.filter(team=data)) >= 5:
+            raise forms.ValidationError("Tento tým již má pět členů a je tedy plný")
+        return data
+
     def clean_team_password(self):
         data = self.cleaned_data['team_password']
         try:
             team = Team.objects.get(id=self.data['team'])
         except Team.DoesNotExist, e:
             raise forms.ValidationError("Neexistující tým")
-        if data != team.password:
+        if data.strip().lower() != team.password.strip():
             raise forms.ValidationError("Nesprávné heslo týmu")
         return data
 
@@ -116,11 +118,10 @@ def create_profile(user, request, **kwargs):
     from dpnk.models import UserProfile
     UserProfile(user = user,
                 team = Team.objects.get(id=request.POST['team']),
-                sex = request.POST['sex'],
-                language = request.POST['language'],
-                telephone = request.POST['telephone'],
                 firstname = request.POST['firstname'],
-                surname = request.POST['surname']
+                surname = request.POST['surname'],
+                telephone = request.POST['telephone'],
+                distance = request.POST['distance']
                 ).save()
 registration.signals.user_registered.connect(create_profile)
 
@@ -128,7 +129,7 @@ class RegisterTeamForm(forms.ModelForm):
 
     class Meta:
         model = Team
-        fields = ('city', 'name', 'company')
+        fields = ('city', 'name', 'company', 'address')
 
 def register_team(request):
     if request.method == 'POST':
@@ -139,6 +140,7 @@ def register_team(request):
             form.save()
             return render_to_response('registration/team_password.html', {
                     'team_id': team.id,
+                    'team_name': team.name,
                     'team_password': team.password
                     })
     else:
@@ -156,8 +158,8 @@ def payment(request):
     p = Payment(session_id=session_id,
                 user=UserProfile.objects.get(user=request.user),
                 order_id = order_id,
-                amount = 200,
-                description = "Účastnický poplatek Do práce na kole")
+                amount = 160,
+                description = "Ucastnicky poplatek Do prace na kole")
     p.save()
     # Render form
     profile = UserProfile.objects.get(user=request.user)
@@ -235,16 +237,11 @@ def payment_status(request):
                                r['trans_status'], r['trans_amount'], r['trans_desc'],
                                r['trans_ts']))
     # Update the corresponding payment
-    try:
-        p = Payment.objects.get(trans_id=r['trans_id'])
-    except Exception, e:
-        # This is an unkown transaction
-        pass # TODO: Log it
-    else:
-        p.status = r['trans_status']
-        if r['trans_recv'] != '':
-            p.realized = r['trans_recv']
-        p.save()
+    p = Payment.objects.get(session_id=r['trans_session_id'])
+    p.status = r['trans_status']
+    if r['trans_recv'] != '':
+        p.realized = r['trans_recv']
+    p.save()
     # Return positive error code as per PayU protocol
     return http.HttpResponse("OK")
 

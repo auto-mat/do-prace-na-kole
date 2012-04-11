@@ -8,19 +8,20 @@ latest.js'></script>
 {% endblock %}
 
 {% block content %}
-<p>Platba</p>
+<h3>Platba startovného</h3>
 
 <form action="https://www.payu.cz/paygw/UTF/NewPayment" method="POST" target="_top"
 name="payform">
-Jméno: <input type="text" name="first_name" value="{{firstname}}" readonly="readonly"><br/>
-Příjmení: <input type="text" name="last_name" value="{{surname}}" readonly="readonly"><br/>
-Email: <input type="text" name="email" value="{{email}}" readonly="readonly"><br/>
-Startovné: <input type="text" name="amount_kc" value="{{amount}}" disabled="disabled"> Kč<br/>
+Soutěžící: {{firstname}} {{surname}}<br/>
+Startovné: {{amount}} Kč<br/>
+<input type="hidden" name="first_name" value="{{firstname}}">
+<input type="hidden" name="last_name" value="{{surname}}">
+<input type="hidden" name="amount_kc" value="{{amount}}">
 <input type="hidden" name="amount" value="{{amount_hal}}">
 <input type="hidden" name="pos_id" value="1116">
 <input type="hidden" name="pos_auth_key" value="NxFcSXh">
 <input type="hidden" name="session_id" value="{{session_id}}">
-Zvolte si typ platby:<br/>
+<span id="style-of-payment-selection">Zvolte si prosím typ platby:</span><br/>
 <script language='JavaScript' type='text/JavaScript'>
 PlnPrintTemplate();
 </script>

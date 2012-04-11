@@ -3,11 +3,19 @@
 
 {% block content %}
 <p>
-Nemáte ještě žádný tým? <a href="/registrace/registrace_tymu/">Založte si tým!</a>
+Nemáte ještě žádný tým? <a href="/registrace/registrace_tymu/">Založte si tým!</a><br/>
+<!--Neznáte kód týmu? <a href="/registrace/kontakt_tymu/">Napište si o něj!</a>-->
 </p>
+
 <form action="/registrace/registrace/" method="post">{% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Odeslat" />
 </form>
+
+<p>ENGLISH INFO: To fill out the form please use this little
+dictionary: jméno = name, příjmení = surname, tým = team, tajný kód týmu =
+secret code of the team, vzdálenost... = distance from your home to work in km,
+uživatelské jméno = username, heslo = password, odeslat = submit</p>
+
 {% endblock %}
 

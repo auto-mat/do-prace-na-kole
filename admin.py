@@ -28,11 +28,11 @@ from models import UserProfile, Team, Payment
 # -- ADMIN FORMS --
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('firstname', 'surname', 'sex', 'language', 'team', 'email', 'date_joined')
+    list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined')
 
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('name', 'company', 'city', 'password')
-    fields = ('name', 'company', 'city', 'password')
+    fields = ('name', 'company', 'city', 'address', 'password')
 
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('trans_id', 'user', 'amount', 'pay_type', 'created', 'status')

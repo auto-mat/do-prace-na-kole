@@ -33,6 +33,7 @@ class Team(models.Model):
     class Meta:
         verbose_name = "Tým"
         verbose_name_plural = "Týmy"
+        ordering = ('name',)
 
     CITIES = (2*('Praha',),
               2*('Brno',),
@@ -40,9 +41,13 @@ class Team(models.Model):
 
     name = models.CharField(
         verbose_name="Název týmu",
-        max_length=50, null=False)
+        max_length=50, null=False,
+        unique=True)
     company = models.CharField(
         verbose_name="Firma",
+        max_length=50, null=False)
+    address = models.CharField(
+        verbose_name="Adresa firmy/pobočky (ulice a číslo)",
         max_length=50, null=False)
     city = models.CharField(
         verbose_name="Soutěžní město",
@@ -65,9 +70,6 @@ class UserProfile(models.Model):
     GENDER = (('man', "Muž"),
               ('woman', "Žena"))
 
-    LANGUAGE = (('cs', "Čeština"),
-                ('en', "Angličtina"))
-
     firstname = models.CharField(
         verbose_name="Jméno",
         max_length=30, null=False)
@@ -76,15 +78,8 @@ class UserProfile(models.Model):
         max_length=30, null=False)
     user = models.ForeignKey(
         User, unique=True)
-    sex = models.CharField(
-        verbose_name="Pohlaví",
-        choices=GENDER,
-        max_length=10, null=False)
-    language = models.CharField(
-        verbose_name="Jazyk",
-        choices=LANGUAGE,
-        default="cs",
-        max_length=2,
+    distance = models.PositiveIntegerField(
+        verbose_name="Vzdálenost",
         null=False)
     # -- Contacts
     telephone = models.CharField(
@@ -117,7 +112,7 @@ class UserProfile(models.Model):
         if 99 in p_status:
             # Payment done
             status = 'done'
-        elif (1 in p_status) or (4 in p_status) or (5 in p_status):
+        elif (1 in p_status) or (4 in p_status) or (5 in p_status) or (None in p_status):
             # A payment is still waiting
             status = 'waiting'
         else:
