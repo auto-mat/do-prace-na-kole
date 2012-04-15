@@ -11,14 +11,36 @@
 <tr><th scope="row">Členové týmu:</th><td>{{ team_members }}</td></tr>
 <tr><th scope="row">Startovné:</th><td>
 {% if payment_status == 'done' %} Zaplaceno {% endif %}
-{% if payment_status == 'waiting' %} Čeká se na potvrzení {% endif %}
+{% if payment_status == 'waiting' %} Čeká se na potvrzení platby (<a href="/registrace/platba/">Zadat jinou platbu</a>){% endif %}
 {% if payment_status == None %} Příspěvek dosud nezaplacen. <a href="/registrace/platba/">Zaplatit</a> {% endif %}
 </td></tr>
 </table>
 <a href="/registrace/upravit_profil/">Upravit údaje</a> | <a href="/registrace/zmena_hesla/">Změnit heslo</a> | <a href="/registrace/logout/">Odhlásit</a>
 
-<h4>Moje jízdy</h4>
+<h4>Uvítání</h4>
 
-Soutěž začíná 2. května 2012.
+<p>Úspěšně jste se zaregistrovali do soutěže Pravidelná dojížďka do práce
+na kole, gratulujeme!</p>
+
+<p>Nyní můžete začít s kolegy vymýšlet týmovou strategii, rozšiřovat
+tým a tím i šanci na výhru, zvát do soutěže své kolegy a známé.  Zveme
+Vás na neoficiální zahájení kampaně na
+afterparty <a href="http://www.dopracenakole.net/velka-cyklojizda/">Velké
+jarní cyklojízdy 2012</a> 19. dubna v Praze a Brně.  Další důležité
+informace se dozvíte včas e-mailem. Důležité aktualizace, například co
+se týče přibývajících cen do soutěží, budeme zvěřejňovat v aktualitách
+na webu a FB kampaně.</p>
+
+<p>Soutěžit se naostro začíná ve středu 2. května 2012. V ten den bude na
+tomto místě zpřístupněna vaše závodnická knížka, kam budete následně
+zaznamenávat vaše cesty do práce a z práce na kole, na základě kterých
+bude moct být váš tým vylosován a odměněn zajímavými cenami.</p>
+
+<p>Již brzy (do konce týdne) zde na svém vlastním profilu také
+naleznete kupon a odkaz pro objednání designového trička Do práce na
+kole. Dolaďujeme právě poslední detaily tak, aby byl celý proces pro
+vás co nejjednodušší.</p>
+
+<p>S dotazy a nejsnostmi se obracejte na kontakt@dopracenakole.net</p>
 
 {% endblock %}

@@ -2,15 +2,17 @@
 {% load url from future %}
 
 {% block content %}
-<p>
-Nemáte ještě žádný tým? <a href="/registrace/registrace_tymu/">Založte si tým!</a><br/>
+<h3>Vytvoření týmu</h3>
+<p>Nemáte ještě žádný tým? <a href="/registrace/registrace_tymu/">Založte si tým!</a></p>
 <!--Neznáte kód týmu? <a href="/registrace/kontakt_tymu/">Napište si o něj!</a>-->
-</p>
 
+<h3>Registrace soutěžících</h3>
 <form action="/registrace/registrace/" method="post">{% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Odeslat" />
 </form>
+
+<p><em>Odesláním tohoto formuláře souhlasím s tím, aby poskytnuté údaje (osobní údaje ve smyslu paragrafu 4 pís. a zákona 101/200 Sb., O ochraně osobních údajů, byly až do odvolání zpracovány občanským sdružením Auto*Mat za účelem zasílání informačních materiálů o činnosti sdružení. Auto*Mat, o.s. se tímto zavazuje, že uvedené údaje neposkytne žádným jiným organizacím nebo firmám. </em></p>
 
 <p>ENGLISH INFO: To fill out the form please use this little
 dictionary: jméno = name, příjmení = surname, tým = team, tajný kód týmu =

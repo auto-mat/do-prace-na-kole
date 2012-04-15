@@ -58,7 +58,7 @@ class Team(models.Model):
         max_length=20, null=False)
 
     def __unicode__(self):
-        return self.name
+        return "%s / %s" % (self.name, self.company)
 
 class UserProfile(models.Model):
     """Uživatelský profil"""

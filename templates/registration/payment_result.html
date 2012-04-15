@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>{{message}}</p>
-<p><a href="/mesto/">Váš soutěžní profil</a>
+<div id="node-payment-result">
+<p id="payment-result">{{message}}</p>
+<p><a href="/mesto/{{ city }}">Váš soutěžní profil</a>
+</div>
 {% endblock %}

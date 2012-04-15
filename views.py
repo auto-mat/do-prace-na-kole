@@ -31,6 +31,8 @@ import registration.forms, registration.signals, registration.backends
 from models import User, UserProfile, Team, Payment
 
 class RegistrationFormDPNK(registration.forms.RegistrationForm):
+    required_css_class = 'required'
+    
     firstname = forms.CharField(
         label="Jméno",
         max_length=30)
@@ -126,7 +128,9 @@ def create_profile(user, request, **kwargs):
 registration.signals.user_registered.connect(create_profile)
 
 class RegisterTeamForm(forms.ModelForm):
-
+    required_css_class = 'required'
+    error_css_class = 'error'
+    
     class Meta:
         model = Team
         fields = ('city', 'name', 'company', 'address')
@@ -197,7 +201,8 @@ def payment_result(request, success):
     return render_to_response('registration/payment_result.html',
                               {
             'pay_type': pay_type,
-            'message': msg
+            'message': msg,
+            'city': UserProfile.objects.get(user=request.user).team.city,
             })
 
 def make_sig(values):
@@ -277,6 +282,15 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('firstname', 'surname', 'telephone', 'team', 'team_password')
+    
+    def clean_team_password(self):
+        data = self.data['team_password']
+        team = Team.objects.get(id=self.data['team'])
+        if team != self.instance.team:
+            # Change in team requested, validate team password
+            if data.strip().lower() != team.password.strip():
+                raise forms.ValidationError("Nesprávné heslo týmu")
+        return data
 
 @login_required
 def update_profile(request):
