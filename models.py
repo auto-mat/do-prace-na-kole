@@ -171,7 +171,7 @@ class Payment(models.Model):
         null=True)
     created = models.DateTimeField(
         verbose_name="Zadání platby",
-        default=datetime.datetime.now(),
+        default=datetime.datetime.now,
         null=False)
     realized = models.DateTimeField(
         verbose_name="Realizace",
