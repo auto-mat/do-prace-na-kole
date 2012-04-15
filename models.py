@@ -112,7 +112,7 @@ class UserProfile(models.Model):
         if 99 in p_status:
             # Payment done
             status = 'done'
-        elif (1 in p_status) or (4 in p_status) or (5 in p_status) or (None in p_status):
+        elif (1 in p_status) or (4 in p_status) or (5 in p_status):
             # A payment is still waiting
             status = 'waiting'
         else:
