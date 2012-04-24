@@ -25,28 +25,33 @@ from django.shortcuts import render_to_response, redirect
 import django.contrib.auth
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.core.mail import EmailMessage
 # Registration imports
 import registration.forms, registration.signals, registration.backends
 # Model imports
-from models import User, UserProfile, Team, Payment
+from models import User, UserProfile, Team, Payment, Voucher
 
 class RegistrationFormDPNK(registration.forms.RegistrationForm):
     required_css_class = 'required'
     
     firstname = forms.CharField(
         label="Jméno",
-        max_length=30)
+        max_length=30,
+        required=True)
     surname = forms.CharField(
         label="Příjmení",
-        max_length=30)
+        max_length=30,
+        required=True)
     team = forms.ModelChoiceField(
         label="Tým",
-        queryset=Team.objects.all())
+        queryset=Team.objects.all(),
+        required=True)
     team_password = forms.CharField(
         label="Tajný kód týmu",
         max_length=20)
     distance = forms.IntegerField(
-        label="Vzdálenost z domova do práce vzdušnou čarou (v km)")
+        label="Vzdálenost z domova do práce vzdušnou čarou (v km)",
+        required=True)
 
     # -- Contacts
     telephone = forms.CharField(
@@ -88,6 +93,8 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
             team = Team.objects.get(id=self.data['team'])
         except Team.DoesNotExist, e:
             raise forms.ValidationError("Neexistující tým")
+        except ValueError, e:
+            raise forms.ValidationError("Neplatný tým")
         if data.strip().lower() != team.password.strip():
             raise forms.ValidationError("Nesprávné heslo týmu")
         return data
