@@ -247,6 +247,35 @@ def payment_status(request):
     if r['trans_recv'] != '':
         p.realized = r['trans_recv']
     p.save()
+
+    if p.status == 99 or p.status == '99':
+        # Assign voucher to user
+        v = Voucher.objects.filter(user__isnull=True)[0]
+        v.user = p.user
+        v.save()
+
+        # Send user email confirmation and a voucher
+        email = EmailMessage(subject=u"Platba Do práce na kole a slevový kupon",
+                             body=u"""Obdrželi jsme Vaši platbu startovného pro soutěž Do práce na kole.
+
+Zaplacením startovného získáváte poukaz na designové triko kampaně Do
+práce na kole 2012 (včetně poštovného a balného). Objednávku můžete
+uskutečnit na adrese:
+
+http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012
+
+Váš slevový kód pro nákup trička v obchodě Čoromoro je %s.
+
+K jeho zadání budete vyzváni poté, co si vyberete velikost a přejdete
+na svůj nákupní košík.
+
+S pozdravem
+Auto*Mat
+""" % v.code,
+                             from_email = u'Do práce na kole <kontakt@dopracenakole.net>',
+                             to = [p.user.email()])
+        email.send(fail_silently=True)
+
     # Return positive error code as per PayU protocol
     return http.HttpResponse("OK")
 
@@ -260,6 +289,7 @@ def login(request):
 @login_required
 def profile(request):
     profile = UserProfile.objects.get(user=request.user)
+    voucher = Voucher.objects.filter(user=profile)[0]
     # Render profile
     payment_status = profile.payment_status()
     team_members = ", ".join([str(p) for p in UserProfile.objects.filter(team=profile.team)])
@@ -269,6 +299,7 @@ def profile(request):
             'profile': profile,
             'team': profile.team,
             'payment_status': payment_status,
+            'voucher': voucher.code,
             'team_members': team_members,
             })
 

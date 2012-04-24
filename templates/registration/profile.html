@@ -10,7 +10,7 @@
 <tr><th scope="row">Firma:</th><td>{{ team.company }}</td></tr>
 <tr><th scope="row">Členové týmu:</th><td>{{ team_members }}</td></tr>
 <tr><th scope="row">Startovné:</th><td>
-{% if payment_status == 'done' %} Zaplaceno {% endif %}
+{% if payment_status == 'done' %} Zaplaceno (slevový kód na triko: {{ voucher }}){% endif %}
 {% if payment_status == 'waiting' %} Čeká se na potvrzení platby (<a href="/registrace/platba/">Zadat jinou platbu</a>){% endif %}
 {% if payment_status == None %} Příspěvek dosud nezaplacen. <a href="/registrace/platba/">Zaplatit</a> {% endif %}
 </td></tr>
@@ -36,7 +36,7 @@ tomto místě zpřístupněna vaše závodnická knížka, kam budete následně
 zaznamenávat vaše cesty do práce a z práce na kole, na základě kterých
 bude moct být váš tým vylosován a odměněn zajímavými cenami.</p>
 
-<p>Již brzy (do konce týdne) zde na svém vlastním profilu také
+<p>Již brzy zde na svém vlastním profilu také
 naleznete kupon a odkaz pro objednání designového trička Do práce na
 kole. Dolaďujeme právě poslední detaily tak, aby byl celý proces pro
 vás co nejjednodušší.</p>

@@ -87,7 +87,8 @@ class UserProfile(models.Model):
         max_length=30, null=False)
     team = models.ForeignKey(
         Team,
-        verbose_name='Tým')
+        verbose_name='Tým',
+        null=False, blank=False)
 
     def person_name(self):
         return "%s %s" % (self.firstname, self.surname)
@@ -193,3 +194,14 @@ class Payment(models.Model):
     def __unicode__(self):
         return self.trans_id
 
+class Voucher(models.Model):
+    """Slevove kupony"""
+
+    class Meta:
+        verbose_name = "Kupon"
+        verbose_name_plural = "Kupony"
+
+    code = models.CharField(
+        verbose_name="Kód",
+        max_length=20, null=False)
+    user = models.ForeignKey(UserProfile, null=True, blank=True)

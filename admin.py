@@ -25,7 +25,7 @@ from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.http import HttpResponseRedirect
 # Models
-from models import UserProfile, Team, Payment
+from models import UserProfile, Team, Payment, Voucher
 # -- ADMIN FORMS --
 
 class PaymentInline(admin.TabularInline):
@@ -61,11 +61,17 @@ class PaymentAdmin(admin.ModelAdmin):
     fields = ('trans_id', 'user', 'amount', 'description', 'created', 'status', 'realized', 'pay_type', 'error', 'session_id')
 
     list_filter = ['status', 'pay_type']
-    
+
+
+class VoucherAdmin(admin.ModelAdmin):
+    list_display = ('code', 'user')
+    fields = ('code', 'user')
+
 admin.site.unregister(User)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Payment, PaymentAdmin)
+admin.site.register(Voucher, VoucherAdmin)
 
 from django.contrib.auth.models import Group
 admin.site.unregister(Group)
