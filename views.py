@@ -296,7 +296,10 @@ def login(request):
 @login_required
 def profile(request):
     profile = UserProfile.objects.get(user=request.user)
-    voucher = Voucher.objects.filter(user=profile)[0]
+    try:
+        voucher_code = Voucher.objects.filter(user=profile)[0].code
+    except IndexError, e:
+        voucher_code = ''
     # Render profile
     payment_status = profile.payment_status()
     team_members = ", ".join([str(p) for p in UserProfile.objects.filter(team=profile.team)])
@@ -306,7 +309,7 @@ def profile(request):
             'profile': profile,
             'team': profile.team,
             'payment_status': payment_status,
-            'voucher': voucher.code,
+            'voucher': voucher_code,
             'team_members': team_members,
             })
 
