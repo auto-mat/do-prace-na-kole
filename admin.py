@@ -37,8 +37,10 @@ class TeamInline(admin.TabularInline):
     extra = 0
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined')
+    list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city')
     inlines = [PaymentInline]
+    search_fields = ['firstname', 'surname']
+    list_filter = ['active', 'team__city']
 
     readonly_fields = ['team_link']
     def team_link(self, obj):

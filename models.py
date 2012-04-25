@@ -109,6 +109,10 @@ class UserProfile(models.Model):
     date_joined.admin_order_field  = 'user__date_joined'
     date_joined.short_description = 'Registrace'
 
+    def city(self):
+        return self.team.city
+    city.short_description = u'Město'
+
     def payment_status(self):
         # Check payment status for this user
         payments = Payment.objects.filter(user=self)
