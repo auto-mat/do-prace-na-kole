@@ -52,7 +52,7 @@ class TeamAdmin(admin.ModelAdmin):
     readonly_fields = ['members']
     def members(self, obj):
         return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
-                                  for u in UserProfile.objects.filter(team=obj)]))
+                                  for u in UserProfile.objects.filter(team=obj, active=True)]))
     members.short_description = 'Členové'
 
     

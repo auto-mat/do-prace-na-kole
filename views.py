@@ -83,7 +83,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
 
     def clean_team(self):
         data = self.cleaned_data['team']
-        if len(UserProfile.objects.filter(team=data)) >= 5:
+        if len(UserProfile.objects.filter(team=data, active=True)) >= 5:
             raise forms.ValidationError("Tento tým již má pět členů a je tedy plný")
         return data
 
@@ -305,6 +305,7 @@ def profile(request):
     team_members = ", ".join([str(p) for p in UserProfile.objects.filter(team=profile.team)])
     return render_to_response('registration/profile.html',
                               {
+            'active': profile.active,
             'user': request.user,
             'profile': profile,
             'team': profile.team,

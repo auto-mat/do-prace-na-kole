@@ -89,6 +89,9 @@ class UserProfile(models.Model):
         Team,
         verbose_name='Tým',
         null=False, blank=False)
+    active = models.BooleanField(
+        verbose_name="Aktivní",
+        default=True)
 
     def person_name(self):
         return "%s %s" % (self.firstname, self.surname)
@@ -120,7 +123,7 @@ class UserProfile(models.Model):
             # No payment done and no waiting
             status = None
         return status
-
+    
 class Payment(models.Model):
     """Platba"""
 

@@ -3,6 +3,7 @@
 
 {% block content %}
 
+{% if active %}
 <table>
 <tr><th scope="row">Jméno</th><td>{{ profile.firstname }} {{ profile.surname }}</td></tr>
 <tr><th scope="row">Tým:</th><td>{{ team.name }} (kód {{team.password}})</td></tr>
@@ -10,12 +11,16 @@
 <tr><th scope="row">Firma:</th><td>{{ team.company }}</td></tr>
 <tr><th scope="row">Členové týmu:</th><td>{{ team_members }}</td></tr>
 <tr><th scope="row">Startovné:</th><td>
-{% if payment_status == 'done' %} Zaplaceno (slevový kód na triko: {{ voucher }}){% endif %}
+{% if payment_status == 'done' %} Zaplaceno (slevový kód na <a href="http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012" target="_top">triko</a>: {{ voucher }}){% endif %}
 {% if payment_status == 'waiting' %} Čeká se na potvrzení platby (<a href="/registrace/platba/">Zadat jinou platbu</a>){% endif %}
 {% if payment_status == None %} Příspěvek dosud nezaplacen. <a href="/registrace/platba/">Zaplatit</a> {% endif %}
 </td></tr>
 </table>
 <a href="/registrace/upravit_profil/">Upravit údaje</a> | <a href="/registrace/zmena_hesla/">Změnit heslo</a> | <a href="/registrace/logout/">Odhlásit</a>
+{% else %}
+Tento profil byl zneaktivněn. S případnými dotazy se obracejte na kontakt@dopracenakole.net .</br>
+<a href="/registrace/logout/">Odhlásit</a>
+{% endif %}
 
 <h4>Uvítání</h4>
 
@@ -35,11 +40,6 @@ na webu a FB kampaně.</p>
 tomto místě zpřístupněna vaše závodnická knížka, kam budete následně
 zaznamenávat vaše cesty do práce a z práce na kole, na základě kterých
 bude moct být váš tým vylosován a odměněn zajímavými cenami.</p>
-
-<p>Již brzy zde na svém vlastním profilu také
-naleznete kupon a odkaz pro objednání designového trička Do práce na
-kole. Dolaďujeme právě poslední detaily tak, aby byl celý proces pro
-vás co nejjednodušší.</p>
 
 <p>S dotazy a nejsnostmi se obracejte na kontakt@dopracenakole.net</p>
 
