@@ -199,7 +199,10 @@ class Payment(models.Model):
         null=True, blank=True)
 
     def __unicode__(self):
-        return self.trans_id
+        if self.trans_id:
+            return self.trans_id
+        else:
+            return self.session_id
 
 class Voucher(models.Model):
     """Slevove kupony"""
