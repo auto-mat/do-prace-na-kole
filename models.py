@@ -169,7 +169,7 @@ class Payment(models.Model):
         max_length=50, null=False)
     trans_id = models.CharField(
         verbose_name="Transaction ID",
-        max_length=50, null=True)
+        max_length=50, null=True, blank=True)
     amount = models.PositiveIntegerField(
         verbose_name="Částka",
         null=False)
@@ -183,20 +183,20 @@ class Payment(models.Model):
         null=False)
     realized = models.DateTimeField(
         verbose_name="Realizace",
-        null=True)
+        null=True, blank=True)
     pay_type = models.CharField(
         verbose_name="Typ platby",
         choices=PAY_TYPES,
         max_length=50,
-        null=True)
+        null=True, blank=True)
     status = models.PositiveIntegerField(
         verbose_name="Status",
         choices=STATUS,
         max_length=50,
-        null=True)
+        null=True, blank=True)
     error = models.PositiveIntegerField(
         verbose_name="Chyba",
-        null=True)
+        null=True, blank=True)
 
     def __unicode__(self):
         return self.trans_id
