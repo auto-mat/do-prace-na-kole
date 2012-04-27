@@ -214,7 +214,6 @@ def payment_result(request, success):
 
 def make_sig(values):
     key1 = 'eac82603809d388f6a2b8b11471f1805'
-    print "".join(values+(key1,))
     return hashlib.md5("".join(values+(key1,))).hexdigest()
 
 def check_sig(sig, values):
