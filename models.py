@@ -150,8 +150,8 @@ class Payment(models.Model):
         ('pv', 'Volksbank'),
         ('pf', 'Fio banka'),
         ('c', 'Kreditní karta přes GPE'),
-        ('bt*', 'bankovní převod'),
-        ('pt*', 'převod přes poštu'),
+        ('bt', 'bankovní převod'),
+        ('pt', 'převod přes poštu'),
         ('sc', 'superCASH'),
         ('t', 'testovací platba'),
         )
