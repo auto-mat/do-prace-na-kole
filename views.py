@@ -205,11 +205,18 @@ def payment_result(request, success):
     else:
         msg = "Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu."
 
+    try:
+        city = UserProfile.objects.get(user=request.user).team.city
+    except TypeError, e:
+        # Looks like sometimes we loose the session before user comes
+        # back from PayU
+        city = None
+
     return render_to_response('registration/payment_result.html',
                               {
             'pay_type': pay_type,
             'message': msg,
-            'city': UserProfile.objects.get(user=request.user).team.city,
+            'city': city
             })
 
 def make_sig(values):
