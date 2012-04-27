@@ -50,6 +50,8 @@ class UserProfileAdmin(admin.ModelAdmin):
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('name', 'company', 'city', 'password')
     fields = ('name', 'members', 'company', 'city', 'address', 'password')
+    search_fields = ['name', 'company']
+    list_filter = ['city']
 
     readonly_fields = ['members']
     def members(self, obj):
