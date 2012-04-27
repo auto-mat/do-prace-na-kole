@@ -203,7 +203,7 @@ def payment_result(request, success):
     if success == True:
         msg = "Vaše platba byla úspěšně přijata."
     else:
-        msg = "Vaše platba se nezdařila"
+        msg = "Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu."
 
     return render_to_response('registration/payment_result.html',
                               {
