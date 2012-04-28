@@ -91,10 +91,8 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         data = self.cleaned_data['team_password']
         try:
             team = Team.objects.get(id=self.data['team'])
-        except Team.DoesNotExist, e:
-            raise forms.ValidationError("Neexistující tým")
-        except ValueError, e:
-            raise forms.ValidationError("Neplatný tým")
+        except (Team.DoesNotExist, ValueError):
+            raise forms.ValidationError("Neexistující nebo neplatný tým")
         if data.strip().lower() != team.password.strip():
             raise forms.ValidationError("Nesprávné heslo týmu")
         return data
