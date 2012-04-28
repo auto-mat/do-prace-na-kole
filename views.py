@@ -261,7 +261,7 @@ def payment_status(request):
 
     if p.status == 99 or p.status == '99':
         # Assign voucher to user
-        v = Voucher.objects.filter(user__isnull=True)[0]
+        v = random.choice(Voucher.objects.filter(user__isnull=True))
         v.user = p.user
         v.save()
 
