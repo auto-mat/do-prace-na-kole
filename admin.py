@@ -36,9 +36,13 @@ class TeamInline(admin.TabularInline):
     model = Team
     extra = 0
 
+class VoucherInline(admin.TabularInline):
+    model = Voucher
+    extra = 0
+
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city')
-    inlines = [PaymentInline]
+    inlines = [PaymentInline, VoucherInline]
     search_fields = ['firstname', 'surname']
     list_filter = ['active', 'team__city']
 
