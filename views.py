@@ -301,7 +301,7 @@ def login(request):
 def profile(request):
     profile = UserProfile.objects.get(user=request.user)
     try:
-        voucher_code = Voucher.objects.filter(user=profile)[-1].code
+        voucher_code = Voucher.objects.filter(user=profile)[0].code
     except IndexError, e:
         voucher_code = ''
     # Render profile
