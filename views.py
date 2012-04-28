@@ -306,7 +306,7 @@ def profile(request):
         voucher_code = ''
     # Render profile
     payment_status = profile.payment_status()
-    team_members = ", ".join([str(p) for p in UserProfile.objects.filter(team=profile.team)])
+    team_members = ", ".join([str(p) for p in UserProfile.objects.filter(team=profile.team, active=True)])
     return render_to_response('registration/profile.html',
                               {
             'active': profile.active,
