@@ -260,14 +260,14 @@ def payment_status(request):
     p.save()
 
     if p.status == 99 or p.status == '99':
-        # Assign voucher to user
-        v = random.choice(Voucher.objects.filter(user__isnull=True))
-        v.user = p.user
-        v.save()
-
-        # Send user email confirmation and a voucher
-        email = EmailMessage(subject=u"Platba Do práce na kole a slevový kupon",
-                             body=u"""Obdrželi jsme Vaši platbu startovného pro soutěž Do práce na kole.
+        if len(Voucher.objects.filter(user = p.user)) == 0:
+            # Assign voucher to user
+            v = random.choice(Voucher.objects.filter(user__isnull=True))
+            v.user = p.user
+            v.save()
+            # Send user email confirmation and a voucher
+            email = EmailMessage(subject=u"Platba Do práce na kole a slevový kupon",
+                                 body=u"""Obdrželi jsme Vaši platbu startovného pro soutěž Do práce na kole.
 
 Zaplacením startovného získáváte poukaz na designové triko kampaně Do
 práce na kole 2012 (včetně poštovného a balného). Objednávku můžete
