@@ -24,6 +24,7 @@ import django
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.db.models import Q
 # Python library imports
 import datetime
 
@@ -127,7 +128,27 @@ class UserProfile(models.Model):
             # No payment done and no waiting
             status = None
         return status
+
+class UserProfileUnpaidManager(models.Manager):
+    def get_query_set(self):
+        paying_or_prospective_user_ids = [p.user_id for p in Payment.objects.filter(
+                Q(status='99') | Q (
+                    # Bank transfer less than 5 days old
+                    status='1', pay_type='bt',
+                    created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
+                )]
+        return super(UserProfileUnpaidManager,self).get_query_set().filter(
+            active=True).exclude(id__in=paying_or_prospective_user_ids)
+
     
+
+class UserProfileUnpaid(UserProfile):
+    objects = UserProfileUnpaidManager()
+    class Meta:
+        proxy = True
+        verbose_name = "Uživatel s nezaplaceným startovným"
+        verbose_name_plural = "Uživatelé s nezaplaceným startovným"
+
 class Payment(models.Model):
     """Platba"""
 

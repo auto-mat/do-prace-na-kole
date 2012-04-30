@@ -25,7 +25,7 @@ from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.http import HttpResponseRedirect
 # Models
-from models import UserProfile, Team, Payment, Voucher
+from models import UserProfile, UserProfileUnpaid, Team, Payment, Voucher
 # -- ADMIN FORMS --
 
 class PaymentInline(admin.TabularInline):
@@ -50,6 +50,9 @@ class UserProfileAdmin(admin.ModelAdmin):
     def team_link(self, obj):
         return mark_safe('<a href="/admin/admin/dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
+
+class UserProfileUnpaidAdmin(UserProfileAdmin):
+    list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city')
 
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('name', 'company', 'city', 'password')
@@ -77,6 +80,7 @@ class VoucherAdmin(admin.ModelAdmin):
 
 admin.site.unregister(User)
 admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(UserProfileUnpaid, UserProfileUnpaidAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Voucher, VoucherAdmin)
