@@ -236,3 +236,39 @@ class Voucher(models.Model):
         verbose_name="Kód",
         max_length=20, null=False)
     user = models.ForeignKey(UserProfile, null=True, blank=True)
+class Question(models.Model):
+
+    class Meta:
+        verbose_name = "Anketní otázka"
+        verbose_name_plural = "Anketní otázky"
+
+    QTYPES = (
+        ('text', 'Text'),
+        ('choice', 'Výběr odpovědi'),
+        ('multiple-choice', 'Výběr z více odpovědí'),
+        )
+
+    text = models.TextField(
+        verbose_name="Otázka",
+        max_length=500,
+        null=False)
+    date = models.DateField(
+        verbose_name="Den",
+        null=False)
+    type = models.CharField(
+        verbose_name="Cesta z práce",
+        choices=QTYPES,
+        max_length=16,
+        null=False)
+
+class Choice(models.Model):
+    
+    class Meta:
+        verbose_name = "Nabídka k anketním otázce"
+        verbose_name_plural = "Nabídky k anketním otázkám"
+
+    question = models.ForeignKey(Question)
+    text = models.CharField(
+        verbose_name="Nabídka",
+        max_length=300,
+        null=False)
