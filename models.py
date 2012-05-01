@@ -94,6 +94,10 @@ class UserProfile(models.Model):
         verbose_name="Aktivní",
         default=True)
 
+    trips = models.PositiveIntegerField(
+        verbose_name="Počet cest",
+        default=0, null=False, blank=False)
+
     def person_name(self):
         return "%s %s" % (self.firstname, self.surname)
     person_name.short_description = 'Jméno'
@@ -236,6 +240,27 @@ class Voucher(models.Model):
         verbose_name="Kód",
         max_length=20, null=False)
     user = models.ForeignKey(UserProfile, null=True, blank=True)
+
+class Trip(models.Model):
+    """Cesty"""
+
+    class Meta:
+        verbose_name = "Cesta"
+        verbose_name_plural = "Cesty"
+
+    user = models.ForeignKey(UserProfile, null=True, blank=True)
+    date = models.DateField(
+        verbose_name="Datum cesty",
+        default=datetime.datetime.now,
+        null=False)
+    trip_to = models.BooleanField(
+        verbose_name="Cesta do práce",
+        null=False)
+    trip_from = models.BooleanField(
+        verbose_name="Cesta z práce",
+        null=False)
+
+
 class Question(models.Model):
 
     class Meta:
@@ -256,7 +281,7 @@ class Question(models.Model):
         verbose_name="Den",
         null=False)
     type = models.CharField(
-        verbose_name="Cesta z práce",
+        verbose_name="Typ",
         choices=QTYPES,
         max_length=16,
         null=False)

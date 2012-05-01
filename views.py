@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 # Standard library imports
-import time, random, httplib, urllib, hashlib
+import time, random, httplib, urllib, hashlib, datetime
 # Django imports
 from django import forms, http
 from django.shortcuts import render_to_response, redirect
@@ -26,10 +26,11 @@ import django.contrib.auth
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
+from django.db.models import Sum, Count
 # Registration imports
 import registration.forms, registration.signals, registration.backends
 # Model imports
-from models import User, UserProfile, Team, Payment, Voucher
+from models import User, UserProfile, Team, Payment, Voucher, Trip, Question, Choice, Answer
 
 class RegistrationFormDPNK(registration.forms.RegistrationForm):
     required_css_class = 'required'
@@ -299,24 +300,92 @@ def login(request):
 
 @login_required
 def profile(request):
-    profile = UserProfile.objects.get(user=request.user)
+
+    days = [datetime.date(year=2012, month=5, day=d) for d in range(2,31)
+            if d not in (5,6,12,13,19,20,26,27)]
+    #    today = datetime.date.today()
+    today = datetime.date(year=2012, month=5, day=4)
+    profile = request.user.get_profile()
+    
+    if request.method == 'POST':
+        if 'day' in request.POST:
+            try:
+                trip = Trip.objects.get(user = request.user.get_profile(),
+                                        date = days[int(request.POST['day'])-1])
+            except Trip.DoesNotExist:
+                trip = Trip()
+                trip.date = days[int(request.POST['day'])-1]
+                trip.user = request.user.get_profile()
+            trip.trip_to = request.POST.get('trip_to', False)
+            trip.trip_from = request.POST.get('trip_from', False)
+            trip.save()
+        # Pre-calculate total number of trips into userprofile to save load
+        trip_counts = Trip.objects.filter(user=profile).values('user').annotate(Sum('trip_to'), Sum('trip_from'))
+        profile.trips = trip_counts[0]['trip_to__sum'] + trip_counts[0]['trip_from__sum']
+        profile.save()
     try:
         voucher_code = Voucher.objects.filter(user=profile)[0].code
     except IndexError, e:
         voucher_code = ''
+
     # Render profile
     payment_status = profile.payment_status()
-    team_members = ", ".join([str(p) for p in UserProfile.objects.filter(team=profile.team, active=True)])
+    team_members = UserProfile.objects.filter(team=profile.team, active=True)
+
+    weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá']
+
+    trips = {}
+    for t in Trip.objects.filter(user=request.user.get_profile()):
+        trips[t.date] = (t.trip_to, t.trip_from)
+    calendar = []
+
+    counter = 0
+    for i, d in enumerate(days):
+        cd = {}
+        cd['name'] = "%s %d.%d." % (weekdays[d.weekday()], d.day, d.month)
+        cd['iso'] = str(d)
+        cd['question_active'] = (d <= today)
+        cd['trips_active'] = (d <= today) and (
+            len(Answer.objects.filter(
+                    question=Question.objects.get(date = d),
+                    user=request.user.get_profile())) > 0)
+        if d in trips:
+            cd['default_trip_to'] = trips[d][0]
+            cd['default_trip_from'] = trips[d][1]
+            counter += int(trips[d][0]) + int(trips[d][1])
+        else:
+            cd['default_trip_to'] = False
+            cd['default_trip_from'] = False
+        cd['percentage'] = "%.0f" % (float(counter)/(2*(i+1))*100,)
+        cd['distance'] = counter * request.user.get_profile().distance
+        calendar.append(cd)
+
+        member_counts = []
+        for member in team_members:
+            member_counts.append({
+                    'name': str(member),
+                    'trips': member.trips,
+                    'percentage': float(member.trips)/(2*(days.index(today)+1)),
+                    'distance': member.trips * member.distance})
+        team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*(days.index(today)+1)) * 100
+        team_distance = sum([m['trips']*m['distance'] for m in member_counts])
+
     return render_to_response('registration/profile.html',
                               {
             'active': profile.active,
+            'superuser': request.user.is_superuser,
             'user': request.user,
             'profile': profile,
             'team': profile.team,
             'payment_status': payment_status,
             'voucher': voucher_code,
-            'team_members': team_members,
+            'team_members': ", ".join([str(p) for p in team_members]),
+            'calendar': calendar,
+            'member_counts': member_counts,
+            'team_percentage': "%.1f" % team_percentage,
+            'team_distance': team_distance,
             })
+
 
 class ProfileUpdateForm(forms.ModelForm):
 
