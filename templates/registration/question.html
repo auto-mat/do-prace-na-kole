@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<p id="question-text">{{ question.text }}</p>
+
+<form name="question" action="/registrace/otazka/" method="POST">
+{% for choice in choices %}
+{% if question.type == 'multiple-choice' %}
+<input type="checkbox" name="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in choices_prefill %}checked="checked"{% endif %} /><label for="choice-{{ choice.id }}">{{ choice.text }}</label><br/>
+{% endif %}
+{% if question.type == 'choice' %}
+<input type="radio" name="choice" value="{{ choice.id }}" {% if choice.id in choices_prefill %}checked="checked"{% endif %} /><label for="choice-{{ choice.id }}">{{ choice.text }}</label><br/>
+{% endif %}
+{% endfor %}
+<label for="comment">Komentář</label><br/>
+<textarea name="comment" cols="60" rows="5">{{ comment_prefill }}</textarea><br/>
+<input type="hidden" name="question" value="{{ question.id }}"/>
+<input type="submit" value="Odeslat">
+</form>
+
+{% endblock %}
