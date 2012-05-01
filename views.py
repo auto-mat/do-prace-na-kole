@@ -419,7 +419,7 @@ def profile(request):
             'team_members': ", ".join([str(p) for p in team_members]),
             'calendar': calendar,
             'member_counts': member_counts,
-            'team_percentage': "%.1f" % team_percentage,
+            'team_percentage': team_percentage,
             'team_distance': team_distance,
             })
 
