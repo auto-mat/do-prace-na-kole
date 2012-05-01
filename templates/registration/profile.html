@@ -24,7 +24,7 @@
 
 <p>Tip: Pro vyplnění jízd musíte nejprve zodpovědět anketní otázku</p>
 
-<table>
+<table id="rides">
 <tr>
 <th scope="column">Den</th>
 <th scope="column">Anketa</th>
@@ -32,17 +32,17 @@
 <th scope="column">Z práce</th>
 <th scope="column">Odeslat</th>
 <th scope="column">Pravidelnost</th>
-<th scope="column">Najeto</th>
+<th scope="column">Vzdálenost</th>
 </tr>
 {% for day in calendar %}
 <tr>
 <form name="calendar-{{ forloop.counter }}" action="/registrace/profil/" method="POST">
-<th scope="row">{{ day.name }}</th>
-<td>{% if day.question_active %}<a href="/registrace/otazka/?day={{ day.iso }}">Otázka</a>{% else %} ? {% endif %}</td>
+<th scope="row" class="date">{{ day.name }}</th>
+<td>{% if day.question_active %}<a href="/registrace/otazka/?day={{ day.iso }}" onclick="window.parent.scroll(0,200);">Otázka</a>{% else %} ? {% endif %}</td>
 <td><input type="checkbox" name="trip_to" {% if not day.trips_active %} readonly="readonly" {% endif %} {% if day.default_trip_to %}checked="checked"{% endif %}/></td>
 <td><input type="checkbox" name="trip_from" {% if not day.trips_active %} readonly="readonly" {% endif %} {% if day.default_trip_from %}checked="checked"{% endif %}/></td>
 <td><input type="hidden" name="day" value="{{ forloop.counter }}"/><input type="submit" value="OK" {% if day.trips_active %} {% else %} disabled="disabled" {% endif %}/></td>
-<td>{% if day.trips_active %}{{ day.percentage }}%{% endif %}</td>
+<td {% if day.percentage > 65 %} class="green" {% else %} class="red" {% endif %}>{% if day.trips_active %}{{ day.percentage|floatformat:1 }}%{% endif %}</td>
 <td>{% if day.trips_active %}{{ day.distance }} km{% endif %}</td>
 </form>
 </tr>
@@ -52,17 +52,21 @@
 <h3>Přehled týmu</h3>
 
 <ul>
-<li>Najeto v týmu: {{ team_distance }} km</li>
-<li>Pravidelnost v týmu: {{ team_percentage }}%</li>
+<li>Překonaná vzdálenost v týmu: {{ team_distance }} km</li>
+<li>Pravidelnost v týmu během kampaně: <span {% if team_percentage > 65 %} class="green" {% else %} class="red" {% endif %}>{{ team_percentage|floatformat:1 }}% </span></li>
+<li>Jak jsou na tom ostatní týmy? Již brzy zde.</li>
 </ul>
+
+<p></p>
 {% endif %}
+
+
 
 
 {% else %}
-Tento profil byl zneaktivněn. S případnými dotazy se obracejte na kontakt@dopracenakole.net .</br>
+Tento profil byl zneaktivněn.</br>
 <a href="/registrace/logout/">Odhlásit</a>
 {% endif %}
-
 
 <p>S dotazy a nejasnostmi se obracejte na kontakt@dopracenakole.net</p>
 
