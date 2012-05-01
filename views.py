@@ -286,7 +286,7 @@ Auto*Mat
 """ % v.code,
                              from_email = u'Do práce na kole <kontakt@dopracenakole.net>',
                              to = [p.user.email()])
-        email.send(fail_silently=True)
+            email.send(fail_silently=True)
 
     # Return positive error code as per PayU protocol
     return http.HttpResponse("OK")
