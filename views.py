@@ -433,7 +433,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ('firstname', 'surname', 'telephone', 'team', 'team_password')
+        fields = ('firstname', 'surname', 'telephone', 'distance', 'team', 'team_password')
     
     def clean_team_password(self):
         data = self.data['team_password']
