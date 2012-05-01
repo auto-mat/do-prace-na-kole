@@ -392,7 +392,8 @@ def profile(request):
         else:
             cd['default_trip_to'] = False
             cd['default_trip_from'] = False
-        cd['percentage'] = "%.0f" % (float(counter)/(2*(i+1))*100,)
+        cd['percentage'] = float(counter)/(2*(i+1))*100
+        cd['percentage_str'] = "%.0f" % (cd['percentage'])
         cd['distance'] = counter * request.user.get_profile().distance
         calendar.append(cd)
 
