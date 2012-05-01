@@ -19,7 +19,6 @@
 </table>
 <a href="/registrace/upravit_profil/">Upravit údaje</a> | <a href="/registrace/zmena_hesla/">Změnit heslo</a> | <a href="/registrace/logout/">Odhlásit</a>
 
-{% if superuser %}
 <h3>Moje jízdy</h3>
 
 <p>Tip: Před vyplněním jízd nejprve zodpovězte anketní otázku</p>
@@ -73,12 +72,6 @@
 </tr>
 {% endfor %}
 </table>
-
-<p></p>
-{% endif %}
-
-
-
 
 {% else %}
 Tento profil byl zneaktivněn.</br>
