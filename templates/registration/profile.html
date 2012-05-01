@@ -4,6 +4,7 @@
 {% block content %}
 
 {% if active %}
+<h3>Základní údaje</h3>
 <table>
 <tr><th scope="row">Jméno</th><td>{{ profile.firstname }} {{ profile.surname }}</td></tr>
 <tr><th scope="row">Tým:</th><td>{{ team.name }} (kód {{team.password}})</td></tr>
@@ -17,30 +18,52 @@
 </td></tr>
 </table>
 <a href="/registrace/upravit_profil/">Upravit údaje</a> | <a href="/registrace/zmena_hesla/">Změnit heslo</a> | <a href="/registrace/logout/">Odhlásit</a>
+
+{% if superuser %}
+<h3>Jízdy</h3>
+
+<p>Tip: Pro vyplnění jízd musíte nejprve zodpovědět anketní otázku</p>
+
+<table>
+<tr>
+<th scope="column">Den</th>
+<th scope="column">Anketa</th>
+<th scope="column">Do práce</th>
+<th scope="column">Z práce</th>
+<th scope="column">Odeslat</th>
+<th scope="column">Pravidelnost</th>
+<th scope="column">Najeto</th>
+</tr>
+{% for day in calendar %}
+<tr>
+<form name="calendar-{{ forloop.counter }}" action="/registrace/profil/" method="POST">
+<th scope="row">{{ day.name }}</th>
+<td>{% if day.question_active %}<a href="/registrace/otazka/?day={{ day.iso }}">Otázka</a>{% else %} ? {% endif %}</td>
+<td><input type="checkbox" name="trip_to" {% if not day.trips_active %} readonly="readonly" {% endif %} {% if day.default_trip_to %}checked="checked"{% endif %}/></td>
+<td><input type="checkbox" name="trip_from" {% if not day.trips_active %} readonly="readonly" {% endif %} {% if day.default_trip_from %}checked="checked"{% endif %}/></td>
+<td><input type="hidden" name="day" value="{{ forloop.counter }}"/><input type="submit" value="OK" {% if day.trips_active %} {% else %} disabled="disabled" {% endif %}/></td>
+<td>{% if day.trips_active %}{{ day.percentage }}%{% endif %}</td>
+<td>{% if day.trips_active %}{{ day.distance }} km{% endif %}</td>
+</form>
+</tr>
+{% endfor %}
+</table>
+
+<h3>Přehled týmu</h3>
+
+<ul>
+<li>Najeto v týmu: {{ team_distance }} km</li>
+<li>Pravidelnost v týmu: {{ team_percentage }}%</li>
+</ul>
+{% endif %}
+
+
 {% else %}
 Tento profil byl zneaktivněn. S případnými dotazy se obracejte na kontakt@dopracenakole.net .</br>
 <a href="/registrace/logout/">Odhlásit</a>
 {% endif %}
 
-<h4>Uvítání</h4>
 
-<p>Úspěšně jste se zaregistrovali do soutěže Pravidelná dojížďka do práce
-na kole, gratulujeme!</p>
-
-<p>Nyní můžete začít s kolegy vymýšlet týmovou strategii, rozšiřovat
-tým a tím i šanci na výhru, zvát do soutěže své kolegy a známé.  Zveme
-Vás na neoficiální zahájení kampaně na
-afterparty <a href="http://www.dopracenakole.net/velka-cyklojizda/">Velké
-jarní cyklojízdy 2012</a> 19. dubna v Praze a Brně.  Další důležité
-informace se dozvíte včas e-mailem. Důležité aktualizace, například co
-se týče přibývajících cen do soutěží, budeme zvěřejňovat v aktualitách
-na webu a FB kampaně.</p>
-
-<p>Soutěžit se naostro začíná ve středu 2. května 2012. V ten den bude na
-tomto místě zpřístupněna vaše závodnická knížka, kam budete následně
-zaznamenávat vaše cesty do práce a z práce na kole, na základě kterých
-bude moct být váš tým vylosován a odměněn zajímavými cenami.</p>
-
-<p>S dotazy a nejsnostmi se obracejte na kontakt@dopracenakole.net</p>
+<p>S dotazy a nejasnostmi se obracejte na kontakt@dopracenakole.net</p>
 
 {% endblock %}
