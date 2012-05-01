@@ -122,6 +122,43 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
     return render_to_response(template_name,
                               {'form': form})
 
+
+class AutoRegistrationFormDPNK(RegistrationFormDPNK):
+
+    def clean_team_password(self):
+        return self.cleaned_data['team_password']
+
+# Temporary to allow mass XLS registrations
+def auto_register(request, backend='registration.backends.simple.SimpleBackend',
+                  success_url=None, form_class=None,
+                  disallowed_url='registration_disallowed',
+                  template_name='registration/auto_registration_form.html',
+                  extra_context=None):
+
+    backend = registration.backends.get_backend(backend)
+    form_class = AutoRegistrationFormDPNK
+
+    if request.method == 'POST':
+        form = form_class(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            new_user = backend.register(request, **form.cleaned_data)
+            order_id = '%s-1' % new_user.id
+            session_id = "%sJ%d " % (order_id, int(time.time()))
+            p = Payment(user=new_user.get_profile(), pay_type='fa', status='99',
+                        amount=160, order_id=order_id, session_id=session_id,
+                        realized=datetime.datetime.now())
+            p.save()
+            auth_user = django.contrib.auth.authenticate(
+                username=request.POST['username'],
+                password=request.POST['password1'])
+            django.contrib.auth.login(request, auth_user)
+            return redirect('/mesto/praha/') # Redirect after POST
+    else:
+        form = form_class(request)
+
+    return render_to_response(template_name,
+                              {'form': form})
+
 def create_profile(user, request, **kwargs):
     from dpnk.models import UserProfile
     UserProfile(user = user,
