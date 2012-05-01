@@ -420,3 +420,46 @@ def update_profile(request):
     return render_to_response('registration/update_profile.html',
                               {'form': form}
                               )
+
+@login_required
+def question(request):
+    if request.method == 'POST':
+        question = Question.objects.get(id=request.POST['question'])
+        try:
+            answer = Answer.objects.get(user = request.user.get_profile(),
+                                        question = question)
+        except Answer.DoesNotExist:
+            answer = Answer()
+            answer.user = request.user.get_profile()
+            answer.question = question
+        answer.save()
+        choice_ids = [v for k, v in request.POST.items() if k.startswith('choice')]
+        answer.choices = Choice.objects.filter(id__in=choice_ids)
+        answer.comment = request.POST.get('comment', '')
+        answer.save()
+        return http.HttpResponseRedirect('/registrace/profil/') # Redirect after POST
+    else:
+        iso_day = request.GET['day']
+        day = datetime.date(*[int(v) for v in iso_day.split('-')])
+        question = Question.objects.get(date=day)
+        try:
+            choices = Choice.objects.filter(question=question)
+        except Choice.DoesNotExist:
+            choices = None
+        try:
+            answer = Answer.objects.get(
+                question=Question.objects.get(date = day),
+                user=request.user.get_profile())
+            comment_prefill = answer.comment
+            choices_prefill = [c.id for c in answer.choices.all()]
+        except Answer.DoesNotExist:
+            comment_prefill = ''
+            choices_prefill = ''
+
+        return render_to_response('registration/question.html',
+                                  {'question': question,
+                                   'choices': choices,
+                                   'choices_prefill': choices_prefill,
+                                   'comment_prefill': comment_prefill,
+                                   }
+                                  )

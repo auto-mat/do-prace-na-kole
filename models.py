@@ -297,3 +297,13 @@ class Choice(models.Model):
         verbose_name="Nabídka",
         max_length=300,
         null=False)
+
+class Answer(models.Model):
+    user = models.ForeignKey(UserProfile, null=False)
+    question = models.ForeignKey(Question, null=False)
+    choices = models.ManyToManyField(Choice)
+    comment = models.TextField(
+        verbose_name="Komentář",
+        max_length=600,
+        null=True, blank=True)
+

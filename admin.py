@@ -80,10 +80,11 @@ class VoucherAdmin(admin.ModelAdmin):
 
 class ChoiceInline(admin.TabularInline):
     model = Choice
-    extra = 1
+    extra = 0
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('text', 'type')
+    list_display = ('text', 'type', 'date')
+    ordering = ('date',)
     fields = ('text', 'type', 'date')
     inlines = [ChoiceInline]
 
