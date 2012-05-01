@@ -341,8 +341,8 @@ def profile(request):
     days = [datetime.date(year=2012, month=5, day=d) for d in range(2,31)
             if d not in (5,6,12,13,19,20,26,27)]
     weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá']
-    #    today = datetime.date.today()
-    today = datetime.date(year=2012, month=5, day=4)
+    today = datetime.date.today()
+    #today = datetime.date(year=2012, month=5, day=4)
     profile = request.user.get_profile()
 
     if request.method == 'POST':
