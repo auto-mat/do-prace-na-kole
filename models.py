@@ -179,6 +179,7 @@ class Payment(models.Model):
         ('pt', 'převod přes poštu'),
         ('sc', 'superCASH'),
         ('t', 'testovací platba'),
+        ('fa', 'faktura mimo PayU'),
         )
 
     class Meta:
