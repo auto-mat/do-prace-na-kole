@@ -402,7 +402,7 @@ def profile(request):
             member_counts.append({
                     'name': str(member),
                     'trips': member.trips,
-                    'percentage': float(member.trips)/(2*(days.index(today)+1)),
+                    'percentage': float(member.trips)/(2*(days.index(today)+1))*100,
                     'distance': member.trips * member.distance})
         team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*(days.index(today)+1)) * 100
         team_distance = sum([m['trips']*m['distance'] for m in member_counts])

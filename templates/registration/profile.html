@@ -20,7 +20,7 @@
 <a href="/registrace/upravit_profil/">Upravit údaje</a> | <a href="/registrace/zmena_hesla/">Změnit heslo</a> | <a href="/registrace/logout/">Odhlásit</a>
 
 {% if superuser %}
-<h3>Jízdy</h3>
+<h3>Moje jízdy</h3>
 
 <p>Tip: Pro vyplnění jízd musíte nejprve zodpovědět anketní otázku</p>
 
@@ -56,6 +56,23 @@
 <li>Pravidelnost v týmu během kampaně: <span {% if team_percentage > 65 %} class="green" {% else %} class="red" {% endif %}>{{ team_percentage|floatformat:1 }}% </span></li>
 <li>Jak jsou na tom ostatní týmy? Již brzy zde.</li>
 </ul>
+
+<table>
+<tr>
+<th scope="column">Jméno</th>
+<th scope="column">Cest</th>
+<th scope="column">Pravidelnost</th>
+<th scope="column">Vzdálenost</th>
+</tr>
+{% for member in member_counts %}
+<tr>
+<td>{{ member.name }}</td>
+<td>{{ member.trips }}</td>
+<td>{{ member.percentage|floatformat:1 }}%</td>
+<td>{{ member.distance }} km</td>
+</tr>
+{% endfor %}
+</table>
 
 <p></p>
 {% endif %}
