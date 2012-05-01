@@ -303,10 +303,11 @@ def profile(request):
 
     days = [datetime.date(year=2012, month=5, day=d) for d in range(2,31)
             if d not in (5,6,12,13,19,20,26,27)]
+    weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá']
     #    today = datetime.date.today()
     today = datetime.date(year=2012, month=5, day=4)
     profile = request.user.get_profile()
-    
+
     if request.method == 'POST':
         if 'day' in request.POST:
             try:
@@ -331,8 +332,6 @@ def profile(request):
     # Render profile
     payment_status = profile.payment_status()
     team_members = UserProfile.objects.filter(team=profile.team, active=True)
-
-    weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá']
 
     trips = {}
     for t in Trip.objects.filter(user=request.user.get_profile()):
