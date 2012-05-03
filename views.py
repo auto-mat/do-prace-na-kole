@@ -519,8 +519,13 @@ def question(request):
         answer.save()
         return http.HttpResponseRedirect('/registrace/profil/') # Redirect after POST
     else:
-        iso_day = request.GET['day']
-        day = datetime.date(*[int(v) for v in iso_day.split('-')])
+	if not request.GET.has_key('day'):
+	    return http.HttpResponseNotFound('Chybí povinný argument "day".')
+	try:
+            iso_day = request.GET['day']
+            day = datetime.date(*[int(v) for v in iso_day.split('-')])
+        except ValueError:
+	    return http.HttpResponseNotFound('Neplatný argument "day".')
         question = Question.objects.get(date=day)
         try:
             choices = Choice.objects.filter(question=question)
