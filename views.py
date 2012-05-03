@@ -419,6 +419,12 @@ def profile(request):
             break
     team_position += 1
 
+    req_city = request.GET.get('mesto', None)
+    if req_city and (req_city.lower() != profile.team.city.lower()):
+        own_city = False
+    else:
+        own_city = True
+
     return render_to_response('registration/profile.html',
                               {
             'active': profile.active,
@@ -435,6 +441,8 @@ def profile(request):
             'team_distance': team_distance,
             'user_position': user_position,
             'team_position': team_position,
+            'req_city': req_city,
+            'own_city': own_city,
             })
 
 def results(request, template):
