@@ -537,6 +537,8 @@ def question(request):
             day = datetime.date(*[int(v) for v in iso_day.split('-')])
         except ValueError:
 	    return http.HttpResponseNotFound('Neplatný argument "day".')
+        if day > datetime.date.today():
+	    return http.HttpResponseNotFound('Neplatný argument "day".')
         question = Question.objects.get(date=day)
         try:
             choices = Choice.objects.filter(question=question)
