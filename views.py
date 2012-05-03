@@ -361,7 +361,10 @@ def profile(request):
             trip.save()
         # Pre-calculate total number of trips into userprofile to save load
         trip_counts = Trip.objects.filter(user=profile).values('user').annotate(Sum('trip_to'), Sum('trip_from'))
-        profile.trips = trip_counts[0]['trip_to__sum'] + trip_counts[0]['trip_from__sum']
+        try:
+            profile.trips = trip_counts[0]['trip_to__sum'] + trip_counts[0]['trip_from__sum']
+        except IndexError:
+            profile.trips = 0
         profile.save()
     try:
         voucher_code = Voucher.objects.filter(user=profile)[0].code
