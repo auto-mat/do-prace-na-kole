@@ -480,7 +480,10 @@ class ProfileUpdateForm(forms.ModelForm):
     
     def clean_team_password(self):
         data = self.data['team_password']
-        team = Team.objects.get(id=self.data['team'])
+        team:
+            try = Team.objects.get(id=self.data['team'])
+        except (Team.DoesNotExist, ValueError):
+            raise forms.ValidationError("Neexistující nebo neplatný tým")
         if team != self.instance.team:
             # Change in team requested, validate team password
             if data.strip().lower() != team.password.strip():
