@@ -373,7 +373,7 @@ def profile(request):
     team_members = UserProfile.objects.filter(team=profile.team, active=True)
 
     trips = {}
-    for t in Trip.objects.filter(user=request.user.get_profile()):
+    for t in Trip.objects.filter(user=profile):
         trips[t.date] = (t.trip_to, t.trip_from)
     calendar = []
 
@@ -396,18 +396,28 @@ def profile(request):
             cd['default_trip_from'] = False
         cd['percentage'] = float(counter)/(2*(i+1))*100
         cd['percentage_str'] = "%.0f" % (cd['percentage'])
-        cd['distance'] = counter * request.user.get_profile().distance
+        cd['distance'] = counter * profile.distance
         calendar.append(cd)
 
-        member_counts = []
-        for member in team_members:
-            member_counts.append({
-                    'name': str(member),
-                    'trips': member.trips,
-                    'percentage': float(member.trips)/(2*(days.index(today)+1))*100,
-                    'distance': member.trips * member.distance})
-        team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*(days.index(today)+1)) * 100
-        team_distance = sum([m['trips']*m['distance'] for m in member_counts])
+    member_counts = []
+    for member in team_members:
+        member_counts.append({
+                'name': str(member),
+                'trips': member.trips,
+                'percentage': float(member.trips)/(2*(days.index(today)+1))*100,
+                'distance': member.trips * member.distance})
+    team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*(days.index(today)+1)) * 100
+    team_distance = sum([m['trips']*m['distance'] for m in member_counts])
+
+    for user_position, u in enumerate(UserResults.objects.filter(city=profile.team.city)):
+        if u.id == profile.id:
+            break
+    user_position += 1
+
+    for team_position, t in enumerate(TeamResults.objects.filter(city=profile.team.city)):
+        if t.id == profile.team.id:
+            break
+    team_position += 1
 
     return render_to_response('registration/profile.html',
                               {
@@ -423,17 +433,20 @@ def profile(request):
             'member_counts': member_counts,
             'team_percentage': team_percentage,
             'team_distance': team_distance,
+            'user_position': user_position,
+            'team_position': team_position,
             })
 
-def results(request):
+def results(request, template):
 
     city = request.GET.get('mesto', None)
+
     if city:
         user_by_percentage = UserResults.objects.filter(city=city)[:10]
         user_by_distance = UserResults.objects.filter(city=city).order_by('-distance')[:10]
         team_by_distance = TeamResults.objects.filter(city=city).order_by('-distance')[:20]
         team_by_percentage = TeamResults.objects.filter(city=city)
-        user_count = UserProfile.objects.filter(active=True, city=city).count()
+        user_count = UserResults.objects.filter(city=city).count()
         team_count = Team.objects.filter(city=city).count()
     else:
         user_by_percentage = UserResults.objects.all()[:10]
@@ -443,7 +456,7 @@ def results(request):
         user_count = UserProfile.objects.filter(active=True).count()
         team_count = Team.objects.all().count()
 
-    return render_to_response('registration/results.html',
+    return render_to_response(template,
                               {
             'user_by_percentage': user_by_percentage,
             'user_by_distance': user_by_distance,

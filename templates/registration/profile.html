@@ -48,12 +48,13 @@
 {% endfor %}
 </table>
 
-<h3>Přehled týmu</h3>
+<h3>Váš přehled</h3>
 
 <ul>
+<li>Aktuálně {{ user_position }}. místo v soutěži jednotlivců</li>
+<li>Aktuálně {{ team_position }}. místo v soutěži týmů</li>
 <li>Překonaná vzdálenost v týmu: {{ team_distance }} km</li>
 <li>Pravidelnost v týmu během kampaně: <span {% if team_percentage > 65 %} class="green" {% else %} class="red" {% endif %}>{{ team_percentage|floatformat:1 }}% </span></li>
-<li>Jak jsou na tom ostatní týmy? Již brzy zde.</li>
 </ul>
 
 <table>
@@ -73,11 +74,16 @@
 {% endfor %}
 </table>
 
+<p><a href="/registrace/vysledky?mesto={{team.city}}" onclick="window.parent.scroll(0,200);">Průběžné výsledkové listiny</a></p>
+
 {% else %}
 Tento profil byl zneaktivněn.</br>
 <a href="/registrace/logout/">Odhlásit</a>
 {% endif %}
 
+<p>&nbsp;</p>
+
+<p>ENGLISH INFO: To fill out your trips, answer the question first, ask your czech colegue for a help. Little dictionary: startovné = registration fee; upravit údaje = change profile; změnit heslo = change password; odhlásit = log out; anketa = poll; otázka = question; do/z práce = to/from work; odeslat = send; pravidelnost = regularity; vzdálenost = distance; </p>
 <p>S dotazy a nejasnostmi se obracejte na kontakt@dopracenakole.net</p>
 
 {% endblock %}

@@ -11,4 +11,4 @@ def days():
 
 def days_count():
     d = days()
-    return d.index(datetime.date.today())
+    return d.index(datetime.date.today())+1

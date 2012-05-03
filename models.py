@@ -343,6 +343,7 @@ class TeamResults(models.Model):
     city = models.CharField()
     trips = models.IntegerField()
     trips_per_person = models.FloatField()
+    persons = models.IntegerField()
     distance = models.PositiveIntegerField()
 
     def percentage(self):

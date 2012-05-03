@@ -3,8 +3,7 @@
 
 {% block content %}
 
-
-<h3>Průběžné výsledky {% if city %} — {{city}}{% endif %}</h3>
+<input type="button" onclick="history.go(-1)" value="Zpět">
 
 <h4>Obsah</h4>
 
@@ -42,6 +41,8 @@
 {% endfor %}
 </table>
 
+<input type="button" onclick="history.go(-1)" value="Zpět">
+
 <h4><a name="soutezici-podle-vzdalenosti">Soutěžící podle překonané vzdálenosti</a></h4>
 <table id="user-results-by-distance">
 <tr>
@@ -67,6 +68,8 @@
 <tr><td>...</td></tr>
 </table>
 
+<input type="button" onclick="history.go(-1)" value="Zpět">
+
 <h4><a name="tymy-podle-pravidelnosti">Týmy podle pravidelnosti</a></h4>
 <table id="team-results-by-percentage">
 <tr>
@@ -89,6 +92,8 @@
 {% endfor %}
 </table>
 
+<input type="button" onclick="history.go(-1)" value="Zpět">
+
 <h4><a name="tymy-podle-vzdalenosti">Týmy podle celkové překonané vzdálenosti</a></h4>
 <table id="team-results-by-distance">
 <tr>
@@ -110,12 +115,15 @@
 <tr><td>...</td></tr>
 </table>
 
+<input type="button" onclick="history.go(-1)" value="Zpět">
+
 <h4><a name="dalsi">Další</a></h4>
 
 <ul>
 <li>{{user_count}} účastníků soutěže</li>
 <li>{{team_count}} týmů</li>
-<li>{{company_count}} firem</li>
 </ul>
+
+<input type="button" onclick="history.go(-1)" value="Zpět">
 
 {% endblock %}
