@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block content %}
+
+
+<h3>Průběžné výsledky {% if city %} — {{city}}{% endif %}</h3>
+
+<h4>Obsah</h4>
+
+<ol>
+<li><a href="#soutezici-podle-pravidelnosti">Soutěžící podle pravidelnosti</a></li>
+<li><a href="#soutezici-podle-vzdalenosti">Soutěžící podle vzdálenosti</a></li>
+<li><a href="#tymy-podle-pravidelnosti">Týmy podle pravidelnosti</a></li>
+<li><a href="#tymy-podle-vzdalenosti">Týmy podle vzdálenosti</a></li>
+<li><a href="#dalsi">Další</a></li>
+</ol>
+
+<h4><a name="soutezici-podle-pravidelnosti">Soutěžící podle pravidelnosti</a></h4>
+<table id="user-results-by-percentage">
+<tr>
+<th scope="column">Pořadí</th>
+<th scope="column">Jméno</th>
+<th scope="column">Příjmení</th>
+<th scope="column">Tým</th>
+<th scope="column">Firma</th>
+{% if not city %}<th scope="column">Město</th>{% endif %}
+<th scope="column">Procento</th>
+<th scope="column">Vzdálenost</th>
+</tr>
+{% for u in user_by_percentage %}
+<tr>
+<td>{{ forloop.counter }}.</td>
+<td>{{ u.firstname }}</td>
+<td>{{ u.surname }}</td>
+<td>{{ u.team }}</td>
+<td>{{ u.company }}</td>
+{% if not city %}<td>{{u.city}}</td>{% endif %}
+<td {% if u.percentage > 65 %} class="green" {% else %} class="red" {% endif %}>{{ u.percentage|floatformat:1 }}%</td>
+<td>{{ u.distance }}km</td>
+</tr>
+{% endfor %}
+</table>
+
+<h4><a name="soutezici-podle-vzdalenosti">Soutěžící podle překonané vzdálenosti</a></h4>
+<table id="user-results-by-distance">
+<tr>
+<th scope="column">Pořadí</th>
+<th scope="column">Jméno</th>
+<th scope="column">Příjmení</th>
+<th scope="column">Tým</th>
+<th scope="column">Firma</th>
+{% if not city %}<th scope="column">Město</th>{% endif %}
+<th scope="column">Vzdálenost</th>
+</tr>
+{% for u in user_by_distance %}
+<tr>
+<td>{{ forloop.counter }}.</td>
+<td>{{ u.firstname }}</td>
+<td>{{ u.surname }}</td>
+<td>{{ u.team }}</td>
+<td>{{ u.company }}</td>
+{% if not city %}<td>{{u.city}}</td>{% endif %}
+<td>{{ u.distance }}km</td>
+</tr>
+{% endfor %}
+<tr><td>...</td></tr>
+</table>
+
+<h4><a name="tymy-podle-pravidelnosti">Týmy podle pravidelnosti</a></h4>
+<table id="team-results-by-percentage">
+<tr>
+<th scope="column">Pořadí</th>
+<th scope="column">Tým</th>
+<th scope="column">Firma</th>
+{% if not city %}<th scope="column">Město</th>{% endif %}
+<th scope="column">Procento</th>
+<th scope="column">Vzdálenost</th>
+</tr>
+{% for t in team_by_percentage %}
+<tr>
+<td>{{ forloop.counter }}.</td>
+<td>{{ t.name }}</td>
+<td>{{ t.company }}</td>
+{% if not city %}<td>{{t.city}}</td>{% endif %}
+<td {% if t.percentage > 65 %} class="green" {% else %} class="red" {% endif %}>{{ t.percentage|floatformat:1 }}%</td>
+<td>{{ t.distance }}km</td>
+</tr>
+{% endfor %}
+</table>
+
+<h4><a name="tymy-podle-vzdalenosti">Týmy podle celkové překonané vzdálenosti</a></h4>
+<table id="team-results-by-distance">
+<tr>
+<th scope="column">Pořadí</th>
+<th scope="column">Tým</th>
+<th scope="column">Firma</th>
+{% if not city %}<th scope="column">Město</th>{% endif %}
+<th scope="column">Vzdálenost</th>
+</tr>
+{% for t in team_by_distance %}
+<tr>
+<td>{{ forloop.counter }}.</td>
+<td>{{ t.name }}</td>
+<td>{{ t.company }}</td>
+{% if not city %}<td>{{t.city}}</td>{% endif %}
+<td>{{ t.distance }}km</td>
+</tr>
+{% endfor %}
+<tr><td>...</td></tr>
+</table>
+
+<h4><a name="dalsi">Další</a></h4>
+
+<ul>
+<li>{{user_count}} účastníků soutěže</li>
+<li>{{team_count}} týmů</li>
+<li>{{company_count}} firem</li>
+</ul>
+
+{% endblock %}
