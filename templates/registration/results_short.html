@@ -4,13 +4,7 @@
 {% block content %}
 
 <div class="contest-results-individual">
-Aktuální první místo jednotlivců — {{ user_by_percentage.0.firstname }} {{ user_by_percentage.0.surname }} / {{ user_by_percentage.0.percentage|floatformat:0 }}% / {{ user_by_percentage.0.distance }} km
-</div>
-<div class="contest-results-company">
-Aktuální první místo týmů — {{ team_by_percentage.0.name }} / {{ team_by_percentage.0.percentage|floatformat:0 }}% / {{ team_by_percentage.0.distance }} km / {{ team_by_percentage.0.persons }} zaměstnanců<br/>
-</div>
-<div class="contest-stats">
-Celkem {{user_count|add:"448"}} účastníků / {{team_count|add:"193"}} týmů / 4 města
+Celkem {{user_count|add:"448"}} účastníků / {{team_count|add:"193"}} týmů {% if not city %}/ 4 města {% endif %}<br/>
 </div>
 <p><a href="/registrace/vysledky/">Podrobné výsledky...</a></p>
 
