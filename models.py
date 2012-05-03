@@ -27,6 +27,8 @@ from django.db.models.signals import post_save
 from django.db.models import Q
 # Python library imports
 import datetime
+# Local imports
+import util
 
 class Team(models.Model):
     """Profil týmu"""
@@ -308,3 +310,40 @@ class Answer(models.Model):
         max_length=600,
         null=True, blank=True)
 
+class UserResults(models.Model):
+
+    class Meta:
+        managed = False
+        db_table = 'dpnk_v_user_results'
+        verbose_name_plural = "Výsledky soutěžících"
+
+    id = models.PositiveIntegerField(primary_key=True)
+    firstname = models.CharField()
+    surname = models.CharField()
+    team = models.CharField()
+    team_id = models.PositiveIntegerField()
+    company = models.CharField()
+    city = models.CharField()
+    trips = models.IntegerField()
+    distance = models.IntegerField()
+
+    def percentage(self):
+        return float(self.trips)/(2*util.days_count())*100
+
+class TeamResults(models.Model):
+
+    class Meta:
+        managed = False
+        db_table = 'dpnk_v_team_results'
+        verbose_name_plural = "Výsledky týmů"
+
+    id = models.PositiveIntegerField(primary_key=True)
+    name = models.CharField()
+    company = models.CharField()
+    city = models.CharField()
+    trips = models.IntegerField()
+    trips_per_person = models.FloatField()
+    distance = models.PositiveIntegerField()
+
+    def percentage(self):
+        return float(self.trips_per_person)/(2*util.days_count())*100

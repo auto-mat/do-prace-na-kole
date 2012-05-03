@@ -30,7 +30,10 @@ from django.db.models import Sum, Count
 # Registration imports
 import registration.forms, registration.signals, registration.backends
 # Model imports
-from models import User, UserProfile, Team, Payment, Voucher, Trip, Question, Choice, Answer
+from models import User, UserProfile, Team, Payment, Voucher, Trip, Question, Choice, \
+    Answer, UserResults, TeamResults
+# Local imports
+import util
 
 class RegistrationFormDPNK(registration.forms.RegistrationForm):
     required_css_class = 'required'
@@ -338,8 +341,7 @@ def login(request):
 @login_required
 def profile(request):
 
-    days = [datetime.date(year=2012, month=5, day=d) for d in range(2,31)
-            if d not in (5,6,12,13,19,20,26,27)]
+    days = util.days()
     weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá']
     today = datetime.date.today()
     #today = datetime.date(year=2012, month=5, day=4)
@@ -423,6 +425,34 @@ def profile(request):
             'team_distance': team_distance,
             })
 
+def results(request):
+
+    city = request.GET.get('mesto', None)
+    if city:
+        user_by_percentage = UserResults.objects.filter(city=city)[:10]
+        user_by_distance = UserResults.objects.filter(city=city).order_by('-distance')[:10]
+        team_by_distance = TeamResults.objects.filter(city=city).order_by('-distance')[:20]
+        team_by_percentage = TeamResults.objects.filter(city=city)
+        user_count = UserProfile.objects.filter(active=True, city=city).count()
+        team_count = Team.objects.filter(city=city).count()
+    else:
+        user_by_percentage = UserResults.objects.all()[:10]
+        user_by_distance = UserResults.objects.all().order_by('-distance')[:10]
+        team_by_distance = TeamResults.objects.all().order_by('-distance')[:20]
+        team_by_percentage = TeamResults.objects.all()
+        user_count = UserProfile.objects.filter(active=True).count()
+        team_count = Team.objects.all().count()
+
+    return render_to_response('registration/results.html',
+                              {
+            'user_by_percentage': user_by_percentage,
+            'user_by_distance': user_by_distance,
+            'team_by_percentage': team_by_percentage,
+            'team_by_distance': team_by_distance,
+            'city': city,
+            'user_count': user_count,
+            'team_count': team_count,
+            })
 
 class ProfileUpdateForm(forms.ModelForm):
 
