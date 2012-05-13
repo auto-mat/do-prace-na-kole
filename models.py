@@ -270,6 +270,11 @@ class Question(models.Model):
         verbose_name = "Anketní otázka"
         verbose_name_plural = "Anketní otázky"
 
+    QUESTIONAIRES = (
+        ('player', 'Soutěžící'),
+        ('company', 'Cyklozaměstnavatel roku')
+        )
+
     QTYPES = (
         ('text', 'Text'),
         ('choice', 'Výběr odpovědi'),
@@ -282,10 +287,19 @@ class Question(models.Model):
         null=False)
     date = models.DateField(
         verbose_name="Den",
-        null=False)
+        null=True, blank=True)
     type = models.CharField(
         verbose_name="Typ",
         choices=QTYPES,
+        max_length=16,
+        null=False)
+    with_comment = models.BooleanField(
+        verbose_name = "Povolit komentář",
+        default=True,
+        null=False)
+    questionaire = models.CharField(
+        verbose_name="Dotazník",
+        choices=QUESTIONAIRES,
         max_length=16,
         null=False)
 
@@ -300,6 +314,9 @@ class Choice(models.Model):
         verbose_name="Nabídka",
         max_length=300,
         null=False)
+    points = models.IntegerField(
+        verbose_name="Body",
+        null=True, blank=True)
 
 class Answer(models.Model):
     user = models.ForeignKey(UserProfile, null=False)

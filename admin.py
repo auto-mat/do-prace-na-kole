@@ -83,9 +83,10 @@ class ChoiceInline(admin.TabularInline):
     extra = 0
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('text', 'type', 'date')
-    ordering = ('date',)
-    fields = ('text', 'type', 'date')
+    list_display = ('text', 'type', 'questionaire', 'date')
+    ordering = ('questionaire', 'date',)
+    list_filter = ('questionaire',)
+    fields = ('text', 'type', 'with_comment', 'questionaire', 'date')
     inlines = [ChoiceInline]
 
 admin.site.unregister(User)
