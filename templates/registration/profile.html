@@ -78,10 +78,9 @@
 </table>
 {% endif %}
 
-{% if req_city %}
-<p><a href="/registrace/vysledky?mesto={{req_city}}" onclick="window.parent.scroll(0,200);">Průběžné výsledkové listiny</a></p>
-{% else %}
+{% if own_city %}
 <p><a href="/registrace/vysledky?mesto={{team.city}}" onclick="window.parent.scroll(0,200);">Průběžné výsledkové listiny</a></p>
+{% else %}
 {% endif %}
 
 {% if own_city %}

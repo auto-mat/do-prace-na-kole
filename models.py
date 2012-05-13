@@ -310,6 +310,9 @@ class Answer(models.Model):
         max_length=600,
         null=True, blank=True)
 
+    def str_choices(self):
+        return ", ".join([choice.text for choice in self.choices.all()])
+            
 class UserResults(models.Model):
 
     class Meta:

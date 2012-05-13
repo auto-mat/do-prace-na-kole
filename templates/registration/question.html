@@ -13,6 +13,7 @@
 <input type="radio" name="choice" value="{{ choice.id }}" {% if choice.id in choices_prefill %}checked="checked"{% endif %} /><label for="choice-{{ choice.id }}">{{ choice.text }}</label><br/>
 {% endif %}
 {% endfor %}
+<br/>
 <label for="comment">Komentář</label><br/>
 <textarea name="comment" cols="60" rows="5">{{ comment_prefill }}</textarea><br/>
 <input type="hidden" name="question" value="{{ question.id }}"/>

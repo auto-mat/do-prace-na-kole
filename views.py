@@ -25,6 +25,7 @@ from django.shortcuts import render_to_response, redirect
 import django.contrib.auth
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.mail import EmailMessage
 from django.db.models import Sum, Count
 # Registration imports
@@ -407,9 +408,9 @@ def profile(request):
         member_counts.append({
                 'name': str(member),
                 'trips': member.trips,
-                'percentage': float(member.trips)/(2*(days.index(today)+1))*100,
+                'percentage': float(member.trips)/(2*util.days_count())*100,
                 'distance': member.trips * member.distance})
-    team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*(days.index(today)+1)) * 100
+    team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*util.days_count()) * 100
     team_distance = sum([m['distance'] for m in member_counts])
 
     for user_position, u in enumerate(UserResults.objects.filter(city=profile.team.city)):
@@ -518,6 +519,8 @@ def update_profile(request):
 @login_required
 def question(request):
     if request.method == 'POST':
+	if not request.POST.has_key('question'):
+	    return http.HttpResponseNotFound('Chybí povinný argument.')
         question = Question.objects.get(id=request.POST['question'])
         try:
             answer = Answer.objects.get(user = request.user.get_profile(),
@@ -564,3 +567,54 @@ def question(request):
                                    'comment_prefill': comment_prefill,
                                    }
                                   )
+
+@staff_member_required
+def questions(request):
+    questions = Question.objects.all().order_by('date')
+    return render_to_response('admin/questions.html',
+                              {'questions': questions})
+
+@staff_member_required
+def answers(request):
+    question_id = request.GET['question']
+    question = Question.objects.get(id=question_id)
+    answers = Answer.objects.filter(question_id=question_id)
+    total_respondents = len(answers)
+
+    count = {'Praha': {}, 'Brno': {}, 'Liberec': {}}
+    count_all = {}
+    respondents = {'Praha': 0, 'Brno': 0, 'Liberec': 0}
+    choice_names = {}
+
+    if question.type in ('choice', 'multiple-choice'):
+        for a in answers:
+            city = a.user.city()
+            a.city = a.user.city()
+            for c in a.choices.all():
+                respondents[city] += 1
+                try:
+                    count[city][c.id] += 1;
+                    count_all[c.id] += 1
+                except KeyError:
+                    count[city][c.id] = 1
+                    count_all[c.id] = 1
+                    choice_names[c.id] = c.text
+
+    stat = {'Praha': [], 'Brno': [], 'Liberec': [], 'Celkem': []}
+    for city, city_count in count.items():
+        for k, v in city_count.items():
+            stat[city].append((choice_names[k], v, float(v)/respondents[city]*100))
+    for k, v in count_all.items():
+        stat['Celkem'].append((choice_names[k], v, float(v)/total_respondents*100))
+            
+    def get_percentage(r):
+        return r[2]
+    for k in stat.keys():
+        stat[k].sort(key=get_percentage, reverse=True)
+
+    return render_to_response('admin/answers.html',
+                              {'question': question,
+                               'answers': answers,
+                               'stat': stat,
+                               'total_respondents': total_respondents,
+                               'choice_names': choice_names})

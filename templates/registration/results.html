@@ -120,8 +120,8 @@
 <h4><a name="dalsi">Další</a></h4>
 
 <ul>
-<li>{{user_count}} účastníků soutěže</li>
-<li>{{team_count}} týmů</li>
+<li>{% if city %} {{user_count}} {% else %} {{user_count|add:"448"}}{% endif %} účastníků soutěže</li>
+<li>{% if city %} {{team_count}} {% else %} {{team_count|add:"193"}}{% endif %} týmů</li>
 </ul>
 
 <input type="button" onclick="history.go(-1)" value="Zpět">
