@@ -2,12 +2,19 @@
 {% load url from future %}
 
 {% block content %}
+<h3>Registrace uzavřeny</h3>
+
+<p>
+Registrace do soutěže Do práce na kole 2012 byly již uzavřeny. S případnými dotazy se prosím obracejte na kontakt@dopracenakole.net .
+</p>
+
+{% if False %}
 <h3>Vytvoření týmu</h3>
 <p>Nemáte ještě žádný tým? <a href="/registrace/registrace_tymu/">Založte si tým!</a></p>
 <!--Neznáte kód týmu? <a href="/registrace/kontakt_tymu/">Napište si o něj!</a>-->
 
 <h3>Registrace soutěžících</h3>
-<form action="/registrace/registrace/" method="post">{% csrf_token %}
+<form action="/registrace/registrace/" method="post" class="registration-form">{% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Odeslat" />
 </form>
@@ -18,6 +25,8 @@
 dictionary: jméno = name, příjmení = surname, tým = team, tajný kód týmu =
 secret code of the team, vzdálenost... = distance from your home to work in km,
 uživatelské jméno = username, heslo = password, odeslat = submit</p>
+
+{% endif %}
 
 {% endblock %}
 
