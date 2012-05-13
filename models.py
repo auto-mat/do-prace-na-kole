@@ -321,12 +321,12 @@ class UserResults(models.Model):
         verbose_name_plural = "Výsledky soutěžících"
 
     id = models.PositiveIntegerField(primary_key=True)
-    firstname = models.CharField()
-    surname = models.CharField()
-    team = models.CharField()
+    firstname = models.CharField(max_length=256)
+    surname = models.CharField(max_length=256)
+    team = models.CharField(max_length=256)
     team_id = models.PositiveIntegerField()
-    company = models.CharField()
-    city = models.CharField()
+    company = models.CharField(max_length=256)
+    city = models.CharField(max_length=256)
     trips = models.IntegerField()
     distance = models.IntegerField()
 
@@ -341,9 +341,9 @@ class TeamResults(models.Model):
         verbose_name_plural = "Výsledky týmů"
 
     id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField()
-    company = models.CharField()
-    city = models.CharField()
+    name = models.CharField(max_length=256)
+    company = models.CharField(max_length=256)
+    city = models.CharField(max_length=256)
     trips = models.IntegerField()
     trips_per_person = models.FloatField()
     persons = models.IntegerField()
