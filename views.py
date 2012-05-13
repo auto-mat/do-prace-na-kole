@@ -517,7 +517,7 @@ def update_profile(request):
                               )
 
 @login_required
-def question(request):
+def questionaire(request, template = 'registration/questionaire.html'):
 
     def get_questions(params):
         if not params.has_key('questionaire'):
@@ -586,7 +586,7 @@ def question(request):
                 question.comment_prefill = ''
                 question.choices_prefill = ''
 
-        return render_to_response('registration/question.html',
+        return render_to_response(template,
                                   {'questions': questions,
                                    'questionaire': questionaire,
                                    'day': request.GET.get('day', '')}
