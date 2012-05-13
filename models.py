@@ -302,6 +302,9 @@ class Question(models.Model):
         choices=QUESTIONAIRES,
         max_length=16,
         null=False)
+    order = models.IntegerField(
+        verbose_name="Pořadí",
+        null=True, blank=True)
 
 class Choice(models.Model):
     
