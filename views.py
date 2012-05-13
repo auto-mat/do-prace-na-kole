@@ -590,8 +590,8 @@ def answers(request):
         for a in answers:
             city = a.user.city()
             a.city = a.user.city()
+            respondents[city] += 1
             for c in a.choices.all():
-                respondents[city] += 1
                 try:
                     count[city][c.id] += 1;
                     count_all[c.id] += 1
