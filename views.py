@@ -518,54 +518,78 @@ def update_profile(request):
 
 @login_required
 def question(request):
+
+    def get_questions(params):
+        if not params.has_key('questionaire'):
+            raise http.Http404
+        questionaire = params['questionaire']
+        if questionaire == 'player':
+            if not params.has_key('day'):
+                raise http.Http404
+            try:
+                iso_day = params['day']
+                day = datetime.date(*[int(v) for v in iso_day.split('-')])
+            except ValueError:
+                raise http.Http404
+            if day > datetime.date.today():
+                raise http.Http404
+            questions = [Question.objects.get(questionaire=questionaire, date=day)]
+        elif questionaire == 'company':
+            questions = Question.objects.filter(questionaire=questionaire)
+        return (questionaire, questions)
+
     if request.method == 'POST':
-	if not request.POST.has_key('question'):
-	    return http.HttpResponseNotFound('Chybí povinný argument.')
-        question = Question.objects.get(id=request.POST['question'])
-        try:
-            answer = Answer.objects.get(user = request.user.get_profile(),
-                                        question = question)
-        except Answer.DoesNotExist:
-            answer = Answer()
-            answer.user = request.user.get_profile()
-            answer.question = question
-        answer.save()
+        questionaire, questions = get_questions(request.POST)
         choice_ids = [v for k, v in request.POST.items() if k.startswith('choice')]
-        answer.choices = Choice.objects.filter(id__in=choice_ids)
-        answer.comment = request.POST.get('comment', '')
-        answer.save()
+        comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
+
+        answers_dict = {}
+        for question in questions:
+            try:
+                answer = Answer.objects.get(user = request.user.get_profile(),
+                                            question = question)
+                # Cleanup previous fillings
+                answer.choices = []
+            except Answer.DoesNotExist:
+                answer = Answer()
+                answer.user = request.user.get_profile()
+                answer.question = question
+            answer.save()
+            answers_dict[question.id] = answer
+
+        # Save choices
+        for choice_id in choice_ids:
+            choice = Choice.objects.get(id=choice_id)
+            answer = answers_dict[choice.question.id]
+            answer.choices.add(choice_id)
+            answer.save()
+        # Save comments
+        for comment_id in comment_ids:
+            answer = answers_dict[comment_id] # comment_id = question_id
+            answer.comment = request.POST.get('comment-%d' % comment_id, '')
+            answer.save()
         return http.HttpResponseRedirect('/registrace/profil/') # Redirect after POST
     else:
-	if not request.GET.has_key('day'):
-	    return http.HttpResponseNotFound('Chybí povinný argument "day".')
-	try:
-            iso_day = request.GET['day']
-            day = datetime.date(*[int(v) for v in iso_day.split('-')])
-        except ValueError:
-	    return http.HttpResponseNotFound('Neplatný argument "day".')
-        if day > datetime.date.today():
-	    return http.HttpResponseNotFound('Neplatný argument "day".')
-        question = Question.objects.get(date=day)
-        try:
-            choices = Choice.objects.filter(question=question)
-        except Choice.DoesNotExist:
-            choices = None
-        try:
-            answer = Answer.objects.get(
-                question=Question.objects.get(date = day),
-                user=request.user.get_profile())
-            comment_prefill = answer.comment
-            choices_prefill = [c.id for c in answer.choices.all()]
-        except Answer.DoesNotExist:
-            comment_prefill = ''
-            choices_prefill = ''
+        questionaire, questions = get_questions(request.GET)
+        for question in questions:
+            try:
+                question.choices = Choice.objects.filter(question=question)
+            except Choice.DoesNotExist:
+                question.choices = None
+            try:
+                answer = Answer.objects.get(
+                    question=question,
+                    user=request.user.get_profile())
+                question.comment_prefill = answer.comment
+                question.choices_prefill = [c.id for c in answer.choices.all()]
+            except Answer.DoesNotExist:
+                question.comment_prefill = ''
+                question.choices_prefill = ''
 
         return render_to_response('registration/question.html',
-                                  {'question': question,
-                                   'choices': choices,
-                                   'choices_prefill': choices_prefill,
-                                   'comment_prefill': comment_prefill,
-                                   }
+                                  {'questions': questions,
+                                   'questionaire': questionaire,
+                                   'day': request.GET.get('day', '')}
                                   )
 
 @staff_member_required
@@ -606,7 +630,7 @@ def answers(request):
             stat[city].append((choice_names[k], v, float(v)/respondents[city]*100))
     for k, v in count_all.items():
         stat['Celkem'].append((choice_names[k], v, float(v)/total_respondents*100))
-            
+
     def get_percentage(r):
         return r[2]
     for k in stat.keys():

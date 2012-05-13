@@ -2,21 +2,24 @@
 
 {% block content %}
 
-<p id="question-text">{{ question.text }}</p>
-
 <form name="question" action="/registrace/otazka/" method="POST">
-{% for choice in choices %}
+{% for question in questions %}
+<p id="question-text">{{ question.text }}</p>
+{% for choice in question.choices %}
 {% if question.type == 'multiple-choice' %}
-<input type="checkbox" name="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in choices_prefill %}checked="checked"{% endif %} /><label for="choice-{{ choice.id }}">{{ choice.text }}</label><br/>
+<input type="checkbox" name="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %} /><label for="choice-{{ choice.id }}">{{ choice.text }}</label><br/>
 {% endif %}
 {% if question.type == 'choice' %}
-<input type="radio" name="choice" value="{{ choice.id }}" {% if choice.id in choices_prefill %}checked="checked"{% endif %} /><label for="choice-{{ choice.id }}">{{ choice.text }}</label><br/>
+<input type="radio" name="choice-{{ question.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %} /><label for="choice-{{ choice.id }}">{{ choice.text }}</label><br/>
 {% endif %}
 {% endfor %}
-<br/>
+{% if question.with_comment %}
 <label for="comment">Komentář</label><br/>
-<textarea name="comment" cols="60" rows="5">{{ comment_prefill }}</textarea><br/>
-<input type="hidden" name="question" value="{{ question.id }}"/>
+<textarea name="comment-{{ question.id }}" cols="60" rows="5">{{ question.comment_prefill }}</textarea><br/>
+{% endif %}
+{% endfor %}
+<input type="hidden" name="questionaire" value="{{ questionaire }}">
+<input type="hidden" name="day" value="{{ day }}">
 <input type="submit" value="Odeslat">
 </form>
 
