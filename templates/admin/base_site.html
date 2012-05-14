@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | Správa kampane Do prace na kole{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">Správa kampane Do prace na kole</h1>
+{% endblock %}
+
+{% block extrastyle %}
+<style>
+div.results {
+    overflow: auto;
+}
+#changelist table thead th {
+  white-space: normal !important;
+}
+</style>
+{% endblock %}
+
+
+{% block nav-global %}{% endblock %}

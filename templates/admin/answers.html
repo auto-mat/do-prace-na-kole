@@ -1,0 +1,39 @@
+{% extends "admin/base_site.html" %}
+{% load url from future %}
+
+{% block content %}
+
+<p>
+<strong>Otazka:</strong> {{ question.text }}<br/>
+<strong>Respondentu:</strong> {{ total_respondents }}
+</p>
+
+<h2>Statistika</h2>
+{% for city, city_stat in stat.items %}
+<h3> {{city}} </h3>
+<table>
+ {% for n, c ,p  in city_stat %}
+  <tr>
+   <td>{{n}}</td>
+   <td>{{c}}</td>
+   <td>{{p|floatformat:1}} %</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endfor %}
+
+<h2>Komentovane odpovedi</h2>
+
+<table>
+{% for a in answers %}
+ {% if a.comment %}
+  <tr>
+   <td>{{a.user}}</td>
+   <td>{{a.city}}</td>
+   <td>{{a.str_choices}}:</td>
+   <td>{{a.comment}}</td>
+  </tr>
+ {% endif %}
+{% endfor %}
+</table>
+{% endblock %}
