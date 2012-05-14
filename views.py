@@ -618,11 +618,13 @@ def answers(request):
             for c in a.choices.all():
                 try:
                     count[city][c.id] += 1;
-                    count_all[c.id] += 1
                 except KeyError:
                     count[city][c.id] = 1
-                    count_all[c.id] = 1
                     choice_names[c.id] = c.text
+                try:
+                    count_all[c.id] += 1
+                except KeyError:
+                    count_all[c.id] = 1
 
     stat = {'Praha': [], 'Brno': [], 'Liberec': [], 'Celkem': []}
     for city, city_count in count.items():
