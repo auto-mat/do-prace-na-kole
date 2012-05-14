@@ -429,6 +429,15 @@ def profile(request):
     else:
         own_city = True
 
+
+    company_survey_answers = Answer.objects.filter(
+        question_id=34, user__in = [m.id for m in team_members])
+    if len(company_survey_answers):
+        company_survey_by = company_survey_answers[0].user
+        if company_survey_by == request.user.get_profile():
+            company_survey_by = 'me'
+    else:
+        company_survey_by = None
     return render_to_response('registration/profile.html',
                               {
             'active': profile.active,
@@ -447,6 +456,7 @@ def profile(request):
             'team_position': team_position,
             'req_city': req_city,
             'own_city': own_city,
+            'company_survey_by': company_survey_by,
             })
 
 def results(request, template):
@@ -535,7 +545,7 @@ def questionaire(request, template = 'registration/questionaire.html'):
                 raise http.Http404
             questions = [Question.objects.get(questionaire=questionaire, date=day)]
         elif questionaire == 'company':
-            questions = Question.objects.filter(questionaire=questionaire)
+            questions = Question.objects.filter(questionaire=questionaire).order_by('order')
         return (questionaire, questions)
 
     if request.method == 'POST':
@@ -587,7 +597,8 @@ def questionaire(request, template = 'registration/questionaire.html'):
                 question.choices_prefill = ''
 
         return render_to_response(template,
-                                  {'questions': questions,
+                                  {'user': request.user.get_profile(),
+                                   'questions': questions,
                                    'questionaire': questionaire,
                                    'day': request.GET.get('day', '')}
                                   )

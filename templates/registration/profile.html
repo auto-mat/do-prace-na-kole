@@ -22,7 +22,7 @@
 
 <h3>Moje jízdy</h3>
 
-<p>Tip: Před vyplněním jízd nejprve zodpovězte anketní otázku</p>
+<!-- <p>Tip: Před vyplněním jízd nejprve zodpovězte anketní otázku</p> -->
 
 <center><p><strong style="color:#FF6E00; font-size: 12pt;">Vyplňujte pouze již uskutečněné jízdy!</strong></p></center>
 
@@ -40,7 +40,7 @@
 <tr>
 <form name="calendar-{{ forloop.counter }}" action="/registrace/profil/" method="POST">
 <th scope="row" class="date">{{ day.name }}</th>
-<td>{% if day.question_active %}<a href="/registrace/otazka/?day={{ day.iso }}" onclick="window.parent.scroll(0,200);">Otázka</a>{% else %} ? {% endif %}</td>
+<td>{% if day.question_active %}<a href="/registrace/otazka/?questionaire=player&day={{ day.iso }}" onclick="window.parent.scroll(0,200);">Otázka</a>{% else %} ? {% endif %}</td>
 <td><input type="checkbox" name="trip_to" {% if not day.trips_active %} readonly="readonly" {% endif %} {% if day.default_trip_to %}checked="checked"{% endif %}/></td>
 <td><input type="checkbox" name="trip_from" {% if not day.trips_active %} readonly="readonly" {% endif %} {% if day.default_trip_from %}checked="checked"{% endif %}/></td>
 <td><input type="hidden" name="day" value="{{ forloop.counter }}"/><input type="submit" value="OK" {% if day.trips_active %} {% else %} disabled="disabled" {% endif %}/></td>
@@ -79,11 +79,25 @@
 {% endif %}
 
 {% if own_city %}
-<p><a href="/registrace/vysledky?mesto={{team.city}}" onclick="window.parent.scroll(0,200);">Průběžné výsledkové listiny</a></p>
+<p><a href="/registrace/vysledky?mesto={{team.city}}" onclick="window.parent.scroll(0,200);">Průběžné výsledky</a></p>
 {% else %}
 {% endif %}
 
+{% if superuser %}
+<h3>Soutěž Cyklozaměstnavatel roku</h3>
+{% if not company_survey_by %}
+<a href="/registrace/cyklozamestnavatel_roku/?questionaire=company" onclick="window.parent.scroll(0,200);">Vyplnit dotazník</a></li>
+{% else %}
+{% if company_survey_by == 'me' %}
+<a href="/registrace/cyklozamestnavatel_roku/?questionaire=company" onclick="window.parent.scroll(0,200);">Upravit dotazník</a></li>
+{% else %}
+Dotazník cyklozaměstnavatel roku za vaši firmu již vyplnil {{company_survey_by.firstname}} {{company_survey_by.surname}}.
+{% endif %}
+{% endif %}
+{% endif %}
+
 {% if own_city %}
+<p><br/><br/></p>
 <p>ENGLISH INFO: To fill out your trips, answer the question first, ask your czech colegue for a help. Little dictionary: startovné = registration fee; upravit údaje = change profile; změnit heslo = change password; odhlásit = log out; anketa = poll; otázka = question; do/z práce = to/from work; odeslat = send; pravidelnost = regularity; vzdálenost = distance; </p>
 <p>S dotazy a nejasnostmi se obracejte na kontakt@dopracenakole.net</p>
 {% endif %}

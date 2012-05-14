@@ -1,11 +1,22 @@
 {% extends "registration/questionaire.html" %}
 
 {% block intro %}
-<p>Má–li vaše společnost více poboček, odpovídejte v následujícím dotazníku pouze za Vaši pobočku. Vaše pobočka bude hodnocena jako samostatná firma.</p>
+<p>
+Vaše firma: <strong>{{ user.team.company }}</strong><br/>
+Adresa vaší pobočky: <strong>{{ user.team.address }} / {{ user.team.city }}</strong>
+</p>
+<p>Tento dotazník se vyplňuje za každou firmu, případně pobočku, pouze
+jednou. Dohodněte se nejprve v týmu, kdo tento dotazník vyplní.</p>
+
+<p>Má–li vaše společnost více poboček, odpovídejte v následujícím
+dotazníku pouze za vaši pobočku. Vaše pobočka bude hodnocena jako
+samostatná firma.</p>
 {% endblock %}
 
 {% block agreement %}
+<p>
 Prohlašuji, že všechny informace odpovídají skutečnosti.
+</p>
 {% endblock %}
 
 {% block outro %}
