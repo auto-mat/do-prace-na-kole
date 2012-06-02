@@ -410,7 +410,10 @@ def profile(request):
                 'trips': member.trips,
                 'percentage': float(member.trips)/(2*util.days_count())*100,
                 'distance': member.trips * member.distance})
-    team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*util.days_count()) * 100
+    if len(team_members):
+        team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*util.days_count()) * 100
+    else:
+        team_percentage = 0
     team_distance = sum([m['distance'] for m in member_counts])
 
     for user_position, u in enumerate(UserResults.objects.filter(city=profile.team.city)):
