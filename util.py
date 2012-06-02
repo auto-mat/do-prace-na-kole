@@ -15,4 +15,4 @@ def days_count():
     for i, day in enumerate(days()):
         if day > datetime.date.today():
             break
-    return i
+    return i+1
