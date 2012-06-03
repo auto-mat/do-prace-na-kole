@@ -349,6 +349,7 @@ def profile(request):
     profile = request.user.get_profile()
 
     if request.method == 'POST':
+        raise http.Http404 # No POST, competition already terminated
         if 'day' in request.POST:
             try:
                 trip = Trip.objects.get(user = request.user.get_profile(),
@@ -494,26 +495,10 @@ def results(request, template):
 
 class ProfileUpdateForm(forms.ModelForm):
 
-    team_password = forms.CharField(
-        label="Heslo nového týmu (pokud měníte tým)",
-        max_length=20,
-        required=False)
-
     class Meta:
         model = UserProfile
-        fields = ('firstname', 'surname', 'telephone', 'distance', 'team', 'team_password')
+        fields = ('firstname', 'surname', 'telephone')
     
-    def clean_team_password(self):
-        data = self.data['team_password']
-        try:
-            team = Team.objects.get(id=self.data['team'])
-        except (Team.DoesNotExist, ValueError):
-            raise forms.ValidationError("Neexistující nebo neplatný tým")
-        if team != self.instance.team:
-            # Change in team requested, validate team password
-            if data.strip().lower() != team.password.strip():
-                raise forms.ValidationError("Nesprávné heslo týmu")
-        return data
 
 @login_required
 def update_profile(request):
@@ -552,6 +537,7 @@ def questionaire(request, template = 'registration/questionaire.html'):
         return (questionaire, questions)
 
     if request.method == 'POST':
+        raise http.Http404 # No POST, competition already terminated
         questionaire, questions = get_questions(request.POST)
         choice_ids = [v for k, v in request.POST.items() if k.startswith('choice')]
         comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
