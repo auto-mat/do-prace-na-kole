@@ -1,0 +1,12 @@
+{% extends "admin/base_site.html" %}
+{% load url from future %}
+
+{% block content %}
+
+<ul>
+{% for c in companies %}
+<li><a href="/admin/cyklozamestnavatel_odpovedi?uid={{ c.0 }}">{{ c.1  }} / {{ c.2 }} / {{ c.3 }}</a>, {{ c.4 }} bodu</li>
+{% endfor %}
+</li>
+
+{% endblock %}

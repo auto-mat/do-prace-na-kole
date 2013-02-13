@@ -4,8 +4,8 @@
 {% block content %}
 
 <p>
-<strong>Otazka:</strong> {{ question.text }}<br/>
-<strong>Respondentu:</strong> {{ total_respondents }}
+<strong>Otázka:</strong> {{ question.text }}<br/>
+<strong>Respondentů:</strong> {{ total_respondents }}
 </p>
 
 <h2>Statistika</h2>
@@ -24,6 +24,7 @@
 
 <h2>Komentovane odpovedi</h2>
 
+<form name="answer-points" method="POST">
 <table>
 {% for a in answers %}
  {% if a.comment %}
@@ -32,8 +33,11 @@
    <td>{{a.city}}</td>
    <td>{{a.str_choices}}:</td>
    <td>{{a.comment}}</td>
+   <td><input type="text" name="points-{{ a.id }}" value="{{a.points}}"/></td>
   </tr>
  {% endif %}
 {% endfor %}
 </table>
+<input type="submit" value="Aktualizovat hodnoceni"/>
+</form>
 {% endblock %}

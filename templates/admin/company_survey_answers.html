@@ -1,0 +1,26 @@
+{% extends "admin/base_site.html" %}
+{% load url from future %}
+
+{% block content %}
+
+<p>
+Firma: {{ team.company }}<br/>
+Mesto: {{ team.city }} / {{ team.address }}<br/>
+Vyplnil tym: {{ team.name }}<br/>
+
+<ul>
+  {% for a in answers %}
+  <li>{{ a.question.text }}
+    <ul>
+      {% for c in a.choices.all %}
+      <li> {{ c.text }} <strong>( {{ c.points }}b )</strong></li>
+      {% endfor %}
+    </ul>
+    <p> {% if a.comment %} {{ a.comment }} <strong>( {{ a.points }}b )</strong> {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+
+Dohromady bodu: {{ total_points }}
+
+{% endblock %}

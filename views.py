@@ -474,7 +474,7 @@ def results(request, template):
         team_by_distance = TeamResults.objects.filter(city=city).order_by('-distance')[:20]
         team_by_percentage = TeamResults.objects.filter(city=city)
         user_count = UserResults.objects.filter(city=city).count()
-        team_count = Team.objects.filter(city=city).count()
+        team_count = TeamResults.objects.filter(city=city).count()
     else:
         user_by_percentage = UserResults.objects.all()[:10]
         user_by_distance = UserResults.objects.all().order_by('-distance')[:10]
@@ -599,28 +599,70 @@ def questions(request):
     return render_to_response('admin/questions.html',
                               {'questions': questions})
 
+def _company_answers(uid):
+    return Answer.objects.filter(user_id=uid,
+                                 question__in=Question.objects.filter(questionaire='company'))
+
+def _total_points(answers):
+    total_points = 0
+    for a in answers:
+        for c in a.choices.all():
+            # Points assigned based on choices
+            if c.points:
+                total_points += c.points
+        # Additional points assigned manually
+        total_points += a.points
+    return total_points
+
+@staff_member_required
+def company_survey(request):
+    companies = [(u.id, u.team.company, u.team.city, u.team.name, _total_points(_company_answers(u.id))) for u in
+                 set([a.user for a in Answer.objects.filter(
+                    question__in=Question.objects.filter(questionaire='company'))])]
+    return render_to_response('admin/company_survey.html',
+                              {'companies': sorted(companies, key = lambda c: c[4], reverse=True)})
+
+def company_survey_answers(request):
+    answers = _company_answers(request.GET['uid'])
+    team = UserProfile.objects.get(id=request.GET['uid']).team
+    total_points = _total_points(answers)
+    return render_to_response('admin/company_survey_answers.html',
+                              {'answers': answers,
+                               'team': team,
+                               'total_points': total_points})
+
+
 @staff_member_required
 def answers(request):
     question_id = request.GET['question']
     question = Question.objects.get(id=question_id)
+
+    if request.method == 'POST':
+        points = [(k.split('-')[1], v) for k, v in request.POST.items() if k.startswith('points-')]
+        for p in points:
+            answer = Answer.objects.get(id=p[0])
+            answer.points = int(p[1])
+            answer.save()
+
     answers = Answer.objects.filter(question_id=question_id)
     total_respondents = len(answers)
-
     count = {'Praha': {}, 'Brno': {}, 'Liberec': {}}
     count_all = {}
     respondents = {'Praha': 0, 'Brno': 0, 'Liberec': 0}
     choice_names = {}
+    
+    for a in answers:
+        a.city = a.user.city()
 
+    
     if question.type in ('choice', 'multiple-choice'):
         for a in answers:
-            city = a.user.city()
-            a.city = a.user.city()
-            respondents[city] += 1
+            respondents[a.city] += 1
             for c in a.choices.all():
                 try:
-                    count[city][c.id] += 1;
+                    count[a.city][c.id] += 1;
                 except KeyError:
-                    count[city][c.id] = 1
+                    count[a.city][c.id] = 1
                     choice_names[c.id] = c.text
                 try:
                     count_all[c.id] += 1
@@ -641,7 +683,7 @@ def answers(request):
 
     return render_to_response('admin/answers.html',
                               {'question': question,
-                               'answers': answers,
+                               'answers': sorted(answers, key=lambda a: a.city),
                                'stat': stat,
                                'total_respondents': total_respondents,
                                'choice_names': choice_names})
