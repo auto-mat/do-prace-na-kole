@@ -329,6 +329,8 @@ class Answer(models.Model):
         verbose_name="Komentář",
         max_length=600,
         null=True, blank=True)
+    points = models.IntegerField(
+        null=True, blank=True, default=0)
 
     def str_choices(self):
         return ", ".join([choice.text for choice in self.choices.all()])
