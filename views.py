@@ -180,7 +180,8 @@ class RegisterTeamForm(forms.ModelForm):
     
     class Meta:
         model = Team
-        fields = ('city', 'name', 'company', 'address')
+        #fields = ('city', 'name', 'company', 'address')
+        fields = ('subsidiary', 'name',)
 
 def register_team(request):
     if request.method == 'POST':

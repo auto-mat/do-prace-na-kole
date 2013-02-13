@@ -30,6 +30,67 @@ import datetime
 # Local imports
 import util
 
+class City(models.Model):
+    """Město"""
+
+    class Meta:
+        verbose_name = "Město"
+        verbose_name_plural = "Města"
+    name = models.CharField(
+        verbose_name="Jméno",
+        max_length=40, null=False)
+    recent_event = models.TextField(
+        null=True, blank=True)
+    city_admins = models.ManyToManyField(
+        'UserProfile',
+        related_name = "administrated_cities",
+        null=True,
+        blank=True)
+
+    def __unicode__(self):
+        return "%s" % self.name
+
+class Company(models.Model):
+    """Firma"""
+
+    class Meta:
+        verbose_name = "Firma"
+        verbose_name_plural = "Firmy"
+
+    name = models.CharField(
+        verbose_name="Jméno",
+        max_length=60, null=False)
+    company_admin = models.OneToOneField(
+        "UserProfile", 
+        related_name = "administrated_company",
+        verbose_name = "Firemní admin",
+        null=True,
+        blank=True)
+
+    def __unicode__(self):
+        return "%s" % self.name
+
+class Subsidiary(models.Model):
+    """Pobočka"""
+
+    class Meta:
+        verbose_name = "Pobočka"
+        verbose_name_plural = "Pobočky"
+
+    name = models.CharField(
+        verbose_name="Jméno",
+        max_length=60, null=False)
+    address = models.CharField(
+        verbose_name="Adresa pobočky (ulice a číslo)",
+        max_length=50, null=False)
+    company = models.ForeignKey(
+          Company, null=False, blank=False)
+    city = models.ForeignKey(
+          City, null=False, blank=False)
+
+    def __unicode__(self):
+        return "%s" % self.address
+
 class Team(models.Model):
     """Profil týmu"""
 
@@ -38,30 +99,32 @@ class Team(models.Model):
         verbose_name_plural = "Týmy"
         ordering = ('name',)
 
-    CITIES = (2*('Praha',),
-              2*('Brno',),
-              2*('Liberec',))
-
     name = models.CharField(
         verbose_name="Název týmu",
         max_length=50, null=False,
         unique=True)
-    company = models.CharField(
-        verbose_name="Firma",
-        max_length=50, null=False)
-    address = models.CharField(
-        verbose_name="Adresa firmy/pobočky (ulice a číslo)",
-        max_length=50, null=False)
-    city = models.CharField(
-        verbose_name="Soutěžní město",
-        choices=CITIES,
-        max_length=40, null=False)
     password = models.CharField(
         verbose_name="Kódové slovo",
         max_length=20, null=False)
+    subsidiary = models.ForeignKey(
+        Subsidiary,
+        verbose_name="Pobočka",
+        null=False,
+        blank=False)
+    coordinator = models.OneToOneField(
+        'UserProfile',
+        related_name = "coordinated_team",
+        verbose_name = 'Koordinátor',
+        null=True, blank=True)
+
+    def team_subsidiary_city(self):
+        return self.subsidiary.city
+
+    def team_subsidiary_company(self):
+        return self.subsidiary.company
 
     def __unicode__(self):
-        return "%s / %s" % (self.name, self.company)
+        return "%s / %s" % (self.name, self.subsidiary.company)
 
 class UserProfile(models.Model):
     """Uživatelský profil"""
@@ -99,6 +162,15 @@ class UserProfile(models.Model):
     trips = models.PositiveIntegerField(
         verbose_name="Počet cest",
         default=0, null=False, blank=False)
+    wants_to_be_paid = models.BooleanField(
+        verbose_name="Chce aby za něj zaplatila firma",
+        default=False)
+    company_pays = models.BooleanField(
+        verbose_name="Platí za něj firma",
+        default=False)
+    libero = models.BooleanField(
+        verbose_name="Libero",
+        default=False)
 
     def person_name(self):
         return "%s %s" % (self.firstname, self.surname)
@@ -262,7 +334,104 @@ class Trip(models.Model):
     trip_from = models.BooleanField(
         verbose_name="Cesta z práce",
         null=False)
+    distance_to = models.IntegerField(
+        verbose_name="Ujetá vzdálenost do práce",
+        null=True, blank=True)
+    distance_from = models.IntegerField(
+        verbose_name="Ujetá vzdálenost z práce",
+        null=True, blank=True)
 
+class Competition(models.Model):
+    """Závod"""
+
+    CTYPES = (
+        ('length', 'Ujetá vzdálenost'),
+        ('frequency', 'Pravidelnost dojíždění'),
+        ('questionnaire', 'Dotazník'),
+        )
+
+    CCOMPETITORTYPES = (
+        ('single_user', 'Jednotlivý uživatelé'),
+        ('team', 'Týmy'),
+        ('company', 'Soutěž firem'),
+        )
+
+    class Meta:
+        verbose_name = "Závod"
+        verbose_name_plural = "Závody"
+    name = models.CharField(
+        verbose_name="Jméno",
+        max_length=40, null=False)
+    type = models.CharField(
+        verbose_name="Typ",
+        choices=CTYPES,
+        max_length=16,
+        null=False)
+    competitor_type = models.CharField(
+        verbose_name="Typ závodníků",
+        choices=CCOMPETITORTYPES,
+        max_length=16,
+        null=False)
+    user_competitors = models.ManyToManyField(
+        UserProfile,
+        related_name = "competitions",
+        null=True, 
+        blank=True)
+    team_competitors = models.ManyToManyField(
+        Team,
+        related_name = "competitions",
+        null=True, 
+        blank=True)
+    city = models.ForeignKey(
+        City,
+        verbose_name = "Soutěž pouze pro město",
+        null=True, 
+        blank=True)
+    company = models.ForeignKey(
+        Company,
+        verbose_name = "Soutěž pouze pro firmu",
+        null=True, 
+        blank=True)
+
+    def __unicode__(self):
+        return "%s" % self.name
+
+class Result(models.Model):
+    """Výsledek závodu"""
+
+    class Meta:
+        verbose_name = "Výsledek závodu"
+        verbose_name_plural = "Výsledky závodu"
+
+    distance = models.IntegerField(
+        null=True, blank=True)
+    trips_count = models.IntegerField(
+        null=True, blank=True)
+    points = models.IntegerField(
+        verbose_name="Body",
+        null=True, blank=True)
+    order = models.IntegerField(
+        verbose_name="Pořadí",
+        null=True, blank=True)
+    competition = models.ForeignKey(
+        Competition,
+        null=False, 
+        blank=False)
+    company = models.ForeignKey(
+        Company,
+        verbose_name = "Výsledek firmy",
+        null=True, 
+        blank=True)
+    team = models.ForeignKey(
+        Team,
+        verbose_name = "Výsledek týmu",
+        null=True, 
+        blank=True)
+    user = models.ForeignKey(
+        UserProfile,
+        verbose_name = "Výsledek jednotlivce",
+        null=True, 
+        blank=True)
 
 class Question(models.Model):
 
@@ -297,6 +466,10 @@ class Question(models.Model):
         verbose_name = "Povolit komentář",
         default=True,
         null=False)
+    with_attachment = models.BooleanField(
+        verbose_name = "Povolit přílohu",
+        default=True,
+        null=False)
     questionaire = models.CharField(
         verbose_name="Dotazník",
         choices=QUESTIONAIRES,
@@ -305,6 +478,11 @@ class Question(models.Model):
     order = models.IntegerField(
         verbose_name="Pořadí",
         null=True, blank=True)
+    competition = models.ForeignKey(
+        Competition,
+        verbose_name = "v soutěži",
+        null=True, 
+        blank=True)
 
 class Choice(models.Model):
     
@@ -322,13 +500,16 @@ class Choice(models.Model):
         null=True, blank=True)
 
 class Answer(models.Model):
-    user = models.ForeignKey(UserProfile, null=False)
+    user = models.ForeignKey(UserProfile, null=True)
+    result = models.ForeignKey(Result, null=True)
     question = models.ForeignKey(Question, null=False)
     choices = models.ManyToManyField(Choice)
     comment = models.TextField(
         verbose_name="Komentář",
         max_length=600,
         null=True, blank=True)
+    points_given = models.IntegerField(
+        null=True, blank=True, default=0)
 
     def str_choices(self):
         return ", ".join([choice.text for choice in self.choices.all()])

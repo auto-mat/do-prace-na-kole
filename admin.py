@@ -25,7 +25,7 @@ from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.http import HttpResponseRedirect
 # Models
-from models import UserProfile, UserProfileUnpaid, Team, Payment, Voucher, Question, Choice
+from models import *
 # -- ADMIN FORMS --
 
 class PaymentInline(admin.TabularInline):
@@ -40,11 +40,37 @@ class VoucherInline(admin.TabularInline):
     model = Voucher
     extra = 0
 
+class SubsidiaryInline(admin.TabularInline):
+    model = Subsidiary
+    extra = 0
+
+class TeamInline(admin.TabularInline):
+    model = Team
+    extra = 0
+
+class CityAdmin(admin.ModelAdmin):
+    list_display = ('name', 'recent_event')
+
+class CompanyAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    inlines = [SubsidiaryInline,]
+
+class SubsidiaryAdmin(admin.ModelAdmin):
+    list_display = ('address', 'name', 'company', 'city')
+    inlines = [TeamInline,]
+    list_filter = ['city']
+
+class ResultAdmin(admin.ModelAdmin):
+    list_display = ('distance', 'trips_count', 'points', 'order', 'competition')
+
+class CompetitionAdmin(admin.ModelAdmin):
+    list_display = ('name', 'type', 'competitor_type')
+
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city')
     inlines = [PaymentInline, VoucherInline]
     search_fields = ['firstname', 'surname']
-    list_filter = ['active', 'team__city']
+    list_filter = ['active', 'team__subsidiary__city']
 
     readonly_fields = ['team_link']
     def team_link(self, obj):
@@ -55,10 +81,9 @@ class UserProfileUnpaidAdmin(UserProfileAdmin):
     list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city')
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'company', 'city', 'password')
-    fields = ('name', 'members', 'company', 'city', 'address', 'password')
-    search_fields = ['name', 'company']
-    list_filter = ['city']
+    list_display = ('name', 'subsidiary', 'team_subsidiary_city', 'team_subsidiary_company', 'password')
+    search_fields = ['name', 'subsidiary__address', 'subsidiary__company__name']
+    list_filter = ['subsidiary__city']
 
     readonly_fields = ['members']
     def members(self, obj):
@@ -89,13 +114,18 @@ class QuestionAdmin(admin.ModelAdmin):
     fields = ('text', 'type', 'with_comment', 'questionaire', 'order', 'date')
     inlines = [ChoiceInline]
 
-admin.site.unregister(User)
+#admin.site.unregister(User)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(UserProfileUnpaid, UserProfileUnpaidAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Voucher, VoucherAdmin)
 admin.site.register(Question, QuestionAdmin)
+admin.site.register(City, CityAdmin)
+admin.site.register(Subsidiary, SubsidiaryAdmin)
+admin.site.register(Company, CompanyAdmin)
+admin.site.register(Competition, CompetitionAdmin)
+admin.site.register(Result, ResultAdmin)
 
 from django.contrib.auth.models import Group
 admin.site.unregister(Group)
