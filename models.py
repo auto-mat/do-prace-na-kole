@@ -142,7 +142,7 @@ class UserProfile(models.Model):
     surname = models.CharField(
         verbose_name="Příjmení",
         max_length=30, null=False)
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         User, unique=True)
     distance = models.PositiveIntegerField(
         verbose_name="Vzdálenost",
@@ -382,6 +382,11 @@ class Competition(models.Model):
         related_name = "competitions",
         null=True, 
         blank=True)
+    company_competitors = models.ManyToManyField(
+        Company,
+        related_name = "competitions",
+        null=True, 
+        blank=True)
     city = models.ForeignKey(
         City,
         verbose_name = "Soutěž pouze pro město",
@@ -392,57 +397,19 @@ class Competition(models.Model):
         verbose_name = "Soutěž pouze pro firmu",
         null=True, 
         blank=True)
+    without_admission = models.BooleanField(
+        verbose_name = "Soutěž bez přihlášek (pro všechny)",
+        default=False,
+        null=False)
 
     def __unicode__(self):
         return "%s" % self.name
-
-class Result(models.Model):
-    """Výsledek závodu"""
-
-    class Meta:
-        verbose_name = "Výsledek závodu"
-        verbose_name_plural = "Výsledky závodu"
-
-    distance = models.IntegerField(
-        null=True, blank=True)
-    trips_count = models.IntegerField(
-        null=True, blank=True)
-    points = models.IntegerField(
-        verbose_name="Body",
-        null=True, blank=True)
-    order = models.IntegerField(
-        verbose_name="Pořadí",
-        null=True, blank=True)
-    competition = models.ForeignKey(
-        Competition,
-        null=False, 
-        blank=False)
-    company = models.ForeignKey(
-        Company,
-        verbose_name = "Výsledek firmy",
-        null=True, 
-        blank=True)
-    team = models.ForeignKey(
-        Team,
-        verbose_name = "Výsledek týmu",
-        null=True, 
-        blank=True)
-    user = models.ForeignKey(
-        UserProfile,
-        verbose_name = "Výsledek jednotlivce",
-        null=True, 
-        blank=True)
 
 class Question(models.Model):
 
     class Meta:
         verbose_name = "Anketní otázka"
         verbose_name_plural = "Anketní otázky"
-
-    QUESTIONAIRES = (
-        ('player', 'Soutěžící'),
-        ('company', 'Cyklozaměstnavatel roku')
-        )
 
     QTYPES = (
         ('text', 'Text'),
@@ -470,19 +437,14 @@ class Question(models.Model):
         verbose_name = "Povolit přílohu",
         default=True,
         null=False)
-    questionaire = models.CharField(
-        verbose_name="Dotazník",
-        choices=QUESTIONAIRES,
-        max_length=16,
-        null=False)
     order = models.IntegerField(
         verbose_name="Pořadí",
         null=True, blank=True)
     competition = models.ForeignKey(
         Competition,
-        verbose_name = "v soutěži",
-        null=True, 
-        blank=True)
+        verbose_name = "Soutěž",
+        null=False, 
+        blank=False)
 
 class Choice(models.Model):
     
@@ -501,7 +463,8 @@ class Choice(models.Model):
 
 class Answer(models.Model):
     user = models.ForeignKey(UserProfile, null=True)
-    result = models.ForeignKey(Result, null=True)
+    team = models.ForeignKey(Team, null=True)
+    company = models.ForeignKey(Company, null=True)
     question = models.ForeignKey(Question, null=False)
     choices = models.ManyToManyField(Choice)
     comment = models.TextField(
@@ -513,42 +476,3 @@ class Answer(models.Model):
 
     def str_choices(self):
         return ", ".join([choice.text for choice in self.choices.all()])
-            
-class UserResults(models.Model):
-
-    class Meta:
-        managed = False
-        db_table = 'dpnk_v_user_results'
-        verbose_name_plural = "Výsledky soutěžících"
-
-    id = models.PositiveIntegerField(primary_key=True)
-    firstname = models.CharField(max_length=256)
-    surname = models.CharField(max_length=256)
-    team = models.CharField(max_length=256)
-    team_id = models.PositiveIntegerField()
-    company = models.CharField(max_length=256)
-    city = models.CharField(max_length=256)
-    trips = models.IntegerField()
-    distance = models.IntegerField()
-
-    def percentage(self):
-        return float(self.trips)/(2*util.days_count())*100
-
-class TeamResults(models.Model):
-
-    class Meta:
-        managed = False
-        db_table = 'dpnk_v_team_results'
-        verbose_name_plural = "Výsledky týmů"
-
-    id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=256)
-    company = models.CharField(max_length=256)
-    city = models.CharField(max_length=256)
-    trips = models.IntegerField()
-    trips_per_person = models.FloatField()
-    persons = models.IntegerField()
-    distance = models.PositiveIntegerField()
-
-    def percentage(self):
-        return float(self.trips_per_person)/(2*util.days_count())*100
