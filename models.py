@@ -38,14 +38,17 @@ class City(models.Model):
         verbose_name_plural = "Města"
     name = models.CharField(
         verbose_name="Jméno",
+        unique=True,
         max_length=40, null=False)
-    recent_event = models.TextField(
-        null=True, blank=True)
     city_admins = models.ManyToManyField(
         'UserProfile',
         related_name = "administrated_cities",
         null=True,
         blank=True)
+    admission_fee = models.PositiveIntegerField(
+        verbose_name="Poplatek",
+        null=False,
+        default=160)
 
     def __unicode__(self):
         return "%s" % self.name
@@ -58,6 +61,7 @@ class Company(models.Model):
         verbose_name_plural = "Firmy"
 
     name = models.CharField(
+        unique=True,
         verbose_name="Jméno",
         max_length=60, null=False)
     company_admin = models.OneToOneField(
@@ -77,19 +81,30 @@ class Subsidiary(models.Model):
         verbose_name = "Pobočka"
         verbose_name_plural = "Pobočky"
 
-    name = models.CharField(
-        verbose_name="Jméno",
-        max_length=60, null=False)
-    address = models.CharField(
-        verbose_name="Adresa pobočky (ulice a číslo)",
+    street = models.CharField(
+        verbose_name="Ulice",
         max_length=50, null=False)
+    street_number = models.CharField(
+        verbose_name="Číslo domu",
+        max_length=10, null=False, blank=False)
+    recipient = models.CharField(
+        verbose_name="Adresát",
+        max_length=50, null=False, blank=False)
+    district = models.CharField(
+        verbose_name="Městská část",
+        max_length=50, null=False, blank=False)
+    PSC = models.IntegerField(
+        verbose_name="PSČ",
+        null=False, blank=False)
     company = models.ForeignKey(
           Company, null=False, blank=False)
     city = models.ForeignKey(
           City, null=False, blank=False)
+    def address(self):
+        return "%s, %s %s, %s, %s, %s" % (self.recipient, self.street, self.street_number, self.district, self.PSC, self.city)
 
     def __unicode__(self):
-        return "%s" % self.address
+        return "%s" % self.address()
 
 class Team(models.Model):
     """Profil týmu"""
@@ -136,6 +151,12 @@ class UserProfile(models.Model):
     GENDER = (('man', "Muž"),
               ('woman', "Žena"))
 
+    TSHIRTSIZE = (('S', "S"),
+              ('M', "M"),
+              ('L', "L"),
+              ('XL', "XL"),
+              ('XXL', "XXL"))
+
     firstname = models.CharField(
         verbose_name="Jméno",
         max_length=30, null=False)
@@ -162,15 +183,18 @@ class UserProfile(models.Model):
     trips = models.PositiveIntegerField(
         verbose_name="Počet cest",
         default=0, null=False, blank=False)
-    wants_to_be_paid = models.BooleanField(
-        verbose_name="Chce aby za něj zaplatila firma",
-        default=False)
-    company_pays = models.BooleanField(
-        verbose_name="Platí za něj firma",
-        default=False)
+    company_admin_unapproved = models.BooleanField(
+        verbose_name="Správcovství organizace není schváleno",
+        default=True)
     libero = models.BooleanField(
         verbose_name="Libero",
         default=False)
+    t_shirt_size = models.CharField(
+        verbose_name="Velikost trička",
+        choices=TSHIRTSIZE,
+        max_length=16,
+        null=False,
+        default='L')
 
     def person_name(self):
         return "%s %s" % (self.firstname, self.surname)
@@ -254,6 +278,7 @@ class Payment(models.Model):
         ('sc', 'superCASH'),
         ('t', 'testovací platba'),
         ('fa', 'faktura mimo PayU'),
+        ('fc', 'firma platí fakturou'),
         )
 
     class Meta:
@@ -297,6 +322,9 @@ class Payment(models.Model):
     error = models.PositiveIntegerField(
         verbose_name="Chyba",
         null=True, blank=True)
+    company_wants_to_pay = models.BooleanField(
+        verbose_name="Firma chce zaplatit",
+        default=False)
 
     def __unicode__(self):
         if self.trans_id:
@@ -360,6 +388,7 @@ class Competition(models.Model):
         verbose_name = "Závod"
         verbose_name_plural = "Závody"
     name = models.CharField(
+        unique=True,
         verbose_name="Jméno",
         max_length=40, null=False)
     type = models.CharField(
@@ -405,6 +434,26 @@ class Competition(models.Model):
     def __unicode__(self):
         return "%s" % self.name
 
+class ChoiceType(models.Model):
+    """Typ volby"""
+    class Meta:
+        verbose_name = "Typ volby"
+        verbose_name_plural = "Typ volby"
+
+    competition = models.ForeignKey(Competition,
+        null=False,
+        blank=False)
+    name = models.CharField(
+        verbose_name="Jméno",
+        unique = True,
+        max_length=40, null=True)
+    universal = models.BooleanField(
+        verbose_name="Typ volby je použitelný pro víc otázek",
+        default=False)
+
+    def __unicode__(self):
+        return "%s" % self.name
+
 class Question(models.Model):
 
     class Meta:
@@ -445,6 +494,12 @@ class Question(models.Model):
         verbose_name = "Soutěž",
         null=False, 
         blank=False)
+    choice_type = models.ForeignKey(ChoiceType,
+        null=False,
+        blank=False)
+
+    def __unicode__(self):
+        return "%s" % self.text
 
 class Choice(models.Model):
     
@@ -452,7 +507,11 @@ class Choice(models.Model):
         verbose_name = "Nabídka k anketním otázce"
         verbose_name_plural = "Nabídky k anketním otázkám"
 
-    question = models.ForeignKey(Question)
+    choice_type = models.ForeignKey(ChoiceType,
+        verbose_name="Typ volby",
+        related_name="choices",
+        null=False,
+        blank=False)
     text = models.CharField(
         verbose_name="Nabídka",
         max_length=300,
@@ -460,6 +519,9 @@ class Choice(models.Model):
     points = models.IntegerField(
         verbose_name="Body",
         null=True, blank=True)
+
+    def __unicode__(self):
+        return "%s" % self.text
 
 class Answer(models.Model):
     user = models.ForeignKey(UserProfile, null=True)
@@ -476,3 +538,6 @@ class Answer(models.Model):
 
     def str_choices(self):
         return ", ".join([choice.text for choice in self.choices.all()])
+
+    def __unicode__(self):
+        return "%s" % self.str_choices()

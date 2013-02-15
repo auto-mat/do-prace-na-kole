@@ -49,14 +49,23 @@ class TeamInline(admin.TabularInline):
     extra = 0
 
 class CityAdmin(admin.ModelAdmin):
-    list_display = ('name', 'recent_event')
+    list_display = ('name', 'admission_fee')
 
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'subsidiaries_text')
     inlines = [SubsidiaryInline,]
+    readonly_fields = ['subsidiaries']
+    def subsidiaries_text(self, obj):
+        return mark_safe(" | ".join(['%s' % (str(u))
+                                  for u in Subsidiary.objects.filter(company=obj)]))
+    subsidiaries_text.short_description = 'Pobočky'
+    def subsidiaries(self, obj):
+        return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/subsidiary/%d">%s</a>' % (u.id, str(u))
+                                  for u in Subsidiary.objects.filter(company=obj)]))
+    subsidiaries.short_description = 'Pobočky'
 
 class SubsidiaryAdmin(admin.ModelAdmin):
-    list_display = ('address', 'name', 'company', 'city')
+    list_display = ('address', 'company', 'city')
     inlines = [TeamInline,]
     list_filter = ['city']
 
@@ -104,12 +113,22 @@ class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 0
 
+class ChoiceTypeAdmin(admin.ModelAdmin):
+    inlines = [ChoiceInline]
+    list_filter = ('competition',)
+
+class AnswerAdmin(admin.ModelAdmin):
+    pass
+
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('text', 'type', 'order', 'date', 'competition')
     ordering = ('order', 'date',)
     list_filter = ('competition',)
     #fields = ('text', 'type', 'with_comment', 'order', 'date')
-    inlines = [ChoiceInline]
+
+    readonly_fields = ['choices']
+    def choices(self, obj):
+        return mark_safe("<br/>".join([choice.text for choice in obj.choice_type.choices.all()]) + '<br/><a href="/admin/admin/dpnk/choicetype/%d">edit</a>' % obj.choice_type.id )
 
 #admin.site.unregister(User)
 admin.site.register(UserProfile, UserProfileAdmin)
@@ -118,10 +137,12 @@ admin.site.register(Team, TeamAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Voucher, VoucherAdmin)
 admin.site.register(Question, QuestionAdmin)
+admin.site.register(ChoiceType, ChoiceTypeAdmin)
 admin.site.register(City, CityAdmin)
 admin.site.register(Subsidiary, SubsidiaryAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Competition, CompetitionAdmin)
+admin.site.register(Answer, AnswerAdmin)
 
 from django.contrib.auth.models import Group
 admin.site.unregister(Group)
