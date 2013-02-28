@@ -337,15 +337,15 @@ def profile(request):
         team_percentage = 0
     team_distance = sum([m['distance'] for m in member_counts])
 
-    for user_position, u in enumerate(UserResults.objects.filter(city=profile.team.city)):
-        if u.id == profile.id:
-            break
-    user_position += 1
+    #for user_position, u in enumerate(UserResults.objects.filter(city=profile.team.city)):
+    #    if u.id == profile.id:
+    #        break
+    #user_position += 1
 
-    for team_position, t in enumerate(TeamResults.objects.filter(city=profile.team.city)):
-        if t.id == profile.team.id:
-            break
-    team_position += 1
+    #for team_position, t in enumerate(TeamResults.objects.filter(city=profile.team.city)):
+    #    if t.id == profile.team.id:
+    #        break
+    #team_position += 1
 
     req_city = request.GET.get('mesto', None)
     if req_city and (req_city.lower() != profile.team.city.lower()):
@@ -376,8 +376,8 @@ def profile(request):
             'member_counts': member_counts,
             'team_percentage': team_percentage,
             'team_distance': team_distance,
-            'user_position': user_position,
-            'team_position': team_position,
+            #'user_position': user_position,
+            #'team_position': team_position,
             'req_city': req_city,
             'own_city': own_city,
             'company_survey_by': company_survey_by,
@@ -387,20 +387,20 @@ def results(request, template):
 
     city = request.GET.get('mesto', None)
 
-    if city:
-        user_by_percentage = UserResults.objects.filter(city=city)[:10]
-        user_by_distance = UserResults.objects.filter(city=city).order_by('-distance')[:10]
-        team_by_distance = TeamResults.objects.filter(city=city).order_by('-distance')[:20]
-        team_by_percentage = TeamResults.objects.filter(city=city)
-        user_count = UserResults.objects.filter(city=city).count()
-        team_count = TeamResults.objects.filter(city=city).count()
-    else:
-        user_by_percentage = UserResults.objects.all()[:10]
-        user_by_distance = UserResults.objects.all().order_by('-distance')[:10]
-        team_by_distance = TeamResults.objects.all().order_by('-distance')[:20]
-        team_by_percentage = TeamResults.objects.all()
-        user_count = UserProfile.objects.filter(active=True).count()
-        team_count = Team.objects.all().count()
+    #if city:
+    #    user_by_percentage = UserResults.objects.filter(city=city)[:10]
+    #    user_by_distance = UserResults.objects.filter(city=city).order_by('-distance')[:10]
+    #    team_by_distance = TeamResults.objects.filter(city=city).order_by('-distance')[:20]
+    #    team_by_percentage = TeamResults.objects.filter(city=city)
+    #    user_count = UserResults.objects.filter(city=city).count()
+    #    team_count = TeamResults.objects.filter(city=city).count()
+    #else:
+    #    user_by_percentage = UserResults.objects.all()[:10]
+    #    user_by_distance = UserResults.objects.all().order_by('-distance')[:10]
+    #    team_by_distance = TeamResults.objects.all().order_by('-distance')[:20]
+    #    team_by_percentage = TeamResults.objects.all()
+    #    user_count = UserProfile.objects.filter(active=True).count()
+    #    team_count = Team.objects.all().count()
 
     return render_to_response(template,
                               {
