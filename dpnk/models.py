@@ -59,6 +59,7 @@ class Company(models.Model):
     class Meta:
         verbose_name = "Firma"
         verbose_name_plural = "Firmy"
+        ordering = ('name',)
 
     name = models.CharField(
         unique=True,

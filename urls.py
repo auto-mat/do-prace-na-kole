@@ -41,5 +41,6 @@ urlpatterns = patterns('',
                        url(r'^cyklozamestnavatel_firmy/$', 'dpnk.views.company_survey'),
                        url(r'^cyklozamestnavatel_odpovedi/$', 'dpnk.views.company_survey_answers'),
                        url(r'^odpovedi/$', 'dpnk.views.answers'),
+                       url(r'^chaining/', include('smart_selects.urls')),
                        )
 

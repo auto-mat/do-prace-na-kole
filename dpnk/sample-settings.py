@@ -103,6 +103,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'registration',
     'dpnk',
+    'smart_selects',
     'south'
 )
 

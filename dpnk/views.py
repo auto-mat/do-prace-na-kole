@@ -28,11 +28,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.mail import EmailMessage
 from django.db.models import Sum, Count
+from smart_selects.form_fields import ChainedModelChoiceField, GroupedModelSelect
 # Registration imports
 import registration.forms, registration.signals, registration.backends
 # Model imports
-from models import User, UserProfile, Team, Payment, Voucher, Trip, Question, Choice, \
-    Answer, UserResults, TeamResults
+from models import *
 # Local imports
 import util
 
@@ -47,7 +47,27 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         label="Příjmení",
         max_length=30,
         required=True)
-    team = forms.ModelChoiceField(
+    company = forms.ModelChoiceField(
+        label="Firma",
+        queryset=Company.objects.all(),
+        required=True)
+    subsidiary = ChainedModelChoiceField(
+        chain_field = "company",
+        app_name = "dpnk",
+        model_name = "Subsidiary",
+        model_field = "company",
+        show_all = False,
+        auto_choose = True,
+        label="Pobočka",
+        queryset=Team.objects.all(),
+        required=True)
+    team = ChainedModelChoiceField(
+        chain_field = "subsidiary",
+        app_name = "dpnk",
+        model_name = "Team",
+        model_field = "subsidiary",
+        show_all = False,
+        auto_choose = True,
         label="Tým",
         queryset=Team.objects.all(),
         required=True)
@@ -57,6 +77,11 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
     distance = forms.IntegerField(
         label="Vzdálenost z domova do práce vzdušnou čarou (v km)",
         required=True)
+    t_shirt_size = forms.ChoiceField(
+        label="Velikost trička",
+        choices = UserProfile.TSHIRTSIZE,
+        initial = "L",
+        )
 
     # -- Contacts
     telephone = forms.CharField(
@@ -76,9 +101,12 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         self.fields.keyOrder = [
             'firstname',
             'surname',
+            'company',
+            'subsidiary',
             'team',
             'team_password',
             'distance',
+            't_shirt_size',
             'email',
             'telephone',
             'username',
@@ -101,6 +129,9 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         if data.strip().lower() != team.password.strip():
             raise forms.ValidationError("Nesprávné heslo týmu")
         return data
+
+    class Meta:
+        model = UserProfile
 
 def register(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
@@ -177,11 +208,30 @@ registration.signals.user_registered.connect(create_profile)
 class RegisterTeamForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
+
+    company = forms.ModelChoiceField(
+        label="Firma",
+        queryset=Company.objects.all(),
+        required=True)
+    subsidiary = ChainedModelChoiceField(
+        chain_field = "company",
+        app_name = "dpnk",
+        model_name = "Subsidiary",
+        model_field = "company",
+        show_all = False,
+        auto_choose = True,
+        label="Pobočka",
+        queryset=Team.objects.all(),
+        required=True)
+    subsidiary1 = GroupedModelSelect(
+        label = "Pobočka",
+        order_field = "company",
+        queryset=Subsidiary.objects.all(),
+        )
     
     class Meta:
         model = Team
-        #fields = ('city', 'name', 'company', 'address')
-        fields = ('subsidiary', 'name',)
+        fields = ('name', 'company', 'subsidiary', 'subsidiary1', 'password')
 
 def register_team(request):
     if request.method == 'POST':
