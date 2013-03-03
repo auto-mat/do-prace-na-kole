@@ -8,9 +8,10 @@
 <h3>Základní údaje</h3>
 <table>
 <tr><th scope="row">Jméno</th><td>{{ profile.firstname }} {{ profile.surname }}</td></tr>
-<tr><th scope="row">Tým:</th><td>{{ team.name }} (kód {{team.password}})</td></tr>
-<tr><th scope="row">Město:</th><td>{{ team.city }}</td></tr>
-<tr><th scope="row">Firma:</th><td>{{ team.company }}</td></tr>
+<tr><th scope="row">Tým:</th><td>{{ team.name }}</td></tr>
+<tr><th scope="row">Město:</th><td>{{ team.subsidiary.city.name }}</td></tr>
+<tr><th scope="row">Pobočka:</th><td>{{ team.subsidiary }}</td></tr>
+<tr><th scope="row">Firma:</th><td>{{ team.subsidiary.company.name }}</td></tr>
 <tr><th scope="row">Členové týmu:</th><td>{{ team_members }}</td></tr>
 <tr><th scope="row">Startovné:</th><td>
 {% if payment_status == 'done' %} Zaplaceno (slevový kód na <a href="http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012" target="_top">triko</a>: {{ voucher }}){% endif %}

@@ -10,7 +10,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ('firstname', 'surname', 'telephone')
+        fields = ('firstname', 'surname', 'telephone', 't_shirt_size')
     
 
 class RegistrationFormDPNK(registration.forms.RegistrationForm):

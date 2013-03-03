@@ -30,7 +30,7 @@ from django.db.models import Sum, Count
 import registration.signals, registration.backends
 # Model imports
 from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company
-from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm
+from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm
 # Local imports
 import util
 
