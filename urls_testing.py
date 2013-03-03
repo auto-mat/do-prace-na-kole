@@ -8,7 +8,7 @@ from dpnk.views import RegistrationFormDPNK, AutoRegistrationFormDPNK
 from registration.views import register
 
 urlpatterns = patterns('',
-                       url(r'^admin/', include(admin.site.urls)),
+                       url(r'^admin/admin/', include(admin.site.urls)),
                        url(r'^registrace/registrace/$', 'dpnk.views.register',
                            {'success_url': '/registrace/platba/'}),
                        url(r'^auto_registrace/$', 'dpnk.views.auto_register',

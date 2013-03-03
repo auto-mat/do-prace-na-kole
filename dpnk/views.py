@@ -43,15 +43,11 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
     backend = registration.backends.get_backend(backend)
     form_class = RegistrationFormDPNK
 
-    company_selected = True
-    subsidiary_selected = True
-    team_selected = True
-
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES)
 
-        form_company = RegisterCompanyForm(request.POST, prefix = "subsidiary")
-        form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix = "company")
+        form_company = RegisterCompanyForm(request.POST, prefix = "company")
+        form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix = "subsidiary")
         form_team = RegisterTeamForm(request.POST, prefix = "team")
         company_selected = request.POST['company_selected'] == "True"
         subsidiary_selected = request.POST['subsidiary_selected'] == "True"
@@ -60,28 +56,31 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
         subsidiary_valid = True
         team_valid = True
 
-        if not company_selected:
+        print "selected:", team_selected, subsidiary_selected, company_selected
+
+        if company_selected:
+            form_company = RegisterCompanyForm(prefix = "company")
+            form.fields['company'].required = True
+        else:
             company_valid = form_company.is_valid()
             form.fields['company'].required = False
-        else:
-            form_company = RegisterCompanyForm(prefix = "subsidiary")
-            form.fields['company'].required = True
 
-        if not subsidiary_selected:
+        if subsidiary_selected:
+            form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
+            form.fields['subsidiary'].required = True
+        else:
             subsidiary_valid = form_subsidiary.is_valid()
             form.fields['subsidiary'].required = False
-        else:
-            form_subsidiary = RegisterSubsidiaryForm(prefix = "company")
-            form.fields['subsidiary'].required = True
 
-        if not team_selected:
-            team_valid = form_team.is_valid()
-            form.fields['team'].required = False
-        else:
+        if team_selected:
             form_team = RegisterTeamForm(prefix = "team")
             form.fields['team'].required = True
+        else:
+            team_valid = form_team.is_valid()
+            form.fields['team'].required = False
 
         form_valid = form.is_valid()
+        print form_valid, team_valid, subsidiary_valid, company_valid
 
         if form_valid and company_valid and subsidiary_valid and team_valid:
             company = None
@@ -116,9 +115,13 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             return redirect(success_url)
     else:
         form = form_class(request)
-        form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
         form_company = RegisterCompanyForm(prefix = "company")
+        form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
         form_team = RegisterTeamForm(prefix = "team")
+
+        company_selected = True
+        subsidiary_selected = True
+        team_selected = True
 
     return render_to_response(template_name,
                               {'form': form,
