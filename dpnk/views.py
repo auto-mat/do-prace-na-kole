@@ -29,8 +29,8 @@ from django.db.models import Sum, Count
 # Registration imports
 import registration.signals, registration.backends
 # Model imports
-from models import UserProfile, Voucher, Trip, Answer, Question
-from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK
+from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company
+from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm
 # Local imports
 import util
 
@@ -43,9 +43,71 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
     backend = registration.backends.get_backend(backend)
     form_class = RegistrationFormDPNK
 
+    company_selected = True
+    subsidiary_selected = True
+    team_selected = True
+
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES)
-        if form.is_valid():
+
+        form_company = RegisterCompanyForm(request.POST, prefix = "subsidiary")
+        form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix = "company")
+        form_team = RegisterTeamForm(request.POST, prefix = "team")
+        company_selected = request.POST['company_selected'] == "True"
+        subsidiary_selected = request.POST['subsidiary_selected'] == "True"
+        team_selected = request.POST['team_selected'] == "True"
+        company_valid = True
+        subsidiary_valid = True
+        team_valid = True
+
+        if not company_selected:
+            company_valid = form_company.is_valid()
+            form.fields['company'].required = False
+        else:
+            form_company = RegisterCompanyForm(prefix = "subsidiary")
+            form.fields['company'].required = True
+
+        if not subsidiary_selected:
+            subsidiary_valid = form_subsidiary.is_valid()
+            form.fields['subsidiary'].required = False
+        else:
+            form_subsidiary = RegisterSubsidiaryForm(prefix = "company")
+            form.fields['subsidiary'].required = True
+
+        if not team_selected:
+            team_valid = form_team.is_valid()
+            form.fields['team'].required = False
+        else:
+            form_team = RegisterTeamForm(prefix = "team")
+            form.fields['team'].required = True
+
+        form_valid = form.is_valid()
+
+        if form_valid and company_valid and subsidiary_valid and team_valid:
+            company = None
+            subsidiary = None
+            team = None
+
+            if not company_selected:
+                company = form_company.save()
+                print "created company", company
+            else:
+                company = Company.objects.get(id=form.data['company'])
+
+            if not subsidiary_selected:
+                subsidiary = form_subsidiary.save(commit=False)
+                subsidiary.company = company
+                form_subsidiary.save()
+                print "created subsidiary", company
+            else:
+                subsidiary = Subsidiary.objects.get(id=form.data['subsidiary'])
+
+            if not team_selected:
+                team = form_team.save(commit=False)
+                team.subsidiary = subsidiary
+                form_team.save()
+                print "created team", team
+
             new_user = backend.register(request, **form.cleaned_data)
             auth_user = django.contrib.auth.authenticate(
                 username=request.POST['username'],
@@ -54,9 +116,19 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             return redirect(success_url)
     else:
         form = form_class(request)
+        form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
+        form_company = RegisterCompanyForm(prefix = "company")
+        form_team = RegisterTeamForm(prefix = "team")
 
     return render_to_response(template_name,
-                              {'form': form})
+                              {'form': form,
+                               'form_subsidiary': form_subsidiary,
+                               'form_company': form_company,
+                               'form_team': form_team,
+                               'company_selected': company_selected,
+                               'subsidiary_selected': subsidiary_selected,
+                               'team_selected': team_selected,
+                                  })
 
 
 
@@ -93,8 +165,13 @@ def auto_register(request, backend='registration.backends.simple.SimpleBackend',
 
 def create_profile(user, request, **kwargs):
     from dpnk.models import UserProfile
+    if request.POST['team_selected'] == "True":
+        team = Team.objects.get(id=request.POST['team'])
+    else:
+        team = Team.objects.get(name=request.POST['team-name'])
+
     UserProfile(user = user,
-                team = Team.objects.get(id=request.POST['team']),
+                team = team,
                 firstname = request.POST['firstname'],
                 surname = request.POST['surname'],
                 telephone = request.POST['telephone'],
@@ -107,7 +184,7 @@ def register_team(request):
         form = RegisterTeamForm(request.POST)
         if form.is_valid():
             team = form.save(commit=False)
-            team.password = random.choice([l.strip() for l in open('/home/aplikace/dpnk/slova.txt')])
+            team.password = random.choice([l.strip() for l in open('slova.txt')])
             form.save()
             return render_to_response('registration/team_password.html', {
                     'team_id': team.id,

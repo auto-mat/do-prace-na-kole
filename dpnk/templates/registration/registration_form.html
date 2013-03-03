@@ -1,21 +1,119 @@
 {% extends "base.html" %}
 {% load url from future %}
 
+{% block body_id %}registration_form{% endblock %}
 {% block content %}
-<h3>Registrace uzavřeny</h3>
-
-<p>
-Registrace do soutěže Do práce na kole 2012 byly již uzavřeny. S případnými dotazy se prosím obracejte na kontakt@dopracenakole.net .
-</p>
-
-{% if 1 == 1 %}
-<h3>Vytvoření týmu</h3>
-<p>Nemáte ještě žádný tým? <a href="/registrace/registrace_tymu/">Založte si tým!</a></p>
-<!--Neznáte kód týmu? <a href="/registrace/kontakt_tymu/">Napište si o něj!</a>-->
-
 <h3>Registrace soutěžících</h3>
+
+<script type="text/javascript">
+   function switchCompanyForm(){
+      document.getElementById("company_form").disabled = (document.getElementById("company_selected_true").checked);
+      document.getElementById("company_div").disabled = !(document.getElementById("company_selected_true").checked);
+
+      if(!document.getElementById("company_selected_true").checked) {
+         document.getElementById("subsidiary_selected_false").checked = true;
+         switchSubsidiaryForm();
+      }
+      if(!document.getElementById("company_selected_true").checked) {
+         document.getElementById("team_selected_false").checked = true;
+         switchTeamForm();
+      }
+   }
+
+   function switchSubsidiaryForm(){
+      document.getElementById("subsidiary_form").disabled = (document.getElementById("subsidiary_selected_true").checked);
+      document.getElementById("subsidiary_div").disabled = !(document.getElementById("subsidiary_selected_true").checked);
+
+      if(!document.getElementById("subsidiary_selected_true").checked) {
+         document.getElementById("team_selected_false").checked = true;
+         switchTeamForm();
+      }
+      if(document.getElementById("subsidiary_selected_true").checked) {
+         document.getElementById("company_selected_true").checked = true;
+         switchCompanyForm();
+      }
+   }
+
+   function switchTeamForm(){
+      document.getElementById("team_form").disabled = (document.getElementById("team_selected_true").checked);
+      document.getElementById("team_div").disabled = !(document.getElementById("team_selected_true").checked);
+
+      if(document.getElementById("team_selected_true").checked) {
+         document.getElementById("company_selected_true").checked = true;
+         switchCompanyForm();
+      }
+      if(document.getElementById("team_selected_true").checked) {
+         document.getElementById("subsidiary_selected_true").checked = true;
+         switchSubsidiaryForm();
+      }
+   }
+</script>
+
 <form action="/registrace/registrace/" method="post" class="registration-form">{% csrf_token %}
-{{ form.as_p }}
+   {% for field in form %}
+      {% if field.name == "company" %}
+         {{ company_selected }}
+         <input type="radio" onclick="switchCompanyForm()" name="company_selected" id="company_selected_true" {% if company_selected %}checked{% endif %} value="True"/>
+         <label for = "company_selected_true" {% if not subsidiary_selected %}disabled{% endif %}>
+            Vyberte společnost ze seznamu:
+         </label>
+         <fieldset id="{{field.name}}_div">
+             {{ field.errors }}
+             {{ field.label_tag }}
+             {{ field }}
+         </fieldset>
+         <input type="radio" onclick="switchCompanyForm()" name="company_selected" id="company_selected_false" {% if not company_selected %}checked{% endif %} value="False"/>
+         <label for = "company_selected_false" {% if subsidiary_selected %}disabled{% endif %}>
+            Společnost v senzamu není, chci založit novou:
+         </label>
+         <fieldset id="company_form" disabled>
+            {{ form_company.as_p }}
+         </fieldset>
+
+      {% elif field.name == "subsidiary" %}
+         <input type="radio" onclick="switchSubsidiaryForm()" name="subsidiary_selected" id="subsidiary_selected_true" {% if subsidiary_selected %}checked{% endif %} value="True">
+         <label for = "subsidiary_selected_true"{% if not subsidiary_selected %}disabled{% endif %}>
+            Vyberte pobočku ze seznamu:
+         </label>
+         <fieldset id="{{field.name}}_div">
+             {{ field.errors }}
+             {{ field.label_tag }}
+             {{ field }}
+         </fieldset>
+         <input type="radio" onclick="switchSubsidiaryForm()" name="subsidiary_selected" id="subsidiary_selected_false" {% if not subsidiary_selected %}checked{% endif %} value="False">
+         <label for = "subsidiary_selected_false">
+            Pobočka v senzamu není, chci založit novou:
+         </label>
+         <fieldset id="subsidiary_form" {% if subsidiary_selected %}disabled{% endif %}>
+            {{ form_subsidiary.as_p }}
+         </fieldset>
+
+      {% elif field.name == "team" %}
+         <input type="radio" onclick="switchTeamForm()" name="team_selected" id="team_selected_true" {% if team_selected %}checked{% endif %} value="True">
+         <label for = "team_selected_true">
+            Vyberte tým ze seznamu:
+         </label>
+         <fieldset id="{{field.name}}_div" {% if not team_selected %}disabled{% endif %}>
+             {{ field.errors }}
+             {{ field.label_tag }}
+             {{ field }}
+         </fieldset>
+         <input type="radio" onclick="switchTeamForm()" name="team_selected" id="team_selected_false" {% if not team_selected %}checked{% endif %} value="False">
+         <label for = "team_selected_false">
+            Tým v senzamu není, chci založit nový:
+         </label>
+         <fieldset id="team_form" {% if team_selected %}disabled{% endif %}>
+            {{ form_team.as_p }}
+         </fieldset>
+
+      {% else %}
+         <div id="{{field.name}}_div">
+             {{ field.errors }}
+             {{ field.label_tag }}
+             {{ field }}
+         </div>
+      {% endif %}
+  {% endfor %}
 <input type="submit" value="Odeslat" />
 </form>
 
@@ -25,8 +123,6 @@ Registrace do soutěže Do práce na kole 2012 byly již uzavřeny. S případn�
 dictionary: jméno = name, příjmení = surname, tým = team, tajný kód týmu =
 secret code of the team, vzdálenost... = distance from your home to work in km,
 uživatelské jméno = username, heslo = password, odeslat = submit</p>
-
-{% endif %}
 
 {% endblock %}
 

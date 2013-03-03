@@ -119,9 +119,6 @@ class Team(models.Model):
         verbose_name="Název týmu",
         max_length=50, null=False,
         unique=True)
-    password = models.CharField(
-        verbose_name="Kódové slovo",
-        max_length=20, null=False)
     subsidiary = models.ForeignKey(
         Subsidiary,
         verbose_name="Pobočka",

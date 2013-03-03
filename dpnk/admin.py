@@ -87,7 +87,7 @@ class UserProfileUnpaidAdmin(UserProfileAdmin):
     list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city')
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'subsidiary', 'team_subsidiary_city', 'team_subsidiary_company', 'password')
+    list_display = ('name', 'subsidiary', 'team_subsidiary_city', 'team_subsidiary_company',)
     search_fields = ['name', 'subsidiary__address', 'subsidiary__company__name']
     list_filter = ['subsidiary__city']
 
