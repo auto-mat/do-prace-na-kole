@@ -106,6 +106,11 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                 username=request.POST['username'],
                 password=request.POST['password1'])
             django.contrib.auth.login(request, auth_user)
+
+            if not team_selected:
+                team.coordinator = new_user.userprofile
+                team.save()
+
             return redirect(success_url)
     else:
         form = form_class(request)
