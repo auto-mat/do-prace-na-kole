@@ -56,8 +56,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
         subsidiary_valid = True
         team_valid = True
 
-        print "selected:", team_selected, subsidiary_selected, company_selected
-
         if company_selected:
             form_company = RegisterCompanyForm(prefix = "company")
             form.fields['company'].required = True
@@ -80,7 +78,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             form.fields['team'].required = False
 
         form_valid = form.is_valid()
-        print form_valid, team_valid, subsidiary_valid, company_valid
 
         if form_valid and company_valid and subsidiary_valid and team_valid:
             company = None
@@ -89,7 +86,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
 
             if not company_selected:
                 company = form_company.save()
-                print "created company", company
             else:
                 company = Company.objects.get(id=form.data['company'])
 
@@ -97,7 +93,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                 subsidiary = form_subsidiary.save(commit=False)
                 subsidiary.company = company
                 form_subsidiary.save()
-                print "created subsidiary", company
             else:
                 subsidiary = Subsidiary.objects.get(id=form.data['subsidiary'])
 
@@ -105,7 +100,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                 team = form_team.save(commit=False)
                 team.subsidiary = subsidiary
                 form_team.save()
-                print "created team", team
 
             new_user = backend.register(request, **form.cleaned_data)
             auth_user = django.contrib.auth.authenticate(
