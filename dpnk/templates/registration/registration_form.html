@@ -49,7 +49,7 @@
    }
 </script>
 
-<form action="/registrace/registrace/" method="post" class="registration-form">{% csrf_token %}
+<form action="" method="post" class="registration-form">{% csrf_token %}
    {% for field in form %}
       {% if field.name == "company" %}
          {{ company_selected }}

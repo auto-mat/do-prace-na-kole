@@ -113,6 +113,13 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                 password=request.POST['password1'])
             django.contrib.auth.login(request, auth_user)
 
+            print new_user.userprofile.team.invitation_token
+            print token
+            if new_user.userprofile.team.invitation_token == token:
+                userprofile = new_user.userprofile
+                userprofile.approved_for_team = True
+                userprofile.save()
+
             if not team_selected:
                 team.coordinator = new_user.userprofile
                 team.save()
@@ -148,6 +155,8 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                                'company_selected': company_selected,
                                'subsidiary_selected': subsidiary_selected,
                                'team_selected': team_selected,
+                               'token': token,
+                               'initial_email': initial_email,
                                   })
 
 
