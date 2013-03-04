@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block title %}
+Pozvat kolegy
+{% endblock %}
+
+{% block content %}
+
+<h1>Pozvat kolegy</h1>
+
+<p>Nyní můžete pozvat své kolegy do vašeho týmu</p>
+
+<form action="" method="post">{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Odeslat" />
+</form>
+
+{% endblock %}

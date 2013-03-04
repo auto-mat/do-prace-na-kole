@@ -126,3 +126,23 @@ class RegisterSubsidiaryForm(forms.ModelForm):
     class Meta:
         model = Subsidiary
         fields = ('street', 'street_number', 'recipient', 'district', 'PSC', 'city')
+
+class InviteForm(forms.Form):
+    required_css_class = 'required'
+    error_css_class = 'error'
+
+    email1 = forms.EmailField(
+        label="Kolega 1",
+        required=False)
+
+    email2 = forms.EmailField(
+        label="Kolega 2",
+        required=False)
+
+    email3 = forms.EmailField(
+        label="Kolega 3",
+        required=False)
+
+    email4 = forms.EmailField(
+        label="Kolega 4",
+        required=False)

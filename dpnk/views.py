@@ -30,7 +30,11 @@ from django.db.models import Sum, Count
 import registration.signals, registration.backends
 # Model imports
 from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company
-from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm
+from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm
+from django.core.mail import send_mail
+from django.template.loader import get_template
+from django.template import Context
+from django.conf import settings
 # Local imports
 import util
 
@@ -38,7 +42,9 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
              disallowed_url='registration_disallowed',
              template_name='registration/registration_form.html',
-             extra_context=None):
+             extra_context=None,
+             token=None,
+             initial_email=None):
 
     backend = registration.backends.get_backend(backend)
     form_class = RegistrationFormDPNK
@@ -110,10 +116,22 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             if not team_selected:
                 team.coordinator = new_user.userprofile
                 team.save()
+                successfull_url = "registration/invitations.html"
 
             return redirect(success_url)
     else:
-        form = form_class(request)
+        initial_company = None
+        initial_subsidiary = None
+        initial_team = None
+
+        if token != None:
+            team = Team.objects.get(invitation_token=token)
+            print team
+            initial_company = team.subsidiary.company
+            initial_subsidiary = team.subsidiary
+            initial_team = team
+
+        form = form_class(request, initial={'company': initial_company, 'subsidiary': initial_subsidiary, 'team': initial_team, 'email': initial_email})
         form_company = RegisterCompanyForm(prefix = "company")
         form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
         form_team = RegisterTeamForm(prefix = "team")
@@ -678,3 +696,29 @@ def answers(request):
                                'stat': stat,
                                'total_respondents': total_respondents,
                                'choice_names': choice_names})
+
+@login_required
+def invite(request, backend='registration.backends.simple.SimpleBackend',
+             success_url=None, form_class=None,
+             template_name='registration/invitation.html',
+             extra_context=None):
+    form_class = InviteForm
+
+    if request.method == 'POST':
+        form = form_class(data=request.POST)
+        if form.is_valid():
+            template = get_template('registration/invitation_email.html')
+            for email in [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4'] ]:
+                if len(email) != 0:
+                    message = template.render(Context({ 'user': request.user,
+                        'SITE_URL': settings.SITE_URL,
+                        'email': email
+                        }))
+                    print message
+                    send_mail('Do práce na kole - pozvánka', message, None, [email], fail_silently=False)
+            return redirect(success_url)
+    else:
+        form = form_class()
+    return render_to_response(template_name,
+                              {'form': form,
+                                  })
