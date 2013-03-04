@@ -21,6 +21,8 @@
 
 # Django imports
 import django
+import random
+import string
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -129,6 +131,14 @@ class Team(models.Model):
         related_name = "coordinated_team",
         verbose_name = 'Koordinátor',
         null=True, blank=True)
+    invitation_token = models.CharField(
+        verbose_name="Token pro pozvánky",
+        default=''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30)),
+        max_length=100,
+        blank=True,
+        null=True,
+        unique=True
+        )
 
     def team_subsidiary_city(self):
         return self.subsidiary.city
@@ -161,6 +171,12 @@ class UserProfile(models.Model):
     surname = models.CharField(
         verbose_name="Příjmení",
         max_length=30, null=False)
+    gender = models.CharField(
+        verbose_name="Pohlaví",
+        choices=GENDER,
+        max_length=16,
+        null=False,
+        default='man')
     user = models.OneToOneField(
         User, unique=True)
     distance = models.PositiveIntegerField(
@@ -186,6 +202,9 @@ class UserProfile(models.Model):
         default=True)
     libero = models.BooleanField(
         verbose_name="Libero",
+        default=False)
+    approved_for_team = models.BooleanField(
+        verbose_name="Odsouhlasen týmem",
         default=False)
     t_shirt_size = models.CharField(
         verbose_name="Velikost trička",

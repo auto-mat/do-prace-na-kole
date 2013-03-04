@@ -51,6 +51,11 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
     distance = forms.IntegerField(
         label="Vzdálenost z domova do práce vzdušnou čarou (v km)",
         required=True)
+    gender = forms.ChoiceField(
+        label="Pohlaví",
+        choices = UserProfile.GENDER,
+        initial = "men",
+        )
     t_shirt_size = forms.ChoiceField(
         label="Velikost trička",
         choices = UserProfile.TSHIRTSIZE,
@@ -77,6 +82,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
             'subsidiary',
             'team',
             'distance',
+            'gender',
             't_shirt_size',
             'email',
             'telephone',
