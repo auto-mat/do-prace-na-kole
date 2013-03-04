@@ -49,10 +49,10 @@ class TeamInline(admin.TabularInline):
     extra = 0
 
 class CityAdmin(admin.ModelAdmin):
-    list_display = ('name', 'admission_fee')
+    list_display = ('name', 'admission_fee', 'id', )
 
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'subsidiaries_text')
+    list_display = ('name', 'subsidiaries_text', 'id', )
     inlines = [SubsidiaryInline,]
     readonly_fields = ['subsidiaries']
     def subsidiaries_text(self, obj):
@@ -65,7 +65,7 @@ class CompanyAdmin(admin.ModelAdmin):
     subsidiaries.short_description = 'Pobočky'
 
 class SubsidiaryAdmin(admin.ModelAdmin):
-    list_display = ('address', 'company', 'city')
+    list_display = ('address', 'company', 'city', 'id', )
     inlines = [TeamInline,]
     list_filter = ['city']
 
@@ -73,7 +73,7 @@ class CompetitionAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'competitor_type')
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city')
+    list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city', 'id', )
     inlines = [PaymentInline, VoucherInline]
     search_fields = ['firstname', 'surname']
     list_filter = ['active', 'team__subsidiary__city']
@@ -84,10 +84,10 @@ class UserProfileAdmin(admin.ModelAdmin):
     team_link.short_description = 'Tým'
 
 class UserProfileUnpaidAdmin(UserProfileAdmin):
-    list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city')
+    list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city', 'id', )
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'subsidiary', 'team_subsidiary_city', 'team_subsidiary_company',)
+    list_display = ('name', 'subsidiary', 'team_subsidiary_city', 'team_subsidiary_company', 'id', )
     search_fields = ['name', 'subsidiary__address', 'subsidiary__company__name']
     list_filter = ['subsidiary__city']
 
@@ -99,14 +99,14 @@ class TeamAdmin(admin.ModelAdmin):
 
     
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('trans_id', 'user', 'amount', 'pay_type', 'created', 'status')
+    list_display = ('trans_id', 'user', 'amount', 'pay_type', 'created', 'status', 'id', )
     fields = ('trans_id', 'user', 'amount', 'description', 'created', 'status', 'realized', 'pay_type', 'error', 'session_id')
 
     list_filter = ['status', 'pay_type']
 
 
 class VoucherAdmin(admin.ModelAdmin):
-    list_display = ('code', 'user')
+    list_display = ('code', 'user', 'id', )
     fields = ('code', 'user')
 
 class ChoiceInline(admin.TabularInline):
@@ -121,7 +121,7 @@ class AnswerAdmin(admin.ModelAdmin):
     pass
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('text', 'type', 'order', 'date', 'competition')
+    list_display = ('text', 'type', 'order', 'date', 'competition', 'id', )
     ordering = ('order', 'date',)
     list_filter = ('competition',)
     #fields = ('text', 'type', 'with_comment', 'order', 'date')
