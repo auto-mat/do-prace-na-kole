@@ -1,0 +1,12 @@
+{% load url from future %}{% autoescape off %}
+
+Váš kolega {{ user.userprofile.firstname }} {{ user.userprofile.surname }} vás žádá o účast v soutěži Do práce na kole ve vašem týmu {{user.userprofile.team.name}}.
+Jeho členství můžete potvrdit pomocí odkazu
+{% block reset_link %}
+{{ SITE_URL }}{% url 'dpnk.views.approve_team_membership' username=user.username%}
+{% endblock %}
+
+S pozdravem,
+Auto*Mat
+
+{% endautoescape %}

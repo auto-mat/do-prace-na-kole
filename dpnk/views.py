@@ -29,6 +29,7 @@ from django.db.models import Sum, Count
 # Registration imports
 import registration.signals, registration.backends
 # Model imports
+from django.contrib.auth.models import User
 from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company
 from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, TeamUserAdminForm
 from django.core.mail import send_mail
@@ -62,6 +63,15 @@ def must_be_approved_for_team(fn):
         else:
             return HttpResponse(u'Vaše členství v týmu "' + userprofile.team.name + u'" nebylo odsouhlaseno. Napište koordinátorovi vašeho týmu "' + unicode(userprofile.team.coordinator) + u'" na jeho email "' + unicode(userprofile.team.coordinator.user.email) + u'"', status=401)
     return wrapper
+
+def send_approval_request(request):
+    template = get_template('registration/approval_request_email.html')
+    email = request.user.userprofile.team.coordinator.user.email
+    message = template.render(Context({ 'user': request.user,
+        'SITE_URL': settings.SITE_URL,
+        'email': email
+        }))
+    send_mail('Do práce na kole - žádost o ověření členství', message, None, [email], fail_silently=False)
 
 def register(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
@@ -138,16 +148,18 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                 password=request.POST['password1'])
             django.contrib.auth.login(request, auth_user)
 
-            if new_user.userprofile.team.invitation_token == token:
+            if new_user.userprofile.team.invitation_token == token or not team_selected:
                 userprofile = new_user.userprofile
                 userprofile.approved_for_team = True
                 userprofile.save()
 
             if not team_selected:
                 team.coordinator = new_user.userprofile
-                team.approved_for_team = True
                 team.save()
                 successfull_url = "registration/invitations.html"
+
+            if new_user.userprofile.approved_for_team == False:
+                send_approval_request(request)
 
             return redirect(success_url)
     else:
@@ -728,6 +740,21 @@ def answers(request):
                                'stat': stat,
                                'total_respondents': total_respondents,
                                'choice_names': choice_names})
+
+@must_be_coordinator
+@login_required
+def approve_team_membership(request, username=None,
+             success_url=None, form_class=None,
+             template_name='registration/approved_for_team.html',
+             extra_context=None):
+    if username != None:
+        user = User.objects.get(username=username)
+        if request.user.userprofile.team == user.userprofile.team:
+            user.userprofile.approved_for_team = True
+            user.userprofile.save()
+            return render_to_response(template_name,
+                                      {'user': user,
+                                          })
 
 @login_required
 def invite(request, backend='registration.backends.simple.SimpleBackend',
