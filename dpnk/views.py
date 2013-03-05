@@ -30,11 +30,12 @@ from django.db.models import Sum, Count
 import registration.signals, registration.backends
 # Model imports
 from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company
-from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm
+from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, TeamUserAdminForm
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
 from django.conf import settings
+from  django.http import HttpResponse
 # Local imports
 import util
 
@@ -122,6 +123,7 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
 
             if not team_selected:
                 team.coordinator = new_user.userprofile
+                team.approved_for_team = True
                 team.save()
                 successfull_url = "registration/invitations.html"
 
@@ -155,8 +157,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                                'company_selected': company_selected,
                                'subsidiary_selected': subsidiary_selected,
                                'team_selected': team_selected,
-                               'token': token,
-                               'initial_email': initial_email,
                                   })
 
 
@@ -730,4 +730,44 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
         form = form_class()
     return render_to_response(template_name,
                               {'form': form,
+                                  })
+
+@login_required
+def team_admin(request, backend='registration.backends.simple.SimpleBackend',
+             success_url=None, form_class=None,
+             template_name='registration/team_admin.html',
+             extra_context=None):
+    team = request.user.userprofile.team
+    unapproved_users = []
+
+    if team.coordinator != request.user.userprofile:
+        return HttpResponse(u'Nejste koordinátorem týmu "' + team.name + u'", nemáte tedy oprávnění editovat jeho údaje. Uživatel: ' + unicode(request.user.userprofile), status=401)
+
+    form_class = TeamAdminForm
+
+    user_approved = False
+    for user in UserProfile.objects.filter(team = team, approved_for_team=False, active=True):
+        if request.POST.has_key('approve-' + str(user.id)):
+            user.approved_for_team = True
+            user.save()
+            user_approved = True
+
+    if request.method == 'POST' and not user_approved:
+        form = form_class(data=request.POST, instance = team)
+        if form.is_valid():
+            form.save()
+            print form
+            return redirect(success_url)
+    else:
+        form = form_class(instance = team)
+
+    for user in UserProfile.objects.filter(team = team, approved_for_team=False, active=True):
+        unapproved_users.append({'name':unicode(user),  'username':user.user, 'id':user.id})
+
+    team_members = UserProfile.objects.filter(team=team, active=True)
+
+    return render_to_response(template_name,
+                              {'form': form,
+                               'unapproved_users': unapproved_users,
+                                'team_members': ", ".join([str(p) for p in team_members]),
                                   })

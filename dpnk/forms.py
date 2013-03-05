@@ -112,7 +112,7 @@ class RegisterTeamForm(forms.ModelForm):
         fields = ('name',)
 
 class RegisterCompanyForm(forms.ModelForm):
-    #required_css_class = 'required'
+    required_css_class = 'required'
     error_css_class = 'error'
 
     class Meta:
@@ -120,7 +120,7 @@ class RegisterCompanyForm(forms.ModelForm):
         fields = ('name', )
     
 class RegisterSubsidiaryForm(forms.ModelForm):
-    #required_css_class = 'required'
+    required_css_class = 'required'
     error_css_class = 'error'
 
     class Meta:
@@ -146,3 +146,25 @@ class InviteForm(forms.Form):
     email4 = forms.EmailField(
         label="Kolega 4",
         required=False)
+
+class TeamAdminForm(forms.ModelForm):
+    required_css_class = 'required'
+    error_css_class = 'error'
+
+    class Meta:
+        model = Team
+        fields = ('name',)
+
+class TeamUserAdminForm(forms.ModelForm):
+    required_css_class = 'required'
+    error_css_class = 'error'
+
+    class Meta:
+        model = UserProfile
+        fields = ('firstname', 'surname', 'approved_for_team',)
+        readonly_fields = ('firstname', 'surname',)
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ['firstname', 'surname',]
+        else:
+            return []

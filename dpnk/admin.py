@@ -73,7 +73,7 @@ class CompetitionAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'competitor_type')
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city', 'id', )
+    list_display = ('firstname', 'surname', 'user', 'team', 'distance', 'email', 'date_joined', 'city', 'id', )
     inlines = [PaymentInline, VoucherInline]
     search_fields = ['firstname', 'surname']
     list_filter = ['active', 'team__subsidiary__city']
@@ -88,7 +88,7 @@ class UserProfileUnpaidAdmin(UserProfileAdmin):
 
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('name', 'subsidiary', 'team_subsidiary_city', 'team_subsidiary_company', 'id', )
-    search_fields = ['name', 'subsidiary__address', 'subsidiary__company__name']
+    search_fields = ['name', 'subsidiary__street', 'subsidiary__company__name']
     list_filter = ['subsidiary__city']
 
     readonly_fields = ['members']

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block body_id %}team_admin{% endblock %}
+{% block content %}
+<form method="post">{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Odeslat" />
+</form>
+Členové týmu:</th><td>{{ team_members }}
+
+<h3>Uživatelé, kteří se přihlásili k týmu, ale nebyly odsouhlaseni:</h3>
+<form method="post">{% csrf_token %}
+<table id="formset" class="form">
+{% for user in unapproved_users %}
+  {% if forloop.first %}
+  <thead><tr>
+    {% for field in user.keys %}
+    <th>{{ field|capfirst }}</th>
+    {% endfor %}
+  </tr></thead>
+  {% endif %}
+  <tr class="{% cycle row1,row2 %}">
+  {% for field in user.values %}
+    <td>
+     {% if forloop.last %}
+      <input type="submit" id="approve-{{field}}" name="approve-{{field}}" value="Přidat k týmu"/>
+     {% else %}
+      {{ field }}
+     {% endif %} 
+    </td>
+  {% endfor %}
+  </tr>
+{% endfor %}
+</table>
+</form>
+{% endblock %}
+

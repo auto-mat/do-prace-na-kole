@@ -19,7 +19,12 @@
 {% if payment_status == None %} Příspěvek dosud nezaplacen. <a href="/registrace/platba/">Zaplatit</a> {% endif %}
 </td></tr>
 </table>
-<a href="/registrace/upravit_profil/">Upravit údaje</a> | <a href="/registrace/zmena_hesla/">Změnit heslo</a> | <a href="/registrace/logout/">Odhlásit</a>
+<a href="/registrace/upravit_profil/">Upravit údaje</a> | 
+{% if team.coordinator == profile %}
+<a href="/registrace/team_admin/">Upravit tým</a> | 
+{% endif %}
+<a href="/registrace/zmena_hesla/">Změnit heslo</a> | 
+<a href="/registrace/logout/">Odhlásit</a>
 
 <h3>Moje jízdy</h3>
 
