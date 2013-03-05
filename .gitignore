@@ -2,4 +2,7 @@
 *.mo
 *.pyc
 *~
-
+dpnk/settings.py
+voucher/
+wp-content/
+sql/
