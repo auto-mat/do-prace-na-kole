@@ -138,8 +138,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                 password=request.POST['password1'])
             django.contrib.auth.login(request, auth_user)
 
-            print new_user.userprofile.team.invitation_token
-            print token
             if new_user.userprofile.team.invitation_token == token:
                 userprofile = new_user.userprofile
                 userprofile.approved_for_team = True
@@ -159,7 +157,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
 
         if token != None:
             team = Team.objects.get(invitation_token=token)
-            print team
             initial_company = team.subsidiary.company
             initial_subsidiary = team.subsidiary
             initial_team = team
@@ -749,7 +746,6 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
                         'SITE_URL': settings.SITE_URL,
                         'email': email
                         }))
-                    print message
                     send_mail('Do práce na kole - pozvánka', message, None, [email], fail_silently=False)
             return redirect(success_url)
     else:
@@ -779,7 +775,6 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
         form = form_class(data=request.POST, instance = team)
         if form.is_valid():
             form.save()
-            print form
             return redirect(success_url)
     else:
         form = form_class(instance = team)
