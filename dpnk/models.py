@@ -178,7 +178,10 @@ class UserProfile(models.Model):
         null=False,
         default='man')
     user = models.OneToOneField(
-        User, unique=True)
+        User,
+        related_name='userprofile',
+        unique=True,
+        )
     distance = models.PositiveIntegerField(
         verbose_name="Vzdálenost",
         null=False)

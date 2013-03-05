@@ -39,6 +39,30 @@ from  django.http import HttpResponse
 # Local imports
 import util
 
+#decorator
+def must_be_coordinator(fn):
+    @login_required
+    def wrapper(*args, **kwargs):
+        request = args[0]
+        team = request.user.userprofile.team
+        if team.coordinator != request.user.userprofile:
+            return HttpResponse(u'Nejste koordinátorem týmu "' + team.name + u'", nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je "' + unicode(team.coordinator) + u'", vy jste: "' + unicode(request.user.userprofile) + u'"', status=401)
+        else:
+            return fn(*args, **kwargs)
+    return wrapper
+
+#decorator
+def must_be_approved_for_team(fn):
+    @login_required
+    def wrapper(*args, **kwargs):
+        request = args[0]
+        userprofile = request.user.userprofile
+        if userprofile.approved_for_team:
+            return fn(*args, **kwargs)
+        else:
+            return HttpResponse(u'Vaše členství v týmu "' + userprofile.team.name + u'" nebylo odsouhlaseno. Napište koordinátorovi vašeho týmu "' + unicode(userprofile.team.coordinator) + u'" na jeho email "' + unicode(userprofile.team.coordinator.user.email) + u'"', status=401)
+    return wrapper
+
 def register(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
              disallowed_url='registration_disallowed',
@@ -366,6 +390,7 @@ def login(request):
             })
 
 @login_required
+@must_be_approved_for_team
 def profile(request):
 
     days = util.days()
@@ -534,6 +559,7 @@ def update_profile(request):
                               )
 
 @login_required
+@must_be_approved_for_team
 def questionaire(request, template = 'registration/questionaire.html'):
 
     def get_questions(params):
@@ -732,6 +758,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
                               {'form': form,
                                   })
 
+@must_be_coordinator
 @login_required
 def team_admin(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
@@ -739,10 +766,6 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
              extra_context=None):
     team = request.user.userprofile.team
     unapproved_users = []
-
-    if team.coordinator != request.user.userprofile:
-        return HttpResponse(u'Nejste koordinátorem týmu "' + team.name + u'", nemáte tedy oprávnění editovat jeho údaje. Uživatel: ' + unicode(request.user.userprofile), status=401)
-
     form_class = TeamAdminForm
 
     user_approved = False
