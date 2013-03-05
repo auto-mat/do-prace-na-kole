@@ -65,9 +65,18 @@ class CompanyAdmin(admin.ModelAdmin):
     subsidiaries.short_description = 'Pobočky'
 
 class SubsidiaryAdmin(admin.ModelAdmin):
-    list_display = ('address', 'company', 'city', 'id', )
+    list_display = ('address', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline,]
     list_filter = ['city']
+
+    readonly_fields = ['teams']
+    def teams_text(self, obj):
+        return mark_safe(" | ".join(['%s' % (str(u))
+                                  for u in Team.objects.filter(subsidiary=obj)]))
+    teams_text.short_description = 'Týmy'
+    def teams(self, obj):
+        return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/team/%d">%s</a>' % (u.id, str(u))
+                                  for u in Team.objects.filter(subsidiary=obj)]))
 
 class CompetitionAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'competitor_type')
