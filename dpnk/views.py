@@ -750,11 +750,15 @@ def approve_team_membership(request, username=None,
     if username != None:
         user = User.objects.get(username=username)
         if request.user.userprofile.team == user.userprofile.team:
+            yet_approved = user.userprofile.approved_for_team == True
             user.userprofile.approved_for_team = True
             user.userprofile.save()
             return render_to_response(template_name,
                                       {'user': user,
+                                       'yet_approved': yet_approved,
                                           })
+        else:
+            return HttpResponse(u'Nejste koordinátorem týmu "' + unicode(user.userprofile.team) + u'" jehož členem uživatel je "' + unicode(user.userprofile) + u'". Nemůžete mu tedy potvrdit členství', status=401)
 
 @login_required
 def invite(request, backend='registration.backends.simple.SimpleBackend',
