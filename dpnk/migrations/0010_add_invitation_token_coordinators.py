@@ -25,6 +25,19 @@ class Migration(DataMigration):
                 if len(team_users) > 0:
                     team.coordinator = orm['dpnk.UserProfile'].objects.filter(team=team)[0]
                     team.save()
+                else:
+                    subsidiary = team.subsidiary
+                    team.delete()
+                    if len(orm['dpnk.Team'].objects.filter(subsidiary=subsidiary)) == 0:
+                        company = subsidiary.company
+                        subsidiary.delete()
+                        if len(orm['dpnk.Subsidiary'].objects.filter(company=company)) == 0:
+                            company.delete()
+
+        # mask all emails
+        for userprofile in orm['dpnk.UserProfile'].objects.all():
+            userprofile.user.email = 'petr.dlouhy@email.cz'
+            userprofile.user.save()
 
     def backwards(self, orm):
         "Write your backwards methods here."
