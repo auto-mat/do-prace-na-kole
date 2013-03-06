@@ -58,7 +58,7 @@ def must_be_approved_for_team(fn):
     def wrapper(*args, **kwargs):
         request = args[0]
         userprofile = request.user.userprofile
-        if userprofile.approved_for_team:
+        if userprofile.approved_for_team or userprofile.team.coordinator == userprofile:
             return fn(*args, **kwargs)
         else:
             return HttpResponse(u'Vaše členství v týmu "' + userprofile.team.name + u'" nebylo odsouhlaseno. Napište koordinátorovi vašeho týmu "' + unicode(userprofile.team.coordinator) + u'" na jeho email "' + unicode(userprofile.team.coordinator.user.email) + u'"', status=401)
