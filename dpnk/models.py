@@ -101,7 +101,10 @@ class Subsidiary(models.Model):
         verbose_name="PSČ",
         null=False, blank=False)
     company = models.ForeignKey(
-          Company, null=False, blank=False)
+          Company, 
+          related_name="subsidiaries",
+          null=False, 
+          blank=False)
     city = models.ForeignKey(
           City, null=False, blank=False)
     def address(self):
@@ -130,6 +133,7 @@ class Team(models.Model):
     subsidiary = models.ForeignKey(
         Subsidiary,
         verbose_name="Pobočka",
+        related_name='teams',
         null=False,
         blank=False)
     coordinator = models.OneToOneField(
