@@ -27,6 +27,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.db.models import Q
+from django.core.exceptions import ValidationError
 # Python library imports
 import datetime
 # Local imports
@@ -109,6 +110,11 @@ class Subsidiary(models.Model):
     def __unicode__(self):
         return "%s" % self.address()
 
+def validate_length(value,min_length=25):
+    str_len = len(str(value))
+    if str_len<min_length:
+        raise ValidationError(u'The string should be longer than %s, but is %s characters long' % (min_length, str_len))
+
 class Team(models.Model):
     """Profil týmu"""
 
@@ -130,14 +136,18 @@ class Team(models.Model):
         'UserProfile',
         related_name = "coordinated_team",
         verbose_name = 'Koordinátor',
-        null=True, blank=True)
+        null=False,
+        blank=False,
+        unique=True,
+        )
     invitation_token = models.CharField(
         verbose_name="Token pro pozvánky",
         default=''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30)),
         max_length=100,
-        blank=True,
-        null=True,
-        unique=True
+        null=False,
+        blank=False,
+        unique=True,
+        validators = [validate_length],
         )
 
     def team_subsidiary_city(self):
@@ -148,6 +158,11 @@ class Team(models.Model):
 
     def __unicode__(self):
         return "%s / %s" % (self.name, self.subsidiary.company)
+
+    def save(self, force_insert=False, force_update=False):
+        if self.coordinator is not None and self.coordinator.team.id != self.id:
+            raise Exception("Koordinátor musí být členem koordinovaného týmu")
+        super(Team, self).save(force_insert, force_update)
 
 class UserProfile(models.Model):
     """Uživatelský profil"""
@@ -181,6 +196,8 @@ class UserProfile(models.Model):
         User,
         related_name='userprofile',
         unique=True,
+        null=False,
+        blank=False,
         )
     distance = models.PositiveIntegerField(
         verbose_name="Vzdálenost",
@@ -459,6 +476,7 @@ class ChoiceType(models.Model):
     class Meta:
         verbose_name = "Typ volby"
         verbose_name_plural = "Typ volby"
+        unique_together = (("competition", "name"),)
 
     competition = models.ForeignKey(Competition,
         null=False,

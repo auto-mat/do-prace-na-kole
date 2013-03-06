@@ -26,6 +26,7 @@ from django.utils.safestring import mark_safe
 from django.http import HttpResponseRedirect
 # Models
 from models import *
+from django.forms import ModelForm
 # -- ADMIN FORMS --
 
 class PaymentInline(admin.TabularInline):
@@ -95,8 +96,13 @@ class UserProfileAdmin(admin.ModelAdmin):
 class UserProfileUnpaidAdmin(UserProfileAdmin):
     list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city', 'id', )
 
+class TeamForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(TeamForm, self).__init__(*args, **kwargs)
+        self.fields['coordinator'].queryset = UserProfile.objects.filter(team=self.instance)
+
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'subsidiary', 'team_subsidiary_city', 'team_subsidiary_company', 'id', )
+    list_display = ('name', 'subsidiary', 'team_subsidiary_city', 'team_subsidiary_company', 'coordinator', 'id', )
     search_fields = ['name', 'subsidiary__street', 'subsidiary__company__name']
     list_filter = ['subsidiary__city']
 
@@ -105,6 +111,7 @@ class TeamAdmin(admin.ModelAdmin):
         return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
                                   for u in UserProfile.objects.filter(team=obj, active=True)]))
     members.short_description = 'Členové'
+    form = TeamForm
 
     
 class PaymentAdmin(admin.ModelAdmin):
@@ -139,7 +146,6 @@ class QuestionAdmin(admin.ModelAdmin):
     def choices(self, obj):
         return mark_safe("<br/>".join([choice.text for choice in obj.choice_type.choices.all()]) + '<br/><a href="/admin/admin/dpnk/choicetype/%d">edit</a>' % obj.choice_type.id )
 
-#admin.site.unregister(User)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(UserProfileUnpaid, UserProfileUnpaidAdmin)
 admin.site.register(Team, TeamAdmin)
@@ -152,6 +158,3 @@ admin.site.register(Subsidiary, SubsidiaryAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Competition, CompetitionAdmin)
 admin.site.register(Answer, AnswerAdmin)
-
-from django.contrib.auth.models import Group
-admin.site.unregister(Group)
