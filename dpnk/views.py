@@ -241,24 +241,6 @@ def create_profile(user, request, **kwargs):
                 ).save()
 registration.signals.user_registered.connect(create_profile)
 
-def register_team(request):
-    if request.method == 'POST':
-        form = RegisterTeamForm(request.POST)
-        if form.is_valid():
-            team = form.save(commit=False)
-            team.password = random.choice([l.strip() for l in open('slova.txt')])
-            form.save()
-            return render_to_response('registration/team_password.html', {
-                    'team_id': team.id,
-                    'team_name': team.name,
-                    'team_password': team.password
-                    })
-    else:
-        form = RegisterTeamForm()
-    return render_to_response('registration/register_team.html', {
-            'form': form,
-            })
-
 @login_required
 def payment(request):
     uid = request.user.id
