@@ -36,7 +36,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         show_all = False,
         auto_choose = True,
         label="Pobočka",
-        queryset=Team.objects.all(),
+        queryset=Subsidiary.objects.all(),
         required=True)
     team = ChainedModelChoiceField(
         chain_field = "subsidiary",
