@@ -52,7 +52,6 @@
 <form action="" method="post" class="registration-form">{% csrf_token %}
    {% for field in form %}
       {% if field.name == "company" %}
-         {{ company_selected }}
          <input type="radio" onclick="switchCompanyForm()" name="company_selected" id="company_selected_true" {% if company_selected %}checked{% endif %} value="True"/>
          <label for = "company_selected_true">
             Vyberte společnost ze seznamu:
