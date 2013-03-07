@@ -85,7 +85,7 @@ class CompetitionAdmin(admin.ModelAdmin):
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('firstname', 'surname', 'user', 'team', 'distance', 'email', 'date_joined', 'city', 'id', )
     inlines = [PaymentInline, VoucherInline]
-    search_fields = ['firstname', 'surname']
+    search_fields = ['firstname', 'surname', 'user__username']
     list_filter = ['active', 'team__subsidiary__city']
 
     readonly_fields = ['team_link']
