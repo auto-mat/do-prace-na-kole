@@ -6,7 +6,9 @@
 <form method="post">{% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Odeslat" />
+<a href="/registrace/profil">Zpět</a>
 </form>
+
 Členové týmu:</th><td>{{ team_members }}
 
 <h3>Uživatelé, kteří se přihlásili k týmu, ale nebyly odsouhlaseni:</h3>
@@ -24,7 +26,10 @@
   {% for field in user.values %}
     <td>
      {% if forloop.last %}
-      <input type="submit" id="approve-{{field}}" name="approve-{{field}}" value="Přidat k týmu"/>
+       {% if user.Stav == 'undecided' %}
+         <input type="submit" id="approve-{{field}}" name="approve-{{field}}" value="Přidat k týmu"/>
+         <input type="submit" id="deny-{{field}}" name="deny-{{field}}" value="Zamítnout členství v týmu"/>
+       {% endif %}
      {% else %}
       {{ field }}
      {% endif %} 

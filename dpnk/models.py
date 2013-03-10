@@ -184,6 +184,11 @@ class UserProfile(models.Model):
               ('XL', "XL"),
               ('XXL', "XXL"))
 
+    TEAMAPPROVAL = (('approved', "Odsouhlasený"),
+              ('undecided', "Nerozhodnutý"),
+              ('denied', "Zamítnutý"),
+              )
+
     firstname = models.CharField(
         verbose_name="Jméno",
         max_length=30, null=False)
@@ -227,9 +232,12 @@ class UserProfile(models.Model):
     libero = models.BooleanField(
         verbose_name="Libero",
         default=False)
-    approved_for_team = models.BooleanField(
-        verbose_name="Odsouhlasen týmem",
-        default=False)
+    approved_for_team = models.CharField(
+        verbose_name="Souhlas týmu",
+        choices=TEAMAPPROVAL,
+        max_length=16,
+        null=False,
+        default='undecided')
     t_shirt_size = models.CharField(
         verbose_name="Velikost trička",
         choices=TSHIRTSIZE,

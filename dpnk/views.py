@@ -58,7 +58,7 @@ def must_be_approved_for_team(fn):
     def wrapper(*args, **kwargs):
         request = args[0]
         userprofile = request.user.userprofile
-        if userprofile.approved_for_team or userprofile.team.coordinator == userprofile:
+        if userprofile.approved_for_team == 'approved' or userprofile.team.coordinator == userprofile:
             return fn(*args, **kwargs)
         else:
             return HttpResponse(u'Vaše členství v týmu "' + userprofile.team.name + u'" nebylo odsouhlaseno. Napište koordinátorovi vašeho týmu "' + unicode(userprofile.team.coordinator) + u'" na jeho email "' + unicode(userprofile.team.coordinator.user.email) + u'"', status=401)
@@ -150,7 +150,7 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
 
             if new_user.userprofile.team.invitation_token == token or not team_selected:
                 userprofile = new_user.userprofile
-                userprofile.approved_for_team = True
+                userprofile.approved_for_team = 'approved'
                 userprofile.save()
 
             if not team_selected:
@@ -158,7 +158,7 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                 team.save()
                 successfull_url = "registration/invitations.html"
 
-            if new_user.userprofile.approved_for_team == False:
+            if new_user.userprofile.approved_for_team != 'approved':
                 send_approval_request(request)
 
             return redirect(success_url)
@@ -732,8 +732,8 @@ def approve_team_membership(request, username=None,
     if username != None:
         user = User.objects.get(username=username)
         if request.user.userprofile.team == user.userprofile.team:
-            yet_approved = user.userprofile.approved_for_team == True
-            user.userprofile.approved_for_team = True
+            yet_approved = user.userprofile.approved_for_team == 'approved'
+            user.userprofile.approved_for_team = 'approved'
             user.userprofile.save()
             return render_to_response(template_name,
                                       {'user': user,
@@ -778,9 +778,13 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
     form_class = TeamAdminForm
 
     user_approved = False
-    for user in UserProfile.objects.filter(team = team, approved_for_team=False, active=True):
+    for user in UserProfile.objects.filter(team = team, approved_for_team='undecided', active=True):
         if request.POST.has_key('approve-' + str(user.id)):
-            user.approved_for_team = True
+            user.approved_for_team = 'approved'
+            user.save()
+            user_approved = True
+        if request.POST.has_key('deny-' + str(user.id)):
+            user.approved_for_team = 'denied'
             user.save()
             user_approved = True
 
@@ -792,8 +796,8 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
     else:
         form = form_class(instance = team)
 
-    for user in UserProfile.objects.filter(team = team, approved_for_team=False, active=True):
-        unapproved_users.append({'name':unicode(user),  'username':user.user, 'id':user.id})
+    for user in UserProfile.objects.filter(team = team, active=True):
+        unapproved_users.append({'Jméno':unicode(user),  'Uživatelské jménu':user.user, 'Stav':user.get_approved_for_team_display(), '':user.id})
 
     team_members = UserProfile.objects.filter(team=team, active=True)
 
