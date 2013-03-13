@@ -848,7 +848,14 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
         form = form_class(instance = team)
 
     for user in UserProfile.objects.filter(team = team, active=True):
-        unapproved_users.append({'Jméno':unicode(user),  'Uživatelské jménu':user.user, 'Stav':user.get_approved_for_team_display(), '':user.id})
+        unapproved_users.append({
+            'name': (u'Jméno', unicode(user)),
+            'username': (u'Uživatel', user.user),
+            'state_name': (u'Stav', unicode(user.get_approved_for_team_display())),
+            'id': (None, user.id),
+            'state': (None, user.approved_for_team),
+            })
+        print unapproved_users
 
     team_members = UserProfile.objects.filter(team=team, active=True)
 
