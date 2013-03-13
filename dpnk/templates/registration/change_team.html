@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block body_id %}team_admin{% endblock %}
+{% block content %}
+Upozornění: změna týmu znamená, že koordinátor nového týmu vás bude muset odsouhlasit.
+<form method="post">{% csrf_token %}
+{{ form.as_p }}
+</form>
+{% endblock %}
+

@@ -156,7 +156,7 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             if not team_selected:
                 team.coordinator = new_user.userprofile
                 team.save()
-                successfull_url = "registration/invitations.html"
+                success_url = "/registrace/pozvanky"
 
             if new_user.userprofile.approved_for_team != 'approved':
                 send_approval_request(request)
@@ -536,15 +536,63 @@ def results(request, template):
             })
 
 @login_required
-def update_profile(request):
+def update_profile(request,
+            success_url = '/registrace/profil/'
+                  ):
+    create_team = False
     profile = UserProfile.objects.get(user=request.user)
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, instance=profile)
-        if form.is_valid():
+        form_team = RegisterTeamForm(request.POST, prefix = "team")
+        create_team = 'id_team_selected' in request.POST
+        team_valid = True
+
+        if create_team:
+            team_valid = form_team.is_valid()
+            form.fields['team'].required = False
+            form.Meta.exclude = ('team')
+        else:
+            form_team = RegisterTeamForm(prefix = "team")
+            form.fields['team'].required = True
+            form.Meta.exclude = ()
+
+        form_valid = form.is_valid()
+
+        if team_valid and form_valid:
+            userprofile = form.save(commit=False)
+
+            if create_team:
+                team = form_team.save(commit=False)
+                team.subsidiary = request.user.userprofile.team.subsidiary
+
+                userprofile.team = team
+                userprofile.coordinated_team = team
+                userprofile.approved_for_team = 'approved'
+                team.coordinator = userprofile
+
+                form_team.save()
+
+                userprofile.team = team
+                success_url = "/registrace/pozvanky"
+                request.session['success_url'] = '/registrace/profil'
+
+            if request.user.userprofile.team != form.cleaned_data['team'] and not create_team:
+                userprofile.approved_for_team = 'undecided'
+
             form.save()
-            return redirect('/registrace/profil/')
+
+            if userprofile.approved_for_team != 'approved':
+                send_approval_request(request)
+
+            return redirect(success_url)
     else:
         form = ProfileUpdateForm(instance=profile)
+        form_team = RegisterTeamForm(prefix = "team")
+
+    form.fields['team'].widget.underlying_form = form_team
+    form.fields['team'].widget.create_team = create_team
+    if request.user.userprofile.team.coordinator == request.user.userprofile:
+        del form.fields["team"]
     return render_to_response('registration/update_profile.html',
                               {'form': form}
                               )
@@ -748,6 +796,9 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
              template_name='registration/invitation.html',
              extra_context=None):
     form_class = InviteForm
+
+    if 'success_url' in request.session:
+        success_url = request.session.get('success_url')
 
     if request.method == 'POST':
         form = form_class(data=request.POST)

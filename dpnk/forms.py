@@ -5,13 +5,12 @@ from django import forms, http
 # Registration imports
 import registration.forms
 from models import UserProfile, Company, Subsidiary, Team
+from django.db.models import Q
+from dpnk.widgets import SelectOrCreate
 
-class ProfileUpdateForm(forms.ModelForm):
-
-    class Meta:
-        model = UserProfile
-        fields = ('firstname', 'surname', 'telephone', 't_shirt_size')
-    
+def team_full(data):
+    if len(UserProfile.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, active=True)) >= 5:
+        raise forms.ValidationError("Tento tým již má pět členů a je tedy plný")
 
 class RegistrationFormDPNK(registration.forms.RegistrationForm):
     required_css_class = 'required'
@@ -93,8 +92,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
 
     def clean_team(self):
         data = self.cleaned_data['team']
-        if len(UserProfile.objects.filter(team=data, active=True)) >= 5:
-            raise forms.ValidationError("Tento tým již má pět členů a je tedy plný")
+        team_full(data)
         return data
 
     class Meta:
@@ -168,3 +166,27 @@ class TeamUserAdminForm(forms.ModelForm):
             return ['firstname', 'surname',]
         else:
             return []
+
+class ProfileUpdateForm(forms.ModelForm):
+    team = forms.ModelChoiceField(
+        label="Tým",
+        queryset= [],
+        widget=SelectOrCreate(RegisterTeamForm, new_description = u"Chci si založit nový tým, ve kterém budu koordinátorem"),
+        empty_label=None,
+        required=True)
+
+    def clean_team(self):
+        data = self.cleaned_data['team']
+        if type(data) != RegisterTeamForm:
+            if data != self.instance.team:
+                team_full(data)
+        return data
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileUpdateForm, self).__init__(*args, **kwargs)
+        userprofile = kwargs['instance']
+        self.fields["team"].queryset = Team.objects.filter(subsidiary__company=userprofile.team.subsidiary.company)
+
+    class Meta:
+        model = UserProfile
+        fields = ('firstname', 'surname', 'telephone', 't_shirt_size', 'team')

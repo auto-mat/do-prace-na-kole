@@ -1,10 +1,21 @@
 {% extends "base.html" %}
 {% load url from future %}
 
+{% block body_id %}update_profile{% endblock %}
 {% block content %}
 <form action="/registrace/upravit_profil/" method="post">{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Upravit" /><input type="button" value="Zpět" onclick="javascript:history.back(-1)"/>
+{% for field in form %}
+   {% if field.name == "team" %}
+      <h5>Upozornění: Změna týmu vyžaduje, aby koordinátor nového týmu schválil vaše členství. V případě návratu do původního týmu je taktéž vyžadováno schválení týmem.</h5>
+   {% endif %}
+   <div id="{{field.name}}_div">
+       {{ field.errors }}
+       {{ field.label_tag }}
+       {{ field }}
+   </div>
+{% endfor %}
+<input type="submit" value="Upravit" />
+<a href="/registrace/profil">Zpět</a>
 </form>
 {% endblock %}
 

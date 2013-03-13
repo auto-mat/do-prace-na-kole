@@ -140,8 +140,11 @@ class Team(models.Model):
         'UserProfile',
         related_name = "coordinated_team",
         verbose_name = 'Koordinátor',
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
+        #TODO:
+        #null=False,
+        #blank=False,
         unique=True,
         )
     invitation_token = models.CharField(
@@ -164,16 +167,16 @@ class Team(models.Model):
         return "%s / %s" % (self.name, self.subsidiary.company)
 
     def save(self, force_insert=False, force_update=False):
-        if self.coordinator is not None and self.coordinator.team.id != self.id:
-            raise Exception("Koordinátor musí být členem koordinovaného týmu")
+        if self.coordinator_id is not None and self.coordinator is not None and self.coordinator.team.id != self.id:
+            raise Exception("Nový koordinátor %s není členem týmu %s" % (self.coordinator, self))
         super(Team, self).save(force_insert, force_update)
 
 class UserProfile(models.Model):
     """Uživatelský profil"""
 
     class Meta:
-        verbose_name = "Uživatel"
-        verbose_name_plural = "Uživatelé"
+        verbose_name = u"Uživatel"
+        verbose_name_plural = u"Uživatelé"
 
     GENDER = (('man', "Muž"),
               ('woman', "Žena"))
@@ -185,7 +188,7 @@ class UserProfile(models.Model):
               ('XXL', "XXL"))
 
     TEAMAPPROVAL = (('approved', "Odsouhlasený"),
-              ('undecided', "Nerozhodnutý"),
+              ('undecided', "Nerozhodnuto"),
               ('denied', "Zamítnutý"),
               )
 
