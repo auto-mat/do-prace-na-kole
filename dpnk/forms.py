@@ -161,6 +161,19 @@ class TeamUserAdminForm(forms.ModelForm):
         else:
             return []
 
+class PaymentTypeForm(forms.Form):
+    CHOICES=[('pay',u'Účastnický poplatek si platím sám.'),
+             ('company',u'Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.'),
+             ('member',u'Jsem členem klubu přátel Auto*mat nebo se jím hodlám stát.')
+             ]
+
+    payment_type = forms.ChoiceField(
+            label='Typ platby',
+            choices=CHOICES,
+            widget=forms.RadioSelect(),
+            )
+
+
 class ProfileUpdateForm(forms.ModelForm):
     team = forms.ModelChoiceField(
         label="Tým",

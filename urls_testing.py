@@ -1,4 +1,6 @@
 from django.conf.urls.defaults import *
+from django.conf.urls.static import static
+from django.conf import settings
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -10,11 +12,11 @@ from registration.views import register
 urlpatterns = patterns('',
                        url(r'^admin/admin/', include(admin.site.urls)),
                        url(r'^registrace/registrace/$', 'dpnk.views.register',
-                           {'success_url': '/registrace/platba/'}),
+                           {'success_url': '/registrace/pozvanky/'}),
                        url(r'^registrace/registrace/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>[^&]+)$$', 'dpnk.views.register',
-                           {'success_url': '/registrace/platba/'}),
+                           {'success_url': '/registrace/pozvanky/'}),
                        url(r'^registrace/pozvanky/$', 'dpnk.views.invite',
-                           {'success_url': '/registrace/platba/'}),
+                           {'success_url': '/registrace/typ_platby/'}),
                        url(r'^registrace/auto_registrace/$', 'dpnk.views.auto_register',
                            {'success_url': '/mesto/praha/'}),
                        url(r'^registrace/login/$', 'django.contrib.auth.views.login'),
@@ -34,6 +36,7 @@ urlpatterns = patterns('',
                            {'template': 'registration/company_survey.html'}),
                        url(r'^registrace/upravit_profil/$', 'dpnk.views.update_profile'),
                        url(r'^registrace/logout/$', 'django.contrib.auth.views.logout'),
+                       url(r'^registrace/typ_platby/$', 'dpnk.views.payment_type'),
                        url(r'^registrace/platba/$', 'dpnk.views.payment'),
                        url(r'^registrace/platba_uspesna/$', 'dpnk.views.payment_result',
                            {'success': True}),
@@ -49,5 +52,6 @@ urlpatterns = patterns('',
                        url(r'^registrace/cyklozamestnavatel_odpovedi/$', 'dpnk.views.company_survey_answers'),
                        url(r'^registrace/odpovedi/$', 'dpnk.views.answers'),
                        url(r'^registrace/chaining/', include('smart_selects.urls')),
-                       )
+                       ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 

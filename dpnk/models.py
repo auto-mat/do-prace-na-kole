@@ -276,7 +276,9 @@ class UserProfile(models.Model):
         verbose_name="Motivační text aspiranta na firemního admina",
         default="",
         max_length=5000,
-        null=False)
+        null=True,
+        blank=True,
+        )
 
     def person_name(self):
         return "%s %s" % (self.firstname, self.surname)
@@ -361,6 +363,7 @@ class Payment(models.Model):
         ('t', 'testovací platba'),
         ('fa', 'faktura mimo PayU'),
         ('fc', 'firma platí fakturou'),
+        ('am', 'člen klubu přátel Auto*matu'),
         )
 
     class Meta:

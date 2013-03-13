@@ -31,7 +31,7 @@ import registration.signals, registration.backends
 # Model imports
 from django.contrib.auth.models import User
 from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company
-from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, TeamUserAdminForm
+from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, TeamUserAdminForm, PaymentTypeForm
 from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.template import Context
@@ -156,7 +156,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             if not team_selected:
                 team.coordinator = new_user.userprofile
                 team.save()
-                success_url = "/registrace/pozvanky"
 
             if new_user.userprofile.approved_for_team != 'approved':
                 send_approval_request(request)
@@ -240,6 +239,31 @@ def create_profile(user, request, **kwargs):
                 distance = request.POST['distance']
                 ).save()
 registration.signals.user_registered.connect(create_profile)
+
+@login_required
+def payment_type(request):
+    template_name='registration/payment_type.html'
+    form_class = PaymentTypeForm
+    print request.POST
+    print request.method
+
+    if request.method == 'POST':
+        form = form_class(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            if form.cleaned_data['payment_type'] == 'pay':
+                return redirect('/registrace/platba')
+            elif form.cleaned_data['payment_type'] == 'company':
+                Payment(user=request.user.userprofile, amount=0, pay_type='fc').save()
+            elif form.cleaned_data['payment_type'] == 'member':
+                Payment(user=request.user.userprofile, amount=0, pay_type='am').save()
+
+            return redirect('/registrace/profil')
+    else:
+        form = form_class()
+
+    print form
+    return render_to_response(template_name,
+                              {'form': form})
 
 @login_required
 def payment(request):

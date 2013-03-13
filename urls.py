@@ -1,4 +1,6 @@
 from django.conf.urls.defaults import *
+from django.conf.urls.static import static
+from django.conf import settings
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -10,11 +12,11 @@ from registration.views import register
 urlpatterns = patterns('',
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^registrace/$', 'dpnk.views.register',
-                           {'success_url': '/registrace/platba/'}),
+                           {'success_url': '/registrace/pozvanky/'}),
                        url(r'^registrace/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>[^&]+)$$', 'dpnk.views.register',
-                           {'success_url': '/registrace/platba/'}),
+                           {'success_url': '/registrace/pozvanky/'}),
                        url(r'^pozvanky/$', 'dpnk.views.invite',
-                           {'success_url': '/registrace/platba/'}),
+                           {'success_url': '/registrace/typ_platby/'}),
                        url(r'^auto_registrace/$', 'dpnk.views.auto_register',
                            {'success_url': '/mesto/praha/'}),
                        url(r'^login/$', 'django.contrib.auth.views.login'),
@@ -34,6 +36,7 @@ urlpatterns = patterns('',
                            {'template': 'registration/company_survey.html'}),
                        url(r'^upravit_profil/$', 'dpnk.views.update_profile'),
                        url(r'^logout/$', 'django.contrib.auth.views.logout'),
+                       url(r'^typ_platby/$', 'dpnk.views.payment_type'),
                        url(r'^platba/$', 'dpnk.views.payment'),
                        url(r'^platba_uspesna/$', 'dpnk.views.payment_result',
                            {'success': True}),
