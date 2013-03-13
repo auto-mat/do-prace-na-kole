@@ -28,10 +28,56 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.db.models import Q
 from django.core.exceptions import ValidationError
+from composite_field import CompositeField
 # Python library imports
 import datetime
 # Local imports
 import util
+
+class Address(CompositeField):
+    street = models.CharField(
+        verbose_name="Ulice",
+        default="",
+        max_length=50,
+        null=False,
+        )
+    street_number = models.CharField(
+        verbose_name="Číslo domu",
+        default="",
+        max_length=10,
+        null=False,
+        blank=False,
+        )
+    recipient = models.CharField(
+        verbose_name="Adresát",
+        default="",
+        max_length=50,
+        null=False,
+        blank=False,
+        )
+    district = models.CharField(
+        verbose_name="Městská část",
+        default="",
+        max_length=50,
+        null=False,
+        blank=False,
+        )
+    psc = models.IntegerField(
+        verbose_name="PSČ",
+        default=0,
+        null=False,
+        blank=False,
+        )
+    city = models.CharField(
+        verbose_name="Adresní město",
+        default="",
+        max_length=50,
+        null=False,
+        blank=False,
+        )
+
+    def __unicode__(self):
+        return "%s, %s %s, %s, %s, %s" % (self.recipient, self.street, self.street_number, self.district, self.psc, self.city)
 
 class City(models.Model):
     """Město"""
@@ -74,6 +120,11 @@ class Company(models.Model):
         verbose_name = "Firemní admin",
         null=True,
         blank=True)
+    invoice_address = Address()
+    ico = models.PositiveIntegerField(
+        default=0,
+        verbose_name="IČO",
+        null=False)
 
     def __unicode__(self):
         return "%s" % self.name
@@ -85,33 +136,19 @@ class Subsidiary(models.Model):
         verbose_name = "Pobočka"
         verbose_name_plural = "Pobočky"
 
-    street = models.CharField(
-        verbose_name="Ulice",
-        max_length=50, null=False)
-    street_number = models.CharField(
-        verbose_name="Číslo domu",
-        max_length=10, null=False, blank=False)
-    recipient = models.CharField(
-        verbose_name="Adresát",
-        max_length=50, null=False, blank=False)
-    district = models.CharField(
-        verbose_name="Městská část",
-        max_length=50, null=False, blank=False)
-    PSC = models.IntegerField(
-        verbose_name="PSČ",
-        null=False, blank=False)
+    address = Address()
     company = models.ForeignKey(
           Company, 
           related_name="subsidiaries",
           null=False, 
           blank=False)
     city = models.ForeignKey(
-          City, null=False, blank=False)
-    def address(self):
-        return "%s, %s %s, %s, %s, %s" % (self.recipient, self.street, self.street_number, self.district, self.PSC, self.city)
+          City, 
+          verbose_name="Soutěžní město",
+          null=False, blank=False)
 
     def __unicode__(self):
-        return "%s" % self.address()
+        return "%s, %s %s, %s, %s, %s" % (self.address.recipient, self.address.street, self.address.street_number, self.address.district, self.address.psc, self.address.city)
 
 def validate_length(value,min_length=25):
     str_len = len(str(value))
@@ -178,9 +215,6 @@ class UserProfile(models.Model):
         verbose_name = u"Uživatel"
         verbose_name_plural = u"Uživatelé"
 
-    GENDER = (('man', "Muž"),
-              ('woman', "Žena"))
-
     TSHIRTSIZE = (('S', "S"),
               ('M', "M"),
               ('L', "L"),
@@ -198,12 +232,6 @@ class UserProfile(models.Model):
     surname = models.CharField(
         verbose_name="Příjmení",
         max_length=30, null=False)
-    gender = models.CharField(
-        verbose_name="Pohlaví",
-        choices=GENDER,
-        max_length=16,
-        null=False,
-        default='man')
     user = models.OneToOneField(
         User,
         related_name='userprofile',
@@ -232,9 +260,6 @@ class UserProfile(models.Model):
     company_admin_unapproved = models.BooleanField(
         verbose_name="Správcovství organizace není schváleno",
         default=True)
-    libero = models.BooleanField(
-        verbose_name="Libero",
-        default=False)
     approved_for_team = models.CharField(
         verbose_name="Souhlas týmu",
         choices=TEAMAPPROVAL,
@@ -247,6 +272,11 @@ class UserProfile(models.Model):
         max_length=16,
         null=False,
         default='L')
+    motivation_company_admin = models.TextField(
+        verbose_name="Motivační text aspiranta na firemního admina",
+        default="",
+        max_length=5000,
+        null=False)
 
     def person_name(self):
         return "%s %s" % (self.firstname, self.surname)

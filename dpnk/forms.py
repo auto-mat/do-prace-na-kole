@@ -50,11 +50,6 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
     distance = forms.IntegerField(
         label="Vzdálenost z domova do práce vzdušnou čarou (v km)",
         required=True)
-    gender = forms.ChoiceField(
-        label="Pohlaví",
-        choices = UserProfile.GENDER,
-        initial = "men",
-        )
     t_shirt_size = forms.ChoiceField(
         label="Velikost trička",
         choices = UserProfile.TSHIRTSIZE,
@@ -81,7 +76,6 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
             'subsidiary',
             'team',
             'distance',
-            'gender',
             't_shirt_size',
             'email',
             'telephone',
@@ -123,7 +117,7 @@ class RegisterSubsidiaryForm(forms.ModelForm):
 
     class Meta:
         model = Subsidiary
-        fields = ('street', 'street_number', 'recipient', 'district', 'PSC', 'city')
+        fields = ('address_street', 'address_street_number', 'address_recipient', 'address_district', 'address_psc', 'address_city', 'city')
 
 class InviteForm(forms.Form):
     required_css_class = 'required'

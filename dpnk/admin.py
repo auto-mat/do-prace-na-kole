@@ -55,27 +55,28 @@ class CityAdmin(admin.ModelAdmin):
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ('name', 'subsidiaries_text', 'id', )
     inlines = [SubsidiaryInline,]
-    readonly_fields = ['subsidiaries']
+    readonly_fields = ['subsidiary_links']
+    search_fields = ('name',)
     def subsidiaries_text(self, obj):
         return mark_safe(" | ".join(['%s' % (str(u))
                                   for u in Subsidiary.objects.filter(company=obj)]))
     subsidiaries_text.short_description = 'Pobočky'
-    def subsidiaries(self, obj):
+    def subsidiary_links(self, obj):
         return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/subsidiary/%d">%s</a>' % (u.id, str(u))
                                   for u in Subsidiary.objects.filter(company=obj)]))
-    subsidiaries.short_description = 'Pobočky'
+    subsidiary_links.short_description = 'Pobočky'
 
 class SubsidiaryAdmin(admin.ModelAdmin):
-    list_display = ('address', 'company', 'city', 'teams_text', 'id', )
+    list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline,]
     list_filter = ['city']
 
-    readonly_fields = ['teams']
+    readonly_fields = ['team_links']
     def teams_text(self, obj):
         return mark_safe(" | ".join(['%s' % (str(u))
                                   for u in Team.objects.filter(subsidiary=obj)]))
     teams_text.short_description = 'Týmy'
-    def teams(self, obj):
+    def team_links(self, obj):
         return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/team/%d">%s</a>' % (u.id, str(u))
                                   for u in Team.objects.filter(subsidiary=obj)]))
 
