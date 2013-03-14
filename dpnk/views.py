@@ -32,7 +32,7 @@ import registration.signals, registration.backends
 # Model imports
 from django.contrib.auth.models import User
 from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company
-from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, TeamUserAdminForm, PaymentTypeForm
+from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, TeamUserAdminForm, PaymentTypeForm
 from django.conf import settings
 from  django.http import HttpResponse
 # Local imports
@@ -186,38 +186,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                                }, context_instance=RequestContext(request))
 
 
-
-# Temporary to allow mass XLS registrations
-def auto_register(request, backend='registration.backends.simple.SimpleBackend',
-                  success_url=None, form_class=None,
-                  disallowed_url='registration_disallowed',
-                  template_name='registration/auto_registration_form.html',
-                  extra_context=None):
-
-    backend = registration.backends.get_backend(backend)
-    form_class = AutoRegistrationFormDPNK
-
-    if request.method == 'POST':
-        form = form_class(data=request.POST, files=request.FILES)
-        if form.is_valid():
-            new_user = backend.register(request, **form.cleaned_data)
-            order_id = '%s-1' % new_user.id
-            session_id = "%sJ%d " % (order_id, int(time.time()))
-            p = Payment(user=new_user.get_profile(), pay_type='fa', status='99',
-                        amount=160, order_id=order_id, session_id=session_id,
-                        realized=datetime.datetime.now())
-            p.save()
-            auth_user = django.contrib.auth.authenticate(
-                username=request.POST['username'],
-                password=request.POST['password1'])
-            django.contrib.auth.login(request, auth_user)
-            return redirect('/mesto/praha/') # Redirect after POST
-    else:
-        form = form_class(request)
-
-    return render_to_response(template_name,
-                              {'form': form
-                               }, context_instance=RequestContext(request))
 
 def create_profile(user, request, **kwargs):
     from dpnk.models import UserProfile

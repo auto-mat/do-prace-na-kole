@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
-from dpnk.views import RegistrationFormDPNK, AutoRegistrationFormDPNK
+from dpnk.views import RegistrationFormDPNK
 from registration.views import register
 
 urlpatterns = patterns('',
@@ -17,8 +17,6 @@ urlpatterns = patterns('',
                            {'success_url': '/registrace/typ_platby/'}),
                        url(r'^registrace/pozvanky/$', 'dpnk.views.invite',
                            {'success_url': '/registrace/typ_platby/'}),
-                       url(r'^registrace/auto_registrace/$', 'dpnk.views.auto_register',
-                           {'success_url': '/mesto/praha/'}),
                        url(r'^registrace/zaslat_zadost_clenstvi/$', 'dpnk.views.team_approval_request'),
                        url(r'^registrace/login/$', 'django.contrib.auth.views.login'),
                        url(r'^registrace/zmena_hesla/$', 'django.contrib.auth.views.password_change'),

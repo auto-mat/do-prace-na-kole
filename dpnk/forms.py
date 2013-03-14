@@ -92,9 +92,6 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
     class Meta:
         model = UserProfile
 
-class AutoRegistrationFormDPNK(RegistrationFormDPNK):
-    pass
-
 class RegisterTeamForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
