@@ -25,6 +25,7 @@ import django.contrib.auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.mail import EmailMessage
+from django.template import RequestContext
 from django.db.models import Sum, Count
 # Registration imports
 import registration.signals, registration.backends
@@ -183,7 +184,7 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                                'company_selected': company_selected,
                                'subsidiary_selected': subsidiary_selected,
                                'team_selected': team_selected,
-                                  })
+                               }, context_instance=RequestContext(request))
 
 
 
@@ -216,7 +217,8 @@ def auto_register(request, backend='registration.backends.simple.SimpleBackend',
         form = form_class(request)
 
     return render_to_response(template_name,
-                              {'form': form})
+                              {'form': form
+                               }, context_instance=RequestContext(request))
 
 def create_profile(user, request, **kwargs):
     from dpnk.models import UserProfile
@@ -257,7 +259,8 @@ def payment_type(request):
 
     print form
     return render_to_response(template_name,
-                              {'form': form})
+                              {'form': form
+                               }, context_instance=RequestContext(request))
 
 @login_required
 def payment(request):
@@ -284,7 +287,7 @@ def payment(request):
             'order_id' : p.order_id,
             'client_ip': request.META['REMOTE_ADDR'],
             'session_id': session_id
-            })
+             }, context_instance=RequestContext(request))
 
 def payment_result(request, success):
     trans_id = request.GET['trans_id']
@@ -316,7 +319,7 @@ def payment_result(request, success):
             'pay_type': pay_type,
             'message': msg,
             'city': city
-            })
+            }, context_instance=RequestContext(request))
 
 def make_sig(values):
     key1 = 'eac82603809d388f6a2b8b11471f1805'
@@ -396,7 +399,7 @@ def login(request):
                               {
             'pay_type': pay_type,
             'message': msg
-            })
+            }, context_instance=RequestContext(request))
 
 @login_required
 def profile(request):
@@ -523,7 +526,7 @@ def profile(request):
             'company_survey_by': company_survey_by,
             'competition_state': settings.COMPETITION_STATE,
             'approved_for_team': request.user.userprofile.approved_for_team,
-            })
+            }, context_instance=RequestContext(request))
 
 def results(request, template):
 
@@ -553,7 +556,7 @@ def results(request, template):
             'city': city,
             'user_count': user_count,
             'team_count': team_count,
-            })
+            }, context_instance=RequestContext(request))
 
 @login_required
 def update_profile(request,
@@ -616,8 +619,8 @@ def update_profile(request,
     #if request.user.userprofile.team.coordinator == request.user.userprofile:
     #    del form.fields["team"]
     return render_to_response('registration/update_profile.html',
-                              {'form': form}
-                              )
+                              {'form': form
+                               }, context_instance=RequestContext(request))
 
 @login_required
 @must_be_approved_for_team
@@ -695,14 +698,15 @@ def questionaire(request, template = 'registration/questionaire.html'):
                                   {'user': request.user.get_profile(),
                                    'questions': questions,
                                    'questionaire': questionaire,
-                                   'day': request.GET.get('day', '')}
-                                  )
+                                   'day': request.GET.get('day', '')
+                                   }, context_instance=RequestContext(request))
 
 @staff_member_required
 def questions(request):
     questions = Question.objects.all().order_by('date')
     return render_to_response('admin/questions.html',
-                              {'questions': questions})
+                              {'questions': questions
+                               }, context_instance=RequestContext(request))
 
 def _company_answers(uid):
     return Answer.objects.filter(user_id=uid,
@@ -725,7 +729,8 @@ def company_survey(request):
                  set([a.user for a in Answer.objects.filter(
                     question__in=Question.objects.filter(questionaire='company'))])]
     return render_to_response('admin/company_survey.html',
-                              {'companies': sorted(companies, key = lambda c: c[4], reverse=True)})
+                              {'companies': sorted(companies, key = lambda c: c[4], reverse=True)
+                               }, context_instance=RequestContext(request))
 
 def company_survey_answers(request):
     answers = _company_answers(request.GET['uid'])
@@ -734,7 +739,8 @@ def company_survey_answers(request):
     return render_to_response('admin/company_survey_answers.html',
                               {'answers': answers,
                                'team': team,
-                               'total_points': total_points})
+                               'total_points': total_points
+                               }, context_instance=RequestContext(request))
 
 
 @staff_member_required
@@ -791,7 +797,8 @@ def answers(request):
                                'answers': sorted(answers, key=lambda a: a.city),
                                'stat': stat,
                                'total_respondents': total_respondents,
-                               'choice_names': choice_names})
+                               'choice_names': choice_names
+                               }, context_instance=RequestContext(request))
 
 @must_be_coordinator
 @login_required
@@ -808,7 +815,7 @@ def approve_team_membership(request, username=None,
                     'user': user,
                     'state': user.userprofile.approved_for_team,
                     'action': False,
-                    })
+                    }, context_instance=RequestContext(request))
             if approval == 'True':
                 user.userprofile.approved_for_team = 'approved'
                 user.userprofile.save()
@@ -821,14 +828,15 @@ def approve_team_membership(request, username=None,
                 'user': user,
                 'state': user.userprofile.approved_for_team,
                 'action': True,
-                })
+                }, context_instance=RequestContext(request))
         else:
             return HttpResponse(u'Nejste koordinátorem týmu "' + unicode(user.userprofile.team) + u'" jehož členem uživatel je "' + unicode(user.userprofile) + u'". Nemůžete mu tedy potvrdit členství', status=401)
 
 @login_required
 def team_approval_request(request):
     approval_request_mail(request.user)
-    return render_to_response('registration/request_team_approval.html')
+    return render_to_response('registration/request_team_approval.html',
+                              context_instance=RequestContext(request))
 
 @login_required
 def invite(request, backend='registration.backends.simple.SimpleBackend',
@@ -849,7 +857,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
         form = form_class()
     return render_to_response(template_name,
                               {'form': form,
-                                  })
+                              }, context_instance=RequestContext(request))
 
 @must_be_coordinator
 @login_required
@@ -898,4 +906,4 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
                               {'form': form,
                                'unapproved_users': unapproved_users,
                                 'team_members': ", ".join([str(p) for p in team_members]),
-                                  })
+                                }, context_instance=RequestContext(request))
