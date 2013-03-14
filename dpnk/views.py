@@ -65,7 +65,7 @@ def must_be_approved_for_team(fn):
     return wrapper
 
 def send_approval_request(request):
-    template = get_template('registration/approval_request_email.html')
+    template = get_template('email/approval_request.html')
     email = request.user.userprofile.team.coordinator.user.email
     message = template.render(Context({ 'user': request.user,
         'SITE_URL': settings.SITE_URL,
@@ -829,7 +829,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
     if request.method == 'POST':
         form = form_class(data=request.POST)
         if form.is_valid():
-            template = get_template('registration/invitation_email.html')
+            template = get_template('email/invitation.html')
             for email in [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4'] ]:
                 if len(email) != 0:
                     message = template.render(Context({ 'user': request.user,
