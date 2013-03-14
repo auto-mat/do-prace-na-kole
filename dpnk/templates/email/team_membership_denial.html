@@ -2,7 +2,9 @@
 
 Dobrý den, {{ user.userprofile }},
 
-vaše členství v týmu {{user.userprofile.team.name}} bylo právě bylo bohužel ZAMÍTNUTO. Budete se muset přihlásit do editace profilu na adrese
+bohužel vaše členství v týmu {{user.userprofile.team.name}} bylo právě ZAMÍTNUTO koordinátorem {{ user.userprofile.team.coordinator.user.userprofile }} z důvodu: {{reason}}
+
+Budete se muset přihlásit do editace profilu na adrese
 {% block profile_link %}
 {{ SITE_URL }}{% url 'dpnk.views.update_profile' %}
 {% endblock %}

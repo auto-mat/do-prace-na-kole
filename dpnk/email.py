@@ -46,11 +46,12 @@ def team_membership_approval_mail(user):
         }))
     send_mail('Do práce na kole - potvrzení ověření členství v týmu', message, None, [email], fail_silently=False)
 
-def team_membership_denial_mail(user):
+def team_membership_denial_mail(user, reason):
     template = get_template('email/team_membership_denial.html')
     email = user.email
     message = template.render(Context({ 'user': user,
         'SITE_URL': settings.SITE_URL,
+        'reason': reason,
         }))
     send_mail('Do práce na kole - ZAMÍTNUTÍ členství v týmu', message, None, [email], fail_silently=False)
 

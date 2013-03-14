@@ -12,6 +12,9 @@
 Členové týmu:</th><td>{{ team_members }}
 
 <h3>Uživatelé, kteří se přihlásili k týmu, ale nebyly odsouhlaseni:</h3>
+{% if denial_message %}
+<div class="errorlist">Při zamítnutí člena týmu musíte vyplnit zprávu.</div>
+{% endif %}
 <form method="post">{% csrf_token %}
    <table id="formset" class="form">
       {% for user in unapproved_users %}
@@ -34,8 +37,10 @@
          {% endfor %}
          <td>
             {% if user.state.1 == 'undecided' %}
-            <input type="submit" id="approve-{{user.id.1}}" name="approve-{{user.id.1}}" value="Přidat"/>
-            <input type="submit" id="deny-{{user.id.1}}" name="deny-{{user.id.1}}" value="Zamítnout členství"/>
+            <input type="submit" id="approve-{{user.id.1}}" name="approve-{{user.id.1}}" value="Ověřit"/>
+            <label for="reason">Důvod odmítnutí</label>
+            <input id="reason-{{user.id.1}}" name="reason-{{user.id.1}}" type="text"/>
+            <input type="submit" id="deny-{{user.id.1}}" name="deny-{{user.id.1}}" value="Zamítnout"/>
             {% endif %}
          </td>
       </tr>

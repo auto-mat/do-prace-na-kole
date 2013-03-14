@@ -823,7 +823,7 @@ def approve_team_membership(request, username=None,
             else:
                 user.userprofile.approved_for_team = 'denied'
                 user.userprofile.save()
-                team_membership_denial_mail(user)
+                team_membership_denial_mail(user, "")
             return render_to_response(template_name, {
                 'user': user,
                 'state': user.userprofile.approved_for_team,
@@ -868,6 +868,7 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
     team = request.user.userprofile.team
     unapproved_users = []
     form_class = TeamAdminForm
+    denial_message = False
 
     user_approved = False
     for user in UserProfile.objects.filter(team = team, approved_for_team='undecided', active=True):
@@ -877,10 +878,13 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
             user_approved = True
             team_membership_approval_mail(request.user)
         if request.POST.has_key('deny-' + str(user.id)):
-            user.approved_for_team = 'denied'
-            user.save()
             user_approved = True
-            team_membership_denial_mail(request.user)
+            if not request.POST['reason-' + str(user.id)]:
+                denial_message = True
+            else:
+                user.approved_for_team = 'denied'
+                user.save()
+                team_membership_denial_mail(request.user, request.POST['reason-' + str(user.id)])
 
     if request.method == 'POST' and not user_approved:
         form = form_class(data=request.POST, instance = team)
@@ -906,4 +910,5 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
                               {'form': form,
                                'unapproved_users': unapproved_users,
                                 'team_members': ", ".join([str(p) for p in team_members]),
+                                'denial_message': denial_message
                                 }, context_instance=RequestContext(request))
