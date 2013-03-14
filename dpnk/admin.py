@@ -104,7 +104,7 @@ class TeamForm(ModelForm):
 
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('name', 'subsidiary', 'team_subsidiary_city', 'team_subsidiary_company', 'coordinator', 'id', )
-    search_fields = ['name', 'subsidiary__street', 'subsidiary__company__name', 'coordinator__firstname', 'coordinator__surname']
+    search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__firstname', 'coordinator__surname']
     list_filter = ['subsidiary__city']
 
     readonly_fields = ['members']
