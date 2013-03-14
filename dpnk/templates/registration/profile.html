@@ -16,11 +16,19 @@
 <tr><th scope="row">Telefon:</th><td>{{ profile.telephone }}</td></tr>
 <tr><th scope="row">Email:</th><td>{{ profile.user.email }}</td></tr>
 <tr><th scope="row">Velikost trička:</th><td>{{ profile.t_shirt_size }}</td></tr>
+{% if approved_for_team %}
 <tr><th scope="row">Členové týmu:</th><td>{{ team_members }}</td></tr>
+{% endif %}
+{% if team_members_count <= 1 %}
+<tr><th scope="row">Upozornění:</th><td class="alert"> Jste sám v týmu. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva lidé.</td></tr>
+{% endif %}
+{% if not approved_for_team %}
+<tr><th scope="row">Členství v týmu:</th><td class="alert">Vaše členství v týmu nebylo dosud odsouhlaseno. Můžete znovu poslat urgenci.</td></tr>
+{% endif %}
 <tr><th scope="row">Startovné:</th><td>
-{% if payment_status == 'done' %} Zaplaceno (slevový kód na <a href="http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012" target="_top">triko</a>: {{ voucher }}){% endif %}
-{% if payment_status == 'waiting' %} Čeká se na potvrzení platby (<a href="/registrace/platba/">Zadat jinou platbu</a>){% endif %}
-{% if payment_status == None %} Příspěvek dosud nezaplacen. <a href="/registrace/platba/">Zaplatit</a> {% endif %}
+      {% if payment_status == 'done' %}<span class="ok"> Zaplaceno </span>(slevový kód na <a href="http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012" target="_top">triko</a>: {{ voucher }}){% endif %}
+      {% if payment_status == 'waiting' %}<span class="alert"> Čeká se na potvrzení platby </span>(<a href="/registrace/typ_platby/">Zadat jinou platbu</a>){% endif %}
+      {% if payment_status == None %}<span class="alert"> Příspěvek dosud nezaplacen. </span><a href="/registrace/platba/">Zaplatit</a> {% endif %}
 </td></tr>
 </table>
 <a href="/registrace/upravit_profil/">Upravit údaje</a> | 

@@ -6,7 +6,7 @@
 <form action="/registrace/upravit_profil/" method="post">{% csrf_token %}
 {% for field in form %}
    {% if field.name == "team" %}
-      <h5>Upozornění: Změna týmu vyžaduje, aby koordinátor nového týmu schválil vaše členství. V případě návratu do původního týmu je taktéž vyžadováno schválení týmem.</h5>
+      <div class="warning">Upozornění: Změna týmu vyžaduje, aby koordinátor nového týmu schválil vaše členství. V případě návratu do původního týmu je taktéž vyžadováno schválení týmem.</div>
    {% endif %}
    <div id="{{field.name}}_div">
        {{ field.errors }}

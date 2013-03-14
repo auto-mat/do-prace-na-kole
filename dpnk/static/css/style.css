@@ -1,0 +1,642 @@
+/*  
+
+Theme Name: dopracenakole2012
+Theme URI: http://www.prahounakole.cz/
+
+Description: Theme based on graphical layout by Ondrej Fucik
+
+Version: 2.2
+
+Author: Petr Studeny, Hynek Hanke, Ondrej Fucik /Auto*Mat
+
+Author URI: http://www.auto-mat.cz
+
+*/
+
+
+/* ===== General layout ====== */
+.alert {
+   color: red
+}
+
+.ok {
+   color: green
+}
+
+html {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+html, body{
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    color: black;
+    background: #FFFFFF url("images/background34px.jpg") repeat-y scroll center -5px;
+    font-size: 13px;
+    font-family: Arial;
+}
+	
+#container {
+    /*left: 50%;
+    position: relative; */
+}
+
+#container2 {
+    width: 980px; 
+    margin: 0 auto;
+    height: auto;
+    min-height: 100%;
+    _height: 100%; /* IE */
+
+    margin-bottom: 30px;
+
+    border: 20px;
+}
+
+#left {
+    width: 198px;
+    float: left;
+    margin-top:10px;
+}
+	  
+#right {
+    width: 198px;
+    float: left;
+}
+	
+#content {
+    width: 560px; /* 210-560-210 */ 
+    float: left;
+    padding: 0 12px;
+    text-align: left;
+    min-height: 450px;
+
+    font-size: 13px;
+}
+	  
+#content a {
+    color: #666666;
+}
+
+/* Footer */
+#bottom-banner {
+    width: 980px;
+    margin: 0px 0px 30px 0px;
+    padding:  0px 0px 7px 0px;
+    clear: both;
+
+    font-color: #cccccc;
+
+//    background: url("images/footer.gif") center top no-repeat scroll;
+    font-size: 11px;
+    color: #666666;
+    text-align: center;
+    line-height: 17px;
+}
+
+	
+#top-banner { 
+    width: 980px;
+    height: 200px;
+    background: #F3F3F3 url("images/header.jpg") no-repeat scroll 0 0;
+}
+
+#homelink {
+	display: block;
+	width: 324px; //185px;
+	height: 140px; //80px;
+	position: absolute;
+	left: 762px; //463px;
+	top: 30px; //11px;
+}
+
+
+#title_and_search {
+    height: 20px;
+    margin-top: 15px;
+}
+
+
+/* Content elements */
+
+h2, h3, h4, h2 a, h3 a, h4 a, .product-title {
+    color: #ff6e00 !important;
+    text-decoration: none;
+}
+
+
+h2 {
+    font-size: 26px;
+}
+
+/* MENU */
+
+#pixopoint_menu1 {
+    width:100%;
+    margin:0px;
+}
+#pixopoint_menu1 ul {
+    width:100%;
+    margin:0;
+    padding:0;
+    list-style: none;
+}
+
+#pixopoint_menu1 li:first-child {
+	border: none;
+}
+
+#pixopoint_menu1 li{
+    font-family: arial, sans-serif;
+    font-weight: bolder;
+    color: #000;
+    z-index:20;
+    font-size:13px;
+    padding: 5px 0px 5px 6px;
+    margin: 0;
+    border-top: 1px solid #cccccc;
+    position: relative;
+    height: auto;
+    margin: 0px;
+}
+
+
+#pixopoint_menu1 ul li ul {
+    position: absolute;
+    overflow: visible;
+    top: -1px;
+    left: 198px;
+    background-color: #EDEDED;
+    z-index: 100;
+    width: 100%;
+    border: 1px solid #cccccc;
+    border-left: none;
+}
+
+#pixopoint_menu1 ul li ul li {
+    color: black;
+    background-color: #EDEDED;
+    padding-left: 10px;
+    border-bottom: none;
+    border-left: 2px solid #cccccc;
+}
+
+#pixopoint_menu1 ul ul > li:first-child {
+    border-left: none;
+    border-top: none;
+}
+
+#pixopoint_menu1 li a {
+    color: #000;
+    text-decoration: none;
+}
+
+#pixopoint_menu1 li:hover {
+
+}
+
+#pixopoint_menu1 ul li a:hover , #pixopoint_menu1 > ul > li.current_page_parent > a, #pixopoint_menu1 > ul > li.current_page_item > a, #pixopoint_menu1 > ul > li > ul > li.current_page_item > a {
+    color: #ff6e00;
+}
+
+/* Search input -- Petr */
+#search {
+    /*float: right;*/
+    margin-right: 0px;
+}
+#search input {
+    height: 23px;
+    /*margin-top: 5px;*/
+    padding-left:0px;
+}
+#searchform input {
+	font-family: "Lucida Grande","Lucida Sans Unicode",Tahoma, Helvetica, Verdana, sans-serif;
+	font-size: 13px;
+	/*text-align: right;*/
+	/*color: #67717E;*/
+	border: 1px solid #ddd;
+	width: 178px;
+	margin: 0 auto 10px auto;
+	}	
+
+a {
+    color: #ff6e00;
+}
+
+a img {
+    border: none;
+}
+
+/* PRODUCTS */
+
+.product-title {
+    font-size: 26px;
+    clear: both;
+    font-weight: bold;
+    border-bottom: 1px solid #000;
+    margin-top: 30px;
+}
+
+.product-image {
+    display: inline-block;
+    vertical-align: top;
+    width: 300px;
+    padding-top: 10px
+}
+
+.product-text {
+    display: inline-block;
+    width: 240px;
+    padding: 5px;
+}
+
+.product-family-logo{
+    float: right;
+}
+
+.product-family-logo img {
+    max-width: 200px;
+    height: auto;
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+
+.product-family-text{
+}
+
+
+.index-bar {
+    border-bottom: 2px solid #cccccc;
+    margin: 10px 0px 5px 0px;
+    padding: 0px 0px 30px 0px;
+    font-size: 13px;
+}
+
+.flashing-post {
+    overflow: hidden;
+    width: 560px;
+    padding-left: 0px;
+    padding-right: 10px;
+    background-color: #F3F3F3 !important;
+}
+
+.contest-results-individual, .contest-results-company {
+    border-top: 1px solid #cccccc;
+    padding: 5px 0px 5px 0px;
+    font-size: 13px;
+}
+
+.contest-results-company {
+    margin-bottom: 10px;
+}
+
+.contest-results h2, .index-bar h2 {
+    font-weight: bold;
+    font-size: 13px;
+    color: #ff6e00;
+    clear: both;
+}
+
+.index-bar h2, .posts-list-item h2 {
+    font-size: 13px;
+    color: #ff6e00;
+    margin-bottom: 2px;
+}
+
+.index-bar h2 + p {
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
+h2 .author, h2 .date {
+    color: #cccccc;
+}
+
+.index-bar img {
+    padding-bottom: 10px;
+}
+
+.category-news, .category-videos {
+    margin-bottom: 20px;
+}
+
+.category-professions {
+    font-size: 8pt;
+    padding: 0 6px 10px 6px;
+}
+
+.index-bar .all { 
+    float: left;
+}
+
+#content .all a{
+    color: #ff6e00;
+}
+
+.more-link{
+    color: #ff6e00;
+}
+
+#right{
+    font-size: 13px;
+}
+
+
+#right img {
+//    padding-left: 15px;
+//    padding-right: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #cccccc;
+    margin-top: 15px;
+//    width: 100%;
+//    height: 100%
+}
+
+#right p {
+//    width: 180px;
+    text-align: center;
+    margin-top: 0px;
+
+    padding-bottom: 15px;
+    border-bottom: 2px solid #cccccc;
+    margin-bottom: 30px;
+}
+
+#right .caption{
+    padding-left:6px;
+}
+
+div#right + p {
+    border-top: 0px;
+}
+
+#entry h2 + p img {
+    padding-bottom: 20px;
+}
+
+#content img.alignleft{
+    float: left;
+    padding-right: 15px;
+    padding-bottom: 10px;
+}
+
+#content img.alignright{
+    float: right;
+    padding-left: 15px;
+    padding-bottom: 10px;
+}
+#content img.alignnone{
+    padding-bottom: 10px;
+}
+
+.aligncenter{
+    margin: 0 auto;
+}
+
+#entry h2, #entry h3, #entry h4, #entry h5, #category-listing h2, #category-listing h3 {
+    clear: both;
+}
+
+.posts-list-item {
+    overflow: auto;
+    margin-bottom: 20px;
+}
+
+p {
+    height: auto;
+}
+
+
+.post-category-info {
+    margin-top: 30px;
+    clear: both;
+}
+
+body.login #login h1{
+    background: #F3F3F3 url("images/dpnk-logo-blue.gif") no-repeat scroll center 0;   
+}
+
+.account_results_table {
+    margin-bottom: 20px;
+    border-spacing: 0;
+}
+
+.account_results_table th {
+    width: 200px;
+    font-weight: normal;
+}
+
+.account_results_table th {
+    background: #ffcc00;
+}
+
+.account_results_table td {
+    margin: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 1px solid #ccc;
+}
+
+
+table.account_results_table .my_team {
+    font-weight: bold;
+}
+
+
+
+form.cform > fieldset {
+    width: 100%;
+    background-color: #F3F3F3;
+    border: none;
+}
+
+form.cform  legend {
+    width: 100%;
+    color: #ff6e00;  
+    border-bottom: 1px solid #cccccc;
+}
+
+form.cform label, form.cform ol.cf-ol > li.cf-box-title{
+    color: #000000;
+    font-size: 13px;
+}
+
+#left #left-box {
+    margin-top: 10px;
+    border-top: 2px solid #cccccc;
+    padding-top: 10px;
+    padding-bottom: 0px;
+    padding-left: 6px;
+}
+
+
+#left #left-box a {
+    color: black;
+    display: block;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+#content ul {
+    list-style-type: disc;
+    list-style-image: url("images/dash.png");
+    padding-left: 18px;
+}
+
+
+#account_km_form input{
+    background-color: #F3F3F3;
+    border: 1px solid black;
+}
+
+#account_km_form form{
+    margin: 0;
+    margin-top: 10px;
+    width: 100%;
+}
+
+#account_km_form form ol.cf-ol li, #account_km_form form label{
+    margin: 0 !important;
+}
+
+#account_km_form form ol.cf-ol li{
+    display: inline-block;
+}
+
+#account_km_form .cf-sb input{
+    display: inline-block;
+    width: 100px;
+}
+
+#account_km_form ol{
+    display:inline-block;
+}
+
+#account_km_form label, #account_km_form .reqtxt{
+    width: 100px;
+}
+
+#account_km_form #cf11_field_1 {
+    border: none;
+}
+#account_km_form  #cf11_field_1, #account_km_form #cf11_field_2, #account_km_form #cf11_field_3{
+    width: 50px;
+    display: inline-block;
+}
+#account_km_form #cf11_field_4 {
+    display: inline-block;
+    width: 200px;
+}
+
+ol.cf-ol li label[for="cf12_field_5"], ol.cf-ol li label[for="cf12_field_6"], ol.cf-ol li label[for="cf12_field_7"], ol.cf-ol li label[for="cf12_field_8"],  ol.cf-ol li label[for="cf12_field_10"], ol.cf-ol li label[for="cf12_field_13"],ol.cf-ol li label[for="cf12_field_15"],  ol.cf-ol li label[for="cf12_field_18"]{
+    width: 500px !important;
+    font-family: Arial;
+    font-weight: bolder;
+}
+
+ol.cf-ol li.cf-box-title{
+    letter-spacing: normal !important;
+    font-weight: bolder;
+}
+
+/*styl pro horní menu (obsazeno v header.php)*/
+#city-bar{
+	margin: 0;
+	width: 100%;
+	height: 34px;
+	background-color:#000000;
+	}
+#city-bar ul{
+	list-style: none;
+	text-transform: uppercase;
+	background-color: black;
+	height: 34px;
+	margin: 0;
+	padding: 0 28px;
+	color: white;
+}
+#city-bar ul.right{
+	float:right;
+	padding-right:0;
+}
+#city-bar ul.right a{
+	color: #ff6e00;
+}
+#city-bar ul.right a:hover{
+	color: white;
+}
+#city-bar ul.right li{
+	border-color:  #ff6e00;
+}
+
+#city-bar li:first-child{
+	border-left: 0px none;
+	}
+#city-bar li {
+	float:left;
+	display: block;
+	padding: 0 10px;
+	margin: 10px 0;
+	border-left: 2px solid white;
+	color: white;
+}
+#city-bar li a{
+	color: white;
+	text-decoration: none;
+	font-weight: bold;
+}
+#city-bar li a:hover{
+	color: #ff6e00;	
+}
+
+#cities{
+	float: left;
+}
+
+.fbbox{
+	width:198px;
+	height: 298px;
+	overflow: hidden;
+}
+#amlogo{
+	width: 198px;
+	height: 68px;
+	border-bottom: 2px solid #cccccc;
+	padding-bottom: 6px;
+	margin-bottom: 6px;
+}
+#amlogo a{
+	color: black;
+	text-decoration: none;
+	padding: 0;
+	line-height: 28px;
+}
+#amlogo img{
+	width: 150px;
+	height: 68px;
+	border: none;
+	margin: 0 auto;
+	padding: 0;
+	padding-left: 22px;
+	vertical-align: bottom;
+}
+
+#lang{
+	position: relative;
+	top: -12px;
+	padding-right: 10px;
+}
+#lang a {
+	color: #CCCCCC !important;
+	font-size: 85%;
+	font-weight: bold;
+	text-decoration: none;
+}
+#klub a{color: #ff6e00 !important;}
+#klub a:hover{color: black !important;}
+#payu {width: 150px; margin: 10px auto;}

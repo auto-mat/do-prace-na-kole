@@ -405,7 +405,6 @@ def login(request):
             })
 
 @login_required
-@must_be_approved_for_team
 def profile(request):
 
     days = util.days()
@@ -518,6 +517,7 @@ def profile(request):
             'payment_status': payment_status,
             'voucher': voucher_code,
             'team_members': ", ".join([str(p) for p in team_members]),
+            'team_members_count': len(team_members),
             'calendar': calendar,
             'member_counts': member_counts,
             'team_percentage': team_percentage,
@@ -528,6 +528,7 @@ def profile(request):
             'own_city': own_city,
             'company_survey_by': company_survey_by,
             'competition_state': settings.COMPETITION_STATE,
+            'approved_for_team': (request.user.userprofile.approved_for_team == 'approved' or request.user.userprofile.team.coordinator == request.user.userprofile)
             })
 
 def results(request, template):
