@@ -22,8 +22,12 @@ a {
    color: #666666;
 }
 
-form p input#id_distance{
+form div input#id_distance{
     margin-bottom: 15px;
+}
+
+form fieldset{
+    margin-top: 15px;
 }
 
 .errorlist {
