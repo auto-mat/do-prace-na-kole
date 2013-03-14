@@ -2,10 +2,18 @@
 {% load url from future %}
 
 {% block content %}
-{% if yet_approved %}
-Uživatel "{{ user.userprofile }}" již je právoplatný členem týmu "{{ user.userprofile.team}}". Členství není nutné znovu potvrzovat.
+{% if action %}
+   {% if state == 'approved' %}
+      Členství uživatele "{{ user.userprofile }}" v týmu "{{ user.userprofile.team }}" bylo právě potvrzeno.
+   {% elif state == 'denied' %}
+      Členství uživatele "{{ user.userprofile }}" v týmu "{{ user.userprofile.team }}" bylo právě zamítnuto.
+   {% endif %}
 {% else %}
-Členství uživatele "{{ user.userprofile }}" v týmu "{{ user.userprofile.team }}" bylo potvrzeno.
+   {% if state == 'approved' %}
+      Členství uživatele "{{ user.userprofile }}" v týmu "{{ user.userprofile.team}}" již bylo potvrzeno. Nebyla provedena žádná akce.
+   {% elif state == 'denied' %}
+      Členství uživatele "{{ user.userprofile }}" v týmu "{{ user.userprofile.team}}" již bylo zamítnuto. Nebyla provedena žádná akce.
+   {% endif %}
 {% endif %}
 
 {% endblock %}

@@ -1,0 +1,14 @@
+{% load url from future %}{% autoescape off %}
+
+Vážený {{ user.userprofile }},
+
+právě jste se zaregistroval do soutěže Do práce na kole do týmu {{user.userprofile.team.name}}. Svůj profil v této soutěži můžete navštívit na adrese
+{% block profile_link %}
+{{ SITE_URL }}{% url 'dpnk.views.profile' %}
+{% endblock %}
+.
+
+S pozdravem,
+Auto*Mat
+
+{% endautoescape %}

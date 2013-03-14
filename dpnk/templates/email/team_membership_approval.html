@@ -1,0 +1,13 @@
+{% load url from future %}{% autoescape off %}
+
+Dobrý den, {{ user.userprofile }},
+
+vaše členství v týmu {{user.userprofile.team.name}} bylo právě odsouhlaseno. Můžete se přihlásit ke svému profilu pomocí adresy 
+{% block profile_link %}
+{{ SITE_URL }}{% url 'dpnk.views.profile' %}
+{% endblock %}
+
+S pozdravem,
+Auto*Mat
+
+{% endautoescape %}

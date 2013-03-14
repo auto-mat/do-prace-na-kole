@@ -1,9 +1,16 @@
 {% load url from future %}{% autoescape off %}
 
-Váš kolega {{ user.userprofile.firstname }} {{ user.userprofile.surname }} vás žádá o účast v soutěži Do práce na kole ve vašem týmu {{user.userprofile.team.name}}.
+Dobrý den, {{ coordinator.userprofile.firstname }} {{ coordinator.userprofile.surname }},
+
+váš kolega {{ user.userprofile.firstname }} {{ user.userprofile.surname }} vás žádá o účast v soutěži Do práce na kole ve vámi koordinovaném týmu {{user.userprofile.team.name}}.
 Jeho členství můžete potvrdit pomocí odkazu
-{% block reset_link %}
-{{ SITE_URL }}{% url 'dpnk.views.approve_team_membership' username=user.username%}
+{% block approval_link %}
+{{ SITE_URL }}{% url 'dpnk.views.approve_team_membership' username=user.username approval='True'%}
+{% endblock %}
+
+Nebo zamítnout pomocí odkazu
+{% block denial_link %}
+{{ SITE_URL }}{% url 'dpnk.views.approve_team_membership' username=user.username approval='False'%}
 {% endblock %}
 
 S pozdravem,

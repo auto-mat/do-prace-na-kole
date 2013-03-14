@@ -32,13 +32,11 @@ import registration.signals, registration.backends
 from django.contrib.auth.models import User
 from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company
 from forms import RegistrationFormDPNK, RegisterTeamForm, AutoRegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, TeamUserAdminForm, PaymentTypeForm
-from django.core.mail import send_mail
-from django.template.loader import get_template
-from django.template import Context
 from django.conf import settings
 from  django.http import HttpResponse
 # Local imports
 import util
+from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail
 
 #decorator
 def must_be_coordinator(fn):
@@ -63,15 +61,6 @@ def must_be_approved_for_team(fn):
         else:
             return HttpResponse(u'Vaše členství v týmu "' + userprofile.team.name + u'" nebylo odsouhlaseno. Napište koordinátorovi vašeho týmu "' + unicode(userprofile.team.coordinator) + u'" na jeho email "' + unicode(userprofile.team.coordinator.user.email) + u'"', status=401)
     return wrapper
-
-def send_approval_request(request):
-    template = get_template('email/approval_request.html')
-    email = request.user.userprofile.team.coordinator.user.email
-    message = template.render(Context({ 'user': request.user,
-        'SITE_URL': settings.SITE_URL,
-        'email': email
-        }))
-    send_mail('Do práce na kole - žádost o ověření členství', message, None, [email], fail_silently=False)
 
 def register(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
@@ -156,10 +145,15 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             if not team_selected:
                 team.coordinator = new_user.userprofile
                 team.save()
+                success_url = "/registrace/pozvanky"
+                team_created_mail(new_user)
+            else:
+                register_mail(new_user)
 
             if new_user.userprofile.approved_for_team != 'approved':
-                send_approval_request(request)
+                approval_request_mail(new_user)
 
+            print success_url
             return redirect(success_url)
     else:
         initial_company = None
@@ -602,13 +596,15 @@ def update_profile(request,
                 success_url = "/registrace/pozvanky"
                 request.session['success_url'] = '/registrace/profil'
 
+                team_created_mail(userprofile.user)
+
             if request.user.userprofile.team != form.cleaned_data['team'] and not create_team:
                 userprofile.approved_for_team = 'undecided'
 
             form.save()
 
             if userprofile.approved_for_team != 'approved':
-                send_approval_request(request)
+                approval_request_mail(userprofile.user)
 
             return redirect(success_url)
     else:
@@ -802,19 +798,37 @@ def answers(request):
 def approve_team_membership(request, username=None,
              success_url=None, form_class=None,
              template_name='registration/approved_for_team.html',
+             approval = 'True',
              extra_context=None):
     if username != None:
         user = User.objects.get(username=username)
         if request.user.userprofile.team == user.userprofile.team:
-            yet_approved = user.userprofile.approved_for_team == 'approved'
-            user.userprofile.approved_for_team = 'approved'
-            user.userprofile.save()
-            return render_to_response(template_name,
-                                      {'user': user,
-                                       'yet_approved': yet_approved,
-                                          })
+            if user.userprofile.approved_for_team != 'undecided':
+                return render_to_response(template_name, {
+                    'user': user,
+                    'state': user.userprofile.approved_for_team,
+                    'action': False,
+                    })
+            if approval == 'True':
+                user.userprofile.approved_for_team = 'approved'
+                user.userprofile.save()
+                team_membership_approval_mail(user)
+            else:
+                user.userprofile.approved_for_team = 'denied'
+                user.userprofile.save()
+                team_membership_denial_mail(user)
+            return render_to_response(template_name, {
+                'user': user,
+                'state': user.userprofile.approved_for_team,
+                'action': True,
+                })
         else:
             return HttpResponse(u'Nejste koordinátorem týmu "' + unicode(user.userprofile.team) + u'" jehož členem uživatel je "' + unicode(user.userprofile) + u'". Nemůžete mu tedy potvrdit členství', status=401)
+
+@login_required
+def team_approval_request(request):
+    approval_request_mail(request.user)
+    return render_to_response('registration/request_team_approval.html')
 
 @login_required
 def invite(request, backend='registration.backends.simple.SimpleBackend',
@@ -829,14 +843,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
     if request.method == 'POST':
         form = form_class(data=request.POST)
         if form.is_valid():
-            template = get_template('email/invitation.html')
-            for email in [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4'] ]:
-                if len(email) != 0:
-                    message = template.render(Context({ 'user': request.user,
-                        'SITE_URL': settings.SITE_URL,
-                        'email': email
-                        }))
-                    send_mail('Do práce na kole - pozvánka', message, None, [email], fail_silently=False)
+            invitation_mail(request.user, [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4'] ])
             return redirect(success_url)
     else:
         form = form_class()
@@ -860,10 +867,12 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
             user.approved_for_team = 'approved'
             user.save()
             user_approved = True
+            team_membership_approval_mail(request.user)
         if request.POST.has_key('deny-' + str(user.id)):
             user.approved_for_team = 'denied'
             user.save()
             user_approved = True
+            team_membership_denial_mail(request.user)
 
     if request.method == 'POST' and not user_approved:
         form = form_class(data=request.POST, instance = team)

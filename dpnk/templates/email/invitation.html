@@ -1,9 +1,11 @@
 {% load url from future %}{% autoescape off %}
 
-Váš kolega {{ user.userprofile.firstname }} {{ user.userprofile.surname }} vás zve k účasti v soutěži Do práce na kole do svého týmu {{user.userprofile.team.name}}.
-{% block reset_link %}
+Dobrý den,
+
+váš kolega {{ user.userprofile }} vás zve k účasti v soutěži Do práce na kole do svého týmu {{user.userprofile.team.name}}. Přihlásit do soutěže se můžete pomocí odkazu
+{% block register_link %}
 {{ SITE_URL }}{% url 'dpnk.views.register' token=user.userprofile.team.invitation_token initial_email=email%}
-{% endblock %}
+{% endblock %}.
 
 S pozdravem,
 Auto*Mat

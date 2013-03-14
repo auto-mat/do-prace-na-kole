@@ -1,0 +1,24 @@
+{% load url from future %}{% autoescape off %}
+
+Dobrý den, {{ user.userprofile }},
+
+váš tým {{user.userprofile.team.name}} byl právě vytvořen. 
+
+Na adrese 
+{% block invite_link %}
+{{ SITE_URL }}{% url 'dpnk.views.ivite' %}
+{% endblock %}
+můžete pozvat své kolegy k přihlášení do vašeho týmu.
+
+Pokud chcete své kolegy vyzvat k vytvoření jejich vlastního týmu, odkažte je na adresu xxxxxxxx.
+
+Ke svému profilu se můžete přihlásit pomocí adresy
+{% block profile_link %}
+{{ SITE_URL }}{% url 'dpnk.views.profile' %}
+{% endblock %}
+.
+
+S pozdravem,
+Auto*Mat
+
+{% endautoescape %}
