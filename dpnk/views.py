@@ -527,6 +527,7 @@ def profile(request):
             'req_city': req_city,
             'own_city': own_city,
             'company_survey_by': company_survey_by,
+            'competition_state': settings.COMPETITION_STATE,
             })
 
 def results(request, template):

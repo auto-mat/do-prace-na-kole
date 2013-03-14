@@ -104,6 +104,7 @@ INSTALLED_APPS = (
     'registration',
     'dpnk',
     'smart_selects',
+    'composite_field',
     'south'
 )
 
@@ -114,10 +115,7 @@ SERVER_EMAIL='root@auto-mat.cz'
 LOGIN_URL = '/registrace/login/'
 LOGIN_REDIRECT_URL = '/registrace/profil/'
 
-EMAIL_HOST = ''
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_PORT = 25
-EMAIL_USE_TLS = False
-
 SITE_URL = ''
+
+COMPETITION_STATE='not_started_yet'
+#COMPETITION_STATE='started'
