@@ -3,14 +3,9 @@
 Dobrý den, {{ coordinator.userprofile.firstname }} {{ coordinator.userprofile.surname }},
 
 váš kolega {{ user.userprofile.firstname }} {{ user.userprofile.surname }} vás žádá o účast v soutěži Do práce na kole ve vámi koordinovaném týmu {{user.userprofile.team.name}}.
-Jeho členství můžete potvrdit pomocí odkazu
+Jeho členství můžete potvrdit nebo zamítnout pomocí odkazu
 {% block approval_link %}
-{{ SITE_URL }}{% url 'dpnk.views.approve_team_membership' username=user.username approval='True'%}
-{% endblock %}
-
-Nebo zamítnout pomocí odkazu
-{% block denial_link %}
-{{ SITE_URL }}{% url 'dpnk.views.approve_team_membership' username=user.username approval='False'%}
+{{ SITE_URL }}{% url 'dpnk.views.approve_team_membership' username=user.username %}
 {% endblock %}
 
 S pozdravem,

@@ -154,7 +154,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             if new_user.userprofile.approved_for_team != 'approved':
                 approval_request_mail(new_user)
 
-            print success_url
             return redirect(success_url)
     else:
         initial_company = None
@@ -242,8 +241,6 @@ def payment_type(request):
         return redirect('/registrace/profil')
     template_name='registration/payment_type.html'
     form_class = PaymentTypeForm
-    print request.POST
-    print request.method
 
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES)
@@ -259,20 +256,9 @@ def payment_type(request):
     else:
         form = form_class()
 
-    print form
     return render_to_response(template_name,
                               {'form': form
                                }, context_instance=RequestContext(request))
-
-#@login_required
-#def update_profile(request):
-#    print request.POST
-#    return update_object(request,
-#                        form_class=ProfileUpdateForm,
-#                        object_id=request.user.get_profile().id,
-#                        template_name='registration/update_profile.html',
-#                        post_save_redirect='/registrace/profil/',
-#                        )
 
 @login_required
 def payment(request):
@@ -814,37 +800,49 @@ def answers(request):
                                'choice_names': choice_names
                                }, context_instance=RequestContext(request))
 
+def approve_for_team(userprofile, reason, approve=False, deny=False):
+    if deny:
+        if not reason:
+            return 'no_message'
+        userprofile.approved_for_team = 'denied'
+        userprofile.save()
+        team_membership_denial_mail(userprofile.user, reason)
+        return 'denied'
+    elif approve:
+        userprofile.approved_for_team = 'approved'
+        userprofile.save()
+        user_approved = True
+        team_membership_approval_mail(userprofile.user)
+        return 'approved'
+
 @must_be_coordinator
 @login_required
 def approve_team_membership(request, username=None,
              success_url=None, form_class=None,
              template_name='registration/approved_for_team.html',
-             approval = 'True',
              extra_context=None):
     if username != None:
         user = User.objects.get(username=username)
-        if request.user.userprofile.team == user.userprofile.team:
-            if user.userprofile.approved_for_team != 'undecided':
-                return render_to_response(template_name, {
-                    'user': user,
-                    'state': user.userprofile.approved_for_team,
-                    'action': False,
-                    }, context_instance=RequestContext(request))
-            if approval == 'True':
-                user.userprofile.approved_for_team = 'approved'
-                user.userprofile.save()
-                team_membership_approval_mail(user)
-            else:
-                user.userprofile.approved_for_team = 'denied'
-                user.userprofile.save()
-                team_membership_denial_mail(user, "")
+        if request.user.userprofile.team != user.userprofile.team:
+            return HttpResponse(u'Nejste koordinátorem týmu "' + unicode(user.userprofile.team) + u'" jehož členem uživatel je "' + unicode(user.userprofile) + u'". Nemůžete mu tedy potvrdit členství', status=401)
+
+        #Nothing to do
+        if user.userprofile.approved_for_team != 'undecided':
             return render_to_response(template_name, {
                 'user': user,
                 'state': user.userprofile.approved_for_team,
-                'action': True,
+                'action': False,
                 }, context_instance=RequestContext(request))
-        else:
-            return HttpResponse(u'Nejste koordinátorem týmu "' + unicode(user.userprofile.team) + u'" jehož členem uživatel je "' + unicode(user.userprofile) + u'". Nemůžete mu tedy potvrdit členství', status=401)
+
+        approved_state = 'unapproved'
+        if request.method == 'POST':
+            approved_state = approve_for_team(user.userprofile, request.POST.get('deny_reason', ''), approve=request.POST.has_key('approve'), deny=request.POST.has_key('deny'))
+        return render_to_response(template_name, {
+            'user': user,
+            'state': user.userprofile.approved_for_team,
+            'action': True,
+            'approved_state': approved_state,
+            }, context_instance=RequestContext(request))
 
 @login_required
 def team_approval_request(request):
@@ -882,25 +880,12 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
     team = request.user.userprofile.team
     unapproved_users = []
     form_class = TeamAdminForm
-    denial_message = False
+    denial_message = 'unapproved'
 
-    user_approved = False
-    for user in UserProfile.objects.filter(team = team, approved_for_team='undecided', active=True):
-        if request.POST.has_key('approve-' + str(user.id)):
-            user.approved_for_team = 'approved'
-            user.save()
-            user_approved = True
-            team_membership_approval_mail(request.user)
-        if request.POST.has_key('deny-' + str(user.id)):
-            user_approved = True
-            if not request.POST['reason-' + str(user.id)]:
-                denial_message = True
-            else:
-                user.approved_for_team = 'denied'
-                user.save()
-                team_membership_denial_mail(request.user, request.POST['reason-' + str(user.id)])
+    for userprofile in UserProfile.objects.filter(team = team, approved_for_team='undecided', active=True):
+        denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), approve=request.POST.has_key('approve-' + str(userprofile.id)), deny=request.POST.has_key('deny-' + str(userprofile.id)))
 
-    if request.method == 'POST' and not user_approved:
+    if request.method == 'POST' and denial_message == 'unapproved':
         form = form_class(data=request.POST, instance = team)
         if form.is_valid():
             form.save()
@@ -908,15 +893,14 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
     else:
         form = form_class(instance = team)
 
-    for user in UserProfile.objects.filter(team = team, active=True):
+    for userprofile in UserProfile.objects.filter(team = team, active=True):
         unapproved_users.append({
-            'name': (u'Jméno', unicode(user)),
-            'username': (u'Uživatel', user.user),
-            'state_name': (u'Stav', unicode(user.get_approved_for_team_display())),
-            'id': (None, user.id),
-            'state': (None, user.approved_for_team),
+            'name': (u'Jméno', unicode(userprofile)),
+            'username': (u'Uživatel', userprofile.user),
+            'state_name': (u'Stav', unicode(userprofile.get_approved_for_team_display())),
+            'id': (None, userprofile.id),
+            'state': (None, userprofile.approved_for_team),
             })
-        print unapproved_users
 
     team_members = UserProfile.objects.filter(team=team, active=True)
 
@@ -924,5 +908,5 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
                               {'form': form,
                                'unapproved_users': unapproved_users,
                                 'team_members': ", ".join([str(p) for p in team_members]),
-                                'denial_message': denial_message
+                                'denial_message': denial_message == 'no_message',
                                 }, context_instance=RequestContext(request))
