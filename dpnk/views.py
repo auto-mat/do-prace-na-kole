@@ -783,35 +783,6 @@ def approve_for_team(userprofile, reason, approve=False, deny=False):
         team_membership_approval_mail(userprofile.user)
         return 'approved'
 
-@must_be_coordinator
-@login_required
-def approve_team_membership(request, username=None,
-             success_url=None, form_class=None,
-             template_name='registration/approved_for_team.html',
-             extra_context=None):
-    if username != None:
-        user = User.objects.get(username=username)
-        if request.user.userprofile.team != user.userprofile.team:
-            return HttpResponse(u'Nejste koordinátorem týmu "' + unicode(user.userprofile.team) + u'" jehož členem uživatel je "' + unicode(user.userprofile) + u'". Nemůžete mu tedy potvrdit členství', status=401)
-
-        #Nothing to do
-        if user.userprofile.approved_for_team != 'undecided':
-            return render_to_response(template_name, {
-                'user': user,
-                'state': user.userprofile.approved_for_team,
-                'action': False,
-                }, context_instance=RequestContext(request))
-
-        approved_state = 'unapproved'
-        if request.method == 'POST':
-            approved_state = approve_for_team(user.userprofile, request.POST.get('deny_reason', ''), approve=request.POST.has_key('approve'), deny=request.POST.has_key('deny'))
-        return render_to_response(template_name, {
-            'user': user,
-            'state': user.userprofile.approved_for_team,
-            'action': True,
-            'approved_state': approved_state,
-            }, context_instance=RequestContext(request))
-
 @login_required
 def team_approval_request(request):
     approval_request_mail(request.user)

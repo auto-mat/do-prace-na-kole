@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
-from dpnk.views import RegistrationFormDPNK, AutoRegistrationFormDPNK
+from dpnk.views import RegistrationFormDPNK
 from registration.views import register
 
 urlpatterns = patterns('',
@@ -23,8 +23,6 @@ urlpatterns = patterns('',
                        url(r'^zmena_hesla_hotovo/$', 'django.contrib.auth.views.password_change_done'),
                        url(r'^profil/$', 'dpnk.views.profile'),
                        url(r'^team_admin/$', 'dpnk.views.team_admin',
-                           {'success_url': '/registrace/profil/'}),
-                       url(r'^pridat_do_tymu/(?P<username>[^&]+)/$$', 'dpnk.views.approve_team_membership',
                            {'success_url': '/registrace/profil/'}),
                        url(r'^vysledky/$', 'dpnk.views.results',
                            {'template': 'registration/results.html'}),
