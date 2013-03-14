@@ -615,8 +615,8 @@ def update_profile(request,
 
     form.fields['team'].widget.underlying_form = form_team
     form.fields['team'].widget.create_team = create_team
-    if request.user.userprofile.team.coordinator == request.user.userprofile:
-        del form.fields["team"]
+    #if request.user.userprofile.team.coordinator == request.user.userprofile:
+    #    del form.fields["team"]
     return render_to_response('registration/update_profile.html',
                               {'form': form}
                               )

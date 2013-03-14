@@ -182,6 +182,15 @@ class ProfileUpdateForm(forms.ModelForm):
         empty_label=None,
         required=True)
 
+    email = forms.EmailField(
+        required=False)
+
+    def save(self, *args, **kwargs):
+        ret_val = super(ProfileUpdateForm, self).save(*args, **kwargs)
+        self.instance.user.email = self.cleaned_data.get('email')
+        self.instance.user.save()
+        return ret_val
+
     def clean_team(self):
         data = self.cleaned_data['team']
         if type(data) != RegisterTeamForm:
@@ -190,10 +199,13 @@ class ProfileUpdateForm(forms.ModelForm):
         return data
 
     def __init__(self, *args, **kwargs):
-        super(ProfileUpdateForm, self).__init__(*args, **kwargs)
+        ret_val = super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         userprofile = kwargs['instance']
         self.fields["team"].queryset = Team.objects.filter(subsidiary__company=userprofile.team.subsidiary.company)
 
+        self.fields['email'].initial = self.instance.user.email
+        return ret_val
+
     class Meta:
         model = UserProfile
-        fields = ('firstname', 'surname', 'telephone', 't_shirt_size', 'team')
+        fields = ('firstname', 'surname', 'telephone', 'email', 't_shirt_size', 'team')
