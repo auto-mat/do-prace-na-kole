@@ -22,9 +22,17 @@
 {% if team_members_count <= 1 %}
 <tr><th scope="row">Upozornění:</th><td class="alert"> Jste sám v týmu. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva lidé.</td></tr>
 {% endif %}
-{% if not approved_for_team %}
-<tr><th scope="row">Členství v týmu:</th><td class="alert">Vaše členství v týmu nebylo dosud odsouhlaseno. Můžete znovu poslat urgenci.</td></tr>
+<tr><th scope="row">Členství v týmu:</th>
+{% if team.coordinator == profile %}
+      <td class="ok">Koordinátor.</td>
+{% elif approved_for_team == 'undecided' %}
+      <td class="warning">Nebylo dosud odsouhlaseno. Můžete znovu poslat urgenci koordinátorovi.</td>
+{% elif approved_for_team == 'denied' %}
+      <td class="alert">Zamítnuto. Budete si muset <a href="/registrace/upravit_profil/">zvolit jiný tým</a>. </td>
+{% elif approved_for_team == 'approved' %}
+      <td class="ok">Odsouhlaseno.</td>
 {% endif %}
+</tr>
 <tr><th scope="row">Startovné:</th><td>
       {% if payment_status == 'done' %}<span class="ok"> Zaplaceno </span>(slevový kód na <a href="http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012" target="_top">triko</a>: {{ voucher }}){% endif %}
       {% if payment_status == 'waiting' %}<span class="alert"> Čeká se na potvrzení platby </span>(<a href="/registrace/typ_platby/">Zadat jinou platbu</a>){% endif %}

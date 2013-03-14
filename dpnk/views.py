@@ -528,7 +528,7 @@ def profile(request):
             'own_city': own_city,
             'company_survey_by': company_survey_by,
             'competition_state': settings.COMPETITION_STATE,
-            'approved_for_team': (request.user.userprofile.approved_for_team == 'approved' or request.user.userprofile.team.coordinator == request.user.userprofile)
+            'approved_for_team': request.user.userprofile.approved_for_team,
             })
 
 def results(request, template):

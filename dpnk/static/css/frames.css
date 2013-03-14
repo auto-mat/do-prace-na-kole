@@ -53,8 +53,12 @@ form p input#id_distance{
     color: green;
     font-weight: bold;
 }
-.red,.alert,.warning{
+.red,.alert{
     color: red;
+    font-weight: bold;
+}
+.warning{
+    color: orange;
     font-weight: bold;
 }
 
