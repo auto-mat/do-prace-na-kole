@@ -17,7 +17,7 @@
 <tr><th scope="row">Email:</th><td>{{ profile.user.email }}</td></tr>
 <tr><th scope="row">Velikost trička:</th><td>{{ profile.t_shirt_size }}</td></tr>
 <tr><th scope="row">Koordinátor týmu:</th><td>{{ team.coordinator }}</td></tr>
-{% if approved_for_team %}
+{% if approved_for_team == 'approved' %}
 <tr><th scope="row">Členové týmu:</th><td>{{ team_members }}</td></tr>
 {% endif %}
 {% if team_members_count <= 1 %}
