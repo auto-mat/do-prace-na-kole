@@ -238,6 +238,8 @@ registration.signals.user_registered.connect(create_profile)
 
 @login_required
 def payment_type(request):
+    if request.user.userprofile.team.subsidiary.city.admission_fee == 0:
+        return redirect('/registrace/profil')
     template_name='registration/payment_type.html'
     form_class = PaymentTypeForm
     print request.POST
@@ -249,9 +251,9 @@ def payment_type(request):
             if form.cleaned_data['payment_type'] == 'pay':
                 return redirect('/registrace/platba')
             elif form.cleaned_data['payment_type'] == 'company':
-                Payment(user=request.user.userprofile, amount=0, pay_type='fc').save()
+                Payment(user=request.user.userprofile, amount=0, pay_type='fc', status=5).save()
             elif form.cleaned_data['payment_type'] == 'member':
-                Payment(user=request.user.userprofile, amount=0, pay_type='am').save()
+                Payment(user=request.user.userprofile, amount=0, pay_type='am', status=5).save()
 
             return redirect('/registrace/profil')
     else:
@@ -262,8 +264,20 @@ def payment_type(request):
                               {'form': form
                                }, context_instance=RequestContext(request))
 
+#@login_required
+#def update_profile(request):
+#    print request.POST
+#    return update_object(request,
+#                        form_class=ProfileUpdateForm,
+#                        object_id=request.user.get_profile().id,
+#                        template_name='registration/update_profile.html',
+#                        post_save_redirect='/registrace/profil/',
+#                        )
+
 @login_required
 def payment(request):
+    if request.user.userprofile.team.subsidiary.city.admission_fee == 0:
+        return redirect('/registrace/profil')
     uid = request.user.id
     order_id = '%s-1' % uid
     session_id = "%sJ%d " % (order_id, int(time.time()))
@@ -271,7 +285,7 @@ def payment(request):
     p = Payment(session_id=session_id,
                 user=UserProfile.objects.get(user=request.user),
                 order_id = order_id,
-                amount = 160,
+                amount = request.user.userprofile.team.subsidiary.city.admission_fee,
                 description = "Ucastnicky poplatek Do prace na kole")
     p.save()
     # Render form

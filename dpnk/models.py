@@ -301,6 +301,9 @@ class UserProfile(models.Model):
     city.short_description = u'Město'
 
     def payment_status(self):
+        if self.team.subsidiary.city.admission_fee == 0:
+            return 'no_admission'
+
         # Check payment status for this user
         payments = Payment.objects.filter(user=self)
         p_status = [p.status for p in payments]
