@@ -68,5 +68,6 @@ def invitation_mail(user, emails):
         if len(email) != 0:
             message = template.render(Context({ 'user': user,
                 'SITE_URL': settings.SITE_URL,
+                'email': email,
                 }))
             send_mail('Do práce na kole - pozvánka', message, None, [email], fail_silently=False)
