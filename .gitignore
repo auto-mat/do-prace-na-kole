@@ -1,3 +1,4 @@
+!.gitkeep
 /#*#
 *.mo
 *.pyc
@@ -6,3 +7,7 @@ dpnk/settings.py
 voucher/
 wp-content/
 sql/
+
+env/
+project/settings_dev_local.py
+static/
