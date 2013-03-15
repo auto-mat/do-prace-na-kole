@@ -154,6 +154,7 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             if new_user.userprofile.approved_for_team != 'approved':
                 approval_request_mail(new_user)
 
+            return HttpResponse("redirect")
             return redirect(success_url)
     else:
         initial_company = None
