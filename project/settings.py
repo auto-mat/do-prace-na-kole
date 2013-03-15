@@ -48,7 +48,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     #'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-	'django.middleware.csrf.CsrfViewMiddleware',
+	#'django.middleware.csrf.CsrfViewMiddleware',
 
     "dpnk.middleware.XHRMiddleware",
 )
@@ -75,5 +75,6 @@ SERVER_EMAIL='root@auto-mat.cz'
 LOGIN_URL = '/registrace/login/'
 LOGIN_REDIRECT_URL = '/registrace/profil/'
 SITE_URL = ''
+SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX
 COMPETITION_STATE='not_started_yet'
 #COMPETITION_STATE='started'
