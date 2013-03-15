@@ -1,5 +1,5 @@
 django==1.4.3
 south==0.7.6
 django-registration==0.8
-django-smart-selects==1.0.5
+git+https://github.com/digi604/django-smart-selects.git#egg=django-smart-selects==1.0.6
 django-composite-field==0.1
