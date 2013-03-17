@@ -205,4 +205,4 @@ class ProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ('firstname', 'surname', 'telephone', 'email', 't_shirt_size', 'team')
+        fields = ('firstname', 'surname', 'telephone', 'email', 'team')
