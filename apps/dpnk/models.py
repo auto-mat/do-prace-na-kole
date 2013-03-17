@@ -318,6 +318,10 @@ class UserProfile(models.Model):
             status = None
         return status
 
+    def payment_type(self):
+        payment = Payment.objects.filter(user=self).latest('id')
+        return payment.pay_type
+
 class UserProfileUnpaidManager(models.Manager):
     def get_query_set(self):
         paying_or_prospective_user_ids = [p.user_id for p in Payment.objects.filter(

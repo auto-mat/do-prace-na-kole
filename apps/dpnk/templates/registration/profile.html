@@ -39,10 +39,21 @@
 {% endif %}
 </tr>
 <tr><th scope="row">Startovné:</th><td>
-      {% if payment_status == 'no_admission' %}<span class="ok"> Ve vašem městě se startovné neplatí. {% endif %}
-      {% if payment_status == 'done' %}<span class="ok"> Zaplaceno </span>(slevový kód na <a href="http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012" target="_top">triko</a>: {{ voucher }}){% endif %}
-      {% if payment_status == 'waiting' %}<span class="alert"> Čeká se na potvrzení platby </span>(<a href="/registrace/typ_platby/">Zadat jinou platbu</a>){% endif %}
-      {% if payment_status == None %}<span class="alert"> Příspěvek dosud nezaplacen. </span><a href="/registrace/typ_platby/">Zaplatit</a> {% endif %}
+      {% if payment_status == 'no_admission' %}
+         <span class="ok"> Ve vašem městě se startovné neplatí.</span>
+      {% elif payment_status == 'done' %}
+         <span class="ok"> Zaplaceno </span>(slevový kód na <a href="http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012" target="_top">triko</a>: {{ voucher }})
+      {% elif payment_status == 'waiting' %}
+         {% if payment_type == 'fc' %}
+            <span class="alert"> Váš zaměstnavatel ještě poplatek nezaplatil </span>(<a href="/registrace/typ_platby/">Zadat jinou platbu</a>)
+         {% elif payment_type == 'am' %}
+            <span class="alert"> Vaše členství v Klubu přátel Auto*Mat se ověřuje </span>(<a href="/registrace/typ_platby/">Zadat jinou platbu</a>)
+         {% else %}
+            <span class="alert"> Čeká se na potvrzení platby </span>(<a href="/registrace/typ_platby/">Zadat jinou platbu</a>)
+         {% endif %}
+      {% elif payment_status == None %}
+         <span class="alert"> Příspěvek dosud nezaplacen. </span><a href="/registrace/typ_platby/">Zaplatit</a> 
+      {% endif %}
 </td></tr>
 </table>
 <a href="/registrace/upravit_profil/">Upravit údaje</a> | 

@@ -481,6 +481,7 @@ def profile(request):
             'profile': profile,
             'team': profile.team,
             'payment_status': payment_status,
+            'payment_type': profile.payment_type(),
             'voucher': voucher_code,
             'team_members': ", ".join([str(p) + " (" + str(p.user.email) + ")" for p in team_members]),
             'team_members_count': len(team_members),
