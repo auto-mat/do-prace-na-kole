@@ -21,9 +21,11 @@
 
 # Django imports
 from django.contrib import admin, messages
+from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.http import HttpResponseRedirect
+from snippets.related_field_admin import RelatedFieldAdmin
 # Models
 from models import *
 from django.forms import ModelForm
@@ -83,8 +85,8 @@ class SubsidiaryAdmin(admin.ModelAdmin):
 class CompetitionAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'competitor_type')
 
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('firstname', 'surname', 'user', 'team', 'distance', 'email', 'date_joined', 'city', 'id', )
+class UserProfileAdmin(RelatedFieldAdmin):
+    list_display = ('firstname', 'surname', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'user__city', 'id', )
     inlines = [PaymentInline, VoucherInline]
     search_fields = ['firstname', 'surname', 'user__username']
     list_filter = ['active', 'team__subsidiary__city']
@@ -94,8 +96,24 @@ class UserProfileAdmin(admin.ModelAdmin):
         return mark_safe('<a href="/admin/admin/dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
 
-class UserProfileUnpaidAdmin(UserProfileAdmin):
-    list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city', 'id', )
+class UserProfileUnpaidAdmin(UserProfileAdmin, RelatedFieldAdmin):
+    list_display = ('firstname', 'surname', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
+
+class UserProfileAdminInline(admin.StackedInline):
+    model = UserProfile
+    inlines = [PaymentInline, ]
+    can_delete=False
+
+    readonly_fields = ['team_link']
+    def team_link(self, obj):
+        return mark_safe('<a href="/admin/admin/dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
+    team_link.short_description = 'Tým'
+
+class UserAdmin(UserAdmin, RelatedFieldAdmin):
+    inlines = (UserProfileAdminInline, )
+    list_display = ('username', 'userprofile', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team__name', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'id')
+    search_fields = ['userprofile__firstname', 'userprofile__surname', 'username']
+    list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__active', 'userprofile__team__subsidiary__city']
 
 class TeamForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -159,3 +177,6 @@ admin.site.register(Subsidiary, SubsidiaryAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Competition, CompetitionAdmin)
 admin.site.register(Answer, AnswerAdmin)
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)

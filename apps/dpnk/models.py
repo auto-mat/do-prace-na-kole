@@ -287,19 +287,6 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.person_name()
 
-    def email(self):
-        return self.user.email
-    email.admin_order_field  = 'user__email'
-
-    def date_joined(self):
-        return self.user.date_joined
-    date_joined.admin_order_field  = 'user__date_joined'
-    date_joined.short_description = 'Registrace'
-
-    def city(self):
-        return self.team.city
-    city.short_description = u'Město'
-
     def payment_status(self):
         if self.team.subsidiary.city.admission_fee == 0:
             return 'no_admission'
