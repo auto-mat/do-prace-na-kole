@@ -20,27 +20,29 @@
       {% for user in unapproved_users %}
       {% if forloop.first %}
       <thead><tr>
-            {% for field in user.values %}
-            {% ifnotequal field.0 None %}
-            <th>{{ field.0 }}</th>
+            {% for field in user %}
+            {% ifnotequal field.1 None %}
+            <th>{{ field.1 }}</th>
             {% endifnotequal %}
             {% endfor %}
       </tr></thead>
       {% endif %}
       <tr class="{% cycle row1,row2 %}">
-         {% for field in user.values %}
-         {% ifnotequal field.0 None %}
+         {% for field in user %}
+         {% ifnotequal field.1 None %}
          <td>
-            {{ field.1 }}
+            {{ field.2 }}
          </td>
          {% endifnotequal %}
          {% endfor %}
          <td>
-            {% if user.state.1 == 'undecided' %}
-            <input type="submit" id="approve-{{user.id.1}}" name="approve-{{user.id.1}}" value="Ověřit"/>
+            {% if user.0.2 == 'undecided' or user.0.2 == 'denied' %}
+            <input type="submit" id="approve-{{user.1.2}}" name="approve-{{user.1.2}}" value="Ověřit"/>
+            {% if user.0.2 == 'undecided' %}
             <label for="reason">Důvod odmítnutí</label>
-            <input id="reason-{{user.id.1}}" name="reason-{{user.id.1}}" type="text"/>
-            <input type="submit" id="deny-{{user.id.1}}" name="deny-{{user.id.1}}" value="Zamítnout"/>
+            <input id="reason-{{user.1.2}}" name="reason-{{user.1.2}}" type="text"/>
+            <input type="submit" id="deny-{{user.1.2}}" name="deny-{{user.1.2}}" value="Zamítnout"/>
+            {% endif %}
             {% endif %}
          </td>
       </tr>

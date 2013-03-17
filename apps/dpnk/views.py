@@ -822,7 +822,7 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
     form_class = TeamAdminForm
     denial_message = 'unapproved'
 
-    for userprofile in UserProfile.objects.filter(team = team, approved_for_team='undecided', active=True):
+    for userprofile in UserProfile.objects.filter(team = team, approved_for_team__in = ('undecided', 'denied'), active=True):
         denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), approve=request.POST.has_key('approve-' + str(userprofile.id)), deny=request.POST.has_key('deny-' + str(userprofile.id)))
 
     if request.method == 'POST' and denial_message == 'unapproved':
@@ -834,13 +834,15 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
         form = form_class(instance = team)
 
     for userprofile in UserProfile.objects.filter(team = team, active=True):
-        unapproved_users.append({
-            'name': (u'Jméno', unicode(userprofile)),
-            'username': (u'Uživatel', userprofile.user),
-            'state_name': (u'Stav', unicode(userprofile.get_approved_for_team_display())),
-            'id': (None, userprofile.id),
-            'state': (None, userprofile.approved_for_team),
-            })
+        unapproved_users.append([
+            ('state', None, userprofile.approved_for_team),
+            ('id', None, userprofile.id),
+            ('name', u'Jméno', unicode(userprofile)),
+            ('username', u'Uživatel', userprofile.user),
+            ('email', u'Email', userprofile.user.email),
+            ('telephone', u'Telefon', userprofile.telephone),
+            ('state_name', u'Stav', unicode(userprofile.get_approved_for_team_display())),
+            ])
 
     team_members = UserProfile.objects.filter(team=team, active=True)
 
