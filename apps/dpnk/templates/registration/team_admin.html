@@ -39,6 +39,7 @@
             {% if user.0.2 == 'undecided' or user.0.2 == 'denied' %}
             <input type="submit" id="approve-{{user.1.2}}" name="approve-{{user.1.2}}" value="Ověřit"/>
             {% if user.0.2 == 'undecided' %}
+            <br/>
             <label for="reason">Důvod odmítnutí</label>
             <input id="reason-{{user.1.2}}" name="reason-{{user.1.2}}" type="text"/>
             <input type="submit" id="deny-{{user.1.2}}" name="deny-{{user.1.2}}" value="Zamítnout"/>
