@@ -43,7 +43,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         model_name = "Team",
         model_field = "subsidiary",
         show_all = False,
-        auto_choose = True,
+        auto_choose = False,
         label="Tým",
         queryset=Team.objects.all(),
         required=True)
