@@ -16,7 +16,11 @@
 <tr><th scope="row">Telefon:</th><td>{{ profile.telephone }}</td></tr>
 <tr><th scope="row">Email:</th><td>{{ profile.user.email }}</td></tr>
 <tr><th scope="row">Velikost trička:</th><td>{{ profile.t_shirt_size }}</td></tr>
-<tr><th scope="row">Koordinátor týmu:</th><td>{{ team.coordinator }}</td></tr>
+<tr><th scope="row">Koordinátor týmu:</th><td>{{ team.coordinator }}
+{% if approved_for_team == 'approved' %}
+({{ team.coordinator.user.email }}, tel.: {{ team.coordinator.telephone }})
+{% endif %}
+</td></tr>
 {% if approved_for_team == 'approved' %}
 <tr><th scope="row">Členové týmu:</th><td>{{ team_members }}</td></tr>
 {% endif %}

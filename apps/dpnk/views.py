@@ -482,7 +482,7 @@ def profile(request):
             'team': profile.team,
             'payment_status': payment_status,
             'voucher': voucher_code,
-            'team_members': ", ".join([str(p) for p in team_members]),
+            'team_members': ", ".join([str(p) + " (" + str(p.user.email) + ")" for p in team_members]),
             'team_members_count': len(team_members),
             'calendar': calendar,
             'member_counts': member_counts,
