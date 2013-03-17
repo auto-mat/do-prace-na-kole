@@ -194,12 +194,6 @@ class Team(models.Model):
         validators = [validate_length],
         )
 
-    def team_subsidiary_city(self):
-        return self.subsidiary.city
-
-    def team_subsidiary_company(self):
-        return self.subsidiary.company
-
     def __unicode__(self):
         return "%s / %s" % (self.name, self.subsidiary.company)
 

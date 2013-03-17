@@ -120,8 +120,8 @@ class TeamForm(ModelForm):
         super(TeamForm, self).__init__(*args, **kwargs)
         self.fields['coordinator'].queryset = UserProfile.objects.filter(team=self.instance)
 
-class TeamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'subsidiary', 'team_subsidiary_city', 'team_subsidiary_company', 'coordinator', 'id', )
+class TeamAdmin(RelatedFieldAdmin):
+    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__firstname', 'coordinator__surname']
     list_filter = ['subsidiary__city']
 
