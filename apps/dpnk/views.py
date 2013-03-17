@@ -573,11 +573,9 @@ def update_profile(request,
 
             if request.user.userprofile.team != form.cleaned_data['team'] and not create_team:
                 userprofile.approved_for_team = 'undecided'
+                approval_request_mail(userprofile.user)
 
             form.save()
-
-            if userprofile.approved_for_team != 'approved':
-                approval_request_mail(userprofile.user)
 
             return redirect(success_url)
     else:
