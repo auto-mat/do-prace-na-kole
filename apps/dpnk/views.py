@@ -201,6 +201,7 @@ def create_profile(user, request, **kwargs):
 
     UserProfile(user = user,
                 team = team,
+                t_shirt_size = request.POST['t_shirt_size'],
                 telephone = request.POST['telephone'],
                 distance = request.POST['distance']
                 ).save()

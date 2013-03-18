@@ -52,8 +52,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         required=True)
     t_shirt_size = forms.ChoiceField(
         label="Velikost trička",
-        choices = UserProfile.TSHIRTSIZE,
-        initial = "L",
+        choices = [['','-----'],] + UserProfile.TSHIRTSIZE,
         )
 
     # -- Contacts

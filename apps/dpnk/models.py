@@ -209,11 +209,11 @@ class UserProfile(models.Model):
         verbose_name = u"Uživatel"
         verbose_name_plural = u"Uživatelé"
 
-    TSHIRTSIZE = (('S', "S"),
+    TSHIRTSIZE = [('S', "S"),
               ('M', "M"),
               ('L', "L"),
               ('XL', "XL"),
-              ('XXL', "XXL"))
+              ('XXL', "XXL")]
 
     TEAMAPPROVAL = (('approved', "Odsouhlasený"),
               ('undecided', "Nerozhodnuto"),
