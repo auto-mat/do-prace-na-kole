@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load url from future %}
+{% load dpnk_tags %}
 
 {% block content %}
 <form action="" method="post">{% csrf_token %}
@@ -7,5 +8,5 @@
 <input type="submit" value="Přihlásit" />
 </form>
 
-<p><a href="/registrace/zapomenute_heslo/">Zapomněli jste své přihlašovací údaje?</a>
+<p><a href="{% wp_url 'zapomenute_heslo' %}">Zapomněli jste své přihlašovací údaje?</a>
 {% endblock %}

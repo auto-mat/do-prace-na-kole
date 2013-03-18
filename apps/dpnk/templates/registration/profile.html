@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load url from future %}
+{% load dpnk_tags %}
 
 {% block body_id %}profile{% endblock %}
 {% block content %}
@@ -27,9 +28,9 @@
 {% if team.coordinator == profile %}
       <td class="ok">Koordinátor.</td>
 {% elif approved_for_team == 'undecided' %}
-      <td class="warning">Nebylo dosud odsouhlaseno. Můžete znovu <a href="/registrace/zaslat_zadost_clenstvi">poslat žádost o ověřeření členství</a> koordinátorovi vašeho týmu.</td>
+      <td class="warning">Nebylo dosud odsouhlaseno. Můžete znovu <a href="{% wp_url 'zaslat_zadost_clenstvi'%}">poslat žádost o ověřeření členství</a> koordinátorovi vašeho týmu.</td>
 {% elif approved_for_team == 'denied' %}
-      <td class="alert">Zamítnuto. Budete si muset <a href="/registrace/upravit_profil/">zvolit jiný tým</a>. </td>
+      <td class="alert">Zamítnuto. Budete si muset <a href="{% wp_url 'upravit_profil' %}">zvolit jiný tým</a>. </td>
 {% elif approved_for_team == 'approved' %}
       <td class="ok">Odsouhlaseno.</td>
 {% endif %}
@@ -37,16 +38,16 @@
 <tr><th scope="row">Startovné:</th><td>
       {% if payment_status == 'no_admission' %}<span class="ok"> Ve vašem městě se startovné neplatí. {% endif %}
       {% if payment_status == 'done' %}<span class="ok"> Zaplaceno </span>(slevový kód na <a href="http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012" target="_top">triko</a>: {{ voucher }}){% endif %}
-      {% if payment_status == 'waiting' %}<span class="alert"> Čeká se na potvrzení platby </span>(<a href="/registrace/typ_platby/">Zadat jinou platbu</a>){% endif %}
-      {% if payment_status == None %}<span class="alert"> Příspěvek dosud nezaplacen. </span><a href="/registrace/typ_platby/">Zaplatit</a> {% endif %}
+      {% if payment_status == 'waiting' %}<span class="alert"> Čeká se na potvrzení platby </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>){% endif %}
+      {% if payment_status == None %}<span class="alert"> Příspěvek dosud nezaplacen. </span><a href="{% wp_url 'typ_platby' %}">Zaplatit</a> {% endif %}
 </td></tr>
 </table>
-<a href="/registrace/upravit_profil/">Upravit údaje</a> | 
+<a href="{% wp_url 'upravit_profil' %}">Upravit údaje</a> | 
 {% if team.coordinator == profile %}
-<a href="/registrace/team_admin/">Upravit tým</a> | 
+<a href="{% wp_url 'team_admin' %}">Upravit tým</a> | 
 {% endif %}
-<a href="/registrace/zmena_hesla/">Změnit heslo</a> | 
-<a href="/registrace/logout/">Odhlásit</a>
+<a href="{% wp_url 'zmena_hesla' %}">Změnit heslo</a> | 
+<a href="{% wp_url 'logout' %}">Odhlásit</a>
 
 {% ifequal competition_state 'started' %}
 
@@ -73,7 +74,7 @@
 <tr>
 <form name="calendar-{{ forloop.counter }}" action="/registrace/profil/" method="POST">
 <th scope="row" class="date">{{ day.name }}</th>
-<td>{% if day.question_active %}<a href="/registrace/otazka/?questionaire=player&day={{ day.iso }}" onclick="window.parent.scroll(0,200);">Otázka</a>{% else %} ? {% endif %}</td>
+<td>{% if day.question_active %}<a href="{% wp_url 'otazka' %}?questionaire=player&day={{ day.iso }}" onclick="window.parent.scroll(0,200);">Otázka</a>{% else %} ? {% endif %}</td>
 <td><input type="checkbox" name="trip_to"  disabled="disabled"  {% if day.default_trip_to %}checked="checked"{% endif %}/></td>
 <td><input type="checkbox" name="trip_from"  disabled="disabled"  {% if day.default_trip_from %}checked="checked"{% endif %}/></td>
 <td {% if day.percentage > 66 %} class="green" {% else %} class="red" {% endif %}>{% if day.trips_active %}{{ day.percentage|floatformat:1 }}%{% endif %}</td>
@@ -113,15 +114,15 @@
 
 {% ifequal competition_state 'started' %}
 {% if own_city %}
-<p><a href="/registrace/vysledky?mesto={{team.city}}" onclick="window.parent.scroll(0,200);">Průběžné výsledky</a></p>
+<p><a href="{% wp_url 'vysledky'%}?mesto={{team.city}}" onclick="window.parent.scroll(0,200);">Průběžné výsledky</a></p>
 
 <h3>Soutěž Cyklozaměstnavatel roku</h3>
 {% if not company_survey_by %}
-<p><a href="/registrace/cyklozamestnavatel_roku/?questionaire=company" onclick="window.parent.scroll(0,200);">Vyplnit dotazník</a></p>
+<p><a href="{% wp_url 'cyklozamestnavatel_roku'%}?questionaire=company" onclick="window.parent.scroll(0,200);">Vyplnit dotazník</a></p>
 {% else %}
 {% if company_survey_by == 'me' %}
 <p><strong>Děkujeme za vyplnění dotazníku.</strong><br/>
-<a href="/registrace/cyklozamestnavatel_roku/?questionaire=company" onclick="window.parent.scroll(0,200);">Prohlédnout dotazník</a></p>
+<a href="{% wp_url 'cyklozamestnavatel_roku'%}questionaire=company" onclick="window.parent.scroll(0,200);">Prohlédnout dotazník</a></p>
 {% else %}
 <p>Dotazník cyklozaměstnavatel roku za vaši firmu již vyplnil {{company_survey_by.firstname}} {{company_survey_by.surname}}.</p>
 {% endif %}
@@ -135,7 +136,7 @@
 
 {% else %}
 Tento profil byl zneaktivněn.</br>
-<a href="/registrace/logout/">Odhlásit</a>
+<a href="{% wp_url 'logout' %}">Odhlásit</a>
 {% endif %}
 
 <p>&nbsp;</p>
