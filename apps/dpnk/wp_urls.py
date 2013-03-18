@@ -26,3 +26,6 @@ urls = {
     'cyklozamestnavatel_odpovedi':  "cyklozamestnavatel_odpovedi.html",
     'odpovedi':                     "odpovedi.html",
 }
+
+def wp_reverse(name):
+    return urls[name]
