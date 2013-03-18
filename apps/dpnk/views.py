@@ -158,7 +158,7 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
 
             if new_user.userprofile.approved_for_team != 'approved':
                 approval_request_mail(new_user)
-
+            print success_url
             return redirect(wp_reverse(success_url))
     else:
         initial_company = None
@@ -570,7 +570,7 @@ def update_profile(request,
 
                 userprofile.team = team
                 success_url = "pozvanky"
-                request.session['success_url'] = '/registrace/profil'
+                request.session['success_url'] = 'profil'
 
                 team_created_mail(userprofile.user)
 
