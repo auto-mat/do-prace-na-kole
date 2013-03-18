@@ -120,19 +120,19 @@ class InviteForm(forms.Form):
     error_css_class = 'error'
 
     email1 = forms.EmailField(
-        label="Kolega 1",
+        label="Email kolegy 1",
         required=False)
 
     email2 = forms.EmailField(
-        label="Kolega 2",
+        label="Email kolegy 2",
         required=False)
 
     email3 = forms.EmailField(
-        label="Kolega 3",
+        label="Email kolegy 3",
         required=False)
 
     email4 = forms.EmailField(
-        label="Kolega 4",
+        label="Email kolegy 4",
         required=False)
 
 class TeamAdminForm(forms.ModelForm):
