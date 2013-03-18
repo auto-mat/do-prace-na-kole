@@ -824,7 +824,10 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
     denial_message = 'unapproved'
 
     for userprofile in UserProfile.objects.filter(team = team, approved_for_team__in = ('undecided', 'denied'), user__is_active=True):
-        denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), approve=request.POST.has_key('approve-' + str(userprofile.id)), deny=request.POST.has_key('deny-' + str(userprofile.id)))
+        message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), approve=request.POST.has_key('approve-' + str(userprofile.id)), deny=request.POST.has_key('deny-' + str(userprofile.id)))
+        if message:
+            denial_message = message
+            break
 
     if request.method == 'POST' and denial_message == 'unapproved':
         form = form_class(data=request.POST, instance = team)
