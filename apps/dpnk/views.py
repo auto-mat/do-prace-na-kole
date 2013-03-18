@@ -487,7 +487,7 @@ def profile(request):
             'payment_type': profile.payment_type(),
             'voucher': voucher_code,
             'team_members': ", ".join([str(p) + " (" + str(p.user.email) + ")" for p in team_members]),
-            'team_members_count': len(team_members),
+            'team_members_count': UserProfile.objects.filter(approved_for_team='approved', team=profile.team, user__is_active=True).count(),
             'calendar': calendar,
             'member_counts': member_counts,
             'team_percentage': team_percentage,
