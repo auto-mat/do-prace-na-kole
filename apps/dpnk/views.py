@@ -849,11 +849,8 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
             ('state_name', u'Stav', unicode(userprofile.get_approved_for_team_display())),
             ])
 
-    team_members = UserProfile.objects.filter(team=team, user__is_active=True)
-
     return render_to_response(template_name,
                               {'form': form,
                                'unapproved_users': unapproved_users,
-                                'team_members': ", ".join([str(p) for p in team_members]),
                                 'denial_message': denial_message == 'no_message',
                                 }, context_instance=RequestContext(request))
