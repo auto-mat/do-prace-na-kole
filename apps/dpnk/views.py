@@ -63,6 +63,9 @@ def must_be_approved_for_team(fn):
             return HttpResponse(u'Vaše členství v týmu "' + userprofile.team.name + u'" nebylo odsouhlaseno. O ověření členství můžete požádat v <a href="/registrace/profil">profilu</a>.', status=401)
     return wrapper
 
+def redirect(url):
+    return HttpResponse("redirect:"+url)
+
 def register(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
              disallowed_url='registration_disallowed',
@@ -154,7 +157,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             if new_user.userprofile.approved_for_team != 'approved':
                 approval_request_mail(new_user)
 
-            return HttpResponse("redirect")
             return redirect(success_url)
     else:
         initial_company = None
@@ -162,7 +164,7 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
         initial_team = None
 
         if token != None:
-            team = Team.objects.get(invitation_token=token)
+            team = Team.objects.get(nvitation_token=token)
             initial_company = team.subsidiary.company
             initial_subsidiary = team.subsidiary
             initial_team = team
@@ -206,8 +208,8 @@ registration.signals.user_registered.connect(create_profile)
 
 @login_required
 def payment_type(request):
-    if request.user.userprofile.team.subsidiary.city.admission_fee == 0:
-        return redirect('/registrace/profil')
+    # if request.user.userprofile.team.subsidiary.city.admission_fee == 0:
+    #     return redirect('/registrace/profil')
     template_name='registration/payment_type.html'
     form_class = PaymentTypeForm
 
@@ -232,7 +234,7 @@ def payment_type(request):
 @login_required
 def payment(request):
     if request.user.userprofile.team.subsidiary.city.admission_fee == 0:
-        return redirect('/registrace/profil')
+        pass #return redirect('/registrace/profil')
     uid = request.user.id
     order_id = '%s-1' % uid
     session_id = "%sJ%d " % (order_id, int(time.time()))

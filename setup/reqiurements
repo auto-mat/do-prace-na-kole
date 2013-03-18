@@ -3,3 +3,4 @@ south==0.7.6
 django-registration==0.8
 django-smart-selects==1.0.6
 django-composite-field==0.1
+django-simple-ajax

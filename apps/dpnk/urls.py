@@ -2,16 +2,18 @@ from django.conf.urls.defaults import patterns, include, url
 
 from views import *
 
+PREFIX = getattr(settings, "DPNK_WP_URL_PREFIX", "http://localhost/dpnk/")
+
 urlpatterns = patterns('',
-    url(r'^$', 
+    url(r'^registrace/$', 
         register,
-        {'success_url': '/typ_platby/'}),
+        {'success_url': PREFIX+'typ_platby.html'}),
     url(r'^(?P<token>[0-9A-Za-z]+)/(?P<initial_email>[^&]+)$$',
         register,
-        {'success_url': '/typ_platby/'}),
+        {'success_url': PREFIX+'typ_platby.html'}),
     url(r'^pozvanky/$',
         invite,
-        {'success_url': '/typ_platby/'}),
+        {'success_url': PREFIX+'typ_platby.html'}),
     url(r'^zaslat_zadost_clenstvi/$',
         team_approval_request),
     url(r'^login/$',
@@ -24,7 +26,7 @@ urlpatterns = patterns('',
         profile),
     url(r'^team_admin/$',
         team_admin,
-        {'success_url': '/profil/'}),
+        {'success_url': PREFIX+'profil.html'}),
     url(r'^vysledky/$',
         results,
         {'template': 'registration/results.html'}),
