@@ -32,7 +32,7 @@ import registration.signals, registration.backends
 # Model imports
 from django.contrib.auth.models import User
 from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company
-from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, TeamUserAdminForm, PaymentTypeForm
+from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm
 from django.conf import settings
 from  django.http import HttpResponse
 # Local imports
@@ -199,10 +199,13 @@ def create_profile(user, request, **kwargs):
     else:
         team = Team.objects.get(name=request.POST['team-name'])
 
+    user.first_name = request.POST['first_name']
+    user.last_name = request.POST['last_name']
+    user.save()
+
     UserProfile(user = user,
                 team = team,
-                firstname = request.POST['firstname'],
-                surname = request.POST['surname'],
+                t_shirt_size = request.POST['t_shirt_size'],
                 telephone = request.POST['telephone'],
                 distance = request.POST['distance']
                 ).save()
@@ -251,9 +254,9 @@ def payment(request):
     profile = UserProfile.objects.get(user=request.user)
     return render_to_response('registration/payment.html',
                               {
-            'firstname': profile.firstname, # firstname
-            'surname': profile.surname, # surname
-            'email': profile.email, # email
+            'firstname': profile.user.first_name, # firstname
+            'surname': profile.user.last_name, # surname
+            'email': profile.user.email, # email
             'amount': p.amount,
             'amount_hal': p.amount * 100, # v halerich
             'description' : p.description,
@@ -410,7 +413,7 @@ def profile(request):
 
     # Render profile
     payment_status = profile.payment_status()
-    team_members = UserProfile.objects.filter(team=profile.team, active=True)
+    team_members = UserProfile.objects.filter(team=profile.team, user__is_active=True)
 
     trips = {}
     for t in Trip.objects.filter(user=profile):
@@ -479,15 +482,16 @@ def profile(request):
         company_survey_by = None
     return render_to_response('registration/profile.html',
                               {
-            'active': profile.active,
+            'active': profile.user.is_active,
             'superuser': request.user.is_superuser,
             'user': request.user,
             'profile': profile,
             'team': profile.team,
             'payment_status': payment_status,
+            'payment_type': profile.payment_type(),
             'voucher': voucher_code,
-            'team_members': ", ".join([str(p) for p in team_members]),
-            'team_members_count': len(team_members),
+            'team_members': ", ".join([str(p) + " (" + str(p.user.email) + ")" for p in team_members]),
+            'team_members_count': UserProfile.objects.filter(approved_for_team='approved', team=profile.team, user__is_active=True).count(),
             'calendar': calendar,
             'member_counts': member_counts,
             'team_percentage': team_percentage,
@@ -576,11 +580,9 @@ def update_profile(request,
 
             if request.user.userprofile.team != form.cleaned_data['team'] and not create_team:
                 userprofile.approved_for_team = 'undecided'
+                approval_request_mail(userprofile.user)
 
             form.save()
-
-            if userprofile.approved_for_team != 'approved':
-                approval_request_mail(userprofile.user)
 
             return redirect(wp_reverse(success_url))
     else:
@@ -826,8 +828,11 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
     form_class = TeamAdminForm
     denial_message = 'unapproved'
 
-    for userprofile in UserProfile.objects.filter(team = team, approved_for_team='undecided', active=True):
-        denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), approve=request.POST.has_key('approve-' + str(userprofile.id)), deny=request.POST.has_key('deny-' + str(userprofile.id)))
+    for userprofile in UserProfile.objects.filter(team = team, approved_for_team__in = ('undecided', 'denied'), user__is_active=True):
+        message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), approve=request.POST.has_key('approve-' + str(userprofile.id)), deny=request.POST.has_key('deny-' + str(userprofile.id)))
+        if message:
+            denial_message = message
+            break
 
     if request.method == 'POST' and denial_message == 'unapproved':
         form = form_class(data=request.POST, instance = team)
@@ -837,20 +842,19 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
     else:
         form = form_class(instance = team)
 
-    for userprofile in UserProfile.objects.filter(team = team, active=True):
-        unapproved_users.append({
-            'name': (u'Jméno', unicode(userprofile)),
-            'username': (u'Uživatel', userprofile.user),
-            'state_name': (u'Stav', unicode(userprofile.get_approved_for_team_display())),
-            'id': (None, userprofile.id),
-            'state': (None, userprofile.approved_for_team),
-            })
-
-    team_members = UserProfile.objects.filter(team=team, active=True)
+    for userprofile in UserProfile.objects.filter(team = team, user__is_active=True):
+        unapproved_users.append([
+            ('state', None, userprofile.approved_for_team),
+            ('id', None, userprofile.id),
+            ('name', u'Jméno', unicode(userprofile)),
+            ('username', u'Uživatel', userprofile.user),
+            ('email', u'Email', userprofile.user.email),
+            ('telephone', u'Telefon', userprofile.telephone),
+            ('state_name', u'Stav', unicode(userprofile.get_approved_for_team_display())),
+            ])
 
     return render_to_response(template_name,
                               {'form': form,
                                'unapproved_users': unapproved_users,
-                                'team_members': ", ".join([str(p) for p in team_members]),
                                 'denial_message': denial_message == 'no_message',
                                 }, context_instance=RequestContext(request))

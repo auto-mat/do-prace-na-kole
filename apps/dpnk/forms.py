@@ -9,17 +9,17 @@ from django.db.models import Q
 from dpnk.widgets import SelectOrCreate
 
 def team_full(data):
-    if len(UserProfile.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, active=True)) >= 5:
+    if len(UserProfile.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, user__is_active=True)) >= 5:
         raise forms.ValidationError("Tento tým již má pět členů a je tedy plný")
 
 class RegistrationFormDPNK(registration.forms.RegistrationForm):
     required_css_class = 'required'
     
-    firstname = forms.CharField(
+    first_name = forms.CharField(
         label="Jméno",
         max_length=30,
         required=True)
-    surname = forms.CharField(
+    last_name = forms.CharField(
         label="Příjmení",
         max_length=30,
         required=True)
@@ -43,7 +43,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         model_name = "Team",
         model_field = "subsidiary",
         show_all = False,
-        auto_choose = True,
+        auto_choose = False,
         label="Tým",
         queryset=Team.objects.all(),
         required=True)
@@ -52,8 +52,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         required=True)
     t_shirt_size = forms.ChoiceField(
         label="Velikost trička",
-        choices = UserProfile.TSHIRTSIZE,
-        initial = "L",
+        choices = [['','-----'],] + UserProfile.TSHIRTSIZE,
         )
 
     # -- Contacts
@@ -70,8 +69,8 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
 
         super(RegistrationFormDPNK, self).__init__(*args, **kwargs)
         self.fields.keyOrder = [
-            'firstname',
-            'surname',
+            'first_name',
+            'last_name',
             'company',
             'subsidiary',
             'team',
@@ -144,20 +143,6 @@ class TeamAdminForm(forms.ModelForm):
         model = Team
         fields = ('name',)
 
-class TeamUserAdminForm(forms.ModelForm):
-    required_css_class = 'required'
-    error_css_class = 'error'
-
-    class Meta:
-        model = UserProfile
-        fields = ('firstname', 'surname', 'approved_for_team',)
-        readonly_fields = ('firstname', 'surname',)
-    def get_readonly_fields(self, request, obj=None):
-        if obj:
-            return ['firstname', 'surname',]
-        else:
-            return []
-
 class PaymentTypeForm(forms.Form):
     CHOICES=[('pay',u'Účastnický poplatek si platím sám.'),
              ('company',u'Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.'),
@@ -170,8 +155,15 @@ class PaymentTypeForm(forms.Form):
             widget=forms.RadioSelect(),
             )
 
-
 class ProfileUpdateForm(forms.ModelForm):
+    first_name = forms.CharField(
+        label="Jméno",
+        max_length=30,
+        required=True)
+    last_name = forms.CharField(
+        label="Příjmení",
+        max_length=30,
+        required=True)
     team = forms.ModelChoiceField(
         label="Tým",
         queryset= [],
@@ -185,6 +177,8 @@ class ProfileUpdateForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).save(*args, **kwargs)
         self.instance.user.email = self.cleaned_data.get('email')
+        self.instance.user.first_name = self.cleaned_data.get('first_name')
+        self.instance.user.last_name = self.cleaned_data.get('last_name')
         self.instance.user.save()
         return ret_val
 
@@ -201,8 +195,10 @@ class ProfileUpdateForm(forms.ModelForm):
         self.fields["team"].queryset = Team.objects.filter(subsidiary__company=userprofile.team.subsidiary.company)
 
         self.fields['email'].initial = self.instance.user.email
+        self.fields['first_name'].initial = self.instance.user.first_name
+        self.fields['last_name'].initial = self.instance.user.last_name
         return ret_val
 
     class Meta:
         model = UserProfile
-        fields = ('firstname', 'surname', 'telephone', 'email', 't_shirt_size', 'team')
+        fields = ('first_name', 'last_name', 'telephone', 'email', 'team')

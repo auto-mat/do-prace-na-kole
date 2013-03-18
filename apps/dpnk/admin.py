@@ -21,9 +21,11 @@
 
 # Django imports
 from django.contrib import admin, messages
+from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.http import HttpResponseRedirect
+from snippets.related_field_admin import RelatedFieldAdmin
 # Models
 from models import *
 from django.forms import ModelForm
@@ -83,34 +85,50 @@ class SubsidiaryAdmin(admin.ModelAdmin):
 class CompetitionAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'competitor_type')
 
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('firstname', 'surname', 'user', 'team', 'distance', 'email', 'date_joined', 'city', 'id', )
+class UserProfileAdmin(RelatedFieldAdmin):
+    list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'user__city', 'id', )
     inlines = [PaymentInline, VoucherInline]
-    search_fields = ['firstname', 'surname', 'user__username']
-    list_filter = ['active', 'team__subsidiary__city']
+    search_fields = ['user__first_name', 'user__last_name', 'user__username']
+    list_filter = ['user__is_active', 'team__subsidiary__city']
 
     readonly_fields = ['team_link']
     def team_link(self, obj):
         return mark_safe('<a href="/admin/admin/dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
 
-class UserProfileUnpaidAdmin(UserProfileAdmin):
-    list_display = ('firstname', 'surname', 'team', 'distance', 'email', 'date_joined', 'city', 'id', )
+class UserProfileUnpaidAdmin(UserProfileAdmin, RelatedFieldAdmin):
+    list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
+
+class UserProfileAdminInline(admin.StackedInline):
+    model = UserProfile
+    inlines = [PaymentInline, ]
+    can_delete=False
+
+    readonly_fields = ['team_link']
+    def team_link(self, obj):
+        return mark_safe('<a href="/admin/admin/dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
+    team_link.short_description = 'Tým'
+
+class UserAdmin(UserAdmin, RelatedFieldAdmin):
+    inlines = (UserProfileAdminInline, )
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'id')
+    search_fields = ['userprofile__first_name', 'userprofile__last_name', 'username']
+    list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city']
 
 class TeamForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(TeamForm, self).__init__(*args, **kwargs)
         self.fields['coordinator'].queryset = UserProfile.objects.filter(team=self.instance)
 
-class TeamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'subsidiary', 'team_subsidiary_city', 'team_subsidiary_company', 'coordinator', 'id', )
-    search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__firstname', 'coordinator__surname']
+class TeamAdmin(RelatedFieldAdmin):
+    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'id', )
+    search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__user__first_name', 'coordinator__user__last_name']
     list_filter = ['subsidiary__city']
 
     readonly_fields = ['members']
     def members(self, obj):
         return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
-                                  for u in UserProfile.objects.filter(team=obj, active=True)]))
+                                  for u in UserProfile.objects.filter(team=obj, user__is_active=True)]))
     members.short_description = 'Členové'
     form = TeamForm
 
@@ -159,3 +177,6 @@ admin.site.register(Subsidiary, SubsidiaryAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Competition, CompetitionAdmin)
 admin.site.register(Answer, AnswerAdmin)
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)

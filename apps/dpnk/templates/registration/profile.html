@@ -9,7 +9,7 @@
 {% if own_city %}
 <h3>Základní údaje</h3>
 <table>
-<tr><th scope="row">Jméno</th><td>{{ profile.firstname }} {{ profile.surname }}</td></tr>
+<tr><th scope="row">Jméno</th><td>{{ profile }}</td></tr>
 <tr><th scope="row">Tým:</th><td>{{ team.name }}</td></tr>
 <tr><th scope="row">Město:</th><td>{{ team.subsidiary.city.name }}</td></tr>
 <tr><th scope="row">Pobočka:</th><td>{{ team.subsidiary }}</td></tr>
@@ -17,12 +17,16 @@
 <tr><th scope="row">Telefon:</th><td>{{ profile.telephone }}</td></tr>
 <tr><th scope="row">Email:</th><td>{{ profile.user.email }}</td></tr>
 <tr><th scope="row">Velikost trička:</th><td>{{ profile.t_shirt_size }}</td></tr>
-<tr><th scope="row">Koordinátor týmu:</th><td>{{ team.coordinator }}</td></tr>
+<tr><th scope="row">Koordinátor týmu:</th><td>{{ team.coordinator }}
+{% if approved_for_team == 'approved' %}
+({{ team.coordinator.user.email }}, tel.: {{ team.coordinator.telephone }})
+{% endif %}
+</td></tr>
 {% if approved_for_team == 'approved' %}
 <tr><th scope="row">Členové týmu:</th><td>{{ team_members }}</td></tr>
 {% endif %}
 {% if team_members_count <= 1 %}
-<tr><th scope="row">Upozornění:</th><td class="alert"> Jste sám v týmu. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva lidé.</td></tr>
+<tr><th scope="row">Upozornění:</th><td class="alert"> Jste jedniný odsouhlasený člen týmu. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva lidé.</td></tr>
 {% endif %}
 <tr><th scope="row">Členství v týmu:</th>
 {% if team.coordinator == profile %}
@@ -36,10 +40,21 @@
 {% endif %}
 </tr>
 <tr><th scope="row">Startovné:</th><td>
-      {% if payment_status == 'no_admission' %}<span class="ok"> Ve vašem městě se startovné neplatí. {% endif %}
-      {% if payment_status == 'done' %}<span class="ok"> Zaplaceno </span>(slevový kód na <a href="http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012" target="_top">triko</a>: {{ voucher }}){% endif %}
-      {% if payment_status == 'waiting' %}<span class="alert"> Čeká se na potvrzení platby </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>){% endif %}
-      {% if payment_status == None %}<span class="alert"> Příspěvek dosud nezaplacen. </span><a href="{% wp_url 'typ_platby' %}">Zaplatit</a> {% endif %}
+      {% if payment_status == 'no_admission' %}
+         <span class="ok"> Ve vašem městě se startovné neplatí.</span>
+      {% elif payment_status == 'done' %}
+         <span class="ok"> Zaplaceno </span>(slevový kód na <a href="http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012" target="_top">triko</a>: {{ voucher }})
+      {% elif payment_status == 'waiting' %}
+         {% if payment_type == 'fc' %}
+            <span class="alert"> Váš zaměstnavatel ještě poplatek nezaplatil </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>)
+         {% elif payment_type == 'am' %}
+            <span class="alert"> Vaše členství v Klubu přátel Auto*Mat se ověřuje </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>)
+         {% else %}
+            <span class="alert"> Čeká se na potvrzení platby </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>)
+         {% endif %}
+      {% elif payment_status == None %}
+         <span class="alert"> Příspěvek dosud nezaplacen. </span><a href="{% wp_url 'typ_platby' %}">Zaplatit</a> 
+      {% endif %}
 </td></tr>
 </table>
 <a href="{% wp_url 'upravit_profil' %}">Upravit údaje</a> | 
@@ -124,7 +139,7 @@
 <p><strong>Děkujeme za vyplnění dotazníku.</strong><br/>
 <a href="{% wp_url 'cyklozamestnavatel_roku'%}questionaire=company" onclick="window.parent.scroll(0,200);">Prohlédnout dotazník</a></p>
 {% else %}
-<p>Dotazník cyklozaměstnavatel roku za vaši firmu již vyplnil {{company_survey_by.firstname}} {{company_survey_by.surname}}.</p>
+<p>Dotazník cyklozaměstnavatel roku za vaši firmu již vyplnil {{ company_survey_by }}.</p>
 {% endif %}
 {% endif %}
 

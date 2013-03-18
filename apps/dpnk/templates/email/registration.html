@@ -2,11 +2,12 @@
 
 Vážený {{ user.userprofile }},
 
-právě jste se zaregistroval do soutěže Do práce na kole do týmu {{user.userprofile.team.name}}. Svůj profil v této soutěži můžete navštívit na adrese
+právě jste se zaregistroval do soutěže Do práce na kole do týmu {{user.userprofile.team.name}}. Svůj profil v této soutěži můžete navštívit na adrese:
 {% block profile_link %}
 {{ SITE_URL }}{% url 'dpnk.views.profile' %}
 {% endblock %}
-.
+
+Vaše uživatelské jméno: {{ user.username }}
 
 S pozdravem,
 Auto*Mat

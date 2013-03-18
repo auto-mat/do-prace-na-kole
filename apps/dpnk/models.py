@@ -194,12 +194,6 @@ class Team(models.Model):
         validators = [validate_length],
         )
 
-    def team_subsidiary_city(self):
-        return self.subsidiary.city
-
-    def team_subsidiary_company(self):
-        return self.subsidiary.company
-
     def __unicode__(self):
         return "%s / %s" % (self.name, self.subsidiary.company)
 
@@ -215,23 +209,17 @@ class UserProfile(models.Model):
         verbose_name = u"Uživatel"
         verbose_name_plural = u"Uživatelé"
 
-    TSHIRTSIZE = (('S', "S"),
+    TSHIRTSIZE = [('S', "S"),
               ('M', "M"),
               ('L', "L"),
               ('XL', "XL"),
-              ('XXL', "XXL"))
+              ('XXL', "XXL")]
 
     TEAMAPPROVAL = (('approved', "Odsouhlasený"),
               ('undecided', "Nerozhodnuto"),
               ('denied', "Zamítnutý"),
               )
 
-    firstname = models.CharField(
-        verbose_name="Jméno",
-        max_length=30, null=False)
-    surname = models.CharField(
-        verbose_name="Příjmení",
-        max_length=30, null=False)
     user = models.OneToOneField(
         User,
         related_name='userprofile',
@@ -250,9 +238,6 @@ class UserProfile(models.Model):
         Team,
         verbose_name='Tým',
         null=False, blank=False)
-    active = models.BooleanField(
-        verbose_name="Aktivní",
-        default=True)
 
     trips = models.PositiveIntegerField(
         verbose_name="Počet cest",
@@ -280,25 +265,14 @@ class UserProfile(models.Model):
         blank=True,
         )
 
-    def person_name(self):
-        return "%s %s" % (self.firstname, self.surname)
-    person_name.short_description = 'Jméno'
+    def first_name(self):
+        return user.first_name
+
+    def last_name(self):
+        return user.last_name
 
     def __unicode__(self):
-        return self.person_name()
-
-    def email(self):
-        return self.user.email
-    email.admin_order_field  = 'user__email'
-
-    def date_joined(self):
-        return self.user.date_joined
-    date_joined.admin_order_field  = 'user__date_joined'
-    date_joined.short_description = 'Registrace'
-
-    def city(self):
-        return self.team.city
-    city.short_description = u'Město'
+        return self.user.get_full_name()
 
     def payment_status(self):
         if self.team.subsidiary.city.admission_fee == 0:
@@ -317,6 +291,13 @@ class UserProfile(models.Model):
             # No payment done and no waiting
             status = None
         return status
+
+    def payment_type(self):
+        try:
+            payment = Payment.objects.filter(user=self).latest('id')
+        except Payment.DoesNotExist:
+            return None
+        return payment.pay_type
 
 class UserProfileUnpaidManager(models.Manager):
     def get_query_set(self):

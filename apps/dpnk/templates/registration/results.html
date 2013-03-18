@@ -30,8 +30,8 @@
 {% for u in user_by_percentage %}
 <tr>
 <td>{{ forloop.counter }}.</td>
-<td>{{ u.firstname }}</td>
-<td>{{ u.surname }}</td>
+<td>{{ u.user.first_name }}</td>
+<td>{{ u.user.last_name }}</td>
 <td>{{ u.team }}</td>
 <td>{{ u.company }}</td>
 {% if not city %}<td>{{u.city}}</td>{% endif %}
@@ -57,8 +57,8 @@
 {% for u in user_by_distance %}
 <tr>
 <td>{{ forloop.counter }}.</td>
-<td>{{ u.firstname }}</td>
-<td>{{ u.surname }}</td>
+<td>{{ u.user.first_name }}</td>
+<td>{{ u.user.last_name }}</td>
 <td>{{ u.team }}</td>
 <td>{{ u.company }}</td>
 {% if not city %}<td>{{u.city}}</td>{% endif %}
