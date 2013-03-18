@@ -220,12 +220,6 @@ class UserProfile(models.Model):
               ('denied', "Zamítnutý"),
               )
 
-    firstname = models.CharField(
-        verbose_name="Jméno",
-        max_length=30, null=False)
-    surname = models.CharField(
-        verbose_name="Příjmení",
-        max_length=30, null=False)
     user = models.OneToOneField(
         User,
         related_name='userprofile',
@@ -244,9 +238,6 @@ class UserProfile(models.Model):
         Team,
         verbose_name='Tým',
         null=False, blank=False)
-    active = models.BooleanField(
-        verbose_name="Aktivní",
-        default=True)
 
     trips = models.PositiveIntegerField(
         verbose_name="Počet cest",
@@ -274,12 +265,14 @@ class UserProfile(models.Model):
         blank=True,
         )
 
-    def person_name(self):
-        return "%s %s" % (self.firstname, self.surname)
-    person_name.short_description = 'Jméno'
+    def first_name(self):
+        return user.first_name
+
+    def last_name(self):
+        return user.last_name
 
     def __unicode__(self):
-        return self.person_name()
+        return self.user.get_full_name()
 
     def payment_status(self):
         if self.team.subsidiary.city.admission_fee == 0:
@@ -300,7 +293,10 @@ class UserProfile(models.Model):
         return status
 
     def payment_type(self):
-        payment = Payment.objects.filter(user=self).latest('id')
+        try:
+            payment = Payment.objects.filter(user=self).latest('id')
+        except Payment.DoesNotExist:
+            return None
         return payment.pay_type
 
 class UserProfileUnpaidManager(models.Manager):

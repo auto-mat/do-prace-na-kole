@@ -86,10 +86,10 @@ class CompetitionAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'competitor_type')
 
 class UserProfileAdmin(RelatedFieldAdmin):
-    list_display = ('firstname', 'surname', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'user__city', 'id', )
+    list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'user__city', 'id', )
     inlines = [PaymentInline, VoucherInline]
-    search_fields = ['firstname', 'surname', 'user__username']
-    list_filter = ['active', 'team__subsidiary__city']
+    search_fields = ['user__first_name', 'user__last_name', 'user__username']
+    list_filter = ['user__is_active', 'team__subsidiary__city']
 
     readonly_fields = ['team_link']
     def team_link(self, obj):
@@ -97,7 +97,7 @@ class UserProfileAdmin(RelatedFieldAdmin):
     team_link.short_description = 'Tým'
 
 class UserProfileUnpaidAdmin(UserProfileAdmin, RelatedFieldAdmin):
-    list_display = ('firstname', 'surname', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
+    list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
 
 class UserProfileAdminInline(admin.StackedInline):
     model = UserProfile
@@ -111,9 +111,9 @@ class UserProfileAdminInline(admin.StackedInline):
 
 class UserAdmin(UserAdmin, RelatedFieldAdmin):
     inlines = (UserProfileAdminInline, )
-    list_display = ('username', 'userprofile', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team__name', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'id')
-    search_fields = ['userprofile__firstname', 'userprofile__surname', 'username']
-    list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__active', 'userprofile__team__subsidiary__city']
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'id')
+    search_fields = ['userprofile__first_name', 'userprofile__last_name', 'username']
+    list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city']
 
 class TeamForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -122,13 +122,13 @@ class TeamForm(ModelForm):
 
 class TeamAdmin(RelatedFieldAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'id', )
-    search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__firstname', 'coordinator__surname']
+    search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__user__first_name', 'coordinator__user__last_name']
     list_filter = ['subsidiary__city']
 
     readonly_fields = ['members']
     def members(self, obj):
         return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
-                                  for u in UserProfile.objects.filter(team=obj, active=True)]))
+                                  for u in UserProfile.objects.filter(team=obj, user__is_active=True)]))
     members.short_description = 'Členové'
     form = TeamForm
 
