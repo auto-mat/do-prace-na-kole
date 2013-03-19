@@ -1,112 +1,12 @@
 <h3>Registrace soutěžících</h3>
 
-<script type="text/javascript">
-   function switchCompanyForm(){
-      document.getElementById("company_form").disabled = (document.getElementById("company_selected_true").checked);
-      document.getElementById("company_div").disabled = !(document.getElementById("company_selected_true").checked);
-
-      if(!document.getElementById("company_selected_true").checked) {
-         document.getElementById("subsidiary_selected_false").checked = true;
-         switchSubsidiaryForm();
-      }
-      if(!document.getElementById("company_selected_true").checked) {
-         document.getElementById("team_selected_false").checked = true;
-         switchTeamForm();
-      }
-   }
-
-   function switchSubsidiaryForm(){
-      document.getElementById("subsidiary_form").disabled = (document.getElementById("subsidiary_selected_true").checked);
-      document.getElementById("subsidiary_div").disabled = !(document.getElementById("subsidiary_selected_true").checked);
-
-      if(!document.getElementById("subsidiary_selected_true").checked) {
-         document.getElementById("team_selected_false").checked = true;
-         switchTeamForm();
-      }
-      if(document.getElementById("subsidiary_selected_true").checked) {
-         document.getElementById("company_selected_true").checked = true;
-         switchCompanyForm();
-      }
-   }
-
-   function switchTeamForm(){
-      document.getElementById("team_form").disabled = (document.getElementById("team_selected_true").checked);
-      document.getElementById("team_div").disabled = !(document.getElementById("team_selected_true").checked);
-
-      if(document.getElementById("team_selected_true").checked) {
-         document.getElementById("company_selected_true").checked = true;
-         switchCompanyForm();
-      }
-      if(document.getElementById("team_selected_true").checked) {
-         document.getElementById("subsidiary_selected_true").checked = true;
-         switchSubsidiaryForm();
-      }
-   }
-</script>
-
 <form action="" method="post" class="registration-form">{% csrf_token %}
    {% for field in form %}
-      {% if field.name == "company" %}
-         <input type="radio" onclick="switchCompanyForm()" name="company_selected" id="company_selected_true" {% if company_selected %}checked{% endif %} value="True"/>
-         <label for = "company_selected_true">
-            Vyberte společnost ze seznamu:
-         </label>
-         <fieldset id="{{field.name}}_div" {% if not company_selected %}disabled{% endif %}>
-             {{ field.errors }}
-             {{ field.label_tag }}
-             {{ field }}
-         </fieldset>
-         <input type="radio" onclick="switchCompanyForm()" name="company_selected" id="company_selected_false" {% if not company_selected %}checked{% endif %} value="False"/>
-         <label for = "company_selected_false">
-            Společnost v senzamu není, chci založit novou:
-         </label>
-         <fieldset id="company_form" {% if company_selected %}disabled{% endif %}>
-            {{ form_company.as_p }}
-         </fieldset>
-
-      {% elif field.name == "subsidiary" %}
-         <input type="radio" onclick="switchSubsidiaryForm()" name="subsidiary_selected" id="subsidiary_selected_true" {% if subsidiary_selected %}checked{% endif %} value="True">
-         <label for = "subsidiary_selected_true">
-            Vyberte pobočku ze seznamu:
-         </label>
-         <fieldset id="{{field.name}}_div" {% if not subsidiary_selected %}disabled{% endif %}>
-             {{ field.errors }}
-             {{ field.label_tag }}
-             {{ field }}
-         </fieldset>
-         <input type="radio" onclick="switchSubsidiaryForm()" name="subsidiary_selected" id="subsidiary_selected_false" {% if not subsidiary_selected %}checked{% endif %} value="False">
-         <label for = "subsidiary_selected_false">
-            Pobočka v senzamu není, chci založit novou:
-         </label>
-         <fieldset id="subsidiary_form" {% if subsidiary_selected %}disabled{% endif %}>
-            {{ form_subsidiary.as_p }}
-         </fieldset>
-
-      {% elif field.name == "team" %}
-         <input type="radio" onclick="switchTeamForm()" name="team_selected" id="team_selected_true" {% if team_selected %}checked{% endif %} value="True">
-         <label for = "team_selected_true">
-            Vyberte tým ze seznamu:
-         </label>
-         <fieldset id="{{field.name}}_div" {% if not team_selected %}disabled{% endif %}>
-             {{ field.errors }}
-             {{ field.label_tag }}
-             {{ field }}
-         </fieldset>
-         <input type="radio" onclick="switchTeamForm()" name="team_selected" id="team_selected_false" {% if not team_selected %}checked{% endif %} value="False">
-         <label for = "team_selected_false">
-            Tým v senzamu není, chci založit nový:
-         </label>
-         <fieldset id="team_form" {% if team_selected %}disabled{% endif %}>
-            {{ form_team.as_p }}
-         </fieldset>
-
-      {% else %}
-         <div id="{{field.name}}_div">
-             {{ field.errors }}
-             {{ field.label_tag }}
-             {{ field }}
-         </div>
-      {% endif %}
+      <div id="{{field.name}}_div">
+          {{ field.errors }}
+          {{ field.label_tag }}
+          {{ field }}
+      </div>
   {% endfor %}
 </form>
 

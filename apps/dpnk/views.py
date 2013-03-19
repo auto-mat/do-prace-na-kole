@@ -70,6 +70,9 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
              extra_context=None,
              token=None,
              initial_email=None):
+    create_company = False
+    create_subsidiary = False
+    create_team = False
 
     backend = registration.backends.get_backend(backend)
     form_class = RegistrationFormDPNK
@@ -80,33 +83,33 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
         form_company = RegisterCompanyForm(request.POST, prefix = "company")
         form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix = "subsidiary")
         form_team = RegisterTeamForm(request.POST, prefix = "team")
-        company_selected = request.POST['company_selected'] == "True"
-        subsidiary_selected = request.POST['subsidiary_selected'] == "True"
-        team_selected = request.POST['team_selected'] == "True"
+        create_company = 'id_company_selected' in request.POST
+        create_subsidiary = 'id_subsidiary_selected' in request.POST
+        create_team = 'id_team_selected' in request.POST
         company_valid = True
         subsidiary_valid = True
         team_valid = True
 
-        if company_selected:
-            form_company = RegisterCompanyForm(prefix = "company")
-            form.fields['company'].required = True
-        else:
+        if create_company:
             company_valid = form_company.is_valid()
             form.fields['company'].required = False
-
-        if subsidiary_selected:
-            form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
-            form.fields['subsidiary'].required = True
         else:
+            form_company = RegisterCompanyForm(prefix = "company")
+            form.fields['company'].required = True
+
+        if create_subsidiary:
             subsidiary_valid = form_subsidiary.is_valid()
             form.fields['subsidiary'].required = False
-
-        if team_selected:
-            form_team = RegisterTeamForm(prefix = "team")
-            form.fields['team'].required = True
         else:
+            form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
+            form.fields['subsidiary'].required = True
+
+        if create_team:
             team_valid = form_team.is_valid()
             form.fields['team'].required = False
+        else:
+            form_team = RegisterTeamForm(prefix = "team")
+            form.fields['team'].required = True
 
         form_valid = form.is_valid()
 
@@ -115,19 +118,19 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             subsidiary = None
             team = None
 
-            if not company_selected:
+            if create_company:
                 company = form_company.save()
             else:
                 company = Company.objects.get(id=form.data['company'])
 
-            if not subsidiary_selected:
+            if create_subsidiary:
                 subsidiary = form_subsidiary.save(commit=False)
                 subsidiary.company = company
                 form_subsidiary.save()
             else:
                 subsidiary = Subsidiary.objects.get(id=form.data['subsidiary'])
 
-            if not team_selected:
+            if create_team:
                 team = form_team.save(commit=False)
                 team.subsidiary = subsidiary
                 form_team.save()
@@ -138,12 +141,12 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                 password=request.POST['password1'])
             django.contrib.auth.login(request, auth_user)
 
-            if new_user.userprofile.team.invitation_token == token or not team_selected:
+            if new_user.userprofile.team.invitation_token == token or create_team:
                 userprofile = new_user.userprofile
                 userprofile.approved_for_team = 'approved'
                 userprofile.save()
 
-            if not team_selected:
+            if create_team:
                 team.coordinator = new_user.userprofile
                 team.save()
                 success_url = "/registrace/pozvanky"
@@ -172,28 +175,27 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
         form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
         form_team = RegisterTeamForm(prefix = "team")
 
-        company_selected = True
-        subsidiary_selected = True
-        team_selected = True
+    form.fields['company'].widget.underlying_form = form_company
+    form.fields['company'].widget.create = create_company
+
+    form.fields['subsidiary'].widget.underlying_form = form_subsidiary
+    form.fields['subsidiary'].widget.create = create_subsidiary
+
+    form.fields['team'].widget.underlying_form = form_team
+    form.fields['team'].widget.create = create_team
 
     return render_to_response(template_name,
                               {'form': form,
-                               'form_subsidiary': form_subsidiary,
-                               'form_company': form_company,
-                               'form_team': form_team,
-                               'company_selected': company_selected,
-                               'subsidiary_selected': subsidiary_selected,
-                               'team_selected': team_selected,
                                }, context_instance=RequestContext(request))
 
 
 
 def create_profile(user, request, **kwargs):
     from dpnk.models import UserProfile
-    if request.POST['team_selected'] == "True":
-        team = Team.objects.get(id=request.POST['team'])
-    else:
+    if 'id_team_selected' in request.POST:
         team = Team.objects.get(name=request.POST['team-name'])
+    else:
+        team = Team.objects.get(id=request.POST['team'])
 
     user.first_name = request.POST['first_name']
     user.last_name = request.POST['last_name']
@@ -586,7 +588,7 @@ def update_profile(request,
         form_team = RegisterTeamForm(prefix = "team")
 
     form.fields['team'].widget.underlying_form = form_team
-    form.fields['team'].widget.create_team = create_team
+    form.fields['team'].widget.create = create_team
     #if request.user.userprofile.team.coordinator == request.user.userprofile:
     #    del form.fields["team"]
     return render_to_response('registration/update_profile.html',

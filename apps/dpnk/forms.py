@@ -6,11 +6,36 @@ from django import forms, http
 import registration.forms
 from models import UserProfile, Company, Subsidiary, Team
 from django.db.models import Q
-from dpnk.widgets import SelectOrCreate
+from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
 
 def team_full(data):
     if len(UserProfile.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, user__is_active=True)) >= 5:
         raise forms.ValidationError("Tento tým již má pět členů a je tedy plný")
+
+class RegisterCompanyForm(forms.ModelForm):
+    required_css_class = 'required'
+    error_css_class = 'error'
+
+    class Meta:
+        model = Company
+        fields = ('name', )
+    
+class RegisterSubsidiaryForm(forms.ModelForm):
+    required_css_class = 'required'
+    error_css_class = 'error'
+
+    class Meta:
+        model = Subsidiary
+        fields = ('address_street', 'address_street_number', 'address_recipient', 'address_district', 'address_psc', 'address_city', 'city')
+
+
+class RegisterTeamForm(forms.ModelForm):
+    required_css_class = 'required'
+    error_css_class = 'error'
+
+    class Meta:
+        model = Team
+        fields = ('name',)
 
 class RegistrationFormDPNK(registration.forms.RegistrationForm):
     required_css_class = 'required'
@@ -26,6 +51,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
     company = forms.ModelChoiceField(
         label="Firma",
         queryset=Company.objects.all(),
+        widget=SelectOrCreate(RegisterCompanyForm, prefix="company", new_description = u"Společnost v seznamu není, chci založit novou"),
         required=True)
     subsidiary = ChainedModelChoiceField(
         chain_field = "company",
@@ -35,6 +61,14 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         show_all = False,
         auto_choose = True,
         label="Pobočka",
+        widget=SelectChainedOrCreate(RegisterSubsidiaryForm, prefix="subsidiary", new_description = u"Pobočka v seznamu není, chci založit novou", 
+            chain_field = "company",
+            app_name = "dpnk",
+            model_name = "Subsidiary",
+            model_field = "company",
+            show_all = False,
+            auto_choose = True,
+        ),
         queryset=Subsidiary.objects.all(),
         required=True)
     team = ChainedModelChoiceField(
@@ -44,6 +78,14 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         model_field = "subsidiary",
         show_all = False,
         auto_choose = False,
+        widget=SelectChainedOrCreate(RegisterTeamForm, prefix="team", new_description = u"Chci si založit nový tým, ve kterém budu koordinátorem",
+            chain_field = "subsidiary",
+            app_name = "dpnk",
+            model_name = "Team",
+            model_field = "subsidiary",
+            show_all = False,
+            auto_choose = False,
+        ),
         label="Tým",
         queryset=Team.objects.all(),
         required=True)
@@ -90,30 +132,6 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
 
     class Meta:
         model = UserProfile
-
-class RegisterTeamForm(forms.ModelForm):
-    required_css_class = 'required'
-    error_css_class = 'error'
-
-    class Meta:
-        model = Team
-        fields = ('name',)
-
-class RegisterCompanyForm(forms.ModelForm):
-    required_css_class = 'required'
-    error_css_class = 'error'
-
-    class Meta:
-        model = Company
-        fields = ('name', )
-    
-class RegisterSubsidiaryForm(forms.ModelForm):
-    required_css_class = 'required'
-    error_css_class = 'error'
-
-    class Meta:
-        model = Subsidiary
-        fields = ('address_street', 'address_street_number', 'address_recipient', 'address_district', 'address_psc', 'address_city', 'city')
 
 class InviteForm(forms.Form):
     required_css_class = 'required'
@@ -167,7 +185,7 @@ class ProfileUpdateForm(forms.ModelForm):
     team = forms.ModelChoiceField(
         label="Tým",
         queryset= [],
-        widget=SelectOrCreate(RegisterTeamForm, new_description = u"Chci si založit nový tým, ve kterém budu koordinátorem"),
+        widget=SelectOrCreate(RegisterTeamForm, prefix="team", new_description = u"Chci si založit nový tým, ve kterém budu koordinátorem"),
         empty_label=None,
         required=True)
 
