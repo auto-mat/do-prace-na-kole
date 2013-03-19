@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load url from future %}
-
+{% load dpnk_tags %}
 {% block content %}
 
 <div class="contest-results-individual">
@@ -8,6 +8,6 @@ Celkem {% if not city %} {{user_count|add:"684"}} {% else %} {{user_count}} {% e
 </div>
 
 <p>
-<a href="/registrace/vysledky/{% if city %}?mesto={{city}}{% endif %}">Podrobné výsledky...</a></p>
+<a href="{% wp_url 'vysledky' %}{% if city %}?mesto={{city}}{% endif %}">Podrobné výsledky...</a></p>
 
 {% endblock %}

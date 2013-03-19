@@ -39,6 +39,8 @@ from  django.http import HttpResponse
 import util
 from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail
 
+from wp_urls import wp_reverse
+
 #decorator
 def must_be_coordinator(fn):
     @login_required
@@ -62,6 +64,9 @@ def must_be_approved_for_team(fn):
         else:
             return HttpResponse(u'Vaše členství v týmu "' + userprofile.team.name + u'" nebylo odsouhlaseno. O ověření členství můžete požádat v <a href="/registrace/profil">profilu</a>.', status=401)
     return wrapper
+
+def redirect(url):
+    return HttpResponse("redirect:"+url)
 
 def register(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
@@ -149,23 +154,22 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             if create_team:
                 team.coordinator = new_user.userprofile
                 team.save()
-                success_url = "/registrace/pozvanky"
+                success_url = "pozvanky"
                 team_created_mail(new_user)
             else:
                 register_mail(new_user)
 
             if new_user.userprofile.approved_for_team != 'approved':
                 approval_request_mail(new_user)
-
-            return HttpResponse("redirect")
-            return redirect(success_url)
+            print success_url
+            return redirect(wp_reverse(success_url))
     else:
         initial_company = None
         initial_subsidiary = None
         initial_team = None
 
         if token != None:
-            team = Team.objects.get(invitation_token=token)
+            team = Team.objects.get(nvitation_token=token)
             initial_company = team.subsidiary.company
             initial_subsidiary = team.subsidiary
             initial_team = team
@@ -212,7 +216,7 @@ registration.signals.user_registered.connect(create_profile)
 @login_required
 def payment_type(request):
     if request.user.userprofile.team.subsidiary.city.admission_fee == 0:
-        return redirect('/registrace/profil')
+        return redirect(wp_reverse('profil'))
     template_name='registration/payment_type.html'
     form_class = PaymentTypeForm
 
@@ -220,13 +224,13 @@ def payment_type(request):
         form = form_class(data=request.POST, files=request.FILES)
         if form.is_valid():
             if form.cleaned_data['payment_type'] == 'pay':
-                return redirect('/registrace/platba')
+                return redirect(wp_reverse('platba'))
             elif form.cleaned_data['payment_type'] == 'company':
                 Payment(user=request.user.userprofile, amount=0, pay_type='fc', status=5).save()
             elif form.cleaned_data['payment_type'] == 'member':
                 Payment(user=request.user.userprofile, amount=0, pay_type='am', status=5).save()
 
-            return redirect('/registrace/profil')
+            return redirect(wp_reverse('profil'))
     else:
         form = form_class()
 
@@ -237,7 +241,7 @@ def payment_type(request):
 @login_required
 def payment(request):
     if request.user.userprofile.team.subsidiary.city.admission_fee == 0:
-        return redirect('/registrace/profil')
+        return redirect(wp_reverse('profil'))
     uid = request.user.id
     order_id = '%s-1' % uid
     session_id = "%sJ%d " % (order_id, int(time.time()))
@@ -535,7 +539,7 @@ def results(request, template):
 
 @login_required
 def update_profile(request,
-            success_url = '/registrace/profil/'
+            success_url = 'profil'
                   ):
     create_team = False
     profile = UserProfile.objects.get(user=request.user)
@@ -571,8 +575,8 @@ def update_profile(request,
                 form_team.save()
 
                 userprofile.team = team
-                success_url = "/registrace/pozvanky"
-                request.session['success_url'] = '/registrace/profil'
+                success_url = "pozvanky"
+                request.session['success_url'] = 'profil'
 
                 team_created_mail(userprofile.user)
 
@@ -582,7 +586,7 @@ def update_profile(request,
 
             form.save()
 
-            return redirect(success_url)
+            return redirect(wp_reverse(success_url))
     else:
         form = ProfileUpdateForm(instance=profile)
         form_team = RegisterTeamForm(prefix = "team")
@@ -808,7 +812,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
         form = form_class(data=request.POST)
         if form.is_valid():
             invitation_mail(request.user, [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4'] ])
-            return redirect(success_url)
+            return redirect(wp_reverse(success_url))
     else:
         form = form_class()
     return render_to_response(template_name,
@@ -836,7 +840,7 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
         form = form_class(data=request.POST, instance = team)
         if form.is_valid():
             form.save()
-            return redirect(success_url)
+            return redirect(wp_reverse(success_url))
     else:
         form = form_class(instance = team)
 

@@ -78,3 +78,7 @@ SITE_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX
 COMPETITION_STATE='not_started_yet'
 #COMPETITION_STATE='started'
+
+INSTALLED_APPS += ("remote_ajax", )
+MIDDLEWARE_CLASSES += ("remote_ajax.middleware.XHRMiddleware", )
+ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
