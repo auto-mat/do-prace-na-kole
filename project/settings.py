@@ -50,7 +50,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 	#'django.middleware.csrf.CsrfViewMiddleware',
 
-    "dpnk.middleware.XHRMiddleware",
+#    "dpnk.middleware.XHRMiddleware",
 )
 ROOT_URLCONF = 'urls'
 TEMPLATE_DIRS = (
