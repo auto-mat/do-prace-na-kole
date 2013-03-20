@@ -352,7 +352,13 @@ def payment_status(request):
                                r['trans_status'], r['trans_amount'], r['trans_desc'],
                                r['trans_ts']))
     # Update the corresponding payment
-    p = Payment.objects.get(session_id=r['trans_session_id'])
+    try:
+        p = Payment.objects.get(session_id=r['trans_session_id'])
+    except DoesNotExist:
+        p = Payment(order_id=r['trans_order_id'], session_id=['trans_session_id'],
+                    amount=int(r['trans_amount'])/100, description=r['trans_desc'])
+
+    p.pay_type = r['trans_pay_type']
     p.status = r['trans_status']
     if r['trans_recv'] != '':
         p.realized = r['trans_recv']
