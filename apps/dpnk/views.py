@@ -358,34 +358,6 @@ def payment_status(request):
         p.realized = r['trans_recv']
     p.save()
 
-    if p.status == 99 or p.status == '99':
-        if len(Voucher.objects.filter(user = p.user)) == 0:
-            # Assign voucher to user
-            v = random.choice(Voucher.objects.filter(user__isnull=True))
-            v.user = p.user
-            v.save()
-            # Send user email confirmation and a voucher
-            email = EmailMessage(subject=u"Platba Do práce na kole a slevový kupon",
-                                 body=u"""Obdrželi jsme Vaši platbu startovného pro soutěž Do práce na kole.
-
-Zaplacením startovného získáváte poukaz na designové triko kampaně Do
-práce na kole 2012 (včetně poštovného a balného). Objednávku můžete
-uskutečnit na adrese:
-
-http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012
-
-Váš slevový kód pro nákup trička v obchodě Čoromoro je %s.
-
-K jeho zadání budete vyzváni poté, co si vyberete velikost a přejdete
-na svůj nákupní košík.
-
-S pozdravem
-Auto*Mat
-""" % v.code,
-                             from_email = u'Do práce na kole <kontakt@dopracenakole.net>',
-                             to = [p.user.email()])
-            email.send(fail_silently=True)
-
     # Return positive error code as per PayU protocol
     return http.HttpResponse("OK")
 
