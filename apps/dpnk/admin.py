@@ -64,7 +64,7 @@ class CompanyAdmin(admin.ModelAdmin):
                                   for u in Subsidiary.objects.filter(company=obj)]))
     subsidiaries_text.short_description = 'Pobočky'
     def subsidiary_links(self, obj):
-        return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/subsidiary/%d">%s</a>' % (u.id, str(u))
+        return mark_safe("<br/>".join(['<a href="/admin/dpnk/subsidiary/%d">%s</a>' % (u.id, str(u))
                                   for u in Subsidiary.objects.filter(company=obj)]))
     subsidiary_links.short_description = 'Pobočky'
 
@@ -79,11 +79,19 @@ class SubsidiaryAdmin(admin.ModelAdmin):
                                   for u in Team.objects.filter(subsidiary=obj)]))
     teams_text.short_description = 'Týmy'
     def team_links(self, obj):
-        return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/team/%d">%s</a>' % (u.id, str(u))
+        return mark_safe("<br/>".join(['<a href="/admin/dpnk/team/%d">%s</a>' % (u.id, str(u))
                                   for u in Team.objects.filter(subsidiary=obj)]))
 
 class CompetitionAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'competitor_type')
+    readonly_fields = ['competitor_links']
+    def competitor_links(self, obj):
+        link_type = { 'single_user': 'userprofile',
+                'team' : 'team',
+                'company': 'company' }[obj.competitor_type]
+        return mark_safe("<br/>".join(['%d (%s, %s): <a href="/admin/dpnk/%s/%d">%s</a>' % (i+1, getattr(u, 'result', '_'), getattr(u, 'user_count', '_'), link_type,u.id, str(u))
+                                  for i, u in enumerate(obj.get_results())]))
+    competitor_links.short_description = 'Výsledky'
 
 class UserProfileAdmin(RelatedFieldAdmin):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'user__city', 'id', )
@@ -93,7 +101,7 @@ class UserProfileAdmin(RelatedFieldAdmin):
 
     readonly_fields = ['team_link']
     def team_link(self, obj):
-        return mark_safe('<a href="/admin/admin/dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
+        return mark_safe('<a href="/admin/dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
 
 class UserProfileUnpaidAdmin(UserProfileAdmin, RelatedFieldAdmin):
@@ -106,7 +114,7 @@ class UserProfileAdminInline(admin.StackedInline):
 
     readonly_fields = ['team_link']
     def team_link(self, obj):
-        return mark_safe('<a href="/admin/admin/dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
+        return mark_safe('<a href="/admin/dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
 
 class UserAdmin(UserAdmin, RelatedFieldAdmin):
@@ -127,7 +135,7 @@ class TeamAdmin(RelatedFieldAdmin):
 
     readonly_fields = ['members']
     def members(self, obj):
-        return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
+        return mark_safe("<br/>".join(['<a href="/admin/dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
                                   for u in UserProfile.objects.filter(team=obj, user__is_active=True)]))
     members.short_description = 'Členové'
     form = TeamForm
@@ -149,11 +157,13 @@ class ChoiceInline(admin.TabularInline):
     extra = 0
 
 class ChoiceTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'competition', 'universal')
     inlines = [ChoiceInline]
-    list_filter = ('competition',)
+    list_filter = ('competition', )
 
-class AnswerAdmin(admin.ModelAdmin):
-    pass
+class AnswerAdmin(RelatedFieldAdmin):
+    list_display = ( 'user', 'points_given', 'question__competition', 'comment', 'question')
+    search_fields = ('user__user__first_name','user__user__last_name')
 
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('text', 'type', 'order', 'date', 'competition', 'id', )
@@ -163,7 +173,10 @@ class QuestionAdmin(admin.ModelAdmin):
 
     readonly_fields = ['choices']
     def choices(self, obj):
-        return mark_safe("<br/>".join([choice.text for choice in obj.choice_type.choices.all()]) + '<br/><a href="/admin/admin/dpnk/choicetype/%d">edit</a>' % obj.choice_type.id )
+        return mark_safe("<br/>".join([choice.text for choice in obj.choice_type.choices.all()]) + '<br/><a href="/admin/dpnk/choicetype/%d">edit</a>' % obj.choice_type.id )
+
+class TripAdmin(admin.ModelAdmin):
+    model = Team
 
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(UserProfileUnpaid, UserProfileUnpaidAdmin)
@@ -177,6 +190,7 @@ admin.site.register(Subsidiary, SubsidiaryAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Competition, CompetitionAdmin)
 admin.site.register(Answer, AnswerAdmin)
+admin.site.register(Trip, TripAdmin)
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

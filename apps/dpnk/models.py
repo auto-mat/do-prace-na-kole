@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Author: Hynek Hanke <hynek.hanke@auto-mat.cz>
+# Author: Petr Dlouhý <petr.dlouhy@email.cz>
 #
 # Copyright (C) 2012 o.s. Auto*Mat
 #
@@ -23,6 +24,7 @@
 import django
 import random
 import string
+import results
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -228,7 +230,7 @@ class UserProfile(models.Model):
         blank=False,
         )
     distance = models.PositiveIntegerField(
-        verbose_name="Vzdálenost",
+        verbose_name="Průměrná vzdálenost do zaměstnání",
         null=False)
     # -- Contacts
     telephone = models.CharField(
@@ -236,12 +238,9 @@ class UserProfile(models.Model):
         max_length=30, null=False)
     team = models.ForeignKey(
         Team,
+        related_name='users',
         verbose_name='Tým',
         null=False, blank=False)
-
-    trips = models.PositiveIntegerField(
-        verbose_name="Počet cest",
-        default=0, null=False, blank=False)
     company_admin_unapproved = models.BooleanField(
         verbose_name="Správcovství organizace není schváleno",
         default=True)
@@ -420,7 +419,11 @@ class Trip(models.Model):
         verbose_name = "Cesta"
         verbose_name_plural = "Cesty"
 
-    user = models.ForeignKey(UserProfile, null=True, blank=True)
+    user = models.ForeignKey(
+        UserProfile, 
+        related_name="user_trips",
+        null=True,
+        blank=True)
     date = models.DateField(
         verbose_name="Datum cesty",
         default=datetime.datetime.now,
@@ -460,6 +463,10 @@ class Competition(models.Model):
         unique=True,
         verbose_name="Jméno",
         max_length=40, null=False)
+    slug = models.CharField(
+        unique=True,
+        verbose_name="Adresa v URL",
+        max_length=10, null=False)
     type = models.CharField(
         verbose_name="Typ",
         choices=CTYPES,
@@ -499,6 +506,12 @@ class Competition(models.Model):
         verbose_name = "Soutěž bez přihlášek (pro všechny)",
         default=False,
         null=False)
+
+    def get_competitors(self):
+        return results.get_competitors(self)
+
+    def get_results(self):
+        return results.get_results(self)
 
     def __unicode__(self):
         return "%s" % self.name
@@ -588,15 +601,16 @@ class Choice(models.Model):
         null=False)
     points = models.IntegerField(
         verbose_name="Body",
-        null=True, blank=True)
+        null=True, 
+        blank=True, 
+        default=None,
+        )
 
     def __unicode__(self):
         return "%s" % self.text
 
 class Answer(models.Model):
-    user = models.ForeignKey(UserProfile, null=True)
-    team = models.ForeignKey(Team, null=True)
-    company = models.ForeignKey(Company, null=True)
+    user = models.ForeignKey(UserProfile, null=True, blank=True)
     question = models.ForeignKey(Question, null=False)
     choices = models.ManyToManyField(Choice)
     comment = models.TextField(
@@ -604,7 +618,7 @@ class Answer(models.Model):
         max_length=600,
         null=True, blank=True)
     points_given = models.IntegerField(
-        null=True, blank=True, default=0)
+        null=True, blank=True, default=None)
 
     def str_choices(self):
         return ", ".join([choice.text for choice in self.choices.all()])
