@@ -38,6 +38,9 @@ from  django.http import HttpResponse
 # Local imports
 import util
 from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
+from django.contrib.sites.models import get_current_site
+from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout
 
 from wp_urls import wp_reverse
 
@@ -67,6 +70,28 @@ def must_be_approved_for_team(fn):
 
 def redirect(url):
     return HttpResponse("redirect:"+url)
+
+def login(request, template_name='registration/login.html',
+          authentication_form=AuthenticationForm):
+    redirect_to = wp_reverse("profil")
+    if request.method == "POST":
+        form = authentication_form(data=request.POST)
+        if form.is_valid():
+            redirect_to = settings.LOGIN_REDIRECT_URL
+            auth_login(request, form.get_user())
+            if request.session.test_cookie_worked():
+                request.session.delete_test_cookie()
+            return HttpResponse(redirect(wp_reverse("profil")))
+    else:
+        form = authentication_form(request)
+    request.session.set_test_cookie()
+    current_site = get_current_site(request)
+    context = { 
+        'form': form,
+        'site': current_site,
+        'site_name': current_site.name,
+    }
+    return render_to_response(template_name, context)
 
 def register(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
@@ -372,12 +397,12 @@ Auto*Mat
     # Return positive error code as per PayU protocol
     return http.HttpResponse("OK")
 
-def login(request):
-    return render_to_response('registration/payment_result.html',
-                              {
-            'pay_type': pay_type,
-            'message': msg
-            }, context_instance=RequestContext(request))
+# def login(request):
+#     return render_to_response('registration/payment_result.html',
+#                               {
+#             'pay_type': pay_type,
+#             'message': msg
+#             }, context_instance=RequestContext(request))
 
 @login_required
 def profile(request):
