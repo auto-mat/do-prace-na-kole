@@ -576,12 +576,14 @@ def update_profile(request,
 
         if create_team:
             team_valid = form_team.is_valid()
-            form.fields['team'].required = False
-            form.Meta.exclude = ('team')
+            if 'team' in  form.fields:
+                form.fields['team'].required = False
+                form.Meta.exclude = ('team')
         else:
             form_team = RegisterTeamForm(prefix = "team")
-            form.fields['team'].required = True
-            form.Meta.exclude = ()
+            if 'team' in  form.fields:
+                form.fields['team'].required = True
+                form.Meta.exclude = ()
 
         form_valid = form.is_valid()
 
@@ -605,7 +607,7 @@ def update_profile(request,
 
                 team_created_mail(userprofile.user)
 
-            if request.user.userprofile.team != form.cleaned_data['team'] and not create_team:
+            if 'team' in form.cleaned_data and request.user.userprofile.team != form.cleaned_data['team'] and not create_team:
                 userprofile.approved_for_team = 'undecided'
                 approval_request_mail(userprofile.user)
 
@@ -616,12 +618,14 @@ def update_profile(request,
         form = ProfileUpdateForm(instance=profile)
         form_team = RegisterTeamForm(prefix = "team")
 
-    form.fields['team'].widget.underlying_form = form_team
-    form.fields['team'].widget.create = create_team
-    #if request.user.userprofile.team.coordinator == request.user.userprofile:
-    #    del form.fields["team"]
+    if 'team' in  form.fields:
+        form.fields['team'].widget.underlying_form = form_team
+        form.fields['team'].widget.create = create_team
+    
+    can_change_team = 'team' in  form.fields
     return render_to_response('registration/update_profile.html',
-                              {'form': form
+                              {'form': form,
+                               'can_change_team': can_change_team
                                }, context_instance=RequestContext(request))
 
 @login_required

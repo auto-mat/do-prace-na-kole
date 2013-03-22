@@ -15,6 +15,9 @@
        {{ field }}
    </div>
 {% endfor %}
+{% if not can_change_team %}
+   <div class="warning">Upozornění: Nemůžete změnit tým, pokud jste jeho koordinátorem a tým v týmu jsou další členové.</div>
+{% endif %}
 <a href="{% wp_url 'profil' %}">Zpět</a>
 </form>
 <button class="submit">Upravit</button>

@@ -215,6 +215,9 @@ class ProfileUpdateForm(forms.ModelForm):
         self.fields['email'].initial = self.instance.user.email
         self.fields['first_name'].initial = self.instance.user.first_name
         self.fields['last_name'].initial = self.instance.user.last_name
+
+        if userprofile.team.coordinator == userprofile and UserProfile.objects.filter(team=userprofile.team, user__is_active=True).count()>1:
+            del self.fields['team']
         return ret_val
 
     class Meta:
