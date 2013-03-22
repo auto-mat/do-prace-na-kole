@@ -281,7 +281,7 @@ class UserProfile(models.Model):
         # Check payment status for this user
         payments = Payment.objects.filter(user=self)
         p_status = [p.status for p in payments]
-        if (99 in p_status) or (1005 in p_status) or (1006 in p_status):
+        if (99 in p_status) or (1005 in p_status) or (1006 in p_status) or (1007 in p_status):
             # Payment done
             status = 'done'
         elif (1 in p_status) or (4 in p_status) or (5 in p_status):
@@ -331,8 +331,9 @@ class Payment(models.Model):
         (7, 'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU'),
         (99, 'Přijata'),
         (888, 'Nesprávný status -- kontaktovat PayU'),
-        (1005, 'Faktura vystavěna'),
-        (1006, 'Faktura zaplacena'),
+        (1005, 'Firma akceptuje platbu'),
+        (1006, 'Faktura vystavena'),
+        (1007, 'Faktura zaplacena'),
         )
 
     PAY_TYPES = (
