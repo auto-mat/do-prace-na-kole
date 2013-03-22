@@ -251,9 +251,9 @@ def payment_type(request):
             if form.cleaned_data['payment_type'] == 'pay':
                 return redirect(wp_reverse('platba'))
             elif form.cleaned_data['payment_type'] == 'company':
-                Payment(user=request.user.userprofile, amount=0, pay_type='fc', status=5).save()
+                Payment(user=request.user.userprofile, amount=0, pay_type='fc', status=1).save()
             elif form.cleaned_data['payment_type'] == 'member':
-                Payment(user=request.user.userprofile, amount=0, pay_type='am', status=5).save()
+                Payment(user=request.user.userprofile, amount=0, pay_type='am', status=1).save()
 
             return redirect(wp_reverse('profil'))
     else:
