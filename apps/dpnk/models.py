@@ -465,6 +465,7 @@ class Competition(models.Model):
         max_length=40, null=False)
     slug = models.CharField(
         unique=True,
+        default="",
         verbose_name="Adresa v URL",
         max_length=10, null=False)
     type = models.CharField(
