@@ -193,7 +193,7 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
         initial_team = None
 
         if token != None:
-            team = Team.objects.get(nvitation_token=token)
+            team = Team.objects.get(invitation_token=token)
             initial_company = team.subsidiary.company
             initial_subsidiary = team.subsidiary
             initial_team = team
