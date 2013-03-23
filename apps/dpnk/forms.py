@@ -40,6 +40,10 @@ class RegisterTeamForm(forms.ModelForm):
 class RegistrationFormDPNK(registration.forms.RegistrationForm):
     required_css_class = 'required'
     
+    language = forms.ChoiceField(
+        label="Jazyk komunikace",
+        choices = UserProfile.LANGUAGE,
+        )
     first_name = forms.CharField(
         label="Jméno",
         max_length=30,
@@ -111,6 +115,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
 
         super(RegistrationFormDPNK, self).__init__(*args, **kwargs)
         self.fields.keyOrder = [
+            'language',
             'first_name',
             'last_name',
             'company',
@@ -222,4 +227,4 @@ class ProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ('first_name', 'last_name', 'telephone', 'email', 'team')
+        fields = ( 'language', 'first_name', 'last_name', 'telephone', 'email', 'team',)
