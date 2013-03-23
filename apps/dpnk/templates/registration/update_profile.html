@@ -4,7 +4,7 @@
 
 {% block body_id %}update_profile{% endblock %}
 {% block content %}
-<form>
+<form class="profile-update">
 {% for field in form %}
    {% if field.name == "team" %}
       <div class="warning">Upozornění: Změna týmu vyžaduje, aby koordinátor nového týmu schválil vaše členství. V případě návratu do původního týmu je taktéž vyžadováno schválení týmem.</div>
