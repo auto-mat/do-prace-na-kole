@@ -1,8 +1,5 @@
-{% extends "base.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
-{% block body_id %}team_admin{% endblock %}
-{% block content %}
 <form method="post">{% csrf_token %}
 {{ form.as_p }}
 <button class="submit" type="button">Odeslat</button>
@@ -47,5 +44,3 @@
       {% endfor %}
    </table>
 </form>
-{% endblock %}
-

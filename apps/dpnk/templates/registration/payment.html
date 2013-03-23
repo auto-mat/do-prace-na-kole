@@ -1,13 +1,3 @@
-{% extends "base.html" %}
-
-{% block head %}
-<script language='JavaScript' type='text/JavaScript' src='https://www.payu.cz/jsgenerator/js/jquery-
-latest.js'></script>
-<script language='javascript' type='text/javascript' src='https://www.payu.cz/paygw/UTF/js/1116/ea/template:3/paytype.js'>
-</script>
-{% endblock %}
-
-{% block content %}
 <h3>Platba startovného</h3>
 
 <form action="https://www.payu.cz/paygw/UTF/NewPayment" method="POST" target="_top"
@@ -36,6 +26,3 @@ PlnPrintTemplate();
 document.forms['payform'].js.value=1;
 -->
 </script>
-
-
-{% endblock %}

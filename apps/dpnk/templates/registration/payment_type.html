@@ -1,11 +1,6 @@
-{% extends "base.html" %}
 {% load url from future %}
 
-{% block body_id %}team_admin{% endblock %}
-{% block content %}
 <form method="post">{% csrf_token %}
 {{ form.as_p }}
 </form>
 <button class="submit">Vybrat způsob platby</button>
-{% endblock %}
-

@@ -1,9 +1,6 @@
-{% extends "base.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
 
-{% block body_id %}update_profile{% endblock %}
-{% block content %}
 <form class="profile-update">
 {% for field in form %}
    {% if field.name == "team" %}
@@ -21,5 +18,3 @@
 <a href="{% wp_url 'profil' %}">Zpět</a>
 </form>
 <button class="submit">Upravit</button>
-{% endblock %}
-
