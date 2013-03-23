@@ -186,7 +186,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
 
             if new_user.userprofile.approved_for_team != 'approved':
                 approval_request_mail(new_user)
-            print success_url
             return redirect(wp_reverse(success_url))
     else:
         initial_company = None
@@ -859,11 +858,10 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
     form_class = TeamAdminForm
     denial_message = 'unapproved'
 
-    for userprofile in UserProfile.objects.filter(team = team, approved_for_team__in = ('undecided', 'denied'), user__is_active=True):
-        message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), approve=request.POST.has_key('approve-' + str(userprofile.id)), deny=request.POST.has_key('deny-' + str(userprofile.id)))
-        if message:
-            denial_message = message
-            break
+    if 'button_action' in request.POST and request.POST['button_action']:
+        b_action = request.POST['button_action'].split('-')
+        userprofile = UserProfile.objects.get(team = team, approved_for_team__in = ('undecided', 'denied'), user__is_active=True, id=b_action[1])
+        denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
 
     if request.method == 'POST' and denial_message == 'unapproved':
         form = form_class(data=request.POST, instance = team)
