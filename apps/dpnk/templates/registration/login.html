@@ -1,9 +1,9 @@
 {% load url from future %}
-{% load dpnk_tags %}
+{% load dpnk_tags bootstrap%}
 
-<form action="" method="post">{% csrf_token %}
-{{ form.as_p }}
+<form action="" method="post" class="form-horizontal">{% csrf_token %}
+{{ form|bootstrap }}
+<button class="submit" type="button">Přihlásit</button>
 </form>
-<input class="submit" type="submit" value="Přihlásit" />
 
 <p><a href="{% wp_url 'zapomenute_heslo' %}">Zapomněli jste své přihlašovací údaje?</a>

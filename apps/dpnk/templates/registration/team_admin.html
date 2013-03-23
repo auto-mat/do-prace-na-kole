@@ -1,7 +1,7 @@
 {% load url from future %}
-{% load dpnk_tags %}
-<form method="post">{% csrf_token %}
-{{ form.as_p }}
+{% load dpnk_tags bootstrap %}
+<form method="post" class="form-horizontal">{% csrf_token %}
+{{ form|bootstrap }}
 <button class="submit" type="button">Odeslat</button>
 <a href="{% wp_url 'profil'%}">Zpět</a>
 
@@ -10,7 +10,7 @@
 {% if denial_message %}
 <div class="errorlist">Při zamítnutí člena týmu musíte vyplnit zprávu.</div>
 {% endif %}
-   <table id="formset" class="form">
+   <table class="table">
       {% for user in unapproved_users %}
       {% if forloop.first %}
       <thead><tr>
@@ -21,7 +21,15 @@
             {% endfor %}
       </tr></thead>
       {% endif %}
-      <tr class="{% cycle row1,row2 %}">
+      <tr class="
+         {% if user.0.2 == "undecided" %}
+            warning
+         {% elif user.0.2 == "denied" %}
+            error
+         {% else %}
+            success
+         {% endif %}
+         ">
          {% for field in user %}
          {% ifnotequal field.1 None %}
          <td>
@@ -30,15 +38,20 @@
          {% endifnotequal %}
          {% endfor %}
          <td>
+            <div class="control-group">
             {% if user.0.2 == 'undecided' or user.0.2 == 'denied' %}
-            <button class="submit" type="button" id="approve-{{user.1.2}}" name="approve-{{user.1.2}}">Ověřit</button>
+            <div class="controls">
+               <button class="submit" type="button" id="approve-{{user.1.2}}" name="approve-{{user.1.2}}">Ověřit</button>
+            </div>
             {% if user.0.2 == 'undecided' %}
-            <br/>
-            <label for="reason">Důvod odmítnutí</label>
-            <input id="reason-{{user.1.2}}" name="reason-{{user.1.2}}" type="text"/>
-            <button class="submit" type="button" id="deny-{{user.1.2}}" name="deny-{{user.1.2}}">Zamítnout</button>
+            <div class="controls">
+               <label for="reason-{{user.1.2}}">Důvod odmítnutí</label>
+               <input id="reason-{{user.1.2}}" name="reason-{{user.1.2}}" type="text"/>
+               <button class="submit" type="button" id="deny-{{user.1.2}}" name="deny-{{user.1.2}}">Zamítnout</button>
+            </div>
             {% endif %}
             {% endif %}
+            </div>
          </td>
       </tr>
       {% endfor %}

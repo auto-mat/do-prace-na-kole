@@ -13,11 +13,12 @@
 <tr><th scope="row">Telefon:</th><td>{{ profile.telephone }}</td></tr>
 <tr><th scope="row">Email:</th><td>{{ profile.user.email }}</td></tr>
 <tr><th scope="row">Velikost trička:</th><td>{{ profile.t_shirt_size }}</td></tr>
+<tr><th scope="row">Počet členů týmu:</th><td>{{ team_members_count }}
 <tr><th scope="row">Koordinátor týmu:</th><td>{{ team.coordinator }}
 {% if approved_for_team == 'approved' %}
 ({{ team.coordinator.user.email }}, tel.: {{ team.coordinator.telephone }})
    {% if member.payment_status == 'waiting' or member.payment_status == None %}
-      <span class="alert"> - nemá zaplaceno startovné</span>
+      <span class="text-error"> - nemá zaplaceno startovné</span>
    {% endif %}
 {% endif %}
 </td></tr>
@@ -29,40 +30,40 @@
          {% endif %}
          {{ member }} ({{ member.user.email }})
          {% if member.payment_status == 'waiting' or member.payment_status == None %}
-            <span class="alert"> - nemá zaplaceno startovné</span>
+            <span class="text-error"> - nemá zaplaceno startovné</span>
          {% endif %}
       {% endfor %}
 </td></tr>
 {% endif %}
 {% if team_members_count <= 1 %}
-<tr><th scope="row">Upozornění:</th><td class="alert"> Váš tým má jediného odslouhlaseného člena. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva právoplatní členové.</td></tr>
+<tr><th scope="row">Upozornění:</th><td class="text-error"> Váš tým má jediného odslouhlaseného člena. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva právoplatní členové.</td></tr>
 {% endif %}
 <tr><th scope="row">Členství v týmu:</th>
 {% if team.coordinator == profile %}
-      <td class="ok">Koordinátor.</td>
+      <td class="text-success">Koordinátor.</td>
 {% elif approved_for_team == 'undecided' %}
-      <td class="warning">Nebylo dosud odsouhlaseno. Můžete znovu <a href="{% wp_url 'zaslat_zadost_clenstvi'%}">poslat žádost o ověřeření členství</a> koordinátorovi vašeho týmu.</td>
+      <td class="text-warning">Nebylo dosud odsouhlaseno. Můžete znovu <a href="{% wp_url 'zaslat_zadost_clenstvi'%}">poslat žádost o ověřeření členství</a> koordinátorovi vašeho týmu.</td>
 {% elif approved_for_team == 'denied' %}
-      <td class="alert">Zamítnuto. Budete si muset <a href="{% wp_url 'upravit_profil' %}">zvolit jiný tým</a>. </td>
+      <td class="text-error">Zamítnuto. Budete si muset <a href="{% wp_url 'upravit_profil' %}">zvolit jiný tým</a>. </td>
 {% elif approved_for_team == 'approved' %}
-      <td class="ok">Odsouhlaseno.</td>
+      <td class="text-success">Odsouhlaseno.</td>
 {% endif %}
 </tr>
 <tr><th scope="row">Startovné:</th><td>
       {% if payment_status == 'no_admission' %}
-         <span class="ok"> Ve vašem městě se startovné neplatí.</span>
+         <span class="text-success"> Ve vašem městě se startovné neplatí.</span>
       {% elif payment_status == 'done' %}
-         <span class="ok"> Zaplaceno </span>(slevový kód na <a href="http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012" target="_top">triko</a>: {{ voucher }})
+         <span class="text-success"> Zaplaceno </span>
       {% elif payment_status == 'waiting' %}
          {% if payment_type == 'fc' %}
-            <span class="alert"> Váš zaměstnavatel ještě poplatek nezaplatil </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>)
+            <span class="text-error"> Váš zaměstnavatel ještě poplatek nezaplatil </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>)
          {% elif payment_type == 'am' %}
-            <span class="alert"> Vaše členství v Klubu přátel Auto*Mat se ověřuje </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>)
+            <span class="text-error"> Vaše členství v Klubu přátel Auto*Mat se ověřuje </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>)
          {% else %}
-            <span class="alert"> Čeká se na potvrzení platby </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>)
+            <span class="text-error"> Čeká se na potvrzení platby </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>)
          {% endif %}
       {% elif payment_status == None %}
-         <span class="alert"> Příspěvek dosud nezaplacen. </span><a href="{% wp_url 'typ_platby' %}">Zaplatit</a> 
+         <span class="text-error"> Příspěvek dosud nezaplacen. </span><a href="{% wp_url 'typ_platby' %}">Zaplatit</a> 
       {% endif %}
 </td></tr>
 </table>

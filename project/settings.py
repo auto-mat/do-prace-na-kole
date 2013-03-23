@@ -69,6 +69,7 @@ INSTALLED_APPS = (
     'smart_selects',
     'composite_field',
     'south',
+    'bootstrapform',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'

@@ -1,6 +1,7 @@
+{% load bootstrap %}
 {% load url from future %}
 
-<form method="post">{% csrf_token %}
-{{ form.as_p }}
+<form method="post" class="form-horizontal">{% csrf_token %}
+{{ form|bootstrap }}
+<button class="submit" type="button">Vybrat způsob platby</button>
 </form>
-<button class="submit">Vybrat způsob platby</button>
