@@ -1,13 +1,15 @@
-<fieldset id="{{id}}_div" {% if selected %}disabled{% endif %}>
+<fieldset id="{{id}}_div" {% if selected %}disabled{% endif %} class="select">
     {{ html }}
 </fieldset>
+<div id="{{id}}_div">
+<label for = "{{ id }}_selected">
+   {{ new_description }}
+</label>
 <input type="checkbox" onclick='
    document.getElementById("{{ id }}_form").style.display = !(document.getElementById("{{ id }}_selected").checked)?"none":"block";
    document.getElementById("{{ id }}_div").disabled = (document.getElementById("{{ id }}_selected").checked);
 ' name="{{ id }}_selected" id="{{ id }}_selected" {% if selected %}checked{% endif %}>
-<label for = "{{ id }}_selected">
-   {{ new_description }}
-</label>
+</div>
 <fieldset id="{{ id }}_form" {% if not selected %}style='display:none'{% endif %} >
    {{ underlying_form.as_p }}
 </fieldset>

@@ -78,7 +78,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         model_field = "subsidiary",
         show_all = False,
         auto_choose = False,
-        widget=SelectChainedOrCreate(RegisterTeamForm, prefix="team", new_description = u"Chci si založit nový tým, ve kterém budu koordinátorem",
+        widget=SelectChainedOrCreate(RegisterTeamForm, prefix="team", new_description = u"Tým v seznamu není, chci si založit nový",
             chain_field = "subsidiary",
             app_name = "dpnk",
             model_name = "Team",
