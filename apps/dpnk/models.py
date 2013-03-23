@@ -220,6 +220,11 @@ class UserProfile(models.Model):
               ('denied', "Zamítnutý"),
               )
 
+    LANGUAGE = [
+            ('cs', "Čeština"),
+            ('en', "Angličtna"),
+              ]
+
     user = models.OneToOneField(
         User,
         related_name='userprofile',
@@ -251,6 +256,12 @@ class UserProfile(models.Model):
         max_length=16,
         null=False,
         default='undecided')
+    language = models.CharField(
+        verbose_name="Jazyk komunikace",
+        choices=LANGUAGE,
+        max_length=16,
+        null=False,
+        default='cs')
     t_shirt_size = models.CharField(
         verbose_name="Velikost trička",
         choices=TSHIRTSIZE,
@@ -357,13 +368,22 @@ class Payment(models.Model):
         verbose_name = "Platba"
         verbose_name_plural = "Platby"
 
-    user = models.ForeignKey(UserProfile, null=False)
+    user = models.ForeignKey(UserProfile, 
+        null=True, 
+        blank=True, 
+        default=None)
     order_id = models.CharField(
         verbose_name="Order ID",
-        max_length=50, null=False)
+        max_length=50,
+        null=True,
+        blank=True,
+        default="")
     session_id = models.CharField(
         verbose_name="Session ID",
-        max_length=50, null=False)
+        max_length=50,
+        null=True,
+        blank=True,
+        default="")
     trans_id = models.CharField(
         verbose_name="Transaction ID",
         max_length=50, null=True, blank=True)
@@ -373,7 +393,9 @@ class Payment(models.Model):
     description = models.CharField(
         verbose_name="Popis",
         max_length=500,
-        null=True)
+        null=True,
+        blank=True,
+        default="")
     created = models.DateTimeField(
         verbose_name="Zadání platby",
         default=datetime.datetime.now,
