@@ -20,10 +20,23 @@
 <tr><th scope="row">Koordinátor týmu:</th><td>{{ team.coordinator }}
 {% if approved_for_team == 'approved' %}
 ({{ team.coordinator.user.email }}, tel.: {{ team.coordinator.telephone }})
+   {% if member.payment_status == 'waiting' or member.payment_status == None %}
+      <span class="alert"> - nemá zaplaceno startovné</span>
+   {% endif %}
 {% endif %}
 </td></tr>
 {% if approved_for_team == 'approved' %}
-<tr><th scope="row">Členové týmu:</th><td>{{ team_members }}</td></tr>
+<tr><th scope="row">Další členové:</th><td>
+      {% for member in team_members %}
+         {% if not forloop.first %}
+            <br/>
+         {% endif %}
+         {{ member }} ({{ member.user.email }})
+         {% if member.payment_status == 'waiting' or member.payment_status == None %}
+            <span class="alert"> - nemá zaplaceno startovné</span>
+         {% endif %}
+      {% endfor %}
+</td></tr>
 {% endif %}
 {% if team_members_count <= 1 %}
 <tr><th scope="row">Upozornění:</th><td class="alert"> Váš tým má jediného odslouhlaseného člena. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva právoplatní členové.</td></tr>
