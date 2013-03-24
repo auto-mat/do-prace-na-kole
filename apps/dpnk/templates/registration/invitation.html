@@ -1,10 +1,11 @@
 {% load url from future %}
+{% load bootstrap %}
 
-<h1>Pozvěte své kolegy do vašeho týmu</h1>
+<h3>Pozvěte své kolegy do vašeho týmu</h3>
 
 <p>Nyní můžete pozvat své kolegy do vašeho týmu</p>
 
-<form method="post">{% csrf_token %}
-{{ form.as_p }}
+<form method="post" class="form-horizontal">{% csrf_token %}
+{{ form|bootstrap }}
 <button class="submit" type="button">Odeslat</button>
 </form>
