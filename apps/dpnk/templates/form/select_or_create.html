@@ -2,15 +2,27 @@
 <fieldset id="{{id}}_div" {% if selected %}disabled{% endif %}>
     {{ html }}
 </fieldset>
-<fieldset>
+
+{# this is hack #}
+</div>
+</div>
+<div class="control-group required">
+
 <label for = "{{ id }}_selected" class="control-label">
-   {{ new_description }}
+      {{ new_description }}
 </label>
+<div class="controls">
 <input type="checkbox" onclick='
    document.getElementById("{{ id }}_form").style.display = !(document.getElementById("{{ id }}_selected").checked)?"none":"block";
    document.getElementById("{{ id }}_div").disabled = (document.getElementById("{{ id }}_selected").checked);
-' name="{{ id }}_selected" id="{{ id }}_selected" class="controls" {% if selected %}checked{% endif %}>
-</fieldset>
-<fieldset id="{{ id }}_form" {% if not selected %}style='display:none'{% endif %}>
+' name="{{ id }}_selected" id="{{ id }}_selected" {% if selected %}checked{% endif %}/>
+</div>
+
+{# this is hack #}
+</div>
+<div id="{{ id }}_form" {% if not selected %}style='display:none'{% endif %}>
+
    {{ underlying_form|bootstrap }}
-</fieldset>
+
+{# this is hack #}
+<div>
