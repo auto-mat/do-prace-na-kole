@@ -1,4 +1,4 @@
-{% load url from future %}{% autoescape off %}
+{% load wp_url from dpnk_tags %}{% autoescape off %}
 
 Dobrý den, {{ user.userprofile }},
 
@@ -6,7 +6,7 @@ váš tým {{user.userprofile.team.name}} byl právě vytvořen.
 
 Na adrese 
 {% block invite_link %}
-{{ SITE_URL }}{% url 'dpnk.views.invite' %}
+{{ SITE_URL }}{% wp_url 'pozvanky' %}
 {% endblock %}
 můžete pozvat své kolegy k přihlášení do vašeho týmu.
 
@@ -14,7 +14,7 @@ Pokud chcete své kolegy vyzvat k vytvoření jejich vlastního týmu, odkažte 
 
 Ke svému profilu se můžete přihlásit pomocí adresy
 {% block profile_link %}
-{{ SITE_URL }}{% url 'dpnk.views.profile' %}
+{{ SITE_URL }}{% wp_url 'profil' %}
 {% endblock %}
 .
 

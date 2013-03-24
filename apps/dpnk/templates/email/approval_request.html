@@ -1,11 +1,11 @@
-{% load url from future %}{% autoescape off %}
+{% load wp_url from dpnk_tags %}{% autoescape off %}
 
 Dobrý den, {{ coordinator.userprofile }},
 
 váš kolega {{ user.userprofile }} vás žádá o účast v soutěži Do práce na kole ve vámi koordinovaném týmu {{user.userprofile.team }}.
 Jeho členství můžete potvrdit nebo zamítnout v administraci týmu:
 {% block approval_link %}
-{{ SITE_URL }}{% url  'dpnk.views.team_admin' %}
+{{ SITE_URL }}{% wp_url  'team_admin' %}
 {% endblock %}
 
 S pozdravem,

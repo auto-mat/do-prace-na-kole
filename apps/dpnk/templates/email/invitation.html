@@ -1,14 +1,11 @@
-{% load url from future %}{% autoescape off %}
+{% load wp_url from dpnk_tags %}{% autoescape off %}
 
 Dobrý den,
 
 váš kolega {{ user.userprofile }} vás zve k účasti v soutěži Do práce na kole do svého týmu {{user.userprofile.team.name}}. Přihlásit do soutěže se můžete pomocí odkazu
-{% comment %}
 {% block register_link %}
-{{ SITE_URL }}{% url 'dpnk.views.register' token=user.userprofile.team.invitation_token initial_email=email%}
-{% endblock %}.
-{% endcomment %}
-{{ SITE_URL }}registrace.html?invitation_token={{ user.userprofile.team.invitation_token }}&email={{ email }}
+{{ SITE_URL }}{% wp_url 'registrace' %}?invitation_token={{ user.userprofile.team.invitation_token }}&email={{ email }}
+{% endblock %}
 
 S pozdravem,
 Auto*Mat
