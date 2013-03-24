@@ -1,7 +1,7 @@
 {% load url from future %}
 {% load dpnk_tags bootstrap%}
 
-<form action="" method="post" class="form-horizontal">{% csrf_token %}
+<form method="post" class="form-horizontal">{% csrf_token %}
 {{ form|bootstrap }}
 <button class="submit" type="button">Přihlásit</button>
 </form>
