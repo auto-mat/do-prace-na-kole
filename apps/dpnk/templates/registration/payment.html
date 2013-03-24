@@ -1,8 +1,10 @@
-<h3>Platba startovného</h3>
+{% load i18n %}
+
+<h3>{% trans "Platba startovného" %}</h3>
 
 <form action="https://www.payu.cz/paygw/UTF/NewPayment" method="POST" name="payform">
-Soutěžící: {{firstname}} {{surname}}<br/>
-Startovné: {{amount}} Kč<br/>
+{% trans "Soutěžící:" %} {{firstname}} {{surname}}<br/>
+{% trans "Startovné:" %} {{amount}} Kč<br/>
 <input type="hidden" name="first_name" value="{{firstname}}">
 <input type="hidden" name="last_name" value="{{surname}}">
 <input type="hidden" name="email" value="{{email}}">
@@ -11,12 +13,12 @@ Startovné: {{amount}} Kč<br/>
 <input type="hidden" name="pos_id" value="1116">
 <input type="hidden" name="pos_auth_key" value="NxFcSXh">
 <input type="hidden" name="session_id" value="{{session_id}}">
-<span id="style-of-payment-selection">Zvolte si prosím typ platby:</span><br/>
+<span id="style-of-payment-selection">{% trans "Zvolte si prosím typ platby:" %}</span><br/>
 <div id="payu-final"></div>
 <input type="hidden" name="desc" value="{{description}}">
 <input type="hidden" name="client_ip" value="{{client_ip}}">
 <input type="hidden" name="js" value="0">
-<input type="submit" value="Zaplatit">
+<input type="submit" value="{% trans "Zaplatit" %}">
 </form>
 <script language="JavaScript" type="text/javascript">
 <!--

@@ -1,7 +1,8 @@
 {% load bootstrap %}
 {% load url from future %}
+{% load i18n %}
 
 <form method="post" class="form-horizontal">{% csrf_token %}
 {{ form|bootstrap }}
-<button class="submit" type="button">Vybrat způsob platby</button>
+<button class="submit" type="button">{% trans "Vybrat způsob platby" %}</button>
 </form>

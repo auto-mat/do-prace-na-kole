@@ -1,14 +1,16 @@
 {% load url from future %}
 {% load dpnk_tags bootstrap %}
+{% load i18n %}
+
 <form method="post" class="form-horizontal">{% csrf_token %}
 {{ form|bootstrap }}
-<button class="submit" type="button">Odeslat</button>
-<a href="{% wp_url 'profil'%}">Zpět</a>
+<button class="submit" type="button">{% trans "Odeslat" %}</button>
+<a href="{% wp_url 'profil'%}">{% trans "Zpět" %}</a>
 
 <input type="hidden" id="button_action" name="button_action" />
-<h3>Členové týmu:</h3>
+<h3>{% trans "Členové týmu:" %}</h3>
 {% if denial_message %}
-<div class="errorlist">Při zamítnutí člena týmu musíte vyplnit zprávu.</div>
+<div class="errorlist">{% trans "Při zamítnutí člena týmu musíte vyplnit zprávu." %}</div>
 {% endif %}
    <table class="table">
       {% for user in unapproved_users %}
@@ -41,13 +43,13 @@
             <div class="control-group">
             {% if user.0.2 == 'undecided' or user.0.2 == 'denied' %}
             <div class="controls">
-               <button class="submit" type="button" id="approve-{{user.1.2}}" name="approve-{{user.1.2}}">Ověřit</button>
+               <button class="submit" type="button" id="approve-{{user.1.2}}" name="approve-{{user.1.2}}">{% trans "Ověřit" %}</button>
             </div>
             {% if user.0.2 == 'undecided' %}
             <div class="controls">
-               <label for="reason-{{user.1.2}}">Důvod odmítnutí</label>
+               <label for="reason-{{user.1.2}}">{% trans "Důvod odmítnutí" %}</label>
                <input id="reason-{{user.1.2}}" name="reason-{{user.1.2}}" type="text"/>
-               <button class="submit" type="button" id="deny-{{user.1.2}}" name="deny-{{user.1.2}}">Zamítnout</button>
+               <button class="submit" type="button" id="deny-{{user.1.2}}" name="deny-{{user.1.2}}">{% trans "Zamítnout" %}</button>
             </div>
             {% endif %}
             {% endif %}

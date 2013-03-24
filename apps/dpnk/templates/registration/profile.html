@@ -1,82 +1,83 @@
 {% load url from future %}
 {% load dpnk_tags %}
+{% load i18n %}
 
 {% if active %}
 {% if own_city %}
-<h3>Základní údaje</h3>
+<h3>{% trans "Základní údaje" %}</h3>
 <table>
-<tr><th scope="row">Jméno</th><td>{{ profile }}</td></tr>
-<tr><th scope="row">Tým:</th><td>{{ team.name }}</td></tr>
-<tr><th scope="row">Město:</th><td>{{ team.subsidiary.city.name }}</td></tr>
-<tr><th scope="row">Pobočka:</th><td>{{ team.subsidiary }}</td></tr>
-<tr><th scope="row">Firma:</th><td>{{ team.subsidiary.company.name }}</td></tr>
-<tr><th scope="row">Telefon:</th><td>{{ profile.telephone }}</td></tr>
-<tr><th scope="row">Email:</th><td>{{ profile.user.email }}</td></tr>
-<tr><th scope="row">Velikost trička:</th><td>{{ profile.t_shirt_size }}</td></tr>
-<tr><th scope="row">Počet členů týmu:</th><td>{{ team_members_count }}
-<tr><th scope="row">Koordinátor týmu:</th><td>{{ team.coordinator }}
+<tr><th scope="row">{% trans "Jméno" %}</th><td>{{ profile }}</td></tr>
+<tr><th scope="row">{% trans "Tým:" %}</th><td>{{ team.name }}</td></tr>
+<tr><th scope="row">{% trans "Město:" %}</th><td>{{ team.subsidiary.city.name }}</td></tr>
+<tr><th scope="row">{% trans "Pobočka:" %}</th><td>{{ team.subsidiary }}</td></tr>
+<tr><th scope="row">{% trans "Firma:" %}</th><td>{{ team.subsidiary.company.name }}</td></tr>
+<tr><th scope="row">{% trans "Telefon:" %}</th><td>{{ profile.telephone }}</td></tr>
+<tr><th scope="row">{% trans "Email:" %}</th><td>{{ profile.user.email }}</td></tr>
+<tr><th scope="row">{% trans "Velikost trička:" %}</th><td>{{ profile.t_shirt_size }}</td></tr>
+<tr><th scope="row">{% trans "Počet členů týmu:" %}</th><td>{{ team_members_count }}
+<tr><th scope="row">{% trans "Koordinátor týmu:" %}</th><td>{{ team.coordinator }}
 {% if approved_for_team == 'approved' %}
 ({{ team.coordinator.user.email }}, tel.: {{ team.coordinator.telephone }})
    {% if member.payment_status == 'waiting' or member.payment_status == None %}
-      <span class="text-error"> - nemá zaplaceno startovné</span>
+      <span class="text-error"> - {% trans "nemá zaplaceno startovné" %}</span>
    {% endif %}
 {% endif %}
 </td></tr>
 {% if approved_for_team == 'approved' %}
-<tr><th scope="row">Další členové:</th><td>
+<tr><th scope="row">{% trans "Další členové:" %}</th><td>
       {% for member in team_members %}
          {% if not forloop.first %}
             <br/>
          {% endif %}
          {{ member }} ({{ member.user.email }})
          {% if member.payment_status == 'waiting' or member.payment_status == None %}
-            <span class="text-error"> - nemá zaplaceno startovné</span>
+            <span class="text-error"> - {% trans "nemá zaplaceno startovné" %}</span>
          {% endif %}
       {% endfor %}
 </td></tr>
 {% endif %}
 {% if team_members_count <= 1 %}
-<tr><th scope="row">Upozornění:</th><td class="text-error"> Váš tým má jediného odslouhlaseného člena. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva právoplatní členové.</td></tr>
+<tr><th scope="row">Upozornění:</th><td class="text-error"> {% trans "Váš tým má jediného odslouhlaseného člena. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva právoplatní členové." %}</td></tr>
 {% endif %}
-<tr><th scope="row">Členství v týmu:</th>
+<tr><th scope="row">{% trans "Členství v týmu:" %}</th>
 {% if team.coordinator == profile %}
-      <td class="text-success">Koordinátor.</td>
+      <td class="text-success">{% trans "Koordinátor." %}</td>
 {% elif approved_for_team == 'undecided' %}
-      <td class="text-warning">Nebylo dosud odsouhlaseno. Můžete znovu <a href="{% wp_url 'zaslat_zadost_clenstvi'%}">poslat žádost o ověřeření členství</a> koordinátorovi vašeho týmu.</td>
+      <td class="text-warning">{% trans "Nebylo dosud odsouhlaseno. Můžete znovu " %}<a href="{% wp_url 'zaslat_zadost_clenstvi'%}">{% trans "poslat žádost o ověřeření členství" %}</a> {% trans "koordinátorovi vašeho týmu." %}</td>
 {% elif approved_for_team == 'denied' %}
-      <td class="text-error">Zamítnuto. Budete si muset <a href="{% wp_url 'upravit_profil' %}">zvolit jiný tým</a>. </td>
+      <td class="text-error">{% trans "Zamítnuto. Budete si muset " %}<a href="{% wp_url 'upravit_profil' %}">{% trans "zvolit jiný tým" %}</a>. </td>
 {% elif approved_for_team == 'approved' %}
-      <td class="text-success">Odsouhlaseno.</td>
+      <td class="text-success">{% trans "Odsouhlaseno." %}</td>
 {% endif %}
 </tr>
-<tr><th scope="row">Startovné:</th><td>
+<tr><th scope="row">{% trans "Startovné:" %}</th><td>
       {% if payment_status == 'no_admission' %}
-         <span class="text-success"> Ve vašem městě se startovné neplatí.</span>
+         <span class="text-success"> {% trans "Ve vašem městě se startovné neplatí." %}</span>
       {% elif payment_status == 'done' %}
-         <span class="text-success"> Zaplaceno </span>
+         <span class="text-success"> {% trans "Zaplaceno" %}</span>
       {% elif payment_status == 'waiting' %}
          {% if payment_type == 'fc' %}
-            <span class="text-error"> Váš zaměstnavatel ještě poplatek nezaplatil </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>)
+            <span class="text-error"> {% trans "Váš zaměstnavatel ještě poplatek nezaplatil" %} </span>(<a href="{% wp_url 'typ_platby' %}">{% trans "Zadat jinou platbu" %}</a>)
          {% elif payment_type == 'am' %}
-            <span class="text-error"> Vaše členství v Klubu přátel Auto*Mat se ověřuje </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>)
+            <span class="text-error"> {% trans "Vaše členství v Klubu přátel Auto*Mat se ověřuje" %} </span>(<a href="{% wp_url 'typ_platby' %}">{% trans "Zadat jinou platbu" %}</a>)
          {% else %}
-            <span class="text-error"> Čeká se na potvrzení platby </span>(<a href="{% wp_url 'typ_platby' %}">Zadat jinou platbu</a>)
+            <span class="text-error"> {% trans "Čeká se na potvrzení platby" %} </span>(<a href="{% wp_url 'typ_platby' %}">{% trans "Zadat jinou platbu" %}</a>)
          {% endif %}
       {% elif payment_status == None %}
-         <span class="text-error"> Příspěvek dosud nezaplacen. </span><a href="{% wp_url 'typ_platby' %}">Zaplatit</a> 
+         <span class="text-error"> {% trans "Příspěvek dosud nezaplacen." %} </span><a href="{% wp_url 'typ_platby' %}">{% trans "Zaplatit" %}</a> 
       {% endif %}
 </td></tr>
 </table>
-<a href="{% wp_url 'upravit_profil' %}">Upravit údaje</a> | 
+<a href="{% wp_url 'upravit_profil' %}">{% trans "Upravit údaje" %}</a> | 
 {% if team.coordinator == profile %}
-<a href="{% wp_url 'team_admin' %}">Upravit tým</a> | 
+<a href="{% wp_url 'team_admin' %}">{% trans "Upravit tým" %}</a> | 
 {% endif %}
-<a href="{% wp_url 'zmena_hesla' %}">Změnit heslo</a> | 
-<a href="{% wp_url 'logout' %}">Odhlásit</a>
+<a href="{% wp_url 'zmena_hesla' %}">{% trans "Změnit heslo" %}</a> | 
+<a href="{% wp_url 'logout' %}">{% trans "Odhlásit" %}</a>
 
 {% ifequal competition_state 'started' %}
 
-<h3>Moje jízdy</h3>
+<h3>{% trans "Moje jízdy" %}</h3>
 
 <!-- <p>Tip: Před vyplněním jízd nejprve zodpovězte anketní otázku</p> -->
 
@@ -154,7 +155,6 @@
 {% endif %}
 
 <p><br/><br/></p>
-<p>ENGLISH INFO: To fill out your trips, answer the question first, ask your czech colegue for a help. Little dictionary: startovné = registration fee; upravit údaje = change profile; změnit heslo = change password; odhlásit = log out; anketa = poll; otázka = question; do/z práce = to/from work; odeslat = send; pravidelnost = regularity; vzdálenost = distance; </p>
 <p>S dotazy a nejasnostmi se obracejte na kontakt@dopracenakole.net</p>
 {% endif %}
 {% endifequal %}

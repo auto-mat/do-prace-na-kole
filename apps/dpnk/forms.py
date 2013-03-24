@@ -7,10 +7,11 @@ import registration.forms
 from models import UserProfile, Company, Subsidiary, Team
 from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
+from django.utils.translation import gettext as _
 
 def team_full(data):
     if len(UserProfile.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, user__is_active=True)) >= 5:
-        raise forms.ValidationError("Tento tým již má pět členů a je tedy plný")
+        raise forms.ValidationError(_("Tento tým již má pět členů a je tedy plný"))
 
 class RegisterCompanyForm(forms.ModelForm):
     required_css_class = 'required'
@@ -41,7 +42,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
     required_css_class = 'required'
     
     language = forms.ChoiceField(
-        label="Jazyk komunikace",
+        label=_("Jazyk komunikace"),
         choices = UserProfile.LANGUAGE,
         )
     first_name = forms.CharField(
@@ -55,7 +56,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
     company = forms.ModelChoiceField(
         label="Firma",
         queryset=Company.objects.all(),
-        widget=SelectOrCreate(RegisterCompanyForm, prefix="company", new_description = u"Společnost v seznamu není, chci založit novou"),
+        widget=SelectOrCreate(RegisterCompanyForm, prefix="company", new_description = _("Společnost v seznamu není, chci založit novou")),
         required=True)
     subsidiary = ChainedModelChoiceField(
         chain_field = "company",
@@ -65,7 +66,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         show_all = False,
         auto_choose = True,
         label="Pobočka",
-        widget=SelectChainedOrCreate(RegisterSubsidiaryForm, prefix="subsidiary", new_description = u"Pobočka v seznamu není, chci založit novou", 
+        widget=SelectChainedOrCreate(RegisterSubsidiaryForm, prefix="subsidiary", new_description = _("Pobočka v seznamu není, chci založit novou"), 
             chain_field = "company",
             app_name = "dpnk",
             model_name = "Subsidiary",
@@ -82,7 +83,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         model_field = "subsidiary",
         show_all = False,
         auto_choose = False,
-        widget=SelectChainedOrCreate(RegisterTeamForm, prefix="team", new_description = u"Tým v seznamu není, chci si založit nový",
+        widget=SelectChainedOrCreate(RegisterTeamForm, prefix="team", new_description = _("Tým v seznamu není, chci si založit nový"),
             chain_field = "subsidiary",
             app_name = "dpnk",
             model_name = "Team",
@@ -94,10 +95,10 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         queryset=Team.objects.all(),
         required=True)
     distance = forms.IntegerField(
-        label="Průměrná ujetá vzdálenost z domova do práce (v km)",
+        label=_("Průměrná ujetá vzdálenost z domova do práce (v km)"),
         required=True)
     t_shirt_size = forms.ChoiceField(
-        label="Velikost trička",
+        label=_("Velikost trička"),
         choices = [['','-----'],] + UserProfile.TSHIRTSIZE,
         )
 
@@ -143,19 +144,19 @@ class InviteForm(forms.Form):
     error_css_class = 'error'
 
     email1 = forms.EmailField(
-        label="Email kolegy 1",
+        label=_("Email kolegy 1"),
         required=False)
 
     email2 = forms.EmailField(
-        label="Email kolegy 2",
+        label=_("Email kolegy 2"),
         required=False)
 
     email3 = forms.EmailField(
-        label="Email kolegy 3",
+        label=_("Email kolegy 3"),
         required=False)
 
     email4 = forms.EmailField(
-        label="Email kolegy 4",
+        label=_("Email kolegy 4"),
         required=False)
 
 class TeamAdminForm(forms.ModelForm):
@@ -167,13 +168,13 @@ class TeamAdminForm(forms.ModelForm):
         fields = ('name',)
 
 class PaymentTypeForm(forms.Form):
-    CHOICES=[('pay',u'Účastnický poplatek si platím sám.'),
-             ('company',u'Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.'),
-             ('member',u'Jsem členem klubu přátel Auto*mat nebo se jím hodlám stát.')
+    CHOICES=[('pay', _("Účastnický poplatek si platím sám.")),
+             ('company', _("Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.")),
+             ('member', _("Jsem členem klubu přátel Auto*mat nebo se jím hodlám stát."))
              ]
 
     payment_type = forms.ChoiceField(
-            label='Typ platby',
+            label=_("Typ platby"),
             choices=CHOICES,
             widget=forms.RadioSelect(),
             )
@@ -190,7 +191,7 @@ class ProfileUpdateForm(forms.ModelForm):
     team = forms.ModelChoiceField(
         label="Tým",
         queryset= [],
-        widget=SelectOrCreate(RegisterTeamForm, prefix="team", new_description = u"Chci si založit nový tým, ve kterém budu koordinátorem"),
+        widget=SelectOrCreate(RegisterTeamForm, prefix="team", new_description = _("Chci si založit nový tým, ve kterém budu koordinátorem")),
         empty_label=None,
         required=True)
 

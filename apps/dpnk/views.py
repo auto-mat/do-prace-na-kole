@@ -27,6 +27,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.core.mail import EmailMessage
 from django.template import RequestContext
 from django.db.models import Sum, Count
+from django.utils.translation import gettext as _
 # Registration imports
 import registration.signals, registration.backends
 # Model imports
@@ -51,7 +52,7 @@ def must_be_coordinator(fn):
         request = args[0]
         team = request.user.userprofile.team
         if team.coordinator != request.user.userprofile:
-            return HttpResponse(u'Nejste koordinátorem týmu "' + team.name + u'", nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je "' + unicode(team.coordinator) + u'", vy jste: "' + unicode(request.user.userprofile) + u'"', status=401)
+            return HttpResponse(_("Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s ") % {'team': team.name, 'coordinator': team.coordinator, 'you': request.user.userprofile}, status=401)
         else:
             return fn(*args, **kwargs)
     return wrapper
@@ -65,7 +66,7 @@ def must_be_approved_for_team(fn):
         if userprofile.approved_for_team == 'approved' or userprofile.team.coordinator == userprofile:
             return fn(*args, **kwargs)
         else:
-            return HttpResponse(u'Vaše členství v týmu "' + userprofile.team.name + u'" nebylo odsouhlaseno. O ověření členství můžete požádat v <a href="/registrace/profil">profilu</a>.', status=401)
+            return HttpResponse(_("Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.") % (userprofile.team.name,), status=401)
     return wrapper
 
 def redirect(url):
@@ -305,9 +306,9 @@ def payment_result(request, success):
         p.save()
 
     if success == True:
-        msg = "Vaše platba byla úspěšně přijata."
+        msg = _("Vaše platba byla úspěšně přijata.")
     else:
-        msg = "Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu."
+        msg = _("Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
 
     try:
         city = UserProfile.objects.get(user=request.user).team.city
@@ -875,12 +876,12 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
         unapproved_users.append([
             ('state', None, userprofile.approved_for_team),
             ('id', None, userprofile.id),
-            ('name', u'Jméno', unicode(userprofile)),
-            ('username', u'Uživatel', userprofile.user),
-            ('email', u'Email', userprofile.user.email),
-            ('payment', u'Platba', {'waiting': u'Nezaplaceno', 'done': u'Zaplaceno', 'no_admission': 'Není potřeba', None: u'Neznámý'}[userprofile.payment_status()]),
-            ('telephone', u'Telefon', userprofile.telephone),
-            ('state_name', u'Stav', unicode(userprofile.get_approved_for_team_display())),
+            ('name', _("Jméno"), unicode(userprofile)),
+            ('username', _("Uživatel"), userprofile.user),
+            ('email', _("Email"), userprofile.user.email),
+            ('payment', _("Platba"), {'waiting': _("Nezaplaceno"), 'done': _("Zaplaceno"), 'no_admission': _("Není potřeba"), None: _("Neznámý")}[userprofile.payment_status()]),
+            ('telephone', _("Telefon"), userprofile.telephone),
+            ('state_name', _("Stav"), unicode(userprofile.get_approved_for_team_display())),
             ])
 
     return render_to_response(template_name,

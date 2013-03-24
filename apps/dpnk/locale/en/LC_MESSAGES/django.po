@@ -1,0 +1,887 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Do prace na kole\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-03-25 03:39+0100\n"
+"PO-Revision-Date: 2013-03-25 03:43+0100\n"
+"Last-Translator: Hynek Hanke <hanke@brailcom.org>\n"
+"Language-Team: en <technik@auto-mat.cz>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: en\n"
+
+#: email.py:32
+msgid "Do práce na kole - žádost o ověření členství"
+msgstr ""
+
+#: email.py:40
+#: email.py:65
+msgid "Do práce na kole - potvrzení registrace"
+msgstr ""
+
+#: email.py:48
+msgid "Do práce na kole - potvrzení ověření členství v týmu"
+msgstr ""
+
+#: email.py:57
+msgid "Do práce na kole - ZAMÍTNUTÍ členství v týmu"
+msgstr ""
+
+#: email.py:75
+msgid "Do práce na kole - pozvánka"
+msgstr ""
+
+#: forms.py:14
+msgid "Tento tým již má pět členů a je tedy plný"
+msgstr ""
+
+#: forms.py:45
+#: models.py:261
+msgid "Jazyk komunikace"
+msgstr ""
+
+#: forms.py:59
+msgid "Společnost v seznamu není, chci založit novou"
+msgstr ""
+
+#: forms.py:69
+msgid "Pobočka v seznamu není, chci založit novou"
+msgstr ""
+
+#: forms.py:86
+msgid "Tým v seznamu není, chci si založit nový"
+msgstr ""
+
+#: forms.py:98
+msgid "Průměrná ujetá vzdálenost z domova do práce (v km)"
+msgstr ""
+
+#: forms.py:101
+#: models.py:267
+msgid "Velikost trička"
+msgstr "T-shirt size"
+
+#: forms.py:147
+msgid "Email kolegy 1"
+msgstr ""
+
+#: forms.py:151
+msgid "Email kolegy 2"
+msgstr ""
+
+#: forms.py:155
+msgid "Email kolegy 3"
+msgstr ""
+
+#: forms.py:159
+msgid "Email kolegy 4"
+msgstr ""
+
+#: forms.py:171
+msgid "Účastnický poplatek si platím sám."
+msgstr ""
+
+#: forms.py:172
+msgid "Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené."
+msgstr ""
+
+#: forms.py:173
+msgid "Jsem členem klubu přátel Auto*mat nebo se jím hodlám stát."
+msgstr ""
+
+#: forms.py:177
+#: models.py:408
+msgid "Typ platby"
+msgstr ""
+
+#: forms.py:194
+msgid "Chci si založit nový tým, ve kterém budu koordinátorem"
+msgstr ""
+
+#: models.py:40
+msgid "Ulice"
+msgstr ""
+
+#: models.py:46
+msgid "Číslo domu"
+msgstr ""
+
+#: models.py:53
+msgid "Adresát"
+msgstr ""
+
+#: models.py:60
+msgid "Městská část"
+msgstr ""
+
+#: models.py:67
+msgid "PSČ"
+msgstr ""
+
+#: models.py:73
+msgid "Adresní město"
+msgstr ""
+
+#: models.py:87
+msgid "Město"
+msgstr ""
+
+#: models.py:88
+msgid "Města"
+msgstr ""
+
+#: models.py:90
+#: models.py:116
+#: models.py:487
+#: models.py:543
+#: views.py:879
+#: templates/registration/profile.html:9
+msgid "Jméno"
+msgstr ""
+
+#: models.py:99
+msgid "Poplatek"
+msgstr ""
+
+#: models.py:110
+msgid "Firma"
+msgstr ""
+
+#: models.py:111
+msgid "Firmy"
+msgstr ""
+
+#: models.py:121
+msgid "Firemní admin"
+msgstr ""
+
+#: models.py:127
+msgid "IČO"
+msgstr ""
+
+#: models.py:137
+#: models.py:173
+msgid "Pobočka"
+msgstr ""
+
+#: models.py:138
+msgid "Pobočky"
+msgstr ""
+
+#: models.py:148
+msgid "Soutěžní město"
+msgstr ""
+
+#: models.py:157
+#, python-format
+msgid "The string should be longer than %(min)s, but is %(max)s characters long"
+msgstr ""
+
+#: models.py:163
+#: models.py:245
+msgid "Tým"
+msgstr ""
+
+#: models.py:164
+#: models.py:478
+msgid "Týmy"
+msgstr ""
+
+#: models.py:168
+msgid "Název týmu"
+msgstr ""
+
+#: models.py:180
+msgid "Koordinátor"
+msgstr ""
+
+#: models.py:189
+msgid "Token pro pozvánky"
+msgstr ""
+
+#: models.py:203
+#, python-format
+msgid "Nový koordinátor %(coordinator)s není členem týmu %(team)s"
+msgstr ""
+
+#: models.py:219
+msgid "Odsouhlasený"
+msgstr ""
+
+#: models.py:220
+msgid "Nerozhodnuto"
+msgstr ""
+
+#: models.py:221
+msgid "Zamítnutý"
+msgstr ""
+
+#: models.py:225
+msgid "Čeština"
+msgstr ""
+
+#: models.py:226
+msgid "Angličtna"
+msgstr ""
+
+#: models.py:237
+msgid "Vzdálenost"
+msgstr ""
+
+#: models.py:241
+#: views.py:883
+msgid "Telefon"
+msgstr ""
+
+#: models.py:249
+msgid "Počet cest"
+msgstr ""
+
+#: models.py:252
+msgid "Správcovství organizace není schváleno"
+msgstr ""
+
+#: models.py:255
+msgid "Souhlas týmu"
+msgstr ""
+
+#: models.py:273
+msgid "Motivační text aspiranta na firemního admina"
+msgstr ""
+
+#: models.py:331
+msgid "Uživatel s nezaplaceným startovným"
+msgstr ""
+
+#: models.py:332
+msgid "Uživatelé s nezaplaceným startovným"
+msgstr ""
+
+#: models.py:369
+#: views.py:882
+msgid "Platba"
+msgstr ""
+
+#: models.py:370
+msgid "Platby"
+msgstr ""
+
+#: models.py:392
+msgid "Částka"
+msgstr ""
+
+#: models.py:395
+msgid "Popis"
+msgstr ""
+
+#: models.py:401
+msgid "Zadání platby"
+msgstr ""
+
+#: models.py:405
+msgid "Realizace"
+msgstr ""
+
+#: models.py:413
+msgid "Status"
+msgstr ""
+
+#: models.py:418
+msgid "Chyba"
+msgstr ""
+
+#: models.py:421
+msgid "Firma chce zaplatit"
+msgstr ""
+
+#: models.py:434
+msgid "Kupon"
+msgstr ""
+
+#: models.py:435
+msgid "Kupony"
+msgstr ""
+
+#: models.py:438
+msgid "Kód"
+msgstr ""
+
+#: models.py:446
+msgid "Cesta"
+msgstr ""
+
+#: models.py:447
+msgid "Cesty"
+msgstr ""
+
+#: models.py:451
+msgid "Datum cesty"
+msgstr ""
+
+#: models.py:455
+msgid "Cesta do práce"
+msgstr ""
+
+#: models.py:458
+msgid "Cesta z práce"
+msgstr ""
+
+#: models.py:461
+msgid "Ujetá vzdálenost do práce"
+msgstr ""
+
+#: models.py:464
+msgid "Ujetá vzdálenost z práce"
+msgstr ""
+
+#: models.py:471
+msgid "Ujetá vzdálenost"
+msgstr ""
+
+#: models.py:472
+msgid "Pravidelnost dojíždění"
+msgstr ""
+
+#: models.py:473
+msgid "Dotazník"
+msgstr ""
+
+#: models.py:477
+msgid "Jednotlivý uživatelé"
+msgstr ""
+
+#: models.py:479
+msgid "Soutěž firem"
+msgstr ""
+
+#: models.py:483
+msgid "Závod"
+msgstr ""
+
+#: models.py:484
+msgid "Závody"
+msgstr ""
+
+#: models.py:490
+#: models.py:573
+msgid "Typ"
+msgstr ""
+
+#: models.py:495
+msgid "Typ závodníků"
+msgstr ""
+
+#: models.py:516
+msgid "Soutěž pouze pro město"
+msgstr ""
+
+#: models.py:521
+msgid "Soutěž pouze pro firmu"
+msgstr ""
+
+#: models.py:525
+msgid "Soutěž bez přihlášek (pro všechny)"
+msgstr ""
+
+#: models.py:535
+#: models.py:536
+#: models.py:607
+msgid "Typ volby"
+msgstr ""
+
+#: models.py:547
+msgid "Typ volby je použitelný pro víc otázek"
+msgstr ""
+
+#: models.py:556
+msgid "Anketní otázka"
+msgstr ""
+
+#: models.py:557
+msgid "Anketní otázky"
+msgstr ""
+
+#: models.py:560
+msgid "Text"
+msgstr ""
+
+#: models.py:561
+msgid "Výběr odpovědi"
+msgstr ""
+
+#: models.py:562
+msgid "Výběr z více odpovědí"
+msgstr ""
+
+#: models.py:566
+msgid "Otázka"
+msgstr ""
+
+#: models.py:570
+msgid "Den"
+msgstr ""
+
+#: models.py:578
+msgid "Povolit komentář"
+msgstr ""
+
+#: models.py:582
+msgid "Povolit přílohu"
+msgstr ""
+
+#: models.py:586
+msgid "Pořadí"
+msgstr ""
+
+#: models.py:590
+msgid "Soutěž"
+msgstr ""
+
+#: models.py:603
+msgid "Nabídka k anketním otázce"
+msgstr ""
+
+#: models.py:604
+msgid "Nabídky k anketním otázkám"
+msgstr ""
+
+#: models.py:612
+msgid "Nabídka"
+msgstr ""
+
+#: models.py:616
+msgid "Body"
+msgstr ""
+
+#: models.py:629
+msgid "Komentář"
+msgstr ""
+
+#: views.py:55
+#, python-format
+msgid "Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s "
+msgstr ""
+
+#: views.py:69
+#, python-format
+msgid "Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>."
+msgstr ""
+
+#: views.py:309
+msgid "Vaše platba byla úspěšně přijata."
+msgstr ""
+
+#: views.py:311
+msgid "Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu."
+msgstr ""
+
+#: views.py:880
+msgid "Uživatel"
+msgstr ""
+
+#: views.py:881
+msgid "Email"
+msgstr ""
+
+#: views.py:882
+msgid "Nezaplaceno"
+msgstr ""
+
+#: views.py:882
+#: templates/registration/profile.html:57
+msgid "Zaplaceno"
+msgstr ""
+
+#: views.py:882
+msgid "Není potřeba"
+msgstr ""
+
+#: views.py:882
+msgid "Neznámý"
+msgstr ""
+
+#: views.py:884
+msgid "Stav"
+msgstr ""
+
+#: templates/500.html:6
+msgid "Došlo k chybě, prosíme obraťte se na kontakt@dopracenakole.net"
+msgstr ""
+
+#: templates/admin/index.html:17
+#, python-format
+msgid "Models available in the %(name)s application."
+msgstr ""
+
+#: templates/admin/index.html:18
+#, python-format
+msgid "%(name)s"
+msgstr ""
+
+#: templates/admin/index.html:28
+msgid "Add"
+msgstr ""
+
+#: templates/admin/index.html:34
+msgid "Change"
+msgstr ""
+
+#: templates/admin/index.html:44
+msgid "You don't have permission to edit anything."
+msgstr ""
+
+#: templates/admin/index.html:62
+msgid "Recent Actions"
+msgstr ""
+
+#: templates/admin/index.html:63
+msgid "My Actions"
+msgstr ""
+
+#: templates/admin/index.html:67
+msgid "None available"
+msgstr ""
+
+#: templates/admin/index.html:81
+msgid "Unknown content"
+msgstr ""
+
+#: templates/registration/invitation.html:5
+msgid "Pozvěte své kolegy do vašeho týmu"
+msgstr ""
+
+#: templates/registration/invitation.html:7
+msgid "Nyní můžete pozvat své kolegy do vašeho týmu"
+msgstr ""
+
+#: templates/registration/invitation.html:11
+#: templates/registration/registration_form.html:8
+#: templates/registration/team_admin.html:7
+msgid "Odeslat"
+msgstr ""
+
+#: templates/registration/logged_out.html:5
+msgid "Nyní jste odhlášeni."
+msgstr ""
+
+#: templates/registration/logged_out.html:5
+#: templates/registration/login.html:7
+msgid "Přihlásit"
+msgstr ""
+
+#: templates/registration/login.html:10
+msgid "Zapomněli jste své přihlašovací údaje?"
+msgstr ""
+
+#: templates/registration/password_change_done.html:4
+msgid "Heslo bylo změněno."
+msgstr ""
+
+#: templates/registration/password_change_done.html:4
+msgid "Zpět na profil"
+msgstr ""
+
+#: templates/registration/password_change_form.html:6
+msgid "Změnit"
+msgstr ""
+
+#: templates/registration/password_reset_complete.html:6
+msgid "Vaše nové heslo bylo nastaveno. Nyní se můžete"
+msgstr ""
+
+#: templates/registration/password_reset_complete.html:6
+msgid "přihlásit"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:6
+msgid "Vložte nové heslo"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:8
+msgid "Zvolte si nové heslo a zapište jej pro kontrolu dvakrát pod sebe."
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:12
+msgid "Nové heslo:"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:14
+msgid "Potvrdit nové heslo:"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:15
+msgid "Zmenit mé heslo"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:20
+msgid "Obnovení hesla nebylo úspěšné"
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:22
+msgid "Tento odkaz na obnovení hesla není platný, možná proto, že již byl použit. Požádejte prosím o obnovení hesla znovu."
+msgstr ""
+
+#: templates/registration/password_reset_done.html:4
+msgid "Obnova hesla"
+msgstr ""
+
+#: templates/registration/password_reset_done.html:6
+msgid "Právě jsme vám zaslali emailem instrukce, jak si nastavit nové heslo. Email byste měli brzy obdržet na vámi zadanou adresu."
+msgstr ""
+
+#: templates/registration/password_reset_email.html:9
+msgid "Přihlašovací jméno: "
+msgstr ""
+
+#: templates/registration/password_reset_email.html:11
+msgid "Heslo pro toto přihlašovací jméno si můžete změnit na následující stránce:"
+msgstr ""
+
+#: templates/registration/password_reset_email.html:16
+msgid ""
+"S pozdravem,\\n"
+" Auto*Mat "
+msgstr ""
+
+#: templates/registration/password_reset_form.html:4
+msgid "Zapomenuté heslo"
+msgstr ""
+
+#: templates/registration/password_reset_form.html:6
+msgid "Zapoměli jste přihlašovací jméno nebo heslo? Vyplňte níže svou emailovou adresu a my vám zašleme instrukce, jak pokračovat."
+msgstr ""
+
+#: templates/registration/password_reset_form.html:10
+#: templates/registration/profile.html:15
+msgid "Email:"
+msgstr ""
+
+#: templates/registration/password_reset_form.html:11
+msgid "Nastavit nové heslo"
+msgstr ""
+
+#: templates/registration/payment.html:3
+msgid "Platba startovného"
+msgstr ""
+
+#: templates/registration/payment.html:6
+msgid "Soutěžící:"
+msgstr ""
+
+#: templates/registration/payment.html:7
+#: templates/registration/profile.html:53
+msgid "Startovné:"
+msgstr ""
+
+#: templates/registration/payment.html:16
+msgid "Zvolte si prosím typ platby:"
+msgstr ""
+
+#: templates/registration/payment.html:21
+#: templates/registration/profile.html:67
+msgid "Zaplatit"
+msgstr ""
+
+#: templates/registration/payment_result.html:8
+msgid "Váš soutěžní profil"
+msgstr ""
+
+#: templates/registration/payment_result.html:10
+msgid "Přístup k vašemu soutěžnímu profilu"
+msgstr ""
+
+#: templates/registration/payment_type.html:7
+msgid "Vybrat způsob platby"
+msgstr ""
+
+#: templates/registration/profile.html:7
+msgid "Základní údaje"
+msgstr ""
+
+#: templates/registration/profile.html:10
+msgid "Tým:"
+msgstr ""
+
+#: templates/registration/profile.html:11
+msgid "Město:"
+msgstr ""
+
+#: templates/registration/profile.html:12
+msgid "Pobočka:"
+msgstr ""
+
+#: templates/registration/profile.html:13
+msgid "Firma:"
+msgstr ""
+
+#: templates/registration/profile.html:14
+msgid "Telefon:"
+msgstr ""
+
+#: templates/registration/profile.html:16
+msgid "Velikost trička:"
+msgstr "T-shirt size:"
+
+#: templates/registration/profile.html:17
+msgid "Počet členů týmu:"
+msgstr ""
+
+#: templates/registration/profile.html:18
+msgid "Koordinátor týmu:"
+msgstr ""
+
+#: templates/registration/profile.html:22
+#: templates/registration/profile.html:34
+msgid "nemá zaplaceno startovné"
+msgstr ""
+
+#: templates/registration/profile.html:27
+msgid "Další členové:"
+msgstr ""
+
+#: templates/registration/profile.html:40
+msgid "Váš tým má jediného odslouhlaseného člena. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva právoplatní členové."
+msgstr ""
+
+#: templates/registration/profile.html:42
+msgid "Členství v týmu:"
+msgstr ""
+
+#: templates/registration/profile.html:44
+msgid "Koordinátor."
+msgstr ""
+
+#: templates/registration/profile.html:46
+msgid "Nebylo dosud odsouhlaseno. Můžete znovu "
+msgstr ""
+
+#: templates/registration/profile.html:46
+msgid "poslat žádost o ověřeření členství"
+msgstr ""
+
+#: templates/registration/profile.html:46
+msgid "koordinátorovi vašeho týmu."
+msgstr ""
+
+#: templates/registration/profile.html:48
+msgid "Zamítnuto. Budete si muset "
+msgstr ""
+
+#: templates/registration/profile.html:48
+msgid "zvolit jiný tým"
+msgstr ""
+
+#: templates/registration/profile.html:50
+msgid "Odsouhlaseno."
+msgstr ""
+
+#: templates/registration/profile.html:55
+msgid "Ve vašem městě se startovné neplatí."
+msgstr ""
+
+#: templates/registration/profile.html:60
+msgid "Váš zaměstnavatel ještě poplatek nezaplatil"
+msgstr ""
+
+#: templates/registration/profile.html:60
+#: templates/registration/profile.html:62
+#: templates/registration/profile.html:64
+msgid "Zadat jinou platbu"
+msgstr ""
+
+#: templates/registration/profile.html:62
+msgid "Vaše členství v Klubu přátel Auto*Mat se ověřuje"
+msgstr ""
+
+#: templates/registration/profile.html:64
+msgid "Čeká se na potvrzení platby"
+msgstr ""
+
+#: templates/registration/profile.html:67
+msgid "Příspěvek dosud nezaplacen."
+msgstr ""
+
+#: templates/registration/profile.html:71
+msgid "Upravit údaje"
+msgstr ""
+
+#: templates/registration/profile.html:73
+msgid "Upravit tým"
+msgstr ""
+
+#: templates/registration/profile.html:75
+msgid "Změnit heslo"
+msgstr ""
+
+#: templates/registration/profile.html:76
+msgid "Odhlásit"
+msgstr ""
+
+#: templates/registration/profile.html:80
+msgid "Moje jízdy"
+msgstr ""
+
+#: templates/registration/registration_form.html:4
+msgid "Registrace soutěžících"
+msgstr ""
+
+#: templates/registration/registration_form.html:11
+msgid "Odesláním tohoto formuláře souhlasím s tím, aby poskytnuté údaje (osobní údaje ve smyslu paragrafu 4 pís. a zákona 101/200 Sb., O ochraně osobních údajů, byly až do odvolání zpracovány občanským sdružením Auto*Mat respektive Nadaci Partnerství či o.s. Cyklisté Liberecka za účelem zasílání informačních materiálů o činnosti sdružení. Auto*Mat, o.s. respektive Nadace Partnerství či o.s. Cyklisté Liberecka se tímto zavazuje, že uvedené údaje neposkytne žádným jiným organizacím nebo firmám."
+msgstr ""
+
+#: templates/registration/request_team_approval.html:3
+msgid "Žádost o ověření členství byla odeslána."
+msgstr ""
+
+#: templates/registration/request_team_approval.html:5
+msgid "Nyní se můžete vrátit zpět na "
+msgstr ""
+
+#: templates/registration/request_team_approval.html:5
+msgid "profil"
+msgstr ""
+
+#: templates/registration/team_admin.html:8
+#: templates/registration/update_profile.html:16
+msgid "Zpět"
+msgstr ""
+
+#: templates/registration/team_admin.html:11
+msgid "Členové týmu:"
+msgstr ""
+
+#: templates/registration/team_admin.html:13
+msgid "Při zamítnutí člena týmu musíte vyplnit zprávu."
+msgstr ""
+
+#: templates/registration/team_admin.html:46
+msgid "Ověřit"
+msgstr ""
+
+#: templates/registration/team_admin.html:50
+msgid "Důvod odmítnutí"
+msgstr ""
+
+#: templates/registration/team_admin.html:52
+msgid "Zamítnout"
+msgstr ""
+
+#: templates/registration/update_profile.html:8
+msgid "Upozornění: Změna týmu vyžaduje, aby koordinátor nového týmu schválil vaše členství. V případě návratu do původního týmu je taktéž vyžadováno schválení týmem."
+msgstr ""
+
+#: templates/registration/update_profile.html:13
+msgid "Upozornění: Nemůžete změnit tým, pokud jste jeho koordinátorem a v týmu jsou další členové."
+msgstr ""
+
+#: templates/registration/update_profile.html:15
+msgid "Upravit"
+msgstr ""
+
