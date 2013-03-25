@@ -210,11 +210,21 @@ class UserProfile(models.Model):
         verbose_name = u"Uživatel"
         verbose_name_plural = u"Uživatelé"
 
-    TSHIRTSIZE = [('S', "S"),
-              ('M', "M"),
-              ('L', "L"),
-              ('XL', "XL"),
-              ('XXL', "XXL")]
+    TSHIRTSIZE = [
+              ('wXXS', u"dámské XXS"),
+              ('wXS', u"dámské XS"),
+              ('wS', u"dámské S"),
+              ('wM', u"dámské M"),
+              ('wL', u"dámské L"),
+              ('wXL', u"dámské XL"),
+              ('wXXL', u"dámské XXL"),
+
+              ('mS', u"pánské S"),
+              ('mM', u"pánské M"),
+              ('mL', u"pánské L"),
+              ('mXL', u"pánské XL"),
+              ('mXXL', u"pánské XXL"),
+              ]
 
     TEAMAPPROVAL = (('approved', _("Odsouhlasený")),
               ('undecided', _("Nerozhodnuto")),
