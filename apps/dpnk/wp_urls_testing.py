@@ -23,6 +23,7 @@ urls = {
     'zapomenute_heslo':             "zapomenute_heslo.html",
     'zapomenute_heslo_odeslano':    "zapomenute_heslo_odeslano.html",
     'zapomenute_heslo_dokonceno':   "zapomenute_heslo_dokonceno.html",
+    'zapomenute_heslo_zmena':       "zapomenute_heslo_zmena.html",
     'otazky':                       "otazky.html",
     'cyklozamestnavatel_firmy':     "cyklozamestnavatel_firmy.html",
     'cyklozamestnavatel_odpovedi':  "cyklozamestnavatel_odpovedi.html",

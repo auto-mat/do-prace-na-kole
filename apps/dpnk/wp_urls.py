@@ -15,6 +15,7 @@ urls = {
     'zapomenute_heslo':             "/profil/zapomenute-heslo",
     'zapomenute_heslo_odeslano':    "/profil/zapomenute-heslo-odeslano",
     'zapomenute_heslo_dokonceno':   "/profil/zapomenute-heslo-dokonceno",
+    'zapomenute_heslo_zmena':       "/profil/zapomenute-heslo-zmena",
     'zmena_hesla':                  "/profil/zmena-hesla",
     'zmena_hesla_hotovo':           "/profil/zmena-hesla-hotovo",
     "upravit_profil":               "/profil/upravit-profil",
