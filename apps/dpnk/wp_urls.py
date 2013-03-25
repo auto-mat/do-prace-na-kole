@@ -1,12 +1,12 @@
 urls = {
     # Registrace
-    'registrace':                   "/jak-slapat/",
-    'pozvanky':                     '/jak-slapat/pozvanky',
-    'zaslat_zadost_clenstvi':       "/jak-slapat/zaslat-zadost-o-clenstvi-v-tymu",
-    'typ_platby':                   "/jak-slapat/typ-platby",
-    'platba':                       "/jak-slapat/platba",
-    'platba_uspesna':               "/jak-slapat/platba-uspesna",
-    'platba_neuspesna':             "/jak-slapat/platba-neuspesna",
+    'registrace':                   "/registrace/",
+    'pozvanky':                     '/registrace/pozvanky',
+    'zaslat_zadost_clenstvi':       "/registrace/zaslat-zadost-o-clenstvi-v-tymu",
+    'typ_platby':                   "/registrace/typ-platby",
+    'platba':                       "/registrace/platba",
+    'platba_uspesna':               "/registrace/platba-uspesna",
+    'platba_neuspesna':             "/registrace/platba-neuspesna",
 
     # Profil
     "profil":                       "/profil",
