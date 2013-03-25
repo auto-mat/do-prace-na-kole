@@ -3,6 +3,7 @@
 {% load dpnk_tags bootstrap%}
 
 <form method="post" class="form-horizontal">{% csrf_token %}
+<input type="hidden" name="page_url" id="page_url" value="{{ django_url }}/dpnk/login/">
 {{ form|bootstrap }}
 <button class="submit" type="button">{% trans "Přihlásit" %}</button>
 </form>

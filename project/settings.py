@@ -74,9 +74,10 @@ INSTALLED_APPS = (
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
-LOGIN_URL = '/registrace/login/'
-LOGIN_REDIRECT_URL = '/registrace/profil/'
+LOGIN_URL = '/dpnk/login'
+LOGIN_REDIRECT_URL = '/dpnk/profil/'
 SITE_URL = ''
+DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX
 COMPETITION_STATE='not_started_yet'
 #COMPETITION_STATE='started'

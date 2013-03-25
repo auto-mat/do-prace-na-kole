@@ -90,6 +90,7 @@ def login(request, template_name='registration/login.html',
     context = { 
         'form': form,
         'site': current_site,
+        'django_url': settings.DJANGO_URL,
         'site_name': current_site.name,
     }
     return render_to_response(template_name, context)
