@@ -55,6 +55,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'urls'
 TEMPLATE_DIRS = (
     normpath(PROJECT_ROOT, 'templates'),
+    normpath(PROJECT_ROOT, 'apps/dpnk/templates'),
 )
 INSTALLED_APPS = (
     'django.contrib.auth',
