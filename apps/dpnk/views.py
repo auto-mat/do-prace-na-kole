@@ -367,13 +367,6 @@ def payment_status(request):
     # Return positive error code as per PayU protocol
     return http.HttpResponse("OK")
 
-# def login(request):
-#     return render_to_response('registration/payment_result.html',
-#                               {
-#             'pay_type': pay_type,
-#             'message': msg
-#             }, context_instance=RequestContext(request))
-
 @login_required
 def profile(request):
 
