@@ -1,3 +1,4 @@
+from django.conf import settings
 urls = {
     # Registrace
     'registrace':                   "/registrace/",
@@ -33,6 +34,10 @@ urls = {
     'odpovedi':                     "odpovedi.html",
 
 }
+
+if hasattr(settings, 'TESTING_URLS') and settings.TESTING_URLS:
+    import wp_urls_testing
+    urls = wp_urls_testing.urls
 
 def wp_reverse(name):
     return urls[name]
