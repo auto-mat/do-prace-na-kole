@@ -3,6 +3,7 @@
 urls = {
     "upravit_profil":               "upravit_profil.html",
     "profil":                       "profil.html",
+    "profil_pristup":               "profil.html",
     'registrace':                   "registrace.html",
     'pozvanky':                     'pozvanky.html',
     'zaslat_zadost_clenstvi':       "zaslat_zadost_clenstvi.html",

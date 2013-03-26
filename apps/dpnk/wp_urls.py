@@ -10,6 +10,7 @@ urls = {
 
     # Profil
     "profil":                       "/profil",
+    "profil_pristup":               "/profil",
     'login':                        "/profil/login",
     'logout':                       "/profil/logout",
     'zapomenute_heslo':             "/profil/zapomenute-heslo",
