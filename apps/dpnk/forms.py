@@ -100,7 +100,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
     t_shirt_size = forms.ChoiceField(
         label=_("Velikost trička"),
         choices = [['','-----'],] + UserProfile.TSHIRTSIZE,
-        help_text=_('Velikost trička můžete vybírat z <a href="http://www.stanleystella.com/#collection">katalogu</a>'),
+        help_text=_('Velikost trička můžete vybírat z <a href="http://www.stanleystella.com/#collection" target="_blank">katalogu</a>'),
         )
 
     # -- Contacts
