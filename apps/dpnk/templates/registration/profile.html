@@ -12,7 +12,7 @@
 <tr><th scope="row">{% trans "Firma:" %}</th><td>{{ team.subsidiary.company.name }}</td></tr>
 <tr><th scope="row">{% trans "Telefon:" %}</th><td>{{ profile.telephone }}</td></tr>
 <tr><th scope="row">{% trans "Email:" %}</th><td>{{ profile.user.email }}</td></tr>
-<tr><th scope="row">{% trans "Velikost trička:" %}</th><td>{{ profile.t_shirt_size }}</td></tr>
+<tr><th scope="row">{% trans "Velikost trička:" %}</th><td>{{ profile.get_t_shirt_size_display }}</td></tr>
 <tr><th scope="row">{% trans "Počet členů týmu:" %}</th><td>{{ team_members_count }}
 <tr><th scope="row">{% trans "Koordinátor týmu:" %}</th><td>{{ team.coordinator }}
 {% if approved_for_team == 'approved' %}
