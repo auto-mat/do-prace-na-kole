@@ -381,6 +381,14 @@ def payment_status(request):
     return http.HttpResponse("OK")
 
 @login_required
+def profile_access(request):
+    profile = request.user.get_profile()
+    return render_to_response('registration/profile_access.html',
+                              {
+            'city': profile.team.subsidiary.city
+            }, context_instance=RequestContext(request))
+
+@login_required
 def profile(request):
 
     days = util.days()
