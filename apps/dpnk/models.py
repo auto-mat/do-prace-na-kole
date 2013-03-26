@@ -50,7 +50,7 @@ class Address(CompositeField):
         blank=False,
         )
     recipient = models.CharField(
-        verbose_name=_("Adresát"),
+        verbose_name=_("Název pobočky (závodu, kanceláře, fakulty)"),
         default="",
         max_length=50,
         null=False,
@@ -96,7 +96,7 @@ class City(models.Model):
         null=True,
         blank=True)
     admission_fee = models.PositiveIntegerField(
-        verbose_name=_("Poplatek"),
+        verbose_name=_("Startovné"),
         null=False,
         default=160)
 
@@ -118,7 +118,7 @@ class Company(models.Model):
     company_admin = models.OneToOneField(
         "UserProfile", 
         related_name = "administrated_company",
-        verbose_name = _("Firemní admin"),
+        verbose_name = _("Firemní správce"),
         null=True,
         blank=True)
     invoice_address = Address()
@@ -177,7 +177,7 @@ class Team(models.Model):
     coordinator = models.OneToOneField(
         'UserProfile',
         related_name = "coordinated_team",
-        verbose_name = _("Koordinátor"),
+        verbose_name = _("Koordinátor/ka týmu"),
         null=True,
         blank=True,
         #TODO:
@@ -280,7 +280,8 @@ class UserProfile(models.Model):
         null=False,
         default='L')
     motivation_company_admin = models.TextField(
-        verbose_name=_("Motivační text aspiranta na firemního admina"),
+        verbose_name=_("Zaměstnanecká pozice"),
+        help_text=_("Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici"),
         default="",
         max_length=5000,
         null=True,
@@ -344,8 +345,8 @@ class UserProfileUnpaid(UserProfile):
     objects = UserProfileUnpaidManager()
     class Meta:
         proxy = True
-        verbose_name = _("Uživatel s nezaplaceným startovným")
-        verbose_name_plural = _("Uživatelé s nezaplaceným startovným")
+        verbose_name = _("Soutěžící, co dosud nezaplatil startovné")
+        verbose_name_plural = _("Soutěžící, co dosud nezaplatili startovné")
 
 class Payment(models.Model):
     """Platba"""
@@ -485,12 +486,12 @@ class Competition(models.Model):
 
     CTYPES = (
         ('length', _("Ujetá vzdálenost")),
-        ('frequency', _("Pravidelnost dojíždění")),
+        ('frequency', _("Pravidelnost jízd na kole")),
         ('questionnaire', _("Dotazník")),
         )
 
     CCOMPETITORTYPES = (
-        ('single_user', _("Jednotlivý uživatelé")),
+        ('single_user', _("Jednotliví soutěžící")),
         ('team', _("Týmy")),
         ('company', _("Soutěž firem")),
         )
