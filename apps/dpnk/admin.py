@@ -72,6 +72,7 @@ class SubsidiaryAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline,]
     list_filter = ['city']
+    search_fields = ('company__name', 'address_street',)
 
     readonly_fields = ['team_links']
     def teams_text(self, obj):
@@ -112,7 +113,7 @@ class UserProfileAdminInline(admin.StackedInline):
 class UserAdmin(UserAdmin, RelatedFieldAdmin):
     inlines = (UserProfileAdminInline, )
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'id')
-    search_fields = ['userprofile__first_name', 'userprofile__last_name', 'username']
+    search_fields = ['first_name', 'last_name', 'username']
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city']
 
 class TeamForm(ModelForm):
