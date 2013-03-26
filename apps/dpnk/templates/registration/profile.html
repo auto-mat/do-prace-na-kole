@@ -4,7 +4,7 @@
 
 {% if active %}
 <h3>{% trans "Základní údaje" %}</h3>
-<table>
+<table class="table-striped">
 <tr><th scope="row">{% trans "Jméno" %}</th><td>{{ profile }}</td></tr>
 <tr><th scope="row">{% trans "Tým:" %}</th><td>{{ team.name }}</td></tr>
 <tr><th scope="row">{% trans "Město:" %}</th><td>{{ team.subsidiary.city.name }}</td></tr>
