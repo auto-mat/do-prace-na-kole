@@ -44,6 +44,7 @@ from django.contrib.sites.models import get_current_site
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout
 
 from wp_urls import wp_reverse
+from util import Mailing
 
 #decorator
 def must_be_coordinator(fn):
@@ -185,6 +186,17 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                 team_created_mail(new_user)
             else:
                 register_mail(new_user)
+
+            # Register into mailing list
+            try:
+                m = Mailing(api_key=settings.MAILING_API_KEY, list_id=settings.MAILING_LIST_ID)
+                mailing_id = m.add(new_user.first_name, new_user.last_name, new_user.email,
+                                   new_user.userprofile.team.subsidiary.city.name)
+            except:
+                pass # TODO: log exception!
+            else:
+                new_user.userprofile.mailing_id = mailing_id
+                new_user.userprofile.save()
 
             if new_user.userprofile.approved_for_team != 'approved':
                 approval_request_mail(new_user)

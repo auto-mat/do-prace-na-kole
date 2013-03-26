@@ -85,3 +85,6 @@ COMPETITION_STATE='not_started_yet'
 INSTALLED_APPS += ("remote_ajax", )
 MIDDLEWARE_CLASSES += ("remote_ajax.middleware.XHRMiddleware", )
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
+
+MAILING_API_KEY = ''
+MAILING_LIST_ID = ''

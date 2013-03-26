@@ -5,3 +5,4 @@ django-smart-selects==1.0.6
 django-composite-field==0.1
 django-remote
 django-bootstrap-form
+createsend
