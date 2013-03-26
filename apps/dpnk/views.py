@@ -468,13 +468,6 @@ def profile(request):
     #        break
     #team_position += 1
 
-    req_city = request.GET.get('mesto', None)
-    if req_city and (req_city.lower() != profile.team.city.lower()):
-        own_city = False
-    else:
-        own_city = True
-
-
     company_survey_answers = Answer.objects.filter(
         question_id=34, user__in = [m.id for m in team_members])
     if len(company_survey_answers):
@@ -501,8 +494,6 @@ def profile(request):
             'team_distance': team_distance,
             #'user_position': user_position,
             #'team_position': team_position,
-            'req_city': req_city,
-            'own_city': own_city,
             'company_survey_by': company_survey_by,
             'competition_state': settings.COMPETITION_STATE,
             'approved_for_team': request.user.userprofile.approved_for_team,

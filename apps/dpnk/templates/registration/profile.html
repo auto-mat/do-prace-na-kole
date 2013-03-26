@@ -3,7 +3,6 @@
 {% load i18n %}
 
 {% if active %}
-{% if own_city %}
 <h3>{% trans "Základní údaje" %}</h3>
 <table>
 <tr><th scope="row">{% trans "Jméno" %}</th><td>{{ profile }}</td></tr>
@@ -136,10 +135,8 @@
 {% endfor %}
 </table>
 {% endifequal %}
-{% endif %}
 
 {% ifequal competition_state 'started' %}
-{% if own_city %}
 <p><a href="{% wp_url 'vysledky'%}?mesto={{team.city}}" onclick="window.parent.scroll(0,200);">Průběžné výsledky</a></p>
 
 <h3>Soutěž Cyklozaměstnavatel roku</h3>
@@ -151,7 +148,6 @@
 <a href="{% wp_url 'cyklozamestnavatel_roku'%}questionaire=company" onclick="window.parent.scroll(0,200);">Prohlédnout dotazník</a></p>
 {% else %}
 <p>Dotazník cyklozaměstnavatel roku za vaši firmu již vyplnil {{ company_survey_by }}.</p>
-{% endif %}
 {% endif %}
 
 <p><br/><br/></p>

@@ -2,10 +2,6 @@
 {% load url from future %}
 {% load bootstrap %}
 
-<h3>{% trans "Pozvěte své kolegy do vašeho týmu" %}</h3>
-
-<p>{% trans "Nyní můžete pozvat své kolegy do vašeho týmu" %}</p>
-
 <form method="post" class="form-horizontal">{% csrf_token %}
 {{ form|bootstrap }}
 <button class="submit" type="button">{% trans "Odeslat" %}</button>

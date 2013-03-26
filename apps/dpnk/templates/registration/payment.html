@@ -1,7 +1,5 @@
 {% load i18n %}
 
-<h3>{% trans "Platba startovného" %}</h3>
-
 <form action="https://www.payu.cz/paygw/UTF/NewPayment" method="POST" name="payform">
 {% trans "Soutěžící:" %} {{firstname}} {{surname}}<br/>
 {% trans "Startovné:" %} {{amount}} Kč<br/>
