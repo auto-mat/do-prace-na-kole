@@ -90,6 +90,11 @@ class City(models.Model):
         verbose_name=_("Jméno"),
         unique=True,
         max_length=40, null=False)
+    slug = models.SlugField(
+        unique=True,
+        verbose_name=u"Subdoména v URL",
+        blank=False
+        )
     city_admins = models.ManyToManyField(
         'UserProfile',
         related_name = "administrated_cities",
