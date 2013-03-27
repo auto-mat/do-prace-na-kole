@@ -24,7 +24,7 @@ from django.shortcuts import render_to_response, redirect
 import django.contrib.auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, mail_admins
 from django.template import RequestContext
 from django.db.models import Sum, Count
 from django.utils.translation import gettext as _
@@ -192,8 +192,8 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                 m = Mailing(api_key=settings.MAILING_API_KEY, list_id=settings.MAILING_LIST_ID)
                 mailing_id = m.add(new_user.first_name, new_user.last_name, new_user.email,
                                    new_user.userprofile.team.subsidiary.city.name)
-            except:
-                pass # TODO: log exception!
+            except Exception, e:
+                mail_admins("ERROR Do prace na kole: Nepodarilo se pridat ucastnika do mailing listu", str(e))
             else:
                 new_user.userprofile.mailing_id = mailing_id
                 new_user.userprofile.save()
