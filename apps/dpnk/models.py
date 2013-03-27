@@ -200,6 +200,8 @@ class Team(models.Model):
         unique=True,
         validators = [validate_length],
         )
+    def members(self):
+        return UserProfile.objects.filter(approved_for_team='approved', team=self, user__is_active=True)
 
     def __unicode__(self):
         return "%s / %s" % (self.name, self.subsidiary.company)
