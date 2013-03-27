@@ -870,6 +870,7 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
         unapproved_users.append([
             ('state', None, userprofile.approved_for_team),
             ('id', None, userprofile.id),
+            ('payment_status', None, userprofile.payment_status()),
             ('name', _("Jméno"), unicode(userprofile)),
             ('username', _("Uživatel"), userprofile.user),
             ('email', _("Email"), userprofile.user.email),
