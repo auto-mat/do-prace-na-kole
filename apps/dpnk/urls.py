@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 
+from django.conf import settings
 from views import *
 
 urlpatterns = patterns('',
@@ -40,7 +41,7 @@ urlpatterns = patterns('',
     url(r'^upravit_profil/$',
         update_profile),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
-        {'next_page': '/dpnk/profil/'}
+        {'next_page': settings.LOGOUT_NEXT_PAGE}
         ),
     url(r'^typ_platby/$',
         payment_type),

@@ -76,6 +76,7 @@ AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
 LOGIN_URL = '/dpnk/login'
 LOGIN_REDIRECT_URL = '/dpnk/profil/'
+LOGOUT_NEXT_PAGE = '/django/dpnk/profil/'
 SITE_URL = ''
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX
