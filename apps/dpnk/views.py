@@ -307,11 +307,7 @@ def payment(request):
             'session_id': session_id
              }, context_instance=RequestContext(request))
 
-def payment_result(request, success):
-    trans_id = request.GET['trans_id']
-    session_id = request.GET['session_id']
-    pay_type = request.GET['pay_type']
-    error = request.GET.get('error' or None)
+def payment_result(request, success, trans_id, session_id, pay_type, error = None):
 
     if session_id and session_id != "":
         p = Payment.objects.get(session_id=session_id)
