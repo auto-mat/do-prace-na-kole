@@ -880,3 +880,6 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
                                'unapproved_users': unapproved_users,
                                 'denial_message': denial_message,
                                 }, context_instance=RequestContext(request))
+
+def facebook_app(request):
+    return render_to_response('registration/facebook_app.html', {'user': request.user})

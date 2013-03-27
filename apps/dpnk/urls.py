@@ -74,4 +74,6 @@ urlpatterns = patterns('',
         company_survey_answers),
     url(r'^odpovedi/$',
         answers),
+    url(r'^facebook_app/$',
+        facebook_app),
 )
