@@ -264,9 +264,9 @@ def payment_type(request):
             if form.cleaned_data['payment_type'] == 'pay':
                 return redirect(wp_reverse('platba'))
             elif form.cleaned_data['payment_type'] == 'company':
-                Payment(user=request.user.userprofile, amount=0, pay_type='fc', status=1).save()
+                Payment(user=request.user.userprofile, amount=0, pay_type='fc', status=Payment.Status.NEW).save()
             elif form.cleaned_data['payment_type'] == 'member':
-                Payment(user=request.user.userprofile, amount=0, pay_type='am', status=1).save()
+                Payment(user=request.user.userprofile, amount=0, pay_type='am', status=Payment.Status.NEW).save()
 
             return redirect(wp_reverse('profil'))
     else:
@@ -316,9 +316,9 @@ def payment_result(request, success):
         p.trans_id = trans_id
         p.pay_type = pay_type
         if success:
-            p.status = 4
+            p.status = Payment.Status.COMMENCED
         else:
-            p.status = 3
+            p.status = Payment.Status.REJECTED
         p.error = error
         p.save()
 

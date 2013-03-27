@@ -315,10 +315,17 @@ class UserProfile(models.Model):
         # Check payment status for this user
         payments = Payment.objects.filter(user=self)
         p_status = [p.status for p in payments]
-        if (99 in p_status) or (1005 in p_status) or (1006 in p_status) or (1007 in p_status):
+        if len(set(Payment.Status.DONE,
+                   Payment.Status.COMPANY_ACCEPTS,
+                   Payment.Status.INVOICE_MADE,
+                   Payment.Status.INVOICE_PAID)
+               & set(p_status)):
             # Payment done
             status = 'done'
-        elif (1 in p_status) or (4 in p_status) or (5 in p_status):
+        elif len(set(Payment.Status.NEW,
+                     Payment.Status.COMMENCED,
+                     Payment.Status.WAITING_CONFIRMATION)
+                 & set(p_status)):
             # A payment is still waiting
             status = 'waiting'
         else:
@@ -336,9 +343,9 @@ class UserProfile(models.Model):
 class UserProfileUnpaidManager(models.Manager):
     def get_query_set(self):
         paying_or_prospective_user_ids = [p.user_id for p in Payment.objects.filter(
-                Q(status='99') | Q (
+                Q(status=Payment.Status.DONE) | Q (
                     # Bank transfer less than 5 days old
-                    status='1', pay_type='bt',
+                    status=Payment.Status.NEW, pay_type='bt',
                     created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
                 )]
         return super(UserProfileUnpaidManager,self).get_query_set().filter(
@@ -356,18 +363,31 @@ class UserProfileUnpaid(UserProfile):
 class Payment(models.Model):
     """Platba"""
 
+    class Status (object):
+        NEW = 1
+        CANCELED = 2
+        REJECTED = 3
+        COMMENCED = 4
+        WAITING_CONFIRMATION = 5
+        REJECTED = 7
+        DONE = 99
+        WRONG_STATUS = 888
+        COMPANY_ACCEPTS = 1005
+        INVOICE_MADE = 1006
+        INVOICE_PAID = 1007
+        
     STATUS = (
-        (1, 'Nová'),
-        (2, 'Zrušena'),
-        (3, 'Odmítnuta'),
-        (4, 'Zahájena'),
-        (5, 'Očekává potvrzení'),
-        (7, 'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU'),
-        (99, 'Přijata'),
-        (888, 'Nesprávný status -- kontaktovat PayU'),
-        (1005, 'Firma akceptuje platbu'),
-        (1006, 'Faktura vystavena'),
-        (1007, 'Faktura zaplacena'),
+        (Status.NEW, 'Nová'),
+        (Status.CANCELED, 'Zrušena'),
+        (Status.REJECTED, 'Odmítnuta'),
+        (Status.COMMENCED, 'Zahájena'),
+        (Status.WAITING_CONFIRMATION, 'Očekává potvrzení'),
+        (Status.REJECTED, 'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU'),
+        (Status.DONE, 'Přijata'),
+        (Status.WRONG_STATUS, 'Nesprávný status -- kontaktovat PayU'),
+        (Status.COMPANY_ACCEPTS, 'Firma akceptuje platbu'),
+        (Status.INVOICE_MADE, 'Faktura vystavena'),
+        (Status.INVOICE_PAID, 'Faktura zaplacena'),
         )
 
     PAY_TYPES = (
@@ -434,7 +454,7 @@ class Payment(models.Model):
     status = models.PositiveIntegerField(
         verbose_name=_("Status"),
         choices=STATUS,
-        default=1,
+        default=Status.NEW,
         max_length=50,
         null=True, blank=True)
     error = models.PositiveIntegerField(
