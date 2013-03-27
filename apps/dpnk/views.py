@@ -319,7 +319,7 @@ def payment_result(request, success):
         p.save()
 
     if success == True:
-        msg = _("Vaše platba byla úspěšně přijata.")
+        msg = _("Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
     else:
         msg = _("Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
 

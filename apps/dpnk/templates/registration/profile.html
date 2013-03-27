@@ -63,7 +63,7 @@
             <span class="text-error"> {% trans "Čeká se na potvrzení platby" %} </span>(<a href="{% wp_url 'typ_platby' %}">{% trans "Zadat jinou platbu" %}</a>)
          {% endif %}
       {% elif payment_status == None %}
-         <span class="text-error"> {% trans "Příspěvek dosud nezaplacen." %} </span><a href="{% wp_url 'typ_platby' %}">{% trans "Zaplatit" %}</a> 
+         <span class="text-error"> {% trans "Příspěvek dosud nezaplacen." %} </span><a href="{% wp_url 'typ_platby' %}">{% trans "Zadat novou platbu" %}</a> 
       {% endif %}
 </td></tr>
 </table>
