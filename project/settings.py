@@ -88,3 +88,6 @@ ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 
 MAILING_API_KEY = ''
 MAILING_LIST_ID = ''
+
+PAYU_KEY_1 = ''
+PAYU_KEY_2 = ''
