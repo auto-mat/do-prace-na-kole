@@ -317,6 +317,8 @@ def payment_result(request, success):
         p.pay_type = pay_type
         if success:
             p.status = 4
+        else:
+            p.status = 3
         p.error = error
         p.save()
 
@@ -332,11 +334,11 @@ def payment_result(request, success):
             }, context_instance=RequestContext(request))
 
 def make_sig(values):
-    key1 = 'eac82603809d388f6a2b8b11471f1805'
+    key1 = settings.PAYU_KEY_1
     return hashlib.md5("".join(values+(key1,))).hexdigest()
 
 def check_sig(sig, values):
-    key2 = 'c2b52884c3816d209ea6c5e7cd917abb'
+    key2 = settings.PAYU_KEY_2
     if sig != hashlib.md5("".join(values+(key2,))).hexdigest():
         raise ValueError("Zamítnuto")
 
