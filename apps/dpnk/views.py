@@ -182,6 +182,8 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             if create_team:
                 team.coordinator = new_user.userprofile
                 team.save()
+                new_user.userprofile.approved_for_team = 'approved'
+                new_user.userprofile.save()
                 success_url = "pozvanky"
                 team_created_mail(new_user)
             else:
@@ -831,27 +833,38 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
 
 @must_be_coordinator
 @login_required
-def team_admin(request, backend='registration.backends.simple.SimpleBackend',
+def team_admin_team(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
-             template_name='registration/team_admin.html',
+             template_name='registration/team_admin_team.html',
              extra_context=None):
     team = request.user.userprofile.team
-    unapproved_users = []
     form_class = TeamAdminForm
-    denial_message = 'unapproved'
 
-    if 'button_action' in request.POST and request.POST['button_action']:
-        b_action = request.POST['button_action'].split('-')
-        userprofile = UserProfile.objects.get(team = team, approved_for_team__in = ('undecided', 'denied'), user__is_active=True, id=b_action[1])
-        denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
-
-    if request.method == 'POST' and denial_message == 'unapproved':
+    if request.method == 'POST':
         form = form_class(data=request.POST, instance = team)
         if form.is_valid():
             form.save()
             return redirect(wp_reverse(success_url))
     else:
         form = form_class(instance = team)
+
+    return render_to_response(template_name,
+                              {'form': form,
+                                }, context_instance=RequestContext(request))
+
+@must_be_coordinator
+@login_required
+def team_admin_members(request, backend='registration.backends.simple.SimpleBackend',
+             template_name='registration/team_admin_members.html',
+             extra_context=None):
+    team = request.user.userprofile.team
+    unapproved_users = []
+    denial_message = 'unapproved'
+
+    if 'button_action' in request.POST and request.POST['button_action']:
+        b_action = request.POST['button_action'].split('-')
+        userprofile = UserProfile.objects.get(team = team, approved_for_team__in = ('undecided', 'denied'), user__is_active=True, id=b_action[1])
+        denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
 
     for userprofile in UserProfile.objects.filter(team = team, user__is_active=True):
         unapproved_users.append([
@@ -866,7 +879,7 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
             ])
 
     return render_to_response(template_name,
-                              {'form': form,
+                              {
                                'unapproved_users': unapproved_users,
                                 'denial_message': denial_message,
                                 }, context_instance=RequestContext(request))

@@ -3,12 +3,7 @@
 {% load i18n %}
 
 <form method="post" class="form-horizontal">{% csrf_token %}
-{{ form|bootstrap }}
-<button class="submit" type="button">{% trans "Odeslat" %}</button>
-<a href="{% wp_url 'profil'%}">{% trans "Zpět" %}</a>
-
 <input type="hidden" id="button_action" name="button_action" />
-<h3>{% trans "Členové týmu:" %}</h3>
 {% if denial_message == 'no_message' %}
    <div class="alert alert-error">{% trans "Při zamítnutí člena týmu musíte vyplnit zprávu." %}</div>
 {% elif denial_message == 'team_full' %}
