@@ -466,9 +466,11 @@ class Payment(models.Model):
         default=False)
 
     def save(self, *args, **kwargs):
+        status_before_update = None
         if self.id:
             status_before_update = Payment.objects.get(pk=self.id).status
         super(Payment, self).save(*args, **kwargs)
+
         if (self.user
             and (status_before_update != Payment.Status.DONE)
             and self.status == Payment.Status.DONE):
