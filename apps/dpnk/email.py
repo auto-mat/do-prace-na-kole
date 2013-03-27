@@ -73,3 +73,11 @@ def invitation_mail(user, emails):
                 'email': email,
                 }))
             send_mail(_("Do práce na kole - pozvánka"), message, None, [email], fail_silently=False)
+
+def payment_confirmation_mail(user):
+    template = get_template('email/payment_confirmation.html')
+    email = user.email
+    message = template.render(Context({
+                'user': user,
+                'SITE_URL': settings.SITE_URL}))
+    send_mail(_("Do práce na kole - přijetí platby"), message, None, [email], fail_silently=False)

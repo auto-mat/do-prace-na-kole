@@ -34,6 +34,7 @@ from django.utils.translation import gettext_lazy as _
 import datetime
 # Local imports
 import util
+from dpnk.email import payment_confirmation_mail
 
 class Address(CompositeField):
     street = models.CharField(
@@ -463,6 +464,15 @@ class Payment(models.Model):
     company_wants_to_pay = models.BooleanField(
         verbose_name=_("Firma chce zaplatit"),
         default=False)
+
+    def save(self, *args, **kwargs):
+        if self.id:
+            status_before_update = Payment.objects.get(pk=self.id).status
+        super(Payment, self).save(*args, **kwargs)
+        if (self.user
+            and (status_before_update != Payment.Status.DONE)
+            and self.status == Payment.Status.DONE):
+            payment_confirmation_mail(self.user.user)
 
     def __unicode__(self):
         if self.trans_id:
