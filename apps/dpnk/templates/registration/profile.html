@@ -17,7 +17,7 @@
 <tr><th scope="row">{% trans "Koordinátor týmu:" %}</th><td>{{ team.coordinator }}
 {% if approved_for_team == 'approved' %}
 ({{ team.coordinator.user.email }}, tel.: {{ team.coordinator.telephone }})
-   {% if member.payment_status == 'waiting' or member.payment_status == None %}
+   {% if team.coordinator.payment_status == 'waiting' or team.coordinator.payment_status == None %}
       <span class="text-error"> - {% trans "nemá zaplaceno startovné" %}</span>
    {% endif %}
 {% endif %}
