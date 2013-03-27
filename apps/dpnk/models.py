@@ -293,12 +293,12 @@ class UserProfile(models.Model):
         null=True,
         blank=True,
         )
-#    mailing_id = models.TextField(
-#        verbose_name=_("ID uživatele v mailing listu"),
-#        default="",
-#        null=True,
-#        blank=True
-#        )
+    mailing_id = models.TextField(
+        verbose_name=_("ID uživatele v mailing listu"),
+        default="",
+        null=True,
+        blank=True
+        )
 
     def first_name(self):
         return user.first_name
