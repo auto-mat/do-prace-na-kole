@@ -434,6 +434,7 @@ class Payment(models.Model):
     status = models.PositiveIntegerField(
         verbose_name=_("Status"),
         choices=STATUS,
+        default=1,
         max_length=50,
         null=True, blank=True)
     error = models.PositiveIntegerField(
