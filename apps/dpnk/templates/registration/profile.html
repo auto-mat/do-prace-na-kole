@@ -56,23 +56,26 @@
          <span class="text-success"> {% trans "Zaplaceno" %}</span>
       {% elif payment_status == 'waiting' %}
          {% if payment_type == 'fc' %}
-            <span class="text-error"> {% trans "Váš zaměstnavatel ještě poplatek nezaplatil" %} </span>(<a href="{% wp_url 'typ_platby' %}">{% trans "Zadat jinou platbu" %}</a>)
+            <span class="text-error"> {% trans "Váš zaměstnavatel ještě poplatek nezaplatil" %} </span><a href="{% wp_url 'typ_platby' %}" class="btn btn-mini">{% trans "Zadat jinou platbu" %}</a>
          {% elif payment_type == 'am' %}
-            <span class="text-error"> {% trans "Vaše členství v Klubu přátel Auto*Mat se ověřuje" %} </span>(<a href="{% wp_url 'typ_platby' %}">{% trans "Zadat jinou platbu" %}</a>)
+            <span class="text-error"> {% trans "Vaše členství v Klubu přátel Auto*Mat se ověřuje" %} </span><a href="{% wp_url 'typ_platby' %}" class="btn btn-mini">{% trans "Zadat jinou platbu" %}</a>
          {% else %}
-            <span class="text-error"> {% trans "Čeká se na potvrzení platby" %} </span>(<a href="{% wp_url 'typ_platby' %}">{% trans "Zadat jinou platbu" %}</a>)
+            <span class="text-error"> {% trans "Čeká se na potvrzení platby" %} </span> <a href="{% wp_url 'typ_platby' %}" class="btn btn-mini">{% trans "Zadat jinou platbu" %}</a>
          {% endif %}
       {% elif payment_status == None %}
-         <span class="text-error"> {% trans "Příspěvek dosud nezaplacen." %} </span><a href="{% wp_url 'typ_platby' %}">{% trans "Zadat novou platbu" %}</a> 
+         <span class="text-error"> {% trans "Příspěvek dosud nezaplacen." %} </span><a href="{% wp_url 'typ_platby' %}" class="btn btn-primary btn-mini">{% trans "Zaplatit" %}</a>
       {% endif %}
 </td></tr>
 </table>
-<a href="{% wp_url 'upravit_profil' %}">{% trans "Upravit údaje" %}</a> | 
+
+<div class="btn-group">
+<a href="{% wp_url 'upravit_profil' %}" class="btn btn-small">{% trans "Upravit údaje" %}</a>
 {% if team.coordinator == profile %}
-<a href="{% wp_url 'team_admin' %}">{% trans "Upravit tým" %}</a> | 
+<a href="{% wp_url 'team_admin' %}" class="btn btn-small">{% trans "Upravit tým" %}</a>
 {% endif %}
-<a href="{% wp_url 'zmena_hesla' %}">{% trans "Změnit heslo" %}</a> | 
-<a href="{% wp_url 'logout' %}">{% trans "Odhlásit" %}</a>
+<a href="{% wp_url 'zmena_hesla' %}" class="btn btn-small">{% trans "Změnit heslo" %}</a>
+<a href="{% wp_url 'logout' %}" class="btn btn-small">{% trans "Odhlásit" %}</a>
+</div>
 
 {% ifequal competition_state 'started' %}
 
