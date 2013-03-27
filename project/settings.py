@@ -12,8 +12,7 @@ sys.path.append(normpath(PROJECT_ROOT, "apps"))
 DEBUG = True
 ADMINS = (
     ('Hynek Hanke', 'hynek.hanke@auto-mat.cz'),
-#    ('Vaclav Rehak', 'vrehak@baf.cz'),
-#    ('Petr Studený', 'petr.studeny@auto-mat.cz'),
+    ('Petr Dlouhý', 'petr.dlouhy@email.cz'),
 )
 DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@dopracenakole.net>'
 MANAGERS = ADMINS

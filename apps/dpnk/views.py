@@ -70,6 +70,9 @@ def must_be_approved_for_team(fn):
             return HttpResponse(_("Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.") % (userprofile.team.name,), status=401)
     return wrapper
 
+def members_in_team(team):
+    return UserProfile.objects.filter(approved_for_team='approved', team=team, user__is_active=True).count()
+
 def redirect(url):
     return HttpResponse("redirect:"+url)
 
@@ -499,7 +502,7 @@ def profile(request):
             'payment_type': profile.payment_type(),
             'voucher': voucher_code,
             'team_members': UserProfile.objects.filter(team=profile.team, user__is_active=True).exclude(id=profile.team.coordinator.id).exclude(id=profile.id),
-            'team_members_count': UserProfile.objects.filter(approved_for_team='approved', team=profile.team, user__is_active=True).count(),
+            'team_members_count': members_in_team(profile.team),
             'calendar': calendar,
             'member_counts': member_counts,
             'team_percentage': team_percentage,
@@ -794,6 +797,8 @@ def approve_for_team(userprofile, reason, approve=False, deny=False):
         team_membership_denial_mail(userprofile.user, reason)
         return 'denied'
     elif approve:
+        if members_in_team(userprofile.team) >= 5:
+            return 'team_full'
         userprofile.approved_for_team = 'approved'
         userprofile.save()
         user_approved = True
@@ -866,5 +871,5 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
     return render_to_response(template_name,
                               {'form': form,
                                'unapproved_users': unapproved_users,
-                                'denial_message': denial_message == 'no_message',
+                                'denial_message': denial_message,
                                 }, context_instance=RequestContext(request))
