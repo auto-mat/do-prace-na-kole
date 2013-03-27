@@ -316,16 +316,16 @@ class UserProfile(models.Model):
         # Check payment status for this user
         payments = Payment.objects.filter(user=self)
         p_status = [p.status for p in payments]
-        if len(set(Payment.Status.DONE,
+        if len(set([Payment.Status.DONE,
                    Payment.Status.COMPANY_ACCEPTS,
                    Payment.Status.INVOICE_MADE,
-                   Payment.Status.INVOICE_PAID)
+                   Payment.Status.INVOICE_PAID])
                & set(p_status)):
             # Payment done
             status = 'done'
-        elif len(set(Payment.Status.NEW,
+        elif len(set([Payment.Status.NEW,
                      Payment.Status.COMMENCED,
-                     Payment.Status.WAITING_CONFIRMATION)
+                     Payment.Status.WAITING_CONFIRMATION])
                  & set(p_status)):
             # A payment is still waiting
             status = 'waiting'
