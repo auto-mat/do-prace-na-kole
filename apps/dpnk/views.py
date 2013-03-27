@@ -315,6 +315,8 @@ def payment_result(request, success):
         p = Payment.objects.get(session_id=session_id)
         p.trans_id = trans_id
         p.pay_type = pay_type
+        if success:
+            p.status = 4
         p.error = error
         p.save()
 
