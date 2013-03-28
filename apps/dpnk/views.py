@@ -36,6 +36,7 @@ from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, 
 from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm
 from django.conf import settings
 from  django.http import HttpResponse
+from django import http
 # Local imports
 import util
 from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail
