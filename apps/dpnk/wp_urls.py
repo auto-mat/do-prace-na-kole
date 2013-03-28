@@ -1,7 +1,7 @@
 from django.conf import settings
 urls = {
     # Registrace
-    'chci_slapat':                  "/chci_slapat/",
+    'chci_slapat':                  "/chci-slapat/",
     'registrace':                   "/registrace/",
     'pozvanky':                     '/registrace/pozvanky',
     'zaslat_zadost_clenstvi':       "/registrace/zaslat-zadost-o-clenstvi-v-tymu",
