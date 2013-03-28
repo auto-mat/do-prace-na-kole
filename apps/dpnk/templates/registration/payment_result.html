@@ -1,14 +1,9 @@
-{% extends "base.html" %}
+{% load i18n %}
 
-{% block content %}
 <div id="node-payment-result">
 <p id="payment-result">{{message}}</p>
 
 <p>
-{% if city %}
-<a href="/mesto/{{ city }}">Váš soutěžní profil</a>
-{% else %}
-<a href="/mesto/">Přístup k vašemu soutěžnímu profilu</a>
-{% endif %}
+<a href="/profil">{% trans "Váš soutěžní profil" %}</a>
+</p>
 </div>
-{% endblock %}

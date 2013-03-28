@@ -1,7 +1,9 @@
-{% load bootstrap %}
+{% load url from future %}
+{% load dpnk_tags bootstrap %}
 {% load i18n %}
 
 <form method="post" class="form-horizontal">{% csrf_token %}
-   {{ form|bootstrap }}
+{{ form|bootstrap }}
 <button class="submit" type="button">{% trans "Odeslat" %}</button>
+<a href="{% wp_url 'profil'%}">{% trans "Zpět" %}</a>
 </form>

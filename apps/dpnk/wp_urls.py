@@ -1,31 +1,47 @@
+from django.conf import settings
 urls = {
-    "upravit_profil":               "upravit_profil.html",
-    "profil":                       "profil.html",
-    'registrace':                   "registrace.html",
-    'pozvanky':                     'pozvanky.html',
-    'zaslat_zadost_clenstvi':       "zaslat_zadost_clenstvi.html",
-    'login':                        "login.html",
-    'zmena_hesla':                  "zmena_hesla.html",
-    'zmena_hesla_hotovo':           "zmena_hesla_hotovo",
-    'team_admin':                   "team_admin.html",
-    'vysledky':                     "vysledky.html",
+    # Admin
+    'admin':                        "/django/admin/",
+
+    # Registrace
+    'chci_slapat':                  "/chci-slapat/",
+    'registrace':                   "/registrace/",
+    'pozvanky':                     '/registrace/pozvanky',
+    'zaslat_zadost_clenstvi':       "/registrace/zaslat-zadost-o-clenstvi-v-tymu",
+    'typ_platby':                   "/registrace/typ-platby",
+    'platba':                       "/registrace/platba",
+    'platba_uspesna':               "/registrace/platba-uspesna",
+    'platba_neuspesna':             "/registrace/platba-neuspesna",
+
+    # Profil
+    "profil":                       "/profil",
+    "profil_pristup":               "/profil",
+    'login':                        "/profil/login",
+    'logout':                       "/profil/logout",
+    'zapomenute_heslo':             "/profil/zapomenute-heslo",
+    'zapomenute_heslo_odeslano':    "/profil/zapomenute-heslo-odeslano",
+    'zapomenute_heslo_dokonceno':   "/profil/zapomenute-heslo-dokonceno",
+    'zapomenute_heslo_zmena':       "/profil/zapomenute-heslo-zmena",
+    'zmena_hesla':                  "/profil/zmena-hesla",
+    'zmena_hesla_hotovo':           "/profil/zmena-hesla-hotovo",
+    "upravit_profil":               "/profil/upravit-profil",
+    'team_admin':                   "/profil/team-admin",
+    'vysledky':                     "/profil/vysledky",
+
+    # Zastarale nebo odlozeno na pozdeji
     'kratke_vysledky':              "kratke_vysledky.html",
-    'otazka':                       "otazka.html",
     'cyklozamestnavatel_roku':      "cyklozamestnavatel_roku.html",
-    'logout':                       "logout.html",
-    'typ_platby':                   "typ_platby.html",
-    'platba':                       "platba.html",
-    'platba_uspesna':               "platba_uspesna.html",
-    'platba_neuspesna':             "platba_uspesna.html",
-    'platba_status':                "platba_status.html",
-    'zapomenute_heslo':             "zapomenute_heslo.html",
-    'zapomenute_heslo_odeslano':    "zapomenute_heslo_odeslano.html",
-    'zapomenute_heslo_dokonceno':   "zapomenute_heslo_dokonceno.html",
+    'otazka':                       "otazka.html",
     'otazky':                       "otazky.html",
     'cyklozamestnavatel_firmy':     "cyklozamestnavatel_firmy.html",
     'cyklozamestnavatel_odpovedi':  "cyklozamestnavatel_odpovedi.html",
     'odpovedi':                     "odpovedi.html",
+
 }
+
+if hasattr(settings, 'TESTING_URLS') and settings.TESTING_URLS:
+    import wp_urls_testing
+    urls = wp_urls_testing.urls
 
 def wp_reverse(name):
     return urls[name]

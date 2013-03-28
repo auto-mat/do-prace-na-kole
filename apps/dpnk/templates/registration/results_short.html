@@ -1,7 +1,5 @@
-{% extends "base.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
-{% block content %}
 
 <div class="contest-results-individual">
 Celkem {% if not city %} {{user_count|add:"684"}} {% else %} {{user_count}} {% endif %} účastníků / {% if not city %} {{team_count|add:"234"}} {% else %} {{team_count}} {% endif %} týmů {% if not city %}/ 4 města {% endif %}<br/>
@@ -9,5 +7,3 @@ Celkem {% if not city %} {{user_count|add:"684"}} {% else %} {{user_count}} {% e
 
 <p>
 <a href="{% wp_url 'vysledky' %}{% if city %}?mesto={{city}}{% endif %}">Podrobné výsledky...</a></p>
-
-{% endblock %}

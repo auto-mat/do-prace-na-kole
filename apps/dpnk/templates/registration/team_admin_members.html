@@ -1,0 +1,55 @@
+{% load url from future %}
+{% load dpnk_tags bootstrap %}
+{% load i18n %}
+
+<form method="post" class="form-inline">{% csrf_token %}
+<input type="hidden" id="button_action" name="button_action" />
+{% if denial_message == 'no_message' %}
+   <div class="alert alert-error">{% trans "Při zamítnutí člena týmu musíte vyplnit zprávu." %}</div>
+{% elif denial_message == 'team_full' %}
+   <div class="alert alert-error">{% trans "Tým je již plný, nemůžete potvrdit dalšího člena." %}</div>
+{% endif %}
+{% for user in unapproved_users %}
+   <h2>{{ user.3.2 }}</h2>
+   <table class="table table-striped table-condensed">
+      {% for field in user %}
+         {% if forloop.counter > 4 %}
+            {% if field.0 == 'state_name' %}
+               <tr class="
+               {% if user.0.2 == "undecided" %}
+                  warning
+               {% elif user.0.2 == "denied" %}
+                  error
+               {% else %}
+                  success
+               {% endif %}
+               ">
+            {% elif field.0 == 'payment' %}
+               <tr class="
+               {% if user.2.2 == None %}
+                  warning
+               {% elif user.2.2 == "waiting" %}
+                  error
+               {% else %}
+                  success
+               {% endif %}
+               ">
+            {% else %}
+               <tr>
+            {% endif %}
+               <th style="width: 5em">{{ field.1 }}</th><td>{{ field.2 }}</td>
+            </tr>
+         {% endif %}
+      {% endfor %}
+   </table>
+   {% if user.0.2 == 'undecided' or user.0.2 == 'denied' %}
+         <button class="submit" type="button" id="approve-{{user.1.2}}" name="approve-{{user.1.2}}">{% trans "Ověřit" %}</button>
+      {% if user.0.2 == 'undecided' %}
+         <br/>
+         <label for="reason-{{user.1.2}}">{% trans "Důvod odmítnutí" %}</label>
+         <input id="reason-{{user.1.2}}" name="reason-{{user.1.2}}" type="text"/>
+         <button class="submit" type="button" id="deny-{{user.1.2}}" name="deny-{{user.1.2}}">{% trans "Zamítnout" %}</button>
+      {% endif %}
+   {% endif %}
+{% endfor %}
+</form>

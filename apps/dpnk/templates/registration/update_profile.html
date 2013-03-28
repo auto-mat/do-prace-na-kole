@@ -1,22 +1,17 @@
-{% extends "base.html" %}
 {% load url from future %}
-{% load dpnk_tags %}
+{% load dpnk_tags bootstrap %}
+{% load i18n %}
 
-{% block body_id %}update_profile{% endblock %}
-{% block content %}
-<form>
+<form class="form-horizontal">
 {% for field in form %}
    {% if field.name == "team" %}
-      <div class="warning">Upozornění: Změna týmu vyžaduje, aby koordinátor nového týmu schválil vaše členství. V případě návratu do původního týmu je taktéž vyžadováno schválení týmem.</div>
+      <div class="text-warning">{% trans "Upozornění: Změna týmu vyžaduje, aby koordinátor nového týmu schválil vaše členství. V případě návratu do původního týmu je taktéž vyžadováno schválení týmem." %}</div>
    {% endif %}
-   <div id="{{field.name}}_div">
-       {{ field.errors }}
-       {{ field.label_tag }}
-       {{ field }}
-   </div>
+   {{ field|bootstrap }}
 {% endfor %}
-<a href="{% wp_url 'profil' %}">Zpět</a>
+{% if not can_change_team %}
+   <div class="text-warning">{% trans "Upozornění: Nemůžete změnit tým, pokud jste jeho koordinátorem a v týmu jsou další členové." %}</div>
+{% endif %}
+<button class="submit" type="button">{% trans "Upravit" %}</button>
+<a href="{% wp_url 'profil' %}">{% trans "Zpět" %}</a>
 </form>
-<button class="submit">Upravit</button>
-{% endblock %}
-

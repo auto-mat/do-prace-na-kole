@@ -1,4 +1,4 @@
-{% load url from future %}{% autoescape off %}
+{% load wp_url from dpnk_tags %}{% autoescape off %}
 
 Dobrý den, {{ user.userprofile }},
 
@@ -6,7 +6,7 @@ bohužel vaše členství v týmu {{user.userprofile.team.name}} bylo právě ZA
 
 Budete se muset přihlásit do editace profilu na adrese
 {% block profile_link %}
-{{ SITE_URL }}{% url 'dpnk.views.update_profile' %}
+{{ SITE_URL }}{% wp_url 'upravit_profil' %}
 {% endblock %}
 a vybrat si jiný tým, nebo si založit vlastní
 

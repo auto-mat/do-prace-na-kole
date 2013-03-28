@@ -1,19 +1,8 @@
-{% extends "base.html" %}
+{% load i18n %}
 {% load url from future %}
+{% load bootstrap %}
 
-{% block title %}
-Pozvěte své kolegy do vašeho týmu
-{% endblock %}
-
-{% block content %}
-
-<h1>Pozvěte své kolegy do vašeho týmu</h1>
-
-<p>Nyní můžete pozvat své kolegy do vašeho týmu</p>
-
-<form action="" method="post">{% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Odeslat" />
+<form method="post" class="form-horizontal">{% csrf_token %}
+{{ form|bootstrap }}
+<button class="submit" type="button">{% trans "Odeslat" %}</button>
 </form>
-
-{% endblock %}

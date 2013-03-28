@@ -24,9 +24,10 @@ from django.shortcuts import render_to_response, redirect
 import django.contrib.auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage, mail_admins
 from django.template import RequestContext
 from django.db.models import Sum, Count
+from django.utils.translation import gettext as _
 # Registration imports
 import registration.signals, registration.backends
 # Model imports
@@ -35,6 +36,7 @@ from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, 
 from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm
 from django.conf import settings
 from  django.http import HttpResponse
+from django import http
 # Local imports
 import util
 from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail
@@ -43,6 +45,7 @@ from django.contrib.sites.models import get_current_site
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout
 
 from wp_urls import wp_reverse
+from util import Mailing
 
 #decorator
 def must_be_coordinator(fn):
@@ -51,7 +54,7 @@ def must_be_coordinator(fn):
         request = args[0]
         team = request.user.userprofile.team
         if team.coordinator != request.user.userprofile:
-            return HttpResponse(u'Nejste koordinátorem týmu "' + team.name + u'", nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je "' + unicode(team.coordinator) + u'", vy jste: "' + unicode(request.user.userprofile) + u'"', status=401)
+            return HttpResponse(_("Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s ") % {'team': team.name, 'coordinator': team.coordinator, 'you': request.user.userprofile}, status=401)
         else:
             return fn(*args, **kwargs)
     return wrapper
@@ -65,7 +68,7 @@ def must_be_approved_for_team(fn):
         if userprofile.approved_for_team == 'approved' or userprofile.team.coordinator == userprofile:
             return fn(*args, **kwargs)
         else:
-            return HttpResponse(u'Vaše členství v týmu "' + userprofile.team.name + u'" nebylo odsouhlaseno. O ověření členství můžete požádat v <a href="/registrace/profil">profilu</a>.', status=401)
+            return HttpResponse(_("Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.") % (userprofile.team.name,), status=401)
     return wrapper
 
 def redirect(url):
@@ -89,6 +92,7 @@ def login(request, template_name='registration/login.html',
     context = { 
         'form': form,
         'site': current_site,
+        'django_url': settings.DJANGO_URL,
         'site_name': current_site.name,
     }
     return render_to_response(template_name, context)
@@ -179,14 +183,26 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             if create_team:
                 team.coordinator = new_user.userprofile
                 team.save()
+                new_user.userprofile.approved_for_team = 'approved'
+                new_user.userprofile.save()
                 success_url = "pozvanky"
                 team_created_mail(new_user)
             else:
                 register_mail(new_user)
 
+            # Register into mailing list
+            try:
+                m = Mailing(api_key=settings.MAILING_API_KEY, list_id=settings.MAILING_LIST_ID)
+                mailing_id = m.add(new_user.first_name, new_user.last_name, new_user.email,
+                                   new_user.userprofile.team.subsidiary.city.name)
+            except Exception, e:
+                mail_admins("ERROR Do prace na kole: Nepodarilo se pridat ucastnika do mailing listu", str(e))
+            else:
+                new_user.userprofile.mailing_id = mailing_id
+                new_user.userprofile.save()
+
             if new_user.userprofile.approved_for_team != 'approved':
                 approval_request_mail(new_user)
-            print success_url
             return redirect(wp_reverse(success_url))
     else:
         initial_company = None
@@ -194,7 +210,7 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
         initial_team = None
 
         if token != None:
-            team = Team.objects.get(nvitation_token=token)
+            team = Team.objects.get(invitation_token=token)
             initial_company = team.subsidiary.company
             initial_subsidiary = team.subsidiary
             initial_team = team
@@ -251,9 +267,9 @@ def payment_type(request):
             if form.cleaned_data['payment_type'] == 'pay':
                 return redirect(wp_reverse('platba'))
             elif form.cleaned_data['payment_type'] == 'company':
-                Payment(user=request.user.userprofile, amount=0, pay_type='fc', status=5).save()
+                Payment(user=request.user.userprofile, amount=0, pay_type='fc', status=Payment.Status.NEW).save()
             elif form.cleaned_data['payment_type'] == 'member':
-                Payment(user=request.user.userprofile, amount=0, pay_type='am', status=5).save()
+                Payment(user=request.user.userprofile, amount=0, pay_type='am', status=Payment.Status.NEW).save()
 
             return redirect(wp_reverse('profil'))
     else:
@@ -292,44 +308,36 @@ def payment(request):
             'session_id': session_id
              }, context_instance=RequestContext(request))
 
-def payment_result(request, success):
-    trans_id = request.GET['trans_id']
-    session_id = request.GET['session_id']
-    pay_type = request.GET['pay_type']
-    error = request.GET.get('error' or None)
+def payment_result(request, success, trans_id, session_id, pay_type, error = None):
 
     if session_id and session_id != "":
         p = Payment.objects.get(session_id=session_id)
         p.trans_id = trans_id
         p.pay_type = pay_type
+        if success:
+            p.status = Payment.Status.COMMENCED
+        else:
+            p.status = Payment.Status.REJECTED
         p.error = error
         p.save()
 
     if success == True:
-        msg = "Vaše platba byla úspěšně přijata."
+        msg = _("Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
     else:
-        msg = "Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu."
-
-    try:
-        city = UserProfile.objects.get(user=request.user).team.city
-    except TypeError, e:
-        # Looks like sometimes we loose the session before user comes
-        # back from PayU
-        city = None
+        msg = _("Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
 
     return render_to_response('registration/payment_result.html',
                               {
             'pay_type': pay_type,
             'message': msg,
-            'city': city
             }, context_instance=RequestContext(request))
 
 def make_sig(values):
-    key1 = 'eac82603809d388f6a2b8b11471f1805'
+    key1 = settings.PAYU_KEY_1
     return hashlib.md5("".join(values+(key1,))).hexdigest()
 
 def check_sig(sig, values):
-    key2 = 'c2b52884c3816d209ea6c5e7cd917abb'
+    key2 = settings.PAYU_KEY_2
     if sig != hashlib.md5("".join(values+(key2,))).hexdigest():
         raise ValueError("Zamítnuto")
 
@@ -360,49 +368,28 @@ def payment_status(request):
                                r['trans_status'], r['trans_amount'], r['trans_desc'],
                                r['trans_ts']))
     # Update the corresponding payment
-    p = Payment.objects.get(session_id=r['trans_session_id'])
+    try:
+        p = Payment.objects.get(session_id=r['trans_session_id'])
+    except Payment.DoesNotExist:
+        p = Payment(order_id=r['trans_order_id'], session_id=['trans_session_id'],
+                    amount=int(r['trans_amount'])/100, description=r['trans_desc'])
+
+    p.pay_type = r['trans_pay_type']
     p.status = r['trans_status']
     if r['trans_recv'] != '':
         p.realized = r['trans_recv']
     p.save()
 
-    if p.status == 99 or p.status == '99':
-        if len(Voucher.objects.filter(user = p.user)) == 0:
-            # Assign voucher to user
-            v = random.choice(Voucher.objects.filter(user__isnull=True))
-            v.user = p.user
-            v.save()
-            # Send user email confirmation and a voucher
-            email = EmailMessage(subject=u"Platba Do práce na kole a slevový kupon",
-                                 body=u"""Obdrželi jsme Vaši platbu startovného pro soutěž Do práce na kole.
-
-Zaplacením startovného získáváte poukaz na designové triko kampaně Do
-práce na kole 2012 (včetně poštovného a balného). Objednávku můžete
-uskutečnit na adrese:
-
-http://www.coromoro.com/designova_trika/detail/139-do-prace-na-kole-2012
-
-Váš slevový kód pro nákup trička v obchodě Čoromoro je %s.
-
-K jeho zadání budete vyzváni poté, co si vyberete velikost a přejdete
-na svůj nákupní košík.
-
-S pozdravem
-Auto*Mat
-""" % v.code,
-                             from_email = u'Do práce na kole <kontakt@dopracenakole.net>',
-                             to = [p.user.email()])
-            email.send(fail_silently=True)
-
     # Return positive error code as per PayU protocol
     return http.HttpResponse("OK")
 
-# def login(request):
-#     return render_to_response('registration/payment_result.html',
-#                               {
-#             'pay_type': pay_type,
-#             'message': msg
-#             }, context_instance=RequestContext(request))
+@login_required
+def profile_access(request):
+    profile = request.user.get_profile()
+    return render_to_response('registration/profile_access.html',
+                              {
+            'city': profile.team.subsidiary.city
+            }, context_instance=RequestContext(request))
 
 @login_required
 def profile(request):
@@ -413,74 +400,74 @@ def profile(request):
     #today = datetime.date(year=2012, month=5, day=4)
     profile = request.user.get_profile()
 
-    if request.method == 'POST':
-        raise http.Http404 # No POST, competition already terminated
-        if 'day' in request.POST:
-            try:
-                trip = Trip.objects.get(user = request.user.get_profile(),
-                                        date = days[int(request.POST['day'])-1])
-            except Trip.DoesNotExist:
-                trip = Trip()
-                trip.date = days[int(request.POST['day'])-1]
-                trip.user = request.user.get_profile()
-            trip.trip_to = request.POST.get('trip_to', False)
-            trip.trip_from = request.POST.get('trip_from', False)
-            trip.save()
-        # Pre-calculate total number of trips into userprofile to save load
-        trip_counts = Trip.objects.filter(user=profile).values('user').annotate(Sum('trip_to'), Sum('trip_from'))
-        try:
-            profile.trips = trip_counts[0]['trip_to__sum'] + trip_counts[0]['trip_from__sum']
-        except IndexError:
-            profile.trips = 0
-        profile.save()
-    try:
-        voucher_code = Voucher.objects.filter(user=profile)[0].code
-    except IndexError, e:
-        voucher_code = ''
+    # if request.method == 'POST':
+    #     raise http.Http404 # No POST, competition already terminated
+    #     if 'day' in request.POST:
+    #         try:
+    #             trip = Trip.objects.get(user = request.user.get_profile(),
+    #                                     date = days[int(request.POST['day'])-1])
+    #         except Trip.DoesNotExist:
+    #             trip = Trip()
+    #             trip.date = days[int(request.POST['day'])-1]
+    #             trip.user = request.user.get_profile()
+    #         trip.trip_to = request.POST.get('trip_to', False)
+    #         trip.trip_from = request.POST.get('trip_from', False)
+    #         trip.save()
+    #     # Pre-calculate total number of trips into userprofile to save load
+    #     trip_counts = Trip.objects.filter(user=profile).values('user').annotate(Sum('trip_to'), Sum('trip_from'))
+    #     try:
+    #         profile.trips = trip_counts[0]['trip_to__sum'] + trip_counts[0]['trip_from__sum']
+    #     except IndexError:
+    #         profile.trips = 0
+    #     profile.save()
+    # try:
+    #     voucher_code = Voucher.objects.filter(user=profile)[0].code
+    # except IndexError, e:
+    #     voucher_code = ''
 
     # Render profile
     payment_status = profile.payment_status()
     team_members = UserProfile.objects.filter(team=profile.team, user__is_active=True)
 
-    trips = {}
-    for t in Trip.objects.filter(user=profile):
-        trips[t.date] = (t.trip_to, t.trip_from)
-    calendar = []
+    # trips = {}
+    # for t in Trip.objects.filter(user=profile):
+    #     trips[t.date] = (t.trip_to, t.trip_from)
+    # calendar = []
 
-    counter = 0
-    for i, d in enumerate(days):
-        cd = {}
-        cd['name'] = "%s %d.%d." % (weekdays[d.weekday()], d.day, d.month)
-        cd['iso'] = str(d)
-        cd['question_active'] = (d <= today)
-        cd['trips_active'] = (d <= today) and (
-            len(Answer.objects.filter(
-                    question=Question.objects.get(date = d),
-                    user=request.user.get_profile())) > 0)
-        if d in trips:
-            cd['default_trip_to'] = trips[d][0]
-            cd['default_trip_from'] = trips[d][1]
-            counter += int(trips[d][0]) + int(trips[d][1])
-        else:
-            cd['default_trip_to'] = False
-            cd['default_trip_from'] = False
-        cd['percentage'] = float(counter)/(2*(i+1))*100
-        cd['percentage_str'] = "%.0f" % (cd['percentage'])
-        cd['distance'] = counter * profile.distance
-        calendar.append(cd)
+    # counter = 0
+    # for i, d in enumerate(days):
+    #     cd = {}
+    #     cd['name'] = "%s %d.%d." % (weekdays[d.weekday()], d.day, d.month)
+    #     cd['iso'] = str(d)
+    #     cd['question_active'] = (d <= today)
+    #     cd['trips_active'] = (d <= today) and (
+    #         len(Answer.objects.filter(
+    #                 question=Question.objects.get(date = d),
+    #                 user=request.user.get_profile())) > 0)
+    #     if d in trips:
+    #         cd['default_trip_to'] = trips[d][0]
+    #         cd['default_trip_from'] = trips[d][1]
+    #         counter += int(trips[d][0]) + int(trips[d][1])
+    #     else:
+    #         cd['default_trip_to'] = False
+    #         cd['default_trip_from'] = False
+    #     cd['percentage'] = float(counter)/(2*(i+1))*100
+    #     cd['percentage_str'] = "%.0f" % (cd['percentage'])
+    #     cd['distance'] = counter * profile.distance
+    #     calendar.append(cd)
 
-    member_counts = []
-    for member in team_members:
-        member_counts.append({
-                'name': str(member),
-                'trips': member.trips,
-                'percentage': float(member.trips)/(2*util.days_count())*100,
-                'distance': member.trips * member.distance})
-    if len(team_members):
-        team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*util.days_count()) * 100
-    else:
-        team_percentage = 0
-    team_distance = sum([m['distance'] for m in member_counts])
+    # member_counts = []
+    # for member in team_members:
+    #     member_counts.append({
+    #             'name': str(member),
+    #             'trips': member.trips,
+    #             'percentage': float(member.trips)/(2*util.days_count())*100,
+    #             'distance': member.trips * member.distance})
+    # if len(team_members):
+    #     team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*util.days_count()) * 100
+    # else:
+    #     team_percentage = 0
+    # team_distance = sum([m['distance'] for m in member_counts])
 
     #for user_position, u in enumerate(UserResults.objects.filter(city=profile.team.city)):
     #    if u.id == profile.id:
@@ -492,21 +479,14 @@ def profile(request):
     #        break
     #team_position += 1
 
-    req_city = request.GET.get('mesto', None)
-    if req_city and (req_city.lower() != profile.team.city.lower()):
-        own_city = False
-    else:
-        own_city = True
-
-
-    company_survey_answers = Answer.objects.filter(
-        question_id=34, user__in = [m.id for m in team_members])
-    if len(company_survey_answers):
-        company_survey_by = company_survey_answers[0].user
-        if company_survey_by == request.user.get_profile():
-            company_survey_by = 'me'
-    else:
-        company_survey_by = None
+    # company_survey_answers = Answer.objects.filter(
+    #     question_id=34, user__in = [m.id for m in team_members])
+    # if len(company_survey_answers):
+    #     company_survey_by = company_survey_answers[0].user
+    #     if company_survey_by == request.user.get_profile():
+    #         company_survey_by = 'me'
+    # else:
+    #     company_survey_by = None
     return render_to_response('registration/profile.html',
                               {
             'active': profile.user.is_active,
@@ -516,18 +496,16 @@ def profile(request):
             'team': profile.team,
             'payment_status': payment_status,
             'payment_type': profile.payment_type(),
-            'voucher': voucher_code,
-            'team_members': ", ".join([str(p) + " (" + str(p.user.email) + ")" for p in team_members]),
-            'team_members_count': UserProfile.objects.filter(approved_for_team='approved', team=profile.team, user__is_active=True).count(),
-            'calendar': calendar,
-            'member_counts': member_counts,
-            'team_percentage': team_percentage,
-            'team_distance': team_distance,
+            #'voucher': voucher_code,
+            'team_members': UserProfile.objects.filter(team=profile.team, user__is_active=True).exclude(id=profile.team.coordinator.id).exclude(id=profile.id),
+            'team_members_count': len(profile.team.members()),
+            #'calendar': calendar,
+            #'member_counts': member_counts,
+            #'team_percentage': team_percentage,
+            #'team_distance': team_distance,
             #'user_position': user_position,
             #'team_position': team_position,
-            'req_city': req_city,
-            'own_city': own_city,
-            'company_survey_by': company_survey_by,
+            #'company_survey_by': company_survey_by,
             'competition_state': settings.COMPETITION_STATE,
             'approved_for_team': request.user.userprofile.approved_for_team,
             }, context_instance=RequestContext(request))
@@ -576,12 +554,14 @@ def update_profile(request,
 
         if create_team:
             team_valid = form_team.is_valid()
-            form.fields['team'].required = False
-            form.Meta.exclude = ('team')
+            if 'team' in  form.fields:
+                form.fields['team'].required = False
+                form.Meta.exclude = ('team')
         else:
             form_team = RegisterTeamForm(prefix = "team")
-            form.fields['team'].required = True
-            form.Meta.exclude = ()
+            if 'team' in  form.fields:
+                form.fields['team'].required = True
+                form.Meta.exclude = ()
 
         form_valid = form.is_valid()
 
@@ -605,7 +585,7 @@ def update_profile(request,
 
                 team_created_mail(userprofile.user)
 
-            if request.user.userprofile.team != form.cleaned_data['team'] and not create_team:
+            if 'team' in form.cleaned_data and request.user.userprofile.team != form.cleaned_data['team'] and not create_team:
                 userprofile.approved_for_team = 'undecided'
                 approval_request_mail(userprofile.user)
 
@@ -616,12 +596,14 @@ def update_profile(request,
         form = ProfileUpdateForm(instance=profile)
         form_team = RegisterTeamForm(prefix = "team")
 
-    form.fields['team'].widget.underlying_form = form_team
-    form.fields['team'].widget.create = create_team
-    #if request.user.userprofile.team.coordinator == request.user.userprofile:
-    #    del form.fields["team"]
+    if 'team' in  form.fields:
+        form.fields['team'].widget.underlying_form = form_team
+        form.fields['team'].widget.create = create_team
+    
+    can_change_team = 'team' in  form.fields
     return render_to_response('registration/update_profile.html',
-                              {'form': form
+                              {'form': form,
+                               'can_change_team': can_change_team
                                }, context_instance=RequestContext(request))
 
 @login_required
@@ -811,6 +793,8 @@ def approve_for_team(userprofile, reason, approve=False, deny=False):
         team_membership_denial_mail(userprofile.user, reason)
         return 'denied'
     elif approve:
+        if len(userprofile.team.members()) >= 5:
+            return 'team_full'
         userprofile.approved_for_team = 'approved'
         userprofile.save()
         user_approved = True
@@ -846,22 +830,14 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
 
 @must_be_coordinator
 @login_required
-def team_admin(request, backend='registration.backends.simple.SimpleBackend',
+def team_admin_team(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
-             template_name='registration/team_admin.html',
+             template_name='registration/team_admin_team.html',
              extra_context=None):
     team = request.user.userprofile.team
-    unapproved_users = []
     form_class = TeamAdminForm
-    denial_message = 'unapproved'
 
-    for userprofile in UserProfile.objects.filter(team = team, approved_for_team__in = ('undecided', 'denied'), user__is_active=True):
-        message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), approve=request.POST.has_key('approve-' + str(userprofile.id)), deny=request.POST.has_key('deny-' + str(userprofile.id)))
-        if message:
-            denial_message = message
-            break
-
-    if request.method == 'POST' and denial_message == 'unapproved':
+    if request.method == 'POST':
         form = form_class(data=request.POST, instance = team)
         if form.is_valid():
             form.save()
@@ -869,19 +845,42 @@ def team_admin(request, backend='registration.backends.simple.SimpleBackend',
     else:
         form = form_class(instance = team)
 
+    return render_to_response(template_name,
+                              {'form': form,
+                                }, context_instance=RequestContext(request))
+
+@must_be_coordinator
+@login_required
+def team_admin_members(request, backend='registration.backends.simple.SimpleBackend',
+             template_name='registration/team_admin_members.html',
+             extra_context=None):
+    team = request.user.userprofile.team
+    unapproved_users = []
+    denial_message = 'unapproved'
+
+    if 'button_action' in request.POST and request.POST['button_action']:
+        b_action = request.POST['button_action'].split('-')
+        userprofile = UserProfile.objects.get(team = team, approved_for_team__in = ('undecided', 'denied'), user__is_active=True, id=b_action[1])
+        denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
+
     for userprofile in UserProfile.objects.filter(team = team, user__is_active=True):
         unapproved_users.append([
             ('state', None, userprofile.approved_for_team),
             ('id', None, userprofile.id),
-            ('name', u'Jméno', unicode(userprofile)),
-            ('username', u'Uživatel', userprofile.user),
-            ('email', u'Email', userprofile.user.email),
-            ('telephone', u'Telefon', userprofile.telephone),
-            ('state_name', u'Stav', unicode(userprofile.get_approved_for_team_display())),
+            ('payment_status', None, userprofile.payment_status()),
+            ('name', _("Jméno"), unicode(userprofile)),
+            ('username', _("Uživatel"), userprofile.user),
+            ('email', _("Email"), userprofile.user.email),
+            ('payment', _("Platba"), {'waiting': _("Nezaplaceno"), 'done': _("Zaplaceno"), 'no_admission': _("Není potřeba"), None: _("Neznámý")}[userprofile.payment_status()]),
+            ('telephone', _("Telefon"), userprofile.telephone),
+            ('state_name', _("Stav"), unicode(userprofile.get_approved_for_team_display())),
             ])
 
     return render_to_response(template_name,
-                              {'form': form,
+                              {
                                'unapproved_users': unapproved_users,
-                                'denial_message': denial_message == 'no_message',
+                                'denial_message': denial_message,
                                 }, context_instance=RequestContext(request))
+
+def facebook_app(request):
+    return render_to_response('registration/facebook_app.html', {'user': request.user})

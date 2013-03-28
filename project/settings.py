@@ -12,8 +12,7 @@ sys.path.append(normpath(PROJECT_ROOT, "apps"))
 DEBUG = True
 ADMINS = (
     ('Hynek Hanke', 'hynek.hanke@auto-mat.cz'),
-#    ('Vaclav Rehak', 'vrehak@baf.cz'),
-#    ('Petr Studený', 'petr.studeny@auto-mat.cz'),
+    ('Petr Dlouhý', 'petr.dlouhy@email.cz'),
 )
 DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@dopracenakole.net>'
 MANAGERS = ADMINS
@@ -43,10 +42,10 @@ STATICFILES_FINDERS = (
 )
 SECRET_KEY = ''
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    #'django.middleware.locale.LocaleMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 	#'django.middleware.csrf.CsrfViewMiddleware',
 
@@ -55,6 +54,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'urls'
 TEMPLATE_DIRS = (
     normpath(PROJECT_ROOT, 'templates'),
+    normpath(PROJECT_ROOT, 'apps/dpnk/templates'),
 )
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -69,12 +69,15 @@ INSTALLED_APPS = (
     'smart_selects',
     'composite_field',
     'south',
+    'bootstrapform',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
-LOGIN_URL = '/registrace/login/'
-LOGIN_REDIRECT_URL = '/registrace/profil/'
+LOGIN_URL = '/dpnk/login'
+LOGIN_REDIRECT_URL = '/dpnk/profil/'
+LOGOUT_NEXT_PAGE = '/django/dpnk/profil/'
 SITE_URL = ''
+DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX
 COMPETITION_STATE='not_started_yet'
 #COMPETITION_STATE='started'
@@ -82,3 +85,9 @@ COMPETITION_STATE='not_started_yet'
 INSTALLED_APPS += ("remote_ajax", )
 MIDDLEWARE_CLASSES += ("remote_ajax.middleware.XHRMiddleware", )
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
+
+MAILING_API_KEY = ''
+MAILING_LIST_ID = ''
+
+PAYU_KEY_1 = ''
+PAYU_KEY_2 = ''

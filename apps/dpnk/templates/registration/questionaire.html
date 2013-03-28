@@ -1,10 +1,3 @@
-{% extends "base.html" %}
-
-{% block content %}
-
-{% block intro %}
-{% endblock %}
-
 <div id="questionaire-{{ questionaire }}">
 <form name="question" action="/registrace/otazka/" method="POST">
 {% for question in questions %}
@@ -25,13 +18,5 @@
 <input type="hidden" name="questionaire" value="{{ questionaire }}">
 <input type="hidden" name="day" value="{{ day }}">
 <input type="button" onclick="history.go(-1)" value="Zpět">
-{% block agreement %}
-{% endblock %}
-
 </form>
 </div>
-
-{% block outro %}
-{% endblock %}
-
-{% endblock %}

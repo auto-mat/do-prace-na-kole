@@ -1,12 +1,12 @@
-{% extends "base.html" %}
+{% load i18n %}
 {% load url from future %}
-{% load dpnk_tags %}
+{% load dpnk_tags bootstrap%}
 
-{% block content %}
-<form action="" method="post">{% csrf_token %}
-{{ form.as_p }}
+<form method="post" class="form-horizontal">{% csrf_token %}
+<input type="hidden" name="page_url" id="page_url" value="{{ django_url }}/dpnk/login/">
+{{ form|bootstrap }}
+<button class="submit" type="button">{% trans "Přihlásit" %}</button>
 </form>
-<input class="submit" type="submit" value="Přihlásit" />
 
-<p><a href="{% wp_url 'zapomenute_heslo' %}">Zapomněli jste své přihlašovací údaje?</a>
-{% endblock %}
+<p><a href="{% wp_url 'zapomenute_heslo' %}">{% trans "Zapomněli jste své přihlašovací údaje?" %}</a></p>
+<p>Ještě nemáte účet? <a href="{% wp_url 'chci_slapat' %}">{% trans "Přihlaste se" %}</a> do soutěže Do práce na kole.</p>

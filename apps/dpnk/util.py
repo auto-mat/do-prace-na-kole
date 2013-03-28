@@ -1,5 +1,6 @@
 
 import datetime
+import createsend
 
 DAY_START = 2
 DAY_END = 31
@@ -16,3 +17,17 @@ def days_count():
         if day > datetime.date.today():
             break
     return i+1
+
+class Mailing:
+
+    def __init__(self, api_key, list_id):
+        createsend.CreateSend.api_key = api_key
+        self.list_id = list_id
+
+    def add(self, name, surname, email, city):
+        subscriber = createsend.Subscriber()
+        r = subscriber.add(self.list_id, email,
+                           " ".join([name, surname]),
+                           [ { 'Key': "Mesto", 'Value': city } ]
+                           , True)
+        return r

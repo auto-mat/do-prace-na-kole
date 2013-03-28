@@ -1,13 +1,20 @@
-{% load url from future %}{% autoescape off %}
+{% load wp_url from dpnk_tags %}{% autoescape off %}
 
 Dobrý den,
 
-váš kolega {{ user.userprofile }} vás zve k účasti v soutěži Do práce na kole do svého týmu {{user.userprofile.team.name}}. Přihlásit do soutěže se můžete pomocí odkazu
-{% block register_link %}
-{{ SITE_URL }}{% url 'dpnk.views.register' token=user.userprofile.team.invitation_token initial_email=email%}
-{% endblock %}.
+Váš kolega/kolegyně {{ user.userprofile }} chce šlapat s Vámi v týmu {{user.userprofile.team.name}}. Víte proč? Zeptejte se ho/jí nebo se mrkněte spot "Nedělej Milušku a šlapej!".
 
-S pozdravem,
-Auto*Mat
+Jdete do toho? Tento odkaz vede k jednoduchému předvyplněnému formuláři.
+{% block register_link %}
+{{ SITE_URL }}{% wp_url 'registrace' %}?invitation_token={{ user.userprofile.team.invitation_token }}&email={{ email }}
+{% endblock %}
+(Pokud Vám odkaz nefunguje, zkopírujte ho přes schránku do oblíbeného prohlížeče.)
+
+Tak ať Vám to šlape!
+Váš tým soutěže Do práce na kole 2013
+
+Proč šlapat? Čtěte http://www.dopracenakole.net/proc-slapat/
+Chcete vědět víc? Napište nám na kontakt@dopracenakole.net
+Do práce na kole 2013 pořádá iniciativa Auto*Mat. http://www.auto-mat.cz
 
 {% endautoescape %}
