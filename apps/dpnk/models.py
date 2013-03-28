@@ -209,6 +209,10 @@ class Team(models.Model):
     def save(self, force_insert=False, force_update=False):
         if self.coordinator_id is not None and self.coordinator is not None and self.coordinator.team.id != self.id:
             raise Exception(_("Nový koordinátor %(coordinator)s není členem týmu %(team)s") % {'coordinator': self.coordinator, 'team': self})
+
+        while Team.objects.filter(invitation_token = self.invitation_token).exists():
+            self.invitation_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30))
+
         super(Team, self).save(force_insert, force_update)
 
 class UserProfile(models.Model):
