@@ -26,6 +26,7 @@ from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django.http import HttpResponseRedirect
 from snippets.related_field_admin import RelatedFieldAdmin
+from dpnk.wp_urls import wp_reverse
 # Models
 from models import *
 from django.forms import ModelForm
@@ -64,7 +65,7 @@ class CompanyAdmin(admin.ModelAdmin):
                                   for u in Subsidiary.objects.filter(company=obj)]))
     subsidiaries_text.short_description = 'Pobočky'
     def subsidiary_links(self, obj):
-        return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/subsidiary/%d">%s</a>' % (u.id, str(u))
+        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/subsidiary/%d">%s</a>' % (u.id, str(u))
                                   for u in Subsidiary.objects.filter(company=obj)]))
     subsidiary_links.short_description = 'Pobočky'
 
@@ -80,21 +81,21 @@ class SubsidiaryAdmin(admin.ModelAdmin):
                                   for u in Team.objects.filter(subsidiary=obj)]))
     teams_text.short_description = 'Týmy'
     def team_links(self, obj):
-        return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/team/%d">%s</a>' % (u.id, str(u))
+        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/team/%d">%s</a>' % (u.id, str(u))
                                   for u in Team.objects.filter(subsidiary=obj)]))
 
 class CompetitionAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'competitor_type')
 
 class UserProfileAdmin(RelatedFieldAdmin):
-    list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'user__city', 'id', )
+    list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
     inlines = [PaymentInline, VoucherInline]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
     list_filter = ['user__is_active', 'team__subsidiary__city']
 
     readonly_fields = ['team_link']
     def team_link(self, obj):
-        return mark_safe('<a href="/admin/admin/dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
+        return mark_safe('<a href="' + wp_reverse('admin') + 'dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
 
 class UserProfileUnpaidAdmin(UserProfileAdmin, RelatedFieldAdmin):
@@ -107,7 +108,7 @@ class UserProfileAdminInline(admin.StackedInline):
 
     readonly_fields = ['team_link']
     def team_link(self, obj):
-        return mark_safe('<a href="/admin/admin/dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
+        return mark_safe('<a href="' + wp_reverse('admin') + 'dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
 
 class UserAdmin(UserAdmin, RelatedFieldAdmin):
@@ -128,7 +129,7 @@ class TeamAdmin(RelatedFieldAdmin):
 
     readonly_fields = ['members']
     def members(self, obj):
-        return mark_safe("<br/>".join(['<a href="/admin/admin/dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
+        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
                                   for u in UserProfile.objects.filter(team=obj, user__is_active=True)]))
     members.short_description = 'Členové'
     form = TeamForm
@@ -164,7 +165,7 @@ class QuestionAdmin(admin.ModelAdmin):
 
     readonly_fields = ['choices']
     def choices(self, obj):
-        return mark_safe("<br/>".join([choice.text for choice in obj.choice_type.choices.all()]) + '<br/><a href="/admin/admin/dpnk/choicetype/%d">edit</a>' % obj.choice_type.id )
+        return mark_safe("<br/>".join([choice.text for choice in obj.choice_type.choices.all()]) + '<br/><a href="' + wp_reverse('admin') + 'dpnk/choicetype/%d">edit</a>' % obj.choice_type.id )
 
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(UserProfileUnpaid, UserProfileUnpaidAdmin)

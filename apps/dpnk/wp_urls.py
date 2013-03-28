@@ -1,5 +1,8 @@
 from django.conf import settings
 urls = {
+    # Admin
+    'admin':                        "/django/admin/",
+
     # Registrace
     'chci_slapat':                  "/chci-slapat/",
     'registrace':                   "/registrace/",
