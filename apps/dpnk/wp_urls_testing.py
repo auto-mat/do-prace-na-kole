@@ -1,6 +1,7 @@
 # This file serves testing purposes if used instead of wp_urls.py
 # and together with dpnk-wp HTML files tree
 urls = {
+    'chci_slapat':                  "chci_slapat.html",
     "upravit_profil":               "upravit_profil.html",
     "profil":                       "profil.html",
     "profil_pristup":               "profil.html",
