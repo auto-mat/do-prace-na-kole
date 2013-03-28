@@ -399,74 +399,74 @@ def profile(request):
     #today = datetime.date(year=2012, month=5, day=4)
     profile = request.user.get_profile()
 
-    if request.method == 'POST':
-        raise http.Http404 # No POST, competition already terminated
-        if 'day' in request.POST:
-            try:
-                trip = Trip.objects.get(user = request.user.get_profile(),
-                                        date = days[int(request.POST['day'])-1])
-            except Trip.DoesNotExist:
-                trip = Trip()
-                trip.date = days[int(request.POST['day'])-1]
-                trip.user = request.user.get_profile()
-            trip.trip_to = request.POST.get('trip_to', False)
-            trip.trip_from = request.POST.get('trip_from', False)
-            trip.save()
-        # Pre-calculate total number of trips into userprofile to save load
-        trip_counts = Trip.objects.filter(user=profile).values('user').annotate(Sum('trip_to'), Sum('trip_from'))
-        try:
-            profile.trips = trip_counts[0]['trip_to__sum'] + trip_counts[0]['trip_from__sum']
-        except IndexError:
-            profile.trips = 0
-        profile.save()
-    try:
-        voucher_code = Voucher.objects.filter(user=profile)[0].code
-    except IndexError, e:
-        voucher_code = ''
+    # if request.method == 'POST':
+    #     raise http.Http404 # No POST, competition already terminated
+    #     if 'day' in request.POST:
+    #         try:
+    #             trip = Trip.objects.get(user = request.user.get_profile(),
+    #                                     date = days[int(request.POST['day'])-1])
+    #         except Trip.DoesNotExist:
+    #             trip = Trip()
+    #             trip.date = days[int(request.POST['day'])-1]
+    #             trip.user = request.user.get_profile()
+    #         trip.trip_to = request.POST.get('trip_to', False)
+    #         trip.trip_from = request.POST.get('trip_from', False)
+    #         trip.save()
+    #     # Pre-calculate total number of trips into userprofile to save load
+    #     trip_counts = Trip.objects.filter(user=profile).values('user').annotate(Sum('trip_to'), Sum('trip_from'))
+    #     try:
+    #         profile.trips = trip_counts[0]['trip_to__sum'] + trip_counts[0]['trip_from__sum']
+    #     except IndexError:
+    #         profile.trips = 0
+    #     profile.save()
+    # try:
+    #     voucher_code = Voucher.objects.filter(user=profile)[0].code
+    # except IndexError, e:
+    #     voucher_code = ''
 
     # Render profile
     payment_status = profile.payment_status()
     team_members = UserProfile.objects.filter(team=profile.team, user__is_active=True)
 
-    trips = {}
-    for t in Trip.objects.filter(user=profile):
-        trips[t.date] = (t.trip_to, t.trip_from)
-    calendar = []
+    # trips = {}
+    # for t in Trip.objects.filter(user=profile):
+    #     trips[t.date] = (t.trip_to, t.trip_from)
+    # calendar = []
 
-    counter = 0
-    for i, d in enumerate(days):
-        cd = {}
-        cd['name'] = "%s %d.%d." % (weekdays[d.weekday()], d.day, d.month)
-        cd['iso'] = str(d)
-        cd['question_active'] = (d <= today)
-        cd['trips_active'] = (d <= today) and (
-            len(Answer.objects.filter(
-                    question=Question.objects.get(date = d),
-                    user=request.user.get_profile())) > 0)
-        if d in trips:
-            cd['default_trip_to'] = trips[d][0]
-            cd['default_trip_from'] = trips[d][1]
-            counter += int(trips[d][0]) + int(trips[d][1])
-        else:
-            cd['default_trip_to'] = False
-            cd['default_trip_from'] = False
-        cd['percentage'] = float(counter)/(2*(i+1))*100
-        cd['percentage_str'] = "%.0f" % (cd['percentage'])
-        cd['distance'] = counter * profile.distance
-        calendar.append(cd)
+    # counter = 0
+    # for i, d in enumerate(days):
+    #     cd = {}
+    #     cd['name'] = "%s %d.%d." % (weekdays[d.weekday()], d.day, d.month)
+    #     cd['iso'] = str(d)
+    #     cd['question_active'] = (d <= today)
+    #     cd['trips_active'] = (d <= today) and (
+    #         len(Answer.objects.filter(
+    #                 question=Question.objects.get(date = d),
+    #                 user=request.user.get_profile())) > 0)
+    #     if d in trips:
+    #         cd['default_trip_to'] = trips[d][0]
+    #         cd['default_trip_from'] = trips[d][1]
+    #         counter += int(trips[d][0]) + int(trips[d][1])
+    #     else:
+    #         cd['default_trip_to'] = False
+    #         cd['default_trip_from'] = False
+    #     cd['percentage'] = float(counter)/(2*(i+1))*100
+    #     cd['percentage_str'] = "%.0f" % (cd['percentage'])
+    #     cd['distance'] = counter * profile.distance
+    #     calendar.append(cd)
 
-    member_counts = []
-    for member in team_members:
-        member_counts.append({
-                'name': str(member),
-                'trips': member.trips,
-                'percentage': float(member.trips)/(2*util.days_count())*100,
-                'distance': member.trips * member.distance})
-    if len(team_members):
-        team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*util.days_count()) * 100
-    else:
-        team_percentage = 0
-    team_distance = sum([m['distance'] for m in member_counts])
+    # member_counts = []
+    # for member in team_members:
+    #     member_counts.append({
+    #             'name': str(member),
+    #             'trips': member.trips,
+    #             'percentage': float(member.trips)/(2*util.days_count())*100,
+    #             'distance': member.trips * member.distance})
+    # if len(team_members):
+    #     team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*util.days_count()) * 100
+    # else:
+    #     team_percentage = 0
+    # team_distance = sum([m['distance'] for m in member_counts])
 
     #for user_position, u in enumerate(UserResults.objects.filter(city=profile.team.city)):
     #    if u.id == profile.id:
@@ -478,14 +478,14 @@ def profile(request):
     #        break
     #team_position += 1
 
-    company_survey_answers = Answer.objects.filter(
-        question_id=34, user__in = [m.id for m in team_members])
-    if len(company_survey_answers):
-        company_survey_by = company_survey_answers[0].user
-        if company_survey_by == request.user.get_profile():
-            company_survey_by = 'me'
-    else:
-        company_survey_by = None
+    # company_survey_answers = Answer.objects.filter(
+    #     question_id=34, user__in = [m.id for m in team_members])
+    # if len(company_survey_answers):
+    #     company_survey_by = company_survey_answers[0].user
+    #     if company_survey_by == request.user.get_profile():
+    #         company_survey_by = 'me'
+    # else:
+    #     company_survey_by = None
     return render_to_response('registration/profile.html',
                               {
             'active': profile.user.is_active,
@@ -495,16 +495,16 @@ def profile(request):
             'team': profile.team,
             'payment_status': payment_status,
             'payment_type': profile.payment_type(),
-            'voucher': voucher_code,
+            #'voucher': voucher_code,
             'team_members': UserProfile.objects.filter(team=profile.team, user__is_active=True).exclude(id=profile.team.coordinator.id).exclude(id=profile.id),
             'team_members_count': len(profile.team.members()),
-            'calendar': calendar,
-            'member_counts': member_counts,
-            'team_percentage': team_percentage,
-            'team_distance': team_distance,
+            #'calendar': calendar,
+            #'member_counts': member_counts,
+            #'team_percentage': team_percentage,
+            #'team_distance': team_distance,
             #'user_position': user_position,
             #'team_position': team_position,
-            'company_survey_by': company_survey_by,
+            #'company_survey_by': company_survey_by,
             'competition_state': settings.COMPETITION_STATE,
             'approved_for_team': request.user.userprofile.approved_for_team,
             }, context_instance=RequestContext(request))

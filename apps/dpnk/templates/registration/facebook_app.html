@@ -2,22 +2,6 @@
 
 {% if user.is_authenticated %}
 
-<script language="JavaScript">
-function autoResizeIframe(id){
-    var newheight;
-    if(document.getElementById){
-        F = document.getElementById(id);
-        if(F.contentDocument) {
-            inner_doc = F.contentDocument;
-            newheight = Math.min(800, inner_doc.body.offsetHeight + 10); // correct for Firefox
-        }else{
-            newheight= Math.min(800, F.contentWindow.document.body.scrollHeight + 10);
-        }
-        F.height= (newheight) + "px";
-    }
-}
-</script>
-
 <iframe id="facebook-app" width="100%" height="500px;" frameborder="0" onload="autoResizeIframe('facebook-app');" marginheight="0" src="/facebook-app/"></iframe>
 
 {% else %}
