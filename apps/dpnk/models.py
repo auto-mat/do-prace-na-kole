@@ -550,11 +550,12 @@ class Competition(models.Model):
         unique=True,
         verbose_name=_("Jméno"),
         max_length=40, null=False)
-    slug = models.CharField(
+    slug = models.SlugField(
         unique=True,
         default="",
-        verbose_name="Adresa v URL",
-        max_length=10, null=False)
+        verbose_name=u"Doména v URL",
+        blank=False
+        )
     type = models.CharField(
         verbose_name=_("Typ"),
         choices=CTYPES,

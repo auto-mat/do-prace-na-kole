@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Competition.slug'
         db.add_column('dpnk_competition', 'slug',
-                      self.gf('django.db.models.fields.CharField')(default='', unique=True, max_length=10),
+                      self.gf('django.db.models.fields.SlugField')(default='', unique=False, max_length=50),
                       keep_default=False)
 
         # Deleting field 'UserProfile.trips'
@@ -108,7 +108,8 @@ class Migration(SchemaMigration):
             'admission_fee': ('django.db.models.fields.PositiveIntegerField', [], {'default': '160'}),
             'city_admins': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'administrated_cities'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['dpnk.UserProfile']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '40'})
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '40'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'})
         },
         'dpnk.company': {
             'Meta': {'ordering': "('name',)", 'object_name': 'Company'},
@@ -131,7 +132,7 @@ class Migration(SchemaMigration):
             'competitor_type': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '40'}),
-            'slug': ('django.db.models.fields.CharField', [], {'default': "''", 'unique': 'True', 'max_length': '10'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'default': "''", 'unique': 'False', 'max_length': '50'}),
             'team_competitors': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'competitions'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['dpnk.Team']"}),
             'type': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
             'user_competitors': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'competitions'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['dpnk.UserProfile']"}),
@@ -142,16 +143,16 @@ class Migration(SchemaMigration):
             'amount': ('django.db.models.fields.PositiveIntegerField', [], {}),
             'company_wants_to_pay': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'description': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True'}),
+            'description': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '500', 'null': 'True', 'blank': 'True'}),
             'error': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'order_id': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'order_id': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'pay_type': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'realized': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'session_id': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'status': ('django.db.models.fields.PositiveIntegerField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'session_id': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'status': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'trans_id': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['dpnk.UserProfile']"})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['dpnk.UserProfile']", 'null': 'True', 'blank': 'True'})
         },
         'dpnk.question': {
             'Meta': {'object_name': 'Question'},
@@ -181,7 +182,7 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "('name',)", 'object_name': 'Team'},
             'coordinator': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'coordinated_team'", 'unique': 'True', 'null': 'True', 'to': "orm['dpnk.UserProfile']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'invitation_token': ('django.db.models.fields.CharField', [], {'default': "'UIJ46LZM0US3FWD390QDJ5QYUT3W4S'", 'unique': 'True', 'max_length': '100'}),
+            'invitation_token': ('django.db.models.fields.CharField', [], {'default': "'0V7BPWXYYLI2OFUUPQJO6ILP9ITTQH'", 'unique': 'True', 'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
             'subsidiary': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'teams'", 'to': "orm['dpnk.Subsidiary']"})
         },
@@ -201,6 +202,8 @@ class Migration(SchemaMigration):
             'company_admin_unapproved': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'distance': ('django.db.models.fields.PositiveIntegerField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'language': ('django.db.models.fields.CharField', [], {'default': "'cs'", 'max_length': '16'}),
+            'mailing_id': ('django.db.models.fields.TextField', [], {'default': "''", 'null': 'True', 'blank': 'True'}),
             'motivation_company_admin': ('django.db.models.fields.TextField', [], {'default': "''", 'max_length': '5000', 'null': 'True', 'blank': 'True'}),
             't_shirt_size': ('django.db.models.fields.CharField', [], {'default': "'L'", 'max_length': '16'}),
             'team': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'users'", 'to': "orm['dpnk.Team']"}),
