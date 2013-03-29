@@ -694,7 +694,7 @@ def questions(request):
 
 def _company_answers(uid):
     return Answer.objects.filter(user_id=uid,
-                                 question__in=Question.objects.filter(questionaire='company'))
+                                 question__in=Question.objects.filter(competition__slug='cyklozamestnavatel_roku'))
 
 def _total_points(answers):
     total_points = 0
@@ -704,14 +704,15 @@ def _total_points(answers):
             if c.points:
                 total_points += c.points
         # Additional points assigned manually
-        total_points += a.points
+        if a.points_given:
+            total_points += a.points_given
     return total_points
 
 @staff_member_required
 def company_survey(request):
-    companies = [(u.id, u.team.company, u.team.city, u.team.name, _total_points(_company_answers(u.id))) for u in
+    companies = [(u.id, u.team.subsidiary.company, u.team.subsidiary.city, u.team.name, _total_points(_company_answers(u.id))) for u in
                  set([a.user for a in Answer.objects.filter(
-                    question__in=Question.objects.filter(questionaire='company'))])]
+                    question__in=Question.objects.filter(competition__slug='cyklozamestnavatel_roku'))])]
     return render_to_response('admin/company_survey.html',
                               {'companies': sorted(companies, key = lambda c: c[4], reverse=True)
                                }, context_instance=RequestContext(request))

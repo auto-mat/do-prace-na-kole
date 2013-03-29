@@ -4,9 +4,9 @@
 {% block content %}
 
 <p>
-Firma: {{ team.company }}<br/>
-Mesto: {{ team.city }} / {{ team.address }}<br/>
-Vyplnil tym: {{ team.name }}<br/>
+Firma: {{ team.subsidiary.company }}<br/>
+Město: {{ team.subsidiary.city }} / {{ team.subsidiary }}<br/>
+Vyplnil tým: {{ team.name }}<br/>
 
 <ul>
   {% for a in answers %}
@@ -21,6 +21,6 @@ Vyplnil tym: {{ team.name }}<br/>
   {% endfor %}
 </ul>
 
-Dohromady bodu: {{ total_points }}
+Dohromady bodů: {{ total_points }}
 
 {% endblock %}
