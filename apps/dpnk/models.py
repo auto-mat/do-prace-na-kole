@@ -193,7 +193,7 @@ class Team(models.Model):
         )
     invitation_token = models.CharField(
         verbose_name=_("Token pro pozvánky"),
-        default=''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30)),
+        default="",
         max_length=100,
         null=False,
         blank=False,
@@ -210,8 +210,12 @@ class Team(models.Model):
         if self.coordinator_id is not None and self.coordinator is not None and self.coordinator.team.id != self.id:
             raise Exception(_("Nový koordinátor %(coordinator)s není členem týmu %(team)s") % {'coordinator': self.coordinator, 'team': self})
 
-        while Team.objects.filter(invitation_token = self.invitation_token).exists():
-            self.invitation_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30))
+        if self.invitation_token == "":
+            while True:
+                invitation_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30))
+                if not Team.objects.filter(invitation_token = invitation_token).exists():
+                    self.invitation_token = invitation_token
+                    break
 
         super(Team, self).save(force_insert, force_update)
 
