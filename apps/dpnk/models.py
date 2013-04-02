@@ -31,7 +31,7 @@ from django.db.models.signals import post_save
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from composite_field import CompositeField
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 # Python library imports
 import datetime
 # Local imports
@@ -40,40 +40,40 @@ from dpnk.email import payment_confirmation_mail
 
 class Address(CompositeField):
     street = models.CharField(
-        verbose_name=_("Ulice"),
+        verbose_name=_(u"Ulice"),
         default="",
         max_length=50,
         null=False,
         )
     street_number = models.CharField(
-        verbose_name=_("Číslo domu"),
+        verbose_name=_(u"Číslo domu"),
         default="",
         max_length=10,
         null=False,
         blank=False,
         )
     recipient = models.CharField(
-        verbose_name=_("Název pobočky (závodu, kanceláře, fakulty)"),
+        verbose_name=_(u"Název pobočky (závodu, kanceláře, fakulty)"),
         default="",
         max_length=50,
         null=False,
         blank=False,
         )
     district = models.CharField(
-        verbose_name=_("Městská část"),
+        verbose_name=_(u"Městská část"),
         default="",
         max_length=50,
         null=False,
         blank=False,
         )
     psc = models.IntegerField(
-        verbose_name=_("PSČ"),
+        verbose_name=_(u"PSČ"),
         default=0,
         null=False,
         blank=False,
         )
     city = models.CharField(
-        verbose_name=_("Adresní město"),
+        verbose_name=_(u"Adresní město"),
         default="",
         max_length=50,
         null=False,
@@ -87,10 +87,10 @@ class City(models.Model):
     """Město"""
 
     class Meta:
-        verbose_name = _("Město")
-        verbose_name_plural = _("Města")
+        verbose_name = _(u"Město")
+        verbose_name_plural = _(u"Města")
     name = models.CharField(
-        verbose_name=_("Jméno"),
+        verbose_name=_(u"Jméno"),
         unique=True,
         max_length=40, null=False)
     slug = models.SlugField(
@@ -104,7 +104,7 @@ class City(models.Model):
         null=True,
         blank=True)
     admission_fee = models.PositiveIntegerField(
-        verbose_name=_("Startovné"),
+        verbose_name=_(u"Startovné"),
         null=False,
         default=160)
 
@@ -115,24 +115,24 @@ class Company(models.Model):
     """Firma"""
 
     class Meta:
-        verbose_name = _("Firma")
-        verbose_name_plural = _("Firmy")
+        verbose_name = _(u"Firma")
+        verbose_name_plural = _(u"Firmy")
         ordering = ('name',)
 
     name = models.CharField(
         unique=True,
-        verbose_name=_("Jméno"),
+        verbose_name=_(u"Jméno"),
         max_length=60, null=False)
     company_admin = models.OneToOneField(
         "UserProfile", 
         related_name = "administrated_company",
-        verbose_name = _("Firemní správce"),
+        verbose_name = _(u"Firemní správce"),
         null=True,
         blank=True)
     invoice_address = Address()
     ico = models.PositiveIntegerField(
         default=0,
-        verbose_name=_("IČO"),
+        verbose_name=_(u"IČO"),
         null=False)
 
     def __unicode__(self):
@@ -142,8 +142,8 @@ class Subsidiary(models.Model):
     """Pobočka"""
 
     class Meta:
-        verbose_name = _("Pobočka")
-        verbose_name_plural = _("Pobočky")
+        verbose_name = _(u"Pobočka")
+        verbose_name_plural = _(u"Pobočky")
 
     address = Address()
     company = models.ForeignKey(
@@ -153,7 +153,7 @@ class Subsidiary(models.Model):
           blank=False)
     city = models.ForeignKey(
           City, 
-          verbose_name=_("Soutěžní město"),
+          verbose_name=_(u"Soutěžní město"),
           null=False, blank=False)
 
     def __unicode__(self):
@@ -162,30 +162,30 @@ class Subsidiary(models.Model):
 def validate_length(value,min_length=25):
     str_len = len(str(value))
     if str_len<min_length:
-        raise ValidationError(_("The string should be longer than %(min)s, but is %(max)s characters long") % {'min': min_length, 'max': str_len})
+        raise ValidationError(_(u"The string should be longer than %(min)s, but is %(max)s characters long") % {'min': min_length, 'max': str_len})
 
 class Team(models.Model):
     """Profil týmu"""
 
     class Meta:
-        verbose_name = _("Tým")
-        verbose_name_plural = _("Týmy")
+        verbose_name = _(u"Tým")
+        verbose_name_plural = _(u"Týmy")
         ordering = ('name',)
 
     name = models.CharField(
-        verbose_name=_("Název týmu"),
+        verbose_name=_(u"Název týmu"),
         max_length=50, null=False,
         unique=True)
     subsidiary = models.ForeignKey(
         Subsidiary,
-        verbose_name=_("Pobočka"),
+        verbose_name=_(u"Pobočka"),
         related_name='teams',
         null=False,
         blank=False)
     coordinator = models.OneToOneField(
         'UserProfile',
         related_name = "coordinated_team",
-        verbose_name = _("Koordinátor/ka týmu"),
+        verbose_name = _(u"Koordinátor/ka týmu"),
         null=True,
         blank=True,
         #TODO:
@@ -194,8 +194,8 @@ class Team(models.Model):
         unique=True,
         )
     invitation_token = models.CharField(
-        verbose_name=_("Token pro pozvánky"),
-        default=''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30)),
+        verbose_name=_(u"Token pro pozvánky"),
+        default="",
         max_length=100,
         null=False,
         blank=False,
@@ -210,10 +210,14 @@ class Team(models.Model):
 
     def save(self, force_insert=False, force_update=False):
         if self.coordinator_id is not None and self.coordinator is not None and self.coordinator.team.id != self.id:
-            raise Exception(_("Nový koordinátor %(coordinator)s není členem týmu %(team)s") % {'coordinator': self.coordinator, 'team': self})
+            raise Exception(_(u"Nový koordinátor %(coordinator)s není členem týmu %(team)s") % {'coordinator': self.coordinator, 'team': self})
 
-        while Team.objects.filter(invitation_token = self.invitation_token).exists():
-            self.invitation_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30))
+        if self.invitation_token == "":
+            while True:
+                invitation_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30))
+                if not Team.objects.filter(invitation_token = invitation_token).exists():
+                    self.invitation_token = invitation_token
+                    break
 
         super(Team, self).save(force_insert, force_update)
 
@@ -221,33 +225,33 @@ class UserProfile(models.Model):
     """Uživatelský profil"""
 
     class Meta:
-        verbose_name = u"Uživatel"
-        verbose_name_plural = u"Uživatelé"
+        verbose_name = _(u"Uživatel")
+        verbose_name_plural = _(u"Uživatelé")
 
     TSHIRTSIZE = [
-              ('wXXS', u"dámské XXS"),
-              ('wXS', u"dámské XS"),
-              ('wS', u"dámské S"),
-              ('wM', u"dámské M"),
-              ('wL', u"dámské L"),
-              ('wXL', u"dámské XL"),
-              ('wXXL', u"dámské XXL"),
+              ('wXXS', _(u"dámské XXS")),
+              ('wXS', _(u"dámské XS")),
+              ('wS', _(u"dámské S")),
+              ('wM', _(u"dámské M")),
+              ('wL', _(u"dámské L")),
+              ('wXL', _(u"dámské XL")),
+              ('wXXL', _(u"dámské XXL")),
 
-              ('mS', u"pánské S"),
-              ('mM', u"pánské M"),
-              ('mL', u"pánské L"),
-              ('mXL', u"pánské XL"),
-              ('mXXL', u"pánské XXL"),
+              ('mS', _(u"pánské S")),
+              ('mM', _(u"pánské M")),
+              ('mL', _(u"pánské L")),
+              ('mXL', _(u"pánské XL")),
+              ('mXXL', _(u"pánské XXL")),
               ]
 
-    TEAMAPPROVAL = (('approved', _("Odsouhlasený")),
-              ('undecided', _("Nerozhodnuto")),
-              ('denied', _("Zamítnutý")),
+    TEAMAPPROVAL = (('approved', _(u"Odsouhlasený")),
+              ('undecided', _(u"Nerozhodnuto")),
+              ('denied', _(u"Zamítnutý")),
               )
 
     LANGUAGE = [
-            ('cs', _("Čeština")),
-            ('en', _("Angličtna")),
+            ('cs', _(u"Čeština")),
+            ('en', _(u"Angličtna")),
               ]
 
     user = models.OneToOneField(
@@ -258,48 +262,48 @@ class UserProfile(models.Model):
         blank=False,
         )
     distance = models.PositiveIntegerField(
-        verbose_name=_("Vzdálenost"),
+        verbose_name=_(u"Vzdálenost"),
         null=False)
     # -- Contacts
     telephone = models.CharField(
-        verbose_name=_("Telefon"),
+        verbose_name=_(u"Telefon"),
         max_length=30, null=False)
     team = models.ForeignKey(
         Team,
         related_name='users',
-        verbose_name=_('Tým'),
+        verbose_name=_(u"Tým"),
         null=False, blank=False)
     company_admin_unapproved = models.BooleanField(
-        verbose_name=_("Správcovství organizace není schváleno"),
+        verbose_name=_(u"Správcovství organizace není schváleno"),
         default=True)
     approved_for_team = models.CharField(
-        verbose_name=_("Souhlas týmu"),
+        verbose_name=_(u"Souhlas týmu"),
         choices=TEAMAPPROVAL,
         max_length=16,
         null=False,
         default='undecided')
     language = models.CharField(
-        verbose_name=_("Jazyk komunikace"),
+        verbose_name=_(u"Jazyk komunikace"),
         choices=LANGUAGE,
         max_length=16,
         null=False,
         default='cs')
     t_shirt_size = models.CharField(
-        verbose_name=_("Velikost trička"),
+        verbose_name=_(u"Velikost trička"),
         choices=TSHIRTSIZE,
         max_length=16,
         null=False,
         default='L')
     motivation_company_admin = models.TextField(
-        verbose_name=_("Zaměstnanecká pozice"),
-        help_text=_("Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici"),
+        verbose_name=_(u"Zaměstnanecká pozice"),
+        help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici"),
         default="",
         max_length=5000,
         null=True,
         blank=True,
         )
     mailing_id = models.TextField(
-        verbose_name=_("ID uživatele v mailing listu"),
+        verbose_name=_(u"ID uživatele v mailing listu"),
         default="",
         null=True,
         blank=True
@@ -358,7 +362,7 @@ class UserProfileUnpaidManager(models.Manager):
                     created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
                 )]
         return super(UserProfileUnpaidManager,self).get_query_set().filter(
-            active=True).exclude(id__in=paying_or_prospective_user_ids)
+            user__is_active=True).exclude(id__in=paying_or_prospective_user_ids)
 
     
 
@@ -366,8 +370,8 @@ class UserProfileUnpaid(UserProfile):
     objects = UserProfileUnpaidManager()
     class Meta:
         proxy = True
-        verbose_name = _("Soutěžící, co dosud nezaplatil startovné")
-        verbose_name_plural = _("Soutěžící, co dosud nezaplatili startovné")
+        verbose_name = _(u"Soutěžící, co dosud nezaplatil startovné")
+        verbose_name_plural = _(u"Soutěžící, co dosud nezaplatili startovné")
 
 class Payment(models.Model):
     """Platba"""
@@ -417,8 +421,8 @@ class Payment(models.Model):
         )
 
     class Meta:
-        verbose_name = _("Platba")
-        verbose_name_plural = _("Platby")
+        verbose_name = _(u"Platba")
+        verbose_name_plural = _(u"Platby")
 
     user = models.ForeignKey(UserProfile, 
         null=True, 
@@ -440,37 +444,37 @@ class Payment(models.Model):
         verbose_name="Transaction ID",
         max_length=50, null=True, blank=True)
     amount = models.PositiveIntegerField(
-        verbose_name=_("Částka"),
+        verbose_name=_(u"Částka"),
         null=False)
     description = models.CharField(
-        verbose_name=_("Popis"),
+        verbose_name=_(u"Popis"),
         max_length=500,
         null=True,
         blank=True,
         default="")
     created = models.DateTimeField(
-        verbose_name=_("Zadání platby"),
+        verbose_name=_(u"Zadání platby"),
         default=datetime.datetime.now,
         null=False)
     realized = models.DateTimeField(
-        verbose_name=_("Realizace"),
+        verbose_name=_(u"Realizace"),
         null=True, blank=True)
     pay_type = models.CharField(
-        verbose_name=_("Typ platby"),
+        verbose_name=_(u"Typ platby"),
         choices=PAY_TYPES,
         max_length=50,
         null=True, blank=True)
     status = models.PositiveIntegerField(
-        verbose_name=_("Status"),
+        verbose_name=_(u"Status"),
         choices=STATUS,
         default=Status.NEW,
         max_length=50,
         null=True, blank=True)
     error = models.PositiveIntegerField(
-        verbose_name=_("Chyba"),
+        verbose_name=_(u"Chyba"),
         null=True, blank=True)
     company_wants_to_pay = models.BooleanField(
-        verbose_name=_("Firma chce zaplatit"),
+        verbose_name=_(u"Firma chce zaplatit"),
         default=False)
 
     def save(self, *args, **kwargs):
@@ -494,11 +498,11 @@ class Voucher(models.Model):
     """Slevove kupony"""
 
     class Meta:
-        verbose_name = _("Kupon")
-        verbose_name_plural = _("Kupony")
+        verbose_name = _(u"Kupon")
+        verbose_name_plural = _(u"Kupony")
 
     code = models.CharField(
-        verbose_name=_("Kód"),
+        verbose_name=_(u"Kód"),
         max_length=20, null=False)
     user = models.ForeignKey(UserProfile, null=True, blank=True)
 
@@ -506,8 +510,8 @@ class Trip(models.Model):
     """Cesty"""
 
     class Meta:
-        verbose_name = _("Cesta")
-        verbose_name_plural = _("Cesty")
+        verbose_name = _(u"Cesta")
+        verbose_name_plural = _(u"Cesty")
 
     user = models.ForeignKey(
         UserProfile, 
@@ -515,43 +519,43 @@ class Trip(models.Model):
         null=True,
         blank=True)
     date = models.DateField(
-        verbose_name=_("Datum cesty"),
+        verbose_name=_(u"Datum cesty"),
         default=datetime.datetime.now,
         null=False)
     trip_to = models.BooleanField(
-        verbose_name=_("Cesta do práce"),
+        verbose_name=_(u"Cesta do práce"),
         null=False)
     trip_from = models.BooleanField(
-        verbose_name=_("Cesta z práce"),
+        verbose_name=_(u"Cesta z práce"),
         null=False)
     distance_to = models.IntegerField(
-        verbose_name=_("Ujetá vzdálenost do práce"),
+        verbose_name=_(u"Ujetá vzdálenost do práce"),
         null=True, blank=True)
     distance_from = models.IntegerField(
-        verbose_name=_("Ujetá vzdálenost z práce"),
+        verbose_name=_(u"Ujetá vzdálenost z práce"),
         null=True, blank=True)
 
 class Competition(models.Model):
     """Závod"""
 
     CTYPES = (
-        ('length', _("Ujetá vzdálenost")),
-        ('frequency', _("Pravidelnost jízd na kole")),
-        ('questionnaire', _("Dotazník")),
+        ('length', _(u"Ujetá vzdálenost")),
+        ('frequency', _(u"Pravidelnost jízd na kole")),
+        ('questionnaire', _(u"Dotazník")),
         )
 
     CCOMPETITORTYPES = (
-        ('single_user', _("Jednotliví soutěžící")),
-        ('team', _("Týmy")),
-        ('company', _("Soutěž firem")),
+        ('single_user', _(u"Jednotliví soutěžící")),
+        ('team', _(u"Týmy")),
+        ('company', _(u"Soutěž firem")),
         )
 
     class Meta:
-        verbose_name = _("Závod")
-        verbose_name_plural = _("Závody")
+        verbose_name = _(u"Závod")
+        verbose_name_plural = _(u"Závody")
     name = models.CharField(
         unique=True,
-        verbose_name=_("Jméno"),
+        verbose_name=_(u"Jméno"),
         max_length=40, null=False)
     slug = models.SlugField(
         unique=True,
@@ -560,12 +564,12 @@ class Competition(models.Model):
         blank=False
         )
     type = models.CharField(
-        verbose_name=_("Typ"),
+        verbose_name=_(u"Typ"),
         choices=CTYPES,
         max_length=16,
         null=False)
     competitor_type = models.CharField(
-        verbose_name=_("Typ závodníků"),
+        verbose_name=_(u"Typ závodníků"),
         choices=CCOMPETITORTYPES,
         max_length=16,
         null=False)
@@ -586,16 +590,16 @@ class Competition(models.Model):
         blank=True)
     city = models.ForeignKey(
         City,
-        verbose_name = _("Soutěž pouze pro město"),
+        verbose_name = _(u"Soutěž pouze pro město"),
         null=True, 
         blank=True)
     company = models.ForeignKey(
         Company,
-        verbose_name = _("Soutěž pouze pro firmu"),
+        verbose_name = _(u"Soutěž pouze pro firmu"),
         null=True, 
         blank=True)
     without_admission = models.BooleanField(
-        verbose_name = _("Soutěž bez přihlášek (pro všechny)"),
+        verbose_name = _(u"Soutěž bez přihlášek (pro všechny)"),
         default=False,
         null=False)
 
@@ -611,19 +615,19 @@ class Competition(models.Model):
 class ChoiceType(models.Model):
     """Typ volby"""
     class Meta:
-        verbose_name = _("Typ volby")
-        verbose_name_plural = _("Typ volby")
+        verbose_name = _(u"Typ volby")
+        verbose_name_plural = _(u"Typ volby")
         unique_together = (("competition", "name"),)
 
     competition = models.ForeignKey(Competition,
         null=False,
         blank=False)
     name = models.CharField(
-        verbose_name=_("Jméno"),
+        verbose_name=_(u"Jméno"),
         unique = True,
         max_length=40, null=True)
     universal = models.BooleanField(
-        verbose_name=_("Typ volby je použitelný pro víc otázek"),
+        verbose_name=_(u"Typ volby je použitelný pro víc otázek"),
         default=False)
 
     def __unicode__(self):
@@ -632,41 +636,41 @@ class ChoiceType(models.Model):
 class Question(models.Model):
 
     class Meta:
-        verbose_name = _("Anketní otázka")
-        verbose_name_plural = _("Anketní otázky")
+        verbose_name = _(u"Anketní otázka")
+        verbose_name_plural = _(u"Anketní otázky")
 
     QTYPES = (
-        ('text', _("Text")),
-        ('choice', _("Výběr odpovědi")),
-        ('multiple-choice', _("Výběr z více odpovědí")),
+        ('text', _(u"Text")),
+        ('choice', _(u"Výběr odpovědi")),
+        ('multiple-choice', _(u"Výběr z více odpovědí")),
         )
 
     text = models.TextField(
-        verbose_name=_("Otázka"),
+        verbose_name=_(u"Otázka"),
         max_length=500,
         null=False)
     date = models.DateField(
-        verbose_name=_("Den"),
+        verbose_name=_(u"Den"),
         null=True, blank=True)
     type = models.CharField(
-        verbose_name=_("Typ"),
+        verbose_name=_(u"Typ"),
         choices=QTYPES,
         max_length=16,
         null=False)
     with_comment = models.BooleanField(
-        verbose_name = _("Povolit komentář"),
+        verbose_name = _(u"Povolit komentář"),
         default=True,
         null=False)
     with_attachment = models.BooleanField(
-        verbose_name = _("Povolit přílohu"),
+        verbose_name = _(u"Povolit přílohu"),
         default=True,
         null=False)
     order = models.IntegerField(
-        verbose_name=_("Pořadí"),
+        verbose_name=_(u"Pořadí"),
         null=True, blank=True)
     competition = models.ForeignKey(
         Competition,
-        verbose_name = _("Soutěž"),
+        verbose_name = _(u"Soutěž"),
         null=False, 
         blank=False)
     choice_type = models.ForeignKey(ChoiceType,
@@ -679,20 +683,20 @@ class Question(models.Model):
 class Choice(models.Model):
     
     class Meta:
-        verbose_name = _("Nabídka k anketním otázce")
-        verbose_name_plural = _("Nabídky k anketním otázkám")
+        verbose_name = _(u"Nabídka k anketním otázce")
+        verbose_name_plural = _(u"Nabídky k anketním otázkám")
 
     choice_type = models.ForeignKey(ChoiceType,
-        verbose_name=_("Typ volby"),
+        verbose_name=_(u"Typ volby"),
         related_name="choices",
         null=False,
         blank=False)
     text = models.CharField(
-        verbose_name=_("Nabídka"),
+        verbose_name=_(u"Nabídka"),
         max_length=300,
         null=False)
     points = models.IntegerField(
-        verbose_name=_("Body"),
+        verbose_name=_(u"Body"),
         null=True, 
         blank=True, 
         default=None,
@@ -706,7 +710,7 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, null=False)
     choices = models.ManyToManyField(Choice)
     comment = models.TextField(
-        verbose_name=_("Komentář"),
+        verbose_name=_(u"Komentář"),
         max_length=600,
         null=True, blank=True)
     points_given = models.IntegerField(

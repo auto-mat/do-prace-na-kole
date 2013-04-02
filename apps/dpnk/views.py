@@ -54,7 +54,7 @@ def must_be_coordinator(fn):
         request = args[0]
         team = request.user.userprofile.team
         if team.coordinator != request.user.userprofile:
-            return HttpResponse(_("Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s ") % {'team': team.name, 'coordinator': team.coordinator, 'you': request.user.userprofile}, status=401)
+            return HttpResponse(_(u"Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s ") % {'team': team.name, 'coordinator': team.coordinator, 'you': request.user.userprofile}, status=401)
         else:
             return fn(*args, **kwargs)
     return wrapper
@@ -68,7 +68,7 @@ def must_be_approved_for_team(fn):
         if userprofile.approved_for_team == 'approved' or userprofile.team.coordinator == userprofile:
             return fn(*args, **kwargs)
         else:
-            return HttpResponse(_("Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.") % (userprofile.team.name,), status=401)
+            return HttpResponse(_(u"Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.") % (userprofile.team.name,), status=401)
     return wrapper
 
 def redirect(url):
@@ -322,9 +322,9 @@ def payment_result(request, success, trans_id, session_id, pay_type, error = Non
         p.save()
 
     if success == True:
-        msg = _("Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
+        msg = _(u"Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
     else:
-        msg = _("Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
+        msg = _(u"Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
 
     return render_to_response('registration/payment_result.html',
                               {
@@ -894,12 +894,12 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
             ('state', None, userprofile.approved_for_team),
             ('id', None, userprofile.id),
             ('payment_status', None, userprofile.payment_status()),
-            ('name', _("Jméno"), unicode(userprofile)),
-            ('username', _("Uživatel"), userprofile.user),
-            ('email', _("Email"), userprofile.user.email),
-            ('payment', _("Platba"), {'waiting': _("Nezaplaceno"), 'done': _("Zaplaceno"), 'no_admission': _("Není potřeba"), None: _("Neznámý")}[userprofile.payment_status()]),
-            ('telephone', _("Telefon"), userprofile.telephone),
-            ('state_name', _("Stav"), unicode(userprofile.get_approved_for_team_display())),
+            ('name', _(u"Jméno"), unicode(userprofile)),
+            ('username', _(u"Uživatel"), userprofile.user),
+            ('email', _(u"Email"), userprofile.user.email),
+            ('payment', _(u"Platba"), {'waiting': _(u"Nezaplaceno"), 'done': _(u"Zaplaceno"), 'no_admission': _(u"Není potřeba"), None: _(u"Neznámý")}[userprofile.payment_status()]),
+            ('telephone', _(u"Telefon"), userprofile.telephone),
+            ('state_name', _(u"Stav"), unicode(userprofile.get_approved_for_team_display())),
             ])
 
     return render_to_response(template_name,
