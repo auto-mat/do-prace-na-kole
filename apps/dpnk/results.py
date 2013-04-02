@@ -19,7 +19,7 @@
 
 import models
 from collections import OrderedDict
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Q
 
 def get_competitors(self):
     if self.without_admission:
@@ -166,3 +166,15 @@ def get_results(self):
             )
         print result.query.__str__()
         return result
+
+def get_competitions(userprofile):
+    return models.Competition.objects.filter(
+            (
+                Q(without_admission = True)
+                & (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
+                & (Q(city = None)    | Q(city = userprofile.team.subsidiary.city))
+            ) | (
+                Q(without_admission = False)
+                & Q(user_competitors = userprofile)
+            )
+        ).distinct()

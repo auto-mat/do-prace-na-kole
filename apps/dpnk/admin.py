@@ -85,15 +85,7 @@ class SubsidiaryAdmin(admin.ModelAdmin):
                                   for u in Team.objects.filter(subsidiary=obj)]))
 
 class CompetitionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'type', 'competitor_type')
-    readonly_fields = ['competitor_links']
-    def competitor_links(self, obj):
-        link_type = { 'single_user': 'userprofile',
-                'team' : 'team',
-                'company': 'company' }[obj.competitor_type]
-        return mark_safe("<br/>".join(['%d (%s, %s): <a href="/admin/dpnk/%s/%d">%s</a>' % (i+1, getattr(u, 'result', '_'), getattr(u, 'user_count', '_'), link_type,u.id, str(u))
-                                  for i, u in enumerate(obj.get_results())]))
-    competitor_links.short_description = 'Výsledky'
+    list_display = ('name', 'slug', 'type', 'competitor_type')
 
 class UserProfileAdmin(RelatedFieldAdmin):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )

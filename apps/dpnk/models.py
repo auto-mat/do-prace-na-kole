@@ -346,6 +346,9 @@ class UserProfile(models.Model):
             return None
         return payment.pay_type
 
+    def get_competitions(self):
+        return results.get_competitions(self)
+
 class UserProfileUnpaidManager(models.Manager):
     def get_query_set(self):
         paying_or_prospective_user_ids = [p.user_id for p in Payment.objects.filter(

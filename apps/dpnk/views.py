@@ -32,7 +32,7 @@ from django.utils.translation import gettext as _
 import registration.signals, registration.backends
 # Model imports
 from django.contrib.auth.models import User
-from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company
+from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition
 from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm
 from django.conf import settings
 from  django.http import HttpResponse
@@ -508,6 +508,31 @@ def profile(request):
             #'company_survey_by': company_survey_by,
             'competition_state': settings.COMPETITION_STATE,
             'approved_for_team': request.user.userprofile.approved_for_team,
+            }, context_instance=RequestContext(request))
+
+def results_user(request, template, username=None, limit=None):
+    userprofile = User.objects.get(username=username).get_profile()
+    competitions = userprofile.get_competitions()
+    print userprofile
+    print competitions
+
+    return render_to_response(template,
+                              {
+            'competitions': competitions,
+            'user': userprofile.user,
+            'limit': ":%s" % limit,
+            }, context_instance=RequestContext(request))
+
+def competition_results(request, template, competition_slug='testing_zavod', limit=None):
+    if limit == '':
+        limit = None
+
+    competition = Competition.objects.get(slug=competition_slug)
+
+    return render_to_response(template,
+                              {
+            'competition': competition,
+            'results': competition.get_results()[:limit],
             }, context_instance=RequestContext(request))
 
 def results(request, template):

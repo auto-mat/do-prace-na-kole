@@ -1,0 +1,38 @@
+{% load url from future %}
+
+{% for competition in competitions %}
+<h4>Výsledky v závodě {{ competition }}:</h4>
+
+<table class="table-striped table-bordered">
+<tr>
+<th scope="column">Pořadí</th>
+<th scope="column">
+   {% if competition.type == 'length' %}
+      Kilometrů
+   {% elif competition.type == 'frequency' %}
+      Jízd
+   {% elif competition.type == 'questionnaire' %}
+      Bodů
+   {% endif %}
+</th>
+<th scope="column">Počet závodníků</th>
+<th scope="column">
+   {% if competition.competitor_type == 'single_user' %}
+      Soutěžící
+   {% elif competition.competitor_type == 'team' %}
+      Tým
+   {% elif competition.competitor_type == 'company' %}
+      Firma
+   {% endif %}
+</th>
+</tr>
+{% for result in competition.get_results|slice:limit %}
+<tr>
+<td>{{ forloop.counter }}.</td>
+<td>{{ result.result }}</td>
+<td>{{ result.user_count }}</td>
+<td>{{ result }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endfor %}
