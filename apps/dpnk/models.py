@@ -360,7 +360,7 @@ class UserProfileUnpaidManager(models.Manager):
                     created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
                 )]
         return super(UserProfileUnpaidManager,self).get_query_set().filter(
-            active=True).exclude(id__in=paying_or_prospective_user_ids)
+            user__is_active=True).exclude(id__in=paying_or_prospective_user_ids)
 
     
 
