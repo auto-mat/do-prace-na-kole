@@ -85,7 +85,7 @@ class SubsidiaryAdmin(admin.ModelAdmin):
                                   for u in Team.objects.filter(subsidiary=obj)]))
 
 class CompetitionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'type', 'competitor_type')
+    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission')
 
 class UserProfileAdmin(RelatedFieldAdmin):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
