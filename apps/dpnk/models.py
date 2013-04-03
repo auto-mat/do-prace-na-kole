@@ -600,7 +600,7 @@ class Competition(models.Model):
         blank=True)
     without_admission = models.BooleanField(
         verbose_name = _(u"Soutěž bez přihlášek (pro všechny)"),
-        default=False,
+        default=True,
         null=False)
 
     def get_competitors(self):
