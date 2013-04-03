@@ -213,7 +213,7 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
             try:
                 team = Team.objects.get(invitation_token=token)
             except Exception, e:
-                mail_admins("ERROR Do prace na kole: Nepodařilo se najít tým pro token", str(e))
+                mail_admins(u"ERROR Do prace na kole: Nepodařilo se najít tým pro token", u"Exception: %s\nToken: %s\nEmail: %s)" % (str(e), token, initial_email) )
                 return HttpResponse(_(u'Automatická registrace selhala. K danému tokenu neexistuje v databázi žádný tým. Zkuste prosím váš tým najít pomocí <a href="%s">manuální registrace</a>.' % wp_reverse("registrace")), status=401)
 
             initial_company = team.subsidiary.company
