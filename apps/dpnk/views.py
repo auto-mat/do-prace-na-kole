@@ -54,7 +54,7 @@ def must_be_coordinator(fn):
         request = args[0]
         team = request.user.userprofile.team
         if team.coordinator != request.user.userprofile:
-            return HttpResponse(_(u"Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s ") % {'team': team.name, 'coordinator': team.coordinator, 'you': request.user.userprofile}, status=401)
+            return HttpResponse(_(u"<div class='text-error'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name, 'coordinator': team.coordinator, 'you': request.user.userprofile}, status=401)
         else:
             return fn(*args, **kwargs)
     return wrapper
@@ -68,7 +68,7 @@ def must_be_approved_for_team(fn):
         if userprofile.approved_for_team == 'approved' or userprofile.team.coordinator == userprofile:
             return fn(*args, **kwargs)
         else:
-            return HttpResponse(_(u"Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.") % (userprofile.team.name,), status=401)
+            return HttpResponse(_(u"<div class='text-error'>Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.</div>") % (userprofile.team.name,), status=401)
     return wrapper
 
 def redirect(url):
@@ -214,7 +214,7 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                 team = Team.objects.get(invitation_token=token)
             except Exception, e:
                 mail_admins(u"ERROR Do prace na kole: Nepodařilo se najít tým pro token", u"Exception: %s\nToken: %s\nEmail: %s" % (str(e), token, initial_email) )
-                return HttpResponse(_(u'Automatická registrace selhala. K danému tokenu neexistuje v databázi žádný tým. Zkuste prosím váš tým najít pomocí <a href="%s">manuální registrace</a>.' % wp_reverse("registrace")), status=401)
+                return HttpResponse(_(u'<div class="text-error">Automatická registrace selhala. K danému tokenu neexistuje v databázi žádný tým. Zkuste prosím váš tým najít pomocí <a href="%s">manuální registrace</a>.</div>' % wp_reverse("registrace")), status=401)
 
             initial_company = team.subsidiary.company
             initial_subsidiary = team.subsidiary
