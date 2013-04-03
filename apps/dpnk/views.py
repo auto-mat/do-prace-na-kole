@@ -862,6 +862,7 @@ def team_approval_request(request):
     return render_to_response('registration/request_team_approval.html',
                               context_instance=RequestContext(request))
 
+@must_be_coordinator
 @login_required
 def invite(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,

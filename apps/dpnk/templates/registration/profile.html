@@ -79,39 +79,6 @@
 
 {% ifequal competition_state 'started' %}
 
-<h3>{% trans "Moje jízdy" %}</h3>
-
-<!-- <p>Tip: Před vyplněním jízd nejprve zodpovězte anketní otázku</p> -->
-
-<center>
-<p><strong style="color:#FF6E00; font-size: 10pt;">Soutěžní skončila, již není možné doplňovat další údaje.</strong></p>
-<p>Výherci jednotlivých soutěžních kategorií a další výstupy kampaně budou zveřejněny 7.6. Jste zváni na slavnostní zakončení a vyhlášení výsledků.</p>
-<p>Sledujte aktuality!</p>
-</center>
-
-<table id="rides">
-<tr>
-<th scope="column">Den</th>
-<th scope="column">Anketa</th>
-<th scope="column">Do práce</th>
-<th scope="column">Z práce</th>
-<th scope="column">Pravidelnost</th>
-<th scope="column">Vzdálenost celkem</th>
-</tr>
-{% for day in calendar %}
-<tr>
-<form name="calendar-{{ forloop.counter }}" action="/registrace/profil/" method="POST">
-<th scope="row" class="date">{{ day.name }}</th>
-<td>{% if day.question_active %}<a href="{% wp_url 'otazka' %}?questionaire=player&day={{ day.iso }}" onclick="window.parent.scroll(0,200);">Otázka</a>{% else %} ? {% endif %}</td>
-<td><input type="checkbox" name="trip_to"  disabled="disabled"  {% if day.default_trip_to %}checked="checked"{% endif %}/></td>
-<td><input type="checkbox" name="trip_from"  disabled="disabled"  {% if day.default_trip_from %}checked="checked"{% endif %}/></td>
-<td {% if day.percentage > 66 %} class="green" {% else %} class="red" {% endif %}>{% if day.trips_active %}{{ day.percentage|floatformat:1 }}%{% endif %}</td>
-<td>{% if day.trips_active %}{{ day.distance }} km{% endif %}</td>
-</form>
-</tr>
-{% endfor %}
-</table>
-
 <h3>Váš přehled</h3>
 
 <ul>
