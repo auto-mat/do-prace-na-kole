@@ -27,6 +27,7 @@ urls = {
     "upravit_profil":               "/profil/upravit-profil",
     'team_admin':                   "/profil/team-admin",
     'vysledky':                     "/profil/vysledky",
+    'vysledky_souteze':             "/profil/vysledky_souteze",
 
     # Zastarale nebo odlozeno na pozdeji
     'kratke_vysledky':              "kratke_vysledky.html",

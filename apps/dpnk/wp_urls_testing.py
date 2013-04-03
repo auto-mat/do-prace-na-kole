@@ -33,6 +33,7 @@ urls = {
     'cyklozamestnavatel_firmy':     "cyklozamestnavatel_firmy.html",
     'cyklozamestnavatel_odpovedi':  "cyklozamestnavatel_odpovedi.html",
     'odpovedi':                     "odpovedi.html",
+    'vysledky_souteze':             "vysledky_souteze.html",
 }
 
 def wp_reverse(name):

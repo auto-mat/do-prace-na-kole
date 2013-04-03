@@ -1,7 +1,8 @@
 {% load url from future %}
+{% load dpnk_tags %}
 
 {% for competition in competitions %}
-<h4>Výsledky v závodě {{ competition }}:</h4>
+<h4>Výsledky v závodě <a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}">{{ competition }}</a>:</h4>
 
 <table class="table-striped table-bordered">
 <tr>
