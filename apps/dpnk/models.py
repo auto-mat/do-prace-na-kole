@@ -53,7 +53,7 @@ class Address(CompositeField):
         )
     recipient = models.CharField(
         verbose_name=_(u"Název pobočky (závodu, kanceláře, fakulty)"),
-        help_text=_(u"Např.: Přírodovědecká fakulta"),
+        help_text=_(u"Např.: Přírodovědecká fakulta nebo Auto*mat"),
         default="",
         max_length=50,
         null=False,
