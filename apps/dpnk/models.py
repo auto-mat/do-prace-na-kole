@@ -53,6 +53,7 @@ class Address(CompositeField):
         )
     recipient = models.CharField(
         verbose_name=_(u"Název pobočky (závodu, kanceláře, fakulty)"),
+        help_text=_(u"Např.: Přírodovědecká fakulta"),
         default="",
         max_length=50,
         null=False,
@@ -62,17 +63,19 @@ class Address(CompositeField):
         verbose_name=_(u"Městská část"),
         default="",
         max_length=50,
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
         )
     psc = models.IntegerField(
         verbose_name=_(u"PSČ"),
+        help_text=_(u"Např.: 13000"),
         default=0,
         null=False,
         blank=False,
         )
     city = models.CharField(
-        verbose_name=_(u"Adresní město"),
+        verbose_name=_(u"Město"),
+        help_text=_(u"Např.: Brno nebo Praha-Nebušice"),
         default="",
         max_length=50,
         null=False,

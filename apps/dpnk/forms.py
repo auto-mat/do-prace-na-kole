@@ -27,7 +27,7 @@ class RegisterSubsidiaryForm(forms.ModelForm):
 
     class Meta:
         model = Subsidiary
-        fields = ('address_street', 'address_street_number', 'address_recipient', 'address_district', 'address_psc', 'address_city', 'city')
+        fields = ('city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
 
 class RegisterTeamForm(forms.ModelForm):
