@@ -25,7 +25,8 @@ import random
 import string
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from composite_field import CompositeField
@@ -268,6 +269,7 @@ class UserProfile(models.Model):
         max_length=30, null=False)
     team = models.ForeignKey(
         Team,
+        related_name='users',
         verbose_name=_(u"Tým"),
         null=False, blank=False)
 
@@ -350,6 +352,18 @@ class UserProfile(models.Model):
         except Payment.DoesNotExist:
             return None
         return payment.pay_type
+
+@receiver(pre_save, sender=UserProfile)
+def set_team_coordinator_pre(sender, instance, **kwargs):
+    if hasattr(instance, "coordinated_team") and instance.coordinated_team != instance.team:
+        instance.coordinated_team.coordinator = None
+        instance.coordinated_team.save()
+
+@receiver(post_save, sender=UserProfile)
+def set_team_coordinator_post(sender, instance, created, **kwargs):
+    if instance.team.coordinator == None:
+        instance.team.coordinator = instance
+        instance.team.save()
 
 class UserProfileUnpaidManager(models.Manager):
     def get_query_set(self):

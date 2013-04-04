@@ -198,6 +198,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
     email = forms.EmailField(
         required=False)
+    can_change_team = True
 
     def save(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).save(*args, **kwargs)
@@ -225,6 +226,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
         if userprofile.team.coordinator == userprofile and UserProfile.objects.filter(team=userprofile.team, user__is_active=True).count()>1:
             del self.fields['team']
+            self.can_change_team = False
         return ret_val
 
     class Meta:
