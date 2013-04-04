@@ -69,22 +69,22 @@ def get_results(self):
             result = competitors.extra(
                 select=OrderedDict([
                     ('userid', 'dpnk_userprofile.id'),
-                    ('result', """SELECT sum(`dpnk_trip`.`%s_to`+`dpnk_trip`.`%s_from`)
+                    ('result', """SELECT sum(IFNULL(`dpnk_trip`.`%(field)s_to` + `dpnk_trip`.`%(field)s_from` ,IFNULL(`dpnk_trip`.`%(field)s_to`, `dpnk_trip`.`%(field)s_from`))) 
                                FROM dpnk_trip
                                LEFT OUTER JOIN dpnk_userprofile ON (dpnk_trip.user_id = dpnk_userprofile.id)
                                LEFT OUTER JOIN auth_user ON (dpnk_userprofile.user_id = auth_user.id)
-                               WHERE auth_user.is_active=True AND dpnk_trip.user_id=userid""" % (field, field))
+                               WHERE auth_user.is_active=True AND dpnk_trip.user_id=userid""" % {'field': field})
                     ]),
                 order_by=['-result']
                 )
             print result.query.__str__()
             return result
         elif self.competitor_type == 'team':
-            sum_select =   """SELECT sum(`dpnk_trip`.`%s_to`+`dpnk_trip`.`%s_from`) 
+            sum_select =   """SELECT sum(IFNULL(`dpnk_trip`.`%(field)s_to` + `dpnk_trip`.`%(field)s_from` ,IFNULL(`dpnk_trip`.`%(field)s_to`, `dpnk_trip`.`%(field)s_from`)))
                             FROM dpnk_trip 
                             LEFT OUTER JOIN dpnk_userprofile ON (dpnk_trip.user_id = dpnk_userprofile.id) 
                             LEFT OUTER JOIN auth_user ON (dpnk_userprofile.user_id = auth_user.id) 
-                            WHERE auth_user.is_active=True AND dpnk_userprofile.team_id=teamid""" % (field, field)
+                            WHERE auth_user.is_active=True AND dpnk_userprofile.team_id=teamid""" % {'field': field}
             count_select =  """SELECT count(dpnk_userprofile.id) 
                             FROM dpnk_userprofile 
                             LEFT OUTER JOIN auth_user ON (dpnk_userprofile.user_id = auth_user.id) 
@@ -101,13 +101,13 @@ def get_results(self):
             print result.query.__str__()
             return result
         elif self.competitor_type == 'company':
-            sum_select =   """SELECT sum(`dpnk_trip`.`%s_to`+`dpnk_trip`.`%s_from`) 
+            sum_select =   """SELECT sum(IFNULL(`dpnk_trip`.`%(field)s_to` + `dpnk_trip`.`%(field)s_from` ,IFNULL(`dpnk_trip`.`%(field)s_to`, `dpnk_trip`.`%(field)s_from`)))
                             FROM dpnk_trip 
                             LEFT OUTER JOIN dpnk_userprofile ON (dpnk_trip.user_id = dpnk_userprofile.id) 
                             LEFT OUTER JOIN dpnk_team ON (dpnk_userprofile.team_id = dpnk_team.id) 
                             LEFT OUTER JOIN dpnk_subsidiary ON (dpnk_team.subsidiary_id = dpnk_subsidiary.id) 
                             LEFT OUTER JOIN auth_user ON (dpnk_userprofile.user_id = auth_user.id) 
-                            WHERE auth_user.is_active=True and dpnk_subsidiary.company_id=companyid""" % (field, field)
+                            WHERE auth_user.is_active=True and dpnk_subsidiary.company_id=companyid""" % {'field': field}
             count_select =  """SELECT count(dpnk_userprofile.id) 
                             FROM dpnk_userprofile 
                             LEFT OUTER JOIN dpnk_team ON (dpnk_userprofile.team_id = dpnk_team.id) 
