@@ -872,8 +872,12 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
 
     if 'button_action' in request.POST and request.POST['button_action']:
         b_action = request.POST['button_action'].split('-')
-        userprofile = UserProfile.objects.get(team = team, approved_for_team__in = ('undecided', 'denied'), user__is_active=True, id=b_action[1])
-        denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
+        userprofile = UserProfile.objects.get(id=b_action[1])
+        if userprofile.approved_for_team not in ('undecided', 'denied') or userprofile.team != team or not userprofile.user.is_active:
+            mail_admins(u"ERROR Do prace na kole: Ověřování uživatele se špatnými parametry", u"Uživatel: %s\nApproval: %s\nTým: %s\nActive: %s" % (userprofile, userprofile.approved_for_team, userprofile.team, userprofile.user.is_active) )
+            denial_message = 'cannot_approve'
+        else:
+            denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
 
     for userprofile in UserProfile.objects.filter(team = team, user__is_active=True):
         unapproved_users.append([
