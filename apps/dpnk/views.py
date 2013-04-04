@@ -577,8 +577,14 @@ def update_profile(request,
                 team = form_team.save(commit=False)
                 team.subsidiary = request.user.userprofile.team.subsidiary
 
+                coordinated_team_members = UserProfile.objects.exclude(id=userprofile.id).filter(team=userprofile.coordinated_team, user__is_active=True)
+                if len(coordinated_team_members)>0:
+                    userprofile.coordinated_team.coordinator = coordinated_team_members[0]
+                else:
+                    userprofile.coordinated_team.coordinator = None
+                userprofile.coordinated_team.save()
+
                 userprofile.team = team
-                userprofile.coordinated_team = team
                 userprofile.approved_for_team = 'approved'
                 team.coordinator = userprofile
 
