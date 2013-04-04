@@ -22,7 +22,9 @@
 # Django imports
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.models import User
+from django.db.models import F
 from django.utils.safestring import mark_safe
 from django.http import HttpResponseRedirect
 from snippets.related_field_admin import RelatedFieldAdmin
@@ -122,10 +124,32 @@ class TeamForm(ModelForm):
         super(TeamForm, self).__init__(*args, **kwargs)
         self.fields['coordinator'].queryset = UserProfile.objects.filter(team=self.instance)
 
+class CoordinatorFilter(SimpleListFilter):
+    title = u"stav týmu"
+    parameter_name = u'team_state'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('without_coordinator', u'bez koordinátora'),
+            ('inactive_coordinator', u'neaktivní koordinátor'),
+            ('empty', u'prázdný tým'),
+            ('foreign_coordinator', u'cizí koordinátor (chyba)'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'without_coordinator':
+            return queryset.filter(coordinator = None)
+        if self.value() == 'inactive_coordinator':
+            return queryset.filter(coordinator__user__is_active = False)
+        if self.value() == 'empty':
+            return queryset.filter(users = None)
+        if self.value() == 'foreign_coordinator':
+            return queryset.exclude(coordinator__team__id = F("id"))
+
 class TeamAdmin(RelatedFieldAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__user__first_name', 'coordinator__user__last_name']
-    list_filter = ['subsidiary__city']
+    list_filter = ['subsidiary__city', CoordinatorFilter]
 
     readonly_fields = ['members']
     def members(self, obj):
