@@ -392,69 +392,95 @@ def profile_access(request):
             }, context_instance=RequestContext(request))
 
 @login_required
-def profile(request):
-
+def rides(request, template='registration/rides.html'):
     days = util.days()
     weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá']
     today = datetime.date.today()
     #today = datetime.date(year=2012, month=5, day=4)
     profile = request.user.get_profile()
 
-    # if request.method == 'POST':
-    #     raise http.Http404 # No POST, competition already terminated
-    #     if 'day' in request.POST:
-    #         try:
-    #             trip = Trip.objects.get(user = request.user.get_profile(),
-    #                                     date = days[int(request.POST['day'])-1])
-    #         except Trip.DoesNotExist:
-    #             trip = Trip()
-    #             trip.date = days[int(request.POST['day'])-1]
-    #             trip.user = request.user.get_profile()
-    #         trip.trip_to = request.POST.get('trip_to', False)
-    #         trip.trip_from = request.POST.get('trip_from', False)
-    #         trip.save()
-    #     # Pre-calculate total number of trips into userprofile to save load
-    #     trip_counts = Trip.objects.filter(user=profile).values('user').annotate(Sum('trip_to'), Sum('trip_from'))
-    #     try:
-    #         profile.trips = trip_counts[0]['trip_to__sum'] + trip_counts[0]['trip_from__sum']
-    #     except IndexError:
-    #         profile.trips = 0
-    #     profile.save()
-    # try:
-    #     voucher_code = Voucher.objects.filter(user=profile)[0].code
-    # except IndexError, e:
-    #     voucher_code = ''
+    if request.method == 'POST':
+        if 'day' in request.POST and request.POST["day"]:
+            day = int(request.POST["day"])
+            date = days[day-1]
+            try:
+                trip = Trip.objects.get(user = request.user.get_profile(),
+                                        date = date)
+            except Trip.DoesNotExist:
+                trip = Trip()
+                trip.date = date
+                trip.user = request.user.get_profile()
+
+            trip.trip_to = request.POST.get('trip_to-' + str(day), False)
+            trip.trip_from = request.POST.get('trip_from-' + str(day), False)
+            if trip.trip_to:
+                try:
+                    trip.distance_to = int(request.POST.get('distance_to-' + str(day), None))
+                except:
+                    trip.distance_to = None
+            else:
+                trip.distance_to = None
+            if trip.trip_from:
+                try:
+                    trip.distance_from = int(request.POST.get('distance_from-' + str(day), None))
+                except:
+                    trip.distance_to = None
+            else:
+                trip.distance_from = None
+            trip.save()
+
+    trips = {}
+    for t in Trip.objects.filter(user=profile):
+        trips[t.date] = t
+    calendar = []
+
+    distance = 0
+    trip_count = 0
+    for i, d in enumerate(days):
+        cd = {}
+        cd['name'] = "%s %d.%d." % (weekdays[d.weekday()], d.day, d.month)
+        cd['iso'] = str(d)
+        cd['question_active'] = (d <= today)
+        cd['trips_active'] = (d <= today) 
+            #and (
+            #len(Answer.objects.filter(
+            #        question=Question.objects.get(date = d),
+            #        user=request.user.get_profile())) > 0)
+        if d in trips:
+            cd['default_trip_to'] = trips[d].trip_to
+            cd['default_trip_from'] = trips[d].trip_from
+            cd['default_distance_to'] = trips[d].distance_to
+            cd['default_distance_from'] = trips[d].distance_from
+            trip_count += int(trips[d].trip_to) + int(trips[d].trip_from)
+            if trips[d].distance_to:
+                distance += trips[d].distance_to
+            else:
+                distance += int(trips[d].trip_to) * profile.distance
+            if trips[d].distance_from:
+                distance += trips[d].distance_from
+            else:
+                distance += int(trips[d].trip_from) * profile.distance
+        else:
+            cd['default_trip_to'] = False
+            cd['default_trip_from'] = False
+            cd['default_distance_to'] = ""
+            cd['default_distance_from'] = ""
+        cd['percentage'] = float(trip_count)/(2*(i+1))*100
+        cd['percentage_str'] = "%.0f" % (cd['percentage'])
+        cd['distance'] = distance
+        calendar.append(cd)
+    return render_to_response(template,
+                              {
+            'calendar': calendar,
+            }, context_instance=RequestContext(request))
+
+@login_required
+def profile(request):
+    profile = request.user.get_profile()
 
     # Render profile
     payment_status = profile.payment_status()
     team_members = UserProfile.objects.filter(team=profile.team, user__is_active=True)
-
-    # trips = {}
-    # for t in Trip.objects.filter(user=profile):
-    #     trips[t.date] = (t.trip_to, t.trip_from)
-    # calendar = []
-
-    # counter = 0
-    # for i, d in enumerate(days):
-    #     cd = {}
-    #     cd['name'] = "%s %d.%d." % (weekdays[d.weekday()], d.day, d.month)
-    #     cd['iso'] = str(d)
-    #     cd['question_active'] = (d <= today)
-    #     cd['trips_active'] = (d <= today) and (
-    #         len(Answer.objects.filter(
-    #                 question=Question.objects.get(date = d),
-    #                 user=request.user.get_profile())) > 0)
-    #     if d in trips:
-    #         cd['default_trip_to'] = trips[d][0]
-    #         cd['default_trip_from'] = trips[d][1]
-    #         counter += int(trips[d][0]) + int(trips[d][1])
-    #     else:
-    #         cd['default_trip_to'] = False
-    #         cd['default_trip_from'] = False
-    #     cd['percentage'] = float(counter)/(2*(i+1))*100
-    #     cd['percentage_str'] = "%.0f" % (cd['percentage'])
-    #     cd['distance'] = counter * profile.distance
-    #     calendar.append(cd)
 
     # member_counts = []
     # for member in team_members:
@@ -496,10 +522,8 @@ def profile(request):
             'team': profile.team,
             'payment_status': payment_status,
             'payment_type': profile.payment_type(),
-            #'voucher': voucher_code,
             'team_members': UserProfile.objects.filter(team=profile.team, user__is_active=True).exclude(id=profile.team.coordinator.id).exclude(id=profile.id),
             'team_members_count': len(profile.team.members()),
-            #'calendar': calendar,
             #'member_counts': member_counts,
             #'team_percentage': team_percentage,
             #'team_distance': team_distance,
