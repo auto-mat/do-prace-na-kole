@@ -90,7 +90,7 @@ class Address(CompositeField):
         )
 
     def __unicode__(self):
-        return "%s, %s %s, %s, %s, %s" % (self.recipient, self.street, self.street_number, self.district, self.psc, self.city)
+        return "%s, %s %s, %s, %s" % (self.recipient, self.street, self.street_number, self.psc, self.city)
 
 class City(models.Model):
     """Město"""
@@ -168,7 +168,7 @@ class Subsidiary(models.Model):
           null=False, blank=False)
 
     def __unicode__(self):
-        return "%s, %s %s, %s, %s, %s" % (self.address.recipient, self.address.street, self.address.street_number, self.address.district, self.address.psc, self.address.city)
+        return "%s, %s %s, %s, %s" % (self.address.recipient, self.address.street, self.address.street_number, self.address.psc, self.address.city)
 
 def validate_length(value,min_length=25):
     str_len = len(str(value))
