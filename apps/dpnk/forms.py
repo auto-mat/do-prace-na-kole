@@ -95,7 +95,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         queryset=Team.objects.all(),
         required=True)
     distance = forms.IntegerField(
-        label=_(u"Průměrná ujetá vzdálenost z domova do práce (v km)"),
+        label=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
         required=True)
     t_shirt_size = forms.ChoiceField(
         label=_(u"Velikost trička"),
