@@ -40,12 +40,14 @@ from dpnk.email import payment_confirmation_mail
 class Address(CompositeField):
     street = models.CharField(
         verbose_name=_(u"Ulice"),
+        help_text=_(u"Např. Šeříková nebo Nám. W. Churchilla"),
         default="",
         max_length=50,
         null=False,
         )
     street_number = models.CharField(
         verbose_name=_(u"Číslo domu"),
+        help_text=_(u"Např. 2965/12 nebo 156"),
         default="",
         max_length=10,
         null=False,
@@ -53,7 +55,7 @@ class Address(CompositeField):
         )
     recipient = models.CharField(
         verbose_name=_(u"Název pobočky (závodu, kanceláře, fakulty)"),
-        help_text=_(u"Např.: Přírodovědecká fakulta nebo Auto*mat"),
+        help_text=_(u"Např. odštěpný závod Brno, oblastní pobočka Liberec, Přírodovědecká fakulta atp."),
         default="",
         max_length=50,
         null=False,
@@ -75,7 +77,7 @@ class Address(CompositeField):
         )
     city = models.CharField(
         verbose_name=_(u"Město"),
-        help_text=_(u"Např.: Brno nebo Praha-Nebušice"),
+        help_text=_(u"Např. Jablonec n.N. nebo Praha 3-Žižkov"),
         default="",
         max_length=50,
         null=False,
@@ -123,7 +125,8 @@ class Company(models.Model):
 
     name = models.CharField(
         unique=True,
-        verbose_name=_(u"Jméno"),
+        verbose_name=_(u"Název organizace"),
+        help_text=_(u"Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova"),
         max_length=60, null=False)
     company_admin = models.OneToOneField(
         "UserProfile", 
@@ -156,6 +159,7 @@ class Subsidiary(models.Model):
     city = models.ForeignKey(
           City, 
           verbose_name=_(u"Soutěžní město"),
+          help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='http://www.dopracenakole.net/chci-slapat/pravidla-souteze/' target='_blank'>pravidla soutěže</a>"),
           null=False, blank=False)
 
     def __unicode__(self):

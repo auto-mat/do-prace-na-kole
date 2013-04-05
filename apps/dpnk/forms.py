@@ -106,6 +106,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
     # -- Contacts
     telephone = forms.CharField(
         label="Telefon",
+        help_text="Pro kurýra, který Vám přiveze soutěžní triko, pro HelpDesk",
         max_length=30)
 
     def __init__(self, request=None, *args, **kwargs):
@@ -131,6 +132,8 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
             'password1',
             'password2'
             ]
+
+        self.fields['email'].help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
 
     def clean_team(self):
         data = self.cleaned_data['team']
@@ -197,6 +200,7 @@ class ProfileUpdateForm(forms.ModelForm):
         required=True)
 
     email = forms.EmailField(
+        help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu"),
         required=False)
     can_change_team = True
 
