@@ -31,6 +31,7 @@ from django.db.models import Q
 from django.core.exceptions import ValidationError
 from composite_field import CompositeField
 from django.utils.translation import ugettext_lazy as _
+from django.core.validators import MaxValueValidator, MinValueValidator
 # Python library imports
 import datetime
 # Local imports
@@ -71,6 +72,10 @@ class Address(CompositeField):
     psc = models.IntegerField(
         verbose_name=_(u"PSČ"),
         help_text=_(u"Např.: 13000"),
+        validators=[
+            MaxValueValidator(99999),
+            MinValueValidator(10000)
+        ],
         default=0,
         null=False,
         blank=False,
