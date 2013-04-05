@@ -8,6 +8,7 @@ from models import UserProfile, Company, Subsidiary, Team
 from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
 from django.utils.translation import gettext as _
+from django.core.exceptions import ValidationError
 
 def team_full(data):
     if len(UserProfile.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, user__is_active=True)) >= 5:
@@ -24,6 +25,21 @@ class RegisterCompanyForm(forms.ModelForm):
 class RegisterSubsidiaryForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
+
+    address_psc = forms.CharField(
+        label =_(u"PSČ"),
+        help_text=_(u"Např.: 130 00"),
+    )
+
+    def clean_address_psc(self):
+        address_psc = self.cleaned_data['address_psc']
+        try:
+            address_psc = int(address_psc.replace(' ', ''))
+        except (TypeError, ValueError):
+            raise ValidationError('PSČ musí být pěticiferné číslo')
+        if address_psc > 99999 or address_psc < 10000:
+            raise ValidationError('PSČ musí být pěticiferné číslo')
+        return address_psc
 
     class Meta:
         model = Subsidiary
