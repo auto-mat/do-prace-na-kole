@@ -117,9 +117,11 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
         form_company = RegisterCompanyForm(request.POST, prefix = "company")
         form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix = "subsidiary")
         form_team = RegisterTeamForm(request.POST, prefix = "team")
-        create_company = 'id_company_selected' in request.POST
-        create_subsidiary = 'id_subsidiary_selected' in request.POST
         create_team = 'id_team_selected' in request.POST
+        if create_team:
+            create_subsidiary = 'id_subsidiary_selected' in request.POST
+        if create_team and create_subsidiary:
+            create_company = 'id_company_selected' in request.POST
         company_valid = True
         subsidiary_valid = True
         team_valid = True
