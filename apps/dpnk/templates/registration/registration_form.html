@@ -1,6 +1,43 @@
 {% load bootstrap %}
 {% load i18n %}
 
+<script>
+   function activateOnclick(){
+      eval($("#id_team_selected").attr("onClick"));
+      eval($("#id_subsidiary_selected").attr("onClick"));
+      eval($("#id_company_selected").attr("onClick"));
+   }
+
+   function switchCompanyForm(){
+      if ($('#id_company_selected').is(':checked')) {
+         $("#id_team_selected").prop("checked", true);
+         $("#id_subsidiary_selected").prop("checked", true);
+      }
+      activateOnclick();
+   }
+
+   function switchSubsidiaryForm(){
+      if ($('#id_subsidiary_selected').is(':checked')) {
+         $("#id_team_selected").prop("checked", true);
+      } else {
+         $("#id_company_selected").prop("checked", false);
+      } 
+      activateOnclick();
+   }
+
+   function switchTeamForm(){
+      if (! $('#id_team_selected').is(':checked')) {
+         $("#id_subsidiary_selected").prop("checked", false);
+         $("#id_company_selected").prop("checked", false);
+      }
+      activateOnclick();
+   }
+
+   $("#id_company_selected").on("click", switchCompanyForm);
+   $("#id_subsidiary_selected").on("click", switchSubsidiaryForm);
+   $("#id_team_selected").on("click", switchTeamForm);
+</script>
+
 <form method="post" class="form-horizontal">{% csrf_token %}
    {{ form|bootstrap }}
 <button class="submit" type="button">{% trans "Odeslat" %}</button>
