@@ -210,6 +210,7 @@ class ProfileUpdateForm(forms.ModelForm):
         required=True)
     team = forms.ModelChoiceField(
         label="Tým",
+        help_text = "<div class='text-info'>" + _(u"Tip: Pokud chcete pouze změnit jméno týmu, nezakládejte nový. Stačí požádat koordinátora, aby jméno změnil v editaci týmu.") + "</div>",
         queryset= [],
         widget=SelectOrCreate(RegisterTeamForm, prefix="team", new_description = _(u"Chci si založit nový tým, ve kterém budu koordinátorem")),
         empty_label=None,
