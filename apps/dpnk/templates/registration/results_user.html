@@ -4,6 +4,10 @@
 {% for competition in competitions %}
 <h4>Výsledky v závodě <a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}">{{ competition }}</a>:</h4>
 
+Pořadí: {{ competition.my_results.position|add:"1" }}.
+<br/>
+Bodové ohodnocení: {{ competition.my_results.result }}
+
 <table class="table-striped table-bordered">
 <tr>
 <th scope="column">Pořadí</th>

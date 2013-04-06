@@ -541,13 +541,10 @@ def profile(request):
 
 def results_user(request, template, username=None, limit=None):
     userprofile = User.objects.get(username=username).get_profile()
-    competitions = userprofile.get_competitions()
-    print userprofile
-    print competitions
 
     return render_to_response(template,
                               {
-            'competitions': competitions,
+            'competitions': userprofile.get_competitions(),
             'user': userprofile.user,
             'limit': ":%s" % limit,
             }, context_instance=RequestContext(request))

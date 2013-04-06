@@ -75,6 +75,7 @@ def get_results(self):
                                LEFT OUTER JOIN auth_user ON (dpnk_userprofile.user_id = auth_user.id)
                                WHERE auth_user.is_active=True AND dpnk_trip.user_id=userid""" % {'field': field})
                     ]),
+                where = ("1",),
                 order_by=['-result']
                 )
             print result.query.__str__()
@@ -96,6 +97,7 @@ def get_results(self):
                     ('user_count', count_select),
                     ('result', "(%s)/(%s)" % (sum_select, count_select))
                     ]),
+                where = ("1",),
                 order_by=['-result']
                 )
             print result.query.__str__()
@@ -121,6 +123,7 @@ def get_results(self):
                     ('user_count', count_select),
                     ('result', "(%s)/(%s)" % (sum_select, count_select))
                     ]),
+                where = ("1",),
                 order_by=['-result']
                 )
             print result.query.__str__()
@@ -162,13 +165,14 @@ def get_results(self):
 
         result = competitors.extra(
             select=select_dict,
+            where = ("1",),
             order_by=['-result']
             )
         print result.query.__str__()
         return result
 
 def get_competitions(userprofile):
-    return models.Competition.objects.filter(
+    competitions = models.Competition.objects.filter(
             (
                 Q(without_admission = True)
                 & (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
@@ -178,3 +182,35 @@ def get_competitions(userprofile):
                 & Q(user_competitors = userprofile)
             )
         ).distinct()
+
+    for competition in competitions:
+        if competition.competitor_type == 'single_user':
+            try:
+                my_results = competition.get_results().get(pk = userprofile.pk)
+            except models.UserProfile.DoesNotExist:
+                my_results = None
+            if not isinstance(my_results, models.UserProfile):
+                my_results = None
+        elif competition.competitor_type == 'team':
+            try:
+                my_results = competition.get_results().get(pk = userprofile.team.pk)
+            except models.Team.DoesNotExist:
+                my_results = None
+            if not isinstance(my_results, models.Team):
+                my_results = None
+        elif competition.competitor_type == 'company':
+            try:
+                my_results = competition.get_results().get(pk = userprofile.team.subsidiary.company.pk)
+            except models.Company.DoesNotExist:
+                my_results = None
+            if not isinstance(my_results, models.Company):
+                my_results = None
+
+        if my_results:
+            #Big hack:
+            result = my_results.result if my_results.result else 0
+            where = '1) HAVING (result > ' + str(result)
+            my_results.position = len(competition.get_results().extra(where=[where]))
+
+        competition.my_results = my_results
+    return competitions
