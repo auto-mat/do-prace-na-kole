@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Vyplnění registrace</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Vyplnění registrace</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>${app_url}/registrace</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=id_first_name</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_first_name</td>
+	<td>Karel</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_last_name</td>
+	<td>Kolář</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=id_company_selected</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_company-name</td>
+	<td>Testovací firma</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=id_subsidiary-city</td>
+	<td>label=Praha</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_subsidiary-address_recipient</td>
+	<td>Testovací pobočka</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_subsidiary-address_street</td>
+	<td>Testovací</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_subsidiary-address_street_number</td>
+	<td>123</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_subsidiary-address_psc</td>
+	<td>123 45</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_subsidiary-address_city</td>
+	<td>Praha-Nebušice</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_team-name</td>
+	<td>Testovací tým</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_distance</td>
+	<td>8</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=id_t_shirt_size</td>
+	<td>label=pánské L</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_email</td>
+	<td>antonin.zkusil@gmail.com</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_telephone</td>
+	<td>123456789</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_username</td>
+	<td>test</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_password1</td>
+	<td>test</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_password2</td>
+	<td>test</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.submit</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>
