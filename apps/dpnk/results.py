@@ -19,7 +19,7 @@
 
 import models
 from collections import OrderedDict
-from django.db.models import Sum, F, Q
+from django.db.models import Sum, F, Q, Count
 
 def get_competitors(self):
     if self.without_admission:
@@ -30,28 +30,35 @@ def get_competitors(self):
                 filter_query['team__subsidiary__city'] = self.city
             if self.company:
                 filter_query['team__subsidiary__company'] = self.company
-            print filter_query
-            return models.UserProfile.objects.filter(**filter_query)
+            query = models.UserProfile.objects.filter(**filter_query)
         elif self.competitor_type == 'team':
             filter_query = {}
             if self.city:
                 filter_query['subsidiary__city'] = self.city
             if self.company:
                 filter_query['subsidiary__company'] = self.company
-            print filter_query
-            return models.Team.objects.filter(**filter_query)
+            query = models.Team.objects.filter(**filter_query)
         elif self.competitor_type == 'company':
             if self.company:
                 filter_query['company'] = self.company
-            print filter_query
-            return models.Company.objects.filter(**filter_query)
+            query = models.Company.objects.filter(**filter_query)
     else:
         if self.competitor_type == 'single_user':
-            return self.user_competitors.all()
+            query = self.user_competitors.all()
         elif self.competitor_type == 'team':
-            return self.team_competitors.all()
+            query = self.team_competitors.all()
         elif self.competitor_type == 'company':
-            return self.company_competitors.all()
+            query = self.company_competitors.all()
+
+    if self.competitor_type == 'single_user':
+        query = query.annotate(team_member_count=Sum('team__users__user__is_active'))
+    elif self.competitor_type == 'team':
+        query = query.annotate(team_member_count=Sum('users__user__is_active'))
+    elif self.competitor_type == 'company':
+        query = query.annotate(team_members=Sum('subsidiaries__teams__users__user__is_active'))
+
+    query = query.filter(Q(team_member_count__gt = 2))
+    return query
 
 def get_results(self):
     competitors = self.get_competitors()
@@ -78,7 +85,6 @@ def get_results(self):
                 where = ("1",),
                 order_by=['-result']
                 )
-            print result.query.__str__()
             return result
         elif self.competitor_type == 'team':
             sum_select =   """SELECT sum(IFNULL(`dpnk_trip`.`%(field)s_to` + `dpnk_trip`.`%(field)s_from` ,IFNULL(`dpnk_trip`.`%(field)s_to`, `dpnk_trip`.`%(field)s_from`)))
@@ -100,7 +106,6 @@ def get_results(self):
                 where = ("1",),
                 order_by=['-result']
                 )
-            print result.query.__str__()
             return result
         elif self.competitor_type == 'company':
             sum_select =   """SELECT sum(IFNULL(`dpnk_trip`.`%(field)s_to` + `dpnk_trip`.`%(field)s_from` ,IFNULL(`dpnk_trip`.`%(field)s_to`, `dpnk_trip`.`%(field)s_from`)))
@@ -126,7 +131,6 @@ def get_results(self):
                 where = ("1",),
                 order_by=['-result']
                 )
-            print result.query.__str__()
             return result
     elif self.type == 'questionnaire':
         select_dict = OrderedDict()
@@ -168,7 +172,6 @@ def get_results(self):
             where = ("1",),
             order_by=['-result']
             )
-        print result.query.__str__()
         return result
 
 def get_competitions(userprofile):
