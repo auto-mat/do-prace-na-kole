@@ -8,6 +8,7 @@ from models import UserProfile, Company, Subsidiary, Team
 from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
 from django.utils.translation import gettext as _
+from django.core.exceptions import ValidationError
 
 def team_full(data):
     if len(UserProfile.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, user__is_active=True)) >= 5:
@@ -25,9 +26,24 @@ class RegisterSubsidiaryForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
+    address_psc = forms.CharField(
+        label =_(u"PSČ"),
+        help_text=_(u"Např.: 130 00"),
+    )
+
+    def clean_address_psc(self):
+        address_psc = self.cleaned_data['address_psc']
+        try:
+            address_psc = int(address_psc.replace(' ', ''))
+        except (TypeError, ValueError):
+            raise ValidationError('PSČ musí být pěticiferné číslo')
+        if address_psc > 99999 or address_psc < 10000:
+            raise ValidationError('PSČ musí být pěticiferné číslo')
+        return address_psc
+
     class Meta:
         model = Subsidiary
-        fields = ('address_street', 'address_street_number', 'address_recipient', 'address_district', 'address_psc', 'address_city', 'city')
+        fields = ('city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
 
 class RegisterTeamForm(forms.ModelForm):
@@ -95,7 +111,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
         queryset=Team.objects.all(),
         required=True)
     distance = forms.IntegerField(
-        label=_(u"Průměrná ujetá vzdálenost z domova do práce (v km)"),
+        label=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
         required=True)
     t_shirt_size = forms.ChoiceField(
         label=_(u"Velikost trička"),
@@ -106,6 +122,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
     # -- Contacts
     telephone = forms.CharField(
         label="Telefon",
+        help_text="Pro kurýra, který Vám přiveze soutěžní triko, pro HelpDesk",
         max_length=30)
 
     def __init__(self, request=None, *args, **kwargs):
@@ -131,6 +148,8 @@ class RegistrationFormDPNK(registration.forms.RegistrationForm):
             'password1',
             'password2'
             ]
+
+        self.fields['email'].help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
 
     def clean_team(self):
         data = self.cleaned_data['team']
@@ -191,13 +210,16 @@ class ProfileUpdateForm(forms.ModelForm):
         required=True)
     team = forms.ModelChoiceField(
         label="Tým",
+        help_text = "<div class='text-info'>" + _(u"Tip: Pokud chcete pouze změnit jméno týmu, nezakládejte nový. Stačí požádat koordinátora, aby jméno změnil v editaci týmu.") + "</div>",
         queryset= [],
         widget=SelectOrCreate(RegisterTeamForm, prefix="team", new_description = _(u"Chci si založit nový tým, ve kterém budu koordinátorem")),
         empty_label=None,
         required=True)
 
     email = forms.EmailField(
+        help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu"),
         required=False)
+    can_change_team = True
 
     def save(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).save(*args, **kwargs)
@@ -225,6 +247,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
         if userprofile.team.coordinator == userprofile and UserProfile.objects.filter(team=userprofile.team, user__is_active=True).count()>1:
             del self.fields['team']
+            self.can_change_team = False
         return ret_val
 
     class Meta:

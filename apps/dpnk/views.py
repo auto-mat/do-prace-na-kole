@@ -117,9 +117,11 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
         form_company = RegisterCompanyForm(request.POST, prefix = "company")
         form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix = "subsidiary")
         form_team = RegisterTeamForm(request.POST, prefix = "team")
-        create_company = 'id_company_selected' in request.POST
-        create_subsidiary = 'id_subsidiary_selected' in request.POST
         create_team = 'id_team_selected' in request.POST
+        if create_team:
+            create_subsidiary = 'id_subsidiary_selected' in request.POST
+        if create_team and create_subsidiary:
+            create_company = 'id_company_selected' in request.POST
         company_valid = True
         subsidiary_valid = True
         team_valid = True
@@ -596,7 +598,7 @@ def update_profile(request,
             success_url = 'profil'
                   ):
     create_team = False
-    profile = UserProfile.objects.get(user=request.user)
+    profile = request.user.get_profile()
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, instance=profile)
         form_team = RegisterTeamForm(request.POST, prefix = "team")
@@ -605,12 +607,12 @@ def update_profile(request,
 
         if create_team:
             team_valid = form_team.is_valid()
-            if 'team' in  form.fields:
+            if form.can_change_team:
                 form.fields['team'].required = False
                 form.Meta.exclude = ('team')
         else:
             form_team = RegisterTeamForm(prefix = "team")
-            if 'team' in  form.fields:
+            if form.can_change_team:
                 form.fields['team'].required = True
                 form.Meta.exclude = ()
 
@@ -623,8 +625,14 @@ def update_profile(request,
                 team = form_team.save(commit=False)
                 team.subsidiary = request.user.userprofile.team.subsidiary
 
+                coordinated_team_members = UserProfile.objects.exclude(id=userprofile.id).filter(team=userprofile.coordinated_team, user__is_active=True)
+                if len(coordinated_team_members)>0:
+                    userprofile.coordinated_team.coordinator = coordinated_team_members[0]
+                else:
+                    userprofile.coordinated_team.coordinator = None
+                userprofile.coordinated_team.save()
+
                 userprofile.team = team
-                userprofile.coordinated_team = team
                 userprofile.approved_for_team = 'approved'
                 team.coordinator = userprofile
 
@@ -636,7 +644,8 @@ def update_profile(request,
 
                 team_created_mail(userprofile.user)
 
-            if 'team' in form.cleaned_data and request.user.userprofile.team != form.cleaned_data['team'] and not create_team:
+            team_changed = form.cleaned_data and request.user.userprofile.team != form.cleaned_data['team']
+            if team_changed and not create_team:
                 userprofile.approved_for_team = 'undecided'
                 approval_request_mail(userprofile.user)
 
@@ -647,14 +656,13 @@ def update_profile(request,
         form = ProfileUpdateForm(instance=profile)
         form_team = RegisterTeamForm(prefix = "team")
 
-    if 'team' in  form.fields:
+    if form.can_change_team:
         form.fields['team'].widget.underlying_form = form_team
         form.fields['team'].widget.create = create_team
     
-    can_change_team = 'team' in  form.fields
     return render_to_response('registration/update_profile.html',
                               {'form': form,
-                               'can_change_team': can_change_team
+                               'can_change_team': form.can_change_team
                                }, context_instance=RequestContext(request))
 
 @login_required
@@ -913,8 +921,12 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
 
     if 'button_action' in request.POST and request.POST['button_action']:
         b_action = request.POST['button_action'].split('-')
-        userprofile = UserProfile.objects.get(team = team, approved_for_team__in = ('undecided', 'denied'), user__is_active=True, id=b_action[1])
-        denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
+        userprofile = UserProfile.objects.get(id=b_action[1])
+        if userprofile.approved_for_team not in ('undecided', 'denied') or userprofile.team != team or not userprofile.user.is_active:
+            mail_admins(u"ERROR Do prace na kole: Ověřování uživatele se špatnými parametry", u"Uživatel: %s\nApproval: %s\nTým: %s\nActive: %s" % (userprofile, userprofile.approved_for_team, userprofile.team, userprofile.user.is_active) )
+            denial_message = 'cannot_approve'
+        else:
+            denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
 
     for userprofile in UserProfile.objects.filter(team = team, user__is_active=True):
         unapproved_users.append([

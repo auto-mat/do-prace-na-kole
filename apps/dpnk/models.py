@@ -27,11 +27,13 @@ import string
 import results
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from composite_field import CompositeField
 from django.utils.translation import ugettext_lazy as _
+from django.core.validators import MaxValueValidator, MinValueValidator
 # Python library imports
 import datetime
 # Local imports
@@ -41,12 +43,14 @@ from dpnk.email import payment_confirmation_mail
 class Address(CompositeField):
     street = models.CharField(
         verbose_name=_(u"Ulice"),
+        help_text=_(u"Např. Šeříková nebo Nám. W. Churchilla"),
         default="",
         max_length=50,
         null=False,
         )
     street_number = models.CharField(
         verbose_name=_(u"Číslo domu"),
+        help_text=_(u"Např. 2965/12 nebo 156"),
         default="",
         max_length=10,
         null=False,
@@ -54,6 +58,7 @@ class Address(CompositeField):
         )
     recipient = models.CharField(
         verbose_name=_(u"Název pobočky (závodu, kanceláře, fakulty)"),
+        help_text=_(u"Např. odštěpný závod Brno, oblastní pobočka Liberec, Přírodovědecká fakulta atp."),
         default="",
         max_length=50,
         null=False,
@@ -63,17 +68,23 @@ class Address(CompositeField):
         verbose_name=_(u"Městská část"),
         default="",
         max_length=50,
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
         )
     psc = models.IntegerField(
         verbose_name=_(u"PSČ"),
+        help_text=_(u"Např.: 13000"),
+        validators=[
+            MaxValueValidator(99999),
+            MinValueValidator(10000)
+        ],
         default=0,
         null=False,
         blank=False,
         )
     city = models.CharField(
-        verbose_name=_(u"Adresní město"),
+        verbose_name=_(u"Město"),
+        help_text=_(u"Např. Jablonec n.N. nebo Praha 3-Žižkov"),
         default="",
         max_length=50,
         null=False,
@@ -81,7 +92,7 @@ class Address(CompositeField):
         )
 
     def __unicode__(self):
-        return "%s, %s %s, %s, %s, %s" % (self.recipient, self.street, self.street_number, self.district, self.psc, self.city)
+        return "%s, %s %s, %s, %s" % (self.recipient, self.street, self.street_number, self.psc, self.city)
 
 class City(models.Model):
     """Město"""
@@ -121,7 +132,8 @@ class Company(models.Model):
 
     name = models.CharField(
         unique=True,
-        verbose_name=_(u"Jméno"),
+        verbose_name=_(u"Název organizace"),
+        help_text=_(u"Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova"),
         max_length=60, null=False)
     company_admin = models.OneToOneField(
         "UserProfile", 
@@ -154,10 +166,11 @@ class Subsidiary(models.Model):
     city = models.ForeignKey(
           City, 
           verbose_name=_(u"Soutěžní město"),
+          help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='http://www.dopracenakole.net/chci-slapat/pravidla-souteze/' target='_blank'>pravidla soutěže</a>"),
           null=False, blank=False)
 
     def __unicode__(self):
-        return "%s, %s %s, %s, %s, %s" % (self.address.recipient, self.address.street, self.address.street_number, self.address.district, self.address.psc, self.address.city)
+        return "%s, %s %s, %s, %s" % (self.address.recipient, self.address.street, self.address.street_number, self.address.psc, self.address.city)
 
 def validate_length(value,min_length=25):
     str_len = len(str(value))
@@ -352,6 +365,18 @@ class UserProfile(models.Model):
 
     def get_competitions(self):
         return results.get_competitions(self)
+    
+@receiver(pre_save, sender=UserProfile)
+def set_team_coordinator_pre(sender, instance, **kwargs):
+    if hasattr(instance, "coordinated_team") and instance.coordinated_team != instance.team:
+        instance.coordinated_team.coordinator = None
+        instance.coordinated_team.save()
+
+@receiver(post_save, sender=UserProfile)
+def set_team_coordinator_post(sender, instance, created, **kwargs):
+    if instance.team.coordinator == None:
+        instance.team.coordinator = instance
+        instance.team.save()
 
 class UserProfileUnpaidManager(models.Manager):
     def get_query_set(self):
