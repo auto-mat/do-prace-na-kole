@@ -55,9 +55,9 @@ def get_competitors(self):
     elif self.competitor_type == 'team':
         query = query.annotate(team_member_count=Sum('users__user__is_active'))
     elif self.competitor_type == 'company':
-        query = query.annotate(team_members=Sum('subsidiaries__teams__users__user__is_active'))
+        query = query.annotate(team_member_count=Sum('subsidiaries__teams__users__user__is_active'))
 
-    query = query.filter(Q(team_member_count__gt = 2))
+    query = query.filter(team_member_count__gt = 2)
     return query
 
 def get_results(self):
@@ -82,7 +82,6 @@ def get_results(self):
                                LEFT OUTER JOIN auth_user ON (dpnk_userprofile.user_id = auth_user.id)
                                WHERE auth_user.is_active=True AND dpnk_trip.user_id=userid""" % {'field': field})
                     ]),
-                where = ("1",),
                 order_by=['-result']
                 )
             return result
@@ -103,7 +102,6 @@ def get_results(self):
                     ('user_count', count_select),
                     ('result', "(%s)/(%s)" % (sum_select, count_select))
                     ]),
-                where = ("1",),
                 order_by=['-result']
                 )
             return result
@@ -128,7 +126,6 @@ def get_results(self):
                     ('user_count', count_select),
                     ('result', "(%s)/(%s)" % (sum_select, count_select))
                     ]),
-                where = ("1",),
                 order_by=['-result']
                 )
             return result
@@ -169,7 +166,6 @@ def get_results(self):
 
         result = competitors.extra(
             select=select_dict,
-            where = ("1",),
             order_by=['-result']
             )
         return result
@@ -209,11 +205,17 @@ def get_competitions(userprofile):
             if not isinstance(my_results, models.Company):
                 my_results = None
 
-        if my_results:
-            #Big hack:
-            result = my_results.result if my_results.result else 0
-            where = '1) HAVING (result > ' + str(result)
-            my_results.position = len(competition.get_results().extra(where=[where]))
+        for i, competitor in enumerate(competition.get_results()):
+            if competitor == my_results:
+                my_results.position = i
+
+        my_results.count = competition.get_results().count()
+
+        #if my_results:
+        #    #Big hack:
+        #    result = my_results.result if my_results.result else 0
+        #    where = '1)) HAVING (result > ' + str(result)
+        #    my_results.position = competition.get_results().extra(where=[where]).count()
 
         competition.my_results = my_results
     return competitions
