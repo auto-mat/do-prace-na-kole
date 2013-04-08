@@ -579,12 +579,13 @@ def update_profile(request,
                 team = form_team.save(commit=False)
                 team.subsidiary = request.user.userprofile.team.subsidiary
 
-                coordinated_team_members = UserProfile.objects.exclude(id=userprofile.id).filter(team=userprofile.coordinated_team, user__is_active=True)
-                if len(coordinated_team_members)>0:
-                    userprofile.coordinated_team.coordinator = coordinated_team_members[0]
-                else:
-                    userprofile.coordinated_team.coordinator = None
-                userprofile.coordinated_team.save()
+                if hasattr(userprofile, 'coordinated_team'):
+                    coordinated_team_members = UserProfile.objects.exclude(id=userprofile.id).filter(team=userprofile.coordinated_team, user__is_active=True)
+                    if len(coordinated_team_members)>0:
+                        userprofile.coordinated_team.coordinator = coordinated_team_members[0]
+                    else:
+                        userprofile.coordinated_team.coordinator = None
+                    userprofile.coordinated_team.save()
 
                 userprofile.team = team
                 userprofile.approved_for_team = 'approved'
@@ -598,7 +599,7 @@ def update_profile(request,
 
                 team_created_mail(userprofile.user)
 
-            team_changed = form.cleaned_data and request.user.userprofile.team != form.cleaned_data['team']
+            team_changed = form.cleaned_data and 'team' in form.cleaned_data and request.user.userprofile.team != form.cleaned_data['team']
             if team_changed and not create_team:
                 userprofile.approved_for_team = 'undecided'
                 approval_request_mail(userprofile.user)
