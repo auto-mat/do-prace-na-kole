@@ -1,22 +1,25 @@
+{% load i18n %}
+
 <div id="questionaire-{{ questionaire }}">
-<form name="question" action="/registrace/otazka/" method="POST">
+<form name="question" method="POST">
 {% for question in questions %}
 <p class="question-text">{{ question.text }}</p>
 {% for choice in question.choices %}
 {% if question.type == 'multiple-choice' %}
-<input type="checkbox" name="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %} disabled="disabled" /><label for="choice-{{ choice.id }}">{{ choice.text }} {% if choice.points != None %}( {{choice.points}}b ) {% endif %}</label><br/>
+<label for="choice-{{ choice.id }}"><input type="checkbox" name="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text }} {% if choice.points != None %}( {{choice.points}}b ) {% endif %}</label><br/>
 {% endif %}
 {% if question.type == 'choice' %}
-<input type="radio" name="choice-{{ question.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %} disabled="disabled" /><label for="choice-{{ choice.id }}">{{ choice.text }}  {% if choice.points != None %}( {{choice.points}}b ) {% endif %}</label><br/>
+<label for="choice-{{ choice.id }}"><input type="radio" name="choice-{{ question.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text }}  {% if choice.points != None %}( {{choice.points}}b ) {% endif %}</label><br/>
 {% endif %}
 {% endfor %}
 {% if question.with_comment %}
 <label for="comment"><span class="comment-label">Komentář</span></label><br/>
-<textarea name="comment-{{ question.id }}" cols="60" rows="5" class="question-{{question.id}}" disabled="disabled" >{{ question.comment_prefill }}</textarea><br/>
+<textarea name="comment-{{ question.id }}" cols="60" rows="5" class="question-{{question.id}}">{{ question.comment_prefill }}</textarea><br/>
 {% endif %}
 {% endfor %}
 <input type="hidden" name="questionaire" value="{{ questionaire }}">
 <input type="hidden" name="day" value="{{ day }}">
+<button class="submit">{% trans "Odeslat" %}</button>
 <input type="button" onclick="history.go(-1)" value="Zpět">
 </form>
 </div>

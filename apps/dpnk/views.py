@@ -32,7 +32,7 @@ from django.utils.translation import gettext as _
 import registration.signals, registration.backends
 # Model imports
 from django.contrib.auth.models import User
-from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition
+from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice
 from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm
 from django.conf import settings
 from  django.http import HttpResponse
@@ -667,30 +667,9 @@ def update_profile(request,
 
 @login_required
 @must_be_approved_for_team
-def questionaire(request, template = 'registration/questionaire.html'):
-
-    def get_questions(params):
-        if not params.has_key('questionaire'):
-            raise http.Http404
-        questionaire = params['questionaire']
-        if questionaire == 'player':
-            if not params.has_key('day'):
-                raise http.Http404
-            try:
-                iso_day = params['day']
-                day = datetime.date(*[int(v) for v in iso_day.split('-')])
-            except ValueError:
-                raise http.Http404
-            if day > datetime.date.today():
-                raise http.Http404
-            questions = [Question.objects.get(questionaire=questionaire, date=day)]
-        elif questionaire == 'company':
-            questions = Question.objects.filter(questionaire=questionaire).order_by('order')
-        return (questionaire, questions)
-
+def questionaire(request, questionaire = None, template = 'registration/questionaire.html'):
+    questions = Question.objects.filter(competition__slug=questionaire).order_by('order')
     if request.method == 'POST':
-        raise http.Http404 # No POST, competition already terminated
-        questionaire, questions = get_questions(request.POST)
         choice_ids = [v for k, v in request.POST.items() if k.startswith('choice')]
         comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
 
@@ -721,10 +700,9 @@ def questionaire(request, template = 'registration/questionaire.html'):
             answer.save()
         return http.HttpResponseRedirect('/registrace/profil/') # Redirect after POST
     else:
-        questionaire, questions = get_questions(request.GET)
         for question in questions:
             try:
-                question.choices = Choice.objects.filter(question=question)
+                question.choices = Choice.objects.filter(choice_type=question.choice_type)
             except Choice.DoesNotExist:
                 question.choices = None
             try:
@@ -741,7 +719,6 @@ def questionaire(request, template = 'registration/questionaire.html'):
                                   {'user': request.user.get_profile(),
                                    'questions': questions,
                                    'questionaire': questionaire,
-                                   'day': request.GET.get('day', '')
                                    }, context_instance=RequestContext(request))
 
 @staff_member_required
