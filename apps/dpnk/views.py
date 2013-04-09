@@ -585,6 +585,7 @@ def competition_results(request, template, competition_slug='testing_zavod', lim
 
     return render_to_response(template,
                               {
+            'userprofile': request.user.get_profile(),
             'competition': competition,
             'results': competition.get_results()[:limit],
             }, context_instance=RequestContext(request))

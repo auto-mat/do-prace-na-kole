@@ -2,7 +2,7 @@
 
 <h4>Výsledky v závodě {{ competition }}:</h4>
 
-<table class="table-striped table-bordered">
+<table class="table table-condensed table-striped table-bordered">
 <tr>
 <th scope="column">Pořadí</th>
 <th scope="column">
@@ -26,7 +26,15 @@
 </th>
 </tr>
 {% for result in results %}
-<tr>
+   <tr class="
+   {% if competition.competitor_type == 'single_user' and userprofile.id == result.id %}
+         info
+   {% elif competition.competitor_type == 'team' and userprofile.team.id == result.id %}
+         info
+   {% elif competition.competitor_type == 'company' and userprofile.team.subsidiary.company.id == result.id %}
+         info
+   {% endif %}
+   "id="row-{{result.id}}">
 <td>{{ forloop.counter }}.</td>
 <td>{{ result.result }}</td>
 <td>{{ result.user_count }}</td>

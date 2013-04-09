@@ -1,7 +1,7 @@
 {% load url from future %}
 {% load dpnk_tags %}
 
-<table class="table-striped table-bordered">
+<table class="table table-striped table-bordered">
    <tr>
       <th scope="column">Závod</th>
       <th scope="column">Typ</th>
@@ -12,7 +12,13 @@
    </tr>
    {% for competition in competitions %}
       <tr>
-         <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}">{{ competition }}</a></td>
+         <td>
+            {% if competition.url %}
+               <a href="{{ competition.url }}" target="_blank">{{ competition }}</a>
+            {% else %}
+               {{ competition }}
+            {% endif %}
+         </td>
          <td>
             {% if competition.type == 'questionnaire' %}
                dotazník
@@ -29,7 +35,7 @@
                společností
             {% endif %}
          </td>
-         <td>{{ competition.my_results.position|add:"1" }}.</td>
+         <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">{{ competition.my_results.position|add:"1" }}.</a></td>
          <td>{{ competition.my_results.result }}</td>
          <td>
             {% if competition.type == 'length' %}
