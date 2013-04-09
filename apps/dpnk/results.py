@@ -179,7 +179,11 @@ def get_competitions(userprofile):
                 & (Q(city = None)    | Q(city = userprofile.team.subsidiary.city))
             ) | (
                 Q(without_admission = False)
-                & Q(user_competitors = userprofile)
+                & (
+                    Q(user_competitors = userprofile)
+                    | Q(team_competitors = userprofile.team)
+                    | Q(company_competitors = userprofile.team.subsidiary.company)
+                )
             )
         ).exclude(Q(date_from__gt = datetime.date.today())).distinct()
     return competitions
