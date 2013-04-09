@@ -398,6 +398,12 @@ def profile_access(request):
             'city': profile.team.subsidiary.city
             }, context_instance=RequestContext(request))
 
+
+def trip_active(day, today):
+    return ((day <= today) 
+        and (day > today - datetime.timedelta(days=7))
+    )
+
 @login_required
 def rides(request, template='registration/rides.html'):
     days = util.days()
@@ -410,6 +416,9 @@ def rides(request, template='registration/rides.html'):
         if 'day' in request.POST and request.POST["day"]:
             day = int(request.POST["day"])
             date = days[day-1]
+            if not trip_active(date, today):
+                mail_admins(u"ERROR Do prace na kole: Vyplňování neaktivního dne", u"Post: %s\n" % (request.POST))
+                return HttpResponse(_(u'<div class="text-error">Tento den již není možné vyplnit.</div>'), status=401)
             try:
                 trip = Trip.objects.get(user = request.user.get_profile(),
                                         date = date)
@@ -447,12 +456,7 @@ def rides(request, template='registration/rides.html'):
         cd = {}
         cd['name'] = "%s %d.%d." % (weekdays[d.weekday()], d.day, d.month)
         cd['iso'] = str(d)
-        cd['question_active'] = (d <= today)
-        cd['trips_active'] = (d <= today) 
-            #and (
-            #len(Answer.objects.filter(
-            #        question=Question.objects.get(date = d),
-            #        user=request.user.get_profile())) > 0)
+        cd['trips_active'] = trip_active(d, today)
         if d in trips:
             cd['default_trip_to'] = trips[d].trip_to
             cd['default_trip_from'] = trips[d].trip_from
