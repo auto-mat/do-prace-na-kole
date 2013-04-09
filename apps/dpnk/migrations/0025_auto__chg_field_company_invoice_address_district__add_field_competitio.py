@@ -8,6 +8,11 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding field 'Competition.url'
+        db.add_column('dpnk_competition', 'url',
+                      self.gf('django.db.models.fields.URLField')(default='', max_length=200, null=True, blank=True),
+                      keep_default=False)
+
         # Adding field 'Competition.date_from'
         db.add_column('dpnk_competition', 'date_from',
                       self.gf('django.db.models.fields.DateField')(default=datetime.datetime(2013, 5, 1, 0, 0)),
@@ -20,6 +25,9 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
+        # Deleting field 'Competition.url'
+        db.delete_column('dpnk_competition', 'url')
+
         # Deleting field 'Competition.date_from'
         db.delete_column('dpnk_competition', 'date_from')
 
@@ -121,6 +129,7 @@ class Migration(SchemaMigration):
             'slug': ('django.db.models.fields.SlugField', [], {'default': "''", 'unique': 'True', 'max_length': '50'}),
             'team_competitors': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'competitions'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['dpnk.Team']"}),
             'type': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
+            'url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'user_competitors': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'competitions'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['dpnk.UserProfile']"}),
             'without_admission': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
         },

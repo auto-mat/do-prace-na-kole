@@ -597,6 +597,12 @@ class Competition(models.Model):
         verbose_name=u"Doména v URL",
         blank=False
         )
+    url = models.URLField(
+        default="",
+        verbose_name=u"Odkaz na stránku závodu",
+        null=True, 
+        blank=True,
+        )
     date_from = models.DateField(
         verbose_name=_(u"Datum začátku soutěže"),
         help_text=_(u"Po tomto datu nebude možné se do soutěže přihlásit"),
