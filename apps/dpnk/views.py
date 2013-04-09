@@ -407,7 +407,6 @@ def trip_active(day, today):
 @login_required
 def rides(request, template='registration/rides.html'):
     days = util.days()
-    weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá']
     today = datetime.date.today()
     #today = datetime.date(year=2013, month=5, day=15)
     profile = request.user.get_profile()
@@ -482,7 +481,7 @@ def rides(request, template='registration/rides.html'):
     return render_to_response(template,
                               {
             'calendar': calendar,
-            'has_distance_dompetition': request.user.get_profile().has_distance_dompetition(),
+            'has_distance_dompetition': profile.has_distance_dompetition(),
             }, context_instance=RequestContext(request))
 
 @login_required
