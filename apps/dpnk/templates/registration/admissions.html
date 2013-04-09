@@ -7,16 +7,33 @@
 <table class="table-striped table-bordered">
    <tr>
       <th scope="column">Závod</th>
+      <th scope="column">Typ</th>
       <th scope="column">Akce</th>
    </tr>
    {% for competition in competitions %}
       <tr>
-         <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}">{{ competition }}</a></td>
+         <td>{{ competition }}</td>
+         <td>
+            {% if competition.type == 'questionnaire' %}
+               dotazník
+            {% elif competition.type == 'frequency' %}
+               pravidelnost
+            {% elif competition.type == 'length' %}
+               freqvence
+            {% endif %}
+            {% if competition.competitor_type == 'single_user' %}
+               jednotlivců
+            {% elif competition.competitor_type == 'team' %}
+               týmů
+            {% elif competition.competitor_type == 'company' %}
+               společností
+            {% endif %}
+         </td>
          <td>
             {% if competition.type == 'questionnaire' %}
                <a href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">
                   {% if competition.competitor_has_admission %}
-                     změnit dotazník
+                     změnit odpovědi
                   {% else %}
                      vyplnit dotazník
                   {% endif %}
