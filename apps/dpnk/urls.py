@@ -2,6 +2,7 @@ from django.conf.urls.defaults import patterns, include, url
 
 from django.conf import settings
 from views import *
+from company_admin_views import *
 
 urlpatterns = patterns('',
     url(r'^registrace/$', 
@@ -85,4 +86,8 @@ urlpatterns = patterns('',
         answers),
     url(r'^facebook_app/$',
         facebook_app),
+
+    #company admin:
+    url(r'^struktura_spolecnosti/$',
+        company_structure),
 )
