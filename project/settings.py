@@ -32,6 +32,8 @@ TIME_ZONE = 'Europe/Prague'
 LANGUAGE_CODE = 'cs-CZ'
 SITE_ID = 5
 USE_I18N = True
+USE_L10N = True
+DECIMAL_SEPARATOR = ','
 MEDIA_ROOT = normpath(PROJECT_ROOT, 'static/upload')
 MEDIA_URL = '/upload/'
 STATIC_ROOT = normpath(PROJECT_ROOT, "static/static")
@@ -63,6 +65,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.admin',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
 
     'registration',
     'dpnk',

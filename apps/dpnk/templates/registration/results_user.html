@@ -1,5 +1,6 @@
 {% load url from future %}
 {% load dpnk_tags %}
+{% load humanize %}
 
 <table class="table table-striped table-bordered">
    <tr>
@@ -7,7 +8,6 @@
       <th scope="column">Typ</th>
       <th scope="column">Pořadí</th>
       <th scope="column">Hodnocení</th>
-      <th scope="column">Jednotka</th>
       <th scope="column">Počet závodníků</th>
    </tr>
    {% for competition in competitions %}
@@ -35,9 +35,8 @@
                společností
             {% endif %}
          </td>
-         <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">{{ competition.my_results.position|add:"1" }}.</a></td>
-         <td>{{ competition.my_results.result }}</td>
-         <td>
+         <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">{{ competition.my_results.position|add:"1"|ordinal }}</a></td>
+         <td>{{ competition.my_results.result|floatformat:-2|intcomma }}
             {% if competition.type == 'length' %}
                Km
             {% elif competition.type == 'frequency' %}
@@ -46,7 +45,7 @@
                b.
             {% endif %}
          </td>
-         <td>{{ competition.my_results.count }}</td>
+         <td>{{ competition.my_results.count|intcomma }}</td>
       </tr>
    {% endfor %}
 </table>
