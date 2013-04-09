@@ -2,13 +2,17 @@
 import datetime
 import createsend
 
-DAY_START = 2
+DAY_START = 1
 DAY_END = 31
-DAYS_EXCLUDE = (5,6,8,12,13,19,20,26,27)
+DAYS_EXCLUDE = (1,8)
 
 def days():
-    return [datetime.date(year=2012, month=5, day=d) for d in range(DAY_START,DAY_END+1)
-            if d not in DAYS_EXCLUDE]
+    days = []
+    for d in range(DAY_START,DAY_END+1):
+        day = datetime.date(year=2013, month=5, day=d) 
+        if d not in DAYS_EXCLUDE and day.weekday() not in (5,6):
+            days.append(day)
+    return days
 
 def days_count():
     d = days()

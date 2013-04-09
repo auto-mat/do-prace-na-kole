@@ -409,7 +409,7 @@ def rides(request, template='registration/rides.html'):
     days = util.days()
     weekdays = ['Po', 'Út', 'St', 'Čt', 'Pá']
     today = datetime.date.today()
-    #today = datetime.date(year=2012, month=5, day=4)
+    #today = datetime.date(year=2013, month=5, day=15)
     profile = request.user.get_profile()
 
     if request.method == 'POST':
@@ -454,7 +454,7 @@ def rides(request, template='registration/rides.html'):
     trip_count = 0
     for i, d in enumerate(days):
         cd = {}
-        cd['name'] = "%s %d.%d." % (weekdays[d.weekday()], d.day, d.month)
+        cd['day'] = d
         cd['trips_active'] = trip_active(d, today)
         if d in trips:
             cd['default_trip_to'] = trips[d].trip_to
