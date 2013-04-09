@@ -482,6 +482,7 @@ def rides(request, template='registration/rides.html'):
     return render_to_response(template,
                               {
             'calendar': calendar,
+            'has_distance_dompetition': request.user.get_profile().has_distance_dompetition(),
             }, context_instance=RequestContext(request))
 
 @login_required
@@ -572,7 +573,6 @@ def admissions(request, template,
     competitions = userprofile.get_competitions_for_admission()
     for competition in competitions:
         competition.competitor_has_admission = competition.has_admission(userprofile)
-        print competition.competitor_has_admission
 
     return render_to_response(template,
                               {

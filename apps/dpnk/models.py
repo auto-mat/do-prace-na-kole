@@ -364,7 +364,10 @@ class UserProfile(models.Model):
         return payment.pay_type
 
     def get_competitions(self):
-        return results.get_competitions(self)
+        return results.get_competitions_with_info(self)
+
+    def has_distance_dompetition(self):
+        return results.has_distance_dompetition(self)
 
     def get_competitions_for_admission(self):
         return results.get_competitions_for_admission(self)

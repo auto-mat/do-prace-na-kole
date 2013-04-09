@@ -182,6 +182,15 @@ def get_competitions(userprofile):
                 & Q(user_competitors = userprofile)
             )
         ).exclude(Q(date_from__gt = datetime.date.today())).distinct()
+    return competitions
+
+def has_distance_dompetition(userprofile):
+    competitions = get_competitions(userprofile)
+    competitions = competitions.filter(type = 'length')
+    return competitions.count() > 0
+
+def get_competitions_with_info(userprofile):
+    competitions = get_competitions(userprofile)
 
     for competition in competitions:
         if competition.competitor_type == 'single_user':

@@ -8,9 +8,13 @@
 <tr>
 <th scope="column">Den</th>
 <th scope="column">Do práce</th>
+{% if has_distance_dompetition %}
 <th scope="column">Vzdálenost</th>
+{% endif %}
 <th scope="column">Z práce</th>
+{% if has_distance_dompetition %}
 <th scope="column">Vzdálenost</th>
+{% endif %}
 <th scope="column">Odeslat</th>
 <th scope="column">Pravidelnost</th>
 <th scope="column">Vzdálenost celkem</th>
@@ -23,9 +27,13 @@
 ">
 <th scope="row" class="date">{{ day.day|naturalday:"D j. M Y" }}</th>
 <td><input type="checkbox" name="trip_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %}  {% if day.default_trip_to %}checked="checked"{% endif %}/></td>
+{% if has_distance_dompetition %}
 <td><input type="number" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %} class="span1" value="{{ day.default_distance_to }}"/></td>
+{% endif %}
 <td><input type="checkbox" name="trip_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %}  {% if day.default_trip_from %}checked="checked"{% endif %}/></td>
+{% if has_distance_dompetition %}
 <td><input type="number" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %} class="span1" value="{{ day.default_distance_from }}"/></td>
+{% endif %}
 <td><button type="button" class="submit" onclick='$("#day").val("{{ forloop.counter }}")' {% if day.trips_active %}{% else %} disabled="disabled"{% endif %}>OK</button></td>
 <td {% if day.percentage > 66 %} class="green" {% else %} class="red" {% endif %}>{% if day.trips_active %}{{ day.percentage|floatformat:1 }}%{% endif %}</td>
 <td>{% if day.trips_active %}{{ day.distance }} km{% endif %}</td>
