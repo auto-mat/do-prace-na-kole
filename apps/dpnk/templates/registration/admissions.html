@@ -1,0 +1,35 @@
+{% load url from future %}
+{% load dpnk_tags %}
+
+<form name="calendar" method="POST">
+<input type="hidden" id="admission_competition_id" name="admission_competition_id"/>
+<input type="hidden" id="cancellation_competition_id" name="cancellation_competition_id"/>
+<table class="table-striped table-bordered">
+   <tr>
+      <th scope="column">Závod</th>
+      <th scope="column">Akce</th>
+   </tr>
+   {% for competition in competitions %}
+      <tr>
+         <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}">{{ competition }}</a></td>
+         <td>
+            {% if competition.type == 'questionnaire' %}
+               <a href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">
+                  {% if competition.competitor_has_admission %}
+                     změnit dotazník
+                  {% else %}
+                     vyplnit dotazník
+                  {% endif %}
+               </a>
+            {% elif competition.type == 'frequency' or competition.type == 'length' %}
+               {% if competition.competitor_has_admission %}
+                  <button type="button" class="submit" onclick='$("#cancellation_competition_id").val("{{ competition.id }}")'>Odhlásit</button>
+               {% else %}
+                  <button type="button" class="submit" onclick='$("#admission_competition_id").val("{{ competition.id }}")'>Přihlásit</button>
+               {% endif %}
+            {% endif %}
+         </td>
+      </tr>
+   {% endfor %}
+</table>
+</form>

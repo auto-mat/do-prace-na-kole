@@ -365,7 +365,13 @@ class UserProfile(models.Model):
 
     def get_competitions(self):
         return results.get_competitions(self)
+
+    def get_competitions_for_admission(self):
+        return results.get_competitions_for_admission(self)
     
+    def is_coordinator(self):
+        return self.team.coordinator == self
+
 @receiver(pre_save, sender=UserProfile)
 def set_team_coordinator_pre(sender, instance, **kwargs):
     if hasattr(instance, "coordinated_team") and instance.coordinated_team != instance.team:
@@ -634,14 +640,34 @@ class Competition(models.Model):
     def get_results(self):
         return results.get_results(self)
 
-    def make_admission(competitor):
-        if not competition.without_admission:
-            if competition.competitor_type == 'single_user':
-                competition.user_competitors.add(userprofile)
-            elif competition.competitor_type == 'team':
-                competition.team_competitors.add(userprofile.team)
-            elif competition.competitor_type == 'company':
-                competition.company_competitors.add(userprofile.team.subsidiary.company)
+    def has_admission(self, userprofile):
+        if self.without_admission:
+            return True
+        else:
+            if self.competitor_type == 'single_user':
+                return self.user_competitors.filter(pk=userprofile.pk).count() > 0
+            elif self.competitor_type == 'team':
+                return self.team_competitors.filter(pk=userprofile.team.pk).count() > 0
+            elif self.competitor_type == 'company':
+                return self.company_competitors.filter(pk=userprofile.company.pk).count() > 0
+
+    def make_admission(self, userprofile, admission=True):
+        if not self.without_admission:
+            if self.competitor_type == 'single_user':
+                if admission:
+                    self.user_competitors.add(userprofile)
+                else:
+                    self.user_competitors.remove(userprofile)
+            elif self.competitor_type == 'team':
+                if admission:
+                    self.team_competitors.add(userprofile.team)
+                else:
+                    self.team_competitors.remove(userprofile.team)
+            elif self.competitor_type == 'company':
+                if admission:
+                    self.company_competitors.add(userprofile.team.subsidiary.company)
+                else:
+                    self.company_competitors.remove(userprofile.team.subsidiary.company)
 
     def __unicode__(self):
         return "%s" % self.name

@@ -1,45 +1,29 @@
 {% load url from future %}
 {% load dpnk_tags %}
 
-{% for competition in competitions %}
-<h4>Výsledky v závodě <a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}">{{ competition }}</a>:</h4>
-
-Pořadí: {{ competition.my_results.position|add:"1" }}.
-<br/>
-Bodové ohodnocení: {{ competition.my_results.result }}
-<br/>
-Počet soutěžících: {{ competition.my_results.count }}
-
 <table class="table-striped table-bordered">
-<tr>
-<th scope="column">Pořadí</th>
-<th scope="column">
-   {% if competition.type == 'length' %}
-      Kilometrů
-   {% elif competition.type == 'frequency' %}
-      Jízd
-   {% elif competition.type == 'questionnaire' %}
-      Bodů
-   {% endif %}
-</th>
-<th scope="column">Počet závodníků</th>
-<th scope="column">
-   {% if competition.competitor_type == 'single_user' %}
-      Soutěžící
-   {% elif competition.competitor_type == 'team' %}
-      Tým
-   {% elif competition.competitor_type == 'company' %}
-      Firma
-   {% endif %}
-</th>
-</tr>
-{% for result in competition.get_results|slice:limit %}
-<tr>
-<td>{{ forloop.counter }}.</td>
-<td>{{ result.result }}</td>
-<td>{{ result.user_count }}</td>
-<td>{{ result }}</td>
-</tr>
-{% endfor %}
+   <tr>
+      <th scope="column">Závod</th>
+      <th scope="column">Pořadí</th>
+      <th scope="column">Hodnocení</th>
+      <th scope="column">Jednotka</th>
+      <th scope="column">Počet závodníků</th>
+   </tr>
+   {% for competition in competitions %}
+      <tr>
+         <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}">{{ competition }}</a></td>
+         <td>{{ competition.my_results.position|add:"1" }}</td>
+         <td>{{ competition.my_results.result }}</td>
+         <td>
+            {% if competition.type == 'length' %}
+               Km
+            {% elif competition.type == 'frequency' %}
+               Jízd
+            {% elif competition.type == 'questionnaire' %}
+               b.
+            {% endif %}
+         </td>
+         <td>{{ competition.my_results.count }}</td>
+      </tr>
+   {% endfor %}
 </table>
-{% endfor %}

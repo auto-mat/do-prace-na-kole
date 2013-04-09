@@ -541,14 +541,40 @@ def profile(request):
             'approved_for_team': request.user.userprofile.approved_for_team,
             }, context_instance=RequestContext(request))
 
-def results_user(request, template, username=None, limit=None):
-    userprofile = User.objects.get(username=username).get_profile()
+@login_required
+def results_user(request, template, limit=None):
+    userprofile = request.user.get_profile()
 
     return render_to_response(template,
                               {
             'competitions': userprofile.get_competitions(),
-            'user': userprofile.user,
+            'userprofile': userprofile,
             'limit': ":%s" % limit,
+            }, context_instance=RequestContext(request))
+
+@login_required
+def admissions(request, template, 
+        success_url="profil",
+        ):
+    userprofile = request.user.get_profile()
+
+    if request.method == 'POST':
+        if 'admission_competition_id' in request.POST and request.POST['admission_competition_id']:
+            competition = Competition.objects.get(id=request.POST['admission_competition_id']) 
+            competition.make_admission(userprofile, True)
+        if 'cancellation_competition_id' in request.POST and request.POST['cancellation_competition_id']:
+            competition = Competition.objects.get(id=request.POST['cancellation_competition_id']) 
+            competition.make_admission(userprofile, False)
+
+    competitions = userprofile.get_competitions_for_admission()
+    for competition in competitions:
+        competition.competitor_has_admission = competition.has_admission(userprofile)
+        print competition.competitor_has_admission
+
+    return render_to_response(template,
+                              {
+            'competitions': competitions,
+            'userprofile': userprofile,
             }, context_instance=RequestContext(request))
 
 def competition_results(request, template, competition_slug='testing_zavod', limit=None):

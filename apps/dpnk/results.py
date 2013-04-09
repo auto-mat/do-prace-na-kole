@@ -219,3 +219,11 @@ def get_competitions(userprofile):
 
         competition.my_results = my_results
     return competitions
+
+def get_competitions_for_admission(userprofile):
+    competitions = models.Competition.objects.filter(
+                Q(without_admission = False)
+                & (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
+                & (Q(city = None)    | Q(city = userprofile.team.subsidiary.city))
+            ).distinct()
+    return competitions
