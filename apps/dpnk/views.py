@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # Author: Hynek Hanke <hynek.hanke@auto-mat.cz>
+# Author: Petr Dlouhý <petr.dlouhy@email.cz>
 #
 # Copyright (C) 2012 o.s. Auto*Mat
 #
@@ -24,6 +25,7 @@ from django.shortcuts import render_to_response, redirect
 import django.contrib.auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from decorators import must_be_coordinator, must_be_approved_for_team, must_be_company_admin, must_have_team
 from django.core.mail import EmailMessage, mail_admins
 from django.template import RequestContext
 from django.db.models import Sum, Count
@@ -46,30 +48,6 @@ from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout
 
 from wp_urls import wp_reverse
 from util import Mailing
-
-#decorator
-def must_be_coordinator(fn):
-    @login_required
-    def wrapper(*args, **kwargs):
-        request = args[0]
-        team = request.user.userprofile.team
-        if team.coordinator != request.user.userprofile:
-            return HttpResponse(_(u"<div class='text-error'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name, 'coordinator': team.coordinator, 'you': request.user.userprofile}, status=401)
-        else:
-            return fn(*args, **kwargs)
-    return wrapper
-
-#decorator
-def must_be_approved_for_team(fn):
-    @login_required
-    def wrapper(*args, **kwargs):
-        request = args[0]
-        userprofile = request.user.userprofile
-        if userprofile.approved_for_team == 'approved' or userprofile.team.coordinator == userprofile:
-            return fn(*args, **kwargs)
-        else:
-            return HttpResponse(_(u"<div class='text-error'>Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.</div>") % (userprofile.team.name,), status=401)
-    return wrapper
 
 def redirect(url):
     return HttpResponse("redirect:"+url)
@@ -405,6 +383,7 @@ def trip_active(day, today):
     )
 
 @login_required
+@must_have_team
 def rides(request, template='registration/rides.html'):
     days = util.days()
     today = datetime.date.today()
@@ -547,6 +526,7 @@ def profile(request):
             }, context_instance=RequestContext(request))
 
 @login_required
+@must_have_team
 def results_user(request, template, limit=None):
     userprofile = request.user.get_profile()
 
@@ -558,6 +538,7 @@ def results_user(request, template, limit=None):
             }, context_instance=RequestContext(request))
 
 @login_required
+@must_have_team
 def admissions(request, template, 
         success_url="profil",
         ):
