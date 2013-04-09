@@ -455,7 +455,6 @@ def rides(request, template='registration/rides.html'):
     for i, d in enumerate(days):
         cd = {}
         cd['name'] = "%s %d.%d." % (weekdays[d.weekday()], d.day, d.month)
-        cd['iso'] = str(d)
         cd['trips_active'] = trip_active(d, today)
         if d in trips:
             cd['default_trip_to'] = trips[d].trip_to
