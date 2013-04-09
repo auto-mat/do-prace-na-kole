@@ -668,13 +668,18 @@ def update_profile(request,
 
 @login_required
 @must_be_approved_for_team
-def questionaire(request, questionaire = None, template = 'registration/questionaire.html'):
+def questionaire(request, questionaire = None, 
+        template = 'registration/questionaire.html',
+        success_url = 'profil',
+        ):
+    userprofile = request.user.get_profile()
     questions = Question.objects.filter(competition__slug=questionaire).order_by('order')
     if request.method == 'POST':
         choice_ids = [v for k, v in request.POST.items() if k.startswith('choice')]
         comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
 
         answers_dict = {}
+        answers_dict_choice_type = {}
         for question in questions:
             try:
                 answer = Answer.objects.get(user = request.user.get_profile(),
@@ -687,11 +692,12 @@ def questionaire(request, questionaire = None, template = 'registration/question
                 answer.question = question
             answer.save()
             answers_dict[question.id] = answer
+            answers_dict_choice_type[question.choice_type.id] = answer
 
         # Save choices
         for choice_id in choice_ids:
             choice = Choice.objects.get(id=choice_id)
-            answer = answers_dict[choice.question.id]
+            answer = answers_dict_choice_type[choice.choice_type.id]
             answer.choices.add(choice_id)
             answer.save()
         # Save comments
@@ -699,7 +705,10 @@ def questionaire(request, questionaire = None, template = 'registration/question
             answer = answers_dict[comment_id] # comment_id = question_id
             answer.comment = request.POST.get('comment-%d' % comment_id, '')
             answer.save()
-        return http.HttpResponseRedirect('/registrace/profil/') # Redirect after POST
+    
+        competition = Competition.objects.get(slug=questionaire)
+        competition.make_admission(userprofile)
+        return redirect(wp_reverse(success_url))
     else:
         for question in questions:
             try:
@@ -709,7 +718,7 @@ def questionaire(request, questionaire = None, template = 'registration/question
             try:
                 answer = Answer.objects.get(
                     question=question,
-                    user=request.user.get_profile())
+                    user=userprofile)
                 question.comment_prefill = answer.comment
                 question.choices_prefill = [c.id for c in answer.choices.all()]
             except Answer.DoesNotExist:
@@ -717,7 +726,7 @@ def questionaire(request, questionaire = None, template = 'registration/question
                 question.choices_prefill = ''
 
         return render_to_response(template,
-                                  {'user': request.user.get_profile(),
+                                  {'user': userprofile,
                                    'questions': questions,
                                    'questionaire': questionaire,
                                    }, context_instance=RequestContext(request))

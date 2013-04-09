@@ -634,6 +634,15 @@ class Competition(models.Model):
     def get_results(self):
         return results.get_results(self)
 
+    def make_admission(competitor):
+        if not competition.without_admission:
+            if competition.competitor_type == 'single_user':
+                competition.user_competitors.add(userprofile)
+            elif competition.competitor_type == 'team':
+                competition.team_competitors.add(userprofile.team)
+            elif competition.competitor_type == 'company':
+                competition.company_competitors.add(userprofile.team.subsidiary.company)
+
     def __unicode__(self):
         return "%s" % self.name
 
