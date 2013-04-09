@@ -167,13 +167,20 @@ class TeamAdmin(RelatedFieldAdmin):
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__user__first_name', 'coordinator__user__last_name']
     list_filter = ['subsidiary__city', CoordinatorFilter]
 
-    readonly_fields = ['members']
+    readonly_fields = ['subsidiary_link', 'members']
     def members(self, obj):
         return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
                                   for u in UserProfile.objects.filter(team=obj, user__is_active=True)]))
     members.short_description = 'Členové'
+    def subsidiary_link(self, obj):
+        return mark_safe('<a href="' + wp_reverse('admin') + 'dpnk/subsidiary/%d">%s</a>' % (obj.subsidiary.id, obj.subsidiary))
+    subsidiary_link.short_description = 'Pobočka'
     form = TeamForm
 
+    def subsidiary__city(self, obj):
+       return obj.subsidiary.city
+    def subsidiary__company(self, obj):
+       return obj.subsidiary.company
     
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('trans_id', 'user', 'amount', 'pay_type', 'created', 'status', 'id', )
