@@ -594,36 +594,6 @@ def competition_results(request, template, competition_slug='testing_zavod', lim
             'results': competition.get_results()[:limit],
             }, context_instance=RequestContext(request))
 
-def results(request, template):
-
-    city = request.GET.get('mesto', None)
-
-    #if city:
-    #    user_by_percentage = UserResults.objects.filter(city=city)[:10]
-    #    user_by_distance = UserResults.objects.filter(city=city).order_by('-distance')[:10]
-    #    team_by_distance = TeamResults.objects.filter(city=city).order_by('-distance')[:20]
-    #    team_by_percentage = TeamResults.objects.filter(city=city)
-    #    user_count = UserResults.objects.filter(city=city).count()
-    #    team_count = TeamResults.objects.filter(city=city).count()
-    #else:
-    #    user_by_percentage = UserResults.objects.all()[:10]
-    #    user_by_distance = UserResults.objects.all().order_by('-distance')[:10]
-    #    team_by_distance = TeamResults.objects.all().order_by('-distance')[:20]
-    #    team_by_percentage = TeamResults.objects.all()
-    #    user_count = UserProfile.objects.filter(active=True).count()
-    #    team_count = Team.objects.all().count()
-
-    return render_to_response(template,
-                              {
-            'user_by_percentage': user_by_percentage,
-            'user_by_distance': user_by_distance,
-            'team_by_percentage': team_by_percentage,
-            'team_by_distance': team_by_distance,
-            'city': city,
-            'user_count': user_count,
-            'team_count': team_count,
-            }, context_instance=RequestContext(request))
-
 @login_required
 def update_profile(request,
             success_url = 'profil'
