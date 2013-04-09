@@ -594,6 +594,16 @@ class Competition(models.Model):
         verbose_name=u"Doména v URL",
         blank=False
         )
+    date_from = models.DateField(
+        verbose_name=_(u"Datum začátku soutěže"),
+        help_text=_(u"Po tomto datu nebude možné se do soutěže přihlásit"),
+        default=datetime.date(2013, 5, 1),
+        null=False, blank=False)
+    date_to = models.DateField(
+        verbose_name=_(u"Datum konce soutěže"),
+        help_text=_(u"Po tomto datu nebude možné soutěžit (vyplňovat dotazník)"),
+        default=datetime.date(2013, 5, 31),
+        null=False, blank=False)
     type = models.CharField(
         verbose_name=_(u"Typ"),
         choices=CTYPES,

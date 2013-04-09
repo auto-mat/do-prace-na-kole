@@ -117,7 +117,7 @@ class Migration(SchemaMigration):
             'ico': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'invoice_address_city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
-            'invoice_address_district': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
+            'invoice_address_district': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'invoice_address_psc': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'invoice_address_recipient': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
             'invoice_address_street': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
@@ -169,7 +169,7 @@ class Migration(SchemaMigration):
         'dpnk.subsidiary': {
             'Meta': {'object_name': 'Subsidiary'},
             'address_city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
-            'address_district': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
+            'address_district': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'address_psc': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'address_recipient': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
             'address_street': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
