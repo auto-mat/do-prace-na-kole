@@ -77,6 +77,7 @@
 <a href="{% wp_url 'logout' %}" class="btn btn-small">{% trans "Odhlásit" %}</a>
 </div>
 
+{% comment %}
 {% ifequal competition_state 'started' %}
 
 <h3>Váš přehled</h3>
@@ -124,10 +125,9 @@
 <p>S dotazy a nejasnostmi se obracejte na kontakt@dopracenakole.net</p>
 {% endif %}
 {% endifequal %}
+{% endcomment %}
 
 {% else %}
 Tento profil byl zneaktivněn.</br>
 <a href="{% wp_url 'logout' %}">Odhlásit</a>
 {% endif %}
-
-<p>&nbsp;</p>
