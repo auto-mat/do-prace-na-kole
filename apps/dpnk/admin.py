@@ -87,7 +87,23 @@ class SubsidiaryAdmin(admin.ModelAdmin):
                                   for u in Team.objects.filter(subsidiary=obj)]))
 
 class CompetitionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission')
+    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'date_from', 'date_to')
+    readonly_fields = ['user_competitors_link', 'team_competitors_link', 'company_competitors_link']
+
+    def user_competitors_link(self, obj):
+        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
+                                  for u in obj.user_competitors.all()]))
+    user_competitors_link.short_description = 'Závodníci'
+
+    def team_competitors_link(self, obj):
+        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/team/%d">%s</a>' % (u.id, str(u))
+                                  for u in obj.team_competitors.all()]))
+    team_competitors_link.short_description = 'Týmový závodníci'
+
+    def company_competitors_link(self, obj):
+        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/company/%d">%s</a>' % (u.id, str(u))
+                                  for u in obj.company_competitors.all()]))
+    company_competitors_link.short_description = 'Firemní závodníci'
 
 class UserProfileAdmin(RelatedFieldAdmin):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )

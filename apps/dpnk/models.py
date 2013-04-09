@@ -369,8 +369,11 @@ class UserProfile(models.Model):
     def get_competitions_for_admission(self):
         return results.get_competitions_for_admission(self)
     
-    def is_coordinator(self):
+    def is_team_coordinator(self):
         return self.team.coordinator == self
+    
+    def is_company_admin(self):
+        return not self.company_admin_unapproved
 
 @receiver(pre_save, sender=UserProfile)
 def set_team_coordinator_pre(sender, instance, **kwargs):

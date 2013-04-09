@@ -20,6 +20,7 @@
 import models
 from collections import OrderedDict
 from django.db.models import Sum, F, Q, Count
+import datetime
 
 def get_competitors(self):
     if self.without_admission:
@@ -180,7 +181,7 @@ def get_competitions(userprofile):
                 Q(without_admission = False)
                 & Q(user_competitors = userprofile)
             )
-        ).distinct()
+        ).exclude(Q(date_from__gt = datetime.date.today())).distinct()
 
     for competition in competitions:
         if competition.competitor_type == 'single_user':
@@ -221,9 +222,26 @@ def get_competitions(userprofile):
     return competitions
 
 def get_competitions_for_admission(userprofile):
-    competitions = models.Competition.objects.filter(
+    competitions = models.Competition.objects
+
+    if not userprofile.is_team_coordinator():
+        competitions = competitions.exclude(competitor_type = 'team')
+
+    if not userprofile.is_company_admin():
+        competitions = competitions.exclude(competitor_type = 'company')
+
+    competitions = competitions.filter(
                 Q(without_admission = False)
                 & (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
                 & (Q(city = None)    | Q(city = userprofile.team.subsidiary.city))
+            ).exclude(
+                (
+                    Q(type = 'questionnaire')
+                    & (Q(date_from__gt = datetime.date.today())
+                    | Q(date_to__lte = datetime.date.today()))
+                ) | (
+                    (Q(type = 'length') | Q(type = 'frequency'))
+                    & Q(date_from__lte = datetime.date.today())
+                )
             ).distinct()
     return competitions
