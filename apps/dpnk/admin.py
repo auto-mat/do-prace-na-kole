@@ -27,7 +27,6 @@ from django.contrib.auth.models import User
 from django.db.models import F
 from django.utils.safestring import mark_safe
 from django.http import HttpResponseRedirect
-from snippets.related_field_admin import RelatedFieldAdmin
 from dpnk.wp_urls import wp_reverse
 # Models
 from models import *
@@ -89,7 +88,7 @@ class SubsidiaryAdmin(admin.ModelAdmin):
 class CompetitionAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'competitor_type')
 
-class UserProfileAdmin(RelatedFieldAdmin):
+class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
     inlines = [PaymentInline, VoucherInline]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
@@ -100,8 +99,30 @@ class UserProfileAdmin(RelatedFieldAdmin):
         return mark_safe('<a href="' + wp_reverse('admin') + 'dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
 
-class UserProfileUnpaidAdmin(UserProfileAdmin, RelatedFieldAdmin):
+    def user__first_name(self, obj):
+       return obj.user.first_name
+    def user__last_name(self, obj):
+       return obj.user.last_name
+    def user__email(self, obj):
+       return obj.user.email
+    def user__date_joined(self, obj):
+       return obj.user.date_joined
+    def team__subsidiary__city(self, obj):
+       return obj.team.subsidiary.city
+
+class UserProfileUnpaidAdmin(UserProfileAdmin):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
+
+    def user__first_name(self, obj):
+       return obj.user.first_name
+    def user__last_name(self, obj):
+       return obj.user.last_name
+    def user__email(self, obj):
+       return obj.user.email
+    def user__date_joined(self, obj):
+       return obj.user.date_joined
+    def team__subsidiary__city(self, obj):
+       return obj.team.subsidiary.city
 
 class UserProfileAdminInline(admin.StackedInline):
     model = UserProfile
@@ -113,11 +134,18 @@ class UserProfileAdminInline(admin.StackedInline):
         return mark_safe('<a href="' + wp_reverse('admin') + 'dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
 
-class UserAdmin(UserAdmin, RelatedFieldAdmin):
+class UserAdmin(UserAdmin):
     inlines = (UserProfileAdminInline, )
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'id')
     search_fields = ['first_name', 'last_name', 'username']
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city']
+
+    def userprofile__team(self, obj):
+       return obj.userprofile.team
+    def userprofile__distance(self, obj):
+       return obj.userprofile.distance
+    def userprofile__team__subsidiary__city(self, obj):
+       return obj.userprofile.team.subsidiary.city
 
 class TeamForm(ModelForm):
     def __init__(self, *args, **kwargs):
@@ -146,7 +174,7 @@ class CoordinatorFilter(SimpleListFilter):
         if self.value() == 'foreign_coordinator':
             return queryset.exclude(coordinator__team__id = F("id"))
 
-class TeamAdmin(RelatedFieldAdmin):
+class TeamAdmin(admin.ModelAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__user__first_name', 'coordinator__user__last_name']
     list_filter = ['subsidiary__city', CoordinatorFilter]
@@ -179,7 +207,11 @@ class ChoiceTypeAdmin(admin.ModelAdmin):
     list_filter = ('competition',)
 
 class AnswerAdmin(admin.ModelAdmin):
-    pass
+    list_display = ( 'user', 'points_given', 'question__competition', 'comment', 'question')
+    search_fields = ('user__user__first_name','user__user__last_name')
+
+    def question__competition(self, obj):
+       return obj.question.competition
 
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('text', 'type', 'order', 'date', 'competition', 'id', )
