@@ -239,13 +239,14 @@ class ProfileUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         userprofile = kwargs['instance']
-        self.fields["team"].queryset = Team.objects.filter(subsidiary__company=userprofile.team.subsidiary.company)
+        if userprofile.team:
+            self.fields["team"].queryset = Team.objects.filter(subsidiary__company=userprofile.team.subsidiary.company)
 
         self.fields['email'].initial = self.instance.user.email
         self.fields['first_name'].initial = self.instance.user.first_name
         self.fields['last_name'].initial = self.instance.user.last_name
 
-        if userprofile.team.coordinator == userprofile and UserProfile.objects.filter(team=userprofile.team, user__is_active=True).count()>1:
+        if not userprofile.team or (userprofile.is_team_coordinator() and UserProfile.objects.filter(team=userprofile.team, user__is_active=True).count()>1):
             del self.fields['team']
             self.can_change_team = False
         return ret_val

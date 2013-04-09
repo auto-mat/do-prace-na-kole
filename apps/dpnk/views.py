@@ -486,7 +486,13 @@ def profile(request):
 
     # Render profile
     payment_status = profile.payment_status()
-    team_members = UserProfile.objects.filter(team=profile.team, user__is_active=True)
+    team_members = []
+    team_members_count = 0
+    if profile.team and profile.team.coordinator:
+        team_members = team.members()
+        team_members_count = team_members.count()
+        team_members = team_members.exclude(id=profile.team.coordinator.id)
+        team_members = team_members.exclude(id=profile.id)
 
     # member_counts = []
     # for member in team_members:
@@ -528,8 +534,8 @@ def profile(request):
             'team': profile.team,
             'payment_status': payment_status,
             'payment_type': profile.payment_type(),
-            'team_members': UserProfile.objects.filter(team=profile.team, user__is_active=True).exclude(id=profile.team.coordinator.id).exclude(id=profile.id),
-            'team_members_count': len(profile.team.members()),
+            'team_members': team_members,
+            'team_members_count': team_members_count,
             #'member_counts': member_counts,
             #'team_percentage': team_percentage,
             #'team_distance': team_distance,

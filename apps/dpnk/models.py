@@ -332,7 +332,7 @@ class UserProfile(models.Model):
         return self.user.get_full_name()
 
     def payment_status(self):
-        if self.team.subsidiary.city.admission_fee == 0:
+        if self.team and self.team.subsidiary and self.team.subsidiary.city.admission_fee == 0:
             return 'no_admission'
 
         # Check payment status for this user
@@ -373,7 +373,7 @@ class UserProfile(models.Model):
         return results.get_competitions_for_admission(self)
     
     def is_team_coordinator(self):
-        return self.team.coordinator == self
+        return self.team and self.team.coordinator == self
     
     def is_company_admin(self):
         return not self.company_admin_unapproved
