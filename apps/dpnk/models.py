@@ -285,7 +285,7 @@ class UserProfile(models.Model):
         Team,
         related_name='users',
         verbose_name=_(u"Tým"),
-        null=False, blank=False)
+        null=True, blank=True)
     company_admin_unapproved = models.BooleanField(
         verbose_name=_(u"Správcovství organizace není schváleno"),
         default=True)
@@ -386,7 +386,7 @@ def set_team_coordinator_pre(sender, instance, **kwargs):
 
 @receiver(post_save, sender=UserProfile)
 def set_team_coordinator_post(sender, instance, created, **kwargs):
-    if instance.team.coordinator == None:
+    if instance.team and instance.team.coordinator == None:
         instance.team.coordinator = instance
         instance.team.save()
 
