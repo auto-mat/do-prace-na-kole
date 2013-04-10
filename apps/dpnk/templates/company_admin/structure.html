@@ -10,7 +10,11 @@
       <li>{{ team.name }}</li>
       <ul>
       {% for user in team.users.all %}
-         <li>{{ user }}</li>
+      <li>{{ user }} - <span class="{{ user.payment_status_state.2 }}">{{ user.payment_status_state.1 }}</span> (<span class="
+         {% if user.payment.pay_type == 'fc' %}
+            text-info
+         {% endif %}
+         ">{{ user.payment.get_pay_type_display }}</span>)</li>
       {% endfor %}
       </ul>
    {% endfor %}

@@ -331,9 +331,9 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.user.get_full_name()
 
-    def payment_status(self):
+    def payment_status_state(self):
         if self.team and self.team.subsidiary and self.team.subsidiary.city.admission_fee == 0:
-            return 'no_admission'
+            return ('no_admission', _(u'neplatí se'), _(u'text-success'))
 
         # Check payment status for this user
         payments = Payment.objects.filter(user=self)
@@ -344,23 +344,29 @@ class UserProfile(models.Model):
                    Payment.Status.INVOICE_PAID])
                & set(p_status)):
             # Payment done
-            status = 'done'
+            status = ('done', _(u'zaplaceno'), _(u'text-success'))
         elif len(set([Payment.Status.NEW,
                      Payment.Status.COMMENCED,
                      Payment.Status.WAITING_CONFIRMATION])
                  & set(p_status)):
             # A payment is still waiting
-            status = 'waiting'
+            status = ('waiting', _(u'nepotvrzeno'), _(u'text-warning'))
         else:
             # No payment done and no waiting
-            status = None
+            status = (None, _(u'žádné informace'), _(u'text-warning'))
         return status
 
-    def payment_type(self):
+    def payment_status(self):
+        return self.payment_status_state()[0]
+
+    def payment(self):
         try:
             payment = Payment.objects.filter(user=self).latest('id')
         except Payment.DoesNotExist:
             return None
+        return payment
+
+    def payment_type(self):
         return payment.pay_type
 
     def get_competitions(self):
