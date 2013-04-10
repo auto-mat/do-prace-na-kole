@@ -141,7 +141,7 @@ class Company(models.Model):
         verbose_name = _(u"Firemní správce"),
         null=True,
         blank=True)
-    invoice_address = Address()
+    address = Address()
     ico = models.PositiveIntegerField(
         default=0,
         verbose_name=_(u"IČO"),

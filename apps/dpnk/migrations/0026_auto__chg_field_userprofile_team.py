@@ -11,11 +11,23 @@ class Migration(SchemaMigration):
 
         # Changing field 'UserProfile.team'
         db.alter_column('dpnk_userprofile', 'team_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['dpnk.Team']))
+        db.rename_column('dpnk_company', 'invoice_address_city'         , 'address_city'          )
+        db.rename_column('dpnk_company', 'invoice_address_district'     , 'address_district'      )
+        db.rename_column('dpnk_company', 'invoice_address_psc'          , 'address_psc'           )
+        db.rename_column('dpnk_company', 'invoice_address_recipient'    , 'address_recipient'     )
+        db.rename_column('dpnk_company', 'invoice_address_street'       , 'address_street'        )
+        db.rename_column('dpnk_company', 'invoice_address_street_number', 'address_street_number' )
 
     def backwards(self, orm):
 
         # Changing field 'UserProfile.team'
         db.alter_column('dpnk_userprofile', 'team_id', self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['dpnk.Team']))
+        db.rename_column('dpnk_company','address_city'          , 'invoice_address_city'          )
+        db.rename_column('dpnk_company','address_district'      , 'invoice_address_district'      )
+        db.rename_column('dpnk_company','address_psc'           , 'invoice_address_psc'           )
+        db.rename_column('dpnk_company','address_recipient'     , 'invoice_address_recipient'     )
+        db.rename_column('dpnk_company','address_street'        , 'invoice_address_street'        )
+        db.rename_column('dpnk_company','address_street_number' , 'invoice_address_street_number' )
 
     models = {
         'auth.group': {
@@ -90,12 +102,12 @@ class Migration(SchemaMigration):
             'company_admin': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'administrated_company'", 'unique': 'True', 'null': 'True', 'to': "orm['dpnk.UserProfile']"}),
             'ico': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'invoice_address_city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
-            'invoice_address_district': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'invoice_address_psc': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'invoice_address_recipient': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
-            'invoice_address_street': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
-            'invoice_address_street_number': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10'}),
+            'address_city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
+            'address_district': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'address_psc': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'address_recipient': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
+            'address_street': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
+            'address_street_number': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '60'})
         },
         'dpnk.competition': {
