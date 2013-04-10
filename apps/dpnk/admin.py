@@ -186,6 +186,10 @@ class TeamAdmin(admin.ModelAdmin):
     members.short_description = 'Členové'
     form = TeamForm
 
+    def subsidiary__city(self, obj):
+       return obj.subsidiary.city
+    def subsidiary__company(self, obj):
+       return obj.subsidiary.company
     
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('trans_id', 'user', 'amount', 'pay_type', 'created', 'status', 'id', )
