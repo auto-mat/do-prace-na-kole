@@ -1,14 +1,26 @@
 {% load wp_url from dpnk_tags %}{% autoescape off %}
 
+Zpráva pro soutěžící/ho {{ coordinator.userprofile }}, koordinátora/ku týmu {{user.userprofile.team}} v soutěži Do práce na kole 2013.
+
 Dobrý den, {{ coordinator.userprofile }},
 
-váš kolega {{ user.userprofile }} vás žádá o účast v soutěži Do práce na kole ve vámi koordinovaném týmu {{user.userprofile.team }}.
-Jeho členství můžete potvrdit nebo zamítnout v administraci týmu:
+soutěžící {{ user.userprofile }} Vás žádá o zapojení do Vašeho týmu {{user.userprofile.team}}.
+
+Vzhledem k otevřenému charakteru soutěže se další soutěžící z Vaší organizace mohou hlásit do Vašeho týmu. Rozhodnutí, zda s nimi budete společně po celý měsíc květen soutěžit v jízdě do práce na kole, je ale na Vás.
+
+Členství kandidáta/ky ve Vašem týmu můžete potvrdit nebo zamítnout pomocí tohoto odkazu:
 {% block approval_link %}
 {{ SITE_URL }}{% wp_url  'team_admin' %}
 {% endblock %}
 
-S pozdravem,
-Auto*Mat
+Ujištění pro Vás: Zamítnutím kandidáta/ku nediskvalifikujete ze soutěže. Pokud si do konce dubna vytvoří vlastní tým nebo se připojí do jiného týmu, bude vše v pořádku.
+
+Děkujeme Vám za založení týmu a přejeme Vám hodně radosti z jízdy na kole!
+Váš organizační tým soutěže Do práce na kole 2013
+
+---
+Soutěž Do práce na kole 2013 pořádá Auto*Mat, o. s. ve spolupráci s Nadací Partnerství, sdruženími Centrum pro životní prostředí a zdraví, Cyklisté Liberecka, Kolomouc, Ostravou na kole, Ústím na kole, dále městy Jihlava, Pardubice a Uherské Hradiště a Centrem ekologického vzdělávání Žabka.
+Za finanční i materiální podporu děkujeme generálnímu logistickému partnerovi TNT Express, společnostem O.P.Tiger a Kellys, Nadaci Vodafone, velvyslanectvím USA a Nizozemska, programu udržitelné mobility Evropské komise a mediálním partnerům Seznam.cz a TV Nova.
+Pravidla soutěže: http://www.dopracenakole.net/chci-slapat/pravidla-souteze/ Registrace: http://www.dopracenakole.net/chci-slapat/ Uživatelská podpora: mailto:kontakt@dopracenakole.net
 
 {% endautoescape %}
