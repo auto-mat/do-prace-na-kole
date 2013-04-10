@@ -20,10 +20,12 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import UpdateView
 from decorators import must_be_company_admin
-from company_admin_forms import SelectUsersPayForm
+from company_admin_forms import SelectUsersPayForm, CompanyForm
 from wp_urls import wp_reverse
 from util import redirect
+from models import Company
 
 @must_be_company_admin
 @login_required
@@ -52,3 +54,15 @@ def pay_for_users(request,
                               {
                                 'form': form,
                                 }, context_instance=RequestContext(request))
+
+class CompanyEditView(UpdateView):
+    template_name = 'company_admin/edit_company.html'
+    form_class = CompanyForm
+    model = Company
+    success_url = 'profil'
+
+    def get_object(self, queryset=None):
+        return self.request.user.get_profile().administrated_company
+
+    def form_valid(self, form):
+        return redirect(wp_reverse(self.success_url))

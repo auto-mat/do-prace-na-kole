@@ -3,6 +3,7 @@ from django.conf.urls.defaults import patterns, include, url
 from django.conf import settings
 from views import *
 from company_admin_views import *
+from company_admin_views import CompanyEditView
 
 urlpatterns = patterns('',
     url(r'^registrace/$', 
@@ -92,4 +93,6 @@ urlpatterns = patterns('',
         company_structure),
     url(r'^zaplatit_za_uzivatele/$',
         pay_for_users),
+    url(r'^editovat_spolecnost/$',
+        CompanyEditView.as_view()),
 )

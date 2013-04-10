@@ -18,7 +18,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django import forms
-from models import UserProfile
+from forms import AdressForm
+from models import UserProfile, Company
 from django.utils.translation import gettext as _
 
 class SelectUsersPayForm(forms.Form):
@@ -35,3 +36,13 @@ class SelectUsersPayForm(forms.Form):
         choices = [(userprofile.pk, userprofile) for userprofile in UserProfile.objects.filter(team__subsidiary__company = company, user__is_active=True).all() 
             if userprofile.payment_type() == 'fc' and userprofile.payment_status() != 'done']
         self.fields['paing_for'].choices = choices
+
+class CompanyForm(AdressForm):
+    class Meta:
+        model = Company
+        fields = ('name', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city', 'ico')
+    def __init__(self, request=None, *args, **kwargs):
+        ret_val = super(CompanyForm, self).__init__(*args, **kwargs)
+        self.fields['address_recipient'].label=_(u"Adresát na faktuře")
+        self.fields['address_recipient'].help_text=_(u"Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova")
+        return ret_val

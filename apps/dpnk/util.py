@@ -1,6 +1,7 @@
 
 import datetime
 import createsend
+from  django.http import HttpResponse
 
 DAY_START = 1
 DAY_END = 31

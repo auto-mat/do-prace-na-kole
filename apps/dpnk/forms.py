@@ -22,7 +22,7 @@ class RegisterCompanyForm(forms.ModelForm):
         model = Company
         fields = ('name', )
     
-class RegisterSubsidiaryForm(forms.ModelForm):
+class AdressForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
@@ -45,6 +45,8 @@ class RegisterSubsidiaryForm(forms.ModelForm):
         model = Subsidiary
         fields = ('city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
+class RegisterSubsidiaryForm(AdressForm):
+    pass
 
 class RegisterTeamForm(forms.ModelForm):
     required_css_class = 'required'
