@@ -90,4 +90,6 @@ urlpatterns = patterns('',
     #company admin:
     url(r'^struktura_spolecnosti/$',
         company_structure),
+    url(r'^zaplatit_za_uzivatele/$',
+        pay_for_users),
 )

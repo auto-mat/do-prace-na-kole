@@ -47,10 +47,7 @@ from django.contrib.sites.models import get_current_site
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout
 
 from wp_urls import wp_reverse
-from util import Mailing
-
-def redirect(url):
-    return HttpResponse("redirect:"+url)
+from util import Mailing, redirect
 
 def login(request, template_name='registration/login.html',
           authentication_form=AuthenticationForm):

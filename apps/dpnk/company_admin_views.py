@@ -21,6 +21,9 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from decorators import must_be_company_admin
+from company_admin_forms import SelectUsersPayForm
+from wp_urls import wp_reverse
+from util import redirect
 
 @must_be_company_admin
 @login_required
@@ -30,4 +33,22 @@ def company_structure(request,
     return render_to_response(template,
                               {
                                 'company': request.user.get_profile().administrated_company,
+                                }, context_instance=RequestContext(request))
+
+@must_be_company_admin
+@login_required
+def pay_for_users(request,
+        template = 'company_admin/pay_for_users.html',
+        form_class = SelectUsersPayForm,
+        ):
+    if request.method == 'POST':
+        form = form_class(request.user.get_profile().administrated_company, data=request.POST)
+        if form.is_valid():
+            print form.cleaned_data['paing_for']
+            return redirect(wp_reverse('profil'))
+    else:
+        form = form_class(request.user.get_profile().administrated_company)
+    return render_to_response(template,
+                              {
+                                'form': form,
                                 }, context_instance=RequestContext(request))

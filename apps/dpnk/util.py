@@ -35,3 +35,6 @@ class Mailing:
                            [ { 'Key': "Mesto", 'Value': city } ]
                            , True)
         return r
+
+def redirect(url):
+    return HttpResponse("redirect:"+url)

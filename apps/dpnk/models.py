@@ -367,7 +367,11 @@ class UserProfile(models.Model):
         return payment
 
     def payment_type(self):
-        return payment.pay_type
+        payment = self.payment()
+        if payment:
+            return self.payment().pay_type
+        else:
+            return None
 
     def get_competitions(self):
         return results.get_competitions_with_info(self)
