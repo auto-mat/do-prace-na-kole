@@ -1,15 +1,33 @@
 {% load wp_url from dpnk_tags %}{% autoescape off %}
 
-Vážený {{ user.userprofile }},
+Zpráva pro soutěžící/ho {{ user.userprofile }} z týmu {{user.userprofile.team}} v soutěži Do práce na kole 2013.
 
-právě jste se zaregistroval do soutěže Do práce na kole do týmu {{user.userprofile.team.name}}. Svůj profil v této soutěži můžete navštívit na adrese:
+Vítejte v soutěži Do práce na kole!
+
+Registraci do týmu {{user.userprofile.team}} máte za sebou, svůj profil budete mít vždy k dispozici na adrese:
 {% block profile_link %}
 {{ SITE_URL }}{% wp_url 'profil' %}
 {% endblock %}
 
-Vaše uživatelské jméno: {{ user.username }}
+Vaše uživatelské jméno je {{ user.username }}. Vaše heslo zde kvůli bezpečnosti neuvádíme, ale můžete si ho kdykoli nechat zaslat znovu z webu http://dopracenakole.net
 
-S pozdravem,
-Auto*Mat
+Máte už soupeře? Soutěž bude pro Vás zábavnější, když se do ní zapojí i Vaši známí. Koho byste rádi vyzvali? Kolegy z Vašeho nebo jiného oddělení? Vaše dodavatele nebo zákazníky? Nebo změříte síly a vytrvalost s konkurencí?
+
+Neváhejte a napište jim, že:
+- šlapat může každý: http://www.youtube.com/watch?v=lckme46WVtU
+- registrace je snadná: http://www.dopracenakole.net/chci-slapat/
+- jízdní kolo na cestě do práce prospěje každému: http://www.dopracenakole.net/proc-slapat/
+
+Každý týden Vám zašleme zprávu s novinkami, ať už se budou týkat registrační fáze (do konce dubna) nebo soutěžní fáze (v květnu). Prosíme Vás, sledujte čas od času Váš osobní profil http://www.dopracenakole.net/profil/, který budete využívat až do konce soutěže jako Váš osobní rozcestník - můžete tam měnit Vaše osobní údaje, zvolíte si soutěžní kategorie a budete si zde evidovat jízdy na kole. Pokud si něčím nejste jistí, ozvěte se na kontakt@dopracenakole.net.
+
+Děkujeme Vám za zájem a těšíme se na viděnou v květnu!
+Váš organizační tým soutěže Do práce na kole 2013
+
+P.S. Už jste si zkusili vylepšit profilovku na Facebooku? Je to snadné, mkrněte na svůj profil http://www.dopracenakole.net/profil/
+
+---
+Soutěž Do práce na kole 2013 pořádá Auto*Mat, o. s. ve spolupráci s Nadací Partnerství, sdruženími Centrum pro životní prostředí a zdraví, Cyklisté Liberecka, Kolomouc, Ostravou na kole, Ústím na kole, dále městy Jihlava, Pardubice a Uherské Hradiště a Centrem ekologického vzdělávání Žabka.
+Za finanční i materiální podporu děkujeme generálnímu logistickému partnerovi TNT Express, společnostem O.P.Tiger a Kellys, Nadaci Vodafone, velvyslanectvím USA a Nizozemska, programu udržitelné mobility Evropské komise a mediálním partnerům Seznam.cz a TV Nova.
+Pravidla soutěže: http://www.dopracenakole.net/chci-slapat/pravidla-souteze/ Registrace: http://www.dopracenakole.net/chci-slapat/ Uživatelská podpora: mailto:kontakt@dopracenakole.net
 
 {% endautoescape %}
