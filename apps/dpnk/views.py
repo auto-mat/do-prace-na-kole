@@ -465,7 +465,7 @@ def profile(request):
     team_members = []
     team_members_count = 0
     if profile.team and profile.team.coordinator:
-        team_members = team.members()
+        team_members = profile.team.members()
         team_members_count = team_members.count()
         team_members = team_members.exclude(id=profile.team.coordinator.id)
         team_members = team_members.exclude(id=profile.id)
