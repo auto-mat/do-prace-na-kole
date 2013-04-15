@@ -3,28 +3,35 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>invitation</title>
+<link rel="selenium.base" href="http://localhost/" />
+<title>pay_for_users</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">invitation</td></tr>
+<tr><td rowspan="1" colspan="3">pay_for_users</td></tr>
 </thead><tbody>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>id=id_email1</td>
+	<td>open</td>
+	<td>${app_url}/zaplatit_za_uzivatele.html</td>
 	<td></td>
 </tr>
 <tr>
-	<td>type</td>
-	<td>id=id_email1</td>
-	<td>antonin.zkusil+selenium_test_invitation@gmail.cz</td>
+	<td>addSelection</td>
+	<td>id=id_paing_for</td>
+	<td>label=Karel Kolář</td>
+</tr>
+<tr>
+	<td>addSelection</td>
+	<td>id=id_paing_for</td>
+	<td>label=Jakub-zmena Druhý-zmena</td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>css=button.submit</td>
 	<td></td>
 </tr>
+
 </tbody></table>
 </body>
 </html>

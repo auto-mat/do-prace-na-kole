@@ -12,9 +12,9 @@
 <tr><td rowspan="1" colspan="3">check_change_team_coordinator</td></tr>
 </thead><tbody>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>css=table.table-striped</td>
-	<td></td>
+	<td>waitForTable</td>
+	<td>//table.0.0</td>
+	<td>Jméno</td>
 </tr>
 <tr>
 	<td>assertTable</td>
@@ -49,7 +49,7 @@
 <tr>
 	<td>assertTable</td>
 	<td>css=table.table-striped.6.1</td>
-	<td>antonin.zkusil@gmail.com</td>
+	<td>antonin.zkusil+selenium_test@gmail.com</td>
 </tr>
 <tr>
 	<td>assertTable</td>
@@ -59,19 +59,18 @@
 <tr>
 	<td>assertTable</td>
 	<td>css=table.table-striped.8.1</td>
-	<td>1</td>
+	<td>2</td>
 </tr>
 <tr>
 	<td>assertTable</td>
 	<td>css=table.table-striped.9.1</td>
-	<td>Jakub-zmena Druhý-zmena</td>
+	<td>Jakub-zmena Druhý-zmena (antonin.zkusil+selenium_test_druhy@gmail.com, tel.: 987654322) - nemá zaplaceno startovné</td>
 </tr>
 <tr>
 	<td>verifyTable</td>
-	<td>css=table.table-striped.11.1</td>
-	<td>Nebylo dosud odsouhlaseno. Můžete znovu poslat žádost o ověřeření členství koordinátorovi vašeho týmu.</td>
+	<td>css=table.table-striped.12.1</td>
+	<td>Váš zaměstnavatel ještě poplatek nezaplatil Zadat jinou platbu</td>
 </tr>
-
 </tbody></table>
 </body>
 </html>
