@@ -18,9 +18,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django import forms
-from forms import AdressForm
-from models import UserProfile, Company
+from forms import AdressForm, RegistrationFormDPNK
+from models import UserProfile, Company, CompanyAdmin
 from django.utils.translation import gettext as _
+from django.contrib.auth.models import User
+from django.forms.models import inlineformset_factory
+import registration.forms
 
 class SelectUsersPayForm(forms.Form):
     paing_for = forms.ModelMultipleChoiceField(
@@ -30,12 +33,14 @@ class SelectUsersPayForm(forms.Form):
         widget=forms.SelectMultiple(attrs={'size':'40'}),
     )
 
-    def __init__(self, company, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('initial', None)
         ret_val = super(SelectUsersPayForm, self).__init__(*args, **kwargs)
         self.fields['paing_for'].queryset = UserProfile.objects.filter(team__subsidiary__company = company, user__is_active=True)
         choices = [(userprofile.pk, userprofile) for userprofile in UserProfile.objects.filter(team__subsidiary__company = company, user__is_active=True).all() 
             if userprofile.payment_type() == 'fc' and userprofile.payment_status() != 'done']
         self.fields['paing_for'].choices = choices
+        return ret_val
 
 class CompanyForm(AdressForm):
     class Meta:
@@ -46,3 +51,47 @@ class CompanyForm(AdressForm):
         self.fields['address_recipient'].label=_(u"Adresát na faktuře")
         self.fields['address_recipient'].help_text=_(u"Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova")
         return ret_val
+
+class CompanyAdminApplicationForm(registration.forms.RegistrationForm):
+    motivation_company_admin = forms.CharField( 
+        label=_(u"Pár vět o vaší pozici"),
+        help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle kterých můžeme ověřit, že vám funkci firemního administrátora můžeme svěřit."),
+        max_length=5000,
+        widget=forms.Textarea,
+        required=True)
+    administrated_company = forms.ModelChoiceField(
+        label=_(u"Administrovaná firma"),
+        queryset=Company.objects.all(),
+        required=True)
+    telephone = forms.CharField(
+        label="Telefon",
+        help_text="Pro možnost kontaktování firemního administrátora",
+        max_length=30)
+    first_name = forms.CharField(
+        label=_(u"Jméno"),
+        max_length=30,
+        required=True)
+    last_name = forms.CharField(
+        label=_(u"Příjmení"),
+        max_length=30,
+        required=True)
+
+    def __init__(self, request=None, *args, **kwargs):
+        ret_val = super(CompanyAdminApplicationForm, self).__init__(*args, **kwargs)
+        self.fields.keyOrder = [
+            'motivation_company_admin',
+            'first_name',
+            'last_name',
+            'administrated_company',
+            'email',
+            'telephone',
+            'username',
+            'password1',
+            'password2'
+            ]
+
+        #self.fields['email'].help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
+        print ret_val
+
+    class Meta:
+        model = CompanyAdmin

@@ -31,7 +31,7 @@ from django.template import RequestContext
 from django.db.models import Sum, Count
 from django.utils.translation import gettext as _
 # Registration imports
-import registration.signals, registration.backends
+import registration.signals, registration.backends, registration.backends.simple
 # Model imports
 from django.contrib.auth.models import User
 from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice
@@ -72,7 +72,24 @@ def login(request, template_name='registration/login.html',
     }
     return render_to_response(template_name, context)
 
-def register(request, backend='registration.backends.simple.SimpleBackend',
+class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend):
+    def register(self, request, user_team, **cleaned_data):
+        new_user = super(UserProfileRegistrationBackend, self).register(request, **cleaned_data)
+        from dpnk.models import UserProfile
+
+        new_user.first_name = cleaned_data['first_name']
+        new_user.last_name = cleaned_data['last_name']
+        new_user.save()
+
+        UserProfile(user = new_user,
+                    team = user_team,
+                    t_shirt_size = cleaned_data['t_shirt_size'],
+                    telephone = cleaned_data['telephone'],
+                    distance = cleaned_data['distance']
+                    ).save()
+        return new_user
+
+def register(request, backend='dpnk.views.UserProfileRegistrationBackend',
              success_url=None, form_class=None,
              disallowed_url='registration_disallowed',
              template_name='registration/registration_form.html',
@@ -145,8 +162,10 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
                 team = form_team.save(commit=False)
                 team.subsidiary = subsidiary
                 form_team.save()
+            else:
+                team = form.cleaned_data['team']
 
-            new_user = backend.register(request, **form.cleaned_data)
+            new_user = backend.register(request, team, **form.cleaned_data)
             auth_user = django.contrib.auth.authenticate(
                 username=request.POST['username'],
                 password=request.POST['password1'])
@@ -214,27 +233,6 @@ def register(request, backend='registration.backends.simple.SimpleBackend',
     return render_to_response(template_name,
                               {'form': form,
                                }, context_instance=RequestContext(request))
-
-
-
-def create_profile(user, request, **kwargs):
-    from dpnk.models import UserProfile
-    if 'id_team_selected' in request.POST:
-        team = Team.objects.get(name=request.POST['team-name'])
-    else:
-        team = Team.objects.get(id=request.POST['team'])
-
-    user.first_name = request.POST['first_name']
-    user.last_name = request.POST['last_name']
-    user.save()
-
-    UserProfile(user = user,
-                team = team,
-                t_shirt_size = request.POST['t_shirt_size'],
-                telephone = request.POST['telephone'],
-                distance = request.POST['distance']
-                ).save()
-registration.signals.user_registered.connect(create_profile)
 
 @login_required
 def payment_type(request):

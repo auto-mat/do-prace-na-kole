@@ -135,12 +135,6 @@ class Company(models.Model):
         verbose_name=_(u"Název organizace"),
         help_text=_(u"Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova"),
         max_length=60, null=False)
-    company_admin = models.OneToOneField(
-        "UserProfile", 
-        related_name = "administrated_company",
-        verbose_name = _(u"Firemní správce"),
-        null=True,
-        blank=True)
     address = Address()
     ico = models.PositiveIntegerField(
         default=0,
@@ -286,9 +280,6 @@ class UserProfile(models.Model):
         related_name='users',
         verbose_name=_(u"Tým"),
         null=True, blank=True)
-    company_admin_unapproved = models.BooleanField(
-        verbose_name=_(u"Správcovství organizace není schváleno"),
-        default=True)
     approved_for_team = models.CharField(
         verbose_name=_(u"Souhlas týmu"),
         choices=TEAMAPPROVAL,
@@ -306,15 +297,7 @@ class UserProfile(models.Model):
         choices=TSHIRTSIZE,
         max_length=16,
         null=False,
-        default='L')
-    motivation_company_admin = models.TextField(
-        verbose_name=_(u"Zaměstnanecká pozice"),
-        help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici"),
-        default="",
-        max_length=5000,
-        null=True,
-        blank=True,
-        )
+        default='mL')
     mailing_id = models.TextField(
         verbose_name=_(u"ID uživatele v mailing listu"),
         default="",
@@ -384,21 +367,64 @@ class UserProfile(models.Model):
     
     def is_team_coordinator(self):
         return self.team and self.team.coordinator == self
-    
-    def is_company_admin(self):
-        return not self.company_admin_unapproved
 
 @receiver(pre_save, sender=UserProfile)
 def set_team_coordinator_pre(sender, instance, **kwargs):
     if hasattr(instance, "coordinated_team") and instance.coordinated_team != instance.team:
-        instance.coordinated_team.coordinator = None
-        instance.coordinated_team.save()
+        coordinated_team = instance.coordinated_team
+        coordinated_team.coordinator = None
+        coordinated_team.save()
 
 @receiver(post_save, sender=UserProfile)
 def set_team_coordinator_post(sender, instance, created, **kwargs):
     if instance.team and instance.team.coordinator == None:
         instance.team.coordinator = instance
         instance.team.save()
+
+class CompanyAdmin(models.Model):
+    """Profil firemního administrátora"""
+
+    class Meta:
+        verbose_name = _(u"Firemní administrátor")
+        verbose_name_plural = _(u"Firemní administrátoři")
+
+    user = models.OneToOneField(
+        User,
+        related_name='company_admin',
+        unique=True,
+        null=False,
+        blank=False,
+        )
+
+    company_admin_approved = models.BooleanField(
+        verbose_name=_(u"Správcovství organizace schváleno"),
+        default=False)
+
+    motivation_company_admin = models.TextField(
+        verbose_name=_(u"Zaměstnanecká pozice"),
+        help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici"),
+        default="",
+        max_length=5000,
+        null=True,
+        blank=True,
+        )
+
+    telephone = models.CharField(
+        verbose_name=_(u"Telefon"),
+        max_length=30, null=False)
+
+    administrated_company = models.OneToOneField(
+       "Company", 
+       related_name = "company_admin",
+       verbose_name = _(u"Administrovaná společnost"),
+       null=False,
+       blank=False)
+
+    def __unicode__(self):
+        return self.user.get_full_name()
+    
+    def is_company_admin(self):
+        return self.company_admin_approved
 
 class UserProfileUnpaidManager(models.Manager):
     def get_query_set(self):
@@ -472,6 +498,7 @@ class Payment(models.Model):
         verbose_name_plural = _(u"Platby")
 
     user = models.ForeignKey(UserProfile, 
+        related_name="payments",
         null=True, 
         blank=True, 
         default=None)

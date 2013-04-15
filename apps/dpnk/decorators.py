@@ -20,13 +20,15 @@
 from django.contrib.auth.decorators import login_required
 from  django.http import HttpResponse
 from django.utils.translation import gettext as _
+from models import CompanyAdmin
 
 def must_be_coordinator(fn):
     @login_required
     def wrapper(*args, **kwargs):
         request = args[0]
         team = request.user.userprofile.team
-        if team.is_team_coordinator():
+        userprofile = request.user.userprofile
+        if not userprofile.is_team_coordinator():
             return HttpResponse(_(u"<div class='text-error'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name, 'coordinator': team.coordinator, 'you': request.user.userprofile}, status=401)
         else:
             return fn(*args, **kwargs)
@@ -47,11 +49,14 @@ def must_be_company_admin(fn):
     @login_required
     def wrapper(*args, **kwargs):
         request = args[0]
-        userprofile = request.user.userprofile
-        if userprofile.is_company_admin():
-            return fn(*args, **kwargs)
-        else:
-            return HttpResponse(_(u"<div class='text-error'>Tato stránka je určená pouze firemním koordinátorům, a tím vy nejste.</div>"), status=401)
+        try:
+            company_admin = request.user.company_admin
+            if company_admin.is_company_admin():
+                return fn(*args, **kwargs)
+        except CompanyAdmin.DoesNotExist:
+            pass
+
+        return HttpResponse(_(u"<div class='text-error'>Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.</div>"), status=401)
     return wrapper
 
 def must_have_team(fn):

@@ -30,6 +30,7 @@ from django.http import HttpResponseRedirect
 from dpnk.wp_urls import wp_reverse
 # Models
 from models import *
+import dpnk
 from django.forms import ModelForm
 # -- ADMIN FORMS --
 
@@ -150,8 +151,12 @@ class UserProfileAdminInline(admin.StackedInline):
         return mark_safe('<a href="' + wp_reverse('admin') + 'dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
 
+class CompanyAdminInline(admin.StackedInline):
+    model = dpnk.models.CompanyAdmin
+    can_delete=False
+
 class UserAdmin(UserAdmin):
-    inlines = (UserProfileAdminInline, )
+    inlines = (UserProfileAdminInline, CompanyAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'id')
     search_fields = ['first_name', 'last_name', 'username']
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city']

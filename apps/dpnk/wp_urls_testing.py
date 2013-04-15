@@ -34,6 +34,10 @@ urls = {
     'cyklozamestnavatel_odpovedi':  "cyklozamestnavatel_odpovedi.html",
     'odpovedi':                     "odpovedi.html",
     'vysledky_souteze':             "vysledky_souteze.html",
+
+    # Company admin
+    'edit_company':                 "editovat_spolecnost.html",
+    'company_admin':                "company_admin.html",
 }
 
 def wp_reverse(name):

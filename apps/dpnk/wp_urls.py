@@ -29,6 +29,10 @@ urls = {
     'vysledky':                     "/profil/vysledky",
     'vysledky_souteze':             "/profil/vysledky_souteze",
 
+    # Company admin
+    'edit_company':                 "/fa/editovat_spolecnost",
+    'company_admin':                "/fa/company_admin",
+
     # Zastarale nebo odlozeno na pozdeji
     'kratke_vysledky':              "kratke_vysledky.html",
     'cyklozamestnavatel_roku':      "cyklozamestnavatel_roku.html",

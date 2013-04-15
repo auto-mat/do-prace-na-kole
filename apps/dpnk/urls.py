@@ -3,7 +3,8 @@ from django.conf.urls.defaults import patterns, include, url
 from django.conf import settings
 from views import *
 from company_admin_views import *
-from company_admin_views import CompanyEditView
+from django.contrib.auth.decorators import login_required
+from decorators import must_be_company_admin
 
 urlpatterns = patterns('',
     url(r'^registrace/$', 
@@ -92,7 +93,9 @@ urlpatterns = patterns('',
     url(r'^struktura_spolecnosti/$',
         company_structure),
     url(r'^zaplatit_za_uzivatele/$',
-        pay_for_users),
-    url(r'^editovat_spolecnost/$',
-        CompanyEditView.as_view()),
+        must_be_company_admin(login_required(SelectUsersPayView.as_view()))),
+    url(r'^spolecnost/editovat_spolecnost/$',
+        must_be_company_admin(login_required(CompanyEditView.as_view()))),
+    url(r'^spolecnost/registrace_admina/$',
+        must_be_company_admin(login_required(CompanyAdminApplicationView.as_view()))),
 )
