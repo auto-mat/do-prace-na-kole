@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from smart_selects.form_fields import ChainedModelChoiceField, GroupedModelSelect
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
 from django import forms, http
 # Registration imports
 import registration.forms
@@ -56,7 +57,7 @@ class RegisterTeamForm(forms.ModelForm):
         model = Team
         fields = ('name',)
 
-class RegistrationFormDPNK(registration.forms.RegistrationForm):
+class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
     required_css_class = 'required'
     
     language = forms.ChoiceField(
@@ -237,6 +238,15 @@ class ProfileUpdateForm(forms.ModelForm):
             if data != self.instance.team:
                 team_full(data)
         return data
+
+    def clean_email(self):
+        """
+        Validate that the email is not already in use.
+        """
+        if User.objects.filter(email__iexact=self.cleaned_data['email']).exclude(pk=self.instance.user.pk).exists():
+            raise forms.ValidationError(_("Tento email již je v našem systému zanesen."))
+        else:
+            return self.cleaned_data['email']
 
     def __init__(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).__init__(*args, **kwargs)
