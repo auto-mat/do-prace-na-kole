@@ -1,9 +1,10 @@
-django==1.4.3
-south==0.7.6
-django-registration==0.8
-django-smart-selects==1.0.6
-django-composite-field==0.1
+django
+south
+django-registration
+django-smart-selects
+django-composite-field
 django-remote
 django-bootstrap-form
 ordereddict
 createsend
+unidecode
