@@ -593,10 +593,13 @@ def update_profile(request,
             if form.can_change_team:
                 form.fields['team'].required = True
                 form.Meta.exclude = ()
+        old_team = request.user.userprofile.team
 
         form_valid = form.is_valid()
 
         if team_valid and form_valid:
+            team_changed = form.cleaned_data and 'team' in form.cleaned_data and old_team != form.cleaned_data['team']
+
             userprofile = form.save(commit=False)
 
             if create_team:
@@ -623,7 +626,6 @@ def update_profile(request,
 
                 team_created_mail(userprofile.user)
 
-            team_changed = form.cleaned_data and 'team' in form.cleaned_data and request.user.userprofile.team != form.cleaned_data['team']
             if team_changed and not create_team:
                 userprofile.approved_for_team = 'undecided'
                 approval_request_mail(userprofile.user)
