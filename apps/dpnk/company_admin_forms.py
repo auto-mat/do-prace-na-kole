@@ -91,7 +91,7 @@ class CompanyAdminApplicationForm(registration.forms.RegistrationForm):
             ]
 
         #self.fields['email'].help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
-        print ret_val
+        return ret_val
 
     class Meta:
         model = CompanyAdmin
