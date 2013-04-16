@@ -76,6 +76,15 @@ class CompanyAdminApplicationForm(registration.forms.RegistrationForm):
         max_length=30,
         required=True)
 
+    def clean_administrated_company(self):
+        obj = self.cleaned_data['administrated_company']
+        print obj.pk
+        print CompanyAdmin.objects.filter(administrated_company__pk = obj.pk)
+        if CompanyAdmin.objects.filter(administrated_company__pk = obj.pk).exists():
+            raise forms.ValidationError(_("Tato firma již má svého správce."))
+        else:
+            return self.cleaned_data['administrated_company']
+
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super(CompanyAdminApplicationForm, self).__init__(*args, **kwargs)
         self.fields.keyOrder = [
