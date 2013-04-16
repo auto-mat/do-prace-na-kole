@@ -59,7 +59,7 @@ def login(request, template_name='registration/login.html',
             auth_login(request, form.get_user())
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
-            return HttpResponse(redirect(wp_reverse("profil")))
+            return HttpResponse(redirect(""))
     else:
         form = authentication_form(request)
     request.session.set_test_cookie()
