@@ -31,7 +31,7 @@ urls = {
 
     # Company admin
     'edit_company':                 "/fa/editovat_spolecnost",
-    'company_admin':                "/fa/company_admin",
+    'company_admin':                "/fa",
 
     # Zastarale nebo odlozeno na pozdeji
     'kratke_vysledky':              "kratke_vysledky.html",
