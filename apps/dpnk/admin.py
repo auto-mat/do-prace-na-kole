@@ -105,30 +105,40 @@ class CompetitionAdmin(admin.ModelAdmin):
                                   for u in obj.company_competitors.all()]))
     company_competitors_link.short_description = 'Firemní závodníci'
 
+class PaymentFilter(SimpleListFilter):
+    title = u"stav platby"
+    parameter_name = u'payment_state'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('not_paid', u'nezaplaceno'),
+            ('not_paid_older', u'nezaplaceno (platba starší než 5 dnů)'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'not_paid_older':
+            paying_or_prospective_user_ids = [p.user_id for p in Payment.objects.filter(
+                Q(status=Payment.Status.DONE) | Q (
+                    # Bank transfer less than 5 days old
+                    status=Payment.Status.NEW, pay_type='bt',
+                    created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
+                )]
+            return queryset.filter(
+                user__is_active=True).exclude(id__in=paying_or_prospective_user_ids)
+        elif self.value() == 'not_paid':
+            return queryset.filter(
+                user__is_active=True).exclude(payment__status=Payment.Status.DONE)
+
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
     inlines = [PaymentInline, VoucherInline]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
-    list_filter = ['user__is_active', 'team__subsidiary__city']
+    list_filter = ['user__is_active', 'team__subsidiary__city', PaymentFilter]
 
     readonly_fields = ['team_link']
     def team_link(self, obj):
         return mark_safe('<a href="' + wp_reverse('admin') + 'dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
-
-    def user__first_name(self, obj):
-       return obj.user.first_name
-    def user__last_name(self, obj):
-       return obj.user.last_name
-    def user__email(self, obj):
-       return obj.user.email
-    def user__date_joined(self, obj):
-       return obj.user.date_joined
-    def team__subsidiary__city(self, obj):
-       return obj.team.subsidiary.city
-
-class UserProfileUnpaidAdmin(UserProfileAdmin):
-    list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
 
     def user__first_name(self, obj):
        return obj.user.first_name
@@ -256,7 +266,6 @@ class TripAdmin(admin.ModelAdmin):
     model = Team
 
 admin.site.register(UserProfile, UserProfileAdmin)
-admin.site.register(UserProfileUnpaid, UserProfileUnpaidAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Voucher, VoucherAdmin)
