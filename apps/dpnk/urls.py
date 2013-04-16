@@ -97,5 +97,5 @@ urlpatterns = patterns('',
     url(r'^spolecnost/editovat_spolecnost/$',
         must_be_company_admin(login_required(CompanyEditView.as_view()))),
     url(r'^spolecnost/registrace_admina/$',
-        must_be_company_admin(login_required(CompanyAdminApplicationView.as_view()))),
+        CompanyAdminApplicationView.as_view()),
 )
