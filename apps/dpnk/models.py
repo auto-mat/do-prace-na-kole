@@ -314,45 +314,58 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.user.get_full_name()
 
-    def payment_status_state(self):
+    def payment(self):
         if self.team and self.team.subsidiary and self.team.subsidiary.city.admission_fee == 0:
-            return ('no_admission', _(u'neplatí se'), _(u'text-success'))
+            return {'payment': None,
+                    'status': 'no_admission',
+                    'status_description': _(u'neplatí se'),
+                    'class': _(u'text-success'),
+                   }
 
-        # Check payment status for this user
-        payments = Payment.objects.filter(user=self)
-        p_status = [p.status for p in payments]
-        if len(set([Payment.Status.DONE,
-                   Payment.Status.COMPANY_ACCEPTS,
-                   Payment.Status.INVOICE_MADE,
-                   Payment.Status.INVOICE_PAID])
-               & set(p_status)):
-            # Payment done
-            status = ('done', _(u'zaplaceno'), _(u'text-success'))
-        elif len(set([Payment.Status.NEW,
-                     Payment.Status.COMMENCED,
-                     Payment.Status.WAITING_CONFIRMATION])
-                 & set(p_status)):
-            # A payment is still waiting
-            status = ('waiting', _(u'nepotvrzeno'), _(u'text-warning'))
-        else:
-            # No payment done and no waiting
-            status = (None, _(u'žádné informace'), _(u'text-warning'))
-        return status
+        payments = self.payments.filter(status__in = [Payment.Status.DONE,
+            Payment.Status.COMPANY_ACCEPTS,
+            Payment.Status.INVOICE_MADE,
+            Payment.Status.INVOICE_PAID],
+            )
+        if payments.exists():
+            return {'payment': payments.latest('id'),
+                    'status': 'done',
+                    'status_description': _(u'zaplaceno'),
+                    'class': _(u'text-success'),
+                   }
+
+        payments = self.payments.filter(status__in = [Payment.Status.NEW,
+            Payment.Status.COMMENCED,
+            Payment.Status.WAITING_CONFIRMATION],
+            )
+        if payments.exists():
+            return {'payment': payments.latest('id'),
+                    'status': 'waiting',
+                    'status_description': _(u'nepotvrzeno'),
+                    'class': _(u'text-warning'),
+                   }
+
+        payments = self.payments
+        if payments.exists():
+            return {'payment': payments.latest('id'),
+                    'status': 'unknown',
+                    'status_description': _(u'neznámý'),
+                    'class': _(u'text-warning'),
+                   }
+
+        return {'payment': None,
+                'status': 'none',
+                'status_description': _(u'žádné platby'),
+                'class': _(u'text-error'),
+               }
 
     def payment_status(self):
-        return self.payment_status_state()[0]
-
-    def payment(self):
-        try:
-            payment = Payment.objects.filter(user=self).latest('id')
-        except Payment.DoesNotExist:
-            return None
-        return payment
+        return self.payment()['status']
 
     def payment_type(self):
-        payment = self.payment()
+        payment = self.payment()['payment']
         if payment:
-            return self.payment().pay_type
+            return payment.pay_type
         else:
             return None
 
@@ -449,9 +462,9 @@ class Payment(models.Model):
         (Status.COMMENCED, 'Zahájena'),
         (Status.WAITING_CONFIRMATION, 'Očekává potvrzení'),
         (Status.REJECTED, 'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU'),
-        (Status.DONE, 'Přijata'),
+        (Status.DONE, 'Platba přijata'),
         (Status.WRONG_STATUS, 'Nesprávný status -- kontaktovat PayU'),
-        (Status.COMPANY_ACCEPTS, 'Firma akceptuje platbu'),
+        (Status.COMPANY_ACCEPTS, 'Platba akceptována firmou'),
         (Status.INVOICE_MADE, 'Faktura vystavena'),
         (Status.INVOICE_PAID, 'Faktura zaplacena'),
         )

@@ -10,11 +10,26 @@
       <li>{{ team.name }}</li>
       <ul>
       {% for user in team.users.all %}
-      <li>{{ user }} - <span class="{{ user.payment_status_state.2 }}">{{ user.payment_status_state.1 }}</span> (<span class="
-         {% if user.payment.pay_type == 'fc' %}
-            text-info
-         {% endif %}
-         ">{{ user.payment.get_pay_type_display }}</span>)</li>
+      <li>
+         {{ user }} - 
+            {% if user.payment.payment.pay_type == 'fc' %}
+               <span class="
+               {% if user.payment.payment.status == user.payment.payment.Status.NEW %}
+                  text-error
+               {% elif user.payment.payment.status == user.payment.payment.Status.COMPANY_ACCEPTS %}
+                  text-warning
+               {% elif user.payment.payment.status == user.payment.payment.Status.INVOICE_MADE %}
+                  text-warning
+               {% elif user.payment.payment.status == user.payment.payment.Status.INVOICE_PAID %}
+                  text-success
+               {% endif %}
+               ">
+               {{ user.payment.payment.get_pay_type_display }} ({{ user.payment.payment.get_status_display }})
+               </span>
+            {% else %}
+               {{ user.payment.status_description }} ({{ user.payment.payment.get_pay_type_display }})
+            {% endif %}
+      </li>
       {% endfor %}
       </ul>
    {% endfor %}
