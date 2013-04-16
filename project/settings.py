@@ -76,7 +76,7 @@ INSTALLED_APPS = (
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
-LOGIN_URL = '/dpnk/login'
+LOGIN_URL = '/django/dpnk/login/'
 LOGIN_REDIRECT_URL = ''
 LOGOUT_NEXT_PAGE = '/django/dpnk/profil/'
 SITE_URL = ''

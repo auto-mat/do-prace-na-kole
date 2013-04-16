@@ -55,7 +55,7 @@ def login(request, template_name='registration/login.html',
         form = authentication_form(data=request.POST)
         if form.is_valid():
             redirect_to = settings.LOGIN_REDIRECT_URL
-            if request.path == "/dpnk/login/":
+            if request.path == settings.LOGIN_URL:
                 redirect_to = redirect(wp_reverse("profil"))
             auth_login(request, form.get_user())
             if request.session.test_cookie_worked():
@@ -383,7 +383,7 @@ def trip_active(day, today):
 def rides(request, template='registration/rides.html'):
     days = util.days()
     today = datetime.date.today()
-    #today = datetime.date(year=2013, month=5, day=15)
+    today = datetime.date(year=2013, month=5, day=15)
     profile = request.user.get_profile()
 
     if request.method == 'POST':
