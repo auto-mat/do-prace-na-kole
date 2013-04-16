@@ -93,7 +93,7 @@ class CompanyAdminApplicationView(FormView):
     template_name = 'generic_form_template.html'
     form_class = CompanyAdminApplicationForm
     model = CompanyAdmin
-    success_url = 'edit_company'
+    success_url = 'company_admin'
 
     def form_valid(self, form, backend='dpnk.company_admin_views.CompanyAdminRegistrationBackend'):
         super(CompanyAdminApplicationView, self).form_valid(form)
