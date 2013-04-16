@@ -279,7 +279,7 @@ class UserProfile(models.Model):
         Team,
         related_name='users',
         verbose_name=_(u"Tým"),
-        null=True, blank=True)
+        null=False, blank=False)
     approved_for_team = models.CharField(
         verbose_name=_(u"Souhlas týmu"),
         choices=TEAMAPPROVAL,
