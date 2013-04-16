@@ -53,7 +53,7 @@ class SelectUsersPayView(FormView):
         for userprofile in form.cleaned_data['paing_for']:
             for payment in userprofile.payments.all():
                 if payment.pay_type == 'fc':
-                    payment.status = Payment.Status.INVOICE_MADE 
+                    payment.status = Payment.Status.COMPANY_ACCEPTS
                     payment.save()
                     break
         super(SelectUsersPayView, self).form_valid(form)
