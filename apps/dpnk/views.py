@@ -51,15 +51,16 @@ from util import Mailing, redirect
 
 def login(request, template_name='registration/login.html',
           authentication_form=AuthenticationForm):
-    redirect_to = wp_reverse("profil")
     if request.method == "POST":
         form = authentication_form(data=request.POST)
         if form.is_valid():
             redirect_to = settings.LOGIN_REDIRECT_URL
+            if request.path == "/dpnk/login/":
+                redirect_to = redirect(wp_reverse("profil"))
             auth_login(request, form.get_user())
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
-            return HttpResponse(redirect(""))
+            return HttpResponse(redirect_to)
     else:
         form = authentication_form(request)
     request.session.set_test_cookie()
@@ -70,7 +71,7 @@ def login(request, template_name='registration/login.html',
         'django_url': settings.DJANGO_URL,
         'site_name': current_site.name,
     }
-    return render_to_response(template_name, context)
+    return render_to_response(template_name, context, context_instance=RequestContext(request))
 
 class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend):
     def register(self, request, user_team, **cleaned_data):
