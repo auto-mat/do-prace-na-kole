@@ -166,7 +166,7 @@ class UserAdmin(UserAdmin):
     def userprofile__distance(self, obj):
        return obj.userprofile.distance
     def userprofile__team__subsidiary__city(self, obj):
-       return obj.userprofile.team.subsidiary.city
+        return getattr(obj, 'userprofile.team.subsidiary.city', None)
 
 class TeamForm(ModelForm):
     def __init__(self, *args, **kwargs):
