@@ -37,7 +37,7 @@ urls = {
 
     # Company admin
     'edit_company':                 "fa/editovat_spolecnost",
-    'company_admin':                "fa",
+    'company_admin':                "../fa",
 }
 
 def wp_reverse(name):
