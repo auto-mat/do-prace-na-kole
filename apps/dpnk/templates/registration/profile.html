@@ -4,17 +4,17 @@
 
 {% if active %}
 <h3>{% trans "Základní údaje" %}</h3>
-<table class="table table-striped table-bordered">
-<tr><th scope="row">{% trans "Jméno" %}</th><td>{{ profile }}</td></tr>
-<tr><th scope="row">{% trans "Tým:" %}</th><td>{{ team.name }}</td></tr>
-<tr><th scope="row">{% trans "Město:" %}</th><td>{{ team.subsidiary.city.name }}</td></tr>
-<tr><th scope="row">{% trans "Pobočka:" %}</th><td>{{ team.subsidiary }}</td></tr>
-<tr><th scope="row">{% trans "Firma:" %}</th><td>{{ team.subsidiary.company.name }}</td></tr>
-<tr><th scope="row">{% trans "Telefon:" %}</th><td>{{ profile.telephone }}</td></tr>
-<tr><th scope="row">{% trans "Email:" %}</th><td>{{ profile.user.email }}</td></tr>
-<tr><th scope="row">{% trans "Velikost trička:" %}</th><td>{{ profile.get_t_shirt_size_display }}</td></tr>
-<tr><th scope="row">{% trans "Počet členů týmu:" %}</th><td>{{ team_members_count }}
-<tr><th scope="row">{% trans "Koordinátor týmu:" %}</th><td>{{ team.coordinator }}
+<table class="table table-striped table-bordered" id="profile_table">
+<tr id="tr_name"><th scope="row">{% trans "Jméno" %}</th><td>{{ profile }}</td></tr>
+<tr id="tr_team"><th scope="row">{% trans "Tým:" %}</th><td>{{ team.name }}</td></tr>
+<tr id="tr_city"><th scope="row">{% trans "Město:" %}</th><td>{{ team.subsidiary.city.name }}</td></tr>
+<tr id="tr_subsidiary"><th scope="row">{% trans "Pobočka:" %}</th><td>{{ team.subsidiary }}</td></tr>
+<tr id="tr_company"><th scope="row">{% trans "Firma:" %}</th><td>{{ team.subsidiary.company.name }}</td></tr>
+<tr id="tr_telephone"><th scope="row">{% trans "Telefon:" %}</th><td>{{ profile.telephone }}</td></tr>
+<tr id="tr_email"><th scope="row">{% trans "Email:" %}</th><td>{{ profile.user.email }}</td></tr>
+<tr id="tr_t-shirt-size"><th scope="row">{% trans "Velikost trička:" %}</th><td>{{ profile.get_t_shirt_size_display }}</td></tr>
+<tr id="tr_team_size"><th scope="row">{% trans "Počet členů týmu:" %}</th><td>{{ team_members_count }}
+<tr id="tr_team_coordinator"><th scope="row">{% trans "Koordinátor týmu:" %}</th><td>{{ team.coordinator }}
 {% if approved_for_team == 'approved' %}
 ({{ team.coordinator.user.email }}, tel.: {{ team.coordinator.telephone }})
    {% if team.coordinator.payment_status == 'waiting' or team.coordinator.payment_status == None %}
@@ -23,7 +23,7 @@
 {% endif %}
 </td></tr>
 {% if approved_for_team == 'approved' %}
-<tr><th scope="row">{% trans "Další členové:" %}</th><td>
+<tr id="tr_other_team_members"><th scope="row">{% trans "Další členové:" %}</th><td>
       {% for member in team_members %}
          {% if not forloop.first %}
             <br/>
@@ -36,9 +36,9 @@
 </td></tr>
 {% endif %}
 {% if team_members_count <= 1 %}
-<tr><th scope="row">Upozornění:</th><td class="text-error"> {% trans "Váš tým má jediného odslouhlaseného člena. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva právoplatní členové." %}</td></tr>
+<tr id="tr_alert"><th scope="row">Upozornění:</th><td class="text-error"> {% trans "Váš tým má jediného odslouhlaseného člena. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva právoplatní členové." %}</td></tr>
 {% endif %}
-<tr><th scope="row">{% trans "Členství v týmu:" %}</th>
+<tr id="tr_team_membership"><th scope="row">{% trans "Členství v týmu:" %}</th>
 {% if team.coordinator == profile %}
       <td class="text-success">{% trans "Koordinátor." %}</td>
 {% elif approved_for_team == 'undecided' %}
@@ -49,7 +49,7 @@
       <td class="text-success">{% trans "Odsouhlaseno." %}</td>
 {% endif %}
 </tr>
-<tr><th scope="row">{% trans "Startovné:" %}</th><td>
+<tr id="tr_payment"><th scope="row">{% trans "Startovné:" %}</th><td>
       {% if payment_status == 'no_admission' %}
          <span class="text-success"> {% trans "Ve vašem městě se startovné neplatí." %}</span>
       {% elif payment_status == 'done' %}
