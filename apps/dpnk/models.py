@@ -377,26 +377,6 @@ def set_team_coordinator_post(sender, instance, created, **kwargs):
         instance.team.coordinator = instance
         instance.team.save()
 
-class UserProfileUnpaidManager(models.Manager):
-    def get_query_set(self):
-        paying_or_prospective_user_ids = [p.user_id for p in Payment.objects.filter(
-                Q(status=Payment.Status.DONE) | Q (
-                    # Bank transfer less than 5 days old
-                    status=Payment.Status.NEW, pay_type='bt',
-                    created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
-                )]
-        return super(UserProfileUnpaidManager,self).get_query_set().filter(
-            user__is_active=True).exclude(id__in=paying_or_prospective_user_ids)
-
-    
-
-class UserProfileUnpaid(UserProfile):
-    objects = UserProfileUnpaidManager()
-    class Meta:
-        proxy = True
-        verbose_name = _(u"Soutěžící, co dosud nezaplatil startovné")
-        verbose_name_plural = _(u"Soutěžící, co dosud nezaplatili startovné")
-
 class Payment(models.Model):
     """Platba"""
 
