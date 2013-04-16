@@ -42,10 +42,6 @@ class TeamInline(admin.TabularInline):
     model = Team
     extra = 0
 
-class VoucherInline(admin.TabularInline):
-    model = Voucher
-    extra = 0
-
 class SubsidiaryInline(admin.TabularInline):
     model = Subsidiary
     extra = 0
@@ -131,7 +127,7 @@ class PaymentFilter(SimpleListFilter):
 
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
-    inlines = [PaymentInline, VoucherInline]
+    inlines = [PaymentInline, ]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
     list_filter = ['user__is_active', 'team__subsidiary__city', PaymentFilter]
 
@@ -231,11 +227,6 @@ class PaymentAdmin(admin.ModelAdmin):
 
     list_filter = ['status', 'pay_type']
 
-
-class VoucherAdmin(admin.ModelAdmin):
-    list_display = ('code', 'user', 'id', )
-    fields = ('code', 'user')
-
 class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 0
@@ -268,7 +259,6 @@ class TripAdmin(admin.ModelAdmin):
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Payment, PaymentAdmin)
-admin.site.register(Voucher, VoucherAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(ChoiceType, ChoiceTypeAdmin)
 admin.site.register(City, CityAdmin)

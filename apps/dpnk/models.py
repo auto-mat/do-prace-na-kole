@@ -561,18 +561,6 @@ class Payment(models.Model):
         else:
             return self.session_id
 
-class Voucher(models.Model):
-    """Slevove kupony"""
-
-    class Meta:
-        verbose_name = _(u"Kupon")
-        verbose_name_plural = _(u"Kupony")
-
-    code = models.CharField(
-        verbose_name=_(u"Kód"),
-        max_length=20, null=False)
-    user = models.ForeignKey(UserProfile, null=True, blank=True)
-
 class Trip(models.Model):
     """Cesty"""
 

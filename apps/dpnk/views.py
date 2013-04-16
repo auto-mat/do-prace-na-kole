@@ -34,7 +34,7 @@ from django.utils.translation import gettext as _
 import registration.signals, registration.backends, registration.backends.simple
 # Model imports
 from django.contrib.auth.models import User
-from models import UserProfile, Voucher, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice
+from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice
 from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm
 from django.conf import settings
 from  django.http import HttpResponse
