@@ -3,12 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head profile="http://selenium-ide.openqa.org/profiles/test-case">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>check_accepted_second_user</title>
+<link rel="selenium.base" href="http://localhost/" />
+<title>check_payment_OK</title>
 </head>
 <body>
 <table cellpadding="1" cellspacing="1" border="1">
 <thead>
-<tr><td rowspan="1" colspan="3">check_accepted_second_user</td></tr>
+<tr><td rowspan="1" colspan="3">check_payment_OK</td></tr>
 </thead><tbody>
 <tr>
 	<td>open</td>
@@ -23,7 +24,7 @@
 <tr>
 	<td>type</td>
 	<td>id=id_username</td>
-	<td>selenium_test_druhy</td>
+	<td>selenium_test</td>
 </tr>
 <tr>
 	<td>type</td>
@@ -36,25 +37,16 @@
 	<td></td>
 </tr>
 <tr>
-	<td>waitForElementPresent</td>
-	<td>id=profile_table</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTable</td>
-	<td>css=table.table-striped.11.1</td>
-	<td>Odsouhlaseno.</td>
+	<td>waitForTable</td>
+	<td>//table.0.0</td>
+	<td>Jméno</td>
 </tr>
 <tr>
 	<td>verifyTable</td>
-	<td>css=table.table-striped.8.1</td>
-	<td>2</td>
+	<td>//table.12.1</td>
+	<td>Zaplaceno</td>
 </tr>
-<tr>
-	<td>assertTable</td>
-	<td>css=table.table-striped.9.1</td>
-	<td>Karel Kolář (antonin.zkusil+selenium_test@gmail.com, tel.: 123456789) - nemá zaplaceno startovné</td>
-</tr>
+
 </tbody></table>
 </body>
 </html>
