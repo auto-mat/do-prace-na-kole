@@ -24,7 +24,7 @@ from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.models import User
-from django.db.models import F
+from django.db.models import F, Sum
 from django.utils.safestring import mark_safe
 from django.http import HttpResponseRedirect
 from dpnk.wp_urls import wp_reverse
@@ -150,7 +150,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
     inlines = [PaymentInline, ]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
-    list_filter = ['user__is_active', 'team__subsidiary__city', PaymentFilter]
+    list_filter = ['user__is_active', 'team__subsidiary__city', 'approved_for_team', PaymentFilter]
 
     readonly_fields = ['team_link', 'mailing_id' ]
     def team_link(self, obj):
@@ -222,10 +222,30 @@ class CoordinatorFilter(SimpleListFilter):
         if self.value() == 'foreign_coordinator':
             return queryset.exclude(coordinator__team__id = F("id"))
 
+class LiberoFilter(SimpleListFilter):
+    title = u"libero"
+    parameter_name = u'libero'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('empty', u'prázdný'),
+            ('libero', u'libero'),
+            ('non libero', u'ne libero'),
+        )
+
+    def queryset(self, request, queryset):
+        queryset = queryset.annotate(team_member_count=Sum('users__user__is_active'))
+        if self.value() == 'empty':
+            return queryset.filter(team_member_count__lte = 0)
+        if self.value() == 'libero':
+            return queryset.filter(team_member_count__lte = 1, team_member_count__gt = 0)
+        elif self.value() == 'non_libero':
+            return queryset.filter(team_member_count__gt = 1)
+
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__user__first_name', 'coordinator__user__last_name']
-    list_filter = ['subsidiary__city', CoordinatorFilter]
+    list_filter = ['subsidiary__city', CoordinatorFilter, LiberoFilter]
 
     readonly_fields = ['subsidiary_link', 'members', 'invitation_token']
     def members(self, obj):
