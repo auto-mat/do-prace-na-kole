@@ -500,6 +500,7 @@ def profile(request):
     #         company_survey_by = 'me'
     # else:
     #     company_survey_by = None
+    request.session['invite_success_url'] = 'profil'
     return render_to_response('registration/profile.html',
                               {
             'active': profile.user.is_active,
@@ -622,7 +623,7 @@ def update_profile(request,
 
                 userprofile.team = team
                 success_url = "pozvanky"
-                request.session['success_url'] = 'profil'
+                request.session['invite_success_url'] = 'profil'
 
                 team_created_mail(userprofile.user)
 
@@ -842,8 +843,8 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
              extra_context=None):
     form_class = InviteForm
 
-    if 'success_url' in request.session:
-        success_url = request.session.get('success_url')
+    if 'invite_success_url' in request.session:
+        success_url = request.session.get('invite_success_url')
 
     if request.method == 'POST':
         form = form_class(data=request.POST)
