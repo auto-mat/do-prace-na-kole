@@ -12,6 +12,9 @@ class Migration(SchemaMigration):
         db.delete_column(u'dpnk_payment', 'company_wants_to_pay')
 
 
+        # Changing field 'CompanyAdmin.administrated_company'
+        db.alter_column(u'dpnk_companyadmin', 'administrated_company_id', self.gf('django.db.models.fields.related.OneToOneField')(unique=True, null=True, to=orm['dpnk.Company']))
+
         # Changing field 'CompanyAdmin.company_admin_approved'
         db.alter_column(u'dpnk_companyadmin', 'company_admin_approved', self.gf('django.db.models.fields.CharField')(max_length=16))
 
@@ -21,6 +24,9 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
 
+
+        # Changing field 'CompanyAdmin.administrated_company'
+        db.alter_column(u'dpnk_companyadmin', 'administrated_company_id', self.gf('django.db.models.fields.related.OneToOneField')(default=0, unique=True, to=orm['dpnk.Company']))
 
         # Changing field 'CompanyAdmin.company_admin_approved'
         db.alter_column(u'dpnk_companyadmin', 'company_admin_approved', self.gf('django.db.models.fields.BooleanField')())
@@ -107,7 +113,7 @@ class Migration(SchemaMigration):
         },
         u'dpnk.companyadmin': {
             'Meta': {'object_name': 'CompanyAdmin'},
-            'administrated_company': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'company_admin'", 'unique': 'True', 'to': u"orm['dpnk.Company']"}),
+            'administrated_company': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'company_admin'", 'unique': 'True', 'null': 'True', 'to': u"orm['dpnk.Company']"}),
             'company_admin_approved': ('django.db.models.fields.CharField', [], {'default': "'undecided'", 'max_length': '16'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'motivation_company_admin': ('django.db.models.fields.TextField', [], {'default': "''", 'max_length': '5000', 'null': 'True', 'blank': 'True'}),

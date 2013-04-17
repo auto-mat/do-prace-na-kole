@@ -431,8 +431,14 @@ class CompanyAdmin(models.Model):
        "Company", 
        related_name = "company_admin",
        verbose_name = _(u"Administrovaná společnost"),
-       null=False,
-       blank=False)
+       null=True,
+       blank=True)
+
+    def get_administrated_company(self):
+        if self.administrated_company:
+            return self.administrated_company
+        else:
+            return self.user.get_profile().team.subsidiary.company
 
     def __unicode__(self):
         return self.user.get_full_name()
