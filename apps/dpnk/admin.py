@@ -37,6 +37,7 @@ from django.forms import ModelForm
 class PaymentInline(admin.TabularInline):
     model = Payment
     extra = 0
+    readonly_fields = [ 'order_id', 'session_id', 'trans_id', 'error', ]
 
 class TeamInline(admin.TabularInline):
     model = Team
@@ -73,7 +74,7 @@ class SubsidiaryAdmin(admin.ModelAdmin):
     list_filter = ['city']
     search_fields = ('company__name', 'address_street',)
 
-    readonly_fields = ['team_links']
+    readonly_fields = ['team_links', 'company_link']
     def teams_text(self, obj):
         return mark_safe(" | ".join(['%s' % (str(u))
                                   for u in Team.objects.filter(subsidiary=obj)]))
@@ -81,6 +82,11 @@ class SubsidiaryAdmin(admin.ModelAdmin):
     def team_links(self, obj):
         return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/team/%d">%s</a>' % (u.id, str(u))
                                   for u in Team.objects.filter(subsidiary=obj)]))
+    team_links.short_description = u"Týmy"
+
+    def company_link(self, obj):
+        return mark_safe('<a href="' + wp_reverse('admin') + 'dpnk/company/%d">%s</a>' % (obj.company.id, obj.company))
+    company_link.short_description = u'Firma'
 
 class CompetitionAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'date_from', 'date_to')
@@ -131,7 +137,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
     list_filter = ['user__is_active', 'team__subsidiary__city', PaymentFilter]
 
-    readonly_fields = ['team_link']
+    readonly_fields = ['team_link', 'mailing_id' ]
     def team_link(self, obj):
         return mark_safe('<a href="' + wp_reverse('admin') + 'dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
@@ -152,7 +158,7 @@ class UserProfileAdminInline(admin.StackedInline):
     inlines = [PaymentInline, ]
     can_delete=False
 
-    readonly_fields = ['team_link']
+    readonly_fields = ['team_link', 'mailing_id' ]
     def team_link(self, obj):
         return mark_safe('<a href="' + wp_reverse('admin') + 'dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
@@ -206,7 +212,7 @@ class TeamAdmin(admin.ModelAdmin):
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__user__first_name', 'coordinator__user__last_name']
     list_filter = ['subsidiary__city', CoordinatorFilter]
 
-    readonly_fields = ['subsidiary_link', 'members']
+    readonly_fields = ['subsidiary_link', 'members', 'invitation_token']
     def members(self, obj):
         return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
                                   for u in UserProfile.objects.filter(team=obj, user__is_active=True)]))
@@ -222,8 +228,9 @@ class TeamAdmin(admin.ModelAdmin):
        return obj.subsidiary.company
     
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('trans_id', 'user', 'amount', 'pay_type', 'created', 'status', 'id', )
+    list_display = ('trans_id', 'session_id', 'user', 'amount', 'pay_type', 'created', 'status', 'id', )
     fields = ('trans_id', 'user', 'amount', 'description', 'created', 'status', 'realized', 'pay_type', 'error', 'session_id')
+    search_fields = ('trans_id', 'session_id', 'user__user__first_name', 'user__user__last_name' )
 
     list_filter = ['status', 'pay_type']
 
