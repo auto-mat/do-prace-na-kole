@@ -904,7 +904,7 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
             ('name', _(u"Jméno"), unicode(userprofile)),
             ('username', _(u"Uživatel"), userprofile.user),
             ('email', _(u"Email"), userprofile.user.email),
-            ('payment', _(u"Platba"), {'waiting': _(u"Nezaplaceno"), 'done': _(u"Zaplaceno"), 'no_admission': _(u"Není potřeba"), None: _(u"Neznámý")}[userprofile.payment_status()]),
+            ('payment', _(u"Platba"), {'waiting': _(u"Nezaplaceno"), 'done': _(u"Zaplaceno"), 'no_admission': _(u"Není potřeba"), 'none': _(u"Neznámý")}[userprofile.payment_status()]),
             ('telephone', _(u"Telefon"), userprofile.telephone),
             ('state_name', _(u"Stav"), unicode(userprofile.get_approved_for_team_display())),
             ])
