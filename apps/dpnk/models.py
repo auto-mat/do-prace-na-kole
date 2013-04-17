@@ -541,9 +541,6 @@ class Payment(models.Model):
     error = models.PositiveIntegerField(
         verbose_name=_(u"Chyba"),
         null=True, blank=True)
-    company_wants_to_pay = models.BooleanField(
-        verbose_name=_(u"Firma chce zaplatit"),
-        default=False)
 
     def save(self, *args, **kwargs):
         status_before_update = None
