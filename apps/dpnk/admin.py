@@ -115,6 +115,11 @@ class PaymentFilter(SimpleListFilter):
         return (
             ('not_paid', u'nezaplaceno'),
             ('not_paid_older', u'nezaplaceno (platba starší než 5 dnů)'),
+            ('no_admission', u'neplatí se'),
+            ('done', u'vyřízeno'),
+            ('waiting', u'čeká se'),
+            ('unknown', u'neznámý'),
+            ('none', u'bez plateb'),
         )
 
     def queryset(self, request, queryset):
@@ -130,6 +135,16 @@ class PaymentFilter(SimpleListFilter):
         elif self.value() == 'not_paid':
             return queryset.filter(
                 user__is_active=True).exclude(payment__status=Payment.Status.DONE)
+        elif self.value() == 'no_admission':
+            return queryset.filter(team__subsidiary__city__admission_fee = 0)
+        elif self.value() == 'done':
+            return queryset.filter(payments__status__in = Payment.done_statuses)
+        elif self.value() == 'waiting':
+            return queryset.exclude(payments__status__in = Payment.done_statuses).filter(payments__status__in = Payment.waiting_statuses)
+        elif self.value() == 'unknown':
+            return queryset.exclude(team__subsidiary__city__admission_fee = 0, payments__status__in = set(Payment.done_statuses) | set(Payment.waiting_statuses))
+        elif self.value() == 'none':
+            return queryset.filter(payments = None)
 
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
