@@ -390,6 +390,11 @@ def set_team_coordinator_post(sender, instance, created, **kwargs):
 class CompanyAdmin(models.Model):
     """Profil firemního administrátora"""
 
+    COMPANY_APPROVAL = (('approved', _(u"Odsouhlasený")),
+              ('undecided', _(u"Nerozhodnuto")),
+              ('denied', _(u"Zamítnutý")),
+              )
+
     class Meta:
         verbose_name = _(u"Firemní administrátor")
         verbose_name_plural = _(u"Firemní administrátoři")
@@ -402,9 +407,12 @@ class CompanyAdmin(models.Model):
         blank=False,
         )
 
-    company_admin_approved = models.BooleanField(
+    company_admin_approved = models.CharField(
         verbose_name=_(u"Správcovství organizace schváleno"),
-        default=False)
+        choices=COMPANY_APPROVAL,
+        max_length=16,
+        null=False,
+        default='undecided')
 
     motivation_company_admin = models.TextField(
         verbose_name=_(u"Zaměstnanecká pozice"),
@@ -430,7 +438,7 @@ class CompanyAdmin(models.Model):
         return self.user.get_full_name()
     
     def is_company_admin(self):
-        return self.company_admin_approved
+        return self.company_admin_approved == 'approved'
 
 class Payment(models.Model):
     """Platba"""
