@@ -52,6 +52,15 @@ class CompanyForm(AdressForm):
         self.fields['address_recipient'].help_text=_(u"Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova")
         return ret_val
 
+class CompanyAdminForm(forms.ModelForm):
+    class Meta:
+        model = CompanyAdmin
+        fields = ('motivation_company_admin', )
+
+    def __init__(self, request=None, *args, **kwargs):
+        ret_val = super(CompanyAdminForm, self).__init__(*args, **kwargs)
+        return ret_val
+
 class CompanyAdminApplicationForm(registration.forms.RegistrationForm):
     motivation_company_admin = forms.CharField( 
         label=_(u"Pár vět o vaší pozici"),

@@ -24,7 +24,7 @@ from django.contrib.auth.models import User
 import django.contrib.auth
 from django.views.generic.edit import UpdateView, FormView
 from decorators import must_be_company_admin
-from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm
+from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm
 from wp_urls import wp_reverse
 from util import redirect
 from models import Company, CompanyAdmin, Payment
@@ -38,7 +38,7 @@ def company_structure(request,
         ):
     return render_to_response(template,
                               {
-                                'company': request.user.company_admin.administrated_company,
+                                'company': request.user.company_admin.get_administrated_company(),
                                 }, context_instance=RequestContext(request))
 
 class SelectUsersPayView(FormView):
@@ -47,7 +47,7 @@ class SelectUsersPayView(FormView):
     success_url = 'company_admin'
 
     def get_initial(self, **kwargs):
-        return self.request.user.company_admin.administrated_company
+        return self.request.user.company_admin.get_administrated_company()
 
     def form_valid(self, form):
         for userprofile in form.cleaned_data['paing_for']:
@@ -66,7 +66,7 @@ class CompanyEditView(UpdateView):
     success_url = 'company_admin'
 
     def get_object(self, queryset=None):
-        return self.request.user.company_admin.administrated_company
+        return self.request.user.company_admin.get_administrated_company()
 
     def form_valid(self, form):
         super(CompanyEditView, self).form_valid(form)
@@ -105,3 +105,20 @@ class CompanyAdminApplicationView(FormView):
         django.contrib.auth.login(self.request, auth_user)
 
         return redirect(wp_reverse(self.success_url))
+
+class CompanyAdminView(UpdateView):
+    template_name = 'generic_form_template.html'
+    form_class = CompanyAdminForm
+    model = CompanyAdmin
+    success_url = 'profil'
+
+    def get_object(self, queryset=None):
+        try:
+            return self.request.user.company_admin
+        except CompanyAdmin.DoesNotExist:
+            return CompanyAdmin(user = self.request.user)
+
+    def form_valid(self, form):
+        super(CompanyAdminView, self).form_valid(form)
+        return redirect(wp_reverse(self.success_url))
+

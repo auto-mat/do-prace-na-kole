@@ -98,4 +98,6 @@ urlpatterns = patterns('',
         must_be_company_admin(login_required(CompanyEditView.as_view()))),
     url(r'^spolecnost/registrace_admina/$',
         CompanyAdminApplicationView.as_view()),
+    url(r'^spolecnost/zadost_admina/$',
+        CompanyAdminView.as_view()),
 )
