@@ -322,11 +322,7 @@ class UserProfile(models.Model):
                     'class': _(u'text-success'),
                    }
 
-        payments = self.payments.filter(status__in = [Payment.Status.DONE,
-            Payment.Status.COMPANY_ACCEPTS,
-            Payment.Status.INVOICE_MADE,
-            Payment.Status.INVOICE_PAID],
-            )
+        payments = self.payments.filter(status__in = Payment.done_statuses)
         if payments.exists():
             return {'payment': payments.latest('id'),
                     'status': 'done',
@@ -334,10 +330,7 @@ class UserProfile(models.Model):
                     'class': _(u'text-success'),
                    }
 
-        payments = self.payments.filter(status__in = [Payment.Status.NEW,
-            Payment.Status.COMMENCED,
-            Payment.Status.WAITING_CONFIRMATION],
-            )
+        payments = self.payments.filter(status__in = Payment.waiting_statuses)
         if payments.exists():
             return {'payment': payments.latest('id'),
                     'status': 'waiting',
@@ -468,6 +461,14 @@ class Payment(models.Model):
         (Status.INVOICE_MADE, 'Faktura vystavena'),
         (Status.INVOICE_PAID, 'Faktura zaplacena'),
         )
+
+    done_statuses = [Status.DONE,
+        Status.COMPANY_ACCEPTS,
+        Status.INVOICE_MADE,
+        Status.INVOICE_PAID]
+    waiting_statuses = [Status.NEW,
+        Status.COMMENCED,
+        Status.WAITING_CONFIRMATION]
 
     PAY_TYPES = (
         ('mp', 'mPenize'),
