@@ -99,5 +99,5 @@ urlpatterns = patterns('',
     url(r'^spolecnost/registrace_admina/$',
         CompanyAdminApplicationView.as_view()),
     url(r'^spolecnost/zadost_admina/$',
-        CompanyAdminView.as_view()),
+        login_required(CompanyAdminView.as_view())),
 )
