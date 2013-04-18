@@ -72,7 +72,9 @@
 <a href="{% wp_url 'upravit_profil' %}" class="btn btn-small">{% trans "Upravit údaje" %}</a>
 {% if team.coordinator == profile %}
 <a href="{% wp_url 'team_admin' %}" class="btn btn-small">{% trans "Upravit tým" %}</a>
+<a href="{% wp_url 'pozvanky' %}" class="btn btn-small">Pozvat další uživatele</a>
 {% endif %}
+<a href="{% wp_url 'zadost_firemni_spravce' %}" class="btn btn-small">Požádat o funkci firemního správce</a>
 <a href="{% wp_url 'zmena_hesla' %}" class="btn btn-small">{% trans "Změnit heslo" %}</a>
 <a href="{% wp_url 'logout' %}" class="btn btn-small">{% trans "Odhlásit" %}</a>
 </div>

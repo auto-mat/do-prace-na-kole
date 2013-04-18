@@ -37,6 +37,7 @@ urls = {
 
     # Company admin
     'edit_company':                 "fa/editovat_spolecnost",
+    'zadost_firemni_spravce':       "fa/zadost",
     'company_admin':                "../fa",
 }
 
