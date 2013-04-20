@@ -29,6 +29,8 @@
             {% endif %}
             {% if competition.competitor_type == 'single_user' %}
                jednotlivců
+            {% elif competition.competitor_type == 'liberos' %}
+               liberos
             {% elif competition.competitor_type == 'team' %}
                týmů
             {% elif competition.competitor_type == 'company' %}

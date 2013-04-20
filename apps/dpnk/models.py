@@ -613,6 +613,7 @@ class Competition(models.Model):
 
     CCOMPETITORTYPES = (
         ('single_user', _(u"Jednotliví soutěžící")),
+        ('liberos', _(u"Liberos")),
         ('team', _(u"Týmy")),
         ('company', _(u"Soutěž firem")),
         )
@@ -696,7 +697,7 @@ class Competition(models.Model):
         if self.without_admission:
             return True
         else:
-            if self.competitor_type == 'single_user':
+            if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
                 return self.user_competitors.filter(pk=userprofile.pk).count() > 0
             elif self.competitor_type == 'team':
                 return self.team_competitors.filter(pk=userprofile.team.pk).count() > 0
@@ -705,7 +706,7 @@ class Competition(models.Model):
 
     def make_admission(self, userprofile, admission=True):
         if not self.without_admission:
-            if self.competitor_type == 'single_user':
+            if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
                 if admission:
                     self.user_competitors.add(userprofile)
                 else:

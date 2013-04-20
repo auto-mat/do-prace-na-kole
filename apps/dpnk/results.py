@@ -29,7 +29,7 @@ import datetime
 def get_competitors(self):
     if self.without_admission:
         filter_query = {}
-        if self.competitor_type == 'single_user':
+        if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
             filter_query['user__is_active'] = True
             if self.city:
                 filter_query['team__subsidiary__city'] = self.city
@@ -48,21 +48,24 @@ def get_competitors(self):
                 filter_query['company'] = self.company
             query = models.Company.objects.filter(**filter_query)
     else:
-        if self.competitor_type == 'single_user':
+        if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
             query = self.user_competitors.all()
         elif self.competitor_type == 'team':
             query = self.team_competitors.all()
         elif self.competitor_type == 'company':
             query = self.company_competitors.all()
 
-    if self.competitor_type == 'single_user':
+    if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
         query = query.annotate(team_member_count=Sum('team__users__user__is_active'))
     elif self.competitor_type == 'team':
         query = query.annotate(team_member_count=Sum('users__user__is_active'))
     elif self.competitor_type == 'company':
         query = query.annotate(team_member_count=Sum('subsidiaries__teams__users__user__is_active'))
 
-    query = query.filter(team_member_count__gt = 2)
+    if self.competitor_type == 'liberos':
+        query = query.filter(team_member_count__lte = 1)
+    else:
+        query = query.filter(team_member_count__gt = 1)
     return query
 
 def get_results(self):
@@ -73,7 +76,7 @@ def get_results(self):
 
     if self.type == 'length' or self.type == 'frequency':
         field = 'distance' if self.type == 'length' else 'trip'
-        if self.competitor_type == 'single_user':
+        if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
             #result = competitors.annotate(trip_to = Sum('user_trips__trip_to')).annotate(trip_from = Sum('user_trips__trip_from')).values('trip_to', 'trip_from').extra(
             #    select={ 'result':'trip_to+trip_from'},
             #    #order_by=['-result']
@@ -137,7 +140,7 @@ def get_results(self):
     elif self.type == 'questionnaire':
         select_dict = OrderedDict()
 
-        if self.competitor_type == 'single_user':
+        if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
             select_dict['userid'] = 'dpnk_userprofile.id'
         elif self.competitor_type == 'team':
             select_dict['teamid'] = 'dpnk_team.id'
@@ -159,7 +162,7 @@ def get_results(self):
                 LEFT OUTER JOIN dpnk_subsidiary ON (dpnk_team.subsidiary_id = dpnk_subsidiary.id) """ 
         query_str += " WHERE "
 
-        if self.competitor_type == 'single_user':
+        if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
             query_str += "dpnk_answer.user_id=userid " 
         elif self.competitor_type == 'team':
             query_str += "dpnk_userprofile.team_id = teamid "
@@ -201,7 +204,7 @@ def get_competitions_with_info(userprofile):
     competitions = get_competitions(userprofile)
 
     for competition in competitions:
-        if competition.competitor_type == 'single_user':
+        if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
             try:
                 my_results = competition.get_results().get(pk = userprofile.pk)
             except models.UserProfile.DoesNotExist:
