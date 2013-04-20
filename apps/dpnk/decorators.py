@@ -20,7 +20,7 @@
 from django.contrib.auth.decorators import login_required
 from  django.http import HttpResponse
 from django.utils.translation import gettext as _
-from models import CompanyAdmin
+from models import CompanyAdmin, UserProfile
 
 def must_be_coordinator(fn):
     @login_required
@@ -36,6 +36,7 @@ def must_be_coordinator(fn):
 
 def must_be_approved_for_team(fn):
     @login_required
+    @must_be_competitor
     def wrapper(*args, **kwargs):
         request = args[0]
         userprofile = request.user.userprofile
@@ -59,13 +60,15 @@ def must_be_company_admin(fn):
         return HttpResponse(_(u"<div class='text-error'>Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.</div>"), status=401)
     return wrapper
 
-def must_have_team(fn):
+def must_be_competitor(fn):
     @login_required
     def wrapper(*args, **kwargs):
         request = args[0]
-        userprofile = request.user.userprofile
-        if userprofile.team:
-            return fn(*args, **kwargs)
-        else:
-            return HttpResponse(_(u"<div class='text-error'>Nemáte zvolený žádný tým (pravděpodobně protože jste firemním administrátorem). Tento obsah tedy nemůžete vidět.</div>"), status=401)
+        try:
+            userprofile = request.user.userprofile
+            if userprofile:
+                return fn(*args, **kwargs)
+        except UserProfile.DoesNotExist:
+            pass
+        return HttpResponse(_(u"<div class='text-error'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním správcem, použijte <a href='/fa'>správu firmy</a>.</div>"), status=401) 
     return wrapper

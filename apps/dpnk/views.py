@@ -25,7 +25,7 @@ from django.shortcuts import render_to_response, redirect
 import django.contrib.auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from decorators import must_be_coordinator, must_be_approved_for_team, must_be_company_admin, must_have_team
+from decorators import must_be_coordinator, must_be_approved_for_team, must_be_company_admin, must_be_competitor
 from django.core.mail import EmailMessage, mail_admins
 from django.template import RequestContext
 from django.db.models import Sum, Count
@@ -379,7 +379,7 @@ def trip_active(day, today):
     )
 
 @login_required
-@must_have_team
+@must_be_competitor
 def rides(request, template='registration/rides.html'):
     days = util.days()
     today = datetime.date.today()
@@ -456,6 +456,7 @@ def rides(request, template='registration/rides.html'):
             }, context_instance=RequestContext(request))
 
 @login_required
+@must_be_competitor
 def profile(request):
     profile = request.user.get_profile()
 
@@ -523,7 +524,7 @@ def profile(request):
             }, context_instance=RequestContext(request))
 
 @login_required
-@must_have_team
+@must_be_competitor
 def results_user(request, template, limit=None):
     userprofile = request.user.get_profile()
 
@@ -535,7 +536,7 @@ def results_user(request, template, limit=None):
             }, context_instance=RequestContext(request))
 
 @login_required
-@must_have_team
+@must_be_competitor
 def admissions(request, template, 
         success_url="profil",
         ):
