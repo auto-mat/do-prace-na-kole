@@ -4,7 +4,7 @@
 *.pyc
 *~
 sql/
-
+dpnk.log
 env/
 project/settings_dev_local.py
 static/

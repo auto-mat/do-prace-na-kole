@@ -26,7 +26,6 @@ import django.contrib.auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from decorators import must_be_coordinator, must_be_approved_for_team, must_be_company_admin, must_be_competitor
-from django.core.mail import EmailMessage, mail_admins
 from django.template import RequestContext
 from django.db.models import Sum, Count
 from django.utils.translation import gettext as _
@@ -48,6 +47,8 @@ from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout
 
 from wp_urls import wp_reverse
 from util import Mailing, redirect
+import logging
+logger = logging.getLogger(__name__)
 
 def login(request, template_name='registration/login.html',
           authentication_form=AuthenticationForm):
@@ -193,7 +194,7 @@ def register(request, backend='dpnk.views.UserProfileRegistrationBackend',
                 mailing_id = m.add(new_user.first_name, new_user.last_name, new_user.email,
                                    new_user.userprofile.team.subsidiary.city.name)
             except Exception, e:
-                mail_admins("ERROR Do prace na kole: Nepodarilo se pridat ucastnika do mailing listu", str(e))
+                logger.error('Can\'t add user %s to mailing list: %s' % (new_user.userprofile, str(e)))
             else:
                 new_user.userprofile.mailing_id = mailing_id
                 new_user.userprofile.save()
@@ -210,7 +211,7 @@ def register(request, backend='dpnk.views.UserProfileRegistrationBackend',
             try:
                 team = Team.objects.get(invitation_token=token)
             except Exception, e:
-                mail_admins(u"ERROR Do prace na kole: Nepodařilo se najít tým pro token", u"Exception: %s\nToken: %s\nEmail: %s" % (str(e), token, initial_email) )
+                logger.error('Can\'t find team with token %s, email: %s, exception: %s' % (token, initial_team, str(e)))
                 return HttpResponse(_(u'<div class="text-error">Automatická registrace selhala. K danému tokenu neexistuje v databázi žádný tým. Zkuste prosím váš tým najít pomocí <a href="%s">manuální registrace</a>.</div>' % wp_reverse("registrace")), status=401)
 
             initial_company = team.subsidiary.company
@@ -244,13 +245,16 @@ def payment_type(request):
 
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES)
+        userprofile = request.user.userprofile
         if form.is_valid():
             if form.cleaned_data['payment_type'] == 'pay':
                 return redirect(wp_reverse('platba'))
             elif form.cleaned_data['payment_type'] == 'company':
-                Payment(user=request.user.userprofile, amount=0, pay_type='fc', status=Payment.Status.NEW).save()
+                Payment(user=userprofile, amount=0, pay_type='fc', status=Payment.Status.NEW).save()
+                logger.info('Inserting company payment for %s' % (userprofile))
             elif form.cleaned_data['payment_type'] == 'member':
-                Payment(user=request.user.userprofile, amount=0, pay_type='am', status=Payment.Status.NEW).save()
+                Payment(user=userprofile, amount=0, pay_type='am', status=Payment.Status.NEW).save()
+                logger.info('Inserting automat club member payment for %s' % (userprofile))
 
             return redirect(wp_reverse('profil'))
     else:
@@ -267,13 +271,15 @@ def payment(request):
     uid = request.user.id
     order_id = '%s-1' % uid
     session_id = "%sJ%d " % (order_id, int(time.time()))
+    userprofile = UserProfile.objects.get(user=request.user)
     # Save new payment record
     p = Payment(session_id=session_id,
-                user=UserProfile.objects.get(user=request.user),
+                user=userprofile,
                 order_id = order_id,
                 amount = request.user.userprofile.team.subsidiary.city.admission_fee,
                 description = "Ucastnicky poplatek Do prace na kole")
     p.save()
+    logger.info('Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s' % (uid, order_id, session_id, userprofile))
     # Render form
     profile = UserProfile.objects.get(user=request.user)
     return render_to_response('registration/payment.html',
@@ -302,6 +308,7 @@ def payment_result(request, success, trans_id, session_id, pay_type, error = Non
         p.error = error
         p.save()
 
+    logger.info('Payment result: %s' % (success))
     if success == True:
         msg = _(u"Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
     else:
@@ -361,6 +368,8 @@ def payment_status(request):
         p.realized = r['trans_recv']
     p.save()
 
+    logger.info('Payment status: pay_type: %s, status: %s' % (p.pay_type, p.status))
+
     # Return positive error code as per PayU protocol
     return http.HttpResponse("OK")
 
@@ -391,7 +400,7 @@ def rides(request, template='registration/rides.html'):
             day = int(request.POST["day"])
             date = days[day-1]
             if not trip_active(date, today):
-                mail_admins(u"ERROR Do prace na kole: Vyplňování neaktivního dne", u"Post: %s\n" % (request.POST))
+                logger.error('User %s is trying to fill in nonactive day, POST:' % (profile, request.POST))
                 return HttpResponse(_(u'<div class="text-error">Tento den již není možné vyplnit.</div>'), status=401)
             try:
                 trip = Trip.objects.get(user = request.user.get_profile(),
@@ -892,7 +901,7 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
         b_action = request.POST['button_action'].split('-')
         userprofile = UserProfile.objects.get(id=b_action[1])
         if userprofile.approved_for_team not in ('undecided', 'denied') or userprofile.team != team or not userprofile.user.is_active:
-            mail_admins(u"ERROR Do prace na kole: Ověřování uživatele se špatnými parametry", u"Uživatel: %s\nApproval: %s\nTým: %s\nActive: %s" % (userprofile, userprofile.approved_for_team, userprofile.team, userprofile.user.is_active) )
+            logger.error('Approving user with wrong parameters. User: %s, approval: %s, team: %s, active: %s' % (userprofile, userprofile.approved_for_team, userprofile.team, userprofile.user.is_active))
             denial_message = 'cannot_approve'
         else:
             denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
