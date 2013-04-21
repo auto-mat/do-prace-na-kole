@@ -22,19 +22,6 @@
    {% endif %}
 {% endif %}
 </td></tr>
-{% if approved_for_team == 'approved' %}
-<tr id="tr_other_team_members"><th scope="row">{% trans "Další členové:" %}</th><td>
-      {% for member in team_members %}
-         {% if not forloop.first %}
-            <br/>
-         {% endif %}
-         {{ member }} ({{ member.user.email }})
-         {% if member.payment_status == 'waiting' or member.payment_status == None %}
-            <span class="text-error"> - {% trans "nemá zaplaceno startovné" %}</span>
-         {% endif %}
-      {% endfor %}
-</td></tr>
-{% endif %}
 {% if team_members_count <= 1 %}
 <tr id="tr_alert"><th scope="row">Upozornění:</th><td class="text-error"> {% trans "Váš tým má jediného odslouhlaseného člena. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva právoplatní členové." %}</td></tr>
 {% endif %}
@@ -79,56 +66,6 @@
 <a href="{% wp_url 'zmena_hesla' %}" class="btn btn-small">{% trans "Změnit heslo" %}</a>
 <a href="{% wp_url 'logout' %}" class="btn btn-small">{% trans "Odhlásit" %}</a>
 </div>
-
-{% comment %}
-{% ifequal competition_state 'started' %}
-
-<h3>Váš přehled</h3>
-
-<ul>
-<li>Aktuálně {{ user_position }}. místo v soutěži jednotlivců</li>
-<li>Aktuálně {{ team_position }}. místo v soutěži týmů</li>
-<li>Překonaná vzdálenost v týmu: {{ team_distance }} km</li>
-<li>Pravidelnost v týmu během kampaně: <span {% if team_percentage > 65 %} class="green" {% else %} class="red" {% endif %}>{{ team_percentage|floatformat:1 }}% </span></li>
-</ul>
-
-<table>
-<tr>
-<th scope="column">Jméno</th>
-<th scope="column">Cest</th>
-<th scope="column">Pravidelnost</th>
-<th scope="column">Vzdálenost</th>
-</tr>
-{% for member in member_counts %}
-<tr>
-<td>{{ member.name }}</td>
-<td>{{ member.trips }}</td>
-<td>{{ member.percentage|floatformat:1 }}%</td>
-<td>{{ member.distance }} km</td>
-</tr>
-{% endfor %}
-</table>
-{% endifequal %}
-
-{% ifequal competition_state 'started' %}
-<p><a href="{% wp_url 'vysledky'%}?mesto={{team.city}}" onclick="window.parent.scroll(0,200);">Průběžné výsledky</a></p>
-
-<h3>Soutěž Cyklozaměstnavatel roku</h3>
-{% if not company_survey_by %}
-<p><a href="{% wp_url 'cyklozamestnavatel_roku'%}?questionaire=company" onclick="window.parent.scroll(0,200);">Vyplnit dotazník</a></p>
-{% else %}
-{% if company_survey_by == 'me' %}
-<p><strong>Děkujeme za vyplnění dotazníku.</strong><br/>
-<a href="{% wp_url 'cyklozamestnavatel_roku'%}questionaire=company" onclick="window.parent.scroll(0,200);">Prohlédnout dotazník</a></p>
-{% else %}
-<p>Dotazník cyklozaměstnavatel roku za vaši firmu již vyplnil {{ company_survey_by }}.</p>
-{% endif %}
-
-<p><br/><br/></p>
-<p>S dotazy a nejasnostmi se obracejte na kontakt@dopracenakole.net</p>
-{% endif %}
-{% endifequal %}
-{% endcomment %}
 
 {% else %}
 Tento profil byl zneaktivněn.</br>

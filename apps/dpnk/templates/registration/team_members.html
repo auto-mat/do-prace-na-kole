@@ -1,0 +1,24 @@
+{% load url from future %}
+{% load dpnk_tags %}
+{% load i18n %}
+
+{% if approved_for_team == 'approved' %}
+   <table class="table table-striped table-bordered" id="team_members_table">
+      <tr>
+         <th>Jméno</th>
+         <th>Email</th>
+         <th>Platba</th>
+      </tr>
+      {% for member in team_members %}
+         <tr>
+         {% if not forloop.first %}
+            <br/>
+         {% endif %}
+         <td>{{ member }}</td>
+         <td>{{ member.user.email }}</td>
+         <td><span class="{{ member.payment.class }}">{{ member.payment.status_description }}</span></td>
+         </tr>
+      {% endfor %}
+   </table>
+</td></tr>
+{% endif %}

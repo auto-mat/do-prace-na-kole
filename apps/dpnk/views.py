@@ -471,45 +471,8 @@ def profile(request):
 
     # Render profile
     payment_status = profile.payment_status()
-    team_members = []
-    team_members_count = 0
     if profile.team and profile.team.coordinator:
-        team_members = profile.team.members()
-        team_members_count = team_members.count()
-        team_members = team_members.exclude(id=profile.team.coordinator.id)
-        team_members = team_members.exclude(id=profile.id)
-
-    # member_counts = []
-    # for member in team_members:
-    #     member_counts.append({
-    #             'name': str(member),
-    #             'trips': member.trips,
-    #             'percentage': float(member.trips)/(2*util.days_count())*100,
-    #             'distance': member.trips * member.distance})
-    # if len(team_members):
-    #     team_percentage = float(sum([m['trips'] for m in member_counts]))/(2*len(team_members)*util.days_count()) * 100
-    # else:
-    #     team_percentage = 0
-    # team_distance = sum([m['distance'] for m in member_counts])
-
-    #for user_position, u in enumerate(UserResults.objects.filter(city=profile.team.city)):
-    #    if u.id == profile.id:
-    #        break
-    #user_position += 1
-
-    #for team_position, t in enumerate(TeamResults.objects.filter(city=profile.team.city)):
-    #    if t.id == profile.team.id:
-    #        break
-    #team_position += 1
-
-    # company_survey_answers = Answer.objects.filter(
-    #     question_id=34, user__in = [m.id for m in team_members])
-    # if len(company_survey_answers):
-    #     company_survey_by = company_survey_answers[0].user
-    #     if company_survey_by == request.user.get_profile():
-    #         company_survey_by = 'me'
-    # else:
-    #     company_survey_by = None
+        team_members_count = profile.team.members().count()
     request.session['invite_success_url'] = 'profil'
     return render_to_response('registration/profile.html',
                               {
@@ -520,15 +483,29 @@ def profile(request):
             'team': profile.team,
             'payment_status': payment_status,
             'payment_type': profile.payment_type(),
-            'team_members': team_members,
             'team_members_count': team_members_count,
-            #'member_counts': member_counts,
-            #'team_percentage': team_percentage,
-            #'team_distance': team_distance,
-            #'user_position': user_position,
-            #'team_position': team_position,
-            #'company_survey_by': company_survey_by,
             'competition_state': settings.COMPETITION_STATE,
+            'approved_for_team': request.user.userprofile.approved_for_team,
+            }, context_instance=RequestContext(request))
+
+@login_required
+@must_be_competitor
+def other_team_members(request,
+        template = 'registration/team_members.html'
+        ):
+    profile = request.user.get_profile()
+
+    # Render profile
+    payment_status = profile.payment_status()
+    team_members = []
+    team_members_count = 0
+    if profile.team and profile.team.coordinator:
+        team_members = profile.team.members()
+        team_members_count = team_members.count()
+
+    return render_to_response(template,
+                              {
+            'team_members': team_members,
             'approved_for_team': request.user.userprofile.approved_for_team,
             }, context_instance=RequestContext(request))
 
