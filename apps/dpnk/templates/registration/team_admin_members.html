@@ -26,15 +26,9 @@
                   success
                {% endif %}
                ">
-            {% elif field.0 == 'payment' %}
+            {% elif field.0 == 'payment_description' %}
                <tr class="
-               {% if user.2.2 == None %}
-                  warning
-               {% elif user.2.2 == "waiting" %}
-                  error
-               {% else %}
-                  success
-               {% endif %}
+                  {{ user.2.2.class }}
                ">
             {% else %}
                <tr>

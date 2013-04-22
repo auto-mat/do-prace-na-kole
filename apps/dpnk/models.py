@@ -319,7 +319,7 @@ class UserProfile(models.Model):
             return {'payment': None,
                     'status': 'no_admission',
                     'status_description': _(u'neplatí se'),
-                    'class': _(u'text-success'),
+                    'class': _(u'success'),
                    }
 
         payments = self.payments.filter(status__in = Payment.done_statuses)
@@ -327,7 +327,7 @@ class UserProfile(models.Model):
             return {'payment': payments.latest('id'),
                     'status': 'done',
                     'status_description': _(u'zaplaceno'),
-                    'class': _(u'text-success'),
+                    'class': _(u'success'),
                    }
 
         payments = self.payments.filter(status__in = Payment.waiting_statuses)
@@ -335,7 +335,7 @@ class UserProfile(models.Model):
             return {'payment': payments.latest('id'),
                     'status': 'waiting',
                     'status_description': _(u'nepotvrzeno'),
-                    'class': _(u'text-warning'),
+                    'class': _(u'warning'),
                    }
 
         payments = self.payments
@@ -343,13 +343,13 @@ class UserProfile(models.Model):
             return {'payment': payments.latest('id'),
                     'status': 'unknown',
                     'status_description': _(u'neznámý'),
-                    'class': _(u'text-warning'),
+                    'class': _(u'warning'),
                    }
 
         return {'payment': None,
                 'status': 'none',
                 'status_description': _(u'žádné platby'),
-                'class': _(u'text-error'),
+                'class': _(u'error'),
                }
 
     def payment_status(self):
