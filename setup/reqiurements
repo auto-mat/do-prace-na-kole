@@ -8,3 +8,4 @@ django-bootstrap-form
 ordereddict
 createsend
 unidecode
+-e git+git://github.com/Soaa-/django-nested-inlines.git#egg=django-nested-inlines

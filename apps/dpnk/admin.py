@@ -28,13 +28,14 @@ from django.db.models import F, Sum
 from django.utils.safestring import mark_safe
 from django.http import HttpResponseRedirect
 from dpnk.wp_urls import wp_reverse
+from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 # Models
 from models import *
 import dpnk
 from django.forms import ModelForm
 # -- ADMIN FORMS --
 
-class PaymentInline(admin.TabularInline):
+class PaymentInline(NestedTabularInline):
     model = Payment
     extra = 0
     readonly_fields = [ 'order_id', 'session_id', 'trans_id', 'error', ]
@@ -45,10 +46,6 @@ class TeamInline(admin.TabularInline):
 
 class SubsidiaryInline(admin.TabularInline):
     model = Subsidiary
-    extra = 0
-
-class TeamInline(admin.TabularInline):
-    model = Team
     extra = 0
 
 class CityAdmin(admin.ModelAdmin):
@@ -168,7 +165,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     def team__subsidiary__city(self, obj):
        return obj.team.subsidiary.city
 
-class UserProfileAdminInline(admin.StackedInline):
+class UserProfileAdminInline(NestedStackedInline):
     model = UserProfile
     inlines = [PaymentInline, ]
     can_delete=False
@@ -178,12 +175,12 @@ class UserProfileAdminInline(admin.StackedInline):
         return mark_safe('<a href="' + wp_reverse('admin') + 'dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
     team_link.short_description = 'Tým'
 
-class CompanyAdminInline(admin.StackedInline):
+class CompanyAdminInline(NestedStackedInline):
     model = dpnk.models.CompanyAdmin
     can_delete=False
 
-class UserAdmin(UserAdmin):
-    inlines = (UserProfileAdminInline, CompanyAdminInline)
+class UserAdmin(UserAdmin, NestedModelAdmin):
+    inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'id')
     search_fields = ['first_name', 'last_name', 'username']
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved']
