@@ -442,9 +442,12 @@ class CompanyAdmin(models.Model):
 
     telephone = models.CharField(
         verbose_name=_(u"Telefon"),
-        max_length=30, null=False)
+        max_length=30, 
+        null=True,
+        blank=True,
+        )
 
-    administrated_company = models.OneToOneField(
+    administrated_company = models.ForeignKey(
        "Company", 
        related_name = "company_admin",
        verbose_name = _(u"Administrovaná společnost"),
