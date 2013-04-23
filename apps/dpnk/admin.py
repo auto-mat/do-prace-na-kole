@@ -134,7 +134,7 @@ class PaymentFilter(SimpleListFilter):
                 user__is_active=True).exclude(id__in=paying_or_prospective_user_ids)
         elif self.value() == 'not_paid':
             return queryset.filter(
-                user__is_active=True).exclude(payment__status=Payment.Status.DONE)
+                user__is_active=True).exclude(payments__status=Payment.Status.DONE)
         elif self.value() == 'no_admission':
             return queryset.filter(team__subsidiary__city__admission_fee = 0)
         elif self.value() == 'done':
