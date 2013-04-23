@@ -25,6 +25,7 @@ import django.contrib.auth
 from django.views.generic.edit import UpdateView, FormView
 from decorators import must_be_company_admin
 from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm
+from dpnk.email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from wp_urls import wp_reverse
 from util import redirect
 from models import Company, CompanyAdmin, Payment
@@ -87,6 +88,7 @@ class CompanyAdminRegistrationBackend(registration.backends.simple.SimpleBackend
             user = new_user,
         )
         admin.save()
+        company_admin_register_no_competitor_mail(admin.user)
         return new_user
 
 class CompanyAdminApplicationView(FormView):
@@ -120,5 +122,6 @@ class CompanyAdminView(UpdateView):
 
     def form_valid(self, form):
         super(CompanyAdminView, self).form_valid(form)
+        company_admin_register_competitor_mail(self.request.user)
         return redirect(wp_reverse(self.success_url))
 

@@ -38,7 +38,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 import datetime
 # Local imports
 import util
-from dpnk.email import payment_confirmation_mail
+from dpnk.email import payment_confirmation_mail, company_admin_rejected_mail, company_admin_approval_mail, payment_confirmation_company_mail
 
 class Address(CompositeField):
     street = models.CharField(
@@ -463,6 +463,18 @@ class CompanyAdmin(models.Model):
     def is_company_admin(self):
         return self.company_admin_approved == 'approved'
 
+    def save(self, *args, **kwargs):
+        status_before_update = None
+        if self.id:
+            status_before_update = CompanyAdmin.objects.get(pk=self.id).company_admin_approved
+        super(CompanyAdmin, self).save(*args, **kwargs)
+
+        if status_before_update != self.company_admin_approved:
+            if self.company_admin_approved == 'approved':
+                company_admin_approval_mail(self.user)
+            elif self.company_admin_approved == 'denied':
+                company_admin_rejected_mail(self.user)
+
 class Payment(models.Model):
     """Platba"""
 
@@ -579,10 +591,15 @@ class Payment(models.Model):
             status_before_update = Payment.objects.get(pk=self.id).status
         super(Payment, self).save(*args, **kwargs)
 
+        statuses_company_ok = (Payment.Status.COMPANY_ACCEPTS, Payment.Status.INVOICE_MADE, Payment.Status.INVOICE_PAID)
         if (self.user
             and (status_before_update != Payment.Status.DONE)
             and self.status == Payment.Status.DONE):
             payment_confirmation_mail(self.user.user)
+        elif (self.user
+            and (status_before_update not in statuses_company_ok)
+            and self.status in statuses_company_ok):
+            payment_confirmation_company_mail(self.user.user)
 
     def __unicode__(self):
         if self.trans_id:
@@ -851,3 +868,9 @@ class Answer(models.Model):
 
     def __unicode__(self):
         return "%s" % self.str_choices()
+
+def get_company(user):
+    try:
+        return user.userprofile.team.subsidiary.company
+    except UserProfile.DoesNotExist:
+        return user.company_admin.administrated_company

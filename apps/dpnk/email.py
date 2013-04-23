@@ -21,6 +21,7 @@ from django.core.mail import send_mail
 from django.template import Context
 from django.conf import settings
 from django.utils.translation import gettext as _
+import models
 
 def approval_request_mail(user):
     template = get_template('email/approval_request.html')
@@ -81,3 +82,47 @@ def payment_confirmation_mail(user):
                 'user': user,
                 'SITE_URL': settings.SITE_URL}))
     send_mail(_("Do práce na kole 2013 - přijetí platby"), message, None, [email], fail_silently=False)
+
+def payment_confirmation_company_mail(user):
+    template = get_template('email/payment_comfirmation_company.html')
+    email = user.email
+    message = template.render(Context({
+                'user': user,
+                'SITE_URL': settings.SITE_URL}))
+    send_mail(_("Do práce na kole 2013 - přijetí platby"), message, None, [email], fail_silently=False)
+
+def company_admin_register_competitor_mail(user):
+    template = get_template('email/company_admin_register_competitor.html')
+    email = user.email
+    message = template.render(Context({ 'user': user,
+        'company': models.get_company(user),
+        'SITE_URL': settings.SITE_URL,
+        }))
+    send_mail(_("Do práce na kole 2013 - firemní správce - potvrzení registrace"), message, None, [email], fail_silently=False)
+
+def company_admin_register_no_competitor_mail(user):
+    template = get_template('email/company_admin_register_no_competitor.html')
+    email = user.email
+    message = template.render(Context({ 'user': user,
+        'company': models.get_company(user),
+        'SITE_URL': settings.SITE_URL,
+        }))
+    send_mail(_("Do práce na kole 2013 - firemní správce - potvrzení registrace"), message, None, [email], fail_silently=False)
+
+def company_admin_approval_mail(user):
+    template = get_template('email/company_admin_approval.html')
+    email = user.email
+    message = template.render(Context({ 'user': user,
+        'company': models.get_company(user),
+        'SITE_URL': settings.SITE_URL,
+        }))
+    send_mail(_("Do práce na kole 2013 - firemní správce - schválení správcovství firmy"), message, None, [email], fail_silently=False)
+
+def company_admin_rejected_mail(user):
+    template = get_template('email/company_admin_rejected.html')
+    email = user.email
+    message = template.render(Context({ 'user': user,
+        'company': models.get_company(user),
+        'SITE_URL': settings.SITE_URL,
+        }))
+    send_mail(_("Do práce na kole 2013 - firemní správce - zamítnutí správcovství firmy"), message, None, [email], fail_silently=False)
