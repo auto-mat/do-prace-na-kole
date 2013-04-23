@@ -389,6 +389,7 @@ def trip_active(day, today):
 
 @login_required
 @must_be_competitor
+@must_be_approved_for_team
 def rides(request, template='registration/rides.html'):
     days = util.days()
     today = datetime.date.today()
@@ -490,6 +491,7 @@ def profile(request):
 
 @login_required
 @must_be_competitor
+@must_be_approved_for_team
 def other_team_members(request,
         template = 'registration/team_members.html'
         ):
@@ -506,11 +508,11 @@ def other_team_members(request,
     return render_to_response(template,
                               {
             'team_members': team_members,
-            'approved_for_team': request.user.userprofile.approved_for_team,
             }, context_instance=RequestContext(request))
 
 @login_required
 @must_be_competitor
+@must_be_approved_for_team
 def results_user(request, template, limit=None):
     userprofile = request.user.get_profile()
 
@@ -523,6 +525,7 @@ def results_user(request, template, limit=None):
 
 @login_required
 @must_be_competitor
+@must_be_approved_for_team
 def admissions(request, template, 
         success_url="profil",
         ):
