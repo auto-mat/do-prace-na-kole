@@ -14,6 +14,27 @@ framework.
 
 """
 import os
+import site
+import sys
+
+ALLDIRS = [ 'env/lib/python2.6/site-packages', ]
+
+# Remember original sys.path.
+prev_sys_path = list(sys.path) 
+
+# Add each new site-packages directory.
+for directory in ALLDIRS:
+  site.addsitedir(directory)
+
+# Reorder sys.path so new directories at the front.
+new_sys_path = [] 
+for item in list(sys.path): 
+    if item not in prev_sys_path: 
+        new_sys_path.append(item) 
+        sys.path.remove(item) 
+sys.path[:0] = new_sys_path 
+
+#site.addsitedir('/home/www/test.dopracenakole.net/django/env/lib/python2.6/site-packages')
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dpnk.settings")
 
