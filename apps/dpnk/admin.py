@@ -90,7 +90,7 @@ class CompetitionAdmin(admin.ModelAdmin):
     readonly_fields = ['user_competitors_link', 'team_competitors_link', 'company_competitors_link']
 
     def user_competitors_link(self, obj):
-        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
+        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (u.user.id, str(u))
                                   for u in obj.user_competitors.all()]))
     user_competitors_link.short_description = 'Závodníci'
 
@@ -128,22 +128,23 @@ class PaymentFilter(SimpleListFilter):
                     created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
                 )]
             return queryset.filter(
-                user__is_active=True).exclude(id__in=paying_or_prospective_user_ids)
+                userprofile__user__is_active=True).exclude(userprofile__id__in=paying_or_prospective_user_ids)
         elif self.value() == 'not_paid':
             return queryset.filter(
-                user__is_active=True).exclude(payments__status=Payment.Status.DONE)
+                userprofile__user__is_active=True).exclude(userprofile__payments__status=Payment.Status.DONE)
         elif self.value() == 'no_admission':
-            return queryset.filter(team__subsidiary__city__admission_fee = 0)
+            return queryset.filter(userprofile__team__subsidiary__city__admission_fee = 0)
         elif self.value() == 'done':
-            return queryset.filter(payments__status__in = Payment.done_statuses)
+            return queryset.filter(userprofile__payments__status__in = Payment.done_statuses)
         elif self.value() == 'waiting':
-            return queryset.exclude(payments__status__in = Payment.done_statuses).filter(payments__status__in = Payment.waiting_statuses)
+            return queryset.exclude(userprofile__payments__status__in = Payment.done_statuses).filter(userprofile__payments__status__in = Payment.waiting_statuses)
         elif self.value() == 'unknown':
-            return queryset.exclude(team__subsidiary__city__admission_fee = 0, payments__status__in = set(Payment.done_statuses) | set(Payment.waiting_statuses))
+            return queryset.exclude(userprofile__team__subsidiary__city__admission_fee = 0, userprofile__payments__status__in = set(Payment.done_statuses) | set(Payment.waiting_statuses))
         elif self.value() == 'none':
-            return queryset.filter(payments = None)
+            return queryset.filter(userprofile__payments = None)
 
-class UserProfileAdmin(admin.ModelAdmin):
+class UserProfileAdminInline(NestedStackedInline):
+    model = UserProfile
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
     inlines = [PaymentInline, ]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
@@ -165,16 +166,6 @@ class UserProfileAdmin(admin.ModelAdmin):
     def team__subsidiary__city(self, obj):
        return obj.team.subsidiary.city
 
-class UserProfileAdminInline(NestedStackedInline):
-    model = UserProfile
-    inlines = [PaymentInline, ]
-    can_delete=False
-
-    readonly_fields = ['team_link', 'mailing_id' ]
-    def team_link(self, obj):
-        return mark_safe('<a href="' + wp_reverse('admin') + 'dpnk/team/%s">%s</a>' % (obj.team.id, obj.team.name))
-    team_link.short_description = 'Tým'
-
 class CompanyAdminInline(NestedStackedInline):
     model = dpnk.models.CompanyAdmin
     can_delete=False
@@ -183,7 +174,7 @@ class UserAdmin(UserAdmin, NestedModelAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'id')
     search_fields = ['first_name', 'last_name', 'username']
-    list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved']
+    list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved', 'userprofile__approved_for_team', 'userprofile__t_shirt_size', PaymentFilter]
 
     def userprofile__team(self, obj):
        return obj.userprofile.team
@@ -246,7 +237,7 @@ class TeamAdmin(admin.ModelAdmin):
 
     readonly_fields = ['subsidiary_link', 'members', 'invitation_token']
     def members(self, obj):
-        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/userprofile/%d">%s</a>' % (u.id, str(u))
+        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (u.user.id, str(u))
                                   for u in UserProfile.objects.filter(team=obj, user__is_active=True)]))
     members.short_description = 'Členové'
     def subsidiary_link(self, obj):
@@ -295,7 +286,6 @@ class QuestionAdmin(admin.ModelAdmin):
 class TripAdmin(admin.ModelAdmin):
     model = Team
 
-admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Question, QuestionAdmin)
