@@ -87,6 +87,7 @@ class SubsidiaryAdmin(admin.ModelAdmin):
 
 class CompetitionAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'date_from', 'date_to')
+    filter_horizontal = ('user_competitors', 'team_competitors', 'company_competitors')
     readonly_fields = ['user_competitors_link', 'team_competitors_link', 'company_competitors_link']
 
     def user_competitors_link(self, obj):
