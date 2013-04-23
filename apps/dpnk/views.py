@@ -194,7 +194,7 @@ def register(request, backend='dpnk.views.UserProfileRegistrationBackend',
                 mailing_id = m.add(new_user.first_name, new_user.last_name, new_user.email,
                                    new_user.userprofile.team.subsidiary.city.name)
             except Exception, e:
-                logger.error('Can\'t add user %s to mailing list: %s' % (new_user.userprofile, str(e)))
+                logger.error(u'Can\'t add user %s to mailing list: %s' % (new_user.userprofile, str(e)))
             else:
                 new_user.userprofile.mailing_id = mailing_id
                 new_user.userprofile.save()
