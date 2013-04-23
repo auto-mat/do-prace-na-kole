@@ -146,6 +146,7 @@ class PaymentFilter(SimpleListFilter):
 
 class UserProfileAdminInline(NestedStackedInline):
     model = UserProfile
+    can_delete=False
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
     inlines = [PaymentInline, ]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
@@ -169,13 +170,13 @@ class UserProfileAdminInline(NestedStackedInline):
 
 class CompanyAdminInline(NestedStackedInline):
     model = dpnk.models.CompanyAdmin
-    can_delete=False
 
 class UserAdmin(UserAdmin, NestedModelAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'id')
     search_fields = ['first_name', 'last_name', 'username']
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved', 'userprofile__approved_for_team', 'userprofile__t_shirt_size', PaymentFilter]
+    readonly_fields = ['password']
 
     def userprofile__team(self, obj):
        return obj.userprofile.team
