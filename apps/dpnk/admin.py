@@ -150,7 +150,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
     inlines = [PaymentInline, ]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
-    list_filter = ['user__is_active', 'team__subsidiary__city', 'approved_for_team', PaymentFilter]
+    list_filter = ['user__is_active', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentFilter]
 
     readonly_fields = ['team_link', 'mailing_id' ]
     def team_link(self, obj):

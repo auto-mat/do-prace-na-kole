@@ -251,6 +251,20 @@ class UserProfile(models.Model):
               ('mXXL', _(u"pánské XXL")),
               ]
 
+    TSHIRTSIZE_USER = [
+              ('wXS', _(u"dámské XS")),
+              ('wS', _(u"dámské S")),
+              ('wM', _(u"dámské M")),
+              ('wL', _(u"dámské L")),
+              ('wXL', _(u"dámské XL")),
+
+              ('mS', _(u"pánské S")),
+              ('mM', _(u"pánské M")),
+              ('mL', _(u"pánské L")),
+              ('mXL', _(u"pánské XL")),
+              ('mXXL', _(u"pánské XXL")),
+              ]
+
     TEAMAPPROVAL = (('approved', _(u"Odsouhlasený")),
               ('undecided', _(u"Nerozhodnuto")),
               ('denied', _(u"Zamítnutý")),

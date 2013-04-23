@@ -118,7 +118,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
         required=True)
     t_shirt_size = forms.ChoiceField(
         label=_(u"Velikost trička"),
-        choices = [['','-----'],] + UserProfile.TSHIRTSIZE,
+        choices = [['','-----'],] + UserProfile.TSHIRTSIZE_USER,
         help_text=_('Velikost trička můžete vybírat z <a href="http://www.dopracenakole.net/registrace/tricka/" target="_blank">katalogu</a>'),
         )
 
