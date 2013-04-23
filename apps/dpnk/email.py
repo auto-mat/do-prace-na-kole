@@ -88,6 +88,7 @@ def payment_confirmation_company_mail(user):
     email = user.email
     message = template.render(Context({
                 'user': user,
+                'company': models.get_company(user),
                 'SITE_URL': settings.SITE_URL}))
     send_mail(_("Do práce na kole 2013 - přijetí platby"), message, None, [email], fail_silently=False)
 
