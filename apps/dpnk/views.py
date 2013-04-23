@@ -374,6 +374,7 @@ def payment_status(request):
     return http.HttpResponse("OK")
 
 @login_required
+@must_be_competitor
 def profile_access(request):
     profile = request.user.get_profile()
     return render_to_response('registration/profile_access.html',
