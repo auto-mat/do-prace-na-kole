@@ -43,6 +43,7 @@ class PaymentInline(NestedTabularInline):
 class TeamInline(admin.TabularInline):
     model = Team
     extra = 0
+    readonly_fields = ['invitation_token',]
 
 class SubsidiaryInline(admin.TabularInline):
     model = Subsidiary
