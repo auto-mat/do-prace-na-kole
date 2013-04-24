@@ -31,6 +31,8 @@ from util import redirect
 from models import Company, CompanyAdmin, Payment
 import registration.signals, registration.backends
 import registration.backends.simple
+import logging
+logger = logging.getLogger(__name__)
 
 @must_be_company_admin
 @login_required
@@ -51,12 +53,14 @@ class SelectUsersPayView(FormView):
         return self.request.user.company_admin.get_administrated_company()
 
     def form_valid(self, form):
-        for userprofile in form.cleaned_data['paing_for']:
+        paing_for = form.cleaned_data['paing_for']
+        for userprofile in paing_for:
             for payment in userprofile.payments.all():
                 if payment.pay_type == 'fc':
                     payment.status = Payment.Status.COMPANY_ACCEPTS
                     payment.save()
                     break
+        logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x.user, paing_for)))
         super(SelectUsersPayView, self).form_valid(form)
         return redirect(wp_reverse(self.success_url))
 
