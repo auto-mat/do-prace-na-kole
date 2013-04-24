@@ -48,12 +48,11 @@
                b.
             {% endif %}
          </td>
-         <td>{{ competition.my_results.count|intcomma }}</td>
       {% else %}
          <td>-</td>
          <td>-</td>
-         <td>-</td>
       {% endif %}
+         <td>{{ competition.my_results.count|intcomma }}</td>
       </tr>
    {% endfor %}
 </table>
