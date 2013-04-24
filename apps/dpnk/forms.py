@@ -266,4 +266,4 @@ class ProfileUpdateForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ( 'language', 'first_name', 'last_name', 'telephone', 'email', 'team', 'distance')
+        fields = ( 'language', 'first_name', 'last_name', 'telephone', 'email', 'distance', 'team')
