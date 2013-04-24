@@ -17,7 +17,9 @@
 {% endif %}
 <th scope="column">Odeslat</th>
 <th scope="column">Pravidelnost</th>
+{% if has_distance_dompetition %}
 <th scope="column">Vzdálenost celkem</th>
+{% endif %}
 </tr>
 {% for day in calendar %}
 <tr class="
@@ -36,7 +38,9 @@
 {% endif %}
 <td><button type="button" class="submit" onclick='$("#day").val("{{ forloop.counter }}")' {% if day.trips_active %}{% else %} disabled="disabled"{% endif %}>OK</button></td>
 <td {% if day.percentage > 66 %} class="green" {% else %} class="red" {% endif %}>{% if day.trips_active %}{{ day.percentage|floatformat:1 }}%{% endif %}</td>
+{% if has_distance_dompetition %}
 <td>{% if day.trips_active %}{{ day.distance }} km{% endif %}</td>
+{% endif %}
 </tr>
 {% endfor %}
 </table>
