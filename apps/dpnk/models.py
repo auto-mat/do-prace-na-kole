@@ -284,6 +284,7 @@ class UserProfile(models.Model):
         )
     distance = models.PositiveIntegerField(
         verbose_name=_(u"Vzdálenost"),
+        help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
         null=False)
     # -- Contacts
     telephone = models.CharField(
