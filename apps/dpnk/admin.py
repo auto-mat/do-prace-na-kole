@@ -263,7 +263,7 @@ class PaymentAdmin(admin.ModelAdmin):
 
 class ChoiceInline(admin.TabularInline):
     model = Choice
-    extra = 0
+    extra = 3
 
 class ChoiceTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'competition', 'universal')
