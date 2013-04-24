@@ -179,7 +179,12 @@ def get_results(self):
         return result
 
 def get_competitions(userprofile):
-    competitions = models.Competition.objects.filter(
+    competitions = models.Competition.objects
+
+    if not userprofile.is_libero():
+        competitions = competitions.exclude(competitor_type = 'liberos')
+
+    competitions = competitions.filter(
             (
                 Q(without_admission = True)
                 & (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
@@ -249,6 +254,9 @@ def get_competitions_for_admission(userprofile):
 
     if not userprofile.is_company_admin():
         competitions = competitions.exclude(competitor_type = 'company')
+
+    if not userprofile.is_libero():
+        competitions = competitions.exclude(competitor_type = 'liberos')
 
     competitions = competitions.filter(
                 Q(without_admission = False)

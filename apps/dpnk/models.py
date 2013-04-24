@@ -389,6 +389,9 @@ class UserProfile(models.Model):
     def is_team_coordinator(self):
         return self.team and self.team.coordinator == self
 
+    def is_libero(self):
+        return self.team.members().count() <= 1
+
     def is_company_admin(self):
         try:
             return self.user.company_admin.is_company_admin()
