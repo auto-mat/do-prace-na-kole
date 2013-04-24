@@ -25,7 +25,7 @@ from django.shortcuts import render_to_response, redirect
 import django.contrib.auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from decorators import must_be_coordinator, must_be_approved_for_team, must_be_company_admin, must_be_competitor
+from decorators import must_be_coordinator, must_be_approved_for_team, must_be_company_admin, must_be_competitor, login_required_simple
 from django.template import RequestContext
 from django.db.models import Sum, Count
 from django.utils.translation import gettext as _
@@ -389,7 +389,7 @@ def trip_active(day, today):
         and (day > today - datetime.timedelta(days=7))
     )
 
-@login_required
+@login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
 def rides(request, template='registration/rides.html'):
@@ -492,7 +492,7 @@ def profile(request):
             'is_company_admin': profile.is_company_admin(),
             }, context_instance=RequestContext(request))
 
-@login_required
+@login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
 def other_team_members(request,
@@ -513,7 +513,7 @@ def other_team_members(request,
             'team_members': team_members,
             }, context_instance=RequestContext(request))
 
-@login_required
+@login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
 def results_user(request, template, limit=None):
@@ -526,7 +526,7 @@ def results_user(request, template, limit=None):
             'limit': ":%s" % limit,
             }, context_instance=RequestContext(request))
 
-@login_required
+@login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
 def admissions(request, template, 

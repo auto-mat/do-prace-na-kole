@@ -22,6 +22,15 @@ from  django.http import HttpResponse
 from django.utils.translation import gettext as _
 from models import CompanyAdmin, UserProfile
 
+def login_required_simple(fn):
+    def wrapper(*args, **kwargs):
+        request = args[0]
+        if not request.user.is_authenticated():
+            return HttpResponse(_(u"<div class='text-error'>Nejste přihlášen</div>"), status=401)
+        else:
+            return fn(*args, **kwargs)
+    return wrapper
+
 def must_be_coordinator(fn):
     @login_required
     def wrapper(*args, **kwargs):
