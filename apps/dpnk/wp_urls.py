@@ -37,7 +37,7 @@ urls = {
     # Zastarale nebo odlozeno na pozdeji
     'kratke_vysledky':              "kratke_vysledky.html",
     'cyklozamestnavatel_roku':      "cyklozamestnavatel_roku.html",
-    'otazka':                       "otazka.html",
+    'otazka':                       "/profil/dotaznik",
     'otazky':                       "otazky.html",
     'cyklozamestnavatel_firmy':     "cyklozamestnavatel_firmy.html",
     'cyklozamestnavatel_odpovedi':  "cyklozamestnavatel_odpovedi.html",
