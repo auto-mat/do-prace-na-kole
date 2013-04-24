@@ -369,7 +369,7 @@ def payment_status(request):
         p.realized = r['trans_recv']
     p.save()
 
-    logger.info('Payment status: pay_type: %s, status: %s' % (p.pay_type, p.status))
+    logger.info('Payment status: pay_type: %s, status: %s, payment response: %s' % (p.pay_type, p.status, r))
 
     # Return positive error code as per PayU protocol
     return http.HttpResponse("OK")
