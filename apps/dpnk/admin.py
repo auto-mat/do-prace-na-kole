@@ -252,7 +252,7 @@ class TeamAdmin(admin.ModelAdmin):
        return obj.subsidiary.company
     
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('trans_id', 'session_id', 'user', 'amount', 'pay_type', 'created', 'status', 'id', )
+    list_display = ('id', 'trans_id', 'session_id', 'user', 'amount', 'pay_type', 'created', 'status', )
     fields = ('trans_id', 'user', 'amount', 'description', 'created', 'status', 'realized', 'pay_type', 'error', 'session_id')
     search_fields = ('trans_id', 'session_id', 'user__user__first_name', 'user__user__last_name' )
 
