@@ -235,7 +235,8 @@ def get_competitions_with_info(userprofile):
             if competitor == my_results:
                 my_results.position = i
 
-        my_results.count = competition.get_results().count()
+        if my_results:
+            my_results.count = competition.get_results().count()
 
         #if my_results:
         #    #Big hack:
