@@ -489,6 +489,7 @@ def profile(request):
             'team_members_count': team_members_count,
             'competition_state': settings.COMPETITION_STATE,
             'approved_for_team': request.user.userprofile.approved_for_team,
+            'is_company_admin': profile.is_company_admin(),
             }, context_instance=RequestContext(request))
 
 @login_required

@@ -389,7 +389,10 @@ class UserProfile(models.Model):
         return self.team and self.team.coordinator == self
 
     def is_company_admin(self):
-        return getattr(self, 'user.company_admin.is_company_admin()', None)
+        try:
+            return self.user.company_admin.is_company_admin()
+        except:
+            return False
 
 @receiver(pre_save, sender=UserProfile)
 def set_team_coordinator_pre(sender, instance, **kwargs):
