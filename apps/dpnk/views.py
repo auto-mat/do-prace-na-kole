@@ -395,7 +395,7 @@ def trip_active(day, today):
 def rides(request, template='registration/rides.html'):
     days = util.days()
     today = datetime.date.today()
-    today = datetime.date(year=2013, month=5, day=15)
+    #today = datetime.date(year=2013, month=5, day=15)
     profile = request.user.get_profile()
 
     if request.method == 'POST':
