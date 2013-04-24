@@ -172,7 +172,7 @@ class CompanyAdminInline(NestedStackedInline):
 
 class UserAdmin(UserAdmin, NestedModelAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'id')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'company_admin__administrated_company', 'id')
     search_fields = ['first_name', 'last_name', 'username']
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved', 'userprofile__approved_for_team', 'userprofile__t_shirt_size', PaymentFilter]
     readonly_fields = ['password']
@@ -182,7 +182,9 @@ class UserAdmin(UserAdmin, NestedModelAdmin):
     def userprofile__distance(self, obj):
        return obj.userprofile.distance
     def userprofile__team__subsidiary__city(self, obj):
-        return getattr(obj, 'userprofile.team.subsidiary.city', None)
+        return obj.userprofile.team.subsidiary.city
+    def company_admin__administrated_company(self, obj):
+        return obj.company_admin.administrated_company
 
 class TeamForm(ModelForm):
     def __init__(self, *args, **kwargs):
