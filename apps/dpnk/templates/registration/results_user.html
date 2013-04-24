@@ -37,6 +37,7 @@
                společností
             {% endif %}
          </td>
+      {% if competition.is_actual %}
          <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">{{ competition.my_results.position|add:"1"|ordinal }}</a></td>
          <td>{{ competition.my_results.result|floatformat:-2|intcomma }}
             {% if competition.type == 'length' %}
@@ -48,6 +49,11 @@
             {% endif %}
          </td>
          <td>{{ competition.my_results.count|intcomma }}</td>
+      {% else %}
+         <td>-</td>
+         <td>-</td>
+         <td>-</td>
+      {% endif %}
       </tr>
    {% endfor %}
 </table>

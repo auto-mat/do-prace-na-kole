@@ -24,7 +24,7 @@ except ImportError:
     # python 2.6 or earlier, use backport
     from ordereddict import OrderedDict
 from django.db.models import Sum, F, Q, Count
-import datetime
+import util
 
 def get_competitors(self):
     if self.without_admission:
@@ -197,8 +197,11 @@ def get_competitions(userprofile):
                     | Q(company_competitors = userprofile.team.subsidiary.company)
                 )
             )
-        ).exclude(Q(date_from__gt = datetime.date.today())).distinct()
+        ).distinct()
     return competitions
+
+def get_actual_competitions(userprofile):
+    return get_competitions(userprofile).exclude(Q(date_from__gt = util.today())).distinct()
 
 def has_distance_dompetition(userprofile):
     competitions = get_competitions(userprofile)
@@ -265,11 +268,11 @@ def get_competitions_for_admission(userprofile):
             ).exclude(
                 (
                     Q(type = 'questionnaire')
-                    & (Q(date_from__gt = datetime.date.today())
-                    | Q(date_to__lte = datetime.date.today()))
+                    & (Q(date_from__gt = util.today())
+                    | Q(date_to__lte = util.today()))
                 ) | (
                     (Q(type = 'length') | Q(type = 'frequency'))
-                    & Q(date_from__lte = datetime.date.today())
+                    & Q(date_from__lte = util.today())
                 )
             ).distinct()
     return competitions

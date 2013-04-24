@@ -23,6 +23,10 @@ def days_count():
             break
     return i+1
 
+def today():
+    #return datetime.date(year=2013, month=5, day=15)
+    return datetime.date.today()
+
 class Mailing:
 
     def __init__(self, api_key, list_id):

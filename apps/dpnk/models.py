@@ -737,6 +737,9 @@ class Competition(models.Model):
     def get_results(self):
         return results.get_results(self)
 
+    def is_actual(self):
+        return self.date_from <= util.today() and self.date_to >= util.today()
+
     def has_admission(self, userprofile):
         if self.without_admission:
             return True
