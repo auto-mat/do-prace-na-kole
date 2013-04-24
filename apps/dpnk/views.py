@@ -194,9 +194,9 @@ def register(request, backend='dpnk.views.UserProfileRegistrationBackend',
                 mailing_id = m.add(new_user.first_name, new_user.last_name, new_user.email,
                                    new_user.userprofile.team.subsidiary.city.name)
             except Exception, e:
-                logger.error(u'Can\'t add user %s with email %s to mailing list: %s' % (new_user.userprofile, new_user.email, str(e)))
+                logger.error(u'Can\'t add user %s with email %s to mailing list: %s' % (new_user.userprofile.user, new_user.email, str(e)))
             else:
-                logger.info(u'User %s with email %s added to mailing list with id %s' % (new_user.userprofile, new_user.email, mailing_id))
+                logger.info(u'User %s with email %s added to mailing list with id %s' % (new_user.userprofile.user, new_user.email, mailing_id))
                 new_user.userprofile.mailing_id = mailing_id
                 new_user.userprofile.save()
 
@@ -252,10 +252,10 @@ def payment_type(request):
                 return redirect(wp_reverse('platba'))
             elif form.cleaned_data['payment_type'] == 'company':
                 Payment(user=userprofile, amount=0, pay_type='fc', status=Payment.Status.NEW).save()
-                logger.info('Inserting company payment for %s' % (userprofile))
+                logger.info('Inserting company payment for %s' % (userprofile.user))
             elif form.cleaned_data['payment_type'] == 'member':
                 Payment(user=userprofile, amount=0, pay_type='am', status=Payment.Status.NEW).save()
-                logger.info('Inserting automat club member payment for %s' % (userprofile))
+                logger.info('Inserting automat club member payment for %s' % (userprofile.user))
 
             return redirect(wp_reverse('profil'))
     else:
@@ -280,7 +280,7 @@ def payment(request):
                 amount = request.user.userprofile.team.subsidiary.city.admission_fee,
                 description = "Ucastnicky poplatek Do prace na kole")
     p.save()
-    logger.info('Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s' % (uid, order_id, session_id, userprofile))
+    logger.info('Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s' % (uid, order_id, session_id, userprofile.user))
     # Render form
     profile = UserProfile.objects.get(user=request.user)
     return render_to_response('registration/payment.html',
@@ -883,7 +883,7 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
         b_action = request.POST['button_action'].split('-')
         userprofile = UserProfile.objects.get(id=b_action[1])
         if userprofile.approved_for_team not in ('undecided', 'denied') or userprofile.team != team or not userprofile.user.is_active:
-            logger.error('Approving user with wrong parameters. User: %s, approval: %s, team: %s, active: %s' % (userprofile, userprofile.approved_for_team, userprofile.team, userprofile.user.is_active))
+            logger.error('Approving user with wrong parameters. User: %s, approval: %s, team: %s, active: %s' % (userprofile.user, userprofile.approved_for_team, userprofile.team, userprofile.user.is_active))
             denial_message = 'cannot_approve'
         else:
             denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
