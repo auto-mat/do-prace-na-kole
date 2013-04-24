@@ -200,9 +200,6 @@ def get_competitions(userprofile):
         ).distinct()
     return competitions
 
-def get_actual_competitions(userprofile):
-    return get_competitions(userprofile).exclude(Q(date_from__gt = util.today())).distinct()
-
 def has_distance_dompetition(userprofile):
     competitions = get_competitions(userprofile)
     competitions = competitions.filter(type = 'length')
