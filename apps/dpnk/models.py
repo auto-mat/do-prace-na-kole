@@ -618,7 +618,7 @@ class Payment(models.Model):
 
     def full_string(self):
         return u"user: %s, order_id: %s, session_id: %s, trans_id: %s, amount: %s, description: %s, created: %s, realized: %s, pay_type: %s, status: %s, error: %s" % (
-            self.user, self.order_id, self.session_id, self.trans_id, self.amount, self.description, self.created, self.realized, self.pay_type, self.status, self.error) 
+            self.user.user, self.order_id, self.session_id, self.trans_id, self.amount, self.description, self.created, self.realized, self.pay_type, self.status, self.error) 
 
     def __unicode__(self):
         if self.trans_id:
