@@ -39,6 +39,8 @@ import datetime
 # Local imports
 import util
 from dpnk.email import payment_confirmation_mail, company_admin_rejected_mail, company_admin_approval_mail, payment_confirmation_company_mail
+import logging
+logger = logging.getLogger(__name__)
 
 class Address(CompositeField):
     street = models.CharField(
@@ -599,6 +601,7 @@ class Payment(models.Model):
         status_before_update = None
         if self.id:
             status_before_update = Payment.objects.get(pk=self.id).status
+            logger.info(u"Saving payment (before): %s" % Payment.objects.get(pk=self.id).full_string())
         super(Payment, self).save(*args, **kwargs)
 
         statuses_company_ok = (Payment.Status.COMPANY_ACCEPTS, Payment.Status.INVOICE_MADE, Payment.Status.INVOICE_PAID)
@@ -610,6 +613,12 @@ class Payment(models.Model):
             and (status_before_update not in statuses_company_ok)
             and self.status in statuses_company_ok):
             payment_confirmation_company_mail(self.user.user)
+
+        logger.info(u"Saving payment (after):  %s" % Payment.objects.get(pk=self.id).full_string())
+
+    def full_string(self):
+        return u"user: %s, order_id: %s, session_id: %s, trans_id: %s, amount: %s, description: %s, created: %s, realized: %s, pay_type: %s, status: %s, error: %s" % (
+            self.user, self.order_id, self.session_id, self.trans_id, self.amount, self.description, self.created, self.realized, self.pay_type, self.status, self.error) 
 
     def __unicode__(self):
         if self.trans_id:
