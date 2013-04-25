@@ -300,14 +300,15 @@ def payment_result(request, success, trans_id, session_id, pay_type, error = Non
 
     if session_id and session_id != "":
         p = Payment.objects.get(session_id=session_id)
-        p.trans_id = trans_id
-        p.pay_type = pay_type
-        if success:
-            p.status = Payment.Status.COMMENCED
-        else:
-            p.status = Payment.Status.REJECTED
-        p.error = error
-        p.save()
+        if p.status == Payment.Status.NEW:
+            p.trans_id = trans_id
+            p.pay_type = pay_type
+            if success:
+                p.status = Payment.Status.COMMENCED
+            else:
+                p.status = Payment.Status.REJECTED
+            p.error = error
+            p.save()
 
     logger.info('Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s' % (success, trans_id, session_id, pay_type, error, request.user))
     if success == True:
