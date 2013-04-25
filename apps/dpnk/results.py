@@ -181,7 +181,9 @@ def get_results(self):
 def get_competitions(userprofile):
     competitions = models.Competition.objects
 
-    if not userprofile.is_libero():
+    if userprofile.is_libero():
+        competitions = competitions.filter(competitor_type = 'liberos')
+    else:
         competitions = competitions.exclude(competitor_type = 'liberos')
 
     competitions = competitions.filter(
@@ -256,7 +258,9 @@ def get_competitions_for_admission(userprofile):
     if not userprofile.is_company_admin():
         competitions = competitions.exclude(competitor_type = 'company')
 
-    if not userprofile.is_libero():
+    if userprofile.is_libero():
+        competitions = competitions.filter(competitor_type = 'liberos')
+    else:
         competitions = competitions.exclude(competitor_type = 'liberos')
 
     competitions = competitions.filter(
