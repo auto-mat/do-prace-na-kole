@@ -309,7 +309,7 @@ def payment_result(request, success, trans_id, session_id, pay_type, error = Non
         p.error = error
         p.save()
 
-    logger.info('Payment result: %s' % (success))
+    logger.info('Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s' % (success, trans_id, session_id, pay_type, error))
     if success == True:
         msg = _(u"Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
     else:
