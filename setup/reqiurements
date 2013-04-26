@@ -5,6 +5,7 @@ django-smart-selects
 django-composite-field
 django-remote
 django-bootstrap-form
+django-admin-enhancer
 ordereddict
 createsend==2.6.0
 unidecode
