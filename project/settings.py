@@ -91,6 +91,8 @@ INSTALLED_APPS += ("remote_ajax", )
 MIDDLEWARE_CLASSES += ("remote_ajax.middleware.XHRMiddleware", )
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 
+MAX_COMPETITIONS_PER_COMPANY = 4
+
 MAILING_API_KEY = ''
 MAILING_LIST_ID = ''
 

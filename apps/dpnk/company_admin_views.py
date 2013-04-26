@@ -25,6 +25,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
 from django.http import Http404
 import django.contrib.auth
+from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView
 from decorators import must_be_company_admin
 from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
@@ -151,6 +152,8 @@ class CompanyCompetitionView(UpdateView):
             if competition.company != company:
                 raise Http404(_(u"<div class='text-error'>K editování tohoto závodu nemáte oprávnění.</div>"))
         else:
+            if Competition.objects.filter(company = company).count() >= settings.MAX_COMPETITIONS_PER_COMPANY:
+                raise Http404(_(u"<div class='text-error'>Překročen maximální počet soutěží.</div>"))
             competition = Competition(company = company)
         return competition
 
