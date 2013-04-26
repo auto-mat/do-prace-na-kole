@@ -4,17 +4,19 @@
 
 <form name="calendar" method="POST">
 <input type="hidden" id="day" name="day"/>
-<table id="rides" class="table table-striped table-bordered">
+<table id="rides" class="table table-striped table-bordered table-hover table-condensed">
 <tr>
-<th scope="column">Den</th>
-<th scope="column">Do práce</th>
+<th scope="column"><div style="width:110px">Den</div></th>
+<th scope="column" colspan="
 {% if has_distance_dompetition %}
-<th scope="column">Vzdálenost</th>
+2
 {% endif %}
-<th scope="column">Z práce</th>
+">Do práce</th>
+<th scope="column" colspan="
 {% if has_distance_dompetition %}
-<th scope="column">Vzdálenost</th>
+2
 {% endif %}
+">Z práce</th>
 <th scope="column">Odeslat</th>
 <th scope="column">Pravidelnost</th>
 {% if has_distance_dompetition %}
