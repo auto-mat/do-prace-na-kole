@@ -1,4 +1,6 @@
 
+import unidecode
+import re
 import datetime
 import createsend
 from  django.http import HttpResponse
@@ -43,3 +45,7 @@ class Mailing:
 
 def redirect(url):
     return HttpResponse("redirect:"+url)
+
+def slugify(str):
+    str = unidecode.unidecode(str).lower()
+    return re.sub(r'\W+','-',str)

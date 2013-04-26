@@ -676,7 +676,7 @@ class Competition(models.Model):
         verbose_name_plural = _(u"Závody")
     name = models.CharField(
         unique=True,
-        verbose_name=_(u"Jméno"),
+        verbose_name=_(u"Jméno soutěže"),
         max_length=40, null=False)
     slug = models.SlugField(
         unique=True,

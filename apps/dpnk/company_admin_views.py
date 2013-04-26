@@ -21,14 +21,18 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext as _
+from django.http import Http404
 import django.contrib.auth
 from django.views.generic.edit import UpdateView, FormView
 from decorators import must_be_company_admin
-from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm
+from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
 from dpnk.email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from wp_urls import wp_reverse
 from util import redirect
-from models import Company, CompanyAdmin, Payment
+from models import Company, CompanyAdmin, Payment, Competition
+import models
 import registration.signals, registration.backends
 import registration.backends.simple
 import logging
@@ -127,5 +131,31 @@ class CompanyAdminView(UpdateView):
     def form_valid(self, form):
         super(CompanyAdminView, self).form_valid(form)
         company_admin_register_competitor_mail(self.request.user)
+        return redirect(wp_reverse(self.success_url))
+
+class CompanyCompetitionView(UpdateView):
+    template_name = 'generic_form_template.html'
+    form_class = CompanyCompetitionForm
+    model = Competition
+    success_url = 'company_admin'
+
+    def __init__(self, *args, **kwargs):
+        ret_val = super(CompanyCompetitionView, self).__init__(*args, **kwargs)
+        return ret_val
+
+    def get_object(self, queryset=None):
+        company = models.get_company(self.request.user)
+        competition_slug = self.kwargs.get('competition_slug', None)
+        if competition_slug:
+            competition = get_object_or_404(Competition.objects, slug = competition_slug)
+            if competition.company != company:
+                raise Http404(_(u"<div class='text-error'>K editování tohoto závodu nemáte oprávnění.</div>"))
+        else:
+            competition = Competition(company = company)
+        return competition
+
+
+    def form_valid(self, form):
+        super(CompanyCompetitionView, self).form_valid(form)
         return redirect(wp_reverse(self.success_url))
 

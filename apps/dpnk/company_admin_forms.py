@@ -19,10 +19,11 @@
 
 from django import forms
 from forms import AdressForm, RegistrationFormDPNK
-from models import UserProfile, Company, CompanyAdmin
+from models import UserProfile, Company, CompanyAdmin, Competition
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
+from util import slugify
 import registration.forms
 
 class SelectUsersPayForm(forms.Form):
@@ -113,3 +114,25 @@ class CompanyAdminApplicationForm(registration.forms.RegistrationForm):
 
     class Meta:
         model = CompanyAdmin
+
+class CompanyCompetitionForm(forms.ModelForm):
+    type = forms.ChoiceField(
+        label=_(u"Typ soutěže"),
+        choices= [x for x in Competition.CTYPES if x[0] != 'questionnaire'],
+        required=True)
+
+    competitor_type = forms.ChoiceField(
+        label=_(u"Typ závodníka"),
+        choices= [x for x in Competition.CCOMPETITORTYPES if x[0] in ['single_user', 'team']],
+        required=True)
+
+    class Meta:
+        model = Competition
+        fields = ('name', 'url', 'type', 'competitor_type', 'without_admission', )
+
+    def save(self, commit=True):
+        instance = super(CompanyCompetitionForm, self).save(commit=False)
+        instance.slug = 'FA-%s' % (slugify(instance.name))
+        if commit:
+            instance.save()
+        return instance
