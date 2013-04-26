@@ -4,7 +4,7 @@
 
 <form name="calendar" method="POST">
 <input type="hidden" id="day" name="day"/>
-<table id="rides" class="table table-striped table-bordered table-hover table-condensed" style="width:500px">
+<table id="rides" class="table table-striped table-bordered table-hover table-condensed" style="max-width:500px">
 <tr>
 <th scope="column"><div style="width:120px">Den</div></th>
 <th scope="column" colspan="
@@ -18,9 +18,9 @@
 {% endif %}
 ">Z práce</th>
 <th scope="column">Odeslat</th>
-<th scope="column">Pravidelnost</th>
+<th scope="column">Prav.</th>
 {% if has_distance_dompetition %}
-<th scope="column">Vzdálenost celkem</th>
+<th scope="column">Vzd. celk.</th>
 {% endif %}
 </tr>
 {% for day in calendar %}
@@ -39,9 +39,9 @@
 <td><input type="number" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %} class="span1" value="{{ day.default_distance_from }}"/></td>
 {% endif %}
 <td><button type="button" class="submit" onclick='$("#day").val("{{ forloop.counter }}")' {% if day.trips_active %}{% else %} disabled="disabled"{% endif %}>OK</button></td>
-<td {% if day.percentage > 66 %} class="green" {% else %} class="red" {% endif %}>{% if day.trips_active %}{{ day.percentage|floatformat:1 }}%{% endif %}</td>
+<td><div {% if day.percentage > 66 %} class="text-success" {% else %} class="text-error" {% endif %}>{% if day.trips_active %}{{ day.percentage|floatformat:1 }}&nbsp;%{% endif %}</div></td>
 {% if has_distance_dompetition %}
-<td>{% if day.trips_active %}{{ day.distance }} km{% endif %}</td>
+<td>{% if day.trips_active %}{{ day.distance }}&nbsp;km{% endif %}</td>
 {% endif %}
 </tr>
 {% endfor %}
