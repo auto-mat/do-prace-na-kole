@@ -11,10 +11,10 @@
 </tr>
 {% for competition in competitions %}
    <tr>
-   <th>{{ competition.name }}</th>
-   <th>{{ competition.get_type_display }}</th>
-   <th>{{ competition.get_competitor_type_display }}</th>
-   <th><a href="{% wp_url 'soutez' %}?competition_slug={{ competition.slug }}">edit</a></th>
+   <td><a href="{{ competition.url}}">{{ competition.name }}</a></td>
+   <td>{{ competition.get_type_display }}</td>
+   <td>{{ competition.get_competitor_type_display }}</td>
+   <td><a href="{% wp_url 'soutez' %}?competition_slug={{ competition.slug }}">edit</a></td>
    </tr>
 {% endfor %}
 </table>
