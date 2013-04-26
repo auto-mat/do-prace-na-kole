@@ -94,6 +94,8 @@ urlpatterns = patterns('',
     #company admin:
     url(r'^struktura_spolecnosti/$',
         company_structure),
+    url(r'^souteze/$',
+        competitions),
     url(r'^zaplatit_za_uzivatele/$',
         must_be_company_admin(login_required(SelectUsersPayView.as_view()))),
     url(r'^spolecnost/editovat_spolecnost/$',

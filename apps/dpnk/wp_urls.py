@@ -32,6 +32,7 @@ urls = {
     # Company admin
     'edit_company':                 "/fa/editovat_spolecnost",
     'zadost_firemni_spravce':       "/fa/zadost",
+    'soutez':                       "/fa/soutez",
     'company_admin':                "/fa",
 
     # Zastarale nebo odlozeno na pozdeji

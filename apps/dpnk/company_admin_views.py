@@ -162,3 +162,12 @@ class CompanyCompetitionView(UpdateView):
         super(CompanyCompetitionView, self).form_valid(form)
         return redirect(wp_reverse(self.success_url))
 
+@must_be_company_admin
+@login_required
+def competitions(request,
+        template = 'company_admin/competitions.html',
+        ):
+    return render_to_response(template,
+                              {
+                                'competitions': Competition.objects.filter(company = models.get_company(request.user)),
+                                }, context_instance=RequestContext(request))

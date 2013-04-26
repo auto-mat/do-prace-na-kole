@@ -1,0 +1,20 @@
+{% load url from future %}
+{% load dpnk_tags %}
+{% load i18n %}
+
+<table class="table table-striped table-bordered" id="company_competition_table">
+<tr>
+<th>Jméno</th>
+<th>Typ soutěže</th>
+<th>Typ závodníků</th>
+<th>Edit</th>
+</tr>
+{% for competition in competitions %}
+   <tr>
+   <th>{{ competition.name }}</th>
+   <th>{{ competition.get_type_display }}</th>
+   <th>{{ competition.get_competitor_type_display }}</th>
+   <th><a href="{% wp_url 'soutez' %}?competition_slug={{ competition.slug }}">edit</a></th>
+   </tr>
+{% endfor %}
+</table>
