@@ -235,6 +235,11 @@ class PaymentAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
     list_filter = ['status', 'pay_type']
 
+    readonly_fields = ['user_link', ]
+    def user_link(self, obj):
+        return mark_safe('<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (obj.user.user.pk, obj.user.user))
+    user_link.short_description = 'Uživatel'
+
 class ChoiceInline(EnhancedAdminMixin, admin.TabularInline):
     model = Choice
     extra = 3
