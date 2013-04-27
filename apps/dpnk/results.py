@@ -204,7 +204,7 @@ def get_competitions(userprofile):
 
 def has_distance_dompetition(userprofile):
     competitions = get_competitions(userprofile)
-    competitions = competitions.filter(type = 'length')
+    competitions = competitions.filter(type = 'length', without_admission=False)
     return competitions.count() > 0
 
 def get_competitions_with_info(userprofile):
