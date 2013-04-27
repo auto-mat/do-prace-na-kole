@@ -532,6 +532,7 @@ class Payment(models.Model):
         ('pg', 'GE Money Bank'),
         ('pv', 'Volksbank'),
         ('pf', 'Fio banka'),
+        ('cs', 'Česká spořitelna'),
         ('c', 'Kreditní karta přes GPE'),
         ('bt', 'bankovní převod'),
         ('pt', 'převod přes poštu'),
