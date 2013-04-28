@@ -309,8 +309,6 @@ def payment_result(request, success, trans_id, session_id, pay_type, error = Non
                 p.status = Payment.Status.REJECTED
             p.error = error
             p.save()
-        else:
-            logger.error("Old payment has not NEW status: %s" % p.full_string())
 
     logger.info('Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s' % (success, trans_id, session_id, pay_type, error, request.user))
     if success == True:
@@ -363,7 +361,7 @@ def payment_status(request):
     try:
         p = Payment.objects.get(session_id=r['trans_session_id'])
     except Payment.DoesNotExist:
-        p = Payment(order_id=r['trans_order_id'], session_id=['trans_session_id'],
+        p = Payment(order_id=r['trans_order_id'], session_id=r['trans_session_id'],
                     amount=int(r['trans_amount'])/100, description=r['trans_desc'])
 
     p.pay_type = r['trans_pay_type']
