@@ -193,11 +193,6 @@ def get_competitions(userprofile):
                 & (Q(city = None)    | Q(city = userprofile.team.subsidiary.city))
             ) | (
                 Q(without_admission = False)
-                & (
-                    Q(user_competitors = userprofile)
-                    | Q(team_competitors = userprofile.team)
-                    | Q(company_competitors = userprofile.team.subsidiary.company)
-                )
             )
         ).distinct()
     return competitions
@@ -247,33 +242,4 @@ def get_competitions_with_info(userprofile):
         #    my_results.position = competition.get_results().extra(where=[where]).count()
 
         competition.my_results = my_results
-    return competitions
-
-def get_competitions_for_admission(userprofile):
-    competitions = models.Competition.objects
-
-    if not userprofile.is_team_coordinator():
-        competitions = competitions.exclude(competitor_type = 'team')
-
-    if not userprofile.is_company_admin():
-        competitions = competitions.exclude(competitor_type = 'company')
-
-    if userprofile.is_libero():
-        competitions = competitions.filter(competitor_type = 'liberos')
-    else:
-        competitions = competitions.exclude(competitor_type = 'liberos')
-
-    competitions = competitions.filter(
-                  (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
-                & (Q(city = None)    | Q(city = userprofile.team.subsidiary.city))
-            ).exclude(
-                (
-                    Q(type = 'questionnaire')
-                    & (Q(date_from__gt = util.today())
-                    | Q(date_to__lte = util.today()))
-                ) | (
-                    (Q(type = 'length') | Q(type = 'frequency'))
-                    & Q(date_from__lte = util.today())
-                )
-            ).distinct()
     return competitions

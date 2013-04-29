@@ -380,14 +380,11 @@ class UserProfile(models.Model):
             return None
 
     def get_competitions(self):
-        return results.get_competitions_with_info(self)
+        return results.get_competitions(self)
 
     def has_distance_dompetition(self):
         return results.has_distance_dompetition(self)
 
-    def get_competitions_for_admission(self):
-        return results.get_competitions_for_admission(self)
-    
     def is_team_coordinator(self):
         return self.team and self.team.coordinator == self
 
@@ -749,6 +746,25 @@ class Competition(models.Model):
 
     def is_actual(self):
         return self.date_from <= util.today() and self.date_to >= util.today()
+
+    def can_admit(self, userprofile):
+        if not userprofile.is_team_coordinator() and self.competitor_type == 'team':
+            return False
+        if not userprofile.is_company_admin() and self.competitor_type == 'company':
+            return False
+        if not userprofile.is_libero() == (self.competitor_type == 'liberos'):
+            return False
+        if self.without_admission:
+            return False
+        if type == 'questionnaire' and not self.is_actual():
+            return False
+        if type != 'questionnaire' and self.date_from <= util.today():
+            return False
+        if self.company and self.company != userprofile.team.subsidiary.company:
+            return False
+        if self.city and self.company != userprofile.team.subsidiary.city:
+            return False
+        return True
 
     def has_admission(self, userprofile):
         if self.without_admission:
