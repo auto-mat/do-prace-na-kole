@@ -190,6 +190,7 @@ def get_competitions(userprofile):
             (
                   (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
                 & (Q(city = None)    | Q(city = userprofile.team.subsidiary.city))
+            )
         ).distinct()
     return competitions
 
