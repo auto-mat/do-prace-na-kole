@@ -188,12 +188,8 @@ def get_competitions(userprofile):
 
     competitions = competitions.filter(
             (
-                Q(without_admission = True)
-                & (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
+                  (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
                 & (Q(city = None)    | Q(city = userprofile.team.subsidiary.city))
-            ) | (
-                Q(without_admission = False)
-            )
         ).distinct()
     return competitions
 
