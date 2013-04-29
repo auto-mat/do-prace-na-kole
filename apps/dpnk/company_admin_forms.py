@@ -128,7 +128,7 @@ class CompanyCompetitionForm(forms.ModelForm):
 
     class Meta:
         model = Competition
-        fields = ('name', 'url', 'type', 'competitor_type', 'without_admission', )
+        fields = ('name', 'url', 'type', 'competitor_type', )
 
     def save(self, commit=True):
         instance = super(CompanyCompetitionForm, self).save(commit=False)
