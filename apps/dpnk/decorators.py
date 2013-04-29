@@ -32,6 +32,7 @@ def login_required_simple(fn):
     return wrapper
 
 def must_be_coordinator(fn):
+    @must_be_competitor
     @login_required
     def wrapper(*args, **kwargs):
         request = args[0]
