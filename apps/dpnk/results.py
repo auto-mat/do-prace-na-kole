@@ -264,8 +264,7 @@ def get_competitions_for_admission(userprofile):
         competitions = competitions.exclude(competitor_type = 'liberos')
 
     competitions = competitions.filter(
-                Q(without_admission = False)
-                & (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
+                  (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
                 & (Q(city = None)    | Q(city = userprofile.team.subsidiary.city))
             ).exclude(
                 (

@@ -39,6 +39,9 @@
             {% endif %}
          </td>
          <td>
+            {% if competition.without_admission %}
+               {% trans "Do této soutěže jsou automaticky přihlášeni všichni" %} 
+            {% else %}
             {% if competition.type == 'questionnaire' %}
                <a href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">
                   {% if competition.competitor_has_admission %}
@@ -53,6 +56,7 @@
                {% else %}
                   <button type="button" class="submit" onclick='$("#admission_competition_id").val("{{ competition.id }}")'>Přihlásit</button>
                {% endif %}
+            {% endif %}
             {% endif %}
          </td>
       </tr>
