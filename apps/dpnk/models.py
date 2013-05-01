@@ -211,6 +211,10 @@ class Team(models.Model):
         unique=True,
         validators = [validate_length],
         )
+
+    def all_members(self):
+        return UserProfile.objects.filter(team=self, user__is_active=True)
+
     def members(self):
         return UserProfile.objects.filter(approved_for_team='approved', team=self, user__is_active=True)
 
