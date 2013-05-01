@@ -194,8 +194,23 @@ def get_competitions(userprofile):
         ).distinct()
     return competitions
 
+def get_competitions_with_admission(userprofile):
+    competitions = get_competitions(userprofile).filter(
+            (
+                Q(without_admission = True)
+            ) | (
+                Q(without_admission = False)
+                & (
+                    Q(user_competitors = userprofile)
+                    | Q(team_competitors = userprofile.team)
+                    | Q(company_competitors = userprofile.team.subsidiary.company)
+                )
+            )
+        ).distinct()
+    return competitions
+
 def has_distance_dompetition(userprofile):
-    competitions = get_competitions(userprofile)
+    competitions = get_competitions_with_admission(userprofile)
     competitions = competitions.filter(type = 'length', without_admission=False)
     return competitions.count() > 0
 
