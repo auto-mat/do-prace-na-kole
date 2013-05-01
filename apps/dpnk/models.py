@@ -780,7 +780,7 @@ class Competition(models.Model):
             elif self.competitor_type == 'team':
                 return self.team_competitors.filter(pk=userprofile.team.pk).count() > 0
             elif self.competitor_type == 'company':
-                return self.company_competitors.filter(pk=userprofile.company.pk).count() > 0
+                return self.company_competitors.filter(pk=userprofile.team.subsidiary.company.pk).count() > 0
 
     def make_admission(self, userprofile, admission=True):
         if not self.without_admission and self.can_admit(userprofile) == True:
