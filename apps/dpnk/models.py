@@ -211,6 +211,10 @@ class Team(models.Model):
         unique=True,
         validators = [validate_length],
         )
+
+    def all_members(self):
+        return UserProfile.objects.filter(team=self, user__is_active=True)
+
     def members(self):
         return UserProfile.objects.filter(approved_for_team='approved', team=self, user__is_active=True)
 
@@ -380,14 +384,11 @@ class UserProfile(models.Model):
             return None
 
     def get_competitions(self):
-        return results.get_competitions_with_info(self)
+        return results.get_competitions(self)
 
     def has_distance_dompetition(self):
         return results.has_distance_dompetition(self)
 
-    def get_competitions_for_admission(self):
-        return results.get_competitions_for_admission(self)
-    
     def is_team_coordinator(self):
         return self.team and self.team.coordinator == self
 
@@ -750,6 +751,30 @@ class Competition(models.Model):
     def is_actual(self):
         return self.date_from <= util.today() and self.date_to >= util.today()
 
+    def can_admit(self, userprofile):
+        if self.without_admission:
+            return 'without_admission'
+        if not userprofile.is_team_coordinator() and self.competitor_type == 'team':
+            return 'not_team_coordinator'
+        if not userprofile.is_company_admin() and self.competitor_type == 'company':
+            return 'not_company_admin'
+        if self.type == 'questionnaire' and not self.is_actual():
+            return 'not_actual'
+        if self.type != 'questionnaire' and self.date_from <= util.today():
+            return 'after_beginning'
+
+        if not userprofile.is_libero() == (self.competitor_type == 'liberos'):
+            logger.error(u"Wrong competition type: compatitor_type: %s, userprofile: %s" % (self.compatitor_type, userprofile))
+            return 'not_libero'
+        if self.company and self.company != userprofile.team.subsidiary.company:
+            logger.error(u"Wrong competition type: company: %s, userprofile: %s" % (self.company, userprofile))
+            return 'not_for_company'
+        if self.city and self.city != userprofile.team.subsidiary.city:
+            logger.error(u"Wrong competition type: city: %s, userprofile: %s" % (self.city, userprofile))
+            return 'not_for_city'
+
+        return True
+
     def has_admission(self, userprofile):
         if self.without_admission:
             return True
@@ -759,10 +784,10 @@ class Competition(models.Model):
             elif self.competitor_type == 'team':
                 return self.team_competitors.filter(pk=userprofile.team.pk).count() > 0
             elif self.competitor_type == 'company':
-                return self.company_competitors.filter(pk=userprofile.company.pk).count() > 0
+                return self.company_competitors.filter(pk=userprofile.team.subsidiary.company.pk).count() > 0
 
     def make_admission(self, userprofile, admission=True):
-        if not self.without_admission:
+        if not self.without_admission and self.can_admit(userprofile) == True:
             if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
                 if admission:
                     self.user_competitors.add(userprofile)

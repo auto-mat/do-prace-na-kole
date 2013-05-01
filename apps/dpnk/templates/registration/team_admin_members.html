@@ -12,6 +12,7 @@
    <div class="alert alert-error">{% trans "Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte kontakt@dopracenakole.net." %}</div>
 {% endif %}
 {% for user in unapproved_users %}
+   <div id="id-{{ user.4.2 }}-team-member">
    <h2>{{ user.3.2 }}</h2>
    <table class="table table-striped table-condensed">
       {% for field in user %}
@@ -25,14 +26,15 @@
                {% else %}
                   success
                {% endif %}
-               ">
+               "
             {% elif field.0 == 'payment_description' %}
                <tr class="
                   {{ user.2.2.class }}
-               ">
+               "
             {% else %}
-               <tr>
+               <tr
             {% endif %}
+            id="id-{{ user.4.2 }}-{{ field.0 }}">
                <th style="width: 5em">{{ field.1 }}</th><td>{{ field.2 }}</td>
             </tr>
          {% endif %}
@@ -47,5 +49,6 @@
          <button class="submit" type="button" id="deny-{{user.1.2}}" name="deny-{{user.1.2}}">{% trans "Zamítnout" %}</button>
       {% endif %}
    {% endif %}
+   </div>
 {% endfor %}
 </form>

@@ -188,9 +188,16 @@ def get_competitions(userprofile):
 
     competitions = competitions.filter(
             (
-                Q(without_admission = True)
-                & (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
+                  (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
                 & (Q(city = None)    | Q(city = userprofile.team.subsidiary.city))
+            )
+        ).distinct()
+    return competitions
+
+def get_competitions_with_admission(userprofile):
+    competitions = get_competitions(userprofile).filter(
+            (
+                Q(without_admission = True)
             ) | (
                 Q(without_admission = False)
                 & (
@@ -203,7 +210,7 @@ def get_competitions(userprofile):
     return competitions
 
 def has_distance_dompetition(userprofile):
-    competitions = get_competitions(userprofile)
+    competitions = get_competitions_with_admission(userprofile)
     competitions = competitions.filter(type = 'length', without_admission=False)
     return competitions.count() > 0
 
@@ -247,34 +254,4 @@ def get_competitions_with_info(userprofile):
         #    my_results.position = competition.get_results().extra(where=[where]).count()
 
         competition.my_results = my_results
-    return competitions
-
-def get_competitions_for_admission(userprofile):
-    competitions = models.Competition.objects
-
-    if not userprofile.is_team_coordinator():
-        competitions = competitions.exclude(competitor_type = 'team')
-
-    if not userprofile.is_company_admin():
-        competitions = competitions.exclude(competitor_type = 'company')
-
-    if userprofile.is_libero():
-        competitions = competitions.filter(competitor_type = 'liberos')
-    else:
-        competitions = competitions.exclude(competitor_type = 'liberos')
-
-    competitions = competitions.filter(
-                Q(without_admission = False)
-                & (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
-                & (Q(city = None)    | Q(city = userprofile.team.subsidiary.city))
-            ).exclude(
-                (
-                    Q(type = 'questionnaire')
-                    & (Q(date_from__gt = util.today())
-                    | Q(date_to__lte = util.today()))
-                ) | (
-                    (Q(type = 'length') | Q(type = 'frequency'))
-                    & Q(date_from__lte = util.today())
-                )
-            ).distinct()
     return competitions
