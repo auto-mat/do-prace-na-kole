@@ -403,7 +403,7 @@ def rides(request, template='registration/rides.html'):
             day = int(request.POST["day"])
             date = days[day-1]
             if not trip_active(date, today):
-                logger.error('User %s is trying to fill in nonactive day, POST:' % (profile, request.POST))
+                logger.error(u'User %s is trying to fill in nonactive day, POST: %s' % (profile, request.POST))
                 return HttpResponse(_(u'<div class="text-error">Tento den již není možné vyplnit.</div>'), status=401)
             try:
                 trip = Trip.objects.get(user = request.user.get_profile(),
@@ -426,7 +426,7 @@ def rides(request, template='registration/rides.html'):
                 try:
                     trip.distance_from = int(request.POST.get('distance_from-' + str(day), None))
                 except:
-                    trip.distance_to = 0
+                    trip.distance_from = 0
             else:
                 trip.distance_from = 0
             trip.save()
