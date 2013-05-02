@@ -426,7 +426,7 @@ def rides(request, template='registration/rides.html'):
                 try:
                     trip.distance_from = int(request.POST.get('distance_from-' + str(day), None))
                 except:
-                    trip.distance_to = 0
+                    trip.distance_from = 0
             else:
                 trip.distance_from = 0
             trip.save()
