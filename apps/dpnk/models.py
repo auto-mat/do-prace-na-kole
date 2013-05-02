@@ -764,7 +764,7 @@ class Competition(models.Model):
             return 'after_beginning'
 
         if not userprofile.is_libero() == (self.competitor_type == 'liberos'):
-            logger.error(u"Wrong competition type: compatitor_type: %s, userprofile: %s" % (self.compatitor_type, userprofile))
+            logger.error(u"Wrong competition type: compatitor_type: %s, userprofile: %s" % (self.competitor_type, userprofile))
             return 'not_libero'
         if self.company and self.company != userprofile.team.subsidiary.company:
             logger.error(u"Wrong competition type: company: %s, userprofile: %s" % (self.company, userprofile))
