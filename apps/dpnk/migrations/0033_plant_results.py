@@ -12,7 +12,7 @@ class Migration(DataMigration):
         # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
         for competition in models.Competition.objects.all():
             for competitor in competition.get_competitors():
-                models.recalculate_result(competition, competitor)
+                results.recalculate_result(competition, competitor)
 
         for team in models.Team.objects.all():
             team.autoset_member_count()

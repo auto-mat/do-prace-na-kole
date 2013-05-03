@@ -856,71 +856,6 @@ class CompetitionResult(models.Model):
         default=None,
         )
     
-def recalculate_result_competitor(userprofile):
-    for competition in userprofile.get_competitions():
-        if competition.competitor_type == 'team':
-            recalculate_result(competition, userprofile.team)
-        elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-            recalculate_result(competition, userprofile)
-        elif competition.competitor_type == 'company':
-            raise NotImplementedError("Company competitions are not working yet")
-
-def recalculate_result(competition, competitor):
-
-    if competition.competitor_type == 'team':
-        team = competitor
-        assert(competition.can_admit(team.coordinator))
-        competition_result, created = CompetitionResult.objects.get_or_create(team = team, competition = competition)
-
-        member_count = team.members().count()
-        members = team.members().all()
-            
-        if member_count == 0:
-            competition_result.result = None
-            competition_result.save()
-            return
-
-        if competition.type == 'questionnaire':
-            points = Choice.objects.filter(answer__user__in = members, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
-            points_given = Answer.objects.filter(user__in = members, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
-            competition_result.result = float(points + points_given) / float(member_count)
-        elif competition.type == 'length':
-            distance_from = Trip.objects.filter(user__in = members).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
-            distance_to   = Trip.objects.filter(user__in = members).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
-            competition_result.result = float(distance_from + distance_to) / float(member_count)
-        elif competition.type == 'frequency':
-            trips_from = Trip.objects.filter(user__in = members).aggregate(Sum('trip_from'))['trip_from__sum'] or 0
-            trips_to   = Trip.objects.filter(user__in = members).aggregate(Sum('trip_to'))['trip_to__sum'] or 0
-            competition_result.result = float(trips_from + trips_to) / float(member_count)
-    
-    elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-        userprofile = competitor
-        assert(competition.can_admit(userprofile))
-        competition_result, created = CompetitionResult.objects.get_or_create(userprofile = userprofile, competition = competition)
-
-        if not (competition_result.userprofile.user.is_active and competition_result.userprofile.approved_for_team == 'approved'):
-            competition_result.result = None
-            competition_result.save()
-            return
-
-        if competition.type == 'questionnaire':
-            points = Choice.objects.filter(answer___user = userprofile, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
-            points_given = Answer.objects.filter(user = userprofile, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
-            competition_result.result = points + points_given
-        elif competition.type == 'length':
-            distance_from = Trip.objects.filter(user=userprofile).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
-            distance_to   = Trip.objects.filter(user=userprofile).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
-            competition_result.result = distance_from + distance_to
-        elif competition.type == 'frequency':
-            trips_from = Trip.objects.filter(user=userprofile).aggregate(Sum('trip_from'))['trip_from__sum'] or 0
-            trips_to   = Trip.objects.filter(user=userprofile).aggregate(Sum('trip_to'))['trip_to__sum'] or 0
-            competition_result.result = trips_from + trips_to
-
-    elif competition.competitor_type == 'company':
-        raise NotImplementedError("Company competitions are not working yet")
-
-    competition_result.save()
-
 class ChoiceType(models.Model):
     """Typ volby"""
     class Meta:
@@ -1042,32 +977,32 @@ def get_company(user):
 def userprofile_pre_save(sender, instance, **kwargs):
     instance.team.autoset_member_count()
     instance.team.save()
-    recalculate_result_competitor(instance)
+    results.recalculate_result_competitor(instance)
 
 @receiver(post_save, sender=User)
 def user_post_save(sender, instance, **kwargs):
     instance.userprofile.team.autoset_member_count()
     instance.userprofile.team.save()
-    recalculate_result_competitor(instance.userprofile)
+    results.recalculate_result_competitor(instance.userprofile)
 
 @receiver(post_save, sender=Trip)
 def user_post_save(sender, instance, **kwargs):
     instance.user.team.autoset_member_count()
     instance.user.team.save()
 
-    recalculate_result_competitor(instance.user)
+    results.recalculate_result_competitor(instance.user)
 
 @receiver(post_save, sender=Competition)
 def competition_post_save(sender, instance, **kwargs):
     for competitor in instance.get_competitors():
-        recalculate_result(instance, competitor)
+        results.recalculate_result(instance, competitor)
 
 @receiver(post_save, sender=Answer)
 def answer_post_save(sender, instance, **kwargs):
     competition = instance.question.competition
     if competition.competitor_type == 'team':
-        recalculate_result(competition, instance.user.team)
+        results.recalculate_result(competition, instance.user.team)
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-        recalculate_result(competition, instance.user)
+        results.recalculate_result(competition, instance.user)
     elif competition.competitor_type == 'company':
         raise NotImplementedError("Company competitions are not working yet")
