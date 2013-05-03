@@ -1055,3 +1055,13 @@ def user_post_save(sender, instance, **kwargs):
 def competition_post_save(sender, instance, **kwargs):
     for competitor in instance.get_competitors():
         recalculate_result(instance, competitor)
+
+@receiver(post_save, sender=Answer)
+def answer_post_save(sender, instance, **kwargs):
+    competition = instance.question.competition
+    if competition.competitor_type == 'team':
+        recalculate_result(competition, instance.user.team)
+    elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
+        recalculate_result(competition, instance.user)
+    elif competition.competitor_type == 'company':
+        raise NotImplementedError("Company competitions are not working yet")
