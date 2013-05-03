@@ -29,7 +29,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.core.exceptions import ValidationError
 from composite_field import CompositeField
 from django.utils.translation import ugettext_lazy as _
@@ -807,6 +807,103 @@ class Competition(models.Model):
     def __unicode__(self):
         return "%s" % self.name
 
+class CompetitionResult(models.Model):
+    """Výsledek závodu"""
+    class Meta:
+        verbose_name = _(u"Výsledek závodu")
+        verbose_name_plural = _(u"Výsledky závodů")
+        unique_together = (("userprofile", "competition"),)
+        unique_together = (("team", "competition"),)
+
+    userprofile = models.ForeignKey(UserProfile,
+        related_name="competitions_results",
+        null=True,
+        blank=True,
+        default=None,
+        )
+    team = models.ForeignKey(Team,
+        related_name="competitions_results",
+        null=True,
+        blank=True,
+        default=None,
+        )
+    competition = models.ForeignKey(Competition,
+        related_name="results",
+        null=False,
+        blank=False,
+        )
+    result = models.FloatField(
+        verbose_name=_(u"Výsledek"),
+        null=True,
+        blank=True,
+        default=None,
+        )
+    
+def recalculate_result_competitor(userprofile):
+    for competition in userprofile.get_competitions():
+        if competition.competitor_type == 'team':
+            recalculate_result(competition, userprofile.team)
+        elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
+            recalculate_result(competition, userprofile)
+        elif competition.competitor_type == 'company':
+            raise NotImplementedError("Company competitions are not working yet")
+
+def recalculate_result(competition, competitor):
+
+    if competition.competitor_type == 'team':
+        team = competitor
+        assert(competition.can_admit(team.coordinator))
+        competition_result, created = CompetitionResult.objects.get_or_create(team = team, competition = competition)
+
+        member_count = team.members().count()
+        members = team.members().all()
+            
+        if member_count == 0:
+            competition_result.result = None
+            competition_result.save()
+            return
+
+        if competition.type == 'questionnaire':
+            points = Choice.objects.filter(answer__user__in = members, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
+            points_given = Answer.objects.filter(user__in = members, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
+            competition_result.result = float(points + points_given) / float(member_count)
+        elif competition.type == 'length':
+            distance_from = Trip.objects.filter(user__in = members).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
+            distance_to   = Trip.objects.filter(user__in = members).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
+            competition_result.result = float(distance_from + distance_to) / float(member_count)
+        elif competition.type == 'frequency':
+            trips_from = Trip.objects.filter(user__in = members).aggregate(Sum('trip_from'))['trip_from__sum'] or 0
+            trips_to   = Trip.objects.filter(user__in = members).aggregate(Sum('trip_to'))['trip_to__sum'] or 0
+            competition_result.result = float(trips_from + trips_to) / float(member_count)
+    
+    elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
+        userprofile = competitor
+        assert(competition.can_admit(userprofile))
+        competition_result, created = CompetitionResult.objects.get_or_create(userprofile = userprofile, competition = competition)
+
+        if not (competition_result.userprofile.user.is_active and competition_result.userprofile.approved_for_team == 'approved'):
+            competition_result.result = None
+            competition_result.save()
+            return
+
+        if competition.type == 'questionnaire':
+            points = Choice.objects.filter(answer___user = userprofile, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
+            points_given = Answer.objects.filter(user = userprofile, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
+            competition_result.result = points + points_given
+        elif competition.type == 'length':
+            distance_from = Trip.objects.filter(user=userprofile).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
+            distance_to   = Trip.objects.filter(user=userprofile).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
+            competition_result.result = distance_from + distance_to
+        elif competition.type == 'frequency':
+            trips_from = Trip.objects.filter(user=userprofile).aggregate(Sum('trip_from'))['trip_from__sum'] or 0
+            trips_to   = Trip.objects.filter(user=userprofile).aggregate(Sum('trip_to'))['trip_to__sum'] or 0
+            competition_result.result = trips_from + trips_to
+
+    elif competition.competitor_type == 'company':
+        raise NotImplementedError("Company competitions are not working yet")
+
+    competition_result.save()
+
 class ChoiceType(models.Model):
     """Typ volby"""
     class Meta:
@@ -922,3 +1019,21 @@ def get_company(user):
         return user.userprofile.team.subsidiary.company
     except UserProfile.DoesNotExist:
         return user.company_admin.administrated_company
+
+#Signals:
+@receiver(post_save, sender=UserProfile)
+def userprofile_pre_save(sender, instance, **kwargs):
+    recalculate_result_competitor(instance)
+
+@receiver(post_save, sender=User)
+def user_post_save(sender, instance, **kwargs):
+    recalculate_result_competitor(instance.userprofile)
+
+@receiver(post_save, sender=Trip)
+def user_post_save(sender, instance, **kwargs):
+    recalculate_result_competitor(instance.user)
+
+@receiver(post_save, sender=Competition)
+def competition_post_save(sender, instance, **kwargs):
+    for competitor in instance.get_competitors():
+        recalculate_result(instance, competitor)
