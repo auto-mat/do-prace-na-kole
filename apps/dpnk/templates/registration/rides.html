@@ -8,18 +8,18 @@
 <tr>
 <th scope="column"><div style="width:120px">Den</div></th>
 <th scope="column" colspan="
-{% if has_distance_dompetition %}
+{% if has_distance_competition %}
 2
 {% endif %}
 ">Do práce</th>
 <th scope="column" colspan="
-{% if has_distance_dompetition %}
+{% if has_distance_competition %}
 2
 {% endif %}
 ">Z práce</th>
 <th scope="column">Odeslat</th>
 <th scope="column">Prav.</th>
-{% if has_distance_dompetition %}
+{% if has_distance_competition %}
 <th scope="column">Vzd. celk.</th>
 {% endif %}
 </tr>
@@ -31,16 +31,16 @@
 ">
 <th scope="row" class="date">{{ day.day|naturalday:"D j. M Y" }}</th>
 <td><input type="checkbox" name="trip_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %}  {% if day.default_trip_to %}checked="checked"{% endif %}/></td>
-{% if has_distance_dompetition %}
+{% if has_distance_competition %}
 <td><input type="number" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %} class="span1" value="{{ day.default_distance_to }}"/></td>
 {% endif %}
 <td><input type="checkbox" name="trip_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %}  {% if day.default_trip_from %}checked="checked"{% endif %}/></td>
-{% if has_distance_dompetition %}
+{% if has_distance_competition %}
 <td><input type="number" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %} class="span1" value="{{ day.default_distance_from }}"/></td>
 {% endif %}
 <td><button type="button" class="submit" onclick='$("#day").val("{{ forloop.counter }}")' {% if day.trips_active %}{% else %} disabled="disabled"{% endif %}>OK</button></td>
 <td><div {% if day.percentage > 66 %} class="text-success" {% else %} class="text-error" {% endif %}>{% if day.trips_active %}{{ day.percentage|floatformat:1 }}&nbsp;%{% endif %}</div></td>
-{% if has_distance_dompetition %}
+{% if has_distance_competition %}
 <td>{% if day.trips_active %}{{ day.distance }}&nbsp;km{% endif %}</td>
 {% endif %}
 </tr>

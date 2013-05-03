@@ -102,7 +102,7 @@ def get_competitions_with_admission(userprofile):
         ).distinct()
     return competitions
 
-def has_distance_dompetition(userprofile):
+def has_distance_competition(userprofile):
     competitions = get_competitions_with_admission(userprofile)
     competitions = competitions.filter(type = 'length', without_admission=False)
     return competitions.count() > 0

@@ -394,10 +394,10 @@ class UserProfile(models.Model):
             return None
 
     def get_competitions(self):
-        return results.get_competitions(self)
+        return results.get_competitions_with_info(self)
 
-    def has_distance_dompetition(self):
-        return results.has_distance_dompetition(self)
+    def has_distance_competition(self):
+        return results.has_distance_competition(self)
 
     def is_team_coordinator(self):
         return self.team and self.team.coordinator == self
@@ -775,7 +775,7 @@ class Competition(models.Model):
             return 'after_beginning'
 
         if not userprofile.is_libero() == (self.competitor_type == 'liberos'):
-            logger.error(u"Wrong competition type: compatitor_type: %s, userprofile: %s" % (self.competitor_type, userprofile))
+            logger.error(u"Wrong competition type: competitor_type: %s, userprofile: %s" % (self.competitor_type, userprofile))
             return 'not_libero'
         if self.company and self.company != userprofile.team.subsidiary.company:
             logger.error(u"Wrong competition type: company: %s, userprofile: %s" % (self.company, userprofile))

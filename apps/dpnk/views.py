@@ -464,7 +464,7 @@ def rides(request, template='registration/rides.html'):
     return render_to_response(template,
                               {
             'calendar': calendar,
-            'has_distance_dompetition': profile.has_distance_dompetition(),
+            'has_distance_competition': profile.has_distance_competition(),
             }, context_instance=RequestContext(request))
 
 @login_required
