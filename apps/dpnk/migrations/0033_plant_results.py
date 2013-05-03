@@ -14,6 +14,10 @@ class Migration(DataMigration):
             for competitor in competition.get_competitors():
                 models.recalculate_result(competition, competitor)
 
+        for team in models.Team.objects.all():
+            team.autoset_member_count()
+            team.save()
+
     def backwards(self, orm):
         "Write your backwards methods here."
 
@@ -175,6 +179,7 @@ class Migration(DataMigration):
             'coordinator': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'coordinated_team'", 'unique': 'True', 'null': 'True', 'to': u"orm['dpnk.UserProfile']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'invitation_token': ('django.db.models.fields.CharField', [], {'default': "''", 'unique': 'True', 'max_length': '100'}),
+            'member_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
             'subsidiary': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'teams'", 'to': u"orm['dpnk.Subsidiary']"})
         },

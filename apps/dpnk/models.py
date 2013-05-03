@@ -212,6 +212,16 @@ class Team(models.Model):
         validators = [validate_length],
         )
 
+    #Auto fields:
+    member_count = models.IntegerField(
+        verbose_name=_(u"Počet právoplatných členů týmu"),
+        null=False,
+        blank=False,
+        default=0,
+        )
+
+    def autoset_member_count(self):
+        self.member_count = self.members().count()
     def all_members(self):
         return UserProfile.objects.filter(team=self, user__is_active=True)
 
@@ -634,6 +644,7 @@ class Trip(models.Model):
     class Meta:
         verbose_name = _(u"Cesta")
         verbose_name_plural = _(u"Cesty")
+        unique_together = (("user", "date"),)
 
     user = models.ForeignKey(
         UserProfile, 
@@ -1023,14 +1034,21 @@ def get_company(user):
 #Signals:
 @receiver(post_save, sender=UserProfile)
 def userprofile_pre_save(sender, instance, **kwargs):
+    instance.team.autoset_member_count()
+    instance.team.save()
     recalculate_result_competitor(instance)
 
 @receiver(post_save, sender=User)
 def user_post_save(sender, instance, **kwargs):
+    instance.userprofile.team.autoset_member_count()
+    instance.userprofile.team.save()
     recalculate_result_competitor(instance.userprofile)
 
 @receiver(post_save, sender=Trip)
 def user_post_save(sender, instance, **kwargs):
+    instance.user.team.autoset_member_count()
+    instance.user.team.save()
+
     recalculate_result_competitor(instance.user)
 
 @receiver(post_save, sender=Competition)

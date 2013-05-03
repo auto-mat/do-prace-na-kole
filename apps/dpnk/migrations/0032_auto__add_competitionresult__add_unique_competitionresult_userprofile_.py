@@ -24,6 +24,11 @@ class Migration(SchemaMigration):
         # Adding unique constraint on 'Trip', fields ['date', 'user']
         db.create_unique(u'dpnk_trip', ['date', 'user_id'])
 
+        # Adding field 'Team.member_count'
+        db.add_column(u'dpnk_team', 'member_count',
+                      self.gf('django.db.models.fields.IntegerField')(default=0),
+                      keep_default=False)
+
 
     def backwards(self, orm):
         # Removing unique constraint on 'Trip', fields ['date', 'user']
@@ -34,6 +39,9 @@ class Migration(SchemaMigration):
 
         # Deleting model 'CompetitionResult'
         db.delete_table(u'dpnk_competitionresult')
+
+        # Deleting field 'Team.member_count'
+        db.delete_column(u'dpnk_team', 'member_count')
 
 
     models = {
@@ -194,6 +202,7 @@ class Migration(SchemaMigration):
             'coordinator': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'coordinated_team'", 'unique': 'True', 'null': 'True', 'to': u"orm['dpnk.UserProfile']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'invitation_token': ('django.db.models.fields.CharField', [], {'default': "''", 'unique': 'True', 'max_length': '100'}),
+            'member_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
             'subsidiary': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'teams'", 'to': u"orm['dpnk.Subsidiary']"})
         },
