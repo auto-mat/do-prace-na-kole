@@ -413,8 +413,8 @@ def rides(request, template='registration/rides.html'):
                 trip.date = date
                 trip.user = request.user.get_profile()
 
-            trip.trip_to = request.POST.get('trip_to-' + str(day), False)
-            trip.trip_from = request.POST.get('trip_from-' + str(day), False)
+            trip.trip_to = request.POST.get('trip_to-' + str(day), 'off') == 'on'
+            trip.trip_from = request.POST.get('trip_from-' + str(day), 'off') == 'on'
             if trip.trip_to:
                 try:
                     trip.distance_to = int(request.POST.get('distance_to-' + str(day), None))
