@@ -36,11 +36,11 @@
 </tr>
 {% for result in results %}
    <tr class="
-   {% if competition.competitor_type == 'single_user' or self.competitor_type == 'liberos' and userprofile.id == result.id %}
+   {% if competition.competitor_type == 'single_user' or self.competitor_type == 'liberos' and userprofile == result.userprofile %}
          info
-   {% elif competition.competitor_type == 'team' and userprofile.team.id == result.id %}
+   {% elif competition.competitor_type == 'team' and userprofile.team == result.team %}
          info
-   {% elif competition.competitor_type == 'company' and userprofile.team.subsidiary.company.id == result.id %}
+   {% elif competition.competitor_type == 'company' and userprofile.team.subsidiary.company == result.company %}
          info
    {% endif %}
    "id="row-{{result.id}}">
@@ -49,7 +49,15 @@
 {% if competition.competitor_type != 'single_user' and self.competitor_type != 'liberos' %}
 <td>{{ result.user_count|intcomma }}</td>
 {% endif %}
-<td>{{ result }}</td>
+<td>
+   {% if competition.competitor_type == 'single_user' or self.competitor_type == 'liberos' %}
+      {{ result.userprofile }}
+   {% elif competition.competitor_type == 'team' %}
+      {{ result.team }}
+   {% elif competition.competitor_type == 'company' %}
+      {{ result.company }}
+   {% endif %}
+</td>
 </tr>
 {% endfor %}
 </table>

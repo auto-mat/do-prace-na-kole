@@ -31,6 +31,7 @@ def get_competitors(self):
         filter_query = {}
         if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
             filter_query['user__is_active'] = True
+            filter_query['approved_for_team'] = 'approved'
             if self.city:
                 filter_query['team__subsidiary__city'] = self.city
             if self.company:
@@ -55,128 +56,20 @@ def get_competitors(self):
         elif self.competitor_type == 'company':
             query = self.company_competitors.all()
 
-    if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
-        query = query.annotate(team_member_count=Sum('team__users__user__is_active'))
+    if self.competitor_type == 'single_user':
+        query = query.filter(team__member_count__gt = 1)
+    elif self.competitor_type == 'liberos':
+        query = query.filter(team__member_count__lte = 1)
     elif self.competitor_type == 'team':
-        query = query.annotate(team_member_count=Sum('users__user__is_active'))
+        query = query.filter(member_count__gt = 1)
     elif self.competitor_type == 'company':
-        query = query.annotate(team_member_count=Sum('subsidiaries__teams__users__user__is_active'))
+        pass
 
-    if self.competitor_type == 'liberos':
-        query = query.filter(team_member_count__lte = 1)
-    else:
-        query = query.filter(team_member_count__gt = 1)
     return query
 
 def get_results(self):
-    competitors = self.get_competitors()
-
-    # Can't it be done with annotation queries like this?
-    #result = competitors.annotate(result = Sum('answer__choices__points')).order_by('-result')
-
-    if self.type == 'length' or self.type == 'frequency':
-        field = 'distance' if self.type == 'length' else 'trip'
-        if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
-            #result = competitors.annotate(trip_to = Sum('user_trips__trip_to')).annotate(trip_from = Sum('user_trips__trip_from')).values('trip_to', 'trip_from').extra(
-            #    select={ 'result':'trip_to+trip_from'},
-            #    #order_by=['-result']
-            #)
-            result = competitors.extra(
-                select=OrderedDict([
-                    ('userid', 'dpnk_userprofile.id'),
-                    ('result', """SELECT sum(IFNULL(`dpnk_trip`.`%(field)s_to` + `dpnk_trip`.`%(field)s_from` ,IFNULL(`dpnk_trip`.`%(field)s_to`, `dpnk_trip`.`%(field)s_from`))) 
-                               FROM dpnk_trip
-                               LEFT OUTER JOIN dpnk_userprofile ON (dpnk_trip.user_id = dpnk_userprofile.id)
-                               LEFT OUTER JOIN auth_user ON (dpnk_userprofile.user_id = auth_user.id)
-                               WHERE auth_user.is_active=True AND dpnk_trip.user_id=userid""" % {'field': field})
-                    ]),
-                order_by=['-result']
-                )
-            return result
-        elif self.competitor_type == 'team':
-            sum_select =   """SELECT sum(IFNULL(`dpnk_trip`.`%(field)s_to` + `dpnk_trip`.`%(field)s_from` ,IFNULL(`dpnk_trip`.`%(field)s_to`, `dpnk_trip`.`%(field)s_from`)))
-                            FROM dpnk_trip 
-                            LEFT OUTER JOIN dpnk_userprofile ON (dpnk_trip.user_id = dpnk_userprofile.id) 
-                            LEFT OUTER JOIN auth_user ON (dpnk_userprofile.user_id = auth_user.id) 
-                            WHERE auth_user.is_active=True AND dpnk_userprofile.team_id=teamid""" % {'field': field}
-            count_select =  """SELECT count(dpnk_userprofile.id) 
-                            FROM dpnk_userprofile 
-                            LEFT OUTER JOIN auth_user ON (dpnk_userprofile.user_id = auth_user.id) 
-                            WHERE auth_user.is_active=True AND dpnk_userprofile.team_id=teamid"""
-            result = competitors.extra(
-                select=OrderedDict([
-                    ('teamid', 'dpnk_team.id'),
-                    ('sum_distance', sum_select),
-                    ('user_count', count_select),
-                    ('result', "(%s)/(%s)" % (sum_select, count_select))
-                    ]),
-                order_by=['-result']
-                )
-            return result
-        elif self.competitor_type == 'company':
-            sum_select =   """SELECT sum(IFNULL(`dpnk_trip`.`%(field)s_to` + `dpnk_trip`.`%(field)s_from` ,IFNULL(`dpnk_trip`.`%(field)s_to`, `dpnk_trip`.`%(field)s_from`)))
-                            FROM dpnk_trip 
-                            LEFT OUTER JOIN dpnk_userprofile ON (dpnk_trip.user_id = dpnk_userprofile.id) 
-                            LEFT OUTER JOIN dpnk_team ON (dpnk_userprofile.team_id = dpnk_team.id) 
-                            LEFT OUTER JOIN dpnk_subsidiary ON (dpnk_team.subsidiary_id = dpnk_subsidiary.id) 
-                            LEFT OUTER JOIN auth_user ON (dpnk_userprofile.user_id = auth_user.id) 
-                            WHERE auth_user.is_active=True and dpnk_subsidiary.company_id=companyid""" % {'field': field}
-            count_select =  """SELECT count(dpnk_userprofile.id) 
-                            FROM dpnk_userprofile 
-                            LEFT OUTER JOIN dpnk_team ON (dpnk_userprofile.team_id = dpnk_team.id) 
-                            LEFT OUTER JOIN dpnk_subsidiary ON (dpnk_team.subsidiary_id = dpnk_subsidiary.id) 
-                            LEFT OUTER JOIN auth_user ON (dpnk_userprofile.user_id = auth_user.id) 
-                            WHERE auth_user.is_active=True AND dpnk_subsidiary.company_id=companyid"""
-            result = competitors.extra(
-                select=OrderedDict([
-                    ('companyid', 'dpnk_company.id'),
-                    ('sum_distance', sum_select),
-                    ('user_count', count_select),
-                    ('result', "(%s)/(%s)" % (sum_select, count_select))
-                    ]),
-                order_by=['-result']
-                )
-            return result
-    elif self.type == 'questionnaire':
-        select_dict = OrderedDict()
-
-        if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
-            select_dict['userid'] = 'dpnk_userprofile.id'
-        elif self.competitor_type == 'team':
-            select_dict['teamid'] = 'dpnk_team.id'
-        elif self.competitor_type == 'company':
-            select_dict['companyid'] = 'dpnk_company.id'
-
-        #query_str ="""SELECT sum(IF(dpnk_answer.points_given is null, dpnk_choice.points, dpnk_answer.points_given))
-        query_str ="""SELECT sum(if(dpnk_answer.points_given is Null, 0, dpnk_answer.points_given) + if(dpnk_choice.points is Null, 0, dpnk_choice.points))
-                FROM dpnk_answer 
-                LEFT OUTER JOIN dpnk_question ON (dpnk_answer.question_id = dpnk_question.id) 
-                LEFT OUTER JOIN dpnk_answer_choices ON (dpnk_answer_choices.answer_id = dpnk_answer.id) 
-                LEFT OUTER JOIN dpnk_choice ON (dpnk_answer_choices.choice_id = dpnk_choice.id) """
-
-        if self.competitor_type == 'team' or self.competitor_type == 'company':
-                query_str += """LEFT OUTER JOIN dpnk_userprofile ON (dpnk_answer.user_id = dpnk_userprofile.id)
-                LEFT OUTER JOIN auth_user ON (dpnk_userprofile.user_id = auth_user.id) """
-        if self.competitor_type == 'company':
-                query_str += """LEFT OUTER JOIN dpnk_team ON (dpnk_userprofile.team_id = dpnk_team.id) 
-                LEFT OUTER JOIN dpnk_subsidiary ON (dpnk_team.subsidiary_id = dpnk_subsidiary.id) """ 
-        query_str += " WHERE "
-
-        if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
-            query_str += "dpnk_answer.user_id=userid " 
-        elif self.competitor_type == 'team':
-            query_str += "dpnk_userprofile.team_id = teamid "
-        elif self.competitor_type == 'company':
-            query_str += "dpnk_subsidiary.company_id = companyid "
-        query_str += """AND dpnk_question.competition_id=%s AND auth_user.is_active=True""" % self.id
-
-        select_dict['result'] = query_str
-
-        result = competitors.extra(
-            select=select_dict,
-            order_by=['-result']
-            )
-        return result
+    competitors = self.results.order_by('-result')
+    return competitors
 
 def get_competitions(userprofile):
     competitions = models.Competition.objects
@@ -218,40 +111,21 @@ def get_competitions_with_info(userprofile):
     competitions = get_competitions(userprofile)
 
     for competition in competitions:
+        results = competition.get_results()
+
+        if not results:
+            continue
+
+        competition.competitor_count = results.exclude(result = None).count()
+
         if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-            try:
-                my_results = competition.get_results().get(pk = userprofile.pk)
-            except models.UserProfile.DoesNotExist:
-                my_results = None
-            if not isinstance(my_results, models.UserProfile):
-                my_results = None
+            my_results = results.get(userprofile = userprofile)
         elif competition.competitor_type == 'team':
-            try:
-                my_results = competition.get_results().get(pk = userprofile.team.pk)
-            except models.Team.DoesNotExist:
-                my_results = None
-            if not isinstance(my_results, models.Team):
-                my_results = None
+            my_results = results.get(team = userprofile.team)
         elif competition.competitor_type == 'company':
-            try:
-                my_results = competition.get_results().get(pk = userprofile.team.subsidiary.company.pk)
-            except models.Company.DoesNotExist:
-                my_results = None
-            if not isinstance(my_results, models.Company):
-                my_results = None
+            raise NotImplementedError("Company competitions are not working yet")
 
-        for i, competitor in enumerate(competition.get_results()):
-            if competitor == my_results:
-                my_results.position = i
-
-        if my_results:
-            my_results.count = competition.get_results().count()
-
-        #if my_results:
-        #    #Big hack:
-        #    result = my_results.result if my_results.result else 0
-        #    where = '1)) HAVING (result > ' + str(result)
-        #    my_results.position = competition.get_results().extra(where=[where]).count()
+        my_results.position = results.filter(result__gt = my_results.result).count()
 
         competition.my_results = my_results
     return competitions
