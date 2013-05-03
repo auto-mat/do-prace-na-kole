@@ -663,10 +663,16 @@ class Trip(models.Model):
         null=False)
     distance_to = models.IntegerField(
         verbose_name=_(u"Ujetá vzdálenost do práce"),
-        null=True, blank=True)
+        null=True,
+        blank=True,
+        default=None,
+        )
     distance_from = models.IntegerField(
         verbose_name=_(u"Ujetá vzdálenost z práce"),
-        null=True, blank=True)
+        null=True,
+        blank=True,
+        default=None,
+        )
 
 class Competition(models.Model):
     """Závod"""
