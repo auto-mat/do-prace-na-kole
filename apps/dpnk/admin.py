@@ -152,7 +152,7 @@ class CompanyAdminInline(EnhancedAdminMixin, NestedStackedInline):
 class UserAdmin(EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'company_admin__administrated_company', 'id')
-    search_fields = ['first_name', 'last_name', 'username']
+    search_fields = ['first_name', 'last_name', 'username', 'email']
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved', 'userprofile__approved_for_team', 'userprofile__t_shirt_size', PaymentFilter]
     readonly_fields = ['password']
 
@@ -203,24 +203,15 @@ class LiberoFilter(SimpleListFilter):
             ('non libero', u'ne libero'),
         )
 
-    def queryset(self, request, queryset):
-        queryset = queryset.annotate(team_member_count=Sum('users__user__is_active'))
-        if self.value() == 'empty':
-            return queryset.filter(team_member_count__lte = 0)
-        if self.value() == 'libero':
-            return queryset.filter(team_member_count__lte = 1, team_member_count__gt = 0)
-        elif self.value() == 'non_libero':
-            return queryset.filter(team_member_count__gt = 1)
-
 class TeamAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'id', )
+    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'member_count', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__user__first_name', 'coordinator__user__last_name']
-    list_filter = ['subsidiary__city', CoordinatorFilter, LiberoFilter]
+    list_filter = ['subsidiary__city', 'member_count', CoordinatorFilter]
 
-    readonly_fields = ['members', 'invitation_token']
+    readonly_fields = ['members', 'invitation_token', 'member_count']
     def members(self, obj):
         return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (u.user.id, str(u))
-                                  for u in UserProfile.objects.filter(team=obj, user__is_active=True)]))
+                                  for u in UserProfile.objects.filter(team=obj)]))
     members.short_description = 'Členové'
     form = TeamForm
 
@@ -266,7 +257,12 @@ class QuestionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
         return mark_safe("<br/>".join([choice.text for choice in obj.choice_type.choices.all()]) + '<br/><a href="' + wp_reverse('admin') + 'dpnk/choicetype/%d">edit</a>' % obj.choice_type.id )
 
 class TripAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    model = Team
+    list_display = ('user', 'date', 'trip_from', 'trip_to', 'distance_from', 'distance_to', 'id')
+    search_fields = ('user__user__first_name', 'user__user__last_name')
+
+class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+    list_display = ('userprofile', 'team', 'result', 'competition')
+    list_filter = ('competition',)
 
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Payment, PaymentAdmin)
@@ -276,6 +272,7 @@ admin.site.register(City, CityAdmin)
 admin.site.register(Subsidiary, SubsidiaryAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Competition, CompetitionAdmin)
+admin.site.register(CompetitionResult, CompetitionResultAdmin)
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(Trip, TripAdmin)
 
