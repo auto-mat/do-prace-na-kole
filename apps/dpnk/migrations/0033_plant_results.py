@@ -4,6 +4,7 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 from dpnk import models
+from dpnk import results
 
 class Migration(DataMigration):
 
