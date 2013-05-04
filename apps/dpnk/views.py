@@ -405,7 +405,7 @@ def rides(request, template='registration/rides.html'):
             if not trip_active(date, today):
                 logger.error(u'User %s is trying to fill in nonactive day, POST: %s' % (profile, request.POST))
                 return HttpResponse(_(u'<div class="text-error">Tento den již není možné vyplnit.</div>'), status=401)
-            trip = Trip.objects.get_or_create(user = request.user.get_profile(),
+            trip, created = Trip.objects.get_or_create(user = request.user.get_profile(),
                 date = date)
 
             trip.trip_to = request.POST.get('trip_to-' + str(day), False)
