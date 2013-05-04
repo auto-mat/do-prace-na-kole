@@ -511,19 +511,6 @@ def other_team_members(request,
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def results_user(request, template, limit=None):
-    userprofile = request.user.get_profile()
-
-    return render_to_response(template,
-                              {
-            'competitions': userprofile.get_competitions(),
-            'userprofile': userprofile,
-            'limit': ":%s" % limit,
-            }, context_instance=RequestContext(request))
-
-@login_required_simple
-@must_be_competitor
-@must_be_approved_for_team
 def admissions(request, template, 
         success_url="profil",
         ):
