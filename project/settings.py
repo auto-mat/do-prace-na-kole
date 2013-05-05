@@ -27,6 +27,14 @@ DATABASES = {
                 'OPTIONS': { 'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci' }
         },
 }
+CACHES = {
+    'default': {
+       'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+       'LOCATION': '127.0.0.1:11211',
+       'KEY_PREFIX': 'dpnkch',
+    },
+}
+
 LOCALE_PATH = normpath(PROJECT_ROOT, 'dpnk/locale')
 TIME_ZONE = 'Europe/Prague'
 LANGUAGE_CODE = 'cs-CZ'

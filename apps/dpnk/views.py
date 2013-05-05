@@ -27,8 +27,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from decorators import must_be_coordinator, must_be_approved_for_team, must_be_company_admin, must_be_competitor, login_required_simple
 from django.template import RequestContext
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from django.utils.translation import gettext as _
+from django.views.decorators.cache import cache_page
 # Registration imports
 import registration.signals, registration.backends, registration.backends.simple
 # Model imports
@@ -889,3 +890,22 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
 
 def facebook_app(request):
     return render_to_response('registration/facebook_app.html', {'user': request.user})
+
+@cache_page(24 * 60 * 60) 
+def statistics(request,
+        template = 'registration/statistics.html'
+        ):
+    total_distance = 0
+    total_distance += Trip.objects.filter(trip_from = True).aggregate(Sum("distance_from"))['distance_from__sum']
+    total_distance += Trip.objects.filter(trip_to = True).aggregate(Sum("distance_to"))['distance_to__sum']
+
+    #TODO: Distance 0 shouldn't be counted, but due to bug in first two days of season 2013 competition it has to be.
+    #total_distance += Trip.objects.filter(distance_from = None, trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    #total_distance += Trip.objects.filter(distance_to = None, trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    total_distance += Trip.objects.filter(Q(distance_from = None) | Q(distance_from = 0), trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    total_distance += Trip.objects.filter(Q(distance_to = None) | Q(distance_to = 0), trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    return render_to_response(template,
+            {
+                'user_count': UserProfile.objects.filter(user__is_active = True, approved_for_team='approved').count(),
+                'total_distance': total_distance,
+            }, context_instance=RequestContext(request))
