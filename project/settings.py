@@ -129,8 +129,8 @@ LOGGING = {
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': "/var/log/django/dpnk.log",
-            'backupCount': 20,
-            'maxBytes': 1000000,
+            'backupCount': 50,
+            'maxBytes': 10000000,
             'formatter': 'verbose',
         },
         'mail_admins': {
