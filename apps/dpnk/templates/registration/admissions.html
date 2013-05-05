@@ -87,7 +87,7 @@
                {% endif %}
             {% endif %}
          </td>
-         {% if competition.is_actual %}
+         {% if competition.is_actual and competition.competitor_has_admission %}
             <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">{{ competition.my_results.position|add:"1"|ordinal }}</a></td>
             <td>{{ competition.my_results.result|floatformat:-2|intcomma }}
                {% if competition.type == 'length' %}
