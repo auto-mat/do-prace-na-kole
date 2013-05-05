@@ -54,7 +54,7 @@
    {{ forloop.counter|ordinal }}
 {% endifchanged %}
 </td>
-<td>{{ result.result|intcomma }}</td>
+<td>{{ result.result|floatformat:-2|intcomma  }}</td>
 {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
 <td>{{ result.team.members.count|intcomma }}</td>
 {% endif %}
