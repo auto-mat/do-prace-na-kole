@@ -8,6 +8,8 @@
       <th>Email</th>
       <th>Členství v týmu</th>
       <th>Platba</th>
+      <th>Počet jízd</th>
+      <th>Ujetá vzdálenost</th>
    </tr>
    {% for member in team_members %}
       <tr>
@@ -15,6 +17,8 @@
       <td>{{ member.user.email }}</td>
       <td>{{ member.get_approved_for_team_display }}</td>
       <td><span class="text-{{ member.payment.class }}">{{ member.payment.status_description }}</span></td>
+      <td>{{ member.get_frequency }} jízd</td>
+      <td>{{ member.get_length }} Km</td>
       </tr>
    {% endfor %}
 </table>

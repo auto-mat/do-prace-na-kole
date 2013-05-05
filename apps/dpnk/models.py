@@ -228,6 +228,12 @@ class Team(models.Model):
     def members(self):
         return UserProfile.objects.filter(approved_for_team='approved', team=self, user__is_active=True)
 
+    def get_frequency(self):
+        return results.get_team_frequency(self)
+
+    def get_length(self):
+        return results.get_team_length(self)
+
     def __unicode__(self):
         return "%s / %s" % (self.name, self.subsidiary.company)
 
@@ -398,6 +404,12 @@ class UserProfile(models.Model):
 
     def has_distance_competition(self):
         return results.has_distance_competition(self)
+
+    def get_frequency(self):
+        return results.get_userprofile_frequency(self)
+
+    def get_length(self):
+        return results.get_userprofile_length(self)
 
     def is_team_coordinator(self):
         return self.team and self.team.coordinator == self

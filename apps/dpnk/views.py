@@ -495,13 +495,9 @@ def other_team_members(request,
         ):
     profile = request.user.get_profile()
 
-    # Render profile
-    payment_status = profile.payment_status()
     team_members = []
-    team_members_count = 0
     if profile.team and profile.team.coordinator:
         team_members = profile.team.all_members()
-        team_members_count = team_members.count()
 
     return render_to_response(template,
                               {

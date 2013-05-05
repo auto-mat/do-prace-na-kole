@@ -11,9 +11,11 @@
 <tr id="tr_company"><th scope="row">{% trans "Firma:" %}</th><td>{{ team.subsidiary.company.name }}</td></tr>
 <tr id="tr_telephone"><th scope="row">{% trans "Telefon:" %}</th><td>{{ profile.telephone }}</td></tr>
 <tr id="tr_email"><th scope="row">{% trans "Email:" %}</th><td>{{ profile.user.email }}</td></tr>
-<tr id="tr_distance"><th scope="row">{% trans "Vzdálenost:" %}</th><td>{{ profile.distance }} Km
+<tr id="tr_distance"><th scope="row">{% trans "Zadaná průměrná vzdálenost:" %}</th><td>{{ profile.distance }} Km</td></tr>
+<tr id="tr_team_distance"><th scope="row">{% trans "Průměrná frekvence týmu" %}</th><td>{{ profile.team.get_frequency }} Jízd</td></tr>
+<tr id="tr_team_length"><th scope="row">{% trans "Průměrná vzdálenost týmu" %}</th><td>{{ profile.team.get_length }} Km</td></tr>
 <tr id="tr_t-shirt-size"><th scope="row">{% trans "Velikost trička:" %}</th><td>{{ profile.get_t_shirt_size_display }}</td></tr>
-<tr id="tr_team_size"><th scope="row">{% trans "Počet členů týmu:" %}</th><td>{{ team_members_count }}
+<tr id="tr_team_size"><th scope="row">{% trans "Počet členů týmu:" %}</th><td>{{ team_members_count }}</td></tr>
 <tr id="tr_team_coordinator"><th scope="row">{% trans "Koordinátor týmu:" %}</th><td>{{ team.coordinator }}
 {% if approved_for_team == 'approved' %}
 ({{ team.coordinator.user.email }}, tel.: {{ team.coordinator.telephone }})

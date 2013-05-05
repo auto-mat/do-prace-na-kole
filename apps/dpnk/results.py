@@ -130,6 +130,37 @@ def get_competitions_with_info(userprofile):
         competition.my_results = my_results
     return competitions
 
+def get_userprofile_frequency(userprofile):
+    trips_from = models.Trip.objects.filter(user=userprofile).aggregate(Sum('trip_from'))['trip_from__sum'] or 0
+    trips_to   = models.Trip.objects.filter(user=userprofile).aggregate(Sum('trip_to'))['trip_to__sum'] or 0
+    return trips_from + trips_to
+
+def get_userprofile_length(userprofile):
+    distance_from = models.Trip.objects.filter(user=userprofile).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
+    distance_to   = models.Trip.objects.filter(user=userprofile).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
+    return distance_from + distance_to
+
+def get_team_frequency(team):
+    member_count = team.members().count()
+    members = team.members().all()
+        
+    if member_count == 0:
+        return None
+    members = team.members().all()
+    distance_from = models.Trip.objects.filter(user__in = members).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
+    distance_to   = models.Trip.objects.filter(user__in = members).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
+    return float(distance_from + distance_to) / float(member_count)
+
+def get_team_length(team):
+    member_count = team.members().count()
+    members = team.members().all()
+        
+    if member_count == 0:
+        return None
+    trips_from = models.Trip.objects.filter(user__in = members).aggregate(Sum('trip_from'))['trip_from__sum'] or 0
+    trips_to   = models.Trip.objects.filter(user__in = members).aggregate(Sum('trip_to'))['trip_to__sum'] or 0
+    return float(trips_from + trips_to) / float(member_count)
+
 def recalculate_result_competition(competition):
     models.CompetitionResult.objects.filter(competition = competition).delete()
     for competitor in competition.get_competitors():
@@ -164,13 +195,9 @@ def recalculate_result(competition, competitor):
             points_given = models.Answer.objects.filter(user__in = members, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
             competition_result.result = float(points + points_given) / float(member_count)
         elif competition.type == 'length':
-            distance_from = models.Trip.objects.filter(user__in = members).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
-            distance_to   = models.Trip.objects.filter(user__in = members).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
-            competition_result.result = float(distance_from + distance_to) / float(member_count)
+            competition_result.result = get_team_length(team)
         elif competition.type == 'frequency':
-            trips_from = models.Trip.objects.filter(user__in = members).aggregate(Sum('trip_from'))['trip_from__sum'] or 0
-            trips_to   = models.Trip.objects.filter(user__in = members).aggregate(Sum('trip_to'))['trip_to__sum'] or 0
-            competition_result.result = float(trips_from + trips_to) / float(member_count)
+            competition_result.result = get_team_frequency(team)
     
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
         userprofile = competitor
@@ -187,13 +214,9 @@ def recalculate_result(competition, competitor):
             points_given = models.Answer.objects.filter(user = userprofile, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
             competition_result.result = points + points_given
         elif competition.type == 'length':
-            distance_from = models.Trip.objects.filter(user=userprofile).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
-            distance_to   = models.Trip.objects.filter(user=userprofile).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
-            competition_result.result = distance_from + distance_to
+            competition_result.result = get_userprofile_length(userprofile)
         elif competition.type == 'frequency':
-            trips_from = models.Trip.objects.filter(user=userprofile).aggregate(Sum('trip_from'))['trip_from__sum'] or 0
-            trips_to   = models.Trip.objects.filter(user=userprofile).aggregate(Sum('trip_to'))['trip_to__sum'] or 0
-            competition_result.result = trips_from + trips_to
+            competition_result.result = get_userprofile_frequency(userprofile)
 
     elif competition.competitor_type == 'company':
         raise NotImplementedError("Company competitions are not working yet")
