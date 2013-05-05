@@ -994,8 +994,7 @@ def user_post_save(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Competition)
 def competition_post_save(sender, instance, **kwargs):
-    for competitor in instance.get_competitors():
-        results.recalculate_result(instance, competitor)
+    results.recalculate_result_competition(instance)
 
 @receiver(post_save, sender=Answer)
 def answer_post_save(sender, instance, **kwargs):

@@ -12,8 +12,7 @@ class Migration(DataMigration):
         "Write your forwards methods here."
         # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
         for competition in models.Competition.objects.all():
-            for competitor in competition.get_competitors():
-                results.recalculate_result(competition, competitor)
+            results.recalculate_result_competition(competition)
 
         for team in models.Team.objects.all():
             team.autoset_member_count()

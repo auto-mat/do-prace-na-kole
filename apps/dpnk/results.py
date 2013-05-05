@@ -130,6 +130,12 @@ def get_competitions_with_info(userprofile):
         competition.my_results = my_results
     return competitions
 
+def recalculate_result_competition(competition):
+    models.CompetitionResult.objects.filter(competition = competition).delete()
+    for competitor in competition.get_competitors():
+        recalculate_result(competition, competitor)
+    
+
 def recalculate_result_competitor(userprofile):
     for competition in userprofile.get_competitions():
         if competition.competitor_type == 'team':
