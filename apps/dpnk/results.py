@@ -118,12 +118,15 @@ def get_competitions_with_info(userprofile):
 
         competition.competitor_count = results.exclude(result = None).count()
 
-        if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-            my_results = results.get(userprofile = userprofile)
-        elif competition.competitor_type == 'team':
-            my_results = results.get(team = userprofile.team)
-        elif competition.competitor_type == 'company':
-            raise NotImplementedError("Company competitions are not working yet")
+        try:
+            if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
+                my_results = results.get(userprofile = userprofile)
+            elif competition.competitor_type == 'team':
+                my_results = results.get(team = userprofile.team)
+            elif competition.competitor_type == 'company':
+                raise NotImplementedError("Company competitions are not working yet")
+        except models.CompetitionResult.DoesNotExist:
+            my_results = models.CompetitionResult()
 
         if my_results.result:
             my_results.position = results.filter(result__gt = my_results.result).count() + 1
