@@ -11,12 +11,12 @@ class Migration(DataMigration):
     def forwards(self, orm):
         "Write your forwards methods here."
         # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
-        for competition in models.Competition.objects.all():
-            results.recalculate_result_competition(competition)
-
         for team in models.Team.objects.all():
             team.autoset_member_count()
             team.save()
+
+        for competition in models.Competition.objects.all():
+            results.recalculate_result_competition(competition)
 
     def backwards(self, orm):
         "Write your backwards methods here."
