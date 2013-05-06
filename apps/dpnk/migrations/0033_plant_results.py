@@ -4,7 +4,6 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 from dpnk import models
-from dpnk import results
 
 class Migration(DataMigration):
 
@@ -16,7 +15,7 @@ class Migration(DataMigration):
             team.save()
 
         for competition in models.Competition.objects.all():
-            results.recalculate_result_competition(competition)
+            competition.recalculate_results()
 
     def backwards(self, orm):
         "Write your backwards methods here."

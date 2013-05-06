@@ -405,6 +405,9 @@ class UserProfile(models.Model):
     def has_distance_competition(self):
         return results.has_distance_competition(self)
 
+    def recalculate_results(self):
+        return results.recalculate_result_competition(self)
+
     def get_frequency(self):
         return results.get_userprofile_frequency(self)
 
@@ -1009,7 +1012,7 @@ def user_post_save(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Competition)
 def competition_post_save(sender, instance, **kwargs):
-    results.recalculate_result_competition(instance)
+    instance.recalculate_results()
 
 @receiver(post_save, sender=Answer)
 def answer_post_save(sender, instance, **kwargs):
