@@ -845,8 +845,7 @@ class CompetitionResult(models.Model):
     class Meta:
         verbose_name = _(u"Výsledek závodu")
         verbose_name_plural = _(u"Výsledky závodů")
-        unique_together = (("userprofile", "competition"),)
-        unique_together = (("team", "competition"),)
+        unique_together = (("userprofile", "competition"), ("team", "competition"))
 
     userprofile = models.ForeignKey(UserProfile,
         related_name="competitions_results",

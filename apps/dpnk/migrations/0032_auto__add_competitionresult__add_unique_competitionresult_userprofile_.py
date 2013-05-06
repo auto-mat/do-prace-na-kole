@@ -18,6 +18,9 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'dpnk', ['CompetitionResult'])
 
+        # Adding unique constraint on 'CompetitionResult', fields ['userprofile', 'competition']
+        db.create_unique(u'dpnk_competitionresult', ['userprofile_id', 'competition_id'])
+
         # Adding unique constraint on 'CompetitionResult', fields ['team', 'competition']
         db.create_unique(u'dpnk_competitionresult', ['team_id', 'competition_id'])
 
@@ -36,6 +39,9 @@ class Migration(SchemaMigration):
 
         # Removing unique constraint on 'CompetitionResult', fields ['team', 'competition']
         db.delete_unique(u'dpnk_competitionresult', ['team_id', 'competition_id'])
+
+        # Removing unique constraint on 'CompetitionResult', fields ['userprofile', 'competition']
+        db.delete_unique(u'dpnk_competitionresult', ['userprofile_id', 'competition_id'])
 
         # Deleting model 'CompetitionResult'
         db.delete_table(u'dpnk_competitionresult')
@@ -151,7 +157,7 @@ class Migration(SchemaMigration):
             'without_admission': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
         },
         u'dpnk.competitionresult': {
-            'Meta': {'unique_together': "(('team', 'competition'),)", 'object_name': 'CompetitionResult'},
+            'Meta': {'unique_together': "(('userprofile', 'competition'), ('team', 'competition'))", 'object_name': 'CompetitionResult'},
             'competition': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'results'", 'to': u"orm['dpnk.Competition']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'result': ('django.db.models.fields.FloatField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),

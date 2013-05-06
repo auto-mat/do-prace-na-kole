@@ -128,7 +128,7 @@ class Migration(DataMigration):
             'without_admission': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
         },
         u'dpnk.competitionresult': {
-            'Meta': {'unique_together': "(('team', 'competition'),)", 'object_name': 'CompetitionResult'},
+            'Meta': {'unique_together': "(('userprofile', 'competition'), ('team', 'competition'))", 'object_name': 'CompetitionResult'},
             'competition': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'results'", 'to': u"orm['dpnk.Competition']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'result': ('django.db.models.fields.FloatField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
