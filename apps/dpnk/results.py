@@ -125,7 +125,10 @@ def get_competitions_with_info(userprofile):
         elif competition.competitor_type == 'company':
             raise NotImplementedError("Company competitions are not working yet")
 
-        my_results.position = results.filter(result__gt = my_results.result).count()
+        if my_results.result:
+            my_results.position = results.filter(result__gt = my_results.result).count() + 1
+        else:
+            my_results.position = "-"
 
         competition.my_results = my_results
     return competitions
