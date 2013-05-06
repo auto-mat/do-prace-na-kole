@@ -168,7 +168,7 @@ def recalculate_result_competition(competition):
     
 
 def recalculate_result_competitor(userprofile):
-    for competition in userprofile.get_competitions():
+    for competition in get_competitions(userprofile):
         if competition.competitor_type == 'team':
             recalculate_result(competition, userprofile.team)
         elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
