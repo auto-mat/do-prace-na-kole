@@ -54,10 +54,17 @@ class CityAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'admission_fee', 'id', )
 
 class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'subsidiaries_text', 'id', )
+    list_display = ('name', 'subsidiaries_text', 'user_count', 'id', )
     inlines = [SubsidiaryInline,]
     readonly_fields = ['subsidiary_links']
     search_fields = ('name',)
+
+    def queryset(self, request):
+        return Company.objects.annotate(user_count = Sum('subsidiaries__teams__member_count'))
+    def user_count(self, obj):
+        return obj.user_count
+    user_count.admin_order_field = 'user_count'
+    
     def subsidiaries_text(self, obj):
         return mark_safe(" | ".join(['%s' % (str(u))
                                   for u in Subsidiary.objects.filter(company=obj)]))
