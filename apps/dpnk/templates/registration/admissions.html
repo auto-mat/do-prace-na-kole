@@ -54,9 +54,9 @@
                </a>
             {% elif competition.type == 'frequency' or competition.type == 'length' %}
                {% if competition.competitor_has_admission %}
-                  <button type="button" class="submit" onclick='$("#cancellation_competition_id").val("{{ competition.id }}")'>Odhlásit</button>
+                  <button type="button" class="submit" onclick='$("#cancellation_competition_id").val("{{ competition.id }}")'>Odhlásit ze soutěže</button>
                {% else %}
-                  <button type="button" class="submit" onclick='$("#admission_competition_id").val("{{ competition.id }}")'>Přihlásit</button>
+                  <button type="button" class="submit" onclick='$("#admission_competition_id").val("{{ competition.id }}")'>Přihlásit do soutěže</button>
                {% endif %}
             {% endif %}
             {% else %}
