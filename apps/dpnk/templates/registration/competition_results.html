@@ -15,10 +15,17 @@
    {% elif competition.type == 'questionnaire' %}
       Bodů
    {% endif %}
-   {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
+   {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.type != 'questionnaire' %}
       průměrně
    {% endif %}
 </th>
+
+{% if competition.type == 'frequency' %}
+   <th>Celkový počet jízd</th>
+{% elif competition.type == 'length' and competition.competitor_type == 'team' %}
+   <th>Celkový počet kilometrů</th>
+{% endif %}
+
 {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
 <th scope="column">Počet závodníků v
    {% if competition.competitor_type == 'team' %}
@@ -28,6 +35,7 @@
    {% endif %}
 </th>
 {% endif %}
+
 <th scope="column">
    {% if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos' %}
       Soutěžící
@@ -37,6 +45,8 @@
       Firma
    {% endif %}
 </th>
+
+
 </tr>
 {% for result in results %}
    <tr class="
@@ -60,6 +70,11 @@
 {% else %}
    <td>{{ result.result|floatformat:-1|intcomma  }}</td>
 {% endif %}
+
+{% if competition.type == 'frequency' or competition.type == 'length' and competition.competitor_type == 'team' %}
+   <td>{{ result.get_total_result }}</td>
+{% endif %}
+
 {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
 <td>{{ result.team.members.count|intcomma }}</td>
 {% endif %}
