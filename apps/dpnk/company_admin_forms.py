@@ -88,8 +88,6 @@ class CompanyAdminApplicationForm(registration.forms.RegistrationForm):
 
     def clean_administrated_company(self):
         obj = self.cleaned_data['administrated_company']
-        print obj.pk
-        print CompanyAdmin.objects.filter(administrated_company__pk = obj.pk)
         if CompanyAdmin.objects.filter(administrated_company__pk = obj.pk).exists():
             raise forms.ValidationError(_("Tato firma již má svého správce."))
         else:
