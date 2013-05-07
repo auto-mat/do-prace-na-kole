@@ -19,15 +19,18 @@ def days():
 
 def days_count():
     d = days()
-    today = datetime.date.today()
+    today = _today()
     for i, day in enumerate(days()):
-        if day > datetime.date.today():
+        if day > _today():
             break
     return i+1
 
-def today():
+def _today():
     #return datetime.date(year=2013, month=5, day=15)
     return datetime.date.today()
+
+def today():
+    return _today()
 
 class Mailing:
 

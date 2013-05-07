@@ -89,13 +89,13 @@
          </td>
          {% if competition.is_actual and competition.competitor_has_admission %}
             <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">{{ competition.my_results.position|ordinal }}</a></td>
-            <td>{{ competition.my_results.result|floatformat:-2|intcomma }}
+            <td>
                {% if competition.type == 'length' %}
-                  Km
+                 {{ competition.my_results.result|floatformat:-2|intcomma }} Km
                {% elif competition.type == 'frequency' %}
-                  Jízd
+                 {{ competition.my_results.result| percentage |floatformat:-2|intcomma }} %
                {% elif competition.type == 'questionnaire' %}
-                  b.
+                 {{ competition.my_results.result|floatformat:-2|intcomma }}b.
                {% endif %}
             </td>
          {% else %}
