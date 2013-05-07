@@ -56,9 +56,9 @@
 {% endifchanged %}
 </td>
 {% if competition.type == 'frequency' %}
-   <td>{{ result.result| percentage |floatformat:-2|intcomma  }}</td>
+   <td>{{ result.result| percentage |floatformat:-1|intcomma  }}</td>
 {% else %}
-   <td>{{ result.result|floatformat:-2|intcomma  }}</td>
+   <td>{{ result.result|floatformat:-1|intcomma  }}</td>
 {% endif %}
 {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
 <td>{{ result.team.members.count|intcomma }}</td>
