@@ -151,17 +151,28 @@ class CompanyAdminInline(EnhancedAdminMixin, NestedStackedInline):
 
 class UserAdmin(EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'company_admin__administrated_company', 'id')
-    search_fields = ['first_name', 'last_name', 'username']
-    list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved', 'userprofile__approved_for_team', 'userprofile__t_shirt_size', PaymentFilter]
+    list_display = ('username', 'email', 'first_name', 'last_name', 'userprofile__payment_type', 'userprofile__payment_status', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'userprofile__team__subsidiary__company', 'company_admin__administrated_company', 'is_staff', 'is_superuser', 'is_active', 'id')
+    search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__subsidiary__company__name',]
+    list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved', 'userprofile__approved_for_team', 'userprofile__t_shirt_size', 'userprofile__team__subsidiary__city', PaymentFilter]
     readonly_fields = ['password']
+    list_max_show_all = 10000
 
+    def userprofile__payment_type(self, obj):
+       pay_type = "(None)"
+       payment = obj.userprofile.payment()['payment']
+       if payment:
+          pay_type = payment.pay_type
+       return pay_type
+    def userprofile__payment_status(self, obj):
+       return obj.userprofile.payment()['status_description']
     def userprofile__team(self, obj):
        return obj.userprofile.team
     def userprofile__distance(self, obj):
        return obj.userprofile.distance
     def userprofile__team__subsidiary__city(self, obj):
         return obj.userprofile.team.subsidiary.city
+    def userprofile__team__subsidiary__company(self, obj):
+        return obj.userprofile.team.subsidiary.company
     def company_admin__administrated_company(self, obj):
         return obj.company_admin.administrated_company
 
@@ -216,6 +227,7 @@ class TeamAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__user__first_name', 'coordinator__user__last_name']
     list_filter = ['subsidiary__city', CoordinatorFilter, LiberoFilter]
+    list_max_show_all = 10000
 
     readonly_fields = ['members', 'invitation_token']
     def members(self, obj):
