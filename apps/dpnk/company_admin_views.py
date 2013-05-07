@@ -150,7 +150,7 @@ class CompanyCompetitionView(UpdateView):
         if competition_slug:
             competition = get_object_or_404(Competition.objects, slug = competition_slug)
             if competition.company != company:
-                raise Http404(_(u"<div class='text-error'>K editování tohoto závodu nemáte oprávnění.</div>"))
+                raise Http404(_(u"<div class='text-error'>K editování této soutěže nemáte oprávnění.</div>"))
         else:
             if Competition.objects.filter(company = company).count() >= settings.MAX_COMPETITIONS_PER_COMPANY:
                 raise Http404(_(u"<div class='text-error'>Překročen maximální počet soutěží.</div>"))

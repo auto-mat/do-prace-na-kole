@@ -2,7 +2,7 @@
 {% load dpnk_tags %}
 {% load humanize %}
 
-<h4>Výsledky v závodě {{ competition }}:</h4>
+<h4>Výsledky v soutěži {{ competition }}:</h4>
 
 <table class="table table-condensed table-striped table-bordered">
 <tr>
@@ -27,7 +27,7 @@
 {% endif %}
 
 {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
-<th scope="column">Počet závodníků v
+<th scope="column">Počet soutěžících v
    {% if competition.competitor_type == 'team' %}
       týmu
    {% elif competition.competitor_type == 'company' %}

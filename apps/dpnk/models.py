@@ -691,7 +691,7 @@ class Trip(models.Model):
         )
 
 class Competition(models.Model):
-    """Závod"""
+    """Soutěž"""
 
     CTYPES = (
         ('length', _(u"Ujetá vzdálenost")),
@@ -707,8 +707,8 @@ class Competition(models.Model):
         )
 
     class Meta:
-        verbose_name = _(u"Závod")
-        verbose_name_plural = _(u"Závody")
+        verbose_name = _(u"Soutěž")
+        verbose_name_plural = _(u"Soutěže")
     name = models.CharField(
         unique=True,
         verbose_name=_(u"Jméno soutěže"),
@@ -721,7 +721,7 @@ class Competition(models.Model):
         )
     url = models.URLField(
         default="",
-        verbose_name=u"Odkaz na stránku závodu",
+        verbose_name=u"Odkaz na stránku soutěže",
         null=True, 
         blank=True,
         )
@@ -741,7 +741,7 @@ class Competition(models.Model):
         max_length=16,
         null=False)
     competitor_type = models.CharField(
-        verbose_name=_(u"Typ závodníků"),
+        verbose_name=_(u"Typ soutěžícího"),
         choices=CCOMPETITORTYPES,
         max_length=16,
         null=False)
@@ -844,10 +844,10 @@ class Competition(models.Model):
         return "%s" % self.name
 
 class CompetitionResult(models.Model):
-    """Výsledek závodu"""
+    """Výsledek soutěže"""
     class Meta:
-        verbose_name = _(u"Výsledek závodu")
-        verbose_name_plural = _(u"Výsledky závodů")
+        verbose_name = _(u"Výsledek soutěže")
+        verbose_name_plural = _(u"Výsledky soutěží")
         unique_together = (("userprofile", "competition"), ("team", "competition"))
 
     userprofile = models.ForeignKey(UserProfile,

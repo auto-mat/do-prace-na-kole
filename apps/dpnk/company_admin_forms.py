@@ -120,7 +120,7 @@ class CompanyCompetitionForm(forms.ModelForm):
         required=True)
 
     competitor_type = forms.ChoiceField(
-        label=_(u"Typ závodníka"),
+        label=_(u"Typ soutěžícího"),
         choices= [x for x in Competition.CCOMPETITORTYPES if x[0] in ['single_user', 'team']],
         required=True)
 
