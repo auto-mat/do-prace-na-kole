@@ -405,9 +405,6 @@ class UserProfile(models.Model):
     def has_distance_competition(self):
         return results.has_distance_competition(self)
 
-    def recalculate_results(self):
-        return results.recalculate_result_competition(self)
-
     def get_frequency(self):
         return results.get_userprofile_frequency(self)
 
@@ -786,6 +783,9 @@ class Competition(models.Model):
 
     def is_actual(self):
         return self.date_from <= util.today() and self.date_to >= util.today()
+
+    def recalculate_results(self):
+        return results.recalculate_result_competition(self)
 
     def can_admit(self, userprofile):
         if self.without_admission:
