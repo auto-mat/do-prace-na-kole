@@ -7,14 +7,14 @@
 <form name="admissions" method="POST">
 <input type="hidden" id="admission_competition_id" name="admission_competition_id"/>
 <input type="hidden" id="cancellation_competition_id" name="cancellation_competition_id"/>
-<table id="rides" class="table table-striped table-bordered table-hover table-condensed" style="max-width:539px">
+<table id="rides" class="table table-striped table-bordered table-hover table-condensed">
    <tr>
       <th scope="column">{% trans "Soutěž" %}</th>
       <th scope="column">{% trans "Typ" %}</th>
       <th scope="column">{% trans "Akce" %}</th>
-      <th scope="column">{% trans "Pořadí" %}</th>
-      <th scope="column">{% trans "Hodnocení" %}</th>
-      <th scope="column">{% trans "Počet soutěžících" %}</th>
+      <th scope="column">{% trans "Po&shy;řa&shy;dí" %}</th>
+      <th scope="column">{% trans "Ho&shy;dno&shy;ce&shy;ní" %}</th>
+      <th scope="column">{% trans "Po&shy;čet sou&shy;tě&shy;ží&shy;cích" %}</th>
    </tr>
    {% for competition in competitions %}
       <tr>
@@ -91,9 +91,9 @@
             <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">{{ competition.my_results.position|ordinal }}</a></td>
             <td>
                {% if competition.type == 'length' %}
-                 {{ competition.my_results.result|floatformat:-1|intcomma }} Km
+                 {{ competition.my_results.result|floatformat:-1|intcomma }}&nbsp;Km
                {% elif competition.type == 'frequency' %}
-                 {{ competition.my_results.result| percentage |floatformat:-1|intcomma }} %
+                 {{ competition.my_results.result| percentage |floatformat:-1|intcomma }}&nbsp;%
                {% elif competition.type == 'questionnaire' %}
                  {{ competition.my_results.result|floatformat:-1|intcomma }}b.
                {% endif %}

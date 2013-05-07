@@ -5,21 +5,21 @@
 
 <table class="table table-striped table-bordered" id="team_members_table">
    <tr>
-      <th>Jméno</th>
-      <th>Email</th>
-      <th>Členství v týmu</th>
-      <th>Platba</th>
-      <th>Počet jízd</th>
-      <th>Ujetá vzdálenost</th>
+      <th>Jmé&shy;no</th>
+      <th>Email</div></th>
+      <th>Člen&shy;ství v tý&shy;mu</th>
+      <th>Pla&shy;tba</th>
+      <th>Po&shy;čet jízd</th>
+      <th>U&shy;je&shy;tá vzdá&shy;le&shy;nost</th>
    </tr>
    {% for member in team_members %}
       <tr>
-      <td>{{ member }}</td>
-      <td>{{ member.user.email }}</td>
-      <td>{{ member.get_approved_for_team_display }}</td>
+      <td><div style="word-break: break-all;">{{ member }}</div></td>
+      <td><div style="word-break: break-all;">{{ member.user.email }}</div></td>
+      <td><div style="word-break: break-all;">{{ member.get_approved_for_team_display }}</div></td>
       <td><span class="text-{{ member.payment.class }}">{{ member.payment.status_description }}</span></td>
-      <td>{{ member.get_frequency|percentage|floatformat:-1|intcomma }} %</td>
-      <td>{{ member.get_length|floatformat:-1|intcomma }} Km</td>
+      <td>{{ member.get_frequency|percentage|floatformat:-1|intcomma }}&nbsp;%</td>
+      <td>{{ member.get_length|floatformat:-1|intcomma }}&nbsp;Km</td>
       </tr>
    {% endfor %}
 </table>

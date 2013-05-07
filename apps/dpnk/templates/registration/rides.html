@@ -4,9 +4,9 @@
 
 <form name="calendar" method="POST">
 <input type="hidden" id="day" name="day"/>
-<table id="rides" class="table table-striped table-bordered table-hover table-condensed" style="max-width:539px">
+<table id="rides" class="table table-striped table-bordered table-hover table-condensed">
 <tr>
-<th scope="column"><div style="width:120px">Den</div></th>
+<th scope="column"><div style="width:150px">Den</div></th>
 <th scope="column" colspan="
 {% if has_distance_competition %}
 2
@@ -17,10 +17,10 @@
 2
 {% endif %}
 ">Z práce</th>
-<th scope="column">Odeslat</th>
-<th scope="column">Prav.</th>
+<th scope="column" style="width:2em;">O&shy;de&shy;slat</th>
+<th scope="column" style="width:4em;">Pra&shy;vi&shy;del&shy;nost</th>
 {% if has_distance_competition %}
-<th scope="column">Vzd. celk.</th>
+<th scope="column" style="width:3em;">Vzdá&shy;le&shy;nost cel&shy;kem</th>
 {% endif %}
 </tr>
 {% for day in calendar %}
