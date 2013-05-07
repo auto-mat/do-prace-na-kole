@@ -152,10 +152,9 @@ def get_team_frequency(team):
         
     if member_count == 0:
         return None
-    members = team.members().all()
-    distance_from = models.Trip.objects.filter(user__in = members).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
-    distance_to   = models.Trip.objects.filter(user__in = members).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
-    return float(distance_from + distance_to) / float(member_count)
+    trips_from = models.Trip.objects.filter(user__in = members).aggregate(Sum('trip_from'))['trip_from__sum'] or 0
+    trips_to   = models.Trip.objects.filter(user__in = members).aggregate(Sum('trip_to'))['trip_to__sum'] or 0
+    return float(trips_from + trips_to) / float(member_count)
 
 def get_team_length(team):
     member_count = team.members().count()
@@ -163,9 +162,10 @@ def get_team_length(team):
         
     if member_count == 0:
         return None
-    trips_from = models.Trip.objects.filter(user__in = members).aggregate(Sum('trip_from'))['trip_from__sum'] or 0
-    trips_to   = models.Trip.objects.filter(user__in = members).aggregate(Sum('trip_to'))['trip_to__sum'] or 0
-    return float(trips_from + trips_to) / float(member_count)
+    members = team.members().all()
+    distance_from = models.Trip.objects.filter(user__in = members).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
+    distance_to   = models.Trip.objects.filter(user__in = members).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
+    return float(distance_from + distance_to) / float(member_count)
 
 def recalculate_result_competition(competition):
     models.CompetitionResult.objects.filter(competition = competition).delete()
