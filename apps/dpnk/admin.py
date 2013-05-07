@@ -155,6 +155,7 @@ class UserAdmin(EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__subsidiary__company__name',]
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved', 'userprofile__approved_for_team', 'userprofile__t_shirt_size', 'userprofile__team__subsidiary__city', PaymentFilter]
     readonly_fields = ['password']
+    list_max_show_all = 10000
 
     def userprofile__payment_type(self, obj):
        pay_type = "(None)"
@@ -202,21 +203,11 @@ class CoordinatorFilter(SimpleListFilter):
         if self.value() == 'foreign_coordinator':
             return queryset.exclude(coordinator__team__id = F("id"))
 
-class LiberoFilter(SimpleListFilter):
-    title = u"libero"
-    parameter_name = u'libero'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('empty', u'prázdný'),
-            ('libero', u'libero'),
-            ('non libero', u'ne libero'),
-        )
-
 class TeamAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'member_count', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__user__first_name', 'coordinator__user__last_name']
     list_filter = ['subsidiary__city', 'member_count', CoordinatorFilter]
+    list_max_show_all = 10000
 
     readonly_fields = ['members', 'invitation_token', 'member_count']
     def members(self, obj):
