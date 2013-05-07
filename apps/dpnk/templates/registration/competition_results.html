@@ -1,7 +1,8 @@
 {% load url from future %}
+{% load dpnk_tags %}
 {% load humanize %}
 
-<h4>Výsledky v závodě {{ competition }}:</h4>
+<h4>Výsledky v soutěži {{ competition }}:</h4>
 
 <table class="table table-condensed table-striped table-bordered">
 <tr>
@@ -10,13 +11,23 @@
    {% if competition.type == 'length' %}
       Kilometrů
    {% elif competition.type == 'frequency' %}
-      Jízd
+      % jízd
    {% elif competition.type == 'questionnaire' %}
       Bodů
    {% endif %}
+   {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.type != 'questionnaire' %}
+      průměrně
+   {% endif %}
 </th>
-{% if competition.competitor_type != 'single_user' and self.competitor_type != 'liberos' %}
-<th scope="column">Počet závodníků v
+
+{% if competition.type == 'frequency' %}
+   <th>Celkový počet jízd</th>
+{% elif competition.type == 'length' and competition.competitor_type == 'team' %}
+   <th>Celkový počet kilometrů</th>
+{% endif %}
+
+{% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
+<th scope="column">Počet soutěžících v
    {% if competition.competitor_type == 'team' %}
       týmu
    {% elif competition.competitor_type == 'company' %}
@@ -24,8 +35,9 @@
    {% endif %}
 </th>
 {% endif %}
+
 <th scope="column">
-   {% if competition.competitor_type == 'single_user' or self.competitor_type == 'liberos' %}
+   {% if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos' %}
       Soutěžící
    {% elif competition.competitor_type == 'team' %}
       Tým
@@ -33,23 +45,48 @@
       Firma
    {% endif %}
 </th>
+
+
 </tr>
 {% for result in results %}
    <tr class="
-   {% if competition.competitor_type == 'single_user' or self.competitor_type == 'liberos' and userprofile.id == result.id %}
+   {% if competition.competitor_type == 'single_user' and userprofile == result.userprofile %}
          info
-   {% elif competition.competitor_type == 'team' and userprofile.team.id == result.id %}
+   {% elif competition.competitor_type == 'liberos' and userprofile == result.userprofile %}
          info
-   {% elif competition.competitor_type == 'company' and userprofile.team.subsidiary.company.id == result.id %}
+   {% elif competition.competitor_type == 'team' and userprofile.team == result.team %}
+         info
+   {% elif competition.competitor_type == 'company' and userprofile.team.subsidiary.company == result.company %}
          info
    {% endif %}
    "id="row-{{result.id}}">
-<td>{{ forloop.counter|ordinal }}</td>
-<td>{{ result.result|intcomma }}</td>
-{% if competition.competitor_type != 'single_user' and self.competitor_type != 'liberos' %}
-<td>{{ result.user_count|intcomma }}</td>
+<td>
+{% ifchanged result.result %}
+   {{ forloop.counter|ordinal }}
+{% endifchanged %}
+</td>
+{% if competition.type == 'frequency' %}
+   <td>{{ result.result| percentage |floatformat:-1|intcomma  }}</td>
+{% else %}
+   <td>{{ result.result|floatformat:-1|intcomma  }}</td>
 {% endif %}
-<td>{{ result }}</td>
+
+{% if competition.type == 'frequency' or competition.type == 'length' and competition.competitor_type == 'team' %}
+   <td>{{ result.get_total_result }}</td>
+{% endif %}
+
+{% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
+<td>{{ result.team.members.count|intcomma }}</td>
+{% endif %}
+<td>
+   {% if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos' %}
+      {{ result.userprofile }}
+   {% elif competition.competitor_type == 'team' %}
+      {{ result.team }}
+   {% elif competition.competitor_type == 'company' %}
+      {{ result.company }}
+   {% endif %}
+</td>
 </tr>
 {% endfor %}
 </table>

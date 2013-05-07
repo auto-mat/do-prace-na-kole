@@ -54,10 +54,17 @@ class CityAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'admission_fee', 'id', )
 
 class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'subsidiaries_text', 'id', )
+    list_display = ('name', 'subsidiaries_text', 'user_count', 'id', )
     inlines = [SubsidiaryInline,]
     readonly_fields = ['subsidiary_links']
     search_fields = ('name',)
+
+    def queryset(self, request):
+        return Company.objects.annotate(user_count = Sum('subsidiaries__teams__member_count'))
+    def user_count(self, obj):
+        return obj.user_count
+    user_count.admin_order_field = 'user_count'
+    
     def subsidiaries_text(self, obj):
         return mark_safe(" | ".join(['%s' % (str(u))
                                   for u in Subsidiary.objects.filter(company=obj)]))
@@ -83,9 +90,20 @@ class SubsidiaryAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
                                   for u in Team.objects.filter(subsidiary=obj)]))
     team_links.short_description = u"Týmy"
 
+def recalculate_competitions_results(modeladmin, request, queryset):
+    for competition in queryset.all():
+        competition.recalculate_results()
+recalculate_competitions_results.short_description = "Přepočítat výsledku vybraných soutěží"
+
 class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'date_from', 'date_to', 'city', 'company')
+    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'date_from', 'date_to', 'city', 'company', 'competition_results_link')
     filter_horizontal = ('user_competitors', 'team_competitors', 'company_competitors')
+    actions = [recalculate_competitions_results]
+
+    readonly_fields = ['competition_results_link', ]
+    def competition_results_link(self, obj):
+        return mark_safe(u'<a href="%s?soutez=%s">výsledky</a>' % (wp_reverse('vysledky_souteze'), obj.slug))
+    competition_results_link.short_description = u"Výsledky soutěže"
 
 class PaymentFilter(SimpleListFilter):
     title = u"stav platby"
@@ -155,7 +173,7 @@ class UserAdmin(EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__subsidiary__company__name',]
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved', 'userprofile__approved_for_team', 'userprofile__t_shirt_size', 'userprofile__team__subsidiary__city', PaymentFilter]
     readonly_fields = ['password']
-    list_max_show_all = 10000
+    list_max_show_all = 1000
 
     def userprofile__payment_type(self, obj):
        pay_type = "(None)"
@@ -203,36 +221,16 @@ class CoordinatorFilter(SimpleListFilter):
         if self.value() == 'foreign_coordinator':
             return queryset.exclude(coordinator__team__id = F("id"))
 
-class LiberoFilter(SimpleListFilter):
-    title = u"libero"
-    parameter_name = u'libero'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('empty', u'prázdný'),
-            ('libero', u'libero'),
-            ('non libero', u'ne libero'),
-        )
-
-    def queryset(self, request, queryset):
-        queryset = queryset.annotate(team_member_count=Sum('users__user__is_active'))
-        if self.value() == 'empty':
-            return queryset.filter(team_member_count__lte = 0)
-        if self.value() == 'libero':
-            return queryset.filter(team_member_count__lte = 1, team_member_count__gt = 0)
-        elif self.value() == 'non_libero':
-            return queryset.filter(team_member_count__gt = 1)
-
 class TeamAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'id', )
+    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'member_count', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__user__first_name', 'coordinator__user__last_name']
-    list_filter = ['subsidiary__city', CoordinatorFilter, LiberoFilter]
-    list_max_show_all = 10000
+    list_filter = ['subsidiary__city', 'member_count', CoordinatorFilter]
+    list_max_show_all = 1000
 
-    readonly_fields = ['members', 'invitation_token']
+    readonly_fields = ['members', 'invitation_token', 'member_count']
     def members(self, obj):
         return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (u.user.id, str(u))
-                                  for u in UserProfile.objects.filter(team=obj, user__is_active=True)]))
+                                  for u in UserProfile.objects.filter(team=obj)]))
     members.short_description = 'Členové'
     form = TeamForm
 
@@ -278,7 +276,13 @@ class QuestionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
         return mark_safe("<br/>".join([choice.text for choice in obj.choice_type.choices.all()]) + '<br/><a href="' + wp_reverse('admin') + 'dpnk/choicetype/%d">edit</a>' % obj.choice_type.id )
 
 class TripAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    model = Team
+    list_display = ('user', 'date', 'trip_from', 'trip_to', 'distance_from', 'distance_to', 'id')
+    search_fields = ('user__user__first_name', 'user__user__last_name')
+
+class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+    list_display = ('userprofile', 'team', 'result', 'competition')
+    list_filter = ('competition',)
+    search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__team__name', 'competition__name')
 
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Payment, PaymentAdmin)
@@ -288,6 +292,7 @@ admin.site.register(City, CityAdmin)
 admin.site.register(Subsidiary, SubsidiaryAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Competition, CompetitionAdmin)
+admin.site.register(CompetitionResult, CompetitionResultAdmin)
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(Trip, TripAdmin)
 

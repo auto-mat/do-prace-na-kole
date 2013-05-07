@@ -10,3 +10,4 @@ ordereddict
 createsend==2.6.0
 unidecode
 -e git+git://github.com/Soaa-/django-nested-inlines.git#egg=django-nested-inlines
+python-memcached

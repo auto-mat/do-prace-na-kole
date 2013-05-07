@@ -27,8 +27,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from decorators import must_be_coordinator, must_be_approved_for_team, must_be_company_admin, must_be_competitor, login_required_simple
 from django.template import RequestContext
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from django.utils.translation import gettext as _
+from django.views.decorators.cache import cache_page
 # Registration imports
 import registration.signals, registration.backends, registration.backends.simple
 # Model imports
@@ -408,8 +409,8 @@ def rides(request, template='registration/rides.html'):
             trip, created = Trip.objects.get_or_create(user = request.user.get_profile(),
                 date = date)
 
-            trip.trip_to = request.POST.get('trip_to-' + str(day), False)
-            trip.trip_from = request.POST.get('trip_from-' + str(day), False)
+            trip.trip_to = request.POST.get('trip_to-' + str(day), 'off') == 'on'
+            trip.trip_from = request.POST.get('trip_from-' + str(day), 'off') == 'on'
             if trip.trip_to:
                 try:
                     trip.distance_to = int(request.POST.get('distance_to-' + str(day), None))
@@ -459,7 +460,7 @@ def rides(request, template='registration/rides.html'):
     return render_to_response(template,
                               {
             'calendar': calendar,
-            'has_distance_dompetition': profile.has_distance_dompetition(),
+            'has_distance_competition': profile.has_distance_competition(),
             }, context_instance=RequestContext(request))
 
 @login_required
@@ -495,30 +496,13 @@ def other_team_members(request,
         ):
     profile = request.user.get_profile()
 
-    # Render profile
-    payment_status = profile.payment_status()
     team_members = []
-    team_members_count = 0
     if profile.team and profile.team.coordinator:
         team_members = profile.team.all_members()
-        team_members_count = team_members.count()
 
     return render_to_response(template,
                               {
             'team_members': team_members,
-            }, context_instance=RequestContext(request))
-
-@login_required_simple
-@must_be_competitor
-@must_be_approved_for_team
-def results_user(request, template, limit=None):
-    userprofile = request.user.get_profile()
-
-    return render_to_response(template,
-                              {
-            'competitions': userprofile.get_competitions(),
-            'userprofile': userprofile,
-            'limit': ":%s" % limit,
             }, context_instance=RequestContext(request))
 
 @login_required_simple
@@ -552,11 +536,16 @@ def competition_results(request, template, competition_slug='testing_zavod', lim
     if limit == '':
         limit = None
 
+    if request.user.is_anonymous():
+        userprofile = None
+    else:
+        userprofile = request.user.get_profile(),
+
     competition = Competition.objects.get(slug=competition_slug)
 
     return render_to_response(template,
                               {
-            'userprofile': request.user.get_profile(),
+            'userprofile': userprofile,
             'competition': competition,
             'results': competition.get_results()[:limit],
             }, context_instance=RequestContext(request))
@@ -906,3 +895,22 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
 
 def facebook_app(request):
     return render_to_response('registration/facebook_app.html', {'user': request.user})
+
+@cache_page(24 * 60 * 60) 
+def statistics(request,
+        template = 'registration/statistics.html'
+        ):
+    total_distance = 0
+    total_distance += Trip.objects.filter(trip_from = True).aggregate(Sum("distance_from"))['distance_from__sum']
+    total_distance += Trip.objects.filter(trip_to = True).aggregate(Sum("distance_to"))['distance_to__sum']
+
+    #TODO: Distance 0 shouldn't be counted, but due to bug in first two days of season 2013 competition it has to be.
+    #total_distance += Trip.objects.filter(distance_from = None, trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    #total_distance += Trip.objects.filter(distance_to = None, trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    total_distance += Trip.objects.filter(Q(distance_from = None) | Q(distance_from = 0), trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    total_distance += Trip.objects.filter(Q(distance_to = None) | Q(distance_to = 0), trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    return render_to_response(template,
+            {
+                'user_count': UserProfile.objects.filter(user__is_active = True, approved_for_team='approved').count(),
+                'total_distance': total_distance,
+            }, context_instance=RequestContext(request))

@@ -88,8 +88,6 @@ class CompanyAdminApplicationForm(registration.forms.RegistrationForm):
 
     def clean_administrated_company(self):
         obj = self.cleaned_data['administrated_company']
-        print obj.pk
-        print CompanyAdmin.objects.filter(administrated_company__pk = obj.pk)
         if CompanyAdmin.objects.filter(administrated_company__pk = obj.pk).exists():
             raise forms.ValidationError(_("Tato firma již má svého správce."))
         else:
@@ -122,7 +120,7 @@ class CompanyCompetitionForm(forms.ModelForm):
         required=True)
 
     competitor_type = forms.ChoiceField(
-        label=_(u"Typ závodníka"),
+        label=_(u"Typ soutěžícího"),
         choices= [x for x in Competition.CCOMPETITORTYPES if x[0] in ['single_user', 'team']],
         required=True)
 

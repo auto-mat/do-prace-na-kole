@@ -27,6 +27,14 @@ DATABASES = {
                 'OPTIONS': { 'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci' }
         },
 }
+CACHES = {
+    'default': {
+       'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+       'LOCATION': '127.0.0.1:11211',
+       'KEY_PREFIX': 'dpnkch',
+    },
+}
+
 LOCALE_PATH = normpath(PROJECT_ROOT, 'dpnk/locale')
 TIME_ZONE = 'Europe/Prague'
 LANGUAGE_CODE = 'cs-CZ'
@@ -129,8 +137,8 @@ LOGGING = {
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': "/var/log/django/dpnk.log",
-            'backupCount': 20,
-            'maxBytes': 1000000,
+            'backupCount': 50,
+            'maxBytes': 10000000,
             'formatter': 'verbose',
         },
         'mail_admins': {
@@ -141,12 +149,12 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['null'],
+            'handlers': ['console', 'logfile'],
             'propagate': True,
             'level': 'INFO',
         },
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['mail_admins', 'logfile'],
             'level': 'ERROR',
             'propagate': False,
         },

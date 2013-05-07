@@ -29,7 +29,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.core.exceptions import ValidationError
 from composite_field import CompositeField
 from django.utils.translation import ugettext_lazy as _
@@ -212,11 +212,27 @@ class Team(models.Model):
         validators = [validate_length],
         )
 
+    #Auto fields:
+    member_count = models.IntegerField(
+        verbose_name=_(u"Počet právoplatných členů týmu"),
+        null=False,
+        blank=False,
+        default=0,
+        )
+
+    def autoset_member_count(self):
+        self.member_count = self.members().count()
     def all_members(self):
         return UserProfile.objects.filter(team=self, user__is_active=True)
 
     def members(self):
         return UserProfile.objects.filter(approved_for_team='approved', team=self, user__is_active=True)
+
+    def get_frequency(self):
+        return results.get_team_frequency(self)
+
+    def get_length(self):
+        return results.get_team_length(self)
 
     def __unicode__(self):
         return "%s / %s" % (self.name, self.subsidiary.company)
@@ -384,10 +400,16 @@ class UserProfile(models.Model):
             return None
 
     def get_competitions(self):
-        return results.get_competitions(self)
+        return results.get_competitions_with_info(self)
 
-    def has_distance_dompetition(self):
-        return results.has_distance_dompetition(self)
+    def has_distance_competition(self):
+        return results.has_distance_competition(self)
+
+    def get_frequency(self):
+        return results.get_userprofile_frequency(self)
+
+    def get_length(self):
+        return results.get_userprofile_length(self)
 
     def is_team_coordinator(self):
         return self.team and self.team.coordinator == self
@@ -638,6 +660,7 @@ class Trip(models.Model):
     class Meta:
         verbose_name = _(u"Cesta")
         verbose_name_plural = _(u"Cesty")
+        unique_together = (("user", "date"),)
 
     user = models.ForeignKey(
         UserProfile, 
@@ -656,13 +679,19 @@ class Trip(models.Model):
         null=False)
     distance_to = models.IntegerField(
         verbose_name=_(u"Ujetá vzdálenost do práce"),
-        null=True, blank=True)
+        null=True,
+        blank=True,
+        default=None,
+        )
     distance_from = models.IntegerField(
         verbose_name=_(u"Ujetá vzdálenost z práce"),
-        null=True, blank=True)
+        null=True,
+        blank=True,
+        default=None,
+        )
 
 class Competition(models.Model):
-    """Závod"""
+    """Soutěž"""
 
     CTYPES = (
         ('length', _(u"Ujetá vzdálenost")),
@@ -678,8 +707,8 @@ class Competition(models.Model):
         )
 
     class Meta:
-        verbose_name = _(u"Závod")
-        verbose_name_plural = _(u"Závody")
+        verbose_name = _(u"Soutěž")
+        verbose_name_plural = _(u"Soutěže")
     name = models.CharField(
         unique=True,
         verbose_name=_(u"Jméno soutěže"),
@@ -692,7 +721,7 @@ class Competition(models.Model):
         )
     url = models.URLField(
         default="",
-        verbose_name=u"Odkaz na stránku závodu",
+        verbose_name=u"Odkaz na stránku soutěže",
         null=True, 
         blank=True,
         )
@@ -712,7 +741,7 @@ class Competition(models.Model):
         max_length=16,
         null=False)
     competitor_type = models.CharField(
-        verbose_name=_(u"Typ závodníků"),
+        verbose_name=_(u"Typ soutěžícího"),
         choices=CCOMPETITORTYPES,
         max_length=16,
         null=False)
@@ -755,6 +784,9 @@ class Competition(models.Model):
     def is_actual(self):
         return self.date_from <= util.today() and self.date_to >= util.today()
 
+    def recalculate_results(self):
+        return results.recalculate_result_competition(self)
+
     def can_admit(self, userprofile):
         if self.without_admission:
             return 'without_admission'
@@ -768,7 +800,7 @@ class Competition(models.Model):
             return 'after_beginning'
 
         if not userprofile.is_libero() == (self.competitor_type == 'liberos'):
-            logger.error(u"Wrong competition type: compatitor_type: %s, userprofile: %s" % (self.competitor_type, userprofile))
+            logger.error(u"Wrong competition type: competitor_type: %s, userprofile: %s" % (self.competitor_type, userprofile))
             return 'not_libero'
         if self.company and self.company != userprofile.team.subsidiary.company:
             logger.error(u"Wrong competition type: company: %s, userprofile: %s" % (self.company, userprofile))
@@ -811,6 +843,41 @@ class Competition(models.Model):
     def __unicode__(self):
         return "%s" % self.name
 
+class CompetitionResult(models.Model):
+    """Výsledek soutěže"""
+    class Meta:
+        verbose_name = _(u"Výsledek soutěže")
+        verbose_name_plural = _(u"Výsledky soutěží")
+        unique_together = (("userprofile", "competition"), ("team", "competition"))
+
+    userprofile = models.ForeignKey(UserProfile,
+        related_name="competitions_results",
+        null=True,
+        blank=True,
+        default=None,
+        )
+    team = models.ForeignKey(Team,
+        related_name="competitions_results",
+        null=True,
+        blank=True,
+        default=None,
+        )
+    competition = models.ForeignKey(Competition,
+        related_name="results",
+        null=False,
+        blank=False,
+        )
+    result = models.FloatField(
+        verbose_name=_(u"Výsledek"),
+        null=True,
+        blank=True,
+        default=None,
+        )
+
+    def get_total_result(self):
+        members = self.team.members().count() if self.team else 1
+        return int(self.result * members)
+    
 class ChoiceType(models.Model):
     """Typ volby"""
     class Meta:
@@ -926,3 +993,37 @@ def get_company(user):
         return user.userprofile.team.subsidiary.company
     except UserProfile.DoesNotExist:
         return user.company_admin.administrated_company
+
+#Signals:
+@receiver(post_save, sender=UserProfile)
+def userprofile_pre_save(sender, instance, **kwargs):
+    instance.team.autoset_member_count()
+    instance.team.save()
+    results.recalculate_result_competitor(instance)
+
+@receiver(post_save, sender=User)
+def user_post_save(sender, instance, **kwargs):
+    instance.userprofile.team.autoset_member_count()
+    instance.userprofile.team.save()
+    results.recalculate_result_competitor(instance.userprofile)
+
+@receiver(post_save, sender=Trip)
+def user_post_save(sender, instance, **kwargs):
+    instance.user.team.autoset_member_count()
+    instance.user.team.save()
+
+    results.recalculate_result_competitor(instance.user)
+
+@receiver(post_save, sender=Competition)
+def competition_post_save(sender, instance, **kwargs):
+    instance.recalculate_results()
+
+@receiver(post_save, sender=Answer)
+def answer_post_save(sender, instance, **kwargs):
+    competition = instance.question.competition
+    if competition.competitor_type == 'team':
+        results.recalculate_result(competition, instance.user.team)
+    elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
+        results.recalculate_result(competition, instance.user)
+    elif competition.competitor_type == 'company':
+        raise NotImplementedError("Company competitions are not working yet")

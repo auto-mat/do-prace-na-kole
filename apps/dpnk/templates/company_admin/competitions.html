@@ -6,15 +6,21 @@
 <tr>
 <th>Jméno</th>
 <th>Typ soutěže</th>
-<th>Typ závodníků</th>
+<th>Typ soutěžících</th>
 <th>Edit</th>
+<th>Výsledky</th>
 </tr>
 {% for competition in competitions %}
    <tr>
-   <td><a href="{{ competition.url}}">{{ competition.name }}</a></td>
+      <td>
+         {% if competition.url %}<a href="{{ competition.url}}">{% endif %}
+            {{ competition.name }}
+         {% if competition.url %}</a>{% endif %}
+      </td>
    <td>{{ competition.get_type_display }}</td>
    <td>{{ competition.get_competitor_type_display }}</td>
    <td><a href="{% wp_url 'soutez' %}?competition_slug={{ competition.slug }}">edit</a></td>
+   <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}">výsledky</a></td>
    </tr>
 {% endfor %}
 </table>
