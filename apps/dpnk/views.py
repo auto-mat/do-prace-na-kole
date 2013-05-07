@@ -539,7 +539,7 @@ def competition_results(request, template, competition_slug='testing_zavod', lim
     if request.user.is_anonymous():
         userprofile = None
     else:
-        userprofile = request.user.get_profile(),
+        userprofile = request.user.get_profile()
 
     competition = Competition.objects.get(slug=competition_slug)
 
