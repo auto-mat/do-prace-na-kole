@@ -89,14 +89,14 @@ def recalculate_competitions_results(modeladmin, request, queryset):
 recalculate_competitions_results.short_description = "Přepočítat výsledku vybraných závodů"
 
 class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'date_from', 'date_to', 'city', 'company')
+    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'date_from', 'date_to', 'city', 'company', 'competition_results_link')
     filter_horizontal = ('user_competitors', 'team_competitors', 'company_competitors')
     actions = [recalculate_competitions_results]
 
-    readonly_fields = ['company_results_link', ]
-    def company_results_link(self, obj):
-        return mark_safe(u'<a href="%s/%s">výsledky</a>' % (wp_reverse('vysledky_souteze'), obj.slug))
-    company_results_link.short_description = u"Výsledky soutěže"
+    readonly_fields = ['competition_results_link', ]
+    def competition_results_link(self, obj):
+        return mark_safe(u'<a href="%s?soutez=%s">výsledky</a>' % (wp_reverse('vysledky_souteze'), obj.slug))
+    competition_results_link.short_description = u"Výsledky soutěže"
 
 class PaymentFilter(SimpleListFilter):
     title = u"stav platby"
