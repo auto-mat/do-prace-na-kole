@@ -93,6 +93,11 @@ class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     filter_horizontal = ('user_competitors', 'team_competitors', 'company_competitors')
     actions = [recalculate_competitions_results]
 
+    readonly_fields = ['company_results_link', ]
+    def company_results_link(self, obj):
+        return mark_safe(u'<a href="%s/%s">výsledky</a>' % (wp_reverse('vysledky_souteze'), obj.slug))
+    company_results_link.short_description = u"Výsledky soutěže"
+
 class PaymentFilter(SimpleListFilter):
     title = u"stav platby"
     parameter_name = u'payment_state'
