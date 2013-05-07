@@ -83,9 +83,15 @@ class SubsidiaryAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
                                   for u in Team.objects.filter(subsidiary=obj)]))
     team_links.short_description = u"Týmy"
 
+def recalculate_competitions_results(modeladmin, request, queryset):
+    for competition in queryset.all():
+        competition.recalculate_results()
+recalculate_competitions_results.short_description = "Přepočítat výsledku vybraných závodů"
+
 class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'date_from', 'date_to', 'city', 'company')
     filter_horizontal = ('user_competitors', 'team_competitors', 'company_competitors')
+    actions = [recalculate_competitions_results]
 
 class PaymentFilter(SimpleListFilter):
     title = u"stav platby"
