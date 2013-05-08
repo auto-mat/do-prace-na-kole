@@ -83,6 +83,7 @@ INSTALLED_APPS = (
     'south',
     'bootstrapform',
     'admin_enhancer',
+    'softhyphen',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
