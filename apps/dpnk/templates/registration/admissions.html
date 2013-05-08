@@ -10,12 +10,12 @@
 <input type="hidden" id="cancellation_competition_id" name="cancellation_competition_id"/>
 <table id="rides" class="table table-striped table-bordered table-hover table-condensed">
    <tr>
-      <th scope="column">{% trans "Soutěž" %}</th>
+      <th scope="column">{% trans "Sou&shy;těž" %}</th>
       <th scope="column">{% trans "Typ" %}</th>
       <th scope="column">{% trans "Akce" %}</th>
-      <th scope="column">{% trans "Po&shy;řa&shy;dí" %}</th>
-      <th scope="column">{% trans "Ho&shy;dno&shy;ce&shy;ní" %}</th>
-      <th scope="column">{% trans "Po&shy;čet sou&shy;tě&shy;ží&shy;cích" %}</th>
+      <th scope="column" class="fixed_width_column">{% trans "Po&shy;řa&shy;dí" %}</th>
+      <th scope="column" class="fixed_width_column">{% trans "Ho&shy;dno&shy;ce&shy;ní" %}</th>
+      <th scope="column" class="fixed_width_column">{% trans "Po&shy;čet sou&shy;tě&shy;ží&shy;cích" %}</th>
 
    </tr>
    {% for competition in competitions %}
