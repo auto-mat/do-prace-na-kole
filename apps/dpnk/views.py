@@ -532,6 +532,7 @@ def admissions(request, template,
             'userprofile': userprofile,
             }, context_instance=RequestContext(request))
 
+@cache_page(24 * 60 * 60) 
 def competition_results(request, template, competition_slug='testing_zavod', limit=None):
     if limit == '':
         limit = None
