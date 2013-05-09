@@ -57,6 +57,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 	#'django.middleware.csrf.CsrfViewMiddleware',
 
 #    "dpnk.middleware.XHRMiddleware",
@@ -84,6 +85,7 @@ INSTALLED_APPS = (
     'bootstrapform',
     'admin_enhancer',
     'softhyphen',
+    'debug_toolbar',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
