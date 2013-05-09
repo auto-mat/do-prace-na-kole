@@ -12,3 +12,4 @@ unidecode
 -e git+git://github.com/Soaa-/django-nested-inlines.git#egg=django-nested-inlines
 python-memcached
 django-softhyphen
+django-debug-toolbar
