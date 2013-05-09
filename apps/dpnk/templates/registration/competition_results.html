@@ -1,48 +1,50 @@
 {% load url from future %}
 {% load dpnk_tags %}
 {% load humanize %}
+{% load softhyphen_tags %}
 
 <h4>Výsledky v soutěži {{ competition }}:</h4>
+<div></div>
 
 <table class="table table-condensed table-striped table-bordered">
 <tr>
-<th scope="column">Pořadí</th>
+<th scope="column">Po&shy;řa&shy;dí</th>
 <th scope="column">
    {% if competition.type == 'length' %}
-      Kilometrů
+      Ki&shy;lo&shy;me&shy;trů
    {% elif competition.type == 'frequency' %}
       % jízd
    {% elif competition.type == 'questionnaire' %}
-      Bodů
+      Bo&shy;dů
    {% endif %}
    {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.type != 'questionnaire' %}
-      průměrně
+      prů&shy;měr&shy;ně
    {% endif %}
 </th>
 
 {% if competition.type == 'frequency' %}
-   <th>Celkový počet jízd</th>
+   <th>Cel&shy;ko&shy;vý po&shy;čet jí&shy;zd</th>
 {% elif competition.type == 'length' and competition.competitor_type == 'team' %}
-   <th>Celkový počet kilometrů</th>
+   <th>Cel&shy;ko&shy;vý po&shy;čet ki&shy;lo&shy;me&shy;trů</th>
 {% endif %}
 
 {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
-<th scope="column">Počet soutěžících v
+<th scope="column">Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch v
    {% if competition.competitor_type == 'team' %}
-      týmu
+      tý&shy;mu
    {% elif competition.competitor_type == 'company' %}
-      firmě
+      fir&shy;mě
    {% endif %}
 </th>
 {% endif %}
 
 <th scope="column">
    {% if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos' %}
-      Soutěžící
+      Sou&shy;tě&shy;ží&shy;cí
    {% elif competition.competitor_type == 'team' %}
       Tým
    {% elif competition.competitor_type == 'company' %}
-      Firma
+      Fir&shy;ma
    {% endif %}
 </th>
 
@@ -82,11 +84,11 @@
 {% endif %}
 <td>
    {% if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos' %}
-      {{ result.userprofile }}
+      {{ result.userprofile|softhyphen:"cs-CZ" }}
    {% elif competition.competitor_type == 'team' %}
-      {{ result.team }}
+      {{ result.team|softhyphen:"cs-CZ" }}
    {% elif competition.competitor_type == 'company' %}
-      {{ result.company }}
+      {{ result.company|softhyphen:"cs-CZ" }}
    {% endif %}
 </td>
 </tr>
