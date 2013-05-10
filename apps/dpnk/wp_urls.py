@@ -15,7 +15,7 @@ urls = {
 
     # Profil
     "profil":                       "/profil",
-    "profil_pristup":               "/profil",
+    "profil_pristup":               "/mesta",
     'login':                        "/profil/login",
     'logout':                       "/profil/logout",
     'zapomenute_heslo':             "/profil/zapomenute-heslo",
