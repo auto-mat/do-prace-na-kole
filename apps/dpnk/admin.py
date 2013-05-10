@@ -137,7 +137,7 @@ class PaymentFilter(SimpleListFilter):
         elif self.value() == 'no_admission':
             return queryset.filter(userprofile__team__subsidiary__city__admission_fee = 0)
         elif self.value() == 'done':
-            return queryset.filter(userprofile__payments__status__in = Payment.done_statuses).filter(userprofile__team__subsidiary__city__admission_fee = 0)
+            return queryset.filter(Q(userprofile__payments__status__in = Payment.done_statuses) | Q(userprofile__team__subsidiary__city__admission_fee = 0))
         elif self.value() == 'paid':
             return queryset.filter(userprofile__payments__status__in = Payment.done_statuses)
         elif self.value() == 'waiting':
