@@ -130,10 +130,10 @@ class PaymentFilter(SimpleListFilter):
                     created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
                 )]
             return queryset.filter(
-                userprofile__user__is_active=True).exclude(userprofile__id__in=paying_or_prospective_user_ids, userprofile__team__subsidiary__city__admission_fee = 0)
+                userprofile__user__is_active=True).exclude(userprofile__id__in=paying_or_prospective_user_ids).exclude(userprofile__team__subsidiary__city__admission_fee = 0)
         elif self.value() == 'not_paid':
             return queryset.filter(
-                userprofile__user__is_active=True).exclude(userprofile__payments__status__in = Payment.done_statuses, userprofile__team__subsidiary__city__admission_fee = 0)
+                userprofile__user__is_active=True).exclude(userprofile__payments__status__in = Payment.done_statuses).exclude(userprofile__team__subsidiary__city__admission_fee = 0)
         elif self.value() == 'no_admission':
             return queryset.filter(userprofile__team__subsidiary__city__admission_fee = 0)
         elif self.value() == 'done':
@@ -143,7 +143,7 @@ class PaymentFilter(SimpleListFilter):
         elif self.value() == 'waiting':
             return queryset.exclude(userprofile__payments__status__in = Payment.done_statuses).filter(userprofile__payments__status__in = Payment.waiting_statuses)
         elif self.value() == 'unknown':
-            return queryset.exclude(userprofile__team__subsidiary__city__admission_fee = 0, userprofile__payments__status__in = set(Payment.done_statuses) | set(Payment.waiting_statuses))
+            return queryset.exclude(userprofile__team__subsidiary__city__admission_fee = 0).exclude(userprofile__payments__status__in = set(Payment.done_statuses) | set(Payment.waiting_statuses))
         elif self.value() == 'none':
             return queryset.filter(userprofile__payments = None)
 
