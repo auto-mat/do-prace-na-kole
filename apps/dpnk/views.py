@@ -425,6 +425,8 @@ def rides(request, template='registration/rides.html'):
                     trip.distance_from = 0
             else:
                 trip.distance_from = None
+            logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s, created: %s' %
+                (request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to, created))
             trip.save()
 
     trips = {}
