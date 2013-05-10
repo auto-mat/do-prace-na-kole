@@ -115,6 +115,7 @@ class PaymentFilter(SimpleListFilter):
             ('not_paid_older', u'nezaplaceno (platba starší než 5 dnů)'),
             ('no_admission', u'neplatí se'),
             ('done', u'vyřízeno'),
+            ('paid', u'zaplaceno'),
             ('waiting', u'čeká se'),
             ('unknown', u'neznámý'),
             ('none', u'bez plateb'),
@@ -129,13 +130,15 @@ class PaymentFilter(SimpleListFilter):
                     created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
                 )]
             return queryset.filter(
-                userprofile__user__is_active=True).exclude(userprofile__id__in=paying_or_prospective_user_ids)
+                userprofile__user__is_active=True).exclude(userprofile__id__in=paying_or_prospective_user_ids, userprofile__team__subsidiary__city__admission_fee = 0)
         elif self.value() == 'not_paid':
             return queryset.filter(
-                userprofile__user__is_active=True).exclude(userprofile__payments__status__in = Payment.done_statuses)
+                userprofile__user__is_active=True).exclude(userprofile__payments__status__in = Payment.done_statuses, userprofile__team__subsidiary__city__admission_fee = 0)
         elif self.value() == 'no_admission':
             return queryset.filter(userprofile__team__subsidiary__city__admission_fee = 0)
         elif self.value() == 'done':
+            return queryset.filter(userprofile__payments__status__in = Payment.done_statuses, userprofile__team__subsidiary__city__admission_fee = 0)
+        elif self.value() == 'paid':
             return queryset.filter(userprofile__payments__status__in = Payment.done_statuses)
         elif self.value() == 'waiting':
             return queryset.exclude(userprofile__payments__status__in = Payment.done_statuses).filter(userprofile__payments__status__in = Payment.waiting_statuses)
