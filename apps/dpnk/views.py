@@ -537,16 +537,16 @@ def competition_results(request, template, competition_slug='testing_zavod', lim
     if limit == '':
         limit = None
 
-    if request.user.is_anonymous():
-        userprofile = None
-    else:
-        userprofile = request.user.get_profile()
+    #if request.user.is_anonymous():
+    #    userprofile = None
+    #else:
+    #    userprofile = request.user.get_profile()
 
     competition = Competition.objects.get(slug=competition_slug)
 
     return render_to_response(template,
                               {
-            'userprofile': userprofile,
+            #'userprofile': userprofile,
             'competition': competition,
             'results': competition.get_results()[:limit],
             }, context_instance=RequestContext(request))
