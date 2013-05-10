@@ -388,7 +388,7 @@ def profile_access(request):
 
 def trip_active(day, today):
     return ((day <= today) 
-        and (day > today - datetime.timedelta(days=7))
+        and (day > today - datetime.timedelta(days=14))
     )
 
 @login_required_simple
