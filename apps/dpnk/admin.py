@@ -172,7 +172,7 @@ class CompanyAdminInline(EnhancedAdminMixin, NestedStackedInline):
 
 class UserAdmin(EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
-    list_display = ('username', 'email', 'first_name', 'last_name', 'userprofile__payment_type', 'userprofile__payment_status', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'userprofile__team__subsidiary__company', 'company_admin__administrated_company', 'trips_count', 'is_staff', 'is_superuser', 'is_active', 'id')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'userprofile__payment_type', 'userprofile__payment_status', 'date_joined', 'userprofile__team__name', 'userprofile__team__subsidiary__company', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'company_admin__administrated_company', 'trips_count', 'is_staff', 'is_superuser', 'is_active', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__subsidiary__company__name','company_admin__administrated_company__name',]
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved', 'userprofile__approved_for_team', 'userprofile__t_shirt_size', 'userprofile__team__subsidiary__city', PaymentFilter]
     readonly_fields = ['password']
@@ -193,8 +193,8 @@ class UserAdmin(EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
        return pay_type
     def userprofile__payment_status(self, obj):
        return obj.userprofile.payment()['status_description']
-    def userprofile__team(self, obj):
-       return obj.userprofile.team
+    def userprofile__team__name(self, obj):
+       return obj.userprofile.team.name
     def userprofile__distance(self, obj):
        return obj.userprofile.distance
     def userprofile__team__subsidiary__city(self, obj):
