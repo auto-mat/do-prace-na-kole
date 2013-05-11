@@ -774,6 +774,10 @@ class Competition(models.Model):
         verbose_name = _(u"Soutěž bez přihlášek (pro všechny)"),
         default=True,
         null=False)
+    is_public = models.BooleanField(
+        verbose_name = _(u"Soutěž je veřejná"),
+        default=True,
+        null=False)
 
     def get_competitors(self):
         return results.get_competitors(self)

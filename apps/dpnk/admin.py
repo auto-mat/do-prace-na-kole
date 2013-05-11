@@ -96,7 +96,7 @@ def recalculate_competitions_results(modeladmin, request, queryset):
 recalculate_competitions_results.short_description = "Přepočítat výsledku vybraných soutěží"
 
 class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'date_from', 'date_to', 'city', 'company', 'competition_results_link')
+    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'city', 'company', 'competition_results_link', 'id')
     filter_horizontal = ('user_competitors', 'team_competitors', 'company_competitors')
     actions = [recalculate_competitions_results]
 
