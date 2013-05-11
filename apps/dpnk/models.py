@@ -38,6 +38,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 import datetime
 # Local imports
 import util
+import mailing
 from dpnk.email import payment_confirmation_mail, company_admin_rejected_mail, company_admin_approval_mail, payment_confirmation_company_mail
 import logging
 logger = logging.getLogger(__name__)
@@ -411,17 +412,8 @@ class UserProfile(models.Model):
     def get_length(self):
         return results.get_userprofile_length(self)
 
-    def is_team_coordinator(self):
-        return self.team and self.team.coordinator == self
-
     def is_libero(self):
         return self.team.members().count() <= 1
-
-    def is_company_admin(self):
-        try:
-            return self.user.company_admin.is_company_admin()
-        except:
-            return False
 
 @receiver(pre_save, sender=UserProfile)
 def set_team_coordinator_pre(sender, instance, **kwargs):
@@ -486,6 +478,13 @@ class CompanyAdmin(models.Model):
        null=True,
        blank=True)
 
+    mailing_id = models.TextField(
+        verbose_name=_(u"ID uživatele v mailing listu"),
+        default="",
+        null=True,
+        blank=True
+        )
+
     def get_administrated_company(self):
         if self.administrated_company:
             return self.administrated_company
@@ -495,9 +494,6 @@ class CompanyAdmin(models.Model):
     def __unicode__(self):
         return self.user.get_full_name()
     
-    def is_company_admin(self):
-        return self.company_admin_approved == 'approved'
-
     def save(self, *args, **kwargs):
         status_before_update = None
         if self.id:
@@ -794,9 +790,9 @@ class Competition(models.Model):
     def can_admit(self, userprofile):
         if self.without_admission:
             return 'without_admission'
-        if not userprofile.is_team_coordinator() and self.competitor_type == 'team':
+        if not is_team_coordinator(userprofile.user) and self.competitor_type == 'team':
             return 'not_team_coordinator'
-        if not userprofile.is_company_admin() and self.competitor_type == 'company':
+        if not is_company_admin(userprofile.user) and self.competitor_type == 'company':
             return 'not_company_admin'
         if self.type == 'questionnaire' and not self.is_actual():
             return 'not_actual'
@@ -998,6 +994,28 @@ def get_company(user):
     except UserProfile.DoesNotExist:
         return user.company_admin.administrated_company
 
+def is_team_coordinator(user):
+    if is_competitor(user) and user.get_profile().team.coordinator == user.get_profile():
+        return True
+    return False
+
+def is_company_admin(user):
+    try:
+        if user.company_admin.company_admin_approved == 'approved':
+            return True
+        return False
+    except CompanyAdmin.DoesNotExist:
+        return False
+
+def is_competitor(user):
+    try:
+        if user.get_profile():
+            return True
+        else:
+            return False
+    except UserProfile.DoesNotExist:
+        return False
+
 #Signals:
 @receiver(post_save, sender=UserProfile)
 def userprofile_pre_save(sender, instance, **kwargs):
@@ -1010,6 +1028,14 @@ def user_post_save(sender, instance, **kwargs):
     instance.userprofile.team.autoset_member_count()
     instance.userprofile.team.save()
     results.recalculate_result_competitor(instance.userprofile)
+
+@receiver(post_save, sender=User)
+def update_mailing_user(sender, instance, created, **kwargs):
+    mailing.add_or_update_user(instance)
+
+@receiver(post_save, sender=Payment)
+def update_mailing_payment(sender, instance, created, **kwargs):
+    mailing.add_or_update_user(instance.user.user)
 
 @receiver(post_save, sender=Trip)
 def user_post_save(sender, instance, **kwargs):

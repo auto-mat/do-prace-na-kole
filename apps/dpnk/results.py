@@ -216,7 +216,7 @@ def recalculate_result(competition, competitor):
             return
 
         if competition.type == 'questionnaire':
-            points = models.Choice.objects.filter(answer___user = userprofile, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
+            points = models.Choice.objects.filter(answer__user = userprofile, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
             points_given = models.Answer.objects.filter(user = userprofile, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
             competition_result.result = points + points_given
         elif competition.type == 'length':

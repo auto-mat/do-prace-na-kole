@@ -47,8 +47,9 @@ from django.contrib.sites.models import get_current_site
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout
 
 from wp_urls import wp_reverse
-from util import Mailing, redirect
+from util import redirect
 import logging
+import models
 logger = logging.getLogger(__name__)
 
 def login(request, template_name='registration/login.html',
@@ -188,18 +189,6 @@ def register(request, backend='dpnk.views.UserProfileRegistrationBackend',
                 team_created_mail(new_user)
             else:
                 register_mail(new_user)
-
-            # Register into mailing list
-            try:
-                m = Mailing(api_key=settings.MAILING_API_KEY, list_id=settings.MAILING_LIST_ID)
-                mailing_id = m.add(new_user.first_name, new_user.last_name, new_user.email,
-                                   new_user.userprofile.team.subsidiary.city.name)
-            except Exception, e:
-                logger.error(u'Can\'t add user %s with email %s to mailing list: %s' % (new_user.userprofile.user, new_user.email, str(e)))
-            else:
-                logger.info(u'User %s with email %s added to mailing list with id %s' % (new_user.userprofile.user, new_user.email, mailing_id))
-                new_user.userprofile.mailing_id = mailing_id
-                new_user.userprofile.save()
 
             if new_user.userprofile.approved_for_team != 'approved':
                 approval_request_mail(new_user)
@@ -487,7 +476,7 @@ def profile(request):
             'team_members_count': team_members_count,
             'competition_state': settings.COMPETITION_STATE,
             'approved_for_team': request.user.userprofile.approved_for_team,
-            'is_company_admin': profile.is_company_admin(),
+            'is_company_admin': models.is_company_admin(request.user),
             }, context_instance=RequestContext(request))
 
 @login_required_simple

@@ -20,7 +20,8 @@
 from django.contrib.auth.decorators import login_required
 from  django.http import HttpResponse
 from django.utils.translation import gettext as _
-from models import CompanyAdmin, UserProfile
+from models import UserProfile
+import models
 
 def login_required_simple(fn):
     def wrapper(*args, **kwargs):
@@ -38,7 +39,7 @@ def must_be_coordinator(fn):
         request = args[0]
         team = request.user.userprofile.team
         userprofile = request.user.userprofile
-        if not userprofile.is_team_coordinator():
+        if not models.is_team_coordinator(request.user):
             return HttpResponse(_(u"<div class='text-error'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name, 'coordinator': team.coordinator, 'you': request.user.userprofile}, status=401)
         else:
             return fn(*args, **kwargs)
@@ -50,7 +51,7 @@ def must_be_approved_for_team(fn):
     def wrapper(*args, **kwargs):
         request = args[0]
         userprofile = request.user.userprofile
-        if userprofile.approved_for_team == 'approved' or userprofile.is_team_coordinator():
+        if userprofile.approved_for_team == 'approved' or models.is_team_coordinator(request.user):
             return fn(*args, **kwargs)
         else:
             return HttpResponse(_(u"<div class='text-error'>Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.</div>") % (userprofile.team.name,), status=401)
@@ -60,12 +61,8 @@ def must_be_company_admin(fn):
     @login_required
     def wrapper(*args, **kwargs):
         request = args[0]
-        try:
-            company_admin = request.user.company_admin
-            if company_admin.is_company_admin():
-                return fn(*args, **kwargs)
-        except CompanyAdmin.DoesNotExist:
-            pass
+        if models.is_company_admin(request.user):
+            return fn(*args, **kwargs)
 
         return HttpResponse(_(u"<div class='text-error'>Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.</div>"), status=401)
     return wrapper
@@ -74,11 +71,8 @@ def must_be_competitor(fn):
     @login_required
     def wrapper(*args, **kwargs):
         request = args[0]
-        try:
-            userprofile = request.user.userprofile
-            if userprofile:
-                return fn(*args, **kwargs)
-        except UserProfile.DoesNotExist:
-            pass
+        if models.is_competitor(request.user):
+            return fn(*args, **kwargs)
+
         return HttpResponse(_(u"<div class='text-error'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním správcem, použijte <a href='/fa'>správu firmy</a>.</div>"), status=401) 
     return wrapper

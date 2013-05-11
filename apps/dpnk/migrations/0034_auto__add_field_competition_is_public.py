@@ -13,10 +13,18 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.BooleanField')(default=True),
                       keep_default=False)
 
+        # Adding field 'CompanyAdmin.mailing_id'
+        db.add_column(u'dpnk_companyadmin', 'mailing_id',
+                      self.gf('django.db.models.fields.TextField')(default='', null=True, blank=True),
+                      keep_default=False)
+
 
     def backwards(self, orm):
         # Deleting field 'Competition.is_public'
         db.delete_column(u'dpnk_competition', 'is_public')
+
+        # Deleting field 'CompanyAdmin.mailing_id'
+        db.delete_column(u'dpnk_companyadmin', 'mailing_id')
 
 
     models = {
@@ -104,6 +112,7 @@ class Migration(SchemaMigration):
             'administrated_company': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'company_admin'", 'null': 'True', 'to': u"orm['dpnk.Company']"}),
             'company_admin_approved': ('django.db.models.fields.CharField', [], {'default': "'undecided'", 'max_length': '16'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'mailing_id': ('django.db.models.fields.TextField', [], {'default': "''", 'null': 'True', 'blank': 'True'}),
             'motivation_company_admin': ('django.db.models.fields.TextField', [], {'default': "''", 'max_length': '5000', 'null': 'True', 'blank': 'True'}),
             'telephone': ('django.db.models.fields.CharField', [], {'max_length': '30', 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'company_admin'", 'unique': 'True', 'to': u"orm['auth.User']"})
