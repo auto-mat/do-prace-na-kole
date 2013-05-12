@@ -135,7 +135,7 @@ class Company(models.Model):
 
     name = models.CharField(
         unique=True,
-        verbose_name=_(u"Název organizace"),
+        verbose_name=_(u"Obchodní firma"),
         help_text=_(u"Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova"),
         max_length=60, null=False)
     address = Address()
