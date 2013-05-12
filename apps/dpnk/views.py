@@ -892,17 +892,23 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
 def facebook_app(request):
     return render_to_response('registration/facebook_app.html', {'user': request.user})
 
-def total_distance():
-    total_distance = 0
-    total_distance += Trip.objects.filter(trip_from = True).aggregate(Sum("distance_from"))['distance_from__sum']
-    total_distance += Trip.objects.filter(trip_to = True).aggregate(Sum("distance_to"))['distance_to__sum']
+def distance(trips):
+    distance = 0
+    distance += trips.filter(trip_from = True).aggregate(Sum("distance_from"))['distance_from__sum'] or 0
+    distance += trips.filter(trip_to = True).aggregate(Sum("distance_to"))['distance_to__sum'] or 0
 
     #TODO: Distance 0 shouldn't be counted, but due to bug in first two days of season 2013 competition it has to be.
-    #total_distance += Trip.objects.filter(distance_from = None, trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
-    #total_distance += Trip.objects.filter(distance_to = None, trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
-    total_distance += Trip.objects.filter(Q(distance_from = None) | Q(distance_from = 0), trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
-    total_distance += Trip.objects.filter(Q(distance_to = None) | Q(distance_to = 0), trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
-    return total_distance
+    #distance += trips.filter(distance_from = None, trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    #distance += trips.filter(distance_to = None, trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    distance += trips.filter(Q(distance_from = None) | Q(distance_from = 0), trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum'] or 0
+    distance += trips.filter(Q(distance_to = None) | Q(distance_to = 0), trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum'] or 0
+    return distance
+
+def total_distance():
+    return distance(Trip.objects)
+
+def period_distance(day_from, day_to):
+    return distance(Trip.objects.filter(date__gte=day_from, date__lte=day_to))
 
 def statistics(request,
         variable,
@@ -911,6 +917,7 @@ def statistics(request,
 
     variables = {}
     variables['ujeta-vzdalenost'] = total_distance()
+    variables['ujeta-vzdalenost-dnes'] = period_distance(util.today(), util.today())
     variables['pocet-soutezicich'] = UserProfile.objects.filter(user__is_active = True, approved_for_team='approved').count()
 
     if request.user.is_authenticated() and models.is_competitor(request.user):
