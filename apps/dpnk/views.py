@@ -900,7 +900,6 @@ def total_distance():
     total_distance += Trip.objects.filter(Q(distance_to = None) | Q(distance_to = 0), trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
     return total_distance
 
-@cache_page(24 * 60 * 60) 
 def statistics(request,
         variable,
         template = 'registration/statistics.html'
