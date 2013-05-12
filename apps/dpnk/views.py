@@ -383,7 +383,8 @@ def trip_active(day, today):
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def rides(request, template='registration/rides.html'):
+def rides(request, template='registration/rides.html',
+        success_url="profil"):
     days = util.days()
     today = util.today()
     profile = request.user.get_profile()
@@ -417,6 +418,8 @@ def rides(request, template='registration/rides.html'):
             logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s, created: %s' %
                 (request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to, created))
             trip.save()
+
+            return redirect(wp_reverse(success_url))
 
     trips = {}
     for t in Trip.objects.filter(user=profile):
@@ -511,6 +514,7 @@ def admissions(request, template,
         if 'cancellation_competition_id' in request.POST and request.POST['cancellation_competition_id']:
             competition = Competition.objects.get(id=request.POST['cancellation_competition_id']) 
             competition.make_admission(userprofile, False)
+        return redirect(wp_reverse(success_url))
 
     competitions = userprofile.get_competitions()
     for competition in competitions:
