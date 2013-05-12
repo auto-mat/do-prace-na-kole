@@ -888,10 +888,7 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
 def facebook_app(request):
     return render_to_response('registration/facebook_app.html', {'user': request.user})
 
-@cache_page(24 * 60 * 60) 
-def statistics(request,
-        template = 'registration/statistics.html'
-        ):
+def total_distance():
     total_distance = 0
     total_distance += Trip.objects.filter(trip_from = True).aggregate(Sum("distance_from"))['distance_from__sum']
     total_distance += Trip.objects.filter(trip_to = True).aggregate(Sum("distance_to"))['distance_to__sum']
@@ -901,8 +898,24 @@ def statistics(request,
     #total_distance += Trip.objects.filter(distance_to = None, trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
     total_distance += Trip.objects.filter(Q(distance_from = None) | Q(distance_from = 0), trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
     total_distance += Trip.objects.filter(Q(distance_to = None) | Q(distance_to = 0), trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    return total_distance
+
+@cache_page(24 * 60 * 60) 
+def statistics(request,
+        variable,
+        template = 'registration/statistics.html'
+        ):
+
+    variables = {}
+    variables['ujeta-vzdalenost'] = total_distance()
+    variables['pocet-soutezicich'] = UserProfile.objects.filter(user__is_active = True, approved_for_team='approved').count()
+
+    variables['pocet-soutezicich-firma'] = UserProfile.objects.filter(user__is_active = True, approved_for_team='approved', team__subsidiary__company = models.get_company(request.user)).count()
+
+    if request.user.is_authenticated() and models.is_competitor(request.user):
+        userprofile = request.user.get_profile()
+
     return render_to_response(template,
             {
-                'user_count': UserProfile.objects.filter(user__is_active = True, approved_for_team='approved').count(),
-                'total_distance': total_distance,
+                'variable': variables[variable],
             }, context_instance=RequestContext(request))
