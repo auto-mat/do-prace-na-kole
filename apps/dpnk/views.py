@@ -909,10 +909,10 @@ def statistics(request,
     variables['ujeta-vzdalenost'] = total_distance()
     variables['pocet-soutezicich'] = UserProfile.objects.filter(user__is_active = True, approved_for_team='approved').count()
 
-    variables['pocet-soutezicich-firma'] = UserProfile.objects.filter(user__is_active = True, approved_for_team='approved', team__subsidiary__company = models.get_company(request.user)).count()
-
     if request.user.is_authenticated() and models.is_competitor(request.user):
-        userprofile = request.user.get_profile()
+        variables['pocet-soutezicich-firma'] = UserProfile.objects.filter(user__is_active = True, approved_for_team='approved', team__subsidiary__company = models.get_company(request.user)).count()
+    else:
+        variables['pocet-soutezicich-firma'] = "-"
 
     return render_to_response(template,
             {
