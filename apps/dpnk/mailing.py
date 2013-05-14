@@ -97,7 +97,7 @@ def delete_user(user):
     mailing_id = None
     if models.is_competitor(user):
         mailing_id = user.get_profile().mailing_id
-    elif is_company_admin(user):
+    elif models.is_company_admin(user):
         mailing_id = user.company_admin.mailing_id
         add_user(user)
 
