@@ -10,6 +10,7 @@
       <li>{{ team.name }}</li>
       <ul>
       {% for user in team.users.all %}
+      {% if user.user.is_active %}
       <li>
          {{ user }} - 
             {% if user.payment.payment.pay_type == 'fc' %}
@@ -30,6 +31,7 @@
                {{ user.payment.status_description }} ({{ user.payment.payment.get_pay_type_display }})
             {% endif %}
       </li>
+      {% endif %}
       {% endfor %}
       </ul>
    {% endfor %}
