@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django import forms, http
 # Registration imports
 import registration.forms
+import models
 from models import UserProfile, Company, Subsidiary, Team
 from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
@@ -259,7 +260,7 @@ class ProfileUpdateForm(forms.ModelForm):
         self.fields['first_name'].initial = self.instance.user.first_name
         self.fields['last_name'].initial = self.instance.user.last_name
 
-        if not userprofile.team or (userprofile.is_team_coordinator() and UserProfile.objects.filter(team=userprofile.team, user__is_active=True).count()>1):
+        if not userprofile.team or (models.is_team_coordinator(userprofile.user) and UserProfile.objects.filter(team=userprofile.team, user__is_active=True).count()>1):
             del self.fields['team']
             self.can_change_team = False
         return ret_val

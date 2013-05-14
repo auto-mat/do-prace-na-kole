@@ -15,7 +15,7 @@ def site_url():
 
 @register.filter(is_safe=True)
 def percentage(value):
-    if value: 
+    if value and ((util.days_count() - 1) * 2) != 0: 
         return (value / ((util.days_count() - 1) * 2)) * 100
     else:
         return 0

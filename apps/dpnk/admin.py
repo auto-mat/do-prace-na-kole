@@ -54,16 +54,20 @@ class CityAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'admission_fee', 'id', )
 
 class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'subsidiaries_text', 'user_count', 'id', )
+    list_display = ('name', 'subsidiaries_text', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'company_admin__user__email', 'id', )
     inlines = [SubsidiaryInline,]
     readonly_fields = ['subsidiary_links']
     search_fields = ('name',)
+    list_max_show_all = 10000
 
     def queryset(self, request):
         return Company.objects.annotate(user_count = Sum('subsidiaries__teams__member_count'))
     def user_count(self, obj):
         return obj.user_count
     user_count.admin_order_field = 'user_count'
+
+    def company_admin__user__email(self, obj):
+       return obj.company_admin.get().user.email
     
     def subsidiaries_text(self, obj):
         return mark_safe(" | ".join(['%s' % (str(u))
@@ -96,7 +100,7 @@ def recalculate_competitions_results(modeladmin, request, queryset):
 recalculate_competitions_results.short_description = "Přepočítat výsledku vybraných soutěží"
 
 class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'date_from', 'date_to', 'city', 'company', 'competition_results_link')
+    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'city', 'company', 'competition_results_link', 'id')
     filter_horizontal = ('user_competitors', 'team_competitors', 'company_competitors')
     actions = [recalculate_competitions_results]
 
@@ -172,7 +176,7 @@ class CompanyAdminInline(EnhancedAdminMixin, NestedStackedInline):
 
 class UserAdmin(EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
-    list_display = ('username', 'email', 'first_name', 'last_name', 'userprofile__payment_type', 'userprofile__payment_status', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'userprofile__team__subsidiary__company', 'company_admin__administrated_company', 'trips_count', 'is_staff', 'is_superuser', 'is_active', 'id')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'userprofile__payment_type', 'userprofile__payment_status', 'date_joined', 'userprofile__team', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'userprofile__team__subsidiary__company',   'company_admin__administrated_company', 'trips_count', 'userprofile__telephone', 'is_staff', 'is_superuser', 'is_active', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__subsidiary__company__name','company_admin__administrated_company__name',]
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved', 'userprofile__approved_for_team', 'userprofile__t_shirt_size', 'userprofile__team__subsidiary__city', PaymentFilter]
     readonly_fields = ['password']
@@ -191,10 +195,12 @@ class UserAdmin(EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
        if payment:
           pay_type = payment.pay_type
        return pay_type
+    def userprofile__telephone(self, obj):
+       return obj.userprofile.telephone
     def userprofile__payment_status(self, obj):
        return obj.userprofile.payment()['status_description']
-    def userprofile__team(self, obj):
-       return obj.userprofile.team
+    def userprofile__team__name(self, obj):
+       return obj.userprofile.team.name
     def userprofile__distance(self, obj):
        return obj.userprofile.distance
     def userprofile__team__subsidiary__city(self, obj):

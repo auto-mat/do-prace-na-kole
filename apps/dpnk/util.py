@@ -2,7 +2,6 @@
 import unidecode
 import re
 import datetime
-import createsend
 from  django.http import HttpResponse
 
 DAY_START = 1
@@ -31,20 +30,6 @@ def _today():
 
 def today():
     return _today()
-
-class Mailing:
-
-    def __init__(self, api_key, list_id):
-        createsend.CreateSend.api_key = api_key
-        self.list_id = list_id
-
-    def add(self, name, surname, email, city):
-        subscriber = createsend.Subscriber()
-        r = subscriber.add(self.list_id, email,
-                           " ".join([name, surname]),
-                           [ { 'Key': "Mesto", 'Value': city } ]
-                           , True)
-        return r
 
 def redirect(url):
     return HttpResponse("redirect:"+url)

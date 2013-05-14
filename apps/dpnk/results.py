@@ -72,7 +72,7 @@ def get_results(self):
     return competitors
 
 def get_competitions(userprofile):
-    competitions = models.Competition.objects
+    competitions = models.Competition.objects.filter(is_public = True)
 
     if userprofile.is_libero():
         competitions = competitions.filter(competitor_type = 'liberos')
@@ -182,6 +182,11 @@ def recalculate_result_competitor(userprofile):
         elif competition.competitor_type == 'company':
             raise NotImplementedError("Company competitions are not working yet")
 
+def recalculate_results_team(team):
+    #TODO: it's enough to recalculate just team competitions
+    for team_member in team.members():
+        recalculate_result_competitor(team_member)
+
 def recalculate_result(competition, competitor):
     if competition.competitor_type == 'team':
         team = competitor
@@ -216,7 +221,7 @@ def recalculate_result(competition, competitor):
             return
 
         if competition.type == 'questionnaire':
-            points = models.Choice.objects.filter(answer___user = userprofile, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
+            points = models.Choice.objects.filter(answer__user = userprofile, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
             points_given = models.Answer.objects.filter(user = userprofile, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
             competition_result.result = points + points_given
         elif competition.type == 'length':

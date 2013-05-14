@@ -47,8 +47,9 @@ from django.contrib.sites.models import get_current_site
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout
 
 from wp_urls import wp_reverse
-from util import Mailing, redirect
+from util import redirect
 import logging
+import models
 logger = logging.getLogger(__name__)
 
 def login(request, template_name='registration/login.html',
@@ -188,18 +189,6 @@ def register(request, backend='dpnk.views.UserProfileRegistrationBackend',
                 team_created_mail(new_user)
             else:
                 register_mail(new_user)
-
-            # Register into mailing list
-            try:
-                m = Mailing(api_key=settings.MAILING_API_KEY, list_id=settings.MAILING_LIST_ID)
-                mailing_id = m.add(new_user.first_name, new_user.last_name, new_user.email,
-                                   new_user.userprofile.team.subsidiary.city.name)
-            except Exception, e:
-                logger.error(u'Can\'t add user %s with email %s to mailing list: %s' % (new_user.userprofile.user, new_user.email, str(e)))
-            else:
-                logger.info(u'User %s with email %s added to mailing list with id %s' % (new_user.userprofile.user, new_user.email, mailing_id))
-                new_user.userprofile.mailing_id = mailing_id
-                new_user.userprofile.save()
 
             if new_user.userprofile.approved_for_team != 'approved':
                 approval_request_mail(new_user)
@@ -394,7 +383,8 @@ def trip_active(day, today):
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def rides(request, template='registration/rides.html'):
+def rides(request, template='registration/rides.html',
+        success_url="profil"):
     days = util.days()
     today = util.today()
     profile = request.user.get_profile()
@@ -428,6 +418,8 @@ def rides(request, template='registration/rides.html'):
             logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s, created: %s' %
                 (request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to, created))
             trip.save()
+
+            return redirect(wp_reverse(success_url))
 
     trips = {}
     for t in Trip.objects.filter(user=profile):
@@ -487,7 +479,7 @@ def profile(request):
             'team_members_count': team_members_count,
             'competition_state': settings.COMPETITION_STATE,
             'approved_for_team': request.user.userprofile.approved_for_team,
-            'is_company_admin': profile.is_company_admin(),
+            'is_company_admin': models.is_company_admin(request.user),
             }, context_instance=RequestContext(request))
 
 @login_required_simple
@@ -522,6 +514,7 @@ def admissions(request, template,
         if 'cancellation_competition_id' in request.POST and request.POST['cancellation_competition_id']:
             competition = Competition.objects.get(id=request.POST['cancellation_competition_id']) 
             competition.make_admission(userprofile, False)
+        return redirect(wp_reverse(success_url))
 
     competitions = userprofile.get_competitions()
     for competition in competitions:
@@ -899,21 +892,40 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
 def facebook_app(request):
     return render_to_response('registration/facebook_app.html', {'user': request.user})
 
-@cache_page(24 * 60 * 60) 
-def statistics(request,
-        template = 'registration/statistics.html'
-        ):
-    total_distance = 0
-    total_distance += Trip.objects.filter(trip_from = True).aggregate(Sum("distance_from"))['distance_from__sum']
-    total_distance += Trip.objects.filter(trip_to = True).aggregate(Sum("distance_to"))['distance_to__sum']
+def distance(trips):
+    distance = 0
+    distance += trips.filter(trip_from = True).aggregate(Sum("distance_from"))['distance_from__sum'] or 0
+    distance += trips.filter(trip_to = True).aggregate(Sum("distance_to"))['distance_to__sum'] or 0
 
     #TODO: Distance 0 shouldn't be counted, but due to bug in first two days of season 2013 competition it has to be.
-    #total_distance += Trip.objects.filter(distance_from = None, trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
-    #total_distance += Trip.objects.filter(distance_to = None, trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
-    total_distance += Trip.objects.filter(Q(distance_from = None) | Q(distance_from = 0), trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
-    total_distance += Trip.objects.filter(Q(distance_to = None) | Q(distance_to = 0), trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    #distance += trips.filter(distance_from = None, trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    #distance += trips.filter(distance_to = None, trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    distance += trips.filter(Q(distance_from = None) | Q(distance_from = 0), trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum'] or 0
+    distance += trips.filter(Q(distance_to = None) | Q(distance_to = 0), trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum'] or 0
+    return distance
+
+def total_distance():
+    return distance(Trip.objects)
+
+def period_distance(day_from, day_to):
+    return distance(Trip.objects.filter(date__gte=day_from, date__lte=day_to))
+
+def statistics(request,
+        variable,
+        template = 'registration/statistics.html'
+        ):
+
+    variables = {}
+    variables['ujeta-vzdalenost'] = total_distance()
+    variables['ujeta-vzdalenost-dnes'] = period_distance(util.today(), util.today())
+    variables['pocet-soutezicich'] = UserProfile.objects.filter(user__is_active = True, approved_for_team='approved').count()
+
+    if request.user.is_authenticated() and models.is_competitor(request.user):
+        variables['pocet-soutezicich-firma'] = UserProfile.objects.filter(user__is_active = True, approved_for_team='approved', team__subsidiary__company = models.get_company(request.user)).count()
+    else:
+        variables['pocet-soutezicich-firma'] = "-"
+
     return render_to_response(template,
             {
-                'user_count': UserProfile.objects.filter(user__is_active = True, approved_for_team='approved').count(),
-                'total_distance': total_distance,
+                'variable': variables[variable],
             }, context_instance=RequestContext(request))
