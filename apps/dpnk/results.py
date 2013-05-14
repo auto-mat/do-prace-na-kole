@@ -182,6 +182,11 @@ def recalculate_result_competitor(userprofile):
         elif competition.competitor_type == 'company':
             raise NotImplementedError("Company competitions are not working yet")
 
+def recalculate_results_team(team):
+    #TODO: it's enough to recalculate just team competitions
+    for team_member in team.members():
+        recalculate_result_competitor(team_member)
+
 def recalculate_result(competition, competitor):
     if competition.competitor_type == 'team':
         team = competitor

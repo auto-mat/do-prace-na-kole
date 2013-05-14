@@ -344,10 +344,10 @@ class UserProfile(models.Model):
         )
 
     def first_name(self):
-        return user.first_name
+        return self.user.first_name
 
     def last_name(self):
-        return user.last_name
+        return self.user.last_name
 
     def __unicode__(self):
         return self.user.get_full_name()
@@ -1023,17 +1023,26 @@ def is_competitor(user):
         return False
 
 #Signals:
-@receiver(post_save, sender=UserProfile)
+@receiver(pre_save, sender=UserProfile)
 def userprofile_pre_save(sender, instance, **kwargs):
+    try:
+        old_instance = UserProfile.objects.get(pk = instance.pk)
+        instance.old_team = old_instance.team
+    except UserProfile.DoesNotExist:
+        instance.old_team = None
+
+
+@receiver(post_save, sender=UserProfile)
+def userprofile_post_save(sender, instance, **kwargs):
     instance.team.autoset_member_count()
     instance.team.save()
-    results.recalculate_result_competitor(instance)
 
-@receiver(post_save, sender=User)
-def user_post_save(sender, instance, **kwargs):
-    instance.userprofile.team.autoset_member_count()
-    instance.userprofile.team.save()
-    results.recalculate_result_competitor(instance.userprofile)
+    if instance.old_team and instance.team != instance.old_team:
+        instance.old_team.autoset_member_count()
+        instance.old_team.save()
+        results.recalculate_results_team(instance.old_team)
+        results.recalculate_results_team(instance.team)
+    results.recalculate_result_competitor(instance)
 
 @receiver(post_save, sender=User)
 def update_mailing_user(sender, instance, created, **kwargs):
@@ -1044,10 +1053,7 @@ def update_mailing_payment(sender, instance, created, **kwargs):
     mailing.add_or_update_user(instance.user.user)
 
 @receiver(post_save, sender=Trip)
-def user_post_save(sender, instance, **kwargs):
-    instance.user.team.autoset_member_count()
-    instance.user.team.save()
-
+def trip_post_save(sender, instance, **kwargs):
     results.recalculate_result_competitor(instance.user)
 
 @receiver(post_save, sender=Competition)
