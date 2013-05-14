@@ -94,13 +94,16 @@ def update_user(user):
         update_mailing_id(user, mailing_id)
 
 def delete_user(user):
-    if models.is_competitor(user) and user.get_profile().mailing_id:
+    if models.is_competitor(user):
         mailing_id = user.get_profile().mailing_id
     else:
         mailing_id = user.company_admin.mailing_id
         add_user(user)
 
-    # Register into mailing list
+    if not mailing_id:
+        return
+
+    # Unregister from mailing list
     try:
         mailing_id = mailing.delete(mailing_id)
     except Exception, e:
