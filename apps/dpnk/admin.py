@@ -158,7 +158,7 @@ class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
     list_filter = ['user__is_active', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentFilter]
 
-    readonly_fields = ['mailing_id' ]
+    #readonly_fields = ['mailing_id' ]
 
     def user__first_name(self, obj):
        return obj.user.first_name
