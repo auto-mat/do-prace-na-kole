@@ -426,7 +426,7 @@ class UserProfile(models.Model):
         return self.team.members().count() <= 1
 
     def save(self, force_insert=False, force_update=False):
-        if UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
+        if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
             logger.error(_(u"Mailing id %s is already used") % self.mailing_id)
         super(UserProfile, self).save(force_insert, force_update)
 
