@@ -1059,7 +1059,8 @@ def update_mailing_user(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Payment)
 def update_mailing_payment(sender, instance, created, **kwargs):
-    mailing.add_or_update_user(instance.user.user)
+    if instance.user:
+        mailing.add_or_update_user(instance.user.user)
 
 @receiver(post_save, sender=Trip)
 def trip_post_save(sender, instance, **kwargs):
