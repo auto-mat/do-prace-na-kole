@@ -336,11 +336,11 @@ class UserProfile(models.Model):
         max_length=16,
         null=False,
         default='mL')
-    mailing_id = models.TextField(
+    mailing_id = models.CharField(
         verbose_name=_(u"ID uživatele v mailing listu"),
-        max_length = 32,
+        max_length = 64,
         db_index=True,
-        default="",
+        default=None,
         unique=True,
         null=True,
         blank=True
