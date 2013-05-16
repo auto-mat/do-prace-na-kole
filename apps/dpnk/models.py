@@ -338,10 +338,11 @@ class UserProfile(models.Model):
         default='mL')
     mailing_id = models.CharField(
         verbose_name=_(u"ID uživatele v mailing listu"),
-        max_length = 64,
+        max_length = 128,
         db_index=True,
         default=None,
-        unique=True,
+        #TODO:
+        #unique=True,
         null=True,
         blank=True
         )
@@ -423,6 +424,11 @@ class UserProfile(models.Model):
 
     def is_libero(self):
         return self.team.members().count() <= 1
+
+    def save(self, force_insert=False, force_update=False):
+        if UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
+            logger.error(_(u"Mailing id %s is already used") % self.mailing_id)
+        super(UserProfile, self).save(force_insert, force_update)
 
 @receiver(pre_save, sender=UserProfile)
 def set_team_coordinator_pre(sender, instance, **kwargs):

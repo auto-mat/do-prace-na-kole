@@ -10,18 +10,12 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Changing field 'UserProfile.mailing_id'
-        db.alter_column(u'dpnk_userprofile', 'mailing_id', self.gf('django.db.models.fields.CharField')(null=True, max_length=64, unique=True))
+        db.alter_column(u'dpnk_userprofile', 'mailing_id', self.gf('django.db.models.fields.CharField')(max_length=128, null=True))
         # Adding index on 'UserProfile', fields ['mailing_id']
         db.create_index(u'dpnk_userprofile', ['mailing_id'])
 
-        # Adding unique constraint on 'UserProfile', fields ['mailing_id']
-        db.create_unique(u'dpnk_userprofile', ['mailing_id'])
-
 
     def backwards(self, orm):
-        # Removing unique constraint on 'UserProfile', fields ['mailing_id']
-        db.delete_unique(u'dpnk_userprofile', ['mailing_id'])
-
         # Removing index on 'UserProfile', fields ['mailing_id']
         db.delete_index(u'dpnk_userprofile', ['mailing_id'])
 
@@ -209,7 +203,7 @@ class Migration(SchemaMigration):
             'distance': ('django.db.models.fields.PositiveIntegerField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'language': ('django.db.models.fields.CharField', [], {'default': "'cs'", 'max_length': '16'}),
-            'mailing_id': ('django.db.models.fields.CharField', [], {'null': 'True', 'default': 'None', 'max_length': '64', 'blank': 'True', 'unique': 'True', 'db_index': 'True'}),
+            'mailing_id': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '128', 'null': 'True', 'db_index': 'True', 'blank': 'True'}),
             't_shirt_size': ('django.db.models.fields.CharField', [], {'default': "'mL'", 'max_length': '16'}),
             'team': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'users'", 'to': u"orm['dpnk.Team']"}),
             'telephone': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
