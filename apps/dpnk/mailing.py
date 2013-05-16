@@ -88,7 +88,7 @@ def update_user(user):
     try:
         mailing_id = mailing.update(mailing_id, user.first_name, user.last_name, user.email, custom_fields)
     except Exception, e:
-        logger.error(u'Can\'t update user %s with email %s to mailing list: %s' % (userprofile.user, user.email, str(e)))
+        logger.error(u'Can\'t update user %s: email: %s, mailing_id: %s to mailing list: %s' % (userprofile.user, user.email, mailing_id, str(e)))
     else:
         logger.info(u'User %s with email %s updated in mailing list with id %s, custom_fields: %s' % (userprofile.user, user.email, mailing_id, custom_fields))
         update_mailing_id(user, mailing_id)
