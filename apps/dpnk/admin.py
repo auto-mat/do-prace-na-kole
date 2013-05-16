@@ -54,16 +54,24 @@ class CityAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'admission_fee', 'id', )
 
 class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'subsidiaries_text', 'user_count', 'id', )
+    list_display = ('name', 'subsidiaries_text', 'ico', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'company_admin__user__email', 'invoice_count', 'id', )
     inlines = [SubsidiaryInline,]
     readonly_fields = ['subsidiary_links']
     search_fields = ('name',)
+    list_max_show_all = 10000
 
     def queryset(self, request):
         return Company.objects.annotate(user_count = Sum('subsidiaries__teams__member_count'))
     def user_count(self, obj):
         return obj.user_count
     user_count.admin_order_field = 'user_count'
+
+    #this is quick addition for 2013 invoices
+    def invoice_count(self, obj):
+       return len([user for user in UserProfile.objects.filter(team__subsidiary__company=obj) if user.payment()['payment'] and user.payment()['payment'].pay_type == 'fc' and user.payment()['payment'].status in Payment.done_statuses])
+
+    def company_admin__user__email(self, obj):
+       return obj.company_admin.get().user.email
     
     def subsidiaries_text(self, obj):
         return mark_safe(" | ".join(['%s' % (str(u))
@@ -154,7 +162,7 @@ class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
     list_filter = ['user__is_active', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentFilter]
 
-    readonly_fields = ['mailing_id' ]
+    #readonly_fields = ['mailing_id' ]
 
     def user__first_name(self, obj):
        return obj.user.first_name
@@ -172,7 +180,7 @@ class CompanyAdminInline(EnhancedAdminMixin, NestedStackedInline):
 
 class UserAdmin(EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
-    list_display = ('username', 'email', 'first_name', 'last_name', 'userprofile__payment_type', 'userprofile__payment_status', 'date_joined', 'userprofile__team__name', 'userprofile__team__subsidiary__company', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'company_admin__administrated_company', 'trips_count', 'is_staff', 'is_superuser', 'is_active', 'id')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'userprofile__payment_type', 'userprofile__payment_status', 'date_joined', 'userprofile__team__name', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'userprofile__team__subsidiary__company',   'company_admin__administrated_company', 'trips_count', 'userprofile__telephone', 'is_staff', 'is_superuser', 'is_active', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__subsidiary__company__name','company_admin__administrated_company__name',]
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'userprofile__team__subsidiary__city', 'company_admin__company_admin_approved', 'userprofile__approved_for_team', 'userprofile__t_shirt_size', 'userprofile__team__subsidiary__city', PaymentFilter]
     readonly_fields = ['password']
@@ -191,6 +199,8 @@ class UserAdmin(EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
        if payment:
           pay_type = payment.pay_type
        return pay_type
+    def userprofile__telephone(self, obj):
+       return obj.userprofile.telephone
     def userprofile__payment_status(self, obj):
        return obj.userprofile.payment()['status_description']
     def userprofile__team__name(self, obj):

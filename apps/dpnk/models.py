@@ -338,7 +338,10 @@ class UserProfile(models.Model):
         default='mL')
     mailing_id = models.TextField(
         verbose_name=_(u"ID uživatele v mailing listu"),
+        max_length = 32,
+        db_index=True,
         default="",
+        unique=True,
         null=True,
         blank=True
         )
