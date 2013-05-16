@@ -62,7 +62,7 @@ class CompanyAdminForm(forms.ModelForm):
         ret_val = super(CompanyAdminForm, self).__init__(*args, **kwargs)
         return ret_val
 
-class CompanyAdminApplicationForm(registration.forms.RegistrationForm):
+class CompanyAdminApplicationForm(registration.forms.RegistrationFormUniqueEmail):
     motivation_company_admin = forms.CharField( 
         label=_(u"Pár vět o vaší pozici"),
         help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle kterých můžeme ověřit, že vám funkci firemního administrátora můžeme svěřit."),
