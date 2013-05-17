@@ -16,7 +16,9 @@
             {% for member in result.team.members %}
                <ul>
                   <li>
+                     {% if member == result.team.coordinator %}<b>{% endif %}
                      {{ member.user.first_name }} {{ member.user.last_name }}: {{ member.telephone }}
+                     {% if member == result.team.coordinator %}</b>{% endif %}
                   </li>
                </ul>
             {% endfor %}
