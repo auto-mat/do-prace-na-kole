@@ -113,7 +113,8 @@ class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
         return mark_safe(u'<a href="%s?soutez=%s">výsledky</a>' % (wp_reverse('vysledky_souteze'), obj.slug))
     competition_results_link.short_description = u"Výsledky soutěže"
     def draw_link(self, obj):
-        return mark_safe(u'<a href="%slosovani/%s">losovani</a>' % (wp_reverse('admin'), obj.slug))
+        if obj.type == 'frequency' and obj.competitor_type == 'team':
+            return mark_safe(u'<a href="%slosovani/%s">losovani</a>' % (wp_reverse('admin'), obj.slug))
     draw_link.short_description = u"Výsledky soutěže"
 
 class PaymentFilter(SimpleListFilter):
