@@ -1,0 +1,27 @@
+{% extends "admin/base_site.html" %}
+{% load url from future %}
+{% load dpnk_tags %}
+{% load i18n %}
+
+{% block content %}
+{% for result in results %}
+   <ul>
+      <li>
+         {{ forloop.counter }}. tah: Tým {{ result }} z firmy {{ result.team.subsidiary.company }}
+         <br/>
+         pravidelnost jízd {{ result.result | percentage }}&nbsp;%
+         {% if result.competition.competitor_type == 'team' %}
+            <br/>
+            Členové:
+            {% for member in result.team.members %}
+               <ul>
+                  <li>
+                     {{ member.user.first_name }} {{ member.user.last_name }}: {{ member.telephone }}
+                  </li>
+               </ul>
+            {% endfor %}
+         {% endif %}
+      </li>
+   </ul>
+{% endfor %}
+{% endblock %}

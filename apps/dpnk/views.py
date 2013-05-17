@@ -40,7 +40,7 @@ from django.conf import settings
 from  django.http import HttpResponse
 from django import http
 # Local imports
-import util
+import util, draw
 from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
 from django.contrib.sites.models import get_current_site
@@ -928,4 +928,13 @@ def statistics(request,
     return render_to_response(template,
             {
                 'variable': variables[variable],
+            }, context_instance=RequestContext(request))
+
+def draw_results(request,
+        competition_slug,
+        template = 'admin/draw.html'
+        ):
+    return render_to_response(template,
+            {
+                'results': draw.draw(competition_slug),
             }, context_instance=RequestContext(request))

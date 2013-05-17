@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
-from dpnk.views import company_survey, company_survey_answers
+from dpnk.views import company_survey, company_survey_answers, draw_results
 
 from django.conf import settings
 
@@ -10,6 +10,8 @@ urlpatterns = patterns('',
         company_survey_answers),
     url(r'^admin/cyklozamestnavatel_firmy/$',
         company_survey),
+    url(r'^admin/losovani/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        draw_results),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^chaining/', include('smart_selects.urls')),
     url(r'^dpnk/', include("dpnk.urls")),
