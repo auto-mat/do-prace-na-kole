@@ -13,3 +13,4 @@ unidecode
 python-memcached
 django-softhyphen
 django-debug-toolbar
+django-extensions

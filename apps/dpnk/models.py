@@ -892,6 +892,12 @@ class CompetitionResult(models.Model):
     def get_total_result(self):
         members = self.team.members().count() if self.team else 1
         return int(self.result * members)
+
+    def __unicode__(self):
+        if self.competition.competitor_type == 'team':
+            return "%s" % self.team.name
+        else:
+            return "%s" % self.userprofile.user.get_full_name()
     
 class ChoiceType(models.Model):
     """Typ volby"""
