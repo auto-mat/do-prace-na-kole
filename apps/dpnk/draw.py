@@ -29,23 +29,14 @@ def all_members_paid(team):
 
 def draw(competition_slug, threshold=0.66):
     competition = Competition.objects.get(slug=competition_slug)
-    teams = []
-    loop_limit = 0
-    while len(teams) < 3:
-        condition = {}
-        condition['competition']=competition
-        if competition.type == 'frequency':
-            condition['result__gt'] = threshold * util.days_count() * 2.0
-        results = CompetitionResult.objects.filter(**condition)
-        if results.count() <= 0:
-            break
-        competition_result = random.choice(results)
-        team = competition_result.team
+    condition = {}
+    condition['competition']=competition
+    if competition.type == 'frequency':
+        condition['result__gt'] = threshold * util.days_count() * 2.0
+    results = CompetitionResult.objects.filter(**condition)
+    results = sorted(results[:10], key=lambda x: random.random())
 
-        if competition.competitor_type != 'team' or all_members_paid(team):
-            teams.append(competition_result)
+    if competition.competitor_type == 'team':
+        results = [result for result in results if all_members_paid(result.team)]
 
-        loop_limit += 1
-        if loop_limit > 100:
-            break
-    return teams
+    return results
