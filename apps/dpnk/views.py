@@ -537,7 +537,12 @@ def competition_results(request, template, competition_slug='testing_zavod', lim
     #else:
     #    userprofile = request.user.get_profile()
 
-    competition = Competition.objects.get(slug=competition_slug)
+    try:
+        competition = Competition.objects.get(slug=competition_slug)
+    except Competition.DoesNotExist:
+        logger.error('Unknown competition slug %s, request: %s' % (competition_slug, request))
+        return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
+
 
     return render_to_response(template,
                               {
