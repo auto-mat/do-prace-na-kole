@@ -410,14 +410,11 @@ class UserProfile(models.Model):
     def has_distance_competition(self):
         return results.has_distance_competition(self)
 
-    def rides_count(self):
-        trips = Trip.objects.filter(user=self)
-        if trips.count() == 0:
-            return 0
-        return trips.aggregate(Sum('trip_from'))['trip_from__sum'] + trips.aggregate(Sum('trip_to'))['trip_to__sum']
-
     def get_frequency(self):
         return results.get_userprofile_frequency(self)
+
+    def get_rough_length(self):
+        return results.get_userprofile_frequency(self) * self.distance
 
     def get_length(self):
         return results.get_userprofile_length(self)
