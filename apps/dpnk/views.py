@@ -628,12 +628,17 @@ def update_profile(request,
 
 @login_required
 @must_be_approved_for_team
-def questionaire(request, questionaire = None, 
+def questionaire(request, questionaire_slug = None,
         template = 'registration/questionaire.html',
         success_url = 'profil',
         ):
     userprofile = request.user.get_profile()
-    questions = Question.objects.filter(competition__slug=questionaire).order_by('order')
+    try:
+        competition = Competition.objects.get(slug=questionaire_slug)
+    except Competition.DoesNotExist:
+        logger.error('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
+        return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
+    questions = Question.objects.filter(competition=competition).order_by('order')
     if request.method == 'POST':
         choice_ids = [v for k, v in request.POST.items() if k.startswith('choice')]
         comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
@@ -666,7 +671,6 @@ def questionaire(request, questionaire = None,
             answer.comment = request.POST.get('comment-%d' % comment_id, '')
             answer.save()
     
-        competition = Competition.objects.get(slug=questionaire)
         competition.make_admission(userprofile)
         return redirect(wp_reverse(success_url))
     else:
@@ -688,7 +692,7 @@ def questionaire(request, questionaire = None,
         return render_to_response(template,
                                   {'user': userprofile,
                                    'questions': questions,
-                                   'questionaire': questionaire,
+                                   'questionaire': questionaire_slug,
                                    }, context_instance=RequestContext(request))
 
 @staff_member_required
