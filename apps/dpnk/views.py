@@ -47,11 +47,13 @@ from django.contrib.sites.models import get_current_site
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout
 
 from wp_urls import wp_reverse
+from unidecode import unidecode
 from util import redirect
 import logging
 import models
 import tempfile
 import shutil
+import re
 logger = logging.getLogger(__name__)
 
 def login(request, template_name='registration/login.html',
@@ -628,11 +630,12 @@ def update_profile(request,
                                'can_change_team': form.can_change_team
                                }, context_instance=RequestContext(request))
 
-def handle_uploaded_file(source):
-    fd, filepath = tempfile.mkstemp(suffix=source.name, dir=settings.MEDIA_ROOT + "/questionaire")
+def handle_uploaded_file(source, username):
+    logger.info("Saving file: username: %s, filenmae: %s" % (username, source.name))
+    fd, filepath = tempfile.mkstemp(suffix=u"_%s#%s" % (username, unidecode(source.name).replace(" ", "_")), dir=settings.MEDIA_ROOT + u"/questionaire")
     with open(filepath, 'wb') as dest:
         shutil.copyfileobj(source, dest)
-    return "questionaire/" + filepath.rsplit("/", 1)[1]
+    return u"questionaire/" + filepath.rsplit("/", 1)[1]
 
 @login_required
 @must_be_approved_for_team
@@ -682,7 +685,7 @@ def questionaire(request, questionaire_slug = None,
             filehandler = request.FILES.get('fileupload-%d' % fileupload_id, None)
             if filehandler:
                 answer = answers_dict[fileupload_id]
-                answer.attachment = handle_uploaded_file(filehandler)
+                answer.attachment = handle_uploaded_file(filehandler, request.user.username)
                 answer.save()
     
         competition.make_admission(userprofile)
@@ -704,6 +707,7 @@ def questionaire(request, questionaire_slug = None,
 
             question.comment_prefill = answer.comment
             question.attachment_prefill = answer.attachment
+            question.attachment_prefill_name = re.sub(r"^.*#", "", answer.attachment.name).replace("_", " ")
             question.choices_prefill = [c.id for c in answer.choices.all()]
         except Answer.DoesNotExist:
             error = True
