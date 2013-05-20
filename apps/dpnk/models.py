@@ -947,7 +947,7 @@ class Question(models.Model):
         null=False)
     with_attachment = models.BooleanField(
         verbose_name = _(u"Povolit přílohu"),
-        default=True,
+        default=False,
         null=False)
     order = models.IntegerField(
         verbose_name=_(u"Pořadí"),
@@ -990,6 +990,11 @@ class Choice(models.Model):
         return "%s" % self.text
 
 class Answer(models.Model):
+    """Odpověď"""
+    class Meta:
+        verbose_name = _(u"Odpověď")
+        verbose_name_plural = _(u"Odpovědi")
+
     user = models.ForeignKey(UserProfile, null=True, blank=True)
     question = models.ForeignKey(Question, null=False)
     choices = models.ManyToManyField(Choice)
@@ -999,6 +1004,10 @@ class Answer(models.Model):
         null=True, blank=True)
     points_given = models.IntegerField(
         null=True, blank=True, default=None)
+    attachment = models.FileField(
+        upload_to="questionaire/",
+        max_length=600,
+        )
 
     def str_choices(self):
         return ", ".join([choice.text for choice in self.choices.all()])

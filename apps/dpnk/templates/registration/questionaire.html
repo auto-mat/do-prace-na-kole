@@ -1,24 +1,36 @@
 {% load i18n %}
 
 <div id="questionaire-{{ questionaire }}">
-<form name="question" method="POST">
+<form name="question" method="POST" enctype="multipart/form-data">
 {% for question in questions %}
+{% if not forloop.first %}
+   <hr/>
+{% endif %}
 <p class="question-text">{{ question.text }}</p>
+{% if question.error %}
+   <div class="text-error">Je nutné vyplnit tuto volbu</div>
+{% endif %}
 {% for choice in question.choices %}
 {% if question.type == 'multiple-choice' %}
-<label for="choice-{{ choice.id }}"><input type="checkbox" name="choice-{{ question.id }}" id="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text }} {% if choice.points != None %}( {{choice.points}}b ) {% endif %}</label><br/>
+<label for="choice-{{ choice.id }}"><input type="checkbox" name="choice-{{ question.id }}" id="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text }}</label><br/>
 {% endif %}
 {% if question.type == 'choice' %}
-<label for="choice-{{ choice.id }}"><input type="radio" name="choice-{{ question.id }}" id="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text }}  {% if choice.points != None %}( {{choice.points}}b ) {% endif %}</label><br/>
+<label for="choice-{{ choice.id }}"><input type="radio" name="choice-{{ question.id }}" id="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text }}</label><br/>
 {% endif %}
 {% endfor %}
 {% if question.with_comment %}
-<label for="comment"><span class="comment-label">Komentář</span></label><br/>
-<textarea name="comment-{{ question.id }}" cols="60" rows="5" class="question-{{question.id}}">{{ question.comment_prefill }}</textarea><br/>
+<label for="comment-{{ question.id }}"><span class="comment-label">Komentář</span></label>
+<textarea name="comment-{{ question.id }}" cols="60" rows="5" class="question">{{ question.comment_prefill }}</textarea><br/>
+{% endif %}
+{% if question.with_attachment %}
+   {%if question.attachment_prefill %}
+      <p>Minulý nahraný soubor: <a href="{{ media }}/{{ question.attachment_prefill }}">{{ question.attachment_prefill_name }}</a></p>
+   {% endif %}
+   <label for="fileupload-{{ question.id }}"><span class="fileupload-label">Zde můžete nahrát soubor</span></label>
+   <input type="file" name="fileupload-{{ question.id }}" class="fileupload" id="fileupload-{{question.id}}"/><br/>
 {% endif %}
 {% endfor %}
 <input type="hidden" name="questionaire" value="{{ questionaire }}">
-<input type="hidden" name="day" value="{{ day }}">
 <button class="submit" type="button">{% trans "Odeslat" %}</button>
 <input type="button" onclick="history.go(-1)" value="Zpět">
 </form>

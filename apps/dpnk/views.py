@@ -47,9 +47,13 @@ from django.contrib.sites.models import get_current_site
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout
 
 from wp_urls import wp_reverse
+from unidecode import unidecode
 from util import redirect
 import logging
 import models
+import tempfile
+import shutil
+import re
 logger = logging.getLogger(__name__)
 
 def login(request, template_name='registration/login.html',
@@ -626,30 +630,41 @@ def update_profile(request,
                                'can_change_team': form.can_change_team
                                }, context_instance=RequestContext(request))
 
+def handle_uploaded_file(source, username):
+    logger.info("Saving file: username: %s, filenmae: %s" % (username, source.name))
+    fd, filepath = tempfile.mkstemp(suffix=u"_%s#%s" % (username, unidecode(source.name).replace(" ", "_")), dir=settings.MEDIA_ROOT + u"/questionaire")
+    with open(filepath, 'wb') as dest:
+        shutil.copyfileobj(source, dest)
+    return u"questionaire/" + filepath.rsplit("/", 1)[1]
+
 @login_required
 @must_be_approved_for_team
-def questionaire(request, questionaire = None, 
+def questionaire(request, questionaire_slug = None,
         template = 'registration/questionaire.html',
         success_url = 'profil',
         ):
     userprofile = request.user.get_profile()
-    questions = Question.objects.filter(competition__slug=questionaire).order_by('order')
+    error = False
+    form_filled = False
+    try:
+        competition = Competition.objects.get(slug=questionaire_slug)
+    except Competition.DoesNotExist:
+        logger.error('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
+        return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
+    questions = Question.objects.filter(competition=competition).order_by('order')
     if request.method == 'POST':
         choice_ids = [v for k, v in request.POST.items() if k.startswith('choice')]
         comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
+        fileupload_ids = [int(k.split('-')[1]) for k, v in request.FILES.items() if k.startswith('fileupload')]
 
         answers_dict = {}
         answers_dict_choice_type = {}
         for question in questions:
-            try:
-                answer = Answer.objects.get(user = request.user.get_profile(),
-                                            question = question)
+            answer, created = Answer.objects.get_or_create(user = request.user.get_profile(),
+                                        question = question)
+            if not created:
                 # Cleanup previous fillings
                 answer.choices = []
-            except Answer.DoesNotExist:
-                answer = Answer()
-                answer.user = request.user.get_profile()
-                answer.question = question
             answer.save()
             answers_dict[question.id] = answer
             answers_dict_choice_type[question.choice_type.id] = answer
@@ -665,31 +680,49 @@ def questionaire(request, questionaire = None,
             answer = answers_dict[comment_id] # comment_id = question_id
             answer.comment = request.POST.get('comment-%d' % comment_id, '')
             answer.save()
+        # Save file uploads
+        for fileupload_id in fileupload_ids:
+            filehandler = request.FILES.get('fileupload-%d' % fileupload_id, None)
+            if filehandler:
+                answer = answers_dict[fileupload_id]
+                answer.attachment = handle_uploaded_file(filehandler, request.user.username)
+                answer.save()
     
-        competition = Competition.objects.get(slug=questionaire)
         competition.make_admission(userprofile)
-        return redirect(wp_reverse(success_url))
-    else:
-        for question in questions:
-            try:
-                question.choices = Choice.objects.filter(choice_type=question.choice_type)
-            except Choice.DoesNotExist:
-                question.choices = None
-            try:
-                answer = Answer.objects.get(
-                    question=question,
-                    user=userprofile)
-                question.comment_prefill = answer.comment
-                question.choices_prefill = [c.id for c in answer.choices.all()]
-            except Answer.DoesNotExist:
-                question.comment_prefill = ''
-                question.choices_prefill = ''
+        form_filled = True
 
-        return render_to_response(template,
-                                  {'user': userprofile,
-                                   'questions': questions,
-                                   'questionaire': questionaire,
-                                   }, context_instance=RequestContext(request))
+    for question in questions:
+        try:
+            question.choices = Choice.objects.filter(choice_type=question.choice_type)
+        except Choice.DoesNotExist:
+            question.choices = None
+        try:
+            answer = Answer.objects.get(
+                question=question,
+                user=userprofile)
+
+            if question.type == 'choice' and answer.choices.count() == 0:
+                error = True
+                question.error = True
+
+            question.comment_prefill = answer.comment
+            question.attachment_prefill = answer.attachment
+            question.attachment_prefill_name = re.sub(r"^.*#", "", answer.attachment.name).replace("_", " ")
+            question.choices_prefill = [c.id for c in answer.choices.all()]
+        except Answer.DoesNotExist:
+            error = True
+            question.comment_prefill = ''
+            question.choices_prefill = ''
+
+    if not error and form_filled:
+        return redirect(wp_reverse(success_url))
+
+    return render_to_response(template,
+                              {'user': userprofile,
+                               'questions': questions,
+                               'questionaire': questionaire_slug,
+                               'media': settings.MEDIA_URL
+                               }, context_instance=RequestContext(request))
 
 @staff_member_required
 def questions(request):
