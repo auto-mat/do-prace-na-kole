@@ -9,10 +9,10 @@
 <p class="question-text">{{ question.text }}</p>
 {% for choice in question.choices %}
 {% if question.type == 'multiple-choice' %}
-<label for="choice-{{ choice.id }}"><input type="checkbox" name="choice-{{ question.id }}" id="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text }} {% if choice.points != None %}( {{choice.points}}b ) {% endif %}</label><br/>
+<label for="choice-{{ choice.id }}"><input type="checkbox" name="choice-{{ question.id }}" id="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text }}</label><br/>
 {% endif %}
 {% if question.type == 'choice' %}
-<label for="choice-{{ choice.id }}"><input type="radio" name="choice-{{ question.id }}" id="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text }}  {% if choice.points != None %}( {{choice.points}}b ) {% endif %}</label><br/>
+<label for="choice-{{ choice.id }}"><input type="radio" name="choice-{{ question.id }}" id="choice-{{ choice.id }}" value="{{ choice.id }}" {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text }}</label><br/>
 {% endif %}
 {% endfor %}
 {% if question.with_comment %}
