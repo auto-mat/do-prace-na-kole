@@ -50,6 +50,8 @@ from wp_urls import wp_reverse
 from util import redirect
 import logging
 import models
+import tempfile
+import shutil
 logger = logging.getLogger(__name__)
 
 def login(request, template_name='registration/login.html',
@@ -626,6 +628,12 @@ def update_profile(request,
                                'can_change_team': form.can_change_team
                                }, context_instance=RequestContext(request))
 
+def handle_uploaded_file(source):
+    fd, filepath = tempfile.mkstemp(suffix=source.name, dir=settings.MEDIA_ROOT + "/questionaire")
+    with open(filepath, 'wb') as dest:
+        shutil.copyfileobj(source, dest)
+    return "questionaire/" + filepath.rsplit("/", 1)[1]
+
 @login_required
 @must_be_approved_for_team
 def questionaire(request, questionaire_slug = None,
@@ -642,19 +650,16 @@ def questionaire(request, questionaire_slug = None,
     if request.method == 'POST':
         choice_ids = [v for k, v in request.POST.items() if k.startswith('choice')]
         comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
+        fileupload_ids = [int(k.split('-')[1]) for k, v in request.FILES.items() if k.startswith('fileupload')]
 
         answers_dict = {}
         answers_dict_choice_type = {}
         for question in questions:
-            try:
-                answer = Answer.objects.get(user = request.user.get_profile(),
-                                            question = question)
+            answer, created = Answer.objects.get_or_create(user = request.user.get_profile(),
+                                        question = question)
+            if not created:
                 # Cleanup previous fillings
                 answer.choices = []
-            except Answer.DoesNotExist:
-                answer = Answer()
-                answer.user = request.user.get_profile()
-                answer.question = question
             answer.save()
             answers_dict[question.id] = answer
             answers_dict_choice_type[question.choice_type.id] = answer
@@ -670,6 +675,13 @@ def questionaire(request, questionaire_slug = None,
             answer = answers_dict[comment_id] # comment_id = question_id
             answer.comment = request.POST.get('comment-%d' % comment_id, '')
             answer.save()
+        # Save file uploads
+        for fileupload_id in fileupload_ids:
+            filehandler = request.FILES.get('fileupload-%d' % fileupload_id, None)
+            if filehandler:
+                answer = answers_dict[fileupload_id]
+                answer.attachment = handle_uploaded_file(filehandler)
+                answer.save()
     
         competition.make_admission(userprofile)
         return redirect(wp_reverse(success_url))
@@ -684,6 +696,7 @@ def questionaire(request, questionaire_slug = None,
                     question=question,
                     user=userprofile)
                 question.comment_prefill = answer.comment
+                question.attachment_prefill = answer.attachment
                 question.choices_prefill = [c.id for c in answer.choices.all()]
             except Answer.DoesNotExist:
                 question.comment_prefill = ''
@@ -693,6 +706,7 @@ def questionaire(request, questionaire_slug = None,
                                   {'user': userprofile,
                                    'questions': questions,
                                    'questionaire': questionaire_slug,
+                                   'media': settings.MEDIA_URL
                                    }, context_instance=RequestContext(request))
 
 @staff_member_required
