@@ -632,7 +632,7 @@ def update_profile(request,
 
 def handle_uploaded_file(source, username):
     logger.info("Saving file: username: %s, filenmae: %s" % (username, source.name))
-    fd, filepath = tempfile.mkstemp(suffix=u"_%s#%s" % (username, unidecode(source.name).replace(" ", "_")), dir=settings.MEDIA_ROOT + u"/questionaire")
+    fd, filepath = tempfile.mkstemp(suffix=u"_%s%%s" % (username, unidecode(source.name).replace(" ", "_")), dir=settings.MEDIA_ROOT + u"/questionaire")
     with open(filepath, 'wb') as dest:
         shutil.copyfileobj(source, dest)
     return u"questionaire/" + filepath.rsplit("/", 1)[1]
@@ -707,7 +707,7 @@ def questionaire(request, questionaire_slug = None,
 
             question.comment_prefill = answer.comment
             question.attachment_prefill = answer.attachment
-            question.attachment_prefill_name = re.sub(r"^.*#", "", answer.attachment.name).replace("_", " ")
+            question.attachment_prefill_name = re.sub(r"^.*%", "", answer.attachment.name).replace("_", " ")
             question.choices_prefill = [c.id for c in answer.choices.all()]
         except Answer.DoesNotExist:
             error = True
