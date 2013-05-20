@@ -641,6 +641,8 @@ def questionaire(request, questionaire_slug = None,
         success_url = 'profil',
         ):
     userprofile = request.user.get_profile()
+    error = False
+    form_filled = False
     try:
         competition = Competition.objects.get(slug=questionaire_slug)
     except Competition.DoesNotExist:
@@ -684,30 +686,39 @@ def questionaire(request, questionaire_slug = None,
                 answer.save()
     
         competition.make_admission(userprofile)
-        return redirect(wp_reverse(success_url))
-    else:
-        for question in questions:
-            try:
-                question.choices = Choice.objects.filter(choice_type=question.choice_type)
-            except Choice.DoesNotExist:
-                question.choices = None
-            try:
-                answer = Answer.objects.get(
-                    question=question,
-                    user=userprofile)
-                question.comment_prefill = answer.comment
-                question.attachment_prefill = answer.attachment
-                question.choices_prefill = [c.id for c in answer.choices.all()]
-            except Answer.DoesNotExist:
-                question.comment_prefill = ''
-                question.choices_prefill = ''
+        form_filled = True
 
-        return render_to_response(template,
-                                  {'user': userprofile,
-                                   'questions': questions,
-                                   'questionaire': questionaire_slug,
-                                   'media': settings.MEDIA_URL
-                                   }, context_instance=RequestContext(request))
+    for question in questions:
+        try:
+            question.choices = Choice.objects.filter(choice_type=question.choice_type)
+        except Choice.DoesNotExist:
+            question.choices = None
+        try:
+            answer = Answer.objects.get(
+                question=question,
+                user=userprofile)
+
+            if question.type == 'choice' and answer.choices.count() == 0:
+                error = True
+                question.error = True
+
+            question.comment_prefill = answer.comment
+            question.attachment_prefill = answer.attachment
+            question.choices_prefill = [c.id for c in answer.choices.all()]
+        except Answer.DoesNotExist:
+            error = True
+            question.comment_prefill = ''
+            question.choices_prefill = ''
+
+    if not error and form_filled:
+        return redirect(wp_reverse(success_url))
+
+    return render_to_response(template,
+                              {'user': userprofile,
+                               'questions': questions,
+                               'questionaire': questionaire_slug,
+                               'media': settings.MEDIA_URL
+                               }, context_instance=RequestContext(request))
 
 @staff_member_required
 def questions(request):
