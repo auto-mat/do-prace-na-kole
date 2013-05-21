@@ -236,6 +236,8 @@ class ProfileUpdateForm(forms.ModelForm):
 
     def clean_team(self):
         data = self.cleaned_data['team']
+        if not data:
+            return self.instance.team
         if type(data) != RegisterTeamForm:
             if data != self.instance.team:
                 team_full(data)
