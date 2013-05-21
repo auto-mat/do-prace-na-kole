@@ -29,6 +29,7 @@ urls = {
     'vysledky':                     "/profil/vysledky",
     'vysledky_souteze':             "/profil/vysledky_souteze",
     'dotaznik':                     "/django/admin/dotaznik/",
+    'odpovedi':                     "/django/admin/odpovedi",
     'dotaznik_odpovedi':            "/django/admin/dotaznik_odpovedi",
     'otazky':                       "/django/admin/otazky/",
     'otazka':                       "/profil/dotaznik",
