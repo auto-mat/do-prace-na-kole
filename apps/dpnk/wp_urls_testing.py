@@ -18,7 +18,6 @@ urls = {
     'vysledky':                     "vysledky.html",
     'kratke_vysledky':              "kratke_vysledky.html",
     'otazka':                       "otazka.html",
-    'cyklozamestnavatel_roku':      "cyklozamestnavatel_roku.html",
     'logout':                       "logout.html",
     'typ_platby':                   "typ_platby.html",
     'platba':                       "platba.html",
@@ -34,6 +33,7 @@ urls = {
     'cyklozamestnavatel_odpovedi':  "cyklozamestnavatel_odpovedi.html",
     'odpovedi':                     "odpovedi.html",
     'vysledky_souteze':             "vysledky_souteze.html",
+    'dotaznik':                     "/admin/dotaznik",
 
     # Company admin
     'edit_company':                 "fa/editovat_spolecnost",

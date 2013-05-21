@@ -28,6 +28,7 @@ urls = {
     'team_admin':                   "/profil/team-admin",
     'vysledky':                     "/profil/vysledky",
     'vysledky_souteze':             "/profil/vysledky_souteze",
+    'dotaznik':                     "/admin/dotaznik",
 
     # Company admin
     'edit_company':                 "/fa/editovat_spolecnost",
@@ -37,7 +38,6 @@ urls = {
 
     # Zastarale nebo odlozeno na pozdeji
     'kratke_vysledky':              "kratke_vysledky.html",
-    'cyklozamestnavatel_roku':      "cyklozamestnavatel_roku.html",
     'otazka':                       "/profil/dotaznik",
     'otazky':                       "otazky.html",
     'cyklozamestnavatel_firmy':     "cyklozamestnavatel_firmy.html",

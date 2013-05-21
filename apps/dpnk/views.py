@@ -34,7 +34,7 @@ from django.views.decorators.cache import cache_page
 import registration.signals, registration.backends, registration.backends.simple
 # Model imports
 from django.contrib.auth.models import User
-from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice
+from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice, City
 from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm
 from django.conf import settings
 from  django.http import HttpResponse
@@ -731,9 +731,9 @@ def questions(request):
                               {'questions': questions
                                }, context_instance=RequestContext(request))
 
-def _company_answers(uid):
+def _company_answers(uid, competition_slug):
     return Answer.objects.filter(user_id=uid,
-                                 question__in=Question.objects.filter(competition__slug='cyklozamestnavatel_roku'))
+                                 question__in=Question.objects.filter(competition__slug=competition_slug))
 
 def _total_points(answers):
     total_points = 0
@@ -748,19 +748,24 @@ def _total_points(answers):
     return total_points
 
 @staff_member_required
-def company_survey(request):
-    companies = [(u.id, u.team.subsidiary.company, u.team.subsidiary.city, u.team.name, _total_points(_company_answers(u.id))) for u in
+def questionnaire_results(request,
+                competition_slug = None,
+                  ):
+    companies = [(u.id, u.team.subsidiary.company, u.team.subsidiary.city, u.team.name, _total_points(_company_answers(u.id, competition_slug))) for u in
                  set([a.user for a in Answer.objects.filter(
-                    question__in=Question.objects.filter(competition__slug='cyklozamestnavatel_roku'))])]
-    return render_to_response('admin/company_survey.html',
-                              {'companies': sorted(companies, key = lambda c: c[4], reverse=True)
+                    question__in=Question.objects.filter(competition__slug=competition_slug))])]
+    return render_to_response('admin/questionnaire_results.html',
+                              {'companies': sorted(companies, key = lambda c: c[4], reverse=True),
+                               'competition_slug': competition_slug,
                                }, context_instance=RequestContext(request))
 
-def company_survey_answers(request):
-    answers = _company_answers(request.GET['uid'])
+def questionnaire_answers(request,
+                competition_slug = None,
+                  ):
+    answers = _company_answers(request.GET['uid'], competition_slug)
     team = UserProfile.objects.get(id=request.GET['uid']).team
     total_points = _total_points(answers)
-    return render_to_response('admin/company_survey_answers.html',
+    return render_to_response('admin/questionnaire_answers.html',
                               {'answers': answers,
                                'team': team,
                                'total_points': total_points
@@ -775,19 +780,20 @@ def answers(request):
     if request.method == 'POST':
         points = [(k.split('-')[1], v) for k, v in request.POST.items() if k.startswith('points-')]
         for p in points:
-            answer = Answer.objects.get(id=p[0])
-            answer.points = int(p[1])
-            answer.save()
+            if not p[1] in ('', 'None', None):
+                answer = Answer.objects.get(id=p[0])
+                answer.points_given = int(p[1])
+                answer.save()
 
     answers = Answer.objects.filter(question_id=question_id)
     total_respondents = len(answers)
-    count = {'Praha': {}, 'Brno': {}, 'Liberec': {}}
+    count = dict((c, {}) for c in City.objects.all())
     count_all = {}
-    respondents = {'Praha': 0, 'Brno': 0, 'Liberec': 0}
+    respondents = dict((c, 0) for c in City.objects.all())
     choice_names = {}
     
     for a in answers:
-        a.city = a.user.city()
+        a.city = a.user.team.subsidiary.city
 
     
     if question.type in ('choice', 'multiple-choice'):
@@ -804,7 +810,8 @@ def answers(request):
                 except KeyError:
                     count_all[c.id] = 1
 
-    stat = {'Praha': [], 'Brno': [], 'Liberec': [], 'Celkem': []}
+    stat = dict((c, []) for c in City.objects.all())
+    stat['Celkem'] = []
     for city, city_count in count.items():
         for k, v in city_count.items():
             stat[city].append((choice_names[k], v, float(v)/respondents[city]*100))
@@ -818,7 +825,7 @@ def answers(request):
 
     return render_to_response('admin/answers.html',
                               {'question': question,
-                               'answers': sorted(answers, key=lambda a: a.city),
+                               'answers': answers,
                                'stat': stat,
                                'total_respondents': total_respondents,
                                'choice_names': choice_names

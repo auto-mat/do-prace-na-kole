@@ -1,15 +1,19 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
-from dpnk.views import company_survey, company_survey_answers, draw_results
+from dpnk.views import questionnaire_results, questionnaire_answers, draw_results, questions, answers
 
 from django.conf import settings
 
 urlpatterns = patterns('',
-    url(r'^admin/cyklozamestnavatel_odpovedi/$',
-        company_survey_answers),
-    url(r'^admin/cyklozamestnavatel_firmy/$',
-        company_survey),
+    url(r'^admin/odpovedi/$',
+        answers),
+    url(r'^admin/otazky/$',
+        questions),
+    url(r'^admin/dotaznik_odpovedi/(?P<competition_slug>[0-9A-Za-z_\-]+)$',
+        questionnaire_answers),
+    url(r'^admin/dotaznik/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        questionnaire_results),
     url(r'^admin/losovani/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
         draw_results),
     url(r'^admin/', include(admin.site.urls)),

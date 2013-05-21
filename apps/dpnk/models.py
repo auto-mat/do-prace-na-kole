@@ -103,6 +103,8 @@ class City(models.Model):
     class Meta:
         verbose_name = _(u"Město")
         verbose_name_plural = _(u"Města")
+        ordering = ('name',)
+
     name = models.CharField(
         verbose_name=_(u"Jméno"),
         unique=True,
@@ -994,6 +996,7 @@ class Answer(models.Model):
     class Meta:
         verbose_name = _(u"Odpověď")
         verbose_name_plural = _(u"Odpovědi")
+        ordering = ('user__team__subsidiary__city', 'pk')
 
     user = models.ForeignKey(UserProfile, null=True, blank=True)
     question = models.ForeignKey(Question, null=False)
