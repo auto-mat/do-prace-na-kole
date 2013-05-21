@@ -5,7 +5,7 @@
 
 <ul>
 {% for c in companies %}
-<li><a href="/admin/cyklozamestnavatel_odpovedi?uid={{ c.0 }}">{{ c.1  }} / {{ c.2 }} / {{ c.3 }}</a>, {{ c.4 }} bodu</li>
+<li><a href="/admin/odpovedi/{{competition_slug}}?uid={{ c.0 }}">{{ c.1  }} / {{ c.2 }} / {{ c.3 }}</a>, {{ c.4 }} bodu</li>
 {% endfor %}
 </li>
 

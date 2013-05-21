@@ -104,18 +104,22 @@ def recalculate_competitions_results(modeladmin, request, queryset):
 recalculate_competitions_results.short_description = "Přepočítat výsledku vybraných soutěží"
 
 class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'city', 'company', 'competition_results_link', 'draw_link', 'id')
+    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'city', 'company', 'competition_results_link', 'questionnaire_results_link', 'draw_link', 'id')
     filter_horizontal = ('user_competitors', 'team_competitors', 'company_competitors')
     actions = [recalculate_competitions_results]
 
-    readonly_fields = ['competition_results_link', 'draw_link']
+    readonly_fields = ['competition_results_link', 'questionnaire_results_link', 'draw_link']
     def competition_results_link(self, obj):
         return mark_safe(u'<a href="%s?soutez=%s">výsledky</a>' % (wp_reverse('vysledky_souteze'), obj.slug))
     competition_results_link.short_description = u"Výsledky soutěže"
+    def questionnaire_results_link(self, obj):
+        if obj.type == 'questionnaire':
+            return mark_safe(u'<a href="%s/%s">odpovědi</a>' % (wp_reverse('dotaznik'), obj.slug))
+    questionnaire_results_link.short_description = u"Odpovědi"
     def draw_link(self, obj):
         if obj.type == 'frequency' and obj.competitor_type == 'team':
             return mark_safe(u'<a href="%slosovani/%s">losovani</a>' % (wp_reverse('admin'), obj.slug))
-    draw_link.short_description = u"Výsledky soutěže"
+    draw_link.short_description = u"Losování"
 
 class PaymentFilter(SimpleListFilter):
     title = u"stav platby"
