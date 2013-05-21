@@ -31,7 +31,7 @@ urls = {
     'otazky':                       "otazky.html",
     'vysledky_souteze':             "vysledky_souteze.html",
     'dotaznik':                     "/admin/dotaznik/",
-    'odpovedi':                     "/admin/odpovedi/",
+    'dotaznik_odpovedi':            "/admin/dotaznik_odpovedi/",
     'otazky':                       "/admin/otazky/",
 
     # Company admin

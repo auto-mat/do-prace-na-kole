@@ -6,7 +6,7 @@
 
 <ul>
 {% for q in questions %}
-<li>{{q.date}}: <a href="{% wp_url 'odpovedi' %}?question={{ q.id }}">{{q.text}}</a></li>
+<li>{{q.date}}: <a href="{% wp_url 'dotaznik_odpovedi' %}?question={{ q.id }}">{{q.text}}</a></li>
 {% endfor %}
 </li>
 
