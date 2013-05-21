@@ -6,7 +6,7 @@
 
 <ul>
 {% for c in companies %}
-<li><a href="{% wp_url 'odpovedi' %}{{competition_slug}}?uid={{ c.0 }}">{{ c.1  }} / {{ c.2 }} / {{ c.3 }}</a>, {{ c.4 }} bodu</li>
+<li><a href="{% wp_url 'dotaznik_odpovedi' %}{{competition_slug}}?uid={{ c.0 }}">{{ c.1  }} / {{ c.2 }} / {{ c.3 }}</a>, {{ c.4 }} bodu</li>
 {% endfor %}
 </li>
 
