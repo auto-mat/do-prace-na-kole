@@ -32,6 +32,7 @@ urls = {
     'vysledky_souteze':             "vysledky_souteze.html",
     'dotaznik':                     "/admin/dotaznik/",
     'odpovedi':                     "/admin/odpovedi/",
+    'otazky':                       "/admin/otazky/",
 
     # Company admin
     'edit_company':                 "fa/editovat_spolecnost",

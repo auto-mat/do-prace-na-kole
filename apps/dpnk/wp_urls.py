@@ -30,6 +30,7 @@ urls = {
     'vysledky_souteze':             "/profil/vysledky_souteze",
     'dotaznik':                     "/django/admin/dotaznik/",
     'odpovedi':                     "/django/admin/odpovedi/",
+    'otazky':                       "/django/admin/otazky/",
 
     # Company admin
     'edit_company':                 "/fa/editovat_spolecnost",
@@ -39,8 +40,6 @@ urls = {
 
     # Zastarale nebo odlozeno na pozdeji
     'kratke_vysledky':              "kratke_vysledky.html",
-    'otazka':                       "/profil/dotaznik",
-    'otazky':                       "otazky.html",
 
 }
 
