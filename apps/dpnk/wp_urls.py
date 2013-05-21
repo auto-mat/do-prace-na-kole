@@ -41,9 +41,6 @@ urls = {
     'kratke_vysledky':              "kratke_vysledky.html",
     'otazka':                       "/profil/dotaznik",
     'otazky':                       "otazky.html",
-    'cyklozamestnavatel_firmy':     "cyklozamestnavatel_firmy.html",
-    'cyklozamestnavatel_odpovedi':  "cyklozamestnavatel_odpovedi.html",
-    'odpovedi':                     "odpovedi.html",
 
 }
 
