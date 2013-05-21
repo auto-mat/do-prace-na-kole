@@ -114,7 +114,7 @@ class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     competition_results_link.short_description = u"Výsledky soutěže"
     def questionnaire_results_link(self, obj):
         if obj.type == 'questionnaire':
-            return mark_safe(u'<a href="%s/%s">odpovědi</a>' % (wp_reverse('dotaznik'), obj.slug))
+            return mark_safe(u'<a href="%s%s">odpovědi</a>' % (wp_reverse('dotaznik'), obj.slug))
     questionnaire_results_link.short_description = u"Odpovědi"
     def draw_link(self, obj):
         if obj.type == 'frequency' and obj.competitor_type == 'team':
