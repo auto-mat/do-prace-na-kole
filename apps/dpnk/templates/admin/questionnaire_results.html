@@ -1,11 +1,12 @@
 {% extends "admin/base_site.html" %}
 {% load url from future %}
+{% load dpnk_tags %}
 
 {% block content %}
 
 <ul>
 {% for c in companies %}
-<li><a href="/admin/odpovedi/{{competition_slug}}?uid={{ c.0 }}">{{ c.1  }} / {{ c.2 }} / {{ c.3 }}</a>, {{ c.4 }} bodu</li>
+<li><a href="{% wp_url 'odpovedi' %}{{competition_slug}}?uid={{ c.0 }}">{{ c.1  }} / {{ c.2 }} / {{ c.3 }}</a>, {{ c.4 }} bodu</li>
 {% endfor %}
 </li>
 

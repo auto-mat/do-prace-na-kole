@@ -1,11 +1,12 @@
 {% extends "admin/base_site.html" %}
 {% load url from future %}
+{% load dpnk_tags %}
 
 {% block content %}
 
 <ul>
 {% for q in questions %}
-<li>{{q.date}}: <a href="/admin/odpovedi/?question={{ q.id }}">{{q.text}}</a></li>
+<li>{{q.date}}: <a href="{% wp_url 'odpovedi' %}?question={{ q.id }}">{{q.text}}</a></li>
 {% endfor %}
 </li>
 

@@ -33,7 +33,8 @@ urls = {
     'cyklozamestnavatel_odpovedi':  "cyklozamestnavatel_odpovedi.html",
     'odpovedi':                     "odpovedi.html",
     'vysledky_souteze':             "vysledky_souteze.html",
-    'dotaznik':                     "/admin/dotaznik",
+    'dotaznik':                     "/admin/dotaznik/",
+    'odpovedi':                     "/admin/odpovedi/",
 
     # Company admin
     'edit_company':                 "fa/editovat_spolecnost",

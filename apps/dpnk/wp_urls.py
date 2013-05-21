@@ -28,7 +28,8 @@ urls = {
     'team_admin':                   "/profil/team-admin",
     'vysledky':                     "/profil/vysledky",
     'vysledky_souteze':             "/profil/vysledky_souteze",
-    'dotaznik':                     "/admin/dotaznik",
+    'dotaznik':                     "/django/admin/dotaznik/",
+    'odpovedi':                     "/django/admin/odpovedi/",
 
     # Company admin
     'edit_company':                 "/fa/editovat_spolecnost",
