@@ -31,6 +31,7 @@ urls = {
     'dotaznik':                     "/django/admin/dotaznik/",
     'odpovedi':                     "/django/admin/odpovedi/",
     'otazky':                       "/django/admin/otazky/",
+    'otazka':                       "/profil/dotaznik",
 
     # Company admin
     'edit_company':                 "/fa/editovat_spolecnost",
