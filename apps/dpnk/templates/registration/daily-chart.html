@@ -1,10 +1,12 @@
 {% load chart_tags %}
 {% chart %}
+     chxr=0,0,{{ max_value }}
      chxt=y
      chbh=a
      chs=440x220
      cht=bvs
      chco=4D89F9
+     chds=0,{{ max_value }}
      chd=t:{{ values|join:',' }}
      chtt=Ujetá+vzdálenost+za+jednotlivé+dny+(km)
 {% endchart %}
