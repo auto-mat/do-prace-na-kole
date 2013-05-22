@@ -1,10 +1,11 @@
 {% load chart_tags %}
 {% chart %}
+     chxl=0:|1:|{{ days|join:'|' }}
      chxr=0,0,{{ max_value }}
-     chxt=y
+     chxt=x,y
      chbh=a
-     chs=440x220
-     cht=bvs
+     chs=440x400
+     cht=bhs
      chco=4D89F9
      chds=0,{{ max_value }}
      chd=t:{{ values|join:',' }}
