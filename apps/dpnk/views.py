@@ -975,12 +975,15 @@ def statistics(request,
                 'variable': variables[variable],
             }, context_instance=RequestContext(request))
 
+@cache_page(24 * 60 * 60)
 def daily_chart(request,
         template = 'registration/daily-chart.html'
         ):
+    values = [period_distance(day, day) for day in util.days()]
     return render_to_response(template,
             {
-                'values': [str(period_distance(day, day)) for day in util.days()]
+                'values': values,
+                'max_value': max(values),
             }, context_instance=RequestContext(request))
 
 def draw_results(request,
