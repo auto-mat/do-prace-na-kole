@@ -24,8 +24,9 @@ import random
 def all_members_paid(team):
     """Has all members of team paid?"""
 
-    for user in team.members():
-        if user.payment()['status'] != 'done':
+    for userprofile in team.members():
+        if userprofile.user.is_active \
+                and userprofile.payment()['status'] != 'done':
             return False
     return True
 
