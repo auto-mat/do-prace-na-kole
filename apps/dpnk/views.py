@@ -983,6 +983,7 @@ def daily_chart(request,
     return render_to_response(template,
             {
                 'values': values,
+                'days': util.days(),
                 'max_value': max(values),
             }, context_instance=RequestContext(request))
 
