@@ -975,6 +975,14 @@ def statistics(request,
                 'variable': variables[variable],
             }, context_instance=RequestContext(request))
 
+def daily_chart(request,
+        template = 'registration/daily-chart.html'
+        ):
+    return render_to_response(template,
+            {
+                'values': [str(period_distance(day, day)) for day in util.days()]
+            }, context_instance=RequestContext(request))
+
 def draw_results(request,
         competition_slug,
         template = 'admin/draw.html'

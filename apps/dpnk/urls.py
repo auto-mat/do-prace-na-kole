@@ -76,6 +76,8 @@ urlpatterns = patterns('',
         'django.contrib.auth.views.password_reset_complete'),
     url(r'^statistika/(?P<variable>[0-9A-Za-z\-]+)/$',
         statistics),
+    url(r'^denni-graf/$',
+        daily_chart),
     url(r'^facebook_app/$',
         facebook_app),
 

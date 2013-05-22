@@ -14,3 +14,4 @@ python-memcached
 django-softhyphen
 django-debug-toolbar
 django-extensions
+django-chart-tools
