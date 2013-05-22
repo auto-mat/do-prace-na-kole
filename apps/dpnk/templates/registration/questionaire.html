@@ -25,6 +25,8 @@
 {% if question.with_attachment %}
    {%if question.attachment_prefill %}
       <p>Minulý nahraný soubor: <a href="{{ media }}/{{ question.attachment_prefill }}">{{ question.attachment_prefill_name }}</a></p>
+   {% else %}
+      <p class="text-warning">Není nahrán žádný soubor</p>
    {% endif %}
    <label for="fileupload-{{ question.id }}"><span class="fileupload-label">Zde můžete nahrát soubor</span></label>
    <input type="file" name="fileupload-{{ question.id }}" class="fileupload" id="fileupload-{{question.id}}"/><br/>
