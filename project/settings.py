@@ -87,6 +87,7 @@ INSTALLED_APPS = (
     'softhyphen',
     'debug_toolbar',
     'django_extensions',
+    'chart_tools',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
