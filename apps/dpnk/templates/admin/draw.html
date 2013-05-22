@@ -2,14 +2,18 @@
 {% load url from future %}
 {% load dpnk_tags %}
 {% load i18n %}
+{% load humanize %}
 
 {% block content %}
+{% if not results %}
+   Tato soutěž nemá žádné týmy splňující kritéria
+{% endif %}
 {% for result in results %}
    <ul>
       <li>
          {{ forloop.counter }}. tah: Tým {{ result }} z firmy {{ result.team.subsidiary.company }}
          <br/>
-         pravidelnost jízd {{ result.result | percentage }}&nbsp;%
+         pravidelnost jízd {{ result.result | percentage|floatformat:-1|intcomma }}&nbsp;%
          {% if result.competition.competitor_type == 'team' %}
             <br/>
             Členové:

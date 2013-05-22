@@ -22,21 +22,42 @@ from dpnk import util
 import random
 
 def all_members_paid(team):
+    """Has all members of team paid?"""
+
     for user in team.members():
         if user.payment()['status'] != 'done':
             return False
     return True
 
-def draw(competition_slug, threshold=0.66):
+def draw(competition_slug, threshold=0.66, limit=10):
+    """Draw competitors above threshold in given competition"""
+
     competition = Competition.objects.get(slug=competition_slug)
     condition = {}
-    condition['competition']=competition
+    condition['competition'] = competition
     if competition.type == 'frequency':
         condition['result__gt'] = threshold * util.days_count() * 2.0
     results = CompetitionResult.objects.filter(**condition)
-    results = sorted(results[:10], key=lambda x: random.random())
 
     if competition.competitor_type == 'team':
-        results = [result for result in results if all_members_paid(result.team)]
+        results = \
+            [result for result in results if all_members_paid(result.team)]
+
+    if competition.type == 'frequency' and \
+        competition.competitor_type == 'team':
+        return draw_weighed(results)
+
+    results = sorted(results[:limit], key=lambda x: random.random())
 
     return results
+
+def draw_weighed(results):
+    """Draw competitors weighed by count of team members"""
+
+    result_members = []
+    for result in results:
+        for team_member in result.team.members():
+            result_members.append(result)
+    result_members = sorted(result_members, key=lambda x: random.random())
+
+    return result_members
