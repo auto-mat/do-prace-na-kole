@@ -489,6 +489,7 @@ class CompanyAdmin(models.Model):
        "Company", 
        related_name = "company_admin",
        verbose_name = _(u"Administrovaná společnost"),
+       unique = True,
        null=True,
        blank=True)
 
