@@ -4,19 +4,20 @@
 {% block content %}
 
 <p>
-Firma: {{ team.subsidiary.company }}<br/>
-Město: {{ team.subsidiary.city }} / {{ team.subsidiary }}<br/>
-Vyplnil tým: {{ team.name }}<br/>
+Závodník: {{ competitor }}<br/>
 
 <ul>
   {% for a in answers %}
-  <li>{{ a.question.text }}
+  <li><i>{{ a.question.text }}</i>
     <ul>
       {% for c in a.choices.all %}
-      <li> {{ c.text }} <strong>( {{ c.points }}b )</strong></li>
+      <li> {{ c.text }} <strong>( {{ c.points }} b )</strong></li>
       {% endfor %}
     </ul>
-    <p> {% if a.comment %} {{ a.comment }} <strong>( {{ a.points }}b )</strong> {% endif %}
+    <p> {% if a.comment %} {{ a.comment }} <strong>( {{ a.points }} b )</strong> {% endif %}</p>
+    {% if a.question.with_attachment %}
+      Příloha: <a href="{{ media }}/{{ a.attachment }}">{{ a.attachment }}</a>
+    {% endif %}
   </li>
   {% endfor %}
 </ul>

@@ -732,43 +732,33 @@ def questions(request):
                               {'questions': questions
                                }, context_instance=RequestContext(request))
 
-def _company_answers(uid, competition_slug):
-    return Answer.objects.filter(user_id=uid,
-                                 question__in=Question.objects.filter(competition__slug=competition_slug))
-
-def _total_points(answers):
-    total_points = 0
-    for a in answers:
-        for c in a.choices.all():
-            # Points assigned based on choices
-            if c.points:
-                total_points += c.points
-        # Additional points assigned manually
-        if a.points_given:
-            total_points += a.points_given
-    return total_points
-
 @staff_member_required
 def questionnaire_results(request,
                 competition_slug = None,
                   ):
-    companies = [(u.id, u.team.subsidiary.company, u.team.subsidiary.city, u.team.name, _total_points(_company_answers(u.id, competition_slug))) for u in
-                 set([a.user for a in Answer.objects.filter(
-                    question__in=Question.objects.filter(competition__slug=competition_slug))])]
+    competitors = Competition.objects.get(slug = competition_slug).get_results()
     return render_to_response('admin/questionnaire_results.html',
-                              {'companies': sorted(companies, key = lambda c: c[4], reverse=True),
+                               {
                                'competition_slug': competition_slug,
+                               'competitors': competitors,
                                }, context_instance=RequestContext(request))
 
 def questionnaire_answers(request,
                 competition_slug = None,
                   ):
-    answers = _company_answers(request.GET['uid'], competition_slug)
-    team = UserProfile.objects.get(id=request.GET['uid']).team
-    total_points = _total_points(answers)
+    competition = Competition.objects.get(slug = competition_slug)
+    competitor = competition.get_results().get(pk = request.GET['uid'])
+    if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
+        userprofile = competitor.userprofile
+    elif competition.competitor_type == 'team':
+        userprofile = competitor.team.coordinator
+    answers = Answer.objects.filter(user=userprofile,
+                                 question__competition__slug=competition_slug)
+    total_points = competitor.result
     return render_to_response('admin/questionnaire_answers.html',
                               {'answers': answers,
-                               'team': team,
+                               'competitor': competitor,
+                               'media': settings.MEDIA_URL,
                                'total_points': total_points
                                }, context_instance=RequestContext(request))
 

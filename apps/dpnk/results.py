@@ -204,7 +204,7 @@ def recalculate_result(competition, competitor):
         if competition.type == 'questionnaire':
             points = models.Choice.objects.filter(answer__user__in = members, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
             points_given = models.Answer.objects.filter(user__in = members, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
-            competition_result.result = float(points + points_given) / float(member_count)
+            competition_result.result = float(points + points_given)
         elif competition.type == 'length':
             competition_result.result = get_team_length(team)
         elif competition.type == 'frequency':
