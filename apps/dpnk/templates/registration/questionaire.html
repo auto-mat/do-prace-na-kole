@@ -32,6 +32,9 @@
    <input type="file" name="fileupload-{{ question.id }}" class="fileupload" id="fileupload-{{question.id}}"/><br/>
 {% endif %}
 {% endfor %}
+{% if error %}
+   <div class="text-error">Ne všechny otázky byly zodopvězeny. Prosím zodpovězte je.</div>
+{% endif %}
 <input type="hidden" name="questionaire" value="{{ questionaire }}">
 <button class="submit" type="button">{% trans "Odeslat" %}</button>
 <input type="button" onclick="history.go(-1)" value="Zpět">

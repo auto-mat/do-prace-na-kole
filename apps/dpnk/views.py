@@ -645,6 +645,7 @@ def questionaire(request, questionaire_slug = None,
         ):
     userprofile = request.user.get_profile()
     error = False
+    empty_answer = False
     form_filled = False
     try:
         competition = Competition.objects.get(slug=questionaire_slug)
@@ -709,18 +710,19 @@ def questionaire(request, questionaire_slug = None,
             question.attachment_prefill_name = re.sub(r"^.*&", "", answer.attachment.name).replace("_", " ")
             question.choices_prefill = [c.id for c in answer.choices.all()]
         except Answer.DoesNotExist:
-            error = True
+            empty_answer = True
             question.comment_prefill = ''
             question.choices_prefill = ''
 
-    if not error and form_filled:
+    if not error and not empty_answer and form_filled:
         return redirect(wp_reverse(success_url))
 
     return render_to_response(template,
                               {'user': userprofile,
                                'questions': questions,
                                'questionaire': questionaire_slug,
-                               'media': settings.MEDIA_URL
+                               'media': settings.MEDIA_URL,
+                               'error': error,
                                }, context_instance=RequestContext(request))
 
 @staff_member_required
