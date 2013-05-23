@@ -653,27 +653,26 @@ def questionaire(request, questionaire_slug = None,
         return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
     questions = Question.objects.filter(competition=competition).order_by('order')
     if request.method == 'POST':
-        choice_ids = [v for k, v in request.POST.items() if k.startswith('choice')]
+        choice_ids = [(int(k.split('-')[1]), v) for k, v in request.POST.items() if k.startswith('choice')]
         comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
         fileupload_ids = [int(k.split('-')[1]) for k, v in request.FILES.items() if k.startswith('fileupload')]
 
         answers_dict = {}
-        answers_dict_choice_type = {}
         for question in questions:
-            answer, created = Answer.objects.get_or_create(user = request.user.get_profile(),
-                                        question = question)
+            answer, created = Answer.objects.get_or_create(
+                    user = request.user.get_profile(),
+                    question = question)
             if not created:
                 # Cleanup previous fillings
                 answer.choices = []
             answer.save()
             answers_dict[question.id] = answer
-            answers_dict_choice_type[question.choice_type.id] = answer
 
         # Save choices
-        for choice_id in choice_ids:
+        for answer_id, choice_id in choice_ids:
             choice = Choice.objects.get(id=choice_id)
-            answer = answers_dict_choice_type[choice.choice_type.id]
-            answer.choices.add(choice_id)
+            answer = answers_dict[answer_id]
+            answer.choices.add(choice)
             answer.save()
         # Save comments
         for comment_id in comment_ids:
