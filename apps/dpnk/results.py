@@ -174,7 +174,7 @@ def recalculate_result_competition(competition):
     
 
 def recalculate_result_competitor(userprofile):
-    for competition in get_competitions(userprofile):
+    for competition in models.Competition.objects.all():
         if competition.competitor_type == 'team':
             recalculate_result(competition, userprofile.team)
         elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
@@ -194,7 +194,7 @@ def recalculate_result(competition, competitor):
         competition_result, created = models.CompetitionResult.objects.get_or_create(team = team, competition = competition)
 
         member_count = team.members().count()
-        members = team.members().all()
+        members = team.members()
             
         if member_count == 0:
             competition_result.result = None
