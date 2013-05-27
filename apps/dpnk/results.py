@@ -190,12 +190,12 @@ def recalculate_results_team(team):
 def recalculate_result(competition, competitor):
     if competition.competitor_type == 'team':
         team = competitor
-        competition_result, created = models.CompetitionResult.objects.get_or_create(team = team, competition = competition)
 
         if not (team.coordinator.get_competitions().filter(pk = competition.pk).count() > 0):
-            competition_result.result = None
-            competition_result.save()
+            models.CompetitionResult.objects.filter(team = team, competition = competition).delete()
             return
+
+        competition_result, created = models.CompetitionResult.objects.get_or_create(team = team, competition = competition)
 
         member_count = team.members().count()
         members = team.members()
@@ -216,12 +216,11 @@ def recalculate_result(competition, competitor):
     
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
         userprofile = competitor
-        competition_result, created = models.CompetitionResult.objects.get_or_create(userprofile = userprofile, competition = competition)
-
-        if not (userprofile.get_competitions().filter(pk = competition.pk).count() > 0 and competition_result.userprofile.user.is_active and competition_result.userprofile.approved_for_team == 'approved'):
-            competition_result.result = None
-            competition_result.save()
+        if not (userprofile.get_competitions().filter(pk = competition.pk).count() > 0 and userprofile.user.is_active and userprofile.approved_for_team == 'approved'):
+            models.CompetitionResult.objects.filter(userprofile = userprofile, competition = competition).delete()
             return
+
+        competition_result, created = models.CompetitionResult.objects.get_or_create(userprofile = userprofile, competition = competition)
 
         if competition.type == 'questionnaire':
             points = models.Choice.objects.filter(answer__user = userprofile, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
