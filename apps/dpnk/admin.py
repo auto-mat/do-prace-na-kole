@@ -313,7 +313,7 @@ class TripAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('userprofile', 'team', 'result', 'competition')
     list_filter = ('competition',)
-    search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'team__name', 'userprofile__team__name', 'competition__name')
+    search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'team__name', 'userprofile__team__name', 'competition__name')
 
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Payment, PaymentAdmin)
