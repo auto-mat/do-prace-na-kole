@@ -191,7 +191,7 @@ def recalculate_result(competition, competitor):
     if competition.competitor_type == 'team':
         team = competitor
 
-        if not (team.coordinator.get_competitions().filter(pk = competition.pk).count() > 0):
+        if team.coordinator and not (team.coordinator.get_competitions().filter(pk = competition.pk).count() > 0):
             models.CompetitionResult.objects.filter(team = team, competition = competition).delete()
             return
 
