@@ -291,6 +291,7 @@ class AnswerAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ( 'user', 'points_given', 'choices__all', 'question__competition', 'comment', 'question')
     search_fields = ('user__user__first_name','user__user__last_name')
     list_filter = ('question__competition',)
+    filter_horizontal = ('choices',)
 
     def choices__all(self, obj):
        return ",".join([ch.text for ch in obj.choices.all()])
