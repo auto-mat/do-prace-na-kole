@@ -76,7 +76,7 @@
 {% endif %}
 
 {% if competition.type == 'frequency' or competition.type == 'length' and competition.competitor_type == 'team' %}
-   <td>{{ result.get_total_result }}</td>
+   <td>{{ result.get_total_result|floatformat:-1 }}</td>
 {% endif %}
 
 {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}

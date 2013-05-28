@@ -888,7 +888,7 @@ class CompetitionResult(models.Model):
 
     def get_total_result(self):
         members = self.team.members().count() if self.team else 1
-        return int(self.result * members)
+        return float(self.result) * float(members)
 
     def __unicode__(self):
         if self.competition.competitor_type == 'team':
