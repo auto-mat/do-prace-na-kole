@@ -922,6 +922,7 @@ class Question(models.Model):
     class Meta:
         verbose_name = _(u"Anketní otázka")
         verbose_name_plural = _(u"Anketní otázky")
+        unique_together = (("competition", "order"),)
 
     QTYPES = (
         ('text', _(u"Text")),
@@ -969,6 +970,7 @@ class Choice(models.Model):
     class Meta:
         verbose_name = _(u"Nabídka k anketním otázce")
         verbose_name_plural = _(u"Nabídky k anketním otázkám")
+        unique_together = (("choice_type", "text"),)
 
     choice_type = models.ForeignKey(ChoiceType,
         verbose_name=_(u"Typ volby"),
@@ -977,7 +979,8 @@ class Choice(models.Model):
         blank=False)
     text = models.CharField(
         verbose_name=_(u"Nabídka"),
-        max_length=300,
+        max_length=250,
+        db_index = True,
         null=False)
     points = models.IntegerField(
         verbose_name=_(u"Body"),
@@ -995,6 +998,7 @@ class Answer(models.Model):
         verbose_name = _(u"Odpověď")
         verbose_name_plural = _(u"Odpovědi")
         ordering = ('user__team__subsidiary__city', 'pk')
+        unique_together = (("user", "question"),)
 
     user = models.ForeignKey(UserProfile, null=True, blank=True)
     question = models.ForeignKey(Question, null=False)
