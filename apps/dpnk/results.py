@@ -191,7 +191,7 @@ def recalculate_result(competition, competitor):
     if competition.competitor_type == 'team':
         team = competitor
 
-        if team.coordinator and not (team.coordinator.get_competitions().filter(pk = competition.pk).count() > 0):
+        if team.coordinator and not (get_competitions(team.coordinator).filter(pk = competition.pk).count() > 0):
             models.CompetitionResult.objects.filter(team = team, competition = competition).delete()
             return
 
@@ -216,7 +216,7 @@ def recalculate_result(competition, competitor):
     
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
         userprofile = competitor
-        if not (userprofile.get_competitions().filter(pk = competition.pk).count() > 0 and userprofile.user.is_active and userprofile.approved_for_team == 'approved'):
+        if not (get_competitions(userprofile).filter(pk = competition.pk).count() > 0 and userprofile.user.is_active and userprofile.approved_for_team == 'approved'):
             models.CompetitionResult.objects.filter(userprofile = userprofile, competition = competition).delete()
             return
 
