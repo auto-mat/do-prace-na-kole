@@ -80,7 +80,7 @@
 {% endif %}
 
 {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
-<td>{{ result.team.members.count|intcomma }}</td>
+<td>{{ result.team.member_count|intcomma }}</td>
 {% endif %}
 <td>
    {% if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos' %}

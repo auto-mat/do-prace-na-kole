@@ -895,7 +895,7 @@ class CompetitionResult(models.Model):
         )
 
     def get_total_result(self):
-        members = self.team.members().count() if self.team else 1
+        members = self.team.member_count if self.team else 1
         return float(self.result) * float(members)
 
     def __unicode__(self):
