@@ -653,7 +653,7 @@ def questionaire(request, questionaire_slug = None,
         logger.error('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
         return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
     questions = Question.objects.filter(competition=competition).order_by('order')
-    if request.method == 'POST':
+    if request.method == 'POST' and competition.can_admit(userprofile) == True:
         choice_ids = [(int(k.split('-')[1]), v) for k, v in request.POST.items() if k.startswith('choice')]
         comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
         fileupload_ids = [int(k.split('-')[1]) for k, v in request.FILES.items() if k.startswith('fileupload')]
@@ -706,6 +706,7 @@ def questionaire(request, questionaire_slug = None,
                 question.error = True
 
             question.comment_prefill = answer.comment
+            question.points_given = answer.points_given
             question.attachment_prefill = answer.attachment
             question.attachment_prefill_name = re.sub(r"^.*&", "", answer.attachment.name).replace("_", " ")
             question.choices_prefill = [c.id for c in answer.choices.all()]
@@ -723,6 +724,8 @@ def questionaire(request, questionaire_slug = None,
                                'questionaire': questionaire_slug,
                                'media': settings.MEDIA_URL,
                                'error': error,
+                               'is_actual': competition.is_actual(),
+                               'has_finished': competition.has_finished(),
                                }, context_instance=RequestContext(request))
 
 @staff_member_required

@@ -796,8 +796,14 @@ class Competition(models.Model):
     def get_results(self):
         return results.get_results(self)
 
+    def has_started(self):
+        return self.date_from <= util.today()
+
+    def has_finished(self):
+        return not self.date_to >= util.today()
+
     def is_actual(self):
-        return self.date_from <= util.today() and self.date_to >= util.today()
+        return self.has_started() and not self.has_finished()
 
     def recalculate_results(self):
         return results.recalculate_result_competition(self)
@@ -809,9 +815,11 @@ class Competition(models.Model):
             return 'not_team_coordinator'
         if not is_company_admin(userprofile.user) and self.competitor_type == 'company':
             return 'not_company_admin'
-        if self.type == 'questionnaire' and not self.is_actual():
-            return 'not_actual'
-        if self.type != 'questionnaire' and self.date_from <= util.today():
+        if self.type == 'questionnaire' and not self.has_started():
+            return 'before_beginning'
+        if self.type == 'questionnaire' and self.has_finished():
+            return 'after_end'
+        if self.type != 'questionnaire' and self.has_started():
             return 'after_beginning'
 
         if not userprofile.is_libero() == (self.competitor_type == 'liberos'):
