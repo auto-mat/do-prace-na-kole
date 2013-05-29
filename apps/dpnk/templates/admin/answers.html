@@ -1,10 +1,11 @@
 {% extends "admin/base_site.html" %}
 {% load url from future %}
+{% load dpnk_tags %}
 
 {% block content %}
 
 <p>
-<strong>Otázka:</strong> {{ question.text }}<br/>
+<strong>Otázka:</strong> <a href="{% wp_url 'admin' %}dpnk/question/{{ question.pk }}">{{ question.text }}</a><br/>
 <strong>Respondentů:</strong> {{ total_respondents }}
 </p>
 

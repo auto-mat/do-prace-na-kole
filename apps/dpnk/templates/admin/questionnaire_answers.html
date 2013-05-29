@@ -1,5 +1,6 @@
 {% extends "admin/base_site.html" %}
 {% load url from future %}
+{% load dpnk_tags %}
 
 {% block content %}
 
@@ -8,13 +9,25 @@ Soutěžící: {{ competitor }}<br/>
 
 <ul>
   {% for a in answers %}
-  <li><i>{{ a.question.text }}</i>
+  <li><i><a href="{% wp_url 'admin' %}odpovedi/?question={{ a.question.pk }}">{{ a.question.text }}</a></i>
     <ul>
       {% for c in a.choices.all %}
-      <li> {{ c.text }} <strong>( {{ c.points }} b )</strong></li>
+      <li> {{ c.text }} <strong>(
+         {% if c.points %}
+            {{ c.points }}
+         {% else %}
+            -
+         {% endif %}
+         b )</strong></li>
       {% endfor %}
     </ul>
-    <p> {% if a.comment %} {{ a.comment }} <strong>( {{ a.points }} b )</strong> {% endif %}</p>
+    <p> {% if a.comment %} {{ a.comment }} <strong>(
+         {% if a.points_given %}
+            {{ a.points_given }}
+         {% else %}
+            -
+         {% endif %}
+         b )</strong> {% endif %}</p>
     {% if a.question.with_attachment %}
       Příloha: <a href="{{ media }}/{{ a.attachment }}">{{ a.attachment }}</a>
     {% endif %}
