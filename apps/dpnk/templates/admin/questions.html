@@ -6,8 +6,19 @@
 
 <ul>
 {% for q in questions %}
+{% ifchanged q.competition %}
+   {% if not forloop.first %}
+      </ul>
+      </li>
+   {% endif %}
+   <li>
+   {{q.competition}}
+   <ul>
+{% endifchanged %}
 <li>{{q.date}}: <a href="{% wp_url 'odpovedi' %}?question={{ q.id }}">{{q.text}}</a></li>
 {% endfor %}
+</ul>
 </li>
+</ul>
 
 {% endblock %}
