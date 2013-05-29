@@ -20,7 +20,7 @@ def days_count():
     d = days()
     today = _today()
     for i, day in enumerate(days()):
-        if day > _today():
+        if day > today:
             break
     return i+1
 

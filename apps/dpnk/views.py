@@ -653,7 +653,7 @@ def questionaire(request, questionaire_slug = None,
         logger.error('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
         return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
     questions = Question.objects.filter(competition=competition).order_by('order')
-    if request.method == 'POST':
+    if request.method == 'POST' and competition.can_admit(userprofile) == True:
         choice_ids = [(int(k.split('-')[1]), v) for k, v in request.POST.items() if k.startswith('choice')]
         comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
         fileupload_ids = [int(k.split('-')[1]) for k, v in request.FILES.items() if k.startswith('fileupload')]
@@ -706,6 +706,7 @@ def questionaire(request, questionaire_slug = None,
                 question.error = True
 
             question.comment_prefill = answer.comment
+            question.points_given = answer.points_given
             question.attachment_prefill = answer.attachment
             question.attachment_prefill_name = re.sub(r"^.*&", "", answer.attachment.name).replace("_", " ")
             question.choices_prefill = [c.id for c in answer.choices.all()]
@@ -723,11 +724,13 @@ def questionaire(request, questionaire_slug = None,
                                'questionaire': questionaire_slug,
                                'media': settings.MEDIA_URL,
                                'error': error,
+                               'is_actual': competition.is_actual(),
+                               'has_finished': competition.has_finished(),
                                }, context_instance=RequestContext(request))
 
 @staff_member_required
 def questions(request):
-    questions = Question.objects.all().order_by('date')
+    questions = Question.objects.all().order_by('competition', 'date', 'order')
     return render_to_response('admin/questions.html',
                               {'questions': questions
                                }, context_instance=RequestContext(request))
@@ -743,6 +746,7 @@ def questionnaire_results(request,
                                'competitors': competitors,
                                }, context_instance=RequestContext(request))
 
+@staff_member_required
 def questionnaire_answers(request,
                 competition_slug = None,
                   ):
@@ -819,6 +823,7 @@ def answers(request):
                                'answers': answers,
                                'stat': stat,
                                'total_respondents': total_respondents,
+                               'media': settings.MEDIA_URL,
                                'choice_names': choice_names
                                }, context_instance=RequestContext(request))
 

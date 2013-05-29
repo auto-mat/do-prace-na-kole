@@ -299,13 +299,15 @@ class AnswerAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
        return obj.question.competition
 
 class QuestionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('text', 'type', 'order', 'date', 'competition', 'id', )
+    list_display = ('text', 'type', 'order', 'date', 'competition', 'answers_link', 'id', )
     ordering = ('order', 'date',)
     list_filter = ('competition',)
 
-    readonly_fields = ['choices']
+    readonly_fields = ['choices', 'answers_link', ]
     def choices(self, obj):
         return mark_safe("<br/>".join([choice.text for choice in obj.choice_type.choices.all()]) + '<br/><a href="' + wp_reverse('admin') + 'dpnk/choicetype/%d">edit</a>' % obj.choice_type.id )
+    def answers_link(self, obj):
+        return mark_safe('<a href="' + wp_reverse('admin') + 'odpovedi/?question=%d">vyhodnocení odpovědí</a>' % (obj.pk))
 
 class TripAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('user', 'date', 'trip_from', 'trip_to', 'distance_from', 'distance_to', 'id')
