@@ -27,12 +27,13 @@
 <form name="answer-points" method="POST">
 <table>
 {% for a in answers %}
- {% if a.comment %}
+ {% if a.comment or a.attachment%}
   <tr>
    <td>{{a.user}}</td>
    <td>{{a.city}}</td>
    <td>{{a.str_choices}}:</td>
    <td>{{a.comment}}</td>
+   <td><a href="{{ media }}/{{ a.attachment }}">{{ a.attachment }}</a></td>
    <td><input type="text" name="points-{{ a.id }}" value="{{a.points_given}}"/></td>
   </tr>
  {% endif %}

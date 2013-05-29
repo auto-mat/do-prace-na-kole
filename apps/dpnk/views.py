@@ -743,6 +743,7 @@ def questionnaire_results(request,
                                'competitors': competitors,
                                }, context_instance=RequestContext(request))
 
+@staff_member_required
 def questionnaire_answers(request,
                 competition_slug = None,
                   ):
@@ -819,6 +820,7 @@ def answers(request):
                                'answers': answers,
                                'stat': stat,
                                'total_respondents': total_respondents,
+                               'media': settings.MEDIA_URL,
                                'choice_names': choice_names
                                }, context_instance=RequestContext(request))
 
