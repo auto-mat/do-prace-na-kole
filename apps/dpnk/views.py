@@ -727,7 +727,7 @@ def questionaire(request, questionaire_slug = None,
 
 @staff_member_required
 def questions(request):
-    questions = Question.objects.all().order_by('date')
+    questions = Question.objects.all().order_by('competition', 'date', 'order')
     return render_to_response('admin/questions.html',
                               {'questions': questions
                                }, context_instance=RequestContext(request))
