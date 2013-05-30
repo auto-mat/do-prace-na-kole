@@ -832,6 +832,13 @@ class Competition(models.Model):
         return True
 
     def has_admission(self, userprofile):
+        if not userprofile.is_libero() == (self.competitor_type == 'liberos'):
+            return False
+        if self.company and self.company != userprofile.team.subsidiary.company:
+            return False
+        if self.city and self.city != userprofile.team.subsidiary.city:
+            return False
+
         if self.without_admission:
             return True
         else:
@@ -841,6 +848,7 @@ class Competition(models.Model):
                 return self.team_competitors.filter(pk=userprofile.team.pk).count() > 0
             elif self.competitor_type == 'company':
                 return self.company_competitors.filter(pk=userprofile.team.subsidiary.company.pk).count() > 0
+            return True
 
     def make_admission(self, userprofile, admission=True):
         if not self.without_admission and self.can_admit(userprofile) == True:
