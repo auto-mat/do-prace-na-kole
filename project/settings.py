@@ -68,6 +68,7 @@ TEMPLATE_DIRS = (
     normpath(PROJECT_ROOT, 'apps/dpnk/templates'),
 )
 INSTALLED_APPS = (
+    'django_su',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.messages',
