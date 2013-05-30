@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^chaining/', include('smart_selects.urls')),
     url(r'^dpnk/', include("dpnk.urls")),
+    url(r"^su/", include("django_su.urls")),
 )
 
 if settings.DEBUG:
