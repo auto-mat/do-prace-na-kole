@@ -17,12 +17,8 @@ def days():
     return days
 
 def days_count():
-    d = days()
     today = _today()
-    for i, day in enumerate(days()):
-        if day > today:
-            break
-    return i+1
+    return len([day for day in days() if day <= today])
 
 def _today():
     #return datetime.date(year=2013, month=5, day=15)
