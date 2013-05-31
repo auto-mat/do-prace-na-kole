@@ -311,7 +311,7 @@ class QuestionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 class TripAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('user', 'date', 'trip_from', 'trip_to', 'distance_from', 'distance_to', 'id')
-    search_fields = ('user__user__first_name', 'user__user__last_name')
+    search_fields = ('user__user__first_name', 'user__user__last_name', 'user__user__username')
 
 class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('userprofile', 'team', 'result', 'competition')
