@@ -398,8 +398,8 @@ def rides(request, template='registration/rides.html',
             day = int(request.POST["day"])
             date = days[day-1]
             if not trip_active(date, today):
-                logger.error(u'User %s is trying to fill in nonactive day, POST: %s' % (profile, request.POST))
-                return HttpResponse(_(u'<div class="text-error">Tento den již není možné vyplnit.</div>'), status=401)
+                logger.error(u'User %s is trying to fill in nonactive day %s (%s), POST: %s' % (profile, day, date, request.POST))
+                return HttpResponse(_(u'<div class="text-error">Den %s již není možné vyplnit.</div>' % date), status=401)
             trip, created = Trip.objects.get_or_create(user = request.user.get_profile(),
                 date = date)
 
@@ -533,6 +533,7 @@ def admissions(request, template,
 
 @cache_page(24 * 60 * 60) 
 def competition_results(request, template, competition_slug='testing_zavod', limit=None):
+    print "counting results", competition_slug
     if limit == '':
         limit = None
 
