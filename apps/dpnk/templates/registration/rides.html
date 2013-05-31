@@ -35,9 +35,9 @@
 {% endif %}
 </td>
 <td><button type="button" class="submit" onclick='$("#day").val("{{ forloop.counter }}")' {% if day.trips_active %}{% else %} disabled="disabled"{% endif %}>OK</button></td>
-<td><div {% if day.percentage > 66 %} class="text-success" {% else %} class="text-error" {% endif %}>{% if day.trips_active %}{{ day.percentage|floatformat:1 }}&nbsp;%{% endif %}</div></td>
+<td><div {% if day.percentage > 66 %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>
 {% if has_distance_competition %}
-<td>{% if day.trips_active %}{{ day.distance }}&nbsp;km{% endif %}</td>
+<td>{{ day.distance }}&nbsp;km</td>
 {% endif %}
 </tr>
 {% endfor %}
