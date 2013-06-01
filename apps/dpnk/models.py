@@ -676,8 +676,8 @@ class Trip(models.Model):
     user = models.ForeignKey(
         UserProfile, 
         related_name="user_trips",
-        null=True,
-        blank=True)
+        null=False,
+        blank=False)
     date = models.DateField(
         verbose_name=_(u"Datum cesty"),
         default=datetime.datetime.now,
@@ -1107,7 +1107,8 @@ def update_mailing_payment(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Trip)
 def trip_post_save(sender, instance, **kwargs):
-    results.recalculate_result_competitor(instance.user)
+    if instance.user:
+        results.recalculate_result_competitor(instance.user)
 
 @receiver(post_save, sender=Competition)
 def competition_post_save(sender, instance, **kwargs):
