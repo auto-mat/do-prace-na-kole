@@ -142,9 +142,21 @@ def get_userprofile_frequency(userprofile):
     return trips_from + trips_to
 
 def get_userprofile_length(userprofile):
-    distance_from = models.Trip.objects.filter(user=userprofile).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
-    distance_to   = models.Trip.objects.filter(user=userprofile).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
-    return distance_from + distance_to
+    # distance_from = models.Trip.objects.filter(user=userprofile).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
+    # distance_to   = models.Trip.objects.filter(user=userprofile).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
+    distance = 0
+    for trip in models.Trip.objects.filter(user=userprofile):
+        #TODO: get the plus distance from somewhere
+        if userprofile.distance + 5 >= trip.distance_from:
+            distance += trip.distance_from or 0
+        else:
+            distance += userprofile.distance + 5
+
+        if userprofile.distance + 5 >= trip.distance_to:
+            distance += trip.distance_to or 0
+        else:
+            distance += userprofile.distance + 5
+    return distance
 
 def get_team_frequency(team):
     member_count = team.members().count()
@@ -163,9 +175,12 @@ def get_team_length(team):
     if member_count == 0:
         return None
     members = team.members().all()
-    distance_from = models.Trip.objects.filter(user__in = members).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
-    distance_to   = models.Trip.objects.filter(user__in = members).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
-    return float(distance_from + distance_to) / float(member_count)
+    # distance_from = models.Trip.objects.filter(user__in = members).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
+    # distance_to   = models.Trip.objects.filter(user__in = members).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
+    distance = 0
+    for member in members:
+        distance += get_userprofile_length(member)
+    return float(distance) / float(member_count)
 
 def recalculate_result_competition(competition):
     models.CompetitionResult.objects.filter(competition = competition).delete()
