@@ -68,7 +68,7 @@ def get_competitors(self):
     return query
 
 def get_results(self):
-    competitors = self.results.order_by('-result')
+    competitors = self.results.order_by('-result', '-team__member_count')
     return competitors
 
 def get_competitions(userprofile):
