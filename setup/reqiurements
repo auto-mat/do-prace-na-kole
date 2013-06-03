@@ -16,3 +16,4 @@ django-debug-toolbar
 django-extensions
 django-chart-tools
 -e git+git://github.com/continuous/django-su.git#egg=django-su
+MySQL-python
