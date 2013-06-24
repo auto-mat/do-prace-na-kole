@@ -288,14 +288,16 @@ class ChoiceTypeAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_filter = ('competition', )
 
 class AnswerAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ( 'user', 'points_given', 'choices__all', 'question__competition', 'comment', 'question')
+    list_display = ( 'user', 'points_given', 'choices__all', 'choices_ids__all', 'question__competition', 'comment', 'question')
     search_fields = ('user__user__first_name','user__user__last_name')
     list_filter = ('question__competition',)
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
 
     def choices__all(self, obj):
-       return ",".join([ch.text for ch in obj.choices.all()])
+       return " | ".join([ch.text for ch in obj.choices.all()])
+    def choices_ids__all(self, obj):
+       return ", ".join([(str(ch.pk)) for ch in obj.choices.all()])
     def question__competition(self, obj):
        return obj.question.competition
 
