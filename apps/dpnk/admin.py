@@ -292,6 +292,7 @@ class AnswerAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     search_fields = ('user__user__first_name','user__user__last_name')
     list_filter = ('question__competition',)
     filter_horizontal = ('choices',)
+    list_max_show_all = 100000
 
     def choices__all(self, obj):
        return ",".join([ch.text for ch in obj.choices.all()])
