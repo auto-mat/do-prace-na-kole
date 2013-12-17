@@ -30,6 +30,7 @@ from django.http import HttpResponseRedirect
 from admin_enhancer.admin import EnhancedModelAdminMixin, EnhancedAdminMixin
 from dpnk.wp_urls import wp_reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
+from import_export.admin import ImportExportModelAdmin
 # Models
 from models import *
 import dpnk
@@ -186,7 +187,7 @@ class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
 class CompanyAdminInline(EnhancedAdminMixin, NestedStackedInline):
     model = dpnk.models.CompanyAdmin
 
-class UserAdmin(EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
+class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'userprofile__payment_type', 'userprofile__payment_status', 'date_joined', 'userprofile__team__name', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'userprofile__team__subsidiary__company',   'company_admin__administrated_company', 'trips_count', 'userprofile__telephone', 'is_staff', 'is_superuser', 'is_active', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__subsidiary__company__name','company_admin__administrated_company__name',]
