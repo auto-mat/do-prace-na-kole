@@ -30,6 +30,7 @@ from django.http import HttpResponseRedirect
 from admin_enhancer.admin import EnhancedModelAdminMixin, EnhancedAdminMixin
 from dpnk.wp_urls import wp_reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
+from import_export.admin import ImportExportModelAdmin
 # Models
 from models import *
 import dpnk
@@ -249,7 +250,7 @@ class CoordinatorFilter(SimpleListFilter):
         if self.value() == 'foreign_coordinator':
             return queryset.exclude(coordinator__team__id = F("id"))
 
-class TeamAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator', 'member_count', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator__user__first_name', 'coordinator__user__last_name']
     list_filter = ['subsidiary__city', 'member_count', CoordinatorFilter]
@@ -312,7 +313,7 @@ class QuestionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     def answers_link(self, obj):
         return mark_safe('<a href="' + wp_reverse('admin') + 'odpovedi/?question=%d">vyhodnocení odpovědí</a>' % (obj.pk))
 
-class TripAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+class TripAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('user', 'date', 'trip_from', 'trip_to', 'distance_from', 'distance_to', 'id')
     search_fields = ('user__user__first_name', 'user__user__last_name', 'user__user__username')
 
