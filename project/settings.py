@@ -27,6 +27,8 @@ DATABASES = {
                 'OPTIONS': { 'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci' }
         },
 }
+
+CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 CACHES = {
     'default': {
        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
