@@ -205,6 +205,17 @@ class Team(models.Model):
         #blank=False,
         unique=True,
         )
+    coordinator_campaign = models.OneToOneField(
+        'UserAttendance',
+        related_name = "coordinated_team",
+        verbose_name = _(u"Koordinátor/ka týmu"),
+        null=True,
+        blank=True,
+        #TODO:
+        #null=False,
+        #blank=False,
+        unique=True,
+        )
     invitation_token = models.CharField(
         verbose_name=_(u"Token pro pozvánky"),
         default="",
@@ -226,10 +237,10 @@ class Team(models.Model):
     def autoset_member_count(self):
         self.member_count = self.members().count()
     def all_members(self):
-        return UserProfile.objects.filter(team=self, user__is_active=True)
+        return UserAttendance.objects.filter(team=self, userprofile__user__is_active=True)
 
     def members(self):
-        return UserProfile.objects.filter(approved_for_team='approved', team=self, user__is_active=True)
+        return UserAttendance.objects.filter(approved_for_team='approved', team=self, userprofile__user__is_active=True)
 
     def get_frequency(self):
         return results.get_team_frequency(self)
@@ -253,12 +264,216 @@ class Team(models.Model):
 
         super(Team, self).save(force_insert, force_update)
 
+
+class Campaign(models.Model):
+    """kampaň"""
+
+    class Meta:
+        verbose_name = _(u"kampaň")
+        verbose_name_plural = _(u"kampaně")
+
+    name = models.CharField(
+        unique=True,
+        verbose_name=_(u"Jméno kampaně"),
+        max_length=60, 
+        null=False)
+
+    def __unicode__(self):
+        return self.name
+
+class Phase(models.Model):
+    """fáze kampaně"""
+
+    class Meta:
+        verbose_name = _(u"fáze kampaně")
+        verbose_name_plural = _(u"fáze kampaně")
+
+    TYPE = [('registration', _(u"Registrační")),
+            ('competition', _(u"Soutěžní")),
+            ('results', _(u"Výsledková")),
+            ]
+
+    campaign = models.ForeignKey(
+       Campaign, 
+       verbose_name = _(u"Kampaň"),
+       null=False,
+       blank=False)
+    type = models.CharField(
+        verbose_name=_(u"Typ fáze"),
+        choices=TYPE,
+        max_length=16,
+        unique=True,
+        null=False,
+        default='registration')
+    date_from = models.DateField(
+        verbose_name=_(u"Datum začátku fáze"),
+        default=None,
+        null=True, blank=True)
+    date_to = models.DateField(
+        verbose_name=_(u"Datum konce fáze"),
+        default=None,
+        null=True, blank=True)
+    
+
+class UserAttendance(models.Model):
+    """Účast uživatele v kampani"""
+
+    class Meta:
+        verbose_name = _(u"Účast v kampani")
+        verbose_name_plural = _(u"Účasti v kampani")
+
+    TSHIRTSIZE = [
+              ('wXXS', _(u"dámské XXS")),
+              ('wXS', _(u"dámské XS")),
+              ('wS', _(u"dámské S")),
+              ('wM', _(u"dámské M")),
+              ('wL', _(u"dámské L")),
+              ('wXL', _(u"dámské XL")),
+              ('wXXL', _(u"dámské XXL")),
+
+              ('mS', _(u"pánské S")),
+              ('mM', _(u"pánské M")),
+              ('mL', _(u"pánské L")),
+              ('mXL', _(u"pánské XL")),
+              ('mXXL', _(u"pánské XXL")),
+              ]
+
+    TSHIRTSIZE_USER = [
+              ('wXS', _(u"dámské XS")),
+              ('wS', _(u"dámské S")),
+              ('wM', _(u"dámské M")),
+              ('wL', _(u"dámské L")),
+              ('wXL', _(u"dámské XL")),
+
+              ('mS', _(u"pánské S")),
+              ('mM', _(u"pánské M")),
+              ('mL', _(u"pánské L")),
+              ('mXL', _(u"pánské XL")),
+              ('mXXL', _(u"pánské XXL")),
+              ]
+
+    TEAMAPPROVAL = (('approved', _(u"Odsouhlasený")),
+              ('undecided', _(u"Nerozhodnuto")),
+              ('denied', _(u"Zamítnutý")),
+              )
+
+    campaign = models.ForeignKey(
+       Campaign, 
+       verbose_name = _(u"Kampaň"),
+       null=False,
+       blank=False)
+    userprofile = models.ForeignKey(
+       "UserProfile", 
+       verbose_name = _(u"Uživatelský profil"),
+       unique = True,
+       null=False,
+       blank=False)
+    distance = models.PositiveIntegerField(
+        verbose_name=_(u"Vzdálenost"),
+        help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
+        default=0,
+        null=False)
+    team = models.ForeignKey(
+        Team,
+        related_name='users',
+        verbose_name=_(u"Tým"),
+        null=False, blank=False)
+    approved_for_team = models.CharField(
+        verbose_name=_(u"Souhlas týmu"),
+        choices=TEAMAPPROVAL,
+        max_length=16,
+        null=False,
+        default='undecided')
+    t_shirt_size = models.CharField(
+        verbose_name=_(u"Velikost trička"),
+        choices=TSHIRTSIZE,
+        max_length=16,
+        null=False,
+        default='mL')
+
+    def first_name(self):
+        return self.userprofile.user.first_name
+
+    def last_name(self):
+        return self.userprofile.user.last_name
+
+    def __unicode__(self):
+        return self.userprofile.user.get_full_name()
+
+    def payment(self):
+        if self.team and self.team.subsidiary and self.team.subsidiary.city.admission_fee == 0:
+            return {'payment': None,
+                    'status': 'no_admission',
+                    'status_description': _(u'neplatí se'),
+                    'class': _(u'success'),
+                   }
+
+        payments = self.payments.filter(status__in = Payment.done_statuses)
+        if payments.exists():
+            return {'payment': payments.latest('id'),
+                    'status': 'done',
+                    'status_description': _(u'zaplaceno'),
+                    'class': _(u'success'),
+                   }
+
+        payments = self.payments.filter(status__in = Payment.waiting_statuses)
+        if payments.exists():
+            return {'payment': payments.latest('id'),
+                    'status': 'waiting',
+                    'status_description': _(u'nepotvrzeno'),
+                    'class': _(u'warning'),
+                   }
+
+        payments = self.payments
+        if payments.exists():
+            return {'payment': payments.latest('id'),
+                    'status': 'unknown',
+                    'status_description': _(u'neznámý'),
+                    'class': _(u'warning'),
+                   }
+
+        return {'payment': None,
+                'status': 'none',
+                'status_description': _(u'žádné platby'),
+                'class': _(u'error'),
+               }
+
+    def payment_status(self):
+        return self.payment()['status']
+
+    def payment_type(self):
+        payment = self.payment()['payment']
+        if payment:
+            return payment.pay_type
+        else:
+            return None
+
+    def get_competitions(self):
+        return results.get_competitions_with_info(self)
+
+    def has_distance_competition(self):
+        return results.has_distance_competition(self)
+
+    def get_frequency(self):
+        return results.get_userprofile_frequency(self)
+
+    def get_rough_length(self):
+        return results.get_userprofile_frequency(self) * self.distance
+
+    def get_length(self):
+        return results.get_userprofile_length(self)
+
+    def is_libero(self):
+        return self.team.members().count() <= 1
+
+
 class UserProfile(models.Model):
     """Uživatelský profil"""
 
     class Meta:
         verbose_name = _(u"Uživatel")
         verbose_name_plural = _(u"Uživatelé")
+        ordering = [ "user__last_name", "user__first_name" ]
 
     TSHIRTSIZE = [
               ('wXXS', _(u"dámské XXS")),
@@ -310,6 +525,7 @@ class UserProfile(models.Model):
     distance = models.PositiveIntegerField(
         verbose_name=_(u"Vzdálenost"),
         help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
+        default=0,
         null=False)
     # -- Contacts
     telephone = models.CharField(
@@ -317,7 +533,7 @@ class UserProfile(models.Model):
         max_length=30, null=False)
     team = models.ForeignKey(
         Team,
-        related_name='users',
+        #related_name='users',
         verbose_name=_(u"Tým"),
         null=False, blank=False)
     approved_for_team = models.CharField(
@@ -586,6 +802,11 @@ class Payment(models.Model):
         null=True, 
         blank=True, 
         default=None)
+    user_attendance = models.ForeignKey(UserAttendance, 
+        related_name="payments",
+        null=True, 
+        blank=True, 
+        default=None)
     order_id = models.CharField(
         verbose_name="Order ID",
         max_length=50,
@@ -678,6 +899,12 @@ class Trip(models.Model):
         related_name="user_trips",
         null=False,
         blank=False)
+    user_attendance = models.ForeignKey(
+        UserAttendance, 
+        related_name="user_trips",
+        null=True,
+        blank=True,
+        default=None)
     date = models.DateField(
         verbose_name=_(u"Datum cesty"),
         default=datetime.datetime.now,
@@ -724,6 +951,11 @@ class Competition(models.Model):
         unique=True,
         verbose_name=_(u"Jméno soutěže"),
         max_length=40, null=False)
+    campaign = models.ForeignKey(
+       Campaign, 
+       verbose_name = _(u"Kampaň"),
+       null=False,
+       blank=False)
     slug = models.SlugField(
         unique=True,
         default="",
@@ -739,12 +971,12 @@ class Competition(models.Model):
     date_from = models.DateField(
         verbose_name=_(u"Datum začátku soutěže"),
         help_text=_(u"Po tomto datu nebude možné se do soutěže přihlásit"),
-        default=datetime.date(2013, 5, 1),
+        default=None,
         null=False, blank=False)
     date_to = models.DateField(
         verbose_name=_(u"Datum konce soutěže"),
         help_text=_(u"Po tomto datu nebude možné soutěžit (vyplňovat dotazník)"),
-        default=datetime.date(2013, 5, 31),
+        default=None,
         null=False, blank=False)
     type = models.CharField(
         verbose_name=_(u"Typ"),
@@ -758,6 +990,11 @@ class Competition(models.Model):
         null=False)
     user_competitors = models.ManyToManyField(
         UserProfile,
+        related_name = "competitions",
+        null=True, 
+        blank=True)
+    user_attendance_competitors = models.ManyToManyField(
+        UserAttendance,
         related_name = "competitions",
         null=True, 
         blank=True)
@@ -880,6 +1117,12 @@ class CompetitionResult(models.Model):
 
     userprofile = models.ForeignKey(UserProfile,
         related_name="competitions_results",
+        null=True,
+        blank=True,
+        default=None,
+        )
+    user_attendance = models.ForeignKey(UserAttendance,
+        #related_name="competitions_results",
         null=True,
         blank=True,
         default=None,
@@ -1017,6 +1260,7 @@ class Answer(models.Model):
         unique_together = (("user", "question"),)
 
     user = models.ForeignKey(UserProfile, null=True, blank=True)
+    user_attendance = models.ForeignKey(UserAttendance, null=True, blank=True)
     question = models.ForeignKey(Question, null=False)
     choices = models.ManyToManyField(Choice)
     comment = models.TextField(

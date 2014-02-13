@@ -164,10 +164,45 @@ class PaymentFilter(SimpleListFilter):
         elif self.value() == 'none':
             return queryset.filter(userprofile__payments = None)
 
+
+class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
+    model = UserAttendance
+    extra = 3
+    inlines= [PaymentInline,]
+    list_display = ('userprofile__payment_type', 'userprofile__payment_status', 'userprofile__team__name', 'userprofile__distance', 'team__subsidiary__city', 'userprofile__team__subsidiary__company', 'trips_count', 'id')
+    search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__name', 'userprofile__team__subsidiary__company__name','company_admin__administrated_company__name',]
+    list_filter = ['team__subsidiary__city', 'team__subsidiary__city', PaymentFilter]
+    list_max_show_all = 10000
+
+    def queryset(self, request):
+        return UserAttendance.objects.annotate(trips_count = Count('user_trips'))
+
+    def trips_count(self, obj):
+        return obj.trips_count
+    trips_count.admin_order_field = 'trips_count'
+
+    def userprofile__payment_type(self, obj):
+       pay_type = "(None)"
+       payment = obj.payment()['payment']
+       if payment:
+          pay_type = payment.pay_type
+       return pay_type
+    def userprofile__payment_status(self, obj):
+       return obj.payment()['status_description']
+    def userprofile__team__name(self, obj):
+       return obj.team.name
+    def userprofile__distance(self, obj):
+       return obj.distance
+    def team__subsidiary__city(self, obj):
+        return obj.team.subsidiary.city
+    def userprofile__team__subsidiary__company(self, obj):
+        return obj.team.subsidiary.company
+
+
 class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
     model = UserProfile
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
-    inlines = [PaymentInline, ]
+    inlines = [PaymentInline, UserAttendanceInline,]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
     list_filter = ['user__is_active', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentFilter]
 
@@ -322,6 +357,16 @@ class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_filter = ('competition',)
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'team__name', 'userprofile__team__name', 'competition__name')
 
+
+class PhaseInline(EnhancedModelAdminMixin, admin.TabularInline):
+    model = Phase
+
+
+class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+    list_display = ('name',)
+    inlines = [PhaseInline, ]
+
+
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Question, QuestionAdmin)
@@ -333,6 +378,7 @@ admin.site.register(Competition, CompetitionAdmin)
 admin.site.register(CompetitionResult, CompetitionResultAdmin)
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(Trip, TripAdmin)
+admin.site.register(Campaign, CampaignAdmin)
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
