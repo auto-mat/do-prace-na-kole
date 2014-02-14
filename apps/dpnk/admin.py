@@ -35,15 +35,23 @@ from import_export.admin import ImportExportModelAdmin
 from models import *
 import dpnk
 from django.forms import ModelForm
+
 # -- ADMIN FORMS --
+class TeamForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(TeamForm, self).__init__(*args, **kwargs)
+        self.fields['coordinator'].queryset = UserProfile.objects.filter(team=self.instance)
+        self.fields['coordinator_campaign'].queryset = UserProfile.objects.filter(team=self.instance)
+
 
 class PaymentInline(EnhancedAdminMixin, NestedTabularInline):
     model = Payment
     extra = 0
-    readonly_fields = [ 'order_id', 'session_id', 'trans_id', 'error', ]
+    readonly_fields = [ 'user', 'user_attendance', 'order_id', 'session_id', 'trans_id', 'error', ]
 
 class TeamInline(EnhancedAdminMixin, admin.TabularInline):
     model = Team
+    form = TeamForm
     extra = 0
     readonly_fields = ['invitation_token',]
 
@@ -53,6 +61,7 @@ class SubsidiaryInline(EnhancedAdminMixin, admin.TabularInline):
 
 class CityAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'admission_fee', 'id', )
+    filter_horizontal = ('city_admins',)
 
 class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'subsidiaries_text', 'ico', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'company_admin__user__email', 'invoice_count', 'id', )
@@ -106,7 +115,7 @@ recalculate_competitions_results.short_description = "Přepočítat výsledku vy
 
 class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'city', 'company', 'competition_results_link', 'questionnaire_results_link', 'draw_link', 'id')
-    filter_horizontal = ('user_competitors', 'team_competitors', 'company_competitors')
+    filter_horizontal = ('user_competitors', 'user_attendance_competitors', 'team_competitors', 'company_competitors')
     actions = [recalculate_competitions_results]
 
     readonly_fields = ['competition_results_link', 'questionnaire_results_link', 'draw_link']
@@ -173,6 +182,7 @@ class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__name', 'userprofile__team__subsidiary__company__name','company_admin__administrated_company__name',]
     list_filter = ['team__subsidiary__city', 'team__subsidiary__city', PaymentFilter]
     list_max_show_all = 10000
+    raw_id_fields = ('team',)
 
     def queryset(self, request):
         return UserAttendance.objects.annotate(trips_count = Count('user_trips'))
@@ -205,6 +215,7 @@ class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
     inlines = [PaymentInline, UserAttendanceInline,]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
     list_filter = ['user__is_active', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentFilter]
+    raw_id_fields = ('team',)
 
     #readonly_fields = ['mailing_id' ]
 
@@ -220,6 +231,7 @@ class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
        return obj.team.subsidiary.city
 
 class CompanyAdminInline(EnhancedAdminMixin, NestedStackedInline):
+    raw_id_fields = ('administrated_company',)
     model = dpnk.models.CompanyAdmin
 
 class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
@@ -257,11 +269,6 @@ class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmi
         return obj.userprofile.team.subsidiary.company
     def company_admin__administrated_company(self, obj):
         return obj.company_admin.administrated_company
-
-class TeamForm(ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(TeamForm, self).__init__(*args, **kwargs)
-        self.fields['coordinator'].queryset = UserProfile.objects.filter(team=self.instance)
 
 class CoordinatorFilter(SimpleListFilter):
     title = u"stav týmu"
@@ -306,6 +313,7 @@ class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmi
 class PaymentAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('id', 'trans_id', 'session_id', 'user', 'amount', 'pay_type', 'created', 'status', )
     search_fields = ('trans_id', 'session_id', 'user__user__first_name', 'user__user__last_name' )
+    raw_id_fields = ('user', 'user_attendance', )
 
     list_filter = ['status', 'pay_type']
 
@@ -329,6 +337,7 @@ class AnswerAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_filter = ('question__competition',)
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
+    raw_id_fields = ('user', 'user_attendance', )
 
     def choices__all(self, obj):
        return " | ".join([ch.text for ch in obj.choices.all()])
@@ -356,6 +365,7 @@ class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('userprofile', 'team', 'result', 'competition')
     list_filter = ('competition',)
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'team__name', 'userprofile__team__name', 'competition__name')
+    raw_id_fields = ('userprofile', 'user_attendance', 'team')
 
 
 class PhaseInline(EnhancedModelAdminMixin, admin.TabularInline):
