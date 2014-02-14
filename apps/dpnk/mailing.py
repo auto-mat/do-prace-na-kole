@@ -36,6 +36,9 @@ class Mailing:
 mailing = Mailing(api_key=settings.MAILING_API_KEY, list_id=settings.MAILING_LIST_ID)
 
 def get_custom_fields(user):
+    if not settings.MAILING_ENABLED:
+        return
+    
     if models.is_competitor(user):
         userprofile = user.get_profile()
         city = userprofile.team.subsidiary.city.name
@@ -59,6 +62,9 @@ def get_custom_fields(user):
     return custom_fields
 
 def update_mailing_id(user,mailing_id):
+    if not settings.MAILING_ENABLED:
+        return
+    
     if mailing_id:
         if models.is_competitor(user):
             user.userprofile.mailing_id = mailing_id
@@ -68,6 +74,9 @@ def update_mailing_id(user,mailing_id):
             user.company_admin.save()
 
 def add_user(user):
+    if not settings.MAILING_ENABLED:
+        return
+    
     custom_fields = get_custom_fields(user)
 
     # Register into mailing list
@@ -80,6 +89,9 @@ def add_user(user):
         update_mailing_id(user, mailing_id)
 
 def update_user(user):
+    if not settings.MAILING_ENABLED:
+        return
+    
     userprofile = user.get_profile()
     custom_fields = get_custom_fields(user)
     mailing_id = userprofile.mailing_id
@@ -94,6 +106,9 @@ def update_user(user):
         update_mailing_id(user, mailing_id)
 
 def delete_user(user):
+    if not settings.MAILING_ENABLED:
+        return
+    
     mailing_id = None
     if models.is_competitor(user):
         mailing_id = user.get_profile().mailing_id
@@ -114,6 +129,9 @@ def delete_user(user):
         update_mailing_id(user, mailing_id)
 
 def add_or_update_user(user):
+    if not settings.MAILING_ENABLED:
+        return
+
     if not user.is_active:
         delete_user(user)
     else:
