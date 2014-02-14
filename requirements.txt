@@ -1,3 +1,20 @@
-
+Django<1.6
 MySQL-python
 django-import-export
+django-smart-selects
+psycopg2
+python-memcached
+django-remote
+django-chart-tools
+django-extensions
+django-debug-toolbar==0.9.4
+django-softhyphen
+django-admin-enhancer
+django-bootstrap-form
+South
+django-composite-field
+django-registration==0.8
+-e git+git://github.com/Soaa-/django-nested-inlines.git#egg=django-nested-inlines
+-e git+git://github.com/continuous/django-su.git#egg=django-su
+unidecode
+createsend
