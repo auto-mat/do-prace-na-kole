@@ -137,8 +137,8 @@ def get_competitions_with_info(userprofile):
     return competitions
 
 def get_userprofile_frequency(userprofile):
-    trips_from = models.Trip.objects.filter(user=userprofile).aggregate(Sum('trip_from'))['trip_from__sum'] or 0
-    trips_to   = models.Trip.objects.filter(user=userprofile).aggregate(Sum('trip_to'))['trip_to__sum'] or 0
+    trips_from = models.Trip.objects.filter(user=userprofile, trip_from=True).count()
+    trips_to   = models.Trip.objects.filter(user=userprofile, trip_to=True).count()
     return trips_from + trips_to
 
 def get_userprofile_length(userprofile):
@@ -164,8 +164,8 @@ def get_team_frequency(team):
         
     if member_count == 0:
         return None
-    trips_from = models.Trip.objects.filter(user__in = members).aggregate(Sum('trip_from'))['trip_from__sum'] or 0
-    trips_to   = models.Trip.objects.filter(user__in = members).aggregate(Sum('trip_to'))['trip_to__sum'] or 0
+    trips_from = models.Trip.objects.filter(user__in=members, trip_from=True).count()
+    trips_to   = models.Trip.objects.filter(user__in=members, trip_to=True).count()
     return float(trips_from + trips_to) / float(member_count)
 
 def get_team_length(team):
