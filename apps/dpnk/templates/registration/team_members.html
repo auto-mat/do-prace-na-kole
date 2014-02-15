@@ -16,7 +16,7 @@
    {% for member in team_members %}
       <tr>
       <td>{{ member|softhyphen:"cs-CZ" }}</td>
-      <td><div style="word-break: break-all;">{{ member.user.email }}</div></td>
+      <td><div style="word-break: break-all;">{{ member.userprofile.user.email }}</div></td>
       <td>{{ member.get_approved_for_team_display|softhyphen:"cs-CZ" }}</td>
       <td><span class="text-{{ member.payment.class }}">{{ member.payment.status_description|softhyphen:"cs-CZ" }}</span></td>
       <td>{{ member.get_frequency|floatformat:-1|intcomma }}&nbsp;jízd<br/>

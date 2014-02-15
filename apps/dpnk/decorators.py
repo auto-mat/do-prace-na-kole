@@ -36,11 +36,12 @@ def must_be_coordinator(fn):
     @must_be_competitor
     @login_required
     def wrapper(*args, **kwargs):
-        request = args[0]
-        team = request.user.userprofile.team
+        sdfeequest = args[0]
         userprofile = request.user.userprofile
+        user_attendance = userprofile.userattendance_set.get(campaign__slug=kwargs['campaign_slug'])
+        team = user_attendance.team
         if not models.is_team_coordinator(request.user):
-            return HttpResponse(_(u"<div class='text-error'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name, 'coordinator': team.coordinator, 'you': request.user.userprofile}, status=401)
+            return HttpResponse(_(u"<div class='text-error'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name, 'coordinator': team.coordinator, 'you': user_attendance}, status=401)
         else:
             return fn(*args, **kwargs)
     return wrapper
@@ -51,10 +52,11 @@ def must_be_approved_for_team(fn):
     def wrapper(*args, **kwargs):
         request = args[0]
         userprofile = request.user.userprofile
-        if userprofile.approved_for_team == 'approved' or models.is_team_coordinator(request.user):
+        user_attendance = userprofile.userattendance_set.get(campaign__slug=kwargs['campaign_slug'])
+        if user_attendance.approved_for_team == 'approved' or models.is_team_coordinator(request.user):
             return fn(*args, **kwargs)
         else:
-            return HttpResponse(_(u"<div class='text-error'>Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.</div>") % (userprofile.team.name,), status=401)
+            return HttpResponse(_(u"<div class='text-error'>Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.</div>") % (user_attendance.team.name,), status=401)
     return wrapper
 
 def must_be_company_admin(fn):

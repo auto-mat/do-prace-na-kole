@@ -225,8 +225,8 @@ class Team(models.Model):
 
     def autoset_member_count(self):
         self.member_count = self.members().count()
-    def all_members(self):
-        return UserAttendance.objects.filter(team=self, userprofile__user__is_active=True)
+    def all_members(self, campaign):
+        return UserAttendance.objects.filter(campaign=campaign, team=self, userprofile__user__is_active=True)
 
     def members(self):
         return UserAttendance.objects.filter(approved_for_team='approved', team=self, userprofile__user__is_active=True)
@@ -241,8 +241,8 @@ class Team(models.Model):
         return "%s / %s" % (self.name, self.subsidiary.company)
 
     def save(self, force_insert=False, force_update=False):
-        if self.coordinator_id is not None and self.coordinator is not None and self.coordinator.team.id != self.id:
-            raise Exception(_(u"Nový koordinátor %(coordinator)s není členem týmu %(team)s") % {'coordinator': self.coordinator, 'team': self})
+        if self.coordinator_campaign_id is not None and self.coordinator_campaign is not None and self.coordinator_campaign.team.id != self.id:
+            raise Exception(_(u"Nový koordinátor %(coordinator)s není členem týmu %(team)s") % {'coordinator': self.coordinator_campaign, 'team': self})
 
         if self.invitation_token == "":
             while True:
@@ -555,13 +555,13 @@ class UserProfile(models.Model):
 def set_team_coordinator_pre(sender, instance, **kwargs):
     if hasattr(instance, "coordinated_team") and instance.coordinated_team != instance.team:
         coordinated_team = instance.coordinated_team
-        coordinated_team.coordinator = None
+        coordinated_team.coordinator_campaign = None
         coordinated_team.save()
 
 @receiver(post_save, sender=UserAttendance)
 def set_team_coordinator_post(sender, instance, created, **kwargs):
-    if instance.team and instance.team.coordinator == None:
-        instance.team.coordinator = instance
+    if instance.team and instance.team.coordinator_campaign == None:
+        instance.team.coordinator_campaign = instance
         instance.team.save()
 
 class CompanyAdmin(models.Model):
@@ -936,12 +936,12 @@ class Competition(models.Model):
     def recalculate_results(self):
         return results.recalculate_result_competition(self)
 
-    def can_admit(self, userprofile):
+    def can_admit(self, user_attendance):
         if self.without_admission:
             return 'without_admission'
-        if not is_team_coordinator(userprofile.user) and self.competitor_type == 'team':
+        if not is_team_coordinator(user_attendance) and self.competitor_type == 'team':
             return 'not_team_coordinator'
-        if not is_company_admin(userprofile.user) and self.competitor_type == 'company':
+        if not is_company_admin(user_attendance.userprofile.user) and self.competitor_type == 'company':
             return 'not_company_admin'
         if self.type == 'questionnaire' and not self.has_started():
             return 'before_beginning'
@@ -950,11 +950,11 @@ class Competition(models.Model):
         if self.type != 'questionnaire' and self.has_started():
             return 'after_beginning'
 
-        if not userprofile.is_libero() == (self.competitor_type == 'liberos'):
+        if not user_attendance.is_libero() == (self.competitor_type == 'liberos'):
             return 'not_libero'
-        if self.company and self.company != userprofile.team.subsidiary.company:
+        if self.company and self.company != user_attendance.team.subsidiary.company:
             return 'not_for_company'
-        if self.city and self.city != userprofile.team.subsidiary.city:
+        if self.city and self.city != user_attendance.team.subsidiary.city:
             return 'not_for_city'
 
         return True
@@ -971,7 +971,7 @@ class Competition(models.Model):
             return True
         else:
             if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
-                return self.user_competitors.filter(pk=userprofile.pk).count() > 0
+                return self.user_attendance_competitors.filter(pk=userprofile.pk).count() > 0
             elif self.competitor_type == 'team':
                 return self.team_competitors.filter(pk=userprofile.team.pk).count() > 0
             elif self.competitor_type == 'company':
@@ -982,9 +982,9 @@ class Competition(models.Model):
         if not self.without_admission and self.can_admit(userprofile) == True:
             if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
                 if admission:
-                    self.user_competitors.add(userprofile)
+                    self.user_attendance_competitors.add(userprofile)
                 else:
-                    self.user_competitors.remove(userprofile)
+                    self.user_attendance_competitors.remove(userprofile)
             elif self.competitor_type == 'team':
                 if admission:
                     self.team_competitors.add(userprofile.team)
@@ -1165,14 +1165,14 @@ class Answer(models.Model):
     def __unicode__(self):
         return "%s" % self.str_choices()
 
-def get_company(user):
+def get_company(campaign, user):
     try:
-        return user.userprofile.team.subsidiary.company
+        return user.userprofile.userattendance_set.get(campaign=campaign).team.subsidiary.company
     except UserProfile.DoesNotExist:
         return user.company_admin.administrated_company
 
-def is_team_coordinator(user):
-    if is_competitor(user) and user.get_profile().team.coordinator == user.get_profile():
+def is_team_coordinator(user_attendance):
+    if user_attendance.team.coordinator_campaign == user_attendance:
         return True
     return False
 
