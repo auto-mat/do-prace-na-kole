@@ -9,15 +9,15 @@
 <tr id="tr_city"><th scope="row">{% trans "Město:" %}</th><td>{{ team.subsidiary.city.name }}</td></tr>
 <tr id="tr_subsidiary"><th scope="row">{% trans "Pobočka:" %}</th><td>{{ team.subsidiary }}</td></tr>
 <tr id="tr_company"><th scope="row">{% trans "Firma:" %}</th><td>{{ team.subsidiary.company.name }}</td></tr>
-<tr id="tr_telephone"><th scope="row">{% trans "Telefon:" %}</th><td>{{ profile.telephone }}</td></tr>
-<tr id="tr_email"><th scope="row">{% trans "Email:" %}</th><td>{{ profile.user.email }}</td></tr>
+<tr id="tr_telephone"><th scope="row">{% trans "Telefon:" %}</th><td>{{ profile.userprofile.telephone }}</td></tr>
+<tr id="tr_email"><th scope="row">{% trans "Email:" %}</th><td>{{ profile.userprofile.user.email }}</td></tr>
 <tr id="tr_distance"><th scope="row">{% trans "Zadaná průměrná vzdálenost:" %}</th><td>{{ profile.distance }}&nbsp;km</td></tr>
 <tr id="tr_t-shirt-size"><th scope="row">{% trans "Velikost trička:" %}</th><td>{{ profile.get_t_shirt_size_display }}</td></tr>
 <tr id="tr_team_size"><th scope="row">{% trans "Počet členů týmu:" %}</th><td>{{ team_members_count }}</td></tr>
-<tr id="tr_team_coordinator"><th scope="row">{% trans "Koordinátor týmu:" %}</th><td>{{ team.coordinator }}
+<tr id="tr_team_coordinator"><th scope="row">{% trans "Koordinátor týmu:" %}</th><td>{{ team.coordinator_campaign }}
 {% if approved_for_team == 'approved' %}
-({{ team.coordinator.user.email }}, tel.: {{ team.coordinator.telephone }})
-   {% if team.coordinator.payment_status == 'waiting' or team.coordinator.payment_status == None %}
+({{ team.coordinator_campaign.user.email }}, tel.: {{ team.coordinator_campaign.userprofile.telephone }})
+   {% if team.coordinator.payment_status == 'waiting' or team.coordinator_campaign.payment_status == None %}
       <span class="text-error"> - {% trans "nemá zaplaceno startovné" %}</span>
    {% endif %}
 {% endif %}
@@ -26,7 +26,7 @@
 <tr id="tr_alert"><th scope="row">Upozornění:</th><td class="text-error"> {% trans "Váš tým má jediného odslouhlaseného člena. Pro účast ve většině soutěží je potřeba, aby v týmu byly nejméně dva právoplatní členové." %}</td></tr>
 {% endif %}
 <tr id="tr_team_membership"><th scope="row">{% trans "Členství v týmu:" %}</th>
-{% if team.coordinator == profile %}
+{% if team.coordinator_campaign == profile %}
       <td class="text-success">{% trans "Koordinátor." %}</td>
 {% elif approved_for_team == 'undecided' %}
       <td class="text-warning">{% trans "Nebylo dosud odsouhlaseno. Můžete znovu " %}<a href="{% wp_url 'zaslat_zadost_clenstvi'%}">{% trans "poslat žádost o ověřeření členství" %}</a> {% trans "koordinátorovi vašeho týmu." %}</td>
@@ -57,7 +57,7 @@
 
 <div class="btn-group">
 <a href="{% wp_url 'upravit_profil' %}" class="btn btn-small">{% trans "Upravit údaje" %}</a>
-{% if team.coordinator == profile %}
+{% if team.coordinator_campaign == profile %}
 <a href="{% wp_url 'team_admin' %}" class="btn btn-small">{% trans "Upravit tým" %}</a>
 <a href="{% wp_url 'pozvanky' %}" class="btn btn-small">Pozvat další uživatele</a>
 {% endif %}

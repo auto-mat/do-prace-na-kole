@@ -34,7 +34,7 @@ from django.views.decorators.cache import cache_page
 import registration.signals, registration.backends, registration.backends.simple
 # Model imports
 from django.contrib.auth.models import User
-from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice, City
+from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice, City, UserAttendance, Campaign
 from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm
 from django.conf import settings
 from  django.http import HttpResponse
@@ -387,11 +387,12 @@ def trip_active(day, today):
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def rides(request, template='registration/rides.html',
+def rides(request, campaign_slug, template='registration/rides.html',
         success_url="profil"):
     days = util.days()
     today = util.today()
     profile = request.user.get_profile()
+    user_attendance = profile.userattendance_set.get(campaign__slug=campaign_slug)
 
     if request.method == 'POST':
         if 'day' in request.POST and request.POST["day"]:
@@ -426,7 +427,7 @@ def rides(request, template='registration/rides.html',
             return redirect(wp_reverse(success_url))
 
     trips = {}
-    for t in Trip.objects.filter(user=profile):
+    for t in Trip.objects.filter(user_attendance=user_attendance):
         trips[t.date] = t
     calendar = []
 
@@ -458,45 +459,48 @@ def rides(request, template='registration/rides.html',
     return render_to_response(template,
                               {
             'calendar': calendar,
-            'has_distance_competition': profile.has_distance_competition(),
+            'has_distance_competition': user_attendance.has_distance_competition(),
             }, context_instance=RequestContext(request))
 
 @login_required
 @must_be_competitor
-def profile(request):
+def profile(request, campaign_slug):
     profile = request.user.get_profile()
+    user_attendance = profile.userattendance_set.get(campaign__slug=campaign_slug)
 
     # Render profile
-    payment_status = profile.payment_status()
-    if profile.team and profile.team.coordinator:
-        team_members_count = profile.team.members().count()
+    payment_status = user_attendance.payment_status()
+    if user_attendance.team and user_attendance.team.coordinator_campaign:
+        team_members_count = user_attendance.team.members().count()
     request.session['invite_success_url'] = 'profil'
     return render_to_response('registration/profile.html',
                               {
             'active': profile.user.is_active,
             'superuser': request.user.is_superuser,
             'user': request.user,
-            'profile': profile,
-            'team': profile.team,
+            'profile': user_attendance,
+            'team': user_attendance.team,
             'payment_status': payment_status,
-            'payment_type': profile.payment_type(),
+            'payment_type': user_attendance.payment_type(),
             'team_members_count': team_members_count,
             'competition_state': settings.COMPETITION_STATE,
-            'approved_for_team': request.user.userprofile.approved_for_team,
+            'approved_for_team': user_attendance.approved_for_team,
             'is_company_admin': models.is_company_admin(request.user),
             }, context_instance=RequestContext(request))
 
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def other_team_members(request,
+def other_team_members(request, campaign_slug,
         template = 'registration/team_members.html'
         ):
     profile = request.user.get_profile()
+    campaign = Campaign.objects.get(slug=campaign_slug)
+    user_attendance = profile.userattendance_set.get(campaign=campaign)
 
     team_members = []
-    if profile.team and profile.team.coordinator:
-        team_members = profile.team.all_members()
+    if user_attendance.team and user_attendance.team.coordinator_campaign:
+        team_members = user_attendance.team.all_members(campaign)
 
     return render_to_response(template,
                               {
@@ -506,29 +510,30 @@ def other_team_members(request,
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def admissions(request, template, 
+def admissions(request, template, campaign_slug,
         success_url="profil",
         ):
     userprofile = request.user.get_profile()
+    user_attendance = userprofile.userattendance_set.get(campaign__slug=campaign_slug)
 
     if request.method == 'POST':
         if 'admission_competition_id' in request.POST and request.POST['admission_competition_id']:
             competition = Competition.objects.get(id=request.POST['admission_competition_id']) 
-            competition.make_admission(userprofile, True)
+            competition.make_admission(user_attendance, True)
         if 'cancellation_competition_id' in request.POST and request.POST['cancellation_competition_id']:
             competition = Competition.objects.get(id=request.POST['cancellation_competition_id']) 
-            competition.make_admission(userprofile, False)
+            competition.make_admission(user_attendance, False)
         return redirect(wp_reverse(success_url))
 
-    competitions = userprofile.get_competitions()
+    competitions = user_attendance.get_competitions()
     for competition in competitions:
-        competition.competitor_has_admission = competition.has_admission(userprofile)
-        competition.competitor_can_admit = competition.can_admit(userprofile)
+        competition.competitor_has_admission = competition.has_admission(user_attendance)
+        competition.competitor_can_admit = competition.can_admit(user_attendance)
 
     return render_to_response(template,
                               {
             'competitions': competitions,
-            'userprofile': userprofile,
+            'user_attendance': user_attendance,
             }, context_instance=RequestContext(request))
 
 @cache_page(24 * 60 * 60) 
@@ -640,11 +645,12 @@ def handle_uploaded_file(source, username):
 
 @login_required
 @must_be_approved_for_team
-def questionaire(request, questionaire_slug = None,
+def questionaire(request, campaign_slug, questionaire_slug = None,
         template = 'registration/questionaire.html',
         success_url = 'profil',
         ):
     userprofile = request.user.get_profile()
+    user_attendance = userprofile.userattendance_set.get(campaign__slug=campaign_slug)
     error = False
     empty_answer = False
     form_filled = False
@@ -654,7 +660,7 @@ def questionaire(request, questionaire_slug = None,
         logger.error('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
         return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
     questions = Question.objects.filter(competition=competition).order_by('order')
-    if request.method == 'POST' and competition.can_admit(userprofile) == True:
+    if request.method == 'POST' and competition.can_admit(user_attendance) == True:
         choice_ids = [(int(k.split('-')[1]), request.POST.getlist(k)) for k, v in request.POST.items() if k.startswith('choice')]
         comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
         fileupload_ids = [int(k.split('-')[1]) for k, v in request.FILES.items() if k.startswith('fileupload')]
@@ -690,7 +696,7 @@ def questionaire(request, questionaire_slug = None,
                 answer.attachment = handle_uploaded_file(filehandler, request.user.username)
                 answer.save()
     
-        competition.make_admission(userprofile)
+        competition.make_admission(user_attendance)
         form_filled = True
 
     for question in questions:
@@ -701,7 +707,7 @@ def questionaire(request, questionaire_slug = None,
         try:
             answer = Answer.objects.get(
                 question=question,
-                user=userprofile)
+                user_attendance=user_attendance)
 
             if question.type == 'choice' and answer.choices.count() == 0:
                 error = True
@@ -943,8 +949,8 @@ def distance(trips):
     #TODO: Distance 0 shouldn't be counted, but due to bug in first two days of season 2013 competition it has to be.
     #distance += trips.filter(distance_from = None, trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
     #distance += trips.filter(distance_to = None, trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
-    distance += trips.filter(Q(distance_from = None) | Q(distance_from = 0), trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum'] or 0
-    distance += trips.filter(Q(distance_to = None) | Q(distance_to = 0), trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum'] or 0
+    distance += trips.filter(Q(distance_from = None) | Q(distance_from = 0), trip_from = True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
+    distance += trips.filter(Q(distance_to = None) | Q(distance_to = 0), trip_to = True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
     return distance
 
 def total_distance():
@@ -955,16 +961,18 @@ def period_distance(day_from, day_to):
 
 def statistics(request,
         variable,
+        campaign_slug,
         template = 'registration/statistics.html'
         ):
 
+    campaign = Campaign.objects.get(slug=campaign_slug)
     variables = {}
     variables['ujeta-vzdalenost'] = total_distance()
     variables['ujeta-vzdalenost-dnes'] = period_distance(util.today(), util.today())
-    variables['pocet-soutezicich'] = UserProfile.objects.filter(user__is_active = True, approved_for_team='approved').count()
+    variables['pocet-soutezicich'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active = True, approved_for_team='approved').count()
 
     if request.user.is_authenticated() and models.is_competitor(request.user):
-        variables['pocet-soutezicich-firma'] = UserProfile.objects.filter(user__is_active = True, approved_for_team='approved', team__subsidiary__company = models.get_company(request.user)).count()
+        variables['pocet-soutezicich-firma'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active = True, approved_for_team='approved', team__subsidiary__company = models.get_company(campaign, request.user)).count()
     else:
         variables['pocet-soutezicich-firma'] = "-"
 

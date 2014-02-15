@@ -6,14 +6,14 @@ from django import forms, http
 # Registration imports
 import registration.forms
 import models
-from models import UserProfile, Company, Subsidiary, Team
+from models import UserProfile, Company, Subsidiary, Team, UserAttendance
 from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
 from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
 
 def team_full(data):
-    if len(UserProfile.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, user__is_active=True)) >= 5:
+    if len(UserAttendance.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, userprofile__user__is_active=True)) >= 5:
         raise forms.ValidationError(_(u"Tento tým již má pět členů a je tedy plný"))
 
 class RegisterCompanyForm(forms.ModelForm):
