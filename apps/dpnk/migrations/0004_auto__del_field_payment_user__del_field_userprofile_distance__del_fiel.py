@@ -1,85 +1,134 @@
 # -*- coding: utf-8 -*-
-import datetime
+from south.utils import datetime_utils as datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-class Migration(DataMigration):
+
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        "Write your forwards methods here."
-        # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
+        # Removing unique constraint on 'Trip', fields ['user', 'date']
+        db.delete_unique(u'dpnk_trip', ['user_id', 'date'])
 
-        campaign = orm['dpnk.Campaign'].objects.get(name="campaign")
+        # Removing unique constraint on 'Answer', fields ['user', 'question']
+        db.delete_unique(u'dpnk_answer', ['user_id', 'question_id'])
 
-        for user in orm['dpnk.UserProfile'].objects.all():
-            user_attendance = orm['dpnk.UserAttendance'](
-                approved_for_team = user.approved_for_team,
-                distance = user.distance,
-                t_shirt_size = user.t_shirt_size,
-                team = user.team,
-                userprofile = user,
-                campaign = campaign)
-            user_attendance.save()
+        # Removing unique constraint on 'CompetitionResult', fields ['userprofile', 'competition']
+        db.delete_unique(u'dpnk_competitionresult', ['userprofile_id', 'competition_id'])
 
-            for payment in user.payments.all():
-                payment.user_attendance = user_attendance
-                payment.save()
+        # Deleting field 'Payment.user'
+        db.delete_column(u'dpnk_payment', 'user_id')
 
-        for team in orm['dpnk.Team'].objects.all():
-            if team.coordinator:
-                team.coordinator_campaign = orm['dpnk.UserAttendance'].objects.get(campaign = campaign, userprofile = team.coordinator)
-                team.save()
+        # Removing M2M table for field user_competitors on 'Competition'
+        db.delete_table(db.shorten_name(u'dpnk_competition_user_competitors'))
 
-        for trip in orm['dpnk.Trip'].objects.all():
-            if trip.user:
-                trip.user_attendance = orm['dpnk.UserAttendance'].objects.get(campaign = campaign, userprofile = trip.user)
-                trip.save()
+        # Deleting field 'UserProfile.distance'
+        db.delete_column(u'dpnk_userprofile', 'distance')
 
-        for answer in orm['dpnk.Answer'].objects.all():
-            if answer.user:
-                answer.user_attendance = orm['dpnk.UserAttendance'].objects.get(campaign = campaign, userprofile = answer.user)
-                answer.save()
+        # Deleting field 'UserProfile.approved_for_team'
+        db.delete_column(u'dpnk_userprofile', 'approved_for_team')
 
-        for competition in orm['dpnk.Competition'].objects.all():
-            if competition.user_competitors:
-                competition.user_attendance_competitors = orm['dpnk.UserAttendance'].objects.filter(campaign = campaign, userprofile__in = competition.user_competitors.all())
-                competition.save()
+        # Deleting field 'UserProfile.team'
+        db.delete_column(u'dpnk_userprofile', 'team_id')
+
+        # Deleting field 'UserProfile.t_shirt_size'
+        db.delete_column(u'dpnk_userprofile', 't_shirt_size')
+
+        # Deleting field 'CompetitionResult.userprofile'
+        db.delete_column(u'dpnk_competitionresult', 'userprofile_id')
+
+        # Adding unique constraint on 'CompetitionResult', fields ['user_attendance', 'competition']
+        db.create_unique(u'dpnk_competitionresult', ['user_attendance_id', 'competition_id'])
+
+        # Deleting field 'Answer.user'
+        db.delete_column(u'dpnk_answer', 'user_id')
+
+        # Adding unique constraint on 'Answer', fields ['user_attendance', 'question']
+        db.create_unique(u'dpnk_answer', ['user_attendance_id', 'question_id'])
+
+        # Deleting field 'Trip.user'
+        db.delete_column(u'dpnk_trip', 'user_id')
+
+        # Adding unique constraint on 'Trip', fields ['user_attendance', 'date']
+        db.create_unique(u'dpnk_trip', ['user_attendance_id', 'date'])
+
+        # Deleting field 'Team.coordinator'
+        db.delete_column(u'dpnk_team', 'coordinator_id')
 
 
     def backwards(self, orm):
-        "Write your backwards methods here."
-        for user in orm['dpnk.UserProfile'].objects.all():
-            for payment in user.payments.all():
-                payment.user_attendance = None
-                payment.save()
+        # Removing unique constraint on 'Trip', fields ['user_attendance', 'date']
+        db.delete_unique(u'dpnk_trip', ['user_attendance_id', 'date'])
 
-        for team in orm['dpnk.Team'].objects.all():
-            if team.coordinator:
-                team.coordinator_campaign = None
-                team.save()
+        # Removing unique constraint on 'Answer', fields ['user_attendance', 'question']
+        db.delete_unique(u'dpnk_answer', ['user_attendance_id', 'question_id'])
 
-        for trip in orm['dpnk.Trip'].objects.all():
-            if trip.user:
-                trip.user_attendance = None
-                trip.save()
+        # Removing unique constraint on 'CompetitionResult', fields ['user_attendance', 'competition']
+        db.delete_unique(u'dpnk_competitionresult', ['user_attendance_id', 'competition_id'])
 
-        for answer in orm['dpnk.Answer'].objects.all():
-            if answer.user:
-                answer.user_attendance = None
-                answer.save()
+        # Adding field 'Payment.user'
+        db.add_column(u'dpnk_payment', 'user',
+                      self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='payments', null=True, to=orm['dpnk.UserProfile'], blank=True),
+                      keep_default=False)
 
-        for competition in orm['dpnk.Competition'].objects.all():
-            if competition.user_competitors:
-                competition.user_attendance_competitors = []
-                competition.save()
+        # Adding M2M table for field user_competitors on 'Competition'
+        m2m_table_name = db.shorten_name(u'dpnk_competition_user_competitors')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('competition', models.ForeignKey(orm[u'dpnk.competition'], null=False)),
+            ('userprofile', models.ForeignKey(orm[u'dpnk.userprofile'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['competition_id', 'userprofile_id'])
 
-        for competition_result in orm['dpnk.CompetitionResult'].objects.all():
-            if competition_result.userprofile:
-                competition_result.user_attendance = None
-                competition_result.save()
+        # Adding field 'UserProfile.distance'
+        db.add_column(u'dpnk_userprofile', 'distance',
+                      self.gf('django.db.models.fields.PositiveIntegerField')(default=0),
+                      keep_default=False)
 
-        orm['dpnk.UserAttendance'].objects.all().delete()
+        # Adding field 'UserProfile.approved_for_team'
+        db.add_column(u'dpnk_userprofile', 'approved_for_team',
+                      self.gf('django.db.models.fields.CharField')(default='undecided', max_length=16),
+                      keep_default=False)
+
+        # Adding field 'UserProfile.team'
+        db.add_column(u'dpnk_userprofile', 'team',
+                      self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['dpnk.Team']),
+                      keep_default=False)
+
+        # Adding field 'UserProfile.t_shirt_size'
+        db.add_column(u'dpnk_userprofile', 't_shirt_size',
+                      self.gf('django.db.models.fields.CharField')(default='mL', max_length=16),
+                      keep_default=False)
+
+        # Adding field 'CompetitionResult.userprofile'
+        db.add_column(u'dpnk_competitionresult', 'userprofile',
+                      self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='competitions_results', null=True, to=orm['dpnk.UserProfile'], blank=True),
+                      keep_default=False)
+
+        # Adding unique constraint on 'CompetitionResult', fields ['userprofile', 'competition']
+        db.create_unique(u'dpnk_competitionresult', ['userprofile_id', 'competition_id'])
+
+        # Adding field 'Answer.user'
+        db.add_column(u'dpnk_answer', 'user',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.UserProfile'], null=True, blank=True),
+                      keep_default=False)
+
+        # Adding unique constraint on 'Answer', fields ['user', 'question']
+        db.create_unique(u'dpnk_answer', ['user_id', 'question_id'])
+
+        # Adding field 'Trip.user'
+        db.add_column(u'dpnk_trip', 'user',
+                      self.gf('django.db.models.fields.related.ForeignKey')(default=1, related_name='user_trips', to=orm['dpnk.UserProfile']),
+                      keep_default=False)
+
+        # Adding unique constraint on 'Trip', fields ['user', 'date']
+        db.create_unique(u'dpnk_trip', ['user_id', 'date'])
+
+        # Adding field 'Team.coordinator'
+        db.add_column(u'dpnk_team', 'coordinator',
+                      self.gf('django.db.models.fields.related.OneToOneField')(related_name='coordinated_team', unique=True, null=True, to=orm['dpnk.UserProfile'], blank=True),
+                      keep_default=False)
 
 
     models = {
@@ -120,14 +169,13 @@ class Migration(DataMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         u'dpnk.answer': {
-            'Meta': {'ordering': "('user__team__subsidiary__city', 'pk')", 'unique_together': "(('user', 'question'),)", 'object_name': 'Answer'},
+            'Meta': {'ordering': "('user_attendance__team__subsidiary__city', 'pk')", 'unique_together': "(('user_attendance', 'question'),)", 'object_name': 'Answer'},
             'attachment': ('django.db.models.fields.files.FileField', [], {'max_length': '600'}),
             'choices': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['dpnk.Choice']", 'symmetrical': 'False'}),
             'comment': ('django.db.models.fields.TextField', [], {'max_length': '600', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'points_given': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'question': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Question']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.UserProfile']", 'null': 'True', 'blank': 'True'}),
             'user_attendance': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.UserAttendance']", 'null': 'True', 'blank': 'True'})
         },
         u'dpnk.campaign': {
@@ -196,17 +244,15 @@ class Migration(DataMigration):
             'type': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
             'url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'user_attendance_competitors': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'competitions'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['dpnk.UserAttendance']"}),
-            'user_competitors': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'competitions'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['dpnk.UserProfile']"}),
             'without_admission': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
         },
         u'dpnk.competitionresult': {
-            'Meta': {'unique_together': "(('userprofile', 'competition'), ('team', 'competition'))", 'object_name': 'CompetitionResult'},
+            'Meta': {'unique_together': "(('user_attendance', 'competition'), ('team', 'competition'))", 'object_name': 'CompetitionResult'},
             'competition': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'results'", 'to': u"orm['dpnk.Competition']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'result': ('django.db.models.fields.FloatField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'team': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'competitions_results'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.Team']"}),
             'user_attendance': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': u"orm['dpnk.UserAttendance']", 'null': 'True', 'blank': 'True'}),
-            'userprofile': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'competitions_results'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.UserProfile']"})
         },
         u'dpnk.payment': {
             'Meta': {'object_name': 'Payment'},
@@ -221,7 +267,6 @@ class Migration(DataMigration):
             'session_id': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'status': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'trans_id': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'payments'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.UserProfile']"}),
             'user_attendance': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'payments'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.UserAttendance']"})
         },
         u'dpnk.phase': {
@@ -258,7 +303,6 @@ class Migration(DataMigration):
         },
         u'dpnk.team': {
             'Meta': {'ordering': "('name',)", 'object_name': 'Team'},
-            'coordinator': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'coordinated_team'", 'unique': 'True', 'null': 'True', 'to': u"orm['dpnk.UserProfile']"}),
             'coordinator_campaign': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'coordinated_team'", 'unique': 'True', 'null': 'True', 'to': u"orm['dpnk.UserAttendance']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'invitation_token': ('django.db.models.fields.CharField', [], {'default': "''", 'unique': 'True', 'max_length': '100'}),
@@ -267,14 +311,13 @@ class Migration(DataMigration):
             'subsidiary': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'teams'", 'to': u"orm['dpnk.Subsidiary']"})
         },
         u'dpnk.trip': {
-            'Meta': {'unique_together': "(('user', 'date'),)", 'object_name': 'Trip'},
+            'Meta': {'unique_together': "(('user_attendance', 'date'),)", 'object_name': 'Trip'},
             'date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime.now'}),
             'distance_from': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'distance_to': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'trip_from': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'trip_to': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'user_trips'", 'to': u"orm['dpnk.UserProfile']"}),
             'user_attendance': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'user_trips'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.UserAttendance']"})
         },
         u'dpnk.userattendance': {
@@ -289,17 +332,12 @@ class Migration(DataMigration):
         },
         u'dpnk.userprofile': {
             'Meta': {'ordering': "['user__last_name', 'user__first_name']", 'object_name': 'UserProfile'},
-            'approved_for_team': ('django.db.models.fields.CharField', [], {'default': "'undecided'", 'max_length': '16'}),
-            'distance': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'language': ('django.db.models.fields.CharField', [], {'default': "'cs'", 'max_length': '16'}),
             'mailing_id': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '128', 'null': 'True', 'db_index': 'True', 'blank': 'True'}),
-            't_shirt_size': ('django.db.models.fields.CharField', [], {'default': "'mL'", 'max_length': '16'}),
-            'team': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Team']"}),
             'telephone': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'userprofile'", 'unique': 'True', 'to': u"orm['auth.User']"})
         }
     }
 
     complete_apps = ['dpnk']
-    symmetrical = True

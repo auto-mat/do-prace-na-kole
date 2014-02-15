@@ -194,17 +194,6 @@ class Team(models.Model):
         related_name='teams',
         null=False,
         blank=False)
-    coordinator = models.OneToOneField(
-        'UserProfile',
-        related_name = "coordinated_team",
-        verbose_name = _(u"Koordinátor/ka týmu"),
-        null=True,
-        blank=True,
-        #TODO:
-        #null=False,
-        #blank=False,
-        unique=True,
-        )
     coordinator_campaign = models.OneToOneField(
         'UserAttendance',
         related_name = "coordinated_team",
@@ -522,38 +511,15 @@ class UserProfile(models.Model):
         null=False,
         blank=False,
         )
-    distance = models.PositiveIntegerField(
-        verbose_name=_(u"Vzdálenost"),
-        help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
-        default=0,
-        null=False)
-    # -- Contacts
     telephone = models.CharField(
         verbose_name=_(u"Telefon"),
         max_length=30, null=False)
-    team = models.ForeignKey(
-        Team,
-        #related_name='users',
-        verbose_name=_(u"Tým"),
-        null=False, blank=False)
-    approved_for_team = models.CharField(
-        verbose_name=_(u"Souhlas týmu"),
-        choices=TEAMAPPROVAL,
-        max_length=16,
-        null=False,
-        default='undecided')
     language = models.CharField(
         verbose_name=_(u"Jazyk komunikace"),
         choices=LANGUAGE,
         max_length=16,
         null=False,
         default='cs')
-    t_shirt_size = models.CharField(
-        verbose_name=_(u"Velikost trička"),
-        choices=TSHIRTSIZE,
-        max_length=16,
-        null=False,
-        default='mL')
     mailing_id = models.CharField(
         verbose_name=_(u"ID uživatele v mailing listu"),
         max_length = 128,
@@ -574,85 +540,19 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.user.get_full_name()
 
-    def payment(self):
-        if self.team and self.team.subsidiary and self.team.subsidiary.city.admission_fee == 0:
-            return {'payment': None,
-                    'status': 'no_admission',
-                    'status_description': _(u'neplatí se'),
-                    'class': _(u'success'),
-                   }
-
-        payments = self.payments.filter(status__in = Payment.done_statuses)
-        if payments.exists():
-            return {'payment': payments.latest('id'),
-                    'status': 'done',
-                    'status_description': _(u'zaplaceno'),
-                    'class': _(u'success'),
-                   }
-
-        payments = self.payments.filter(status__in = Payment.waiting_statuses)
-        if payments.exists():
-            return {'payment': payments.latest('id'),
-                    'status': 'waiting',
-                    'status_description': _(u'nepotvrzeno'),
-                    'class': _(u'warning'),
-                   }
-
-        payments = self.payments
-        if payments.exists():
-            return {'payment': payments.latest('id'),
-                    'status': 'unknown',
-                    'status_description': _(u'neznámý'),
-                    'class': _(u'warning'),
-                   }
-
-        return {'payment': None,
-                'status': 'none',
-                'status_description': _(u'žádné platby'),
-                'class': _(u'error'),
-               }
-
-    def payment_status(self):
-        return self.payment()['status']
-
-    def payment_type(self):
-        payment = self.payment()['payment']
-        if payment:
-            return payment.pay_type
-        else:
-            return None
-
-    def get_competitions(self):
-        return results.get_competitions_with_info(self)
-
-    def has_distance_competition(self):
-        return results.has_distance_competition(self)
-
-    def get_frequency(self):
-        return results.get_userprofile_frequency(self)
-
-    def get_rough_length(self):
-        return results.get_userprofile_frequency(self) * self.distance
-
-    def get_length(self):
-        return results.get_userprofile_length(self)
-
-    def is_libero(self):
-        return self.team.members().count() <= 1
-
     def save(self, force_insert=False, force_update=False):
         if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
             logger.error(_(u"Mailing id %s is already used") % self.mailing_id)
         super(UserProfile, self).save(force_insert, force_update)
 
-@receiver(pre_save, sender=UserProfile)
+@receiver(pre_save, sender=UserAttendance)
 def set_team_coordinator_pre(sender, instance, **kwargs):
     if hasattr(instance, "coordinated_team") and instance.coordinated_team != instance.team:
         coordinated_team = instance.coordinated_team
         coordinated_team.coordinator = None
         coordinated_team.save()
 
-@receiver(post_save, sender=UserProfile)
+@receiver(post_save, sender=UserAttendance)
 def set_team_coordinator_post(sender, instance, created, **kwargs):
     if instance.team and instance.team.coordinator == None:
         instance.team.coordinator = instance
@@ -797,11 +697,6 @@ class Payment(models.Model):
         verbose_name = _(u"Platba")
         verbose_name_plural = _(u"Platby")
 
-    user = models.ForeignKey(UserProfile, 
-        related_name="payments",
-        null=True, 
-        blank=True, 
-        default=None)
     user_attendance = models.ForeignKey(UserAttendance, 
         related_name="payments",
         null=True, 
@@ -892,13 +787,8 @@ class Trip(models.Model):
     class Meta:
         verbose_name = _(u"Cesta")
         verbose_name_plural = _(u"Cesty")
-        unique_together = (("user", "date"),)
+        unique_together = (("user_attendance", "date"),)
 
-    user = models.ForeignKey(
-        UserProfile, 
-        related_name="user_trips",
-        null=False,
-        blank=False)
     user_attendance = models.ForeignKey(
         UserAttendance, 
         related_name="user_trips",
@@ -988,11 +878,6 @@ class Competition(models.Model):
         choices=CCOMPETITORTYPES,
         max_length=16,
         null=False)
-    user_competitors = models.ManyToManyField(
-        UserProfile,
-        related_name = "competitions",
-        null=True, 
-        blank=True)
     user_attendance_competitors = models.ManyToManyField(
         UserAttendance,
         related_name = "competitions",
@@ -1113,16 +998,10 @@ class CompetitionResult(models.Model):
     class Meta:
         verbose_name = _(u"Výsledek soutěže")
         verbose_name_plural = _(u"Výsledky soutěží")
-        unique_together = (("userprofile", "competition"), ("team", "competition"))
+        unique_together = (("user_attendance", "competition"), ("team", "competition"))
 
-    userprofile = models.ForeignKey(UserProfile,
-        related_name="competitions_results",
-        null=True,
-        blank=True,
-        default=None,
-        )
     user_attendance = models.ForeignKey(UserAttendance,
-        #related_name="competitions_results",
+        related_name="competitions_results",
         null=True,
         blank=True,
         default=None,
@@ -1153,8 +1032,6 @@ class CompetitionResult(models.Model):
         if self.competition.competitor_type == 'team':
             return "%s" % self.team.name
         else:
-            if self.userprofile:
-                return "%s" % self.userprofile.user.get_full_name()
             if self.user_attendance:
                 return "%s" % self.user_attendance.userprofile.user.get_full_name()
     
@@ -1259,10 +1136,9 @@ class Answer(models.Model):
     class Meta:
         verbose_name = _(u"Odpověď")
         verbose_name_plural = _(u"Odpovědi")
-        ordering = ('user__team__subsidiary__city', 'pk')
-        unique_together = (("user", "question"),)
+        ordering = ('user_attendance__team__subsidiary__city', 'pk')
+        unique_together = (("user_attendance", "question"),)
 
-    user = models.ForeignKey(UserProfile, null=True, blank=True)
     user_attendance = models.ForeignKey(UserAttendance, null=True, blank=True)
     question = models.ForeignKey(Question, null=False)
     choices = models.ManyToManyField(Choice)

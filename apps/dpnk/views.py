@@ -790,7 +790,7 @@ def answers(request):
     choice_names = {}
     
     for a in answers:
-        a.city = a.user.team.subsidiary.city
+        a.city = a.user_attendance.team.subsidiary.city
 
     
     if question.type in ('choice', 'multiple-choice'):
