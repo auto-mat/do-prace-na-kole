@@ -8,109 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Phase'
-        db.create_table(u'dpnk_phase', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('campaign', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.Campaign'])),
-            ('type', self.gf('django.db.models.fields.CharField')(default='registration', unique=True, max_length=16)),
-            ('date_from', self.gf('django.db.models.fields.DateField')(default=None, null=True, blank=True)),
-            ('date_to', self.gf('django.db.models.fields.DateField')(default=None, null=True, blank=True)),
-        ))
-        db.send_create_signal(u'dpnk', ['Phase'])
-
-        # Adding model 'Campaign'
-        db.create_table(u'dpnk_campaign', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=60)),
-        ))
-
-        campaign = orm['dpnk.Campaign'](name= "campaign", slug="campaign")
-        campaign.save()
-
-        db.send_create_signal(u'dpnk', ['Campaign'])
-
-        # Adding model 'UserAttendance'
-        db.create_table(u'dpnk_userattendance', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('campaign', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.Campaign'])),
-            ('userprofile', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.UserProfile'], unique=True)),
-            ('distance', self.gf('django.db.models.fields.PositiveIntegerField')(default=0)),
-            ('team', self.gf('django.db.models.fields.related.ForeignKey')(related_name='users', to=orm['dpnk.Team'])),
-            ('approved_for_team', self.gf('django.db.models.fields.CharField')(default='undecided', max_length=16)),
-            ('t_shirt_size', self.gf('django.db.models.fields.CharField')(default='mL', max_length=16)),
-        ))
-        db.send_create_signal(u'dpnk', ['UserAttendance'])
-
-        # Adding field 'Payment.user_attendance'
-        db.add_column(u'dpnk_payment', 'user_attendance',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='payments', null=True, blank=True, to=orm['dpnk.UserAttendance']),
-                      keep_default=False)
-
-        # Adding field 'Competition.campaign'
-        db.add_column(u'dpnk_competition', 'campaign',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['dpnk.Campaign']),
-                      keep_default=False)
-
-        # Adding M2M table for field user_attendance_competitors on 'Competition'
-        m2m_table_name = db.shorten_name(u'dpnk_competition_user_attendance_competitors')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('competition', models.ForeignKey(orm[u'dpnk.competition'], null=False)),
-            ('userattendance', models.ForeignKey(orm[u'dpnk.userattendance'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['competition_id', 'userattendance_id'])
-
-        # Adding field 'CompetitionResult.user_attendance'
-        db.add_column(u'dpnk_competitionresult', 'user_attendance',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['dpnk.UserAttendance'], null=True, blank=True),
-                      keep_default=False)
-
-        # Adding field 'Answer.user_attendance'
-        db.add_column(u'dpnk_answer', 'user_attendance',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.UserAttendance'], null=True, blank=True),
-                      keep_default=False)
-
-        # Adding field 'Trip.user_attendance'
-        db.add_column(u'dpnk_trip', 'user_attendance',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='user_trips', null=True, blank=True, to=orm['dpnk.UserAttendance']),
-                      keep_default=False)
-
-        # Adding field 'Team.coordinator_campaign'
-        db.add_column(u'dpnk_team', 'coordinator_campaign',
-                      self.gf('django.db.models.fields.related.OneToOneField')(blank=True, related_name='coordinated_team', unique=True, null=True, to=orm['dpnk.UserAttendance']),
+        # Adding field 'Campaign.slug'
+        db.add_column(u'dpnk_campaign', 'slug',
+                      self.gf('django.db.models.fields.SlugField')(default='', unique=True, max_length=50),
                       keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting model 'Phase'
-        db.delete_table(u'dpnk_phase')
-
-        # Deleting model 'Campaign'
-        db.delete_table(u'dpnk_campaign')
-
-        # Deleting model 'UserAttendance'
-        db.delete_table(u'dpnk_userattendance')
-
-        # Deleting field 'Payment.user_attendance'
-        db.delete_column(u'dpnk_payment', 'user_attendance_id')
-
-        # Deleting field 'Competition.campaign'
-        db.delete_column(u'dpnk_competition', 'campaign_id')
-
-        # Removing M2M table for field user_attendance_competitors on 'Competition'
-        db.delete_table(db.shorten_name(u'dpnk_competition_user_attendance_competitors'))
-
-        # Deleting field 'CompetitionResult.user_attendance'
-        db.delete_column(u'dpnk_competitionresult', 'user_attendance_id')
-
-        # Deleting field 'Answer.user_attendance'
-        db.delete_column(u'dpnk_answer', 'user_attendance_id')
-
-        # Deleting field 'Trip.user_attendance'
-        db.delete_column(u'dpnk_trip', 'user_attendance_id')
-
-        # Deleting field 'Team.coordinator_campaign'
-        db.delete_column(u'dpnk_team', 'coordinator_campaign_id')
+        # Deleting field 'Campaign.slug'
+        db.delete_column(u'dpnk_campaign', 'slug')
 
 
     models = {
@@ -151,20 +57,20 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         u'dpnk.answer': {
-            'Meta': {'ordering': "('user__team__subsidiary__city', 'pk')", 'unique_together': "(('user', 'question'),)", 'object_name': 'Answer'},
+            'Meta': {'ordering': "('user_attendance__team__subsidiary__city', 'pk')", 'unique_together': "(('user_attendance', 'question'),)", 'object_name': 'Answer'},
             'attachment': ('django.db.models.fields.files.FileField', [], {'max_length': '600'}),
             'choices': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['dpnk.Choice']", 'symmetrical': 'False'}),
             'comment': ('django.db.models.fields.TextField', [], {'max_length': '600', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'points_given': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'question': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Question']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.UserProfile']", 'null': 'True', 'blank': 'True'}),
             'user_attendance': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.UserAttendance']", 'null': 'True', 'blank': 'True'})
         },
         u'dpnk.campaign': {
             'Meta': {'object_name': 'Campaign'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '60'})
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '60'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'default': "''", 'unique': 'True', 'max_length': '50'})
         },
         u'dpnk.choice': {
             'Meta': {'unique_together': "(('choice_type', 'text'),)", 'object_name': 'Choice'},
@@ -227,17 +133,15 @@ class Migration(SchemaMigration):
             'type': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
             'url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'user_attendance_competitors': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'competitions'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['dpnk.UserAttendance']"}),
-            'user_competitors': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'competitions'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['dpnk.UserProfile']"}),
             'without_admission': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
         },
         u'dpnk.competitionresult': {
-            'Meta': {'unique_together': "(('userprofile', 'competition'), ('team', 'competition'))", 'object_name': 'CompetitionResult'},
+            'Meta': {'unique_together': "(('user_attendance', 'competition'), ('team', 'competition'))", 'object_name': 'CompetitionResult'},
             'competition': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'results'", 'to': u"orm['dpnk.Competition']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'result': ('django.db.models.fields.FloatField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'team': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'competitions_results'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.Team']"}),
-            'user_attendance': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': u"orm['dpnk.UserAttendance']", 'null': 'True', 'blank': 'True'}),
-            'userprofile': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'competitions_results'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.UserProfile']"})
+            'user_attendance': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'competitions_results'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.UserAttendance']"})
         },
         u'dpnk.payment': {
             'Meta': {'object_name': 'Payment'},
@@ -252,7 +156,6 @@ class Migration(SchemaMigration):
             'session_id': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'status': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'trans_id': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'payments'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.UserProfile']"}),
             'user_attendance': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'payments'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.UserAttendance']"})
         },
         u'dpnk.phase': {
@@ -289,7 +192,6 @@ class Migration(SchemaMigration):
         },
         u'dpnk.team': {
             'Meta': {'ordering': "('name',)", 'object_name': 'Team'},
-            'coordinator': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'coordinated_team'", 'unique': 'True', 'null': 'True', 'to': u"orm['dpnk.UserProfile']"}),
             'coordinator_campaign': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'coordinated_team'", 'unique': 'True', 'null': 'True', 'to': u"orm['dpnk.UserAttendance']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'invitation_token': ('django.db.models.fields.CharField', [], {'default': "''", 'unique': 'True', 'max_length': '100'}),
@@ -298,14 +200,13 @@ class Migration(SchemaMigration):
             'subsidiary': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'teams'", 'to': u"orm['dpnk.Subsidiary']"})
         },
         u'dpnk.trip': {
-            'Meta': {'unique_together': "(('user', 'date'),)", 'object_name': 'Trip'},
+            'Meta': {'unique_together': "(('user_attendance', 'date'),)", 'object_name': 'Trip'},
             'date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime.now'}),
             'distance_from': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'distance_to': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'trip_from': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'trip_to': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'user_trips'", 'to': u"orm['dpnk.UserProfile']"}),
             'user_attendance': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'user_trips'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.UserAttendance']"})
         },
         u'dpnk.userattendance': {
@@ -320,13 +221,9 @@ class Migration(SchemaMigration):
         },
         u'dpnk.userprofile': {
             'Meta': {'ordering': "['user__last_name', 'user__first_name']", 'object_name': 'UserProfile'},
-            'approved_for_team': ('django.db.models.fields.CharField', [], {'default': "'undecided'", 'max_length': '16'}),
-            'distance': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'language': ('django.db.models.fields.CharField', [], {'default': "'cs'", 'max_length': '16'}),
             'mailing_id': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '128', 'null': 'True', 'db_index': 'True', 'blank': 'True'}),
-            't_shirt_size': ('django.db.models.fields.CharField', [], {'default': "'mL'", 'max_length': '16'}),
-            'team': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Team']"}),
             'telephone': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'userprofile'", 'unique': 'True', 'to': u"orm['auth.User']"})
         }

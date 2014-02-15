@@ -266,6 +266,12 @@ class Campaign(models.Model):
         verbose_name=_(u"Jméno kampaně"),
         max_length=60, 
         null=False)
+    slug = models.SlugField(
+        unique=True,
+        default="",
+        verbose_name=u"Doména v URL",
+        blank=False
+        )
 
     def __unicode__(self):
         return self.name

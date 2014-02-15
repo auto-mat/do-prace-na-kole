@@ -375,8 +375,9 @@ class PhaseInline(EnhancedModelAdminMixin, admin.TabularInline):
 
 
 class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'slug')
     inlines = [PhaseInline, ]
+    prepopulated_fields = {'slug': ('name',)}
 
 
 admin.site.register(Team, TeamAdmin)
