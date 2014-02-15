@@ -1153,7 +1153,10 @@ class CompetitionResult(models.Model):
         if self.competition.competitor_type == 'team':
             return "%s" % self.team.name
         else:
-            return "%s" % self.userprofile.user.get_full_name()
+            if self.userprofile:
+                return "%s" % self.userprofile.user.get_full_name()
+            if self.user_attendance:
+                return "%s" % self.user_attendance.userprofile.user.get_full_name()
     
 class ChoiceType(models.Model):
     """Typ volby"""

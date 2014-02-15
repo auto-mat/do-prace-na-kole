@@ -30,13 +30,13 @@ def get_competitors(self):
     if self.without_admission:
         filter_query = {}
         if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
-            filter_query['user__is_active'] = True
+            filter_query['userprofile__user__is_active'] = True
             filter_query['approved_for_team'] = 'approved'
             if self.city:
                 filter_query['team__subsidiary__city'] = self.city
             if self.company:
                 filter_query['team__subsidiary__company'] = self.company
-            query = models.UserProfile.objects.filter(**filter_query)
+            query = models.UserAttendance.objects.filter(**filter_query)
         elif self.competitor_type == 'team':
             filter_query = {}
             if self.city:
@@ -50,7 +50,7 @@ def get_competitors(self):
             query = models.Company.objects.filter(**filter_query)
     else:
         if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
-            query = self.user_competitors.all()
+            query = self.user_attendance_competitors.all()
         elif self.competitor_type == 'team':
             query = self.team_competitors.all()
         elif self.competitor_type == 'company':
@@ -71,44 +71,44 @@ def get_results(self):
     competitors = self.results.order_by('-result', '-team__member_count')
     return competitors
 
-def get_competitions(userprofile):
+def get_competitions(user_attendance):
     competitions = models.Competition.objects.filter(is_public = True)
 
-    if userprofile.is_libero():
+    if user_attendance.is_libero():
         competitions = competitions.filter(competitor_type = 'liberos')
     else:
         competitions = competitions.exclude(competitor_type = 'liberos')
 
     competitions = competitions.filter(
             (
-                  (Q(company = None) | Q(company = userprofile.team.subsidiary.company))
-                & (Q(city = None)    | Q(city = userprofile.team.subsidiary.city))
+                  (Q(company = None) | Q(company = user_attendance.team.subsidiary.company))
+                & (Q(city = None)    | Q(city = user_attendance.team.subsidiary.city))
             )
         ).distinct()
     return competitions
 
-def get_competitions_with_admission(userprofile):
-    competitions = get_competitions(userprofile).filter(
+def get_competitions_with_admission(user_attendance):
+    competitions = get_competitions(user_attendance).filter(
             (
                 Q(without_admission = True)
             ) | (
                 Q(without_admission = False)
                 & (
-                    Q(user_competitors = userprofile)
-                    | Q(team_competitors = userprofile.team)
-                    | Q(company_competitors = userprofile.team.subsidiary.company)
+                    Q(user_attendance_competitors = user_attendance)
+                    | Q(team_competitors = user_attendance.team)
+                    | Q(company_competitors = user_attendance.team.subsidiary.company)
                 )
             )
         ).distinct()
     return competitions
 
-def has_distance_competition(userprofile):
-    competitions = get_competitions_with_admission(userprofile)
+def has_distance_competition(user_attendance):
+    competitions = get_competitions_with_admission(user_attendance)
     competitions = competitions.filter(type = 'length')
     return competitions.count() > 0
 
-def get_competitions_with_info(userprofile):
-    competitions = get_competitions(userprofile)
+def get_competitions_with_info(user_attendance):
+    competitions = get_competitions(user_attendance)
 
     for competition in competitions:
         results = competition.get_results()
@@ -120,9 +120,9 @@ def get_competitions_with_info(userprofile):
 
         try:
             if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-                my_results = results.get(userprofile = userprofile)
+                my_results = results.get(user_attendance = user_attendance)
             elif competition.competitor_type == 'team':
-                my_results = results.get(team = userprofile.team)
+                my_results = results.get(team = user_attendance.team)
             elif competition.competitor_type == 'company':
                 raise NotImplementedError("Company competitions are not working yet")
         except models.CompetitionResult.DoesNotExist:
@@ -136,26 +136,26 @@ def get_competitions_with_info(userprofile):
         competition.my_results = my_results
     return competitions
 
-def get_userprofile_frequency(userprofile):
-    trips_from = models.Trip.objects.filter(user=userprofile, trip_from=True).count()
-    trips_to   = models.Trip.objects.filter(user=userprofile, trip_to=True).count()
+def get_userprofile_frequency(user_attendance):
+    trips_from = models.Trip.objects.filter(user_attendance=user_attendance, trip_from=True).count()
+    trips_to   = models.Trip.objects.filter(user_attendance=user_attendance, trip_to=True).count()
     return trips_from + trips_to
 
-def get_userprofile_length(userprofile):
-    # distance_from = models.Trip.objects.filter(user=userprofile).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
-    # distance_to   = models.Trip.objects.filter(user=userprofile).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
+def get_userprofile_length(user_attendance):
+    # distance_from = models.Trip.objects.filter(user_attendance=user_attendance).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
+    # distance_to   = models.Trip.objects.filter(user_attendance=user_attendance).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
     distance = 0
-    for trip in models.Trip.objects.filter(user=userprofile):
+    for trip in models.Trip.objects.filter(user_attendance=user_attendance):
         #TODO: get the plus distance from somewhere
-        if userprofile.distance + 5 >= trip.distance_from:
+        if user_attendance.distance + 5 >= trip.distance_from:
             distance += trip.distance_from or 0
         else:
-            distance += userprofile.distance + 5
+            distance += user_attendance.distance + 5
 
-        if userprofile.distance + 5 >= trip.distance_to:
+        if user_attendance.distance + 5 >= trip.distance_to:
             distance += trip.distance_to or 0
         else:
-            distance += userprofile.distance + 5
+            distance += user_attendance.distance + 5
     return distance
 
 def get_team_frequency(team):
@@ -188,12 +188,12 @@ def recalculate_result_competition(competition):
         recalculate_result(competition, competitor)
     
 
-def recalculate_result_competitor(userprofile):
+def recalculate_result_competitor(user_attendance):
     for competition in models.Competition.objects.all():
         if competition.competitor_type == 'team':
-            recalculate_result(competition, userprofile.team)
+            recalculate_result(competition, user_attendance.team)
         elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-            recalculate_result(competition, userprofile)
+            recalculate_result(competition, user_attendance)
         elif competition.competitor_type == 'company':
             raise NotImplementedError("Company competitions are not working yet")
 
@@ -230,21 +230,21 @@ def recalculate_result(competition, competitor):
             competition_result.result = get_team_frequency(team)
     
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-        userprofile = competitor
-        if not (competition.has_admission(userprofile) and userprofile.user.is_active and userprofile.approved_for_team == 'approved'):
-            models.CompetitionResult.objects.filter(userprofile = userprofile, competition = competition).delete()
+        user_attendance = competitor
+        if not (competition.has_admission(user_attendance) and user_attendance.userprofile.user.is_active and user_attendance.approved_for_team == 'approved'):
+            models.CompetitionResult.objects.filter(user_attendance = user_attendance, competition = competition).delete()
             return
 
-        competition_result, created = models.CompetitionResult.objects.get_or_create(userprofile = userprofile, competition = competition)
+        competition_result, created = models.CompetitionResult.objects.get_or_create(user_attendance = user_attendance, competition = competition)
 
         if competition.type == 'questionnaire':
-            points = models.Choice.objects.filter(answer__user = userprofile, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
-            points_given = models.Answer.objects.filter(user = userprofile, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
+            points = models.Choice.objects.filter(answer__user_attendance = user_attendance, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
+            points_given = models.Answer.objects.filter(user_attendance = user_attendance, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
             competition_result.result = points + points_given
         elif competition.type == 'length':
-            competition_result.result = get_userprofile_length(userprofile)
+            competition_result.result = get_userprofile_length(user_attendance)
         elif competition.type == 'frequency':
-            competition_result.result = get_userprofile_frequency(userprofile)
+            competition_result.result = get_userprofile_frequency(user_attendance)
 
     elif competition.competitor_type == 'company':
         raise NotImplementedError("Company competitions are not working yet")

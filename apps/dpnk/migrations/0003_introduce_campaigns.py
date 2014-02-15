@@ -46,11 +46,6 @@ class Migration(DataMigration):
                 competition.user_attendance_competitors = orm['dpnk.UserAttendance'].objects.filter(campaign = campaign, userprofile__in = competition.user_competitors.all())
                 competition.save()
 
-        for competition_result in orm['dpnk.CompetitionResult'].objects.all():
-            if competition_result.userprofile:
-                competition_result.user_attendance = orm['dpnk.UserAttendance'].objects.get(campaign = campaign, userprofile = competition_result.userprofile)
-                competition_result.save()
-
 
     def backwards(self, orm):
         "Write your backwards methods here."
