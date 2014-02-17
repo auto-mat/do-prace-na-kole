@@ -30,6 +30,7 @@ from django.template import RequestContext
 from django.db.models import Sum, Count, Q
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import cache_page
+from django.views.generic.edit import FormView
 # Registration imports
 import registration.signals, registration.backends, registration.backends.simple
 # Model imports
@@ -81,7 +82,7 @@ def login(request, template_name='registration/login.html',
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
 class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend):
-    def register(self, request, user_team, **cleaned_data):
+    def register(self, request, campaign, **cleaned_data):
         new_user = super(UserProfileRegistrationBackend, self).register(request, **cleaned_data)
         from dpnk.models import UserProfile
 
@@ -89,147 +90,33 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
         new_user.last_name = cleaned_data['last_name']
         new_user.save()
 
-        UserProfile(user = new_user,
-                    team = user_team,
-                    t_shirt_size = cleaned_data['t_shirt_size'],
-                    telephone = cleaned_data['telephone'],
+        userprofile = UserProfile(user = new_user,
+                    language = cleaned_data['language'],
+                    )
+        userprofile.save()
+        UserAttendance(userprofile = userprofile,
+                    campaign = campaign,
                     distance = cleaned_data['distance']
                     ).save()
         return new_user
 
-def register(request, backend='dpnk.views.UserProfileRegistrationBackend',
-             success_url=None, form_class=None,
-             disallowed_url='registration_disallowed',
-             template_name='registration/registration_form.html',
-             extra_context=None,
-             token=None,
-             initial_email=None):
-    create_company = False
-    create_subsidiary = False
-    create_team = False
-
-    backend = registration.backends.get_backend(backend)
+class RegistrationView(FormView):
+    template_name = 'generic_form_template.html'
     form_class = RegistrationFormDPNK
+    model = UserProfile
+    success_url = 'profil'
 
-    if request.method == 'POST':
-        form = form_class(data=request.POST, files=request.FILES)
+    def form_valid(self, form, backend='dpnk.views.UserProfileRegistrationBackend'):
+        campaign = Campaign.objects.get(slug=self.kwargs['campaign_slug'])
+        super(RegistrationView, self).form_valid(form)
+        backend = registration.backends.get_backend(backend)
+        new_user = backend.register(self.request, campaign, **form.cleaned_data)
+        auth_user = django.contrib.auth.authenticate(
+            username=self.request.POST['username'],
+            password=self.request.POST['password1'])
+        django.contrib.auth.login(self.request, auth_user)
 
-        form_company = RegisterCompanyForm(request.POST, prefix = "company")
-        form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix = "subsidiary")
-        form_team = RegisterTeamForm(request.POST, prefix = "team")
-        create_team = 'id_team_selected' in request.POST
-        if create_team:
-            create_subsidiary = 'id_subsidiary_selected' in request.POST
-        if create_team and create_subsidiary:
-            create_company = 'id_company_selected' in request.POST
-        company_valid = True
-        subsidiary_valid = True
-        team_valid = True
-
-        if create_company:
-            company_valid = form_company.is_valid()
-            form.fields['company'].required = False
-        else:
-            form_company = RegisterCompanyForm(prefix = "company")
-            form.fields['company'].required = True
-
-        if create_subsidiary:
-            subsidiary_valid = form_subsidiary.is_valid()
-            form.fields['subsidiary'].required = False
-        else:
-            form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
-            form.fields['subsidiary'].required = True
-
-        if create_team:
-            team_valid = form_team.is_valid()
-            form.fields['team'].required = False
-        else:
-            form_team = RegisterTeamForm(prefix = "team")
-            form.fields['team'].required = True
-
-        form_valid = form.is_valid()
-
-        if form_valid and company_valid and subsidiary_valid and team_valid:
-            company = None
-            subsidiary = None
-            team = None
-
-            if create_company:
-                company = form_company.save()
-            else:
-                company = Company.objects.get(id=form.data['company'])
-
-            if create_subsidiary:
-                subsidiary = form_subsidiary.save(commit=False)
-                subsidiary.company = company
-                form_subsidiary.save()
-            else:
-                subsidiary = Subsidiary.objects.get(id=form.data['subsidiary'])
-
-            if create_team:
-                team = form_team.save(commit=False)
-                team.subsidiary = subsidiary
-                form_team.save()
-            else:
-                team = form.cleaned_data['team']
-
-            new_user = backend.register(request, team, **form.cleaned_data)
-            auth_user = django.contrib.auth.authenticate(
-                username=request.POST['username'],
-                password=request.POST['password1'])
-            django.contrib.auth.login(request, auth_user)
-
-            if new_user.userprofile.team.invitation_token == token or create_team:
-                userprofile = new_user.userprofile
-                userprofile.approved_for_team = 'approved'
-                userprofile.save()
-
-            if create_team:
-                team.coordinator = new_user.userprofile
-                team.save()
-                new_user.userprofile.approved_for_team = 'approved'
-                new_user.userprofile.save()
-                success_url = "pozvanky"
-                team_created_mail(new_user)
-            else:
-                register_mail(new_user)
-
-            if new_user.userprofile.approved_for_team != 'approved':
-                approval_request_mail(new_user)
-            return redirect(wp_reverse(success_url))
-    else:
-        initial_company = None
-        initial_subsidiary = None
-        initial_team = None
-
-        if token != None:
-            try:
-                team = Team.objects.get(invitation_token=token)
-            except Exception, e:
-                logger.error('Can\'t find team with token %s, email: %s, exception: %s' % (token, initial_team, str(e)))
-                return HttpResponse(_(u'<div class="text-error">Automatická registrace selhala. K danému tokenu neexistuje v databázi žádný tým. Zkuste prosím váš tým najít pomocí <a href="%s">manuální registrace</a>.</div>' % wp_reverse("registrace")), status=401)
-
-            initial_company = team.subsidiary.company
-            initial_subsidiary = team.subsidiary
-            initial_team = team
-
-        form = form_class(request, initial={'company': initial_company, 'subsidiary': initial_subsidiary, 'team': initial_team, 'email': initial_email})
-        form_company = RegisterCompanyForm(prefix = "company")
-        form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
-        form_team = RegisterTeamForm(prefix = "team")
-
-    form.fields['company'].widget.underlying_form = form_company
-    form.fields['company'].widget.create = create_company
-
-    form.fields['subsidiary'].widget.underlying_form = form_subsidiary
-    form.fields['subsidiary'].widget.create = create_subsidiary
-
-    form.fields['team'].widget.underlying_form = form_team
-    form.fields['team'].widget.create = create_team
-
-    return render_to_response(template_name,
-                              {'form': form,
-                               }, context_instance=RequestContext(request))
+        return redirect(wp_reverse(self.success_url))
 
 @login_required
 def payment_type(request):
@@ -472,6 +359,8 @@ def profile(request, campaign_slug):
     payment_status = user_attendance.payment_status()
     if user_attendance.team and user_attendance.team.coordinator_campaign:
         team_members_count = user_attendance.team.members().count()
+    else:
+        team_members_count = 0
     request.session['invite_success_url'] = 'profil'
     return render_to_response('registration/profile.html',
                               {
