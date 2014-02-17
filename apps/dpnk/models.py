@@ -372,7 +372,9 @@ class UserAttendance(models.Model):
         Team,
         related_name='users',
         verbose_name=_(u"Tým"),
-        null=False, blank=False)
+        null=True,
+        blank=True,
+        default=None)
     approved_for_team = models.CharField(
         verbose_name=_(u"Souhlas týmu"),
         choices=TEAMAPPROVAL,
@@ -1166,6 +1168,8 @@ class Answer(models.Model):
         return "%s" % self.str_choices()
 
 def get_company(campaign, user):
+    if not user.userprofile.userattendance_set.get(campaign=campaign).team:
+        return None
     try:
         return user.userprofile.userattendance_set.get(campaign=campaign).team.subsidiary.company
     except UserProfile.DoesNotExist:

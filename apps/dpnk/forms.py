@@ -73,62 +73,11 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
         label=_(u"Příjmení"),
         max_length=30,
         required=True)
-    company = forms.ModelChoiceField(
-        label=_(u"Firma"),
-        queryset=Company.objects.all(),
-        widget=SelectOrCreate(RegisterCompanyForm, prefix="company", new_description = _(u"Společnost v seznamu není, chci založit novou")),
-        required=True)
-    subsidiary = ChainedModelChoiceField(
-        chain_field = "company",
-        app_name = "dpnk",
-        model_name = "Subsidiary",
-        model_field = "company",
-        show_all = False,
-        auto_choose = True,
-        label="Pobočka",
-        widget=SelectChainedOrCreate(RegisterSubsidiaryForm, prefix="subsidiary", new_description = _(u"Pobočka v seznamu není, chci založit novou"), 
-            chain_field = "company",
-            app_name = "dpnk",
-            model_name = "Subsidiary",
-            model_field = "company",
-            show_all = False,
-            auto_choose = True,
-        ),
-        queryset=Subsidiary.objects.all(),
-        required=True)
-    team = ChainedModelChoiceField(
-        chain_field = "subsidiary",
-        app_name = "dpnk",
-        model_name = "Team",
-        model_field = "subsidiary",
-        show_all = False,
-        auto_choose = False,
-        widget=SelectChainedOrCreate(RegisterTeamForm, prefix="team", new_description = _(u"Tým v seznamu není, chci si založit nový"),
-            chain_field = "subsidiary",
-            app_name = "dpnk",
-            model_name = "Team",
-            model_field = "subsidiary",
-            show_all = False,
-            auto_choose = False,
-        ),
-        label="Tým",
-        queryset=Team.objects.all(),
-        required=True)
     distance = forms.IntegerField(
         label=_(u"Vzdálenost"),
         help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
         required=True)
-    t_shirt_size = forms.ChoiceField(
-        label=_(u"Velikost trička"),
-        choices = [['','-----'],] + UserProfile.TSHIRTSIZE_USER,
-        help_text=_('Velikost trička můžete vybírat z <a href="http://www.dopracenakole.net/registrace/tricka/" target="_blank">katalogu</a>'),
-        )
 
-    # -- Contacts
-    telephone = forms.CharField(
-        label="Telefon",
-        help_text="Pro kurýra, který Vám přiveze soutěžní triko, pro HelpDesk",
-        max_length=30)
 
     def __init__(self, request=None, *args, **kwargs):
         if request:
@@ -142,13 +91,8 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
             'language',
             'first_name',
             'last_name',
-            'company',
-            'subsidiary',
-            'team',
             'distance',
-            't_shirt_size',
             'email',
-            'telephone',
             'username',
             'password1',
             'password2'

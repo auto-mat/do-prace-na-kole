@@ -7,8 +7,8 @@ from django.contrib.auth.decorators import login_required
 from decorators import must_be_company_admin
 
 urlpatterns = patterns('',
-    url(r'^registrace/$', 
-        register,
+    url(r'^(?P<campaign_slug>[0-9A-Za-z_\-]+)/registrace/$', 
+        RegistrationView.as_view(),
         {'success_url': 'typ_platby'}),
     url(r'^registrace/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>[^&]+)/$$',
         register,
