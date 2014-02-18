@@ -270,6 +270,13 @@ class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmi
     def company_admin__administrated_company(self, obj):
         return obj.company_admin.administrated_company
 
+
+class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+    list_display = ('__unicode__', 'id', 'distance', 'team', 'approved_for_team', 't_shirt_size')
+    list_filter = ('campaign',)
+    raw_id_fields = ('userprofile', 'team')
+
+
 class CoordinatorFilter(SimpleListFilter):
     title = u"stav týmu"
     parameter_name = u'team_state'
@@ -392,6 +399,7 @@ admin.site.register(CompetitionResult, CompetitionResultAdmin)
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(Trip, TripAdmin)
 admin.site.register(Campaign, CampaignAdmin)
+admin.site.register(UserAttendance, UserAttendanceAdmin)
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
