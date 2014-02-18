@@ -36,11 +36,11 @@ def must_be_coordinator(fn):
     @must_be_competitor
     @login_required
     def wrapper(*args, **kwargs):
-        sdfeequest = args[0]
+        request = args[0]
         userprofile = request.user.userprofile
         user_attendance = userprofile.userattendance_set.get(campaign__slug=kwargs['campaign_slug'])
         team = user_attendance.team
-        if not models.is_team_coordinator(request.user):
+        if not models.is_team_coordinator(request.user.userprofile):
             return HttpResponse(_(u"<div class='text-error'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name, 'coordinator': team.coordinator, 'you': user_attendance}, status=401)
         else:
             return fn(*args, **kwargs)
@@ -53,7 +53,7 @@ def must_be_approved_for_team(fn):
         request = args[0]
         userprofile = request.user.userprofile
         user_attendance = userprofile.userattendance_set.get(campaign__slug=kwargs['campaign_slug'])
-        if user_attendance.approved_for_team == 'approved' or models.is_team_coordinator(request.user):
+        if user_attendance.approved_for_team == 'approved' or models.is_team_coordinator(user_attendance):
             return fn(*args, **kwargs)
         else:
             return HttpResponse(_(u"<div class='text-error'>Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.</div>") % (user_attendance.team.name,), status=401)
