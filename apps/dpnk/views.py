@@ -451,13 +451,14 @@ def competition_results(request, template, competition_slug='testing_zavod', lim
             }, context_instance=RequestContext(request))
 
 @login_required
-def update_profile(request,
+def update_profile(request, campaign_slug=None,
             success_url = 'profil'
                   ):
     create_team = False
     profile = request.user.get_profile()
+    user_attendance = profile.userattendance_set.get(campaign__slug=campaign_slug)
     if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, instance=profile)
+        form = ProfileUpdateForm(request.POST, instance=user_attendance)
         form_team = RegisterTeamForm(request.POST, prefix = "team")
         create_team = 'id_team_selected' in request.POST
         team_valid = True
@@ -472,7 +473,7 @@ def update_profile(request,
             if form.can_change_team:
                 form.fields['team'].required = True
                 form.Meta.exclude = ()
-        old_team = request.user.userprofile.team
+        old_team = user_attendance.team
 
         form_valid = form.is_valid()
 
@@ -513,7 +514,7 @@ def update_profile(request,
 
             return redirect(wp_reverse(success_url))
     else:
-        form = ProfileUpdateForm(instance=profile)
+        form = ProfileUpdateForm(instance=user_attendance)
         form_team = RegisterTeamForm(prefix = "team")
 
     if form.can_change_team:
@@ -871,7 +872,7 @@ def statistics(request,
             }, context_instance=RequestContext(request))
 
 @cache_page(24 * 60 * 60)
-def daily_chart(request,
+def daily_chart(request, campaign_slug,
         template = 'registration/daily-chart.html'
         ):
     values = [period_distance(day, day) for day in util.days()]
