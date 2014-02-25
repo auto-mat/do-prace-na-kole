@@ -109,7 +109,6 @@ class ChangeTeamForm(forms.ModelForm):
         if type(data) != RegisterTeamForm:
             if data != self.instance.team:
                 team_full(data)
-        print "data: %s" % data
         return data
 
     def __init__(self, request=None, *args, **kwargs):
@@ -234,6 +233,34 @@ class PaymentTypeForm(forms.Form):
             choices=CHOICES,
             widget=forms.RadioSelect(),
             )
+
+
+class TShirtUpdateForm(forms.ModelForm):
+    t_shirt_size = forms.ChoiceField(
+        choices = UserAttendance.TSHIRTSIZE_USER,
+        label=_(u"Velikost trička"),
+        )
+    telephone = forms.CharField(
+        label="Telefon",
+        help_text="Pro kurýra, který Vám přiveze soutěžní triko, pro HelpDesk",
+        max_length=30)
+
+    def save(self, *args, **kwargs):
+        ret_val = super(TShirtUpdateForm, self).save(*args, **kwargs)
+        self.instance.userprofile.telephone = self.cleaned_data.get('telephone')
+        self.instance.userprofile.save()
+        return ret_val
+
+    def __init__(self, *args, **kwargs):
+        ret_val = super(TShirtUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['telephone'].initial = self.instance.userprofile.telephone
+        return ret_val
+
+
+    class Meta:
+        model = UserAttendance
+        fields = ('t_shirt_size', 'telephone', )
+
 
 class ProfileUpdateForm(forms.ModelForm):
     language = forms.ChoiceField(

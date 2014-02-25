@@ -318,6 +318,8 @@ class UserAttendance(models.Model):
         verbose_name_plural = _(u"Účasti v kampani")
 
     TSHIRTSIZE = [
+              ('', '---------'),
+              ('no', _(u"nechci triko")),
               ('wXXS', _(u"dámské XXS")),
               ('wXS', _(u"dámské XS")),
               ('wS', _(u"dámské S")),
@@ -334,6 +336,7 @@ class UserAttendance(models.Model):
               ]
 
     TSHIRTSIZE_USER = [
+              ('no', _(u"nechci triko")),
               ('wXS', _(u"dámské XS")),
               ('wS', _(u"dámské S")),
               ('wM', _(u"dámské M")),
@@ -386,7 +389,8 @@ class UserAttendance(models.Model):
         choices=TSHIRTSIZE,
         max_length=16,
         null=False,
-        default='mL')
+        blank=True,
+        default='')
 
     def first_name(self):
         return self.userprofile.user.first_name
@@ -471,41 +475,6 @@ class UserProfile(models.Model):
         verbose_name = _(u"Uživatel")
         verbose_name_plural = _(u"Uživatelé")
         ordering = [ "user__last_name", "user__first_name" ]
-
-    TSHIRTSIZE = [
-              ('wXXS', _(u"dámské XXS")),
-              ('wXS', _(u"dámské XS")),
-              ('wS', _(u"dámské S")),
-              ('wM', _(u"dámské M")),
-              ('wL', _(u"dámské L")),
-              ('wXL', _(u"dámské XL")),
-              ('wXXL', _(u"dámské XXL")),
-
-              ('mS', _(u"pánské S")),
-              ('mM', _(u"pánské M")),
-              ('mL', _(u"pánské L")),
-              ('mXL', _(u"pánské XL")),
-              ('mXXL', _(u"pánské XXL")),
-              ]
-
-    TSHIRTSIZE_USER = [
-              ('wXS', _(u"dámské XS")),
-              ('wS', _(u"dámské S")),
-              ('wM', _(u"dámské M")),
-              ('wL', _(u"dámské L")),
-              ('wXL', _(u"dámské XL")),
-
-              ('mS', _(u"pánské S")),
-              ('mM', _(u"pánské M")),
-              ('mL', _(u"pánské L")),
-              ('mXL', _(u"pánské XL")),
-              ('mXXL', _(u"pánské XXL")),
-              ]
-
-    TEAMAPPROVAL = (('approved', _(u"Odsouhlasený")),
-              ('undecided', _(u"Nerozhodnuto")),
-              ('denied', _(u"Zamítnutý")),
-              )
 
     LANGUAGE = [
             ('cs', _(u"Čeština")),

@@ -36,6 +36,7 @@ import registration.signals, registration.backends, registration.backends.simple
 # Model imports
 from django.contrib.auth.models import User
 from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice, City, UserAttendance, Campaign
+import forms
 from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm, ChangeTeamForm
 from django.conf import settings
 from  django.http import HttpResponse
@@ -603,6 +604,29 @@ class UpdateProfileView(UpdateView):
         super(UpdateProfileView, self).form_valid(form)
         return redirect(wp_reverse(self.success_url))
 
+
+class ChangeTShirtView(UpdateView):
+    template_name = 'generic_form_template.html'
+    form_class = forms.TShirtUpdateForm
+    model = UserAttendance
+    success_url = 'profil'
+
+    def get(self, request, *args, **kwargs):
+        if kwargs['campaign_slug']:
+            self.campaign_slug=kwargs['campaign_slug']
+        return super(ChangeTShirtView, self).get(request, args, kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if kwargs['campaign_slug']:
+            self.campaign_slug=kwargs['campaign_slug']
+        return super(ChangeTShirtView, self).post(request, args, kwargs)
+
+    def get_object(self):
+        return get_object_or_404(UserAttendance, campaign__slug=self.campaign_slug, userprofile=self.request.user.userprofile)
+
+    def form_valid(self, form):
+        super(ChangeTShirtView, self).form_valid(form)
+        return redirect(wp_reverse(self.success_url))
 
 
 def handle_uploaded_file(source, username):
