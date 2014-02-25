@@ -21,7 +21,7 @@
 # Standard library imports
 import time, random, httplib, urllib, hashlib, datetime
 # Django imports
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, get_object_or_404
 import django.contrib.auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
@@ -30,13 +30,13 @@ from django.template import RequestContext
 from django.db.models import Sum, Count, Q
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import cache_page
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, UpdateView
 # Registration imports
 import registration.signals, registration.backends, registration.backends.simple
 # Model imports
 from django.contrib.auth.models import User
 from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice, City, UserAttendance, Campaign
-from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm
+from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm, ChangeTeamForm
 from django.conf import settings
 from  django.http import HttpResponse
 from django import http
@@ -100,6 +100,134 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
                     ).save()
         return new_user
 
+def change_team(request,
+             campaign_slug,
+             success_url=None, form_class=ChangeTeamForm,
+             template_name='generic_form_template.html',
+             extra_context=None,
+             ):
+    user_attendance = request.user.get_profile().userattendance_set.get(campaign__slug=campaign_slug)
+    create_company = False
+    create_subsidiary = False
+    create_team = False
+
+    if request.method == 'POST':
+        form = form_class(data=request.POST, files=request.FILES, instance=user_attendance)
+
+        form_company = RegisterCompanyForm(request.POST, prefix = "company")
+        form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix = "subsidiary")
+        form_team = RegisterTeamForm(request.POST, prefix = "team")
+        create_team = 'id_team_selected' in request.POST
+        if create_team:
+            create_subsidiary = 'id_subsidiary_selected' in request.POST
+        if create_team and create_subsidiary:
+            create_company = 'id_company_selected' in request.POST
+        company_valid = True
+        subsidiary_valid = True
+        team_valid = True
+
+        if create_company:
+            company_valid = form_company.is_valid()
+            form.fields['company'].required = False
+        else:
+            form_company = RegisterCompanyForm(prefix = "company")
+            form.fields['company'].required = True
+
+        if create_subsidiary:
+            subsidiary_valid = form_subsidiary.is_valid()
+            form.fields['subsidiary'].required = False
+        else:
+            form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
+            form.fields['subsidiary'].required = True
+
+        if create_team:
+            team_valid = form_team.is_valid()
+            form.fields['team'].required = False
+        else:
+            form_team = RegisterTeamForm(prefix = "team")
+            form.fields['team'].required = True
+        old_team = user_attendance.team
+
+        form_valid = form.is_valid()
+
+        if form_valid and company_valid and subsidiary_valid and team_valid:
+            team_changed = form.cleaned_data and 'team' in form.cleaned_data and old_team != form.cleaned_data['team']
+
+            company = None
+            subsidiary = None
+            team = None
+
+            if create_company:
+                company = form_company.save()
+            else:
+                company = Company.objects.get(id=form.data['company'])
+
+            if create_subsidiary:
+                subsidiary = form_subsidiary.save(commit=False)
+                subsidiary.company = company
+                form_subsidiary.save()
+            else:
+                subsidiary = Subsidiary.objects.get(id=form.data['subsidiary'])
+
+            if create_team:
+                team = form_team.save(commit=False)
+                team.subsidiary = subsidiary
+                form_team.save()
+            else:
+                team = form.cleaned_data['team']
+
+            if create_team:
+                team = form_team.save(commit=False)
+
+                if hasattr(user_attendance, 'coordinated_team'):
+                    coordinated_team_members = UserAttendance.objects.exclude(id=user_attendance.id).filter(team=user_attendance.coordinated_team, userprofile__user__is_active=True)
+                    if len(coordinated_team_members)>0:
+                        user_attendance.coordinated_team.coordinator = coordinated_team_members[0]
+                    else:
+                        user_attendance.coordinated_team.coordinator = None
+                    user_attendance.coordinated_team.save()
+
+                user_attendance.team = team
+                user_attendance.approved_for_team = 'approved'
+                team.coordinator = user_attendance
+
+                form_team.save()
+
+                user_attendance.team = team
+                success_url = "pozvanky"
+                request.session['invite_success_url'] = 'profil'
+
+                team_created_mail(user_attendance.userprofile.user)
+
+            if team_changed and not create_team:
+                user_attendance.approved_for_team = 'undecided'
+                approval_request_mail(user_attendance.userprofile.user)
+
+            form.save()
+
+            if user_attendance.approved_for_team != 'approved':
+                approval_request_mail(user_attendance.user)
+            return redirect(wp_reverse(success_url))
+    else:
+        form = form_class(request, instance=user_attendance)
+        form_company = RegisterCompanyForm(prefix = "company")
+        form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
+        form_team = RegisterTeamForm(prefix = "team")
+
+    form.fields['company'].widget.underlying_form = form_company
+    form.fields['company'].widget.create = create_company
+
+    form.fields['subsidiary'].widget.underlying_form = form_subsidiary
+    form.fields['subsidiary'].widget.create = create_subsidiary
+
+    form.fields['team'].widget.underlying_form = form_team
+    form.fields['team'].widget.create = create_team
+
+    return render_to_response(template_name,
+                              {'form': form,
+                               }, context_instance=RequestContext(request))
+
+
 class RegistrationView(FormView):
     template_name = 'generic_form_template.html'
     form_class = RegistrationFormDPNK
@@ -117,6 +245,7 @@ class RegistrationView(FormView):
         django.contrib.auth.login(self.request, auth_user)
 
         return redirect(wp_reverse(self.success_url))
+
 
 @login_required
 def payment_type(request):
@@ -450,81 +579,31 @@ def competition_results(request, template, competition_slug='testing_zavod', lim
             'results': competition.get_results()[:limit],
             }, context_instance=RequestContext(request))
 
-@login_required
-def update_profile(request, campaign_slug=None,
-            success_url = 'profil'
-                  ):
-    create_team = False
-    profile = request.user.get_profile()
-    user_attendance = profile.userattendance_set.get(campaign__slug=campaign_slug)
-    if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, instance=user_attendance)
-        form_team = RegisterTeamForm(request.POST, prefix = "team")
-        create_team = 'id_team_selected' in request.POST
-        team_valid = True
 
-        if create_team:
-            team_valid = form_team.is_valid()
-            if form.can_change_team:
-                form.fields['team'].required = False
-                form.Meta.exclude = ('team')
-        else:
-            form_team = RegisterTeamForm(prefix = "team")
-            if form.can_change_team:
-                form.fields['team'].required = True
-                form.Meta.exclude = ()
-        old_team = user_attendance.team
+class UpdateProfileView(UpdateView):
+    template_name = 'generic_form_template.html'
+    form_class = ProfileUpdateForm
+    model = UserAttendance
+    success_url = 'profil'
 
-        form_valid = form.is_valid()
+    def get(self, request, *args, **kwargs):
+        if kwargs['campaign_slug']:
+            self.campaign_slug=kwargs['campaign_slug']
+        return super(UpdateProfileView, self).get(request, args, kwargs)
 
-        if team_valid and form_valid:
-            team_changed = form.cleaned_data and 'team' in form.cleaned_data and old_team != form.cleaned_data['team']
+    def post(self, request, *args, **kwargs):
+        if kwargs['campaign_slug']:
+            self.campaign_slug=kwargs['campaign_slug']
+        return super(UpdateProfileView, self).post(request, args, kwargs)
 
-            userprofile = form.save(commit=False)
+    def get_object(self):
+        return get_object_or_404(UserAttendance, campaign__slug=self.campaign_slug, userprofile=self.request.user.userprofile)
 
-            if create_team:
-                team = form_team.save(commit=False)
-                team.subsidiary = request.user.userprofile.team.subsidiary
+    def form_valid(self, form):
+        super(UpdateProfileView, self).form_valid(form)
+        return redirect(wp_reverse(self.success_url))
 
-                if hasattr(userprofile, 'coordinated_team'):
-                    coordinated_team_members = UserProfile.objects.exclude(id=userprofile.id).filter(team=userprofile.coordinated_team, user__is_active=True)
-                    if len(coordinated_team_members)>0:
-                        userprofile.coordinated_team.coordinator = coordinated_team_members[0]
-                    else:
-                        userprofile.coordinated_team.coordinator = None
-                    userprofile.coordinated_team.save()
 
-                userprofile.team = team
-                userprofile.approved_for_team = 'approved'
-                team.coordinator = userprofile
-
-                form_team.save()
-
-                userprofile.team = team
-                success_url = "pozvanky"
-                request.session['invite_success_url'] = 'profil'
-
-                team_created_mail(userprofile.user)
-
-            if team_changed and not create_team:
-                userprofile.approved_for_team = 'undecided'
-                approval_request_mail(userprofile.user)
-
-            form.save()
-
-            return redirect(wp_reverse(success_url))
-    else:
-        form = ProfileUpdateForm(instance=user_attendance)
-        form_team = RegisterTeamForm(prefix = "team")
-
-    if form.can_change_team:
-        form.fields['team'].widget.underlying_form = form_team
-        form.fields['team'].widget.create = create_team
-    
-    return render_to_response('registration/update_profile.html',
-                              {'form': form,
-                               'can_change_team': form.can_change_team
-                               }, context_instance=RequestContext(request))
 
 def handle_uploaded_file(source, username):
     logger.info("Saving file: username: %s, filenmae: %s" % (username, source.name))
@@ -725,21 +804,21 @@ def answers(request):
                                'choice_names': choice_names
                                }, context_instance=RequestContext(request))
 
-def approve_for_team(userprofile, reason, approve=False, deny=False):
+def approve_for_team(user_attendance, reason, approve=False, deny=False):
     if deny:
         if not reason:
             return 'no_message'
-        userprofile.approved_for_team = 'denied'
-        userprofile.save()
-        team_membership_denial_mail(userprofile.user, reason)
+        user_attendance.approved_for_team = 'denied'
+        user_attendance.save()
+        team_membership_denial_mail(user_attendance.userprofile.user, reason)
         return 'denied'
     elif approve:
-        if len(userprofile.team.members()) >= 5:
+        if len(user_attendance.team.members()) >= 5:
             return 'team_full'
-        userprofile.approved_for_team = 'approved'
-        userprofile.save()
+        user_attendance.approved_for_team = 'approved'
+        user_attendance.save()
         user_approved = True
-        team_membership_approval_mail(userprofile.user)
+        team_membership_approval_mail(user_attendance.userprofile.user)
         return 'approved'
 
 @login_required
@@ -772,11 +851,13 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
 
 @must_be_coordinator
 @login_required
-def team_admin_team(request, backend='registration.backends.simple.SimpleBackend',
+def team_admin_team(request, campaign_slug, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
              template_name='registration/team_admin_team.html',
              extra_context=None):
-    team = request.user.userprofile.team
+    profile = request.user.get_profile()
+    user_attendance = profile.userattendance_set.get(campaign__slug=campaign_slug)
+    team = user_attendance.team
     form_class = TeamAdminForm
 
     if request.method == 'POST':
@@ -793,33 +874,37 @@ def team_admin_team(request, backend='registration.backends.simple.SimpleBackend
 
 @must_be_coordinator
 @login_required
-def team_admin_members(request, backend='registration.backends.simple.SimpleBackend',
+def team_admin_members(request, campaign_slug, backend='registration.backends.simple.SimpleBackend',
              template_name='registration/team_admin_members.html',
              extra_context=None):
-    team = request.user.userprofile.team
+    profile = request.user.get_profile()
+    user_attendance = profile.userattendance_set.get(campaign__slug=campaign_slug)
+    team = user_attendance.team
     unapproved_users = []
     denial_message = 'unapproved'
 
     if 'button_action' in request.POST and request.POST['button_action']:
         b_action = request.POST['button_action'].split('-')
-        userprofile = UserProfile.objects.get(id=b_action[1])
-        if userprofile.approved_for_team not in ('undecided', 'denied') or userprofile.team != team or not userprofile.user.is_active:
-            logger.error('Approving user with wrong parameters. User: %s, approval: %s, team: %s, active: %s' % (userprofile.user, userprofile.approved_for_team, userprofile.team, userprofile.user.is_active))
+        user_attendance = UserAttendance.objects.get(id=b_action[1])
+        userprofile = user_attendance.userprofile
+        if user_attendance.approved_for_team not in ('undecided', 'denied') or user_attendance.team != team or not userprofile.user.is_active:
+            logger.error('Approving user with wrong parameters. User: %s, approval: %s, team: %s, active: %s' % (userprofile.user, user_attendance.approved_for_team, user_attendance.team, userprofile.user.is_active))
             denial_message = 'cannot_approve'
         else:
-            denial_message = approve_for_team(userprofile, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
+            denial_message = approve_for_team(user_attendance, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
 
-    for userprofile in UserProfile.objects.filter(team = team, user__is_active=True):
+    for user_attendance in UserAttendance.objects.filter(team = team, userprofile__user__is_active=True):
+        userprofile = user_attendance.userprofile
         unapproved_users.append([
-            ('state', None, userprofile.approved_for_team),
-            ('id', None, userprofile.id),
-            ('payment', None, userprofile.payment()),
+            ('state', None, user_attendance.approved_for_team),
+            ('id', None, user_attendance.id),
+            ('payment', None, user_attendance.payment()),
             ('name', _(u"Jméno"), unicode(userprofile)),
             ('username', _(u"Uživatel"), userprofile.user),
             ('email', _(u"Email"), userprofile.user.email),
-            ('payment_description', _(u"Platba"), userprofile.payment()['status_description']),
+            ('payment_description', _(u"Platba"), user_attendance.payment()['status_description']),
             ('telephone', _(u"Telefon"), userprofile.telephone),
-            ('state_name', _(u"Stav"), unicode(userprofile.get_approved_for_team_display())),
+            ('state_name', _(u"Stav"), unicode(user_attendance.get_approved_for_team_display())),
             ])
 
     return render_to_response(template_name,

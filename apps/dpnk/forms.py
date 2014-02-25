@@ -58,6 +58,93 @@ class RegisterTeamForm(forms.ModelForm):
         model = Team
         fields = ('name',)
 
+
+class ChangeTeamForm(forms.ModelForm):
+    company = forms.ModelChoiceField(
+        label=_(u"Firma"),
+        queryset=Company.objects.all(),
+        widget=SelectOrCreate(RegisterCompanyForm, prefix="company", new_description = _(u"Společnost v seznamu není, chci založit novou")),
+        required=True)
+    subsidiary = ChainedModelChoiceField(
+        chain_field = "company",
+        app_name = "dpnk",
+        model_name = "Subsidiary",
+        model_field = "company",
+        show_all = False,
+        auto_choose = True,
+        label="Pobočka",
+        widget=SelectChainedOrCreate(RegisterSubsidiaryForm, prefix="subsidiary", new_description = _(u"Pobočka v seznamu není, chci založit novou"), 
+            chain_field = "company",
+            app_name = "dpnk",
+            model_name = "Subsidiary",
+            model_field = "company",
+            show_all = False,
+            auto_choose = True,
+        ),
+        queryset=Subsidiary.objects.all(),
+        required=True)
+    team = ChainedModelChoiceField(
+        chain_field = "subsidiary",
+        app_name = "dpnk",
+        model_name = "Team",
+        model_field = "subsidiary",
+        show_all = False,
+        auto_choose = False,
+        widget=SelectChainedOrCreate(RegisterTeamForm, prefix="team", new_description = _(u"Tým v seznamu není, chci si založit nový"),
+            chain_field = "subsidiary",
+            app_name = "dpnk",
+            model_name = "Team",
+            model_field = "subsidiary",
+            show_all = False,
+            auto_choose = False,
+        ),
+        label="Tým",
+        queryset=Team.objects.all(),
+        required=True)
+
+    def clean_team(self):
+        data = self.cleaned_data['team']
+        if not data:
+            return self.instance.team
+        if type(data) != RegisterTeamForm:
+            if data != self.instance.team:
+                team_full(data)
+        print "data: %s" % data
+        return data
+
+    def __init__(self, request=None, *args, **kwargs):
+        initial = kwargs.get('initial', {})
+        instance = kwargs.get('instance', {})
+        if instance:
+            initial['team'] = instance.team
+            initial['subsidiary'] = instance.team.subsidiary
+            initial['company'] = instance.team.subsidiary.company
+
+        if request:
+            if request.GET.get('team', None):
+                initial['team'] = request.GET['team']
+
+        kwargs['initial']=initial
+
+        super(ChangeTeamForm, self).__init__(*args, **kwargs)
+        self.fields.keyOrder = [
+            'company',
+            'subsidiary',
+            'team',
+            ]
+
+        #if user_attendance.team:
+        #    self.fields["team"].queryset = Team.objects.filter(subsidiary__company=user_attendance.team.subsidiary.company)
+
+        #if not user_attendance.team or (models.is_team_coordinator(user_attendance) and UserAttendance.objects.filter(team=user_attendance.team, userprofile__user__is_active=True).count()>1):
+        #    del self.fields['team']
+        #    self.can_change_team = False
+
+    class Meta:
+        model = UserAttendance
+        fields = ('team',)
+
+
 class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
     required_css_class = 'required'
     
@@ -149,6 +236,10 @@ class PaymentTypeForm(forms.Form):
             )
 
 class ProfileUpdateForm(forms.ModelForm):
+    language = forms.ChoiceField(
+        label=_(u"Jazyk komunikace"),
+        choices = UserProfile.LANGUAGE,
+        )
     first_name = forms.CharField(
         label="Jméno",
         max_length=30,
@@ -157,60 +248,39 @@ class ProfileUpdateForm(forms.ModelForm):
         label="Příjmení",
         max_length=30,
         required=True)
-    team = forms.ModelChoiceField(
-        label="Tým",
-        help_text = "<div class='text-info'>" + _(u"Tip: Pokud chcete pouze změnit jméno týmu, nezakládejte nový. Stačí požádat koordinátora, aby jméno změnil v editaci týmu.") + "</div>",
-        queryset= [],
-        widget=SelectOrCreate(RegisterTeamForm, prefix="team", new_description = _(u"Chci si založit nový tým, ve kterém budu koordinátorem")),
-        empty_label=None,
-        required=True)
 
     email = forms.EmailField(
         help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu"),
         required=False)
-    can_change_team = True
 
     def save(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).save(*args, **kwargs)
-        self.instance.user.email = self.cleaned_data.get('email')
-        self.instance.user.first_name = self.cleaned_data.get('first_name')
-        self.instance.user.last_name = self.cleaned_data.get('last_name')
-        self.instance.user.save()
+        self.instance.userprofile.language = self.cleaned_data.get('language')
+        self.instance.userprofile.save()
+        self.instance.userprofile.user.email = self.cleaned_data.get('email')
+        self.instance.userprofile.user.first_name = self.cleaned_data.get('first_name')
+        self.instance.userprofile.user.last_name = self.cleaned_data.get('last_name')
+        self.instance.userprofile.user.save()
         return ret_val
-
-    def clean_team(self):
-        data = self.cleaned_data['team']
-        if not data:
-            return self.instance.team
-        if type(data) != RegisterTeamForm:
-            if data != self.instance.team:
-                team_full(data)
-        return data
 
     def clean_email(self):
         """
         Validate that the email is not already in use.
         """
-        if User.objects.filter(email__iexact=self.cleaned_data['email']).exclude(pk=self.instance.user.pk).exists():
+        if User.objects.filter(email__iexact=self.cleaned_data['email']).exclude(pk=self.instance.userprofile.user.pk).exists():
             raise forms.ValidationError(_("Tento email již je v našem systému zanesen."))
         else:
             return self.cleaned_data['email']
 
     def __init__(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).__init__(*args, **kwargs)
-        userprofile = kwargs['instance']
-        if userprofile.team:
-            self.fields["team"].queryset = Team.objects.filter(subsidiary__company=userprofile.team.subsidiary.company)
-
-        self.fields['email'].initial = self.instance.user.email
-        self.fields['first_name'].initial = self.instance.user.first_name
-        self.fields['last_name'].initial = self.instance.user.last_name
-
-        if not userprofile.team or (models.is_team_coordinator(userprofile.user) and UserProfile.objects.filter(team=userprofile.team, user__is_active=True).count()>1):
-            del self.fields['team']
-            self.can_change_team = False
+        user_attendance = kwargs['instance']
+        self.fields['language'].initial = self.instance.userprofile.language
+        self.fields['email'].initial = self.instance.userprofile.user.email
+        self.fields['first_name'].initial = self.instance.userprofile.user.first_name
+        self.fields['last_name'].initial = self.instance.userprofile.user.last_name
         return ret_val
 
     class Meta:
-        model = UserProfile
-        fields = ( 'language', 'first_name', 'last_name', 'telephone', 'email', 'team')
+        model = UserAttendance
+        fields = ( 'language', 'first_name', 'last_name', 'email', 'distance')

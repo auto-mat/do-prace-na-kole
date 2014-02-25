@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 
 from django.conf import settings
+import views
 from views import *
 from company_admin_views import *
 from django.contrib.auth.decorators import login_required
@@ -8,7 +9,7 @@ from decorators import must_be_company_admin
 
 campaign_urlpatterns = patterns('',
     url(r'^tym/$', 
-        ChangeTeamView.as_view(),
+        views.change_team,
         {'success_url': 'profil'}),
     url(r'^registrace/$', 
         RegistrationView.as_view(),
@@ -47,7 +48,7 @@ campaign_urlpatterns = patterns('',
     url(r'^otazka/(?P<questionaire_slug>[0-9A-Za-z_\-]+)/$',
         questionaire),
     url(r'^upravit_profil/$',
-        update_profile),
+        UpdateProfileView.as_view()),
     url(r'^typ_platby/$',
         payment_type),
     url(r'^platba/$',
