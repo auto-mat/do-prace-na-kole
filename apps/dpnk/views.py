@@ -83,7 +83,7 @@ def login(request, template_name='registration/login.html',
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
 class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend):
-    def register(self, request, campaign, **cleaned_data):
+    def register(self, request, campaign, invitation_token, **cleaned_data):
         new_user = super(UserProfileRegistrationBackend, self).register(request, **cleaned_data)
         from dpnk.models import UserProfile
 
@@ -95,8 +95,17 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
                     language = cleaned_data['language'],
                     )
         userprofile.save()
+
+        approved_for_team = 'undecided'
+        try:
+            team = Team.objects.get(invitation_token=invitation_token)
+            approved_for_team = 'approved'
+        except Team.DoesNotExist:
+            team = None
         UserAttendance(userprofile = userprofile,
                     campaign = campaign,
+                    team = team,
+                    approved_for_team = approved_for_team,
                     distance = cleaned_data['distance']
                     ).save()
         return new_user
@@ -235,11 +244,14 @@ class RegistrationView(FormView):
     model = UserProfile
     success_url = 'profil'
 
+    def get_initial(self):
+        return {'email': self.kwargs['initial_email']}
+
     def form_valid(self, form, backend='dpnk.views.UserProfileRegistrationBackend'):
         campaign = Campaign.objects.get(slug=self.kwargs['campaign_slug'])
         super(RegistrationView, self).form_valid(form)
         backend = registration.backends.get_backend(backend)
-        new_user = backend.register(self.request, campaign, **form.cleaned_data)
+        new_user = backend.register(self.request, campaign, self.kwargs['token'], **form.cleaned_data)
         auth_user = django.contrib.auth.authenticate(
             username=self.request.POST['username'],
             password=self.request.POST['password1'])
