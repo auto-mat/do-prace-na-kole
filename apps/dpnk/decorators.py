@@ -38,10 +38,10 @@ def must_be_coordinator(fn):
     def wrapper(*args, **kwargs):
         request = args[0]
         userprofile = request.user.userprofile
-        user_attendance = userprofile.userattendance_set.get(campaign__slug=kwargs['campaign_slug'])
+        user_attendance = userprofile.userattendance_set.get(campaign__slug=kwargs.pop('campaign_slug'))
         team = user_attendance.team
-        if not models.is_team_coordinator(request.user.userprofile):
-            return HttpResponse(_(u"<div class='text-error'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name, 'coordinator': team.coordinator, 'you': user_attendance}, status=401)
+        if not models.is_team_coordinator(user_attendance):
+            return HttpResponse(_(u"<div class='text-error'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name, 'coordinator': team.coordinator_campaign, 'you': user_attendance}, status=401)
         else:
             return fn(*args, **kwargs)
     return wrapper
