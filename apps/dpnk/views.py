@@ -400,8 +400,7 @@ def payment_status(request):
 
 @login_required
 @must_be_competitor
-def profile_access(request):
-    profile = request.user.get_profile()
+def profile_access(profile, user_attendance, request):
     return render_to_response('registration/profile_access.html',
                               {
             'city': profile.team.subsidiary.city
@@ -416,19 +415,17 @@ def trip_active(day, today):
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def rides(request, campaign_slug, template='registration/rides.html',
+def rides(request, campaign_slug, user_attendance=None, template='registration/rides.html',
         success_url="profil"):
     days = util.days()
     today = util.today()
-    profile = request.user.get_profile()
-    user_attendance = profile.userattendance_set.get(campaign__slug=campaign_slug)
 
     if request.method == 'POST':
         if 'day' in request.POST and request.POST["day"]:
             day = int(request.POST["day"])
             date = days[day-1]
             if not trip_active(date, today):
-                logger.error(u'User %s is trying to fill in nonactive day %s (%s), POST: %s' % (profile, day, date, request.POST))
+                logger.error(u'User %s is trying to fill in nonactive day %s (%s), POST: %s' % (user_attendance, day, date, request.POST))
                 return HttpResponse(_(u'<div class="text-error">Den %s již není možné vyplnit.</div>' % date), status=401)
             trip, created = Trip.objects.get_or_create(user = request.user.get_profile(),
                 date = date)
@@ -493,9 +490,7 @@ def rides(request, campaign_slug, template='registration/rides.html',
 
 @login_required
 @must_be_competitor
-def profile(request, campaign_slug):
-    profile = request.user.get_profile()
-    user_attendance = profile.userattendance_set.get(campaign__slug=campaign_slug)
+def profile(request, campaign_slug, user_attendance=None):
 
     # Render profile
     payment_status = user_attendance.payment_status()
@@ -506,7 +501,7 @@ def profile(request, campaign_slug):
     request.session['invite_success_url'] = 'profil'
     return render_to_response('registration/profile.html',
                               {
-            'active': profile.user.is_active,
+            'active': user_attendance.userprofile.user.is_active,
             'superuser': request.user.is_superuser,
             'user': request.user,
             'profile': user_attendance,
@@ -522,12 +517,10 @@ def profile(request, campaign_slug):
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def other_team_members(request, campaign_slug,
+def other_team_members(request, campaign_slug, userprofile=None, user_attendance=None, 
         template = 'registration/team_members.html'
         ):
-    profile = request.user.get_profile()
     campaign = Campaign.objects.get(slug=campaign_slug)
-    user_attendance = profile.userattendance_set.get(campaign=campaign)
 
     team_members = []
     if user_attendance.team and user_attendance.team.coordinator_campaign:
@@ -541,12 +534,9 @@ def other_team_members(request, campaign_slug,
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def admissions(request, template, campaign_slug,
+def admissions(request, template, campaign_slug, user_attendance=None, 
         success_url="profil",
         ):
-    userprofile = request.user.get_profile()
-    user_attendance = userprofile.userattendance_set.get(campaign__slug=campaign_slug)
-
     if request.method == 'POST':
         if 'admission_competition_id' in request.POST and request.POST['admission_competition_id']:
             competition = Competition.objects.get(id=request.POST['admission_competition_id']) 
@@ -599,18 +589,8 @@ class UpdateProfileView(UpdateView):
     model = UserAttendance
     success_url = 'profil'
 
-    def get(self, request, *args, **kwargs):
-        if kwargs['campaign_slug']:
-            self.campaign_slug=kwargs['campaign_slug']
-        return super(UpdateProfileView, self).get(request, args, kwargs)
-
-    def post(self, request, *args, **kwargs):
-        if kwargs['campaign_slug']:
-            self.campaign_slug=kwargs['campaign_slug']
-        return super(UpdateProfileView, self).post(request, args, kwargs)
-
     def get_object(self):
-        return get_object_or_404(UserAttendance, campaign__slug=self.campaign_slug, userprofile=self.request.user.userprofile)
+        return get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
 
     def form_valid(self, form):
         super(UpdateProfileView, self).form_valid(form)
@@ -623,18 +603,8 @@ class ChangeTShirtView(UpdateView):
     model = UserAttendance
     success_url = 'profil'
 
-    def get(self, request, *args, **kwargs):
-        if kwargs['campaign_slug']:
-            self.campaign_slug=kwargs['campaign_slug']
-        return super(ChangeTShirtView, self).get(request, args, kwargs)
-
-    def post(self, request, *args, **kwargs):
-        if kwargs['campaign_slug']:
-            self.campaign_slug=kwargs['campaign_slug']
-        return super(ChangeTShirtView, self).post(request, args, kwargs)
-
     def get_object(self):
-        return get_object_or_404(UserAttendance, campaign__slug=self.campaign_slug, userprofile=self.request.user.userprofile)
+        return get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
 
     def form_valid(self, form):
         super(ChangeTShirtView, self).form_valid(form)
@@ -868,6 +838,7 @@ def team_approval_request(request):
 def invite(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
              template_name='registration/invitation.html',
+             user_attendance=None,
              extra_context=None):
     form_class = InviteForm
 
@@ -889,10 +860,9 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
 @login_required
 def team_admin_team(request, campaign_slug, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
+             user_attendance=None,
              template_name='registration/team_admin_team.html',
              extra_context=None):
-    profile = request.user.get_profile()
-    user_attendance = profile.userattendance_set.get(campaign__slug=campaign_slug)
     team = user_attendance.team
     form_class = TeamAdminForm
 

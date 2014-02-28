@@ -20,7 +20,7 @@
 from django.contrib.auth.decorators import login_required
 from  django.http import HttpResponse
 from django.utils.translation import gettext as _
-from models import UserProfile
+from models import UserProfile, UserAttendance, Campaign
 import models
 
 def login_required_simple(fn):
@@ -51,8 +51,7 @@ def must_be_approved_for_team(fn):
     @must_be_competitor
     def wrapper(*args, **kwargs):
         request = args[0]
-        userprofile = request.user.userprofile
-        user_attendance = userprofile.userattendance_set.get(campaign__slug=kwargs['campaign_slug'])
+        user_attendance = kwargs['user_attendance']
         if user_attendance.approved_for_team == 'approved' or models.is_team_coordinator(user_attendance):
             return fn(*args, **kwargs)
         else:
@@ -74,6 +73,18 @@ def must_be_competitor(fn):
     def wrapper(*args, **kwargs):
         request = args[0]
         if models.is_competitor(request.user):
+            userprofile = request.user.userprofile
+            campaign = Campaign.objects.get(slug=kwargs['campaign_slug'])
+            try:
+                user_attendance = userprofile.userattendance_set.get(campaign=campaign)
+            except UserAttendance.DoesNotExist:
+                user_attendance = UserAttendance(userprofile = userprofile,
+                            campaign = campaign,
+                            approved_for_team = 'undecided',
+                            )
+                user_attendance.save()
+            
+            kwargs['user_attendance'] = user_attendance
             return fn(*args, **kwargs)
 
         return HttpResponse(_(u"<div class='text-error'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním správcem, použijte <a href='/fa'>správu firmy</a>.</div>"), status=401) 
