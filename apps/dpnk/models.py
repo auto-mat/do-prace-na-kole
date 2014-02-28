@@ -316,6 +316,7 @@ class UserAttendance(models.Model):
     class Meta:
         verbose_name = _(u"Účast v kampani")
         verbose_name_plural = _(u"Účasti v kampani")
+        unique_together = (("userprofile", "campaign"),)
 
     TSHIRTSIZE = [
               ('', '---------'),
@@ -363,7 +364,7 @@ class UserAttendance(models.Model):
     userprofile = models.ForeignKey(
        "UserProfile", 
        verbose_name = _(u"Uživatelský profil"),
-       unique = True,
+       unique=False,
        null=False,
        blank=False)
     distance = models.PositiveIntegerField(
