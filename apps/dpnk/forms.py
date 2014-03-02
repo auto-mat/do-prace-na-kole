@@ -159,10 +159,6 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
         label=_(u"Příjmení"),
         max_length=30,
         required=True)
-    distance = forms.IntegerField(
-        label=_(u"Vzdálenost"),
-        help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
-        required=True)
 
 
     def __init__(self, request=None, *args, **kwargs):
@@ -177,7 +173,6 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
             'language',
             'first_name',
             'last_name',
-            'distance',
             'email',
             'username',
             'password1',
