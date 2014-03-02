@@ -245,7 +245,7 @@ class RegistrationView(FormView):
     success_url = 'profil'
 
     def get_initial(self):
-        return {'email': self.kwargs['initial_email']}
+        return {'email': self.kwargs.get('initial_email', '')}
 
     def form_valid(self, form, backend='dpnk.views.UserProfileRegistrationBackend'):
         campaign = Campaign.objects.get(slug=self.kwargs['campaign_slug'])
@@ -897,7 +897,7 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
             logger.error('Approving user with wrong parameters. User: %s, approval: %s, team: %s, active: %s' % (userprofile.user, user_attendance.approved_for_team, user_attendance.team, userprofile.user.is_active))
             denial_message = 'cannot_approve'
         else:
-            denial_message = approve_for_team(user_attendance, request.POST.get('reason-' + str(userprofile.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
+            denial_message = approve_for_team(user_attendance, request.POST.get('reason-' + str(user_attendance.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
 
     for user_attendance in UserAttendance.objects.filter(team = team, userprofile__user__is_active=True):
         userprofile = user_attendance.userprofile
