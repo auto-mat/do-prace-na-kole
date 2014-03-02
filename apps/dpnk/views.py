@@ -211,12 +211,12 @@ def change_team(request,
 
             if team_changed and not create_team:
                 user_attendance.approved_for_team = 'undecided'
-                approval_request_mail(user_attendance.userprofile.user)
+                approval_request_mail(user_attendance)
 
             form.save()
 
             if user_attendance.approved_for_team != 'approved':
-                approval_request_mail(user_attendance.user)
+                approval_request_mail(user_attendance)
             return redirect(wp_reverse(success_url))
     else:
         form = form_class(request, instance=user_attendance)
@@ -827,9 +827,10 @@ def approve_for_team(user_attendance, reason, approve=False, deny=False):
         team_membership_approval_mail(user_attendance.userprofile.user)
         return 'approved'
 
+@must_be_competitor
 @login_required
-def team_approval_request(request):
-    approval_request_mail(request.user)
+def team_approval_request(request, campaign_slug, user_attendance=None):
+    approval_request_mail(user_attendance)
     return render_to_response('registration/request_team_approval.html',
                               context_instance=RequestContext(request))
 
@@ -858,7 +859,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
 
 @must_be_coordinator
 @login_required
-def team_admin_team(request, campaign_slug, backend='registration.backends.simple.SimpleBackend',
+def team_admin_team(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
              user_attendance=None,
              template_name='registration/team_admin_team.html',
@@ -880,11 +881,10 @@ def team_admin_team(request, campaign_slug, backend='registration.backends.simpl
 
 @must_be_coordinator
 @login_required
-def team_admin_members(request, campaign_slug, backend='registration.backends.simple.SimpleBackend',
+def team_admin_members(request, backend='registration.backends.simple.SimpleBackend',
              template_name='registration/team_admin_members.html',
+             user_attendance=None,
              extra_context=None):
-    profile = request.user.get_profile()
-    user_attendance = profile.userattendance_set.get(campaign__slug=campaign_slug)
     team = user_attendance.team
     unapproved_users = []
     denial_message = 'unapproved'

@@ -23,11 +23,11 @@ from django.conf import settings
 from django.utils.translation import gettext as _
 import models
 
-def approval_request_mail(user):
+def approval_request_mail(user_attendance):
     template = get_template('email/approval_request.html')
-    email = user.userprofile.team.coordinator.user.email
-    message = template.render(Context({ 'coordinator': user.userprofile.team.coordinator.user,
-        'user': user,
+    email = user_attendance.team.coordinator_campaign.userprofile.user.email
+    message = template.render(Context({ 'coordinator': user_attendance.team.coordinator_campaign.userprofile.user,
+        'user': user_attendance,
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_("Do práce na kole 2013 - žádost o ověření členství"), message, None, [email], fail_silently=False)

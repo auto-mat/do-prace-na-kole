@@ -1,6 +1,6 @@
 {% load wp_url from dpnk_tags %}{% autoescape off %}
 
-Zpráva pro soutěžící/ho {{ coordinator.userprofile }}, koordinátora/ku týmu {{user.userprofile.team}} v soutěži Do práce na kole 2013.
+Zpráva pro soutěžící/ho {{ coordinator.userprofile }}, koordinátora/ku týmu {{user.userprofile.team}} v soutěži {{ user.campaign }}.
 
 Dobrý den,
 
@@ -16,7 +16,7 @@ Vzhledem k otevřenému charakteru soutěže se další soutěžící z Vaší o
 Ujištění pro Vás: Zamítnutím kandidáta/ku nediskvalifikujete ze soutěže. Pokud si do konce dubna vytvoří vlastní tým nebo se připojí do jiného týmu, bude vše v pořádku.
 
 Děkujeme Vám za založení týmu a přejeme Vám hodně radosti z jízdy na kole!
-Váš organizační tým soutěže Do práce na kole 2013
+Váš organizační tým soutěže {{ user.campaign }}
 
 ---
 Soutěž Do práce na kole 2013 pořádá Auto*Mat, o. s. ve spolupráci s Nadací Partnerství, sdruženími Centrum pro životní prostředí a zdraví, Cyklisté Liberecka, Kolomouc, Ostravou na kole, Ústím na kole, dále městy Jihlava, Pardubice a Uherské Hradiště a Centrem ekologického vzdělávání Žabka.
