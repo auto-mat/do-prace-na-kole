@@ -177,7 +177,7 @@ class PaymentFilter(SimpleListFilter):
 
 class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
     model = UserAttendance
-    extra = 3
+    extra = 0
     inlines= [PaymentInline,]
     list_display = ('userprofile__payment_type', 'userprofile__payment_status', 'userprofile__team__name', 'userprofile__distance', 'team__subsidiary__city', 'userprofile__team__subsidiary__company', 'trips_count', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__name', 'userprofile__team__subsidiary__company__name','company_admin__administrated_company__name',]
@@ -305,11 +305,10 @@ class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmi
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator_campaign__userprofile__user__first_name', 'coordinator_campaign__userprofile__user__last_name']
     list_filter = ['subsidiary__city', 'member_count', CoordinatorFilter]
     list_max_show_all = 10000
-    raw_id_fields = ('coordinator_campaign', )
 
     readonly_fields = ['members', 'invitation_token', 'member_count']
     def members(self, obj):
-        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (u.user.id, str(u))
+        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (u.userprofile.user.id, str(u))
                                   for u in UserAttendance.objects.filter(team=obj)]))
     members.short_description = 'Členové'
     form = TeamForm
