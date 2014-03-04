@@ -88,11 +88,10 @@
 <tr id="tr_name"><th scope="row">{% trans "Doručení balíčku" %}</th><td>{{ profile }}</td><td><a href="{% wp_url 'upravit_profil' %}" class="btn btn-small">{% trans "Upravit údaje" %}</a></td></tr>
 
 <tr id="tr_team_membership"><th scope="row">{% trans "Správcovství firmy" %}</th>
+<td>{{ company_admin.get_company_admin_approved_display }}</td>
 {% if is_company_admin %}
-<td></td>
 <td><a href="{% wp_url 'company_admin' %}" class="btn btn-small">Přejít na správu firmy</a></td>
 {% else %}
-<td></td>
 <td><a href="{% wp_url 'zadost_firemni_spravce' %}" class="btn btn-small">Požádat o funkci firemního správce</a></td>
 {% endif %}
 

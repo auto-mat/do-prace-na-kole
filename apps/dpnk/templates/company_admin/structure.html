@@ -10,7 +10,7 @@
       <li>{{ team.name }}</li>
       <ul>
       {% for user in team.users.all %}
-      {% if user.user.is_active %}
+      {% if user.userprofile.user.is_active %}
       <li>
          {{ user }} - 
             {% if user.payment.payment.pay_type == 'fc' %}

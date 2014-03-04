@@ -271,16 +271,15 @@ def payment_type(request, user_attendance=None):
 
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES)
-        userprofile = request.user.userprofile
         if form.is_valid():
             if form.cleaned_data['payment_type'] == 'pay':
                 return redirect(wp_reverse('platba'))
             elif form.cleaned_data['payment_type'] == 'company':
-                Payment(user=userprofile, amount=0, pay_type='fc', status=Payment.Status.NEW).save()
-                logger.info('Inserting company payment for %s' % (userprofile.user))
+                Payment(user_attendance=user_attendance, amount=0, pay_type='fc', status=Payment.Status.NEW).save()
+                logger.info('Inserting company payment for %s' % (user_attendance))
             elif form.cleaned_data['payment_type'] == 'member':
-                Payment(user=userprofile, amount=0, pay_type='am', status=Payment.Status.NEW).save()
-                logger.info('Inserting automat club member payment for %s' % (userprofile.user))
+                Payment(user_attendance=user_attendance, amount=0, pay_type='am', status=Payment.Status.NEW).save()
+                logger.info('Inserting automat club member payment for %s' % (user_attendance))
 
             return redirect(wp_reverse('profil'))
     else:
@@ -526,6 +525,7 @@ def profile(request, user_attendance=None):
             'team_members_count': team_members_count,
             'competition_state': settings.COMPETITION_STATE,
             'approved_for_team': user_attendance.approved_for_team,
+            'company_admin': user_attendance.userprofile.user.company_admin,
             'is_company_admin': models.is_company_admin(request.user),
             }, context_instance=RequestContext(request))
 
@@ -573,8 +573,7 @@ def admissions(request, template, user_attendance=None,
             }, context_instance=RequestContext(request))
 
 @cache_page(24 * 60 * 60) 
-def competition_results(request, template, competition_slug='testing_zavod', limit=None):
-    print "counting results", competition_slug
+def competition_results(request, template, competition_slug, campaign_slug, limit=None):
     if limit == '':
         limit = None
 
@@ -635,12 +634,12 @@ def handle_uploaded_file(source, username):
 
 @login_required_simple
 @must_be_approved_for_team
-def questionaire(request, campaign_slug, questionaire_slug = None,
+def questionaire(request, questionaire_slug = None,
         template = 'registration/questionaire.html',
+        user_attendance = None,
         success_url = 'profil',
         ):
     userprofile = request.user.get_profile()
-    user_attendance = userprofile.userattendance_set.get(campaign__slug=campaign_slug)
     error = False
     empty_answer = False
     form_filled = False

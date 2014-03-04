@@ -73,6 +73,14 @@ campaign_urlpatterns = patterns('',
     url(r'^facebook_app/$',
         facebook_app),
 
+
+    #company admin:
+    url(r'^spolecnost/zadost_admina/$',
+        login_required(CompanyAdminView.as_view())),
+    url(r'^spolecnost/soutez/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        must_be_company_admin(login_required(CompanyCompetitionView.as_view()))),
+    url(r'^spolecnost/soutez/$',
+        must_be_company_admin(login_required(CompanyCompetitionView.as_view()))),
 )
 
 urlpatterns = patterns('',
@@ -104,12 +112,6 @@ urlpatterns = patterns('',
         must_be_company_admin(login_required(SelectUsersPayView.as_view()))),
     url(r'^spolecnost/editovat_spolecnost/$',
         must_be_company_admin(login_required(CompanyEditView.as_view()))),
-    url(r'^spolecnost/soutez/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
-        must_be_company_admin(login_required(CompanyCompetitionView.as_view()))),
-    url(r'^spolecnost/soutez/$',
-        must_be_company_admin(login_required(CompanyCompetitionView.as_view()))),
     url(r'^spolecnost/registrace_admina/$',
         CompanyAdminApplicationView.as_view()),
-    url(r'^spolecnost/zadost_admina/$',
-        login_required(CompanyAdminView.as_view())),
 )

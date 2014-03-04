@@ -19,7 +19,7 @@
 
 from django import forms
 from forms import AdressForm, RegistrationFormDPNK
-from models import UserProfile, Company, CompanyAdmin, Competition
+from models import UserProfile, Company, CompanyAdmin, Competition, UserAttendance
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
@@ -37,9 +37,9 @@ class SelectUsersPayForm(forms.Form):
     def __init__(self, *args, **kwargs):
         company = kwargs.pop('initial', None)
         ret_val = super(SelectUsersPayForm, self).__init__(*args, **kwargs)
-        self.fields['paing_for'].queryset = UserProfile.objects.filter(team__subsidiary__company = company, user__is_active=True)
-        choices = [(userprofile.pk, userprofile) for userprofile in UserProfile.objects.filter(team__subsidiary__company = company, user__is_active=True).all() 
-            if userprofile.payment_type() == 'fc' and userprofile.payment_status() != 'done']
+        self.fields['paing_for'].queryset = UserAttendance.objects.filter(team__subsidiary__company = company, userprofile__user__is_active=True)
+        choices = [(user_attendance.pk, user_attendance) for user_attendance in UserAttendance.objects.filter(team__subsidiary__company = company, userprofile__user__is_active=True).all() 
+            if user_attendance.payment_type() == 'fc' and user_attendance.payment_status() != 'done']
         self.fields['paing_for'].choices = choices
         return ret_val
 

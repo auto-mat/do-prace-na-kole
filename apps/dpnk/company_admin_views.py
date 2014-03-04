@@ -32,7 +32,7 @@ from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApp
 from dpnk.email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from wp_urls import wp_reverse
 from util import redirect
-from models import Company, CompanyAdmin, Payment, Competition
+from models import Company, CompanyAdmin, Payment, Competition, Campaign
 import models
 import registration.signals, registration.backends
 import registration.backends.simple
@@ -66,7 +66,7 @@ class SelectUsersPayView(FormView):
                     payment.status = Payment.Status.COMPANY_ACCEPTS
                     payment.save()
                     break
-        logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x.user, paing_for)))
+        logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x, paing_for)))
         super(SelectUsersPayView, self).form_valid(form)
         return redirect(wp_reverse(self.success_url))
 
@@ -126,13 +126,16 @@ class CompanyAdminView(UpdateView):
 
     def get_object(self, queryset=None):
         try:
-            return self.request.user.company_admin
+            company_admin = self.request.user.company_admin
         except CompanyAdmin.DoesNotExist:
-            return CompanyAdmin(user = self.request.user)
+            company_admin = CompanyAdmin(user = self.request.user)
+        company_admin.administrated_company = models.UserAttendance.objects.get(campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile).team.subsidiary.company
+        company_admin.save()
+        return company_admin
 
     def form_valid(self, form):
         super(CompanyAdminView, self).form_valid(form)
-        company_admin_register_competitor_mail(self.request.user)
+        company_admin_register_competitor_mail(self.request.user, models.UserAttendance.objects.get(campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile))
         return redirect(wp_reverse(self.success_url))
 
 class CompanyCompetitionView(UpdateView):
@@ -146,8 +149,10 @@ class CompanyCompetitionView(UpdateView):
         return ret_val
 
     def get_object(self, queryset=None):
-        company = models.get_company(self.request.user)
+        company = self.request.user.company_admin.administrated_company
         competition_slug = self.kwargs.get('competition_slug', None)
+        campaign_slug = self.kwargs.get('campaign_slug', None)
+        campaign = Campaign.objects.get(slug = campaign_slug)
         if competition_slug:
             competition = get_object_or_404(Competition.objects, slug = competition_slug)
             if competition.company != company:
@@ -155,7 +160,8 @@ class CompanyCompetitionView(UpdateView):
         else:
             if Competition.objects.filter(company = company).count() >= settings.MAX_COMPETITIONS_PER_COMPANY:
                 raise Http404(_(u"<div class='text-error'>Překročen maximální počet soutěží.</div>"))
-            competition = Competition(company = company)
+            phase = campaign.phase_set.get(type='competition')
+            competition = Competition(company=company, campaign=campaign, date_from=phase.date_from, date_to=phase.date_to )
         return competition
 
 

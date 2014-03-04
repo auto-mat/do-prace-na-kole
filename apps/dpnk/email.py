@@ -83,20 +83,20 @@ def payment_confirmation_mail(user):
                 'SITE_URL': settings.SITE_URL}))
     send_mail(_("Do práce na kole 2013 - přijetí platby"), message, None, [email], fail_silently=False)
 
-def payment_confirmation_company_mail(user):
+def payment_confirmation_company_mail(user_attendance):
     template = get_template('email/payment_comfirmation_company.html')
-    email = user.email
+    email = user_attendance.userprofile.user.email
     message = template.render(Context({
-                'user': user,
-                'company': models.get_company(user),
+                'user': user_attendance,
+                'company': user_attendance.team.subsidiary.company,
                 'SITE_URL': settings.SITE_URL}))
     send_mail(_("Do práce na kole 2013 - přijetí platby"), message, None, [email], fail_silently=False)
 
-def company_admin_register_competitor_mail(user):
+def company_admin_register_competitor_mail(user, company):
     template = get_template('email/company_admin_register_competitor.html')
     email = user.email
     message = template.render(Context({ 'user': user,
-        'company': models.get_company(user),
+        'company': company,
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_("Do práce na kole 2013 - firemní správce - potvrzení registrace"), message, None, [email], fail_silently=False)
@@ -114,7 +114,7 @@ def company_admin_approval_mail(user):
     template = get_template('email/company_admin_approval.html')
     email = user.email
     message = template.render(Context({ 'user': user,
-        'company': models.get_company(user),
+        'company': user.company_admin.administrated_company,
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_("Do práce na kole 2013 - firemní správce - schválení správcovství firmy"), message, None, [email], fail_silently=False)

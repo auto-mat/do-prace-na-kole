@@ -740,7 +740,7 @@ class Payment(models.Model):
         elif (self.user_attendance
             and (status_before_update not in statuses_company_ok)
             and self.status in statuses_company_ok):
-            payment_confirmation_company_mail(self.user.user)
+            payment_confirmation_company_mail(self.user_attendance)
 
         logger.info(u"Saving payment (after):  %s" % Payment.objects.get(pk=self.id).full_string())
 
