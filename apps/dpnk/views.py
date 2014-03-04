@@ -109,13 +109,14 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
                     ).save()
         return new_user
 
+@login_required_simple
+@must_be_competitor
 def change_team(request,
-             campaign_slug,
              success_url=None, form_class=ChangeTeamForm,
              template_name='generic_form_template.html',
+             user_attendance=None,
              extra_context=None,
              ):
-    user_attendance = request.user.get_profile().userattendance_set.get(campaign__slug=campaign_slug)
     create_company = False
     create_subsidiary = False
     create_team = False

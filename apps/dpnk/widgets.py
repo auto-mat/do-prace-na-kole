@@ -34,7 +34,7 @@ class SelectChainedOrCreate(widgets.ChainedSelect):
     def __init__(self, underlying_form_class, prefix="", new_description = u"Vytvořit novou položku", *args, **kwargs):
         super(widgets.ChainedSelect,self).__init__()
         for k, v in kwargs.iteritems():
-            assert( k in ['chain_field', 'show_all', 'app_name', 'model_field', 'auto_choose', 'model_name'])
+            assert( k in ['chain_field', 'show_all', 'app_name', 'model_field', 'auto_choose', 'model_name', 'view_name'])
             setattr(self, k, v)
         self.manager = None
 
