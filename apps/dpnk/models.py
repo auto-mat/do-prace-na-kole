@@ -597,8 +597,6 @@ class CompanyAdmin(models.Model):
     def get_administrated_company(self):
         if self.administrated_company:
             return self.administrated_company
-        else:
-            return self.user.get_profile().team.subsidiary.company
 
     def __unicode__(self):
         return self.user.get_full_name()
@@ -1152,7 +1150,7 @@ def is_team_coordinator(user_attendance):
 
 def is_company_admin(user):
     try:
-        if user.company_admin.company_admin_approved == 'approved':
+        if user.company_admin.company_admin_approved == 'approved' and user.company_admin.administrated_company:
             return True
         return False
     except CompanyAdmin.DoesNotExist:

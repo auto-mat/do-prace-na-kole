@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # This file serves testing purposes if used instead of wp_urls.py
 # and together with dpnk-wp HTML files tree
 urls = {
@@ -24,6 +25,8 @@ urls = {
     'platba_uspesna':               "platba_uspesna.html",
     'platba_neuspesna':             "platba_uspesna.html",
     'platba_status':                "platba_status.html",
+    'zmenit_triko':                 "zmenit_triko.html",
+    'zmenit_tym':                   "tým.html",
     'zapomenute_heslo':             "zapomenute_heslo.html",
     'zapomenute_heslo_odeslano':    "zapomenute_heslo_odeslano.html",
     'zapomenute_heslo_dokonceno':   "zapomenute_heslo_dokonceno.html",
@@ -38,7 +41,7 @@ urls = {
     # Company admin
     'edit_company':                 "fa/editovat_spolecnost",
     'zadost_firemni_spravce':       "fa/zadost",
-    'company_admin':                "../fa",
+    'company_admin':                "fa",
     'soutez':                       "soutez",
 }
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.conf import settings
 urls = {
     # Admin
@@ -33,6 +34,7 @@ urls = {
     'dotaznik_odpovedi':            "/django/admin/dotaznik_odpovedi/",
     'otazky':                       "/django/admin/otazky/",
     'otazka':                       "/profil/dotaznik",
+    'zmenit_triko':                 "/zmenit_triko",
 
     # Company admin
     'edit_company':                 "/fa/editovat_spolecnost",

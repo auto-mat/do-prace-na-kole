@@ -43,10 +43,11 @@ logger = logging.getLogger(__name__)
 @login_required
 def company_structure(request,
         template = 'company_admin/structure.html',
+        administrated_company = None,
         ):
     return render_to_response(template,
                               {
-                                'company': request.user.company_admin.get_administrated_company(),
+                                'company': administrated_company,
                                 }, context_instance=RequestContext(request))
 
 class SelectUsersPayView(FormView):
@@ -166,8 +167,9 @@ class CompanyCompetitionView(UpdateView):
 @login_required
 def competitions(request,
         template = 'company_admin/competitions.html',
+        administrated_company = None,
         ):
     return render_to_response(template,
                               {
-                                'competitions': Competition.objects.filter(company = models.get_company(request.user)),
+                                'competitions': Competition.objects.filter(company = administrated_company),
                                 }, context_instance=RequestContext(request))
