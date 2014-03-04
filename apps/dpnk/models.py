@@ -370,8 +370,9 @@ class UserAttendance(models.Model):
     distance = models.PositiveIntegerField(
         verbose_name=_(u"Vzdálenost"),
         help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
-        default=0,
-        null=False)
+        default=None,
+        blank=True,
+        null=True)
     team = models.ForeignKey(
         Team,
         related_name='users',

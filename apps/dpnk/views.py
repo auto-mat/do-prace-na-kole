@@ -106,7 +106,6 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
                     campaign = campaign,
                     team = team,
                     approved_for_team = approved_for_team,
-                    distance = cleaned_data['distance']
                     ).save()
         return new_user
 
@@ -251,7 +250,7 @@ class RegistrationView(FormView):
         campaign = Campaign.objects.get(slug=self.kwargs['campaign_slug'])
         super(RegistrationView, self).form_valid(form)
         backend = registration.backends.get_backend(backend)
-        new_user = backend.register(self.request, campaign, self.kwargs['token'], **form.cleaned_data)
+        new_user = backend.register(self.request, campaign, self.kwargs.get('token', None), **form.cleaned_data)
         auth_user = django.contrib.auth.authenticate(
             username=self.request.POST['username'],
             password=self.request.POST['password1'])

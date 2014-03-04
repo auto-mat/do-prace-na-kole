@@ -114,7 +114,7 @@ class ChangeTeamForm(forms.ModelForm):
     def __init__(self, request=None, *args, **kwargs):
         initial = kwargs.get('initial', {})
         instance = kwargs.get('instance', {})
-        if instance:
+        if instance and instance.team:
             initial['team'] = instance.team
             initial['subsidiary'] = instance.team.subsidiary
             initial['company'] = instance.team.subsidiary.company
@@ -301,6 +301,7 @@ class ProfileUpdateForm(forms.ModelForm):
         self.fields['email'].initial = self.instance.userprofile.user.email
         self.fields['first_name'].initial = self.instance.userprofile.user.first_name
         self.fields['last_name'].initial = self.instance.userprofile.user.last_name
+        self.fields['distance'].required = True
         return ret_val
 
     class Meta:
