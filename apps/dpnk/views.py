@@ -260,8 +260,11 @@ class RegistrationView(FormView):
 
 
 @login_required
-def payment_type(request):
-    if request.user.userprofile.team.subsidiary.city.admission_fee == 0:
+@must_be_competitor
+def payment_type(request, user_attendance=None):
+    if not user_attendance.team :
+        return HttpResponse(_(u"<div class='text-error'>Pro zadání platby musíte mít napřed vybraný tým.</div>"), status=401)
+    if user_attendance.team.subsidiary.city.admission_fee == 0:
         return redirect(wp_reverse('profil'))
     template_name='registration/payment_type.html'
     form_class = PaymentTypeForm
@@ -288,21 +291,23 @@ def payment_type(request):
                                }, context_instance=RequestContext(request))
 
 @login_required
-def payment(request):
-    if request.user.userprofile.team.subsidiary.city.admission_fee == 0:
+@must_be_competitor
+def payment(request, user_attendance=None):
+    if not user_attendance.team :
+        return HttpResponse(_(u"<div class='text-error'>Pro zadání platby musíte mít napřed vybraný tým.</div>"), status=401)
+    if user_attendance.team.subsidiary.city.admission_fee == 0:
         return redirect(wp_reverse('profil'))
     uid = request.user.id
     order_id = '%s-1' % uid
     session_id = "%sJ%d " % (order_id, int(time.time()))
-    userprofile = UserProfile.objects.get(user=request.user)
     # Save new payment record
     p = Payment(session_id=session_id,
-                user=userprofile,
+                user_attendance=user_attendance,
                 order_id = order_id,
-                amount = request.user.userprofile.team.subsidiary.city.admission_fee,
+                amount = user_attendance.team.subsidiary.city.admission_fee,
                 description = "Ucastnicky poplatek Do prace na kole")
     p.save()
-    logger.info('Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s' % (uid, order_id, session_id, userprofile.user))
+    logger.info('Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s' % (uid, order_id, session_id, user_attendance))
     # Render form
     profile = UserProfile.objects.get(user=request.user)
     return render_to_response('registration/payment.html',

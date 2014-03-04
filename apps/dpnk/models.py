@@ -733,11 +733,11 @@ class Payment(models.Model):
         super(Payment, self).save(*args, **kwargs)
 
         statuses_company_ok = (Payment.Status.COMPANY_ACCEPTS, Payment.Status.INVOICE_MADE, Payment.Status.INVOICE_PAID)
-        if (self.user
+        if (self.user_attendance
             and (status_before_update != Payment.Status.DONE)
             and self.status == Payment.Status.DONE):
             payment_confirmation_mail(self.user.user)
-        elif (self.user
+        elif (self.user_attendance
             and (status_before_update not in statuses_company_ok)
             and self.status in statuses_company_ok):
             payment_confirmation_company_mail(self.user.user)
@@ -745,8 +745,8 @@ class Payment(models.Model):
         logger.info(u"Saving payment (after):  %s" % Payment.objects.get(pk=self.id).full_string())
 
     def full_string(self):
-        if self.user:
-            user = self.user.user
+        if self.user_attendance:
+            user = self.user_attendance
         else:
             user = None
         return u"user: %s, order_id: %s, session_id: %s, trans_id: %s, amount: %s, description: %s, created: %s, realized: %s, pay_type: %s, status: %s, error: %s" % (
@@ -1204,8 +1204,8 @@ def update_mailing_user(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Payment)
 def update_mailing_payment(sender, instance, created, **kwargs):
-    if instance.user:
-        mailing.add_or_update_user(instance.user.user)
+    if instance.user_attendance:
+        mailing.add_or_update_user(instance.user_attendance)
 
 @receiver(post_save, sender=Trip)
 def trip_post_save(sender, instance, **kwargs):
