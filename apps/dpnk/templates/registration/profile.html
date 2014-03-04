@@ -39,21 +39,25 @@
       <td>
          <a href="{% wp_url 'team_admin' %}" class="btn btn-small">{% trans "Upravit tým" %}</a>
          <a href="{% wp_url 'pozvanky' %}" class="btn btn-small">Pozvat další uživatele</a>
-         <a href="{% wp_url 'zmenit_tym' %}" class="btn btn-small">{% trans "Zvolit jiný tým" %}</a>
       </td>
 {% elif approved_for_team == 'undecided' %}
       <td class="text-warning">{% trans "Členství ještě nebylo odsouhlaseno" %}</td>
-      <td>
-         <a href="{% wp_url 'zmenit_tym' %}" class="btn btn-small">{% trans "Zvolit jiný tým" %}</a>
-         <a href="{% wp_url 'zaslat_zadost_clenstvi'%}" class="btn btn-small">{% trans "Znovu poslat žádost o ověřeření členství" %}</a>
-      </td>
 {% elif approved_for_team == 'denied' %}
       <td class="text-error">{% trans "Zamítnuto" %}</td>
-      <td><a href="{% wp_url 'zmenit_tym' %}" class="btn btn-small">{% trans "Zvolit jiný tým" %}</a></td>
 {% elif approved_for_team == 'approved' %}
       <td class="text-success">{% trans "Odsouhlaseno." %}</td>
-      <td><a href="{% wp_url 'zmenit_tym' %}" class="btn btn-small">{% trans "Zvolit jiný tým" %}</a></td>
 {% endif %}
+
+      <td>
+         <a href="{% wp_url 'zmenit_tym' %}" class="btn btn-small">{% trans "Zvolit jiný tým" %}</a>
+         <a href="{% wp_url 'dalsi_clenove' %}" class="btn btn-small">{% trans "Další členové týmu" %}</a>
+{% if team.coordinator_campaign == profile %}
+         <a href="{% wp_url 'team_admin' %}" class="btn btn-small">{% trans "Upravit tým" %}</a>
+         <a href="{% wp_url 'pozvanky' %}" class="btn btn-small">Pozvat další uživatele</a>
+{% elif approved_for_team == 'undecided' %}
+         <a href="{% wp_url 'zaslat_zadost_clenstvi'%}" class="btn btn-small">{% trans "Znovu poslat žádost o ověřeření členství" %}</a>
+{% endif %}
+      </td>
 </tr>
 
 <tr id="tr_payment"><th scope="row">{% trans "Startovné" %}</th>
@@ -81,7 +85,7 @@
 </tr>
 
 
-<tr id="tr_name"><th scope="row">{% trans "Soutěže" %}</th><td>{{ profile }}</td><td><a href="{% wp_url 'upravit_profil' %}" class="btn btn-small">{% trans "Upravit údaje" %}</a></td></tr>
+<tr id="tr_name"><th scope="row">{% trans "Soutěže" %}</th><td>{{ profile }}</td><td><a href="{% wp_url 'souteze' %}" class="btn btn-small">{% trans "Přihlásit do soutěží" %}</a></td></tr>
 <tr id="tr_name"><th scope="row">{% trans "Doručení balíčku" %}</th><td>{{ profile }}</td><td><a href="{% wp_url 'upravit_profil' %}" class="btn btn-small">{% trans "Upravit údaje" %}</a></td></tr>
 
 <tr id="tr_team_membership"><th scope="row">{% trans "Správcovství firmy" %}</th>

@@ -37,6 +37,8 @@ urls = {
     'odpovedi':                     "/admin/odpovedi/",
     'dotaznik_odpovedi':            "/admin/dotaznik_odpovedi/",
     'otazky':                       "/admin/otazky/",
+    'dalsi_clenove':                "clenove_tymu",
+    'souteze':                      "souteze",
 
     # Company admin
     'edit_company':                 "fa/editovat_spolecnost",
