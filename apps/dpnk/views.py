@@ -259,7 +259,7 @@ class RegistrationView(FormView):
         return redirect(wp_reverse(self.success_url))
 
 
-@login_required
+@login_required_simple
 @must_be_competitor
 def payment_type(request, user_attendance=None):
     if not user_attendance.team :
@@ -290,7 +290,18 @@ def payment_type(request, user_attendance=None):
                               {'form': form
                                }, context_instance=RequestContext(request))
 
+
 @login_required
+@must_be_competitor
+def header_bar(request, user_attendance=None):
+    return render_to_response('registration/header_bar.html',
+                              {
+            'user_attendance': user_attendance,
+             }, context_instance=RequestContext(request))
+
+
+
+@login_required_simple
 @must_be_competitor
 def payment(request, user_attendance=None):
     if not user_attendance.team :
@@ -402,7 +413,7 @@ def payment_status(request):
     # Return positive error code as per PayU protocol
     return http.HttpResponse("OK")
 
-@login_required
+@login_required_simple
 @must_be_competitor
 def profile_access(request, user_attendance=None):
     return render_to_response('registration/profile_access.html',
@@ -492,7 +503,7 @@ def rides(request, user_attendance=None, template='registration/rides.html',
             'has_distance_competition': user_attendance.has_distance_competition(),
             }, context_instance=RequestContext(request))
 
-@login_required
+@login_required_simple
 @must_be_competitor
 def profile(request, user_attendance=None):
 
@@ -622,7 +633,7 @@ def handle_uploaded_file(source, username):
         shutil.copyfileobj(source, dest)
     return u"questionaire/" + filepath.rsplit("/", 1)[1]
 
-@login_required
+@login_required_simple
 @must_be_approved_for_team
 def questionaire(request, campaign_slug, questionaire_slug = None,
         template = 'registration/questionaire.html',
@@ -832,14 +843,14 @@ def approve_for_team(user_attendance, reason, approve=False, deny=False):
         return 'approved'
 
 @must_be_competitor
-@login_required
+@login_required_simple
 def team_approval_request(request, user_attendance=None):
     approval_request_mail(user_attendance)
     return render_to_response('registration/request_team_approval.html',
                               context_instance=RequestContext(request))
 
 @must_be_coordinator
-@login_required
+@login_required_simple
 def invite(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
              template_name='registration/invitation.html',
@@ -862,7 +873,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
                               }, context_instance=RequestContext(request))
 
 @must_be_coordinator
-@login_required
+@login_required_simple
 def team_admin_team(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
              user_attendance=None,
@@ -884,7 +895,7 @@ def team_admin_team(request, backend='registration.backends.simple.SimpleBackend
                                 }, context_instance=RequestContext(request))
 
 @must_be_coordinator
-@login_required
+@login_required_simple
 def team_admin_members(request, backend='registration.backends.simple.SimpleBackend',
              template_name='registration/team_admin_members.html',
              user_attendance=None,

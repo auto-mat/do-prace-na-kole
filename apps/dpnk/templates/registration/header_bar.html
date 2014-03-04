@@ -1,0 +1,6 @@
+{% load url from future %}
+{% load dpnk_tags %}
+{% load i18n %}
+
+{{ user_attendance }}
+<a href="{% wp_url 'logout' %}" class="btn btn-small">{% trans "Odhlásit" %}</a>
