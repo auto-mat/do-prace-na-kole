@@ -550,7 +550,7 @@ def other_team_members(request, userprofile=None, user_attendance=None,
 @must_be_competitor
 @must_be_approved_for_team
 def admissions(request, template, user_attendance=None, 
-        success_url="profil",
+        success_url="souteze",
         ):
     if request.method == 'POST':
         if 'admission_competition_id' in request.POST and request.POST['admission_competition_id']:
