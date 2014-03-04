@@ -38,7 +38,7 @@ def must_be_coordinator(fn):
     def wrapper(*args, **kwargs):
         request = args[0]
         userprofile = request.user.userprofile
-        user_attendance = userprofile.userattendance_set.get(campaign__slug=kwargs.pop('campaign_slug'))
+        user_attendance = kwargs['user_attendance']
         team = user_attendance.team
         if not models.is_team_coordinator(user_attendance):
             return HttpResponse(_(u"<div class='text-error'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name, 'coordinator': team.coordinator_campaign, 'you': user_attendance}, status=401)
@@ -76,10 +76,13 @@ def must_be_company_admin(fn):
 def must_be_competitor(fn):
     @login_required
     def wrapper(*args, **kwargs):
+        if kwargs.get('user_attendance', None):
+            return fn(*args, **kwargs)
+
         request = args[0]
         if models.is_competitor(request.user):
             userprofile = request.user.userprofile
-            campaign = Campaign.objects.get(slug=kwargs['campaign_slug'])
+            campaign = Campaign.objects.get(slug=kwargs.pop('campaign_slug'))
             try:
                 user_attendance = userprofile.userattendance_set.get(campaign=campaign)
             except UserAttendance.DoesNotExist:

@@ -85,8 +85,6 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': settings.LOGOUT_NEXT_PAGE}
         ),
-    url(r'^profil_pristup/$',
-        profile_access),
     url(r'^login/$',
         login),
     url(r'^zmena_hesla/$',

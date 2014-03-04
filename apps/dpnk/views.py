@@ -400,10 +400,10 @@ def payment_status(request):
 
 @login_required
 @must_be_competitor
-def profile_access(profile, user_attendance, request):
+def profile_access(request, user_attendance=None):
     return render_to_response('registration/profile_access.html',
                               {
-            'city': profile.team.subsidiary.city
+            'city': user_attendance.team.subsidiary.city
             }, context_instance=RequestContext(request))
 
 
@@ -415,7 +415,7 @@ def trip_active(day, today):
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def rides(request, campaign_slug, user_attendance=None, template='registration/rides.html',
+def rides(request, user_attendance=None, template='registration/rides.html',
         success_url="profil"):
     days = util.days()
     today = util.today()
@@ -490,7 +490,7 @@ def rides(request, campaign_slug, user_attendance=None, template='registration/r
 
 @login_required
 @must_be_competitor
-def profile(request, campaign_slug, user_attendance=None):
+def profile(request, user_attendance=None):
 
     # Render profile
     payment_status = user_attendance.payment_status()
@@ -517,10 +517,10 @@ def profile(request, campaign_slug, user_attendance=None):
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def other_team_members(request, campaign_slug, userprofile=None, user_attendance=None, 
+def other_team_members(request, userprofile=None, user_attendance=None, 
         template = 'registration/team_members.html'
         ):
-    campaign = Campaign.objects.get(slug=campaign_slug)
+    campaign = user_attendance.campaign
 
     team_members = []
     if user_attendance.team and user_attendance.team.coordinator_campaign:
@@ -534,7 +534,7 @@ def other_team_members(request, campaign_slug, userprofile=None, user_attendance
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def admissions(request, template, campaign_slug, user_attendance=None, 
+def admissions(request, template, user_attendance=None, 
         success_url="profil",
         ):
     if request.method == 'POST':
@@ -829,7 +829,7 @@ def approve_for_team(user_attendance, reason, approve=False, deny=False):
 
 @must_be_competitor
 @login_required
-def team_approval_request(request, campaign_slug, user_attendance=None):
+def team_approval_request(request, user_attendance=None):
     approval_request_mail(user_attendance)
     return render_to_response('registration/request_team_approval.html',
                               context_instance=RequestContext(request))
