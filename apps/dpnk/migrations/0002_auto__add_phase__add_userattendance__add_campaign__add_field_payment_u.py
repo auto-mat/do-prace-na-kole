@@ -24,7 +24,7 @@ class Migration(SchemaMigration):
             ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=60)),
         ))
 
-        campaign = orm['dpnk.Campaign'](name= "campaign", slug="campaign")
+        campaign = orm['dpnk.Campaign'](name= "campaign")
         campaign.save()
 
         db.send_create_signal(u'dpnk', ['Campaign'])
