@@ -16,8 +16,9 @@ framework.
 import os
 import site
 import sys
+from project.settings import PROJECT_ROOT
 
-ALLDIRS = [ 'env/lib/python2.6/site-packages', ]
+ALLDIRS = [ os.path.join(PROJECT_ROOT, 'env/lib/python2.6/site-packages'), ]
 
 # Remember original sys.path.
 prev_sys_path = list(sys.path) 
@@ -34,7 +35,7 @@ for item in list(sys.path):
         sys.path.remove(item) 
 sys.path[:0] = new_sys_path 
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dpnk.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
