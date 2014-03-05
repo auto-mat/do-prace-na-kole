@@ -1,5 +1,4 @@
 Django
-MySQL-python
 django-import-export
 django-smart-selects
 psycopg2
