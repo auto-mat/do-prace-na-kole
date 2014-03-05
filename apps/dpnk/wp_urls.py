@@ -35,6 +35,9 @@ urls = {
     'otazky':                       "/django/admin/otazky/",
     'otazka':                       "/profil/dotaznik",
     'zmenit_triko':                 "/zmenit_triko",
+    'zmenit_tym':                   "/zmenit_tym",
+    'dalsi_clenove':                "/dalsi_clenove",
+    'souteze':                      "/souteze",
 
     # Company admin
     'edit_company':                 "/fa/editovat_spolecnost",
