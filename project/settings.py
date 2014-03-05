@@ -44,10 +44,10 @@ SITE_ID = 5
 USE_I18N = True
 USE_L10N = True
 DECIMAL_SEPARATOR = ','
-MEDIA_ROOT = normpath(PROJECT_ROOT, 'static/upload')
-MEDIA_URL = '/static/upload/'
-STATIC_ROOT = normpath(PROJECT_ROOT, "static/static")
-STATIC_URL = '/media/'  # XXX: possible depences, rename static
+MEDIA_ROOT = normpath(PROJECT_ROOT, 'media/upload')
+MEDIA_URL = '/media/'
+STATIC_ROOT = normpath(PROJECT_ROOT, "static")
+STATIC_URL = '/static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
