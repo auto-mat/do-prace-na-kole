@@ -17,3 +17,4 @@ django-registration==0.8
 -e git+git://github.com/continuous/django-su.git#egg=django-su
 unidecode
 createsend
+ordereddict
