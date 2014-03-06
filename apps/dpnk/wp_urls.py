@@ -34,10 +34,10 @@ urls = {
     'dotaznik_odpovedi':            "/django/admin/dotaznik_odpovedi/",
     'otazky':                       "/django/admin/otazky/",
     'otazka':                       "/profil/dotaznik",
-    'zmenit_triko':                 "/zmenit_triko",
-    'zmenit_tym':                   "/zmenit_tym",
-    'dalsi_clenove':                "/dalsi_clenove",
-    'souteze':                      "/souteze",
+    'zmenit_triko':                 "/profil/zmenit-triko",
+    'zmenit_tym':                   "/profil/zmenit-tym",
+    'dalsi_clenove':                "/profil/dalsi-clenove",
+    'souteze':                      "/profil/souteze",
 
     # Company admin
     'edit_company':                 "/fa/editovat_spolecnost",
