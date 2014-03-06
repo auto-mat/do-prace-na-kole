@@ -37,6 +37,8 @@ urls = {
     'otazka':                       "otazka.html",
     'zmenit_triko':                 "zmenit_triko.html",
     'zmenit_tym':                   "tým.html",
+    'dalsi_clenove':                "clenove_tymu",
+    'souteze':                      "souteze",
 
     # Company admin
     'edit_company':                 "fa/editovat_spolecnost",
@@ -48,8 +50,6 @@ urls = {
     'kratke_vysledky':              "kratke_vysledky.html",
     'platba_status':                "platba_status.html",
     'otazky':                       "otazky.html",
-    'dalsi_clenove':                "clenove_tymu",
-    'souteze':                      "souteze",
 
     # Company admin
 }
