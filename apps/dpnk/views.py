@@ -416,9 +416,14 @@ def payment_status(request):
 @login_required_simple
 @must_be_competitor
 def profile_access(request, user_attendance=None):
+    if user_attendance.team:
+        city_redirect = "/" + user_attendance.team.subsidiary.city.slug
+    else:
+        city_redirect = ""
+
     return render_to_response('registration/profile_access.html',
                               {
-            'city': user_attendance.team.subsidiary.city
+            'city_redirect': city_redirect
             }, context_instance=RequestContext(request))
 
 
