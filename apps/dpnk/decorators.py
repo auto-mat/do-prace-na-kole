@@ -57,7 +57,11 @@ def must_be_approved_for_team(fn):
         if user_attendance.approved_for_team == 'approved' or models.is_team_coordinator(user_attendance):
             return fn(*args, **kwargs)
         else:
-            return HttpResponse(_(u"<div class='text-error'>Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='/registrace/profil'>profilu</a>.</div>") % (user_attendance.team.name,), status=401)
+            if user_attendance.team:
+                team = user_attendance.team.name
+            else:
+                team = ""
+            return HttpResponse(_(u"<div class='text-error'>Vaše členství v týmu %s nebylo odsouhlaseno. O ověření členství můžete požádat v <a href='%s'>profilu</a>.</div>") % (team, wp_reverse("profil")), status=401)
     return wrapper
 
 def must_be_company_admin(fn):
@@ -97,5 +101,5 @@ def must_be_competitor(fn):
             kwargs['user_attendance'] = user_attendance
             return fn(*args, **kwargs)
 
-        return HttpResponse(_(u"<div class='text-error'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním správcem, použijte <a href='/fa'>správu firmy</a>.</div>"), status=401) 
+        return HttpResponse(_(u"<div class='text-error'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním správcem, použijte <a href='%s'>správu firmy</a>.</div>" % wp_reverse("company_admin")), status=401)
     return wrapper

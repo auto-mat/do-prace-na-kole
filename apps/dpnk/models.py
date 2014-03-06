@@ -736,7 +736,7 @@ class Payment(models.Model):
         if (self.user_attendance
             and (status_before_update != Payment.Status.DONE)
             and self.status == Payment.Status.DONE):
-            payment_confirmation_mail(self.user.user)
+            payment_confirmation_mail(self.user_attendance.userprofile.user)
         elif (self.user_attendance
             and (status_before_update not in statuses_company_ok)
             and self.status in statuses_company_ok):
@@ -1145,7 +1145,7 @@ def get_company(campaign, user):
         return user.company_admin.administrated_company
 
 def is_team_coordinator(user_attendance):
-    if user_attendance.team.coordinator_campaign == user_attendance:
+    if user_attendance.team and user_attendance.team.coordinator_campaign == user_attendance:
         return True
     return False
 
