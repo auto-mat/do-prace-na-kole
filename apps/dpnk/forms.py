@@ -9,6 +9,7 @@ import models
 from models import UserProfile, Company, Subsidiary, Team, UserAttendance
 from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
+from django.forms.widgets import HiddenInput
 from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
 
@@ -132,12 +133,10 @@ class ChangeTeamForm(forms.ModelForm):
             'team',
             ]
 
-        #if user_attendance.team:
-        #    self.fields["team"].queryset = Team.objects.filter(subsidiary__company=user_attendance.team.subsidiary.company)
-
-        #if not user_attendance.team or (models.is_team_coordinator(user_attendance) and UserAttendance.objects.filter(team=user_attendance.team, userprofile__user__is_active=True).count()>1):
-        #    del self.fields['team']
-        #    self.can_change_team = False
+        if instance.payment_status() == 'done':
+            self.fields["subsidiary"].widget = HiddenInput()
+            self.fields["company"].widget = HiddenInput()
+            self.fields["team"].queryset = Team.objects.filter(subsidiary__company=instance.team.subsidiary.company)
 
     class Meta:
         model = UserAttendance
