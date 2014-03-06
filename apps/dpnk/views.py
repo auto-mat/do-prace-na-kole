@@ -377,7 +377,7 @@ def payment_status(request):
     sig = request.POST['sig']
     check_sig(sig, (pos_id, session_id, ts))
     # Determine the status of transaction based on the notification
-    c = httplib.HTTPSConnection("www.payu.cz")
+    c = httplib.HTTPSConnection("secure.payu.com.")
     timestamp = str(int(time.time()))
     c.request("POST", "/paygw/UTF/Payment/get/txt/",
               urllib.urlencode({

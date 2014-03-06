@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<form action="https://www.payu.cz/paygw/UTF/NewPayment" method="POST" name="payform">
+<form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform">
 {% trans "Soutěžící:" %} {{firstname}} {{surname}}<br/>
 {% trans "Startovné:" %} {{amount}} Kč<br/>
 <input type="hidden" name="first_name" value="{{firstname}}">
@@ -8,7 +8,7 @@
 <input type="hidden" name="email" value="{{email}}">
 <input type="hidden" name="amount_kc" value="{{amount}}">
 <input type="hidden" name="amount" value="{{amount_hal}}">
-<input type="hidden" name="pos_id" value="1116">
+<input type="hidden" name="pos_id" value="131116">
 <input type="hidden" name="pos_auth_key" value="NxFcSXh">
 <input type="hidden" name="session_id" value="{{session_id}}">
 <span id="style-of-payment-selection">{% trans "Zvolte si prosím typ platby:" %}</span><br/>
