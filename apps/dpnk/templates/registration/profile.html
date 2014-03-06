@@ -31,7 +31,7 @@
       class="btn btn-block btn-error">{% trans "Členství v týmu zamítnuto" %}</a>
 {% elif approved_for_team == 'approved' %}
    <a href="{% wp_url 'zmenit_tym' %}"
-      class="btn btn-block btn-success">{% trans "Odsouhlaseno" %}</a>
+      class="btn btn-block btn-success">{% trans "Členství v týmu odsouhlaseno" %}</a>
 {% endif %}
 
 {% if not team %}
@@ -56,7 +56,7 @@
    {% endif %}
 {% else %}
    <a href="{% wp_url 'typ_platby' %}"
-      class="btn btn-block btn-waring">{% trans "Zaplatit startovné" %}</a>
+      class="btn btn-block btn-warning">{% trans "Zaplatit startovné" %}</a>
 {% endif %}
 
 {% if team and approved_for_team == 'approved' and team %}
