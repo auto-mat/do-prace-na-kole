@@ -21,13 +21,15 @@ from django.contrib.auth.decorators import login_required
 from  django.http import HttpResponse
 from django.utils.translation import gettext as _
 from models import UserProfile, UserAttendance, Campaign
+from wp_urls import wp_reverse
+from util import redirect
 import models
 
 def login_required_simple(fn):
     def wrapper(*args, **kwargs):
         request = args[0]
         if not request.user.is_authenticated():
-            return HttpResponse(_(u"<div class='text-error'>Nejste přihlášen</div>"), status=401)
+            return redirect(wp_reverse("login"))
         else:
             return fn(*args, **kwargs)
     return wrapper
