@@ -519,6 +519,12 @@ def profile(request, user_attendance=None):
     else:
         team_members_count = 0
     request.session['invite_success_url'] = 'profil'
+
+    if models.is_company_admin(request.user):
+        company_admin = user_attendance.userprofile.user.company_admin
+    else:
+        company_admin = None
+
     return render_to_response('registration/profile.html',
                               {
             'active': user_attendance.userprofile.user.is_active,
@@ -531,7 +537,7 @@ def profile(request, user_attendance=None):
             'team_members_count': team_members_count,
             'competition_state': settings.COMPETITION_STATE,
             'approved_for_team': user_attendance.approved_for_team,
-            'company_admin': user_attendance.userprofile.user.company_admin,
+            'company_admin': company_admin,
             'is_company_admin': models.is_company_admin(request.user),
             }, context_instance=RequestContext(request))
 
