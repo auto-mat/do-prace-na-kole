@@ -60,7 +60,7 @@ class SubsidiaryInline(EnhancedAdminMixin, admin.TabularInline):
     extra = 0
 
 class CityAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'admission_fee', 'id', )
+    list_display = ('name', 'id', )
     filter_horizontal = ('city_admins',)
 
 class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
@@ -230,8 +230,9 @@ class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
     def team__subsidiary__city(self, obj):
        return obj.team.subsidiary.city
 
-class CompanyAdminInline(EnhancedAdminMixin, NestedStackedInline):
+class CompanyAdminInline(EnhancedAdminMixin, NestedTabularInline):
     raw_id_fields = ('administrated_company',)
+    extra = 0
     model = dpnk.models.CompanyAdmin
 
 class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
@@ -379,11 +380,17 @@ class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 class PhaseInline(EnhancedModelAdminMixin, admin.TabularInline):
     model = Phase
+    extra = 0
+
+
+class CityInCampaignInline(EnhancedAdminMixin, admin.TabularInline):
+    model = CityInCampaign
+    extra = 0
 
 
 class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'slug')
-    inlines = [PhaseInline, ]
+    inlines = [PhaseInline, CityInCampaignInline, ]
     prepopulated_fields = {'slug': ('name',)}
 
 

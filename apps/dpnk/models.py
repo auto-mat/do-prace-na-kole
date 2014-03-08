@@ -119,13 +119,32 @@ class City(models.Model):
         related_name = "administrated_cities",
         null=True,
         blank=True)
+
+    def __unicode__(self):
+        return "%s" % self.name
+
+
+class CityInCampaign(models.Model):
+    """Město v kampani"""
+
+    class Meta:
+        verbose_name = _(u"Město v kampani")
+        verbose_name_plural = _(u"Města v kampani")
+        unique_together = (("city", "campaign"),)
+
     admission_fee = models.PositiveIntegerField(
         verbose_name=_(u"Startovné"),
         null=False,
         default=160)
+    city = models.ForeignKey(
+          City, 
+          null=False, 
+          blank=False)
+    campaign = models.ForeignKey(
+          "Campaign", 
+          null=False, 
+          blank=False)
 
-    def __unicode__(self):
-        return "%s" % self.name
 
 class Company(models.Model):
     """Firma"""
@@ -282,6 +301,7 @@ class Phase(models.Model):
     class Meta:
         verbose_name = _(u"fáze kampaně")
         verbose_name_plural = _(u"fáze kampaně")
+        unique_together = (("type", "campaign"),)
 
     TYPE = [('registration', _(u"Registrační")),
             ('competition', _(u"Soutěžní")),
@@ -297,7 +317,6 @@ class Phase(models.Model):
         verbose_name=_(u"Typ fáze"),
         choices=TYPE,
         max_length=16,
-        unique=True,
         null=False,
         default='registration')
     date_from = models.DateField(
@@ -548,11 +567,14 @@ class CompanyAdmin(models.Model):
     class Meta:
         verbose_name = _(u"Firemní administrátor")
         verbose_name_plural = _(u"Firemní administrátoři")
+        unique_together = (
+                ("user", "campaign"),
+                ("administrated_company", "campaign"),
+                )
 
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         User,
         related_name='company_admin',
-        unique=True,
         null=False,
         blank=False,
         )
@@ -573,31 +595,17 @@ class CompanyAdmin(models.Model):
         blank=True,
         )
 
-    telephone = models.CharField(
-        verbose_name=_(u"Telefon"),
-        max_length=30, 
-        null=True,
-        blank=True,
-        )
-
     administrated_company = models.ForeignKey(
        "Company", 
        related_name = "company_admin",
        verbose_name = _(u"Administrovaná společnost"),
-       unique = True,
        null=True,
        blank=True)
 
-    mailing_id = models.TextField(
-        verbose_name=_(u"ID uživatele v mailing listu"),
-        default="",
-        null=True,
-        blank=True
-        )
-
-    def get_administrated_company(self):
-        if self.administrated_company:
-            return self.administrated_company
+    campaign = models.ForeignKey(
+       Campaign, 
+       null=False,
+       blank=False)
 
     def __unicode__(self):
         return self.user.get_full_name()
