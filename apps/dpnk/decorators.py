@@ -66,15 +66,13 @@ def must_be_approved_for_team(fn):
 
 def must_be_company_admin(fn):
     @login_required
-    def wrapper(*args, **kwargs):
-        request = args[0]
-        try:
-            administrated_company = request.user.company_admin.get_administrated_company()
-        except CompanyAdmin.DoesNotExist:
-            administrated_company = None
-        if administrated_company:
-            kwargs['administrated_company'] = administrated_company
-            return fn(*args, **kwargs)
+    def wrapper(request, campaign_slug="", *args, **kwargs):
+        campaign = Campaign.objects.get(slug=campaign_slug)
+
+        company_admin = models.get_company_admin(request.user, campaign)
+        if company_admin:
+            kwargs['company_admin'] = company_admin
+            return fn(request, *args, **kwargs)
 
         return HttpResponse(_(u"<div class='text-error'>Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.</div>"), status=401)
     return wrapper

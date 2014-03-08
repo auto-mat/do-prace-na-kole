@@ -19,7 +19,7 @@
 
 from django import forms
 from forms import AdressForm, RegistrationFormDPNK
-from models import UserProfile, Company, CompanyAdmin, Competition, UserAttendance
+from models import UserProfile, Company, CompanyAdmin, Competition, UserAttendance, Campaign
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
@@ -35,10 +35,13 @@ class SelectUsersPayForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        company = kwargs.pop('initial', None)
+        initial = kwargs.pop('initial', None)
+        company_admin = initial['company_admin']
+        queryset = UserAttendance.objects.filter(team__subsidiary__company = company_admin.administrated_company, campaign = company_admin.campaign, userprofile__user__is_active=True)
+
         ret_val = super(SelectUsersPayForm, self).__init__(*args, **kwargs)
-        self.fields['paing_for'].queryset = UserAttendance.objects.filter(team__subsidiary__company = company, userprofile__user__is_active=True)
-        choices = [(user_attendance.pk, user_attendance) for user_attendance in UserAttendance.objects.filter(team__subsidiary__company = company, userprofile__user__is_active=True).all() 
+        self.fields['paing_for'].queryset = queryset
+        choices = [(user_attendance.pk, user_attendance) for user_attendance in queryset.all() 
             if user_attendance.payment_type() == 'fc' and user_attendance.payment_status() != 'done']
         self.fields['paing_for'].choices = choices
         return ret_val
@@ -85,17 +88,23 @@ class CompanyAdminApplicationForm(registration.forms.RegistrationFormUniqueEmail
         label=_(u"Příjmení"),
         max_length=30,
         required=True)
+    campaign = forms.ModelChoiceField(
+        widget = forms.widgets.HiddenInput(),
+        queryset=Campaign.objects.all(),
+        required=True)
 
     def clean_administrated_company(self):
         obj = self.cleaned_data['administrated_company']
-        if CompanyAdmin.objects.filter(administrated_company__pk = obj.pk).exists():
-            raise forms.ValidationError(_("Tato firma již má svého správce."))
+        campaign = self.cleaned_data['campaign']
+        if CompanyAdmin.objects.filter(administrated_company__pk = obj.pk, campaign=campaign).exists():
+            raise forms.ValidationError(_("Tato společnost již má svého správce."))
         else:
             return self.cleaned_data['administrated_company']
 
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super(CompanyAdminApplicationForm, self).__init__(*args, **kwargs)
         self.fields.keyOrder = [
+            'campaign',
             'motivation_company_admin',
             'first_name',
             'last_name',

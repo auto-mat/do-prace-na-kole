@@ -145,6 +145,9 @@ class CityInCampaign(models.Model):
           null=False, 
           blank=False)
 
+    def __unicode__(self):
+        return "%s" % (self.city.name)
+
 
 class Company(models.Model):
     """Firma"""
@@ -181,8 +184,8 @@ class Subsidiary(models.Model):
           related_name="subsidiaries",
           null=False, 
           blank=False)
-    city = models.ForeignKey(
-          City, 
+    city_in_campaign = models.ForeignKey(
+          CityInCampaign, 
           verbose_name=_(u"Soutěžní město"),
           help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='http://www.dopracenakole.net/chci-slapat/pravidla-souteze/' target='_blank'>pravidla soutěže</a>"),
           null=False, blank=False)
@@ -422,8 +425,11 @@ class UserAttendance(models.Model):
     def __unicode__(self):
         return self.userprofile.user.get_full_name()
 
+    def admission_fee(self):
+        return self.team.subsidiary.city_in_campaign.admission_fee
+
     def payment(self):
-        if self.team and self.team.subsidiary and self.team.subsidiary.city.admission_fee == 0:
+        if self.team and self.team.subsidiary and self.admission_fee() == 0:
             return {'payment': None,
                     'status': 'no_admission',
                     'status_description': _(u'neplatí se'),
@@ -618,9 +624,9 @@ class CompanyAdmin(models.Model):
 
         if status_before_update != self.company_admin_approved:
             if self.company_admin_approved == 'approved':
-                company_admin_approval_mail(self.user)
+                company_admin_approval_mail(self)
             elif self.company_admin_approved == 'denied':
-                company_admin_rejected_mail(self.user)
+                company_admin_rejected_mail(self)
 
 class Payment(models.Model):
     """Platba"""
@@ -920,7 +926,7 @@ class Competition(models.Model):
             return 'without_admission'
         if not is_team_coordinator(user_attendance) and self.competitor_type == 'team':
             return 'not_team_coordinator'
-        if not is_company_admin(user_attendance.userprofile.user) and self.competitor_type == 'company':
+        if not get_company_admin(user_attendance.userprofile.user, self.campaign) and self.competitor_type == 'company':
             return 'not_company_admin'
         if self.type == 'questionnaire' and not self.has_started():
             return 'before_beginning'
@@ -943,7 +949,7 @@ class Competition(models.Model):
             return False
         if self.company and self.company != userprofile.team.subsidiary.company:
             return False
-        if self.city and self.city != userprofile.team.subsidiary.city:
+        if self.city and self.city != userprofile.team.subsidiary.city_in_campaign:
             return False
 
         if self.without_admission:
@@ -1121,7 +1127,7 @@ class Answer(models.Model):
     class Meta:
         verbose_name = _(u"Odpověď")
         verbose_name_plural = _(u"Odpovědi")
-        ordering = ('user_attendance__team__subsidiary__city', 'pk')
+        ordering = ('user_attendance__team__subsidiary__city_in_campaign__city', 'pk')
         unique_together = (("user_attendance", "question"),)
 
     user_attendance = models.ForeignKey(UserAttendance, null=True, blank=True)
@@ -1157,13 +1163,11 @@ def is_team_coordinator(user_attendance):
         return True
     return False
 
-def is_company_admin(user):
+def get_company_admin(user, campaign):
     try:
-        if user.company_admin.company_admin_approved == 'approved' and user.company_admin.administrated_company:
-            return True
-        return False
+        return user.company_admin.get(campaign=campaign, company_admin_approved='approved')
     except CompanyAdmin.DoesNotExist:
-        return False
+        return None
 
 def is_competitor(user):
     try:

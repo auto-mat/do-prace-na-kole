@@ -32,7 +32,7 @@ from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApp
 from dpnk.email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from wp_urls import wp_reverse
 from util import redirect
-from models import Company, CompanyAdmin, Payment, Competition, Campaign
+from models import Company, CompanyAdmin, Payment, Competition, Campaign, UserProfile
 import models
 import registration.signals, registration.backends
 import registration.backends.simple
@@ -43,11 +43,11 @@ logger = logging.getLogger(__name__)
 @login_required
 def company_structure(request,
         template = 'company_admin/structure.html',
-        administrated_company = None,
+        company_admin = None,
         ):
     return render_to_response(template,
                               {
-                                'company': administrated_company,
+                                'company': company_admin.administrated_company,
                                 }, context_instance=RequestContext(request))
 
 class SelectUsersPayView(FormView):
@@ -55,8 +55,10 @@ class SelectUsersPayView(FormView):
     form_class = SelectUsersPayForm
     success_url = 'company_admin'
 
-    def get_initial(self, **kwargs):
-        return self.request.user.company_admin.get_administrated_company()
+    def get_initial(self):
+        return {
+                'company_admin': self.kwargs.get('company_admin'),
+                }
 
     def form_valid(self, form):
         paing_for = form.cleaned_data['paing_for']
@@ -77,7 +79,7 @@ class CompanyEditView(UpdateView):
     success_url = 'company_admin'
 
     def get_object(self, queryset=None):
-        return self.request.user.company_admin.get_administrated_company()
+        return self.kwargs.get('company_admin').administrated_company
 
     def form_valid(self, form):
         super(CompanyEditView, self).form_valid(form)
@@ -93,12 +95,18 @@ class CompanyAdminRegistrationBackend(registration.backends.simple.SimpleBackend
 
         admin = CompanyAdmin(
             motivation_company_admin = cleaned_data['motivation_company_admin'],
-            telephone = cleaned_data['telephone'],
             administrated_company = cleaned_data['administrated_company'],
+            campaign = cleaned_data['campaign'],
             user = new_user,
         )
         admin.save()
-        company_admin_register_no_competitor_mail(admin.user)
+
+        userprofile = UserProfile(
+            user = new_user,
+            telephone = cleaned_data['telephone'],
+        )
+        userprofile.save()
+        company_admin_register_no_competitor_mail(admin.user, cleaned_data['administrated_company'])
         return new_user
 
 class CompanyAdminApplicationView(FormView):
@@ -106,6 +114,11 @@ class CompanyAdminApplicationView(FormView):
     form_class = CompanyAdminApplicationForm
     model = CompanyAdmin
     success_url = 'company_admin'
+
+    def get_initial(self):
+        return {
+                'campaign': Campaign.objects.get(slug=self.kwargs.get('campaign_slug')),
+                }
 
     def form_valid(self, form, backend='dpnk.company_admin_views.CompanyAdminRegistrationBackend'):
         super(CompanyAdminApplicationView, self).form_valid(form)
@@ -125,17 +138,18 @@ class CompanyAdminView(UpdateView):
     success_url = 'profil'
 
     def get_object(self, queryset=None):
+        user_attendance = self.kwargs.get('user_attendance')
+        campaign = user_attendance.campaign
         try:
-            company_admin = self.request.user.company_admin
+            company_admin = self.request.user.company_admin.get(campaign=campaign)
         except CompanyAdmin.DoesNotExist:
-            company_admin = CompanyAdmin(user = self.request.user)
-        company_admin.administrated_company = models.UserAttendance.objects.get(campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile).team.subsidiary.company
-        company_admin.save()
+            company_admin = CompanyAdmin(user=self.request.user, campaign=campaign)
+        company_admin.administrated_company = user_attendance.team.subsidiary.company
         return company_admin
 
     def form_valid(self, form):
         super(CompanyAdminView, self).form_valid(form)
-        company_admin_register_competitor_mail(self.request.user, models.UserAttendance.objects.get(campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile))
+        company_admin_register_competitor_mail(self.request.user, self.kwargs.get('user_attendance').team.subsidiary.company)
         return redirect(wp_reverse(self.success_url))
 
 class CompanyCompetitionView(UpdateView):
@@ -149,10 +163,9 @@ class CompanyCompetitionView(UpdateView):
         return ret_val
 
     def get_object(self, queryset=None):
-        company = self.request.user.company_admin.administrated_company
+        company = self.kwargs.get('company_admin').administrated_company
         competition_slug = self.kwargs.get('competition_slug', None)
-        campaign_slug = self.kwargs.get('campaign_slug', None)
-        campaign = Campaign.objects.get(slug = campaign_slug)
+        campaign = self.kwargs.get('company_admin').campaign
         if competition_slug:
             competition = get_object_or_404(Competition.objects, slug = competition_slug)
             if competition.company != company:
@@ -173,9 +186,9 @@ class CompanyCompetitionView(UpdateView):
 @login_required
 def competitions(request,
         template = 'company_admin/competitions.html',
-        administrated_company = None,
+        company_admin = None,
         ):
     return render_to_response(template,
                               {
-                                'competitions': Competition.objects.filter(company = administrated_company),
+                                'competitions': company_admin.administrated_company.competition_set.all(),
                                 }, context_instance=RequestContext(request))

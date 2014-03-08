@@ -147,7 +147,7 @@ def change_team(request,
             subsidiary_valid = form_subsidiary.is_valid()
             form.fields['subsidiary'].required = False
         else:
-            form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
+            form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary", campaign=user_attendance.campaign)
             form.fields['subsidiary'].required = True
 
         if create_team:
@@ -221,7 +221,7 @@ def change_team(request,
     else:
         form = form_class(request, instance=user_attendance)
         form_company = RegisterCompanyForm(prefix = "company")
-        form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary")
+        form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary", campaign=user_attendance.campaign)
         form_team = RegisterTeamForm(prefix = "team")
 
     form.fields['company'].widget.underlying_form = form_company
@@ -265,7 +265,7 @@ class RegistrationView(FormView):
 def payment_type(request, user_attendance=None):
     if not user_attendance.team :
         return HttpResponse(_(u"<div class='text-error'>Pro zadání platby musíte mít napřed vybraný tým.</div>"), status=401)
-    if user_attendance.team.subsidiary.city.admission_fee == 0:
+    if user_attendance.payment()['status'] == 'no_admission':
         return redirect(wp_reverse('profil'))
     template_name='registration/payment_type.html'
     form_class = PaymentTypeForm
@@ -306,7 +306,7 @@ def header_bar(request, user_attendance=None):
 def payment(request, user_attendance=None):
     if not user_attendance.team :
         return HttpResponse(_(u"<div class='text-error'>Pro zadání platby musíte mít napřed vybraný tým.</div>"), status=401)
-    if user_attendance.team.subsidiary.city.admission_fee == 0:
+    if user_attendance.payment()['status'] == 'no_admission':
         return redirect(wp_reverse('profil'))
     uid = request.user.id
     order_id = '%s-1' % uid
@@ -315,7 +315,7 @@ def payment(request, user_attendance=None):
     p = Payment(session_id=session_id,
                 user_attendance=user_attendance,
                 order_id = order_id,
-                amount = user_attendance.team.subsidiary.city.admission_fee,
+                amount = user_attendance.admission_fee(),
                 description = "Ucastnicky poplatek Do prace na kole")
     p.save()
     logger.info('Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s' % (uid, order_id, session_id, user_attendance))
@@ -520,11 +520,6 @@ def profile(request, user_attendance=None):
         team_members_count = 0
     request.session['invite_success_url'] = 'profil'
 
-    if models.is_company_admin(request.user):
-        company_admin = user_attendance.userprofile.user.company_admin
-    else:
-        company_admin = None
-
     return render_to_response('registration/profile.html',
                               {
             'active': user_attendance.userprofile.user.is_active,
@@ -537,8 +532,6 @@ def profile(request, user_attendance=None):
             'team_members_count': team_members_count,
             'competition_state': settings.COMPETITION_STATE,
             'approved_for_team': user_attendance.approved_for_team,
-            'company_admin': company_admin,
-            'is_company_admin': models.is_company_admin(request.user),
             }, context_instance=RequestContext(request))
 
 @login_required_simple

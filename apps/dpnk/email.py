@@ -101,29 +101,29 @@ def company_admin_register_competitor_mail(user, company):
         }))
     send_mail(_("Do práce na kole 2013 - firemní správce - potvrzení registrace"), message, None, [email], fail_silently=False)
 
-def company_admin_register_no_competitor_mail(user):
+def company_admin_register_no_competitor_mail(user, company):
     template = get_template('email/company_admin_register_no_competitor.html')
     email = user.email
     message = template.render(Context({ 'user': user,
-        'company': models.get_company(user),
+        'company': company,
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_("Do práce na kole 2013 - firemní správce - potvrzení registrace"), message, None, [email], fail_silently=False)
 
-def company_admin_approval_mail(user):
+def company_admin_approval_mail(company_admin):
     template = get_template('email/company_admin_approval.html')
-    email = user.email
-    message = template.render(Context({ 'user': user,
-        'company': user.company_admin.administrated_company,
+    email = company_admin.user.email
+    message = template.render(Context({ 'user': company_admin.user,
+        'company': company_admin.administrated_company,
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_("Do práce na kole 2013 - firemní správce - schválení správcovství firmy"), message, None, [email], fail_silently=False)
 
-def company_admin_rejected_mail(user):
+def company_admin_rejected_mail(company_admin):
     template = get_template('email/company_admin_rejected.html')
-    email = user.email
-    message = template.render(Context({ 'user': user,
-        'company': models.get_company(user),
+    email = company_admin.user.email
+    message = template.render(Context({ 'user': company_admin.user,
+        'company': company_admin.administrated_company,
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_("Do práce na kole 2013 - firemní správce - zamítnutí správcovství firmy"), message, None, [email], fail_silently=False)

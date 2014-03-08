@@ -44,9 +44,15 @@ class AdressForm(forms.ModelForm):
             raise ValidationError('PSČ musí být pěticiferné číslo')
         return address_psc
 
+    def __init__(self, *args, **kwargs):
+        campaign = kwargs.pop('campaign', None)
+        super(AdressForm, self).__init__(*args, **kwargs)
+        if campaign:
+            self.fields['city_in_campaign'].queryset = models.CityInCampaign.objects.filter(campaign=campaign)
+
     class Meta:
         model = Subsidiary
-        fields = ('city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
+        fields = ('city_in_campaign', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
 class RegisterSubsidiaryForm(AdressForm):
     pass

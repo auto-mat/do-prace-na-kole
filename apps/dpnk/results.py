@@ -33,14 +33,14 @@ def get_competitors(self):
             filter_query['userprofile__user__is_active'] = True
             filter_query['approved_for_team'] = 'approved'
             if self.city:
-                filter_query['team__subsidiary__city'] = self.city
+                filter_query['team__subsidiary__city_in_campaign'] = self.city
             if self.company:
                 filter_query['team__subsidiary__company'] = self.company
             query = models.UserAttendance.objects.filter(**filter_query)
         elif self.competitor_type == 'team':
             filter_query = {}
             if self.city:
-                filter_query['subsidiary__city'] = self.city
+                filter_query['subsidiary__city_in_campaign'] = self.city
             if self.company:
                 filter_query['subsidiary__company'] = self.company
             query = models.Team.objects.filter(**filter_query)
@@ -82,7 +82,7 @@ def get_competitions(user_attendance):
     competitions = competitions.filter(
             (
                   (Q(company = None) | Q(company = user_attendance.team.subsidiary.company))
-                & (Q(city = None)    | Q(city = user_attendance.team.subsidiary.city))
+                & (Q(city = None)    | Q(city = user_attendance.team.subsidiary.city_in_campaign))
             )
         ).distinct()
     return competitions
@@ -164,8 +164,8 @@ def get_team_frequency(team):
         
     if member_count == 0:
         return None
-    trips_from = models.Trip.objects.filter(user__in=members, trip_from=True).count()
-    trips_to   = models.Trip.objects.filter(user__in=members, trip_to=True).count()
+    trips_from = models.Trip.objects.filter(user_attendance__in=members, trip_from=True).count()
+    trips_to   = models.Trip.objects.filter(user_attendance__in=members, trip_to=True).count()
     return float(trips_from + trips_to) / float(member_count)
 
 def get_team_length(team):
@@ -206,7 +206,7 @@ def recalculate_result(competition, competitor):
     if competition.competitor_type == 'team':
         team = competitor
 
-        if team.coordinator and not competition.has_admission(team.coordinator):
+        if team.coordinator_campaign and not competition.has_admission(team.coordinator_campaign):
             models.CompetitionResult.objects.filter(team = team, competition = competition).delete()
             return
 
@@ -221,8 +221,8 @@ def recalculate_result(competition, competitor):
             return
 
         if competition.type == 'questionnaire':
-            points = models.Choice.objects.filter(answer__user__in = members, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
-            points_given = models.Answer.objects.filter(user__in = members, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
+            points = models.Choice.objects.filter(answer__user_attendance__in = members, answer__question__competition = competition).aggregate(Sum('points'))['points__sum'] or 0
+            points_given = models.Answer.objects.filter(user_attendance__in = members, question__competition = competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
             competition_result.result = float(points + points_given)
         elif competition.type == 'length':
             competition_result.result = get_team_length(team)
