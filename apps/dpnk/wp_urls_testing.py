@@ -43,7 +43,7 @@ urls = {
     # Company admin
     'edit_company':                 "fa/editovat_spolecnost",
     'zadost_firemni_spravce':       "fa/zadost",
-    'soutez':                       "soutez",
+    'soutez':                       "fa/soutez",
     'company_admin':                "fa",
 
     # Zastarale nebo odlozeno na pozdeji
@@ -53,6 +53,9 @@ urls = {
 
     # Company admin
 }
+
+for url in urls:
+    urls[url] = "/~petr/dpnk-wp/%s" % urls[url]
 
 def wp_reverse(name):
     return urls[name]
