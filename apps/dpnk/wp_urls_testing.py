@@ -2,9 +2,6 @@
 # This file serves testing purposes if used instead of wp_urls.py
 # and together with dpnk-wp HTML files tree
 urls = {
-    # Admin
-    'admin':                        "/admin/",
-
     # Registrace
     'chci_slapat':                  "chci_slapat.html",
     'registrace':                   "registrace.html",
@@ -56,6 +53,9 @@ urls = {
 
 for url in urls:
     urls[url] = "/~petr/dpnk-wp/%s" % urls[url]
+
+urls['admin'] = "/admin/"
+
 
 def wp_reverse(name):
     return urls[name]
