@@ -63,9 +63,9 @@ class SelectUsersPayView(FormView):
     def form_valid(self, form):
         paing_for = form.cleaned_data['paing_for']
         for userprofile in paing_for:
-            for payment in userprofile.payments.all():
+            for payment in userprofile.payments().all():
                 if payment.pay_type == 'fc':
-                    payment.status = Payment.Status.COMPANY_ACCEPTS
+                    payment.status = Payment.Status.PAYMENT_COMPANY_ACCEPTS
                     payment.save()
                     break
         logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x, paing_for)))

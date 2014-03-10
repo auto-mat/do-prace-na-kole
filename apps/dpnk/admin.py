@@ -30,9 +30,11 @@ from django.http import HttpResponseRedirect
 from admin_enhancer.admin import EnhancedModelAdminMixin, EnhancedAdminMixin
 from dpnk.wp_urls import wp_reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
+from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 from import_export.admin import ImportExportModelAdmin
 # Models
 from models import *
+from dpnk import models
 import dpnk
 from django.forms import ModelForm
 
@@ -46,7 +48,23 @@ class TeamForm(ModelForm):
 class PaymentInline(EnhancedAdminMixin, NestedTabularInline):
     model = Payment
     extra = 0
+    form = models.PaymentForm
     readonly_fields = ['user_attendance', 'order_id', 'session_id', 'trans_id', 'error', ]
+
+
+class PackageTransactionInline(EnhancedAdminMixin, NestedTabularInline):
+    model = PackageTransaction
+    extra = 0
+    readonly_fields = ['user_attendance']
+    form = models.PackageTransactionForm
+
+
+class UserActionTransactionInline(EnhancedAdminMixin, NestedTabularInline):
+    model = UserActionTransaction
+    extra = 0
+    readonly_fields = ['user_attendance']
+    form = models.UserActionTransactionForm
+
 
 class TeamInline(EnhancedAdminMixin, admin.TabularInline):
     model = Team
@@ -161,25 +179,25 @@ class PaymentFilter(SimpleListFilter):
                 userprofile__user__is_active=True).exclude(userprofile__id__in=paying_or_prospective_user_ids).exclude(userprofile__team__subsidiary__city_in_campaign__admission_fee = 0)
         elif self.value() == 'not_paid':
             return queryset.filter(
-                userprofile__user__is_active=True).exclude(userprofile__payments__status__in = Payment.done_statuses).exclude(userprofile__team__subsidiary__city__admission_fee = 0)
+                userprofile__user__is_active=True).exclude(userprofile__transactions__status__in = Payment.done_statuses).exclude(userprofile__team__subsidiary__city__admission_fee = 0)
         elif self.value() == 'no_admission':
             return queryset.filter(userprofile__team__subsidiary__city__admission_fee = 0)
         elif self.value() == 'done':
-            return queryset.filter(Q(userprofile__payments__status__in = Payment.done_statuses) | Q(userprofile__team__subsidiary__city__admission_fee = 0))
+            return queryset.filter(Q(userprofile__transactions__status__in = Payment.done_statuses) | Q(userprofile__team__subsidiary__city__admission_fee = 0))
         elif self.value() == 'paid':
-            return queryset.filter(userprofile__payments__status__in = Payment.done_statuses)
+            return queryset.filter(userprofile__transactions__status__in = Payment.done_statuses)
         elif self.value() == 'waiting':
-            return queryset.exclude(userprofile__payments__status__in = Payment.done_statuses).filter(userprofile__payments__status__in = Payment.waiting_statuses)
+            return queryset.exclude(userprofile__transactions__status__in = Payment.done_statuses).filter(userprofile__transactions__status__in = Payment.waiting_statuses)
         elif self.value() == 'unknown':
-            return queryset.exclude(userprofile__team__subsidiary__city__admission_fee = 0).exclude(userprofile__payments__status__in = set(Payment.done_statuses) | set(Payment.waiting_statuses))
+            return queryset.exclude(userprofile__team__subsidiary__city__admission_fee = 0).exclude(userprofile__transactions__status__in = set(Payment.done_statuses) | set(Payment.waiting_statuses))
         elif self.value() == 'none':
-            return queryset.filter(userprofile__payments = None)
+            return queryset.filter(userprofile__transactions = None)
 
 
 class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
     model = UserAttendance
     extra = 0
-    inlines= [PaymentInline,]
+    inlines= [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
     list_display = ('userprofile__payment_type', 'userprofile__payment_status', 'userprofile__team__name', 'userprofile__distance', 'team__subsidiary__city', 'userprofile__team__subsidiary__company', 'trips_count', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__name', 'userprofile__team__subsidiary__company__name','company_admin__administrated_company__name',]
     list_filter = ['team__subsidiary__city_in_campaign', 'team__subsidiary__city_in_campaign', PaymentFilter]
@@ -320,17 +338,42 @@ class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmi
     def subsidiary__company(self, obj):
        return obj.subsidiary.company
     
-class PaymentAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'trans_id', 'session_id', 'user_attendance', 'amount', 'pay_type', 'created', 'status', )
-    search_fields = ('trans_id', 'session_id', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name' )
+
+class TransactionChildAdmin(PolymorphicChildModelAdmin):
+    base_model = Transaction
     raw_id_fields = ('user_attendance', )
 
-    list_filter = ['status', 'pay_type']
+
+class PaymentChildAdmin(TransactionChildAdmin):
+    form = models.PaymentForm
+
+
+class PackageTransactionChildAdmin(TransactionChildAdmin):
+    form = models.PackageTransactionForm
+
+
+class UserActionTransactionChildAdmin(TransactionChildAdmin):
+    form = models.UserActionTransactionForm
+
+
+class TransactionAdmin(PolymorphicParentModelAdmin):
+    list_display = ('id', 'user_attendance', 'created', 'status', 'polymorphic_ctype', 'user_link')
+    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name' )
+    list_filter = ['status', 'polymorphic_ctype', 'user_attendance__campaign']
 
     readonly_fields = ['user_link', ]
     def user_link(self, obj):
-        return mark_safe('<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (obj.user.user.pk, obj.user.user))
+        if obj.user_attendance:
+            return mark_safe('<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (obj.user_attendance.userprofile.user.pk, obj.user_attendance.userprofile.user))
     user_link.short_description = 'Uživatel'
+
+    base_model = Transaction
+    child_models = (
+            (Payment, PaymentChildAdmin),
+            (PackageTransaction, PackageTransactionChildAdmin),
+            (UserActionTransaction, UserActionTransactionChildAdmin),
+        )
+
 
 class ChoiceInline(EnhancedAdminMixin, admin.TabularInline):
     model = Choice
@@ -396,7 +439,7 @@ class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 
 admin.site.register(Team, TeamAdmin)
-admin.site.register(Payment, PaymentAdmin)
+admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(ChoiceType, ChoiceTypeAdmin)
 admin.site.register(City, CityAdmin)

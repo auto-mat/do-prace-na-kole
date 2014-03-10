@@ -92,6 +92,8 @@ INSTALLED_APPS = (
     'django_extensions',
     'chart_tools',
     'import_export',
+    'polymorphic',
+    'django.contrib.contenttypes',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'

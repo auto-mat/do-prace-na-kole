@@ -25,6 +25,7 @@ import django
 import random
 import string
 import results
+from django import forms
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save
@@ -34,6 +35,7 @@ from django.core.exceptions import ValidationError
 from composite_field import CompositeField
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
+from polymorphic import PolymorphicModel
 # Python library imports
 import datetime
 # Local imports
@@ -416,6 +418,9 @@ class UserAttendance(models.Model):
         blank=True,
         default='')
 
+    def payments(self):
+        return self.transactions.instance_of(Payment)
+
     def first_name(self):
         return self.userprofile.user.first_name
 
@@ -436,7 +441,7 @@ class UserAttendance(models.Model):
                     'class': _(u'success'),
                    }
 
-        payments = self.payments.filter(status__in = Payment.done_statuses)
+        payments = self.payments().filter(status__in = Payment.done_statuses)
         if payments.exists():
             return {'payment': payments.latest('id'),
                     'status': 'done',
@@ -444,7 +449,7 @@ class UserAttendance(models.Model):
                     'class': _(u'success'),
                    }
 
-        payments = self.payments.filter(status__in = Payment.waiting_statuses)
+        payments = self.payments().filter(status__in = Payment.waiting_statuses)
         if payments.exists():
             return {'payment': payments.latest('id'),
                     'status': 'waiting',
@@ -452,7 +457,7 @@ class UserAttendance(models.Model):
                     'class': _(u'warning'),
                    }
 
-        payments = self.payments
+        payments = self.payments()
         if payments.exists():
             return {'payment': payments.latest('id'),
                     'status': 'unknown',
@@ -628,7 +633,91 @@ class CompanyAdmin(models.Model):
             elif self.company_admin_approved == 'denied':
                 company_admin_rejected_mail(self)
 
-class Payment(models.Model):
+
+class Transaction(PolymorphicModel):
+    """Transakce"""
+    status = models.PositiveIntegerField(
+        verbose_name=_(u"Status"),
+        max_length=50,
+        null=False, blank=False)
+    user_attendance = models.ForeignKey(UserAttendance, 
+        related_name="transactions",
+        null=True, 
+        blank=False, 
+        default=None)
+    created = models.DateTimeField(
+        verbose_name=_(u"Vytvoření"),
+        default=datetime.datetime.now,
+        null=False)
+    description = models.CharField(
+        verbose_name=_(u"Popis"),
+        max_length=500,
+        null=True,
+        blank=True,
+        default="")
+    realized = models.DateTimeField(
+        verbose_name=_(u"Realizace"),
+        null=True, blank=True)
+
+    class Meta:
+        verbose_name = _(u"Transakce")
+        verbose_name_plural = _(u"Transakce")
+
+
+class UserActionTransaction(Transaction):
+    """Uživatelská akce"""
+
+    class Status (object):
+        COMPETITION_START_CONFIRMED = 30002
+        
+    STATUS = (
+        (Status.COMPETITION_START_CONFIRMED, 'Potvrzen vstup do soutěže'),
+        )
+
+    class Meta:
+        verbose_name = _(u"Uživatelská akce")
+        verbose_name_plural = _(u"Uživatelské akce")
+
+class UserActionTransactionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(UserActionTransactionForm, self).__init__(*args, **kwargs)
+        self.fields['status'] = forms.ChoiceField(choices=UserActionTransaction.STATUS)
+
+    class Meta:
+        model = UserActionTransaction
+
+
+class PackageTransaction(Transaction):
+    """Transakce balíku"""
+
+    class Status (object):
+        PACKAGE_ACCEPTED_FOR_ASSEMBLY = 20002
+        PACKAGE_ASSEMBLED = 20003
+        PACKAGE_SENT = 20004
+        PACKAGE_DELIVERY_CONFIRMED = 20005
+        
+    STATUS = (
+        (Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY, 'Přijat k sestavení'),
+        (Status.PACKAGE_ASSEMBLED, 'Sestaven'),
+        (Status.PACKAGE_SENT, 'Odeslán'),
+        (Status.PACKAGE_DELIVERY_CONFIRMED, 'Doručení potvrzeno'),
+        )
+
+    class Meta:
+        verbose_name = _(u"Transakce balíku")
+        verbose_name_plural = _(u"Transakce balíku")
+
+
+class PackageTransactionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(PackageTransactionForm, self).__init__(*args, **kwargs)
+        self.fields['status'] = forms.ChoiceField(choices=PackageTransaction.STATUS)
+
+    class Meta:
+        model = PackageTransaction
+
+
+class Payment(Transaction):
     """Platba"""
 
     class Status (object):
@@ -685,14 +774,9 @@ class Payment(models.Model):
         )
 
     class Meta:
-        verbose_name = _(u"Platba")
-        verbose_name_plural = _(u"Platby")
+        verbose_name = _(u"Platební transakce")
+        verbose_name_plural = _(u"Platební transakce")
 
-    user_attendance = models.ForeignKey(UserAttendance, 
-        related_name="payments",
-        null=True, 
-        blank=True, 
-        default=None)
     order_id = models.CharField(
         verbose_name="Order ID",
         max_length=50,
@@ -711,28 +795,9 @@ class Payment(models.Model):
     amount = models.PositiveIntegerField(
         verbose_name=_(u"Částka"),
         null=False)
-    description = models.CharField(
-        verbose_name=_(u"Popis"),
-        max_length=500,
-        null=True,
-        blank=True,
-        default="")
-    created = models.DateTimeField(
-        verbose_name=_(u"Zadání platby"),
-        default=datetime.datetime.now,
-        null=False)
-    realized = models.DateTimeField(
-        verbose_name=_(u"Realizace"),
-        null=True, blank=True)
     pay_type = models.CharField(
         verbose_name=_(u"Typ platby"),
         choices=PAY_TYPES,
-        max_length=50,
-        null=True, blank=True)
-    status = models.PositiveIntegerField(
-        verbose_name=_(u"Status"),
-        choices=STATUS,
-        default=Status.NEW,
         max_length=50,
         null=True, blank=True)
     error = models.PositiveIntegerField(
@@ -771,6 +836,16 @@ class Payment(models.Model):
             return self.trans_id
         else:
             return self.session_id
+
+
+class PaymentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(PaymentForm, self).__init__(*args, **kwargs)
+        self.fields['status'] = forms.ChoiceField(choices=Payment.STATUS)
+
+    class Meta:
+        model = Payment
+
 
 class Trip(models.Model):
     """Cesty"""
