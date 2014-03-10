@@ -296,6 +296,13 @@ class Campaign(models.Model):
         verbose_name=u"Doména v URL",
         blank=False
         )
+    email_footer = models.TextField(
+        verbose_name=_(u"Patička uživatelských emailů"),
+        default="",
+        max_length=5000,
+        null=True,
+        blank=True,
+        )
 
     def __unicode__(self):
         return self.name

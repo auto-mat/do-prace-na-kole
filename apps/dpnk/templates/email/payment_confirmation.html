@@ -1,8 +1,8 @@
 {% load wp_url from dpnk_tags %}{% autoescape off %}
 
-Zpráva pro účastnici/účastníka soutěže Do práce na kole 2013 {{ user.get_full_name }}.
+Zpráva pro účastnici/účastníka soutěže {{ user.campaign }} {{ user.get_full_name }}.
 
-Vážená/ý účastnice/íku soutěže Do práce na kole 2013,
+Vážená/ý účastnice/íku soutěže {{ user.campaign }},
 
 Vaše platba startovného byla potvrzena. Ať už jste hradil/a startovné sám/sama nebo jste členem/členkou Klubu přátel, považujte otázku startovného za vyřešenou.
 
@@ -14,13 +14,11 @@ Nyní se můžete soustředit na přípravu k soutěži, máme pro Vás proto p�
 Nyní se také můžete těšit na startovní balíček s designovým moderním trikem! Skvělé triko z bio-bavlny Vám certifikovaným netoxickým tiskem vyrobí O.P.Tiger a do místa Vašeho zaměstnání doručí TNT Express. Více informací o trikách naleznete na http://www.dopracenakole.net/registrace/tricka/
 
 Vážíme si Vašeho rozhodnutí účastnit se soutěže a těšíme se na viděnou v ulicích města se soutěžním trikem!
-Váš organizační tým soutěže Do práce na kole 2013
+Váš organizační tým soutěže {{ user.campaign }}
 
 P.S. Už jste si zkusil/a vylepšit profilovku na Facebooku? Je to snadné, mkrněte na svůj profil http://www.dopracenakole.net/profil/
 
 ---
-Soutěž Do práce na kole 2013 organizuje Auto*Mat, o. s. ve spolupráci s Nadací Partnerství, sdruženími Centrum pro životní prostředí a zdraví, Cyklisté Liberecka, Kolomouc, Ostravou na kole, Ústím na kole, dále městy Jihlava, Pardubice a Uherské Hradiště a Centrem ekologického vzdělávání Žabka.
-Za finanční i materiální podporu děkujeme generálnímu logistickému partnerovi TNT Express, společnostem O.P.Tiger a Kellys, Nadaci Vodafone, velvyslanectvím USA a Nizozemska, programu udržitelné mobility Evropské komise a mediálním partnerům Seznam.cz a TV Nova.
-Pravidla soutěže: http://www.dopracenakole.net/chci-slapat/pravidla-souteze/ Registrace: http://www.dopracenakole.net/chci-slapat/ Uživatelská podpora: mailto:kontakt@dopracenakole.net
+{{ user.campaign.email_footer }}
 
 {% endautoescape %}

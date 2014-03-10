@@ -32,10 +32,10 @@ def approval_request_mail(user_attendance):
         }))
     send_mail(_("Do práce na kole 2013 - žádost o ověření členství"), message, None, [email], fail_silently=False)
 
-def register_mail(user):
+def register_mail(user_attendance):
     template = get_template('email/registration.html')
-    email = user.email
-    message = template.render(Context({ 'user': user,
+    email = user_attendance.userprofile.user.email
+    message = template.render(Context({ 'user': user_attendance,
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_("Do práce na kole 2013 - potvrzení registrace"), message, None, [email], fail_silently=False)
@@ -57,19 +57,19 @@ def team_membership_denial_mail(user, reason):
         }))
     send_mail(_("Do práce na kole 2013 - ZAMÍTNUTÍ členství v týmu"), message, None, [email], fail_silently=False)
 
-def team_created_mail(user):
+def team_created_mail(user_attendance):
     template = get_template('email/team_created.html')
-    email = user.email
-    message = template.render(Context({ 'user': user,
+    email = user_attendance.userprofile.user.email
+    message = template.render(Context({ 'user': user_attendance,
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_("Do práce na kole 2013 - potvrzení registrace"), message, None, [email], fail_silently=False)
 
-def invitation_mail(user, emails):
+def invitation_mail(user_attendance, emails):
     template = get_template('email/invitation.html')
     for email in emails:
         if len(email) != 0:
-            message = template.render(Context({ 'user': user,
+            message = template.render(Context({ 'user': user_attendance,
                 'SITE_URL': settings.SITE_URL,
                 'email': email,
                 }))
@@ -92,11 +92,11 @@ def payment_confirmation_company_mail(user_attendance):
                 'SITE_URL': settings.SITE_URL}))
     send_mail(_("Do práce na kole 2013 - přijetí platby"), message, None, [email], fail_silently=False)
 
-def company_admin_register_competitor_mail(user, company):
+def company_admin_register_competitor_mail(user_attendance):
     template = get_template('email/company_admin_register_competitor.html')
-    email = user.email
-    message = template.render(Context({ 'user': user,
-        'company': company,
+    email = user_attendance.userprofile.user.email
+    message = template.render(Context({ 'user': user_attendance,
+        'company': user_attendance.team.subsidiary.company,
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_("Do práce na kole 2013 - firemní správce - potvrzení registrace"), message, None, [email], fail_silently=False)

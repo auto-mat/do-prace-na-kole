@@ -1,10 +1,10 @@
 {% load wp_url from dpnk_tags %}{% autoescape off %}
 
-Zpráva pro soutěžící/ho {{ user.userprofile }}, zakladatele/ku týmu {{user.userprofile.team.name}} v soutěži Do práce na kole 2013.
+Zpráva pro soutěžící/ho {{ user.userprofile }}, zakladatele/ku týmu {{user.team.name}} v soutěži {{ user.campaign }}.
 
 Dobrý den,
 
-Váš tým {{user.userprofile.team.name}} byl právě vytvořen. 
+Váš tým {{user.team.name}} byl právě vytvořen. 
 
 Na adrese 
 {% block invite_link %}
@@ -22,13 +22,11 @@ Ke svému profilu se můžete přihlásit pomocí adresy
 Vašemu týmu může vyjádřit podporu Váš zaměstnavatel tím, že za Vás uhradí startovné, nebo dokonce že vyhlásí celofiremní kampaň Do práce na kole. Soutěžit pak budete nejen v soutěžním městě, ale také se všemi zaměstnanci Vaší organizace, ať už pracují kdekoli. Jak na to? Kontaktujte osobu, do jejíž kompetence podobné věci patří (vedoucí CSR oddělení, vedoucí vnitřní komunikace, vedoucí PR, ředitel/ka atd.) a nabídněte jí tyto možnosti nebo odkaz na web http://www.dopracenakole.net/firma/.
 
 Děkujeme Vám za přízeň a těšíme se na viděnou v květnu!
-Váš organizační tým soutěže Do práce na kole 2013
+Váš organizační tým soutěže {{ user.campaign }}
 
 P.S. Zapojit do soutěže Vašeho zaměstnavatele se fakt vyplatí - víc soutěžících, ideální teambuilding, účast hrazená zaměstnavatelem a skvělé PR!
 
 ---
-Soutěž Do práce na kole 2013 pořádá Auto*Mat, o. s. ve spolupráci s Nadací Partnerství, sdruženími Centrum pro životní prostředí a zdraví, Cyklisté Liberecka, Kolomouc, Ostravou na kole, Ústím na kole, dále městy Jihlava, Pardubice a Uherské Hradiště a Centrem ekologického vzdělávání Žabka.
-Za finanční i materiální podporu děkujeme generálnímu logistickému partnerovi TNT Express, společnostem O.P.Tiger a Kellys, Nadaci Vodafone, velvyslanectvím USA a Nizozemska, programu udržitelné mobility Evropské komise a mediálním partnerům Seznam.cz a TV Nova.
-Pravidla soutěže: http://www.dopracenakole.net/chci-slapat/pravidla-souteze/ Registrace: http://www.dopracenakole.net/chci-slapat/ Uživatelská podpora: mailto:kontakt@dopracenakole.net
+{{ user.campaign.email_footer }}
 
 {% endautoescape %}

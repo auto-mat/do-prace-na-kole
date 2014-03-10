@@ -102,11 +102,14 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
             approved_for_team = 'approved'
         except Team.DoesNotExist:
             team = None
-        UserAttendance(userprofile = userprofile,
+        user_attendance = UserAttendance(userprofile = userprofile,
                     campaign = campaign,
                     team = team,
                     approved_for_team = approved_for_team,
-                    ).save()
+                    )
+        user_attendance.save()
+
+        register_mail(user_attendance)
         return new_user
 
 @login_required_simple
@@ -207,7 +210,7 @@ def change_team(request,
                 success_url = "pozvanky"
                 request.session['invite_success_url'] = 'profil'
 
-                team_created_mail(user_attendance.userprofile.user)
+                team_created_mail(user_attendance)
 
             if team_changed and not create_team:
                 user_attendance.approved_for_team = 'undecided'
@@ -868,7 +871,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
     if request.method == 'POST':
         form = form_class(data=request.POST)
         if form.is_valid():
-            invitation_mail(request.user, [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4'] ])
+            invitation_mail(user_attendance, [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4'] ])
             return redirect(wp_reverse(success_url))
     else:
         form = form_class()

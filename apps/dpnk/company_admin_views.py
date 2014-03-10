@@ -149,7 +149,7 @@ class CompanyAdminView(UpdateView):
 
     def form_valid(self, form):
         super(CompanyAdminView, self).form_valid(form)
-        company_admin_register_competitor_mail(self.request.user, self.kwargs.get('user_attendance').team.subsidiary.company)
+        company_admin_register_competitor_mail(self.kwargs.get('user_attendance'))
         return redirect(wp_reverse(self.success_url))
 
 class CompanyCompetitionView(UpdateView):
