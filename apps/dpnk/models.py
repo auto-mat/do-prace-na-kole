@@ -1312,3 +1312,8 @@ def answer_post_save(sender, instance, **kwargs):
         results.recalculate_result(competition, instance.user)
     elif competition.competitor_type == 'company':
         raise NotImplementedError("Company competitions are not working yet")
+
+@receiver(pre_save, sender=Payment)
+def payment_set_realized_date(sender, instance, **kwargs):
+    if instance.status in Payment.done_statuses and not instance.realized:
+        instance.realized = datetime.datetime.now()
