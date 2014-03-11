@@ -63,13 +63,10 @@ def login(request, template_name='registration/login.html',
     if request.method == "POST":
         form = authentication_form(data=request.POST)
         if form.is_valid():
-            redirect_to = settings.LOGIN_REDIRECT_URL
-            if request.path == settings.LOGIN_URL:
-                redirect_to = redirect(wp_reverse("profil"))
             auth_login(request, form.get_user())
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
-            return HttpResponse(redirect_to)
+            return HttpResponse(redirect(wp_reverse(settings.LOGIN_REDIRECT_VIEW)))
     else:
         form = authentication_form(request)
     request.session.set_test_cookie()

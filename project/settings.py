@@ -97,9 +97,9 @@ INSTALLED_APPS = (
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
-LOGIN_URL = '/django/dpnk/login/'
-LOGIN_REDIRECT_URL = ''
-LOGOUT_NEXT_PAGE = '/django/dpnk/profil/'
+LOGIN_URL = '/dpnk/login/'
+LOGIN_REDIRECT_VIEW = 'profil'
+LOGOUT_NEXT_PAGE = '/dpnk/login/'
 SITE_URL = ''
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX
