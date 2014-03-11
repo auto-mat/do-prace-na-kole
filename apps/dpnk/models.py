@@ -148,7 +148,7 @@ class CityInCampaign(models.Model):
           blank=False)
 
     def __unicode__(self):
-        return "%s" % (self.city.name)
+        return "%s: %s" % (self.campaign.name, self.city.name)
 
 
 class Company(models.Model):
