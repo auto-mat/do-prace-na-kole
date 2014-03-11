@@ -79,6 +79,9 @@ def login(request, template_name='registration/login.html',
     }
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
+def logout_redirect(request):
+    return HttpResponse(redirect(settings.LOGOUT_REDIRECT_URL))
+
 class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend):
     def register(self, request, campaign, invitation_token, **cleaned_data):
         new_user = super(UserProfileRegistrationBackend, self).register(request, **cleaned_data)

@@ -109,6 +109,8 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout',
         {'next_page': settings.LOGOUT_NEXT_PAGE}
         ),
+    url(r'^logout_redirect/$',
+        logout_redirect),
     url(r'^login/$',
         login),
     url(r'^zmena_hesla/$',
