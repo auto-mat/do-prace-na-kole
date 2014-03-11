@@ -295,10 +295,12 @@ def payment_type(request, user_attendance=None):
 
 
 def header_bar(request, campaign_slug):
+    user_attendance = None
     try:
-        user_attendance = request.user.userprofile.userattendance_set.get(campaign__slug=campaign_slug)
+        if request.user.is_authenticated():
+            user_attendance = request.user.userprofile.userattendance_set.get(campaign__slug=campaign_slug)
     except UserAttendance.DoesNotExist:
-        user_attendance = None
+        pass
     return render_to_response('registration/header_bar.html',
                               {
             'is_authentificated': request.user.is_authenticated(),
