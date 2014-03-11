@@ -294,11 +294,14 @@ def payment_type(request, user_attendance=None):
                                }, context_instance=RequestContext(request))
 
 
-@login_required
-@must_be_competitor
-def header_bar(request, user_attendance=None):
+def header_bar(request, campaign_slug):
+    try:
+        user_attendance = request.user.userprofile.userattendance_set.get(campaign__slug=campaign_slug)
+    except UserAttendance.DoesNotExist:
+        user_attendance = None
     return render_to_response('registration/header_bar.html',
                               {
+            'is_authentificated': request.user.is_authenticated(),
             'user_attendance': user_attendance,
              }, context_instance=RequestContext(request))
 

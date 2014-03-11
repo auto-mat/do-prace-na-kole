@@ -2,5 +2,14 @@
 {% load dpnk_tags %}
 {% load i18n %}
 
-{{ user_attendance }}
-<a href="{% wp_url 'logout' %}" class="btn btn-small">{% trans "Odhlásit" %}</a>
+{% if is_authentificated %}
+   {{ user_attendance }} 
+   /
+   <a href="{% wp_url 'profil_pristup' %}/{{ user_attendance.team.subsidiary.city_in_campaign.city.slug }}">Můj profil</a>
+   /
+   <a href="{% wp_url 'logout' %}">{% trans "Odhlásit" %}</a>
+{% else %}
+   <a href="/prihlasit">Přihlásit</a>
+   /
+   <a href="/registrace">Registrovat</a>
+{% endif %}
