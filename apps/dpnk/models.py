@@ -1260,6 +1260,18 @@ def is_competitor(user):
     except UserProfile.DoesNotExist:
         return False
 
+
+#TODO: this is quickfix, should be geting campaign slug from URL
+class SubsidiaryInCampaignManager(models.Manager):
+    def get_query_set(self):
+        return super(SubsidiaryInCampaignManager,self).get_query_set().filter(city_in_campaign__campaign__slug="campaign")
+
+
+class SubsidiaryInCampaign(Subsidiary):
+    objects = SubsidiaryInCampaignManager()
+    class Meta:
+        proxy = True
+
 #Signals:
 @receiver(pre_save, sender=User)
 def userprofile_pre_save(sender, instance, **kwargs):

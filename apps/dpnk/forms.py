@@ -83,7 +83,7 @@ class ChangeTeamForm(forms.ModelForm):
         widget=SelectChainedOrCreate(RegisterSubsidiaryForm, view_name='', prefix="subsidiary", new_description = _(u"Pobočka v seznamu není, chci založit novou"), 
             chain_field = "company",
             app_name = "dpnk",
-            model_name = "Subsidiary",
+            model_name = "SubsidiaryInCampaign",
             model_field = "company",
             show_all = False,
             auto_choose = True,
