@@ -515,7 +515,10 @@ class UserAttendance(models.Model):
         return results.get_userprofile_length(self)
 
     def is_libero(self):
-        return self.team.members().count() <= 1
+        if self.team:
+            return self.team.members().count() <= 1
+        else:
+            return False
 
 
 class UserProfile(models.Model):
@@ -1041,9 +1044,9 @@ class Competition(models.Model):
     def has_admission(self, userprofile):
         if not userprofile.is_libero() == (self.competitor_type == 'liberos'):
             return False
-        if self.company and self.company != userprofile.team.subsidiary.company:
+        if self.company and userprofile.team and self.company != userprofile.team.subsidiary.company:
             return False
-        if self.city and self.city != userprofile.team.subsidiary.city_in_campaign:
+        if self.city and userprofile.team and self.city != userprofile.team.subsidiary.city_in_campaign:
             return False
 
         if self.without_admission:
@@ -1285,36 +1288,28 @@ class SubsidiaryInCampaign(Subsidiary):
         proxy = True
 
 #Signals:
-@receiver(pre_save, sender=User)
+@receiver(pre_save, sender=UserAttendance)
 def userprofile_pre_save(sender, instance, **kwargs):
     try:
-        userprofile = instance.get_profile()
-    except UserProfile.DoesNotExist:
-        return
-
-    try:
-        old_instance = UserProfile.objects.get(pk = userprofile.pk)
-        userprofile.old_team = old_instance.team
-    except UserProfile.DoesNotExist:
-        userprofile.old_team = None
+        old_instance = UserAttendance.objects.get(pk = instance.pk)
+        instance.old_team = old_instance.team
+    except UserAttendance.DoesNotExist:
+        instance.old_team = None
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=UserAttendance)
 def userprofile_post_save(sender, instance, **kwargs):
-    try:
-        userprofile = instance.get_profile()
-    except UserProfile.DoesNotExist:
-        return
+    if instance.team:
+        instance.team.autoset_member_count()
+        instance.team.save()
 
-    userprofile.team.autoset_member_count()
-    userprofile.team.save()
-
-    if userprofile.old_team and userprofile.team != userprofile.old_team:
-        userprofile.old_team.autoset_member_count()
-        userprofile.old_team.save()
-        results.recalculate_results_team(userprofile.old_team)
-        results.recalculate_results_team(userprofile.team)
-    results.recalculate_result_competitor(userprofile)
+    if instance.old_team and instance.team != instance.old_team:
+        instance.old_team.autoset_member_count()
+        instance.old_team.save()
+        results.recalculate_results_team(instance.old_team)
+        if instance.team:
+            results.recalculate_results_team(instance.team)
+    results.recalculate_result_competitor(instance)
 
 @receiver(post_save, sender=User)
 def update_mailing_user(sender, instance, created, **kwargs):

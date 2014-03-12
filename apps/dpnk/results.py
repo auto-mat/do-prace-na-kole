@@ -190,7 +190,7 @@ def recalculate_result_competition(competition):
 
 def recalculate_result_competitor(user_attendance):
     for competition in models.Competition.objects.all():
-        if competition.competitor_type == 'team':
+        if competition.competitor_type == 'team' and user_attendance.team:
             recalculate_result(competition, user_attendance.team)
         elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
             recalculate_result(competition, user_attendance)

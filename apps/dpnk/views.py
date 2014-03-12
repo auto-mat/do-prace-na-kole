@@ -212,11 +212,11 @@ def change_team(request,
 
                 team_created_mail(user_attendance)
 
+            form.save()
+
             if team_changed and not create_team:
                 user_attendance.approved_for_team = 'undecided'
                 approval_request_mail(user_attendance)
-
-            form.save()
 
             if user_attendance.approved_for_team != 'approved':
                 approval_request_mail(user_attendance)
