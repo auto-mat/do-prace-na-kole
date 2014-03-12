@@ -1,19 +1,27 @@
 {% load wp_url from dpnk_tags %}{% autoescape off %}
 
+{% if not invited == None %}
+Zpráva pro soutěžící/ho {{ invited.userprofile }} z týmu {{invited.team}} v soutěži {{ invited.campaign }}.
+{% endif %}
+
 Dobrý den,
 
-Váš kolega/kolegyně {{ user.userprofile }} chce šlapat s Vámi v týmu {{user.team.name}}. Víte proč? Zeptejte se ho/jí nebo se mrkněte spot "Nedělej Milušku a šlapej!" http://www.youtube.com/watch?v=8mn4Lr1tx1w
+Váš kolega/kolegyně {{ inviting.userprofile }} chce šlapat s Vámi v týmu {{inviting.team.name}}. Víte proč? Zeptejte se ho/jí na mailu {{ inviting.mail }}.
 
+{% if not invited == None %}
+Jdete do toho? Stačí se na stránkách {{ SITE_URL }}{% wp_url 'login' %} přihlásit pod vaším uživatelským jménem ({{ invited.userprofile.user.username }}) a heslem z minulého roku.
+{% else %}
 Jdete do toho? Tento odkaz vede k jednoduchému předvyplněnému formuláři.
 {% block register_link %}
-{{ SITE_URL }}{% wp_url 'registrace' %}?invitation_token={{ user.team.invitation_token }}&email={{ email }}
+{{ SITE_URL }}{% wp_url 'registrace' %}?invitation_token={{ inviting.team.invitation_token }}&email={{ email }}
 {% endblock %}
 (Pokud Vám odkaz nefunguje, zkopírujte ho přes schránku do oblíbeného prohlížeče.)
+{% endif %}
 
 Tak ať Vám to šlape!
-Váš tým soutěže {{ user.campaign }}
+Váš tým soutěže {{ inviting.campaign }}
 
 ---
-{{ user.campaign.email_footer }}
+{{ inviting.campaign.email_footer }}
 
 {% endautoescape %}

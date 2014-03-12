@@ -43,7 +43,7 @@ from  django.http import HttpResponse
 from django import http
 # Local imports
 import util, draw
-from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail
+from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail, invitation_register_mail
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
 from django.contrib.sites.models import get_current_site
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout
@@ -875,7 +875,26 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
     if request.method == 'POST':
         form = form_class(data=request.POST)
         if form.is_valid():
-            invitation_mail(user_attendance, [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4'] ])
+            emails = [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4']]
+
+            for email in emails:
+                try:
+                    invited_user = User.objects.get(email=email)
+
+                    if invited_user.userprofile.userattendance_set.filter(campaign=user_attendance.campaign).count() == 0:
+                        invited_user_attendance = UserAttendance(userprofile = invited_user.userprofile,
+                                    campaign = user_attendance.campaign,
+                                    team = user_attendance.team,
+                                    approved_for_team = 'approved',
+                                    )
+                        invited_user_attendance.save()
+
+                        invitation_register_mail(user_attendance, invited_user_attendance)
+                    else:
+                        invitation_mail(user_attendance, email)
+                except User.DoesNotExist:
+                    invitation_mail(user_attendance, email)
+
             return redirect(wp_reverse(success_url))
     else:
         form = form_class()

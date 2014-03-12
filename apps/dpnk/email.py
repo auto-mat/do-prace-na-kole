@@ -32,6 +32,16 @@ def approval_request_mail(user_attendance):
         }))
     send_mail(_("Do práce na kole 2013 - žádost o ověření členství"), message, None, [email], fail_silently=False)
 
+def invitation_register_mail(inviting, invited):
+    template = get_template('email/invitation.html')
+    email = invited.userprofile.user.email
+    message = template.render(Context({ 'inviting': inviting,
+        'invited': invited,
+        'SITE_URL': settings.SITE_URL,
+        }))
+    send_mail(_("Do práce na kole 2013 - potvrzení registrace"), message, None, [email], fail_silently=False)
+
+
 def register_mail(user_attendance):
     template = get_template('email/registration.html')
     email = user_attendance.userprofile.user.email
@@ -65,15 +75,14 @@ def team_created_mail(user_attendance):
         }))
     send_mail(_("Do práce na kole 2013 - potvrzení vytvoření týmu"), message, None, [email], fail_silently=False)
 
-def invitation_mail(user_attendance, emails):
+def invitation_mail(user_attendance, email):
     template = get_template('email/invitation.html')
-    for email in emails:
-        if len(email) != 0:
-            message = template.render(Context({ 'user': user_attendance,
-                'SITE_URL': settings.SITE_URL,
-                'email': email,
-                }))
-            send_mail(_("Do práce na kole 2013 - pozvánka do týmu"), message, None, [email], fail_silently=False)
+    if len(email) != 0:
+        message = template.render(Context({ 'inviting': user_attendance,
+            'SITE_URL': settings.SITE_URL,
+            'email': email,
+            }))
+        send_mail(_("Do práce na kole 2013 - pozvánka do týmu"), message, None, [email], fail_silently=False)
 
 def payment_confirmation_mail(user):
     template = get_template('email/payment_confirmation.html')
