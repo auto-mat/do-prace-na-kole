@@ -17,5 +17,5 @@ django-registration==0.8
 -e git+https://github.com/silverfix/django-nested-inlines.git#egg=django-nested-inlines
 -e git+git://github.com/continuous/django-su.git#egg=django-su
 unidecode
-createsend
+createsend==2.6.0
 ordereddict

@@ -304,6 +304,16 @@ class Campaign(models.Model):
         null=True,
         blank=True,
         )
+    mailing_list_id = models.CharField(
+        verbose_name=_(u"ID mailing listu"),
+        max_length=60,
+        default="",
+        blank=True,
+        null=False)
+    mailing_list_enabled = models.BooleanField(
+        verbose_name=_(u"Povolit mailing list"),
+        default=False,
+        null=False)
 
     def __unicode__(self):
         return self.name
@@ -1308,6 +1318,11 @@ def userprofile_post_save(sender, instance, **kwargs):
 
 @receiver(post_save, sender=User)
 def update_mailing_user(sender, instance, created, **kwargs):
+    for user_attendance in instance.userprofile.userattendance_set.all():
+        mailing.add_or_update_user(user_attendance)
+
+@receiver(post_save, sender=UserAttendance)
+def update_mailing_user_attendance(sender, instance, created, **kwargs):
     mailing.add_or_update_user(instance)
 
 @receiver(post_save, sender=Payment)
