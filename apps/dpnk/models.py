@@ -35,6 +35,7 @@ from django.core.exceptions import ValidationError
 from composite_field import CompositeField
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.conf import settings
 from polymorphic import PolymorphicModel
 # Python library imports
 import datetime
@@ -1264,7 +1265,7 @@ def is_competitor(user):
 #TODO: this is quickfix, should be geting campaign slug from URL
 class SubsidiaryInCampaignManager(models.Manager):
     def get_query_set(self):
-        return super(SubsidiaryInCampaignManager,self).get_query_set().filter(city_in_campaign__campaign__slug="campaign")
+        return super(SubsidiaryInCampaignManager,self).get_query_set().filter(city_in_campaign__campaign__slug=settings.CAMPAIGN)
 
 
 class SubsidiaryInCampaign(Subsidiary):
