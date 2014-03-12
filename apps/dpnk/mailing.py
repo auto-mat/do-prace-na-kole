@@ -39,12 +39,12 @@ def get_custom_fields(user_attendance):
         return
     
     user = user_attendance.userprofile.user
+    city = None
+    payment_status = None
     if models.is_competitor(user):
-        city = user_attendance.team.subsidiary.city_in_campaign.city.name
+        if user_attendance.team:
+            city = user_attendance.team.subsidiary.city_in_campaign.city.name
         payment_status = user_attendance.payment()['status']
-    else:
-        city = None
-        payment_status = None
 
     is_competitor = models.is_competitor(user)
     team_coordinator = models.is_team_coordinator(user_attendance)
@@ -60,19 +60,16 @@ def get_custom_fields(user_attendance):
                    ]
     return custom_fields
 
-def update_mailing_id(user,mailing_id):
+def update_mailing_id(user, mailing_id):
     if mailing_id:
-        if models.is_competitor(user):
-            user.userprofile.mailing_id = mailing_id
-            user.userprofile.save()
-        if models.is_company_admin(user):
-            user.company_admin.mailing_id = mailing_id
-            user.company_admin.save()
+        user.userprofile.mailing_id = mailing_id
+        user.userprofile.save()
 
-def add_user(user):
+def add_user(user_attendance):
     if not user_attendance.campaign.mailing_list_enabled:
         return
     
+    user = user_attendance.userprofile.user
     custom_fields = get_custom_fields(user_attendance)
 
     # Register into mailing list

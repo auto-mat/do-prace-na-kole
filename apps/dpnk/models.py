@@ -1318,8 +1318,11 @@ def userprofile_post_save(sender, instance, **kwargs):
 
 @receiver(post_save, sender=User)
 def update_mailing_user(sender, instance, created, **kwargs):
-    for user_attendance in instance.userprofile.userattendance_set.all():
-        mailing.add_or_update_user(user_attendance)
+    try:
+        for user_attendance in instance.userprofile.userattendance_set.all():
+            mailing.add_or_update_user(user_attendance)
+    except UserProfile.DoesNotExist:
+        pass
 
 @receiver(post_save, sender=UserAttendance)
 def update_mailing_user_attendance(sender, instance, created, **kwargs):
