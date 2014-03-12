@@ -1296,6 +1296,9 @@ def userprofile_pre_save(sender, instance, **kwargs):
     except UserAttendance.DoesNotExist:
         instance.old_team = None
 
+    if instance.old_team and instance.team != instance.old_team:
+        instance.approved_for_team = 'undecided'
+
 
 @receiver(post_save, sender=UserAttendance)
 def userprofile_post_save(sender, instance, **kwargs):
