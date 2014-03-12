@@ -324,7 +324,7 @@ class CoordinatorFilter(SimpleListFilter):
 class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator_campaign', 'member_count', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator_campaign__userprofile__user__first_name', 'coordinator_campaign__userprofile__user__last_name']
-    list_filter = ['subsidiary__city_in_campaign', 'member_count', CoordinatorFilter]
+    list_filter = ['subsidiary__city_in_campaign', 'subsidiary__city_in_campaign__campaign', 'member_count', CoordinatorFilter]
     list_max_show_all = 10000
 
     readonly_fields = ['members', 'invitation_token', 'member_count']
