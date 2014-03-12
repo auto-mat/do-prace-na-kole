@@ -34,6 +34,11 @@
       class="btn btn-block btn-success">{% trans "Členství v týmu odsouhlaseno" %}</a>
 {% endif %}
 
+{% if team.coordinator_campaign == profile %}
+   <a href="{% wp_url 'team_admin' %}"
+      class="btn btn-block btn-success">{% trans "Jste týmový koordinátor, přejít na správu týmu" %}</a>
+{% endif %}
+
 {% if not team %}
    <a href="#"
       class="btn btn-block btn-warning disabled">{% trans "Abyste mohli zadat platbu musíte napřed vyplnit tým" %}</a>
