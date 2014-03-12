@@ -881,7 +881,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
                 try:
                     invited_user = User.objects.get(email=email)
 
-                    if invited_user.userprofile.userattendance_set.filter(campaign=user_attendance.campaign).count() == 0:
+                    if hasattr(invited_user, "userprofile") and invited_user.userprofile.userattendance_set.filter(campaign=user_attendance.campaign).count() == 0:
                         invited_user_attendance = UserAttendance(userprofile = invited_user.userprofile,
                                     campaign = user_attendance.campaign,
                                     team = user_attendance.team,
