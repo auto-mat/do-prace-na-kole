@@ -358,7 +358,7 @@ class UserActionTransactionChildAdmin(TransactionChildAdmin):
 
 class TransactionAdmin(PolymorphicParentModelAdmin):
     list_display = ('id', 'user_attendance', 'created', 'status', 'polymorphic_ctype', 'user_link')
-    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name' )
+    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username')
     list_filter = ['status', 'polymorphic_ctype', 'user_attendance__campaign']
 
     readonly_fields = ['user_link', ]
