@@ -134,6 +134,7 @@ class CityInCampaign(models.Model):
         verbose_name = _(u"Město v kampani")
         verbose_name_plural = _(u"Města v kampani")
         unique_together = (("city", "campaign"),)
+        ordering = ('city__name',)
 
     admission_fee = models.PositiveIntegerField(
         verbose_name=_(u"Startovné"),
