@@ -647,6 +647,7 @@ class Transaction(PolymorphicModel):
     status = models.PositiveIntegerField(
         verbose_name=_(u"Status"),
         max_length=50,
+        default=0,
         null=False, blank=False)
     user_attendance = models.ForeignKey(UserAttendance, 
         related_name="transactions",

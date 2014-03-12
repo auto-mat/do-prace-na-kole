@@ -324,9 +324,10 @@ def payment(request, user_attendance=None):
                 user_attendance=user_attendance,
                 order_id = order_id,
                 amount = user_attendance.admission_fee(),
+                status=Payment.Status.NEW,
                 description = "Ucastnicky poplatek Do prace na kole")
     p.save()
-    logger.info('Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s' % (uid, order_id, session_id, user_attendance))
+    logger.info('Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s, status: %s' % (uid, order_id, session_id, user_attendance, p.status))
     # Render form
     profile = UserProfile.objects.get(user=request.user)
     return render_to_response('registration/payment.html',
