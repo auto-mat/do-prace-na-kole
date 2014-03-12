@@ -1298,7 +1298,10 @@ def userprofile_pre_save(sender, instance, **kwargs):
         instance.old_team = None
 
     if instance.old_team and instance.team != instance.old_team:
-        instance.approved_for_team = 'undecided'
+        if instance.team.member_count == 0:
+            instance.approved_for_team = 'approved'
+        else:
+            instance.approved_for_team = 'undecided'
 
 
 @receiver(post_save, sender=UserAttendance)
