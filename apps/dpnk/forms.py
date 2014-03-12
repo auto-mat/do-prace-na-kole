@@ -242,7 +242,7 @@ class TShirtUpdateForm(forms.ModelForm):
         )
     telephone = forms.CharField(
         label="Telefon",
-        help_text="Pro kurýra, který Vám přiveze soutěžní triko, pro HelpDesk",
+        help_text="Telefon je pro kurýra, který Vám přiveze soutěžní triko, pro HelpDesk",
         max_length=30)
 
     def save(self, *args, **kwargs):
