@@ -76,7 +76,7 @@ campaign_urlpatterns = patterns('',
 
     #company admin:
     url(r'^spolecnost/zadost_admina/$',
-        must_be_competitor(login_required(CompanyAdminView.as_view()))),
+        must_be_competitor(must_have_team(login_required(CompanyAdminView.as_view())))),
     url(r'^spolecnost/soutez/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
         must_be_company_admin(login_required(CompanyCompetitionView.as_view()))),
     url(r'^spolecnost/soutez/$',

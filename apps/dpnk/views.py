@@ -25,7 +25,7 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404
 import django.contrib.auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from decorators import must_be_coordinator, must_be_approved_for_team, must_be_company_admin, must_be_competitor, login_required_simple
+from decorators import must_be_coordinator, must_be_approved_for_team, must_be_company_admin, must_be_competitor, login_required_simple, must_have_team
 from django.template import RequestContext
 from django.db.models import Sum, Count, Q
 from django.utils.translation import gettext as _
@@ -265,9 +265,8 @@ class RegistrationView(FormView):
 
 @login_required_simple
 @must_be_competitor
+@must_have_team
 def payment_type(request, user_attendance=None):
-    if not user_attendance.team :
-        return HttpResponse(_(u"<div class='text-error'>Pro zadání platby musíte mít napřed vybraný tým.</div>"), status=401)
     if user_attendance.payment()['status'] == 'no_admission':
         return redirect(wp_reverse('profil'))
     template_name='registration/payment_type.html'
@@ -311,9 +310,8 @@ def header_bar(request, campaign_slug):
 
 @login_required_simple
 @must_be_competitor
+@must_have_team
 def payment(request, user_attendance=None):
-    if not user_attendance.team :
-        return HttpResponse(_(u"<div class='text-error'>Pro zadání platby musíte mít napřed vybraný tým.</div>"), status=401)
     if user_attendance.payment()['status'] == 'no_admission':
         return redirect(wp_reverse('profil'))
     uid = request.user.id

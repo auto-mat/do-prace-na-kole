@@ -77,6 +77,14 @@ def must_be_company_admin(fn):
         return HttpResponse(_(u"<div class='text-error'>Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.</div>"), status=401)
     return wrapper
 
+def must_have_team(fn):
+   @login_required
+   def wrapper(request, user_attendance = None, *args, **kwargs):
+      if not user_attendance.team :
+         return HttpResponse(_(u"<div class='text-error'>Napřed musíte mít vybraný tým.</div>"), status=401)
+      return fn(request, user_attendance = user_attendance, *args, **kwargs)
+   return wrapper
+
 def must_be_competitor(fn):
     @login_required
     def wrapper(*args, **kwargs):

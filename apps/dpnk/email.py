@@ -63,7 +63,7 @@ def team_created_mail(user_attendance):
     message = template.render(Context({ 'user': user_attendance,
         'SITE_URL': settings.SITE_URL,
         }))
-    send_mail(_("Do práce na kole 2013 - potvrzení registrace"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2013 - potvrzení vytvoření týmu"), message, None, [email], fail_silently=False)
 
 def invitation_mail(user_attendance, emails):
     template = get_template('email/invitation.html')
