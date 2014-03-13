@@ -36,6 +36,10 @@
    $("#id_company_selected").on("click", switchCompanyForm);
    $("#id_subsidiary_selected").on("click", switchSubsidiaryForm);
    $("#id_team_selected").on("click", switchTeamForm);
+
+   $('#id_company').selectpicker({
+       liveSearch: "true",
+   });
 </script>
 
 <form method="post" class="form-horizontal">{% csrf_token %}
