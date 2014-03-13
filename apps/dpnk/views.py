@@ -116,7 +116,7 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
 @must_be_competitor
 def change_team(request,
              success_url=None, form_class=ChangeTeamForm,
-             template_name='generic_form_template.html',
+             template_name='registration/change_team.html',
              user_attendance=None,
              extra_context=None,
              ):
