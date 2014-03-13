@@ -91,6 +91,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'django_extensions',
     'chart_tools',
+    'massadmin',
     'import_export',
     'polymorphic',
     'django.contrib.contenttypes',

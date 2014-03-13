@@ -19,3 +19,4 @@ django-registration==0.8
 unidecode
 createsend==2.6.0
 ordereddict
+django-mass-edit
