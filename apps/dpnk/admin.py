@@ -296,7 +296,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('__unicode__', 'id', 'distance', 'team', 'approved_for_team', 'campaign', 't_shirt_size')
     list_filter = ('campaign',)
     raw_id_fields = ('userprofile', 'team')
-    search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name')
+    search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username')
 
 
 class CoordinatorFilter(SimpleListFilter):
