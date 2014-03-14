@@ -68,7 +68,7 @@ class RegisterTeamForm(forms.ModelForm):
 
 class ChangeTeamForm(forms.ModelForm):
     company = forms.ModelChoiceField(
-        label=_(u"Firma"),
+        label=_(u"Společnost"),
         queryset=Company.objects.all(),
         widget=SelectOrCreate(RegisterCompanyForm, prefix="company", new_description = _(u"Společnost v seznamu není, chci založit novou")),
         required=True)
