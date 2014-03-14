@@ -439,6 +439,21 @@ class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+class CompanyAdminAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+    list_display = ['user', 'user__email', 'user__name', 'user__telephone', 'company_admin_approved', 'administrated_company', 'campaign']
+    list_filter = ['campaign',]
+    search_fields = ['administrated_company__name', 'user__first_name', 'user__last_name', 'user__username']
+    raw_id_fields = ['user',]
+
+    def user__email(self, obj):
+       return obj.user.email
+
+    def user__name(self, obj):
+       return obj.user.get_profile()
+
+    def user__telephone(self, obj):
+       return obj.user.get_profile().telephone
+
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Question, QuestionAdmin)
@@ -452,6 +467,7 @@ admin.site.register(Answer, AnswerAdmin)
 admin.site.register(Trip, TripAdmin)
 admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(UserAttendance, UserAttendanceAdmin)
+admin.site.register(models.CompanyAdmin, CompanyAdminAdmin)
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
