@@ -78,7 +78,7 @@ def must_be_company_admin(fn):
     return wrapper
 
 def must_have_team(fn):
-   @login_required
+   @must_be_competitor
    def wrapper(request, user_attendance = None, *args, **kwargs):
       if not user_attendance.team :
          return HttpResponse(_(u"<div class='text-error'>Napřed musíte mít vybraný tým.</div>"), status=401)
