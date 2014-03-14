@@ -355,9 +355,13 @@ class Phase(models.Model):
         null=True, blank=True)
 
     def has_started(self):
+        if self.date_from == None:
+            return True
         return self.date_from <= util.today()
 
     def has_finished(self):
+        if self.date_to == None:
+            return True
         return not self.date_to >= util.today()
 
     def is_actual(self):
