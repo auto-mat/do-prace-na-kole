@@ -83,7 +83,7 @@ class CityAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'subsidiaries_text', 'ico', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'company_admin__user__email', 'id', )
+    list_display = ('name', 'subsidiaries_text', 'ico', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
     inlines = [SubsidiaryInline,]
     readonly_fields = ['subsidiary_links']
     search_fields = ('name',)
@@ -99,8 +99,8 @@ class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     def invoice_count(self, obj):
        return len([user for user in UserAttendance.objects.filter(team__subsidiary__company=obj) if user.payment()['payment'] and user.payment()['payment'].pay_type == 'fc' and user.payment()['payment'].status in Payment.done_statuses])
 
-    def company_admin__user__email(self, obj):
-       return obj.company_admin.get().user.email
+    #def company_admin__user__email(self, obj):
+    #   return obj.company_admin.get().user.email
     
     def subsidiaries_text(self, obj):
         return mark_safe(" | ".join(['%s' % (str(u))
