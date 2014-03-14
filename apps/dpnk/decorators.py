@@ -43,7 +43,7 @@ def must_be_coordinator(fn):
         user_attendance = kwargs['user_attendance']
         team = user_attendance.team
         if not models.is_team_coordinator(user_attendance):
-            return HttpResponse(_(u"<div class='text-error'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name if team else u"neznámý", 'coordinator': team.coordinator_campaign if team else u"nikdo", 'you': user_attendance}, status=401)
+            return HttpResponse(_(u"<div class='text-warning'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name if team else u"neznámý", 'coordinator': team.coordinator_campaign if team else u"nikdo", 'you': user_attendance}, status=401)
         else:
             return fn(*args, **kwargs)
     return wrapper
@@ -61,7 +61,7 @@ def must_be_approved_for_team(fn):
                 team = user_attendance.team.name
             else:
                 team = ""
-            return HttpResponse(_(u"<div class='text-error'>Vaše členství v týmu %s nebylo odsouhlaseno týmovým koordinátorem. <a href='%s'>Znovu požádat o ověření členství</a>.</div>") % (team, wp_reverse("zaslat_zadost_clenstvi")), status=401)
+            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %s nebylo odsouhlaseno týmovým koordinátorem. <a href='%s'>Znovu požádat o ověření členství</a>.</div>") % (team, wp_reverse("zaslat_zadost_clenstvi")), status=401)
     return wrapper
 
 def must_be_company_admin(fn):
@@ -74,14 +74,14 @@ def must_be_company_admin(fn):
             kwargs['company_admin'] = company_admin
             return fn(request, *args, **kwargs)
 
-        return HttpResponse(_(u"<div class='text-error'>Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.</div>"), status=401)
+        return HttpResponse(_(u"<div class='text-warning'>Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.</div>"), status=401)
     return wrapper
 
 def must_have_team(fn):
    @must_be_competitor
    def wrapper(request, user_attendance = None, *args, **kwargs):
       if not user_attendance.team :
-         return HttpResponse(_(u"<div class='text-error'>Napřed musíte mít vybraný tým.</div>"), status=401)
+         return HttpResponse(_(u"<div class='text-warning'>Napřed musíte mít vybraný tým.</div>"), status=401)
       return fn(request, user_attendance = user_attendance, *args, **kwargs)
    return wrapper
 
@@ -94,7 +94,7 @@ def must_be_in_phase(phase_type):
          except models.Phase.DoesNotExist:
             phase=None
          if not phase or not phase.is_actual():
-            return HttpResponse(_(u"<div class='text-error'>Tento formulář se zobrazuje pouze v %s fázi soutěže.</div>" % models.Phase.TYPE_DICT[phase_type]), status=401)
+            return HttpResponse(_(u"<div class='text-warning'>Tento formulář se zobrazuje pouze v %s fázi soutěže.</div>" % models.Phase.TYPE_DICT[phase_type]), status=401)
          return fn(request, *args, **kwargs)
       return wrapped
    return decorator
@@ -122,5 +122,5 @@ def must_be_competitor(fn):
             kwargs['user_attendance'] = user_attendance
             return fn(*args, **kwargs)
 
-        return HttpResponse(_(u"<div class='text-error'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním správcem, použijte <a href='%s'>správu firmy</a>.</div>" % wp_reverse("company_admin")), status=401)
+        return HttpResponse(_(u"<div class='text-warning'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním správcem, použijte <a href='%s'>správu firmy</a>.</div>" % wp_reverse("company_admin")), status=401)
     return wrapper
