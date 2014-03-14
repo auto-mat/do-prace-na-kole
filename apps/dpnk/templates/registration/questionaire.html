@@ -47,7 +47,7 @@
 {% endif %}
 <input type="hidden" name="questionaire" value="{{ questionaire }}">
 {% if is_actual %}
-<button class="submit" type="button">{% trans "Odeslat" %}</button>
+<button class="submit submit_once" type="button">{% trans "Odeslat" %}</button>
 {% endif %}
 <input type="button" onclick="history.go(-1)" value="Zpět">
 </form>

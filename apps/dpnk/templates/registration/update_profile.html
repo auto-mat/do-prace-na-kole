@@ -12,6 +12,6 @@
 {% if not can_change_team %}
    <div class="text-warning">{% trans "Upozornění: Nemůžete změnit tým, pokud jste jeho koordinátorem a v týmu jsou další členové." %}</div>
 {% endif %}
-<button class="submit" type="button">{% trans "Upravit" %}</button>
+<button class="submit submit_once" type="button">{% trans "Upravit" %}</button>
 <a href="{% wp_url 'profil' %}">{% trans "Zpět" %}</a>
 </form>
