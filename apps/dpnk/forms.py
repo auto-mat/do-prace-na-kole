@@ -97,7 +97,7 @@ class ChangeTeamForm(forms.ModelForm):
         model_field = "subsidiary",
         show_all = False,
         auto_choose = False,
-        widget=SelectChainedOrCreate(RegisterTeamForm, view_name='', prefix="team", new_description = _(u"Tým v seznamu není, chci si založit nový"),
+        widget=SelectChainedOrCreate(RegisterTeamForm, view_name='', prefix="team", new_description = _(u"Tým v seznamu není, chci si založit nový (budu jeho koordinátorem)"),
             chain_field = "subsidiary",
             app_name = "dpnk",
             model_name = "Team",
