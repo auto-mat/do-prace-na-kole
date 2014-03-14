@@ -110,7 +110,7 @@ class CompanyAdminRegistrationBackend(registration.backends.simple.SimpleBackend
         return new_user
 
 class CompanyAdminApplicationView(FormView):
-    template_name = 'generic_form_template.html'
+    template_name = 'company_admin/registration.html'
     form_class = CompanyAdminApplicationForm
     model = CompanyAdmin
     success_url = 'company_admin'
