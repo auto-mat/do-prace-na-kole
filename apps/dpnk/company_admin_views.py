@@ -51,7 +51,7 @@ def company_structure(request,
                                 }, context_instance=RequestContext(request))
 
 class SelectUsersPayView(FormView):
-    template_name = 'company_admin/pay_for_users.html'
+    template_name = 'generic_form_template.html'
     form_class = SelectUsersPayForm
     success_url = 'company_admin'
 
@@ -73,7 +73,7 @@ class SelectUsersPayView(FormView):
         return redirect(wp_reverse(self.success_url))
 
 class CompanyEditView(UpdateView):
-    template_name = 'company_admin/edit_company.html'
+    template_name = 'generic_form_template.html'
     form_class = CompanyForm
     model = Company
     success_url = 'company_admin'
