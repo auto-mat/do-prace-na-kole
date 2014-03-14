@@ -79,7 +79,7 @@ class ChangeTeamForm(forms.ModelForm):
         model_field = "company",
         show_all = False,
         auto_choose = True,
-        label="Adresa pobočky/firmy",
+        label="Adresa pobočky/společnosti",
         widget=SelectChainedOrCreate(RegisterSubsidiaryForm, view_name='', prefix="subsidiary", new_description = _(u"Adresa v seznamu není, chci založit novou"),
             chain_field = "company",
             app_name = "dpnk",
