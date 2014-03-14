@@ -4,8 +4,11 @@
 
 {% if is_authentificated %}
    {{ user_attendance }} 
+{% if company_admin %}
+   / <a href="{% wp_url 'company_admin' %}">Společnost</a>
+{% endif %}
    /
-      <a href="{% wp_url 'profil' %}">Můj profil</a>
+      <a href="{% wp_url 'profil' %}">Profil</a>
    /
    <a href="{% wp_url 'logout' %}">{% trans "Odhlásit" %}</a>
 {% else %}
