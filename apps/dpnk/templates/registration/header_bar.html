@@ -5,11 +5,7 @@
 {% if is_authentificated %}
    {{ user_attendance }} 
    /
-   {% if user_attendance and user_attendance.team %}
-      <a href="{% wp_url 'profil_pristup' %}/{{ user_attendance.team.subsidiary.city_in_campaign.city.slug }}">Můj profil</a>
-   {% else %}
       <a href="{% wp_url 'profil' %}">Můj profil</a>
-   {% endif %}
    /
    <a href="{% wp_url 'logout' %}">{% trans "Odhlásit" %}</a>
 {% else %}
