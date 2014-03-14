@@ -257,7 +257,7 @@ class CompanyAdminInline(EnhancedAdminMixin, NestedTabularInline):
 
 class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
-    #list_display = ('username', 'email', 'first_name', 'last_name', 'userprofile__payment_type', 'userprofile__payment_status', 'date_joined', )#'userprofile__team__name', 'userprofile__distance', 'userprofile__team__subsidiary__city', 'userprofile__team__subsidiary__company',   'company_admin__administrated_company', 'trips_count', 'userprofile__telephone', 'is_staff', 'is_superuser', 'is_active', 'id')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name',]
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved', PaymentFilter]
     readonly_fields = ['password']
