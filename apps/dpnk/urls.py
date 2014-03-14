@@ -5,7 +5,7 @@ import views
 from views import *
 from company_admin_views import *
 from django.contrib.auth.decorators import login_required
-from decorators import must_be_company_admin
+from decorators import must_be_company_admin, must_be_in_phase
 
 campaign_urlpatterns = patterns('',
     url(r'^tym/$', 
