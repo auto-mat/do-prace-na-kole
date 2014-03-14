@@ -22,7 +22,7 @@
 
 {% if team and approved_for_team == 'undecided' %}
    <a href="{% wp_url 'zmenit_tym' %}"
-      class="btn btn-block btn-warning">{% trans "Členství v týmu se schvaluje" %}</a>
+      class="btn btn-block btn-warning">{% trans "Členství v týmu čeká na schválení týmovým koodinátorem" %}</a>
 {% elif approved_for_team == 'undecided' %}
    <a href="{% wp_url 'zmenit_tym' %}"
       class="btn btn-block btn-warning">{% trans "Vyberte tým" %}</a>
