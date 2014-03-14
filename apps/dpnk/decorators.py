@@ -85,6 +85,21 @@ def must_have_team(fn):
       return fn(request, user_attendance = user_attendance, *args, **kwargs)
    return wrapper
 
+def must_be_in_phase(phase_type):
+   def decorator(fn):
+      @must_be_competitor
+      def wrapped(request, user_attendance, *args, **kwargs):
+         try:
+            phase = user_attendance.campaign.phase_set.get(type=phase_type)
+         except models.Phase.DoesNotExist:
+            phase=None
+         if not phase or not phase.is_actual():
+            return HttpResponse(_(u"<div class='text-error'>Tento formulář se zobrazuje pouze v %s fázi soutěže.</div>" % models.Phase.TYPE_DICT[phase_type]), status=401)
+         return fn(request, user_attendance=user_attendance, *args, **kwargs)
+      return wrapped
+   return decorator
+
+
 def must_be_competitor(fn):
     @login_required
     def wrapper(*args, **kwargs):

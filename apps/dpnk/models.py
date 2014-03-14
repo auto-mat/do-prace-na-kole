@@ -327,10 +327,12 @@ class Phase(models.Model):
         verbose_name_plural = _(u"fáze kampaně")
         unique_together = (("type", "campaign"),)
 
-    TYPE = [('registration', _(u"Registrační")),
-            ('competition', _(u"Soutěžní")),
-            ('results', _(u"Výsledková")),
+    TYPE = [('registration', _(u"registrační")),
+            ('competition', _(u"soutěžní")),
+            ('results', _(u"výsledková")),
             ]
+
+    TYPE_DICT = dict(TYPE)
 
     campaign = models.ForeignKey(
        Campaign, 
@@ -351,6 +353,15 @@ class Phase(models.Model):
         verbose_name=_(u"Datum konce fáze"),
         default=None,
         null=True, blank=True)
+
+    def has_started(self):
+        return self.date_from <= util.today()
+
+    def has_finished(self):
+        return not self.date_to >= util.today()
+
+    def is_actual(self):
+        return self.has_started() and not self.has_finished()
     
 
 class UserAttendance(models.Model):
