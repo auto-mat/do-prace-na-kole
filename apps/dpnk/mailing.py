@@ -2,6 +2,7 @@ import createsend
 from django.conf import settings
 import models
 import logging
+import threading
 logger = logging.getLogger(__name__)
 
 class Mailing:
@@ -35,9 +36,6 @@ class Mailing:
 mailing = Mailing(api_key=settings.MAILING_API_KEY)
 
 def get_custom_fields(user_attendance):
-    if not user_attendance.campaign.mailing_list_enabled:
-        return
-    
     user = user_attendance.userprofile.user
     city = None
     payment_status = None
@@ -66,9 +64,6 @@ def update_mailing_id(user, mailing_id):
         user.userprofile.save()
 
 def add_user(user_attendance):
-    if not user_attendance.campaign.mailing_list_enabled:
-        return
-    
     user = user_attendance.userprofile.user
     custom_fields = get_custom_fields(user_attendance)
 
@@ -83,9 +78,6 @@ def add_user(user_attendance):
         update_mailing_id(user, mailing_id)
 
 def update_user(user_attendance):
-    if not user_attendance.campaign.mailing_list_enabled:
-        return
-    
     user = user_attendance.userprofile.user
     userprofile = user_attendance.userprofile
     custom_fields = get_custom_fields(user_attendance)
@@ -102,9 +94,6 @@ def update_user(user_attendance):
         update_mailing_id(user, mailing_id)
 
 def delete_user(user_attendance):
-    if not user_attendance.campaign.mailing_list_enabled:
-        return
-    
     mailing_id = None
     if models.is_competitor(user):
         mailing_id = user.get_profile().mailing_id
@@ -125,16 +114,24 @@ def delete_user(user_attendance):
         logger.info(u'User %s with email %s deleted from mailing list with id %s' % (user, user.email, mailing_id))
         update_mailing_id(user, mailing_id)
 
+class MailingThread(threading.Thread):
+    def __init__(self, user_attendance, **kwargs):
+        self.user_attendance = user_attendance
+        super(MailingThread, self).__init__(**kwargs)
+
+    def run(self):
+        user = self.user_attendance.userprofile.user
+        if not user.is_active:
+            delete_user(self.user_attendance)
+        else:
+            if models.is_competitor(user) and user.get_profile().mailing_id:
+                update_user(self.user_attendance)
+            else:
+                add_user(self.user_attendance)
+
+
 def add_or_update_user(user_attendance):
     if not user_attendance.campaign.mailing_list_enabled:
         return
 
-    user = user_attendance.userprofile.user
-    if not user.is_active:
-        delete_user(user_attendance)
-    else:
-        if models.is_competitor(user) and user.get_profile().mailing_id:
-            update_user(user_attendance)
-        else:
-            add_user(user_attendance)
-
+    MailingThread(user_attendance).start()

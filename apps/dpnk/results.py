@@ -25,6 +25,7 @@ except ImportError:
     from ordereddict import OrderedDict
 from django.db.models import Sum, F, Q, Count
 import util
+import threading
 
 def get_competitors(self):
     if self.without_admission:
@@ -187,15 +188,22 @@ def recalculate_result_competition(competition):
     for competitor in competition.get_competitors():
         recalculate_result(competition, competitor)
     
+class RecalculateResultCompetitorThread(threading.Thread):
+    def __init__(self, user_attendance, **kwargs):
+        self.user_attendance = user_attendance
+        super(RecalculateResultCompetitorThread, self).__init__(**kwargs)
+
+    def run(self):
+        for competition in models.Competition.objects.all():
+            if competition.competitor_type == 'team' and user_attendance.team:
+                recalculate_result(competition, user_attendance.team)
+            elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
+                recalculate_result(competition, user_attendance)
+            elif competition.competitor_type == 'company':
+                raise NotImplementedError("Company competitions are not working yet")
 
 def recalculate_result_competitor(user_attendance):
-    for competition in models.Competition.objects.all():
-        if competition.competitor_type == 'team' and user_attendance.team:
-            recalculate_result(competition, user_attendance.team)
-        elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-            recalculate_result(competition, user_attendance)
-        elif competition.competitor_type == 'company':
-            raise NotImplementedError("Company competitions are not working yet")
+    RecalculateResultCompetitorThread(user_attendance).start()
 
 def recalculate_results_team(team):
     #TODO: it's enough to recalculate just team competitions
