@@ -192,7 +192,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
 
     def clean_email(self):
         if User.objects.filter(email__iexact=self.cleaned_data['email']):
-                        raise forms.ValidationError(mark_safe(_("This email address is already in use dresa se již používá. Pokud je vaše, použijte <a href='%s'> obnovu hesla</a>." % wp_reverse('zapomenute_heslo'))))
+            raise forms.ValidationError(mark_safe(_("Tato e-mailová adresa se již používá. Pokud je vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> obnovu hesla</a>." % {'password': wp_reverse('zapomenute_heslo'), 'login': wp_reverse('login')})))
         return self.cleaned_data['email']
 
 
