@@ -4,6 +4,7 @@
 
 <ul>
 {% for subsidiary in company.subsidiaries.all %}
+   {% if subsidiary.city_in_campaign.campaign == campaign %}
    <li>{{ subsidiary }}</li>
    <ul>
    {% for team in subsidiary.teams.all %}
@@ -36,5 +37,6 @@
       </ul>
    {% endfor %}
    </ul>
+   {% endif %}
 {% endfor %}
 </ul>
