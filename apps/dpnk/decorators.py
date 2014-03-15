@@ -61,7 +61,7 @@ def must_be_approved_for_team(fn):
                 team = user_attendance.team.name
             else:
                 team = ""
-            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %s nebylo odsouhlaseno týmovým koordinátorem. <a href='%s'>Znovu požádat o ověření členství</a>.</div>") % (team, wp_reverse("zaslat_zadost_clenstvi")), status=401)
+            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno týmovým koordinátorem. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': team, 'address': wp_reverse("zaslat_zadost_clenstvi")}, status=401)
     return wrapper
 
 def must_be_company_admin(fn):

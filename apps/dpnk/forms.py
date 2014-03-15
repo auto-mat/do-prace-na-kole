@@ -267,8 +267,8 @@ class BikeRepairForm(forms.ModelForm):
             transaction = None
         if transaction:
             created_formated_date = formats.date_format(transaction.created, "SHORT_DATETIME_FORMAT")
-            raise forms.ValidationError(_(u"Tento uživatel byl již %s v cykloservisu %s (poznámka: %s)." %
-                (created_formated_date, transaction.author.get_full_name(), transaction.description)))
+            raise forms.ValidationError(_(u"Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: %(note)s)." %
+                {'time': created_formated_date, 'bike_shop': transaction.author.get_full_name(), 'note': transaction.description}))
         return super(BikeRepairForm, self).clean()
 
     def save(self, *args, **kwargs):
