@@ -13,6 +13,7 @@ from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
 from django.forms.widgets import HiddenInput
 from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator, MinLengthValidator
 
 def team_full(data):
     if len(UserAttendance.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, userprofile__user__is_active=True)) >= 5:
@@ -285,6 +286,7 @@ class TShirtUpdateForm(forms.ModelForm):
         )
     telephone = forms.CharField(
         label="Telefon",
+        validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
         help_text="Telefon je pro kurýra, který Vám přiveze soutěžní triko, pro HelpDesk",
         max_length=30)
 
