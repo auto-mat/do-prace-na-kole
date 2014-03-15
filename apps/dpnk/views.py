@@ -129,7 +129,7 @@ def change_team(request,
         form = form_class(data=request.POST, files=request.FILES, instance=user_attendance)
 
         form_company = RegisterCompanyForm(request.POST, prefix = "company")
-        form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix = "subsidiary")
+        form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix = "subsidiary", campaign=user_attendance.campaign)
         form_team = RegisterTeamForm(request.POST, prefix = "team")
         create_team = 'id_team_selected' in request.POST
         if create_team:
