@@ -36,13 +36,6 @@ from import_export.admin import ImportExportModelAdmin
 from models import *
 from dpnk import models
 import dpnk
-from django.forms import ModelForm
-
-# -- ADMIN FORMS --
-class TeamForm(ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(TeamForm, self).__init__(*args, **kwargs)
-        self.fields['coordinator_campaign'].queryset = UserAttendance.objects.filter(team=self.instance)
 
 
 class PaymentInline(EnhancedAdminMixin, NestedTabularInline):
@@ -75,7 +68,7 @@ class UserActionTransactionInline(EnhancedAdminMixin, NestedTabularInline):
 
 class TeamInline(EnhancedAdminMixin, admin.TabularInline):
     model = Team
-    form = TeamForm
+    form = models.TeamForm
     extra = 0
     readonly_fields = ['invitation_token',]
     raw_id_fields = ('coordinator_campaign', )

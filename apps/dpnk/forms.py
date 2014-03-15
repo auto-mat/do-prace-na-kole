@@ -215,13 +215,13 @@ class InviteForm(forms.Form):
         label=_(u"Email kolegy 4"),
         required=False)
 
-class TeamAdminForm(forms.ModelForm):
+class TeamAdminForm(models.TeamForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
     class Meta:
         model = Team
-        fields = ('name',)
+        fields = ('name', 'coordinator_campaign', )
 
 class PaymentTypeForm(forms.Form):
     CHOICES=[('pay', _(u"Účastnický poplatek si platím sám.")),

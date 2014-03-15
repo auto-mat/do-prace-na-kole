@@ -126,6 +126,10 @@ def change_team(request,
     create_subsidiary = False
     create_team = False
 
+    team_member_count = UserAttendance.objects.filter(team=user_attendance.team, userprofile__user__is_active=True).exclude(approved_for_team='denied').count()
+    if user_attendance.team.coordinator_campaign == user_attendance and team_member_count > 1:
+        return HttpResponse(_(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin')), status=401)
+
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES, instance=user_attendance)
 

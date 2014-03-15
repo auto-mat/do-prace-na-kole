@@ -282,6 +282,12 @@ class Team(models.Model):
         super(Team, self).save(force_insert, force_update)
 
 
+class TeamForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(TeamForm, self).__init__(*args, **kwargs)
+        self.fields['coordinator_campaign'].queryset = UserAttendance.objects.filter(team=self.instance, approved_for_team='approved')
+
+
 class Campaign(models.Model):
     """kampaň"""
 
