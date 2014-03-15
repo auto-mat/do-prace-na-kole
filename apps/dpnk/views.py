@@ -554,7 +554,6 @@ def profile(request, user_attendance=None):
             'payment_status': payment_status,
             'payment_type': user_attendance.payment_type(),
             'team_members_count': team_members_count,
-            'competition_state': settings.COMPETITION_STATE,
             'approved_for_team': user_attendance.approved_for_team,
             }, context_instance=RequestContext(request))
 

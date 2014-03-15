@@ -60,7 +60,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'author.middlewares.AuthorDefaultBackendMiddleware'
+    'author.middlewares.AuthorDefaultBackendMiddleware',
+    'timelog.middleware.TimeLogMiddleware',
+    'remote_ajax.middleware.XHRMiddleware',
 	#'django.middleware.csrf.CsrfViewMiddleware',
 
 #    "dpnk.middleware.XHRMiddleware",
@@ -98,6 +100,8 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'author',
     'fieldsignals',
+    'timelog',
+    'remote_ajax',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
@@ -108,11 +112,7 @@ LOGOUT_REDIRECT_URL = '/'
 SITE_URL = ''
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX
-COMPETITION_STATE='not_started_yet'
-#COMPETITION_STATE='started'
 
-INSTALLED_APPS += ("remote_ajax", )
-MIDDLEWARE_CLASSES += ("remote_ajax.middleware.XHRMiddleware", )
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 
 MAX_COMPETITIONS_PER_COMPANY = 4
@@ -121,6 +121,8 @@ MAILING_API_KEY = ''
 
 PAYU_KEY_1 = ''
 PAYU_KEY_2 = ''
+
+TIMELOG_LOG = '/var/log/django/dpnk-timelog.log'
 
 LOGGING = {
     'version': 1,
@@ -132,6 +134,8 @@ LOGGING = {
         'simple': {
             'format': '%(levelname)s %(message)s'
         },
+        'plain': {
+            'format': '%(asctime)s %(message)s'},
     },
     'filters': {
          'require_debug_false': {
@@ -160,7 +164,15 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler',
-        }
+        },
+        'timelog': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': TIMELOG_LOG,
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'plain',
+        },
     },
     'loggers': {
         'django': {
@@ -176,7 +188,12 @@ LOGGING = {
         'dpnk': {
             'handlers': ['console', 'mail_admins', 'logfile'],
             'level': 'INFO',
-        }
+        },
+        'timelog.middleware': {
+             'handlers': ['timelog'],
+             'level': 'DEBUG',
+             'propogate': False,
+        },
     }
 }
 
