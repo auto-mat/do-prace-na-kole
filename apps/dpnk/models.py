@@ -25,6 +25,7 @@ import django
 import random
 import string
 import results
+from author.decorators import with_author
 from django import forms
 from django.db import models
 from django.contrib.auth.models import User
@@ -67,8 +68,8 @@ class Address(CompositeField):
         help_text=_(u"Např. odštěpný závod Brno, oblastní pobočka Liberec, Přírodovědecká fakulta atp."),
         default="",
         max_length=50,
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
         )
     district = models.CharField(
         verbose_name=_(u"Městská část"),
@@ -671,6 +672,7 @@ class CompanyAdmin(models.Model):
                 company_admin_rejected_mail(self)
 
 
+@with_author
 class Transaction(PolymorphicModel):
     """Transakce"""
     status = models.PositiveIntegerField(
@@ -700,6 +702,30 @@ class Transaction(PolymorphicModel):
     class Meta:
         verbose_name = _(u"Transakce")
         verbose_name_plural = _(u"Transakce")
+
+
+class CommonTransaction(Transaction):
+    """Obecná transakce"""
+
+    class Status (object):
+        BIKE_REPAIR = 40001
+
+    STATUS = (
+        (Status.BIKE_REPAIR, 'Oprava v cykloservisu'),
+        )
+
+    class Meta:
+        verbose_name = _(u"Obecná transakce")
+        verbose_name_plural = _(u"Obecné transakce")
+
+
+class CommonTransactionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(CommonTransactionForm, self).__init__(*args, **kwargs)
+        self.fields['status'] = forms.ChoiceField(choices=CommonTransaction.STATUS)
+
+    class Meta:
+        model = CommonTransaction
 
 
 class UserActionTransaction(Transaction):

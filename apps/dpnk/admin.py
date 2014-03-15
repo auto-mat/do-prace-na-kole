@@ -59,6 +59,13 @@ class PackageTransactionInline(EnhancedAdminMixin, NestedTabularInline):
     form = models.PackageTransactionForm
 
 
+class CommonTransactionInline(EnhancedAdminMixin, NestedTabularInline):
+    model = CommonTransaction
+    extra = 0
+    readonly_fields = ['user_attendance']
+    form = models.CommonTransactionForm
+
+
 class UserActionTransactionInline(EnhancedAdminMixin, NestedTabularInline):
     model = UserActionTransaction
     extra = 0
@@ -343,6 +350,7 @@ class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmi
 class TransactionChildAdmin(PolymorphicChildModelAdmin):
     base_model = Transaction
     raw_id_fields = ('user_attendance', )
+    readonly_fields = ('author', 'created', 'updated_by' )
 
 
 class PaymentChildAdmin(TransactionChildAdmin):
@@ -353,12 +361,16 @@ class PackageTransactionChildAdmin(TransactionChildAdmin):
     form = models.PackageTransactionForm
 
 
+class CommonTransactionChildAdmin(TransactionChildAdmin):
+    form = models.CommonTransactionForm
+
+
 class UserActionTransactionChildAdmin(TransactionChildAdmin):
     form = models.UserActionTransactionForm
 
 
 class TransactionAdmin(PolymorphicParentModelAdmin):
-    list_display = ('id', 'user_attendance', 'created', 'status', 'polymorphic_ctype', 'user_link')
+    list_display = ('id', 'user_attendance', 'created', 'status', 'polymorphic_ctype', 'user_link', 'author')
     search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username')
     list_filter = ['status', 'polymorphic_ctype', 'user_attendance__campaign']
 
@@ -372,6 +384,7 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
     child_models = (
             (Payment, PaymentChildAdmin),
             (PackageTransaction, PackageTransactionChildAdmin),
+            (CommonTransaction, CommonTransactionChildAdmin),
             (UserActionTransaction, UserActionTransactionChildAdmin),
         )
 
