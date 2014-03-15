@@ -45,6 +45,8 @@ urls = {
 
     # Other
     'bike_repair':                  "/cykloservis",
+    'pravidla':                     "/pravidla",
+    'firma':                        "/firma",
 
     # Zastarale nebo odlozeno na pozdeji
     'kratke_vysledky':              "kratke_vysledky.html",

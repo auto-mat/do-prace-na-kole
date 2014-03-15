@@ -5,8 +5,8 @@ Zpráva pro {{ user.get_full_name }}, firemního správce ve společnosti {{ com
 Dobrý den,
 právě jste se stal/a firemním správcem/správkyní společnosti {{ company }}.
 Můžete se přihlásit do registračního systému {{ user.campaign }}. Přihlášení se liší, pokud jste soutěžící/m v této soutěži nebo ne.
-Pokud JSTE soutěžící, tj. registroval/a jste se standardně jako člen/ka týmu, přihlašte se jako dřív a využijte tlačítko „Přejít na správu firmy“ ve Vašem profilu (link http://www.dopracenakole.net/profil/ ).
-Pokud NEJSTE soutěžící, tj. registroval/a jste se přes stránku určenou firemním správcům, jděte tam znovu (link http://www.dopracenakole.net/fa/ ).
+Pokud JSTE soutěžící, tj. registroval/a jste se standardně jako člen/ka týmu, přihlašte se jako dřív a využijte tlačítko „Přejít na správu firmy“ ve Vašem profilu (link {{ SITE_URL }}{% wp_url  'profil' %} ).
+Pokud NEJSTE soutěžící, tj. registroval/a jste se přes stránku určenou firemním správcům, jděte tam znovu (link {{ SITE_URL }}{% wp_url  'company_admin' %} ).
 Po přihlášení prosím vyplňte fakturační údaje společnosti, které nám po skončení registrací poslouží pro vystavení faktury. Toto stačí udělat jednou.
 Dále můžete sledovat stav registrací a postupně schvalovat „Vaše“ účastníky s tím, že je zahrnete na společnou fakturu. V průběhu registrací budou přibývat další a další soutěžící, tuto kontrolu proto provedete několikrát.
 Děkujeme Vám za podporu soutěže {{ user.campaign }} a těšíme se na spolupráci.

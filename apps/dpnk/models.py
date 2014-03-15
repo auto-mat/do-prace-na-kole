@@ -44,6 +44,7 @@ import datetime
 import util
 import mailing
 from dpnk.email import payment_confirmation_mail, company_admin_rejected_mail, company_admin_approval_mail, payment_confirmation_company_mail
+from wp_urls import wp_reverse
 import logging
 logger = logging.getLogger(__name__)
 
@@ -192,7 +193,7 @@ class Subsidiary(models.Model):
     city_in_campaign = models.ForeignKey(
           CityInCampaign, 
           verbose_name=_(u"Soutěžní město"),
-          help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='http://www.dopracenakole.net/chci-slapat/pravidla-souteze/' target='_blank'>pravidla soutěže</a>"),
+          help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % wp_reverse('pravidla'),
           null=False, blank=False)
 
     def __unicode__(self):
