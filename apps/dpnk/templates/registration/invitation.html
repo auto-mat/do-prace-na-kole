@@ -1,8 +1,0 @@
-{% load i18n %}
-{% load url from future %}
-{% load bootstrap %}
-
-<form method="post" class="form-horizontal">{% csrf_token %}
-{{ form|bootstrap }}
-<button class="submit submit_once" type="button">{% trans "Odeslat" %}</button>
-</form>

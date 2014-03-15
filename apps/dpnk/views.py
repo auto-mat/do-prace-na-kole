@@ -23,6 +23,7 @@ import time, random, httplib, urllib, hashlib, datetime
 # Django imports
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 import django.contrib.auth
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
@@ -173,6 +174,7 @@ def change_team(request,
 
             if create_company:
                 company = form_company.save()
+                messages.add_message(request, messages.SUCCESS, _(u"Splečnost %s úspěšně vytvořena.") % company, fail_silently=True)
             else:
                 company = Company.objects.get(id=form.data['company'])
 
@@ -180,6 +182,7 @@ def change_team(request,
                 subsidiary = form_subsidiary.save(commit=False)
                 subsidiary.company = company
                 form_subsidiary.save()
+                messages.add_message(request, messages.SUCCESS, _(u"Pobočka %s úspěšně vytvořena.") % subsidiary, fail_silently=True)
             else:
                 subsidiary = Subsidiary.objects.get(id=form.data['subsidiary'])
 
@@ -187,6 +190,7 @@ def change_team(request,
                 team = form_team.save(commit=False)
                 team.subsidiary = subsidiary
                 form_team.save()
+                messages.add_message(request, messages.SUCCESS, _(u"Tým %s úspěšně vytvořen.") % team, fail_silently=True)
             else:
                 team = form.cleaned_data['team']
 
@@ -221,6 +225,8 @@ def change_team(request,
 
             if user_attendance.approved_for_team != 'approved':
                 approval_request_mail(user_attendance)
+
+            messages.add_message(request, messages.SUCCESS, _(u"Údaje o týmu úspěšně nastaveny."), fail_silently=True)
             return redirect(wp_reverse(success_url))
     else:
         form = form_class(request, instance=user_attendance)
@@ -280,9 +286,11 @@ def payment_type(request, user_attendance=None):
                 return redirect(wp_reverse('platba'))
             elif form.cleaned_data['payment_type'] == 'company':
                 Payment(user_attendance=user_attendance, amount=0, pay_type='fc', status=Payment.Status.NEW).save()
+                messages.add_message(request, messages.WARNING, _(u"Platbu ještě musí schválit váš firemní koordinátor"), fail_silently=True)
                 logger.info('Inserting company payment for %s' % (user_attendance))
             elif form.cleaned_data['payment_type'] == 'member':
                 Payment(user_attendance=user_attendance, amount=0, pay_type='am', status=Payment.Status.NEW).save()
+                messages.add_message(request, messages.WARNING, _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), fail_silently=True)
                 logger.info('Inserting automat club member payment for %s' % (user_attendance))
 
             return redirect(wp_reverse('profil'))
@@ -330,6 +338,7 @@ def payment(request, user_attendance=None):
                 description = "Ucastnicky poplatek Do prace na kole")
     p.save()
     logger.info('Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s, status: %s' % (uid, order_id, session_id, user_attendance, p.status))
+    messages.add_message(request, messages.WARNING, _(u"Platba vytvořena, čeká se na jení potvrzení"), fail_silently=True)
     # Render form
     profile = UserProfile.objects.get(user=request.user)
     return render_to_response('registration/payment.html',
@@ -613,10 +622,11 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
             }, context_instance=RequestContext(request))
 
 
-class UpdateProfileView(UpdateView):
+class UpdateProfileView(SuccessMessageMixin, UpdateView):
     template_name = 'generic_form_template.html'
     form_class = ProfileUpdateForm
     model = UserAttendance
+    success_message = _(u"Osobní údaje úspěšně upraveny")
     success_url = 'profil'
 
     def get_object(self):
@@ -627,10 +637,11 @@ class UpdateProfileView(UpdateView):
         return redirect(wp_reverse(self.success_url))
 
 
-class ChangeTShirtView(UpdateView):
+class ChangeTShirtView(SuccessMessageMixin, UpdateView):
     template_name = 'generic_form_template.html'
     form_class = forms.TShirtUpdateForm
     model = UserAttendance
+    success_message = _(u"Velikost trička úspěšně nastavena")
     success_url = 'profil'
 
     def get_object(self):
@@ -868,7 +879,7 @@ def team_approval_request(request, user_attendance=None):
 @login_required_simple
 def invite(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
-             template_name='registration/invitation.html',
+             template_name = 'generic_form_template.html',
              user_attendance=None,
              extra_context=None):
     form_class = InviteForm
