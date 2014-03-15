@@ -279,11 +279,7 @@ class BikeRepairForm(forms.ModelForm):
         model = models.CommonTransaction
         fields = ('user_attendance', 'description')
 
-class TShirtUpdateForm(forms.ModelForm):
-    t_shirt_size = forms.ChoiceField(
-        choices = UserAttendance.TSHIRTSIZE_USER,
-        label=_(u"Velikost trička"),
-        )
+class TShirtUpdateForm(models.UserAttendanceForm):
     telephone = forms.CharField(
         label="Telefon",
         validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],

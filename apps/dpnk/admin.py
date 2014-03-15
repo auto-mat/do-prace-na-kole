@@ -297,6 +297,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_filter = ('campaign',)
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username')
+    form = UserAttendanceForm
 
 
 class CoordinatorFilter(SimpleListFilter):
@@ -439,9 +440,14 @@ class CityInCampaignInline(EnhancedAdminMixin, admin.TabularInline):
     extra = 0
 
 
+class TShirtSizeInline(EnhancedAdminMixin, admin.TabularInline):
+    model = TShirtSize
+    extra = 0
+
+
 class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'slug')
-    inlines = [PhaseInline, CityInCampaignInline, ]
+    inlines = [PhaseInline, CityInCampaignInline, TShirtSizeInline]
     prepopulated_fields = {'slug': ('name',)}
 
 

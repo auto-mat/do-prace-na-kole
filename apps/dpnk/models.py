@@ -376,7 +376,34 @@ class Phase(models.Model):
 
     def is_actual(self):
         return self.has_started() and not self.has_finished()
+
     
+class TShirtSize(models.Model):
+    """Velikost trička"""
+
+    name = models.CharField(
+        verbose_name=_(u"Velikost"),
+        max_length=40, null=False)
+    campaign = models.ForeignKey(
+       Campaign, 
+       verbose_name = _(u"Kampaň"),
+       null=False,
+       blank=False)
+
+    class Meta:
+        verbose_name = _(u"Velikost trička")
+        verbose_name_plural = _(u"Velikosti trička")
+        unique_together = (("name", "campaign"),)
+        ordering = [ "name" ]
+
+    def __unicode__(self):
+        return self.name
+
+class UserAttendanceForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(UserAttendanceForm, self).__init__(*args, **kwargs)
+        self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign)
+
 
 class UserAttendance(models.Model):
     """Účast uživatele v kampani"""
@@ -385,39 +412,6 @@ class UserAttendance(models.Model):
         verbose_name = _(u"Účast v kampani")
         verbose_name_plural = _(u"Účasti v kampani")
         unique_together = (("userprofile", "campaign"),)
-
-    TSHIRTSIZE = [
-              ('', '---------'),
-              ('no', _(u"nechci triko")),
-              ('wXXS', _(u"dámské XXS")),
-              ('wXS', _(u"dámské XS")),
-              ('wS', _(u"dámské S")),
-              ('wM', _(u"dámské M")),
-              ('wL', _(u"dámské L")),
-              ('wXL', _(u"dámské XL")),
-              ('wXXL', _(u"dámské XXL")),
-
-              ('mS', _(u"pánské S")),
-              ('mM', _(u"pánské M")),
-              ('mL', _(u"pánské L")),
-              ('mXL', _(u"pánské XL")),
-              ('mXXL', _(u"pánské XXL")),
-              ]
-
-    TSHIRTSIZE_USER = [
-              ('no', _(u"nechci triko")),
-              ('wXS', _(u"dámské XS")),
-              ('wS', _(u"dámské S")),
-              ('wM', _(u"dámské M")),
-              ('wL', _(u"dámské L")),
-              ('wXL', _(u"dámské XL")),
-
-              ('mS', _(u"pánské S")),
-              ('mM', _(u"pánské M")),
-              ('mL', _(u"pánské L")),
-              ('mXL', _(u"pánské XL")),
-              ('mXXL', _(u"pánské XXL")),
-              ]
 
     TEAMAPPROVAL = (('approved', _(u"Odsouhlasený")),
               ('undecided', _(u"Nerozhodnuto")),
@@ -454,13 +448,12 @@ class UserAttendance(models.Model):
         max_length=16,
         null=False,
         default='undecided')
-    t_shirt_size = models.CharField(
+    t_shirt_size = models.ForeignKey(
+        TShirtSize,
         verbose_name=_(u"Velikost trička"),
-        choices=TSHIRTSIZE,
-        max_length=16,
-        null=False,
-        blank=True,
-        default='')
+        null=True,
+        blank=False,
+        )
 
     def payments(self):
         return self.transactions.instance_of(Payment)
