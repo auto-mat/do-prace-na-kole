@@ -30,6 +30,7 @@ from django import forms
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save
+from fieldsignals import post_save_changed, pre_save_changed
 from django.dispatch import receiver
 from django.db.models import Q, Sum
 from django.core.exceptions import ValidationError
@@ -44,6 +45,7 @@ import datetime
 import util
 import mailing
 from dpnk.email import payment_confirmation_mail, company_admin_rejected_mail, company_admin_approval_mail, payment_confirmation_company_mail
+from dpnk import email
 from wp_urls import wp_reverse
 import logging
 logger = logging.getLogger(__name__)
@@ -1406,3 +1408,8 @@ def answer_post_save(sender, instance, **kwargs):
 def payment_set_realized_date(sender, instance, **kwargs):
     if instance.status in Payment.done_statuses and not instance.realized:
         instance.realized = datetime.datetime.now()
+
+def team_admin_changed(sender, instance, changed_fields=None, **kwargs):
+    field, (old, new) = changed_fields.items()[0]
+    email.new_team_coordinator_mail(UserAttendance.objects.get(pk=new))
+post_save_changed.connect(team_admin_changed, sender=Team, fields=['coordinator_campaign'])

@@ -136,3 +136,12 @@ def company_admin_rejected_mail(company_admin):
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_("Do práce na kole 2013 - firemní správce - zamítnutí správcovství firmy"), message, None, [email], fail_silently=False)
+
+def new_team_coordinator_mail(user_attendance):
+    template = get_template('email/new_team_coordinator.html')
+    email = user_attendance.userprofile.user.email
+    message = template.render(Context({
+        'user_attendance': user_attendance,
+        'SITE_URL': settings.SITE_URL,
+        }))
+    send_mail(_("Do práce na kole 2013 - zpráva pro nového koordinátor týmu"), message, None, [email], fail_silently=False)

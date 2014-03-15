@@ -97,6 +97,7 @@ INSTALLED_APPS = (
     'polymorphic',
     'django.contrib.contenttypes',
     'author',
+    'fieldsignals',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
