@@ -12,8 +12,10 @@ from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
 from django.forms.widgets import HiddenInput
 from django.utils.translation import gettext as _
+from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinLengthValidator
+from wp_urls import wp_reverse
 
 def team_full(data):
     if len(UserAttendance.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, userprofile__user__is_active=True)) >= 5:
@@ -187,6 +189,12 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
             ]
 
         self.fields['email'].help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
+
+    def clean_email(self):
+        if User.objects.filter(email__iexact=self.cleaned_data['email']):
+                        raise forms.ValidationError(mark_safe(_("This email address is already in use dresa se již používá. Pokud je vaše, použijte <a href='%s'> obnovu hesla</a>." % wp_reverse('zapomenute_heslo'))))
+        return self.cleaned_data['email']
+
 
     def clean_team(self):
         data = self.cleaned_data['team']
