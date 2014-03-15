@@ -5,7 +5,7 @@ import views
 from views import *
 from company_admin_views import *
 from django.contrib.auth.decorators import login_required
-from decorators import must_be_company_admin, must_be_in_phase
+from decorators import must_be_company_admin, must_be_in_phase, must_be_in_group
 
 campaign_urlpatterns = patterns('',
     url(r'^tym/$', 
@@ -70,6 +70,8 @@ campaign_urlpatterns = patterns('',
         statistics),
     url(r'^denni-graf/$',
         daily_chart),
+    url(r'^cykloservis/$',
+        login_required_simple(must_be_in_group('cykloservis')(BikeRepairView.as_view()))),
     url(r'^facebook_app/$',
         facebook_app),
 

@@ -25,12 +25,13 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404
 import django.contrib.auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.messages.views import SuccessMessageMixin
 from decorators import must_be_coordinator, must_be_approved_for_team, must_be_company_admin, must_be_competitor, login_required_simple, must_have_team
 from django.template import RequestContext
 from django.db.models import Sum, Count, Q
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import cache_page
-from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import FormView, UpdateView, CreateView
 # Registration imports
 import registration.signals, registration.backends, registration.backends.simple
 # Model imports
@@ -1021,6 +1022,25 @@ def daily_chart(request, campaign_slug,
                 'days': reversed(util.days()),
                 'max_value': max(values),
             }, context_instance=RequestContext(request))
+
+
+class BikeRepairView(SuccessMessageMixin, CreateView):
+    template_name = 'generic_form_template.html'
+    form_class = forms.BikeRepairForm
+    success_url = 'bike_repair'
+    success_message = _(u"%(user_attendance)s je nováček a právě si zažádal o opravu kola")
+    model = models.CommonTransaction
+
+    def get_initial(self):
+        campaign = Campaign.objects.get(slug=self.kwargs['campaign_slug'])
+        return {
+                'campaign': campaign,
+                }
+
+    def form_valid(self, form):
+        super(BikeRepairView, self).form_valid(form)
+        return redirect(wp_reverse(self.success_url))
+
 
 def draw_results(request,
         competition_slug,

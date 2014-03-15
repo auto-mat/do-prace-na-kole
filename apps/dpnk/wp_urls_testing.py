@@ -43,6 +43,9 @@ urls = {
     'soutez':                       "fa/soutez",
     'company_admin':                "fa",
 
+    # Other
+    'bike_repair':                  "/cykloservis",
+
     # Zastarale nebo odlozeno na pozdeji
     'kratke_vysledky':              "kratke_vysledky.html",
     'platba_status':                "platba_status.html",

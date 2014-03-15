@@ -6,6 +6,7 @@ from django import forms, http
 # Registration imports
 import registration.forms
 import models
+from django.utils import formats
 from models import UserProfile, Company, Subsidiary, Team, UserAttendance
 from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
@@ -234,6 +235,48 @@ class PaymentTypeForm(forms.Form):
             widget=forms.RadioSelect(),
             )
 
+
+class BikeRepairForm(forms.ModelForm):
+    user_attendance = forms.CharField(
+        label="Uživatelské jméno zákazníka",
+        help_text="Uživatelské jméno, které vám sdělí zákazník",
+        max_length=100)
+    description = forms.CharField(
+        label="Poznámka",
+        max_length=500,
+        required=False)
+    
+    def clean_user_attendance(self):
+        campaign = self.initial['campaign']
+        try:
+            user_attendance = UserAttendance.objects.get(userprofile__user__username=self.cleaned_data.get('user_attendance'), campaign=campaign)
+        except UserAttendance.DoesNotExist:
+            raise forms.ValidationError(_(u"Takový uživatel neexistuje"))
+
+        other_user_attendances = user_attendance.userprofile.userattendance_set.exclude(campaign=campaign)
+        if other_user_attendances.count() > 0:
+            raise forms.ValidationError(_(u"Tento uživatel není nováček, soutěžil již v následujících kampaních: %s" % ", ".join([u.campaign.name for u in other_user_attendances])))
+
+        return user_attendance
+
+    def clean(self):
+        try:
+            transaction = models.CommonTransaction.objects.get(user_attendance=self.cleaned_data.get('user_attendance'), status=models.CommonTransaction.Status.BIKE_REPAIR)
+        except models.CommonTransaction.DoesNotExist:
+            transaction = None
+        if transaction:
+            created_formated_date = formats.date_format(transaction.created, "SHORT_DATETIME_FORMAT")
+            raise forms.ValidationError(_(u"Tento uživatel byl již %s v cykloservisu %s (poznámka: %s)." %
+                (created_formated_date, transaction.author.get_full_name(), transaction.description)))
+        return super(BikeRepairForm, self).clean()
+
+    def save(self, *args, **kwargs):
+        self.instance.status = models.CommonTransaction.Status.BIKE_REPAIR
+        return super(BikeRepairForm, self).save(*args, **kwargs)
+
+    class Meta:
+        model = models.CommonTransaction
+        fields = ('user_attendance', 'description')
 
 class TShirtUpdateForm(forms.ModelForm):
     t_shirt_size = forms.ChoiceField(

@@ -1,6 +1,8 @@
 {% load bootstrap %}
 {% load i18n %}
 
+{% include "messages_include.html" %}
+
 <form method="post" class="form-horizontal">{% csrf_token %}
    {{ form|bootstrap }}
 <button class="submit submit_once" type="button">{% trans "Odeslat" %}</button>
