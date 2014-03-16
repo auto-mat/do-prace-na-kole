@@ -54,14 +54,12 @@ def must_be_approved_for_team(fn):
     def wrapper(*args, **kwargs):
         request = args[0]
         user_attendance = kwargs['user_attendance']
+        if not user_attendance.team:
+            return HttpResponse(_(u"<div class='text-warning'>Nemáte zvolený tým</div>"), status=401)
         if user_attendance.approved_for_team == 'approved' or models.is_team_coordinator(user_attendance):
             return fn(*args, **kwargs)
         else:
-            if user_attendance.team:
-                team = user_attendance.team.name
-            else:
-                team = ""
-            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno týmovým koordinátorem. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': team, 'address': wp_reverse("zaslat_zadost_clenstvi")}, status=401)
+            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno týmovým koordinátorem. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': user_attendance.team, 'address': wp_reverse("zaslat_zadost_clenstvi")}, status=401)
     return wrapper
 
 def must_be_company_admin(fn):
