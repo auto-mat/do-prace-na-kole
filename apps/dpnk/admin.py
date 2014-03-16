@@ -117,7 +117,7 @@ class SubsidiaryAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline,]
     list_filter = ['city']
-    search_fields = ('company__name', 'address_street',)
+    search_fields = ('address_recipient', 'company__name', 'address_street',)
     raw_id_fields = ('company',)
 
     readonly_fields = ['team_links', ]
@@ -334,6 +334,7 @@ class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmi
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator_campaign__userprofile__user__first_name', 'coordinator_campaign__userprofile__user__last_name']
     list_filter = ['subsidiary__city', 'campaign', 'member_count', CoordinatorFilter]
     list_max_show_all = 10000
+    raw_id_fields = ['subsidiary',]
 
     readonly_fields = ['members', 'invitation_token', 'member_count']
     def members(self, obj):
