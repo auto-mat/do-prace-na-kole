@@ -114,9 +114,9 @@ class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     subsidiary_links.short_description = 'Pobočky'
 
 class SubsidiaryAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('__unicode__', 'company', 'city_in_campaign', 'teams_text', 'id', )
+    list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline,]
-    list_filter = ['city_in_campaign']
+    list_filter = ['city']
     search_fields = ('company__name', 'address_street',)
     raw_id_fields = ('company',)
 
@@ -179,7 +179,7 @@ class PaymentFilter(SimpleListFilter):
                     created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
                 )]
             return queryset.filter(
-                userprofile__user__is_active=True).exclude(userprofile__id__in=paying_or_prospective_user_ids).exclude(userprofile__team__subsidiary__city_in_campaign__admission_fee = 0)
+                userprofile__user__is_active=True).exclude(userprofile__id__in=paying_or_prospective_user_ids).exclude(userprofile__team__subsidiary__city__admission_fee = 0)
         elif self.value() == 'not_paid':
             return queryset.filter(
                 userprofile__user__is_active=True).exclude(userprofile__transactions__status__in = Payment.done_statuses).exclude(userprofile__team__subsidiary__city__admission_fee = 0)
@@ -203,7 +203,7 @@ class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
     inlines= [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
     list_display = ('userprofile__payment_type', 'userprofile__payment_status', 'userprofile__team__name', 'userprofile__distance', 'team__subsidiary__city', 'userprofile__team__subsidiary__company', 'trips_count', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__name', 'userprofile__team__subsidiary__company__name','company_admin__administrated_company__name',]
-    list_filter = ['team__subsidiary__city_in_campaign', 'team__subsidiary__city_in_campaign', PaymentFilter]
+    list_filter = ['team__subsidiary__city', 'team__subsidiary__city', PaymentFilter]
     list_max_show_all = 10000
     raw_id_fields = ('team',)
 
@@ -237,7 +237,7 @@ class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
     inlines = [UserAttendanceInline,]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
-    list_filter = ['user__is_active', 'team__subsidiary__city_in_campaign', 'approved_for_team', 't_shirt_size', PaymentFilter]
+    list_filter = ['user__is_active', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentFilter]
 
     #readonly_fields = ['mailing_id' ]
 
@@ -332,7 +332,7 @@ class CoordinatorFilter(SimpleListFilter):
 class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator_campaign', 'member_count', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator_campaign__userprofile__user__first_name', 'coordinator_campaign__userprofile__user__last_name']
-    list_filter = ['subsidiary__city_in_campaign', 'subsidiary__city_in_campaign__campaign', 'member_count', CoordinatorFilter]
+    list_filter = ['subsidiary__city', 'campaign', 'member_count', CoordinatorFilter]
     list_max_show_all = 10000
 
     readonly_fields = ['members', 'invitation_token', 'member_count']
@@ -343,7 +343,7 @@ class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmi
     form = TeamForm
 
     def subsidiary__city(self, obj):
-       return obj.subsidiary.city_in_campaign
+       return obj.subsidiary.city
     def subsidiary__company(self, obj):
        return obj.subsidiary.company
     

@@ -52,12 +52,12 @@ class AdressForm(forms.ModelForm):
         campaign = kwargs.pop('campaign', None)
         super(AdressForm, self).__init__(*args, **kwargs)
         if campaign:
-            self.fields['city_in_campaign'].queryset = models.CityInCampaign.objects.filter(campaign=campaign)
-        self.fields['city_in_campaign'].label_from_instance = lambda obj: obj.city.name
+            self.fields['city'].queryset = models.City.objects.filter(cityincampaign__campaign=campaign)
+        #self.fields['city'].label_from_instance = lambda obj: obj.city.name
 
     class Meta:
         model = Subsidiary
-        fields = ('city_in_campaign', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
+        fields = ('city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
 class RegisterSubsidiaryForm(AdressForm):
     pass
@@ -105,7 +105,7 @@ class ChangeTeamForm(forms.ModelForm):
         widget=SelectChainedOrCreate(RegisterTeamForm, view_name='', prefix="team", new_description = _(u"Tým v seznamu není, chci si založit nový (budu jeho koordinátorem)"),
             chain_field = "subsidiary",
             app_name = "dpnk",
-            model_name = "Team",
+            model_name = "TeamInCampaign",
             model_field = "subsidiary",
             show_all = False,
             auto_choose = False,

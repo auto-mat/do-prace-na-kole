@@ -41,7 +41,7 @@ def get_custom_fields(user_attendance):
     payment_status = None
     if models.is_competitor(user):
         if user_attendance.team:
-            city = user_attendance.team.subsidiary.city_in_campaign.city.name
+            city = user_attendance.team.subsidiary.city.name
         payment_status = user_attendance.payment()['status']
 
     team_coordinator = models.is_team_coordinator(user_attendance)

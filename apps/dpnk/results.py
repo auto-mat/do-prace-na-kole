@@ -34,14 +34,14 @@ def get_competitors(self):
             filter_query['userprofile__user__is_active'] = True
             filter_query['approved_for_team'] = 'approved'
             if self.city:
-                filter_query['team__subsidiary__city_in_campaign'] = self.city
+                filter_query['team__subsidiary__city'] = self.city
             if self.company:
                 filter_query['team__subsidiary__company'] = self.company
             query = models.UserAttendance.objects.filter(**filter_query)
         elif self.competitor_type == 'team':
             filter_query = {}
             if self.city:
-                filter_query['subsidiary__city_in_campaign'] = self.city
+                filter_query['subsidiary__city'] = self.city
             if self.company:
                 filter_query['subsidiary__company'] = self.company
             query = models.Team.objects.filter(**filter_query)
@@ -83,7 +83,7 @@ def get_competitions(user_attendance):
     competitions = competitions.filter(
             (
                   (Q(company = None) | Q(company = user_attendance.team.subsidiary.company))
-                & (Q(city = None)    | Q(city = user_attendance.team.subsidiary.city_in_campaign))
+                & (Q(city = None)    | Q(city = user_attendance.team.subsidiary.city))
             )
         ).distinct()
     return competitions
@@ -195,10 +195,10 @@ class RecalculateResultCompetitorThread(threading.Thread):
 
     def run(self):
         for competition in models.Competition.objects.all():
-            if competition.competitor_type == 'team' and user_attendance.team:
-                recalculate_result(competition, user_attendance.team)
+            if competition.competitor_type == 'team' and self.user_attendance.team:
+                recalculate_result(competition, self.user_attendance.team)
             elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-                recalculate_result(competition, user_attendance)
+                recalculate_result(competition, self.user_attendance)
             elif competition.competitor_type == 'company':
                 raise NotImplementedError("Company competitions are not working yet")
 

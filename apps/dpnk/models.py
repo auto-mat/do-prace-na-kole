@@ -192,8 +192,8 @@ class Subsidiary(models.Model):
           related_name="subsidiaries",
           null=False, 
           blank=False)
-    city_in_campaign = models.ForeignKey(
-          CityInCampaign, 
+    city = models.ForeignKey(
+          City, 
           verbose_name=_(u"Soutěžní město"),
           help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % wp_reverse('pravidla'),
           null=False, blank=False)
@@ -244,6 +244,10 @@ class Team(models.Model):
         unique=True,
         validators = [validate_length],
         )
+    campaign = models.ForeignKey(
+          "Campaign", 
+          verbose_name=_(u"Kampaň"),
+          null=False, blank=False)
 
     #Auto fields:
     member_count = models.IntegerField(
@@ -473,7 +477,7 @@ class UserAttendance(models.Model):
         return self.userprofile.user.get_full_name()
 
     def admission_fee(self):
-        return self.team.subsidiary.city_in_campaign.admission_fee
+        return self.team.subsidiary.city.cityincampaign_set.get(campaign=self.campaign).admission_fee
 
     def payment(self):
         if self.team and self.team.subsidiary and self.admission_fee() == 0:
@@ -1098,7 +1102,7 @@ class Competition(models.Model):
             return False
         if self.company and userprofile.team and self.company != userprofile.team.subsidiary.company:
             return False
-        if self.city and userprofile.team and self.city != userprofile.team.subsidiary.city_in_campaign:
+        if self.city and userprofile.team and self.city != userprofile.team.subsidiary.city:
             return False
 
         if self.without_admission:
@@ -1276,7 +1280,7 @@ class Answer(models.Model):
     class Meta:
         verbose_name = _(u"Odpověď")
         verbose_name_plural = _(u"Odpovědi")
-        ordering = ('user_attendance__team__subsidiary__city_in_campaign__city', 'pk')
+        ordering = ('user_attendance__team__subsidiary__city', 'pk')
         unique_together = (("user_attendance", "question"),)
 
     user_attendance = models.ForeignKey(UserAttendance, null=True, blank=True)
@@ -1329,9 +1333,20 @@ def is_competitor(user):
 
 
 #TODO: this is quickfix, should be geting campaign slug from URL
+class TeamInCampaignManager(models.Manager):
+    def get_query_set(self):
+        return super(TeamInCampaignManager,self).get_query_set().filter(campaign__slug=settings.CAMPAIGN)
+
+
+class TeamInCampaign(Team):
+    objects = TeamInCampaignManager()
+    class Meta:
+        proxy = True
+
+
 class SubsidiaryInCampaignManager(models.Manager):
     def get_query_set(self):
-        return super(SubsidiaryInCampaignManager,self).get_query_set().filter(city_in_campaign__campaign__slug=settings.CAMPAIGN)
+        return super(SubsidiaryInCampaignManager,self).get_query_set().filter(city__cityincampaign__campaign__slug=settings.CAMPAIGN)
 
 
 class SubsidiaryInCampaign(Subsidiary):
