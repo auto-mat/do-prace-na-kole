@@ -925,7 +925,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
 def team_admin_team(request, backend='registration.backends.simple.SimpleBackend',
              success_url=None, form_class=None,
              user_attendance=None,
-             template_name='registration/team_admin_team.html',
+             template_name = 'generic_form_template.html',
              extra_context=None):
     team = user_attendance.team
     form_class = TeamAdminForm
