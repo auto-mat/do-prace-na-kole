@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 from dpnk.views import questionnaire_results, questionnaire_answers, draw_results, questions, answers
+from django.conf.urls.static import static
 
 from django.conf import settings
 
@@ -21,14 +22,4 @@ urlpatterns = patterns('',
     url(r'^admin/', include("massadmin.urls")),
     url(r'^dpnk/', include("dpnk.urls")),
     url(r"^su/", include("django_su.urls")),
-)
-
-if settings.DEBUG:
-    urlpatterns += patterns('',
-        url(r'^static/uploads/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT,
-        }), 
-        url(r'^static/static/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.STATIC_ROOT,
-        }), 
-    ) 
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
