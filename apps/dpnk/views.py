@@ -332,7 +332,7 @@ def payment(request, user_attendance=None):
         return redirect(wp_reverse('profil'))
     uid = request.user.id
     order_id = '%s-1' % uid
-    session_id = "%sJ%d " % (order_id, int(time.time()))
+    session_id = "%sJ%d" % (order_id, int(time.time()))
     # Save new payment record
     p = Payment(session_id=session_id,
                 user_attendance=user_attendance,
@@ -399,9 +399,10 @@ def payment_status(request):
     session_id = request.POST['session_id']
     ts = request.POST['ts']
     sig = request.POST['sig']
+    logger.info('Payment status - pos_id: %s, session_id: %s, ts: %s, sig: %s' % (pos_id, session_id, ts, sig))
     check_sig(sig, (pos_id, session_id, ts))
     # Determine the status of transaction based on the notification
-    c = httplib.HTTPSConnection("secure.payu.com.")
+    c = httplib.HTTPSConnection("secure.payu.com")
     timestamp = str(int(time.time()))
     c.request("POST", "/paygw/UTF/Payment/get/txt/",
               urllib.urlencode({
