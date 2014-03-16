@@ -1332,34 +1332,32 @@ class SubsidiaryInCampaign(Subsidiary):
         proxy = True
 
 #Signals:
-@receiver(pre_save, sender=UserAttendance)
-def userprofile_pre_save(sender, instance, **kwargs):
-    try:
-        old_instance = UserAttendance.objects.get(pk = instance.pk)
-        instance.old_team = old_instance.team
-    except UserAttendance.DoesNotExist:
-        instance.old_team = None
+def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
+    field, (old, new) = changed_fields.items()[0]
+    old_team = Team.objects.get(pk=old) if old else None
+    new_team = Team.objects.get(pk=new) if new else None
+    if instance.team and new_team.member_count == 0:
+        instance.approved_for_team = 'approved'
+    else:
+        instance.approved_for_team = 'undecided'
+pre_save_changed.connect(pre_user_team_changed, sender=UserAttendance, fields=['team'])
 
-    if instance.old_team and instance.team != instance.old_team:
-        if instance.team.member_count == 0:
-            instance.approved_for_team = 'approved'
-        else:
-            instance.approved_for_team = 'undecided'
+def post_user_team_changed(sender, instance, changed_fields=None, **kwargs):
+    field, (old, new) = changed_fields.items()[0]
+    old_team = Team.objects.get(pk=old) if old else None
+    new_team = Team.objects.get(pk=new) if new else None
+    if new_team:
+        new_team.autoset_member_count()
+        new_team.save()
+        results.recalculate_results_team(new_team)
 
+    if old_team:
+        old_team.autoset_member_count()
+        old_team.save()
+        results.recalculate_results_team(old_team)
 
-@receiver(post_save, sender=UserAttendance)
-def userprofile_post_save(sender, instance, **kwargs):
-    if instance.team:
-        instance.team.autoset_member_count()
-        instance.team.save()
-
-    if instance.old_team and instance.team != instance.old_team:
-        instance.old_team.autoset_member_count()
-        instance.old_team.save()
-        results.recalculate_results_team(instance.old_team)
-        if instance.team:
-            results.recalculate_results_team(instance.team)
     results.recalculate_result_competitor(instance)
+post_save_changed.connect(post_user_team_changed, sender=UserAttendance, fields=['team'])
 
 @receiver(post_save, sender=User)
 def update_mailing_user(sender, instance, created, **kwargs):
