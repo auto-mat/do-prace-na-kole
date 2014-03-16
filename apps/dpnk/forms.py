@@ -53,6 +53,7 @@ class AdressForm(forms.ModelForm):
         super(AdressForm, self).__init__(*args, **kwargs)
         if campaign:
             self.fields['city_in_campaign'].queryset = models.CityInCampaign.objects.filter(campaign=campaign)
+        self.fields['city_in_campaign'].label_from_instance = lambda obj: obj.city.name
 
     class Meta:
         model = Subsidiary
