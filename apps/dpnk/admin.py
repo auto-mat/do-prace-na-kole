@@ -33,6 +33,7 @@ from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTa
 from adminsortable.admin import SortableInlineAdminMixin
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 from import_export.admin import ImportExportModelAdmin
+from django.utils.translation import ugettext_lazy as _
 # Models
 from models import *
 from dpnk import models
@@ -292,12 +293,17 @@ class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmi
     def company_admin__administrated_company(self, obj):
         return obj.company_admin.administrated_company
 
+def update_mailing(modeladmin, request, queryset):
+    for user_attendance in queryset:
+        mailing.add_or_update_user(user_attendance)
+update_mailing.short_description = _(u"Aktualizovat mailing list")
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('__unicode__', 'id', 'distance', 'team', 'approved_for_team', 'campaign', 't_shirt_size')
     list_filter = ('campaign',)
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username')
+    actions = ( update_mailing, )
     form = UserAttendanceForm
 
 
