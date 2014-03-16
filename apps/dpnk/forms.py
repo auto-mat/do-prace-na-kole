@@ -263,7 +263,7 @@ class BikeRepairForm(forms.ModelForm):
         except UserAttendance.DoesNotExist:
             raise forms.ValidationError(_(u"Takový uživatel neexistuje"))
 
-        other_user_attendances = user_attendance.userprofile.userattendance_set.exclude(campaign=campaign)
+        other_user_attendances = user_attendance.other_user_attendances(campaign)
         if other_user_attendances.count() > 0:
             raise forms.ValidationError(_(u"Tento uživatel není nováček, soutěžil již v následujících kampaních: %s" % ", ".join([u.campaign.name for u in other_user_attendances])))
 

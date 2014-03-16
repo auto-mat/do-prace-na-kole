@@ -44,17 +44,17 @@ def get_custom_fields(user_attendance):
             city = user_attendance.team.subsidiary.city_in_campaign.city.name
         payment_status = user_attendance.payment()['status']
 
-    is_competitor = models.is_competitor(user)
     team_coordinator = models.is_team_coordinator(user_attendance)
     company_admin = models.get_company_admin(user, user_attendance.campaign) == None
+    is_new_user = user_attendance.other_user_attendances(campaign).count() > 0
 
     custom_fields = [ 
                        { 'Key': "Mesto", 'Value': city } ,
-                       { 'Key': "je_soutezici", 'Value': is_competitor } ,
                        { 'Key': "Tymovy_koordinator", 'Value': team_coordinator } ,
                        { 'Key': "Firemni_spravce", 'Value': company_admin } ,
                        { 'Key': "Stav_platby", 'Value': payment_status } ,
                        { 'Key': "Aktivni", 'Value': user.is_active } ,
+                       { 'Key': "Novacek", 'Value': is_new_user } ,
                    ]
     return custom_fields
 

@@ -544,6 +544,9 @@ class UserAttendance(models.Model):
         else:
             return False
 
+    def other_user_attendances(self, campaign):
+        return self.userprofile.userattendance_set.exclude(campaign=campaign)
+
 
 class UserProfile(models.Model):
     """Uživatelský profil"""
