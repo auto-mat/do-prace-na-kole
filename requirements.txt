@@ -23,3 +23,4 @@ django-mass-edit
 django-author
 -e git+https://github.com/PetrDlouhy/django-fieldsignals.git#egg=django-fieldsignals
 django-timelog
+django-admin-sortable2

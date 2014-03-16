@@ -102,6 +102,7 @@ INSTALLED_APPS = (
     'fieldsignals',
     'timelog',
     'remote_ajax',
+    'adminsortable',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'

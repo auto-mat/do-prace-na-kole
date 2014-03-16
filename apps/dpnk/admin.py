@@ -30,6 +30,7 @@ from django.http import HttpResponseRedirect
 from admin_enhancer.admin import EnhancedModelAdminMixin, EnhancedAdminMixin
 from dpnk.wp_urls import wp_reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
+from adminsortable.admin import SortableInlineAdminMixin
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 from import_export.admin import ImportExportModelAdmin
 # Models
@@ -440,14 +441,14 @@ class CityInCampaignInline(EnhancedAdminMixin, admin.TabularInline):
     extra = 0
 
 
-class TShirtSizeInline(EnhancedAdminMixin, admin.TabularInline):
+class TShirtSizeInline(EnhancedAdminMixin, SortableInlineAdminMixin, admin.TabularInline):
     model = TShirtSize
     extra = 0
 
 
 class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'slug')
-    inlines = [PhaseInline, CityInCampaignInline, TShirtSizeInline]
+    inlines = [TShirtSizeInline, PhaseInline, CityInCampaignInline]
     prepopulated_fields = {'slug': ('name',)}
 
 

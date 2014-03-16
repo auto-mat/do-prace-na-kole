@@ -389,12 +389,17 @@ class TShirtSize(models.Model):
        verbose_name = _(u"Kampaň"),
        null=False,
        blank=False)
+    order = models.PositiveIntegerField(
+            default=0,
+            blank=False,
+            null=False,
+            )
 
     class Meta:
         verbose_name = _(u"Velikost trička")
         verbose_name_plural = _(u"Velikosti trička")
         unique_together = (("name", "campaign"),)
-        ordering = [ "name" ]
+        ordering = [ "order" ]
 
     def __unicode__(self):
         return self.name
