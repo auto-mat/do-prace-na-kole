@@ -1410,5 +1410,8 @@ def payment_set_realized_date(sender, instance, **kwargs):
 
 def team_admin_changed(sender, instance, changed_fields=None, **kwargs):
     field, (old, new) = changed_fields.items()[0]
-    email.new_team_coordinator_mail(UserAttendance.objects.get(pk=new))
+    try:
+        email.new_team_coordinator_mail(UserAttendance.objects.get(pk=new))
+    except UserAttendance.DoesNotExist:
+        pass
 post_save_changed.connect(team_admin_changed, sender=Team, fields=['coordinator_campaign'])
