@@ -55,6 +55,7 @@ def get_custom_fields(user_attendance):
                        { 'Key': "Stav_platby", 'Value': payment_status } ,
                        { 'Key': "Aktivni", 'Value': user.is_active } ,
                        { 'Key': "Novacek", 'Value': is_new_user } ,
+                       { 'Key': "Kampan", 'Value': user_attendance.campaign.name } ,
                    ]
     return custom_fields
 
