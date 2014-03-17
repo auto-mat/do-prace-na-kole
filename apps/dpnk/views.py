@@ -193,6 +193,7 @@ def change_team(request,
             if create_team:
                 team = form_team.save(commit=False)
                 team.subsidiary = subsidiary
+                team.campaign = user_attendance.campaign
                 form_team.save()
                 messages.add_message(request, messages.SUCCESS, _(u"Tým %s úspěšně vytvořen.") % team.name, fail_silently=True)
             else:
