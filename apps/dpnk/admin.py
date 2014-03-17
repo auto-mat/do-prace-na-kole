@@ -410,6 +410,12 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
         )
 
 
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user_attendance', 'created', 'status', 'session_id', 'trans_id', 'amount', 'pay_type', 'error', 'order_id', 'author')
+    search_fields = ('session_id', 'trans_id', 'order_id')
+    list_filter = ['status', 'error',]
+
+
 class ChoiceInline(EnhancedAdminMixin, admin.TabularInline):
     model = Choice
     extra = 3
@@ -495,6 +501,7 @@ class CompanyAdminAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Transaction, TransactionAdmin)
+admin.site.register(Payment, PaymentAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(ChoiceType, ChoiceTypeAdmin)
 admin.site.register(City, CityAdmin)
