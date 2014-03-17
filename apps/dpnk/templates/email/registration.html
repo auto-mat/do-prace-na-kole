@@ -1,15 +1,15 @@
 {% load wp_url from dpnk_tags %}{% autoescape off %}
 
-Zpráva pro soutěžící/ho {{ user.userprofile }} z týmu {{user.team}} v soutěži {{ user.campaign }}.
+Zpráva pro soutěžící/ho {{ user.userprofile }} v soutěži {{ user.campaign }}.
 
 Vítejte v soutěži Do práce na kole!
 
-Registraci do týmu {{user.team}} máte za sebou, svůj profil budete mít vždy k dispozici na adrese:
+Právě jste se registroval/a do kampaně {{ user.campaign }}. Než budete moct vyjet, projděte prosím ještě všechny kroky na adrese:
 {% block profile_link %}
 {{ SITE_URL }}{% wp_url 'profil' %}
 {% endblock %}
 
-Vaše uživatelské jméno je {{ user.username }}. Vaše heslo zde kvůli bezpečnosti neuvádíme, ale můžete si ho kdykoli nechat zaslat znovu z webu http://dopracenakole.net
+Vaše uživatelské jméno je {{ user.userprofile.user.username }}. Vaše heslo zde kvůli bezpečnosti neuvádíme, ale můžete si ho kdykoli nechat zaslat znovu z webu {{ SITE_URL }}
 
 Máte už soupeře? Soutěž bude pro Vás zábavnější, když se do ní zapojí i Vaši známí. Koho byste rádi vyzvali? Kolegy z Vašeho nebo jiného oddělení? Vaše dodavatele nebo zákazníky? Nebo změříte síly a vytrvalost s konkurencí?
 
