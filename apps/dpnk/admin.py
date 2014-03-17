@@ -197,8 +197,17 @@ class PaymentFilter(SimpleListFilter):
             return queryset.filter(userprofile__transactions = None)
 
 
+class UserAttendanceForm(forms.ModelForm):
+    class Meta:
+        model = UserAttendance
+    def __init__(self, *args, **kwargs):
+        super(UserAttendanceForm, self).__init__(*args, **kwargs)
+        self.fields['t_shirt_size'].required = False
+
+
 class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
     model = UserAttendance
+    form = UserAttendanceForm
     extra = 0
     inlines= [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
     list_display = ('userprofile__payment_type', 'userprofile__payment_status', 'userprofile__team__name', 'userprofile__distance', 'team__subsidiary__city', 'userprofile__team__subsidiary__company', 'trips_count', 'id')
@@ -232,8 +241,17 @@ class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
         return obj.team.subsidiary.company
 
 
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        self.fields['telephone'].required = False
+
+
 class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
     model = UserProfile
+    form = UserProfileForm
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
     inlines = [UserAttendanceInline,]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
