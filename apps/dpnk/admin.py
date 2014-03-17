@@ -331,7 +331,7 @@ class CoordinatorFilter(SimpleListFilter):
             return queryset.exclude(coordinator_campaign__team__id = F("id"))
 
 class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator_campaign', 'member_count', 'id', )
+    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator_campaign', 'member_count', 'campaign', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator_campaign__userprofile__user__first_name', 'coordinator_campaign__userprofile__user__last_name']
     list_filter = ['subsidiary__city', 'campaign', 'member_count', CoordinatorFilter]
     list_max_show_all = 10000
