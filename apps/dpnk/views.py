@@ -194,7 +194,7 @@ def change_team(request,
                 team = form_team.save(commit=False)
                 team.subsidiary = subsidiary
                 form_team.save()
-                messages.add_message(request, messages.SUCCESS, _(u"Tým %s úspěšně vytvořen.") % team, fail_silently=True)
+                messages.add_message(request, messages.SUCCESS, _(u"Tým %s úspěšně vytvořen.") % team.name, fail_silently=True)
             else:
                 team = form.cleaned_data['team']
 
