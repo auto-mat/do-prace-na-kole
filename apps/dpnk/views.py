@@ -897,22 +897,22 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
             emails = [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4']]
 
             for email in emails:
-                try:
-                    invited_user = User.objects.get(email=email)
+                #try:
+                #    invited_user = User.objects.get(email=email)
 
-                    if hasattr(invited_user, "userprofile") and invited_user.userprofile.userattendance_set.filter(campaign=user_attendance.campaign).count() == 0:
-                        invited_user_attendance = UserAttendance(userprofile = invited_user.userprofile,
-                                    campaign = user_attendance.campaign,
-                                    team = user_attendance.team,
-                                    approved_for_team = 'approved',
-                                    )
-                        invited_user_attendance.save()
+                #    if hasattr(invited_user, "userprofile") and invited_user.userprofile.userattendance_set.filter(campaign=user_attendance.campaign).count() == 0:
+                #        invited_user_attendance = UserAttendance(userprofile = invited_user.userprofile,
+                #                    campaign = user_attendance.campaign,
+                #                    team = user_attendance.team,
+                #                    approved_for_team = 'approved',
+                #                    )
+                #        invited_user_attendance.save()
 
-                        invitation_register_mail(user_attendance, invited_user_attendance)
-                    else:
-                        invitation_mail(user_attendance, email)
-                except User.DoesNotExist:
-                    invitation_mail(user_attendance, email)
+                #        invitation_register_mail(user_attendance, invited_user_attendance)
+                #    else:
+                #        invitation_mail(user_attendance, email)
+                #except User.DoesNotExist:
+                invitation_mail(user_attendance, email)
 
             return redirect(wp_reverse(success_url))
     else:
