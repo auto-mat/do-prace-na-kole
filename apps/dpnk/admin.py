@@ -44,20 +44,20 @@ class PaymentInline(EnhancedAdminMixin, NestedTabularInline):
     model = Payment
     extra = 0
     form = models.PaymentForm
-    readonly_fields = ['user_attendance', 'order_id', 'session_id', 'trans_id', 'error', ]
+    readonly_fields = ['user_attendance', 'order_id', 'session_id', 'trans_id', 'error', 'author', 'updated_by']
 
 
 class PackageTransactionInline(EnhancedAdminMixin, NestedTabularInline):
     model = PackageTransaction
     extra = 0
-    readonly_fields = ['user_attendance']
+    readonly_fields = ['user_attendance', 'author', 'updated_by']
     form = models.PackageTransactionForm
 
 
 class CommonTransactionInline(EnhancedAdminMixin, NestedTabularInline):
     model = CommonTransaction
     extra = 0
-    readonly_fields = ['user_attendance']
+    readonly_fields = ['user_attendance', 'author', 'updated_by']
     form = models.CommonTransactionForm
 
 
@@ -305,6 +305,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username')
     actions = ( update_mailing, )
     form = UserAttendanceForm
+    inlines= [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
 
 
 class CoordinatorFilter(SimpleListFilter):
