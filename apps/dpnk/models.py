@@ -213,11 +213,12 @@ class Team(models.Model):
         verbose_name = _(u"Tým")
         verbose_name_plural = _(u"Týmy")
         ordering = ('name',)
+        unique_together = (("name", "campaign"),)
 
     name = models.CharField(
         verbose_name=_(u"Název týmu"),
         max_length=50, null=False,
-        unique=True)
+        unique=False)
     subsidiary = models.ForeignKey(
         Subsidiary,
         verbose_name=_(u"Pobočka"),
