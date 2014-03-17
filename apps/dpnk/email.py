@@ -30,7 +30,7 @@ def approval_request_mail(user_attendance):
         'user': user_attendance,
         'SITE_URL': settings.SITE_URL,
         }))
-    send_mail(_("Do práce na kole 2013 - žádost o ověření členství"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - žádost o ověření členství"), message, None, [email], fail_silently=False)
 
 def invitation_register_mail(inviting, invited):
     template = get_template('email/invitation.html')
@@ -39,7 +39,7 @@ def invitation_register_mail(inviting, invited):
         'invited': invited,
         'SITE_URL': settings.SITE_URL,
         }))
-    send_mail(_("Do práce na kole 2013 - potvrzení registrace"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - potvrzení registrace"), message, None, [email], fail_silently=False)
 
 
 def register_mail(user_attendance):
@@ -48,7 +48,7 @@ def register_mail(user_attendance):
     message = template.render(Context({ 'user': user_attendance,
         'SITE_URL': settings.SITE_URL,
         }))
-    send_mail(_("Do práce na kole 2013 - potvrzení registrace"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - potvrzení registrace"), message, None, [email], fail_silently=False)
 
 def team_membership_approval_mail(user):
     template = get_template('email/team_membership_approval.html')
@@ -56,7 +56,7 @@ def team_membership_approval_mail(user):
     message = template.render(Context({ 'user': user,
         'SITE_URL': settings.SITE_URL,
         }))
-    send_mail(_("Do práce na kole 2013 - potvrzení ověření členství v týmu"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - potvrzení ověření členství v týmu"), message, None, [email], fail_silently=False)
 
 def team_membership_denial_mail(user, reason):
     template = get_template('email/team_membership_denial.html')
@@ -65,7 +65,7 @@ def team_membership_denial_mail(user, reason):
         'SITE_URL': settings.SITE_URL,
         'reason': reason,
         }))
-    send_mail(_("Do práce na kole 2013 - ZAMÍTNUTÍ členství v týmu"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - ZAMÍTNUTÍ členství v týmu"), message, None, [email], fail_silently=False)
 
 def team_created_mail(user_attendance):
     template = get_template('email/team_created.html')
@@ -73,7 +73,7 @@ def team_created_mail(user_attendance):
     message = template.render(Context({ 'user': user_attendance,
         'SITE_URL': settings.SITE_URL,
         }))
-    send_mail(_("Do práce na kole 2013 - potvrzení vytvoření týmu"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - potvrzení vytvoření týmu"), message, None, [email], fail_silently=False)
 
 def invitation_mail(user_attendance, email):
     template = get_template('email/invitation.html')
@@ -82,7 +82,7 @@ def invitation_mail(user_attendance, email):
             'SITE_URL': settings.SITE_URL,
             'email': email,
             }))
-        send_mail(_("Do práce na kole 2013 - pozvánka do týmu"), message, None, [email], fail_silently=False)
+        send_mail(_("Do práce na kole 2014 - pozvánka do týmu"), message, None, [email], fail_silently=False)
 
 def payment_confirmation_mail(user):
     template = get_template('email/payment_confirmation.html')
@@ -90,7 +90,7 @@ def payment_confirmation_mail(user):
     message = template.render(Context({
                 'user': user,
                 'SITE_URL': settings.SITE_URL}))
-    send_mail(_("Do práce na kole 2013 - přijetí platby"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - přijetí platby"), message, None, [email], fail_silently=False)
 
 def payment_confirmation_company_mail(user_attendance):
     template = get_template('email/payment_comfirmation_company.html')
@@ -99,7 +99,7 @@ def payment_confirmation_company_mail(user_attendance):
                 'user': user_attendance,
                 'company': user_attendance.team.subsidiary.company,
                 'SITE_URL': settings.SITE_URL}))
-    send_mail(_("Do práce na kole 2013 - přijetí platby"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - přijetí platby"), message, None, [email], fail_silently=False)
 
 def company_admin_register_competitor_mail(user_attendance):
     template = get_template('email/company_admin_register_competitor.html')
@@ -108,7 +108,7 @@ def company_admin_register_competitor_mail(user_attendance):
         'company': user_attendance.team.subsidiary.company,
         'SITE_URL': settings.SITE_URL,
         }))
-    send_mail(_("Do práce na kole 2013 - firemní správce - potvrzení registrace"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - firemní správce - potvrzení registrace"), message, None, [email], fail_silently=False)
 
 def company_admin_register_no_competitor_mail(user, company):
     template = get_template('email/company_admin_register_no_competitor.html')
@@ -117,7 +117,7 @@ def company_admin_register_no_competitor_mail(user, company):
         'company': company,
         'SITE_URL': settings.SITE_URL,
         }))
-    send_mail(_("Do práce na kole 2013 - firemní správce - potvrzení registrace"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - firemní správce - potvrzení registrace"), message, None, [email], fail_silently=False)
 
 def company_admin_approval_mail(company_admin):
     template = get_template('email/company_admin_approval.html')
@@ -126,7 +126,7 @@ def company_admin_approval_mail(company_admin):
         'company': company_admin.administrated_company,
         'SITE_URL': settings.SITE_URL,
         }))
-    send_mail(_("Do práce na kole 2013 - firemní správce - schválení správcovství firmy"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - firemní správce - schválení správcovství firmy"), message, None, [email], fail_silently=False)
 
 def company_admin_rejected_mail(company_admin):
     template = get_template('email/company_admin_rejected.html')
@@ -135,7 +135,7 @@ def company_admin_rejected_mail(company_admin):
         'company': company_admin.administrated_company,
         'SITE_URL': settings.SITE_URL,
         }))
-    send_mail(_("Do práce na kole 2013 - firemní správce - zamítnutí správcovství firmy"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - firemní správce - zamítnutí správcovství firmy"), message, None, [email], fail_silently=False)
 
 def new_team_coordinator_mail(user_attendance):
     template = get_template('email/new_team_coordinator.html')
@@ -144,4 +144,4 @@ def new_team_coordinator_mail(user_attendance):
         'user_attendance': user_attendance,
         'SITE_URL': settings.SITE_URL,
         }))
-    send_mail(_("Do práce na kole 2013 - zpráva pro nového koordinátor týmu"), message, None, [email], fail_silently=False)
+    send_mail(_("Do práce na kole 2014 - zpráva pro nového koordinátor týmu"), message, None, [email], fail_silently=False)
