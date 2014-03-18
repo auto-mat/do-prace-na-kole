@@ -212,7 +212,6 @@ class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
     inlines= [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
     list_display = ('userprofile__payment_type', 'userprofile__payment_status', 'userprofile__team__name', 'userprofile__distance', 'team__subsidiary__city', 'userprofile__team__subsidiary__company', 'trips_count', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__name', 'userprofile__team__subsidiary__company__name','company_admin__administrated_company__name',]
-    list_filter = ['team__subsidiary__city', 'team__subsidiary__city', PaymentFilter]
     list_max_show_all = 10000
     raw_id_fields = ('team',)
 
@@ -255,7 +254,6 @@ class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
     list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
     inlines = [UserAttendanceInline,]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
-    list_filter = ['user__is_active', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentFilter]
 
     #readonly_fields = ['mailing_id' ]
 
@@ -279,7 +277,7 @@ class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmi
     inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name',]
-    list_filter = ['is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved', PaymentFilter]
+    list_filter = ['is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved']
     readonly_fields = ['password']
     list_max_show_all = 10000
 
@@ -317,8 +315,8 @@ def update_mailing(modeladmin, request, queryset):
 update_mailing.short_description = _(u"Aktualizovat mailing list")
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('__unicode__', 'id', 'distance', 'team', 'approved_for_team', 'campaign', 't_shirt_size')
-    list_filter = ('campaign',)
+    list_display = ('__unicode__', 'id', 'distance', 'team', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status')
+    list_filter = ('campaign', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentFilter)
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username')
     actions = ( update_mailing, )
@@ -413,7 +411,7 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('id', 'user_attendance', 'created', 'status', 'session_id', 'trans_id', 'amount', 'pay_type', 'error', 'order_id', 'author')
     search_fields = ('session_id', 'trans_id', 'order_id')
-    list_filter = ['status', 'error',]
+    list_filter = ['status', 'error', 'pay_type']
 
 
 class ChoiceInline(EnhancedAdminMixin, admin.TabularInline):
