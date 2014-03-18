@@ -315,6 +315,15 @@ def update_mailing(modeladmin, request, queryset):
 update_mailing.short_description = _(u"Aktualizovat mailing list")
 
 
+def approve_am_payment(modeladmin, request, queryset):
+    for user_attendance in queryset:
+        payment = user_attendance.payment()['payment']
+        if payment.pay_type == "am" and payment.status == models.Payment.Status.NEW:
+            payment.status = models.Payment.Status.DONE
+            payment.save()
+approve_am_payment.short_description = _(u"Potvrdit platbu člena klubu přátel AM")
+
+
 #TODO: this filters any paymant that user has is of specified type, should be only the last payment
 class PaymentTypeFilter(SimpleListFilter):
     title = u"typ platby"
@@ -332,7 +341,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_filter = ('campaign', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentTypeFilter, PaymentFilter)
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username')
-    actions = ( update_mailing, )
+    actions = ( update_mailing, approve_am_payment)
     form = UserAttendanceForm
     inlines= [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
 
