@@ -177,24 +177,24 @@ class PaymentFilter(SimpleListFilter):
                     # Bank transfer less than 5 days old
                     status=Payment.Status.NEW, pay_type='bt',
                     created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
-                )]
+                ).distinct()]
             return queryset.filter(
-                userprofile__user__is_active=True).exclude(id__in=paying_or_prospective_user_ids).exclude(team__subsidiary__city__cityincampaign__admission_fee = 0)
+                userprofile__user__is_active=True).exclude(id__in=paying_or_prospective_user_ids).exclude(team__subsidiary__city__cityincampaign__admission_fee = 0).distinct()
         elif self.value() == 'not_paid':
             return queryset.filter(
-                userprofile__user__is_active=True).exclude(transactions__status__in = Payment.done_statuses).exclude(team__subsidiary__city__cityincampaign__admission_fee = 0)
+                userprofile__user__is_active=True).exclude(transactions__status__in = Payment.done_statuses).exclude(team__subsidiary__city__cityincampaign__admission_fee = 0).distinct()
         elif self.value() == 'no_admission':
-            return queryset.filter(team__subsidiary__city__cityincampaign__admission_fee = 0)
+            return queryset.filter(team__subsidiary__city__cityincampaign__admission_fee = 0).distinct()
         elif self.value() == 'done':
-            return queryset.filter(Q(transactions__status__in = Payment.done_statuses) | Q(team__subsidiary__city__cityincampaign__admission_fee = 0))
+            return queryset.filter(Q(transactions__status__in = Payment.done_statuses) | Q(team__subsidiary__city__cityincampaign__admission_fee = 0)).distinct()
         elif self.value() == 'paid':
-            return queryset.filter(transactions__status__in = Payment.done_statuses)
+            return queryset.filter(transactions__status__in = Payment.done_statuses).distinct()
         elif self.value() == 'waiting':
-            return queryset.exclude(transactions__status__in = Payment.done_statuses).filter(transactions__status__in = Payment.waiting_statuses)
+            return queryset.exclude(transactions__status__in = Payment.done_statuses).filter(transactions__status__in = Payment.waiting_statuses).distinct()
         elif self.value() == 'unknown':
-            return queryset.exclude(team__subsidiary__city__cityincampaign__admission_fee = 0).exclude(transactions__status__in = set(Payment.done_statuses) | set(Payment.waiting_statuses))
+            return queryset.exclude(team__subsidiary__city__cityincampaign__admission_fee = 0).exclude(transactions__status__in = set(Payment.done_statuses) | set(Payment.waiting_statuses)).distinct()
         elif self.value() == 'none':
-            return queryset.filter(transactions = None)
+            return queryset.filter(transactions = None).distinct()
 
 
 class UserAttendanceForm(forms.ModelForm):
