@@ -205,5 +205,5 @@ def competitions(request,
         ):
     return render_to_response(template,
                               {
-                                'competitions': company_admin.administrated_company.competition_set.all(),
+                                'competitions': company_admin.administrated_company.competition_set.filter(campaign=company_admin.campaign),
                                 }, context_instance=RequestContext(request))
