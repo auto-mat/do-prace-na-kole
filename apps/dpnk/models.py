@@ -273,7 +273,7 @@ class Team(models.Model):
         return results.get_team_length(self)
 
     def __unicode__(self):
-        return "%s / %s (%s)" % (self.name, self.subsidiary.company, self.member_count)
+        return "%s (%s)" % (self.name, self.member_count)
 
     def save(self, force_insert=False, force_update=False):
         if self.coordinator_campaign_id is not None and self.coordinator_campaign is not None and self.coordinator_campaign.team.id != self.id:
