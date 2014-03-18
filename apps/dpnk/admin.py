@@ -333,7 +333,8 @@ class PaymentTypeFilter(SimpleListFilter):
         return models.Payment.PAY_TYPES
 
     def queryset(self, request, queryset):
-        return queryset.filter(transactions__payment__pay_type = self.value()).distinct()
+        if self.value():
+           return queryset.filter(transactions__payment__pay_type = self.value()).distinct()
 
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
