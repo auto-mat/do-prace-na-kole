@@ -315,7 +315,7 @@ def update_mailing(modeladmin, request, queryset):
 update_mailing.short_description = _(u"Aktualizovat mailing list")
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('__unicode__', 'id', 'distance', 'team', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status')
+    list_display = ('__unicode__', 'id', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status')
     list_filter = ('campaign', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentFilter)
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username')
@@ -323,6 +323,12 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     form = UserAttendanceForm
     inlines= [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
 
+    def team__subsidiary(self, obj):
+       if obj.team:
+          return obj.team.subsidiary
+    def team__subsidiary__company(self, obj):
+       if obj.team:
+          return obj.team.subsidiary.company
 
 class CoordinatorFilter(SimpleListFilter):
     title = u"stav týmu"
