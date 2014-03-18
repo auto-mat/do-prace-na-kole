@@ -314,9 +314,22 @@ def update_mailing(modeladmin, request, queryset):
         mailing.add_or_update_user(user_attendance)
 update_mailing.short_description = _(u"Aktualizovat mailing list")
 
+
+#TODO: this filters any paymant that user has is of specified type, should be only the last payment
+class PaymentTypeFilter(SimpleListFilter):
+    title = u"typ platby"
+    parameter_name = u'payment_type'
+
+    def lookups(self, request, model_admin):
+        return models.Payment.PAY_TYPES
+
+    def queryset(self, request, queryset):
+        return queryset.filter(transactions__payment__pay_type = self.value())
+
+
 class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('__unicode__', 'id', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status')
-    list_filter = ('campaign', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentFilter)
+    list_filter = ('campaign', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentTypeFilter, PaymentFilter)
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username')
     actions = ( update_mailing, )
