@@ -23,7 +23,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
-from django.http import Http404
+from django.http import HttpResponse, Http404
 import django.contrib.auth
 from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView
@@ -138,6 +138,12 @@ class CompanyAdminView(UpdateView):
     model = CompanyAdmin
     success_url = 'profil'
 
+    def get(self, *args, **kwargs):
+        try:
+            return super(CompanyAdminView, self).get(*args, **kwargs)
+        except Http404 as e:
+            return HttpResponse(e.message)
+
     def get_object(self, queryset=None):
         user_attendance = self.kwargs.get('user_attendance')
         campaign = user_attendance.campaign
@@ -145,6 +151,8 @@ class CompanyAdminView(UpdateView):
             company_admin = self.request.user.company_admin.get(campaign=campaign)
         except CompanyAdmin.DoesNotExist:
             company_admin = CompanyAdmin(user=self.request.user, campaign=campaign)
+        if user_attendance.team.subsidiary.company.company_admin and user_attendance.team.subsidiary.company.company_admin != company_admin:
+            raise Http404(_(u'<div class="text-warning">Vaše firma již svého koordinátora má.</div>'))
         company_admin.administrated_company = user_attendance.team.subsidiary.company
         return company_admin
 
@@ -163,6 +171,12 @@ class CompanyCompetitionView(UpdateView):
         ret_val = super(CompanyCompetitionView, self).__init__(*args, **kwargs)
         return ret_val
 
+    def get(self, *args, **kwargs):
+        try:
+            return super(CompanyCompetitionView, self).get(*args, **kwargs)
+        except Http404 as e:
+            return HttpResponse(e.message)
+
     def get_object(self, queryset=None):
         company = self.kwargs.get('company_admin').administrated_company
         competition_slug = self.kwargs.get('competition_slug', None)
@@ -173,7 +187,7 @@ class CompanyCompetitionView(UpdateView):
                 raise Http404(_(u"<div class='text-warning'>K editování této soutěže nemáte oprávnění.</div>"))
         else:
             if Competition.objects.filter(company=company, campaign=campaign).count() >= settings.MAX_COMPETITIONS_PER_COMPANY:
-                raise Http404(_(u"<div class='text-warning'>Překročen maximální počet soutěží.</div>"))
+                raise Http404(_(u"<div class='text-warning'>Překročen maximální počet soutěží pro společnost.</div>"))
             phase = campaign.phase_set.get(type='competition')
             competition = Competition(company=company, campaign=campaign, date_from=phase.date_from, date_to=phase.date_to )
         return competition
