@@ -825,6 +825,7 @@ class Payment(Transaction):
         (Status.INVOICE_MADE, 'Faktura vystavena'),
         (Status.INVOICE_PAID, 'Faktura zaplacena'),
         )
+    STATUS_MAP = dict(STATUS)
 
     done_statuses = [Status.DONE,
         Status.COMPANY_ACCEPTS,
@@ -901,6 +902,9 @@ class Payment(Transaction):
             payment_confirmation_company_mail(self.user_attendance)
 
         logger.info(u"Saving payment (after):  %s" % Payment.objects.get(pk=self.id).full_string())
+
+    def get_status_display(self):
+        return Payment.STATUS_MAP[self.status]
 
     def full_string(self):
         if self.user_attendance:
