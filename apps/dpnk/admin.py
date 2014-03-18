@@ -337,9 +337,20 @@ class PaymentTypeFilter(SimpleListFilter):
            return queryset.filter(transactions__payment__pay_type = self.value()).distinct()
 
 
+class NotInCityFilter(SimpleListFilter):
+    title = u"Ne ve městě"
+    parameter_name = u'not_in_city'
+
+    def lookups(self, request, model_admin):
+        return [(c.pk, c.name) for c in City.objects.all()]
+
+    def queryset(self, request, queryset):
+        return queryset.exclude(team__subsidiary__city = self.value())
+
+
 class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('__unicode__', 'id', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status')
-    list_filter = ('campaign', 'team__subsidiary__city', 'approved_for_team', 't_shirt_size', PaymentTypeFilter, PaymentFilter)
+    list_filter = ('campaign', 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', PaymentTypeFilter, PaymentFilter)
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username')
     actions = ( update_mailing, approve_am_payment)
