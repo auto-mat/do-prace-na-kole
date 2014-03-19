@@ -39,6 +39,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.conf import settings
 from polymorphic import PolymorphicModel
+from django.db import transaction
 # Python library imports
 import datetime
 # Local imports
@@ -330,6 +331,18 @@ class Campaign(models.Model):
         verbose_name=_(u"Povolit mailing list"),
         default=False,
         null=False)
+    tracking_number_first = models.PositiveIntegerField(
+        verbose_name=_(u"První číslo řady pro doručování balíčků"),
+        default=0,
+        blank=False,
+        null=False,
+        )
+    tracking_number_last = models.PositiveIntegerField(
+        verbose_name=_(u"Poslední číslo řady pro doručování balíčků"),
+        default=999999999,
+        blank=False,
+        null=False,
+        )
 
     def __unicode__(self):
         return self.name
@@ -688,6 +701,25 @@ class CompanyAdmin(models.Model):
 
 
 @with_author
+class DeliveryBatch(models.Model):
+    """Dávka objednávek"""
+
+    created = models.DateTimeField(
+        verbose_name=_(u"Datum vytvoření"),
+        default=datetime.datetime.now,
+        null=False)
+    campaign = models.ForeignKey(
+       Campaign,
+       verbose_name = _(u"Kampaň"),
+       null=False,
+       blank=False)
+
+    class Meta:
+        verbose_name = _(u"Dávka objednávek")
+        verbose_name_plural = _(u"Dávky objednávek")
+
+
+@with_author
 class Transaction(PolymorphicModel):
     """Transakce"""
     status = models.PositiveIntegerField(
@@ -769,6 +801,22 @@ class UserActionTransactionForm(forms.ModelForm):
 class PackageTransaction(Transaction):
     """Transakce balíku"""
 
+    t_shirt_size = models.ForeignKey(
+        TShirtSize,
+        verbose_name=_(u"Velikost trička"),
+        null=True,
+        blank=False,
+        )
+    tracking_number = models.PositiveIntegerField(
+        verbose_name=_(u"Tracking number TNT"),
+        unique=True,
+        null=False)
+    delivery_batch = models.ForeignKey(
+        DeliveryBatch,
+        verbose_name = _(u"Dávka objednávek"),
+        null=False,
+        blank=False)
+
     class Status (object):
         PACKAGE_ACCEPTED_FOR_ASSEMBLY = 20002
         PACKAGE_ASSEMBLED = 20003
@@ -785,6 +833,23 @@ class PackageTransaction(Transaction):
     class Meta:
         verbose_name = _(u"Transakce balíku")
         verbose_name_plural = _(u"Transakce balíku")
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        if not self.t_shirt_size:
+            self.t_shirt_size = self.user_attendance.t_shirt_size
+        if not self.tracking_number:
+            campaign = self.user_attendance.campaign
+            first = campaign.tracking_number_first
+            last = campaign.tracking_number_last
+            last_transaction = PackageTransaction.objects.filter(tracking_number__gte=first, tracking_number__lte=last).last()
+            if last_transaction:
+                if last_transaction.tracking_number == last:
+                    raise Exception(_(u"Došla číselná řada pro balíčkové transakce"))
+                self.tracking_number = last_transaction.tracking_number + 1
+            else:
+                self.tracking_number = first
+        super(PackageTransaction, self).save(*args, **kwargs)
 
 
 class PackageTransactionForm(forms.ModelForm):

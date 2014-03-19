@@ -50,7 +50,7 @@ class PaymentInline(EnhancedAdminMixin, NestedTabularInline):
 class PackageTransactionInline(EnhancedAdminMixin, NestedTabularInline):
     model = PackageTransaction
     extra = 0
-    readonly_fields = ['user_attendance', 'author', 'updated_by']
+    readonly_fields = ['user_attendance', 'author', 'updated_by', 'tracking_number', 't_shirt_size']
     form = models.PackageTransactionForm
 
 
@@ -406,7 +406,7 @@ class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmi
        return obj.subsidiary.company
     
 
-class TransactionChildAdmin(PolymorphicChildModelAdmin):
+class TransactionChildAdmin(EnhancedModelAdminMixin, PolymorphicChildModelAdmin):
     base_model = Transaction
     raw_id_fields = ('user_attendance', )
     readonly_fields = ('author', 'created', 'updated_by' )
@@ -417,6 +417,7 @@ class PaymentChildAdmin(TransactionChildAdmin):
 
 
 class PackageTransactionChildAdmin(TransactionChildAdmin):
+    readonly_fields = ['created', 'author', 'updated_by', 'tracking_number', 't_shirt_size']
     form = models.PackageTransactionForm
 
 
@@ -518,6 +519,11 @@ class TShirtSizeInline(EnhancedAdminMixin, SortableInlineAdminMixin, admin.Tabul
     extra = 0
 
 
+class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
+    list_display = ( 'campaign', 'created')
+    readonly_fields = ('author', 'created', 'updated_by')
+
+
 class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'slug')
     inlines = [TShirtSizeInline, PhaseInline, CityInCampaignInline]
@@ -554,6 +560,7 @@ admin.site.register(Trip, TripAdmin)
 admin.site.register(Campaign, CampaignAdmin)
 admin.site.register(UserAttendance, UserAttendanceAdmin)
 admin.site.register(models.CompanyAdmin, CompanyAdminAdmin)
+admin.site.register(models.DeliveryBatch, DeliveryBatchAdmin)
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
