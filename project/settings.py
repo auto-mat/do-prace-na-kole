@@ -103,6 +103,7 @@ INSTALLED_APPS = (
     'timelog',
     'remote_ajax',
     'adminsortable',
+    'reportlab',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
