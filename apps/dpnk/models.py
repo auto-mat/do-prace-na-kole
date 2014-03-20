@@ -25,6 +25,8 @@ import django
 import random
 import string
 import results
+import parcel_batch
+import avfull
 from author.decorators import with_author
 from django import forms
 from django.db import models
@@ -37,6 +39,8 @@ from django.core.exceptions import ValidationError
 from composite_field import CompositeField
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.files.temp import NamedTemporaryFile
+from django.core.files import File
 from django.conf import settings
 from polymorphic import PolymorphicModel
 from django.db import transaction
@@ -347,6 +351,10 @@ class Campaign(models.Model):
     def __unicode__(self):
         return self.name
 
+    def user_attendances_for_delivery(self):
+        return UserAttendance.objects.filter(campaign=self, transactions__payment__status__in=Payment.done_statuses, t_shirt_size__ship=True).exclude(transactions__packagetransaction__status__gt=1)
+
+
 class Phase(models.Model):
     """fáze kampaně"""
 
@@ -412,6 +420,10 @@ class TShirtSize(models.Model):
             blank=False,
             null=False,
             )
+    ship = models.BooleanField(
+        verbose_name=_(u"Posílá se?"),
+        default=True,
+        null=False)
 
     class Meta:
         verbose_name = _(u"Velikost trička")
@@ -713,10 +725,42 @@ class DeliveryBatch(models.Model):
        verbose_name = _(u"Kampaň"),
        null=False,
        blank=False)
+    customer_sheets = models.FileField(
+        verbose_name=_("Zákaznické listy"),
+        upload_to='customer_sheets',
+        blank=True, null=True)
+    tnt_order = models.FileField(
+        verbose_name=_("Objednávka pro TNT"),
+        upload_to='tnt_order',
+        blank=True, null=True)
+
 
     class Meta:
         verbose_name = _(u"Dávka objednávek")
         verbose_name_plural = _(u"Dávky objednávek")
+
+@transaction.atomic
+def add_packages(instance):
+    for user_attendance in instance.campaign.user_attendances_for_delivery():
+        pt = PackageTransaction(user_attendance=user_attendance, delivery_batch=instance)
+        pt.save()
+
+@receiver(post_save, sender=DeliveryBatch)
+def create_delivery_files(sender, instance, created, **kwargs):
+    if created:
+        add_packages(instance)
+
+    if not instance.customer_sheets:
+        temp = NamedTemporaryFile()
+        parcel_batch.make_customer_sheets_pdf(temp, instance)
+        instance.customer_sheets.save("customer_sheets_%s.pdf" % instance.created.strftime("%Y-%M-%d"), File(temp))
+        instance.save()
+
+    if not instance.tnt_order:
+        temp = NamedTemporaryFile()
+        avfull.make_avfull(temp, instance)
+        instance.tnt_order.save("delivery_batch_%s.txt" % instance.created.strftime("%Y-%M-%d"), File(temp))
+        instance.save()
 
 
 @with_author

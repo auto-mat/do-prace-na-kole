@@ -2,7 +2,6 @@
 from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
@@ -13,6 +12,8 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
             ('campaign', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.Campaign'])),
+            ('customer_sheets', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
+            ('tnt_order', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='deliverybatch_create', null=True, to=orm['auth.User'])),
             ('updated_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='deliverybatch_update', null=True, to=orm['auth.User'])),
         ))
@@ -43,6 +44,11 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.PositiveIntegerField')(default=999999999),
                       keep_default=False)
 
+        # Adding field 'TShirtSize.ship'
+        db.add_column(u'dpnk_tshirtsize', 'ship',
+                      self.gf('django.db.models.fields.BooleanField')(default=True),
+                      keep_default=False)
+
 
     def backwards(self, orm):
         # Deleting model 'DeliveryBatch'
@@ -62,6 +68,9 @@ class Migration(SchemaMigration):
 
         # Deleting field 'Campaign.tracking_number_last'
         db.delete_column(u'dpnk_campaign', 'tracking_number_last')
+
+        # Deleting field 'TShirtSize.ship'
+        db.delete_column(u'dpnk_tshirtsize', 'ship')
 
 
     models = {
@@ -207,14 +216,16 @@ class Migration(SchemaMigration):
             'author': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'deliverybatch_create'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'campaign': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Campaign']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'customer_sheets': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'tnt_order': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'deliverybatch_update'", 'null': 'True', 'to': u"orm['auth.User']"})
         },
         u'dpnk.packagetransaction': {
             'Meta': {'object_name': 'PackageTransaction', '_ormbases': [u'dpnk.Transaction']},
-            'delivery_batch': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': u"orm['dpnk.DeliveryBatch']"}),
+            'delivery_batch': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.DeliveryBatch']"}),
             't_shirt_size': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.TShirtSize']", 'null': 'True'}),
-            'tracking_number': ('django.db.models.fields.PositiveIntegerField', [], {'default': 'None', 'unique': 'True'}),
+            'tracking_number': ('django.db.models.fields.PositiveIntegerField', [], {'unique': 'True'}),
             u'transaction_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['dpnk.Transaction']", 'unique': 'True', 'primary_key': 'True'})
         },
         u'dpnk.payment': {
@@ -296,7 +307,8 @@ class Migration(SchemaMigration):
             'campaign': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Campaign']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '40'}),
-            'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'})
+            'order': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
+            'ship': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
         },
         u'dpnk.useractiontransaction': {
             'Meta': {'object_name': 'UserActionTransaction', '_ormbases': [u'dpnk.Transaction']},

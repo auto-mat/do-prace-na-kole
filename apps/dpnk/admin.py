@@ -50,7 +50,8 @@ class PaymentInline(EnhancedAdminMixin, NestedTabularInline):
 class PackageTransactionInline(EnhancedAdminMixin, NestedTabularInline):
     model = PackageTransaction
     extra = 0
-    readonly_fields = ['user_attendance', 'author', 'updated_by', 'tracking_number', 't_shirt_size']
+    readonly_fields = ['author', 'updated_by', 'tracking_number', 't_shirt_size']
+    raw_id_fields = ['user_attendance',]
     form = models.PackageTransactionForm
 
 
@@ -520,8 +521,12 @@ class TShirtSizeInline(EnhancedAdminMixin, SortableInlineAdminMixin, admin.Tabul
 
 
 class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
-    list_display = ( 'campaign', 'created')
-    readonly_fields = ('author', 'created', 'updated_by')
+    list_display = ( 'campaign', 'created', 'package_transaction__count')
+    readonly_fields = ('author', 'created', 'updated_by', 'package_transaction__count')
+    inlines = [PackageTransactionInline,]
+
+    def package_transaction__count(self, obj):
+        return obj.packagetransaction_set.count()
 
 
 class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
