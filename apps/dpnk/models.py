@@ -21,7 +21,6 @@
 """Modely pro Do práce na kole"""
 
 # Django imports
-import django
 import random
 import string
 import results
@@ -34,7 +33,6 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save
 from fieldsignals import post_save_changed, pre_save_changed
 from django.dispatch import receiver
-from django.db.models import Q, Sum
 from django.core.exceptions import ValidationError
 from composite_field import CompositeField
 from django.utils.translation import ugettext_lazy as _
@@ -49,11 +47,14 @@ import datetime
 # Local imports
 import util
 import mailing
-from dpnk.email import payment_confirmation_mail, company_admin_rejected_mail, company_admin_approval_mail, payment_confirmation_company_mail
+from dpnk.email import (
+    payment_confirmation_mail, company_admin_rejected_mail,
+    company_admin_approval_mail, payment_confirmation_company_mail)
 from dpnk import email
 from wp_urls import wp_reverse
 import logging
 logger = logging.getLogger(__name__)
+
 
 class Address(CompositeField):
     street = models.CharField(
@@ -109,6 +110,7 @@ class Address(CompositeField):
     def __unicode__(self):
         return "%s, %s %s, %s, %s" % (self.recipient, self.street, self.street_number, self.psc, self.city)
 
+
 class City(models.Model):
     """Město"""
 
@@ -120,7 +122,8 @@ class City(models.Model):
     name = models.CharField(
         verbose_name=_(u"Jméno"),
         unique=True,
-        max_length=40, null=False)
+        max_length=40,
+        null=False)
     slug = models.SlugField(
         unique=True,
         verbose_name=u"Subdoména v URL",
@@ -128,7 +131,7 @@ class City(models.Model):
         )
     city_admins = models.ManyToManyField(
         'UserProfile',
-        related_name = "administrated_cities",
+        related_name="administrated_cities",
         null=True,
         blank=True)
 
@@ -150,13 +153,13 @@ class CityInCampaign(models.Model):
         null=False,
         default=160)
     city = models.ForeignKey(
-          City, 
-          null=False, 
-          blank=False)
+        City,
+        null=False,
+        blank=False)
     campaign = models.ForeignKey(
-          "Campaign", 
-          null=False, 
-          blank=False)
+        "Campaign",
+        null=False,
+        blank=False)
 
     def __unicode__(self):
         return "%(city)s (%(campaign)s)" % {'campaign': self.campaign.name, 'city': self.city.name}
@@ -184,6 +187,7 @@ class Company(models.Model):
     def __unicode__(self):
         return "%s" % self.name
 
+
 class Subsidiary(models.Model):
     """Pobočka"""
 
@@ -193,23 +197,26 @@ class Subsidiary(models.Model):
 
     address = Address()
     company = models.ForeignKey(
-          Company, 
-          related_name="subsidiaries",
-          null=False, 
-          blank=False)
+        Company,
+        related_name="subsidiaries",
+        null=False,
+        blank=False)
     city = models.ForeignKey(
-          City, 
-          verbose_name=_(u"Soutěžní město"),
-          help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % wp_reverse('pravidla'),
-          null=False, blank=False)
+        City,
+        verbose_name=_(u"Soutěžní město"),
+        help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % wp_reverse('pravidla'),
+        null=False,
+        blank=False)
 
     def __unicode__(self):
         return "%s, %s %s, %s, %s" % (self.address.recipient, self.address.street, self.address.street_number, self.address.psc, self.address.city)
 
-def validate_length(value,min_length=25):
+
+def validate_length(value, min_length=25):
     str_len = len(str(value))
-    if str_len<min_length:
+    if str_len < min_length:
         raise ValidationError(_(u"The string should be longer than %(min)s, but is %(max)s characters long") % {'min': min_length, 'max': str_len})
+
 
 class Team(models.Model):
     """Profil týmu"""
@@ -232,8 +239,8 @@ class Team(models.Model):
         blank=False)
     coordinator_campaign = models.OneToOneField(
         'UserAttendance',
-        related_name = "coordinated_team",
-        verbose_name = _(u"Koordinátor/ka týmu"),
+        related_name="coordinated_team",
+        verbose_name=_(u"Koordinátor/ka týmu"),
         null=True,
         blank=True,
         #TODO:
@@ -248,12 +255,13 @@ class Team(models.Model):
         null=False,
         blank=False,
         unique=True,
-        validators = [validate_length],
+        validators=[validate_length],
         )
     campaign = models.ForeignKey(
-          "Campaign", 
-          verbose_name=_(u"Kampaň"),
-          null=False, blank=False)
+        "Campaign",
+        verbose_name=_(u"Kampaň"),
+        null=False,
+        blank=False)
 
     #Auto fields:
     member_count = models.IntegerField(
@@ -265,6 +273,7 @@ class Team(models.Model):
 
     def autoset_member_count(self):
         self.member_count = self.members().count()
+
     def all_members(self, campaign):
         return UserAttendance.objects.filter(campaign=campaign, team=self, userprofile__user__is_active=True)
 
@@ -287,7 +296,7 @@ class Team(models.Model):
         if self.invitation_token == "":
             while True:
                 invitation_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30))
-                if not Team.objects.filter(invitation_token = invitation_token).exists():
+                if not Team.objects.filter(invitation_token=invitation_token).exists():
                     self.invitation_token = invitation_token
                     break
 
@@ -310,7 +319,7 @@ class Campaign(models.Model):
     name = models.CharField(
         unique=True,
         verbose_name=_(u"Jméno kampaně"),
-        max_length=60, 
+        max_length=60,
         null=False)
     slug = models.SlugField(
         unique=True,
@@ -371,10 +380,10 @@ class Phase(models.Model):
     TYPE_DICT = dict(TYPE)
 
     campaign = models.ForeignKey(
-       Campaign, 
-       verbose_name = _(u"Kampaň"),
-       null=False,
-       blank=False)
+        Campaign,
+        verbose_name=_(u"Kampaň"),
+        null=False,
+        blank=False)
     type = models.CharField(
         verbose_name=_(u"Typ fáze"),
         choices=TYPE,
@@ -391,19 +400,19 @@ class Phase(models.Model):
         null=True, blank=True)
 
     def has_started(self):
-        if self.date_from == None:
+        if not self.date_from:
             return True
         return self.date_from <= util.today()
 
     def has_finished(self):
-        if self.date_to == None:
+        if not self.date_to:
             return True
         return not self.date_to >= util.today()
 
     def is_actual(self):
         return self.has_started() and not self.has_finished()
 
-    
+
 class TShirtSize(models.Model):
     """Velikost trička"""
 
@@ -411,15 +420,15 @@ class TShirtSize(models.Model):
         verbose_name=_(u"Velikost"),
         max_length=40, null=False)
     campaign = models.ForeignKey(
-       Campaign, 
-       verbose_name = _(u"Kampaň"),
-       null=False,
-       blank=False)
+        Campaign,
+        verbose_name=_(u"Kampaň"),
+        null=False,
+        blank=False)
     order = models.PositiveIntegerField(
-            default=0,
-            blank=False,
-            null=False,
-            )
+        default=0,
+        blank=False,
+        null=False,
+        )
     ship = models.BooleanField(
         verbose_name=_(u"Posílá se?"),
         default=True,
@@ -429,10 +438,11 @@ class TShirtSize(models.Model):
         verbose_name = _(u"Velikost trička")
         verbose_name_plural = _(u"Velikosti trička")
         unique_together = (("name", "campaign"),)
-        ordering = [ "order" ]
+        ordering = ["order"]
 
     def __unicode__(self):
         return self.name
+
 
 class UserAttendanceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -448,22 +458,23 @@ class UserAttendance(models.Model):
         verbose_name_plural = _(u"Účasti v kampani")
         unique_together = (("userprofile", "campaign"),)
 
-    TEAMAPPROVAL = (('approved', _(u"Odsouhlasený")),
-              ('undecided', _(u"Nerozhodnuto")),
-              ('denied', _(u"Zamítnutý")),
-              )
+    TEAMAPPROVAL = (
+        ('approved', _(u"Odsouhlasený")),
+        ('undecided', _(u"Nerozhodnuto")),
+        ('denied', _(u"Zamítnutý")),
+        )
 
     campaign = models.ForeignKey(
-       Campaign, 
-       verbose_name = _(u"Kampaň"),
-       null=False,
-       blank=False)
+        Campaign,
+        verbose_name=_(u"Kampaň"),
+        null=False,
+        blank=False)
     userprofile = models.ForeignKey(
-       "UserProfile", 
-       verbose_name = _(u"Uživatelský profil"),
-       unique=False,
-       null=False,
-       blank=False)
+        "UserProfile",
+        verbose_name=_(u"Uživatelský profil"),
+        unique=False,
+        null=False,
+        blank=False)
     distance = models.PositiveIntegerField(
         verbose_name=_(u"Vzdálenost"),
         help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
@@ -511,23 +522,23 @@ class UserAttendance(models.Model):
                     'status': 'no_admission',
                     'status_description': _(u'neplatí se'),
                     'class': _(u'success'),
-                   }
+                    }
 
-        payments = self.payments().filter(status__in = Payment.done_statuses)
+        payments = self.payments().filter(status__in=Payment.done_statuses)
         if payments.exists():
             return {'payment': payments.latest('id'),
                     'status': 'done',
                     'status_description': _(u'zaplaceno'),
                     'class': _(u'success'),
-                   }
+                    }
 
-        payments = self.payments().filter(status__in = Payment.waiting_statuses)
+        payments = self.payments().filter(status__in=Payment.waiting_statuses)
         if payments.exists():
             return {'payment': payments.latest('id'),
                     'status': 'waiting',
                     'status_description': _(u'nepotvrzeno'),
                     'class': _(u'warning'),
-                   }
+                    }
 
         payments = self.payments()
         if payments.exists():
@@ -535,13 +546,13 @@ class UserAttendance(models.Model):
                     'status': 'unknown',
                     'status_description': _(u'neznámý'),
                     'class': _(u'warning'),
-                   }
+                    }
 
         return {'payment': None,
                 'status': 'none',
                 'status_description': _(u'žádné platby'),
                 'class': _(u'error'),
-               }
+                }
 
     def payment_status(self):
         return self.payment()['status']
@@ -584,12 +595,12 @@ class UserProfile(models.Model):
     class Meta:
         verbose_name = _(u"Uživatel")
         verbose_name_plural = _(u"Uživatelé")
-        ordering = [ "user__last_name", "user__first_name" ]
+        ordering = ["user__last_name", "user__first_name"]
 
     LANGUAGE = [
-            ('cs', _(u"Čeština")),
-            ('en', _(u"Angličtna")),
-              ]
+        ('cs', _(u"Čeština")),
+        ('en', _(u"Angličtna")),
+        ]
 
     user = models.OneToOneField(
         User,
@@ -609,7 +620,7 @@ class UserProfile(models.Model):
         default='cs')
     mailing_id = models.CharField(
         verbose_name=_(u"ID uživatele v mailing listu"),
-        max_length = 128,
+        max_length=128,
         db_index=True,
         default=None,
         #TODO:
@@ -632,6 +643,7 @@ class UserProfile(models.Model):
             logger.error(_(u"Mailing id %s is already used") % self.mailing_id)
         super(UserProfile, self).save(force_insert, force_update)
 
+
 @receiver(pre_save, sender=UserAttendance)
 def set_team_coordinator_pre(sender, instance, **kwargs):
     if hasattr(instance, "coordinated_team") and instance.coordinated_team != instance.team:
@@ -639,27 +651,30 @@ def set_team_coordinator_pre(sender, instance, **kwargs):
         coordinated_team.coordinator_campaign = None
         coordinated_team.save()
 
+
 @receiver(post_save, sender=UserAttendance)
 def set_team_coordinator_post(sender, instance, created, **kwargs):
-    if instance.team and instance.team.coordinator_campaign == None:
+    if instance.team and not instance.team.coordinator_campaign:
         instance.team.coordinator_campaign = instance
         instance.team.save()
+
 
 class CompanyAdmin(models.Model):
     """Profil firemního administrátora"""
 
-    COMPANY_APPROVAL = (('approved', _(u"Odsouhlasený")),
-              ('undecided', _(u"Nerozhodnuto")),
-              ('denied', _(u"Zamítnutý")),
-              )
+    COMPANY_APPROVAL = (
+        ('approved', _(u"Odsouhlasený")),
+        ('undecided', _(u"Nerozhodnuto")),
+        ('denied', _(u"Zamítnutý")),
+        )
 
     class Meta:
         verbose_name = _(u"Firemní administrátor")
         verbose_name_plural = _(u"Firemní administrátoři")
         unique_together = (
-                ("user", "campaign"),
-                ("administrated_company", "campaign"),
-                )
+            ("user", "campaign"),
+            ("administrated_company", "campaign"),
+            )
 
     user = models.ForeignKey(
         User,
@@ -685,20 +700,20 @@ class CompanyAdmin(models.Model):
         )
 
     administrated_company = models.ForeignKey(
-       "Company", 
-       related_name = "company_admin",
-       verbose_name = _(u"Administrovaná společnost"),
-       null=True,
-       blank=True)
+        "Company",
+        related_name="company_admin",
+        verbose_name=_(u"Administrovaná společnost"),
+        null=True,
+        blank=True)
 
     campaign = models.ForeignKey(
-       Campaign, 
-       null=False,
-       blank=False)
+        Campaign,
+        null=False,
+        blank=False)
 
     def __unicode__(self):
         return self.user.get_full_name()
-    
+
     def save(self, *args, **kwargs):
         status_before_update = None
         if self.id:
@@ -721,10 +736,10 @@ class DeliveryBatch(models.Model):
         default=datetime.datetime.now,
         null=False)
     campaign = models.ForeignKey(
-       Campaign,
-       verbose_name = _(u"Kampaň"),
-       null=False,
-       blank=False)
+        Campaign,
+        verbose_name=_(u"Kampaň"),
+        null=False,
+        blank=False)
     customer_sheets = models.FileField(
         verbose_name=_("Zákaznické listy"),
         upload_to='customer_sheets',
@@ -734,16 +749,17 @@ class DeliveryBatch(models.Model):
         upload_to='tnt_order',
         blank=True, null=True)
 
-
     class Meta:
         verbose_name = _(u"Dávka objednávek")
         verbose_name_plural = _(u"Dávky objednávek")
+
 
 @transaction.atomic
 def add_packages(instance):
     for user_attendance in instance.campaign.user_attendances_for_delivery():
         pt = PackageTransaction(user_attendance=user_attendance, delivery_batch=instance)
         pt.save()
+
 
 @receiver(post_save, sender=DeliveryBatch)
 def create_delivery_files(sender, instance, created, **kwargs):
@@ -771,10 +787,11 @@ class Transaction(PolymorphicModel):
         max_length=50,
         default=0,
         null=False, blank=False)
-    user_attendance = models.ForeignKey(UserAttendance, 
+    user_attendance = models.ForeignKey(
+        UserAttendance,
         related_name="transactions",
-        null=True, 
-        blank=False, 
+        null=True,
+        blank=False,
         default=None)
     created = models.DateTimeField(
         verbose_name=_(u"Vytvoření"),
@@ -824,7 +841,7 @@ class UserActionTransaction(Transaction):
 
     class Status (object):
         COMPETITION_START_CONFIRMED = 30002
-        
+
     STATUS = (
         (Status.COMPETITION_START_CONFIRMED, 'Potvrzen vstup do soutěže'),
         )
@@ -832,6 +849,7 @@ class UserActionTransaction(Transaction):
     class Meta:
         verbose_name = _(u"Uživatelská akce")
         verbose_name_plural = _(u"Uživatelské akce")
+
 
 class UserActionTransactionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -857,7 +875,7 @@ class PackageTransaction(Transaction):
         null=False)
     delivery_batch = models.ForeignKey(
         DeliveryBatch,
-        verbose_name = _(u"Dávka objednávek"),
+        verbose_name=_(u"Dávka objednávek"),
         null=False,
         blank=False)
 
@@ -866,7 +884,7 @@ class PackageTransaction(Transaction):
         PACKAGE_ASSEMBLED = 20003
         PACKAGE_SENT = 20004
         PACKAGE_DELIVERY_CONFIRMED = 20005
-        
+
     STATUS = (
         (Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY, 'Přijat k sestavení'),
         (Status.PACKAGE_ASSEMBLED, 'Sestaven'),
@@ -920,7 +938,7 @@ class Payment(Transaction):
         COMPANY_ACCEPTS = 1005
         INVOICE_MADE = 1006
         INVOICE_PAID = 1007
-        
+
     STATUS = (
         (Status.NEW, 'Nová'),
         (Status.CANCELED, 'Zrušena'),
@@ -936,11 +954,13 @@ class Payment(Transaction):
         )
     STATUS_MAP = dict(STATUS)
 
-    done_statuses = [Status.DONE,
+    done_statuses = [
+        Status.DONE,
         Status.COMPANY_ACCEPTS,
         Status.INVOICE_MADE,
         Status.INVOICE_PAID]
-    waiting_statuses = [Status.NEW,
+    waiting_statuses = [
+        Status.NEW,
         Status.COMMENCED,
         Status.WAITING_CONFIRMATION]
 
@@ -1001,13 +1021,14 @@ class Payment(Transaction):
         super(Payment, self).save(*args, **kwargs)
 
         statuses_company_ok = (Payment.Status.COMPANY_ACCEPTS, Payment.Status.INVOICE_MADE, Payment.Status.INVOICE_PAID)
-        if (self.user_attendance
-            and (status_before_update != Payment.Status.DONE)
-            and self.status == Payment.Status.DONE):
+        if (
+                self.user_attendance
+                and (status_before_update != Payment.Status.DONE)
+                and self.status == Payment.Status.DONE):
             payment_confirmation_mail(self.user_attendance.userprofile.user)
         elif (self.user_attendance
-            and (status_before_update not in statuses_company_ok)
-            and self.status in statuses_company_ok):
+              and (status_before_update not in statuses_company_ok)
+              and self.status in statuses_company_ok):
             payment_confirmation_company_mail(self.user_attendance)
 
         logger.info(u"Saving payment (after):  %s" % Payment.objects.get(pk=self.id).full_string())
@@ -1021,7 +1042,7 @@ class Payment(Transaction):
         else:
             user = None
         return u"user: %s, order_id: %s, session_id: %s, trans_id: %s, amount: %s, description: %s, created: %s, realized: %s, pay_type: %s, status: %s, error: %s" % (
-            user, self.order_id, self.session_id, self.trans_id, self.amount, self.description, self.created, self.realized, self.pay_type, self.status, self.error) 
+            user, self.order_id, self.session_id, self.trans_id, self.amount, self.description, self.created, self.realized, self.pay_type, self.status, self.error)
 
     def __unicode__(self):
         if self.trans_id:
@@ -1048,7 +1069,7 @@ class Trip(models.Model):
         unique_together = (("user_attendance", "date"),)
 
     user_attendance = models.ForeignKey(
-        UserAttendance, 
+        UserAttendance,
         related_name="user_trips",
         null=True,
         blank=True,
@@ -1076,6 +1097,7 @@ class Trip(models.Model):
         default=None,
         )
 
+
 class Competition(models.Model):
     """Soutěž"""
 
@@ -1100,10 +1122,10 @@ class Competition(models.Model):
         verbose_name=_(u"Jméno soutěže"),
         max_length=40, null=False)
     campaign = models.ForeignKey(
-       Campaign, 
-       verbose_name = _(u"Kampaň"),
-       null=False,
-       blank=False)
+        Campaign,
+        verbose_name=_(u"Kampaň"),
+        null=False,
+        blank=False)
     slug = models.SlugField(
         unique=True,
         default="",
@@ -1113,7 +1135,7 @@ class Competition(models.Model):
     url = models.URLField(
         default="",
         verbose_name=u"Odkaz na stránku soutěže",
-        null=True, 
+        null=True,
         blank=True,
         )
     date_from = models.DateField(
@@ -1138,35 +1160,35 @@ class Competition(models.Model):
         null=False)
     user_attendance_competitors = models.ManyToManyField(
         UserAttendance,
-        related_name = "competitions",
-        null=True, 
+        related_name="competitions",
+        null=True,
         blank=True)
     team_competitors = models.ManyToManyField(
         Team,
-        related_name = "competitions",
-        null=True, 
+        related_name="competitions",
+        null=True,
         blank=True)
     company_competitors = models.ManyToManyField(
         Company,
-        related_name = "competitions",
-        null=True, 
+        related_name="competitions",
+        null=True,
         blank=True)
     city = models.ForeignKey(
         City,
-        verbose_name = _(u"Soutěž pouze pro město"),
-        null=True, 
+        verbose_name=_(u"Soutěž pouze pro město"),
+        null=True,
         blank=True)
     company = models.ForeignKey(
         Company,
-        verbose_name = _(u"Soutěž pouze pro firmu"),
-        null=True, 
+        verbose_name=_(u"Soutěž pouze pro firmu"),
+        null=True,
         blank=True)
     without_admission = models.BooleanField(
-        verbose_name = _(u"Soutěž bez přihlášek (pro všechny)"),
+        verbose_name=_(u"Soutěž bez přihlášek (pro všechny)"),
         default=True,
         null=False)
     is_public = models.BooleanField(
-        verbose_name = _(u"Soutěž je veřejná"),
+        verbose_name=_(u"Soutěž je veřejná"),
         default=True,
         null=False)
 
@@ -1231,7 +1253,7 @@ class Competition(models.Model):
             return True
 
     def make_admission(self, userprofile, admission=True):
-        if not self.without_admission and self.can_admit(userprofile) == True:
+        if not self.without_admission and self.can_admit(userprofile):
             if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
                 if admission:
                     self.user_attendance_competitors.add(userprofile)
@@ -1251,6 +1273,7 @@ class Competition(models.Model):
     def __unicode__(self):
         return "%s" % self.name
 
+
 class CompetitionResult(models.Model):
     """Výsledek soutěže"""
     class Meta:
@@ -1258,19 +1281,22 @@ class CompetitionResult(models.Model):
         verbose_name_plural = _(u"Výsledky soutěží")
         unique_together = (("user_attendance", "competition"), ("team", "competition"))
 
-    user_attendance = models.ForeignKey(UserAttendance,
+    user_attendance = models.ForeignKey(
+        UserAttendance,
         related_name="competitions_results",
         null=True,
         blank=True,
         default=None,
         )
-    team = models.ForeignKey(Team,
+    team = models.ForeignKey(
+        Team,
         related_name="competitions_results",
         null=True,
         blank=True,
         default=None,
         )
-    competition = models.ForeignKey(Competition,
+    competition = models.ForeignKey(
+        Competition,
         related_name="results",
         null=False,
         blank=False,
@@ -1292,7 +1318,8 @@ class CompetitionResult(models.Model):
         else:
             if self.user_attendance:
                 return "%s" % self.user_attendance.userprofile.user.get_full_name()
-    
+
+
 class ChoiceType(models.Model):
     """Typ volby"""
     class Meta:
@@ -1300,12 +1327,13 @@ class ChoiceType(models.Model):
         verbose_name_plural = _(u"Typ volby")
         unique_together = (("competition", "name"),)
 
-    competition = models.ForeignKey(Competition,
+    competition = models.ForeignKey(
+        Competition,
         null=False,
         blank=False)
     name = models.CharField(
         verbose_name=_(u"Jméno"),
-        unique = True,
+        unique=True,
         max_length=40, null=True)
     universal = models.BooleanField(
         verbose_name=_(u"Typ volby je použitelný pro víc otázek"),
@@ -1313,6 +1341,7 @@ class ChoiceType(models.Model):
 
     def __unicode__(self):
         return "%s" % self.name
+
 
 class Question(models.Model):
 
@@ -1340,11 +1369,11 @@ class Question(models.Model):
         max_length=16,
         null=False)
     with_comment = models.BooleanField(
-        verbose_name = _(u"Povolit komentář"),
+        verbose_name=_(u"Povolit komentář"),
         default=True,
         null=False)
     with_attachment = models.BooleanField(
-        verbose_name = _(u"Povolit přílohu"),
+        verbose_name=_(u"Povolit přílohu"),
         default=False,
         null=False)
     order = models.IntegerField(
@@ -1352,24 +1381,27 @@ class Question(models.Model):
         null=True, blank=True)
     competition = models.ForeignKey(
         Competition,
-        verbose_name = _(u"Soutěž"),
-        null=False, 
+        verbose_name=_(u"Soutěž"),
+        null=False,
         blank=False)
-    choice_type = models.ForeignKey(ChoiceType,
+    choice_type = models.ForeignKey(
+        ChoiceType,
         null=False,
         blank=False)
 
     def __unicode__(self):
         return "%s" % self.text
 
+
 class Choice(models.Model):
-    
+
     class Meta:
         verbose_name = _(u"Nabídka k anketním otázce")
         verbose_name_plural = _(u"Nabídky k anketním otázkám")
         unique_together = (("choice_type", "text"),)
 
-    choice_type = models.ForeignKey(ChoiceType,
+    choice_type = models.ForeignKey(
+        ChoiceType,
         verbose_name=_(u"Typ volby"),
         related_name="choices",
         null=False,
@@ -1377,17 +1409,18 @@ class Choice(models.Model):
     text = models.CharField(
         verbose_name=_(u"Nabídka"),
         max_length=250,
-        db_index = True,
+        db_index=True,
         null=False)
     points = models.IntegerField(
         verbose_name=_(u"Body"),
-        null=True, 
-        blank=True, 
+        null=True,
+        blank=True,
         default=None,
         )
 
     def __unicode__(self):
         return "%s" % self.text
+
 
 class Answer(models.Model):
     """Odpověď"""
@@ -1417,6 +1450,7 @@ class Answer(models.Model):
     def __unicode__(self):
         return "%s" % self.str_choices()
 
+
 def get_company(campaign, user):
     if not user.userprofile.userattendance_set.get(campaign=campaign).team:
         return None
@@ -1425,16 +1459,19 @@ def get_company(campaign, user):
     except UserProfile.DoesNotExist:
         return user.company_admin.administrated_company
 
+
 def is_team_coordinator(user_attendance):
     if user_attendance.team and user_attendance.team.coordinator_campaign == user_attendance:
         return True
     return False
+
 
 def get_company_admin(user, campaign):
     try:
         return user.company_admin.get(campaign=campaign, company_admin_approved='approved')
     except CompanyAdmin.DoesNotExist:
         return None
+
 
 def is_competitor(user):
     try:
@@ -1448,36 +1485,40 @@ def is_competitor(user):
 
 #TODO: this is quickfix, should be geting campaign slug from URL
 class TeamInCampaignManager(models.Manager):
+
     def get_query_set(self):
-        return super(TeamInCampaignManager,self).get_query_set().filter(campaign__slug=settings.CAMPAIGN)
+        return super(TeamInCampaignManager, self).get_query_set().filter(campaign__slug=settings.CAMPAIGN)
 
 
 class TeamInCampaign(Team):
     objects = TeamInCampaignManager()
+
     class Meta:
         proxy = True
 
 
 class SubsidiaryInCampaignManager(models.Manager):
     def get_query_set(self):
-        return super(SubsidiaryInCampaignManager,self).get_query_set().filter(city__cityincampaign__campaign__slug=settings.CAMPAIGN)
+        return super(SubsidiaryInCampaignManager, self).get_query_set().filter(city__cityincampaign__campaign__slug=settings.CAMPAIGN)
 
 
 class SubsidiaryInCampaign(Subsidiary):
     objects = SubsidiaryInCampaignManager()
+
     class Meta:
         proxy = True
+
 
 #Signals:
 def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     field, (old, new) = changed_fields.items()[0]
-    old_team = Team.objects.get(pk=old) if old else None
     new_team = Team.objects.get(pk=new) if new else None
     if instance.team and new_team.member_count == 0:
         instance.approved_for_team = 'approved'
     else:
         instance.approved_for_team = 'undecided'
 pre_save_changed.connect(pre_user_team_changed, sender=UserAttendance, fields=['team'])
+
 
 def post_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     field, (old, new) = changed_fields.items()[0]
@@ -1496,6 +1537,7 @@ def post_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     results.recalculate_result_competitor(instance)
 post_save_changed.connect(post_user_team_changed, sender=UserAttendance, fields=['team'])
 
+
 @receiver(post_save, sender=User)
 def update_mailing_user(sender, instance, created, **kwargs):
     try:
@@ -1504,23 +1546,28 @@ def update_mailing_user(sender, instance, created, **kwargs):
     except UserProfile.DoesNotExist:
         pass
 
+
 @receiver(post_save, sender=UserAttendance)
 def update_mailing_user_attendance(sender, instance, created, **kwargs):
     mailing.add_or_update_user(instance)
+
 
 @receiver(post_save, sender=Payment)
 def update_mailing_payment(sender, instance, created, **kwargs):
     if instance.user_attendance:
         mailing.add_or_update_user(instance.user_attendance)
 
+
 @receiver(post_save, sender=Trip)
 def trip_post_save(sender, instance, **kwargs):
     if instance.user:
         results.recalculate_result_competitor(instance.user)
 
+
 @receiver(post_save, sender=Competition)
 def competition_post_save(sender, instance, **kwargs):
     instance.recalculate_results()
+
 
 @receiver(post_save, sender=Answer)
 def answer_post_save(sender, instance, **kwargs):
@@ -1532,10 +1579,12 @@ def answer_post_save(sender, instance, **kwargs):
     elif competition.competitor_type == 'company':
         raise NotImplementedError("Company competitions are not working yet")
 
+
 @receiver(pre_save, sender=Payment)
 def payment_set_realized_date(sender, instance, **kwargs):
     if instance.status in Payment.done_statuses and not instance.realized:
         instance.realized = datetime.datetime.now()
+
 
 def team_admin_changed(sender, instance, changed_fields=None, **kwargs):
     field, (old, new) = changed_fields.items()[0]
