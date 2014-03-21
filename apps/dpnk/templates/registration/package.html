@@ -1,0 +1,9 @@
+{% load url from future %}
+{% load dpnk_tags %}
+{% load i18n %}
+
+Triko: {{ user_attendance.package_shipped.t_shirt_size }}
+<br/>
+Adresa: {{ user_attendance.team.subsidiary }}
+<br/>
+Balíček můžete <a href="http://www.tnt.com/webtracker/tracking.do?requestType=GEN&searchType=CON&respLang=cs&respCountry=cz&sourceID=1&sourceCountry=ww&cons={{ user_attendance.package_shipped.tracking_number }}&navigation=1&genericSiteIdent= ">sledovat pomocí TNT</a>

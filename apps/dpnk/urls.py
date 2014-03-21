@@ -66,6 +66,9 @@ campaign_urlpatterns = patterns('',
         login_required_simple(must_be_in_group('cykloservis')(BikeRepairView.as_view()))),
     url(r'^facebook_app/$',
         facebook_app),
+    url(r'^package/$',
+        user_attendance_view, 
+        {"template": "registration/package.html"}),
 
 
     #company admin:

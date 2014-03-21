@@ -36,6 +36,7 @@ urls = {
     'zmenit_tym':                   "tým.html",
     'dalsi_clenove':                "clenove_tymu",
     'souteze':                      "souteze",
+    'balicek':                      "balicek",
 
     # Company admin
     'edit_company':                 "fa/editovat_spolecnost",

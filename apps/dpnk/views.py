@@ -558,6 +558,15 @@ def profile(request, user_attendance=None):
             'package_shipped': user_attendance.package_shipped(),
             }, context_instance=RequestContext(request))
 
+
+@login_required_simple
+@must_be_competitor
+def user_attendance_view(request, user_attendance=None, template=None):
+    return render_to_response(template, {
+            'user_attendance': user_attendance,
+            }, context_instance=RequestContext(request))
+
+
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team

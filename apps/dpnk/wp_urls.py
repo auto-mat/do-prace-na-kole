@@ -38,6 +38,7 @@ urls = {
     'zmenit_tym':                   "/profil/zmenit-tym",
     'dalsi_clenove':                "/profil/dalsi-clenove",
     'souteze':                      "/profil/souteze",
+    'balicek':                      "/profil/balicek",
 
     # Company admin
     'edit_company':                 "/fa/editovat_spolecnost",
