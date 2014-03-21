@@ -14,14 +14,6 @@
       class="btn btn-block btn-warning">{% trans "Vyplňte své osobní údaje" %}</a>
 {% endif %}
 
-{% if profile.t_shirt_size %}
-   <a href="{% wp_url 'zmenit_triko' %}"
-      class="btn btn-block btn-success">{% trans "Velikost trika vyplněna" %}</a>
-{% else %}
-   <a href="{% wp_url 'zmenit_triko' %}"
-      class="btn btn-block btn-warning">{% trans "Vyplňte velikost trika" %}</a>
-{% endif %}
-
 {% if team and approved_for_team == 'undecided' %}
    <a href="{% wp_url 'zmenit_tym' %}"
       class="btn btn-block btn-warning">{% trans "Členství v týmu čeká na schválení týmovým koodinátorem" %}</a>
@@ -34,6 +26,19 @@
 {% elif approved_for_team == 'approved' %}
    <a href="{% wp_url 'zmenit_tym' %}"
       class="btn btn-block btn-success">{% trans "Členství v týmu odsouhlaseno" %}</a>
+{% endif %}
+
+{% if profile.t_shirt_size %}
+   {% if is_package_shipped %}
+      <a href="#"
+         class="btn btn-block btn-success disabled">{% trans "Velikost trika vyplněna" %}</a>
+   {% else %}
+      <a href="{% wp_url 'zmenit_triko' %}"
+         class="btn btn-block btn-success">{% trans "Velikost trika vyplněna" %}</a>
+   {% endif %}
+{% else %}
+   <a href="{% wp_url 'zmenit_triko' %}"
+      class="btn btn-block btn-warning">{% trans "Vyplňte velikost trika" %}</a>
 {% endif %}
 
 {% if team.coordinator_campaign == profile %}
@@ -66,10 +71,21 @@
       class="btn btn-block btn-warning">{% trans "Zaplatit startovné" %}</a>
 {% endif %}
 
+{% if team and payment_status == 'no_admission' or payment_status == 'done' and profile.t_shirt_size %}
+   {% if is_package_shipped %}
+      <a href="{% wp_url 'balicek' %}"
+         class="btn btn-block btn-warning">{% trans "Startovní balíček odeslán, sledovat jeho pohyb" %}</a>
+   {% else %}
+      <a href=""
+         class="btn btn-block btn-warning disabled">{% trans "Startovní balíček ještě nebyl odeslán" %}</a>
+   {% endif %}
+{% else %}
+   <a href="#"
+      class="btn btn-block btn-warning disabled">{% trans "Startovní balíček pošleme až budete mít vybraný tým, tričko a zaplacené startovné" %}</a>
+{% endif %}
+
 <a href="#"
    class="btn btn-block btn-warning disabled">{% trans "Přihlašování do soutěží ještě není aktivní" %}</a>
-   <a href="#"
-      class="btn btn-block btn-warning disabled">{% trans "Startovní balíček ještě nebyl odeslán" %}</a>
 
 {% comment %}
 {% if team and approved_for_team == 'approved' and team %}
@@ -78,14 +94,6 @@
 {% else %}
    <a href="#"
       class="btn btn-block btn-warning disabled">{% trans "Před přihlášením do soutěží musíte být součástí týmu" %}</a>
-{% endif %}
-
-{% if team and payment_status == 'no_admission' or payment_status == 'done' %}
-   <a href="{% wp_url 'souteze' %}"
-      class="btn btn-block btn-warning">{% trans "Doručení balíčku" %}</a>
-{% else %}
-   <a href="#"
-      class="btn btn-block btn-warning disabled">{% trans "Startovní balíček pošleme až budete mít vybraný tým a zaplacené startovné" %}</a>
 {% endif %}
 {% endcomment %}
 

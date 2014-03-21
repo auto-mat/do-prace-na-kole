@@ -892,12 +892,14 @@ class PackageTransaction(Transaction):
         blank=False)
 
     class Status (object):
+        PACKAGE_NEW = 20001
         PACKAGE_ACCEPTED_FOR_ASSEMBLY = 20002
         PACKAGE_ASSEMBLED = 20003
         PACKAGE_SENT = 20004
         PACKAGE_DELIVERY_CONFIRMED = 20005
 
     STATUS = (
+        (Status.PACKAGE_NEW, 'Nový'),
         (Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY, 'Přijat k sestavení'),
         (Status.PACKAGE_ASSEMBLED, 'Sestaven'),
         (Status.PACKAGE_SENT, 'Odeslán'),

@@ -544,6 +544,7 @@ def profile(request, user_attendance=None):
         team_members_count = 0
     request.session['invite_success_url'] = 'profil'
 
+    is_package_shipped = user_attendance.package_shipped() != None
     return render_to_response('registration/profile.html',
                               {
             'active': user_attendance.userprofile.user.is_active,
@@ -555,7 +556,7 @@ def profile(request, user_attendance=None):
             'payment_type': user_attendance.payment_type(),
             'team_members_count': team_members_count,
             'approved_for_team': user_attendance.approved_for_team,
-            'package_shipped': user_attendance.package_shipped(),
+            'is_package_shipped': is_package_shipped,
             }, context_instance=RequestContext(request))
 
 
