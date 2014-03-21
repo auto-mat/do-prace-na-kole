@@ -26,3 +26,4 @@ django-timelog
 django-admin-sortable2
 reportlab
 svg2rlg
+flake8
