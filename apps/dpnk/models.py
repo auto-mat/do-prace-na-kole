@@ -781,13 +781,13 @@ def create_delivery_files(sender, instance, created, **kwargs):
     if not instance.customer_sheets:
         temp = NamedTemporaryFile()
         parcel_batch.make_customer_sheets_pdf(temp, instance)
-        instance.customer_sheets.save("customer_sheets_%s.pdf" % instance.created.strftime("%Y-%M-%d"), File(temp))
+        instance.customer_sheets.save("customer_sheets_%s_%s.pdf" % (instance.pk, instance.created.strftime("%Y-%M-%d")), File(temp))
         instance.save()
 
     if not instance.tnt_order:
         temp = NamedTemporaryFile()
         avfull.make_avfull(temp, instance)
-        instance.tnt_order.save("delivery_batch_%s.txt" % instance.created.strftime("%Y-%M-%d"), File(temp))
+        instance.tnt_order.save("delivery_batch_%s_%s.txt" % (instance.pk, instance.created.strftime("%Y-%M-%d")), File(temp))
         instance.save()
 
 
