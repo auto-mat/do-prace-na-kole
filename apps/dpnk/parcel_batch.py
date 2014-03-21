@@ -82,10 +82,14 @@ def make_sheet(package_transaction, Story):
     Story.append(Spacer(1, 30))
 
     Story.append(Paragraph(u"Uživatelské jméno: %s" % user_attendance.userprofile.user.username, styles["Normal"]))
+
     d = package_transaction.created
     datestr = "%d. %d. %d" % (d.day, d.month, d.year)
     Story.append(Paragraph(datestr, styles["Heading3"]))
-    Story.append(Paragraph(u"#%s" % package_transaction.delivery_batch.pk, styles["Heading3"]))
+
+    batch_date = package_transaction.delivery_batch.created.strftime("%y%M%d")
+    reference = u"Ref: %s-%s-DPNK Seq: %s" % (package_transaction.delivery_batch.pk, batch_date, package_transaction.pk)
+    Story.append(Paragraph(reference, styles["Heading3"]))
     Story.append(Spacer(1, 30))
 
     Story.append(Paragraph(u"%s, %s" % (user_attendance.team.subsidiary.company, user_attendance.team.subsidiary.address_recipient), styles["Normal"]))
