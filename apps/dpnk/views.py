@@ -19,36 +19,34 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 # Standard library imports
-import time, random, httplib, urllib, hashlib, datetime
+import time, httplib, urllib, hashlib, datetime
 # Django imports
-from django.shortcuts import render_to_response, redirect, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404
 import django.contrib.auth
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
-from decorators import must_be_coordinator, must_be_approved_for_team, must_be_company_admin, must_be_competitor, login_required_simple, must_have_team
+from decorators import must_be_coordinator, must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team
 from django.template import RequestContext
-from django.db.models import Sum, Count, Q
+from django.db.models import Sum, Q
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import cache_page
 from django.views.generic.edit import FormView, UpdateView, CreateView
 # Registration imports
 import registration.signals, registration.backends, registration.backends.simple
 # Model imports
-from django.contrib.auth.models import User
 from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice, City, UserAttendance, Campaign
 import forms
-from forms import RegistrationFormDPNK, RegisterTeamForm, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm, ChangeTeamForm
+from forms import RegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm, ChangeTeamForm
 from django.conf import settings
 from  django.http import HttpResponse
 from django import http
 # Local imports
 import util, draw
-from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail, invitation_register_mail
-from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm, PasswordChangeForm
+from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import get_current_site
-from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout
+from django.contrib.auth import login as auth_login
 
 from wp_urls import wp_reverse
 from unidecode import unidecode
@@ -73,7 +71,7 @@ def login(request, template_name='registration/login.html',
         form = authentication_form(request)
     request.session.set_test_cookie()
     current_site = get_current_site(request)
-    context = { 
+    context = {
         'form': form,
         'site': current_site,
         'django_url': settings.DJANGO_URL,
@@ -266,7 +264,7 @@ class RegistrationView(FormView):
         campaign = Campaign.objects.get(slug=self.kwargs['campaign_slug'])
         super(RegistrationView, self).form_valid(form)
         backend = registration.backends.get_backend(backend)
-        new_user = backend.register(self.request, campaign, self.kwargs.get('token', None), **form.cleaned_data)
+        backend.register(self.request, campaign, self.kwargs.get('token', None), **form.cleaned_data)
         auth_user = django.contrib.auth.authenticate(
             username=self.request.POST['username'],
             password=self.request.POST['password1'])
@@ -454,7 +452,7 @@ def profile_access(request, user_attendance=None):
 
 
 def trip_active(day, today):
-    return ((day <= today) 
+    return ((day <= today)
         and (day > today - datetime.timedelta(days=14))
     )
 
@@ -563,7 +561,7 @@ def profile(request, user_attendance=None):
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def other_team_members(request, userprofile=None, user_attendance=None, 
+def other_team_members(request, userprofile=None, user_attendance=None,
         template = 'registration/team_members.html'
         ):
     campaign = user_attendance.campaign
@@ -580,15 +578,15 @@ def other_team_members(request, userprofile=None, user_attendance=None,
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def admissions(request, template, user_attendance=None, 
+def admissions(request, template, user_attendance=None,
         success_url="souteze",
         ):
     if request.method == 'POST':
         if 'admission_competition_id' in request.POST and request.POST['admission_competition_id']:
-            competition = Competition.objects.get(id=request.POST['admission_competition_id']) 
+            competition = Competition.objects.get(id=request.POST['admission_competition_id'])
             competition.make_admission(user_attendance, True)
         if 'cancellation_competition_id' in request.POST and request.POST['cancellation_competition_id']:
-            competition = Competition.objects.get(id=request.POST['cancellation_competition_id']) 
+            competition = Competition.objects.get(id=request.POST['cancellation_competition_id'])
             competition.make_admission(user_attendance, False)
         return redirect(wp_reverse(success_url))
 
@@ -603,7 +601,7 @@ def admissions(request, template, user_attendance=None,
             'user_attendance': user_attendance,
             }, context_instance=RequestContext(request))
 
-@cache_page(24 * 60 * 60) 
+@cache_page(24 * 60 * 60)
 def competition_results(request, template, competition_slug, campaign_slug, limit=None):
     if limit == '':
         limit = None
@@ -717,7 +715,7 @@ def questionaire(request, questionaire_slug = None,
                 answer = answers_dict[fileupload_id]
                 answer.attachment = handle_uploaded_file(filehandler, request.user.username)
                 answer.save()
-    
+
         competition.make_admission(user_attendance)
         form_filled = True
 
@@ -816,11 +814,11 @@ def answers(request):
     count_all = {}
     respondents = dict((c, 0) for c in City.objects.all())
     choice_names = {}
-    
+
     for a in answers:
         a.city = a.user_attendance.team.subsidiary.city
 
-    
+
     if question.type in ('choice', 'multiple-choice'):
         for a in answers:
             respondents[a.city] += 1
