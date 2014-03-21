@@ -26,7 +26,8 @@ import django.contrib.auth
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
-from decorators import must_be_coordinator, must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team
+from django.utils.decorators import method_decorator
+from decorators import must_be_coordinator, must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team, user_attendance_has
 from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import gettext as _
@@ -664,6 +665,11 @@ class ChangeTShirtView(SuccessMessageMixin, UpdateView):
     def form_valid(self, form):
         super(ChangeTShirtView, self).form_valid(form)
         return redirect(wp_reverse(self.success_url))
+
+    @method_decorator(login_required_simple)
+    @method_decorator(user_attendance_has(lambda ua: ua.package_shipped(), "<div class='text-warning'>Velikost trika nemůžete měnit, již bylo odesláno</div>"))
+    def dispatch(self, request, *args, **kwargs):
+        return super(ChangeTShirtView, self).dispatch(request, *args, **kwargs)
 
 
 def handle_uploaded_file(source, username):
