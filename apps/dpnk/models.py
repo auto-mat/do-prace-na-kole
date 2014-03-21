@@ -365,7 +365,7 @@ class Campaign(models.Model):
             campaign=self,
             transactions__payment__status__in=Payment.done_statuses,
             t_shirt_size__ship=True,
-        ).exclude(transactions__packagetransaction__status__gt=1).\
+        ).exclude(transactions__packagetransaction__status__in=PackageTransaction.shipped_statuses).\
         exclude(team=None).distinct()
 
 
@@ -590,6 +590,9 @@ class UserAttendance(models.Model):
         else:
             return False
 
+    def package_shipped(self):
+        return self.transactions.filter(instance_of=PackageTransaction, status__in=PackageTransaction.shipped_statuses).last()
+
     def other_user_attendances(self, campaign):
         return self.userprofile.userattendance_set.exclude(campaign=campaign)
 
@@ -762,7 +765,11 @@ class DeliveryBatch(models.Model):
 @transaction.atomic
 def add_packages(instance):
     for user_attendance in instance.campaign.user_attendances_for_delivery():
-        pt = PackageTransaction(user_attendance=user_attendance, delivery_batch=instance)
+        pt = PackageTransaction(
+            user_attendance=user_attendance,
+            delivery_batch=instance,
+            status=PackageTransaction.Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
+            )
         pt.save()
 
 
@@ -896,6 +903,13 @@ class PackageTransaction(Transaction):
         (Status.PACKAGE_SENT, 'Odeslán'),
         (Status.PACKAGE_DELIVERY_CONFIRMED, 'Doručení potvrzeno'),
         )
+
+    shipped_statuses = [
+        Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
+        Status.PACKAGE_ASSEMBLED,
+        Status.PACKAGE_SENT,
+        Status.PACKAGE_DELIVERY_CONFIRMED
+        ]
 
     class Meta:
         verbose_name = _(u"Transakce balíku")

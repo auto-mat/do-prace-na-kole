@@ -557,6 +557,7 @@ def profile(request, user_attendance=None):
             'payment_type': user_attendance.payment_type(),
             'team_members_count': team_members_count,
             'approved_for_team': user_attendance.approved_for_team,
+            'package_shipped': user_attendance.package_shipped(),
             }, context_instance=RequestContext(request))
 
 @login_required_simple
