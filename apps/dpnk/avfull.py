@@ -30,23 +30,33 @@ def make_address(**fields):
 
 
 def make_aline(**fields):
-    return u"""A\
+    aline = u"""A\
 {m[carrier_code]:<5.5}\
-{m[con_reference]:<18.18}\
+{m[con_reference]:>18.18}\
 {m[con_sequence_number]:0>6.0f}\
-{m[con_note_number]:<9.9}\
-""".format(m=Default(fields)) + \
-        make_address(**fields['sender_address']) + \
-        make_address(**fields['receivers_address']) + \
-        make_address(**fields['pick_up_address']) + \
-        make_address(**fields['delivery_address'])
+{m[con_note_number]:0>9.0f}\
+""".format(m=Default(fields))
+
+    if not fields['delivery_address'] and not fields['pick_up_address'] and not fields['receivers_address'] and not fields['sender_address']:
+        return aline
+    aline += make_address(**fields['sender_address'])
+    if not fields['delivery_address'] and not fields['pick_up_address'] and not fields['receivers_address']:
+        return aline
+    aline += make_address(**fields['receivers_address'])
+    if not fields['delivery_address'] and not fields['pick_up_address']:
+        return aline
+    aline += make_address(**fields['pick_up_address'])
+    if not fields['delivery_address']:
+        return aline
+    aline += make_address(**fields['delivery_address'])
+    return aline
 
 
 def make_bline(**fields):
     return u"""B\
-{m[con_reference]:<18.18}\
+{m[con_reference]:>18.18}\
 {m[con_sequence_number]:0>6.0f}\
-{m[con_note_number]:<9.9}\
+{m[con_note_number]:0>9.0f}\
 {m[con_sending_date]:<8.8}\
 {m[special_instructions]:<60.60}\
 {m[cost_centre_code]:<20.20}\
@@ -67,9 +77,9 @@ def make_bline(**fields):
 
 def make_cline(**fields):
     return u"""C\
-{m[con_reference]:<18.18}\
+{m[con_reference]:>18.18}\
 {m[con_sequence_number]:0>6.0f}\
-{m[con_note_number]:<9.9}\
+{m[con_note_number]:0>9.0f}\
 {m[package_type_seq_number]:0>2.0f}\
 {m[package_type_desc]:>20.20}\
 {m[package_type_count]:<4.0f}\
@@ -85,9 +95,9 @@ def make_cline(**fields):
 
 def make_dline(**fields):
     return u"""D\
-{m[con_reference]:<18.18}\
+{m[con_reference]:>18.18}\
 {m[con_sequence_number]:0>6.0f}\
-{m[con_note_number]:<9.9}\
+{m[con_note_number]:0>9.0f}\
 {m[package_type_seq_number]:0>2.0f}\
 {m[article_type_sequence_number]:0>2.0f}\
 {m[article_descriptory]:<30.30}\
@@ -106,8 +116,9 @@ def make_dline(**fields):
 
 def make_avfull(outfile, delivery_batch):
     try:
-        date = datetime.datetime.today().strftime("%Y%M%D")
-        con_reference = str(delivery_batch.pk) + "-A*M-DPNK"
+        today = datetime.datetime.today().strftime("%y%M%d")
+        batch_date = delivery_batch.created.strftime("%y%M%d")
+        con_reference = "%s-%s-DPNK" % (str(delivery_batch.pk), batch_date)
         tnt_account_reference = 111057
         for package_transaction in delivery_batch.packagetransaction_set.all():
             user_attendance = package_transaction.user_attendance
@@ -117,7 +128,6 @@ def make_avfull(outfile, delivery_batch):
             serviceID = "15N"
             weight = 0.2
             sender_address = {
-                #"ac_number": str(i),
                 "name": "OP Automat",
                 "street1": "Korytna 1538/4",
                 "town": "PRAHA",
@@ -126,7 +136,6 @@ def make_avfull(outfile, delivery_batch):
                 "tnt_ac_reference": tnt_account_reference,
                 }
             receivers_address = {
-                #"ac_number" : str(i),
                 "name": u"%s, %s" % (subsidiary.company, subsidiary.address_recipient),
                 "contact_name": user_attendance,
                 "phone": user_attendance.userprofile.telephone.replace(" ", ""),
@@ -139,10 +148,10 @@ def make_avfull(outfile, delivery_batch):
             delivery_address = {}
 
             outfile.write(unidecode(make_aline(
-                carrier_code="TNT",
+                carrier_code="TNT03",
                 con_reference=con_reference,
                 con_sequence_number=sequence_number,
-                #vat_number=package_transaction.tracking_number,
+                con_note_number=package_transaction.tracking_number,
                 sender_address=sender_address,
                 receivers_address=receivers_address,
                 pick_up_address=pick_up_address,
@@ -152,8 +161,8 @@ def make_avfull(outfile, delivery_batch):
             outfile.write(unidecode(make_bline(
                 con_reference=con_reference,
                 con_sequence_number=sequence_number,
-                #con_sequence_number=str(package_transaction.tracking_number),
-                con_sending_date=date,
+                con_note_number=package_transaction.tracking_number,
+                con_sending_date=today,
                 service_code=serviceID,
                 payment_indicator="S",
                 total_no_packages=1,
@@ -165,9 +174,9 @@ def make_avfull(outfile, delivery_batch):
             outfile.write(unidecode(make_cline(
                 con_reference=con_reference,
                 con_sequence_number=sequence_number,
-                #con_sequence_number=str(package_transaction.tracking_number),
+                con_note_number=package_transaction.tracking_number,
                 package_type_seq_number=1,
-                package_type_desc=user_attendance.campaign.name,
+                package_type_desc=user_attendance.campaign.slug,
                 package_type_count=1,
                 package_height=2,
                 package_width=24,
@@ -178,7 +187,7 @@ def make_avfull(outfile, delivery_batch):
             outfile.write(unidecode(make_dline(
                 con_reference=con_reference,
                 con_sequence_number=sequence_number,
-                #con_sequence_number=str(package_transaction.tracking_number),
+                con_note_number=package_transaction.tracking_number,
                 package_type_seq_number=1,
                 article_type_sequence_number=1,
                 )+"\n"))
