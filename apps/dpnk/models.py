@@ -361,7 +361,12 @@ class Campaign(models.Model):
         return self.name
 
     def user_attendances_for_delivery(self):
-        return UserAttendance.objects.filter(campaign=self, transactions__payment__status__in=Payment.done_statuses, t_shirt_size__ship=True).exclude(transactions__packagetransaction__status__gt=1)
+        return UserAttendance.objects.filter(
+            campaign=self,
+            transactions__payment__status__in=Payment.done_statuses,
+            t_shirt_size__ship=True,
+        ).exclude(transactions__packagetransaction__status__gt=1).\
+        exclude(team=None).distinct()
 
 
 class Phase(models.Model):
@@ -904,7 +909,7 @@ class PackageTransaction(Transaction):
             campaign = self.user_attendance.campaign
             first = campaign.tracking_number_first
             last = campaign.tracking_number_last
-            last_transaction = PackageTransaction.objects.filter(tracking_number__gte=first, tracking_number__lte=last).last()
+            last_transaction = PackageTransaction.objects.filter(tracking_number__gte=first, tracking_number__lte=last).order_by("tracking_number").last()
             if last_transaction:
                 if last_transaction.tracking_number == last:
                     raise Exception(_(u"Došla číselná řada pro balíčkové transakce"))
