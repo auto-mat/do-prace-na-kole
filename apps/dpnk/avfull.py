@@ -116,7 +116,7 @@ def make_dline(**fields):
 
 def make_avfull(outfile, delivery_batch):
     try:
-        today = datetime.datetime.today().strftime("%y%M%d")
+        today = datetime.datetime.today().strftime("%Y%M%d")
         batch_date = delivery_batch.created.strftime("%y%M%d")
         con_reference = "%s-%s-DPNK" % (str(delivery_batch.pk), batch_date)
         tnt_account_reference = 111057
@@ -156,7 +156,7 @@ def make_avfull(outfile, delivery_batch):
                 receivers_address=receivers_address,
                 pick_up_address=pick_up_address,
                 delivery_address=delivery_address,
-                )+"\n"))
+                )+"\r\n"))
 
             outfile.write(unidecode(make_bline(
                 con_reference=con_reference,
@@ -169,7 +169,7 @@ def make_avfull(outfile, delivery_batch):
                 currency_code="CZK",
                 con_total_value=160,
                 weight_in_kg=weight,
-                )+"\n"))
+                )+"\r\n"))
 
             outfile.write(unidecode(make_cline(
                 con_reference=con_reference,
@@ -182,7 +182,7 @@ def make_avfull(outfile, delivery_batch):
                 package_width=24,
                 package_depth=33,
                 package_total_weight_kgs=weight,
-                )+"\n"))
+                )+"\r\n"))
 
             outfile.write(unidecode(make_dline(
                 con_reference=con_reference,
@@ -190,6 +190,6 @@ def make_avfull(outfile, delivery_batch):
                 con_note_number=package_transaction.tracking_number_cnc(),
                 package_type_seq_number=1,
                 article_type_sequence_number=1,
-                )+"\n"))
+                )+"\r\n"))
     finally:
         outfile.close
