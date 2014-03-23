@@ -167,7 +167,7 @@ def make_avfull(outfile, delivery_batch):
                 payment_indicator="S",
                 total_no_packages=1,
                 currency_code="CZK",
-                con_total_value=160,
+                con_total_value=user_attendance.admission_fee(),
                 weight_in_kg=weight,
                 )+"\r\n"))
 
