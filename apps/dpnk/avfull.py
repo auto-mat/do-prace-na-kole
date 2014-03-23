@@ -34,7 +34,7 @@ def make_aline(**fields):
 {m[carrier_code]:<5.5}\
 {m[con_reference]:>18.18}\
 {m[con_sequence_number]:0>6.0f}\
-{m[con_note_number]:0>9.0f}\
+{m[con_note_number]:0>9.9}\
 """.format(m=Default(fields))
 
     if not fields['delivery_address'] and not fields['pick_up_address'] and not fields['receivers_address'] and not fields['sender_address']:
@@ -56,7 +56,7 @@ def make_bline(**fields):
     return u"""B\
 {m[con_reference]:>18.18}\
 {m[con_sequence_number]:0>6.0f}\
-{m[con_note_number]:0>9.0f}\
+{m[con_note_number]:0>9.9}\
 {m[con_sending_date]:<8.8}\
 {m[special_instructions]:<60.60}\
 {m[cost_centre_code]:<20.20}\
@@ -79,7 +79,7 @@ def make_cline(**fields):
     return u"""C\
 {m[con_reference]:>18.18}\
 {m[con_sequence_number]:0>6.0f}\
-{m[con_note_number]:0>9.0f}\
+{m[con_note_number]:0>9.9}\
 {m[package_type_seq_number]:0>2.0f}\
 {m[package_type_desc]:>20.20}\
 {m[package_type_count]:<4.0f}\
@@ -97,7 +97,7 @@ def make_dline(**fields):
     return u"""D\
 {m[con_reference]:>18.18}\
 {m[con_sequence_number]:0>6.0f}\
-{m[con_note_number]:0>9.0f}\
+{m[con_note_number]:0>9.9}\
 {m[package_type_seq_number]:0>2.0f}\
 {m[article_type_sequence_number]:0>2.0f}\
 {m[article_descriptory]:<30.30}\
@@ -151,7 +151,7 @@ def make_avfull(outfile, delivery_batch):
                 carrier_code="TNT03",
                 con_reference=con_reference,
                 con_sequence_number=sequence_number,
-                con_note_number=package_transaction.tracking_number,
+                con_note_number=package_transaction.tracking_number_cnc(),
                 sender_address=sender_address,
                 receivers_address=receivers_address,
                 pick_up_address=pick_up_address,
@@ -161,7 +161,7 @@ def make_avfull(outfile, delivery_batch):
             outfile.write(unidecode(make_bline(
                 con_reference=con_reference,
                 con_sequence_number=sequence_number,
-                con_note_number=package_transaction.tracking_number,
+                con_note_number=package_transaction.tracking_number_cnc(),
                 con_sending_date=today,
                 service_code=serviceID,
                 payment_indicator="S",
@@ -174,7 +174,7 @@ def make_avfull(outfile, delivery_batch):
             outfile.write(unidecode(make_cline(
                 con_reference=con_reference,
                 con_sequence_number=sequence_number,
-                con_note_number=package_transaction.tracking_number,
+                con_note_number=package_transaction.tracking_number_cnc(),
                 package_type_seq_number=1,
                 package_type_desc=user_attendance.campaign.slug,
                 package_type_count=1,
@@ -187,7 +187,7 @@ def make_avfull(outfile, delivery_batch):
             outfile.write(unidecode(make_dline(
                 con_reference=con_reference,
                 con_sequence_number=sequence_number,
-                con_note_number=package_transaction.tracking_number,
+                con_note_number=package_transaction.tracking_number_cnc(),
                 package_type_seq_number=1,
                 article_type_sequence_number=1,
                 )+"\n"))

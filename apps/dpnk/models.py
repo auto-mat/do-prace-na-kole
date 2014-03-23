@@ -42,6 +42,7 @@ from django.core.files import File
 from django.conf import settings
 from polymorphic import PolymorphicModel
 from django.db import transaction
+from modulus11 import mod11
 # Python library imports
 import datetime
 # Local imports
@@ -916,6 +917,10 @@ class PackageTransaction(Transaction):
     class Meta:
         verbose_name = _(u"Transakce balíku")
         verbose_name_plural = _(u"Transakce balíku")
+
+    def tracking_number_cnc(self):
+        str_tn = str(self.tracking_number)
+        return str_tn + str(mod11.calc_check_digit(str_tn))
 
     @transaction.atomic
     def save(self, *args, **kwargs):

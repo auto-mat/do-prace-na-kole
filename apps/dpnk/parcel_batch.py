@@ -37,7 +37,7 @@ def make_sheet(package_transaction, Story):
     DIR = os.path.dirname(__file__)
     # CONFIGURATION
     user_attendance = package_transaction.user_attendance
-    delivery_number = "{:0>9.0f}".format(package_transaction.tracking_number)
+    delivery_number = "{:0>9.9}".format(package_transaction.tracking_number_cnc())
     if u"pánské" in user_attendance.t_shirt_size.__unicode__():
         t_shirt_preview_file = os.path.join(DIR, "static/img/campaign_tshirt_men.svg")
     if u"dámské" in user_attendance.t_shirt_size.__unicode__():
