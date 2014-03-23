@@ -439,6 +439,10 @@ class TShirtSize(models.Model):
         verbose_name=_(u"Posílá se?"),
         default=True,
         null=False)
+    t_shirt_preview = models.FileField(
+        verbose_name=_("Náhled trika"),
+        upload_to='t_shirt_preview',
+        blank=True, null=True)
 
     class Meta:
         verbose_name = _(u"Velikost trička")

@@ -38,10 +38,6 @@ def make_sheet(package_transaction, Story):
     # CONFIGURATION
     user_attendance = package_transaction.user_attendance
     delivery_number = "{:0>9.9}".format(package_transaction.tracking_number_cnc())
-    if u"pánské" in user_attendance.t_shirt_size.__unicode__():
-        t_shirt_preview_file = os.path.join(DIR, "static/img/campaign_tshirt_men.svg")
-    if u"dámské" in user_attendance.t_shirt_size.__unicode__():
-        t_shirt_preview_file = os.path.join(DIR, "static/img/campaign_tshirt_women.svg")
     logo_file = os.path.join(DIR, "static/img/logo.jpg")
     # END OF CONFIGURATION
 
@@ -96,14 +92,15 @@ def make_sheet(package_transaction, Story):
     Story.append(Paragraph(user_attendance.__unicode__(), styles["Normal"]))
     Story.append(Paragraph(u"%s %s" % (user_attendance.team.subsidiary.address_street, user_attendance.team.subsidiary.address_street_number), styles["Normal"]))
     Story.append(Paragraph(u"%s, %s" % (user_attendance.team.subsidiary.address_psc, user_attendance.team.subsidiary.address_city), styles["Normal"]))
-    Story.append(Paragraph(user_attendance.t_shirt_size.__unicode__(), styles["Heading1"]))
+    Story.append(Paragraph(package_transaction.t_shirt_size.__unicode__(), styles["Heading1"]))
     Story.append(Spacer(1, 72))
 
-    svg_tshirt = svg2rlg(t_shirt_preview_file)
-    svg_tshirt.scale(0.2, 0.2)
-    svg_tshirt.width = 5*cm
-    svg_tshirt.height = 0
-    svg_tshirt.shift(11*cm, 0)
-    Story.append(svg_tshirt)
+    if package_transaction.t_shirt_size.t_shirt_preview:
+        svg_tshirt = svg2rlg(package_transaction.t_shirt_size.t_shirt_preview.path)
+        svg_tshirt.scale(0.2, 0.2)
+        svg_tshirt.width = 5*cm
+        svg_tshirt.height = 0
+        svg_tshirt.shift(11*cm, 0)
+        Story.append(svg_tshirt)
 
     Story.append(PageBreak())
