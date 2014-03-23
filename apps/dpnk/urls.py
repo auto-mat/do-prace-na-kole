@@ -69,6 +69,9 @@ campaign_urlpatterns = patterns('',
     url(r'^package/$',
         user_attendance_view, 
         {"template": "registration/package.html"}),
+    url(r'^address/$',
+        user_attendance_view,
+        {"template": "registration/address.html"}),
 
 
     #company admin:
