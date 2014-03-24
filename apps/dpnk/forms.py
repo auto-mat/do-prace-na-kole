@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from smart_selects.form_fields import ChainedModelChoiceField, GroupedModelSelect
-from django.contrib.auth.forms import AuthenticationForm
+from smart_selects.form_fields import ChainedModelChoiceField
 from django.contrib.auth.models import User
-from django import forms, http
+from django import forms
 # Registration imports
 import registration.forms
 import models
@@ -28,7 +27,7 @@ class RegisterCompanyForm(forms.ModelForm):
     class Meta:
         model = Company
         fields = ('name', )
-    
+
 class AdressForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
@@ -156,7 +155,7 @@ class ChangeTeamForm(forms.ModelForm):
 
 class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
     required_css_class = 'required'
-    
+
     language = forms.ChoiceField(
         label=_(u"Jazyk komunikace"),
         choices = UserProfile.LANGUAGE,
@@ -261,7 +260,7 @@ class BikeRepairForm(forms.ModelForm):
         label="Poznámka",
         max_length=500,
         required=False)
-    
+
     def clean_user_attendance(self):
         campaign = self.initial['campaign']
         try:
@@ -357,7 +356,6 @@ class ProfileUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).__init__(*args, **kwargs)
-        user_attendance = kwargs['instance']
         self.fields['language'].initial = self.instance.userprofile.language
         self.fields['email'].initial = self.instance.userprofile.user.email
         self.fields['first_name'].initial = self.instance.userprofile.user.first_name
