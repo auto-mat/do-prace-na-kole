@@ -1,6 +1,6 @@
 {% load wp_url from dpnk_tags %}{% autoescape off %}
 
-Zpráva pro účastnici/účastníka soutěže {{ user.campaign }} {{ user.get_full_name }} ze společnosti {{ company }}.
+Zpráva pro soutěžící/ho {{ user }} z týmu {{user.team.name}} v soutěži {{ user.campaign }} ze společnosti {{ company }}.
 
 Dobrý den,
 firemní správce společnosti {{ company }}, právě potvrdil/a uhrazení Vašeho účastnického poplatku v soutěži {{ user.campaign }}.

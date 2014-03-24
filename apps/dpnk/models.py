@@ -1058,7 +1058,7 @@ class Payment(Transaction):
                 self.user_attendance
                 and (status_before_update != Payment.Status.DONE)
                 and self.status == Payment.Status.DONE):
-            payment_confirmation_mail(self.user_attendance.userprofile.user)
+            payment_confirmation_mail(self.user_attendance)
         elif (self.user_attendance
               and (status_before_update not in statuses_company_ok)
               and self.status in statuses_company_ok):

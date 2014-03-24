@@ -4,7 +4,7 @@ Zpráva pro soutěžící/ho {{ user.userprofile }} v soutěži {{ user.campaign
 
 Dobrý den,
 
-vaše členství v týmu {{user.userprofile.team.name}} bylo právě odsouhlaseno. Můžete se přihlásit ke svému profilu pomocí adresy 
+vaše členství v týmu {{user.team.name}} bylo právě odsouhlaseno. Můžete se přihlásit ke svému profilu pomocí adresy
 {% block profile_link %}
 {{ SITE_URL }}{% wp_url 'profil' %}
 {% endblock %}

@@ -1,12 +1,12 @@
 {% load wp_url from dpnk_tags %}{% autoescape off %}
 
 {% if not invited == None %}
-Zpráva pro soutěžící/ho {{ invited.userprofile }} z týmu {{invited.team}} v soutěži {{ invited.campaign }}.
+Zpráva pro soutěžící/ho {{ invited.userprofile }} z týmu {{invited.team.name}} v soutěži {{ invited.campaign }}.
 {% endif %}
 
 Dobrý den,
 
-Váš kolega/kolegyně {{ inviting.userprofile }} chce jezdit s Vámi v týmu {{inviting.team.name}}. Víte proč? Zeptejte se ho/jí na mailu {{ inviting.mail }}.
+Váš kolega/kolegyně {{ inviting.userprofile }} chce jezdit s Vámi v týmu {{inviting.team.name}}. Víte proč? Zeptejte se ho/jí na mailu {{ inviting.userprofile.user.email }}.
 
 {% if not invited == None %}
 Jdete do toho? Stačí se na stránkách {{ SITE_URL }}{% wp_url 'login' %} přihlásit pod vaším uživatelským jménem ({{ invited.userprofile.user.username }}) a heslem z minulého roku.

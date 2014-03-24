@@ -20,7 +20,6 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
 from django.http import HttpResponse, Http404
@@ -33,7 +32,6 @@ from dpnk.email import company_admin_register_competitor_mail, company_admin_reg
 from wp_urls import wp_reverse
 from util import redirect
 from models import Company, CompanyAdmin, Payment, Competition, Campaign, UserProfile
-import models
 import registration.signals, registration.backends
 import registration.backends.simple
 import logging
@@ -107,7 +105,7 @@ class CompanyAdminRegistrationBackend(registration.backends.simple.SimpleBackend
             telephone = cleaned_data['telephone'],
         )
         userprofile.save()
-        company_admin_register_no_competitor_mail(admin.user, cleaned_data['administrated_company'])
+        company_admin_register_no_competitor_mail(admin, cleaned_data['administrated_company'])
         return new_user
 
 class CompanyAdminApplicationView(FormView):
@@ -124,7 +122,7 @@ class CompanyAdminApplicationView(FormView):
     def form_valid(self, form, backend='dpnk.company_admin_views.CompanyAdminRegistrationBackend'):
         super(CompanyAdminApplicationView, self).form_valid(form)
         backend = registration.backends.get_backend(backend)
-        new_user = backend.register(self.request, **form.cleaned_data)
+        backend.register(self.request, **form.cleaned_data)
         auth_user = django.contrib.auth.authenticate(
             username=self.request.POST['username'],
             password=self.request.POST['password1'])

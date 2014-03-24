@@ -1,10 +1,10 @@
 {% load wp_url from dpnk_tags %}{% autoescape off %}
 
-Zpráva pro soutěžící/ho {{ coordinator.userprofile }}, koordinátora/ku týmu {{user.userprofile.team}} v soutěži {{ user.campaign }}.
+Zpráva pro soutěžící/ho {{ coordinator.userprofile }}, koordinátora/ku týmu {{user.team.name}} v soutěži {{ user.campaign }}.
 
 Dobrý den,
 
-soutěžící {{ user.userprofile }} Vás žádá o zapojení do Vašeho týmu {{user.team}}.
+soutěžící {{ user.userprofile }} Vás žádá o zapojení do Vašeho týmu {{user.team.name}}.
 
 Vzhledem k otevřenému charakteru soutěže se další soutěžící z Vaší organizace mohou hlásit do Vašeho týmu. Rozhodnutí, zda s nimi budete společně po celý měsíc květen soutěžit v jízdě do práce na kole, je ale na Vás.
 

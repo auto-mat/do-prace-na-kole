@@ -901,15 +901,14 @@ def approve_for_team(user_attendance, reason, approve=False, deny=False):
             return 'no_message'
         user_attendance.approved_for_team = 'denied'
         user_attendance.save()
-        team_membership_denial_mail(user_attendance.userprofile.user, reason)
+        team_membership_denial_mail(user_attendance, reason)
         return 'denied'
     elif approve:
         if len(user_attendance.team.members()) >= 5:
             return 'team_full'
         user_attendance.approved_for_team = 'approved'
         user_attendance.save()
-        user_approved = True
-        team_membership_approval_mail(user_attendance.userprofile.user)
+        team_membership_approval_mail(user_attendance)
         return 'approved'
 
 @must_be_competitor

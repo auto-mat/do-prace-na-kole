@@ -1,13 +1,13 @@
 {% load wp_url from dpnk_tags %}{% autoescape off %}
 
-Zpráva pro {{ user.get_full_name }} ze soutěže {{ user.campaign }}.
+Zpráva pro {{ company_admin.user }} ze soutěže {{ company_admin.campaign }}.
 
 Dobrý den,
 Vaše žádost o funkci firemního správce nebyla potvrzena. Pokud nevíte proč a nikdo Vás nekontaktoval, obraťte se prosím na nás s žádostí o vysvětlení.
-Děkujeme Vám za podporu soutěže {{ user.campaign }}!
-Váš organizační tým soutěže {{ user.campaign }}
+Děkujeme Vám za podporu soutěže {{ company_admin.campaign }}!
+Váš organizační tým soutěže {{ company_admin.campaign }}
 
 ---
-{{ user.campaign.email_footer }}
+{{ company_admin.campaign.email_footer }}
 
 {% endautoescape %}
