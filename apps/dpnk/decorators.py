@@ -17,11 +17,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from  django.http import HttpResponse
 from django.utils.translation import gettext as _
-from models import UserProfile, UserAttendance, Campaign
+from models import UserAttendance, Campaign
 from wp_urls import wp_reverse
 from util import redirect
 import models
@@ -136,8 +135,9 @@ def must_be_in_group(group):
 
 def user_attendance_has(condition, message):
    def decorator(fn):
+      @must_be_competitor
       def wrapped(request, *args, **kwargs):
-         user_attendance=get_object_or_404(UserAttendance, campaign__slug=kwargs['campaign_slug'], userprofile=request.user.userprofile)
+         user_attendance = kwargs['user_attendance']
          if condition(user_attendance):
             return HttpResponse(message, status=401)
          return fn(request, *args, **kwargs)
