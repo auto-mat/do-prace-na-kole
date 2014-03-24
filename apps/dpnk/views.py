@@ -275,6 +275,7 @@ class RegistrationView(FormView):
 
 
 @login_required_simple
+@user_attendance_has(lambda ua: ua.payment()['status'] == 'done', "<div class='text-warning'>Již máte startovné zaplaceno</div>")
 @must_be_competitor
 @must_have_team
 def payment_type(request, user_attendance=None):
@@ -325,6 +326,7 @@ def header_bar(request, campaign_slug):
 
 
 @login_required_simple
+@user_attendance_has(lambda ua: ua.payment()['status'] == 'done', "<div class='text-warning'>Již máte startovné zaplaceno</div>")
 @must_be_competitor
 @must_have_team
 def payment(request, user_attendance=None):
