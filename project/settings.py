@@ -67,6 +67,10 @@ MIDDLEWARE_CLASSES = (
 
 #    "dpnk.middleware.XHRMiddleware",
 )
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "django_su.backends.SuBackend",
+)
 ROOT_URLCONF = 'urls'
 TEMPLATE_DIRS = (
     normpath(PROJECT_ROOT, 'templates'),
