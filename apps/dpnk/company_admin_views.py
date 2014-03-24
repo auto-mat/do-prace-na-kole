@@ -151,8 +151,9 @@ class CompanyAdminView(UpdateView):
             company_admin = self.request.user.company_admin.get(campaign=campaign)
         except CompanyAdmin.DoesNotExist:
             company_admin = CompanyAdmin(user=self.request.user, campaign=campaign)
-        if user_attendance.team.subsidiary.company.company_admin and user_attendance.team.subsidiary.company.company_admin != company_admin:
-            raise Http404(_(u'<div class="text-warning">Vaše firma již svého koordinátora má.</div>'))
+        if user_attendance.team.subsidiary.company.company_admin.exists() and user_attendance.team.subsidiary.company.company_admin.get() != company_admin:
+            company_admin = user_attendance.team.subsidiary.company.company_admin.get()
+            raise Http404(_(u'<div class="text-warning">Vaše firma již svého koordinátora má: %s.</div>' % company_admin))
         company_admin.administrated_company = user_attendance.team.subsidiary.company
         return company_admin
 
