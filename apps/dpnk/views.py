@@ -274,6 +274,26 @@ class RegistrationView(FormView):
         return redirect(wp_reverse(self.success_url))
 
 
+class ConfirmDeliveryView(FormView):
+    template_name = 'generic_form_template.html'
+    form_class = forms.ConfirmDeliveryForm
+    success_url = 'profil'
+
+    def form_valid(self, form):
+        if form.cleaned_data['package_delivered']:
+            package = self.user_attendance.package_shipped()
+            package.status = models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED
+            package.save()
+        return redirect(wp_reverse(self.success_url))
+
+    @method_decorator(user_attendance_has(lambda ua: not ua.package_shipped(), "<div class='text-warning'>Váš startovní balíček ještě nebyl odeslán.</div>"))
+    @method_decorator(user_attendance_has(lambda ua: ua.package_delivered(), "<div class='text-warning'>Váš startvní balíček již byl doručen.</div>"))
+    @method_decorator(must_be_competitor)
+    def dispatch(self, request, *args, **kwargs):
+        self.user_attendance = kwargs['user_attendance']
+        return super(ConfirmDeliveryView, self).dispatch(request, *args, **kwargs)
+
+
 @login_required_simple
 @user_attendance_has(lambda ua: ua.payment()['status'] == 'done', "<div class='text-warning'>Již máte startovné zaplaceno</div>")
 @must_be_competitor
@@ -548,6 +568,7 @@ def profile(request, user_attendance=None):
     request.session['invite_success_url'] = 'profil'
 
     is_package_shipped = user_attendance.package_shipped() != None
+    is_package_delivered = user_attendance.package_delivered() != None
     return render_to_response('registration/profile.html',
                               {
             'active': user_attendance.userprofile.user.is_active,
@@ -560,6 +581,7 @@ def profile(request, user_attendance=None):
             'team_members_count': team_members_count,
             'approved_for_team': user_attendance.approved_for_team,
             'is_package_shipped': is_package_shipped,
+            'is_package_delivered': is_package_delivered,
             }, context_instance=RequestContext(request))
 
 

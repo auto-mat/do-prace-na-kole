@@ -246,6 +246,12 @@ class PaymentTypeForm(forms.Form):
             )
 
 
+class ConfirmDeliveryForm(forms.Form):
+    package_delivered = forms.BooleanField(
+            label=_(u"Startovní balíček mi již byl doručen"),
+            )
+
+
 class BikeRepairForm(forms.ModelForm):
     user_attendance = forms.CharField(
         label="Uživatelské jméno zákazníka",

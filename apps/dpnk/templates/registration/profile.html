@@ -73,8 +73,13 @@
 
 {% if team and payment_status == 'no_admission' or payment_status == 'done' and profile.t_shirt_size %}
    {% if is_package_shipped %}
-      <a href="{% wp_url 'balicek' %}"
-         class="btn btn-block btn-warning">{% trans "Startovní balíček odeslán, sledovat jeho pohyb" %}</a>
+      {% if is_package_delivered %}
+         <a href="#"
+            class="btn btn-block btn-success disabled">{% trans "Startovní balíček doručen" %}</a>
+      {% else %}
+         <a href="{% wp_url 'balicek' %}"
+            class="btn btn-block btn-warning">{% trans "Startovní balíček odeslán, sledovat jeho pohyb" %}</a>
+      {% endif %}
    {% else %}
       <a href=""
          class="btn btn-block btn-warning disabled">{% trans "Startovní balíček ještě nebyl odeslán" %}</a>

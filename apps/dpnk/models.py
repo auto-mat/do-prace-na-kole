@@ -367,7 +367,7 @@ class Campaign(models.Model):
             transactions__payment__status__in=Payment.done_statuses,
             t_shirt_size__ship=True,
         ).exclude(transactions__packagetransaction__status__in=PackageTransaction.shipped_statuses).\
-        exclude(team=None).distinct()
+            exclude(team=None).distinct()
 
 
 class Phase(models.Model):
@@ -597,6 +597,9 @@ class UserAttendance(models.Model):
 
     def package_shipped(self):
         return self.transactions.filter(instance_of=PackageTransaction, status__in=PackageTransaction.shipped_statuses).last()
+
+    def package_delivered(self):
+        return self.transactions.filter(instance_of=PackageTransaction, status=PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED).last()
 
     def other_user_attendances(self, campaign):
         return self.userprofile.userattendance_set.exclude(campaign=campaign)
