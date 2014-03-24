@@ -521,12 +521,22 @@ class TShirtSizeInline(EnhancedAdminMixin, SortableInlineAdminMixin, admin.Tabul
 
 
 class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
-    list_display = ( 'campaign', 'created', 'package_transaction__count')
-    readonly_fields = ('author', 'created', 'updated_by', 'package_transaction__count')
+    list_display = ( 'campaign', 'created', 'package_transaction__count', 'customer_sheets__url', 'tnt_order__url')
+    readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction__count')
     inlines = [PackageTransactionInline,]
 
     def package_transaction__count(self, obj):
+        if not obj.pk:
+            return obj.campaign.user_attendances_for_delivery().count()
         return obj.packagetransaction_set.count()
+    package_transaction__count.short_description = "Balíčků k odeslání"
+
+    def customer_sheets__url(self, obj):
+        return mark_safe(u"<a href='%s'>customer_sheets</a>" % obj.customer_sheets.url)
+
+    def tnt_order__url(self, obj):
+        return mark_safe(u"<a href='%s'>tnt_order</a>" % obj.tnt_order.url)
+
 
 
 class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):

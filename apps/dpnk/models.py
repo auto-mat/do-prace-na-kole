@@ -754,6 +754,7 @@ class DeliveryBatch(models.Model):
     campaign = models.ForeignKey(
         Campaign,
         verbose_name=_(u"Kampaň"),
+        default = Campaign.objects.get(slug=settings.CAMPAIGN).pk,
         null=False,
         blank=False)
     customer_sheets = models.FileField(

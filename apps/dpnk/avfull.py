@@ -178,9 +178,9 @@ def make_avfull(outfile, delivery_batch):
                 package_type_seq_number=1,
                 package_type_desc=user_attendance.campaign.slug,
                 package_type_count=1,
-                package_height=2,
-                package_width=24,
-                package_depth=33,
+                package_height=1,
+                package_width=26,
+                package_depth=35,
                 package_total_weight_kgs=weight,
                 )+"\r\n"))
 
