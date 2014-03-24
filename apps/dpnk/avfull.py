@@ -126,7 +126,7 @@ def make_avfull(outfile, delivery_batch):
             sequence_number = package_transaction.pk
 
             serviceID = "15N"
-            weight = 0.2
+            weight = 0.25
             sender_address = {
                 "name": "OP Automat",
                 "street1": "Korytna 1538/4",
