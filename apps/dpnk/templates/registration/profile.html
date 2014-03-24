@@ -22,7 +22,7 @@
       class="btn btn-block btn-warning">{% trans "Vyberte tým" %}</a>
 {% elif approved_for_team == 'denied' %}
    <a href="{% wp_url 'zmenit_tym' %}"
-      class="btn btn-block btn-error">{% trans "Členství v týmu zamítnuto" %}</a>
+      class="btn btn-block btn-danger">{% trans "Členství v týmu zamítnuto, zvolit jiný tým" %}</a>
 {% elif approved_for_team == 'approved' %}
    <a href="{% wp_url 'zmenit_tym' %}"
       class="btn btn-block btn-success">{% trans "Členství v týmu odsouhlaseno" %}</a>
