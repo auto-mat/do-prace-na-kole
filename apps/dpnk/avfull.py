@@ -116,8 +116,8 @@ def make_dline(**fields):
 
 def make_avfull(outfile, delivery_batch):
     try:
-        today = datetime.datetime.today().strftime("%Y%M%d")
-        batch_date = delivery_batch.created.strftime("%y%M%d")
+        today = datetime.datetime.today().strftime("%Y%m%d")
+        batch_date = delivery_batch.created.strftime("%y%m%d")
         con_reference = "%s-%s-DPNK" % (str(delivery_batch.pk), batch_date)
         tnt_account_reference = 111057
         for package_transaction in delivery_batch.packagetransaction_set.all():

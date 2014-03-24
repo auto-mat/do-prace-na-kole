@@ -52,7 +52,7 @@ def make_sheet(package_transaction, canvas):
     datestr = "%d. %d. %d" % (d.day, d.month, d.year)
     canvas.drawString(13*cm, 22*cm, datestr)
 
-    batch_date = package_transaction.delivery_batch.created.strftime("%y%M%d")
+    batch_date = package_transaction.delivery_batch.created.strftime("%y%m%d")
     reference = u"Ref: %s-%s-DPNK Seq: %s" % (package_transaction.delivery_batch.pk, batch_date, package_transaction.pk)
     canvas.drawString(13*cm, 21.5*cm, reference)
 
