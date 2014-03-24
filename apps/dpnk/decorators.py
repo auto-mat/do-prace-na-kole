@@ -18,12 +18,13 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib.auth.decorators import login_required
-from  django.http import HttpResponse
+from django.http import HttpResponse
 from django.utils.translation import gettext as _
 from models import UserAttendance, Campaign
 from wp_urls import wp_reverse
 from util import redirect
 import models
+
 
 def login_required_simple(fn):
     def wrapper(*args, **kwargs):
@@ -34,12 +35,11 @@ def login_required_simple(fn):
             return fn(*args, **kwargs)
     return wrapper
 
+
 def must_be_coordinator(fn):
     @must_be_competitor
     @login_required
     def wrapper(*args, **kwargs):
-        request = args[0]
-        userprofile = request.user.userprofile
         user_attendance = kwargs['user_attendance']
         team = user_attendance.team
         if not models.is_team_coordinator(user_attendance):
@@ -48,11 +48,11 @@ def must_be_coordinator(fn):
             return fn(*args, **kwargs)
     return wrapper
 
+
 def must_be_approved_for_team(fn):
     @login_required
     @must_be_competitor
     def wrapper(*args, **kwargs):
-        request = args[0]
         user_attendance = kwargs['user_attendance']
         if not user_attendance.team:
             return HttpResponse(_(u"<div class='text-warning'>Nemáte zvolený tým</div>"), status=401)
@@ -61,6 +61,7 @@ def must_be_approved_for_team(fn):
         else:
             return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno týmovým koordinátorem. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': user_attendance.team, 'address': wp_reverse("zaslat_zadost_clenstvi")}, status=401)
     return wrapper
+
 
 def must_be_company_admin(fn):
     @login_required
@@ -75,27 +76,29 @@ def must_be_company_admin(fn):
         return HttpResponse(_(u"<div class='text-warning'>Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.</div>"), status=401)
     return wrapper
 
+
 def must_have_team(fn):
-   @must_be_competitor
-   def wrapper(request, user_attendance = None, *args, **kwargs):
-      if not user_attendance.team :
-         return HttpResponse(_(u"<div class='text-warning'>Napřed musíte mít vybraný tým.</div>"), status=401)
-      return fn(request, user_attendance = user_attendance, *args, **kwargs)
-   return wrapper
+    @must_be_competitor
+    def wrapper(request, user_attendance=None, *args, **kwargs):
+        if not user_attendance.team:
+            return HttpResponse(_(u"<div class='text-warning'>Napřed musíte mít vybraný tým.</div>"), status=401)
+        return fn(request, user_attendance=user_attendance, *args, **kwargs)
+    return wrapper
+
 
 def must_be_in_phase(phase_type):
-   def decorator(fn):
-      def wrapped(request, *args, **kwargs):
-         campaign = Campaign.objects.get(slug=kwargs.get('campaign_slug'))
-         try:
-            phase = campaign.phase_set.get(type=phase_type)
-         except models.Phase.DoesNotExist:
-            phase=None
-         if not phase or not phase.is_actual():
-            return HttpResponse(_(u"<div class='text-warning'>Tento formulář se zobrazuje pouze v %s fázi soutěže.</div>" % models.Phase.TYPE_DICT[phase_type]), status=401)
-         return fn(request, *args, **kwargs)
-      return wrapped
-   return decorator
+    def decorator(fn):
+        def wrapped(request, *args, **kwargs):
+            campaign = Campaign.objects.get(slug=kwargs.get('campaign_slug'))
+            try:
+                phase = campaign.phase_set.get(type=phase_type)
+            except models.Phase.DoesNotExist:
+                phase = None
+            if not phase or not phase.is_actual():
+                return HttpResponse(_(u"<div class='text-warning'>Tento formulář se zobrazuje pouze v %s fázi soutěže.</div>" % models.Phase.TYPE_DICT[phase_type]), status=401)
+            return fn(request, *args, **kwargs)
+        return wrapped
+    return decorator
 
 
 def must_be_competitor(fn):
@@ -111,35 +114,37 @@ def must_be_competitor(fn):
             try:
                 user_attendance = userprofile.userattendance_set.get(campaign=campaign)
             except UserAttendance.DoesNotExist:
-                user_attendance = UserAttendance(userprofile = userprofile,
-                            campaign = campaign,
-                            approved_for_team = 'undecided',
-                            )
+                user_attendance = UserAttendance(
+                    userprofile=userprofile,
+                    campaign=campaign,
+                    approved_for_team='undecided',
+                    )
                 user_attendance.save()
-            
+
             kwargs['user_attendance'] = user_attendance
             return fn(*args, **kwargs)
 
         return HttpResponse(_(u"<div class='text-warning'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním správcem, použijte <a href='%s'>správu firmy</a>.</div>" % wp_reverse("company_admin")), status=401)
     return wrapper
 
+
 def must_be_in_group(group):
-   def decorator(fn):
-      def wrapped(request, *args, **kwargs):
-         if request.user.groups.filter(name=group).count() == 0:
-            return HttpResponse(_(u"<div class='text-warning'>Pro přístup k této stránce musíte být ve skupině %s</div>" % group), status=401)
-         return fn(request, *args, **kwargs)
-      return wrapped
-   return decorator
-   
+    def decorator(fn):
+        def wrapped(request, *args, **kwargs):
+            if request.user.groups.filter(name=group).count() == 0:
+                return HttpResponse(_(u"<div class='text-warning'>Pro přístup k této stránce musíte být ve skupině %s</div>" % group), status=401)
+            return fn(request, *args, **kwargs)
+        return wrapped
+    return decorator
+
 
 def user_attendance_has(condition, message):
-   def decorator(fn):
-      @must_be_competitor
-      def wrapped(request, *args, **kwargs):
-         user_attendance = kwargs['user_attendance']
-         if condition(user_attendance):
-            return HttpResponse(message, status=401)
-         return fn(request, *args, **kwargs)
-      return wrapped
-   return decorator
+    def decorator(fn):
+        @must_be_competitor
+        def wrapped(request, *args, **kwargs):
+            user_attendance = kwargs['user_attendance']
+            if condition(user_attendance):
+                return HttpResponse(message, status=401)
+            return fn(request, *args, **kwargs)
+        return wrapped
+    return decorator
