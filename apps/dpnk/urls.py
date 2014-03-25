@@ -89,7 +89,7 @@ campaign_urlpatterns = patterns(
     url(r'^souteze/$',
         company_admin_views.competitions),
     url(r'^zaplatit_za_uzivatele/$',
-        must_be_company_admin(login_required(company_admin_views.SelectUsersPayView.as_view()))),
+        company_admin_views.SelectUsersPayView.as_view()),
     url(r'^spolecnost/editovat_spolecnost/$',
         must_be_company_admin(login_required(company_admin_views.CompanyEditView.as_view()))),
     url(r'^spolecnost/registrace_admina/$',

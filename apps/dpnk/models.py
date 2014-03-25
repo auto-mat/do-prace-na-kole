@@ -727,6 +727,18 @@ class CompanyAdmin(models.Model):
         null=False,
         blank=False)
 
+    note = models.TextField(
+        verbose_name=_(u"Interní poznámka"),
+        max_length=500,
+        null=True,
+        blank=True,
+        )
+
+    can_confirm_payments = models.BooleanField(
+        verbose_name=_(u"Může potvrzovat platby"),
+        default=False,
+        null=False)
+
     def __unicode__(self):
         return self.user.get_full_name()
 

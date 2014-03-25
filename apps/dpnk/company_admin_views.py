@@ -19,6 +19,7 @@
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
@@ -26,7 +27,7 @@ from django.http import HttpResponse, Http404
 import django.contrib.auth
 from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView
-from decorators import must_be_company_admin
+from decorators import must_be_company_admin, request_condition
 from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
 from dpnk.email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from wp_urls import wp_reverse
@@ -56,7 +57,7 @@ class SelectUsersPayView(FormView):
 
     def get_initial(self):
         return {
-                'company_admin': self.kwargs.get('company_admin'),
+                'company_admin': self.company_admin,
                 }
 
     def form_valid(self, form):
@@ -70,6 +71,13 @@ class SelectUsersPayView(FormView):
         logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x, paing_for)))
         super(SelectUsersPayView, self).form_valid(form)
         return redirect(wp_reverse(self.success_url))
+
+    @method_decorator(login_required)
+    @method_decorator(must_be_company_admin)
+    @method_decorator(request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, "<div class='text-warning'>Potvrzování plateb nemáte povoleno</div>"))
+    def dispatch(self, request, *args, **kwargs):
+        self.company_admin = kwargs['company_admin']
+        return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
 
 class CompanyEditView(UpdateView):
     template_name = 'generic_form_template.html'
