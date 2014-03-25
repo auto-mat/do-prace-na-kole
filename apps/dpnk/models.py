@@ -644,6 +644,12 @@ class UserProfile(models.Model):
         null=True,
         blank=True
         )
+    mailing_hash = models.BigIntegerField(
+        verbose_name=_(u"Hash poslední synchronizace s mailingem"),
+        default=None,
+        null=True,
+        blank=True
+        )
 
     def first_name(self):
         return self.user.first_name

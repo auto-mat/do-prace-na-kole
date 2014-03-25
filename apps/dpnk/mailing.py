@@ -21,11 +21,11 @@ class Mailing:
     def update(self, list_id, mailing_id, name, surname, email, custom_fields):
         subscriber = createsend.Subscriber(list_id, mailing_id)
         subscriber.get(list_id, mailing_id)
-        r = subscriber.update(email,
+        subscriber.update(email,
                            " ".join([name, surname]),
                            custom_fields
                            , True)
-        return r
+        return subscriber.email_address
 
     def delete(self, list_id, mailing_id):
         subscriber = createsend.Subscriber(list_id, mailing_id)
@@ -59,10 +59,10 @@ def get_custom_fields(user_attendance):
                    ]
     return custom_fields
 
-def update_mailing_id(user, mailing_id):
-    if mailing_id:
-        user.userprofile.mailing_id = mailing_id
-        user.userprofile.save()
+def update_mailing_id(user, mailing_id, mailing_hash):
+    user.userprofile.mailing_id = mailing_id
+    user.userprofile.mailing_hash = mailing_hash
+    user.userprofile.save()
 
 def add_user(user_attendance):
     user = user_attendance.userprofile.user
@@ -72,11 +72,14 @@ def add_user(user_attendance):
     try:
         list_id = user_attendance.campaign.mailing_list_id
         mailing_id = mailing.add(list_id, user.first_name, user.last_name, user.email, custom_fields)
+        mailing_hash = hash(str((list_id, user.first_name, user.last_name, user.email, custom_fields)))
     except Exception, e:
         logger.error(u'Can\'t add user %s with email %s to mailing list: %s' % (user, user.email, str(e)))
+        update_mailing_id(user, None, None)
     else:
         logger.info(u'User %s with email %s added to mailing list with id %s, custom_fields: %s' % (user, user.email, mailing_id, custom_fields))
-        update_mailing_id(user, mailing_id)
+        update_mailing_id(user, mailing_id, mailing_hash)
+
 
 def update_user(user_attendance):
     user = user_attendance.userprofile.user
@@ -87,20 +90,21 @@ def update_user(user_attendance):
     # Register into mailing list
     try:
         list_id = user_attendance.campaign.mailing_list_id
-        mailing_id = mailing.update(list_id, mailing_id, user.first_name, user.last_name, user.email, custom_fields)
+        mailing_hash = hash(str((list_id, user.first_name, user.last_name, user.email, custom_fields)))
+        if userprofile.mailing_hash != mailing_hash:
+            mailing_id = mailing.update(list_id, mailing_id, user.first_name, user.last_name, user.email, custom_fields)
+            logger.info(u'User %s (%s) with email %s updated in mailing list with id %s, custom_fields: %s' % (userprofile, userprofile.user, user.email, mailing_id, custom_fields))
+            update_mailing_id(user, mailing_id, mailing_hash)
     except Exception, e:
         logger.error(u'Can\'t update user %s: email: %s, mailing_id: %s to mailing list: %s' % (userprofile.user, user.email, mailing_id, str(e)))
-    else:
-        logger.info(u'User %s with email %s updated in mailing list with id %s, custom_fields: %s' % (userprofile.user, user.email, mailing_id, custom_fields))
-        update_mailing_id(user, mailing_id)
+        update_mailing_id(user, None, None)
+
 
 def delete_user(user_attendance):
-    mailing_id = None
-    if models.is_competitor(user):
-        mailing_id = user.get_profile().mailing_id
-    elif models.is_company_admin(user):
-        mailing_id = user.company_admin.mailing_id
-        add_user(user)
+    user = user_attendance.userprofile.user
+    userprofile = user_attendance.userprofile
+
+    mailing_id = user.get_profile().mailing_id
 
     if not mailing_id:
         return
@@ -111,9 +115,10 @@ def delete_user(user_attendance):
         mailing_id = mailing.delete(list_id, mailing_id)
     except Exception, e:
         logger.error(u'Can\'t delete user %s with email %s to mailing list: %s' % (user, user.email, str(e)))
+        update_mailing_id(user, None, None)
     else:
         logger.info(u'User %s with email %s deleted from mailing list with id %s' % (user, user.email, mailing_id))
-        update_mailing_id(user, mailing_id)
+        update_mailing_id(user, mailing_id, None)
 
 class MailingThread(threading.Thread):
     def __init__(self, user_attendance, **kwargs):
