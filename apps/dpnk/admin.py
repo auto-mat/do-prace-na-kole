@@ -307,11 +307,29 @@ class CompanyAdminInline(EnhancedAdminMixin, NestedTabularInline):
     model = dpnk.models.CompanyAdmin
 
 
+class HasUserprofileFilter(SimpleListFilter):
+    title = u"Má userprofile"
+    parameter_name = u'has_userprofile'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('yes', 'Yes'),
+            ('no', 'No'),
+            ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.exclude(userprofile=None)
+        if self.value() == 'no':
+            return queryset.filter(userprofile=None)
+        return queryset
+
+
 class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name', ]
-    list_filter = ['is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved']
+    list_filter = ['is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved', HasUserprofileFilter]
     readonly_fields = ['password']
     list_max_show_all = 10000
 
