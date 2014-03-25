@@ -621,7 +621,7 @@ class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 class CompanyAdminAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ['user', 'user__email', 'user__name', 'user__telephone', 'company_admin_approved', 'administrated_company__name', 'can_confirm_payments', 'note', 'campaign']
-    list_filter = ['campaign', ]
+    list_filter = ['campaign', 'company_admin_approved']
     search_fields = ['administrated_company__name', 'user__first_name', 'user__last_name', 'user__username']
     raw_id_fields = ['user', ]
 
