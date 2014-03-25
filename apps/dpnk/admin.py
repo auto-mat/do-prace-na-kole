@@ -405,6 +405,8 @@ class NotInCityFilter(SimpleListFilter):
         return [(c.pk, c.name) for c in models.City.objects.all()]
 
     def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
         return queryset.exclude(team__subsidiary__city=self.value())
 
 
