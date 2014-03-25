@@ -620,7 +620,7 @@ class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 
 class CompanyAdminAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ['user', 'user__email', 'user__name', 'user__telephone', 'company_admin_approved', 'administrated_company', 'can_confirm_payments', 'note', 'campaign']
+    list_display = ['user', 'user__email', 'user__name', 'user__telephone', 'company_admin_approved', 'administrated_company__name', 'can_confirm_payments', 'note', 'campaign']
     list_filter = ['campaign', ]
     search_fields = ['administrated_company__name', 'user__first_name', 'user__last_name', 'user__username']
     raw_id_fields = ['user', ]
@@ -633,6 +633,10 @@ class CompanyAdminAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
     def user__telephone(self, obj):
         return obj.user.get_profile().telephone
+
+    def administrated_company__name(self, obj):
+        if obj.administrated_company:
+            return obj.administrated_company.name
 
 admin.site.register(models.Team, TeamAdmin)
 admin.site.register(models.Transaction, TransactionAdmin)
