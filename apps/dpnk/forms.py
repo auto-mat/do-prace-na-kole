@@ -65,9 +65,15 @@ class RegisterTeamForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
+    campaign = forms.ModelChoiceField(
+        label=_(u"Kampaň"),
+        queryset=models.Campaign.objects.all(),
+        widget=HiddenInput(),
+        )
+
     class Meta:
         model = Team
-        fields = ('name',)
+        fields = ('name', 'campaign')
 
 
 class ChangeTeamForm(forms.ModelForm):

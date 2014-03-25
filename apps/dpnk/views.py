@@ -134,7 +134,7 @@ def change_team(request,
 
         form_company = RegisterCompanyForm(request.POST, prefix = "company")
         form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix = "subsidiary", campaign=user_attendance.campaign)
-        form_team = RegisterTeamForm(request.POST, prefix = "team")
+        form_team = RegisterTeamForm(request.POST, prefix = "team", initial={"campaign": user_attendance.campaign})
         create_team = 'id_team_selected' in request.POST
         if create_team:
             create_subsidiary = 'id_subsidiary_selected' in request.POST
@@ -162,7 +162,7 @@ def change_team(request,
             team_valid = form_team.is_valid()
             form.fields['team'].required = False
         else:
-            form_team = RegisterTeamForm(prefix = "team")
+            form_team = RegisterTeamForm(prefix = "team", initial={"campaign": user_attendance.campaign})
             form.fields['team'].required = True
         old_team = user_attendance.team
 
@@ -236,7 +236,7 @@ def change_team(request,
         form = form_class(request, instance=user_attendance)
         form_company = RegisterCompanyForm(prefix = "company")
         form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary", campaign=user_attendance.campaign)
-        form_team = RegisterTeamForm(prefix = "team")
+        form_team = RegisterTeamForm(prefix = "team", initial={"campaign": user_attendance.campaign})
 
     form.fields['company'].widget.underlying_form = form_company
     form.fields['company'].widget.create = create_company
