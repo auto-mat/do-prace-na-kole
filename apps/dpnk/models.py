@@ -273,7 +273,7 @@ class Team(models.Model):
         )
 
     def autoset_member_count(self):
-        self.member_count = self.members().count()
+        self.member_count = UserAttendance.objects.filter(campaign=self.campaign, team=self).count()
 
     def all_members(self, campaign):
         return UserAttendance.objects.filter(campaign=campaign, team=self, userprofile__user__is_active=True)
