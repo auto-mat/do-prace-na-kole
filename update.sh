@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+#version 0.1
 
 git pull
 source env/bin/activate
@@ -6,7 +7,7 @@ env/bin/python env/bin/pip install -r requirements.txt
 if [ "$1" = "migrate" ]; then
    echo "Backuping db..."
    mkdir db_backup
-   env/bin/python manage.py dumpdata  --indent=4 --all -e south -e sessions -e contenttypes > sql/dpnk-`git rev-parse --short HEAD`-`date +"%y%m%d-%H:%M:%S"`.json
+   sudo -u postgres pg_dump  > db_backup/`date +"%y%m%d-%H:%M:%S"`-zmapa.sql
    echo "Migrating..."
    env/bin/python manage.py migrate
 fi
