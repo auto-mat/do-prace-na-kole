@@ -616,7 +616,7 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
 
 
 class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'slug')
+    list_display = ('name', 'slug', 'mailing_list_enabled', )
     inlines = [TShirtSizeInline, PhaseInline, CityInCampaignInline]
     prepopulated_fields = {'slug': ('name',)}
 
