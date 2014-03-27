@@ -48,6 +48,7 @@ from dpnk.email import approval_request_mail, register_mail, team_membership_app
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import get_current_site
 from django.contrib.auth import login as auth_login
+from django.db import transaction
 
 from wp_urls import wp_reverse
 from unidecode import unidecode
@@ -380,6 +381,7 @@ def payment(request, user_attendance=None):
             'session_id': session_id
              }, context_instance=RequestContext(request))
 
+@transaction.atomic
 def payment_result(request, success, trans_id, session_id, pay_type, error = None):
     logger.info('Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s' % (success, trans_id, session_id, pay_type, error, request.user))
 
@@ -415,6 +417,7 @@ def check_sig(sig, values):
     if sig != hashlib.md5("".join(values+(key2,))).hexdigest():
         raise ValueError("Zamítnuto")
 
+@transaction.atomic
 def payment_status(request):
     # Read notification parameters
     pos_id = request.POST['pos_id']
