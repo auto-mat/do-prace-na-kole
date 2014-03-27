@@ -520,7 +520,7 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('id', 'user_attendance', 'created', 'status', 'session_id', 'trans_id', 'amount', 'pay_type', 'error', 'order_id', 'author')
     search_fields = ('session_id', 'trans_id', 'order_id')
-    list_filter = ['status', 'error', 'pay_type']
+    list_filter = ['status', 'error', 'pay_type', 'user_attendance__campaign']
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created')
 
