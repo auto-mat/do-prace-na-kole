@@ -1034,9 +1034,25 @@ class Payment(Transaction):
         ('am', 'člen klubu přátel Auto*matu'),
         )
 
-    not_paying_types = [
+    NOT_PAYING_TYPES = [
         'am',
         'fc',
+        ]
+
+    PAYU_PAYING_TYPES = [
+        'mp',
+        'kb',
+        'rf',
+        'pg',
+        'pv',
+        'pf',
+        'cs',
+        'c',
+        'bt',
+        'pt',
+        'sc',
+        't',
+        'fa',
         ]
 
     class Meta:
