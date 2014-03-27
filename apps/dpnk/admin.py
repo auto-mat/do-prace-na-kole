@@ -371,7 +371,7 @@ class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmi
 
 def update_mailing(modeladmin, request, queryset):
     for user_attendance in queryset:
-        mailing.add_or_update_user(user_attendance)
+        mailing.add_or_update_user(user_attendance, ignore_hash=True)
 update_mailing.short_description = _(u"Aktualizovat mailing list")
 
 

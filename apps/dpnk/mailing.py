@@ -81,7 +81,7 @@ def add_user(user_attendance):
         update_mailing_id(user, mailing_id, mailing_hash)
 
 
-def update_user(user_attendance):
+def update_user(user_attendance, ignore_hash):
     user = user_attendance.userprofile.user
     userprofile = user_attendance.userprofile
     custom_fields = get_custom_fields(user_attendance)
@@ -91,7 +91,7 @@ def update_user(user_attendance):
     try:
         list_id = user_attendance.campaign.mailing_list_id
         mailing_hash = hash(str((list_id, user.first_name, user.last_name, user.email, custom_fields)))
-        if userprofile.mailing_hash != mailing_hash:
+        if ignore_hash or userprofile.mailing_hash != mailing_hash:
             mailing_id = mailing.update(list_id, mailing_id, user.first_name, user.last_name, user.email, custom_fields)
             logger.info(u'User %s (%s) with email %s updated in mailing list with id %s, custom_fields: %s' % (userprofile, userprofile.user, user.email, mailing_id, custom_fields))
             update_mailing_id(user, mailing_id, mailing_hash)
@@ -121,8 +121,9 @@ def delete_user(user_attendance):
         update_mailing_id(user, mailing_id, None)
 
 class MailingThread(threading.Thread):
-    def __init__(self, user_attendance, **kwargs):
+    def __init__(self, user_attendance, ignore_hash, **kwargs):
         self.user_attendance = user_attendance
+        self.ignore_hash = ignore_hash
         super(MailingThread, self).__init__(**kwargs)
 
     def run(self):
@@ -131,13 +132,13 @@ class MailingThread(threading.Thread):
             delete_user(self.user_attendance)
         else:
             if models.is_competitor(user) and user.get_profile().mailing_id:
-                update_user(self.user_attendance)
+                update_user(self.user_attendance, self.ignore_hash)
             else:
                 add_user(self.user_attendance)
 
 
-def add_or_update_user(user_attendance):
+def add_or_update_user(user_attendance, ignore_hash=False):
     if not user_attendance.campaign.mailing_list_enabled:
         return
 
-    MailingThread(user_attendance).start()
+    MailingThread(user_attendance, ignore_hash).start()
