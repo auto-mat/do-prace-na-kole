@@ -185,7 +185,7 @@ class PaymentFilter(SimpleListFilter):
             ('not_paid_older', u'nezaplaceno (platba starší než 5 dnů)'),
             ('no_admission', u'neplatí se'),
             ('done', u'vyřízeno'),
-            ('paid', u'zaplaceno'),
+            ('paid', u'zaplaceno přes PayU'),
             ('waiting', u'čeká se'),
             ('unknown', u'neznámý'),
             ('none', u'bez plateb'),
@@ -205,15 +205,15 @@ class PaymentFilter(SimpleListFilter):
             return queryset.filter(
                 userprofile__user__is_active=True).exclude(transactions__status__in=models.Payment.done_statuses).exclude(team__subsidiary__city__cityincampaign__admission_fee=0).distinct()
         elif self.value() == 'no_admission':
-            return queryset.filter(team__subsidiary__city__cityincampaign__admission_fee=0).distinct()
+            return queryset.filter(Q(team__subsidiary__city__cityincampaign__admission_fee=0) | Q(transactions__payment__pay_type__in=models.Payment.not_paying_types)).distinct()
         elif self.value() == 'done':
             return queryset.filter(Q(transactions__status__in=models.Payment.done_statuses) | Q(team__subsidiary__city__cityincampaign__admission_fee=0)).distinct()
         elif self.value() == 'paid':
-            return queryset.filter(transactions__status__in=models.Payment.done_statuses).distinct()
+            return queryset.filter(transactions__status__in=models.Payment.done_statuses).exclude(transactions__status__in=models.Payment.done_statuses, transactions__payment__pay_type__in=models.Payment.not_paying_types).distinct()
         elif self.value() == 'waiting':
             return queryset.exclude(transactions__status__in=models.Payment.done_statuses).filter(transactions__status__in=models.Payment.waiting_statuses).distinct()
         elif self.value() == 'unknown':
-            return queryset.exclude(team__subsidiary__city__cityincampaign__admission_fee=0).exclude(transactions__status__in=set(models.Payment.done_statuses) | set(models.Payment.waiting_statuses)).distinct()
+            return queryset.exclude(team__subsidiary__city__cityincampaign__admission_fee=0).exclude(transactions__status__in=set(models.Payment.done_statuses) | set(models.Payment.waiting_statuses)).exclude(transactions=None).distinct()
         elif self.value() == 'none':
             return queryset.filter(transactions=None).distinct()
 

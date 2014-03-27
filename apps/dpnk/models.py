@@ -1034,6 +1034,11 @@ class Payment(Transaction):
         ('am', 'člen klubu přátel Auto*matu'),
         )
 
+    not_paying_types = [
+        'am',
+        'fc',
+        ]
+
     class Meta:
         verbose_name = _(u"Platební transakce")
         verbose_name_plural = _(u"Platební transakce")
