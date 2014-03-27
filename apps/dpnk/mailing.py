@@ -120,6 +120,19 @@ def delete_user(user_attendance):
         logger.info(u'User %s with email %s deleted from mailing list with id %s' % (user, user.email, mailing_id))
         update_mailing_id(user, mailing_id, None)
 
+def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
+    if not user_attendance.campaign.mailing_list_enabled:
+        return
+
+    user = user_attendance.userprofile.user
+    if not user.is_active:
+        delete_user(user_attendance)
+    else:
+        if models.is_competitor(user) and user.get_profile().mailing_id:
+            update_user(user_attendance, ignore_hash)
+        else:
+            add_user(user_attendance)
+
 class MailingThread(threading.Thread):
     def __init__(self, user_attendance, ignore_hash, **kwargs):
         self.user_attendance = user_attendance
@@ -127,18 +140,8 @@ class MailingThread(threading.Thread):
         super(MailingThread, self).__init__(**kwargs)
 
     def run(self):
-        user = self.user_attendance.userprofile.user
-        if not user.is_active:
-            delete_user(self.user_attendance)
-        else:
-            if models.is_competitor(user) and user.get_profile().mailing_id:
-                update_user(self.user_attendance, self.ignore_hash)
-            else:
-                add_user(self.user_attendance)
+        add_or_update_user_synchronous(self.user_attendance, self.ignore_hash)
 
 
 def add_or_update_user(user_attendance, ignore_hash=False):
-    if not user_attendance.campaign.mailing_list_enabled:
-        return
-
     MailingThread(user_attendance, ignore_hash).start()
