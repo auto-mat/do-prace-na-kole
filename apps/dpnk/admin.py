@@ -156,6 +156,7 @@ class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'city', 'company', 'competition_results_link', 'questionnaire_results_link', 'draw_link', 'id')
     filter_horizontal = ('user_attendance_competitors', 'team_competitors', 'company_competitors')
     search_fields = ('name',)
+    list_filter = ('campaign',)
     actions = [recalculate_competitions_results]
 
     readonly_fields = ['competition_results_link', 'questionnaire_results_link', 'draw_link']
@@ -454,7 +455,7 @@ class CoordinatorFilter(SimpleListFilter):
 class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator_campaign', 'member_count', 'campaign', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator_campaign__userprofile__user__first_name', 'coordinator_campaign__userprofile__user__last_name']
-    list_filter = ['subsidiary__city', 'campaign', 'member_count', CoordinatorFilter]
+    list_filter = ['campaign', 'subsidiary__city', 'member_count', CoordinatorFilter]
     list_max_show_all = 10000
     raw_id_fields = ['subsidiary', ]
 
@@ -499,7 +500,7 @@ class UserActionTransactionChildAdmin(TransactionChildAdmin):
 class TransactionAdmin(PolymorphicParentModelAdmin):
     list_display = ('id', 'user_attendance', 'created', 'status', 'polymorphic_ctype', 'user_link', 'author')
     search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username')
-    list_filter = ['status', 'polymorphic_ctype', 'user_attendance__campaign']
+    list_filter = ['user_attendance__campaign', 'status', 'polymorphic_ctype',]
 
     readonly_fields = ['user_link', ]
 
@@ -520,7 +521,7 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('id', 'user_attendance', 'created', 'status', 'session_id', 'trans_id', 'amount', 'pay_type', 'error', 'order_id', 'author')
     search_fields = ('session_id', 'trans_id', 'order_id')
-    list_filter = ['status', 'error', 'pay_type', 'user_attendance__campaign']
+    list_filter = [ 'user_attendance__campaign', 'status', 'error', 'pay_type',]
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created')
 
@@ -533,13 +534,13 @@ class ChoiceInline(EnhancedAdminMixin, admin.TabularInline):
 class ChoiceTypeAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'competition', 'universal')
     inlines = [ChoiceInline]
-    list_filter = ('competition', )
+    list_filter = ('competition__campaign', 'competition', )
 
 
 class AnswerAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('user_attendance', 'points_given', 'choices__all', 'choices_ids__all', 'question__competition', 'comment', 'question')
     search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name')
-    list_filter = ('question__competition',)
+    list_filter = ('question__competition__campaign', 'question__competition',)
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
     raw_id_fields = ('user_attendance', )
@@ -557,7 +558,7 @@ class AnswerAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 class QuestionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('text', 'type', 'order', 'date', 'competition', 'answers_link', 'id', )
     ordering = ('order', 'date',)
-    list_filter = ('competition',)
+    list_filter = ('competition__campaign', 'competition',)
 
     readonly_fields = ['choices', 'answers_link', ]
 
@@ -573,11 +574,12 @@ class TripAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmi
     list_display = ('user_attendance', 'date', 'trip_from', 'trip_to', 'distance_from', 'distance_to', 'id')
     search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username')
     raw_id_fields = ('user_attendance',)
+    list_filter = ('user_attendance__campaign',)
 
 
 class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('user_attendance', 'team', 'result', 'competition')
-    list_filter = ('competition',)
+    list_filter = ('competition__campaign', 'competition',)
     search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'team__name', 'competition__name')
     raw_id_fields = ('user_attendance', 'team')
 
@@ -601,6 +603,7 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
     list_display = ('campaign', 'created', 'package_transaction__count', 'customer_sheets__url', 'tnt_order__url')
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction__count')
     inlines = [PackageTransactionInline, ]
+    list_filter = ('campaign',)
 
     def package_transaction__count(self, obj):
         if not obj.pk:
