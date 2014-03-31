@@ -99,18 +99,18 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
                     )
         userprofile.save()
 
-        approved_for_team = 'undecided'
         try:
             team = Team.objects.get(invitation_token=invitation_token)
-            approved_for_team = 'approved'
+            approve = True
         except Team.DoesNotExist:
             team = None
         user_attendance = UserAttendance(userprofile = userprofile,
                     campaign = campaign,
                     team = team,
-                    approved_for_team = approved_for_team,
                     )
         user_attendance.save()
+        if approve:
+           approve_for_team(request, user_attendance, "", True, False)
 
         register_mail(user_attendance)
         return new_user
@@ -311,8 +311,7 @@ class ConfirmTeamInvitationView(FormView):
         if form.cleaned_data['question']:
             self.user_attendance.team = self.new_team
             self.user_attendance.save()
-            self.user_attendance.approved_for_team = 'approved'
-            self.user_attendance.save()
+            approve_for_team(self.request, self.user_attendance, "", True, False)
         return redirect(wp_reverse(self.success_url))
 
     @method_decorator(request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, "<div class='text-warning'>Tým nenalezen.</div>"))
@@ -988,9 +987,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
                             )
 
                         if invited_user_attendance.team == user_attendance.team:
-                            approved_for_team = 'approved'
-                            invited_user_attendance.save()
-                            messages.add_message(request, messages.SUCCESS, _(u"Uživatel %s byl odsouhlasen ve vašem týmu" % invited_user_attendance), fail_silently=True)
+                            approve_for_team(request, user_attendance, "", True, False)
                         else:
                             invitation_register_mail(user_attendance, invited_user_attendance)
                             messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka uživateli %s na email %s" % (invited_user_attendance, email)), fail_silently=True)
