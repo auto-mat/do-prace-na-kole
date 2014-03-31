@@ -36,6 +36,7 @@ def invitation_register_mail(inviting, invited):
     email = invited.userprofile.user.email
     message = template.render(Context({ 'inviting': inviting,
         'invited': invited,
+        'email': email,
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_(u"%s - potvrzení registrace" % inviting.campaign), message, None, [email], fail_silently=False)

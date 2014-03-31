@@ -27,7 +27,7 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.decorators import method_decorator
-from decorators import must_be_coordinator, must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team, user_attendance_has
+from decorators import must_be_coordinator, must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team, user_attendance_has, request_condition
 from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import gettext as _
@@ -44,7 +44,7 @@ from  django.http import HttpResponse
 from django import http
 # Local imports
 import util, draw
-from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail
+from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail, invitation_register_mail
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import get_current_site
 from django.db import transaction
@@ -292,6 +292,36 @@ class ConfirmDeliveryView(FormView):
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
         return super(ConfirmDeliveryView, self).dispatch(request, *args, **kwargs)
+
+
+class ConfirmTeamInvitationView(FormView):
+    template_name = 'registration/team_invitation.html'
+    form_class = forms.ConfirmTeamInvitationForm
+    success_url = 'profil'
+
+    def get_context_data(self, **kwargs):
+        context = super(ConfirmTeamInvitationView, self).get_context_data(**kwargs)
+        context['old_team'] = self.user_attendance.team
+        context['new_team'] = self.new_team
+        return context
+
+    def form_valid(self, form):
+        if form.cleaned_data['question']:
+            self.user_attendance.team = self.new_team
+            self.user_attendance.save()
+            self.user_attendance.approved_for_team = 'approved'
+            self.user_attendance.save()
+        return redirect(wp_reverse(self.success_url))
+
+    @method_decorator(request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, "<div class='text-warning'>Tým nenalezen.</div>"))
+    @method_decorator(request_condition(lambda r, a, k: r.user.email!=k['initial_email'], "<div class='text-warning'>Pozvánka je určena jinému uživateli, než je aktuálně přihlášen.</div>"))
+    @method_decorator(must_be_competitor)
+    def dispatch(self, request, *args, **kwargs):
+        print request
+        self.user_attendance = kwargs['user_attendance']
+        invitation_token = self.kwargs['token']
+        self.new_team = Team.objects.get(invitation_token=invitation_token)
+        return super(ConfirmTeamInvitationView, self).dispatch(request, *args, **kwargs)
 
 
 @login_required_simple
@@ -938,22 +968,25 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
             emails = [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4']]
 
             for email in emails:
-                #try:
-                #    invited_user = User.objects.get(email=email)
+                if email:
+                    try:
+                        invited_user = models.User.objects.get(email=email)
 
-                #    if hasattr(invited_user, "userprofile") and invited_user.userprofile.userattendance_set.filter(campaign=user_attendance.campaign).count() == 0:
-                #        invited_user_attendance = UserAttendance(userprofile = invited_user.userprofile,
-                #                    campaign = user_attendance.campaign,
-                #                    team = user_attendance.team,
-                #                    approved_for_team = 'approved',
-                #                    )
-                #        invited_user_attendance.save()
+                        invited_user_attendance, created = UserAttendance.objects.get_or_create(
+                            userprofile = invited_user.userprofile,
+                            campaign = user_attendance.campaign,
+                            )
 
-                #        invitation_register_mail(user_attendance, invited_user_attendance)
-                #    else:
-                #        invitation_mail(user_attendance, email)
-                #except User.DoesNotExist:
-                invitation_mail(user_attendance, email)
+                        if invited_user_attendance.team == user_attendance.team:
+                            approved_for_team = 'approved'
+                            invited_user_attendance.save()
+                            messages.add_message(request, messages.SUCCESS, _(u"Uživatel %s byl odsouhlasen ve vašem týmu" % invited_user_attendance), fail_silently=True)
+                        else:
+                            invitation_register_mail(user_attendance, invited_user_attendance)
+                            messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka uživateli %s na email %s" % (invited_user_attendance, email)), fail_silently=True)
+                    except models.User.DoesNotExist:
+                        invitation_mail(user_attendance, email)
+                        messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s" % email), fail_silently=True)
 
             return redirect(wp_reverse(success_url))
     else:

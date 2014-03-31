@@ -8,6 +8,7 @@ urls = {
     'chci_slapat':                  "/chci-slapat/",
     'registrace':                   "/registrace/",
     'pozvanky':                     '/registrace/pozvanky',
+    'team_invitation':              '/registrace/tym-pozvanka',
     'zaslat_zadost_clenstvi':       "/registrace/zaslat-zadost-o-clenstvi-v-tymu",
     'typ_platby':                   "/registrace/typ-platby",
     'platba':                       "/registrace/platba",
