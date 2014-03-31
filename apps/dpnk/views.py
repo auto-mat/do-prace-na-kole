@@ -22,7 +22,7 @@
 import time, httplib, urllib, hashlib, datetime
 # Django imports
 from django.shortcuts import render_to_response, get_object_or_404
-import django.contrib.auth
+from django.contrib import auth
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
@@ -47,7 +47,6 @@ import util, draw
 from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import get_current_site
-from django.contrib.auth import login as auth_login
 from django.db import transaction
 
 from wp_urls import wp_reverse
@@ -65,7 +64,7 @@ def login(request, template_name='registration/login.html',
     if request.method == "POST":
         form = authentication_form(data=request.POST)
         if form.is_valid():
-            auth_login(request, form.get_user())
+            auth.login(request, form.get_user())
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
             return HttpResponse(redirect(wp_reverse(settings.LOGIN_REDIRECT_VIEW)))
@@ -267,10 +266,10 @@ class RegistrationView(FormView):
         super(RegistrationView, self).form_valid(form)
         backend = registration.backends.get_backend(backend)
         backend.register(self.request, campaign, self.kwargs.get('token', None), **form.cleaned_data)
-        auth_user = django.contrib.auth.authenticate(
+        auth_user = auth.authenticate(
             username=self.request.POST['username'],
             password=self.request.POST['password1'])
-        django.contrib.auth.login(self.request, auth_user)
+        auth.login(self.request, auth_user)
 
         return redirect(wp_reverse(self.success_url))
 
