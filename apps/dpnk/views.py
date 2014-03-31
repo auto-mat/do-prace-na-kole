@@ -943,7 +943,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %s ve vašem týmu bylo zamítnuto" % user_attendance), fail_silently=True)
         return
     elif approve:
-        if len(user_attendance.team.members()) >= 5:
+        if len(user_attendance.team.members()) >= settings.MAX_TEAM_MEMBERS:
             messages.add_message(request, messages.ERROR, _(u"Tým je již plný, další člen již nemůže být potvrzen."), fail_silently=True)
             return
         user_attendance.approved_for_team = 'approved'
