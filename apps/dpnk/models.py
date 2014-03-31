@@ -273,7 +273,10 @@ class Team(models.Model):
         )
 
     def autoset_member_count(self):
-        self.member_count = UserAttendance.objects.filter(campaign=self.campaign, team=self).count()
+        self.member_count = UserAttendance.objects.filter(campaign=self.campaign, team=self, approved_for_team='approved').count()
+        self.save()
+        if self.member_count >= settings.MAX_TEAM_MEMBERS:
+            logger.error(_(u"Too much members in team %s") % self)
 
     def all_members(self, campaign):
         return UserAttendance.objects.filter(campaign=campaign, team=self, userprofile__user__is_active=True)
@@ -1586,6 +1589,8 @@ class SubsidiaryInCampaign(Subsidiary):
 def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     field, (old, new) = changed_fields.items()[0]
     new_team = Team.objects.get(pk=new) if new else None
+    if new_team.campaign != instance.campaign:
+        logger.error(_(u"UserAttendance %s campaign doesn't match team campaign") % instance)
     if instance.team and new_team.member_count == 0:
         instance.approved_for_team = 'approved'
     else:
@@ -1599,17 +1604,19 @@ def post_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     new_team = Team.objects.get(pk=new) if new else None
     if new_team:
         new_team.autoset_member_count()
-        new_team.save()
         results.recalculate_results_team(new_team)
 
     if old_team:
         old_team.autoset_member_count()
-        old_team.save()
         results.recalculate_results_team(old_team)
 
     results.recalculate_result_competitor(instance)
 post_save_changed.connect(post_user_team_changed, sender=UserAttendance, fields=['team'])
 
+
+def post_user_approved_for_team(sender, instance, changed_fields=None, **kwargs):
+    instance.team.autoset_member_count()
+post_save_changed.connect(post_user_approved_for_team, sender=UserAttendance, fields=['approved_for_team'])
 
 @receiver(post_save, sender=User)
 def update_mailing_user(sender, instance, created, **kwargs):
