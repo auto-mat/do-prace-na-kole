@@ -31,7 +31,7 @@ from decorators import must_be_coordinator, must_be_approved_for_team, must_be_c
 from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import gettext as _
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, never_cache, cache_control
 from django.views.generic.edit import FormView, UpdateView, CreateView
 # Registration imports
 import registration.signals, registration.backends, registration.backends.simple
@@ -59,6 +59,8 @@ import shutil
 import re
 logger = logging.getLogger(__name__)
 
+@never_cache
+@cache_control(max_age=0, no_cache=True, no_store=True)
 def login(request, template_name='registration/login.html',
           authentication_form=AuthenticationForm):
     if request.method == "POST":
@@ -357,6 +359,8 @@ def payment_type(request, user_attendance=None):
                                }, context_instance=RequestContext(request))
 
 
+@never_cache
+@cache_control(max_age=0, no_cache=True, no_store=True)
 def header_bar(request, campaign_slug):
     user_attendance = None
     company_admin = None
@@ -589,6 +593,8 @@ def rides(request, user_attendance=None, template='registration/rides.html',
 
 @login_required_simple
 @must_be_competitor
+@never_cache
+@cache_control(max_age=0, no_cache=True, no_store=True)
 def profile(request, user_attendance=None):
 
     # Render profile
