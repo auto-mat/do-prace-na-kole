@@ -933,21 +933,25 @@ def answers(request):
                                'choice_names': choice_names
                                }, context_instance=RequestContext(request))
 
-def approve_for_team(user_attendance, reason, approve=False, deny=False):
+def approve_for_team(request, user_attendance, reason="", approve=False, deny=False):
     if deny:
         if not reason:
-            return 'no_message'
+            messages.add_message(request, messages.WARNING, _(u"Při zamítnutí člena týmu musíte vyplnit zprávu."), fail_silently=True)
+            return
         user_attendance.approved_for_team = 'denied'
         user_attendance.save()
         team_membership_denial_mail(user_attendance, reason)
-        return 'denied'
+        messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %s ve vašem týmu bylo zamítnuto" % user_attendance), fail_silently=True)
+        return
     elif approve:
         if len(user_attendance.team.members()) >= 5:
-            return 'team_full'
+            messages.add_message(request, messages.WARNING, _(u"Tým je již plný, další člen již nemůže být potvrzen."), fail_silently=True)
+            return
         user_attendance.approved_for_team = 'approved'
         user_attendance.save()
         team_membership_approval_mail(user_attendance)
-        return 'approved'
+        messages.add_message(request, messages.SUCCESS, _(u"Uživatel %s byl odsouhlasen ve vašem týmu" % user_attendance), fail_silently=True)
+        return
 
 @must_be_competitor
 @login_required_simple
@@ -1031,7 +1035,6 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
              extra_context=None):
     team = user_attendance.team
     unapproved_users = []
-    denial_message = 'unapproved'
 
     if 'button_action' in request.POST and request.POST['button_action']:
         b_action = request.POST['button_action'].split('-')
@@ -1039,9 +1042,9 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
         userprofile = user_attendance.userprofile
         if user_attendance.approved_for_team not in ('undecided', 'denied') or user_attendance.team != team or not userprofile.user.is_active:
             logger.error('Approving user with wrong parameters. User: %s, approval: %s, team: %s, active: %s' % (userprofile.user, user_attendance.approved_for_team, user_attendance.team, userprofile.user.is_active))
-            denial_message = 'cannot_approve'
+            messages.add_message(request, messages.WARNING, _(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte kontakt@dopracenakole.net."), fail_silently=True)
         else:
-            denial_message = approve_for_team(user_attendance, request.POST.get('reason-' + str(user_attendance.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
+            approve_for_team(request, user_attendance, request.POST.get('reason-' + str(user_attendance.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
 
     for user_attendance in UserAttendance.objects.filter(team = team, userprofile__user__is_active=True):
         userprofile = user_attendance.userprofile
@@ -1060,7 +1063,6 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
     return render_to_response(template_name,
                               {
                                'unapproved_users': unapproved_users,
-                                'denial_message': denial_message,
                                 }, context_instance=RequestContext(request))
 
 def facebook_app(request):
