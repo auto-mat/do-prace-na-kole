@@ -63,6 +63,7 @@ logger = logging.getLogger(__name__)
 @cache_control(max_age=0, no_cache=True, no_store=True)
 def login(request, template_name='registration/login.html',
           authentication_form=AuthenticationForm):
+    redirect_to = wp_reverse("profil")
     if request.method == "POST":
         form = authentication_form(data=request.POST)
         if form.is_valid():
@@ -73,8 +74,6 @@ def login(request, template_name='registration/login.html',
     else:
         if request.GET.has_key("next"):
             redirect_to = ""
-        else:
-            redirect_to = wp_reverse("profil")
         form = authentication_form(request)
     request.session.set_test_cookie()
     current_site = get_current_site(request)
