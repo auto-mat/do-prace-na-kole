@@ -233,10 +233,16 @@ class InviteForm(forms.Form):
 class TeamAdminForm(models.TeamForm):
     required_css_class = 'required'
     error_css_class = 'error'
+    campaign = forms.ModelChoiceField(
+        label=_(u"Kampaň"),
+        queryset=models.Campaign.objects.all(),
+        widget=HiddenInput(),
+        )
+
 
     class Meta:
         model = Team
-        fields = ('name', 'coordinator_campaign', )
+        fields = ('name', 'coordinator_campaign', 'campaign')
 
 class PaymentTypeForm(forms.Form):
     CHOICES=[('pay', _(u"Účastnický poplatek si platím sám.")),
