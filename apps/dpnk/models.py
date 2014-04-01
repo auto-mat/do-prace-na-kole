@@ -275,7 +275,7 @@ class Team(models.Model):
     def autoset_member_count(self):
         self.member_count = UserAttendance.objects.filter(campaign=self.campaign, team=self, approved_for_team='approved').count()
         self.save()
-        if self.member_count >= settings.MAX_TEAM_MEMBERS:
+        if self.member_count > settings.MAX_TEAM_MEMBERS:
             logger.error(_(u"Too much members in team %s") % self)
 
     def all_members(self, campaign):
