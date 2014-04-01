@@ -416,6 +416,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_filter = ('campaign', 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', PaymentTypeFilter, PaymentFilter)
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email')
+    readonly_fields = ('user_link',)
     actions = (update_mailing, approve_am_payment)
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
@@ -427,6 +428,10 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     def team__subsidiary__company(self, obj):
         if obj.team:
             return obj.team.subsidiary.company
+
+    def user_link(self, obj):
+        return mark_safe('<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (obj.userprofile.user.pk, obj.userprofile.user))
+    user_link.short_description = 'Uživatel'
 
 
 class CoordinatorFilter(SimpleListFilter):
