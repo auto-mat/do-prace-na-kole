@@ -798,6 +798,9 @@ class DeliveryBatch(models.Model):
         verbose_name = _(u"Dávka objednávek")
         verbose_name_plural = _(u"Dávky objednávek")
 
+    def __unicode__(self):
+        return self.created
+
 
 @transaction.atomic
 def add_packages(instance):
