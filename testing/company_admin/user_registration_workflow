@@ -8,11 +8,9 @@
 <body>
 <table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
 <tr><td><b>Test Suite</b></td></tr>
-<tr><td><a href="set_environment.html">set_environment</a></td></tr>
-<tr><td><a href="delete_testing_team.html">delete_testing_team</a></td></tr>
-<tr><td><a href="delete_testing_data.html">delete_testing_data</a></td></tr>
-<tr><td><a href="vyplneni_registrace.html">vyplneni_registrace - založení FTP</a></td></tr>
-<tr><td><a href="vyplneni_osobnich_udaju">vyplneni_osobnich_udaju</a></td></tr>
+<tr><td><a href="../set_environment.html">set_environment</a></td></tr>
+<tr><td><a href="../vyplneni_registrace.html">vyplneni_registrace</a></td></tr>
+<tr><td><a href="../vyplneni_osobnich_udaju">vyplneni_osobnich_udaju</a></td></tr>
 </tbody></table>
 </body>
 </html>

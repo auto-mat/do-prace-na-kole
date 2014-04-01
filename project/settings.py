@@ -2,6 +2,7 @@
 # Django settings for DPNK project.
 import os
 import sys
+from django.contrib.messages import constants as message_constants
 
 normpath = lambda *args: os.path.normpath(os.path.abspath(os.path.join(*args)))
 PROJECT_ROOT = normpath(__file__, "..", "..")
@@ -122,6 +123,7 @@ SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 
 MAX_COMPETITIONS_PER_COMPANY = 4
+MAX_TEAM_MEMBERS = 5
 
 MAILING_API_KEY = ''
 
@@ -203,6 +205,13 @@ LOGGING = {
     }
 }
 
+MESSAGE_TAGS = {
+        message_constants.DEBUG: 'debug',
+        message_constants.INFO: 'info',
+        message_constants.SUCCESS: 'success',
+        message_constants.WARNING: 'warning',
+        message_constants.ERROR: 'danger',
+        }
 
 # import local settings
 try:

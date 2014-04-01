@@ -59,7 +59,7 @@ def must_be_approved_for_team(fn):
         if user_attendance.approved_for_team == 'approved' or models.is_team_coordinator(user_attendance):
             return fn(*args, **kwargs)
         else:
-            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno týmovým koordinátorem. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': user_attendance.team, 'address': wp_reverse("zaslat_zadost_clenstvi")}, status=401)
+            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno týmovým koordinátorem. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': user_attendance.team.name, 'address': wp_reverse("zaslat_zadost_clenstvi")}, status=401)
     return wrapper
 
 
@@ -153,12 +153,8 @@ def user_attendance_has(condition, message):
 def request_condition(condition, message):
     def decorator(fn):
         def wrapped(request, *args, **kwargs):
-            print condition(request, args, kwargs)
             if condition(request, args, kwargs):
                 return HttpResponse(message, status=401)
-            print request
-            print args
-            print kwargs
             return fn(request, *args, **kwargs)
         return wrapped
     return decorator

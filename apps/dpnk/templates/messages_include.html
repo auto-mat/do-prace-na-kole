@@ -1,7 +1,11 @@
+{% load dpnk_tags %}
 
 {% if messages %}
     {% for message in messages %}
-    <div {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+       {% if not required_tag or required_tag in message.extra_tags %}
+          {# TODO: we should use message.level_tag after upgrade to Django 1.7 #}
+          <div class="alert{% for tag in message.tags|split:" " %} alert-{{ tag }}{% endfor %}">{{ message }}</div>
+       {% endif %}
     {% endfor %}
 {% endif %}
 

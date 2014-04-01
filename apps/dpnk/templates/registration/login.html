@@ -4,6 +4,7 @@
 
 <form method="post" class="form-horizontal">{% csrf_token %}
 <input type="hidden" name="page_url" id="page_url" value="{{ django_url }}/dpnk/login/">
+<input type="hidden" name="redirect_to" id="redirect_to" value="{{ redirect_to }}">
 {{ form|bootstrap }}
 <br/>
 <button class="submit submit_once btn btn-block btn-primary" type="button">{% trans "Přihlásit" %}</button>

@@ -36,6 +36,7 @@ def invitation_register_mail(inviting, invited):
     email = invited.userprofile.user.email
     message = template.render(Context({ 'inviting': inviting,
         'invited': invited,
+        'email': email,
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_(u"%s - potvrzení registrace" % inviting.campaign), message, None, [email], fail_silently=False)
@@ -55,7 +56,7 @@ def team_membership_approval_mail(user_attendance):
     message = template.render(Context({ 'user': user_attendance,
         'SITE_URL': settings.SITE_URL,
         }))
-    send_mail(_(u"%s - potvrzení ověření členství v týmu"), message, None, [email], fail_silently=False)
+    send_mail(_(u"%s - potvrzení ověření členství v týmu" % user_attendance.campaign), message, None, [email], fail_silently=False)
 
 def team_membership_denial_mail(user_attendance, reason):
     template = get_template('email/team_membership_denial.html')

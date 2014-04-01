@@ -6,6 +6,7 @@ urls = {
     'chci_slapat':                  "chci_slapat.html",
     'registrace':                   "registrace.html",
     'pozvanky':                     'pozvanky.html',
+    'team_invitation':              'tym-pozvanka.html',
     'zaslat_zadost_clenstvi':       "zaslat_zadost_clenstvi.html",
     'typ_platby':                   "typ_platby.html",
     'platba':                       "platba.html",

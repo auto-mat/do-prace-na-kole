@@ -4,16 +4,10 @@
 
 <form method="post" class="form-inline">{% csrf_token %}
 <input type="hidden" id="button_action" name="button_action" />
-{% if denial_message == 'no_message' %}
-   <div class="alert alert-error">{% trans "Při zamítnutí člena týmu musíte vyplnit zprávu." %}</div>
-{% elif denial_message == 'team_full' %}
-   <div class="alert alert-error">{% trans "Tým je již plný, nemůžete potvrdit dalšího člena." %}</div>
-{% elif denial_message == 'cannot_approve' %}
-   <div class="alert alert-error">{% trans "Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte kontakt@dopracenakole.net." %}</div>
-{% endif %}
 {% for user in unapproved_users %}
    <div id="id-{{ user.4.2 }}-team-member">
    <h2>{{ user.3.2 }}</h2>
+   {% include "messages_include.html" with required_tag="user_attendance_"|add:user.1.2 %}
    <table class="table table-striped table-condensed">
       {% for field in user %}
          {% if forloop.counter > 4 %}

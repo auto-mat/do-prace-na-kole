@@ -22,12 +22,12 @@
 import time, httplib, urllib, hashlib, datetime
 # Django imports
 from django.shortcuts import render_to_response, get_object_or_404
-import django.contrib.auth
+from django.contrib import auth
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.decorators import method_decorator
-from decorators import must_be_coordinator, must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team, user_attendance_has
+from decorators import must_be_coordinator, must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team, user_attendance_has, request_condition
 from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import gettext as _
@@ -44,10 +44,9 @@ from  django.http import HttpResponse
 from django import http
 # Local imports
 import util, draw
-from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail
+from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail, invitation_register_mail
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import get_current_site
-from django.contrib.auth import login as auth_login
 from django.db import transaction
 
 from wp_urls import wp_reverse
@@ -67,17 +66,22 @@ def login(request, template_name='registration/login.html',
     if request.method == "POST":
         form = authentication_form(data=request.POST)
         if form.is_valid():
-            auth_login(request, form.get_user())
+            auth.login(request, form.get_user())
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
-            return HttpResponse(redirect(wp_reverse(settings.LOGIN_REDIRECT_VIEW)))
+            return HttpResponse(redirect(request.POST["redirect_to"]))
     else:
+        if request.GET.has_key("next"):
+            redirect_to = ""
+        else:
+            redirect_to = wp_reverse("profil")
         form = authentication_form(request)
     request.session.set_test_cookie()
     current_site = get_current_site(request)
     context = {
         'form': form,
         'site': current_site,
+        'redirect_to': redirect_to,
         'django_url': settings.DJANGO_URL,
         'site_name': current_site.name,
     }
@@ -100,24 +104,25 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
                     )
         userprofile.save()
 
-        approved_for_team = 'undecided'
         try:
             team = Team.objects.get(invitation_token=invitation_token)
-            approved_for_team = 'approved'
+            approve = True
         except Team.DoesNotExist:
             team = None
         user_attendance = UserAttendance(userprofile = userprofile,
                     campaign = campaign,
                     team = team,
-                    approved_for_team = approved_for_team,
                     )
         user_attendance.save()
+        if approve:
+           approve_for_team(request, user_attendance, "", True, False)
 
         register_mail(user_attendance)
         return new_user
 
 @login_required_simple
 @must_be_competitor
+@user_attendance_has(lambda ua: not ua.can_change_team_coordinator(),_(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin')))
 def change_team(request,
              success_url=None, form_class=ChangeTeamForm,
              template_name='registration/change_team.html',
@@ -127,10 +132,6 @@ def change_team(request,
     create_company = False
     create_subsidiary = False
     create_team = False
-
-    team_member_count = UserAttendance.objects.filter(team=user_attendance.team, userprofile__user__is_active=True).exclude(approved_for_team='denied').count()
-    if user_attendance.team and user_attendance.team.coordinator_campaign == user_attendance and team_member_count > 1:
-        return HttpResponse(_(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin')), status=401)
 
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES, instance=user_attendance)
@@ -269,10 +270,10 @@ class RegistrationView(FormView):
         super(RegistrationView, self).form_valid(form)
         backend = registration.backends.get_backend(backend)
         backend.register(self.request, campaign, self.kwargs.get('token', None), **form.cleaned_data)
-        auth_user = django.contrib.auth.authenticate(
+        auth_user = auth.authenticate(
             username=self.request.POST['username'],
             password=self.request.POST['password1'])
-        django.contrib.auth.login(self.request, auth_user)
+        auth.login(self.request, auth_user)
 
         return redirect(wp_reverse(self.success_url))
 
@@ -295,6 +296,41 @@ class ConfirmDeliveryView(FormView):
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
         return super(ConfirmDeliveryView, self).dispatch(request, *args, **kwargs)
+
+
+class ConfirmTeamInvitationView(FormView):
+    template_name = 'registration/team_invitation.html'
+    form_class = forms.ConfirmTeamInvitationForm
+    success_url = 'profil'
+
+    def get_context_data(self, **kwargs):
+        context = super(ConfirmTeamInvitationView, self).get_context_data(**kwargs)
+        context['old_team'] = self.user_attendance.team
+        context['new_team'] = self.new_team
+        return context
+
+    def form_valid(self, form):
+        if form.cleaned_data['question']:
+            self.user_attendance.team = self.new_team
+            self.user_attendance.save()
+            approve_for_team(self.request, self.user_attendance, "", True, False)
+        return redirect(wp_reverse(self.success_url))
+
+    @method_decorator(must_be_competitor)
+    @method_decorator(request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, "<div class='text-warning'>Tým nenalezen.</div>"))
+    @method_decorator(request_condition(lambda r, a, k: r.user.email!=k['initial_email'], "<div class='text-warning'>Pozvánka je určena jinému uživateli, než je aktuálně přihlášen.</div>"))
+    @method_decorator(user_attendance_has(lambda ua: not ua.can_change_team_coordinator(),_(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin'))))
+    def dispatch(self, request, *args, **kwargs):
+        self.user_attendance = kwargs['user_attendance']
+        invitation_token = self.kwargs['token']
+        self.new_team = Team.objects.get(invitation_token=invitation_token)
+
+        if self.user_attendance.payment_status() == 'done' and self.user_attendance.team.subsidiary != self.new_team.subsidiary:
+            return HttpResponse(_(u'<div class="text-error">Již máte zaplaceno, nemůžete měnit tým mimo svoji pobočku.</div>'), status=401)
+
+        if self.user_attendance.campaign != self.new_team.campaign:
+            return HttpResponse(_(u'<div class="text-error">Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku).</div>'), status=401)
+        return super(ConfirmTeamInvitationView, self).dispatch(request, *args, **kwargs)
 
 
 @login_required_simple
@@ -904,21 +940,25 @@ def answers(request):
                                'choice_names': choice_names
                                }, context_instance=RequestContext(request))
 
-def approve_for_team(user_attendance, reason, approve=False, deny=False):
+def approve_for_team(request, user_attendance, reason="", approve=False, deny=False):
     if deny:
         if not reason:
-            return 'no_message'
+            messages.add_message(request, messages.ERROR, _(u"Při zamítnutí člena týmu musíte vyplnit zprávu."), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
+            return
         user_attendance.approved_for_team = 'denied'
         user_attendance.save()
         team_membership_denial_mail(user_attendance, reason)
-        return 'denied'
+        messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %s ve vašem týmu bylo zamítnuto" % user_attendance), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
+        return
     elif approve:
-        if len(user_attendance.team.members()) >= 5:
-            return 'team_full'
+        if len(user_attendance.team.members()) >= settings.MAX_TEAM_MEMBERS:
+            messages.add_message(request, messages.ERROR, _(u"Tým je již plný, další člen již nemůže být potvrzen."), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
+            return
         user_attendance.approved_for_team = 'approved'
         user_attendance.save()
         team_membership_approval_mail(user_attendance)
-        return 'approved'
+        messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %s v týmu %s bylo odsouhlaseno." % (user_attendance, user_attendance.team.name)), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
+        return
 
 @must_be_competitor
 @login_required_simple
@@ -945,22 +985,23 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
             emails = [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4']]
 
             for email in emails:
-                #try:
-                #    invited_user = User.objects.get(email=email)
+                if email:
+                    try:
+                        invited_user = models.User.objects.get(email=email)
 
-                #    if hasattr(invited_user, "userprofile") and invited_user.userprofile.userattendance_set.filter(campaign=user_attendance.campaign).count() == 0:
-                #        invited_user_attendance = UserAttendance(userprofile = invited_user.userprofile,
-                #                    campaign = user_attendance.campaign,
-                #                    team = user_attendance.team,
-                #                    approved_for_team = 'approved',
-                #                    )
-                #        invited_user_attendance.save()
+                        invited_user_attendance, created = UserAttendance.objects.get_or_create(
+                            userprofile = invited_user.userprofile,
+                            campaign = user_attendance.campaign,
+                            )
 
-                #        invitation_register_mail(user_attendance, invited_user_attendance)
-                #    else:
-                #        invitation_mail(user_attendance, email)
-                #except User.DoesNotExist:
-                invitation_mail(user_attendance, email)
+                        if invited_user_attendance.team == user_attendance.team:
+                            approve_for_team(request, invited_user_attendance, "", True, False)
+                        else:
+                            invitation_register_mail(user_attendance, invited_user_attendance)
+                            messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka uživateli %s na email %s" % (invited_user_attendance, email)), fail_silently=True)
+                    except models.User.DoesNotExist:
+                        invitation_mail(user_attendance, email)
+                        messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s" % email), fail_silently=True)
 
             return redirect(wp_reverse(success_url))
     else:
@@ -999,7 +1040,6 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
              extra_context=None):
     team = user_attendance.team
     unapproved_users = []
-    denial_message = 'unapproved'
 
     if 'button_action' in request.POST and request.POST['button_action']:
         b_action = request.POST['button_action'].split('-')
@@ -1007,15 +1047,15 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
         userprofile = user_attendance.userprofile
         if user_attendance.approved_for_team not in ('undecided', 'denied') or user_attendance.team != team or not userprofile.user.is_active:
             logger.error('Approving user with wrong parameters. User: %s, approval: %s, team: %s, active: %s' % (userprofile.user, user_attendance.approved_for_team, user_attendance.team, userprofile.user.is_active))
-            denial_message = 'cannot_approve'
+            messages.add_message(request, messages.ERROR, _(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte kontakt@dopracenakole.net."), fail_silently=True)
         else:
-            denial_message = approve_for_team(user_attendance, request.POST.get('reason-' + str(user_attendance.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
+            approve_for_team(request, user_attendance, request.POST.get('reason-' + str(user_attendance.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
 
     for user_attendance in UserAttendance.objects.filter(team = team, userprofile__user__is_active=True):
         userprofile = user_attendance.userprofile
         unapproved_users.append([
             ('state', None, user_attendance.approved_for_team),
-            ('id', None, user_attendance.id),
+            ('id', None, str(user_attendance.id)),
             ('payment', None, user_attendance.payment()),
             ('name', _(u"Jméno"), unicode(userprofile)),
             ('username', _(u"Uživatel"), userprofile.user),
@@ -1028,7 +1068,6 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
     return render_to_response(template_name,
                               {
                                'unapproved_users': unapproved_users,
-                                'denial_message': denial_message,
                                 }, context_instance=RequestContext(request))
 
 def facebook_app(request):

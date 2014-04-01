@@ -263,6 +263,12 @@ class ConfirmDeliveryForm(forms.Form):
             )
 
 
+class ConfirmTeamInvitationForm(forms.Form):
+    question = forms.BooleanField(
+            label=_(u"Chci být zařazen do nového týmu"),
+            )
+
+
 class BikeRepairForm(forms.ModelForm):
     user_attendance = forms.CharField(
         label="Uživatelské jméno zákazníka",

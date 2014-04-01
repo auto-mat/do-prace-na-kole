@@ -1,0 +1,15 @@
+{% load bootstrap %}
+{% load i18n %}
+
+{% include "messages_include.html" %}
+{% if old_team %}
+Přejete si být přeřazeni z týmu {{ old_team }} do týmu {{ new_team }}?
+{% else %}
+Přejete si být zařazeni do týmu {{ new_team }}?
+{% endif %}
+
+<form method="post" class="form-horizontal">{% csrf_token %}
+   {{ form|bootstrap }}
+<br/>
+<button class="submit submit_once btn btn-block btn-primary" type="button">{% trans "Odeslat" %}</button>
+</form>
