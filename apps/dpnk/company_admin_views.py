@@ -25,6 +25,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
 from django.http import HttpResponse, Http404
 import django.contrib.auth
+import datetime
 from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView
 from decorators import must_be_company_admin, request_condition
@@ -66,6 +67,7 @@ class SelectUsersPayView(FormView):
             for payment in userprofile.payments().all():
                 if payment.pay_type == 'fc':
                     payment.status = Payment.Status.COMPANY_ACCEPTS
+                    payment.description = payment.description + "\nFA %s odsouhlasil dne %s" % (self.request.user.username, datetime.datetime.now())
                     payment.save()
                     break
         logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x, paing_for)))
