@@ -19,3 +19,8 @@ def percentage(value):
         return (value / ((util.days_count()) * 2)) * 100
     else:
         return 0
+
+
+@register.filter
+def split(str,splitter):
+        return str.split(splitter)

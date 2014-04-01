@@ -935,21 +935,21 @@ def answers(request):
 def approve_for_team(request, user_attendance, reason="", approve=False, deny=False):
     if deny:
         if not reason:
-            messages.add_message(request, messages.ERROR, _(u"Při zamítnutí člena týmu musíte vyplnit zprávu."), fail_silently=True)
+            messages.add_message(request, messages.ERROR, _(u"Při zamítnutí člena týmu musíte vyplnit zprávu."), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
             return
         user_attendance.approved_for_team = 'denied'
         user_attendance.save()
         team_membership_denial_mail(user_attendance, reason)
-        messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %s ve vašem týmu bylo zamítnuto" % user_attendance), fail_silently=True)
+        messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %s ve vašem týmu bylo zamítnuto" % user_attendance), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
         return
     elif approve:
         if len(user_attendance.team.members()) >= settings.MAX_TEAM_MEMBERS:
-            messages.add_message(request, messages.ERROR, _(u"Tým je již plný, další člen již nemůže být potvrzen."), fail_silently=True)
+            messages.add_message(request, messages.ERROR, _(u"Tým je již plný, další člen již nemůže být potvrzen."), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
             return
         user_attendance.approved_for_team = 'approved'
         user_attendance.save()
         team_membership_approval_mail(user_attendance)
-        messages.add_message(request, messages.SUCCESS, _(u"Uživatel %s byl odsouhlasen ve vašem týmu" % user_attendance), fail_silently=True)
+        messages.add_message(request, messages.SUCCESS, _(u"Uživatel %s byl odsouhlasen ve vašem týmu" % user_attendance), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
         return
 
 @must_be_competitor
@@ -1047,7 +1047,7 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
         userprofile = user_attendance.userprofile
         unapproved_users.append([
             ('state', None, user_attendance.approved_for_team),
-            ('id', None, user_attendance.id),
+            ('id', None, str(user_attendance.id)),
             ('payment', None, user_attendance.payment()),
             ('name', _(u"Jméno"), unicode(userprofile)),
             ('username', _(u"Uživatel"), userprofile.user),
