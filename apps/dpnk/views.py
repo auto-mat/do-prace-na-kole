@@ -987,7 +987,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
                             )
 
                         if invited_user_attendance.team == user_attendance.team:
-                            approve_for_team(request, user_attendance, "", True, False)
+                            approve_for_team(request, invited_user_attendance, "", True, False)
                         else:
                             invitation_register_mail(user_attendance, invited_user_attendance)
                             messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka uživateli %s na email %s" % (invited_user_attendance, email)), fail_silently=True)
