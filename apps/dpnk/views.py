@@ -69,14 +69,19 @@ def login(request, template_name='registration/login.html',
             auth.login(request, form.get_user())
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
-            return HttpResponse(redirect(wp_reverse(settings.LOGIN_REDIRECT_VIEW)))
+            return HttpResponse(redirect(request.POST["redirect_to"]))
     else:
+        if request.GET.has_key("next"):
+            redirect_to = ""
+        else:
+            redirect_to = wp_reverse("profil")
         form = authentication_form(request)
     request.session.set_test_cookie()
     current_site = get_current_site(request)
     context = {
         'form': form,
         'site': current_site,
+        'redirect_to': redirect_to,
         'django_url': settings.DJANGO_URL,
         'site_name': current_site.name,
     }
