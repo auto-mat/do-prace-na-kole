@@ -987,7 +987,7 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
             for email in emails:
                 if email:
                     try:
-                        invited_user = models.User.objects.get(email=email)
+                        invited_user = models.User.objects.get(is_active=True, email=email)
 
                         invited_user_attendance, created = UserAttendance.objects.get_or_create(
                             userprofile = invited_user.userprofile,
