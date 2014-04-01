@@ -957,7 +957,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         user_attendance.approved_for_team = 'approved'
         user_attendance.save()
         team_membership_approval_mail(user_attendance)
-        messages.add_message(request, messages.SUCCESS, _(u"Uživatel %s byl odsouhlasen ve vašem týmu" % user_attendance), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
+        messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %s v týmu %s bylo odsouhlaseno." % (user_attendance, user_attendance.team.name)), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
         return
 
 @must_be_competitor
