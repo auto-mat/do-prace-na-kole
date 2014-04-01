@@ -316,7 +316,6 @@ class ConfirmTeamInvitationView(FormView):
     @method_decorator(user_attendance_has(lambda ua: not ua.can_change_team_coordinator(),_(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin'))))
     @method_decorator(must_be_competitor)
     def dispatch(self, request, *args, **kwargs):
-        print request
         self.user_attendance = kwargs['user_attendance']
         invitation_token = self.kwargs['token']
         self.new_team = Team.objects.get(invitation_token=invitation_token)
