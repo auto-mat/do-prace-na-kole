@@ -319,6 +319,12 @@ class ConfirmTeamInvitationView(FormView):
         self.user_attendance = kwargs['user_attendance']
         invitation_token = self.kwargs['token']
         self.new_team = Team.objects.get(invitation_token=invitation_token)
+
+        if self.user_attendance.payment_status() == 'done' and self.user_attendance.team.subsidiary != self.new_team.subsidiary:
+            return HttpResponse(_(u'<div class="text-error">Již máte zaplaceno, nemůžete měnit tým mimo svoji pobočku.</div>'), status=401)
+
+        if self.user_attendance.campaign != self.new_team.campaign:
+            return HttpResponse(_(u'<div class="text-error">Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku).</div>'), status=401)
         return super(ConfirmTeamInvitationView, self).dispatch(request, *args, **kwargs)
 
 
