@@ -1625,7 +1625,8 @@ post_save_changed.connect(post_user_team_changed, sender=UserAttendance, fields=
 
 
 def post_user_approved_for_team(sender, instance, changed_fields=None, **kwargs):
-    instance.team.autoset_member_count()
+    if instance.team:
+        instance.team.autoset_member_count()
 post_save_changed.connect(post_user_approved_for_team, sender=UserAttendance, fields=['approved_for_team'])
 
 @receiver(post_save, sender=User)
