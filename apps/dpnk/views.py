@@ -311,10 +311,10 @@ class ConfirmTeamInvitationView(FormView):
             approve_for_team(self.request, self.user_attendance, "", True, False)
         return redirect(wp_reverse(self.success_url))
 
+    @method_decorator(must_be_competitor)
     @method_decorator(request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, "<div class='text-warning'>Tým nenalezen.</div>"))
     @method_decorator(request_condition(lambda r, a, k: r.user.email!=k['initial_email'], "<div class='text-warning'>Pozvánka je určena jinému uživateli, než je aktuálně přihlášen.</div>"))
     @method_decorator(user_attendance_has(lambda ua: not ua.can_change_team_coordinator(),_(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin'))))
-    @method_decorator(must_be_competitor)
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
         invitation_token = self.kwargs['token']
