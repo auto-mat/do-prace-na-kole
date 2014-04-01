@@ -607,6 +607,13 @@ class UserAttendance(models.Model):
     def other_user_attendances(self, campaign):
         return self.userprofile.userattendance_set.exclude(campaign=campaign)
 
+    def can_change_team_coordinator(self):
+        """Can change team? Not, if he is team coordinator and the team has other members"""
+        team_member_count = UserAttendance.objects.filter(team=self.team, userprofile__user__is_active=True).exclude(approved_for_team='denied').count()
+        if self.team and self.team.coordinator_campaign == self and team_member_count > 1:
+            return False
+        return True
+
 
 class UserProfile(models.Model):
     """Uživatelský profil"""

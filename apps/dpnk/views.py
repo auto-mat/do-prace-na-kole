@@ -117,6 +117,7 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
 
 @login_required_simple
 @must_be_competitor
+@user_attendance_has(lambda ua: not ua.can_change_team_coordinator(),_(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin')))
 def change_team(request,
              success_url=None, form_class=ChangeTeamForm,
              template_name='registration/change_team.html',
@@ -126,10 +127,6 @@ def change_team(request,
     create_company = False
     create_subsidiary = False
     create_team = False
-
-    team_member_count = UserAttendance.objects.filter(team=user_attendance.team, userprofile__user__is_active=True).exclude(approved_for_team='denied').count()
-    if user_attendance.team and user_attendance.team.coordinator_campaign == user_attendance and team_member_count > 1:
-        return HttpResponse(_(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin')), status=401)
 
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES, instance=user_attendance)
@@ -316,6 +313,7 @@ class ConfirmTeamInvitationView(FormView):
 
     @method_decorator(request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, "<div class='text-warning'>Tým nenalezen.</div>"))
     @method_decorator(request_condition(lambda r, a, k: r.user.email!=k['initial_email'], "<div class='text-warning'>Pozvánka je určena jinému uživateli, než je aktuálně přihlášen.</div>"))
+    @method_decorator(user_attendance_has(lambda ua: not ua.can_change_team_coordinator(),_(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin'))))
     @method_decorator(must_be_competitor)
     def dispatch(self, request, *args, **kwargs):
         print request
