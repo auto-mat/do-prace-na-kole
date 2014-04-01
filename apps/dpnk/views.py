@@ -103,6 +103,7 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
                     )
         userprofile.save()
 
+        approve = False
         try:
             team = Team.objects.get(invitation_token=invitation_token)
             approve = True
