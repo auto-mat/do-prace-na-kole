@@ -109,6 +109,7 @@ INSTALLED_APPS = (
     'remote_ajax',
     'adminsortable',
     'reportlab',
+    'dbbackup',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
@@ -121,6 +122,9 @@ DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
+
+DBBACKUP_STORAGE = 'dbbackup.storage.filesystem_storage'
+DBBACKUP_FILESYSTEM_DIRECTORY = 'db_backup'
 
 MAX_COMPETITIONS_PER_COMPANY = 4
 MAX_TEAM_MEMBERS = 5
