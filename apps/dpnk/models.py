@@ -660,6 +660,11 @@ class UserProfile(models.Model):
         null=True,
         blank=True
         )
+    note = models.TextField(
+        verbose_name=_(u"Interní poznámka"),
+        null=True,
+        blank=True,
+        )
 
     def first_name(self):
         return self.user.first_name
@@ -851,7 +856,6 @@ class Transaction(PolymorphicModel):
         null=False)
     description = models.TextField(
         verbose_name=_(u"Popis"),
-        max_length=500,
         null=True,
         blank=True,
         default="")

@@ -10,12 +10,20 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Changing field 'Transaction.description'
-        db.alter_column(u'dpnk_transaction', 'description', self.gf('django.db.models.fields.TextField')(max_length=500, null=True))
+        db.alter_column(u'dpnk_transaction', 'description', self.gf('django.db.models.fields.TextField')(null=True))
+        # Adding field 'UserProfile.note'
+        db.add_column(u'dpnk_userprofile', 'note',
+                      self.gf('django.db.models.fields.TextField')(null=True, blank=True),
+                      keep_default=False)
+
 
     def backwards(self, orm):
 
         # Changing field 'Transaction.description'
         db.alter_column(u'dpnk_transaction', 'description', self.gf('django.db.models.fields.CharField')(max_length=500, null=True))
+        # Deleting field 'UserProfile.note'
+        db.delete_column(u'dpnk_userprofile', 'note')
+
 
     models = {
         u'auth.group': {
@@ -230,7 +238,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Transaction'},
             'author': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'transaction_create'", 'null': 'True', 'to': u"orm['auth.User']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'description': ('django.db.models.fields.TextField', [], {'default': "''", 'max_length': '500', 'null': 'True', 'blank': 'True'}),
+            'description': ('django.db.models.fields.TextField', [], {'default': "''", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'polymorphic_ctype': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'polymorphic_dpnk.transaction_set'", 'null': 'True', 'to': u"orm['contenttypes.ContentType']"}),
             'realized': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
@@ -277,6 +285,7 @@ class Migration(SchemaMigration):
             'language': ('django.db.models.fields.CharField', [], {'default': "'cs'", 'max_length': '16'}),
             'mailing_hash': ('django.db.models.fields.BigIntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'mailing_id': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '128', 'null': 'True', 'db_index': 'True', 'blank': 'True'}),
+            'note': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'telephone': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'userprofile'", 'unique': 'True', 'to': u"orm['auth.User']"})
         }
