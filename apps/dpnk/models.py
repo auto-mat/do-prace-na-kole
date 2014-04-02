@@ -849,7 +849,7 @@ class Transaction(PolymorphicModel):
         verbose_name=_(u"Vytvoření"),
         default=datetime.datetime.now,
         null=False)
-    description = models.CharField(
+    description = models.TextField(
         verbose_name=_(u"Popis"),
         max_length=500,
         null=True,
