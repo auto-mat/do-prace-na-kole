@@ -28,3 +28,4 @@ reportlab
 svg2rlg
 flake8
 modulus11
+django-dbbackup

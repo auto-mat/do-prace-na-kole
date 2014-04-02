@@ -741,7 +741,7 @@ class CompanyAdmin(models.Model):
         related_name="company_admin",
         verbose_name=_(u"Administrovaná společnost"),
         null=True,
-        blank=True)
+        blank=False)
 
     campaign = models.ForeignKey(
         Campaign,

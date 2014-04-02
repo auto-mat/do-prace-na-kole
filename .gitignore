@@ -5,6 +5,7 @@
 *~
 /sql/
 /dpnk.log
+/dpnk-timelog.log
 /env/
-/project/settings_dev_local.py
+/project/settings_local.py
 /static/
