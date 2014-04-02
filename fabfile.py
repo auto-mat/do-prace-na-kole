@@ -149,9 +149,16 @@ def local():
 
 def dpnk_test():
     "Use the local virtual server"
-    env.hosts = ['pdlouhy@auto-mat.cz']
+    env.hosts = ['auto-mat.cz']
     env.path = '/home/aplikace/dpnk-devel'
-    env.user = 'root'
+    env.user = 'pdlouhy'
+    env.virtualhost_path = "/"
+
+def dpnk():
+    "Use the local virtual server"
+    env.hosts = ['auto-mat.cz']
+    env.path = '/home/aplikace/dpnk-new'
+    env.user = 'pdlouhy'
     env.virtualhost_path = "/"
 
 # tasks
