@@ -66,7 +66,7 @@ campaign_urlpatterns = patterns(
     url(r'^denni-graf/$',
         views.daily_chart),
     url(r'^cykloservis/$',
-        login_required_simple(must_be_in_group('cykloservis')(views.BikeRepairView.as_view()))),
+        login_required(must_be_in_group('cykloservis')(views.BikeRepairView.as_view()))),
     url(r'^facebook_app/$',
         views.facebook_app),
     url(r'^package/$',
