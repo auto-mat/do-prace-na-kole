@@ -278,6 +278,9 @@ class Team(models.Model):
         if self.member_count > settings.MAX_TEAM_MEMBERS:
             logger.error(_(u"Too much members in team %s") % self)
 
+    def unapproved_members(self):
+        return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True, approved_for_team='undecided')
+
     def all_members(self, campaign):
         return UserAttendance.objects.filter(campaign=campaign, team=self, userprofile__user__is_active=True)
 
