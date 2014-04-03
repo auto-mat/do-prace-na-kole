@@ -77,9 +77,9 @@ def add_user(user_attendance):
         list_id = user_attendance.campaign.mailing_list_id
         mailing_id = mailing.add(list_id, user.first_name, user.last_name, user.email, custom_fields)
         mailing_hash = hash(str((list_id, user.first_name, user.last_name, user.email, custom_fields)))
-    except Exception, e:
-        logger.error(u'Can\'t add user %s with email %s to mailing list: %s' % (user, user.email, str(e)))
+    except Exception:
         update_mailing_id(user, None, None)
+        raise
     else:
         logger.info(u'User %s with email %s added to mailing list with id %s, custom_fields: %s' % (user, user.email, mailing_id, custom_fields))
         update_mailing_id(user, mailing_id, mailing_hash)
@@ -96,12 +96,12 @@ def update_user(user_attendance, ignore_hash):
         list_id = user_attendance.campaign.mailing_list_id
         mailing_hash = hash(str((list_id, user.first_name, user.last_name, user.email, custom_fields)))
         if ignore_hash or userprofile.mailing_hash != mailing_hash:
-            mailing_id = mailing.update(list_id, mailing_id, user.first_name, user.last_name, user.email, custom_fields)
+            new_mailing_id = mailing.update(list_id, mailing_id, user.first_name, user.last_name, user.email, custom_fields)
             logger.info(u'User %s (%s) with email %s updated in mailing list with id %s, custom_fields: %s' % (userprofile, userprofile.user, user.email, mailing_id, custom_fields))
-            update_mailing_id(user, mailing_id, mailing_hash)
-    except Exception, e:
-        logger.error(u'Can\'t update user %s: email: %s, mailing_id: %s to mailing list: %s' % (userprofile.user, user.email, mailing_id, str(e)))
+            update_mailing_id(user, new_mailing_id, mailing_hash)
+    except Exception:
         update_mailing_id(user, None, None)
+        raise
 
 
 def delete_user(user_attendance):
@@ -114,13 +114,13 @@ def delete_user(user_attendance):
     # Unregister from mailing list
     try:
         list_id = user_attendance.campaign.mailing_list_id
-        mailing_id = mailing.delete(list_id, mailing_id)
-    except Exception, e:
-        logger.error(u'Can\'t delete user %s with email %s to mailing list: %s' % (user, user.email, str(e)))
+        new_mailing_id = mailing.delete(list_id, mailing_id)
+    except Exception:
         update_mailing_id(user, None, None)
+        raise
     else:
         logger.info(u'User %s with email %s deleted from mailing list with id %s' % (user, user.email, mailing_id))
-        update_mailing_id(user, mailing_id, None)
+        update_mailing_id(user, new_mailing_id, None)
 
 
 def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
@@ -128,13 +128,17 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
         return
 
     user = user_attendance.userprofile.user
-    if not user.is_active:
-        delete_user(user_attendance)
-    else:
-        if models.is_competitor(user) and user.get_profile().mailing_id:
-            update_user(user_attendance, ignore_hash)
+
+    try:
+        if not user.is_active:
+            delete_user(user_attendance)
         else:
-            add_user(user_attendance)
+            if models.is_competitor(user) and user.get_profile().mailing_id:
+                update_user(user_attendance, ignore_hash)
+            else:
+                add_user(user_attendance)
+    except:
+        logger.exception("Problem occured during mailing list record actualization")
 
 
 class MailingThread(threading.Thread):
