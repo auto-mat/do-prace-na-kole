@@ -5,6 +5,7 @@ import logging
 import threading
 logger = logging.getLogger(__name__)
 
+
 class Mailing:
 
     def __init__(self, api_key):
@@ -14,17 +15,17 @@ class Mailing:
         subscriber = createsend.Subscriber()
         r = subscriber.add(list_id, email,
                            " ".join([name, surname]),
-                           custom_fields
-                           , True)
+                           custom_fields,
+                           True)
         return r
 
     def update(self, list_id, mailing_id, name, surname, email, custom_fields):
         subscriber = createsend.Subscriber(list_id, mailing_id)
         subscriber.get(list_id, mailing_id)
         subscriber.update(email,
-                           " ".join([name, surname]),
-                           custom_fields
-                           , True)
+                          " ".join([name, surname]),
+                          custom_fields,
+                          True)
         return subscriber.email_address
 
     def delete(self, list_id, mailing_id):
@@ -34,6 +35,7 @@ class Mailing:
         return r
 
 mailing = Mailing(api_key=settings.MAILING_API_KEY)
+
 
 def get_custom_fields(user_attendance):
     user = user_attendance.userprofile.user
@@ -45,24 +47,26 @@ def get_custom_fields(user_attendance):
         payment_status = user_attendance.payment()['status']
 
     team_coordinator = models.is_team_coordinator(user_attendance)
-    company_admin = models.get_company_admin(user, user_attendance.campaign) != None
+    company_admin = models.get_company_admin(user, user_attendance.campaign) is not None
     is_new_user = user_attendance.other_user_attendances(user_attendance.campaign).count() > 0
 
-    custom_fields = [ 
-                       { 'Key': "Mesto", 'Value': city } ,
-                       { 'Key': "Tymovy_koordinator", 'Value': team_coordinator } ,
-                       { 'Key': "Firemni_spravce", 'Value': company_admin } ,
-                       { 'Key': "Stav_platby", 'Value': payment_status } ,
-                       { 'Key': "Aktivni", 'Value': user.is_active } ,
-                       { 'Key': "Novacek", 'Value': is_new_user } ,
-                       { 'Key': "Kampan", 'Value': user_attendance.campaign.name } ,
-                   ]
+    custom_fields = [
+        {'Key': "Mesto", 'Value': city},
+        {'Key': "Tymovy_koordinator", 'Value': team_coordinator},
+        {'Key': "Firemni_spravce", 'Value': company_admin},
+        {'Key': "Stav_platby", 'Value': payment_status},
+        {'Key': "Aktivni", 'Value': user.is_active},
+        {'Key': "Novacek", 'Value': is_new_user},
+        {'Key': "Kampan", 'Value': user_attendance.campaign.name},
+        ]
     return custom_fields
+
 
 def update_mailing_id(user, mailing_id, mailing_hash):
     user.userprofile.mailing_id = mailing_id
     user.userprofile.mailing_hash = mailing_hash
     user.userprofile.save()
+
 
 def add_user(user_attendance):
     user = user_attendance.userprofile.user
@@ -102,8 +106,6 @@ def update_user(user_attendance, ignore_hash):
 
 def delete_user(user_attendance):
     user = user_attendance.userprofile.user
-    userprofile = user_attendance.userprofile
-
     mailing_id = user.get_profile().mailing_id
 
     if not mailing_id:
@@ -120,6 +122,7 @@ def delete_user(user_attendance):
         logger.info(u'User %s with email %s deleted from mailing list with id %s' % (user, user.email, mailing_id))
         update_mailing_id(user, mailing_id, None)
 
+
 def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
     if not user_attendance.campaign.mailing_list_enabled:
         return
@@ -132,6 +135,7 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
             update_user(user_attendance, ignore_hash)
         else:
             add_user(user_attendance)
+
 
 class MailingThread(threading.Thread):
     def __init__(self, user_attendance, ignore_hash, **kwargs):
