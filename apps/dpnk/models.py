@@ -281,8 +281,8 @@ class Team(models.Model):
     def unapproved_members(self):
         return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True, approved_for_team='undecided')
 
-    def all_members(self, campaign):
-        return UserAttendance.objects.filter(campaign=campaign, team=self, userprofile__user__is_active=True)
+    def all_members(self):
+        return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True)
 
     def members(self):
         return UserAttendance.objects.filter(approved_for_team='approved', team=self, userprofile__user__is_active=True)

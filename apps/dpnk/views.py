@@ -644,11 +644,9 @@ def user_attendance_view(request, user_attendance=None, template=None):
 def other_team_members(request, userprofile=None, user_attendance=None,
         template = 'registration/team_members.html'
         ):
-    campaign = user_attendance.campaign
-
     team_members = []
     if user_attendance.team and user_attendance.team.coordinator_campaign:
-        team_members = user_attendance.team.all_members(campaign)
+        team_members = user_attendance.team.all_members()
 
     return render_to_response(template,
                               {
