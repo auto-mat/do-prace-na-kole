@@ -694,7 +694,7 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
     try:
         competition = Competition.objects.get(slug=competition_slug)
     except Competition.DoesNotExist:
-        logger.error('Unknown competition slug %s, request: %s' % (competition_slug, request))
+        logger.exception('Unknown competition slug %s, request: %s' % (competition_slug, request))
         return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
 
 
@@ -762,7 +762,7 @@ def questionaire(request, questionaire_slug = None,
     try:
         competition = Competition.objects.get(slug=questionaire_slug)
     except Competition.DoesNotExist:
-        logger.error('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
+        logger.exception('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
         return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
     questions = Question.objects.filter(competition=competition).order_by('order')
     if request.method == 'POST' and competition.can_admit(user_attendance) == True:
