@@ -19,7 +19,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 # Standard library imports
-import time, httplib, urllib, hashlib, datetime
+import time
+import httplib
+import urllib
+import hashlib
+import datetime
 # Django imports
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib import auth
@@ -34,16 +38,19 @@ from django.utils.translation import gettext as _
 from django.views.decorators.cache import cache_page, never_cache, cache_control
 from django.views.generic.edit import FormView, UpdateView, CreateView
 # Registration imports
-import registration.signals, registration.backends, registration.backends.simple
+import registration.signals
+import registration.backends
+import registration.backends.simple
 # Model imports
 from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice, City, UserAttendance, Campaign
 import forms
 from forms import RegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm, ChangeTeamForm
 from django.conf import settings
-from  django.http import HttpResponse
+from django.http import HttpResponse
 from django import http
 # Local imports
-import util, draw
+import util
+import draw
 from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail, invitation_register_mail
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.models import get_current_site
@@ -59,6 +66,7 @@ import shutil
 import re
 logger = logging.getLogger(__name__)
 
+
 @never_cache
 @cache_control(max_age=0, no_cache=True, no_store=True)
 def login(request, template_name='registration/login.html',
@@ -72,7 +80,7 @@ def login(request, template_name='registration/login.html',
                 request.session.delete_test_cookie()
             return HttpResponse(redirect(request.POST["redirect_to"]))
     else:
-        if request.GET.has_key("next"):
+        if "next" in request.GET:
             redirect_to = ""
         form = authentication_form(request)
     request.session.set_test_cookie()
@@ -86,8 +94,10 @@ def login(request, template_name='registration/login.html',
     }
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
+
 def logout_redirect(request):
     return HttpResponse(redirect(settings.LOGOUT_REDIRECT_URL))
+
 
 class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend):
     def register(self, request, campaign, invitation_token, **cleaned_data):
@@ -98,9 +108,10 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
         new_user.last_name = cleaned_data['last_name']
         new_user.save()
 
-        userprofile = UserProfile(user = new_user,
-                    language = cleaned_data['language'],
-                    )
+        userprofile = UserProfile(
+            user=new_user,
+            language=cleaned_data['language'],
+            )
         userprofile.save()
 
         approve = False
@@ -109,26 +120,29 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
             approve = True
         except Team.DoesNotExist:
             team = None
-        user_attendance = UserAttendance(userprofile = userprofile,
-                    campaign = campaign,
-                    team = team,
-                    )
+        user_attendance = UserAttendance(
+            userprofile=userprofile,
+            campaign=campaign,
+            team=team,
+            )
         user_attendance.save()
         if approve:
-           approve_for_team(request, user_attendance, "", True, False)
+            approve_for_team(request, user_attendance, "", True, False)
 
         register_mail(user_attendance)
         return new_user
 
+
 @login_required_simple
 @must_be_competitor
-@user_attendance_has(lambda ua: not ua.can_change_team_coordinator(),_(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin')))
-def change_team(request,
-             success_url=None, form_class=ChangeTeamForm,
-             template_name='registration/change_team.html',
-             user_attendance=None,
-             extra_context=None,
-             ):
+@user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), _(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin')))
+def change_team(
+        request,
+        success_url=None, form_class=ChangeTeamForm,
+        template_name='registration/change_team.html',
+        user_attendance=None,
+        extra_context=None,
+        ):
     create_company = False
     create_subsidiary = False
     create_team = False
@@ -136,9 +150,9 @@ def change_team(request,
     if request.method == 'POST':
         form = form_class(data=request.POST, files=request.FILES, instance=user_attendance)
 
-        form_company = RegisterCompanyForm(request.POST, prefix = "company")
-        form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix = "subsidiary", campaign=user_attendance.campaign)
-        form_team = RegisterTeamForm(request.POST, prefix = "team", initial={"campaign": user_attendance.campaign})
+        form_company = RegisterCompanyForm(request.POST, prefix="company")
+        form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix="subsidiary", campaign=user_attendance.campaign)
+        form_team = RegisterTeamForm(request.POST, prefix="team", initial={"campaign": user_attendance.campaign})
         create_team = 'id_team_selected' in request.POST
         if create_team:
             create_subsidiary = 'id_subsidiary_selected' in request.POST
@@ -152,21 +166,21 @@ def change_team(request,
             company_valid = form_company.is_valid()
             form.fields['company'].required = False
         else:
-            form_company = RegisterCompanyForm(prefix = "company")
+            form_company = RegisterCompanyForm(prefix="company")
             form.fields['company'].required = True
 
         if create_subsidiary:
             subsidiary_valid = form_subsidiary.is_valid()
             form.fields['subsidiary'].required = False
         else:
-            form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary", campaign=user_attendance.campaign)
+            form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=user_attendance.campaign)
             form.fields['subsidiary'].required = True
 
         if create_team:
             team_valid = form_team.is_valid()
             form.fields['team'].required = False
         else:
-            form_team = RegisterTeamForm(prefix = "team", initial={"campaign": user_attendance.campaign})
+            form_team = RegisterTeamForm(prefix="team", initial={"campaign": user_attendance.campaign})
             form.fields['team'].required = True
         old_team = user_attendance.team
 
@@ -207,7 +221,7 @@ def change_team(request,
 
                 if hasattr(user_attendance, 'coordinated_team'):
                     coordinated_team_members = UserAttendance.objects.exclude(id=user_attendance.id).filter(team=user_attendance.coordinated_team, userprofile__user__is_active=True)
-                    if len(coordinated_team_members)>0:
+                    if len(coordinated_team_members) > 0:
                         user_attendance.coordinated_team.coordinator = coordinated_team_members[0]
                     else:
                         user_attendance.coordinated_team.coordinator = None
@@ -238,9 +252,9 @@ def change_team(request,
             return redirect(wp_reverse(success_url))
     else:
         form = form_class(request, instance=user_attendance)
-        form_company = RegisterCompanyForm(prefix = "company")
-        form_subsidiary = RegisterSubsidiaryForm(prefix = "subsidiary", campaign=user_attendance.campaign)
-        form_team = RegisterTeamForm(prefix = "team", initial={"campaign": user_attendance.campaign})
+        form_company = RegisterCompanyForm(prefix="company")
+        form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=user_attendance.campaign)
+        form_team = RegisterTeamForm(prefix="team", initial={"campaign": user_attendance.campaign})
 
     form.fields['company'].widget.underlying_form = form_company
     form.fields['company'].widget.create = create_company
@@ -251,9 +265,9 @@ def change_team(request,
     form.fields['team'].widget.underlying_form = form_team
     form.fields['team'].widget.create = create_team
 
-    return render_to_response(template_name,
-                              {'form': form,
-                               }, context_instance=RequestContext(request))
+    return render_to_response(template_name, {
+        'form': form,
+        }, context_instance=RequestContext(request))
 
 
 class RegistrationView(FormView):
@@ -318,8 +332,8 @@ class ConfirmTeamInvitationView(FormView):
 
     @method_decorator(must_be_competitor)
     @method_decorator(request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, "<div class='text-warning'>Tým nenalezen.</div>"))
-    @method_decorator(request_condition(lambda r, a, k: r.user.email!=k['initial_email'], "<div class='text-warning'>Pozvánka je určena jinému uživateli, než je aktuálně přihlášen.</div>"))
-    @method_decorator(user_attendance_has(lambda ua: not ua.can_change_team_coordinator(),_(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin'))))
+    @method_decorator(request_condition(lambda r, a, k: r.user.email != k['initial_email'], "<div class='text-warning'>Pozvánka je určena jinému uživateli, než je aktuálně přihlášen.</div>"))
+    @method_decorator(user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), _(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin'))))
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
         invitation_token = self.kwargs['token']
@@ -340,7 +354,7 @@ class ConfirmTeamInvitationView(FormView):
 def payment_type(request, user_attendance=None):
     if user_attendance.payment()['status'] == 'no_admission':
         return redirect(wp_reverse('profil'))
-    template_name='registration/payment_type.html'
+    template_name = 'registration/payment_type.html'
     form_class = PaymentTypeForm
 
     if request.method == 'POST':
@@ -361,9 +375,9 @@ def payment_type(request, user_attendance=None):
     else:
         form = form_class()
 
-    return render_to_response(template_name,
-                              {'form': form
-                               }, context_instance=RequestContext(request))
+    return render_to_response(template_name, {
+        'form': form
+        }, context_instance=RequestContext(request))
 
 
 @never_cache
@@ -377,13 +391,11 @@ def header_bar(request, campaign_slug):
             company_admin = models.get_company_admin(user_attendance.userprofile.user, user_attendance.campaign)
     except UserAttendance.DoesNotExist:
         pass
-    return render_to_response('registration/header_bar.html',
-                              {
-            'is_authentificated': request.user.is_authenticated(),
-            'company_admin': company_admin,
-            'user_attendance': user_attendance,
-             }, context_instance=RequestContext(request))
-
+    return render_to_response('registration/header_bar.html', {
+        'is_authentificated': request.user.is_authenticated(),
+        'company_admin': company_admin,
+        'user_attendance': user_attendance,
+        }, context_instance=RequestContext(request))
 
 
 @login_required_simple
@@ -399,30 +411,30 @@ def payment(request, user_attendance=None):
     # Save new payment record
     p = Payment(session_id=session_id,
                 user_attendance=user_attendance,
-                order_id = order_id,
-                amount = user_attendance.admission_fee(),
+                order_id=order_id,
+                amount=user_attendance.admission_fee(),
                 status=Payment.Status.NEW,
-                description = "Ucastnicky poplatek Do prace na kole")
+                description="Ucastnicky poplatek Do prace na kole")
     p.save()
     logger.info('Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s, status: %s' % (uid, order_id, session_id, user_attendance, p.status))
     messages.add_message(request, messages.WARNING, _(u"Platba vytvořena, čeká se na její potvrzení"), fail_silently=True)
     # Render form
     profile = UserProfile.objects.get(user=request.user)
-    return render_to_response('registration/payment.html',
-                              {
-            'firstname': profile.user.first_name, # firstname
-            'surname': profile.user.last_name, # surname
-            'email': profile.user.email, # email
-            'amount': p.amount,
-            'amount_hal': p.amount * 100, # v halerich
-            'description' : p.description,
-            'order_id' : p.order_id,
-            'client_ip': request.META['REMOTE_ADDR'],
-            'session_id': session_id
-             }, context_instance=RequestContext(request))
+    return render_to_response('registration/payment.html', {
+        'firstname': profile.user.first_name,  # firstname
+        'surname': profile.user.last_name,  # surname
+        'email': profile.user.email,  # email
+        'amount': p.amount,
+        'amount_hal': p.amount * 100,  # v halerich
+        'description': p.description,
+        'order_id': p.order_id,
+        'client_ip': request.META['REMOTE_ADDR'],
+        'session_id': session_id
+        }, context_instance=RequestContext(request))
+
 
 @transaction.atomic
-def payment_result(request, success, trans_id, session_id, pay_type, error = None):
+def payment_result(request, success, trans_id, session_id, pay_type, error=None):
     logger.info('Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s' % (success, trans_id, session_id, pay_type, error, request.user))
 
     if session_id and session_id != "":
@@ -437,25 +449,27 @@ def payment_result(request, success, trans_id, session_id, pay_type, error = Non
             p.error = error
             p.save()
 
-    if success == True:
+    if success:
         msg = _(u"Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
     else:
         msg = _(u"Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
 
-    return render_to_response('registration/payment_result.html',
-                              {
-            'pay_type': pay_type,
-            'message': msg,
-            }, context_instance=RequestContext(request))
+    return render_to_response('registration/payment_result.html', {
+        'pay_type': pay_type,
+        'message': msg,
+        }, context_instance=RequestContext(request))
+
 
 def make_sig(values):
     key1 = settings.PAYU_KEY_1
     return hashlib.md5("".join(values+(key1,))).hexdigest()
 
+
 def check_sig(sig, values):
     key2 = settings.PAYU_KEY_2
     if sig != hashlib.md5("".join(values+(key2,))).hexdigest():
         raise ValueError("Zamítnuto")
+
 
 @transaction.atomic
 def payment_status(request):
@@ -471,16 +485,16 @@ def payment_status(request):
     timestamp = str(int(time.time()))
     c.request("POST", "/paygw/UTF/Payment/get/txt/",
               urllib.urlencode({
-                'pos_id': pos_id,
-                'session_id': session_id,
-                'ts': timestamp,
-                'sig': make_sig((pos_id, session_id, timestamp))
-                }),
+                  'pos_id': pos_id,
+                  'session_id': session_id,
+                  'ts': timestamp,
+                  'sig': make_sig((pos_id, session_id, timestamp))
+                  }),
               {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"})
     raw_response = c.getresponse().read()
     r = {}
-    for i in [i.split(':',1) for i in raw_response.split('\n') if i != '']:
+    for i in [i.split(':', 1) for i in raw_response.split('\n') if i != '']:
         r[i[0]] = i[1].strip()
     check_sig(r['trans_sig'], (r['trans_pos_id'], r['trans_session_id'], r['trans_order_id'],
                                r['trans_status'], r['trans_amount'], r['trans_desc'],
@@ -503,6 +517,7 @@ def payment_status(request):
     # Return positive error code as per PayU protocol
     return http.HttpResponse("OK")
 
+
 @login_required_simple
 @must_be_competitor
 def profile_access(request, user_attendance=None):
@@ -511,21 +526,23 @@ def profile_access(request, user_attendance=None):
     else:
         city_redirect = ""
 
-    return render_to_response('registration/profile_access.html',
-                              {
-            'city_redirect': city_redirect
-            }, context_instance=RequestContext(request))
+    return render_to_response('registration/profile_access.html', {
+        'city_redirect': city_redirect
+        }, context_instance=RequestContext(request))
 
 
 def trip_active(day, today):
-    return ((day <= today)
+    return (
+        (day <= today)
         and (day > today - datetime.timedelta(days=14))
-    )
+        )
+
 
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def rides(request, user_attendance=None, template='registration/rides.html',
+def rides(
+        request, user_attendance=None, template='registration/rides.html',
         success_url="profil"):
     days = util.days()
     today = util.today()
@@ -537,8 +554,9 @@ def rides(request, user_attendance=None, template='registration/rides.html',
             if not trip_active(date, today):
                 logger.error(u'User %s is trying to fill in nonactive day %s (%s), POST: %s' % (user_attendance, day, date, request.POST))
                 return HttpResponse(_(u'<div class="text-error">Den %s již není možné vyplnit.</div>' % date), status=401)
-            trip, created = Trip.objects.get_or_create(user = request.user.get_profile(),
-                date = date)
+            trip, created = Trip.objects.get_or_create(
+                user=request.user.get_profile(),
+                date=date)
 
             trip.trip_to = request.POST.get('trip_to-' + str(day), 'off') == 'on'
             trip.trip_from = request.POST.get('trip_from-' + str(day), 'off') == 'on'
@@ -556,8 +574,8 @@ def rides(request, user_attendance=None, template='registration/rides.html',
                     trip.distance_from = 0
             else:
                 trip.distance_from = None
-            logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s, created: %s' %
-                (request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to, created))
+            logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s, created: %s' % (
+                request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to, created))
             trip.save()
 
             return redirect(wp_reverse(success_url))
@@ -576,8 +594,8 @@ def rides(request, user_attendance=None, template='registration/rides.html',
         if d in trips:
             cd['default_trip_to'] = trips[d].trip_to
             cd['default_trip_from'] = trips[d].trip_from
-            cd['default_distance_to'] = "" if trips[d].distance_to == None else trips[d].distance_to
-            cd['default_distance_from'] = "" if trips[d].distance_from == None else trips[d].distance_from
+            cd['default_distance_to'] = "" if trips[d].distance_to is None else trips[d].distance_to
+            cd['default_distance_from'] = "" if trips[d].distance_from is None else trips[d].distance_from
             trip_count += int(trips[d].trip_to) + int(trips[d].trip_from)
             if trips[d].distance_to:
                 distance += trips[d].distance_to
@@ -592,11 +610,11 @@ def rides(request, user_attendance=None, template='registration/rides.html',
         cd['percentage_str'] = "%.0f" % (cd['percentage'])
         cd['distance'] = distance
         calendar.append(cd)
-    return render_to_response(template,
-                              {
-            'calendar': calendar,
-            'has_distance_competition': user_attendance.has_distance_competition(),
-            }, context_instance=RequestContext(request))
+    return render_to_response(template, {
+        'calendar': calendar,
+        'has_distance_competition': user_attendance.has_distance_competition(),
+        }, context_instance=RequestContext(request))
+
 
 @login_required_simple
 @must_be_competitor
@@ -612,51 +630,52 @@ def profile(request, user_attendance=None):
         team_members_count = 0
     request.session['invite_success_url'] = 'profil'
 
-    is_package_shipped = user_attendance.package_shipped() != None
-    is_package_delivered = user_attendance.package_delivered() != None
-    return render_to_response('registration/profile.html',
-                              {
-            'active': user_attendance.userprofile.user.is_active,
-            'superuser': request.user.is_superuser,
-            'user': request.user,
-            'profile': user_attendance,
-            'team': user_attendance.team,
-            'payment_status': payment_status,
-            'payment_type': user_attendance.payment_type(),
-            'team_members_count': team_members_count,
-            'approved_for_team': user_attendance.approved_for_team,
-            'is_package_shipped': is_package_shipped,
-            'is_package_delivered': is_package_delivered,
-            }, context_instance=RequestContext(request))
+    is_package_shipped = user_attendance.package_shipped() is not None
+    is_package_delivered = user_attendance.package_delivered() is not None
+    return render_to_response('registration/profile.html', {
+        'active': user_attendance.userprofile.user.is_active,
+        'superuser': request.user.is_superuser,
+        'user': request.user,
+        'profile': user_attendance,
+        'team': user_attendance.team,
+        'payment_status': payment_status,
+        'payment_type': user_attendance.payment_type(),
+        'team_members_count': team_members_count,
+        'approved_for_team': user_attendance.approved_for_team,
+        'is_package_shipped': is_package_shipped,
+        'is_package_delivered': is_package_delivered,
+        }, context_instance=RequestContext(request))
 
 
 @login_required_simple
 @must_be_competitor
 def user_attendance_view(request, user_attendance=None, template=None):
     return render_to_response(template, {
-            'user_attendance': user_attendance,
-            }, context_instance=RequestContext(request))
+        'user_attendance': user_attendance,
+        }, context_instance=RequestContext(request))
 
 
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def other_team_members(request, userprofile=None, user_attendance=None,
-        template = 'registration/team_members.html'
+def other_team_members(
+        request, userprofile=None, user_attendance=None,
+        template='registration/team_members.html'
         ):
     team_members = []
     if user_attendance.team and user_attendance.team.coordinator_campaign:
         team_members = user_attendance.team.all_members()
 
-    return render_to_response(template,
-                              {
-            'team_members': team_members,
-            }, context_instance=RequestContext(request))
+    return render_to_response(template, {
+        'team_members': team_members,
+        }, context_instance=RequestContext(request))
+
 
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
-def admissions(request, template, user_attendance=None,
+def admissions(
+        request, template, user_attendance=None,
         success_url="souteze",
         ):
     if request.method == 'POST':
@@ -673,11 +692,11 @@ def admissions(request, template, user_attendance=None,
         competition.competitor_has_admission = competition.has_admission(user_attendance)
         competition.competitor_can_admit = competition.can_admit(user_attendance)
 
-    return render_to_response(template,
-                              {
-            'competitions': competitions,
-            'user_attendance': user_attendance,
-            }, context_instance=RequestContext(request))
+    return render_to_response(template, {
+        'competitions': competitions,
+        'user_attendance': user_attendance,
+        }, context_instance=RequestContext(request))
+
 
 @cache_page(24 * 60 * 60)
 def competition_results(request, template, competition_slug, campaign_slug, limit=None):
@@ -695,13 +714,11 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
         logger.error('Unknown competition slug %s, request: %s' % (competition_slug, request))
         return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
 
-
-    return render_to_response(template,
-                              {
-            #'userprofile': userprofile,
-            'competition': competition,
-            'results': competition.get_results()[:limit],
-            }, context_instance=RequestContext(request))
+    return render_to_response(template, {
+        #'userprofile': userprofile,
+        'competition': competition,
+        'results': competition.get_results()[:limit],
+        }, context_instance=RequestContext(request))
 
 
 class UpdateProfileView(SuccessMessageMixin, UpdateView):
@@ -746,12 +763,15 @@ def handle_uploaded_file(source, username):
         shutil.copyfileobj(source, dest)
     return u"questionaire/" + filepath.rsplit("/", 1)[1]
 
+
 @login_required_simple
 @must_be_approved_for_team
-def questionaire(request, questionaire_slug = None,
-        template = 'registration/questionaire.html',
-        user_attendance = None,
-        success_url = 'profil',
+def questionaire(
+        request,
+        questionaire_slug=None,
+        template='registration/questionaire.html',
+        user_attendance=None,
+        success_url='profil',
         ):
     userprofile = request.user.get_profile()
     error = False
@@ -763,7 +783,7 @@ def questionaire(request, questionaire_slug = None,
         logger.error('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
         return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
     questions = Question.objects.filter(competition=competition).order_by('order')
-    if request.method == 'POST' and competition.can_admit(user_attendance) == True:
+    if request.method == 'POST' and competition.can_admit(user_attendance):
         choice_ids = [(int(k.split('-')[1]), request.POST.getlist(k)) for k, v in request.POST.items() if k.startswith('choice')]
         comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
         fileupload_ids = [int(k.split('-')[1]) for k, v in request.FILES.items() if k.startswith('fileupload')]
@@ -771,8 +791,8 @@ def questionaire(request, questionaire_slug = None,
         answers_dict = {}
         for question in questions:
             answer, created = Answer.objects.get_or_create(
-                    user = request.user.get_profile(),
-                    question = question)
+                user=request.user.get_profile(),
+                question=question)
             if not created:
                 # Cleanup previous fillings
                 answer.choices = []
@@ -788,7 +808,7 @@ def questionaire(request, questionaire_slug = None,
                 answer.save()
         # Save comments
         for comment_id in comment_ids:
-            answer = answers_dict[comment_id] # comment_id = question_id
+            answer = answers_dict[comment_id]  # comment_id = question_id
             answer.comment = request.POST.get('comment-%d' % comment_id, '')
             answer.save()
         # Save file uploads
@@ -829,46 +849,51 @@ def questionaire(request, questionaire_slug = None,
     if not error and not empty_answer and form_filled:
         return redirect(wp_reverse(success_url))
 
-    return render_to_response(template,
-                              {'user': userprofile,
-                               'questions': questions,
-                               'questionaire': questionaire_slug,
-                               'media': settings.MEDIA_URL,
-                               'error': error,
-                               'is_actual': competition.is_actual(),
-                               'has_finished': competition.has_finished(),
-                               }, context_instance=RequestContext(request))
+    return render_to_response(template, {
+        'user': userprofile,
+        'questions': questions,
+        'questionaire': questionaire_slug,
+        'media': settings.MEDIA_URL,
+        'error': error,
+        'is_actual': competition.is_actual(),
+        'has_finished': competition.has_finished(),
+        }, context_instance=RequestContext(request))
+
 
 @staff_member_required
 def questions(request):
     questions = Question.objects.all().order_by('competition', 'date', 'order')
-    return render_to_response('admin/questions.html',
-                              {'questions': questions
-                               }, context_instance=RequestContext(request))
+    return render_to_response('admin/questions.html', {
+        'questions': questions
+        }, context_instance=RequestContext(request))
+
 
 @staff_member_required
-def questionnaire_results(request,
-                competition_slug = None,
-                  ):
-    competitors = Competition.objects.get(slug = competition_slug).get_results()
-    return render_to_response('admin/questionnaire_results.html',
-                               {
-                               'competition_slug': competition_slug,
-                               'competitors': competitors,
-                               }, context_instance=RequestContext(request))
+def questionnaire_results(
+        request,
+        competition_slug=None,
+        ):
+    competitors = Competition.objects.get(slug=competition_slug).get_results()
+    return render_to_response('admin/questionnaire_results.html', {
+        'competition_slug': competition_slug,
+        'competitors': competitors,
+        }, context_instance=RequestContext(request))
+
 
 @staff_member_required
-def questionnaire_answers(request,
-                competition_slug = None,
-                  ):
-    competition = Competition.objects.get(slug = competition_slug)
-    competitor = competition.get_results().get(pk = request.GET['uid'])
+def questionnaire_answers(
+        request,
+        competition_slug=None,
+        ):
+    competition = Competition.objects.get(slug=competition_slug)
+    competitor = competition.get_results().get(pk=request.GET['uid'])
     if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
         userprofile = [competitor.userprofile]
     elif competition.competitor_type == 'team':
         userprofile = competitor.team.members
-    answers = Answer.objects.filter(user__in=userprofile,
-                                 question__competition__slug=competition_slug)
+    answers = Answer.objects.filter(
+        user__in=userprofile,
+        question__competition__slug=competition_slug)
     total_points = competitor.result
     return render_to_response('admin/questionnaire_answers.html',
                               {'answers': answers,
@@ -901,13 +926,12 @@ def answers(request):
     for a in answers:
         a.city = a.user_attendance.team.subsidiary.city
 
-
     if question.type in ('choice', 'multiple-choice'):
         for a in answers:
             respondents[a.city] += 1
             for c in a.choices.all():
                 try:
-                    count[a.city][c.id] += 1;
+                    count[a.city][c.id] += 1
                 except KeyError:
                     count[a.city][c.id] = 1
                     choice_names[c.id] = c.text
@@ -938,6 +962,7 @@ def answers(request):
                                'choice_names': choice_names
                                }, context_instance=RequestContext(request))
 
+
 def approve_for_team(request, user_attendance, reason="", approve=False, deny=False):
     if deny:
         if not reason:
@@ -958,6 +983,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %s v týmu %s bylo odsouhlaseno." % (user_attendance, user_attendance.team.name)), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
         return
 
+
 @must_be_competitor
 @login_required_simple
 def team_approval_request(request, user_attendance=None):
@@ -965,13 +991,17 @@ def team_approval_request(request, user_attendance=None):
     return render_to_response('registration/request_team_approval.html',
                               context_instance=RequestContext(request))
 
+
 @must_be_coordinator
 @login_required_simple
-def invite(request, backend='registration.backends.simple.SimpleBackend',
-             success_url=None, form_class=None,
-             template_name = 'generic_form_template.html',
-             user_attendance=None,
-             extra_context=None):
+def invite(
+        request,
+        backend='registration.backends.simple.SimpleBackend',
+        success_url=None,
+        form_class=None,
+        template_name='generic_form_template.html',
+        user_attendance=None,
+        extra_context=None):
     form_class = InviteForm
 
     if 'invite_success_url' in request.session:
@@ -988,8 +1018,8 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
                         invited_user = models.User.objects.get(is_active=True, email=email)
 
                         invited_user_attendance, created = UserAttendance.objects.get_or_create(
-                            userprofile = invited_user.userprofile,
-                            campaign = user_attendance.campaign,
+                            userprofile=invited_user.userprofile,
+                            campaign=user_attendance.campaign,
                             )
 
                         if invited_user_attendance.team == user_attendance.team:
@@ -1004,38 +1034,45 @@ def invite(request, backend='registration.backends.simple.SimpleBackend',
             return redirect(wp_reverse(success_url))
     else:
         form = form_class()
-    return render_to_response(template_name,
-                              {'form': form,
-                              }, context_instance=RequestContext(request))
+    return render_to_response(template_name, {
+        'form': form,
+        }, context_instance=RequestContext(request))
+
 
 @must_be_coordinator
 @login_required_simple
-def team_admin_team(request, backend='registration.backends.simple.SimpleBackend',
-             success_url=None, form_class=None,
-             user_attendance=None,
-             template_name = 'generic_form_template.html',
-             extra_context=None):
+def team_admin_team(
+        request,
+        backend='registration.backends.simple.SimpleBackend',
+        success_url=None,
+        form_class=None,
+        user_attendance=None,
+        template_name='generic_form_template.html',
+        extra_context=None):
     team = user_attendance.team
     form_class = TeamAdminForm
 
     if request.method == 'POST':
-        form = form_class(data=request.POST, instance = team)
+        form = form_class(data=request.POST, instance=team)
         if form.is_valid():
             form.save()
             return redirect(wp_reverse(success_url))
     else:
-        form = form_class(instance = team)
+        form = form_class(instance=team)
 
-    return render_to_response(template_name,
-                              {'form': form,
-                                }, context_instance=RequestContext(request))
+    return render_to_response(template_name, {
+        'form': form,
+        }, context_instance=RequestContext(request))
+
 
 @must_be_coordinator
 @login_required_simple
-def team_admin_members(request, backend='registration.backends.simple.SimpleBackend',
-             template_name='registration/team_admin_members.html',
-             user_attendance=None,
-             extra_context=None):
+def team_admin_members(
+        request,
+        backend='registration.backends.simple.SimpleBackend',
+        template_name='registration/team_admin_members.html',
+        user_attendance=None,
+        extra_context=None):
     team = user_attendance.team
     unapproved_users = []
 
@@ -1049,7 +1086,7 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
         else:
             approve_for_team(request, user_attendance, request.POST.get('reason-' + str(user_attendance.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
 
-    for user_attendance in UserAttendance.objects.filter(team = team, userprofile__user__is_active=True):
+    for user_attendance in UserAttendance.objects.filter(team=team, userprofile__user__is_active=True):
         userprofile = user_attendance.userprofile
         unapproved_users.append([
             ('state', None, user_attendance.approved_for_team),
@@ -1063,65 +1100,70 @@ def team_admin_members(request, backend='registration.backends.simple.SimpleBack
             ('state_name', _(u"Stav"), unicode(user_attendance.get_approved_for_team_display())),
             ])
 
-    return render_to_response(template_name,
-                              {
-                               'unapproved_users': unapproved_users,
-                                }, context_instance=RequestContext(request))
+    return render_to_response(template_name, {
+        'unapproved_users': unapproved_users,
+        }, context_instance=RequestContext(request))
+
 
 def facebook_app(request):
     return render_to_response('registration/facebook_app.html', {'user': request.user})
 
+
 def distance(trips):
     distance = 0
-    distance += trips.filter(trip_from = True).aggregate(Sum("distance_from"))['distance_from__sum'] or 0
-    distance += trips.filter(trip_to = True).aggregate(Sum("distance_to"))['distance_to__sum'] or 0
+    distance += trips.filter(trip_from=True).aggregate(Sum("distance_from"))['distance_from__sum'] or 0
+    distance += trips.filter(trip_to=True).aggregate(Sum("distance_to"))['distance_to__sum'] or 0
 
     #TODO: Distance 0 shouldn't be counted, but due to bug in first two days of season 2013 competition it has to be.
     #distance += trips.filter(distance_from = None, trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
     #distance += trips.filter(distance_to = None, trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
-    distance += trips.filter(Q(distance_from = None) | Q(distance_from = 0), trip_from = True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
-    distance += trips.filter(Q(distance_to = None) | Q(distance_to = 0), trip_to = True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
+    distance += trips.filter(Q(distance_from=None) | Q(distance_from=0), trip_from=True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
+    distance += trips.filter(Q(distance_to=None) | Q(distance_to=0), trip_to=True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
     return distance
+
 
 def total_distance():
     return distance(Trip.objects)
 
+
 def period_distance(day_from, day_to):
     return distance(Trip.objects.filter(date__gte=day_from, date__lte=day_to))
 
-def statistics(request,
+
+def statistics(
+        request,
         variable,
         campaign_slug,
-        template = 'registration/statistics.html'
+        template='registration/statistics.html'
         ):
-
     campaign = Campaign.objects.get(slug=campaign_slug)
     variables = {}
     variables['ujeta-vzdalenost'] = total_distance()
     variables['ujeta-vzdalenost-dnes'] = period_distance(util.today(), util.today())
-    variables['pocet-soutezicich'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active = True, approved_for_team='approved').count()
+    variables['pocet-soutezicich'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True, approved_for_team='approved').count()
 
     if request.user.is_authenticated() and models.is_competitor(request.user):
-        variables['pocet-soutezicich-firma'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active = True, approved_for_team='approved', team__subsidiary__company = models.get_company(campaign, request.user)).count()
+        variables['pocet-soutezicich-firma'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True, approved_for_team='approved', team__subsidiary__company=models.get_company(campaign, request.user)).count()
     else:
         variables['pocet-soutezicich-firma'] = "-"
 
-    return render_to_response(template,
-            {
-                'variable': variables[variable],
-            }, context_instance=RequestContext(request))
+    return render_to_response(template, {
+        'variable': variables[variable],
+        }, context_instance=RequestContext(request))
+
 
 @cache_page(24 * 60 * 60)
-def daily_chart(request, campaign_slug,
-        template = 'registration/daily-chart.html'
+def daily_chart(
+        request,
+        campaign_slug,
+        template='registration/daily-chart.html',
         ):
     values = [period_distance(day, day) for day in util.days()]
-    return render_to_response(template,
-            {
-                'values': values,
-                'days': reversed(util.days()),
-                'max_value': max(values),
-            }, context_instance=RequestContext(request))
+    return render_to_response(template, {
+        'values': values,
+        'days': reversed(util.days()),
+        'max_value': max(values),
+        }, context_instance=RequestContext(request))
 
 
 class BikeRepairView(SuccessMessageMixin, CreateView):
@@ -1134,19 +1176,19 @@ class BikeRepairView(SuccessMessageMixin, CreateView):
     def get_initial(self):
         campaign = Campaign.objects.get(slug=self.kwargs['campaign_slug'])
         return {
-                'campaign': campaign,
-                }
+            'campaign': campaign,
+            }
 
     def form_valid(self, form):
         super(BikeRepairView, self).form_valid(form)
         return redirect(wp_reverse(self.success_url))
 
 
-def draw_results(request,
+def draw_results(
+        request,
         competition_slug,
-        template = 'admin/draw.html'
+        template='admin/draw.html'
         ):
-    return render_to_response(template,
-            {
-                'results': draw.draw(competition_slug),
-            }, context_instance=RequestContext(request))
+    return render_to_response(template, {
+        'results': draw.draw(competition_slug),
+        }, context_instance=RequestContext(request))
