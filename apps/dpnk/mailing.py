@@ -46,7 +46,7 @@ def get_custom_fields(user_attendance):
             city = user_attendance.team.subsidiary.city.name
         payment_status = user_attendance.payment()['status']
 
-    team_coordinator = models.is_team_coordinator(user_attendance)
+    team_coordinator = user_attendance.is_team_coordinator()
     company_admin = models.get_company_admin(user, user_attendance.campaign) is not None
     is_new_user = user_attendance.other_user_attendances(user_attendance.campaign).count() > 0
 

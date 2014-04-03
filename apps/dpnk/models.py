@@ -278,8 +278,11 @@ class Team(models.Model):
         if self.member_count > settings.MAX_TEAM_MEMBERS:
             logger.error(_(u"Too much members in team %s") % self)
 
-    def all_members(self, campaign):
-        return UserAttendance.objects.filter(campaign=campaign, team=self, userprofile__user__is_active=True)
+    def unapproved_members(self):
+        return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True, approved_for_team='undecided')
+
+    def all_members(self):
+        return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True)
 
     def members(self):
         return UserAttendance.objects.filter(approved_for_team='approved', team=self, userprofile__user__is_active=True)
@@ -613,6 +616,11 @@ class UserAttendance(models.Model):
         if self.team and self.team.coordinator_campaign == self and team_member_count > 1:
             return False
         return True
+
+    def is_team_coordinator(self):
+        if self.team and self.team.coordinator_campaign == self:
+            return True
+        return False
 
 
 class UserProfile(models.Model):
@@ -1303,7 +1311,7 @@ class Competition(models.Model):
     def can_admit(self, user_attendance):
         if self.without_admission:
             return 'without_admission'
-        if not is_team_coordinator(user_attendance) and self.competitor_type == 'team':
+        if not user_attendance.is_team_coordinator() and self.competitor_type == 'team':
             return 'not_team_coordinator'
         if not get_company_admin(user_attendance.userprofile.user, self.campaign) and self.competitor_type == 'company':
             return 'not_company_admin'
@@ -1548,12 +1556,6 @@ def get_company(campaign, user):
         return user.userprofile.userattendance_set.get(campaign=campaign).team.subsidiary.company
     except UserProfile.DoesNotExist:
         return user.company_admin.administrated_company
-
-
-def is_team_coordinator(user_attendance):
-    if user_attendance.team and user_attendance.team.coordinator_campaign == user_attendance:
-        return True
-    return False
 
 
 def get_company_admin(user, campaign):
