@@ -210,7 +210,7 @@ def deploy_version(version):
     env.version = version
     run('cd %(path)s; rm releases/previous; mv releases/current releases/previous;' % env)
     run('cd %(path)s; ln -s %(version)s releases/current' % env)
-    restart_webserver()
+    #restart_webserver()
 
 def rollback():
     """
@@ -223,7 +223,7 @@ def rollback():
     run('cd %(path)s; mv releases/current releases/_previous;' % env)
     run('cd %(path)s; mv releases/previous releases/current;' % env)
     run('cd %(path)s; mv releases/_previous releases/previous;' % env)
-    restart_webserver()
+    #restart_webserver()
     
 # Helpers. These are called by other functions rather than directly
 
