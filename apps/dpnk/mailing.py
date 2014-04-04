@@ -62,10 +62,11 @@ def get_custom_fields(user_attendance):
     return custom_fields
 
 
-def update_mailing_id(user, mailing_id, mailing_hash):
-    user.userprofile.mailing_id = mailing_id
-    user.userprofile.mailing_hash = mailing_hash
-    user.userprofile.save()
+def update_mailing_id(user_attendance, mailing_id, mailing_hash):
+    userprofile = user_attendance.userprofile
+    userprofile.mailing_id = mailing_id
+    userprofile.mailing_hash = mailing_hash
+    userprofile.save()
 
 
 def add_user(user_attendance):
@@ -78,11 +79,11 @@ def add_user(user_attendance):
         mailing_id = mailing.add(list_id, user.first_name, user.last_name, user.email, custom_fields)
         mailing_hash = hash(str((list_id, user.first_name, user.last_name, user.email, custom_fields)))
     except Exception:
-        update_mailing_id(user, None, None)
+        update_mailing_id(user_attendance, None, None)
         raise
     else:
         logger.info(u'User %s with email %s added to mailing list with id %s, custom_fields: %s' % (user, user.email, mailing_id, custom_fields))
-        update_mailing_id(user, mailing_id, mailing_hash)
+        update_mailing_id(user_attendance, mailing_id, mailing_hash)
 
 
 def update_user(user_attendance, ignore_hash):
@@ -98,15 +99,15 @@ def update_user(user_attendance, ignore_hash):
         if ignore_hash or userprofile.mailing_hash != mailing_hash:
             new_mailing_id = mailing.update(list_id, mailing_id, user.first_name, user.last_name, user.email, custom_fields)
             logger.info(u'User %s (%s) with email %s updated in mailing list with id %s, custom_fields: %s' % (userprofile, userprofile.user, user.email, mailing_id, custom_fields))
-            update_mailing_id(user, new_mailing_id, mailing_hash)
+            update_mailing_id(user_attendance, new_mailing_id, mailing_hash)
     except Exception:
-        update_mailing_id(user, None, None)
+        update_mailing_id(user_attendance, None, None)
         raise
 
 
 def delete_user(user_attendance):
     user = user_attendance.userprofile.user
-    mailing_id = user.get_profile().mailing_id
+    mailing_id = user_attendance.userprofile.mailing_id
 
     if not mailing_id:
         return
@@ -116,11 +117,11 @@ def delete_user(user_attendance):
         list_id = user_attendance.campaign.mailing_list_id
         new_mailing_id = mailing.delete(list_id, mailing_id)
     except Exception:
-        update_mailing_id(user, None, None)
+        update_mailing_id(user_attendance, None, None)
         raise
     else:
         logger.info(u'User %s with email %s deleted from mailing list with id %s' % (user, user.email, mailing_id))
-        update_mailing_id(user, new_mailing_id, None)
+        update_mailing_id(user_attendance, new_mailing_id, None)
 
 
 def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
@@ -133,7 +134,7 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
         if not user.is_active:
             delete_user(user_attendance)
         else:
-            if models.is_competitor(user) and user.get_profile().mailing_id:
+            if models.is_competitor(user) and user_attendance.userprofile.mailing_id:
                 update_user(user_attendance, ignore_hash)
             else:
                 add_user(user_attendance)
