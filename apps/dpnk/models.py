@@ -845,6 +845,45 @@ def create_delivery_files(sender, instance, created, **kwargs):
 
 
 @with_author
+class Invoice(models.Model):
+    """Faktura"""
+    class Meta:
+        verbose_name = _(u"Faktura")
+        verbose_name_plural = _(u"Faktury")
+
+    created = models.DateTimeField(
+        verbose_name=_(u"Datum vytvoření"),
+        default=datetime.datetime.now,
+        null=False)
+    exposure_date = models.DateTimeField(
+        verbose_name=_(u"Datum vystavení"),
+        default=datetime.datetime.now,
+        null=True,
+        )
+    invoice_pdf = models.FileField(
+        verbose_name=_("PDF faktury"),
+        upload_to='invoices',
+        blank=True,
+        null=True,
+        )
+    company = models.ForeignKey(
+        Company,
+        null=False,
+        blank=False,
+        )
+    campaign = models.ForeignKey(
+        Campaign,
+        verbose_name=_(u"Kampaň"),
+        null=False,
+        blank=False)
+
+
+@receiver(pre_save, sender=Invoice)
+def add_payments(sender, instance, **kwargs):
+    instance.payment_set = Payment.objects.filter(pay_type='fc', status=Payment.Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=instance.company, user_attendance__campaign=instance.campaign)
+
+
+@with_author
 class Transaction(PolymorphicModel):
     """Transakce"""
     status = models.PositiveIntegerField(
@@ -1110,6 +1149,13 @@ class Payment(Transaction):
     error = models.PositiveIntegerField(
         verbose_name=_(u"Chyba"),
         null=True, blank=True)
+    invoice = models.ForeignKey(
+        Invoice,
+        null=True,
+        blank=True,
+        default=None,
+        )
+
 
     def save(self, *args, **kwargs):
         status_before_update = None

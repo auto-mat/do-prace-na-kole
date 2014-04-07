@@ -655,6 +655,12 @@ class CompanyAdminAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
         if obj.administrated_company:
             return obj.administrated_company.name
 
+
+class InvoiceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+    list_display = ['company', 'created', 'exposure_date']
+    readonly_fields = ['created', 'author', 'updated_by']
+    inlines = [ PaymentInline ]
+
 admin.site.register(models.Team, TeamAdmin)
 admin.site.register(models.Transaction, TransactionAdmin)
 admin.site.register(models.Payment, PaymentAdmin)
@@ -671,6 +677,7 @@ admin.site.register(models.Campaign, CampaignAdmin)
 admin.site.register(models.UserAttendance, UserAttendanceAdmin)
 admin.site.register(models.CompanyAdmin, CompanyAdminAdmin)
 admin.site.register(models.DeliveryBatch, DeliveryBatchAdmin)
+admin.site.register(models.Invoice, InvoiceAdmin)
 
 admin.site.unregister(models.User)
 admin.site.register(models.User, UserAdmin)
