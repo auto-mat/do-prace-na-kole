@@ -980,7 +980,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         user_attendance.approved_for_team = 'approved'
         user_attendance.save()
         team_membership_approval_mail(user_attendance)
-        messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %s v týmu %s bylo odsouhlaseno." % (user_attendance, user_attendance.team.name)), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
+        messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %(user)s v týmu %(team)s bylo odsouhlaseno." % {"user": user_attendance, "team": user_attendance.team.name}), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
         return
 
 
@@ -1026,7 +1026,7 @@ def invite(
                             approve_for_team(request, invited_user_attendance, "", True, False)
                         else:
                             invitation_register_mail(user_attendance, invited_user_attendance)
-                            messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka uživateli %s na email %s" % (invited_user_attendance, email)), fail_silently=True)
+                            messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka uživateli %(user)s na email %(email)s" % {"user": invited_user_attendance, "email": email}), fail_silently=True)
                     except models.User.DoesNotExist:
                         invitation_mail(user_attendance, email)
                         messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s" % email), fail_silently=True)
