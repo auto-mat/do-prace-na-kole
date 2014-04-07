@@ -288,7 +288,7 @@ class BikeRepairForm(forms.ModelForm):
 
         other_user_attendances = user_attendance.other_user_attendances(campaign)
         if other_user_attendances.count() > 0:
-            raise forms.ValidationError(_(u"Tento uživatel není nováček, soutěžil již v následujících kampaních: %s" % ", ".join([u.campaign.name for u in other_user_attendances])))
+            raise forms.ValidationError(_(u"Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s" % ", ".join([u.campaign.name for u in other_user_attendances])))
 
         return user_attendance
 
@@ -313,9 +313,9 @@ class BikeRepairForm(forms.ModelForm):
 
 class TShirtUpdateForm(models.UserAttendanceForm):
     telephone = forms.CharField(
-        label="Telefon",
+        label=_("Telefon"),
         validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
-        help_text="Telefon je pro kurýra, který Vám přiveze soutěžní triko, pro HelpDesk",
+        help_text=_("Telefon je pro kurýra, který Vám přiveze soutěžní triko, pro HelpDesk"),
         max_length=30)
 
     def save(self, *args, **kwargs):
@@ -341,11 +341,11 @@ class ProfileUpdateForm(forms.ModelForm):
         choices = UserProfile.LANGUAGE,
         )
     first_name = forms.CharField(
-        label="Jméno",
+        label=_(u"Jméno"),
         max_length=30,
         required=True)
     last_name = forms.CharField(
-        label="Příjmení",
+        label=_(u"Příjmení"),
         max_length=30,
         required=True)
 

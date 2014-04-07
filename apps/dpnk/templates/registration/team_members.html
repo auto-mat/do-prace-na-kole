@@ -30,7 +30,7 @@
       {% comment %}
       <td>{{ member.get_frequency|floatformat:-1|intcomma }}&nbsp;{% trans "jízd" %}<br/>
       {{ member.get_frequency|percentage|floatformat:-1|intcomma }}&nbsp;%</td>
-      <td>cca&nbsp;{{ member.get_rough_length|floatformat:-1|intcomma }}&nbsp;km
+      <td>{% trans "cca" %}&nbsp;{{ member.get_rough_length|floatformat:-1|intcomma }}&nbsp;km
       {% if member.has_distance_competition %}
          <br/>
          {% trans "přesně" %}&nbsp;{{ member.get_length|floatformat:-1|intcomma }}&nbsp;km

@@ -276,7 +276,7 @@ class Team(models.Model):
         self.member_count = UserAttendance.objects.filter(campaign=self.campaign, team=self, approved_for_team='approved').count()
         self.save()
         if self.member_count > settings.MAX_TEAM_MEMBERS:
-            logger.error(_(u"Too much members in team %s") % self)
+            logger.error(u"Too many members in team %s" % self)
 
     def unapproved_members(self):
         return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True, approved_for_team='undecided')
@@ -537,7 +537,7 @@ class UserAttendance(models.Model):
             return {'payment': None,
                     'status': 'no_admission',
                     'status_description': _(u'neplatí se'),
-                    'class': _(u'success'),
+                    'class': u'success',
                     }
 
         payments = self.payments().filter(status__in=Payment.done_statuses)
@@ -545,7 +545,7 @@ class UserAttendance(models.Model):
             return {'payment': payments.latest('id'),
                     'status': 'done',
                     'status_description': _(u'zaplaceno'),
-                    'class': _(u'success'),
+                    'class': u'success',
                     }
 
         payments = self.payments().filter(status__in=Payment.waiting_statuses)
@@ -553,7 +553,7 @@ class UserAttendance(models.Model):
             return {'payment': payments.latest('id'),
                     'status': 'waiting',
                     'status_description': _(u'nepotvrzeno'),
-                    'class': _(u'warning'),
+                    'class': u'warning',
                     }
 
         payments = self.payments()
@@ -561,13 +561,13 @@ class UserAttendance(models.Model):
             return {'payment': payments.latest('id'),
                     'status': 'unknown',
                     'status_description': _(u'neznámý'),
-                    'class': _(u'warning'),
+                    'class': u'warning',
                     }
 
         return {'payment': None,
                 'status': 'none',
                 'status_description': _(u'žádné platby'),
-                'class': _(u'error'),
+                'class': u'error',
                 }
 
     def payment_status(self):
