@@ -6,13 +6,13 @@
 
 <table class="table table-striped table-bordered" id="team_members_table">
    <tr>
-      <th>Jmé&shy;no</th>
-      <th>E&shy;mail</div></th>
-      <th>Člen&shy;ství v tý&shy;mu</th>
-      <th>Pla&shy;tba</th>
+      <th>{% trans "Jmé&shy;no" %}</th>
+      <th>{% trans "E&shy;mail" %}</div></th>
+      <th>{% trans "Člen&shy;ství v tý&shy;mu" %}</th>
+      <th>{% trans "Pla&shy;tba" %}</th>
       {% comment %}
-      <th class="fixed_width_column">Jízdy</th>
-      <th class="fixed_width_column">U&shy;je&shy;tá vzdá&shy;le&shy;nost</th>
+      <th class="fixed_width_column">{% trans "Jízdy" %}</th>
+      <th class="fixed_width_column">{% trans "U&shy;je&shy;tá vzdá&shy;le&shy;nost" %}</th>
       {% endcomment %}
    </tr>
    {% for member in team_members %}
@@ -21,19 +21,19 @@
       <td><div style="word-break: break-all;">{{ member.userprofile.user.email }}</div></td>
       <td>
          {% if member.is_team_coordinator %}
-            Koordinátor
+            {% trans "Koordinátor" %}
          {% else %}
             {{ member.get_approved_for_team_display|softhyphen:"cs-CZ" }}
          {% endif %}
       </td>
       <td><span class="text-{{ member.payment.class }}">{{ member.payment.status_description|softhyphen:"cs-CZ" }}</span></td>
       {% comment %}
-      <td>{{ member.get_frequency|floatformat:-1|intcomma }}&nbsp;jízd<br/>
+      <td>{{ member.get_frequency|floatformat:-1|intcomma }}&nbsp;{% trans "jízd" %}<br/>
       {{ member.get_frequency|percentage|floatformat:-1|intcomma }}&nbsp;%</td>
       <td>cca&nbsp;{{ member.get_rough_length|floatformat:-1|intcomma }}&nbsp;km
       {% if member.has_distance_competition %}
          <br/>
-         přesně&nbsp;{{ member.get_length|floatformat:-1|intcomma }}&nbsp;km
+         {% trans "přesně" %}&nbsp;{{ member.get_length|floatformat:-1|intcomma }}&nbsp;km
       {% endif %}
       </td>
       </tr>

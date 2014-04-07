@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-07 12:24+0200\n"
+"POT-Creation-Date: 2014-04-07 12:39+0200\n"
 "PO-Revision-Date: 2013-03-25 03:43+0100\n"
 "Last-Translator: Hynek Hanke <hanke@brailcom.org>\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -219,7 +219,7 @@ msgstr ""
 msgid "Kampaň"
 msgstr ""
 
-#: forms.py:81
+#: forms.py:81 templates/registration/header_bar.html:8
 msgid "Společnost"
 msgstr ""
 
@@ -415,6 +415,7 @@ msgid ""
 msgstr ""
 
 #: models.py:226 models.py:503
+#: templates/registration/competition_results.html:45
 msgid "Tým"
 msgstr ""
 
@@ -887,7 +888,7 @@ msgstr ""
 msgid "Otázka"
 msgstr ""
 
-#: models.py:1462
+#: models.py:1462 templates/registration/rides.html:9
 msgid "Den"
 msgstr ""
 
@@ -927,7 +928,7 @@ msgstr ""
 msgid "Odpovědi"
 msgstr ""
 
-#: models.py:1535
+#: models.py:1535 templates/registration/questionaire.html:26
 msgid "Komentář"
 msgstr ""
 
@@ -1193,6 +1194,19 @@ msgstr ""
 msgid "Unknown content"
 msgstr ""
 
+#: templates/registration/address.html:6
+msgid ""
+"Před výběrem trička prosím zkontrolujte následující adresu pobočky, na "
+"kterou bude doručen startovní balíček. V případě, že je špatně, napište na "
+msgstr ""
+
+#: templates/registration/address.html:12
+msgid ""
+"Nemáte vybraný tým a tím pádem ani přidělenou adresu pobočky, na kterou bude "
+"doručen balíček. Prosím, zkontrolujte si při výběru týmu, jestli adresa vaší "
+"pobočky odpovídá realitě. V případě, že je šapatně napište na "
+msgstr ""
+
 #: templates/registration/admissions.html:13
 msgid "Sou&shy;těž"
 msgstr ""
@@ -1266,23 +1280,41 @@ msgid ""
 "Momentálně nejsou vypsány žádné soutěže, do kterých byste se mohl/a přihlásit"
 msgstr ""
 
+#: templates/registration/competition_results.html:43
+msgid "Sou&shy;tě&shy;ží&shy;cí"
+msgstr ""
+
+#: templates/registration/competition_results.html:47
+msgid "Fir&shy;ma"
+msgstr ""
+
 #: templates/registration/facebook_app.html:9
 msgid ""
 "Možnost nahrát si originální cover fotku na Facebook je přístupná všem "
 "přihlášeným účastníkům."
 msgstr ""
 
+#: templates/registration/header_bar.html:11
+msgid "Profil"
+msgstr ""
+
 #: templates/registration/header_bar.html:13
+#: templates/registration/profile.html:118
 msgid "Odhlásit"
+msgstr ""
+
+#: templates/registration/header_bar.html:15
+#: templates/registration/logged_out.html:5
+#: templates/registration/login.html:10
+msgid "Přihlásit"
+msgstr ""
+
+#: templates/registration/header_bar.html:17
+msgid "Registrovat"
 msgstr ""
 
 #: templates/registration/logged_out.html:5
 msgid "Nyní jste odhlášeni."
-msgstr ""
-
-#: templates/registration/logged_out.html:5
-#: templates/registration/login.html:10
-msgid "Přihlásit"
 msgstr ""
 
 #: templates/registration/password_change_done.html:4
@@ -1473,6 +1505,31 @@ msgstr ""
 msgid "Začít soutěžit"
 msgstr ""
 
+#: templates/registration/questionaire.html:11
+msgid "Je nutné vyplnit tuto volbu"
+msgstr ""
+
+#: templates/registration/questionaire.html:21
+#: templates/registration/questionaire.html:29
+msgid "b"
+msgstr ""
+
+#: templates/registration/questionaire.html:35
+msgid "Minulý nahraný soubor: "
+msgstr ""
+
+#: templates/registration/questionaire.html:37
+msgid "Není nahrán žádný soubor"
+msgstr ""
+
+#: templates/registration/questionaire.html:40
+msgid "Zde můžete nahrát soubor"
+msgstr ""
+
+#: templates/registration/questionaire.html:46
+msgid "Ne všechny otázky byly zodpovězeny. Prosím zodpovězte je."
+msgstr ""
+
 #: templates/registration/request_team_approval.html:4
 msgid "Žádost o ověření členství byla odeslána."
 msgstr ""
@@ -1485,6 +1542,26 @@ msgstr ""
 msgid "profil"
 msgstr ""
 
+#: templates/registration/rides.html:10
+msgid "Do práce"
+msgstr ""
+
+#: templates/registration/rides.html:11
+msgid "Z práce"
+msgstr ""
+
+#: templates/registration/rides.html:12
+msgid "O&shy;de&shy;slat"
+msgstr ""
+
+#: templates/registration/rides.html:13
+msgid "Pra&shy;vi&shy;del&shy;nost"
+msgstr ""
+
+#: templates/registration/rides.html:15
+msgid "Vzdá&shy;le&shy;nost cel&shy;kem"
+msgstr ""
+
 #: templates/registration/team_admin_members.html:38
 msgid "Ověřit"
 msgstr ""
@@ -1495,6 +1572,26 @@ msgstr ""
 
 #: templates/registration/team_admin_members.html:43
 msgid "Zamítnout"
+msgstr ""
+
+#: templates/registration/team_members.html:9
+msgid "Jmé&shy;no"
+msgstr ""
+
+#: templates/registration/team_members.html:10
+msgid "E&shy;mail"
+msgstr ""
+
+#: templates/registration/team_members.html:11
+msgid "Člen&shy;ství v tý&shy;mu"
+msgstr ""
+
+#: templates/registration/team_members.html:12
+msgid "Pla&shy;tba"
+msgstr ""
+
+#: templates/registration/team_members.html:25
+msgid "Koordinátor"
 msgstr ""
 
 #~ msgid "Velikost trička:"
