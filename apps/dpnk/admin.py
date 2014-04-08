@@ -387,7 +387,7 @@ approve_am_payment.short_description = _(u"Potvrdit platbu člena klubu přátel
 
 #TODO: this filters any paymant that user has is of specified type, should be only the last payment
 class PaymentTypeFilter(SimpleListFilter):
-    title = u"typ platby"
+    title = _(u"typ platby")
     parameter_name = u'payment_type'
 
     def lookups(self, request, model_admin):
@@ -399,7 +399,7 @@ class PaymentTypeFilter(SimpleListFilter):
 
 
 class NotInCityFilter(SimpleListFilter):
-    title = u"Ne ve městě"
+    title = _(u"Ne ve městě")
     parameter_name = u'not_in_city'
 
     def lookups(self, request, model_admin):

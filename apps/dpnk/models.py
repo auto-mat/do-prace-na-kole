@@ -216,7 +216,7 @@ class Subsidiary(models.Model):
 def validate_length(value, min_length=25):
     str_len = len(str(value))
     if str_len < min_length:
-        raise ValidationError(_(u"The string should be longer than %(min)s, but is %(max)s characters long") % {'min': min_length, 'max': str_len})
+        raise ValidationError(_(u"Řetězec by neměl být kratší než %(min)s znaků a delší než %(max)s znaků") % {'min': min_length, 'max': str_len})
 
 
 class Team(models.Model):
@@ -685,7 +685,7 @@ class UserProfile(models.Model):
 
     def save(self, force_insert=False, force_update=False):
         if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
-            logger.error(_(u"Mailing id %s is already used") % self.mailing_id)
+            logger.error(u"Mailing id %s is already used" % self.mailing_id)
         super(UserProfile, self).save(force_insert, force_update)
 
 
@@ -723,6 +723,7 @@ class CompanyAdmin(models.Model):
 
     user = models.ForeignKey(
         User,
+        verbose_name=_(u"User"),
         related_name='company_admin',
         null=False,
         blank=False,
@@ -1606,7 +1607,7 @@ def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     field, (old, new) = changed_fields.items()[0]
     new_team = Team.objects.get(pk=new) if new else None
     if new_team and new_team.campaign != instance.campaign:
-        logger.error(_(u"UserAttendance %s campaign doesn't match team campaign") % instance)
+        logger.error(u"UserAttendance %s campaign doesn't match team campaign" % instance)
     if instance.team and new_team.member_count == 0:
         instance.approved_for_team = 'approved'
     else:

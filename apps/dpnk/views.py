@@ -34,7 +34,7 @@ from django.utils.decorators import method_decorator
 from decorators import must_be_coordinator, must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team, user_attendance_has, request_condition
 from django.template import RequestContext
 from django.db.models import Sum, Q
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache, cache_control
 from django.views.generic.edit import FormView, UpdateView, CreateView
 # Registration imports

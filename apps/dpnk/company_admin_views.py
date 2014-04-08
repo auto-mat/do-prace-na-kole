@@ -22,7 +22,7 @@ from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponse, Http404
 import django.contrib.auth
 import datetime

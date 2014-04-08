@@ -10,7 +10,7 @@ from models import UserProfile, Company, Subsidiary, Team, UserAttendance
 from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
 from django.forms.widgets import HiddenInput
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinLengthValidator
@@ -271,11 +271,11 @@ class ConfirmTeamInvitationForm(forms.Form):
 
 class BikeRepairForm(forms.ModelForm):
     user_attendance = forms.CharField(
-        label="Uživatelské jméno zákazníka",
-        help_text="Uživatelské jméno, které vám sdělí zákazník",
+        label=_(u"Uživatelské jméno zákazníka"),
+        help_text=_(u"Uživatelské jméno, které vám sdělí zákazník"),
         max_length=100)
     description = forms.CharField(
-        label="Poznámka",
+        label=_(u"Poznámka"),
         max_length=500,
         required=False)
 

@@ -20,7 +20,7 @@ from django.template.loader import get_template
 from django.core.mail import send_mail
 from django.template import Context
 from django.conf import settings
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 
 def approval_request_mail(user_attendance):
     template = get_template('email/approval_request.html')
