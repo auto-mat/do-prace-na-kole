@@ -20,7 +20,7 @@
 from django import forms
 from forms import AdressForm, RegistrationFormDPNK
 from models import UserProfile, Company, CompanyAdmin, Competition, UserAttendance, Campaign
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 from util import slugify

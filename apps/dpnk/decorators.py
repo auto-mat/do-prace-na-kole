@@ -19,7 +19,7 @@
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 from models import UserAttendance, Campaign
 from wp_urls import wp_reverse
 from util import redirect

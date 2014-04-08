@@ -90,7 +90,7 @@ class Address(CompositeField):
         )
     psc = models.IntegerField(
         verbose_name=_(u"PSČ"),
-        help_text=_(u"Např.: 13000"),
+        help_text=_(u"Např.: 130 00"),
         validators=[
             MaxValueValidator(99999),
             MinValueValidator(10000)
@@ -216,7 +216,7 @@ class Subsidiary(models.Model):
 def validate_length(value, min_length=25):
     str_len = len(str(value))
     if str_len < min_length:
-        raise ValidationError(_(u"The string should be longer than %(min)s, but is %(max)s characters long") % {'min': min_length, 'max': str_len})
+        raise ValidationError(_(u"Řetězec by neměl být kratší než %(min)s znaků a delší než %(max)s znaků") % {'min': min_length, 'max': str_len})
 
 
 class Team(models.Model):
@@ -429,7 +429,7 @@ class TShirtSize(models.Model):
     """Velikost trička"""
 
     name = models.CharField(
-        verbose_name=_(u"Velikost"),
+        verbose_name=_(u"Velikost trička"),
         max_length=40, null=False)
     campaign = models.ForeignKey(
         Campaign,
@@ -685,7 +685,7 @@ class UserProfile(models.Model):
 
     def save(self, force_insert=False, force_update=False):
         if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
-            logger.error(_(u"Mailing id %s is already used") % self.mailing_id)
+            logger.error(u"Mailing id %s is already used" % self.mailing_id)
         super(UserProfile, self).save(force_insert, force_update)
 
 
@@ -723,6 +723,7 @@ class CompanyAdmin(models.Model):
 
     user = models.ForeignKey(
         User,
+        verbose_name=_(u"User"),
         related_name='company_admin',
         null=False,
         blank=False,
@@ -1021,17 +1022,17 @@ class Payment(Transaction):
         INVOICE_PAID = 1007
 
     STATUS = (
-        (Status.NEW, 'Nová'),
-        (Status.CANCELED, 'Zrušena'),
-        (Status.REJECTED, 'Odmítnuta'),
-        (Status.COMMENCED, 'Zahájena'),
-        (Status.WAITING_CONFIRMATION, 'Očekává potvrzení'),
-        (Status.REJECTED, 'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU'),
-        (Status.DONE, 'Platba přijata'),
-        (Status.WRONG_STATUS, 'Nesprávný status -- kontaktovat PayU'),
-        (Status.COMPANY_ACCEPTS, 'Platba akceptována firmou'),
-        (Status.INVOICE_MADE, 'Faktura vystavena'),
-        (Status.INVOICE_PAID, 'Faktura zaplacena'),
+        (Status.NEW, _(u'Nová')),
+        (Status.CANCELED, _(u'Zrušena')),
+        (Status.REJECTED, _(u'Odmítnuta')),
+        (Status.COMMENCED, _(u'Zahájena')),
+        (Status.WAITING_CONFIRMATION, _(u'Očekává potvrzení')),
+        (Status.REJECTED, _(u'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU')),
+        (Status.DONE, _(u'Platba přijata')),
+        (Status.WRONG_STATUS, _(u'Nesprávný status -- kontaktovat PayU')),
+        (Status.COMPANY_ACCEPTS, _(u'Platba akceptována firmou')),
+        (Status.INVOICE_MADE, _(u'Faktura vystavena')),
+        (Status.INVOICE_PAID, _(u'Faktura zaplacena')),
         )
     STATUS_MAP = dict(STATUS)
 
@@ -1046,21 +1047,21 @@ class Payment(Transaction):
         Status.WAITING_CONFIRMATION]
 
     PAY_TYPES = (
-        ('mp', 'mPenize'),
-        ('kb', 'MojePlatba'),
-        ('rf', 'ePlatby pro eKonto'),
-        ('pg', 'GE Money Bank'),
-        ('pv', 'Volksbank'),
-        ('pf', 'Fio banka'),
-        ('cs', 'Česká spořitelna'),
-        ('c', 'Kreditní karta přes GPE'),
-        ('bt', 'bankovní převod'),
-        ('pt', 'převod přes poštu'),
-        ('sc', 'superCASH'),
-        ('t', 'testovací platba'),
-        ('fa', 'faktura mimo PayU'),
-        ('fc', 'firma platí fakturou'),
-        ('am', 'člen klubu přátel Auto*matu'),
+        ('mp', _(u'mPenize')),
+        ('kb', _(u'MojePlatba')),
+        ('rf', _(u'ePlatby pro eKonto')),
+        ('pg', _(u'GE Money Bank')),
+        ('pv', _(u'Volksbank')),
+        ('pf', _(u'Fio banka')),
+        ('cs', _(u'Česká spořitelna')),
+        ('c', _(u'Kreditní karta přes GPE')),
+        ('bt', _(u'bankovní převod')),
+        ('pt', _(u'převod přes poštu')),
+        ('sc', _(u'superCASH')),
+        ('t', _(u'testovací platba')),
+        ('fa', _(u'faktura mimo PayU')),
+        ('fc', _(u'firma platí fakturou')),
+        ('am', _(u'člen klubu přátel Auto*matu')),
         )
 
     NOT_PAYING_TYPES = [
@@ -1610,7 +1611,7 @@ def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     field, (old, new) = changed_fields.items()[0]
     new_team = Team.objects.get(pk=new) if new else None
     if new_team and new_team.campaign != instance.campaign:
-        logger.error(_(u"UserAttendance %s campaign doesn't match team campaign") % instance)
+        logger.error(u"UserAttendance %s campaign doesn't match team campaign" % instance)
     if instance.team and new_team.member_count == 0:
         instance.approved_for_team = 'approved'
     else:
