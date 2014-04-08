@@ -90,7 +90,7 @@ class Address(CompositeField):
         )
     psc = models.IntegerField(
         verbose_name=_(u"PSČ"),
-        help_text=_(u"Např.: 13000"),
+        help_text=_(u"Např.: 130 00"),
         validators=[
             MaxValueValidator(99999),
             MinValueValidator(10000)
@@ -429,7 +429,7 @@ class TShirtSize(models.Model):
     """Velikost trička"""
 
     name = models.CharField(
-        verbose_name=_(u"Velikost"),
+        verbose_name=_(u"Velikost trička"),
         max_length=40, null=False)
     campaign = models.ForeignKey(
         Campaign,
@@ -1017,17 +1017,17 @@ class Payment(Transaction):
         INVOICE_PAID = 1007
 
     STATUS = (
-        (Status.NEW, 'Nová'),
-        (Status.CANCELED, 'Zrušena'),
-        (Status.REJECTED, 'Odmítnuta'),
-        (Status.COMMENCED, 'Zahájena'),
-        (Status.WAITING_CONFIRMATION, 'Očekává potvrzení'),
-        (Status.REJECTED, 'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU'),
-        (Status.DONE, 'Platba přijata'),
-        (Status.WRONG_STATUS, 'Nesprávný status -- kontaktovat PayU'),
-        (Status.COMPANY_ACCEPTS, 'Platba akceptována firmou'),
-        (Status.INVOICE_MADE, 'Faktura vystavena'),
-        (Status.INVOICE_PAID, 'Faktura zaplacena'),
+        (Status.NEW, _(u'Nová')),
+        (Status.CANCELED, _(u'Zrušena')),
+        (Status.REJECTED, _(u'Odmítnuta')),
+        (Status.COMMENCED, _(u'Zahájena')),
+        (Status.WAITING_CONFIRMATION, _(u'Očekává potvrzení')),
+        (Status.REJECTED, _(u'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU')),
+        (Status.DONE, _(u'Platba přijata')),
+        (Status.WRONG_STATUS, _(u'Nesprávný status -- kontaktovat PayU')),
+        (Status.COMPANY_ACCEPTS, _(u'Platba akceptována firmou')),
+        (Status.INVOICE_MADE, _(u'Faktura vystavena')),
+        (Status.INVOICE_PAID, _(u'Faktura zaplacena')),
         )
     STATUS_MAP = dict(STATUS)
 
@@ -1042,21 +1042,21 @@ class Payment(Transaction):
         Status.WAITING_CONFIRMATION]
 
     PAY_TYPES = (
-        ('mp', 'mPenize'),
-        ('kb', 'MojePlatba'),
-        ('rf', 'ePlatby pro eKonto'),
-        ('pg', 'GE Money Bank'),
-        ('pv', 'Volksbank'),
-        ('pf', 'Fio banka'),
-        ('cs', 'Česká spořitelna'),
-        ('c', 'Kreditní karta přes GPE'),
-        ('bt', 'bankovní převod'),
-        ('pt', 'převod přes poštu'),
-        ('sc', 'superCASH'),
-        ('t', 'testovací platba'),
-        ('fa', 'faktura mimo PayU'),
-        ('fc', 'firma platí fakturou'),
-        ('am', 'člen klubu přátel Auto*matu'),
+        ('mp', _(u'mPenize')),
+        ('kb', _(u'MojePlatba')),
+        ('rf', _(u'ePlatby pro eKonto')),
+        ('pg', _(u'GE Money Bank')),
+        ('pv', _(u'Volksbank')),
+        ('pf', _(u'Fio banka')),
+        ('cs', _(u'Česká spořitelna')),
+        ('c', _(u'Kreditní karta přes GPE')),
+        ('bt', _(u'bankovní převod')),
+        ('pt', _(u'převod přes poštu')),
+        ('sc', _(u'superCASH')),
+        ('t', _(u'testovací platba')),
+        ('fa', _(u'faktura mimo PayU')),
+        ('fc', _(u'firma platí fakturou')),
+        ('am', _(u'člen klubu přátel Auto*matu')),
         )
 
     NOT_PAYING_TYPES = [

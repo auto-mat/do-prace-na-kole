@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-07 17:59+0200\n"
+"POT-Creation-Date: 2014-04-08 11:17+0200\n"
 "PO-Revision-Date: 2013-03-25 03:43+0100\n"
 "Last-Translator: Hynek Hanke <hanke@brailcom.org>\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -64,7 +64,7 @@ msgid "Administrovaná firma"
 msgstr "Administrated company"
 
 #: company_admin_forms.py:84 forms.py:170 forms.py:344 models.py:124
-#: models.py:1433 views.py:1095
+#: models.py:1433 views.py:1095 templates/company_admin/competitions.html:7
 msgid "Jméno"
 msgstr "Name"
 
@@ -76,7 +76,7 @@ msgstr "Surname"
 msgid "Tato společnost již má svého správce."
 msgstr "This company already has its administrator"
 
-#: company_admin_forms.py:127
+#: company_admin_forms.py:127 templates/company_admin/competitions.html:8
 msgid "Typ soutěže"
 msgstr "Competition type"
 
@@ -234,9 +234,9 @@ msgstr "This team has already got five members - it is full"
 
 #: forms.py:36 models.py:92
 msgid "PSČ"
-msgstr "ZIP code"
+msgstr "ZIP code (PSČ)"
 
-#: forms.py:37
+#: forms.py:37 models.py:93
 msgid "Např.: 130 00"
 msgstr "For example 130 00"
 
@@ -390,10 +390,6 @@ msgstr "For example Brno, Liberec, Science faculty"
 msgid "Městská část"
 msgstr "City part"
 
-#: models.py:93
-msgid "Např.: 13000"
-msgstr "13000"
-
 #: models.py:103 models.py:119
 msgid "Město"
 msgstr "Town"
@@ -408,7 +404,7 @@ msgstr "Towns"
 
 #: models.py:147
 msgid "Město v kampani"
-msgstr "Town in the comapign"
+msgstr "Town in the campaign"
 
 #: models.py:148
 msgid "Města v kampani"
@@ -551,8 +547,8 @@ msgstr ""
 msgid "Datum konce fáze"
 msgstr ""
 
-#: models.py:432
-msgid "Velikost"
+#: models.py:432 models.py:454 models.py:515 models.py:932
+msgid "Velikost trička"
 msgstr "T-shirt size"
 
 #: models.py:445
@@ -561,11 +557,7 @@ msgstr ""
 
 #: models.py:449
 msgid "Náhled trika"
-msgstr ""
-
-#: models.py:454 models.py:515 models.py:932
-msgid "Velikost trička"
-msgstr "T-shirt size"
+msgstr "T-shirt preview"
 
 #: models.py:455
 msgid "Velikosti trička"
@@ -573,11 +565,11 @@ msgstr "T-shirt size"
 
 #: models.py:473
 msgid "Účast v kampani"
-msgstr ""
+msgstr "Campaign attendance"
 
 #: models.py:474
 msgid "Účasti v kampani"
-msgstr ""
+msgstr "Campaign attendances"
 
 #: models.py:478 models.py:711
 msgid "Odsouhlasený"
@@ -593,7 +585,7 @@ msgstr "Denied"
 
 #: models.py:490
 msgid "Uživatelský profil"
-msgstr ""
+msgstr "User profile"
 
 #: models.py:495
 msgid "Vzdálenost"
@@ -756,37 +748,142 @@ msgstr ""
 msgid "Došla číselná řada pro balíčkové transakce"
 msgstr ""
 
+#: models.py:1020
+msgid "Nová"
+msgstr ""
+
+#: models.py:1021
+msgid "Zrušena"
+msgstr ""
+
+#: models.py:1022
+msgid "Odmítnuta"
+msgstr "Denied"
+
+#: models.py:1023
+msgid "Zahájena"
+msgstr "Initiated"
+
+#: models.py:1024
+msgid "Očekává potvrzení"
+msgstr "Waiting for confirmation"
+
+#: models.py:1025
+msgid "Platba zamítnuta, prostředky nemožno vrátit, řeší PayU"
+msgstr "Payment denied, resources unrecoverable, is being solved by PayU"
+
+#: models.py:1026
+msgid "Platba přijata"
+msgstr "Payment accepted"
+
+#: models.py:1027
+msgid "Nesprávný status -- kontaktovat PayU"
+msgstr ""
+
+#: models.py:1028
+msgid "Platba akceptována firmou"
+msgstr "Payment accepted by company"
+
+#: models.py:1029
+msgid "Faktura vystavena"
+msgstr "Inoice exposed"
+
+#: models.py:1030
+msgid "Faktura zaplacena"
+msgstr "Invoice paid"
+
+#: models.py:1045
+msgid "mPenize"
+msgstr ""
+
+#: models.py:1046
+#, fuzzy
+msgid "MojePlatba"
+msgstr "Payment"
+
+#: models.py:1047
+msgid "ePlatby pro eKonto"
+msgstr ""
+
+#: models.py:1048
+msgid "GE Money Bank"
+msgstr ""
+
+#: models.py:1049
+msgid "Volksbank"
+msgstr ""
+
+#: models.py:1050
+msgid "Fio banka"
+msgstr ""
+
+#: models.py:1051
+msgid "Česká spořitelna"
+msgstr ""
+
+#: models.py:1052
+msgid "Kreditní karta přes GPE"
+msgstr "Credit card via GPE"
+
+#: models.py:1053
+msgid "bankovní převod"
+msgstr "bank transfer"
+
+#: models.py:1054
+msgid "převod přes poštu"
+msgstr "transfer by post office"
+
+#: models.py:1055
+msgid "superCASH"
+msgstr ""
+
+#: models.py:1056
+msgid "testovací platba"
+msgstr "testing payment"
+
+#: models.py:1057
+msgid "faktura mimo PayU"
+msgstr "invoice outside PayU"
+
+#: models.py:1058
+msgid "firma platí fakturou"
+msgstr "campany pays by invoice"
+
+#: models.py:1059
+msgid "člen klubu přátel Auto*matu"
+msgstr "Auto*Mat Friends Club member"
+
 #: models.py:1084 models.py:1085
 msgid "Platební transakce"
-msgstr ""
+msgstr "Payment transaction"
 
 #: models.py:1103
 msgid "Částka"
-msgstr ""
+msgstr "Amount"
 
 #: models.py:1111
 msgid "Chyba"
-msgstr ""
+msgstr "Error"
 
 #: models.py:1165
 msgid "Cesta"
-msgstr ""
+msgstr "Trip"
 
 #: models.py:1166
 msgid "Cesty"
-msgstr ""
+msgstr "Trips"
 
 #: models.py:1176
 msgid "Datum cesty"
-msgstr ""
+msgstr "Trip date"
 
 #: models.py:1180
 msgid "Cesta do práce"
-msgstr ""
+msgstr "Trip to work"
 
 #: models.py:1183
 msgid "Cesta z práce"
-msgstr ""
+msgstr "Trip from work"
 
 #: models.py:1186
 msgid "Ujetá vzdálenost do práce"
@@ -1238,6 +1335,18 @@ msgstr ""
 msgid "Unknown content"
 msgstr ""
 
+#: templates/company_admin/competitions.html:9
+msgid "Typ soutěžících"
+msgstr "Competitor type"
+
+#: templates/company_admin/competitions.html:10
+msgid "Upravit"
+msgstr ""
+
+#: templates/company_admin/competitions.html:11
+msgid "Výsledky"
+msgstr "Results"
+
 #: templates/registration/address.html:6
 msgid ""
 "Před výběrem trička prosím zkontrolujte následující adresu pobočky, na "
@@ -1357,7 +1466,7 @@ msgstr ""
 
 #: templates/registration/header_bar.html:11
 msgid "Profil"
-msgstr ""
+msgstr "Profile"
 
 #: templates/registration/header_bar.html:13
 #: templates/registration/profile.html:118
@@ -1460,7 +1569,7 @@ msgstr "Please choose a payment type"
 
 #: templates/registration/payment.html:19
 msgid "Zaplatit"
-msgstr "Pay "
+msgstr "Pay"
 
 #: templates/registration/payment_result.html:7
 msgid "Váš soutěžní profil"
@@ -1497,11 +1606,11 @@ msgstr "Team membership approved"
 #: templates/registration/profile.html:34
 #: templates/registration/profile.html:37
 msgid "Velikost trika vyplněna"
-msgstr "T-shirt size"
+msgstr "T-shirt size has been filled"
 
 #: templates/registration/profile.html:41
 msgid "Vyplňte velikost trika"
-msgstr "T-shirt size"
+msgstr "Fill in your t-shirt size"
 
 #: templates/registration/profile.html:47
 msgid "Ve vašem týmu jsou neodsouhlasení členové. Odsouhlaste je!"
@@ -1663,6 +1772,3 @@ msgstr "Payment"
 #: templates/registration/team_members.html:25
 msgid "Koordinátor"
 msgstr "Coordinator"
-
-#~ msgid "Velikost trička:"
-#~ msgstr "T-shirt size:"
