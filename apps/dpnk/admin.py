@@ -621,7 +621,7 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
         if not obj.pk:
             return obj.campaign.user_attendances_for_delivery().count()
         return obj.packagetransaction_set.count()
-    package_transaction__count.short_description = "Balíčků k odeslání"
+    package_transaction__count.short_description = _(u"Balíčků k odeslání")
 
     def customer_sheets__url(self, obj):
         return mark_safe(u"<a href='%s'>customer_sheets</a>" % obj.customer_sheets.url)
