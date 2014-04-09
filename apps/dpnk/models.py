@@ -530,7 +530,10 @@ class UserAttendance(models.Model):
         return self.userprofile.user.get_full_name()
 
     def admission_fee(self):
-        return self.team.subsidiary.city.cityincampaign_set.get(campaign=self.campaign).admission_fee
+        try:
+            return self.team.subsidiary.city.cityincampaign_set.get(campaign=self.campaign).admission_fee
+        except CityInCampaign.DoesNotExist:
+            return None
 
     def payment(self):
         if self.team and self.team.subsidiary and self.admission_fee() == 0:
