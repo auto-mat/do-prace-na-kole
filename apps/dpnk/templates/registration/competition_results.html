@@ -40,11 +40,11 @@
 
 <th scope="column">
    {% if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos' %}
-      Sou&shy;tě&shy;ží&shy;cí
+      {% trans "Sou&shy;tě&shy;ží&shy;cí" %}
    {% elif competition.competitor_type == 'team' %}
-      Tým
+      {% trans "Tým" %}
    {% elif competition.competitor_type == 'company' %}
-      Fir&shy;ma
+      {% trans "Fir&shy;ma" %}
    {% endif %}
 </th>
 

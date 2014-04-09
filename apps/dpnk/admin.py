@@ -177,7 +177,7 @@ class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 
 class PaymentFilter(SimpleListFilter):
-    title = u"stav platby"
+    title = _(u"stav platby")
     parameter_name = u'payment_state'
 
     def lookups(self, request, model_admin):
@@ -309,7 +309,7 @@ class CompanyAdminInline(EnhancedAdminMixin, NestedTabularInline):
 
 
 class HasUserprofileFilter(SimpleListFilter):
-    title = u"Má userprofile"
+    title = _(u"Má userprofile")
     parameter_name = u'has_userprofile'
 
     def lookups(self, request, model_admin):
@@ -387,7 +387,7 @@ approve_am_payment.short_description = _(u"Potvrdit platbu člena klubu přátel
 
 #TODO: this filters any paymant that user has is of specified type, should be only the last payment
 class PaymentTypeFilter(SimpleListFilter):
-    title = u"typ platby"
+    title = _(u"typ platby")
     parameter_name = u'payment_type'
 
     def lookups(self, request, model_admin):
@@ -399,7 +399,7 @@ class PaymentTypeFilter(SimpleListFilter):
 
 
 class NotInCityFilter(SimpleListFilter):
-    title = u"Ne ve městě"
+    title = _(u"Ne ve městě")
     parameter_name = u'not_in_city'
 
     def lookups(self, request, model_admin):
@@ -435,7 +435,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 
 class CoordinatorFilter(SimpleListFilter):
-    title = u"stav týmu"
+    title = _(u"stav týmu")
     parameter_name = u'team_state'
 
     def lookups(self, request, model_admin):
@@ -621,7 +621,7 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
         if not obj.pk:
             return obj.campaign.user_attendances_for_delivery().count()
         return obj.packagetransaction_set.count()
-    package_transaction__count.short_description = "Balíčků k odeslání"
+    package_transaction__count.short_description = _(u"Balíčků k odeslání")
 
     def customer_sheets__url(self, obj):
         return mark_safe(u"<a href='%s'>customer_sheets</a>" % obj.customer_sheets.url)

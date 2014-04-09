@@ -20,7 +20,7 @@
 from django import forms
 from forms import AdressForm, RegistrationFormDPNK
 from models import UserProfile, Company, CompanyAdmin, Competition, UserAttendance, Campaign
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 from util import slugify
@@ -97,7 +97,7 @@ class CompanyAdminApplicationForm(registration.forms.RegistrationFormUniqueEmail
         obj = self.cleaned_data['administrated_company']
         campaign = self.cleaned_data['campaign']
         if CompanyAdmin.objects.filter(administrated_company__pk = obj.pk, campaign=campaign).exists():
-            raise forms.ValidationError(_("Tato společnost již má svého správce."))
+            raise forms.ValidationError(_(u"Tato společnost již má svého koordinátora."))
         else:
             return self.cleaned_data['administrated_company']
 

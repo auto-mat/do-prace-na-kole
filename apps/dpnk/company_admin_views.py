@@ -22,7 +22,7 @@ from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponse, Http404
 import django.contrib.auth
 import datetime
@@ -162,7 +162,7 @@ class CompanyAdminView(UpdateView):
         old_company_admin = user_attendance.team.subsidiary.company.company_admin.filter(campaign=campaign).first()
         print old_company_admin
         if old_company_admin and old_company_admin != company_admin:
-            raise Http404(_(u'<div class="text-warning">Vaše firma již svého koordinátora má: %s.</div>' % old_company_admin))
+            raise Http404(_(u'<div class="text-warning">Vaše firma již svého koordinátora má: %s.</div>') % old_company_admin)
         company_admin.administrated_company = user_attendance.team.subsidiary.company
         return company_admin
 

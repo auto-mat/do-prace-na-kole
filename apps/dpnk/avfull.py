@@ -118,7 +118,6 @@ def make_avfull(outfile, delivery_batch):
     try:
         today = datetime.datetime.today().strftime("%Y%m%d")
         batch_date = delivery_batch.created.strftime("%y%m%d")
-        con_reference = "%s-%s-DPNK" % (str(delivery_batch.pk), batch_date)
         tnt_account_reference = 111057
         for package_transaction in delivery_batch.packagetransaction_set.all():
             user_attendance = package_transaction.user_attendance
@@ -149,7 +148,7 @@ def make_avfull(outfile, delivery_batch):
 
             outfile.write(unidecode(make_aline(
                 carrier_code="TNT03",
-                con_reference=con_reference,
+                con_reference=package_transaction.tnt_con_reference(),
                 con_sequence_number=sequence_number,
                 con_note_number=package_transaction.tracking_number_cnc(),
                 sender_address=sender_address,
@@ -159,7 +158,7 @@ def make_avfull(outfile, delivery_batch):
                 )+"\r\n"))
 
             outfile.write(unidecode(make_bline(
-                con_reference=con_reference,
+                con_reference=package_transaction.tnt_con_reference(),
                 con_sequence_number=sequence_number,
                 con_note_number=package_transaction.tracking_number_cnc(),
                 con_sending_date=today,
@@ -172,7 +171,7 @@ def make_avfull(outfile, delivery_batch):
                 )+"\r\n"))
 
             outfile.write(unidecode(make_cline(
-                con_reference=con_reference,
+                con_reference=package_transaction.tnt_con_reference(),
                 con_sequence_number=sequence_number,
                 con_note_number=package_transaction.tracking_number_cnc(),
                 package_type_seq_number=1,
@@ -185,7 +184,7 @@ def make_avfull(outfile, delivery_batch):
                 )+"\r\n"))
 
             outfile.write(unidecode(make_dline(
-                con_reference=con_reference,
+                con_reference=package_transaction.tnt_con_reference(),
                 con_sequence_number=sequence_number,
                 con_note_number=package_transaction.tracking_number_cnc(),
                 package_type_seq_number=1,

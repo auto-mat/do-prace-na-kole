@@ -201,6 +201,7 @@ def deploy():
     #install_site()
     symlink_current_release()
     collectstatic()
+    locale()
 
 def deploy_version(version):
     "Specify a specific version to be made live"
@@ -244,6 +245,10 @@ def upload_tar_from_git():
 def collectstatic():
     "Collect static files"
     run('cd %(path)s/releases/current/;  env/bin/python manage.py collectstatic --noinput' % env)
+
+def locale():
+    "Compile locale"
+    run('cd %(path)s/releases/current/apps/dpnk; django-admin compilemessages' % env)
 
 def install_site():
     "Add the virtualhost file to apache"

@@ -31,7 +31,6 @@ def make_sheet(package_transaction, canvas):
     DIR = os.path.dirname(__file__)
     # CONFIGURATION
     user_attendance = package_transaction.user_attendance
-    delivery_number = "{:0>9.9}".format(package_transaction.tracking_number_cnc())
     logo_file = os.path.join(DIR, "static/img/logo.jpg")
     # END OF CONFIGURATION
 
@@ -39,8 +38,8 @@ def make_sheet(package_transaction, canvas):
     im = Image(logo_file, 3.98*cm, 1.5*cm)
     im.drawOn(canvas, 2*cm, 26*cm)
 
-    barcode = code128.Code128(delivery_number, barWidth=0.5*mm, barHeight=20*mm, humanReadable=True)
-    barcode.drawOn(canvas, 13*cm, 26*cm)
+    barcode = code128.Code128(package_transaction.tnt_con_reference(), barWidth=0.5*mm, barHeight=20*mm, humanReadable=True)
+    barcode.drawOn(canvas, 8*cm, 26*cm)
 
     canvas.setFont('DejaVuB', 20)
     canvas.drawString(5*cm, 24*cm, user_attendance.campaign.__unicode__())
@@ -52,9 +51,8 @@ def make_sheet(package_transaction, canvas):
     datestr = "%d. %d. %d" % (d.day, d.month, d.year)
     canvas.drawString(13*cm, 22*cm, datestr)
 
-    batch_date = package_transaction.delivery_batch.created.strftime("%y%m%d")
-    reference = u"Ref: %s-%s-DPNK Seq: %s" % (package_transaction.delivery_batch.pk, batch_date, package_transaction.pk)
-    canvas.drawString(13*cm, 21.5*cm, reference)
+    barcode = code128.Code128(package_transaction.tracking_number_cnc(), barWidth=0.5*mm, barHeight=20*mm, humanReadable=True)
+    barcode.drawOn(canvas, 12*cm, 19.5*cm)
 
     canvas.setFont('DejaVu', 10)
     canvas.drawString(2*cm, 21*cm, u"%s, %s" % (user_attendance.team.subsidiary.company, user_attendance.team.subsidiary.address_recipient))

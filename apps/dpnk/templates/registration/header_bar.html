@@ -5,14 +5,14 @@
 {% if is_authentificated %}
    {{ user_attendance }} 
 {% if company_admin %}
-   / <a href="{% wp_url 'company_admin' %}">Společnost</a>
+   / <a href="{% wp_url 'company_admin' %}">{% trans "Společnost" %}</a >
 {% endif %}
    /
-      <a href="{% wp_url 'profil' %}">Profil</a>
+      <a href="{% wp_url 'profil' %}">{% trans "Profil" %}</a>
    /
    <a href="{% wp_url 'logout' %}">{% trans "Odhlásit" %}</a>
 {% else %}
-   <a href="/prihlasit">Přihlásit</a>
+   <a href="/prihlasit">{% trans "Přihlásit" %}</a>
    /
-   <a href="/registrace">Registrovat</a>
+   <a href="/registrace">{% trans "Registrovat" %}</a>
 {% endif %}
