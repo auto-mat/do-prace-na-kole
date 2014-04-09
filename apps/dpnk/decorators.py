@@ -95,7 +95,7 @@ def must_be_in_phase(phase_type):
             except models.Phase.DoesNotExist:
                 phase = None
             if not phase or not phase.is_actual():
-                return HttpResponse(_(u"<div class='text-warning'>Tento formulář se zobrazuje pouze v %s fázi soutěže.</div>" % models.Phase.TYPE_DICT[phase_type]), status=401)
+                return HttpResponse(_(u"<div class='text-warning'>Tento formulář se zobrazuje pouze v %s fázi soutěže.</div>") % models.Phase.TYPE_DICT[phase_type], status=401)
             return fn(request, *args, **kwargs)
         return wrapped
     return decorator
@@ -124,7 +124,7 @@ def must_be_competitor(fn):
             kwargs['user_attendance'] = user_attendance
             return fn(*args, **kwargs)
 
-        return HttpResponse(_(u"<div class='text-warning'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním správcem, použijte <a href='%s'>správu firmy</a>.</div>" % wp_reverse("company_admin")), status=401)
+        return HttpResponse(_(u"<div class='text-warning'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.</div>") % wp_reverse("company_admin"), status=401)
     return wrapper
 
 
@@ -132,7 +132,7 @@ def must_be_in_group(group):
     def decorator(fn):
         def wrapped(request, *args, **kwargs):
             if request.user.groups.filter(name=group).count() == 0:
-                return HttpResponse(_(u"<div class='text-warning'>Pro přístup k této stránce musíte být ve skupině %s</div>" % group), status=401)
+                return HttpResponse(_(u"<div class='text-warning'>Pro přístup k této stránce musíte být ve skupině %s</div>") % group, status=401)
             return fn(request, *args, **kwargs)
         return wrapped
     return decorator

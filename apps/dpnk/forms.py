@@ -198,7 +198,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
 
     def clean_email(self):
         if User.objects.filter(email__iexact=self.cleaned_data['email']):
-            raise forms.ValidationError(mark_safe(_("Tato e-mailová adresa se již používá. Pokud je vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> obnovu hesla</a>." % {'password': wp_reverse('zapomenute_heslo'), 'login': wp_reverse('login')})))
+            raise forms.ValidationError(mark_safe(_(u"Tato e-mailová adresa se již používá. Pokud je vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> obnovu hesla</a>.") % {'password': wp_reverse('zapomenute_heslo'), 'login': wp_reverse('login')}))
         return self.cleaned_data['email']
 
 
@@ -288,7 +288,7 @@ class BikeRepairForm(forms.ModelForm):
 
         other_user_attendances = user_attendance.other_user_attendances(campaign)
         if other_user_attendances.count() > 0:
-            raise forms.ValidationError(_(u"Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s" % ", ".join([u.campaign.name for u in other_user_attendances])))
+            raise forms.ValidationError(_(u"Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s") % ", ".join([u.campaign.name for u in other_user_attendances]))
 
         return user_attendance
 
@@ -299,8 +299,8 @@ class BikeRepairForm(forms.ModelForm):
             transaction = None
         if transaction:
             created_formated_date = formats.date_format(transaction.created, "SHORT_DATETIME_FORMAT")
-            raise forms.ValidationError(_(u"Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: %(note)s)." %
-                {'time': created_formated_date, 'bike_shop': transaction.author.get_full_name(), 'note': transaction.description}))
+            raise forms.ValidationError(_(u"Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: %(note)s).") %
+                {'time': created_formated_date, 'bike_shop': transaction.author.get_full_name(), 'note': transaction.description})
         return super(BikeRepairForm, self).clean()
 
     def save(self, *args, **kwargs):
@@ -313,9 +313,9 @@ class BikeRepairForm(forms.ModelForm):
 
 class TShirtUpdateForm(models.UserAttendanceForm):
     telephone = forms.CharField(
-        label=_("Telefon"),
+        label=_(u"Telefon"),
         validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
-        help_text=_("Telefon je pro kurýra, který Vám přiveze soutěžní triko, pro HelpDesk"),
+        help_text=_(u"Telefon je pro kurýra, který Vám přiveze soutěžní triko, pro HelpDesk"),
         max_length=30)
 
     def save(self, *args, **kwargs):
@@ -368,7 +368,7 @@ class ProfileUpdateForm(forms.ModelForm):
         Validate that the email is not already in use.
         """
         if User.objects.filter(email__iexact=self.cleaned_data['email']).exclude(pk=self.instance.userprofile.user.pk).exists():
-            raise forms.ValidationError(_("Tento email již je v našem systému zanesen."))
+            raise forms.ValidationError(_(u"Tento email již je v našem systému zanesen."))
         else:
             return self.cleaned_data['email']
 

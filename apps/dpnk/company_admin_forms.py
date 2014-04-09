@@ -97,7 +97,7 @@ class CompanyAdminApplicationForm(registration.forms.RegistrationFormUniqueEmail
         obj = self.cleaned_data['administrated_company']
         campaign = self.cleaned_data['campaign']
         if CompanyAdmin.objects.filter(administrated_company__pk = obj.pk, campaign=campaign).exists():
-            raise forms.ValidationError(_("Tato společnost již má svého správce."))
+            raise forms.ValidationError(_(u"Tato společnost již má svého koordinátora."))
         else:
             return self.cleaned_data['administrated_company']
 

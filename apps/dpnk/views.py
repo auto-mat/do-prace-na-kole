@@ -135,7 +135,7 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
 
 @login_required_simple
 @must_be_competitor
-@user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), _(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin')))
+@user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), '<div class="text-error">' + _(u'Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.') % wp_reverse('team_admin') + "</div>")
 def change_team(
         request,
         success_url=None, form_class=ChangeTeamForm,
@@ -333,7 +333,7 @@ class ConfirmTeamInvitationView(FormView):
     @method_decorator(must_be_competitor)
     @method_decorator(request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, "<div class='text-warning'>Tým nenalezen.</div>"))
     @method_decorator(request_condition(lambda r, a, k: r.user.email != k['initial_email'], "<div class='text-warning'>Pozvánka je určena jinému uživateli, než je aktuálně přihlášen.</div>"))
-    @method_decorator(user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), _(u'<div class="text-error">Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.</div>' % wp_reverse('team_admin'))))
+    @method_decorator(user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), '<div class="text-error">' + _(u'Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.') % wp_reverse('team_admin') + "</div>"))
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
         invitation_token = self.kwargs['token']
@@ -553,7 +553,7 @@ def rides(
             date = days[day-1]
             if not trip_active(date, today):
                 logger.error(u'User %s is trying to fill in nonactive day %s (%s), POST: %s' % (user_attendance, day, date, request.POST))
-                return HttpResponse(_(u'<div class="text-error">Den %s již není možné vyplnit.</div>' % date), status=401)
+                return HttpResponse(_(u'<div class="text-error">Den %s již není možné vyplnit.</div>') % date, status=401)
             trip, created = Trip.objects.get_or_create(
                 user=request.user.get_profile(),
                 date=date)
@@ -980,7 +980,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         user_attendance.approved_for_team = 'approved'
         user_attendance.save()
         team_membership_approval_mail(user_attendance)
-        messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %(user)s v týmu %(team)s bylo odsouhlaseno." % {"user": user_attendance, "team": user_attendance.team.name}), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
+        messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %(user)s v týmu %(team)s bylo odsouhlaseno.") % {"user": user_attendance, "team": user_attendance.team.name}, extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
         return
 
 
@@ -1026,10 +1026,10 @@ def invite(
                             approve_for_team(request, invited_user_attendance, "", True, False)
                         else:
                             invitation_register_mail(user_attendance, invited_user_attendance)
-                            messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka uživateli %(user)s na email %(email)s" % {"user": invited_user_attendance, "email": email}), fail_silently=True)
+                            messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka uživateli %(user)s na email %(email)s") % {"user": invited_user_attendance, "email": email}, fail_silently=True)
                     except models.User.DoesNotExist:
                         invitation_mail(user_attendance, email)
-                        messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s" % email), fail_silently=True)
+                        messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s") % email, fail_silently=True)
 
             return redirect(wp_reverse(success_url))
     else:

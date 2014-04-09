@@ -162,7 +162,7 @@ class CompanyAdminView(UpdateView):
         old_company_admin = user_attendance.team.subsidiary.company.company_admin.filter(campaign=campaign).first()
         print old_company_admin
         if old_company_admin and old_company_admin != company_admin:
-            raise Http404(_(u'<div class="text-warning">Vaše firma již svého koordinátora má: %s.</div>' % old_company_admin))
+            raise Http404(_(u'<div class="text-warning">Vaše firma již svého koordinátora má: %s.</div>') % old_company_admin)
         company_admin.administrated_company = user_attendance.team.subsidiary.company
         return company_admin
 

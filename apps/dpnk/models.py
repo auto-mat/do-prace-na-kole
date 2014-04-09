@@ -446,7 +446,7 @@ class TShirtSize(models.Model):
         default=True,
         null=False)
     t_shirt_preview = models.FileField(
-        verbose_name=_("Náhled trika"),
+        verbose_name=_(u"Náhled trika"),
         upload_to='t_shirt_preview',
         blank=True, null=True)
 
@@ -803,11 +803,11 @@ class DeliveryBatch(models.Model):
         null=False,
         blank=False)
     customer_sheets = models.FileField(
-        verbose_name=_("Zákaznické listy"),
+        verbose_name=_(u"Zákaznické listy"),
         upload_to='customer_sheets',
         blank=True, null=True)
     tnt_order = models.FileField(
-        verbose_name=_("Objednávka pro TNT"),
+        verbose_name=_(u"Objednávka pro TNT"),
         upload_to='tnt_order',
         blank=True, null=True)
 

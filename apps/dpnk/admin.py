@@ -177,7 +177,7 @@ class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 
 class PaymentFilter(SimpleListFilter):
-    title = u"stav platby"
+    title = _(u"stav platby")
     parameter_name = u'payment_state'
 
     def lookups(self, request, model_admin):
@@ -309,7 +309,7 @@ class CompanyAdminInline(EnhancedAdminMixin, NestedTabularInline):
 
 
 class HasUserprofileFilter(SimpleListFilter):
-    title = u"Má userprofile"
+    title = _(u"Má userprofile")
     parameter_name = u'has_userprofile'
 
     def lookups(self, request, model_admin):
@@ -435,7 +435,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 
 class CoordinatorFilter(SimpleListFilter):
-    title = u"stav týmu"
+    title = _(u"stav týmu")
     parameter_name = u'team_state'
 
     def lookups(self, request, model_admin):
