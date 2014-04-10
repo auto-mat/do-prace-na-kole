@@ -440,15 +440,18 @@ def payment_result(request, success, trans_id, session_id, pay_type, error=None)
 
     if session_id and session_id != "":
         p = Payment.objects.select_for_update().get(session_id=session_id)
-        if p.status == Payment.Status.NEW:
-            p.trans_id = trans_id
-            p.pay_type = pay_type
+        if p.status not in Payment.done_statuses:
             if success:
                 p.status = Payment.Status.COMMENCED
             else:
                 p.status = Payment.Status.REJECTED
+        if not p.trans_id:
+            p.trans_id = trans_id
+        if not p.pay_type:
+            p.pay_type = pay_type
+        if not p.error:
             p.error = error
-            p.save()
+        p.save()
 
     if success:
         msg = _(u"Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
