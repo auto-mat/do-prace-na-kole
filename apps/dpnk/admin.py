@@ -536,6 +536,7 @@ class PaymentAdmin(admin.ModelAdmin):
     list_filter = [ 'user_attendance__campaign', 'status', 'error', 'pay_type',]
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created')
+    list_max_show_all = 10000
 
 
 class ChoiceInline(EnhancedAdminMixin, admin.TabularInline):
