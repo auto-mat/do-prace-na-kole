@@ -416,7 +416,7 @@ def payment(request, user_attendance=None):
                 status=Payment.Status.NEW,
                 description="Ucastnicky poplatek Do prace na kole")
     p.save()
-    logger.info('Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s, status: %s' % (uid, order_id, session_id, user_attendance, p.status))
+    logger.info(u'Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s' % (uid, order_id, session_id, user_attendance, user_attendance.userprofile.user.username, p.status))
     messages.add_message(request, messages.WARNING, _(u"Platba vytvořena, čeká se na její potvrzení"), fail_silently=True)
     # Render form
     profile = UserProfile.objects.get(user=request.user)
@@ -436,7 +436,7 @@ def payment(request, user_attendance=None):
 @login_required_simple
 @transaction.atomic
 def payment_result(request, success, trans_id, session_id, pay_type, error=None):
-    logger.info('Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s' % (success, trans_id, session_id, pay_type, error, request.user))
+    logger.info(u'Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s (%s)' % (success, trans_id, session_id, pay_type, error, request.user, request.user.username))
 
     if session_id and session_id != "":
         p = Payment.objects.select_for_update().get(session_id=session_id)
@@ -764,7 +764,7 @@ class ChangeTShirtView(SuccessMessageMixin, UpdateView):
 
 
 def handle_uploaded_file(source, username):
-    logger.info("Saving file: username: %s, filenmae: %s" % (username, source.name))
+    logger.info("Saving file: username: %s, filename: %s" % (username, source.name))
     fd, filepath = tempfile.mkstemp(suffix=u"_%s&%s" % (username, unidecode(source.name).replace(" ", "_")), dir=settings.MEDIA_ROOT + u"/questionaire")
     with open(filepath, 'wb') as dest:
         shutil.copyfileobj(source, dest)
@@ -1088,7 +1088,7 @@ def team_admin_members(
         user_attendance = UserAttendance.objects.get(id=b_action[1])
         userprofile = user_attendance.userprofile
         if user_attendance.approved_for_team not in ('undecided', 'denied') or user_attendance.team != team or not userprofile.user.is_active:
-            logger.error('Approving user with wrong parameters. User: %s, approval: %s, team: %s, active: %s' % (userprofile.user, user_attendance.approved_for_team, user_attendance.team, userprofile.user.is_active))
+            logger.error(u'Approving user with wrong parameters. User: %s (%s), approval: %s, team: %s, active: %s' % (userprofile.user, userprofile.user.username, user_attendance.approved_for_team, user_attendance.team, userprofile.user.is_active))
             messages.add_message(request, messages.ERROR, _(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte kontakt@dopracenakole.net."), fail_silently=True)
         else:
             approve_for_team(request, user_attendance, request.POST.get('reason-' + str(user_attendance.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
