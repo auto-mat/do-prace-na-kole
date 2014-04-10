@@ -438,7 +438,7 @@ def payment_result(request, success, trans_id, session_id, pay_type, error=None)
     logger.info('Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s' % (success, trans_id, session_id, pay_type, error, request.user))
 
     if session_id and session_id != "":
-        p = Payment.objects.get(session_id=session_id)
+        p = Payment.objects.select_for_update().get(session_id=session_id)
         if p.status == Payment.Status.NEW:
             p.trans_id = trans_id
             p.pay_type = pay_type
@@ -501,7 +501,7 @@ def payment_status(request):
                                r['trans_ts']))
     # Update the corresponding payment
     # TODO: use update_or_create in Django 1.7
-    p, created = Payment.objects.get_or_create(
+    p, created = Payment.objects.select_for_update().get_or_create(
         session_id=r['trans_session_id'],
         defaults={
             'order_id': r['trans_order_id'],
