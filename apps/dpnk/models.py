@@ -1050,18 +1050,23 @@ class Payment(Transaction):
         Status.WAITING_CONFIRMATION]
 
     PAY_TYPES = (
-        ('mp', _(u'mPenize')),
+        ('mp', _(u'mPenize - mBank')),
         ('kb', _(u'MojePlatba')),
         ('rf', _(u'ePlatby pro eKonto')),
         ('pg', _(u'GE Money Bank')),
-        ('pv', _(u'Volksbank')),
+        ('pv', _(u'Sberbank (Volksbank)')),
         ('pf', _(u'Fio banka')),
-        ('cs', _(u'Česká spořitelna')),
+        ('cs', _(u'PLATBA 24 – Česká spořitelna')),
+        ('era', _(u'Era - Poštovní spořitelna')),
+        ('cb', _(u'ČSOB')),
         ('c', _(u'Kreditní karta přes GPE')),
         ('bt', _(u'bankovní převod')),
         ('pt', _(u'převod přes poštu')),
-        ('sc', _(u'superCASH')),
+        ('sc', _(u'superCASH')),  # Deprecated
+        ('psc', _(u'PaySec')),
+        ('mo', _(u'Mobito')),
         ('t', _(u'testovací platba')),
+
         ('fa', _(u'faktura mimo PayU')),
         ('fc', _(u'firma platí fakturou')),
         ('am', _(u'člen klubu přátel Auto*matu')),
@@ -1080,12 +1085,15 @@ class Payment(Transaction):
         'pv',
         'pf',
         'cs',
+        'era',
+        'cb',
         'c',
         'bt',
         'pt',
         'sc',
+        'psc',
+        'mo',
         't',
-        'fa',
         ]
 
     class Meta:
