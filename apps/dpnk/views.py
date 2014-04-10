@@ -500,11 +500,14 @@ def payment_status(request):
                                r['trans_status'], r['trans_amount'], r['trans_desc'],
                                r['trans_ts']))
     # Update the corresponding payment
-    try:
-        p = Payment.objects.get(session_id=r['trans_session_id'])
-    except Payment.DoesNotExist:
-        p = Payment(order_id=r['trans_order_id'], session_id=r['trans_session_id'],
-                    amount=int(r['trans_amount'])/100, description=r['trans_desc'])
+    # TODO: use update_or_create in Django 1.7
+    p, created = Payment.objects.get_or_create(
+        session_id=r['trans_session_id'],
+        defaults={
+            'order_id': r['trans_order_id'],
+            'amount': int(r['trans_amount'])/100,
+            'description': r['trans_desc'],
+        })
 
     p.pay_type = r['trans_pay_type']
     p.status = r['trans_status']
