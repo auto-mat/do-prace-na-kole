@@ -433,6 +433,7 @@ def payment(request, user_attendance=None):
         }, context_instance=RequestContext(request))
 
 
+@login_required_simple
 @transaction.atomic
 def payment_result(request, success, trans_id, session_id, pay_type, error=None):
     logger.info('Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s' % (success, trans_id, session_id, pay_type, error, request.user))
