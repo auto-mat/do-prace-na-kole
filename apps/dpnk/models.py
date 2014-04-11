@@ -1089,18 +1089,23 @@ class Payment(Transaction):
         Status.WAITING_CONFIRMATION]
 
     PAY_TYPES = (
-        ('mp', _(u'mPenize')),
+        ('mp', _(u'mPenize - mBank')),
         ('kb', _(u'MojePlatba')),
         ('rf', _(u'ePlatby pro eKonto')),
         ('pg', _(u'GE Money Bank')),
-        ('pv', _(u'Volksbank')),
+        ('pv', _(u'Sberbank (Volksbank)')),
         ('pf', _(u'Fio banka')),
-        ('cs', _(u'Česká spořitelna')),
+        ('cs', _(u'PLATBA 24 – Česká spořitelna')),
+        ('era', _(u'Era - Poštovní spořitelna')),
+        ('cb', _(u'ČSOB')),
         ('c', _(u'Kreditní karta přes GPE')),
         ('bt', _(u'bankovní převod')),
         ('pt', _(u'převod přes poštu')),
-        ('sc', _(u'superCASH')),
+        ('sc', _(u'superCASH')),  # Deprecated
+        ('psc', _(u'PaySec')),
+        ('mo', _(u'Mobito')),
         ('t', _(u'testovací platba')),
+
         ('fa', _(u'faktura mimo PayU')),
         ('fc', _(u'firma platí fakturou')),
         ('am', _(u'člen klubu přátel Auto*matu')),
@@ -1119,12 +1124,15 @@ class Payment(Transaction):
         'pv',
         'pf',
         'cs',
+        'era',
+        'cb',
         'c',
         'bt',
         'pt',
         'sc',
+        'psc',
+        'mo',
         't',
-        'fa',
         ]
 
     class Meta:
@@ -1191,10 +1199,12 @@ class Payment(Transaction):
     def full_string(self):
         if self.user_attendance:
             user = self.user_attendance
+            username = self.user_attendance.userprofile.user.username
         else:
             user = None
-        return u"user: %s, order_id: %s, session_id: %s, trans_id: %s, amount: %s, description: %s, created: %s, realized: %s, pay_type: %s, status: %s, error: %s" % (
-            user, self.order_id, self.session_id, self.trans_id, self.amount, self.description, self.created, self.realized, self.pay_type, self.status, self.error)
+            username = None
+        return u"id: %s, user: %s (%s), order_id: %s, session_id: %s, trans_id: %s, amount: %s, description: %s, created: %s, realized: %s, pay_type: %s, status: %s, error: %s" % (
+            self.pk, user, username, self.order_id, self.session_id, self.trans_id, self.amount, self.description, self.created, self.realized, self.pay_type, self.status, self.error)
 
     def __unicode__(self):
         if self.trans_id:
