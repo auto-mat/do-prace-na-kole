@@ -3,6 +3,7 @@
 import os
 import sys
 from django.contrib.messages import constants as message_constants
+from django.utils.translation import ugettext_lazy as _
 
 normpath = lambda *args: os.path.normpath(os.path.abspath(os.path.join(*args)))
 PROJECT_ROOT = normpath(__file__, "..", "..")
@@ -40,7 +41,12 @@ CACHES = {
 
 LOCALE_PATH = normpath(PROJECT_ROOT, 'dpnk/locale')
 TIME_ZONE = 'Europe/Prague'
-LANGUAGE_CODE = 'cs-CZ'
+LANGUAGES = (
+    ('cs', _('Czech')),
+    ('en', _('English')),
+)
+LANGUAGE_CODE = 'cs'
+PREFIX_DEFAULT_LOCALE = False
 SITE_ID = 5
 USE_I18N = True
 USE_L10N = True
@@ -56,7 +62,7 @@ STATICFILES_FINDERS = (
 SECRET_KEY = ''
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
+    'localeurl.middleware.LocaleURLMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -110,6 +116,7 @@ INSTALLED_APPS = (
     'adminsortable',
     'reportlab',
     'dbbackup',
+    'localeurl',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'

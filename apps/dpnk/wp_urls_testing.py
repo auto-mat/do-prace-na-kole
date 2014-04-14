@@ -62,7 +62,3 @@ for url in urls:
     urls[url] = "/~petr/dpnk-wp/%s" % urls[url]
 
 urls['admin'] = "/admin/"
-
-
-def wp_reverse(name):
-    return urls[name]

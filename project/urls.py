@@ -23,4 +23,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include("massadmin.urls")),
     url(r'^dpnk/', include("dpnk.urls")),
     url(r"^su/", include("django_su.urls")),
+    url(r'^localeurl/', include('localeurl.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
