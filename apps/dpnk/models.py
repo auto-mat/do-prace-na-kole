@@ -51,7 +51,7 @@ import mailing
 from dpnk.email import (
     payment_confirmation_mail, company_admin_rejected_mail,
     company_admin_approval_mail, payment_confirmation_company_mail)
-from dpnk import email
+from dpnk import email, invoice_pdf
 from wp_urls import wp_reverse
 import logging
 logger = logging.getLogger(__name__)
@@ -882,9 +882,26 @@ class Invoice(models.Model):
         blank=False)
 
 
-@receiver(pre_save, sender=Invoice)
-def add_payments(sender, instance, **kwargs):
-    instance.payment_set = Payment.objects.filter(pay_type='fc', status=Payment.Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=instance.company, user_attendance__campaign=instance.campaign)
+
+@transaction.atomic
+def add_payments(instance):
+    payments = Payment.objects.filter(pay_type='fc', status=Payment.Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=instance.company, user_attendance__campaign=instance.campaign)
+    instance.payment_set = payments
+    for payment in payments:
+        payment.status = Payment.Status.INVOICE_MADE
+        payment.save()
+
+
+@receiver(post_save, sender=Invoice)
+def create_invoice_files(sender, instance, created, **kwargs):
+    if created:
+        add_payments(instance)
+
+    if not instance.invoice_pdf:
+        temp = NamedTemporaryFile()
+        invoice_pdf.make_invoice_sheet_pdf(temp, instance)
+        instance.invoice_pdf.save("invoice_%s_%s.pdf" % (instance.created.strftime("%Y-%m-%d"), hash(str(instance.pk) + settings.SECRET_KEY)), File(temp))
+        instance.save()
 
 
 @with_author
@@ -1170,6 +1187,8 @@ class Payment(Transaction):
         null=True,
         blank=True,
         default=None,
+        on_delete=models.SET_NULL,
+        related_name=("payment_set"),
         )
 
 

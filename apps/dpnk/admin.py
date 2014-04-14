@@ -101,12 +101,6 @@ class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
         return obj.user_count
     user_count.admin_order_field = 'user_count'
 
-    #this is quick addition for 2013 invoices
-    def invoice_count(self, obj):
-        return len([
-            user for user in models.UserAttendance.objects.filter(team__subsidiary__company=obj)
-            if user.payment()['payment'] and user.payment()['payment'].pay_type == 'fc' and user.payment()['payment'].status in models.Payment.done_statuses])
-
     #def company_admin__user__email(self, obj):
     #   return obj.company_admin.get().user.email
 
@@ -537,6 +531,7 @@ class PaymentAdmin(admin.ModelAdmin):
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created')
     list_max_show_all = 10000
+    form = models.PaymentForm
 
 
 class ChoiceInline(EnhancedAdminMixin, admin.TabularInline):
@@ -658,9 +653,13 @@ class CompanyAdminAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 
 class InvoiceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ['company', 'created', 'exposure_date']
-    readonly_fields = ['created', 'author', 'updated_by']
+    list_display = ['company', 'created', 'exposure_date', 'invoice__count']
+    readonly_fields = ['created', 'author', 'updated_by', 'invoice__count']
     inlines = [ PaymentInline ]
+
+    def invoice__count(self, obj):
+        return obj.payment_set.count()
+    invoice__count.short_description = _(u"Počet plateb")
 
 admin.site.register(models.Team, TeamAdmin)
 admin.site.register(models.Transaction, TransactionAdmin)

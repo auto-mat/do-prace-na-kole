@@ -2,16 +2,14 @@
 
 import os
 import reportlab
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.platypus import Paragraph, Image
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm, mm
+from reportlab.lib.units import cm
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.graphics.barcode import code128
-from svg2rlg import svg2rlg
 import locale
 
 
@@ -35,7 +33,7 @@ def make_sheet(invoice, canvas):
     logo_file = os.path.join(DIR, "static/img/logo.jpg")
     # END OF CONFIGURATION
 
-	# STYLES
+    # STYLES
     styles = getSampleStyleSheet()
     styles['Normal'].fontName = 'DejaVu'
     styles['Normal'].fontSize = 10
@@ -62,7 +60,6 @@ def make_sheet(invoice, canvas):
     canvas.drawString(3*cm, 21*cm, "PSČ %s" % invoice.company.address_psc)
     canvas.drawString(3*cm, 20.5*cm, "IČO: %s" % invoice.company.ico)
 
-
     canvas.setFont('DejaVuB', 10)
     canvas.drawString(10*cm, 23.5*cm, "DODAVATEL")
     canvas.drawString(10*cm, 22.5*cm, "Auto*Mat, o.s.")
@@ -73,7 +70,6 @@ def make_sheet(invoice, canvas):
     canvas.drawString(10*cm, 20.5*cm, "č. účtu: 217 359 444 / 0300")
     canvas.drawString(10*cm, 20*cm, "VS: 2014002")
 
-
     canvas.drawString(3*cm, 18.5*cm, "Fakturujeme Vám startovní poplatek za účastníky akce Do práce na kole 2014.")
     invoice_count = invoice.payment_set.count()
     canvas.drawString(3*cm, 18*cm, "Počet soutěžících, za které fakturujeme poplatek: %s" % invoice_count)
@@ -81,16 +77,16 @@ def make_sheet(invoice, canvas):
     p.wrapOn(canvas, 17*cm, 10*cm)
     p.drawOn(canvas, 3 * cm, 7.5 * cm)
 
-
     payment_base = sum([u.user_attendance.team.subsidiary.city.cityincampaign_set.get(campaign=invoice.campaign).admission_fee for u in invoice.payment_set.all()])
 
     #TODO: get the fee from the database
-    canvas.drawRightString(18*cm, 7*cm, u"CELKEM: %s Kč" % locale.format("%g", payment_base * 1.21))
-    canvas.drawRightString(18*cm, 6.5*cm, u"Bez daně: %s,- Kč" % (payment_base))
-    canvas.drawRightString(18*cm, 6*cm, u"DPH 21,0%%: %s,- Kč" % (payment_base * 0.21))
-    canvas.drawRightString(18*cm, 5.5*cm, u"CELKEM K ÚHRADĚ vč. DPH: %s,- Kč" % (payment_base))
-    canvas.drawRightString(18*cm, 5*cm, u"Částka k úhradě: %s,- Kč" % (payment_base))
-     
+    locale.setlocale(locale.LC_ALL, "cs_CZ.utf8")
+    canvas.drawRightString(18*cm, 7*cm, u"CELKEM: %s Kč" % locale.format("%0.1f", payment_base * 1.21))
+    canvas.drawRightString(18*cm, 6.5*cm, u"Bez daně: %s Kč" % (locale.format("%0.1f", payment_base)))
+    canvas.drawRightString(18*cm, 6*cm, u"DPH 21,0%%: %s Kč" % locale.format("%0.1f", payment_base * 0.21))
+    canvas.drawRightString(18*cm, 5.5*cm, u"CELKEM K ÚHRADĚ vč. DPH: %s Kč" % (locale.format("%0.1f", payment_base)))
+    canvas.drawRightString(18*cm, 5*cm, u"Částka k úhradě: %s Kč" % (locale.format("%0.1f", payment_base)))
+
     canvas.drawString(3*cm, 4*cm, "V Praze, dne ")
     canvas.drawString(3*cm, 3.5*cm, "vystavil: Lucie Mullerová/737 563 750")
     canvas.drawString(3*cm, 3*cm, "lucie.mullerova@auto-mat.cz")
