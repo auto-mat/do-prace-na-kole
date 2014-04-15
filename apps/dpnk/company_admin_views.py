@@ -34,6 +34,7 @@ from dpnk.email import company_admin_register_competitor_mail, company_admin_reg
 from wp_urls import wp_reverse
 from util import redirect
 from models import Company, CompanyAdmin, Payment, Competition, Campaign, UserProfile
+import models
 import registration.signals
 import registration.backends
 import registration.backends.simple
@@ -226,4 +227,18 @@ def competitions(
     return render_to_response(
         template, {
             'competitions': company_admin.administrated_company.competition_set.filter(campaign=company_admin.campaign),
+            }, context_instance=RequestContext(request))
+
+
+@must_be_company_admin
+@login_required
+def invoices(
+        request,
+        template='company_admin/invoices.html',
+        company_admin=None,
+        ):
+    return render_to_response(
+        template, {
+            'invoices': company_admin.administrated_company.invoice_set.filter(campaign=company_admin.campaign),
+            'payments_to_invoice': models.payments_to_invoice(company_admin.administrated_company, company_admin.campaign),
             }, context_instance=RequestContext(request))

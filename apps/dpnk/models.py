@@ -920,7 +920,7 @@ class Invoice(models.Model):
         super(Invoice, self).save(*args, **kwargs)
 
     def payments_to_add(self):
-        return Payment.objects.filter(pay_type='fc', status=Payment.Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=self.company, user_attendance__campaign=self.campaign)
+        return payments_to_invoice(self.company, self.campaign)
 
     @transaction.atomic
     def add_payments(self):
@@ -934,6 +934,8 @@ class Invoice(models.Model):
         if not self.pk and not self.payments_to_add().exists():
             raise ValidationError(_(u"Neexistuje žádná nefakturovaná platba"))
 
+def payments_to_invoice(company, campaign):
+    return Payment.objects.filter(pay_type='fc', status=Payment.Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=company, user_attendance__campaign=campaign)
 
 @receiver(post_save, sender=Invoice)
 def create_invoice_files(sender, instance, created, **kwargs):
