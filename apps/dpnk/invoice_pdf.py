@@ -31,6 +31,7 @@ def make_sheet(invoice, canvas):
     DIR = os.path.dirname(__file__)
     # CONFIGURATION
     logo_file = os.path.join(DIR, "static/img/logo.jpg")
+    stamp_file = os.path.join(DIR, "static/img/stamp.png")
     # END OF CONFIGURATION
 
     # STYLES
@@ -48,34 +49,38 @@ def make_sheet(invoice, canvas):
     im.drawOn(canvas, 11*cm, 25*cm)
 
     canvas.setFont('DejaVuB', 20)
-    canvas.drawString(3*cm, 26*cm, "FAKTURA 2/2014")
-    canvas.drawString(3*cm, 25*cm, "Daňový doklad")
+    canvas.drawString(3*cm, 26*cm, u"FAKTURA %s/%s" % (invoice.sequence_number, invoice.exposure_date.year))
+    canvas.drawString(3*cm, 25*cm, u"Daňový doklad")
 
     canvas.setFont('DejaVuB', 10)
-    canvas.drawString(3*cm, 23.5*cm, "OBJEDNATEL")
+    canvas.drawString(3*cm, 23.5*cm, u"OBJEDNATEL")
     canvas.drawString(3*cm, 22.5*cm, invoice.company.name)
     canvas.setFont('DejaVu', 10)
-    canvas.drawString(3*cm, 22*cm, "%s %s" % (invoice.company.address_street, invoice.company.address_street_number))
+    canvas.drawString(3*cm, 22*cm, u"%s %s" % (invoice.company.address_street, invoice.company.address_street_number))
     canvas.drawString(3*cm, 21.5*cm, invoice.company.address_city)
-    canvas.drawString(3*cm, 21*cm, "PSČ %s" % invoice.company.address_psc)
-    canvas.drawString(3*cm, 20.5*cm, "IČO: %s" % invoice.company.ico)
+    canvas.drawString(3*cm, 21*cm, u"PSČ %s" % invoice.company.address_psc)
+    canvas.drawString(3*cm, 20.5*cm, u"IČO: %s" % invoice.company.ico)
 
     canvas.setFont('DejaVuB', 10)
-    canvas.drawString(10*cm, 23.5*cm, "DODAVATEL")
-    canvas.drawString(10*cm, 22.5*cm, "Auto*Mat, o.s.")
+    canvas.drawString(10*cm, 23.5*cm, u"DODAVATEL")
+    canvas.drawString(10*cm, 22.5*cm, u"Auto*Mat, o.s.")
     canvas.setFont('DejaVu', 10)
-    canvas.drawString(10*cm, 22*cm, "Lublaňská 398/18")
-    canvas.drawString(10*cm, 21.5*cm, "120 00 Praha 2")
-    canvas.drawString(10*cm, 21*cm, "IČ: 22670319/ DIČ: CZ22670319")
-    canvas.drawString(10*cm, 20.5*cm, "č. účtu: 217 359 444 / 0300")
-    canvas.drawString(10*cm, 20*cm, "VS: 2014002")
+    canvas.drawString(10*cm, 22*cm, u"Lublaňská 398/18")
+    canvas.drawString(10*cm, 21.5*cm, u"120 00 Praha 2")
+    canvas.drawString(10*cm, 21*cm, u"IČ: 22670319/ DIČ: CZ22670319")
+    canvas.drawString(10*cm, 20.5*cm, u"č. účtu: 217 359 444 / 0300")
+    canvas.drawString(10*cm, 20*cm, u"VS: %s%03d" % (invoice.exposure_date.year, invoice.sequence_number))
 
-    canvas.drawString(3*cm, 18.5*cm, "Fakturujeme Vám startovní poplatek za účastníky akce Do práce na kole 2014.")
+    canvas.drawString(3*cm, 18.5*cm, u"Fakturujeme Vám startovní poplatek za účastníky akce %s." % invoice.campaign.name)
     invoice_count = invoice.payment_set.count()
-    canvas.drawString(3*cm, 18*cm, "Počet soutěžících, za které fakturujeme poplatek: %s" % invoice_count)
-    p = Paragraph(u"Jména účastníků: %s" % (", ".join([u.user_attendance.__unicode__() for u in invoice.payment_set.all()])), styles['Normal'])
+    canvas.drawString(3*cm, 18*cm, u"Počet soutěžících, za které fakturujeme poplatek: %s" % invoice_count)
+    p = Paragraph(u"Jména účastníků: %s" % (", ".join([u.user_attendance.__unicode__() for u in invoice.payment_set.order_by("user_attendance__userprofile__user__last_name", "user_attendance__userprofile__user__first_name").all()])), styles['Normal'])
     p.wrapOn(canvas, 17*cm, 10*cm)
     p.drawOn(canvas, 3 * cm, 7.5 * cm)
+
+    # START OF THE DOCUMENT
+    st = Image(stamp_file, 4.66*cm, 2.16*cm)
+    st.drawOn(canvas, 11*cm, 10*cm)
 
     payment_base = sum([u.user_attendance.team.subsidiary.city.cityincampaign_set.get(campaign=invoice.campaign).admission_fee for u in invoice.payment_set.all()])
 
@@ -87,11 +92,11 @@ def make_sheet(invoice, canvas):
     canvas.drawRightString(18*cm, 5.5*cm, u"CELKEM K ÚHRADĚ vč. DPH: %s Kč" % (locale.format("%0.1f", payment_base)))
     canvas.drawRightString(18*cm, 5*cm, u"Částka k úhradě: %s Kč" % (locale.format("%0.1f", payment_base)))
 
-    canvas.drawString(3*cm, 4*cm, "V Praze, dne ")
-    canvas.drawString(3*cm, 3.5*cm, "vystavil: Lucie Mullerová/737 563 750")
-    canvas.drawString(3*cm, 3*cm, "lucie.mullerova@auto-mat.cz")
+    canvas.drawString(3*cm, 4*cm, u"V Praze, dne ")
+    canvas.drawString(3*cm, 3.5*cm, u"vystavil: Lucie Mullerová/737 563 750")
+    canvas.drawString(3*cm, 3*cm, u"lucie.mullerova@auto-mat.cz")
 
-    canvas.drawString(3*cm, 2.5*cm, "Sdružení Auto*Mat bylo zaregistrováno u MV ČR pod číslem VS/1-1/68 776/07-R.")
-    canvas.drawString(3*cm, 2*cm, "U Městského soudu v Praze jsme vedeni pod spisovou značkou L 18119.")
-    canvas.drawString(3*cm, 1.5*cm, "Společně s vámi tvoříme město, ve kterém chceme žít.")
-    canvas.drawString(3*cm, 1*cm, "www.auto-mat.cz")
+    canvas.drawString(3*cm, 2.5*cm, u"Sdružení Auto*Mat bylo zaregistrováno u MV ČR pod číslem VS/1-1/68 776/07-R.")
+    canvas.drawString(3*cm, 2*cm, u"U Městského soudu v Praze jsme vedeni pod spisovou značkou L 18119.")
+    canvas.drawString(3*cm, 1.5*cm, u"Společně s vámi tvoříme město, ve kterém chceme žít.")
+    canvas.drawString(3*cm, 1*cm, u"www.auto-mat.cz")

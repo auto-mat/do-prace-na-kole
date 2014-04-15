@@ -30,3 +30,4 @@ flake8
 modulus11
 django-dbbackup
 django-localeurl
+PIL
