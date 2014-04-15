@@ -49,7 +49,7 @@ class PaymentInline(EnhancedAdminMixin, NestedTabularInline):
 class PackageTransactionInline(EnhancedAdminMixin, NestedTabularInline):
     model = models.PackageTransaction
     extra = 0
-    readonly_fields = ['author', 'updated_by', 'tracking_number', 't_shirt_size']
+    readonly_fields = ['author', 'updated_by', 'tracking_number', 'tracking_number_cnc', 't_shirt_size']
     raw_id_fields = ['user_attendance', ]
     form = models.PackageTransactionForm
 
@@ -497,7 +497,7 @@ class PaymentChildAdmin(TransactionChildAdmin):
 
 
 class PackageTransactionChildAdmin(TransactionChildAdmin):
-    readonly_fields = ['created', 'author', 'updated_by', 'tracking_number', 't_shirt_size']
+    readonly_fields = ['created', 'author', 'updated_by', 'tracking_number', 'tracking_number_cnc', 't_shirt_size']
     form = models.PackageTransactionForm
 
 
