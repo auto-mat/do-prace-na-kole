@@ -799,7 +799,6 @@ class DeliveryBatch(models.Model):
     campaign = models.ForeignKey(
         Campaign,
         verbose_name=_(u"Kampaň"),
-        default = Campaign.objects.get(slug=settings.CAMPAIGN).pk,
         null=False,
         blank=False)
     customer_sheets = models.FileField(
@@ -817,6 +816,13 @@ class DeliveryBatch(models.Model):
 
     def __unicode__(self):
         return unicode(self.created)
+
+    def __init__(self, *args, **kwargs):
+        try:
+            self._meta.get_field('campaign').default = Campaign.objects.get(slug=settings.CAMPAIGN).pk
+        except django.db.utils.ProgrammingError:
+            pass
+        return super(DeliveryBatch, self).__init__(*args, **kwargs)
 
 
 @transaction.atomic
