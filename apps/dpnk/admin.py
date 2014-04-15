@@ -654,7 +654,7 @@ class CompanyAdminAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 class InvoiceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ['company', 'created', 'exposure_date', 'invoice__count']
-    readonly_fields = ['created', 'author', 'updated_by', 'invoice__count']
+    readonly_fields = ['created', 'author', 'updated_by', 'invoice__count', 'sequence_number']
     inlines = [ PaymentInline ]
 
     def invoice__count(self, obj):
