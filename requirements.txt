@@ -31,3 +31,4 @@ modulus11
 django-dbbackup
 django-localeurl
 PIL
+-e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator
