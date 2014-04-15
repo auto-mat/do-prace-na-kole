@@ -363,6 +363,18 @@ class Campaign(models.Model):
         blank=False,
         null=False,
         )
+    invoice_sequence_number_first = models.PositiveIntegerField(
+        verbose_name=_(u"První číslo řady pro faktury"),
+        default=0,
+        blank=False,
+        null=False,
+        )
+    invoice_sequence_number_last = models.PositiveIntegerField(
+        verbose_name=_(u"Poslední číslo řady pro faktury"),
+        default=999999999,
+        blank=False,
+        null=False,
+        )
 
     def __unicode__(self):
         return self.name
@@ -878,6 +890,7 @@ class Invoice(models.Model):
         )
     company = models.ForeignKey(
         Company,
+        verbose_name=_(u"Společnost"),
         null=False,
         blank=False,
         )
@@ -886,22 +899,46 @@ class Invoice(models.Model):
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False)
+    sequence_number = models.PositiveIntegerField(
+        verbose_name=_(u"Pořadové číslo faktury"),
+        unique=True,
+        null=False)
 
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        if not self.sequence_number:
+            campaign = self.campaign
+            first = campaign.invoice_sequence_number_first
+            last = campaign.invoice_sequence_number_last
+            last_transaction = Invoice.objects.filter(sequence_number__gte=first, sequence_number__lte=last).order_by("sequence_number").last()
+            if last_transaction:
+                if last_transaction.sequence_number == last:
+                    raise Exception(_(u"Došla číselná řada faktury"))
+                self.sequence_number = last_transaction.sequence_number + 1
+            else:
+                self.sequence_number = first
+        super(Invoice, self).save(*args, **kwargs)
 
+    def payments_to_add(self):
+        return Payment.objects.filter(pay_type='fc', status=Payment.Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=self.company, user_attendance__campaign=self.campaign)
 
-@transaction.atomic
-def add_payments(instance):
-    payments = Payment.objects.filter(pay_type='fc', status=Payment.Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=instance.company, user_attendance__campaign=instance.campaign)
-    instance.payment_set = payments
-    for payment in payments:
-        payment.status = Payment.Status.INVOICE_MADE
-        payment.save()
+    @transaction.atomic
+    def add_payments(self):
+        payments = self.payments_to_add()
+        self.payment_set = payments
+        for payment in payments:
+            payment.status = Payment.Status.INVOICE_MADE
+            payment.save()
+
+    def clean(self):
+        if not self.pk and not self.payments_to_add().exists():
+            raise ValidationError(_(u"Neexistuje žádná nefakturovaná platba"))
 
 
 @receiver(post_save, sender=Invoice)
 def create_invoice_files(sender, instance, created, **kwargs):
     if created:
-        add_payments(instance)
+        instance.add_payments()
 
     if not instance.invoice_pdf:
         temp = NamedTemporaryFile()
