@@ -412,14 +412,17 @@ class NotInCityFilter(SimpleListFilter):
 
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('__unicode__', 'id', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status')
+    list_display = ('__unicode__', 'id', 'userprofile__user__email', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status')
     list_filter = ('campaign', 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', PaymentTypeFilter, PaymentFilter)
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
-    readonly_fields = ('user_link',)
+    readonly_fields = ('user_link', 'userprofile__user__email', )
     actions = (update_mailing, approve_am_payment)
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
+
+    def userprofile__user__email(self, obj):
+        return obj.userprofile.user.email
 
     def team__subsidiary(self, obj):
         if obj.team:
