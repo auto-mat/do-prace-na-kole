@@ -30,3 +30,4 @@ flake8
 modulus11
 django-dbbackup
 django-localeurl
+-e git+https://github.com/PetrDlouhy/django-related-admin#egg=django-related-admin
