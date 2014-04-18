@@ -653,13 +653,17 @@ class CompanyAdminAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 
 class InvoiceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ['company', 'created', 'exposure_date', 'invoice__count']
+    list_display = ['company', 'created', 'exposure_date', 'invoice__count', 'invoice_pdf__url']
     readonly_fields = ['created', 'author', 'updated_by', 'invoice__count', 'sequence_number']
     inlines = [ PaymentInline ]
 
     def invoice__count(self, obj):
         return obj.payment_set.count()
     invoice__count.short_description = _(u"Počet plateb")
+
+    def invoice_pdf__url(self, obj):
+        return mark_safe(u"<a href='%s'>invoice.pdf</a>" % obj.invoice_pdf.url)
+
 
 admin.site.register(models.Team, TeamAdmin)
 admin.site.register(models.Transaction, TransactionAdmin)
