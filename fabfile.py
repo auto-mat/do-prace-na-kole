@@ -274,7 +274,6 @@ def migrate():
     run('cd %(path)s/releases/current/;  env/bin/python manage.py migrate' % env)
 
 def dbbackup():
-    require('release', provided_by=[deploy, setup])
     run('cd %(path)s/releases/current/;  env/bin/python manage.py dbbackup --compress' % env)
 
 def restart_webserver():

@@ -36,6 +36,7 @@ import datetime
 # Models
 from dpnk import models, mailing
 from django import forms
+from related_admin import RelatedFieldAdmin
 import dpnk
 
 
@@ -227,7 +228,6 @@ class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
     form = UserAttendanceForm
     extra = 0
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
-    list_display = ('userprofile__payment_type', 'userprofile__payment_status', 'userprofile__team__name', 'userprofile__distance', 'team__subsidiary__city', 'userprofile__team__subsidiary__company', 'trips_count', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__name', 'userprofile__team__subsidiary__company__name', 'company_admin__administrated_company__name', ]
     list_max_show_all = 10000
     raw_id_fields = ('team',)
@@ -274,11 +274,8 @@ class UserProfileForm(forms.ModelForm):
 class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
     model = models.UserProfile
     form = UserProfileForm
-    list_display = ('user__first_name', 'user__last_name', 'user', 'team', 'distance', 'user__email', 'user__date_joined', 'team__subsidiary__city', 'id', )
     inlines = [UserAttendanceInline, ]
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
-
-    #readonly_fields = ['mailing_id' ]
 
     def user__first_name(self, obj):
         return obj.user.first_name
@@ -405,23 +402,15 @@ class NotInCityFilter(SimpleListFilter):
         return queryset.exclude(team__subsidiary__city=self.value())
 
 
-class UserAttendanceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('__unicode__', 'id', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status')
+class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
+    list_display = ('__unicode__', 'id', 'userprofile__user__email', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status')
     list_filter = ('campaign', 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', PaymentTypeFilter, PaymentFilter)
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
-    readonly_fields = ('user_link',)
+    readonly_fields = ('user_link', 'userprofile__user__email', )
     actions = (update_mailing, approve_am_payment)
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
-
-    def team__subsidiary(self, obj):
-        if obj.team:
-            return obj.team.subsidiary
-
-    def team__subsidiary__company(self, obj):
-        if obj.team:
-            return obj.team.subsidiary.company
 
     def user_link(self, obj):
         return mark_safe('<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (obj.userprofile.user.pk, obj.userprofile.user))
@@ -457,7 +446,7 @@ def recalculate_team_member_count(modeladmin, request, queryset):
 recalculate_team_member_count.short_description = "Přepočítat počet členů týmu"
 
 
-class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
+class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedFieldAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator_campaign', 'member_count', 'campaign', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator_campaign__userprofile__user__first_name', 'coordinator_campaign__userprofile__user__last_name']
     list_filter = ['campaign', 'subsidiary__city', 'member_count', CoordinatorFilter]
@@ -472,12 +461,6 @@ class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmi
                          for u in models.UserAttendance.objects.filter(team=obj)]))
     members.short_description = 'Členové'
     form = models.TeamForm
-
-    def subsidiary__city(self, obj):
-        return obj.subsidiary.city
-
-    def subsidiary__company(self, obj):
-        return obj.subsidiary.company
 
 
 class TransactionChildAdmin(EnhancedModelAdminMixin, PolymorphicChildModelAdmin):
@@ -545,7 +528,7 @@ class ChoiceTypeAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_filter = ('competition__campaign', 'competition', )
 
 
-class AnswerAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ('user_attendance', 'points_given', 'choices__all', 'choices_ids__all', 'question__competition', 'comment', 'question')
     search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name')
     list_filter = ('question__competition__campaign', 'question__competition',)
@@ -632,25 +615,11 @@ class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
-class CompanyAdminAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ['user', 'user__email', 'user__name', 'user__telephone', 'company_admin_approved', 'administrated_company__name', 'can_confirm_payments', 'note', 'campaign']
+class CompanyAdminAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
+    list_display = ['user', 'user__email', 'user__userprofile', 'user__userprofile__telephone', 'company_admin_approved', 'administrated_company__name', 'can_confirm_payments', 'note', 'campaign']
     list_filter = ['campaign', 'company_admin_approved']
     search_fields = ['administrated_company__name', 'user__first_name', 'user__last_name', 'user__username']
     raw_id_fields = ['user', ]
-
-    def user__email(self, obj):
-        return obj.user.email
-
-    def user__name(self, obj):
-        return obj.user.get_profile()
-
-    def user__telephone(self, obj):
-        return obj.user.get_profile().telephone
-
-    def administrated_company__name(self, obj):
-        if obj.administrated_company:
-            return obj.administrated_company.name
-
 
 class InvoiceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ['company', 'created', 'exposure_date', 'invoice__count', 'invoice_pdf__url']
