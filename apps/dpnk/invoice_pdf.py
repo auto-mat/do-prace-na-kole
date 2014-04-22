@@ -46,6 +46,7 @@ Společně s vámi tvoříme město, ve kterém chceme žít. www.auto-mat.cz
     invoice_gen.title = u"Faktura %s/%s" % (invoice.sequence_number, invoice.exposure_date.year)
     invoice_gen.variable_symbol = "%s%03d" % (invoice.exposure_date.year, invoice.sequence_number)
     invoice_gen.date = invoice.exposure_date
+    invoice_gen.rounding_result = True
     invoice_gen.currency = u"Kč"
 
     for subsidiary in models.Subsidiary.objects.filter(teams__users__transactions__payment__invoice=invoice).distinct():
