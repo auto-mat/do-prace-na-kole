@@ -264,7 +264,7 @@ class CreateInvoiceView(FormView):
         context = super(CreateInvoiceView, self).get_context_data(**kwargs)
         payments = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
         users = [p.user_attendance.__unicode__() for p in payments]
-        context['message'] = _(u"Vytvořit fakturu pro následujících %(count)s závodníků: %(names)s") % {"count": payments.count(), "names": ", ".join(users)}
+        context['message'] = _(u"Vytvořit fakturu pro následujících %(count)s soutěžících: %(names)s") % {"count": payments.count(), "names": ", ".join(users)}
         return context
 
     @method_decorator(must_be_company_admin)
