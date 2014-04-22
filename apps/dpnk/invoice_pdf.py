@@ -15,6 +15,7 @@ def make_invoice_sheet_pdf(outfile, invoice):
         zip=invoice.company.address_psc,
         city=invoice.company.address_city,
         ir=invoice.company.ico,
+        vat_id=invoice.company.dic,
         )
 
     if invoice.order_number:

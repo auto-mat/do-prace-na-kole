@@ -51,7 +51,7 @@ class SelectUsersPayForm(forms.Form):
 class CompanyForm(AdressForm):
     class Meta:
         model = Company
-        fields = ('name', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city', 'ico')
+        fields = ('name', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city', 'ico', 'dic')
 
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super(CompanyForm, self).__init__(*args, **kwargs)

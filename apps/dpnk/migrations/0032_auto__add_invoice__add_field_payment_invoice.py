@@ -45,6 +45,11 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.PositiveIntegerField')(default=999999999),
                       keep_default=False)
 
+        # Adding field 'Company.dic'
+        db.add_column(u'dpnk_company', 'dic',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=10),
+                      keep_default=False)
+
 
     def backwards(self, orm):
         # Deleting model 'Invoice'
@@ -61,6 +66,9 @@ class Migration(SchemaMigration):
 
         # Deleting field 'Campaign.invoice_sequence_number_last'
         db.delete_column(u'dpnk_campaign', 'invoice_sequence_number_last')
+
+        # Deleting field 'Company.dic'
+        db.delete_column(u'dpnk_company', 'dic')
 
 
     models = {
@@ -164,7 +172,8 @@ class Migration(SchemaMigration):
             'address_recipient': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'address_street': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
             'address_street_number': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10'}),
-            'ico': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
+            'dic': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10'}),
+            'ico': ('django.db.models.fields.PositiveIntegerField', [], {'default': 'None'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '60'})
         },

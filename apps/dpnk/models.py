@@ -186,9 +186,18 @@ class Company(models.Model):
         max_length=60, null=False)
     address = Address()
     ico = models.PositiveIntegerField(
-        default=0,
+        default=None,
         verbose_name=_(u"IČO"),
-        null=False)
+        null=False,
+        blank=False,
+        )
+    dic = models.CharField(
+        verbose_name=_(u"DIČ"),
+        max_length=10,
+        default="",
+        null=False,
+        blank=False,
+        )
 
     def __unicode__(self):
         return "%s" % self.name
