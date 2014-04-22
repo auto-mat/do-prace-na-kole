@@ -88,12 +88,27 @@ class CityAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+class CompanyForm(forms.ModelForm):
+    class Meta:
+        model = models.Company
+
+    def __init__(self, *args, **kwargs):
+        super(CompanyForm, self).__init__(*args, **kwargs)
+        self.fields['dic'].required = False
+        self.fields['ico'].required = False
+        self.fields['address_city'].required = False
+        self.fields['address_psc'].required = False
+        self.fields['address_street_number'].required = False
+        self.fields['address_street'].required = False
+
+
 class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'subsidiaries_text', 'ico', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
+    list_display = ('name', 'subsidiaries_text', 'ico', 'dic', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
     inlines = [SubsidiaryInline, ]
     readonly_fields = ['subsidiary_links']
     search_fields = ('name',)
     list_max_show_all = 10000
+    form = CompanyForm
 
     def queryset(self, request):
         return models.Company.objects.annotate(user_count=Sum('subsidiaries__teams__member_count'))
