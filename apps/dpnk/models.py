@@ -914,6 +914,12 @@ class Invoice(models.Model):
         verbose_name=_(u"Pořadové číslo faktury"),
         unique=True,
         null=False)
+    order_number = models.PositiveIntegerField(
+        verbose_name=_(u"Číslo objednávky"),
+        null=True,
+        blank=True,
+        )
+
 
     def paid(self):
         return self.paid_date <= util.today()

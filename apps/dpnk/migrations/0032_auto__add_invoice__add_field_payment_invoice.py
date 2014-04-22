@@ -18,6 +18,7 @@ class Migration(SchemaMigration):
             ('company', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.Company'])),
             ('campaign', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.Campaign'])),
             ('sequence_number', self.gf('django.db.models.fields.PositiveIntegerField')(unique=True)),
+            ('order_number', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
             ('author', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='invoice_create', null=True, to=orm['auth.User'])),
             ('updated_by', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='invoice_update', null=True, to=orm['auth.User'])),
         ))
@@ -223,6 +224,7 @@ class Migration(SchemaMigration):
             'exposure_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime.now', 'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'invoice_pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'order_number': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
             'paid_date': ('django.db.models.fields.DateField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'sequence_number': ('django.db.models.fields.PositiveIntegerField', [], {'unique': 'True'}),
             'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'invoice_update'", 'null': 'True', 'to': u"orm['auth.User']"})

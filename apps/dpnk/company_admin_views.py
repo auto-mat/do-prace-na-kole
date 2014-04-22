@@ -252,7 +252,11 @@ class CreateInvoiceView(FormView):
 
     def form_valid(self, form):
         if form.cleaned_data['create_invoice']:
-            invoice = models.Invoice(company=self.company_admin.administrated_company, campaign=self.company_admin.campaign)
+            invoice = models.Invoice(
+                company=self.company_admin.administrated_company,
+                campaign=self.company_admin.campaign,
+                order_number=form.cleaned_data['order_number'],
+                )
             invoice.save()
         return redirect(wp_reverse(self.success_url))
 

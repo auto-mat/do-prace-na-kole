@@ -16,6 +16,9 @@ def make_invoice_sheet_pdf(outfile, invoice):
         ir=invoice.company.ico,
         )
 
+    if invoice.order_number:
+      client.note = u"Číslo objednávky: %s" % invoice.order_number
+
     provider = Provider(
         u"Auto*Mat, o.s.",
         email=u"lucie.mullerova@auto-mat.cz",

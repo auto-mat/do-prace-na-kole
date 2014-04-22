@@ -155,3 +155,7 @@ class CreateInvoiceForm(forms.Form):
     create_invoice = forms.BooleanField(
             label=_(u"Vytvořit novou fakturu"),
             )
+    order_number = forms.IntegerField(
+            label=_(u"Číslo objednávky (nepovinné)"),
+            required=False,
+            )
