@@ -23,6 +23,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 from django.http import HttpResponse, Http404
 import django.contrib.auth
 import datetime
@@ -270,6 +271,8 @@ class CreateInvoiceView(FormView):
         return context
 
     @method_decorator(must_be_company_admin)
+    @method_decorator(request_condition(lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(), "<div class='text-warning'>" + ugettext(u"Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>" % wp_reverse('edit_company')) + "</div>"))
+    @method_decorator(request_condition(lambda r, a, k: k['company_admin'].company_has_invoices(), "<div class='text-warning'>" + ugettext(u"Vaše společnost již má fakturu vystavenou") + "</div>"))
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(CreateInvoiceView, self).dispatch(request, *args, **kwargs)

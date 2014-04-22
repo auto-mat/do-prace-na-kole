@@ -199,6 +199,10 @@ class Company(models.Model):
         blank=False,
         )
 
+    def has_filled_contact_information(self):
+        address_complete = self.address.street and self.address.street_number and self.address.psc and self.address.city
+        return self.name and address_complete and self.ico and self.dic
+
     def __unicode__(self):
         return "%s" % self.name
 
@@ -797,6 +801,9 @@ class CompanyAdmin(models.Model):
         verbose_name=_(u"Může potvrzovat platby"),
         default=False,
         null=False)
+
+    def company_has_invoices(self):
+        return self.administrated_company.invoice_set.filter(campaign=self.campaign).exists()
 
     def __unicode__(self):
         return self.user.get_full_name()
