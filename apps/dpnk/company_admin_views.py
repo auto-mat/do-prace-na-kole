@@ -30,6 +30,7 @@ from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView
 from decorators import must_be_company_admin, request_condition
 from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
+import company_admin_forms
 from dpnk.email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from wp_urls import wp_reverse
 from util import redirect
@@ -242,3 +243,27 @@ def invoices(
             'invoices': company_admin.administrated_company.invoice_set.filter(campaign=company_admin.campaign),
             'payments_to_invoice': models.payments_to_invoice(company_admin.administrated_company, company_admin.campaign),
             }, context_instance=RequestContext(request))
+
+
+class CreateInvoiceView(FormView):
+    template_name = 'generic_form_template.html'
+    form_class = company_admin_forms.CreateInvoiceForm
+    success_url = 'company_admin'
+
+    def form_valid(self, form):
+        if form.cleaned_data['create_invoice']:
+            invoice = models.Invoice(company=self.company_admin.administrated_company, campaign=self.company_admin.campaign)
+            invoice.save()
+        return redirect(wp_reverse(self.success_url))
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateInvoiceView, self).get_context_data(**kwargs)
+        payments = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
+        users = [p.user_attendance.__unicode__() for p in payments]
+        context['message'] = _(u"Vytvořit fakturu pro následujících %(count)s závodníků: %(names)s") % {"count": payments.count(), "names": ", ".join(users)}
+        return context
+
+    @method_decorator(must_be_company_admin)
+    def dispatch(self, request, *args, **kwargs):
+        self.company_admin = kwargs['company_admin']
+        return super(CreateInvoiceView, self).dispatch(request, *args, **kwargs)

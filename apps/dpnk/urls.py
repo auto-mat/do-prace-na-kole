@@ -93,6 +93,8 @@ campaign_urlpatterns = patterns(
         company_admin_views.competitions),
     url(r'^faktury/$',
         company_admin_views.invoices),
+    url(r'^create_invoice/$',
+        company_admin_views.CreateInvoiceView.as_view()),
     url(r'^zaplatit_za_uzivatele/$',
         company_admin_views.SelectUsersPayView.as_view()),
     url(r'^spolecnost/editovat_spolecnost/$',

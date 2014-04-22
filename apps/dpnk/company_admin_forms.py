@@ -149,3 +149,9 @@ class CompanyCompetitionForm(forms.ModelForm):
             raise forms.ValidationError(_(u"%(model_name)s with this %(field_label)s already exists.") % {
                 "model_name": self.instance._meta.verbose_name, "field_label": self.instance._meta.get_field('name').verbose_name})
         return self.cleaned_data['name']
+
+
+class CreateInvoiceForm(forms.Form):
+    create_invoice = forms.BooleanField(
+            label=_(u"Vytvořit novou fakturu"),
+            )
