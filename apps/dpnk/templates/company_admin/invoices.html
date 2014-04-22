@@ -25,5 +25,5 @@
 <br/>
 
 {% if payments_to_invoice.count > 0 %}
-<a href="vytvorit_fakturu" class="btn btn-small">Vytvořit fakturu</a>
+<a href="{% wp_url "create_invoice" %}" class="btn btn-small">Vytvořit fakturu</a>
 {% endif %}

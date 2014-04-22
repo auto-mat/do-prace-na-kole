@@ -153,7 +153,7 @@ class CompanyCompetitionForm(forms.ModelForm):
 
 class CreateInvoiceForm(forms.Form):
     create_invoice = forms.BooleanField(
-            label=_(u"Vytvořit novou fakturu"),
+            label=_(u"Údaje jsou správné, chci vytvořit fakturu"),
             )
     order_number = forms.IntegerField(
             label=_(u"Číslo objednávky (nepovinné)"),

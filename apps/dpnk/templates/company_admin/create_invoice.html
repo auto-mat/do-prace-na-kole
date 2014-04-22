@@ -1,0 +1,28 @@
+{% load bootstrap %}
+{% load i18n %}
+{% load dpnk_tags %}
+
+{% include "messages_include.html" %}
+
+{% blocktrans %}
+Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících: {{ competitors_names }}
+{% endblocktrans %}
+<br/>
+<br/>
+{{ company }}
+<br/>
+{{ company.address.street }}
+<br/>
+{{ company.address.psc }} {{ company.address.city }}
+<br/>
+{% trans "IČO: " %}{{ company.ico }}
+<br/>
+{% trans "DIČ: " %}{{ company.dic }}
+<br/>
+<a class="btn btn-block btn-primary" href="{% wp_url 'edit_company' %}">{% trans "Změnit údaje" %}</a>
+
+<form method="post" class="form-horizontal">{% csrf_token %}
+   {{ form|bootstrap }}
+<br/>
+<button class="submit submit_once btn btn-block btn-primary" type="button">{% trans "Potvrdit" %}</button>
+</form>

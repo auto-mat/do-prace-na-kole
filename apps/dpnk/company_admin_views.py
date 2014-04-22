@@ -246,7 +246,7 @@ def invoices(
 
 
 class CreateInvoiceView(FormView):
-    template_name = 'generic_form_template.html'
+    template_name = 'company_admin/create_invoice.html'
     form_class = company_admin_forms.CreateInvoiceForm
     success_url = 'company_admin'
 
@@ -264,7 +264,9 @@ class CreateInvoiceView(FormView):
         context = super(CreateInvoiceView, self).get_context_data(**kwargs)
         payments = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
         users = [p.user_attendance.__unicode__() for p in payments]
-        context['message'] = _(u"Vytvořit fakturu pro následujících %(count)s soutěžících: %(names)s") % {"count": payments.count(), "names": ", ".join(users)}
+        context['competitors_count'] = payments.count()
+        context['competitors_names'] = ", ".join(users)
+        context['company'] = self.company_admin.administrated_company
         return context
 
     @method_decorator(must_be_company_admin)
