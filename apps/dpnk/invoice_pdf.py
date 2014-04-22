@@ -48,7 +48,7 @@ Společně s vámi tvoříme město, ve kterém chceme žít. www.auto-mat.cz
     for subsidiary in models.Subsidiary.objects.filter(teams__users__transactions__payment__invoice=invoice).distinct():
        competitors = invoice.payment_set.filter(user_attendance__team__subsidiary=subsidiary).order_by("user_attendance__userprofile__user__last_name", "user_attendance__userprofile__user__first_name")
        if competitors.exists():
-          fee = subsidiary.city.cityincampaign_set.get(campaign=invoice.campaign).admission_fee
+          fee = subsidiary.city.cityincampaign_set.get(campaign=invoice.campaign).admission_fee_company
           invoice_gen.add_item(Item(competitors.count(), fee, description=u"Platba účasti v kampani za %s na pobočce %s, %s za soutěžící %s" % (invoice.campaign, subsidiary.address.street, subsidiary.address.city, ", ".join([u.user_attendance.__unicode__() for u in competitors])), tax=21))
 
     pdf = SimpleInvoice(invoice_gen)

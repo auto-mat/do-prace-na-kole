@@ -23,6 +23,11 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'dpnk', ['Invoice'])
 
+        # Adding field 'CityInCampaign.admission_fee_company'
+        db.add_column(u'dpnk_cityincampaign', 'admission_fee_company',
+                      self.gf('django.db.models.fields.FloatField')(default=179.34),
+                      keep_default=False)
+
         # Adding field 'Payment.invoice'
         db.add_column(u'dpnk_payment', 'invoice',
                       self.gf('django.db.models.fields.related.ForeignKey')(related_name='payment_set', on_delete=models.SET_NULL, default=None, to=orm['dpnk.Invoice'], blank=True, null=True),
@@ -42,6 +47,9 @@ class Migration(SchemaMigration):
     def backwards(self, orm):
         # Deleting model 'Invoice'
         db.delete_table(u'dpnk_invoice')
+
+        # Deleting field 'CityInCampaign.admission_fee_company'
+        db.delete_column(u'dpnk_cityincampaign', 'admission_fee_company')
 
         # Deleting field 'Payment.invoice'
         db.delete_column(u'dpnk_payment', 'invoice_id')
@@ -136,7 +144,8 @@ class Migration(SchemaMigration):
         },
         u'dpnk.cityincampaign': {
             'Meta': {'ordering': "('city__name',)", 'unique_together': "(('city', 'campaign'),)", 'object_name': 'CityInCampaign'},
-            'admission_fee': ('django.db.models.fields.PositiveIntegerField', [], {'default': '160'}),
+            'admission_fee': ('django.db.models.fields.PositiveIntegerField', [], {'default': '180'}),
+            'admission_fee_company': ('django.db.models.fields.FloatField', [], {'default': '179.34'}),
             'campaign': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Campaign']"}),
             'city': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.City']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})

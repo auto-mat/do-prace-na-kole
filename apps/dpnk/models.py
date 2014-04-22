@@ -149,10 +149,15 @@ class CityInCampaign(models.Model):
         unique_together = (("city", "campaign"),)
         ordering = ('city__name',)
 
+    #TODO: make this field float or in cents
     admission_fee = models.PositiveIntegerField(
         verbose_name=_(u"Startovné"),
         null=False,
-        default=160)
+        default=180)
+    admission_fee_company = models.FloatField(
+        verbose_name=_(u"Startovné pro firmy"),
+        null=False,
+        default=179.34)
     city = models.ForeignKey(
         City,
         null=False,
