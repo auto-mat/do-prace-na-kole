@@ -7,12 +7,23 @@
 <th>{% trans "Datum" %}</th>
 <th>{% trans "Soubor" %}</th>
 <th>{% trans "Počet plateb" %}</th>
+<th>{% trans "Zaplaceno" %}</th>
 </tr>
 {% for invoice in invoices %}
    <td>{{ invoice.exposure_date }}</td>
    <td><a href="{{ invoice.invoice_pdf.url }}">soubor</a></td>
    <td>{{ invoice.payment_set.count }}</td>
+   {% if invoice.paid %}
+   <td>{{ invoice.paid_date }}</td>
+   {% else %}
+   <td>{% trans "Ne" %}</td>
+   {% endif %}
    </tr>
 {% endfor %}
 </table>
 {% trans "Počet plateb do nové faktury: " %}{{ payments_to_invoice.count }}
+<br/>
+
+{% if payments_to_invoice.count > 0 %}
+<a href="vytvorit_fakturu" class="btn btn-small">Vytvořit fakturu</a>
+{% endif %}

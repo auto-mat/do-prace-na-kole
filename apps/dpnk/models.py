@@ -877,10 +877,16 @@ class Invoice(models.Model):
         verbose_name=_(u"Datum vytvoření"),
         default=datetime.datetime.now,
         null=False)
-    exposure_date = models.DateTimeField(
+    exposure_date = models.DateField(
         verbose_name=_(u"Datum vystavení"),
         default=datetime.datetime.now,
         null=True,
+        )
+    paid_date = models.DateField(
+        verbose_name=_(u"Datum zaplacení"),
+        default=None,
+        null=True,
+        blank=True,
         )
     invoice_pdf = models.FileField(
         verbose_name=_("PDF faktury"),
@@ -903,6 +909,9 @@ class Invoice(models.Model):
         verbose_name=_(u"Pořadové číslo faktury"),
         unique=True,
         null=False)
+
+    def paid(self):
+        return self.paid_date <= util.today()
 
     @transaction.atomic
     def save(self, *args, **kwargs):

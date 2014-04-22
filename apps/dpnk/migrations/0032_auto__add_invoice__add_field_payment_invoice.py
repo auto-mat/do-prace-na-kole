@@ -12,7 +12,8 @@ class Migration(SchemaMigration):
         db.create_table(u'dpnk_invoice', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('exposure_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, null=True)),
+            ('exposure_date', self.gf('django.db.models.fields.DateField')(default=datetime.datetime.now, null=True)),
+            ('paid_date', self.gf('django.db.models.fields.DateField')(default=None, null=True, blank=True)),
             ('invoice_pdf', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
             ('company', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.Company'])),
             ('campaign', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.Campaign'])),
@@ -210,9 +211,10 @@ class Migration(SchemaMigration):
             'campaign': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Campaign']"}),
             'company': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Company']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'exposure_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'null': 'True'}),
+            'exposure_date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime.now', 'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'invoice_pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'paid_date': ('django.db.models.fields.DateField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'sequence_number': ('django.db.models.fields.PositiveIntegerField', [], {'unique': 'True'}),
             'updated_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'invoice_update'", 'null': 'True', 'to': u"orm['auth.User']"})
         },
