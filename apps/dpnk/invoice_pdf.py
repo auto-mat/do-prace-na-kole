@@ -3,6 +3,7 @@ import os
 from InvoiceGenerator.api import Invoice, Item, Client, Provider, Creator
 from InvoiceGenerator.pdf import SimpleInvoice
 import models
+import datetime
 
 
 def make_invoice_sheet_pdf(outfile, invoice):
@@ -46,6 +47,8 @@ Společně s vámi tvoříme město, ve kterém chceme žít. www.auto-mat.cz
     invoice_gen.title = u"Faktura %s/%s" % (invoice.sequence_number, invoice.exposure_date.year)
     invoice_gen.variable_symbol = "%s%03d" % (invoice.exposure_date.year, invoice.sequence_number)
     invoice_gen.date = invoice.exposure_date
+    invoice_gen.payback = invoice.exposure_date + datetime.timedelta(days=14)
+    invoice_gen.taxable_date = invoice.taxable_date
     invoice_gen.rounding_result = True
     invoice_gen.currency = u"Kč"
 

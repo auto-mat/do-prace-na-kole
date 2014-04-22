@@ -883,8 +883,13 @@ class Invoice(models.Model):
         default=datetime.datetime.now,
         null=False)
     exposure_date = models.DateField(
-        verbose_name=_(u"Datum vystavení"),
-        default=datetime.datetime.now,
+        verbose_name=_(u"Datum vystavení daňového dokladu"),
+        default=datetime.date.today,
+        null=True,
+        )
+    taxable_date = models.DateField(
+        verbose_name=_(u"Den uskutečnění zdanitelného plnění"),
+        default=datetime.date.today,
         null=True,
         )
     paid_date = models.DateField(
