@@ -243,6 +243,7 @@ def invoices(
         template, {
             'invoices': company_admin.administrated_company.invoice_set.filter(campaign=company_admin.campaign),
             'payments_to_invoice': models.payments_to_invoice(company_admin.administrated_company, company_admin.campaign),
+            'company_information_filled': company_admin.administrated_company.has_filled_contact_information(),
             }, context_instance=RequestContext(request))
 
 
