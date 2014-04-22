@@ -4,10 +4,10 @@
 
 <table class="table table-striped table-bordered" id="company_competition_table">
 <tr>
-<th>{% trans "Datum" %}</th>
-<th>{% trans "Soubor" %}</th>
+<th>{% trans "Den vystavení daňového dokladu" %}</th>
+<th>{% trans "Soubor s fakturou" %}</th>
 <th>{% trans "Počet plateb" %}</th>
-<th>{% trans "Zaplaceno" %}</th>
+<th>{% trans "Datum potvrzení zaplacení" %}</th>
 </tr>
 {% for invoice in invoices %}
    <td>{{ invoice.exposure_date }}</td>
@@ -16,7 +16,7 @@
    {% if invoice.paid %}
    <td>{{ invoice.paid_date }}</td>
    {% else %}
-   <td>{% trans "Ne" %}</td>
+   <td>{% trans "Zaplacení nepotvrzeno" %}</td>
    {% endif %}
    </tr>
 {% endfor %}
