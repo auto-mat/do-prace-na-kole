@@ -607,7 +607,7 @@ class TShirtSizeInline(EnhancedAdminMixin, SortableInlineAdminMixin, admin.Tabul
 
 class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
     list_display = ('campaign', 'created', 'package_transaction__count', 'customer_sheets__url', 'tnt_order__url')
-    readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction__count')
+    readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction__count', 't_shirt_sizes')
     inlines = [PackageTransactionInline, ]
     list_filter = ('campaign',)
 
@@ -616,6 +616,20 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
             return obj.campaign.user_attendances_for_delivery().count()
         return obj.packagetransaction_set.count()
     package_transaction__count.short_description = _(u"Balíčků k odeslání")
+
+    def t_shirt_sizes(self, obj):
+        if not obj.pk:
+            package_transactions = obj.campaign.user_attendances_for_delivery()
+        else:
+            package_transactions = obj.packagetransaction_set.all()
+        t_shirts = {}
+        for package_transaction in package_transactions:
+            if package_transaction.t_shirt_size in t_shirts:
+                t_shirts[package_transaction.t_shirt_size] += 1
+            else:
+                t_shirts[package_transaction.t_shirt_size] = 1
+        return mark_safe(u"<br/>".join([u"%s: %s" % (t, t_shirts[t]) for t in t_shirts]))
+    t_shirt_sizes.short_description = _(u"Velikosti trik")
 
     def customer_sheets__url(self, obj):
         return mark_safe(u"<a href='%s'>customer_sheets</a>" % obj.customer_sheets.url)
