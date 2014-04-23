@@ -598,7 +598,7 @@ class TShirtSizeInline(EnhancedAdminMixin, SortableInlineAdminMixin, admin.Tabul
 class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
     list_display = ('campaign', 'created', 'package_transaction__count', 'customer_sheets__url', 'tnt_order__url')
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction__count', 't_shirt_sizes')
-    inlines = [PackageTransactionInline, ]
+    #inlines = [PackageTransactionInline, ]
     list_filter = ('campaign',)
 
     def package_transaction__count(self, obj):
