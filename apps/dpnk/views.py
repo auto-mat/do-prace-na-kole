@@ -383,18 +383,14 @@ def payment_type(request, user_attendance=None):
 @never_cache
 @cache_control(max_age=0, no_cache=True, no_store=True)
 def header_bar(request, campaign_slug):
-    user_attendance = None
     company_admin = None
-    try:
-        if request.user.is_authenticated():
-            user_attendance = request.user.userprofile.userattendance_set.get(campaign__slug=campaign_slug)
-            company_admin = models.get_company_admin(user_attendance.userprofile.user, user_attendance.campaign)
-    except UserAttendance.DoesNotExist:
-        pass
+    if request.user.is_authenticated():
+        campaign = Campaign.objects.get(slug=campaign_slug)
+        company_admin = models.get_company_admin(request.user, campaign)
     return render_to_response('registration/header_bar.html', {
         'is_authentificated': request.user.is_authenticated(),
         'company_admin': company_admin,
-        'user_attendance': user_attendance,
+        'user': request.user,
         }, context_instance=RequestContext(request))
 
 

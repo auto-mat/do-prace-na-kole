@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% if is_authentificated %}
-   {{ user_attendance }} 
+   {{ user.get_full_name }}
 {% if company_admin %}
    / <a href="{% wp_url 'company_admin' %}">{% trans "Společnost" %}</a >
 {% endif %}
