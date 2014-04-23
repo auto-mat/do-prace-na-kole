@@ -121,6 +121,8 @@ def make_avfull(outfile, delivery_batch):
         tnt_account_reference = 111057
         for package_transaction in delivery_batch.packagetransaction_set.all():
             user_attendance = package_transaction.user_attendance
+            if not user_attendance.team:
+                continue
             subsidiary = user_attendance.team.subsidiary
             sequence_number = package_transaction.pk
 
