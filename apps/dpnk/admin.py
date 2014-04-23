@@ -650,10 +650,19 @@ class CompanyAdminAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     search_fields = ['administrated_company__name', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
     raw_id_fields = ['user', ]
 
+
+def mark_invoices_paid(modeladmin, request, queryset):
+    for invoice in queryset.all():
+        invoice.paid_date = datetime.date.today()
+        invoice.save()
+mark_invoices_paid.short_description = _(u"Označit faktury jako zaplacené")
+
+
 class InvoiceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ['company', 'created', 'exposure_date', 'invoice__count', 'invoice_pdf__url']
+    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'invoice__count', 'invoice_pdf__url']
     readonly_fields = ['created', 'author', 'updated_by', 'invoice__count', 'sequence_number']
     inlines = [ PaymentInline ]
+    actions = [mark_invoices_paid]
 
     def invoice__count(self, obj):
         return obj.payment_set.count()

@@ -975,6 +975,16 @@ class Invoice(models.Model):
         if not self.pk and not self.payments_to_add().exists():
             raise ValidationError(_(u"Neexistuje žádná nefakturovaná platba"))
 
+
+def change_invoice_payments_status(sender, instance, changed_fields=None, **kwargs):
+    field, (old, new) = changed_fields.items()[0]
+    if new!=None:
+        for payment in instance.payment_set.all():
+            payment.status = Payment.Status.INVOICE_PAID
+            payment.save()
+post_save_changed.connect(change_invoice_payments_status, sender=Invoice, fields=['paid_date'])
+
+
 def payments_to_invoice(company, campaign):
     return Payment.objects.filter(pay_type='fc', status=Payment.Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=company, user_attendance__campaign=campaign)
 
