@@ -21,6 +21,8 @@ def make_customer_sheets_pdf(outfile, delivery_batch):
     pdfmetrics.registerFont(TTFont('DejaVuB', 'DejaVuSans-Bold.ttf'))
 
     for package_transaction in delivery_batch.packagetransaction_set.all():
+        if not package_transaction.user_attendance.team:
+            continue
         make_sheet(package_transaction, canvas)
         canvas.showPage()
 
