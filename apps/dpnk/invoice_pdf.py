@@ -52,6 +52,7 @@ Společně s vámi tvoříme město, ve kterém chceme žít. www.auto-mat.cz
     invoice_gen.taxable_date = invoice.taxable_date
     invoice_gen.rounding_result = True
     invoice_gen.currency_locale = u"cs_CZ.utf-8"
+    invoice_gen.paytype = u"bankovním převodem"
 
     for subsidiary in models.Subsidiary.objects.filter(teams__users__transactions__payment__invoice=invoice).distinct():
        competitors = invoice.payment_set.filter(user_attendance__team__subsidiary=subsidiary).order_by("user_attendance__userprofile__user__last_name", "user_attendance__userprofile__user__first_name")
