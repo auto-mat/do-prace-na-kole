@@ -29,7 +29,7 @@ import django.contrib.auth
 import datetime
 from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView
-from decorators import must_be_company_admin, request_condition
+from decorators import must_be_company_admin, request_condition, must_be_in_phase
 from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
 import company_admin_forms
 from dpnk.email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
@@ -271,6 +271,7 @@ class CreateInvoiceView(FormView):
         context['company'] = self.company_admin.administrated_company
         return context
 
+    @method_decorator(must_be_in_phase("registration"))
     @method_decorator(must_be_company_admin)
     @method_decorator(request_condition(lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(), "<div class='text-warning'>" + ugettext(u"Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>" % wp_reverse('edit_company')) + "</div>"))
     @method_decorator(request_condition(lambda r, a, k: k['company_admin'].company_has_invoices(), "<div class='text-warning'>" + ugettext(u"Vaše společnost již má fakturu vystavenou") + "</div>"))
