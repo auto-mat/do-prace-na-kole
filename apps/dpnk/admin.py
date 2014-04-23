@@ -159,7 +159,7 @@ class SubsidiaryAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 def recalculate_competitions_results(modeladmin, request, queryset):
     for competition in queryset.all():
         competition.recalculate_results()
-recalculate_competitions_results.short_description = "Přepočítat výsledku vybraných soutěží"
+recalculate_competitions_results.short_description = _(u"Přepočítat výsledku vybraných soutěží")
 
 
 class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
