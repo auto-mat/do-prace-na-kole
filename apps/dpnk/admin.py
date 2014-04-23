@@ -658,9 +658,28 @@ def mark_invoices_paid(modeladmin, request, queryset):
 mark_invoices_paid.short_description = _(u"Označit faktury jako zaplacené")
 
 
+class InvoicePaidFilter(SimpleListFilter):
+    title = _(u"Zaplacení faktury")
+    parameter_name = u'invoice_paid'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', u'Zaplacena'),
+            ('no', u'Nezaplacena'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(paid_date__isnull=False)
+        if self.value() == 'no':
+            return queryset.filter(paid_date__isnull=True)
+        return queryset
+
+
 class InvoiceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ['company', 'created', 'exposure_date', 'paid_date', 'invoice__count', 'invoice_pdf__url']
     readonly_fields = ['created', 'author', 'updated_by', 'invoice__count', 'sequence_number']
+    list_filter = [InvoicePaidFilter]
     inlines = [ PaymentInline ]
     actions = [mark_invoices_paid]
 
