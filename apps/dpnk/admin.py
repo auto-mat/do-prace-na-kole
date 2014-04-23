@@ -677,9 +677,9 @@ class InvoicePaidFilter(SimpleListFilter):
 
 
 class InvoiceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'invoice__count', 'invoice_pdf__url']
+    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'invoice__count', 'invoice_pdf__url', 'campaign', 'sequence_number', 'order_number']
     readonly_fields = ['created', 'author', 'updated_by', 'invoice__count', 'sequence_number']
-    list_filter = [InvoicePaidFilter]
+    list_filter = ['campaign', InvoicePaidFilter]
     inlines = [ PaymentInline ]
     actions = [mark_invoices_paid]
 
