@@ -83,7 +83,7 @@ class SelectUsersPayView(FormView):
 
     @method_decorator(login_required)
     @method_decorator(must_be_company_admin)
-    @method_decorator(request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, "<div class='text-warning'>" + ugettext(u"Potvrzování plateb nemáte povoleno)") + "</div>"))
+    @method_decorator(request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, "<div class='text-warning'>" + ugettext(u"Potvrzování plateb nemáte povoleno") + "</div>"))
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)

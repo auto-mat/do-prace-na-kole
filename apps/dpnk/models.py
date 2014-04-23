@@ -899,7 +899,7 @@ class Invoice(models.Model):
         default=datetime.datetime.now,
         null=False)
     exposure_date = models.DateField(
-        verbose_name=_(u"Datum vystavení daňového dokladu"),
+        verbose_name=_(u"Den vystavení daňového dokladu"),
         default=datetime.date.today,
         null=True,
         )
