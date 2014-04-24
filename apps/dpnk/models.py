@@ -188,7 +188,7 @@ class Company(models.Model):
     ico = models.PositiveIntegerField(
         default=None,
         verbose_name=_(u"IČO"),
-        null=False,
+        null=True,
         blank=False,
         )
     dic = models.CharField(
