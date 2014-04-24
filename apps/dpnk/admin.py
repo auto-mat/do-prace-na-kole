@@ -158,6 +158,7 @@ class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     filter_horizontal = ('user_attendance_competitors', 'team_competitors', 'company_competitors')
     search_fields = ('name',)
     list_filter = ('campaign',)
+    save_as = True
     actions = [recalculate_competitions_results]
 
     readonly_fields = ['competition_results_link', 'questionnaire_results_link', 'draw_link']
