@@ -144,7 +144,7 @@ def user_attendance_has(condition, message):
         def wrapped(request, *args, **kwargs):
             user_attendance = kwargs['user_attendance']
             if condition(user_attendance):
-                return HttpResponse(message, status=401)
+                return HttpResponse(message.encode('utf8'), status=401)
             return fn(request, *args, **kwargs)
         return wrapped
     return decorator
@@ -154,7 +154,7 @@ def request_condition(condition, message):
     def decorator(fn):
         def wrapped(request, *args, **kwargs):
             if condition(request, args, kwargs):
-                return HttpResponse(message, status=401)
+                return HttpResponse(message.encode('utf8'), status=401)
             return fn(request, *args, **kwargs)
         return wrapped
     return decorator
