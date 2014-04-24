@@ -13,9 +13,11 @@
       <th scope="column">{% trans "Sou&shy;těž" %}</th>
       <th scope="column">{% trans "Typ" %}</th>
       <th scope="column">{% trans "Akce" %}</th>
+      {% comment %}
       <th scope="column" class="fixed_width_column">{% trans "Po&shy;řa&shy;dí" %}</th>
       <th scope="column" class="fixed_width_column">{% trans "Ho&shy;dno&shy;ce&shy;ní" %}</th>
       <th scope="column" class="fixed_width_column">{% trans "Po&shy;čet sou&shy;tě&shy;ží&shy;cích" %}</th>
+      {% endcomment %}
 
    </tr>
    {% for competition in competitions %}
@@ -92,6 +94,7 @@
                {% endif %}
             {% endif %}
          </td>
+         {% comment %}
          {% if competition.has_started and competition.competitor_has_admission %}
             <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">{{ competition.my_results.position|ordinal }}</a></td>
             <td>
@@ -108,6 +111,7 @@
             <td>-</td>
          {% endif %}
          <td>{{ competition.competitor_count|intcomma }}</td>
+         {% endcomment %}
       </tr>
    {% endfor %}
 </table>
