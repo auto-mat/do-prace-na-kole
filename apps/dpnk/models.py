@@ -630,10 +630,12 @@ class UserAttendance(models.Model):
         return results.get_userprofile_length(self)
 
     def is_libero(self):
-        if self.team:
-            return self.team.members().count() <= 1
-        else:
-            return False
+        return False
+        #DPNK2014 is not using liberos
+        #if self.team:
+        #    return self.team.members().count() <= 1
+        #else:
+        #    return False
 
     def package_shipped(self):
         return self.transactions.filter(instance_of=PackageTransaction, status__in=PackageTransaction.shipped_statuses).last()
