@@ -73,7 +73,7 @@ def get_results(self):
     return competitors
 
 def get_competitions(user_attendance):
-    competitions = models.Competition.objects.filter(is_public = True)
+    competitions = models.Competition.objects.filter(is_public=True, campaign=user_attendance.campaign)
 
     if user_attendance.is_libero():
         competitions = competitions.filter(competitor_type = 'liberos')
