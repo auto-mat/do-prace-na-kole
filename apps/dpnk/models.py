@@ -1398,7 +1398,7 @@ class Competition(models.Model):
     name = models.CharField(
         unique=True,
         verbose_name=_(u"Jméno soutěže"),
-        max_length=40, null=False)
+        max_length=160, null=False)
     campaign = models.ForeignKey(
         Campaign,
         verbose_name=_(u"Kampaň"),
