@@ -88,12 +88,27 @@ class CityAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+class CompanyForm(forms.ModelForm):
+    class Meta:
+        model = models.Company
+
+    def __init__(self, *args, **kwargs):
+        super(CompanyForm, self).__init__(*args, **kwargs)
+        self.fields['dic'].required = False
+        self.fields['ico'].required = False
+        self.fields['address_city'].required = False
+        self.fields['address_psc'].required = False
+        self.fields['address_street_number'].required = False
+        self.fields['address_street'].required = False
+
+
 class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'subsidiaries_text', 'ico', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
+    list_display = ('name', 'subsidiaries_text', 'ico', 'dic', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
     inlines = [SubsidiaryInline, ]
     readonly_fields = ['subsidiary_links']
     search_fields = ('name',)
     list_max_show_all = 10000
+    form = CompanyForm
 
     def queryset(self, request):
         return models.Company.objects.annotate(user_count=Sum('subsidiaries__teams__member_count'))
@@ -101,12 +116,6 @@ class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     def user_count(self, obj):
         return obj.user_count
     user_count.admin_order_field = 'user_count'
-
-    #this is quick addition for 2013 invoices
-    def invoice_count(self, obj):
-        return len([
-            user for user in models.UserAttendance.objects.filter(team__subsidiary__company=obj)
-            if user.payment()['payment'] and user.payment()['payment'].pay_type == 'fc' and user.payment()['payment'].status in models.Payment.done_statuses])
 
     #def company_admin__user__email(self, obj):
     #   return obj.company_admin.get().user.email
@@ -150,7 +159,7 @@ class SubsidiaryAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 def recalculate_competitions_results(modeladmin, request, queryset):
     for competition in queryset.all():
         competition.recalculate_results()
-recalculate_competitions_results.short_description = "Přepočítat výsledku vybraných soutěží"
+recalculate_competitions_results.short_description = _(u"Přepočítat výsledku vybraných soutěží")
 
 
 class CompetitionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
@@ -514,13 +523,14 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
         )
 
 
-class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user_attendance', 'created', 'status', 'session_id', 'trans_id', 'amount', 'pay_type', 'error', 'order_id', 'author')
-    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'session_id', 'trans_id', 'order_id')
+class PaymentAdmin(RelatedFieldAdmin):
+    list_display = ('id', 'user_attendance', 'created', 'status', 'session_id', 'trans_id', 'amount', 'pay_type', 'error', 'order_id', 'author', 'user_attendance__team__subsidiary__company__name')
+    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'session_id', 'trans_id', 'order_id', 'user_attendance__team__subsidiary__company__name', )
     list_filter = [ 'user_attendance__campaign', 'status', 'error', 'pay_type',]
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created')
     list_max_show_all = 10000
+    form = models.PaymentForm
 
 
 class ChoiceInline(EnhancedAdminMixin, admin.TabularInline):
@@ -641,6 +651,47 @@ class CompanyAdminAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     search_fields = ['administrated_company__name', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
     raw_id_fields = ['user', ]
 
+
+def mark_invoices_paid(modeladmin, request, queryset):
+    for invoice in queryset.all():
+        invoice.paid_date = datetime.date.today()
+        invoice.save()
+mark_invoices_paid.short_description = _(u"Označit faktury jako zaplacené")
+
+
+class InvoicePaidFilter(SimpleListFilter):
+    title = _(u"Zaplacení faktury")
+    parameter_name = u'invoice_paid'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', u'Zaplacena'),
+            ('no', u'Nezaplacena'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(paid_date__isnull=False)
+        if self.value() == 'no':
+            return queryset.filter(paid_date__isnull=True)
+        return queryset
+
+
+class InvoiceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'invoice__count', 'invoice_pdf__url', 'campaign', 'sequence_number', 'order_number']
+    readonly_fields = ['created', 'author', 'updated_by', 'invoice__count', 'sequence_number']
+    list_filter = ['campaign', InvoicePaidFilter]
+    inlines = [ PaymentInline ]
+    actions = [mark_invoices_paid]
+
+    def invoice__count(self, obj):
+        return obj.payment_set.count()
+    invoice__count.short_description = _(u"Počet plateb")
+
+    def invoice_pdf__url(self, obj):
+        return mark_safe(u"<a href='%s'>invoice.pdf</a>" % obj.invoice_pdf.url)
+
+
 admin.site.register(models.Team, TeamAdmin)
 admin.site.register(models.Transaction, TransactionAdmin)
 admin.site.register(models.Payment, PaymentAdmin)
@@ -657,6 +708,7 @@ admin.site.register(models.Campaign, CampaignAdmin)
 admin.site.register(models.UserAttendance, UserAttendanceAdmin)
 admin.site.register(models.CompanyAdmin, CompanyAdminAdmin)
 admin.site.register(models.DeliveryBatch, DeliveryBatchAdmin)
+admin.site.register(models.Invoice, InvoiceAdmin)
 
 admin.site.unregister(models.User)
 admin.site.register(models.User, UserAdmin)

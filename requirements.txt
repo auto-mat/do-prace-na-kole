@@ -30,4 +30,6 @@ flake8
 modulus11
 django-dbbackup
 django-localeurl
+pillow
+-e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator
 -e git+https://github.com/PetrDlouhy/django-related-admin#egg=django-related-admin

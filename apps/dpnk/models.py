@@ -51,7 +51,7 @@ import mailing
 from dpnk.email import (
     payment_confirmation_mail, company_admin_rejected_mail,
     company_admin_approval_mail, payment_confirmation_company_mail)
-from dpnk import email
+from dpnk import email, invoice_pdf
 from wp_urls import wp_reverse
 import logging
 logger = logging.getLogger(__name__)
@@ -149,10 +149,15 @@ class CityInCampaign(models.Model):
         unique_together = (("city", "campaign"),)
         ordering = ('city__name',)
 
+    #TODO: make this field float or in cents
     admission_fee = models.PositiveIntegerField(
         verbose_name=_(u"Startovné"),
         null=False,
-        default=160)
+        default=180)
+    admission_fee_company = models.FloatField(
+        verbose_name=_(u"Startovné pro firmy"),
+        null=False,
+        default=179.34)
     city = models.ForeignKey(
         City,
         null=False,
@@ -181,9 +186,22 @@ class Company(models.Model):
         max_length=60, null=False)
     address = Address()
     ico = models.PositiveIntegerField(
-        default=0,
+        default=None,
         verbose_name=_(u"IČO"),
-        null=False)
+        null=False,
+        blank=False,
+        )
+    dic = models.CharField(
+        verbose_name=_(u"DIČ"),
+        max_length=10,
+        default="",
+        null=False,
+        blank=False,
+        )
+
+    def has_filled_contact_information(self):
+        address_complete = self.address.street and self.address.street_number and self.address.psc and self.address.city
+        return self.name and address_complete and self.ico and self.dic
 
     def __unicode__(self):
         return "%s" % self.name
@@ -359,6 +377,18 @@ class Campaign(models.Model):
         )
     tracking_number_last = models.PositiveIntegerField(
         verbose_name=_(u"Poslední číslo řady pro doručování balíčků"),
+        default=999999999,
+        blank=False,
+        null=False,
+        )
+    invoice_sequence_number_first = models.PositiveIntegerField(
+        verbose_name=_(u"První číslo řady pro faktury"),
+        default=0,
+        blank=False,
+        null=False,
+        )
+    invoice_sequence_number_last = models.PositiveIntegerField(
+        verbose_name=_(u"Poslední číslo řady pro faktury"),
         default=999999999,
         blank=False,
         null=False,
@@ -772,6 +802,9 @@ class CompanyAdmin(models.Model):
         default=False,
         null=False)
 
+    def company_has_invoices(self):
+        return self.administrated_company.invoice_set.filter(campaign=self.campaign).exists()
+
     def __unicode__(self):
         return self.user.get_full_name()
 
@@ -799,7 +832,6 @@ class DeliveryBatch(models.Model):
     campaign = models.ForeignKey(
         Campaign,
         verbose_name=_(u"Kampaň"),
-        default = Campaign.objects.get(slug=settings.CAMPAIGN).pk,
         null=False,
         blank=False)
     customer_sheets = models.FileField(
@@ -817,6 +849,13 @@ class DeliveryBatch(models.Model):
 
     def __unicode__(self):
         return unicode(self.created)
+
+    def __init__(self, *args, **kwargs):
+        try:
+            self._meta.get_field('campaign').default = Campaign.objects.get(slug=settings.CAMPAIGN).pk
+        except django.db.utils.ProgrammingError:
+            pass
+        return super(DeliveryBatch, self).__init__(*args, **kwargs)
 
 
 @transaction.atomic
@@ -845,6 +884,119 @@ def create_delivery_files(sender, instance, created, **kwargs):
         temp = NamedTemporaryFile()
         avfull.make_avfull(temp, instance)
         instance.tnt_order.save("delivery_batch_%s_%s.txt" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
+        instance.save()
+
+
+@with_author
+class Invoice(models.Model):
+    """Faktura"""
+    class Meta:
+        verbose_name = _(u"Faktura")
+        verbose_name_plural = _(u"Faktury")
+
+    created = models.DateTimeField(
+        verbose_name=_(u"Datum vytvoření"),
+        default=datetime.datetime.now,
+        null=False)
+    exposure_date = models.DateField(
+        verbose_name=_(u"Den vystavení daňového dokladu"),
+        default=datetime.date.today,
+        null=True,
+        )
+    taxable_date = models.DateField(
+        verbose_name=_(u"Den uskutečnění zdanitelného plnění"),
+        default=datetime.date.today,
+        null=True,
+        )
+    paid_date = models.DateField(
+        verbose_name=_(u"Datum zaplacení"),
+        default=None,
+        null=True,
+        blank=True,
+        )
+    invoice_pdf = models.FileField(
+        verbose_name=_("PDF faktury"),
+        upload_to='invoices',
+        blank=True,
+        null=True,
+        )
+    company = models.ForeignKey(
+        Company,
+        verbose_name=_(u"Společnost"),
+        null=False,
+        blank=False,
+        )
+    campaign = models.ForeignKey(
+        Campaign,
+        verbose_name=_(u"Kampaň"),
+        null=False,
+        blank=False)
+    sequence_number = models.PositiveIntegerField(
+        verbose_name=_(u"Pořadové číslo faktury"),
+        unique=True,
+        null=False)
+    order_number = models.PositiveIntegerField(
+        verbose_name=_(u"Číslo objednávky"),
+        null=True,
+        blank=True,
+        )
+
+
+    def paid(self):
+        return self.paid_date <= util.today()
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        if not self.sequence_number:
+            campaign = self.campaign
+            first = campaign.invoice_sequence_number_first
+            last = campaign.invoice_sequence_number_last
+            last_transaction = Invoice.objects.filter(sequence_number__gte=first, sequence_number__lte=last).order_by("sequence_number").last()
+            if last_transaction:
+                if last_transaction.sequence_number == last:
+                    raise Exception(_(u"Došla číselná řada faktury"))
+                self.sequence_number = last_transaction.sequence_number + 1
+            else:
+                self.sequence_number = first
+        super(Invoice, self).save(*args, **kwargs)
+
+    def payments_to_add(self):
+        return payments_to_invoice(self.company, self.campaign)
+
+    @transaction.atomic
+    def add_payments(self):
+        payments = self.payments_to_add()
+        self.payment_set = payments
+        for payment in payments:
+            payment.status = Payment.Status.INVOICE_MADE
+            payment.save()
+
+    def clean(self):
+        if not self.pk and not self.payments_to_add().exists():
+            raise ValidationError(_(u"Neexistuje žádná nefakturovaná platba"))
+
+
+def change_invoice_payments_status(sender, instance, changed_fields=None, **kwargs):
+    field, (old, new) = changed_fields.items()[0]
+    if new!=None:
+        for payment in instance.payment_set.all():
+            payment.status = Payment.Status.INVOICE_PAID
+            payment.save()
+post_save_changed.connect(change_invoice_payments_status, sender=Invoice, fields=['paid_date'])
+
+
+def payments_to_invoice(company, campaign):
+    return Payment.objects.filter(pay_type='fc', status=Payment.Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=company, user_attendance__campaign=campaign)
+
+@receiver(post_save, sender=Invoice)
+def create_invoice_files(sender, instance, created, **kwargs):
+    if created:
+        instance.add_payments()
+
+    if not instance.invoice_pdf:
+        temp = NamedTemporaryFile()
+        invoice_pdf.make_invoice_sheet_pdf(temp, instance)
+        instance.invoice_pdf.save("invoice_%s_%s_%s.pdf" % (instance.company, instance.exposure_date.strftime("%Y-%m-%d"), hash(str(instance.pk) + settings.SECRET_KEY)), File(temp))
         instance.save()
 
 
@@ -1126,6 +1278,15 @@ class Payment(Transaction):
     error = models.PositiveIntegerField(
         verbose_name=_(u"Chyba"),
         null=True, blank=True)
+    invoice = models.ForeignKey(
+        Invoice,
+        null=True,
+        blank=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name=("payment_set"),
+        )
+
 
     def save(self, *args, **kwargs):
         status_before_update = None

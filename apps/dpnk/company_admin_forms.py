@@ -51,7 +51,7 @@ class SelectUsersPayForm(forms.Form):
 class CompanyForm(AdressForm):
     class Meta:
         model = Company
-        fields = ('name', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city', 'ico')
+        fields = ('name', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city', 'ico', 'dic')
 
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super(CompanyForm, self).__init__(*args, **kwargs)
@@ -149,3 +149,13 @@ class CompanyCompetitionForm(forms.ModelForm):
             raise forms.ValidationError(_(u"%(model_name)s with this %(field_label)s already exists.") % {
                 "model_name": self.instance._meta.verbose_name, "field_label": self.instance._meta.get_field('name').verbose_name})
         return self.cleaned_data['name']
+
+
+class CreateInvoiceForm(forms.Form):
+    create_invoice = forms.BooleanField(
+            label=_(u"Údaje jsou správné, chci vytvořit fakturu"),
+            )
+    order_number = forms.IntegerField(
+            label=_(u"Číslo objednávky (nepovinné)"),
+            required=False,
+            )

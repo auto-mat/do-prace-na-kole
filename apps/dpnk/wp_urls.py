@@ -44,6 +44,7 @@ urls = {
     'balicek':                      "/profil/balicek/",
 
     # Company admin
+    'create_invoice':               "/fa/vytvorit_fakturu/",
     'edit_company':                 "/fa/editovat_spolecnost/",
     'zadost_firemni_spravce':       "/fa/zadost/",
     'soutez':                       "/fa/soutez/",

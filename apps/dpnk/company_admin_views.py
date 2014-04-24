@@ -23,17 +23,20 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 from django.http import HttpResponse, Http404
 import django.contrib.auth
 import datetime
 from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView
-from decorators import must_be_company_admin, request_condition
+from decorators import must_be_company_admin, request_condition, must_be_in_phase
 from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
+import company_admin_forms
 from dpnk.email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from wp_urls import wp_reverse
 from util import redirect
 from models import Company, CompanyAdmin, Payment, Competition, Campaign, UserProfile
+import models
 import registration.signals
 import registration.backends
 import registration.backends.simple
@@ -80,7 +83,7 @@ class SelectUsersPayView(FormView):
 
     @method_decorator(login_required)
     @method_decorator(must_be_company_admin)
-    @method_decorator(request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, "<div class='text-warning'>Potvrzování plateb nemáte povoleno</div>"))
+    @method_decorator(request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, "<div class='text-warning'>" + ugettext(u"Potvrzování plateb nemáte povoleno") + "</div>"))
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
@@ -168,7 +171,6 @@ class CompanyAdminView(UpdateView):
         except CompanyAdmin.DoesNotExist:
             company_admin = CompanyAdmin(user=self.request.user, campaign=campaign)
         old_company_admin = user_attendance.team.subsidiary.company.company_admin.filter(campaign=campaign).first()
-        print old_company_admin
         if old_company_admin and old_company_admin != company_admin:
             raise Http404(_(u'<div class="text-warning">Vaše firma již svého koordinátora má: %s.</div>') % old_company_admin)
         company_admin.administrated_company = user_attendance.team.subsidiary.company
@@ -227,3 +229,51 @@ def competitions(
         template, {
             'competitions': company_admin.administrated_company.competition_set.filter(campaign=company_admin.campaign),
             }, context_instance=RequestContext(request))
+
+
+@must_be_company_admin
+@login_required
+def invoices(
+        request,
+        template='company_admin/invoices.html',
+        company_admin=None,
+        ):
+    return render_to_response(
+        template, {
+            'invoices': company_admin.administrated_company.invoice_set.filter(campaign=company_admin.campaign),
+            'payments_to_invoice': models.payments_to_invoice(company_admin.administrated_company, company_admin.campaign),
+            'company_information_filled': company_admin.administrated_company.has_filled_contact_information(),
+            }, context_instance=RequestContext(request))
+
+
+class CreateInvoiceView(FormView):
+    template_name = 'company_admin/create_invoice.html'
+    form_class = company_admin_forms.CreateInvoiceForm
+    success_url = 'company_admin'
+
+    def form_valid(self, form):
+        if form.cleaned_data['create_invoice']:
+            invoice = models.Invoice(
+                company=self.company_admin.administrated_company,
+                campaign=self.company_admin.campaign,
+                order_number=form.cleaned_data['order_number'],
+                )
+            invoice.save()
+        return redirect(wp_reverse(self.success_url))
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateInvoiceView, self).get_context_data(**kwargs)
+        payments = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
+        users = [p.user_attendance.__unicode__() for p in payments]
+        context['competitors_count'] = payments.count()
+        context['competitors_names'] = ", ".join(users)
+        context['company'] = self.company_admin.administrated_company
+        return context
+
+    @method_decorator(must_be_in_phase("registration"))
+    @method_decorator(must_be_company_admin)
+    @method_decorator(request_condition(lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(), "<div class='text-warning'>" + ugettext(u"Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>" % wp_reverse('edit_company')) + "</div>"))
+    @method_decorator(request_condition(lambda r, a, k: k['company_admin'].company_has_invoices(), "<div class='text-warning'>" + ugettext(u"Vaše společnost již má fakturu vystavenou") + "</div>"))
+    def dispatch(self, request, *args, **kwargs):
+        self.company_admin = kwargs['company_admin']
+        return super(CreateInvoiceView, self).dispatch(request, *args, **kwargs)
