@@ -185,7 +185,7 @@ msgid ""
 "firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.</div>"
 msgstr ""
 "<div class='text-warning'>You do not compete in the Bike to work "
-"competition. If you are a company administrator, please use <a href='%s'> "
+"competition. If you are a company cordinator, please use <a href='%s'> "
 "company administration</a>.</div>"
 
 #: decorators.py:135
@@ -235,17 +235,17 @@ msgstr "%s - payment acceptation"
 #: email.py:111 email.py:120
 #, python-format
 msgid "%s - firemní koordinátor - potvrzení registrace"
-msgstr "%s - Company administrator - registration confirmation"
+msgstr "%s - Company cordinator - registration confirmation"
 
 #: email.py:129
 #, python-format
 msgid "%s - firemní koordinátor - schválení správcovství firmy"
-msgstr "%s - Company administrator - company administration approval"
+msgstr "%s - Company cordinator - company administration approval"
 
 #: email.py:138
 #, python-format
 msgid "%s - firemní koordinátor - zamítnutí správcovství firmy"
-msgstr "%s - Company administrator - company administration denial"
+msgstr "%s - Company cordinator - company administration denial"
 
 #: email.py:147
 #, python-format
