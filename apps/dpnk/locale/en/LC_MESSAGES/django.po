@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-24 17:21+0200\n"
+"POT-Creation-Date: 2014-04-24 17:30+0200\n"
 "PO-Revision-Date: 2013-03-25 03:43+0100\n"
 "Last-Translator: Hynek Hanke <hanke@brailcom.org>\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -127,6 +127,11 @@ msgstr "Competition type"
 #: company_admin_forms.py:138 models.py:1435
 msgid "Typ soutěžícího"
 msgstr "Competitor type"
+
+#: company_admin_forms.py:149
+#, python-format
+msgid "%(model_name)s with this %(field_label)s already exists."
+msgstr ""
 
 #: company_admin_forms.py:156
 msgid "Údaje jsou správné, chci vytvořit fakturu"
@@ -1573,6 +1578,14 @@ msgstr "Action"
 #: templates/registration/admissions.html:16
 msgid "Oblast"
 msgstr "Area"
+
+#: templates/registration/admissions.html:64
+msgid "Od&shy;hlá&shy;sit ze sou&shy;tě&shy;že"
+msgstr "Remove competition entry"
+
+#: templates/registration/admissions.html:66
+msgid "Při&shy;hlá&shy;sit do sou&shy;tě&shy;že"
+msgstr "Apply for competition"
 
 #: templates/registration/admissions.html:71
 msgid ""
