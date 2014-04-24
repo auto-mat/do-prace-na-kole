@@ -35,6 +35,7 @@ from decorators import must_be_coordinator, must_be_approved_for_team, must_be_c
 from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 from django.views.decorators.cache import cache_page, never_cache, cache_control
 from django.views.generic.edit import FormView, UpdateView, CreateView
 # Registration imports
@@ -135,7 +136,7 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
 
 @login_required_simple
 @must_be_competitor
-@user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), '<div class="text-error">' + _(u'Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.') % wp_reverse('team_admin') + "</div>")
+@user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), string_concat(u'<div class="text-error">', _(u'Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.') % wp_reverse('team_admin'), u"</div>"))
 def change_team(
         request,
         success_url=None, form_class=ChangeTeamForm,
@@ -304,8 +305,8 @@ class ConfirmDeliveryView(FormView):
             package.save()
         return redirect(wp_reverse(self.success_url))
 
-    @method_decorator(user_attendance_has(lambda ua: not ua.package_shipped(), "<div class='text-warning'>Váš startovní balíček ještě nebyl odeslán.</div>"))
-    @method_decorator(user_attendance_has(lambda ua: ua.package_delivered(), "<div class='text-warning'>Váš startvní balíček již byl doručen.</div>"))
+    @method_decorator(user_attendance_has(lambda ua: not ua.package_shipped(), string_concat("<div class='text-warning'>", _(u"Váš startovní balíček ještě nebyl odeslán."), "</div>")))
+    @method_decorator(user_attendance_has(lambda ua: ua.package_delivered(), string_concat("<div class='text-warning'>", _(u"Váš startvní balíček již byl doručen."), "</div>")))
     @method_decorator(must_be_competitor)
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
@@ -331,9 +332,9 @@ class ConfirmTeamInvitationView(FormView):
         return redirect(wp_reverse(self.success_url))
 
     @method_decorator(must_be_competitor)
-    @method_decorator(request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, "<div class='text-warning'>Tým nenalezen.</div>"))
-    @method_decorator(request_condition(lambda r, a, k: r.user.email != k['initial_email'], "<div class='text-warning'>Pozvánka je určena jinému uživateli, než je aktuálně přihlášen.</div>"))
-    @method_decorator(user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), '<div class="text-error">' + _(u'Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.') % wp_reverse('team_admin') + "</div>"))
+    @method_decorator(request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, string_concat("<div class='text-warning'>", _(u"Tým nenalezen."), "</div>")))
+    @method_decorator(request_condition(lambda r, a, k: r.user.email != k['initial_email'], string_concat("<div class='text-warning'>", _(u"Pozvánka je určena jinému uživateli, než je aktuálně přihlášen."), "</div>")))
+    @method_decorator(user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), string_concat('<div class="text-error">', _(u'Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.') % wp_reverse('team_admin'), "</div>")))
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
         invitation_token = self.kwargs['token']
@@ -348,7 +349,7 @@ class ConfirmTeamInvitationView(FormView):
 
 
 @login_required_simple
-@user_attendance_has(lambda ua: ua.payment()['status'] == 'done', "<div class='text-warning'>Již máte startovné zaplaceno</div>")
+@user_attendance_has(lambda ua: ua.payment()['status'] == 'done', string_concat("<div class='text-warning'>", _(u"Již máte startovné zaplaceno"), "</div>"))
 @must_be_competitor
 @must_have_team
 def payment_type(request, user_attendance=None):
@@ -395,7 +396,7 @@ def header_bar(request, campaign_slug):
 
 
 @login_required_simple
-@user_attendance_has(lambda ua: ua.payment()['status'] == 'done', "<div class='text-warning'>Již máte startovné zaplaceno</div>")
+@user_attendance_has(lambda ua: ua.payment()['status'] == 'done', string_concat("<div class='text-warning'>", _(u"Již máte startovné zaplaceno"), "</div>"))
 @must_be_competitor
 @must_have_team
 def payment(request, user_attendance=None):
@@ -754,7 +755,7 @@ class ChangeTShirtView(SuccessMessageMixin, UpdateView):
         return redirect(wp_reverse(self.success_url))
 
     @method_decorator(login_required_simple)
-    @method_decorator(user_attendance_has(lambda ua: ua.package_shipped(), "<div class='text-warning'>Velikost trika nemůžete měnit, již bylo odesláno</div>"))
+    @method_decorator(user_attendance_has(lambda ua: ua.package_shipped(), string_concat("<div class='text-warning'>", _(u"Velikost trika nemůžete měnit, již bylo odesláno"), "</div>")))
     def dispatch(self, request, *args, **kwargs):
         return super(ChangeTShirtView, self).dispatch(request, *args, **kwargs)
 
