@@ -13,6 +13,7 @@
       <th scope="column">{% trans "Sou&shy;těž" %}</th>
       <th scope="column">{% trans "Typ" %}</th>
       <th scope="column">{% trans "Akce" %}</th>
+      <th scope="column">{% trans "Oblast" %}</th>
       {% comment %}
       <th scope="column" class="fixed_width_column">{% trans "Po&shy;řa&shy;dí" %}</th>
       <th scope="column" class="fixed_width_column">{% trans "Ho&shy;dno&shy;ce&shy;ní" %}</th>
@@ -28,6 +29,7 @@
             {% else %}
                {{ competition|softhyphen:"cs-CZ" }}
             {% endif %}
+         </td>
          <td>
             {% if competition.type == 'questionnaire' %}
                do&shy;ta&shy;zník
@@ -92,6 +94,13 @@
                {% else %}
                   {{ competition.competitor_can_admit }}
                {% endif %}
+            {% endif %}
+         </td>
+         <td>
+            {% if competition.city %}
+               {{ competition.city}}
+            {% else %}
+               {% trans "Celá ČR" %}
             {% endif %}
          </td>
          {% comment %}
