@@ -305,8 +305,8 @@ class ConfirmDeliveryView(FormView):
             package.save()
         return redirect(wp_reverse(self.success_url))
 
-    @method_decorator(user_attendance_has(lambda ua: not ua.package_shipped(), string_concat("<div class='text-warning'>", _(u"Váš startovní balíček ještě nebyl odeslán."), "</div>")))
-    @method_decorator(user_attendance_has(lambda ua: ua.package_delivered(), string_concat("<div class='text-warning'>", _(u"Váš startvní balíček již byl doručen."), "</div>")))
+    @method_decorator(user_attendance_has(lambda ua: not ua.package_shipped(), string_concat("<div class='text-warning'>", _(u"Startovní balíček ještě nebyl odeslán"), "</div>")))
+    @method_decorator(user_attendance_has(lambda ua: ua.package_delivered(), string_concat("<div class='text-warning'>", _(u"Startovní balíček mi již byl doručen"), "</div>")))
     @method_decorator(must_be_competitor)
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
