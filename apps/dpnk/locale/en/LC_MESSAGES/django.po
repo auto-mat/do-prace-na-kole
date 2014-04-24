@@ -1504,8 +1504,8 @@ msgid_plural ""
 "\n"
 "Vytvořit fakturu pro následujících %(competitors_count)s soutěžících: "
 "%(competitors_names)s\n"
-msgstr[0] "Create invoice for following competitor: %(competitors_names)s\n"
-msgstr[1] "Create invoice for following %(competitors_count)s competitors: %(competitors_names)s\n"
+msgstr[0] "\nCreate invoice for following competitor: %(competitors_names)s\n"
+msgstr[1] "\nCreate invoice for following %(competitors_count)s competitors: %(competitors_names)s\n"
 
 #: templates/company_admin/create_invoice.html:21
 msgid "IČO: "
