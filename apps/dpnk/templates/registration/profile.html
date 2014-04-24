@@ -97,18 +97,13 @@
       class="btn btn-block btn-warning disabled">{% trans "Startovní balíček pošleme až budete mít vybraný tým, tričko a zaplacené startovné" %}</a>
 {% endif %}
 
-<a href="#"
-   class="btn btn-block btn-warning disabled">{% trans "Přihlašování do soutěží ještě není aktivní" %}</a>
-
-{% comment %}
 {% if team and approved_for_team == 'approved' and team %}
    <a href="{% wp_url 'souteze' %}"
-      class="btn btn-block btn-warning">{% trans "Přihlásit se do soutěží" %}</a>
+      class="btn btn-block btn-info">{% trans "Přihlásit se do soutěží" %}</a>
 {% else %}
    <a href="#"
       class="btn btn-block btn-warning disabled">{% trans "Před přihlášením do soutěží musíte být součástí týmu" %}</a>
 {% endif %}
-{% endcomment %}
 
 <a href="#"
    class="btn btn-block btn-primary disabled">{% trans "Začít soutěžit" %}</a>
