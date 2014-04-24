@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-24 17:30+0200\n"
+"POT-Creation-Date: 2014-04-24 20:18+0200\n"
 "PO-Revision-Date: 2013-03-25 03:43+0100\n"
 "Last-Translator: Hynek Hanke <hanke@brailcom.org>\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -324,7 +324,7 @@ msgstr "Company"
 
 #: forms.py:83
 msgid "Společnost v seznamu není, chci založit novou"
-msgstr "This company is not on the list, I want to create a new one"
+msgstr "My company is not on the list, I want to create a new one"
 
 #: forms.py:92
 msgid "Adresa pobočky/společnosti"
@@ -1507,19 +1507,19 @@ msgid_plural ""
 msgstr[0] "Create invoice for following competitor: %(competitors_names)s\n"
 msgstr[1] "Create invoice for following %(competitors_count)s competitors: %(competitors_names)s\n"
 
-#: templates/company_admin/create_invoice.html:19
+#: templates/company_admin/create_invoice.html:21
 msgid "IČO: "
 msgstr "IR"
 
-#: templates/company_admin/create_invoice.html:21
+#: templates/company_admin/create_invoice.html:23
 msgid "DIČ: "
 msgstr "VAT ID"
 
-#: templates/company_admin/create_invoice.html:23
+#: templates/company_admin/create_invoice.html:25
 msgid "Změnit údaje"
 msgstr "Change details"
 
-#: templates/company_admin/create_invoice.html:28
+#: templates/company_admin/create_invoice.html:30
 msgid "Potvrdit"
 msgstr "Confirm"
 
@@ -1583,53 +1583,57 @@ msgstr "Action"
 msgid "Oblast"
 msgstr "Area"
 
-#: templates/registration/admissions.html:64
+#: templates/registration/admissions.html:17
+msgid "Firemní soutěž"
+msgstr "Company competition"
+
+#: templates/registration/admissions.html:65
 msgid "Od&shy;hlá&shy;sit ze sou&shy;tě&shy;že"
 msgstr "Remove competition entry"
 
-#: templates/registration/admissions.html:66
+#: templates/registration/admissions.html:67
 msgid "Při&shy;hlá&shy;sit do sou&shy;tě&shy;že"
 msgstr "Apply for competition"
 
-#: templates/registration/admissions.html:71
+#: templates/registration/admissions.html:72
 msgid ""
 "Do té&shy;to sou&shy;tě&shy;že jste při&shy;hlá&shy;šen au&shy;to&shy;ma&shy;"
 "ti&shy;cky."
 msgstr "You are registered into this competition automatically"
 
-#: templates/registration/admissions.html:74
+#: templates/registration/admissions.html:75
 msgid ""
 "Sou&shy;těž za&shy;ča&shy;la, již není mož&shy;né se od&shy;hlá&shy;sit."
 msgstr ""
 "The competition has begun, it is not possible to cancel the registration"
 
-#: templates/registration/admissions.html:76
+#: templates/registration/admissions.html:77
 msgid ""
 "Sou&shy;těž za&shy;ča&shy;la, již není mož&shy;né se při&shy;hlá&shy;sit."
 msgstr "The competition has begun, it is not possible to register"
 
-#: templates/registration/admissions.html:79
+#: templates/registration/admissions.html:80
 msgid "Do&shy;taz&shy;ník ješ&shy;tě ne&shy;ní ak&shy;tiv&shy;ní."
 msgstr "The questionnaire is in process"
 
-#: templates/registration/admissions.html:81
+#: templates/registration/admissions.html:82
 msgid "Do&shy;taz&shy;ník již ne&shy;ní ak&shy;tiv&shy;ní."
 msgstr "The questionnaire is not active yet"
 
-#: templates/registration/admissions.html:85
+#: templates/registration/admissions.html:86
 msgid ""
 "Do té&shy;to sou&shy;tě&shy;že tý&shy;mů vás při&shy;hlá&shy;sil váš tý&shy;"
 "mo&shy;vý ko&shy;or&shy;di&shy;ná&shy;tor."
 msgstr "You have been registered by your team coordinator"
 
-#: templates/registration/admissions.html:87
+#: templates/registration/admissions.html:88
 msgid ""
 "Do té&shy;to sou&shy;tě&shy;že týmů vás mu&shy;sí při&shy;hlá&shy;sit tý&shy;"
 "mo&shy;vý ko&shy;or&shy;di&shy;ná&shy;tor."
 msgstr ""
 "You have to be registered by your team coordinator into the team category "
 
-#: templates/registration/admissions.html:91
+#: templates/registration/admissions.html:92
 msgid ""
 "Do té&shy;to sou&shy;tě&shy;že fi&shy;rem vás při&shy;hlá&shy;sil váš fi&shy;"
 "rem&shy;ní sprá&shy;vce."
@@ -1637,7 +1641,7 @@ msgstr ""
 "You have been registered into the company competition by your company "
 "administrator"
 
-#: templates/registration/admissions.html:93
+#: templates/registration/admissions.html:94
 msgid ""
 "Do té&shy;to sou&shy;tě&shy;že fi&shy;rem vás mu&shy;sí při&shy;hlá&shy;sit "
 "váš fi&shy;rem&shy;ní sprá&shy;vce."
@@ -1645,11 +1649,15 @@ msgstr ""
 "You have to be registered into the company competition by your company "
 "administrator"
 
-#: templates/registration/admissions.html:104
+#: templates/registration/admissions.html:105
 msgid "Celá ČR"
 msgstr "Whole Czech"
 
-#: templates/registration/admissions.html:131
+#: templates/registration/admissions.html:112
+msgid "Ne"
+msgstr "None"
+
+#: templates/registration/admissions.html:139
 msgid ""
 "Momentálně nejsou vypsány žádné soutěže, do kterých byste se mohl/a přihlásit"
 msgstr "There are no available competitions at the moment"
