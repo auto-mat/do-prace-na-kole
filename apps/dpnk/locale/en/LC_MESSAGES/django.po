@@ -1499,9 +1499,13 @@ msgstr "Results"
 #, python-format
 msgid ""
 "\n"
+"Vytvořit fakturu pro následujícho soutěžícího: %(competitors_names)s\n"
+msgid_plural ""
+"\n"
 "Vytvořit fakturu pro následujících %(competitors_count)s soutěžících: "
 "%(competitors_names)s\n"
-msgstr ""
+msgstr[0] "Create invoice for following competitor: %(competitors_names)s\n"
+msgstr[1] "Create invoice for following %(competitors_count)s competitors: %(competitors_names)s\n"
 
 #: templates/company_admin/create_invoice.html:19
 msgid "IČO: "

@@ -4,7 +4,9 @@
 
 {% include "messages_include.html" %}
 
-{% blocktrans %}
+{% blocktrans count competitors_count=competitors_count %}
+Vytvořit fakturu pro následujícho soutěžícího: {{ competitors_names }}
+{% plural %}
 Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících: {{ competitors_names }}
 {% endblocktrans %}
 <br/>
