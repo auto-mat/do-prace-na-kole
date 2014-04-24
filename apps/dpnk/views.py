@@ -31,7 +31,7 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.decorators import method_decorator
-from decorators import must_be_coordinator, must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team, user_attendance_has, request_condition
+from decorators import must_be_coordinator, must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team, user_attendance_has, request_condition, must_be_in_phase
 from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import ugettext_lazy as _
@@ -675,6 +675,7 @@ def other_team_members(
 
 
 @login_required_simple
+@must_be_in_phase("registration")
 @must_be_competitor
 @must_be_approved_for_team
 def admissions(
