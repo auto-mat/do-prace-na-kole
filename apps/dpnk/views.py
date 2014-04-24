@@ -676,7 +676,7 @@ def other_team_members(
 
 
 @login_required_simple
-@must_be_in_phase("registration")
+@must_be_in_phase("admissions")
 @must_be_competitor
 @must_be_approved_for_team
 def admissions(
