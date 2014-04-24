@@ -196,6 +196,7 @@ def deploy():
     env.release = api.local("git rev-parse --short HEAD", capture=True)
     #env.release = time.strftime('%Y%m%d%H%M%S')
 
+    sudo('sudo chmod g+rw /var/log/django/ -R')
     upload_tar_from_git()
     install_requirements()
     #install_site()

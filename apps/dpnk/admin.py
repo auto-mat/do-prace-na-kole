@@ -167,7 +167,7 @@ class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.Mo
     filter_horizontal = ('team_competitors', 'company_competitors')
     raw_id_fields = ('user_attendance_competitors',)
     search_fields = ('name',)
-    list_filter = ('campaign',)
+    list_filter = ('campaign', 'city', 'without_admission', 'is_public', 'competitor_type', 'type')
     save_as = True
     actions = [recalculate_competitions_results]
 
