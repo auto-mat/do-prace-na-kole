@@ -14,6 +14,7 @@
       <th scope="column">{% trans "Typ" %}</th>
       <th scope="column">{% trans "Akce" %}</th>
       <th scope="column">{% trans "Oblast" %}</th>
+      <th scope="column">{% trans "Firemní soutěž" %}</th>
       {% comment %}
       <th scope="column" class="fixed_width_column">{% trans "Po&shy;řa&shy;dí" %}</th>
       <th scope="column" class="fixed_width_column">{% trans "Ho&shy;dno&shy;ce&shy;ní" %}</th>
@@ -98,9 +99,16 @@
          </td>
          <td>
             {% if competition.city %}
-               {{ competition.city}}
+               {{ competition.city|softhyphen:"cs-CZ"}}
             {% else %}
                {% trans "Celá ČR" %}
+            {% endif %}
+         </td>
+         <td>
+            {% if competition.company %}
+               {{ competition.company|softhyphen:"cs-CZ"}}
+            {% else %}
+               {% trans "Ne" %}
             {% endif %}
          </td>
          {% comment %}
