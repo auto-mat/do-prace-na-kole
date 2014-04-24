@@ -163,7 +163,7 @@ recalculate_competitions_results.short_description = _(u"Přepočítat výsledku
 
 
 class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'city', 'company', 'competition_results_link', 'questionnaire_results_link', 'draw_link', 'id')
+    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'city', 'company', 'competition_results_link', 'questionnaire_results_link', 'draw_link', 'url', 'id')
     filter_horizontal = ('team_competitors', 'company_competitors')
     raw_id_fields = ('user_attendance_competitors',)
     search_fields = ('name',)
