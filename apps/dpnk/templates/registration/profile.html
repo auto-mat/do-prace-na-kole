@@ -97,7 +97,10 @@
       class="btn btn-block btn-warning disabled">{% trans "Startovní balíček pošleme až budete mít vybraný tým, tričko a zaplacené startovné" %}</a>
 {% endif %}
 
-{% if team and approved_for_team == 'approved' and team %}
+{% if not admissions_phase_is_active %}
+   <a href="#"
+      class="btn btn-block btn-warning disabled">{% trans "Přihlašování do soutěží ještě není aktivní" %}</a>
+{% elif team and approved_for_team == 'approved' and team %}
    <a href="{% wp_url 'souteze' %}"
       class="btn btn-block btn-info">{% trans "Přihlásit se do soutěží" %}</a>
 {% else %}

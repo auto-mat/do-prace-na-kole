@@ -636,6 +636,12 @@ def profile(request, user_attendance=None):
 
     is_package_shipped = user_attendance.package_shipped() is not None
     is_package_delivered = user_attendance.package_delivered() is not None
+
+    try:
+        phase = user_attendance.campaign.phase_set.get(type="admissions")
+    except models.Phase.DoesNotExist:
+        phase = None
+    admissions_phase_is_active = phase and phase.is_actual()
     return render_to_response('registration/profile.html', {
         'active': user_attendance.userprofile.user.is_active,
         'superuser': request.user.is_superuser,
@@ -648,6 +654,7 @@ def profile(request, user_attendance=None):
         'approved_for_team': user_attendance.approved_for_team,
         'is_package_shipped': is_package_shipped,
         'is_package_delivered': is_package_delivered,
+        'admissions_phase_is_active': admissions_phase_is_active,
         }, context_instance=RequestContext(request))
 
 
