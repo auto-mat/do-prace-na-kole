@@ -31,6 +31,7 @@ from django import forms
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save
+from django.db.utils import ProgrammingError
 from fieldsignals import post_save_changed, pre_save_changed
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
@@ -856,7 +857,7 @@ class DeliveryBatch(models.Model):
     def __init__(self, *args, **kwargs):
         try:
             self._meta.get_field('campaign').default = Campaign.objects.get(slug=settings.CAMPAIGN).pk
-        except django.db.utils.ProgrammingError:
+        except ProgrammingError:
             pass
         return super(DeliveryBatch, self).__init__(*args, **kwargs)
 
@@ -944,7 +945,6 @@ class Invoice(models.Model):
         blank=True,
         )
 
-
     def paid(self):
         return self.paid_date <= util.today()
 
@@ -981,7 +981,7 @@ class Invoice(models.Model):
 
 def change_invoice_payments_status(sender, instance, changed_fields=None, **kwargs):
     field, (old, new) = changed_fields.items()[0]
-    if new!=None:
+    if new is not None:
         for payment in instance.payment_set.all():
             payment.status = Payment.Status.INVOICE_PAID
             payment.save()
@@ -990,6 +990,7 @@ post_save_changed.connect(change_invoice_payments_status, sender=Invoice, fields
 
 def payments_to_invoice(company, campaign):
     return Payment.objects.filter(pay_type='fc', status=Payment.Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=company, user_attendance__campaign=campaign)
+
 
 @receiver(post_save, sender=Invoice)
 def create_invoice_files(sender, instance, created, **kwargs):
@@ -1289,7 +1290,6 @@ class Payment(Transaction):
         on_delete=models.SET_NULL,
         related_name=("payment_set"),
         )
-
 
     def save(self, *args, **kwargs):
         status_before_update = None
@@ -1816,6 +1816,7 @@ def post_user_approved_for_team(sender, instance, changed_fields=None, **kwargs)
     if instance.team:
         instance.team.autoset_member_count()
 post_save_changed.connect(post_user_approved_for_team, sender=UserAttendance, fields=['approved_for_team'])
+
 
 @receiver(post_save, sender=User)
 def update_mailing_user(sender, instance, created, **kwargs):
