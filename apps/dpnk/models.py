@@ -1475,6 +1475,9 @@ class Competition(models.Model):
     def get_competitors(self):
         return results.get_competitors(self)
 
+    def get_competitors_count(self):
+        return self.get_competitors().count()
+
     def get_results(self):
         return results.get_results(self)
 
