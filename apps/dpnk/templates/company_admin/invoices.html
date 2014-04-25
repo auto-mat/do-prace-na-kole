@@ -27,6 +27,8 @@
    {% if company_information_filled %}
       {% if payments_to_invoice.count > 0 %}
       <a href="{% wp_url "create_invoice" %}" class="btn btn-block btn-primary">{% trans "Vytvořit fakturu" %}</a>
+      {% else %}
+      <a href="{% wp_url "pay_for_company_competitors" %}" class="btn btn-block btn-primary">{% trans "Před vytvořením faktury schvalte platbu soutěžícím ve vaší společnosti" %}</a>
       {% endif %}
    {% else %}
       <a href="{% wp_url "edit_company" %}" class="btn btn-block btn-primary">{% trans "Před vytvořením faktury vyplňte údaje o vaší společnosti" %}</a>

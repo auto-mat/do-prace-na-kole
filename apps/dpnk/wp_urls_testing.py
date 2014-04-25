@@ -40,6 +40,7 @@ urls = {
     'balicek':                      "balicek",
 
     # Company admin
+    'pay_for_company_competitors':  "/fa/zaplatit_za_uzivatele/",
     'edit_company':                 "fa/editovat_spolecnost",
     'create_invoice':               "fa/vytvorit_fakturu",
     'zadost_firemni_spravce':       "fa/zadost",

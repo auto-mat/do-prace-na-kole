@@ -44,6 +44,7 @@ urls = {
     'balicek':                      "/profil/balicek/",
 
     # Company admin
+    'pay_for_company_competitors':  "/fa/zaplatit_za_uzivatele/",
     'create_invoice':               "/fa/vytvorit_fakturu/",
     'edit_company':                 "/fa/editovat_spolecnost/",
     'zadost_firemni_spravce':       "/fa/zadost/",
