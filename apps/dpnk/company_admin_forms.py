@@ -144,7 +144,7 @@ class CompanyCompetitionForm(forms.ModelForm):
         fields = ('name', 'url', 'type', 'competitor_type', )
 
     def clean_name(self):
-        self.instance.slug = 'FA-%s-%s' % (self.instance.campaign.slug, slugify(self.cleaned_data['name']))
+        self.instance.slug = 'FA-%s-%s' % (self.instance.campaign.slug, slugify(self.cleaned_data['name'])[1:30])
         if Competition.objects.filter(slug=self.instance.slug).exists():
             raise forms.ValidationError(_(u"%(model_name)s with this %(field_label)s already exists.") % {
                 "model_name": self.instance._meta.verbose_name, "field_label": self.instance._meta.get_field('name').verbose_name})
