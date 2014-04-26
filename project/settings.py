@@ -74,6 +74,10 @@ MIDDLEWARE_CLASSES = (
 
 #    "dpnk.middleware.XHRMiddleware",
 )
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    "dpnk.context_processors.settings_properties",
+)
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "django_su.backends.SuBackend",

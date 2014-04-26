@@ -15,6 +15,11 @@ div.results {
 #changelist table thead th {
   white-space: normal !important;
 }
+{% if HEADER_COLOR %}
+#header {
+   background-color: {{ HEADER_COLOR }};
+}
+{% endif %}
 </style>
 {% endblock %}
 
