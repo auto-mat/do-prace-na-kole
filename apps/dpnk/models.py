@@ -575,29 +575,35 @@ class UserAttendance(models.Model):
                     'class': u'success',
                     }
 
-        payments = self.payments().filter(status__in=Payment.done_statuses)
-        if payments.exists():
-            return {'payment': payments.latest('id'),
+        try:
+            payment = self.payments().filter(status__in=Payment.done_statuses).latest('id')
+            return {'payment': payment,
                     'status': 'done',
                     'status_description': _(u'zaplaceno'),
                     'class': u'success',
                     }
+        except Transaction.DoesNotExist:
+            pass
 
-        payments = self.payments().filter(status__in=Payment.waiting_statuses)
-        if payments.exists():
-            return {'payment': payments.latest('id'),
+        try:
+            payment = self.payments().filter(status__in=Payment.waiting_statuses).latest('id')
+            return {'payment': payment,
                     'status': 'waiting',
                     'status_description': _(u'nepotvrzeno'),
                     'class': u'warning',
                     }
+        except Transaction.DoesNotExist:
+            pass
 
-        payments = self.payments()
-        if payments.exists():
-            return {'payment': payments.latest('id'),
+        try:
+            payment = self.payments()
+            return {'payment': payment.latest('id'),
                     'status': 'unknown',
                     'status_description': _(u'neznámý'),
                     'class': u'warning',
                     }
+        except Transaction.DoesNotExist:
+            pass
 
         return {'payment': None,
                 'status': 'none',
