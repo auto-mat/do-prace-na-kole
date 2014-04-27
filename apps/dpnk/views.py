@@ -556,11 +556,16 @@ def rides(
             day = int(request.POST["day"])
             date = days[day-1]
             if not trip_active(date, today):
-                logger.error(u'User %s is trying to fill in nonactive day %s (%s), POST: %s' % (user_attendance, day, date, request.POST))
+                logger.error(u'User %s is trying to fill in nonactive day %s (%s), POST: %s' % (request.user.username, day, date, request.POST))
                 return HttpResponse(_(u'<div class="text-error">Den %s již není možné vyplnit.</div>') % date, status=401)
             trip, created = Trip.objects.get_or_create(
-                user=request.user.get_profile(),
-                date=date)
+                user_attendance=user_attendance,
+                date=date,
+                defaults={
+                    'trip_from': False,
+                    'trip_to': False,
+                },
+            )
 
             trip.trip_to = request.POST.get('trip_to-' + str(day), 'off') == 'on'
             trip.trip_from = request.POST.get('trip_from-' + str(day), 'off') == 'on'
