@@ -24,6 +24,7 @@ import httplib
 import urllib
 import hashlib
 import datetime
+import results
 # Django imports
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib import auth
@@ -552,12 +553,13 @@ def rides(
     today = util.today()
 
     if request.method == 'POST':
-        if 'day' in request.POST and request.POST["day"]:
-            day = int(request.POST["day"])
-            date = days[day-1]
+        for day_m, date in enumerate(days):
+            day = day_m + 1
+            trip_to = request.POST.get('trip_to-' + str(day), 'off') == 'on'
+            trip_from = request.POST.get('trip_from-' + str(day), 'off') == 'on'
+
             if not trip_active(date, today):
-                logger.error(u'User %s is trying to fill in nonactive day %s (%s), POST: %s' % (request.user.username, day, date, request.POST))
-                return HttpResponse(_(u'<div class="text-error">Den %s již není možné vyplnit.</div>') % date, status=401)
+                continue
             trip, created = Trip.objects.get_or_create(
                 user_attendance=user_attendance,
                 date=date,
@@ -567,8 +569,8 @@ def rides(
                 },
             )
 
-            trip.trip_to = request.POST.get('trip_to-' + str(day), 'off') == 'on'
-            trip.trip_from = request.POST.get('trip_from-' + str(day), 'off') == 'on'
+            trip.trip_to = trip_to
+            trip.trip_from = trip_from
             if trip.trip_to:
                 try:
                     trip.distance_to = int(request.POST.get('distance_to-' + str(day), None))
@@ -585,9 +587,11 @@ def rides(
                 trip.distance_from = None
             logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s, created: %s' % (
                 request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to, created))
+            trip.dont_recalculate = True
             trip.save()
 
-            return redirect(wp_reverse(success_url))
+        results.recalculate_result_competitor(user_attendance)
+        return redirect(wp_reverse(success_url))
 
     trips = {}
     for t in Trip.objects.filter(user_attendance=user_attendance):

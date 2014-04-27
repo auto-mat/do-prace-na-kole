@@ -9,7 +9,6 @@
 <th scope="column">{% trans "Den" %}</th>
 <th scope="column">{% trans "Do práce" %}</th>
 <th scope="column">{% trans "Z práce" %}</th>
-<th scope="column" class="fixed_width_column">{% trans "O&shy;de&shy;slat" %}</th>
 <th scope="column" class="fixed_width_column">{% trans "Pra&shy;vi&shy;del&shy;nost" %}</th>
 {% if has_distance_competition %}
 <th scope="column" class="fixed_width_column">{% trans "Vzdá&shy;le&shy;nost cel&shy;kem" %}</th>
@@ -34,7 +33,6 @@
    <input type="number" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %} class="span1" value="{{ day.default_distance_from }}"/>
 {% endif %}
 </td>
-<td><button type="button" class="submit submit_once" onclick='$("#day").val("{{ forloop.counter }}")' {% if day.trips_active %}{% else %} disabled="disabled"{% endif %}>OK</button></td>
 <td><div {% if day.percentage > 66 %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>
 {% if has_distance_competition %}
 <td>{{ day.distance }}&nbsp;km</td>
@@ -42,4 +40,5 @@
 </tr>
 {% endfor %}
 </table>
+<button type="button" class="submit submit_once btn btn-block btn-primary">{% trans "Vyplnit jízdy" %}</button>
 </form>

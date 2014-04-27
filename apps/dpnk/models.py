@@ -1849,7 +1849,7 @@ def update_mailing_payment(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Trip)
 def trip_post_save(sender, instance, **kwargs):
-    if instance.user_attendance:
+    if instance.user_attendance and not instance.dont_recalculate:
         results.recalculate_result_competitor(instance.user_attendance)
 
 
