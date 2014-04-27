@@ -1126,11 +1126,8 @@ def distance(trips):
     distance += trips.filter(trip_from=True).aggregate(Sum("distance_from"))['distance_from__sum'] or 0
     distance += trips.filter(trip_to=True).aggregate(Sum("distance_to"))['distance_to__sum'] or 0
 
-    #TODO: Distance 0 shouldn't be counted, but due to bug in first two days of season 2013 competition it has to be.
-    #distance += trips.filter(distance_from = None, trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
-    #distance += trips.filter(distance_to = None, trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
-    distance += trips.filter(Q(distance_from=None) | Q(distance_from=0), trip_from=True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
-    distance += trips.filter(Q(distance_to=None) | Q(distance_to=0), trip_to=True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
+    distance += trips.filter(distance_from = None, trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    distance += trips.filter(distance_to = None, trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
     return distance
 
 
