@@ -547,7 +547,7 @@ def trip_active(day, today):
 @must_be_approved_for_team
 def rides(
         request, user_attendance=None, template='registration/rides.html',
-        success_url="profil"):
+        success_url=""):
     days = util.days(user_attendance.campaign)
     today = util.today()
 

@@ -66,6 +66,8 @@ if hasattr(settings, 'TESTING_URLS') and settings.TESTING_URLS:
     urls = wp_urls_testing.urls
 
 def wp_reverse(name):
+    if name == "":
+        return ""
     prefix = ""
     if not (hasattr(settings, 'TESTING_URLS') and settings.TESTING_URLS) and translation.get_language() != settings.LANGUAGE_CODE:
         prefix = "/" + translation.get_language()
