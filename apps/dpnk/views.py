@@ -548,7 +548,7 @@ def trip_active(day, today):
 def rides(
         request, user_attendance=None, template='registration/rides.html',
         success_url="profil"):
-    days = util.days()
+    days = util.days(user_attendance.campaign)
     today = util.today()
 
     if request.method == 'POST':
