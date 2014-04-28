@@ -8,7 +8,7 @@
    / <a href="{% wp_url 'company_admin' %}">{% trans "Společnost" %}</a >
 {% endif %}
    /
-      <a href="{% wp_url 'profil' %}">{% trans "Profil" %}</a>
+   <a href="{% if entered_competition %}{% wp_url 'competition_profile' %}{% else %}{% wp_url 'profil' %}{% endif %}">{% trans "Profil" %}</a>
    /
    <a href="{% wp_url 'logout' %}">{% trans "Odhlásit" %}</a>
 {% else %}

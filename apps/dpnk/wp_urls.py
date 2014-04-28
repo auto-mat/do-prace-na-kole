@@ -44,7 +44,7 @@ urls = {
     'balicek':                      "/profil/balicek/",
 
     # Competition
-    'enter_competition':            "zacit_soutezit",
+    'competition_profile':          "soutezni_profil",
 
     # Company admin
     'pay_for_company_competitors':  "/fa/zaplatit_za_uzivatele/",

@@ -389,10 +389,15 @@ def header_bar(request, campaign_slug):
     if request.user.is_authenticated():
         campaign = Campaign.objects.get(slug=campaign_slug)
         company_admin = models.get_company_admin(request.user, campaign)
+        try:
+            entered_competition = models.UserAttendance.objects.get(campaign=campaign, userprofile__user=request.user).entered_competition
+        except UserAttendance.DoesNotExist:
+            entered_competition = None
     return render_to_response('registration/header_bar.html', {
         'is_authentificated': request.user.is_authenticated(),
         'company_admin': company_admin,
         'user': request.user,
+        'entered_competition': entered_competition,
         }, context_instance=RequestContext(request))
 
 
@@ -633,7 +638,17 @@ def rides(
 @must_be_competitor
 @never_cache
 @cache_control(max_age=0, no_cache=True, no_store=True)
-def profile(request, user_attendance=None):
+def profile(request, user_attendance=None, success_url = 'competition_profile'):
+    if user_attendance.entered_competition():
+        return redirect(wp_reverse(success_url))
+    if request.POST and request.POST['enter_competition'] == 'true':
+        user_action = models.UserActionTransaction(
+            status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED,
+            user_attendance=user_attendance,
+            realized=datetime.datetime.now(),
+        )
+        user_action.save()
+        return redirect(wp_reverse(success_url))
 
     # Render profile
     payment_status = user_attendance.payment_status()

@@ -114,8 +114,10 @@
 <a href="#"
    class="btn btn-block btn-primary disabled">{% trans "Začít soutěžit budete moci až budete " %}{{cant_enter_competition_reason}}</a>
 {% else %}
-<a href="{% wp_url 'enter_competition' %}"
-   class="btn btn-block btn-primary">{% trans "Začít soutěžit" %}</a>
+<form method="post" class="form-horizontal">{% csrf_token %}
+<input type="hidden" value="true" name="enter_competition" />
+<button class="submit submit_once btn btn-block btn-primary" type="button">{% trans "Začít soutěžit" %}</button>
+</form>
 {% endif %}
 
 {% else %}

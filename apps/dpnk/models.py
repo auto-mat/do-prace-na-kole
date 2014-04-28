@@ -683,6 +683,9 @@ class UserAttendance(models.Model):
         else:
             return True
 
+    def entered_competition(self):
+        return self.transactions.filter(status=UserActionTransaction.Status.COMPETITION_START_CONFIRMED).exists()
+
 
 class UserProfile(models.Model):
     """Uživatelský profil"""

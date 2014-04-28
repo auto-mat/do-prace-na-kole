@@ -40,7 +40,7 @@ urls = {
     'balicek':                      "balicek",
 
     # Competition
-    'enter_competition':            "zacit_soutezit",
+    'competition_profile':          "soutezni_profil",
 
 
     # Company admin
