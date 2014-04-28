@@ -525,7 +525,7 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
 
 
 class PaymentAdmin(RelatedFieldAdmin):
-    list_display = ('id', 'user_attendance', 'created', 'status', 'session_id', 'trans_id', 'amount', 'pay_type', 'error', 'order_id', 'author', 'user_attendance__team__subsidiary__company__name')
+    list_display = ('id', 'user_attendance', 'created', 'realized', 'status', 'session_id', 'trans_id', 'amount', 'pay_type', 'error', 'order_id', 'author', 'user_attendance__team__subsidiary__company__name')
     search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'session_id', 'trans_id', 'order_id', 'user_attendance__team__subsidiary__company__name', )
     list_filter = [ 'user_attendance__campaign', 'status', 'error', 'pay_type',]
     raw_id_fields = ('user_attendance',)
