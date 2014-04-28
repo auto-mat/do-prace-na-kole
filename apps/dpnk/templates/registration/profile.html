@@ -111,8 +111,10 @@
 <br/>
 
 {% if cant_enter_competition_reason != 'can_enter' %}
-<a href="#"
-   class="btn btn-block btn-primary disabled">{% trans "Začít soutěžit budete moci až budete " %}{{cant_enter_competition_reason}}</a>
+<div
+   class="btn btn-block btn-primary disabled">{% trans "Začít soutěžit budete moci až budete " %}{{cant_enter_competition_reason}}</div>
+{% elif not competition_entry_active %}
+<div class="btn btn-block btn-primary disabled">{% trans "Začít soutěžit" %}</div>
 {% else %}
 <form method="post" class="form-horizontal">{% csrf_token %}
 <input type="hidden" value="true" name="enter_competition" />
