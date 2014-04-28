@@ -39,6 +39,10 @@ urls = {
     'souteze':                      "souteze",
     'balicek':                      "balicek",
 
+    # Competition
+    'enter_competition':            "zacit_soutezit",
+
+
     # Company admin
     'pay_for_company_competitors':  "/fa/zaplatit_za_uzivatele/",
     'edit_company':                 "fa/editovat_spolecnost",

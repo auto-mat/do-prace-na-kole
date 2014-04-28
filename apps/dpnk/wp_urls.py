@@ -43,6 +43,9 @@ urls = {
     'souteze':                      "/profil/souteze/",
     'balicek':                      "/profil/balicek/",
 
+    # Competition
+    'enter_competition':            "zacit_soutezit",
+
     # Company admin
     'pay_for_company_competitors':  "/fa/zaplatit_za_uzivatele/",
     'create_invoice':               "/fa/vytvorit_fakturu/",

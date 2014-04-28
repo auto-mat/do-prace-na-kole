@@ -665,6 +665,24 @@ class UserAttendance(models.Model):
             return True
         return False
 
+    def can_enter_competition(self):
+        if not self.distance:
+            return 'no_personal_data'
+        elif not self.team:
+            return 'no_team'
+        elif not self.approved_for_team == 'approved':
+            return 'not_approved_for_team'
+        elif not self.t_shirt_size:
+            return 'not_t_shirt'
+        elif self.team.coordinator_campaign == self and self.team.unapproved_members().count() > 0:
+            return 'unapproved_team_members'
+        elif self.team.coordinator_campaign == self and self.team.member_count < 2:
+            return 'not_enough_team_members'
+        elif self.payment()['status'] != 'done':
+            return 'not_paid'
+        else:
+            return True
+
 
 class UserProfile(models.Model):
     """Uživatelský profil"""

@@ -108,8 +108,15 @@
       class="btn btn-block btn-warning disabled">{% trans "Před přihlášením do soutěží musíte být součástí týmu" %}</a>
 {% endif %}
 
+<br/>
+
+{% if cant_enter_competition_reason != 'can_enter' %}
 <a href="#"
-   class="btn btn-block btn-primary disabled">{% trans "Začít soutěžit" %}</a>
+   class="btn btn-block btn-primary disabled">{% trans "Začít soutěžit budete moci až budete " %}{{cant_enter_competition_reason}}</a>
+{% else %}
+<a href="{% wp_url 'enter_competition' %}"
+   class="btn btn-block btn-primary">{% trans "Začít soutěžit" %}</a>
+{% endif %}
 
 {% else %}
 Tento profil byl zneaktivněn.</br>

@@ -651,6 +651,19 @@ def profile(request, user_attendance=None):
     except models.Phase.DoesNotExist:
         phase = None
     admissions_phase_is_active = phase and phase.is_actual()
+
+    cant_enter_competition_reasons = {
+        'no_personal_data': _(u"mít vyplněné osobní údaje"),  # Začít soutěžit bude moci až budete ...
+        'no_team': _(u"mít vybraný tým"),  # Začít soutěžit bude moci až budete ...
+        'not_approved_for_team': _(u"mít odsouhlasené členství v týmu"),  # Začít soutěžit bude moci až budete ...
+        'unapproved_team_members': _(u"mít odsouhlasené všechny členy týmu"),  # Začít soutěžit bude moci až budete ...
+        'not_enough_team_members': _(u"mít víc než jen jednoho člena týmu"),  # Začít soutěžit bude moci až budete ...
+        'not_t_shirt': _(u"mít vyplněnou velikost trika"),  # Začít soutěžit bude moci až budete ...
+        'not_paid': _(u"mít zaplaceno"),  # Začít soutěžit bude moci až budete ...
+        True: 'can_enter',
+    }
+    cant_enter_competition_reason = cant_enter_competition_reasons[user_attendance.can_enter_competition()]
+
     return render_to_response('registration/profile.html', {
         'active': user_attendance.userprofile.user.is_active,
         'superuser': request.user.is_superuser,
@@ -664,6 +677,7 @@ def profile(request, user_attendance=None):
         'is_package_shipped': is_package_shipped,
         'is_package_delivered': is_package_delivered,
         'admissions_phase_is_active': admissions_phase_is_active,
+        'cant_enter_competition_reason': cant_enter_competition_reason,
         }, context_instance=RequestContext(request))
 
 
