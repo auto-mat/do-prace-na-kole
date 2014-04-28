@@ -4,6 +4,8 @@ import re
 import datetime
 from  django.http import HttpResponse
 
+DAYS_EXCLUDE = (datetime.date(year=2014, day=8, month=5), )
+
 def daterange(start_date, end_date):
     for n in range(int ((end_date - start_date).days)):
         yield start_date + datetime.timedelta(n)
@@ -13,7 +15,7 @@ def days(campaign):
     competition_start = campaign.phase_set.get(type="competition").date_from
     competition_end = campaign.phase_set.get(type="competition").date_to
     for day in daterange(competition_start, competition_end):
-        if day.weekday() not in (5,6):
+        if day not in DAYS_EXCLUDE and day.weekday() not in (5,6):
             days.append(day)
     return days
 
