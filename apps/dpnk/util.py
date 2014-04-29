@@ -19,9 +19,9 @@ def days(campaign):
             days.append(day)
     return days
 
-def days_count():
+def days_count(campaign):
     today = _today()
-    return len([day for day in days() if day <= today])
+    return len([day for day in days(campaign) if day <= today])
 
 def _today():
     #return datetime.date(year=2013, month=5, day=15)

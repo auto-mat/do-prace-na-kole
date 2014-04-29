@@ -13,13 +13,6 @@ def wp_url(name):
 def site_url():
     return settings.SITE_URL
 
-@register.filter(is_safe=True)
-def percentage(value):
-    if value and util.days_count() != 0:
-        return (value / ((util.days_count()) * 2)) * 100
-    else:
-        return 0
-
 
 @register.filter
 def split(str,splitter):

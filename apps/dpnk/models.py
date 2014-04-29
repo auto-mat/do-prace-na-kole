@@ -1618,6 +1618,12 @@ class CompetitionResult(models.Model):
         default=None,
         )
 
+    def get_result_percentage(self):
+        if self.result and util.days_count(self.competition.campaign) != 0:
+            return (self.result / ((util.days_count(self.competition.campaign)) * 2)) * 100
+        else:
+            return 0
+
     def get_total_result(self):
         members = self.team.member_count if self.team else 1
         return float(self.result) * float(members)

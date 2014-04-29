@@ -13,7 +13,7 @@
       <li>
          {{ forloop.counter }}. tah: Tým {{ result }} z firmy {{ result.team.subsidiary.company }}
          <br/>
-         pravidelnost jízd {{ result.result | percentage|floatformat:-1|intcomma }}&nbsp;%
+         pravidelnost jízd {{ result.get_result_percentage|floatformat:-1|intcomma }}&nbsp;%
          {% if result.competition.competitor_type == 'team' %}
             <br/>
             Členové:

@@ -71,7 +71,7 @@
 {% endifchanged %}
 </td>
 {% if competition.type == 'frequency' %}
-   <td>{{ result.result| percentage |floatformat:-1|intcomma  }}</td>
+   <td>{{ result.get_result_percentage |floatformat:-1|intcomma  }}</td>
 {% else %}
    <td>{{ result.result|floatformat:-1|intcomma  }}</td>
 {% endif %}
