@@ -754,6 +754,26 @@ def admissions(
         }, context_instance=RequestContext(request))
 
 
+@login_required_simple
+@must_be_in_phase("competition")
+@must_be_competitor
+@must_be_approved_for_team
+def competitions(
+        request, user_attendance=None,
+        template="registration/competitions.html",
+        campaign_slug=None,
+        ):
+    competitions = user_attendance.get_competitions()
+    for competition in competitions:
+        competition.competitor_has_admission = competition.has_admission(user_attendance)
+        competition.competitor_can_admit = competition.can_admit(user_attendance)
+
+    return render_to_response(template, {
+        'competitions': competitions,
+        'user_attendance': user_attendance,
+        }, context_instance=RequestContext(request))
+
+
 @cache_page(24 * 60 * 60)
 def competition_results(request, template, competition_slug, campaign_slug, limit=None):
     if limit == '':
