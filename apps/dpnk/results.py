@@ -30,6 +30,7 @@ import threading
 def get_competitors(self):
     if self.without_admission:
         filter_query = {}
+        filter_query['campaign'] = self.campaign
         if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
             filter_query['userprofile__user__is_active'] = True
             filter_query['approved_for_team'] = 'approved'
