@@ -1190,17 +1190,21 @@ def distance(trips):
     distance += trips.filter(trip_from=True).aggregate(Sum("distance_from"))['distance_from__sum'] or 0
     distance += trips.filter(trip_to=True).aggregate(Sum("distance_to"))['distance_to__sum'] or 0
 
-    distance += trips.filter(distance_from = None, trip_from = True).aggregate(Sum("user__distance"))['user__distance__sum']
-    distance += trips.filter(distance_to = None, trip_to = True).aggregate(Sum("user__distance"))['user__distance__sum']
+    distance_from = trips.filter(distance_from = None, trip_from = True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum']
+    if distance_from:
+        distance += distance_from
+    distance_to = trips.filter(distance_to = None, trip_to = True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum']
+    if distance_to:
+        distance += distance_to
     return distance
 
 
-def total_distance():
-    return distance(Trip.objects)
+def total_distance(campaign):
+    return distance(Trip.objects.filter(user_attendance__campaign=campaign))
 
 
-def period_distance(day_from, day_to):
-    return distance(Trip.objects.filter(date__gte=day_from, date__lte=day_to))
+def period_distance(campaign, day_from, day_to):
+    return distance(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to))
 
 
 def statistics(
@@ -1211,8 +1215,8 @@ def statistics(
         ):
     campaign = Campaign.objects.get(slug=campaign_slug)
     variables = {}
-    variables['ujeta-vzdalenost'] = total_distance()
-    variables['ujeta-vzdalenost-dnes'] = period_distance(util.today(), util.today())
+    variables['ujeta-vzdalenost'] = total_distance(campaign)
+    variables['ujeta-vzdalenost-dnes'] = period_distance(campaign, util.today(), util.today())
     variables['pocet-soutezicich'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True, approved_for_team='approved').count()
 
     if request.user.is_authenticated() and models.is_competitor(request.user):
