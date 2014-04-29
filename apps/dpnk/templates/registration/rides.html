@@ -15,6 +15,7 @@
 {% endif %}
 </tr>
 {% for day in calendar %}
+{% if day.trips_active %}
 <tr class="
 {% if day.trips_active %}
    info
@@ -42,6 +43,7 @@
 <td>{{ day.distance }}&nbsp;km</td>
 {% endif %}
 </tr>
+{% endif %}
 {% endfor %}
 </table>
 <button type="button" class="submit submit_once btn btn-block btn-primary">{% trans "Vyplnit jízdy" %}</button>
