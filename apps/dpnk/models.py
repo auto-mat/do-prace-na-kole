@@ -630,6 +630,12 @@ class UserAttendance(models.Model):
     def get_frequency(self):
         return results.get_userprofile_frequency(self)
 
+    def get_frequency_percentage(self):
+        if util.days_count(self.campaign) != 0:
+            return (self.get_frequency() / (float(util.days_count(self.campaign)) * 2)) * 100
+        else:
+            return 0
+
     def get_rough_length(self):
         return results.get_userprofile_frequency(self) * self.distance
 
