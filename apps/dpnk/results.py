@@ -41,6 +41,7 @@ def get_competitors(self):
             query = models.UserAttendance.objects.filter(**filter_query)
         elif self.competitor_type == 'team':
             filter_query = {}
+            filter_query['campaign'] = self.campaign
             if self.city:
                 filter_query['subsidiary__city'] = self.city
             if self.company:
