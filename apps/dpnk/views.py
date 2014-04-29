@@ -1207,6 +1207,7 @@ def period_distance(campaign, day_from, day_to):
     return distance(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to))
 
 
+@cache_page(24 * 60 * 60)
 def statistics(
         request,
         variable,
