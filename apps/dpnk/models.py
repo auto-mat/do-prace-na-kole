@@ -1006,7 +1006,7 @@ def create_invoice_files(sender, instance, created, **kwargs):
     if not instance.invoice_pdf:
         temp = NamedTemporaryFile()
         invoice_pdf.make_invoice_sheet_pdf(temp, instance)
-        instance.invoice_pdf.save("invoice_%s_%s_%s.pdf" % (instance.company, instance.exposure_date.strftime("%Y-%m-%d"), hash(str(instance.pk) + settings.SECRET_KEY)), File(temp))
+        instance.invoice_pdf.save("invoice_%s_%s_%s.pdf" % (instance.company.name[0:40], instance.exposure_date.strftime("%Y-%m-%d"), hash(str(instance.pk) + settings.SECRET_KEY)), File(temp))
         instance.save()
 
 
