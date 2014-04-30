@@ -262,10 +262,7 @@ class Team(models.Model):
         related_name="coordinated_team",
         verbose_name=_(u"Koordinátor/ka týmu"),
         null=True,
-        blank=True,
-        #TODO:
-        #null=False,
-        #blank=False,
+        blank=False,
         unique=True,
         )
     invitation_token = models.CharField(
