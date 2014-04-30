@@ -451,7 +451,7 @@ class Phase(models.Model):
 
     def has_finished(self):
         if not self.date_to:
-            return True
+            return False
         return not self.date_to >= util.today()
 
     def is_actual(self):
