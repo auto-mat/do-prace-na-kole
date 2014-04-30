@@ -86,17 +86,16 @@ def must_have_team(fn):
     return wrapper
 
 
-def must_be_in_phase(phase_type):
+def must_be_in_phase(*phase_type):
     def decorator(fn):
         def wrapped(request, *args, **kwargs):
             campaign = Campaign.objects.get(slug=kwargs.get('campaign_slug'))
-            try:
-                phase = campaign.phase_set.get(type=phase_type)
-            except models.Phase.DoesNotExist:
-                phase = None
-            if not phase or not phase.is_actual():
-                return HttpResponse(_(u"<div class='text-warning'>Tento formulář se zobrazuje pouze v %s fázi soutěže.</div>") % models.Phase.TYPE_DICT[phase_type], status=401)
-            return fn(request, *args, **kwargs)
+            phases = campaign.phase_set.filter(type__in=phase_type)
+            for phase in phases:
+                if phase and phase.is_actual():
+                    return fn(request, *args, **kwargs)
+            phases_string = _(u" a ").join([unicode(models.Phase.TYPE_DICT[p]) for p in phase_type])
+            return HttpResponse(_(u"<div class='text-warning'>Tento formulář se zobrazuje pouze v %s fázi soutěže.</div>") % phases_string, status=401)
         return wrapped
     return decorator
 

@@ -755,7 +755,7 @@ def admissions(
 
 
 @login_required_simple
-@must_be_in_phase("competition")
+@must_be_in_phase("competition", "results")
 @must_be_competitor
 @must_be_approved_for_team
 def competitions(
