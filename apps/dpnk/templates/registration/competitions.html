@@ -6,6 +6,9 @@
 
 {% if competitions %}
 
+<form name="admissions" method="POST">
+<input type="hidden" id="admission_competition_id" name="admission_competition_id"/>
+<input type="hidden" id="cancellation_competition_id" name="cancellation_competition_id"/>
 {% for competition in competitions %}
 <h4>{{ competition.name }}</h4>
 {% if competition.has_started %}
@@ -33,7 +36,12 @@
       {% endspaceless %}
       <br/>
    {% endif %}
-   {% if competition.type == 'questionnaire' and competition.is_active %}
+{% else %}
+   <div class="text-info">{% trans "Tato soutěž ještě nezačala" %}</div>
+{% endif %}
+
+   {% if competition.competitor_can_admit == True %}
+   {% if competition.type == 'questionnaire' %}
       <a class="btn btn-primary" href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">
          {% if competition.competitor_has_admission %}
             změ&shy;nit od&shy;po&shy;vě&shy;di
@@ -41,16 +49,53 @@
             vy&shy;pl&shy;nit do&shy;taz&shy;ník
          {% endif %}
       </a>
+   {% elif competition.type == 'frequency' or competition.type == 'length' %}
+      {% if competition.competitor_has_admission %}
+         <button type="button" class="submit submit_once btn btn-primary" onclick='$("#cancellation_competition_id").val("{{ competition.id }}")'>{% trans "Od&shy;hlá&shy;sit ze sou&shy;tě&shy;že" %}</button>
+      {% else %}
+         <button type="button" class="submit submit_once btn btn-primary" onclick='$("#admission_competition_id").val("{{ competition.id }}")'>{% trans "Při&shy;hlá&shy;sit do sou&shy;tě&shy;že" %}</button>
+      {% endif %}
    {% endif %}
+   {% else %}
+      {% if competition.competitor_can_admit == 'without_admission' %}
+         {% trans "Do té&shy;to sou&shy;tě&shy;že jste při&shy;hlá&shy;šen au&shy;to&shy;ma&shy;ti&shy;cky." %} 
+      {% elif competition.competitor_can_admit == 'after_beginning' %}
+         {% if competition.competitor_has_admission %}
+            {% trans "Sou&shy;těž za&shy;ča&shy;la, již není mož&shy;né se od&shy;hlá&shy;sit." %} 
+         {% else %}
+            {% trans "Sou&shy;těž za&shy;ča&shy;la, již není mož&shy;né se při&shy;hlá&shy;sit." %} 
+         {% endif %}
+      {% elif competition.competitor_can_admit == 'before_beginning' %}
+         {% trans "Do&shy;taz&shy;ník ješ&shy;tě ne&shy;ní ak&shy;tiv&shy;ní." %}
+      {% elif competition.competitor_can_admit == 'after_end' %}
+         {% trans "Do&shy;taz&shy;ník již ne&shy;ní ak&shy;tiv&shy;ní." %}
+         <a href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">zo&shy;bra&shy;zit vy&shy;hod&shy;no&shy;ce&shy;ní </a>
+      {% elif competition.competitor_can_admit == 'not_team_coordinator' %}
+         {% if competition.competitor_has_admission %}
+            {% trans "Do té&shy;to sou&shy;tě&shy;že tý&shy;mů vás při&shy;hlá&shy;sil váš tý&shy;mo&shy;vý ko&shy;or&shy;di&shy;ná&shy;tor." %} 
+         {% else %}
+            {% trans "Do té&shy;to sou&shy;tě&shy;že týmů vás mu&shy;sí při&shy;hlá&shy;sit tý&shy;mo&shy;vý ko&shy;or&shy;di&shy;ná&shy;tor." %} 
+         {% endif %}
+      {% elif competition.competitor_can_admit == 'not_company_admin' %}
+         {% if competition.competitor_has_admission %}
+            {% trans "Do té&shy;to sou&shy;tě&shy;že fi&shy;rem vás při&shy;hlá&shy;sil váš fi&shy;rem&shy;ní sprá&shy;vce." %} 
+         {% else %}
+            {% trans "Do té&shy;to sou&shy;tě&shy;že fi&shy;rem vás mu&shy;sí při&shy;hlá&shy;sit váš fi&shy;rem&shy;ní sprá&shy;vce." %} 
+         {% endif %}
+      {% else %}
+         {{ competition.competitor_can_admit }}
+      {% endif %}
+      <br/>
+   {% endif %}
+
+   {% if competition.has_started %}
    {% if competition.type != 'questionnaire' or competition.has_finished %}
       <a class="btn btn-primary" href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">Výsledky</a>
    {% endif %}
-{% else %}
-   <div class="text-info">{% trans "Tato soutěž ještě nezačala" %}</div>
-{% endif %}
+   {% endif %}
 <a class="btn btn-primary" href="{{ competition.url }}">Pravidla</a>
 {% endfor %}
-
+</form>
 {% else %}
 <div class="text-info">{% trans "Momentálně nejsou vypsány žádné soutěže, do kterých byste se mohl/a přihlásit" %}</div>
 {% endif %}

@@ -728,12 +728,11 @@ def other_team_members(
 
 
 @login_required_simple
-@must_be_in_phase("admissions")
 @must_be_competitor
 @must_be_approved_for_team
 def admissions(
         request, template, user_attendance=None,
-        success_url="souteze",
+        success_url="",
         ):
     if request.method == 'POST':
         if 'admission_competition_id' in request.POST and request.POST['admission_competition_id']:
@@ -744,26 +743,6 @@ def admissions(
             competition.make_admission(user_attendance, False)
         return redirect(wp_reverse(success_url))
 
-    competitions = user_attendance.get_competitions()
-    for competition in competitions:
-        competition.competitor_has_admission = competition.has_admission(user_attendance)
-        competition.competitor_can_admit = competition.can_admit(user_attendance)
-
-    return render_to_response(template, {
-        'competitions': competitions,
-        'user_attendance': user_attendance,
-        }, context_instance=RequestContext(request))
-
-
-@login_required_simple
-@must_be_in_phase("competition", "results")
-@must_be_competitor
-@must_be_approved_for_team
-def competitions(
-        request, user_attendance=None,
-        template="registration/competitions.html",
-        campaign_slug=None,
-        ):
     competitions = user_attendance.get_competitions()
     for competition in competitions:
         competition.competitor_has_admission = competition.has_admission(user_attendance)
