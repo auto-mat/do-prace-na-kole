@@ -93,7 +93,9 @@
       <a class="btn btn-primary" href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">Výsledky</a>
    {% endif %}
    {% endif %}
-<a class="btn btn-primary" href="{{ competition.url }}">Pravidla</a>
+{% if competition.url %}
+   <a class="btn btn-primary" href="{{ competition.url }}">Pravidla</a>
+{% endif %}
 {% endfor %}
 </form>
 {% else %}
