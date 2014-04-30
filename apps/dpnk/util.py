@@ -3,6 +3,7 @@ import unidecode
 import re
 import datetime
 from  django.http import HttpResponse
+import settings
 
 DAYS_EXCLUDE = (datetime.date(year=2014, day=8, month=5), )
 
@@ -24,7 +25,8 @@ def days_count(campaign):
     return len([day for day in days(campaign) if day <= today])
 
 def _today():
-    #return datetime.date(year=2013, month=5, day=15)
+    if hasattr(settings, 'FAKE_DATE'):
+        return settings.FAKE_DATE
     return datetime.date.today()
 
 def today():
