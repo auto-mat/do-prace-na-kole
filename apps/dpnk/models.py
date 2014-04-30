@@ -416,6 +416,7 @@ class Phase(models.Model):
         unique_together = (("type", "campaign"),)
 
     TYPE = [('registration', _(u"registrační")),
+            ('compet_entry', _(u"vstup do soutěže")),
             ('competition', _(u"soutěžní")),
             ('results', _(u"výsledková")),
             ('admissions', _(u"přihlašovací")),

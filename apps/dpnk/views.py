@@ -680,10 +680,10 @@ def profile(request, user_attendance=None, success_url = 'competition_profile'):
     cant_enter_competition_reason = cant_enter_competition_reasons[user_attendance.can_enter_competition()]
 
     try:
-        competition_phase = user_attendance.campaign.phase_set.get(type="competition")
+        competition_entry_phase = user_attendance.campaign.phase_set.get(type="compet_entry")
     except models.Phase.DoesNotExist:
-        competition_phase = None
-    competition_phase_is_active = competition_phase and competition_phase.is_actual()
+        competition_entry_phase = None
+    competition_entry_phase_is_active = competition_entry_phase and competition_entry_phase.is_actual()
     return render_to_response('registration/profile.html', {
         'active': user_attendance.userprofile.user.is_active,
         'superuser': request.user.is_superuser,
@@ -698,7 +698,7 @@ def profile(request, user_attendance=None, success_url = 'competition_profile'):
         'is_package_delivered': is_package_delivered,
         'admissions_phase_is_active': admissions_phase_is_active,
         'cant_enter_competition_reason': cant_enter_competition_reason,
-        'competition_entry_active': competition_phase_is_active,
+        'competition_entry_active': competition_entry_phase_is_active,
         }, context_instance=RequestContext(request))
 
 
