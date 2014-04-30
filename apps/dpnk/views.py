@@ -386,6 +386,7 @@ def payment_type(request, user_attendance=None):
 @cache_control(max_age=0, no_cache=True, no_store=True)
 def header_bar(request, campaign_slug):
     company_admin = None
+    entered_competition = None
     if request.user.is_authenticated():
         campaign = Campaign.objects.get(slug=campaign_slug)
         company_admin = models.get_company_admin(request.user, campaign)
