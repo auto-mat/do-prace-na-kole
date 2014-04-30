@@ -4,27 +4,53 @@
 {% load humanize %}
 {% load softhyphen_tags %}
 
+{% if competitions %}
+
 {% for competition in competitions %}
-<h3>{{ competition.name }}</h3>
-{{ competition.my_results.position|ordinal }} místo z {{ competition.competitor_count|intcomma }} 
-   {% if competition.competitor_type == 'single_user' %}
-      jed&shy;not&shy;liv&shy;ců
-   {% elif competition.competitor_type == 'liberos' %}
-      li&shy;be&shy;ros
-   {% elif competition.competitor_type == 'team' %}
-      tý&shy;mů
-   {% elif competition.competitor_type == 'company' %}
-      spo&shy;le&shy;čno&shy;stí
-   {% endif %}
-   ( 
-      {% if competition.type == 'length' %}
-        {{ competition.my_results.result|floatformat:-1|intcomma }}&nbsp;km
-      {% elif competition.type == 'frequency' %}
-        {{ competition.my_results.get_result_percentage |floatformat:-1|intcomma }}&nbsp;%
-      {% elif competition.type == 'questionnaire' %}
-        {{ competition.my_results.result|floatformat:-1|intcomma }}b.
+<h4>{{ competition.name }}</h4>
+{% if competition.has_started %}
+   {% if competition.type != 'questionnaire' or competition.has_finished %}
+      {{ competition.my_results.position|ordinal }} místo z {{ competition.competitor_count|intcomma }}
+      {% if competition.competitor_type == 'single_user' %}
+         jed&shy;not&shy;liv&shy;ců
+      {% elif competition.competitor_type == 'liberos' %}
+         li&shy;be&shy;ros
+      {% elif competition.competitor_type == 'team' %}
+         tý&shy;mů
+      {% elif competition.competitor_type == 'company' %}
+         spo&shy;le&shy;čno&shy;stí
       {% endif %}
-   )
-   <br/>
-   <a class="btn btn-primary" href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">Pořadí</a>
+      {% spaceless %}
+      (
+         {% if competition.type == 'length' %}
+           {{ competition.my_results.result|floatformat:-1|intcomma }}&nbsp;km
+         {% elif competition.type == 'frequency' %}
+           {{ competition.my_results.get_result_percentage |floatformat:-1|intcomma }}&nbsp;%
+         {% elif competition.type == 'questionnaire' %}
+           {{ competition.my_results.result|floatformat:-1|intcomma }}b.
+         {% endif %}
+      )
+      {% endspaceless %}
+      <br/>
+   {% endif %}
+   {% if competition.type == 'questionnaire' and competition.is_active %}
+      <a class="btn btn-primary" href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">
+         {% if competition.competitor_has_admission %}
+            změ&shy;nit od&shy;po&shy;vě&shy;di
+         {% else %}
+            vy&shy;pl&shy;nit do&shy;taz&shy;ník
+         {% endif %}
+      </a>
+   {% endif %}
+   {% if competition.type != 'questionnaire' or competition.has_finished %}
+      <a class="btn btn-primary" href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">Výsledky</a>
+   {% endif %}
+{% else %}
+   <div class="text-info">{% trans "Tato soutěž ještě nezačala" %}</div>
+{% endif %}
+<a class="btn btn-primary" href="{{ competition.url }}">Pravidla</a>
 {% endfor %}
+
+{% else %}
+<div class="text-info">{% trans "Momentálně nejsou vypsány žádné soutěže, do kterých byste se mohl/a přihlásit" %}</div>
+{% endif %}
