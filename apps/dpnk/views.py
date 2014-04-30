@@ -867,7 +867,7 @@ def questionaire(
         answers_dict = {}
         for question in questions:
             answer, created = Answer.objects.get_or_create(
-                user=request.user.get_profile(),
+                user_attendance=user_attendance,
                 question=question)
             if not created:
                 # Cleanup previous fillings
