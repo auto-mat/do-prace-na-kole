@@ -314,10 +314,10 @@ class Team(models.Model):
 
     def save(self, force_insert=False, force_update=False):
         if not self.coordinator_campaign and self.member_count > 0:
-            logger.error("Team %(team)s has no team coordinator, but has team members: %(team_members)s" % {'team_members': self.members(), 'team': self})
+            logger.error(u"Team %(team)s has no team coordinator, but has team members: %(team_members)s" % {'team_members': self.members(), 'team': self})
 
         if self.coordinator_campaign and self.coordinator_campaign.team != self:
-            logger.error("New coordinator of team %(team)s - %(coordinator)s is member of another team %(another_team)s" % {'coordinator': self.coordinator_campaign, 'team': self, 'another_team': self.coordinator_campaign.team})
+            logger.error(u"New coordinator of team %(team)s - %(coordinator)s is member of another team %(another_team)s" % {'coordinator': self.coordinator_campaign, 'team': self, 'another_team': self.coordinator_campaign.team})
 
         if self.invitation_token == "":
             while True:

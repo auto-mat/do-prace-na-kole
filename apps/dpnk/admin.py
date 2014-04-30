@@ -428,6 +428,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     actions = (update_mailing, approve_am_payment)
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
+    list_max_show_all = 10000
 
     def user_link(self, obj):
         return mark_safe('<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (obj.userprofile.user.pk, obj.userprofile.user))
