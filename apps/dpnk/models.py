@@ -262,10 +262,7 @@ class Team(models.Model):
         related_name="coordinated_team",
         verbose_name=_(u"Koordinátor/ka týmu"),
         null=True,
-        blank=True,
-        #TODO:
-        #null=False,
-        #blank=False,
+        blank=False,
         unique=True,
         )
     invitation_token = models.CharField(
@@ -316,8 +313,11 @@ class Team(models.Model):
         return "%s (%s)" % (self.name, self.member_count)
 
     def save(self, force_insert=False, force_update=False):
-        if self.coordinator_campaign_id is not None and self.coordinator_campaign is not None and self.coordinator_campaign.team.id != self.id:
-            raise Exception(_(u"Nový koordinátor %(coordinator)s není členem týmu %(team)s") % {'coordinator': self.coordinator_campaign, 'team': self})
+        if not self.coordinator_campaign and self.member_count > 0:
+            logger.error("Team %(team)s has no team coordinator, but has team members: %(team_members)s" % {'team_members': self.members(), 'team': self})
+
+        if self.coordinator_campaign and self.coordinator_campaign.team != self:
+            logger.error("New coordinator of team %(team)s - %(coordinator)s is member of another team %(another_team)s" % {'coordinator': self.coordinator_campaign, 'team': self, 'another_team': self.coordinator_campaign.team})
 
         if self.invitation_token == "":
             while True:
@@ -1033,7 +1033,7 @@ def create_invoice_files(sender, instance, created, **kwargs):
     if not instance.invoice_pdf:
         temp = NamedTemporaryFile()
         invoice_pdf.make_invoice_sheet_pdf(temp, instance)
-        instance.invoice_pdf.save("invoice_%s_%s_%s.pdf" % (instance.company, instance.exposure_date.strftime("%Y-%m-%d"), hash(str(instance.pk) + settings.SECRET_KEY)), File(temp))
+        instance.invoice_pdf.save("invoice_%s_%s_%s.pdf" % (instance.company.name[0:40], instance.exposure_date.strftime("%Y-%m-%d"), hash(str(instance.pk) + settings.SECRET_KEY)), File(temp))
         instance.save()
 
 
