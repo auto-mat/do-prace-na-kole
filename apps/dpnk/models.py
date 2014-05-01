@@ -1434,6 +1434,8 @@ class Competition(models.Model):
     class Meta:
         verbose_name = _(u"Soutěž")
         verbose_name_plural = _(u"Soutěže")
+        ordering = ('type', 'name')
+
     name = models.CharField(
         unique=False,
         verbose_name=_(u"Jméno soutěže"),
