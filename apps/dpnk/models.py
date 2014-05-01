@@ -1454,7 +1454,7 @@ class Competition(models.Model):
         )
     date_from = models.DateField(
         verbose_name=_(u"Datum začátku soutěže"),
-        help_text=_(u"Po tomto datu nebude možné se do soutěže přihlásit"),
+        help_text=_(u"Od tohoto data se počítají jízdy"),
         default=None,
         null=False, blank=False)
     date_to = models.DateField(
@@ -1505,6 +1505,13 @@ class Competition(models.Model):
         verbose_name=_(u"Soutěž je veřejná"),
         default=True,
         null=False)
+    entry_after_beginning_days = models.IntegerField(
+        verbose_name=_(u"Prodloužené přihlášky"),
+        help_text=_(u"Počet dní po začátku soutěže, kdy je ještě možné se přihlásit"),
+        default=7,
+        blank=False,
+        null=False,
+    )
 
     def get_competitors(self):
         return results.get_competitors(self)
@@ -1517,6 +1524,9 @@ class Competition(models.Model):
 
     def has_started(self):
         return self.date_from <= util.today()
+
+    def has_entry_opened(self):
+        return self.date_from + datetime.timedelta(self.entry_after_beginning_days) <= util.today()
 
     def has_finished(self):
         return not self.date_to >= util.today()
@@ -1538,7 +1548,7 @@ class Competition(models.Model):
             return 'before_beginning'
         if self.type == 'questionnaire' and self.has_finished():
             return 'after_end'
-        if self.type != 'questionnaire' and self.has_started():
+        if self.type != 'questionnaire' and self.has_entry_opened():
             return 'after_beginning'
 
         if not user_attendance.is_libero() == (self.competitor_type == 'liberos'):
