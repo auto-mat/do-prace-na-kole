@@ -171,7 +171,7 @@ class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedF
     save_as = True
     actions = [recalculate_competitions_results]
 
-    readonly_fields = ['competition_results_link', 'questionnaire_results_link', 'draw_link']
+    readonly_fields = ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'rules']
 
     def competition_results_link(self, obj):
         return mark_safe(u'<a href="%s?soutez=%s">výsledky</a>' % (wp_reverse('vysledky_souteze'), obj.slug))
