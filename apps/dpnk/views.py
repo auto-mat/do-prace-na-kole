@@ -554,7 +554,7 @@ def trip_active(day, today):
 @must_be_approved_for_team
 def rides(
         request, user_attendance=None, template='registration/rides.html',
-        success_url=""):
+        success_url=None):
     days = util.days(user_attendance.campaign)
     today = util.today()
 
@@ -597,7 +597,9 @@ def rides(
             trip.save()
 
         results.recalculate_result_competitor(user_attendance)
-        return redirect(wp_reverse(success_url))
+
+        if success_url:
+            return redirect(wp_reverse(success_url))
 
     trips = {}
     for t in Trip.objects.filter(user_attendance=user_attendance):
@@ -732,7 +734,7 @@ def other_team_members(
 @must_be_approved_for_team
 def admissions(
         request, template, user_attendance=None,
-        success_url="",
+        success_url=None,
         ):
     if request.method == 'POST':
         if 'admission_competition_id' in request.POST and request.POST['admission_competition_id']:
@@ -741,7 +743,8 @@ def admissions(
         if 'cancellation_competition_id' in request.POST and request.POST['cancellation_competition_id']:
             competition = Competition.objects.get(id=request.POST['cancellation_competition_id'])
             competition.make_admission(user_attendance, False)
-        return redirect(wp_reverse(success_url))
+        if success_url:
+            return redirect(wp_reverse(success_url))
 
     competitions = user_attendance.get_competitions()
     for competition in competitions:
