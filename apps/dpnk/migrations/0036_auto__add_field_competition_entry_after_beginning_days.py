@@ -13,10 +13,18 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.IntegerField')(default=7),
                       keep_default=False)
 
+        # Adding field 'Competition.rules'
+        db.add_column(u'dpnk_competition', 'rules',
+                      self.gf('django.db.models.fields.TextField')(default=None, null=True, blank=True),
+                      keep_default=False)
+
 
     def backwards(self, orm):
         # Deleting field 'Competition.entry_after_beginning_days'
         db.delete_column(u'dpnk_competition', 'entry_after_beginning_days')
+
+        # Deleting field 'Competition.rules'
+        db.delete_column(u'dpnk_competition', 'rules')
 
 
     models = {
@@ -149,6 +157,7 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_public': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '160'}),
+            'rules': ('django.db.models.fields.TextField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'slug': ('django.db.models.fields.SlugField', [], {'default': "''", 'unique': 'True', 'max_length': '50'}),
             'team_competitors': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'competitions'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['dpnk.Team']"}),
             'type': ('django.db.models.fields.CharField', [], {'max_length': '16'}),

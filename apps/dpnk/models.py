@@ -1512,6 +1512,12 @@ class Competition(models.Model):
         blank=False,
         null=False,
     )
+    rules = models.TextField(
+        verbose_name=_(u"Pravidla soutěže"),
+        default=None,
+        blank=True,
+        null=True,
+    )
 
     def get_competitors(self):
         return results.get_competitors(self)
