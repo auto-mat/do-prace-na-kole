@@ -162,6 +162,11 @@ def recalculate_competitions_results(modeladmin, request, queryset):
 recalculate_competitions_results.short_description = _(u"Přepočítat výsledku vybraných soutěží")
 
 
+class QuestionInline(EnhancedAdminMixin, admin.TabularInline):
+    model = models.Question
+    extra = 0
+
+
 class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedFieldAdmin):
     list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'entry_after_beginning_days', 'city', 'company__name', 'competition_results_link', 'questionnaire_results_link', 'draw_link', 'get_competitors_count', 'url', 'id')
     filter_horizontal = ('team_competitors', 'company_competitors')
@@ -170,6 +175,7 @@ class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedF
     list_filter = ('campaign', 'city', 'without_admission', 'is_public', 'competitor_type', 'type')
     save_as = True
     actions = [recalculate_competitions_results]
+    inlines = [ QuestionInline, ]
 
     readonly_fields = ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'rules']
 
