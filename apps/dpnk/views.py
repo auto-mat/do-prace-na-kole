@@ -307,6 +307,7 @@ class ConfirmDeliveryView(UpdateView):
     def get_object(self):
         return self.user_attendance.package_shipped()
 
+    @method_decorator(user_attendance_has(lambda ua: not ua.t_shirt_size.ship, string_concat("<div class='text-warning'>", _(u"Startovní balíček se neodesílá, pokud nechcete žádné tričko."), "</div>")))
     @method_decorator(user_attendance_has(lambda ua: not ua.package_shipped(), string_concat("<div class='text-warning'>", _(u"Startovní balíček ještě nebyl odeslán"), "</div>")))
     @method_decorator(user_attendance_has(lambda ua: ua.package_delivered(), string_concat("<div class='text-warning'>", _(u"Doručení startovního balíčku potvrzeno"), "</div>")))
     @method_decorator(must_be_competitor)
