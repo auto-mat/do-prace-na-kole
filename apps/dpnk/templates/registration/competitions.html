@@ -13,7 +13,7 @@
 <h4>{{ competition.name }}</h4>
 {% if competition.has_started %}
    {% if competition.type != 'questionnaire' or competition.has_finished %}
-   {% if competition.my_results.result %}
+   {% if competition.my_results.result and competition.competitor_has_admission %}
       {{ competition.my_results.position|ordinal }} místo z {{ competition.competitor_count|intcomma }}
       {% if competition.competitor_type == 'single_user' %}
          jed&shy;not&shy;liv&shy;ců
