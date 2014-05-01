@@ -11,6 +11,21 @@
 <input type="hidden" id="cancellation_competition_id" name="cancellation_competition_id"/>
 {% for competition in competitions %}
 <h4>{{ competition.name }}</h4>
+<i>{% if competition.company %}
+   {% trans "vnitrofiremní" %}
+{% endif %}
+{% if competition.type == 'questionnaire' %}
+   do&shy;ta&shy;zník
+{% elif competition.type == 'frequency' %}
+   {% trans "soutěž na pravidelnost" %}
+{% elif competition.type == 'length' %}
+   {% trans "soutěž na vzdálenost" %}
+{% endif %}
+{% if competition.company %}
+   {% trans "společnosti" %} {{ competition.company }}
+{% endif %}</i>
+<br/>
+<br/>
 {% if competition.has_started %}
    {% if competition.type != 'questionnaire' or competition.has_finished %}
    {% if competition.my_results.result and competition.competitor_has_admission %}
