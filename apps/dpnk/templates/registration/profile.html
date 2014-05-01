@@ -80,7 +80,10 @@
 {% endif %}
 
 {% if team and payment_status == 'no_admission' or payment_status == 'done' and profile.t_shirt_size %}
-   {% if is_package_shipped %}
+   {% if not profile.t_shirt_size.ship %}
+      <div
+         class="btn btn-block btn-success disabled">{% trans "Pokud nechcete žádné triko, startovní balíček se neposílá" %}</div>
+   {% elif is_package_shipped %}
       {% if is_package_delivered %}
          <a href="#"
             class="btn btn-block btn-success disabled">{% trans "Startovní balíček doručen" %}</a>
