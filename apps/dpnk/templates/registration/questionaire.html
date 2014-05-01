@@ -1,7 +1,7 @@
 {% load i18n %}
 
 <h2>{{ questionaire.name }}</h2>
-<a class="btn btn-block btn-info" href="{{ questionaire.url }}" target="_blank">{% trans "Pravidla" %}</a>
+<a class="btn btn-block btn-info" href="{{ questionaire.url }}" target="_blank">{% trans "Další informace o soutěži" %}</a>
 <br/>
 <div id="questionaire-{{ questionaire.slug }}">
 <form name="question" method="POST" enctype="multipart/form-data">
