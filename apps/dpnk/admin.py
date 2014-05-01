@@ -564,7 +564,7 @@ class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
         return obj.question.competition
 
 
-class QuestionAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+class QuestionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('text', 'type', 'order', 'date', 'competition', 'answers_link', 'id', )
     ordering = ('order', 'date',)
     list_filter = ('competition__campaign', 'competition',)
