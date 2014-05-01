@@ -2,6 +2,8 @@
 {% load dpnk_tags %}
 {% load i18n %}
 
+{% trans "Datum přijetí k sestavení: " %}{{ user_attendance.package_shipped.created.date }}
+<br/>
 {% trans "Triko: " %}{{ user_attendance.package_shipped.t_shirt_size }}
 <br/>
 {% trans "Adresa: " %}{{ user_attendance.team.subsidiary }}
