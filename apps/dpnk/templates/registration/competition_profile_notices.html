@@ -1,0 +1,11 @@
+{% load url from future %}
+{% load dpnk_tags %}
+{% load i18n %}
+
+{% if not user_attendance.package_shipped %}
+   <div class="btn btn-block btn-warning disabled">{% trans "Startovní balíček ještě nebyl odeslán" %}</div>
+{% endif %}
+{% if not user_attendance.package_delivered %}
+   <a href="{% wp_url 'balicek' %}"
+      class="btn btn-block btn-warning">{% trans "Startovní balíček odeslán, sledovat jeho pohyb" %}</a>
+{% endif %}
