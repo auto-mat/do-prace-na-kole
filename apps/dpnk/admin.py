@@ -568,6 +568,7 @@ class QuestionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.Model
     list_display = ('text', 'type', 'order', 'date', 'competition', 'answers_link', 'id', )
     ordering = ('order', 'date',)
     list_filter = ('competition__campaign', 'competition',)
+    search_fields = ('text',)
 
     readonly_fields = ['choices', 'answers_link', ]
 
