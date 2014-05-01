@@ -199,7 +199,7 @@ class RecalculateResultCompetitorThread(threading.Thread):
         recalculate_result_competitor_nothread(self.user_attendance)
 
 def recalculate_result_competitor_nothread(user_attendance):
-    for competition in models.Competition.objects.all():
+    for competition in get_competitions(user_attendance):
         if competition.competitor_type == 'team' and user_attendance.team:
             recalculate_result(competition, user_attendance.team)
         elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
