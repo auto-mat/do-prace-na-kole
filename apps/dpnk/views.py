@@ -544,11 +544,25 @@ def profile_access(request, user_attendance=None):
         }, context_instance=RequestContext(request))
 
 
-def trip_active(day, today):
+def trip_active_last7(day, today):
     return (
         (day <= today)
-        and (day > today - datetime.timedelta(days=14))
+        and (day > today - datetime.timedelta(days=7))
         )
+
+
+def trip_active_last_week(day, today):
+    return (
+            (day <= today)
+        and (
+            (
+                day.isocalendar()[1] == today.isocalendar()[1])
+            or
+                (today.weekday() == 0 and day.isocalendar()[1]+1 == today.isocalendar()[1])
+            )
+        )
+
+trip_active = trip_active_last_week
 
 
 @login_required_simple
