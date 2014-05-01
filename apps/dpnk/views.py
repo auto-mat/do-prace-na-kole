@@ -849,6 +849,7 @@ def questionaire(
         user_attendance=None,
         success_url='profil',
         ):
+    questionnaire = models.Competition.objects.get(slug=questionaire_slug)
     userprofile = request.user.get_profile()
     error = False
     empty_answer = False
@@ -928,7 +929,7 @@ def questionaire(
     return render_to_response(template, {
         'user': userprofile,
         'questions': questions,
-        'questionaire': questionaire_slug,
+        'questionaire': questionnaire,
         'media': settings.MEDIA_URL,
         'error': error,
         'is_actual': competition.is_actual(),

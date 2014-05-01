@@ -1,6 +1,7 @@
 {% load i18n %}
 
-<div id="questionaire-{{ questionaire }}">
+<h2>{{ questionaire.name }}</h2>
+<div id="questionaire-{{ questionaire.slug }}">
 <form name="question" method="POST" enctype="multipart/form-data">
 {% for question in questions %}
 {% if not forloop.first %}
@@ -45,7 +46,7 @@
 {% if error %}
    <div class="text-error">{% trans "Ne všechny otázky byly zodpovězeny. Prosím zodpovězte je." %}</div>
 {% endif %}
-<input type="hidden" name="questionaire" value="{{ questionaire }}">
+<input type="hidden" name="questionaire" value="{{ questionaire.slug }}">
 {% if is_actual %}
 <button class="submit submit_once btn btn-block btn-primary" type="button">{% trans "Odeslat" %}</button>
 {% endif %}
