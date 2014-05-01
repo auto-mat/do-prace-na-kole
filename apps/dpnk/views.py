@@ -571,7 +571,7 @@ trip_active = trip_active_last_week
 @user_attendance_has(lambda ua: not ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Vyplnit jízdy můžete až po vstupu do soutěže."), "</div>"))
 def rides(
         request, user_attendance=None, template='registration/rides.html',
-        success_url=None):
+        success_url=""):
     days = util.days(user_attendance.campaign)
     today = util.today()
 
@@ -615,7 +615,7 @@ def rides(
 
         results.recalculate_result_competitor(user_attendance)
 
-        if success_url:
+        if success_url is not None:
             return redirect(wp_reverse(success_url))
 
     trips = {}
@@ -751,7 +751,7 @@ def other_team_members(
 @must_be_approved_for_team
 def admissions(
         request, template, user_attendance=None,
-        success_url=None,
+        success_url="",
         ):
     if request.method == 'POST':
         if 'admission_competition_id' in request.POST and request.POST['admission_competition_id']:
@@ -760,7 +760,7 @@ def admissions(
         if 'cancellation_competition_id' in request.POST and request.POST['cancellation_competition_id']:
             competition = Competition.objects.get(id=request.POST['cancellation_competition_id'])
             competition.make_admission(user_attendance, False)
-        if success_url:
+        if success_url is not None:
             return redirect(wp_reverse(success_url))
 
     competitions = user_attendance.get_competitions()
