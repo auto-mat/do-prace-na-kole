@@ -257,10 +257,20 @@ class PaymentTypeForm(forms.Form):
             )
 
 
-class ConfirmDeliveryForm(forms.Form):
-    package_delivered = forms.BooleanField(
-            label=_(u"Startovní balíček mi již byl doručen"),
+class ConfirmDeliveryForm(forms.ModelForm):
+    CHOICES=[(models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED, _(u"Startovní balíček mi již byl doručen.")),
+             (models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED, _(u"Startovní balíček mi ještě nebyl doručen.")),
+             ]
+
+    status = forms.ChoiceField(
+            label=_(u"Doručení balíčku"),
+            choices=CHOICES,
+            widget=forms.RadioSelect(),
             )
+
+    class Meta:
+        model = models.PackageTransaction
+        fields = ('status',)
 
 
 class ConfirmTeamInvitationForm(forms.Form):

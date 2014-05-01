@@ -294,20 +294,20 @@ class RegistrationView(FormView):
         return redirect(wp_reverse(self.success_url))
 
 
-class ConfirmDeliveryView(FormView):
+class ConfirmDeliveryView(UpdateView):
     template_name = 'generic_form_template.html'
     form_class = forms.ConfirmDeliveryForm
     success_url = 'profil'
 
     def form_valid(self, form):
-        if form.cleaned_data['package_delivered']:
-            package = self.user_attendance.package_shipped()
-            package.status = models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED
-            package.save()
+        super(ConfirmDeliveryView, self).form_valid(form)
         return redirect(wp_reverse(self.success_url))
 
+    def get_object(self):
+        return self.user_attendance.package_shipped()
+
     @method_decorator(user_attendance_has(lambda ua: not ua.package_shipped(), string_concat("<div class='text-warning'>", _(u"Startovní balíček ještě nebyl odeslán"), "</div>")))
-    @method_decorator(user_attendance_has(lambda ua: ua.package_delivered(), string_concat("<div class='text-warning'>", _(u"Startovní balíček mi již byl doručen"), "</div>")))
+    @method_decorator(user_attendance_has(lambda ua: ua.package_delivered(), string_concat("<div class='text-warning'>", _(u"Doručení startovního balíčku potvrzeno"), "</div>")))
     @method_decorator(must_be_competitor)
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']

@@ -1143,6 +1143,7 @@ class PackageTransaction(Transaction):
         PACKAGE_ASSEMBLED = 20003
         PACKAGE_SENT = 20004
         PACKAGE_DELIVERY_CONFIRMED = 20005
+        PACKAGE_DELIVERY_DENIED = 20006
 
     STATUS = (
         (Status.PACKAGE_NEW, 'Nový'),
@@ -1150,13 +1151,15 @@ class PackageTransaction(Transaction):
         (Status.PACKAGE_ASSEMBLED, 'Sestaven'),
         (Status.PACKAGE_SENT, 'Odeslán'),
         (Status.PACKAGE_DELIVERY_CONFIRMED, 'Doručení potvrzeno'),
+        (Status.PACKAGE_DELIVERY_DENIED, 'Dosud nedoručeno'),
         )
 
     shipped_statuses = [
         Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
         Status.PACKAGE_ASSEMBLED,
         Status.PACKAGE_SENT,
-        Status.PACKAGE_DELIVERY_CONFIRMED
+        Status.PACKAGE_DELIVERY_CONFIRMED,
+        Status.PACKAGE_DELIVERY_DENIED,
         ]
 
     class Meta:
