@@ -1118,6 +1118,7 @@ def invite(
 
 @must_be_coordinator
 @login_required_simple
+@user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže již nemůžete měnit parametry týmu."), "</div>"))
 def team_admin_team(
         request,
         backend='registration.backends.simple.SimpleBackend',
