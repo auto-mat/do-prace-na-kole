@@ -196,13 +196,16 @@ class RecalculateResultCompetitorThread(threading.Thread):
         super(RecalculateResultCompetitorThread, self).__init__(**kwargs)
 
     def run(self):
-        for competition in models.Competition.objects.all():
-            if competition.competitor_type == 'team' and self.user_attendance.team:
-                recalculate_result(competition, self.user_attendance.team)
-            elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-                recalculate_result(competition, self.user_attendance)
-            elif competition.competitor_type == 'company':
-                raise NotImplementedError("Company competitions are not working yet")
+        recalculate_result_competitor_nothread(self.user_attendance)
+
+def recalculate_result_competitor_nothread(user_attendance):
+    for competition in models.Competition.objects.all():
+        if competition.competitor_type == 'team' and user_attendance.team:
+            recalculate_result(competition, user_attendance.team)
+        elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
+            recalculate_result(competition, user_attendance)
+        elif competition.competitor_type == 'company':
+            raise NotImplementedError("Company competitions are not working yet")
 
 def recalculate_result_competitor(user_attendance):
     RecalculateResultCompetitorThread(user_attendance).start()

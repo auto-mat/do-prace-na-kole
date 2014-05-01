@@ -1602,6 +1602,7 @@ class Competition(models.Model):
                     self.company_competitors.add(userprofile.team.subsidiary.company)
                 else:
                     self.company_competitors.remove(userprofile.team.subsidiary.company)
+        results.recalculate_result_competitor_nothread(userprofile)
 
     def __unicode__(self):
         return "%s" % self.name
