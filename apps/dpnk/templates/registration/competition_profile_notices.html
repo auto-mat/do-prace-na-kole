@@ -2,6 +2,13 @@
 {% load dpnk_tags %}
 {% load i18n %}
 
+{% if user_attendance.team.coordinator_campaign == user_attendance %}
+   {% if user_attendance.team.unapproved_members.count > 0 %}
+      <a href="{% wp_url 'team_admin' %}"
+         class="btn btn-block btn-warning">{% trans "Ve vašem týmu jsou neodsouhlasení členové. Odsouhlaste je!" %}</a>
+   {% endif %}
+{% endif %}
+
 {% if user_attendance.t_shirt_size.ship %}
 {% if not user_attendance.package_shipped %}
    <div class="btn btn-block btn-warning disabled">{% trans "Startovní balíček ještě nebyl odeslán" %}</div>
