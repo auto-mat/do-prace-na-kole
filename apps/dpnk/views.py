@@ -138,6 +138,7 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
 @login_required_simple
 @must_be_competitor
 @user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), string_concat(u'<div class="text-error">', _(u'Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.') % wp_reverse('team_admin'), u"</div>"))
+@user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže nemůžete měnit tým."), "</div>"))
 def change_team(
         request,
         success_url=None, form_class=ChangeTeamForm,
@@ -552,6 +553,7 @@ def trip_active(day, today):
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
+@user_attendance_has(lambda ua: not ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Vyplnit jízdy můžete až po vstupu do soutěže."), "</div>"))
 def rides(
         request, user_attendance=None, template='registration/rides.html',
         success_url=None):
