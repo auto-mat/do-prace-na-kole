@@ -406,6 +406,12 @@ class Campaign(models.Model):
         ).exclude(transactions__packagetransaction__status__in=PackageTransaction.shipped_statuses).\
             exclude(team=None).distinct()
 
+    def phase(self, phase_type):
+        try:
+            return self.phase_set.get(type=phase_type)
+        except models.Phase.DoesNotExist:
+            return None
+
 
 class Phase(models.Model):
     """fáze kampaně"""

@@ -10,8 +10,8 @@ def daterange(start_date, end_date):
 
 def days(campaign):
     days = []
-    competition_start = campaign.phase_set.get(type="competition").date_from
-    competition_end = campaign.phase_set.get(type="competition").date_to
+    competition_start = campaign.phase("competition").date_from
+    competition_end = campaign.phase("competition").date_to
     for day in daterange(competition_start, competition_end):
         if day.weekday() not in (5,6):
             days.append(day)
