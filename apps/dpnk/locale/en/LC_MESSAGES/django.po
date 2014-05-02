@@ -2163,7 +2163,7 @@ msgstr "Before competition admission you have to have your team"
 
 #: templates/registration/profile.html:118
 msgid "Začít soutěžit budete moci až budete "
-msgstr "You can begin to compete after "
+msgstr "You can begin to compete after you "
 
 #: templates/registration/profile.html:120
 #: templates/registration/profile.html:124
