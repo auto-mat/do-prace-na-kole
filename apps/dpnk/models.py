@@ -406,6 +406,12 @@ class Campaign(models.Model):
         ).exclude(transactions__packagetransaction__status__in=PackageTransaction.shipped_statuses).\
             exclude(team=None).distinct()
 
+    def phase(self, phase_type):
+        try:
+            return self.phase_set.get(type=phase_type)
+        except models.Phase.DoesNotExist:
+            return None
+
 
 class Phase(models.Model):
     """fáze kampaně"""
@@ -995,6 +1001,8 @@ class Invoice(models.Model):
                 self.sequence_number = last_transaction.sequence_number + 1
             else:
                 self.sequence_number = first
+
+            self.taxable_date = min(datetime.date.today(), self.campaign.phase("competition").date_from)
         super(Invoice, self).save(*args, **kwargs)
 
     def payments_to_add(self):

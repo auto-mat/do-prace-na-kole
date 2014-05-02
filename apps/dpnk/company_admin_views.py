@@ -209,7 +209,7 @@ class CompanyCompetitionView(UpdateView):
         else:
             if Competition.objects.filter(company=company, campaign=campaign).count() >= settings.MAX_COMPETITIONS_PER_COMPANY:
                 raise Http404(_(u"<div class='text-warning'>Překročen maximální počet soutěží pro společnost.</div>"))
-            phase = campaign.phase_set.get(type='competition')
+            phase = campaign.phase('competition')
             competition = Competition(company=company, campaign=campaign, date_from=phase.date_from, date_to=phase.date_to)
         return competition
 

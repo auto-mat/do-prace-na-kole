@@ -681,10 +681,7 @@ def profile(request, user_attendance=None, success_url = 'competition_profile'):
     is_package_shipped = user_attendance.package_shipped() is not None
     is_package_delivered = user_attendance.package_delivered() is not None
 
-    try:
-        phase = user_attendance.campaign.phase_set.get(type="admissions")
-    except models.Phase.DoesNotExist:
-        phase = None
+    phase = user_attendance.campaign.phase("admissions")
     admissions_phase_is_active = phase and phase.is_actual()
 
     cant_enter_competition_reasons = {
