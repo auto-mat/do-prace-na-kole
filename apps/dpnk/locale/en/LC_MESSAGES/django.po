@@ -1759,12 +1759,12 @@ msgstr "The competition has begun, it is not possible to register"
 #: templates/registration/admissions.html:73
 #: templates/registration/competitions.html:86
 msgid "Do&shy;taz&shy;ník ješ&shy;tě ne&shy;ní ak&shy;tiv&shy;ní."
-msgstr "The questionnaire is in process"
+msgstr "The questionnaire is not active yet"
 
 #: templates/registration/admissions.html:75
 #: templates/registration/competitions.html:88
 msgid "Do&shy;taz&shy;ník již ne&shy;ní ak&shy;tiv&shy;ní."
-msgstr "The questionnaire is not active yet"
+msgstr "The questionnaire filling has ended"
 
 #: templates/registration/admissions.html:79
 #: templates/registration/competitions.html:92
