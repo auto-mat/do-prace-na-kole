@@ -79,7 +79,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "dpnk.context_processors.settings_properties",
 )
 AUTHENTICATION_BACKENDS = (
-    'dpnk.auth_backend.EmailModelBackend',
+    'dpnk.auth.EmailModelBackend',
     "django_su.backends.SuBackend",
 )
 ROOT_URLCONF = 'urls'
