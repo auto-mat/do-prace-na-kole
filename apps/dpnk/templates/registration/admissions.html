@@ -27,20 +27,20 @@
          </td>
          <td>
             {% if competition.type == 'questionnaire' %}
-               do&shy;ta&shy;zník
+               {% trans "do&shy;ta&shy;zník" %}
             {% elif competition.type == 'frequency' %}
-               pra&shy;vi&shy;del&shy;nost
+               {% trans "pra&shy;vi&shy;del&shy;nost" %}
             {% elif competition.type == 'length' %}
-               vzdá&shy;le&shy;nost
+               {% trans "vzdá&shy;le&shy;nost" %}
             {% endif %}
             {% if competition.competitor_type == 'single_user' %}
-               jed&shy;not&shy;liv&shy;ců
+               {% trans "jed&shy;not&shy;liv&shy;ců" %}
             {% elif competition.competitor_type == 'liberos' %}
-               li&shy;be&shy;ros
+               {% trans "li&shy;be&shy;ros" %}
             {% elif competition.competitor_type == 'team' %}
-               tý&shy;mů
+               {% trans "tý&shy;mů" %}
             {% elif competition.competitor_type == 'company' %}
-               spo&shy;le&shy;čno&shy;stí
+               {% trans "spo&shy;le&shy;čno&shy;stí" %}
             {% endif %}
          </td>
          <td>
@@ -48,9 +48,9 @@
             {% if competition.type == 'questionnaire' %}
                <a href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">
                   {% if competition.competitor_has_admission %}
-                     změ&shy;nit od&shy;po&shy;vě&shy;di
+                     {% trans "změ&shy;nit od&shy;po&shy;vě&shy;di" %}
                   {% else %}
-                     vy&shy;pl&shy;nit do&shy;taz&shy;ník
+                     {% trans "vy&shy;pl&shy;nit do&shy;taz&shy;ník" %}
                   {% endif %}
                </a>
             {% elif competition.type == 'frequency' or competition.type == 'length' %}

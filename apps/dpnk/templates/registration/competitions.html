@@ -15,7 +15,7 @@
    {% trans "vnitrofiremní" %}
 {% endif %}
 {% if competition.type == 'questionnaire' %}
-   do&shy;ta&shy;zník
+   {% trans "do&shy;ta&shy;zník" %}
 {% elif competition.type == 'frequency' %}
    {% trans "soutěž na pravidelnost" %}
 {% elif competition.type == 'length' %}
@@ -29,15 +29,15 @@
 {% if competition.has_started %}
    {% if competition.type != 'questionnaire' or competition.has_finished %}
    {% if competition.my_results.result and competition.competitor_has_admission %}
-      {{ competition.my_results.position|ordinal }} místo z {{ competition.competitor_count|intcomma }}
+      {{ competition.my_results.position|ordinal }}{% trans " místo z " %}{{ competition.competitor_count|intcomma }}
       {% if competition.competitor_type == 'single_user' %}
-         jed&shy;not&shy;liv&shy;ců
+         {% trans "jed&shy;not&shy;liv&shy;ců" %}
       {% elif competition.competitor_type == 'liberos' %}
-         li&shy;be&shy;ros
+         {% trans "li&shy;be&shy;ros" %}
       {% elif competition.competitor_type == 'team' %}
-         tý&shy;mů
+         {% trans "tý&shy;mů" %}
       {% elif competition.competitor_type == 'company' %}
-         spo&shy;le&shy;čno&shy;stí
+         {% trans "spo&shy;le&shy;čno&shy;stí" %}
       {% endif %}
       {% spaceless %}
       (
@@ -61,9 +61,9 @@
    {% if competition.type == 'questionnaire' %}
       <a class="btn btn-primary" href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">
          {% if competition.competitor_has_admission %}
-            změ&shy;nit od&shy;po&shy;vě&shy;di
+            {% trans "Změ&shy;nit od&shy;po&shy;vě&shy;di" %}
          {% else %}
-            vy&shy;pl&shy;nit do&shy;taz&shy;ník
+            {% trans "Vy&shy;pl&shy;nit do&shy;taz&shy;ník" %}
          {% endif %}
       </a>
    {% elif competition.type == 'frequency' or competition.type == 'length' %}
@@ -107,7 +107,7 @@
 
    {% if competition.has_started %}
    {% if competition.type != 'questionnaire' or competition.has_finished %}
-      <a class="btn btn-primary" href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">Výsledky</a>
+      <a class="btn btn-primary" href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">{% trans "Výsledky" %}</a>
    {% endif %}
    {% endif %}
 {% if competition.url %}

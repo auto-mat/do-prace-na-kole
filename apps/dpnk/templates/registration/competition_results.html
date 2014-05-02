@@ -4,37 +4,37 @@
 {% load humanize %}
 {% load softhyphen_tags %}
 
-<h4>Výsledky v soutěži {{ competition }}:</h4>
+<h4>{% trans "Výsledky v soutěži " %}{{ competition }}:</h4>
 <div></div>
 
 <table class="table table-condensed table-striped table-bordered">
 <tr>
-<th scope="column">Po&shy;řa&shy;dí</th>
+<th scope="column">{% trans "Po&shy;řa&shy;dí" %}</th>
 <th scope="column">
    {% if competition.type == 'length' %}
-      Ki&shy;lo&shy;me&shy;trů
+      {% trans "Ki&shy;lo&shy;me&shy;trů" %}
    {% elif competition.type == 'frequency' %}
-      % jízd
+      {% trans "% jízd" %}
    {% elif competition.type == 'questionnaire' %}
-      Bo&shy;dů
+      {% trans "Bo&shy;dů" %}
    {% endif %}
    {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.type != 'questionnaire' %}
-      prů&shy;měr&shy;ně
+      {% trans "prů&shy;měr&shy;ně" %}
    {% endif %}
 </th>
 
 {% if competition.type == 'frequency' %}
-   <th>Cel&shy;ko&shy;vý po&shy;čet jí&shy;zd</th>
+   <th>{% trans "Cel&shy;ko&shy;vý po&shy;čet jí&shy;zd" %}</th>
 {% elif competition.type == 'length' and competition.competitor_type == 'team' %}
-   <th>Cel&shy;ko&shy;vý po&shy;čet ki&shy;lo&shy;me&shy;trů</th>
+   <th>{% trans "Cel&shy;ko&shy;vý po&shy;čet ki&shy;lo&shy;me&shy;trů" %}</th>
 {% endif %}
 
 {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
-<th scope="column">Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch v
+<th scope="column">{% trans "Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch v " %}
    {% if competition.competitor_type == 'team' %}
-      tý&shy;mu
+      {% trans "tý&shy;mu" %}
    {% elif competition.competitor_type == 'company' %}
-      fir&shy;mě
+      {% trans "fir&shy;mě" %}
    {% endif %}
 </th>
 {% endif %}
