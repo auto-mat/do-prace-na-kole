@@ -636,9 +636,9 @@ def rides(
             cd['default_distance_from'] = "" if trips[d].distance_from is None else trips[d].distance_from
             trip_count += int(trips[d].trip_to) + int(trips[d].trip_from)
             if trips[d].distance_to:
-                distance += trips[d].distance_to
+                distance += trips[d].distance_to_cutted()
             if trips[d].distance_from:
-                distance += trips[d].distance_from
+                distance += trips[d].distance_from_cutted()
         else:
             cd['default_trip_to'] = False
             cd['default_trip_from'] = False
