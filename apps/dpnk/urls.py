@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 
 from django.conf import settings
 import views
+import dpnk.auth
 import company_admin_views
 from django.contrib.auth.decorators import login_required
 from decorators import must_be_company_admin, must_be_in_phase, must_be_in_group, login_required_simple, must_be_competitor, must_have_team
@@ -126,7 +127,9 @@ urlpatterns = patterns(
         {'success': False}),
     url(r'^zapomenute_heslo/$',
         'django.contrib.auth.views.password_reset',
-        name='password_reset'),
+        {'password_reset_form': dpnk.auth.PasswordResetForm},
+        name='password_reset',
+        ),
     url(r'^zapomenute_heslo/odeslano/$',
         'django.contrib.auth.views.password_reset_done',
         name='password_reset_done'),
