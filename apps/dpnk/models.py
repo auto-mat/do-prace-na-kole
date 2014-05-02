@@ -973,6 +973,8 @@ class Invoice(models.Model):
                 self.sequence_number = last_transaction.sequence_number + 1
             else:
                 self.sequence_number = first
+
+            self.taxable_date = min(datetime.date.today(), self.campaign.phase("competition").date_from)
         super(Invoice, self).save(*args, **kwargs)
 
     def payments_to_add(self):
