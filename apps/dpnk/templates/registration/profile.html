@@ -79,7 +79,7 @@
       class="btn btn-block btn-warning">{% trans "Zaplatit startovné" %}</a>
 {% endif %}
 
-{% if not profile.t_shirt_size.ship %}
+{% if profile.t_shirt_size and not profile.t_shirt_size.ship %}
    <div
       class="btn btn-block btn-success disabled">{% trans "Pokud nechcete žádné triko, startovní balíček se neposílá" %}</div>
 {% elif team and payment_status == 'no_admission' or payment_status == 'done' and profile.t_shirt_size %}
