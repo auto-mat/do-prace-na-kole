@@ -370,6 +370,13 @@ class Campaign(models.Model):
         verbose_name=_(u"Povolit mailing list"),
         default=False,
         null=False)
+    trip_plus_distance = models.PositiveIntegerField(
+        verbose_name=_(u"Maximální navýšení vzdálenosti"),
+        help_text=_(u"Počet kilometrů, o které je možné prodloužit si jednu jízdu"),
+        default=5,
+        blank=True,
+        null=True,
+        )
     tracking_number_first = models.PositiveIntegerField(
         verbose_name=_(u"První číslo řady pro doručování balíčků"),
         default=0,
@@ -959,7 +966,7 @@ class Invoice(models.Model):
         blank=True,
         )
     invoice_pdf = models.FileField(
-        verbose_name=_("PDF faktury"),
+        verbose_name=_(u"PDF faktury"),
         upload_to='invoices',
         blank=True,
         null=True,
