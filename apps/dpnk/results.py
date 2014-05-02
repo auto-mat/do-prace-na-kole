@@ -148,17 +148,9 @@ def get_userprofile_length(user_attendance):
     # distance_from = models.Trip.objects.filter(user_attendance=user_attendance).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
     # distance_to   = models.Trip.objects.filter(user_attendance=user_attendance).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
     distance = 0
-    plus_distance = user_attendance.campaign.trip_plus_distance
     for trip in models.Trip.objects.filter(user_attendance=user_attendance):
-        if plus_distance is None or user_attendance.distance + plus_distance >= trip.distance_from:
-            distance += trip.distance_from or 0
-        else:
-            distance += user_attendance.distance + plus_distance
-
-        if plus_distance is None or user_attendance.distance + plus_distance >= trip.distance_to:
-            distance += trip.distance_to or 0
-        else:
-            distance += user_attendance.distance + plus_distance
+        distance += trip.distance_from_cutted()
+        distance += trip.distance_to_cutted()
     return distance
 
 def get_team_frequency(team):

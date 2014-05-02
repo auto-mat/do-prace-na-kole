@@ -1429,6 +1429,14 @@ class Trip(models.Model):
         default=None,
         )
 
+    def distance_from_cutted(self):
+        plus_distance = self.user_attendance.campaign.trip_plus_distance
+        return min(self.user_attendance.distance + plus_distance, self.distance_from or 0)
+
+    def distance_to_cutted(self):
+        plus_distance = self.user_attendance.campaign.trip_plus_distance
+        return min(self.user_attendance.distance + plus_distance, self.distance_to or 0)
+
 
 class Competition(models.Model):
     """Soutěž"""
