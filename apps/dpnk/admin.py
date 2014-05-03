@@ -168,7 +168,7 @@ class QuestionInline(EnhancedAdminMixin, admin.TabularInline):
 
 
 class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedFieldAdmin):
-    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'entry_after_beginning_days', 'city', 'company__name', 'competition_results_link', 'questionnaire_results_link', 'draw_link', 'get_competitors_count', 'url', 'id')
+    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'entry_after_beginning_days', 'city', 'company__name', 'competition_results_link', 'questionnaire_results_link', 'questionnaire_link', 'draw_link', 'get_competitors_count', 'url', 'id')
     filter_horizontal = ('team_competitors', 'company_competitors')
     raw_id_fields = ('user_attendance_competitors',)
     search_fields = ('name', 'company__name')
@@ -187,6 +187,11 @@ class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedF
         if obj.type == 'questionnaire':
             return mark_safe(u'<a href="%s%s">odpovědi</a>' % (wp_reverse('dotaznik'), obj.slug))
     questionnaire_results_link.short_description = u"Odpovědi"
+
+    def questionnaire_link(self, obj):
+        if obj.type == 'questionnaire':
+            return mark_safe(u'<a href="%s?questionaire=%s">dotazník</a>' % (wp_reverse('otazka'), obj.slug))
+    questionnaire_link.short_description = _(u"Dotazník")
 
     def draw_link(self, obj):
         if obj.type == 'frequency' and obj.competitor_type == 'team':
