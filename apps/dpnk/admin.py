@@ -550,6 +550,7 @@ class ChoiceTypeAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'competition', 'universal')
     inlines = [ChoiceInline]
     list_filter = ('competition__campaign', 'competition', )
+    save_as = True
 
 
 class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
@@ -575,6 +576,7 @@ class QuestionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.Model
     ordering = ('order', 'date',)
     list_filter = ('competition__campaign', 'competition',)
     search_fields = ('text',)
+    save_as = True
 
     readonly_fields = ['choices', 'answers_link', ]
 
