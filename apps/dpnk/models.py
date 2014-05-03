@@ -29,6 +29,7 @@ import avfull
 from author.decorators import with_author
 from django import forms
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save
 from django.db.utils import ProgrammingError
@@ -1711,6 +1712,12 @@ class ChoiceType(models.Model):
         return "%s" % self.name
 
 
+class QuestionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(QuestionForm, self).__init__(*args, **kwargs)
+        self.fields['choice_type'].queryset = ChoiceType.objects.filter(Q(competition=self.instance.competition) | Q(universal=True))
+
+
 class Question(models.Model):
 
     class Meta:
@@ -1754,6 +1761,7 @@ class Question(models.Model):
         blank=False)
     choice_type = models.ForeignKey(
         ChoiceType,
+        verbose_name=_(u"Typ volby"),
         null=False,
         blank=False)
 

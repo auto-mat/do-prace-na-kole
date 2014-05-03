@@ -572,6 +572,7 @@ class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
 
 
 class QuestionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
+    form = models.QuestionForm
     list_display = ('text', 'type', 'order', 'date', 'competition', 'answers_link', 'id', )
     ordering = ('order', 'date',)
     list_filter = ('competition__campaign', 'competition',)
