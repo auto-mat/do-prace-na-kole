@@ -3,11 +3,14 @@
 <h2>{{ questionaire.name }}</h2>
 <a class="btn btn-block btn-info" href="{{ questionaire.url }}" target="_blank">{% trans "Další informace o soutěži" %}</a>
 <br/>
-<div id="questionaire-{{ questionaire.slug }}">
+<div id="questionaire-{{ questionaire.slug }}" class="questionnaire" >
 <form name="question" method="POST" enctype="multipart/form-data">
 {% for question in questions %}
 {% if not forloop.first %}
    <hr/>
+{% endif %}
+{% if question.name %}
+   <h3>{{ question.name }}</h3>
 {% endif %}
 <p class="question-text">{{ question.text|safe }}</p>
 {% if question.error %}

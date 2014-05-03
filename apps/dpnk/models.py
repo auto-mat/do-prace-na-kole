@@ -1731,6 +1731,12 @@ class Question(models.Model):
         ('multiple-choice', _(u"Výběr z více odpovědí")),
         )
 
+    name = models.CharField(
+        verbose_name=_(u"Jméno"),
+        max_length=60,
+        null=True,
+        blank=True,
+    )
     text = models.TextField(
         verbose_name=_(u"Otázka"),
         max_length=500,
@@ -1766,7 +1772,7 @@ class Question(models.Model):
         blank=False)
 
     def __unicode__(self):
-        return "%s" % self.text
+        return "%s" % (self.name or self.text)
 
 
 class Choice(models.Model):
