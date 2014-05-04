@@ -1742,8 +1742,9 @@ class Question(models.Model):
     )
     text = models.TextField(
         verbose_name=_(u"Otázka"),
-        max_length=500,
-        null=False)
+        null=True,
+        blank=True,
+    )
     date = models.DateField(
         verbose_name=_(u"Den"),
         null=True, blank=True)
@@ -1772,8 +1773,9 @@ class Question(models.Model):
     choice_type = models.ForeignKey(
         ChoiceType,
         verbose_name=_(u"Typ volby"),
-        null=False,
-        blank=False)
+        default=None,
+        null=True,
+        blank=True)
 
     def __unicode__(self):
         return "%s" % (self.name or self.text)
