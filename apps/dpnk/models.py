@@ -1663,6 +1663,13 @@ class CompetitionResult(models.Model):
         blank=True,
         default=None,
         )
+    company = models.ForeignKey(
+        Company,
+        related_name="company_results",
+        null=True,
+        blank=True,
+        default=None,
+        )
     competition = models.ForeignKey(
         Competition,
         related_name="results",
