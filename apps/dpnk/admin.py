@@ -164,6 +164,7 @@ recalculate_competitions_results.short_description = _(u"Přepočítat výsledku
 
 class QuestionInline(SortableInlineAdminMixin, EnhancedAdminMixin, admin.TabularInline):
     model = models.Question
+    form = models.QuestionForm
     extra = 0
 
 

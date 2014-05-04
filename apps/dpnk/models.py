@@ -1715,7 +1715,10 @@ class ChoiceType(models.Model):
 class QuestionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(QuestionForm, self).__init__(*args, **kwargs)
-        self.fields['choice_type'].queryset = ChoiceType.objects.filter(Q(competition=self.instance.competition) | Q(universal=True))
+        if hasattr(self.instance, 'competition'):
+            self.fields['choice_type'].queryset = ChoiceType.objects.filter(Q(competition=self.instance.competition) | Q(universal=True))
+        else:
+            self.fields['choice_type'].queryset = ChoiceType.objects.filter(universal=True)
 
 
 class Question(models.Model):
@@ -1747,6 +1750,7 @@ class Question(models.Model):
     type = models.CharField(
         verbose_name=_(u"Typ"),
         choices=QTYPES,
+        default='text',
         max_length=16,
         null=False)
     with_comment = models.BooleanField(
