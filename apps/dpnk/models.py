@@ -1458,7 +1458,7 @@ class Competition(models.Model):
     class Meta:
         verbose_name = _(u"Soutěž")
         verbose_name_plural = _(u"Soutěže")
-        ordering = ('type', 'name')
+        ordering = ('-campaign', 'type', 'name')
 
     name = models.CharField(
         unique=False,
