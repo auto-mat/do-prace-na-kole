@@ -162,7 +162,7 @@ def recalculate_competitions_results(modeladmin, request, queryset):
 recalculate_competitions_results.short_description = _(u"Přepočítat výsledku vybraných soutěží")
 
 
-class QuestionInline(EnhancedAdminMixin, admin.TabularInline):
+class QuestionInline(SortableInlineAdminMixin, EnhancedAdminMixin, admin.TabularInline):
     model = models.Question
     extra = 0
 

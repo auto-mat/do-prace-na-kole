@@ -1723,7 +1723,7 @@ class Question(models.Model):
     class Meta:
         verbose_name = _(u"Anketní otázka")
         verbose_name_plural = _(u"Anketní otázky")
-        unique_together = (("competition", "order"),)
+        ordering = ("order",)
 
     QTYPES = (
         ('text', _(u"Text")),
