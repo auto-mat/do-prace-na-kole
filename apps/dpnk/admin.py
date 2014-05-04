@@ -177,6 +177,7 @@ class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedF
     save_as = True
     actions = [recalculate_competitions_results]
     inlines = [ QuestionInline, ]
+    prepopulated_fields = {'slug': ('name',)}
 
     readonly_fields = ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'rules']
 

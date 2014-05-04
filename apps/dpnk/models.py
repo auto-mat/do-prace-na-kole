@@ -1528,6 +1528,7 @@ class Competition(models.Model):
         blank=True)
     without_admission = models.BooleanField(
         verbose_name=_(u"Soutěž bez přihlášek (pro všechny)"),
+        help_text=_(u"Dotazník je obvykle na přihlášky, výkonnost také a pravidelnost bez nich."),
         default=True,
         null=False)
     is_public = models.BooleanField(
@@ -1635,6 +1636,10 @@ class Competition(models.Model):
 
     def __unicode__(self):
         return "%s" % self.name
+
+    def clean(self):
+        if self.competitor_type == 'company' and self.city != None:
+            raise ValidationError(_(u"Soutěž firem pro určité město nedává smysl."))
 
 
 class CompetitionResult(models.Model):
