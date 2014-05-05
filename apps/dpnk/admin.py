@@ -606,21 +606,18 @@ class ChoiceTypeAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 
 class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
-    list_display = ('user_attendance', 'points_given', 'choices__all', 'choices_ids__all', 'question__competition', 'comment', 'question')
-    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name')
+    list_display = ('user_attendance', 'points_given', 'choices_all', 'choices_ids_all', 'question__competition', 'comment', 'question')
+    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'question__text', 'question__name')
     list_filter = ('question__competition__campaign', 'question__competition',)
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
     raw_id_fields = ('user_attendance', )
 
-    def choices__all(self, obj):
+    def choices_all(self, obj):
         return " | ".join([ch.text for ch in obj.choices.all()])
 
-    def choices_ids__all(self, obj):
+    def choices_ids_all(self, obj):
         return ", ".join([(str(ch.pk)) for ch in obj.choices.all()])
-
-    def question__competition(self, obj):
-        return obj.question.competition
 
 
 class QuestionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
