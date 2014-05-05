@@ -1237,10 +1237,11 @@ def daily_chart(
         campaign_slug,
         template='registration/daily-chart.html',
         ):
-    values = [period_distance(day, day) for day in util.days()]
+    campaign = Campaign.objects.get(slug=campaign_slug)
+    values = [period_distance(campaign, day, day) for day in util.days(campaign)]
     return render_to_response(template, {
         'values': values,
-        'days': reversed(util.days()),
+        'days': reversed(util.days(campaign)),
         'max_value': max(values),
         }, context_instance=RequestContext(request))
 
