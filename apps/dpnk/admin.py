@@ -139,6 +139,7 @@ class SubsidiaryAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_filter = ['city']
     search_fields = ('address_recipient', 'company__name', 'address_street', )
     raw_id_fields = ('company',)
+    list_max_show_all = 10000
 
     readonly_fields = ['team_links', ]
 
@@ -257,7 +258,7 @@ class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
     model = models.UserAttendance
     form = UserAttendanceForm
     extra = 0
-    inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
+    #inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__name', 'userprofile__team__subsidiary__company__name', 'company_admin__administrated_company__name', ]
     list_max_show_all = 10000
     raw_id_fields = ('team',)
