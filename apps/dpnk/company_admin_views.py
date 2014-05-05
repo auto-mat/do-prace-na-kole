@@ -270,7 +270,7 @@ class CreateInvoiceView(FormView):
         context['company'] = self.company_admin.administrated_company
         return context
 
-    @method_decorator(must_be_in_phase("registration"))
+    @method_decorator(must_be_in_phase("registration", "competition"))
     @method_decorator(must_be_company_admin)
     @method_decorator(request_condition(lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(), "<div class='text-warning'>" + ugettext(u"Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>" % wp_reverse('edit_company')) + "</div>"))
     @method_decorator(request_condition(lambda r, a, k: k['company_admin'].company_has_invoices(), "<div class='text-warning'>" + ugettext(u"Vaše společnost již má fakturu vystavenou") + "</div>"))
