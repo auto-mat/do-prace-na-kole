@@ -389,8 +389,8 @@ def payment_type(request, user_attendance=None):
 def header_bar(request, campaign_slug):
     company_admin = None
     entered_competition = None
+    campaign = Campaign.objects.get(slug=campaign_slug)
     if request.user.is_authenticated():
-        campaign = Campaign.objects.get(slug=campaign_slug)
         company_admin = models.get_company_admin(request.user, campaign)
         try:
             entered_competition = models.UserAttendance.objects.get(campaign=campaign, userprofile__user=request.user).entered_competition
@@ -401,6 +401,7 @@ def header_bar(request, campaign_slug):
         'company_admin': company_admin,
         'user': request.user,
         'entered_competition': entered_competition,
+        'registration_phase_active': campaign.phase("registration").is_actual()
         }, context_instance=RequestContext(request))
 
 
