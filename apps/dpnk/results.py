@@ -197,7 +197,7 @@ def recalculate_result_competitor_nothread(user_attendance):
         elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
             recalculate_result(competition, user_attendance)
         elif competition.competitor_type == 'company':
-            raise NotImplementedError("Company competitions are not working yet")
+            recalculate_result(competition, user_attendance.team.subsidiary.company)
 
 def recalculate_result_competitor(user_attendance):
     RecalculateResultCompetitorThread(user_attendance).start()
@@ -252,7 +252,20 @@ def recalculate_result(competition, competitor):
             competition_result.result = get_userprofile_frequency(user_attendance)
 
     elif competition.competitor_type == 'company':
-        raise NotImplementedError("Company competitions are not working yet")
+        company = competitor
+        company_admin = company.company_admin.get().user_attendance(competition.campaign)
+        if not (competition.has_admission(company_admin)):
+            models.CompetitionResult.objects.filter(company=company, competition=competition).delete()
+            return
+
+        competition_result, created = models.CompetitionResult.objects.get_or_create(company=company, competition=competition)
+
+        if competition.type == 'questionnaire':
+            points = models.Choice.objects.filter(answer__user_attendance=company_admin, answer__question__competition=competition).aggregate(Sum('points'))['points__sum'] or 0
+            points_given = models.Answer.objects.filter(user_attendance=company_admin, question__competition=competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
+            competition_result.result = points + points_given
+        elif competition.type == 'length' or  competition.type == 'frequency':
+            raise NotImplementedError("Company length and frequency competitions are not implemented yet")
 
     competition_result.save()
 

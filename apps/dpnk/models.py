@@ -857,6 +857,9 @@ class CompanyAdmin(models.Model):
     def company_has_invoices(self):
         return self.administrated_company.invoice_set.filter(campaign=self.campaign).exists()
 
+    def user_attendance(self, campaign):
+        return self.user.get_profile().userattendance_set.get(campaign=campaign)
+
     def __unicode__(self):
         return self.user.get_full_name()
 
