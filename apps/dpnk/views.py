@@ -541,6 +541,7 @@ def profile_access(request, user_attendance=None):
         city_redirect = ""
 
     return render_to_response('registration/profile_access.html', {
+        'city': user_attendance.team.subsidiary.city,
         'city_redirect': city_redirect
         }, context_instance=RequestContext(request))
 
