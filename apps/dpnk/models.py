@@ -197,13 +197,13 @@ class Company(models.Model):
         verbose_name=_(u"DIČ"),
         max_length=10,
         default="",
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
         )
 
     def has_filled_contact_information(self):
         address_complete = self.address.street and self.address.street_number and self.address.psc and self.address.city
-        return self.name and address_complete and self.ico and self.dic
+        return self.name and address_complete and self.ico
 
     def __unicode__(self):
         return "%s" % self.name
