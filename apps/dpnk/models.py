@@ -1703,6 +1703,10 @@ class CompetitionResult(models.Model):
             if self.user_attendance:
                 return "%s" % self.user_attendance.userprofile.user.get_full_name()
 
+    def clean(self):
+        if ((1 if self.user_attendance else 0) + (1 if self.team else 0) + (1 if self.company else 0)) != 1:
+            raise ValidationError(_(u"Musí být zvolen právě jeden uživatel, tým nebo společnost"))
+
 
 class ChoiceType(models.Model):
     """Typ volby"""
