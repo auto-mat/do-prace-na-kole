@@ -1208,7 +1208,7 @@ def period_distance(campaign, day_from, day_to):
     return distance(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to))
 
 
-@cache_page(24 * 60 * 60)
+@cache_page(60 * 60)
 def statistics(
         request,
         variable,
@@ -1219,7 +1219,9 @@ def statistics(
     variables = {}
     variables['ujeta-vzdalenost'] = total_distance(campaign)
     variables['ujeta-vzdalenost-dnes'] = period_distance(campaign, util.today(), util.today())
-    variables['pocet-soutezicich'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True, approved_for_team='approved').count()
+    variables['pocet-zaplacenych'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True).filter(Q(transactions__status__in=models.Payment.done_statuses) | Q(team__subsidiary__city__cityincampaign__admission_fee=0)).distinct().count()
+    variables['pocet-prihlasenych'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True).distinct().count()
+    variables['pocet-soutezicich'] = UserAttendance.objects.filter(campaign=campaign, transactions__useractiontransaction__status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED).distinct().count()
 
     if request.user.is_authenticated() and models.is_competitor(request.user):
         variables['pocet-soutezicich-firma'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True, approved_for_team='approved', team__subsidiary__company=models.get_company(campaign, request.user)).count()
