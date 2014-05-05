@@ -87,7 +87,7 @@
    {% if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos' %}
       {{ result.user_attendance|softhyphen:"cs-CZ" }}
    {% elif competition.competitor_type == 'team' %}
-      {{ result.team|softhyphen:"cs-CZ" }}
+      {{ result.team.name|softhyphen:"cs-CZ" }} / {{ result.team.subsidiary.company.name|softhyphen:"cs-CZ" }}
    {% elif competition.competitor_type == 'company' %}
       {{ result.company|softhyphen:"cs-CZ" }}
    {% endif %}
