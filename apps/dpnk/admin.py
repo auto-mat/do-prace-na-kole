@@ -419,6 +419,31 @@ class PaymentTypeFilter(SimpleListFilter):
             return queryset.filter(transactions__payment__pay_type=self.value()).distinct()
 
 
+class PackageConfirmationFilter(SimpleListFilter):
+    title = _(u"Doručení startovního balíčku")
+    parameter_name = u'package_confirmation'
+
+    def lookups(self, request, model_admin):
+        return (
+            ("confirmed", _(u"Potvrzeno")),
+            ("denied", _(u"Nedoručení potvrzeno")),
+            ("unknown", _(u"Odesláno, bez vyjádření")),
+            ("unshipped", _(u"Neodesláno")),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == "confirmed":
+            return queryset.filter(transactions__packagetransaction__status=models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED).distinct()
+        if self.value() == "denied":
+            return queryset.filter(transactions__packagetransaction__status=models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED).distinct()
+        if self.value() == "unknown":
+            return queryset.filter(transactions__packagetransaction__status__in=models.PackageTransaction.shipped_statuses).exclude(
+                    transactions__packagetransaction__status__in=[models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED, models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED]
+                    ).distinct()
+        if self.value() == "unshipped":
+            return queryset.exclude(transactions__packagetransaction__status__in=models.PackageTransaction.shipped_statuses).distinct()
+        return queryset
+
 
 class CompetitionEntryFilter(SimpleListFilter):
     title = _(u"Přihlášení k závodu")
@@ -453,7 +478,7 @@ class NotInCityFilter(SimpleListFilter):
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ('__unicode__', 'id', 'userprofile__user__email', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count')
-    list_filter = ('campaign', 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, 'team__member_count')
+    list_filter = ('campaign', 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, 'team__member_count', PackageConfirmationFilter)
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
     readonly_fields = ('user_link', 'userprofile__user__email', )
