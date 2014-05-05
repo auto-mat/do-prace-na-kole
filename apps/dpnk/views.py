@@ -964,11 +964,11 @@ def questionnaire_answers(
     competition = Competition.objects.get(slug=competition_slug)
     competitor = competition.get_results().get(pk=request.GET['uid'])
     if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
-        userprofile = [competitor.userprofile]
+        user_attendances = [competitor]
     elif competition.competitor_type == 'team':
-        userprofile = competitor.team.members
+        user_attendances = competitor.team.members()
     answers = Answer.objects.filter(
-        user__in=userprofile,
+        user_attendance__in=user_attendances,
         question__competition__slug=competition_slug)
     total_points = competitor.result
     return render_to_response('admin/questionnaire_answers.html',
