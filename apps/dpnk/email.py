@@ -90,7 +90,7 @@ def payment_confirmation_mail(user_attendance):
     message = template.render(Context({
                 'user': user_attendance,
                 'SITE_URL': settings.SITE_URL}))
-    send_mail(_(u"%s - přijetí platby"), message, None, [email], fail_silently=False)
+    send_mail(_(u"%s - přijetí platby") % user_attendance.campaign, message, None, [email], fail_silently=False)
 
 def payment_confirmation_company_mail(user_attendance):
     template = get_template('email/payment_comfirmation_company.html')
