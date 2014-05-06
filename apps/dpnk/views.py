@@ -653,6 +653,7 @@ def rides(
     return render_to_response(template, {
         'calendar': calendar,
         'has_distance_competition': user_attendance.has_distance_competition(),
+        'user_attendance': user_attendance,
         }, context_instance=RequestContext(request))
 
 

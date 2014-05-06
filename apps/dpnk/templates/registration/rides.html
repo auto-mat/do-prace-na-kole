@@ -5,6 +5,7 @@
 <form name="calendar" method="POST">
 <input type="hidden" id="day" name="day"/>
 <button class="btn-info btn" type="button" onclick='$( ".toggle" ).toggle( "hidden" );'>{% trans "Zobrazit všechny jízdy" %}</button>
+{% trans "Zadaný počet kilometrů na jednu jízdu: " %}{{ user_attendance.distance }}
 <table id="rides" class="table table-striped table-bordered table-hover table-condensed">
 <tr>
 <th scope="column">{% trans "Den" %}</th>
