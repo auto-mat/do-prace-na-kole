@@ -993,6 +993,9 @@ class Invoice(models.Model):
         blank=True,
         )
 
+    def __unicode__(self):
+        return "%s" % self.sequence_number
+
     def paid(self):
         return self.paid_date <= util.today()
 
