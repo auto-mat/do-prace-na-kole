@@ -1233,7 +1233,7 @@ def statistics(
         }, context_instance=RequestContext(request))
 
 
-@cache_page(24 * 60 * 60)
+@cache_page(60 * 60)
 def daily_chart(
         request,
         campaign_slug,
