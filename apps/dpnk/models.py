@@ -1425,12 +1425,20 @@ class Trip(models.Model):
         null=True,
         blank=True,
         default=None,
+        validators=[
+            MaxValueValidator(1000),
+            MinValueValidator(0)
+        ],
         )
     distance_from = models.IntegerField(
         verbose_name=_(u"Ujetá vzdálenost z práce"),
         null=True,
         blank=True,
         default=None,
+        validators=[
+            MaxValueValidator(1000),
+            MinValueValidator(0)
+        ],
         )
 
     def distance_from_cutted(self):

@@ -598,14 +598,14 @@ def rides(
             trip.trip_from = trip_from
             if trip.trip_to:
                 try:
-                    trip.distance_to = int(request.POST.get('distance_to-' + str(day), None))
+                    trip.distance_to = max(min(int(request.POST.get('distance_to-' + str(day), None)), 1000), 0)
                 except:
                     trip.distance_to = 0
             else:
                 trip.distance_to = None
             if trip.trip_from:
                 try:
-                    trip.distance_from = int(request.POST.get('distance_from-' + str(day), None))
+                    trip.distance_from = max(min(int(request.POST.get('distance_from-' + str(day), None)), 1000), 0)
                 except:
                     trip.distance_from = 0
             else:
