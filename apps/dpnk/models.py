@@ -707,6 +707,10 @@ class UserAttendance(models.Model):
     def entered_competition(self):
         return self.transactions.filter(status=UserActionTransaction.Status.COMPETITION_START_CONFIRMED).exists()
 
+    def team_member_count(self):
+        if self.team:
+            return self.team.member_count
+
 
 class UserProfile(models.Model):
     """Uživatelský profil"""

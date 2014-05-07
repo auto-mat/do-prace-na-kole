@@ -58,6 +58,8 @@ def get_custom_fields(user_attendance):
         {'Key': "Aktivni", 'Value': user.is_active},
         {'Key': "Novacek", 'Value': is_new_user},
         {'Key': "Kampan", 'Value': user_attendance.campaign.name},
+        {'Key': "Vstoupil_do_souteze", 'Value': user_attendance.entered_competition()},
+        {'Key': "Pocet_lidi_v_tymu", 'Value': user_attendance.team_member_count()},
         ]
     return custom_fields
 
