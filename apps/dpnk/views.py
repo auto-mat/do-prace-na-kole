@@ -1220,7 +1220,7 @@ def period_trips(campaign, day_from, day_to):
     return trips(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to))
 
 
-@cache_page(60 * 60)
+@cache_page(60)
 def statistics(
         request,
         variable,
@@ -1255,7 +1255,7 @@ def statistics(
         }, context_instance=RequestContext(request))
 
 
-@cache_page(60 * 60)
+@cache_page(60)
 def daily_chart(
         request,
         campaign_slug,
