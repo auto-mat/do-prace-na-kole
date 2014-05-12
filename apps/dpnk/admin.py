@@ -200,6 +200,11 @@ class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedF
             return mark_safe(u'<a href="%slosovani/%s">losovani</a>' % (wp_reverse('admin'), obj.slug))
     draw_link.short_description = u"Losování"
 
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "user_attendance_competitors":
+            kwargs["queryset"] = models.UserProfileId.objects.all()
+        return super(CompetitionAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
+
 
 class PaymentFilter(SimpleListFilter):
     title = _(u"stav platby")

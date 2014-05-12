@@ -85,7 +85,7 @@
 {% endif %}
 <td>
    {% if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos' %}
-      {{ result.user_attendance|softhyphen:"cs-CZ" }}
+      {{ result.user_attendance.name|softhyphen:"cs-CZ" }}
    {% elif competition.competitor_type == 'team' %}
       {{ result.team.name|softhyphen:"cs-CZ" }} / {{ result.team.subsidiary.company.name|softhyphen:"cs-CZ" }}
    {% elif competition.competitor_type == 'company' %}

@@ -573,6 +573,9 @@ class UserAttendance(models.Model):
     def last_name(self):
         return self.userprofile.user.last_name
 
+    def name(self):
+        return self.userprofile.user.get_full_name()
+
     def __unicode__(self):
         return self.userprofile.user.get_full_name()
 
@@ -710,6 +713,14 @@ class UserAttendance(models.Model):
     def team_member_count(self):
         if self.team:
             return self.team.member_count
+
+
+class UserProfileId(UserAttendance):
+    class Meta:
+        proxy = True
+
+    def __unicode__(self):
+        return str(self.pk)
 
 
 class UserProfile(models.Model):
