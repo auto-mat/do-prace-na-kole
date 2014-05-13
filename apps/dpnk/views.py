@@ -685,8 +685,7 @@ def profile(request, user_attendance=None, success_url = 'competition_profile'):
     is_package_shipped = user_attendance.package_shipped() is not None
     is_package_delivered = user_attendance.package_delivered() is not None
 
-    phase = user_attendance.campaign.phase("admissions")
-    admissions_phase_is_active = phase and phase.is_actual()
+    admissions_phase = user_attendance.campaign.phase("admissions")
 
     cant_enter_competition_reasons = {
         'no_personal_data': _(u"mít vyplněné osobní údaje"),  # Translators: Začít soutěžit bude moci až budete ...
@@ -717,7 +716,7 @@ def profile(request, user_attendance=None, success_url = 'competition_profile'):
         'approved_for_team': user_attendance.approved_for_team,
         'is_package_shipped': is_package_shipped,
         'is_package_delivered': is_package_delivered,
-        'admissions_phase_is_active': admissions_phase_is_active,
+        'admissions_phase': admissions_phase,
         'cant_enter_competition_reason': cant_enter_competition_reason,
         'competition_entry_active': competition_entry_phase_is_active,
         }, context_instance=RequestContext(request))
