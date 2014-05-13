@@ -290,7 +290,7 @@ class Team(models.Model):
         )
 
     def autoset_member_count(self):
-        self.member_count = UserAttendance.objects.filter(campaign=self.campaign, team=self, approved_for_team='approved').count()
+        self.member_count = UserAttendance.objects.filter(campaign=self.campaign, team=self, approved_for_team='approved', transactions__useractiontransaction__status=UserActionTransaction.Status.COMPETITION_START_CONFIRMED).count()
         self.save()
         if self.member_count > settings.MAX_TEAM_MEMBERS:
             logger.error(u"Too many members in team %s" % self)
@@ -311,7 +311,7 @@ class Team(models.Model):
         return results.get_team_length(self)
 
     def __unicode__(self):
-        return "%s (%s)" % (self.name, self.member_count)
+        return "%s (%s)" % (self.name, self.members().count())
 
     def save(self, force_insert=False, force_update=False):
         if not self.coordinator_campaign and self.member_count > 0:
@@ -1969,6 +1969,13 @@ def update_mailing_user(sender, instance, created, **kwargs):
             mailing.add_or_update_user(user_attendance)
     except UserProfile.DoesNotExist:
         pass
+
+
+@receiver(post_save, sender=UserActionTransaction)
+def update_user_attendance(sender, instance, created, **kwargs):
+    mailing.add_or_update_user(instance.user_attendance)
+    if instance.user_attendance.team:
+        instance.user_attendance.team.autoset_member_count()
 
 
 @receiver(post_save, sender=UserAttendance)
