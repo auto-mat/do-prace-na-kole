@@ -746,6 +746,7 @@ class InvoiceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ['company', 'created', 'exposure_date', 'paid_date', 'invoice__count', 'invoice_pdf__url', 'campaign', 'sequence_number', 'order_number']
     readonly_fields = ['created', 'author', 'updated_by', 'invoice__count', 'sequence_number']
     list_filter = ['campaign', InvoicePaidFilter]
+    search_fields = ['company__name', ]
     inlines = [ PaymentInline ]
     actions = [mark_invoices_paid]
 
