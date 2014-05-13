@@ -492,6 +492,11 @@ class TShirtSize(models.Model):
         verbose_name=_(u"Posílá se?"),
         default=True,
         null=False)
+    available = models.BooleanField(
+        verbose_name=_(u"Je dostupné?"),
+        help_text=_(u"Zobrazuje se v nabídce trik"),
+        default=True,
+        null=False)
     t_shirt_preview = models.FileField(
         verbose_name=_(u"Náhled trika"),
         upload_to='t_shirt_preview',
@@ -510,7 +515,7 @@ class TShirtSize(models.Model):
 class UserAttendanceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserAttendanceForm, self).__init__(*args, **kwargs)
-        self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign)
+        self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
 
 
 class UserAttendance(models.Model):
