@@ -537,7 +537,7 @@ class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedFieldAdm
     readonly_fields = ['members', 'invitation_token', 'member_count']
 
     def members(self, obj):
-        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a> - %s' % (u.userprofile.user.id, str(u), str(u.approved_for_team))
+        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/userattendance/%d">%s</a> - %s' % (u.pk, str(u), str(u.approved_for_team))
                          for u in models.UserAttendance.objects.filter(team=obj)]))
     members.short_description = 'Členové'
     form = models.TeamForm
