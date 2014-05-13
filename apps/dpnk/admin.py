@@ -105,6 +105,7 @@ class CompanyForm(forms.ModelForm):
 class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'subsidiaries_text', 'ico', 'dic', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
     inlines = [SubsidiaryInline, ]
+    list_filter = ['subsidiaries__teams__campaign', 'subsidiaries__city']
     readonly_fields = ['subsidiary_links']
     search_fields = ('name',)
     list_max_show_all = 10000
@@ -136,7 +137,7 @@ class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 class SubsidiaryAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline, ]
-    list_filter = ['city']
+    list_filter = ['teams__campaign', 'city']
     search_fields = ('address_recipient', 'company__name', 'address_street', )
     raw_id_fields = ('company',)
     list_max_show_all = 10000
