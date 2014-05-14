@@ -31,7 +31,7 @@ from django import forms
 from django.db import models
 from django.db.models import Q
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.db.utils import ProgrammingError
 from fieldsignals import post_save_changed, pre_save_changed
 from django.dispatch import receiver
@@ -705,7 +705,7 @@ class UserAttendance(models.Model):
             return 'not_t_shirt'
         elif self.team.coordinator_campaign == self and self.team.unapproved_members().count() > 0:
             return 'unapproved_team_members'
-        elif self.team.coordinator_campaign == self and self.team.member_count < 2:
+        elif self.team.coordinator_campaign == self and self.team.members().count() < 2:
             return 'not_enough_team_members'
         elif self.payment()['status'] != 'done':
             return 'not_paid'
@@ -1972,7 +1972,8 @@ def update_mailing_user(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=UserActionTransaction)
-def update_user_attendance(sender, instance, created, **kwargs):
+@receiver(post_delete, sender=UserActionTransaction)
+def update_user_attendance(sender, instance, *args, **kwargs):
     mailing.add_or_update_user(instance.user_attendance)
     if instance.user_attendance.team:
         instance.user_attendance.team.autoset_member_count()
