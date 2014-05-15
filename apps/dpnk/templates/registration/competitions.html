@@ -21,6 +21,15 @@
 {% elif competition.type == 'length' %}
    {% trans "soutěž na vzdálenost" %}
 {% endif %}
+{% if competition.competitor_type == 'single_user' %}
+   {% trans "jed&shy;not&shy;liv&shy;ců" %}
+{% elif competition.competitor_type == 'liberos' %}
+   {% trans "li&shy;be&shy;ros" %}
+{% elif competition.competitor_type == 'team' %}
+   {% trans "tý&shy;mů" %}
+{% elif competition.competitor_type == 'company' %}
+   {% trans "spo&shy;le&shy;čno&shy;stí" %}
+{% endif %}
 {% if competition.company %}
    {% trans "společnosti" %} {{ competition.company }}
 {% endif %}</i>
@@ -86,7 +95,8 @@
          {% trans "Do&shy;taz&shy;ník ješ&shy;tě ne&shy;ní ak&shy;tiv&shy;ní." %}
       {% elif competition.competitor_can_admit == 'after_end' %}
          {% trans "Do&shy;taz&shy;ník již ne&shy;ní ak&shy;tiv&shy;ní." %}
-         <a href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">zo&shy;bra&shy;zit vy&shy;hod&shy;no&shy;ce&shy;ní </a>
+         <br/>
+         <a class="btn btn-primary" href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">zo&shy;bra&shy;zit vy&shy;hod&shy;no&shy;ce&shy;ní </a>
       {% elif competition.competitor_can_admit == 'not_team_coordinator' %}
          {% if competition.competitor_has_admission %}
             {% trans "Do té&shy;to sou&shy;tě&shy;že tý&shy;mů vás při&shy;hlá&shy;sil váš tý&shy;mo&shy;vý ko&shy;or&shy;di&shy;ná&shy;tor." %} 
