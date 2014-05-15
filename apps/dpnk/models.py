@@ -682,10 +682,13 @@ class UserAttendance(models.Model):
     def other_user_attendances(self, campaign):
         return self.userprofile.userattendance_set.exclude(campaign=campaign)
 
+    def undenied_team_member_count(self):
+        team = getattr(self, "coordinated_team", self.team)
+        return UserAttendance.objects.filter(team=team, userprofile__user__is_active=True).exclude(approved_for_team='denied').count()
+
     def can_change_team_coordinator(self):
         """Can change team? Not, if he is team coordinator and the team has other members"""
-        team_member_count = UserAttendance.objects.filter(team=self.team, userprofile__user__is_active=True).exclude(approved_for_team='denied').count()
-        if self.team and self.team.coordinator_campaign == self and team_member_count > 1:
+        if self.team and self.team.coordinator_campaign == self and self.undenied_team_member_count() > 1:
             return False
         return True
 
@@ -718,6 +721,10 @@ class UserAttendance(models.Model):
     def team_member_count(self):
         if self.team:
             return self.team.member_count
+
+    def clean(self):
+        if hasattr(self, "coordinated_team") and self.coordinated_team != self.team and self.undenied_team_member_count() > 1:
+            raise ValidationError(_(u"Není možné změnit tým, dokud je uživatel týmovým koordinátorem."))
 
 
 class UserProfileId(UserAttendance):
