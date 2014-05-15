@@ -11,8 +11,14 @@
       <th class="fixed_width_column">{% trans "U&shy;je&shy;tá vzdá&shy;le&shy;nost" %}</th>
    </tr>
    {% for member in team_members %}
-      <tr {% if member.is_team_coordinator %}class="info"{% endif %}>
-      <td>{{ member|softhyphen:"cs-CZ" }}</td>
+      <tr
+         {% if member.is_team_coordinator %}class="info"{% endif %}
+         {% if not member.entered_competition %}class="danger"{% endif %}
+         >
+      <td>{{ member.name|softhyphen:"cs-CZ" }}</td>
+      {% if not member.entered_competition %}
+         <td colspan="2">{% trans "Ještě nezačal soutěžit" %}</td>
+      {% else %}
       <td>{{ member.get_frequency|floatformat:-1|intcomma }}&nbsp;{% trans "jízd" %}<br/>
       {{ member.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%</td>
       <td>{% trans "cca" %}&nbsp;{{ member.get_rough_length|floatformat:-1|intcomma }}&nbsp;km
@@ -21,6 +27,7 @@
          {% trans "přesně" %}&nbsp;{{ member.get_length|floatformat:-1|intcomma }}&nbsp;km
       {% endif %}
       </td>
+      {% endif %}
       </tr>
    {% endfor %}
 </table>

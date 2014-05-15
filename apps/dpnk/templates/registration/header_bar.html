@@ -13,6 +13,8 @@
    <a href="{% wp_url 'logout' %}">{% trans "Odhlásit" %}</a>
 {% else %}
    <a href="/prihlasit">{% trans "Přihlásit" %}</a>
+   {% if registration_phase_active %}
    /
    <a href="/registrace">{% trans "Registrovat" %}</a>
+   {% endif %}
 {% endif %}

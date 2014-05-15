@@ -389,8 +389,8 @@ def payment_type(request, user_attendance=None):
 def header_bar(request, campaign_slug):
     company_admin = None
     entered_competition = None
+    campaign = Campaign.objects.get(slug=campaign_slug)
     if request.user.is_authenticated():
-        campaign = Campaign.objects.get(slug=campaign_slug)
         company_admin = models.get_company_admin(request.user, campaign)
         try:
             entered_competition = models.UserAttendance.objects.get(campaign=campaign, userprofile__user=request.user).entered_competition
@@ -401,6 +401,7 @@ def header_bar(request, campaign_slug):
         'company_admin': company_admin,
         'user': request.user,
         'entered_competition': entered_competition,
+        'registration_phase_active': campaign.phase("registration").is_actual()
         }, context_instance=RequestContext(request))
 
 
@@ -540,6 +541,7 @@ def profile_access(request, user_attendance=None):
         city_redirect = ""
 
     return render_to_response('registration/profile_access.html', {
+        'city': user_attendance.team.subsidiary.city,
         'city_redirect': city_redirect
         }, context_instance=RequestContext(request))
 
@@ -596,14 +598,15 @@ def rides(
             trip.trip_from = trip_from
             if trip.trip_to:
                 try:
-                    trip.distance_to = int(request.POST.get('distance_to-' + str(day), None))
+                    #TODO: Make possible to fill in float numbers
+                    trip.distance_to = max(min(round(float(request.POST.get('distance_to-' + str(day), None))), 1000), 0)
                 except:
                     trip.distance_to = 0
             else:
                 trip.distance_to = None
             if trip.trip_from:
                 try:
-                    trip.distance_from = int(request.POST.get('distance_from-' + str(day), None))
+                    trip.distance_from = max(min(round(float(request.POST.get('distance_from-' + str(day), None))), 1000), 0)
                 except:
                     trip.distance_from = 0
             else:
@@ -651,6 +654,7 @@ def rides(
     return render_to_response(template, {
         'calendar': calendar,
         'has_distance_competition': user_attendance.has_distance_competition(),
+        'user_attendance': user_attendance,
         }, context_instance=RequestContext(request))
 
 
@@ -681,8 +685,7 @@ def profile(request, user_attendance=None, success_url = 'competition_profile'):
     is_package_shipped = user_attendance.package_shipped() is not None
     is_package_delivered = user_attendance.package_delivered() is not None
 
-    phase = user_attendance.campaign.phase("admissions")
-    admissions_phase_is_active = phase and phase.is_actual()
+    admissions_phase = user_attendance.campaign.phase("admissions")
 
     cant_enter_competition_reasons = {
         'no_personal_data': _(u"mít vyplněné osobní údaje"),  # Translators: Začít soutěžit bude moci až budete ...
@@ -713,7 +716,7 @@ def profile(request, user_attendance=None, success_url = 'competition_profile'):
         'approved_for_team': user_attendance.approved_for_team,
         'is_package_shipped': is_package_shipped,
         'is_package_delivered': is_package_delivered,
-        'admissions_phase_is_active': admissions_phase_is_active,
+        'admissions_phase': admissions_phase,
         'cant_enter_competition_reason': cant_enter_competition_reason,
         'competition_entry_active': competition_entry_phase_is_active,
         }, context_instance=RequestContext(request))
@@ -771,7 +774,7 @@ def admissions(
         }, context_instance=RequestContext(request))
 
 
-@cache_page(24 * 60 * 60)
+@cache_page(60 * 60)
 def competition_results(request, template, competition_slug, campaign_slug, limit=None):
     if limit == '':
         limit = None
@@ -962,11 +965,11 @@ def questionnaire_answers(
     competition = Competition.objects.get(slug=competition_slug)
     competitor = competition.get_results().get(pk=request.GET['uid'])
     if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
-        userprofile = [competitor.userprofile]
+        user_attendances = [competitor]
     elif competition.competitor_type == 'team':
-        userprofile = competitor.team.members
+        user_attendances = competitor.team.members()
     answers = Answer.objects.filter(
-        user__in=userprofile,
+        user_attendance__in=user_attendances,
         question__competition__slug=competition_slug)
     total_points = competitor.result
     return render_to_response('admin/questionnaire_answers.html',
@@ -1206,7 +1209,18 @@ def period_distance(campaign, day_from, day_to):
     return distance(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to))
 
 
-@cache_page(24 * 60 * 60)
+def trips(trips):
+    return trips.filter(trip_from=True).count() + trips.filter(trip_to=True).count()
+
+def total_trips(campaign):
+    return trips(Trip.objects.filter(user_attendance__campaign=campaign))
+
+
+def period_trips(campaign, day_from, day_to):
+    return trips(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to))
+
+
+@cache_page(60)
 def statistics(
         request,
         variable,
@@ -1215,30 +1229,43 @@ def statistics(
         ):
     campaign = Campaign.objects.get(slug=campaign_slug)
     variables = {}
-    variables['ujeta-vzdalenost'] = total_distance(campaign)
-    variables['ujeta-vzdalenost-dnes'] = period_distance(campaign, util.today(), util.today())
-    variables['pocet-soutezicich'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True, approved_for_team='approved').count()
+    if variable == 'ujeta-vzdalenost':
+        result = total_distance(campaign)
+    elif variable == 'ujeta-vzdalenost-dnes':
+        result = period_distance(campaign, util.today(), util.today())
+    elif variable == 'pocet-cest':
+        result = total_trips(campaign)
+    elif variable == 'pocet-cest-dnes':
+        result = period_trips(campaign, util.today(), util.today())
+    elif variable == 'pocet-zaplacenych':
+        result = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True).filter(Q(transactions__status__in=models.Payment.done_statuses) | Q(team__subsidiary__city__cityincampaign__admission_fee=0)).distinct().count()
+    elif variable == 'pocet-prihlasenych':
+        result = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True).distinct().count()
+    elif variable == 'pocet-soutezicich':
+        result= UserAttendance.objects.filter(campaign=campaign, transactions__useractiontransaction__status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED).distinct().count()
 
-    if request.user.is_authenticated() and models.is_competitor(request.user):
-        variables['pocet-soutezicich-firma'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True, approved_for_team='approved', team__subsidiary__company=models.get_company(campaign, request.user)).count()
-    else:
-        variables['pocet-soutezicich-firma'] = "-"
+    if variable == 'pocet-soutezicich-firma':
+        if request.user.is_authenticated() and models.is_competitor(request.user):
+            result = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True, approved_for_team='approved', team__subsidiary__company=models.get_company(campaign, request.user)).count()
+        else:
+            result = "-"
 
     return render_to_response(template, {
-        'variable': variables[variable],
+        'variable': result
         }, context_instance=RequestContext(request))
 
 
-@cache_page(24 * 60 * 60)
+@cache_page(60)
 def daily_chart(
         request,
         campaign_slug,
         template='registration/daily-chart.html',
         ):
-    values = [period_distance(day, day) for day in util.days()]
+    campaign = Campaign.objects.get(slug=campaign_slug)
+    values = [period_distance(campaign, day, day) for day in util.days(campaign)]
     return render_to_response(template, {
         'values': values,
-        'days': reversed(util.days()),
+        'days': reversed(util.days(campaign)),
         'max_value': max(values),
         }, context_instance=RequestContext(request))
 

@@ -154,7 +154,7 @@ def get_userprofile_length(user_attendance):
     return distance
 
 def get_team_frequency(team):
-    member_count = team.members().count()
+    member_count = team.member_count
     members = team.members().all()
         
     if member_count == 0:
@@ -164,7 +164,7 @@ def get_team_frequency(team):
     return float(trips_from + trips_to) / float(member_count)
 
 def get_team_length(team):
-    member_count = team.members().count()
+    member_count = team.member_count
     members = team.members().all()
         
     if member_count == 0:
@@ -217,7 +217,7 @@ def recalculate_result(competition, competitor):
 
         competition_result, created = models.CompetitionResult.objects.get_or_create(team = team, competition = competition)
 
-        member_count = team.members().count()
+        member_count = team.member_count
         members = team.members()
             
         if member_count == 0:

@@ -31,7 +31,7 @@ from django import forms
 from django.db import models
 from django.db.models import Q
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.db.utils import ProgrammingError
 from fieldsignals import post_save_changed, pre_save_changed
 from django.dispatch import receiver
@@ -197,13 +197,13 @@ class Company(models.Model):
         verbose_name=_(u"DIČ"),
         max_length=10,
         default="",
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
         )
 
     def has_filled_contact_information(self):
         address_complete = self.address.street and self.address.street_number and self.address.psc and self.address.city
-        return self.name and address_complete and self.ico and self.dic
+        return self.name and address_complete and self.ico
 
     def __unicode__(self):
         return "%s" % self.name
@@ -290,7 +290,7 @@ class Team(models.Model):
         )
 
     def autoset_member_count(self):
-        self.member_count = UserAttendance.objects.filter(campaign=self.campaign, team=self, approved_for_team='approved').count()
+        self.member_count = UserAttendance.objects.filter(campaign=self.campaign, team=self, approved_for_team='approved', transactions__useractiontransaction__status=UserActionTransaction.Status.COMPETITION_START_CONFIRMED).count()
         self.save()
         if self.member_count > settings.MAX_TEAM_MEMBERS:
             logger.error(u"Too many members in team %s" % self)
@@ -311,7 +311,7 @@ class Team(models.Model):
         return results.get_team_length(self)
 
     def __unicode__(self):
-        return "%s (%s)" % (self.name, self.member_count)
+        return "%s (%s)" % (self.name, self.members().count())
 
     def save(self, force_insert=False, force_update=False):
         if not self.coordinator_campaign and self.member_count > 0:
@@ -492,6 +492,11 @@ class TShirtSize(models.Model):
         verbose_name=_(u"Posílá se?"),
         default=True,
         null=False)
+    available = models.BooleanField(
+        verbose_name=_(u"Je dostupné?"),
+        help_text=_(u"Zobrazuje se v nabídce trik"),
+        default=True,
+        null=False)
     t_shirt_preview = models.FileField(
         verbose_name=_(u"Náhled trika"),
         upload_to='t_shirt_preview',
@@ -510,7 +515,7 @@ class TShirtSize(models.Model):
 class UserAttendanceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserAttendanceForm, self).__init__(*args, **kwargs)
-        self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign)
+        self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
 
 
 class UserAttendance(models.Model):
@@ -572,6 +577,9 @@ class UserAttendance(models.Model):
 
     def last_name(self):
         return self.userprofile.user.last_name
+
+    def name(self):
+        return self.userprofile.user.get_full_name()
 
     def __unicode__(self):
         return self.userprofile.user.get_full_name()
@@ -674,10 +682,13 @@ class UserAttendance(models.Model):
     def other_user_attendances(self, campaign):
         return self.userprofile.userattendance_set.exclude(campaign=campaign)
 
+    def undenied_team_member_count(self):
+        team = getattr(self, "coordinated_team", self.team)
+        return UserAttendance.objects.filter(team=team, userprofile__user__is_active=True).exclude(approved_for_team='denied').count()
+
     def can_change_team_coordinator(self):
         """Can change team? Not, if he is team coordinator and the team has other members"""
-        team_member_count = UserAttendance.objects.filter(team=self.team, userprofile__user__is_active=True).exclude(approved_for_team='denied').count()
-        if self.team and self.team.coordinator_campaign == self and team_member_count > 1:
+        if self.team and self.team.coordinator_campaign == self and self.undenied_team_member_count() > 1:
             return False
         return True
 
@@ -697,7 +708,7 @@ class UserAttendance(models.Model):
             return 'not_t_shirt'
         elif self.team.coordinator_campaign == self and self.team.unapproved_members().count() > 0:
             return 'unapproved_team_members'
-        elif self.team.coordinator_campaign == self and self.team.member_count < 2:
+        elif self.team.coordinator_campaign == self and self.team.members().count() < 2:
             return 'not_enough_team_members'
         elif self.payment()['status'] != 'done':
             return 'not_paid'
@@ -706,6 +717,22 @@ class UserAttendance(models.Model):
 
     def entered_competition(self):
         return self.transactions.filter(status=UserActionTransaction.Status.COMPETITION_START_CONFIRMED).exists()
+
+    def team_member_count(self):
+        if self.team:
+            return self.team.member_count
+
+    def clean(self):
+        if hasattr(self, "coordinated_team") and self.coordinated_team != self.team and self.undenied_team_member_count() > 1:
+            raise ValidationError(_(u"Není možné změnit tým, dokud je uživatel týmovým koordinátorem."))
+
+
+class UserProfileId(UserAttendance):
+    class Meta:
+        proxy = True
+
+    def __unicode__(self):
+        return str(self.pk)
 
 
 class UserProfile(models.Model):
@@ -990,11 +1017,14 @@ class Invoice(models.Model):
         verbose_name=_(u"Pořadové číslo faktury"),
         unique=True,
         null=False)
-    order_number = models.PositiveIntegerField(
+    order_number = models.BigIntegerField(
         verbose_name=_(u"Číslo objednávky"),
         null=True,
         blank=True,
         )
+
+    def __unicode__(self):
+        return "%s" % self.sequence_number
 
     def paid(self):
         return self.paid_date <= util.today()
@@ -1425,12 +1455,20 @@ class Trip(models.Model):
         null=True,
         blank=True,
         default=None,
+        validators=[
+            MaxValueValidator(1000),
+            MinValueValidator(0)
+        ],
         )
     distance_from = models.IntegerField(
         verbose_name=_(u"Ujetá vzdálenost z práce"),
         null=True,
         blank=True,
         default=None,
+        validators=[
+            MaxValueValidator(1000),
+            MinValueValidator(0)
+        ],
         )
 
     def distance_from_cutted(self):
@@ -1952,6 +1990,14 @@ def update_mailing_user(sender, instance, created, **kwargs):
             mailing.add_or_update_user(user_attendance)
     except UserProfile.DoesNotExist:
         pass
+
+
+@receiver(post_save, sender=UserActionTransaction)
+@receiver(post_delete, sender=UserActionTransaction)
+def update_user_attendance(sender, instance, *args, **kwargs):
+    mailing.add_or_update_user(instance.user_attendance)
+    if instance.user_attendance.team:
+        instance.user_attendance.team.autoset_member_count()
 
 
 @receiver(post_save, sender=UserAttendance)
