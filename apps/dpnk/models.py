@@ -1007,7 +1007,7 @@ class Invoice(models.Model):
         verbose_name=_(u"Pořadové číslo faktury"),
         unique=True,
         null=False)
-    order_number = models.PositiveIntegerField(
+    order_number = models.BigIntegerField(
         verbose_name=_(u"Číslo objednávky"),
         null=True,
         blank=True,
