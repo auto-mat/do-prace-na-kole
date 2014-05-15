@@ -2030,7 +2030,7 @@ def answer_post_save(sender, instance, **kwargs):
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
         results.recalculate_result(competition, instance.user_attendance)
     elif competition.competitor_type == 'company':
-        raise NotImplementedError("Company competitions are not working yet")
+        results.recalculate_result(competition, instance.user_attendance.team.subsidiary.company)
 
 
 @receiver(pre_save, sender=Payment)

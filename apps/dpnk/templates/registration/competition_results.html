@@ -29,7 +29,7 @@
    <th>{% trans "Cel&shy;ko&shy;vý po&shy;čet ki&shy;lo&shy;me&shy;trů" %}</th>
 {% endif %}
 
-{% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
+{% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.competitor_type != 'company'%}
 <th scope="column">{% trans "Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch v " %}
    {% if competition.competitor_type == 'team' %}
       {% trans "tý&shy;mu" %}
@@ -80,7 +80,7 @@
    <td>{{ result.get_total_result|floatformat:-1 }}</td>
 {% endif %}
 
-{% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' %}
+{% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.competitor_type != 'company'%}
 <td>{{ result.team.member_count|intcomma }}</td>
 {% endif %}
 <td>
