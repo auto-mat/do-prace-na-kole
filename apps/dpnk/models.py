@@ -1740,6 +1740,8 @@ class CompetitionResult(models.Model):
     def __unicode__(self):
         if self.competition.competitor_type == 'team':
             return "%s" % self.team.name
+        elif self.competition.competitor_type == 'company':
+            return "%s" % self.team.subsidiary.company.name
         else:
             if self.user_attendance:
                 return "%s" % self.user_attendance.userprofile.user.get_full_name()

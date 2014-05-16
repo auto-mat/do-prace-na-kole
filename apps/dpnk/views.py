@@ -963,18 +963,20 @@ def questionnaire_answers(
         competition_slug=None,
         ):
     competition = Competition.objects.get(slug=competition_slug)
-    competitor = competition.get_results().get(pk=request.GET['uid'])
+    competitor_result = competition.get_results().get(pk=request.GET['uid'])
     if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
-        user_attendances = [competitor]
+        user_attendances = [competitor_result.user_attendance]
     elif competition.competitor_type == 'team':
-        user_attendances = competitor.team.members()
+        user_attendances = competitor_result.team.members()
+    elif competition.competitor_type == 'company':
+        user_attendances = UserAttendance.objects.filter(team__subsidiary__company=competitor_result.company)
     answers = Answer.objects.filter(
         user_attendance__in=user_attendances,
         question__competition__slug=competition_slug)
-    total_points = competitor.result
+    total_points = competitor_result.result
     return render_to_response('admin/questionnaire_answers.html',
                               {'answers': answers,
-                               'competitor': competitor,
+                               'competitor': competitor_result,
                                'media': settings.MEDIA_URL,
                                'total_points': total_points
                                }, context_instance=RequestContext(request))
