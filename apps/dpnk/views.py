@@ -996,7 +996,7 @@ def answers(request):
                 answer.save()
 
     answers = Answer.objects.filter(question_id=question_id)
-    total_respondents = len(answers)
+    total_respondents = answers.count()
     count = dict((c, {}) for c in City.objects.all())
     count_all = {}
     respondents = dict((c, 0) for c in City.objects.all())
