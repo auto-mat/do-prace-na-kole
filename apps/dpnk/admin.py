@@ -528,7 +528,7 @@ recalculate_team_member_count.short_description = "Přepočítat počet členů 
 
 
 class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedFieldAdmin):
-    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator_campaign', 'member_count', 'campaign', 'id', )
+    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator_campaign', 'coordinator_campaign__userprofile__user__email', 'member_count', 'campaign', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator_campaign__userprofile__user__first_name', 'coordinator_campaign__userprofile__user__last_name']
     list_filter = ['campaign', 'subsidiary__city', 'member_count', CoordinatorFilter]
     list_max_show_all = 10000
