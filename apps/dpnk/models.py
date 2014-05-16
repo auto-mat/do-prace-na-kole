@@ -208,6 +208,9 @@ class Company(models.Model):
     def __unicode__(self):
         return "%s" % self.name
 
+    def company_address(self):
+        return "%s, %s %s, %s, %s" % (self.address.recipient, self.address.street, self.address.street_number, self.address.psc, self.address.city)
+
 
 class Subsidiary(models.Model):
     """Pobočka"""

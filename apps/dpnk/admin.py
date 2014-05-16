@@ -743,19 +743,23 @@ class InvoicePaidFilter(SimpleListFilter):
         return queryset
 
 
-class InvoiceAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'invoice__count', 'invoice_pdf__url', 'campaign', 'sequence_number', 'order_number']
-    readonly_fields = ['created', 'author', 'updated_by', 'invoice__count', 'sequence_number']
+class InvoiceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
+    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'invoice_count', 'invoice_pdf_url', 'campaign', 'sequence_number', 'order_number', 'company__ico', 'company__dic', 'company_address']
+    readonly_fields = ['created', 'author', 'updated_by', 'invoice_count', 'sequence_number']
     list_filter = ['campaign', InvoicePaidFilter]
     search_fields = ['company__name', ]
     inlines = [ PaymentInline ]
     actions = [mark_invoices_paid]
 
-    def invoice__count(self, obj):
-        return obj.payment_set.count()
-    invoice__count.short_description = _(u"Počet plateb")
+    def company_address(self, obj):
+        return obj.company.company_address()
+    company_address.short_description = _(u"Adresa společnosti")
 
-    def invoice_pdf__url(self, obj):
+    def invoice_count(self, obj):
+        return obj.payment_set.count()
+    invoice_count.short_description = _(u"Počet plateb")
+
+    def invoice_pdf_url(self, obj):
         return mark_safe(u"<a href='%s'>invoice.pdf</a>" % obj.invoice_pdf.url)
 
 
