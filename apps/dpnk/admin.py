@@ -750,6 +750,7 @@ class InvoiceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     search_fields = ['company__name', ]
     inlines = [ PaymentInline ]
     actions = [mark_invoices_paid]
+    list_max_show_all = 10000
 
     def company_address(self, obj):
         return obj.company.company_address()
