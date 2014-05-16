@@ -15,7 +15,7 @@
    {{q.competition}}
    <ul>
 {% endifchanged %}
-<li>{{q.date}}: <a href="{% wp_url 'odpovedi' %}?question={{ q.id }}">{{q.text}}</a></li>
+<li>{{q.date}} ({{q.answer_set.count}}): <a href="{% wp_url 'odpovedi' %}?question={{ q.id }}">{{q.text}}</a></li>
 {% endfor %}
 </ul>
 </li>
