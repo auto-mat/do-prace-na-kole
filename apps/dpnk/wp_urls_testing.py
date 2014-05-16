@@ -28,10 +28,6 @@ urls = {
     'team_admin':                   "team_admin.html",
     'vysledky':                     "vysledky.html",
     'vysledky_souteze':             "vysledky_souteze.html",
-    'dotaznik':                     "/admin/dotaznik/",
-    'odpovedi':                     "/admin/odpovedi/",
-    'dotaznik_odpovedi':            "/admin/dotaznik_odpovedi/",
-    'otazky':                       "/admin/otazky/",
     'otazka':                       "otazka.html",
     'zmenit_triko':                 "zmenit_triko.html",
     'zmenit_tym':                   "tým.html",
@@ -66,5 +62,10 @@ urls = {
 
 for url in urls:
     urls[url] = "/~petr/dpnk-wp/%s" % urls[url]
+
+urls['dotaznik']="/admin/dotaznik/"
+urls['odpovedi']="/admin/odpovedi/"
+urls['dotaznik_odpovedi']="/admin/dotaznik_odpovedi/"
+urls['otazky']="/admin/otazky/"
 
 urls['admin'] = "/admin/"
