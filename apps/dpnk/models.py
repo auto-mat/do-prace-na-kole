@@ -1882,7 +1882,11 @@ class Answer(models.Model):
 
     user_attendance = models.ForeignKey(UserAttendance, null=True, blank=True)
     question = models.ForeignKey(Question, null=False)
-    choices = models.ManyToManyField(Choice)
+    choices = models.ManyToManyField(
+        Choice,
+        blank=True,
+        null=True,
+    )
     comment = models.TextField(
         verbose_name=_(u"Komentář"),
         max_length=600,
