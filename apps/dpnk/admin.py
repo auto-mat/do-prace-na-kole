@@ -647,7 +647,8 @@ class TripAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmi
     list_display = ('user_attendance', 'date', 'trip_from', 'trip_to', 'distance_from', 'distance_to', 'id')
     search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username')
     raw_id_fields = ('user_attendance',)
-    list_filter = ('user_attendance__campaign', 'distance_from')
+    list_filter = ('user_attendance__campaign', 'user_attendance__team__subsidiary__city', 'distance_from')
+    list_max_show_all = 100000
 
 
 class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
