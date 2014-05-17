@@ -21,8 +21,11 @@ def days(campaign):
     return days
 
 def days_count(campaign):
+    if hasattr(campaign, 'days_count'):
+        return campaign.days_count
     today = _today()
-    return len([day for day in days(campaign) if day <= today])
+    campaign.days_count = len([day for day in days(campaign) if day <= today])
+    return campaign.days_count
 
 def _today():
     if hasattr(settings, 'FAKE_DATE'):
