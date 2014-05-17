@@ -778,10 +778,10 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
     if limit == '':
         limit = None
 
-    #if request.user.is_anonymous():
-    #    userprofile = None
-    #else:
-    #    userprofile = request.user.get_profile()
+    if request.user.is_anonymous():
+        user_attendance = None
+    else:
+        user_attendance = request.user.userprofile.userattendance_set.get(campaign__slug=campaign_slug)
 
     try:
         competition = Competition.objects.get(slug=competition_slug)
@@ -798,7 +798,7 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
         results = results.select_related('company')
 
     return render_to_response(template, {
-        #'userprofile': userprofile,
+        'user_attendance': user_attendance,
         'competition': competition,
         'results': results[:limit]
         }, context_instance=RequestContext(request))

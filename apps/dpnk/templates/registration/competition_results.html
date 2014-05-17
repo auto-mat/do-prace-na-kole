@@ -53,17 +53,15 @@
 </tr>
 {% for result in results %}
    <tr class="
-{% comment %}
-   {% if competition.competitor_type == 'single_user' and userprofile == result.userprofile %}
+   {% if competition.competitor_type == 'single_user' and user_attendance == result.user_attendance %}
          info
-   {% elif competition.competitor_type == 'liberos' and userprofile == result.userprofile %}
+   {% elif competition.competitor_type == 'liberos' and user_attendance == result.user_attendance %}
          info
-   {% elif competition.competitor_type == 'team' and userprofile.team == result.team %}
+   {% elif competition.competitor_type == 'team' and user_attendance.team == result.team %}
          info
-   {% elif competition.competitor_type == 'company' and userprofile.team.subsidiary.company == result.company %}
+   {% elif competition.competitor_type == 'company' and user_attendance.team.subsidiary.company == result.company %}
          info
    {% endif %}
-{% endcomment %}
    " id="row-{{result.id}}">
 <td>
 {% ifchanged result.result %}
