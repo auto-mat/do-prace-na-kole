@@ -25,3 +25,9 @@ urlpatterns = patterns('',
     url(r"^su/", include("django_su.urls")),
     url(r'^localeurl/', include('localeurl.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    )
