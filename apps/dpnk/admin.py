@@ -179,6 +179,8 @@ class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedF
     actions = [recalculate_competitions_results]
     inlines = [ QuestionInline, ]
     prepopulated_fields = {'slug': ('name',)}
+    list_max_show_all = 10000
+    form = models.CompetitionForm
 
     readonly_fields = ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'rules']
 
@@ -202,8 +204,11 @@ class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedF
     draw_link.short_description = u"Losování"
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "team_competitors":
+            kwargs["queryset"] = models.TeamName.objects.all()
+
         if db_field.name == "user_attendance_competitors":
-            kwargs["queryset"] = models.UserProfileId.objects.all()
+            kwargs["queryset"] = models.UserAttendanceRelated.objects.select_related('userprofile__user', 'campaign')
         return super(CompetitionAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
 

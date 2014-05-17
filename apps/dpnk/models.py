@@ -333,6 +333,14 @@ class Team(models.Model):
         super(Team, self).save(force_insert, force_update)
 
 
+class TeamName(Team):
+    class Meta:
+        proxy = True
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+
 class TeamForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TeamForm, self).__init__(*args, **kwargs)
@@ -730,12 +738,12 @@ class UserAttendance(models.Model):
             raise ValidationError(_(u"Není možné změnit tým, dokud je uživatel týmovým koordinátorem."))
 
 
-class UserProfileId(UserAttendance):
+class UserAttendanceRelated(UserAttendance):
     class Meta:
         proxy = True
 
     def __unicode__(self):
-        return str(self.pk)
+        return "%s - %s" % (self.userprofile.user.get_full_name(), self.campaign.slug)
 
 
 class UserProfile(models.Model):
@@ -1684,6 +1692,14 @@ class Competition(models.Model):
     def clean(self):
         if self.competitor_type == 'company' and self.city != None:
             raise ValidationError(_(u"Soutěž firem pro určité město nedává smysl."))
+
+
+class CompetitionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(CompetitionForm, self).__init__(*args, **kwargs)
+        if hasattr(self.instance, 'campaign'):
+            self.fields['user_attendance_competitors'].queryset = UserAttendanceRelated.objects.filter(campaign=self.instance.campaign).select_related('userprofile__user', 'campaign')
+        self.fields['team_competitors'].queryset = TeamName.objects.all()
 
 
 class CompetitionResult(models.Model):
