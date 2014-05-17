@@ -774,7 +774,6 @@ def admissions(
         }, context_instance=RequestContext(request))
 
 
-@cache_page(60 * 60)
 def competition_results(request, template, competition_slug, campaign_slug, limit=None):
     if limit == '':
         limit = None
@@ -790,10 +789,18 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
         logger.exception('Unknown competition slug %s, request: %s' % (competition_slug, request))
         return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
 
+    results = competition.get_results()
+    if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
+        results = results.select_related('user_attendance__userprofile__user')
+    elif competition.competitor_type == 'team':
+        results = results.select_related('team__subsidiary__company')
+    elif competition.competitor_type == 'company':
+        results = results.select_related('company')
+
     return render_to_response(template, {
         #'userprofile': userprofile,
         'competition': competition,
-        'results': competition.get_results()[:limit],
+        'results': results[:limit]
         }, context_instance=RequestContext(request))
 
 
