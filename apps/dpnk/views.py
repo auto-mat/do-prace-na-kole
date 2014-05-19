@@ -774,6 +774,7 @@ def admissions(
         }, context_instance=RequestContext(request))
 
 
+@cache_page(60)
 def competition_results(request, template, competition_slug, campaign_slug, limit=None):
     if limit == '':
         limit = None
@@ -798,7 +799,7 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
         results = results.select_related('company')
 
     return render_to_response(template, {
-        'user_attendance': user_attendance,
+        'user_attendance': None,
         'competition': competition,
         'results': results[:limit]
         }, context_instance=RequestContext(request))
