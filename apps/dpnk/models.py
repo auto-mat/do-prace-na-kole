@@ -289,6 +289,7 @@ class Team(models.Model):
         verbose_name=_(u"Počet právoplatných členů týmu"),
         null=False,
         blank=False,
+        db_index=True,
         default=0,
         )
 
@@ -1741,6 +1742,7 @@ class CompetitionResult(models.Model):
         null=True,
         blank=True,
         default=None,
+        db_index=True,
         )
 
     def get_result_percentage(self):
