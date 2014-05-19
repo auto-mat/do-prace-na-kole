@@ -774,7 +774,7 @@ def admissions(
         }, context_instance=RequestContext(request))
 
 
-@cache_page(60)
+@cache_page(60*60)
 def competition_results(request, template, competition_slug, campaign_slug, limit=None):
     if limit == '':
         limit = None
