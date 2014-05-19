@@ -84,8 +84,8 @@ def get_competitions(user_attendance):
 
     competitions = competitions.filter(
             (
-                  (Q(company = None) | Q(company = user_attendance.team.subsidiary.company))
-                & (Q(city = None)    | Q(city = user_attendance.team.subsidiary.city))
+                  (Q(company=None) | Q(company=(user_attendance.company())))
+                & (Q(city=None)    | Q(city=(user_attendance.team.subsidiary.city if user_attendance.team else None)))
             )
         ).distinct()
     return competitions
@@ -197,7 +197,7 @@ def recalculate_result_competitor_nothread(user_attendance):
         elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
             recalculate_result(competition, user_attendance)
         elif competition.competitor_type == 'company':
-            recalculate_result(competition, user_attendance.team.subsidiary.company)
+            recalculate_result(competition, user_attendance.company())
 
 def recalculate_result_competitor(user_attendance):
     RecalculateResultCompetitorThread(user_attendance).start()
@@ -208,6 +208,9 @@ def recalculate_results_team(team):
         recalculate_result_competitor(team_member)
 
 def recalculate_result(competition, competitor):
+    if competitor == None:
+        return
+
     if competition.competitor_type == 'team':
         team = competitor
 
