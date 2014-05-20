@@ -739,7 +739,7 @@ def other_team_members(
         ):
     team_members = []
     if user_attendance.team and user_attendance.team.coordinator_campaign:
-        team_members = user_attendance.team.all_members()
+        team_members = user_attendance.team.all_members().select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign', 'user_attendance')
 
     return render_to_response(template, {
         'team_members': team_members,

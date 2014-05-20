@@ -148,7 +148,7 @@ def get_userprofile_length(user_attendance):
     # distance_from = models.Trip.objects.filter(user_attendance=user_attendance).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
     # distance_to   = models.Trip.objects.filter(user_attendance=user_attendance).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
     distance = 0
-    for trip in models.Trip.objects.filter(user_attendance=user_attendance):
+    for trip in models.Trip.objects.filter(user_attendance=user_attendance).select_related('user_attendance__campaign'):
         distance += trip.distance_from_cutted()
         distance += trip.distance_to_cutted()
     return distance
