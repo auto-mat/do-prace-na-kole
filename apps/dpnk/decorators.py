@@ -24,9 +24,11 @@ from models import UserAttendance, Campaign
 from wp_urls import wp_reverse
 from util import redirect
 import models
+import functools
 
 
 def login_required_simple(fn):
+    @functools.wraps(fn)
     def wrapper(*args, **kwargs):
         request = args[0]
         if not request.user.is_authenticated():
@@ -37,6 +39,7 @@ def login_required_simple(fn):
 
 
 def must_be_coordinator(fn):
+    @functools.wraps(fn)
     @must_be_competitor
     @login_required
     def wrapper(*args, **kwargs):
@@ -50,6 +53,7 @@ def must_be_coordinator(fn):
 
 
 def must_be_approved_for_team(fn):
+    @functools.wraps(fn)
     @login_required
     @must_be_competitor
     def wrapper(*args, **kwargs):
@@ -64,6 +68,7 @@ def must_be_approved_for_team(fn):
 
 
 def must_be_company_admin(fn):
+    @functools.wraps(fn)
     @login_required
     def wrapper(request, campaign_slug="", *args, **kwargs):
         campaign = Campaign.objects.get(slug=campaign_slug)
@@ -78,6 +83,7 @@ def must_be_company_admin(fn):
 
 
 def must_have_team(fn):
+    @functools.wraps(fn)
     @must_be_competitor
     def wrapper(request, user_attendance=None, *args, **kwargs):
         if not user_attendance.team:
@@ -88,6 +94,7 @@ def must_have_team(fn):
 
 def must_be_in_phase(*phase_type):
     def decorator(fn):
+        @functools.wraps(fn)
         def wrapped(request, *args, **kwargs):
             campaign = Campaign.objects.get(slug=kwargs.get('campaign_slug'))
             phases = campaign.phase_set.filter(type__in=phase_type)
@@ -101,6 +108,7 @@ def must_be_in_phase(*phase_type):
 
 
 def must_be_competitor(fn):
+    @functools.wraps(fn)
     @login_required
     def wrapper(*args, **kwargs):
         if kwargs.get('user_attendance', None):
@@ -129,6 +137,7 @@ def must_be_competitor(fn):
 
 def must_be_in_group(group):
     def decorator(fn):
+        @functools.wraps(fn)
         def wrapped(request, *args, **kwargs):
             if request.user.groups.filter(name=group).count() == 0:
                 return HttpResponse(_(u"<div class='text-warning'>Pro přístup k této stránce musíte být ve skupině %s</div>") % group, status=401)
@@ -139,6 +148,7 @@ def must_be_in_group(group):
 
 def user_attendance_has(condition, message):
     def decorator(fn):
+        @functools.wraps(fn)
         @must_be_competitor
         def wrapped(request, *args, **kwargs):
             user_attendance = kwargs['user_attendance']
@@ -151,6 +161,7 @@ def user_attendance_has(condition, message):
 
 def request_condition(condition, message):
     def decorator(fn):
+        @functools.wraps(fn)
         def wrapped(request, *args, **kwargs):
             if condition(request, args, kwargs):
                 return HttpResponse(message.encode('utf8'), status=401)
