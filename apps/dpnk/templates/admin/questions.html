@@ -6,13 +6,27 @@
 
 <ul>
 {% for q in questions %}
+{% ifchanged q.competition.campaign %}
+   {% if not forloop.first %}
+      </ul>
+      </li>
+   {% endif %}
+{% endifchanged %}
 {% ifchanged q.competition %}
    {% if not forloop.first %}
       </ul>
       </li>
    {% endif %}
+{% endifchanged %}
+
+{% ifchanged q.competition.campaign %}
    <li>
-   {{q.competition}}
+   {{q.competition.campaign}}
+   <ul>
+{% endifchanged %}
+{% ifchanged q.competition %}
+   <li>
+   {{q.competition}} - {{q.competition.city}}
    <ul>
 {% endifchanged %}
 <li>{{q.date}} ({{q.answer_set.count}}): <a href="{% wp_url 'odpovedi' %}?question={{ q.id }}">{{q.text}}</a></li>
