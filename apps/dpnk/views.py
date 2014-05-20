@@ -748,7 +748,6 @@ def other_team_members(
 
 @login_required_simple
 @must_be_competitor
-@must_be_approved_for_team
 def admissions(
         request, template, user_attendance=None,
         success_url="",
@@ -849,7 +848,7 @@ def handle_uploaded_file(source, username):
 
 
 @login_required_simple
-@must_be_approved_for_team
+@must_be_competitor
 def questionaire(
         request,
         questionaire_slug=None,

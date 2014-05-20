@@ -1665,7 +1665,7 @@ class Competition(models.Model):
         else:
             if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
                 return self.user_attendance_competitors.filter(pk=userprofile.pk).count() > 0
-            elif self.competitor_type == 'team':
+            elif self.competitor_type == 'team' and userprofile.team:
                 return self.team_competitors.filter(pk=userprofile.team.pk).count() > 0
             elif self.competitor_type == 'company':
                 return self.company_competitors.filter(pk=userprofile.company().pk).count() > 0
@@ -1685,9 +1685,9 @@ class Competition(models.Model):
                     self.team_competitors.remove(userprofile.team)
             elif self.competitor_type == 'company':
                 if admission:
-                    self.company_competitors.add(userprofile.team.subsidiary.company)
+                    self.company_competitors.add(userprofile.company())
                 else:
-                    self.company_competitors.remove(userprofile.team.subsidiary.company)
+                    self.company_competitors.remove(userprofile.company())
         results.recalculate_result_competitor_nothread(userprofile)
 
     def __unicode__(self):
@@ -2064,7 +2064,7 @@ def answer_post_save(sender, instance, **kwargs):
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
         results.recalculate_result(competition, instance.user_attendance)
     elif competition.competitor_type == 'company':
-        results.recalculate_result(competition, instance.user_attendance.team.subsidiary.company)
+        results.recalculate_result(competition, instance.user_attendance.company())
 
 
 @receiver(pre_save, sender=Payment)

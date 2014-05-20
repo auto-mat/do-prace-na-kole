@@ -127,7 +127,7 @@ def get_competitions_with_info(user_attendance):
             elif competition.competitor_type == 'team':
                 my_results = results.get(team = user_attendance.team)
             elif competition.competitor_type == 'company':
-                my_results = results.get(company = user_attendance.team.subsidiary.company)
+                my_results = results.get(company = user_attendance.company())
         except models.CompetitionResult.DoesNotExist:
             my_results = models.CompetitionResult()
 
