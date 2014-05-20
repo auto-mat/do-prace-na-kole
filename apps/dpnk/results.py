@@ -71,7 +71,7 @@ def get_competitors(self):
     return query
 
 def get_results(self):
-    competitors = self.results.order_by('-result', '-team__member_count')
+    competitors = self.results.exclude(result=None).order_by('-result', '-team__member_count')
     return competitors
 
 def get_competitions(user_attendance):
