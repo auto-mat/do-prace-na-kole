@@ -762,7 +762,7 @@ def admissions(
         if success_url is not None:
             return redirect(wp_reverse(success_url))
 
-    competitions = user_attendance.get_competitions().select_related('city', 'campaign', 'company')
+    competitions = user_attendance.get_competitions()
     for competition in competitions:
         competition.competitor_has_admission = competition.has_admission(user_attendance)
         competition.competitor_can_admit = competition.can_admit(user_attendance)

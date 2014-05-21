@@ -111,7 +111,7 @@ def has_distance_competition(user_attendance):
     return competitions.count() > 0
 
 def get_competitions_with_info(user_attendance):
-    competitions = get_competitions(user_attendance)
+    competitions = get_competitions(user_attendance).select_related('city', 'campaign', 'company')
 
     for competition in competitions:
         results = competition.get_results()
