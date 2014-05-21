@@ -623,9 +623,9 @@ class ChoiceTypeAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
 
 
 class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
-    list_display = ('user_attendance', 'points_given', 'choices_all', 'choices_ids_all', 'question__competition', 'comment', 'question')
+    list_display = ('user_attendance', 'points_given', 'choices_all', 'choices_ids_all', 'question__competition', 'attachment_url', 'comment', 'question__text')
     search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'question__text', 'question__name')
-    list_filter = ('question__competition__campaign', 'question__competition',)
+    list_filter = ('question__competition__campaign', 'question__competition__city', 'question__competition',)
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
     raw_id_fields = ('user_attendance', )
@@ -635,6 +635,10 @@ class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
 
     def choices_ids_all(self, obj):
         return ", ".join([(str(ch.pk)) for ch in obj.choices.all()])
+
+    def attachment_url(self, obj):
+        if obj.attachment:
+            return mark_safe(u"<a href='%s'>%s</a>" % (obj.attachment.url, obj.attachment))
 
 
 class QuestionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
