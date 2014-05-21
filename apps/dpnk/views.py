@@ -622,7 +622,7 @@ def rides(
             return redirect(wp_reverse(success_url))
 
     trips = {}
-    for t in Trip.objects.filter(user_attendance=user_attendance):
+    for t in Trip.objects.filter(user_attendance=user_attendance).select_related('user_attendance__campaign'):
         trips[t.date] = t
     calendar = []
 
