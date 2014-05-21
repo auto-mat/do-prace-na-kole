@@ -1674,11 +1674,11 @@ class Competition(models.Model):
             return True
         else:
             if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
-                return self.user_attendance_competitors.filter(pk=userprofile.pk).count() > 0
+                return self.user_attendance_competitors.filter(pk=userprofile.pk).exists()
             elif self.competitor_type == 'team' and userprofile.team:
-                return self.team_competitors.filter(pk=userprofile.team.pk).count() > 0
+                return self.team_competitors.filter(pk=userprofile.team.pk).exists()
             elif self.competitor_type == 'company':
-                return self.company_competitors.filter(pk=userprofile.company().pk).count() > 0
+                return self.company_competitors.filter(pk=userprofile.company().pk).exists()
             return True
 
     def make_admission(self, userprofile, admission=True):

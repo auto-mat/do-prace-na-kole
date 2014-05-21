@@ -118,7 +118,7 @@ def must_be_competitor(fn):
         if models.is_competitor(request.user):
             userprofile = request.user.userprofile
             try:
-                user_attendance = userprofile.userattendance_set.get(campaign__slug=kwargs.pop('campaign_slug'))
+                user_attendance = userprofile.userattendance_set.select_related('team__subsidiary__city', 'campaign', 'team__subsidiary__company', 't_shirt_size').get(campaign__slug=kwargs.pop('campaign_slug'))
             except UserAttendance.DoesNotExist:
                 user_attendance = UserAttendance(
                     userprofile=userprofile,
