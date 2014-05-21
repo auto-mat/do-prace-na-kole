@@ -756,14 +756,24 @@ class InvoicePaidFilter(SimpleListFilter):
         return queryset
 
 
+class InvoiceForm(forms.ModelForm):
+    class Meta:
+        model = models.Invoice
+
+    def __init__(self, *args, **kwargs):
+        super(InvoiceForm, self).__init__(*args, **kwargs)
+        self.fields['sequence_number'].required = False
+
+
 class InvoiceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ['company', 'created', 'exposure_date', 'paid_date', 'invoice_count', 'invoice_pdf_url', 'campaign', 'sequence_number', 'order_number', 'company__ico', 'company__dic', 'company_address']
-    readonly_fields = ['created', 'author', 'updated_by', 'invoice_count', 'sequence_number']
+    readonly_fields = ['created', 'author', 'updated_by', 'invoice_count']
     list_filter = ['campaign', InvoicePaidFilter]
     search_fields = ['company__name', ]
     inlines = [ PaymentInline ]
     actions = [mark_invoices_paid]
     list_max_show_all = 10000
+    form = InvoiceForm
 
     def company_address(self, obj):
         return obj.company.company_address()
