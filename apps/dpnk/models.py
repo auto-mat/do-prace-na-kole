@@ -728,7 +728,16 @@ class UserAttendance(models.Model):
             return True
 
     def company(self):
-        return get_company(self.campaign, self.userprofile.user)
+        if self.team:
+            try:
+                return self.team.subsidiary.company
+            except UserProfile.DoesNotExist:
+                pass
+
+        try:
+            return self.userprofile.user.company_admin.get(campaign=self.campaign).administrated_company
+        except CompanyAdmin.DoesNotExist:
+            return None
 
     def entered_competition(self):
         return self.transactions.filter(status=UserActionTransaction.Status.COMPETITION_START_CONFIRMED).exists()
@@ -1927,16 +1936,7 @@ class Answer(models.Model):
 
 
 def get_company(campaign, user):
-    if user.userprofile.userattendance_set.get(campaign=campaign).team:
-        try:
-            return user.userprofile.userattendance_set.get(campaign=campaign).team.subsidiary.company
-        except UserProfile.DoesNotExist:
-            pass
-
-    try:
-        return user.company_admin.get(campaign=campaign).administrated_company
-    except CompanyAdmin.DoesNotExist:
-        return None
+    return user.userprofile.userattendance_set.get(campaign=campaign).company()
 
 
 def get_company_admin(user, campaign):
