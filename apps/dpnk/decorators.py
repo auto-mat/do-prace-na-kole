@@ -117,13 +117,12 @@ def must_be_competitor(fn):
         request = args[0]
         if models.is_competitor(request.user):
             userprofile = request.user.userprofile
-            campaign = Campaign.objects.get(slug=kwargs.pop('campaign_slug'))
             try:
-                user_attendance = userprofile.userattendance_set.get(campaign=campaign)
+                user_attendance = userprofile.userattendance_set.get(campaign__slug=kwargs.pop('campaign_slug'))
             except UserAttendance.DoesNotExist:
                 user_attendance = UserAttendance(
                     userprofile=userprofile,
-                    campaign=campaign,
+                    campaign=Campaign.objects.get(slug=kwargs.pop('campaign_slug')),
                     approved_for_team='undecided',
                     )
                 user_attendance.save()
