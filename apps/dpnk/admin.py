@@ -728,11 +728,19 @@ class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+def update_mailing_coordinator(modeladmin, request, queryset):
+    for company_admin in queryset:
+        user_attendance = company_admin.user_attendance()
+        mailing.add_or_update_user_synchronous(user_attendance, ignore_hash=True)
+update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
+
+
 class CompanyAdminAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ['user', 'user__email', 'user__userprofile', 'user__userprofile__telephone', 'company_admin_approved', 'administrated_company__name', 'can_confirm_payments', 'note', 'campaign']
     list_filter = ['campaign', 'company_admin_approved']
     search_fields = ['administrated_company__name', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
     raw_id_fields = ['user', ]
+    actions = (update_mailing_coordinator,)
 
 
 def mark_invoices_paid(modeladmin, request, queryset):
