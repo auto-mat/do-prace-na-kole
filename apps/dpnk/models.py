@@ -592,6 +592,7 @@ class UserAttendance(models.Model):
 
     def name(self):
         return self.userprofile.user.get_full_name()
+    name.admin_order_field = 'userprofile__user__last_name'
 
     def __unicode__(self):
         return self.userprofile.user.get_full_name()
