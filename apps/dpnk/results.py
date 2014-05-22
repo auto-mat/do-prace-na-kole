@@ -257,7 +257,7 @@ def recalculate_result(competition, competitor):
     elif competition.competitor_type == 'company':
         company = competitor
         try:
-            company_admin = company.company_admin.get(campaign=competition.campaign).user_attendance(competition.campaign)
+            company_admin = company.company_admin.get(campaign=competition.campaign).user_attendance()
         except models.CompanyAdmin.DoesNotExist:
             return
         if not (competition.has_admission(company_admin)):
