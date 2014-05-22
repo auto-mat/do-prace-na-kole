@@ -678,6 +678,9 @@ class UserAttendance(models.Model):
     def get_length(self):
         return results.get_userprofile_length(self)
 
+    def get_userprofile(self):
+        return self.userprofile
+
     def is_libero(self):
         return False
         #DPNK2014 is not using liberos
@@ -910,7 +913,13 @@ class CompanyAdmin(models.Model):
         return self.administrated_company.invoice_set.filter(campaign=self.campaign).exists()
 
     def user_attendance(self):
-        return self.user.get_profile().userattendance_set.get(campaign=self.campaign)
+        try:
+            return self.user.get_profile().userattendance_set.get(campaign=self.campaign)
+        except UserAttendance.DoesNotExist:
+            return None
+
+    def get_userprofile(self):
+        return self.user.userprofile
 
     def __unicode__(self):
         return self.user.get_full_name()

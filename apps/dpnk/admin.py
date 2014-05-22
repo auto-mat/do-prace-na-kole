@@ -728,16 +728,39 @@ class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+class HasUserAttendanceFilter(SimpleListFilter):
+    title = _(u"Má účast v kampani")
+    parameter_name = u'has_user_attendance'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', u'Ano'),
+            ('no', u'Ne'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(user__userprofile__userattendance__isnull=False)
+        if self.value() == 'no':
+            return queryset.filter(user__userprofile__userattendance__isnull=True)
+        return queryset
+
+
 def update_mailing_coordinator(modeladmin, request, queryset):
     for company_admin in queryset:
         user_attendance = company_admin.user_attendance()
-        mailing.add_or_update_user_synchronous(user_attendance, ignore_hash=True)
+        if user_attendance:
+            mailing.add_or_update_user_synchronous(user_attendance, ignore_hash=True)
+        else:
+            mailing.add_or_update_user_synchronous(company_admin, ignore_hash=True)
+
+    modeladmin.message_user(request, _(u"Úspěšně aktualiován mailing pro %s koordinátorů") % queryset.count())
 update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
 
 
 class CompanyAdminAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ['user', 'user__email', 'user__userprofile', 'user__userprofile__telephone', 'company_admin_approved', 'administrated_company__name', 'can_confirm_payments', 'note', 'campaign']
-    list_filter = ['campaign', 'company_admin_approved']
+    list_filter = ['campaign', 'company_admin_approved', HasUserAttendanceFilter]
     search_fields = ['administrated_company__name', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
     raw_id_fields = ['user', ]
     actions = (update_mailing_coordinator,)

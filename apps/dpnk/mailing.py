@@ -38,17 +38,25 @@ mailing = Mailing(api_key=settings.MAILING_API_KEY)
 
 
 def get_custom_fields(user_attendance):
-    user = user_attendance.userprofile.user
+    user = user_attendance.get_userprofile().user
     city = None
     payment_status = None
-    if models.is_competitor(user):
+    team_coordinator = None
+    is_new_user = None
+    entered_competition = None
+    team_member_count = None
+
+    if isinstance(user_attendance, models.UserAttendance) and models.is_competitor(user):
         if user_attendance.team:
             city = user_attendance.team.subsidiary.city.name
         payment_status = user_attendance.payment()['status']
 
-    team_coordinator = user_attendance.is_team_coordinator()
+        team_coordinator = user_attendance.is_team_coordinator()
+        is_new_user = user_attendance.other_user_attendances(user_attendance.campaign).count() > 0
+        entered_competition = user_attendance.entered_competition()
+        team_member_count = user_attendance.team_member_count()
+
     company_admin = models.get_company_admin(user, user_attendance.campaign) is not None
-    is_new_user = user_attendance.other_user_attendances(user_attendance.campaign).count() > 0
 
     custom_fields = [
         {'Key': "Mesto", 'Value': city},
@@ -58,21 +66,21 @@ def get_custom_fields(user_attendance):
         {'Key': "Aktivni", 'Value': user.is_active},
         {'Key': "Novacek", 'Value': is_new_user},
         {'Key': "Kampan", 'Value': user_attendance.campaign.name},
-        {'Key': "Vstoupil_do_souteze", 'Value': user_attendance.entered_competition()},
-        {'Key': "Pocet_lidi_v_tymu", 'Value': user_attendance.team_member_count()},
+        {'Key': "Vstoupil_do_souteze", 'Value': entered_competition},
+        {'Key': "Pocet_lidi_v_tymu", 'Value': team_member_count},
         ]
     return custom_fields
 
 
 def update_mailing_id(user_attendance, mailing_id, mailing_hash):
-    userprofile = user_attendance.userprofile
+    userprofile = user_attendance.get_userprofile()
     userprofile.mailing_id = mailing_id
     userprofile.mailing_hash = mailing_hash
     userprofile.save()
 
 
 def add_user(user_attendance):
-    user = user_attendance.userprofile.user
+    user = user_attendance.get_userprofile().user
     custom_fields = get_custom_fields(user_attendance)
 
     # Register into mailing list
@@ -89,8 +97,8 @@ def add_user(user_attendance):
 
 
 def update_user(user_attendance, ignore_hash):
-    user = user_attendance.userprofile.user
-    userprofile = user_attendance.userprofile
+    user = user_attendance.get_userprofile().user
+    userprofile = user_attendance.get_userprofile()
     custom_fields = get_custom_fields(user_attendance)
     mailing_id = userprofile.mailing_id
 
@@ -108,8 +116,8 @@ def update_user(user_attendance, ignore_hash):
 
 
 def delete_user(user_attendance):
-    user = user_attendance.userprofile.user
-    mailing_id = user_attendance.userprofile.mailing_id
+    user = user_attendance.get_userprofile().user
+    mailing_id = user_attendance.get_userprofile().mailing_id
 
     if not mailing_id:
         return
@@ -130,13 +138,13 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
     if not user_attendance.campaign.mailing_list_enabled:
         return
 
-    user = user_attendance.userprofile.user
+    user = user_attendance.get_userprofile().user
 
     try:
         if not user.is_active:
             delete_user(user_attendance)
         else:
-            if models.is_competitor(user) and user_attendance.userprofile.mailing_id:
+            if models.is_competitor(user) and user_attendance.get_userprofile().mailing_id:
                 update_user(user_attendance, ignore_hash)
             else:
                 add_user(user_attendance)
