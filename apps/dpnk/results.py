@@ -38,6 +38,8 @@ def get_competitors(self):
                 filter_query['team__subsidiary__city'] = self.city
             if self.company:
                 filter_query['team__subsidiary__company'] = self.company
+            if self.sex:
+                filter_query['userprofile__sex'] = self.sex
             query = models.UserAttendance.objects.filter(**filter_query)
         elif self.competitor_type == 'team':
             filter_query = {}
@@ -85,6 +87,7 @@ def get_competitions(user_attendance):
     competitions = competitions.filter(
             (
                   (Q(company=None) | Q(company=(user_attendance.company())))
+                & (Q(sex=None)     | Q(sex=(user_attendance.userprofile.sex)))
                 & (Q(city=None)    | Q(city=(user_attendance.team.subsidiary.city if user_attendance.team else None)))
             )
         ).distinct()

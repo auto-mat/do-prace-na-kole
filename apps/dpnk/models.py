@@ -768,9 +768,14 @@ class UserProfile(models.Model):
     """Uživatelský profil"""
 
     class Meta:
-        verbose_name = _(u"Uživatel")
-        verbose_name_plural = _(u"Uživatelé")
+        verbose_name = _(u"Uživatelský profil")
+        verbose_name_plural = _(u"Uživatelské profily")
         ordering = ["user__last_name", "user__first_name"]
+
+    GENDER = (
+        ('male', _(u'Muž')),
+        ('female', _(u'Žena')),
+        ('unknown', _(u'Neznámé')))
 
     LANGUAGE = [
         ('cs', _(u"Čeština")),
@@ -809,6 +814,12 @@ class UserProfile(models.Model):
         null=True,
         blank=True
         )
+    sex = models.CharField(
+        verbose_name=_(u"Pohlaví"),
+        choices=GENDER,
+        default='unknown',
+        max_length=50,
+    )
     note = models.TextField(
         verbose_name=_(u"Interní poznámka"),
         null=True,
@@ -1604,6 +1615,14 @@ class Competition(models.Model):
         verbose_name=_(u"Soutěž pouze pro firmu"),
         null=True,
         blank=True)
+    sex = models.CharField(
+        verbose_name=_(u"Soutěž pouze pro pohlaví"),
+        choices=UserProfile.GENDER,
+        default=None,
+        max_length=50,
+        null=True,
+        blank=True,
+    )
     without_admission = models.BooleanField(
         verbose_name=_(u"Soutěž bez přihlášek (pro všechny)"),
         help_text=_(u"Dotazník je obvykle na přihlášky, výkonnost také a pravidelnost bez nich."),

@@ -172,10 +172,10 @@ class QuestionInline(SortableInlineAdminMixin, EnhancedAdminMixin, admin.Tabular
 
 
 class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedFieldAdmin):
-    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'entry_after_beginning_days', 'city', 'company__name', 'competition_results_link', 'questionnaire_results_link', 'questionnaire_link', 'draw_link', 'get_competitors_count', 'url', 'id')
+    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'date_from', 'date_to', 'entry_after_beginning_days', 'city', 'sex', 'company__name', 'competition_results_link', 'questionnaire_results_link', 'questionnaire_link', 'draw_link', 'get_competitors_count', 'url', 'id')
     filter_horizontal = ('team_competitors', 'company_competitors', 'user_attendance_competitors',)
     search_fields = ('name', 'company__name', 'slug')
-    list_filter = ('campaign', 'city', 'without_admission', 'is_public', 'competitor_type', 'type')
+    list_filter = ('campaign', 'city', 'without_admission', 'is_public', 'competitor_type', 'type', 'sex')
     save_as = True
     actions = [recalculate_competitions_results]
     inlines = [ QuestionInline, ]
@@ -359,11 +359,16 @@ class HasUserprofileFilter(SimpleListFilter):
         return queryset
 
 
+class UserProfileAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    list_display = ('user', '__unicode__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
+    list_filter = ('userattendance__campaign', 'language', 'sex', 'userattendance__team__subsidiary__city')
+    search_fields = ['user__first_name', 'user__last_name', 'user__username', 'user__email' ]
+
 class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name', ]
-    list_filter = ['userprofile__userattendance__campaign', 'is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved', HasUserprofileFilter]
+    list_filter = ['userprofile__userattendance__campaign', 'is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved', HasUserprofileFilter, 'userprofile__sex']
     readonly_fields = ['password']
     list_max_show_all = 10000
 
@@ -503,7 +508,7 @@ recalculate_results.short_description = _(u"Přepočítat výsledky soutěží p
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ('name', 'id', 'userprofile__user__email', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count')
-    list_filter = ('campaign', 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, 'team__member_count', PackageConfirmationFilter, 'transactions__packagetransaction__delivery_batch')
+    list_filter = ('campaign', 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, 'team__member_count', PackageConfirmationFilter, 'transactions__packagetransaction__delivery_batch', 'userprofile__sex')
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
     readonly_fields = ('user_link', 'userprofile__user__email', )
@@ -843,6 +848,7 @@ admin.site.register(models.Answer, AnswerAdmin)
 admin.site.register(models.Trip, TripAdmin)
 admin.site.register(models.Campaign, CampaignAdmin)
 admin.site.register(models.UserAttendance, UserAttendanceAdmin)
+admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.CompanyAdmin, CompanyAdminAdmin)
 admin.site.register(models.DeliveryBatch, DeliveryBatchAdmin)
 admin.site.register(models.Invoice, InvoiceAdmin)
