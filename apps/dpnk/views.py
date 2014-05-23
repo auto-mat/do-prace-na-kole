@@ -623,6 +623,7 @@ def rides(
 
         results.recalculate_result_competitor(user_attendance)
 
+        messages.add_message(request, messages.SUCCESS, _(u"Jízdy úspěšně vyplněny"), fail_silently=False)
         if success_url is not None:
             return redirect(wp_reverse(success_url))
 
