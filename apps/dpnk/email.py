@@ -97,7 +97,7 @@ def payment_confirmation_company_mail(user_attendance):
     email = user_attendance.userprofile.user.email
     message = template.render(Context({
                 'user': user_attendance,
-                'company': user_attendance.team.subsidiary.company,
+                'company': user_attendance.team.subsidiary.company if user_attendance.team else _(u"(není vybraná)"),
                 'SITE_URL': settings.SITE_URL}))
     send_mail(_(u"%s - přijetí platby" % user_attendance.campaign), message, None, [email], fail_silently=False)
 
