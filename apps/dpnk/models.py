@@ -1469,6 +1469,7 @@ class Trip(models.Model):
         verbose_name = _(u"Cesta")
         verbose_name_plural = _(u"Cesty")
         unique_together = (("user_attendance", "date"),)
+        ordering = ('date',)
 
     user_attendance = models.ForeignKey(
         UserAttendance,
