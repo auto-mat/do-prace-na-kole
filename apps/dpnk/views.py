@@ -974,7 +974,10 @@ def questionnaire_answers(
         competition_slug=None,
         ):
     competition = Competition.objects.get(slug=competition_slug)
-    competitor_result = competition.get_results().get(pk=request.GET['uid'])
+    try:
+        competitor_result = competition.get_results().get(pk=request.GET['uid'])
+    except:
+        return HttpResponse(_(u'<div class="text-error">Nesprávně zadaný soutěžící.</div>'), status=401)
     if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
         user_attendances = [competitor_result.user_attendance]
     elif competition.competitor_type == 'team':
