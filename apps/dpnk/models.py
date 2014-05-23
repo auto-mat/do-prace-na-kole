@@ -1082,7 +1082,8 @@ class Invoice(models.Model):
         super(Invoice, self).save(*args, **kwargs)
 
     def payments_to_add(self):
-        return payments_to_invoice(self.company, self.campaign)
+        if hasattr(self, 'campaign'):
+            return payments_to_invoice(self.company, self.campaign)
 
     @transaction.atomic
     def add_payments(self):
@@ -1093,7 +1094,7 @@ class Invoice(models.Model):
             payment.save()
 
     def clean(self):
-        if not self.pk and not self.payments_to_add().exists():
+        if not self.pk and hasattr(self, 'campaign') and not self.payments_to_add().exists():
             raise ValidationError(_(u"Neexistuje žádná nefakturovaná platba"))
 
 
