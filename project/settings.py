@@ -75,6 +75,7 @@ MIDDLEWARE_CLASSES = (
 #    "dpnk.middleware.XHRMiddleware",
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.messages.context_processors.messages',
     'django.contrib.auth.context_processors.auth',
     "dpnk.context_processors.settings_properties",
 )
