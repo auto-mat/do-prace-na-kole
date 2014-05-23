@@ -488,6 +488,13 @@ class NotInCityFilter(SimpleListFilter):
         return queryset.exclude(team__subsidiary__city=self.value())
 
 
+class TripAdminInline(EnhancedModelAdminMixin, admin.TabularInline):
+    list_display = ('user_attendance', 'date', 'trip_from', 'trip_to', 'distance_from', 'distance_to', 'id')
+    raw_id_fields = ('user_attendance',)
+    extra = 0
+    model = dpnk.models.Trip
+
+
 def recalculate_results(modeladmin, request, queryset):
     for user_attendance in queryset.all():
         results.recalculate_result_competitor_nothread(user_attendance)
@@ -502,7 +509,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     readonly_fields = ('user_link', 'userprofile__user__email', )
     actions = (update_mailing, approve_am_payment, recalculate_results)
     form = UserAttendanceForm
-    inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
+    inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
     list_max_show_all = 10000
 
     def user_link(self, obj):
