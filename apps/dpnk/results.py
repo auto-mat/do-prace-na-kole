@@ -27,8 +27,8 @@ from django.db.models import Sum, F, Q, Count
 import util
 import threading
 
-def get_competitors(self):
-    if self.without_admission:
+def get_competitors(self, potencial_competitors=False):
+    if self.without_admission or potencial_competitors:
         filter_query = {}
         filter_query['campaign'] = self.campaign
         if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':

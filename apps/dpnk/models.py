@@ -1646,8 +1646,8 @@ class Competition(models.Model):
         null=True,
     )
 
-    def get_competitors(self):
-        return results.get_competitors(self)
+    def get_competitors(self, potencial_competitors=False):
+        return results.get_competitors(self, potencial_competitors)
 
     def get_competitors_count(self):
         return self.get_competitors().count()
@@ -1743,7 +1743,7 @@ class CompetitionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CompetitionForm, self).__init__(*args, **kwargs)
         if hasattr(self.instance, 'campaign'):
-            self.fields['user_attendance_competitors'].queryset = UserAttendanceRelated.objects.filter(campaign=self.instance.campaign).select_related('userprofile__user', 'campaign')
+            self.fields['user_attendance_competitors'].queryset = self.instance.get_competitors(potencial_competitors=True).select_related('userprofile__user', 'campaign')
         self.fields['team_competitors'].queryset = TeamName.objects.all()
 
 
