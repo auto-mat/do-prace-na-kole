@@ -31,19 +31,19 @@ style="display:none"
 >
 <th scope="row" class="date">{{ day.day|naturalday:"D j. M Y" }}</th>
 <td>
-   <input type="checkbox" name="trip_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %}  {% if day.default_trip_to %}checked="checked"{% endif %}/>
+   <input type="checkbox" name="trip_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_to %}checked="checked"{% endif %}/>
 </td>
 {% if has_distance_competition %}
 <td>
-   <input type="number" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %} class="form-control" value="{{ day.default_distance_to }}"/>
+   <input type="number" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_to }}"/>
 </td>
 {% endif %}
 <td>
-   <input type="checkbox" name="trip_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %}  {% if day.default_trip_from %}checked="checked"{% endif %}/>
+   <input type="checkbox" name="trip_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_from %}checked="checked"{% endif %}/>
 </td>
 {% if has_distance_competition %}
 <td>
-   <input type="number" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" {% endif %} class="form-control" value="{{ day.default_distance_from }}"/>
+   <input type="number" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from }}"/>
 </td>
 {% endif %}
 <td><div {% if day.percentage > 66 %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>
