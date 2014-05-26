@@ -132,11 +132,6 @@ class City(models.Model):
         verbose_name=u"Subdoména v URL",
         blank=False
         )
-    city_admins = models.ManyToManyField(
-        'UserProfile',
-        related_name="administrated_cities",
-        null=True,
-        blank=True)
 
     def __unicode__(self):
         return "%s" % self.name
@@ -149,7 +144,7 @@ class CityInCampaign(models.Model):
         verbose_name = _(u"Město v kampani")
         verbose_name_plural = _(u"Města v kampani")
         unique_together = (("city", "campaign"),)
-        ordering = ('city__name',)
+        ordering = ('campaign', 'city__name',)
 
     #TODO: make this field float or in cents
     admission_fee = models.PositiveIntegerField(
@@ -825,6 +820,11 @@ class UserProfile(models.Model):
         null=True,
         blank=True,
         )
+    administrated_cities = models.ManyToManyField(
+        'CityInCampaign',
+        related_name="city_admins",
+        null=True,
+        blank=True)
 
     def first_name(self):
         return self.user.first_name

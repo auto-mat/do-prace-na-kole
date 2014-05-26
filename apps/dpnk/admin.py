@@ -85,7 +85,6 @@ class SubsidiaryInline(EnhancedAdminMixin, admin.TabularInline):
 
 class CityAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'id', )
-    filter_horizontal = ('city_admins',)
     prepopulated_fields = {'slug': ('name',)}
 
 
@@ -317,6 +316,7 @@ class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
     model = models.UserProfile
     form = UserProfileForm
     inlines = [UserAttendanceInline, ]
+    filter_horizontal = ('administrated_cities',)
     search_fields = ['user__first_name', 'user__last_name', 'user__username']
 
     def user__first_name(self, obj):
@@ -368,7 +368,7 @@ class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmi
     inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name', ]
-    list_filter = ['userprofile__userattendance__campaign', 'is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved', HasUserprofileFilter, 'userprofile__sex']
+    list_filter = ['userprofile__userattendance__campaign', 'is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved', HasUserprofileFilter, 'userprofile__sex', 'userprofile__administrated_cities__city']
     readonly_fields = ['password']
     list_max_show_all = 10000
 
