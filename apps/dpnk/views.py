@@ -576,6 +576,8 @@ trip_active = trip_active_last_week
 @must_be_competitor
 @must_be_approved_for_team
 @user_attendance_has(lambda ua: not ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Vyplnit jízdy můžete až po vstupu do soutěže."), "</div>"))
+@never_cache
+@cache_control(max_age=0, no_cache=True, no_store=True)
 def rides(
         request, user_attendance=None, template='registration/rides.html',
         success_url=""):
@@ -739,6 +741,8 @@ def user_attendance_view(request, user_attendance=None, template=None):
 @login_required_simple
 @must_be_competitor
 @must_be_approved_for_team
+@never_cache
+@cache_control(max_age=0, no_cache=True, no_store=True)
 def other_team_members(
         request, userprofile=None, user_attendance=None,
         template='registration/team_members.html'
@@ -754,6 +758,8 @@ def other_team_members(
 
 @login_required_simple
 @must_be_competitor
+@never_cache
+@cache_control(max_age=0, no_cache=True, no_store=True)
 def admissions(
         request, template, user_attendance=None,
         success_url="",
