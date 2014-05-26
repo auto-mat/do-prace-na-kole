@@ -957,7 +957,10 @@ def questionaire(
 
 @staff_member_required
 def questions(request):
-    questions = Question.objects.all().order_by('competition__campaign', 'competition', 'date', 'order')
+    filter_query = {}
+    if not request.user.is_superuser:
+        filter_query['competition__city__cityincampaign__in'] = request.user.userprofile.administrated_cities.all()
+    questions = Question.objects.filter(**filter_query).order_by('competition__campaign', 'competition', 'date', 'order')
     return render_to_response('admin/questions.html', {
         'questions': questions
         }, context_instance=RequestContext(request))
@@ -1007,6 +1010,8 @@ def questionnaire_answers(
 def answers(request):
     question_id = request.GET['question']
     question = Question.objects.get(id=question_id)
+    if not request.user.is_superuser and (not question.competition.city or not question.competition.city.cityincampaign_set.filter(pk__in=request.user.userprofile.administrated_cities.all()).exists()):
+        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Otázka je položená ve městě, pro které nemáte oprávnění."), "</div>"), status=401)
 
     if request.method == 'POST':
         points = [(k.split('-')[1], v) for k, v in request.POST.items() if k.startswith('points-')]

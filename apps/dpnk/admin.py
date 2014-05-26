@@ -361,7 +361,8 @@ class HasUserprofileFilter(SimpleListFilter):
 
 class UserProfileAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('user', '__unicode__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
-    list_filter = ('userattendance__campaign', 'language', 'sex', 'userattendance__team__subsidiary__city')
+    list_filter = ('userattendance__campaign', 'language', 'sex', 'userattendance__team__subsidiary__city', 'userattendance__approved_for_team')
+    filter_horizontal = ('administrated_cities',)
     search_fields = ['user__first_name', 'user__last_name', 'user__username', 'user__email' ]
 
 class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
