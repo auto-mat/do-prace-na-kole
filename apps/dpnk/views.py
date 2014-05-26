@@ -971,7 +971,11 @@ def questionnaire_results(
         request,
         competition_slug=None,
         ):
-    competitors = Competition.objects.get(slug=competition_slug).get_results()
+    competition = Competition.objects.get(slug=competition_slug)
+    if not request.user.is_superuser and (not competition.city or not competition.city.cityincampaign_set.filter(pk__in=request.user.userprofile.administrated_cities.all()).exists()):
+        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění."), "</div>"))
+
+    competitors = competition.get_results()
     return render_to_response('admin/questionnaire_results.html', {
         'competition_slug': competition_slug,
         'competitors': competitors,
@@ -984,6 +988,9 @@ def questionnaire_answers(
         competition_slug=None,
         ):
     competition = Competition.objects.get(slug=competition_slug)
+    if not request.user.is_superuser and (not competition.city or not competition.city.cityincampaign_set.filter(pk__in=request.user.userprofile.administrated_cities.all()).exists()):
+        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění."), "</div>"))
+
     try:
         competitor_result = competition.get_results().get(pk=request.GET['uid'])
     except:
