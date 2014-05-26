@@ -623,6 +623,16 @@ class PaymentAdmin(RelatedFieldAdmin):
     form = models.PaymentForm
 
 
+class PackageTransactionAdmin(RelatedFieldAdmin):
+    list_display = ('id', 'user_attendance', 'created', 'realized', 'status', 'author', 'user_attendance__team__subsidiary__company__name', 't_shirt_size', 'delivery_batch', 'tnt_con_reference', 'tracking_number_cnc')
+    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'session_id', 'trans_id', 'order_id', 'user_attendance__team__subsidiary__company__name', )
+    list_filter = [ 'user_attendance__campaign', 'status', 'delivery_batch']
+    raw_id_fields = ('user_attendance',)
+    readonly_fields = ('author', 'created')
+    list_max_show_all = 10000
+    form = models.PaymentForm
+
+
 class ChoiceInline(EnhancedAdminMixin, admin.TabularInline):
     model = models.Choice
     extra = 3
@@ -837,6 +847,7 @@ class InvoiceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
 
 admin.site.register(models.Team, TeamAdmin)
 admin.site.register(models.Transaction, TransactionAdmin)
+admin.site.register(models.PackageTransaction, PackageTransactionAdmin)
 admin.site.register(models.Payment, PaymentAdmin)
 admin.site.register(models.Question, QuestionAdmin)
 admin.site.register(models.ChoiceType, ChoiceTypeAdmin)
