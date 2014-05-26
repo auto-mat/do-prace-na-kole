@@ -658,7 +658,7 @@ class QuestionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.Model
     form = models.QuestionForm
     list_display = ('__unicode__', 'text', 'type', 'order', 'date', 'competition', 'answers_link', 'id', )
     ordering = ('order', 'date',)
-    list_filter = ('competition__campaign', 'competition',)
+    list_filter = ('competition__campaign', 'competition__city', 'competition',)
     search_fields = ('text',)
     save_as = True
 

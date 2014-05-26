@@ -957,10 +957,12 @@ def questionaire(
 
 @staff_member_required
 def questions(request):
-    filter_query = {}
+    filter_query = Q()
     if not request.user.is_superuser:
-        filter_query['competition__city__cityincampaign__in'] = request.user.userprofile.administrated_cities.all()
-    questions = Question.objects.filter(**filter_query).order_by('competition__campaign', 'competition', 'date', 'order')
+        for administrated_city in request.user.userprofile.administrated_cities.all():
+            filter_query |= (Q(competition__city=administrated_city.city) & Q(competition__campaign=administrated_city.campaign))
+        #filter_query['competition__city__cityincampaign__in'] = request.user.userprofile.administrated_cities.all()
+    questions = Question.objects.filter(filter_query).order_by('competition__campaign', 'competition', 'date', 'order')
     return render_to_response('admin/questions.html', {
         'questions': questions
         }, context_instance=RequestContext(request))
@@ -972,7 +974,7 @@ def questionnaire_results(
         competition_slug=None,
         ):
     competition = Competition.objects.get(slug=competition_slug)
-    if not request.user.is_superuser and (not competition.city or not competition.city.cityincampaign_set.filter(pk__in=request.user.userprofile.administrated_cities.all()).exists()):
+    if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(competition):
         return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění."), "</div>"))
 
     competitors = competition.get_results()
@@ -988,7 +990,7 @@ def questionnaire_answers(
         competition_slug=None,
         ):
     competition = Competition.objects.get(slug=competition_slug)
-    if not request.user.is_superuser and (not competition.city or not competition.city.cityincampaign_set.filter(pk__in=request.user.userprofile.administrated_cities.all()).exists()):
+    if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(competition):
         return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění."), "</div>"))
 
     try:
@@ -1017,7 +1019,7 @@ def questionnaire_answers(
 def answers(request):
     question_id = request.GET['question']
     question = Question.objects.get(id=question_id)
-    if not request.user.is_superuser and (not question.competition.city or not question.competition.city.cityincampaign_set.filter(pk__in=request.user.userprofile.administrated_cities.all()).exists()):
+    if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(question.competition):
         return HttpResponse(string_concat("<div class='text-warning'>", _(u"Otázka je položená ve městě, pro které nemáte oprávnění."), "</div>"), status=401)
 
     if request.method == 'POST':
@@ -1036,21 +1038,22 @@ def answers(request):
     choice_names = {}
 
     for a in answers:
-        a.city = a.user_attendance.team.subsidiary.city
+        a.city = a.user_attendance.team.subsidiary.city if a.user_attendance.team else None
 
     if question.type in ('choice', 'multiple-choice'):
         for a in answers:
-            respondents[a.city] += 1
-            for c in a.choices.all():
-                try:
-                    count[a.city][c.id] += 1
-                except KeyError:
-                    count[a.city][c.id] = 1
-                    choice_names[c.id] = c.text
-                try:
-                    count_all[c.id] += 1
-                except KeyError:
-                    count_all[c.id] = 1
+            if a.city:
+                respondents[a.city] += 1
+                for c in a.choices.all():
+                    try:
+                        count[a.city][c.id] += 1
+                    except KeyError:
+                        count[a.city][c.id] = 1
+                        choice_names[c.id] = c.text
+                    try:
+                        count_all[c.id] += 1
+                    except KeyError:
+                        count_all[c.id] = 1
 
     stat = dict((c, []) for c in City.objects.all())
     stat['Celkem'] = []

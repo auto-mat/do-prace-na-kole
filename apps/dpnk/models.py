@@ -835,6 +835,9 @@ class UserProfile(models.Model):
     def __unicode__(self):
         return self.user.get_full_name()
 
+    def competition_edition_allowed(self, competition):
+        return not competition.city or not self.administrated_cities.filter(campaign=competition.campaign, city=competition.city).exists()
+
     def save(self, force_insert=False, force_update=False):
         if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
             logger.error(u"Mailing id %s is already used" % self.mailing_id)
