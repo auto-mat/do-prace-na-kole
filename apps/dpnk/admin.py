@@ -645,10 +645,28 @@ class ChoiceTypeAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     save_as = True
 
 
+class HasReactionFilter(SimpleListFilter):
+    title = _(u"Obsahuje odpověď")
+    parameter_name = u'has_reaction'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', u'Ano'),
+            ('no', u'Ne'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.exclude((Q(comment=None) | Q(comment='')) & (Q(attachment=None) | Q(attachment='')) & Q(points_given=None)).distinct()
+        if self.value() == 'no':
+            return queryset.filter((Q(comment=None) | Q(comment='')) & (Q(attachment=None) | Q(attachment='')) & Q(points_given=None)).distinct()
+        return queryset
+
+
 class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ('user_attendance', 'points_given', 'choices_all', 'choices_ids_all', 'question__competition', 'question__competition__city', 'attachment_url', 'comment', 'question__text')
     search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'question__text', 'question__name', 'question__competition__name')
-    list_filter = ('question__competition__campaign', 'question__competition__city', 'question__competition',)
+    list_filter = ('question__competition__campaign', HasReactionFilter, 'question__competition__city', 'question__competition')
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
     raw_id_fields = ('user_attendance', )
