@@ -1711,7 +1711,7 @@ class Competition(models.Model):
                 return self.user_attendance_competitors.filter(pk=userprofile.pk).exists()
             elif self.competitor_type == 'team' and userprofile.team:
                 return self.team_competitors.filter(pk=userprofile.team.pk).exists()
-            elif self.competitor_type == 'company':
+            elif self.competitor_type == 'company' and userprofile.company():
                 return self.company_competitors.filter(pk=userprofile.company().pk).exists()
             return True
 
