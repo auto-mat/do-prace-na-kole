@@ -962,7 +962,7 @@ def questions(request):
         for administrated_city in request.user.userprofile.administrated_cities.all():
             filter_query |= (Q(competition__city=administrated_city.city) & Q(competition__campaign=administrated_city.campaign))
         #filter_query['competition__city__cityincampaign__in'] = request.user.userprofile.administrated_cities.all()
-    questions = Question.objects.filter(filter_query).order_by('competition__campaign', 'competition', 'date', 'order')
+    questions = Question.objects.filter(filter_query).order_by('competition__campaign', 'competition__slug', 'order')
     return render_to_response('admin/questions.html', {
         'questions': questions
         }, context_instance=RequestContext(request))
