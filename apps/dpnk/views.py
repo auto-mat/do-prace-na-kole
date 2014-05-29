@@ -1227,15 +1227,12 @@ def facebook_app(request):
 
 def distance(trips):
     distance = 0
-    distance += trips.filter(trip_from=True).aggregate(Sum("distance_from"))['distance_from__sum'] or 0
-    distance += trips.filter(trip_to=True).aggregate(Sum("distance_to"))['distance_to__sum'] or 0
+    #TODO: Fix calculation also for team length competitions.
+    distance += trips.filter(user_attendance__competitions__type='length', trip_from=True).aggregate(Sum("distance_from"))['distance_from__sum'] or 0
+    distance += trips.filter(user_attendance__competitions__type='length', trip_to=True).aggregate(Sum("distance_to"))['distance_to__sum'] or 0
 
-    distance_from = trips.filter(distance_from = None, trip_from = True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum']
-    if distance_from:
-        distance += distance_from
-    distance_to = trips.filter(distance_to = None, trip_to = True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum']
-    if distance_to:
-        distance += distance_to
+    distance += trips.exclude(user_attendance__competitions__type='length').filter(trip_from = True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
+    distance += trips.exclude(user_attendance__competitions__type='length').filter(trip_to = True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
     return distance
 
 
