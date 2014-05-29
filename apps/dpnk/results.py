@@ -102,7 +102,7 @@ def get_competitions_with_admission(user_attendance):
                 & (
                     Q(user_attendance_competitors = user_attendance)
                     | Q(team_competitors = user_attendance.team)
-                    | Q(company_competitors = user_attendance.team.subsidiary.company)
+                    | Q(company_competitors = user_attendance.company())
                 )
             )
         ).distinct()

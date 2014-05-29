@@ -669,7 +669,10 @@ class UserAttendance(models.Model):
             return 0
 
     def get_rough_length(self):
-        return results.get_userprofile_frequency(self) * self.distance
+        if self.distance:
+            return results.get_userprofile_frequency(self) * self.distance
+        else:
+            return 0
 
     def get_length(self):
         return results.get_userprofile_length(self)
