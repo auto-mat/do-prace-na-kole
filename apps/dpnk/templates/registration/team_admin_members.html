@@ -8,7 +8,7 @@
    <div id="id-{{ user.4.2 }}-team-member">
    <h2>{{ user.3.2 }}</h2>
    {% include "messages_include.html" with required_tag="user_attendance_"|add:user.1.2 %}
-   <table class="table table-striped table-condensed">
+   <table class="table table-condensed">
       {% for field in user %}
          {% if forloop.counter > 4 %}
             {% if field.0 == 'state_name' %}
