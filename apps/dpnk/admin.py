@@ -367,7 +367,7 @@ class UserProfileAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 
 class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
-    list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'id')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'userprofile_administrated_cities', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name', ]
     list_filter = ['userprofile__userattendance__campaign', 'is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved', HasUserprofileFilter, 'userprofile__sex', 'userprofile__administrated_cities__city']
     readonly_fields = ['password']
@@ -407,6 +407,9 @@ class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmi
 
     def company_admin__administrated_company(self, obj):
         return obj.company_admin.administrated_company
+
+    def userprofile_administrated_cities(self, obj):
+        return ", ".join([str(c) for c in obj.userprofile.administrated_cities.all()])
 
 
 def update_mailing(modeladmin, request, queryset):
