@@ -1225,6 +1225,13 @@ def facebook_app(request):
     return render_to_response('registration/facebook_app.html', {'user': request.user})
 
 
+def distance_length_competitions(trips):
+    distance = 0
+    distance += trips.filter(user_attendance__competitions__type='length', trip_from=True).aggregate(Sum("distance_from"))['distance_from__sum'] or 0
+    distance += trips.filter(user_attendance__competitions__type='length', trip_to=True).aggregate(Sum("distance_to"))['distance_to__sum'] or 0
+    return distance
+
+
 def distance(trips):
     distance = 0
     #TODO: Fix calculation also for team length competitions.
@@ -1238,6 +1245,10 @@ def distance(trips):
 
 def total_distance(campaign):
     return distance(Trip.objects.filter(user_attendance__campaign=campaign))
+
+
+def total_distance_length_competitions(campaign):
+    return distance_length_competitions(Trip.objects.filter(user_attendance__campaign=campaign))
 
 
 def period_distance(campaign, day_from, day_to):
@@ -1265,6 +1276,8 @@ def statistics(
     campaign = Campaign.objects.get(slug=campaign_slug)
     variables = {}
     if variable == 'ujeta-vzdalenost':
+        result = total_distance_length_competitions(campaign)
+    if variable == 'ujeta-vzdalenost-vsechny-souteze':
         result = total_distance(campaign)
     elif variable == 'ujeta-vzdalenost-dnes':
         result = period_distance(campaign, util.today(), util.today())
