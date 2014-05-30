@@ -263,7 +263,7 @@ def recalculate_result(competition, competitor):
             company_admin = company.company_admin.get(campaign=competition.campaign).user_attendance()
         except models.CompanyAdmin.DoesNotExist:
             return
-        if not (competition.has_admission(company_admin)):
+        if not company_admin or not (competition.has_admission(company_admin)):
             models.CompetitionResult.objects.filter(company=company, competition=competition).delete()
             return
 

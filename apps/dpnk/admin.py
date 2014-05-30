@@ -205,10 +205,13 @@ class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedF
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == "team_competitors":
-            kwargs["queryset"] = models.TeamName.objects.all()
+            kwargs["queryset"] = models.Team.objects.none()
 
         if db_field.name == "user_attendance_competitors":
-            kwargs["queryset"] = models.UserAttendanceRelated.objects.select_related('userprofile__user', 'campaign')
+            kwargs["queryset"] = models.UserAttendance.objects.none()
+
+        if db_field.name == "company_competitors":
+            kwargs["queryset"] = models.Company.objects.none()
         return super(CompetitionAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
 
