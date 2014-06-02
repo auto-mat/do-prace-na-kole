@@ -514,7 +514,7 @@ recalculate_results.short_description = _(u"Přepočítat výsledky soutěží p
 
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
-    list_display = ('name', 'id', 'userprofile__user__email', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count')
+    list_display = ('name', 'id', 'userprofile__user__email', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_rough_length', 'get_length')
     list_filter = ('campaign', 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, 'team__member_count', PackageConfirmationFilter, 'transactions__packagetransaction__delivery_batch', 'userprofile__sex')
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
@@ -527,6 +527,9 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     def user_link(self, obj):
         return mark_safe('<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (obj.userprofile.user.pk, obj.userprofile.user))
     user_link.short_description = 'Uživatel'
+
+    def queryset(self, request):
+        return models.UserAttendance.objects.select_related('userprofile__user', 'team__subsidiary__company', 'campaign__cityincampaigns', 't_shirt_size', 'team__subsidiary__city', 'campaign')
 
 
 class CoordinatorFilter(SimpleListFilter):
