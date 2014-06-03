@@ -680,7 +680,7 @@ class HasReactionFilter(SimpleListFilter):
 
 class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ('user_attendance', 'points_given', 'choices_all', 'choices_ids_all', 'question__competition', 'question__competition__city', 'attachment_url', 'comment', 'question__text')
-    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'question__text', 'question__name', 'question__competition__name')
+    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'question__text', 'question__name', 'question__competition__name', 'user_attendance__team__subsidiary__company__name')
     list_filter = ('question__competition__campaign', HasReactionFilter, 'question__competition__city', 'question__competition')
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
