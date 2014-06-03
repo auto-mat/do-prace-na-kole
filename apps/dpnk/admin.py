@@ -723,7 +723,7 @@ show_distance_trips.short_description = _(u"Ukázat ujetou vzdálenost")
 
 class TripAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('user_attendance', 'date', 'trip_from', 'trip_to', 'distance_from', 'distance_to', 'id')
-    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username')
+    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'user_attendance__team__subsidiary__company__name')
     raw_id_fields = ('user_attendance',)
     list_filter = ('user_attendance__campaign', 'user_attendance__team__subsidiary__city', 'distance_from')
     actions = (show_distance_trips,)
