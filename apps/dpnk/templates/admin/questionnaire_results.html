@@ -4,10 +4,39 @@
 
 {% block content %}
 
-<ul>
-{% for competitor in competitors %}
-<li><a href="{% wp_url 'dotaznik_odpovedi' %}{{competition_slug}}?uid={{ competitor.pk }}">{{ competitor }}</a>, {{ competitor.result }} bodů</li>
-{% endfor %}
-</li>
+<table>
+   <tr>
+      <th>
+         soutěžící
+      </th>
+      {% if competition.competitor_type == 'team' %}
+      <th>
+         firma
+      </th><th>
+         město
+      </th>
+      {% endif %}
+      <th>
+         bodů
+      </th>
+   </tr>
+   {% for competitor in competitors %}
+   <tr>
+      <td>
+         <a href="{% wp_url 'dotaznik_odpovedi' %}{{competition_slug}}?uid={{ competitor.pk }}">{{ competitor }}</a>
+      </td>
+      {% if competition.competitor_type == 'team' %}
+      <td>
+         {{ competitor.team.subsidiary.company }}
+      </td><td>
+         {{ competitor.team.subsidiary.city }}
+      </td>
+      {% endif %}
+      <td>
+         {{ competitor.result }}
+      </td>
+   </tr>
+   {% endfor %}
+</table>
 
 {% endblock %}

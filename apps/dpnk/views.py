@@ -981,6 +981,7 @@ def questionnaire_results(
     return render_to_response('admin/questionnaire_results.html', {
         'competition_slug': competition_slug,
         'competitors': competitors,
+        'competition': competition,
         }, context_instance=RequestContext(request))
 
 
