@@ -512,6 +512,11 @@ def recalculate_results(modeladmin, request, queryset):
         results.recalculate_result_competitor_nothread(user_attendance)
 recalculate_results.short_description = _(u"Přepočítat výsledky soutěží pro vybrané účasti v kampani")
 
+def show_distance(modeladmin, request, queryset):
+    length = dpnk.views.distance(dpnk.models.Trip.objects.filter(user_attendance__in=queryset))
+    modeladmin.message_user(request, "Ujetá vzdálenost: %s Km" % length)
+show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
+
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ('name', 'id', 'userprofile__user__email', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_rough_length', 'get_length')
@@ -519,7 +524,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
     readonly_fields = ('user_link', 'userprofile__user__email', )
-    actions = (update_mailing, approve_am_payment, recalculate_results)
+    actions = (update_mailing, approve_am_payment, recalculate_results, show_distance)
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
     list_max_show_all = 10000
