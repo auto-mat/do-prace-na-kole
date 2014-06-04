@@ -514,8 +514,10 @@ recalculate_results.short_description = _(u"Přepočítat výsledky soutěží p
 
 
 def show_distance(modeladmin, request, queryset):
-    length = dpnk.views.distance(dpnk.models.Trip.objects.filter(user_attendance__in=queryset))
-    modeladmin.message_user(request, "Ujetá vzdálenost: %s Km" % length)
+    trips_query = dpnk.models.Trip.objects.filter(user_attendance__in=queryset)
+    length = dpnk.views.distance(trips_query)
+    trips = dpnk.views.trips(trips_query)
+    modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
 show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 
 
@@ -717,7 +719,8 @@ class QuestionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.Model
 
 def show_distance_trips(modeladmin, request, queryset):
     length = dpnk.views.distance(queryset)
-    modeladmin.message_user(request, "Ujetá vzdálenost: %s Km" % length)
+    trips = dpnk.views.trips(queryset)
+    modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
 show_distance_trips.short_description = _(u"Ukázat ujetou vzdálenost")
 
 
