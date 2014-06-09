@@ -30,6 +30,7 @@ from dpnk.wp_urls import wp_reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 from adminsortable.admin import SortableInlineAdminMixin
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
+from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from django.utils.translation import ugettext_lazy as _
 import datetime
@@ -521,8 +522,14 @@ def show_distance(modeladmin, request, queryset):
 show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 
 
-class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
-    list_display = ('name', 'id', 'userprofile__user__email', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_rough_length', 'get_length')
+class UserAttendanceResource(resources.ModelResource):
+    class Meta:
+        model = models.UserAttendance
+        fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email')
+
+
+class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin):
+    list_display = ('name', 'id', 'userprofile__user__email', 'distance', 'team', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_rough_length', 'get_length')
     list_filter = ('campaign', 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, 'team__member_count', PackageConfirmationFilter, 'transactions__packagetransaction__delivery_batch', 'userprofile__sex')
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
@@ -531,6 +538,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
     list_max_show_all = 10000
+    resource_class = UserAttendanceResource
 
     def user_link(self, obj):
         return mark_safe('<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (obj.userprofile.user.pk, obj.userprofile.user))
