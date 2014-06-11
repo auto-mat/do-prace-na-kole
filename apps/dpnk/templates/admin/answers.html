@@ -6,7 +6,7 @@
 
 <p>
 <strong>Otázka:</strong> <a href="{% wp_url 'admin' %}dpnk/question/{{ question.pk }}">{{ question.text }}</a><br/>
-<strong>Respondentů:</strong> {{ total_respondents }}<br>
+<strong>Respondentů:</strong> <a href="{% wp_url 'dotaznik' %}{{ question.competition.slug }}">{{ total_respondents }}</a><br>
 <a href="{% wp_url 'admin' %}dpnk/answer/?question__competition__id__exact={{ question.competition.pk }}">Odpovědi k soutěži {{ question.competition }}</a>
 </p>
 
