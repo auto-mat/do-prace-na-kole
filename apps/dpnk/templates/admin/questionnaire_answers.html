@@ -1,6 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
+{% load thumbnail %}
 
 {% block content %}
 
@@ -29,7 +30,14 @@ Soutěžící: {{ competitor }}<br/>
          {% endif %}
          b )</strong> {% endif %}</p>
     {% if a.question.with_attachment %}
-      Příloha: <a href="{{ media }}/{{ a.attachment }}">{{ a.attachment }}</a>
+      Příloha:
+      {% thumbnail a.attachment "250x250" as foto_thumb %}
+      {% if foto_thumb %}
+         <a href="{{ settings.SITE_URL}}{{ a.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
+         <img src="{{ settings.SITE_URL}}{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
+      {% else %}
+         <a href="{{ media }}/{{ a.attachment }}" target="_blank">{{ a.attachment }}</a>
+      {% endif %}
     {% endif %}
   </li>
   {% endfor %}

@@ -123,6 +123,7 @@ INSTALLED_APPS = (
     'dbbackup',
     'localeurl',
     'related_admin',
+    'easy_thumbnails',
 )
 AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
