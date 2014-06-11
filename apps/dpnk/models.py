@@ -1927,6 +1927,9 @@ class Question(models.Model):
     def __unicode__(self):
         return "%s" % (self.name or self.text)
 
+    def with_answer(self):
+        return self.with_comment or self.with_attachment or self.type != 'text' or self.choice_type != None
+
 
 class Choice(models.Model):
 

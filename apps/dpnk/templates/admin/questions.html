@@ -15,7 +15,9 @@
    {{q.competition.campaign}} - <a href="{% wp_url 'dotaznik' %}{{ q.competition.slug }}">{{q.competition}}</a> - {{q.competition.city}}
    <ul>
 {% endifchanged %}
+{% if q.with_answer %}
 <li>{{q.date}} ({{q.answer_set.count}}): <a href="{% wp_url 'odpovedi' %}?question={{ q.id }}">{{q.text}}</a></li>
+{% endif %}
 {% endfor %}
 </ul>
 </li>
