@@ -1984,6 +1984,7 @@ class Answer(models.Model):
     attachment = models.FileField(
         upload_to="questionaire/",
         max_length=600,
+        blank=True,
         )
 
     def str_choices(self):
