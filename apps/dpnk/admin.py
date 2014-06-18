@@ -441,7 +441,9 @@ class PaymentTypeFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.filter(transactions__payment__pay_type=self.value()).distinct()
+            #TODO: this is slow since it doesn't use querysets
+            users = [u.id for u in queryset.filter(transactions__payment__pay_type=self.value()) if u.payment()['payment'].pay_type == self.value()]
+            return queryset.filter(id__in=users)
 
 
 class PackageConfirmationFilter(SimpleListFilter):
