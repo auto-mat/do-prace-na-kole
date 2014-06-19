@@ -42,6 +42,7 @@ urls = {
     'dalsi_clenove':                "/profil/dalsi-clenove/",
     'souteze':                      "/profil/souteze/",
     'balicek':                      "/profil/balicek/",
+    'questionnaire_answers_all':    "/questionnaire_answers",
 
     # Competition
     'competition_profile':          "/profil/soutezni_profil/",

@@ -955,6 +955,26 @@ def questionaire(
         }, context_instance=RequestContext(request))
 
 
+def questionnaire_answers_all(request, template, competition_slug, campaign_slug, limit=None):
+    competition = Competition.objects.get(slug=competition_slug)
+    if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(competition):
+        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění."), "</div>"))
+    if not competition.public_answers:
+        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Tato soutěž nemá povolené prohlížení odpovědí."), "</div>"))
+
+    competitors = competition.get_results()
+
+    for competitor in competitors:
+        query = {}
+        competitor.answers = Answer.objects.filter(
+            user_attendance__in=competitor.user_attendances(),
+            question__competition__slug=competition_slug)
+    return render_to_response(template, {
+        'competitors': competitors,
+        'competition': competition,
+        }, context_instance=RequestContext(request))
+
+
 @staff_member_required
 def questions(request):
     filter_query = Q()
@@ -998,14 +1018,8 @@ def questionnaire_answers(
         competitor_result = competition.get_results().get(pk=request.GET['uid'])
     except:
         return HttpResponse(_(u'<div class="text-error">Nesprávně zadaný soutěžící.</div>'), status=401)
-    if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
-        user_attendances = [competitor_result.user_attendance]
-    elif competition.competitor_type == 'team':
-        user_attendances = competitor_result.team.members()
-    elif competition.competitor_type == 'company':
-        user_attendances = UserAttendance.objects.filter(team__subsidiary__company=competitor_result.company)
     answers = Answer.objects.filter(
-        user_attendance__in=user_attendances,
+        user_attendance__in=competitor_result.user_attendances(),
         question__competition__slug=competition_slug)
     total_points = competitor_result.result
     return render_to_response('admin/questionnaire_answers.html',

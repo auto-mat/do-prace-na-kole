@@ -34,6 +34,7 @@ urls = {
     'dalsi_clenove':                "clenove_tymu",
     'souteze':                      "souteze",
     'balicek':                      "balicek",
+    'questionnaire_answers_all':    "questionnaire_answers",
 
     # Competition
     'competition_profile':          "soutezni_profil",

@@ -1634,6 +1634,10 @@ class Competition(models.Model):
         help_text=_(u"Dotazník je obvykle na přihlášky, výkonnost také a pravidelnost bez nich."),
         default=True,
         null=False)
+    public_answers = models.BooleanField(
+        verbose_name=_(u"Zveřejňovat soutěžní odpovědi"),
+        default=False,
+        null=False)
     is_public = models.BooleanField(
         verbose_name=_(u"Soutěž je veřejná"),
         default=True,
@@ -1834,6 +1838,15 @@ class CompetitionResult(models.Model):
     def clean(self):
         if ((1 if self.user_attendance else 0) + (1 if self.team else 0) + (1 if self.company else 0)) != 1:
             raise ValidationError(_(u"Musí být zvolen právě jeden uživatel, tým nebo společnost"))
+
+    def user_attendances(self):
+        competition = self.competition
+        if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
+            return [self.user_attendance]
+        elif competition.competitor_type == 'team':
+            return self.team.members()
+        elif competition.competitor_type == 'company':
+            return UserAttendance.objects.filter(team__subsidiary__company=self.company)
 
 
 class ChoiceType(models.Model):

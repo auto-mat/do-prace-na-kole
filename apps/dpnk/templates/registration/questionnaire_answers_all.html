@@ -1,0 +1,21 @@
+{% load url from future %}
+{% load dpnk_tags %}
+{% load thumbnail %}
+
+<h2>{{ competition.name }}</h2>
+{% for competitor in competitors %}
+   <h3 id="comp_res_{{competitor.pk}}">{{ competitor }} ({{ competitor.result }} b.)</h3>
+   {% for answer in competitor.answers %}
+      {% if answer.comment %}
+         {{ answer.comment|linebreaksbr|urlize}}
+      {% endif %}
+      <br/>
+      {% thumbnail answer.attachment "250x250" as foto_thumb %}
+      {% if foto_thumb %}
+         <a href="{{ settings.SITE_URL}}{{ answer.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
+         <img src="{{ settings.SITE_URL}}{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
+      {% else %}
+         <a href="{{ media }}/{{ answer.attachment }}" target="_blank">{{ answer.attachment }}</a>
+      {% endif %}
+   {% endfor %}
+{% endfor %}
