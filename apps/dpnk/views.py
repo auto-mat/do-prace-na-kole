@@ -1045,7 +1045,7 @@ def answers(request):
                 answer.points_given = int(p[1])
                 answer.save()
 
-    answers = Answer.objects.filter(question_id=question_id)
+    answers = Answer.objects.filter(question_id=question_id).order_by('-points_given')
     total_respondents = answers.count()
     count = dict((c, {}) for c in City.objects.all())
     count_all = {}
