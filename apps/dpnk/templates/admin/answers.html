@@ -34,7 +34,7 @@
 {% for a in answers %}
  {% if a.comment or a.attachment%}
   <tr>
-   <td>{{a.user}}</td>
+   <td>{{a.user_attendance}}</td>
    <td>{{a.city}}</td>
    <td>{{a.str_choices}}:</td>
    <td><a href="{% wp_url 'admin' %}dpnk/answer/{{ a.id }}">{{a.comment|linebreaksbr}}</a></td>
