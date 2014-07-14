@@ -957,7 +957,7 @@ def questionaire(
 
 def questionnaire_answers_all(request, template, competition_slug, campaign_slug, limit=None):
     competition = Competition.objects.get(slug=competition_slug)
-    if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(competition):
+    if not request.user.is_superuser and hasattr(request.user, 'userprofile') and request.user.userprofile.competition_edition_allowed(competition):
         return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění."), "</div>"))
     if not competition.public_answers:
         return HttpResponse(string_concat("<div class='text-warning'>", _(u"Tato soutěž nemá povolené prohlížení odpovědí."), "</div>"))
