@@ -540,6 +540,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExpo
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
     list_max_show_all = 10000
+    list_per_page = 10
     resource_class = UserAttendanceResource
 
     def user_link(self, obj):
