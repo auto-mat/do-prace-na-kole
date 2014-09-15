@@ -932,7 +932,7 @@ class CompanyAdmin(models.Model):
 
     def user_attendance(self):
         try:
-            return self.user.get_profile().userattendance_set.get(campaign=self.campaign)
+            return self.user.userprofile.userattendance_set.get(campaign=self.campaign)
         except UserAttendance.DoesNotExist:
             return None
 
@@ -1500,9 +1500,11 @@ class Trip(models.Model):
         null=False)
     trip_to = models.BooleanField(
         verbose_name=_(u"Cesta do práce"),
+        default=False,
         null=False)
     trip_from = models.BooleanField(
         verbose_name=_(u"Cesta z práce"),
+        default=False,
         null=False)
     distance_to = models.IntegerField(
         verbose_name=_(u"Ujetá vzdálenost do práce"),
@@ -2020,7 +2022,7 @@ def get_company_admin(user, campaign):
 
 def is_competitor(user):
     try:
-        if user.get_profile():
+        if user.userprofile:
             return True
         else:
             return False

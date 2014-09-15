@@ -103,7 +103,6 @@ INSTALLED_APPS = (
     'dpnk',
     'smart_selects',
     'composite_field',
-    'south',
     'bootstrapform',
     'admin_enhancer',
     'softhyphen',
@@ -113,7 +112,6 @@ INSTALLED_APPS = (
     'massadmin',
     'import_export',
     'polymorphic',
-    'django.contrib.contenttypes',
     'author',
     'fieldsignals',
     'timelog',
@@ -125,7 +123,6 @@ INSTALLED_APPS = (
     'related_admin',
     'easy_thumbnails',
 )
-AUTH_PROFILE_MODULE = 'dpnk.UserProfile'
 SERVER_EMAIL='root@auto-mat.cz'
 LOGIN_URL = '/dpnk/login/'
 LOGIN_REDIRECT_VIEW = 'profil'

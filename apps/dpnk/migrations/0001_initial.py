@@ -1,515 +1,631 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+import dpnk.models
+import django.db.models.deletion
+from django.conf import settings
+import django.core.validators
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'City'
-        db.create_table(u'dpnk_city', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=40)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=50)),
-            ('admission_fee', self.gf('django.db.models.fields.PositiveIntegerField')(default=160)),
-        ))
-        db.send_create_signal(u'dpnk', ['City'])
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('contenttypes', '0001_initial'),
+    ]
 
-        # Adding M2M table for field city_admins on 'City'
-        db.create_table(u'dpnk_city_city_admins', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('city', models.ForeignKey(orm[u'dpnk.city'], null=False)),
-            ('userprofile', models.ForeignKey(orm[u'dpnk.userprofile'], null=False))
-        ))
-        db.create_unique(u'dpnk_city_city_admins', ['city_id', 'userprofile_id'])
-
-        # Adding model 'Company'
-        db.create_table(u'dpnk_company', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=60)),
-            ('address_street', self.gf('django.db.models.fields.CharField')(default='', max_length=50)),
-            ('address_street_number', self.gf('django.db.models.fields.CharField')(default='', max_length=10)),
-            ('address_recipient', self.gf('django.db.models.fields.CharField')(default='', max_length=50)),
-            ('address_district', self.gf('django.db.models.fields.CharField')(default='', max_length=50, null=True, blank=True)),
-            ('address_psc', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('address_city', self.gf('django.db.models.fields.CharField')(default='', max_length=50)),
-            ('ico', self.gf('django.db.models.fields.PositiveIntegerField')(default=0)),
-        ))
-        db.send_create_signal(u'dpnk', ['Company'])
-
-        # Adding model 'Subsidiary'
-        db.create_table(u'dpnk_subsidiary', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('address_street', self.gf('django.db.models.fields.CharField')(default='', max_length=50)),
-            ('address_street_number', self.gf('django.db.models.fields.CharField')(default='', max_length=10)),
-            ('address_recipient', self.gf('django.db.models.fields.CharField')(default='', max_length=50)),
-            ('address_district', self.gf('django.db.models.fields.CharField')(default='', max_length=50, null=True, blank=True)),
-            ('address_psc', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('address_city', self.gf('django.db.models.fields.CharField')(default='', max_length=50)),
-            ('company', self.gf('django.db.models.fields.related.ForeignKey')(related_name='subsidiaries', to=orm['dpnk.Company'])),
-            ('city', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.City'])),
-        ))
-        db.send_create_signal(u'dpnk', ['Subsidiary'])
-
-        # Adding model 'Team'
-        db.create_table(u'dpnk_team', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=50)),
-            ('subsidiary', self.gf('django.db.models.fields.related.ForeignKey')(related_name='teams', to=orm['dpnk.Subsidiary'])),
-            ('coordinator', self.gf('django.db.models.fields.related.OneToOneField')(blank=True, related_name='coordinated_team', unique=True, null=True, to=orm['dpnk.UserProfile'])),
-            ('invitation_token', self.gf('django.db.models.fields.CharField')(default='', unique=True, max_length=100)),
-            ('member_count', self.gf('django.db.models.fields.IntegerField')(default=0)),
-        ))
-        db.send_create_signal(u'dpnk', ['Team'])
-
-        # Adding model 'UserProfile'
-        db.create_table(u'dpnk_userprofile', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(related_name='userprofile', unique=True, to=orm['auth.User'])),
-            ('distance', self.gf('django.db.models.fields.PositiveIntegerField')()),
-            ('telephone', self.gf('django.db.models.fields.CharField')(max_length=30)),
-            ('team', self.gf('django.db.models.fields.related.ForeignKey')(related_name='users', to=orm['dpnk.Team'])),
-            ('approved_for_team', self.gf('django.db.models.fields.CharField')(default='undecided', max_length=16)),
-            ('language', self.gf('django.db.models.fields.CharField')(default='cs', max_length=16)),
-            ('t_shirt_size', self.gf('django.db.models.fields.CharField')(default='mL', max_length=16)),
-            ('mailing_id', self.gf('django.db.models.fields.CharField')(default=None, max_length=128, null=True, db_index=True, blank=True)),
-        ))
-        db.send_create_signal(u'dpnk', ['UserProfile'])
-
-        # Adding model 'CompanyAdmin'
-        db.create_table(u'dpnk_companyadmin', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(related_name='company_admin', unique=True, to=orm['auth.User'])),
-            ('company_admin_approved', self.gf('django.db.models.fields.CharField')(default='undecided', max_length=16)),
-            ('motivation_company_admin', self.gf('django.db.models.fields.TextField')(default='', max_length=5000, null=True, blank=True)),
-            ('telephone', self.gf('django.db.models.fields.CharField')(max_length=30, null=True, blank=True)),
-            ('administrated_company', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='company_admin', unique=True, null=True, to=orm['dpnk.Company'])),
-            ('mailing_id', self.gf('django.db.models.fields.TextField')(default='', null=True, blank=True)),
-        ))
-        db.send_create_signal(u'dpnk', ['CompanyAdmin'])
-
-        # Adding model 'Payment'
-        db.create_table(u'dpnk_payment', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='payments', null=True, blank=True, to=orm['dpnk.UserProfile'])),
-            ('order_id', self.gf('django.db.models.fields.CharField')(default='', max_length=50, null=True, blank=True)),
-            ('session_id', self.gf('django.db.models.fields.CharField')(default='', max_length=50, null=True, blank=True)),
-            ('trans_id', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
-            ('amount', self.gf('django.db.models.fields.PositiveIntegerField')()),
-            ('description', self.gf('django.db.models.fields.CharField')(default='', max_length=500, null=True, blank=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('realized', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('pay_type', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
-            ('status', self.gf('django.db.models.fields.PositiveIntegerField')(default=1, max_length=50, null=True, blank=True)),
-            ('error', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-        ))
-        db.send_create_signal(u'dpnk', ['Payment'])
-
-        # Adding model 'Trip'
-        db.create_table(u'dpnk_trip', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='user_trips', to=orm['dpnk.UserProfile'])),
-            ('date', self.gf('django.db.models.fields.DateField')(default=datetime.datetime.now)),
-            ('trip_to', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('trip_from', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('distance_to', self.gf('django.db.models.fields.IntegerField')(default=None, null=True, blank=True)),
-            ('distance_from', self.gf('django.db.models.fields.IntegerField')(default=None, null=True, blank=True)),
-        ))
-        db.send_create_signal(u'dpnk', ['Trip'])
-
-        # Adding unique constraint on 'Trip', fields ['user', 'date']
-        db.create_unique(u'dpnk_trip', ['user_id', 'date'])
-
-        # Adding model 'Competition'
-        db.create_table(u'dpnk_competition', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=40)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(default='', unique=True, max_length=50)),
-            ('url', self.gf('django.db.models.fields.URLField')(default='', max_length=200, null=True, blank=True)),
-            ('date_from', self.gf('django.db.models.fields.DateField')(default=datetime.datetime(2013, 5, 1, 0, 0))),
-            ('date_to', self.gf('django.db.models.fields.DateField')(default=datetime.datetime(2013, 5, 31, 0, 0))),
-            ('type', self.gf('django.db.models.fields.CharField')(max_length=16)),
-            ('competitor_type', self.gf('django.db.models.fields.CharField')(max_length=16)),
-            ('city', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.City'], null=True, blank=True)),
-            ('company', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.Company'], null=True, blank=True)),
-            ('without_admission', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('is_public', self.gf('django.db.models.fields.BooleanField')(default=True)),
-        ))
-        db.send_create_signal(u'dpnk', ['Competition'])
-
-        # Adding M2M table for field user_competitors on 'Competition'
-        db.create_table(u'dpnk_competition_user_competitors', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('competition', models.ForeignKey(orm[u'dpnk.competition'], null=False)),
-            ('userprofile', models.ForeignKey(orm[u'dpnk.userprofile'], null=False))
-        ))
-        db.create_unique(u'dpnk_competition_user_competitors', ['competition_id', 'userprofile_id'])
-
-        # Adding M2M table for field team_competitors on 'Competition'
-        db.create_table(u'dpnk_competition_team_competitors', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('competition', models.ForeignKey(orm[u'dpnk.competition'], null=False)),
-            ('team', models.ForeignKey(orm[u'dpnk.team'], null=False))
-        ))
-        db.create_unique(u'dpnk_competition_team_competitors', ['competition_id', 'team_id'])
-
-        # Adding M2M table for field company_competitors on 'Competition'
-        db.create_table(u'dpnk_competition_company_competitors', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('competition', models.ForeignKey(orm[u'dpnk.competition'], null=False)),
-            ('company', models.ForeignKey(orm[u'dpnk.company'], null=False))
-        ))
-        db.create_unique(u'dpnk_competition_company_competitors', ['competition_id', 'company_id'])
-
-        # Adding model 'CompetitionResult'
-        db.create_table(u'dpnk_competitionresult', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('userprofile', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='competitions_results', null=True, blank=True, to=orm['dpnk.UserProfile'])),
-            ('team', self.gf('django.db.models.fields.related.ForeignKey')(default=None, related_name='competitions_results', null=True, blank=True, to=orm['dpnk.Team'])),
-            ('competition', self.gf('django.db.models.fields.related.ForeignKey')(related_name='results', to=orm['dpnk.Competition'])),
-            ('result', self.gf('django.db.models.fields.FloatField')(default=None, null=True, blank=True)),
-        ))
-        db.send_create_signal(u'dpnk', ['CompetitionResult'])
-
-        # Adding unique constraint on 'CompetitionResult', fields ['userprofile', 'competition']
-        db.create_unique(u'dpnk_competitionresult', ['userprofile_id', 'competition_id'])
-
-        # Adding unique constraint on 'CompetitionResult', fields ['team', 'competition']
-        db.create_unique(u'dpnk_competitionresult', ['team_id', 'competition_id'])
-
-        # Adding model 'ChoiceType'
-        db.create_table(u'dpnk_choicetype', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('competition', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.Competition'])),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=40, unique=True, null=True)),
-            ('universal', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal(u'dpnk', ['ChoiceType'])
-
-        # Adding unique constraint on 'ChoiceType', fields ['competition', 'name']
-        db.create_unique(u'dpnk_choicetype', ['competition_id', 'name'])
-
-        # Adding model 'Question'
-        db.create_table(u'dpnk_question', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('text', self.gf('django.db.models.fields.TextField')(max_length=500)),
-            ('date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('type', self.gf('django.db.models.fields.CharField')(max_length=16)),
-            ('with_comment', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('with_attachment', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('order', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('competition', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.Competition'])),
-            ('choice_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.ChoiceType'])),
-        ))
-        db.send_create_signal(u'dpnk', ['Question'])
-
-        # Adding unique constraint on 'Question', fields ['competition', 'order']
-        db.create_unique(u'dpnk_question', ['competition_id', 'order'])
-
-        # Adding model 'Choice'
-        db.create_table(u'dpnk_choice', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('choice_type', self.gf('django.db.models.fields.related.ForeignKey')(related_name='choices', to=orm['dpnk.ChoiceType'])),
-            ('text', self.gf('django.db.models.fields.CharField')(max_length=250, db_index=True)),
-            ('points', self.gf('django.db.models.fields.IntegerField')(default=None, null=True, blank=True)),
-        ))
-        db.send_create_signal(u'dpnk', ['Choice'])
-
-        # Adding unique constraint on 'Choice', fields ['choice_type', 'text']
-        db.create_unique(u'dpnk_choice', ['choice_type_id', 'text'])
-
-        # Adding model 'Answer'
-        db.create_table(u'dpnk_answer', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.UserProfile'], null=True, blank=True)),
-            ('question', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['dpnk.Question'])),
-            ('comment', self.gf('django.db.models.fields.TextField')(max_length=600, null=True, blank=True)),
-            ('points_given', self.gf('django.db.models.fields.IntegerField')(default=None, null=True, blank=True)),
-            ('attachment', self.gf('django.db.models.fields.files.FileField')(max_length=600)),
-        ))
-        db.send_create_signal(u'dpnk', ['Answer'])
-
-        # Adding unique constraint on 'Answer', fields ['user', 'question']
-        db.create_unique(u'dpnk_answer', ['user_id', 'question_id'])
-
-        # Adding M2M table for field choices on 'Answer'
-        db.create_table(u'dpnk_answer_choices', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('answer', models.ForeignKey(orm[u'dpnk.answer'], null=False)),
-            ('choice', models.ForeignKey(orm[u'dpnk.choice'], null=False))
-        ))
-        db.create_unique(u'dpnk_answer_choices', ['answer_id', 'choice_id'])
-
-
-    def backwards(self, orm):
-        # Removing unique constraint on 'Answer', fields ['user', 'question']
-        db.delete_unique(u'dpnk_answer', ['user_id', 'question_id'])
-
-        # Removing unique constraint on 'Choice', fields ['choice_type', 'text']
-        db.delete_unique(u'dpnk_choice', ['choice_type_id', 'text'])
-
-        # Removing unique constraint on 'Question', fields ['competition', 'order']
-        db.delete_unique(u'dpnk_question', ['competition_id', 'order'])
-
-        # Removing unique constraint on 'ChoiceType', fields ['competition', 'name']
-        db.delete_unique(u'dpnk_choicetype', ['competition_id', 'name'])
-
-        # Removing unique constraint on 'CompetitionResult', fields ['team', 'competition']
-        db.delete_unique(u'dpnk_competitionresult', ['team_id', 'competition_id'])
-
-        # Removing unique constraint on 'CompetitionResult', fields ['userprofile', 'competition']
-        db.delete_unique(u'dpnk_competitionresult', ['userprofile_id', 'competition_id'])
-
-        # Removing unique constraint on 'Trip', fields ['user', 'date']
-        db.delete_unique(u'dpnk_trip', ['user_id', 'date'])
-
-        # Deleting model 'City'
-        db.delete_table(u'dpnk_city')
-
-        # Removing M2M table for field city_admins on 'City'
-        db.delete_table('dpnk_city_city_admins')
-
-        # Deleting model 'Company'
-        db.delete_table(u'dpnk_company')
-
-        # Deleting model 'Subsidiary'
-        db.delete_table(u'dpnk_subsidiary')
-
-        # Deleting model 'Team'
-        db.delete_table(u'dpnk_team')
-
-        # Deleting model 'UserProfile'
-        db.delete_table(u'dpnk_userprofile')
-
-        # Deleting model 'CompanyAdmin'
-        db.delete_table(u'dpnk_companyadmin')
-
-        # Deleting model 'Payment'
-        db.delete_table(u'dpnk_payment')
-
-        # Deleting model 'Trip'
-        db.delete_table(u'dpnk_trip')
-
-        # Deleting model 'Competition'
-        db.delete_table(u'dpnk_competition')
-
-        # Removing M2M table for field user_competitors on 'Competition'
-        db.delete_table('dpnk_competition_user_competitors')
-
-        # Removing M2M table for field team_competitors on 'Competition'
-        db.delete_table('dpnk_competition_team_competitors')
-
-        # Removing M2M table for field company_competitors on 'Competition'
-        db.delete_table('dpnk_competition_company_competitors')
-
-        # Deleting model 'CompetitionResult'
-        db.delete_table(u'dpnk_competitionresult')
-
-        # Deleting model 'ChoiceType'
-        db.delete_table(u'dpnk_choicetype')
-
-        # Deleting model 'Question'
-        db.delete_table(u'dpnk_question')
-
-        # Deleting model 'Choice'
-        db.delete_table(u'dpnk_choice')
-
-        # Deleting model 'Answer'
-        db.delete_table(u'dpnk_answer')
-
-        # Removing M2M table for field choices on 'Answer'
-        db.delete_table('dpnk_answer_choices')
-
-
-    models = {
-        u'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        u'auth.permission': {
-            'Meta': {'ordering': "(u'content_type__app_label', u'content_type__model', u'codename')", 'unique_together': "((u'content_type', u'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        u'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        u'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        u'dpnk.answer': {
-            'Meta': {'ordering': "('user__team__subsidiary__city', 'pk')", 'unique_together': "(('user', 'question'),)", 'object_name': 'Answer'},
-            'attachment': ('django.db.models.fields.files.FileField', [], {'max_length': '600'}),
-            'choices': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['dpnk.Choice']", 'symmetrical': 'False'}),
-            'comment': ('django.db.models.fields.TextField', [], {'max_length': '600', 'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'points_given': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
-            'question': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Question']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.UserProfile']", 'null': 'True', 'blank': 'True'})
-        },
-        u'dpnk.choice': {
-            'Meta': {'unique_together': "(('choice_type', 'text'),)", 'object_name': 'Choice'},
-            'choice_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'choices'", 'to': u"orm['dpnk.ChoiceType']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'points': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
-            'text': ('django.db.models.fields.CharField', [], {'max_length': '250', 'db_index': 'True'})
-        },
-        u'dpnk.choicetype': {
-            'Meta': {'unique_together': "(('competition', 'name'),)", 'object_name': 'ChoiceType'},
-            'competition': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Competition']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '40', 'unique': 'True', 'null': 'True'}),
-            'universal': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
-        },
-        u'dpnk.city': {
-            'Meta': {'ordering': "('name',)", 'object_name': 'City'},
-            'admission_fee': ('django.db.models.fields.PositiveIntegerField', [], {'default': '160'}),
-            'city_admins': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'administrated_cities'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['dpnk.UserProfile']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '40'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'})
-        },
-        u'dpnk.company': {
-            'Meta': {'ordering': "('name',)", 'object_name': 'Company'},
-            'address_city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
-            'address_district': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'address_psc': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'address_recipient': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
-            'address_street': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
-            'address_street_number': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10'}),
-            'ico': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '60'})
-        },
-        u'dpnk.companyadmin': {
-            'Meta': {'object_name': 'CompanyAdmin'},
-            'administrated_company': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'company_admin'", 'unique': 'True', 'null': 'True', 'to': u"orm['dpnk.Company']"}),
-            'company_admin_approved': ('django.db.models.fields.CharField', [], {'default': "'undecided'", 'max_length': '16'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'mailing_id': ('django.db.models.fields.TextField', [], {'default': "''", 'null': 'True', 'blank': 'True'}),
-            'motivation_company_admin': ('django.db.models.fields.TextField', [], {'default': "''", 'max_length': '5000', 'null': 'True', 'blank': 'True'}),
-            'telephone': ('django.db.models.fields.CharField', [], {'max_length': '30', 'null': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'company_admin'", 'unique': 'True', 'to': u"orm['auth.User']"})
-        },
-        u'dpnk.competition': {
-            'Meta': {'object_name': 'Competition'},
-            'city': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.City']", 'null': 'True', 'blank': 'True'}),
-            'company': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Company']", 'null': 'True', 'blank': 'True'}),
-            'company_competitors': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'competitions'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['dpnk.Company']"}),
-            'competitor_type': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
-            'date_from': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2013, 5, 1, 0, 0)'}),
-            'date_to': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2013, 5, 31, 0, 0)'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_public': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '40'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'default': "''", 'unique': 'True', 'max_length': '50'}),
-            'team_competitors': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'competitions'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['dpnk.Team']"}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
-            'url': ('django.db.models.fields.URLField', [], {'default': "''", 'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'user_competitors': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'competitions'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['dpnk.UserProfile']"}),
-            'without_admission': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
-        },
-        u'dpnk.competitionresult': {
-            'Meta': {'unique_together': "(('userprofile', 'competition'), ('team', 'competition'))", 'object_name': 'CompetitionResult'},
-            'competition': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'results'", 'to': u"orm['dpnk.Competition']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'result': ('django.db.models.fields.FloatField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
-            'team': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'competitions_results'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.Team']"}),
-            'userprofile': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'competitions_results'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.UserProfile']"})
-        },
-        u'dpnk.payment': {
-            'Meta': {'object_name': 'Payment'},
-            'amount': ('django.db.models.fields.PositiveIntegerField', [], {}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'description': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '500', 'null': 'True', 'blank': 'True'}),
-            'error': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'order_id': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'pay_type': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'realized': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'session_id': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'status': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1', 'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'trans_id': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'related_name': "'payments'", 'null': 'True', 'blank': 'True', 'to': u"orm['dpnk.UserProfile']"})
-        },
-        u'dpnk.question': {
-            'Meta': {'unique_together': "(('competition', 'order'),)", 'object_name': 'Question'},
-            'choice_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.ChoiceType']"}),
-            'competition': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.Competition']"}),
-            'date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'order': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'text': ('django.db.models.fields.TextField', [], {'max_length': '500'}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
-            'with_attachment': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'with_comment': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
-        },
-        u'dpnk.subsidiary': {
-            'Meta': {'object_name': 'Subsidiary'},
-            'address_city': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
-            'address_district': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50', 'null': 'True', 'blank': 'True'}),
-            'address_psc': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'address_recipient': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
-            'address_street': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '50'}),
-            'address_street_number': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '10'}),
-            'city': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['dpnk.City']"}),
-            'company': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'subsidiaries'", 'to': u"orm['dpnk.Company']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
-        },
-        u'dpnk.team': {
-            'Meta': {'ordering': "('name',)", 'object_name': 'Team'},
-            'coordinator': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'coordinated_team'", 'unique': 'True', 'null': 'True', 'to': u"orm['dpnk.UserProfile']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'invitation_token': ('django.db.models.fields.CharField', [], {'default': "''", 'unique': 'True', 'max_length': '100'}),
-            'member_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
-            'subsidiary': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'teams'", 'to': u"orm['dpnk.Subsidiary']"})
-        },
-        u'dpnk.trip': {
-            'Meta': {'unique_together': "(('user', 'date'),)", 'object_name': 'Trip'},
-            'date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime.now'}),
-            'distance_from': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
-            'distance_to': ('django.db.models.fields.IntegerField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'trip_from': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'trip_to': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'user_trips'", 'to': u"orm['dpnk.UserProfile']"})
-        },
-        u'dpnk.userprofile': {
-            'Meta': {'object_name': 'UserProfile'},
-            'approved_for_team': ('django.db.models.fields.CharField', [], {'default': "'undecided'", 'max_length': '16'}),
-            'distance': ('django.db.models.fields.PositiveIntegerField', [], {}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'language': ('django.db.models.fields.CharField', [], {'default': "'cs'", 'max_length': '16'}),
-            'mailing_id': ('django.db.models.fields.CharField', [], {'default': 'None', 'max_length': '128', 'null': 'True', 'db_index': 'True', 'blank': 'True'}),
-            't_shirt_size': ('django.db.models.fields.CharField', [], {'default': "'mL'", 'max_length': '16'}),
-            'team': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'users'", 'to': u"orm['dpnk.Team']"}),
-            'telephone': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
-            'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'userprofile'", 'unique': 'True', 'to': u"orm['auth.User']"})
-        }
-    }
-
-    complete_apps = ['dpnk']
+    operations = [
+        migrations.CreateModel(
+            name='Answer',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('comment', models.TextField(max_length=600, null=True, verbose_name='Comment', blank=True)),
+                ('points_given', models.IntegerField(default=None, null=True, blank=True)),
+                ('attachment', models.FileField(max_length=600, upload_to=b'questionaire/', blank=True)),
+            ],
+            options={
+                'ordering': ('user_attendance__team__subsidiary__city', 'pk'),
+                'verbose_name': 'Answer',
+                'verbose_name_plural': 'Answers',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Campaign',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=60, verbose_name='Name of campaign')),
+                ('slug', models.SlugField(default=b'', unique=True, verbose_name='Dom\xe9na v URL')),
+                ('email_footer', models.TextField(default=b'', max_length=5000, null=True, verbose_name='Users e-mail footer', blank=True)),
+                ('mailing_list_id', models.CharField(default=b'', max_length=60, verbose_name='ID mailing list', blank=True)),
+                ('mailing_list_enabled', models.BooleanField(default=False, verbose_name='Permit mailing list')),
+                ('trip_plus_distance', models.PositiveIntegerField(default=5, help_text='How much can competitor increase his/her ride against ordinar distance (in km)', null=True, verbose_name='Maximal distance increase', blank=True)),
+                ('tracking_number_first', models.PositiveIntegerField(default=0, verbose_name='First digit of the start kit delivery')),
+                ('tracking_number_last', models.PositiveIntegerField(default=999999999, verbose_name='Last digit of the start kit delivery')),
+                ('invoice_sequence_number_first', models.PositiveIntegerField(default=0, verbose_name='First sequence number for invoices')),
+                ('invoice_sequence_number_last', models.PositiveIntegerField(default=999999999, verbose_name='Last sequence number for invoices')),
+            ],
+            options={
+                'verbose_name': 'campaign',
+                'verbose_name_plural': 'campaigns',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Choice',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('text', models.CharField(max_length=250, verbose_name='Choice', db_index=True)),
+                ('points', models.IntegerField(default=None, null=True, verbose_name='Points', blank=True)),
+            ],
+            options={
+                'verbose_name': 'Choice to questionnaire questions',
+                'verbose_name_plural': 'Choices to questionnaire questions',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ChoiceType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=40, unique=True, null=True, verbose_name='Name')),
+                ('universal', models.BooleanField(default=False, verbose_name='Choice type can be used for more questions')),
+            ],
+            options={
+                'verbose_name': 'Choice type',
+                'verbose_name_plural': 'Choice type',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='City',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=40, verbose_name='Name')),
+                ('slug', models.SlugField(unique=True, verbose_name='Subdom\xe9na v URL')),
+            ],
+            options={
+                'ordering': ('name',),
+                'verbose_name': 'Town',
+                'verbose_name_plural': 'Towns',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='CityInCampaign',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('admission_fee', models.PositiveIntegerField(default=180, verbose_name='Starting fee')),
+                ('admission_fee_company', models.FloatField(default=179.34, verbose_name='Company starting fee')),
+                ('campaign', models.ForeignKey(to='dpnk.Campaign')),
+                ('city', models.ForeignKey(to='dpnk.City')),
+            ],
+            options={
+                'ordering': ('campaign', 'city__name'),
+                'verbose_name': 'Town in the campaign',
+                'verbose_name_plural': 'Towns in the campaign',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Company',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(help_text='For example V\xfdrobna, a.s., P\u0159\xedsp\u011bvkov\xe1, p.o., Nevl\xe1dka, o.s., Univerzita Karlova', unique=True, max_length=60, verbose_name='Company name')),
+                ('address_street', models.CharField(default=b'', help_text='For example \u0160e\u0159\xedkov\xe1 nebo N\xe1m. W. Churchilla', max_length=50, verbose_name='Street')),
+                ('address_street_number', models.CharField(default=b'', help_text='For example. 2965/12 or 156', max_length=10, verbose_name='House number')),
+                ('address_recipient', models.CharField(default=b'', max_length=50, blank=True, help_text='For example Brno, Liberec, Science faculty', null=True, verbose_name='Company name (subsidiary, office, faculty) on the address')),
+                ('address_district', models.CharField(default=b'', max_length=50, null=True, verbose_name='City part', blank=True)),
+                ('address_psc', models.IntegerField(default=0, help_text='For example 130 00', verbose_name='ZIP code (PS\u010c)', validators=[django.core.validators.MaxValueValidator(99999), django.core.validators.MinValueValidator(10000)])),
+                ('address_city', models.CharField(default=b'', help_text='For example Jablonec n.N. or Praha 3-\u017di\u017ekov', max_length=50, verbose_name='Town')),
+                ('ico', models.PositiveIntegerField(default=None, null=True, verbose_name='Company registration number (I\u010cO)')),
+                ('dic', models.CharField(default=b'', max_length=10, null=True, verbose_name='VAT ID', blank=True)),
+            ],
+            options={
+                'ordering': ('name',),
+                'verbose_name': 'Company',
+                'verbose_name_plural': 'Companies',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='CompanyAdmin',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('company_admin_approved', models.CharField(default=b'undecided', max_length=16, verbose_name='Company administration approved', choices=[(b'approved', 'Confirmed'), (b'undecided', 'Unconfirmed'), (b'denied', 'Denied')])),
+                ('motivation_company_admin', models.TextField(default=b'', max_length=5000, blank=True, help_text='Please, write us, which position you occupy in your company', null=True, verbose_name='Occupied position')),
+                ('note', models.TextField(max_length=500, null=True, verbose_name='Internal note', blank=True)),
+                ('can_confirm_payments', models.BooleanField(default=False, verbose_name='Can confirm payments')),
+                ('administrated_company', models.ForeignKey(related_name=b'company_admin', verbose_name='Administrated company', to='dpnk.Company', null=True)),
+                ('campaign', models.ForeignKey(to='dpnk.Campaign')),
+                ('user', models.ForeignKey(related_name=b'company_admin', verbose_name='U\u017eivatel', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'verbose_name': 'Company administrator',
+                'verbose_name_plural': 'Company administrators',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Competition',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=160, verbose_name='Competition name')),
+                ('slug', models.SlugField(default=b'', unique=True, verbose_name='Dom\xe9na v URL')),
+                ('url', models.URLField(default=b'', null=True, verbose_name='Odkaz na str\xe1nku sout\u011b\u017ee', blank=True)),
+                ('date_from', models.DateField(default=None, help_text='The rides are counting from this date', verbose_name='Competition beginning date')),
+                ('date_to', models.DateField(default=None, help_text='After this date the competition will be closed (or fill questionnaire)', verbose_name='Competition end date')),
+                ('type', models.CharField(max_length=16, verbose_name='Type', choices=[(b'length', 'Distance ridden'), (b'frequency', 'Bike rides regularity'), (b'questionnaire', 'Questionnaire')])),
+                ('competitor_type', models.CharField(max_length=16, verbose_name='Competitor type', choices=[(b'single_user', 'Individual competitors'), (b'liberos', 'Liberos'), (b'team', 'Teams'), (b'company', 'Company competition')])),
+                ('sex', models.CharField(default=None, choices=[(b'male', 'Mu\u017e'), (b'female', '\u017dena'), (b'unknown', 'Nezn\xe1m\xe9')], max_length=50, blank=True, null=True, verbose_name='Sout\u011b\u017e pouze pro pohlav\xed')),
+                ('without_admission', models.BooleanField(default=True, help_text='Questionnaire is usually with admission, frequency and regullarity without admission.', verbose_name='Competition is without admission')),
+                ('public_answers', models.BooleanField(default=False, verbose_name='Zve\u0159ej\u0148ovat sout\u011b\u017en\xed odpov\u011bdi')),
+                ('is_public', models.BooleanField(default=True, verbose_name='Competition is public')),
+                ('entry_after_beginning_days', models.IntegerField(default=7, help_text='Days from begining, when it is still possible to admit the competition.', verbose_name='Prolonged admissions')),
+                ('rules', models.TextField(default=None, null=True, verbose_name='Competition rules', blank=True)),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
+                ('city', models.ForeignKey(verbose_name='Competition is only for cities', blank=True, to='dpnk.City', null=True)),
+                ('company', models.ForeignKey(verbose_name='Competition is only for companies', blank=True, to='dpnk.Company', null=True)),
+                ('company_competitors', models.ManyToManyField(related_name=b'competitions', null=True, to='dpnk.Company', blank=True)),
+            ],
+            options={
+                'ordering': ('-campaign', 'type', 'name'),
+                'verbose_name': 'Competition',
+                'verbose_name_plural': 'Competitions',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='CompetitionResult',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('result', models.FloatField(default=None, null=True, verbose_name='Result', db_index=True, blank=True)),
+                ('company', models.ForeignKey(related_name=b'company_results', default=None, blank=True, to='dpnk.Company', null=True)),
+                ('competition', models.ForeignKey(related_name=b'results', to='dpnk.Competition')),
+            ],
+            options={
+                'verbose_name': 'Competition result',
+                'verbose_name_plural': 'Competition results',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='DeliveryBatch',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(default=datetime.datetime.now, verbose_name='Created')),
+                ('customer_sheets', models.FileField(upload_to=b'customer_sheets', null=True, verbose_name='Customer sheets', blank=True)),
+                ('tnt_order', models.FileField(upload_to=b'tnt_order', null=True, verbose_name='TNT order', blank=True)),
+                ('author', models.ForeignKey(related_name=b'deliverybatch_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
+                ('updated_by', models.ForeignKey(related_name=b'deliverybatch_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'verbose_name': 'Delivery batch',
+                'verbose_name_plural': 'Delivery batches',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Invoice',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(default=datetime.datetime.now, verbose_name='Created')),
+                ('exposure_date', models.DateField(default=datetime.date.today, null=True, verbose_name='Invoice exposure date')),
+                ('taxable_date', models.DateField(default=datetime.date.today, null=True, verbose_name='Taxable date')),
+                ('paid_date', models.DateField(default=None, null=True, verbose_name='Payment date', blank=True)),
+                ('invoice_pdf', models.FileField(upload_to=b'invoices', null=True, verbose_name='PDF invoice', blank=True)),
+                ('sequence_number', models.PositiveIntegerField(unique=True, verbose_name='Invoice sequence number')),
+                ('order_number', models.BigIntegerField(null=True, verbose_name='Order number', blank=True)),
+                ('author', models.ForeignKey(related_name=b'invoice_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
+                ('company', models.ForeignKey(verbose_name='Company', to='dpnk.Company')),
+                ('updated_by', models.ForeignKey(related_name=b'invoice_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'verbose_name': 'Invoice',
+                'verbose_name_plural': 'Invoices',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Phase',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('type', models.CharField(default=b'registration', max_length=16, verbose_name='Phase type', choices=[(b'registration', 'registration'), (b'compet_entry', 'main competition entry'), (b'competition', 'competition'), (b'results', 'results'), (b'admissions', 'apply for competitions')])),
+                ('date_from', models.DateField(default=None, null=True, verbose_name='Phase beginning date', blank=True)),
+                ('date_to', models.DateField(default=None, null=True, verbose_name='Phase end date', blank=True)),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
+            ],
+            options={
+                'verbose_name': 'champaign phase',
+                'verbose_name_plural': 'champaign phase',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Question',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=60, null=True, verbose_name='Name', blank=True)),
+                ('text', models.TextField(null=True, verbose_name='Question', blank=True)),
+                ('date', models.DateField(null=True, verbose_name='Day', blank=True)),
+                ('type', models.CharField(default=b'text', max_length=16, verbose_name='Type', choices=[(b'text', 'Text'), (b'choice', 'Choice'), (b'multiple-choice', 'Multiple choice ')])),
+                ('with_comment', models.BooleanField(default=True, verbose_name='Allow comment')),
+                ('with_attachment', models.BooleanField(default=False, verbose_name='Allow attachment')),
+                ('order', models.IntegerField(null=True, verbose_name='Order', blank=True)),
+                ('choice_type', models.ForeignKey(default=None, blank=True, to='dpnk.ChoiceType', null=True, verbose_name='Choice type')),
+                ('competition', models.ForeignKey(verbose_name='Competition', to='dpnk.Competition')),
+            ],
+            options={
+                'ordering': ('order',),
+                'verbose_name': 'Survey question',
+                'verbose_name_plural': 'Survey questions',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Subsidiary',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('address_street', models.CharField(default=b'', help_text='For example \u0160e\u0159\xedkov\xe1 nebo N\xe1m. W. Churchilla', max_length=50, verbose_name='Street')),
+                ('address_street_number', models.CharField(default=b'', help_text='For example. 2965/12 or 156', max_length=10, verbose_name='House number')),
+                ('address_recipient', models.CharField(default=b'', max_length=50, blank=True, help_text='For example Brno, Liberec, Science faculty', null=True, verbose_name='Company name (subsidiary, office, faculty) on the address')),
+                ('address_district', models.CharField(default=b'', max_length=50, null=True, verbose_name='City part', blank=True)),
+                ('address_psc', models.IntegerField(default=0, help_text='For example 130 00', verbose_name='ZIP code (PS\u010c)', validators=[django.core.validators.MaxValueValidator(99999), django.core.validators.MinValueValidator(10000)])),
+                ('address_city', models.CharField(default=b'', help_text='For example Jablonec n.N. or Praha 3-\u017di\u017ekov', max_length=50, verbose_name='Town')),
+                ('city', models.ForeignKey(verbose_name='Competing town', to='dpnk.City', help_text="Rozhoduje o tom, kde budete sout\u011b\u017eit - vizte <a href='/~petr/dpnk-wp//pravidla' target='_blank'>pravidla sout\u011b\u017ee</a>")),
+                ('company', models.ForeignKey(related_name=b'subsidiaries', to='dpnk.Company')),
+            ],
+            options={
+                'verbose_name': 'Subdivision',
+                'verbose_name_plural': 'Subdivisions',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Team',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=50, verbose_name='Team name')),
+                ('invitation_token', models.CharField(default=b'', unique=True, max_length=100, verbose_name='Invitation token', validators=[dpnk.models.validate_length])),
+                ('member_count', models.IntegerField(default=0, verbose_name='Number of authorized team members', db_index=True)),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
+            ],
+            options={
+                'ordering': ('name',),
+                'verbose_name': 'Team',
+                'verbose_name_plural': 'Teams',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Transaction',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('status', models.PositiveIntegerField(default=0, max_length=50, verbose_name='Status')),
+                ('created', models.DateTimeField(default=datetime.datetime.now, verbose_name='Created')),
+                ('description', models.TextField(default=b'', null=True, verbose_name='Description', blank=True)),
+                ('realized', models.DateTimeField(null=True, verbose_name='Realized', blank=True)),
+            ],
+            options={
+                'verbose_name': 'Transaction',
+                'verbose_name_plural': 'Transaction',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Payment',
+            fields=[
+                ('transaction_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='dpnk.Transaction')),
+                ('order_id', models.CharField(default=b'', max_length=50, null=True, verbose_name=b'Order ID', blank=True)),
+                ('session_id', models.CharField(default=b'', max_length=50, null=True, verbose_name=b'Session ID', blank=True)),
+                ('trans_id', models.CharField(max_length=50, null=True, verbose_name=b'Transaction ID', blank=True)),
+                ('amount', models.PositiveIntegerField(verbose_name='Amount')),
+                ('pay_type', models.CharField(blank=True, max_length=50, null=True, verbose_name='Payment type', choices=[(b'mp', 'mPenize - mBank'), (b'kb', 'MojePlatba'), (b'rf', 'ePlatby pro eKonto'), (b'pg', 'GE Money Bank'), (b'pv', 'Sberbank (Volksbank)'), (b'pf', 'Fio banka'), (b'cs', 'PLATBA 24 \u2013 \u010cesk\xe1 spo\u0159itelna'), (b'era', 'Era - Po\u0161tovn\xed spo\u0159itelna'), (b'cb', '\u010cSOB'), (b'c', 'Credit card via GPE'), (b'bt', 'bank transfer'), (b'pt', 'transfer by post office'), (b'sc', 'superCASH'), (b'psc', 'PaySec'), (b'mo', 'Mobito'), (b't', 'testing payment'), (b'fa', 'invoice outside PayU'), (b'fc', 'company pays by invoice'), (b'am', 'Auto*Mat Friends Club member')])),
+                ('error', models.PositiveIntegerField(null=True, verbose_name='Error', blank=True)),
+                ('invoice', models.ForeignKey(related_name=b'payment_set', on_delete=django.db.models.deletion.SET_NULL, default=None, blank=True, to='dpnk.Invoice', null=True)),
+            ],
+            options={
+                'verbose_name': 'Payment transaction',
+                'verbose_name_plural': 'Payment transaction',
+            },
+            bases=('dpnk.transaction',),
+        ),
+        migrations.CreateModel(
+            name='PackageTransaction',
+            fields=[
+                ('transaction_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='dpnk.Transaction')),
+                ('tracking_number', models.PositiveIntegerField(unique=True, verbose_name='TNT tracking number')),
+                ('delivery_batch', models.ForeignKey(verbose_name='Delivery batch', to='dpnk.DeliveryBatch')),
+            ],
+            options={
+                'verbose_name': 'Package transaction',
+                'verbose_name_plural': 'Package transaction',
+            },
+            bases=('dpnk.transaction',),
+        ),
+        migrations.CreateModel(
+            name='CommonTransaction',
+            fields=[
+                ('transaction_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='dpnk.Transaction')),
+            ],
+            options={
+                'verbose_name': 'Common transaction',
+                'verbose_name_plural': 'Common transactions',
+            },
+            bases=('dpnk.transaction',),
+        ),
+        migrations.CreateModel(
+            name='Trip',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('date', models.DateField(default=datetime.datetime.now, verbose_name='Trip date')),
+                ('trip_to', models.BooleanField(default=False, verbose_name='Trip to work')),
+                ('trip_from', models.BooleanField(default=False, verbose_name='Trip from work')),
+                ('distance_to', models.IntegerField(default=None, null=True, verbose_name='Distance ridden to work', blank=True, validators=[django.core.validators.MaxValueValidator(1000), django.core.validators.MinValueValidator(0)])),
+                ('distance_from', models.IntegerField(default=None, null=True, verbose_name='Distance ridden from work', blank=True, validators=[django.core.validators.MaxValueValidator(1000), django.core.validators.MinValueValidator(0)])),
+            ],
+            options={
+                'ordering': ('date',),
+                'verbose_name': 'Trip',
+                'verbose_name_plural': 'Trips',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='TShirtSize',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=40, verbose_name='T-shirt size')),
+                ('order', models.PositiveIntegerField(default=0)),
+                ('ship', models.BooleanField(default=True, verbose_name='Ships?')),
+                ('available', models.BooleanField(default=True, help_text='Is shown in the t-shirt sizes', verbose_name='Is available?')),
+                ('t_shirt_preview', models.FileField(upload_to=b't_shirt_preview', null=True, verbose_name='T-shirt preview', blank=True)),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
+            ],
+            options={
+                'ordering': ['order'],
+                'verbose_name': 'T-shirt size',
+                'verbose_name_plural': 'T-shirt size',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UserActionTransaction',
+            fields=[
+                ('transaction_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='dpnk.Transaction')),
+            ],
+            options={
+                'verbose_name': 'User action',
+                'verbose_name_plural': 'User actions',
+            },
+            bases=('dpnk.transaction',),
+        ),
+        migrations.CreateModel(
+            name='UserAttendance',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('distance', models.PositiveIntegerField(default=None, help_text='Average distance from home to work (in km in one direction)', null=True, verbose_name='Distance', blank=True)),
+                ('approved_for_team', models.CharField(default=b'undecided', max_length=16, verbose_name='Team approval', choices=[(b'approved', 'Confirmed'), (b'undecided', 'Unconfirmed'), (b'denied', 'Denied')])),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
+                ('t_shirt_size', models.ForeignKey(verbose_name='T-shirt size', to='dpnk.TShirtSize', null=True)),
+                ('team', models.ForeignKey(related_name=b'users', default=None, blank=True, to='dpnk.Team', null=True, verbose_name='Team')),
+            ],
+            options={
+                'verbose_name': 'Campaign attendance',
+                'verbose_name_plural': 'Campaign attendances',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UserProfile',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('telephone', models.CharField(max_length=30, verbose_name='Telephone')),
+                ('language', models.CharField(default=b'cs', max_length=16, verbose_name='Language', choices=[(b'cs', 'Czech'), (b'en', 'English')])),
+                ('mailing_id', models.CharField(default=None, max_length=128, blank=True, null=True, verbose_name='Mailing list ID', db_index=True)),
+                ('mailing_hash', models.BigIntegerField(default=None, null=True, verbose_name='Hash of last synchronization with mailing list', blank=True)),
+                ('sex', models.CharField(default=b'unknown', max_length=50, verbose_name='Pohlav\xed', choices=[(b'male', 'Mu\u017e'), (b'female', '\u017dena'), (b'unknown', 'Nezn\xe1m\xe9')])),
+                ('note', models.TextField(null=True, verbose_name='Internal note', blank=True)),
+                ('administrated_cities', models.ManyToManyField(related_name=b'city_admins', null=True, to='dpnk.CityInCampaign', blank=True)),
+                ('user', models.OneToOneField(related_name=b'userprofile', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ['user__last_name', 'user__first_name'],
+                'verbose_name': 'User profile',
+                'verbose_name_plural': 'U\u017eivatelsk\xe9 profily',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AddField(
+            model_name='userattendance',
+            name='userprofile',
+            field=models.ForeignKey(verbose_name='User profile', to='dpnk.UserProfile'),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='userattendance',
+            unique_together=set([('userprofile', 'campaign')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='tshirtsize',
+            unique_together=set([('name', 'campaign')]),
+        ),
+        migrations.AddField(
+            model_name='trip',
+            name='user_attendance',
+            field=models.ForeignKey(related_name=b'user_trips', default=None, blank=True, to='dpnk.UserAttendance', null=True),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='trip',
+            unique_together=set([('user_attendance', 'date')]),
+        ),
+        migrations.AddField(
+            model_name='transaction',
+            name='author',
+            field=models.ForeignKey(related_name=b'transaction_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='transaction',
+            name='polymorphic_ctype',
+            field=models.ForeignKey(related_name=b'polymorphic_dpnk.transaction_set', editable=False, to='contenttypes.ContentType', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='transaction',
+            name='updated_by',
+            field=models.ForeignKey(related_name=b'transaction_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='transaction',
+            name='user_attendance',
+            field=models.ForeignKey(related_name=b'transactions', default=None, to='dpnk.UserAttendance', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='team',
+            name='coordinator_campaign',
+            field=models.OneToOneField(related_name=b'coordinated_team', null=True, verbose_name='Team coordinator', to='dpnk.UserAttendance'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='team',
+            name='subsidiary',
+            field=models.ForeignKey(related_name=b'teams', verbose_name='Subdivision', to='dpnk.Subsidiary'),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='team',
+            unique_together=set([('name', 'campaign')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='phase',
+            unique_together=set([('type', 'campaign')]),
+        ),
+        migrations.AddField(
+            model_name='packagetransaction',
+            name='t_shirt_size',
+            field=models.ForeignKey(verbose_name='T-shirt size', to='dpnk.TShirtSize', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='competitionresult',
+            name='team',
+            field=models.ForeignKey(related_name=b'competitions_results', default=None, blank=True, to='dpnk.Team', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='competitionresult',
+            name='user_attendance',
+            field=models.ForeignKey(related_name=b'competitions_results', default=None, blank=True, to='dpnk.UserAttendance', null=True),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='competitionresult',
+            unique_together=set([('team', 'competition'), ('user_attendance', 'competition')]),
+        ),
+        migrations.AddField(
+            model_name='competition',
+            name='team_competitors',
+            field=models.ManyToManyField(related_name=b'competitions', null=True, to='dpnk.Team', blank=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='competition',
+            name='user_attendance_competitors',
+            field=models.ManyToManyField(related_name=b'competitions', null=True, to='dpnk.UserAttendance', blank=True),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='companyadmin',
+            unique_together=set([('user', 'campaign'), ('administrated_company', 'campaign')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='cityincampaign',
+            unique_together=set([('city', 'campaign')]),
+        ),
+        migrations.AddField(
+            model_name='choicetype',
+            name='competition',
+            field=models.ForeignKey(to='dpnk.Competition'),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='choicetype',
+            unique_together=set([('competition', 'name')]),
+        ),
+        migrations.AddField(
+            model_name='choice',
+            name='choice_type',
+            field=models.ForeignKey(related_name=b'choices', verbose_name='Choice type', to='dpnk.ChoiceType'),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='choice',
+            unique_together=set([('choice_type', 'text')]),
+        ),
+        migrations.AddField(
+            model_name='answer',
+            name='choices',
+            field=models.ManyToManyField(to='dpnk.Choice', null=True, blank=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='answer',
+            name='question',
+            field=models.ForeignKey(to='dpnk.Question'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='answer',
+            name='user_attendance',
+            field=models.ForeignKey(blank=True, to='dpnk.UserAttendance', null=True),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='answer',
+            unique_together=set([('user_attendance', 'question')]),
+        ),
+        migrations.CreateModel(
+            name='SubsidiaryInCampaign',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('dpnk.subsidiary',),
+        ),
+        migrations.CreateModel(
+            name='TeamInCampaign',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('dpnk.team',),
+        ),
+        migrations.CreateModel(
+            name='TeamName',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('dpnk.team',),
+        ),
+        migrations.CreateModel(
+            name='UserAttendanceRelated',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('dpnk.userattendance',),
+        ),
+    ]
