@@ -771,9 +771,10 @@ class UserProfile(models.Model):
         ordering = ["user__last_name", "user__first_name"]
 
     GENDER = (
+        ('unknown', _(u'-------')),
         ('male', _(u'Muž')),
         ('female', _(u'Žena')),
-        ('unknown', _(u'Neznámé')))
+        )
 
     LANGUAGE = [
         ('cs', _(u"Čeština")),

@@ -346,10 +346,6 @@ class TShirtUpdateForm(models.UserAttendanceForm):
 
 
 class ProfileUpdateForm(forms.ModelForm):
-    language = forms.ChoiceField(
-        label=_(u"Jazyk komunikace"),
-        choices = UserProfile.LANGUAGE,
-        )
     first_name = forms.CharField(
         label=_(u"Jméno"),
         max_length=30,
@@ -365,32 +361,34 @@ class ProfileUpdateForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).save(*args, **kwargs)
-        self.instance.userprofile.language = self.cleaned_data.get('language')
-        self.instance.userprofile.save()
-        self.instance.userprofile.user.email = self.cleaned_data.get('email')
-        self.instance.userprofile.user.first_name = self.cleaned_data.get('first_name')
-        self.instance.userprofile.user.last_name = self.cleaned_data.get('last_name')
-        self.instance.userprofile.user.save()
+        self.instance.user.email = self.cleaned_data.get('email')
+        self.instance.user.first_name = self.cleaned_data.get('first_name')
+        self.instance.user.last_name = self.cleaned_data.get('last_name')
+        self.instance.user.save()
         return ret_val
 
     def clean_email(self):
         """
         Validate that the email is not already in use.
         """
-        if User.objects.filter(email__iexact=self.cleaned_data['email']).exclude(pk=self.instance.userprofile.user.pk).exists():
+        if User.objects.filter(email__iexact=self.cleaned_data['email']).exclude(pk=self.instance.user.pk).exists():
             raise forms.ValidationError(_(u"Tento email již je v našem systému zanesen."))
         else:
             return self.cleaned_data['email']
 
+    def clean_sex(self):
+        if self.cleaned_data['sex'] == 'unknown':
+            raise forms.ValidationError(_(u"Zadejte pohlaví"))
+        else:
+            return self.cleaned_data['sex']
+
     def __init__(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['language'].initial = self.instance.userprofile.language
-        self.fields['email'].initial = self.instance.userprofile.user.email
-        self.fields['first_name'].initial = self.instance.userprofile.user.first_name
-        self.fields['last_name'].initial = self.instance.userprofile.user.last_name
-        self.fields['distance'].required = True
+        self.fields['email'].initial = self.instance.user.email
+        self.fields['first_name'].initial = self.instance.user.first_name
+        self.fields['last_name'].initial = self.instance.user.last_name
         return ret_val
 
     class Meta:
-        model = UserAttendance
-        fields = ( 'language', 'first_name', 'last_name', 'email', 'distance')
+        model = UserProfile
+        fields = ( 'language', 'sex', 'first_name', 'last_name', 'email')

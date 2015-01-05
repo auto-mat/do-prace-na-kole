@@ -818,12 +818,12 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
 class UpdateProfileView(SuccessMessageMixin, UpdateView):
     template_name = 'generic_form_template.html'
     form_class = ProfileUpdateForm
-    model = UserAttendance
+    model = UserProfile
     success_message = _(u"Osobní údaje úspěšně upraveny")
     success_url = 'profil'
 
     def get_object(self):
-        return get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
+        return self.request.user.userprofile
 
     def form_valid(self, form):
         super(UpdateProfileView, self).form_valid(form)
