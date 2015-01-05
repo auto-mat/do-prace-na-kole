@@ -125,7 +125,7 @@
 {% else %}
 <form method="post" class="form-horizontal">{% csrf_token %}
 <input type="hidden" value="true" name="enter_competition" />
-<button class="submit submit_once btn btn-block btn-primary" type="button"><strong style="font-size:20px">{% trans "Začít soutěžit" %}</strong></button>
+<button class="submit submit_once btn btn-block btn-primary" type="submit"><strong style="font-size:20px">{% trans "Začít soutěžit" %}</strong></button>
 </form>
 {% endif %}
 

@@ -56,9 +56,9 @@
                </a>
             {% elif competition.type == 'frequency' or competition.type == 'length' %}
                {% if competition.competitor_has_admission %}
-                  <button type="button" class="submit submit_once" onclick='$("#cancellation_competition_id").val("{{ competition.id }}")'>{% trans "Od&shy;hlá&shy;sit ze sou&shy;tě&shy;že" %}</button>
+                  <button type="submit" class="submit submit_once" onclick='$("#cancellation_competition_id").val("{{ competition.id }}")'>{% trans "Od&shy;hlá&shy;sit ze sou&shy;tě&shy;že" %}</button>
                {% else %}
-                  <button type="button" class="submit submit_once" onclick='$("#admission_competition_id").val("{{ competition.id }}")'>{% trans "Při&shy;hlá&shy;sit do sou&shy;tě&shy;že" %}</button>
+                  <button type="submit" class="submit submit_once" onclick='$("#admission_competition_id").val("{{ competition.id }}")'>{% trans "Při&shy;hlá&shy;sit do sou&shy;tě&shy;že" %}</button>
                {% endif %}
             {% endif %}
             {% else %}
