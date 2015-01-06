@@ -33,6 +33,7 @@ from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModel
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.gis.admin import OSMGeoAdmin
 import datetime
 import results
 # Models
@@ -530,7 +531,7 @@ class UserAttendanceResource(resources.ModelResource):
         fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email')
 
 
-class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin):
+class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin, OSMGeoAdmin):
     list_display = ('name', 'id', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_rough_length', 'get_length')
     list_filter = ('campaign', 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, 'team__member_count', PackageConfirmationFilter, 'transactions__packagetransaction__delivery_batch', 'userprofile__sex')
     raw_id_fields = ('userprofile', 'team')

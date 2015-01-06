@@ -31,6 +31,7 @@ from django import forms
 from django.db import models
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.contrib.gis.db import models
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.db.utils import ProgrammingError
 from fieldsignals import post_save_changed, pre_save_changed
@@ -556,6 +557,12 @@ class UserAttendance(models.Model):
         default=None,
         blank=True,
         null=True)
+    track = models.LineStringField(
+        verbose_name=_(u"trasa"),
+        srid=4326,
+        null=True,
+        blank=True,
+        )
     team = models.ForeignKey(
         Team,
         related_name='users',
@@ -1495,18 +1502,24 @@ class Trip(models.Model):
         null=True,
         blank=True,
         default=None)
+    is_working_day = models.BooleanField(
+        verbose_name=_(u"pracovní den"),
+        default=False,
+        )
     date = models.DateField(
         verbose_name=_(u"Datum cesty"),
         default=datetime.datetime.now,
         null=False)
-    trip_to = models.BooleanField(
+    trip_to = models.NullBooleanField(
         verbose_name=_(u"Cesta do práce"),
-        default=False,
-        null=False)
-    trip_from = models.BooleanField(
+        default=None,
+        null=True,
+        )
+    trip_from = models.NullBooleanField(
         verbose_name=_(u"Cesta z práce"),
-        default=False,
-        null=False)
+        default=None,
+        null=True,
+        )
     distance_to = models.IntegerField(
         verbose_name=_(u"Ujetá vzdálenost do práce"),
         null=True,

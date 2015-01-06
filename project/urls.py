@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from django.contrib import admin
+from django.contrib.gis import admin
 admin.site.index_template = 'admin/my_custom_index.html'
 admin.autodiscover()
 from dpnk.views import questionnaire_results, questionnaire_answers, draw_results, questions, answers

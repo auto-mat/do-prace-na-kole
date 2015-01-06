@@ -98,6 +98,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django.contrib.gis',
 
     'registration',
     'dpnk',
