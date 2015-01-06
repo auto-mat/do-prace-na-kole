@@ -217,10 +217,6 @@ def recalculate_result(competition, competitor):
     if competition.competitor_type == 'team':
         team = competitor
 
-        if team.coordinator_campaign and not competition.has_admission(team.coordinator_campaign):
-            models.CompetitionResult.objects.filter(team = team, competition = competition).delete()
-            return
-
         competition_result, created = models.CompetitionResult.objects.get_or_create(team = team, competition = competition)
 
         member_count = team.member_count

@@ -257,14 +257,6 @@ class Team(models.Model):
         related_name='teams',
         null=False,
         blank=False)
-    coordinator_campaign = models.OneToOneField(
-        'UserAttendance',
-        related_name="coordinated_team",
-        verbose_name=_(u"Koordinátor/ka týmu"),
-        null=True,
-        blank=False,
-        unique=True,
-        )
     invitation_token = models.CharField(
         verbose_name=_(u"Token pro pozvánky"),
         default="",
@@ -314,12 +306,6 @@ class Team(models.Model):
         return "%s (%s)" % (self.name, self.members().count())
 
     def save(self, force_insert=False, force_update=False):
-        if not self.coordinator_campaign and self.member_count > 0:
-            logger.error(u"Team %(team)s has no team coordinator, but has team members: %(team_members)s" % {'team_members': ", ".join([m.userprofile.user.username for m in self.members()]), 'team': self})
-
-        if self.coordinator_campaign and self.coordinator_campaign.team != self:
-            logger.error(u"New coordinator of team %(team)s - %(coordinator)s is member of another team %(another_team)s" % {'coordinator': self.coordinator_campaign, 'team': self, 'another_team': self.coordinator_campaign.team})
-
         if self.invitation_token == "":
             while True:
                 invitation_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30))
@@ -336,12 +322,6 @@ class TeamName(Team):
 
     def __unicode__(self):
         return unicode(self.name)
-
-
-class TeamForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(TeamForm, self).__init__(*args, **kwargs)
-        self.fields['coordinator_campaign'].queryset = UserAttendance.objects.filter(team=self.instance, approved_for_team='approved')
 
 
 class Campaign(models.Model):
@@ -705,19 +685,8 @@ class UserAttendance(models.Model):
         return self.userprofile.userattendance_set.exclude(campaign=campaign)
 
     def undenied_team_member_count(self):
-        team = getattr(self, "coordinated_team", self.team)
+        team = self.team
         return UserAttendance.objects.filter(team=team, userprofile__user__is_active=True).exclude(approved_for_team='denied').count()
-
-    def can_change_team_coordinator(self):
-        """Can change team? Not, if he is team coordinator and the team has other members"""
-        if self.team and self.team.coordinator_campaign == self and self.undenied_team_member_count() > 1:
-            return False
-        return True
-
-    def is_team_coordinator(self):
-        if self.team and self.team.coordinator_campaign == self:
-            return True
-        return False
 
     def can_enter_competition(self):
         if not self.distance:
@@ -728,9 +697,9 @@ class UserAttendance(models.Model):
             return 'not_approved_for_team'
         elif not self.t_shirt_size:
             return 'not_t_shirt'
-        elif self.team.coordinator_campaign == self and self.team.unapproved_members().count() > 0:
+        elif self.team.unapproved_members().count() > 0:
             return 'unapproved_team_members'
-        elif self.team.coordinator_campaign == self and self.team.members().count() < 2:
+        elif self.team.members().count() < 2:
             return 'not_enough_team_members'
         elif self.payment()['status'] != 'done':
             return 'not_paid'
@@ -755,10 +724,6 @@ class UserAttendance(models.Model):
     def team_member_count(self):
         if self.team:
             return self.team.member_count
-
-    def clean(self):
-        if hasattr(self, "coordinated_team") and self.coordinated_team != self.team and self.undenied_team_member_count() > 1:
-            raise ValidationError(_(u"Není možné změnit tým, dokud je uživatel týmovým koordinátorem."))
 
 
 class UserAttendanceRelated(UserAttendance):
@@ -853,21 +818,6 @@ class UserProfile(models.Model):
         if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
             logger.error(u"Mailing id %s is already used" % self.mailing_id)
         super(UserProfile, self).save(force_insert, force_update)
-
-
-@receiver(pre_save, sender=UserAttendance)
-def set_team_coordinator_pre(sender, instance, **kwargs):
-    if hasattr(instance, "coordinated_team") and instance.coordinated_team != instance.team:
-        coordinated_team = instance.coordinated_team
-        coordinated_team.coordinator_campaign = None
-        coordinated_team.save()
-
-
-@receiver(post_save, sender=UserAttendance)
-def set_team_coordinator_post(sender, instance, created, **kwargs):
-    if instance.team and not instance.team.coordinator_campaign:
-        instance.team.coordinator_campaign = instance
-        instance.team.save()
 
 
 class CompanyAdmin(models.Model):
@@ -1699,8 +1649,6 @@ class Competition(models.Model):
     def can_admit(self, user_attendance):
         if self.without_admission:
             return 'without_admission'
-        if not user_attendance.is_team_coordinator() and self.competitor_type == 'team':
-            return 'not_team_coordinator'
         if not get_company_admin(user_attendance.userprofile.user, self.campaign) and self.competitor_type == 'company':
             return 'not_company_admin'
         if self.type == 'questionnaire' and not self.has_started():
@@ -2159,12 +2107,3 @@ def answer_post_save(sender, instance, **kwargs):
 def payment_set_realized_date(sender, instance, **kwargs):
     if instance.status in Payment.done_statuses and not instance.realized:
         instance.realized = datetime.datetime.now()
-
-
-def team_admin_changed(sender, instance, changed_fields=None, **kwargs):
-    field, (old, new) = changed_fields.items()[0]
-    try:
-        email.new_team_coordinator_mail(UserAttendance.objects.get(pk=new))
-    except UserAttendance.DoesNotExist:
-        pass
-post_save_changed.connect(team_admin_changed, sender=Team, fields=['coordinator_campaign'])

@@ -41,17 +41,15 @@
       class="btn btn-block btn-warning">{% trans "Vyplňte velikost trika" %}</a>
 {% endif %}
 
-{% if team.coordinator_campaign == profile %}
-   {% if team.unapproved_members.count > 0 %}
-      <a href="{% wp_url 'team_admin' %}"
-         class="btn btn-block btn-warning">{% trans "Ve vašem týmu jsou neodsouhlasení členové. Odsouhlaste je!" %}</a>
-   {% elif team.members.count < 2 %}
-      <a href="{% wp_url 'team_admin' %}"
-         class="btn btn-block btn-warning">{% trans "Aby byl tým úplný, potřebuje mít víc než jednoho člena. Pozvěte své kolegy!" %}</a>
-   {% else %}
-      <a href="{% wp_url 'team_admin' %}"
-         class="btn btn-block btn-success">{% trans "Jste týmový koordinátor, přejít na správu týmu" %}</a>
-   {% endif %}
+{% if team.unapproved_members.count > 0 %}
+   <a href="{% wp_url 'team_admin' %}"
+      class="btn btn-block btn-warning">{% trans "Ve vašem týmu jsou neodsouhlasení členové. Odsouhlaste je!" %}</a>
+{% elif team.members.count < 2 %}
+   <a href="{% wp_url 'team_admin' %}"
+      class="btn btn-block btn-warning">{% trans "Aby byl tým úplný, potřebuje mít víc než jednoho člena. Pozvěte své kolegy!" %}</a>
+{% else %}
+   <a href="{% wp_url 'team_admin' %}"
+      class="btn btn-block btn-success">{% trans "Přejít na správu týmu" %}</a>
 {% endif %}
 
 {% if not team %}

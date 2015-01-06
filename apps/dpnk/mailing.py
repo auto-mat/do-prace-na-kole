@@ -41,7 +41,6 @@ def get_custom_fields(user_attendance):
     user = user_attendance.get_userprofile().user
     city = None
     payment_status = None
-    team_coordinator = None
     is_new_user = None
     entered_competition = None
     team_member_count = None
@@ -51,7 +50,6 @@ def get_custom_fields(user_attendance):
             city = user_attendance.team.subsidiary.city.name
         payment_status = user_attendance.payment()['status']
 
-        team_coordinator = user_attendance.is_team_coordinator()
         is_new_user = user_attendance.other_user_attendances(user_attendance.campaign).count() > 0
         entered_competition = user_attendance.entered_competition()
         team_member_count = user_attendance.team_member_count()
@@ -60,7 +58,6 @@ def get_custom_fields(user_attendance):
 
     custom_fields = [
         {'Key': "Mesto", 'Value': city},
-        {'Key': "Tymovy_koordinator", 'Value': team_coordinator},
         {'Key': "Firemni_spravce", 'Value': company_admin},
         {'Key': "Stav_platby", 'Value': payment_status},
         {'Key': "Aktivni", 'Value': user.is_active},

@@ -74,10 +74,8 @@ class UserActionTransactionInline(EnhancedAdminMixin, NestedTabularInline):
 
 class TeamInline(EnhancedAdminMixin, admin.TabularInline):
     model = models.Team
-    form = models.TeamForm
     extra = 0
     readonly_fields = ['invitation_token', ]
-    raw_id_fields = ('coordinator_campaign', )
 
 
 class SubsidiaryInline(EnhancedAdminMixin, admin.TabularInline):
@@ -552,29 +550,6 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExpo
         return models.UserAttendance.objects.select_related('userprofile__user', 'team__subsidiary__company', 'campaign__cityincampaigns', 't_shirt_size', 'team__subsidiary__city', 'campaign')
 
 
-class CoordinatorFilter(SimpleListFilter):
-    title = _(u"stav týmu")
-    parameter_name = u'team_state'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('without_coordinator', u'bez koordinátora'),
-            ('inactive_coordinator', u'neaktivní koordinátor'),
-            ('empty', u'prázdný tým'),
-            ('foreign_coordinator', u'cizí koordinátor (chyba)'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'without_coordinator':
-            return queryset.filter(coordinator_campaign=None)
-        if self.value() == 'inactive_coordinator':
-            return queryset.filter(coordinator_campaign__userprofile__user__is_active=False)
-        if self.value() == 'empty':
-            return queryset.filter(users=None)
-        if self.value() == 'foreign_coordinator':
-            return queryset.exclude(coordinator_campaign__team__id=F("id"))
-
-
 def recalculate_team_member_count(modeladmin, request, queryset):
     for team in queryset.all():
         team.autoset_member_count()
@@ -582,9 +557,9 @@ recalculate_team_member_count.short_description = "Přepočítat počet členů 
 
 
 class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedFieldAdmin):
-    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'coordinator_campaign', 'coordinator_campaign__userprofile__user__email', 'member_count', 'campaign', 'get_length', 'get_frequency', 'id', )
-    search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name', 'coordinator_campaign__userprofile__user__first_name', 'coordinator_campaign__userprofile__user__last_name']
-    list_filter = ['campaign', 'subsidiary__city', 'member_count', CoordinatorFilter]
+    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'member_count', 'campaign', 'get_length', 'get_frequency', 'id', )
+    search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name']
+    list_filter = ['campaign', 'subsidiary__city', 'member_count']
     list_max_show_all = 10000
     raw_id_fields = ['subsidiary', ]
     actions = ( recalculate_team_member_count, )
@@ -595,7 +570,6 @@ class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedFieldAdm
         return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/userattendance/%d">%s</a> - %s' % (u.pk, str(u), str(u.approved_for_team))
                          for u in models.UserAttendance.objects.filter(team=obj)]))
     members.short_description = 'Členové'
-    form = models.TeamForm
 
 
 class TransactionChildAdmin(EnhancedModelAdminMixin, PolymorphicChildModelAdmin):

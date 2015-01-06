@@ -23,13 +23,16 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 def approval_request_mail(user_attendance):
-    template = get_template('email/approval_request.html')
-    email = user_attendance.team.coordinator_campaign.userprofile.user.email
-    message = template.render(Context({ 'coordinator': user_attendance.team.coordinator_campaign.userprofile.user,
-        'user': user_attendance,
-        'SITE_URL': settings.SITE_URL,
-        }))
-    send_mail(_(u"%s - žádost o ověření členství" % user_attendance.campaign), message, None, [email], fail_silently=False)
+    for team_member in user_attendance.team.members():
+        if user_attendance == team_member:
+            continue
+        template = get_template('email/approval_request.html')
+        email = team_member.userprofile.user.email
+        message = template.render(Context({ 'team_member': team_member,
+            'new_user': user_attendance,
+            'SITE_URL': settings.SITE_URL,
+            }))
+        send_mail(_(u"%s - žádost o ověření členství" % user_attendance.campaign), message, None, [email], fail_silently=False)
 
 def invitation_register_mail(inviting, invited):
     template = get_template('email/invitation.html')
@@ -58,10 +61,11 @@ def team_membership_approval_mail(user_attendance):
         }))
     send_mail(_(u"%s - potvrzení ověření členství v týmu" % user_attendance.campaign), message, None, [email], fail_silently=False)
 
-def team_membership_denial_mail(user_attendance, reason):
+def team_membership_denial_mail(user_attendance, denier, reason):
     template = get_template('email/team_membership_denial.html')
     email = user_attendance.userprofile.user.email
     message = template.render(Context({ 'user': user_attendance,
+        'denier': denier,
         'SITE_URL': settings.SITE_URL,
         'reason': reason,
         }))
@@ -136,12 +140,3 @@ def company_admin_rejected_mail(company_admin):
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_(u"%s - firemní koordinátor - zamítnutí správcovství firmy" % company_admin.campaign), message, None, [email], fail_silently=False)
-
-def new_team_coordinator_mail(user_attendance):
-    template = get_template('email/new_team_coordinator.html')
-    email = user_attendance.userprofile.user.email
-    message = template.render(Context({
-        'user_attendance': user_attendance,
-        'SITE_URL': settings.SITE_URL,
-        }))
-    send_mail(_(u"%s - zpráva pro nového koordinátor týmu" % user_attendance.campaign), message, None, [email], fail_silently=False)

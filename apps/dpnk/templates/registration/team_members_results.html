@@ -12,7 +12,6 @@
    </tr>
    {% for member in team_members %}
       <tr
-         {% if member.is_team_coordinator %}class="info"{% endif %}
          {% if not member.entered_competition %}class="danger"{% endif %}
          >
       <td>{{ member.name|softhyphen:"cs-CZ" }}</td>

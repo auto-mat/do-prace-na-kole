@@ -4,11 +4,9 @@
 
 {% include "messages_include.html" %}
 
-{% if user_attendance.team.coordinator_campaign == user_attendance %}
-   {% if user_attendance.team.unapproved_members.count > 0 %}
-      <a href="{% wp_url 'team_admin' %}"
-         class="btn btn-block btn-warning">{% trans "Ve vašem týmu jsou neodsouhlasení členové. Odsouhlaste je!" %}</a>
-   {% endif %}
+{% if user_attendance.team.unapproved_members.count > 0 %}
+   <a href="{% wp_url 'team_admin' %}"
+      class="btn btn-block btn-warning">{% trans "Ve vašem týmu jsou neodsouhlasení členové. Odsouhlaste je!" %}</a>
 {% endif %}
 
 {% if user_attendance.t_shirt_size.ship %}

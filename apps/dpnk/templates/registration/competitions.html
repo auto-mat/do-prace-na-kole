@@ -98,12 +98,6 @@
          {% trans "Do&shy;taz&shy;ník již ne&shy;ní ak&shy;tiv&shy;ní." %}
          <br/>
          <a class="btn btn-primary" href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">zo&shy;bra&shy;zit vy&shy;hod&shy;no&shy;ce&shy;ní </a>
-      {% elif competition.competitor_can_admit == 'not_team_coordinator' %}
-         {% if competition.competitor_has_admission %}
-            {% trans "Do té&shy;to sou&shy;tě&shy;že tý&shy;mů vás při&shy;hlá&shy;sil váš tý&shy;mo&shy;vý ko&shy;or&shy;di&shy;ná&shy;tor." %} 
-         {% else %}
-            {% trans "Do té&shy;to sou&shy;tě&shy;že týmů vás mu&shy;sí při&shy;hlá&shy;sit tý&shy;mo&shy;vý ko&shy;or&shy;di&shy;ná&shy;tor." %} 
-         {% endif %}
       {% elif competition.competitor_can_admit == 'not_company_admin' %}
          {% if competition.competitor_has_admission %}
             {% trans "Do té&shy;to sou&shy;tě&shy;že fi&shy;rem vás při&shy;hlá&shy;sil váš fi&shy;rem&shy;ní koordinátor." %}

@@ -38,20 +38,6 @@ def login_required_simple(fn):
     return wrapper
 
 
-def must_be_coordinator(fn):
-    @functools.wraps(fn)
-    @must_be_competitor
-    @login_required
-    def wrapper(*args, **kwargs):
-        user_attendance = kwargs['user_attendance']
-        team = user_attendance.team
-        if not user_attendance.is_team_coordinator():
-            return HttpResponse(_(u"<div class='text-warning'>Nejste koordinátorem týmu %(team)s, nemáte tedy oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s, vy jste: %(you)s </div>") % {'team': team.name if team else u"neznámý", 'coordinator': team.coordinator_campaign if team else u"nikdo", 'you': user_attendance}, status=401)
-        else:
-            return fn(*args, **kwargs)
-    return wrapper
-
-
 def must_be_approved_for_team(fn):
     @functools.wraps(fn)
     @login_required
@@ -60,10 +46,10 @@ def must_be_approved_for_team(fn):
         user_attendance = kwargs['user_attendance']
         if not user_attendance.team:
             return HttpResponse(_(u"<div class='text-warning'>Nemáte zvolený tým</div>"), status=401)
-        if user_attendance.approved_for_team == 'approved' or user_attendance.is_team_coordinator():
+        if user_attendance.approved_for_team == 'approved':
             return fn(*args, **kwargs)
         else:
-            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno týmovým koordinátorem. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': user_attendance.team.name, 'address': wp_reverse("zaslat_zadost_clenstvi")}, status=401)
+            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': user_attendance.team.name, 'address': wp_reverse("zaslat_zadost_clenstvi")}, status=401)
     return wrapper
 
 

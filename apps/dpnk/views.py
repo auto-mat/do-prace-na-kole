@@ -32,7 +32,7 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.decorators import method_decorator
-from decorators import must_be_coordinator, must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team, user_attendance_has, request_condition, must_be_in_phase
+from decorators import must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team, user_attendance_has, request_condition, must_be_in_phase
 from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import ugettext_lazy as _
@@ -137,7 +137,6 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
 
 @login_required_simple
 @must_be_competitor
-@user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), string_concat(u'<div class="text-error">', _(u'Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.') % wp_reverse('team_admin'), u"</div>"))
 @user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže nemůžete měnit tým."), "</div>"))
 def change_team(
         request,
@@ -222,17 +221,8 @@ def change_team(
             if create_team:
                 team = form_team.save(commit=False)
 
-                if hasattr(user_attendance, 'coordinated_team'):
-                    coordinated_team_members = UserAttendance.objects.exclude(id=user_attendance.id).filter(team=user_attendance.coordinated_team, userprofile__user__is_active=True)
-                    if len(coordinated_team_members) > 0:
-                        user_attendance.coordinated_team.coordinator = coordinated_team_members[0]
-                    else:
-                        user_attendance.coordinated_team.coordinator = None
-                    user_attendance.coordinated_team.save()
-
                 user_attendance.team = team
                 user_attendance.approved_for_team = 'approved'
-                team.coordinator = user_attendance
 
                 form_team.save()
 
@@ -337,7 +327,6 @@ class ConfirmTeamInvitationView(FormView):
     @method_decorator(must_be_competitor)
     @method_decorator(request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, string_concat("<div class='text-warning'>", _(u"Tým nenalezen."), "</div>")))
     @method_decorator(request_condition(lambda r, a, k: r.user.email != k['initial_email'], string_concat("<div class='text-warning'>", _(u"Pozvánka je určena jinému uživateli, než je aktuálně přihlášen."), "</div>")))
-    @method_decorator(user_attendance_has(lambda ua: not ua.can_change_team_coordinator(), string_concat('<div class="text-error">', _(u'Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href="%s">zvolit jiného koordinátora</a>.') % wp_reverse('team_admin'), "</div>")))
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
         invitation_token = self.kwargs['token']
@@ -684,7 +673,7 @@ def profile(request, user_attendance=None, success_url = 'competition_profile'):
 
     # Render profile
     payment_status = user_attendance.payment_status()
-    if user_attendance.team and user_attendance.team.coordinator_campaign:
+    if user_attendance.team:
         team_members_count = user_attendance.team.members().count()
     else:
         team_members_count = 0
@@ -748,7 +737,7 @@ def other_team_members(
         template='registration/team_members.html'
         ):
     team_members = []
-    if user_attendance.team and user_attendance.team.coordinator_campaign:
+    if user_attendance.team:
         team_members = user_attendance.team.all_members().select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign', 'user_attendance')
 
     return render_to_response(template, {
@@ -1100,7 +1089,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
             return
         user_attendance.approved_for_team = 'denied'
         user_attendance.save()
-        team_membership_denial_mail(user_attendance, reason)
+        team_membership_denial_mail(user_attendance, request.user, reason)
         messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %s ve vašem týmu bylo zamítnuto" % user_attendance), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
         return
     elif approve:
@@ -1122,7 +1111,7 @@ def team_approval_request(request, user_attendance=None):
                               context_instance=RequestContext(request))
 
 
-@must_be_coordinator
+@must_be_competitor
 @login_required_simple
 def invite(
         request,
@@ -1169,7 +1158,7 @@ def invite(
         }, context_instance=RequestContext(request))
 
 
-@must_be_coordinator
+@must_be_competitor
 @login_required_simple
 @user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže již nemůžete měnit parametry týmu."), "</div>"))
 def team_admin_team(
@@ -1196,7 +1185,7 @@ def team_admin_team(
         }, context_instance=RequestContext(request))
 
 
-@must_be_coordinator
+@must_be_competitor
 @login_required_simple
 def team_admin_members(
         request,

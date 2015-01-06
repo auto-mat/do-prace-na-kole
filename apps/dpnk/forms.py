@@ -107,7 +107,7 @@ class ChangeTeamForm(forms.ModelForm):
         model_field = "subsidiary",
         show_all = False,
         auto_choose = False,
-        widget=SelectChainedOrCreate(RegisterTeamForm, view_name='', prefix="team", new_description = _(u"Tým v seznamu není, chci si založit nový (budu jeho koordinátorem)"),
+        widget=SelectChainedOrCreate(RegisterTeamForm, view_name='', prefix="team", new_description = _(u"Můj tým v seznamu není, vytvořit nový"),
             chain_field = "subsidiary",
             app_name = "dpnk",
             model_name = "TeamInCampaign",
@@ -230,7 +230,7 @@ class InviteForm(forms.Form):
         label=_(u"Email kolegy 4"),
         required=False)
 
-class TeamAdminForm(models.TeamForm):
+class TeamAdminForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
     campaign = forms.ModelChoiceField(
@@ -242,7 +242,7 @@ class TeamAdminForm(models.TeamForm):
 
     class Meta:
         model = Team
-        fields = ('name', 'coordinator_campaign', 'campaign')
+        fields = ('name', 'campaign')
 
 class PaymentTypeForm(forms.Form):
     CHOICES=[('pay', _(u"Účastnický poplatek si platím sám.")),
