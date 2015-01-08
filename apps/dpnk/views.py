@@ -46,7 +46,7 @@ import registration.backends.simple
 # Model imports
 from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice, City, UserAttendance, Campaign
 import forms
-from forms import RegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm, ChangeTeamForm
+from forms import RegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm, ChangeTeamForm, TrackUpdateForm
 from django.conf import settings
 from django.http import HttpResponse
 from django import http
@@ -816,6 +816,21 @@ class UpdateProfileView(SuccessMessageMixin, UpdateView):
 
     def form_valid(self, form):
         super(UpdateProfileView, self).form_valid(form)
+        return redirect(wp_reverse(self.success_url))
+
+
+class UpdateTrackView(SuccessMessageMixin, UpdateView):
+    template_name = 'generic_form_template.html'
+    form_class = TrackUpdateForm
+    model = UserAttendance
+    success_message = _(u"Osobní údaje úspěšně upraveny")
+    success_url = 'profil'
+
+    def get_object(self):
+        return get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
+
+    def form_valid(self, form):
+        super(UpdateTrackView, self).form_valid(form)
         return redirect(wp_reverse(self.success_url))
 
 

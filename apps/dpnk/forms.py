@@ -14,6 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinLengthValidator
+from django.contrib.gis.forms import OSMWidget
 from wp_urls import wp_reverse
 
 def team_full(data):
@@ -343,6 +344,25 @@ class TShirtUpdateForm(models.UserAttendanceForm):
     class Meta:
         model = UserAttendance
         fields = ('t_shirt_size', 'telephone', )
+
+
+class TrackUpdateForm(forms.ModelForm):
+    class Meta:
+        model = UserAttendance
+        fields = ('track', 'distance')
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs['instance']
+        super(TrackUpdateForm, self).__init__(*args, **kwargs)
+
+        location = instance.team.subsidiary.city.location
+        self.fields['track'].widget=OSMWidget(attrs={
+            'geom_type': 'LINESTRING',
+            'default_lat_custom': location.y,
+            'default_lon_custom': location.x,
+            'default_zoom': 14,
+        })
+        self.fields['track'].widget.template_name = "gis/openlayers-osm-custom.html"
 
 
 class ProfileUpdateForm(forms.ModelForm):

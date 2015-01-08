@@ -66,6 +66,8 @@ campaign_urlpatterns = patterns(
         views.questionaire),
     url(r'^upravit_profil/$',
         login_required_simple(views.UpdateProfileView.as_view())),
+    url(r'^upravit_trasu/$',
+        login_required_simple(views.UpdateTrackView.as_view())),
     url(r'^zmenit_triko/$',
         views.ChangeTShirtView.as_view(),
         {'success_url': 'typ_platby'}),

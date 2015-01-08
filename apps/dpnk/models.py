@@ -133,6 +133,12 @@ class City(models.Model):
         verbose_name=u"Subdoména v URL",
         blank=False
         )
+    location = models.PointField(
+        verbose_name=_(u"poloha města"),
+        srid=4326,
+        null=True,
+        blank=False,
+        )
 
     def __unicode__(self):
         return "%s" % self.name
