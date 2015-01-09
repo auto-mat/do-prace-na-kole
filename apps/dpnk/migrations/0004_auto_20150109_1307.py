@@ -18,4 +18,10 @@ class Migration(migrations.Migration):
             field=django.contrib.gis.db.models.fields.PointField(srid=4326, null=True, verbose_name='poloha m\u011bsta'),
             preserve_default=True,
         ),
+        migrations.AlterField(
+            model_name='userattendance',
+            name='track',
+            field=django.contrib.gis.db.models.fields.LineStringField(srid=4326, geography=True, null=True, verbose_name='trasa', blank=True),
+            preserve_default=True,
+        ),
     ]

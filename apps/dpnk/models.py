@@ -548,7 +548,9 @@ class UserAttendance(models.Model):
         srid=4326,
         null=True,
         blank=True,
+        geography=True,
         )
+    objects = models.GeoManager()
     team = models.ForeignKey(
         Team,
         related_name='users',
@@ -669,6 +671,12 @@ class UserAttendance(models.Model):
 
     def get_length(self):
         return results.get_userprofile_length(self)
+
+    def get_distance(self):
+        if self.track:
+            return UserAttendance.objects.length().get(id=self.id).length.km
+        else:
+            return self.distance
 
     def get_userprofile(self):
         return self.userprofile
