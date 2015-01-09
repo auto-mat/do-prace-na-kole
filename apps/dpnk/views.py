@@ -594,15 +594,14 @@ def rides(
             trip.trip_from = trip_from
             if trip.trip_to:
                 try:
-                    #TODO: Make possible to fill in float numbers
-                    trip.distance_to = max(min(round(float(request.POST.get('distance_to-' + str(day), None))), 1000), 0)
+                    trip.distance_to = max(min(float(request.POST.get('distance_to-' + str(day), None)), 1000), 0)
                 except:
                     pass
             else:
                 trip.distance_to = None
             if trip.trip_from:
                 try:
-                    trip.distance_from = max(min(round(float(request.POST.get('distance_from-' + str(day), None))), 1000), 0)
+                    trip.distance_from = max(min(float(request.POST.get('distance_from-' + str(day), None)), 1000), 0)
                 except:
                     pass
             else:

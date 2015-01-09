@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load l10n %}
 {% load dpnk_tags %}
 {% load humanize %}
 
@@ -35,7 +36,7 @@ style="display:none"
 </td>
 {% if has_distance_competition %}
 <td>
-   <input type="number" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_to }}"/>
+   <input type="number" step="any" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_to|unlocalize }}"/>
 </td>
 {% endif %}
 <td>
@@ -43,7 +44,7 @@ style="display:none"
 </td>
 {% if has_distance_competition %}
 <td>
-   <input type="number" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from }}"/>
+   <input type="number" step="any" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from|unlocalize }}"/>
 </td>
 {% endif %}
 <td><div {% if day.percentage > 66 %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>

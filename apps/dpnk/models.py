@@ -1484,7 +1484,7 @@ class Trip(models.Model):
         default=None,
         null=True,
         )
-    distance_to = models.IntegerField(
+    distance_to = models.FloatField(
         verbose_name=_(u"Ujetá vzdálenost do práce"),
         null=True,
         blank=True,
@@ -1494,7 +1494,7 @@ class Trip(models.Model):
             MinValueValidator(0)
         ],
         )
-    distance_from = models.IntegerField(
+    distance_from = models.FloatField(
         verbose_name=_(u"Ujetá vzdálenost z práce"),
         null=True,
         blank=True,
