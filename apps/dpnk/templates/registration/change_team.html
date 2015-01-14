@@ -1,5 +1,7 @@
+{% extends "base_generic_form.html" %}
 {% load bootstrap %}
 {% load i18n %}
+{% block form %}
 <style>
    #id_company_div:disabled,
    #id_company:disabled,
@@ -55,3 +57,4 @@
 <br/>
 <button class="submit submit_once btn btn-block btn-primary" type="submit">{% trans "Odeslat" %}</button>
 </form>
+{% endblock %}

@@ -32,7 +32,8 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.decorators import method_decorator
-from decorators import must_be_approved_for_team, must_be_competitor, login_required_simple, must_have_team, user_attendance_has, request_condition, must_be_in_phase
+from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase
+from django.contrib.auth.decorators import login_required as login_required_simple
 from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import ugettext_lazy as _
@@ -60,7 +61,8 @@ from django.db import transaction
 
 from wp_urls import wp_reverse
 from unidecode import unidecode
-from util import redirect
+from django.shortcuts import redirect
+from django.core.urlresolvers import reverse
 import logging
 import models
 import tempfile
@@ -242,7 +244,7 @@ def change_team(
                 approval_request_mail(user_attendance)
 
             messages.add_message(request, messages.SUCCESS, _(u"Údaje o týmu úspěšně nastaveny."), fail_silently=True)
-            return redirect(wp_reverse(success_url))
+            return redirect(reverse(success_url, kwargs={'campaign_slug': user_attendance.campaign.slug}))
     else:
         form = form_class(request, instance=user_attendance)
         form_company = RegisterCompanyForm(prefix="company")
@@ -264,7 +266,7 @@ def change_team(
 
 
 class RegistrationView(FormView):
-    template_name = 'generic_form_template.html'
+    template_name = 'base_generic_form.html'
     form_class = RegistrationFormDPNK
     model = UserProfile
     success_url = 'profil'
@@ -286,7 +288,7 @@ class RegistrationView(FormView):
 
 
 class ConfirmDeliveryView(UpdateView):
-    template_name = 'generic_form_template.html'
+    template_name = 'base_generic_form.html'
     form_class = forms.ConfirmDeliveryForm
     success_url = 'profil'
 
@@ -715,6 +717,7 @@ def profile(request, user_attendance=None, success_url = 'competition_profile'):
         'admissions_phase': admissions_phase,
         'cant_enter_competition_reason': cant_enter_competition_reason,
         'competition_entry_active': competition_entry_phase_is_active,
+        'campaign_slug': user_attendance.campaign.slug,
         }, context_instance=RequestContext(request))
 
 
@@ -802,9 +805,13 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
         'results': results[:limit]
         }, context_instance=RequestContext(request))
 
+class CampaignUpdateView(UpdateView):
+    def form_valid(self, form):
+        super(UpdateView, self).form_valid(form)
+        return redirect(reverse(profile, kwargs={'campaign_slug': self.kwargs['campaign_slug']}))
 
-class UpdateProfileView(SuccessMessageMixin, UpdateView):
-    template_name = 'generic_form_template.html'
+class UpdateProfileView(SuccessMessageMixin, CampaignUpdateView):
+    template_name = 'base_generic_form.html'
     form_class = ProfileUpdateForm
     model = UserProfile
     success_message = _(u"Osobní údaje úspěšně upraveny")
@@ -813,13 +820,9 @@ class UpdateProfileView(SuccessMessageMixin, UpdateView):
     def get_object(self):
         return self.request.user.userprofile
 
-    def form_valid(self, form):
-        super(UpdateProfileView, self).form_valid(form)
-        return redirect(wp_reverse(self.success_url))
 
-
-class UpdateTrackView(SuccessMessageMixin, UpdateView):
-    template_name = 'generic_form_template.html'
+class UpdateTrackView(SuccessMessageMixin, CampaignUpdateView):
+    template_name = 'registration/change_track.html'
     form_class = TrackUpdateForm
     model = UserAttendance
     success_message = _(u"Osobní údaje úspěšně upraveny")
@@ -828,13 +831,9 @@ class UpdateTrackView(SuccessMessageMixin, UpdateView):
     def get_object(self):
         return get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
 
-    def form_valid(self, form):
-        super(UpdateTrackView, self).form_valid(form)
-        return redirect(wp_reverse(self.success_url))
 
-
-class ChangeTShirtView(SuccessMessageMixin, UpdateView):
-    template_name = 'generic_form_template.html'
+class ChangeTShirtView(SuccessMessageMixin, CampaignUpdateView):
+    template_name = 'base_generic_form.html'
     form_class = forms.TShirtUpdateForm
     model = UserAttendance
     success_message = _(u"Velikost trička úspěšně nastavena")
@@ -842,10 +841,6 @@ class ChangeTShirtView(SuccessMessageMixin, UpdateView):
 
     def get_object(self):
         return get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
-
-    def form_valid(self, form):
-        super(ChangeTShirtView, self).form_valid(form)
-        return redirect(wp_reverse(self.success_url))
 
     @method_decorator(login_required_simple)
     @method_decorator(user_attendance_has(lambda ua: ua.package_shipped(), string_concat("<div class='text-warning'>", _(u"Velikost trika nemůžete měnit, již bylo odesláno"), "</div>")))
@@ -1132,7 +1127,7 @@ def invite(
         backend='registration.backends.simple.SimpleBackend',
         success_url=None,
         form_class=None,
-        template_name='generic_form_template.html',
+        template_name='base_generic_form.html',
         user_attendance=None,
         extra_context=None):
     form_class = InviteForm
@@ -1164,7 +1159,7 @@ def invite(
                         invitation_mail(user_attendance, email)
                         messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s") % email, fail_silently=True)
 
-            return redirect(wp_reverse(success_url))
+            return redirect(reverse(success_url, kwargs={'campaign_slug': user_attendance.campaign.slug}))
     else:
         form = form_class()
     return render_to_response(template_name, {
@@ -1181,7 +1176,7 @@ def team_admin_team(
         success_url=None,
         form_class=None,
         user_attendance=None,
-        template_name='generic_form_template.html',
+        template_name='base_generic_form.html',
         extra_context=None):
     team = user_attendance.team
     form_class = TeamAdminForm
@@ -1190,7 +1185,7 @@ def team_admin_team(
         form = form_class(data=request.POST, instance=team)
         if form.is_valid():
             form.save()
-            return redirect(wp_reverse(success_url))
+            return redirect(reverse(success_url, kwargs={'campaign_slug': user_attendance.campaign.slug}))
     else:
         form = form_class(instance=team)
 
@@ -1337,7 +1332,7 @@ def daily_chart(
 
 
 class BikeRepairView(SuccessMessageMixin, CreateView):
-    template_name = 'generic_form_template.html'
+    template_name = 'base_generic_form.html'
     form_class = forms.BikeRepairForm
     success_url = 'bike_repair'
     success_message = _(u"%(user_attendance)s je nováček a právě si zažádal o opravu kola")

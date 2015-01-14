@@ -1,6 +1,8 @@
+{% extends "base_generic_form.html" %}
 {% load bootstrap %}
 {% load i18n %}
 
+{% block form %}
 {% include "messages_include.html" %}
 {% if old_team %}
 Přejete si být přeřazeni z týmu {{ old_team }} do týmu {{ new_team }}?
@@ -13,3 +15,4 @@ Přejete si být zařazeni do týmu {{ new_team }}?
 <br/>
 <button class="submit submit_once btn btn-block btn-primary" type="submit">{% trans "Odeslat" %}</button>
 </form>
+{% endblock %}
