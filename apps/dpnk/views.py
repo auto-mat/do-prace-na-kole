@@ -806,6 +806,11 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
         }, context_instance=RequestContext(request))
 
 class CampaignUpdateView(UpdateView):
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(UpdateView, self).get_context_data(*args, **kwargs)
+        context_data['title'] = self.title
+        return context_data
+
     def form_valid(self, form):
         super(UpdateView, self).form_valid(form)
         return redirect(reverse(profile, kwargs={'campaign_slug': self.kwargs['campaign_slug']}))
@@ -816,6 +821,7 @@ class UpdateProfileView(SuccessMessageMixin, CampaignUpdateView):
     model = UserProfile
     success_message = _(u"Osobní údaje úspěšně upraveny")
     success_url = 'profil'
+    title = _("Upravit profil")
 
     def get_object(self):
         return self.request.user.userprofile
@@ -827,6 +833,7 @@ class UpdateTrackView(SuccessMessageMixin, CampaignUpdateView):
     model = UserAttendance
     success_message = _(u"Osobní údaje úspěšně upraveny")
     success_url = 'profil'
+    title = _("Upravit trasu")
 
     def get_object(self):
         return get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
@@ -838,6 +845,7 @@ class ChangeTShirtView(SuccessMessageMixin, CampaignUpdateView):
     model = UserAttendance
     success_message = _(u"Velikost trička úspěšně nastavena")
     success_url = 'profil'
+    title = _("Upravit velikost trika")
 
     def get_object(self):
         return get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
