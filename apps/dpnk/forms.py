@@ -163,19 +163,17 @@ class ChangeTeamForm(forms.ModelForm):
 class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
     required_css_class = 'required'
 
-    language = forms.ChoiceField(
-        label=_(u"Jazyk komunikace"),
-        choices = UserProfile.LANGUAGE,
-        )
-    first_name = forms.CharField(
-        label=_(u"Jméno"),
-        max_length=30,
-        required=True)
-    last_name = forms.CharField(
-        label=_(u"Příjmení"),
-        max_length=30,
-        required=True)
+    username = forms.CharField(widget=forms.HiddenInput, required=False)
 
+    def clean_username(self):
+        "This function is required to overwrite an inherited username clean"
+        return self.cleaned_data['username']
+
+    def clean(self):
+        if not self.errors:
+            self.cleaned_data['username'] = '%s%s' % (self.cleaned_data['email'].split('@',1)[0], User.objects.count())
+        super(RegistrationFormNoUserName, self).clean()
+        return self.cleaned_data
 
     def __init__(self, request=None, *args, **kwargs):
         if request:
@@ -186,11 +184,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
 
         super(RegistrationFormDPNK, self).__init__(*args, **kwargs)
         self.fields.keyOrder = [
-            'language',
-            'first_name',
-            'last_name',
             'email',
-            'username',
             'password1',
             'password2'
             ]
