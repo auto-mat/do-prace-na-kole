@@ -739,6 +739,18 @@ class UserAttendance(models.Model):
         if self.team:
             return self.team.member_count
 
+    def tshirt_complete(self):
+        return self.t_shirt_size
+
+    def track_complete(self):
+        return self.track or self.distance
+
+    def team_complete(self):
+        return self.team.member_count > 1
+
+    def payment_complete(self):
+        return self.payment()['status'] == 'done' or self.payment()['status'] == 'no_admission'
+
 
 class UserAttendanceRelated(UserAttendance):
     class Meta:
@@ -828,6 +840,9 @@ class UserProfile(models.Model):
 
     def competition_edition_allowed(self, competition):
         return not competition.city or not self.administrated_cities.filter(campaign=competition.campaign, city=competition.city).exists()
+
+    def profile_complete(self):
+        return self.sex and self.first_name() and self.last_name() and self.user.email
 
     def save(self, force_insert=False, force_update=False):
         if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:

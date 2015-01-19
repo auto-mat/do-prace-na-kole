@@ -1,0 +1,96 @@
+body { margin: 10px; }
+
+.steps li {
+    padding: 10px 12px 10px 25px;
+    margin-right: 5px;
+    background: #efefef;
+    position: relative;
+    display: inline-block;
+    color:#000;
+    text-decoration:none;
+}
+
+.steps li:hover {cursor: pointer; cursor: hand;}
+.steps li:before {
+    width: 0;
+    height: 0;
+    border-top: 20px inset transparent;
+    border-bottom: 20px inset transparent;
+    border-left: 20px solid #fff;
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+}
+.steps li:after {
+    width: 0;
+    height: 0;
+    border-top: 20px inset transparent;
+    border-bottom: 20px inset transparent;
+    border-left: 20px solid #efefef;
+    position: absolute;
+    content: "";
+    top: 0;
+    right: -20px;
+    z-index: 2;
+}
+
+.steps li:last-child:after,
+.steps li:first-child:before {
+    border: none;
+}
+.steps li:first-child {
+    padding-left:15px;   
+    -webkit-border-radius: 4px 0 0 4px;
+       -moz-border-radius: 4px 0 0 4px;
+            border-radius: 4px 0 0 4px;
+}
+.steps li:last-child {
+    -webkit-border-radius: 0 4px 4px 0;
+       -moz-border-radius: 0 4px 4px 0;
+            border-radius: 0 4px 4px 0;
+}
+
+.steps .current {
+    background: #BFE5FF;
+}
+.steps .current a {
+    color: #fff;
+}
+.steps .current:after {
+    border-left-color: #BFE5FF;
+}
+
+.steps .fulfilled a {
+   color: #5cb85c;
+}
+
+.steps .unfulfilled a {
+   color: #f0ad4e;
+}
+
+.steps li a {
+    counter-increment: item;
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: inherit;
+    -webkit-font-smoothing: antialiased;
+}
+
+.steps li a:before {
+    content: counter(item, decimal) '. ';
+}
+
+.steps li.unfulfilled a:before {
+    content: '\f096\00a0' counter(item, decimal) '. ';
+}
+
+.steps li.fulfilled a:before {
+    content:  '\f046\00a0' counter(item, decimal) '. ';
+}
+   
+.steps {
+    counter-reset: item;
+    list-style-type: decimal;
+}
