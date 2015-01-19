@@ -778,7 +778,8 @@ class UserProfile(models.Model):
         verbose_name=_(u"Telefon"),
         max_length=30, null=False)
     language = models.CharField(
-        verbose_name=_(u"Jazyk komunikace"),
+        verbose_name=_(u"Jazyk emailů"),
+        help_text=_(u"Jazyk, ve kterém vám budou docházet emaily z registračního systému"),
         choices=LANGUAGE,
         max_length=16,
         null=False,
