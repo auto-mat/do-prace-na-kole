@@ -262,6 +262,7 @@ def change_team(
 
     return render_to_response(template_name, {
         'form': form,
+        'campaign_slug': user_attendance.campaign.slug
         }, context_instance=RequestContext(request))
 
 
