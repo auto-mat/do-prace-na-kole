@@ -1,6 +1,7 @@
 {% extends "base_generic_registration_form.html" %}
-{% load bootstrap %}
+{% load crispy_forms_tags %}
 {% load i18n %}
+
 {% block form %}
 <style>
    #id_company_div:disabled,
@@ -52,12 +53,5 @@
    });
 </script>
 
-{% include "messages_include.html" %}
-{{ message }}
-
-<form method="post" class="form-horizontal">{% csrf_token %}
-   {{ form|bootstrap }}
-<br/>
-<button class="submit btn btn-primary" type="submit">{% if submit_label %}{{ submit_label }}{% else %}{% trans "Odeslat" %}{% endif %}</button>
-</form>
+{{ block.super }}
 {% endblock %}

@@ -1,4 +1,4 @@
-{% load bootstrap %}
+{% load crispy_forms_tags %}
 {% load i18n %}
 {% load dpnk_tags %}
 
@@ -24,8 +24,4 @@ Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících: 
 <br/>
 <a class="btn btn-block btn-primary" href="{% wp_url 'edit_company' %}">{% trans "Změnit údaje" %}</a>
 
-<form method="post" class="form-horizontal">{% csrf_token %}
-   {{ form|bootstrap }}
-<br/>
-<button class="submit submit_once btn btn-block btn-primary" type="button">{% trans "Potvrdit" %}</button>
-</form>
+{% crispy form %}

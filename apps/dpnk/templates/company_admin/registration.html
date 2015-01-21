@@ -1,4 +1,4 @@
-{% load bootstrap %}
+{% load crispy_forms_tags %}
 {% load i18n %}
 
 <script>
@@ -7,7 +7,4 @@
    });
 </script>
 
-<form method="post" class="form-horizontal">{% csrf_token %}
-   {{ form|bootstrap }}
-<button class="submit submit_once btn btn-block btn-primary" type="button">{% trans "Odeslat" %}</button>
-</form>
+{% crispy form %}

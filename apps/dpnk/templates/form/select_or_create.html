@@ -1,4 +1,4 @@
-{% load bootstrap %}
+{% load crispy_forms_tags %}
 <fieldset id="{{id}}_div" {% if selected %}disabled{% endif %}>
     {{ html }}
 </fieldset>
@@ -20,7 +20,7 @@
 </div>
 
 <div id="{{ id }}_form" {% if not selected %}style='display:none'{% endif %}>
-   {{ underlying_form|bootstrap }}
+   {{ underlying_form|crispy }}
 </div>
 
 {# this is hack #}

@@ -1,12 +1,9 @@
 {% extends "base_generic_registration_form.html" %}
-{% load bootstrap %}
+{% load crispy_forms_tags %}
 {% load url from future %}
 {% load i18n %}
 
 {% block form %}
-<form method="post" class="form-horizontal">{% csrf_token %}
-{{ form|bootstrap }}
-<br/>
-<button class="submit submit_once btn btn-block btn-primary" type="submit">{% trans "Vybrat způsob platby" %}</button>
-</form>
+{% crispy form %}
+
 {% endblock %}

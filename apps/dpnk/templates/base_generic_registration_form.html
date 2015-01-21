@@ -17,6 +17,9 @@
     <li class="{% if current_view == 'typ_platby' %}current{% endif %} {% if not payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' campaign_slug %}">Startovné</a></li>
     <li class="{% if current_view == 'upravit_profil' %}current{% endif %} {% if not profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' campaign_slug %}">Pracovní rozvrh</a></li>
 </ol>
+
+{% block form %}
 {{ block.super }}
+{% endblock %}
 </div>
 {% endblock %}

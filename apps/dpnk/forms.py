@@ -15,11 +15,22 @@ from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinLengthValidator
 from django.contrib.gis.forms import OSMWidget
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from wp_urls import wp_reverse
 
 def team_full(data):
     if len(UserAttendance.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, userprofile__user__is_active=True)) >= 5:
         raise forms.ValidationError(_(u"Tento tým již má pět členů a je tedy plný"))
+
+
+class PrevNextMixin(object):
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('prev', _(u'Předchozí')))
+        self.helper.add_input(Submit('next', _(u'Další')))
+        super(PrevNextMixin, self).__init__(*args, **kwargs)
+
 
 class RegisterCompanyForm(forms.ModelForm):
     required_css_class = 'required'
@@ -77,7 +88,7 @@ class RegisterTeamForm(forms.ModelForm):
         fields = ('name', 'campaign')
 
 
-class ChangeTeamForm(forms.ModelForm):
+class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     company = forms.ModelChoiceField(
         label=_(u"Společnost"),
         queryset=Company.objects.all(),
@@ -176,6 +187,9 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
         return self.cleaned_data
 
     def __init__(self, request=None, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', _(u'Odeslat')))
+
         if request:
             initial = kwargs.get('initial', {})
             if request.GET.get('team', None):
@@ -239,7 +253,7 @@ class TeamAdminForm(forms.ModelForm):
         model = Team
         fields = ('name', 'campaign')
 
-class PaymentTypeForm(forms.Form):
+class PaymentTypeForm(PrevNextMixin, forms.Form):
     CHOICES=[('pay', _(u"Účastnický poplatek si platím sám.")),
              ('company', _(u"Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.")),
              ('member', _(u"Jsem členem klubu přátel Auto*mat nebo se jím hodlám stát."))
@@ -316,7 +330,7 @@ class BikeRepairForm(forms.ModelForm):
         model = models.CommonTransaction
         fields = ('user_attendance', 'description')
 
-class TShirtUpdateForm(models.UserAttendanceForm):
+class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
     telephone = forms.CharField(
         label=_(u"Telefon"),
         validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
@@ -340,7 +354,7 @@ class TShirtUpdateForm(models.UserAttendanceForm):
         fields = ('t_shirt_size', 'telephone', )
 
 
-class TrackUpdateForm(forms.ModelForm):
+class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
     class Meta:
         model = UserAttendance
         fields = ('track', 'distance')
@@ -359,7 +373,7 @@ class TrackUpdateForm(forms.ModelForm):
         self.fields['track'].widget.template_name = "gis/openlayers-osm-custom.html"
 
 
-class ProfileUpdateForm(forms.ModelForm):
+class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
     first_name = forms.CharField(
         label=_(u"Jméno"),
         max_length=30,

@@ -9,7 +9,6 @@ django-extensions
 django-debug-toolbar
 django-softhyphen==0.15
 django-admin-enhancer
-django-bootstrap-form
 django-polymorphic
 django-composite-field
 django-registration==0.8
@@ -34,3 +33,4 @@ pillow
 -e git+https://github.com/PetrDlouhy/django-related-admin#egg=django-related-admin
 newrelic
 easy_thumbnails
+django-crispy-forms

@@ -104,7 +104,6 @@ INSTALLED_APPS = (
     'dpnk',
     'smart_selects',
     'composite_field',
-    'bootstrapform',
     'admin_enhancer',
     'softhyphen',
     'debug_toolbar',
@@ -123,7 +122,10 @@ INSTALLED_APPS = (
     'localeurl',
     'related_admin',
     'easy_thumbnails',
+    'crispy_forms',
 )
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SERVER_EMAIL='root@auto-mat.cz'
 LOGIN_URL = '/dpnk/login/'
 LOGIN_REDIRECT_VIEW = 'profil'

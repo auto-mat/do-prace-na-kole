@@ -1,6 +1,6 @@
 {% extends "base_generic.html" %}
 {% load i18n %}
-{% load bootstrap %}
+{% load crispy_forms_tags %}
 
 {% block title %}{{ title }}{% endblock %}
 
@@ -12,11 +12,7 @@
 
 {{ message }}
 
-<form method="post" class="form-horizontal">{% csrf_token %}
-   {{ form|bootstrap }}
-<br/>
-<button class="submit btn btn-primary" type="submit">{% if submit_label %}{{ submit_label }}{% else %}{% trans "Odeslat" %}{% endif %}</button>
-</form>
+{% crispy form %}
 {% endblock %}
 </div>
 {% endblock %}
