@@ -1,19 +1,23 @@
 {% extends "base_generic.html" %}
 {% load i18n %}
+{% load bootstrap %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+{% block form_container %}
+<div class="container">
 {% block form %}
 {% include "messages_include.html" %}
-{% load bootstrap %}
 
 {{ message }}
 
 <form method="post" class="form-horizontal">{% csrf_token %}
    {{ form|bootstrap }}
 <br/>
-<button class="submit submit_once btn btn-block btn-primary" type="submit">{% if submit_label %}{{ submit_label }}{% else %}{% trans "Odeslat" %}{% endif %}</button>
+<button class="submit btn btn-primary" type="submit">{% if submit_label %}{{ submit_label }}{% else %}{% trans "Odeslat" %}{% endif %}</button>
 </form>
+{% endblock %}
+</div>
 {% endblock %}
 {% endblock %}

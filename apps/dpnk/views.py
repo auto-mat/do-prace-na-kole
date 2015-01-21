@@ -144,6 +144,7 @@ class RegistrationViewMixin(object):
         context_data = super(RegistrationViewMixin, self).get_context_data(*args, **kwargs)
         context_data['title'] = self.title
         context_data['current_view'] = self.current_view
+        context_data['submit_label'] = _(u"Další")
 
         self.user_attendance = get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
         context_data['campaign_slug'] = self.kwargs['campaign_slug']
@@ -392,7 +393,7 @@ def payment_type(request, user_attendance=None):
         form = form_class(data=request.POST, files=request.FILES)
         if form.is_valid():
             if form.cleaned_data['payment_type'] == 'pay':
-                return redirect(wp_reverse('platba'))
+                return redirect(reverse('platba', kwargs={'campaign_slug': user_attendance.campaign.slug}))
             elif form.cleaned_data['payment_type'] == 'company':
                 Payment(user_attendance=user_attendance, amount=0, pay_type='fc', status=Payment.Status.NEW).save()
                 messages.add_message(request, messages.WARNING, _(u"Platbu ještě musí schválit váš firemní koordinátor"), fail_silently=True)
@@ -858,7 +859,7 @@ class UpdateTrackView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     template_name = 'registration/change_track.html'
     form_class = TrackUpdateForm
     model = UserAttendance
-    success_message = _(u"Osobní údaje úspěšně upraveny")
+    success_message = _(u"Trasa/vzdálenost úspěšně upravena")
     success_url = 'zmenit_triko'
     current_view = "upravit_trasu"
     title = _("Upravit trasu")

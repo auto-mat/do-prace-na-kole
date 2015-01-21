@@ -4,11 +4,11 @@
 
 {% block extrahead %}
 <link href="{% static "css/progress_tracker.css"%}" rel="stylesheet" media="screen">
-<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
 <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 {% endblock %}
 
-{% block content %}
+{% block form_container %}
+<div class="container">
 <ol class="steps">
     <li class="{% if current_view == 'upravit_profil' %}current{% endif %} {% if not profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' campaign_slug %}">Osobní údaje</a></li>
     <li class="{% if current_view == 'zmenit_tym' %}current{% endif %} {% if not team_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_tym' campaign_slug %}">Tým</a></li>
@@ -18,4 +18,5 @@
     <li class="{% if current_view == 'upravit_profil' %}current{% endif %} {% if not profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' campaign_slug %}">Pracovní rozvrh</a></li>
 </ol>
 {{ block.super }}
+</div>
 {% endblock %}
