@@ -10,8 +10,7 @@ from decorators import must_be_company_admin, must_be_in_phase, must_be_in_group
 campaign_urlpatterns = patterns(
     '',
     url(r'^tym/$',
-        views.change_team,
-        {'success_url': 'profil'},
+        views.ChangeTeamView.as_view(),
         name="zmenit_tym"),
     url(r'^tym/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>[^&]+)/$$',
         views.ConfirmTeamInvitationView.as_view(),

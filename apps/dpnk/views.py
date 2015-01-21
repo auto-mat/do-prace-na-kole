@@ -137,26 +137,52 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
         return new_user
 
 
-@login_required_simple
-@must_be_competitor
-@user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže nemůžete měnit tým."), "</div>"))
-def change_team(
-        request,
-        success_url=None, form_class=ChangeTeamForm,
-        template_name='registration/change_team.html',
-        user_attendance=None,
-        extra_context=None,
-        ):
-    create_company = False
-    create_subsidiary = False
-    create_team = False
+class RegistrationViewMixin(object):
+    template_name = 'base_generic_registration_form.html'
 
-    if request.method == 'POST':
-        form = form_class(data=request.POST, files=request.FILES, instance=user_attendance)
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(RegistrationViewMixin, self).get_context_data(*args, **kwargs)
+        context_data['title'] = self.title
+        context_data['current_view'] = self.current_view
+
+        self.user_attendance = get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
+        context_data['campaign_slug'] = self.kwargs['campaign_slug']
+        context_data['profile_complete'] = self.request.user.userprofile.profile_complete()
+        context_data['team_complete'] = self.user_attendance.team_complete()
+        context_data['track_complete'] = self.user_attendance.track_complete()
+        context_data['tshirt_complete'] = self.user_attendance.tshirt_complete()
+        context_data['payment_complete'] = self.user_attendance.payment_complete()
+        return context_data
+
+    def get_success_url(self):
+        return reverse(self.success_url, kwargs={'campaign_slug': self.kwargs['campaign_slug']})
+
+
+class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
+    form_class=ChangeTeamForm
+    template_name='registration/change_team.html'
+    success_url='upravit_trasu'
+    title=_(u'Změnit tým')
+    current_view = "zmenit_tym"
+
+    @method_decorator(login_required_simple)
+    @method_decorator(must_be_competitor)
+    @method_decorator(user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže nemůžete měnit tým."), "</div>")))
+    def dispatch(self, request, *args, **kwargs):
+        self.user_attendance = kwargs['user_attendance']
+        return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
+
+
+    def post(self, request, *args, **kwargs):
+        create_company = False
+        create_subsidiary = False
+        create_team = False
+
+        form = self.form_class(data=request.POST, files=request.FILES, instance=self.user_attendance)
 
         form_company = RegisterCompanyForm(request.POST, prefix="company")
-        form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix="subsidiary", campaign=user_attendance.campaign)
-        form_team = RegisterTeamForm(request.POST, prefix="team", initial={"campaign": user_attendance.campaign})
+        form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix="subsidiary", campaign=self.user_attendance.campaign)
+        form_team = RegisterTeamForm(request.POST, prefix="team", initial={"campaign": self.user_attendance.campaign})
         create_team = 'id_team_selected' in request.POST
         if create_team:
             create_subsidiary = 'id_subsidiary_selected' in request.POST
@@ -177,16 +203,16 @@ def change_team(
             subsidiary_valid = form_subsidiary.is_valid()
             form.fields['subsidiary'].required = False
         else:
-            form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=user_attendance.campaign)
+            form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=self.user_attendance.campaign)
             form.fields['subsidiary'].required = True
 
         if create_team:
             team_valid = form_team.is_valid()
             form.fields['team'].required = False
         else:
-            form_team = RegisterTeamForm(prefix="team", initial={"campaign": user_attendance.campaign})
+            form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign})
             form.fields['team'].required = True
-        old_team = user_attendance.team
+        old_team = self.user_attendance.team
 
         form_valid = form.is_valid()
 
@@ -214,7 +240,7 @@ def change_team(
             if create_team:
                 team = form_team.save(commit=False)
                 team.subsidiary = subsidiary
-                team.campaign = user_attendance.campaign
+                team.campaign = self.user_attendance.campaign
                 form_team.save()
                 messages.add_message(request, messages.SUCCESS, _(u"Tým %s úspěšně vytvořen.") % team.name, fail_silently=True)
             else:
@@ -223,47 +249,56 @@ def change_team(
             if create_team:
                 team = form_team.save(commit=False)
 
-                user_attendance.team = team
-                user_attendance.approved_for_team = 'approved'
+                self.user_attendance.team = team
+                self.user_attendance.approved_for_team = 'approved'
 
                 form_team.save()
 
-                user_attendance.team = team
-                success_url = "pozvanky"
-                request.session['invite_success_url'] = 'profil'
+                self.user_attendance.team = team
+                self.success_url = "pozvanky"
+                request.session['invite_success_url'] = 'upravit_trasu'
 
-                team_created_mail(user_attendance)
+                team_created_mail(self.user_attendance)
 
             form.save()
 
             if team_changed and not create_team:
-                user_attendance.approved_for_team = 'undecided'
-                approval_request_mail(user_attendance)
+                self.user_attendance.approved_for_team = 'undecided'
+                approval_request_mail(self.user_attendance)
 
-            if user_attendance.approved_for_team != 'approved':
-                approval_request_mail(user_attendance)
+            if self.user_attendance.approved_for_team != 'approved':
+                approval_request_mail(self.user_attendance)
 
             messages.add_message(request, messages.SUCCESS, _(u"Údaje o týmu úspěšně nastaveny."), fail_silently=True)
-            return redirect(reverse(success_url, kwargs={'campaign_slug': user_attendance.campaign.slug}))
-    else:
-        form = form_class(request, instance=user_attendance)
+            return redirect(reverse(self.success_url, kwargs={'campaign_slug': self.user_attendance.campaign.slug}))
+        form.fields['company'].widget.underlying_form = form_company
+        form.fields['company'].widget.create = create_company
+
+        form.fields['subsidiary'].widget.underlying_form = form_subsidiary
+        form.fields['subsidiary'].widget.create = create_subsidiary
+
+        form.fields['team'].widget.underlying_form = form_team
+        form.fields['team'].widget.create = create_team
+
+        context_data = self.get_context_data()
+        context_data['form'] = form
+        context_data['campaign_slug'] = self.user_attendance.campaign.slug
+        return render_to_response(self.template_name, context_data, context_instance=RequestContext(request))
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(request, instance=self.user_attendance)
         form_company = RegisterCompanyForm(prefix="company")
-        form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=user_attendance.campaign)
-        form_team = RegisterTeamForm(prefix="team", initial={"campaign": user_attendance.campaign})
+        form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=self.user_attendance.campaign)
+        form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign})
 
-    form.fields['company'].widget.underlying_form = form_company
-    form.fields['company'].widget.create = create_company
+        form.fields['company'].widget.underlying_form = form_company
+        form.fields['subsidiary'].widget.underlying_form = form_subsidiary
+        form.fields['team'].widget.underlying_form = form_team
 
-    form.fields['subsidiary'].widget.underlying_form = form_subsidiary
-    form.fields['subsidiary'].widget.create = create_subsidiary
-
-    form.fields['team'].widget.underlying_form = form_team
-    form.fields['team'].widget.create = create_team
-
-    return render_to_response(template_name, {
-        'form': form,
-        'campaign_slug': user_attendance.campaign.slug
-        }, context_instance=RequestContext(request))
+        context_data = self.get_context_data()
+        context_data['form'] = form
+        context_data['campaign_slug'] = self.user_attendance.campaign.slug
+        return render_to_response(self.template_name, context_data, context_instance=RequestContext(request))
 
 
 class RegistrationView(FormView):
@@ -806,26 +841,6 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
         'competition': competition,
         'results': results[:limit]
         }, context_instance=RequestContext(request))
-
-class RegistrationViewMixin(object):
-    template_name = 'base_generic_registration_form.html'
-
-    def get_context_data(self, *args, **kwargs):
-        context_data = super(RegistrationViewMixin, self).get_context_data(*args, **kwargs)
-        context_data['title'] = self.title
-        context_data['current_view'] = self.current_view
-
-        self.user_attendance = get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
-        context_data['campaign_slug'] = self.kwargs['campaign_slug']
-        context_data['profile_complete'] = self.request.user.userprofile.profile_complete()
-        context_data['team_complete'] = self.user_attendance.team_complete()
-        context_data['track_complete'] = self.user_attendance.track_complete()
-        context_data['tshirt_complete'] = self.user_attendance.tshirt_complete()
-        context_data['payment_complete'] = self.user_attendance.payment_complete()
-        return context_data
-
-    def get_success_url(self):
-        return reverse(self.success_url, kwargs={'campaign_slug': self.kwargs['campaign_slug']})
 
 class UpdateProfileView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     form_class = ProfileUpdateForm
