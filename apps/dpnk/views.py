@@ -372,7 +372,8 @@ def payment_type(request, user_attendance=None):
         form = form_class()
 
     return render_to_response(template_name, {
-        'form': form
+        'form': form,
+        'campaign_slug': user_attendance.campaign.slug
         }, context_instance=RequestContext(request))
 
 
@@ -806,16 +807,11 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
         'results': results[:limit]
         }, context_instance=RequestContext(request))
 
-class CampaignUpdateView(UpdateView):
-    def form_valid(self, form):
-        super(UpdateView, self).form_valid(form)
-        return redirect(reverse(profile, kwargs={'campaign_slug': self.kwargs['campaign_slug']}))
-
-class RegistrationUpdateView(CampaignUpdateView):
+class RegistrationViewMixin(object):
     template_name = 'base_generic_registration_form.html'
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(UpdateView, self).get_context_data(*args, **kwargs)
+        context_data = super(RegistrationViewMixin, self).get_context_data(*args, **kwargs)
         context_data['title'] = self.title
         context_data['current_view'] = self.current_view
 
@@ -828,11 +824,14 @@ class RegistrationUpdateView(CampaignUpdateView):
         context_data['payment_complete'] = self.user_attendance.payment_complete()
         return context_data
 
-class UpdateProfileView(SuccessMessageMixin, RegistrationUpdateView):
+    def get_success_url(self):
+        return reverse(self.success_url, kwargs={'campaign_slug': self.kwargs['campaign_slug']})
+
+class UpdateProfileView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     form_class = ProfileUpdateForm
     model = UserProfile
     success_message = _(u"Osobní údaje úspěšně upraveny")
-    success_url = 'profil'
+    success_url = "zmenit_tym"
     current_view = "upravit_profil"
     title = _("Upravit profil")
 
@@ -840,12 +839,12 @@ class UpdateProfileView(SuccessMessageMixin, RegistrationUpdateView):
         return self.request.user.userprofile
 
 
-class UpdateTrackView(SuccessMessageMixin, RegistrationUpdateView):
+class UpdateTrackView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     template_name = 'registration/change_track.html'
     form_class = TrackUpdateForm
     model = UserAttendance
     success_message = _(u"Osobní údaje úspěšně upraveny")
-    success_url = 'profil'
+    success_url = 'zmenit_triko'
     current_view = "upravit_trasu"
     title = _("Upravit trasu")
 
@@ -853,13 +852,13 @@ class UpdateTrackView(SuccessMessageMixin, RegistrationUpdateView):
         return get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
 
 
-class ChangeTShirtView(SuccessMessageMixin, RegistrationUpdateView):
+class ChangeTShirtView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     template_name = 'base_generic_registration_form.html'
 
     form_class = forms.TShirtUpdateForm
     model = UserAttendance
     success_message = _(u"Velikost trička úspěšně nastavena")
-    success_url = 'profil'
+    success_url = 'typ_platby'
     current_view = "zmenit_triko"
     title = _("Upravit velikost trika")
 
