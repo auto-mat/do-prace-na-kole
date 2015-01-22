@@ -156,13 +156,17 @@ class RegistrationViewMixin(object):
         return context_data
 
     def get_success_url(self):
-        return reverse(self.success_url, kwargs={'campaign_slug': self.kwargs['campaign_slug']})
+        if 'next' in self.request.POST:
+            return reverse(self.next_url, kwargs={'campaign_slug': self.kwargs['campaign_slug']})
+        else:
+            return reverse(self.prev_url, kwargs={'campaign_slug': self.kwargs['campaign_slug']})
 
 
 class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     form_class=ChangeTeamForm
     template_name='registration/change_team.html'
-    success_url='upravit_trasu'
+    next_url='upravit_trasu'
+    prev_url='upravit_profil'
     title=_(u'Změnit tým')
     current_view = "zmenit_tym"
 
@@ -847,7 +851,7 @@ class UpdateProfileView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     form_class = ProfileUpdateForm
     model = UserProfile
     success_message = _(u"Osobní údaje úspěšně upraveny")
-    success_url = "zmenit_tym"
+    next_url = "zmenit_tym"
     current_view = "upravit_profil"
     title = _("Upravit profil")
 
@@ -860,7 +864,8 @@ class UpdateTrackView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     form_class = TrackUpdateForm
     model = UserAttendance
     success_message = _(u"Trasa/vzdálenost úspěšně upravena")
-    success_url = 'zmenit_triko'
+    next_url = 'zmenit_triko'
+    prev_url = 'zmenit_tym'
     current_view = "upravit_trasu"
     title = _("Upravit trasu")
 
@@ -874,7 +879,8 @@ class ChangeTShirtView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     form_class = forms.TShirtUpdateForm
     model = UserAttendance
     success_message = _(u"Velikost trička úspěšně nastavena")
-    success_url = 'typ_platby'
+    next_url = 'typ_platby'
+    prev_url = 'upravit_trasu'
     current_view = "zmenit_triko"
     title = _("Upravit velikost trika")
 
