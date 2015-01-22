@@ -140,13 +140,17 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
 class RegistrationViewMixin(object):
     template_name = 'base_generic_registration_form.html'
 
+    @method_decorator(must_be_competitor)
+    def dispatch(self, request, *args, **kwargs):
+        self.user_attendance = kwargs['user_attendance']
+        return super(RegistrationViewMixin, self).dispatch(request, *args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context_data = super(RegistrationViewMixin, self).get_context_data(*args, **kwargs)
         context_data['title'] = self.title
         context_data['current_view'] = self.current_view
         context_data['submit_label'] = _(u"Další")
 
-        self.user_attendance = get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
         context_data['campaign_slug'] = self.kwargs['campaign_slug']
         context_data['profile_complete'] = self.request.user.userprofile.profile_complete()
         context_data['team_complete'] = self.user_attendance.team_complete()
@@ -174,7 +178,6 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     @method_decorator(must_be_competitor)
     @method_decorator(user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže nemůžete měnit tým."), "</div>")))
     def dispatch(self, request, *args, **kwargs):
-        self.user_attendance = kwargs['user_attendance']
         return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
 
 
@@ -345,7 +348,6 @@ class ConfirmDeliveryView(UpdateView):
     @method_decorator(user_attendance_has(lambda ua: ua.package_delivered(), string_concat("<div class='text-warning'>", _(u"Doručení startovního balíčku potvrzeno"), "</div>")))
     @method_decorator(must_be_competitor)
     def dispatch(self, request, *args, **kwargs):
-        self.user_attendance = kwargs['user_attendance']
         return super(ConfirmDeliveryView, self).dispatch(request, *args, **kwargs)
 
 
@@ -383,38 +385,68 @@ class ConfirmTeamInvitationView(FormView):
         return super(ConfirmTeamInvitationView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required_simple
-@user_attendance_has(lambda ua: ua.payment()['status'] == 'done', string_concat("<div class='text-warning'>", _(u"Již máte startovné zaplaceno"), "</div>"))
-@must_be_competitor
-@must_have_team
-def payment_type(request, user_attendance=None):
-    if user_attendance.payment()['status'] == 'no_admission':
-        return redirect(wp_reverse('profil'))
+class PaymentView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     template_name = 'registration/payment_type.html'
     form_class = PaymentTypeForm
+    title = _(u"Platba")
+    current_view = "payment_type"
+    next_url = "upravit_profil"
+    prev_url = "upravit_triko"
 
-    if request.method == 'POST':
-        form = form_class(data=request.POST, files=request.FILES)
-        if form.is_valid():
-            if form.cleaned_data['payment_type'] == 'pay':
-                return redirect(reverse('platba', kwargs={'campaign_slug': user_attendance.campaign.slug}))
-            elif form.cleaned_data['payment_type'] == 'company':
-                Payment(user_attendance=user_attendance, amount=0, pay_type='fc', status=Payment.Status.NEW).save()
-                messages.add_message(request, messages.WARNING, _(u"Platbu ještě musí schválit váš firemní koordinátor"), fail_silently=True)
-                logger.info('Inserting company payment for %s' % (user_attendance))
-            elif form.cleaned_data['payment_type'] == 'member':
-                Payment(user_attendance=user_attendance, amount=0, pay_type='am', status=Payment.Status.NEW).save()
-                messages.add_message(request, messages.WARNING, _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), fail_silently=True)
-                logger.info('Inserting automat club member payment for %s' % (user_attendance))
+    @method_decorator(login_required_simple)
+    #@method_decorator(user_attendance_has(lambda ua: ua.payment()['status'] == 'done', string_concat("<div class='text-warning'>", _(u"Již máte startovné zaplaceno"), "</div>")))
+    @method_decorator(must_be_competitor)
+    @method_decorator(must_have_team)
+    def dispatch(self, request, *args, **kwargs):
+        return super(PaymentView, self).dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super(PaymentView, self).get_context_data(**kwargs)
+
+        if self.user_attendance.payment()['status'] == 'no_admission':
             return redirect(wp_reverse('profil'))
-    else:
-        form = form_class()
+        uid = self.request.user.id
+        order_id = '%s-1' % uid
+        session_id = "%sJ%d" % (order_id, int(time.time()))
+        # Save new payment record
+        #p = Payment(session_id=session_id,
+        #            user_attendance=user_attendance,
+        #            order_id=order_id,
+        #            amount=user_attendance.admission_fee(),
+        #            status=Payment.Status.NEW,
+        #            description="Ucastnicky poplatek Do prace na kole")
+        #p.save()
+        #logger.info(u'Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s' % (uid, order_id, session_id, user_attendance, user_attendance.userprofile.user.username, p.status))
+        messages.add_message(self.request, messages.WARNING, _(u"Platba vytvořena, čeká se na její potvrzení"), fail_silently=True)
+        # Render form
+        profile = UserProfile.objects.get(user=self.request.user)
+        context['firstname'] = profile.user.first_name  # firstname
+        context['surname'] = profile.user.last_name  # surname
+        context['email'] = profile.user.email  # email
+        context['amount'] = self.user_attendance.admission_fee()
+        context['amount_hal'] = self.user_attendance.admission_fee() * 100  # v halerich
+        context['description'] = "Ucastnicky poplatek Do prace na kole"
+        context['order_id'] = order_id
+        context['client_ip'] = self.request.META['REMOTE_ADDR']
+        context['session_id'] = session_id
+        return context
 
-    return render_to_response(template_name, {
-        'form': form,
-        'campaign_slug': user_attendance.campaign.slug
-        }, context_instance=RequestContext(request))
+    #if user_attendance.payment()['status'] == 'no_admission':
+    #    return redirect(wp_reverse('profil'))
+
+    def form_valid(self, form):
+        if form.cleaned_data['payment_type'] == 'pay':
+            return redirect(reverse('platba', kwargs={'campaign_slug': self.user_attendance.campaign.slug}))
+        elif form.cleaned_data['payment_type'] == 'company':
+            Payment(user_attendance=self.user_attendance, amount=0, pay_type='fc', status=Payment.Status.NEW).save()
+            messages.add_message(self.request, messages.WARNING, _(u"Platbu ještě musí schválit váš firemní koordinátor"), fail_silently=True)
+            logger.info('Inserting company payment for %s' % (self.user_attendance))
+        elif form.cleaned_data['payment_type'] == 'member':
+            Payment(user_attendance=self.user_attendance, amount=0, pay_type='am', status=Payment.Status.NEW).save()
+            messages.add_message(self.request, messages.WARNING, _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), fail_silently=True)
+            logger.info('Inserting automat club member payment for %s' % (self.user_attendance))
+
+        return super(PaymentView, self).form_valid(form)
 
 
 @never_cache

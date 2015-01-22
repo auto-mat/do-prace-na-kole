@@ -78,7 +78,7 @@ campaign_urlpatterns = patterns(
         {'success_url': 'typ_platby'},
         name="zmenit_triko"),
     url(r'^typ_platby/$',
-        views.payment_type,
+        views.PaymentView.as_view(),
         name="typ_platby"),
     url(r'^platba/$',
         views.payment,
