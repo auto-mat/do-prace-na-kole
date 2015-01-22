@@ -1,6 +1,21 @@
 {% extends "gis/openlayers.html" %}
 {% load l10n %}
 
+<style type="text/css">{% block map_css %}
+    #{{ id }}_map { width: {{ map_width }}px; height: {{ map_height }}px; }
+    #{{ id }}_map .aligned label { float: inherit; }
+    #{{ id }}_div_map { position: relative; vertical-align: top; }
+    {% if not display_raw %}#{{ id }} { display: none; }{% endif %}
+    .olControlEditingToolbar .olControlModifyFeatureItemActive {
+        background-image: url("{{ STATIC_URL }}admin/img/gis/move_vertex_on.png");
+        background-repeat: no-repeat;
+    }
+    .olControlEditingToolbar .olControlModifyFeatureItemInactive {
+        background-image: url("{{ STATIC_URL }}admin/img/gis/move_vertex_off.png");
+        background-repeat: no-repeat;
+    }{% endblock %}
+</style>
+
 {% block map_options %}var map_options = {
     maxExtend: new OpenLayers.Bounds(-20037508,-20037508,20037508,20037508),
     maxResolution: 156543.0339,
