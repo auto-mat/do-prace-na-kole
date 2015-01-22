@@ -256,15 +256,17 @@ class TeamAdminForm(forms.ModelForm):
         fields = ('name', 'campaign')
 
 class PaymentTypeForm(PrevNextMixin, forms.Form):
-    CHOICES=[('pay', _(u"Účastnický poplatek si platím sám.")),
+    CHOICES=[('','---------' ),
+             ('pay', _(u"Účastnický poplatek si platím sám.")),
+             ('member', _(u"Jsem členem klubu přátel Auto*mat nebo se jím hodlám stát.")),
              ('company', _(u"Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.")),
-             ('member', _(u"Jsem členem klubu přátel Auto*mat nebo se jím hodlám stát."))
+             ('free', _(u"Je mi poskytováno startovné zdarma."))
              ]
 
     payment_type = forms.ChoiceField(
             label=_(u"Typ platby"),
             choices=CHOICES,
-            widget=forms.RadioSelect(),
+            widget=forms.Select(),
             )
 
 
