@@ -27,8 +27,10 @@ def team_full(data):
 class PrevNextMixin(object):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
-        self.helper.add_input(Submit('prev', _(u'Předchozí')))
-        self.helper.add_input(Submit('next', _(u'Další')))
+        if not hasattr(self, 'no_prev'):
+            self.helper.add_input(Submit('prev', _(u'Předchozí')))
+        if not hasattr(self, 'no_next'):
+            self.helper.add_input(Submit('next', _(u'Další')))
         super(PrevNextMixin, self).__init__(*args, **kwargs)
 
 
@@ -374,6 +376,8 @@ class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
 
 
 class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
+    no_prev = True
+
     first_name = forms.CharField(
         label=_(u"Jméno"),
         max_length=30,
