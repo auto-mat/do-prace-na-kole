@@ -6,27 +6,54 @@
 {% block extrahead %}
 <script language='javascript' type='text/javascript' src="https://secure.payu.com/jsgenerator/js/jquery-latest.js"></script>
 <script language='javascript' type='text/javascript' src='https://secure.payu.com/paygw/UTF/js/131116/ea/template:3/paytype.js'></script>
+<script src="http://malsup.github.com/jquery.form.js"></script> 
 {{ block.super }}
 {% endblock %}
 
 
 
 {% block form %}
-{{ block.super }}
+
+{% crispy form %}
+
 <script>
 function switch_description(){
-   $("#description_switcher>div").hide();
-   $("#" + $("#id_payment_type option:selected").attr("value") + "_description").show()
+   $(".description_switcher_div").hide();
+   selected_value = $('input[name=payment_type]:checked', '#div_id_payment_type').val()
+   $("#" + selected_value + "_description").show()
+   if(selected_value == 'pay' || selected_value == 'member_wannabe')
+      $(".form-actions").hide();
+   else
+      $(".form-actions").show();
 }
-$("#id_payment_type").change(function() {
+$("#div_id_payment_type").change(function() {
    switch_description();
 });
+
 $(function(){
    switch_description();
+   $("#div_id_payment_type").append($("#description_switcher"));
+
+   $.get("{{aklub_url}}/regular-dpnk/?firstname={{firstname}}&amp;surname={{surname}}&amp;email={{email}}&amp;telephone={{user_attendance.telephone}}", function(data) {
+      $("#aklub-form-container").append(data);
+      $("#aklub-form").ajaxForm({replaceTarget: false, target: "#aklub-form", success: function(){
+         window.scrollTo(0, 0);
+      }});
+   });
+
+   $("#pay_description form").submit(function(){
+      if($("#payu-hidden-values").is(":empty")) {
+         $.get("/dpnk/campaign/platba/ #payu-hidden-values", function(data) {
+            $("#payu-hidden-values").html(data);
+            $("#pay_description form").submit();
+         });
+         return false;
+      }
+   });
 });
 </script>
 <div id="description_switcher">
-   <div id="free_description" style="display:none">
+   <div id="free_description" class="description_switcher_div" style="display:none">
       Startovné zdarma můžete čerpat v těchto případech:
       <ul>
          <li>bydlíte ve městě Liberec</li>
@@ -36,39 +63,26 @@ $(function(){
 
       Po zadání tohoto typu platby vyčkejte, než vaši volbu potvrdíme.
    </div>
-   <div id="company_description" style="display:none">
+   <div id="company_description" class="description_switcher_div" style="display:none">
       Startovné za mě platí zaměstnavatel Společnost prostřednictvím koordinátora Firemní Koordinátor s emailem firemni.koordinator@email.cz.
    </div>
-   <div id="member_description" style="display:none">
+   <div id="member_description" class="description_switcher_div" style="display:none">
       Členové Klubu přátel mají startovné zdarma. Pokud jste členem Klubu přátel, stiskněte tlačítko „Další“ a vyčkejte než vaše členství ověříme.
-      <br/>
-      <br/>
-      Pokud členem Klubu přátel nejste, můžete podpořit aktivity sdružení Auto*mat již za 150 Kč měsíčně:
-      <iframe name="django_form" id="django_form" src="http://klub.vnitrni.auto-mat.cz/regular-wp/" frameborder="0" style="height: 1200px; width: 100%"></iframe>
    </div>
-   <div id="pay_description" style="display:none">
+   <div id="member_wannabe_description" class="description_switcher_div" style="display:none">
+      Pokud členem Klubu přátel nejste, můžete podpořit aktivity sdružení Auto*mat již za 150 Kč měsíčně a dostat tak startovné zdarma:
+      <div id="aklub-form-container"></div>
+   </div>
+</div>
+<div id="pay_description" class="description_switcher_div">
    <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform">
    {% trans "Soutěžící:" %} {{firstname}} {{surname}}<br/>
    {% trans "Startovné:" %} {{amount}} Kč<br/>
-   <input type="hidden" name="first_name" value="{{firstname}}">
-   <input type="hidden" name="last_name" value="{{surname}}">
-   <input type="hidden" name="email" value="{{email}}">
-   <input type="hidden" name="amount_kc" value="{{amount}}">
-   <input type="hidden" name="amount" value="{{amount_hal}}">
-   <input type="hidden" name="pos_id" value="131116">
-   <input type="hidden" name="pos_auth_key" value="NxFcSXh">
-   <input type="hidden" name="session_id" value="{{session_id}}">
-   <input type="hidden" name="language" value="{{LANGUAGE_CODE}}">
-   <span id="style-of-payment-selection">{% trans "Zvolte si prosím typ platby:" %}</span><br/>
-   <div id="payu-final"></div>
-   <input type="hidden" name="desc" value="{{description}}">
-   <input type="hidden" name="client_ip" value="{{client_ip}}">
-   <input type="hidden" name="js" value="0">
+   <div id="payu-hidden-values"></div>
    <script language="JavaScript" type="text/javascript">
    PlnPrintTemplate();
    </script>
    <input type="submit" class="btn btn-primary" value="{% trans "Zaplatit" %}"/>
-   </form>
-   </div>
+</form>
 </div>
 {% endblock %}

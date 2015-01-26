@@ -1,18 +1,4 @@
-{% extends "base_generic.html" %}
 {% load i18n static %}
-
-{% block extrahead %}
-<script language='javascript' type='text/javascript' src="https://secure.payu.com/jsgenerator/js/jquery-latest.js"></script>
-<script language='javascript' type='text/javascript' src='https://secure.payu.com/paygw/UTF/js/131116/ea/template:3/paytype.js'>
-</script>
-{% endblock %}
-
-
-
-{% block content %}
-<form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform">
-{% trans "Soutěžící:" %} {{firstname}} {{surname}}<br/>
-{% trans "Startovné:" %} {{amount}} Kč<br/>
 <input type="hidden" name="first_name" value="{{firstname}}">
 <input type="hidden" name="last_name" value="{{surname}}">
 <input type="hidden" name="email" value="{{email}}">
@@ -22,14 +8,6 @@
 <input type="hidden" name="pos_auth_key" value="NxFcSXh">
 <input type="hidden" name="session_id" value="{{session_id}}">
 <input type="hidden" name="language" value="{{LANGUAGE_CODE}}">
-<span id="style-of-payment-selection">{% trans "Zvolte si prosím typ platby:" %}</span><br/>
-<div id="payu-final"></div>
 <input type="hidden" name="desc" value="{{description}}">
 <input type="hidden" name="client_ip" value="{{client_ip}}">
 <input type="hidden" name="js" value="0">
-<script language="JavaScript" type="text/javascript">
-PlnPrintTemplate();
-</script>
-<input type="submit" class="btn btn-block btn-primary" value="{% trans "Zaplatit" %}"/>
-</form>
-{% endblock %}

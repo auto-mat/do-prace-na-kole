@@ -1352,11 +1352,15 @@ class Payment(Transaction):
 
         ('fa', _(u'faktura mimo PayU')),
         ('fc', _(u'firma platí fakturou')),
-        ('am', _(u'člen klubu přátel Auto*matu')),
+        ('am', _(u'člen Klubu přátel Auto*matu')),
+        ('amw', _(u'kandidát na členství v Klubu přátel Auto*matu')),
+        ('fe', _(u'neplatí startovné')),
         )
 
     NOT_PAYING_TYPES = [
         'am',
+        'amw',
+        'fe',
         'fc',
         ]
 

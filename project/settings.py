@@ -134,6 +134,7 @@ LOGOUT_REDIRECT_URL = '/'
 SITE_URL = ''
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX
+AKLUB_URL = "http://klub.vnitrni.auto-mat.cz"
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 
