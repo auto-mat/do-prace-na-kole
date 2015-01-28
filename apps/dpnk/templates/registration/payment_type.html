@@ -53,7 +53,8 @@ $(function(){
 });
 </script>
 <div id="description_switcher">
-   <div id="free_description" class="description_switcher_div" style="display:none">
+   <div id="free_description" class="description_switcher_div description" style="display:none">
+      <h3>Startovné zdarma</h3>
       Startovné zdarma můžete čerpat v těchto případech:
       <ul>
          <li>bydlíte ve městě Liberec</li>
@@ -63,18 +64,21 @@ $(function(){
 
       Po zadání tohoto typu platby vyčkejte, než vaši volbu potvrdíme.
    </div>
-   <div id="company_description" class="description_switcher_div" style="display:none">
+   <div id="company_description" class="description_switcher_div description" style="display:none">
+      <h3>Startovné platí zaměstnavatel</h3>
       Startovné za mě platí zaměstnavatel Společnost prostřednictvím koordinátora Firemní Koordinátor s emailem firemni.koordinator@email.cz.
    </div>
-   <div id="member_description" class="description_switcher_div" style="display:none">
+   <div id="member_description" class="description_switcher_div description" style="display:none">
+      <h3>Člen Klubu přátel</h3>
       Členové Klubu přátel mají startovné zdarma. Pokud jste členem Klubu přátel, stiskněte tlačítko „Další“ a vyčkejte než vaše členství ověříme.
    </div>
-   <div id="member_wannabe_description" class="description_switcher_div" style="display:none">
-      Pokud členem Klubu přátel nejste, můžete podpořit aktivity sdružení Auto*mat již za 150 Kč měsíčně a dostat tak startovné zdarma:
+   <div id="member_wannabe_description" class="description_switcher_div description" style="display:none">
+      <h3>Vstup do Klubu přátel</h3>
       <div id="aklub-form-container"></div>
    </div>
 </div>
-<div id="pay_description" class="description_switcher_div">
+<div id="pay_description" class="description_switcher_div description">
+   <h3>Platba startovného</h3>
    <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform">
    {% trans "Soutěžící:" %} {{firstname}} {{surname}}<br/>
    {% trans "Startovné:" %} {{amount}} Kč<br/>
