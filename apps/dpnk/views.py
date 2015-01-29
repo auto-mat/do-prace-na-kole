@@ -391,7 +391,7 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     form_class = PaymentTypeForm
     title = _(u"Platba")
     current_view = "payment_type"
-    next_url = "upravit_profil"
+    next_url = "working_schedule"
     prev_url = "upravit_triko"
 
     @method_decorator(login_required_simple)
@@ -884,7 +884,7 @@ class UpdateProfileView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     success_message = _(u"Osobní údaje úspěšně upraveny")
     next_url = "zmenit_tym"
     current_view = "upravit_profil"
-    title = _("Upravit profil")
+    title = _(u"Upravit profil")
 
     def get_object(self):
         return self.request.user.userprofile
@@ -914,12 +914,10 @@ class UpdateTrackView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     title = _("Upravit trasu")
 
     def get_object(self):
-        return get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
+        return self.user_attendance
 
 
 class ChangeTShirtView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
-    template_name = 'base_generic_registration_form.html'
-
     form_class = forms.TShirtUpdateForm
     model = UserAttendance
     success_message = _(u"Velikost trička úspěšně nastavena")
@@ -929,7 +927,7 @@ class ChangeTShirtView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     title = _("Upravit velikost trika")
 
     def get_object(self):
-        return get_object_or_404(UserAttendance, campaign__slug=self.kwargs['campaign_slug'], userprofile=self.request.user.userprofile)
+        return self.user_attendance
 
     @method_decorator(login_required_simple)
     @method_decorator(user_attendance_has(lambda ua: ua.package_shipped(), string_concat("<div class='text-warning'>", _(u"Velikost trika nemůžete měnit, již bylo odesláno"), "</div>")))
