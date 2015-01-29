@@ -751,6 +751,19 @@ class UserAttendance(models.Model):
     def payment_complete(self):
         return self.payment()['status'] == 'done' or self.payment()['status'] == 'no_admission'
 
+    def get_all_trips(self):
+        days = util.days(self.campaign)
+        trips = []
+        for d in days:
+            trip, created = self.user_trips.get_or_create(date=d)
+            if created:
+                working_day = util.working_day(d)
+                trip.is_working_ride_to = working_day
+                trip.is_working_ride_from = working_day
+                trip.save()
+            trips.append(trip)
+        return trips
+
 
 class UserAttendanceRelated(UserAttendance):
     class Meta:
@@ -1486,8 +1499,12 @@ class Trip(models.Model):
         null=True,
         blank=True,
         default=None)
-    is_working_day = models.BooleanField(
-        verbose_name=_(u"pracovní den"),
+    is_working_ride_to = models.BooleanField(
+        verbose_name=_(u"pracovní cesta do práce"),
+        default=False,
+        )
+    is_working_ride_from = models.BooleanField(
+        verbose_name=_(u"pracovní cesta z práce"),
         default=False,
         )
     date = models.DateField(

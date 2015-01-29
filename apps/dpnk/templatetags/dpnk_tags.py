@@ -17,3 +17,8 @@ def site_url():
 @register.filter
 def split(str,splitter):
         return str.split(splitter)
+
+
+@register.filter
+def times(count):
+    return range(int(count))

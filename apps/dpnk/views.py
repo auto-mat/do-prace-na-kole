@@ -39,6 +39,7 @@ from django.db.models import Sum, Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.views.decorators.cache import cache_page, never_cache, cache_control
+from django.views.generic import TemplateView
 from django.views.generic.edit import FormView, UpdateView, CreateView
 # Registration imports
 import registration.signals
@@ -47,7 +48,7 @@ import registration.backends.simple
 # Model imports
 from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice, City, UserAttendance, Campaign
 import forms
-from forms import RegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm, ChangeTeamForm, TrackUpdateForm
+from forms import RegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm, ChangeTeamForm, TrackUpdateForm, WorkingScheduleForm
 from django.conf import settings
 from django.http import HttpResponse
 from django import http
@@ -887,6 +888,19 @@ class UpdateProfileView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
 
     def get_object(self):
         return self.request.user.userprofile
+
+
+class WorkingScheduleView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
+    form_class = WorkingScheduleForm
+    model = UserAttendance
+    success_message = _(u"Pracovní kalendář úspěšně upraven")
+    prev_url = 'typ_platby'
+    next_url = 'profile'
+    current_view = "working_schedule"
+    title = _(u"Upravit pracovní kalendář")
+
+    def get_object(self):
+        return self.user_attendance
 
 
 class UpdateTrackView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):

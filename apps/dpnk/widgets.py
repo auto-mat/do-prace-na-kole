@@ -3,6 +3,8 @@ from django.template.loader import render_to_string
 from smart_selects.widgets import ChainedSelect
 import django.forms as forms
 import smart_selects.widgets as widgets
+from django.forms.widgets import Widget
+import datetime
 
 class SelectOrCreate(forms.Select):
     underlying_form = None
@@ -54,3 +56,22 @@ class SelectChainedOrCreate(widgets.ChainedSelect):
             'new_description': self.new_description,
             })
         return widget
+
+
+class WorkingScheduleWidget(Widget):
+    def render(self, name, trips, *args, **kwargs):
+        widget = render_to_string("widgets/working_schedule.html", {
+            'trips': trips,
+            'padding_days_before': trips[0].date.weekday,
+            'padding_days_after': 6 - trips[-1].date.weekday(),
+            })
+        return widget
+
+    def value_from_datadict(self, data, files, name):
+        result = {}
+        for data_line in data:
+            if data_line.startswith("working-ride-"):
+                data_line_parts = data_line.split("-")
+                date = datetime.datetime.strptime(data_line_parts[3], "%Y%m%d").date()
+                result[date, data_line_parts[2]] = data[data_line]
+        return result

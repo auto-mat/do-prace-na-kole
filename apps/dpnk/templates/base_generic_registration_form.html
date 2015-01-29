@@ -15,7 +15,7 @@
     <li class="{% if current_view == 'upravit_trasu' %}current{% endif %} {% if not track_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_trasu' campaign_slug %}">Trasa</a></li>
     <li class="{% if current_view == 'zmenit_triko' %}current{% endif %} {% if not tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' campaign_slug %}">Triko</a></li>
     <li class="{% if current_view == 'typ_platby' %}current{% endif %} {% if not payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' campaign_slug %}">Startovné</a></li>
-    <li class="{% if current_view == 'upravit_profil' %}current{% endif %} {% if not profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' campaign_slug %}">Pracovní rozvrh</a></li>
+    <li class="{% if current_view == 'working_schedule' %}current{% endif %} {% if not profile_complete %}un{% endif %}fulfilled"><a href="{% url 'working_schedule' campaign_slug %}">Pracovní rozvrh</a></li>
 </ol>
 
 {% block form %}

@@ -11,13 +11,15 @@ def daterange(start_date, end_date):
     for n in range(int ((end_date - start_date).days)):
         yield start_date + datetime.timedelta(n)
 
+def working_day(day):
+    return day not in DAYS_EXCLUDE and day.weekday() not in (5,6)
+
 def days(campaign):
     days = []
     competition_start = campaign.phase("competition").date_from
     competition_end = campaign.phase("competition").date_to
     for day in daterange(competition_start, competition_end):
-        if day not in DAYS_EXCLUDE and day.weekday() not in (5,6):
-            days.append(day)
+        days.append(day)
     return days
 
 def days_count(campaign):

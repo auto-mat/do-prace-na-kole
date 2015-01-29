@@ -9,6 +9,7 @@ from django.utils import formats
 from models import UserProfile, Company, Subsidiary, Team, UserAttendance
 from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
+from dpnk.fields import WorkingScheduleField
 from django.forms.widgets import HiddenInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -88,6 +89,29 @@ class RegisterTeamForm(forms.ModelForm):
     class Meta:
         model = Team
         fields = ('name', 'campaign')
+
+
+class WorkingScheduleForm(PrevNextMixin, forms.ModelForm):
+    schedule = WorkingScheduleField(
+        label=_(u"Pracovní rozvrh"),
+        required=False,
+        )
+
+    def save(self, *args, **kwargs):
+        ret_val = super(WorkingScheduleForm, self).save(*args, **kwargs)
+        trips = self.cleaned_data['schedule']
+        for trip in trips:
+            trip.save()
+        return ret_val
+
+    def __init__(self, *args, **kwargs):
+        ret_val = super(WorkingScheduleForm, self).__init__(*args, **kwargs)
+        self.fields['schedule'].initial = self.instance.get_all_trips()
+        return ret_val
+
+    class Meta:
+        model = UserAttendance
+        fields = ('schedule', )
 
 
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
