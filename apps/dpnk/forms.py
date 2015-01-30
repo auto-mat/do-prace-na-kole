@@ -215,6 +215,14 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         fields = ('team',)
 
 
+class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
+    email = forms.CharField(
+        required=True,
+        label=_(u"E-mail"),
+        help_text=_(u"Zadejte váš email. Pokud jste se účastnili v minulém roce, zadejte stejný email jako v minulém roce."),
+        )
+
+
 class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
     required_css_class = 'required'
 

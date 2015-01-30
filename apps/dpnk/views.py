@@ -40,6 +40,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.views.decorators.cache import cache_page, never_cache, cache_control
 from django.views.generic.edit import FormView, UpdateView, CreateView
+from class_based_auth_views.views import LoginView
 # Registration imports
 import registration.signals
 import registration.backends
@@ -47,7 +48,7 @@ import registration.backends.simple
 # Model imports
 from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice, City, UserAttendance, Campaign
 import forms
-from forms import RegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, PaymentTypeForm, ChangeTeamForm, TrackUpdateForm, WorkingScheduleForm
+from forms import RegistrationFormDPNK, RegistrationAccessFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, PaymentTypeForm, ChangeTeamForm, TrackUpdateForm, WorkingScheduleForm
 from django.conf import settings
 from django.http import HttpResponse
 from django import http
@@ -67,6 +68,15 @@ import tempfile
 import shutil
 import re
 logger = logging.getLogger(__name__)
+
+
+class DPNKLoginView(LoginView):
+    def get_initial(self):
+        initial_email = self.kwargs.get('initial_email')
+        if initial_email:
+            return {'username': self.kwargs['initial_email']}
+        else:
+            return {}
 
 
 class UserAttendanceViewMixin(object):
@@ -273,6 +283,20 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
         context_data['form'] = form
         context_data['campaign_slug'] = self.user_attendance.campaign.slug
         return render_to_response(self.template_name, context_data, context_instance=RequestContext(request))
+
+
+class RegistrationAccessView(FormView):
+    template_name = 'base_generic_form.html'
+    form_class = RegistrationAccessFormDPNK
+
+    def form_valid(self, form):
+        email = form.cleaned_data['email']
+        campaign = Campaign.objects.get(slug=self.request.subdomain)
+        user_exists = models.UserAttendance.objects.filter(campaign=campaign, userprofile__user__email=email).exists()
+        if user_exists:
+            return redirect(reverse('login', kwargs={'initial_email': email}))
+        else:
+            return redirect(reverse('registrace', kwargs={'initial_email': email}))
 
 
 class RegistrationView(FormView):
