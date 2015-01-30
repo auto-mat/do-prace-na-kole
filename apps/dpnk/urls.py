@@ -2,12 +2,15 @@ from django.conf.urls import patterns, include, url
 
 from django.conf import settings
 import views
+from forms import AuthenticationFormDPNK
 import dpnk.auth
 import company_admin_views
+from decorators import must_be_company_admin, must_be_in_phase, must_be_in_group, must_be_competitor, must_have_team
 from django.contrib.auth.decorators import login_required
-from decorators import must_be_company_admin, must_be_in_phase, must_be_in_group, login_required_simple, must_be_competitor, must_have_team
+from django.contrib.auth.decorators import login_required as login_required_simple
+from class_based_auth_views.views import LoginView, LogoutView
 
-campaign_urlpatterns = patterns(
+urlpatterns = patterns(
     '',
     url(r'^tym/$',
         views.ChangeTeamView.as_view(),
@@ -129,10 +132,17 @@ campaign_urlpatterns = patterns(
         must_be_company_admin(login_required(company_admin_views.CompanyEditView.as_view()))),
     url(r'^spolecnost/registrace_admina/$',
         company_admin_views.CompanyAdminApplicationView.as_view()),
-)
-
-urlpatterns = patterns(
-    '',
+    url(r'^login/$',
+        LoginView.as_view(
+            form_class=AuthenticationFormDPNK,
+            template_name='base_generic_form.html',
+            ),
+        name='login',
+        ),
+    url(r'^logout/$',
+        LogoutView.as_view(),
+        name='logout',
+        ),
     url(r'^platba_status$',
         views.payment_status),
     url(r'^platba_uspesna/(?P<trans_id>[0-9]+)/(?P<session_id>[0-9A-Za-z\-]+)/(?P<pay_type>[0-9A-Za-z]+)/$$',
@@ -155,18 +165,10 @@ urlpatterns = patterns(
     url(r'^zapomenute_heslo/dokonceno/$',
         'django.contrib.auth.views.password_reset_complete',
         name='password_reset_complete'),
-    url(r'^logout/$', 'django.contrib.auth.views.logout',
-        {'next_page': settings.LOGOUT_NEXT_PAGE}
-        ),
-    url(r'^logout_redirect/$',
-        views.logout_redirect),
-    url(r'^login/$',
-        views.login),
     url(r'^zmena_hesla/$',
         'django.contrib.auth.views.password_change',
         name='password_change'),
     url(r'^zmena_hesla_hotovo/$',
         'django.contrib.auth.views.password_change_done',
         name='password_change_done'),
-    url(r'^(?P<campaign_slug>[0-9A-Za-z_\-]+)/', include(campaign_urlpatterns)),
 )

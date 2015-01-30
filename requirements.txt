@@ -34,3 +34,5 @@ pillow
 newrelic
 easy_thumbnails
 django-crispy-forms
+django-class-based-auth-views
+django-subdomains

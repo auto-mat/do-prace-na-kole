@@ -72,36 +72,14 @@ import re
 logger = logging.getLogger(__name__)
 
 
-@never_cache
-@cache_control(max_age=0, no_cache=True, no_store=True)
-def login(request, template_name='registration/login.html',
-          authentication_form=AuthenticationForm):
-    redirect_to = wp_reverse("profil")
-    if request.method == "POST":
-        form = authentication_form(data=request.POST)
-        if form.is_valid():
-            auth.login(request, form.get_user())
-            if request.session.test_cookie_worked():
-                request.session.delete_test_cookie()
-            return HttpResponse(redirect(request.POST["redirect_to"]))
-    else:
-        if "next" in request.GET:
-            redirect_to = ""
-        form = authentication_form(request)
-    request.session.set_test_cookie()
-    current_site = get_current_site(request)
-    context = {
-        'form': form,
-        'site': current_site,
-        'redirect_to': redirect_to,
-        'django_url': settings.DJANGO_URL,
-        'site_name': current_site.name,
-    }
-    return render_to_response(template_name, context, context_instance=RequestContext(request))
+class UserAttendanceViewMixin(object):
+    @method_decorator(must_be_competitor)
+    def dispatch(self, request, *args, **kwargs):
+        self.user_attendance = kwargs['user_attendance']
+        return super(UserAttendanceViewMixin, self).dispatch(request, *args, **kwargs)
 
-
-def logout_redirect(request):
-    return HttpResponse(redirect(settings.LOGOUT_REDIRECT_URL))
+    def get_object(self):
+        return self.user_attendance
 
 
 class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend):
@@ -135,13 +113,8 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
         return new_user
 
 
-class RegistrationViewMixin(object):
+class RegistrationViewMixin(UserAttendanceViewMixin):
     template_name = 'base_generic_registration_form.html'
-
-    @method_decorator(must_be_competitor)
-    def dispatch(self, request, *args, **kwargs):
-        self.user_attendance = kwargs['user_attendance']
-        return super(RegistrationViewMixin, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(RegistrationViewMixin, self).get_context_data(*args, **kwargs)
@@ -149,7 +122,6 @@ class RegistrationViewMixin(object):
         context_data['current_view'] = self.current_view
         context_data['submit_label'] = _(u"Další")
 
-        context_data['campaign_slug'] = self.kwargs['campaign_slug']
         context_data['profile_complete'] = self.request.user.userprofile.profile_complete()
         context_data['team_complete'] = self.user_attendance.team_complete()
         context_data['track_complete'] = self.user_attendance.track_complete()
@@ -159,9 +131,9 @@ class RegistrationViewMixin(object):
 
     def get_success_url(self):
         if 'next' in self.request.POST:
-            return reverse(self.next_url, kwargs={'campaign_slug': self.kwargs['campaign_slug']})
+            return reverse(self.next_url)
         else:
-            return reverse(self.prev_url, kwargs={'campaign_slug': self.kwargs['campaign_slug']})
+            return reverse(self.prev_url)
 
 
 class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
@@ -276,7 +248,7 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
                 approval_request_mail(self.user_attendance)
 
             messages.add_message(request, messages.SUCCESS, _(u"Údaje o týmu úspěšně nastaveny."), fail_silently=True)
-            return redirect(reverse(self.success_url, kwargs={'campaign_slug': self.user_attendance.campaign.slug}))
+            return redirect(reverse(self.success_url))
         form.fields['company'].widget.underlying_form = form_company
         form.fields['company'].widget.create = create_company
 
@@ -317,7 +289,7 @@ class RegistrationView(FormView):
         return {'email': self.kwargs.get('initial_email', '')}
 
     def form_valid(self, form, backend='dpnk.views.UserProfileRegistrationBackend'):
-        campaign = Campaign.objects.get(slug=self.kwargs['campaign_slug'])
+        campaign = Campaign.objects.get(slug=self.request.subdomain)
         super(RegistrationView, self).form_valid(form)
         backend = registration.backends.get_backend(backend)
         backend.register(self.request, campaign, self.kwargs.get('token', None), **form.cleaned_data)
@@ -424,7 +396,7 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
         payment_choice = payment_choices[payment_type]
 
         if payment_type == 'pay':
-            return redirect(reverse('platba', kwargs={'campaign_slug': self.user_attendance.campaign.slug}))
+            return redirect(reverse('platba'))
         elif payment_choice:
             Payment(user_attendance=self.user_attendance, amount=0, pay_type=payment_choice['type'], status=Payment.Status.NEW).save()
             messages.add_message(self.request, messages.WARNING, payment_choice['message'], fail_silently=True)
@@ -1243,7 +1215,7 @@ def invite(
                         invitation_mail(user_attendance, email)
                         messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s") % email, fail_silently=True)
 
-            return redirect(reverse(success_url, kwargs={'campaign_slug': user_attendance.campaign.slug}))
+            return redirect(reverse(success_url))
     else:
         form = form_class()
     return render_to_response(template_name, {
@@ -1269,7 +1241,7 @@ def team_admin_team(
         form = form_class(data=request.POST, instance=team)
         if form.is_valid():
             form.save()
-            return redirect(reverse(success_url, kwargs={'campaign_slug': user_attendance.campaign.slug}))
+            return redirect(reverse(success_url))
     else:
         form = form_class(instance=team)
 
@@ -1423,7 +1395,7 @@ class BikeRepairView(SuccessMessageMixin, CreateView):
     model = models.CommonTransaction
 
     def get_initial(self):
-        campaign = Campaign.objects.get(slug=self.kwargs['campaign_slug'])
+        campaign = Campaign.objects.get(slug=self.request.subdomain)
         return {
             'campaign': campaign,
             }

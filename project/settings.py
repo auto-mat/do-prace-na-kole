@@ -47,7 +47,7 @@ LANGUAGES = (
 )
 LANGUAGE_CODE = 'cs'
 PREFIX_DEFAULT_LOCALE = False
-SITE_ID = 5
+SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 DECIMAL_SEPARATOR = ','
@@ -63,6 +63,7 @@ SECRET_KEY = ''
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'localeurl.middleware.LocaleURLMiddleware',
+    'subdomains.middleware.SubdomainMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -71,8 +72,6 @@ MIDDLEWARE_CLASSES = (
     'timelog.middleware.TimeLogMiddleware',
     'remote_ajax.middleware.XHRMiddleware',
 	#'django.middleware.csrf.CsrfViewMiddleware',
-
-#    "dpnk.middleware.XHRMiddleware",
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
@@ -99,6 +98,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.gis',
+    'django.contrib.sites',
 
     'registration',
     'dpnk',
@@ -128,9 +128,8 @@ INSTALLED_APPS = (
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SERVER_EMAIL='root@auto-mat.cz'
 LOGIN_URL = '/dpnk/login/'
-LOGIN_REDIRECT_VIEW = 'profil'
-LOGOUT_NEXT_PAGE = '/dpnk/logout_redirect'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL='/dpnk/upravit_profil/'
+LOGOUT_NEXT_PAGE='profil'
 SITE_URL = ''
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX

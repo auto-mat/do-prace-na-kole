@@ -10,24 +10,24 @@
 {% if active %}
 
 {% if profile.distance %}
-   <a href="{% url 'upravit_profil' campaign_slug %}"
+   <a href="{% url 'upravit_profil' %}"
       class="btn btn-block btn-success">{% trans "Osobní údaje vyplněny" %}</a>
 {% else %}
-   <a href="{% url 'upravit_profil' campaign_slug %}"
+   <a href="{% url 'upravit_profil' %}"
       class="btn btn-block btn-warning">{% trans "Vyplňte své osobní údaje" %}</a>
 {% endif %}
 
 {% if team and approved_for_team == 'undecided' %}
-   <a href="{% url 'zmenit_tym' campaign_slug %}"
+   <a href="{% url 'zmenit_tym' %}"
       class="btn btn-block btn-warning">{% trans "Členství v týmu čeká na schválení týmovým koodinátorem" %}</a>
 {% elif approved_for_team == 'undecided' %}
-   <a href="{% url 'zmenit_tym' campaign_slug %}"
+   <a href="{% url 'zmenit_tym' %}"
       class="btn btn-block btn-warning">{% trans "Vyberte tým" %}</a>
 {% elif approved_for_team == 'denied' %}
-   <a href="{% url 'zmenit_tym' campaign_slug %}"
+   <a href="{% url 'zmenit_tym' %}"
       class="btn btn-block btn-danger">{% trans "Členství v týmu zamítnuto, zvolit jiný tým" %}</a>
 {% elif approved_for_team == 'approved' %}
-   <a href="{% url 'zmenit_tym' campaign_slug %}"
+   <a href="{% url 'zmenit_tym' %}"
       class="btn btn-block btn-success">{% trans "Členství v týmu odsouhlaseno" %}</a>
 {% endif %}
 
@@ -36,22 +36,22 @@
       <a href="#"
          class="btn btn-block btn-success disabled">{% trans "Velikost trika vyplněna" %}</a>
    {% else %}
-      <a href="{% url 'zmenit_triko' campaign_slug %}"
+      <a href="{% url 'zmenit_triko' %}"
          class="btn btn-block btn-success">{% trans "Velikost trika vyplněna" %}</a>
    {% endif %}
 {% else %}
-   <a href="{% url 'zmenit_triko' campaign_slug %}"
+   <a href="{% url 'zmenit_triko' %}"
       class="btn btn-block btn-warning">{% trans "Vyplňte velikost trika" %}</a>
 {% endif %}
 
 {% if team.unapproved_members.count > 0 %}
-   <a href="{% url 'team_admin' campaign_slug %}"
+   <a href="{% url 'team_admin' %}"
       class="btn btn-block btn-warning">{% trans "Ve vašem týmu jsou neodsouhlasení členové. Odsouhlaste je!" %}</a>
 {% elif team.members.count < 2 %}
-   <a href="{% url 'team_admin' campaign_slug %}"
+   <a href="{% url 'team_admin' %}"
       class="btn btn-block btn-warning">{% trans "Aby byl tým úplný, potřebuje mít víc než jednoho člena. Pozvěte své kolegy!" %}</a>
 {% else %}
-   <a href="{% url 'team_admin' campaign_slug %}"
+   <a href="{% url 'team_admin' %}"
       class="btn btn-block btn-success">{% trans "Přejít na správu týmu" %}</a>
 {% endif %}
 
@@ -66,17 +66,17 @@
       class="btn btn-block btn-success disabled">{% trans "Startovné úspěšně zaplaceno" %}</a>
 {% elif payment_status == 'waiting' %}
    {% if payment_type == 'fc' %}
-      <a href="{% url 'typ_platby' campaign_slug %}"
+      <a href="{% url 'typ_platby' %}"
          class="btn btn-block btn-warning">{% trans "Váš zaměstnavatel ještě poplatek nezaplatil" %}</a>
    {% elif payment_type == 'am' %}
-      <a href="{% url 'typ_platby' campaign_slug %}"
+      <a href="{% url 'typ_platby' %}"
          class="btn btn-block btn-warning">{% trans "Vaše členství v Klubu přátel Auto*Mat se ověřuje" %}</a>
    {% else %}
-      <a href="{% url 'typ_platby' campaign_slug %}"
+      <a href="{% url 'typ_platby' %}"
          class="btn btn-block btn-warning">{% trans "Čeká se na potvrzení platby" %}</a>
    {% endif %}
 {% else %}
-   <a href="{% url 'typ_platby' campaign_slug %}"
+   <a href="{% url 'typ_platby' %}"
       class="btn btn-block btn-warning">{% trans "Zaplatit startovné" %}</a>
 {% endif %}
 
@@ -89,7 +89,7 @@
          <a href="#"
             class="btn btn-block btn-success disabled">{% trans "Startovní balíček doručen" %}</a>
       {% else %}
-         <a href="{% url 'balicek' campaign_slug %}"
+         <a href="{% url 'balicek' %}"
             class="btn btn-block btn-warning">{% trans "Startovní balíček odeslán, sledovat jeho pohyb" %}</a>
       {% endif %}
    {% else %}
@@ -108,7 +108,7 @@
    <a href="#"
       class="btn btn-block btn-info disabled">{% trans "Přihlašování do soutěží již není aktivní" %}</a>
 {% elif team and approved_for_team == 'approved' and team %}
-   <a href="{% url 'souteze' campaign_slug %}"
+   <a href="{% url 'souteze' %}"
       class="btn btn-block btn-info">{% trans "Přihlásit se do soutěží" %}</a>
 {% else %}
    <a href="#"
@@ -132,6 +132,6 @@
 
 {% else %}
 Tento profil byl zneaktivněn.</br>
-<a href="{% url 'logout' campaign_slug %}">{% trans "Odhlásit" %}</a>
+<a href="{% url 'logout' %}">{% trans "Odhlásit" %}</a>
 {% endif %}
 {% endblock %}

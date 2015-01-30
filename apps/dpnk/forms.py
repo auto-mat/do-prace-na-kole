@@ -18,11 +18,19 @@ from django.core.validators import RegexValidator, MinLengthValidator
 from django.contrib.gis.forms import OSMWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from wp_urls import wp_reverse
+from django.core.urlresolvers import reverse
+from django.contrib.auth.forms import AuthenticationForm
 
 def team_full(data):
     if len(UserAttendance.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, userprofile__user__is_active=True)) >= 5:
         raise forms.ValidationError(_(u"Tento tým již má pět členů a je tedy plný"))
+
+
+class SubmitMixin(object):
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        super(SubmitMixin, self).__init__(*args, **kwargs)
 
 
 class PrevNextMixin(object):
@@ -33,6 +41,10 @@ class PrevNextMixin(object):
         if not hasattr(self, 'no_next'):
             self.helper.add_input(Submit('next', _(u'Další')))
         super(PrevNextMixin, self).__init__(*args, **kwargs)
+
+
+class AuthenticationFormDPNK(SubmitMixin, AuthenticationForm):
+    pass
 
 
 class RegisterCompanyForm(forms.ModelForm):
@@ -316,7 +328,7 @@ class ConfirmTeamInvitationForm(forms.Form):
             )
 
 
-class BikeRepairForm(forms.ModelForm):
+class BikeRepairForm(SubmitMixin, forms.ModelForm):
     user_attendance = forms.CharField(
         label=_(u"Uživatelské jméno zákazníka"),
         help_text=_(u"Uživatelské jméno, které vám sdělí zákazník"),

@@ -27,17 +27,6 @@ import models
 import functools
 
 
-def login_required_simple(fn):
-    @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
-        request = args[0]
-        if not request.user.is_authenticated():
-            return redirect(wp_reverse("login"))
-        else:
-            return fn(*args, **kwargs)
-    return wrapper
-
-
 def must_be_approved_for_team(fn):
     @functools.wraps(fn)
     @login_required
@@ -56,8 +45,8 @@ def must_be_approved_for_team(fn):
 def must_be_company_admin(fn):
     @functools.wraps(fn)
     @login_required
-    def wrapper(request, campaign_slug="", *args, **kwargs):
-        campaign = Campaign.objects.get(slug=campaign_slug)
+    def wrapper(request, *args, **kwargs):
+        campaign = Campaign.objects.get(slug=request.subdomain)
 
         company_admin = models.get_company_admin(request.user, campaign)
         if company_admin:
@@ -82,7 +71,7 @@ def must_be_in_phase(*phase_type):
     def decorator(fn):
         @functools.wraps(fn)
         def wrapped(request, *args, **kwargs):
-            campaign = Campaign.objects.get(slug=kwargs.get('campaign_slug'))
+            campaign = Campaign.objects.get(slug=request.subdomain)
             phases = campaign.phase_set.filter(type__in=phase_type)
             for phase in phases:
                 if phase and phase.is_actual():
@@ -103,7 +92,7 @@ def must_be_competitor(fn):
         request = args[0]
         if models.is_competitor(request.user):
             userprofile = request.user.userprofile
-            campaign_slug = kwargs.pop('campaign_slug')
+            campaign_slug = request.subdomain
             try:
                 user_attendance = userprofile.userattendance_set.select_related('team__subsidiary__city', 'campaign', 'team__subsidiary__company', 't_shirt_size').get(campaign__slug=campaign_slug)
             except UserAttendance.DoesNotExist:
