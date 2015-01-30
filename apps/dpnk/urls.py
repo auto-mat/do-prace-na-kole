@@ -1,6 +1,5 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 
-from django.conf import settings
 import views
 from forms import AuthenticationFormDPNK
 import dpnk.auth
@@ -8,7 +7,7 @@ import company_admin_views
 from decorators import must_be_company_admin, must_be_in_phase, must_be_in_group, must_be_competitor, must_have_team
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import login_required as login_required_simple
-from class_based_auth_views.views import LoginView, LogoutView
+from class_based_auth_views.views import LogoutView
 
 urlpatterns = patterns(
     '',
@@ -119,7 +118,7 @@ urlpatterns = patterns(
         {"template": "registration/address.html"}),
 
 
-    #company admin:
+    # company admin:
     url(r'^spolecnost/zadost_admina/$',
         must_be_competitor(must_have_team(login_required(company_admin_views.CompanyAdminView.as_view())))),
     url(r'^spolecnost/soutez/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
