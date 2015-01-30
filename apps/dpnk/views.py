@@ -109,13 +109,10 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
         new_user = super(UserProfileRegistrationBackend, self).register(request, **cleaned_data)
         from dpnk.models import UserProfile
 
-        new_user.first_name = cleaned_data['first_name']
-        new_user.last_name = cleaned_data['last_name']
         new_user.save()
 
         userprofile = UserProfile(
             user=new_user,
-            language=cleaned_data['language'],
             )
         userprofile.save()
 
@@ -314,7 +311,7 @@ class RegistrationView(FormView):
     template_name = 'base_generic_form.html'
     form_class = RegistrationFormDPNK
     model = UserProfile
-    success_url = 'profil'
+    success_url = 'upravit_profil'
 
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}
@@ -325,11 +322,11 @@ class RegistrationView(FormView):
         backend = registration.backends.get_backend(backend)
         backend.register(self.request, campaign, self.kwargs.get('token', None), **form.cleaned_data)
         auth_user = auth.authenticate(
-            username=self.request.POST['username'],
+            username=self.request.POST['email'],
             password=self.request.POST['password1'])
         auth.login(self.request, auth_user)
 
-        return redirect(wp_reverse(self.success_url))
+        return redirect(reverse(self.success_url))
 
 
 class ConfirmDeliveryView(UpdateView):

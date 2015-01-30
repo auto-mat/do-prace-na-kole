@@ -209,7 +209,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
     def clean(self):
         if not self.errors:
             self.cleaned_data['username'] = '%s%s' % (self.cleaned_data['email'].split('@',1)[0], User.objects.count())
-        super(RegistrationFormNoUserName, self).clean()
+        super(RegistrationFormDPNK, self).clean()
         return self.cleaned_data
 
     def __init__(self, request=None, *args, **kwargs):
@@ -233,7 +233,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
 
     def clean_email(self):
         if User.objects.filter(email__iexact=self.cleaned_data['email']):
-            raise forms.ValidationError(mark_safe(_(u"Tato e-mailová adresa se již používá. Pokud je vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> obnovu hesla</a>.") % {'password': wp_reverse('zapomenute_heslo'), 'login': wp_reverse('login')}))
+            raise forms.ValidationError(mark_safe(_(u"Tato e-mailová adresa se již používá. Pokud je vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> obnovu hesla</a>.") % {'password': reverse('password_reset'), 'login': reverse('login')}))
         return self.cleaned_data['email']
 
 
@@ -414,7 +414,7 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         required=True)
 
     email = forms.EmailField(
-        help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu"),
+        help_text=_(u"Email slouží jako přihlašovací jméno"),
         required=False)
 
     def save(self, *args, **kwargs):
