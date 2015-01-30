@@ -26,20 +26,19 @@ import hashlib
 import datetime
 import results
 # Django imports
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.decorators import method_decorator
-from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase
+from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition
 from django.contrib.auth.decorators import login_required as login_required_simple
 from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.views.decorators.cache import cache_page, never_cache, cache_control
-from django.views.generic import TemplateView
 from django.views.generic.edit import FormView, UpdateView, CreateView
 # Registration imports
 import registration.signals
@@ -48,7 +47,7 @@ import registration.backends.simple
 # Model imports
 from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice, City, UserAttendance, Campaign
 import forms
-from forms import RegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm,  PaymentTypeForm, ChangeTeamForm, TrackUpdateForm, WorkingScheduleForm
+from forms import RegistrationFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, PaymentTypeForm, ChangeTeamForm, TrackUpdateForm, WorkingScheduleForm
 from django.conf import settings
 from django.http import HttpResponse
 from django import http
@@ -56,8 +55,6 @@ from django import http
 import util
 import draw
 from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail, invitation_register_mail
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.sites.models import get_current_site
 from django.db import transaction
 
 from wp_urls import wp_reverse
@@ -137,11 +134,11 @@ class RegistrationViewMixin(UserAttendanceViewMixin):
 
 
 class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
-    form_class=ChangeTeamForm
-    template_name='registration/change_team.html'
-    next_url='upravit_trasu'
-    prev_url='upravit_profil'
-    title=_(u'Změnit tým')
+    form_class = ChangeTeamForm
+    template_name = 'registration/change_team.html'
+    next_url = 'upravit_trasu'
+    prev_url = 'upravit_profil'
+    title = _(u'Změnit tým')
     current_view = "zmenit_tym"
 
     @method_decorator(login_required_simple)
@@ -149,7 +146,6 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     @method_decorator(user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže nemůžete měnit tým."), "</div>")))
     def dispatch(self, request, *args, **kwargs):
         return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
-
 
     def post(self, request, *args, **kwargs):
         create_company = False
@@ -374,7 +370,7 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
         context = super(PaymentTypeView, self).get_context_data(**kwargs)
 
         if self.user_attendance.payment_status() == 'no_admission':
-            return redirect(next_url)
+            return redirect(self.next_url)
 
         profile = self.user_attendance.userprofile
         context['user_attendance'] = self.user_attendance
@@ -702,7 +698,7 @@ def rides(
 @must_be_competitor
 @never_cache
 @cache_control(max_age=0, no_cache=True, no_store=True)
-def profile(request, user_attendance=None, success_url = 'competition_profile'):
+def profile(request, user_attendance=None, success_url='competition_profile'):
     if user_attendance.entered_competition():
         return redirect(wp_reverse(success_url))
     if request.POST and request.POST['enter_competition'] == 'true':
@@ -846,6 +842,7 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
         'competition': competition,
         'results': results[:limit]
         }, context_instance=RequestContext(request))
+
 
 class UpdateProfileView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     form_class = ProfileUpdateForm
@@ -1019,7 +1016,6 @@ def questionnaire_answers_all(request, template, competition_slug, campaign_slug
     competitors = competition.get_results()
 
     for competitor in competitors:
-        query = {}
         competitor.answers = Answer.objects.filter(
             user_attendance__in=competitor.user_attendances(),
             question__competition__slug=competition_slug)
@@ -1035,7 +1031,7 @@ def questions(request):
     if not request.user.is_superuser:
         for administrated_city in request.user.userprofile.administrated_cities.all():
             filter_query |= (Q(competition__city=administrated_city.city) & Q(competition__campaign=administrated_city.campaign))
-        #filter_query['competition__city__cityincampaign__in'] = request.user.userprofile.administrated_cities.all()
+        # filter_query['competition__city__cityincampaign__in'] = request.user.userprofile.administrated_cities.all()
     questions = Question.objects.filter(filter_query).order_by('competition__campaign', 'competition__slug', 'order')
     return render_to_response('admin/questions.html', {
         'questions': questions
@@ -1303,12 +1299,12 @@ def distance_length_competitions(trips):
 
 def distance(trips):
     distance = 0
-    #TODO: Fix calculation also for team length competitions.
+    # TODO: Fix calculation also for team length competitions.
     distance += trips.filter(user_attendance__competitions__type='length', trip_from=True).aggregate(Sum("distance_from"))['distance_from__sum'] or 0
     distance += trips.filter(user_attendance__competitions__type='length', trip_to=True).aggregate(Sum("distance_to"))['distance_to__sum'] or 0
 
-    distance += trips.exclude(user_attendance__competitions__type='length').filter(trip_from = True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
-    distance += trips.exclude(user_attendance__competitions__type='length').filter(trip_to = True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
+    distance += trips.exclude(user_attendance__competitions__type='length').filter(trip_from=True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
+    distance += trips.exclude(user_attendance__competitions__type='length').filter(trip_to=True).aggregate(Sum("user_attendance__distance"))['user_attendance__distance__sum'] or 0
     return distance
 
 
@@ -1327,6 +1323,7 @@ def period_distance(campaign, day_from, day_to):
 def trips(trips):
     return trips.filter(trip_from=True).count() + trips.filter(trip_to=True).count()
 
+
 def total_trips(campaign):
     return trips(Trip.objects.filter(user_attendance__campaign=campaign))
 
@@ -1343,7 +1340,6 @@ def statistics(
         template='registration/statistics.html'
         ):
     campaign = Campaign.objects.get(slug=campaign_slug)
-    variables = {}
     if variable == 'ujeta-vzdalenost':
         result = total_distance_length_competitions(campaign)
     if variable == 'ujeta-vzdalenost-vsechny-souteze':
@@ -1359,7 +1355,7 @@ def statistics(
     elif variable == 'pocet-prihlasenych':
         result = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True).distinct().count()
     elif variable == 'pocet-soutezicich':
-        result= UserAttendance.objects.filter(campaign=campaign, transactions__useractiontransaction__status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED).distinct().count()
+        result = UserAttendance.objects.filter(campaign=campaign, transactions__useractiontransaction__status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED).distinct().count()
 
     if variable == 'pocet-soutezicich-firma':
         if request.user.is_authenticated() and models.is_competitor(request.user):

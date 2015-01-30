@@ -22,7 +22,6 @@ from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from models import UserAttendance, Campaign
 from wp_urls import wp_reverse
-from util import redirect
 import models
 import functools
 

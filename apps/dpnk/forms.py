@@ -21,6 +21,7 @@ from crispy_forms.layout import Submit
 from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import AuthenticationForm
 
+
 def team_full(data):
     if len(UserAttendance.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, userprofile__user__is_active=True)) >= 5:
         raise forms.ValidationError(_(u"Tento tým již má pět členů a je tedy plný"))
@@ -55,12 +56,13 @@ class RegisterCompanyForm(forms.ModelForm):
         model = Company
         fields = ('name', )
 
+
 class AdressForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
     address_psc = forms.CharField(
-        label =_(u"PSČ"),
+        label=_(u"PSČ"),
         help_text=_(u"Např.: 130 00"),
     )
 
@@ -79,14 +81,16 @@ class AdressForm(forms.ModelForm):
         super(AdressForm, self).__init__(*args, **kwargs)
         if campaign:
             self.fields['city'].queryset = models.City.objects.filter(cityincampaign__campaign=campaign)
-        #self.fields['city'].label_from_instance = lambda obj: obj.city.name
+        # self.fields['city'].label_from_instance = lambda obj: obj.city.name
 
     class Meta:
         model = Subsidiary
         fields = ('city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
+
 class RegisterSubsidiaryForm(AdressForm):
     pass
+
 
 class RegisterTeamForm(forms.ModelForm):
     required_css_class = 'required'
@@ -130,40 +134,42 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     company = forms.ModelChoiceField(
         label=_(u"Společnost"),
         queryset=Company.objects.all(),
-        widget=SelectOrCreate(RegisterCompanyForm, prefix="company", new_description = _(u"Společnost v seznamu není, chci založit novou")),
+        widget=SelectOrCreate(RegisterCompanyForm, prefix="company", new_description=_(u"Společnost v seznamu není, chci založit novou")),
         required=True)
     subsidiary = ChainedModelChoiceField(
-        chain_field = "company",
-        app_name = "dpnk",
-        model_name = "Subsidiary",
-        model_field = "company",
-        show_all = False,
-        auto_choose = True,
+        chain_field="company",
+        app_name="dpnk",
+        model_name="Subsidiary",
+        model_field="company",
+        show_all=False,
+        auto_choose=True,
         label=_(u"Adresa pobočky/společnosti"),
-        widget=SelectChainedOrCreate(RegisterSubsidiaryForm, view_name='', prefix="subsidiary", new_description = _(u"Adresa v seznamu není, chci založit novou"),
-            chain_field = "company",
-            app_name = "dpnk",
-            model_name = "SubsidiaryInCampaign",
-            model_field = "company",
-            show_all = False,
-            auto_choose = True,
+        widget=SelectChainedOrCreate(
+            RegisterSubsidiaryForm, view_name='', prefix="subsidiary", new_description=_(u"Adresa v seznamu není, chci založit novou"),
+            chain_field="company",
+            app_name="dpnk",
+            model_name="SubsidiaryInCampaign",
+            model_field="company",
+            show_all=False,
+            auto_choose=True,
         ),
         queryset=Subsidiary.objects.all(),
         required=True)
     team = ChainedModelChoiceField(
-        chain_field = "subsidiary",
-        app_name = "dpnk",
-        model_name = "Team",
-        model_field = "subsidiary",
-        show_all = False,
-        auto_choose = False,
-        widget=SelectChainedOrCreate(RegisterTeamForm, view_name='', prefix="team", new_description = _(u"Můj tým v seznamu není, vytvořit nový"),
-            chain_field = "subsidiary",
-            app_name = "dpnk",
-            model_name = "TeamInCampaign",
-            model_field = "subsidiary",
-            show_all = False,
-            auto_choose = False,
+        chain_field="subsidiary",
+        app_name="dpnk",
+        model_name="Team",
+        model_field="subsidiary",
+        show_all=False,
+        auto_choose=False,
+        widget=SelectChainedOrCreate(
+            RegisterTeamForm, view_name='', prefix="team", new_description=_(u"Můj tým v seznamu není, vytvořit nový"),
+            chain_field="subsidiary",
+            app_name="dpnk",
+            model_name="TeamInCampaign",
+            model_field="subsidiary",
+            show_all=False,
+            auto_choose=False,
         ),
         label=_(u"Tým"),
         queryset=Team.objects.all(),
@@ -190,7 +196,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             if request.GET.get('team', None):
                 initial['team'] = request.GET['team']
 
-        kwargs['initial']=initial
+        kwargs['initial'] = initial
 
         super(ChangeTeamForm, self).__init__(*args, **kwargs)
         self.fields.keyOrder = [
@@ -220,7 +226,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
 
     def clean(self):
         if not self.errors:
-            self.cleaned_data['username'] = '%s%s' % (self.cleaned_data['email'].split('@',1)[0], User.objects.count())
+            self.cleaned_data['username'] = '%s%s' % (self.cleaned_data['email'].split('@', 1)[0], User.objects.count())
         super(RegistrationFormDPNK, self).clean()
         return self.cleaned_data
 
@@ -232,7 +238,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
             initial = kwargs.get('initial', {})
             if request.GET.get('team', None):
                 initial['team'] = request.GET['team']
-            kwargs['initial']=initial
+            kwargs['initial'] = initial
 
         super(RegistrationFormDPNK, self).__init__(*args, **kwargs)
         self.fields.keyOrder = [
@@ -241,13 +247,12 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
             'password2'
             ]
 
-        self.fields['email'].help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
+        self.fields['email'].help_text = _(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
 
     def clean_email(self):
         if User.objects.filter(email__iexact=self.cleaned_data['email']):
             raise forms.ValidationError(mark_safe(_(u"Tato e-mailová adresa se již používá. Pokud je vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> obnovu hesla</a>.") % {'password': reverse('password_reset'), 'login': reverse('login')}))
         return self.cleaned_data['email']
-
 
     def clean_team(self):
         data = self.cleaned_data['team']
@@ -256,6 +261,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
 
     class Meta:
         model = UserProfile
+
 
 class InviteForm(forms.Form):
     required_css_class = 'required'
@@ -277,6 +283,7 @@ class InviteForm(forms.Form):
         label=_(u"Email kolegy 4"),
         required=False)
 
+
 class TeamAdminForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
@@ -286,36 +293,38 @@ class TeamAdminForm(forms.ModelForm):
         widget=HiddenInput(),
         )
 
-
     class Meta:
         model = Team
         fields = ('name', 'campaign')
 
+
 class PaymentTypeForm(PrevNextMixin, forms.Form):
-    CHOICES=[('pay', _(u"Účastnický poplatek si platím sám.")),
-             ('member', _(u"Jsem členem Klubu přátel Auto*Matu.")),
-             ('member_wannabe', _(u"Chci se stát členem Klubu přátel Auto*Matu.")),
-             ('company', _(u"Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.")),
-             ('free', _(u"Je mi poskytováno startovné zdarma."))
-             ]
+    CHOICES = [
+        ('pay', _(u"Účastnický poplatek si platím sám.")),
+        ('member', _(u"Jsem členem Klubu přátel Auto*Matu.")),
+        ('member_wannabe', _(u"Chci se stát členem Klubu přátel Auto*Matu.")),
+        ('company', _(u"Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.")),
+        ('free', _(u"Je mi poskytováno startovné zdarma."))
+        ]
 
     payment_type = forms.ChoiceField(
-            label=_(u"Typ platby"),
-            choices=CHOICES,
-            widget=forms.RadioSelect(),
-            )
+        label=_(u"Typ platby"),
+        choices=CHOICES,
+        widget=forms.RadioSelect(),
+        )
 
 
 class ConfirmDeliveryForm(forms.ModelForm):
-    CHOICES=[(models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED, _(u"Startovní balíček mi již byl doručen.")),
-             (models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED, _(u"Startovní balíček mi ještě nebyl doručen.")),
-             ]
+    CHOICES = [
+        (models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED, _(u"Startovní balíček mi již byl doručen.")),
+        (models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED, _(u"Startovní balíček mi ještě nebyl doručen.")),
+        ]
 
     status = forms.ChoiceField(
-            label=_(u"Doručení balíčku"),
-            choices=CHOICES,
-            widget=forms.RadioSelect(),
-            )
+        label=_(u"Doručení balíčku"),
+        choices=CHOICES,
+        widget=forms.RadioSelect(),
+        )
 
     class Meta:
         model = models.PackageTransaction
@@ -324,8 +333,8 @@ class ConfirmDeliveryForm(forms.ModelForm):
 
 class ConfirmTeamInvitationForm(forms.Form):
     question = forms.BooleanField(
-            label=_(u"Chci být zařazen do nového týmu"),
-            )
+        label=_(u"Chci být zařazen do nového týmu"),
+        )
 
 
 class BikeRepairForm(SubmitMixin, forms.ModelForm):
@@ -358,8 +367,9 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
             transaction = None
         if transaction:
             created_formated_date = formats.date_format(transaction.created, "SHORT_DATETIME_FORMAT")
-            raise forms.ValidationError(_(u"Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: %(note)s).") %
-                {'time': created_formated_date, 'bike_shop': transaction.author.get_full_name(), 'note': transaction.description})
+            raise forms.ValidationError(_(u"Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: %(note)s).") % {
+                'time': created_formated_date, 'bike_shop': transaction.author.get_full_name(), 'note': transaction.description
+                })
         return super(BikeRepairForm, self).clean()
 
     def save(self, *args, **kwargs):
@@ -369,6 +379,7 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
     class Meta:
         model = models.CommonTransaction
         fields = ('user_attendance', 'description')
+
 
 class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
     telephone = forms.CharField(
@@ -388,7 +399,6 @@ class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
         self.fields['telephone'].initial = self.instance.userprofile.telephone
         return ret_val
 
-
     class Meta:
         model = UserAttendance
         fields = ('t_shirt_size', 'telephone', )
@@ -404,7 +414,7 @@ class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
         super(TrackUpdateForm, self).__init__(*args, **kwargs)
 
         location = instance.team.subsidiary.city.location
-        self.fields['track'].widget=OSMWidget(attrs={
+        self.fields['track'].widget = OSMWidget(attrs={
             'geom_type': 'LINESTRING',
             'default_lat_custom': location.y,
             'default_lon_custom': location.x,
@@ -461,4 +471,4 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ( 'language', 'sex', 'first_name', 'last_name', 'email')
+        fields = ('language', 'sex', 'first_name', 'last_name', 'email')

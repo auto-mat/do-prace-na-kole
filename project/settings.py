@@ -19,23 +19,23 @@ ADMINS = (
 DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@dopracenakole.net>'
 MANAGERS = ADMINS
 DATABASES = {
-        'default': {
-                'ENGINE': 'django.db.backends.mysql',
-                'NAME': '',
-                'USER': '',
-                'PASSWORD': '',
-                'HOST': 'localhost',
-                'PORT': '',
-                'OPTIONS': { 'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci' }
-        },
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '',
+        'OPTIONS': {'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci'}
+    },
 }
 
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 CACHES = {
     'default': {
-       'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-       'LOCATION': '127.0.0.1:11211',
-       'KEY_PREFIX': 'dpnkch',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+        'KEY_PREFIX': 'dpnkch',
     },
 }
 
@@ -71,7 +71,7 @@ MIDDLEWARE_CLASSES = (
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'timelog.middleware.TimeLogMiddleware',
     'remote_ajax.middleware.XHRMiddleware',
-	#'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
@@ -126,13 +126,13 @@ INSTALLED_APPS = (
 )
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-SERVER_EMAIL='root@auto-mat.cz'
+SERVER_EMAIL = 'root@auto-mat.cz'
 LOGIN_URL = '/dpnk/login/'
-LOGIN_REDIRECT_URL='/dpnk/upravit_profil/'
-LOGOUT_NEXT_PAGE='profil'
+LOGIN_REDIRECT_URL = '/dpnk/upravit_profil/'
+LOGOUT_NEXT_PAGE = 'profil'
 SITE_URL = ''
 DJANGO_URL = ''
-SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX
+SMART_SELECTS_URL_PREFIX = "http://localhost:8000"
 AKLUB_URL = "http://klub.vnitrni.auto-mat.cz"
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
@@ -164,23 +164,23 @@ LOGGING = {
             'format': '%(asctime)s %(message)s'},
     },
     'filters': {
-         'require_debug_false': {
-             '()': 'django.utils.log.RequireDebugFalse'
-         }
-     },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
     'handlers': {
         'null': {
             'level': 'DEBUG',
             'class': 'django.utils.log.NullHandler',
         },
-        'console':{
+        'console': {
             'level': 'ERROR',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
         'logfile': {
-            'level':'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': "/var/log/django/dpnk.log",
             'backupCount': 50,
             'maxBytes': 10000000,
@@ -217,20 +217,20 @@ LOGGING = {
             'level': 'INFO',
         },
         'timelog.middleware': {
-             'handlers': ['timelog'],
-             'level': 'DEBUG',
-             'propogate': False,
+            'handlers': ['timelog'],
+            'level': 'DEBUG',
+            'propogate': False,
         },
     }
 }
 
 MESSAGE_TAGS = {
-        message_constants.DEBUG: 'debug',
-        message_constants.INFO: 'info',
-        message_constants.SUCCESS: 'success',
-        message_constants.WARNING: 'warning',
-        message_constants.ERROR: 'danger',
-        }
+    message_constants.DEBUG: 'debug',
+    message_constants.INFO: 'info',
+    message_constants.SUCCESS: 'success',
+    message_constants.WARNING: 'warning',
+    message_constants.ERROR: 'danger',
+    }
 
 # import local settings
 try:
