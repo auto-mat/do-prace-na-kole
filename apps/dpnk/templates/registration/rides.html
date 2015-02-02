@@ -9,6 +9,8 @@
 {% trans "Zadaný počet kilometrů na jednu jízdu: " %}{{ user_attendance.get_distance|floatformat:2 }} Km
 {% if has_distance_competition %}{% trans " (Do políčka zadávejte ujetý počet kilometrů)" %}{% endif %}
 <a href="{% url 'working_schedule' %}">Změnit pracovní rozvrh</a>
+{% include "messages_include.html" %}
+{{ message }}
 <table id="rides" class="table table-bordered table-hover table-condensed">
 <tr>
 <th scope="column">{% trans "Den" %}</th>
