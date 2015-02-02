@@ -3,7 +3,7 @@
 {% load dpnk_tags %}
 {% load humanize %}
 
-<form name="calendar" method="POST">
+<form id="rides-form" name="calendar" method="POST" action="/dpnk/jizdy/">
 <input type="hidden" id="day" name="day"/>
 <button class="btn-info btn" type="button" onclick='$( ".toggle" ).toggle( "hidden" );'>{% trans "Zobrazit všechny jízdy" %}</button>
 {% trans "Zadaný počet kilometrů na jednu jízdu: " %}{{ user_attendance.get_distance|floatformat:2 }} Km
@@ -54,6 +54,5 @@ style="display:none"
 </tr>
 {% endfor %}
 </table>
-<button type="submit" class="submit submit_once btn btn-block btn-primary"><strong style="font-size:20px">{% trans "Vyplnit jízdy" %}</strong></button>
 </form>
 <div></div>

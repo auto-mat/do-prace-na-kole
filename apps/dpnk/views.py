@@ -40,6 +40,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.views.decorators.cache import cache_page, never_cache, cache_control
 from django.views.generic.edit import FormView, UpdateView, CreateView
+from django.views.generic.base import TemplateView
 from class_based_auth_views.views import LoginView
 # Registration imports
 import registration.signals
@@ -633,7 +634,7 @@ trip_active = trip_active_last_week
 @cache_control(max_age=0, no_cache=True, no_store=True)
 def rides(
         request, user_attendance=None, template='registration/rides.html',
-        success_url=""):
+        success_url="jizdy"):
     days = util.days(user_attendance.campaign)
     today = util.today()
 
@@ -679,7 +680,7 @@ def rides(
 
         messages.add_message(request, messages.SUCCESS, _(u"Jízdy úspěšně vyplněny"), fail_silently=False)
         if success_url is not None:
-            return redirect(wp_reverse(success_url))
+            return redirect(reverse(success_url))
 
     trips = {}
     for t in Trip.objects.filter(user_attendance=user_attendance).select_related('user_attendance__campaign'):
@@ -697,7 +698,7 @@ def rides(
             cd['default_trip_from'] = trips[d].trip_from
             cd['default_distance_to'] = "0" if trips[d].distance_to is None else trips[d].distance_to
             cd['default_distance_from'] = "0" if trips[d].distance_from is None else trips[d].distance_from
-            trip_count += int(trips[d].trip_to) + int(trips[d].trip_from)
+            trip_count += int(trips[d].trip_to or 0) + int(trips[d].trip_from or 0)
             if trips[d].distance_to:
                 distance += trips[d].distance_to_cutted()
             if trips[d].distance_from:
@@ -781,6 +782,10 @@ def profile(request, user_attendance=None, success_url='competition_profile'):
         'competition_entry_active': competition_entry_phase_is_active,
         'campaign_slug': user_attendance.campaign.slug,
         }, context_instance=RequestContext(request))
+
+
+class ProfileView(TemplateView):
+    template_name = 'registration/competition_profile.html'
 
 
 @login_required_simple

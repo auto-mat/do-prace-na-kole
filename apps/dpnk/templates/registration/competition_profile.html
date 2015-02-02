@@ -1,0 +1,20 @@
+{% extends "base_generic.html" %}
+
+{% block extrahead %}
+<script language='javascript' type='text/javascript' src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+<script language='javascript' type='text/javascript' src="http://malsup.github.com/jquery.form.js"></script> 
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<script>
+   $.get("/dpnk/jizdy/", function(data) {
+      $("#rides-form-container").append(data);
+      $("#rides-form-container").change(function(){
+         $("#rides-form").ajaxSubmit({replaceTarget: false, target: "#rides-form", success: function(){
+            window.scrollTo(0, 0);
+      }})});
+   });
+</script>
+<div id="rides-form-container"></div>
+{% endblock %}
