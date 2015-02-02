@@ -11,7 +11,10 @@
    $.get("/dpnk/jizdy/", function(data) {
       $("#rides-form-container").append(data);
       $("#rides-form-container").change(function(){
+         $("#rides-form :input").prop('readonly', true);
+         $("#rides-form").addClass("waiting-for-load");
          $("#rides-form").ajaxSubmit({replaceTarget: false, target: "#rides-form", success: function(){
+            $("#rides-form").removeClass("waiting-for-load");
             window.scrollTo(0, 0);
       }})});
    });

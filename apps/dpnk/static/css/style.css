@@ -251,3 +251,11 @@ ul#qtranslate-chooser li:first-child:after {
   #myCarousel1 { display: block !important; visibility: visible !important}
   .aktuality_popis {margin:0 10%;}
 }
+
+.waiting-for-load {
+   cursor: progress;
+}
+
+#rides-form .form-control[readonly]{
+   cursor: progress;
+}
