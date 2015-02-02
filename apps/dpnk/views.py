@@ -690,6 +690,8 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
             cd['day'] = d
             cd['trips_active'] = trip_active(d, today)
             if d in trips:
+                cd['working_ride_to'] = trips[d].is_working_ride_to
+                cd['working_ride_from'] = trips[d].is_working_ride_from
                 cd['default_trip_to'] = trips[d].trip_to
                 cd['default_trip_from'] = trips[d].trip_from
                 cd['default_distance_to'] = "0" if trips[d].distance_to is None else trips[d].distance_to
@@ -700,6 +702,8 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
                 if trips[d].trip_from and trips[d].distance_from:
                     distance += trips[d].distance_from_cutted()
             else:
+                cd['working_ride_to'] = False
+                cd['working_ride_from'] = False
                 cd['default_trip_to'] = False
                 cd['default_trip_from'] = False
                 cd['default_distance_to'] = "0"
@@ -886,7 +890,7 @@ class WorkingScheduleView(SuccessMessageMixin, RegistrationViewMixin, UpdateView
     model = UserAttendance
     success_message = _(u"Pracovní kalendář úspěšně upraven")
     prev_url = 'typ_platby'
-    next_url = 'profile'
+    next_url = 'profil'
     current_view = "working_schedule"
     title = _(u"Upravit pracovní kalendář")
 

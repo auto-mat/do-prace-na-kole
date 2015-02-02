@@ -8,6 +8,7 @@
 <button class="btn-info btn" type="button" onclick='$( ".toggle" ).toggle( "hidden" );'>{% trans "Zobrazit všechny jízdy" %}</button>
 {% trans "Zadaný počet kilometrů na jednu jízdu: " %}{{ user_attendance.get_distance|floatformat:2 }} Km
 {% if has_distance_competition %}{% trans " (Do políčka zadávejte ujetý počet kilometrů)" %}{% endif %}
+<a href="{% url 'working_schedule' %}">Změnit pracovní rozvrh</a>
 <table id="rides" class="table table-bordered table-hover table-condensed">
 <tr>
 <th scope="column">{% trans "Den" %}</th>
@@ -32,19 +33,27 @@ style="display:none"
 >
 <th scope="row" class="date">{{ day.day|naturalday:"D j. M Y" }}</th>
 <td>
+   {% if day.working_ride_to %}
    <input type="checkbox" name="trip_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_to %}checked="checked"{% endif %}/>
+   {% endif %}
 </td>
 {% if has_distance_competition %}
 <td>
+   {% if day.working_ride_to %}
    <input type="number" step="any" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_to|unlocalize }}"/>
+   {% endif %}
 </td>
 {% endif %}
 <td>
+   {% if day.working_ride_from %}
    <input type="checkbox" name="trip_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_from %}checked="checked"{% endif %}/>
+   {% endif %}
 </td>
 {% if has_distance_competition %}
 <td>
+   {% if day.working_ride_from %}
    <input type="number" step="any" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from|unlocalize }}"/>
+   {% endif %}
 </td>
 {% endif %}
 <td><div {% if day.percentage > 66 %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>
