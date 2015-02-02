@@ -49,7 +49,7 @@ urlpatterns = patterns(
         {'template': 'registration/team_members_results.html'},
         ),
     url(r'^jizdy/$',
-        views.rides,
+        views.RidesView.as_view(),
         name="jizdy",
         ),
     url(r'^profil_pristup/$',

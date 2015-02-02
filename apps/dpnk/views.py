@@ -626,19 +626,22 @@ def trip_active_last_week(day, today):
 trip_active = trip_active_last_week
 
 
-@login_required_simple
-@must_be_competitor
-@must_be_approved_for_team
-@user_attendance_has(lambda ua: not ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Vyplnit jízdy můžete až po vstupu do soutěže."), "</div>"))
-@never_cache
-@cache_control(max_age=0, no_cache=True, no_store=True)
-def rides(
-        request, user_attendance=None, template='registration/rides.html',
-        success_url="jizdy"):
-    days = util.days(user_attendance.campaign)
-    today = util.today()
+class RidesView(UserAttendanceViewMixin, TemplateView):
+    template_name='registration/rides.html'
+    success_url="jizdy"
 
-    if request.method == 'POST':
+    @method_decorator(login_required_simple)
+    @method_decorator(must_be_competitor)
+    #@method_decorator(must_be_approved_for_team)
+    #@method_decorator(user_attendance_has(lambda ua: not ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Vyplnit jízdy můžete až po vstupu do soutěže."), "</div>")))
+    @method_decorator(never_cache)
+    @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
+    def dispatch(self, request, *args, **kwargs):
+        return super(RidesView, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        days = util.days(self.user_attendance.campaign)
+        today = util.today()
         for day_m, date in enumerate(days):
             day = day_m + 1
             trip_to = request.POST.get('trip_to-' + str(day), 'off') == 'on'
@@ -647,7 +650,7 @@ def rides(
             if not trip_active(date, today):
                 continue
             trip, created = Trip.objects.get_or_create(
-                user_attendance=user_attendance,
+                user_attendance=self.user_attendance,
                 date=date,
                 defaults={
                     'trip_from': False,
@@ -657,66 +660,59 @@ def rides(
 
             trip.trip_to = trip_to
             trip.trip_from = trip_from
-            if trip.trip_to:
-                try:
-                    trip.distance_to = max(min(float(request.POST.get('distance_to-' + str(day), None)), 1000), 0)
-                except:
-                    pass
-            else:
-                trip.distance_to = None
-            if trip.trip_from:
-                try:
-                    trip.distance_from = max(min(float(request.POST.get('distance_from-' + str(day), None)), 1000), 0)
-                except:
-                    pass
-            else:
-                trip.distance_from = None
+            try:
+                trip.distance_to = max(min(float(request.POST.get('distance_to-' + str(day), None)), 1000), 0)
+                trip.distance_from = max(min(float(request.POST.get('distance_from-' + str(day), None)), 1000), 0)
+            except:
+                pass
             logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s, created: %s' % (
                 request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to, created))
             trip.dont_recalculate = True
             trip.save()
 
-        results.recalculate_result_competitor(user_attendance)
+        results.recalculate_result_competitor(self.user_attendance)
 
         messages.add_message(request, messages.SUCCESS, _(u"Jízdy úspěšně vyplněny"), fail_silently=False)
-        if success_url is not None:
-            return redirect(reverse(success_url))
+        return render_to_response(self.template_name, self.get_context_data(), context_instance=RequestContext(request))
 
-    trips = {}
-    for t in Trip.objects.filter(user_attendance=user_attendance).select_related('user_attendance__campaign'):
-        trips[t.date] = t
-    calendar = []
+    def get_context_data(self, *args, **kwargs):
+        days = util.days(self.user_attendance.campaign)
+        today = util.today()
+        trips = {}
+        for t in Trip.objects.filter(user_attendance=self.user_attendance).select_related('user_attendance__campaign'):
+            trips[t.date] = t
+        calendar = []
 
-    distance = 0
-    trip_count = 0
-    for i, d in enumerate(days):
-        cd = {}
-        cd['day'] = d
-        cd['trips_active'] = trip_active(d, today)
-        if d in trips:
-            cd['default_trip_to'] = trips[d].trip_to
-            cd['default_trip_from'] = trips[d].trip_from
-            cd['default_distance_to'] = "0" if trips[d].distance_to is None else trips[d].distance_to
-            cd['default_distance_from'] = "0" if trips[d].distance_from is None else trips[d].distance_from
-            trip_count += int(trips[d].trip_to or 0) + int(trips[d].trip_from or 0)
-            if trips[d].distance_to:
-                distance += trips[d].distance_to_cutted()
-            if trips[d].distance_from:
-                distance += trips[d].distance_from_cutted()
-        else:
-            cd['default_trip_to'] = False
-            cd['default_trip_from'] = False
-            cd['default_distance_to'] = "0"
-            cd['default_distance_from'] = "0"
-        cd['percentage'] = float(trip_count)/(2*(i+1))*100
-        cd['percentage_str'] = "%.0f" % (cd['percentage'])
-        cd['distance'] = distance
-        calendar.append(cd)
-    return render_to_response(template, {
-        'calendar': calendar,
-        'has_distance_competition': user_attendance.has_distance_competition(),
-        'user_attendance': user_attendance,
-        }, context_instance=RequestContext(request))
+        distance = 0
+        trip_count = 0
+        for i, d in enumerate(days):
+            cd = {}
+            cd['day'] = d
+            cd['trips_active'] = trip_active(d, today)
+            if d in trips:
+                cd['default_trip_to'] = trips[d].trip_to
+                cd['default_trip_from'] = trips[d].trip_from
+                cd['default_distance_to'] = "0" if trips[d].distance_to is None else trips[d].distance_to
+                cd['default_distance_from'] = "0" if trips[d].distance_from is None else trips[d].distance_from
+                trip_count += int(trips[d].trip_to or 0) + int(trips[d].trip_from or 0)
+                if trips[d].trip_to and trips[d].distance_to:
+                    distance += trips[d].distance_to_cutted()
+                if trips[d].trip_from and trips[d].distance_from:
+                    distance += trips[d].distance_from_cutted()
+            else:
+                cd['default_trip_to'] = False
+                cd['default_trip_from'] = False
+                cd['default_distance_to'] = "0"
+                cd['default_distance_from'] = "0"
+            cd['percentage'] = float(trip_count)/(2*(i+1))*100
+            cd['percentage_str'] = "%.0f" % (cd['percentage'])
+            cd['distance'] = distance
+            calendar.append(cd)
+        return {
+            'calendar': calendar,
+            'has_distance_competition': self.user_attendance.has_distance_competition(),
+            'user_attendance': self.user_attendance,
+        }
 
 
 @login_required_simple
