@@ -660,11 +660,8 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
 
             trip.trip_to = trip_to
             trip.trip_from = trip_from
-            try:
-                trip.distance_to = max(min(float(request.POST.get('distance_to-' + str(day), None)), 1000), 0)
-                trip.distance_from = max(min(float(request.POST.get('distance_from-' + str(day), None)), 1000), 0)
-            except:
-                pass
+            trip.distance_to = max(min(float(request.POST.get('distance_to-' + str(day), 0)), 1000), 0)
+            trip.distance_from = max(min(float(request.POST.get('distance_from-' + str(day), 0)), 1000), 0)
             logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s, created: %s' % (
                 request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to, created))
             trip.dont_recalculate = True
