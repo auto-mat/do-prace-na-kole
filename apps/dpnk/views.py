@@ -682,7 +682,9 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
 
         distance = 0
         trip_count = 0
+        working_rides_count = 0
         for i, d in enumerate(days):
+            working_rides_count += (1 if trips[d].is_working_ride_to else 0) + (1 if trips[d].is_working_ride_from else 0)
             cd = {}
             cd['day'] = d
             cd['trips_active'] = trip_active(d, today)
@@ -705,7 +707,10 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
                 cd['default_trip_from'] = False
                 cd['default_distance_to'] = "0"
                 cd['default_distance_from'] = "0"
-            cd['percentage'] = float(trip_count)/(2*(i+1))*100
+            if trip_count == 0:
+                cd['percentage'] = 0
+            else:
+                cd['percentage'] = float(trip_count)/working_rides_count*100
             cd['percentage_str'] = "%.0f" % (cd['percentage'])
             cd['distance'] = distance
             calendar.append(cd)
