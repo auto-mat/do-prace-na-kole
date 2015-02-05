@@ -117,7 +117,8 @@ class WorkingScheduleForm(PrevNextMixin, forms.ModelForm):
         ret_val = super(WorkingScheduleForm, self).save(*args, **kwargs)
         trips = self.cleaned_data['schedule']
         for trip in trips:
-            trip.save()
+            if trip.can_edit:
+                trip.save()
         return ret_val
 
     def __init__(self, *args, **kwargs):

@@ -763,6 +763,7 @@ class UserAttendance(models.Model):
                 trip.is_working_ride_to = working_day
                 trip.is_working_ride_from = working_day
                 trip.save()
+            trip.can_edit = d >= util.today()
             trips.append(trip)
         return trips
 
