@@ -9,13 +9,13 @@
 
 {% block form_container %}
 <div class="container">
-<ol class="steps">
-    <li class="{% if current_view == 'upravit_profil' %}current{% endif %} {% if not profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' %}">Osobní údaje</a></li>
-    <li class="{% if current_view == 'zmenit_tym' %}current{% endif %} {% if not team_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_tym' %}">Tým</a></li>
-    <li class="{% if current_view == 'upravit_trasu' %}current{% endif %} {% if not track_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_trasu' %}">Trasa</a></li>
-    <li class="{% if current_view == 'zmenit_triko' %}current{% endif %} {% if not tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}">Triko</a></li>
-    <li class="{% if current_view == 'typ_platby' %}current{% endif %} {% if not payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' %}">Startovné</a></li>
-    <li class="{% if current_view == 'working_schedule' %}current{% endif %} {% if not profile_complete %}un{% endif %}fulfilled"><a href="{% url 'working_schedule' %}">Pracovní rozvrh</a></li>
+<ol class="progress-steps nav nav-pills">
+    <li class="{% if current_view == 'upravit_profil' %}active{% endif %} {% if not profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' %}">Osobní údaje</a></li>
+    <li class="{% if current_view == 'zmenit_tym' %}active{% endif %} {% if not team_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_tym' %}">Tým</a></li>
+    <li class="{% if current_view == 'upravit_trasu' %}active{% endif %} {% if not track_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_trasu' %}">Trasa</a></li>
+    <li class="{% if current_view == 'zmenit_triko' %}active{% endif %} {% if not tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}">Triko</a></li>
+    <li class="{% if current_view == 'typ_platby' %}active{% endif %} {% if not payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' %}">Startovné</a></li>
+    <li class="{% if current_view == 'working_schedule' %}active{% endif %} {% if not profile_complete %}un{% endif %}fulfilled"><a href="{% url 'working_schedule' %}">Pracovní rozvrh</a></li>
 </ol>
 
 {% block form %}

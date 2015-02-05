@@ -1,6 +1,6 @@
 body { margin: 10px; }
 
-.steps li {
+.progress-steps li {
     padding: 10px 12px 10px 25px;
     margin-right: 5px;
     background: #efefef;
@@ -11,8 +11,8 @@ body { margin: 10px; }
     height: 40px;
 }
 
-.steps li:hover {cursor: pointer; cursor: hand;}
-.steps li:before {
+.progress-steps li:hover {cursor: pointer; cursor: hand;}
+.progress-steps li:before {
     width: 0;
     height: 0;
     border-top: 20px inset transparent;
@@ -23,7 +23,7 @@ body { margin: 10px; }
     top: 0;
     left: 0;
 }
-.steps li:after {
+.progress-steps li:after {
     width: 0;
     height: 0;
     border-top: 20px inset transparent;
@@ -36,41 +36,41 @@ body { margin: 10px; }
     z-index: 2;
 }
 
-.steps li:last-child:after,
-.steps li:first-child:before {
+.progress-steps li:last-child:after,
+.progress-steps li:first-child:before {
     border: none;
 }
-.steps li:first-child {
+.progress-steps li:first-child {
     padding-left:15px;   
     -webkit-border-radius: 4px 0 0 4px;
        -moz-border-radius: 4px 0 0 4px;
             border-radius: 4px 0 0 4px;
 }
-.steps li:last-child {
+.progress-steps li:last-child {
     -webkit-border-radius: 0 4px 4px 0;
        -moz-border-radius: 0 4px 4px 0;
             border-radius: 0 4px 4px 0;
 }
 
-.steps .current {
+.progress-steps .active {
     background: #BFE5FF;
 }
-.steps .current a {
+.progress-steps .active a {
     color: #fff;
 }
-.steps .current:after {
+.progress-steps .active:after {
     border-left-color: #BFE5FF;
 }
 
-.steps .fulfilled a {
+.progress-steps .fulfilled a {
    color: #5cb85c;
 }
 
-.steps .unfulfilled a {
+.progress-steps .unfulfilled a {
    color: #f0ad4e;
 }
 
-.steps li a {
+.progress-steps li a {
     counter-increment: item;
     font-family: FontAwesome;
     font-weight: normal;
@@ -80,19 +80,19 @@ body { margin: 10px; }
     padding: 12px 0px 12px 0px;
 }
 
-.steps li a:before {
+.progress-steps li a:before {
     content: counter(item, decimal) '. ';
 }
 
-.steps li.unfulfilled a:before {
+.progress-steps li.unfulfilled a:before {
     content: '\f096\00a0' counter(item, decimal) '. ';
 }
 
-.steps li.fulfilled a:before {
+.progress-steps li.fulfilled a:before {
     content:  '\f046\00a0' counter(item, decimal) '. ';
 }
    
-.steps {
+.progress-steps {
     counter-reset: item;
     list-style-type: decimal;
 }
