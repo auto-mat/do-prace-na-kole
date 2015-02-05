@@ -684,7 +684,8 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         trip_count = 0
         working_rides_count = 0
         for i, d in enumerate(days):
-            working_rides_count += (1 if trips[d].is_working_ride_to else 0) + (1 if trips[d].is_working_ride_from else 0)
+            if d in trips:
+                working_rides_count += (1 if trips[d].is_working_ride_to else 0) + (1 if trips[d].is_working_ride_from else 0)
             cd = {}
             cd['day'] = d
             cd['trips_active'] = trip_active(d, today)
