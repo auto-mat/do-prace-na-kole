@@ -2,6 +2,7 @@
 from smart_selects.form_fields import ChainedModelChoiceField
 from django.contrib.auth.models import User
 from django import forms
+import settings
 # Registration imports
 import registration.forms
 import models
@@ -423,11 +424,15 @@ class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
         super(TrackUpdateForm, self).__init__(*args, **kwargs)
 
         location = instance.team.subsidiary.city.location
+        default_zoom = 14
+        if not location:
+           location = settings.DEFAULT_MAPWIDGET_LOCATION
+           default_zoom = settings.DEFAULT_MAPWIDGET_ZOOM
         self.fields['track'].widget = OSMWidget(attrs={
             'geom_type': 'LINESTRING',
             'default_lat_custom': location.y,
             'default_lon_custom': location.x,
-            'default_zoom': 14,
+            'default_zoom': default_zoom,
         })
         self.fields['track'].widget.template_name = "gis/openlayers-osm-custom.html"
 
