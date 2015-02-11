@@ -1278,44 +1278,47 @@ def team_admin_team(
         }, context_instance=RequestContext(request))
 
 
-@must_be_competitor
-@login_required_simple
-def team_admin_members(
-        request,
-        backend='registration.backends.simple.SimpleBackend',
-        template_name='registration/team_admin_members.html',
-        user_attendance=None,
-        extra_context=None):
-    team = user_attendance.team
-    unapproved_users = []
 
-    if 'button_action' in request.POST and request.POST['button_action']:
-        b_action = request.POST['button_action'].split('-')
-        user_attendance = UserAttendance.objects.get(id=b_action[1])
-        userprofile = user_attendance.userprofile
-        if user_attendance.approved_for_team not in ('undecided', 'denied') or user_attendance.team != team or not userprofile.user.is_active:
-            logger.error(u'Approving user with wrong parameters. User: %s (%s), approval: %s, team: %s, active: %s' % (userprofile.user, userprofile.user.username, user_attendance.approved_for_team, user_attendance.team, userprofile.user.is_active))
-            messages.add_message(request, messages.ERROR, _(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte kontakt@dopracenakole.net."), fail_silently=True)
-        else:
-            approve_for_team(request, user_attendance, request.POST.get('reason-' + str(user_attendance.id), ''), b_action[0] == 'approve', b_action[0] == 'deny')
+class TeamMembers(UserAttendanceViewMixin, TemplateView):
+    template_name='registration/team_admin_members.html'
 
-    for user_attendance in UserAttendance.objects.filter(team=team, userprofile__user__is_active=True):
-        userprofile = user_attendance.userprofile
-        unapproved_users.append([
-            ('state', None, user_attendance.approved_for_team),
-            ('id', None, str(user_attendance.id)),
-            ('payment', None, user_attendance.payment()),
-            ('name', _(u"Jméno"), unicode(userprofile)),
-            ('username', _(u"Uživatel"), userprofile.user),
-            ('email', _(u"Email"), userprofile.user.email),
-            ('payment_description', _(u"Platba"), user_attendance.payment()['status_description']),
-            ('telephone', _(u"Telefon"), userprofile.telephone),
-            ('state_name', _(u"Stav"), unicode(user_attendance.get_approved_for_team_display())),
-            ])
+    @method_decorator(must_be_competitor)
+    @method_decorator(login_required_simple)
+    def dispatch(self, request, *args, **kwargs):
+        return super(TeamMembers, self).dispatch(request, *args, **kwargs)
 
-    return render_to_response(template_name, {
-        'unapproved_users': unapproved_users,
-        }, context_instance=RequestContext(request))
+    def post(self, request, *args, **kwargs):
+        if 'approve' in request.POST:
+            action, approve_id = request.POST['approve'].split('-')
+            self.user_attendance = UserAttendance.objects.get(id=approve_id)
+            userprofile = self.user_attendance.userprofile
+            if self.user_attendance.approved_for_team not in ('undecided', 'denied') or not userprofile.user.is_active:
+                logger.error(u'Approving user with wrong parameters. User: %s (%s), approval: %s, team: %s, active: %s' % (userprofile.user, userprofile.user.username, self.user_attendance.approved_for_team, self.user_attendance.team, userprofile.user.is_active))
+                messages.add_message(request, messages.ERROR, _(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte kontakt@dopracenakole.net."), fail_silently=True)
+            else:
+                approve_for_team(request, self.user_attendance, request.POST.get('reason-' + str(self.user_attendance.id), ''), action == 'approve', action == 'deny')
+        return render_to_response(self.template_name, self.get_context_data(), context_instance=RequestContext(request))
+
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(TeamMembers, self).get_context_data(*args, **kwargs)
+        team = self.user_attendance.team
+
+        unapproved_users = []
+        for self.user_attendance in UserAttendance.objects.filter(team=team, userprofile__user__is_active=True):
+            userprofile = self.user_attendance.userprofile
+            unapproved_users.append([
+                ('state', None, self.user_attendance.approved_for_team),
+                ('id', None, str(self.user_attendance.id)),
+                ('payment', None, self.user_attendance.payment()),
+                ('name', _(u"Jméno"), unicode(userprofile)),
+                ('email', _(u"Email"), userprofile.user.email),
+                ('payment_description', _(u"Platba"), self.user_attendance.payment()['status_description']),
+                ('telephone', _(u"Telefon"), userprofile.telephone),
+                ('state_name', _(u"Stav"), unicode(self.user_attendance.get_approved_for_team_display())),
+                ])
+        context_data['unapproved_users'] = unapproved_users
+        return context_data
 
 
 def facebook_app(request):

@@ -9,6 +9,7 @@
 <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="{% static "js/bootstrap-select/bootstrap-select.js"%}"></script>
 <link rel="stylesheet" type="text/css" href="{% static "js/bootstrap-select/bootstrap-select.css"%}">
+<script src="http://malsup.github.com/jquery.form.js"></script>
 {{ block.super }}
 {% endblock %}
 
@@ -63,7 +64,20 @@
       $('#id_company').attr("data-live-search", true);
       $('#id_company').selectpicker();
    });
+
+   //Team members approval form
+   $.get("/dalsi_clenove/", function(data) {
+      $("#members-form-container").append(data);
+      $("#members-form").ajaxForm({replaceTarget: false, target: "#members-form"});
+   });
 </script>
 
 {{ block.super }}
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+<br/>
+<h1>Členové vašeho týmu</h1>
+<div id="members-form-container"></div>
 {% endblock %}
