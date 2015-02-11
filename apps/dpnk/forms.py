@@ -201,11 +201,6 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         kwargs['initial'] = initial
 
         super(ChangeTeamForm, self).__init__(*args, **kwargs)
-        self.fields.keyOrder = [
-            'company',
-            'subsidiary',
-            'team',
-            ]
 
         if instance.payment_status() == 'done' and instance.team:
             self.fields["subsidiary"].widget = HiddenInput()
@@ -214,7 +209,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
     class Meta:
         model = UserAttendance
-        fields = ('team',)
+        fields = ('company', 'subsidiary', 'team')
 
 
 class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
@@ -251,11 +246,6 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
             kwargs['initial'] = initial
 
         super(RegistrationFormDPNK, self).__init__(*args, **kwargs)
-        self.fields.keyOrder = [
-            'email',
-            'password1',
-            'password2'
-            ]
 
         self.fields['email'].help_text = _(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
 
@@ -271,6 +261,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
 
     class Meta:
         model = UserProfile
+        fields = ('email', 'password1', 'password2')
 
 
 class InviteForm(forms.Form):
