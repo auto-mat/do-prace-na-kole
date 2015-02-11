@@ -101,7 +101,7 @@ class RegisterTeamForm(forms.ModelForm):
         label=_(u"Kampaň"),
         queryset=models.Campaign.objects.all(),
         widget=HiddenInput(),
-        )
+    )
 
     class Meta:
         model = Team
@@ -112,7 +112,7 @@ class WorkingScheduleForm(PrevNextMixin, forms.ModelForm):
     schedule = WorkingScheduleField(
         label=_(u"Pracovní rozvrh"),
         required=False,
-        )
+    )
 
     def save(self, *args, **kwargs):
         ret_val = super(WorkingScheduleForm, self).save(*args, **kwargs)
@@ -217,7 +217,7 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
         required=True,
         label=_(u"E-mail"),
         help_text=_(u"Zadejte váš email. Pokud jste se účastnili v minulém roce, zadejte stejný email jako v minulém roce."),
-        )
+    )
 
 
 class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
@@ -292,7 +292,7 @@ class TeamAdminForm(forms.ModelForm):
         label=_(u"Kampaň"),
         queryset=models.Campaign.objects.all(),
         widget=HiddenInput(),
-        )
+    )
 
     class Meta:
         model = Team
@@ -306,26 +306,26 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         ('member_wannabe', _(u"Chci se stát členem Klubu přátel Auto*Matu.")),
         ('company', _(u"Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.")),
         ('free', _(u"Je mi poskytováno startovné zdarma."))
-        ]
+    ]
 
     payment_type = forms.ChoiceField(
         label=_(u"Typ platby"),
         choices=CHOICES,
         widget=forms.RadioSelect(),
-        )
+    )
 
 
 class ConfirmDeliveryForm(forms.ModelForm):
     CHOICES = [
         (models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED, _(u"Startovní balíček mi již byl doručen.")),
         (models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED, _(u"Startovní balíček mi ještě nebyl doručen.")),
-        ]
+    ]
 
     status = forms.ChoiceField(
         label=_(u"Doručení balíčku"),
         choices=CHOICES,
         widget=forms.RadioSelect(),
-        )
+    )
 
     class Meta:
         model = models.PackageTransaction
@@ -335,7 +335,7 @@ class ConfirmDeliveryForm(forms.ModelForm):
 class ConfirmTeamInvitationForm(forms.Form):
     question = forms.BooleanField(
         label=_(u"Chci být zařazen do nového týmu"),
-        )
+    )
 
 
 class BikeRepairForm(SubmitMixin, forms.ModelForm):
@@ -370,7 +370,7 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
             created_formated_date = formats.date_format(transaction.created, "SHORT_DATETIME_FORMAT")
             raise forms.ValidationError(_(u"Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: %(note)s).") % {
                 'time': created_formated_date, 'bike_shop': transaction.author.get_full_name(), 'note': transaction.description
-                })
+            })
         return super(BikeRepairForm, self).clean()
 
     def save(self, *args, **kwargs):
@@ -417,8 +417,8 @@ class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
         location = instance.team.subsidiary.city.location
         default_zoom = 14
         if not location:
-           location = settings.DEFAULT_MAPWIDGET_LOCATION
-           default_zoom = settings.DEFAULT_MAPWIDGET_ZOOM
+            location = settings.DEFAULT_MAPWIDGET_LOCATION
+            default_zoom = settings.DEFAULT_MAPWIDGET_ZOOM
         self.fields['track'].widget = OSMWidget(attrs={
             'geom_type': 'LINESTRING',
             'default_lat_custom': location.y,
