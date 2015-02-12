@@ -152,6 +152,11 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     title = _(u'Změnit tým')
     current_view = "zmenit_tym"
 
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(ChangeTeamView, self).get_context_data(*args, **kwargs)
+        context_data['campaign_slug'] = self.user_attendance.campaign.slug
+        return context_data
+
     @method_decorator(login_required_simple)
     @method_decorator(must_be_competitor)
     @method_decorator(user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže nemůžete měnit tým."), "</div>")))
@@ -267,7 +272,6 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
 
         context_data = self.get_context_data()
         context_data['form'] = form
-        context_data['campaign_slug'] = self.user_attendance.campaign.slug
         return render_to_response(self.template_name, context_data, context_instance=RequestContext(request))
 
     def get(self, request, *args, **kwargs):
@@ -282,7 +286,6 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
 
         context_data = self.get_context_data()
         context_data['form'] = form
-        context_data['campaign_slug'] = self.user_attendance.campaign.slug
         return render_to_response(self.template_name, context_data, context_instance=RequestContext(request))
 
 
