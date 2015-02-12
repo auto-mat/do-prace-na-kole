@@ -717,7 +717,6 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
             calendar.append(cd)
         return {
             'calendar': calendar,
-            'has_distance_competition': self.user_attendance.has_distance_competition(),
             'user_attendance': self.user_attendance,
         }
 
