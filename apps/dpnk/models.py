@@ -537,7 +537,7 @@ class UserAttendance(models.Model):
         unique=False,
         null=False,
         blank=False)
-    distance = models.PositiveIntegerField(
+    distance = models.FloatField(
         verbose_name=_(u"Vzdálenost"),
         help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
         default=None,
