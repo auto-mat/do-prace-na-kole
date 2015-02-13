@@ -7,19 +7,17 @@
 <input type="hidden" id="day" name="day"/>
 <button class="btn-info btn" type="button" onclick='$( ".toggle" ).toggle( "hidden" );'>{% trans "Zobrazit všechny jízdy" %}</button>
 {% trans "Zadaný počet kilometrů na jednu jízdu: " %}{{ user_attendance.get_distance|floatformat:2 }} Km
-{% if has_distance_competition %}{% trans " (Do políčka zadávejte ujetý počet kilometrů)" %}{% endif %}
+{% trans " (Do políčka zadávejte ujetý počet kilometrů)" %}
 <a href="{% url 'working_schedule' %}">Změnit pracovní rozvrh</a>
 {% include "messages_include.html" %}
 {{ message }}
 <table id="rides" class="table table-bordered table-hover table-condensed">
 <tr>
 <th scope="column">{% trans "Den" %}</th>
-<th scope="column" {% if has_distance_competition %}colspan="2"{% endif %}>{% trans "Do práce" %}</th>
-<th scope="column" {% if has_distance_competition %}colspan="2"{% endif %}>{% trans "Z práce" %}</th>
+<th scope="column" colspan="2">{% trans "Do práce" %}</th>
+<th scope="column" colspan="2">{% trans "Z práce" %}</th>
 <th scope="column" class="fixed_width_column">{% trans "Pra&shy;vi&shy;del&shy;nost" %}</th>
-{% if has_distance_competition %}
 <th scope="column" class="fixed_width_column">{% trans "Vzdá&shy;le&shy;nost cel&shy;kem" %}</th>
-{% endif %}
 </tr>
 {% for day in calendar %}
 <tr class="
@@ -39,29 +37,23 @@ style="display:none"
    <input type="checkbox" name="trip_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_to %}checked="checked"{% endif %}/>
    {% endif %}
 </td>
-{% if has_distance_competition %}
 <td>
    {% if day.working_ride_to %}
    <input type="number" step="any" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_to|unlocalize }}"/>
    {% endif %}
 </td>
-{% endif %}
 <td>
    {% if day.working_ride_from %}
    <input type="checkbox" name="trip_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_from %}checked="checked"{% endif %}/>
    {% endif %}
 </td>
-{% if has_distance_competition %}
 <td>
    {% if day.working_ride_from %}
    <input type="number" step="any" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from|unlocalize }}"/>
    {% endif %}
 </td>
-{% endif %}
 <td><div {% if day.percentage > 66 %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>
-{% if has_distance_competition %}
 <td>{{ day.distance }}&nbsp;km</td>
-{% endif %}
 </tr>
 {% endfor %}
 </table>

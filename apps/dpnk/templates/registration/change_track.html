@@ -1,9 +1,33 @@
 {% extends "base_generic_registration_form.html" %}
 
 {% block extrahead %}
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script type="text/javascript" src="http://openlayers.org/api/2.11/OpenLayers.js"></script>
 <script type="text/javascript" src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
 <script type="text/javascript" src="/static/gis/js/OLMapWidget.js"></script>
 <script type="text/javascript" src="http://zelenamapa-dev.plzne.cz/static/js/mapa-utils.js"></script>
 {{ block.super }}
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+<script>
+$(function(){
+getCustomLength = function(evt, onlySum) {
+    distance = evt.feature.geometry.getGeodesicLength(new OpenLayers.Projection("EPSG:900913"));
+    distance = distance / 1000.0;
+    distance = distance.toFixed(3);
+    if(distance != 0){
+        $('#id_distance').val(distance);
+    }
+}
+
+layer = geodjango_track.layers['vector'];
+layer.events.on({
+    'sketchmodified': getCustomLength,
+    'featuremodified': getCustomLength,
+});
+});
+</script>
+<span id="foo"></span>
 {% endblock %}

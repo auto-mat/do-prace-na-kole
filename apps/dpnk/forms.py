@@ -202,11 +202,6 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
         super(ChangeTeamForm, self).__init__(*args, **kwargs)
 
-        if instance.payment_status() == 'done' and instance.team:
-            self.fields["subsidiary"].widget = HiddenInput()
-            self.fields["company"].widget = HiddenInput()
-            self.fields["team"].queryset = Team.objects.filter(subsidiary__company=instance.team.subsidiary.company)
-
     class Meta:
         model = UserAttendance
         fields = ('company', 'subsidiary', 'team')
