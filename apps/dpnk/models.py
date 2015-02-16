@@ -1100,6 +1100,8 @@ class Invoice(models.Model):
         return "%s" % self.sequence_number
 
     def paid(self):
+        if not self.paid_date:
+            return False
         return self.paid_date <= util.today()
 
     @transaction.atomic
