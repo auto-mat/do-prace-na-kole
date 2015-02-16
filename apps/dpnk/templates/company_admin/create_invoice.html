@@ -1,7 +1,9 @@
+{% extends "base_generic_form.html" %}
 {% load crispy_forms_tags %}
 {% load i18n %}
 {% load dpnk_tags %}
 
+{% block content %}
 {% include "messages_include.html" %}
 
 {% blocktrans count competitors_count=competitors_count %}
@@ -25,3 +27,4 @@ Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících: 
 <a class="btn btn-block btn-primary" href="{% wp_url 'edit_company' %}">{% trans "Změnit údaje" %}</a>
 
 {% crispy form %}
+{% endblock %}

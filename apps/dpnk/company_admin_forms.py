@@ -22,10 +22,11 @@ from forms import AdressForm
 from models import Company, CompanyAdmin, Competition, UserAttendance, Campaign
 from django.utils.translation import ugettext_lazy as _
 from util import slugify
+from forms import SubmitMixin
 import registration.forms
 
 
-class SelectUsersPayForm(forms.Form):
+class SelectUsersPayForm(SubmitMixin, forms.Form):
     paing_for = forms.ModelMultipleChoiceField(
         [],
         label=_(u"Soutěžící, za které bude zaplaceno"),
@@ -159,7 +160,7 @@ class CompanyCompetitionForm(forms.ModelForm):
         return competition
 
 
-class CreateInvoiceForm(forms.Form):
+class CreateInvoiceForm(SubmitMixin, forms.Form):
     create_invoice = forms.BooleanField(
             label=_(u"Údaje jsou správné, chci vytvořit fakturu"),
             )

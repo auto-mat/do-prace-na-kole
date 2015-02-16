@@ -59,7 +59,7 @@ def company_structure(
 
 
 class SelectUsersPayView(FormView):
-    template_name = 'generic_form_template.html'
+    template_name = 'base_generic_form.html'
     form_class = SelectUsersPayForm
     success_url = 'company_admin'
 
