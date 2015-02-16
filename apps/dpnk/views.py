@@ -245,7 +245,7 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
                 form_team.save()
 
                 self.user_attendance.team = team
-                self.success_url = "pozvanky"
+                self.next_url = "pozvanky"
                 request.session['invite_success_url'] = 'upravit_trasu'
 
                 team_created_mail(self.user_attendance)
@@ -260,7 +260,7 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
                 approval_request_mail(self.user_attendance)
 
             messages.add_message(request, messages.SUCCESS, _(u"Údaje o týmu úspěšně nastaveny."), fail_silently=True)
-            return redirect(reverse(self.success_url))
+            return redirect(reverse(self.next_url))
         form.fields['company'].widget.underlying_form = form_company
         form.fields['company'].widget.create = create_company
 
