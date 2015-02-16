@@ -40,7 +40,7 @@ class SelectUsersPayForm(forms.Form):
 
         ret_val = super(SelectUsersPayForm, self).__init__(*args, **kwargs)
         self.fields['paing_for'].queryset = queryset
-        choices = [(user_attendance.pk, user_attendance)
+        choices = [(user_attendance.pk, "%s (%s)" % (user_attendance, user_attendance.payment()['payment'].amount))
                    for user_attendance in queryset.all()
                    if user_attendance.payment_type() == 'fc'
                    and user_attendance.payment_status() != 'done']

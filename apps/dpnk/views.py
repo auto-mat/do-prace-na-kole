@@ -411,10 +411,10 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
 
     def form_valid(self, form):
         payment_choices = {
-            'member': {'type': 'am', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno")},
-            'member_wannabe': {'type': 'amw', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno")},
-            'free': {'type': 'fe', 'message': _(u"Váš nárok na startovné zdarma bude muset být ještě ověřen")},
-            'company': {'type': 'fc', 'message': _(u"Platbu ještě musí schválit váš firemní koordinátor")},
+            'member': {'type': 'am', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
+            'member_wannabe': {'type': 'amw', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
+            'free': {'type': 'fe', 'message': _(u"Váš nárok na startovné zdarma bude muset být ještě ověřen"), 'amount': 0},
+            'company': {'type': 'fc', 'message': _(u"Platbu ještě musí schválit váš firemní koordinátor"), 'amount': self.user_attendance.company_admission_fee()},
             }
         payment_type = form.cleaned_data['payment_type']
         payment_choice = payment_choices[payment_type]
@@ -422,7 +422,7 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
         if payment_type == 'pay':
             return redirect(reverse('platba'))
         elif payment_choice:
-            Payment(user_attendance=self.user_attendance, amount=0, pay_type=payment_choice['type'], status=Payment.Status.NEW).save()
+            Payment(user_attendance=self.user_attendance, amount=payment_choice['amount'], pay_type=payment_choice['type'], status=Payment.Status.NEW).save()
             messages.add_message(self.request, messages.WARNING, payment_choice['message'], fail_silently=True)
             logger.info('Inserting %s payment for %s' % (payment_type, self.user_attendance))
 

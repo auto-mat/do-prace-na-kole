@@ -152,16 +152,6 @@ class CityInCampaign(models.Model):
         verbose_name_plural = _(u"Města v kampani")
         unique_together = (("city", "campaign"),)
         ordering = ('campaign', 'city__name',)
-
-    #TODO: make this field float or in cents
-    admission_fee = models.PositiveIntegerField(
-        verbose_name=_(u"Startovné"),
-        null=False,
-        default=180)
-    admission_fee_company = models.FloatField(
-        verbose_name=_(u"Startovné pro firmy"),
-        null=False,
-        default=179.34)
     city = models.ForeignKey(
         City,
         null=False,
@@ -396,6 +386,26 @@ class Campaign(models.Model):
         blank=False,
         null=False,
         )
+    admission_fee = models.FloatField(
+        verbose_name=_(u"Včasné startovné"),
+        null=False,
+        default=0)
+    admission_fee_company = models.FloatField(
+        verbose_name=_(u"Včasné startovné pro firmy"),
+        null=False,
+        default=0)
+    late_admission_fee = models.FloatField(
+        verbose_name=_(u"Pozdní startovné"),
+        null=False,
+        default=0)
+    late_admission_fee_company = models.FloatField(
+        verbose_name=_(u"Pozdní startovné pro firmy"),
+        null=False,
+        default=0)
+    benefitial_admission_fee = models.FloatField(
+        verbose_name=_(u"Benefiční startovné"),
+        null=False,
+        default=0)
 
     def __unicode__(self):
         return self.name
@@ -424,6 +434,7 @@ class Phase(models.Model):
         unique_together = (("type", "campaign"),)
 
     TYPE = [('registration', _(u"registrační")),
+            ('late_admission', _(u"pozdní startovné")),
             ('compet_entry', _(u"vstup do soutěže")),
             ('competition', _(u"soutěžní")),
             ('results', _(u"výsledková")),
@@ -588,10 +599,16 @@ class UserAttendance(models.Model):
         return self.userprofile.user.get_full_name()
 
     def admission_fee(self):
-        try:
-            return self.team.subsidiary.city.cityincampaign_set.get(campaign=self.campaign).admission_fee
-        except CityInCampaign.DoesNotExist:
-            return None
+        if self.campaign.phase("late_admission").is_actual():
+            return self.campaign.late_admission_fee
+        else:
+            return self.campaign.admission_fee
+
+    def company_admission_fee(self):
+        if self.campaign.phase("late_admission").is_actual():
+            return self.campaign.late_admission_fee_company
+        else:
+            return self.campaign.admission_fee_company
 
     def payment(self):
         if self.team and self.team.subsidiary and self.admission_fee() == 0:
