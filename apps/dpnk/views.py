@@ -392,14 +392,13 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     @method_decorator(must_be_competitor)
     @method_decorator(must_have_team)
     def dispatch(self, request, *args, **kwargs):
-        return super(PaymentTypeView, self).dispatch(request, *args, **kwargs)
+        dispatch = super(PaymentTypeView, self).dispatch(request, *args, **kwargs)
+        if self.user_attendance.payment_status() == 'no_admission':
+            return redirect(self.next_url)
+        return dispatch
 
     def get_context_data(self, **kwargs):
         context = super(PaymentTypeView, self).get_context_data(**kwargs)
-
-        if self.user_attendance.payment_status() == 'no_admission':
-            return redirect(self.next_url)
-
         profile = self.user_attendance.userprofile
         context['user_attendance'] = self.user_attendance
         context['firstname'] = profile.user.first_name  # firstname
