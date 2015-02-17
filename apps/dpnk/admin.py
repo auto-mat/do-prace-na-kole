@@ -37,6 +37,7 @@ from django.contrib.gis.admin import OSMGeoAdmin
 import datetime
 import results
 # Models
+from filters import CampaignFilter
 from dpnk import models, mailing
 from django import forms
 from related_admin import RelatedFieldAdmin
@@ -174,7 +175,7 @@ class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedF
     list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'public_answers', 'date_from', 'date_to', 'entry_after_beginning_days', 'city', 'sex', 'company__name', 'competition_results_link', 'questionnaire_results_link', 'questionnaire_link', 'draw_link', 'get_competitors_count', 'url', 'id')
     filter_horizontal = ('team_competitors', 'company_competitors', 'user_attendance_competitors',)
     search_fields = ('name', 'company__name', 'slug')
-    list_filter = ('campaign', 'city', 'without_admission', 'is_public', 'public_answers', 'competitor_type', 'type', 'sex')
+    list_filter = (CampaignFilter, 'city', 'without_admission', 'is_public', 'public_answers', 'competitor_type', 'type', 'sex')
     save_as = True
     actions = [recalculate_competitions_results]
     inlines = [ QuestionInline, ]
@@ -531,7 +532,7 @@ class UserAttendanceResource(resources.ModelResource):
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin, OSMGeoAdmin):
     list_display = ('name', 'id', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_rough_length', 'get_length')
-    list_filter = ('campaign', 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, 'team__member_count', PackageConfirmationFilter, 'transactions__packagetransaction__delivery_batch', 'userprofile__sex')
+    list_filter = (CampaignFilter, 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, 'team__member_count', PackageConfirmationFilter, 'transactions__packagetransaction__delivery_batch', 'userprofile__sex')
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
     readonly_fields = ('user_link', 'userprofile__user__email', )
@@ -559,7 +560,7 @@ recalculate_team_member_count.short_description = "Přepočítat počet členů 
 class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedFieldAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'member_count', 'campaign', 'get_length', 'get_frequency', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name']
-    list_filter = ['campaign', 'subsidiary__city', 'member_count']
+    list_filter = [CampaignFilter, 'subsidiary__city', 'member_count']
     list_max_show_all = 10000
     raw_id_fields = ['subsidiary', ]
     actions = ( recalculate_team_member_count, )
@@ -745,7 +746,7 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
     list_display = ('campaign', 'created', 'package_transaction__count', 'customer_sheets__url', 'tnt_order__url')
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction__count', 't_shirt_sizes')
     #inlines = [PackageTransactionInline, ]
-    list_filter = ('campaign',)
+    list_filter = (CampaignFilter,)
 
     def package_transaction__count(self, obj):
         if not obj.pk:
@@ -812,7 +813,7 @@ update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
 
 class CompanyAdminAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ['user', 'user__email', 'user__userprofile', 'user__userprofile__telephone', 'company_admin_approved', 'administrated_company__name', 'can_confirm_payments', 'note', 'campaign']
-    list_filter = ['campaign', 'company_admin_approved', HasUserAttendanceFilter]
+    list_filter = [CampaignFilter, 'company_admin_approved', HasUserAttendanceFilter]
     search_fields = ['administrated_company__name', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
     raw_id_fields = ['user', ]
     list_max_show_all = 100000
@@ -856,7 +857,7 @@ class InvoiceForm(forms.ModelForm):
 class InvoiceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ['company', 'created', 'exposure_date', 'paid_date', 'invoice_count', 'invoice_pdf_url', 'campaign', 'sequence_number', 'order_number', 'company__ico', 'company__dic', 'company_address']
     readonly_fields = ['created', 'author', 'updated_by', 'invoice_count']
-    list_filter = ['campaign', InvoicePaidFilter]
+    list_filter = [CampaignFilter, InvoicePaidFilter]
     search_fields = ['company__name', ]
     inlines = [ PaymentInline ]
     actions = [mark_invoices_paid]
