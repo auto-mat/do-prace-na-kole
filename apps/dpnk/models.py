@@ -599,13 +599,13 @@ class UserAttendance(models.Model):
         return self.userprofile.user.get_full_name()
 
     def admission_fee(self):
-        if self.campaign.phase("late_admission").is_actual():
+        if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
             return self.campaign.late_admission_fee
         else:
             return self.campaign.admission_fee
 
     def company_admission_fee(self):
-        if self.campaign.phase("late_admission").is_actual():
+        if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
             return self.campaign.late_admission_fee_company
         else:
             return self.campaign.admission_fee_company
