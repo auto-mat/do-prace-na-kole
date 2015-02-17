@@ -421,7 +421,7 @@ class Campaign(models.Model):
     def phase(self, phase_type):
         try:
             return self.phase_set.get(type=phase_type)
-        except models.Phase.DoesNotExist:
+        except Phase.DoesNotExist:
             return None
 
 
