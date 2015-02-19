@@ -208,8 +208,8 @@ class Subsidiary(models.Model):
     """Pobočka"""
 
     class Meta:
-        verbose_name = _(u"Pobočka")
-        verbose_name_plural = _(u"Pobočky")
+        verbose_name = _(u"Pobočka firmy")
+        verbose_name_plural = _(u"Pobočky firem")
 
     address = Address()
     company = models.ForeignKey(
@@ -527,8 +527,8 @@ class UserAttendance(models.Model):
     """Účast uživatele v kampani"""
 
     class Meta:
-        verbose_name = _(u"Účast v kampani")
-        verbose_name_plural = _(u"Účasti v kampani")
+        verbose_name = _(u"Účastník kampaně")
+        verbose_name_plural = _(u"Účastníci kampaně")
         unique_together = (("userprofile", "campaign"),)
 
     TEAMAPPROVAL = (
