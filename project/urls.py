@@ -9,9 +9,11 @@ from django.conf import settings
 
 urlpatterns = patterns('',
     url(r'^admin/odpovedi/$',
-        answers),
+        answers,
+        name='answers'),
     url(r'^admin/otazky/$',
-        questions),
+        questions,
+        name='questions'),
     url(r'^admin/dotaznik_odpovedi/(?P<competition_slug>[0-9A-Za-z_\-]+)$',
         questionnaire_answers),
     url(r'^admin/dotaznik/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',

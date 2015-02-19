@@ -130,7 +130,7 @@ class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     def subsidiary_links(self, obj):
         return mark_safe(
             "<br/>".join(
-                ['<a href="' + wp_reverse('admin') + 'dpnk/subsidiary/%d">%s</a>' % (u.id, str(u))
+                ['<a href="%s">%s</a>' % (reverse('admin:dpnk_subsidiary_change', args=(u.pk,)), str(u))
                     for u in models.Subsidiary.objects.filter(company=obj)]))
     subsidiary_links.short_description = 'Pobočky'
 
@@ -165,7 +165,7 @@ class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, admin.ModelAdmin)
     def team_links(self, obj):
         return mark_safe(
             "<br/>".join(
-                ['<a href="' + wp_reverse('admin') + 'dpnk/team/%d">%s</a>' % (u.id, str(u))
+                ['<a href="%s">%s</a>' % (reverse('admin:dpnk_team_change', args=(u.pk,)), str(u))
                     for u in models.Team.objects.filter(subsidiary=obj)]))
     team_links.short_description = u"Týmy"
 
@@ -555,7 +555,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExpo
     resource_class = UserAttendanceResource
 
     def user_link(self, obj):
-        return mark_safe('<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (obj.userprofile.user.pk, obj.userprofile.user))
+        return mark_safe('<a href="%s">%s</a>' % (reverse('admin:auth_user_change', args=(obj.userprofile.user.pk,)), obj.userprofile.user))
     user_link.short_description = 'Uživatel'
 
     def queryset(self, request):
@@ -582,7 +582,7 @@ class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedFieldAdm
     readonly_fields = ['members', 'invitation_token', 'member_count']
 
     def members(self, obj):
-        return mark_safe("<br/>".join(['<a href="' + wp_reverse('admin') + 'dpnk/userattendance/%d">%s</a> - %s' % (u.pk, str(u), str(u.approved_for_team))
+        return mark_safe("<br/>".join(['<a href="%s">%s</a> - %s' % (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), u, u.approved_for_team)
                          for u in models.UserAttendance.objects.filter(team=obj)]))
     members.short_description = 'Členové'
 
@@ -619,7 +619,7 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
 
     def user_link(self, obj):
         if obj.user_attendance:
-            return mark_safe('<a href="' + wp_reverse('admin') + 'auth/user/%d">%s</a>' % (obj.user_attendance.userprofile.user.pk, obj.user_attendance.userprofile.user))
+            return mark_safe('<a href="%s">%s</a>' % (reverse('admin:auth_user_change', args=(obj.user_attendance.userprofile.user.pk,)), obj.user_attendance.userprofile.user))
     user_link.short_description = 'Uživatel'
 
     base_model = models.Transaction
@@ -712,10 +712,10 @@ class QuestionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.Model
 
     def choices(self, obj):
         return mark_safe("<br/>".join([
-            choice.text for choice in obj.choice_type.choices.all()]) + '<br/><a href="' + wp_reverse('admin') + 'dpnk/choicetype/%d">edit</a>' % obj.choice_type.id)
+                    choice.text for choice in obj.choice_type.choices.all()]) + '<br/><a href="%s">edit</a>' % reverse('admin:dpnk_choicetype_change', args=(obj.choice_type.pk,)))
 
     def answers_link(self, obj):
-        return mark_safe('<a href="' + wp_reverse('admin') + 'odpovedi/?question=%d">vyhodnocení odpovědí</a>' % (obj.pk))
+        return mark_safe('<a href="' + reverse('answers') + u'?question=%d">vyhodnocení odpovědí</a>' % (obj.pk))
 
 
 def show_distance_trips(modeladmin, request, queryset):

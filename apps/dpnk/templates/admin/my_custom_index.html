@@ -1,13 +1,12 @@
 {% extends "admin/index.html" %}
 {% load i18n admin_static %}
-{% load dpnk_tags %}
 
 {% block content %}
     <div class="module">
       <table>
          <caption>{% trans "Anketa" %}</caption>
          <tbody>
-         <tr><th><a href="{% wp_url 'otazky' %}">{% trans "Otázky" %}</a></th></tr>
+         <tr><th><a href="{% url 'questions' %}">{% trans "Otázky" %}</a></th></tr>
          </tbody>
       </table>
     </div>
