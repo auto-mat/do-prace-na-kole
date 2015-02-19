@@ -27,9 +27,11 @@ from django.db.models import F, Sum, Count, Q
 from django.utils.safestring import mark_safe
 from admin_enhancer.admin import EnhancedModelAdminMixin, EnhancedAdminMixin
 from dpnk.wp_urls import wp_reverse
+from django.core.urlresolvers import reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 from adminsortable.admin import SortableInlineAdminMixin
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
+from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter, AllValuesComboFilter
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from django.utils.translation import ugettext_lazy as _
@@ -543,7 +545,7 @@ class UserAttendanceResource(resources.ModelResource):
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin, OSMGeoAdmin):
     list_display = ('name', 'id', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_rough_length', 'get_length')
-    list_filter = (CampaignFilter, 'team__subsidiary__city', NotInCityFilter, 'approved_for_team', 't_shirt_size', 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, 'team__member_count', PackageConfirmationFilter, 'transactions__packagetransaction__delivery_batch', 'userprofile__sex')
+    list_filter = (CampaignFilter, ('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('approved_for_team', AllValuesComboFilter), ('t_shirt_size', RelatedFieldComboFilter), 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, ('team__member_count', AllValuesComboFilter), PackageConfirmationFilter, ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter), ('userprofile__sex', AllValuesComboFilter))
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
     readonly_fields = ('user_link', 'userprofile__user__email', )

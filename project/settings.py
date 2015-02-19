@@ -123,6 +123,7 @@ INSTALLED_APPS = (
     'related_admin',
     'easy_thumbnails',
     'crispy_forms',
+    'adminfilters',
 )
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
