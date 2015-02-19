@@ -135,7 +135,18 @@ class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     subsidiary_links.short_description = 'Pobočky'
 
 
-class SubsidiaryAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+class CityAdminMixin:
+    queryset_param = 'city__in'
+    def queryset(self, request):
+        queryset = super(admin.ModelAdmin, self).queryset(request)
+        if request.user.is_superuser:
+            return queryset
+        print [cic.city for cic in request.user.userprofile.administrated_cities.all()]
+        kwargs = { self.queryset_param: [cic.city for cic in request.user.userprofile.administrated_cities.all()]}
+        return queryset.filter(**kwargs)
+
+
+class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, admin.ModelAdmin):
     list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline, ]
     list_filter = ['teams__campaign', 'city']
@@ -548,8 +559,11 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExpo
     user_link.short_description = 'Uživatel'
 
     def queryset(self, request):
-        return models.UserAttendance.objects.select_related('userprofile__user', 'team__subsidiary__company', 'campaign__cityincampaigns', 't_shirt_size', 'team__subsidiary__city', 'campaign')
-
+        queryset = super(UserAttendanceAdmin, self).queryset(request)
+        query = Q()
+        for city_in_campaign in request.user.userprofile.administrated_cities.all():
+           query = query | (Q(team__subsidiary__city=city_in_campaign.city) & Q(campaign=city_in_campaign.campaign))
+        return queryset.filter(query)#.select_related('userprofile__user', 'team__subsidiary__company', 'campaign__cityincampaigns', 't_shirt_size', 'team__subsidiary__city', 'campaign')
 
 def recalculate_team_member_count(modeladmin, request, queryset):
     for team in queryset.all():
