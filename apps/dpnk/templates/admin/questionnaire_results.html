@@ -1,6 +1,5 @@
 {% extends "admin/base_site.html" %}
 {% load url from future %}
-{% load dpnk_tags %}
 
 {% block content %}
 
@@ -23,7 +22,7 @@
    {% for competitor in competitors %}
    <tr>
       <td>
-         <a href="{% wp_url 'dotaznik_odpovedi' %}{{competition_slug}}?uid={{ competitor.pk }}">{{ competitor }}</a>
+         <a href="{% url 'questionnaire_answers' competition_slug %}?uid={{ competitor.pk }}">{{ competitor }}</a>
       </td>
       {% if competition.competitor_type == 'team' %}
       <td>

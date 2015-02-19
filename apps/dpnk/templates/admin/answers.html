@@ -1,14 +1,13 @@
 {% extends "admin/base_site.html" %}
 {% load url from future %}
-{% load dpnk_tags %}
 {% load thumbnail %}
 
 {% block content %}
 
 <p>
-<strong>Otázka:</strong> <a href="{% wp_url 'admin' %}dpnk/question/{{ question.pk }}">{{ question.text }}</a><br/>
-<strong>Respondentů:</strong> <a href="{% wp_url 'dotaznik' %}{{ question.competition.slug }}">{{ total_respondents }}</a><br>
-<a href="{% wp_url 'admin' %}dpnk/answer/?question__competition__id__exact={{ question.competition.pk }}">Odpovědi k soutěži {{ question.competition }}</a>
+<strong>Otázka:</strong> <a href="{% url 'admin:dpnk_question_change' question.pk %}">{{ question.text }}</a><br/>
+<strong>Respondentů:</strong> <a href="{% url 'questionnaire_results' question.competition.slug %}">{{ total_respondents }}</a><br>
+<a href="{% url 'admin:dpnk_answer_changelist' %}?question__competition__id__exact={{ question.competition.pk }}">Odpovědi k soutěži {{ question.competition }}</a>
 </p>
 
 {% if question.type != 'text' %}
@@ -37,7 +36,7 @@
    <td>{{a.user_attendance}}</td>
    <td>{{a.city}}</td>
    <td>{{a.str_choices}}:</td>
-   <td><a href="{% wp_url 'admin' %}dpnk/answer/{{ a.id }}">{{a.comment|linebreaksbr}}</a></td>
+   <td><a href="{% url 'admin:dpnk_answer_change' a.id %}">{{a.comment|linebreaksbr}}</a></td>
    <td>
       {% thumbnail a.attachment "250x250" as foto_thumb %}
       {% if foto_thumb %}

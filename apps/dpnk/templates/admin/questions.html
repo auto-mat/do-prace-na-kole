@@ -1,6 +1,5 @@
 {% extends "admin/base_site.html" %}
 {% load url from future %}
-{% load dpnk_tags %}
 
 {% block content %}
 
@@ -12,11 +11,11 @@
       </li>
    {% endif %}
    <li>
-   {{q.competition.campaign}} - <a href="{% wp_url 'dotaznik' %}{{ q.competition.slug }}">{{q.competition}}</a> - {{q.competition.city}}
+   {{q.competition.campaign}} - <a href="{% url 'questionnaire_results' q.competition.slug %}">{{q.competition}}</a> - {{q.competition.city}}
    <ul>
 {% endifchanged %}
 {% if q.with_answer %}
-<li>{{q.date}} ({{q.answer_set.count}}): <a href="{% wp_url 'odpovedi' %}?question={{ q.id }}">{{q.text}}</a></li>
+<li>{{q.date}} ({{q.answer_set.count}}): <a href="{% url 'answers' %}?question={{ q.id }}">{{q.text}}</a></li>
 {% endif %}
 {% endfor %}
 </ul>

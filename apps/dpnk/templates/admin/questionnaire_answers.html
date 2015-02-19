@@ -1,6 +1,5 @@
 {% extends "admin/base_site.html" %}
 {% load url from future %}
-{% load dpnk_tags %}
 {% load thumbnail %}
 
 {% block content %}
@@ -10,7 +9,7 @@ Soutěžící: {{ competitor }}<br/>
 
 <ul>
   {% for a in answers %}
-  <li><i><a href="{% wp_url 'admin' %}odpovedi/?question={{ a.question.pk }}">{{ a.question.text }}</a></i>
+  <li><i><a href="{% url 'answers' %}?question={{ a.question.pk }}">{{ a.question.text }}</a></i>
     <ul>
       {% for c in a.choices.all %}
       <li> {{ c.text }} <strong>(
