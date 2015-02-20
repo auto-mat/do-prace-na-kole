@@ -829,7 +829,7 @@ update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
 
 class CompanyAdminAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ['user', 'user__email', 'user__userprofile', 'user__userprofile__telephone', 'company_admin_approved', 'administrated_company__name', 'can_confirm_payments', 'note', 'campaign']
-    list_filter = [CampaignFilter, 'company_admin_approved', HasUserAttendanceFilter]
+    list_filter = [CampaignFilter, 'company_admin_approved', HasUserAttendanceFilter, 'administrated_company__subsidiaries__city']
     search_fields = ['administrated_company__name', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
     raw_id_fields = ['user', ]
     list_max_show_all = 100000
