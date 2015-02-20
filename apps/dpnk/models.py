@@ -893,8 +893,8 @@ class CompanyAdmin(models.Model):
         )
 
     class Meta:
-        verbose_name = _(u"Firemní administrátor")
-        verbose_name_plural = _(u"Firemní administrátoři")
+        verbose_name = _(u"Firemní koordinátor")
+        verbose_name_plural = _(u"Firemní koordinátoři")
         unique_together = (
             ("user", "campaign"),
             ("administrated_company", "campaign"),
