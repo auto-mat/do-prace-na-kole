@@ -1,0 +1,16 @@
+{% extends "base_generic_registration_form.html" %}
+
+{% block form %}
+{{ block.super }}
+<strong>
+Počet plánovaných pracovních jízd celkem: <span id="rides-count"></span>
+<br/>
+Minimální počet jízd, splňující podmínky soutěže: <span id="minimum-rides"></span>
+<br/>
+<span id="not-enough-rides-warning" class="text-danger" style="display:none">Není možné dosáhnout minimálního počtu jízd, pro splnění kritérií soutěže je nutné si zapsat více pracovních dní.</span>
+</strong>
+<script>
+minimum_percentage = {{ minimum_percentage }}
+minimum_rides_base = {{ minimum_rides_base }}
+</script>
+{% endblock %}
