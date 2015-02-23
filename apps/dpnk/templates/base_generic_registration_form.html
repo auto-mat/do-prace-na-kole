@@ -3,6 +3,7 @@
 {% load static %}
 
 {% block extrahead %}
+{{ block.super }}
 <link href="{% static "css/progress_tracker.css"%}" rel="stylesheet" media="screen">
 <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 {% endblock %}

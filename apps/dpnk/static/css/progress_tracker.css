@@ -1,14 +1,12 @@
-body { margin: 10px; }
-
 .progress-steps li {
-    padding: 10px 12px 10px 25px;
-    margin-right: 5px;
-    background: #efefef;
-    position: relative;
-    display: inline-block;
-    color:#000;
-    text-decoration:none;
-    height: 40px;
+    padding: 10px 12px 10px 25px !important;
+    margin-right: 5px !important;
+    background-color: #efefef !important;
+    position: relative !important;
+    display: inline-block !important;
+    color:#000 !important !important;
+    text-decoration:none !important;
+    height: 40px !important;
 }
 
 .progress-steps li:hover {cursor: pointer; cursor: hand;}
@@ -53,17 +51,18 @@ body { margin: 10px; }
 }
 
 .progress-steps .active {
-    background: #BFE5FF;
+    background-color: #BFE5FF !important;
 }
 .progress-steps .active a {
-    color: #fff;
+    background-color: transparent !important;
+    color: #fff !important;
 }
 .progress-steps .active:after {
-    border-left-color: #BFE5FF;
+    border-left-color: #BFE5FF !important;
 }
 
 .progress-steps .fulfilled a {
-   color: #5cb85c;
+   color: #5cb85c !important;
 }
 
 .progress-steps .unfulfilled a {
