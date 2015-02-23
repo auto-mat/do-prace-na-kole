@@ -299,7 +299,7 @@ class Team(models.Model):
         return results.get_team_length(self)
 
     def __unicode__(self):
-        return "%s (%s)" % (self.name, self.members().count())
+        return u"%s (%s)" % (self.name, u", ".join([u.userprofile.name() for u in self.members()]))
 
     def save(self, force_insert=False, force_update=False):
         if self.invitation_token == "":
