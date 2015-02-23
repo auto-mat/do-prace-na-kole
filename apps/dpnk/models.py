@@ -361,6 +361,12 @@ class Campaign(models.Model):
         blank=False,
         null=False,
         )
+    minimum_percentage = models.PositiveIntegerField(
+        verbose_name=_(u"Minimální procento pro kvalifikaci do pravidelnostní soutěže"),
+        default=66,
+        blank=False,
+        null=False,
+        )
     trip_plus_distance = models.PositiveIntegerField(
         verbose_name=_(u"Maximální navýšení vzdálenosti"),
         help_text=_(u"Počet kilometrů, o které je možné prodloužit si jednu jízdu"),

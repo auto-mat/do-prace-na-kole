@@ -52,7 +52,7 @@ style="display:none"
    <input type="number" step="any" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from|unlocalize }}"/>
    {% endif %}
 </td>
-<td><div {% if day.percentage > 66 %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>
+<td><div {% if day.percentage >  minimum_percentage %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>
 <td>{{ day.distance }}&nbsp;km</td>
 </tr>
 {% endfor %}
