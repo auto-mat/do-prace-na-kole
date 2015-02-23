@@ -355,6 +355,12 @@ class Campaign(models.Model):
         verbose_name=_(u"Povolit mailing list"),
         default=False,
         null=False)
+    minimum_rides_base = models.PositiveIntegerField(
+        verbose_name=_(u"Minimální základ počtu jízd"),
+        default=25,
+        blank=False,
+        null=False,
+        )
     trip_plus_distance = models.PositiveIntegerField(
         verbose_name=_(u"Maximální navýšení vzdálenosti"),
         help_text=_(u"Počet kilometrů, o které je možné prodloužit si jednu jízdu"),
@@ -670,15 +676,11 @@ class UserAttendance(models.Model):
     def has_distance_competition(self):
         return results.has_distance_competition(self)
 
-    def get_frequency(self):
-        return results.get_userprofile_frequency(self)
+    def get_frequency(self, rides_count=None, working_trips_count=None):
+        return results.get_userprofile_frequency(self, rides_count, working_trips_count)
 
-    def get_frequency_percentage(self):
-        days_count = util.days_count(self.campaign)
-        if days_count != 0:
-            return (self.get_frequency() / (float(days_count) * 2)) * 100
-        else:
-            return 0
+    def get_frequency_percentage(self, rides_count=None, working_trips_count=None):
+        return self.get_frequency(rides_count, working_trips_count) * 100
 
     def get_rough_length(self):
         if self.distance:

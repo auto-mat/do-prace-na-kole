@@ -698,7 +698,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
                 cd['default_trip_from'] = trips[d].trip_from
                 cd['default_distance_to'] = "0" if trips[d].distance_to is None else trips[d].distance_to
                 cd['default_distance_from'] = "0" if trips[d].distance_from is None else trips[d].distance_from
-                trip_count += int(trips[d].trip_to or 0) + int(trips[d].trip_from or 0)
+                trip_count += (1 if trips[d].is_working_ride_to and trips[d].trip_to else 0) + (1 if trips[d].is_working_ride_from and trips[d].trip_from else 0)
                 if trips[d].trip_to and trips[d].distance_to:
                     distance += trips[d].distance_to_cutted()
                 if trips[d].trip_from and trips[d].distance_from:
@@ -710,10 +710,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
                 cd['default_trip_from'] = False
                 cd['default_distance_to'] = "0"
                 cd['default_distance_from'] = "0"
-            if trip_count == 0:
-                cd['percentage'] = 0
-            else:
-                cd['percentage'] = float(trip_count)/working_rides_count*100
+            cd['percentage'] = self.user_attendance.get_frequency_percentage(trip_count, working_rides_count)
             cd['percentage_str'] = "%.0f" % (cd['percentage'])
             cd['distance'] = distance
             calendar.append(cd)

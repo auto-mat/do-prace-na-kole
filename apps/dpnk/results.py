@@ -142,10 +142,21 @@ def get_competitions_with_info(user_attendance):
         competition.my_results = my_results
     return competitions
 
-def get_userprofile_frequency(user_attendance):
-    trips_from = models.Trip.objects.filter(user_attendance=user_attendance, trip_from=True).count()
-    trips_to   = models.Trip.objects.filter(user_attendance=user_attendance, trip_to=True).count()
-    return trips_from + trips_to
+def get_userprofile_frequency(user_attendance, rides_count=None, working_trips_count=None):
+    if rides_count == 0:
+        return 0
+    minimum_rides_base = user_attendance.campaign.minimum_rides_base
+    all_working_trips_count = models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True).count() + \
+                              models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True).count()
+    if working_trips_count is None:
+        working_trips_count = all_working_trips_count
+    all_rides_count = models.Trip.objects.filter(user_attendance=user_attendance, trip_from=True, is_working_ride_from=True).count() +\
+                      models.Trip.objects.filter(user_attendance=user_attendance, trip_to=True, is_working_ride_to=True).count()
+    if rides_count is None:
+        rides_count = all_rides_count
+
+    rides_percentage_index = min(1, float(all_working_trips_count) / minimum_rides_base)
+    return float(rides_count)/working_trips_count*rides_percentage_index
 
 def get_userprofile_length(user_attendance):
     # distance_from = models.Trip.objects.filter(user_attendance=user_attendance).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
