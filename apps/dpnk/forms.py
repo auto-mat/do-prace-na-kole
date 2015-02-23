@@ -438,6 +438,10 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
     email = forms.EmailField(
         help_text=_(u"Email slouží jako přihlašovací jméno"),
         required=False)
+    dont_show_name = forms.BooleanField(
+        label=_(u"Nechci, aby moje skutečné jméno bylo veřejně zobrazováno"),
+        required=False,
+    )
 
     def save(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).save(*args, **kwargs)
@@ -446,6 +450,16 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         self.instance.user.last_name = self.cleaned_data.get('last_name')
         self.instance.user.save()
         return ret_val
+
+    def clean_nickname(self):
+        nickname = self.cleaned_data['nickname']
+        if self.cleaned_data['dont_show_name'] == True:
+            if nickname:
+                return nickname
+            else:
+                raise forms.ValidationError(_(u"Pokud si nepřejete zobrazovat své jméno, zadejte, co se má zobrazovat místo něj"))
+        else:
+            return None
 
     def clean_email(self):
         """
@@ -467,8 +481,9 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         self.fields['email'].initial = self.instance.user.email
         self.fields['first_name'].initial = self.instance.user.first_name
         self.fields['last_name'].initial = self.instance.user.last_name
+        self.fields['dont_show_name'].initial = self.instance.nickname != None
         return ret_val
 
     class Meta:
         model = UserProfile
-        fields = ('language', 'sex', 'first_name', 'last_name', 'email')
+        fields = ('language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'email')

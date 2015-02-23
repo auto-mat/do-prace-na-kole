@@ -592,11 +592,11 @@ class UserAttendance(models.Model):
         return self.userprofile.user.last_name
 
     def name(self):
-        return self.userprofile.user.get_full_name()
+        return self.userprofile.name()
     name.admin_order_field = 'userprofile__user__last_name'
 
     def __unicode__(self):
-        return self.userprofile.user.get_full_name()
+        return self.userprofile.name()
 
     def admission_fee(self):
         if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
@@ -790,7 +790,7 @@ class UserAttendanceRelated(UserAttendance):
         proxy = True
 
     def __unicode__(self):
-        return "%s - %s" % (self.userprofile.user.get_full_name(), self.campaign.slug)
+        return "%s - %s" % (self.userprofile.name(), self.campaign.slug)
 
 
 class UserProfile(models.Model):
@@ -818,6 +818,13 @@ class UserProfile(models.Model):
         unique=True,
         null=False,
         blank=False,
+        )
+    nickname = models.CharField(
+        _(u'Zobrazené jméno'),
+        help_text=_(u'Zobrazí se ve všech veřejných výpisech místo vašeho jména. Zadávejte takové jméno, podle kterého vás vaši kolegové poznají'),
+        max_length=60,
+        blank=True,
+        null=True,
         )
     telephone = models.CharField(
         verbose_name=_(u"Telefon"),
@@ -868,8 +875,14 @@ class UserProfile(models.Model):
     def last_name(self):
         return self.user.last_name
 
+    def name(self):
+        if self.nickname:
+            return self.nickname
+        else:
+            return self.user.get_full_name()
+
     def __unicode__(self):
-        return self.user.get_full_name()
+        return self.name()
 
     def competition_edition_allowed(self, competition):
         return not competition.city or not self.administrated_cities.filter(campaign=competition.campaign, city=competition.city).exists()
@@ -1870,7 +1883,7 @@ class CompetitionResult(models.Model):
             return "%s" % self.company.name
         else:
             if self.user_attendance:
-                return "%s" % self.user_attendance.userprofile.user.get_full_name()
+                return "%s" % self.user_attendance.userprofile.name()
 
     def clean(self):
         if ((1 if self.user_attendance else 0) + (1 if self.team else 0) + (1 if self.company else 0)) != 1:
