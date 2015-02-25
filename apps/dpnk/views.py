@@ -888,7 +888,6 @@ class UpdateProfileView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
 
 
 class WorkingScheduleView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
-    template_name = 'registration/working_schedule.html'
     form_class = WorkingScheduleForm
     model = UserAttendance
     success_message = _(u"Pracovní kalendář úspěšně upraven")
@@ -896,12 +895,6 @@ class WorkingScheduleView(SuccessMessageMixin, RegistrationViewMixin, UpdateView
     next_url = 'profil'
     current_view = "working_schedule"
     title = _(u"Upravit pracovní kalendář")
-
-    def get_context_data(self, *args, **kwargs):
-        context_data = super(WorkingScheduleView, self).get_context_data(*args, **kwargs)
-        context_data['minimum_rides_base'] = self.user_attendance.campaign.minimum_rides_base
-        context_data['minimum_percentage'] = self.user_attendance.campaign.minimum_percentage
-        return context_data
 
     def get_object(self):
         return self.user_attendance

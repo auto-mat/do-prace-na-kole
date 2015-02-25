@@ -28,3 +28,14 @@
 {% endfor %}
 </tr>
 </table>
+<strong>
+Počet plánovaných pracovních jízd celkem: <span id="rides-count"></span>
+<br/>
+Minimální počet jízd, splňující podmínky soutěže: <span id="minimum-rides"></span>
+<br/>
+<span id="not-enough-rides-warning" class="text-danger" style="display:none">Není možné dosáhnout minimálního počtu jízd, pro splnění kritérií soutěže je nutné si zapsat více pracovních dní.</span>
+</strong>
+<script>
+minimum_percentage = {{ trips.0.user_attendance.campaign.minimum_percentage }}
+minimum_rides_base = {{ trips.0.user_attendance.campaign.minimum_rides_base }}
+</script>
