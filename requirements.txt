@@ -1,6 +1,6 @@
 Django
 django-import-export
--e git+https://github.com/PetrDlouhy/django-smart-selects.git#egg=django-smart-selects
+-e git+https://github.com/digi604/django-smart-selects.git#egg=django-smart-selects
 psycopg2
 python-memcached
 -e git+https://github.com/auto-mat/django-remote.git#egg=django-remote
