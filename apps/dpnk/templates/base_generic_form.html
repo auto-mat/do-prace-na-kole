@@ -14,6 +14,7 @@
 
 {% crispy form %}
 {% endblock %}
+{% block error %}{{ block.super }}{% endblock %}
 </div>
 {% endblock %}
 {% endblock %}

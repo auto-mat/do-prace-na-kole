@@ -21,7 +21,13 @@
       levý sloupec
    </div>
    <div class="col-md-8">
-      {% block content %}{% endblock %}
+      {% block content %}
+      {% block error %}
+         {% if fullpage_error_message %}
+         <div class="text-danger">{{ fullpage_error_message }}</div>
+         {% endif %}
+      {% endblock %}
+      {% endblock %}
    </div>
    <div class="col-md-1">
       pravý sloupec

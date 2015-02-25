@@ -19,6 +19,8 @@
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from models import UserAttendance, Campaign
 from wp_urls import wp_reverse
@@ -56,14 +58,20 @@ def must_be_company_admin(fn):
     return wrapper
 
 
-def must_have_team(fn):
-    @functools.wraps(fn)
-    @must_be_competitor
-    def wrapper(request, user_attendance=None, *args, **kwargs):
-        if not user_attendance.team:
-            return HttpResponse(_(u"<div class='text-warning'>Napřed musíte mít vybraný tým.</div>"), status=401)
-        return fn(request, user_attendance=user_attendance, *args, **kwargs)
-    return wrapper
+def must_have_team(template='base_generic.html', extra_params={}):
+    def decorator(fn):
+        @functools.wraps(fn)
+        @must_be_competitor
+        def wrapped(request, user_attendance=None, *args, **kwargs):
+            print template
+            if not user_attendance.team:
+                return render_to_response(template, dict(extra_params, **{
+                    'fullpage_error_message': _(u"Napřed musíte mít vybraný tým."),
+                    'form': None,
+                    }), context_instance=RequestContext(request))
+            return fn(request, user_attendance=user_attendance, *args, **kwargs)
+        return wrapped
+    return decorator
 
 
 def must_be_in_phase(*phase_type):
@@ -120,14 +128,17 @@ def must_be_in_group(group):
     return decorator
 
 
-def user_attendance_has(condition, message):
+def user_attendance_has(condition, message, template='base_generic.html', extra_params={}):
     def decorator(fn):
         @functools.wraps(fn)
         @must_be_competitor
         def wrapped(request, *args, **kwargs):
             user_attendance = kwargs['user_attendance']
             if condition(user_attendance):
-                return HttpResponse(message.encode('utf8'), status=401)
+                return render_to_response(template, dict(extra_params, **{
+                    'fullpage_error_message': message,
+                    'form': None,
+                    }), context_instance=RequestContext(request))
             return fn(request, *args, **kwargs)
         return wrapped
     return decorator

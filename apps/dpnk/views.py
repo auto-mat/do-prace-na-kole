@@ -383,18 +383,17 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     template_name = 'registration/payment_type.html'
     form_class = PaymentTypeForm
     title = _(u"Platba")
-    current_view = "payment_type"
+    current_view = "typ_platby"
     next_url = "working_schedule"
     prev_url = "upravit_triko"
 
     @method_decorator(login_required_simple)
-    #@method_decorator(user_attendance_has(lambda ua: ua.payment()['status'] == 'done', string_concat("<div class='text-warning'>", _(u"Již máte startovné zaplaceno"), "</div>")))
+    @method_decorator(user_attendance_has(lambda ua: ua.payment()['status'] == 'done', _(u"Již máte startovné zaplaceno"), template_name, extra_params={'current_view': current_view}))
+    @method_decorator(user_attendance_has(lambda ua: ua.payment()['status'] == 'no_admission', _(u"Startovné se neplatí"), template_name, extra_params={'current_view': current_view}))
     @method_decorator(must_be_competitor)
-    @method_decorator(must_have_team)
+    @method_decorator(must_have_team(template_name, extra_params={'current_view': current_view}))
     def dispatch(self, request, *args, **kwargs):
         dispatch = super(PaymentTypeView, self).dispatch(request, *args, **kwargs)
-        if self.user_attendance.payment_status() == 'no_admission':
-            return redirect(self.next_url)
         return dispatch
 
     def get_context_data(self, **kwargs):
@@ -460,7 +459,7 @@ class PaymentView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     @method_decorator(login_required_simple)
     #@method_decorator(user_attendance_has(lambda ua: ua.payment()['status'] == 'done', string_concat("<div class='text-warning'>", _(u"Již máte startovné zaplaceno"), "</div>")))
     @method_decorator(must_be_competitor)
-    @method_decorator(must_have_team)
+    @method_decorator(must_have_team(template_name))
     def dispatch(self, request, *args, **kwargs):
         return super(PaymentView, self).dispatch(request, *args, **kwargs)
 
