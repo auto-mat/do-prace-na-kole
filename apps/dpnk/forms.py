@@ -401,9 +401,20 @@ class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
 
 
 class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
+    dont_want_insert_track = forms.BooleanField(
+        label=_(u"Nepřeji si zadávat svoji trasu."),
+        required=False,
+    )
+
+    def clean(self):
+        cleaned_data = super(TrackUpdateForm, self).clean()
+        if cleaned_data['dont_want_insert_track'] == True:
+            cleaned_data['track'] = None
+        return cleaned_data
+
     class Meta:
         model = UserAttendance
-        fields = ('track', 'distance')
+        fields = ('track', 'dont_want_insert_track', 'distance')
 
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']

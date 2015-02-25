@@ -6,6 +6,12 @@ $(function(){
         $("#div_id_nickname").toggle();
     });
 
+    //UserProfile update form:
+    $("#id_dont_want_insert_track").change(function(){
+        $("#div_id_track").toggle(! $("#id_dont_want_insert_track").prop("checked"));
+    });
+    $("#id_dont_want_insert_track").change();
+
     //WorkingSchedule update form:
     $(".working-ride").change(function(){
         rides_count = $(".working-ride:checked").size();
