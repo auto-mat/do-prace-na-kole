@@ -688,12 +688,6 @@ class UserAttendance(models.Model):
     def get_frequency_percentage(self, rides_count=None, working_trips_count=None):
         return self.get_frequency(rides_count, working_trips_count) * 100
 
-    def get_rough_length(self):
-        if self.distance:
-            return results.get_userprofile_frequency(self) * self.distance
-        else:
-            return 0
-
     def get_length(self):
         return results.get_userprofile_length(self)
 
