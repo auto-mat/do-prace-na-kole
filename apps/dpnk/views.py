@@ -126,13 +126,14 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
 class RegistrationMessagesMixin(UserAttendanceViewMixin):
     def get(self, request, *args, **kwargs):
         ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
-        print "reg mixin"
         if self.user_attendance.team:
             if self.current_view not in ('upravit_profil',):
                 if self.user_attendance.approved_for_team != 'approved':
                     messages.warning(request, mark_safe(_(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") % {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
                 elif len(self.user_attendance.team.unapproved_members()) > 0:
                     messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('zmenit_tym')))
+                if self.user_attendance.is_libero():
+                    messages.warning(request, mark_safe(_(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce! Pokud nemůžete sehnat spolupracovníky, použijte seznamku.')))
 
         if self.user_attendance.payment_status() not in ('done', 'none',):
             messages.info(request, mark_safe(_(u'Vaše platba typu %s ještě nebyla vyřízena. Můžete <a href="%s">zadat novou platbu.</a>') % (self.user_attendance.payment_type_string(), reverse('platba'))))
