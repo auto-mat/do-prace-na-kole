@@ -755,7 +755,7 @@ class UserAttendance(models.Model):
             return None
 
     def entered_competition(self):
-        return self.transactions.filter(status=UserActionTransaction.Status.COMPETITION_START_CONFIRMED).exists()
+        return self.tshirt_complete() and self.track_complete() and self.team_complete() and self.payment_complete() and self.userprofile.profile_complete()
 
     def team_member_count(self):
         if self.team:
