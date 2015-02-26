@@ -17,7 +17,7 @@
        <li class="{% if current_view == 'upravit_trasu' %}active{% endif %} {% if not user_attendance.track_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_trasu' %}">Trasa</a></li>
        <li class="{% if current_view == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}">Triko</a></li>
        <li class="{% if current_view == 'typ_platby' %}active{% endif %} {% if not user_attendance.payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' %}">Startovné</a></li>
-       <li class="{% if current_view == 'working_schedule' %}active{% endif %} {% if not user_attendance.userprofile.profile_complete %}un{% endif %}fulfilled"><a href="{% url 'working_schedule' %}">Pracovní rozvrh</a></li>
+       <li class="{% if current_view == 'working_schedule' %}active{% endif %} fulfilled"><a href="{% url 'working_schedule' %}">Pracovní rozvrh</a></li>
    </ol>
 </nav>
 
