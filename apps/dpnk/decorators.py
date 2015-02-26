@@ -69,7 +69,7 @@ def must_have_team(fn):
                 'fullpage_error_message': mark_safe(_(u"Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse("zmenit_tym")),
                 'user_attendance': user_attendance,
                 'title': _(u"Musíte mít vybraný tým"),
-                'current_view': view.current_view,
+                'current_view': getattr(view, 'current_view', ''),
                 'form': None,
                 }, context_instance=RequestContext(request))
         return fn(view,request, user_attendance=user_attendance, *args, **kwargs)
