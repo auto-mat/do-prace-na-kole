@@ -108,7 +108,7 @@ class RegisterTeamForm(forms.ModelForm):
         fields = ('name', 'campaign')
 
 
-class WorkingScheduleForm(PrevNextMixin, forms.ModelForm):
+class WorkingScheduleForm(forms.ModelForm):
     schedule = WorkingScheduleField(
         label=_(u"Pracovní rozvrh"),
         required=False,
@@ -124,6 +124,10 @@ class WorkingScheduleForm(PrevNextMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         ret_val = super(WorkingScheduleForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('prev', _(u'Předchozí')))
+        if self.instance.entered_competition():
+            self.helper.add_input(Submit('next', _(u'Přejít do profilu')))
         self.fields['schedule'].initial = self.instance.get_all_trips()
         return ret_val
 
