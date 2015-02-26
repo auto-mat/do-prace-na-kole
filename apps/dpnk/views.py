@@ -173,7 +173,7 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
 
     @method_decorator(login_required_simple)
     @must_be_competitor
-    @user_attendance_has(lambda ua: ua.entered_competition(), _(u"Po vstupu do soutěže nemůžete měnit tým."))
+    #@user_attendance_has(lambda ua: ua.entered_competition(), _(u"Po vstupu do soutěže nemůžete měnit tým."))
     def dispatch(self, request, *args, **kwargs):
         return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
 
@@ -1266,7 +1266,7 @@ def invite(
 
 @must_be_competitor
 @login_required_simple
-@user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže již nemůžete měnit parametry týmu."), "</div>"))
+#@user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže již nemůžete měnit parametry týmu."), "</div>"))
 def team_admin_team(
         request,
         backend='registration.backends.simple.SimpleBackend',
