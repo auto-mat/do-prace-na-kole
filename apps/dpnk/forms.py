@@ -420,11 +420,13 @@ class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
         instance = kwargs['instance']
         super(TrackUpdateForm, self).__init__(*args, **kwargs)
 
-        location = instance.team.subsidiary.city.location
-        default_zoom = 14
+        location = None
+        if instance.team:
+            location = instance.team.subsidiary.city.location
         if not location:
             location = settings.DEFAULT_MAPWIDGET_LOCATION
             default_zoom = settings.DEFAULT_MAPWIDGET_ZOOM
+        default_zoom = 14
         self.fields['track'].widget = OSMWidget(attrs={
             'geom_type': 'LINESTRING',
             'default_lat_custom': location.y,
