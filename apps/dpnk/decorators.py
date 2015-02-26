@@ -63,7 +63,6 @@ def must_have_team(template='base_generic.html', extra_params={}):
         @functools.wraps(fn)
         @must_be_competitor
         def wrapped(request, user_attendance=None, *args, **kwargs):
-            print template
             if not user_attendance.team:
                 return render_to_response(template, dict(extra_params, **{
                     'fullpage_error_message': _(u"Napřed musíte mít vybraný tým."),
