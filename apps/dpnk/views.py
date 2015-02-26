@@ -38,6 +38,7 @@ from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
+from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_page, never_cache, cache_control
 from django.views.generic.edit import FormView, UpdateView, CreateView
 from django.views.generic.base import TemplateView
@@ -1275,6 +1276,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
 
     @must_be_competitor
     @method_decorator(login_required_simple)
+    @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):
         return super(TeamMembers, self).dispatch(request, *args, **kwargs)
 
@@ -1294,6 +1296,11 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context_data = super(TeamMembers, self).get_context_data(*args, **kwargs)
         team = self.user_attendance.team
+        if not team:
+            return {'fullpage_error_message': _(u"Další členové vašeho týmu se zobrazí, jakmile budete mít vybraný tým")}
+        if self.user_attendance.approved_for_team != 'approved':
+            print self.user_attendance.approved_for_team
+            return {'fullpage_error_message': mark_safe(_(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") % {'team': self.user_attendance.team.name, 'address': wp_reverse("zaslat_zadost_clenstvi")})}
 
         unapproved_users = []
         for self.user_attendance in UserAttendance.objects.filter(team=team, userprofile__user__is_active=True):

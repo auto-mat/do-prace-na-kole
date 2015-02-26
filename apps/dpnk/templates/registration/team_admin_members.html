@@ -2,6 +2,9 @@
 {% load dpnk_tags %}
 {% load i18n %}
 
+{% if fullpage_error_message %}
+<div class="text-danger">{{ fullpage_error_message }}</div>
+{% endif %}
 <form method="post" class="form-inline" id="members-form" action="/dalsi_clenove/">{% csrf_token %}
 {% for user in unapproved_users %}
    <div id="id-{{ user.4.2 }}-team-member">
