@@ -617,7 +617,7 @@ def trip_active_last_week(day, today):
             )
         )
 
-trip_active = trip_active_last_week
+trip_active = trip_active_last7
 
 
 class RidesView(UserAttendanceViewMixin, TemplateView):
