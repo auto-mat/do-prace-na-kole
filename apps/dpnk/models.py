@@ -676,6 +676,9 @@ class UserAttendance(models.Model):
         else:
             return None
 
+    def payment_type_string(self):
+        return Payment.PAY_TYPES_DICT[self.payment_type()].upper()
+
     def get_competitions(self):
         return results.get_competitions_with_info(self)
 
@@ -1406,6 +1409,7 @@ class Payment(Transaction):
         ('amw', _(u'kandidát na členství v Klubu přátel Auto*matu')),
         ('fe', _(u'neplatí startovné')),
         )
+    PAY_TYPES_DICT = dict(PAY_TYPES)
 
     NOT_PAYING_TYPES = [
         'am',

@@ -123,7 +123,25 @@ class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend)
         return new_user
 
 
-class RegistrationViewMixin(UserAttendanceViewMixin):
+class RegistrationMessagesMixin(UserAttendanceViewMixin):
+    def get(self, request, *args, **kwargs):
+        ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
+        print "reg mixin"
+        if self.user_attendance.team:
+            if self.current_view not in ('upravit_profil',):
+                if self.user_attendance.approved_for_team != 'approved':
+                    messages.warning(request, mark_safe(_(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") % {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
+                elif len(self.user_attendance.team.unapproved_members()) > 0:
+                    messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('zmenit_tym')))
+
+        if self.user_attendance.payment_status() not in ('done', 'none',):
+            messages.info(request, mark_safe(_(u'Vaše platba typu %s ještě nebyla vyřízena. Můžete <a href="%s">zadat novou platbu.</a>') % (self.user_attendance.payment_type_string(), reverse('platba'))))
+        if self.current_view == 'working_schedule' and not self.user_attendance.entered_competition():
+            messages.error(request, _(u'Před vstupem do soutěžního profilu musíte mít splněny všechny kroky registrace'))
+        return ret_val
+
+
+class RegistrationViewMixin(RegistrationMessagesMixin, UserAttendanceViewMixin):
     template_name = 'base_generic_registration_form.html'
 
     def get_context_data(self, *args, **kwargs):
@@ -271,6 +289,7 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
         return render_to_response(self.template_name, context_data, context_instance=RequestContext(request))
 
     def get(self, request, *args, **kwargs):
+        super(ChangeTeamView, self).get(request, *args, **kwargs)
         form = self.form_class(request, instance=self.user_attendance)
         form_company = RegisterCompanyForm(prefix="company")
         form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=self.user_attendance.campaign)
