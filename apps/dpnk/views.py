@@ -128,13 +128,7 @@ class RegistrationViewMixin(UserAttendanceViewMixin):
         context_data = super(RegistrationViewMixin, self).get_context_data(*args, **kwargs)
         context_data['title'] = self.title
         context_data['current_view'] = self.current_view
-        context_data['submit_label'] = _(u"Další")
-
-        context_data['profile_complete'] = self.request.user.userprofile.profile_complete()
-        context_data['team_complete'] = self.user_attendance.team_complete()
-        context_data['track_complete'] = self.user_attendance.track_complete()
-        context_data['tshirt_complete'] = self.user_attendance.tshirt_complete()
-        context_data['payment_complete'] = self.user_attendance.payment_complete()
+        context_data['user_attendance'] = self.user_attendance
         return context_data
 
     def get_success_url(self):

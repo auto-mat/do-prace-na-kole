@@ -22,8 +22,10 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 from models import UserAttendance, Campaign
 from wp_urls import wp_reverse
+from django.core.urlresolvers import reverse
 import models
 import functools
 
@@ -65,7 +67,9 @@ def must_have_team(template='base_generic.html', extra_params={}):
         def wrapped(request, user_attendance=None, *args, **kwargs):
             if not user_attendance.team:
                 return render_to_response(template, dict(extra_params, **{
-                    'fullpage_error_message': _(u"Napřed musíte mít vybraný tým."),
+                    'fullpage_error_message': mark_safe(_(u"Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse("zmenit_tym")),
+                    'user_attendance': user_attendance,
+                    'title': _(u"Musíte mít vybraný tým"),
                     'form': None,
                     }), context_instance=RequestContext(request))
             return fn(request, user_attendance=user_attendance, *args, **kwargs)
@@ -136,6 +140,8 @@ def user_attendance_has(condition, message, template='base_generic.html', extra_
             if condition(user_attendance):
                 return render_to_response(template, dict(extra_params, **{
                     'fullpage_error_message': message,
+                    'user_attendance': user_attendance,
+                    'title': _(u"Musíte mít vybraný tým"),
                     'form': None,
                     }), context_instance=RequestContext(request))
             return fn(request, *args, **kwargs)
