@@ -798,7 +798,9 @@ def profile(request, user_attendance=None, success_url='competition_profile'):
         }, context_instance=RequestContext(request))
 
 
-class ProfileView(TemplateView):
+class ProfileView(RegistrationViewMixin, TemplateView):
+    title = 'Soutěžní profil'
+    current_view = 'profile_view'
     template_name = 'registration/competition_profile.html'
 
 
