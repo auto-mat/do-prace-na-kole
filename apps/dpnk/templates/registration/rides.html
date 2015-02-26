@@ -3,6 +3,9 @@
 {% load dpnk_tags %}
 {% load humanize %}
 
+{% if fullpage_error_message %}
+<div class="text-danger">{{ fullpage_error_message }}</div>
+{% else %}
 <form id="rides-form" name="calendar" method="POST" action="/dpnk/jizdy/">
 <input type="hidden" id="day" name="day"/>
 <button class="btn-info btn" type="button" onclick='$( ".toggle" ).toggle( "hidden" );'>{% trans "Zobrazit všechny jízdy" %}</button>
@@ -59,3 +62,4 @@ style="display:none"
 </table>
 </form>
 <div></div>
+{% endif %}

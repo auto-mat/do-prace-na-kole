@@ -37,11 +37,11 @@ def must_be_approved_for_team(fn):
     def wrapper(*args, **kwargs):
         user_attendance = kwargs['user_attendance']
         if not user_attendance.team:
-            return HttpResponse(_(u"<div class='text-warning'>Nemáte zvolený tým</div>"), status=401)
+            return HttpResponse(_(u"<div class='text-warning'>Nemáte zvolený tým</div>"))
         if user_attendance.approved_for_team == 'approved':
             return fn(*args, **kwargs)
         else:
-            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': user_attendance.team.name, 'address': wp_reverse("zaslat_zadost_clenstvi")}, status=401)
+            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': user_attendance.team.name, 'address': wp_reverse("zaslat_zadost_clenstvi")})
     return wrapper
 
 
@@ -56,25 +56,24 @@ def must_be_company_admin(fn):
             kwargs['company_admin'] = company_admin
             return fn(request, *args, **kwargs)
 
-        return HttpResponse(_(u"<div class='text-warning'>Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.</div>"), status=401)
+        return HttpResponse(_(u"<div class='text-warning'>Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.</div>"))
     return wrapper
 
 
-def must_have_team(template='base_generic.html', extra_params={}):
-    def decorator(fn):
-        @functools.wraps(fn)
-        @must_be_competitor
-        def wrapped(request, user_attendance=None, *args, **kwargs):
-            if not user_attendance.team:
-                return render_to_response(template, dict(extra_params, **{
-                    'fullpage_error_message': mark_safe(_(u"Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse("zmenit_tym")),
-                    'user_attendance': user_attendance,
-                    'title': _(u"Musíte mít vybraný tým"),
-                    'form': None,
-                    }), context_instance=RequestContext(request))
-            return fn(request, user_attendance=user_attendance, *args, **kwargs)
-        return wrapped
-    return decorator
+def must_have_team(fn):
+    @functools.wraps(fn)
+    @must_be_competitor
+    def wrapped(view, request, user_attendance=None, *args, **kwargs):
+        if not user_attendance.team:
+            return render_to_response(view.template_name, {
+                'fullpage_error_message': mark_safe(_(u"Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse("zmenit_tym")),
+                'user_attendance': user_attendance,
+                'title': _(u"Musíte mít vybraný tým"),
+                'current_view': view.current_view,
+                'form': None,
+                }, context_instance=RequestContext(request))
+        return fn(view,request, user_attendance=user_attendance, *args, **kwargs)
+    return wrapped
 
 
 def must_be_in_phase(*phase_type):
@@ -87,19 +86,18 @@ def must_be_in_phase(*phase_type):
                 if phase and phase.is_actual():
                     return fn(request, *args, **kwargs)
             phases_string = _(u" a ").join([unicode(models.Phase.TYPE_DICT[p]) for p in phase_type])
-            return HttpResponse(_(u"<div class='text-warning'>Tento formulář se zobrazuje pouze v %s fázi soutěže.</div>") % phases_string, status=401)
+            return HttpResponse(_(u"<div class='text-warning'>Tento formulář se zobrazuje pouze v %s fázi soutěže.</div>") % phases_string)
         return wrapped
     return decorator
 
 
 def must_be_competitor(fn):
     @functools.wraps(fn)
-    @login_required
     def wrapper(*args, **kwargs):
         if kwargs.get('user_attendance', None):
             return fn(*args, **kwargs)
 
-        request = args[0]
+        request = args[1]
         if models.is_competitor(request.user):
             userprofile = request.user.userprofile
             campaign_slug = request.subdomain
@@ -116,7 +114,7 @@ def must_be_competitor(fn):
             kwargs['user_attendance'] = user_attendance
             return fn(*args, **kwargs)
 
-        return HttpResponse(_(u"<div class='text-warning'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.</div>") % wp_reverse("company_admin"), status=401)
+        return HttpResponse(_(u"<div class='text-warning'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.</div>") % wp_reverse("company_admin"))
     return wrapper
 
 
@@ -125,26 +123,27 @@ def must_be_in_group(group):
         @functools.wraps(fn)
         def wrapped(request, *args, **kwargs):
             if request.user.groups.filter(name=group).count() == 0:
-                return HttpResponse(_(u"<div class='text-warning'>Pro přístup k této stránce musíte být ve skupině %s</div>") % group, status=401)
+                return HttpResponse(_(u"<div class='text-warning'>Pro přístup k této stránce musíte být ve skupině %s</div>") % group)
             return fn(request, *args, **kwargs)
         return wrapped
     return decorator
 
 
-def user_attendance_has(condition, message, template='base_generic.html', extra_params={}):
+def user_attendance_has(condition, message):
     def decorator(fn):
         @functools.wraps(fn)
         @must_be_competitor
-        def wrapped(request, *args, **kwargs):
+        def wrapped(view, request, *args, **kwargs):
             user_attendance = kwargs['user_attendance']
             if condition(user_attendance):
-                return render_to_response(template, dict(extra_params, **{
+                return render_to_response(view.template_name, {
                     'fullpage_error_message': message,
                     'user_attendance': user_attendance,
                     'title': _(u"Musíte mít vybraný tým"),
+                    'current_view': getattr(view, 'current_view', ''),
                     'form': None,
-                    }), context_instance=RequestContext(request))
-            return fn(request, *args, **kwargs)
+                    }, context_instance=RequestContext(request))
+            return fn(view, request, *args, **kwargs)
         return wrapped
     return decorator
 
@@ -154,7 +153,7 @@ def request_condition(condition, message):
         @functools.wraps(fn)
         def wrapped(request, *args, **kwargs):
             if condition(request, args, kwargs):
-                return HttpResponse(message.encode('utf8'), status=401)
+                return HttpResponse(message.encode('utf8'))
             return fn(request, *args, **kwargs)
         return wrapped
     return decorator

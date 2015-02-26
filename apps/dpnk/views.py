@@ -62,7 +62,8 @@ from django.db import transaction
 from wp_urls import wp_reverse
 from unidecode import unidecode
 from django.shortcuts import redirect
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
+from string_lazy import mark_safe_lazy, format_lazy
 import logging
 import models
 import tempfile
@@ -81,7 +82,7 @@ class DPNKLoginView(LoginView):
 
 
 class UserAttendanceViewMixin(object):
-    @method_decorator(must_be_competitor)
+    @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
         return super(UserAttendanceViewMixin, self).dispatch(request, *args, **kwargs)
@@ -152,8 +153,8 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
         return context_data
 
     @method_decorator(login_required_simple)
-    @method_decorator(must_be_competitor)
-    @method_decorator(user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže nemůžete měnit tým."), "</div>")))
+    @must_be_competitor
+    @user_attendance_has(lambda ua: ua.entered_competition(), _(u"Po vstupu do soutěže nemůžete měnit tým."))
     def dispatch(self, request, *args, **kwargs):
         return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
 
@@ -331,10 +332,10 @@ class ConfirmDeliveryView(UpdateView):
     def get_object(self):
         return self.user_attendance.package_shipped()
 
-    @method_decorator(user_attendance_has(lambda ua: not ua.t_shirt_size.ship, string_concat("<div class='text-warning'>", _(u"Startovní balíček se neodesílá, pokud nechcete žádné tričko."), "</div>")))
-    @method_decorator(user_attendance_has(lambda ua: not ua.package_shipped(), string_concat("<div class='text-warning'>", _(u"Startovní balíček ještě nebyl odeslán"), "</div>")))
-    @method_decorator(user_attendance_has(lambda ua: ua.package_delivered(), string_concat("<div class='text-warning'>", _(u"Doručení startovního balíčku potvrzeno"), "</div>")))
-    @method_decorator(must_be_competitor)
+    @user_attendance_has(lambda ua: not ua.t_shirt_size.ship, _(u"Startovní balíček se neodesílá, pokud nechcete žádné tričko."))
+    @user_attendance_has(lambda ua: not ua.package_shipped(), _(u"Startovní balíček ještě nebyl odeslán"))
+    @user_attendance_has(lambda ua: ua.package_delivered(), _(u"Doručení startovního balíčku potvrzeno"))
+    @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
         return super(ConfirmDeliveryView, self).dispatch(request, *args, **kwargs)
 
@@ -357,7 +358,7 @@ class ConfirmTeamInvitationView(FormView):
             approve_for_team(self.request, self.user_attendance, "", True, False)
         return redirect(wp_reverse(self.success_url))
 
-    @method_decorator(must_be_competitor)
+    @must_be_competitor
     @method_decorator(request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, string_concat("<div class='text-warning'>", _(u"Tým nenalezen."), "</div>")))
     @method_decorator(request_condition(lambda r, a, k: r.user.email != k['initial_email'], string_concat("<div class='text-warning'>", _(u"Pozvánka je určena jinému uživateli, než je aktuálně přihlášen."), "</div>")))
     def dispatch(self, request, *args, **kwargs):
@@ -380,12 +381,11 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     current_view = "typ_platby"
     next_url = "working_schedule"
     prev_url = "upravit_triko"
-
     @method_decorator(login_required_simple)
-    @method_decorator(user_attendance_has(lambda ua: ua.payment()['status'] == 'done', _(u"Již máte startovné zaplaceno"), template_name, extra_params={'current_view': current_view}))
-    @method_decorator(user_attendance_has(lambda ua: ua.payment()['status'] == 'no_admission', _(u"Startovné se neplatí"), template_name, extra_params={'current_view': current_view}))
-    @method_decorator(must_be_competitor)
-    @method_decorator(must_have_team(template_name, extra_params={'current_view': current_view}))
+    @user_attendance_has(lambda ua: ua.payment()['status'] == 'done', mark_safe_lazy(format_lazy(_(u"Již máte startovné zaplaceno. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
+    @user_attendance_has(lambda ua: ua.payment()['status'] == 'no_admission', mark_safe_lazy(format_lazy(_(u"Startovné se neplatí. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
+    @must_be_competitor
+    @must_have_team
     def dispatch(self, request, *args, **kwargs):
         dispatch = super(PaymentTypeView, self).dispatch(request, *args, **kwargs)
         return dispatch
@@ -451,9 +451,8 @@ class PaymentView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     prev_url = "upravit_triko"
 
     @method_decorator(login_required_simple)
-    #@method_decorator(user_attendance_has(lambda ua: ua.payment()['status'] == 'done', string_concat("<div class='text-warning'>", _(u"Již máte startovné zaplaceno"), "</div>")))
-    @method_decorator(must_be_competitor)
-    @method_decorator(must_have_team(template_name))
+    @must_be_competitor
+    @must_have_team
     def dispatch(self, request, *args, **kwargs):
         return super(PaymentView, self).dispatch(request, *args, **kwargs)
 
@@ -626,9 +625,9 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
     success_url="jizdy"
 
     @method_decorator(login_required_simple)
-    @method_decorator(must_be_competitor)
-    #@method_decorator(must_be_approved_for_team)
-    #@method_decorator(user_attendance_has(lambda ua: not ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Vyplnit jízdy můžete až po vstupu do soutěže."), "</div>")))
+    @must_be_competitor
+    @method_decorator(must_be_approved_for_team)
+    @user_attendance_has(lambda ua: not ua.entered_competition(), mark_safe_lazy(format_lazy(_(u"Vyplnit jízdy můžete až budete mít splněny všechny body <a href='{addr}'>registrace</a>."), addr=reverse_lazy("upravit_profil"))))
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
     def dispatch(self, request, *args, **kwargs):
@@ -920,7 +919,7 @@ class ChangeTShirtView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
         return self.user_attendance
 
     @method_decorator(login_required_simple)
-    @method_decorator(user_attendance_has(lambda ua: ua.package_shipped(), string_concat("<div class='text-warning'>", _(u"Velikost trika nemůžete měnit, již bylo odesláno"), "</div>")))
+    @user_attendance_has(lambda ua: ua.package_shipped(), _(u"Velikost trika nemůžete měnit, již bylo odesláno"))
     def dispatch(self, request, *args, **kwargs):
         return super(ChangeTShirtView, self).dispatch(request, *args, **kwargs)
 
@@ -1274,7 +1273,7 @@ def team_admin_team(
 class TeamMembers(UserAttendanceViewMixin, TemplateView):
     template_name='registration/team_admin_members.html'
 
-    @method_decorator(must_be_competitor)
+    @must_be_competitor
     @method_decorator(login_required_simple)
     def dispatch(self, request, *args, **kwargs):
         return super(TeamMembers, self).dispatch(request, *args, **kwargs)
