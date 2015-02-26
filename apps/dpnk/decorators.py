@@ -41,7 +41,7 @@ def must_be_approved_for_team(fn):
         if user_attendance.approved_for_team == 'approved':
             return fn(*args, **kwargs)
         else:
-            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': user_attendance.team.name, 'address': wp_reverse("zaslat_zadost_clenstvi")})
+            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")})
     return wrapper
 
 
