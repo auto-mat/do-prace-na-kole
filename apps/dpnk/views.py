@@ -323,7 +323,7 @@ class RegistrationAccessView(FormView):
     def form_valid(self, form):
         email = form.cleaned_data['email']
         campaign = Campaign.objects.get(slug=self.request.subdomain)
-        user_exists = models.UserAttendance.objects.filter(campaign=campaign, userprofile__user__email=email).exists()
+        user_exists = models.User.objects.filter(email=email).exists()
         if user_exists:
             return redirect(reverse('login', kwargs={'initial_email': email}))
         else:
