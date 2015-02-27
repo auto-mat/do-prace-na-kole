@@ -129,8 +129,10 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
         ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
         if self.user_attendance.team:
             if self.current_view not in ('upravit_profil',):
-                if self.user_attendance.approved_for_team != 'approved':
-                    messages.warning(request, mark_safe(_(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") % {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
+                if self.user_attendance.approved_for_team == 'undecided':
+                    messages.warning(request, mark_safe(_(u"Vaše členství v týmu %(team)s čeká na vyřízení. Pokud to trvá příliš dlouho, můžete zkusit <a href='%(address)s'>znovu požádat o ověření členství</a>.") % {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
+                elif self.user_attendance.approved_for_team == 'denied':
+                    messages.error(request, mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')))
                 elif len(self.user_attendance.team.unapproved_members()) > 0:
                     messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('zmenit_tym')))
                 if self.user_attendance.is_libero():
