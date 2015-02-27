@@ -772,7 +772,7 @@ class UserAttendance(models.Model):
         return self.track or self.distance
 
     def team_complete(self):
-        return self.team
+        return self.team and self.approved_for_team == 'approved'
 
     def payment_complete(self):
         return self.payment()['status'] == 'done' or self.payment()['status'] == 'no_admission'
