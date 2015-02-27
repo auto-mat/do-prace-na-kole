@@ -40,7 +40,7 @@ $(function(){
 
    $("#pay_description form").submit(function(){
       if($("#payu-hidden-values").is(":empty")) {
-         $.get("/dpnk/campaign/platba/ #payu-hidden-values", function(data) {
+         $.get("{% url "platba" %} #payu-hidden-values", function(data) {
             $("#payu-hidden-values").html(data);
             $("#pay_description form").submit();
          });
