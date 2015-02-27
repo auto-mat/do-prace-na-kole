@@ -275,7 +275,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
         fields = ('email', 'password1', 'password2')
 
 
-class InviteForm(forms.Form):
+class InviteForm(SubmitMixin, forms.Form):
     required_css_class = 'required'
     error_css_class = 'error'
 

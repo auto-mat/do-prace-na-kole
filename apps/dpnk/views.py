@@ -270,8 +270,9 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
                 form_team.save()
 
                 self.user_attendance.team = team
+                request.session['invite_success_url'] = self.get_success_url()
                 self.next_url = "pozvanky"
-                request.session['invite_success_url'] = 'upravit_trasu'
+                self.prev_url = "pozvanky"
 
                 team_created_mail(self.user_attendance)
 
@@ -285,7 +286,7 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
                 approval_request_mail(self.user_attendance)
 
             messages.add_message(request, messages.SUCCESS, _(u"Údaje o týmu úspěšně nastaveny."), fail_silently=True)
-            return redirect(reverse(self.next_url))
+            return redirect(self.get_success_url())
         form.fields['company'].widget.underlying_form = form_company
         form.fields['company'].widget.create = create_company
 
@@ -1225,51 +1226,39 @@ def team_approval_request(request, user_attendance=None):
                               context_instance=RequestContext(request))
 
 
-@must_be_competitor
-@login_required_simple
-def invite(
-        request,
-        backend='registration.backends.simple.SimpleBackend',
-        success_url=None,
-        form_class=None,
-        template_name='base_generic_form.html',
-        user_attendance=None,
-        extra_context=None):
+class InviteView(RegistrationViewMixin, FormView):
     form_class = InviteForm
+    title = _(u'Odeslat pozvánky dalším uživatelům')
+    current_view = "zmenit_tym"
 
-    if 'invite_success_url' in request.session:
-        success_url = request.session.get('invite_success_url')
+    @method_decorator(login_required_simple)
+    @must_be_competitor
+    def dispatch(self, request, *args, **kwargs):
+        return super(InviteView, self).dispatch(request, *args, **kwargs)
 
-    if request.method == 'POST':
-        form = form_class(data=request.POST)
-        if form.is_valid():
-            emails = [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4']]
+    def form_valid(self, form):
+        emails = [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4']]
 
-            for email in emails:
-                if email:
-                    try:
-                        invited_user = models.User.objects.get(is_active=True, email=email)
+        for email in emails:
+            if email:
+                try:
+                    invited_user = models.User.objects.get(is_active=True, email=email)
 
-                        invited_user_attendance, created = UserAttendance.objects.get_or_create(
-                            userprofile=invited_user.userprofile,
-                            campaign=user_attendance.campaign,
-                            )
+                    invited_user_attendance, created = UserAttendance.objects.get_or_create(
+                        userprofile=invited_user.userprofile,
+                        campaign=self.user_attendance.campaign,
+                        )
 
-                        if invited_user_attendance.team == user_attendance.team:
-                            approve_for_team(request, invited_user_attendance, "", True, False)
-                        else:
-                            invitation_register_mail(user_attendance, invited_user_attendance)
-                            messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka uživateli %(user)s na email %(email)s") % {"user": invited_user_attendance, "email": email}, fail_silently=True)
-                    except models.User.DoesNotExist:
-                        invitation_mail(user_attendance, email)
-                        messages.add_message(request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s") % email, fail_silently=True)
+                    if invited_user_attendance.team == self.user_attendance.team:
+                        approve_for_team(request, invited_user_attendance, "", True, False)
+                    else:
+                        invitation_register_mail(self.user_attendance, invited_user_attendance)
+                        messages.add_message(self.request, messages.SUCCESS, _(u"Odeslána pozvánka uživateli %(user)s na email %(email)s") % {"user": invited_user_attendance, "email": email}, fail_silently=True)
+                except models.User.DoesNotExist:
+                    invitation_mail(self.user_attendance, email)
+                    messages.add_message(self.request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s") % email, fail_silently=True)
 
-            return redirect(reverse(success_url))
-    else:
-        form = form_class()
-    return render_to_response(template_name, {
-        'form': form,
-        }, context_instance=RequestContext(request))
+        return redirect(self.request.session.get('invite_success_url'))
 
 
 @must_be_competitor

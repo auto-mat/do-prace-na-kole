@@ -34,7 +34,7 @@ urlpatterns = patterns(
         must_be_in_phase("registration", "compet_entry")(views.RegistrationAccessView.as_view()),
         ),
     url(r'^pozvanky/$',
-        views.invite,
+        views.InviteView.as_view(),
         {'success_url': 'typ_platby'},
         name="pozvanky"),
     url(r'^zaslat_zadost_clenstvi/$',
