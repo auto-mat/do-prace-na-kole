@@ -422,6 +422,11 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
         context['aklub_url'] = settings.AKLUB_URL
         return context
 
+    def get_form(self, form_class):
+        form = super(PaymentTypeView, self).get_form(form_class)
+        form.user_attendance = self.user_attendance
+        return form
+
     def form_valid(self, form):
         payment_choices = {
             'member': {'type': 'am', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},

@@ -791,6 +791,23 @@ class UserAttendance(models.Model):
             trips.append(trip)
         return trips
 
+    def is_company_admin(self):
+        try:
+            ca = self.userprofile.user.company_admin.get()
+            return ca
+        except CompanyAdmin.DoesNotExist:
+            return None
+
+    def get_asociated_company_admin(self):
+        try:
+            ca = self.team.subsidiary.company.company_admin.get()
+            if ca.company_admin_approved == 'approved':
+                return ca
+            else:
+                return None
+        except CompanyAdmin.DoesNotExist:
+            return None
+
 
 class UserAttendanceRelated(UserAttendance):
     class Meta:

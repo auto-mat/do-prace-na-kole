@@ -313,6 +313,16 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         widget=forms.RadioSelect(),
     )
 
+    def clean_payment_type(self):
+        payment_type = self.cleaned_data['payment_type']
+        company = self.user_attendance.team.subsidiary.company
+        company_admin = self.user_attendance.get_asociated_company_admin()
+        if payment_type == 'company' and not company_admin:
+            raise forms.ValidationError(mark_safe(_(u"Váš zaměstnavatel %s nemá zvoleného koordinátor společnosti.<ul><li><a href='%s'>Chci se stát koordinátorem mé společnosti</a></li></ul>") % (self.user_attendance.team.subsidiary.company, reverse('company_admin_application'))))
+        elif payment_type == 'company' and not company_admin.can_confirm_payments:
+           raise forms.ValidationError(mark_safe(_(u"Koordinátor vašeho zaměstnavatele nemá možnost povolovat platby fakturou.<ul><li>Kontaktujte koordinátora %s vašeho zaměstnavatele %s na emailu %s</li><li>Koordinátor bude muset nejprve dohodnout spolupráci na adrese kontakt@dopracenakole.net</li></ul>") % (company_admin, company, company_admin.user.email)))
+        return payment_type
+
 
 class ConfirmDeliveryForm(forms.ModelForm):
     CHOICES = [

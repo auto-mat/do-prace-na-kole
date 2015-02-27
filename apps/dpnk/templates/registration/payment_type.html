@@ -59,7 +59,17 @@ $(function(){
    </div>
    <div id="company_description" class="description_switcher_div description" style="display:none">
       <h3>Startovné platí zaměstnavatel</h3>
-      Startovné za mě platí zaměstnavatel Společnost prostřednictvím koordinátora Firemní Koordinátor s emailem firemni.koordinator@email.cz.
+      {% if user_attendance.get_asociated_company_admin %}
+      Startovné za mě platí zaměstnavatel, mám to domluvené.
+      {% else %}
+      Váš zaměstnavatel ještě nemá zvoleného koordinátora. Pokud chcete zvolit tento typ platby, je potřeba, aby byla platba startovného fakturou dohodnutá s vaším zaměstnavatelem.
+      <br/>
+      <a href='{% url "company_admin_application" %}'>Chci se sám stát koordinátorem mé společnosti.</a>
+      {% endif %}
+      <br/><br/>
+      {% trans "Zaměstnavatel: " %} {{ user_attendance.team.subsidiary.company }}<br/>
+      {% trans "Koordinátor společnosti: " %} {{ user_attendance.get_asociated_company_admin|default:"Není" }}<br/>
+      {% trans "Email na koordinátora: " %} {{ user_attendance.get_asociated_company_admin.user.email|default:"Není" }}<br/>
    </div>
    <div id="member_description" class="description_switcher_div description" style="display:none">
       <h3>Člen Klubu přátel</h3>
