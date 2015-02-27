@@ -29,13 +29,15 @@ import django.contrib.auth
 import datetime
 from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView
-from decorators import must_be_company_admin, request_condition, must_be_in_phase
+from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_company_admin, must_be_in_phase
 from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
 import company_admin_forms
 from dpnk.email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from wp_urls import wp_reverse
+from django.core.urlresolvers import reverse_lazy
 from util import redirect
 from models import Company, CompanyAdmin, Payment, Competition, Campaign, UserProfile
+from views import UserAttendanceViewMixin
 import models
 import registration.signals
 import registration.backends
@@ -151,35 +153,34 @@ class CompanyAdminApplicationView(FormView):
         return redirect(wp_reverse(self.success_url))
 
 
-class CompanyAdminView(UpdateView):
-    template_name = 'generic_form_template.html'
+class CompanyAdminView(UserAttendanceViewMixin, UpdateView):
+    template_name = 'base_generic_form.html'
     form_class = CompanyAdminForm
     model = CompanyAdmin
-    success_url = 'profil'
+    success_url = reverse_lazy('zmenit_tym')
 
-    def get(self, *args, **kwargs):
-        try:
-            return super(CompanyAdminView, self).get(*args, **kwargs)
-        except Http404 as e:
-            return HttpResponse(e.message)
+    @must_be_competitor
+    @must_have_team
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(CompanyAdminView, self).dispatch(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
-        user_attendance = self.kwargs.get('user_attendance')
-        campaign = user_attendance.campaign
+        campaign = self.user_attendance.campaign
         try:
             company_admin = self.request.user.company_admin.get(campaign=campaign)
         except CompanyAdmin.DoesNotExist:
             company_admin = CompanyAdmin(user=self.request.user, campaign=campaign)
-        old_company_admin = user_attendance.team.subsidiary.company.company_admin.filter(campaign=campaign).first()
+        old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.filter(campaign=campaign).first()
         if old_company_admin and old_company_admin != company_admin:
             raise Http404(_(u'<div class="text-warning">Vaše firma již svého koordinátora má: %s.</div>') % old_company_admin)
-        company_admin.administrated_company = user_attendance.team.subsidiary.company
+        company_admin.administrated_company = self.user_attendance.team.subsidiary.company
         return company_admin
 
     def form_valid(self, form):
-        super(CompanyAdminView, self).form_valid(form)
-        company_admin_register_competitor_mail(self.kwargs.get('user_attendance'))
-        return redirect(wp_reverse(self.success_url))
+        ret_val = super(CompanyAdminView, self).form_valid(form)
+        company_admin_register_competitor_mail(self.user_attendance)
+        return ret_val
 
 
 class CompanyCompetitionView(UpdateView):

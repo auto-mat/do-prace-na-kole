@@ -61,7 +61,7 @@ class CompanyForm(AdressForm):
         return ret_val
 
 
-class CompanyAdminForm(forms.ModelForm):
+class CompanyAdminForm(SubmitMixin, forms.ModelForm):
     class Meta:
         model = CompanyAdmin
         fields = ('motivation_company_admin', )

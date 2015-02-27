@@ -122,7 +122,9 @@ urlpatterns = patterns(
 
     # company admin:
     url(r'^spolecnost/zadost_admina/$',
-        must_be_competitor(must_have_team(login_required(company_admin_views.CompanyAdminView.as_view())))),
+        company_admin_views.CompanyAdminView.as_view(),
+        name='company_admin_application',
+        ),
     url(r'^spolecnost/soutez/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
         must_be_company_admin(login_required(company_admin_views.CompanyCompetitionView.as_view()))),
     url(r'^spolecnost/soutez/$',
