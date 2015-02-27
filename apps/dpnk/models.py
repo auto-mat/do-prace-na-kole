@@ -683,7 +683,8 @@ class UserAttendance(models.Model):
             return None
 
     def payment_type_string(self):
-        return Payment.PAY_TYPES_DICT[self.payment_type()].upper()
+        if self.payment_type():
+            return Payment.PAY_TYPES_DICT[self.payment_type()].upper()
 
     def get_competitions(self):
         return results.get_competitions_with_info(self)

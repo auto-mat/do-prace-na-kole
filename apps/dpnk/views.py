@@ -138,7 +138,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                 if self.user_attendance.is_libero():
                     messages.warning(request, mark_safe(_(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce! <ul><li>Můžete se pokusit <a href="%s">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete sehnat spolupracovníky, použijte seznamku.</li></ul>') % reverse('zmenit_tym')))
 
-        if self.user_attendance.payment_status() not in ('done', 'none',):
+        if self.user_attendance.payment_status() not in ('done', 'none',) and self.current_view not in ('typ_platby',):
             messages.info(request, mark_safe(_(u'Vaše platba typu %s ještě nebyla vyřízena. Můžete <a href="%s">zadat novou platbu.</a>') % (self.user_attendance.payment_type_string(), reverse('platba'))))
         if self.current_view == 'working_schedule' and not self.user_attendance.entered_competition():
             messages.error(request, _(u'Před vstupem do soutěžního profilu musíte mít splněny všechny kroky registrace'))
