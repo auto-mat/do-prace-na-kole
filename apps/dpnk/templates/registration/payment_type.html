@@ -83,7 +83,7 @@ $(function(){
 <div id="pay_description" class="description_switcher_div description">
    <h3>Platba startovného</h3>
    <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform">
-   {% trans "Soutěžící:" %} {{firstname}} {{surname}}<br/>
+   {% trans "Soutěžící:" %} {{ user_attendance.userprofile.user.get_full_name }}<br/>
    {% trans "Startovné:" %} {{amount}} Kč<br/>
    <div id="payu-hidden-values"></div>
    <script language="JavaScript" type="text/javascript">
