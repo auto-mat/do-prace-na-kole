@@ -6,15 +6,19 @@
 {% block extrahead %}
 <script type="text/javascript" src="{% static "js/bootstrap-select/bootstrap-select.js"%}"></script>
 <link rel="stylesheet" type="text/css" href="{% static "js/bootstrap-select/bootstrap-select.css"%}">
-<script src="http://malsup.github.com/jquery.form.js"></script>
+<script type="text/javascript" src="{% static "js/jquery.form.js"%}"></script>
 {{ block.super }}
 {% endblock %}
 
 
-{% block form %}
+{% block messages %}
 <div class="alert alert-info">
    Pokud je název společnosti, nebo adresa pobočky chybná, nezakládejte novou, ale žádejte opravu na kontakt@dopracenakole.net
 </div>
+{{ block.super }}
+{% endblock %}
+
+{% block container_header %}
 <style>
    #id_company_div:disabled,
    #id_company:disabled,
@@ -71,11 +75,10 @@
       $("#members-form").ajaxForm({replaceTarget: false, target: "#members-form"});
    });
 </script>
-
 {{ block.super }}
 {% endblock %}
 
-{% block content %}
+{% block container_footer %}
 {{ block.super }}
 <br/>
 <h1>Členové vašeho týmu</h1>

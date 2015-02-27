@@ -1,7 +1,9 @@
+{% extends "base_generic.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
 {% load i18n %}
 
+{% block content %}
 {% trans "Datum přijetí k sestavení: " %}{{ user_attendance.package_shipped.created.date }}
 <br/>
 {% trans "Triko: " %}{{ user_attendance.package_shipped.t_shirt_size }}
@@ -13,3 +15,4 @@
 Balíček můžete <a href="{{ tnt_href }}">sledovat pomocí TNT</a>
 {% endblocktrans %}
 {% endif %}
+{% endblock %}

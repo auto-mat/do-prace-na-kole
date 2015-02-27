@@ -1,20 +1,18 @@
 {% extends "base_generic_registration_form.html" %}
 {% load crispy_forms_tags %}
 {% load url from future %}
+{% load static %}
 {% load i18n %}
 
 {% block extrahead %}
-<script language='javascript' type='text/javascript' src="https://secure.payu.com/jsgenerator/js/jquery-latest.js"></script>
 <script language='javascript' type='text/javascript' src='https://secure.payu.com/paygw/UTF/js/131116/ea/template:3/paytype.js'></script>
-<script src="http://malsup.github.com/jquery.form.js"></script>
+<script type="text/javascript" src="{% static "js/jquery.form.js"%}"></script>
 {{ block.super }}
 {% endblock %}
 
 
 
-{% block form %}
-{{ block.super }}
-
+{% block container_footer %}
 <script>
 function switch_description(){
    $(".description_switcher_div").hide();

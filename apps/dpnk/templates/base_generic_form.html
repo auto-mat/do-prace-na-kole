@@ -7,14 +7,24 @@
 {% block content %}
 {% block form_container %}
 <div class="container">
-{% block form %}
+{% block container_header %}
+{% endblock %}
+
+{% block messages %}
 {% include "messages_include.html" %}
-
 {{ message }}
+{% endblock %}
 
+{% block form_intro %}
+{% endblock %}
+
+{% block form %}
 {% crispy form %}
 {% endblock %}
 {% block error %}{{ block.super }}{% endblock %}
+
+{% block container_footer %}
+{% endblock %}
 </div>
 {% endblock %}
 {% endblock %}
