@@ -70,7 +70,7 @@
    });
 
    //Team members approval form
-   $.get("/dalsi_clenove/", function(data) {
+   $.get('{% url "team_members" %}', function(data) {
       $("#members-form-container").append(data);
       $("#members-form").ajaxForm({replaceTarget: false, target: "#members-form"});
    });

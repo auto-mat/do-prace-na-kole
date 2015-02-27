@@ -46,6 +46,7 @@ urlpatterns = patterns(
         name="profil"),
     url(r'^dalsi_clenove/$',
         views.TeamMembers.as_view(),
+        name="team_members",
         ),
     url(r'^dalsi_clenove_vysledky/$',
         views.other_team_members,
