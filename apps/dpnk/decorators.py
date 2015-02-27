@@ -32,7 +32,6 @@ import functools
 
 def must_be_approved_for_team(fn):
     @functools.wraps(fn)
-    @login_required
     @must_be_competitor
     def wrapper(*args, **kwargs):
         user_attendance = kwargs['user_attendance']

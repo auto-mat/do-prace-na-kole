@@ -83,6 +83,7 @@ class DPNKLoginView(LoginView):
 
 
 class UserAttendanceViewMixin(object):
+    @method_decorator(login_required_simple)
     @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
@@ -402,10 +403,9 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     current_view = "typ_platby"
     next_url = "working_schedule"
     prev_url = "upravit_triko"
-    @method_decorator(login_required_simple)
+
     @user_attendance_has(lambda ua: ua.payment()['status'] == 'done', mark_safe_lazy(format_lazy(_(u"Již máte startovné zaplaceno. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
     @user_attendance_has(lambda ua: ua.payment()['status'] == 'no_admission', mark_safe_lazy(format_lazy(_(u"Startovné se neplatí. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
-    @must_be_competitor
     @must_have_team
     def dispatch(self, request, *args, **kwargs):
         dispatch = super(PaymentTypeView, self).dispatch(request, *args, **kwargs)
@@ -471,8 +471,6 @@ class PaymentView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     next_url = "upravit_profil"
     prev_url = "upravit_triko"
 
-    @method_decorator(login_required_simple)
-    @must_be_competitor
     @must_have_team
     def dispatch(self, request, *args, **kwargs):
         return super(PaymentView, self).dispatch(request, *args, **kwargs)
@@ -645,9 +643,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
     template_name='registration/rides.html'
     success_url="jizdy"
 
-    @method_decorator(login_required_simple)
-    @must_be_competitor
-    @method_decorator(must_be_approved_for_team)
+    @must_be_approved_for_team
     @user_attendance_has(lambda ua: not ua.entered_competition(), mark_safe_lazy(format_lazy(_(u"Vyplnit jízdy můžete až budete mít splněny všechny body <a href='{addr}'>registrace</a>."), addr=reverse_lazy("upravit_profil"))))
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
@@ -1296,8 +1292,6 @@ def team_admin_team(
 class TeamMembers(UserAttendanceViewMixin, TemplateView):
     template_name='registration/team_admin_members.html'
 
-    @must_be_competitor
-    @method_decorator(login_required_simple)
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):
         return super(TeamMembers, self).dispatch(request, *args, **kwargs)
