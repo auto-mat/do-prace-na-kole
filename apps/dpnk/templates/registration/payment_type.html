@@ -53,11 +53,7 @@ $(function(){
    <div id="free_description" class="description_switcher_div description" style="display:none">
       <h3>Startovné zdarma</h3>
       Startovné zdarma můžete čerpat v těchto případech:
-      <ul>
-         <li>bydlíte ve městě Liberec</li>
-         <li>pracujete ve firmě Firma</li>
-         <li>jste koordinátorem ve městě Město</li>
-      </ul>
+      {{ user_attendance.campaign.free_entry_cases_html|safe }}
 
       Po zadání tohoto typu platby vyčkejte, než vaši volbu potvrdíme.
    </div>

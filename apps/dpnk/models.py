@@ -418,6 +418,11 @@ class Campaign(models.Model):
         verbose_name=_(u"Benefiční startovné"),
         null=False,
         default=0)
+    free_entry_cases_html = models.TextField(
+        verbose_name=_(u"Případy, kdy je startovné zdarma"),
+        null=True,
+        blank=True,
+        )
 
     def __unicode__(self):
         return self.name
