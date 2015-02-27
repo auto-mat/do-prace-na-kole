@@ -801,12 +801,8 @@ class ProfileView(RegistrationViewMixin, TemplateView):
     template_name = 'registration/competition_profile.html'
 
 
-@login_required_simple
-@must_be_competitor
-def user_attendance_view(request, user_attendance=None, template=None):
-    return render_to_response(template, {
-        'user_attendance': user_attendance,
-        }, context_instance=RequestContext(request))
+class UserAttendanceView(UserAttendanceViewMixin, TemplateView):
+    pass
 
 
 @login_required_simple

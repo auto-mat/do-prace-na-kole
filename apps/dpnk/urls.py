@@ -103,17 +103,21 @@ urlpatterns = patterns(
     url(r'^facebook_app/$',
         views.facebook_app),
     url(r'^package/$',
-        views.user_attendance_view,
-        {"template": "registration/package.html"}),
+        views.UserAttendanceView.as_view(
+            template_name = "registration/package.html"
+        ),
+        name="package"),
     url(r'^competition_profile_notices/$',
-        views.user_attendance_view,
-        {"template": "registration/competition_profile_notices.html"}),
+        views.UserAttendanceView.as_view(
+            template_name = "registration/competition_profile_notices.html"
+        )),
     url(r'^package-confirmation/$',
         views.ConfirmDeliveryView.as_view(),
         ),
     url(r'^address/$',
-        views.user_attendance_view,
-        {"template": "registration/address.html"}),
+        views.UserAttendanceView.as_view(
+            template_name = "registration/address.html"
+        )),
 
 
     # company admin:
