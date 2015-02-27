@@ -795,6 +795,7 @@ class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'slug', 'mailing_list_enabled', )
     inlines = [TShirtSizeInline, PhaseInline, CityInCampaignInline]
     prepopulated_fields = {'slug': ('name',)}
+    save_as = True
 
 
 class HasUserAttendanceFilter(SimpleListFilter):
