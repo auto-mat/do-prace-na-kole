@@ -181,6 +181,13 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         queryset=Team.objects.all(),
         required=True)
 
+    def clean(self):
+        cleaned_data = super(ChangeTeamForm, self).clean()
+        if self.instance.payment_status() == 'done' and self.instance.team:
+            if cleaned_data['team'].subsidiary != self.instance.team.subsidiary:
+                raise forms.ValidationError(mark_safe(_(u"Po zaplacení není možné měnit tým mimo pobočku")))
+        return cleaned_data
+
     def clean_team(self):
         data = self.cleaned_data['team']
         if not data:
@@ -205,6 +212,11 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         kwargs['initial'] = initial
 
         super(ChangeTeamForm, self).__init__(*args, **kwargs)
+
+        if self.instance.payment_status() == 'done' and self.instance.team:
+            self.fields["subsidiary"].widget = HiddenInput()
+            self.fields["company"].widget = HiddenInput()
+            self.fields["team"].queryset = Team.objects.filter(subsidiary__company=self.instance.team.subsidiary.company)
 
     class Meta:
         model = UserAttendance
