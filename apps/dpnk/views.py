@@ -1218,12 +1218,19 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         return
 
 
-@must_be_competitor
-@login_required_simple
-def team_approval_request(request, user_attendance=None):
-    approval_request_mail(user_attendance)
-    return render_to_response('registration/request_team_approval.html',
-                              context_instance=RequestContext(request))
+class TeamApprovalRequest(RegistrationViewMixin, TemplateView):
+    template_name = 'registration/request_team_approval.html'
+    title = _(u"Znovu odeslat žádost o členství")
+    current_view = "zmenit_tym"
+
+    @method_decorator(login_required_simple)
+    @must_be_competitor
+    def dispatch(self, request, *args, **kwargs):
+        return super(TeamApprovalRequest, self).dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        approval_request_mail(self.user_attendance)
+        return super(TeamApprovalRequest, self).form_valid(form)
 
 
 class InviteView(RegistrationViewMixin, FormView):

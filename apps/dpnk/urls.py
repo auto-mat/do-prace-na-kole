@@ -38,7 +38,7 @@ urlpatterns = patterns(
         {'success_url': 'typ_platby'},
         name="pozvanky"),
     url(r'^zaslat_zadost_clenstvi/$',
-        views.team_approval_request,
+        views.TeamApprovalRequest.as_view(),
         name="zaslat_zadost_clenstvi",
         ),
     url(r'^profil/$',

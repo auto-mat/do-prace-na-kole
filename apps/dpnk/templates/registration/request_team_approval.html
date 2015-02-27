@@ -1,7 +1,10 @@
+{% extends "base_generic_registration_form.html" %}
 {% load i18n %}
 {% load url from future %}
-{% load dpnk_tags %}
+
+{% block form %}
 {% trans "Žádost o ověření členství byla odeslána." %}
 
-{% trans "Nyní se můžete vrátit zpět na " %}<a href="{% wp_url 'profil' %}">{% trans "profil" %}</a>.
+{% trans "Pokračujte na " %}<a href="{% url 'upravit_trasu' %}">{% trans "výběr trasy" %}</a>.
+{% endblock %}
 
