@@ -922,6 +922,7 @@ class UpdateTrackView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
 
 
 class ChangeTShirtView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
+    template_name = 'registration/change_tshirt.html'
     form_class = forms.TShirtUpdateForm
     model = UserAttendance
     success_message = _(u"Velikost trička úspěšně nastavena")

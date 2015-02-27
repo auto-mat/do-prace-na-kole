@@ -1,0 +1,15 @@
+{% extends "base_generic_registration_form.html" %}
+{% load i18n %}
+
+{% block form_intro %}
+{% blocktrans %}
+Doručení startovního balíčku s tričkem probíhá vždy na dříve zvolenou pobočku vaší společnosti. Před výběrem trička prosím zkontrolujte, že je adresa pobočky správně, pokud není, napište na kontakt@dopracenakole.net  
+{% endblocktrans %}
+<br/><br/>
+{% trans "Name: " %}{{ user_attendance.userprofile.user.get_full_name }}
+<br/>
+{% trans "Adresa: " %}{{ user_attendance.team.subsidiary }}
+<br/>
+<br/>
+{{ block.super }}
+{% endblock %}
