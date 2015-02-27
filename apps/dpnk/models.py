@@ -767,9 +767,7 @@ class UserAttendance(models.Model):
         return self.track or self.distance
 
     def team_complete(self):
-        if self.team:
-            return self.team.member_count > 1
-        return False
+        return self.team
 
     def payment_complete(self):
         return self.payment()['status'] == 'done' or self.payment()['status'] == 'no_admission'
