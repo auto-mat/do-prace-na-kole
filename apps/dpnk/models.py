@@ -799,6 +799,8 @@ class UserAttendance(models.Model):
             return None
 
     def get_asociated_company_admin(self):
+        if not self.team:
+            return None
         try:
             ca = self.team.subsidiary.company.company_admin.get()
             if ca.company_admin_approved == 'approved':
