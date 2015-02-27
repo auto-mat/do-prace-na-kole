@@ -142,6 +142,12 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
             messages.info(request, mark_safe(_(u'Vaše platba typu %s ještě nebyla vyřízena. Můžete <a href="%s">zadat novou platbu.</a>') % (self.user_attendance.payment_type_string(), reverse('platba'))))
         if self.current_view == 'working_schedule' and not self.user_attendance.entered_competition():
             messages.error(request, _(u'Před vstupem do soutěžního profilu musíte mít splněny všechny kroky registrace'))
+
+
+        if self.user_attendance.is_company_admin().company_admin_approved == 'undecided':
+            messages.warning(request, _(u'Vaše žádost o funkci koordinátora společnosti čeká na vyřízení.'))
+        if self.user_attendance.is_company_admin().company_admin_approved == 'denied':
+            messages.error(request, _(u'Vaše žádost o funkci koordinátora společnosti byla zamítnuta.'))
         return ret_val
 
 
