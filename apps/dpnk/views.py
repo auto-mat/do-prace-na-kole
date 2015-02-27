@@ -144,9 +144,10 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
             messages.error(request, _(u'Před vstupem do soutěžního profilu musíte mít splněny všechny kroky registrace'))
 
 
-        if self.user_attendance.is_company_admin().company_admin_approved == 'undecided':
+        company_admin = self.user_attendance.is_company_admin()
+        if company_admin and company_admin.company_admin_approved == 'undecided':
             messages.warning(request, _(u'Vaše žádost o funkci koordinátora společnosti čeká na vyřízení.'))
-        if self.user_attendance.is_company_admin().company_admin_approved == 'denied':
+        if company_admin and company_admin.company_admin_approved == 'denied':
             messages.error(request, _(u'Vaše žádost o funkci koordinátora společnosti byla zamítnuta.'))
         return ret_val
 
