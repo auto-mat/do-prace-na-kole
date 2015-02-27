@@ -278,7 +278,7 @@ class Team(models.Model):
         )
 
     def autoset_member_count(self):
-        self.member_count = UserAttendance.objects.filter(campaign=self.campaign, team=self, approved_for_team='approved', transactions__useractiontransaction__status=UserActionTransaction.Status.COMPETITION_START_CONFIRMED).count()
+        self.member_count = self.members().count()
         self.save()
         if self.member_count > settings.MAX_TEAM_MEMBERS:
             logger.error(u"Too many members in team %s" % self)
@@ -290,7 +290,7 @@ class Team(models.Model):
         return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True)
 
     def members(self):
-        return UserAttendance.objects.filter(approved_for_team='approved', team=self, userprofile__user__is_active=True)
+        return UserAttendance.objects.filter(campaign=self.campaign, approved_for_team='approved', team=self, userprofile__user__is_active=True)
 
     def get_frequency(self):
         return results.get_team_frequency(self)
