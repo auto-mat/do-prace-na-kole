@@ -414,6 +414,7 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     next_url = "working_schedule"
     prev_url = "upravit_triko"
 
+    @method_decorator(login_required_simple)
     @must_have_team
     @user_attendance_has(lambda ua: ua.payment()['status'] == 'done', mark_safe_lazy(format_lazy(_(u"Již máte startovné zaplaceno. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
     @user_attendance_has(lambda ua: ua.payment()['status'] == 'no_admission', mark_safe_lazy(format_lazy(_(u"Startovné se neplatí. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
