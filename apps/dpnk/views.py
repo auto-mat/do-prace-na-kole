@@ -1247,6 +1247,7 @@ class InviteView(RegistrationViewMixin, FormView):
     form_class = InviteForm
     title = _(u'Odeslat pozvánky dalším uživatelům')
     current_view = "zmenit_tym"
+    success_url = reverse_lazy('zmenit_tym')
 
     @method_decorator(login_required_simple)
     @must_be_competitor
@@ -1275,7 +1276,7 @@ class InviteView(RegistrationViewMixin, FormView):
                     invitation_mail(self.user_attendance, email)
                     messages.add_message(self.request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s") % email, fail_silently=True)
 
-        return redirect(self.request.session.get('invite_success_url'))
+        return redirect(self.request.session.get('invite_success_url') or self.success_url)
 
 
 @must_be_competitor
