@@ -39,8 +39,8 @@ $(function(){
    });
 
    $("#pay_description form").submit(function(){
-      if($("#payu-hidden-values").is(":empty")) {
-         $.get("{% url "platba" %} #payu-hidden-values", function(data) {
+      if($("#payu-hidden-values input").length == 0) {
+         $.get("{% url "platba" %}", function(data) {
             $("#payu-hidden-values").html(data);
             $("#pay_description form").submit();
          });

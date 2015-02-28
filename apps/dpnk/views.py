@@ -515,7 +515,7 @@ class PaymentView(SuccessMessageMixin, RegistrationViewMixin, FormView):
         context['surname'] = profile.user.last_name  # surname
         context['email'] = profile.user.email  # email
         context['amount'] = self.user_attendance.admission_fee()
-        context['amount_hal'] = self.user_attendance.admission_fee() * 100  # v halerich
+        context['amount_hal'] = int(self.user_attendance.admission_fee() * 100)  # v halerich
         context['description'] = "Ucastnicky poplatek Do prace na kole"
         context['order_id'] = order_id
         context['client_ip'] = self.request.META['REMOTE_ADDR']
