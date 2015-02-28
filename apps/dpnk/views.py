@@ -523,35 +523,43 @@ class PaymentView(SuccessMessageMixin, RegistrationViewMixin, FormView):
         return context
 
 
-@login_required_simple
-@transaction.atomic
-def payment_result(request, success, trans_id, session_id, pay_type, error=None):
-    logger.info(u'Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s (%s)' % (success, trans_id, session_id, pay_type, error, request.user, request.user.username))
+class PaymentResult(RegistrationViewMixin, TemplateView):
+    current_view = 'typ_platby'
+    title = "Stav platby"
+    template_name = 'registration/payment_result.html'
 
-    if session_id and session_id != "":
-        p = Payment.objects.select_for_update().get(session_id=session_id)
-        if p.status not in Payment.done_statuses:
-            if success:
-                p.status = Payment.Status.COMMENCED
-            else:
-                p.status = Payment.Status.REJECTED
-        if not p.trans_id:
-            p.trans_id = trans_id
-        if not p.pay_type:
-            p.pay_type = pay_type
-        if not p.error:
-            p.error = error
-        p.save()
+    @method_decorator(login_required_simple)
+    def dispatch(self, request, *args, **kwargs):
+        return super(PaymentResult, self).dispatch(request, *args, **kwargs)
 
-    if success:
-        msg = _(u"Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
-    else:
-        msg = _(u"Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
+    @transaction.atomic
+    def get_context_data(self, success, trans_id, session_id, pay_type, error=None, user_attendance=None):
+        context_data = super(PaymentResult, self).get_context_data()
+        logger.info(u'Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s (%s)' % (success, trans_id, session_id, pay_type, error, user_attendance, user_attendance.userprofile.user.username))
 
-    return render_to_response('registration/payment_result.html', {
-        'pay_type': pay_type,
-        'message': msg,
-        }, context_instance=RequestContext(request))
+        if session_id and session_id != "":
+            p = Payment.objects.select_for_update().get(session_id=session_id)
+            if p.status not in Payment.done_statuses:
+                if success:
+                    p.status = Payment.Status.COMMENCED
+                else:
+                    p.status = Payment.Status.REJECTED
+            if not p.trans_id:
+                p.trans_id = trans_id
+            if not p.pay_type:
+                p.pay_type = pay_type
+            if not p.error:
+                p.error = error
+            p.save()
+
+        context_data['pay_type'] = pay_type
+        context_data['success'] = success
+
+        if success:
+            context_data['payment_message'] = _(u"Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
+        else:
+            context_data['payment_message'] = _(u"Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
+        return context_data
 
 
 def make_sig(values):

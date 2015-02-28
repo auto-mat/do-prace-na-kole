@@ -1,9 +1,16 @@
+{% extends "base_generic_registration_form.html" %}
 {% load i18n %}
 
+{% block form %}
 <div id="node-payment-result">
-<p id="payment-result">{{message}}</p>
+<p id="payment-result">{{payment_message}}</p>
 
 <p>
-<a href="/profil">{% trans "Váš soutěžní profil" %}</a>
+{% if success %}
+<a href="{% url 'working_schedule' %}">{% trans "Pokračujte na pracovní rozvrh" %}</a>
+{% else %}
+<a href="{% url 'typ_platby' %}">{% trans "Zkuste zadat platbu znovu" %}</a>
+{% endif %}
 </p>
 </div>
+{% endblock %}
