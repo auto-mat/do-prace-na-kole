@@ -136,7 +136,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                 elif len(self.user_attendance.team.unapproved_members()) > 0:
                     messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('zmenit_tym')))
                 if self.user_attendance.is_libero():
-                    messages.warning(request, mark_safe(_(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce! <ul><li>Můžete se pokusit <a href="%s">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete sehnat spolupracovníky, použijte seznamku.</li></ul>') % reverse('zmenit_tym')))
+                    messages.warning(request, mark_safe(_(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce! <ul><li><a href="%s">Pozvěte</a> své kolegy do vašeho týmu.</li><li>Můžete se pokusit <a href="%s">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete sehnat spolupracovníky, použijte seznamku.</li></ul>') % (reverse('pozvanky'), reverse('zmenit_tym'))))
 
         if self.user_attendance.payment_status() not in ('done', 'none',) and self.current_view not in ('typ_platby',):
             messages.info(request, mark_safe(_(u'Vaše platba typu %s ještě nebyla vyřízena. Můžete <a href="%s">zadat novou platbu.</a>') % (self.user_attendance.payment_type_string(), reverse('platba'))))
