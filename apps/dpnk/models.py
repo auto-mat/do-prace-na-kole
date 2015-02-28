@@ -703,7 +703,7 @@ class UserAttendance(models.Model):
 
     def get_distance(self):
         if self.track:
-            return UserAttendance.objects.length().get(id=self.id).length.km
+            return round(UserAttendance.objects.length().get(id=self.id).length.km, 2)
         else:
             return self.distance
 

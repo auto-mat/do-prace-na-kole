@@ -718,6 +718,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         distance = 0
         trip_count = 0
         working_rides_count = 0
+        default_distance = self.user_attendance.get_distance()
         for i, d in enumerate(days):
             if d in trips:
                 working_rides_count += (1 if trips[d].is_working_ride_to else 0) + (1 if trips[d].is_working_ride_from else 0)
@@ -729,8 +730,8 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
                 cd['working_ride_from'] = trips[d].is_working_ride_from
                 cd['default_trip_to'] = trips[d].trip_to
                 cd['default_trip_from'] = trips[d].trip_from
-                cd['default_distance_to'] = "0" if trips[d].distance_to is None else trips[d].distance_to
-                cd['default_distance_from'] = "0" if trips[d].distance_from is None else trips[d].distance_from
+                cd['default_distance_to'] = default_distance if trips[d].distance_to is None else trips[d].distance_to
+                cd['default_distance_from'] = default_distance if trips[d].distance_from is None else trips[d].distance_from
                 trip_count += (1 if trips[d].is_working_ride_to and trips[d].trip_to else 0) + (1 if trips[d].is_working_ride_from and trips[d].trip_from else 0)
                 if trips[d].trip_to and trips[d].distance_to:
                     distance += trips[d].distance_to_cutted()
@@ -741,8 +742,8 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
                 cd['working_ride_from'] = False
                 cd['default_trip_to'] = False
                 cd['default_trip_from'] = False
-                cd['default_distance_to'] = "0"
-                cd['default_distance_from'] = "0"
+                cd['default_distance_to'] = default_distance
+                cd['default_distance_from'] = default_distance
             cd['percentage'] = self.user_attendance.get_frequency_percentage(trip_count, working_rides_count)
             cd['percentage_str'] = "%.0f" % (cd['percentage'])
             cd['distance'] = distance
