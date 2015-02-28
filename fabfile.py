@@ -261,6 +261,7 @@ def install_site():
 def install_requirements():
     "Install the required packages from the requirements file using pip"
     require('release', provided_by=[deploy, setup])
+    run('cd %(path)s/releases/%(release)s; bower install' % env)
     run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt' % env)
 
 def symlink_current_release():

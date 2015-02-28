@@ -1,0 +1,24 @@
+{
+  "directory": "apps/dpnk/static/js/bow/",
+  "name": "dopracenakole2015",
+  "version": "0.0.0",
+  "authors": [
+    "Petr Dlouhý <petr.dlouhy@email.cz>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "openlayers": "release-2.13.1",
+    "bootstrap": "~3.3.2",
+    "jquery-form": "~3.46.0",
+    "bootstrap-select": "~1.6.4",
+    "font-awesome": "~4.3.0"
+  }
+}

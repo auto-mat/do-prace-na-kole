@@ -4,6 +4,7 @@
 *.pyc
 *.swp
 *~
+/apps/dpnk/static/bow
 /sql/
 /dpnk.log
 /dpnk-timelog.log
