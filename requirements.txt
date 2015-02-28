@@ -37,3 +37,4 @@ django-crispy-forms
 django-class-based-auth-views
 django-subdomains
 django-adminfilters
+django-compressor

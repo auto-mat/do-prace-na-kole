@@ -58,6 +58,7 @@ STATIC_URL = '/static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
 )
 SECRET_KEY = ''
 MIDDLEWARE_CLASSES = (
@@ -124,7 +125,10 @@ INSTALLED_APPS = (
     'easy_thumbnails',
     'crispy_forms',
     'adminfilters',
+    'compressor',
 )
+
+COMPRESSOR_ENABLED = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SERVER_EMAIL = 'root@auto-mat.cz'
