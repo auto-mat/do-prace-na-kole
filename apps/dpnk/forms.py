@@ -206,7 +206,14 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
     def __init__(self, request=None, *args, **kwargs):
         initial = kwargs.get('initial', {})
-        instance = kwargs.get('instance', {})
+        instance = kwargs.get('instance', False)
+
+        if instance:
+            previous_user_attendance = instance.previous_user_attendance()
+            if previous_user_attendance:
+                initial['subsidiary'] = previous_user_attendance.team.subsidiary
+                initial['company'] = previous_user_attendance.team.subsidiary.company
+
         if instance and instance.team:
             initial['team'] = instance.team
             initial['subsidiary'] = instance.team.subsidiary
