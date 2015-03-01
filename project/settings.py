@@ -2,6 +2,7 @@
 # Django settings for DPNK project.
 import os
 import sys
+from django.core.urlresolvers import reverse_lazy
 from django.contrib.messages import constants as message_constants
 from django.utils.translation import ugettext_lazy as _
 
@@ -132,9 +133,9 @@ COMPRESSOR_ENABLED = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SERVER_EMAIL = 'root@auto-mat.cz'
-LOGIN_URL = '/dpnk/login/'
-LOGIN_REDIRECT_URL = '/dpnk/upravit_profil/'
-LOGOUT_NEXT_PAGE = 'profil'
+LOGIN_URL = reverse_lazy('login')
+LOGIN_REDIRECT_URL = reverse_lazy("upravit_profil")
+LOGOUT_NEXT_PAGE = reverse_lazy('profil')
 SITE_URL = ''
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"
