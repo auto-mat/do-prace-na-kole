@@ -890,7 +890,7 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
         competition = Competition.objects.get(slug=competition_slug)
     except Competition.DoesNotExist:
         logger.exception('Unknown competition slug %s, request: %s' % (competition_slug, request))
-        return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
+        return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující soutěž">kontakt@dopracenakole.net</a></div>'), status=401)
 
     results = competition.get_results()
     if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
@@ -991,7 +991,7 @@ def questionaire(
         competition = Competition.objects.get(slug=questionaire_slug)
     except Competition.DoesNotExist:
         logger.exception('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
-        return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na kontakt@dopracenakole.net</div>'), status=401)
+        return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující dotazník">kontakt@dopracenakole.net</a></div>'), status=401)
     questions = Question.objects.filter(competition=competition).order_by('order')
     if request.method == 'POST' and competition.can_admit(user_attendance):
         choice_ids = [(int(k.split('-')[1]), request.POST.getlist(k)) for k, v in request.POST.items() if k.startswith('choice')]
@@ -1321,7 +1321,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
             userprofile = self.user_attendance.userprofile
             if self.user_attendance.approved_for_team not in ('undecided', 'denied') or not userprofile.user.is_active:
                 logger.error(u'Approving user with wrong parameters. User: %s (%s), approval: %s, team: %s, active: %s' % (userprofile.user, userprofile.user.username, self.user_attendance.approved_for_team, self.user_attendance.team, userprofile.user.is_active))
-                messages.add_message(request, messages.ERROR, _(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte kontakt@dopracenakole.net."), fail_silently=True)
+                messages.add_message(request, messages.ERROR, _(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.net?subject=Žádost o změnu adresy společnosti, pobočky nebo týmu'>kontakt@dopracenakole.net</a>."), fail_silently=True)
             else:
                 approve_for_team(request, self.user_attendance, request.POST.get('reason-' + str(self.user_attendance.id), ''), action == 'approve', action == 'deny')
         return render_to_response(self.template_name, self.get_context_data(), context_instance=RequestContext(request))
