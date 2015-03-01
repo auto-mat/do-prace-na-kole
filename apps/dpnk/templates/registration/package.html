@@ -1,9 +1,9 @@
-{% extends "base_generic.html" %}
+{% extends "base_generic_registration_form.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
 {% load i18n %}
 
-{% block content %}
+{% block form %}
 {% trans "Datum přijetí k sestavení: " %}{{ user_attendance.package_shipped.created.date }}
 <br/>
 {% trans "Triko: " %}{{ user_attendance.package_shipped.t_shirt_size }}

@@ -829,6 +829,10 @@ class ProfileView(RegistrationViewMixin, TemplateView):
 class UserAttendanceView(UserAttendanceViewMixin, TemplateView):
     pass
 
+class PackageView(RegistrationViewMixin, TemplateView):
+    template_name = "registration/package.html"
+    title = _(u"Sledování balíčku")
+    current_view = "zmenit_tym"
 
 @login_required_simple
 @must_be_competitor

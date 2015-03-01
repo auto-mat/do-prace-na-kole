@@ -104,9 +104,7 @@ urlpatterns = patterns(
     url(r'^facebook_app/$',
         views.facebook_app),
     url(r'^package/$',
-        views.UserAttendanceView.as_view(
-            template_name = "registration/package.html"
-        ),
+        views.PackageView.as_view(),
         name="package"),
     url(r'^competition_profile_notices/$',
         views.UserAttendanceView.as_view(
