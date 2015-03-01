@@ -125,6 +125,13 @@ class WorkingScheduleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         ret_val = super(WorkingScheduleForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'schedule',
+            HTML(_(u"""Jak postupovat ve speciálních případech:  <ul>
+               <li>při práci na dlouhé krátké týdny zadejte ve dnech, které pracujete cestu tam i zpět</li>
+               <li>pokud pracujete přes noc, zadejte první den pouze cestu tam a druhý den pouze cestu zpět</li>
+               </ul>""")),
+        )
         self.helper.add_input(Submit('prev', _(u'Předchozí')))
         if self.instance.entered_competition():
             self.helper.add_input(Submit('next', _(u'Přejít do profilu')))

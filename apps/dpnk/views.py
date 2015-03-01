@@ -931,6 +931,7 @@ class WorkingScheduleView(SuccessMessageMixin, RegistrationViewMixin, UpdateView
     next_url = 'profil'
     current_view = "working_schedule"
     title = _(u"Upravit pracovní kalendář")
+    template_name = 'registration/working_schedule.html'
 
     def get_object(self):
         return self.user_attendance

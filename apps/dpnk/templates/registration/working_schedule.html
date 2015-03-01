@@ -1,0 +1,17 @@
+{% extends "base_generic_registration_form.html" %}
+{% load i18n %}
+
+{% block form_intro %}
+{% blocktrans %}
+<strong>
+Při nestandardním rozvrhu vyplňte následující tabulku:
+</strong>
+<hr/>
+Zatrhněte, kdy budete cestovat do nebo z práce (jakýmkoliv dopravním prostředkem):  
+<br/>
+Rozvrh bude v průběhu soutěže možné měnit, vždy však pouze do budoucnosti.
+<br/>
+<br/>
+{% endblocktrans %}
+{{ block.super }}
+{% endblock %}
