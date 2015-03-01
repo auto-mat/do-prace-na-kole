@@ -240,7 +240,7 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
 
             if create_company:
                 company = form_company.save()
-                messages.add_message(request, messages.SUCCESS, _(u"Splečnost %s úspěšně vytvořena.") % company, fail_silently=True)
+                messages.add_message(request, messages.SUCCESS, _(u"Společnost %s úspěšně vytvořena.") % company, fail_silently=True)
             else:
                 company = Company.objects.get(id=form.data['company'])
 
