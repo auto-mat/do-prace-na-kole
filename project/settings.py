@@ -127,8 +127,10 @@ INSTALLED_APPS = (
     'crispy_forms',
     'adminfilters',
     'compressor',
+    'django_bleach',
 )
 
+BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a']
 COMPRESSOR_ENABLED = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

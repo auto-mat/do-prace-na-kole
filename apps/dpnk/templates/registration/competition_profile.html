@@ -1,5 +1,6 @@
 {% extends "base_generic.html" %}
 {% load static %}
+{% load dpnk_tags %}
 
 {% block extrahead %}
 <script type="text/javascript" src="{% static "bow/jquery-form/jquery.form.js"%}"></script>
@@ -26,4 +27,5 @@
 {{ message }}
 {% endblock %}
 
+{% cyklistesobe user_attendance.team.subsidiary.city.cyklistesobe_slug %}
 {% endblock %}

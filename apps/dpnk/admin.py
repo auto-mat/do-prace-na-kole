@@ -88,7 +88,7 @@ class SubsidiaryInline(EnhancedAdminMixin, admin.TabularInline):
 
 class CityAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('name', 'id', )
-    prepopulated_fields = {'slug': ('name',)}
+    prepopulated_fields = {'slug': ('name',), 'cyklistesobe_slug': ('name',)}
 
 
 class CompanyForm(forms.ModelForm):

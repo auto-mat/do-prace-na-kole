@@ -38,3 +38,5 @@ django-class-based-auth-views
 django-subdomains
 django-adminfilters
 django-compressor
+slumber
+django-bleach
