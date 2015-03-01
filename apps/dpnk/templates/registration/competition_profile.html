@@ -8,7 +8,7 @@
 
 {% block content %}
 <script>
-   $.get("/dpnk/jizdy/", function(data) {
+   $.get("{% url 'jizdy' %}", function(data) {
       $("#rides-form-container").append(data);
       $("#rides-form-container").change(function(){
          $("#rides-form :input").prop('readonly', true);
