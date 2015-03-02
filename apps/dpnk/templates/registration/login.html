@@ -3,7 +3,7 @@
 {% load dpnk_tags %}
 {% load crispy_forms_tags %}
 
-<form method="post" class="form-horizontal">{% csrf_token %}
+<form method="post" class="form-horizontal login-form">{% csrf_token %}
 <input type="hidden" name="page_url" id="page_url" value="{{ django_url }}/dpnk/login/">
 <input type="hidden" name="redirect_to" id="redirect_to" value="{{ redirect_to }}">
 {{ form|crispy }}
