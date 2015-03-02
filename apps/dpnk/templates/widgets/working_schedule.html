@@ -1,32 +1,37 @@
 {% load dpnk_tags %}
-<table class="table table-bordered table-hover table-condensed"><thead><tr><th>Po</th><th>Út</th><th>St</th><th>Čt</th><th>Pá</th><th>So</th><th>Ne</th></tr><thead>
-<tr>
-{% for i in padding_days_before|times %}
-<td></td>
-{% endfor %}
-{% for trip in trips %}
-   <td>
-      {{ trip.date }}
-      <br>
-      <input type="checkbox" name="working-ride-to-{{ trip.date| date:"Ymd" }}" class="working-ride" id="working-ride-to-{{ trip.date| date:"Ymd" }}"
-      {% if trip.is_working_ride_to %}checked="checked"{% endif %}
-      {% if not trip.can_edit %}disabled="disabled"{% endif %}
-      ><label for="working-ride-to-{{ trip.date| date:"Ymd" }}">Tam</label></input>
-      <br>
-      <input type="checkbox" name="working-ride-from-{{ trip.date| date:"Ymd" }}" class="working-ride" id="working-ride-from-{{ trip.date| date:"Ymd" }}"
-      {% if trip.is_working_ride_from %}checked="checked"{% endif %}
-      {% if not trip.can_edit %}disabled="disabled"{% endif %}
-      ><label for="working-ride-from-{{ trip.date| date:"Ymd" }}">Zpět</label></input>
-   </td>
-   {% if trip.date.weekday == 6 %}
-      </tr>
+<table class="table table-hover table-condensed">
+   <thead>
+      <tr><th>Po</th><th>Út</th><th>St</th><th>Čt</th><th>Pá</th><th>So</th><th>Ne</th></tr>
+   </thead>
+   <tbody>
       <tr>
-   {% endif %}
-{% endfor %}
-{% for i in padding_days_after|times %}
-<td></td>
-{% endfor %}
-</tr>
+      {% for i in padding_days_before|times %}
+      <td></td>
+      {% endfor %}
+      {% for trip in trips %}
+         <td>
+            {{ trip.date }}
+            <br>
+            <input type="checkbox" name="working-ride-to-{{ trip.date| date:"Ymd" }}" class="working-ride" id="working-ride-to-{{ trip.date| date:"Ymd" }}"
+            {% if trip.is_working_ride_to %}checked="checked"{% endif %}
+            {% if not trip.can_edit %}disabled="disabled"{% endif %}
+            ><label for="working-ride-to-{{ trip.date| date:"Ymd" }}">Tam</label></input>
+            <br>
+            <input type="checkbox" name="working-ride-from-{{ trip.date| date:"Ymd" }}" class="working-ride" id="working-ride-from-{{ trip.date| date:"Ymd" }}"
+            {% if trip.is_working_ride_from %}checked="checked"{% endif %}
+            {% if not trip.can_edit %}disabled="disabled"{% endif %}
+            ><label for="working-ride-from-{{ trip.date| date:"Ymd" }}">Zpět</label></input>
+         </td>
+         {% if trip.date.weekday == 6 %}
+            </tr>
+            <tr>
+         {% endif %}
+      {% endfor %}
+      {% for i in padding_days_after|times %}
+      <td></td>
+      {% endfor %}
+      </tr>
+   </tbody>
 </table>
 <strong>
 Počet plánovaných pracovních jízd celkem: <span id="rides-count"></span>
