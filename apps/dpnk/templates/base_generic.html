@@ -8,14 +8,17 @@
 {% block default_head %}
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-{% compress css %}
-<link href="{% static "css/style.css"%}" rel="stylesheet" media="screen">
-<link href="{% static "css/bootstrap_mod.css"%}" rel="stylesheet" media="screen">
-{% endcompress %}
-<link href="{% static "bow/bootstrap/dist/css/bootstrap.css"%}" rel="stylesheet" media="screen">
+
 <script type="text/javascript" src="{% static "bow/jquery/dist/jquery.js"%}"></script>
 <script type="text/javascript" src="{% static "bow/bootstrap/dist/js/bootstrap.js"%}"></script>
 <script type="text/javascript" src="{% static "js/form_functions.js"%}"></script>
+
+<link href="{% static "bow/bootstrap/dist/css/bootstrap.css"%}" rel="stylesheet" media="screen">
+<link href="{% static "css/bootstrap_mod.css"%}" rel="stylesheet" media="screen">
+<!-- TODO: Warning, tahle adresa se samzorejme zmeni -->
+<link href="http://test.dopracenakole.net/wp-content/themes/dpnk-2015/style.css" rel="stylesheet" media="screen">
+<link href="{% static "css/style.css"%}" rel="stylesheet" media="screen">
+
 {% endblock %}{% block extrahead %}{% endblock %}
 </head>
 <body>
