@@ -49,8 +49,10 @@ urlpatterns = patterns(
         name="team_members",
         ),
     url(r'^dalsi_clenove_vysledky/$',
-        views.other_team_members,
-        {'template': 'registration/team_members_results.html'},
+        views.OtherTeamMembers.as_view(
+            template_name='registration/team_members_results.html',
+        ),
+        name="other_team_members_results",
         ),
     url(r'^jizdy/$',
         views.RidesView.as_view(),

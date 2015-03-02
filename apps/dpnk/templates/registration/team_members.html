@@ -1,9 +1,11 @@
+{% extends "base_generic.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
 {% load i18n %}
 {% load humanize %}
 {% load softhyphen_tags %}
 
+{% block content %}
 <table class="table table-bordered" id="team_members_table">
    <tr>
       <th>{% trans "Jmé&shy;no" %}</th>
@@ -21,3 +23,4 @@
       <td><span class="text-{{ member.payment.class }}">{{ member.payment.status_description|softhyphen:"cs-CZ" }}</span></td>
    {% endfor %}
 </table>
+{% endblock %}

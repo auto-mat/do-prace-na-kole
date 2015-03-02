@@ -841,22 +841,25 @@ class PackageView(RegistrationViewMixin, TemplateView):
     title = _(u"Sledování balíčku")
     current_view = "zmenit_tym"
 
-@login_required_simple
-@must_be_competitor
-@must_be_approved_for_team
-@never_cache
-@cache_control(max_age=0, no_cache=True, no_store=True)
-def other_team_members(
-        request, userprofile=None, user_attendance=None,
-        template='registration/team_members.html'
-        ):
-    team_members = []
-    if user_attendance.team:
-        team_members = user_attendance.team.all_members().select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign', 'user_attendance')
 
-    return render_to_response(template, {
-        'team_members': team_members,
-        }, context_instance=RequestContext(request))
+class OtherTeamMembers(UserAttendanceViewMixin, TemplateView):
+    template_name='registration/team_members.html'
+
+    @method_decorator(login_required_simple)
+    @must_be_competitor
+    @must_be_approved_for_team
+    @method_decorator(never_cache)
+    @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
+    def dispatch(self, request, *args, **kwargs):
+        return super(OtherTeamMembers, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(OtherTeamMembers, self).get_context_data(*args, **kwargs)
+        team_members = []
+        if self.user_attendance.team:
+            team_members = self.user_attendance.team.all_members().select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign', 'user_attendance')
+        context_data['team_members'] = team_members
+        return context_data
 
 
 class AdmissionsView(UserAttendanceViewMixin, TemplateView):
