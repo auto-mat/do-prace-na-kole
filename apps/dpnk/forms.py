@@ -46,7 +46,9 @@ class PrevNextMixin(object):
 
 
 class AuthenticationFormDPNK(SubmitMixin, AuthenticationForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        ret_val = super(AuthenticationFormDPNK, self).__init__(*args, **kwargs)
+        self.fields['username'].label = _(u"Email (uživatelské jméno)")
 
 
 class RegisterCompanyForm(forms.ModelForm):
