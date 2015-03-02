@@ -859,33 +859,32 @@ def other_team_members(
         }, context_instance=RequestContext(request))
 
 
-@login_required_simple
-@must_be_competitor
-@never_cache
-@cache_control(max_age=0, no_cache=True, no_store=True)
-def admissions(
-        request, template, user_attendance=None,
-        success_url="",
-        ):
-    if request.method == 'POST':
+class AdmissionsView(UserAttendanceViewMixin, TemplateView):
+    @method_decorator(login_required_simple)
+    @must_be_competitor
+    @method_decorator(never_cache)
+    @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
+    def dispatch(self, request, *args, **kwargs):
+        return super(AdmissionsView, self).dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
         if 'admission_competition_id' in request.POST and request.POST['admission_competition_id']:
             competition = Competition.objects.get(id=request.POST['admission_competition_id'])
-            competition.make_admission(user_attendance, True)
+            competition.make_admission(self.user_attendance, True)
         if 'cancellation_competition_id' in request.POST and request.POST['cancellation_competition_id']:
             competition = Competition.objects.get(id=request.POST['cancellation_competition_id'])
-            competition.make_admission(user_attendance, False)
+            competition.make_admission(self.user_attendance, False)
         if success_url is not None:
-            return redirect(wp_reverse(success_url))
+            return redirect(reverse(success_url))
 
-    competitions = user_attendance.get_competitions()
-    for competition in competitions:
-        competition.competitor_has_admission = competition.has_admission(user_attendance)
-        competition.competitor_can_admit = competition.can_admit(user_attendance)
-
-    return render_to_response(template, {
-        'competitions': competitions,
-        'user_attendance': user_attendance,
-        }, context_instance=RequestContext(request))
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(AdmissionsView, self).get_context_data(*args, **kwargs)
+        competitions = self.user_attendance.get_competitions()
+        for competition in competitions:
+            competition.competitor_has_admission = competition.has_admission(self.user_attendance)
+            competition.competitor_can_admit = competition.can_admit(self.user_attendance)
+        context_data['competitions'] = competitions
+        return context_data
 
 
 def competition_results(request, template, competition_slug, campaign_slug, limit=None):

@@ -59,11 +59,15 @@ urlpatterns = patterns(
     url(r'^profil_pristup/$',
         views.profile_access),
     url(r'^prihlasky/$',
-        views.admissions,
-        {'template': 'registration/admissions.html'}),
-    url(r'^competitions/$',
-        views.admissions,
-        {'template': "registration/competitions.html"},
+        views.AdmissionsView.as_view(
+            template_name='registration/admissions.html'
+        ),
+        ),
+    url(r'^souteze/$',
+        views.AdmissionsView.as_view(
+            template_name="registration/competitions.html"
+        ),
+        name="competitions",
         ),
     url(r'^vysledky_souteze/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
         views.competition_results,

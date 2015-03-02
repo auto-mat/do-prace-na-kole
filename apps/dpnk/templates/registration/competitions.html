@@ -1,9 +1,11 @@
+{% extends "base_generic.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
 {% load i18n %}
 {% load humanize %}
 {% load softhyphen_tags %}
 
+{% block content %}
 <div></div>
 {% if competitions %}
 
@@ -124,3 +126,4 @@
 {% else %}
 <div class="text-info">{% trans "Momentálně nejsou vypsány žádné soutěže, do kterých byste se mohl/a přihlásit" %}</div>
 {% endif %}
+{% endblock %}
