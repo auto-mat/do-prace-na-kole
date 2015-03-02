@@ -1,7 +1,61 @@
 .waiting-for-load {
-   cursor: progress;
+  cursor: progress;
 }
-
-#rides-form .form-control[readonly]{
-   cursor: progress;
+#rides-form .form-control[readonly] {
+  cursor: progress;
+}
+.navbar {
+  margin-bottom: 0;
+}
+.navbar li.active,
+.navbar li:hover {
+  text-decoration: underline;
+}
+.navbar li.fulfilled a {
+  background: url(../img/ok.png) 92% 25% no-repeat;
+}
+.navbar li.unfulfilled a {
+  background: url(../img/ko.png) 92% 25% no-repeat;
+}
+.navbar li:first-child a {
+  padding-left: 0;
+}
+.logout {
+  background: url(../img/logout.png) no-repeat center center;
+  display: inline-block;
+  padding: 15px;
+  overflow: hidden;
+  text-indent: 30em;
+  opacity: 0.4;
+}
+.logout:hover {
+  opacity: 1;
+}
+.base.container {
+  margin-top: 80px;
+  margin-bottom: 80px;
+}
+.homepage form,
+.upravit_profil form,
+.zmenit_triko form {
+  width: 300px;
+  margin: 2em 0 0 0;
+}
+.working_schedule td {
+  border: 1em solid #fff;
+  background: #ECECEC;
+}
+.working_schedule thead tr th {
+  background-color: #ff6c00;
+  border: 1em solid #fff;
+  color: #fff;
+}
+input[type=checkbox] {
+  margin-right: 0.3em;
+}
+.controls {
+  margin-bottom: 1em;
+}
+input:disabled + label {
+  color: #ccc;
 }
