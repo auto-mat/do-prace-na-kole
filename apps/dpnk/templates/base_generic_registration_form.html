@@ -8,18 +8,11 @@
 <link href="{% static "bow/font-awesome/css/font-awesome.css"%}" rel="stylesheet">
 {% endblock %}
 
-{% block container_header %}
-<nav class="navbar navbar-default">
-   <ol class="progress-steps nav navbar-nav">
-       <li class="{% if current_view == 'upravit_profil' %}active{% endif %} {% if not user_attendance.userprofile.profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' %}">Osobní údaje</a></li>
-       <li class="{% if current_view == 'zmenit_tym' %}active{% endif %} {% if not user_attendance.team_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_tym' %}">Tým</a></li>
-       <li class="{% if current_view == 'upravit_trasu' %}active{% endif %} {% if not user_attendance.track_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_trasu' %}">Trasa</a></li>
-       <li class="{% if current_view == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}">Triko</a></li>
-       <li class="{% if current_view == 'typ_platby' %}active{% endif %} {% if not user_attendance.payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' %}">Startovné</a></li>
-       <li class="{% if current_view == 'working_schedule' %}active{% endif %} fulfilled"><a href="{% url 'working_schedule' %}">Pracovní rozvrh</a></li>
-   </ol>
-</nav>
-{% endblock %}
-
-{% block menu %}
+{% block navbar %}
+<li class="{% if current_view == 'upravit_profil' %}active{% endif %} {% if not user_attendance.userprofile.profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' %}">Osobní údaje</a></li>
+<li class="{% if current_view == 'zmenit_tym' %}active{% endif %} {% if not user_attendance.team_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_tym' %}">Tým</a></li>
+<li class="{% if current_view == 'upravit_trasu' %}active{% endif %} {% if not user_attendance.track_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_trasu' %}">Trasa</a></li>
+<li class="{% if current_view == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}">Triko</a></li>
+<li class="{% if current_view == 'typ_platby' %}active{% endif %} {% if not user_attendance.payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' %}">Startovné</a></li>
+<li class="{% if current_view == 'working_schedule' %}active{% endif %} fulfilled"><a href="{% url 'working_schedule' %}">Pracovní rozvrh</a></li>
 {% endblock %}

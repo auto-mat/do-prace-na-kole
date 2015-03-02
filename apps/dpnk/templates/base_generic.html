@@ -21,27 +21,63 @@
 
 {% endblock %}{% block extrahead %}{% endblock %}
 </head>
-<body>
-<div class="row">
-   <div class="col-md-1">
-      levý sloupec
-   </div>
-   <div class="col-md-8">
-      {% block content %}
-      {% block error %}
-         {% if fullpage_error_message %}
-         <div class="text-danger">{{ fullpage_error_message }}</div>
+<body class="{% if current_view == None %}homepage{% endif %} {{ current_view }}">
+<div class="navbar navbar-fixed-top" role="navigation">
+   <div class="container">
+      <div class="row">
+         <div class="col-md-2">
+            <a id="logo" href="http://test.dopracenakole.net/">
+               <img src="http://test.dopracenakole.net/wp-content/themes/dpnk-2015/img/dpnk-logo.png" alt="Do práce na kole">
+            </a>
+         </div>
+         {% if user.is_authenticated %}
+            <div class="col-md-8">
+               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                 <span class="sr-only">Toggle navigation</span>
+                 <span class="icon-bar"></span>
+                 <span class="icon-bar"></span>
+                 <span class="icon-bar"></span>
+               </button>
+               <nav class="navbar">
+                  <ul class="nav navbar-nav">
+                      {% block navbar %}
+                      <li class="{% if current_view == 'competitions' %}active{% endif %}"><a href="{% url 'competitions' %}">{% trans "Soutěže" %}</a></li>
+                      <li class="{% if current_view == 'other_team_members' %}active{% endif %}"><a href="{% url 'other_team_members_results' %}">{% trans "Tým" %}</a></li>
+                      <li class="{% if current_view == 'profile_view' %}active{% endif %}"><a href="{% url 'profil' %}">{% trans "Profil" %}</a></li>
+                      <li class="dropdown">
+                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans "Nastavení" %}<span class="caret"></span></a>
+                         <ul class="dropdown-menu" role="menu">
+                            <li><a href="{% url 'upravit_profil' %}">Osobní údaje</a></li>
+                            <li><a href="{% url 'zmenit_tym' %}">Tým</a></li>
+                            <li><a href="{% url 'upravit_trasu' %}">Trasa</a></li>
+                            <li><a href="{% url 'zmenit_triko' %}">Triko</a></li>
+                            <li><a href="{% url 'typ_platby' %}">Startovné</a></li>
+                            <li><a href="{% url 'working_schedule' %}">Pracovní rozvrh</a></li>
+                         </ul>
+                      </li>
+                      {% endblock %}
+                  </ul>
+               </nav>
+            </div>
+               <div class="col-md-2 col-sm-3">
+                  <a href="{% url 'logout' %}" class="logout" title="Log out">Logout</a>
+               </div>
+            </div>
          {% endif %}
-      {% endblock %}
-      {% endblock %}
+      </div>
    </div>
-   <div class="col-md-1">
-      {% block menu %}
-      <a href="{% url 'logout' %}">{% trans "Odhlásit" %}</a>
-      <a href="{% url 'competitions' %}">{% trans "Soutěže" %}</a>
-      <a href="{% url 'other_team_members_results' %}">{% trans "Tým" %}</a>
-      <a href="{% url 'profil' %}">{% trans "Profil" %}</a>
-      {% endblock %}
+</div>
+<div class="base container">
+   <div class="row">
+      <div class="col-md-10 col-md-offset-2">
+         {% block content %}
+         {% block error %}
+            {% if fullpage_error_message %}
+            <div class="text-danger">{{ fullpage_error_message }}</div>
+            {% endif %}
+         {% endblock %}
+         {% endblock %}
+      </div>
    </div>
 </div>
 </body>

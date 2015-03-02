@@ -859,6 +859,7 @@ class OtherTeamMembers(UserAttendanceViewMixin, TemplateView):
         if self.user_attendance.team:
             team_members = self.user_attendance.team.all_members().select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign', 'user_attendance')
         context_data['team_members'] = team_members
+        context_data['current_view'] = "other_team_members"
         return context_data
 
 
@@ -887,6 +888,7 @@ class AdmissionsView(UserAttendanceViewMixin, TemplateView):
             competition.competitor_has_admission = competition.has_admission(self.user_attendance)
             competition.competitor_can_admit = competition.can_admit(self.user_attendance)
         context_data['competitions'] = competitions
+        context_data['current_view'] = "competitions"
         return context_data
 
 
