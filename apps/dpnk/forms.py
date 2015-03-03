@@ -36,13 +36,16 @@ class SubmitMixin(object):
 
 
 class PrevNextMixin(object):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, url_name="", *args, **kwargs):
         self.helper = FormHelper()
+        if url_name:
+            self.url_name = url_name
+            self.helper.form_class = url_name + "_form"
         if not hasattr(self, 'no_prev'):
             self.helper.add_input(Submit('prev', _(u'Předchozí')))
         if not hasattr(self, 'no_next'):
             self.helper.add_input(Submit('next', _(u'Další')))
-        super(PrevNextMixin, self).__init__(*args, **kwargs)
+        return super(PrevNextMixin, self).__init__(*args, **kwargs)
 
 
 class AuthenticationFormDPNK(AuthenticationForm):
@@ -127,9 +130,11 @@ class WorkingScheduleForm(forms.ModelForm):
                 trip.save()
         return ret_val
 
-    def __init__(self, *args, **kwargs):
-        ret_val = super(WorkingScheduleForm, self).__init__(*args, **kwargs)
+    def __init__(self, url_name="", *args, **kwargs):
         self.helper = FormHelper()
+        if url_name:
+            self.url_name = url_name
+            self.helper.form_class = url_name + "_form"
         self.helper.layout = Layout(
             'schedule',
             HTML(_(u"""Jak postupovat ve speciálních případech:  <ul>
@@ -137,6 +142,7 @@ class WorkingScheduleForm(forms.ModelForm):
                <li>pokud pracujete přes noc, zadejte první den pouze cestu tam a druhý den pouze cestu zpět</li>
                </ul>""")),
         )
+        ret_val = super(WorkingScheduleForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('prev', _(u'Předchozí')))
         if self.instance.entered_competition():
             self.helper.add_input(Submit('next', _(u'Přejít do profilu')))

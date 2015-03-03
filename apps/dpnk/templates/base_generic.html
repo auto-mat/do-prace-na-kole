@@ -21,7 +21,7 @@
 
 {% endblock %}{% block extrahead %}{% endblock %}
 </head>
-<body class="{% if current_view == None %}homepage{% endif %} {{ current_view }}">
+<body class="{% if current_view == None %}homepage{% endif %} {{ url_name }}">
 <div class="navbar navbar-fixed-top" role="navigation">
    <div class="container">
       <div class="row">
