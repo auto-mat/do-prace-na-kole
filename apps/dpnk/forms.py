@@ -45,9 +45,12 @@ class PrevNextMixin(object):
         super(PrevNextMixin, self).__init__(*args, **kwargs)
 
 
-class AuthenticationFormDPNK(SubmitMixin, AuthenticationForm):
+class AuthenticationFormDPNK(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         ret_val = super(AuthenticationFormDPNK, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = "login-form"
+        self.helper.add_input(Submit('submit', _(u'Přihlásit')))
         self.fields['username'].label = _(u"Email (uživatelské jméno)")
 
 
