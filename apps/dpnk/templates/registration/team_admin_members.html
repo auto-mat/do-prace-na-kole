@@ -5,7 +5,7 @@
 {% if fullpage_error_message %}
 <div class="text-danger">{{ fullpage_error_message }}</div>
 {% endif %}
-<form method="post" class="form-inline" id="members-form" action="/dalsi_clenove/">{% csrf_token %}
+<form method="post" class="form-inline" id="members-form" action="{% url 'team_members' %}">{% csrf_token %}
 {% for user in unapproved_users %}
    <div id="id-{{ user.4.2 }}-team-member">
    <h2>{{ user.3.2 }}</h2>
