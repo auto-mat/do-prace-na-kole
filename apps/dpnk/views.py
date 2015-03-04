@@ -1346,9 +1346,9 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
             action, approve_id = request.POST['approve'].split('-')
             approved_user = UserAttendance.objects.get(id=approve_id)
             userprofile = approved_user.userprofile
-            if approved_user.approved_for_team not in ('undecided', 'denied') or not userprofile.user.is_active:
+            if approved_user.approved_for_team not in ('undecided', 'denied') or not userprofile.user.is_active or approved_user.team != self.user_attendance.team:
                 logger.error(u'Approving user with wrong parameters. User: %s (%s), approval: %s, team: %s, active: %s' % (userprofile.user, userprofile.user.username, approved_user.approved_for_team, approved_user.team, userprofile.user.is_active))
-                messages.add_message(request, messages.ERROR, _(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.net?subject=Žádost o změnu adresy společnosti, pobočky nebo týmu'>kontakt@dopracenakole.net</a>."), fail_silently=True)
+                messages.add_message(request, messages.ERROR, mark_safe(_(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.net?subject=Žádost o změnu adresy společnosti, pobočky nebo týmu'>kontakt@dopracenakole.net</a>.")), extra_tags="user_attendance_%s" % approved_user.pk, fail_silently=True)
             else:
                 approve_for_team(request, approved_user, request.POST.get('reason-' + str(approved_user.id), ''), action == 'approve', action == 'deny')
         return render_to_response(self.template_name, self.get_context_data(), context_instance=RequestContext(request))
