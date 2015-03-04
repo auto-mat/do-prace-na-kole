@@ -7,7 +7,6 @@ import company_admin_views
 from decorators import must_be_company_admin, must_be_in_phase, must_be_in_group, must_be_competitor, must_have_team
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import login_required as login_required_simple
-from class_based_auth_views.views import LogoutView
 
 urlpatterns = patterns(
     '',
@@ -165,7 +164,7 @@ urlpatterns = patterns(
         name='login',
         ),
     url(r'^logout/$',
-        LogoutView.as_view(),
+        'django.contrib.auth.views.logout',
         name='logout',
         ),
     url(r'^platba_status$',

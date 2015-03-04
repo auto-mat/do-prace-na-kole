@@ -1,5 +1,7 @@
+{% extends "base_generic.html" %}
 {% load i18n %}
 {% load url from future %}
-{% load dpnk_tags %}
 
-{% trans "Nyní jste odhlášeni." %} <a href="{% wp_url 'login' %}">{% trans "Přihlásit" %}</a>
+{% block content %}
+{% trans "Nyní jste odhlášeni." %} <a href="{% url 'login' %}">{% trans "Přihlásit" %}</a>
+{% endblock %}
