@@ -138,7 +138,7 @@ class WorkingScheduleForm(forms.ModelForm):
         self.helper.layout = Layout(
             'schedule',
             HTML(_(u"""Jak postupovat ve speciálních případech:  <ul>
-               <li>při práci na dlouhé krátké týdny zadejte ve dnech, které pracujete cestu tam i zpět</li>
+               <li>při práci na krátký dlouhý týden zadejte ve dnech, které pracujete cestu tam i zpět</li>
                <li>pokud pracujete přes noc, zadejte první den pouze cestu tam a druhý den pouze cestu zpět</li>
                </ul>""")),
         )
@@ -355,9 +355,9 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         company = self.user_attendance.team.subsidiary.company
         company_admin = self.user_attendance.get_asociated_company_admin()
         if payment_type == 'company' and not company_admin:
-            raise forms.ValidationError(mark_safe(_(u"Váš zaměstnavatel %s nemá zvoleného koordinátor společnosti.<ul><li><a href='%s'>Chci se stát koordinátorem mé společnosti</a></li></ul>") % (self.user_attendance.team.subsidiary.company, reverse('company_admin_application'))))
+            raise forms.ValidationError(mark_safe(_(u"Váš zaměstnavatel %(employer)s nemá zvoleného koordinátor společnosti.<ul><li><a href='%(url)s'>Chci se stát koordinátorem mé společnosti</a></li></ul>") % {'employer': self.user_attendance.team.subsidiary.company, 'url': reverse('company_admin_application')}))
         elif payment_type == 'company' and not company_admin.can_confirm_payments:
-           raise forms.ValidationError(mark_safe(_(u"Koordinátor vašeho zaměstnavatele nemá možnost povolovat platby fakturou.<ul><li>Kontaktujte koordinátora %s vašeho zaměstnavatele %s na emailu %s</li><li>Koordinátor bude muset nejprve dohodnout spolupráci na adrese <a href='mailto:kontakt@dopracenakole.net?subject=Žádost o povolení firemních plateb'>kontakt@dopracenakole.net</a>.net</li></ul>") % (company_admin, company, company_admin.user.email)))
+           raise forms.ValidationError(mark_safe(_(u"Koordinátor vašeho zaměstnavatele nemá možnost povolovat platby fakturou.<ul><li>Kontaktujte koordinátora %(company_admin)s vašeho zaměstnavatele %(employer)s na emailu %(email)s</li><li>Koordinátor bude muset nejprve dohodnout spolupráci na adrese <a href='mailto:kontakt@dopracenakole.net?subject=Žádost o povolení firemních plateb'>kontakt@dopracenakole.net</a>.net</li></ul>") % {'company_admin': company_admin, 'employer': company, 'email': company_admin.user.email}))
         return payment_type
 
 

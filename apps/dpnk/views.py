@@ -147,10 +147,10 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                 elif len(self.user_attendance.team.unapproved_members()) > 0:
                     messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('zmenit_tym')))
                 if self.user_attendance.is_libero():
-                    messages.warning(request, mark_safe(_(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce! <ul><li><a href="%s">Pozvěte</a> své kolegy do vašeho týmu.</li><li>Můžete se pokusit <a href="%s">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete sehnat spolupracovníky, použijte seznamku.</li></ul>') % (reverse('pozvanky'), reverse('zmenit_tym'))))
+                    messages.warning(request, mark_safe(_(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce! <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu.</li><li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete sehnat spolupracovníky, použijte seznamku.</li></ul>') % {'invite_url': reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym')}))
 
         if self.user_attendance.payment_status() not in ('done', 'none',) and self.current_view not in ('typ_platby',):
-            messages.info(request, mark_safe(_(u'Vaše platba typu %s ještě nebyla vyřízena. Můžete <a href="%s">zadat novou platbu.</a>') % (self.user_attendance.payment_type_string(), reverse('platba'))))
+            messages.info(request, mark_safe(_(u'Vaše platba typu %(payment_type)s ještě nebyla vyřízena. Můžete <a href="%(url)s">zadat novou platbu.</a>') % {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('platba')}))
         if self.current_view == 'working_schedule' and not self.user_attendance.entered_competition():
             messages.error(request, _(u'Před vstupem do soutěžního profilu musíte mít splněny všechny kroky registrace'))
 
@@ -1348,7 +1348,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
             userprofile = approved_user.userprofile
             if approved_user.approved_for_team not in ('undecided', 'denied') or not userprofile.user.is_active or approved_user.team != self.user_attendance.team:
                 logger.error(u'Approving user with wrong parameters. User: %s (%s), approval: %s, team: %s, active: %s' % (userprofile.user, userprofile.user.username, approved_user.approved_for_team, approved_user.team, userprofile.user.is_active))
-                messages.add_message(request, messages.ERROR, mark_safe(_(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.net?subject=Žádost o změnu adresy společnosti, pobočky nebo týmu'>kontakt@dopracenakole.net</a>.")), extra_tags="user_attendance_%s" % approved_user.pk, fail_silently=True)
+                messages.add_message(request, messages.ERROR, mark_safe(_(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.net?subject=Nejde ověřit člen týmu'>kontakt@dopracenakole.net</a>.")), extra_tags="user_attendance_%s" % approved_user.pk, fail_silently=True)
             else:
                 approve_for_team(request, approved_user, request.POST.get('reason-' + str(approved_user.id), ''), action == 'approve', action == 'deny')
         return render_to_response(self.template_name, self.get_context_data(), context_instance=RequestContext(request))

@@ -1454,8 +1454,8 @@ class Payment(Transaction):
 
         ('fa', _(u'faktura mimo PayU')),
         ('fc', _(u'firma platí fakturou')),
-        ('am', _(u'člen Klubu přátel Auto*matu')),
-        ('amw', _(u'kandidát na členství v Klubu přátel Auto*matu')),
+        ('am', _(u'člen Klubu přátel Auto*Matu')),
+        ('amw', _(u'kandidát na členství v Klubu přátel Auto*Matu')),
         ('fe', _(u'neplatí startovné')),
         )
     PAY_TYPES_DICT = dict(PAY_TYPES)
