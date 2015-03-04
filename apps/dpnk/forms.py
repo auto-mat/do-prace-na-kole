@@ -29,8 +29,11 @@ def team_full(data):
 
 
 class SubmitMixin(object):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, url_name="", *args, **kwargs):
         self.helper = FormHelper()
+        if url_name:
+            self.url_name = url_name
+            self.helper.form_class = url_name + "_form"
         self.helper.add_input(Submit('submit', _(u'Odeslat')))
         super(SubmitMixin, self).__init__(*args, **kwargs)
 
