@@ -608,6 +608,16 @@ class UserAttendance(models.Model):
         null=True,
         blank=False,
         )
+    created = models.DateTimeField(
+        verbose_name=_(u"Datum vytvoření"),
+        auto_now_add=True,
+        null=True,
+        )
+    updated = models.DateTimeField(
+        verbose_name=_(u"Datum poslední změny"),
+        auto_now=True,
+        null=True,
+        )
 
     def payments(self):
         return self.transactions.instance_of(Payment)
