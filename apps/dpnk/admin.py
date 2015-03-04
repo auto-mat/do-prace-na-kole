@@ -86,7 +86,7 @@ class SubsidiaryInline(EnhancedAdminMixin, admin.TabularInline):
     extra = 0
 
 
-class CityAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+class CityAdmin(EnhancedModelAdminMixin, OSMGeoAdmin):
     list_display = ('name', 'slug', 'cyklistesobe_slug', 'id', )
     prepopulated_fields = {'slug': ('name',), 'cyklistesobe_slug': ('name',)}
 
