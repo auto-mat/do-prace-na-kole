@@ -11,7 +11,7 @@
       {% endfor %}
       {% for trip in trips %}
          <td>
-            {{ trip.date }}
+            {{ trip.date|date:"SHORT_DATE_FORMAT" }}
             <br>
             <input type="checkbox" name="working-ride-to-{{ trip.date| date:"Ymd" }}" class="working-ride" id="working-ride-to-{{ trip.date| date:"Ymd" }}"
             {% if trip.is_working_ride_to %}checked="checked"{% endif %}
