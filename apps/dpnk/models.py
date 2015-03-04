@@ -918,6 +918,7 @@ class UserProfile(models.Model):
         )
     sex = models.CharField(
         verbose_name=_(u"Pohlaví"),
+        help_text=_(u"Slouží k zařazení do výkonnostních soutěží"),
         choices=GENDER,
         default='unknown',
         max_length=50,
