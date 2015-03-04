@@ -49,12 +49,12 @@
                       <li class="dropdown">
                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans "Nastavení" %}<span class="caret"></span></a>
                          <ul class="dropdown-menu" role="menu">
-                            <li><a href="{% url 'upravit_profil' %}">Osobní údaje</a></li>
-                            <li><a href="{% url 'zmenit_tym' %}">Tým</a></li>
-                            <li><a href="{% url 'upravit_trasu' %}">Trasa</a></li>
-                            <li><a href="{% url 'zmenit_triko' %}">Triko</a></li>
-                            <li><a href="{% url 'typ_platby' %}">Startovné</a></li>
-                            <li><a href="{% url 'working_schedule' %}">Pracovní rozvrh</a></li>
+                            <li><a href="{% url 'upravit_profil' %}">{% trans "Osobní údaje" %}</a></li>
+                            <li><a href="{% url 'zmenit_tym' %}">{% trans "Tým" %}</a></li>
+                            <li><a href="{% url 'upravit_trasu' %}">{% trans "Trasa" %}</a></li>
+                            <li><a href="{% url 'zmenit_triko' %}">{% trans "Triko" %}</a></li>
+                            <li><a href="{% url 'typ_platby' %}">{% trans "Startovné" %}</a></li>
+                            <li><a href="{% url 'working_schedule' %}">{% trans "Pracovní rozvrh" %}</a></li>
                          </ul>
                       </li>
                       {% endblock %}

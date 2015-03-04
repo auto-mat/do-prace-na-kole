@@ -10,9 +10,9 @@
 
 {% block navbar %}
 <li class="{% if current_view == 'upravit_profil' %}active{% endif %} {% if not user_attendance.userprofile.profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' %}">Osobní údaje</a></li>
-<li class="{% if current_view == 'zmenit_tym' %}active{% endif %} {% if not user_attendance.team_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_tym' %}">Tým</a></li>
-<li class="{% if current_view == 'upravit_trasu' %}active{% endif %} {% if not user_attendance.track_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_trasu' %}">Trasa</a></li>
-<li class="{% if current_view == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}">Triko</a></li>
-<li class="{% if current_view == 'typ_platby' %}active{% endif %} {% if not user_attendance.payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' %}">Startovné</a></li>
-<li class="{% if current_view == 'working_schedule' %}active{% endif %} fulfilled"><a href="{% url 'working_schedule' %}">Pracovní rozvrh</a></li>
+<li class="{% if current_view == 'zmenit_tym' %}active{% endif %} {% if not user_attendance.team_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_tym' %}">{% trans "Tým" %}</a></li>
+<li class="{% if current_view == 'upravit_trasu' %}active{% endif %} {% if not user_attendance.track_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_trasu' %}">{% trans "Trasa" %}</a></li>
+<li class="{% if current_view == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}">{% trans "Triko" %}</a></li>
+<li class="{% if current_view == 'typ_platby' %}active{% endif %} {% if not user_attendance.payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' %}">{% trans "Startovné" %}</a></li>
+<li class="{% if current_view == 'working_schedule' %}active{% endif %} fulfilled"><a href="{% url 'working_schedule' %}">{% trans "Pracovní rozvrh" %}</a></li>
 {% endblock %}

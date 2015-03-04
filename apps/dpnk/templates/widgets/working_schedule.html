@@ -1,7 +1,8 @@
 {% load dpnk_tags %}
+{% load i18n %}
 <table class="table table-hover table-condensed">
    <thead>
-      <tr><th>Po</th><th>Út</th><th>St</th><th>Čt</th><th>Pá</th><th>So</th><th>Ne</th></tr>
+      <tr><th>{% trans "Po" %}</th><th>{% trans "Út" %}</th><th>{% trans "St" %}</th><th>{% trans "Čt" %}</th><th>{% trans "Pá" %}</th><th>{% trans "So" %}</th><th>{% trans "Ne" context "day name" %}</th></tr>
    </thead>
    <tbody>
       <tr>
@@ -15,12 +16,12 @@
             <input type="checkbox" name="working-ride-to-{{ trip.date| date:"Ymd" }}" class="working-ride" id="working-ride-to-{{ trip.date| date:"Ymd" }}"
             {% if trip.is_working_ride_to %}checked="checked"{% endif %}
             {% if not trip.can_edit %}disabled="disabled"{% endif %}
-            ><label for="working-ride-to-{{ trip.date| date:"Ymd" }}">Tam</label></input>
+            ><label for="working-ride-to-{{ trip.date| date:"Ymd" }}">{% trans "Tam" %}</label></input>
             <br>
             <input type="checkbox" name="working-ride-from-{{ trip.date| date:"Ymd" }}" class="working-ride" id="working-ride-from-{{ trip.date| date:"Ymd" }}"
             {% if trip.is_working_ride_from %}checked="checked"{% endif %}
             {% if not trip.can_edit %}disabled="disabled"{% endif %}
-            ><label for="working-ride-from-{{ trip.date| date:"Ymd" }}">Zpět</label></input>
+            ><label for="working-ride-from-{{ trip.date| date:"Ymd" }}">{% trans "Zpět" %}</label></input>
          </td>
          {% if trip.date.weekday == 6 %}
             </tr>
@@ -34,11 +35,11 @@
    </tbody>
 </table>
 <strong>
-Počet plánovaných pracovních jízd celkem: <span id="rides-count"></span>
+{% trans "Počet plánovaných pracovních jízd celkem:" %} <span id="rides-count"></span>
 <br/>
-Minimální počet jízd, splňující podmínky soutěže: <span id="minimum-rides"></span>
+{% trans "Minimální počet jízd, splňující podmínky soutěže:" %} <span id="minimum-rides"></span>
 <br/>
-<span id="not-enough-rides-warning" class="text-danger" style="display:none">Není možné dosáhnout minimálního počtu jízd, pro splnění kritérií soutěže je nutné si zapsat více pracovních dní.</span>
+<span id="not-enough-rides-warning" class="text-danger" style="display:none">{% trans "Není možné dosáhnout minimálního počtu jízd, pro splnění kritérií soutěže je nutné si zapsat více pracovních dní." %}</span>
 </strong>
 <script>
 minimum_percentage = {{ trips.0.user_attendance.campaign.minimum_percentage }}

@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load bleach_tags %}
 <a href="http://www.cyklistesobe.cz/{{ cyklistesobe.features.0.properties.url }}"><h3>
 {{ cyklistesobe.features.0.properties.title }}
@@ -6,6 +7,6 @@
 <img src="http://www.cyklistesobe.cz/{{ cyklistesobe.features.0.properties.photo_thumb_url }}" ></img>
 {% endif %}
 {{ cyklistesobe.features.0.properties.description|bleach }}
-{{ cyklistesobe.features.0.properties.vote_count }} Hlasů
+{{ cyklistesobe.features.0.properties.vote_count }} {% trans "Hlasů" %}
 <br/>
-Vytvořil: {{ cyklistesobe.features.0.properties.created_by }}
+{% trans "Vytvořil:" %} {{ cyklistesobe.features.0.properties.created_by }}

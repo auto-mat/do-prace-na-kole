@@ -11,7 +11,6 @@
 <button class="btn-info btn" type="button" onclick='$( ".toggle" ).toggle( "hidden" );'>{% trans "Zobrazit všechny jízdy" %}</button>
 {% trans "Zadaný počet kilometrů na jednu jízdu: " %}{{ user_attendance.get_distance|floatformat:2 }} Km
 {% trans " (Do políčka zadávejte ujetý počet kilometrů)" %}
-<a href="{% url 'working_schedule' %}">Změnit pracovní rozvrh</a>
 {% include "messages_include.html" %}
 {{ message }}
 <table id="rides" class="table table-bordered table-hover table-condensed">

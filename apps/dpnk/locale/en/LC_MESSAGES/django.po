@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-04 15:23+0100\n"
+"POT-Creation-Date: 2015-03-04 19:46+0100\n"
 "PO-Revision-Date: 2013-03-25 03:43+0100\n"
 "Last-Translator: Hynek Hanke <hanke@brailcom.org>\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -404,7 +404,8 @@ msgstr "ZIP code (PSČ)"
 msgid "Např.: 130 00"
 msgstr "For example 130 00"
 
-#: forms.py:125
+#: forms.py:125 templates/base_generic.html:57
+#: templates/base_generic_registration_form.html:17
 msgid "Pracovní rozvrh"
 msgstr "Working schedule"
 
@@ -443,6 +444,8 @@ msgid "Můj tým v seznamu není, vytvořit nový"
 msgstr "My team is not on the list, I want to create a new one"
 
 #: forms.py:202 models.py:245 models.py:595 templates/base_generic.html:47
+#: templates/base_generic.html.py:53
+#: templates/base_generic_registration_form.html:13
 #: templates/registration/competition_results.html:47
 msgid "Tým"
 msgstr "Team"
@@ -1030,14 +1033,16 @@ msgid ""
 "Zobrazí se ve všech veřejných výpisech místo vašeho jména. Zadávejte takové "
 "jméno, podle kterého vás vaši kolegové poznají"
 msgstr ""
+"Will be displayed instead of your name in all public outputs. Fill in such "
+"name, that your coleauges know that it is You."
 
 #: models.py:888
 msgid "Jazyk emailů"
-msgstr ""
+msgstr "Email language"
 
 #: models.py:889
 msgid "Jazyk, ve kterém vám budou docházet emaily z registračního systému"
-msgstr ""
+msgstr "Language, in whitch will be delivered emails from registration system"
 
 #: models.py:895
 msgid "ID uživatele v mailing listu"
@@ -1049,7 +1054,7 @@ msgstr "Hash of last synchronization with mailing list"
 
 #: models.py:911
 msgid "Pohlaví"
-msgstr ""
+msgstr "Gende"
 
 #: models.py:917 models.py:1008
 msgid "Interní poznámka"
@@ -1316,7 +1321,6 @@ msgid "člen Klubu přátel Auto*Matu"
 msgstr "Auto*Mat Friends Club member"
 
 #: models.py:1459
-#, fuzzy
 msgid "kandidát na členství v Klubu přátel Auto*Matu"
 msgstr "Auto*Mat Friends Club member wannabe"
 
@@ -1939,7 +1943,7 @@ msgstr "Error, please contact kontakt@dopracenakole.net"
 
 #: templates/base_generic.html:8
 msgid "DPNK"
-msgstr ""
+msgstr "DPNK"
 
 #: templates/base_generic.html:48 templates/registration/header_bar.html:12
 msgid "Profil"
@@ -1947,7 +1951,26 @@ msgstr "Profile"
 
 #: templates/base_generic.html:50
 msgid "Nastavení"
-msgstr ""
+msgstr "Settings"
+
+#: templates/base_generic.html:52
+msgid "Osobní údaje"
+msgstr "Personal details"
+
+#: templates/base_generic.html:54
+#: templates/base_generic_registration_form.html:14
+msgid "Trasa"
+msgstr "Track"
+
+#: templates/base_generic.html:55
+#: templates/base_generic_registration_form.html:15
+msgid "Triko"
+msgstr "T-shirt"
+
+#: templates/base_generic.html:56
+#: templates/base_generic_registration_form.html:16
+msgid "Startovné"
+msgstr "Registration fee"
 
 #: templates/admin/my_custom_index.html:7
 msgid "Anketa"
@@ -2179,6 +2202,25 @@ msgstr "Whole Czech"
 msgid ""
 "Momentálně nejsou vypsány žádné soutěže, do kterých byste se mohl/a přihlásit"
 msgstr "There are no available competitions at the moment"
+
+#: templates/registration/change_team.html:16
+msgid ""
+"\n"
+"   Pokud je název společnosti, nebo adresa pobočky chybná, nezakládejte "
+"novou, ale žádejte opravu na <a href='mailto:kontakt@dopracenakole.net?"
+"subject=Žádost o změnu adresy společnosti, pobočky nebo "
+"týmu'>kontakt@dopracenakole.net</a>.\n"
+"   "
+msgstr ""
+"\n"
+"If name of company or subsidiary is wrong, don't make new one, but request "
+"correction at <a href='mailto:kontakt@dopracenakole.net?subject=Company or "
+"subsidiary change request'>kontakt@dopracenakole.net</a>.\n"
+"    "
+
+#: templates/registration/change_team.html:86
+msgid "Členové vašeho týmu"
+msgstr ""
 
 #: templates/registration/change_tshirt.html:5
 msgid ""
@@ -2420,9 +2462,43 @@ msgstr ""
 msgid "Zkuste zadat platbu znovu"
 msgstr ""
 
+#: templates/registration/payment_type.html:54
+msgid "Startovné zdarma"
+msgstr "Free entry"
+
+#: templates/registration/payment_type.html:55
+msgid "Startovné zdarma můžete čerpat v těchto případech:"
+msgstr "You can get free entry in these cases:"
+
+#: templates/registration/payment_type.html:58
+msgid "Po zadání tohoto typu platby vyčkejte, než vaši volbu potvrdíme."
+msgstr ""
+"After selecting this payment type, please wait for our payment approval."
+
+#: templates/registration/payment_type.html:61
+msgid "Startovné platí zaměstnavatel"
+msgstr "My registration fee will be paid by my employer"
+
+#: templates/registration/payment_type.html:63
+msgid "Startovné za mě platí zaměstnavatel, mám to domluvené."
+msgstr "My registration fee will be paid by my employer, he agrees with it."
+
+#: templates/registration/payment_type.html:65
+msgid ""
+"Váš zaměstnavatel ještě nemá zvoleného koordinátora. Pokud chcete zvolit "
+"tento typ platby, je potřeba, aby byla platba startovného fakturou dohodnutá "
+"s vaším zaměstnavatelem."
+msgstr ""
+"Your employer doesn't have company coordinator. If you want to choose this "
+"type of payment, you have to ask your employer."
+
+#: templates/registration/payment_type.html:67
+msgid "Chci se sám stát koordinátorem mé společnosti."
+msgstr "I want to by company coordinator of my company."
+
 #: templates/registration/payment_type.html:70
 msgid "Zaměstnavatel: "
-msgstr ""
+msgstr "Employer: "
 
 #: templates/registration/payment_type.html:71
 msgid "Koordinátor společnosti: "
@@ -2432,9 +2508,29 @@ msgstr "Company coordinator"
 msgid "Email na koordinátora: "
 msgstr "Company coordinator email"
 
+#: templates/registration/payment_type.html:75
+msgid "Člen Klubu přátel"
+msgstr "Auto*Mat Friends Club member"
+
+#: templates/registration/payment_type.html:76
+msgid ""
+"Členové Klubu přátel mají startovné zdarma. Pokud jste členem Klubu přátel, "
+"stiskněte tlačítko „Další“ a vyčkejte než vaše členství ověříme."
+msgstr ""
+"Members of Auto*Mat Friends Club has free entry. If you are member of "
+"Members Club, press „Next“ button and wait for membershi approval."
+
+#: templates/registration/payment_type.html:79
+msgid "Vstup do Klubu přátel"
+msgstr "Auto*Mat Friends Club entry"
+
+#: templates/registration/payment_type.html:84
+msgid "Platba startovného"
+msgstr "Registration fee payment"
+
 #: templates/registration/payment_type.html:86
 msgid "Soutěžící:"
-msgstr "Competitor"
+msgstr "Competitor:"
 
 #: templates/registration/payment_type.html:87
 msgid "Startovné:"
@@ -2680,6 +2776,76 @@ msgid ""
 "Rozvrh bude v průběhu soutěže možné měnit, vždy však pouze do budoucnosti.\n"
 "<br/>\n"
 "<br/>\n"
+msgstr ""
+"\n"
+"<strong>\n"
+"If you have nonstandart working schedule, change following table:\n"
+"</strong>\n"
+"<hr/>\n"
+"Check, when you will be traveling to or from work (doesn't matter by which "
+"mean of transportation)\n"
+"<br/>\n"
+"Working schedule will be possible to change, but allways only future days.\n"
+"<br/>\n"
+"<br/>\n"
+
+#: templates/templatetags/cyklistesobe.html:10
+msgid "Hlasů"
+msgstr "Votes"
+
+#: templates/templatetags/cyklistesobe.html:12
+msgid "Vytvořil:"
+msgstr "Created by:"
+
+#: templates/widgets/working_schedule.html:5
+msgid "Po"
+msgstr "Mon"
+
+#: templates/widgets/working_schedule.html:5
+msgid "Út"
+msgstr "Tue"
+
+#: templates/widgets/working_schedule.html:5
+msgid "St"
+msgstr "Wen"
+
+#: templates/widgets/working_schedule.html:5
+msgid "Čt"
+msgstr "Thu"
+
+#: templates/widgets/working_schedule.html:5
+msgid "Pá"
+msgstr "Fri"
+
+#: templates/widgets/working_schedule.html:5
+msgid "So"
+msgstr "Sat"
+
+#: templates/widgets/working_schedule.html:5
+msgctxt "day name"
+msgid "Ne"
+msgstr "Sun"
+
+#: templates/widgets/working_schedule.html:19
+msgid "Tam"
+msgstr "There"
+
+#: templates/widgets/working_schedule.html:24
+msgid "Zpět"
+msgstr "Back"
+
+#: templates/widgets/working_schedule.html:38
+msgid "Počet plánovaných pracovních jízd celkem:"
+msgstr ""
+
+#: templates/widgets/working_schedule.html:40
+msgid "Minimální počet jízd, splňující podmínky soutěže:"
+msgstr ""
+
+#: templates/widgets/working_schedule.html:42
+msgid ""
+"Není možné dosáhnout minimálního počtu jízd, pro splnění kritérií soutěže je "
+"nutné si zapsat více pracovních dní."
 msgstr ""
 
 #~ msgid "Po vstupu do soutěže nemůžete měnit tým."

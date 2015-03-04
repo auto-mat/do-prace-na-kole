@@ -51,20 +51,20 @@ $(function(){
 </script>
 <div id="description_switcher">
    <div id="free_description" class="description_switcher_div description" style="display:none">
-      <h3>Startovné zdarma</h3>
-      Startovné zdarma můžete čerpat v těchto případech:
+      <h3>{% trans "Startovné zdarma" %}</h3>
+      {% trans "Startovné zdarma můžete čerpat v těchto případech:" %}
       {{ user_attendance.campaign.free_entry_cases_html|safe }}
 
-      Po zadání tohoto typu platby vyčkejte, než vaši volbu potvrdíme.
+      {% trans "Po zadání tohoto typu platby vyčkejte, než vaši volbu potvrdíme." %}
    </div>
    <div id="company_description" class="description_switcher_div description" style="display:none">
-      <h3>Startovné platí zaměstnavatel</h3>
+      <h3>{% trans "Startovné platí zaměstnavatel" %}</h3>
       {% if user_attendance.get_asociated_company_admin %}
-      Startovné za mě platí zaměstnavatel, mám to domluvené.
+      {% trans "Startovné za mě platí zaměstnavatel, mám to domluvené." %}
       {% else %}
-      Váš zaměstnavatel ještě nemá zvoleného koordinátora. Pokud chcete zvolit tento typ platby, je potřeba, aby byla platba startovného fakturou dohodnutá s vaším zaměstnavatelem.
+      {% trans "Váš zaměstnavatel ještě nemá zvoleného koordinátora. Pokud chcete zvolit tento typ platby, je potřeba, aby byla platba startovného fakturou dohodnutá s vaším zaměstnavatelem." %}
       <br/>
-      <a href='{% url "company_admin_application" %}'>Chci se sám stát koordinátorem mé společnosti.</a>
+      <a href='{% url "company_admin_application" %}'>{% trans "Chci se sám stát koordinátorem mé společnosti." %}</a>
       {% endif %}
       <br/><br/>
       {% trans "Zaměstnavatel: " %} {{ user_attendance.team.subsidiary.company }}<br/>
@@ -72,16 +72,16 @@ $(function(){
       {% trans "Email na koordinátora: " %} {{ user_attendance.get_asociated_company_admin.user.email|default:"Není" }}<br/>
    </div>
    <div id="member_description" class="description_switcher_div description" style="display:none">
-      <h3>Člen Klubu přátel</h3>
-      Členové Klubu přátel mají startovné zdarma. Pokud jste členem Klubu přátel, stiskněte tlačítko „Další“ a vyčkejte než vaše členství ověříme.
+      <h3>{% trans "Člen Klubu přátel" %}</h3>
+      {% trans "Členové Klubu přátel mají startovné zdarma. Pokud jste členem Klubu přátel, stiskněte tlačítko „Další“ a vyčkejte než vaše členství ověříme." %}
    </div>
    <div id="member_wannabe_description" class="description_switcher_div description" style="display:none">
-      <h3>Vstup do Klubu přátel</h3>
+      <h3>{% trans "Vstup do Klubu přátel" %}</h3>
       <div id="aklub-form-container"></div>
    </div>
 </div>
 <div id="pay_description" class="description_switcher_div description">
-   <h3>Platba startovného</h3>
+   <h3>{% trans "Platba startovného" %}</h3>
    <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform">
    {% trans "Soutěžící:" %} {{ user_attendance.userprofile.user.get_full_name }}<br/>
    {% trans "Startovné:" %} {{amount}} Kč<br/>

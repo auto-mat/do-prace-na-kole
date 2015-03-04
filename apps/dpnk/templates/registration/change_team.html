@@ -13,7 +13,9 @@
 
 {% block messages %}
 <div class="alert alert-info">
+   {% blocktrans %}
    Pokud je název společnosti, nebo adresa pobočky chybná, nezakládejte novou, ale žádejte opravu na <a href='mailto:kontakt@dopracenakole.net?subject=Žádost o změnu adresy společnosti, pobočky nebo týmu'>kontakt@dopracenakole.net</a>.
+   {% endblocktrans %}
 </div>
 {{ block.super }}
 {% endblock %}
@@ -81,6 +83,6 @@
 {% block container_footer %}
 {{ block.super }}
 <br/>
-<h1>Členové vašeho týmu</h1>
+<h1>{% trans "Členové vašeho týmu" %}</h1>
 <div id="members-form-container"></div>
 {% endblock %}
