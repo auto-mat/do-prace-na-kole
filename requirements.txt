@@ -40,3 +40,4 @@ django-adminfilters
 django-compressor
 slumber
 django-bleach
+django-google-analytics
