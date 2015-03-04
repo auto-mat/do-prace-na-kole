@@ -461,6 +461,9 @@ class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
         cleaned_data = super(TrackUpdateForm, self).clean()
         if cleaned_data['dont_want_insert_track'] == True:
             cleaned_data['track'] = None
+        else:
+            if cleaned_data['track'] == None:
+                raise forms.ValidationError(_(u"Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat."))
         return cleaned_data
 
     class Meta:
