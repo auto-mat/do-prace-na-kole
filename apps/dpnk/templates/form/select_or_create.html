@@ -8,14 +8,14 @@
 </div>
 
 <div class="control-group required">
-<label for = "{{ id }}_selected" class="control-label">
-      {{ new_description }}
-</label>
 <div class="controls">
+<label for = "{{ id }}_selected" class="control-label checkbox-inline">
 <input type="checkbox" onclick='
    document.getElementById("{{ id }}_form").style.display = !(document.getElementById("{{ id }}_selected").checked)?"none":"block";
    document.getElementById("{{ id }}_div").disabled = (document.getElementById("{{ id }}_selected").checked);
 ' name="{{ id }}_selected" id="{{ id }}_selected" {% if selected %}checked{% endif %}/>
+{{ new_description }}
+</label>
 </div>
 </div>
 
