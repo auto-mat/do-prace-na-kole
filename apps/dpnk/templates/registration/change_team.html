@@ -62,11 +62,11 @@
       activateOnclick();
    }
 
-   $("#id_company_selected").on("click", switchCompanyForm);
-   $("#id_subsidiary_selected").on("click", switchSubsidiaryForm);
-   $("#id_team_selected").on("click", switchTeamForm);
-
    $(function() {
+      $("#id_company_selected").on("click", switchCompanyForm);
+      $("#id_subsidiary_selected").on("click", switchSubsidiaryForm);
+      $("#id_team_selected").on("click", switchTeamForm);
+
       $('#id_company').attr("data-live-search", true);
       $('#id_company').selectpicker();
    });
