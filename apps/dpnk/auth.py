@@ -3,6 +3,8 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordResetForm
 from django.utils.translation import ugettext_lazy as _
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django import forms
 
 
@@ -20,6 +22,11 @@ class EmailModelBackend(ModelBackend):
             return user
 
 class PasswordResetForm(PasswordResetForm):
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        super(PasswordResetForm, self).__init__(*args, **kwargs)
+
     def clean_email(self):
         """
         Validate that the email is not already in use.

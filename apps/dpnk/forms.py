@@ -56,6 +56,13 @@ class AuthenticationFormDPNK(AuthenticationForm):
         ret_val = super(AuthenticationFormDPNK, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = "login-form"
+        self.helper.layout = Layout(
+            HTML(_(u"""<a href="%s">Zapomněli jste své přihlašovací údaje?</a>
+                <br/><br/>
+                Ještě nemáte účet? <a href="%s">Registrujte se</a> do soutěže Do práce na kole.<br/><br/>
+            """ % ( reverse("password_reset"), reverse("registrace")) )),
+            'username', 'password',
+            )
         self.helper.add_input(Submit('submit', _(u'Přihlásit')))
         self.fields['username'].label = _(u"Email (uživatelské jméno)")
 
