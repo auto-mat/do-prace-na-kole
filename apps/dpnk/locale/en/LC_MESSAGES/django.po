@@ -686,8 +686,8 @@ msgid "Město"
 msgstr "Town"
 
 #: models.py:107
-msgid "Např. Jablonec n.N. nebo Praha 3-Žižkov"
-msgstr "For example Jablonec n.N. or Praha 3-Žižkov"
+msgid "Např. Jablonec n. N. nebo Praha 3-Žižkov"
+msgstr "For example Jablonec n. N. or Praha 3-Žižkov"
 
 #: models.py:123
 msgid "Města"
@@ -965,13 +965,13 @@ msgstr "track"
 #: models.py:585
 msgid ""
 "Zadávání trasy ukončíte dvouklikem.<br/><br/>Trasa slouží k výpočtu "
-"vzdálenosti a pomůže nám lépe určit potřeby cyklistů pohybuících se ve "
-"městě. Vaše cesta se zobrazí vašim týmovým kolegům.<br/>Trasy všech "
+"vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve "
+"městě na kole. Vaše cesta se zobrazí vašim týmovým kolegům.<br/>Trasy všech "
 "účastníků budou v anonymizované podobě zobrazené na úvodní stránce.<br/><br/"
 ">Polohu začátku a konce trasy stačí zadávat s přesností 100m."
 msgstr ""
 "Finnish your track with doubleclick<br/><br/>Track is used to count distance "
-"and helps us to better define cyclists needs for motion in the city. Your "
+"and helps us to better define needs of people transfering in the city on bicycle. Your "
 "track will be displayed to your colleagues.<br/>Tracks of all atendees will "
 "be displayed anonymously on front page.<br/><br/>It is enough to fill in the "
 "location of start and end of track with 100m accuracy."

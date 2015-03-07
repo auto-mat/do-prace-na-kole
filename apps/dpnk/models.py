@@ -104,7 +104,7 @@ class Address(CompositeField):
         )
     city = models.CharField(
         verbose_name=_(u"Město"),
-        help_text=_(u"Např. Jablonec n.N. nebo Praha 3-Žižkov"),
+        help_text=_(u"Např. Jablonec n. N. nebo Praha 3-Žižkov"),
         default="",
         max_length=50,
         null=False,
@@ -366,6 +366,7 @@ class Campaign(models.Model):
         null=False)
     minimum_rides_base = models.PositiveIntegerField(
         verbose_name=_(u"Minimální základ počtu jízd"),
+        help_text=_(u"Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout 100% jízd"),
         default=25,
         blank=False,
         null=False,
@@ -582,7 +583,7 @@ class UserAttendance(models.Model):
         null=True)
     track = models.LineStringField(
         verbose_name=_(u"trasa"),
-        help_text=_(u"Zadávání trasy ukončíte dvouklikem.<br/><br/>Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby cyklistů pohybuících se ve městě. Vaše cesta se zobrazí vašim týmovým kolegům.<br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na úvodní stránce.<br/><br/>Polohu začátku a konce trasy stačí zadávat s přesností 100m."),
+        help_text=_(u"Zadávání trasy ukončíte dvouklikem.<br/><br/>Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve městě na kole. Vaše cesta se zobrazí vašim týmovým kolegům.<br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na úvodní stránce.<br/><br/>Polohu začátku a konce trasy stačí zadávat s přesností 100m."),
         srid=4326,
         null=True,
         blank=True,
@@ -918,7 +919,7 @@ class UserProfile(models.Model):
         )
     sex = models.CharField(
         verbose_name=_(u"Pohlaví"),
-        help_text=_(u"Slouží k zařazení do výkonnostních soutěží"),
+        help_text=_(u"Slouží k zařazení do výkonnostních kategorií"),
         choices=GENDER,
         default='unknown',
         max_length=50,
