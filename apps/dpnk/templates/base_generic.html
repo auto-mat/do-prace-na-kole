@@ -2,6 +2,7 @@
 {% load static %}
 {% load compress %}
 {% load googleanalytics %}
+{% load localeurl_tags %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -62,6 +63,10 @@
                </nav>
             </div>
                <div class="col-md-2 col-sm-3">
+                  {% if url_name %}
+                  <a href="{% locale_url "cs" url_name %}" class="switch-czech" title="Česky">Česky</a>
+                  <a href="{% locale_url "en" url_name %}" class="switch-english" title="English">English</a>
+                  {% endif %}
                   <a href="{% url 'logout' %}" class="logout" title="Log out">Logout</a>
                </div>
             </div>
