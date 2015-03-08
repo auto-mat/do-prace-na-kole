@@ -1,5 +1,8 @@
+{% extends "base_generic.html" %}
 {% load i18n %}
 
+{% block content %}
 <p>
-{% trans "Omlouváme se, ale taková stránka zde neexistuje. Pokud si myslíte, že by zde být měla, prosím kontaktujte kontakt@dopracenakole.net" %}
+{% trans "Omlouváme se, ale taková stránka zde neexistuje. Pokud si myslíte, že by zde být měla, prosím kontaktujte <a href='kontakt@dopracenakole.net'>kontakt@dopracenakole.net</a>" %}
 </p>
+{% endblock %}

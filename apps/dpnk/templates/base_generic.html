@@ -33,7 +33,6 @@
                <img src="http://test.dopracenakole.net/wp-content/themes/dpnk-2015/img/dpnk-logo.png" alt="Do práce na kole">
             </a>
          </div>
-         {% if user.is_authenticated %}
             <div class="col-md-8">
                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                  <span class="sr-only">Toggle navigation</span>
@@ -43,6 +42,7 @@
                </button>
                <nav class="navbar">
                   <ul class="nav navbar-nav">
+         {% if user.is_authenticated %}
                       {% block navbar %}
                       <li class="{% if current_view == 'competitions' %}active{% endif %}"><a href="{% url 'competitions' %}">{% trans "Soutěže" %}</a></li>
                       <li class="{% if current_view == 'other_team_members' %}active{% endif %}"><a href="{% url 'other_team_members_results' %}">{% trans "Tým" %}</a></li>
@@ -59,16 +59,20 @@
                          </ul>
                       </li>
                       {% endblock %}
+         {% else %}
+                      <li ><a href="{% url 'login' %}">{% trans "Přihlásit" %}</a></li>
+         {% endif %}
                   </ul>
                </nav>
             </div>
                <div class="col-md-2 col-sm-3">
+                  {% if request.resolver_match.url_name %}
                   <a href="{% locale_url "cs" request.resolver_match.url_name %}" class="switch-czech" title="Česky">Česky</a>
                   <a href="{% locale_url "en" request.resolver_match.url_name %}" class="switch-english" title="English">English</a>
+                  {% endif %}
                   <a href="{% url 'logout' %}" class="logout" title="Log out">{% trans "Odhlásit" %}</a>
                </div>
             </div>
-         {% endif %}
       </div>
    </div>
 </div>

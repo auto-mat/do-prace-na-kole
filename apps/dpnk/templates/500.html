@@ -1,5 +1,8 @@
+{% extends "base_generic.html" %}
 {% load i18n %}
 
+{% block content %}
 <p>
-{% trans "Došlo k chybě, prosíme obraťte se na kontakt@dopracenakole.net" %}
+{% trans "Došlo k chybě, prosíme obraťte se na <a href='kontakt@dopracenakole.net'>kontakt@dopracenakole.net</a>" %}
 </p>
+{% endblock %}
