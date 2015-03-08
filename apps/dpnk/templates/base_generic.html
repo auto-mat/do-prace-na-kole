@@ -66,10 +66,8 @@
                </nav>
             </div>
                <div class="col-md-2 col-sm-3">
-                  {% if request.resolver_match.url_name %}
-                  <a href="{% locale_url "cs" request.resolver_match.url_name %}" class="switch-czech" title="Česky">Česky</a>
-                  <a href="{% locale_url "en" request.resolver_match.url_name %}" class="switch-english" title="English">English</a>
-                  {% endif %}
+                  <a href="{{ request.path|chlocale:"cs"}}" class="switch-czech" title="Česky">Česky</a>
+                  <a href="{{ request.path|chlocale:"en"}}" class="switch-english" title="English">English</a>
                   <a href="{% url 'logout' %}" class="logout" title="Log out">{% trans "Odhlásit" %}</a>
                </div>
             </div>
