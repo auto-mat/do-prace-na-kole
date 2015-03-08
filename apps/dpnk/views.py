@@ -92,12 +92,10 @@ class UserAttendanceViewMixin(object):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(UserAttendanceViewMixin , self).get_context_data(*args, **kwargs)
-        context_data['url_name'] = self.url_name
         return context_data
 
     def get_form_kwargs(self, *args, **kwargs):
         form_kwargs = super(UserAttendanceViewMixin , self).get_form_kwargs(*args, **kwargs)
-        form_kwargs['url_name']=self.url_name
         return form_kwargs
 
     def get_object(self):
