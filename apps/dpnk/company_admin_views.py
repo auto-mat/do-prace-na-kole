@@ -63,7 +63,7 @@ class CompanyStructure(TemplateView):
 
 
 class SelectUsersPayView(FormView):
-    template_name = 'base_generic_form.html'
+    template_name = 'base_generic_company_admin_form.html'
     form_class = SelectUsersPayForm
     success_url = 'company_admin'
 
@@ -86,8 +86,8 @@ class SelectUsersPayView(FormView):
         return redirect(wp_reverse(self.success_url))
 
     @method_decorator(login_required)
-    @method_decorator(must_be_company_admin)
-    @method_decorator(request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, "<div class='text-warning'>" + ugettext(u"Potvrzování plateb nemáte povoleno") + "</div>"))
+    @must_be_company_admin
+    @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, ugettext(u"Potvrzování plateb nemáte povoleno"))
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
@@ -236,7 +236,7 @@ def competitions(
 
 @must_be_company_admin
 @login_required
-@request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, "<div class='text-warning'>" + ugettext(u"Vystavování faktur nemáte povoleno") + "</div>")
+@request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, ugettext(u"Vystavování faktur nemáte povoleno"))
 def invoices(
         request,
         template='company_admin/invoices.html',

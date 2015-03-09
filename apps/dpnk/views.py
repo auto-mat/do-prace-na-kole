@@ -391,8 +391,8 @@ class ConfirmTeamInvitationView(FormView):
         return redirect(wp_reverse(self.success_url))
 
     @must_be_competitor
-    @method_decorator(request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, string_concat("<div class='text-warning'>", _(u"Tým nenalezen."), "</div>")))
-    @method_decorator(request_condition(lambda r, a, k: r.user.email != k['initial_email'], string_concat("<div class='text-warning'>", _(u"Pozvánka je určena jinému uživateli, než je aktuálně přihlášen."), "</div>")))
+    @request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, _(u"Tým nenalezen."))
+    @request_condition(lambda r, a, k: r.user.email != k['initial_email'], _(u"Pozvánka je určena jinému uživateli, než je aktuálně přihlášen."))
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
         invitation_token = self.kwargs['token']

@@ -151,9 +151,11 @@ def user_attendance_has(condition, message):
 def request_condition(condition, message):
     def decorator(fn):
         @functools.wraps(fn)
-        def wrapped(request, *args, **kwargs):
+        def wrapped(view, request, *args, **kwargs):
             if condition(request, args, kwargs):
-                return HttpResponse(message.encode('utf8'))
-            return fn(request, *args, **kwargs)
+                return render_to_response(view.template_name, {
+                    'fullpage_error_message': message,
+                }, context_instance=RequestContext(request))
+            return fn(view, request, *args, **kwargs)
         return wrapped
     return decorator
