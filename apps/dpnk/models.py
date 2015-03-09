@@ -814,7 +814,7 @@ class UserAttendance(models.Model):
 
     def is_company_admin(self):
         try:
-            ca = self.userprofile.user.company_admin.get()
+            ca = CompanyAdmin.objects.get(user=self.userprofile.user, campaign=self.campaign)
             return ca
         except CompanyAdmin.DoesNotExist:
             return None
