@@ -129,7 +129,7 @@ class CompanyAdminApplicationForm(registration.forms.RegistrationFormUniqueEmail
         model = CompanyAdmin
 
 
-class CompanyCompetitionForm(forms.ModelForm):
+class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
     type = forms.ChoiceField(
         label=_(u"Typ soutěže"),
         choices=[x for x in Competition.CTYPES if x[0] != 'questionnaire'],

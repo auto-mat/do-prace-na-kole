@@ -158,7 +158,7 @@ class CompanyAdminApplicationView(FormView):
 
 
 class CompanyAdminView(UserAttendanceViewMixin, UpdateView):
-    template_name = 'base_generic_form.html'
+    template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyAdminForm
     model = CompanyAdmin
     success_url = reverse_lazy('zmenit_tym')
@@ -191,11 +191,13 @@ class CompanyCompetitionView(UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyCompetitionForm
     model = Competition
-    success_url = 'company_admin'
+    success_url = reverse_lazy('company_admin_competitions')
 
-    def __init__(self, *args, **kwargs):
-        ret_val = super(CompanyCompetitionView, self).__init__(*args, **kwargs)
-        return ret_val
+    @must_be_company_admin
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.company_admin = kwargs['company_admin']
+        return super(CompanyCompetitionView, self).dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         try:
@@ -204,9 +206,9 @@ class CompanyCompetitionView(UpdateView):
             return HttpResponse(e.message)
 
     def get_object(self, queryset=None):
-        company = self.kwargs.get('company_admin').administrated_company
+        company = self.company_admin.administrated_company
         competition_slug = self.kwargs.get('competition_slug', None)
-        campaign = self.kwargs.get('company_admin').campaign
+        campaign = self.company_admin.campaign
         if competition_slug:
             competition = get_object_or_404(Competition.objects, slug=competition_slug)
             if competition.company != company:
@@ -217,10 +219,6 @@ class CompanyCompetitionView(UpdateView):
             phase = campaign.phase('competition')
             competition = Competition(company=company, campaign=campaign, date_from=phase.date_from, date_to=phase.date_to)
         return competition
-
-    def form_valid(self, form):
-        super(CompanyCompetitionView, self).form_valid(form)
-        return redirect(wp_reverse(self.success_url))
 
 
 @must_be_company_admin
