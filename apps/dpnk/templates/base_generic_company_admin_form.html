@@ -11,6 +11,7 @@
 {% block navbar %}
 <li class="{% if request.resolver_match.url_name == 'company_admin_pay_for_users' %}active{% endif %}"><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Zaplatit za uživatele" %}</a></li>
 <li class="{% if request.resolver_match.url_name == 'company_structure' %}active{% endif %}"><a href="{% url 'company_structure' %}">{% trans "Struktura společnosti" %}</a></li>
+<li class="{% if request.resolver_match.url_name == 'edit_company' %}active{% endif %}"><a href="{% url 'edit_company' %}">{% trans "Upravit společnost" %}</a></li>
 {% if user_attendance.entered_competition %}
 <li class="{% if current_view == 'profile_view' %}active{% endif %}"><a href="{% url 'profil' %}">{% trans "Profil" %}</a></li>
 {% endif %}

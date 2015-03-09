@@ -49,7 +49,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
         return ret_val
 
 
-class CompanyForm(AdressForm):
+class CompanyForm(SubmitMixin, AdressForm):
     class Meta:
         model = Company
         fields = ('name', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city', 'ico', 'dic')

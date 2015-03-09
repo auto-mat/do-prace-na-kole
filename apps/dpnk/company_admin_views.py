@@ -94,17 +94,19 @@ class SelectUsersPayView(FormView):
 
 
 class CompanyEditView(UpdateView):
-    template_name = 'generic_form_template.html'
+    template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyForm
     model = Company
-    success_url = 'company_admin'
+    success_url = reverse_lazy('company_structure')
+
+    @must_be_company_admin
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.company_admin = kwargs['company_admin']
+        return super(CompanyEditView, self).dispatch(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
-        return self.kwargs.get('company_admin').administrated_company
-
-    def form_valid(self, form):
-        super(CompanyEditView, self).form_valid(form)
-        return redirect(wp_reverse(self.success_url))
+        return self.company_admin.administrated_company
 
 
 class CompanyAdminRegistrationBackend(registration.backends.simple.SimpleBackend):
@@ -186,7 +188,7 @@ class CompanyAdminView(UserAttendanceViewMixin, UpdateView):
 
 
 class CompanyCompetitionView(UpdateView):
-    template_name = 'generic_form_template.html'
+    template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyCompetitionForm
     model = Competition
     success_url = 'company_admin'
