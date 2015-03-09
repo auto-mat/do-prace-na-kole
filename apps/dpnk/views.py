@@ -90,14 +90,6 @@ class UserAttendanceViewMixin(object):
         self.user_attendance = kwargs['user_attendance']
         return super(UserAttendanceViewMixin, self).dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, *args, **kwargs):
-        context_data = super(UserAttendanceViewMixin , self).get_context_data(*args, **kwargs)
-        return context_data
-
-    def get_form_kwargs(self, *args, **kwargs):
-        form_kwargs = super(UserAttendanceViewMixin , self).get_form_kwargs(*args, **kwargs)
-        return form_kwargs
-
     def get_object(self):
         return self.user_attendance
 
@@ -168,7 +160,6 @@ class RegistrationViewMixin(RegistrationMessagesMixin, UserAttendanceViewMixin):
         context_data = super(RegistrationViewMixin, self).get_context_data(*args, **kwargs)
         context_data['title'] = self.title
         context_data['current_view'] = self.current_view
-        context_data['user_attendance'] = self.user_attendance
         return context_data
 
     def get_success_url(self):
