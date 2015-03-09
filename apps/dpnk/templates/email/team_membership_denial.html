@@ -1,4 +1,5 @@
-{% load wp_url from dpnk_tags %}{% autoescape off %}
+{% load localeurl_tags %}
+{% autoescape off %}
 
 Zpráva pro soutěžící/ho {{ user.userprofile }} v soutěži {{ user.campaign }}.
 
@@ -8,7 +9,7 @@ bohužel Vaše členství v týmu {{user.team.name}} bylo právě ZAMÍTNUTO čl
 
 Budete se muset přihlásit do editace profilu na adrese
 {% block profile_link %}
-{{ SITE_URL }}{% wp_url 'upravit_profil' %}
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% locale_url user.userprofile.language 'zmenit_tym' %}
 {% endblock %}
 a vybrat si jiný tým, nebo si založit tým vlastní.
 

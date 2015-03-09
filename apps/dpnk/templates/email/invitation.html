@@ -1,6 +1,7 @@
-{% load wp_url from dpnk_tags %}{% autoescape off %}
+{% load localeurl_tags %}
+{% autoescape off %}
 
-{% if not invited == None %}
+{% if not invited %}
 Zpráva pro soutěžící/ho {{ invited.userprofile }} z týmu {{invited.team.name}} v soutěži {{ invited.campaign }}.
 {% endif %}
 
@@ -10,7 +11,11 @@ Váš kolega/kolegyně {{ inviting.userprofile }} chce jezdit s Vámi v týmu {{
 
 Jdete do toho? Tento odkaz vede k jednoduchému předvyplněnému formuláři.
 {% block register_link %}
-{{ SITE_URL }}{% if invited == None %}{% wp_url 'registrace' %}{% else %}{% wp_url 'team_invitation' %}{% endif %}?invitation_token={{ inviting.team.invitation_token }}&email={{ email | urlencode }}
+{% if invited %}
+http://{{ invited.campaign.slug }}.{{ SITE_URL }}{% locale_url invited.userprofile.language 'registrace' token=inviting.team.invitation_token initial_email=email %}
+{% else %}
+http://{{ inviting.campaign.slug }}.{{ SITE_URL }}{% locale_url inviting.userprofile.language 'zmenit_tym' token=inviting.team.invitation_token initial_email=email %}
+{% endif %}
 {% endblock %}
 (Pokud Vám odkaz nefunguje, zkopírujte ho přes schránku do oblíbeného prohlížeče.)
 

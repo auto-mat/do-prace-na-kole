@@ -140,3 +140,18 @@ def company_admin_rejected_mail(company_admin):
         'SITE_URL': settings.SITE_URL,
         }))
     send_mail(_(u"%s - firemní koordinátor - zamítnutí správcovství firmy" % company_admin.campaign), message, None, [email], fail_silently=False)
+
+def send_testing_email(user_attendance, company_admin, company):
+   approval_request_mail(user_attendance)
+   invitation_register_mail(user_attendance, user_attendance)
+   register_mail(user_attendance)
+   team_membership_approval_mail(user_attendance)
+   team_membership_denial_mail(user_attendance, user_attendance, "reason of denial")
+   team_created_mail(user_attendance)
+   invitation_mail(user_attendance, "email@email.cz")
+   payment_confirmation_mail(user_attendance)
+   payment_confirmation_company_mail(user_attendance)
+   company_admin_register_competitor_mail(user_attendance)
+   company_admin_register_no_competitor_mail(company_admin, company)
+   company_admin_approval_mail(company_admin)
+   company_admin_rejected_mail(company_admin)

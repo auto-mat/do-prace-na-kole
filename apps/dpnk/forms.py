@@ -388,7 +388,7 @@ class ConfirmDeliveryForm(forms.ModelForm):
         fields = ('status',)
 
 
-class ConfirmTeamInvitationForm(forms.Form):
+class ConfirmTeamInvitationForm(SubmitMixin, forms.Form):
     question = forms.BooleanField(
         label=_(u"Chci být zařazen do nového týmu"),
     )

@@ -1,4 +1,4 @@
-{% load wp_url from dpnk_tags %}{% autoescape off %}
+{% load localeurl_tags %}{% autoescape off %}
 
 Zpráva pro soutěžící/ho {{ team_member.userprofile }}, člena/členku týmu {{new_user.team.name}} v soutěži {{ new_user.campaign }}.
 
@@ -10,7 +10,7 @@ Vzhledem k otevřenému charakteru soutěže se další soutěžící z Vaší o
 
 Členství kandidáta/ky ve Vašem týmu můžete potvrdit nebo zamítnout pomocí tohoto odkazu:
 {% block approval_link %}
-{{ SITE_URL }}{% wp_url  'team_admin' %}
+http://{{ new_user.campaign.slug }}.{{ SITE_URL }}{% locale_url new_user.userprofile.language 'zmenit_tym' %}
 {% endblock %}
 
 Ujištění pro Vás: Zamítnutím kandidáta/ku nediskvalifikujete ze soutěže. Pokud si do konce dubna vytvoří vlastní tým nebo se připojí do jiného týmu, bude vše v pořádku.
