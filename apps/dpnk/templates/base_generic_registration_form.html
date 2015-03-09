@@ -15,4 +15,7 @@
 <li class="{% if current_view == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}">{% trans "Triko" %}</a></li>
 <li class="{% if current_view == 'typ_platby' %}active{% endif %} {% if not user_attendance.payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' %}">{% trans "Startovné" %}</a></li>
 <li class="{% if current_view == 'working_schedule' %}active{% endif %} fulfilled"><a href="{% url 'working_schedule' %}">{% trans "Pracovní rozvrh" %}</a></li>
+{% if user_attendance.entered_competition %}
+<li class="{% if current_view == 'profile_view' %}active{% endif %}"><a href="{% url 'profil' %}">{% trans "Profil" %}</a></li>
+{% endif %}
 {% endblock %}
