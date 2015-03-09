@@ -221,17 +221,19 @@ class CompanyCompetitionView(UpdateView):
         return competition
 
 
-@must_be_company_admin
-@login_required
-def competitions(
-        request,
-        template='company_admin/competitions.html',
-        company_admin=None,
-        ):
-    return render_to_response(
-        template, {
-            'competitions': company_admin.administrated_company.competition_set.filter(campaign=company_admin.campaign),
-            }, context_instance=RequestContext(request))
+class CompanyCompetitionsShowView(TemplateView):
+    template_name='company_admin/competitions.html'
+
+    @must_be_company_admin
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.company_admin = kwargs['company_admin']
+        return super(CompanyCompetitionsShowView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context_data = super(CompanyCompetitionsShowView, self).get_context_data(**kwargs)
+        context_data['competitions'] = self.company_admin.administrated_company.competition_set.filter(campaign=self.company_admin.campaign)
+        return context_data
 
 
 @must_be_company_admin

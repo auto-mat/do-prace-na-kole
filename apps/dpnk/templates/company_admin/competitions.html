@@ -1,7 +1,8 @@
+{% extends "base_generic_company_admin_form.html" %}
 {% load url from future %}
-{% load dpnk_tags %}
 {% load i18n %}
 
+{% block content %}
 <table class="table table-bordered" id="company_competition_table">
 <tr>
 <th>{% trans "Jméno" %}</th>
@@ -19,8 +20,9 @@
       </td>
    <td>{{ competition.get_type_display }}</td>
    <td>{{ competition.get_competitor_type_display }}</td>
-   <td><a href="{% wp_url 'soutez' %}?competition_slug={{ competition.slug }}">edit</a></td>
-   <td><a href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}">výsledky</a></td>
+   <td><a href="{% url 'company_admin_competition' competition_slug=competition.slug %}">edit</a></td>
+   <td><a href="{% url 'competition_results' competition_slug=competition.slug %}">výsledky</a></td>
    </tr>
 {% endfor %}
 </table>
+{% endblock %}
