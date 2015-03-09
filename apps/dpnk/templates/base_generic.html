@@ -71,6 +71,10 @@
                </nav>
             </div>
                <div class="col-md-2 col-sm-3">
+                  {% if user.is_authenticated %}
+                  {% trans "Uživatel: " %}{{ user_attendance }}
+                  {% trans "Tým: " %}{{ user_attendance.team.name }}
+                  {% endif %}
                   <a href="{{ request.path|chlocale:"cs"}}" class="switch-czech" title="Česky">Česky</a>
                   <a href="{{ request.path|chlocale:"en"}}" class="switch-english" title="English">English</a>
                   <a href="{% url 'logout' %}" class="logout" title="Log out">{% trans "Odhlásit" %}</a>
