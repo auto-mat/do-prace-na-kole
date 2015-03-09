@@ -1,0 +1,17 @@
+{% extends "base_generic_form.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link href="{% static "css/progress_tracker.css"%}" rel="stylesheet" media="screen">
+<link href="{% static "bow/font-awesome/css/font-awesome.css"%}" rel="stylesheet">
+{% endblock %}
+
+{% block navbar %}
+<li class="{% if request.resolver_match.url_name == 'company_admin_pay_for_users' %}active{% endif %}"><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Zaplatit za uživatele" %}</a></li>
+<li class="{% if request.resolver_match.url_name == 'company_structure' %}active{% endif %}"><a href="{% url 'company_structure' %}">{% trans "Struktura společnosti" %}</a></li>
+{% if user_attendance.entered_competition %}
+<li class="{% if current_view == 'profile_view' %}active{% endif %}"><a href="{% url 'profil' %}">{% trans "Profil" %}</a></li>
+{% endif %}
+{% endblock %}

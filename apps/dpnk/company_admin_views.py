@@ -29,6 +29,7 @@ import django.contrib.auth
 import datetime
 from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView
+from django.views.generic.base import TemplateView
 from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_company_admin, must_be_in_phase
 from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
 import company_admin_forms
@@ -45,19 +46,20 @@ import registration.backends.simple
 import logging
 logger = logging.getLogger(__name__)
 
+class CompanyStructure(TemplateView):
+    template_name='company_admin/structure.html'
 
-@must_be_company_admin
-@login_required
-def company_structure(
-        request,
-        template='company_admin/structure.html',
-        company_admin=None,
-        ):
-    return render_to_response(
-        template, {
-            'company': company_admin.administrated_company,
-            'campaign': company_admin.campaign,
-            }, context_instance=RequestContext(request))
+    @must_be_company_admin
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.company_admin = kwargs['company_admin']
+        return super(CompanyStructure, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(CompanyStructure, self).get_context_data(*args, **kwargs)
+        context_data['company'] = self.company_admin.administrated_company
+        context_data['campaign'] = self.company_admin.campaign
+        return context_data
 
 
 class SelectUsersPayView(FormView):

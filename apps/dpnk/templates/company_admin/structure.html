@@ -1,7 +1,9 @@
+{% extends "base_generic_company_admin_form.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
 {% load i18n %}
 
+{% block content %}
 <ul>
 {% for subsidiary in company.subsidiaries.all %}
    <li>{{ subsidiary }}</li>
@@ -40,3 +42,4 @@
    </ul>
 {% endfor %}
 </ul>
+{% endblock %}

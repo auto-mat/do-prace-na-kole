@@ -46,16 +46,17 @@ def must_be_approved_for_team(fn):
 
 def must_be_company_admin(fn):
     @functools.wraps(fn)
-    @login_required
-    def wrapper(request, *args, **kwargs):
+    def wrapper(view, request, *args, **kwargs):
         campaign = Campaign.objects.get(slug=request.subdomain)
 
         company_admin = models.get_company_admin(request.user, campaign)
         if company_admin:
             kwargs['company_admin'] = company_admin
-            return fn(request, *args, **kwargs)
+            return fn(view, request, *args, **kwargs)
 
-        return HttpResponse(_(u"<div class='text-warning'>Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.</div>"))
+        return render_to_response(view.template_name, {
+            'fullpage_error_message': mark_safe(_(u"Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.")),
+        }, context_instance=RequestContext(request))
     return wrapper
 
 

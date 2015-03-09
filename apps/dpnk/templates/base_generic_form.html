@@ -19,7 +19,9 @@
 {% endblock %}
 
 {% block form %}
+{% if form %}
 {% crispy form %}
+{% endif %}
 {% endblock %}
 {% block error %}{{ block.super }}{% endblock %}
 
