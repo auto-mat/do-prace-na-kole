@@ -7,10 +7,10 @@ Vítejte v soutěži Do práce na kole!
 
 Právě jste se registroval/a do kampaně {{ user.campaign }}. Než budete moct vyjet, projděte prosím ještě všechny kroky na adrese:
 {% block profile_link %}
-http://{{ user.campaign.slug }}.{{ SITE_URL }}{% locale_url user.userprofile.language 'profil' %}
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% locale_url user.userprofile.language 'upravit_profil' %}
 {% endblock %}
 
-Vaše uživatelské jméno je {{ user.userprofile.user.username }}. Vaše heslo zde kvůli bezpečnosti neuvádíme, ale můžete si ho kdykoli nechat zaslat znovu z webu http://{{ SITE_URL }}
+Váš email, se kterým se budete přihlašovat je {{ user.userprofile.user.email }}. Vaše heslo zde kvůli bezpečnosti neuvádíme, ale můžete si ho kdykoli nechat zaslat znovu z webu http://{{ user.campaign.slug }}.{{ SITE_URL }}{% locale_url user.userprofile.language 'password_change' %}
 
 Máte už soupeře? Soutěž bude pro Vás zábavnější, když se do ní zapojí i Vaši známí. Koho byste rádi vyzvali? Kolegy z Vašeho nebo jiného oddělení? Vaše dodavatele nebo zákazníky? Nebo změříte síly a vytrvalost s konkurencí?
 
