@@ -142,7 +142,7 @@ class CompanyAdminApplicationView(FormView):
 
     def get_initial(self):
         return {
-            'campaign': Campaign.objects.get(slug=self.kwargs.get('campaign_slug')),
+            'campaign': Campaign.objects.get(slug=self.request.subdomain),
             }
 
     def form_valid(self, form, backend='dpnk.company_admin_views.CompanyAdminRegistrationBackend'):
