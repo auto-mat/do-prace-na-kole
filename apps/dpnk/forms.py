@@ -331,7 +331,7 @@ class InviteForm(SubmitMixin, forms.Form):
         required=False)
 
 
-class TeamAdminForm(forms.ModelForm):
+class TeamAdminForm(SubmitMixin, forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
     campaign = forms.ModelChoiceField(

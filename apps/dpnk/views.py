@@ -1295,32 +1295,19 @@ class InviteView(RegistrationViewMixin, FormView):
         return redirect(self.request.session.get('invite_success_url') or self.success_url)
 
 
-@must_be_competitor
-@login_required_simple
-#@user_attendance_has(lambda ua: ua.entered_competition(), string_concat("<div class='text-warning'>", _(u"Po vstupu do soutěže již nemůžete měnit parametry týmu."), "</div>"))
-def team_admin_team(
-        request,
-        backend='registration.backends.simple.SimpleBackend',
-        success_url=None,
-        form_class=None,
-        user_attendance=None,
-        template_name='base_generic_form.html',
-        extra_context=None):
-    team = user_attendance.team
+class UpdateTeam(UserAttendanceViewMixin, UpdateView):
+    template_name='base_generic_form.html'
     form_class = TeamAdminForm
+    success_url = reverse_lazy('profil')
 
-    if request.method == 'POST':
-        form = form_class(data=request.POST, instance=team)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse(success_url))
-    else:
-        form = form_class(instance=team)
+    @must_be_competitor
+    @method_decorator(login_required_simple)
+    #@user_attendance_has(lambda ua: ua.entered_competition(), _(u"Po vstupu do soutěže již nemůžete měnit parametry týmu."))
+    def dispatch(self, request, *args, **kwargs):
+        return super(UpdateTeam, self).dispatch(request, *args, **kwargs)
 
-    return render_to_response(template_name, {
-        'form': form,
-        }, context_instance=RequestContext(request))
-
+    def get_object(self):
+        return self.user_attendance.team
 
 
 class TeamMembers(UserAttendanceViewMixin, TemplateView):

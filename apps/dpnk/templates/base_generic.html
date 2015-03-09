@@ -52,6 +52,11 @@
                          <ul class="dropdown-menu" role="menu">
                             <li><a href="{% url 'upravit_profil' %}">{% trans "Osobní údaje" %}</a></li>
                             <li><a href="{% url 'zmenit_tym' %}">{% trans "Tým" %}</a></li>
+                            <li>
+                               <ul>
+                                  <li><a href="{% url 'edit_team' %}">{% trans "Upravit tým" %}</a></li>
+                               </ul>
+                            </li>
                             <li><a href="{% url 'upravit_trasu' %}">{% trans "Trasa" %}</a></li>
                             <li><a href="{% url 'zmenit_triko' %}">{% trans "Triko" %}</a></li>
                             <li><a href="{% url 'typ_platby' %}">{% trans "Startovné" %}</a></li>

@@ -6,25 +6,25 @@
 {% load softhyphen_tags %}
 
 {% block content %}
-<div></div>
+<h3>Výsledky týmu {{ user_attendance.team.name }}</h3>
 <table class="table table-bordered" id="team_members_table">
    <tr>
       <th>{% trans "Jmé&shy;no" %}</th>
       <th class="fixed_width_column">{% trans "Jízdy" %}</th>
       <th class="fixed_width_column">{% trans "U&shy;je&shy;tá vzdá&shy;le&shy;nost" %}</th>
    </tr>
-   {% for member in team_members %}
+   {% for user_attendance in team_members %}
       <tr
-         {% if not member.entered_competition %}class="danger"{% endif %}
+         {% if not user_attendance.entered_competition %}class="danger"{% endif %}
          >
-      <td>{{ member.name|softhyphen:"cs-CZ" }}</td>
-      {% if not member.entered_competition %}
+      <td>{{ user_attendance.name|softhyphen:"cs-CZ" }}</td>
+      {% if not user_attendance.entered_competition %}
          <td colspan="2">{% trans "Ještě nezačal soutěžit" %}</td>
       {% else %}
-      <td>{{ member.get_frequency|floatformat:-1|intcomma }}&nbsp;{% trans "jízd" %}<br/>
-      {{ member.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%</td>
+      <td>{{ user_attendance.get_frequency|floatformat:-1|intcomma }}&nbsp;{% trans "jízd" %}<br/>
+      {{ user_attendance.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%</td>
       <td>
-         {{ member.get_length|floatformat:-1|intcomma }}&nbsp;km
+         {{ user_attendance.get_length|floatformat:-1|intcomma }}&nbsp;km
       </td>
       {% endif %}
       </tr>
