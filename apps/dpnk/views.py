@@ -1284,7 +1284,7 @@ class InviteView(RegistrationViewMixin, FormView):
                         )
 
                     if invited_user_attendance.team == self.user_attendance.team:
-                        approve_for_team(request, invited_user_attendance, "", True, False)
+                        approve_for_team(self.request, invited_user_attendance, "", True, False)
                     else:
                         invitation_register_mail(self.user_attendance, invited_user_attendance)
                         messages.add_message(self.request, messages.SUCCESS, _(u"Odeslána pozvánka uživateli %(user)s na email %(email)s") % {"user": invited_user_attendance, "email": email}, fail_silently=True)
