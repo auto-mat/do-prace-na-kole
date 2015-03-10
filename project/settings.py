@@ -135,7 +135,7 @@ INSTALLED_APPS = (
 )
 
 GOOGLE_ANALYTICS_MODEL = True
-BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a']
+BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br']
 COMPRESSOR_ENABLED = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
