@@ -490,7 +490,7 @@ class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
         if not location:
             location = settings.DEFAULT_MAPWIDGET_LOCATION
             default_zoom = settings.DEFAULT_MAPWIDGET_ZOOM
-        default_zoom = 14
+        default_zoom = 13
         self.fields['track'].widget = OSMWidget(attrs={
             'geom_type': 'LINESTRING',
             'default_lat_custom': location.y,
