@@ -50,6 +50,11 @@
                       <li class="dropdown">
                          <ul class="dropdown-menu" role="menu">
                             <li><a href="{% url 'upravit_profil' %}">{% trans "Osobní údaje" %}</a></li>
+                            <li>
+                               <ul>
+                                  <li><a href="{% url 'password_change' %}">{% trans "Změnit heslo" %}</a></li>
+                               </ul>
+                            </li>
                             <li><a href="{% url 'zmenit_tym' %}">{% trans "Tým" %}</a></li>
                             <li>
                                <ul>

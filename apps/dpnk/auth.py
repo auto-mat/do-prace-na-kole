@@ -2,10 +2,12 @@
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.forms import PasswordChangeForm
 from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
+from dpnk.forms import SubmitMixin
 
 
 class EmailModelBackend(ModelBackend):
@@ -35,3 +37,7 @@ class PasswordResetForm(PasswordResetForm):
             return self.cleaned_data['email']
         else:
             raise forms.ValidationError(_(u"Tento email v systému není zanesen."))
+
+
+class PasswordChangeForm(SubmitMixin, PasswordChangeForm):
+   pass

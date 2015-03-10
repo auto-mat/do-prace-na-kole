@@ -213,6 +213,7 @@ urlpatterns = patterns(
         name='password_reset_complete'),
     url(r'^zmena_hesla/$',
         'django.contrib.auth.views.password_change',
+        {'password_change_form': dpnk.auth.PasswordChangeForm},
         name='password_change'),
     url(r'^zmena_hesla_hotovo/$',
         'django.contrib.auth.views.password_change_done',
