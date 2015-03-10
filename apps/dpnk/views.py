@@ -372,37 +372,42 @@ class ConfirmDeliveryView(UpdateView):
         return super(ConfirmDeliveryView, self).dispatch(request, *args, **kwargs)
 
 
-class ConfirmTeamInvitationView(FormView):
+class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
     template_name = 'registration/team_invitation.html'
     form_class = forms.ConfirmTeamInvitationForm
-    success_url = 'profil'
+    success_url = reverse_lazy('zmenit_tym')
+    current_view = 'zmenit_tym'
+    title = _(u"Pozvánka do týmu")
 
     def get_context_data(self, **kwargs):
         context = super(ConfirmTeamInvitationView, self).get_context_data(**kwargs)
         context['old_team'] = self.user_attendance.team
         context['new_team'] = self.new_team
+
+        if self.user_attendance.payment_status() == 'done' and self.user_attendance.team.subsidiary != self.new_team.subsidiary:
+            return {'fullpage_error_message': _(u"Již máte zaplaceno, nemůžete měnit tým mimo svoji pobočku.")}
+
+        if self.user_attendance.campaign != self.new_team.campaign:
+            return {'fullpage_error_message': _(u"Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku).")}
         return context
+
+    def get_success_url(self):
+        return self.success_url
 
     def form_valid(self, form):
         if form.cleaned_data['question']:
             self.user_attendance.team = self.new_team
             self.user_attendance.save()
             approve_for_team(self.request, self.user_attendance, "", True, False)
-        return redirect(wp_reverse(self.success_url))
+        return super(ConfirmTeamInvitationView, self).form_valid(form)
 
+    @method_decorator(login_required_simple)
     @must_be_competitor
     @request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, _(u"Tým nenalezen."))
     @request_condition(lambda r, a, k: r.user.email != k['initial_email'], _(u"Pozvánka je určena jinému uživateli, než je aktuálně přihlášen."))
     def dispatch(self, request, *args, **kwargs):
-        self.user_attendance = kwargs['user_attendance']
         invitation_token = self.kwargs['token']
         self.new_team = Team.objects.get(invitation_token=invitation_token)
-
-        if self.user_attendance.payment_status() == 'done' and self.user_attendance.team.subsidiary != self.new_team.subsidiary:
-            return HttpResponse(_(u'<div class="text-error">Již máte zaplaceno, nemůžete měnit tým mimo svoji pobočku.</div>'), status=401)
-
-        if self.user_attendance.campaign != self.new_team.campaign:
-            return HttpResponse(_(u'<div class="text-error">Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku).</div>'), status=401)
         return super(ConfirmTeamInvitationView, self).dispatch(request, *args, **kwargs)
 
 
