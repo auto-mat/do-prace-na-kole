@@ -823,7 +823,7 @@ class UserAttendance(models.Model):
         if not self.team:
             return None
         try:
-            ca = self.team.subsidiary.company.company_admin.get()
+            ca = self.team.subsidiary.company.company_admin.get(campaign=self.campaign)
             if ca.company_admin_approved == 'approved':
                 return ca
             else:

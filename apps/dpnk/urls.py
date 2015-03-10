@@ -154,9 +154,9 @@ urlpatterns = patterns(
         name="company_admin_competitions"
         ),
     url(r'^faktury/$',
-        company_admin_views.invoices),
-    url(r'^create_invoice/$',
-        company_admin_views.CreateInvoiceView.as_view()),
+        company_admin_views.InvoicesView.as_view(),
+        name="invoices",
+        ),
     url(r'^zaplatit_za_uzivatele/$',
         company_admin_views.SelectUsersPayView.as_view(),
         name='company_admin_pay_for_users',

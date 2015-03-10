@@ -1,7 +1,9 @@
+{% extends "base_generic_company_admin_form.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
 {% load i18n %}
 
+{% block content %}
 {% if invoices.count > 0 %}
    <table class="table table-bordered" id="company_competition_table">
    <tr>
@@ -34,3 +36,4 @@
       <a href="{% wp_url "edit_company" %}" class="btn btn-block btn-primary">{% trans "Před vytvořením faktury vyplňte údaje o vaší společnosti" %}</a>
    {% endif %}
 {% endif %}
+{% endblock %}

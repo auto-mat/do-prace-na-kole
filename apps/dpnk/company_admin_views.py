@@ -23,7 +23,6 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext
 from django.http import HttpResponse, Http404
 import django.contrib.auth
 import datetime
@@ -34,8 +33,8 @@ from decorators import must_be_approved_for_team, must_be_competitor, must_have_
 from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
 import company_admin_forms
 from dpnk.email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
-from wp_urls import wp_reverse
 from django.core.urlresolvers import reverse_lazy
+from string_lazy import format_lazy
 from util import redirect
 from models import Company, CompanyAdmin, Payment, Competition, Campaign, UserProfile
 from views import UserAttendanceViewMixin
@@ -65,7 +64,7 @@ class CompanyStructure(TemplateView):
 class SelectUsersPayView(FormView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = SelectUsersPayForm
-    success_url = 'company_admin'
+    success_url = reverse_lazy('company_structure')
 
     def get_initial(self):
         return {
@@ -82,12 +81,11 @@ class SelectUsersPayView(FormView):
                     payment.save()
                     break
         logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x, paing_for)))
-        super(SelectUsersPayView, self).form_valid(form)
-        return redirect(wp_reverse(self.success_url))
+        return super(SelectUsersPayView, self).form_valid(form)
 
     @method_decorator(login_required)
     @must_be_company_admin
-    @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, ugettext(u"Potvrzování plateb nemáte povoleno"))
+    @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, _(u"Potvrzování plateb nemáte povoleno"))
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
@@ -111,7 +109,7 @@ class CompanyEditView(UpdateView):
 
 class CompanyAdminRegistrationBackend(registration.backends.simple.SimpleBackend):
     def register(self, request, **cleaned_data):
-        new_user = super(CompanyAdminRegistrationBackend, self).register(request, **cleaned_data)
+        new_user = super(CompanyEditView, self).register(request, **cleaned_data)
 
         new_user.first_name = cleaned_data['first_name']
         new_user.last_name = cleaned_data['last_name']
@@ -138,7 +136,7 @@ class CompanyAdminApplicationView(FormView):
     template_name = 'company_admin/registration.html'
     form_class = CompanyAdminApplicationForm
     model = CompanyAdmin
-    success_url = 'company_admin'
+    success_url = reverse_lazy('company_structure')
 
     def get_initial(self):
         return {
@@ -146,7 +144,6 @@ class CompanyAdminApplicationView(FormView):
             }
 
     def form_valid(self, form, backend='dpnk.company_admin_views.CompanyAdminRegistrationBackend'):
-        super(CompanyAdminApplicationView, self).form_valid(form)
         backend = registration.backends.get_backend(backend)
         backend.register(self.request, **form.cleaned_data)
         auth_user = django.contrib.auth.authenticate(
@@ -154,7 +151,7 @@ class CompanyAdminApplicationView(FormView):
             password=self.request.POST['password1'])
         django.contrib.auth.login(self.request, auth_user)
 
-        return redirect(wp_reverse(self.success_url))
+        return super(CompanyAdminApplicationView, self).form_valid(form)
 
 
 class CompanyAdminView(UserAttendanceViewMixin, UpdateView):
@@ -240,26 +237,17 @@ class CompanyCompetitionsShowView(TemplateView):
         return context_data
 
 
-@must_be_company_admin
-@login_required
-@request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, ugettext(u"Vystavování faktur nemáte povoleno"))
-def invoices(
-        request,
-        template='company_admin/invoices.html',
-        company_admin=None,
-        ):
-    return render_to_response(
-        template, {
-            'invoices': company_admin.administrated_company.invoice_set.filter(campaign=company_admin.campaign),
-            'payments_to_invoice': models.payments_to_invoice(company_admin.administrated_company, company_admin.campaign),
-            'company_information_filled': company_admin.administrated_company.has_filled_contact_information(),
-            }, context_instance=RequestContext(request))
-
-
-class CreateInvoiceView(FormView):
+class InvoicesView(FormView):
     template_name = 'company_admin/create_invoice.html'
+    template_name_created = 'company_admin/invoices.html'
     form_class = company_admin_forms.CreateInvoiceForm
-    success_url = 'company_admin'
+    success_url = reverse_lazy('invoices')
+
+    def get_template_names(self):
+        if self.company_admin.company_has_invoices():
+            return self.template_name_created
+        else:
+            return self.template_name
 
     def form_valid(self, form):
         if form.cleaned_data['create_invoice']:
@@ -269,22 +257,25 @@ class CreateInvoiceView(FormView):
                 order_number=form.cleaned_data['order_number'],
                 )
             invoice.save()
-        return redirect(wp_reverse(self.success_url))
+        return super(InvoicesView, self).form_valid(form)
 
-    def get_context_data(self, **kwargs):
-        context = super(CreateInvoiceView, self).get_context_data(**kwargs)
+    def get_context_data(self, *args, **kwargs):
+        context = super(InvoicesView, self).get_context_data(*args, **kwargs)
         payments = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
         users = [p.user_attendance.__unicode__() for p in payments]
         context['competitors_count'] = payments.count()
         context['competitors_names'] = ", ".join(users)
         context['company'] = self.company_admin.administrated_company
+
+        context['invoices'] = self.company_admin.administrated_company.invoice_set.filter(campaign=self.company_admin.campaign)
+        context['payments_to_invoice'] = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
+        context['company_information_filled'] = self.company_admin.administrated_company.has_filled_contact_information()
         return context
 
-    @method_decorator(must_be_in_phase("registration", "competition"))
-    @method_decorator(must_be_company_admin)
-    @method_decorator(request_condition(lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(), "<div class='text-warning'>" + ugettext(u"Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>" % wp_reverse('edit_company')) + "</div>"))
-    @method_decorator(request_condition(lambda r, a, k: k['company_admin'].company_has_invoices(), "<div class='text-warning'>" + ugettext(u"Vaše společnost již má fakturu vystavenou") + "</div>"))
-    @method_decorator(request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, "<div class='text-warning'>" + ugettext(u"Vystavování faktur nemáte povoleno") + "</div>"))
+    @must_be_in_phase("registration", "competition")
+    @must_be_company_admin
+    @request_condition(lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(), format_lazy(_(u"Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>"), addr=reverse_lazy('edit_company')))
+    @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, _(u"Vystavování faktur nemáte povoleno"))
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
-        return super(CreateInvoiceView, self).dispatch(request, *args, **kwargs)
+        return super(InvoicesView, self).dispatch(request, *args, **kwargs)

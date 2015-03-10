@@ -1,7 +1,6 @@
-{% extends "base_generic_form.html" %}
+{% extends "base_generic_company_admin_form.html" %}
 {% load crispy_forms_tags %}
 {% load i18n %}
-{% load dpnk_tags %}
 
 {% block content %}
 {% include "messages_include.html" %}
@@ -24,7 +23,7 @@ Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících: 
 <br/>
 {% trans "DIČ: " %}{{ company.dic }}
 <br/>
-<a class="btn btn-block btn-primary" href="{% wp_url 'edit_company' %}">{% trans "Změnit údaje" %}</a>
+<a class="btn btn-block btn-primary" href="{% url 'edit_company' %}">{% trans "Změnit údaje" %}</a>
 
-{% crispy form %}
+{{ block.super }}
 {% endblock %}

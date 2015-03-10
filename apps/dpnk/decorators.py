@@ -79,14 +79,16 @@ def must_have_team(fn):
 def must_be_in_phase(*phase_type):
     def decorator(fn):
         @functools.wraps(fn)
-        def wrapped(request, *args, **kwargs):
+        def wrapped(view, request, *args, **kwargs):
             campaign = Campaign.objects.get(slug=request.subdomain)
             phases = campaign.phase_set.filter(type__in=phase_type)
             for phase in phases:
                 if phase and phase.is_actual():
-                    return fn(request, *args, **kwargs)
+                    return fn(view, request, *args, **kwargs)
             phases_string = _(u" a ").join([unicode(models.Phase.TYPE_DICT[p]) for p in phase_type])
-            return HttpResponse(_(u"<div class='text-warning'>Tento formulář se zobrazuje pouze v %s fázi soutěže.</div>") % phases_string)
+            return render_to_response(view.template_name, {
+                'fullpage_error_message': mark_safe(_(u"Tento formulář se zobrazuje pouze v %s fázi soutěže.")),
+            }, context_instance=RequestContext(request))
         return wrapped
     return decorator
 
