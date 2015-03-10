@@ -4,7 +4,7 @@ import views
 from forms import AuthenticationFormDPNK
 import dpnk.auth
 import company_admin_views
-from decorators import must_be_company_admin, must_be_in_phase, must_be_in_group, must_be_competitor, must_have_team
+from decorators import must_be_company_admin, must_be_in_group, must_be_competitor, must_have_team
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import login_required as login_required_simple
 
@@ -20,21 +20,21 @@ urlpatterns = patterns(
         views.ConfirmTeamInvitationView.as_view(),
         name="zmenit_tym"),
     url(r'^registrace/$',
-        must_be_in_phase("registration", "compet_entry")(views.RegistrationView.as_view()),
+        views.RegistrationView.as_view(),
         {'success_url': 'typ_platby'},
         name="registrace"),
     url(r'^registrace/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>[^&/]+)/$$',
-        must_be_in_phase("registration", "compet_entry")(views.RegistrationView.as_view()),
+        views.RegistrationView.as_view(),
         {'success_url': 'typ_platby'},
         name="registrace"),
     url(r'^registrace/(?P<initial_email>[^&]+)/$$',
-        must_be_in_phase("registration", "compet_entry")(views.RegistrationView.as_view()),
+        views.RegistrationView.as_view(),
         {'success_url': 'typ_platby'},
         name="registrace"),
     url(r'^header_bar/$',
         views.header_bar),
     url(r'^registrace_pristup/$',
-        must_be_in_phase("registration", "compet_entry")(views.RegistrationAccessView.as_view()),
+        views.RegistrationAccessView.as_view(),
         ),
     url(r'^pozvanky/$',
         views.InviteView.as_view(),

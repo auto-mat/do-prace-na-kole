@@ -32,7 +32,7 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.decorators import method_decorator
-from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition
+from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase
 from django.contrib.auth.decorators import login_required as login_required_simple
 from django.template import RequestContext
 from django.db.models import Sum, Q
@@ -320,6 +320,10 @@ class RegistrationAccessView(FormView):
     template_name = 'base_generic_form.html'
     form_class = RegistrationAccessFormDPNK
 
+    @must_be_in_phase("registration", "compet_entry")
+    def dispatch(self, request, *args, **kwargs):
+        return super(RegistrationAccessView, self).dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         email = form.cleaned_data['email']
         campaign = Campaign.objects.get(slug=self.request.subdomain)
@@ -335,6 +339,10 @@ class RegistrationView(FormView):
     form_class = RegistrationFormDPNK
     model = UserProfile
     success_url = 'upravit_profil'
+
+    @must_be_in_phase("registration", "compet_entry")
+    def dispatch(self, request, *args, **kwargs):
+        return super(RegistrationView, self).dispatch(request, *args, **kwargs)
 
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}
