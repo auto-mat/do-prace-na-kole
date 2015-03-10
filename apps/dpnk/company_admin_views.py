@@ -169,17 +169,21 @@ class CompanyAdminView(UserAttendanceViewMixin, UpdateView):
     def dispatch(self, request, *args, **kwargs):
         return super(CompanyAdminView, self).dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(CompanyAdminView, self).get_context_data(*args, **kwargs)
+        old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.filter(campaign=self.user_attendance.campaign).first()
+        if old_company_admin and old_company_admin != self.company_admin:
+            return {'fullpage_error_message': _(u"Vaše společnost již svého koordinátora má: %s." % old_company_admin)}
+        return context_data
+
     def get_object(self, queryset=None):
         campaign = self.user_attendance.campaign
         try:
-            company_admin = self.request.user.company_admin.get(campaign=campaign)
+            self.company_admin = self.request.user.company_admin.get(campaign=campaign)
         except CompanyAdmin.DoesNotExist:
-            company_admin = CompanyAdmin(user=self.request.user, campaign=campaign)
-        old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.filter(campaign=campaign).first()
-        if old_company_admin and old_company_admin != company_admin:
-            raise Http404(_(u'<div class="text-warning">Vaše firma již svého koordinátora má: %s.</div>') % old_company_admin)
-        company_admin.administrated_company = self.user_attendance.team.subsidiary.company
-        return company_admin
+            self.company_admin = CompanyAdmin(user=self.request.user, campaign=campaign)
+        self.company_admin.administrated_company = self.user_attendance.team.subsidiary.company
+        return self.company_admin
 
     def form_valid(self, form):
         ret_val = super(CompanyAdminView, self).form_valid(form)
