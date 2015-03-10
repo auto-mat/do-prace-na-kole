@@ -830,13 +830,6 @@ class ProfileView(RegistrationViewMixin, TemplateView):
     current_view = 'profile_view'
     template_name = 'registration/competition_profile.html'
 
-    def get_context_data(self, *args, **kwargs):
-        context_data = super(ProfileView, self).get_context_data(*args, **kwargs)
-        import slumber
-        api = slumber.API("http://www.cyklistesobe.cz/issues/")
-        context_data['cyklistesobe'] = api.list.get(order="vote_count", count=1)
-        return context_data
-
 
 class UserAttendanceView(UserAttendanceViewMixin, TemplateView):
     pass
