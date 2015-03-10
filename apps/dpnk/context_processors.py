@@ -8,10 +8,13 @@ def site(request):
     return {'SITE_URL': settings.SITE_URL}
 
 def user_attendance(request):
-    userprofile = request.user.userprofile
-    campaign_slug = request.subdomain
-    try:
-        user_attendance = userprofile.userattendance_set.select_related('team__subsidiary__city', 'campaign', 'team__subsidiary__company', 't_shirt_size').get(campaign__slug=campaign_slug)
-    except UserAttendance.DoesNotExist:
-        user_attendance = None
-    return {'user_attendance': user_attendance}
+    if request.user and request.user.is_authenticated():
+        userprofile = request.user.userprofile
+        campaign_slug = request.subdomain
+        try:
+            user_attendance = userprofile.userattendance_set.select_related('team__subsidiary__city', 'campaign', 'team__subsidiary__company', 't_shirt_size').get(campaign__slug=campaign_slug)
+        except UserAttendance.DoesNotExist:
+            user_attendance = None
+        return {'user_attendance': user_attendance}
+    else:
+        return {'user_attendance': None}
