@@ -141,9 +141,6 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
 
         if self.user_attendance.payment_status() not in ('done', 'none',) and self.current_view not in ('typ_platby',):
             messages.info(request, mark_safe(_(u'Vaše platba typu %(payment_type)s ještě nebyla vyřízena. Můžete <a href="%(url)s">zadat novou platbu.</a>') % {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('platba')}))
-        if self.current_view == 'working_schedule' and not self.user_attendance.entered_competition():
-            messages.error(request, _(u'Před vstupem do soutěžního profilu musíte mít splněny všechny kroky registrace'))
-
 
         company_admin = self.user_attendance.is_company_admin()
         if company_admin and company_admin.company_admin_approved == 'undecided':
@@ -165,6 +162,8 @@ class RegistrationViewMixin(RegistrationMessagesMixin, UserAttendanceViewMixin):
     def get_success_url(self):
         if 'next' in self.request.POST:
             return reverse(self.next_url)
+        elif 'submit' in self.request.POST:
+            return reverse(self.success_url)
         else:
             return reverse(self.prev_url)
 
@@ -951,6 +950,7 @@ class WorkingScheduleView(SuccessMessageMixin, RegistrationViewMixin, UpdateView
     success_message = _(u"Pracovní kalendář úspěšně upraven")
     prev_url = 'typ_platby'
     next_url = 'profil'
+    success_url = 'working_schedule'
     current_view = "working_schedule"
     title = _(u"Upravit pracovní kalendář")
     template_name = 'registration/working_schedule.html'
