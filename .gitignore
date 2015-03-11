@@ -13,3 +13,4 @@
 /static/
 /db_backup/
 /setup.cfg
+/run
