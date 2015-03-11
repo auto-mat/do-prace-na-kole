@@ -15,7 +15,10 @@ def wp_url(name):
 @register.simple_tag
 def cyklistesobe(city_slug):
     api = slumber.API("http://www.cyklistesobe.cz/issues/")
-    cyklistesobe = api.list.get(order="vote_count", count=1, group=city_slug)
+    kwargs = {}
+    if city_slug:
+        kwargs['group'] = city_slug
+    cyklistesobe = api.list.get(order="vote_count", count=1, **kwargs)
     template = get_template("templatetags/cyklistesobe.html")
     context = Context({ 'cyklistesobe': cyklistesobe })
     return template.render(context)
