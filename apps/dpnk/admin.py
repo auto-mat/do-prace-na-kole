@@ -376,11 +376,22 @@ class HasUserprofileFilter(SimpleListFilter):
         return queryset
 
 
+def remove_mailing_id(modeladmin, request, queryset):
+    for userprofile in queryset:
+        userprofile.mailing_id = None
+        userprofile.mailing_hash = None
+        userprofile.save()
+    modeladmin.message_user(request, _(u"Mailing ID a hash byl úspěšne odebrán %s profilům") % queryset.count())
+remove_mailing_id.short_description = _(u"Odstranit mailing ID a hash")
+
+
 class UserProfileAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('user', '__unicode__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
     list_filter = ('userattendance__campaign', 'language', 'sex', 'userattendance__team__subsidiary__city', 'userattendance__approved_for_team')
     filter_horizontal = ('administrated_cities',)
     search_fields = ['user__first_name', 'user__last_name', 'user__username', 'user__email' ]
+    actions = (remove_mailing_id,)
+
 
 class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
