@@ -842,8 +842,9 @@ class UserAttendance(models.Model):
         if self.pk == None:
            previous_user_attendance = self.previous_user_attendance()
            if previous_user_attendance:
-               self.distance = previous_user_attendance.distance
-               self.track = previous_user_attendance.track
+               if previous_user_attendance.track:
+                   self.distance = previous_user_attendance.distance
+                   self.track = previous_user_attendance.track
                t_shirt_size = self.campaign.tshirtsize_set.filter(name=previous_user_attendance.t_shirt_size.name)
                if t_shirt_size.count() == 1:
                    self.t_shirt_size = t_shirt_size.first()
