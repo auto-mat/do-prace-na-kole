@@ -443,6 +443,7 @@ class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmi
 def update_mailing(modeladmin, request, queryset):
     for user_attendance in queryset:
         mailing.add_or_update_user_synchronous(user_attendance, ignore_hash=True)
+    modeladmin.message_user(request, _(u"Mailing list byl úspěšne aktualizován %s uživatelům") % queryset.count())
 update_mailing.short_description = _(u"Aktualizovat mailing list")
 
 
