@@ -5,7 +5,10 @@ import datetime
 from  django.http import HttpResponse
 import settings
 
-DAYS_EXCLUDE = (datetime.date(year=2014, day=8, month=5), )
+DAYS_EXCLUDE = (
+    datetime.date(year=2014, day=8, month=5),
+    datetime.date(year=2015, day=8, month=5),
+)
 
 def daterange(start_date, end_date):
     for n in range(int ((end_date - start_date).days)):
