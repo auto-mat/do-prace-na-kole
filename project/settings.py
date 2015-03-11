@@ -131,10 +131,9 @@ INSTALLED_APPS = (
     'adminfilters',
     'compressor',
     'django_bleach',
-    'google_analytics',
+    'analytical',
 )
 
-GOOGLE_ANALYTICS_MODEL = True
 BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br']
 COMPRESSOR_ENABLED = True
 
