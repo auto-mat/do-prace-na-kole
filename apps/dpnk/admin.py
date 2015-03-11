@@ -804,7 +804,7 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
 
 
 class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'slug', 'mailing_list_enabled', )
+    list_display = ('name', 'slug', 'mailing_list_id', 'previous_campaign', 'minimum_rides_base', 'minimum_percentage', 'trip_plus_distance', 'mailing_list_enabled', )
     inlines = [TShirtSizeInline, PhaseInline, CityInCampaignInline]
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ('city_count',)
