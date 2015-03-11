@@ -19,7 +19,9 @@
 <link href="{% static "bow/bootstrap/dist/css/bootstrap.css"%}" rel="stylesheet" media="screen">
 <link href="{% static "css/bootstrap_mod.css"%}" rel="stylesheet" media="screen">
 <!-- TODO: Warning, tahle adresa se samzorejme zmeni -->
-<link href="http://test.dopracenakole.net/wp-content/themes/dpnk-2015/style.css" rel="stylesheet" media="screen">
+<link href="http://test.dopracenakole.net/wp-content/themes/dpnk-2015-m/style.css" rel="stylesheet" media="screen">
+<link rel='stylesheet' id='family-css'  href='http://fonts.googleapis.com/css?family=Open+Sans%3A400italic%2C300%2C600%2C400&#038;subset=latin%2Clatin-ext&#038;ver=4.1.1' type='text/css' media='all' />
+
 <link href="{% static "css/style.css"%}" rel="stylesheet" media="screen">
 
 {% endblock %}{% block extrahead %}{% endblock %}
@@ -31,8 +33,8 @@
    <div class="container">
       <div class="row">
          <div class="col-md-2">
-            <a id="logo" href="http://test.dopracenakole.net/">
-               <img src="http://test.dopracenakole.net/wp-content/themes/dpnk-2015/img/dpnk-logo.png" alt="Do práce na kole">
+            <a  href="http://test.dopracenakole.net/">
+               DO PRÁCE NA KOLE
             </a>
          </div>
             <div class="col-md-8">
@@ -42,8 +44,8 @@
                  <span class="icon-bar"></span>
                  <span class="icon-bar"></span>
                </button>
-               <nav class="navbar">
-                  <ul class="nav navbar-nav">
+               <nav>
+                  <ul class="navbar nav navbar-nav" id="the_menu">
          {% if user.is_authenticated %}
                       {% block navbar %}
                       <li class="{% if current_view == 'competitions' %}active{% endif %}"><a href="{% url 'competitions' %}">{% trans "Soutěže" %}</a></li>
