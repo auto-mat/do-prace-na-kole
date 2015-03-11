@@ -188,6 +188,11 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
 
+    def get_previous_team_name(self):
+        previous_user_attendance = self.user_attendance.previous_user_attendance()
+        if previous_user_attendance:
+            return previous_user_attendance.team.name
+
     def post(self, request, *args, **kwargs):
         create_company = False
         create_subsidiary = False
@@ -225,7 +230,7 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
             team_valid = form_team.is_valid()
             form.fields['team'].required = False
         else:
-            form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign})
+            form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign, 'name': self.get_previous_team_name()})
             form.fields['team'].required = True
         old_team = self.user_attendance.team
 
@@ -305,7 +310,7 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
         form = self.form_class(request, instance=self.user_attendance)
         form_company = RegisterCompanyForm(prefix="company")
         form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=self.user_attendance.campaign)
-        form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign})
+        form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign, 'name': self.get_previous_team_name()})
 
         form.fields['company'].widget.underlying_form = form_company
         form.fields['subsidiary'].widget.underlying_form = form_subsidiary

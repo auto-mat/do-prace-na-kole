@@ -248,6 +248,11 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
         super(ChangeTeamForm, self).__init__(*args, **kwargs)
 
+        if instance and 'team' not in initial:
+            previous_user_attendance = instance.previous_user_attendance()
+            if previous_user_attendance:
+                self.fields["team"].widget.create = True
+
         if self.instance.payment_status() == 'done' and self.instance.team:
             self.fields["subsidiary"].widget = HiddenInput()
             self.fields["company"].widget = HiddenInput()
