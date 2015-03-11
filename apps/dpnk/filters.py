@@ -23,7 +23,7 @@ from dpnk import models
 
 class CampaignFilter(SimpleListFilter):
     title = _(u"Kampaň")
-    parameter_name = u'invoice_paid'
+    parameter_name = u'campaign'
     field='campaign'
 
     def lookups(self, request, model_admin):
@@ -48,7 +48,7 @@ class CampaignFilter(SimpleListFilter):
             }
 
     def queryset(self, request, queryset):
-        if self.value() == 'all' or not self.value():
+        if self.value() == 'all':
             return queryset
         elif self.value():
             campaign = self.value()
