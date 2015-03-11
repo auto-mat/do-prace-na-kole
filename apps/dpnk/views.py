@@ -536,7 +536,7 @@ class PaymentView(SuccessMessageMixin, RegistrationViewMixin, FormView):
         context['amount_hal'] = int(self.user_attendance.admission_fee() * 100)  # v halerich
         context['description'] = "Ucastnicky poplatek Do prace na kole"
         context['order_id'] = order_id
-        context['client_ip'] = self.request.META['REMOTE_ADDR']
+        context['client_ip'] = util.get_client_ip(self.request)
         context['session_id'] = session_id
         return context
 
