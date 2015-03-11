@@ -44,7 +44,7 @@ urlpatterns = patterns(
         views.TeamApprovalRequest.as_view(),
         name="zaslat_zadost_clenstvi",
         ),
-    url(r'^profil/$',
+    url(r'^$',
         views.ProfileView.as_view(),
         name="profil"),
     url(r'^dalsi_clenove/$',

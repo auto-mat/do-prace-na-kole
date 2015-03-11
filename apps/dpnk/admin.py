@@ -443,6 +443,7 @@ class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmi
 def update_mailing(modeladmin, request, queryset):
     for user_attendance in queryset:
         mailing.add_or_update_user_synchronous(user_attendance, ignore_hash=True)
+    modeladmin.message_user(request, _(u"Mailing list byl úspěšne aktualizován %s uživatelům") % queryset.count())
 update_mailing.short_description = _(u"Aktualizovat mailing list")
 
 
@@ -803,7 +804,7 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
 
 
 class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'slug', 'mailing_list_enabled', )
+    list_display = ('name', 'slug', 'mailing_list_id', 'previous_campaign', 'minimum_rides_base', 'minimum_percentage', 'trip_plus_distance', 'mailing_list_enabled', )
     inlines = [TShirtSizeInline, PhaseInline, CityInCampaignInline]
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ('city_count',)

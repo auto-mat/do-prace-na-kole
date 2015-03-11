@@ -21,6 +21,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, HTML
 from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import AuthenticationForm
+from django.utils.translation import string_concat
 
 
 def team_full(data):
@@ -156,6 +157,9 @@ class WorkingScheduleForm(forms.ModelForm):
         self.helper.add_input(Submit('prev', _(u'Předchozí')))
         if self.instance.entered_competition():
             self.helper.add_input(Submit('next', _(u'Přejít do profilu')))
+        else:
+            self.helper.layout.extend([HTML(string_concat('<div class="alert alert-danger">', _(u'Před vstupem do soutěžního profilu musíte mít splněny všechny kroky registrace'), '</div>'))])
+            self.helper.add_input(Submit('submit', _(u'Odeslat')))
         self.fields['schedule'].initial = self.instance.get_all_trips()
         return ret_val
 
