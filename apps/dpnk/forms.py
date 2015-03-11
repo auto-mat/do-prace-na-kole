@@ -567,7 +567,7 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
 
         self.helper.layout = Layout(
             'language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'email',
-            HTML(_(u'Odesláním tohoto formuláře souhlasím s tím, aby poskytnuté údaje (osobní údaje ve smyslu paragrafu 4 pís. a zákona 101/200 Sb., O ochraně osobních údajů), byly až do odvolání zpracovány občanským sdružením Auto*Mat, o. s. a místně příslušným organizátorem kampaně uvedeným u každého města na tomto webu. Vaše osobní údaje nebudou předány ani za úplatu ani zdarma žádným jiným organizacím. Rozesílky e-mailů budou realizovány prostřednictvím nástroje CampaignOptimizer, jejímž administrátorem je Auto*Mat, o. s.')),
+            HTML(_(u'Odesláním tohoto formuláře souhlasím s tím, aby poskytnuté údaje (osobní údaje ve smyslu paragrafu 4 pís. a zákona 101/200 Sb., O ochraně osobních údajů), byly až do odvolání zpracovány občanským sdružením Auto*Mat, o. s. a místně příslušným organizátorem kampaně uvedeným u každého města na tomto webu pro účely kampaně Do práce na kole. ')),
         )
         return ret_val
 
