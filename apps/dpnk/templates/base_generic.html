@@ -27,17 +27,17 @@
 {% endblock %}{% block extrahead %}{% endblock %}
 {% analytical_head_bottom %}
 </head>
-<body class="{% if current_view == None %}homepage{% endif %} {{ request.resolver_match.url_name }}">
+<body class="django_administrace {% if current_view == None %}homepage{% endif %} {{ request.resolver_match.url_name }}">
 {% analytical_body_top %}
 <div class="navbar navbar-fixed-top" role="navigation">
    <div class="container">
       <div class="row">
          <div class="col-md-2">
-            <a  href="http://test.dopracenakole.net/">
+            <a class="logo" href="http://test.dopracenakole.net/">
                DO PRÁCE NA KOLE
             </a>
          </div>
-            <div class="col-md-8">
+            <div class="col-md-7">
                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                  <span class="sr-only">Toggle navigation</span>
                  <span class="icon-bar"></span>
@@ -84,14 +84,18 @@
                   </ul>
                </nav>
             </div>
-            <div class="col-md-2 col-sm-3">
-               {% if user.is_authenticated %}
-               {% trans "Uživatel: " %}{{ user_attendance }}
-               {% trans "Tým: " %}{{ user_attendance.team.name }}
-               {% endif %}
-               <a href="{{ request.path|chlocale:"cs"}}" class="switch-czech" title="Česky">Česky</a>
-               <a href="{{ request.path|chlocale:"en"}}" class="switch-english" title="English">English</a>
-               <a href="{% url 'logout' %}" class="logout" title="Log out">{% trans "Odhlásit" %}</a>
+            <div class="col-md-3 col-sm-3">
+                <ul class="user_info">
+                 {% if user.is_authenticated %}
+                   <li>{% trans "Uživatel: " %}{{ user_attendance }}</li>
+                   <li>{% trans "Tým: " %}{{ user_attendance.team.name }}</li>
+                   <li><a href="{% url 'logout' %}" class="logout" title="Log out">{% trans "Odhlásit" %}</a></li>
+                 {% endif %}
+               </ul>
+               <ul class="lang_switch">
+                 <li><a href="{{ request.path|chlocale:"cs"}}" class="switch-czech" title="Česky">Česky</a></li>
+                 <li><a href="{{ request.path|chlocale:"en"}}" class="switch-english" title="English">English</a></li>
+               </ul>
             </div>
       </div>
    </div>

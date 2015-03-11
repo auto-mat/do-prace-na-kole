@@ -20,17 +20,6 @@
 .navbar li:first-child a {
   padding-left: 0;
 }
-.logout {
-  background: url(../img/logout.png) no-repeat center center;
-  display: inline-block;
-  padding: 15px;
-  overflow: hidden;
-  text-indent: 30em;
-  opacity: 0.4;
-}
-.logout:hover {
-  opacity: 1;
-}
 .base.container {
   margin-top: 80px;
   margin-bottom: 80px;
