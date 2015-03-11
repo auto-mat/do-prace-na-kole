@@ -210,6 +210,7 @@ def deploy():
     symlink_current_release()
     collectstatic()
     locale()
+    restart_webserver()
 
 def deploy_version(version):
     "Specify a specific version to be made live"
@@ -219,7 +220,7 @@ def deploy_version(version):
     env.version = version
     run('cd %(path)s; rm releases/previous; mv releases/current releases/previous;' % env)
     run('cd %(path)s; ln -s %(version)s releases/current' % env)
-    #restart_webserver()
+    restart_webserver()
 
 def rollback():
     """
@@ -232,7 +233,7 @@ def rollback():
     run('cd %(path)s; mv releases/current releases/_previous;' % env)
     run('cd %(path)s; mv releases/previous releases/current;' % env)
     run('cd %(path)s; mv releases/_previous releases/previous;' % env)
-    #restart_webserver()
+    restart_webserver()
     
 # Helpers. These are called by other functions rather than directly
 
@@ -289,4 +290,5 @@ def dbbackup():
 
 def restart_webserver():
     "Restart the web server"
-    sudo('/etc/init.d/apache2 restart')
+    sudo('sudo supervisorctl restart dpnk')
+    #sudo('/etc/init.d/apache2 restart')
