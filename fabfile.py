@@ -154,10 +154,17 @@ def dpnk_test():
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
 
-def dpnk():
+def dpnk2014():
     "Use the local virtual server"
     env.hosts = ['auto-mat.cz']
     env.path = '/home/aplikace/dpnk-new'
+    env.user = 'pdlouhy'
+    env.virtualhost_path = "/"
+
+def dpnk():
+    "Use the local virtual server"
+    env.hosts = ['auto-mat.cz']
+    env.path = '/home/aplikace/dpnk-2015'
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
 
