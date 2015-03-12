@@ -48,9 +48,10 @@
                   <ul class="navbar nav navbar-nav" id="the_menu">
          {% if user.is_authenticated %}
                       {% block navbar %}
-                      <li class="{% if current_view == 'competitions' %}active{% endif %}"><a href="{% url 'competitions' %}">{% trans "Soutěže" %}</a></li>
-                      <li class="{% if current_view == 'other_team_members' %}active{% endif %}"><a href="{% url 'other_team_members_results' %}">{% trans "Tým" %}</a></li>
-                      <li class="{% if current_view == 'profile_view' %}active{% endif %}"><a href="{% url 'profil' %}">{% trans "Profil" %}</a></li>
+                       
+                      <li class="{% if current_view == 'profile_view' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'profil' %}">{% trans "Profil" %}</a></li>
+                      <li class="{% if current_view == 'competitions' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'competitions' %}">{% trans "Soutěže" %}</a></li>
+                      <li class="{% if current_view == 'other_team_members' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'other_team_members_results' %}">{% trans "Tým" %}</a></li>
                       <li class="dropdown">
                          <ul class="dropdown-menu" role="menu">
                             <li><a href="{% url 'upravit_profil' %}">{% trans "Osobní údaje" %}</a></li>
