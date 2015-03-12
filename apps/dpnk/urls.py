@@ -35,6 +35,7 @@ urlpatterns = patterns(
         views.header_bar),
     url(r'^registrace_pristup/$',
         views.RegistrationAccessView.as_view(),
+        name="registration_access"
         ),
     url(r'^pozvanky/$',
         views.InviteView.as_view(),
