@@ -270,7 +270,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
     email = forms.CharField(
         required=True,
-        label=_(u"E-mail"),
+        label=_(u"E-mail (uživatelské jméno)"),
         help_text=_(u"Zadejte váš email. Pokud jste se účastnili v minulém roce, zadejte stejný email jako v minulém roce."),
     )
 
