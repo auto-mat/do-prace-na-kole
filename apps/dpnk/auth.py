@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.forms import PasswordResetForm, PasswordChangeForm, SetPasswordForm
 from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
 from django.template import RequestContext
@@ -29,6 +28,14 @@ class EmailModelBackend(ModelBackend):
 
         if user.check_password(password):
             return user
+
+
+class SetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        super(SetPasswordForm, self).__init__(*args, **kwargs)
+
 
 class PasswordResetForm(PasswordResetForm):
     def __init__(self, *args, **kwargs):

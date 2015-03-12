@@ -208,6 +208,7 @@ urlpatterns = patterns(
         name='password_reset_done'),
     url(r'^zapomenute_heslo/zmena/(?P<uidb64>[0-9A-Za-z_]+)-(?P<token>.+)/$',
         'django.contrib.auth.views.password_reset_confirm',
+        {'set_password_form': dpnk.auth.SetPasswordForm},
         name='password_reset_confirm'),
     url(r'^zapomenute_heslo/dokonceno/$',
         'django.contrib.auth.views.password_reset_complete',
