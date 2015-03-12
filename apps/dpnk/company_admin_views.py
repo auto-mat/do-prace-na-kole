@@ -160,9 +160,9 @@ class CompanyAdminView(UserAttendanceViewMixin, UpdateView):
     model = CompanyAdmin
     success_url = reverse_lazy('zmenit_tym')
 
+    @method_decorator(login_required)
     @must_be_competitor
     @must_have_team
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super(CompanyAdminView, self).dispatch(request, *args, **kwargs)
 

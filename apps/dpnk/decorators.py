@@ -55,7 +55,7 @@ def must_be_company_admin(fn):
             return fn(view, request, *args, **kwargs)
 
         return render_to_response(view.template_name, {
-            'fullpage_error_message': mark_safe(_(u"Tato stránka je určená pouze ověřeným firemním koordinátorům, a tím vy nejste.")),
+            'fullpage_error_message': mark_safe(_(u"Tato stránka je určená pouze ověřeným Koordinátorům společností. K tuto funkci se musíte nejdříve <a href='%s'>přihlásit</a>" % reverse("company_admin_application"))),
         }, context_instance=RequestContext(request))
     return wrapper
 
