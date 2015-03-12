@@ -328,6 +328,12 @@ class RegistrationAccessView(FormView):
     def dispatch(self, request, *args, **kwargs):
         return super(RegistrationAccessView, self).dispatch(request, *args, **kwargs)
 
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return redirect(reverse('profil'))
+        else:
+            return super(RegistrationAccessView, self).get(request, *args, **kwargs)
+
     def form_valid(self, form):
         email = form.cleaned_data['email']
         campaign = Campaign.objects.get(slug=self.request.subdomain)
@@ -843,6 +849,12 @@ class ProfileView(RegistrationViewMixin, TemplateView):
     title = 'Soutěžní profil'
     current_view = 'profile_view'
     template_name = 'registration/competition_profile.html'
+
+    def get(self, request, *args, **kwargs):
+        if self.user_attendance.entered_competition():
+            return super(ProfileView, self).get(request, *args, **kwargs)
+        else:
+            return redirect(reverse('upravit_profil'))
 
 
 class UserAttendanceView(UserAttendanceViewMixin, TemplateView):
