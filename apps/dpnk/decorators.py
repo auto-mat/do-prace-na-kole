@@ -87,7 +87,7 @@ def must_be_in_phase(*phase_type):
                     return fn(view, request, *args, **kwargs)
             phases_string = _(u" a ").join([unicode(models.Phase.TYPE_DICT[p]) for p in phase_type])
             return render_to_response(view.template_name, {
-                'fullpage_error_message': mark_safe(_(u"Tento formulář se zobrazuje pouze v %s fázi soutěže.")),
+                'fullpage_error_message': mark_safe(_(u"Tento formulář se zobrazuje pouze ve fázích soutěže: %s") % phases_string),
             }, context_instance=RequestContext(request))
         return wrapped
     return decorator

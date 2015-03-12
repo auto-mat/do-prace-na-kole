@@ -466,6 +466,7 @@ class Phase(models.Model):
             ('competition', _(u"soutěžní")),
             ('results', _(u"výsledková")),
             ('admissions', _(u"přihlašovací do soutěží")),
+            ('invoices', _(u"vytváření faktur")),
             ]
 
     TYPE_DICT = dict(TYPE)
