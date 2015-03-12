@@ -189,7 +189,7 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
 
     def get_previous_team_name(self):
         previous_user_attendance = self.user_attendance.previous_user_attendance()
-        if previous_user_attendance:
+        if previous_user_attendance and previous_user_attendance.team:
             return previous_user_attendance.team.name
 
     def post(self, request, *args, **kwargs):
