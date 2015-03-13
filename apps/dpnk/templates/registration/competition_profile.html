@@ -1,6 +1,7 @@
 {% extends "base_generic.html" %}
 {% load static %}
 {% load dpnk_tags %}
+{% load i18n %}
 
 {% block extrahead %}
 <script type="text/javascript" src="{% static "bow/jquery-form/jquery.form.js"%}"></script>
@@ -27,5 +28,10 @@
 {{ message }}
 {% endblock %}
 
+
+<h3>{% trans "Novinky" %}</h3>
+{% wp_news %}
+<h3>{% trans "Cyklisté sobě" %}</h3>
+<a href="http://{{ user_attendance.team.subsidiary.city.cyklistesobe_slug }}.cyklistesobe.cz" target="_blank">Podpořte řešení problémů ve vašem městě</a>
 {% cyklistesobe user_attendance.team.subsidiary.city.cyklistesobe_slug %}
 {% endblock %}

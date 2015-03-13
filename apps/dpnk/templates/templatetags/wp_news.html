@@ -1,0 +1,14 @@
+{% load i18n %}
+{% load bleach_tags %}
+
+{% for key, value in wp_feed.items %}
+   <a href="{{ value.url }}" target="_blank"><h4>
+   {{ value.title }}
+   </h4></a>
+   {% if value.image %}
+   <img src="{{ value.image }}" alt="Obrázek k podnětu"></img>
+   {% endif %}
+   {{ value.excerpt|bleach }}
+   <br/>
+   <br/>
+{% endfor %}

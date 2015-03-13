@@ -42,3 +42,4 @@ slumber
 django-bleach
 django-analytical
 gunicorn
+django-cache-utils
