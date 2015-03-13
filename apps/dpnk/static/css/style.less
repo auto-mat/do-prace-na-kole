@@ -6,17 +6,23 @@
    cursor: progress;
 }
 @c: #FF6C00;
+#collapsing_menu{
+	float: left;
+}
 .navbar{
+	ul{
 		margin-bottom: 0;
 		li{
-			a{
+			a{	
+				padding:15px 10px;
 				// &::after{
 				// 	 content: ">";
 				// }
+				&.active, &:hover{
+					text-decoration: underline;
+				}
 			}
-			&.active, &:hover{
-				text-decoration: underline;
-			}
+			
 			&.fulfilled{
 				a{
 					background:url(../img/ok.png) 92% 25% no-repeat;
@@ -32,7 +38,19 @@
 					padding-left:0;
 				}
 			}
+			ul{
+				li{
+					ul{
+						li{
+							font-size: 0.9em;
+							padding-left:0.3em;
+							padding-bottom:0.3em; 
+						}
+					}
+				}
+			}
 		}
+	}
 }
 // .logout{
 // 	background:url(../img/logout.png) no-repeat center center;
@@ -80,4 +98,38 @@ input[type=checkbox]{
 }
 input:disabled+label{
    color:#ccc;
+}
+.user_info{
+	padding-left: 0;
+	li{
+		list-style: none;
+	}
+	.logout_django{
+		a{
+		display: block;
+		margin-top:0.3em;
+		color:#fff;
+		width:100%;
+		}
+
+	}
+}
+.lang_switch{
+	float: right;
+	li{
+		display: inline-block;
+		list-style: none;
+		a{
+			padding:15px 5px;
+			display: inline-block;
+		}
+	}
+}
+
+
+
+@media (max-width: 768px){
+	.logo_holder{
+		float: left;
+	}
 }

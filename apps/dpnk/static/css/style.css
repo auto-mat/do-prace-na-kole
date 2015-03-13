@@ -4,21 +4,32 @@
 #rides-form .form-control[readonly] {
   cursor: progress;
 }
-.navbar {
+#collapsing_menu {
+  float: left;
+}
+.navbar ul {
   margin-bottom: 0;
 }
-.navbar li.active,
-.navbar li:hover {
+.navbar ul li a {
+  padding: 15px 10px;
+}
+.navbar ul li a.active,
+.navbar ul li a:hover {
   text-decoration: underline;
 }
-.navbar li.fulfilled a {
+.navbar ul li.fulfilled a {
   background: url(../img/ok.png) 92% 25% no-repeat;
 }
-.navbar li.unfulfilled a {
+.navbar ul li.unfulfilled a {
   background: url(../img/ko.png) 92% 25% no-repeat;
 }
-.navbar li:first-child a {
+.navbar ul li:first-child a {
   padding-left: 0;
+}
+.navbar ul li ul li ul li {
+  font-size: 0.9em;
+  padding-left: 0.3em;
+  padding-bottom: 0.3em;
 }
 .base.container {
   margin-top: 80px;
@@ -47,4 +58,32 @@ input[type=checkbox] {
 }
 input:disabled + label {
   color: #ccc;
+}
+.user_info {
+  padding-left: 0;
+}
+.user_info li {
+  list-style: none;
+}
+.user_info .logout_django a {
+  display: block;
+  margin-top: 0.3em;
+  color: #fff;
+  width: 100%;
+}
+.lang_switch {
+  float: right;
+}
+.lang_switch li {
+  display: inline-block;
+  list-style: none;
+}
+.lang_switch li a {
+  padding: 15px 5px;
+  display: inline-block;
+}
+@media (max-width: 768px) {
+  .logo_holder {
+    float: left;
+  }
 }
