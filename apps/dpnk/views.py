@@ -514,6 +514,7 @@ class PaymentView(SuccessMessageMixin, RegistrationViewMixin, FormView):
     next_url = "upravit_profil"
     prev_url = "upravit_triko"
 
+    @method_decorator(login_required_simple)
     @must_have_team
     def dispatch(self, request, *args, **kwargs):
         return super(PaymentView, self).dispatch(request, *args, **kwargs)
