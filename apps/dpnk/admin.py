@@ -450,10 +450,11 @@ update_mailing.short_description = _(u"Aktualizovat mailing list")
 def approve_am_payment(modeladmin, request, queryset):
     for user_attendance in queryset:
         payment = user_attendance.payment()['payment']
-        if payment.pay_type == "am" and payment.status == models.Payment.Status.NEW:
+        if payment and payment.status == models.Payment.Status.NEW:
             payment.status = models.Payment.Status.DONE
+            payment.description += "\nPayment realized by %s\n" % request.user.username
             payment.save()
-approve_am_payment.short_description = _(u"Potvrdit platbu člena klubu přátel AM")
+approve_am_payment.short_description = _(u"Potvrdit platbu")
 
 
 #TODO: this filters any paymant that user has is of specified type, should be only the last payment
