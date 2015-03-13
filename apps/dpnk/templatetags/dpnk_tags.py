@@ -18,13 +18,13 @@ def wp_url(name):
 
 @register.simple_tag
 @cached(600)
-def cyklistesobe(city_slug):
+def cyklistesobe(city_slug, order="created"):
     api = slumber.API("http://www.cyklistesobe.cz/issues/")
     kwargs = {}
     if city_slug:
         kwargs['group'] = city_slug
     try:
-        cyklistesobe = api.list.get(order="vote_count", count=1, **kwargs)
+        cyklistesobe = api.list.get(order=order, count=1, **kwargs)
     except:
         cyklistesobe = None
     template = get_template("templatetags/cyklistesobe.html")
