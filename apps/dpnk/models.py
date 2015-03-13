@@ -580,7 +580,7 @@ class UserAttendance(models.Model):
         verbose_name=_(u"Vzdálenost"),
         help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
         default=None,
-        blank=False,
+        blank=True,
         null=True)
     track = models.LineStringField(
         verbose_name=_(u"trasa"),
