@@ -471,14 +471,16 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
             'company': {'type': 'fc', 'message': _(u"Platbu ještě musí schválit váš firemní koordinátor"), 'amount': self.user_attendance.company_admission_fee()},
             }
         payment_type = form.cleaned_data['payment_type']
-        payment_choice = payment_choices[payment_type]
 
         if payment_type == 'pay':
-            return redirect(reverse('platba'))
-        elif payment_choice:
-            Payment(user_attendance=self.user_attendance, amount=payment_choice['amount'], pay_type=payment_choice['type'], status=Payment.Status.NEW).save()
-            messages.add_message(self.request, messages.WARNING, payment_choice['message'], fail_silently=True)
-            logger.info('Inserting %s payment for %s' % (payment_type, self.user_attendance))
+            logger.error(u'Pay payment type, request: %s' % (self.request))
+            return http.HttpResponse(_(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč."), status=500)
+        else:
+            payment_choice = payment_choices[payment_type]
+            if payment_choice:
+                Payment(user_attendance=self.user_attendance, amount=payment_choice['amount'], pay_type=payment_choice['type'], status=Payment.Status.NEW).save()
+                messages.add_message(self.request, messages.WARNING, payment_choice['message'], fail_silently=True)
+                logger.info('Inserting %s payment for %s' % (payment_type, self.user_attendance))
 
         return super(PaymentTypeView, self).form_valid(form)
 
