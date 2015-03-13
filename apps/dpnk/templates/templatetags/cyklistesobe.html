@@ -1,8 +1,9 @@
 {% load i18n %}
 {% load bleach_tags %}
-<a href="http://www.cyklistesobe.cz{{ cyklistesobe.features.0.properties.url }}"><h3>
+{% if cyklistesobe %}
+<a href="http://www.cyklistesobe.cz{{ cyklistesobe.features.0.properties.url }}"><h4>
 {{ cyklistesobe.features.0.properties.title }}
-</h3></a>
+</h4></a>
 {% if cyklistesobe.features.0.properties.photo_thumb_url %}
 <img src="http://www.cyklistesobe.cz{{ cyklistesobe.features.0.properties.photo_thumb_url }}" alt="Obrázek k podnětu"></img>
 {% endif %}
@@ -10,3 +11,4 @@
 {{ cyklistesobe.features.0.properties.vote_count }} {% trans "Hlasů" %}
 <br/>
 {% trans "Vytvořil:" %} {{ cyklistesobe.features.0.properties.created_by }}
+{% endif %}
