@@ -580,7 +580,7 @@ class UserAttendance(models.Model):
         verbose_name=_(u"Vzdálenost"),
         help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
         default=None,
-        blank=False,
+        blank=True,
         null=True)
     track = models.LineStringField(
         verbose_name=_(u"trasa"),
@@ -846,9 +846,10 @@ class UserAttendance(models.Model):
                if previous_user_attendance.track:
                    self.distance = previous_user_attendance.distance
                    self.track = previous_user_attendance.track
-               t_shirt_size = self.campaign.tshirtsize_set.filter(name=previous_user_attendance.t_shirt_size.name)
-               if t_shirt_size.count() == 1:
-                   self.t_shirt_size = t_shirt_size.first()
+               if previous_user_attendance.t_shirt_size:
+                   t_shirt_size = self.campaign.tshirtsize_set.filter(name=previous_user_attendance.t_shirt_size.name)
+                   if t_shirt_size.count() == 1:
+                       self.t_shirt_size = t_shirt_size.first()
         return super(UserAttendance, self).save(*args, **kwargs)
 
 

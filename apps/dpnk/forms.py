@@ -235,7 +235,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
         if instance:
             previous_user_attendance = instance.previous_user_attendance()
-            if previous_user_attendance:
+            if previous_user_attendance and previous_user_attendance.team:
                 initial['subsidiary'] = previous_user_attendance.team.subsidiary
                 initial['company'] = previous_user_attendance.team.subsidiary.company
 

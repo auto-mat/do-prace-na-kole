@@ -41,3 +41,4 @@ django-compressor
 slumber
 django-bleach
 django-analytical
+gunicorn
