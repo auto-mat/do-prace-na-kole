@@ -155,11 +155,22 @@ class WorkingScheduleForm(forms.ModelForm):
         )
         ret_val = super(WorkingScheduleForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('prev', _(u'Předchozí')))
-        if self.instance.entered_competition():
-            self.helper.add_input(Submit('next', _(u'Přejít do profilu')))
-        else:
-            self.helper.layout.extend([HTML(string_concat('<div class="alert alert-danger">', _(u'Před vstupem do soutěžního profilu musíte mít splněny všechny kroky registrace'), '</div>'))])
-            self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        entered_competition = self.instance.entered_competition()
+        if not entered_competition:
+            tasks = []
+            if not self.instance.userprofile.profile_complete():
+                tasks.append(_(u"<a href='%s'>vyplnit</a>") % reverse('upravit_profil'))
+            if not self.instance.team_complete():
+                tasks.append(_(u"<a href='%s'>vybrat tým</a>") % reverse('zmenit_tym'))
+            if not self.instance.track_complete():
+                tasks.append(_(u"<a href='%s'>vyplnit trasu</a>") % reverse('upravit_trasu'))
+            if not self.instance.payment_complete():
+                tasks.append(_(u"<a href='%s'>mít dokončenou platbu</a>") % reverse('typ_platby'))
+            if not self.instance.tshirt_complete():
+                tasks.append(_(u"<a href='%s'>vyplnit tričko</a>") % reverse('zmenit_triko'))
+            self.helper.layout.extend([HTML(string_concat('<div class="alert alert-warning">', _(u'Před vstupem do profilu budete ještě muset %s') % ", ".join(tasks), '</div>'))])
+            self.helper.add_input(Submit('submit', _(u'Uložit')))
+        self.helper.add_input(Submit('next', _(u'Přejít do profilu'), **({} if entered_competition else {'disabled': 'True'})))
         self.fields['schedule'].initial = self.instance.get_all_trips()
         return ret_val
 
