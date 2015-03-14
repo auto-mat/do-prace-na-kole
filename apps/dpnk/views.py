@@ -150,12 +150,18 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
         return ret_val
 
 
-class RegistrationViewMixin(RegistrationMessagesMixin, UserAttendanceViewMixin):
+class TitleViewMixin(object):
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(TitleViewMixin, self).get_context_data(*args, **kwargs)
+        context_data['title'] = self.title
+        return context_data
+
+
+class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAttendanceViewMixin):
     template_name = 'base_generic_registration_form.html'
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(RegistrationViewMixin, self).get_context_data(*args, **kwargs)
-        context_data['title'] = self.title
         context_data['current_view'] = self.current_view
         return context_data
 
@@ -869,8 +875,9 @@ class PackageView(RegistrationViewMixin, TemplateView):
     current_view = "zmenit_tym"
 
 
-class OtherTeamMembers(UserAttendanceViewMixin, TemplateView):
+class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
     template_name='registration/team_members.html'
+    title = _(u"Výsledky členů týmu")
 
     @method_decorator(login_required_simple)
     @must_be_competitor
@@ -890,7 +897,9 @@ class OtherTeamMembers(UserAttendanceViewMixin, TemplateView):
         return context_data
 
 
-class AdmissionsView(UserAttendanceViewMixin, TemplateView):
+class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
+    title = _(u"Výsledky soutěží")
+
     @method_decorator(login_required_simple)
     @must_be_competitor
     @method_decorator(never_cache)
@@ -955,7 +964,7 @@ class UpdateProfileView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     success_message = _(u"Osobní údaje úspěšně upraveny")
     next_url = "zmenit_tym"
     current_view = "upravit_profil"
-    title = _(u"Upravit profil")
+    title = _(u"Osobní údaje")
 
     def get_object(self):
         return self.request.user.userprofile
@@ -998,7 +1007,7 @@ class ChangeTShirtView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
     next_url = 'typ_platby'
     prev_url = 'upravit_trasu'
     current_view = "zmenit_triko"
-    title = _("Upravit velikost trika")
+    title = _(u"Upravit velikost trička")
 
     def get_object(self):
         return self.user_attendance
@@ -1323,10 +1332,11 @@ class InviteView(RegistrationViewMixin, FormView):
         return redirect(self.request.session.get('invite_success_url') or self.success_url)
 
 
-class UpdateTeam(UserAttendanceViewMixin, UpdateView):
+class UpdateTeam(UserAttendanceViewMixin, TitleViewMixin, UpdateView):
     template_name='base_generic_form.html'
     form_class = TeamAdminForm
     success_url = reverse_lazy('profil')
+    title = _(u"Upravit název týmu")
 
     @must_be_competitor
     @method_decorator(login_required_simple)
