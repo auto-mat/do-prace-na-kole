@@ -36,7 +36,10 @@ def cyklistesobe(city_slug, order="created"):
 def wp_news():
     url="http://www.dopracenakole.net/"
     api = slumber.API(url)
-    wp_feed = api.list.get(feed="content_to_backend", _post_type="post", count=10)
+    try:
+        wp_feed = api.list.get(feed="content_to_backend", _post_type="post", count=10)
+    except:
+        return ""
     template = get_template("templatetags/wp_news.html")
     context = Context({'wp_feed': wp_feed})
     return template.render(context)
@@ -46,7 +49,10 @@ def wp_news():
 def wp_article(id):
     url="http://www.dopracenakole.net/"
     api = slumber.API(url)
-    wp_article = api.list.get(feed="content_to_backend", _post_type="post", _id=id)
+    try:
+        wp_article = api.list.get(feed="content_to_backend", _post_type="page", _id=id)
+    except:
+        return ""
     return bleach.clean(wp_article.values()[0]['excerpt'])
 
 @register.simple_tag
