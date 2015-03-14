@@ -153,6 +153,7 @@ def dpnk_test():
     env.path = '/home/aplikace/dpnk-devel'
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
+    env.app_name = "dpnk-devel"
 
 def dpnk2014():
     "Use the local virtual server"
@@ -160,6 +161,7 @@ def dpnk2014():
     env.path = '/home/aplikace/dpnk-new'
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
+    env.app_name = "dpnk"
 
 def dpnk():
     "Use the local virtual server"
@@ -167,6 +169,7 @@ def dpnk():
     env.path = '/home/aplikace/dpnk-2015'
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
+    env.app_name = "dpnk"
 
 # tasks
 
@@ -290,5 +293,5 @@ def dbbackup():
 
 def restart_webserver():
     "Restart the web server"
-    sudo('sudo supervisorctl restart dpnk')
+    sudo('sudo supervisorctl restart %(app_name)s' % env)
     #sudo('/etc/init.d/apache2 restart')
