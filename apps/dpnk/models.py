@@ -590,6 +590,10 @@ class UserAttendance(models.Model):
         blank=True,
         geography=True,
         )
+    dont_want_insert_track = models.BooleanField(
+        verbose_name=_(u"Nepřeji si zadávat svoji trasu."),
+        default=False,
+        null=False)
     objects = models.GeoManager()
     team = models.ForeignKey(
         Team,

@@ -471,11 +471,6 @@ class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
 
 
 class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
-    dont_want_insert_track = forms.BooleanField(
-        label=_(u"Nepřeji si zadávat svoji trasu."),
-        required=False,
-    )
-
     def clean(self):
         cleaned_data = super(TrackUpdateForm, self).clean()
         if cleaned_data['dont_want_insert_track'] == True:
