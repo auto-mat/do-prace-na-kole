@@ -584,7 +584,19 @@ class UserAttendance(models.Model):
         null=True)
     track = models.LineStringField(
         verbose_name=_(u"trasa"),
-        help_text=_(u"<strong>Zadávání trasy ukončíte dvouklikem.</strong><br/><br/>Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve městě na kole. Vaše cesta se zobrazí vašim týmovým kolegům.<br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na úvodní stránce.<br/><br/>Polohu začátku a konce trasy stačí zadávat s přesností 100m."),
+        help_text=_(u"""
+<ul>
+   <li><strong>Zadávání trasy ukončíte dvouklikem.</strong></li>
+   <li>Zadávání trasy zahájíte jedním kliknutím, tažením posouváte mapu.</li>
+   <li>Změnu trasy je možné provést kliknutím na její průběh v režimu změny trasy.</li>
+   <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede.</li>
+   <li>Zadání přesnějšího průběhu nám však může pomoci lépe zjistit jak se lidé na kole pohybují.</li>
+   <li>Trasu bude možné změnit nebo upřesnit i později v průběhu soutěže.</li>
+   <li>Polohu začátku a konce trasy stačí zadávat s přesností 100m.</li>
+</ul>
+Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve městě na kole. Vaše cesta se zobrazí vašim týmovým kolegům.
+<br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na úvodní stránce.
+"""),
         srid=4326,
         null=True,
         blank=True,
