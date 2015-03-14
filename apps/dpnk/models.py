@@ -112,7 +112,7 @@ class Address(CompositeField):
         )
 
     def __unicode__(self):
-        return "%s, %s %s, %s, %s" % (self.recipient, self.street, self.street_number, self.psc, self.city)
+        return ", ".join([self.recipient, self.street, self.street_number, util.format_psc(self.psc), self.city])
 
 
 class City(models.Model):
@@ -205,7 +205,7 @@ class Company(models.Model):
         return "%s" % self.name
 
     def company_address(self):
-        return "%s, %s %s, %s, %s" % (self.address.recipient, self.address.street, self.address.street_number, self.address.psc, self.address.city)
+        return ", ".join([self.address.recipient, self.address.street, self.address.street_number, util.format_psc(self.address.psc), self.address.city])
 
 
 class Subsidiary(models.Model):
@@ -229,7 +229,7 @@ class Subsidiary(models.Model):
         blank=False)
 
     def __unicode__(self):
-        return "%s, %s %s, %s, %s" % (self.address.recipient, self.address.street, self.address.street_number, self.address.psc, self.address.city)
+        return ", ".join([self.address.recipient, self.address.street, self.address.street_number, util.format_psc(self.address.psc), self.address.city])
 
 
 def validate_length(value, min_length=25):
