@@ -4,7 +4,6 @@ from dpnk import util
 from django.template import Context
 from django.template.loader import get_template
 from cache_utils.decorators import cached
-import bleach
 import slumber
 register = template.Library()
 
@@ -53,7 +52,7 @@ def wp_article(id):
         wp_article = api.list.get(feed="content_to_backend", _post_type="page", _id=id)
     except:
         return ""
-    return bleach.clean(wp_article.values()[0]['excerpt'])
+    return wp_article.values()[0]['content']
 
 @register.simple_tag
 def site_url():
