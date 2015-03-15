@@ -131,6 +131,12 @@ urlpatterns = patterns(
         views.UserAttendanceView.as_view(
             template_name = "registration/address.html"
         )),
+    url(r'^tracks/$',
+        views.CombinedTracksKMLView.as_view()
+        ),
+    url(r'^tracks/(?P<city_slug>[^&]+)/$',
+        views.CombinedTracksKMLView.as_view()
+        ),
 
 
     # company admin:

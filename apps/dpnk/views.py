@@ -32,8 +32,10 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
 from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase
 from django.contrib.auth.decorators import login_required as login_required_simple
+from django.contrib.gis.shortcuts import render_to_kml
 from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import ugettext_lazy as _
@@ -1516,3 +1518,21 @@ def draw_results(
     return render_to_response(template, {
         'results': draw.draw(competition_slug),
         }, context_instance=RequestContext(request))
+
+
+class CombinedTracksKMLView(TemplateView):
+    template_name = "gis/tracks.kml"
+    @method_decorator(gzip_page)
+    @method_decorator(never_cache)              # don't cache KML in browsers
+    @method_decorator(cache_page(24 * 60 * 60))  # cache in memcached for 24h
+    def dispatch(self, request, *args, **kwargs):
+        return super(CombinedTracksKMLView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, city_slug=None, *args, **kwargs):
+        context_data = super(CombinedTracksKMLView, self).get_context_data(*args, **kwargs)
+        filter_params = {}
+        if city_slug:
+            filter_params['team__subsidiary__city__slug'] = city_slug
+        user_attendances = models.UserAttendance.objects.filter(campaign__slug=self.request.subdomain, **filter_params).kml()
+        context_data['user_attendances'] = user_attendances
+        return context_data
