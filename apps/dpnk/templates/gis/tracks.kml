@@ -1,7 +1,7 @@
 {% extends "gis/kml/base.kml" %}
 {% block placemarks %}
 {% for user_attendance in user_attendances %}
-  <Placemark">
+  <Placemark>
     {{ user_attendance.track.kml|safe }}
   </Placemark>
 {% endfor %}
