@@ -161,7 +161,7 @@ class WorkingScheduleForm(forms.ModelForm):
             if not self.instance.userprofile.profile_complete():
                 tasks.append(_(u"<a href='%s'>vyplnit</a>") % reverse('upravit_profil'))
             if not self.instance.team_complete():
-                tasks.append(_(u"<a href='%s'>vybrat tým</a>") % reverse('zmenit_tym'))
+                tasks.append(_(u"<a href='%s'>být ověřeným členem týmu</a>") % reverse('zmenit_tym'))
             if not self.instance.track_complete():
                 tasks.append(_(u"<a href='%s'>vyplnit trasu</a>") % reverse('upravit_trasu'))
             if not self.instance.payment_complete():
