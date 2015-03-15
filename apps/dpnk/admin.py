@@ -254,20 +254,20 @@ class PaymentFilter(SimpleListFilter):
                     created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
                 ).distinct()]
             return queryset.filter(
-                userprofile__user__is_active=True).exclude(id__in=paying_or_prospective_user_ids).exclude(team__subsidiary__city__cityincampaign__admission_fee=0).distinct()
+                userprofile__user__is_active=True).exclude(id__in=paying_or_prospective_user_ids).exclude(campaign__admission_fee=0).distinct()
         elif self.value() == 'not_paid':
             return queryset.filter(
-                userprofile__user__is_active=True).exclude(transactions__status__in=models.Payment.done_statuses).exclude(team__subsidiary__city__cityincampaign__admission_fee=0).distinct()
+                userprofile__user__is_active=True).exclude(transactions__status__in=models.Payment.done_statuses).exclude(campaign__admission_fee=0).distinct()
         elif self.value() == 'no_admission':
-            return queryset.filter(Q(team__subsidiary__city__cityincampaign__admission_fee=0) | Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct()
+            return queryset.filter(Q(campaign__admission_fee=0) | Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct()
         elif self.value() == 'done':
-            return queryset.filter(Q(transactions__status__in=models.Payment.done_statuses) | Q(team__subsidiary__city__cityincampaign__admission_fee=0)).distinct()
+            return queryset.filter(Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0)).distinct()
         elif self.value() == 'paid':
             return queryset.filter(Q(transactions__status__in=models.Payment.done_statuses) & Q(transactions__payment__pay_type__in=models.Payment.PAYU_PAYING_TYPES)).distinct()
         elif self.value() == 'waiting':
             return queryset.exclude(transactions__status__in=models.Payment.done_statuses).filter(transactions__status__in=models.Payment.waiting_statuses).distinct()
         elif self.value() == 'unknown':
-            return queryset.exclude(team__subsidiary__city__cityincampaign__admission_fee=0).exclude(transactions__status__in=set(models.Payment.done_statuses) | set(models.Payment.waiting_statuses)).exclude(transactions=None).distinct()
+            return queryset.exclude(campaign__admission_fee=0).exclude(transactions__status__in=set(models.Payment.done_statuses) | set(models.Payment.waiting_statuses)).exclude(transactions=None).distinct()
         elif self.value() == 'none':
             return queryset.filter(transactions=None).distinct()
 
