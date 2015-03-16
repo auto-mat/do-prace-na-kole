@@ -109,7 +109,7 @@ class CompanyEditView(UpdateView):
 
 class CompanyAdminRegistrationBackend(registration.backends.simple.SimpleBackend):
     def register(self, request, **cleaned_data):
-        new_user = super(CompanyEditView, self).register(request, **cleaned_data)
+        new_user = super(CompanyAdminRegistrationBackend, self).register(request, **cleaned_data)
 
         new_user.first_name = cleaned_data['first_name']
         new_user.last_name = cleaned_data['last_name']
