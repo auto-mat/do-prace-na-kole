@@ -512,13 +512,8 @@ def header_bar(request, campaign_slug):
         }, context_instance=RequestContext(request))
 
 
-class PaymentView(RegistrationViewMixin, FormView):
+class PaymentView(UserAttendanceViewMixin, TemplateView):
     template_name = 'registration/payment.html'
-    form_class = PaymentTypeForm
-    title = _(u"Platba")
-    current_view = "payment_type"
-    next_url = "upravit_profil"
-    prev_url = "upravit_triko"
 
     @method_decorator(login_required_simple)
     @must_have_team
