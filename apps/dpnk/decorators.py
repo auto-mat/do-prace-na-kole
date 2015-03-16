@@ -141,7 +141,7 @@ def user_attendance_has(condition, message):
                 return render_to_response(view.template_name, {
                     'fullpage_error_message': message,
                     'user_attendance': user_attendance,
-                    'title': _(u"Musíte mít vybraný tým"),
+                    'title': getattr(view, 'title', ''),
                     'current_view': getattr(view, 'current_view', ''),
                     'form': None,
                     }, context_instance=RequestContext(request))
