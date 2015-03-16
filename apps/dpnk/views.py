@@ -443,7 +443,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
     title = _(u"Platba")
     current_view = "typ_platby"
     next_url = "working_schedule"
-    prev_url = "upravit_triko"
+    prev_url = "zmenit_triko"
 
     @method_decorator(login_required_simple)
     @must_have_team
