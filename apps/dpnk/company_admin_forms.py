@@ -71,7 +71,7 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
         return ret_val
 
 
-class CompanyAdminApplicationForm(registration.forms.RegistrationFormUniqueEmail):
+class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFormUniqueEmail):
     motivation_company_admin = forms.CharField(
         label=_(u"Pár vět o vaší pozici"),
         help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle kterých můžeme ověřit, že vám funkci firemního administrátora můžeme svěřit."),
