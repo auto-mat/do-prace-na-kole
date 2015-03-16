@@ -701,6 +701,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
     template_name='registration/rides.html'
     success_url="jizdy"
 
+    @method_decorator(login_required_simple)
     @must_be_approved_for_team
     @user_attendance_has(lambda ua: not ua.entered_competition(), mark_safe_lazy(format_lazy(_(u"Vyplnit jízdy můžete až budete mít splněny všechny body <a href='{addr}'>registrace</a>."), addr=reverse_lazy("upravit_profil"))))
     @method_decorator(never_cache)
