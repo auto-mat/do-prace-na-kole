@@ -480,7 +480,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
 
         if payment_type == 'pay':
             logger.error(u'Pay payment type, request: %s' % (self.request))
-            return http.HttpResponse(_(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč."), status=500)
+            return http.HttpResponse(_(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."), status=500)
         else:
             payment_choice = payment_choices[payment_type]
             if payment_choice:
