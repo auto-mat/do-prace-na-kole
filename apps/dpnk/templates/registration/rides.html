@@ -8,7 +8,7 @@
 {% else %}
 <form id="rides-form" name="calendar" method="POST" action="/dpnk/jizdy/">
 <input type="hidden" id="day" name="day"/>
-<button class="btn-info btn" type="button" onclick='$( ".toggle" ).toggle( "hidden" );'>{% trans "Zobrazit všechny jízdy" %}</button>
+<button class="btn-info btn show_rides_btn" type="button" onclick='$( ".toggle" ).toggle(  );'><span class="toggle">{% trans "Zobrazit všechny jízdy" %}</span><span class="toggle" style="display:none">{% trans "Skrýt všechny jízdy" %}</span></button>
 {% trans "Zadaný počet kilometrů na jednu jízdu: " %}{{ user_attendance.get_distance|floatformat:2 }} Km
 {% trans " (Do políčka zadávejte ujetý počet kilometrů)" %}
 {% include "messages_include.html" %}
