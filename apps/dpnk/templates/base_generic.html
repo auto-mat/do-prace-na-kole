@@ -45,7 +45,12 @@
                  <span class="icon-bar"></span>
                </button>
                <nav>
+                <ul class="lang_switch">
+                         <li><a href="{{ request.path|chlocale:"cs"}}" class="switch-czech" title="Česky">CZ</a></li>
+                         <li><a href="{{ request.path|chlocale:"en"}}" class="switch-english" title="English">EN</a></li>
+                    </ul>
                   <div id="collapsing_menu" class="collapse navbar-collapse">
+                   
                     <ul class="navbar nav navbar-nav" id="the_menu" >
            {% if user.is_authenticated %}
                         <li class="{% if current_view == 'profile_view' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'profil' %}">{% trans "Profil" %}</a></li>
@@ -82,17 +87,13 @@
                         <li ><a href="{% url 'login' %}">{% trans "Přihlásit" %}</a></li>
            {% endif %}
                     </ul>
-                    <br/>
-                    <ul class="navbar nav navbar-nav" id="the_menu" >
-                        {% block navbar %}
+                        {% block navbar %}  
                         {% endblock %}
-                    </ul>
+
+                        
                   </div>
                </nav>
-                <ul class="lang_switch">
-                         <li><a href="{{ request.path|chlocale:"cs"}}" class="switch-czech" title="Česky">CZ</a></li>
-                         <li><a href="{{ request.path|chlocale:"en"}}" class="switch-english" title="English">EN</a></li>
-                    </ul>
+              
             </div>
       </div>
    </div>
@@ -138,7 +139,10 @@
         $(window).resize(function(event) {
           equal_cols()
         });
-
+        // deactivate unfulfilled links
+        $('.disabled a').click(function (e) {
+          e.preventDefault();
+        });
 
       });
 

@@ -4,8 +4,22 @@
 #rides .form-control {
   width: 70px;
 }
-#collapsing_menu {
-  float: left;
+h1,
+h2,
+h3,
+h4,
+h5 {
+  color: #f7c29a;
+}
+h1 a,
+h2 a,
+h3 a,
+h4 a,
+h5 a {
+  color: #f37021;
+}
+.navbar {
+  background-color: #fff2e8;
 }
 .navbar ul {
   margin-bottom: 0;
@@ -17,11 +31,11 @@
 .navbar ul li a:hover {
   text-decoration: underline;
 }
-.navbar ul li.fulfilled a {
-  background: url(../img/ok.png) 92% 25% no-repeat;
-}
 .navbar ul li.unfulfilled a {
-  background: url(../img/ko.png) 92% 25% no-repeat;
+  color: #f7c29a;
+}
+.navbar ul li.unfulfilled a:hover {
+  color: #4f92ce;
 }
 .navbar ul li:first-child a {
   padding-left: 0;
@@ -30,6 +44,27 @@
   font-size: 0.9em;
   padding-left: 0.3em;
   padding-bottom: 0.3em;
+}
+.steps li {
+  background: url(../img/next.png) 100% 50% no-repeat;
+  padding-right: 0.3em;
+}
+.steps li:last-child {
+  background-image: none;
+}
+#the_menu .dropdown-menu,
+.the_submenu .dropdown-menu {
+  background-color: #fff2e8;
+}
+.the_submenu {
+  float: left;
+  clear: both;
+}
+.the_submenu a {
+  font-size: 0.8em;
+}
+.navbar-collapse {
+  padding-left: 0;
 }
 .base.container {
   margin-top: 80px;
@@ -60,6 +95,7 @@ input:disabled + label {
   color: #ccc;
 }
 .user_info {
+  margin-top: 1em;
   padding-left: 0;
 }
 .user_info li {
@@ -85,8 +121,31 @@ input:disabled + label {
 .btn.show_rides_btn {
   margin-bottom: 0.5em;
 }
+.vote {
+  background: url(../img/thumbsup.png) no-repeat right 40%;
+  display: inline-block;
+  padding-right: 18px;
+  color: #4D4D4D;
+  margin-left: 0.3em;
+}
+.cyklistesobe img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 1em;
+}
 @media (max-width: 768px) {
   .logo_holder {
     float: left;
+  }
+  #collapsing_menu {
+    width: 100%;
+  }
+  .the_submenu {
+    margin-top: 0.5em;
+    padding-top: 1em;
+    border-top: 1px solid #ff6c00;
+  }
+  .navbar ul li a {
+    padding-left: 0;
   }
 }
