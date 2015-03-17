@@ -225,8 +225,8 @@ class CompanyCompetitionView(UpdateView):
 class CompanyCompetitionsShowView(TemplateView):
     template_name='company_admin/competitions.html'
 
-    @must_be_company_admin
     @method_decorator(login_required)
+    @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(CompanyCompetitionsShowView, self).dispatch(request, *args, **kwargs)
