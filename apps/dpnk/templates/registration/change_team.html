@@ -86,3 +86,10 @@
 <h1>{% trans "Členové vašeho týmu" %}</h1>
 <div id="members-form-container"></div>
 {% endblock %}
+
+{% block third_menu %}
+<ul class="navbar nav navbar-nav the_submenu">
+<li><a href="{% url 'edit_team' %}">{% trans "Upravit tým" %}</a></li>
+<li><a href="{% url 'pozvanky' %}">{% trans "Pozvánky" %}</a></li>
+</ul>
+{% endblock %}

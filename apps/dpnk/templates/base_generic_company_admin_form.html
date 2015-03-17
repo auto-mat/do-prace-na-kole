@@ -8,7 +8,7 @@
 <link href="{% static "bow/font-awesome/css/font-awesome.css"%}" rel="stylesheet">
 {% endblock %}
 
-{% block navbar %}
+{% block second_menu %}
 <ul class="navbar nav navbar-nav steps" id="the_submenu" >
 <li class="{% if request.resolver_match.url_name == 'company_admin_pay_for_users' %}active{% endif %}"><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Zaplatit za uživatele" %}</a></li>
 <li class="{% if request.resolver_match.url_name == 'company_structure' %}active{% endif %}"><a href="{% url 'company_structure' %}">{% trans "Struktura společnosti" %}</a></li>
@@ -17,7 +17,4 @@
 <li class="{% if request.resolver_match.url_name == 'company_admin_competition' %}active{% endif %}"><a href="{% url 'company_admin_competition' %}">{% trans "Vypsat soutěž" %}</a></li>
 <li class="{% if request.resolver_match.url_name == 'invoices' %}active{% endif %}"><a href="{% url 'invoices' %}">{% trans "Faktury" %}</a></li>
 </ul>
-{% endblock %}
-
-{% block company_admin_menu %}
 {% endblock %}

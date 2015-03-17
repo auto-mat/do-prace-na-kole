@@ -56,40 +56,19 @@
                         <li class="{% if current_view == 'profile_view' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'profil' %}">{% trans "Profil" %}</a></li>
                         <li class="{% if current_view == 'competitions' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'competitions' %}">{% trans "Soutěže" %}</a></li>
                         <li class="{% if current_view == 'other_team_members' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'other_team_members_results' %}">{% trans "Tým" %}</a></li>
-                        <li class="dropdown">
-                           <ul class="dropdown-menu" role="menu">
-                              <li><a href="{% url 'upravit_profil' %}">{% trans "Osobní údaje" %}</a></li>
-                              <li>
-                                 <ul>
-                                    <li><a href="{% url 'password_change' %}">{% trans "Změnit heslo" %}</a></li>
-                                 </ul>
-                              </li>
-                              <li><a href="{% url 'zmenit_tym' %}">{% trans "Tým" %}</a></li>
-                              <li>
-                                 <ul>
-                                    <li><a href="{% url 'edit_team' %}">{% trans "Upravit tým" %}</a></li>
-                                    <li><a href="{% url 'pozvanky' %}">{% trans "Pozvánky" %}</a></li>
-                                 </ul>
-                              </li>
-                              <li><a href="{% url 'upravit_trasu' %}">{% trans "Trasa" %}</a></li>
-                              <li><a href="{% url 'zmenit_triko' %}">{% trans "Triko" %}</a></li>
-                              <li><a href="{% url 'typ_platby' %}">{% trans "Startovné" %}</a></li>
-                              <li><a href="{% url 'working_schedule' %}">{% trans "Pracovní rozvrh" %}</a></li>
-                           </ul>
-                           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans "Nastavení" %}<span class="caret"></span></a>
-                        </li>
+                        <li class="{% block settings_link_class %}{% endblock %}"><a href="{% url 'upravit_profil' %}">{% trans "Nastavení" %}</a></li>
                         {% if user_attendance.is_company_admin %}
-                        {% block company_admin_menu %}
                         <li><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Správa společnosti" %}</a></li>
-                        {% endblock %}
                         {% endif %}
            {% else %}
                         <li ><a href="{% url 'login' %}">{% trans "Přihlásit" %}</a></li>
            {% endif %}
                     </ul>
-                        {% block navbar %}  
+                        {% block second_menu %}  
                         {% endblock %}
 
+                        {% block third_menu %}  
+                        {% endblock %}
                         
                   </div>
                </nav>
@@ -115,6 +94,7 @@
                {% if user.is_authenticated %}
                  <li>{% trans "Uživatel: " %}{{ user_attendance }}</li>
                  <li>{% trans "Tým: " %}{{ user_attendance.team.name }}</li>
+                 <li><a href="{% url 'password_change' %}">{% trans "Změnit heslo" %}</a></li>
                  <li class="logout_django"><a class="btn btn-warning" href="{% url 'logout' %}" class="logout" title="Log out">{% trans "Odhlásit" %}</a></li>
                {% endif %}
              </ul>

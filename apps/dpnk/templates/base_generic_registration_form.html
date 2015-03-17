@@ -8,7 +8,7 @@
 <link href="{% static "bow/font-awesome/css/font-awesome.css"%}" rel="stylesheet">
 {% endblock %}
 
-{% block navbar %}
+{% block second_menu %}
 {{ block.super }}
 <ul class="navbar nav navbar-nav steps the_submenu">
 
@@ -20,3 +20,5 @@
 <li class="{% if current_view == 'working_schedule' %}active{% endif %} fulfilled"><a href="{% url 'working_schedule' %}">{% trans "Pracovní rozvrh" %}</a></li>
 </ul>
 {% endblock %}
+
+{% block settings_link_class %}active{% endblock %}
