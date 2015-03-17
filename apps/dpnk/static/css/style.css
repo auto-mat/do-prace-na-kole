@@ -1,8 +1,8 @@
 .waiting-for-load {
   cursor: progress;
 }
-#rides-form .form-control[readonly] {
-  cursor: progress;
+#rides .form-control {
+  width: 70px;
 }
 #collapsing_menu {
   float: left;
@@ -81,6 +81,9 @@ input:disabled + label {
 .lang_switch li a {
   padding: 15px 5px;
   display: inline-block;
+}
+.btn.show_rides_btn {
+  margin-bottom: 0.5em;
 }
 @media (max-width: 768px) {
   .logo_holder {
