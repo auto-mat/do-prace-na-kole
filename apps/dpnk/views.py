@@ -752,6 +752,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         distance = 0
         trip_count = 0
         working_rides_count = 0
+        has_active_trip = False
         default_distance = self.user_attendance.get_distance()
         for i, d in enumerate(days):
             if d in trips:
@@ -759,6 +760,8 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
             cd = {}
             cd['day'] = d
             cd['trips_active'] = trip_active(d, today)
+            if cd['trips_active']:
+                has_active_trip = True
             if d in trips:
                 cd['working_ride_to'] = trips[d].is_working_ride_to
                 cd['working_ride_from'] = trips[d].is_working_ride_from
@@ -784,6 +787,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
             calendar.append(cd)
         return {
             'calendar': calendar,
+            'has_active_trip': has_active_trip,
             'user_attendance': self.user_attendance,
             'minimum_percentage': self.user_attendance.campaign.minimum_percentage,
         }
