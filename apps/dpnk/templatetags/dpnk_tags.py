@@ -4,7 +4,6 @@ from dpnk import util
 from django.template import Context
 from django.template.loader import get_template
 from cache_utils.decorators import cached
-import bleach
 import slumber
 register = template.Library()
 
@@ -36,7 +35,10 @@ def cyklistesobe(city_slug, order="created"):
 def wp_news():
     url="http://www.dopracenakole.net/"
     api = slumber.API(url)
-    wp_feed = api.list.get(feed="content_to_backend", _post_type="post", count=10)
+    try:
+        wp_feed = api.list.get(feed="content_to_backend", _post_type="post", count=10)
+    except:
+        return ""
     template = get_template("templatetags/wp_news.html")
     context = Context({'wp_feed': wp_feed})
     return template.render(context)
@@ -46,8 +48,11 @@ def wp_news():
 def wp_article(id):
     url="http://www.dopracenakole.net/"
     api = slumber.API(url)
-    wp_article = api.list.get(feed="content_to_backend", _post_type="post", _id=id)
-    return bleach.clean(wp_article.values()[0]['excerpt'])
+    try:
+        wp_article = api.list.get(feed="content_to_backend", _post_type="page", _id=id)
+    except:
+        return ""
+    return wp_article.values()[0]['content']
 
 @register.simple_tag
 def site_url():

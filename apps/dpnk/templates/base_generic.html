@@ -7,7 +7,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 {% analytical_head_top %}
-<title>{% block title %}{% trans "DPNK" %}{% endblock %}</title>
+<title>{% block title %}{% trans "DPNK" %}{% if title %} - {{ title }}{% endif %}{% endblock %}</title>
 {% block default_head %}
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,6 +98,7 @@
 <div class="base container">
    <div class="row">
       <div class="col-md-8 col-sm-7 col-md-offset-2">
+         {% block caption %}<h2>{{ title }}</h2>{% endblock %}
          {% block content %}
          {% block error %}
             {% if fullpage_error_message %}

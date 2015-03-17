@@ -54,3 +54,7 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+def format_psc(integer):
+    psc_str = str(integer)
+    return psc_str[:-2] + " " + psc_str[-2:]
