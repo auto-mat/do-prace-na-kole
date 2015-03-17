@@ -227,7 +227,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     def clean(self):
         cleaned_data = super(ChangeTeamForm, self).clean()
         if self.instance.payment_status() == 'done' and self.instance.team:
-            if cleaned_data['team'].subsidiary != self.instance.team.subsidiary:
+            if 'team' in cleaned_data and cleaned_data['team'].subsidiary != self.instance.team.subsidiary:
                 raise forms.ValidationError(mark_safe(_(u"Po zaplacení není možné měnit tým mimo pobočku")))
         return cleaned_data
 

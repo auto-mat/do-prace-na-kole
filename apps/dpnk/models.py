@@ -588,7 +588,7 @@ class UserAttendance(models.Model):
 <ul>
    <li><strong>Zadávání trasy ukončíte dvouklikem.</strong></li>
    <li>Zadávání trasy zahájíte jedním kliknutím, tažením posouváte mapu.</li>
-   <li>Změnu trasy je možné provést kliknutím na její průběh v režimu změny trasy.</li>
+   <li>Změnu trasy provedete po přepnutí do režimu úprav kliknutím na trasu.</li>
    <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede.</li>
    <li>Zadání přesnějšího průběhu nám však může pomoci lépe zjistit jak se lidé na kole pohybují.</li>
    <li>Trasu bude možné změnit nebo upřesnit i později v průběhu soutěže.</li>
@@ -1146,6 +1146,7 @@ class Invoice(models.Model):
     class Meta:
         verbose_name = _(u"Faktura")
         verbose_name_plural = _(u"Faktury")
+        unique_together = (("sequence_number", "campaign"),)
 
     created = models.DateTimeField(
         verbose_name=_(u"Datum vytvoření"),
@@ -1186,7 +1187,6 @@ class Invoice(models.Model):
         blank=False)
     sequence_number = models.PositiveIntegerField(
         verbose_name=_(u"Pořadové číslo faktury"),
-        unique=True,
         null=False)
     order_number = models.BigIntegerField(
         verbose_name=_(u"Číslo objednávky"),
@@ -1208,7 +1208,7 @@ class Invoice(models.Model):
             campaign = self.campaign
             first = campaign.invoice_sequence_number_first
             last = campaign.invoice_sequence_number_last
-            last_transaction = Invoice.objects.filter(sequence_number__gte=first, sequence_number__lte=last).order_by("sequence_number").last()
+            last_transaction = Invoice.objects.filter(campaign=campaign, sequence_number__gte=first, sequence_number__lte=last).order_by("sequence_number").last()
             if last_transaction:
                 if last_transaction.sequence_number == last:
                     raise Exception(_(u"Došla číselná řada faktury"))

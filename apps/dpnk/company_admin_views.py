@@ -109,7 +109,7 @@ class CompanyEditView(UpdateView):
 
 class CompanyAdminRegistrationBackend(registration.backends.simple.SimpleBackend):
     def register(self, request, **cleaned_data):
-        new_user = super(CompanyEditView, self).register(request, **cleaned_data)
+        new_user = super(CompanyAdminRegistrationBackend, self).register(request, **cleaned_data)
 
         new_user.first_name = cleaned_data['first_name']
         new_user.last_name = cleaned_data['last_name']
@@ -225,8 +225,8 @@ class CompanyCompetitionView(UpdateView):
 class CompanyCompetitionsShowView(TemplateView):
     template_name='company_admin/competitions.html'
 
-    @must_be_company_admin
     @method_decorator(login_required)
+    @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(CompanyCompetitionsShowView, self).dispatch(request, *args, **kwargs)

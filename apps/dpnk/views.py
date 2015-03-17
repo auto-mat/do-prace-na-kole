@@ -30,10 +30,11 @@ from django.shortcuts import render_to_response
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.messages.views import SuccessMessageMixin
 from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
 from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase
 from django.contrib.auth.decorators import login_required as login_required_simple
+from django.contrib.gis.shortcuts import render_to_kml
 from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import ugettext_lazy as _
@@ -174,7 +175,7 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
             return reverse(self.prev_url)
 
 
-class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
+class ChangeTeamView(RegistrationViewMixin, FormView):
     form_class = ChangeTeamForm
     template_name = 'registration/change_team.html'
     next_url = 'upravit_trasu'
@@ -295,7 +296,6 @@ class ChangeTeamView(SuccessMessageMixin, RegistrationViewMixin, FormView):
             if self.user_attendance.approved_for_team != 'approved':
                 approval_request_mail(self.user_attendance)
 
-            messages.add_message(request, messages.SUCCESS, _(u"Údaje o týmu úspěšně nastaveny."), fail_silently=True)
             return redirect(self.get_success_url())
         form.fields['company'].widget.underlying_form = form_company
         form.fields['company'].widget.create = create_company
@@ -437,13 +437,13 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
         return super(ConfirmTeamInvitationView, self).dispatch(request, *args, **kwargs)
 
 
-class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
+class PaymentTypeView(RegistrationViewMixin, FormView):
     template_name = 'registration/payment_type.html'
     form_class = PaymentTypeForm
     title = _(u"Platba")
     current_view = "typ_platby"
     next_url = "working_schedule"
-    prev_url = "upravit_triko"
+    prev_url = "zmenit_triko"
 
     @method_decorator(login_required_simple)
     @must_have_team
@@ -480,7 +480,7 @@ class PaymentTypeView(SuccessMessageMixin, RegistrationViewMixin, FormView):
 
         if payment_type == 'pay':
             logger.error(u'Pay payment type, request: %s' % (self.request))
-            return http.HttpResponse(_(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč."), status=500)
+            return http.HttpResponse(_(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."), status=500)
         else:
             payment_choice = payment_choices[payment_type]
             if payment_choice:
@@ -512,13 +512,8 @@ def header_bar(request, campaign_slug):
         }, context_instance=RequestContext(request))
 
 
-class PaymentView(SuccessMessageMixin, RegistrationViewMixin, FormView):
+class PaymentView(UserAttendanceViewMixin, TemplateView):
     template_name = 'registration/payment.html'
-    form_class = PaymentTypeForm
-    title = _(u"Platba")
-    current_view = "payment_type"
-    next_url = "upravit_profil"
-    prev_url = "upravit_triko"
 
     @method_decorator(login_required_simple)
     @must_have_team
@@ -701,6 +696,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
     template_name='registration/rides.html'
     success_url="jizdy"
 
+    @method_decorator(login_required_simple)
     @must_be_approved_for_team
     @user_attendance_has(lambda ua: not ua.entered_competition(), mark_safe_lazy(format_lazy(_(u"Vyplnit jízdy můžete až budete mít splněny všechny body <a href='{addr}'>registrace</a>."), addr=reverse_lazy("upravit_profil"))))
     @method_decorator(never_cache)
@@ -968,7 +964,7 @@ def competition_results(request, template, competition_slug, campaign_slug, limi
         }, context_instance=RequestContext(request))
 
 
-class UpdateProfileView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
+class UpdateProfileView(RegistrationViewMixin, UpdateView):
     form_class = ProfileUpdateForm
     model = UserProfile
     success_message = _(u"Osobní údaje úspěšně upraveny")
@@ -980,7 +976,7 @@ class UpdateProfileView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
         return self.request.user.userprofile
 
 
-class WorkingScheduleView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
+class WorkingScheduleView(RegistrationViewMixin, UpdateView):
     form_class = WorkingScheduleForm
     model = UserAttendance
     success_message = _(u"Pracovní kalendář úspěšně upraven")
@@ -995,7 +991,7 @@ class WorkingScheduleView(SuccessMessageMixin, RegistrationViewMixin, UpdateView
         return self.user_attendance
 
 
-class UpdateTrackView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
+class UpdateTrackView(RegistrationViewMixin, UpdateView):
     template_name = 'registration/change_track.html'
     form_class = TrackUpdateForm
     model = UserAttendance
@@ -1009,7 +1005,7 @@ class UpdateTrackView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
         return self.user_attendance
 
 
-class ChangeTShirtView(SuccessMessageMixin, RegistrationViewMixin, UpdateView):
+class ChangeTShirtView(RegistrationViewMixin, UpdateView):
     template_name = 'registration/change_tshirt.html'
     form_class = forms.TShirtUpdateForm
     model = UserAttendance
@@ -1500,7 +1496,7 @@ def daily_chart(
         }, context_instance=RequestContext(request))
 
 
-class BikeRepairView(SuccessMessageMixin, CreateView):
+class BikeRepairView(CreateView):
     template_name = 'base_generic_form.html'
     form_class = forms.BikeRepairForm
     success_url = 'bike_repair'
@@ -1526,3 +1522,21 @@ def draw_results(
     return render_to_response(template, {
         'results': draw.draw(competition_slug),
         }, context_instance=RequestContext(request))
+
+
+class CombinedTracksKMLView(TemplateView):
+    template_name = "gis/tracks.kml"
+    @method_decorator(gzip_page)
+    @method_decorator(never_cache)              # don't cache KML in browsers
+    @method_decorator(cache_page(24 * 60 * 60))  # cache in memcached for 24h
+    def dispatch(self, request, *args, **kwargs):
+        return super(CombinedTracksKMLView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, city_slug=None, *args, **kwargs):
+        context_data = super(CombinedTracksKMLView, self).get_context_data(*args, **kwargs)
+        filter_params = {}
+        if city_slug:
+            filter_params['team__subsidiary__city__slug'] = city_slug
+        user_attendances = models.UserAttendance.objects.filter(campaign__slug=self.request.subdomain, **filter_params).kml()
+        context_data['user_attendances'] = user_attendances
+        return context_data

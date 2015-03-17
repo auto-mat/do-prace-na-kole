@@ -71,7 +71,7 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
         return ret_val
 
 
-class CompanyAdminApplicationForm(registration.forms.RegistrationFormUniqueEmail):
+class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFormUniqueEmail):
     motivation_company_admin = forms.CharField(
         label=_(u"Pár vět o vaší pozici"),
         help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle kterých můžeme ověřit, že vám funkci firemního administrátora můžeme svěřit."),
@@ -99,13 +99,14 @@ class CompanyAdminApplicationForm(registration.forms.RegistrationFormUniqueEmail
         queryset=Campaign.objects.all(),
         required=True)
 
-    def clean_administrated_company(self):
-        obj = self.cleaned_data['administrated_company']
-        campaign = self.cleaned_data['campaign']
+    def clean(self):
+        cleaned_data = super(CompanyAdminApplicationForm, self).clean()
+        obj = cleaned_data['administrated_company']
+        campaign = cleaned_data['campaign']
         if CompanyAdmin.objects.filter(administrated_company__pk=obj.pk, campaign=campaign).exists():
             raise forms.ValidationError(_(u"Tato společnost již má svého koordinátora."))
         else:
-            return self.cleaned_data['administrated_company']
+            return cleaned_data
 
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super(CompanyAdminApplicationForm, self).__init__(*args, **kwargs)
