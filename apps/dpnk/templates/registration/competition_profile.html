@@ -17,7 +17,6 @@
          $("#rides-form").addClass("waiting-for-load");
          $("#rides-form").ajaxSubmit({replaceTarget: false, target: "#rides-form", success: function(){
             $("#rides-form").removeClass("waiting-for-load");
-            window.scrollTo(0, 0);
       }})});
    });
 </script>

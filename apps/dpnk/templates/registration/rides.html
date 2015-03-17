@@ -6,7 +6,7 @@
 {% if fullpage_error_message %}
 <div class="text-danger">{{ fullpage_error_message }}</div>
 {% else %}
-<form id="rides-form" name="calendar" method="POST" action="/dpnk/jizdy/">
+<form id="rides-form" name="calendar" method="POST" action="{% url "jizdy" %}">
 <input type="hidden" id="day" name="day"/>
 <button class="btn-info btn show_rides_btn" type="button" onclick='$( ".toggle" ).toggle(  );'><span class="toggle">{% trans "Zobrazit všechny jízdy" %}</span><span class="toggle" style="display:none">{% trans "Skrýt všechny jízdy" %}</span></button>
 {% trans "Zadaný počet kilometrů na jednu jízdu: " %}{{ user_attendance.get_distance|floatformat:2 }} Km
@@ -14,9 +14,8 @@
 {% include "messages_include.html" %}
 {{ message }}
 
-{% for day in calendar %}
-<table id="rides" class="table table-bordered table-hover table-condensed">
-<thead>
+<table id="rides" class="table table-bordered table-hover table-condensed {% if not has_active_trip %}toggle{% endif %}" {% if not has_active_trip %}style="display:none"{% endif %}>
+<thead class="{% if has_active_trip %}toggle{% endif %}">
    <tr>
       <th scope="col">{% trans "Den" %}</th>
       <th scope="col" colspan="2">{% trans "Do práce" %}</th>
@@ -25,6 +24,7 @@
       <th scope="col" class="fixed_width_column">{% trans "Vzdá&shy;le&shy;nost cel&shy;kem" %}</th>
    </tr>
 </thead>
+{% for day in calendar %}
 <tr class="
 {% if day.trips_active %}
    info
@@ -62,6 +62,11 @@ style="display:none"
 </tr>
 {% endfor %}
 </table>
+{% if not has_active_trip %}
+<div class="toggle">
+{% trans "Zde budete zadávat vaše jízdy" %}
+</div>
+{% endif %}
 </form>
 <div></div>
 {% endif %}

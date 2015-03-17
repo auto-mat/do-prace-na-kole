@@ -729,8 +729,14 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
 
             trip.trip_to = trip_to
             trip.trip_from = trip_from
-            trip.distance_to = max(min(float(request.POST.get('distance_to-' + str(day), 0)), 1000), 0)
-            trip.distance_from = max(min(float(request.POST.get('distance_from-' + str(day), 0)), 1000), 0)
+            try:
+                trip.distance_to = max(min(float(request.POST.get('distance_to-' + str(day), None)), 1000), 0)
+            except (ValueError, TypeError):
+                trip.distance_to = None
+            try:
+                trip.distance_from = max(min(float(request.POST.get('distance_from-' + str(day), None)), 1000), 0)
+            except (ValueError, TypeError):
+                trip.distance_from = None
             logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s, created: %s' % (
                 request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to, created))
             trip.dont_recalculate = True
@@ -752,13 +758,16 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         distance = 0
         trip_count = 0
         working_rides_count = 0
-        default_distance = self.user_attendance.get_distance()
+        has_active_trip = False
+        default_distance = self.user_attendance.get_distance(1)
         for i, d in enumerate(days):
             if d in trips:
                 working_rides_count += (1 if trips[d].is_working_ride_to else 0) + (1 if trips[d].is_working_ride_from else 0)
             cd = {}
             cd['day'] = d
             cd['trips_active'] = trip_active(d, today)
+            if cd['trips_active']:
+                has_active_trip = True
             if d in trips:
                 cd['working_ride_to'] = trips[d].is_working_ride_to
                 cd['working_ride_from'] = trips[d].is_working_ride_from
@@ -784,6 +793,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
             calendar.append(cd)
         return {
             'calendar': calendar,
+            'has_active_trip': has_active_trip,
             'user_attendance': self.user_attendance,
             'minimum_percentage': self.user_attendance.campaign.minimum_percentage,
         }
