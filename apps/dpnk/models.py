@@ -738,9 +738,9 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def get_length(self):
         return results.get_userprofile_length(self)
 
-    def get_distance(self):
+    def get_distance(self, round_digits=2):
         if self.track:
-            return round(UserAttendance.objects.length().get(id=self.id).length.km, 2)
+            return round(UserAttendance.objects.length().get(id=self.id).length.km, round_digits)
         else:
             return self.distance
 

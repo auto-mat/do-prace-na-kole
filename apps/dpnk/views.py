@@ -729,8 +729,14 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
 
             trip.trip_to = trip_to
             trip.trip_from = trip_from
-            trip.distance_to = max(min(float(request.POST.get('distance_to-' + str(day), 0)), 1000), 0)
-            trip.distance_from = max(min(float(request.POST.get('distance_from-' + str(day), 0)), 1000), 0)
+            try:
+                trip.distance_to = max(min(float(request.POST.get('distance_to-' + str(day), None)), 1000), 0)
+            except (ValueError, TypeError):
+                trip.distance_to = None
+            try:
+                trip.distance_from = max(min(float(request.POST.get('distance_from-' + str(day), None)), 1000), 0)
+            except (ValueError, TypeError):
+                trip.distance_from = None
             logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s, created: %s' % (
                 request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to, created))
             trip.dont_recalculate = True
@@ -753,7 +759,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         trip_count = 0
         working_rides_count = 0
         has_active_trip = False
-        default_distance = self.user_attendance.get_distance()
+        default_distance = self.user_attendance.get_distance(1)
         for i, d in enumerate(days):
             if d in trips:
                 working_rides_count += (1 if trips[d].is_working_ride_to else 0) + (1 if trips[d].is_working_ride_from else 0)
