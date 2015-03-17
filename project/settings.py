@@ -133,6 +133,7 @@ INSTALLED_APPS = (
     'compressor',
     'django_bleach',
     'analytical',
+    'leaflet',
 )
 
 BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br']

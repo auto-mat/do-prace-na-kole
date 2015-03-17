@@ -35,7 +35,7 @@ from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFi
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.admin import OSMGeoAdmin
+from leaflet.admin import LeafletGeoAdmin
 import datetime
 import results
 # Models
@@ -86,7 +86,7 @@ class SubsidiaryInline(EnhancedAdminMixin, admin.TabularInline):
     extra = 0
 
 
-class CityAdmin(EnhancedModelAdminMixin, OSMGeoAdmin):
+class CityAdmin(EnhancedModelAdminMixin, LeafletGeoAdmin):
     list_display = ('name', 'slug', 'cyklistesobe_slug', 'id', )
     prepopulated_fields = {'slug': ('name',), 'cyklistesobe_slug': ('name',)}
 
@@ -556,7 +556,7 @@ class UserAttendanceResource(resources.ModelResource):
         fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email')
 
 
-class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin, OSMGeoAdmin):
+class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin, LeafletGeoAdmin):
     list_display = ('id', 'name', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_length', 'created')
     list_filter = (CampaignFilter, ('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('approved_for_team', AllValuesComboFilter), ('t_shirt_size', RelatedFieldComboFilter), 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, ('team__member_count', AllValuesComboFilter), PackageConfirmationFilter, ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter), ('userprofile__sex', AllValuesComboFilter))
     raw_id_fields = ('userprofile', 'team')
