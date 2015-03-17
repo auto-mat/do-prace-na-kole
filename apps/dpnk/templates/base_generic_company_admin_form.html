@@ -15,9 +15,6 @@
 <li class="{% if request.resolver_match.url_name == 'company_admin_competitions' %}active{% endif %}"><a href="{% url 'company_admin_competitions' %}">{% trans "Soutěže" %}</a></li>
 <li class="{% if request.resolver_match.url_name == 'company_admin_competition' %}active{% endif %}"><a href="{% url 'company_admin_competition' %}">{% trans "Vypsat soutěž" %}</a></li>
 <li class="{% if request.resolver_match.url_name == 'invoices' %}active{% endif %}"><a href="{% url 'invoices' %}">{% trans "Faktury" %}</a></li>
-{% if user_attendance.entered_competition %}
-<li class="{% if current_view == 'profile_view' %}active{% endif %}"><a href="{% url 'profil' %}">{% trans "Profil" %}</a></li>
-{% endif %}
 {% endblock %}
 
 {% block company_admin_menu %}

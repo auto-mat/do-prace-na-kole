@@ -48,8 +48,6 @@
                   <div id="collapsing_menu" class="collapse navbar-collapse">
                     <ul class="navbar nav navbar-nav" id="the_menu" >
            {% if user.is_authenticated %}
-                        {% block navbar %}
-                         
                         <li class="{% if current_view == 'profile_view' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'profil' %}">{% trans "Profil" %}</a></li>
                         <li class="{% if current_view == 'competitions' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'competitions' %}">{% trans "Soutěže" %}</a></li>
                         <li class="{% if current_view == 'other_team_members' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'other_team_members_results' %}">{% trans "Tým" %}</a></li>
@@ -75,7 +73,6 @@
                            </ul>
                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% trans "Nastavení" %}<span class="caret"></span></a>
                         </li>
-                        {% endblock %}
                         {% if user_attendance.is_company_admin %}
                         {% block company_admin_menu %}
                         <li><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Správa společnosti" %}</a></li>
@@ -84,6 +81,11 @@
            {% else %}
                         <li ><a href="{% url 'login' %}">{% trans "Přihlásit" %}</a></li>
            {% endif %}
+                    </ul>
+                    <br/>
+                    <ul class="navbar nav navbar-nav" id="the_menu" >
+                        {% block navbar %}
+                        {% endblock %}
                     </ul>
                   </div>
                </nav>
