@@ -105,7 +105,7 @@ def must_be_competitor(fn):
             userprofile = request.user.userprofile
             campaign_slug = request.subdomain
             try:
-                Campaign.objects.get(slug=campaign_slug)
+                campaign = Campaign.objects.get(slug=campaign_slug)
             except Campaign.DoesNotExist:
                 raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>")% campaign_slug)
             try:
