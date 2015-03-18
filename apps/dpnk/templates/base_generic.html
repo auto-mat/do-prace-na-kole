@@ -80,6 +80,9 @@
 <div class="base container">
    <div class="row">
       <div class="col-md-8 col-sm-7 col-md-offset-2">
+         <!--[if lte IE 8]>
+            <p class="alert alert-warning browsehappy">Používáte <strong>zastaralý</strong> prohlížeč. Udělějte si službu a <a href="http://browsehappy.com/">updejtněte si prohlížeč..</a></p>
+         <![endif]-->
          {% block caption %}<h2>{{ title }}</h2>{% endblock %}
          {% block content %}
          {% block error %}

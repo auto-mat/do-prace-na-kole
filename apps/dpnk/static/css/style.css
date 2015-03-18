@@ -37,6 +37,9 @@ h5 a {
 .navbar ul li.unfulfilled a:hover {
   color: #4f92ce;
 }
+.navbar ul li.unfulfilled.active a {
+  color: #4f92ce;
+}
 .navbar ul li:first-child a {
   padding-left: 0;
 }
