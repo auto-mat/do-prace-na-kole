@@ -1,7 +1,10 @@
+{% extends "base_generic.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
 {% load thumbnail %}
 
+{% block content %}
+{{ block.super }}
 <h2>{{ competition.name }}</h2>
 {% for competitor in competitors %}
    <h3 id="comp_res_{{competitor.pk}}">{{ competitor }} ({{ competitor.result }} b.)</h3>
@@ -19,3 +22,4 @@
       {% endif %}
    {% endfor %}
 {% endfor %}
+{% endblock %}

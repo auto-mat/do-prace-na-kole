@@ -1,3 +1,4 @@
+{% extends "base_generic.html" %}
 {% load url from future %}
 {% load i18n %}
 {% load dpnk_tags %}
@@ -5,6 +6,8 @@
 {% load softhyphen_tags %}
 {% load dpnk_tags %}
 
+{% block content %}
+{{ block.super }}
 <h4>{% trans "Výsledky v soutěži " %}{{ competition }}:</h4>
 <div></div>
 
@@ -100,3 +103,4 @@
 </tr>
 {% endfor %}
 </table>
+{% endblock %}
