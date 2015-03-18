@@ -24,20 +24,22 @@ import random
 def all_members_paid(team):
     """Has all members of team paid?"""
 
-    for userprofile in team.members():
-        if userprofile.user.is_active \
-                and userprofile.payment()['status'] != 'done':
+    for userattendance in team.members():
+        if userattendance.userprofile.user.is_active \
+                and userattendance.payment()['status'] != 'done':
             return False
     return True
 
-def draw(competition_slug, threshold=0.66, limit=10):
+def draw(competition_slug, limit=10):
     """Draw competitors above threshold in given competition"""
 
+    raise NotImplementedError("Rewrite of this fucntion is needed")
     competition = Competition.objects.get(slug=competition_slug)
+    threshold = competition.campaign.minimum_percentage
     condition = {}
     condition['competition'] = competition
     if competition.type == 'frequency':
-        condition['result__gt'] = threshold * util.days_count() * 2.0
+        condition['result__gt'] = threshold * util.days_count(competition.campaign) * 2.0
     results = CompetitionResult.objects.filter(**condition)
 
     if competition.competitor_type == 'team':

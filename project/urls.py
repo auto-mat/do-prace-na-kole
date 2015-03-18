@@ -2,7 +2,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib.gis import admin
 admin.site.index_template = 'admin/my_custom_index.html'
 admin.autodiscover()
-from dpnk.views import questionnaire_results, questionnaire_answers, draw_results, questions, answers
+from dpnk.views import questionnaire_results, questionnaire_answers, questions, answers
+from dpnk import views
 from django.conf.urls.static import static
 
 from django.conf import settings
@@ -10,18 +11,20 @@ from django.conf import settings
 urlpatterns = patterns('',
     url(r'^admin/odpovedi/$',
         answers,
-        name='answers'),
+        name='admin_answers'),
     url(r'^admin/otazky/$',
         questions,
-        name='questions'),
+        name='admin_questions'),
     url(r'^admin/dotaznik_odpovedi/(?P<competition_slug>[0-9A-Za-z_\-]+)$',
         questionnaire_answers,
-        name='questionnaire_answers'),
+        name='admin_questionnaire_answers'),
     url(r'^admin/dotaznik/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
         questionnaire_results,
-        name='questionnaire_results'),
+        name='admin_questionnaire_results'),
     url(r'^admin/losovani/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
-        draw_results),
+        views.DrawResultsView.as_view(),
+        name="admin_draw_results",
+        ),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^chaining/', include('smart_selects.urls')),
     url(r'^admin/', include("massadmin.urls")),

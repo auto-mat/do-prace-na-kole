@@ -934,34 +934,35 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
         return context_data
 
 
-def competition_results(request, template, competition_slug, campaign_slug, limit=None):
-    if limit == '':
-        limit = None
+class CompetitionResultsView(TemplateView):
+    template_name = 'registration/competition_results.html'
 
-    if request.user.is_anonymous():
-        user_attendance = None
-    else:
-        user_attendance = request.user.userprofile.userattendance_set.get(campaign__slug=campaign_slug)
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(CompetitionResultsView, self).get_context_data(*args, **kwargs)
+        competition_slug = kwargs.get('competition_slug')
+        limit = kwargs.get('limit')
+        campaign_slug = self.request.subdomain
 
-    try:
-        competition = Competition.objects.get(slug=competition_slug)
-    except Competition.DoesNotExist:
-        logger.exception('Unknown competition slug %s, request: %s' % (competition_slug, request))
-        return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující soutěž">kontakt@dopracenakole.net</a></div>'), status=401)
+        if limit == '':
+            limit = None
 
-    results = competition.get_results()
-    if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
-        results = results.select_related('user_attendance__userprofile__user')
-    elif competition.competitor_type == 'team':
-        results = results.select_related('team__subsidiary__company')
-    elif competition.competitor_type == 'company':
-        results = results.select_related('company')
+        try:
+            competition = Competition.objects.get(slug=competition_slug)
+        except Competition.DoesNotExist:
+            logger.exception('Unknown competition slug %s, request: %s' % (competition_slug, self.request))
+            return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující soutěž">kontakt@dopracenakole.net</a></div>'), status=401)
 
-    return render_to_response(template, {
-        'user_attendance': user_attendance,
-        'competition': competition,
-        'results': results[:limit]
-        }, context_instance=RequestContext(request))
+        results = competition.get_results()
+        if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
+            results = results.select_related('user_attendance__userprofile__user')
+        elif competition.competitor_type == 'team':
+            results = results.select_related('team__subsidiary__company')
+        elif competition.competitor_type == 'company':
+            results = results.select_related('company')
+
+        context_data['competition'] = competition
+        context_data['results'] = results[:limit]
+        return context_data
 
 
 class UpdateProfileView(RegistrationViewMixin, UpdateView):
@@ -1129,23 +1130,31 @@ def questionaire(
         }, context_instance=RequestContext(request))
 
 
-def questionnaire_answers_all(request, template, competition_slug, campaign_slug, limit=None):
-    competition = Competition.objects.get(slug=competition_slug)
-    if not request.user.is_superuser and hasattr(request.user, 'userprofile') and request.user.userprofile.competition_edition_allowed(competition):
-        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění."), "</div>"))
-    if not competition.public_answers:
-        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Tato soutěž nemá povolené prohlížení odpovědí."), "</div>"))
+class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
+    template_name = 'registration/questionnaire_answers_all.html'
+    title = _(u"Výsledky všech soutěží")
 
-    competitors = competition.get_results()
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(QuestionnaireAnswersAllView, self).get_context_data(*args, **kwargs)
 
-    for competitor in competitors:
-        competitor.answers = Answer.objects.filter(
-            user_attendance__in=competitor.user_attendances(),
-            question__competition__slug=competition_slug)
-    return render_to_response(template, {
-        'competitors': competitors,
-        'competition': competition,
-        }, context_instance=RequestContext(request))
+        competition_slug = kwargs.get('competition_slug')
+        competition = Competition.objects.get(slug=competition_slug)
+        if not self.request.user.is_superuser and hasattr(self.request.user, 'userprofile') and self.request.user.userprofile.competition_edition_allowed(competition):
+            context_data['fullpage_error_message'] = _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění.")
+            return context_data
+        if not competition.public_answers and not self.request.user.is_superuser:
+            context_data['fullpage_error_message'] = _(u"Tato soutěž nemá povolené prohlížení odpovědí.")
+            return context_data
+
+        competitors = competition.get_results()
+
+        for competitor in competitors:
+            competitor.answers = Answer.objects.filter(
+                user_attendance__in=competitor.user_attendances(),
+                question__competition__slug=competition_slug)
+        context_data['competitors'] = competitors
+        context_data['competition'] = competition
+        return context_data
 
 
 @staff_member_required
@@ -1514,14 +1523,14 @@ class BikeRepairView(CreateView):
         return redirect(wp_reverse(self.success_url))
 
 
-def draw_results(
-        request,
-        competition_slug,
-        template='admin/draw.html'
-        ):
-    return render_to_response(template, {
-        'results': draw.draw(competition_slug),
-        }, context_instance=RequestContext(request))
+class DrawResultsView(TemplateView):
+    template_name='admin/draw.html'
+
+    def get_context_data(self, city_slug=None, *args, **kwargs):
+        context_data = super(DrawResultsView, self).get_context_data(*args, **kwargs)
+        competition_slug = kwargs.get('competition_slug')
+        context_data['results'] = draw.draw(competition_slug)
+        return context_data
 
 
 class CombinedTracksKMLView(TemplateView):

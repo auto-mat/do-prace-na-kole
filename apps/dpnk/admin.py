@@ -26,7 +26,6 @@ from django.contrib.admin import SimpleListFilter
 from django.db.models import F, Sum, Count, Q
 from django.utils.safestring import mark_safe
 from admin_enhancer.admin import EnhancedModelAdminMixin, EnhancedAdminMixin
-from dpnk.wp_urls import wp_reverse
 from django.core.urlresolvers import reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 from adminsortable.admin import SortableInlineAdminMixin
@@ -199,22 +198,22 @@ class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedF
     readonly_fields = ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'rules']
 
     def competition_results_link(self, obj):
-        return mark_safe(u'<a href="%s?soutez=%s">výsledky</a>' % (wp_reverse('vysledky_souteze'), obj.slug))
+        return mark_safe(u'<a href="%s">výsledky</a>' % (reverse('competition_results', kwargs={'competition_slug': obj.slug})))
     competition_results_link.short_description = u"Výsledky soutěže"
 
     def questionnaire_results_link(self, obj):
         if obj.type == 'questionnaire':
-            return mark_safe(u'<a href="%s%s">odpovědi</a>' % (wp_reverse('dotaznik'), obj.slug))
+            return mark_safe(u'<a href="%s">odpovědi</a>' % (reverse('admin_questionnaire_results', kwargs={'competition_slug': obj.slug})))
     questionnaire_results_link.short_description = u"Odpovědi"
 
     def questionnaire_link(self, obj):
         if obj.type == 'questionnaire':
-            return mark_safe(u'<a href="%s?questionaire=%s">dotazník</a>' % (wp_reverse('otazka'), obj.slug))
+            return mark_safe(u'<a href="%s">dotazník</a>' % (reverse('questionnaire_answers_all', kwargs={'competition_slug': obj.slug})))
     questionnaire_link.short_description = _(u"Dotazník")
 
     def draw_link(self, obj):
         if obj.type == 'frequency' and obj.competitor_type == 'team':
-            return mark_safe(u'<a href="%slosovani/%s">losovani</a>' % (wp_reverse('admin'), obj.slug))
+            return mark_safe(u'<a href="%s">losovani</a>' % (reverse('admin_draw_results', kwargs={'competition_slug': obj.slug})))
     draw_link.short_description = u"Losování"
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
@@ -730,7 +729,7 @@ class QuestionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.Model
                     choice.text for choice in obj.choice_type.choices.all()]) + '<br/><a href="%s">edit</a>' % reverse('admin:dpnk_choicetype_change', args=(obj.choice_type.pk,)))
 
     def answers_link(self, obj):
-        return mark_safe('<a href="' + reverse('answers') + u'?question=%d">vyhodnocení odpovědí</a>' % (obj.pk))
+        return mark_safe('<a href="' + reverse('admin_answers') + u'?question=%d">vyhodnocení odpovědí</a>' % (obj.pk))
 
 
 def show_distance_trips(modeladmin, request, queryset):

@@ -24,6 +24,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from models import UserAttendance, Campaign
+from django.http import Http404
 from wp_urls import wp_reverse
 from django.core.urlresolvers import reverse
 import models
@@ -104,11 +105,15 @@ def must_be_competitor(fn):
             userprofile = request.user.userprofile
             campaign_slug = request.subdomain
             try:
+                campaign = Campaign.objects.get(slug=campaign_slug)
+            except Campaign.DoesNotExist:
+                raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>")% campaign_slug)
+            try:
                 user_attendance = userprofile.userattendance_set.select_related('team__subsidiary__city', 'campaign', 'team__subsidiary__company', 't_shirt_size').get(campaign__slug=campaign_slug)
             except UserAttendance.DoesNotExist:
                 user_attendance = UserAttendance(
                     userprofile=userprofile,
-                    campaign=Campaign.objects.get(slug=campaign_slug),
+                    campaign=campaign,
                     approved_for_team='undecided',
                     )
                 user_attendance.save()
