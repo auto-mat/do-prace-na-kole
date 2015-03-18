@@ -43,3 +43,4 @@ django-bleach
 django-analytical
 gunicorn
 django-cache-utils
+django-settings-context-processor

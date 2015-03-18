@@ -83,6 +83,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'dpnk.context_processors.site',
     'dpnk.context_processors.user_attendance',
     "dpnk.context_processors.settings_properties",
+    'settings_context_processor.context_processors.settings',
 )
 AUTHENTICATION_BACKENDS = (
     'dpnk.auth.EmailModelBackend',
@@ -133,6 +134,12 @@ INSTALLED_APPS = (
     'compressor',
     'django_bleach',
     'analytical',
+    'settings_context_processor'
+)
+TEMPLATE_VISIBLE_SETTINGS = (
+    'PAYU_POS_AUTH_KEY',
+    'PAYU_POS_ID',
+    'PAYU_KEY_1',
 )
 
 BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br']
@@ -165,6 +172,8 @@ MAILING_API_KEY = ''
 
 PAYU_KEY_1 = ''
 PAYU_KEY_2 = ''
+PAYU_POS_AUTH_KEY = 'NxFcSXh'
+PAYU_POS_ID = "131116"
 
 TIMELOG_LOG = '/var/log/django/dpnk-timelog.log'
 
