@@ -537,7 +537,6 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
                     description="Ucastnicky poplatek Do prace na kole")
         p.save()
         logger.info(u'Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s' % (uid, order_id, session_id, self.user_attendance, self.user_attendance.userprofile.user.username, p.status))
-        messages.add_message(self.request, messages.WARNING, _(u"Platba vytvořena, čeká se na její potvrzení"), fail_silently=True)
         # Render form
         profile = self.user_attendance.userprofile
         context['firstname'] = profile.user.first_name  # firstname
