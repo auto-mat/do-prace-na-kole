@@ -542,8 +542,8 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
         logger.info(u'Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s' % (uid, order_id, session_id, self.user_attendance, self.user_attendance.userprofile.user.username, p.status))
         # Render form
         profile = self.user_attendance.userprofile
-        firstname = profile.user.first_name  # firstname
-        lastname = profile.user.last_name  # surname
+        firstname = unidecode(profile.user.first_name)  # firstname
+        lastname = unidecode(profile.user.last_name)  # surname
         email = profile.user.email  # email
         amount = self.user_attendance.admission_fee()
         amount_hal = int(self.user_attendance.admission_fee() * 100)  # v halerich
@@ -608,7 +608,7 @@ class PaymentResult(RegistrationViewMixin, TemplateView):
 
 def make_sig(values):
     key1 = settings.PAYU_KEY_1
-    return hashlib.md5("".join(values+(key1,))).hexdigest()
+    return hashlib.md5((u"".join(values+(key1,))).encode()).hexdigest()
 
 
 def check_sig(sig, values):
