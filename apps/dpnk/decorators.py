@@ -34,14 +34,16 @@ import functools
 def must_be_approved_for_team(fn):
     @functools.wraps(fn)
     @must_be_competitor
-    def wrapper(*args, **kwargs):
+    def wrapper(view, request, *args, **kwargs):
         user_attendance = kwargs['user_attendance']
         if not user_attendance.team:
             return HttpResponse(_(u"<div class='text-warning'>Nemáte zvolený tým</div>"))
         if user_attendance.approved_for_team == 'approved':
-            return fn(*args, **kwargs)
+            return fn(view, request, *args, **kwargs)
         else:
-            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")})
+            return render_to_response(view.template_name, {
+                'fullpage_error_message': mark_safe(_(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") % {'team': user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}),
+            }, context_instance=RequestContext(request))
     return wrapper
 
 

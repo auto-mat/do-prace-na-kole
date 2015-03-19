@@ -1380,6 +1380,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
     template_name='registration/team_admin_members.html'
 
     @method_decorator(never_cache)
+    @must_be_approved_for_team
     def dispatch(self, request, *args, **kwargs):
         return super(TeamMembers, self).dispatch(request, *args, **kwargs)
 
@@ -1401,8 +1402,6 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
         team = self.user_attendance.team
         if not team:
             return {'fullpage_error_message': _(u"Další členové vašeho týmu se zobrazí, jakmile budete mít vybraný tým")}
-        if self.user_attendance.approved_for_team != 'approved':
-            return {'fullpage_error_message': mark_safe(_(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") % {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")})}
 
         unapproved_users = []
         for self.user_attendance in UserAttendance.objects.filter(team=team, userprofile__user__is_active=True):
