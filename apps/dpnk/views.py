@@ -130,7 +130,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
     def get(self, request, *args, **kwargs):
         ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
         if self.user_attendance.team:
-            if self.current_view not in ('upravit_profil',):
+            if self.registration_phase not in ('upravit_profil',):
                 if self.user_attendance.approved_for_team == 'undecided':
                     messages.warning(request, mark_safe(_(u"Vaše členství v týmu %(team)s čeká na vyřízení. Pokud to trvá příliš dlouho, můžete zkusit <a href='%(address)s'>znovu požádat o ověření členství</a>.") % {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
                 elif self.user_attendance.approved_for_team == 'denied':
@@ -140,7 +140,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                 if self.user_attendance.is_libero():
                     messages.warning(request, mark_safe(_(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce! <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu.</li><li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete sehnat spolupracovníky, použijte seznamku.</li></ul>') % {'invite_url': reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym')}))
 
-        if self.user_attendance.payment_status() not in ('done', 'none',) and self.current_view not in ('typ_platby',):
+        if self.user_attendance.payment_status() not in ('done', 'none',) and self.registration_phase not in ('typ_platby',):
             messages.info(request, mark_safe(_(u'Vaše platba typu %(payment_type)s ještě nebyla vyřízena. Můžete <a href="%(url)s">zadat novou platbu.</a>') % {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('platba')}))
 
         company_admin = self.user_attendance.is_company_admin()
@@ -163,7 +163,7 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(RegistrationViewMixin, self).get_context_data(*args, **kwargs)
-        context_data['current_view'] = self.current_view
+        context_data['registration_phase'] = self.registration_phase
         return context_data
 
     def get_success_url(self):
@@ -181,7 +181,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
     next_url = 'upravit_trasu'
     prev_url = 'upravit_profil'
     title = _(u'Změnit tým')
-    current_view = "zmenit_tym"
+    registration_phase = "zmenit_tym"
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(ChangeTeamView, self).get_context_data(*args, **kwargs)
@@ -402,7 +402,7 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
     template_name = 'registration/team_invitation.html'
     form_class = forms.ConfirmTeamInvitationForm
     success_url = reverse_lazy('zmenit_tym')
-    current_view = 'zmenit_tym'
+    registration_phase = 'zmenit_tym'
     title = _(u"Pozvánka do týmu")
 
     def get_context_data(self, **kwargs):
@@ -441,7 +441,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
     template_name = 'registration/payment_type.html'
     form_class = PaymentTypeForm
     title = _(u"Platba")
-    current_view = "typ_platby"
+    registration_phase = "typ_platby"
     next_url = "working_schedule"
     prev_url = "zmenit_triko"
 
@@ -565,7 +565,7 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
 
 
 class PaymentResult(RegistrationViewMixin, TemplateView):
-    current_view = 'typ_platby'
+    registration_phase = 'typ_platby'
     title = "Stav platby"
     template_name = 'registration/payment_result.html'
 
@@ -874,7 +874,7 @@ def profile(request, user_attendance=None, success_url='competition_profile'):
 
 class ProfileView(RegistrationViewMixin, TemplateView):
     title = 'Soutěžní profil'
-    current_view = 'profile_view'
+    registration_phase = 'profile_view'
     template_name = 'registration/competition_profile.html'
 
     def get(self, request, *args, **kwargs):
@@ -890,7 +890,7 @@ class UserAttendanceView(UserAttendanceViewMixin, TemplateView):
 class PackageView(RegistrationViewMixin, TemplateView):
     template_name = "registration/package.html"
     title = _(u"Sledování balíčku")
-    current_view = "zmenit_tym"
+    registration_phase = "zmenit_tym"
 
 
 class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
@@ -911,7 +911,7 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
         if self.user_attendance.team:
             team_members = self.user_attendance.team.all_members().select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign', 'user_attendance')
         context_data['team_members'] = team_members
-        context_data['current_view'] = "other_team_members"
+        context_data['registration_phase'] = "other_team_members"
         return context_data
 
 
@@ -942,7 +942,7 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
             competition.competitor_has_admission = competition.has_admission(self.user_attendance)
             competition.competitor_can_admit = competition.can_admit(self.user_attendance)
         context_data['competitions'] = competitions
-        context_data['current_view'] = "competitions"
+        context_data['registration_phase'] = "competitions"
         return context_data
 
 
@@ -982,7 +982,7 @@ class UpdateProfileView(RegistrationViewMixin, UpdateView):
     model = UserProfile
     success_message = _(u"Osobní údaje úspěšně upraveny")
     next_url = "zmenit_tym"
-    current_view = "upravit_profil"
+    registration_phase = "upravit_profil"
     title = _(u"Osobní údaje")
 
     def get_object(self):
@@ -996,7 +996,7 @@ class WorkingScheduleView(RegistrationViewMixin, UpdateView):
     prev_url = 'typ_platby'
     next_url = 'profil'
     success_url = 'working_schedule'
-    current_view = "working_schedule"
+    registration_phase = "working_schedule"
     title = _(u"Upravit pracovní kalendář")
     template_name = 'registration/working_schedule.html'
 
@@ -1011,7 +1011,7 @@ class UpdateTrackView(RegistrationViewMixin, UpdateView):
     success_message = _(u"Trasa/vzdálenost úspěšně upravena")
     next_url = 'zmenit_triko'
     prev_url = 'zmenit_tym'
-    current_view = "upravit_trasu"
+    registration_phase = "upravit_trasu"
     title = _("Upravit trasu")
 
     def get_object(self):
@@ -1025,7 +1025,7 @@ class ChangeTShirtView(RegistrationViewMixin, UpdateView):
     success_message = _(u"Velikost trička úspěšně nastavena")
     next_url = 'typ_platby'
     prev_url = 'upravit_trasu'
-    current_view = "zmenit_triko"
+    registration_phase = "zmenit_triko"
     title = _(u"Upravit velikost trička")
 
     def get_object(self):
@@ -1311,7 +1311,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
 class TeamApprovalRequest(RegistrationViewMixin, TemplateView):
     template_name = 'registration/request_team_approval.html'
     title = _(u"Znovu odeslat žádost o členství")
-    current_view = "zmenit_tym"
+    registration_phase = "zmenit_tym"
 
     @method_decorator(login_required_simple)
     @must_be_competitor
@@ -1327,7 +1327,7 @@ class InviteView(RegistrationViewMixin, FormView):
     template_name="base_team.html"
     form_class = InviteForm
     title = _(u'Odeslat pozvánky dalším uživatelům')
-    current_view = "zmenit_tym"
+    registration_phase = "zmenit_tym"
     success_url = reverse_lazy('zmenit_tym')
 
     @method_decorator(login_required_simple)
