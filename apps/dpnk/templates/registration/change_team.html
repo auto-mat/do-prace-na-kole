@@ -1,4 +1,4 @@
-{% extends "base_generic_registration_form.html" %}
+{% extends "base_team.html" %}
 {% load crispy_forms_tags %}
 {% load i18n %}
 {% load static %}
@@ -70,26 +70,6 @@
       $('#id_company').attr("data-live-search", true);
       $('#id_company').selectpicker();
    });
-
-   //Team members approval form
-   $.get('{% url "team_members" %}', function(data) {
-      $("#members-form-container").append(data);
-      $("#members-form").ajaxForm({replaceTarget: false, target: "#members-form"});
-   });
 </script>
 {{ block.super }}
-{% endblock %}
-
-{% block container_footer %}
-{{ block.super }}
-<br/>
-<h1>{% trans "Členové vašeho týmu" %}</h1>
-<div id="members-form-container"></div>
-{% endblock %}
-
-{% block third_menu %}
-<ul class="navbar nav navbar-nav the_submenu">
-<li><a href="{% url 'edit_team' %}">{% trans "Upravit tým" %}</a></li>
-<li><a href="{% url 'pozvanky' %}">{% trans "Pozvánky" %}</a></li>
-</ul>
 {% endblock %}

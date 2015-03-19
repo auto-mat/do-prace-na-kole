@@ -1,7 +1,9 @@
+{% extends "base_team.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
 {% load i18n %}
 
+{% block form %}
 {% if fullpage_error_message %}
 <div class="text-danger">{{ fullpage_error_message }}</div>
 {% endif %}
@@ -48,3 +50,4 @@
    </div>
 {% endfor %}
 </form>
+{% endblock %}

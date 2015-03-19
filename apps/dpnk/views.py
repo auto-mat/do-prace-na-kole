@@ -1324,6 +1324,7 @@ class TeamApprovalRequest(RegistrationViewMixin, TemplateView):
 
 
 class InviteView(RegistrationViewMixin, FormView):
+    template_name="base_team.html"
     form_class = InviteForm
     title = _(u'Odeslat pozvánky dalším uživatelům')
     current_view = "zmenit_tym"
@@ -1360,7 +1361,7 @@ class InviteView(RegistrationViewMixin, FormView):
 
 
 class UpdateTeam(UserAttendanceViewMixin, TitleViewMixin, UpdateView):
-    template_name='base_generic_form.html'
+    template_name='base_team.html'
     form_class = TeamAdminForm
     success_url = reverse_lazy('profil')
     title = _(u"Upravit název týmu")
