@@ -4,9 +4,6 @@
 {% load i18n %}
 
 {% block form %}
-{% if fullpage_error_message %}
-<div class="text-danger">{{ fullpage_error_message }}</div>
-{% endif %}
 <form method="post" class="form-inline" id="members-form" action="{% url 'team_members' %}">{% csrf_token %}
 {% for user in unapproved_users %}
    <div id="id-{{ user.4.2 }}-team-member">
