@@ -37,7 +37,9 @@ def must_be_approved_for_team(fn):
     def wrapper(view, request, *args, **kwargs):
         user_attendance = kwargs['user_attendance']
         if not user_attendance.team:
-            return HttpResponse(_(u"<div class='text-warning'>Nemáte zvolený tým</div>"))
+            return render_to_response(view.template_name, {
+                'fullpage_error_message': mark_safe(_(u"Nemáte zvolený tým")),
+            }, context_instance=RequestContext(request))
         if user_attendance.approved_for_team == 'approved':
             return fn(view, request, *args, **kwargs)
         else:
