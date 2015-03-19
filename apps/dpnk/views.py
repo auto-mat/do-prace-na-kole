@@ -1309,7 +1309,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         return
 
 
-class TeamApprovalRequest(RegistrationViewMixin, TemplateView):
+class TeamApprovalRequest(UserAttendanceViewMixin, TemplateView):
     template_name = 'registration/request_team_approval.html'
     title = _(u"Znovu odeslat žádost o členství")
     registration_phase = "zmenit_tym"
