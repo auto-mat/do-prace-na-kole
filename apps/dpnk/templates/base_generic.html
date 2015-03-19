@@ -55,7 +55,7 @@
            {% if user.is_authenticated %}
                         <li class="{% if request.resolver_match.url_name == 'profile_view' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'profil' %}">{% trans "Profil" %}</a></li>
                         <li class="{% if request.resolver_match.url_name == 'competitions' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'competitions' %}">{% trans "Soutěže" %}</a></li>
-                        <li class="{% if request.resolver_match.url_name == 'other_team_members' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'other_team_members_results' %}">{% trans "Výsledky týmu" %}</a></li>
+                        <li class="{% if request.resolver_match.url_name == 'other_team_members_results' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'other_team_members_results' %}">{% trans "Kolegové" %}</a></li>
                         <li class="{% block settings_link_class %}{% endblock %}"><a href="{% url 'upravit_profil' %}">{% trans "Soutěžní údaje" %}</a></li>
                         {% if user_attendance.is_company_admin %}
                         <li><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Správa společnosti" %}</a></li>
