@@ -539,15 +539,28 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
         logger.info(u'Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s' % (uid, order_id, session_id, self.user_attendance, self.user_attendance.userprofile.user.username, p.status))
         # Render form
         profile = self.user_attendance.userprofile
-        context['firstname'] = profile.user.first_name  # firstname
-        context['surname'] = profile.user.last_name  # surname
-        context['email'] = profile.user.email  # email
-        context['amount'] = self.user_attendance.admission_fee()
-        context['amount_hal'] = int(self.user_attendance.admission_fee() * 100)  # v halerich
-        context['description'] = "Ucastnicky poplatek Do prace na kole"
+        firstname = profile.user.first_name  # firstname
+        lastname = profile.user.last_name  # surname
+        email = profile.user.email  # email
+        amount = self.user_attendance.admission_fee()
+        amount_hal = int(self.user_attendance.admission_fee() * 100)  # v halerich
+        description = "Ucastnicky poplatek Do prace na kole"
+        client_ip = util.get_client_ip(self.request)
+        timestamp = str(int(time.time()))
+        language_code = self.user_attendance.userprofile.language
+
+        context['firstname'] = firstname
+        context['surname'] = lastname
+        context['email'] = email
+        context['amount'] = amount
+        context['amount_hal'] = amount_hal
+        context['description'] = description
         context['order_id'] = order_id
-        context['client_ip'] = util.get_client_ip(self.request)
+        context['client_ip'] = client_ip
+        context['language_code'] = language_code
         context['session_id'] = session_id
+        context['ts'] = timestamp
+        context['sig'] = make_sig((settings.PAYU_POS_ID, session_id, settings.PAYU_POS_AUTH_KEY, str(amount_hal), description, order_id, firstname, lastname, email, language_code, client_ip, timestamp))
         return context
 
 

@@ -5,7 +5,7 @@
 {% load i18n %}
 
 {% block extrahead %}
-<script language='javascript' type='text/javascript' src='https://secure.payu.com/paygw/UTF/js/{{ PAYU_POS_ID }}/{{ PAYU_KEY_1|slice:":2" }}/template:3/paytype.js'></script>
+<script language='javascript' type='text/javascript' src='https://secure.payu.com/paygw/UTF/js/{{ PAYU_POS_ID }}/{{ PAYU_KEY_1|slice:":2" }}/template:3/ext_calc:0/paytype.js'></script>
 <script type="text/javascript" src="{% static "bow/jquery-form/jquery.form.js"%}"></script>
 {{ block.super }}
 {% endblock %}
