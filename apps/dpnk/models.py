@@ -964,7 +964,11 @@ class UserProfile(models.Model):
         if self.nickname:
             return self.nickname
         else:
-            return self.user.get_full_name()
+            full_name = self.user.get_full_name()
+            if full_name:
+                return full_name
+            else:
+                return self.user.username
 
     def __unicode__(self):
         return self.name()
