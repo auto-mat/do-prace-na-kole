@@ -29,6 +29,7 @@ import results
 from django.shortcuts import render_to_response
 from django.contrib import auth
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
@@ -1323,12 +1324,17 @@ class TeamApprovalRequest(RegistrationViewMixin, TemplateView):
         return super(TeamApprovalRequest, self).form_valid(form)
 
 
-class InviteView(RegistrationViewMixin, FormView):
+class InviteView(UserAttendanceViewMixin, FormView):
     template_name="base_team.html"
     form_class = InviteForm
     title = _(u'Odeslat pozvánky dalším uživatelům')
     registration_phase = "zmenit_tym"
-    success_url = reverse_lazy('zmenit_tym')
+    success_url = reverse_lazy('pozvanky')
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(InviteView, self).get_context_data(*args, **kwargs)
+        context_data['registration_phase'] = self.registration_phase
+        return context_data
 
     @method_decorator(login_required_simple)
     @must_be_competitor
@@ -1357,14 +1363,23 @@ class InviteView(RegistrationViewMixin, FormView):
                     invitation_mail(self.user_attendance, email)
                     messages.add_message(self.request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s") % email, fail_silently=True)
 
-        return redirect(self.request.session.get('invite_success_url') or self.success_url)
+        invite_success_url = self.request.session.get('invite_success_url')
+        self.request.session['invite_success_url'] = None
+        return redirect(invite_success_url or self.success_url)
 
 
-class UpdateTeam(UserAttendanceViewMixin, TitleViewMixin, UpdateView):
+class UpdateTeam(UserAttendanceViewMixin, SuccessMessageMixin, UpdateView):
     template_name='base_team.html'
     form_class = TeamAdminForm
-    success_url = reverse_lazy('profil')
+    success_url = reverse_lazy('edit_team')
     title = _(u"Upravit název týmu")
+    registration_phase = 'zmenit_tym'
+    success_message = _(u"Název týmu úspěšně změněn na %(name)s")
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(UpdateTeam, self).get_context_data(*args, **kwargs)
+        context_data['registration_phase'] = self.registration_phase
+        return context_data
 
     @must_be_competitor
     @method_decorator(login_required_simple)
@@ -1378,6 +1393,7 @@ class UpdateTeam(UserAttendanceViewMixin, TitleViewMixin, UpdateView):
 
 class TeamMembers(UserAttendanceViewMixin, TemplateView):
     template_name='registration/team_admin_members.html'
+    registration_phase = "zmenit_tym"
 
     @method_decorator(never_cache)
     @must_be_approved_for_team
@@ -1417,6 +1433,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
                 ('state_name', _(u"Stav"), unicode(self.user_attendance.get_approved_for_team_display())),
                 ])
         context_data['unapproved_users'] = unapproved_users
+        context_data['registration_phase'] = self.registration_phase
         return context_data
 
 
