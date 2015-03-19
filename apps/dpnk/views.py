@@ -567,7 +567,7 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
         return context
 
 
-class PaymentResult(RegistrationViewMixin, TemplateView):
+class PaymentResult(UserAttendanceViewMixin, TemplateView):
     registration_phase = 'typ_platby'
     title = "Stav platby"
     template_name = 'registration/payment_result.html'
@@ -603,6 +603,7 @@ class PaymentResult(RegistrationViewMixin, TemplateView):
             context_data['payment_message'] = _(u"Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
         else:
             context_data['payment_message'] = _(u"Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
+        context_data['registration_phase'] = self.registration_phase
         return context_data
 
 
