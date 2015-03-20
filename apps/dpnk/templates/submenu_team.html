@@ -6,6 +6,6 @@
 <li class="{% if request.resolver_match.url_name == 'zmenit_tym' %}active{% endif %}"><a href="{% url 'zmenit_tym' %}">{% trans "Změnit" %}</a></li>
 <li class="{% if request.resolver_match.url_name == 'team_members' %}active{% endif %}"><a href="{% url 'team_members' %}">{% trans "Členové" %}</a></li>
 <li class="{% if request.resolver_match.url_name == 'edit_team' %}active{% endif %}"><a href="{% url 'edit_team' %}">{% trans "Upravit název" %}</a></li>
-<li class="{% if request.resolver_match.url_name == 'pozvanky' %}active{% endif %}"><a href="{% url 'pozvanky' %}">{% trans "Pozvánky" %}</a></li>
+<li class="{% if request.resolver_match.url_name == 'pozvanky' %}active{% endif %}"><a href="{% url 'pozvanky' %}">{% trans "Pozvat kolegy" %}</a></li>
 </ul>
 {% endblock %}
