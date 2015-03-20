@@ -48,8 +48,8 @@ logger = logging.getLogger(__name__)
 class CompanyStructure(TemplateView):
     template_name='company_admin/structure.html'
 
-    @must_be_company_admin
     @method_decorator(login_required)
+    @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(CompanyStructure, self).dispatch(request, *args, **kwargs)
@@ -97,8 +97,8 @@ class CompanyEditView(UpdateView):
     model = Company
     success_url = reverse_lazy('company_structure')
 
-    @must_be_company_admin
     @method_decorator(login_required)
+    @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(CompanyEditView, self).dispatch(request, *args, **kwargs)
@@ -194,8 +194,8 @@ class CompanyCompetitionView(UpdateView):
     model = Competition
     success_url = reverse_lazy('company_admin_competitions')
 
-    @must_be_company_admin
     @method_decorator(login_required)
+    @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(CompanyCompetitionView, self).dispatch(request, *args, **kwargs)
@@ -272,6 +272,7 @@ class InvoicesView(FormView):
         context['company_information_filled'] = self.company_admin.administrated_company.has_filled_contact_information()
         return context
 
+    @method_decorator(login_required)
     @must_be_in_phase("invoices")
     @must_be_company_admin
     @request_condition(lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(), format_lazy(_(u"Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>"), addr=reverse_lazy('edit_company')))

@@ -25,7 +25,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from models import UserAttendance, Campaign
 from django.http import Http404
-from wp_urls import wp_reverse
 from django.core.urlresolvers import reverse
 import models
 import functools
@@ -100,11 +99,10 @@ def must_be_in_phase(*phase_type):
 
 def must_be_competitor(fn):
     @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
+    def wrapper(view, request, *args, **kwargs):
         if kwargs.get('user_attendance', None):
-            return fn(*args, **kwargs)
+            return fn(view, request, *args, **kwargs)
 
-        request = args[1]
         if models.is_competitor(request.user):
             userprofile = request.user.userprofile
             campaign_slug = request.subdomain
@@ -123,9 +121,11 @@ def must_be_competitor(fn):
                 user_attendance.save()
 
             kwargs['user_attendance'] = user_attendance
-            return fn(*args, **kwargs)
+            return fn(view, request, *args, **kwargs)
 
-        return HttpResponse(_(u"<div class='text-warning'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.</div>") % wp_reverse("company_admin"))
+        return render_to_response(view.template_name, {
+            'fullpage_error_message': mark_safe(_(u"V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.") % reverse("company_structure")),
+        }, context_instance=RequestContext(request))
     return wrapper
 
 

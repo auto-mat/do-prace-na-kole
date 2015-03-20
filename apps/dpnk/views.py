@@ -1398,6 +1398,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
     template_name='registration/team_admin_members.html'
     registration_phase = "zmenit_tym"
 
+    @method_decorator(login_required_simple)
     @method_decorator(never_cache)
     @must_be_approved_for_team
     def dispatch(self, request, *args, **kwargs):
