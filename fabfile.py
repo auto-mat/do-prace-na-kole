@@ -165,7 +165,7 @@ def dpnk2014():
 
 def dpnk():
     "Use the local virtual server"
-    api.local("[ `git rev-parse --abbrev-ref HEAD` = 'master' ] || read -p 'Do you want to deploy non-master branch?' ans && [ $ans = 'yes' ]")
+    api.local("[ `git rev-parse --abbrev-ref HEAD` = 'master' ] || (read -p 'Do you want to deploy non-master branch?' ans && [ $ans = 'yes' ])")
     env.hosts = ['auto-mat.cz']
     env.path = '/home/aplikace/dpnk-2015'
     env.user = 'pdlouhy'
