@@ -201,6 +201,7 @@ def deploy():
     """
     require('hosts', provided_by=[local])
     require('path')
+    api.local('test -e fabfile.py')
 
     import time
     env.release = api.local("git rev-parse --short HEAD", capture=True)
@@ -244,7 +245,6 @@ def upload_tar_from_git():
     require('release', provided_by=[deploy, setup])
     "Create an archive from the current Git master branch and upload it"
     api.local('git archive --format=tar HEAD | gzip > %(release)s.tar.gz' % env)
-    run('rm %(path)s/releases/%(release)s -rf' % env)
     run('mkdir %(path)s/releases/%(release)s' % env)
     put('%(release)s.tar.gz' % env, '%(path)s/packages/' % env)
     run('cd %(path)s/releases/%(release)s && tar zxf ../../packages/%(release)s.tar.gz' % env)
