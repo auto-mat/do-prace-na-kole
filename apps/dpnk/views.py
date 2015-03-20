@@ -1384,8 +1384,8 @@ class UpdateTeam(UserAttendanceViewMixin, SuccessMessageMixin, UpdateView):
         context_data['registration_phase'] = self.registration_phase
         return context_data
 
-    @must_be_competitor
     @method_decorator(login_required_simple)
+    @must_be_competitor
     #@user_attendance_has(lambda ua: ua.entered_competition(), _(u"Po vstupu do soutěže již nemůžete měnit parametry týmu."))
     def dispatch(self, request, *args, **kwargs):
         return super(UpdateTeam, self).dispatch(request, *args, **kwargs)
