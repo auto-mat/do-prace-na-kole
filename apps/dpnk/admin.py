@@ -154,6 +154,7 @@ class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, admin.ModelAdmin)
     search_fields = ('address_recipient', 'company__name', 'address_street', )
     raw_id_fields = ('company',)
     list_max_show_all = 10000
+    save_as = True
 
     readonly_fields = ['team_links', ]
 
