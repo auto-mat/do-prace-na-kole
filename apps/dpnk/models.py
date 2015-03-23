@@ -305,7 +305,7 @@ class Team(models.Model):
     def __unicode__(self):
         return u"%s (%s)" % (self.name, u", ".join([u.userprofile.name() for u in self.members()]))
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
         if self.invitation_token == "":
             while True:
                 invitation_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30))
@@ -313,7 +313,7 @@ class Team(models.Model):
                     self.invitation_token = invitation_token
                     break
 
-        super(Team, self).save(force_insert, force_update)
+        super(Team, self).save(force_insert, force_update, *args, **kwargs)
 
 
 class TeamName(Team):
@@ -979,10 +979,10 @@ class UserProfile(models.Model):
     def profile_complete(self):
         return self.sex and self.first_name() and self.last_name() and self.user.email
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
         if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
             logger.error(u"Mailing id %s is already used" % self.mailing_id)
-        super(UserProfile, self).save(force_insert, force_update)
+        super(UserProfile, self).save(force_insert, force_update, *args, **kwargs)
 
 
 class CompanyAdmin(models.Model):

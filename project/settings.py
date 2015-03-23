@@ -259,6 +259,8 @@ MESSAGE_TAGS = {
     message_constants.ERROR: 'danger',
     }
 
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
 # import local settings
 try:
         from settings_local import *
