@@ -798,10 +798,12 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
     t_shirt_sizes.short_description = _(u"Velikosti trik")
 
     def customer_sheets__url(self, obj):
-        return mark_safe(u"<a href='%s'>customer_sheets</a>" % obj.customer_sheets.url)
+        if obj.customer_sheets:
+            return mark_safe(u"<a href='%s'>customer_sheets</a>" % obj.customer_sheets.url)
 
     def tnt_order__url(self, obj):
-        return mark_safe(u"<a href='%s'>tnt_order</a>" % obj.tnt_order.url)
+        if obj.tnt_order:
+            return mark_safe(u"<a href='%s'>tnt_order</a>" % obj.tnt_order.url)
 
 
 class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
