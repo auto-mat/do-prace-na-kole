@@ -911,6 +911,41 @@ class InvoiceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     def invoice_pdf_url(self, obj):
         return mark_safe(u"<a href='%s'>invoice.pdf</a>" % obj.invoice_pdf.url)
 
+class UserAttendanceToBatch(models.UserAttendance):
+    class Meta:
+        proxy = True
+
+
+def create_batch(modeladmin, request, queryset):
+    campaign = models.Campaign.objects.get(slug=request.subdomain)
+    delivery_batch = models.DeliveryBatch()
+    delivery_batch.campaign = campaign
+    delivery_batch.add_packages_on_save = False
+    delivery_batch.save()
+    delivery_batch.add_packages(user_attendances=queryset)
+    delivery_batch.add_packages_on_save = True
+    delivery_batch.save()
+    modeladmin.message_user(request, _(u"Vytvořena nová dávka obsahující %s položek") % queryset.count())
+create_batch.short_description = _(u"Vytvořit dávku z vybraných uživatelů")
+
+
+class UserAttendanceToBatchAdmin(RelatedFieldAdmin):
+    list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city',  'payment_created')
+    list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter))
+    actions = (create_batch, )
+    list_max_show_all = 10000
+
+    def payment_created(self, obj):
+        return obj.payment_created
+    payment_created.admin_order_field = 'payment_created'
+    payment_created.short_description = 'Datum vytvoření platby'
+
+    def queryset(self, request):
+        campaign = models.Campaign.objects.get(slug=request.subdomain)
+        queryset = campaign.user_attendances_for_delivery()
+        return queryset
+
+
 import pprint
 from django.contrib.sessions.models import Session
 class SessionAdmin(admin.ModelAdmin):
@@ -938,6 +973,7 @@ admin.site.register(models.Answer, AnswerAdmin)
 admin.site.register(models.Trip, TripAdmin)
 admin.site.register(models.Campaign, CampaignAdmin)
 admin.site.register(models.UserAttendance, UserAttendanceAdmin)
+admin.site.register(UserAttendanceToBatch, UserAttendanceToBatchAdmin)
 admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.CompanyAdmin, CompanyAdminAdmin)
 admin.site.register(models.DeliveryBatch, DeliveryBatchAdmin)

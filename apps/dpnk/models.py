@@ -29,7 +29,7 @@ import avfull
 from author.decorators import with_author
 from django import forms
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.db.models.signals import post_save, pre_save, post_delete
@@ -443,7 +443,9 @@ class Campaign(models.Model):
             transactions__payment__status__in=Payment.done_statuses,
             t_shirt_size__ship=True,
         ).exclude(transactions__packagetransaction__status__in=PackageTransaction.shipped_statuses).\
-            exclude(team=None).distinct()
+            exclude(team=None).\
+            annotate(payment_created=Max('transactions__payment__created')).\
+            distinct()
 
     def phase(self, phase_type):
         try:
@@ -1115,29 +1117,32 @@ class DeliveryBatch(models.Model):
         return super(DeliveryBatch, self).__init__(*args, **kwargs)
 
 
-@transaction.atomic
-def add_packages(instance):
-    for user_attendance in instance.campaign.user_attendances_for_delivery():
-        pt = PackageTransaction(
-            user_attendance=user_attendance,
-            delivery_batch=instance,
-            status=PackageTransaction.Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
-            )
-        pt.save()
+    @transaction.atomic
+    def add_packages(self, user_attendances=None):
+        if not user_attendances:
+            user_attendances = self.campaign.user_attendances_for_delivery()
+        print user_attendances
+        for user_attendance in user_attendances:
+            pt = PackageTransaction(
+                user_attendance=user_attendance,
+                delivery_batch=self,
+                status=PackageTransaction.Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
+                )
+            pt.save()
 
 
 @receiver(post_save, sender=DeliveryBatch)
 def create_delivery_files(sender, instance, created, **kwargs):
-    if created:
-        add_packages(instance)
+    if created and getattr(instance, 'add_packages_on_save', True):
+        instance.add_packages()
 
-    if not instance.customer_sheets:
+    if not instance.customer_sheets and getattr(instance, 'add_packages_on_save', True):
         temp = NamedTemporaryFile()
         parcel_batch.make_customer_sheets_pdf(temp, instance)
         instance.customer_sheets.save("customer_sheets_%s_%s.pdf" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
         instance.save()
 
-    if not instance.tnt_order:
+    if not instance.tnt_order and getattr(instance, 'add_packages_on_save', True):
         temp = NamedTemporaryFile()
         avfull.make_avfull(temp, instance)
         instance.tnt_order.save("delivery_batch_%s_%s.txt" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))

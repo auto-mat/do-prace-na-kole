@@ -21,8 +21,7 @@ def make_customer_sheets_pdf(outfile, delivery_batch):
     pdfmetrics.registerFont(TTFont('DejaVu', 'DejaVuSans.ttf'))
     pdfmetrics.registerFont(TTFont('DejaVuB', 'DejaVuSans-Bold.ttf'))
 
-    #TODO: remove slow non-ORM sorting
-    for package_transaction in sorted(delivery_batch.packagetransaction_set.all(), key=lambda pt: getattr(pt.user_attendance.payment()['payment'], "realized", None) or datetime.datetime(datetime.MAXYEAR, 1, 1)):
+    for package_transaction in delivery_batch.packagetransaction_set.order_by('id'):
         if not package_transaction.user_attendance.team:
             continue
         make_sheet(package_transaction, canvas)
