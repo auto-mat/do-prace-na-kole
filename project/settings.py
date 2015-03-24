@@ -134,7 +134,9 @@ INSTALLED_APPS = (
     'compressor',
     'django_bleach',
     'analytical',
-    'settings_context_processor'
+    'settings_context_processor',
+    'provider',
+    'provider.oauth2',
 )
 TEMPLATE_VISIBLE_SETTINGS = (
     'PAYU_POS_AUTH_KEY',
@@ -258,6 +260,8 @@ MESSAGE_TAGS = {
     message_constants.WARNING: 'warning',
     message_constants.ERROR: 'danger',
     }
+
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # import local settings
 try:

@@ -35,6 +35,7 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.admin import OSMGeoAdmin
+from admin_mixins import ReadOnlyModelAdminMixin
 import datetime
 import results
 # Models
@@ -913,6 +914,8 @@ class InvoiceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
 
 class UserAttendanceToBatch(models.UserAttendance):
     class Meta:
+        verbose_name = _(u"Uživatel na dávku objednávek")
+        verbose_name_plural = _(u"Uživatelé na dávku objednávek")
         proxy = True
 
 
@@ -929,7 +932,7 @@ def create_batch(modeladmin, request, queryset):
 create_batch.short_description = _(u"Vytvořit dávku z vybraných uživatelů")
 
 
-class UserAttendanceToBatchAdmin(RelatedFieldAdmin):
+class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
     list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city',  'payment_created')
     list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter))
     actions = (create_batch, )
