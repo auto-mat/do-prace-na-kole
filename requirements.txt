@@ -45,3 +45,4 @@ gunicorn
 django-cache-utils
 django-settings-context-processor
 -e git+https://github.com/glassresistor/django-oauth2-provider.git#egg=django-oauth2-provider
+django-rosetta

@@ -40,7 +40,7 @@ CACHES = {
     },
 }
 
-LOCALE_PATH = normpath(PROJECT_ROOT, 'dpnk/locale')
+LOCALE_PATHS = (normpath(PROJECT_ROOT, 'apps/dpnk/locale'),)
 TIME_ZONE = 'Europe/Prague'
 LANGUAGES = (
     ('cs', _('Czech')),

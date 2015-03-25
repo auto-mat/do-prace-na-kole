@@ -34,6 +34,11 @@ urlpatterns = patterns('',
     url(r'^oauth2/', include('provider.oauth2.urls', namespace = 'oauth2')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+            url(r'^rosetta/', include('rosetta.urls')),
+                )
+
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns += patterns('',
