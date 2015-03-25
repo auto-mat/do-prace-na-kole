@@ -138,7 +138,7 @@ def make_avfull(outfile, delivery_batch):
                 }
             receivers_address = {
                 "name": u"%s, %s" % (subsidiary.company, subsidiary.address_recipient),
-                "contact_name": user_attendance,
+                "contact_name": user_attendance.userprofile.user.get_full_name(),
                 "phone": user_attendance.userprofile.telephone.replace(" ", ""),
                 "street1": u"%s %s" % (subsidiary.address_street, subsidiary.address_street_number),
                 "town": subsidiary.address_city,

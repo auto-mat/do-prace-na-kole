@@ -59,7 +59,7 @@ def make_sheet(package_transaction, canvas):
 
     canvas.setFont('DejaVu', 10)
     canvas.drawString(2*cm, 21*cm, u"%s, %s" % (user_attendance.team.subsidiary.company, user_attendance.team.subsidiary.address_recipient))
-    canvas.drawString(2*cm, 20.5*cm, user_attendance.__unicode__())
+    canvas.drawString(2*cm, 20.5*cm, user_attendance.userprofile.user.get_full_name())
     canvas.drawString(2*cm, 20*cm, u"%s %s" % (user_attendance.team.subsidiary.address_street, user_attendance.team.subsidiary.address_street_number))
     canvas.drawString(2*cm, 19.5*cm, u"%s, %s" % (user_attendance.team.subsidiary.address_psc, user_attendance.team.subsidiary.address_city))
 
