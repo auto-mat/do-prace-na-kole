@@ -939,6 +939,12 @@ class InvoiceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     def invoice_pdf_url(self, obj):
         return mark_safe(u"<a href='%s'>invoice.pdf</a>" % obj.invoice_pdf.url)
 
+
+class GpxFileAdmin(admin.ModelAdmin):
+    model = models.GpxFile
+    raw_id_fields = ('user_attendance', 'trip')
+
+
 class UserAttendanceToBatch(models.UserAttendance):
     class Meta:
         verbose_name = _(u"Uživatel na dávku objednávek")
@@ -1010,6 +1016,7 @@ admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.CompanyAdmin, CompanyAdminAdmin)
 admin.site.register(models.DeliveryBatch, DeliveryBatchAdmin)
 admin.site.register(models.Invoice, InvoiceAdmin)
+admin.site.register(models.GpxFile, GpxFileAdmin)
 
 admin.site.unregister(models.User)
 admin.site.register(models.User, UserAdmin)

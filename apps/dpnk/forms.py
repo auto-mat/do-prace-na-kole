@@ -584,3 +584,36 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'email')
+
+
+class CreateGpxFileForm(SubmitMixin, forms.ModelForm):
+    trip_date = forms.DateField(
+        label=_(u"Datum cesty"),
+    )
+    CHOICES = [
+        ('trip_to', _(u"Tam")),
+        ('trip_from', _(u"Zpět")),
+    ]
+    direction = forms.ChoiceField(
+        label=_(u"Typ platby"),
+        choices=CHOICES,
+    )
+
+    def clean_user_attendance(self):
+        print self.request
+
+    def save(self, *args, **kwargs):
+        print args, kwargs
+        print self.request
+
+    def __init__(self, request=None, *args, **kwargs):
+        ret_val = super(CreateGpxFileForm, self).__init__(*args, **kwargs)
+        self.resuest = request
+        #    if request:
+        #        self.fields['trip'].queryset = models.Trip.objects.filter(user_attendance)
+        return ret_val
+
+    class Meta:
+        model = models.GpxFile
+        fields = ('file', 'trip_date', 'direction')
+

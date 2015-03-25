@@ -2260,6 +2260,21 @@ class SubsidiaryInCampaign(Subsidiary):
         proxy = True
 
 
+class GpxFile(models.Model):
+    file = models.FileField(
+        verbose_name=_(u"GPX trasa"),
+        upload_to='gpx_tracks',
+        blank=False, null=False)
+    user_attendance = models.ForeignKey(
+        UserAttendance,
+        null=False,
+        blank=False)
+    trip = models.ForeignKey(
+        Trip,
+        null=True,
+        blank=True)
+
+
 #Signals:
 def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     field, (old, new) = changed_fields.items()[0]
