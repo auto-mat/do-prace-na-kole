@@ -26,7 +26,7 @@ reportlab
 svg2rlg
 flake8
 modulus11
--e hg+https://bitbucket.org/mjs7231/django-dbbackup#egg=django-dbbackup --upgrade
+-e hg+https://bitbucket.org/mjs7231/django-dbbackup#egg=django-dbbackup
 django-localeurl
 pillow
 -e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator

@@ -414,6 +414,16 @@ class Campaign(models.Model):
         blank=True,
         null=True,
         )
+    package_weight = models.FloatField(
+        verbose_name=_(u"Váha balíku"),
+        null=True,
+        blank=True,
+        default=0.25,
+        validators=[
+            MaxValueValidator(1000),
+            MinValueValidator(0)
+        ],
+        )
     invoice_sequence_number_first = models.PositiveIntegerField(
         verbose_name=_(u"První číslo řady pro faktury"),
         default=0,
