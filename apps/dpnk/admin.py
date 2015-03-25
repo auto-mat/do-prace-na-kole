@@ -935,6 +935,8 @@ class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
     list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city',  'payment_created')
     list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter))
     actions = (create_batch, )
+    def get_actions(self, request):
+        return {'create_batch': (create_batch, 'create_batch', create_batch.short_description) }
     list_max_show_all = 10000
 
     def payment_created(self, obj):
