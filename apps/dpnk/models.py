@@ -396,6 +396,24 @@ class Campaign(models.Model):
         blank=False,
         null=False,
         )
+    package_height = models.PositiveIntegerField(
+        verbose_name=_(u"Výška balíku"),
+        default=1,
+        blank=True,
+        null=True,
+        )
+    package_width = models.PositiveIntegerField(
+        verbose_name=_(u"Šířka balíku"),
+        default=26,
+        blank=True,
+        null=True,
+        )
+    package_depth = models.PositiveIntegerField(
+        verbose_name=_(u"Hloubka balíku"),
+        default=35,
+        blank=True,
+        null=True,
+        )
     invoice_sequence_number_first = models.PositiveIntegerField(
         verbose_name=_(u"První číslo řady pro faktury"),
         default=0,
