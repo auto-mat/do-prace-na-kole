@@ -1235,6 +1235,7 @@ class InviteView(UserAttendanceViewMixin, FormView):
         return context_data
 
     @method_decorator(login_required_simple)
+    @must_be_approved_for_team
     @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
         return super(InviteView, self).dispatch(request, *args, **kwargs)
@@ -1281,6 +1282,7 @@ class UpdateTeam(UserAttendanceViewMixin, SuccessMessageMixin, UpdateView):
 
     @method_decorator(login_required_simple)
     @must_be_competitor
+    @must_be_approved_for_team
     #@user_attendance_has(lambda ua: ua.entered_competition(), _(u"Po vstupu do soutěže již nemůžete měnit parametry týmu."))
     def dispatch(self, request, *args, **kwargs):
         return super(UpdateTeam, self).dispatch(request, *args, **kwargs)
