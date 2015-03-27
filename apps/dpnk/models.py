@@ -33,7 +33,7 @@ from django.db import models
 from django.db.models import Q, Max
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
-from django.db.models.signals import post_save, pre_save, post_delete
+from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
 from django.db.utils import ProgrammingError
 from fieldsignals import post_save_changed, pre_save_changed
 from django.dispatch import receiver
@@ -2278,6 +2278,13 @@ def update_user_attendance(sender, instance, *args, **kwargs):
     mailing.add_or_update_user(instance.user_attendance)
     if instance.user_attendance.team:
         instance.user_attendance.team.autoset_member_count()
+
+
+@receiver(pre_delete, sender=Invoice)
+def update_user_attendance(sender, instance, *args, **kwargs):
+    for payment in instance.payment_set.all():
+        payment.status = Payment.Status.COMPANY_ACCEPTS
+        payment.save()
 
 
 @receiver(post_save, sender=UserAttendance)
