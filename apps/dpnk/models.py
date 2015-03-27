@@ -680,6 +680,12 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def name(self):
         return self.userprofile.name()
     name.admin_order_field = 'userprofile__user__last_name'
+    name.short_description = _(u"Jméno")
+
+    def name_for_trusted(self):
+        return self.userprofile.name_for_trusted()
+    name_for_trusted.admin_order_field = 'userprofile__user__last_name'
+    name_for_trusted.short_description = _(u"Jméno")
 
     def __unicode__(self):
         return self.userprofile.name()
@@ -994,6 +1000,20 @@ class UserProfile(models.Model):
     def name(self):
         if self.nickname:
             return self.nickname
+        else:
+            full_name = self.user.get_full_name()
+            if full_name:
+                return full_name
+            else:
+                return self.user.username
+
+    def name_for_trusted(self):
+        if self.nickname:
+            full_name = self.user.get_full_name()
+            if full_name:
+                return u"%s (%s)" % (full_name, self.nickname)
+            else:
+                return u"%s (%s)" % (self.user.username, self.nickname)
         else:
             full_name = self.user.get_full_name()
             if full_name:

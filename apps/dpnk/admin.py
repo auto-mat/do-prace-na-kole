@@ -334,7 +334,7 @@ class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
     form = UserProfileForm
     inlines = [UserAttendanceInline, ]
     filter_horizontal = ('administrated_cities',)
-    search_fields = ['user__first_name', 'user__last_name', 'user__username']
+    search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username']
 
     def user__first_name(self, obj):
         return obj.user.first_name
@@ -389,7 +389,7 @@ class UserProfileAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('user', '__unicode__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
     list_filter = ('userattendance__campaign', 'language', 'sex', 'userattendance__team__subsidiary__city', 'userattendance__approved_for_team')
     filter_horizontal = ('administrated_cities',)
-    search_fields = ['user__first_name', 'user__last_name', 'user__username', 'user__email' ]
+    search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username', 'user__email' ]
     actions = (remove_mailing_id,)
 
 
@@ -557,10 +557,10 @@ class UserAttendanceResource(resources.ModelResource):
 
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin, OSMGeoAdmin):
-    list_display = ('id', 'name', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_length', 'created')
+    list_display = ('id', 'name_for_trusted', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_length', 'created')
     list_filter = (CampaignFilter, ('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('approved_for_team', AllValuesComboFilter), ('t_shirt_size', RelatedFieldComboFilter), 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, ('team__member_count', AllValuesComboFilter), PackageConfirmationFilter, ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter), ('userprofile__sex', AllValuesComboFilter))
     raw_id_fields = ('userprofile', 'team')
-    search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
+    search_fields = ('userprofile__nickname', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
     readonly_fields = ('user_link', 'userprofile__user__email', 'created', 'updated')
     actions = (update_mailing, approve_am_payment, recalculate_results, show_distance)
     form = UserAttendanceForm
@@ -627,7 +627,7 @@ class UserActionTransactionChildAdmin(TransactionChildAdmin):
 
 class TransactionAdmin(PolymorphicParentModelAdmin):
     list_display = ('id', 'user_attendance', 'created', 'status', 'polymorphic_ctype', 'user_link', 'author')
-    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username')
+    search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username')
     list_filter = ['user_attendance__campaign', 'status', 'polymorphic_ctype',]
 
     readonly_fields = ['user_link', ]
@@ -648,7 +648,7 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
 
 class PaymentAdmin(RelatedFieldAdmin):
     list_display = ('id', 'user_attendance', 'created', 'realized', 'status', 'session_id', 'trans_id', 'amount', 'pay_type', 'error', 'order_id', 'author', 'user_attendance__team__subsidiary__company__name')
-    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'session_id', 'trans_id', 'order_id', 'user_attendance__team__subsidiary__company__name', )
+    search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'session_id', 'trans_id', 'order_id', 'user_attendance__team__subsidiary__company__name', )
     list_filter = [ 'user_attendance__campaign', 'status', 'error', 'pay_type',]
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created')
@@ -658,7 +658,7 @@ class PaymentAdmin(RelatedFieldAdmin):
 
 class PackageTransactionAdmin(RelatedFieldAdmin):
     list_display = ('id', 'user_attendance', 'created', 'realized', 'status', 'author', 'user_attendance__team__subsidiary__company__name', 't_shirt_size', 'delivery_batch', 'tnt_con_reference', 'tracking_number_cnc')
-    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'session_id', 'trans_id', 'order_id', 'user_attendance__team__subsidiary__company__name', )
+    search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'session_id', 'trans_id', 'order_id', 'user_attendance__team__subsidiary__company__name', )
     list_filter = [ 'user_attendance__campaign', 'status', 'delivery_batch']
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created')
@@ -698,7 +698,7 @@ class HasReactionFilter(SimpleListFilter):
 
 class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
     list_display = ('user_attendance', 'points_given', 'choices_all', 'choices_ids_all', 'question__competition', 'question__competition__city', 'attachment_url', 'comment', 'question__text')
-    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'question__text', 'question__name', 'question__competition__name', 'user_attendance__team__subsidiary__company__name')
+    search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'question__text', 'question__name', 'question__competition__name', 'user_attendance__team__subsidiary__company__name')
     list_filter = ('question__competition__campaign', HasReactionFilter, 'question__competition__city', 'question__competition')
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
@@ -742,7 +742,7 @@ show_distance_trips.short_description = _(u"Ukázat ujetou vzdálenost")
 
 class TripAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('user_attendance', 'date', 'trip_from', 'trip_to','is_working_ride_from', 'is_working_ride_to', 'distance_from', 'distance_to', 'id')
-    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'user_attendance__team__subsidiary__company__name')
+    search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'user_attendance__team__subsidiary__company__name')
     raw_id_fields = ('user_attendance',)
     list_filter = ('user_attendance__campaign', 'user_attendance__team__subsidiary__city', 'distance_from')
     actions = (show_distance_trips,)
@@ -752,7 +752,7 @@ class TripAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmi
 class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('user_attendance', 'team', 'company', 'result', 'competition')
     list_filter = ('competition__campaign', 'competition',)
-    search_fields = ('user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'team__name', 'competition__name')
+    search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'team__name', 'competition__name')
     raw_id_fields = ('user_attendance', 'team')
 
 
