@@ -921,6 +921,7 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
 
 class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
     title = _(u"Výsledky soutěží")
+    success_url = reverse_lazy("competitions")
 
     @method_decorator(login_required_simple)
     @must_be_competitor
@@ -936,8 +937,7 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
         if 'cancellation_competition_id' in request.POST and request.POST['cancellation_competition_id']:
             competition = Competition.objects.get(id=request.POST['cancellation_competition_id'])
             competition.make_admission(self.user_attendance, False)
-        if success_url is not None:
-            return redirect(reverse(success_url))
+        return redirect(self.success_url)
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(AdmissionsView, self).get_context_data(*args, **kwargs)

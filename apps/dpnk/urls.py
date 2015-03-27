@@ -64,11 +64,6 @@ urlpatterns = patterns(
         ),
     url(r'^profil_pristup/$',
         views.profile_access),
-    url(r'^prihlasky/$',
-        views.AdmissionsView.as_view(
-            template_name='registration/admissions.html'
-        ),
-        ),
     url(r'^souteze/$',
         views.AdmissionsView.as_view(
             template_name="registration/competitions.html"

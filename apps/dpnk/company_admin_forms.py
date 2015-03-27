@@ -155,7 +155,6 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
 
     def save(self, force_insert=False, force_update=False, commit=True):
         competition = super(CompanyCompetitionForm, self).save(commit=False)
-        competition.without_admission = (competition.type != 'length')
         if commit:
             competition.save()
         return competition
