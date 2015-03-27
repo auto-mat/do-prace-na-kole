@@ -56,7 +56,6 @@ from dpnk.email import (
     payment_confirmation_mail, company_admin_rejected_mail,
     company_admin_approval_mail, payment_confirmation_company_mail)
 from dpnk import email, invoice_pdf
-from wp_urls import wp_reverse
 import logging
 logger = logging.getLogger(__name__)
 
@@ -225,7 +224,7 @@ class Subsidiary(models.Model):
     city = models.ForeignKey(
         City,
         verbose_name=_(u"Soutěžní město"),
-        help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % wp_reverse('pravidla'),
+        help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % "http://www.dopracenakole.net/pravidla",
         null=False,
         blank=False)
 

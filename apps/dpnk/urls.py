@@ -31,8 +31,6 @@ urlpatterns = patterns(
         views.RegistrationView.as_view(),
         {'success_url': 'typ_platby'},
         name="registrace"),
-    url(r'^header_bar/$',
-        views.header_bar),
     url(r'^registrace_pristup/$',
         views.RegistrationAccessView.as_view(),
         name="registration_access"
@@ -62,8 +60,6 @@ urlpatterns = patterns(
         views.RidesView.as_view(),
         name="jizdy",
         ),
-    url(r'^profil_pristup/$',
-        views.profile_access),
     url(r'^souteze/$',
         views.AdmissionsView.as_view(
             template_name="registration/competitions.html"
@@ -114,10 +110,6 @@ urlpatterns = patterns(
     url(r'^package/$',
         views.PackageView.as_view(),
         name="package"),
-    url(r'^competition_profile_notices/$',
-        views.UserAttendanceView.as_view(
-            template_name = "registration/competition_profile_notices.html"
-        )),
     url(r'^package-confirmation/$',
         views.ConfirmDeliveryView.as_view(),
         ),

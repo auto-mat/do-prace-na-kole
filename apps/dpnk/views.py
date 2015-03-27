@@ -494,27 +494,6 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         return super(PaymentTypeView, self).form_valid(form)
 
 
-@never_cache
-@cache_control(max_age=0, no_cache=True, no_store=True)
-def header_bar(request, campaign_slug):
-    company_admin = None
-    entered_competition = None
-    campaign = Campaign.objects.get(slug=campaign_slug)
-    if request.user.is_authenticated():
-        company_admin = models.get_company_admin(request.user, campaign)
-        try:
-            entered_competition = models.UserAttendance.objects.get(campaign=campaign, userprofile__user=request.user).entered_competition
-        except UserAttendance.DoesNotExist:
-            entered_competition = None
-    return render_to_response('registration/header_bar.html', {
-        'is_authentificated': request.user.is_authenticated(),
-        'company_admin': company_admin,
-        'user': request.user,
-        'entered_competition': entered_competition,
-        'registration_phase_active': campaign.phase("registration").is_actual()
-        }, context_instance=RequestContext(request))
-
-
 class PaymentView(UserAttendanceViewMixin, TemplateView):
     template_name = 'registration/payment.html'
 
@@ -527,7 +506,7 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
         context = super(PaymentView, self).get_context_data(**kwargs)
 
         if self.user_attendance.payment()['status'] == 'no_admission':
-            return redirect(wp_reverse('profil'))
+            return redirect(reverse('profil'))
         uid = self.request.user.id
         order_id = '%s-1' % uid
         session_id = "%sJ%d" % (order_id, int(time.time()))
@@ -668,25 +647,6 @@ def payment_status(request):
     return http.HttpResponse("OK")
 
 
-@login_required_simple
-@must_be_competitor
-def profile_access(request, user_attendance=None):
-    if user_attendance.team:
-        city_redirect = "/" + user_attendance.team.subsidiary.city.slug
-    else:
-        city_redirect = ""
-
-    if user_attendance.team:
-        city = user_attendance.team.subsidiary.city
-    else:
-        city = None
-
-    return render_to_response('registration/profile_access.html', {
-        'city': city,
-        'city_redirect': city_redirect
-        }, context_instance=RequestContext(request))
-
-
 def trip_active_last7(day, today):
     return (
         (day <= today)
@@ -809,71 +769,6 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
             'user_attendance': self.user_attendance,
             'minimum_percentage': self.user_attendance.campaign.minimum_percentage,
         }
-
-
-@login_required_simple
-@must_be_competitor
-@never_cache
-@cache_control(max_age=0, no_cache=True, no_store=True)
-def profile(request, user_attendance=None, success_url='competition_profile'):
-    if user_attendance.entered_competition():
-        return redirect(wp_reverse(success_url))
-    if request.POST and request.POST['enter_competition'] == 'true':
-        user_action = models.UserActionTransaction(
-            status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED,
-            user_attendance=user_attendance,
-            realized=datetime.datetime.now(),
-        )
-        user_action.save()
-        return redirect(wp_reverse(success_url))
-
-    # Render profile
-    payment_status = user_attendance.payment_status()
-    if user_attendance.team:
-        team_members_count = user_attendance.team.members().count()
-    else:
-        team_members_count = 0
-    request.session['invite_success_url'] = 'profil'
-
-    is_package_shipped = user_attendance.package_shipped() is not None
-    is_package_delivered = user_attendance.package_delivered() is not None
-
-    admissions_phase = user_attendance.campaign.phase("admissions")
-
-    cant_enter_competition_reasons = {
-        'no_personal_data': _(u"mít vyplněné osobní údaje"),  # Translators: Začít soutěžit bude moci až budete ...
-        'no_team': _(u"mít vybraný tým"),  # Translators: Začít soutěžit bude moci až budete ...
-        'not_approved_for_team': _(u"mít odsouhlasené členství v týmu"),  # Translators: Začít soutěžit bude moci až budete ...
-        'unapproved_team_members': _(u"mít odsouhlasené všechny členy týmu"),  # Translators: Začít soutěžit bude moci až budete ...
-        'not_enough_team_members': _(u"mít víc než jen jednoho člena týmu"),  # Translators: Začít soutěžit bude moci až budete ...
-        'not_t_shirt': _(u"mít vyplněnou velikost trika"),  # Translators: Začít soutěžit bude moci až budete ...
-        'not_paid': _(u"mít zaplaceno"),  # Translators: Začít soutěžit bude moci až budete ...
-        True: 'can_enter',
-    }
-    cant_enter_competition_reason = cant_enter_competition_reasons[user_attendance.can_enter_competition()]
-
-    try:
-        competition_entry_phase = user_attendance.campaign.phase_set.get(type="compet_entry")
-    except models.Phase.DoesNotExist:
-        competition_entry_phase = None
-    competition_entry_phase_is_active = competition_entry_phase and competition_entry_phase.is_actual()
-    return render_to_response('registration/profile.html', {
-        'active': user_attendance.userprofile.user.is_active,
-        'superuser': request.user.is_superuser,
-        'user': request.user,
-        'profile': user_attendance,
-        'team': user_attendance.team,
-        'payment_status': payment_status,
-        'payment_type': user_attendance.payment_type(),
-        'team_members_count': team_members_count,
-        'approved_for_team': user_attendance.approved_for_team,
-        'is_package_shipped': is_package_shipped,
-        'is_package_delivered': is_package_delivered,
-        'admissions_phase': admissions_phase,
-        'cant_enter_competition_reason': cant_enter_competition_reason,
-        'competition_entry_active': competition_entry_phase_is_active,
-        'campaign_slug': user_attendance.campaign.slug,
-        }, context_instance=RequestContext(request))
 
 
 class ProfileView(RegistrationViewMixin, TemplateView):
