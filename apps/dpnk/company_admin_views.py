@@ -262,7 +262,7 @@ class InvoicesView(FormView):
     def get_context_data(self, *args, **kwargs):
         context = super(InvoicesView, self).get_context_data(*args, **kwargs)
         payments = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
-        users = [p.user_attendance.__unicode__() for p in payments]
+        users = [p.user_attendance.userprofile.user.get_full_name() for p in payments]
         context['competitors_count'] = payments.count()
         context['competitors_names'] = ", ".join(users)
         context['company'] = self.company_admin.administrated_company

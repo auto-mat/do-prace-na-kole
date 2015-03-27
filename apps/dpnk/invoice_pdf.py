@@ -55,6 +55,6 @@ Společně s vámi tvoříme město, ve kterém chceme žít. www.auto-mat.cz
     invoice_gen.paytype = u"bankovním převodem"
 
     for payment in invoice.payment_set.order_by("user_attendance__userprofile__user__last_name", "user_attendance__userprofile__user__first_name"):
-       invoice_gen.add_item(Item(1, payment.amount, description=u"Platba za soutěžící/ho %s" % (payment.user_attendance), tax=21))
+       invoice_gen.add_item(Item(1, payment.amount, description=u"Platba za soutěžící/ho %s" % (payment.user_attendance.userprofile.user.get_full_name()), tax=21))
     pdf = SimpleInvoice(invoice_gen)
     pdf.gen(outfile, generate_qr_code=True)

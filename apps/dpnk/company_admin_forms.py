@@ -41,7 +41,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
 
         ret_val = super(SelectUsersPayForm, self).__init__(*args, **kwargs)
         self.fields['paing_for'].queryset = queryset
-        choices = [(user_attendance.pk, "%s (%s)" % (user_attendance, user_attendance.payment()['payment'].amount))
+        choices = [(user_attendance.pk, u"%s Kč: %s (%s)" % (user_attendance.payment()['payment'].amount, user_attendance.userprofile.user.get_full_name(), user_attendance.userprofile.user.email))
                    for user_attendance in queryset.all()
                    if user_attendance.payment_type() == 'fc'
                    and user_attendance.payment_status() != 'done']

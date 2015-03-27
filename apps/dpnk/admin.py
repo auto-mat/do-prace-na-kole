@@ -557,7 +557,7 @@ class UserAttendanceResource(resources.ModelResource):
 
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin, OSMGeoAdmin):
-    list_display = ('id', 'name', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_length', 'created')
+    list_display = ('id', 'name', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_length', 'created')
     list_filter = (CampaignFilter, ('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('approved_for_team', AllValuesComboFilter), ('t_shirt_size', RelatedFieldComboFilter), 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, ('team__member_count', AllValuesComboFilter), PackageConfirmationFilter, ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter), ('userprofile__sex', AllValuesComboFilter))
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
