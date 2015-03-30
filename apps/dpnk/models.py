@@ -26,13 +26,14 @@ import string
 import results
 import parcel_batch
 import avfull
+from unidecode import unidecode
 from author.decorators import with_author
 from django import forms
 from django.db import models
 from django.db.models import Q, Max
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
-from django.db.models.signals import post_save, pre_save, post_delete
+from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
 from django.db.utils import ProgrammingError
 from fieldsignals import post_save_changed, pre_save_changed
 from django.dispatch import receiver
@@ -55,7 +56,6 @@ from dpnk.email import (
     payment_confirmation_mail, company_admin_rejected_mail,
     company_admin_approval_mail, payment_confirmation_company_mail)
 from dpnk import email, invoice_pdf
-from wp_urls import wp_reverse
 import logging
 logger = logging.getLogger(__name__)
 
@@ -224,7 +224,7 @@ class Subsidiary(models.Model):
     city = models.ForeignKey(
         City,
         verbose_name=_(u"Soutěžní město"),
-        help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % wp_reverse('pravidla'),
+        help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % "http://www.dopracenakole.net/pravidla",
         null=False,
         blank=False)
 
@@ -680,6 +680,12 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def name(self):
         return self.userprofile.name()
     name.admin_order_field = 'userprofile__user__last_name'
+    name.short_description = _(u"Jméno")
+
+    def name_for_trusted(self):
+        return self.userprofile.name_for_trusted()
+    name_for_trusted.admin_order_field = 'userprofile__user__last_name'
+    name_for_trusted.short_description = _(u"Jméno")
 
     def __unicode__(self):
         return self.userprofile.name()
@@ -1001,6 +1007,20 @@ class UserProfile(models.Model):
             else:
                 return self.user.username
 
+    def name_for_trusted(self):
+        if self.nickname:
+            full_name = self.user.get_full_name()
+            if full_name:
+                return u"%s (%s)" % (full_name, self.nickname)
+            else:
+                return u"%s (%s)" % (self.user.username, self.nickname)
+        else:
+            full_name = self.user.get_full_name()
+            if full_name:
+                return full_name
+            else:
+                return self.user.username
+
     def __unicode__(self):
         return self.name()
 
@@ -1294,7 +1314,8 @@ def create_invoice_files(sender, instance, created, **kwargs):
     if not instance.invoice_pdf:
         temp = NamedTemporaryFile()
         invoice_pdf.make_invoice_sheet_pdf(temp, instance)
-        instance.invoice_pdf.save("invoice_%s_%s_%s.pdf" % (instance.company.name[0:40], instance.exposure_date.strftime("%Y-%m-%d"), hash(str(instance.pk) + settings.SECRET_KEY)), File(temp))
+        filename = "invoice_%s_%s_%s.pdf" % (unidecode(instance.company.name[0:40]), instance.exposure_date.strftime("%Y-%m-%d"), hash(str(instance.pk) + settings.SECRET_KEY))
+        instance.invoice_pdf.save(filename, File(temp))
         instance.save()
 
 
@@ -2277,6 +2298,13 @@ def update_user_attendance(sender, instance, *args, **kwargs):
     mailing.add_or_update_user(instance.user_attendance)
     if instance.user_attendance.team:
         instance.user_attendance.team.autoset_member_count()
+
+
+@receiver(pre_delete, sender=Invoice)
+def update_user_attendance(sender, instance, *args, **kwargs):
+    for payment in instance.payment_set.all():
+        payment.status = Payment.Status.COMPANY_ACCEPTS
+        payment.save()
 
 
 @receiver(post_save, sender=UserAttendance)

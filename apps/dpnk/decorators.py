@@ -72,7 +72,7 @@ def must_have_team(fn):
             return render_to_response(view.template_name, {
                 'fullpage_error_message': mark_safe(_(u"Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse("zmenit_tym")),
                 'user_attendance': user_attendance,
-                'title': _(u"Musíte mít vybraný tým"),
+                'title': getattr(view, 'title', _(u"Musíte mít vybraný tým")),
                 'registration_phase': getattr(view, 'registration_phase', ''),
                 'form': None,
                 }, context_instance=RequestContext(request))

@@ -5,6 +5,7 @@
 {% block content %}
 {% include "messages_include.html" %}
 
+{% if competitors_count > 0 %}
 {% blocktrans count competitors_count=competitors_count %}
 Vytvořit fakturu pro následujícho soutěžícího: {{ competitors_names }}
 {% plural %}
@@ -24,6 +25,9 @@ Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících: 
 {% trans "DIČ: " %}{{ company.dic }}
 <br/>
 <a class="btn btn-block btn-primary" href="{% url 'edit_company' %}">{% trans "Změnit údaje" %}</a>
-
 {{ block.super }}
+{% else %}
+<div class="alert alert-info">{% trans "Nemáte žádné soutěžící, pro které by bylo možné vytvořit fakturu" %}</div>
+{% endif %}
+
 {% endblock %}
