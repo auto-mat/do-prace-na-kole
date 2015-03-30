@@ -7,11 +7,24 @@
 
 {% if competitors_count > 0 %}
 {% blocktrans count competitors_count=competitors_count %}
-Vytvořit fakturu pro následujícho soutěžícího: {{ competitors_names }}
+Vytvořit fakturu pro následujícho soutěžícího:
 {% plural %}
-Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících: {{ competitors_names }}
+Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících:
 {% endblocktrans %}
-<br/>
+<table id="pay_for" class="table table-bordered table-hover table-condensed">
+   <thead>
+      <tr>
+         <th>{% trans "Účastník" %}</th>
+         <th>{% trans "Částka" %}</th>
+      </tr>
+   </thead>
+   {% for payment in payments %}
+   <tr>
+      <td>{{ payment.user_attendance.name_for_trusted }}</td>
+      <td>{{ payment.amount }} Kč</td>
+   </tr>
+   {% endfor %}
+</table>
 <br/>
 {{ company }}
 <br/>

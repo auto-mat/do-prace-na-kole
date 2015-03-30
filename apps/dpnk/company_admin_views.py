@@ -261,7 +261,7 @@ class InvoicesView(CreateView):
         payments = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
         users = [p.user_attendance.userprofile.user.get_full_name() for p in payments]
         context['competitors_count'] = payments.count()
-        context['competitors_names'] = ", ".join(users)
+        context['payments'] = payments
         context['company'] = self.company_admin.administrated_company
 
         context['invoices'] = self.company_admin.administrated_company.invoice_set.filter(campaign=self.company_admin.campaign)
