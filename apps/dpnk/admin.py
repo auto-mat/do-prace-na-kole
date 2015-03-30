@@ -891,7 +891,7 @@ class InvoiceForm(forms.ModelForm):
 
 
 class InvoiceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
-    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'invoice_count', 'invoice_pdf_url', 'campaign', 'sequence_number', 'order_number', 'company__ico', 'company__dic', 'company_address']
+    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'total_amount', 'invoice_count', 'invoice_pdf_url', 'campaign', 'sequence_number', 'order_number', 'company__ico', 'company__dic', 'company_address']
     readonly_fields = ['created', 'author', 'updated_by', 'invoice_count']
     list_filter = [CampaignFilter, InvoicePaidFilter]
     search_fields = ['company__name', ]

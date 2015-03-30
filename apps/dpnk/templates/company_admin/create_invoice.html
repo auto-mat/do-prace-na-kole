@@ -24,7 +24,8 @@ Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících: 
 <br/>
 {% trans "DIČ: " %}{{ company.dic }}
 <br/>
-<a class="btn btn-block btn-primary" href="{% url 'edit_company' %}">{% trans "Změnit údaje" %}</a>
+<a class="btn btn-primary" href="{% url 'edit_company' %}">{% trans "Změnit adresu firmy" %}</a>
+<hr/>
 {{ block.super }}
 {% else %}
 <div class="alert alert-info">{% trans "Nemáte žádné soutěžící, pro které by bylo možné vytvořit fakturu" %}</div>

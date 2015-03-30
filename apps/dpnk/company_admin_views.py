@@ -27,7 +27,7 @@ from django.http import HttpResponse, Http404
 import django.contrib.auth
 import datetime
 from django.conf import settings
-from django.views.generic.edit import UpdateView, FormView
+from django.views.generic.edit import UpdateView, FormView, CreateView
 from django.views.generic.base import TemplateView
 from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_company_admin, must_be_in_phase
 from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
@@ -237,7 +237,7 @@ class CompanyCompetitionsShowView(TemplateView):
         return context_data
 
 
-class InvoicesView(FormView):
+class InvoicesView(CreateView):
     template_name = 'company_admin/create_invoice.html'
     template_name_created = 'company_admin/invoices.html'
     form_class = company_admin_forms.CreateInvoiceForm
@@ -250,13 +250,10 @@ class InvoicesView(FormView):
             return self.template_name
 
     def form_valid(self, form):
-        if form.cleaned_data['create_invoice']:
-            invoice = models.Invoice(
-                company=self.company_admin.administrated_company,
-                campaign=self.company_admin.campaign,
-                order_number=form.cleaned_data['order_number'],
-                )
-            invoice.save()
+        self.object = form.save(commit=False)
+        self.object.company=self.company_admin.administrated_company
+        self.object.campaign=self.company_admin.campaign
+        self.object.save()
         return super(InvoicesView, self).form_valid(form)
 
     def get_context_data(self, *args, **kwargs):

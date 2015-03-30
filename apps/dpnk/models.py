@@ -1229,6 +1229,14 @@ class Invoice(models.Model):
         null=True,
         blank=True,
         )
+    company_pais_benefitial_fee = models.BooleanField(
+        verbose_name=_(u"Moje firma si přeje podpořit Auto*Mat a zaplatit benefiční startovné (450 Kč za osobu)."),
+        default=False,
+        )
+    total_amount = models.FloatField(
+        verbose_name=_(u"Celková částka"),
+        null=False,
+        default=0)
     invoice_pdf = models.FileField(
         verbose_name=_(u"PDF faktury"),
         upload_to='invoices',
@@ -1250,7 +1258,7 @@ class Invoice(models.Model):
         verbose_name=_(u"Pořadové číslo faktury"),
         null=False)
     order_number = models.BigIntegerField(
-        verbose_name=_(u"Číslo objednávky"),
+        verbose_name=_(u"Číslo objednávky (nepovinné)"),
         null=True,
         blank=True,
         )

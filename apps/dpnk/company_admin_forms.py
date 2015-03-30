@@ -19,7 +19,7 @@
 
 from django import forms
 from forms import AdressForm
-from models import Company, CompanyAdmin, Competition, UserAttendance, Campaign
+from models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice
 from django.utils.translation import ugettext_lazy as _
 from util import slugify
 from forms import SubmitMixin
@@ -160,11 +160,11 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
         return competition
 
 
-class CreateInvoiceForm(SubmitMixin, forms.Form):
+class CreateInvoiceForm(SubmitMixin, forms.ModelForm):
     create_invoice = forms.BooleanField(
             label=_(u"Údaje jsou správné, chci vytvořit fakturu"),
             )
-    order_number = forms.IntegerField(
-            label=_(u"Číslo objednávky (nepovinné)"),
-            required=False,
-            )
+
+    class Meta:
+        model = Invoice
+        fields = ('company_pais_benefitial_fee', 'order_number', 'create_invoice')
