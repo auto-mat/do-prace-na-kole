@@ -60,6 +60,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def get_address_string(address):
+    return ", ".join(filter(lambda x: x!="", [address.recipient, "%s %s" % (address.street, address.street_number), "%s %s" % (util.format_psc(address.psc), address.city)]))
+
+
 class Address(CompositeField):
     street = models.CharField(
         verbose_name=_(u"Ulice"),
@@ -112,7 +116,7 @@ class Address(CompositeField):
         )
 
     def __unicode__(self):
-        return ", ".join([self.recipient, self.street, self.street_number, util.format_psc(self.psc), self.city])
+        return get_address_string(self)
 
 
 class City(models.Model):
@@ -205,7 +209,7 @@ class Company(models.Model):
         return "%s" % self.name
 
     def company_address(self):
-        return ", ".join([self.address.recipient, self.address.street, self.address.street_number, util.format_psc(self.address.psc), self.address.city])
+        return get_address_string(self.address)
 
 
 class Subsidiary(models.Model):
@@ -229,7 +233,7 @@ class Subsidiary(models.Model):
         blank=False)
 
     def __unicode__(self):
-        return ", ".join([self.address.recipient, self.address.street, self.address.street_number, util.format_psc(self.address.psc), self.address.city])
+        return get_address_string(self.address)
 
 
 def validate_length(value, min_length=25):
