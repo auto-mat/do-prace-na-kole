@@ -856,13 +856,13 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         days = util.days(self.campaign)
         trips = []
         for d in days:
-            trip, created = self.user_trips.get_or_create(date=d)
-            if created:
-                working_day = util.working_day(d)
-                trip.is_working_ride_to = working_day
-                trip.is_working_ride_from = working_day
-                trip.save()
+            working_day = util.working_day(d)
+            trip, created = self.user_trips.get_or_create(date=d, defaults={
+                'is_working_ride_to': working_day,
+                'is_working_ride_from': working_day
+                })
             trip.can_edit = d >= util.today()
+            trip.working_day = working_day
             trips.append(trip)
         return trips
 
