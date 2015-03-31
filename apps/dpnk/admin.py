@@ -31,7 +31,7 @@ from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTa
 from adminsortable2.admin import SortableInlineAdminMixin
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter, AllValuesComboFilter
-from import_export import resources
+from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.admin import OSMGeoAdmin
@@ -105,7 +105,7 @@ class CompanyForm(forms.ModelForm):
         self.fields['address_street'].required = False
 
 
-class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+class CompanyAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('name', 'subsidiaries_text', 'ico', 'dic', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
     inlines = [SubsidiaryInline, ]
     list_filter = ['subsidiaries__teams__campaign', 'subsidiaries__city']
@@ -147,7 +147,7 @@ class CityAdminMixin:
         return queryset.filter(**kwargs)
 
 
-class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, admin.ModelAdmin):
+class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline, ]
     list_filter = ['teams__campaign', 'city']
@@ -553,7 +553,12 @@ show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 class UserAttendanceResource(resources.ModelResource):
     class Meta:
         model = models.UserAttendance
-        fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email')
+        fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email', 'dehydrate_subsidiary_name', 'team__subsidiary__company__name')
+
+    subsidiary_name = fields.Field()
+    def dehydrate_subsidiary_name(self, obj):
+        if obj.team and obj.team.subsidiary:
+            return obj.team.subsidiary.name()
 
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin, OSMGeoAdmin):

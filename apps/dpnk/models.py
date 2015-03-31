@@ -235,6 +235,8 @@ class Subsidiary(models.Model):
     def __unicode__(self):
         return get_address_string(self.address)
 
+    def name(self):
+        return get_address_string(self.address)
 
 def validate_length(value, min_length=25):
     str_len = len(str(value))
