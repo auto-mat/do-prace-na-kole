@@ -1600,9 +1600,10 @@ class Payment(Transaction):
     session_id = models.CharField(
         verbose_name="Session ID",
         max_length=50,
+        unique=True,
         null=True,
         blank=True,
-        default="")
+        default=None)
     trans_id = models.CharField(
         verbose_name="Transaction ID",
         max_length=50, null=True, blank=True)
