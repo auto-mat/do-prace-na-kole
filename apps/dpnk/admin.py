@@ -656,7 +656,7 @@ class PaymentAdmin(RelatedFieldAdmin):
     search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'session_id', 'trans_id', 'order_id', 'user_attendance__team__subsidiary__company__name', )
     list_filter = [ 'user_attendance__campaign', 'status', 'error', 'pay_type',]
     raw_id_fields = ('user_attendance',)
-    readonly_fields = ('author', 'created')
+    readonly_fields = ('author', 'created', 'updated_by')
     list_max_show_all = 10000
     form = models.PaymentForm
 
