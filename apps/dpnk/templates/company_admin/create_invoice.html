@@ -5,7 +5,7 @@
 {% block content %}
 {% include "messages_include.html" %}
 
-{% if competitors_count > 0 %}
+{% if payments.count > 0 %}
 {% blocktrans count competitors_count=competitors_count %}
 Vytvořit fakturu pro následujícho soutěžícího:
 {% plural %}

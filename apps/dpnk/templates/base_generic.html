@@ -84,12 +84,12 @@
             <p class="alert alert-warning browsehappy">{% trans 'Bohužel používáte <strong>zastaralý</strong> prohlížeč internetu. Přes naši snahu nemusí některé části webu dobře fungovat. Pokud můžete, <a href="http://www.whatbrowser.org/intl/cs">nainstalujte si novější prohlížeč' %}</a>.
          <![endif]-->
          {% block caption %}<h2>{{ title }}</h2>{% endblock %}
-         {% block content %}
          {% block error %}
             {% if fullpage_error_message %}
             <div class="alert alert-danger">{{ fullpage_error_message }}</div>
+            {% else %}
+            {% block content %}{% endblock %}
             {% endif %}
-         {% endblock %}
          {% endblock %}
       </div>
       <div class="col-md-2 col-sm-3">

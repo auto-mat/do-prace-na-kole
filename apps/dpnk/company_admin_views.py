@@ -260,13 +260,10 @@ class InvoicesView(CreateView):
         context = super(InvoicesView, self).get_context_data(*args, **kwargs)
         payments = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
         users = [p.user_attendance.userprofile.user.get_full_name() for p in payments]
-        context['competitors_count'] = payments.count()
         context['payments'] = payments
         context['company'] = self.company_admin.administrated_company
 
         context['invoices'] = self.company_admin.administrated_company.invoice_set.filter(campaign=self.company_admin.campaign)
-        context['payments_to_invoice'] = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
-        context['company_information_filled'] = self.company_admin.administrated_company.has_filled_contact_information()
         return context
 
     @method_decorator(login_required)
