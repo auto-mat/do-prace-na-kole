@@ -2,7 +2,7 @@
 {% load i18n %}
 <table class="table table-hover table-condensed">
    <thead>
-      <tr><th>{% trans "Po" %}</th><th>{% trans "Út" %}</th><th>{% trans "St" %}</th><th>{% trans "Čt" %}</th><th>{% trans "Pá" %}</th><th>{% trans "So" %}</th><th>{% trans "Ne" context "day name" %}</th></tr>
+      <tr><th>{% trans "Po" %}</th><th>{% trans "Út" %}</th><th>{% trans "St" %}</th><th>{% trans "Čt" %}</th><th>{% trans "Pá" %}</th><th class="non-working-day">{% trans "So" %}</th><th class="non-working-day">{% trans "Ne" context "day name" %}</th></tr>
    </thead>
    <tbody>
       <tr>
