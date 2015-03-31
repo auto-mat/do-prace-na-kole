@@ -60,6 +60,9 @@
                         {% if user_attendance.is_company_admin %}
                         <li><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Správa společnosti" %}</a></li>
                         {% endif %}
+                        {% if user.is_staff %}
+                        <li><a href="{% url 'admin:index' %}">{% trans "Administrace" %}</a></li>
+                        {% endif %}
            {% else %}
                         <li ><a href="{% url 'login' %}">{% trans "Přihlásit" %}</a></li>
            {% endif %}
