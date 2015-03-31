@@ -553,12 +553,18 @@ show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 class UserAttendanceResource(resources.ModelResource):
     class Meta:
         model = models.UserAttendance
-        fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email', 'dehydrate_subsidiary_name', 'team__subsidiary__company__name')
+        fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email', 'dehydrate_subsidiary_name', 'team__subsidiary__company__name', 'created', 'payment_date')
 
     subsidiary_name = fields.Field()
     def dehydrate_subsidiary_name(self, obj):
         if obj.team and obj.team.subsidiary:
             return obj.team.subsidiary.name()
+
+    payment_date = fields.Field()
+    def dehydrate_payment_date(self, obj):
+        payment = obj.payment()['payment']
+        if payment:
+            return payment.realized
 
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin, OSMGeoAdmin):
