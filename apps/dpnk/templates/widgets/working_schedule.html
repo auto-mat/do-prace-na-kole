@@ -15,12 +15,12 @@
             <br>
             <input type="checkbox" name="working-ride-to-{{ trip.date| date:"Ymd" }}" class="working-ride" id="working-ride-to-{{ trip.date| date:"Ymd" }}"
             {% if trip.is_working_ride_to %}checked="checked"{% endif %}
-            {% if not trip.can_edit %}disabled="disabled"{% endif %}
+            {% if not trip.can_edit_working_schedule %}disabled="disabled"{% endif %}
             ><label for="working-ride-to-{{ trip.date| date:"Ymd" }}">{% trans "Tam" %}</label></input>
             <br>
             <input type="checkbox" name="working-ride-from-{{ trip.date| date:"Ymd" }}" class="working-ride" id="working-ride-from-{{ trip.date| date:"Ymd" }}"
             {% if trip.is_working_ride_from %}checked="checked"{% endif %}
-            {% if not trip.can_edit %}disabled="disabled"{% endif %}
+            {% if not trip.can_edit_working_schedule %}disabled="disabled"{% endif %}
             ><label for="working-ride-from-{{ trip.date| date:"Ymd" }}">{% trans "Zpět" %}</label></input>
          </td>
          {% if trip.date.weekday == 6 %}

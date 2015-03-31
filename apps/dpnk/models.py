@@ -873,10 +873,6 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         Trip.objects.bulk_create(create_trips)
 
         trips = Trip.objects.filter(user_attendance=self, date__in=days).all()
-        for trip in trips:
-            working_day = util.working_day(trip.date)
-            trip.can_edit = trip.date >= util.today()
-            trip.working_day = working_day
         return trips
 
     def is_company_admin(self):
@@ -1738,6 +1734,11 @@ class Trip(models.Model):
         plus_distance = self.user_attendance.campaign.trip_plus_distance
         return min((self.user_attendance.distance or 0) + plus_distance, self.distance_to or 0)
 
+    def working_day(self):
+        return util.working_day(self.date)
+
+    def can_edit_working_schedule(self):
+        return self.date >= util.today()
 
 class Competition(models.Model):
     """Soutěž"""

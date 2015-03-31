@@ -137,7 +137,7 @@ class WorkingScheduleForm(forms.ModelForm):
         ret_val = super(WorkingScheduleForm, self).save(*args, **kwargs)
         trips = self.cleaned_data['schedule']
         for trip in trips:
-            if trip.can_edit:
+            if trip.can_edit_working_schedule():
                 trip.save()
         return ret_val
 
