@@ -28,10 +28,10 @@ from django.utils.safestring import mark_safe
 from admin_enhancer.admin import EnhancedModelAdminMixin, EnhancedAdminMixin
 from django.core.urlresolvers import reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
-from adminsortable.admin import SortableInlineAdminMixin
+from adminsortable2.admin import SortableInlineAdminMixin
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter, AllValuesComboFilter
-from import_export import resources
+from import_export import resources, fields
 from import_export.admin import ImportExportModelAdmin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.admin import OSMGeoAdmin
@@ -105,7 +105,7 @@ class CompanyForm(forms.ModelForm):
         self.fields['address_street'].required = False
 
 
-class CompanyAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+class CompanyAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('name', 'subsidiaries_text', 'ico', 'dic', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
     inlines = [SubsidiaryInline, ]
     list_filter = ['subsidiaries__teams__campaign', 'subsidiaries__city']
@@ -147,7 +147,7 @@ class CityAdminMixin:
         return queryset.filter(**kwargs)
 
 
-class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, admin.ModelAdmin):
+class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline, ]
     list_filter = ['teams__campaign', 'city']
@@ -553,7 +553,18 @@ show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 class UserAttendanceResource(resources.ModelResource):
     class Meta:
         model = models.UserAttendance
-        fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email')
+        fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email', 'dehydrate_subsidiary_name', 'team__subsidiary__company__name', 'created', 'payment_date')
+
+    subsidiary_name = fields.Field()
+    def dehydrate_subsidiary_name(self, obj):
+        if obj.team and obj.team.subsidiary:
+            return obj.team.subsidiary.name()
+
+    payment_date = fields.Field()
+    def dehydrate_payment_date(self, obj):
+        payment = obj.payment()['payment']
+        if payment:
+            return payment.realized
 
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin, OSMGeoAdmin):
@@ -651,7 +662,7 @@ class PaymentAdmin(RelatedFieldAdmin):
     search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'session_id', 'trans_id', 'order_id', 'user_attendance__team__subsidiary__company__name', )
     list_filter = [ 'user_attendance__campaign', 'status', 'error', 'pay_type',]
     raw_id_fields = ('user_attendance',)
-    readonly_fields = ('author', 'created')
+    readonly_fields = ('author', 'created', 'updated_by')
     list_max_show_all = 10000
     form = models.PaymentForm
 
@@ -771,11 +782,27 @@ class TShirtSizeInline(EnhancedAdminMixin, SortableInlineAdminMixin, admin.Tabul
     extra = 0
 
 
+class DeliveryBatchForm(forms.ModelForm):
+    class Meta:
+        model = models.DeliveryBatch
+
+    def __init__(self, *args, **kwargs):
+        ret_val = super(DeliveryBatchForm, self).__init__(*args, **kwargs)
+        self.instance.campaign = models.Campaign.objects.get(slug=self.request.subdomain)
+        return ret_val
+
+
 class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
     list_display = ('campaign', 'created', 'package_transaction__count', 'customer_sheets__url', 'tnt_order__url')
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction__count', 't_shirt_sizes')
     #inlines = [PackageTransactionInline, ]
     list_filter = (CampaignFilter,)
+    form = DeliveryBatchForm
+
+    def get_form(self, request, *args, **kwargs):
+        form = super(DeliveryBatchAdmin, self).get_form(request, *args, **kwargs)
+        form.request = request
+        return form
 
     def package_transaction__count(self, obj):
         if not obj.pk:
@@ -785,9 +812,9 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
 
     def t_shirt_sizes(self, obj):
         if not obj.pk:
-            package_transactions = obj.campaign.user_attendances_for_delivery()
+            package_transactions = obj.campaign.user_attendances_for_delivery().select_related('t_shirt_size')
         else:
-            package_transactions = obj.packagetransaction_set.all()
+            package_transactions = obj.packagetransaction_set.all().select_related('t_shirt_size')
         t_shirts = {}
         for package_transaction in package_transactions:
             if package_transaction.t_shirt_size in t_shirts:
@@ -891,7 +918,7 @@ class InvoiceForm(forms.ModelForm):
 
 
 class InvoiceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
-    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'invoice_count', 'invoice_pdf_url', 'campaign', 'sequence_number', 'order_number', 'company__ico', 'company__dic', 'company_address']
+    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'total_amount', 'invoice_count', 'invoice_pdf_url', 'campaign', 'sequence_number', 'order_number', 'company__ico', 'company__dic', 'company_address']
     readonly_fields = ['created', 'author', 'updated_by', 'invoice_count']
     list_filter = [CampaignFilter, InvoicePaidFilter]
     search_fields = ['company__name', ]

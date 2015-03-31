@@ -60,6 +60,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def get_address_string(address):
+    return ", ".join(filter(lambda x: x!="", [address.recipient, "%s %s" % (address.street, address.street_number), "%s %s" % (util.format_psc(address.psc), address.city)]))
+
+
 class Address(CompositeField):
     street = models.CharField(
         verbose_name=_(u"Ulice"),
@@ -112,7 +116,7 @@ class Address(CompositeField):
         )
 
     def __unicode__(self):
-        return ", ".join([self.recipient, self.street, self.street_number, util.format_psc(self.psc), self.city])
+        return get_address_string(self)
 
 
 class City(models.Model):
@@ -205,7 +209,7 @@ class Company(models.Model):
         return "%s" % self.name
 
     def company_address(self):
-        return ", ".join([self.address.recipient, self.address.street, self.address.street_number, util.format_psc(self.address.psc), self.address.city])
+        return get_address_string(self.address)
 
 
 class Subsidiary(models.Model):
@@ -229,8 +233,10 @@ class Subsidiary(models.Model):
         blank=False)
 
     def __unicode__(self):
-        return ", ".join([self.address.recipient, self.address.street, self.address.street_number, util.format_psc(self.address.psc), self.address.city])
+        return get_address_string(self.address)
 
+    def name(self):
+        return get_address_string(self.address)
 
 def validate_length(value, min_length=25):
     str_len = len(str(value))
@@ -1158,13 +1164,6 @@ class DeliveryBatch(models.Model):
     def __unicode__(self):
         return unicode(self.created)
 
-    def __init__(self, *args, **kwargs):
-        try:
-            self._meta.get_field('campaign').default = Campaign.objects.get(slug=settings.CAMPAIGN).pk
-        except ProgrammingError:
-            pass
-        return super(DeliveryBatch, self).__init__(*args, **kwargs)
-
 
     @transaction.atomic
     def add_packages(self, user_attendances=None):
@@ -1225,6 +1224,14 @@ class Invoice(models.Model):
         null=True,
         blank=True,
         )
+    company_pais_benefitial_fee = models.BooleanField(
+        verbose_name=_(u"Moje firma si přeje podpořit Auto*Mat a zaplatit benefiční startovné (450 Kč za osobu)."),
+        default=False,
+        )
+    total_amount = models.FloatField(
+        verbose_name=_(u"Celková částka"),
+        null=False,
+        default=0)
     invoice_pdf = models.FileField(
         verbose_name=_(u"PDF faktury"),
         upload_to='invoices',
@@ -1246,7 +1253,7 @@ class Invoice(models.Model):
         verbose_name=_(u"Pořadové číslo faktury"),
         null=False)
     order_number = models.BigIntegerField(
-        verbose_name=_(u"Číslo objednávky"),
+        verbose_name=_(u"Číslo objednávky (nepovinné)"),
         null=True,
         blank=True,
         )
@@ -1588,9 +1595,10 @@ class Payment(Transaction):
     session_id = models.CharField(
         verbose_name="Session ID",
         max_length=50,
+        unique=True,
         null=True,
         blank=True,
-        default="")
+        default=None)
     trans_id = models.CharField(
         verbose_name="Transaction ID",
         max_length=50, null=True, blank=True)
@@ -1645,13 +1653,7 @@ class Payment(Transaction):
             user = None
             username = None
         return u"id: %s, user: %s (%s), order_id: %s, session_id: %s, trans_id: %s, amount: %s, description: %s, created: %s, realized: %s, pay_type: %s, status: %s, error: %s" % (
-            self.pk, user, username, self.order_id, self.session_id, self.trans_id, self.amount, self.description, self.created, self.realized, self.pay_type, self.status, self.error)
-
-    def __unicode__(self):
-        if self.trans_id:
-            return self.trans_id
-        else:
-            return self.session_id
+            self.pk, user, username, self.order_id, getattr(self, "session_id", ""), self.trans_id, self.amount, self.description, self.created, self.realized, self.pay_type, self.status, self.error)
 
 
 class PaymentForm(forms.ModelForm):

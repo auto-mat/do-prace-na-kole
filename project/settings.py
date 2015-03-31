@@ -123,7 +123,7 @@ INSTALLED_APPS = (
     'fieldsignals',
     'timelog',
     'remote_ajax',
-    'adminsortable',
+    'adminsortable2',
     'reportlab',
     'dbbackup',
     'localeurl',

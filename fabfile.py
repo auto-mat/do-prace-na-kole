@@ -239,6 +239,11 @@ def rollback():
     run('cd %(path)s; mv releases/previous releases/current;' % env)
     run('cd %(path)s; mv releases/_previous releases/previous;' % env)
     restart_webserver()
+
+def update():
+    "Update requirements and other"
+    update_requirements()
+    restart_webserver()
     
 # Helpers. These are called by other functions rather than directly
 
@@ -272,10 +277,16 @@ def install_site():
     sudo('cd /etc/apache2/sites-available/; a2ensite %(project_name)s' % env) 
 
 def install_requirements():
-    "Install the required packages from the requirements file using pip"
+    "Install all new requirements"
+    require('release', provided_by=[deploy, setup])
+    run('cd %(path)s/releases/%(release)s; bower install' % env)
+    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt' % env)
+
+def update_requirements():
+    "Update all requirements"
     require('release', provided_by=[deploy, setup])
     run('cd %(path)s/releases/%(release)s; bower update' % env)
-    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt' % env)
+    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt --upgrade' % env)
 
 def symlink_current_release():
     "Symlink our current release"
