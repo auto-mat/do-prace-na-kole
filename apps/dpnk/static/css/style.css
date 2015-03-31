@@ -80,13 +80,19 @@ h5 a {
   margin: 2em 0 0 0;
 }
 .working_schedule td {
-  border: 1em solid #fff;
-  background: #ECECEC;
+  border: 1em solid #ffffff;
+  background: #ececec;
+}
+.working_schedule td.non-working-day {
+  background: #c0c0c0;
 }
 .working_schedule thead tr th {
   background-color: #ff6c00;
-  border: 1em solid #fff;
-  color: #fff;
+  border: 1em solid #ffffff;
+  color: #ffffff;
+}
+.working_schedule thead tr th.non-working-day {
+  background-color: #ff4000;
 }
 input[type=checkbox] {
   margin-right: 0.3em;
@@ -95,7 +101,7 @@ input[type=checkbox] {
   margin-bottom: 1em;
 }
 input:disabled + label {
-  color: #ccc;
+  color: #cccccc;
 }
 .user_info {
   margin-top: 1em;
@@ -107,7 +113,7 @@ input:disabled + label {
 .user_info .logout_django a {
   display: block;
   margin-top: 0.3em;
-  color: #fff;
+  color: #ffffff;
   width: 100%;
 }
 .lang_switch {
@@ -128,7 +134,7 @@ input:disabled + label {
   background: url(../img/thumbsup.png) no-repeat right 40%;
   display: inline-block;
   padding-right: 18px;
-  color: #4D4D4D;
+  color: #4d4d4d;
   margin-left: 0.3em;
 }
 .cyklistesobe img {
@@ -136,7 +142,7 @@ input:disabled + label {
   height: auto;
   margin-bottom: 1em;
 }
-@media (max-width: 768px) {
+@media (max-width:768px) {
   .logo_holder {
     float: left;
   }
