@@ -1164,13 +1164,6 @@ class DeliveryBatch(models.Model):
     def __unicode__(self):
         return unicode(self.created)
 
-    def __init__(self, *args, **kwargs):
-        try:
-            self._meta.get_field('campaign').default = Campaign.objects.get(slug=settings.CAMPAIGN).pk
-        except ProgrammingError:
-            pass
-        return super(DeliveryBatch, self).__init__(*args, **kwargs)
-
 
     @transaction.atomic
     def add_packages(self, user_attendances=None):

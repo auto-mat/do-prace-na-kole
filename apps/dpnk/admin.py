@@ -782,11 +782,27 @@ class TShirtSizeInline(EnhancedAdminMixin, SortableInlineAdminMixin, admin.Tabul
     extra = 0
 
 
+class DeliveryBatchForm(forms.ModelForm):
+    class Meta:
+        model = models.DeliveryBatch
+
+    def __init__(self, *args, **kwargs):
+        ret_val = super(DeliveryBatchForm, self).__init__(*args, **kwargs)
+        self.instance.campaign = models.Campaign.objects.get(slug=self.request.subdomain)
+        return ret_val
+
+
 class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
     list_display = ('campaign', 'created', 'package_transaction__count', 'customer_sheets__url', 'tnt_order__url')
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction__count', 't_shirt_sizes')
     #inlines = [PackageTransactionInline, ]
     list_filter = (CampaignFilter,)
+    form = DeliveryBatchForm
+
+    def get_form(self, request, *args, **kwargs):
+        form = super(DeliveryBatchAdmin, self).get_form(request, *args, **kwargs)
+        form.request = request
+        return form
 
     def package_transaction__count(self, obj):
         if not obj.pk:
@@ -796,9 +812,9 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
 
     def t_shirt_sizes(self, obj):
         if not obj.pk:
-            package_transactions = obj.campaign.user_attendances_for_delivery()
+            package_transactions = obj.campaign.user_attendances_for_delivery().select_related('t_shirt_size')
         else:
-            package_transactions = obj.packagetransaction_set.all()
+            package_transactions = obj.packagetransaction_set.all().select_related('t_shirt_size')
         t_shirts = {}
         for package_transaction in package_transactions:
             if package_transaction.t_shirt_size in t_shirts:
