@@ -2265,14 +2265,34 @@ class GpxFile(models.Model):
         verbose_name=_(u"GPX trasa"),
         upload_to='gpx_tracks',
         blank=False, null=False)
-    user_attendance = models.ForeignKey(
-        UserAttendance,
+    DIRECTIONS = [
+        ('trip_to', _(u"Tam")),
+        ('trip_from', _(u"Zpět")),
+    ]
+    trip_date = models.DateField(
+        verbose_name=_(u"Datum vykonání cesty"),
         null=False,
-        blank=False)
+        blank=False
+        )
+    direction = models.CharField(
+        verbose_name=_(u"Směr cesty"),
+        choices=DIRECTIONS,
+        max_length=50,
+        null=False, blank=False)
     trip = models.ForeignKey(
         Trip,
         null=True,
         blank=True)
+    user_attendance = models.ForeignKey(
+        UserAttendance,
+        null=False,
+        blank=False)
+
+    class Meta:
+        unique_together = (
+                ("user_attendance", "trip_date", "direction"),
+                ("trip", "direction"),
+                )
 
 
 #Signals:
@@ -2318,6 +2338,13 @@ def update_mailing_user(sender, instance, created, **kwargs):
     except UserProfile.DoesNotExist:
         pass
 
+@receiver(pre_save, sender=GpxFile)
+def set_trip(sender, instance, *args, **kwargs):
+    try:
+        trip = Trip.objects.get(user_attendance=instance.user_attendance, date=instance.trip_date)
+    except Trip.DoesNotExist:
+        trip = None
+    instance.trip = trip
 
 @receiver(post_save, sender=UserActionTransaction)
 @receiver(post_delete, sender=UserActionTransaction)

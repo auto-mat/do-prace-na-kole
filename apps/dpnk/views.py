@@ -32,6 +32,7 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.gzip import gzip_page
 from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase
 from django.contrib.auth.decorators import login_required as login_required_simple
@@ -1481,15 +1482,15 @@ class CombinedTracksKMLView(TemplateView):
         return context_data
 
 
-class CreateGpxFileView(SuccessMessageMixin, CreateView):
+class CreateGpxFileView(UserAttendanceViewMixin, SuccessMessageMixin, CreateView):
     form_class = forms.CreateGpxFileForm
     model = models.GpxFile
     template_name="base_generic_form.html"
     success_url = reverse_lazy("add_gpx_file")
 
-    def post(self, request, *args, **kwargs):
-        gpx_file = self.form_class.save(commit=False)
-        #ret_val = super(CreateGpxFileForm, self).post(request, args, kwargs)
-        #print ret_val
-        return ret_val
+    def get_initial(self):
+        return {'user_attendance': self.user_attendance}
 
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(CreateGpxFileView, self).dispatch(request, *args, **kwargs)

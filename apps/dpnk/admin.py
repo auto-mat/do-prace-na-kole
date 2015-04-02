@@ -942,6 +942,7 @@ class InvoiceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
 
 class GpxFileAdmin(admin.ModelAdmin):
     model = models.GpxFile
+    list_display = ('id', 'trip_date', 'direction', 'trip', 'user_attendance')
     raw_id_fields = ('user_attendance', 'trip')
 
 
