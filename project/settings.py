@@ -73,6 +73,8 @@ MIDDLEWARE_CLASSES = (
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'timelog.middleware.TimeLogMiddleware',
     'remote_ajax.middleware.XHRMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -86,6 +88,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'settings_context_processor.context_processors.settings',
 )
 AUTHENTICATION_BACKENDS = (
+    'oauth2_provider.backends.OAuth2Backend',
     'dpnk.auth.EmailModelBackend',
     "django_su.backends.SuBackend",
 )
