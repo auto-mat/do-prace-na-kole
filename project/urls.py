@@ -31,7 +31,7 @@ urlpatterns = patterns('',
     url(r'^', include("dpnk.urls")),
     url(r"^su/", include("django_su.urls")),
     url(r'^localeurl/', include('localeurl.urls')),
-    url(r'^oauth2/', include('provider.oauth2.urls', namespace = 'oauth2')),
+    url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if 'rosetta' in settings.INSTALLED_APPS:

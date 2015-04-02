@@ -135,8 +135,7 @@ INSTALLED_APPS = (
     'django_bleach',
     'analytical',
     'settings_context_processor',
-    'provider',
-    'provider.oauth2',
+    'oauth2_provider',
 )
 TEMPLATE_VISIBLE_SETTINGS = (
     'PAYU_POS_AUTH_KEY',
