@@ -584,24 +584,3 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'email')
-
-
-class CreateGpxFileForm(SubmitMixin, forms.ModelForm):
-    user_attendance = forms.CharField(
-        label=_(u"Uživatel"),
-        widget=HiddenInput(),
-    )
-
-    def clean_user_attendance(self):
-        return self.initial['user_attendance']
-
-
-    def __init__(self, request=None, *args, **kwargs):
-        ret_val = super(CreateGpxFileForm, self).__init__(*args, **kwargs)
-        self.resuest = request
-        return ret_val
-
-    class Meta:
-        model = models.GpxFile
-        fields = ('file', 'trip_date', 'direction', 'user_attendance')
-

@@ -1480,17 +1480,3 @@ class CombinedTracksKMLView(TemplateView):
         user_attendances = models.UserAttendance.objects.filter(campaign__slug=self.request.subdomain, **filter_params).kml()
         context_data['user_attendances'] = user_attendances
         return context_data
-
-
-class CreateGpxFileView(UserAttendanceViewMixin, SuccessMessageMixin, CreateView):
-    form_class = forms.CreateGpxFileForm
-    model = models.GpxFile
-    template_name="base_generic_form.html"
-    success_url = reverse_lazy("add_gpx_file")
-
-    def get_initial(self):
-        return {'user_attendance': self.user_attendance}
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super(CreateGpxFileView, self).dispatch(request, *args, **kwargs)

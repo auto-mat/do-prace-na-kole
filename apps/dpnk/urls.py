@@ -123,10 +123,6 @@ urlpatterns = patterns(
     url(r'^tracks/(?P<city_slug>[^&]+)/$',
         views.CombinedTracksKMLView.as_view()
         ),
-    url(r'^add_gpx_file/$',
-        views.CreateGpxFileView.as_view(),
-        name="add_gpx_file",
-        ),
 
 
     # company admin:

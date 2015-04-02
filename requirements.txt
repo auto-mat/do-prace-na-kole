@@ -46,3 +46,4 @@ django-cache-utils
 django-settings-context-processor
 django-rosetta
 django-oauth-toolkit
+djangorestframework

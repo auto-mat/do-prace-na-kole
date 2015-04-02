@@ -5,6 +5,7 @@ admin.autodiscover()
 from dpnk.views import questionnaire_results, questionnaire_answers, questions, answers
 from dpnk import views
 from django.conf.urls.static import static
+from dpnk.rest import router
 
 from django.conf import settings
 
@@ -32,6 +33,8 @@ urlpatterns = patterns('',
     url(r"^su/", include("django_su.urls")),
     url(r'^localeurl/', include('localeurl.urls')),
     url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    url(r'^rest/', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if 'rosetta' in settings.INSTALLED_APPS:
