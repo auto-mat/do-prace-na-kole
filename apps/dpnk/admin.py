@@ -960,7 +960,7 @@ create_batch.short_description = _(u"Vytvořit dávku z vybraných uživatelů")
 
 class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
     list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city',  'payment_created')
-    list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter))
+    list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter), 'transactions__status')
     actions = (create_batch, )
     def get_actions(self, request):
         return {'create_batch': (create_batch, 'create_batch', create_batch.short_description) }

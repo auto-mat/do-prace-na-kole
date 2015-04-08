@@ -1435,6 +1435,7 @@ class PackageTransaction(Transaction):
         PACKAGE_SENT = 20004
         PACKAGE_DELIVERY_CONFIRMED = 20005
         PACKAGE_DELIVERY_DENIED = 20006
+        PACKAGE_RECLAIM = 20007
 
     STATUS = (
         (Status.PACKAGE_NEW, 'Nový'),
@@ -1443,6 +1444,7 @@ class PackageTransaction(Transaction):
         (Status.PACKAGE_SENT, 'Odeslán'),
         (Status.PACKAGE_DELIVERY_CONFIRMED, 'Doručení potvrzeno'),
         (Status.PACKAGE_DELIVERY_DENIED, 'Dosud nedoručeno'),
+        (Status.PACKAGE_RECLAIM, 'Reklamován'),
         )
 
     shipped_statuses = [
