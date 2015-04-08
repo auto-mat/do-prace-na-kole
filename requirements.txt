@@ -1,4 +1,4 @@
-Django
+Django<1.8
 django-import-export
 -e git+https://github.com/digi604/django-smart-selects.git#egg=django-smart-selects
 psycopg2
