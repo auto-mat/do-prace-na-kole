@@ -995,7 +995,7 @@ class UserProfile(models.Model):
         blank=True,
         )
     administrated_cities = models.ManyToManyField(
-        'CityInCampaign',
+        'City',
         related_name="city_admins",
         null=True,
         blank=True)
@@ -1034,7 +1034,7 @@ class UserProfile(models.Model):
         return self.name()
 
     def competition_edition_allowed(self, competition):
-        return not competition.city or not self.administrated_cities.filter(campaign=competition.campaign, city=competition.city).exists()
+        return not competition.city or not self.administrated_cities.filter(city=competition.city).exists()
 
     def profile_complete(self):
         return self.sex and self.first_name() and self.last_name() and self.user.email
