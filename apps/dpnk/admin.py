@@ -39,7 +39,7 @@ from admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin
 import datetime
 import results
 # Models
-from filters import CampaignFilter
+from filters import CampaignFilter, CityCampaignFilter, SubsidiaryCampaignFilter, TripCampaignFilter
 from dpnk import models, mailing
 from django import forms
 from related_admin import RelatedFieldAdmin
@@ -109,7 +109,7 @@ class CompanyAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.M
     queryset_city_param = 'subsidiaries__city__in'
     list_display = ('name', 'subsidiaries_text', 'ico', 'dic', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
     inlines = [SubsidiaryInline, ]
-    list_filter = ['subsidiaries__teams__campaign', 'subsidiaries__city']
+    list_filter = [CityCampaignFilter, 'subsidiaries__city']
     readonly_fields = ['subsidiary_links']
     search_fields = ('name',)
     list_max_show_all = 10000
@@ -142,7 +142,7 @@ class CompanyAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.M
 class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.ModelAdmin):
     list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline, ]
-    list_filter = ['teams__campaign', 'city']
+    list_filter = [SubsidiaryCampaignFilter, 'city']
     search_fields = ('address_recipient', 'company__name', 'address_street', )
     raw_id_fields = ('company',)
     list_max_show_all = 10000
@@ -746,7 +746,7 @@ class TripAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
     list_display = ('user_attendance', 'date', 'trip_from', 'trip_to','is_working_ride_from', 'is_working_ride_to', 'distance_from', 'distance_to', 'id')
     search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'user_attendance__team__subsidiary__company__name')
     raw_id_fields = ('user_attendance',)
-    list_filter = ('user_attendance__campaign', 'user_attendance__team__subsidiary__city', 'distance_from')
+    list_filter = (TripCampaignFilter, 'user_attendance__team__subsidiary__city', 'distance_from')
     actions = (show_distance_trips,)
     list_max_show_all = 100000
 
