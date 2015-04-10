@@ -278,7 +278,8 @@ class UserAttendanceForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UserAttendanceForm, self).__init__(*args, **kwargs)
-        self.fields['t_shirt_size'].required = False
+        if 't_shirt_size' in self.fields:
+            self.fields['t_shirt_size'].required = False
 
 
 class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
