@@ -32,7 +32,7 @@ from adminsortable2.admin import SortableInlineAdminMixin
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter, AllValuesComboFilter
 from import_export import resources, fields
-from import_export.admin import ImportExportModelAdmin
+from import_export.admin import ExportMixin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.admin import OSMGeoAdmin
 from admin_mixins import ReadOnlyModelAdminMixin
@@ -105,7 +105,7 @@ class CompanyForm(forms.ModelForm):
         self.fields['address_street'].required = False
 
 
-class CompanyAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
+class CompanyAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
     list_display = ('name', 'subsidiaries_text', 'ico', 'dic', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
     inlines = [SubsidiaryInline, ]
     list_filter = ['subsidiaries__teams__campaign', 'subsidiaries__city']
@@ -147,7 +147,7 @@ class CityAdminMixin:
         return queryset.filter(**kwargs)
 
 
-class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
+class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.ModelAdmin):
     list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline, ]
     list_filter = ['teams__campaign', 'city']
@@ -184,7 +184,7 @@ class QuestionInline(SortableInlineAdminMixin, EnhancedAdminMixin, admin.Tabular
     extra = 0
 
 
-class CompetitionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedFieldAdmin):
+class CompetitionAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
     list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'public_answers', 'date_from', 'date_to', 'entry_after_beginning_days', 'city', 'sex', 'company__name', 'competition_results_link', 'questionnaire_results_link', 'questionnaire_link', 'draw_link', 'get_competitors_count', 'url', 'id')
     filter_horizontal = ('team_competitors', 'company_competitors', 'user_attendance_competitors',)
     search_fields = ('name', 'company__name', 'slug')
@@ -386,7 +386,7 @@ def remove_mailing_id(modeladmin, request, queryset):
 remove_mailing_id.short_description = _(u"Odstranit mailing ID a hash")
 
 
-class UserProfileAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     list_display = ('user', '__unicode__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
     list_filter = ('userattendance__campaign', 'language', 'sex', 'userattendance__team__subsidiary__city', 'userattendance__approved_for_team')
     filter_horizontal = ('administrated_cities',)
@@ -394,7 +394,7 @@ class UserProfileAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     actions = (remove_mailing_id,)
 
 
-class UserAdmin(ImportExportModelAdmin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
+class UserAdmin(ExportMixin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'userprofile_administrated_cities', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name', ]
@@ -568,7 +568,7 @@ class UserAttendanceResource(resources.ModelResource):
             return payment.realized
 
 
-class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ImportExportModelAdmin, OSMGeoAdmin):
+class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixin, OSMGeoAdmin):
     list_display = ('id', 'name_for_trusted', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_length', 'created')
     list_filter = (CampaignFilter, ('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('approved_for_team', AllValuesComboFilter), ('t_shirt_size', RelatedFieldComboFilter), 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, ('team__member_count', AllValuesComboFilter), PackageConfirmationFilter, ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter), ('userprofile__sex', AllValuesComboFilter))
     raw_id_fields = ('userprofile', 'team')
@@ -598,7 +598,7 @@ def recalculate_team_member_count(modeladmin, request, queryset):
 recalculate_team_member_count.short_description = "Přepočítat počet členů týmu"
 
 
-class TeamAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, RelatedFieldAdmin):
+class TeamAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
     list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'member_count', 'campaign', 'get_length', 'get_frequency', 'id', )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name']
     list_filter = [CampaignFilter, 'subsidiary__city', 'member_count']
@@ -727,7 +727,7 @@ class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
             return mark_safe(u"<a href='%s'>%s</a>" % (obj.attachment.url, obj.attachment))
 
 
-class QuestionAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
+class QuestionAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
     form = models.QuestionForm
     list_display = ('__unicode__', 'text', 'type', 'order', 'date', 'competition', 'answers_link', 'id', )
     ordering = ('order', 'date',)
@@ -752,7 +752,7 @@ def show_distance_trips(modeladmin, request, queryset):
 show_distance_trips.short_description = _(u"Ukázat ujetou vzdálenost")
 
 
-class TripAdmin(EnhancedModelAdminMixin, ImportExportModelAdmin, admin.ModelAdmin):
+class TripAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
     list_display = ('user_attendance', 'date', 'trip_from', 'trip_to','is_working_ride_from', 'is_working_ride_to', 'distance_from', 'distance_to', 'id')
     search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'user_attendance__team__subsidiary__company__name')
     raw_id_fields = ('user_attendance',)
