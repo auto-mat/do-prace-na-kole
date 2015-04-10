@@ -17,6 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from django.contrib import admin
 
 class ReadOnlyModelAdminMixin(object):
     """ModelAdmin class that prevents modifications through the admin.
@@ -43,3 +44,15 @@ class ReadOnlyModelAdminMixin(object):
  
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+class CityAdminMixin(object):
+    queryset_city_param = 'city__in'
+    def queryset(self, request):
+        queryset = super(admin.ModelAdmin, self).queryset(request)
+        if request.user.is_superuser:
+            return queryset
+        kwargs = { self.queryset_city_param: request.user.userprofile.administrated_cities.all()}
+        return queryset.filter(**kwargs)
+
+

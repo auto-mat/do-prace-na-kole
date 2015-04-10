@@ -35,7 +35,7 @@ from import_export import resources, fields
 from import_export.admin import ExportMixin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.admin import OSMGeoAdmin
-from admin_mixins import ReadOnlyModelAdminMixin
+from admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin
 import datetime
 import results
 # Models
@@ -105,7 +105,8 @@ class CompanyForm(forms.ModelForm):
         self.fields['address_street'].required = False
 
 
-class CompanyAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
+class CompanyAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.ModelAdmin):
+    queryset_city_param = 'subsidiaries__city__in'
     list_display = ('name', 'subsidiaries_text', 'ico', 'dic', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
     inlines = [SubsidiaryInline, ]
     list_filter = ['subsidiaries__teams__campaign', 'subsidiaries__city']
@@ -115,7 +116,8 @@ class CompanyAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
     form = CompanyForm
 
     def queryset(self, request):
-        return models.Company.objects.annotate(user_count=Sum('subsidiaries__teams__member_count'))
+        queryset = super(CompanyAdmin, self).queryset(request)
+        return queryset.annotate(user_count=Sum('subsidiaries__teams__member_count'))
 
     def user_count(self, obj):
         return obj.user_count
@@ -135,16 +137,6 @@ class CompanyAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
                 ['<a href="%s">%s</a>' % (reverse('admin:dpnk_subsidiary_change', args=(u.pk,)), str(u))
                     for u in models.Subsidiary.objects.filter(company=obj)]))
     subsidiary_links.short_description = 'Pobočky'
-
-
-class CityAdminMixin:
-    queryset_param = 'city__in'
-    def queryset(self, request):
-        queryset = super(admin.ModelAdmin, self).queryset(request)
-        if request.user.is_superuser:
-            return queryset
-        kwargs = { self.queryset_param: [cic.city for cic in request.user.userprofile.administrated_cities.all()]}
-        return queryset.filter(**kwargs)
 
 
 class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.ModelAdmin):
@@ -568,7 +560,8 @@ class UserAttendanceResource(resources.ModelResource):
             return payment.realized
 
 
-class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixin, OSMGeoAdmin):
+class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixin, CityAdminMixin, OSMGeoAdmin):
+    queryset_city_param = 'team__subsidiary__city__in'
     list_display = ('id', 'name_for_trusted', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_length', 'created')
     list_filter = (CampaignFilter, ('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('approved_for_team', AllValuesComboFilter), ('t_shirt_size', RelatedFieldComboFilter), 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, ('team__member_count', AllValuesComboFilter), PackageConfirmationFilter, ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter), ('userprofile__sex', AllValuesComboFilter))
     raw_id_fields = ('userprofile', 'team')
@@ -587,10 +580,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixi
 
     def queryset(self, request):
         queryset = super(UserAttendanceAdmin, self).queryset(request)
-        query = Q()
-        for city_in_campaign in request.user.userprofile.administrated_cities.all():
-           query = query | (Q(team__subsidiary__city=city_in_campaign.city) & Q(campaign=city_in_campaign.campaign))
-        return queryset.filter(query)#.select_related('userprofile__user', 'team__subsidiary__company', 'campaign__cityincampaigns', 't_shirt_size', 'team__subsidiary__city', 'campaign')
+        return queryset#.select_related('userprofile__user', 'team__subsidiary__company', 'campaign__cityincampaigns', 't_shirt_size', 'team__subsidiary__city', 'campaign')
 
 def recalculate_team_member_count(modeladmin, request, queryset):
     for team in queryset.all():
