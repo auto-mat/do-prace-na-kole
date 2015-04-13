@@ -784,11 +784,22 @@ class DeliveryBatchForm(forms.ModelForm):
 
 
 class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
-    list_display = ('campaign', 'created', 'package_transaction__count', 'customer_sheets__url', 'tnt_order__url')
+    list_display = ['campaign', 'created', 'package_transaction__count', 'customer_sheets__url', 'tnt_order__url']
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction__count', 't_shirt_sizes')
     #inlines = [PackageTransactionInline, ]
     list_filter = (CampaignFilter,)
     form = DeliveryBatchForm
+
+    def get_list_display(self, request):
+        for t_size in models.TShirtSize.objects.filter(campaign__slug=request.subdomain):
+            field_name = "t_shirt_size_" + str(t_size.pk)
+            self.list_display.append(field_name)
+            def t_shirt_size(obj, t_size_id = t_size.pk):
+                return obj.packagetransaction_set.filter(t_shirt_size__pk=t_size_id).aggregate(Count('t_shirt_size'))['t_shirt_size__count']
+            t_shirt_size.short_description = t_size.name
+            setattr(self, field_name, t_shirt_size)
+        return self.list_display
+
 
     def get_form(self, request, *args, **kwargs):
         form = super(DeliveryBatchAdmin, self).get_form(request, *args, **kwargs)
