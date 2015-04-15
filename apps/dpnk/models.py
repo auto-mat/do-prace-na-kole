@@ -709,12 +709,13 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             return self.campaign.admission_fee_company
 
     def payment(self):
-        if self.team and self.team.subsidiary and self.admission_fee() == 0:
-            return {'payment': None,
-                    'status': 'no_admission',
-                    'status_description': _(u'neplatí se'),
-                    'class': u'success',
-                    }
+        #TODO: commented out in DPNK2015 because it is to power demanding for unused feature
+        #if self.team and self.team.subsidiary and self.admission_fee() == 0:
+        #    return {'payment': None,
+        #            'status': 'no_admission',
+        #            'status_description': _(u'neplatí se'),
+        #            'class': u'success',
+        #            }
 
         try:
             payment = self.payments().filter(status__in=Payment.done_statuses).latest('id')
