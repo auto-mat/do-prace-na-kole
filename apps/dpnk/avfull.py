@@ -127,7 +127,7 @@ def make_avfull(outfile, delivery_batch):
             sequence_number = package_transaction.pk
 
             serviceID = "15N"
-            weight = 0.25
+            weight = user_attendance.campaign.package_weight
             sender_address = {
                 "name": "OP Automat",
                 "street1": "Korytna 1538/4",
@@ -138,7 +138,7 @@ def make_avfull(outfile, delivery_batch):
                 }
             receivers_address = {
                 "name": u"%s, %s" % (subsidiary.company, subsidiary.address_recipient),
-                "contact_name": user_attendance,
+                "contact_name": user_attendance.userprofile.user.get_full_name(),
                 "phone": user_attendance.userprofile.telephone.replace(" ", ""),
                 "street1": u"%s %s" % (subsidiary.address_street, subsidiary.address_street_number),
                 "town": subsidiary.address_city,
@@ -179,9 +179,9 @@ def make_avfull(outfile, delivery_batch):
                 package_type_seq_number=1,
                 package_type_desc=user_attendance.campaign.slug,
                 package_type_count=1,
-                package_height=1,
-                package_width=26,
-                package_depth=35,
+                package_height=user_attendance.campaign.package_height,
+                package_width=user_attendance.campaign.package_width,
+                package_depth=user_attendance.campaign.package_depth,
                 package_total_weight_kgs=weight,
                 )+"\r\n"))
 

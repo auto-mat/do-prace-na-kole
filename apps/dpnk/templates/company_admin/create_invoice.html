@@ -1,16 +1,32 @@
 {% extends "base_generic_company_admin_form.html" %}
 {% load crispy_forms_tags %}
 {% load i18n %}
+{% load dpnk_tags %}
 
 {% block content %}
 {% include "messages_include.html" %}
 
+{% if payments.count > 0 %}
+{% wp_article 10816 %}
 {% blocktrans count competitors_count=competitors_count %}
-Vytvořit fakturu pro následujícho soutěžícího: {{ competitors_names }}
+Vytvořit fakturu pro následujícho soutěžícího:
 {% plural %}
-Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících: {{ competitors_names }}
+Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících:
 {% endblocktrans %}
-<br/>
+<table id="pay_for" class="table table-bordered table-hover table-condensed">
+   <thead>
+      <tr>
+         <th>{% trans "Účastník" %}</th>
+         <th>{% trans "Částka" %}</th>
+      </tr>
+   </thead>
+   {% for payment in payments %}
+   <tr>
+      <td>{{ payment.user_attendance.name_for_trusted }}</td>
+      <td>{{ payment.amount }} Kč</td>
+   </tr>
+   {% endfor %}
+</table>
 <br/>
 {{ company }}
 <br/>
@@ -23,7 +39,11 @@ Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících: 
 <br/>
 {% trans "DIČ: " %}{{ company.dic }}
 <br/>
-<a class="btn btn-block btn-primary" href="{% url 'edit_company' %}">{% trans "Změnit údaje" %}</a>
-
+<a class="btn btn-primary" href="{% url 'edit_company' %}">{% trans "Změnit adresu firmy" %}</a>
+<hr/>
 {{ block.super }}
+{% else %}
+<div class="alert alert-info">{% trans "Nemáte žádné soutěžící, pro které by bylo možné vytvořit fakturu" %}</div>
+{% endif %}
+
 {% endblock %}

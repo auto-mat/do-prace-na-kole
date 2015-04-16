@@ -165,6 +165,7 @@ def dpnk2014():
 
 def dpnk():
     "Use the local virtual server"
+    api.local("[ `git rev-parse --abbrev-ref HEAD` = 'master' ] || (read -p 'Do you want to deploy non-master branch?' ans && [ $ans = 'yes' ])")
     env.hosts = ['auto-mat.cz']
     env.path = '/home/aplikace/dpnk-2015'
     env.user = 'pdlouhy'
@@ -201,6 +202,7 @@ def deploy():
     """
     require('hosts', provided_by=[local])
     require('path')
+    api.local('test -e fabfile.py')
 
     import time
     env.release = api.local("git rev-parse --short HEAD", capture=True)
@@ -237,6 +239,11 @@ def rollback():
     run('cd %(path)s; mv releases/previous releases/current;' % env)
     run('cd %(path)s; mv releases/_previous releases/previous;' % env)
     restart_webserver()
+
+def update():
+    "Update requirements and other"
+    update_requirements()
+    restart_webserver()
     
 # Helpers. These are called by other functions rather than directly
 
@@ -244,7 +251,6 @@ def upload_tar_from_git():
     require('release', provided_by=[deploy, setup])
     "Create an archive from the current Git master branch and upload it"
     api.local('git archive --format=tar HEAD | gzip > %(release)s.tar.gz' % env)
-    run('rm %(path)s/releases/%(release)s -rf' % env)
     run('mkdir %(path)s/releases/%(release)s' % env)
     put('%(release)s.tar.gz' % env, '%(path)s/packages/' % env)
     run('cd %(path)s/releases/%(release)s && tar zxf ../../packages/%(release)s.tar.gz' % env)
@@ -271,10 +277,16 @@ def install_site():
     sudo('cd /etc/apache2/sites-available/; a2ensite %(project_name)s' % env) 
 
 def install_requirements():
-    "Install the required packages from the requirements file using pip"
+    "Install all new requirements"
     require('release', provided_by=[deploy, setup])
     run('cd %(path)s/releases/%(release)s; bower install' % env)
     run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt' % env)
+
+def update_requirements():
+    "Update all requirements"
+    require('release', provided_by=[deploy, setup])
+    run('cd %(path)s/releases/%(release)s; bower update' % env)
+    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt --upgrade' % env)
 
 def symlink_current_release():
     "Symlink our current release"

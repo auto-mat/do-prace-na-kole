@@ -29,8 +29,10 @@ import results
 from django.shortcuts import render_to_response
 from django.contrib import auth
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.gzip import gzip_page
 from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase
 from django.contrib.auth.decorators import login_required as login_required_simple
@@ -130,18 +132,20 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
     def get(self, request, *args, **kwargs):
         ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
         if self.user_attendance.team:
-            if self.current_view not in ('upravit_profil',):
+            if self.registration_phase not in ('upravit_profil',):
                 if self.user_attendance.approved_for_team == 'undecided':
                     messages.warning(request, mark_safe(_(u"Vaše členství v týmu %(team)s čeká na vyřízení. Pokud to trvá příliš dlouho, můžete zkusit <a href='%(address)s'>znovu požádat o ověření členství</a>.") % {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
                 elif self.user_attendance.approved_for_team == 'denied':
                     messages.error(request, mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')))
                 elif len(self.user_attendance.team.unapproved_members()) > 0:
-                    messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('zmenit_tym')))
-                if self.user_attendance.is_libero():
-                    messages.warning(request, mark_safe(_(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce! <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu.</li><li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete sehnat spolupracovníky, použijte seznamku.</li></ul>') % {'invite_url': reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym')}))
+                    messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members')))
+                elif self.user_attendance.is_libero():
+                    #TODO: get WP slug for city
+                    messages.warning(request, mark_safe(_(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce! <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu.</li><li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete sehnat spolupracovníky, použijte <a href="http://www.dopracenakole.net/locations/%(city)s/seznamka" target="_blank">seznamku</a>.</li></ul>') % {'invite_url':
+                        reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym'), 'city': self.user_attendance.team.subsidiary.city.slug}))
 
-        if self.user_attendance.payment_status() not in ('done', 'none',) and self.current_view not in ('typ_platby',):
-            messages.info(request, mark_safe(_(u'Vaše platba typu %(payment_type)s ještě nebyla vyřízena. Můžete <a href="%(url)s">zadat novou platbu.</a>') % {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('platba')}))
+        if self.user_attendance.payment_status() not in ('done', 'none',) and self.registration_phase not in ('typ_platby',):
+            messages.info(request, mark_safe(_(u'Vaše platba typu %(payment_type)s ještě nebyla vyřízena. Můžete <a href="%(url)s">zadat novou platbu.</a>') % {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('typ_platby')}))
 
         company_admin = self.user_attendance.is_company_admin()
         if company_admin and company_admin.company_admin_approved == 'undecided':
@@ -163,7 +167,7 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(RegistrationViewMixin, self).get_context_data(*args, **kwargs)
-        context_data['current_view'] = self.current_view
+        context_data['registration_phase'] = self.registration_phase
         return context_data
 
     def get_success_url(self):
@@ -181,7 +185,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
     next_url = 'upravit_trasu'
     prev_url = 'upravit_profil'
     title = _(u'Změnit tým')
-    current_view = "zmenit_tym"
+    registration_phase = "zmenit_tym"
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(ChangeTeamView, self).get_context_data(*args, **kwargs)
@@ -402,7 +406,7 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
     template_name = 'registration/team_invitation.html'
     form_class = forms.ConfirmTeamInvitationForm
     success_url = reverse_lazy('zmenit_tym')
-    current_view = 'zmenit_tym'
+    registration_phase = 'zmenit_tym'
     title = _(u"Pozvánka do týmu")
 
     def get_context_data(self, **kwargs):
@@ -441,7 +445,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
     template_name = 'registration/payment_type.html'
     form_class = PaymentTypeForm
     title = _(u"Platba")
-    current_view = "typ_platby"
+    registration_phase = "typ_platby"
     next_url = "working_schedule"
     prev_url = "zmenit_triko"
 
@@ -491,27 +495,6 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         return super(PaymentTypeView, self).form_valid(form)
 
 
-@never_cache
-@cache_control(max_age=0, no_cache=True, no_store=True)
-def header_bar(request, campaign_slug):
-    company_admin = None
-    entered_competition = None
-    campaign = Campaign.objects.get(slug=campaign_slug)
-    if request.user.is_authenticated():
-        company_admin = models.get_company_admin(request.user, campaign)
-        try:
-            entered_competition = models.UserAttendance.objects.get(campaign=campaign, userprofile__user=request.user).entered_competition
-        except UserAttendance.DoesNotExist:
-            entered_competition = None
-    return render_to_response('registration/header_bar.html', {
-        'is_authentificated': request.user.is_authenticated(),
-        'company_admin': company_admin,
-        'user': request.user,
-        'entered_competition': entered_competition,
-        'registration_phase_active': campaign.phase("registration").is_actual()
-        }, context_instance=RequestContext(request))
-
-
 class PaymentView(UserAttendanceViewMixin, TemplateView):
     template_name = 'registration/payment.html'
 
@@ -524,7 +507,7 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
         context = super(PaymentView, self).get_context_data(**kwargs)
 
         if self.user_attendance.payment()['status'] == 'no_admission':
-            return redirect(wp_reverse('profil'))
+            return redirect(reverse('profil'))
         uid = self.request.user.id
         order_id = '%s-1' % uid
         session_id = "%sJ%d" % (order_id, int(time.time()))
@@ -537,23 +520,35 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
                     description="Ucastnicky poplatek Do prace na kole")
         p.save()
         logger.info(u'Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s' % (uid, order_id, session_id, self.user_attendance, self.user_attendance.userprofile.user.username, p.status))
-        messages.add_message(self.request, messages.WARNING, _(u"Platba vytvořena, čeká se na její potvrzení"), fail_silently=True)
         # Render form
         profile = self.user_attendance.userprofile
-        context['firstname'] = profile.user.first_name  # firstname
-        context['surname'] = profile.user.last_name  # surname
-        context['email'] = profile.user.email  # email
-        context['amount'] = self.user_attendance.admission_fee()
-        context['amount_hal'] = int(self.user_attendance.admission_fee() * 100)  # v halerich
-        context['description'] = "Ucastnicky poplatek Do prace na kole"
+        firstname = unidecode(profile.user.first_name)  # firstname
+        lastname = unidecode(profile.user.last_name)  # surname
+        email = profile.user.email  # email
+        amount = self.user_attendance.admission_fee()
+        amount_hal = int(self.user_attendance.admission_fee() * 100)  # v halerich
+        description = "Ucastnicky poplatek Do prace na kole"
+        client_ip = util.get_client_ip(self.request)
+        timestamp = str(int(time.time()))
+        language_code = self.user_attendance.userprofile.language
+
+        context['firstname'] = firstname
+        context['surname'] = lastname
+        context['email'] = email
+        context['amount'] = amount
+        context['amount_hal'] = amount_hal
+        context['description'] = description
         context['order_id'] = order_id
-        context['client_ip'] = util.get_client_ip(self.request)
+        context['client_ip'] = client_ip
+        context['language_code'] = language_code
         context['session_id'] = session_id
+        context['ts'] = timestamp
+        context['sig'] = make_sig((settings.PAYU_POS_ID, session_id, settings.PAYU_POS_AUTH_KEY, str(amount_hal), description, order_id, firstname, lastname, email, language_code, client_ip, timestamp))
         return context
 
 
-class PaymentResult(RegistrationViewMixin, TemplateView):
-    current_view = 'typ_platby'
+class PaymentResult(UserAttendanceViewMixin, TemplateView):
+    registration_phase = 'typ_platby'
     title = "Stav platby"
     template_name = 'registration/payment_result.html'
 
@@ -588,12 +583,13 @@ class PaymentResult(RegistrationViewMixin, TemplateView):
             context_data['payment_message'] = _(u"Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
         else:
             context_data['payment_message'] = _(u"Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
+        context_data['registration_phase'] = self.registration_phase
         return context_data
 
 
 def make_sig(values):
     key1 = settings.PAYU_KEY_1
-    return hashlib.md5("".join(values+(key1,))).hexdigest()
+    return hashlib.md5((u"".join(values+(key1,))).encode()).hexdigest()
 
 
 def check_sig(sig, values):
@@ -652,25 +648,6 @@ def payment_status(request):
     return http.HttpResponse("OK")
 
 
-@login_required_simple
-@must_be_competitor
-def profile_access(request, user_attendance=None):
-    if user_attendance.team:
-        city_redirect = "/" + user_attendance.team.subsidiary.city.slug
-    else:
-        city_redirect = ""
-
-    if user_attendance.team:
-        city = user_attendance.team.subsidiary.city
-    else:
-        city = None
-
-    return render_to_response('registration/profile_access.html', {
-        'city': city,
-        'city_redirect': city_redirect
-        }, context_instance=RequestContext(request))
-
-
 def trip_active_last7(day, today):
     return (
         (day <= today)
@@ -725,8 +702,14 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
 
             trip.trip_to = trip_to
             trip.trip_from = trip_from
-            trip.distance_to = max(min(float(request.POST.get('distance_to-' + str(day), 0)), 1000), 0)
-            trip.distance_from = max(min(float(request.POST.get('distance_from-' + str(day), 0)), 1000), 0)
+            try:
+                trip.distance_to = max(min(float(request.POST.get('distance_to-' + str(day), None)), 1000), 0)
+            except (ValueError, TypeError):
+                trip.distance_to = None
+            try:
+                trip.distance_from = max(min(float(request.POST.get('distance_from-' + str(day), None)), 1000), 0)
+            except (ValueError, TypeError):
+                trip.distance_from = None
             logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s, created: %s' % (
                 request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to, created))
             trip.dont_recalculate = True
@@ -748,13 +731,16 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         distance = 0
         trip_count = 0
         working_rides_count = 0
-        default_distance = self.user_attendance.get_distance()
+        has_active_trip = False
+        default_distance = self.user_attendance.get_distance(1)
         for i, d in enumerate(days):
             if d in trips:
                 working_rides_count += (1 if trips[d].is_working_ride_to else 0) + (1 if trips[d].is_working_ride_from else 0)
             cd = {}
             cd['day'] = d
             cd['trips_active'] = trip_active(d, today)
+            if cd['trips_active']:
+                has_active_trip = True
             if d in trips:
                 cd['working_ride_to'] = trips[d].is_working_ride_to
                 cd['working_ride_from'] = trips[d].is_working_ride_from
@@ -780,79 +766,15 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
             calendar.append(cd)
         return {
             'calendar': calendar,
+            'has_active_trip': has_active_trip,
             'user_attendance': self.user_attendance,
             'minimum_percentage': self.user_attendance.campaign.minimum_percentage,
         }
 
 
-@login_required_simple
-@must_be_competitor
-@never_cache
-@cache_control(max_age=0, no_cache=True, no_store=True)
-def profile(request, user_attendance=None, success_url='competition_profile'):
-    if user_attendance.entered_competition():
-        return redirect(wp_reverse(success_url))
-    if request.POST and request.POST['enter_competition'] == 'true':
-        user_action = models.UserActionTransaction(
-            status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED,
-            user_attendance=user_attendance,
-            realized=datetime.datetime.now(),
-        )
-        user_action.save()
-        return redirect(wp_reverse(success_url))
-
-    # Render profile
-    payment_status = user_attendance.payment_status()
-    if user_attendance.team:
-        team_members_count = user_attendance.team.members().count()
-    else:
-        team_members_count = 0
-    request.session['invite_success_url'] = 'profil'
-
-    is_package_shipped = user_attendance.package_shipped() is not None
-    is_package_delivered = user_attendance.package_delivered() is not None
-
-    admissions_phase = user_attendance.campaign.phase("admissions")
-
-    cant_enter_competition_reasons = {
-        'no_personal_data': _(u"mít vyplněné osobní údaje"),  # Translators: Začít soutěžit bude moci až budete ...
-        'no_team': _(u"mít vybraný tým"),  # Translators: Začít soutěžit bude moci až budete ...
-        'not_approved_for_team': _(u"mít odsouhlasené členství v týmu"),  # Translators: Začít soutěžit bude moci až budete ...
-        'unapproved_team_members': _(u"mít odsouhlasené všechny členy týmu"),  # Translators: Začít soutěžit bude moci až budete ...
-        'not_enough_team_members': _(u"mít víc než jen jednoho člena týmu"),  # Translators: Začít soutěžit bude moci až budete ...
-        'not_t_shirt': _(u"mít vyplněnou velikost trika"),  # Translators: Začít soutěžit bude moci až budete ...
-        'not_paid': _(u"mít zaplaceno"),  # Translators: Začít soutěžit bude moci až budete ...
-        True: 'can_enter',
-    }
-    cant_enter_competition_reason = cant_enter_competition_reasons[user_attendance.can_enter_competition()]
-
-    try:
-        competition_entry_phase = user_attendance.campaign.phase_set.get(type="compet_entry")
-    except models.Phase.DoesNotExist:
-        competition_entry_phase = None
-    competition_entry_phase_is_active = competition_entry_phase and competition_entry_phase.is_actual()
-    return render_to_response('registration/profile.html', {
-        'active': user_attendance.userprofile.user.is_active,
-        'superuser': request.user.is_superuser,
-        'user': request.user,
-        'profile': user_attendance,
-        'team': user_attendance.team,
-        'payment_status': payment_status,
-        'payment_type': user_attendance.payment_type(),
-        'team_members_count': team_members_count,
-        'approved_for_team': user_attendance.approved_for_team,
-        'is_package_shipped': is_package_shipped,
-        'is_package_delivered': is_package_delivered,
-        'admissions_phase': admissions_phase,
-        'cant_enter_competition_reason': cant_enter_competition_reason,
-        'competition_entry_active': competition_entry_phase_is_active,
-        'campaign_slug': user_attendance.campaign.slug,
-        }, context_instance=RequestContext(request))
-
-
 class ProfileView(RegistrationViewMixin, TemplateView):
-    title = 'Soutěžní profil'
-    current_view = 'profile_view'
+    title = _(u'Soutěžní profil')
+    registration_phase = 'profile_view'
     template_name = 'registration/competition_profile.html'
 
     def get(self, request, *args, **kwargs):
@@ -868,7 +790,7 @@ class UserAttendanceView(UserAttendanceViewMixin, TemplateView):
 class PackageView(RegistrationViewMixin, TemplateView):
     template_name = "registration/package.html"
     title = _(u"Sledování balíčku")
-    current_view = "zmenit_tym"
+    registration_phase = "zmenit_tym"
 
 
 class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
@@ -889,12 +811,13 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
         if self.user_attendance.team:
             team_members = self.user_attendance.team.all_members().select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign', 'user_attendance')
         context_data['team_members'] = team_members
-        context_data['current_view'] = "other_team_members"
+        context_data['registration_phase'] = "other_team_members"
         return context_data
 
 
 class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
     title = _(u"Výsledky soutěží")
+    success_url = reverse_lazy("competitions")
 
     @method_decorator(login_required_simple)
     @must_be_competitor
@@ -910,8 +833,7 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
         if 'cancellation_competition_id' in request.POST and request.POST['cancellation_competition_id']:
             competition = Competition.objects.get(id=request.POST['cancellation_competition_id'])
             competition.make_admission(self.user_attendance, False)
-        if success_url is not None:
-            return redirect(reverse(success_url))
+        return redirect(self.success_url)
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(AdmissionsView, self).get_context_data(*args, **kwargs)
@@ -920,38 +842,39 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
             competition.competitor_has_admission = competition.has_admission(self.user_attendance)
             competition.competitor_can_admit = competition.can_admit(self.user_attendance)
         context_data['competitions'] = competitions
-        context_data['current_view'] = "competitions"
+        context_data['registration_phase'] = "competitions"
         return context_data
 
 
-def competition_results(request, template, competition_slug, campaign_slug, limit=None):
-    if limit == '':
-        limit = None
+class CompetitionResultsView(TemplateView):
+    template_name = 'registration/competition_results.html'
 
-    if request.user.is_anonymous():
-        user_attendance = None
-    else:
-        user_attendance = request.user.userprofile.userattendance_set.get(campaign__slug=campaign_slug)
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(CompetitionResultsView, self).get_context_data(*args, **kwargs)
+        competition_slug = kwargs.get('competition_slug')
+        limit = kwargs.get('limit')
+        campaign_slug = self.request.subdomain
 
-    try:
-        competition = Competition.objects.get(slug=competition_slug)
-    except Competition.DoesNotExist:
-        logger.exception('Unknown competition slug %s, request: %s' % (competition_slug, request))
-        return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující soutěž">kontakt@dopracenakole.net</a></div>'), status=401)
+        if limit == '':
+            limit = None
 
-    results = competition.get_results()
-    if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
-        results = results.select_related('user_attendance__userprofile__user')
-    elif competition.competitor_type == 'team':
-        results = results.select_related('team__subsidiary__company')
-    elif competition.competitor_type == 'company':
-        results = results.select_related('company')
+        try:
+            competition = Competition.objects.get(slug=competition_slug)
+        except Competition.DoesNotExist:
+            logger.exception('Unknown competition slug %s, request: %s' % (competition_slug, self.request))
+            return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující soutěž">kontakt@dopracenakole.net</a></div>'), status=401)
 
-    return render_to_response(template, {
-        'user_attendance': user_attendance,
-        'competition': competition,
-        'results': results[:limit]
-        }, context_instance=RequestContext(request))
+        results = competition.get_results()
+        if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
+            results = results.select_related('user_attendance__userprofile__user')
+        elif competition.competitor_type == 'team':
+            results = results.select_related('team__subsidiary__company')
+        elif competition.competitor_type == 'company':
+            results = results.select_related('company')
+
+        context_data['competition'] = competition
+        context_data['results'] = results[:limit]
+        return context_data
 
 
 class UpdateProfileView(RegistrationViewMixin, UpdateView):
@@ -959,7 +882,7 @@ class UpdateProfileView(RegistrationViewMixin, UpdateView):
     model = UserProfile
     success_message = _(u"Osobní údaje úspěšně upraveny")
     next_url = "zmenit_tym"
-    current_view = "upravit_profil"
+    registration_phase = "upravit_profil"
     title = _(u"Osobní údaje")
 
     def get_object(self):
@@ -973,7 +896,7 @@ class WorkingScheduleView(RegistrationViewMixin, UpdateView):
     prev_url = 'typ_platby'
     next_url = 'profil'
     success_url = 'working_schedule'
-    current_view = "working_schedule"
+    registration_phase = "working_schedule"
     title = _(u"Upravit pracovní kalendář")
     template_name = 'registration/working_schedule.html'
 
@@ -988,7 +911,7 @@ class UpdateTrackView(RegistrationViewMixin, UpdateView):
     success_message = _(u"Trasa/vzdálenost úspěšně upravena")
     next_url = 'zmenit_triko'
     prev_url = 'zmenit_tym'
-    current_view = "upravit_trasu"
+    registration_phase = "upravit_trasu"
     title = _("Upravit trasu")
 
     def get_object(self):
@@ -1002,7 +925,7 @@ class ChangeTShirtView(RegistrationViewMixin, UpdateView):
     success_message = _(u"Velikost trička úspěšně nastavena")
     next_url = 'typ_platby'
     prev_url = 'upravit_trasu'
-    current_view = "zmenit_triko"
+    registration_phase = "zmenit_triko"
     title = _(u"Upravit velikost trička")
 
     def get_object(self):
@@ -1119,32 +1042,38 @@ def questionaire(
         }, context_instance=RequestContext(request))
 
 
-def questionnaire_answers_all(request, template, competition_slug, campaign_slug, limit=None):
-    competition = Competition.objects.get(slug=competition_slug)
-    if not request.user.is_superuser and hasattr(request.user, 'userprofile') and request.user.userprofile.competition_edition_allowed(competition):
-        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění."), "</div>"))
-    if not competition.public_answers:
-        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Tato soutěž nemá povolené prohlížení odpovědí."), "</div>"))
+class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
+    template_name = 'registration/questionnaire_answers_all.html'
+    title = _(u"Výsledky všech soutěží")
 
-    competitors = competition.get_results()
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(QuestionnaireAnswersAllView, self).get_context_data(*args, **kwargs)
 
-    for competitor in competitors:
-        competitor.answers = Answer.objects.filter(
-            user_attendance__in=competitor.user_attendances(),
-            question__competition__slug=competition_slug)
-    return render_to_response(template, {
-        'competitors': competitors,
-        'competition': competition,
-        }, context_instance=RequestContext(request))
+        competition_slug = kwargs.get('competition_slug')
+        competition = Competition.objects.get(slug=competition_slug)
+        if not self.request.user.is_superuser and hasattr(self.request.user, 'userprofile') and self.request.user.userprofile.competition_edition_allowed(competition):
+            context_data['fullpage_error_message'] = _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění.")
+            return context_data
+        if not competition.public_answers and not self.request.user.is_superuser:
+            context_data['fullpage_error_message'] = _(u"Tato soutěž nemá povolené prohlížení odpovědí.")
+            return context_data
+
+        competitors = competition.get_results()
+
+        for competitor in competitors:
+            competitor.answers = Answer.objects.filter(
+                user_attendance__in=competitor.user_attendances(),
+                question__competition__slug=competition_slug)
+        context_data['competitors'] = competitors
+        context_data['competition'] = competition
+        return context_data
 
 
 @staff_member_required
 def questions(request):
     filter_query = Q()
     if not request.user.is_superuser:
-        for administrated_city in request.user.userprofile.administrated_cities.all():
-            filter_query |= (Q(competition__city=administrated_city.city) & Q(competition__campaign=administrated_city.campaign))
-        # filter_query['competition__city__cityincampaign__in'] = request.user.userprofile.administrated_cities.all()
+        filter_query = Q(competition__city__in=request.user.userprofile.administrated_cities.all())
     questions = Question.objects.filter(filter_query).order_by('competition__campaign', 'competition__slug', 'order')
     return render_to_response('admin/questions.html', {
         'questions': questions
@@ -1277,10 +1206,10 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         return
 
 
-class TeamApprovalRequest(RegistrationViewMixin, TemplateView):
+class TeamApprovalRequest(UserAttendanceViewMixin, TemplateView):
     template_name = 'registration/request_team_approval.html'
     title = _(u"Znovu odeslat žádost o členství")
-    current_view = "zmenit_tym"
+    registration_phase = "zmenit_tym"
 
     @method_decorator(login_required_simple)
     @must_be_competitor
@@ -1292,13 +1221,20 @@ class TeamApprovalRequest(RegistrationViewMixin, TemplateView):
         return super(TeamApprovalRequest, self).form_valid(form)
 
 
-class InviteView(RegistrationViewMixin, FormView):
+class InviteView(UserAttendanceViewMixin, FormView):
+    template_name="submenu_team.html"
     form_class = InviteForm
     title = _(u'Odeslat pozvánky dalším uživatelům')
-    current_view = "zmenit_tym"
-    success_url = reverse_lazy('zmenit_tym')
+    registration_phase = "zmenit_tym"
+    success_url = reverse_lazy('pozvanky')
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(InviteView, self).get_context_data(*args, **kwargs)
+        context_data['registration_phase'] = self.registration_phase
+        return context_data
 
     @method_decorator(login_required_simple)
+    @must_be_approved_for_team
     @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
         return super(InviteView, self).dispatch(request, *args, **kwargs)
@@ -1325,17 +1261,27 @@ class InviteView(RegistrationViewMixin, FormView):
                     invitation_mail(self.user_attendance, email)
                     messages.add_message(self.request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s") % email, fail_silently=True)
 
-        return redirect(self.request.session.get('invite_success_url') or self.success_url)
+        invite_success_url = self.request.session.get('invite_success_url')
+        self.request.session['invite_success_url'] = None
+        return redirect(invite_success_url or self.success_url)
 
 
-class UpdateTeam(UserAttendanceViewMixin, TitleViewMixin, UpdateView):
-    template_name='base_generic_form.html'
+class UpdateTeam(UserAttendanceViewMixin, SuccessMessageMixin, UpdateView):
+    template_name='submenu_team.html'
     form_class = TeamAdminForm
-    success_url = reverse_lazy('profil')
+    success_url = reverse_lazy('edit_team')
     title = _(u"Upravit název týmu")
+    registration_phase = 'zmenit_tym'
+    success_message = _(u"Název týmu úspěšně změněn na %(name)s")
 
-    @must_be_competitor
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(UpdateTeam, self).get_context_data(*args, **kwargs)
+        context_data['registration_phase'] = self.registration_phase
+        return context_data
+
     @method_decorator(login_required_simple)
+    @must_be_competitor
+    @must_be_approved_for_team
     #@user_attendance_has(lambda ua: ua.entered_competition(), _(u"Po vstupu do soutěže již nemůžete měnit parametry týmu."))
     def dispatch(self, request, *args, **kwargs):
         return super(UpdateTeam, self).dispatch(request, *args, **kwargs)
@@ -1346,8 +1292,11 @@ class UpdateTeam(UserAttendanceViewMixin, TitleViewMixin, UpdateView):
 
 class TeamMembers(UserAttendanceViewMixin, TemplateView):
     template_name='registration/team_admin_members.html'
+    registration_phase = "zmenit_tym"
 
+    @method_decorator(login_required_simple)
     @method_decorator(never_cache)
+    @must_be_approved_for_team
     def dispatch(self, request, *args, **kwargs):
         return super(TeamMembers, self).dispatch(request, *args, **kwargs)
 
@@ -1369,8 +1318,6 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
         team = self.user_attendance.team
         if not team:
             return {'fullpage_error_message': _(u"Další členové vašeho týmu se zobrazí, jakmile budete mít vybraný tým")}
-        if self.user_attendance.approved_for_team != 'approved':
-            return {'fullpage_error_message': mark_safe(_(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") % {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")})}
 
         unapproved_users = []
         for self.user_attendance in UserAttendance.objects.filter(team=team, userprofile__user__is_active=True):
@@ -1386,6 +1333,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
                 ('state_name', _(u"Stav"), unicode(self.user_attendance.get_approved_for_team_display())),
                 ])
         context_data['unapproved_users'] = unapproved_users
+        context_data['registration_phase'] = self.registration_phase
         return context_data
 
 
@@ -1504,14 +1452,14 @@ class BikeRepairView(CreateView):
         return redirect(wp_reverse(self.success_url))
 
 
-def draw_results(
-        request,
-        competition_slug,
-        template='admin/draw.html'
-        ):
-    return render_to_response(template, {
-        'results': draw.draw(competition_slug),
-        }, context_instance=RequestContext(request))
+class DrawResultsView(TemplateView):
+    template_name='admin/draw.html'
+
+    def get_context_data(self, city_slug=None, *args, **kwargs):
+        context_data = super(DrawResultsView, self).get_context_data(*args, **kwargs)
+        competition_slug = kwargs.get('competition_slug')
+        context_data['results'] = draw.draw(competition_slug)
+        return context_data
 
 
 class CombinedTracksKMLView(TemplateView):

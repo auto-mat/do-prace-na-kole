@@ -31,8 +31,6 @@ urlpatterns = patterns(
         views.RegistrationView.as_view(),
         {'success_url': 'typ_platby'},
         name="registrace"),
-    url(r'^header_bar/$',
-        views.header_bar),
     url(r'^registrace_pristup/$',
         views.RegistrationAccessView.as_view(),
         name="registration_access"
@@ -62,13 +60,6 @@ urlpatterns = patterns(
         views.RidesView.as_view(),
         name="jizdy",
         ),
-    url(r'^profil_pristup/$',
-        views.profile_access),
-    url(r'^prihlasky/$',
-        views.AdmissionsView.as_view(
-            template_name='registration/admissions.html'
-        ),
-        ),
     url(r'^souteze/$',
         views.AdmissionsView.as_view(
             template_name="registration/competitions.html"
@@ -76,18 +67,17 @@ urlpatterns = patterns(
         name="competitions",
         ),
     url(r'^vysledky_souteze/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
-        views.competition_results,
-        {'template': 'registration/competition_results.html'},
+        views.CompetitionResultsView.as_view(),
         name="competition_results",
         ),
     url(r'^vysledky_souteze/(?P<competition_slug>[0-9A-Za-z_\-]+)/(?P<limit>[0-9]+)/$',
-        views.competition_results,
-        {'template': 'registration/competition_results.html'},
+        views.CompetitionResultsView.as_view(),
         name="competition_results",
         ),
     url(r'^questionnaire_answers/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
-        views.questionnaire_answers_all,
-        {'template': 'registration/questionnaire_answers_all.html'}),
+        views.QuestionnaireAnswersAllView.as_view(),
+        name="questionnaire_answers_all",
+        ),
     url(r'^otazka/(?P<questionaire_slug>[0-9A-Za-z_\-]+)/$',
         views.questionaire),
     url(r'^upravit_profil/$',
@@ -120,10 +110,6 @@ urlpatterns = patterns(
     url(r'^package/$',
         views.PackageView.as_view(),
         name="package"),
-    url(r'^competition_profile_notices/$',
-        views.UserAttendanceView.as_view(
-            template_name = "registration/competition_profile_notices.html"
-        )),
     url(r'^package-confirmation/$',
         views.ConfirmDeliveryView.as_view(),
         ),

@@ -1,10 +1,10 @@
-{% extends "base_generic_registration_form.html" %}
+{% extends "base_generic_form.html" %}
 {% load i18n %}
 {% load url from future %}
 
 {% block form %}
-{% trans "Žádost o ověření členství byla odeslána." %}
-
+<div class="alert alert-info">{% trans "Žádost o ověření členství byla odeslána." %}</div>
+<br/>
 {% trans "Pokračujte na " %}<a href="{% url 'upravit_trasu' %}">{% trans "výběr trasy" %}</a>.
 {% endblock %}
 

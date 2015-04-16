@@ -24,7 +24,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from models import UserAttendance, Campaign
-from wp_urls import wp_reverse
+from django.http import Http404
 from django.core.urlresolvers import reverse
 import models
 import functools
@@ -33,14 +33,18 @@ import functools
 def must_be_approved_for_team(fn):
     @functools.wraps(fn)
     @must_be_competitor
-    def wrapper(*args, **kwargs):
+    def wrapper(view, request, *args, **kwargs):
         user_attendance = kwargs['user_attendance']
         if not user_attendance.team:
-            return HttpResponse(_(u"<div class='text-warning'>Nemáte zvolený tým</div>"))
+            return render_to_response(view.template_name, {
+                'fullpage_error_message': mark_safe(_(u"Nemáte zvolený tým")),
+            }, context_instance=RequestContext(request))
         if user_attendance.approved_for_team == 'approved':
-            return fn(*args, **kwargs)
+            return fn(view, request, *args, **kwargs)
         else:
-            return HttpResponse(_(u"<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>") % {'team': user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")})
+            return render_to_response(view.template_name, {
+                'fullpage_error_message': mark_safe(_(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") % {'team': user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}),
+            }, context_instance=RequestContext(request))
     return wrapper
 
 
@@ -68,8 +72,8 @@ def must_have_team(fn):
             return render_to_response(view.template_name, {
                 'fullpage_error_message': mark_safe(_(u"Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse("zmenit_tym")),
                 'user_attendance': user_attendance,
-                'title': _(u"Musíte mít vybraný tým"),
-                'current_view': getattr(view, 'current_view', ''),
+                'title': getattr(view, 'title', _(u"Musíte mít vybraný tým")),
+                'registration_phase': getattr(view, 'registration_phase', ''),
                 'form': None,
                 }, context_instance=RequestContext(request))
         return fn(view,request, user_attendance=user_attendance, *args, **kwargs)
@@ -95,28 +99,33 @@ def must_be_in_phase(*phase_type):
 
 def must_be_competitor(fn):
     @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
+    def wrapper(view, request, *args, **kwargs):
         if kwargs.get('user_attendance', None):
-            return fn(*args, **kwargs)
+            return fn(view, request, *args, **kwargs)
 
-        request = args[1]
         if models.is_competitor(request.user):
             userprofile = request.user.userprofile
             campaign_slug = request.subdomain
+            try:
+                campaign = Campaign.objects.get(slug=campaign_slug)
+            except Campaign.DoesNotExist:
+                raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>")% campaign_slug)
             try:
                 user_attendance = userprofile.userattendance_set.select_related('team__subsidiary__city', 'campaign', 'team__subsidiary__company', 't_shirt_size').get(campaign__slug=campaign_slug)
             except UserAttendance.DoesNotExist:
                 user_attendance = UserAttendance(
                     userprofile=userprofile,
-                    campaign=Campaign.objects.get(slug=campaign_slug),
+                    campaign=campaign,
                     approved_for_team='undecided',
                     )
                 user_attendance.save()
 
             kwargs['user_attendance'] = user_attendance
-            return fn(*args, **kwargs)
+            return fn(view, request, *args, **kwargs)
 
-        return HttpResponse(_(u"<div class='text-warning'>V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.</div>") % wp_reverse("company_admin"))
+        return render_to_response(view.template_name, {
+            'fullpage_error_message': mark_safe(_(u"V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.") % reverse("company_structure")),
+        }, context_instance=RequestContext(request))
     return wrapper
 
 
@@ -142,7 +151,7 @@ def user_attendance_has(condition, message):
                     'fullpage_error_message': message,
                     'user_attendance': user_attendance,
                     'title': getattr(view, 'title', ''),
-                    'current_view': getattr(view, 'current_view', ''),
+                    'registration_phase': getattr(view, 'registration_phase', ''),
                     'form': None,
                     }, context_instance=RequestContext(request))
             return fn(view, request, *args, **kwargs)

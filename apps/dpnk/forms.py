@@ -59,10 +59,10 @@ class AuthenticationFormDPNK(AuthenticationForm):
         self.helper.form_class = "login-form"
         self.helper.layout = Layout(
             'username', 'password',
-            HTML(_(u"""<a href="%s">Zapomněli jste své přihlašovací údaje?</a>
+            HTML(_(u"""<a href="%(password_reset_address)s">Zapomněli jste své přihlašovací údaje?</a>
                 <br/><br/>
-                Ještě nemáte účet? <a href="%s">Registrujte se</a> do soutěže Do práce na kole.<br/><br/>
-            """ % ( reverse("password_reset"), reverse("registration_access")) )),
+                Ještě nemáte účet? <a href="%(registration_address)s">Registrujte se</a> do soutěže Do práce na kole.<br/><br/>
+            """ % { 'password_reset_address': reverse("password_reset"), 'registration_address': reverse("registration_access")} )),
             )
         self.helper.add_input(Submit('submit', _(u'Přihlásit')))
         self.fields['username'].label = _(u"Email (uživatelské jméno)")
@@ -137,7 +137,7 @@ class WorkingScheduleForm(forms.ModelForm):
         ret_val = super(WorkingScheduleForm, self).save(*args, **kwargs)
         trips = self.cleaned_data['schedule']
         for trip in trips:
-            if trip.can_edit:
+            if trip.can_edit_working_schedule():
                 trip.save()
         return ret_val
 

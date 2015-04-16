@@ -27,7 +27,7 @@ from django.http import HttpResponse, Http404
 import django.contrib.auth
 import datetime
 from django.conf import settings
-from django.views.generic.edit import UpdateView, FormView
+from django.views.generic.edit import UpdateView, FormView, CreateView
 from django.views.generic.base import TemplateView
 from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_company_admin, must_be_in_phase
 from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
@@ -48,8 +48,8 @@ logger = logging.getLogger(__name__)
 class CompanyStructure(TemplateView):
     template_name='company_admin/structure.html'
 
-    @must_be_company_admin
     @method_decorator(login_required)
+    @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(CompanyStructure, self).dispatch(request, *args, **kwargs)
@@ -97,8 +97,8 @@ class CompanyEditView(UpdateView):
     model = Company
     success_url = reverse_lazy('company_structure')
 
-    @must_be_company_admin
     @method_decorator(login_required)
+    @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(CompanyEditView, self).dispatch(request, *args, **kwargs)
@@ -194,8 +194,8 @@ class CompanyCompetitionView(UpdateView):
     model = Competition
     success_url = reverse_lazy('company_admin_competitions')
 
-    @must_be_company_admin
     @method_decorator(login_required)
+    @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(CompanyCompetitionView, self).dispatch(request, *args, **kwargs)
@@ -225,8 +225,8 @@ class CompanyCompetitionView(UpdateView):
 class CompanyCompetitionsShowView(TemplateView):
     template_name='company_admin/competitions.html'
 
-    @must_be_company_admin
     @method_decorator(login_required)
+    @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(CompanyCompetitionsShowView, self).dispatch(request, *args, **kwargs)
@@ -237,7 +237,7 @@ class CompanyCompetitionsShowView(TemplateView):
         return context_data
 
 
-class InvoicesView(FormView):
+class InvoicesView(CreateView):
     template_name = 'company_admin/create_invoice.html'
     template_name_created = 'company_admin/invoices.html'
     form_class = company_admin_forms.CreateInvoiceForm
@@ -250,28 +250,23 @@ class InvoicesView(FormView):
             return self.template_name
 
     def form_valid(self, form):
-        if form.cleaned_data['create_invoice']:
-            invoice = models.Invoice(
-                company=self.company_admin.administrated_company,
-                campaign=self.company_admin.campaign,
-                order_number=form.cleaned_data['order_number'],
-                )
-            invoice.save()
+        self.object = form.save(commit=False)
+        self.object.company=self.company_admin.administrated_company
+        self.object.campaign=self.company_admin.campaign
+        self.object.save()
         return super(InvoicesView, self).form_valid(form)
 
     def get_context_data(self, *args, **kwargs):
         context = super(InvoicesView, self).get_context_data(*args, **kwargs)
         payments = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
-        users = [p.user_attendance.__unicode__() for p in payments]
-        context['competitors_count'] = payments.count()
-        context['competitors_names'] = ", ".join(users)
+        users = [p.user_attendance.userprofile.user.get_full_name() for p in payments]
+        context['payments'] = payments
         context['company'] = self.company_admin.administrated_company
 
         context['invoices'] = self.company_admin.administrated_company.invoice_set.filter(campaign=self.company_admin.campaign)
-        context['payments_to_invoice'] = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
-        context['company_information_filled'] = self.company_admin.administrated_company.has_filled_contact_information()
         return context
 
+    @method_decorator(login_required)
     @must_be_in_phase("invoices")
     @must_be_company_admin
     @request_condition(lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(), format_lazy(_(u"Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>"), addr=reverse_lazy('edit_company')))

@@ -6,7 +6,7 @@
 
 <p>
 <strong>Otázka:</strong> <a href="{% url 'admin:dpnk_question_change' question.pk %}">{{ question.text }}</a><br/>
-<strong>Respondentů:</strong> <a href="{% url 'questionnaire_results' question.competition.slug %}">{{ total_respondents }}</a><br>
+<strong>Respondentů:</strong> <a href="{% url 'admin_questionnaire_results' question.competition.slug %}">{{ total_respondents }}</a><br>
 <a href="{% url 'admin:dpnk_answer_changelist' %}?question__competition__id__exact={{ question.competition.pk }}">Odpovědi k soutěži {{ question.competition }}</a>
 </p>
 

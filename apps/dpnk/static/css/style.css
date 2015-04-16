@@ -1,23 +1,72 @@
 .waiting-for-load {
   cursor: progress;
 }
-#rides-form .form-control[readonly] {
-  cursor: progress;
+#rides .form-control {
+  width: 70px;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  color: #f7c29a;
+}
+h1 a,
+h2 a,
+h3 a,
+h4 a,
+h5 a {
+  color: #f37021;
 }
 .navbar {
+  background-color: #fff2e8;
+}
+.navbar ul {
   margin-bottom: 0;
 }
-.navbar li.active,
-.navbar li:hover {
+.navbar ul li a {
+  padding: 15px 10px;
+}
+.navbar ul li a.active,
+.navbar ul li a:hover {
   text-decoration: underline;
 }
-.navbar li.fulfilled a {
-  background: url(../img/ok.png) 92% 25% no-repeat;
+.navbar ul li.unfulfilled a {
+  color: #f7c29a;
 }
-.navbar li.unfulfilled a {
-  background: url(../img/ko.png) 92% 25% no-repeat;
+.navbar ul li.unfulfilled a:hover {
+  color: #4f92ce;
 }
-.navbar li:first-child a {
+.navbar ul li.unfulfilled.active a {
+  color: #4f92ce;
+}
+.navbar ul li:first-child a {
+  padding-left: 0;
+}
+.navbar ul li ul li ul li {
+  font-size: 0.9em;
+  padding-left: 0.3em;
+  padding-bottom: 0.3em;
+}
+.steps li {
+  background: url(../img/next.png) 100% 50% no-repeat;
+  padding-right: 0.3em;
+}
+.steps li:last-child {
+  background-image: none;
+}
+#the_menu .dropdown-menu,
+.the_submenu .dropdown-menu {
+  background-color: #fff2e8;
+}
+.the_submenu {
+  float: left;
+  clear: both;
+}
+.the_submenu a {
+  font-size: 0.8em;
+}
+.navbar-collapse {
   padding-left: 0;
 }
 .base.container {
@@ -31,13 +80,19 @@
   margin: 2em 0 0 0;
 }
 .working_schedule td {
-  border: 1em solid #fff;
-  background: #ECECEC;
+  border: 1em solid #ffffff;
+  background: #ececec;
+}
+.working_schedule td.non-working-day {
+  background: #c0c0c0;
 }
 .working_schedule thead tr th {
   background-color: #ff6c00;
-  border: 1em solid #fff;
-  color: #fff;
+  border: 1em solid #ffffff;
+  color: #ffffff;
+}
+.working_schedule thead tr th.non-working-day {
+  background-color: #ff4000;
 }
 input[type=checkbox] {
   margin-right: 0.3em;
@@ -46,5 +101,60 @@ input[type=checkbox] {
   margin-bottom: 1em;
 }
 input:disabled + label {
-  color: #ccc;
+  color: #cccccc;
+}
+.user_info {
+  margin-top: 1em;
+  padding-left: 0;
+}
+.user_info li {
+  list-style: none;
+}
+.user_info .logout_django a {
+  display: block;
+  margin-top: 0.3em;
+  color: #ffffff;
+  width: 100%;
+}
+.lang_switch {
+  float: right;
+}
+.lang_switch li {
+  display: inline-block;
+  list-style: none;
+}
+.lang_switch li a {
+  padding: 15px 5px;
+  display: inline-block;
+}
+.btn.show_rides_btn {
+  margin-bottom: 0.5em;
+}
+.vote {
+  background: url(../img/thumbsup.png) no-repeat right 40%;
+  display: inline-block;
+  padding-right: 18px;
+  color: #4d4d4d;
+  margin-left: 0.3em;
+}
+.cyklistesobe img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 1em;
+}
+@media (max-width:768px) {
+  .logo_holder {
+    float: left;
+  }
+  #collapsing_menu {
+    width: 100%;
+  }
+  .the_submenu {
+    margin-top: 0.5em;
+    padding-top: 1em;
+    border-top: 1px solid #ff6c00;
+  }
+  .navbar ul li a {
+    padding-left: 0;
+  }
 }

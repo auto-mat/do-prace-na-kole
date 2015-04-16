@@ -1,4 +1,4 @@
-Django
+-e git+https://github.com/PetrDlouhy/django.git@view_permission#egg=Django
 django-import-export
 -e git+https://github.com/digi604/django-smart-selects.git#egg=django-smart-selects
 psycopg2
@@ -26,7 +26,7 @@ reportlab
 svg2rlg
 flake8
 modulus11
-django-dbbackup
+-e hg+https://bitbucket.org/mjs7231/django-dbbackup#egg=django-dbbackup
 django-localeurl
 pillow
 -e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator
@@ -43,3 +43,7 @@ django-bleach
 django-analytical
 gunicorn
 django-cache-utils
+django-settings-context-processor
+django-rosetta
+django-oauth-toolkit
+djangorestframework

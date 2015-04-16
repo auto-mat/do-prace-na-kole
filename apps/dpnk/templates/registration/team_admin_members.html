@@ -1,10 +1,9 @@
+{% extends "submenu_team.html" %}
 {% load url from future %}
 {% load dpnk_tags %}
 {% load i18n %}
 
-{% if fullpage_error_message %}
-<div class="text-danger">{{ fullpage_error_message }}</div>
-{% endif %}
+{% block form %}
 <form method="post" class="form-inline" id="members-form" action="{% url 'team_members' %}">{% csrf_token %}
 {% for user in unapproved_users %}
    <div id="id-{{ user.4.2 }}-team-member">
@@ -48,3 +47,4 @@
    </div>
 {% endfor %}
 </form>
+{% endblock %}

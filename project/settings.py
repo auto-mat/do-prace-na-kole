@@ -40,7 +40,7 @@ CACHES = {
     },
 }
 
-LOCALE_PATH = normpath(PROJECT_ROOT, 'dpnk/locale')
+LOCALE_PATHS = (normpath(PROJECT_ROOT, 'apps/dpnk/locale'),)
 TIME_ZONE = 'Europe/Prague'
 LANGUAGES = (
     ('cs', _('Czech')),
@@ -73,6 +73,8 @@ MIDDLEWARE_CLASSES = (
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'timelog.middleware.TimeLogMiddleware',
     'remote_ajax.middleware.XHRMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
 )
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -83,8 +85,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'dpnk.context_processors.site',
     'dpnk.context_processors.user_attendance',
     "dpnk.context_processors.settings_properties",
+    'settings_context_processor.context_processors.settings',
 )
 AUTHENTICATION_BACKENDS = (
+    'oauth2_provider.backends.OAuth2Backend',
     'dpnk.auth.EmailModelBackend',
     "django_su.backends.SuBackend",
 )
@@ -122,7 +126,7 @@ INSTALLED_APPS = (
     'fieldsignals',
     'timelog',
     'remote_ajax',
-    'adminsortable',
+    'adminsortable2',
     'reportlab',
     'dbbackup',
     'localeurl',
@@ -134,7 +138,24 @@ INSTALLED_APPS = (
     'django_bleach',
     'analytical',
     'leaflet',
+    'settings_context_processor',
+    'oauth2_provider',
+    'rest_framework',
 )
+TEMPLATE_VISIBLE_SETTINGS = (
+    'PAYU_POS_AUTH_KEY',
+    'PAYU_POS_ID',
+    'PAYU_KEY_1',
+)
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.ext.rest_framework.OAuth2Authentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+}
 
 BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br']
 COMPRESSOR_ENABLED = True
@@ -156,8 +177,7 @@ DEFAULT_MAPWIDGET_ZOOM = 8
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 
-DBBACKUP_STORAGE = 'dbbackup.storage.filesystem_storage'
-DBBACKUP_FILESYSTEM_DIRECTORY = 'db_backup'
+DBBACKUP_BACKUP_DIRECTORY = normpath(PROJECT_ROOT, 'db_backup')
 
 MAX_COMPETITIONS_PER_COMPANY = 4
 MAX_TEAM_MEMBERS = 5
@@ -166,6 +186,8 @@ MAILING_API_KEY = ''
 
 PAYU_KEY_1 = ''
 PAYU_KEY_2 = ''
+PAYU_POS_AUTH_KEY = 'NxFcSXh'
+PAYU_POS_ID = "131116"
 
 TIMELOG_LOG = '/var/log/django/dpnk-timelog.log'
 
@@ -250,6 +272,8 @@ MESSAGE_TAGS = {
     message_constants.WARNING: 'warning',
     message_constants.ERROR: 'danger',
     }
+
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # import local settings
 try:

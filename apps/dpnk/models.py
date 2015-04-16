@@ -26,13 +26,14 @@ import string
 import results
 import parcel_batch
 import avfull
+from unidecode import unidecode
 from author.decorators import with_author
 from django import forms
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
-from django.db.models.signals import post_save, pre_save, post_delete
+from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
 from django.db.utils import ProgrammingError
 from fieldsignals import post_save_changed, pre_save_changed
 from django.dispatch import receiver
@@ -55,9 +56,12 @@ from dpnk.email import (
     payment_confirmation_mail, company_admin_rejected_mail,
     company_admin_approval_mail, payment_confirmation_company_mail)
 from dpnk import email, invoice_pdf
-from wp_urls import wp_reverse
 import logging
 logger = logging.getLogger(__name__)
+
+
+def get_address_string(address):
+    return ", ".join(filter(lambda x: x!="", [address.recipient, "%s %s" % (address.street, address.street_number), "%s %s" % (util.format_psc(address.psc), address.city)]))
 
 
 class Address(CompositeField):
@@ -112,7 +116,7 @@ class Address(CompositeField):
         )
 
     def __unicode__(self):
-        return ", ".join([self.recipient, self.street, self.street_number, util.format_psc(self.psc), self.city])
+        return get_address_string(self)
 
 
 class City(models.Model):
@@ -205,7 +209,7 @@ class Company(models.Model):
         return "%s" % self.name
 
     def company_address(self):
-        return ", ".join([self.address.recipient, self.address.street, self.address.street_number, util.format_psc(self.address.psc), self.address.city])
+        return get_address_string(self.address)
 
 
 class Subsidiary(models.Model):
@@ -224,13 +228,15 @@ class Subsidiary(models.Model):
     city = models.ForeignKey(
         City,
         verbose_name=_(u"Soutěžní město"),
-        help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % wp_reverse('pravidla'),
+        help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % "http://www.dopracenakole.net/pravidla",
         null=False,
         blank=False)
 
     def __unicode__(self):
-        return ", ".join([self.address.recipient, self.address.street, self.address.street_number, util.format_psc(self.address.psc), self.address.city])
+        return get_address_string(self.address)
 
+    def name(self):
+        return get_address_string(self.address)
 
 def validate_length(value, min_length=25):
     str_len = len(str(value))
@@ -305,7 +311,7 @@ class Team(models.Model):
     def __unicode__(self):
         return u"%s (%s)" % (self.name, u", ".join([u.userprofile.name() for u in self.members()]))
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
         if self.invitation_token == "":
             while True:
                 invitation_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(30))
@@ -313,7 +319,7 @@ class Team(models.Model):
                     self.invitation_token = invitation_token
                     break
 
-        super(Team, self).save(force_insert, force_update)
+        super(Team, self).save(force_insert, force_update, *args, **kwargs)
 
 
 class TeamName(Team):
@@ -396,6 +402,34 @@ class Campaign(models.Model):
         blank=False,
         null=False,
         )
+    package_height = models.PositiveIntegerField(
+        verbose_name=_(u"Výška balíku"),
+        default=1,
+        blank=True,
+        null=True,
+        )
+    package_width = models.PositiveIntegerField(
+        verbose_name=_(u"Šířka balíku"),
+        default=26,
+        blank=True,
+        null=True,
+        )
+    package_depth = models.PositiveIntegerField(
+        verbose_name=_(u"Hloubka balíku"),
+        default=35,
+        blank=True,
+        null=True,
+        )
+    package_weight = models.FloatField(
+        verbose_name=_(u"Váha balíku"),
+        null=True,
+        blank=True,
+        default=0.25,
+        validators=[
+            MaxValueValidator(1000),
+            MinValueValidator(0)
+        ],
+        )
     invoice_sequence_number_first = models.PositiveIntegerField(
         verbose_name=_(u"První číslo řady pro faktury"),
         default=0,
@@ -443,7 +477,10 @@ class Campaign(models.Model):
             transactions__payment__status__in=Payment.done_statuses,
             t_shirt_size__ship=True,
         ).exclude(transactions__packagetransaction__status__in=PackageTransaction.shipped_statuses).\
-            exclude(team=None).distinct()
+            exclude(team=None).\
+            annotate(payment_created=Max('transactions__payment__created')).\
+            order_by('payment_created').\
+            distinct()
 
     def phase(self, phase_type):
         try:
@@ -649,6 +686,12 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def name(self):
         return self.userprofile.name()
     name.admin_order_field = 'userprofile__user__last_name'
+    name.short_description = _(u"Jméno")
+
+    def name_for_trusted(self):
+        return self.userprofile.name_for_trusted()
+    name_for_trusted.admin_order_field = 'userprofile__user__last_name'
+    name_for_trusted.short_description = _(u"Jméno")
 
     def __unicode__(self):
         return self.userprofile.name()
@@ -666,12 +709,13 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             return self.campaign.admission_fee_company
 
     def payment(self):
-        if self.team and self.team.subsidiary and self.admission_fee() == 0:
-            return {'payment': None,
-                    'status': 'no_admission',
-                    'status_description': _(u'neplatí se'),
-                    'class': u'success',
-                    }
+        #TODO: commented out in DPNK2015 because it is to power demanding for unused feature
+        #if self.team and self.team.subsidiary and self.admission_fee() == 0:
+        #    return {'payment': None,
+        #            'status': 'no_admission',
+        #            'status_description': _(u'neplatí se'),
+        #            'class': u'success',
+        #            }
 
         try:
             payment = self.payments().filter(status__in=Payment.done_statuses).latest('id')
@@ -738,9 +782,9 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def get_length(self):
         return results.get_userprofile_length(self)
 
-    def get_distance(self):
+    def get_distance(self, round_digits=2):
         if self.track:
-            return round(UserAttendance.objects.length().get(id=self.id).length.km, 2)
+            return round(UserAttendance.objects.length().get(id=self.id).length.km, round_digits)
         else:
             return self.distance
 
@@ -817,16 +861,19 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     def get_all_trips(self):
         days = util.days(self.campaign)
-        trips = []
-        for d in days:
-            trip, created = self.user_trips.get_or_create(date=d)
-            if created:
-                working_day = util.working_day(d)
-                trip.is_working_ride_to = working_day
-                trip.is_working_ride_from = working_day
-                trip.save()
-            trip.can_edit = d >= util.today()
-            trips.append(trip)
+        trip_days = Trip.objects.filter(user_attendance=self, date__in=days).values_list('date', flat=True)
+        not_created_days = list(set(days) - set(trip_days))
+        create_trips = []
+        for d in not_created_days:
+            working_day = util.working_day(d)
+            create_trips.append(Trip(date=d,
+                user_attendance=self,
+                is_working_ride_to=working_day,
+                is_working_ride_from=working_day,
+            ))
+        Trip.objects.bulk_create(create_trips)
+
+        trips = Trip.objects.filter(user_attendance=self, date__in=days).all()
         return trips
 
     def is_company_admin(self):
@@ -949,7 +996,7 @@ class UserProfile(models.Model):
         blank=True,
         )
     administrated_cities = models.ManyToManyField(
-        'CityInCampaign',
+        'City',
         related_name="city_admins",
         null=True,
         blank=True)
@@ -964,21 +1011,39 @@ class UserProfile(models.Model):
         if self.nickname:
             return self.nickname
         else:
-            return self.user.get_full_name()
+            full_name = self.user.get_full_name()
+            if full_name:
+                return full_name
+            else:
+                return self.user.username
+
+    def name_for_trusted(self):
+        if self.nickname:
+            full_name = self.user.get_full_name()
+            if full_name:
+                return u"%s (%s)" % (full_name, self.nickname)
+            else:
+                return u"%s (%s)" % (self.user.username, self.nickname)
+        else:
+            full_name = self.user.get_full_name()
+            if full_name:
+                return full_name
+            else:
+                return self.user.username
 
     def __unicode__(self):
         return self.name()
 
     def competition_edition_allowed(self, competition):
-        return not competition.city or not self.administrated_cities.filter(campaign=competition.campaign, city=competition.city).exists()
+        return not competition.city or not self.administrated_cities.filter(city=competition.city).exists()
 
     def profile_complete(self):
         return self.sex and self.first_name() and self.last_name() and self.user.email
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
         if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
             logger.error(u"Mailing id %s is already used" % self.mailing_id)
-        super(UserProfile, self).save(force_insert, force_update)
+        super(UserProfile, self).save(force_insert, force_update, *args, **kwargs)
 
 
 class CompanyAdmin(models.Model):
@@ -1103,37 +1168,32 @@ class DeliveryBatch(models.Model):
     def __unicode__(self):
         return unicode(self.created)
 
-    def __init__(self, *args, **kwargs):
-        try:
-            self._meta.get_field('campaign').default = Campaign.objects.get(slug=settings.CAMPAIGN).pk
-        except ProgrammingError:
-            pass
-        return super(DeliveryBatch, self).__init__(*args, **kwargs)
 
-
-@transaction.atomic
-def add_packages(instance):
-    for user_attendance in instance.campaign.user_attendances_for_delivery():
-        pt = PackageTransaction(
-            user_attendance=user_attendance,
-            delivery_batch=instance,
-            status=PackageTransaction.Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
-            )
-        pt.save()
+    @transaction.atomic
+    def add_packages(self, user_attendances=None):
+        if not user_attendances:
+            user_attendances = self.campaign.user_attendances_for_delivery()
+        for user_attendance in user_attendances:
+            pt = PackageTransaction(
+                user_attendance=user_attendance,
+                delivery_batch=self,
+                status=PackageTransaction.Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
+                )
+            pt.save()
 
 
 @receiver(post_save, sender=DeliveryBatch)
 def create_delivery_files(sender, instance, created, **kwargs):
-    if created:
-        add_packages(instance)
+    if created and getattr(instance, 'add_packages_on_save', True):
+        instance.add_packages()
 
-    if not instance.customer_sheets:
+    if not instance.customer_sheets and getattr(instance, 'add_packages_on_save', True):
         temp = NamedTemporaryFile()
         parcel_batch.make_customer_sheets_pdf(temp, instance)
         instance.customer_sheets.save("customer_sheets_%s_%s.pdf" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
         instance.save()
 
-    if not instance.tnt_order:
+    if not instance.tnt_order and getattr(instance, 'add_packages_on_save', True):
         temp = NamedTemporaryFile()
         avfull.make_avfull(temp, instance)
         instance.tnt_order.save("delivery_batch_%s_%s.txt" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
@@ -1168,6 +1228,14 @@ class Invoice(models.Model):
         null=True,
         blank=True,
         )
+    company_pais_benefitial_fee = models.BooleanField(
+        verbose_name=_(u"Moje firma si přeje podpořit Auto*Mat a zaplatit benefiční startovné (450 Kč za osobu)."),
+        default=False,
+        )
+    total_amount = models.FloatField(
+        verbose_name=_(u"Celková částka"),
+        null=False,
+        default=0)
     invoice_pdf = models.FileField(
         verbose_name=_(u"PDF faktury"),
         upload_to='invoices',
@@ -1189,7 +1257,7 @@ class Invoice(models.Model):
         verbose_name=_(u"Pořadové číslo faktury"),
         null=False)
     order_number = models.BigIntegerField(
-        verbose_name=_(u"Číslo objednávky"),
+        verbose_name=_(u"Číslo objednávky (nepovinné)"),
         null=True,
         blank=True,
         )
@@ -1257,7 +1325,8 @@ def create_invoice_files(sender, instance, created, **kwargs):
     if not instance.invoice_pdf:
         temp = NamedTemporaryFile()
         invoice_pdf.make_invoice_sheet_pdf(temp, instance)
-        instance.invoice_pdf.save("invoice_%s_%s_%s.pdf" % (instance.company.name[0:40], instance.exposure_date.strftime("%Y-%m-%d"), hash(str(instance.pk) + settings.SECRET_KEY)), File(temp))
+        filename = "invoice_%s_%s_%s.pdf" % (unidecode(instance.company.name[0:40]), instance.exposure_date.strftime("%Y-%m-%d"), hash(str(instance.pk) + settings.SECRET_KEY))
+        instance.invoice_pdf.save(filename, File(temp))
         instance.save()
 
 
@@ -1367,6 +1436,7 @@ class PackageTransaction(Transaction):
         PACKAGE_SENT = 20004
         PACKAGE_DELIVERY_CONFIRMED = 20005
         PACKAGE_DELIVERY_DENIED = 20006
+        PACKAGE_RECLAIM = 20007
 
     STATUS = (
         (Status.PACKAGE_NEW, 'Nový'),
@@ -1375,6 +1445,7 @@ class PackageTransaction(Transaction):
         (Status.PACKAGE_SENT, 'Odeslán'),
         (Status.PACKAGE_DELIVERY_CONFIRMED, 'Doručení potvrzeno'),
         (Status.PACKAGE_DELIVERY_DENIED, 'Dosud nedoručeno'),
+        (Status.PACKAGE_RECLAIM, 'Reklamován'),
         )
 
     shipped_statuses = [
@@ -1530,9 +1601,10 @@ class Payment(Transaction):
     session_id = models.CharField(
         verbose_name="Session ID",
         max_length=50,
+        unique=True,
         null=True,
         blank=True,
-        default="")
+        default=None)
     trans_id = models.CharField(
         verbose_name="Transaction ID",
         max_length=50, null=True, blank=True)
@@ -1587,13 +1659,7 @@ class Payment(Transaction):
             user = None
             username = None
         return u"id: %s, user: %s (%s), order_id: %s, session_id: %s, trans_id: %s, amount: %s, description: %s, created: %s, realized: %s, pay_type: %s, status: %s, error: %s" % (
-            self.pk, user, username, self.order_id, self.session_id, self.trans_id, self.amount, self.description, self.created, self.realized, self.pay_type, self.status, self.error)
-
-    def __unicode__(self):
-        if self.trans_id:
-            return self.trans_id
-        else:
-            return self.session_id
+            self.pk, user, username, self.order_id, getattr(self, "session_id", ""), self.trans_id, self.amount, self.description, self.created, self.realized, self.pay_type, self.status, self.error)
 
 
 class PaymentForm(forms.ModelForm):
@@ -1671,6 +1737,11 @@ class Trip(models.Model):
         plus_distance = self.user_attendance.campaign.trip_plus_distance
         return min((self.user_attendance.distance or 0) + plus_distance, self.distance_to or 0)
 
+    def working_day(self):
+        return util.working_day(self.date)
+
+    def can_edit_working_schedule(self):
+        return self.date >= util.today()
 
 class Competition(models.Model):
     """Soutěž"""
@@ -2156,7 +2227,7 @@ def get_company_admin(user, campaign):
 
 def is_competitor(user):
     try:
-        if user.userprofile:
+        if user.is_authenticated() and user.userprofile:
             return True
         else:
             return False
@@ -2188,6 +2259,41 @@ class SubsidiaryInCampaign(Subsidiary):
 
     class Meta:
         proxy = True
+
+
+class GpxFile(models.Model):
+    file = models.FileField(
+        verbose_name=_(u"GPX trasa"),
+        upload_to='gpx_tracks',
+        blank=False, null=False)
+    DIRECTIONS = [
+        ('trip_to', _(u"Tam")),
+        ('trip_from', _(u"Zpět")),
+    ]
+    trip_date = models.DateField(
+        verbose_name=_(u"Datum vykonání cesty"),
+        null=False,
+        blank=False
+        )
+    direction = models.CharField(
+        verbose_name=_(u"Směr cesty"),
+        choices=DIRECTIONS,
+        max_length=50,
+        null=False, blank=False)
+    trip = models.ForeignKey(
+        Trip,
+        null=True,
+        blank=True)
+    user_attendance = models.ForeignKey(
+        UserAttendance,
+        null=False,
+        blank=False)
+
+    class Meta:
+        unique_together = (
+                ("user_attendance", "trip_date", "direction"),
+                ("trip", "direction"),
+                )
 
 
 #Signals:
@@ -2233,6 +2339,13 @@ def update_mailing_user(sender, instance, created, **kwargs):
     except UserProfile.DoesNotExist:
         pass
 
+@receiver(pre_save, sender=GpxFile)
+def set_trip(sender, instance, *args, **kwargs):
+    try:
+        trip = Trip.objects.get(user_attendance=instance.user_attendance, date=instance.trip_date)
+    except Trip.DoesNotExist:
+        trip = None
+    instance.trip = trip
 
 @receiver(post_save, sender=UserActionTransaction)
 @receiver(post_delete, sender=UserActionTransaction)
@@ -2240,6 +2353,13 @@ def update_user_attendance(sender, instance, *args, **kwargs):
     mailing.add_or_update_user(instance.user_attendance)
     if instance.user_attendance.team:
         instance.user_attendance.team.autoset_member_count()
+
+
+@receiver(pre_delete, sender=Invoice)
+def update_user_attendance(sender, instance, *args, **kwargs):
+    for payment in instance.payment_set.all():
+        payment.status = Payment.Status.COMPANY_ACCEPTS
+        payment.save()
 
 
 @receiver(post_save, sender=UserAttendance)

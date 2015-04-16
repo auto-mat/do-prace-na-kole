@@ -2,13 +2,15 @@
 {% load bleach_tags %}
 
 {% for key, value in wp_feed.items %}
-   <a href="{{ value.url }}" target="_blank"><h4>
-   {{ value.title }}
-   </h4></a>
+<div class="wp_news">
+   <h4>
+	   <a href="{{ value.url }}" target="_blank">
+	   		{{ value.title }}
+	   </a>
+   </h4>
    {% if value.image %}
    <img src="{{ value.image }}" alt="Obrázek k podnětu"></img>
    {% endif %}
    {{ value.excerpt|bleach }}
-   <br/>
-   <br/>
+</div>
 {% endfor %}

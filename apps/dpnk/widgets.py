@@ -63,7 +63,7 @@ class WorkingScheduleWidget(Widget):
         widget = render_to_string("widgets/working_schedule.html", {
             'trips': trips,
             'padding_days_before': trips[0].date.weekday,
-            'padding_days_after': 6 - trips[-1].date.weekday(),
+            'padding_days_after': 6 - trips.last().date.weekday(),
             })
         return widget
 

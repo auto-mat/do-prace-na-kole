@@ -19,7 +19,7 @@
 
 from django import forms
 from forms import AdressForm
-from models import Company, CompanyAdmin, Competition, UserAttendance, Campaign
+from models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice
 from django.utils.translation import ugettext_lazy as _
 from util import slugify
 from forms import SubmitMixin
@@ -41,7 +41,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
 
         ret_val = super(SelectUsersPayForm, self).__init__(*args, **kwargs)
         self.fields['paing_for'].queryset = queryset
-        choices = [(user_attendance.pk, "%s (%s)" % (user_attendance, user_attendance.payment()['payment'].amount))
+        choices = [(user_attendance.pk, u"%s Kč: %s (%s)" % (user_attendance.payment()['payment'].amount, user_attendance.userprofile.user.get_full_name(), user_attendance.userprofile.user.email))
                    for user_attendance in queryset.all()
                    if user_attendance.payment_type() == 'fc'
                    and user_attendance.payment_status() != 'done']
@@ -155,17 +155,16 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
 
     def save(self, force_insert=False, force_update=False, commit=True):
         competition = super(CompanyCompetitionForm, self).save(commit=False)
-        competition.without_admission = (competition.type != 'length')
         if commit:
             competition.save()
         return competition
 
 
-class CreateInvoiceForm(SubmitMixin, forms.Form):
+class CreateInvoiceForm(SubmitMixin, forms.ModelForm):
     create_invoice = forms.BooleanField(
             label=_(u"Údaje jsou správné, chci vytvořit fakturu"),
             )
-    order_number = forms.IntegerField(
-            label=_(u"Číslo objednávky (nepovinné)"),
-            required=False,
-            )
+
+    class Meta:
+        model = Invoice
+        fields = ('company_pais_benefitial_fee', 'order_number', 'create_invoice')

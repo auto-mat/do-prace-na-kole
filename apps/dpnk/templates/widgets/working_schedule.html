@@ -2,7 +2,7 @@
 {% load i18n %}
 <table class="table table-hover table-condensed">
    <thead>
-      <tr><th>{% trans "Po" %}</th><th>{% trans "Út" %}</th><th>{% trans "St" %}</th><th>{% trans "Čt" %}</th><th>{% trans "Pá" %}</th><th>{% trans "So" %}</th><th>{% trans "Ne" context "day name" %}</th></tr>
+      <tr><th>{% trans "Po" %}</th><th>{% trans "Út" %}</th><th>{% trans "St" %}</th><th>{% trans "Čt" %}</th><th>{% trans "Pá" %}</th><th class="non-working-day">{% trans "So" %}</th><th class="non-working-day">{% trans "Ne" context "day name" %}</th></tr>
    </thead>
    <tbody>
       <tr>
@@ -10,17 +10,17 @@
       <td></td>
       {% endfor %}
       {% for trip in trips %}
-         <td>
+         <td class="{% if not trip.working_day %}non-{% endif %}working-day">
             {{ trip.date|date:"SHORT_DATE_FORMAT" }}
             <br>
             <input type="checkbox" name="working-ride-to-{{ trip.date| date:"Ymd" }}" class="working-ride" id="working-ride-to-{{ trip.date| date:"Ymd" }}"
             {% if trip.is_working_ride_to %}checked="checked"{% endif %}
-            {% if not trip.can_edit %}disabled="disabled"{% endif %}
+            {% if not trip.can_edit_working_schedule %}disabled="disabled"{% endif %}
             ><label for="working-ride-to-{{ trip.date| date:"Ymd" }}">{% trans "Tam" %}</label></input>
             <br>
             <input type="checkbox" name="working-ride-from-{{ trip.date| date:"Ymd" }}" class="working-ride" id="working-ride-from-{{ trip.date| date:"Ymd" }}"
             {% if trip.is_working_ride_from %}checked="checked"{% endif %}
-            {% if not trip.can_edit %}disabled="disabled"{% endif %}
+            {% if not trip.can_edit_working_schedule %}disabled="disabled"{% endif %}
             ><label for="working-ride-from-{{ trip.date| date:"Ymd" }}">{% trans "Zpět" %}</label></input>
          </td>
          {% if trip.date.weekday == 6 %}

@@ -54,4 +54,18 @@ class CampaignFilter(SimpleListFilter):
             campaign = self.value()
         else:
             campaign = request.subdomain
-        return queryset.filter(campaign__slug=campaign)
+        queryarg = {}
+        queryarg[self.field + "__slug"] = campaign
+        return queryset.filter(**queryarg).distinct()
+
+
+class CityCampaignFilter(CampaignFilter):
+    field = "subsidiaries__teams__campaign"
+
+
+class SubsidiaryCampaignFilter(CampaignFilter):
+    field = 'teams__campaign'
+
+
+class TripCampaignFilter(CampaignFilter):
+    field = 'user_attendance__campaign'
