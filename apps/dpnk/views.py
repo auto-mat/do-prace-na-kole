@@ -1073,9 +1073,7 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
 def questions(request):
     filter_query = Q()
     if not request.user.is_superuser:
-        for administrated_city in request.user.userprofile.administrated_cities.all():
-            filter_query |= (Q(competition__city=administrated_city.city) & Q(competition__campaign=administrated_city.campaign))
-        # filter_query['competition__city__cityincampaign__in'] = request.user.userprofile.administrated_cities.all()
+        filter_query = Q(competition__city__in=request.user.userprofile.administrated_cities.all())
     questions = Question.objects.filter(filter_query).order_by('competition__campaign', 'competition__slug', 'order')
     return render_to_response('admin/questions.html', {
         'questions': questions
