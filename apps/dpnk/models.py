@@ -43,6 +43,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files import File
+from django.utils.safestring import mark_safe
 from django.conf import settings
 from polymorphic import PolymorphicModel
 from django.db import transaction
@@ -1463,6 +1464,9 @@ class PackageTransaction(Transaction):
     def tracking_number_cnc(self):
         str_tn = str(self.tracking_number)
         return str_tn + str(mod11.calc_check_digit(str_tn))
+
+    def tracking_link(self):
+        return mark_safe("<a href='http://www.tnt.com/webtracker/tracking.do?requestType=GEN&searchType=CON&respLang=cs&respCountry=cz&sourceID=1&sourceCountry=ww&cons=%(number)s&navigation=1&genericSiteIdent='>%(number)s</a>" % {'number': self.tracking_number_cnc() })
 
     def tnt_con_reference(self):
         batch_date = self.delivery_batch.created.strftime("%y%m%d")
