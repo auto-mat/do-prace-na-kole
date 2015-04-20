@@ -56,7 +56,7 @@ class PaymentInline(EnhancedAdminMixin, NestedTabularInline):
 class PackageTransactionInline(EnhancedAdminMixin, NestedTabularInline):
     model = models.PackageTransaction
     extra = 0
-    readonly_fields = ['author', 'updated_by', 'tracking_number', 'tracking_number_cnc', 't_shirt_size']
+    readonly_fields = ['author', 'updated_by', 'tracking_link',  't_shirt_size']
     raw_id_fields = ['user_attendance', ]
     form = models.PackageTransactionForm
 
@@ -614,7 +614,7 @@ class PaymentChildAdmin(TransactionChildAdmin):
 
 
 class PackageTransactionChildAdmin(TransactionChildAdmin):
-    readonly_fields = ['created', 'author', 'updated_by', 'tracking_number', 'tracking_number_cnc', 't_shirt_size']
+    readonly_fields = ['created', 'author', 'updated_by', 'tracking_link', 't_shirt_size']
     form = models.PackageTransactionForm
 
 
@@ -658,7 +658,7 @@ class PaymentAdmin(RelatedFieldAdmin):
 
 
 class PackageTransactionAdmin(RelatedFieldAdmin):
-    list_display = ('id', 'user_attendance', 'created', 'realized', 'status', 'author', 'user_attendance__team__subsidiary__company__name', 't_shirt_size', 'delivery_batch', 'tnt_con_reference', 'tracking_number_cnc')
+    list_display = ('id', 'user_attendance', 'created', 'realized', 'status', 'author', 'user_attendance__team__subsidiary__company__name', 't_shirt_size', 'delivery_batch', 'tnt_con_reference', 'tracking_link')
     search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'session_id', 'trans_id', 'order_id', 'user_attendance__team__subsidiary__company__name', )
     list_filter = [ 'user_attendance__campaign', 'status', 'delivery_batch']
     raw_id_fields = ('user_attendance',)
