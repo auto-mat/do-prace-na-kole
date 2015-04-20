@@ -170,10 +170,17 @@ DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"
 AKLUB_URL = "http://klub.vnitrni.auto-mat.cz"
 
-DEFAULT_MAPWIDGET_LOCATION = lambda: None
-DEFAULT_MAPWIDGET_LOCATION.x = 14.4387817382809995
-DEFAULT_MAPWIDGET_LOCATION.y = 50.0866699218750000
-DEFAULT_MAPWIDGET_ZOOM = 8
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (50.0866699218750000, 14.4387817382809995),
+    'TILES': [
+        (_(u'cyklomapa'), 'http://tiles.prahounakole.cz/{z}/{x}/{y}.png', {'attribution': u'&copy; přispěvatelé <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
+        (_(u'Všeobecná mapa'), 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': u'&copy; přispěvatelé <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
+        ],
+    'DEFAULT_ZOOM': 8,
+    'MIN_ZOOM': 8,
+    'MAX_ZOOM': 18,
+    'SPATIAL_EXTENT': [11.953,48.517,19.028,51.097],
+}
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 
