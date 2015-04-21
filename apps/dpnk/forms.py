@@ -183,7 +183,7 @@ class WorkingScheduleForm(forms.ModelForm):
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     company = forms.ModelChoiceField(
         label=_(u"Společnost"),
-        queryset=Company.objects.all(),
+        queryset=Company.objects.filter(active=True),
         widget=SelectOrCreate(RegisterCompanyForm, prefix="company", new_description=_(u"Společnost v seznamu není, chci založit novou")),
         required=True)
     subsidiary = ChainedModelChoiceField(
@@ -203,7 +203,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             show_all=False,
             auto_choose=True,
         ),
-        queryset=Subsidiary.objects.all(),
+        queryset=Subsidiary.objects.filter(active=True),
         required=True)
     team = ChainedModelChoiceField(
         chain_field="subsidiary",
