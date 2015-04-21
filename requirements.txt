@@ -47,3 +47,4 @@ django-settings-context-processor
 django-rosetta
 django-oauth-toolkit
 djangorestframework
+-e git+https://github.com/PetrDlouhy/django-leaflet.git#egg=django-leaflet

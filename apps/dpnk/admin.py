@@ -34,7 +34,7 @@ from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFi
 from import_export import resources, fields
 from import_export.admin import ExportMixin
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.admin import OSMGeoAdmin
+from leaflet.admin import LeafletGeoAdmin
 from admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin
 import datetime
 import results
@@ -86,7 +86,7 @@ class SubsidiaryInline(EnhancedAdminMixin, admin.TabularInline):
     extra = 0
 
 
-class CityAdmin(EnhancedModelAdminMixin, OSMGeoAdmin):
+class CityAdmin(EnhancedModelAdminMixin, LeafletGeoAdmin):
     list_display = ('name', 'slug', 'cyklistesobe_slug', 'id', )
     prepopulated_fields = {'slug': ('name',), 'cyklistesobe_slug': ('name',)}
 
@@ -565,8 +565,7 @@ class UserAttendanceResource(resources.ModelResource):
         if payment:
             return payment.realized
 
-
-class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixin, CityAdminMixin, OSMGeoAdmin):
+class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixin, LeafletGeoAdmin):
     queryset_city_param = 'team__subsidiary__city__in'
     list_display = ('id', 'name_for_trusted', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_length', 'created')
     list_filter = (CampaignFilter, ('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('approved_for_team', AllValuesComboFilter), ('t_shirt_size', RelatedFieldComboFilter), 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, ('team__member_count', AllValuesComboFilter), PackageConfirmationFilter, ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter), ('userprofile__sex', AllValuesComboFilter))

@@ -17,6 +17,7 @@ from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinLengthValidator
 from django.contrib.gis.forms import OSMWidget
+from leaflet.forms.widgets import LeafletWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, HTML
 from django.core.urlresolvers import reverse
@@ -499,20 +500,19 @@ class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
         instance = kwargs['instance']
         super(TrackUpdateForm, self).__init__(*args, **kwargs)
 
-        location = None
-        if instance.team:
-            location = instance.team.subsidiary.city.location
-        if not location:
-            location = settings.DEFAULT_MAPWIDGET_LOCATION
-            default_zoom = settings.DEFAULT_MAPWIDGET_ZOOM
-        default_zoom = 13
-        self.fields['track'].widget = OSMWidget(attrs={
-            'geom_type': 'LINESTRING',
-            'default_lat_custom': location.y,
-            'default_lon_custom': location.x,
-            'default_zoom': default_zoom,
-        })
-        self.fields['track'].widget.template_name = "gis/openlayers-osm-custom.html"
+        settings_overrides = {}
+        if instance.team and instance.team.subsidiary.city.location:
+            settings_overrides['DEFAULT_CENTER'] = (instance.team.subsidiary.city.location.y, instance.team.subsidiary.city.location.x)
+            settings_overrides['DEFAULT_ZOOM'] = 13
+
+        self.fields['track'].widget = LeafletWidget(
+            attrs={
+                "geom_type":'LINESTRING',
+                "map_height":"500px",
+                "map_width":"100%",
+                'settings_overrides':settings_overrides,
+            }
+        )
 
 
 class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
