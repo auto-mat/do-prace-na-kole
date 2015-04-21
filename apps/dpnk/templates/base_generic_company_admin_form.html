@@ -11,8 +11,8 @@
 {% block second_menu %}
 <ul class="navbar nav navbar-nav  the_submenu" >
 <li class="{% if request.resolver_match.url_name == 'company_admin_pay_for_users' %}active{% endif %}"><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Zaplatit za uživatele" %}</a></li>
-<li class="{% if request.resolver_match.url_name == 'company_structure' %}active{% endif %}"><a href="{% url 'company_structure' %}">{% trans "Struktura společnosti" %}</a></li>
-<li class="{% if request.resolver_match.url_name == 'edit_company' %}active{% endif %}"><a href="{% url 'edit_company' %}">{% trans "Upravit společnost" %}</a></li>
+<li class="{% if request.resolver_match.url_name == 'company_structure' %}active{% endif %}"><a href="{% url 'company_structure' %}">{% trans "Struktura" %}</a></li>
+<li class="{% if request.resolver_match.url_name == 'edit_company' %}active{% endif %}"><a href="{% url 'edit_company' %}">{% trans "Adresa" %}</a></li>
 <li class="{% if request.resolver_match.url_name == 'company_admin_competitions' %}active{% endif %}"><a href="{% url 'company_admin_competitions' %}">{% trans "Soutěže" %}</a></li>
 <li class="{% if request.resolver_match.url_name == 'company_admin_competition' %}active{% endif %}"><a href="{% url 'company_admin_competition' %}">{% trans "Vypsat soutěž" %}</a></li>
 <li class="{% if request.resolver_match.url_name == 'invoices' %}active{% endif %}"><a href="{% url 'invoices' %}">{% trans "Faktury" %}</a></li>
