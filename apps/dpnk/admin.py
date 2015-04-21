@@ -115,7 +115,7 @@ class CompanyAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.M
     queryset_city_param = 'subsidiaries__city__in'
     list_display = ('name', 'subsidiaries_text', 'ico', 'dic', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
     inlines = [SubsidiaryInline, ]
-    list_filter = [CityCampaignFilter, 'subsidiaries__city']
+    list_filter = [CityCampaignFilter, 'subsidiaries__city', 'active']
     readonly_fields = ['subsidiary_links']
     search_fields = ('name',)
     list_max_show_all = 10000
@@ -148,7 +148,7 @@ class CompanyAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.M
 class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.ModelAdmin):
     list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline, ]
-    list_filter = [SubsidiaryCampaignFilter, 'city']
+    list_filter = [SubsidiaryCampaignFilter, 'city', 'active']
     search_fields = ('address_recipient', 'company__name', 'address_street', )
     raw_id_fields = ('company',)
     list_max_show_all = 10000
