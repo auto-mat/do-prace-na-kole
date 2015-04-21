@@ -73,11 +73,13 @@ h5 a {
   margin-top: 80px;
   margin-bottom: 80px;
 }
-.homepage form,
-.upravit_profil form,
-.zmenit_triko form {
+.django_administrace form {
   width: 300px;
   margin: 2em 0 0 0;
+}
+.company_admin_pay_for_users form,
+.upravit_trasu form {
+  width: 100%;
 }
 .working_schedule td {
   border: 1em solid #ffffff;
