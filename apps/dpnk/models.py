@@ -103,8 +103,8 @@ class Address(CompositeField):
             MaxValueValidator(99999),
             MinValueValidator(10000)
         ],
-        default=0,
-        null=False,
+        default=None,
+        null=True,
         blank=False,
         )
     city = models.CharField(
