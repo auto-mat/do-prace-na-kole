@@ -78,7 +78,8 @@ h5 a {
   margin: 2em 0 0 0;
 }
 .company_admin_pay_for_users form,
-.upravit_trasu form {
+.upravit_trasu form,
+.working_schedule form {
   width: 100%;
 }
 .working_schedule td {
