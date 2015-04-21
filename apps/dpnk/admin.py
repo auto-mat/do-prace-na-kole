@@ -97,12 +97,18 @@ class CompanyForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CompanyForm, self).__init__(*args, **kwargs)
-        self.fields['dic'].required = False
-        self.fields['ico'].required = False
-        self.fields['address_city'].required = False
-        self.fields['address_psc'].required = False
-        self.fields['address_street_number'].required = False
-        self.fields['address_street'].required = False
+        if 'dic' in self.fields:
+            self.fields['dic'].required = False
+        if 'ico' in self.fields:
+            self.fields['ico'].required = False
+        if 'address_city' in self.fields:
+            self.fields['address_city'].required = False
+        if 'address_psc' in self.fields:
+            self.fields['address_psc'].required = False
+        if 'address_street_number' in self.fields:
+            self.fields['address_street_number'].required = False
+        if 'address_street' in self.fields:
+            self.fields['address_street'].required = False
 
 
 class CompanyAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.ModelAdmin):
