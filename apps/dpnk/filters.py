@@ -18,6 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
 from dpnk import models
 
 
@@ -29,12 +30,14 @@ class CampaignFilter(SimpleListFilter):
     def lookups(self, request, model_admin):
         if not request.subdomain:
             campaigns = [('all', _('All'))]
+            campaigns = [('none', _('None'))]
             campaigns += [(c.slug, c.name) for c in models.Campaign.objects.all()]
         else:
             current_campaign = models.Campaign.objects.get(slug=request.subdomain)
             campaigns = [(None, current_campaign.name)]
             campaigns += [(c.slug, c.name) for c in models.Campaign.objects.exclude(slug=request.subdomain)]
             campaigns += [('all', _('All'))]
+            campaigns += [('none', _('None'))]
         return campaigns
 
     def choices(self, cl):
@@ -54,9 +57,12 @@ class CampaignFilter(SimpleListFilter):
             campaign = self.value()
         else:
             campaign = request.subdomain
-        queryarg = {}
-        queryarg[self.field + "__slug"] = campaign
-        return queryset.filter(**queryarg).distinct()
+        campaign_queryarg = {self.field + "__slug": campaign}
+        none_queryarg = {self.field: None}
+
+        if self.value() == 'none':
+            return queryset.filter(**none_queryarg).distinct()
+        return queryset.filter(Q(**campaign_queryarg) | Q(**none_queryarg)).distinct()
 
 
 class CityCampaignFilter(CampaignFilter):
