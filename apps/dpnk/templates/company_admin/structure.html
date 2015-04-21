@@ -15,7 +15,7 @@
       {% for user in team.users.all %}
       {% if user.userprofile.user.is_active %}
       <li>
-         {{ user.userprofile.name_for_trusted }} -
+         {{ user.userprofile.name_for_trusted }} <i>{{ user.userprofile.user.email }}</i> -
             {% if user.payment.payment.pay_type == 'fc' %}
                <span class="
                {% if user.payment.payment.status == user.payment.payment.Status.NEW %}
