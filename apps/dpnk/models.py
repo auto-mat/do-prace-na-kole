@@ -201,6 +201,10 @@ class Company(models.Model):
         null=True,
         blank=True,
         )
+    active = models.BooleanField(
+        verbose_name=_(u"Aktivní"),
+        default=True,
+        null=False)
 
     def has_filled_contact_information(self):
         address_complete = self.address.street and self.address.street_number and self.address.psc and self.address.city
@@ -232,6 +236,10 @@ class Subsidiary(models.Model):
         help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % "http://www.dopracenakole.net/pravidla",
         null=False,
         blank=False)
+    active = models.BooleanField(
+        verbose_name=_(u"Aktivní"),
+        default=True,
+        null=False)
 
     def __unicode__(self):
         return get_address_string(self.address)
