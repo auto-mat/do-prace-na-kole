@@ -23,4 +23,12 @@ $(function(){
         $("#not-enough-rides-warning").toggle(rides_count < minimum_rides);
     });
     $(".working-ride").change();
+
+
+    $(".submit_once").attr("disabled", false);
+
+    $("form").submit(function(){
+      $(".submit_once").attr("disabled", true).val("Please wait...");
+      return true;
+    })
 });
