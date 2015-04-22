@@ -1302,14 +1302,21 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         if 'approve' in request.POST:
-            action, approve_id = request.POST['approve'].split('-')
-            approved_user = UserAttendance.objects.get(id=approve_id)
-            userprofile = approved_user.userprofile
-            if approved_user.approved_for_team not in ('undecided', 'denied') or not userprofile.user.is_active or approved_user.team != self.user_attendance.team:
-                logger.error(u'Approving user with wrong parameters. User: %s (%s), approval: %s, team: %s, active: %s' % (userprofile.user, userprofile.user.username, approved_user.approved_for_team, approved_user.team, userprofile.user.is_active))
-                messages.add_message(request, messages.ERROR, mark_safe(_(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.net?subject=Nejde ověřit člen týmu'>kontakt@dopracenakole.net</a>.")), extra_tags="user_attendance_%s" % approved_user.pk, fail_silently=True)
-            else:
-                approve_for_team(request, approved_user, request.POST.get('reason-' + str(approved_user.id), ''), action == 'approve', action == 'deny')
+            approve_id = None
+            try:
+                action, approve_id = request.POST['approve'].split('-')
+            except ValueError:
+                logger.error(u'Can\'t split POST approve parameter: %s' % (request))
+                messages.add_message(request, messages.ERROR, mark_safe(_(u"Nastala chyba při ověřování uživatele, patrně používáte zastaralý internetový prohlížeč.")))
+
+            if approve_id:
+                approved_user = UserAttendance.objects.get(id=approve_id)
+                userprofile = approved_user.userprofile
+                if approved_user.approved_for_team not in ('undecided', 'denied') or not userprofile.user.is_active or approved_user.team != self.user_attendance.team:
+                    logger.error(u'Approving user with wrong parameters. User: %s (%s), approval: %s, team: %s, active: %s' % (userprofile.user, userprofile.user.username, approved_user.approved_for_team, approved_user.team, userprofile.user.is_active))
+                    messages.add_message(request, messages.ERROR, mark_safe(_(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.net?subject=Nejde ověřit člen týmu'>kontakt@dopracenakole.net</a>.")), extra_tags="user_attendance_%s" % approved_user.pk, fail_silently=True)
+                else:
+                    approve_for_team(request, approved_user, request.POST.get('reason-' + str(approved_user.id), ''), action == 'approve', action == 'deny')
         return render_to_response(self.template_name, self.get_context_data(), context_instance=RequestContext(request))
 
 
