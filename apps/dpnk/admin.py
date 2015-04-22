@@ -924,15 +924,25 @@ class InvoiceForm(forms.ModelForm):
         self.fields['sequence_number'].required = False
 
 
-class InvoiceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
-    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'total_amount', 'invoice_count', 'invoice_pdf_url', 'campaign', 'sequence_number', 'order_number', 'company__ico', 'company__dic', 'company_address']
+class InvoiceResource(resources.ModelResource):
+    class Meta:
+        model = models.Invoice
+        fields = ('company__name', 'created', 'exposure_date', 'paid_date', 'total_amount', 'invoice_count', 'campaign__name', 'sequence_number', 'order_number', 'company__ico', 'company__dic', 'company_pais_benefitial_fee', 'company__address_street', 'company__address_street_number', 'company__address_recipient', 'company__address_district', 'company__address_psc', 'company__address_city')
+
+    def dehydrate_invoice_count(self, obj):
+        return obj.payment_set.count()
+
+
+class InvoiceAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
+    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'total_amount', 'invoice_count', 'invoice_pdf_url', 'campaign', 'sequence_number', 'order_number', 'company__ico', 'company__dic', 'company_pais_benefitial_fee', 'company_address']
     readonly_fields = ['created', 'author', 'updated_by', 'invoice_count']
-    list_filter = [CampaignFilter, InvoicePaidFilter]
+    list_filter = [CampaignFilter, InvoicePaidFilter, 'company_pais_benefitial_fee']
     search_fields = ['company__name', ]
     inlines = [ PaymentInline ]
     actions = [mark_invoices_paid]
     list_max_show_all = 10000
     form = InvoiceForm
+    resource_class = InvoiceResource
 
     def company_address(self, obj):
         return obj.company.company_address()
