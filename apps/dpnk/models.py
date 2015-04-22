@@ -1793,6 +1793,7 @@ class Competition(models.Model):
     url = models.URLField(
         default="",
         verbose_name=u"Odkaz na stránku soutěže",
+        help_text=_(u"Odkaz na stránku, kde budou pravidla a podrobné informace o soutěži"),
         null=True,
         blank=True,
         )
@@ -1800,12 +1801,12 @@ class Competition(models.Model):
         verbose_name=_(u"Datum začátku soutěže"),
         help_text=_(u"Od tohoto data se počítají jízdy"),
         default=None,
-        null=False, blank=False)
+        null=True, blank=False)
     date_to = models.DateField(
         verbose_name=_(u"Datum konce soutěže"),
         help_text=_(u"Po tomto datu nebude možné soutěžit (vyplňovat dotazník)"),
         default=None,
-        null=False, blank=False)
+        null=True, blank=False)
     type = models.CharField(
         verbose_name=_(u"Typ"),
         choices=CTYPES,
@@ -1970,27 +1971,39 @@ class Competition(models.Model):
 class CompetitionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CompetitionForm, self).__init__(*args, **kwargs)
+        self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
+
+        if not self.request.user.is_superuser:
+            self.fields["city"].queryset = self.request.user.userprofile.administrated_cities
+            self.fields["city"].required = True
+
         if not self.instance.id:
-            self.fields["team_competitors"].queryset = Team.objects.none()
-            self.fields["user_attendance_competitors"].queryset = UserAttendance.objects.none()
-            self.fields["company_competitors"].queryset = Company.objects.none()
+            if 'team_competitors' in self.fields:
+                self.fields["team_competitors"].queryset = Team.objects.none()
+            if 'user_attendance_competitors' in self.fields:
+                self.fields["user_attendance_competitors"].queryset = UserAttendance.objects.none()
+            if 'company_competitors' in self.fields:
+                self.fields["company_competitors"].queryset = Company.objects.none()
             return
 
-        if hasattr(self.instance, 'campaign'):
+        if hasattr(self.instance, 'campaign') and 'user_attendance_competitors' in self.fields:
             if self.instance.competitor_type in ['liberos', 'single_user']:
                 self.fields['user_attendance_competitors'].queryset = self.instance.get_competitors(potencial_competitors=True).select_related('userprofile__user', 'campaign')
             else:
                 self.fields['user_attendance_competitors'].queryset = self.instance.user_attendance_competitors.select_related('userprofile__user', 'campaign')
 
-        if self.instance.competitor_type == 'team':
-            self.fields['team_competitors'].queryset = TeamName.objects.all()
-        else:
-            self.fields['team_competitors'].queryset = self.instance.team_competitors
+        if 'team_competitors' in self.fields:
+            if self.instance.competitor_type == 'team':
+                self.fields['team_competitors'].queryset = TeamName.objects.all()
+            else:
+                self.fields['team_competitors'].queryset = self.instance.team_competitors
 
-        if self.instance.competitor_type == 'company':
-            self.fields["company_competitors"].queryset = Company.objects.all()
-        else:
-            self.fields['company_competitors'].queryset = self.instance.company_competitors
+        if 'company_competitors' in self.fields:
+            if self.instance.competitor_type == 'company':
+                self.fields["company_competitors"].queryset = Company.objects.all()
+            else:
+                self.fields['company_competitors'].queryset = self.instance.company_competitors
+
 
 class CompetitionResult(models.Model):
     """Výsledek soutěže"""

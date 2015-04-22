@@ -182,7 +182,7 @@ class QuestionInline(SortableInlineAdminMixin, EnhancedAdminMixin, admin.Tabular
     extra = 0
 
 
-class CompetitionAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
+class CompetitionAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, RelatedFieldAdmin):
     list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'public_answers', 'date_from', 'date_to', 'entry_after_beginning_days', 'city', 'sex', 'company__name', 'competition_results_link', 'questionnaire_results_link', 'questionnaire_link', 'draw_link', 'get_competitors_count', 'url', 'id')
     filter_horizontal = ('team_competitors', 'company_competitors', 'user_attendance_competitors',)
     search_fields = ('name', 'company__name', 'slug')
@@ -194,24 +194,33 @@ class CompetitionAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
     list_max_show_all = 10000
     form = models.CompetitionForm
 
-    readonly_fields = ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'rules']
+    def get_form(self, request, *args, **kwargs):
+        form = super(CompetitionAdmin, self).get_form(request, *args, **kwargs)
+        form.request = request
+        return form
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.is_superuser:
+            return ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'rules']
+        return ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'rules', 'date_to', 'date_from', 'company', 'without_admission', 'public_answers', 'is_public', 'entry_after_beginning_days', 'team_competitors', 'company_competitors', 'user_attendance_competitors', 'campaign']
 
     def competition_results_link(self, obj):
-        return mark_safe(u'<a href="%s">výsledky</a>' % (reverse('competition_results', kwargs={'competition_slug': obj.slug})))
+        if obj.slug:
+            return mark_safe(u'<a href="%s">výsledky</a>' % (reverse('competition_results', kwargs={'competition_slug': obj.slug})))
     competition_results_link.short_description = u"Výsledky soutěže"
 
     def questionnaire_results_link(self, obj):
-        if obj.type == 'questionnaire':
+        if obj.type == 'questionnaire' and obj.slug:
             return mark_safe(u'<a href="%s">odpovědi</a>' % (reverse('admin_questionnaire_results', kwargs={'competition_slug': obj.slug})))
     questionnaire_results_link.short_description = u"Odpovědi"
 
     def questionnaire_link(self, obj):
-        if obj.type == 'questionnaire':
+        if obj.type == 'questionnaire' and obj.slug:
             return mark_safe(u'<a href="%s">dotazník</a>' % (reverse('questionnaire_answers_all', kwargs={'competition_slug': obj.slug})))
     questionnaire_link.short_description = _(u"Dotazník")
 
     def draw_link(self, obj):
-        if obj.type == 'frequency' and obj.competitor_type == 'team':
+        if obj.type == 'frequency' and obj.competitor_type == 'team' and obj.slug:
             return mark_safe(u'<a href="%s">losovani</a>' % (reverse('admin_draw_results', kwargs={'competition_slug': obj.slug})))
     draw_link.short_description = u"Losování"
 
