@@ -28,7 +28,7 @@ $(function(){
     $(".submit_once").attr("disabled", false);
 
     $("form").submit(function(){
-      $(".submit_once").attr("disabled", true).val("Please wait...");
+      $(".submit_once").attr("disabled", true).val("Prosím čekejte...");
       return true;
     })
 });
