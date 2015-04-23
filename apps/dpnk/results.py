@@ -35,7 +35,9 @@ def get_competitors(self, potencial_competitors=False):
             filter_query['userprofile__user__is_active'] = True
             filter_query['approved_for_team'] = 'approved'
             if self.city:
-                filter_query['team__subsidiary__city'] = self.city
+                cities = self.city.all()
+                if cities:
+                    filter_query['team__subsidiary__city__in'] = cities
             if self.company:
                 filter_query['team__subsidiary__company'] = self.company
             if self.sex:
@@ -45,7 +47,9 @@ def get_competitors(self, potencial_competitors=False):
             filter_query = {}
             filter_query['campaign'] = self.campaign
             if self.city:
-                filter_query['subsidiary__city'] = self.city
+                cities = self.city.all()
+                if cities:
+                    filter_query['subsidiary__city__in'] = cities
             if self.company:
                 filter_query['subsidiary__company'] = self.company
             query = models.Team.objects.filter(**filter_query)
