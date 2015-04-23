@@ -184,7 +184,7 @@ class QuestionInline(SortableInlineAdminMixin, EnhancedAdminMixin, admin.Tabular
 
 class CompetitionAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, RelatedFieldAdmin):
     list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'public_answers', 'date_from', 'date_to', 'entry_after_beginning_days', 'city_list', 'sex', 'company__name', 'competition_results_link', 'questionnaire_results_link', 'questionnaire_link', 'draw_link', 'get_competitors_count', 'url', 'id')
-    filter_horizontal = ('team_competitors', 'company_competitors', 'user_attendance_competitors',)
+    filter_horizontal = ('team_competitors', 'company_competitors', 'user_attendance_competitors', 'city')
     search_fields = ('name', 'company__name', 'slug')
     list_filter = (CampaignFilter, 'city', 'without_admission', 'is_public', 'public_answers', 'competitor_type', 'type', 'sex')
     save_as = True

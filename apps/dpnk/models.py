@@ -1801,19 +1801,21 @@ class Competition(models.Model):
         verbose_name=_(u"Datum začátku soutěže"),
         help_text=_(u"Od tohoto data se počítají jízdy"),
         default=None,
-        null=True, blank=False)
+        null=True, blank=True)
     date_to = models.DateField(
         verbose_name=_(u"Datum konce soutěže"),
         help_text=_(u"Po tomto datu nebude možné soutěžit (vyplňovat dotazník)"),
         default=None,
-        null=True, blank=False)
+        null=True, blank=True)
     type = models.CharField(
         verbose_name=_(u"Typ"),
+        help_text=_(u"Určuje, zdali bude soutěž výkonnostní (na ujetou vzdálenost), nebo na pravidelnost. Volba \"Dotazník\" slouží pro kreativní soutěže, cyklozaměstnavatele roku a další dotazníky; je nutné definovat otázky."),
         choices=CTYPES,
         max_length=16,
         null=False)
     competitor_type = models.CharField(
         verbose_name=_(u"Typ soutěžícího"),
+        help_text=_(u"Určuje, zdali bude soutěž týmová, nebo pro jednotlivce. Ostatní volby vybírejte jen pokud víte, k čemu slouží."),
         choices=CCOMPETITORTYPES,
         max_length=16,
         null=False)
@@ -1845,6 +1847,7 @@ class Competition(models.Model):
         blank=True)
     sex = models.CharField(
         verbose_name=_(u"Soutěž pouze pro pohlaví"),
+        help_text=_(u"Pokud chcete oddělit výsledky pro muže a ženy, je potřeba vypsat dvě soutěže - jednu pro muže a druhou pro ženy. Jinak nechte prázdné."),
         choices=UserProfile.GENDER,
         default=None,
         max_length=50,
@@ -1888,13 +1891,19 @@ class Competition(models.Model):
         return results.get_results(self)
 
     def has_started(self):
-        return self.date_from <= util.today()
+        if self.date_from:
+            return self.date_from <= util.today()
+        else:
+            return True
 
     def has_entry_opened(self):
         return self.date_from + datetime.timedelta(self.entry_after_beginning_days) <= util.today()
 
     def has_finished(self):
-        return not self.date_to >= util.today()
+        if self.date_to:
+            return not self.date_to >= util.today()
+        else:
+            return False
 
     def is_actual(self):
         return self.has_started() and not self.has_finished()
@@ -1918,7 +1927,7 @@ class Competition(models.Model):
             return 'not_libero'
         if self.company and self.company != user_attendance.team.subsidiary.company:
             return 'not_for_company'
-        if self.city.filter(pk=userprofile.team.subsidiary.city.pk).exists():
+        if self.city.filter(pk=user_attendance.team.subsidiary.city.pk).exists():
             return 'not_for_city'
 
         return True
@@ -1972,7 +1981,8 @@ class Competition(models.Model):
 class CompetitionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CompetitionForm, self).__init__(*args, **kwargs)
-        self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
+        if not hasattr(self.instance, 'campaign'):
+            self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
 
         if not self.request.user.is_superuser:
             self.fields["city"].queryset = self.request.user.userprofile.administrated_cities

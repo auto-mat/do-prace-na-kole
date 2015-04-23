@@ -51,8 +51,8 @@ class CityAdminMixin(object):
     def queryset(self, request):
         queryset = super(admin.ModelAdmin, self).queryset(request)
         if request.user.is_superuser:
-            return queryset
+            return queryset.distinct()
         kwargs = { self.queryset_city_param: request.user.userprofile.administrated_cities.all()}
-        return queryset.filter(**kwargs)
+        return queryset.filter(**kwargs).distinct()
 
 
