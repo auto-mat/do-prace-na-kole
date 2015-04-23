@@ -4,7 +4,7 @@
 {% load i18n %}
 
 {% block form %}
-<form method="post" class="form-inline" id="members-form" action="{% url 'team_members' %}">{% csrf_token %}
+<form method="post" class="submit-once-form form-inline" id="members-form" action="{% url 'team_members' %}">{% csrf_token %}
 {% for user in unapproved_users %}
    <div id="id-{{ user.4.2 }}-team-member">
    <h2>{{ user.3.2 }}</h2>

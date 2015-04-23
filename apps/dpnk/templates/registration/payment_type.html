@@ -82,14 +82,14 @@ $(function(){
 </div>
 <div id="pay_description" class="description_switcher_div description">
    <h3>{% trans "Platba startovného" %}</h3>
-   <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform">
+   <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform" class="submit-once-form">
    {% trans "Soutěžící:" %} {{ user_attendance.userprofile.user.get_full_name }}<br/>
    {% trans "Startovné:" %} {{amount}} Kč<br/>
    <div id="payu-hidden-values"></div>
    <script language="JavaScript" type="text/javascript">
    PlnPrintTemplate();
    </script>
-   <input type="submit" class="btn btn-primary submit_once" value="{% trans "Zaplatit" %}"/>
+   <input type="submit" class="btn btn-primary" value="{% trans "Zaplatit" %}"/>
 </form>
 </div>
 {% endblock %}

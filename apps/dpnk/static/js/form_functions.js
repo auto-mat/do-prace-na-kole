@@ -25,10 +25,18 @@ $(function(){
     $(".working-ride").change();
 
 
-    $(".submit_once").attr("disabled", false);
+   $('.submit-once-form').submit(function () {
+       // Bail out if the form contains validation errors
+       if ($.validator && !$(this).valid()) return;
 
-    $("form").submit(function(){
-      $(".submit_once").attr("disabled", true).val("Prosím čekejte...");
-      return true;
-    })
+       var form = $(this);
+       $(this).find('input[type="submit"], button[type="submit"]').each(function (index) {
+           // Create a disabled clone of the submit button
+           $(this).clone(false).removeAttr('id').prop('disabled', true).insertBefore($(this));
+
+           // Hide the actual submit button and move it to the beginning of the form
+           $(this).hide();
+           form.prepend($(this));
+       });
+   });
 });
