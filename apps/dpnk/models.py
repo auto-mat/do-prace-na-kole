@@ -1832,9 +1832,10 @@ class Competition(models.Model):
         related_name="competitions",
         null=True,
         blank=True)
-    city = models.ForeignKey(
+    city = models.ManyToManyField(
         City,
-        verbose_name=_(u"Soutěž pouze pro město"),
+        verbose_name=_(u"Soutěž pouze pro města"),
+        help_text=_(u"Soutěž bude probíhat ve vybraných městech. Pokud zůstane prázdné, soutěž probíhá ve všech městech."),
         null=True,
         blank=True)
     company = models.ForeignKey(
@@ -1917,7 +1918,7 @@ class Competition(models.Model):
             return 'not_libero'
         if self.company and self.company != user_attendance.team.subsidiary.company:
             return 'not_for_company'
-        if self.city and self.city != user_attendance.team.subsidiary.city:
+        if self.city.filter(pk=userprofile.team.subsidiary.city.pk).exists():
             return 'not_for_city'
 
         return True
@@ -1927,7 +1928,7 @@ class Competition(models.Model):
             return False
         if self.company and userprofile.team and self.company != userprofile.team.subsidiary.company:
             return False
-        if self.city and userprofile.team and self.city != userprofile.team.subsidiary.city:
+        if userprofile.team and self.city.filter(pk=userprofile.team.subsidiary.city.pk).exists():
             return False
 
         if self.without_admission:

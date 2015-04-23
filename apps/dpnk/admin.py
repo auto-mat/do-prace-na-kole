@@ -183,7 +183,7 @@ class QuestionInline(SortableInlineAdminMixin, EnhancedAdminMixin, admin.Tabular
 
 
 class CompetitionAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, RelatedFieldAdmin):
-    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'public_answers', 'date_from', 'date_to', 'entry_after_beginning_days', 'city', 'sex', 'company__name', 'competition_results_link', 'questionnaire_results_link', 'questionnaire_link', 'draw_link', 'get_competitors_count', 'url', 'id')
+    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'public_answers', 'date_from', 'date_to', 'entry_after_beginning_days', 'city_list', 'sex', 'company__name', 'competition_results_link', 'questionnaire_results_link', 'questionnaire_link', 'draw_link', 'get_competitors_count', 'url', 'id')
     filter_horizontal = ('team_competitors', 'company_competitors', 'user_attendance_competitors',)
     search_fields = ('name', 'company__name', 'slug')
     list_filter = (CampaignFilter, 'city', 'without_admission', 'is_public', 'public_answers', 'competitor_type', 'type', 'sex')
@@ -203,6 +203,9 @@ class CompetitionAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, Rel
         if request.user.is_superuser:
             return ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'rules']
         return ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'rules', 'date_to', 'date_from', 'company', 'without_admission', 'public_answers', 'is_public', 'entry_after_beginning_days', 'team_competitors', 'company_competitors', 'user_attendance_competitors', 'campaign']
+
+    def city_list(self, obj):
+        return ", ".join([str(c) for c in obj.city.all()])
 
     def competition_results_link(self, obj):
         if obj.slug:
