@@ -1,5 +1,18 @@
 from rest_framework import routers, serializers, viewsets, filters
+from rest_framework.exceptions import APIException
 from models import GpxFile, UserAttendance
+from django.db.utils import IntegrityError
+from gpxpy.gpx import GPXXMLSyntaxException
+
+
+class DuplicateGPX(APIException):
+    status_code = 409
+    default_detail ="GPX for this day and trip already uploaded"
+
+
+class GPXParsingFail(APIException):
+    status_code = 400
+    default_detail ="Can't parse GPX file"
 
 
 class GpxFileSerializer(serializers.ModelSerializer):
@@ -8,11 +21,18 @@ class GpxFileSerializer(serializers.ModelSerializer):
         subdomain = self.context['request'].subdomain
         user_attendance = UserAttendance.objects.get(userprofile__user=user, campaign__slug=subdomain)
         validated_data['user_attendance'] = user_attendance
-        return super(GpxFileSerializer, self).create(validated_data)
+        try:
+            instance = super(GpxFileSerializer, self).create(validated_data)
+        except IntegrityError:
+            raise DuplicateGPX
+        except GPXXMLSyntaxException:
+            raise GPXParsingFail
+        return instance
 
     class Meta:
         model = GpxFile
         fields = ('trip_date', 'direction', 'file')
+        read_only_fields = ('track',)
 
 
 class GpxFileSet(viewsets.ModelViewSet):

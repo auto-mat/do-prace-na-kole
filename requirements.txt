@@ -48,3 +48,4 @@ django-rosetta
 django-oauth-toolkit
 djangorestframework
 -e git+https://github.com/PetrDlouhy/django-leaflet.git#egg=django-leaflet
+-e git+https://github.com/tkrajina/gpxpy.git@gpx-1.1#egg=gpxpy

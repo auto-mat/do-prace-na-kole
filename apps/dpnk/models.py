@@ -26,12 +26,14 @@ import string
 import results
 import parcel_batch
 import avfull
+import gpxpy
 from unidecode import unidecode
 from author.decorators import with_author
 from django import forms
 from django.db import models
 from django.db.models import Q, Max
 from django.contrib.auth.models import User
+from django.contrib.gis.geos import Point, LineString
 from django.contrib.gis.db import models
 from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
 from django.db.utils import ProgrammingError
@@ -2315,6 +2317,13 @@ class GpxFile(models.Model):
         Trip,
         null=True,
         blank=True)
+    track = models.LineStringField(
+        verbose_name=_(u"trasa"),
+        srid=4326,
+        null=True,
+        blank=True,
+        geography=True,
+        )
     user_attendance = models.ForeignKey(
         UserAttendance,
         null=False,
@@ -2376,6 +2385,15 @@ def set_trip(sender, instance, *args, **kwargs):
         trip = Trip.objects.get(user_attendance=instance.user_attendance, date=instance.trip_date)
     except Trip.DoesNotExist:
         trip = None
+    gpx = gpxpy.parse(instance.file.read())
+    if gpx.tracks:
+        track_list_of_points = []
+        for point in gpx.tracks[0].segments[0].points:
+
+            point_in_segment = Point(point.longitude, point.latitude)
+            track_list_of_points.append(point_in_segment.coords)
+
+        instance.track = LineString(track_list_of_points)
     instance.trip = trip
 
 @receiver(post_save, sender=UserActionTransaction)

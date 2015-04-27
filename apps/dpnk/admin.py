@@ -968,7 +968,7 @@ class InvoiceAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
         return mark_safe(u"<a href='%s'>invoice.pdf</a>" % obj.invoice_pdf.url)
 
 
-class GpxFileAdmin(admin.ModelAdmin):
+class GpxFileAdmin(LeafletGeoAdmin):
     model = models.GpxFile
     list_display = ('id', 'trip_date', 'direction', 'trip', 'user_attendance')
     raw_id_fields = ('user_attendance', 'trip')
