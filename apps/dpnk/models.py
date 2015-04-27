@@ -1973,10 +1973,6 @@ class Competition(models.Model):
     def __unicode__(self):
         return "%s" % self.name
 
-    def clean(self):
-        if self.competitor_type == 'company' and self.city != None:
-            raise ValidationError(_(u"Soutěž firem pro určité město nedává smysl."))
-
 
 class CompetitionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

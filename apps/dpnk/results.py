@@ -88,11 +88,23 @@ def get_competitions(user_attendance):
     else:
         competitions = competitions.exclude(competitor_type = 'liberos')
 
+    if user_attendance.get_asociated_company_admin():
+        administrated_company = user_attendance.get_asociated_company_admin().administrated_company
+        administrated_cities = models.City.objects.filter(subsidiary__company=administrated_company).distinct()
+    else:
+        administrated_company = None
+        administrated_cities = None
+
     competitions = competitions.filter(
             (
-                  (Q(company=None) | Q(company=(user_attendance.company())))
+                Q(competitor_type__in = ('liberos', 'team', 'single_user'))
+                & (Q(company=None) | Q(company=(user_attendance.company())))
                 & (Q(sex=None)     | Q(sex=(user_attendance.userprofile.sex)))
                 & (Q(city=None)    | Q(city=(user_attendance.team.subsidiary.city if user_attendance.team else None)))
+            ) | (
+                Q(competitor_type__in = ('company',))
+                &  (Q(company=None) | Q(company=administrated_company))
+                &  (Q(city=None) | Q(city__in=administrated_cities))
             )
         ).distinct()
     return competitions
