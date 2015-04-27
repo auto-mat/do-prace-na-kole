@@ -759,6 +759,12 @@ def show_distance_trips(modeladmin, request, queryset):
 show_distance_trips.short_description = _(u"Ukázat ujetou vzdálenost")
 
 
+class GpxFileInline(EnhancedAdminMixin, admin.TabularInline):
+    model = models.GpxFile
+    raw_id_fields = ('user_attendance', 'trip')
+    extra = 0
+
+
 class TripAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
     list_display = ('user_attendance', 'date', 'trip_from', 'trip_to','is_working_ride_from', 'is_working_ride_to', 'distance_from', 'distance_to', 'id')
     search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'user_attendance__team__subsidiary__company__name')
@@ -766,6 +772,7 @@ class TripAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
     list_filter = (TripCampaignFilter, 'user_attendance__team__subsidiary__city', 'distance_from')
     actions = (show_distance_trips,)
     list_max_show_all = 100000
+    inlines = [GpxFileInline, ]
 
 
 class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
