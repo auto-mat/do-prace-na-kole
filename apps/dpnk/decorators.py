@@ -51,7 +51,10 @@ def must_be_approved_for_team(fn):
 def must_be_company_admin(fn):
     @functools.wraps(fn)
     def wrapper(view, request, *args, **kwargs):
-        campaign = Campaign.objects.get(slug=request.subdomain)
+        try:
+            campaign = Campaign.objects.get(slug=request.subdomain)
+        except Campaign.DoesNotExist:
+            raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>")% request.subdomain)
 
         company_admin = models.get_company_admin(request.user, campaign)
         if company_admin:
@@ -84,7 +87,10 @@ def must_be_in_phase(*phase_type):
     def decorator(fn):
         @functools.wraps(fn)
         def wrapped(view, request, *args, **kwargs):
-            campaign = Campaign.objects.get(slug=request.subdomain)
+            try:
+                campaign = Campaign.objects.get(slug=request.subdomain)
+            except Campaign.DoesNotExist:
+                raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>")% request.subdomain)
             phases = campaign.phase_set.filter(type__in=phase_type)
             for phase in phases:
                 if phase and phase.is_actual():
