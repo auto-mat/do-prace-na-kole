@@ -1043,7 +1043,7 @@ class UserProfile(models.Model):
         return self.name()
 
     def competition_edition_allowed(self, competition):
-        return not competition.city or not self.administrated_cities.filter(city=competition.city).exists()
+        return not competition.city.exists() or not self.administrated_cities.filter(pk__in=competition.city.values_list("pk", flat=True)).exists()
 
     def profile_complete(self):
         return self.sex and self.first_name() and self.last_name() and self.user.email
