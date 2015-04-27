@@ -30,7 +30,6 @@ import gpxpy
 from unidecode import unidecode
 from author.decorators import with_author
 from django import forms
-from django.db import models
 from django.db.models import Q, Max
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point, LineString
@@ -2329,6 +2328,7 @@ class GpxFile(models.Model):
         null=False,
         blank=False)
 
+    objects = models.GeoManager()
     class Meta:
         unique_together = (
                 ("user_attendance", "trip_date", "direction"),
@@ -2395,6 +2395,15 @@ def set_trip(sender, instance, *args, **kwargs):
 
         instance.track = LineString(track_list_of_points)
     instance.trip = trip
+
+@receiver(post_save, sender=GpxFile)
+def set_trip_post(sender, instance, *args, **kwargs):
+    if instance.trip:
+        if instance.direction == 'trip_to':
+            instance.trip.distance_to = round(GpxFile.objects.length().get(pk=instance.pk).length.km, 2)
+        if instance.direction == 'trip_from':
+            instance.trip.distance_from =  round(GpxFile.objects.length().get(pk=instance.pk).length.km, 2)
+        instance.trip.save()
 
 @receiver(post_save, sender=UserActionTransaction)
 @receiver(post_delete, sender=UserActionTransaction)
