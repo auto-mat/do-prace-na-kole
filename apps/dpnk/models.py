@@ -772,6 +772,13 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         else:
             return None
 
+    def payment_amount(self):
+        payment = self.payment()['payment']
+        if payment:
+            return payment.amount
+        else:
+            return None
+
     def payment_type_string(self):
         if self.payment_type():
             return Payment.PAY_TYPES_DICT[self.payment_type()].upper()

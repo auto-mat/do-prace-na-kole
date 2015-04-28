@@ -564,7 +564,7 @@ show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 class UserAttendanceResource(resources.ModelResource):
     class Meta:
         model = models.UserAttendance
-        fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email', 'dehydrate_subsidiary_name', 'team__subsidiary__company__name', 'created', 'payment_date')
+        fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email', 'dehydrate_subsidiary_name', 'team__subsidiary__company__name', 'created')
 
     subsidiary_name = fields.Field()
     def dehydrate_subsidiary_name(self, obj):
@@ -577,9 +577,22 @@ class UserAttendanceResource(resources.ModelResource):
         if payment:
             return payment.realized
 
+    payment_status = fields.Field()
+    def dehydrate_payment_status(self, obj):
+        return obj.payment_status()
+
+    payment_type = fields.Field()
+    def dehydrate_payment_type(self, obj):
+        return obj.payment_type()
+
+    payment_amount = fields.Field()
+    def dehydrate_payment_amount(self, obj):
+        return obj.payment_amount()
+
+
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixin, CityAdminMixin, LeafletGeoAdmin):
     queryset_city_param = 'team__subsidiary__city__in'
-    list_display = ('id', 'name_for_trusted', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'team__member_count', 'get_frequency', 'get_length', 'created')
+    list_display = ('id', 'name_for_trusted', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'payment_amount', 'team__member_count', 'get_frequency', 'get_length', 'created')
     list_filter = (CampaignFilter, ('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('approved_for_team', AllValuesComboFilter), ('t_shirt_size', RelatedFieldComboFilter), 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, ('team__member_count', AllValuesComboFilter), PackageConfirmationFilter, ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter), ('userprofile__sex', AllValuesComboFilter))
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__nickname', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
