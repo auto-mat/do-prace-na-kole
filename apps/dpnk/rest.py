@@ -1,6 +1,7 @@
 from rest_framework import routers, serializers, viewsets, filters
 from rest_framework.exceptions import APIException
 from models import GpxFile, UserAttendance
+from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
 
@@ -21,7 +22,10 @@ class GpxFileSerializer(serializers.ModelSerializer):
         user_attendance = UserAttendance.objects.get(userprofile__user=user, campaign__slug=subdomain)
         validated_data['user_attendance'] = user_attendance
         try:
-            instance = super(GpxFileSerializer, self).create(validated_data)
+            instance = GpxFile(**validated_data)
+            instance.clean()
+            instance.track = instance.track_clean
+            instance.save()
         except IntegrityError:
             raise DuplicateGPX
         except ValidationError:
