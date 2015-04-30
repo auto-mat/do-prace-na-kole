@@ -30,6 +30,20 @@ import models
 import functools
 
 
+def must_be_owner(fn):
+    @functools.wraps(fn)
+    @must_be_competitor
+    def wrapper(view, request, *args, **kwargs):
+        user_attendance = kwargs['user_attendance']
+        view_object = view.get_object()
+        if view_object and not user_attendance == view_object.user_attendance:
+            return render_to_response(view.template_name, {
+                'fullpage_error_message': mark_safe(_(u"Nemůžete vidět cizí objekt")),
+            }, context_instance=RequestContext(request))
+        return fn(view, request, *args, **kwargs)
+    return wrapper
+
+
 def must_be_approved_for_team(fn):
     @functools.wraps(fn)
     @must_be_competitor

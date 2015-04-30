@@ -2,7 +2,6 @@ from rest_framework import routers, serializers, viewsets, filters
 from rest_framework.exceptions import APIException
 from models import GpxFile, UserAttendance
 from django.db.utils import IntegrityError
-from gpxpy.gpx import GPXXMLSyntaxException
 
 
 class DuplicateGPX(APIException):
@@ -25,7 +24,7 @@ class GpxFileSerializer(serializers.ModelSerializer):
             instance = super(GpxFileSerializer, self).create(validated_data)
         except IntegrityError:
             raise DuplicateGPX
-        except GPXXMLSyntaxException:
+        except ValidationError:
             raise GPXParsingFail
         return instance
 

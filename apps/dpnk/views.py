@@ -34,7 +34,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.gzip import gzip_page
-from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase
+from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase, must_be_owner
 from django.contrib.auth.decorators import login_required as login_required_simple
 from django.contrib.gis.shortcuts import render_to_kml
 from django.template import RequestContext
@@ -94,7 +94,8 @@ class UserAttendanceViewMixin(object):
         return super(UserAttendanceViewMixin, self).dispatch(request, *args, **kwargs)
 
     def get_object(self):
-        return self.user_attendance
+        if hasattr(self, 'user_attendance'):
+            return self.user_attendance
 
 
 class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend):
@@ -648,27 +649,6 @@ def payment_status(request):
     return http.HttpResponse("OK")
 
 
-def trip_active_last7(day, today):
-    return (
-        (day <= today)
-        and (day > today - datetime.timedelta(days=7))
-        )
-
-
-def trip_active_last_week(day, today):
-    return (
-            (day <= today)
-        and (
-            (
-                day.isocalendar()[1] == today.isocalendar()[1])
-            or
-                (today.weekday() == 0 and day.isocalendar()[1]+1 == today.isocalendar()[1])
-            )
-        )
-
-trip_active = trip_active_last7
-
-
 class RidesView(UserAttendanceViewMixin, TemplateView):
     template_name='registration/rides.html'
     success_url="jizdy"
@@ -683,13 +663,12 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         days = util.days(self.user_attendance.campaign)
-        today = util.today()
         for day_m, date in enumerate(days):
             day = day_m + 1
             trip_to = request.POST.get('trip_to-' + str(day), 'off') == 'on'
             trip_from = request.POST.get('trip_from-' + str(day), 'off') == 'on'
 
-            if not trip_active(date, today):
+            if not util.trip_active(date):
                 continue
             trip, created = Trip.objects.get_or_create(
                 user_attendance=self.user_attendance,
@@ -722,7 +701,6 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         days = util.days(self.user_attendance.campaign)
-        today = util.today()
         trips = {}
         for t in Trip.objects.filter(user_attendance=self.user_attendance).select_related('user_attendance__campaign'):
             trips[t.date] = t
@@ -738,10 +716,12 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
                 working_rides_count += (1 if trips[d].is_working_ride_to else 0) + (1 if trips[d].is_working_ride_from else 0)
             cd = {}
             cd['day'] = d
-            cd['trips_active'] = trip_active(d, today)
+            cd['trips_active'] = util.trip_active(d)
             if cd['trips_active']:
                 has_active_trip = True
             if d in trips:
+                cd['gpxfile_to'] = util.get_or_none_rm(trips[d].gpxfile_set, direction='trip_to')
+                cd['gpxfile_from'] = util.get_or_none_rm(trips[d].gpxfile_set, direction='trip_from')
                 cd['working_ride_to'] = trips[d].is_working_ride_to
                 cd['working_ride_from'] = trips[d].is_working_ride_from
                 cd['default_trip_to'] = trips[d].trip_to
@@ -754,6 +734,8 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
                 if trips[d].trip_from and trips[d].distance_from:
                     distance += trips[d].distance_from_cutted()
             else:
+                cd['gpxfile_to'] = False
+                cd['gpxfile_from'] = False
                 cd['working_ride_to'] = False
                 cd['working_ride_from'] = False
                 cd['default_trip_to'] = False
@@ -769,6 +751,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
             'has_active_trip': has_active_trip,
             'user_attendance': self.user_attendance,
             'minimum_percentage': self.user_attendance.campaign.minimum_percentage,
+            'other_gpx_files': models.GpxFile.objects.filter(user_attendance=self.user_attendance, trip=None),
         }
 
 
@@ -1485,3 +1468,42 @@ class CombinedTracksKMLView(TemplateView):
         user_attendances = models.UserAttendance.objects.filter(campaign__slug=self.request.subdomain, **filter_params).kml()
         context_data['user_attendances'] = user_attendances
         return context_data
+
+
+class UpdateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, UpdateView):
+    form_class = forms.GpxFileForm
+    model = models.GpxFile
+    template_name="registration/gpx_file.html"
+    success_url = reverse_lazy("profil")
+    title = _(u"Zadat trasu")
+
+    def get_initial(self):
+        return { 'user_attendance': self.user_attendance }
+
+    def get_object(self, queryset=None):
+        obj = models.GpxFile.objects.get(id=self.kwargs['id'])
+        return obj
+
+    @must_be_owner
+    def dispatch(self, request, *args, **kwargs):
+        return super(UpdateGpxFileView, self).dispatch(request, *args, **kwargs)
+
+
+class CreateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, CreateView):
+    form_class = forms.GpxFileForm
+    model = models.GpxFile
+    template_name="registration/gpx_file.html"
+    success_url = reverse_lazy("profil")
+    title = _(u"Zadat trasu")
+
+    def get_initial(self):
+        return {
+            'user_attendance': self.user_attendance,
+            'direction': self.kwargs['direction'],
+            'trip_date': self.kwargs['date'],
+            'track': self.user_attendance.track,
+        }
+
+    @must_be_owner
+    def dispatch(self, request, *args, **kwargs):
+        return super(CreateGpxFileView, self).dispatch(request, *args, **kwargs)

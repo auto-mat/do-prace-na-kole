@@ -6,6 +6,8 @@ import settings
 # Registration imports
 import registration.forms
 import models
+import util
+import datetime
 from django.utils import formats
 from models import UserProfile, Company, Subsidiary, Team, UserAttendance
 from django.db.models import Q
@@ -30,14 +32,37 @@ def team_full(data):
         raise forms.ValidationError(_(u"Tento tým již má pět členů a je tedy plný"))
 
 
-class SubmitMixin(object):
+class UserLeafletWidget(LeafletWidget):
+    def __init__(self, *args, **kwargs):
+        user_attendance = kwargs['user_attendance']
+        settings_overrides = {}
+        if user_attendance.team and user_attendance.team.subsidiary.city.location:
+            settings_overrides['DEFAULT_CENTER'] = (user_attendance.team.subsidiary.city.location.y, user_attendance.team.subsidiary.city.location.x)
+            settings_overrides['DEFAULT_ZOOM'] = 13
+
+        super(UserLeafletWidget, self).__init__(
+            attrs={
+                "geom_type":'LINESTRING',
+                "map_height":"500px",
+                "map_width":"100%",
+                'settings_overrides':settings_overrides,
+            }
+        )
+
+
+class FormClassMixin(object):
     def __init__(self, url_name="", *args, **kwargs):
         self.helper = FormHelper()
         if url_name:
             self.url_name = url_name
             self.helper.form_class = url_name + "_form"
-        self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        super(FormClassMixin, self).__init__(*args, **kwargs)
+
+
+class SubmitMixin(FormClassMixin):
+    def __init__(self, url_name="", *args, **kwargs):
         super(SubmitMixin, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', _(u'Odeslat')))
 
 
 class PrevNextMixin(object):
@@ -500,19 +525,7 @@ class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
         instance = kwargs['instance']
         super(TrackUpdateForm, self).__init__(*args, **kwargs)
 
-        settings_overrides = {}
-        if instance.team and instance.team.subsidiary.city.location:
-            settings_overrides['DEFAULT_CENTER'] = (instance.team.subsidiary.city.location.y, instance.team.subsidiary.city.location.x)
-            settings_overrides['DEFAULT_ZOOM'] = 13
-
-        self.fields['track'].widget = LeafletWidget(
-            attrs={
-                "geom_type":'LINESTRING',
-                "map_height":"500px",
-                "map_width":"100%",
-                'settings_overrides':settings_overrides,
-            }
-        )
+        self.fields['track'].widget = UserLeafletWidget(user_attendance=instance)
 
 
 class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
@@ -584,3 +597,42 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'email')
+
+
+class GpxFileForm(FormClassMixin, forms.ModelForm):
+    def clean_user_attendance(self):
+        return self.initial['user_attendance']
+
+    def clean_trip_date(self):
+        return self.initial['trip_date']
+
+    def clean_direction(self):
+        return self.initial['direction']
+
+    def clean_track(self):
+        if not util.trip_active(self.trip_date):
+            return getattr(self.initial, 'track', None)
+        return self.cleaned_data['track']
+
+    def clean_file(self):
+        if not util.trip_active(self.trip_date):
+            return getattr(self.initial, 'file', None)
+        return self.cleaned_data['file']
+
+    def __init__(self, *args, **kwargs):
+        super(GpxFileForm, self).__init__(*args, **kwargs)
+        self.trip_date = self.instance.trip_date or datetime.datetime.strptime(self.initial['trip_date'], "%Y-%m-%d").date()
+        if util.trip_active(self.trip_date):
+            self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        user_attendance = self.initial['user_attendance']
+
+        self.fields['track'].widget = UserLeafletWidget(user_attendance=user_attendance)
+
+    class Meta:
+        model = models.GpxFile
+        fields = ('trip_date', 'direction', 'user_attendance', 'track', 'file')
+        widgets = {
+            'user_attendance': HiddenInput(),
+            'trip_date': forms.TextInput(attrs={'readonly':'readonly'}),
+            'direction': forms.Select(attrs={'readonly':'readonly'}),
+            }

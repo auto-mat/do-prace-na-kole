@@ -4,6 +4,7 @@ import re
 import datetime
 from  django.http import HttpResponse
 import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 DAYS_EXCLUDE = (
     datetime.date(year=2014, day=8, month=5),
@@ -58,3 +59,37 @@ def get_client_ip(request):
 def format_psc(integer):
     psc_str = str(integer)
     return psc_str[:-2] + " " + psc_str[-2:]
+
+def get_or_none_rm(model, *args, **kwargs):
+    try:
+        return model.get(*args, **kwargs)
+    except ObjectDoesNotExist:
+        return None
+
+def get_or_none(model, *args, **kwargs):
+    try:
+        return model.objects.get(*args, **kwargs)
+    except model.DoesNotExist:
+        return None
+
+def trip_active_last7(day):
+    day_today = _today()
+    return (
+        (day <= day_today)
+        and (day > day_today - datetime.timedelta(days=7))
+        )
+
+
+def trip_active_last_week(day):
+    day_today = _today()
+    return (
+            (day <= day_today)
+        and (
+            (
+                day.isocalendar()[1] == day_today.isocalendar()[1])
+            or
+                (day_today.weekday() == 0 and day.isocalendar()[1]+1 == day_today.isocalendar()[1])
+            )
+        )
+
+trip_active = trip_active_last7

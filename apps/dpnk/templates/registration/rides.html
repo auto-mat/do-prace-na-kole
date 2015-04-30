@@ -16,11 +16,11 @@
 {{ message }}
 
 <table id="rides" class="table table-bordered table-hover table-condensed {% if not has_active_trip %}toggle{% endif %}" {% if not has_active_trip %}style="display:none"{% endif %}>
-<thead class="{% if has_active_trip %}toggle{% endif %}">
+<thead>
    <tr>
       <th scope="col">{% trans "Den" %}</th>
-      <th scope="col" colspan="2">{% trans "Do práce" %}</th>
-      <th scope="col" colspan="2">{% trans "Z práce" %}</th>
+      <th scope="col" >{% trans "Do práce" %}</th>
+      <th scope="col" >{% trans "Z práce" %}</th>
       <th scope="col" class="fixed_width_column">{% trans "Pra&shy;vi&shy;del&shy;nost" %}</th>
       <th scope="col" class="fixed_width_column">{% trans "Vzdá&shy;le&shy;nost cel&shy;kem" %}</th>
    </tr>
@@ -38,24 +38,46 @@ style="display:none"
 {% endif %}
 >
 <th scope="row" class="date">{{ day.day|naturalday:"D j. M" }}</th>
-<td>
+<td style="white-space: nowrap;">
    {% if day.working_ride_to %}
    <input type="checkbox" name="trip_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_to %}checked="checked"{% endif %}/>
-   {% endif %}
-</td>
-<td>
-   {% if day.working_ride_to %}
    <input type="number" step="any" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_to|unlocalize }}"/>
+   {% if day.gpxfile_to %}
+   <a href="{% url "gpx_file" id=day.gpxfile_to.id %}">
+      {% if day.trips_active %}
+         <i class="fa fa-edit"></i>
+      {% else %}
+         <i class="fa fa-eye"></i>
+      {% endif %}
+   </a>
+   {% else %}
+   <a href="{% url "gpx_file_create" date=day.day direction='trip_to' %}">
+      {% if day.trips_active %}
+         <i class="fa fa-map-marker"></i>
+      {% endif %}
+   </a>
+   {% endif %}
    {% endif %}
 </td>
 <td>
    {% if day.working_ride_from %}
    <input type="checkbox" name="trip_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_from %}checked="checked"{% endif %}/>
-   {% endif %}
-</td>
-<td>
-   {% if day.working_ride_from %}
    <input type="number" step="any" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from|unlocalize }}"/>
+   {% if day.gpxfile_from %}
+   <a href="{% url "gpx_file" id=day.gpxfile_from.id %}">
+      {% if day.trips_active %}
+         <i class="fa fa-edit"></i>
+      {% else %}
+         <i class="fa fa-eye"></i>
+      {% endif %}
+   </a>
+   {% else %}
+   <a href="{% url "gpx_file_create" date=day.day direction='trip_from' %}">
+      {% if day.trips_active %}
+         <i class="fa fa-map-marker"></i>
+      {% endif %}
+   </a>
+   {% endif %}
    {% endif %}
 </td>
 <td><div {% if day.percentage >  minimum_percentage %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>
@@ -63,6 +85,25 @@ style="display:none"
 </tr>
 {% endfor %}
 </table>
+
+{% if other_gpx_files %}
+   <h3>Další nahrané jízdy</h3>
+   <table class="table">
+      {% for gpx_file in other_gpx_files %}
+      <tr>
+         <td>{{ gpx_file.trip_date }}</td>
+         <td>{{ gpx_file.direction_string }}</td>
+         <td>{% if gpx_file.length %}{{ gpx_file.length }} Km{% endif %}</td>
+         <td>
+         <a href="{% url "gpx_file" id=gpx_file.id %}">
+            <i class="fa fa-eye"></i>
+         </a>
+         </td>
+      </tr>
+      {% endfor %}
+   </table>
+{% endif %}
+
 {% if not has_active_trip %}
 <div class="toggle alert alert-info">
 {% trans "Zde budete zadávat vaše jízdy" %}

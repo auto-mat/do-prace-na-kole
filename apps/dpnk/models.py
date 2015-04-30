@@ -2302,13 +2302,15 @@ class SubsidiaryInCampaign(Subsidiary):
 
 class GpxFile(models.Model):
     file = models.FileField(
-        verbose_name=_(u"GPX trasa"),
+        verbose_name=_(u"GPX soubor"),
+        help_text=_(u"Zadat trasu nahráním souboru GPX"),
         upload_to='gpx_tracks',
-        blank=False, null=False)
+        blank=True, null=True)
     DIRECTIONS = [
         ('trip_to', _(u"Tam")),
         ('trip_from', _(u"Zpět")),
     ]
+    DIRECTIONS_DICT = dict(DIRECTIONS)
     trip_date = models.DateField(
         verbose_name=_(u"Datum vykonání cesty"),
         null=False,
@@ -2337,10 +2339,36 @@ class GpxFile(models.Model):
 
     objects = models.GeoManager()
     class Meta:
+        verbose_name = _(u"GPX soubor")
+        verbose_name_plural = _(u"GPX soubory")
         unique_together = (
                 ("user_attendance", "trip_date", "direction"),
                 ("trip", "direction"),
                 )
+        ordering = ('trip_date', 'direction')
+
+    def direction_string(self):
+        return self.DIRECTIONS_DICT[self.direction]
+
+    def length(self):
+        length = GpxFile.objects.length().get(pk=self.pk).length
+        if length:
+            return round(length.km, 2)
+
+    def clean(self):
+        if self.file:
+            try:
+                gpx = gpxpy.parse(self.file.read())
+            except gpxpy.gpx.GPXXMLSyntaxException:
+                raise ValidationError(u"Vadný GPX soubor")
+            if gpx.tracks:
+                track_list_of_points = []
+                for point in gpx.tracks[0].segments[0].points:
+
+                    point_in_segment = Point(point.longitude, point.latitude)
+                    track_list_of_points.append(point_in_segment.coords)
+
+                self.track_clean = LineString(track_list_of_points)
 
 
 #Signals:
@@ -2392,24 +2420,21 @@ def set_trip(sender, instance, *args, **kwargs):
         trip = Trip.objects.get(user_attendance=instance.user_attendance, date=instance.trip_date)
     except Trip.DoesNotExist:
         trip = None
-    gpx = gpxpy.parse(instance.file.read())
-    if gpx.tracks:
-        track_list_of_points = []
-        for point in gpx.tracks[0].segments[0].points:
-
-            point_in_segment = Point(point.longitude, point.latitude)
-            track_list_of_points.append(point_in_segment.coords)
-
-        instance.track = LineString(track_list_of_points)
     instance.trip = trip
+
+def set_track(sender, instance, changed_fields=None, **kwargs):
+    if hasattr(instance, 'track_clean'):
+        instance.track = instance.track_clean
+pre_save_changed.connect(set_track, sender=GpxFile, fields=['file'])
 
 @receiver(post_save, sender=GpxFile)
 def set_trip_post(sender, instance, *args, **kwargs):
-    if instance.trip:
-        if instance.direction == 'trip_to':
-            instance.trip.distance_to = round(GpxFile.objects.length().get(pk=instance.pk).length.km, 2)
-        if instance.direction == 'trip_from':
-            instance.trip.distance_from =  round(GpxFile.objects.length().get(pk=instance.pk).length.km, 2)
+    if instance.trip and util.trip_active(instance.trip.date):
+        length = instance.length()
+        if instance.direction == 'trip_to' and length:
+            instance.trip.distance_to = length
+        if instance.direction == 'trip_from' and length:
+            instance.trip.distance_from = length
         instance.trip.save()
 
 @receiver(post_save, sender=UserActionTransaction)

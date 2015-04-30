@@ -3,6 +3,7 @@
 }
 #rides .form-control {
   width: 70px;
+  display: inline;
 }
 h1,
 h2,
