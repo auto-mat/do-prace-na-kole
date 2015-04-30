@@ -26,7 +26,7 @@ import hashlib
 import datetime
 import results
 # Django imports
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -1481,8 +1481,7 @@ class UpdateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageM
         return { 'user_attendance': self.user_attendance }
 
     def get_object(self, queryset=None):
-        obj = models.GpxFile.objects.get(id=self.kwargs['id'])
-        return obj
+        return get_object_or_404(models.GpxFile, id=self.kwargs['id'])
 
     @must_be_owner
     def dispatch(self, request, *args, **kwargs):

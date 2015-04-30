@@ -25,6 +25,7 @@ from crispy_forms.layout import Submit, Layout, HTML
 from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import string_concat
+from django.http import Http404
 
 
 def team_full(data):
@@ -621,9 +622,12 @@ class GpxFileForm(FormClassMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(GpxFileForm, self).__init__(*args, **kwargs)
-        self.trip_date = self.instance.trip_date or datetime.datetime.strptime(self.initial['trip_date'], "%Y-%m-%d").date()
-        if util.trip_active(self.trip_date):
-            self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        try:
+            self.trip_date = self.instance.trip_date or datetime.datetime.strptime(self.initial['trip_date'], "%Y-%m-%d").date()
+            if util.trip_active(self.trip_date):
+                self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        except ValueError:
+            raise Http404
         user_attendance = self.initial['user_attendance']
 
         self.fields['track'].widget = UserLeafletWidget(user_attendance=user_attendance)
