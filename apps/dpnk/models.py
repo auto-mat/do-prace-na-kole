@@ -2359,16 +2359,16 @@ class GpxFile(models.Model):
         if self.file:
             try:
                 gpx = gpxpy.parse(self.file.read())
-            except gpxpy.gpx.GPXXMLSyntaxException:
+                if gpx.tracks:
+                    track_list_of_points = []
+                    for point in gpx.tracks[0].segments[0].points:
+
+                        point_in_segment = Point(point.longitude, point.latitude)
+                        track_list_of_points.append(point_in_segment.coords)
+
+                    self.track_clean = LineString(track_list_of_points)
+            except:
                 raise ValidationError(u"Vadný GPX soubor")
-            if gpx.tracks:
-                track_list_of_points = []
-                for point in gpx.tracks[0].segments[0].points:
-
-                    point_in_segment = Point(point.longitude, point.latitude)
-                    track_list_of_points.append(point_in_segment.coords)
-
-                self.track_clean = LineString(track_list_of_points)
 
 
 #Signals:
