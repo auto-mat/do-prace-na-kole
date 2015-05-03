@@ -1947,7 +1947,7 @@ class Competition(models.Model):
             return 'not_libero'
         if self.company and self.company != user_attendance.team.subsidiary.company:
             return 'not_for_company'
-        if self.city.filter(pk=user_attendance.team.subsidiary.city.pk).exists():
+        if self.city.exists() and not self.city.filter(pk=user_attendance.team.subsidiary.city.pk).exists():
             return 'not_for_city'
 
         return True
