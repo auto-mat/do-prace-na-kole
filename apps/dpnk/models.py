@@ -878,6 +878,9 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def payment_complete(self):
         return self.payment()['status'] == 'done' or self.payment()['status'] == 'no_admission'
 
+    def get_emissions(self, distance=None):
+        return util.get_emissions(self.get_distance())
+
     def get_all_trips(self):
         days = util.days(self.campaign)
         trip_days = Trip.objects.filter(user_attendance=self, date__in=days).values_list('date', flat=True)

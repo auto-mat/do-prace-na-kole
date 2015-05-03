@@ -51,7 +51,6 @@ PREFIX_DEFAULT_LOCALE = False
 SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
-DECIMAL_SEPARATOR = ','
 MEDIA_ROOT = normpath(PROJECT_ROOT, 'media/upload')
 MEDIA_URL = '/media/upload/'
 STATIC_ROOT = normpath(PROJECT_ROOT, "static")

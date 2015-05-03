@@ -93,3 +93,16 @@ def trip_active_last_week(day):
         )
 
 trip_active = trip_active_last7
+
+def get_emissions(distance):
+    return {
+            'co2': round(distance * 150.8, 1),
+            'co': round(distance * 724.4, 1),
+            'nox': round(distance * 169.7, 1),
+            'n2o': round(distance * 25.0, 1),
+            'voc': round(distance * 82.9, 1),
+            'ch4': round(distance * 7.7, 1),
+            'so2': round(distance * 4.9, 1),
+            'solid': round(distance * 35.0, 1),
+            'pb': round(distance * 0.011, 1),
+            }

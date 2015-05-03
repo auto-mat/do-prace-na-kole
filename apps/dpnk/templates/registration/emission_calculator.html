@@ -1,0 +1,37 @@
+{% extends "base_generic.html" %}
+{% load humanize %}
+
+{% block content %}
+{% with user_attendance.get_emissions as emissions %}
+<table class="table">
+<tr>
+   <td>Ujetá vzdálenost</td><td>{{ user_attendance.get_distance|floatformat:1 }}&nbsp;km</td>
+</tr>
+<tr>
+   <td>CO<sub>2</sub></td><td>{{ emissions.co2|intcomma }}&nbsp;g</td>
+</tr>
+<tr>
+   <td>CO</td><td>{{ emissions.co|intcomma }}&nbsp;µg</td>
+</tr>
+<tr>
+   <td>NO<sub>X</sub></td><td>{{ emissions.nox|intcomma }}&nbsp;µg</td>
+</tr>
+<tr>
+   <td>N<sub>2</sub>O</td><td>{{ emissions.n2o|intcomma }}&nbsp;µg</td>
+</tr>
+<tr>
+   <td>CH<sub>4</sub></td><td>{{ emissions.ch4|intcomma }}&nbsp;µg</td>
+</tr>
+<tr>
+   <td>SO<sub>2</sub></td><td>{{ emissions.ch4|intcomma }}&nbsp;µg</td>
+</tr>
+<tr>
+   <td>Pevné částice</td><td>{{ emissions.solid|intcomma }}&nbsp;µg</td>
+</tr>
+<tr>
+   <td>Olovo</td><td>{{ emissions.pb|intcomma }}&nbsp;µg</td>
+</tr>
+</tr>
+</table>
+{% endwith %}
+{% endblock %}

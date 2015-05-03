@@ -1,3 +1,22 @@
+# -*- coding: utf-8 -*-
+# Author: Petr Dlouhý <petr.dlouhy@email.cz>
+#
+# Copyright (C) 2015 o.s. Auto*Mat
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 from django.conf.urls import patterns, url
 
 import views
@@ -7,6 +26,7 @@ import company_admin_views
 from decorators import must_be_company_admin, must_be_in_group, must_be_competitor, must_have_team
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import login_required as login_required_simple
+from django.utils.translation import ugettext_lazy as _
 
 urlpatterns = patterns(
     '',
@@ -130,6 +150,13 @@ urlpatterns = patterns(
     url(r'^gpx_file_create/(?P<date>[^&]+)/(?P<direction>[^&]+)$',
         views.CreateGpxFileView.as_view(),
         name="gpx_file_create",
+        ),
+    url(r'^emisni_kalkulacka/$',
+        views.UserAttendanceView.as_view(
+            template_name="registration/emission_calculator.html",
+            title=_(u"Emisní kalkulačka"),
+        ),
+        name="emission_calculator",
         ),
 
 

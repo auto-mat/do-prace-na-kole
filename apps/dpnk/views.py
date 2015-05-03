@@ -31,7 +31,7 @@ from django.contrib import auth
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.admin.views.decorators import staff_member_required
-from django.utils.decorators import method_decorator
+from django.utils.decorators import method_decorator, classonlymethod
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.gzip import gzip_page
 from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase, must_be_owner
@@ -157,6 +157,12 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
 
 
 class TitleViewMixin(object):
+    @classonlymethod
+    def as_view(self, *args, **kwargs):
+        if 'title' in kwargs:
+            self.title = kwargs.get('title')
+        return super(TitleViewMixin, self).as_view(*args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context_data = super(TitleViewMixin, self).get_context_data(*args, **kwargs)
         context_data['title'] = self.title
@@ -744,7 +750,8 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
                 cd['default_distance_from'] = default_distance
             cd['percentage'] = self.user_attendance.get_frequency_percentage(trip_count, working_rides_count)
             cd['percentage_str'] = "%.0f" % (cd['percentage'])
-            cd['distance'] = distance
+            cd['distance'] = round(distance, 1)
+            cd['emissions'] = util.get_emissions(distance)
             calendar.append(cd)
         return {
             'calendar': calendar,
@@ -767,7 +774,7 @@ class ProfileView(RegistrationViewMixin, TemplateView):
             return redirect(reverse('upravit_profil'))
 
 
-class UserAttendanceView(UserAttendanceViewMixin, TemplateView):
+class UserAttendanceView(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
     pass
 
 class PackageView(RegistrationViewMixin, TemplateView):
