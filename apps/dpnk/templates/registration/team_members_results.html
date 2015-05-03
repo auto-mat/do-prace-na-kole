@@ -10,7 +10,8 @@
 <table class="table table-bordered" id="team_members_table">
    <tr>
       <th>{% trans "Jmé&shy;no" %}</th>
-      <th class="fixed_width_column">{% trans "Jízdy" %}</th>
+      <th class="fixed_width_column">{% trans "Po&shy;čet jízd" %}</th>
+      <th class="fixed_width_column">{% trans "Pro&shy;cen&shy;to jízd" %}</th>
       <th class="fixed_width_column">{% trans "U&shy;je&shy;tá vzdá&shy;le&shy;nost" %}</th>
    </tr>
    {% for user_attendance in team_members %}
@@ -19,10 +20,15 @@
          >
       <td>{{ user_attendance.name|softhyphen:"cs-CZ" }}</td>
       {% if not user_attendance.entered_competition %}
-         <td colspan="2">{% trans "Ještě nezačal soutěžit" %}</td>
+         <td colspan="3">{% trans "Ještě nezačal soutěžit" %}</td>
       {% else %}
-      <td>{{ user_attendance.get_frequency|floatformat:-1|intcomma }}&nbsp;{% trans "jízd" %}<br/>
-      {{ user_attendance.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%</td>
+
+      <td>
+         {{ user_attendance.get_rides_count }}
+      </td>
+      <td>
+         {{ user_attendance.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%
+      </td>
       <td>
          {{ user_attendance.get_length|floatformat:-1|intcomma }}&nbsp;km
       </td>

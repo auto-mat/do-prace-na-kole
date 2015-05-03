@@ -159,30 +159,39 @@ def get_competitions_with_info(user_attendance):
         competition.my_results = my_results
     return competitions
 
+def get_rides_count(user_attendance):
+    return models.Trip.objects.filter(user_attendance=user_attendance, trip_from=True, is_working_ride_from=True).count() +\
+           models.Trip.objects.filter(user_attendance=user_attendance, trip_to=True, is_working_ride_to=True).count()
+
+def get_working_trips_count(user_attendance):
+    return models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, date__lte=util.today()).count() + \
+           models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, date__lte=util.today()).count()
+
+def get_all_working_trips_count(user_attendance):
+    return models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True).count() + \
+           models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True).count()
+
+
 def get_userprofile_frequency(user_attendance, rides_count=None, working_trips_count=None):
     minimum_rides_base = user_attendance.campaign.minimum_rides_base
-    all_working_trips_count = models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True).count() + \
-                              models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True).count()
     if working_trips_count is None:
-        working_trips_count = all_working_trips_count
-    all_rides_count = models.Trip.objects.filter(user_attendance=user_attendance, trip_from=True, is_working_ride_from=True).count() +\
-                      models.Trip.objects.filter(user_attendance=user_attendance, trip_to=True, is_working_ride_to=True).count()
-    if rides_count is None:
-        rides_count = all_rides_count
+        working_trips_count = get_working_trips_count(user_attendance)
 
-    rides_percentage_index = min(1, float(all_working_trips_count) / minimum_rides_base)
+    if rides_count is None:
+        rides_count = get_rides_count(user_attendance)
+
+    rides_percentage_index = min(1, float(get_all_working_trips_count(user_attendance)) / minimum_rides_base)
     if working_trips_count == 0:
         return 0
     return float(rides_count)/working_trips_count*rides_percentage_index
 
 def get_userprofile_length(user_attendance):
-    # distance_from = models.Trip.objects.filter(user_attendance=user_attendance).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
-    # distance_to   = models.Trip.objects.filter(user_attendance=user_attendance).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
-    distance = 0
-    for trip in models.Trip.objects.filter(user_attendance=user_attendance).select_related('user_attendance__campaign'):
-        distance += trip.distance_from_cutted()
-        distance += trip.distance_to_cutted()
-    return distance
+    trip_plus_distance = user_attendance.campaign.trip_plus_distance + user_attendance.get_distance()
+    distance_from = (models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True, distance_from__lt=trip_plus_distance).aggregate(Sum('distance_from'))['distance_from__sum'] or 0) + \
+                    models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True, distance_from__gte=trip_plus_distance).count() * (trip_plus_distance)
+    distance_to   = (models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, trip_to=True, distance_to__lt=trip_plus_distance).aggregate(Sum('distance_to'))['distance_to__sum'] or 0) + \
+                    models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, trip_to=True, distance_to__gte=trip_plus_distance).count() * (trip_plus_distance)
+    return distance_from + distance_to
 
 def get_team_frequency(team):
     member_count = team.member_count

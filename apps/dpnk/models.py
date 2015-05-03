@@ -789,6 +789,9 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def has_distance_competition(self):
         return results.has_distance_competition(self)
 
+    def get_rides_count(self):
+        return results.get_rides_count(self)
+
     def get_frequency(self, rides_count=None, working_trips_count=None):
         return results.get_userprofile_frequency(self, rides_count, working_trips_count)
 
@@ -1749,12 +1752,18 @@ class Trip(models.Model):
         )
 
     def distance_from_cutted(self):
-        plus_distance = self.user_attendance.campaign.trip_plus_distance
-        return min((self.user_attendance.distance or 0) + plus_distance, self.distance_from or 0)
+        if self.trip_from and self.is_working_ride_from:
+            plus_distance = self.user_attendance.campaign.trip_plus_distance
+            return min((self.user_attendance.get_distance() or 0) + plus_distance, self.distance_from or 0)
+        else:
+            return 0
 
     def distance_to_cutted(self):
-        plus_distance = self.user_attendance.campaign.trip_plus_distance
-        return min((self.user_attendance.distance or 0) + plus_distance, self.distance_to or 0)
+        if self.trip_to and self.is_working_ride_to:
+            plus_distance = self.user_attendance.campaign.trip_plus_distance
+            return min((self.user_attendance.get_distance() or 0) + plus_distance, self.distance_to or 0)
+        else:
+            return 0
 
     def working_day(self):
         return util.working_day(self.date)

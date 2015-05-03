@@ -81,7 +81,7 @@ style="display:none"
    {% endif %}
 </td>
 <td><div {% if day.percentage >  minimum_percentage %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>
-<td>{{ day.distance }}&nbsp;km</td>
+<td>{{ day.distance|floatformat:1 }}&nbsp;km</td>
 </tr>
 {% endfor %}
 </table>
@@ -93,7 +93,7 @@ style="display:none"
       <tr>
          <td>{{ gpx_file.trip_date }}</td>
          <td>{{ gpx_file.direction_string }}</td>
-         <td>{% if gpx_file.length %}{{ gpx_file.length }} Km{% endif %}</td>
+         <td>{% if gpx_file.length %}{{ gpx_file.length|floatformat:1 }} Km{% endif %}</td>
          <td>
          <a href="{% url "gpx_file" id=gpx_file.id %}">
             <i class="fa fa-eye"></i>
