@@ -1,6 +1,5 @@
 {% extends "base_generic.html" %}
 {% load url from future %}
-{% load dpnk_tags %}
 {% load i18n %}
 {% load humanize %}
 {% load softhyphen_tags %}
@@ -71,7 +70,7 @@
 
    {% if competition.competitor_can_admit == True %}
    {% if competition.type == 'questionnaire' %}
-      <a class="btn btn-primary" href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">
+      <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">
          {% if competition.competitor_has_admission %}
             {% trans "Změ&shy;nit od&shy;po&shy;vě&shy;di" %}
          {% else %}
@@ -99,7 +98,7 @@
       {% elif competition.competitor_can_admit == 'after_end' %}
          {% trans "Do&shy;taz&shy;ník již ne&shy;ní ak&shy;tiv&shy;ní." %}
          <br/>
-         <a class="btn btn-primary" href="{% wp_url 'otazka' %}?questionaire={{ competition.slug }}">zo&shy;bra&shy;zit vy&shy;hod&shy;no&shy;ce&shy;ní </a>
+         <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">zo&shy;bra&shy;zit vy&shy;hod&shy;no&shy;ce&shy;ní </a>
       {% elif competition.competitor_can_admit == 'not_company_admin' %}
          {% if competition.competitor_has_admission %}
             {% trans "Do té&shy;to sou&shy;tě&shy;že fi&shy;rem vás při&shy;hlá&shy;sil váš fi&shy;rem&shy;ní koordinátor." %}

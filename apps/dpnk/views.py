@@ -935,101 +935,108 @@ def handle_uploaded_file(source, username):
     return u"questionaire/" + filepath.rsplit("/", 1)[1]
 
 
-@login_required_simple
-@must_be_competitor
-def questionaire(
-        request,
-        questionaire_slug=None,
-        template='registration/questionaire.html',
-        user_attendance=None,
-        success_url='profil',
-        ):
-    questionnaire = models.Competition.objects.get(slug=questionaire_slug)
-    userprofile = request.user.get_profile()
-    error = False
-    empty_answer = False
-    form_filled = False
-    try:
-        competition = Competition.objects.get(slug=questionaire_slug)
-    except Competition.DoesNotExist:
-        logger.exception('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
-        return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující dotazník">kontakt@dopracenakole.net</a></div>'), status=401)
-    questions = Question.objects.filter(competition=competition).order_by('order')
-    if request.method == 'POST' and competition.can_admit(user_attendance):
-        choice_ids = [(int(k.split('-')[1]), request.POST.getlist(k)) for k, v in request.POST.items() if k.startswith('choice')]
-        comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
-        fileupload_ids = [int(k.split('-')[1]) for k, v in request.FILES.items() if k.startswith('fileupload')]
+class QuestionnaireView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
+    template_name='registration/questionaire.html'
+    success_url=reverse_lazy('competitions')
+    title=_(u"Vyplnňte odpovědi")
 
-        answers_dict = {}
-        for question in questions:
-            answer, created = Answer.objects.get_or_create(
-                user_attendance=user_attendance,
-                question=question)
-            if not created:
-                # Cleanup previous fillings
-                answer.choices = []
-            answer.save()
-            answers_dict[question.id] = answer
-
-        # Save choices
-        for answer_id, choices_ids in choice_ids:
-            for choice_id in choices_ids:
-                choice = Choice.objects.get(id=choice_id)
-                answer = answers_dict[answer_id]
-                answer.choices.add(choice)
-                answer.save()
-        # Save comments
-        for comment_id in comment_ids:
-            answer = answers_dict[comment_id]  # comment_id = question_id
-            answer.comment = request.POST.get('comment-%d' % comment_id, '')
-            answer.save()
-        # Save file uploads
-        for fileupload_id in fileupload_ids:
-            filehandler = request.FILES.get('fileupload-%d' % fileupload_id, None)
-            if filehandler:
-                answer = answers_dict[fileupload_id]
-                answer.attachment = handle_uploaded_file(filehandler, request.user.username)
-                answer.save()
-
-        competition.make_admission(user_attendance)
-        form_filled = True
-
-    for question in questions:
+    #@login_required_simple
+    #@must_be_competitor
+    def dispatch(self, request, *args, **kwargs):
+        #import pudb; pudb.set_trace()
+        questionaire_slug=kwargs['questionnaire_slug']
+        self.questionnaire = models.Competition.objects.get(slug=questionaire_slug)
+        self.userprofile = request.user.userprofile
+        self.error = False
+        self.empty_answer = False
+        form_filled = False
         try:
-            question.choices = Choice.objects.filter(choice_type=question.choice_type)
-        except Choice.DoesNotExist:
-            question.choices = None
-        try:
-            answer = Answer.objects.get(
-                question=question,
-                user_attendance=user_attendance)
+            self.competition = Competition.objects.get(slug=questionaire_slug)
+        except Competition.DoesNotExist:
+            logger.exception('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
+            return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující dotazník">kontakt@dopracenakole.net</a></div>'), status=401)
+        self.questions = Question.objects.filter(competition=self.competition).order_by('order')
+        return super(QuestionnaireView, self).dispatch(request, *args, **kwargs)
 
-            if question.type == 'choice' and answer.choices.count() == 0:
-                error = True
-                question.error = True
+    def post(self, request, *args, **kwargs):
+        if self.competition.can_admit(self.user_attendance):
+            choice_ids = [(int(k.split('-')[1]), request.POST.getlist(k)) for k, v in request.POST.items() if k.startswith('choice')]
+            comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
+            fileupload_ids = [int(k.split('-')[1]) for k, v in request.FILES.items() if k.startswith('fileupload')]
 
-            question.comment_prefill = answer.comment
-            question.points_given = answer.points_given
-            question.attachment_prefill = answer.attachment
-            question.attachment_prefill_name = re.sub(r"^.*&", "", answer.attachment.name).replace("_", " ")
-            question.choices_prefill = [c.id for c in answer.choices.all()]
-        except Answer.DoesNotExist:
-            empty_answer = True
-            question.comment_prefill = ''
-            question.choices_prefill = ''
+            answers_dict = {}
+            for question in self.questions:
+                answer, created = Answer.objects.get_or_create(
+                    user_attendance=self.user_attendance,
+                    question=question)
+                if not created:
+                    # Cleanup previous fillings
+                    answer.choices = []
+                answer.save()
+                answers_dict[question.id] = answer
 
-    if not error and not empty_answer and form_filled:
-        return redirect(wp_reverse(success_url))
+            # Save choices
+            for answer_id, choices_ids in choice_ids:
+                for choice_id in choices_ids:
+                    choice = Choice.objects.get(id=choice_id)
+                    answer = answers_dict[answer_id]
+                    answer.choices.add(choice)
+                    answer.save()
+            # Save comments
+            for comment_id in comment_ids:
+                answer = answers_dict[comment_id]  # comment_id = question_id
+                answer.comment = request.POST.get('comment-%d' % comment_id, '')
+                answer.save()
+            # Save file uploads
+            for fileupload_id in fileupload_ids:
+                filehandler = request.FILES.get('fileupload-%d' % fileupload_id, None)
+                if filehandler:
+                    answer = answers_dict[fileupload_id]
+                    answer.attachment = handle_uploaded_file(filehandler, request.user.username)
+                    answer.save()
 
-    return render_to_response(template, {
-        'user': userprofile,
-        'questions': questions,
-        'questionaire': questionnaire,
-        'media': settings.MEDIA_URL,
-        'error': error,
-        'is_actual': competition.is_actual(),
-        'has_finished': competition.has_finished(),
-        }, context_instance=RequestContext(request))
+            self.competition.make_admission(self.user_attendance)
+            form_filled = True
+        if not self.error and not self.empty_answer and form_filled:
+            return redirect(self.success_url)
+
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(QuestionnaireView, self).get_context_data(*args, **kwargs)
+        for question in self.questions:
+            try:
+                question.choices = Choice.objects.filter(choice_type=question.choice_type)
+            except Choice.DoesNotExist:
+                question.choices = None
+            try:
+                answer = Answer.objects.get(
+                    question=question,
+                    user_attendance=self.user_attendance)
+
+                if question.type == 'choice' and answer.choices.count() == 0:
+                    self.error = True
+                    question.error = True
+
+                question.comment_prefill = answer.comment
+                question.points_given = answer.points_given
+                question.attachment_prefill = answer.attachment
+                question.attachment_prefill_name = re.sub(r"^.*&", "", answer.attachment.name).replace("_", " ")
+                question.choices_prefill = [c.id for c in answer.choices.all()]
+            except Answer.DoesNotExist:
+                self.empty_answer = True
+                question.comment_prefill = ''
+                question.choices_prefill = ''
+ 
+        context_data.update({
+            'user': self.userprofile,
+            'questions': self.questions,
+            'questionaire': self.questionnaire,
+            'media': settings.MEDIA_URL,
+            'error': self.error,
+            'is_actual': self.competition.is_actual(),
+            'has_finished': self.competition.has_finished(),
+            })
+        return context_data
 
 
 class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):

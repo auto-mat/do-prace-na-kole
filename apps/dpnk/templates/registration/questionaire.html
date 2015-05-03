@@ -1,5 +1,7 @@
+{% extends "base_generic_form.html" %}
 {% load i18n %}
 
+{% block form %}
 <h2>{{ questionaire.name }}</h2>
 <a class="btn btn-block btn-info" href="{{ questionaire.url }}" target="_blank">{% trans "Další informace o soutěži" %}</a>
 <br/>
@@ -57,3 +59,4 @@
 {% endif %}
 </form>
 </div>
+{% endblock %}
