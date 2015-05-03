@@ -792,11 +792,11 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def get_rides_count(self):
         return results.get_rides_count(self)
 
-    def get_frequency(self, rides_count=None, working_trips_count=None):
-        return results.get_userprofile_frequency(self, rides_count, working_trips_count)
+    def get_frequency(self, day=None):
+        return results.get_userprofile_frequency(self, day)
 
-    def get_frequency_percentage(self, rides_count=None, working_trips_count=None):
-        return self.get_frequency(rides_count, working_trips_count) * 100
+    def get_frequency_percentage(self, day=None):
+        return self.get_frequency(day) * 100
 
     def get_length(self):
         return results.get_userprofile_length(self)
@@ -2081,8 +2081,14 @@ class CompetitionResult(models.Model):
             return 0
 
     def get_total_result(self):
-        members = self.team.member_count if self.team else 1
-        return float(self.result) * float(members)
+        #TODO: don't use this function, show rides table instead
+        if self.user_attendance:
+            return self.user_attendance.get_rides_count()
+        if self.team:
+            rides_count = 0
+            for member in self.team.members():
+                rides_count += member.get_rides_count()
+            return rides_count
 
     def __unicode__(self):
         if self.competition.competitor_type == 'team':

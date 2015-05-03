@@ -159,31 +159,36 @@ def get_competitions_with_info(user_attendance):
         competition.my_results = my_results
     return competitions
 
-def get_rides_count(user_attendance):
-    return models.Trip.objects.filter(user_attendance=user_attendance, trip_from=True, is_working_ride_from=True).count() +\
-           models.Trip.objects.filter(user_attendance=user_attendance, trip_to=True, is_working_ride_to=True).count()
+def get_rides_count(user_attendance, day=None):
+    if not day:
+        day=util.today()
+    return models.Trip.objects.filter(user_attendance=user_attendance, trip_from=True, is_working_ride_from=True, date__lte=day).count() +\
+           models.Trip.objects.filter(user_attendance=user_attendance, trip_to=True, is_working_ride_to=True, date__lte=day).count()
 
-def get_working_trips_count(user_attendance):
-    return models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, date__lte=util.today()).count() + \
-           models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, date__lte=util.today()).count()
+def get_working_trips_count(user_attendance, day=None):
+    if not day:
+        day=util.today()
+    return models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, date__lte=day).count() + \
+           models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, date__lte=day).count()
 
 def get_all_working_trips_count(user_attendance):
     return models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True).count() + \
            models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True).count()
 
+def get_team_frequency(user_attendancies, day=None):
+    working_trips_count = 0
+    rides_count = 0
 
-def get_userprofile_frequency(user_attendance, rides_count=None, working_trips_count=None):
-    minimum_rides_base = user_attendance.campaign.minimum_rides_base
-    if working_trips_count is None:
-        working_trips_count = get_working_trips_count(user_attendance)
+    for user_attendance in user_attendancies:
+        minimum_rides_base = user_attendance.campaign.minimum_rides_base
+        working_trips_user = get_working_trips_count(user_attendance, day)
+        rides_count += get_rides_count(user_attendance, day)
 
-    if rides_count is None:
-        rides_count = get_rides_count(user_attendance)
-
-    rides_percentage_index = min(1, float(get_all_working_trips_count(user_attendance)) / minimum_rides_base)
+        rides_percentage_index = min(1, float(get_all_working_trips_count(user_attendance)) / minimum_rides_base)
+        working_trips_count += working_trips_user*rides_percentage_index
     if working_trips_count == 0:
         return 0
-    return float(rides_count)/working_trips_count*rides_percentage_index
+    return float(rides_count)/working_trips_count
 
 def get_userprofile_length(user_attendance):
     trip_plus_distance = (user_attendance.campaign.trip_plus_distance or 0) + (user_attendance.get_distance() or 0)
@@ -193,15 +198,8 @@ def get_userprofile_length(user_attendance):
                     models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, trip_to=True, distance_to__gte=trip_plus_distance).count() * (trip_plus_distance)
     return distance_from + distance_to
 
-def get_team_frequency(team):
-    member_count = team.member_count
-    members = team.members().all()
-        
-    if member_count == 0:
-        return None
-    trips_from = models.Trip.objects.filter(user_attendance__in=members, trip_from=True).count()
-    trips_to   = models.Trip.objects.filter(user_attendance__in=members, trip_to=True).count()
-    return float(trips_from + trips_to) / float(member_count)
+def get_userprofile_frequency(user_attendance, day=None):
+    return get_team_frequency([user_attendance], day)
 
 def get_team_length(team):
     member_count = team.member_count
@@ -271,7 +269,7 @@ def recalculate_result(competition, competitor):
         elif competition.type == 'length':
             competition_result.result = get_team_length(team)
         elif competition.type == 'frequency':
-            competition_result.result = get_team_frequency(team)
+            competition_result.result = get_team_frequency(team.members())
     
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
         user_attendance = competitor
