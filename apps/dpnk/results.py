@@ -186,7 +186,7 @@ def get_userprofile_frequency(user_attendance, rides_count=None, working_trips_c
     return float(rides_count)/working_trips_count*rides_percentage_index
 
 def get_userprofile_length(user_attendance):
-    trip_plus_distance = user_attendance.campaign.trip_plus_distance + user_attendance.get_distance()
+    trip_plus_distance = (user_attendance.campaign.trip_plus_distance or 0) + (user_attendance.get_distance() or 0)
     distance_from = (models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True, distance_from__lt=trip_plus_distance).aggregate(Sum('distance_from'))['distance_from__sum'] or 0) + \
                     models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True, distance_from__gte=trip_plus_distance).count() * (trip_plus_distance)
     distance_to   = (models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, trip_to=True, distance_to__lt=trip_plus_distance).aggregate(Sum('distance_to'))['distance_to__sum'] or 0) + \
