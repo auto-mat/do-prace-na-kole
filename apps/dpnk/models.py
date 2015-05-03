@@ -2072,8 +2072,8 @@ class CompetitionResult(models.Model):
         )
 
     def get_result_percentage(self):
-        if self.result and util.days_count(self.competition.campaign) != 0:
-            return (self.result / ((util.days_count(self.competition.campaign)) * 2)) * 100
+        if self.result:
+            return self.result * 100
         else:
             return 0
 
