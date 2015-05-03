@@ -27,6 +27,22 @@
 {{ message }}
 {% endblock %}
 
+<div>
+   <h3>{% trans "Vouchery" %}</h3>
+   <table class="table">
+   {% for voucher in user_attendance.voucher_set.all %}
+   <tr>
+      <td>
+         {{ voucher.type_string }}
+      </td>
+      <td>
+         {{ voucher.token }}
+      </td>
+   </tr>
+   {% endfor %}
+   </table>
+</div>
+
 <div class="row">
    <div class="col-md-6">
       <h3>{% trans "Novinky" %}</h3>

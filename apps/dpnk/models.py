@@ -2312,6 +2312,37 @@ class SubsidiaryInCampaign(Subsidiary):
         proxy = True
 
 
+class Voucher(models.Model):
+    TYPES = [
+        ('rekola', _(u"ReKola")),
+    ]
+    TYPE_DICT = dict(TYPES)
+    type = models.CharField(
+        verbose_name=_(u"typ voucheru"),
+        choices=TYPES,
+        max_length=10,
+        null=False,
+        blank=False,
+        default='rekola',
+    )
+    token=models.TextField(
+        verbose_name=_(u"token"),
+        blank=False,
+        null=True,
+    )
+    user_attendance=models.ForeignKey(
+        UserAttendance,
+        null=True,
+        blank=True,
+    )
+    class Meta:
+        verbose_name = _(u"Voucher")
+        verbose_name_plural = _(u"Vouchery")
+
+    def type_string(self):
+        return self.TYPE_DICT[self.type]
+
+
 class GpxFile(models.Model):
     file = models.FileField(
         verbose_name=_(u"GPX soubor"),

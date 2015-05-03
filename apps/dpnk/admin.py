@@ -20,7 +20,7 @@
 """Administrátorské rozhraní pro Do práce na kole"""
 
 # Django imports
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.admin import SimpleListFilter
 from django.db.models import F, Sum, Count, Q
@@ -32,7 +32,7 @@ from adminsortable2.admin import SortableInlineAdminMixin
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter, AllValuesComboFilter
 from import_export import resources, fields
-from import_export.admin import ExportMixin
+from import_export.admin import ExportMixin, ImportMixin
 from django.utils.translation import ugettext_lazy as _
 from leaflet.admin import LeafletGeoAdmin
 from admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin
@@ -560,6 +560,18 @@ def show_distance(modeladmin, request, queryset):
     modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
 show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 
+def assign_vouchers(modeladmin, request, queryset):
+    count = queryset.count()
+    vouchers = dpnk.models.Voucher.objects.filter(user_attendance=None).all()[:count]
+    if vouchers.count() != count:
+        messages.error(request, _(u"Není dost volných voucherů"))
+        return
+    for user_attendance, voucher in zip(queryset, vouchers):
+        voucher.user_attendance = user_attendance
+        voucher.save()
+    modeladmin.message_user(request, _(u"Úspěšně přiřazeno %s voucherů" % (count)))
+assign_vouchers.short_description = _(u"Přiřadit vouchery")
+
 
 class UserAttendanceResource(resources.ModelResource):
     class Meta:
@@ -597,7 +609,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixi
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__nickname', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
     readonly_fields = ('user_link', 'userprofile__user__email', 'created', 'updated')
-    actions = (update_mailing, approve_am_payment, recalculate_results, show_distance)
+    actions = (update_mailing, approve_am_payment, recalculate_results, show_distance, assign_vouchers)
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
     list_max_show_all = 10000
@@ -994,6 +1006,10 @@ class GpxFileAdmin(LeafletGeoAdmin):
     raw_id_fields = ('user_attendance', 'trip')
 
 
+class VoucherAdmin(ImportMixin, admin.ModelAdmin):
+    list_display = ('id', 'type', 'token', 'user_attendance')
+
+
 class UserAttendanceToBatch(models.UserAttendance):
     class Meta:
         verbose_name = _(u"Uživatel na dávku objednávek")
@@ -1066,6 +1082,7 @@ admin.site.register(models.CompanyAdmin, CompanyAdminAdmin)
 admin.site.register(models.DeliveryBatch, DeliveryBatchAdmin)
 admin.site.register(models.Invoice, InvoiceAdmin)
 admin.site.register(models.GpxFile, GpxFileAdmin)
+admin.site.register(models.Voucher, VoucherAdmin)
 
 admin.site.unregister(models.User)
 admin.site.register(models.User, UserAdmin)
