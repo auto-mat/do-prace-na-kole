@@ -114,7 +114,7 @@
 
    {% if competition.has_started %}
    {% if competition.type != 'questionnaire' or competition.has_finished %}
-      <a class="btn btn-primary" href="{% wp_url 'vysledky_souteze' %}?soutez={{ competition.slug }}#row-{{ competition.my_results.id }}">{% trans "Výsledky" %}</a>
+      <a class="btn btn-primary" href="{% url 'competition_results' competition_slug=competition.slug %}#row-{{ competition.my_results.id }}">{% trans "Výsledky" %}</a>
    {% endif %}
    {% endif %}
 {% if competition.url %}
