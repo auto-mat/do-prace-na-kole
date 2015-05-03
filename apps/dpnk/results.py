@@ -181,14 +181,14 @@ def get_team_frequency(user_attendancies, day=None):
 
     for user_attendance in user_attendancies:
         minimum_rides_base = user_attendance.campaign.minimum_rides_base
-        working_trips_user = get_working_trips_count(user_attendance, day)
-        rides_count += get_rides_count(user_attendance, day)
+        working_trips_count += get_working_trips_count(user_attendance, day)
+        rides_count_user = get_rides_count(user_attendance, day)
 
         rides_percentage_index = min(1, float(get_all_working_trips_count(user_attendance)) / minimum_rides_base)
-        working_trips_count += working_trips_user*rides_percentage_index
+        rides_count += float(rides_count_user)*rides_percentage_index
     if working_trips_count == 0:
         return 0
-    return float(rides_count)/working_trips_count
+    return rides_count/working_trips_count
 
 def get_userprofile_length(user_attendance):
     trip_plus_distance = (user_attendance.campaign.trip_plus_distance or 0) + (user_attendance.get_distance() or 0)
