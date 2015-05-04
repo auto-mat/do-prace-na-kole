@@ -2482,8 +2482,10 @@ def set_trip_post(sender, instance, *args, **kwargs):
         length = instance.length()
         if instance.direction == 'trip_to' and length:
             instance.trip.distance_to = length
+            instance.trip.trip_to = True
         if instance.direction == 'trip_from' and length:
             instance.trip.distance_from = length
+            instance.trip.trip_from = True
         instance.trip.save()
 
 @receiver(post_save, sender=UserActionTransaction)
