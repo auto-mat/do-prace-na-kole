@@ -2388,6 +2388,11 @@ class GpxFile(models.Model):
         UserAttendance,
         null=False,
         blank=False)
+    from_application = models.BooleanField(
+        verbose_name=_(u"Nahráno z aplikace"),
+        default=False,
+        null=False,
+    )
 
     objects = models.GeoManager()
     class Meta:

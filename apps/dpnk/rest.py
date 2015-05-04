@@ -43,6 +43,7 @@ class GpxFileSerializer(serializers.ModelSerializer):
             instance = GpxFile(**validated_data)
             instance.clean()
             instance.track = instance.track_clean
+            instance.from_application = True
             instance.save()
         except IntegrityError:
             raise DuplicateGPX
