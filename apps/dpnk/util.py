@@ -96,7 +96,7 @@ trip_active = trip_active_last7
 
 def get_emissions(distance):
     return {
-            'co2': round(distance * 150.8, 1),
+            'co2': round(distance * 129, 1),
             'co': round(distance * 724.4, 1),
             'nox': round(distance * 169.7, 1),
             'n2o': round(distance * 25.0, 1),
