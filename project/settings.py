@@ -12,7 +12,7 @@ PROJECT_ROOT = normpath(__file__, "..", "..")
 sys.path.append(normpath(PROJECT_ROOT, "project"))
 sys.path.append(normpath(PROJECT_ROOT, "apps"))
 
-DEBUG = True
+DEBUG = False
 ADMINS = (
     ('Hynek Hanke', 'hynek.hanke@auto-mat.cz'),
     ('Petr Dlouhý', 'petr.dlouhy@email.cz'),
