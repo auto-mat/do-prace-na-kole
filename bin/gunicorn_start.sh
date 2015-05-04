@@ -6,7 +6,7 @@ SOCKFILE=/home/aplikace/dpnk-2015/releases/current/run/gunicorn.sock # we will c
 USER=www-data # the user to run as
 GROUP=www-data # the group to run as
 NUM_WORKERS=6 # how many worker processes should Gunicorn spawn
-TIMEOUT=20000
+TIMEOUT=6000
 DJANGO_SETTINGS_MODULE=project.settings # which settings file should Django use
 DJANGO_WSGI_MODULE=wsgi # WSGI module name
  
@@ -29,6 +29,6 @@ exec env/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
 --workers $NUM_WORKERS \
 --user=$USER --group=$GROUP \
 --bind=unix:$SOCKFILE \
---timeout=40000 \
+--timeout=$TIMEOUT \
 --log-level=debug \
 --log-file=-
