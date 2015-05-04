@@ -3,6 +3,11 @@
 {% load dpnk_tags %}
 {% load humanize %}
 
+<script>
+   $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+   })
+</script>
 {% if fullpage_error_message %}
 <div class="text-danger">{{ fullpage_error_message }}</div>
 {% else %}
@@ -23,7 +28,7 @@
       <th scope="col">{% trans "Z práce" %}</th>
       <th scope="col">{% trans "Pra&shy;vi&shy;del&shy;nost" %}</th>
       <th scope="col">{% trans "Vzdá&shy;le&shy;nost" %}</th>
-      <th scope="col">CO<sub>2</sub></th>
+      <th scope="col"><abbr data-toggle="tooltip" data-placement="left" title="{% trans 'Ušetřeno oproti jízdě autem' %}">CO<sub>2</sub></abbr></th>
    </tr>
 </thead>
 {% for day in calendar %}
@@ -44,6 +49,7 @@ style="display:none"
    <input type="checkbox" name="trip_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_to %}checked="checked"{% endif %}/>
    <input type="number" step="any" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_to|unlocalize }}"/>
    {% if day.gpxfile_to %}
+   <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
    <a href="{% url "gpx_file" id=day.gpxfile_to.id %}">
       {% if day.trips_active %}
          <i class="fa fa-edit"></i>
@@ -51,12 +57,15 @@ style="display:none"
          <i class="fa fa-eye"></i>
       {% endif %}
    </a>
+   </abbr>
    {% else %}
+   <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zadat trasu v mapě nebo nahráním GPX souboru' %}">
    <a href="{% url "gpx_file_create" date=day.day direction='trip_to' %}">
       {% if day.trips_active %}
          <i class="fa fa-map-marker"></i>
       {% endif %}
    </a>
+   </abbr>
    {% endif %}
    {% endif %}
 </td>
@@ -65,6 +74,7 @@ style="display:none"
    <input type="checkbox" name="trip_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_from %}checked="checked"{% endif %}/>
    <input type="number" step="any" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from|unlocalize }}"/>
    {% if day.gpxfile_from %}
+   <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
    <a href="{% url "gpx_file" id=day.gpxfile_from.id %}">
       {% if day.trips_active %}
          <i class="fa fa-edit"></i>
@@ -72,18 +82,21 @@ style="display:none"
          <i class="fa fa-eye"></i>
       {% endif %}
    </a>
+   </abbr>
    {% else %}
+   <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zadat trasu v mapě nebo nahráním GPX souboru' %}">
    <a href="{% url "gpx_file_create" date=day.day direction='trip_from' %}">
       {% if day.trips_active %}
          <i class="fa fa-map-marker"></i>
       {% endif %}
    </a>
+   </abbr>
    {% endif %}
    {% endif %}
 </td>
 <td><div {% if day.percentage >  minimum_percentage %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>
 <td>{{ day.distance|intcomma }}&nbsp;km</td>
-<td><a href="{% url 'emission_calculator' %}">{{ day.emissions.co2|intcomma }}&nbsp;g</a></td>
+<td>{{ day.emissions.co2|intcomma }}&nbsp;g <a href="{% url 'emission_calculator' %}"><i class="fa fa-info-circle"></i></a></td>
 </tr>
 {% endfor %}
 </table>
