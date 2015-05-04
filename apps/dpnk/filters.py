@@ -75,3 +75,41 @@ class SubsidiaryCampaignFilter(CampaignFilter):
 
 class TripCampaignFilter(CampaignFilter):
     field = 'user_attendance__campaign'
+
+
+class HasVoucherFilter(SimpleListFilter):
+    title = _(u"Má nějaké vouchery")
+    parameter_name = u'has_voucher'
+    field = 'has_voucher'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('yes', _('Ano')),
+            ('no', _('Ne')),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(voucher__isnull=False).distinct()
+        if self.value() == 'no':
+            return queryset.filter(voucher__isnull=True).distinct()
+        return queryset
+
+
+class HasRidesFilter(SimpleListFilter):
+    title = _(u"Má nějaké jízdy")
+    parameter_name = u'has_rides'
+    field = 'has_rides'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('yes', _('Ano')),
+            ('no', _('Ne')),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(user_trips__isnull=False).distinct()
+        if self.value() == 'no':
+            return queryset.filter(user_trips__isnull=True).distinct()
+        return queryset
