@@ -182,7 +182,7 @@ class WorkingScheduleForm(forms.ModelForm):
         )
         ret_val = super(WorkingScheduleForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('prev', _(u'Předchozí')))
-        entered_competition = self.instance.entered_competition()
+        entered_competition = self.instance.tshirt_complete() and self.instance.track_complete() and self.instance.team_complete() and self.instance.payment_complete() and self.instance.userprofile.profile_complete()
         if not entered_competition:
             tasks = []
             if not self.instance.userprofile.profile_complete():

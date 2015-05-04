@@ -860,7 +860,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             return None
 
     def entered_competition(self):
-        return self.tshirt_complete() and self.track_complete() and self.team_complete() and self.payment_complete() and self.userprofile.profile_complete()
+        return self.tshirt_complete() and self.track_complete() and self.team_complete() and self.payment_complete() and self.userprofile.profile_complete() and self.working_schedule_complete()
 
     def team_member_count(self):
         if self.team:
@@ -877,6 +877,9 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     def payment_complete(self):
         return self.payment()['status'] == 'done' or self.payment()['status'] == 'no_admission'
+
+    def working_schedule_complete(self):
+        return self.user_trips.count() != 0
 
     def get_emissions(self, distance=None):
         return util.get_emissions(self.get_length())
