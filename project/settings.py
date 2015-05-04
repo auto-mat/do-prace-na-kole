@@ -31,6 +31,7 @@ DATABASES = {
     },
 }
 
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 CACHES = {
     'default': {
