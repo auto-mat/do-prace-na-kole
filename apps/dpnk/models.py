@@ -313,7 +313,7 @@ class Team(models.Model):
         return UserAttendance.objects.filter(campaign=self.campaign, approved_for_team='approved', team=self, userprofile__user__is_active=True)
 
     def get_frequency(self):
-        return results.get_team_frequency(self)
+        return results.get_team_frequency(self.members())
 
     def get_length(self):
         return results.get_team_length(self)
