@@ -341,7 +341,6 @@ class RegistrationAccessView(FormView):
     template_name = 'base_generic_form.html'
     form_class = RegistrationAccessFormDPNK
 
-    @must_be_in_phase("registration", "compet_entry")
     def dispatch(self, request, *args, **kwargs):
         return super(RegistrationAccessView, self).dispatch(request, *args, **kwargs)
 
