@@ -20,7 +20,6 @@ ordereddict
 -e git+https://github.com/PetrDlouhy/django-mass-edit#egg=django-mass-edit
 -e git+https://github.com/PetrDlouhy/django-author.git#egg=django-author
 -e git+https://github.com/PetrDlouhy/django-fieldsignals.git#egg=django-fieldsignals
-django-timelog
 django-admin-sortable2
 reportlab
 svg2rlg

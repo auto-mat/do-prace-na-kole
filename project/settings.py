@@ -71,7 +71,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'author.middlewares.AuthorDefaultBackendMiddleware',
-    'timelog.middleware.TimeLogMiddleware',
     'remote_ajax.middleware.XHRMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
@@ -124,7 +123,6 @@ INSTALLED_APPS = (
     'polymorphic',
     'author',
     'fieldsignals',
-    'timelog',
     'remote_ajax',
     'adminsortable2',
     'reportlab',
@@ -196,8 +194,6 @@ PAYU_KEY_2 = ''
 PAYU_POS_AUTH_KEY = 'NxFcSXh'
 PAYU_POS_ID = "131116"
 
-TIMELOG_LOG = '/var/log/django/dpnk-timelog.log'
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -240,14 +236,6 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True,
         },
-        'timelog': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': TIMELOG_LOG,
-            'maxBytes': 1024 * 1024 * 5,  # 5 MB
-            'backupCount': 5,
-            'formatter': 'plain',
-        },
     },
     'loggers': {
         'django': {
@@ -263,11 +251,6 @@ LOGGING = {
         'dpnk': {
             'handlers': ['console', 'mail_admins', 'logfile'],
             'level': 'INFO',
-        },
-        'timelog.middleware': {
-            'handlers': ['timelog'],
-            'level': 'DEBUG',
-            'propogate': False,
         },
     }
 }
