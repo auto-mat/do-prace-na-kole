@@ -1594,7 +1594,6 @@ class Payment(Transaction):
         'am',
         'amw',
         'fe',
-        'fc',
         ]
 
     PAYU_PAYING_TYPES = [

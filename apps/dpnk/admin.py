@@ -246,34 +246,27 @@ class PaymentFilter(SimpleListFilter):
     def lookups(self, request, model_admin):
         return (
             ('not_paid', u'nezaplaceno'),
-            ('not_paid_older', u'nezaplaceno (platba starší než 5 dnů)'),
             ('no_admission', u'neplatí se'),
             ('done', u'vyřízeno'),
-            ('paid', u'zaplaceno přes PayU'),
+            ('paid_payu', u'zaplaceno přes PayU'),
+            ('paid', u'zaplaceno'),
             ('waiting', u'čeká se'),
             ('unknown', u'neznámý'),
             ('none', u'bez plateb'),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == 'not_paid_older':
-            paying_or_prospective_user_ids = [p.user_attendance_id for p in models.Payment.objects.filter(
-                Q(status=models.Payment.Status.DONE) | Q(
-                    # Bank transfer less than 5 days old
-                    status=models.Payment.Status.NEW, pay_type='bt',
-                    created__gt=datetime.datetime.now() - datetime.timedelta(days=5))
-                ).distinct()]
-            return queryset.filter(
-                userprofile__user__is_active=True).exclude(id__in=paying_or_prospective_user_ids).exclude(campaign__admission_fee=0).distinct()
-        elif self.value() == 'not_paid':
+        if self.value() == 'not_paid':
             return queryset.filter(
                 userprofile__user__is_active=True).exclude(transactions__status__in=models.Payment.done_statuses).exclude(campaign__admission_fee=0).distinct()
         elif self.value() == 'no_admission':
             return queryset.filter(Q(campaign__admission_fee=0) | Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct()
         elif self.value() == 'done':
             return queryset.filter(Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0)).distinct()
-        elif self.value() == 'paid':
+        elif self.value() == 'paid_payu':
             return queryset.filter(Q(transactions__status__in=models.Payment.done_statuses) & Q(transactions__payment__pay_type__in=models.Payment.PAYU_PAYING_TYPES)).distinct()
+        elif self.value() == 'paid':
+            return queryset.filter(Q(transactions__status__in=models.Payment.done_statuses)).exclude(Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct()
         elif self.value() == 'waiting':
             return queryset.exclude(transactions__status__in=models.Payment.done_statuses).filter(transactions__status__in=models.Payment.waiting_statuses).distinct()
         elif self.value() == 'unknown':
