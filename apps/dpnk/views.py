@@ -668,6 +668,10 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         return super(RidesView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        if len(request.POST) == 0:
+            logger.error("Blank POST")
+            return
+
         days = util.days(self.user_attendance.campaign)
         for day_m, date in enumerate(days):
             day = day_m + 1

@@ -3,11 +3,6 @@
 {% load dpnk_tags %}
 {% load humanize %}
 
-<script>
-   $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-   })
-</script>
 {% if fullpage_error_message %}
 <div class="text-danger">{{ fullpage_error_message }}</div>
 {% else %}
