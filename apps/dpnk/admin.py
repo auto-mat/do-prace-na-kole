@@ -565,6 +565,13 @@ def assign_vouchers(modeladmin, request, queryset):
     modeladmin.message_user(request, _(u"Úspěšně přiřazeno %s voucherů" % (count)))
 assign_vouchers.short_description = _(u"Přiřadit vouchery")
 
+def add_trips(modeladmin, request, queryset):
+    count = queryset.count()
+    for user_attendance in queryset.all():
+        user_attendance.get_all_trips()
+    modeladmin.message_user(request, _(u"Úspěšně přiřazeno %s cest" % (count)))
+add_trips.short_description = _(u"Vytvořit cesty")
+
 
 class UserAttendanceResource(resources.ModelResource):
     class Meta:
@@ -602,7 +609,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixi
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__nickname', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
     readonly_fields = ('user_link', 'userprofile__user__email', 'created', 'updated')
-    actions = (update_mailing, approve_am_payment, recalculate_results, show_distance, assign_vouchers)
+    actions = (update_mailing, approve_am_payment, recalculate_results, show_distance, assign_vouchers, add_trips)
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
     list_max_show_all = 10000
