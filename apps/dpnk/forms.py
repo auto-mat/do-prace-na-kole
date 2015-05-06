@@ -197,7 +197,7 @@ class WorkingScheduleForm(forms.ModelForm):
                 tasks.append(_(u"<a href='%s'>vyplnit tričko</a>") % reverse('zmenit_triko'))
             self.helper.layout.extend([HTML(string_concat('<div class="alert alert-warning">', _(u'Před vstupem do profilu budete ještě muset %s') % ", ".join(tasks), '</div>'))])
             self.helper.add_input(Submit('submit', _(u'Uložit')))
-        self.helper.add_input(Submit('next', _(u'Přejít do profilu'), **({} if entered_competition else {'disabled': 'True'})))
+        self.helper.add_input(Submit('next', _(u'Uložit a přejít do profilu'), **({} if entered_competition else {'disabled': 'True'})))
         self.fields['schedule'].initial = self.instance.get_all_trips()
         return ret_val
 
