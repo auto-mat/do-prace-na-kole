@@ -920,7 +920,7 @@ class ChangeTShirtView(RegistrationViewMixin, UpdateView):
         return self.user_attendance
 
     @method_decorator(login_required_simple)
-    @user_attendance_has(lambda ua: ua.package_shipped(), _(u"Velikost trika nemůžete měnit, již bylo odesláno"))
+    @user_attendance_has(lambda ua: ua.package_shipped(), _(u"Velikost trika nemůžete měnit, již bylo zařazeno do zpracování"))
     def dispatch(self, request, *args, **kwargs):
         return super(ChangeTShirtView, self).dispatch(request, *args, **kwargs)
 
