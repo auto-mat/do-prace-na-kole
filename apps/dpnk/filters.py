@@ -113,3 +113,22 @@ class HasRidesFilter(SimpleListFilter):
         if self.value() == 'no':
             return queryset.filter(user_trips__isnull=True).distinct()
         return queryset
+
+
+class IsForCompanyFilter(SimpleListFilter):
+    title = _(u"Je vnitrofiremní soutěž")
+    parameter_name = u'is_for_company'
+    field = 'is_for_company'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('yes', _('Ano')),
+            ('no', _('Ne')),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(company__isnull=False).distinct()
+        if self.value() == 'no':
+            return queryset.exclude(company__isnull=False).distinct()
+        return queryset
