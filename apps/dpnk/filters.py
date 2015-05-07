@@ -132,3 +132,22 @@ class IsForCompanyFilter(SimpleListFilter):
         if self.value() == 'no':
             return queryset.exclude(company__isnull=False).distinct()
         return queryset
+
+
+class HasTeamFilter(SimpleListFilter):
+    title = _(u"Uživatel má zvolený tým")
+    parameter_name = u'user_has_team'
+    field = 'user_has_team'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('yes', _('Ano')),
+            ('no', _('Ne')),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(team__isnull=False).distinct()
+        if self.value() == 'no':
+            return queryset.exclude(team__isnull=False).distinct()
+        return queryset
