@@ -937,7 +937,7 @@ def handle_uploaded_file(source, username):
 class QuestionnaireView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
     template_name='registration/questionaire.html'
     success_url=reverse_lazy('competitions')
-    title=_(u"Vyplnňte odpovědi")
+    title=_(u"Vyplňte odpovědi")
 
     #@login_required_simple
     #@must_be_competitor
