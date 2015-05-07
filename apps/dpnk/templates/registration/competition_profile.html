@@ -19,6 +19,13 @@
             $("#rides-form").removeClass("waiting-for-load");
       }})});
    });
+
+   $( document ).ready(function(){
+      var frags = navigator.userAgent.split('/');
+      if ((frags[frags.length - 2].indexOf('Firefox') > -1) && (parseFloat(frags[frags.length - 1]) < 28)) {
+           alert('Používáte zastaralou verzi prohlížeče Firefox, ve které nefunguje správně zadávání jízd. Prosím aktualizujte prohlížeč, nebo použijte jiný.')
+      }
+   });
 </script>
 <div id="rides-form-container"></div>
 
