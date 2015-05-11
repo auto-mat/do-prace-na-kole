@@ -1960,7 +1960,7 @@ class Competition(models.Model):
             return False
         if self.company and userprofile.team and self.company != userprofile.team.subsidiary.company:
             return False
-        if userprofile.team and self.city.filter(pk=userprofile.team.subsidiary.city.pk).exists():
+        if userprofile.team and self.city.exists() and not self.city.filter(pk=userprofile.team.subsidiary.city.pk).exists():
             return False
 
         if self.without_admission:
