@@ -85,6 +85,7 @@ class SelectUsersPayView(FormView):
 
     @method_decorator(login_required)
     @must_be_company_admin
+    @must_be_in_phase("payment")
     @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, _(u"Potvrzování plateb nemáte povoleno"))
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
