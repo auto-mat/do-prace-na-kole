@@ -219,7 +219,7 @@ class CompetitionAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, Rel
 
     def questionnaire_link(self, obj):
         if obj.type == 'questionnaire' and obj.slug:
-            return mark_safe(u'<a href="%s">dotazník</a>' % (reverse('questionnaire_answers_all', kwargs={'competition_slug': obj.slug})))
+            return mark_safe(u'<a href="%s">dotazník</a>' % (reverse('questionnaire', kwargs={'questionnaire_slug': obj.slug})))
     questionnaire_link.short_description = _(u"Dotazník")
 
     def draw_link(self, obj):
