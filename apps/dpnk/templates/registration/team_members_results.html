@@ -13,6 +13,7 @@
       <th class="fixed_width_column">{% trans "Po&shy;čet jízd" %}</th>
       <th class="fixed_width_column">{% trans "Pro&shy;cen&shy;to jízd" %}</th>
       <th class="fixed_width_column">{% trans "U&shy;je&shy;tá vzdá&shy;le&shy;nost" %}</th>
+      <th class="fixed_width_column">{% trans "Na&shy;sta&shy;ve&shy;ná vzdá&shy;le&shy;nost ce&shy;sty" %}</th>
    </tr>
    {% for user_attendance in team_members %}
       <tr
@@ -20,7 +21,7 @@
          >
       <td>{{ user_attendance.name|softhyphen:"cs-CZ" }}</td>
       {% if not user_attendance.entered_competition %}
-         <td colspan="3">{% trans "Ještě nezačal soutěžit" %}</td>
+         <td colspan="4">{% trans "Ještě nezačal/a soutěžit" %}</td>
       {% else %}
 
       <td>
@@ -31,6 +32,9 @@
       </td>
       <td>
          {{ user_attendance.get_length|floatformat:-1|intcomma }}&nbsp;km
+      </td>
+      <td>
+         {{ user_attendance.get_distance|floatformat:-1|intcomma }}&nbsp;km
       </td>
       {% endif %}
       </tr>
