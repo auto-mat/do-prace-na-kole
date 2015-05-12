@@ -2085,13 +2085,20 @@ class CompetitionResult(models.Model):
 
     def get_total_result(self):
         #TODO: don't use this function, show rides table instead
-        if self.user_attendance:
-            return self.user_attendance.get_rides_count()
-        if self.team:
-            rides_count = 0
-            for member in self.team.members():
-                rides_count += member.get_rides_count()
-            return rides_count
+        if self.competition.type == 'length':
+            if self.user_attendance:
+                return self.result
+            if self.team:
+                return self.result * self.team.member_count
+
+        elif self.competition.type == 'frequency':
+            if self.user_attendance:
+                return self.user_attendance.get_rides_count()
+            if self.team:
+                rides_count = 0
+                for member in self.team.members():
+                    rides_count += member.get_rides_count()
+                return rides_count
 
     def __unicode__(self):
         if self.competition.competitor_type == 'team':
