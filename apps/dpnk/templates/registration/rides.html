@@ -3,6 +3,11 @@
 {% load dpnk_tags %}
 {% load humanize %}
 
+<script type="text/javascript">
+   $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+   })
+</script>
 {% if fullpage_error_message %}
 <div class="text-danger">{{ fullpage_error_message }}</div>
 {% else %}
@@ -42,7 +47,7 @@ style="display:none"
 <td>
    {% if day.working_ride_to %}
    <input type="checkbox" name="trip_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_to %}checked="checked"{% endif %}/>
-   <input type="number" step="any" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_to|unlocalize }}"/>
+   <input type="text" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_to|unlocalize }}"/>
    {% if day.gpxfile_to %}
    <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
    <a href="{% url "gpx_file" id=day.gpxfile_to.id %}">
@@ -67,7 +72,7 @@ style="display:none"
 <td>
    {% if day.working_ride_from %}
    <input type="checkbox" name="trip_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_from %}checked="checked"{% endif %}/>
-   <input type="number" step="any" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from|unlocalize }}"/>
+   <input type="text" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from|unlocalize }}"/>
    {% if day.gpxfile_from %}
    <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
    <a href="{% url "gpx_file" id=day.gpxfile_from.id %}">
