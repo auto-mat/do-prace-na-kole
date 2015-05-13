@@ -198,6 +198,12 @@ def get_userprofile_length(user_attendance):
                     models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, trip_to=True, distance_to__gte=trip_plus_distance).count() * (trip_plus_distance)
     return distance_from + distance_to
 
+def get_userprofile_nonreduced_length(user_attendance):
+    distance_from = (models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True).aggregate(Sum('distance_from'))['distance_from__sum'] or 0)
+    distance_to   = (models.Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, trip_to=True).aggregate(Sum('distance_to'))['distance_to__sum'] or 0)
+    return distance_from + distance_to
+
+
 def get_userprofile_frequency(user_attendance, day=None):
     return get_team_frequency([user_attendance], day)
 

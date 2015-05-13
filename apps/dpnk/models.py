@@ -802,6 +802,9 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def get_length(self):
         return results.get_userprofile_length(self)
 
+    def get_nonreduced_length(self):
+        return results.get_userprofile_nonreduced_length(self)
+
     def get_distance(self, round_digits=2):
         if self.track:
             return round(UserAttendance.objects.length().get(id=self.id).length.km, round_digits)
@@ -883,7 +886,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return self.user_trips.count() != 0
 
     def get_emissions(self, distance=None):
-        return util.get_emissions(self.get_length())
+        return util.get_emissions(self.get_nonreduced_length())
 
     def get_all_trips(self):
         days = util.days(self.campaign)

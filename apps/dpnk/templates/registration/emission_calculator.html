@@ -1,11 +1,12 @@
 {% extends "base_generic.html" %}
 {% load humanize %}
+{% load dpnk_tags %}
 
 {% block content %}
 {% with user_attendance.get_emissions as emissions %}
 <table class="table">
 <tr>
-   <td>Ujetá vzdálenost</td><td>{{ user_attendance.get_length|floatformat:1 }}&nbsp;km</td>
+   <td>Ujetá vzdálenost (neredukovaná)</td><td>{{ user_attendance.get_nonreduced_length|floatformat:1 }}&nbsp;km</td>
 </tr>
 <tr>
    <td>CO<sub>2</sub></td><td>{{ emissions.co2|intcomma }}&nbsp;g</td>
@@ -33,5 +34,6 @@
 </tr>
 </tr>
 </table>
+{% wp_article 11340 %}
 {% endwith %}
 {% endblock %}

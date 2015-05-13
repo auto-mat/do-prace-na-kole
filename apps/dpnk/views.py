@@ -717,6 +717,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         calendar = []
 
         distance = 0
+        nonreduced_distance = 0
         has_active_trip = False
         default_distance = self.user_attendance.get_distance(1)
         for i, d in enumerate(days):
@@ -736,8 +737,10 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
                 cd['default_distance_from'] = default_distance if trips[d].distance_from is None else trips[d].distance_from
                 if trips[d].trip_to and trips[d].distance_to:
                     distance += trips[d].distance_to_cutted()
+                    nonreduced_distance += trips[d].distance_to
                 if trips[d].trip_from and trips[d].distance_from:
                     distance += trips[d].distance_from_cutted()
+                    nonreduced_distance += trips[d].distance_from
             else:
                 cd['gpxfile_to'] = False
                 cd['gpxfile_from'] = False
@@ -750,7 +753,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
             cd['percentage'] = self.user_attendance.get_frequency_percentage(d)
             cd['percentage_str'] = "%.0f" % (cd['percentage'])
             cd['distance'] = round(distance, 1)
-            cd['emissions'] = util.get_emissions(distance)
+            cd['emissions'] = util.get_emissions(nonreduced_distance)
             calendar.append(cd)
         return {
             'calendar': calendar,
