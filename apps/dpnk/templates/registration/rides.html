@@ -15,7 +15,7 @@
 <input type="hidden" id="day" name="day"/>
 <button class="btn-info btn show_rides_btn" type="button" onclick='$( ".toggle" ).toggle(  );'><span class="toggle">{% trans "Zobrazit všechny jízdy" %}</span><span class="toggle" style="display:none">{% trans "Skrýt všechny jízdy" %}</span></button>
 <br>
-{% trans "Zadaný počet kilometrů na jednu jízdu: " %}{{ user_attendance.get_distance|floatformat:2 }} Km
+{% trans "Zadaný počet kilometrů na jednu jízdu: " %}{{ user_attendance.get_distance|floatformat:2 }}&nbsp;Km
 {% trans " (Do políčka zadávejte ujetý počet kilometrů)" %}
 {% include "messages_include.html" %}
 {{ message }}
@@ -95,7 +95,15 @@ style="display:none"
    {% endif %}
 </td>
 <td><div {% if day.percentage >  minimum_percentage %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>
-<td>{{ day.distance|intcomma }}&nbsp;km</td>
+<td>
+   {% if day.distance_was_cutted %}
+      <abbr data-toggle="tooltip" data-placement="right" title='{% blocktrans with plus_distance=user_attendance.campaign.trip_plus_distance distance=user_attendance.get_distance|floatformat:2  %}Za každou jízdu se započítává maximální zajížďka {{ plus_distance }}&nbsp;Km oproti zadané vzdálenosti do práce ({{ distance }}&nbsp;Km).{% endblocktrans %}'>
+   {% endif %}
+   {{ day.distance|intcomma }}&nbsp;km
+   {% if day.distance_was_cutted %}
+      </abbr>
+   {% endif %}
+</td>
 <td>{{ day.emissions.co2|intcomma }}&nbsp;g <a href="{% url 'emission_calculator' %}"><i class="fa fa-info-circle"></i></a></td>
 </tr>
 {% endfor %}
@@ -108,7 +116,7 @@ style="display:none"
       <tr>
          <td>{{ gpx_file.trip_date }}</td>
          <td>{{ gpx_file.direction_string }}</td>
-         <td>{% if gpx_file.length %}{{ gpx_file.length|floatformat:1 }} Km{% endif %}</td>
+         <td>{% if gpx_file.length %}{{ gpx_file.length|floatformat:1 }}&nbsp;Km{% endif %}</td>
          <td>
          <a href="{% url "gpx_file" id=gpx_file.id %}">
             <i class="fa fa-eye"></i>

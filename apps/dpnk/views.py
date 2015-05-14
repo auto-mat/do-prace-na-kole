@@ -724,11 +724,18 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
                 cd['default_trip_from'] = trips[d].trip_from
                 cd['default_distance_to'] = default_distance if trips[d].distance_to is None else trips[d].distance_to
                 cd['default_distance_from'] = default_distance if trips[d].distance_from is None else trips[d].distance_from
+                cd['distance_was_cutted'] = False
                 if trips[d].trip_to and trips[d].distance_to:
-                    distance += trips[d].distance_to_cutted()
+                    distance_was_cutted, distance_cutted = trips[d].distance_to_cutted()
+                    distance += distance_cutted
+                    if distance_was_cutted:
+                        cd['distance_was_cutted'] = True
                     nonreduced_distance += trips[d].distance_to
                 if trips[d].trip_from and trips[d].distance_from:
-                    distance += trips[d].distance_from_cutted()
+                    distance_was_cutted, distance_cutted = trips[d].distance_from_cutted()
+                    distance += distance_cutted
+                    if distance_was_cutted:
+                        cd['distance_was_cutted'] = True
                     nonreduced_distance += trips[d].distance_from
             else:
                 cd['gpxfile_to'] = False
