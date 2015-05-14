@@ -681,11 +681,11 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
             trip.trip_to = trip_to
             trip.trip_from = trip_from
             try:
-                trip.distance_to = max(min(float(request.POST.get('distance_to-' + day, None)), 1000), 0)
+                trip.distance_to = max(min(float(request.POST.get('distance_to-' + day, "").replace(',','.')), 1000), 0)
             except (ValueError, TypeError):
                 trip.distance_to = None
             try:
-                trip.distance_from = max(min(float(request.POST.get('distance_from-' + day, None)), 1000), 0)
+                trip.distance_from = max(min(float(request.POST.get('distance_from-' + day, "").replace(',','.')), 1000), 0)
             except (ValueError, TypeError):
                 trip.distance_from = None
             logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s' % (
