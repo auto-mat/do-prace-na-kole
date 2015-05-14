@@ -26,6 +26,9 @@ def days(campaign):
         days.append(day)
     return days
 
+def days_active(campaign):
+    return [d for d in days(campaign) if trip_active(d)]
+
 def days_count(campaign):
     if hasattr(campaign, 'days_count'):
         return campaign.days_count

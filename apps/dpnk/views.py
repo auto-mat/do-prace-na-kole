@@ -672,37 +672,26 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
             logger.error("Blank POST")
             return
 
-        days = util.days(self.user_attendance.campaign)
-        for day_m, date in enumerate(days):
-            day = day_m + 1
-            trip_to = request.POST.get('trip_to-' + str(day), 'off') == 'on'
-            trip_from = request.POST.get('trip_from-' + str(day), 'off') == 'on'
-
-            if not util.trip_active(date):
-                continue
-            trip, created = Trip.objects.get_or_create(
-                user_attendance=self.user_attendance,
-                date=date,
-                defaults={
-                    'trip_from': False,
-                    'trip_to': False,
-                },
-            )
+        trips = self.user_attendance.get_active_trips().select_related('user_attendance__campaign')
+        for day_m, trip in enumerate(trips):
+            day = str(trip.date)
+            trip_to = request.POST.get('trip_to-' + day, 'off') == 'on'
+            trip_from = request.POST.get('trip_from-' + day, 'off') == 'on'
 
             trip.trip_to = trip_to
             trip.trip_from = trip_from
             try:
-                trip.distance_to = max(min(float(request.POST.get('distance_to-' + str(day), None)), 1000), 0)
+                trip.distance_to = max(min(float(request.POST.get('distance_to-' + day, None)), 1000), 0)
             except (ValueError, TypeError):
                 trip.distance_to = None
             try:
-                trip.distance_from = max(min(float(request.POST.get('distance_from-' + str(day), None)), 1000), 0)
+                trip.distance_from = max(min(float(request.POST.get('distance_from-' + day, None)), 1000), 0)
             except (ValueError, TypeError):
                 trip.distance_from = None
-            logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s, created: %s' % (
-                request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to, created))
+            logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s' % (
+                request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to))
             trip.dont_recalculate = True
-            trip.save()
+        Trip.objects.bulk_update(trips, update_fields=["trip_to", "trip_from", "distance_to", "distance_from"])
 
         results.recalculate_result_competitor(self.user_attendance)
 
@@ -712,7 +701,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         days = util.days(self.user_attendance.campaign)
         trips = {}
-        for t in Trip.objects.filter(user_attendance=self.user_attendance).select_related('user_attendance__campaign'):
+        for t in self.user_attendance.get_all_trips().select_related('user_attendance__campaign'):
             trips[t.date] = t
         calendar = []
 

@@ -139,6 +139,7 @@ INSTALLED_APPS = (
     'settings_context_processor',
     'oauth2_provider',
     'rest_framework',
+    'bulk_update',
 )
 TEMPLATE_VISIBLE_SETTINGS = (
     'PAYU_POS_AUTH_KEY',

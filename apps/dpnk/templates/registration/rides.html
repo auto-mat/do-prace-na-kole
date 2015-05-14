@@ -46,8 +46,8 @@ style="display:none"
 <th scope="row" class="date">{{ day.day|naturalday:"D j. M" }}</th>
 <td>
    {% if day.working_ride_to %}
-   <input type="checkbox" name="trip_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_to %}checked="checked"{% endif %}/>
-   <input type="text" name="distance_to-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_to|unlocalize }}"/>
+   <input type="checkbox" name="trip_to-{{ day.day|date:"Y-m-d" }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_to %}checked="checked"{% endif %}/>
+   <input type="text" name="distance_to-{{ day.day|date:"Y-m-d" }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_to|unlocalize }}"/>
    {% if day.gpxfile_to %}
    <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
    <a href="{% url "gpx_file" id=day.gpxfile_to.id %}">
@@ -71,8 +71,8 @@ style="display:none"
 </td>
 <td>
    {% if day.working_ride_from %}
-   <input type="checkbox" name="trip_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_from %}checked="checked"{% endif %}/>
-   <input type="text" name="distance_from-{{ forloop.counter }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from|unlocalize }}"/>
+   <input type="checkbox" name="trip_from-{{ day.day|date:"Y-m-d" }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_from %}checked="checked"{% endif %}/>
+   <input type="text" name="distance_from-{{ day.day|date:"Y-m-d" }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from|unlocalize }}"/>
    {% if day.gpxfile_from %}
    <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
    <a href="{% url "gpx_file" id=day.gpxfile_from.id %}">

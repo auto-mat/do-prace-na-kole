@@ -49,6 +49,7 @@ from django.conf import settings
 from polymorphic import PolymorphicModel
 from django.db import transaction
 from modulus11 import mod11
+from bulk_update.manager import BulkUpdateManager
 # Python library imports
 import datetime
 # Local imports
@@ -888,8 +889,15 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def get_emissions(self, distance=None):
         return util.get_emissions(self.get_nonreduced_length())
 
+    def get_active_trips(self):
+        days = util.days_active(self.campaign)
+        return self.get_trips(days)
+
     def get_all_trips(self):
         days = util.days(self.campaign)
+        return self.get_trips(days)
+
+    def get_trips(self, days):
         trip_days = Trip.objects.filter(user_attendance=self, date__in=days).values_list('date', flat=True)
         not_created_days = list(set(days) - set(trip_days))
         create_trips = []
@@ -1710,6 +1718,7 @@ class Trip(models.Model):
         verbose_name_plural = _(u"Cesty")
         unique_together = (("user_attendance", "date"),)
         ordering = ('date',)
+    objects = BulkUpdateManager()
 
     user_attendance = models.ForeignKey(
         UserAttendance,
