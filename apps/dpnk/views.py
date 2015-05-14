@@ -675,19 +675,20 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         trips = self.user_attendance.get_active_trips().select_related('user_attendance__campaign')
         for day_m, trip in enumerate(trips):
             day = str(trip.date)
-            trip_to = request.POST.get('trip_to-' + day, 'off') == 'on'
-            trip_from = request.POST.get('trip_from-' + day, 'off') == 'on'
+            if trip.is_working_ride_to:
+                trip.trip_to = request.POST.get('trip_to-' + day) == 'on'
+                try:
+                    trip.distance_to = max(min(float(request.POST.get('distance_to-' + day).replace(',','.')), 1000), 0)
+                except (ValueError, TypeError):
+                    trip.distance_to = None
 
-            trip.trip_to = trip_to
-            trip.trip_from = trip_from
-            try:
-                trip.distance_to = max(min(float(request.POST.get('distance_to-' + day, "").replace(',','.')), 1000), 0)
-            except (ValueError, TypeError):
-                trip.distance_to = None
-            try:
-                trip.distance_from = max(min(float(request.POST.get('distance_from-' + day, "").replace(',','.')), 1000), 0)
-            except (ValueError, TypeError):
-                trip.distance_from = None
+            if trip.is_working_ride_from:
+                trip.trip_from = request.POST.get('trip_from-' + day) == 'on'
+                try:
+                    trip.distance_from = max(min(float(request.POST.get('distance_from-' + day).replace(',','.')), 1000), 0)
+                except (ValueError, TypeError):
+                    trip.distance_from = None
+
             logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s' % (
                 request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to))
             trip.dont_recalculate = True
