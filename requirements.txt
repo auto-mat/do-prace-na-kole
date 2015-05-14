@@ -48,4 +48,5 @@ django-oauth-toolkit
 djangorestframework
 -e git+https://github.com/makinacorpus/django-leaflet.git#egg=django-leaflet
 -e git+https://github.com/tkrajina/gpxpy.git@gpx-1.1#egg=gpxpy
+django-cachalot
 django-bulk-update
