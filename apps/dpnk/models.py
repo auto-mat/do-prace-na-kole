@@ -1779,7 +1779,7 @@ class Trip(models.Model):
             else:
                 return (False, ridden_distance)
         else:
-            return 0
+            return (False, 0)
 
 
     def distance_to_cutted(self):
@@ -1792,7 +1792,7 @@ class Trip(models.Model):
             else:
                 return (False, ridden_distance)
         else:
-            return 0
+            return (False, 0)
 
     def working_day(self):
         return util.working_day(self.date)
