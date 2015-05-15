@@ -1421,9 +1421,9 @@ def statistics(
 @cache_page(60)
 def daily_chart(
         request,
-        campaign_slug,
         template='registration/daily-chart.html',
         ):
+    campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
     values = [period_distance(campaign, day, day) for day in util.days(campaign)]
     return render_to_response(template, {

@@ -1,4 +1,6 @@
 {% load chart_tags %}
+{% load l10n %}
+{% localize off %}
 {% chart %}
      chxl=0:|1:|{{ days|join:'|' }}
      chxr=0,0,{{ max_value }}
@@ -11,3 +13,4 @@
      chd=t:{{ values|join:',' }}
      chtt=Ujetá+vzdálenost+za+jednotlivé+dny+(km)
 {% endchart %}
+{% endlocalize %}
