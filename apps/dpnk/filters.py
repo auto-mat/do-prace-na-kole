@@ -17,8 +17,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.contrib.admin import SimpleListFilter
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import Q
+from django.db.models import Q, Count
 from dpnk import models
 
 
@@ -151,3 +152,22 @@ class HasTeamFilter(SimpleListFilter):
         if self.value() == 'no':
             return queryset.exclude(team__isnull=False).distinct()
         return queryset
+
+
+class EmailFilter(SimpleListFilter):
+    title = _(u"Email")
+    parameter_name = u'email'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('duplicate', _(u'Duplicitní')),
+            ('blank', _(u'Prázdný')),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'duplicate':
+            duplicates = User.objects.filter(email__isnull=False).exclude(email__exact='').values('email').annotate(Count('id')).values('email').order_by().filter(id__count__gt=1).values_list('email', flat=True)
+            return queryset.filter(email__in=duplicates)
+        if self.value() == 'blank':
+            return queryset.filter(email__exact='')
+

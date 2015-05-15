@@ -39,7 +39,7 @@ from admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin
 import datetime
 import results
 # Models
-from filters import CampaignFilter, CityCampaignFilter, SubsidiaryCampaignFilter, TripCampaignFilter, HasVoucherFilter, HasRidesFilter, IsForCompanyFilter, HasTeamFilter
+from filters import CampaignFilter, CityCampaignFilter, SubsidiaryCampaignFilter, TripCampaignFilter, HasVoucherFilter, HasRidesFilter, IsForCompanyFilter, HasTeamFilter, EmailFilter
 from dpnk import models, mailing
 from django import forms
 from related_admin import RelatedFieldAdmin
@@ -401,7 +401,7 @@ class UserAdmin(ExportMixin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmi
     inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'userprofile_administrated_cities', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name', ]
-    list_filter = ['userprofile__userattendance__campaign', 'is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved', HasUserprofileFilter, 'userprofile__sex', 'userprofile__administrated_cities']
+    list_filter = ['userprofile__userattendance__campaign', 'is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved', HasUserprofileFilter, 'userprofile__sex', 'userprofile__administrated_cities', EmailFilter]
     readonly_fields = ['password']
     list_max_show_all = 10000
 
