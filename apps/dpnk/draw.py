@@ -33,13 +33,12 @@ def all_members_paid(team):
 def draw(competition_slug, limit=10):
     """Draw competitors above threshold in given competition"""
 
-    raise NotImplementedError("Rewrite of this fucntion is needed")
     competition = Competition.objects.get(slug=competition_slug)
-    threshold = competition.campaign.minimum_percentage
+    threshold = competition.campaign.minimum_percentage / 100.0
     condition = {}
     condition['competition'] = competition
     if competition.type == 'frequency':
-        condition['result__gt'] = threshold * util.days_count(competition.campaign) * 2.0
+        condition['result__gt'] = threshold
     results = CompetitionResult.objects.filter(**condition)
 
     if competition.competitor_type == 'team':
