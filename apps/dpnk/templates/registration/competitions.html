@@ -77,6 +77,11 @@
             {% trans "Vy&shy;pl&shy;nit do&shy;taz&shy;ník" %}
          {% endif %}
       </a>
+      {% if competition.public_answers %}
+         <a class="btn btn-primary" href="{% url 'questionnaire_answers_all' competition_slug=competition.slug %}">
+            {% trans "Všechny odpovědi" %}
+         </a>
+      {% endif %}
    {% elif competition.type == 'frequency' or competition.type == 'length' %}
       {% if competition.competitor_has_admission %}
          <button type="submit" class="submit submit_once btn btn-primary" onclick='$("#cancellation_competition_id").val("{{ competition.id }}")'>{% trans "Od&shy;hlá&shy;sit ze sou&shy;tě&shy;že" %}</button>

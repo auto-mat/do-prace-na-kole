@@ -87,7 +87,7 @@
 {% endif %}
 <td>
    {% if competition.public_answers %}
-      <a href="{% wp_url 'questionnaire_answers_all' %}?soutez={{competition.slug }}#comp_res_{{result.pk}}">
+      <a href="{% url 'questionnaire_answers_all' competition_slug=competition.slug %}#comp_res_{{result.pk}}">
    {% endif %}
    {% if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos' %}
       {{ result.user_attendance.name|softhyphen:"cs-CZ" }}

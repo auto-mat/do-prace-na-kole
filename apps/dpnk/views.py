@@ -1047,10 +1047,7 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
 
         competition_slug = kwargs.get('competition_slug')
         competition = Competition.objects.get(slug=competition_slug)
-        if not self.request.user.is_superuser and hasattr(self.request.user, 'userprofile') and self.request.user.userprofile.competition_edition_allowed(competition):
-            context_data['fullpage_error_message'] = _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění.")
-            return context_data
-        if not competition.public_answers and not self.request.user.is_superuser:
+        if not competition.public_answers and not self.request.user.is_superuser and self.request.user.userprofile.competition_edition_allowed(competition):
             context_data['fullpage_error_message'] = _(u"Tato soutěž nemá povolené prohlížení odpovědí.")
             return context_data
 
@@ -1083,7 +1080,7 @@ def questionnaire_results(
         ):
     competition = Competition.objects.get(slug=competition_slug)
     if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(competition):
-        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění."), "</div>"))
+        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve městě, pro které nemáte oprávnění."), "</div>"))
 
     competitors = competition.get_results()
     return render_to_response('admin/questionnaire_results.html', {
@@ -1100,7 +1097,7 @@ def questionnaire_answers(
         ):
     competition = Competition.objects.get(slug=competition_slug)
     if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(competition):
-        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve měste, pro které nemáte oprávnění."), "</div>"))
+        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve městě, pro které nemáte oprávnění."), "</div>"))
 
     try:
         competitor_result = competition.get_results().get(pk=request.GET['uid'])
