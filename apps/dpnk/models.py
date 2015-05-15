@@ -2382,11 +2382,15 @@ class Voucher(models.Model):
         return self.TYPE_DICT[self.type]
 
 
+
+def normalize_gpx_filename(instance, filename):
+    return '-'.join(['gpx_tracks/track', datetime.datetime.now().strftime("%Y-%m-%d"), unidecode(filename)])
+
 class GpxFile(models.Model):
     file = models.FileField(
         verbose_name=_(u"GPX soubor"),
         help_text=_(u"Zadat trasu nahráním souboru GPX"),
-        upload_to=u'gpx_tracks',
+        upload_to=normalize_gpx_filename,
         blank=True, null=True)
     DIRECTIONS = [
         ('trip_to', _(u"Tam")),
