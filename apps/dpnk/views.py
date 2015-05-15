@@ -63,7 +63,6 @@ import draw
 from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail, invitation_register_mail
 from django.db import transaction
 
-from wp_urls import wp_reverse
 from unidecode import unidecode
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -395,7 +394,7 @@ class ConfirmDeliveryView(UpdateView):
 
     def form_valid(self, form):
         super(ConfirmDeliveryView, self).form_valid(form)
-        return redirect(wp_reverse(self.success_url))
+        return redirect(reverse(self.success_url))
 
     def get_object(self):
         return self.user_attendance.package_shipped()
@@ -1449,7 +1448,7 @@ class BikeRepairView(CreateView):
 
     def form_valid(self, form):
         super(BikeRepairView, self).form_valid(form)
-        return redirect(wp_reverse(self.success_url))
+        return redirect(reverse(self.success_url))
 
 
 class DrawResultsView(TemplateView):

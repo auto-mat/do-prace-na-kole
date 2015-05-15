@@ -7,14 +7,6 @@ from cache_utils.decorators import cached
 import slumber
 register = template.Library()
 
-from dpnk.wp_urls import wp_reverse
-
-@register.simple_tag
-def wp_url(name):
-    return wp_reverse(name)
-
-
-
 @register.simple_tag
 @cached(600)
 def cyklistesobe(city_slug, order="created"):
