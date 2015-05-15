@@ -581,7 +581,7 @@ class TShirtSize(models.Model):
         null=False)
     t_shirt_preview = models.FileField(
         verbose_name=_(u"Náhled trika"),
-        upload_to='t_shirt_preview',
+        upload_to=u't_shirt_preview',
         blank=True, null=True)
 
     class Meta:
@@ -1191,11 +1191,11 @@ class DeliveryBatch(models.Model):
         blank=False)
     customer_sheets = models.FileField(
         verbose_name=_(u"Zákaznické listy"),
-        upload_to='customer_sheets',
+        upload_to=u'customer_sheets',
         blank=True, null=True)
     tnt_order = models.FileField(
         verbose_name=_(u"Objednávka pro TNT"),
-        upload_to='tnt_order',
+        upload_to=u'tnt_order',
         blank=True, null=True)
 
     class Meta:
@@ -1275,7 +1275,7 @@ class Invoice(models.Model):
         default=0)
     invoice_pdf = models.FileField(
         verbose_name=_(u"PDF faktury"),
-        upload_to='invoices',
+        upload_to=u'invoices',
         blank=True,
         null=True,
         )
@@ -2292,7 +2292,7 @@ class Answer(models.Model):
     points_given = models.IntegerField(
         null=True, blank=True, default=None)
     attachment = models.FileField(
-        upload_to="questionaire/",
+        upload_to=u"questionaire/",
         max_length=600,
         blank=True,
         )
@@ -2386,7 +2386,7 @@ class GpxFile(models.Model):
     file = models.FileField(
         verbose_name=_(u"GPX soubor"),
         help_text=_(u"Zadat trasu nahráním souboru GPX"),
-        upload_to='gpx_tracks',
+        upload_to=u'gpx_tracks',
         blank=True, null=True)
     DIRECTIONS = [
         ('trip_to', _(u"Tam")),
