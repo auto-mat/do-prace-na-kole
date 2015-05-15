@@ -19,10 +19,10 @@ from dpnk.forms import SubmitMixin
 class EmailModelBackend(ModelBackend):
     def authenticate(self, username=None, password=None):
         try:
-            user = User.objects.get(username__iexact=username)
+            user = User.objects.get(is_active=True, username__iexact=username)
         except User.DoesNotExist:
             try:
-                user = User.objects.get(email__iexact=username)
+                user = User.objects.get(is_active=True, email__iexact=username)
             except User.DoesNotExist:
                 return None
 
