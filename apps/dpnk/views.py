@@ -938,10 +938,9 @@ class QuestionnaireView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
     success_url=reverse_lazy('competitions')
     title=_(u"Vyplňte odpovědi")
 
-    #@login_required_simple
-    #@must_be_competitor
+    @method_decorator(login_required_simple)
+    @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
-        #import pudb; pudb.set_trace()
         questionaire_slug=kwargs['questionnaire_slug']
         self.questionnaire = models.Competition.objects.get(slug=questionaire_slug)
         self.userprofile = request.user.userprofile
