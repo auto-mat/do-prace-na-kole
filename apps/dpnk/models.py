@@ -32,7 +32,7 @@ from author.decorators import with_author
 from django import forms
 from django.db.models import Q, Max
 from django.contrib.auth.models import User
-from django.contrib.gis.geos import Point, LineString
+from django.contrib.gis.geos import Point, LineString, MultiLineString
 from django.contrib.gis.db import models
 from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
 from django.db.utils import ProgrammingError
@@ -2411,7 +2411,7 @@ class GpxFile(models.Model):
         Trip,
         null=True,
         blank=True)
-    track = models.LineStringField(
+    track = models.MultiLineStringField(
         verbose_name=_(u"trasa"),
         srid=4326,
         null=True,
@@ -2451,13 +2451,15 @@ class GpxFile(models.Model):
             try:
                 gpx = gpxpy.parse(self.file.read())
                 if gpx.tracks:
-                    track_list_of_points = []
-                    for point in gpx.tracks[0].segments[0].points:
+                    multiline = []
+                    for segment in gpx.tracks[0].segments:
+                        track_list_of_points = []
+                        for point in segment.points:
+                            point_in_segment = Point(point.longitude, point.latitude)
+                            track_list_of_points.append(point_in_segment.coords)
 
-                        point_in_segment = Point(point.longitude, point.latitude)
-                        track_list_of_points.append(point_in_segment.coords)
-
-                    self.track_clean = LineString(track_list_of_points)
+                        multiline.append(LineString(track_list_of_points))
+                    self.track_clean = MultiLineString(multiline)
             except:
                 raise ValidationError(u"Vadný GPX soubor")
 

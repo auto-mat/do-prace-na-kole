@@ -631,6 +631,7 @@ class GpxFileForm(FormClassMixin, forms.ModelForm):
         user_attendance = self.initial['user_attendance']
 
         self.fields['track'].widget = UserLeafletWidget(user_attendance=user_attendance)
+        self.fields['track'].widget.attrs['geom_type'] = 'MULTILINESTRING'
 
     class Meta:
         model = models.GpxFile

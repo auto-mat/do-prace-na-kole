@@ -37,6 +37,7 @@ from django.views.decorators.gzip import gzip_page
 from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase, must_be_owner
 from django.contrib.auth.decorators import login_required as login_required_simple
 from django.contrib.gis.shortcuts import render_to_kml
+from django.contrib.gis.geos import MultiLineString
 from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.utils.translation import ugettext_lazy as _
@@ -1491,7 +1492,7 @@ class CreateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageM
             'user_attendance': self.user_attendance,
             'direction': self.kwargs['direction'],
             'trip_date': self.kwargs['date'],
-            'track': self.user_attendance.track,
+            'track': MultiLineString(self.user_attendance.track),
         }
 
     @must_be_owner
