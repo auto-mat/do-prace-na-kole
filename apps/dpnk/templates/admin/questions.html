@@ -11,7 +11,7 @@
       </li>
    {% endif %}
    <li>
-   {{q.competition.campaign}} - <a href="{% url 'admin_questionnaire_results' q.competition.slug %}">{{q.competition}}</a> - {{q.competition.city}}
+   {{q.competition.campaign}} - <a href="{% url 'admin_questionnaire_results' q.competition.slug %}">{{q.competition}}</a> - {{q.competition.city.all|join:", "|default:"všechna města"}}
    <ul>
 {% endifchanged %}
 {% if q.with_answer %}
