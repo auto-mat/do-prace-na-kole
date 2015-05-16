@@ -676,18 +676,26 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         for day_m, trip in enumerate(trips):
             day = str(trip.date)
             if trip.is_working_ride_to:
-                trip.trip_to = request.POST.get('trip_to-' + day) == 'on'
+                trip_to = request.POST.get('trip_to-' + day)
+                if trip_to == 'on':
+                   trip.trip_to = True
+                elif trip_to == 'off':
+                   trip.trip_to = False
                 try:
                     trip.distance_to = max(min(float(request.POST.get('distance_to-' + day).replace(',','.')), 1000), 0)
-                except (ValueError, TypeError):
-                    trip.distance_to = None
+                except (ValueError, TypeError, AttributeError):
+                    pass
 
             if trip.is_working_ride_from:
-                trip.trip_from = request.POST.get('trip_from-' + day) == 'on'
+                trip_from = request.POST.get('trip_from-' + day)
+                if trip_from == 'on':
+                   trip.trip_from = True
+                elif trip_from == 'off':
+                   trip.trip_from = False
                 try:
                     trip.distance_from = max(min(float(request.POST.get('distance_from-' + day).replace(',','.')), 1000), 0)
-                except (ValueError, TypeError):
-                    trip.distance_from = None
+                except (ValueError, TypeError, AttributeError):
+                    pass
 
             logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s' % (
                 request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to))
