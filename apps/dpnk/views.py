@@ -1488,11 +1488,16 @@ class CreateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageM
     title = _(u"Zadat trasu")
 
     def get_initial(self):
+        if self.user_attendance.track:
+            track = MultiLineString(self.user_attendance.track)
+        else:
+            track = None
+
         return {
             'user_attendance': self.user_attendance,
             'direction': self.kwargs['direction'],
             'trip_date': self.kwargs['date'],
-            'track': MultiLineString(self.user_attendance.track),
+            'track': track,
         }
 
     @must_be_owner
