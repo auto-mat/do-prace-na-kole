@@ -9,7 +9,7 @@ register = template.Library()
 
 @register.simple_tag
 @cached(600)
-def cyklistesobe(city_slug, order="created"):
+def cyklistesobe(city_slug, order="created_at"):
     api = slumber.API("http://www.cyklistesobe.cz/issues/")
     kwargs = {}
     if city_slug:
