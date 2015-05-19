@@ -25,7 +25,7 @@
 {% if question.type == 'choice' %}
 <label for="choice-{{ question.id}}-{{ choice.id }}"><input type="radio" name="choice-{{ question.id }}" id="choice-{{ question.id}}-{{ choice.id }}" value="{{ choice.id }}" {% if not is_actual %}readonly="readonly"{% endif %} {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text|safe }}
 {% endif %}
-{% if has_finished %}
+{% if show_points %}
    ( {% if choice.points %} {{choice.points}} {% else %} - {% endif %} {% trans "b" %} )
 {% endif %}
 </label><br/>
@@ -33,7 +33,7 @@
 {% if question.with_comment %}
 <label for="comment-{{ question.id }}"></label>
 <textarea name="comment-{{ question.id }}" cols="60" rows="5" class="question" {% if not is_actual %}readonly="readonly"{% endif %}>{{ question.comment_prefill }}</textarea>
-{% if has_finished %}
+{% if show_points %}
    ( {% if question.points_given %} {{question.points_given}} {% else %} - {% endif %} {% trans "b" %} )
 {% endif %}
 <br/>

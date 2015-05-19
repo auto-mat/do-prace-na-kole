@@ -1032,7 +1032,7 @@ class QuestionnaireView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
             'media': settings.MEDIA_URL,
             'error': self.error,
             'is_actual': self.competition.is_actual(),
-            'has_finished': self.competition.has_finished(),
+            'show_points': self.competition.has_finished() or self.userprofile.user.is_superuser,
             })
         return context_data
 
