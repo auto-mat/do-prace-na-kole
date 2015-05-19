@@ -31,7 +31,7 @@
 </label><br/>
 {% endfor %}
 {% if question.with_comment %}
-<label for="comment-{{ question.id }}"><span class="comment-label">{% trans "Komentář" %}</span></label>
+<label for="comment-{{ question.id }}"></label>
 <textarea name="comment-{{ question.id }}" cols="60" rows="5" class="question" {% if not is_actual %}readonly="readonly"{% endif %}>{{ question.comment_prefill }}</textarea>
 {% if has_finished %}
    ( {% if question.points_given %} {{question.points_given}} {% else %} - {% endif %} {% trans "b" %} )
