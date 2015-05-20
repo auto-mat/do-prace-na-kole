@@ -3,7 +3,6 @@ django-import-export
 -e git+https://github.com/digi604/django-smart-selects.git#egg=django-smart-selects
 psycopg2
 python-memcached
--e git+https://github.com/auto-mat/django-remote.git#egg=django-remote
 django-chart-tools
 django-extensions
 django-debug-toolbar
@@ -50,3 +49,5 @@ djangorestframework
 -e git+https://github.com/tkrajina/gpxpy.git@gpx-1.1#egg=gpxpy
 django-cachalot
 django-bulk-update
+django-cors-headers
+
