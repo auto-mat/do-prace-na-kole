@@ -1391,6 +1391,10 @@ def statistics(
         result = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True).distinct().count()
     elif variable == 'pocet-soutezicich':
         result = UserAttendance.objects.filter(Q(campaign=campaign) & Q(userprofile__user__is_active=True) & (Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0))).distinct().count()
+    elif variable == 'pocet-spolecnosti':
+        result = Company.objects.filter(Q(subsidiaries__teams__campaign=campaign)).distinct().count()
+    elif variable == 'pocet-pobocek':
+        result = Subsidiary.objects.filter(Q(teams__campaign=campaign)).distinct().count()
 
     if variable == 'pocet-soutezicich-firma':
         if request.user.is_authenticated() and models.is_competitor(request.user):
