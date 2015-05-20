@@ -25,6 +25,8 @@ import urllib
 import hashlib
 import datetime
 import results
+import json
+import collections
 # Django imports
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib import auth
@@ -1414,6 +1416,17 @@ def daily_chart(
         'days': reversed(util.days(campaign)),
         'max_value': max(values),
         }, context_instance=RequestContext(request))
+
+
+@cache_page(60)
+def daily_distance_json(
+        request,
+        ):
+    campaign_slug = request.subdomain
+    campaign = Campaign.objects.get(slug=campaign_slug)
+    values = collections.OrderedDict((str(day), period_distance(campaign, day, day)) for day in util.days(campaign))
+    data = json.dumps(values)
+    return http.HttpResponse(data)
 
 
 class BikeRepairView(CreateView):
