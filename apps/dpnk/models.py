@@ -2460,7 +2460,8 @@ class GpxFile(models.Model):
 
                         multiline.append(LineString(track_list_of_points))
                     self.track_clean = MultiLineString(multiline)
-            except:
+            except Exception as e:
+                logger.error("Valid GPX file: %s" % e)
                 raise ValidationError(u"Vadný GPX soubor")
 
 
