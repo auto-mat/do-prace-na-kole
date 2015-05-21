@@ -788,6 +788,9 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def get_competitions(self):
         return results.get_competitions_with_info(self)
 
+    def get_competitions_without_admission(self):
+        return results.get_competitions_without_admission(self)
+
     def has_distance_competition(self):
         return results.has_distance_competition(self)
 

@@ -147,6 +147,11 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                     messages.warning(request, mark_safe(_(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce! <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu.</li><li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete sehnat spolupracovníky, použijte <a href="http://www.dopracenakole.net/locations/%(city)s/seznamka" target="_blank">seznamku</a>.</li></ul>') % {'invite_url':
                         reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym'), 'city': self.user_attendance.team.subsidiary.city.slug}))
 
+        unanswered_questionnaires = self.user_attendance.get_competitions_without_admission().filter(type='questionnaire')
+        if unanswered_questionnaires.exists():
+            competitions = ", ".join(["<a href='%(url)s'>%(name)s</a>" % { "url": reverse_lazy("questionnaire", kwargs={"questionnaire_slug":q.slug}), "name": q.name} for q in unanswered_questionnaires.all()])
+            messages.info(request, mark_safe(_(u'Nezapomeňte vyplnit odpovědi v následujících soutěžích: %s!') % competitions))
+
         if self.user_attendance.payment_status() not in ('done', 'none',) and self.registration_phase not in ('typ_platby',):
             messages.info(request, mark_safe(_(u'Vaše platba typu %(payment_type)s ještě nebyla vyřízena. Můžete <a href="%(url)s">zadat novou platbu.</a>') % {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('typ_platby')}))
 

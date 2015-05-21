@@ -125,6 +125,17 @@ def get_competitions_with_admission(user_attendance):
         ).distinct()
     return competitions
 
+def get_competitions_without_admission(user_attendance):
+    competitions = get_competitions(user_attendance).filter(
+            Q(without_admission = False)
+            & ~(
+                Q(user_attendance_competitors = user_attendance)
+                | Q(team_competitors = user_attendance.team)
+                | Q(company_competitors = user_attendance.company())
+            )
+        ).distinct()
+    return competitions
+
 def has_distance_competition(user_attendance):
     competitions = get_competitions_with_admission(user_attendance)
     competitions = competitions.filter(type = 'length')
