@@ -201,8 +201,8 @@ class CompetitionAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, Rel
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser:
-            return ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'rules']
-        return ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'rules', 'date_to', 'date_from', 'company', 'without_admission', 'public_answers', 'is_public', 'entry_after_beginning_days', 'team_competitors', 'company_competitors', 'user_attendance_competitors', 'campaign']
+            return ['competition_results_link', 'questionnaire_results_link', 'draw_link']
+        return ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'date_to', 'date_from', 'company', 'without_admission', 'public_answers', 'is_public', 'entry_after_beginning_days', 'team_competitors', 'company_competitors', 'user_attendance_competitors', 'campaign']
 
     def city_list(self, obj):
         return ", ".join([str(c) for c in obj.city.all()])
