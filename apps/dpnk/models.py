@@ -2246,6 +2246,10 @@ class Question(models.Model):
         default=None,
         null=True,
         blank=True)
+    required = models.BooleanField(
+        verbose_name=_(u"Povinná otázka"),
+        default=True,
+        null=False)
 
     def __unicode__(self):
         return "%s" % (self.name or self.text)

@@ -16,7 +16,7 @@
 {% endif %}
 <p class="question-text">{{ question.text|safe }}</p>
 {% if question.error %}
-   <div class="text-error">{% trans "Je nutné vyplnit tuto volbu" %}</div>
+   <div class="alert alert-warning">{% trans "Je nutné vyplnit tuto volbu" %}</div>
 {% endif %}
 {% for choice in question.choices %}
 {% if question.type == 'multiple-choice' %}
@@ -57,7 +57,7 @@
 {% endif %}
 {% endfor %}
 {% if error %}
-   <div class="text-error">{% trans "Ne všechny otázky byly zodpovězeny. Prosím zodpovězte je." %}</div>
+   <div class="alert alert-warning">{% trans "Ne všechny otázky byly zodpovězeny. Prosím zodpovězte je." %}</div>
 {% endif %}
 <input type="hidden" name="questionaire" value="{{ questionaire.slug }}">
 {% if is_actual %}
