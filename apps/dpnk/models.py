@@ -2191,6 +2191,13 @@ class Question(models.Model):
         ('multiple-choice', _(u"Výběr z více odpovědí")),
         )
 
+    COMMENT_TYPES = (
+        (None, _(u"Nic")),
+        ('text', _(u"Text")),
+        ('link', _(u"Odkaz")),
+        ('one-liner', _(u"Jeden řádek textu")),
+        )
+
     name = models.CharField(
         verbose_name=_(u"Jméno"),
         max_length=60,
@@ -2211,10 +2218,13 @@ class Question(models.Model):
         default='text',
         max_length=16,
         null=False)
-    with_comment = models.BooleanField(
-        verbose_name=_(u"Povolit komentář"),
-        default=True,
-        null=False)
+    comment_type = models.CharField(
+        verbose_name=_(u"Typ komentáře"),
+        choices=COMMENT_TYPES,
+        default=None,
+        max_length=16,
+        blank=True,
+        null=True)
     with_attachment = models.BooleanField(
         verbose_name=_(u"Povolit přílohu"),
         default=False,
@@ -2238,7 +2248,7 @@ class Question(models.Model):
         return "%s" % (self.name or self.text)
 
     def with_answer(self):
-        return self.with_comment or self.with_attachment or self.type != 'text' or self.choice_type != None
+        return self.comment_type or self.with_attachment or self.type != 'text' or self.choice_type != None
 
 
 class Choice(models.Model):

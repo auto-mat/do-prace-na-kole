@@ -30,9 +30,15 @@
 {% endif %}
 </label><br/>
 {% endfor %}
-{% if question.with_comment %}
+{% if question.comment_type %}
 <label for="comment-{{ question.id }}"></label>
+{% if question.comment_type == 'text' %}
 <textarea name="comment-{{ question.id }}" cols="60" rows="5" class="question" {% if not is_actual %}readonly="readonly"{% endif %}>{{ question.comment_prefill }}</textarea>
+{% elif question.comment_type == 'link' %}
+<input type="url" name="comment-{{ question.id }}" style="width:100%" class="question" {% if not is_actual %}readonly="readonly"{% endif %} value="{{ question.comment_prefill }}"/>
+{% elif question.comment_type == 'one-liner' %}
+<input type="text" name="comment-{{ question.id }}" style="width:100%" class="question" {% if not is_actual %}readonly="readonly"{% endif %} value="{{ question.comment_prefill }}"/>
+{% endif %}
 {% if show_points %}
    ( {% if question.points_given %} {{question.points_given}} {% else %} - {% endif %} {% trans "b" %} )
 {% endif %}
