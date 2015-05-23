@@ -77,6 +77,8 @@ class SubsidiaryCampaignFilter(CampaignFilter):
 class TripCampaignFilter(CampaignFilter):
     field = 'user_attendance__campaign'
 
+class QuestionCampaignFilter(CampaignFilter):
+    field = 'question__competition__campaign'
 
 class HasVoucherFilter(SimpleListFilter):
     title = _(u"Má nějaké vouchery")
