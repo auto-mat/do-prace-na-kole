@@ -21,7 +21,7 @@ from django.core.validators import RegexValidator, MinLengthValidator
 from django.contrib.gis.forms import OSMWidget
 from leaflet.forms.widgets import LeafletWidget
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, HTML
+from crispy_forms.layout import Submit, Layout, HTML, Field
 from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import string_concat
@@ -433,6 +433,52 @@ class ConfirmDeliveryForm(forms.ModelForm):
     class Meta:
         model = models.PackageTransaction
         fields = ('status',)
+
+
+class AnswerForm(forms.ModelForm):
+    choices = forms.ModelMultipleChoiceField(queryset = (), label="", help_text="")
+
+    def __init__(self, *args, **kwargs):
+        self.question = kwargs['question']
+        del kwargs['question']
+        ret_val = super(AnswerForm, self).__init__(*args, **kwargs)
+        if self.question.comment_type:
+            if self.question.comment_type == 'link':
+                self.fields['comment'] = forms.URLField()
+            if self.question.comment_type == 'one-liner':
+                self.fields['comment'] = forms.CharField()
+            self.fields['comment'].label = ""
+            if self.question.type == 'text':
+                self.fields['comment'].required = self.question.required
+        else:
+            del self.fields['comment']
+
+        choices_layout = Field('choices')
+        if self.question.type != 'text':
+            if self.question.type == 'choice':
+                choices_layout = Field('choices', template="widgets/radioselectmultiple.html")
+            self.fields['choices'].widget = forms.CheckboxSelectMultiple()
+            self.fields['choices'].queryset = self.question.choice_type.choices.all()
+            self.fields['choices'].required = self.question.required
+            self.fields['choices'].help_text = ""
+        else:
+            del self.fields['choices']
+
+        if not self.question.with_attachment:
+            del self.fields['attachment']
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            choices_layout,
+            'comment',
+            'attachment',
+        )
+        self.helper.form_tag = False
+        return ret_val
+
+    class Meta:
+        model = models.Answer
+        fields = ('choices', 'comment', 'attachment')
 
 
 class ConfirmTeamInvitationForm(SubmitMixin, forms.Form):

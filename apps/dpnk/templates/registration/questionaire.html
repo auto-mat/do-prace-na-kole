@@ -1,5 +1,6 @@
 {% extends "base_generic_form.html" %}
 {% load i18n %}
+{% load crispy_forms_tags %}
 
 {% block form %}
 <h2>{{ questionaire.name }}</h2>
@@ -12,54 +13,15 @@
    <hr/>
 {% endif %}
 {% if question.name %}
-   <h3>{{ question.name }}</h3>
+   <h3>{{ question.name }}{% if question.required %} *{% endif %}</h3>
 {% endif %}
 <p class="question-text">{{ question.text|safe }}</p>
-{% if question.error %}
-   <div class="alert alert-warning">{% trans "Je nutné vyplnit tuto volbu" %}</div>
-{% endif %}
-{% for choice in question.choices %}
-{% if question.type == 'multiple-choice' %}
-<label for="choice-{{ question.id}}-{{ choice.id }}"><input type="checkbox" name="choice-{{ question.id }}" id="choice-{{ question.id}}-{{ choice.id }}" value="{{ choice.id }}" {% if not is_actual %}readonly="readonly"{% endif %} {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text|safe }}
-{% endif %}
-{% if question.type == 'choice' %}
-<label for="choice-{{ question.id}}-{{ choice.id }}"><input type="radio" name="choice-{{ question.id }}" id="choice-{{ question.id}}-{{ choice.id }}" value="{{ choice.id }}" {% if not is_actual %}readonly="readonly"{% endif %} {% if choice.id in question.choices_prefill %}checked="checked"{% endif %}/>{{ choice.text|safe }}
-{% endif %}
+{% crispy question.form %}
 {% if show_points %}
    ( {% if choice.points %} {{choice.points}} {% else %} - {% endif %} {% trans "b" %} )
-{% endif %}
-</label><br/>
-{% endfor %}
-{% if question.comment_type %}
-<label for="comment-{{ question.id }}"></label>
-{% if question.comment_type == 'text' %}
-<textarea name="comment-{{ question.id }}" cols="60" rows="5" class="question" {% if not is_actual %}readonly="readonly"{% endif %}>{{ question.comment_prefill }}</textarea>
-{% elif question.comment_type == 'link' %}
-<input type="url" name="comment-{{ question.id }}" style="width:100%" class="question" {% if not is_actual %}readonly="readonly"{% endif %} value="{{ question.comment_prefill }}"/>
-{% elif question.comment_type == 'one-liner' %}
-<input type="text" name="comment-{{ question.id }}" style="width:100%" class="question" {% if not is_actual %}readonly="readonly"{% endif %} value="{{ question.comment_prefill }}"/>
-{% endif %}
-{% if show_points %}
    ( {% if question.points_given %} {{question.points_given}} {% else %} - {% endif %} {% trans "b" %} )
 {% endif %}
-<br/>
-{% endif %}
-{% if question.with_attachment %}
-   {%if question.attachment_prefill %}
-      <p>{% trans "Minulý nahraný soubor: " %}<a href="{{ media }}/{{ question.attachment_prefill }}">{{ question.attachment_prefill_name }}</a></p>
-   {% else %}
-      <p class="text-warning">{% trans "Není nahrán žádný soubor" %}</p>
-   {% endif %}
-   {% if is_actual %}
-   <label for="fileupload-{{ question.id }}"><span class="fileupload-label">{% trans "Zde můžete nahrát soubor" %}</span></label>
-   <input type="file" name="fileupload-{{ question.id }}" class="fileupload" id="fileupload-{{question.id}}"/><br/>
-   {% endif %}
-{% endif %}
 {% endfor %}
-{% if error %}
-   <div class="alert alert-warning">{% trans "Ne všechny otázky byly zodpovězeny. Prosím zodpovězte je." %}</div>
-{% endif %}
-<input type="hidden" name="questionaire" value="{{ questionaire.slug }}">
 {% if is_actual %}
 <button class="submit submit_once btn btn-block btn-primary" type="submit">{% trans "Odeslat" %}</button>
 {% endif %}

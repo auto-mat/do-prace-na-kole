@@ -28,7 +28,7 @@ import results
 import json
 import collections
 # Django imports
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, render
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -945,6 +945,7 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
     template_name='registration/questionaire.html'
     success_url=reverse_lazy('competitions')
     title=_(u"Vyplňte odpovědi")
+    form_class=forms.AnswerForm
 
     @method_decorator(login_required_simple)
     @must_be_competitor
@@ -953,104 +954,45 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
         self.user_attendance = kwargs['user_attendance']
         self.questionnaire = models.Competition.objects.get(slug=questionaire_slug)
         self.userprofile = request.user.userprofile
-        self.error = False
-        self.empty_answer = False
-        form_filled = False
         try:
             self.competition = Competition.objects.get(slug=questionaire_slug)
         except Competition.DoesNotExist:
             logger.exception('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
             return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující dotazník">kontakt@dopracenakole.net</a></div>'), status=401)
-
-        self.questions = Question.objects.filter(competition=self.competition).order_by('order')
-        for question in self.questions:
-            try:
-                question.choices = Choice.objects.filter(choice_type=question.choice_type)
-            except Choice.DoesNotExist:
-                question.choices = None
-            try:
-                answer = Answer.objects.get(
-                    question=question,
-                    user_attendance=self.user_attendance)
-
-                question.comment_prefill = answer.comment
-                question.points_given = answer.points_given
-                question.attachment_prefill = answer.attachment
-                question.attachment_prefill_name = re.sub(r"^.*&", "", answer.attachment.name).replace("_", " ")
-                question.choices_prefill = [c.id for c in answer.choices.all()]
-            except Answer.DoesNotExist:
-                self.empty_answer = True
-                question.comment_prefill = ''
-                question.choices_prefill = ''
+        for question in Question.objects.filter(competition=self.competition).exclude(answer__user_attendance=self.user_attendance).order_by('order'):
+            Answer.objects.create(question=question, user_attendance=self.user_attendance)
+        self.questions = Question.objects.filter(competition=self.competition).select_related("answer").order_by('order')
         return super(QuestionnaireView, self).dispatch(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        if self.competition.can_admit(self.user_attendance):
-            choice_ids = [(int(k.split('-')[1]), request.POST.getlist(k)) for k, v in request.POST.items() if k.startswith('choice')]
-            comment_ids = [int(k.split('-')[1]) for k, v in request.POST.items() if k.startswith('comment')]
-            fileupload_ids = [int(k.split('-')[1]) for k, v in request.FILES.items() if k.startswith('fileupload')]
-
-            answers_dict = {}
-            for question in self.questions:
-                answer, created = Answer.objects.get_or_create(
-                    user_attendance=self.user_attendance,
-                    question=question)
-                if not created:
-                    # Cleanup previous fillings
-                    answer.choices = []
-                answer.save()
-                answers_dict[question.id] = answer
-
-            # Save choices
-            for answer_id, choices_ids in choice_ids:
-                for choice_id in choices_ids:
-                    choice = Choice.objects.get(id=choice_id)
-                    answer = answers_dict[answer_id]
-                    answer.choices.add(choice)
-                    answer.save()
-            # Save comments
-            for comment_id in comment_ids:
-                answer = answers_dict[comment_id]  # comment_id = question_id
-                answer.comment = request.POST.get('comment-%d' % comment_id, '')
-                answer.save()
-            # Save file uploads
-            for fileupload_id in fileupload_ids:
-                filehandler = request.FILES.get('fileupload-%d' % fileupload_id, None)
-                if filehandler:
-                    answer = answers_dict[fileupload_id]
-                    answer.attachment = handle_uploaded_file(filehandler, request.user.username)
-                    answer.save()
-
-            self.competition.make_admission(self.user_attendance)
-            form_filled = True
-
+    def get(self, request, *args, **kwargs):
         for question in self.questions:
-            answer = Answer.objects.get(
-                question=question,
-                user_attendance=self.user_attendance)
-            if question.required:
-                if question.type == 'choice' and answer.choices.count() == 0:
-                    self.error = True
-                    question.error = True
-                if question.type == 'text' and question.comment_type and (answer.comment == None or answer.comment == ""):
-                    self.error = True
-                    question.error = True
+            answer = question.answer_set.get(user_attendance=self.user_attendance)
+            question.points_given = answer.points_given
+            question.form = self.form_class(instance=answer, question=question, prefix="question-%s" % question.pk)
+        return render(request, self.template_name, self.get_context_data())
 
-        if not self.error and not self.empty_answer and form_filled:
+    def post(self, request, *args, **kwargs):
+        valid = True
+        for question in self.questions:
+            answer = question.answer_set.get(user_attendance=self.user_attendance)
+            question.points_given = answer.points_given
+            question.form = self.form_class(request.POST, files=request.FILES, instance=answer, question=question, prefix="question-%s" % question.pk)
+            if not question.form.is_valid():
+                valid = False
+
+        if valid:
+            for question in self.questions:
+                question.form.save()
+            self.competition.make_admission(self.user_attendance)
             return redirect(self.success_url)
-        else:
-            return super(QuestionnaireView, self).get(request, *args, **kwargs)
-
+        return render(request, self.template_name, self.get_context_data())
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(QuestionnaireView, self).get_context_data(*args, **kwargs)
  
         context_data.update({
-            'user': self.userprofile,
             'questions': self.questions,
             'questionaire': self.questionnaire,
-            'media': settings.MEDIA_URL,
-            'error': self.error,
             'is_actual': self.competition.is_actual(),
             'show_points': self.competition.has_finished() or self.userprofile.user.is_superuser,
             })
