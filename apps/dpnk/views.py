@@ -998,7 +998,7 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
         context_data.update({
             'questions': self.questions,
             'questionaire': self.questionnaire,
-            'is_actual': self.is_actual,
+            'show_submit': self.is_actual and not self.questionnaire.without_admission,
             'show_points': self.show_points,
             })
         return context_data
