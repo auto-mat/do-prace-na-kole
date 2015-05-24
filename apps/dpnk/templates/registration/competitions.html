@@ -91,7 +91,15 @@
    {% endif %}
    {% else %}
       {% if competition.competitor_can_admit == 'without_admission' %}
-         {% trans "Do té&shy;to sou&shy;tě&shy;že jste při&shy;hlá&shy;šen au&shy;to&shy;ma&shy;ti&shy;cky." %} 
+         {% if competition.type == 'questionnaire' %}
+            <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">
+               {% if competition.competitor_has_admission %}
+                  {% trans "Zobrazit informace" %}
+               {% endif %}
+            </a>
+         {% endif %}
+
+         {# trans "Do té&shy;to sou&shy;tě&shy;že jste při&shy;hlá&shy;šen au&shy;to&shy;ma&shy;ti&shy;cky." #} 
       {% elif competition.competitor_can_admit == 'after_beginning' %}
          {% if competition.competitor_has_admission %}
             {% trans "Sou&shy;těž za&shy;ča&shy;la, již není mož&shy;né se od&shy;hlá&shy;sit." %} 
