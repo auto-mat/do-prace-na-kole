@@ -117,7 +117,7 @@ class CompanyAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.M
     inlines = [SubsidiaryInline, ]
     list_filter = [CityCampaignFilter, 'subsidiaries__city', 'active']
     readonly_fields = ['subsidiary_links']
-    search_fields = ('name',)
+    search_fields = ('name', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'address_district')
     list_max_show_all = 10000
     form = CompanyForm
 
@@ -149,7 +149,7 @@ class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admi
     list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline, ]
     list_filter = [SubsidiaryCampaignFilter, 'city', 'active']
-    search_fields = ('address_recipient', 'company__name', 'address_street', )
+    search_fields = ('address_recipient', 'company__name', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'address_district')
     raw_id_fields = ('company',)
     list_max_show_all = 10000
     save_as = True
@@ -607,7 +607,7 @@ class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixi
     list_display = ('id', 'name_for_trusted', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'payment_amount', 'team__member_count', 'get_frequency', 'get_length', 'created')
     list_filter = (CampaignFilter, ('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('approved_for_team', AllValuesComboFilter), ('t_shirt_size', RelatedFieldComboFilter), 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, ('team__member_count', AllValuesComboFilter), PackageConfirmationFilter, ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter), ('userprofile__sex', AllValuesComboFilter), HasVoucherFilter, HasRidesFilter, HasTeamFilter)
     raw_id_fields = ('userprofile', 'team')
-    search_fields = ('userprofile__nickname', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__company__name')
+    search_fields = ('userprofile__nickname', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__address_psc', 'team__subsidiary__address_recipient', 'team__subsidiary__address_city',  'team__subsidiary__address_district', 'team__subsidiary__company__name')
     readonly_fields = ('user_link', 'userprofile__user__email', 'created', 'updated')
     actions = (update_mailing, approve_am_payment, recalculate_results, show_distance, assign_vouchers, add_trips)
     form = UserAttendanceForm
