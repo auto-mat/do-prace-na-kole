@@ -18,8 +18,7 @@
 <p class="question-text">{{ question.text|safe }}</p>
 {% crispy question.form %}
 {% if show_points %}
-   ( {% if choice.points %} {{choice.points}} {% else %} - {% endif %} {% trans "b" %} )
-   ( {% if question.points_given %} {{question.points_given}} {% else %} - {% endif %} {% trans "b" %} )
+   ( {% if question.points_given != None %} {{question.points_given}} {% else %} - {% endif %} {% trans "b" %} )
 {% endif %}
 {% endfor %}
 {% if is_actual %}

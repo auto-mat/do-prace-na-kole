@@ -961,6 +961,8 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
             return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující dotazník">kontakt@dopracenakole.net</a></div>'), status=401)
         for question in Question.objects.filter(competition=self.competition).exclude(answer__user_attendance=self.user_attendance).order_by('order'):
             Answer.objects.create(question=question, user_attendance=self.user_attendance)
+        self.show_points = self.competition.has_finished() or self.userprofile.user.is_superuser
+        self.is_actual = self.competition.is_actual()
         self.questions = Question.objects.filter(competition=self.competition).select_related("answer").order_by('order')
         return super(QuestionnaireView, self).dispatch(request, *args, **kwargs)
 
@@ -968,15 +970,18 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
         for question in self.questions:
             answer = question.answer_set.get(user_attendance=self.user_attendance)
             question.points_given = answer.points_given
-            question.form = self.form_class(instance=answer, question=question, prefix="question-%s" % question.pk)
+            question.form = self.form_class(instance=answer, question=question, prefix="question-%s" % question.pk, show_points=self.show_points, is_actual=self.is_actual)
         return render(request, self.template_name, self.get_context_data())
 
     def post(self, request, *args, **kwargs):
+        if not self.is_actual:
+            return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž již nelze vyplňovat"), "</div>"))
+
         valid = True
         for question in self.questions:
             answer = question.answer_set.get(user_attendance=self.user_attendance)
             question.points_given = answer.points_given
-            question.form = self.form_class(request.POST, files=request.FILES, instance=answer, question=question, prefix="question-%s" % question.pk)
+            question.form = self.form_class(request.POST, files=request.FILES, instance=answer, question=question, prefix="question-%s" % question.pk, show_points=self.show_points, is_actual=self.is_actual)
             if not question.form.is_valid():
                 valid = False
 
@@ -993,8 +998,8 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
         context_data.update({
             'questions': self.questions,
             'questionaire': self.questionnaire,
-            'is_actual': self.competition.is_actual(),
-            'show_points': self.competition.has_finished() or self.userprofile.user.is_superuser,
+            'is_actual': self.is_actual,
+            'show_points': self.show_points,
             })
         return context_data
 

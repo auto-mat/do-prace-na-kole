@@ -12,7 +12,7 @@ from django.utils import formats
 from models import UserProfile, Company, Subsidiary, Team, UserAttendance
 from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
-from dpnk.fields import WorkingScheduleField
+from dpnk.fields import WorkingScheduleField, ShowPointsMultipleModelChoiceField
 from django.forms.widgets import HiddenInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -21,7 +21,8 @@ from django.core.validators import RegexValidator, MinLengthValidator
 from django.contrib.gis.forms import OSMWidget
 from leaflet.forms.widgets import LeafletWidget
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, HTML, Field
+from crispy_forms.layout import Submit, Layout, HTML, Field, Div
+from crispy_forms.bootstrap import InlineCheckboxes
 from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import string_concat
@@ -436,42 +437,47 @@ class ConfirmDeliveryForm(forms.ModelForm):
 
 
 class AnswerForm(forms.ModelForm):
-    choices = forms.ModelMultipleChoiceField(queryset = (), label="", help_text="")
+    choices = ShowPointsMultipleModelChoiceField(queryset = (), label="", help_text="")
 
     def __init__(self, *args, **kwargs):
-        self.question = kwargs['question']
-        del kwargs['question']
+        question = kwargs.pop('question')
+        show_points = kwargs.pop('show_points')
+        is_actual = kwargs.pop('is_actual')
         ret_val = super(AnswerForm, self).__init__(*args, **kwargs)
-        if self.question.comment_type:
-            if self.question.comment_type == 'link':
+        if question.comment_type:
+            if question.comment_type == 'link':
                 self.fields['comment'] = forms.URLField()
-            if self.question.comment_type == 'one-liner':
+            if question.comment_type == 'one-liner':
                 self.fields['comment'] = forms.CharField()
             self.fields['comment'].label = ""
-            if self.question.type == 'text':
-                self.fields['comment'].required = self.question.required
+            if question.type == 'text':
+                self.fields['comment'].required = question.required
         else:
             del self.fields['comment']
 
         choices_layout = Field('choices')
-        if self.question.type != 'text':
-            if self.question.type == 'choice':
+        if question.type != 'text':
+            if question.type == 'choice':
                 choices_layout = Field('choices', template="widgets/radioselectmultiple.html")
             self.fields['choices'].widget = forms.CheckboxSelectMultiple()
-            self.fields['choices'].queryset = self.question.choice_type.choices.all()
-            self.fields['choices'].required = self.question.required
+            self.fields['choices'].queryset = question.choice_type.choices.all()
+            self.fields['choices'].show_points = show_points
+            self.fields['choices'].required = question.required
             self.fields['choices'].help_text = ""
         else:
             del self.fields['choices']
 
-        if not self.question.with_attachment:
+        if not question.with_attachment:
             del self.fields['attachment']
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            choices_layout,
-            'comment',
-            'attachment',
+            Div(
+                choices_layout,
+                'comment',
+                'attachment',
+                css_class = None if is_actual else 'readonly'
+            )
         )
         self.helper.form_tag = False
         return ret_val
