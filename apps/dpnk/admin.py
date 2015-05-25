@@ -113,24 +113,13 @@ class CompanyForm(forms.ModelForm):
 
 class CompanyAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.ModelAdmin):
     queryset_city_param = 'subsidiaries__city__in'
-    list_display = ('name', 'subsidiaries_text', 'ico', 'dic', 'user_count', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
+    list_display = ('name', 'subsidiaries_text', 'ico', 'dic', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'id', )
     inlines = [SubsidiaryInline, ]
     list_filter = [CityCampaignFilter, 'subsidiaries__city', 'active']
     readonly_fields = ['subsidiary_links']
     search_fields = ('name', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'address_district')
     list_max_show_all = 10000
     form = CompanyForm
-
-    def queryset(self, request):
-        queryset = super(CompanyAdmin, self).queryset(request)
-        return queryset.annotate(user_count=Sum('subsidiaries__teams__member_count'))
-
-    def user_count(self, obj):
-        return obj.user_count
-    user_count.admin_order_field = 'user_count'
-
-    #def company_admin__user__email(self, obj):
-    #   return obj.company_admin.get().user.email
 
     def subsidiaries_text(self, obj):
         return mark_safe(" | ".join(
