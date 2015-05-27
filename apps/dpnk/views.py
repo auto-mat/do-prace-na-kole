@@ -846,6 +846,10 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
 class CompetitionResultsView(TemplateView):
     template_name = 'registration/competition_results.html'
 
+    @method_decorator(cache_page(60))
+    def dispatch(self, request, *args, **kwargs):
+        return super(CompetitionResultsView, self).dispatch(request, *args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompetitionResultsView, self).get_context_data(*args, **kwargs)
         competition_slug = kwargs.get('competition_slug')
