@@ -1392,6 +1392,7 @@ def daily_chart(
 def daily_distance_json(
         request,
         ):
+    return http.HttpResponse("")
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
     values = collections.OrderedDict((str(day), period_distance(campaign, day, day)) for day in util.days(campaign))
