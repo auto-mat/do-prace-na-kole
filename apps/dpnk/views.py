@@ -1388,7 +1388,7 @@ def daily_chart(
         }, context_instance=RequestContext(request))
 
 
-@cache_page(60)
+@cache_page(60*60)
 def daily_distance_json(
         request,
         ):
