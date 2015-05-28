@@ -1982,6 +1982,8 @@ class Competition(models.Model):
         return True
 
     def has_admission(self, userprofile):
+        if not userprofile.entered_competition():
+            return False
         if not userprofile.is_libero() == (self.competitor_type == 'liberos'):
             return False
         if self.company and userprofile.team and self.company != userprofile.team.subsidiary.company:
