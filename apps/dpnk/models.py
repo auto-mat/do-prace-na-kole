@@ -2328,6 +2328,9 @@ class Answer(models.Model):
         blank=True,
         )
 
+    def has_any_answer(self):
+        return self.comment or self.choices.all() or self.attachment or self.points_given
+
     def str_choices(self):
         return ", ".join([choice.text for choice in self.choices.all()])
 

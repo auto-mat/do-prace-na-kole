@@ -40,7 +40,7 @@ import datetime
 import results
 # Models
 from filters import CampaignFilter, CityCampaignFilter, SubsidiaryCampaignFilter, TripCampaignFilter, QuestionCampaignFilter, HasVoucherFilter, HasRidesFilter, IsForCompanyFilter, HasTeamFilter, EmailFilter
-from dpnk import models, mailing
+from dpnk import models, mailing, actions
 from django import forms
 from related_admin import RelatedFieldAdmin
 import dpnk
@@ -159,12 +159,6 @@ class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admi
     team_links.short_description = u"Týmy"
 
 
-def recalculate_competitions_results(modeladmin, request, queryset):
-    for competition in queryset.all():
-        competition.recalculate_results()
-recalculate_competitions_results.short_description = _(u"Přepočítat výsledku vybraných soutěží")
-
-
 class QuestionInline(SortableInlineAdminMixin, EnhancedAdminMixin, admin.TabularInline):
     model = models.Question
     form = models.QuestionForm
@@ -177,7 +171,7 @@ class CompetitionAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, Rel
     search_fields = ('name', 'company__name', 'slug')
     list_filter = (CampaignFilter, 'city', 'without_admission', 'is_public', 'public_answers', 'competitor_type', 'type', IsForCompanyFilter, 'sex')
     save_as = True
-    actions = [recalculate_competitions_results]
+    actions = [actions.recalculate_competitions_results, actions.normalize_questionnqire_admissions]
     inlines = [ QuestionInline, ]
     prepopulated_fields = {'slug': ('name',)}
     list_max_show_all = 10000
