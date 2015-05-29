@@ -1038,7 +1038,7 @@ def questions(request):
     filter_query = Q()
     if not request.user.is_superuser:
         filter_query = Q(competition__city__in=request.user.userprofile.administrated_cities.all())
-    questions = Question.objects.filter(filter_query).order_by('-competition__campaign', 'competition__slug', 'order')
+    questions = Question.objects.filter(filter_query).order_by('-competition__campaign', 'competition__slug', 'order').distinct()
     return render_to_response('admin/questions.html', {
         'questions': questions
         }, context_instance=RequestContext(request))
