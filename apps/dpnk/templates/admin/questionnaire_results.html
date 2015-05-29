@@ -5,35 +5,21 @@
 
 <table>
    <tr>
-      <th>
-         soutěžící
-      </th>
-      {% if competition.competitor_type == 'team' %}
-      <th>
-         firma
-      </th><th>
-         město
-      </th>
-      {% endif %}
-      <th>
-         bodů
-      </th>
+      <th> soutěžící </th>
+      <th> tým </th>
+      <th> firma </th>
+      <th> město </th>
+      <th> bodů </th>
    </tr>
    {% for competitor in competitors %}
    <tr>
       <td>
          <a href="{% url 'admin_questionnaire_answers' competition_slug %}?uid={{ competitor.pk }}">{{ competitor }}</a>
       </td>
-      {% if competition.competitor_type == 'team' %}
-      <td>
-         {{ competitor.team.subsidiary.company }}
-      </td><td>
-         {{ competitor.team.subsidiary.city }}
-      </td>
-      {% endif %}
-      <td>
-         {{ competitor.result }}
-      </td>
+      <td> {{ competitor.get_team }} </td>
+      <td> {{ competitor.get_company }} </td>
+      <td> {{ competitor.get_city }} </td>
+      <td> {{ competitor.result }} </td>
    </tr>
    {% endfor %}
 </table>

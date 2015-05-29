@@ -2105,6 +2105,18 @@ class CompetitionResult(models.Model):
         db_index=True,
         )
 
+    def get_team(self):
+        if self.competition.competitor_type in ['liberos', 'single_user']:
+            return self.user_attendance.team
+        if self.competition.competitor_type == 'team':
+            return self.team
+
+    def get_company(self):
+        return self.get_team().subsidiary.company
+
+    def get_city(self):
+        return self.get_team().subsidiary.city
+
     def get_result_percentage(self):
         if self.result:
             return self.result * 100
