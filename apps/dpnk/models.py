@@ -2489,7 +2489,8 @@ class GpxFile(models.Model):
                             point_in_segment = Point(point.longitude, point.latitude)
                             track_list_of_points.append(point_in_segment.coords)
 
-                        multiline.append(LineString(track_list_of_points))
+                        if len(track_list_of_points) > 1:
+                            multiline.append(LineString(track_list_of_points))
                     self.track_clean = MultiLineString(multiline)
             except Exception as e:
                 logger.error("Valid GPX file: %s" % e)
