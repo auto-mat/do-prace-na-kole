@@ -867,9 +867,9 @@ class CompetitionResultsView(TemplateView):
 
         results = competition.get_results()
         if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
-            results = results.select_related('user_attendance__userprofile__user')
+            results = results.select_related('user_attendance__userprofile__user', 'user_attendance__team__subsidiary__company', 'user_attendance__team__subsidiary__city')
         elif competition.competitor_type == 'team':
-            results = results.select_related('team__subsidiary__company')
+            results = results.select_related('team__subsidiary__company', 'team__subsidiary__company', 'team__subsidiary__city')
         elif competition.competitor_type == 'company':
             results = results.select_related('company')
 
