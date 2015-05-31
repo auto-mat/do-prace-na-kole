@@ -964,8 +964,6 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
         except Competition.DoesNotExist:
             logger.exception('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
             return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující dotazník">kontakt@dopracenakole.net</a></div>'), status=401)
-        for question in Question.objects.filter(competition=self.competition).exclude(answer__user_attendance=self.user_attendance).order_by('order'):
-            Answer.objects.create(question=question, user_attendance=self.user_attendance)
         self.show_points = self.competition.has_finished() or self.userprofile.user.is_superuser
         self.is_actual = self.competition.is_actual()
         self.questions = Question.objects.filter(competition=self.competition).select_related("answer").order_by('order')
@@ -973,8 +971,11 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         for question in self.questions:
-            answer = question.answer_set.get(user_attendance=self.user_attendance)
-            question.points_given = answer.points_given
+            try:
+                answer = question.answer_set.get(user_attendance=self.user_attendance)
+                question.points_given = answer.points_given
+            except Answer.DoesNotExist:
+                answer = Answer(question=question, user_attendance=self.user_attendance)
             question.form = self.form_class(instance=answer, question=question, prefix="question-%s" % question.pk, show_points=self.show_points, is_actual=self.is_actual)
         return render(request, self.template_name, self.get_context_data())
 
@@ -984,7 +985,14 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
 
         valid = True
         for question in self.questions:
-            answer = question.answer_set.get(user_attendance=self.user_attendance)
+            if not question.with_answer():
+                continue
+
+            try:
+                answer = question.answer_set.get(user_attendance=self.user_attendance)
+                question.points_given = answer.points_given
+            except Answer.DoesNotExist:
+                answer = Answer(question=question, user_attendance=self.user_attendance)
             question.points_given = answer.points_given
             question.form = self.form_class(request.POST, files=request.FILES, instance=answer, question=question, prefix="question-%s" % question.pk, show_points=self.show_points, is_actual=self.is_actual)
             if not question.form.is_valid():
@@ -992,6 +1000,8 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
 
         if valid:
             for question in self.questions:
+                if not question.with_answer():
+                    continue
                 question.form.save()
             self.competition.make_admission(self.user_attendance)
             return redirect(self.success_url)
