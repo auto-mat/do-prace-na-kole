@@ -3,7 +3,6 @@
 {% load i18n %}
 {% load dpnk_tags %}
 {% load humanize %}
-{% load softhyphen_tags %}
 {% load dpnk_tags %}
 
 {% block content %}
@@ -46,13 +45,15 @@
 {% endif %}
 
 <th scope="column">
-   {% if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos' %}
-      {% trans "Sou&shy;tě&shy;ží&shy;cí" %}
-   {% elif competition.competitor_type == 'team' %}
-      {% trans "Tým" %}
-   {% elif competition.competitor_type == 'company' %}
-      {% trans "Fir&shy;ma" %}
-   {% endif %}
+   {% trans "Sou&shy;tě&shy;ží&shy;cí" %}
+</th>
+{% if competition.competitor_type != 'team' %}
+<th scope="column" class="narrow-hide-400">
+   {% trans "Tým" %}
+</th>
+{% endif %}
+<th scope="column" class="narrow-hide-400">
+   {% trans "Spo&shy;leč&shy;nost" %}
 </th>
 
 
@@ -91,16 +92,18 @@
    {% if competition.public_answers %}
       <a href="{% url 'questionnaire_answers_all' competition_slug=competition.slug %}#comp_res_{{result.pk}}">
    {% endif %}
-   {% if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos' %}
-      {{ result.user_attendance.name|softhyphen:"cs-CZ" }}
-   {% elif competition.competitor_type == 'team' %}
-      {{ result.team.name|softhyphen:"cs-CZ" }} / {{ result.team.subsidiary.company.name|softhyphen:"cs-CZ" }}
-   {% elif competition.competitor_type == 'company' %}
-      {{ result.company|softhyphen:"cs-CZ" }}
-   {% endif %}
-   {% if competition.type == 'questionnaire' %}
+   {{ result }}
+   {% if competition.public_answers %}
       </a>
    {% endif %}
+</td>
+{% if competition.competitor_type != 'team' %}
+<td class="narrow-hide-400">
+   {{ result.get_team.name }}
+</td>
+{% endif %}
+<td class="narrow-hide-400">
+   {{ result.get_team.subsidiary.address_street }} / {{ result.get_company }}
 </td>
 </tr>
 {% endfor %}

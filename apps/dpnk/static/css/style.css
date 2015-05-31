@@ -175,6 +175,11 @@ input:disabled + label {
     display: none;
   }
 }
+@media only screen and (max-width:400px) {
+  .narrow-hide-400 {
+    display: none;
+  }
+}
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
