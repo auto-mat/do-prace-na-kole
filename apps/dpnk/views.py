@@ -1347,6 +1347,7 @@ def statistics(
         ):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
+    result = None
     if variable == 'ujeta-vzdalenost':
         result = total_distance(campaign)
     elif variable == 'ujeta-vzdalenost-dnes':
@@ -1371,6 +1372,9 @@ def statistics(
             result = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True, approved_for_team='approved', team__subsidiary__company=models.get_company(campaign, request.user)).count()
         else:
             result = "-"
+
+    if not result:
+        return HttpResponse(_(u"Neznámá proměnná %s" % variable), status=403)
 
     return render_to_response(template, {
         'variable': result
