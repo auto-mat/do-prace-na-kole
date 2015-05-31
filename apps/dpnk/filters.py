@@ -19,7 +19,7 @@
 from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Sum
 from dpnk import models
 
 
@@ -68,6 +68,11 @@ class CampaignFilter(SimpleListFilter):
 
 class CityCampaignFilter(CampaignFilter):
     field = "subsidiaries__teams__campaign"
+
+    def queryset(self, request, queryset):
+        queryset = super(CityCampaignFilter, self).queryset(request, queryset)
+        queryset = queryset.annotate(user_count_sum=Sum('subsidiaries__teams__member_count'))
+        return queryset
 
 
 class SubsidiaryCampaignFilter(CampaignFilter):
