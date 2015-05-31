@@ -55,6 +55,9 @@
 <th scope="column" class="narrow-hide-400">
    {% trans "Spo&shy;leč&shy;nost" %}
 </th>
+<th scope="column" class="narrow-hide-400">
+   {% trans "Měs&shy;to" %}
+</th>
 
 
 </tr>
@@ -104,6 +107,9 @@
 {% endif %}
 <td class="narrow-hide-400">
    {{ result.get_team.subsidiary.address_street }} / {{ result.get_company }}
+</td>
+<td class="narrow-hide-400">
+   {{ result.get_city }}
 </td>
 </tr>
 {% endfor %}

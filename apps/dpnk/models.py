@@ -2112,10 +2112,14 @@ class CompetitionResult(models.Model):
             return self.team
 
     def get_company(self):
-        return self.get_team().subsidiary.company
+        team = self.get_team()
+        if team:
+            return team.subsidiary.company
 
     def get_city(self):
-        return self.get_team().subsidiary.city
+        team = self.get_team()
+        if team:
+            return team.subsidiary.city
 
     def get_result_percentage(self):
         if self.result:
