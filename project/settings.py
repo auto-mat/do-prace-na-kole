@@ -68,6 +68,8 @@ MIDDLEWARE_CLASSES = (
     'subdomains.middleware.SubdomainMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'denorm.middleware.DenormMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -139,6 +141,7 @@ INSTALLED_APPS = (
     'oauth2_provider',
     'rest_framework',
     'bulk_update',
+    'denorm',
     #'cachalot',
 )
 TEMPLATE_VISIBLE_SETTINGS = (

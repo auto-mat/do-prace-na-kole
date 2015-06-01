@@ -47,6 +47,7 @@ from django.core.files import File
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from polymorphic import PolymorphicModel
+from denorm import denormalized, depend_on_related
 from django.db import transaction
 from modulus11 import mod11
 from bulk_update.manager import BulkUpdateManager
@@ -311,7 +312,15 @@ class Team(models.Model):
         return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True)
 
     def members(self):
-        return UserAttendance.objects.filter(campaign=self.campaign, approved_for_team='approved', team=self, userprofile__user__is_active=True)
+        return self.users.filter(approved_for_team='approved', userprofile__user__is_active=True)
+
+    @denormalized(models.IntegerField, null=True, skip={'updated', 'created'})
+    @depend_on_related('UserAttendance')
+    def get_rides_count_denorm(self):
+        rides_count = 0
+        for member in self.team.members():
+            rides_count += member.get_rides_count_denorm
+        return rides_count
 
     def get_frequency(self):
         return results.get_team_frequency(self.members())
@@ -795,6 +804,11 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return results.has_distance_competition(self)
 
     def get_rides_count(self):
+        return results.get_rides_count(self)
+
+    @denormalized(models.IntegerField, null=True, skip={'updated', 'created'})
+    @depend_on_related('Trip')
+    def get_rides_count_denorm(self):
         return results.get_rides_count(self)
 
     def get_frequency(self, day=None):
@@ -2137,12 +2151,9 @@ class CompetitionResult(models.Model):
 
         elif self.competition.type == 'frequency':
             if self.user_attendance:
-                return self.user_attendance.get_rides_count()
+                return self.user_attendance.get_rides_count_denorm or 0
             if self.team:
-                rides_count = 0
-                for member in self.team.members():
-                    rides_count += member.get_rides_count()
-                return rides_count
+                return self.team.get_rides_count_denorm or 0
 
     def __unicode__(self):
         if self.competition.competitor_type == 'team':
