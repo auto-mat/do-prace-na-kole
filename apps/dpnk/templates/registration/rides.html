@@ -129,7 +129,7 @@ style="display:none"
    </table>
 {% endif %}
 
-{% if not has_active_trip %}
+{% if allow_adding_rides and not has_active_trip %}
 <div class="toggle alert alert-info">
 {% trans "Zde budete zadávat vaše jízdy" %}
 </div>
