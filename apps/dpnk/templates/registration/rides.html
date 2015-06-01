@@ -13,13 +13,16 @@
 {% else %}
 <form id="rides-form" name="calendar" method="POST" action="{% url "jizdy" %}">
 <input type="hidden" id="day" name="day"/>
+{% if allow_adding_rides %}
+<button class="btn-info btn show_rides_btn" type="button" onclick='$( ".toggle" ).toggle(  );'><span class="toggle">{% trans "Zobrazit všechny jízdy" %}</span><span class="toggle" style="display:none">{% trans "Skrýt všechny jízdy" %}</span></button>
+{% endif %}
 <br>
 {% trans "Zadaný počet kilometrů na jednu jízdu: " %}{{ user_attendance.get_distance|floatformat:2 }}&nbsp;Km
 {% trans " (Do políčka zadávejte ujetý počet kilometrů)" %}
 {% include "messages_include.html" %}
 {{ message }}
 
-<table id="rides" class="table table-bordered table-hover table-condensed">
+<table id="rides" class="table table-bordered table-hover table-condensed {% if allow_adding_rides and not has_active_trip %}toggle{% endif %}" {% if allow_adding_rides and not has_active_trip %}style="display:none"{% endif %}>
 <thead>
    <tr>
       <th scope="col">{% trans "Den" %}</th>
@@ -38,7 +41,9 @@
    toggle
 {% endif %}
 "
-
+{% if allow_adding_rides and not day.trips_active %}
+style="display:none"
+{% endif %}
 >
 <th scope="row" class="date">{{ day.day|naturalday:"D j. M" }}</th>
 <td>
@@ -124,7 +129,7 @@
    </table>
 {% endif %}
 
-{% if not has_active_trip %}
+{% if allow_adding_rides and not has_active_trip %}
 <div class="toggle alert alert-info">
 {% trans "Zde budete zadávat vaše jízdy" %}
 </div>

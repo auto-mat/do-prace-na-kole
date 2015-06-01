@@ -663,12 +663,12 @@ class GpxFileForm(FormClassMixin, forms.ModelForm):
         return self.initial['direction']
 
     def clean_track(self):
-        if not util.trip_active(self.trip_date):
+        if not util.trip_active(self.trip):
             return getattr(self.initial, 'track', None)
         return self.cleaned_data['track']
 
     def clean_file(self):
-        if not util.trip_active(self.trip_date):
+        if not util.trip_active(self.trip):
             return getattr(self.initial, 'file', None)
         return self.cleaned_data['file']
 
@@ -676,7 +676,8 @@ class GpxFileForm(FormClassMixin, forms.ModelForm):
         super(GpxFileForm, self).__init__(*args, **kwargs)
         try:
             self.trip_date = self.instance.trip_date or datetime.datetime.strptime(self.initial['trip_date'], "%Y-%m-%d").date()
-            if util.trip_active(self.trip_date):
+            self.trip = models.Trip.objects.get(date=self.trip_date, user_attendance=self.initial['user_attendance'])
+            if util.trip_active(self.trip):
                 self.helper.add_input(Submit('submit', _(u'Odeslat')))
         except ValueError:
             raise Http404
