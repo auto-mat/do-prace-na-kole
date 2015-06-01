@@ -320,12 +320,12 @@ class Team(models.Model):
     def members(self):
         return self.users.filter(approved_for_team='approved', userprofile__user__is_active=True)
 
-    @denormalized(models.IntegerField, null=True, skip={'updated', 'created'})
-    @depend_on_related('UserAttendance')
+    @denormalized(models.IntegerField, null=True)
+    @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def get_rides_count_denorm(self):
         rides_count = 0
-        for member in self.team.members():
-            rides_count += member.get_rides_count_denorm
+        for member in self.members():
+            rides_count += member.get_rides_count()
         return rides_count
 
     def get_frequency(self):
