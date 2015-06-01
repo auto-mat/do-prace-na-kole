@@ -95,7 +95,10 @@ def trip_active_last_week(day):
             )
         )
 
-trip_active = trip_active_last7
+def trip_active_never(day):
+    return False
+
+trip_active = trip_active_never
 
 def get_emissions(distance):
     return {
