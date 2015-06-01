@@ -171,6 +171,12 @@ class CityInCampaign(models.Model):
         "Campaign",
         null=False,
         blank=False)
+    allow_adding_rides = models.BooleanField(
+        verbose_name=_(u"povolit zapisování jízd"),
+        null=False,
+        blank=False,
+        default=True,
+    )
 
     def __unicode__(self):
         return "%(city)s (%(campaign)s)" % {'campaign': self.campaign.name, 'city': self.city.name}
@@ -2558,7 +2564,7 @@ pre_save_changed.connect(set_track, sender=GpxFile, fields=['file'])
 
 @receiver(post_save, sender=GpxFile)
 def set_trip_post(sender, instance, *args, **kwargs):
-    if instance.trip and util.trip_active(instance.trip.date):
+    if instance.trip and util.trip_active(instance.trip):
         length = instance.length()
         if instance.direction == 'trip_to' and length:
             instance.trip.distance_to = length

@@ -718,10 +718,11 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         nonreduced_distance = 0
         has_active_trip = False
         default_distance = self.user_attendance.get_distance(1)
+        allow_adding_rides = models.CityInCampaign.objects.get(city=self.user_attendance.team.subsidiary.city, campaign=self.user_attendance.campaign).allow_adding_rides
         for i, d in enumerate(days):
             cd = {}
             cd['day'] = d
-            cd['trips_active'] = util.trip_active(d)
+            cd['trips_active'] = util.trip_active(trips[d], allow_adding_rides)
             if cd['trips_active']:
                 has_active_trip = True
             if d in trips:
@@ -764,6 +765,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
             'calendar': calendar,
             'has_active_trip': has_active_trip,
             'user_attendance': self.user_attendance,
+            'allow_adding_rides': allow_adding_rides,
             'minimum_percentage': self.user_attendance.campaign.minimum_percentage,
             'other_gpx_files': models.GpxFile.objects.filter(user_attendance=self.user_attendance, trip=None),
         }

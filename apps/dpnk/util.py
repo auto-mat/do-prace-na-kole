@@ -5,6 +5,7 @@ import datetime
 from  django.http import HttpResponse
 import settings
 from django.core.exceptions import ObjectDoesNotExist
+import models
 
 DAYS_EXCLUDE = (
     datetime.date(year=2014, day=8, month=5),
@@ -27,7 +28,7 @@ def days(campaign):
     return days
 
 def days_active(campaign):
-    return [d for d in days(campaign) if trip_active(d)]
+    return [d for d in days(campaign) if day_active(d)]
 
 def days_count(campaign):
     if hasattr(campaign, 'days_count'):
@@ -75,7 +76,7 @@ def get_or_none(model, *args, **kwargs):
     except model.DoesNotExist:
         return None
 
-def trip_active_last7(day):
+def day_active_last7(day):
     day_today = _today()
     return (
         (day <= day_today)
@@ -83,7 +84,7 @@ def trip_active_last7(day):
         )
 
 
-def trip_active_last_week(day):
+def day_active_last_week(day):
     day_today = _today()
     return (
             (day <= day_today)
@@ -95,7 +96,14 @@ def trip_active_last_week(day):
             )
         )
 
-trip_active = trip_active_last7
+day_active = day_active_last7
+
+def trip_active(trip, allow_adding_rides=None):
+    if not allow_adding_rides:
+        allow_adding_rides = models.CityInCampaign.objects.get(city=trip.user_attendance.team.subsidiary.city, campaign=trip.user_attendance.campaign).allow_adding_rides
+    if allow_adding_rides:
+        return day_active(trip.date)
+    return False
 
 def get_emissions(distance):
     return {
