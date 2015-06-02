@@ -42,6 +42,7 @@ from django.contrib.gis.shortcuts import render_to_kml
 from django.contrib.gis.geos import MultiLineString
 from django.template import RequestContext
 from django.db.models import Sum, Q
+from django.db.transaction import commit
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.safestring import mark_safe
@@ -701,7 +702,9 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
                 request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to))
             trip.dont_recalculate = True
         Trip.objects.bulk_update(trips, update_fields=["trip_to", "trip_from", "distance_to", "distance_from"])
+        commit()
 
+        #TODO: use Celery for this
         results.recalculate_result_competitor(self.user_attendance)
 
         messages.add_message(request, messages.SUCCESS, _(u"Jízdy úspěšně vyplněny"), fail_silently=False)
