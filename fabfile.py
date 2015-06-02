@@ -223,6 +223,7 @@ def deploy():
     #install_site()
     symlink_current_release()
     collectstatic()
+    denorm()
     locale()
     restart_webserver()
 
@@ -274,6 +275,11 @@ def upload_tar_from_git():
 def collectstatic():
     "Collect static files"
     run('cd %(path)s/releases/current/;  env/bin/python manage.py collectstatic --noinput' % env)
+
+def denorm():
+    "Reinit denorm"
+    run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_drop' % env)
+    run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_init' % env)
 
 def locale():
     "Compile locale"
