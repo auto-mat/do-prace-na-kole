@@ -2141,9 +2141,12 @@ class CompetitionResult(models.Model):
         if team:
             return team.subsidiary.city
 
+    def get_result(self):
+        return round(self.result, 1)
+
     def get_result_percentage(self):
         if self.result:
-            return self.result * 100
+            return round(self.result * 100, 1)
         else:
             return 0
 
@@ -2151,9 +2154,9 @@ class CompetitionResult(models.Model):
         #TODO: don't use this function, show rides table instead
         if self.competition.type == 'length':
             if self.user_attendance:
-                return self.result
+                return round(self.result, 1)
             if self.team:
-                return self.result * self.team.member_count
+                return round(self.result * self.team.member_count, 1)
 
         elif self.competition.type == 'frequency':
             if self.user_attendance:

@@ -79,13 +79,13 @@
 {% endifchanged %}
 </td>
 {% if competition.type == 'frequency' %}
-   <td>{{ result.get_result_percentage |floatformat:-1|intcomma  }}</td>
+   <td>{{ result.get_result_percentage |intcomma  }}</td>
 {% else %}
-   <td>{{ result.result|floatformat:-1|intcomma  }}</td>
+   <td>{{ result.get_result|intcomma  }}</td>
 {% endif %}
 
 {% if competition.type == 'frequency' or competition.type == 'length' and competition.competitor_type == 'team' %}
-   <td>{{ result.get_total_result|floatformat:-1 }}</td>
+   <td>{{ result.get_total_result|intcomma }}</td>
 {% endif %}
 
 {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.competitor_type != 'company'%}
