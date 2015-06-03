@@ -2160,9 +2160,9 @@ class CompetitionResult(models.Model):
 
         elif self.competition.type == 'frequency':
             if self.user_attendance:
-                return self.user_attendance.get_rides_count_denorm or 0
+                return self.user_attendance.get_rides_count_denorm or ""
             if self.team:
-                return self.team.get_rides_count_denorm or 0
+                return self.team.get_rides_count_denorm or ""
 
     def __unicode__(self):
         if self.competition.competitor_type == 'team':
