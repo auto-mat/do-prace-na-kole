@@ -18,6 +18,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.utils.translation import ugettext_lazy as _
+import dpnk
+import results
+from dpnk import models, mailing
+from django.contrib import messages
+
 
 def recalculate_competitions_results(modeladmin, request, queryset):
     for competition in queryset.all():
@@ -43,14 +48,14 @@ normalize_questionnqire_admissions.short_description = _(u"Obnovit přihlášky 
 def touch_user_attendance(modeladmin, request, queryset):
     for user_attendance in queryset.all():
         user_attendance.save()
-    modeladmin.message_user(request, _(u"Touch proběhl úspěšně")
+    modeladmin.message_user(request, _(u"Touch proběhl úspěšně"))
 touch_user_attendance.short_description = _(u"Touch vybrané účastníky v kampani")
 
 
 def recalculate_results(modeladmin, request, queryset):
     for user_attendance in queryset.all():
         results.recalculate_result_competitor_nothread(user_attendance)
-    modeladmin.message_user(request, _(u"Výsledky přepočítány")
+    modeladmin.message_user(request, _(u"Výsledky přepočítány"))
 recalculate_results.short_description = _(u"Přepočítat výsledky soutěží pro vybrané účasti v kampani")
 
 
@@ -97,5 +102,5 @@ def approve_am_payment(modeladmin, request, queryset):
             payment.status = models.Payment.Status.DONE
             payment.description += "\nPayment realized by %s\n" % request.user.username
             payment.save()
-    modeladmin.message_user(request, _(u"Platby potvrzeny")
+    modeladmin.message_user(request, _(u"Platby potvrzeny"))
 approve_am_payment.short_description = _(u"Potvrdit platbu")
