@@ -36,3 +36,66 @@ def normalize_questionnqire_admissions(modeladmin, request, queryset):
                     competition.user_attendance_competitors.add(answer.user_attendance)
         competition.save()
 normalize_questionnqire_admissions.short_description = _(u"Obnovit přihlášky podle odpovědí na dotazník")
+
+
+# ---- USER_ATTENDANCE -----
+
+def touch_user_attendance(modeladmin, request, queryset):
+    for user_attendance in queryset.all():
+        user_attendance.save()
+    modeladmin.message_user(request, _(u"Touch proběhl úspěšně")
+touch_user_attendance.short_description = _(u"Touch vybrané účastníky v kampani")
+
+
+def recalculate_results(modeladmin, request, queryset):
+    for user_attendance in queryset.all():
+        results.recalculate_result_competitor_nothread(user_attendance)
+    modeladmin.message_user(request, _(u"Výsledky přepočítány")
+recalculate_results.short_description = _(u"Přepočítat výsledky soutěží pro vybrané účasti v kampani")
+
+
+def show_distance(modeladmin, request, queryset):
+    trips_query = dpnk.models.Trip.objects.filter(user_attendance__in=queryset)
+    length = dpnk.views.distance(trips_query)
+    trips = dpnk.views.trips(trips_query)
+    modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
+show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
+
+
+def assign_vouchers(modeladmin, request, queryset):
+    count = queryset.count()
+    vouchers = dpnk.models.Voucher.objects.filter(user_attendance=None).all()[:count]
+    if vouchers.count() != count:
+        messages.error(request, _(u"Není dost volných voucherů"))
+        return
+    for user_attendance, voucher in zip(queryset, vouchers):
+        voucher.user_attendance = user_attendance
+        voucher.save()
+    modeladmin.message_user(request, _(u"Úspěšně přiřazeno %s voucherů" % (count)))
+assign_vouchers.short_description = _(u"Přiřadit vouchery")
+
+
+def add_trips(modeladmin, request, queryset):
+    count = queryset.count()
+    for user_attendance in queryset.all():
+        user_attendance.get_all_trips()
+    modeladmin.message_user(request, _(u"Úspěšně přiřazeno %s cest" % (count)))
+add_trips.short_description = _(u"Vytvořit cesty")
+
+
+def update_mailing(modeladmin, request, queryset):
+    for user_attendance in queryset:
+        mailing.add_or_update_user_synchronous(user_attendance, ignore_hash=True)
+    modeladmin.message_user(request, _(u"Mailing list byl úspěšne aktualizován %s uživatelům") % queryset.count())
+update_mailing.short_description = _(u"Aktualizovat mailing list")
+
+
+def approve_am_payment(modeladmin, request, queryset):
+    for user_attendance in queryset:
+        payment = user_attendance.payment()['payment']
+        if payment and payment.status == models.Payment.Status.NEW:
+            payment.status = models.Payment.Status.DONE
+            payment.description += "\nPayment realized by %s\n" % request.user.username
+            payment.save()
+    modeladmin.message_user(request, _(u"Platby potvrzeny")
+approve_am_payment.short_description = _(u"Potvrdit platbu")

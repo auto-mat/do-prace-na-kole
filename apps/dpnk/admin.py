@@ -431,23 +431,6 @@ class UserAdmin(ExportMixin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmi
         return ", ".join([str(c) for c in obj.userprofile.administrated_cities.all()])
 
 
-def update_mailing(modeladmin, request, queryset):
-    for user_attendance in queryset:
-        mailing.add_or_update_user_synchronous(user_attendance, ignore_hash=True)
-    modeladmin.message_user(request, _(u"Mailing list byl úspěšne aktualizován %s uživatelům") % queryset.count())
-update_mailing.short_description = _(u"Aktualizovat mailing list")
-
-
-def approve_am_payment(modeladmin, request, queryset):
-    for user_attendance in queryset:
-        payment = user_attendance.payment()['payment']
-        if payment and payment.status == models.Payment.Status.NEW:
-            payment.status = models.Payment.Status.DONE
-            payment.description += "\nPayment realized by %s\n" % request.user.username
-            payment.save()
-approve_am_payment.short_description = _(u"Potvrdit platbu")
-
-
 #TODO: this filters any paymant that user has is of specified type, should be only the last payment
 class PaymentTypeFilter(SimpleListFilter):
     title = _(u"typ platby")
@@ -527,39 +510,6 @@ class TripAdminInline(EnhancedModelAdminMixin, admin.TabularInline):
     model = dpnk.models.Trip
 
 
-def recalculate_results(modeladmin, request, queryset):
-    for user_attendance in queryset.all():
-        results.recalculate_result_competitor_nothread(user_attendance)
-recalculate_results.short_description = _(u"Přepočítat výsledky soutěží pro vybrané účasti v kampani")
-
-
-def show_distance(modeladmin, request, queryset):
-    trips_query = dpnk.models.Trip.objects.filter(user_attendance__in=queryset)
-    length = dpnk.views.distance(trips_query)
-    trips = dpnk.views.trips(trips_query)
-    modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
-show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
-
-def assign_vouchers(modeladmin, request, queryset):
-    count = queryset.count()
-    vouchers = dpnk.models.Voucher.objects.filter(user_attendance=None).all()[:count]
-    if vouchers.count() != count:
-        messages.error(request, _(u"Není dost volných voucherů"))
-        return
-    for user_attendance, voucher in zip(queryset, vouchers):
-        voucher.user_attendance = user_attendance
-        voucher.save()
-    modeladmin.message_user(request, _(u"Úspěšně přiřazeno %s voucherů" % (count)))
-assign_vouchers.short_description = _(u"Přiřadit vouchery")
-
-def add_trips(modeladmin, request, queryset):
-    count = queryset.count()
-    for user_attendance in queryset.all():
-        user_attendance.get_all_trips()
-    modeladmin.message_user(request, _(u"Úspěšně přiřazeno %s cest" % (count)))
-add_trips.short_description = _(u"Vytvořit cesty")
-
-
 class UserAttendanceResource(resources.ModelResource):
     class Meta:
         model = models.UserAttendance
@@ -591,12 +541,12 @@ class UserAttendanceResource(resources.ModelResource):
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixin, CityAdminMixin, LeafletGeoAdmin):
     queryset_city_param = 'team__subsidiary__city__in'
-    list_display = ('id', 'name_for_trusted', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'payment_amount', 'team__member_count', 'get_frequency', 'get_length', 'created')
+    list_display = ('id', 'name_for_trusted', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'payment_amount', 'team__member_count', 'get_frequency', 'get_length', 'get_rides_count_denorm', 'created')
     list_filter = (CampaignFilter, ('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('approved_for_team', AllValuesComboFilter), ('t_shirt_size', RelatedFieldComboFilter), 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, ('team__member_count', AllValuesComboFilter), PackageConfirmationFilter, ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter), ('userprofile__sex', AllValuesComboFilter), HasVoucherFilter, HasRidesFilter, HasTeamFilter)
     raw_id_fields = ('userprofile', 'team')
     search_fields = ('userprofile__nickname', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__address_psc', 'team__subsidiary__address_recipient', 'team__subsidiary__address_city',  'team__subsidiary__address_district', 'team__subsidiary__company__name')
     readonly_fields = ('user_link', 'userprofile__user__email', 'created', 'updated')
-    actions = (update_mailing, approve_am_payment, recalculate_results, show_distance, assign_vouchers, add_trips)
+    actions = (actions.update_mailing, actions.approve_am_payment, actions.recalculate_results, actions.show_distance, actions.assign_vouchers, actions.add_trips, actions.touch_user_attendance)
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
     list_max_show_all = 10000
