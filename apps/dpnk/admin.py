@@ -513,7 +513,7 @@ class TripAdminInline(EnhancedModelAdminMixin, admin.TabularInline):
 class UserAttendanceResource(resources.ModelResource):
     class Meta:
         model = models.UserAttendance
-        fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email', 'dehydrate_subsidiary_name', 'team__subsidiary__company__name', 'created')
+        fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__telephone', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username',  'userprofile__user__email', 'dehydrate_subsidiary_name', 'team__subsidiary__company__name', 'created')
 
     subsidiary_name = fields.Field()
     def dehydrate_subsidiary_name(self, obj):
