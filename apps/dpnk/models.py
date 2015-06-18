@@ -1524,12 +1524,12 @@ class PackageTransaction(Transaction):
         str_tn = str(self.tracking_number)
         return str_tn + str(mod11.calc_check_digit(str_tn))
 
-    def tracking_link(self):
-        return mark_safe("<a href='http://www.tnt.com/webtracker/tracking.do?requestType=GEN&searchType=CON&respLang=cs&respCountry=cz&sourceID=1&sourceCountry=ww&cons=%(number)s&navigation=1&genericSiteIdent='>%(number)s</a>" % {'number': self.tracking_number_cnc() })
-
     def tnt_con_reference(self):
         batch_date = self.delivery_batch.created.strftime("%y%m%d")
         return "{:s}-{:s}-{:0>6.0f}".format(str(self.delivery_batch.pk), batch_date, self.pk)
+
+    def tracking_link(self):
+        return mark_safe("<a href='http://www.tnt.com/webtracker/tracking.do?requestType=GEN&searchType=REF&respLang=cs&respCountry=cz&sourceID=1&sourceCountry=ww&cons=%(number)s&navigation=1&genericSiteIdent='>%(number)s</a>" % {'number': self.tnt_con_reference() })
 
     @transaction.atomic
     def save(self, *args, **kwargs):
