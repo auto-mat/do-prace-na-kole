@@ -943,6 +943,7 @@ class GpxFileAdmin(LeafletGeoAdmin):
     list_display = ('id', 'trip_date', 'file', 'direction', 'trip', 'user_attendance', 'from_application')
     search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username')
     raw_id_fields = ('user_attendance', 'trip')
+    list_filter = ('from_application', 'user_attendance__team__subsidiary__city')
 
 
 class VoucherAdmin(ImportMixin, admin.ModelAdmin):
