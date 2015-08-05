@@ -354,7 +354,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
         return data
 
     class Meta:
-        model = UserProfile
+        model = User
         fields = ('email', 'password1', 'password2')
 
 

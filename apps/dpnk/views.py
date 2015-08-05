@@ -53,7 +53,7 @@ from class_based_auth_views.views import LoginView
 # Registration imports
 import registration.signals
 import registration.backends
-import registration.backends.simple
+import registration.backends.simple.views
 # Model imports
 from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, Choice, City, UserAttendance, Campaign
 import forms
@@ -101,9 +101,9 @@ class UserAttendanceViewMixin(object):
             return self.user_attendance
 
 
-class UserProfileRegistrationBackend(registration.backends.simple.SimpleBackend):
-    def register(self, request, campaign, invitation_token, **cleaned_data):
-        new_user = super(UserProfileRegistrationBackend, self).register(request, **cleaned_data)
+class UserProfileRegistrationBackend(registration.backends.simple.views.RegistrationView):
+    def register(self, request, campaign, invitation_token, form):
+        new_user = super(UserProfileRegistrationBackend, self).register(request, form)
         from dpnk.models import UserProfile
 
         new_user.save()
@@ -384,11 +384,11 @@ class RegistrationView(FormView):
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}
 
-    def form_valid(self, form, backend='dpnk.views.UserProfileRegistrationBackend'):
+    def form_valid(self, form, backend=UserProfileRegistrationBackend):
         campaign = Campaign.objects.get(slug=self.request.subdomain)
         super(RegistrationView, self).form_valid(form)
-        backend = registration.backends.get_backend(backend)
-        backend.register(self.request, campaign, self.kwargs.get('token', None), **form.cleaned_data)
+        backend = backend()
+        backend.register(self.request, campaign, self.kwargs.get('token', None), form)
         auth_user = auth.authenticate(
             username=self.request.POST['email'],
             password=self.request.POST['password1'])

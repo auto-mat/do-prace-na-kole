@@ -41,7 +41,7 @@ from views import UserAttendanceViewMixin
 import models
 import registration.signals
 import registration.backends
-import registration.backends.simple
+import registration.backends.simple.views
 import logging
 logger = logging.getLogger(__name__)
 
@@ -108,7 +108,7 @@ class CompanyEditView(UpdateView):
         return self.company_admin.administrated_company
 
 
-class CompanyAdminRegistrationBackend(registration.backends.simple.SimpleBackend):
+class CompanyAdminRegistrationBackend(registration.backends.simple.views.RegistrationView):
     def register(self, request, **cleaned_data):
         new_user = super(CompanyAdminRegistrationBackend, self).register(request, **cleaned_data)
 

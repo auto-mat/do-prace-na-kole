@@ -10,7 +10,7 @@ django-softhyphen==0.15
 django-admin-enhancer
 django-polymorphic
 django-composite-field
-django-registration==0.8
+django-registration-redux
 -e git+https://github.com/silverfix/django-nested-inlines.git#egg=django-nested-inlines
 django-su
 unidecode
