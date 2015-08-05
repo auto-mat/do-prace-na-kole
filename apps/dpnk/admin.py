@@ -94,6 +94,7 @@ class CityAdmin(EnhancedModelAdminMixin, LeafletGeoAdmin):
 class CompanyForm(forms.ModelForm):
     class Meta:
         model = models.Company
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         super(CompanyForm, self).__init__(*args, **kwargs)
@@ -265,6 +266,7 @@ class PaymentFilter(SimpleListFilter):
 class UserAttendanceForm(forms.ModelForm):
     class Meta:
         model = models.UserAttendance
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         super(UserAttendanceForm, self).__init__(*args, **kwargs)
@@ -314,6 +316,7 @@ class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = models.UserProfile
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
@@ -762,6 +765,7 @@ class TShirtSizeInline(EnhancedAdminMixin, SortableInlineAdminMixin, admin.Tabul
 class DeliveryBatchForm(forms.ModelForm):
     class Meta:
         model = models.DeliveryBatch
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         ret_val = super(DeliveryBatchForm, self).__init__(*args, **kwargs)
@@ -900,6 +904,7 @@ class InvoicePaidFilter(SimpleListFilter):
 class InvoiceForm(forms.ModelForm):
     class Meta:
         model = models.Invoice
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         super(InvoiceForm, self).__init__(*args, **kwargs)

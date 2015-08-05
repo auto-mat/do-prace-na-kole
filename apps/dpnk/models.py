@@ -1444,6 +1444,7 @@ class CommonTransactionForm(forms.ModelForm):
 
     class Meta:
         model = CommonTransaction
+        fields = "__all__"
 
 
 class UserActionTransaction(Transaction):
@@ -1468,6 +1469,7 @@ class UserActionTransactionForm(forms.ModelForm):
 
     class Meta:
         model = UserActionTransaction
+        fields = "__all__"
 
 
 class PackageTransaction(Transaction):
@@ -1556,6 +1558,7 @@ class PackageTransactionForm(forms.ModelForm):
 
     class Meta:
         model = PackageTransaction
+        fields = "__all__"
 
 
 class Payment(Transaction):
@@ -1731,6 +1734,7 @@ class PaymentForm(forms.ModelForm):
 
     class Meta:
         model = Payment
+        fields = "__all__"
 
 
 class Trip(models.Model):
