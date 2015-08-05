@@ -12,7 +12,7 @@ def user_attendance(request):
         userprofile = request.user.userprofile
         campaign_slug = request.subdomain
         try:
-            user_attendance = userprofile.userattendance_set.select_related('team__subsidiary__city', 'campaign', 'team__subsidiary__company', 't_shirt_size').get(campaign__slug=campaign_slug)
+            user_attendance = userprofile.userattendance_set.select_related('campaign', 'team', 't_shirt_size').get(campaign__slug=campaign_slug)
         except UserAttendance.DoesNotExist:
             user_attendance = None
         return {'user_attendance': user_attendance}
