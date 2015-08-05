@@ -50,4 +50,4 @@ djangorestframework
 django-cachalot
 django-bulk-update
 django-cors-headers
--e git+https://github.com/whyflyru/django-denorm.git#egg=django-denorm
+-e git+https://github.com/PetrDlouhy/django-denorm.git#egg=django-denorm
