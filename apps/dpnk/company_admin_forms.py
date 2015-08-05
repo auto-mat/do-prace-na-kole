@@ -128,6 +128,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
 
     class Meta:
         model = CompanyAdmin
+        fields = "__all__"
 
 
 class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):

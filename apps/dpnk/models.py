@@ -1058,7 +1058,6 @@ class UserProfile(models.Model):
     administrated_cities = models.ManyToManyField(
         'City',
         related_name="city_admins",
-        null=True,
         blank=True)
 
     def first_name(self):
@@ -1395,7 +1394,6 @@ class Transaction(PolymorphicModel):
     """Transakce"""
     status = models.PositiveIntegerField(
         verbose_name=_(u"Status"),
-        max_length=50,
         default=0,
         null=False, blank=False)
     user_attendance = models.ForeignKey(
@@ -1895,23 +1893,19 @@ class Competition(models.Model):
     user_attendance_competitors = models.ManyToManyField(
         UserAttendance,
         related_name="competitions",
-        null=True,
         blank=True)
     team_competitors = models.ManyToManyField(
         Team,
         related_name="competitions",
-        null=True,
         blank=True)
     company_competitors = models.ManyToManyField(
         Company,
         related_name="competitions",
-        null=True,
         blank=True)
     city = models.ManyToManyField(
         City,
         verbose_name=_(u"Soutěž pouze pro města"),
         help_text=_(u"Soutěž bude probíhat ve vybraných městech. Pokud zůstane prázdné, soutěž probíhá ve všech městech."),
-        null=True,
         blank=True)
     company = models.ForeignKey(
         Company,
@@ -2342,7 +2336,6 @@ class Answer(models.Model):
     choices = models.ManyToManyField(
         Choice,
         blank=True,
-        null=True,
     )
     comment = models.TextField(
         verbose_name=_(u"Komentář"),
