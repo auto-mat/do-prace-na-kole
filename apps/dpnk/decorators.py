@@ -131,7 +131,7 @@ def must_be_competitor(fn):
             except Campaign.DoesNotExist:
                 raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>")% campaign_slug)
             try:
-                user_attendance = userprofile.userattendance_set.select_related('team__subsidiary__city', 'campaign', 'team__subsidiary__company', 't_shirt_size').get(campaign__slug=campaign_slug)
+                user_attendance = userprofile.userattendance_set.select_related('campaign', 'team', 't_shirt_size').get(campaign__slug=campaign_slug)
             except UserAttendance.DoesNotExist:
                 user_attendance = UserAttendance(
                     userprofile=userprofile,
