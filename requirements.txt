@@ -10,7 +10,7 @@ django-softhyphen==0.15
 django-admin-enhancer
 django-polymorphic
 django-composite-field
-django-registration-redux
+-e git+https://github.com/PetrDlouhy/django-registration#egg=django-registration-redux
 -e git+https://github.com/silverfix/django-nested-inlines.git#egg=django-nested-inlines
 django-su
 unidecode
@@ -31,7 +31,7 @@ pillow
 -e git+https://github.com/PetrDlouhy/django-related-admin#egg=django-related-admin
 newrelic
 easy_thumbnails
-django-crispy-forms
+-e git+https://github.com/maraujop/django-crispy-forms.git@dev#egg=django-crispy-forms
 django-class-based-auth-views
 django-subdomains
 django-adminfilters
