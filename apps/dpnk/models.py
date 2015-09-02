@@ -609,6 +609,12 @@ class TShirtSize(models.Model):
         return self.name
 
 
+class UserAttendanceForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(UserAttendanceForm, self).__init__(*args, **kwargs)
+        self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
+
+
 class UserAttendance(models.Model):
     """Účast uživatele v kampani"""
 
