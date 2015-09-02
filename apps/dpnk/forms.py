@@ -221,6 +221,9 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         show_all=False,
         auto_choose=True,
         label=_(u"Adresa pobočky/společnosti"),
+        foreign_key_app_name="dpnk",
+        foreign_key_model_name="Subsidiary",
+        foreign_key_field_name="company",
         widget=SelectChainedOrCreate(
             RegisterSubsidiaryForm, view_name='', prefix="subsidiary", new_description=_(u"Adresa v seznamu není, chci založit novou"),
             chain_field="company",
@@ -239,6 +242,9 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         model_field="subsidiary",
         show_all=False,
         auto_choose=False,
+        foreign_key_app_name="dpnk",
+        foreign_key_model_name="Subsidiary",
+        foreign_key_field_name="company",
         widget=SelectChainedOrCreate(
             RegisterTeamForm, view_name='', prefix="team", new_description=_(u"Můj tým v seznamu není, vytvořit nový"),
             chain_field="subsidiary",
