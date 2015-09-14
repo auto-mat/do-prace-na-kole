@@ -271,6 +271,7 @@ class UserAttendanceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserAttendanceForm, self).__init__(*args, **kwargs)
         if 't_shirt_size' in self.fields:
+            self.fields['t_shirt_size'].queryset = models.TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
             self.fields['t_shirt_size'].required = False
 
 
