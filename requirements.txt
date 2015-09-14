@@ -11,8 +11,8 @@ django-admin-enhancer
 django-polymorphic
 django-composite-field
 -e git+https://github.com/PetrDlouhy/django-registration#egg=django-registration-redux
--e git+https://github.com/silverfix/django-nested-inlines.git#egg=django-nested-inlines
-django-su
+-e git+https://github.com/PetrDlouhy/django-nested-inlines.git@sil#egg=django-nested-inlines
+-e git+https://github.com/adamcharnock/django-su.git#egg=django-su
 unidecode
 createsend==2.6.0
 ordereddict
@@ -34,11 +34,11 @@ easy_thumbnails
 -e git+https://github.com/maraujop/django-crispy-forms.git@dev#egg=django-crispy-forms
 django-class-based-auth-views
 django-subdomains
-django-adminfilters
+-e git+https://github.com/PetrDlouhy/django-adminfilters.git#egg=django-adminfilters
 django-compressor
 slumber
 django-bleach
-django-analytical
+-e git+https://github.com/bittner/django-analytical@feature/remove-django19-deprecation-warning#egg=django-analytical
 gunicorn
 django-cache-utils
 django-settings-context-processor
