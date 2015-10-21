@@ -10,12 +10,12 @@ register = template.Library()
 @register.simple_tag
 @cached(600)
 def cyklistesobe(city_slug, order="created_at"):
-    api = slumber.API("http://www.cyklistesobe.cz/issues/")
+    api = slumber.API("http://www.cyklistesobe.cz/api/")
     kwargs = {}
     if city_slug:
         kwargs['group'] = city_slug
     try:
-        cyklistesobe = api.list.get(order=order, count=1, **kwargs)
+        cyklistesobe = api.issues.get(order=order, count=1, **kwargs)
     except:
         cyklistesobe = None
     template = get_template("templatetags/cyklistesobe.html")
