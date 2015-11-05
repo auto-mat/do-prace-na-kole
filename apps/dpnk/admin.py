@@ -642,7 +642,7 @@ class PaymentAdmin(RelatedFieldAdmin):
 
 
 class PackageTransactionAdmin(RelatedFieldAdmin):
-    list_display = ('id', 'user_attendance', 'created', 'realized', 'status', 'author', 'user_attendance__team__subsidiary__company__name', 't_shirt_size', 'delivery_batch', 'tracking_number_cnc', 'tracking_link')
+    list_display = ('id', 'user_attendance', 'created', 'realized', 'status', 'author', 'user_attendance__team__subsidiary', 'user_attendance__team__subsidiary__company__name', 't_shirt_size', 'delivery_batch', 'tracking_number_cnc', 'tracking_link')
     search_fields = ('id', 'user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'user_attendance__team__subsidiary__company__name', )
     list_filter = [ 'user_attendance__campaign', 'status', 'delivery_batch']
     raw_id_fields = ('user_attendance',)
