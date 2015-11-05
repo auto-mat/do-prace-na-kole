@@ -10,44 +10,44 @@ django-softhyphen==0.15
 django-admin-enhancer
 django-polymorphic
 django-composite-field
--e git+https://github.com/PetrDlouhy/django-registration#egg=django-registration-redux
--e git+https://github.com/PetrDlouhy/django-nested-inlines.git@sil#egg=django-nested-inlines
--e git+https://github.com/adamcharnock/django-su.git#egg=django-su
+django-registration-redux
+-e git+https://github.com/silverfix/django-nested-inlines.git#egg=django-nested-inlines
+django-su
 unidecode
 createsend==2.6.0
 ordereddict
--e git+https://github.com/PetrDlouhy/django-mass-edit#egg=django-mass-edit
--e git+https://github.com/PetrDlouhy/django-author.git#egg=django-author
--e git+https://github.com/PetrDlouhy/django-fieldsignals.git#egg=django-fieldsignals
+django-mass-edit
+django-author
+django-fieldsignals
 django-admin-sortable2
 reportlab
 svg2rlg
 flake8
 modulus11
--e git+https://github.com/mjs7231/django-dbbackup.git#egg=django-dbbackup
+django-dbbackup
 django-localeurl
 pillow
--e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator
--e git+https://github.com/PetrDlouhy/django-related-admin#egg=django-related-admin
+InvoiceGenerator
+django-related-admin
 newrelic
 easy_thumbnails
--e git+https://github.com/maraujop/django-crispy-forms.git@dev#egg=django-crispy-forms
+django-crispy-forms
 django-class-based-auth-views
 django-subdomains
--e git+https://github.com/PetrDlouhy/django-adminfilters.git#egg=django-adminfilters
+django-adminfilters
 django-compressor
 slumber
 django-bleach
--e git+https://github.com/bittner/django-analytical@feature/remove-django19-deprecation-warning#egg=django-analytical
+django-analytical
 gunicorn
 django-cache-utils
 django-settings-context-processor
 django-rosetta
 django-oauth-toolkit
 djangorestframework
--e git+https://github.com/makinacorpus/django-leaflet.git#egg=django-leaflet
--e git+https://github.com/tkrajina/gpxpy.git@gpx-1.1#egg=gpxpy
+django-leaflet
+gpxpy
 django-cachalot
 django-bulk-update
 django-cors-headers
--e git+https://github.com/PetrDlouhy/django-denorm.git#egg=django-denorm
+-e git+https://github.com/django-denorm/django-denorm.git@develop#egg=django-denorm
