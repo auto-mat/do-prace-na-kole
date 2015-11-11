@@ -50,4 +50,5 @@ gpxpy
 django-cachalot
 django-bulk-update
 django-cors-headers
+django-nose
 -e git+https://github.com/django-denorm/django-denorm.git@develop#egg=django-denorm
