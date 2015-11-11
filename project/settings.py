@@ -141,7 +141,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'bulk_update',
     'denorm',
-    #'cachalot',
+    # 'cachalot',
 )
 TEMPLATE_VISIBLE_SETTINGS = (
     'PAYU_POS_AUTH_KEY',
@@ -176,11 +176,11 @@ LEAFLET_CONFIG = {
     'TILES': [
         (_(u'cyklomapa'), 'http://tiles.prahounakole.cz/{z}/{x}/{y}.png', {'attribution': u'&copy; přispěvatelé <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
         (_(u'Všeobecná mapa'), 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': u'&copy; přispěvatelé <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
-        ],
+    ],
     'DEFAULT_ZOOM': 8,
     'MIN_ZOOM': 8,
     'MAX_ZOOM': 18,
-    'SPATIAL_EXTENT': [11.953,48.517,19.028,51.097],
+    'SPATIAL_EXTENT': [11.953, 48.517, 19.028, 51.097],
 }
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
@@ -260,12 +260,12 @@ MESSAGE_TAGS = {
     message_constants.SUCCESS: 'success',
     message_constants.WARNING: 'warning',
     message_constants.ERROR: 'danger',
-    }
+}
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # import local settings
 try:
-        from settings_local import *
+    from settings_local import *  # noqa
 except ImportError:
-        pass
+    pass

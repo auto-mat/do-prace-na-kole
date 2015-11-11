@@ -121,9 +121,9 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
             'username',
             'password1',
             'password2'
-            ]
+        ]
 
-        #self.fields['email'].help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
+        # self.fields['email'].help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
         return ret_val
 
     class Meta:
@@ -163,8 +163,8 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
 
 class CreateInvoiceForm(SubmitMixin, forms.ModelForm):
     create_invoice = forms.BooleanField(
-            label=_(u"Údaje jsou správné, chci vytvořit fakturu"),
-            )
+        label=_(u"Údaje jsou správné, chci vytvořit fakturu"),
+    )
 
     class Meta:
         model = Invoice

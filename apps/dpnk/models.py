@@ -35,7 +35,6 @@ from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point, LineString, MultiLineString
 from django.contrib.gis.db import models
 from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
-from django.db.utils import ProgrammingError
 from fieldsignals import post_save_changed, pre_save_changed
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
@@ -59,13 +58,13 @@ import mailing
 from dpnk.email import (
     payment_confirmation_mail, company_admin_rejected_mail,
     company_admin_approval_mail, payment_confirmation_company_mail)
-from dpnk import email, invoice_pdf
+from dpnk import invoice_pdf
 import logging
 logger = logging.getLogger(__name__)
 
 
 def get_address_string(address):
-    return ", ".join(filter(lambda x: x!="", [address.recipient, "%s %s" % (address.street, address.street_number), "%s %s" % (util.format_psc(address.psc), address.city)]))
+    return ", ".join(filter(lambda x: x != "", [address.recipient, "%s %s" % (address.street, address.street_number), "%s %s" % (util.format_psc(address.psc), address.city)]))
 
 
 class Address(CompositeField):
@@ -75,7 +74,7 @@ class Address(CompositeField):
         default="",
         max_length=50,
         null=False,
-        )
+    )
     street_number = models.CharField(
         verbose_name=_(u"Číslo domu"),
         help_text=_(u"Např. 2965/12 nebo 156"),
@@ -83,7 +82,7 @@ class Address(CompositeField):
         max_length=10,
         null=False,
         blank=False,
-        )
+    )
     recipient = models.CharField(
         verbose_name=_(u"Název společnosti (pobočky, závodu, kanceláře, fakulty) na adrese"),
         help_text=_(u"Např. odštěpný závod Brno, oblastní pobočka Liberec, Přírodovědecká fakulta atp."),
@@ -91,14 +90,14 @@ class Address(CompositeField):
         max_length=50,
         null=True,
         blank=True,
-        )
+    )
     district = models.CharField(
         verbose_name=_(u"Městská část"),
         default="",
         max_length=50,
         null=True,
         blank=True,
-        )
+    )
     psc = models.IntegerField(
         verbose_name=_(u"PSČ"),
         help_text=_(u"Např.: 130 00"),
@@ -109,7 +108,7 @@ class Address(CompositeField):
         default=None,
         null=True,
         blank=False,
-        )
+    )
     city = models.CharField(
         verbose_name=_(u"Město"),
         help_text=_(u"Např. Jablonec n. N. nebo Praha 3-Žižkov"),
@@ -117,7 +116,7 @@ class Address(CompositeField):
         max_length=50,
         null=False,
         blank=False,
-        )
+    )
 
     def __unicode__(self):
         return get_address_string(self)
@@ -140,7 +139,7 @@ class City(models.Model):
         unique=True,
         verbose_name=u"Subdoména v URL",
         blank=False
-        )
+    )
     cyklistesobe_slug = models.CharField(
         verbose_name=_(u"Jméno skupiny na webu Cyklisté sobě"),
         max_length=40,
@@ -150,7 +149,7 @@ class City(models.Model):
         srid=4326,
         null=True,
         blank=False,
-        )
+    )
 
     def __unicode__(self):
         return "%s" % self.name
@@ -202,14 +201,14 @@ class Company(models.Model):
         verbose_name=_(u"IČO"),
         null=True,
         blank=False,
-        )
+    )
     dic = models.CharField(
         verbose_name=_(u"DIČ"),
         max_length=10,
         default="",
         null=True,
         blank=True,
-        )
+    )
     active = models.BooleanField(
         verbose_name=_(u"Aktivní"),
         default=True,
@@ -256,6 +255,7 @@ class Subsidiary(models.Model):
     def name(self):
         return get_address_string(self.address)
 
+
 def validate_length(value, min_length=25):
     str_len = len(str(value))
     if str_len < min_length:
@@ -289,21 +289,21 @@ class Team(models.Model):
         blank=False,
         unique=True,
         validators=[validate_length],
-        )
+    )
     campaign = models.ForeignKey(
         "Campaign",
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False)
 
-    #Auto fields:
+    # Auto fields:
     member_count = models.IntegerField(
         verbose_name=_(u"Počet právoplatných členů týmu"),
         null=False,
         blank=False,
         db_index=True,
         default=0,
-        )
+    )
 
     def autoset_member_count(self):
         self.member_count = self.members().count()
@@ -373,7 +373,7 @@ class Campaign(models.Model):
         default="",
         verbose_name=u"Doména v URL",
         blank=False
-        )
+    )
     previous_campaign = models.ForeignKey(
         'Campaign',
         verbose_name=_(u"Předchozí kampaň"),
@@ -385,7 +385,7 @@ class Campaign(models.Model):
         max_length=5000,
         null=True,
         blank=True,
-        )
+    )
     mailing_list_id = models.CharField(
         verbose_name=_(u"ID mailing listu"),
         max_length=60,
@@ -402,50 +402,50 @@ class Campaign(models.Model):
         default=25,
         blank=False,
         null=False,
-        )
+    )
     minimum_percentage = models.PositiveIntegerField(
         verbose_name=_(u"Minimální procento pro kvalifikaci do pravidelnostní soutěže"),
         default=66,
         blank=False,
         null=False,
-        )
+    )
     trip_plus_distance = models.PositiveIntegerField(
         verbose_name=_(u"Maximální navýšení vzdálenosti"),
         help_text=_(u"Počet kilometrů, o které je možné prodloužit si jednu jízdu"),
         default=5,
         blank=True,
         null=True,
-        )
+    )
     tracking_number_first = models.PositiveIntegerField(
         verbose_name=_(u"První číslo řady pro doručování balíčků"),
         default=0,
         blank=False,
         null=False,
-        )
+    )
     tracking_number_last = models.PositiveIntegerField(
         verbose_name=_(u"Poslední číslo řady pro doručování balíčků"),
         default=999999999,
         blank=False,
         null=False,
-        )
+    )
     package_height = models.PositiveIntegerField(
         verbose_name=_(u"Výška balíku"),
         default=1,
         blank=True,
         null=True,
-        )
+    )
     package_width = models.PositiveIntegerField(
         verbose_name=_(u"Šířka balíku"),
         default=26,
         blank=True,
         null=True,
-        )
+    )
     package_depth = models.PositiveIntegerField(
         verbose_name=_(u"Hloubka balíku"),
         default=35,
         blank=True,
         null=True,
-        )
+    )
     package_weight = models.FloatField(
         verbose_name=_(u"Váha balíku"),
         null=True,
@@ -455,19 +455,19 @@ class Campaign(models.Model):
             MaxValueValidator(1000),
             MinValueValidator(0)
         ],
-        )
+    )
     invoice_sequence_number_first = models.PositiveIntegerField(
         verbose_name=_(u"První číslo řady pro faktury"),
         default=0,
         blank=False,
         null=False,
-        )
+    )
     invoice_sequence_number_last = models.PositiveIntegerField(
         verbose_name=_(u"Poslední číslo řady pro faktury"),
         default=999999999,
         blank=False,
         null=False,
-        )
+    )
     admission_fee = models.FloatField(
         verbose_name=_(u"Včasné startovné"),
         null=False,
@@ -492,7 +492,7 @@ class Campaign(models.Model):
         verbose_name=_(u"Případy, kdy je startovné zdarma"),
         null=True,
         blank=True,
-        )
+    )
 
     def __unicode__(self):
         return self.name
@@ -584,7 +584,7 @@ class TShirtSize(models.Model):
         default=0,
         blank=False,
         null=False,
-        )
+    )
     ship = models.BooleanField(
         verbose_name=_(u"Posílá se?"),
         default=True,
@@ -627,7 +627,7 @@ class UserAttendance(models.Model):
         ('approved', _(u"Odsouhlasený")),
         ('undecided', _(u"Nerozhodnuto")),
         ('denied', _(u"Zamítnutý")),
-        )
+    )
 
     campaign = models.ForeignKey(
         Campaign,
@@ -664,7 +664,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         null=True,
         blank=True,
         geography=True,
-        )
+    )
     dont_want_insert_track = models.BooleanField(
         verbose_name=_(u"Nepřeji si zadávat svoji trasu."),
         default=False,
@@ -688,17 +688,17 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         verbose_name=_(u"Velikost trička"),
         null=True,
         blank=False,
-        )
+    )
     created = models.DateTimeField(
         verbose_name=_(u"Datum vytvoření"),
         auto_now_add=True,
         null=True,
-        )
+    )
     updated = models.DateTimeField(
         verbose_name=_(u"Datum poslední změny"),
         auto_now=True,
         null=True,
-        )
+    )
 
     def payments(self):
         return self.transactions.instance_of(Payment)
@@ -735,8 +735,8 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             return self.campaign.admission_fee_company
 
     def payment(self):
-        #TODO: commented out in DPNK2015 because it is to power demanding for unused feature
-        #if self.team and self.team.subsidiary and self.admission_fee() == 0:
+        # TODO: commented out in DPNK2015 because it is to power demanding for unused feature
+        # if self.team and self.team.subsidiary and self.admission_fee() == 0:
         #    return {'payment': None,
         #            'status': 'no_admission',
         #            'status_description': _(u'neplatí se'),
@@ -926,7 +926,8 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         create_trips = []
         for d in not_created_days:
             working_day = util.working_day(d)
-            create_trips.append(Trip(date=d,
+            create_trips.append(Trip(
+                date=d,
                 user_attendance=self,
                 is_working_ride_to=working_day,
                 is_working_ride_from=working_day,
@@ -963,16 +964,16 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             return None
 
     def save(self, *args, **kwargs):
-        if self.pk == None:
-           previous_user_attendance = self.previous_user_attendance()
-           if previous_user_attendance:
-               if previous_user_attendance.track:
-                   self.distance = previous_user_attendance.distance
-                   self.track = previous_user_attendance.track
-               if previous_user_attendance.t_shirt_size:
-                   t_shirt_size = self.campaign.tshirtsize_set.filter(name=previous_user_attendance.t_shirt_size.name)
-                   if t_shirt_size.count() == 1:
-                       self.t_shirt_size = t_shirt_size.first()
+        if self.pk is None:
+            previous_user_attendance = self.previous_user_attendance()
+            if previous_user_attendance:
+                if previous_user_attendance.track:
+                    self.distance = previous_user_attendance.distance
+                    self.track = previous_user_attendance.track
+                if previous_user_attendance.t_shirt_size:
+                    t_shirt_size = self.campaign.tshirtsize_set.filter(name=previous_user_attendance.t_shirt_size.name)
+                    if t_shirt_size.count() == 1:
+                        self.t_shirt_size = t_shirt_size.first()
         return super(UserAttendance, self).save(*args, **kwargs)
 
 
@@ -996,12 +997,12 @@ class UserProfile(models.Model):
         ('unknown', _(u'-------')),
         ('male', _(u'Muž')),
         ('female', _(u'Žena')),
-        )
+    )
 
     LANGUAGE = [
         ('cs', _(u"Čeština")),
         ('en', _(u"Angličtna")),
-        ]
+    ]
 
     user = models.OneToOneField(
         User,
@@ -1009,14 +1010,14 @@ class UserProfile(models.Model):
         unique=True,
         null=False,
         blank=False,
-        )
+    )
     nickname = models.CharField(
         _(u'Zobrazené jméno'),
         help_text=_(u'Zobrazí se ve všech veřejných výpisech místo vašeho jména. Zadávejte takové jméno, podle kterého vás vaši kolegové poznají'),
         max_length=60,
         blank=True,
         null=True,
-        )
+    )
     telephone = models.CharField(
         verbose_name=_(u"Telefon"),
         max_length=30, null=False)
@@ -1032,17 +1033,17 @@ class UserProfile(models.Model):
         max_length=128,
         db_index=True,
         default=None,
-        #TODO:
-        #unique=True,
+        # TODO:
+        # unique=True,
         null=True,
         blank=True
-        )
+    )
     mailing_hash = models.BigIntegerField(
         verbose_name=_(u"Hash poslední synchronizace s mailingem"),
         default=None,
         null=True,
         blank=True
-        )
+    )
     sex = models.CharField(
         verbose_name=_(u"Pohlaví"),
         help_text=_(u"Slouží k zařazení do výkonnostních kategorií"),
@@ -1054,7 +1055,7 @@ class UserProfile(models.Model):
         verbose_name=_(u"Interní poznámka"),
         null=True,
         blank=True,
-        )
+    )
     administrated_cities = models.ManyToManyField(
         'City',
         related_name="city_admins",
@@ -1112,7 +1113,7 @@ class CompanyAdmin(models.Model):
         ('approved', _(u"Odsouhlasený")),
         ('undecided', _(u"Nerozhodnuto")),
         ('denied', _(u"Zamítnutý")),
-        )
+    )
 
     class Meta:
         verbose_name = _(u"Firemní koordinátor")
@@ -1120,7 +1121,7 @@ class CompanyAdmin(models.Model):
         unique_together = (
             ("user", "campaign"),
             ("administrated_company", "campaign"),
-            )
+        )
 
     user = models.ForeignKey(
         User,
@@ -1128,7 +1129,7 @@ class CompanyAdmin(models.Model):
         related_name='company_admin',
         null=False,
         blank=False,
-        )
+    )
 
     company_admin_approved = models.CharField(
         verbose_name=_(u"Správcovství organizace schváleno"),
@@ -1144,7 +1145,7 @@ class CompanyAdmin(models.Model):
         max_length=5000,
         null=True,
         blank=True,
-        )
+    )
 
     administrated_company = models.ForeignKey(
         "Company",
@@ -1163,7 +1164,7 @@ class CompanyAdmin(models.Model):
         max_length=500,
         null=True,
         blank=True,
-        )
+    )
 
     can_confirm_payments = models.BooleanField(
         verbose_name=_(u"Může potvrzovat platby"),
@@ -1227,7 +1228,6 @@ class DeliveryBatch(models.Model):
     def __unicode__(self):
         return unicode(self.created)
 
-
     @transaction.atomic
     def add_packages(self, user_attendances=None):
         if not user_attendances:
@@ -1237,7 +1237,7 @@ class DeliveryBatch(models.Model):
                 user_attendance=user_attendance,
                 delivery_batch=self,
                 status=PackageTransaction.Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
-                )
+            )
             pt.save()
 
 
@@ -1275,22 +1275,22 @@ class Invoice(models.Model):
         verbose_name=_(u"Den vystavení daňového dokladu"),
         default=datetime.date.today,
         null=True,
-        )
+    )
     taxable_date = models.DateField(
         verbose_name=_(u"Den uskutečnění zdanitelného plnění"),
         default=datetime.date.today,
         null=True,
-        )
+    )
     paid_date = models.DateField(
         verbose_name=_(u"Datum zaplacení"),
         default=None,
         null=True,
         blank=True,
-        )
+    )
     company_pais_benefitial_fee = models.BooleanField(
         verbose_name=_(u"Moje firma si přeje podpořit Auto*Mat a zaplatit benefiční startovné (450 Kč za osobu)."),
         default=False,
-        )
+    )
     total_amount = models.FloatField(
         verbose_name=_(u"Celková částka"),
         null=False,
@@ -1300,13 +1300,13 @@ class Invoice(models.Model):
         upload_to=u'invoices',
         blank=True,
         null=True,
-        )
+    )
     company = models.ForeignKey(
         Company,
         verbose_name=_(u"Společnost"),
         null=False,
         blank=False,
-        )
+    )
     campaign = models.ForeignKey(
         Campaign,
         verbose_name=_(u"Kampaň"),
@@ -1319,7 +1319,7 @@ class Invoice(models.Model):
         verbose_name=_(u"Číslo objednávky (nepovinné)"),
         null=True,
         blank=True,
-        )
+    )
 
     def __unicode__(self):
         return "%s" % self.sequence_number
@@ -1428,7 +1428,7 @@ class CommonTransaction(Transaction):
 
     STATUS = (
         (Status.BIKE_REPAIR, 'Oprava v cykloservisu'),
-        )
+    )
 
     class Meta:
         verbose_name = _(u"Obecná transakce")
@@ -1453,7 +1453,7 @@ class UserActionTransaction(Transaction):
 
     STATUS = (
         (Status.COMPETITION_START_CONFIRMED, 'Potvrzen vstup do soutěže'),
-        )
+    )
 
     class Meta:
         verbose_name = _(u"Uživatelská akce")
@@ -1478,7 +1478,7 @@ class PackageTransaction(Transaction):
         verbose_name=_(u"Velikost trička"),
         null=True,
         blank=False,
-        )
+    )
     tracking_number = models.PositiveIntegerField(
         verbose_name=_(u"Tracking number TNT"),
         unique=True,
@@ -1506,7 +1506,7 @@ class PackageTransaction(Transaction):
         (Status.PACKAGE_DELIVERY_CONFIRMED, 'Doručení potvrzeno'),
         (Status.PACKAGE_DELIVERY_DENIED, 'Dosud nedoručeno'),
         (Status.PACKAGE_RECLAIM, 'Reklamován'),
-        )
+    )
 
     shipped_statuses = [
         Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
@@ -1514,7 +1514,7 @@ class PackageTransaction(Transaction):
         Status.PACKAGE_SENT,
         Status.PACKAGE_DELIVERY_CONFIRMED,
         Status.PACKAGE_DELIVERY_DENIED,
-        ]
+    ]
 
     class Meta:
         verbose_name = _(u"Transakce balíku")
@@ -1529,7 +1529,10 @@ class PackageTransaction(Transaction):
         return "{:s}-{:s}-{:0>6.0f}".format(str(self.delivery_batch.pk), batch_date, self.pk)
 
     def tracking_link(self):
-        return mark_safe("<a href='http://www.tnt.com/webtracker/tracking.do?requestType=GEN&searchType=REF&respLang=cs&respCountry=cz&sourceID=1&sourceCountry=ww&cons=%(number)s&navigation=1&genericSiteIdent='>%(number)s</a>" % {'number': self.tnt_con_reference() })
+        return mark_safe(
+            "<a href='http://www.tnt.com/webtracker/tracking.do?requestType=GEN&searchType=REF&respLang=cs&respCountry=cz&sourceID=1&sourceCountry=ww&cons=%(number)s&navigation=1&genericSiteIdent='>%(number)s</a>" %
+            {'number': self.tnt_con_reference()}
+        )
 
     @transaction.atomic
     def save(self, *args, **kwargs):
@@ -1587,7 +1590,7 @@ class Payment(Transaction):
         (Status.COMPANY_ACCEPTS, _(u'Platba akceptována firmou')),
         (Status.INVOICE_MADE, _(u'Faktura vystavena')),
         (Status.INVOICE_PAID, _(u'Faktura zaplacena')),
-        )
+    )
     STATUS_MAP = dict(STATUS)
 
     done_statuses = [
@@ -1623,14 +1626,14 @@ class Payment(Transaction):
         ('am', _(u'člen Klubu přátel Auto*Matu')),
         ('amw', _(u'kandidát na členství v Klubu přátel Auto*Matu')),
         ('fe', _(u'neplatí startovné')),
-        )
+    )
     PAY_TYPES_DICT = dict(PAY_TYPES)
 
     NOT_PAYING_TYPES = [
         'am',
         'amw',
         'fe',
-        ]
+    ]
 
     PAYU_PAYING_TYPES = [
         'mp',
@@ -1649,7 +1652,7 @@ class Payment(Transaction):
         'psc',
         'mo',
         't',
-        ]
+    ]
 
     class Meta:
         verbose_name = _(u"Platební transakce")
@@ -1689,7 +1692,7 @@ class Payment(Transaction):
         default=None,
         on_delete=models.SET_NULL,
         related_name=("payment_set"),
-        )
+    )
 
     def save(self, *args, **kwargs):
         status_before_update = None
@@ -1754,11 +1757,11 @@ class Trip(models.Model):
     is_working_ride_to = models.BooleanField(
         verbose_name=_(u"pracovní cesta do práce"),
         default=False,
-        )
+    )
     is_working_ride_from = models.BooleanField(
         verbose_name=_(u"pracovní cesta z práce"),
         default=False,
-        )
+    )
     date = models.DateField(
         verbose_name=_(u"Datum cesty"),
         default=datetime.datetime.now,
@@ -1767,12 +1770,12 @@ class Trip(models.Model):
         verbose_name=_(u"Cesta do práce"),
         default=None,
         null=True,
-        )
+    )
     trip_from = models.NullBooleanField(
         verbose_name=_(u"Cesta z práce"),
         default=None,
         null=True,
-        )
+    )
     distance_to = models.FloatField(
         verbose_name=_(u"Ujetá vzdálenost do práce"),
         null=True,
@@ -1782,7 +1785,7 @@ class Trip(models.Model):
             MaxValueValidator(1000),
             MinValueValidator(0)
         ],
-        )
+    )
     distance_from = models.FloatField(
         verbose_name=_(u"Ujetá vzdálenost z práce"),
         null=True,
@@ -1792,7 +1795,7 @@ class Trip(models.Model):
             MaxValueValidator(1000),
             MinValueValidator(0)
         ],
-        )
+    )
 
     def distance_from_cutted(self):
         if self.trip_from and self.is_working_ride_from:
@@ -1805,7 +1808,6 @@ class Trip(models.Model):
                 return (False, ridden_distance)
         else:
             return (False, 0)
-
 
     def distance_to_cutted(self):
         if self.trip_to and self.is_working_ride_to:
@@ -1825,6 +1827,7 @@ class Trip(models.Model):
     def can_edit_working_schedule(self):
         return self.date >= util.today()
 
+
 class Competition(models.Model):
     """Soutěž"""
 
@@ -1832,14 +1835,14 @@ class Competition(models.Model):
         ('length', _(u"Ujetá vzdálenost")),
         ('frequency', _(u"Pravidelnost jízd na kole")),
         ('questionnaire', _(u"Dotazník")),
-        )
+    )
 
     CCOMPETITORTYPES = (
         ('single_user', _(u"Jednotliví soutěžící")),
         ('liberos', _(u"Liberos")),
         ('team', _(u"Týmy")),
         ('company', _(u"Soutěž firem")),
-        )
+    )
 
     class Meta:
         verbose_name = _(u"Soutěž")
@@ -1860,14 +1863,14 @@ class Competition(models.Model):
         default="",
         verbose_name=u"Doména v URL",
         blank=False
-        )
+    )
     url = models.URLField(
         default="",
         verbose_name=u"Odkaz na stránku soutěže",
         help_text=_(u"Odkaz na stránku, kde budou pravidla a podrobné informace o soutěži"),
         null=True,
         blank=True,
-        )
+    )
     date_from = models.DateField(
         verbose_name=_(u"Datum začátku soutěže"),
         help_text=_(u"Od tohoto data se počítají jízdy"),
@@ -2094,34 +2097,34 @@ class CompetitionResult(models.Model):
         null=True,
         blank=True,
         default=None,
-        )
+    )
     team = models.ForeignKey(
         Team,
         related_name="competitions_results",
         null=True,
         blank=True,
         default=None,
-        )
+    )
     company = models.ForeignKey(
         Company,
         related_name="company_results",
         null=True,
         blank=True,
         default=None,
-        )
+    )
     competition = models.ForeignKey(
         Competition,
         related_name="results",
         null=False,
         blank=False,
-        )
+    )
     result = models.FloatField(
         verbose_name=_(u"Výsledek"),
         null=True,
         blank=True,
         default=None,
         db_index=True,
-        )
+    )
 
     def get_team(self):
         if self.competition.competitor_type in ['liberos', 'single_user']:
@@ -2149,7 +2152,7 @@ class CompetitionResult(models.Model):
             return 0
 
     def get_total_result(self):
-        #TODO: don't use this function, show rides table instead
+        # TODO: don't use this function, show rides table instead
         if self.competition.type == 'length':
             if self.user_attendance:
                 return round(self.result, 1)
@@ -2228,14 +2231,14 @@ class Question(models.Model):
         ('text', _(u"Text")),
         ('choice', _(u"Výběr odpovědi")),
         ('multiple-choice', _(u"Výběr z více odpovědí")),
-        )
+    )
 
     COMMENT_TYPES = (
         (None, _(u"Nic")),
         ('text', _(u"Text")),
         ('link', _(u"Odkaz")),
         ('one-liner', _(u"Jeden řádek textu")),
-        )
+    )
 
     name = models.CharField(
         verbose_name=_(u"Jméno"),
@@ -2291,7 +2294,7 @@ class Question(models.Model):
         return "%s" % (self.name or self.text)
 
     def with_answer(self):
-        return self.comment_type or self.with_attachment or self.type != 'text' or self.choice_type != None
+        return self.comment_type or self.with_attachment or self.type != 'text' or self.choice_type is not None
 
 
 class Choice(models.Model):
@@ -2317,7 +2320,7 @@ class Choice(models.Model):
         null=True,
         blank=True,
         default=None,
-        )
+    )
 
     def __unicode__(self):
         return "%s" % self.text
@@ -2347,7 +2350,7 @@ class Answer(models.Model):
         upload_to=u"questionaire/",
         max_length=600,
         blank=True,
-        )
+    )
 
     def has_any_answer(self):
         return self.comment or self.choices.all() or self.attachment or self.points_given
@@ -2380,7 +2383,7 @@ def is_competitor(user):
         return False
 
 
-#TODO: this is quickfix, should be geting campaign slug from URL
+# TODO: this is quickfix, should be geting campaign slug from URL
 class TeamInCampaignManager(models.Manager):
 
     def get_query_set(self):
@@ -2419,16 +2422,17 @@ class Voucher(models.Model):
         blank=False,
         default='rekola',
     )
-    token=models.TextField(
+    token = models.TextField(
         verbose_name=_(u"token"),
         blank=False,
         null=True,
     )
-    user_attendance=models.ForeignKey(
+    user_attendance = models.ForeignKey(
         UserAttendance,
         null=True,
         blank=True,
     )
+
     class Meta:
         verbose_name = _(u"Voucher")
         verbose_name_plural = _(u"Vouchery")
@@ -2437,9 +2441,9 @@ class Voucher(models.Model):
         return self.TYPE_DICT[self.type]
 
 
-
 def normalize_gpx_filename(instance, filename):
     return '-'.join(['gpx_tracks/track', datetime.datetime.now().strftime("%Y-%m-%d"), unidecode(filename)])
+
 
 class GpxFile(models.Model):
     file = models.FileField(
@@ -2456,7 +2460,7 @@ class GpxFile(models.Model):
         verbose_name=_(u"Datum vykonání cesty"),
         null=False,
         blank=False
-        )
+    )
     direction = models.CharField(
         verbose_name=_(u"Směr cesty"),
         choices=DIRECTIONS,
@@ -2472,7 +2476,7 @@ class GpxFile(models.Model):
         null=True,
         blank=True,
         geography=True,
-        )
+    )
     user_attendance = models.ForeignKey(
         UserAttendance,
         null=False,
@@ -2484,13 +2488,14 @@ class GpxFile(models.Model):
     )
 
     objects = models.GeoManager()
+
     class Meta:
         verbose_name = _(u"GPX soubor")
         verbose_name_plural = _(u"GPX soubory")
         unique_together = (
-                ("user_attendance", "trip_date", "direction"),
-                ("trip", "direction"),
-                )
+            ("user_attendance", "trip_date", "direction"),
+            ("trip", "direction"),
+        )
         ordering = ('trip_date', 'direction')
 
     def direction_string(self):
@@ -2521,7 +2526,7 @@ class GpxFile(models.Model):
                 raise ValidationError(u"Vadný GPX soubor")
 
 
-#Signals:
+# Signals:
 def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     field, (old, new) = changed_fields.items()[0]
     new_team = Team.objects.get(pk=new) if new else None
@@ -2564,6 +2569,7 @@ def update_mailing_user(sender, instance, created, **kwargs):
     except UserProfile.DoesNotExist:
         pass
 
+
 @receiver(pre_save, sender=GpxFile)
 def set_trip(sender, instance, *args, **kwargs):
     try:
@@ -2572,10 +2578,12 @@ def set_trip(sender, instance, *args, **kwargs):
         trip = None
     instance.trip = trip
 
+
 def set_track(sender, instance, changed_fields=None, **kwargs):
     if hasattr(instance, 'track_clean'):
         instance.track = instance.track_clean
 pre_save_changed.connect(set_track, sender=GpxFile, fields=['file'])
+
 
 @receiver(post_save, sender=GpxFile)
 def set_trip_post(sender, instance, *args, **kwargs):
@@ -2589,6 +2597,7 @@ def set_trip_post(sender, instance, *args, **kwargs):
             instance.trip.trip_from = True
         instance.trip.save()
 
+
 @receiver(post_save, sender=UserActionTransaction)
 @receiver(post_delete, sender=UserActionTransaction)
 def update_user_attendance(sender, instance, *args, **kwargs):
@@ -2598,7 +2607,7 @@ def update_user_attendance(sender, instance, *args, **kwargs):
 
 
 @receiver(pre_delete, sender=Invoice)
-def update_user_attendance(sender, instance, *args, **kwargs):
+def user_attendance_pre_delete(sender, instance, *args, **kwargs):
     for payment in instance.payment_set.all():
         payment.status = Payment.Status.COMPANY_ACCEPTS
         payment.save()

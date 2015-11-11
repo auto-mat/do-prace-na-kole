@@ -23,7 +23,7 @@ import views
 from forms import AuthenticationFormDPNK
 import dpnk.auth
 import company_admin_views
-from decorators import must_be_company_admin, must_be_in_group, must_be_competitor, must_have_team
+from decorators import must_be_in_group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import login_required as login_required_simple
 from django.utils.translation import ugettext_lazy as _
@@ -139,7 +139,7 @@ urlpatterns = patterns(
         ),
     url(r'^address/$',
         views.UserAttendanceView.as_view(
-            template_name = "registration/address.html"
+            template_name="registration/address.html"
         )),
     url(r'^tracks/$',
         views.CombinedTracksKMLView.as_view()
@@ -203,14 +203,14 @@ urlpatterns = patterns(
         views.DPNKLoginView.as_view(
             form_class=AuthenticationFormDPNK,
             template_name='base_generic_form.html',
-            ),
+        ),
         name='login',
         ),
     url(r'^login/$',
         views.DPNKLoginView.as_view(
             form_class=AuthenticationFormDPNK,
             template_name='base_generic_form.html',
-            ),
+        ),
         name='login',
         ),
     url(r'^logout/$',

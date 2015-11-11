@@ -2,7 +2,6 @@
 from smart_selects.form_fields import ChainedModelChoiceField
 from django.contrib.auth.models import User
 from django import forms
-import settings
 # Registration imports
 import registration.forms
 import models
@@ -18,11 +17,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinLengthValidator
-from django.contrib.gis.forms import OSMWidget
 from leaflet.forms.widgets import LeafletWidget
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, HTML, Field, Div
-from crispy_forms.bootstrap import InlineCheckboxes
 from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import string_concat
@@ -44,10 +41,10 @@ class UserLeafletWidget(LeafletWidget):
 
         super(UserLeafletWidget, self).__init__(
             attrs={
-                "geom_type":'LINESTRING',
-                "map_height":"500px",
-                "map_width":"100%",
-                'settings_overrides':settings_overrides,
+                "geom_type": 'LINESTRING',
+                "map_height": "500px",
+                "map_width": "100%",
+                'settings_overrides': settings_overrides,
             }
         )
 
@@ -90,10 +87,11 @@ class AuthenticationFormDPNK(AuthenticationForm):
             HTML(_(u"""<a href="%(password_reset_address)s">Zapomněli jste své přihlašovací údaje?</a>
                 <br/><br/>
                 Ještě nemáte účet? <a href="%(registration_address)s">Registrujte se</a> do soutěže Do práce na kole.<br/><br/>
-            """ % { 'password_reset_address': reverse("password_reset"), 'registration_address': reverse("registration_access")} )),
-            )
+            """ % {'password_reset_address': reverse("password_reset"), 'registration_address': reverse("registration_access")})),
+        )
         self.helper.add_input(Submit('submit', _(u'Přihlásit')))
         self.fields['username'].label = _(u"Email (uživatelské jméno)")
+        return ret_val
 
 
 class RegisterCompanyForm(forms.ModelForm):
@@ -421,7 +419,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         if payment_type == 'company' and not company_admin:
             raise forms.ValidationError(mark_safe(_(u"Váš zaměstnavatel %(employer)s nemá zvoleného koordinátor společnosti.<ul><li><a href='%(url)s'>Chci se stát koordinátorem mé společnosti</a></li></ul>") % {'employer': self.user_attendance.team.subsidiary.company, 'url': reverse('company_admin_application')}))
         elif payment_type == 'company' and not company_admin.can_confirm_payments:
-           raise forms.ValidationError(mark_safe(_(u"Koordinátor vašeho zaměstnavatele nemá možnost povolovat platby fakturou.<ul><li>Kontaktujte koordinátora %(company_admin)s vašeho zaměstnavatele %(employer)s na emailu %(email)s</li><li>Koordinátor bude muset nejprve dohodnout spolupráci na adrese <a href='mailto:kontakt@dopracenakole.net?subject=Žádost o povolení firemních plateb'>kontakt@dopracenakole.net</a>.net</li></ul>") % {'company_admin': company_admin, 'employer': company, 'email': company_admin.user.email}))
+            raise forms.ValidationError(mark_safe(_(u"Koordinátor vašeho zaměstnavatele nemá možnost povolovat platby fakturou.<ul><li>Kontaktujte koordinátora %(company_admin)s vašeho zaměstnavatele %(employer)s na emailu %(email)s</li><li>Koordinátor bude muset nejprve dohodnout spolupráci na adrese <a href='mailto:kontakt@dopracenakole.net?subject=Žádost o povolení firemních plateb'>kontakt@dopracenakole.net</a>.net</li></ul>") % {'company_admin': company_admin, 'employer': company, 'email': company_admin.user.email}))
         return payment_type
 
 
@@ -443,7 +441,7 @@ class ConfirmDeliveryForm(forms.ModelForm):
 
 
 class AnswerForm(forms.ModelForm):
-    choices = ShowPointsMultipleModelChoiceField(queryset = (), label="", help_text="")
+    choices = ShowPointsMultipleModelChoiceField(queryset=(), label="", help_text="")
 
     def __init__(self, *args, **kwargs):
         question = kwargs.pop('question')
@@ -482,7 +480,7 @@ class AnswerForm(forms.ModelForm):
                 choices_layout,
                 'comment',
                 'attachment',
-                css_class = None if is_actual else 'readonly'
+                css_class=None if is_actual else 'readonly'
             )
         )
         self.helper.form_tag = False
@@ -569,10 +567,10 @@ class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
 class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
     def clean(self):
         cleaned_data = super(TrackUpdateForm, self).clean()
-        if cleaned_data['dont_want_insert_track'] == True:
+        if cleaned_data['dont_want_insert_track']:
             cleaned_data['track'] = None
         else:
-            if cleaned_data['track'] == None:
+            if cleaned_data['track'] is None:
                 raise forms.ValidationError(_(u"Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat."))
         return cleaned_data
 
@@ -617,7 +615,7 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
 
     def clean_nickname(self):
         nickname = self.cleaned_data['nickname']
-        if self.cleaned_data['dont_show_name'] == True:
+        if self.cleaned_data['dont_show_name']:
             if nickname:
                 return nickname
             else:
@@ -645,7 +643,7 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         self.fields['email'].initial = self.instance.user.email
         self.fields['first_name'].initial = self.instance.user.first_name
         self.fields['last_name'].initial = self.instance.user.last_name
-        self.fields['dont_show_name'].initial = self.instance.nickname != None
+        self.fields['dont_show_name'].initial = self.instance.nickname is not None
 
         self.helper.layout = Layout(
             'language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'email',
@@ -697,6 +695,6 @@ class GpxFileForm(FormClassMixin, forms.ModelForm):
         fields = ('trip_date', 'direction', 'user_attendance', 'track', 'file')
         widgets = {
             'user_attendance': HiddenInput(),
-            'trip_date': forms.TextInput(attrs={'readonly':'readonly'}),
-            'direction': forms.Select(attrs={'readonly':'readonly'}),
-            }
+            'trip_date': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'direction': forms.Select(attrs={'readonly': 'readonly'}),
+        }

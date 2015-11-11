@@ -1,4 +1,4 @@
-from rest_framework import routers, serializers, viewsets, filters
+from rest_framework import routers, serializers, viewsets
 from rest_framework.exceptions import APIException
 from models import GpxFile, UserAttendance, Campaign
 from django.core.exceptions import ValidationError
@@ -7,17 +7,17 @@ from django.db.utils import IntegrityError
 
 class DuplicateGPX(APIException):
     status_code = 409
-    default_detail ="GPX for this day and trip already uploaded"
+    default_detail = "GPX for this day and trip already uploaded"
 
 
 class GPXParsingFail(APIException):
     status_code = 400
-    default_detail ="Can't parse GPX file"
+    default_detail = "Can't parse GPX file"
 
 
 class CampaignDoesNotExist(APIException):
     status_code = 404
-    default_detail ="Campaign with this slug not found"
+    default_detail = "Campaign with this slug not found"
 
 
 class GpxFileSerializer(serializers.ModelSerializer):
@@ -36,7 +36,7 @@ class GpxFileSerializer(serializers.ModelSerializer):
                 userprofile=user.userprofile,
                 campaign=campaign,
                 approved_for_team='undecided',
-                )
+            )
             user_attendance.save()
         validated_data['user_attendance'] = user_attendance
         try:

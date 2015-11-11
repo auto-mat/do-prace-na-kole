@@ -19,24 +19,24 @@ import sys
 from project.settings import PROJECT_ROOT
 import newrelic.agent
 
-newrelic.agent.initialize(os.path.join(PROJECT_ROOT,'newrelic.ini'))
+newrelic.agent.initialize(os.path.join(PROJECT_ROOT, 'newrelic.ini'))
 
-ALLDIRS = [ os.path.join(PROJECT_ROOT, 'env/lib/python2.6/site-packages'), ]
+ALLDIRS = [os.path.join(PROJECT_ROOT, 'env/lib/python2.6/site-packages'), ]
 
 # Remember original sys.path.
-prev_sys_path = list(sys.path) 
+prev_sys_path = list(sys.path)
 
 # Add each new site-packages directory.
 for directory in ALLDIRS:
-  site.addsitedir(directory)
+    site.addsitedir(directory)
 
 # Reorder sys.path so new directories at the front.
-new_sys_path = [] 
-for item in list(sys.path): 
-    if item not in prev_sys_path: 
-        new_sys_path.append(item) 
-        sys.path.remove(item) 
-sys.path[:0] = new_sys_path 
+new_sys_path = []
+for item in list(sys.path):
+    if item not in prev_sys_path:
+        new_sys_path.append(item)
+        sys.path.remove(item)
+sys.path[:0] = new_sys_path
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
 

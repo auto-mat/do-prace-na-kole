@@ -18,8 +18,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from dpnk.models import CompetitionResult, Competition
-from dpnk import util
 import random
+
 
 def all_members_paid(team):
     """Has all members of team paid?"""
@@ -29,6 +29,7 @@ def all_members_paid(team):
                 and userattendance.payment()['status'] != 'done':
             return False
     return True
+
 
 def draw(competition_slug, limit=10):
     """Draw competitors above threshold in given competition"""
@@ -45,13 +46,13 @@ def draw(competition_slug, limit=10):
         results = \
             [result for result in results if all_members_paid(result.team)]
 
-    if competition.type == 'frequency' and \
-        competition.competitor_type == 'team':
+    if competition.type == 'frequency' and competition.competitor_type == 'team':
         return draw_weighed(results)
 
     results = sorted(results[:limit], key=lambda x: random.random())
 
     return results
+
 
 def draw_weighed(results):
     """Draw competitors weighed by count of team members"""

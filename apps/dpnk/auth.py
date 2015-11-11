@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
 from django.template import RequestContext
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
@@ -52,7 +52,7 @@ class PasswordResetForm(PasswordResetForm):
         else:
             raise forms.ValidationError(_(u"Tento email v systému není zanesen."))
 
-    #TODO: This is copy of original save method only adding RequestContext. This is quicfix, it should be done some more elegant way.
+    # TODO: This is copy of original save method only adding RequestContext. This is quicfix, it should be done some more elegant way.
     def save(self, domain_override=None,
              subject_template_name='registration/password_reset_subject.txt',
              email_template_name='registration/password_reset_email.html',
@@ -99,6 +99,5 @@ class PasswordResetForm(PasswordResetForm):
             send_mail(subject, email, from_email, [user.email], html_message=html_email)
 
 
-
 class PasswordChangeForm(SubmitMixin, PasswordChangeForm):
-   pass
+    pass

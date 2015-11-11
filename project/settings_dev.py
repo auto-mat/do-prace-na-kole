@@ -1,28 +1,28 @@
-from settings import *
+from settings import *  # noqa
 
 ADMINS = (
     ('', ''),
 )
-DEBUG=True
+DEBUG = True
 DEFAULT_FROM_EMAIL = 'Do práce na kole <>'
 SERVER_EMAIL = 'Do práce na kole <>'
 
 DATABASES = {
-        'default': {
-                'ENGINE': 'django.db.backends.mysql',
-                'NAME': 'dpnk',
-                'USER': 'dpnk',
-                'PASSWORD': 'dpnk',
-                'HOST': 'localhost',
-                'PORT': '',
-                'OPTIONS': { 'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED' }
-        },
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'dpnk',
+        'USER': 'dpnk',
+        'PASSWORD': 'dpnk',
+        'HOST': 'localhost',
+        'PORT': '',
+        'OPTIONS': {'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci, SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED'}
+    },
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/dpnk-emails'
 
-SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  #XXX
+SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  # XXX
 SITE_URL = 'http://localhost/~petr/dpnk-wp/'
 DJANGO_URL = 'http://localhost:8000'
 TESTING_URLS = True
@@ -49,13 +49,14 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.logger.LoggingPanel',
 )
 
+
 def custom_show_toolbar(request):
-    return True # Always show toolbar, for example purposes only.
+    return True  # Always show toolbar, for example purposes only.
 
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
     'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
-    #'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
+    # 'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
     'HIDE_DJANGO_SQL': False,
     'TAG': 'div',
 }

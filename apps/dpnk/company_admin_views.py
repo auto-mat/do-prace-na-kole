@@ -17,8 +17,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
@@ -29,13 +27,12 @@ import datetime
 from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView, CreateView
 from django.views.generic.base import TemplateView
-from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_company_admin, must_be_in_phase
+from decorators import must_be_competitor, must_have_team, request_condition, must_be_company_admin, must_be_in_phase
 from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
 import company_admin_forms
 from dpnk.email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from django.core.urlresolvers import reverse_lazy
 from string_lazy import format_lazy
-from util import redirect
 from models import Company, CompanyAdmin, Payment, Competition, Campaign, UserProfile
 from views import UserAttendanceViewMixin
 import models
@@ -45,8 +42,9 @@ import registration.backends.simple.views
 import logging
 logger = logging.getLogger(__name__)
 
+
 class CompanyStructure(TemplateView):
-    template_name='company_admin/structure.html'
+    template_name = 'company_admin/structure.html'
 
     @method_decorator(login_required)
     @must_be_company_admin
@@ -69,7 +67,7 @@ class SelectUsersPayView(FormView):
     def get_initial(self):
         return {
             'company_admin': self.company_admin,
-            }
+        }
 
     def form_valid(self, form):
         paing_for = form.cleaned_data['paing_for']
@@ -142,7 +140,7 @@ class CompanyAdminApplicationView(FormView):
     def get_initial(self):
         return {
             'campaign': Campaign.objects.get(slug=self.request.subdomain),
-            }
+        }
 
     def form_valid(self, form, backend='dpnk.company_admin_views.CompanyAdminRegistrationBackend'):
         backend = registration.backends.get_backend(backend)
@@ -224,7 +222,7 @@ class CompanyCompetitionView(UpdateView):
 
 
 class CompanyCompetitionsShowView(TemplateView):
-    template_name='company_admin/competitions.html'
+    template_name = 'company_admin/competitions.html'
 
     @method_decorator(login_required)
     @must_be_company_admin
@@ -252,15 +250,14 @@ class InvoicesView(CreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.company=self.company_admin.administrated_company
-        self.object.campaign=self.company_admin.campaign
+        self.object.company = self.company_admin.administrated_company
+        self.object.campaign = self.company_admin.campaign
         self.object.save()
         return super(InvoicesView, self).form_valid(form)
 
     def get_context_data(self, *args, **kwargs):
         context = super(InvoicesView, self).get_context_data(*args, **kwargs)
         payments = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
-        users = [p.user_attendance.userprofile.user.get_full_name() for p in payments]
         context['payments'] = payments
         context['company'] = self.company_admin.administrated_company
 

@@ -23,8 +23,9 @@ from dpnk.models import UserAttendance, Company, CompanyAdmin, UserProfile, Camp
 from django.contrib.auth.models import User
 import email
 
-@override_settings(EMAIL_FILE_PATH = '/tmp/dpnk-test-emails')
-@override_settings(EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend')
+
+@override_settings(EMAIL_FILE_PATH='/tmp/dpnk-test-emails')
+@override_settings(EMAIL_BACKEND='django.core.mail.backends.filebased.EmailBackend')
 class TestEmails(TestCase):
     def setUp(self):
         self.campaign = Campaign.objects.create(name="Testing campaign", slug="testing_campaign")

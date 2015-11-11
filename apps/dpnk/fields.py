@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from dpnk.widgets import WorkingScheduleWidget
-import util
-from models import Trip
+
 
 class WorkingScheduleField(forms.Field):
     widget = WorkingScheduleWidget
@@ -16,6 +15,7 @@ class WorkingScheduleField(forms.Field):
 
 class ShowPointsMultipleModelChoiceField(forms.ModelMultipleChoiceField):
     show_points = False
+
     def label_from_instance(self, obj):
         if self.show_points:
             return u"%s (%s b)" % (obj.text, obj.points)

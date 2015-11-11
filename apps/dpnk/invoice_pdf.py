@@ -2,7 +2,6 @@
 import os
 from InvoiceGenerator.api import Invoice, Item, Client, Provider, Creator
 from InvoiceGenerator.pdf import SimpleInvoice
-import models
 import datetime
 
 
@@ -16,10 +15,10 @@ def make_invoice_sheet_pdf(outfile, invoice):
         city=invoice.company.address_city,
         ir=invoice.company.ico,
         vat_id=invoice.company.dic,
-        )
+    )
 
     if invoice.order_number:
-      client.note = u"Číslo objednávky: %s" % invoice.order_number
+        client.note = u"Číslo objednávky: %s" % invoice.order_number
 
     provider = Provider(
         u"Auto*Mat, o.s.",
@@ -37,12 +36,12 @@ def make_invoice_sheet_pdf(outfile, invoice):
 U Městského soudu v Praze jsme vedeni pod spisovou značkou L 18119.
 Společně s vámi tvoříme město, ve kterém chceme žít. www.auto-mat.cz
 """,
-        )
+    )
 
     creator = Creator(
         u'Lucie Mullerová',
         stamp_filename=os.path.join(DIR, "static/img/stamp.png"),
-        )
+    )
 
     invoice_gen = Invoice(client, provider, creator)
     invoice_gen.title = u"Faktura %s/%s" % (invoice.sequence_number, invoice.exposure_date.year)
