@@ -8,7 +8,8 @@
 /sql/
 /dpnk.log
 /dpnk-timelog.log
-/env/
+env
+/env*/
 /project/settings_local.py
 /static/
 /db_backup/
