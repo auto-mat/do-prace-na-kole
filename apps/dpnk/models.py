@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 # Author: Hynek Hanke <hynek.hanke@auto-mat.cz>
 # Author: Petr Dlouhý <petr.dlouhy@email.cz>
 #

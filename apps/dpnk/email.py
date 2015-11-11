@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 # Author: Petr Dlouhý <petr.dlouhy@email.cz>
 #
 # Copyright (C) 2013 o.s. Auto*Mat
