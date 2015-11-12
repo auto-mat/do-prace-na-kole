@@ -19,9 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.utils.translation import ugettext_lazy as _
-import dpnk
-import results
-from dpnk import models, mailing
+#import results
+from . import models, mailing
 from django.contrib import messages
 
 
@@ -61,16 +60,16 @@ recalculate_results.short_description = _(u"Přepočítat výsledky soutěží p
 
 
 def show_distance(modeladmin, request, queryset):
-    trips_query = dpnk.models.Trip.objects.filter(user_attendance__in=queryset)
-    length = dpnk.views.distance(trips_query)
-    trips = dpnk.views.trips(trips_query)
+    trips_query = models.Trip.objects.filter(user_attendance__in=queryset)
+    length = views.distance(trips_query)
+    trips = views.trips(trips_query)
     modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
 show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 
 
 def assign_vouchers(modeladmin, request, queryset):
     count = queryset.count()
-    vouchers = dpnk.models.Voucher.objects.filter(user_attendance=None).all()[:count]
+    vouchers = models.Voucher.objects.filter(user_attendance=None).all()[:count]
     if vouchers.count() != count:
         messages.error(request, _(u"Není dost volných voucherů"))
         return

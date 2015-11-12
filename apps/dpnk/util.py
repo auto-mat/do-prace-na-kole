@@ -24,7 +24,7 @@ import datetime
 from django.http import HttpResponse
 import settings
 from django.core.exceptions import ObjectDoesNotExist
-import models
+#import models
 
 DAYS_EXCLUDE = (
     datetime.date(year=2014, day=8, month=5),

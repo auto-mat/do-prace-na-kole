@@ -20,10 +20,13 @@
 
 # Standard library imports
 import time
-import httplib
+try:
+    import httplib
+except ImportError:
+    from http import client as httplib
 import urllib
 import hashlib
-import results
+#import results
 import json
 import collections
 # Django imports
@@ -34,7 +37,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator, classonlymethod
 from django.views.decorators.gzip import gzip_page
-from decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase, must_be_owner
+from .decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase, must_be_owner
 from django.contrib.auth.decorators import login_required as login_required_simple
 from django.contrib.gis.geos import MultiLineString
 from django.template import RequestContext
@@ -52,24 +55,24 @@ import registration.signals
 import registration.backends
 import registration.backends.simple.views
 # Model imports
-from models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, City, UserAttendance, Campaign
-import forms
-from forms import RegistrationFormDPNK, RegistrationAccessFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, PaymentTypeForm, ChangeTeamForm, TrackUpdateForm, WorkingScheduleForm
+from .models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, City, UserAttendance, Campaign
+from . import forms
+from .forms import RegistrationFormDPNK, RegistrationAccessFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, PaymentTypeForm, ChangeTeamForm, TrackUpdateForm, WorkingScheduleForm
 from django.conf import settings
 from django.http import HttpResponse
 from django import http
 # Local imports
-import util
-import draw
+from . import util
+from . import draw
 from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail, invitation_register_mail
 from django.db import transaction
 
 from unidecode import unidecode
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse, reverse_lazy
-from string_lazy import mark_safe_lazy, format_lazy
+from .string_lazy import mark_safe_lazy, format_lazy
 import logging
-import models
+from . import models
 import tempfile
 import shutil
 logger = logging.getLogger(__name__)

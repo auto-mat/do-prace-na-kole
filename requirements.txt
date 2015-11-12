@@ -1,4 +1,5 @@
--e git+https://github.com/PetrDlouhy/django.git@view_permission#egg=Django
+#-e git+https://github.com/PetrDlouhy/django.git@view_permission#egg=Django
+Django
 django-import-export
 -e git+https://github.com/PetrDlouhy/django-smart-selects.git#egg=django-smart-selects
 psycopg2
@@ -6,7 +7,7 @@ python-memcached
 django-chart-tools
 django-extensions
 django-debug-toolbar
-django-softhyphen==0.15
+django-softhyphen
 django-admin-enhancer
 django-polymorphic
 django-composite-field
@@ -14,7 +15,7 @@ django-registration-redux
 -e git+https://github.com/silverfix/django-nested-inlines.git#egg=django-nested-inlines
 django-su
 unidecode
-createsend==2.6.0
+-e git+https://github.com/PetrDlouhy/createsend-python.git@python3#egg=createsend
 ordereddict
 django-mass-edit
 django-author
@@ -27,14 +28,14 @@ modulus11
 django-dbbackup
 django-localeurl
 pillow
-InvoiceGenerator
-django-related-admin
+-e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator
+-e git+https://github.com/PetrDlouhy/django-related-admin.git#egg=django-related-admin
 newrelic
 easy_thumbnails
 django-crispy-forms
 django-class-based-auth-views
-django-subdomains
-django-adminfilters
+-e git+https://github.com/tkaemming/django-subdomains.git#egg=django-subdomains
+-e git+https://github.com/PetrDlouhy/django-adminfilters.git@develop#egg=django-adminfilters
 django-compressor
 slumber
 django-bleach

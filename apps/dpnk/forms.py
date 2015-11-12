@@ -22,11 +22,9 @@ from django.contrib.auth.models import User
 from django import forms
 # Registration imports
 import registration.forms
-import models
-import util
 import datetime
 from django.utils import formats
-from models import UserProfile, Company, Subsidiary, Team, UserAttendance
+from . import models
 from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
 from dpnk.fields import WorkingScheduleField, ShowPointsMultipleModelChoiceField
@@ -45,7 +43,7 @@ from django.http import Http404
 
 
 def team_full(data):
-    if len(UserAttendance.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, userprofile__user__is_active=True)) >= 5:
+    if len(models.UserAttendance.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, userprofile__user__is_active=True)) >= 5:
         raise forms.ValidationError(_(u"Tento tým již má pět členů a je tedy plný"))
 
 
@@ -117,7 +115,7 @@ class RegisterCompanyForm(forms.ModelForm):
     error_css_class = 'error'
 
     class Meta:
-        model = Company
+        model = models.Company
         fields = ('name', )
 
 
@@ -148,7 +146,7 @@ class AdressForm(forms.ModelForm):
         # self.fields['city'].label_from_instance = lambda obj: obj.city.name
 
     class Meta:
-        model = Subsidiary
+        model = models.Subsidiary
         fields = ('city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
 
@@ -167,7 +165,7 @@ class RegisterTeamForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Team
+        model = models.Team
         fields = ('name', 'campaign')
 
 
@@ -219,14 +217,14 @@ class WorkingScheduleForm(forms.ModelForm):
         return ret_val
 
     class Meta:
-        model = UserAttendance
+        model = models.UserAttendance
         fields = ('schedule', )
 
 
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     company = forms.ModelChoiceField(
         label=_(u"Společnost"),
-        queryset=Company.objects.filter(active=True),
+        queryset=models.Company.objects.filter(active=True),
         widget=SelectOrCreate(RegisterCompanyForm, prefix="company", new_description=_(u"Společnost v seznamu není, chci založit novou")),
         required=True)
     subsidiary = ChainedModelChoiceField(
@@ -249,7 +247,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             show_all=False,
             auto_choose=True,
         ),
-        queryset=Subsidiary.objects.filter(active=True),
+        queryset=models.Subsidiary.objects.filter(active=True),
         required=True)
     team = ChainedModelChoiceField(
         chain_field="subsidiary",
@@ -271,7 +269,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             auto_choose=False,
         ),
         label=_(u"Tým"),
-        queryset=Team.objects.all(),
+        queryset=models.Team.objects.all(),
         required=True)
 
     def clean(self):
@@ -324,7 +322,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             self.fields["team"].queryset = Team.objects.filter(subsidiary__company=self.instance.team.subsidiary.company)
 
     class Meta:
-        model = UserAttendance
+        model = models.UserAttendance
         fields = ('company', 'subsidiary', 'team')
 
 
@@ -411,7 +409,7 @@ class TeamAdminForm(SubmitMixin, forms.ModelForm):
     )
 
     class Meta:
-        model = Team
+        model = models.Team
         fields = ('name', 'campaign')
 
 
@@ -578,7 +576,7 @@ class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
         return ret_val
 
     class Meta:
-        model = UserAttendance
+        model = models.UserAttendance
         fields = ('t_shirt_size', 'telephone', )
 
 
@@ -593,7 +591,7 @@ class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
         return cleaned_data
 
     class Meta:
-        model = UserAttendance
+        model = models.UserAttendance
         fields = ('track', 'dont_want_insert_track', 'distance')
 
     def __init__(self, *args, **kwargs):
@@ -670,7 +668,7 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         return ret_val
 
     class Meta:
-        model = UserProfile
+        model = models.UserProfile
         fields = ('language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'email')
 
 

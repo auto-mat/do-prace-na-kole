@@ -19,7 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from rest_framework import routers, serializers, viewsets
 from rest_framework.exceptions import APIException
-from models import GpxFile, UserAttendance, Campaign
+from .models import GpxFile, UserAttendance, Campaign
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 

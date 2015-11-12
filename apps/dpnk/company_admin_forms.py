@@ -19,11 +19,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django import forms
-from forms import AdressForm
-from models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice
+from .forms import AdressForm
+from .models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice
 from django.utils.translation import ugettext_lazy as _
-from util import slugify
-from forms import SubmitMixin
+from .util import slugify
+from .forms import SubmitMixin
 import registration.forms
 
 

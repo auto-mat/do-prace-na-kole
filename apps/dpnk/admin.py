@@ -35,14 +35,13 @@ from import_export import resources, fields
 from import_export.admin import ExportMixin, ImportMixin
 from django.utils.translation import ugettext_lazy as _
 from leaflet.admin import LeafletGeoAdmin
-from admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin
+from .admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin
 import datetime
 # Models
-from filters import CampaignFilter, CityCampaignFilter, SubsidiaryCampaignFilter, TripCampaignFilter, QuestionCampaignFilter, HasVoucherFilter, HasRidesFilter, IsForCompanyFilter, HasTeamFilter, EmailFilter
-from dpnk import models, mailing, actions
+from .filters import CampaignFilter, CityCampaignFilter, SubsidiaryCampaignFilter, TripCampaignFilter, QuestionCampaignFilter, HasVoucherFilter, HasRidesFilter, IsForCompanyFilter, HasTeamFilter, EmailFilter
+from . import models, mailing, actions
 from django import forms
 from related_admin import RelatedFieldAdmin
-import dpnk
 
 
 class PaymentInline(EnhancedAdminMixin, NestedTabularInline):
@@ -349,7 +348,7 @@ class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
 class CompanyAdminInline(EnhancedAdminMixin, NestedTabularInline):
     raw_id_fields = ('administrated_company',)
     extra = 0
-    model = dpnk.models.CompanyAdmin
+    model = models.CompanyAdmin
 
 
 class HasUserprofileFilter(SimpleListFilter):
@@ -511,7 +510,7 @@ class TripAdminInline(EnhancedModelAdminMixin, admin.TabularInline):
     list_display = ('user_attendance', 'date', 'trip_from', 'trip_to', 'distance_from', 'distance_to', 'id')
     raw_id_fields = ('user_attendance',)
     extra = 0
-    model = dpnk.models.Trip
+    model = models.Trip
 
 
 class UserAttendanceResource(resources.ModelResource):
@@ -727,8 +726,8 @@ class QuestionAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
 
 
 def show_distance_trips(modeladmin, request, queryset):
-    length = dpnk.views.distance(queryset)
-    trips = dpnk.views.trips(queryset)
+    length = views.distance(queryset)
+    trips = views.trips(queryset)
     modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
 show_distance_trips.short_description = _(u"Ukázat ujetou vzdálenost")
 

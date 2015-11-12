@@ -23,10 +23,9 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from models import UserAttendance, Campaign
+from .models import UserAttendance, Campaign
 from django.http import Http404
 from django.core.urlresolvers import reverse
-import models
 import functools
 
 

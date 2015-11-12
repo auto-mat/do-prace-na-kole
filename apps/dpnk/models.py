@@ -24,9 +24,9 @@
 # Django imports
 import random
 import string
-import results
-import parcel_batch
-import avfull
+from . import results
+#import parcel_batch
+#import avfull
 import gpxpy
 from unidecode import unidecode
 from author.decorators import with_author
@@ -54,8 +54,8 @@ from bulk_update.manager import BulkUpdateManager
 # Python library imports
 import datetime
 # Local imports
-import util
-import mailing
+#import util
+#import mailing
 from dpnk.email import (
     payment_confirmation_mail, company_admin_rejected_mail,
     company_admin_approval_mail, payment_confirmation_company_mail)

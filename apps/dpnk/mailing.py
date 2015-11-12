@@ -19,7 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import createsend
 from django.conf import settings
-import models
+#import models
 import logging
 import threading
 logger = logging.getLogger(__name__)

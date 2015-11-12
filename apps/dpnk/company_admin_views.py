@@ -27,15 +27,15 @@ import datetime
 from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView, CreateView
 from django.views.generic.base import TemplateView
-from decorators import must_be_competitor, must_have_team, request_condition, must_be_company_admin, must_be_in_phase
-from company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
-import company_admin_forms
-from dpnk.email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
+from .decorators import must_be_competitor, must_have_team, request_condition, must_be_company_admin, must_be_in_phase
+from .company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
+from . import company_admin_forms
+from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from django.core.urlresolvers import reverse_lazy
-from string_lazy import format_lazy
-from models import Company, CompanyAdmin, Payment, Competition, Campaign, UserProfile
-from views import UserAttendanceViewMixin
-import models
+from .string_lazy import format_lazy
+from .models import Company, CompanyAdmin, Payment, Competition, Campaign, UserProfile
+from .views import UserAttendanceViewMixin
+from . import models
 import registration.signals
 import registration.backends
 import registration.backends.simple.views
