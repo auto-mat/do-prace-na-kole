@@ -30,7 +30,7 @@ def site(request):
 
 
 def user_attendance(request):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated() and hasattr(request.user, 'userprofile'):
         userprofile = request.user.userprofile
         campaign_slug = request.subdomain
         try:

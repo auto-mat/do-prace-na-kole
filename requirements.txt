@@ -27,6 +27,7 @@ reportlab
 flake8
 modulus11
 django-dbbackup
+-e git+https://github.com/atn9/django-localeurl.git#egg=django-localeurl
 pillow
 -e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator
 -e git+https://github.com/PetrDlouhy/django-related-admin.git#egg=django-related-admin

@@ -956,15 +956,6 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         except CompanyAdmin.DoesNotExist:
             return None
 
-    def is_competitor(self):
-        try:
-            if self.is_authenticated() and self.userprofile:
-                return True
-            else:
-                return False
-        except UserProfile.DoesNotExist:
-            return False
-
     def previous_user_attendance(self):
         previous_campaign = self.campaign.previous_campaign
         try:

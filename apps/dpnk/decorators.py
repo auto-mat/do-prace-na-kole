@@ -28,6 +28,7 @@ from .models import UserAttendance, Campaign
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from . import models
+from . import util
 import functools
 
 
@@ -124,7 +125,7 @@ def must_be_competitor(fn):
         if kwargs.get('user_attendance', None):
             return fn(view, request, *args, **kwargs)
 
-        if models.is_competitor(request.user):
+        if util.is_competitor(request.user):
             userprofile = request.user.userprofile
             campaign_slug = request.subdomain
             try:

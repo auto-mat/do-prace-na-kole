@@ -24,7 +24,6 @@ import datetime
 from django.http import HttpResponse
 import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.gis.db import models
 
 DAYS_EXCLUDE = (
     datetime.date(year=2014, day=8, month=5),
@@ -152,5 +151,15 @@ def get_emissions(distance):
 def get_company_admin(user, campaign):
     try:
         return user.company_admin.get(campaign=campaign, company_admin_approved='approved')
-    except models.Model.DoesNotExist:
+    except ObjectDoesNotExist:
         return None
+
+
+def is_competitor(self):
+    try:
+        if self.is_authenticated() and self.userprofile:
+            return True
+        else:
+            return False
+    except ObjectDoesNotExist:
+        return False

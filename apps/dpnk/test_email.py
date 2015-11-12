@@ -22,14 +22,14 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from dpnk.models import UserAttendance, Company, CompanyAdmin, UserProfile, Campaign, Team, Subsidiary, City
 from django.contrib.auth.models import User
-import email
+from . import email
 
 
 @override_settings(EMAIL_FILE_PATH='/tmp/dpnk-test-emails')
 @override_settings(EMAIL_BACKEND='django.core.mail.backends.filebased.EmailBackend')
 class TestEmails(TestCase):
     def setUp(self):
-        self.campaign = Campaign.objects.create(name="Testing campaign", slug="testing_campaign")
+        self.campaign = Campaign.objects.create(name="Testing campaign 1", slug="testing_campaign_1")
         self.city = City.objects.create(name="Testing City", slug="testing_city")
 
         self.company = Company.objects.create(name="Testing Company")
