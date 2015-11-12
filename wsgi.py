@@ -18,6 +18,7 @@ import site
 import sys
 from project.settings import PROJECT_ROOT
 import newrelic.agent
+from django.core.wsgi import get_wsgi_application
 
 newrelic.agent.initialize(os.path.join(PROJECT_ROOT, 'newrelic.ini'))
 
@@ -43,7 +44,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
-from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 application = newrelic.agent.wsgi_application()(application)
 

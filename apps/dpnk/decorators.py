@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import six
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -26,6 +27,7 @@ from django.utils.safestring import mark_safe
 from .models import UserAttendance, Campaign
 from django.http import Http404
 from django.core.urlresolvers import reverse
+from . import models
 import functools
 
 
@@ -108,7 +110,7 @@ def must_be_in_phase(*phase_type):
             for phase in phases:
                 if phase and phase.is_actual():
                     return fn(view, request, *args, **kwargs)
-            phases_string = _(u" a ").join([unicode(models.Phase.TYPE_DICT[p]) for p in phase_type])
+            phases_string = _(u" a ").join([six.text_type(models.Phase.TYPE_DICT[p]) for p in phase_type])
             return render_to_response(view.template_name, {
                 'fullpage_error_message': mark_safe(_(u"Tento formulář se zobrazuje pouze ve fázích soutěže: %s") % phases_string),
             }, context_instance=RequestContext(request))

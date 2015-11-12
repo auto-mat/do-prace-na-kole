@@ -25,6 +25,7 @@ import registration.forms
 import datetime
 from django.utils import formats
 from . import models
+from . import util
 from django.db.models import Q
 from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
 from dpnk.fields import WorkingScheduleField, ShowPointsMultipleModelChoiceField
@@ -319,7 +320,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         if self.instance.payment_status() == 'done' and self.instance.team:
             self.fields["subsidiary"].widget = HiddenInput()
             self.fields["company"].widget = HiddenInput()
-            self.fields["team"].queryset = Team.objects.filter(subsidiary__company=self.instance.team.subsidiary.company)
+            self.fields["team"].queryset = models.Team.objects.filter(subsidiary__company=self.instance.team.subsidiary.company)
 
     class Meta:
         model = models.UserAttendance
@@ -526,8 +527,8 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
     def clean_user_attendance(self):
         campaign = self.initial['campaign']
         try:
-            user_attendance = UserAttendance.objects.get(userprofile__user__username=self.cleaned_data.get('user_attendance'), campaign=campaign)
-        except UserAttendance.DoesNotExist:
+            user_attendance = models.UserAttendance.objects.get(userprofile__user__username=self.cleaned_data.get('user_attendance'), campaign=campaign)
+        except models.UserAttendance.DoesNotExist:
             raise forms.ValidationError(_(u"Takový uživatel neexistuje"))
 
         other_user_attendances = user_attendance.other_user_attendances(campaign)

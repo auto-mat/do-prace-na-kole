@@ -24,7 +24,7 @@ import datetime
 from django.http import HttpResponse
 import settings
 from django.core.exceptions import ObjectDoesNotExist
-#import models
+from django.contrib.gis.db import models
 
 DAYS_EXCLUDE = (
     datetime.date(year=2014, day=8, month=5),
@@ -112,8 +112,8 @@ def get_or_none(model, *args, **kwargs):
 def day_active_last7(day):
     day_today = _today()
     return (
-        (day <= day_today)
-        and (day > day_today - datetime.timedelta(days=7))
+        (day <= day_today) and
+        (day > day_today - datetime.timedelta(days=7))
     )
 
 
@@ -129,9 +129,7 @@ def day_active_last_week(day):
 day_active = day_active_last7
 
 
-def trip_active(trip, allow_adding_rides=None):
-    if not allow_adding_rides:
-        allow_adding_rides = models.CityInCampaign.objects.get(city=trip.user_attendance.team.subsidiary.city, campaign=trip.user_attendance.campaign).allow_adding_rides
+def trip_active(trip, allow_adding_rides):
     if allow_adding_rides:
         return day_active(trip.date)
     return False
@@ -149,3 +147,10 @@ def get_emissions(distance):
         'solid': round(distance * 35.0, 1),
         'pb': round(distance * 0.011, 1),
     }
+
+
+def get_company_admin(user, campaign):
+    try:
+        return user.company_admin.get(campaign=campaign, company_admin_approved='approved')
+    except models.Model.DoesNotExist:
+        return None

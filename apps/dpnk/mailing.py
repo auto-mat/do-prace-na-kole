@@ -19,7 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import createsend
 from django.conf import settings
-#import models
+from . import util
 import logging
 import threading
 logger = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ def get_custom_fields(user_attendance):
     entered_competition = None
     team_member_count = None
 
-    if isinstance(user_attendance, models.UserAttendance) and models.is_competitor(user):
+    if hasattr(user_attendance, 'is_competitor') and user_attendance.is_competitor(user):
         if user_attendance.team:
             city = user_attendance.team.subsidiary.city.name
         payment_status = user_attendance.payment()['status']
@@ -73,7 +73,7 @@ def get_custom_fields(user_attendance):
         entered_competition = user_attendance.entered_competition()
         team_member_count = user_attendance.team_member_count()
 
-    company_admin = models.get_company_admin(user, user_attendance.campaign) is not None
+    company_admin = util.get_company_admin(user, user_attendance.campaign) is not None
 
     custom_fields = [
         {'Key': "Mesto", 'Value': city},
@@ -163,7 +163,7 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
         if not user.is_active:
             delete_user(user_attendance)
         else:
-            if models.is_competitor(user) and user_attendance.get_userprofile().mailing_id:
+            if user_attendance.is_competitor(user_attendance) and user_attendance.get_userprofile().mailing_id:
                 update_user(user_attendance, ignore_hash)
             else:
                 add_user(user_attendance)

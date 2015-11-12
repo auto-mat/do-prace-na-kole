@@ -25,7 +25,10 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib.messages import constants as message_constants
 from django.utils.translation import ugettext_lazy as _
 
-normpath = lambda *args: os.path.normpath(os.path.abspath(os.path.join(*args)))
+
+def normpath(*args):
+    return os.path.normpath(os.path.abspath(os.path.join(*args)))
+
 PROJECT_ROOT = normpath(__file__, "..", "..")
 
 sys.path.append(normpath(PROJECT_ROOT, "project"))

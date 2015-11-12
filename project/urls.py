@@ -1,13 +1,14 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.gis import admin
-admin.site.index_template = 'admin/my_custom_index.html'
-admin.autodiscover()
 from dpnk.views import questionnaire_results, questionnaire_answers, questions, answers
 from dpnk import views
 from django.conf.urls.static import static
 from dpnk.rest import router
 
 from django.conf import settings
+
+admin.site.index_template = 'admin/my_custom_index.html'
+admin.autodiscover()
 
 urlpatterns = patterns(
     '',

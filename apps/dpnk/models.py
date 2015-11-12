@@ -24,9 +24,8 @@
 # Django imports
 import random
 import string
-from . import results
-#import parcel_batch
-#import avfull
+from . import parcel_batch
+from . import avfull
 import gpxpy
 from unidecode import unidecode
 from author.decorators import with_author
@@ -54,8 +53,8 @@ from bulk_update.manager import BulkUpdateManager
 # Python library imports
 import datetime
 # Local imports
-#import util
-#import mailing
+from . import util
+from . import mailing
 from dpnk.email import (
     payment_confirmation_mail, company_admin_rejected_mail,
     company_admin_approval_mail, payment_confirmation_company_mail)
@@ -957,6 +956,15 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         except CompanyAdmin.DoesNotExist:
             return None
 
+    def is_competitor(self):
+        try:
+            if self.is_authenticated() and self.userprofile:
+                return True
+            else:
+                return False
+        except UserProfile.DoesNotExist:
+            return False
+
     def previous_user_attendance(self):
         previous_campaign = self.campaign.previous_campaign
         try:
@@ -1704,13 +1712,13 @@ class Payment(Transaction):
 
         statuses_company_ok = (Payment.Status.COMPANY_ACCEPTS, Payment.Status.INVOICE_MADE, Payment.Status.INVOICE_PAID)
         if (
-                self.user_attendance
-                and (status_before_update != Payment.Status.DONE)
-                and self.status == Payment.Status.DONE):
+                self.user_attendance and
+                (status_before_update != Payment.Status.DONE) and
+                self.status == Payment.Status.DONE):
             payment_confirmation_mail(self.user_attendance)
-        elif (self.user_attendance
-              and (status_before_update not in statuses_company_ok)
-              and self.status in statuses_company_ok):
+        elif (self.user_attendance and
+                (status_before_update not in statuses_company_ok) and
+                self.status in statuses_company_ok):
             payment_confirmation_company_mail(self.user_attendance)
 
         logger.info(u"Saving payment (after):  %s" % Payment.objects.get(pk=self.id).full_string())
@@ -1985,7 +1993,7 @@ class Competition(models.Model):
     def can_admit(self, user_attendance):
         if self.without_admission:
             return 'without_admission'
-        if not get_company_admin(user_attendance.userprofile.user, self.campaign) and self.competitor_type == 'company':
+        if not util.get_company_admin(user_attendance.userprofile.user, self.campaign) and self.competitor_type == 'company':
             return 'not_company_admin'
         if self.type == 'questionnaire' and not self.has_started():
             return 'before_beginning'
@@ -2367,23 +2375,6 @@ def get_company(campaign, user):
     return user.userprofile.userattendance_set.get(campaign=campaign).company()
 
 
-def get_company_admin(user, campaign):
-    try:
-        return user.company_admin.get(campaign=campaign, company_admin_approved='approved')
-    except CompanyAdmin.DoesNotExist:
-        return None
-
-
-def is_competitor(user):
-    try:
-        if user.is_authenticated() and user.userprofile:
-            return True
-        else:
-            return False
-    except UserProfile.DoesNotExist:
-        return False
-
-
 # TODO: this is quickfix, should be geting campaign slug from URL
 class TeamInCampaignManager(models.Manager):
 
@@ -2588,7 +2579,8 @@ pre_save_changed.connect(set_track, sender=GpxFile, fields=['file'])
 
 @receiver(post_save, sender=GpxFile)
 def set_trip_post(sender, instance, *args, **kwargs):
-    if instance.trip and util.trip_active(instance.trip):
+    allow_adding_rides = CityInCampaign.objects.get(city=instance.trip.user_attendance.team.subsidiary.city, campaign=instance.trip.user_attendance.campaign).allow_adding_rides
+    if instance.trip and util.trip_active(instance.trip, allow_adding_rides):
         length = instance.length()
         if instance.direction == 'trip_to' and length:
             instance.trip.distance_to = length
@@ -2651,3 +2643,5 @@ def answer_post_save(sender, instance, **kwargs):
 def payment_set_realized_date(sender, instance, **kwargs):
     if instance.status in Payment.done_statuses and not instance.realized:
         instance.realized = datetime.datetime.now()
+
+from . import results  # noqa

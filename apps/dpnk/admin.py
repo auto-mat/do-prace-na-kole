@@ -39,9 +39,11 @@ from .admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin
 import datetime
 # Models
 from .filters import CampaignFilter, CityCampaignFilter, SubsidiaryCampaignFilter, TripCampaignFilter, QuestionCampaignFilter, HasVoucherFilter, HasRidesFilter, IsForCompanyFilter, HasTeamFilter, EmailFilter
-from . import models, mailing, actions
+from . import models, mailing, actions, views
 from django import forms
 from related_admin import RelatedFieldAdmin
+import pprint
+from django.contrib.sessions.models import Session
 
 
 class PaymentInline(EnhancedAdminMixin, NestedTabularInline):
@@ -1002,10 +1004,6 @@ class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
         campaign = models.Campaign.objects.get(slug=request.subdomain)
         queryset = campaign.user_attendances_for_delivery()
         return queryset
-
-
-import pprint
-from django.contrib.sessions.models import Session
 
 
 class SessionAdmin(admin.ModelAdmin):

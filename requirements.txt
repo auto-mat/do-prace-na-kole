@@ -1,9 +1,10 @@
+six
 #-e git+https://github.com/PetrDlouhy/django.git@view_permission#egg=Django
 Django
 django-import-export
 -e git+https://github.com/PetrDlouhy/django-smart-selects.git#egg=django-smart-selects
 psycopg2
-python-memcached
+python3-memcached
 django-chart-tools
 django-extensions
 django-debug-toolbar
@@ -22,11 +23,10 @@ django-author
 django-fieldsignals
 django-admin-sortable2
 reportlab
-svg2rlg
+-e git+https://github.com/aquavitae/svg2rlg.git#egg=svg2rlg
 flake8
 modulus11
 django-dbbackup
-django-localeurl
 pillow
 -e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator
 -e git+https://github.com/PetrDlouhy/django-related-admin.git#egg=django-related-admin
@@ -41,7 +41,7 @@ slumber
 django-bleach
 django-analytical
 gunicorn
-django-cache-utils
+-e git+https://github.com/Thermondo/django-cache-utils.git#egg=django-cache-utils
 django-settings-context-processor
 django-rosetta
 django-oauth-toolkit

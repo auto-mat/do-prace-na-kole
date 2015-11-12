@@ -26,7 +26,7 @@ except ImportError:
     from http import client as httplib
 import urllib
 import hashlib
-#import results
+from . import results
 import json
 import collections
 # Django imports

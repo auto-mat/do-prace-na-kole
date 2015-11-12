@@ -19,7 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.utils.translation import ugettext_lazy as _
-#import results
+from . import results
+from . import views
 from . import models, mailing
 from django.contrib import messages
 
