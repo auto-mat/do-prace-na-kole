@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 # Author: Petr Dlouhý <petr.dlouhy@email.cz>
 #
 # Copyright (C) 2013 o.s. Auto*Mat
@@ -18,11 +19,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django import forms
-from forms import AdressForm
-from models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice
+from .forms import AdressForm
+from .models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice
 from django.utils.translation import ugettext_lazy as _
-from util import slugify
-from forms import SubmitMixin
+from .util import slugify
+from .forms import SubmitMixin
 import registration.forms
 
 
@@ -121,9 +122,9 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
             'username',
             'password1',
             'password2'
-            ]
+        ]
 
-        #self.fields['email'].help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
+        # self.fields['email'].help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
         return ret_val
 
     class Meta:
@@ -163,8 +164,8 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
 
 class CreateInvoiceForm(SubmitMixin, forms.ModelForm):
     create_invoice = forms.BooleanField(
-            label=_(u"Údaje jsou správné, chci vytvořit fakturu"),
-            )
+        label=_(u"Údaje jsou správné, chci vytvořit fakturu"),
+    )
 
     class Meta:
         model = Invoice

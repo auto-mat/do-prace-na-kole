@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 # Author: Petr Dlouhý <petr.dlouhy@email.cz>
 #
 # Copyright (C) 2015 o.s. Auto*Mat
@@ -26,7 +27,7 @@ from dpnk import models
 class CampaignFilter(SimpleListFilter):
     title = _(u"Kampaň")
     parameter_name = u'campaign'
-    field='campaign'
+    field = 'campaign'
 
     def lookups(self, request, model_admin):
         if not request.subdomain:
@@ -82,8 +83,10 @@ class SubsidiaryCampaignFilter(CampaignFilter):
 class TripCampaignFilter(CampaignFilter):
     field = 'user_attendance__campaign'
 
+
 class QuestionCampaignFilter(CampaignFilter):
     field = 'question__competition__campaign'
+
 
 class HasVoucherFilter(SimpleListFilter):
     title = _(u"Má nějaké vouchery")
@@ -177,4 +180,3 @@ class EmailFilter(SimpleListFilter):
             return queryset.filter(email__in=duplicates)
         if self.value() == 'blank':
             return queryset.filter(email__exact='')
-

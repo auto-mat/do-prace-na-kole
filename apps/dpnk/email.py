@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 # Author: Petr Dlouhý <petr.dlouhy@email.cz>
 #
 # Copyright (C) 2013 o.s. Auto*Mat
@@ -22,121 +23,144 @@ from django.template import Context
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
+
 def approval_request_mail(user_attendance):
     for team_member in user_attendance.team.members():
         if user_attendance == team_member:
             continue
         template = get_template('email/approval_request.html')
         email = team_member.userprofile.user.email
-        message = template.render(Context({ 'team_member': team_member,
+        message = template.render(Context({
+            'team_member': team_member,
             'new_user': user_attendance,
             'SITE_URL': settings.SITE_URL,
-            }))
+        }))
         send_mail(_(u"%s - žádost o ověření členství" % user_attendance.campaign), message, None, [email], fail_silently=False)
+
 
 def invitation_register_mail(inviting, invited):
     template = get_template('email/invitation.html')
     email = invited.userprofile.user.email
-    message = template.render(Context({ 'inviting': inviting,
+    message = template.render(Context({
+        'inviting': inviting,
         'invited': invited,
         'email': email,
         'SITE_URL': settings.SITE_URL,
-        }))
+    }))
     send_mail(_(u"%s - potvrzení registrace" % inviting.campaign), message, None, [email], fail_silently=False)
 
 
 def register_mail(user_attendance):
     template = get_template('email/registration.html')
     email = user_attendance.userprofile.user.email
-    message = template.render(Context({ 'user': user_attendance,
+    message = template.render(Context({
+        'user': user_attendance,
         'SITE_URL': settings.SITE_URL,
-        }))
+    }))
     send_mail(_(u"%s - potvrzení registrace" % user_attendance.campaign), message, None, [email], fail_silently=False)
+
 
 def team_membership_approval_mail(user_attendance):
     template = get_template('email/team_membership_approval.html')
     email = user_attendance.userprofile.user.email
-    message = template.render(Context({ 'user': user_attendance,
+    message = template.render(Context({
+        'user': user_attendance,
         'SITE_URL': settings.SITE_URL,
-        }))
+    }))
     send_mail(_(u"%s - potvrzení ověření členství v týmu" % user_attendance.campaign), message, None, [email], fail_silently=False)
+
 
 def team_membership_denial_mail(user_attendance, denier, reason):
     template = get_template('email/team_membership_denial.html')
     email = user_attendance.userprofile.user.email
-    message = template.render(Context({ 'user': user_attendance,
+    message = template.render(Context({
+        'user': user_attendance,
         'denier': denier,
         'SITE_URL': settings.SITE_URL,
         'reason': reason,
-        }))
+    }))
     send_mail(_(u"%s - ZAMÍTNUTÍ členství v týmu" % user_attendance.campaign), message, None, [email], fail_silently=False)
+
 
 def team_created_mail(user_attendance):
     template = get_template('email/team_created.html')
     email = user_attendance.userprofile.user.email
-    message = template.render(Context({ 'user': user_attendance,
+    message = template.render(Context({
+        'user': user_attendance,
         'SITE_URL': settings.SITE_URL,
-        }))
+    }))
     send_mail(_(u"%s - potvrzení vytvoření týmu" % user_attendance.campaign), message, None, [email], fail_silently=False)
+
 
 def invitation_mail(user_attendance, email):
     template = get_template('email/invitation.html')
     if len(email) != 0:
-        message = template.render(Context({ 'inviting': user_attendance,
+        message = template.render(Context({
+            'inviting': user_attendance,
             'SITE_URL': settings.SITE_URL,
             'email': email,
-            }))
+        }))
         send_mail(_(u"%s - pozvánka do týmu" % user_attendance.campaign), message, None, [email], fail_silently=False)
+
 
 def payment_confirmation_mail(user_attendance):
     template = get_template('email/payment_confirmation.html')
     email = user_attendance.userprofile.user.email
     message = template.render(Context({
-                'user': user_attendance,
-                'SITE_URL': settings.SITE_URL}))
+        'user': user_attendance,
+        'SITE_URL': settings.SITE_URL}))
     send_mail(_(u"%s - přijetí platby") % user_attendance.campaign, message, None, [email], fail_silently=False)
+
 
 def payment_confirmation_company_mail(user_attendance):
     template = get_template('email/payment_comfirmation_company.html')
     email = user_attendance.userprofile.user.email
     message = template.render(Context({
-                'user': user_attendance,
-                'company': user_attendance.team.subsidiary.company if user_attendance.team else _(u"(není vybraná)"),
-                'SITE_URL': settings.SITE_URL}))
+        'user': user_attendance,
+        'company': user_attendance.team.subsidiary.company if user_attendance.team else _(u"(není vybraná)"),
+        'SITE_URL': settings.SITE_URL}))
     send_mail(_(u"%s - přijetí platby" % user_attendance.campaign), message, None, [email], fail_silently=False)
+
 
 def company_admin_register_competitor_mail(user_attendance):
     template = get_template('email/company_admin_register_competitor.html')
     email = user_attendance.userprofile.user.email
-    message = template.render(Context({ 'user': user_attendance,
+    message = template.render(Context({
+        'user': user_attendance,
         'company': user_attendance.team.subsidiary.company,
         'SITE_URL': settings.SITE_URL,
-        }))
+    }))
     send_mail(_(u"%s - firemní koordinátor - potvrzení registrace" % user_attendance.campaign), message, None, [email], fail_silently=False)
+
 
 def company_admin_register_no_competitor_mail(company_admin, company):
     template = get_template('email/company_admin_register_no_competitor.html')
     email = company_admin.user.email
-    message = template.render(Context({ 'company_admin': company_admin,
+    message = template.render(Context({
+        'company_admin': company_admin,
         'company': company,
         'SITE_URL': settings.SITE_URL,
-        }))
+    }))
     send_mail(_(u"%s - firemní koordinátor - potvrzení registrace" % company_admin.campaign), message, None, [email], fail_silently=False)
+
 
 def company_admin_approval_mail(company_admin):
     template = get_template('email/company_admin_approval.html')
     email = company_admin.user.email
-    message = template.render(Context({ 'company_admin': company_admin,
+    message = template.render(Context({
+        'company_admin': company_admin,
         'company': company_admin.administrated_company,
         'SITE_URL': settings.SITE_URL,
-        }))
+    }))
     send_mail(_(u"%s - firemní koordinátor - schválení správcovství firmy" % company_admin.campaign), message, None, [email], fail_silently=False)
+
 
 def company_admin_rejected_mail(company_admin):
     template = get_template('email/company_admin_rejected.html')
     email = company_admin.user.email
-    message = template.render(Context({ 'company_admin': company_admin,
+    message = template.render(Context({
+        'company_admin': company_admin,
         'company': company_admin.administrated_company,
         'SITE_URL': settings.SITE_URL,
-        }))
+    }))
     send_mail(_(u"%s - firemní koordinátor - zamítnutí správcovství firmy" % company_admin.campaign), message, None, [email], fail_silently=False)

@@ -1,8 +1,25 @@
 # -*- coding: utf-8 -*-
+
+# Author: Petr Dlouhý <petr.dlouhy@auto-mat.cz>
+#
+# Copyright (C) 2015 o.s. Auto*Mat
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import os
 from InvoiceGenerator.api import Invoice, Item, Client, Provider, Creator
 from InvoiceGenerator.pdf import SimpleInvoice
-import models
 import datetime
 
 
@@ -16,10 +33,10 @@ def make_invoice_sheet_pdf(outfile, invoice):
         city=invoice.company.address_city,
         ir=invoice.company.ico,
         vat_id=invoice.company.dic,
-        )
+    )
 
     if invoice.order_number:
-      client.note = u"Číslo objednávky: %s" % invoice.order_number
+        client.note = u"Číslo objednávky: %s" % invoice.order_number
 
     provider = Provider(
         u"Auto*Mat, o.s.",
@@ -37,12 +54,12 @@ def make_invoice_sheet_pdf(outfile, invoice):
 U Městského soudu v Praze jsme vedeni pod spisovou značkou L 18119.
 Společně s vámi tvoříme město, ve kterém chceme žít. www.auto-mat.cz
 """,
-        )
+    )
 
     creator = Creator(
         u'Lucie Mullerová',
         stamp_filename=os.path.join(DIR, "static/img/stamp.png"),
-        )
+    )
 
     invoice_gen = Invoice(client, provider, creator)
     invoice_gen.title = u"Faktura %s/%s" % (invoice.sequence_number, invoice.exposure_date.year)

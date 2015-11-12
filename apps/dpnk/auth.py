@@ -1,4 +1,23 @@
 # -*- coding: utf-8 -*-
+
+# Author: Petr Dlouhý <petr.dlouhy@auto-mat.cz>
+#
+# Copyright (C) 2015 o.s. Auto*Mat
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordResetForm, PasswordChangeForm, SetPasswordForm
@@ -6,7 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
 from django.template import RequestContext
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
@@ -52,7 +71,7 @@ class PasswordResetForm(PasswordResetForm):
         else:
             raise forms.ValidationError(_(u"Tento email v systému není zanesen."))
 
-    #TODO: This is copy of original save method only adding RequestContext. This is quicfix, it should be done some more elegant way.
+    # TODO: This is copy of original save method only adding RequestContext. This is quicfix, it should be done some more elegant way.
     def save(self, domain_override=None,
              subject_template_name='registration/password_reset_subject.txt',
              email_template_name='registration/password_reset_email.html',
@@ -99,6 +118,5 @@ class PasswordResetForm(PasswordResetForm):
             send_mail(subject, email, from_email, [user.email], html_message=html_email)
 
 
-
 class PasswordChangeForm(SubmitMixin, PasswordChangeForm):
-   pass
+    pass

@@ -1,5 +1,24 @@
 # -*- coding: utf-8 -*-
 # Django settings for DPNK project.
+
+# Author: Petr Dlouhý <petr.dlouhy@auto-mat.cz>
+#
+# Copyright (C) 2015 o.s. Auto*Mat
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 import os
 import sys
 from django.core.urlresolvers import reverse_lazy
@@ -141,7 +160,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'bulk_update',
     'denorm',
-    #'cachalot',
+    # 'cachalot',
 )
 TEMPLATE_VISIBLE_SETTINGS = (
     'PAYU_POS_AUTH_KEY',
@@ -176,11 +195,11 @@ LEAFLET_CONFIG = {
     'TILES': [
         (_(u'cyklomapa'), 'http://tiles.prahounakole.cz/{z}/{x}/{y}.png', {'attribution': u'&copy; přispěvatelé <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
         (_(u'Všeobecná mapa'), 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': u'&copy; přispěvatelé <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
-        ],
+    ],
     'DEFAULT_ZOOM': 8,
     'MIN_ZOOM': 8,
     'MAX_ZOOM': 18,
-    'SPATIAL_EXTENT': [11.953,48.517,19.028,51.097],
+    'SPATIAL_EXTENT': [11.953, 48.517, 19.028, 51.097],
 }
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
@@ -260,12 +279,12 @@ MESSAGE_TAGS = {
     message_constants.SUCCESS: 'success',
     message_constants.WARNING: 'warning',
     message_constants.ERROR: 'danger',
-    }
+}
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # import local settings
 try:
-        from settings_local import *
+    from settings_local import *  # noqa
 except ImportError:
-        pass
+    pass

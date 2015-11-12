@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 # Author: Petr Dlouhý <petr.dlouhy@email.cz>
 #
 # Copyright (C) 2013 o.s. Auto*Mat
@@ -17,16 +18,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-from models import UserAttendance, Campaign
+from .models import UserAttendance, Campaign
 from django.http import Http404
 from django.core.urlresolvers import reverse
-import models
 import functools
 
 
@@ -68,7 +67,7 @@ def must_be_company_admin(fn):
         try:
             campaign = Campaign.objects.get(slug=request.subdomain)
         except Campaign.DoesNotExist:
-            raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>")% request.subdomain)
+            raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>") % request.subdomain)
 
         company_admin = models.get_company_admin(request.user, campaign)
         if company_admin:
@@ -92,8 +91,8 @@ def must_have_team(fn):
                 'title': getattr(view, 'title', _(u"Musíte mít vybraný tým")),
                 'registration_phase': getattr(view, 'registration_phase', ''),
                 'form': None,
-                }, context_instance=RequestContext(request))
-        return fn(view,request, user_attendance=user_attendance, *args, **kwargs)
+            }, context_instance=RequestContext(request))
+        return fn(view, request, user_attendance=user_attendance, *args, **kwargs)
     return wrapped
 
 
@@ -104,7 +103,7 @@ def must_be_in_phase(*phase_type):
             try:
                 campaign = Campaign.objects.get(slug=request.subdomain)
             except Campaign.DoesNotExist:
-                raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>")% request.subdomain)
+                raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>") % request.subdomain)
             phases = campaign.phase_set.filter(type__in=phase_type)
             for phase in phases:
                 if phase and phase.is_actual():
@@ -129,7 +128,7 @@ def must_be_competitor(fn):
             try:
                 campaign = Campaign.objects.get(slug=campaign_slug)
             except Campaign.DoesNotExist:
-                raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>")% campaign_slug)
+                raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>") % campaign_slug)
             try:
                 user_attendance = userprofile.userattendance_set.select_related('campaign', 'team', 't_shirt_size').get(campaign__slug=campaign_slug)
             except UserAttendance.DoesNotExist:
@@ -137,7 +136,7 @@ def must_be_competitor(fn):
                     userprofile=userprofile,
                     campaign=campaign,
                     approved_for_team='undecided',
-                    )
+                )
                 user_attendance.save()
 
             kwargs['user_attendance'] = user_attendance
@@ -173,7 +172,7 @@ def user_attendance_has(condition, message):
                     'title': getattr(view, 'title', ''),
                     'registration_phase': getattr(view, 'registration_phase', ''),
                     'form': None,
-                    }, context_instance=RequestContext(request))
+                }, context_instance=RequestContext(request))
             return fn(view, request, *args, **kwargs)
         return wrapped
     return decorator

@@ -1,4 +1,22 @@
 # -*- coding: utf-8 -*-
+
+# Author: Petr Dlouhý <petr.dlouhy@auto-mat.cz>
+#
+# Copyright (C) 2015 o.s. Auto*Mat
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 from unidecode import unidecode
 
@@ -117,7 +135,6 @@ def make_dline(**fields):
 def make_avfull(outfile, delivery_batch):
     try:
         today = datetime.datetime.today().strftime("%Y%m%d")
-        batch_date = delivery_batch.created.strftime("%y%m%d")
         tnt_account_reference = 111057
         for package_transaction in delivery_batch.packagetransaction_set.all():
             user_attendance = package_transaction.user_attendance
@@ -135,7 +152,7 @@ def make_avfull(outfile, delivery_batch):
                 "postcode": "100 00",
                 "country_code": "CZ",
                 "tnt_ac_reference": tnt_account_reference,
-                }
+            }
             receivers_address = {
                 "name": u"%s, %s" % (subsidiary.company, subsidiary.address_recipient),
                 "contact_name": user_attendance.userprofile.user.get_full_name(),
@@ -144,7 +161,7 @@ def make_avfull(outfile, delivery_batch):
                 "town": subsidiary.address_city,
                 "postcode": str(subsidiary.address_psc),
                 "country_code": "CZ",
-                }
+            }
             pick_up_address = {}
             delivery_address = {}
 
@@ -157,7 +174,7 @@ def make_avfull(outfile, delivery_batch):
                 receivers_address=receivers_address,
                 pick_up_address=pick_up_address,
                 delivery_address=delivery_address,
-                )+"\r\n"))
+            ) + "\r\n"))
 
             outfile.write(unidecode(make_bline(
                 con_reference=package_transaction.tnt_con_reference(),
@@ -170,7 +187,7 @@ def make_avfull(outfile, delivery_batch):
                 currency_code="CZK",
                 con_total_value=user_attendance.admission_fee(),
                 weight_in_kg=weight,
-                )+"\r\n"))
+            ) + "\r\n"))
 
             outfile.write(unidecode(make_cline(
                 con_reference=package_transaction.tnt_con_reference(),
@@ -183,7 +200,7 @@ def make_avfull(outfile, delivery_batch):
                 package_width=user_attendance.campaign.package_width,
                 package_depth=user_attendance.campaign.package_depth,
                 package_total_weight_kgs=weight,
-                )+"\r\n"))
+            ) + "\r\n"))
 
             outfile.write(unidecode(make_dline(
                 con_reference=package_transaction.tnt_con_reference(),
@@ -191,6 +208,6 @@ def make_avfull(outfile, delivery_batch):
                 con_note_number=package_transaction.tracking_number_cnc(),
                 package_type_seq_number=1,
                 article_type_sequence_number=1,
-                )+"\r\n"))
+            ) + "\r\n"))
     finally:
         outfile.close

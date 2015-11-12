@@ -9,7 +9,8 @@ from dpnk.rest import router
 
 from django.conf import settings
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^admin/odpovedi/$',
         answers,
         name='admin_answers'),
@@ -38,12 +39,14 @@ urlpatterns = patterns('',
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if 'rosetta' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-            url(r'^rosetta/', include('rosetta.urls')),
-                )
+    urlpatterns += patterns(
+        '',
+        url(r'^rosetta/', include('rosetta.urls')),
+    )
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^__debug__/', include(debug_toolbar.urls)),
     )

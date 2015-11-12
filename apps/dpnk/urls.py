@@ -19,11 +19,11 @@
 
 from django.conf.urls import patterns, url
 
-import views
-from forms import AuthenticationFormDPNK
-import dpnk.auth
-import company_admin_views
-from decorators import must_be_company_admin, must_be_in_group, must_be_competitor, must_have_team
+from . import views
+from .forms import AuthenticationFormDPNK
+from . import auth
+from . import company_admin_views
+from .decorators import must_be_in_group
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import login_required as login_required_simple
 from django.utils.translation import ugettext_lazy as _
@@ -139,7 +139,7 @@ urlpatterns = patterns(
         ),
     url(r'^address/$',
         views.UserAttendanceView.as_view(
-            template_name = "registration/address.html"
+            template_name="registration/address.html"
         )),
     url(r'^tracks/$',
         views.CombinedTracksKMLView.as_view()
@@ -203,14 +203,14 @@ urlpatterns = patterns(
         views.DPNKLoginView.as_view(
             form_class=AuthenticationFormDPNK,
             template_name='base_generic_form.html',
-            ),
+        ),
         name='login',
         ),
     url(r'^login/$',
         views.DPNKLoginView.as_view(
             form_class=AuthenticationFormDPNK,
             template_name='base_generic_form.html',
-            ),
+        ),
         name='login',
         ),
     url(r'^logout/$',
@@ -231,7 +231,7 @@ urlpatterns = patterns(
         ),
     url(r'^zapomenute_heslo/$',
         'django.contrib.auth.views.password_reset',
-        {'password_reset_form': dpnk.auth.PasswordResetForm},
+        {'password_reset_form': auth.PasswordResetForm},
         name='password_reset',
         ),
     url(r'^zapomenute_heslo/odeslano/$',
@@ -239,14 +239,14 @@ urlpatterns = patterns(
         name='password_reset_done'),
     url(r'^zapomenute_heslo/zmena/(?P<uidb64>[0-9A-Za-z_]+)-(?P<token>.+)/$',
         'django.contrib.auth.views.password_reset_confirm',
-        {'set_password_form': dpnk.auth.SetPasswordForm},
+        {'set_password_form': auth.SetPasswordForm},
         name='password_reset_confirm'),
     url(r'^zapomenute_heslo/dokonceno/$',
         'django.contrib.auth.views.password_reset_complete',
         name='password_reset_complete'),
     url(r'^zmena_hesla/$',
         'django.contrib.auth.views.password_change',
-        {'password_change_form': dpnk.auth.PasswordChangeForm},
+        {'password_change_form': auth.PasswordChangeForm},
         name='password_change'),
     url(r'^zmena_hesla_hotovo/$',
         'django.contrib.auth.views.password_change_done',
