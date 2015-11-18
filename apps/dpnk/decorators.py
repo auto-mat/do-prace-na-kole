@@ -40,9 +40,16 @@ def must_be_owner(fn):
         user_attendance = kwargs['user_attendance']
         view_object = view.get_object()
         if view_object and not user_attendance == view_object.user_attendance:
-            return render_to_response(view.template_name, {
-                'fullpage_error_message': mark_safe(_(u"Nemůžete vidět cizí objekt")),
-            }, context_instance=RequestContext(request))
+            response = render_to_response(
+                view.template_name,
+                {
+                    'fullpage_error_message': mark_safe(_(u"Nemůžete vidět cizí objekt")),
+                },
+                context_instance=RequestContext(request),
+                status=403,
+            )
+            response.status_message = "not_owner"
+            return response
         return fn(view, request, *args, **kwargs)
     return wrapper
 
@@ -53,15 +60,28 @@ def must_be_approved_for_team(fn):
     def wrapper(view, request, *args, **kwargs):
         user_attendance = kwargs['user_attendance']
         if not user_attendance.team:
-            return render_to_response(view.template_name, {
-                'fullpage_error_message': mark_safe(_(u"Nemáte zvolený tým")),
-            }, context_instance=RequestContext(request))
+            response = render_to_response(
+                view.template_name, {
+                    'fullpage_error_message': mark_safe(_(u"Nemáte zvolený tým")),
+                },
+                context_instance=RequestContext(request),
+                status=403,
+            )
+            response.status_message = "team_not_chosen"
+            return response
         if user_attendance.approved_for_team == 'approved':
             return fn(view, request, *args, **kwargs)
         else:
-            return render_to_response(view.template_name, {
-                'fullpage_error_message': mark_safe(_(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") % {'team': user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}),
-            }, context_instance=RequestContext(request))
+            response = render_to_response(
+                view.template_name,
+                {
+                    'fullpage_error_message': mark_safe(_(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") % {'team': user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}),
+                },
+                context_instance=RequestContext(request),
+                status=403,
+            )
+            response.status_message = "not_approved_for_team"
+            return response
     return wrapper
 
 
@@ -79,9 +99,16 @@ def must_be_company_admin(fn):
             kwargs['company_admin'] = company_admin
             return fn(view, request, *args, **kwargs)
 
-        return render_to_response(view.template_name, {
-            'fullpage_error_message': mark_safe(_(u"Tato stránka je určená pouze ověřeným Koordinátorům společností. K tuto funkci se musíte nejdříve <a href='%s'>přihlásit</a>" % reverse("company_admin_application"))),
-        }, context_instance=RequestContext(request))
+        response = render_to_response(
+            view.template_name,
+            {
+                'fullpage_error_message': mark_safe(_(u"Tato stránka je určená pouze ověřeným Koordinátorům společností. K tuto funkci se musíte nejdříve <a href='%s'>přihlásit</a>" % reverse("company_admin_application"))),
+            },
+            context_instance=RequestContext(request),
+            status=403,
+        )
+        response.status_message = "not_company_admin"
+        return response
     return wrapper
 
 
@@ -90,13 +117,20 @@ def must_have_team(fn):
     @must_be_competitor
     def wrapped(view, request, user_attendance=None, *args, **kwargs):
         if not user_attendance.team:
-            return render_to_response(view.template_name, {
-                'fullpage_error_message': mark_safe(_(u"Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse("zmenit_tym")),
-                'user_attendance': user_attendance,
-                'title': getattr(view, 'title', _(u"Musíte mít vybraný tým")),
-                'registration_phase': getattr(view, 'registration_phase', ''),
-                'form': None,
-            }, context_instance=RequestContext(request))
+            response = render_to_response(
+                view.template_name,
+                {
+                    'fullpage_error_message': mark_safe(_(u"Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse("zmenit_tym")),
+                    'user_attendance': user_attendance,
+                    'title': getattr(view, 'title', _(u"Musíte mít vybraný tým")),
+                    'registration_phase': getattr(view, 'registration_phase', ''),
+                    'form': None,
+                },
+                context_instance=RequestContext(request),
+                status=403,
+            )
+            response.status_message = "have_no_team"
+            return response
         return fn(view, request, user_attendance=user_attendance, *args, **kwargs)
     return wrapped
 
@@ -115,9 +149,15 @@ def must_be_in_phase(*phase_type):
                 if phase and phase.is_actual():
                     return fn(view, request, *args, **kwargs)
             phases_string = _(u" a ").join([six.text_type(models.Phase.TYPE_DICT[p]) for p in phase_type])
-            return render_to_response(view.template_name, {
-                'fullpage_error_message': mark_safe(_(u"Tento formulář se zobrazuje pouze ve fázích soutěže: %s") % phases_string),
-            }, context_instance=RequestContext(request))
+            response = render_to_response(
+                view.template_name, {
+                    'fullpage_error_message': mark_safe(_(u"Tento formulář se zobrazuje pouze ve fázích soutěže: %s") % phases_string),
+                },
+                context_instance=RequestContext(request),
+                status=403,
+            )
+            response.status_message = "out_of_phase"
+            return response
         return wrapped
     return decorator
 
@@ -149,9 +189,16 @@ def must_be_competitor(fn):
             kwargs['user_attendance'] = user_attendance
             return fn(view, request, *args, **kwargs)
 
-        return render_to_response(view.template_name, {
-            'fullpage_error_message': mark_safe(_(u"V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.") % reverse("company_structure")),
-        }, context_instance=RequestContext(request))
+        response = render_to_response(
+            view.template_name,
+            {
+                'fullpage_error_message': mark_safe(_(u"V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.") % reverse("company_structure")),
+            },
+            context_instance=RequestContext(request),
+            status=403,
+        )
+        response.status_message = "not_competitor"
+        return response
     return wrapper
 
 
@@ -173,13 +220,20 @@ def user_attendance_has(condition, message):
         def wrapped(view, request, *args, **kwargs):
             user_attendance = kwargs['user_attendance']
             if condition(user_attendance):
-                return render_to_response(view.template_name, {
-                    'fullpage_error_message': message,
-                    'user_attendance': user_attendance,
-                    'title': getattr(view, 'title', ''),
-                    'registration_phase': getattr(view, 'registration_phase', ''),
-                    'form': None,
-                }, context_instance=RequestContext(request))
+                response = render_to_response(
+                    view.template_name,
+                    {
+                        'fullpage_error_message': message,
+                        'user_attendance': user_attendance,
+                        'title': getattr(view, 'title', ''),
+                        'registration_phase': getattr(view, 'registration_phase', ''),
+                        'form': None,
+                    },
+                    context_instance=RequestContext(request),
+                    status=403,
+                )
+                response.status_message = "condition_not_fulfilled"
+                return response
             return fn(view, request, *args, **kwargs)
         return wrapped
     return decorator
@@ -190,9 +244,16 @@ def request_condition(condition, message):
         @functools.wraps(fn)
         def wrapped(view, request, *args, **kwargs):
             if condition(request, args, kwargs):
-                return render_to_response(view.template_name, {
-                    'fullpage_error_message': message,
-                }, context_instance=RequestContext(request))
+                response = render_to_response(
+                    view.template_name,
+                    {
+                        'fullpage_error_message': message,
+                    },
+                    context_instance=RequestContext(request),
+                    status=403,
+                )
+                response.status_message = "request_condition"
+                return response
             return fn(view, request, *args, **kwargs)
         return wrapped
     return decorator
