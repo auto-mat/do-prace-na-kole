@@ -4,5 +4,12 @@
 {% block content %}
 <p>
 {% trans "Omlouváme se, ale taková stránka zde neexistuje. Pokud si myslíte, že by zde být měla, prosím kontaktujte <a href='kontakt@dopracenakole.net'>kontakt@dopracenakole.net</a>" %}
+{% if messages %}
+   <ul class="messages">
+      {% for message in messages %}
+         <li>{{ message }}</li>
+      {% endfor %}
+   </ul>
+{% endif %}
 </p>
 {% endblock %}

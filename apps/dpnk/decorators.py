@@ -26,6 +26,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from .models import UserAttendance, Campaign
 from django.http import Http404
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from . import models
 from . import util
@@ -70,7 +71,8 @@ def must_be_company_admin(fn):
         try:
             campaign = Campaign.objects.get(slug=request.subdomain)
         except Campaign.DoesNotExist:
-            raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>") % request.subdomain)
+            messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % request.subdomain)
+            raise Http404()
 
         company_admin = models.get_company_admin(request.user, campaign)
         if company_admin:
@@ -106,7 +108,8 @@ def must_be_in_phase(*phase_type):
             try:
                 campaign = Campaign.objects.get(slug=request.subdomain)
             except Campaign.DoesNotExist:
-                raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>") % request.subdomain)
+                messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % request.subdomain)
+                raise Http404()
             phases = campaign.phase_set.filter(type__in=phase_type)
             for phase in phases:
                 if phase and phase.is_actual():
@@ -131,7 +134,8 @@ def must_be_competitor(fn):
             try:
                 campaign = Campaign.objects.get(slug=campaign_slug)
             except Campaign.DoesNotExist:
-                raise Http404(_(u"<h1>Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.</h1>") % campaign_slug)
+                messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % campaign_slug)
+                raise Http404()
             try:
                 user_attendance = userprofile.userattendance_set.select_related('campaign', 'team', 't_shirt_size').get(campaign__slug=campaign_slug)
             except UserAttendance.DoesNotExist:
