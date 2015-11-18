@@ -4,7 +4,7 @@ Django
 django-import-export
 -e git+https://github.com/PetrDlouhy/django-smart-selects.git#egg=django-smart-selects
 psycopg2
-python3-memcached
+-e git+https://github.com/linsomniac/python-memcached.git#egg=python-memcached
 django-chart-tools
 django-extensions
 django-debug-toolbar
@@ -35,7 +35,7 @@ newrelic
 easy_thumbnails
 django-crispy-forms
 django-class-based-auth-views
--e git+https://github.com/tkaemming/django-subdomains.git#egg=django-subdomains
+-e git+https://github.com/fabfuel/django-subdomains.git#egg=django-subdomains
 -e git+https://github.com/PetrDlouhy/django-adminfilters.git@develop#egg=django-adminfilters
 django-compressor
 slumber

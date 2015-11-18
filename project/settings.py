@@ -163,6 +163,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'bulk_update',
     'denorm',
+    'subdomains',
     # 'cachalot',
 )
 TEMPLATE_VISIBLE_SETTINGS = (

@@ -1,0 +1,57 @@
+[
+    {
+        "fields": {
+            "domain": "localhost:8000",
+            "name": "localhost:8000"
+        },
+        "model": "sites.site",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "domain": "testserver",
+            "name": "testserver"
+        },
+        "model": "sites.site",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "admission_fee": 0.0,
+            "admission_fee_company": 0.0,
+            "benefitial_admission_fee": 0.0,
+            "email_footer": "",
+            "free_entry_cases_html": "",
+            "invoice_sequence_number_first": 0,
+            "invoice_sequence_number_last": 999999999,
+            "late_admission_fee": 0.0,
+            "late_admission_fee_company": 0.0,
+            "mailing_list_enabled": false,
+            "mailing_list_id": "",
+            "minimum_percentage": 66,
+            "minimum_rides_base": 25,
+            "name": "Testing campaign",
+            "package_depth": 35,
+            "package_height": 1,
+            "package_weight": 0.25,
+            "package_width": 26,
+            "previous_campaign": null,
+            "slug": "testing-campaign",
+            "tracking_number_first": 0,
+            "tracking_number_last": 999999999,
+            "trip_plus_distance": 5
+        },
+        "model": "dpnk.campaign",
+        "pk": 339
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "date_from": "2010-11-01",
+            "date_to": "2010-11-30",
+            "type": "registration"
+        },
+        "model": "dpnk.phase",
+        "pk": 1
+    }
+]
