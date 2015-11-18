@@ -22,7 +22,7 @@ import unidecode
 import re
 import datetime
 from django.http import HttpResponse
-import settings
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
 DAYS_EXCLUDE = (
