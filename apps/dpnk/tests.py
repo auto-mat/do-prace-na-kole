@@ -81,3 +81,7 @@ class AdminFilterTests(TestCase):
         address = reverse('zmenit_triko')
         response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
         self.assertEqual(response.status_code, 200)
+
+        address = reverse('working_schedule')
+        response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
+        self.assertEqual(response.status_code, 200)

@@ -53,5 +53,15 @@
         },
         "model": "dpnk.phase",
         "pk": 1
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "date_from": "2010-12-01",
+            "date_to": "2010-12-30",
+            "type": "competition"
+        },
+        "model": "dpnk.phase",
+        "pk": 2
     }
 ]
