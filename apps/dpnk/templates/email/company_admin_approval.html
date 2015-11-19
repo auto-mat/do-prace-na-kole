@@ -1,13 +1,14 @@
-{% load localeurl_tags %}
+{% load i18n %}
 {% autoescape off %}
 
+{% language company_admin.user.userprofile.language %}
 Zpráva pro {{ company_admin.user }}, firemního správce ve společnosti {{ company }} v soutěži {{ company_admin.campaign }}.
 
 Dobrý den,
 právě jste se stal/a firemním správcem/správkyní společnosti {{ company }}.
 Můžete se přihlásit do registračního systému {{ company_admin.campaign }}. Přihlášení se liší, pokud jste soutěžící/m v této soutěži nebo ne.
-Pokud JSTE soutěžící, tj. registroval/a jste se standardně jako člen/ka týmu, přihlašte se jako dřív a využijte tlačítko „Přejít na správu firmy“ ve Vašem profilu (link http://{{ company_admin.campaign.slug }}.{{ SITE_URL }}{% locale_url company_admin.user.userprofile.language 'profil' %}).
-Pokud NEJSTE soutěžící, tj. registroval/a jste se přes stránku určenou firemním správcům, jděte tam znovu (link http://{{ company_admin.campaign.slug }}.{{ SITE_URL }}{% locale_url company_admin.user.userprofile.language 'company_admin_application' %}).
+Pokud JSTE soutěžící, tj. registroval/a jste se standardně jako člen/ka týmu, přihlašte se jako dřív a využijte tlačítko „Přejít na správu firmy“ ve Vašem profilu (link http://{{ company_admin.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}).
+Pokud NEJSTE soutěžící, tj. registroval/a jste se přes stránku určenou firemním správcům, jděte tam znovu (link http://{{ company_admin.campaign.slug }}.{{ SITE_URL }}{% url 'company_admin_application' %}).
 Po přihlášení prosím vyplňte fakturační údaje společnosti, které nám po skončení registrací poslouží pro vystavení faktury. Toto stačí udělat jednou.
 Dále můžete sledovat stav registrací a postupně schvalovat „Vaše“ účastníky s tím, že je zahrnete na společnou fakturu. V průběhu registrací budou přibývat další a další soutěžící, tuto kontrolu proto provedete několikrát.
 Děkujeme Vám za podporu soutěže {{ company_admin.campaign }} a těšíme se na spolupráci.
@@ -15,5 +16,6 @@ Váš organizační tým soutěže {{ company_admin.campaign }}
 
 ---
 {{ company_admin.campaign.email_footer }}
+{% endlanguage %}
 
 {% endautoescape %}

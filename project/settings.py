@@ -86,7 +86,7 @@ STATICFILES_FINDERS = (
 SECRET_KEY = ''
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'localeurl.middleware.LocaleURLMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'subdomains.middleware.SubdomainMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -149,7 +149,6 @@ INSTALLED_APPS = (
     'adminsortable2',
     'reportlab',
     'dbbackup',
-    'localeurl',
     'related_admin',
     'easy_thumbnails',
     'crispy_forms',

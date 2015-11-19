@@ -1,13 +1,14 @@
-{% load localeurl_tags %}
+{% load i18n %}
 {% autoescape off %}
 
+{% language user.userprofile.language %}
 Zpráva pro soutěžící/ho {{ user.userprofile }} v soutěži {{ user.campaign }}.
 
 Dobrý den,
 
 vaše členství v týmu {{user.team.name}} bylo právě odsouhlaseno. Můžete se přihlásit ke svému profilu pomocí adresy
 {% block profile_link %}
-http://{{ user.campaign.slug }}.{{ SITE_URL }}{% locale_url user.userprofile.language 'login' %}
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
 {% endblock %}
 
 Děkujeme Vám za přízeň a těšíme se na viděnou v květnu!
@@ -15,6 +16,7 @@ Váš organizační tým soutěže {{ user.campaign }}
 
 ---
 {{ user.campaign.email_footer }}
+{% endlanguage %}
 
 
 {% endautoescape %}

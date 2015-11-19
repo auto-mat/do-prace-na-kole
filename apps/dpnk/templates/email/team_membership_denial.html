@@ -1,6 +1,7 @@
-{% load localeurl_tags %}
+{% load i18n %}
 {% autoescape off %}
 
+{% language user.userprofile.language %}
 Zpráva pro soutěžící/ho {{ user.userprofile }} v soutěži {{ user.campaign }}.
 
 Dobrý den,
@@ -9,7 +10,7 @@ bohužel Vaše členství v týmu {{user.team.name}} bylo právě ZAMÍTNUTO čl
 
 Budete se muset přihlásit do editace profilu na adrese
 {% block profile_link %}
-http://{{ user.campaign.slug }}.{{ SITE_URL }}{% locale_url user.userprofile.language 'zmenit_tym' %}
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'zmenit_tym' %}
 {% endblock %}
 a vybrat si jiný tým, nebo si založit tým vlastní.
 
@@ -20,6 +21,7 @@ Váš organizační tým soutěže {{ user.campaign }}
 
 ---
 {{ user.campaign.email_footer }}
+{% endlanguage %}
 
 
 {% endautoescape %}

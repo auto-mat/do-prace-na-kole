@@ -1,5 +1,7 @@
-{% load localeurl_tags %}{% autoescape off %}
+{% load i18n %}
+{% autoescape off %}
 
+{% language new_user.userprofile.language %}
 Zpráva pro soutěžící/ho {{ team_member.userprofile }}, člena/členku týmu {{new_user.team.name}} v soutěži {{ new_user.campaign }}.
 
 Dobrý den,
@@ -10,7 +12,7 @@ Vzhledem k otevřenému charakteru soutěže se další soutěžící z Vaší o
 
 Členství kandidáta/ky ve Vašem týmu můžete potvrdit nebo zamítnout pomocí tohoto odkazu:
 {% block approval_link %}
-http://{{ new_user.campaign.slug }}.{{ SITE_URL }}{% locale_url new_user.userprofile.language 'team_members' %}
+http://{{ new_user.campaign.slug }}.{{ SITE_URL }}{% url new_user.userprofile.language 'team_members' %}
 {% endblock %}
 
 Ujištění pro Vás: Zamítnutím kandidáta/ku nediskvalifikujete ze soutěže. Pokud si do konce dubna vytvoří vlastní tým nebo se připojí do jiného týmu, bude vše v pořádku.
@@ -20,5 +22,6 @@ Váš organizační tým soutěže {{ new_user.campaign }}
 
 ---
 {{ new_user.campaign.email_footer }}
+{% endlanguage %}
 
 {% endautoescape %}

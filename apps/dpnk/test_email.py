@@ -85,6 +85,14 @@ class TestEmails(TestCase):
 
     def test_send_company_admin_approval_mail(self):
         email.company_admin_approval_mail(self.company_admin)
+        email.company_admin_approval_mail(self.company_admin)
 
     def test_send_company_admin_rejected_mail(self):
         email.company_admin_rejected_mail(self.company_admin)
+
+
+class TestEmailsEn(TestEmails):
+    def setUp(self):
+        super(TestEmailsEn, self).setUp()
+        self.userprofile.language = "en"
+        self.company_admin.user.userprofile.language = "en"

@@ -1,21 +1,22 @@
-{% load localeurl_tags %}
+{% load i18n %}
 {% autoescape off %}
 
+{% language user.userprofile.language %}
 Zpráva pro soutěžící/ho {{ user.userprofile }} v soutěži {{ user.campaign }}.
 
 Vítejte v soutěži Do práce na kole!
 
 Právě jste se registroval/a do kampaně {{ user.campaign }}. Než budete moct vyjet, projděte prosím ještě všechny kroky na adrese:
 {% block profile_link %}
-http://{{ user.campaign.slug }}.{{ SITE_URL }}{% locale_url user.userprofile.language 'upravit_profil' %}
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'upravit_profil' %}
 {% endblock %}
 
-Váš email, se kterým se budete přihlašovat je {{ user.userprofile.user.email }}. Vaše heslo zde kvůli bezpečnosti neuvádíme, ale můžete si ho kdykoli nechat zaslat znovu z webu http://{{ user.campaign.slug }}.{{ SITE_URL }}{% locale_url user.userprofile.language 'password_change' %}
+Váš email, se kterým se budete přihlašovat je {{ user.userprofile.user.email }}. Vaše heslo zde kvůli bezpečnosti neuvádíme, ale můžete si ho kdykoli nechat zaslat znovu z webu http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'password_change' %}
 
 Máte už soupeře? Soutěž bude pro Vás zábavnější, když se do ní zapojí i Vaši známí. Koho byste rádi vyzvali? Kolegy z Vašeho nebo jiného oddělení? Vaše dodavatele nebo zákazníky? Nebo změříte síly a vytrvalost s konkurencí?
 
 Každý týden Vám zašleme zprávu s novinkami, ať už se budou týkat registrační fáze (do konce dubna) nebo soutěžní fáze (v květnu). Prosíme Vás, sledujte čas od času Váš osobní profil 
-http://{{ user.campaign.slug }}.{{ SITE_URL }}{% locale_url user.userprofile.language 'profil' %}
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}
 , který budete využívat až do konce soutěže jako Váš osobní rozcestník - můžete tam měnit Vaše osobní údaje, zvolíte si soutěžní kategorie a budete si zde evidovat jízdy na kole. Pokud si něčím nejste jistí, ozvěte se na kontakt@dopracenakole.net.
 
 Děkujeme Vám za zájem a těšíme se na viděnou v květnu!
@@ -23,5 +24,6 @@ Váš organizační tým soutěže {{ user.campaign }}
 
 ---
 {{ user.campaign.email_footer }}
+{% endlanguage %}
 
 {% endautoescape %}

@@ -41,9 +41,14 @@ def approval_request_mail(user_attendance):
 def invitation_register_mail(inviting, invited):
     template = get_template('email/invitation.html')
     email = invited.userprofile.user.email
+    if not invited:
+        lang_code = inviting.userprofile.language
+    else:
+        lang_code = inviting.userprofile.language
     message = template.render(Context({
         'inviting': inviting,
         'invited': invited,
+        'lang_code': lang_code,
         'email': email,
         'SITE_URL': settings.SITE_URL,
     }))
@@ -97,6 +102,7 @@ def invitation_mail(user_attendance, email):
     if len(email) != 0:
         message = template.render(Context({
             'inviting': user_attendance,
+            'lang_code': user_attendance.userprofile.language,
             'SITE_URL': settings.SITE_URL,
             'email': email,
         }))

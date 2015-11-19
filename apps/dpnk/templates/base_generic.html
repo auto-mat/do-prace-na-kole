@@ -2,8 +2,8 @@
 {% load static %}
 {% load compress %}
 {% load analytical %}
-{% load localeurl_tags %}
 <!DOCTYPE html>
+{% get_available_languages as languages %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 {% analytical_head_top %}
@@ -47,8 +47,11 @@
                </button>
                <nav>
                 <ul class="lang_switch">
-                         <li><a href="{{ request.path|chlocale:"cs"}}" class="switch-czech" title="Česky">CZ</a></li>
-                         <li><a href="{{ request.path|chlocale:"en"}}" class="switch-english" title="English">EN</a></li>
+                         {% for lang_code, lang_name in languages %}
+                           {% language lang_code %}
+                             <a href="{% url request.resolver_match.view_name %}" class="switch-{{ lang_code }}">{{ lang_name }}</a>
+                           {% endlanguage %}
+                         {% endfor %}
                     </ul>
                   <div id="collapsing_menu" class="collapse navbar-collapse">
                    

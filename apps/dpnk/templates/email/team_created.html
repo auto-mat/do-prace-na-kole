@@ -1,6 +1,7 @@
-{% load localeurl_tags %}
+{% load i18n %}
 {% autoescape off %}
 
+{% language user.userprofile.language %}
 Zpráva pro soutěžící/ho {{ user.userprofile }}, zakladatele/ku týmu {{user.team.name}} v soutěži {{ user.campaign }}.
 
 Dobrý den,
@@ -9,7 +10,7 @@ Váš tým {{user.team.name}} byl právě vytvořen.
 
 Na adrese 
 {% block invite_link %}
-http://{{ user.campaign.slug }}.{{ SITE_URL }}{% locale_url user.userprofile.language 'pozvanky' %}
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'pozvanky' %}
 {% endblock %}
 můžete pozvat své kolegy k přihlášení do vašeho týmu.
 
@@ -17,11 +18,11 @@ Pokud chcete své kolegy/ně vyzvat k vytvoření jejich vlastního týmu, odka�
 
 Ke svému profilu se můžete přihlásit pomocí adresy
 {% block profile_link %}
-http://{{ user.campaign.slug }}.{{ SITE_URL }}{% locale_url user.userprofile.language 'login' %}
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
 {% endblock %}
 
 Vašemu týmu může vyjádřit podporu Váš zaměstnavatel tím, že za Vás uhradí startovné, nebo dokonce že vyhlásí celofiremní kampaň Do práce na kole. Soutěžit pak budete nejen v soutěžním městě, ale také se všemi zaměstnanci Vaší organizace, ať už pracují kdekoli. Jak na to? Kontaktujte osobu, do jejíž kompetence podobné věci patří (vedoucí CSR oddělení, vedoucí vnitřní komunikace, vedoucí PR, ředitel/ka atd.) a nabídněte jí tyto možnosti nebo odkaz na web 
-http://{{ user.campaign.slug }}.{{ SITE_URL }}{% locale_url user.userprofile.language 'company_admin_application' %}
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'company_admin_application' %}
 
 Děkujeme Vám za přízeň a těšíme se na viděnou v květnu!
 Váš organizační tým soutěže {{ user.campaign }}
@@ -30,5 +31,6 @@ P.S. Zapojit do soutěže Vašeho zaměstnavatele se fakt vyplatí - víc soutě
 
 ---
 {{ user.campaign.email_footer }}
+{% endlanguage %}
 
 {% endautoescape %}

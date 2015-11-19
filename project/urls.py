@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.conf.urls.i18n import i18n_patterns
 from django.contrib.gis import admin
 from dpnk.views import questionnaire_results, questionnaire_answers, questions, answers
 from dpnk import views
@@ -31,13 +32,15 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
     url(r'^chaining/', include('smart_selects.urls')),
     url(r'^admin/', include("massadmin.urls")),
-    url(r'^', include("dpnk.urls")),
     url(r"^su/", include("django_su.urls")),
-    url(r'^localeurl/', include('localeurl.urls')),
     url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^rest/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += i18n_patterns(
+    url(r'^', include("dpnk.urls")),
+)
 
 if 'rosetta' in settings.INSTALLED_APPS:
     urlpatterns += patterns(
