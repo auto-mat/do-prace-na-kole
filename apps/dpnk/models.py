@@ -44,6 +44,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files import File
 from django.utils.safestring import mark_safe
+from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
 from polymorphic import PolymorphicModel
 from denorm import denormalized, depend_on_related
@@ -67,6 +68,7 @@ def get_address_string(address):
     return ", ".join(filter(lambda x: x != "", [address.recipient, "%s %s" % (address.street, address.street_number), "%s %s" % (util.format_psc(address.psc), address.city)]))
 
 
+@python_2_unicode_compatible
 class Address(CompositeField):
     street = models.CharField(
         verbose_name=_(u"Ulice"),
@@ -118,10 +120,11 @@ class Address(CompositeField):
         blank=False,
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return get_address_string(self)
 
 
+@python_2_unicode_compatible
 class City(models.Model):
     """Město"""
 
@@ -151,10 +154,11 @@ class City(models.Model):
         blank=False,
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % self.name
 
 
+@python_2_unicode_compatible
 class CityInCampaign(models.Model):
     """Město v kampani"""
 
@@ -178,10 +182,11 @@ class CityInCampaign(models.Model):
         default=True,
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return "%(city)s (%(campaign)s)" % {'campaign': self.campaign.name, 'city': self.city.name}
 
 
+@python_2_unicode_compatible
 class Company(models.Model):
     """Firma"""
 
@@ -218,13 +223,14 @@ class Company(models.Model):
         address_complete = self.address.street and self.address.street_number and self.address.psc and self.address.city
         return self.name and address_complete and self.ico
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % self.name
 
     def company_address(self):
         return get_address_string(self.address)
 
 
+@python_2_unicode_compatible
 class Subsidiary(models.Model):
     """Pobočka"""
 
@@ -249,7 +255,7 @@ class Subsidiary(models.Model):
         default=True,
         null=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return get_address_string(self.address)
 
     def name(self):
@@ -262,6 +268,7 @@ def validate_length(value, min_length=25):
         raise ValidationError(_(u"Řetězec by neměl být kratší než %(min)s znaků a delší než %(max)s znaků") % {'min': min_length, 'max': str_len})
 
 
+@python_2_unicode_compatible
 class Team(models.Model):
     """Profil týmu"""
 
@@ -334,7 +341,7 @@ class Team(models.Model):
     def get_length(self):
         return results.get_team_length(self)
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s)" % (self.name, u", ".join([u.userprofile.name() for u in self.members()]))
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
@@ -348,14 +355,16 @@ class Team(models.Model):
         super(Team, self).save(force_insert, force_update, *args, **kwargs)
 
 
+@python_2_unicode_compatible
 class TeamName(Team):
     class Meta:
         proxy = True
 
-    def __unicode__(self):
+    def __str__(self):
         return unicode(self.name)
 
 
+@python_2_unicode_compatible
 class Campaign(models.Model):
     """kampaň"""
 
@@ -494,7 +503,7 @@ class Campaign(models.Model):
         blank=True,
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def user_attendances_for_delivery(self):
@@ -569,6 +578,7 @@ class Phase(models.Model):
         return self.has_started() and not self.has_finished()
 
 
+@python_2_unicode_compatible
 class TShirtSize(models.Model):
     """Velikost trička"""
 
@@ -605,7 +615,7 @@ class TShirtSize(models.Model):
         unique_together = (("name", "campaign"),)
         ordering = ["order"]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -615,6 +625,7 @@ class UserAttendanceForm(forms.ModelForm):
         self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
 
 
+@python_2_unicode_compatible
 class UserAttendance(models.Model):
     """Účast uživatele v kampani"""
 
@@ -719,7 +730,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     name_for_trusted.admin_order_field = 'userprofile__user__last_name'
     name_for_trusted.short_description = _(u"Jméno")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.userprofile.name()
 
     def admission_fee(self):
@@ -977,14 +988,16 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return super(UserAttendance, self).save(*args, **kwargs)
 
 
+@python_2_unicode_compatible
 class UserAttendanceRelated(UserAttendance):
     class Meta:
         proxy = True
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s - %s" % (self.userprofile.name(), self.campaign.slug)
 
 
+@python_2_unicode_compatible
 class UserProfile(models.Model):
     """Uživatelský profil"""
 
@@ -1091,7 +1104,7 @@ class UserProfile(models.Model):
             else:
                 return self.user.username
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
     def competition_edition_allowed(self, competition):
@@ -1106,6 +1119,7 @@ class UserProfile(models.Model):
         super(UserProfile, self).save(force_insert, force_update, *args, **kwargs)
 
 
+@python_2_unicode_compatible
 class CompanyAdmin(models.Model):
     """Profil firemního administrátora"""
 
@@ -1183,7 +1197,7 @@ class CompanyAdmin(models.Model):
     def get_userprofile(self):
         return self.user.userprofile
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.get_full_name()
 
     def save(self, *args, **kwargs):
@@ -1199,6 +1213,7 @@ class CompanyAdmin(models.Model):
                 company_admin_rejected_mail(self)
 
 
+@python_2_unicode_compatible
 @with_author
 class DeliveryBatch(models.Model):
     """Dávka objednávek"""
@@ -1225,7 +1240,7 @@ class DeliveryBatch(models.Model):
         verbose_name = _(u"Dávka objednávek")
         verbose_name_plural = _(u"Dávky objednávek")
 
-    def __unicode__(self):
+    def __str__(self):
         return unicode(self.created)
 
     @transaction.atomic
@@ -1259,6 +1274,7 @@ def create_delivery_files(sender, instance, created, **kwargs):
         instance.save()
 
 
+@python_2_unicode_compatible
 @with_author
 class Invoice(models.Model):
     """Faktura"""
@@ -1321,7 +1337,7 @@ class Invoice(models.Model):
         blank=True,
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % self.sequence_number
 
     def paid(self):
@@ -1828,6 +1844,7 @@ class Trip(models.Model):
         return self.date >= util.today()
 
 
+@python_2_unicode_compatible
 class Competition(models.Model):
     """Soutěž"""
 
@@ -2042,7 +2059,7 @@ class Competition(models.Model):
                     self.company_competitors.remove(userprofile.company())
         results.recalculate_result_competitor_nothread(userprofile)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % self.name
 
 
@@ -2084,6 +2101,7 @@ class CompetitionForm(forms.ModelForm):
                 self.fields['company_competitors'].queryset = self.instance.company_competitors
 
 
+@python_2_unicode_compatible
 class CompetitionResult(models.Model):
     """Výsledek soutěže"""
     class Meta:
@@ -2165,7 +2183,7 @@ class CompetitionResult(models.Model):
             if self.team:
                 return self.team.get_rides_count_denorm or ""
 
-    def __unicode__(self):
+    def __str__(self):
         if self.competition.competitor_type == 'team':
             return "%s" % self.team.name
         elif self.competition.competitor_type == 'company':
@@ -2188,6 +2206,7 @@ class CompetitionResult(models.Model):
             return UserAttendance.objects.filter(team__subsidiary__company=self.company)
 
 
+@python_2_unicode_compatible
 class ChoiceType(models.Model):
     """Typ volby"""
     class Meta:
@@ -2207,7 +2226,7 @@ class ChoiceType(models.Model):
         verbose_name=_(u"Typ volby je použitelný pro víc otázek"),
         default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % self.name
 
 
@@ -2220,6 +2239,7 @@ class QuestionForm(forms.ModelForm):
             self.fields['choice_type'].queryset = ChoiceType.objects.filter(universal=True)
 
 
+@python_2_unicode_compatible
 class Question(models.Model):
 
     class Meta:
@@ -2290,13 +2310,14 @@ class Question(models.Model):
         default=True,
         null=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % (self.name or self.text)
 
     def with_answer(self):
         return self.comment_type or self.with_attachment or self.type != 'text' or self.choice_type is not None
 
 
+@python_2_unicode_compatible
 class Choice(models.Model):
 
     class Meta:
@@ -2322,10 +2343,11 @@ class Choice(models.Model):
         default=None,
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % self.text
 
 
+@python_2_unicode_compatible
 class Answer(models.Model):
     """Odpověď"""
     class Meta:
@@ -2358,7 +2380,7 @@ class Answer(models.Model):
     def str_choices(self):
         return ", ".join([choice.text for choice in self.choices.all()])
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % self.str_choices()
 
 

@@ -140,7 +140,7 @@ class CompanyAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.M
 
 
 class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.ModelAdmin):
-    list_display = ('__unicode__', 'company', 'city', 'teams_text', 'id', )
+    list_display = ('__str__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline, ]
     list_filter = [SubsidiaryCampaignFilter, 'city', 'active']
     search_fields = ('address_recipient', 'company__name', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'address_district')
@@ -382,7 +382,7 @@ remove_mailing_id.short_description = _(u"Odstranit mailing ID a hash")
 
 
 class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
-    list_display = ('user', '__unicode__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
+    list_display = ('user', '__str__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
     list_filter = ('userattendance__campaign', 'language', 'sex', 'userattendance__team__subsidiary__city', 'userattendance__approved_for_team')
     filter_horizontal = ('administrated_cities',)
     search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
@@ -710,7 +710,7 @@ class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
 
 class QuestionAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
     form = models.QuestionForm
-    list_display = ('__unicode__', 'text', 'type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
+    list_display = ('__str__', 'text', 'type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
     ordering = ('order', 'date',)
     list_filter = ('competition__campaign', 'competition__city', 'competition',)
     search_fields = ('text',)
