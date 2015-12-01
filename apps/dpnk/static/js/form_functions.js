@@ -39,4 +39,12 @@ $(function(){
            form.prepend($(this));
        });
    });
+
+   $('.upravit_profil form').submit(function (){
+      if($('#id_mailing_opt_in').prop('checked') == false){
+         return window.confirm("Skutečně nechcete dostávat žádné soutěžní emaily?");
+      } else {
+         return true;
+      }
+   });
 });

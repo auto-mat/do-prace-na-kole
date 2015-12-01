@@ -661,16 +661,17 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         self.fields['first_name'].initial = self.instance.user.first_name
         self.fields['last_name'].initial = self.instance.user.last_name
         self.fields['dont_show_name'].initial = self.instance.nickname is not None
+        self.fields['mailing_opt_in'].initial = None
 
         self.helper.layout = Layout(
-            'language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'email',
+            'language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'mailing_opt_in', 'email',
             HTML(_(u'Odesláním tohoto formuláře souhlasím s tím, aby poskytnuté údaje (osobní údaje ve smyslu paragrafu 4 pís. a zákona 101/200 Sb., O ochraně osobních údajů), byly až do odvolání zpracovány občanským sdružením Auto*Mat, o. s. a místně příslušným organizátorem kampaně uvedeným u každého města na tomto webu pro účely kampaně Do práce na kole. ')),
         )
         return ret_val
 
     class Meta:
         model = models.UserProfile
-        fields = ('language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'email')
+        fields = ('language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'mailing_opt_in', 'email')
 
 
 class GpxFileForm(FormClassMixin, forms.ModelForm):
