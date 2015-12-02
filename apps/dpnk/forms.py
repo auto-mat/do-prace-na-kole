@@ -226,7 +226,11 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     company = forms.ModelChoiceField(
         label=_(u"Společnost"),
         queryset=models.Company.objects.filter(active=True),
-        widget=SelectOrCreate(RegisterCompanyForm, prefix="company", new_description=_(u"Společnost v seznamu není, chci založit novou")),
+        widget=SelectOrCreate(
+            RegisterCompanyForm,
+            prefix="company",
+            new_description=_(u"Společnost v seznamu není, chci založit novou")
+        ),
         required=True)
     subsidiary = ChainedModelChoiceField(
         chain_field="company",
@@ -240,9 +244,15 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
         widget=SelectChainedOrCreate(
-            RegisterSubsidiaryForm, view_name='', prefix="subsidiary", new_description=_(u"Adresa v seznamu není, chci založit novou"),
+            RegisterSubsidiaryForm,
+            view_name='',
+            prefix="subsidiary",
+            new_description=_(u"Adresa v seznamu není, chci založit novou"),
             chain_field="company",
             app_name="dpnk",
+            foreign_key_app_name="dpnk",
+            foreign_key_model_name="Subsidiary",
+            foreign_key_field_name="company",
             model_name="SubsidiaryInCampaign",
             model_field="company",
             show_all=False,
@@ -261,9 +271,15 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
         widget=SelectChainedOrCreate(
-            RegisterTeamForm, view_name='', prefix="team", new_description=_(u"Můj tým v seznamu není, vytvořit nový"),
+            RegisterTeamForm,
+            view_name='',
+            prefix="team",
+            new_description=_(u"Můj tým v seznamu není, vytvořit nový"),
             chain_field="subsidiary",
             app_name="dpnk",
+            foreign_key_app_name="dpnk",
+            foreign_key_model_name="Subsidiary",
+            foreign_key_field_name="company",
             model_name="TeamInCampaign",
             model_field="subsidiary",
             show_all=False,
