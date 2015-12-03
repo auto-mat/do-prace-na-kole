@@ -2597,8 +2597,7 @@ pre_save_changed.connect(set_track, sender=GpxFile, fields=['file'])
 
 @receiver(post_save, sender=GpxFile)
 def set_trip_post(sender, instance, *args, **kwargs):
-    allow_adding_rides = CityInCampaign.objects.get(city=instance.trip.user_attendance.team.subsidiary.city, campaign=instance.trip.user_attendance.campaign).allow_adding_rides
-    if instance.trip and util.trip_active(instance.trip, allow_adding_rides):
+    if instance.trip and util.trip_active(instance.trip):
         length = instance.length()
         if instance.direction == 'trip_to' and length:
             instance.trip.distance_to = length

@@ -726,7 +726,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         for i, d in enumerate(days):
             cd = {}
             cd['day'] = d
-            cd['trips_active'] = util.trip_active(trips[d], allow_adding_rides)
+            cd['trips_active'] = util.trip_active(trips[d])
             if cd['trips_active']:
                 has_active_trip = True
             if d in trips:

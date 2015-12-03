@@ -128,7 +128,9 @@ def day_active_last_week(day):
 day_active = day_active_last7
 
 
-def trip_active(trip, allow_adding_rides):
+def trip_active(trip):
+    from .models import CityInCampaign
+    allow_adding_rides = CityInCampaign.objects.get(city=trip.user_attendance.team.subsidiary.city, campaign=trip.user_attendance.campaign).allow_adding_rides
     if allow_adding_rides:
         return day_active(trip.date)
     return False
