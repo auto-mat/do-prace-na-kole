@@ -42,6 +42,15 @@ class AdminFilterTests(TestCase):
         response = self.client.get(reverse("admin:dpnk_userattendance_changelist"), HTTP_HOST="testing-campaign.testserver")
         self.assertEqual(response.status_code, 200)
 
+    def test_admin_views_competition(self):
+        self.assertTrue(self.client.login(username='admin', password='admin'))
+        response = self.client.get(reverse("admin:dpnk_competition_add"), HTTP_HOST="testing-campaign.testserver")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'id="id_competitor_type"')
+        response = self.client.get(reverse("admin:dpnk_competition_change", args=[3]), HTTP_HOST="testing-campaign.testserver")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'id="id_competitor_type"')
+
     def test_dpnk_views_no_login(self):
         address = reverse('registrace')
         response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
