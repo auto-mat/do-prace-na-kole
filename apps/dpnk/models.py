@@ -361,7 +361,7 @@ class TeamName(Team):
         proxy = True
 
     def __str__(self):
-        return unicode(self.name)
+        return self.name
 
 
 @python_2_unicode_compatible
@@ -1938,14 +1938,17 @@ class Competition(models.Model):
         null=False)
     user_attendance_competitors = models.ManyToManyField(
         UserAttendance,
+        verbose_name=_(u"Přihlášení soutěžící jednotlivci"),
         related_name="competitions",
         blank=True)
     team_competitors = models.ManyToManyField(
         Team,
+        verbose_name=_(u"Přihlášené soutěžící týmy"),
         related_name="competitions",
         blank=True)
     company_competitors = models.ManyToManyField(
         Company,
+        verbose_name=_(u"Přihlášené soutěžící firmy"),
         related_name="competitions",
         blank=True)
     city = models.ManyToManyField(
@@ -2090,24 +2093,7 @@ class Competition(models.Model):
 
 
 class CompetitionForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(CompetitionForm, self).__init__(*args, **kwargs)
-        if not hasattr(self.instance, 'campaign'):
-            self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
-
-        if not self.request.user.is_superuser:
-            self.fields["city"].queryset = self.request.user.userprofile.administrated_cities
-            self.fields["city"].required = True
-
-        if not self.instance.id:
-            if 'team_competitors' in self.fields:
-                self.fields["team_competitors"].queryset = Team.objects.none()
-            if 'user_attendance_competitors' in self.fields:
-                self.fields["user_attendance_competitors"].queryset = UserAttendance.objects.none()
-            if 'company_competitors' in self.fields:
-                self.fields["company_competitors"].queryset = Company.objects.none()
-            return
-
+    def set_fields_queryset_on_update(self):
         if hasattr(self.instance, 'campaign') and 'user_attendance_competitors' in self.fields:
             if self.instance.competitor_type in ['liberos', 'single_user']:
                 self.fields['user_attendance_competitors'].queryset = self.instance.get_competitors(potencial_competitors=True).select_related('userprofile__user', 'campaign')
@@ -2118,13 +2104,35 @@ class CompetitionForm(forms.ModelForm):
             if self.instance.competitor_type == 'team':
                 self.fields['team_competitors'].queryset = TeamName.objects.all()
             else:
-                self.fields['team_competitors'].queryset = self.instance.team_competitors
+                self.fields['team_competitors'].queryset = self.instance.team_competitors.all()
 
         if 'company_competitors' in self.fields:
             if self.instance.competitor_type == 'company':
                 self.fields["company_competitors"].queryset = Company.objects.all()
             else:
-                self.fields['company_competitors'].queryset = self.instance.company_competitors
+                self.fields['company_competitors'].queryset = self.instance.company_competitors.all()
+
+    def set_fields_queryset_on_create(self):
+        if 'team_competitors' in self.fields:
+            self.fields["team_competitors"].queryset = Team.objects.none()
+        if 'user_attendance_competitors' in self.fields:
+            self.fields["user_attendance_competitors"].queryset = UserAttendance.objects.none()
+        if 'company_competitors' in self.fields:
+            self.fields["company_competitors"].queryset = Company.objects.none()
+
+    def __init__(self, *args, **kwargs):
+        super(CompetitionForm, self).__init__(*args, **kwargs)
+        if not hasattr(self.instance, 'campaign'):
+            self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
+
+        if not self.request.user.is_superuser:
+            self.fields["city"].queryset = self.request.user.userprofile.administrated_cities
+            self.fields["city"].required = True
+
+        if self.instance.id:
+            self.set_fields_queryset_on_update()
+        else:
+            self.set_fields_queryset_on_create()
 
 
 @python_2_unicode_compatible
