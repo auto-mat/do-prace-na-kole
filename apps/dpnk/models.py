@@ -2604,7 +2604,8 @@ post_save_changed.connect(post_user_approved_for_team, sender=UserAttendance, fi
 def update_mailing_user(sender, instance, created, **kwargs):
     try:
         for user_attendance in instance.userprofile.userattendance_set.all():
-            mailing.add_or_update_user(user_attendance)
+            if not kwargs.get('raw', False) and user_attendance.campaign:
+                mailing.add_or_update_user(user_attendance)
     except UserProfile.DoesNotExist:
         pass
 
@@ -2640,7 +2641,8 @@ def set_trip_post(sender, instance, *args, **kwargs):
 @receiver(post_save, sender=UserActionTransaction)
 @receiver(post_delete, sender=UserActionTransaction)
 def update_user_attendance(sender, instance, *args, **kwargs):
-    mailing.add_or_update_user(instance.user_attendance)
+    if not kwargs.get('raw', False):
+        mailing.add_or_update_user(instance.user_attendance)
     if instance.user_attendance.team:
         instance.user_attendance.team.autoset_member_count()
 
@@ -2654,12 +2656,13 @@ def user_attendance_pre_delete(sender, instance, *args, **kwargs):
 
 @receiver(post_save, sender=UserAttendance)
 def update_mailing_user_attendance(sender, instance, created, **kwargs):
-    mailing.add_or_update_user(instance)
+    if not kwargs.get('raw', False):
+        mailing.add_or_update_user(instance)
 
 
 @receiver(post_save, sender=Payment)
 def update_mailing_payment(sender, instance, created, **kwargs):
-    if instance.user_attendance:
+    if instance.user_attendance and kwargs.get('raw', False):
         mailing.add_or_update_user(instance.user_attendance)
 
 
