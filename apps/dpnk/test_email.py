@@ -19,14 +19,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.test import TestCase
-from django.test.utils import override_settings
 from dpnk.models import UserAttendance, Company, CompanyAdmin, UserProfile, Campaign, Team, Subsidiary, City
 from django.contrib.auth.models import User
 from . import email
+from django.core import mail
 
 
-@override_settings(EMAIL_FILE_PATH='/tmp/dpnk-test-emails')
-@override_settings(EMAIL_BACKEND='django.core.mail.backends.filebased.EmailBackend')
 class TestEmails(TestCase):
     def setUp(self):
         self.campaign = Campaign.objects.create(name="Testing campaign 1", slug="testing_campaign_1")
@@ -38,57 +36,82 @@ class TestEmails(TestCase):
 
         self.user = User.objects.create(first_name="Testing", last_name="User", username="user1", email="user1@email.com")
         self.userprofile = UserProfile.objects.create(user=self.user)
-        self.user_attendance = UserAttendance.objects.create(userprofile=self.userprofile, campaign=self.campaign, team=self.team)
+        self.user_attendance = UserAttendance.objects.create(userprofile=self.userprofile, campaign=self.campaign, team=self.team, approved_for_team='approved')
 
         self.user_tm1 = User.objects.create(first_name="Team", last_name="Member 1", username="user2", email="user2@email.com")
         self.userprofile_tm1 = UserProfile.objects.create(user=self.user_tm1)
-        self.user_attendance_tm1 = UserAttendance.objects.create(userprofile=self.userprofile_tm1, campaign=self.campaign, team=self.team)
+        self.user_attendance_tm1 = UserAttendance.objects.create(userprofile=self.userprofile_tm1, campaign=self.campaign, team=self.team, approved_for_team='approved')
 
         self.user_tm2 = User.objects.create(first_name="Team", last_name="Member 2", username="user3", email="user3@email.com")
         self.userprofile_tm2 = UserProfile.objects.create(user=self.user_tm2)
-        self.user_attendance_tm2 = UserAttendance.objects.create(userprofile=self.userprofile_tm2, campaign=self.campaign, team=self.team)
+        self.user_attendance_tm2 = UserAttendance.objects.create(userprofile=self.userprofile_tm2, campaign=self.campaign, team=self.team, approved_for_team='approved')
 
         self.company_admin = CompanyAdmin.objects.create(user=self.user, administrated_company=self.company, campaign=self.campaign)
 
     def test_send_approval_request_mail(self):
         email.approval_request_mail(self.user_attendance)
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - žádost o ověření členství")
 
     def test_send_invitation_register_mail(self):
         email.invitation_register_mail(self.user_attendance, self.user_attendance)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - potvrzení registrace")
 
     def test_send_register_mail(self):
         email.register_mail(self.user_attendance)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - potvrzení registrace")
 
     def test_send_team_membership_approval_mail(self):
         email.team_membership_approval_mail(self.user_attendance)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - potvrzení ověření členství v týmu")
 
     def test_send_team_membership_denial_mail(self):
         email.team_membership_denial_mail(self.user_attendance, self.user_attendance, "reason of denial")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - ZAMÍTNUTÍ členství v týmu")
 
     def test_send_team_created_mail(self):
         email.team_created_mail(self.user_attendance)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - potvrzení vytvoření týmu")
 
     def test_send_invitation_mail(self):
         email.invitation_mail(self.user_attendance, "email@email.cz")
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - pozvánka do týmu")
 
     def test_send_payment_confirmation_mail(self):
         email.payment_confirmation_mail(self.user_attendance)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - přijetí platby")
 
     def test_send_payment_confirmation_company_mail(self):
         email.payment_confirmation_company_mail(self.user_attendance)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - přijetí platby")
 
     def test_send_company_admin_register_competitor_mail(self):
         email.company_admin_register_competitor_mail(self.user_attendance)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - potvrzení registrace")
 
     def test_send_company_admin_register_no_competitor_mail(self):
         email.company_admin_register_no_competitor_mail(self.company_admin, self.company)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - potvrzení registrace")
 
     def test_send_company_admin_approval_mail(self):
         email.company_admin_approval_mail(self.company_admin)
-        email.company_admin_approval_mail(self.company_admin)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - schválení správcovství firmy")
 
     def test_send_company_admin_rejected_mail(self):
         email.company_admin_rejected_mail(self.company_admin)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - zamítnutí správcovství firmy")
 
 
 class TestEmailsEn(TestEmails):
