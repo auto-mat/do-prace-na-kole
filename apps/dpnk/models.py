@@ -1385,7 +1385,7 @@ class Invoice(models.Model):
 
 
 def change_invoice_payments_status(sender, instance, changed_fields=None, **kwargs):
-    field, (old, new) = changed_fields.items()[0]
+    field, (old, new) = next(iter(changed_fields.items()))
     if new is not None:
         for payment in instance.payment_set.all():
             payment.status = Payment.Status.INVOICE_PAID
@@ -2538,7 +2538,7 @@ class GpxFile(models.Model):
 
 # Signals:
 def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
-    field, (old, new) = changed_fields.items()[0]
+    field, (old, new) = next(iter(changed_fields.items()))
     new_team = Team.objects.get(pk=new) if new else None
     if new_team and new_team.campaign != instance.campaign:
         logger.error(u"UserAttendance %s campaign doesn't match team campaign" % instance)
@@ -2550,7 +2550,7 @@ pre_save_changed.connect(pre_user_team_changed, sender=UserAttendance, fields=['
 
 
 def post_user_team_changed(sender, instance, changed_fields=None, **kwargs):
-    field, (old, new) = changed_fields.items()[0]
+    field, (old, new) = next(iter(changed_fields.items()))
     old_team = Team.objects.get(pk=old) if old else None
     new_team = Team.objects.get(pk=new) if new else None
     if new_team:
