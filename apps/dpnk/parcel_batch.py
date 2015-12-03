@@ -62,7 +62,7 @@ def make_sheet(package_transaction, canvas):
     barcode.drawOn(canvas, 8 * cm, 26 * cm)
 
     canvas.setFont('DejaVuB', 20)
-    canvas.drawString(5 * cm, 24 * cm, user_attendance.campaign.__unicode__())
+    canvas.drawString(5 * cm, 24 * cm, user_attendance.campaign.__str__())
 
     canvas.setFont('DejaVuB', 10)
     canvas.drawString(2 * cm, 22 * cm, u"Uživatelské jméno: %s" % user_attendance.userprofile.user.username)
@@ -85,7 +85,7 @@ def make_sheet(package_transaction, canvas):
         canvas.drawString(2 * cm, 18.5 * cm, u"Zaplaceno: %s" % (realized.date()))
 
     canvas.setFont('DejaVuB', 20)
-    canvas.drawString(5 * cm, 17 * cm, package_transaction.t_shirt_size.__unicode__())
+    canvas.drawString(5 * cm, 17 * cm, package_transaction.t_shirt_size.__str__())
 
     if package_transaction.t_shirt_size.t_shirt_preview:
         svg_tshirt = svg2rlg(package_transaction.t_shirt_size.t_shirt_preview.path)
