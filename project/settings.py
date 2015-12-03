@@ -199,8 +199,14 @@ AKLUB_URL = "http://klub.vnitrni.auto-mat.cz"
 LEAFLET_CONFIG = {
     'DEFAULT_CENTER': (50.0866699218750000, 14.4387817382809995),
     'TILES': [
-        (_(u'cyklomapa'), 'http://tiles.prahounakole.cz/{z}/{x}/{y}.png', {'attribution': u'&copy; přispěvatelé <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
-        (_(u'Všeobecná mapa'), 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': u'&copy; přispěvatelé <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
+        (
+            _(u'cyklomapa'),
+            'http://tiles.prahounakole.cz/{z}/{x}/{y}.png',
+            {'attribution': u'&copy; přispěvatelé <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
+        (
+            _(u'Všeobecná mapa'),
+            'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {'attribution': u'&copy; přispěvatelé <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
     ],
     'DEFAULT_ZOOM': 8,
     'MIN_ZOOM': 8,

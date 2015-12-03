@@ -267,7 +267,11 @@ class InvoicesView(CreateView):
     @method_decorator(login_required)
     @must_be_in_phase("invoices")
     @must_be_company_admin
-    @request_condition(lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(), format_lazy(_(u"Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>"), addr=reverse_lazy('edit_company')))
+    @request_condition(
+        lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(),
+        format_lazy(
+            _(u"Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>"),
+            addr=reverse_lazy('edit_company')))
     @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, _(u"Vystavování faktur nemáte povoleno"))
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']

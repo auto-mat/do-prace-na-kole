@@ -198,7 +198,11 @@ class WorkingScheduleForm(forms.ModelForm):
         )
         ret_val = super(WorkingScheduleForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('prev', _(u'Předchozí')))
-        entered_competition = self.instance.tshirt_complete() and self.instance.track_complete() and self.instance.team_complete() and self.instance.payment_complete() and self.instance.userprofile.profile_complete()
+        entered_competition = self.instance.tshirt_complete() and\
+            self.instance.track_complete() and\
+            self.instance.team_complete() and\
+            self.instance.payment_complete() and\
+            self.instance.userprofile.profile_complete()
         if not entered_competition:
             tasks = []
             if not self.instance.userprofile.profile_complete():
@@ -382,7 +386,9 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
 
     def clean_email(self):
         if User.objects.filter(email__iexact=self.cleaned_data['email']):
-            raise forms.ValidationError(mark_safe(_(u"Tato e-mailová adresa se již používá. Pokud je vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> obnovu hesla</a>.") % {'password': reverse('password_reset'), 'login': reverse('login')}))
+            raise forms.ValidationError(mark_safe(
+                _(u"Tato e-mailová adresa se již používá. Pokud je vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> obnovu hesla</a>.")
+                % {'password': reverse('password_reset'), 'login': reverse('login')}))
         return self.cleaned_data['email']
 
     def clean_team(self):
@@ -450,9 +456,16 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         company = self.user_attendance.team.subsidiary.company
         company_admin = self.user_attendance.get_asociated_company_admin()
         if payment_type == 'company' and not company_admin:
-            raise forms.ValidationError(mark_safe(_(u"Váš zaměstnavatel %(employer)s nemá zvoleného koordinátor společnosti.<ul><li><a href='%(url)s'>Chci se stát koordinátorem mé společnosti</a></li></ul>") % {'employer': self.user_attendance.team.subsidiary.company, 'url': reverse('company_admin_application')}))
+            raise forms.ValidationError(mark_safe(
+                _(u"Váš zaměstnavatel %(employer)s nemá zvoleného koordinátor společnosti.<ul><li><a href='%(url)s'>Chci se stát koordinátorem mé společnosti</a></li></ul>")
+                % {'employer': self.user_attendance.team.subsidiary.company, 'url': reverse('company_admin_application')}))
         elif payment_type == 'company' and not company_admin.can_confirm_payments:
-            raise forms.ValidationError(mark_safe(_(u"Koordinátor vašeho zaměstnavatele nemá možnost povolovat platby fakturou.<ul><li>Kontaktujte koordinátora %(company_admin)s vašeho zaměstnavatele %(employer)s na emailu %(email)s</li><li>Koordinátor bude muset nejprve dohodnout spolupráci na adrese <a href='mailto:kontakt@dopracenakole.net?subject=Žádost o povolení firemních plateb'>kontakt@dopracenakole.net</a>.net</li></ul>") % {'company_admin': company_admin, 'employer': company, 'email': company_admin.user.email}))
+            raise forms.ValidationError(mark_safe(
+                _(u"Koordinátor vašeho zaměstnavatele nemá možnost povolovat platby fakturou."
+                  u"<ul><li>Kontaktujte koordinátora %(company_admin)s vašeho zaměstnavatele %(employer)s na emailu %(email)s</li>"
+                  u"<li>Koordinátor bude muset nejprve dohodnout spolupráci na adrese"
+                  u" <a href='mailto:kontakt@dopracenakole.net?subject=Žádost o povolení firemních plateb'>kontakt@dopracenakole.net</a>.net</li></ul>")
+                % {'company_admin': company_admin, 'employer': company, 'email': company_admin.user.email}))
         return payment_type
 
 
@@ -549,7 +562,9 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
 
         other_user_attendances = user_attendance.other_user_attendances(campaign)
         if other_user_attendances.count() > 0:
-            raise forms.ValidationError(_(u"Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s") % ", ".join([u.campaign.name for u in other_user_attendances]))
+            raise forms.ValidationError(_(
+                u"Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s") %
+                ", ".join([u.campaign.name for u in other_user_attendances]))
 
         return user_attendance
 
@@ -681,7 +696,10 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
 
         self.helper.layout = Layout(
             'language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'mailing_opt_in', 'email',
-            HTML(_(u'Odesláním tohoto formuláře souhlasím s tím, aby poskytnuté údaje (osobní údaje ve smyslu paragrafu 4 pís. a zákona 101/200 Sb., O ochraně osobních údajů), byly až do odvolání zpracovány občanským sdružením Auto*Mat, o. s. a místně příslušným organizátorem kampaně uvedeným u každého města na tomto webu pro účely kampaně Do práce na kole. ')),
+            HTML(_(u'Odesláním tohoto formuláře souhlasím s tím, aby poskytnuté údaje'
+                   u' (osobní údaje ve smyslu paragrafu 4 pís. a zákona 101/200 Sb., O ochraně osobních údajů),'
+                   u' byly až do odvolání zpracovány občanským sdružením Auto*Mat, o. s. a místně příslušným organizátorem'
+                   u' kampaně uvedeným u každého města na tomto webu pro účely kampaně Do práce na kole. ')),
         )
         return ret_val
 

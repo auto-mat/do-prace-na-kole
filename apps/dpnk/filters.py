@@ -176,7 +176,12 @@ class EmailFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'duplicate':
-            duplicates = User.objects.filter(email__isnull=False).exclude(email__exact='').values('email').annotate(Count('id')).values('email').order_by().filter(id__count__gt=1).values_list('email', flat=True)
+            duplicates = User.objects.filter(email__isnull=False).\
+                exclude(email__exact='').\
+                values('email').\
+                annotate(Count('id')).values('email').\
+                order_by().filter(id__count__gt=1).\
+                values_list('email', flat=True)
             return queryset.filter(email__in=duplicates)
         if self.value() == 'blank':
             return queryset.filter(email__exact='')

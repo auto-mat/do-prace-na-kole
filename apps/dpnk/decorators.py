@@ -75,7 +75,10 @@ def must_be_approved_for_team(fn):
             response = render_to_response(
                 view.template_name,
                 {
-                    'fullpage_error_message': mark_safe(_(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") % {'team': user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}),
+                    'fullpage_error_message':
+                    mark_safe(
+                        _(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") %
+                        {'team': user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}),
                 },
                 context_instance=RequestContext(request),
                 status=403,
@@ -102,7 +105,10 @@ def must_be_company_admin(fn):
         response = render_to_response(
             view.template_name,
             {
-                'fullpage_error_message': mark_safe(_(u"Tato stránka je určená pouze ověřeným Koordinátorům společností. K tuto funkci se musíte nejdříve <a href='%s'>přihlásit</a>" % reverse("company_admin_application"))),
+                'fullpage_error_message':
+                mark_safe(_(
+                    u"Tato stránka je určená pouze ověřeným Koordinátorům společností. K tuto funkci se musíte nejdříve <a href='%s'>přihlásit</a>" %
+                    reverse("company_admin_application"))),
             },
             context_instance=RequestContext(request),
             status=403,
@@ -192,7 +198,10 @@ def must_be_competitor(fn):
         response = render_to_response(
             view.template_name,
             {
-                'fullpage_error_message': mark_safe(_(u"V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.") % reverse("company_structure")),
+                'fullpage_error_message':
+                mark_safe(_(
+                    u"V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.") %
+                    reverse("company_structure")),
             },
             context_instance=RequestContext(request),
             status=403,

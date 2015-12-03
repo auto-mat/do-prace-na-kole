@@ -899,7 +899,12 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             return None
 
     def entered_competition(self):
-        return self.tshirt_complete() and self.track_complete() and self.team_complete() and self.payment_complete() and self.userprofile.profile_complete() and self.working_schedule_complete()
+        return self.tshirt_complete() and\
+            self.track_complete() and\
+            self.team_complete() and\
+            self.payment_complete() and\
+            self.userprofile.profile_complete() and\
+            self.working_schedule_complete()
 
     def team_member_count(self):
         if self.team:
@@ -1551,7 +1556,8 @@ class PackageTransaction(Transaction):
 
     def tracking_link(self):
         return mark_safe(
-            "<a href='http://www.tnt.com/webtracker/tracking.do?requestType=GEN&searchType=REF&respLang=cs&respCountry=cz&sourceID=1&sourceCountry=ww&cons=%(number)s&navigation=1&genericSiteIdent='>%(number)s</a>" %
+            "<a href='http://www.tnt.com/webtracker/tracking.do?"
+            "requestType=GEN&searchType=REF&respLang=cs&respCountry=cz&sourceID=1&sourceCountry=ww&cons=%(number)s&navigation=1&genericSiteIdent='>%(number)s</a>" %
             {'number': self.tnt_con_reference()}
         )
 
@@ -1746,7 +1752,19 @@ class Payment(Transaction):
             user = None
             username = None
         return u"id: %s, user: %s (%s), order_id: %s, session_id: %s, trans_id: %s, amount: %s, description: %s, created: %s, realized: %s, pay_type: %s, status: %s, error: %s" % (
-            self.pk, user, username, self.order_id, getattr(self, "session_id", ""), self.trans_id, self.amount, self.description, self.created, self.realized, self.pay_type, self.status, self.error)
+            self.pk,
+            user,
+            username,
+            self.order_id,
+            getattr(self, "session_id", ""),
+            self.trans_id,
+            self.amount,
+            self.description,
+            self.created,
+            self.realized,
+            self.pay_type,
+            self.status,
+            self.error)
 
 
 class PaymentForm(forms.ModelForm):
@@ -1905,7 +1923,10 @@ class Competition(models.Model):
         null=True, blank=True)
     type = models.CharField(
         verbose_name=_(u"Typ"),
-        help_text=_(u"Určuje, zdali bude soutěž výkonnostní (na ujetou vzdálenost), nebo na pravidelnost. Volba \"Dotazník\" slouží pro kreativní soutěže, cyklozaměstnavatele roku a další dotazníky; je nutné definovat otázky."),
+        help_text=_(
+            u"Určuje, zdali bude soutěž výkonnostní (na ujetou vzdálenost),"
+            u" nebo na pravidelnost. Volba \"Dotazník\" slouží pro kreativní soutěže,"
+            u" cyklozaměstnavatele roku a další dotazníky; je nutné definovat otázky."),
         choices=CTYPES,
         max_length=16,
         null=False)

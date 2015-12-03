@@ -38,7 +38,17 @@ from leaflet.admin import LeafletGeoAdmin
 from .admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin
 import datetime
 # Models
-from .filters import CampaignFilter, CityCampaignFilter, SubsidiaryCampaignFilter, TripCampaignFilter, QuestionCampaignFilter, HasVoucherFilter, HasRidesFilter, IsForCompanyFilter, HasTeamFilter, EmailFilter
+from .filters import (
+    CampaignFilter,
+    CityCampaignFilter,
+    SubsidiaryCampaignFilter,
+    TripCampaignFilter,
+    QuestionCampaignFilter,
+    HasVoucherFilter,
+    HasRidesFilter,
+    IsForCompanyFilter,
+    HasTeamFilter,
+    EmailFilter)
 from . import models, mailing, actions, views
 from django import forms
 from related_admin import RelatedFieldAdmin
@@ -114,11 +124,30 @@ class CompanyForm(forms.ModelForm):
 
 class CompanyAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.ModelAdmin):
     queryset_city_param = 'subsidiaries__city__in'
-    list_display = ('name', 'subsidiaries_text', 'ico', 'dic', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'user_count', 'id', )
+    list_display = (
+        'name',
+        'subsidiaries_text',
+        'ico',
+        'dic',
+        'address_street',
+        'address_street_number',
+        'address_recipient',
+        'address_psc',
+        'address_city',
+        'user_count',
+        'id',
+    )
     inlines = [SubsidiaryInline, ]
     list_filter = [CityCampaignFilter, 'subsidiaries__city', 'active']
     readonly_fields = ['subsidiary_links']
-    search_fields = ('name', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'address_district')
+    search_fields = (
+        'name',
+        'address_street',
+        'address_street_number',
+        'address_recipient',
+        'address_psc',
+        'address_city',
+        'address_district')
     list_max_show_all = 10000
     form = CompanyForm
 
@@ -143,7 +172,15 @@ class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admi
     list_display = ('__str__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline, ]
     list_filter = [SubsidiaryCampaignFilter, 'city', 'active']
-    search_fields = ('address_recipient', 'company__name', 'address_street', 'address_street_number', 'address_recipient', 'address_psc', 'address_city', 'address_district')
+    search_fields = (
+        'address_recipient',
+        'company__name',
+        'address_street',
+        'address_street_number',
+        'address_recipient',
+        'address_psc',
+        'address_city',
+        'address_district')
     raw_id_fields = ('company',)
     list_max_show_all = 10000
     save_as = True
@@ -171,10 +208,43 @@ class QuestionInline(SortableInlineAdminMixin, EnhancedAdminMixin, admin.Tabular
 
 
 class CompetitionAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, RelatedFieldAdmin):
-    list_display = ('name', 'slug', 'type', 'competitor_type', 'without_admission', 'is_public', 'public_answers', 'date_from', 'date_to', 'entry_after_beginning_days', 'city_list', 'sex', 'company__name', 'competition_results_link', 'questionnaire_results_link', 'questionnaire_link', 'draw_link', 'get_competitors_count', 'url', 'id')
-    filter_horizontal = ('team_competitors', 'company_competitors', 'user_attendance_competitors', 'city')
+    list_display = (
+        'name',
+        'slug',
+        'type',
+        'competitor_type',
+        'without_admission',
+        'is_public',
+        'public_answers',
+        'date_from',
+        'date_to',
+        'entry_after_beginning_days',
+        'city_list',
+        'sex',
+        'company__name',
+        'competition_results_link',
+        'questionnaire_results_link',
+        'questionnaire_link',
+        'draw_link',
+        'get_competitors_count',
+        'url',
+        'id')
+    filter_horizontal = (
+        'team_competitors',
+        'company_competitors',
+        'user_attendance_competitors',
+        'city')
     search_fields = ('name', 'company__name', 'slug')
-    list_filter = (CampaignFilter, 'city', 'without_admission', 'is_public', 'public_answers', 'competitor_type', 'type', IsForCompanyFilter, 'sex')
+    list_filter = (
+        CampaignFilter,
+        'city',
+        'without_admission',
+        'is_public',
+        'public_answers',
+        'competitor_type',
+        'type',
+        IsForCompanyFilter,
+        'sex')
     save_as = True
     actions = [actions.recalculate_competitions_results, actions.normalize_questionnqire_admissions]
     inlines = [QuestionInline, ]
@@ -190,7 +260,20 @@ class CompetitionAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, Rel
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser:
             return ['competition_results_link', 'questionnaire_results_link', 'draw_link']
-        return ['competition_results_link', 'questionnaire_results_link', 'draw_link', 'date_to', 'date_from', 'company', 'without_admission', 'public_answers', 'is_public', 'entry_after_beginning_days', 'team_competitors', 'company_competitors', 'user_attendance_competitors', 'campaign']
+        return ['competition_results_link',
+                'questionnaire_results_link',
+                'draw_link',
+                'date_to',
+                'date_from',
+                'company',
+                'without_admission',
+                'public_answers',
+                'is_public',
+                'entry_after_beginning_days',
+                'team_competitors',
+                'company_competitors',
+                'user_attendance_competitors',
+                'campaign']
 
     def city_list(self, obj):
         return ", ".join([str(c) for c in obj.city.all()])
@@ -245,20 +328,38 @@ class PaymentFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'not_paid':
-            return queryset.filter(
-                userprofile__user__is_active=True).exclude(transactions__status__in=models.Payment.done_statuses).exclude(campaign__admission_fee=0).distinct()
+            return queryset.\
+                filter(userprofile__user__is_active=True).\
+                exclude(transactions__status__in=models.Payment.done_statuses).\
+                exclude(campaign__admission_fee=0).distinct()
         elif self.value() == 'no_admission':
-            return queryset.filter(Q(campaign__admission_fee=0) | Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct()
+            return queryset.\
+                filter(Q(campaign__admission_fee=0) | Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).\
+                distinct()
         elif self.value() == 'done':
-            return queryset.filter(Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0)).distinct()
+            return queryset.\
+                filter(Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0)).\
+                distinct()
         elif self.value() == 'paid_payu':
-            return queryset.filter(Q(transactions__status__in=models.Payment.done_statuses) & Q(transactions__payment__pay_type__in=models.Payment.PAYU_PAYING_TYPES)).distinct()
+            return queryset.\
+                filter(Q(transactions__status__in=models.Payment.done_statuses) & Q(transactions__payment__pay_type__in=models.Payment.PAYU_PAYING_TYPES)).\
+                distinct()
         elif self.value() == 'paid':
-            return queryset.filter(Q(transactions__status__in=models.Payment.done_statuses)).exclude(Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct()
+            return queryset.\
+                filter(Q(transactions__status__in=models.Payment.done_statuses)).\
+                exclude(Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).\
+                distinct()
         elif self.value() == 'waiting':
-            return queryset.exclude(transactions__status__in=models.Payment.done_statuses).filter(transactions__status__in=models.Payment.waiting_statuses).distinct()
+            return queryset.\
+                exclude(transactions__status__in=models.Payment.done_statuses).\
+                filter(transactions__status__in=models.Payment.waiting_statuses).\
+                distinct()
         elif self.value() == 'unknown':
-            return queryset.exclude(campaign__admission_fee=0).exclude(transactions__status__in=set(models.Payment.done_statuses) | set(models.Payment.waiting_statuses)).exclude(transactions=None).distinct()
+            return queryset.\
+                exclude(campaign__admission_fee=0).\
+                exclude(transactions__status__in=set(models.Payment.done_statuses) | set(models.Payment.waiting_statuses)).\
+                exclude(transactions=None).\
+                distinct()
         elif self.value() == 'none':
             return queryset.filter(transactions=None).distinct()
 
@@ -281,7 +382,15 @@ class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
     form = UserAttendanceForm
     extra = 0
     # inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
-    search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__team__name', 'userprofile__team__subsidiary__company__name', 'company_admin__administrated_company__name', ]
+    search_fields = [
+        'first_name',
+        'last_name',
+        'username',
+        'email',
+        'userprofile__team__name',
+        'userprofile__team__subsidiary__company__name',
+        'company_admin__administrated_company__name',
+    ]
     list_max_show_all = 10000
     raw_id_fields = ('team',)
 
@@ -393,7 +502,16 @@ class UserAdmin(ExportMixin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmi
     inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'userprofile_administrated_cities', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name', ]
-    list_filter = ['userprofile__userattendance__campaign', 'is_staff', 'is_superuser', 'is_active', 'company_admin__company_admin_approved', HasUserprofileFilter, 'userprofile__sex', 'userprofile__administrated_cities', EmailFilter]
+    list_filter = [
+        'userprofile__userattendance__campaign',
+        'is_staff',
+        'is_superuser',
+        'is_active',
+        'company_admin__company_admin_approved',
+        HasUserprofileFilter,
+        'userprofile__sex',
+        'userprofile__administrated_cities',
+        EmailFilter]
     readonly_fields = ['password']
     list_max_show_all = 10000
 
@@ -471,7 +589,9 @@ class PackageConfirmationFilter(SimpleListFilter):
         if self.value() == "unknown":
             return queryset.filter(
                 transactions__packagetransaction__status__in=models.PackageTransaction.shipped_statuses).exclude(
-                transactions__packagetransaction__status__in=[models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED, models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED]
+                transactions__packagetransaction__status__in=[
+                    models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED,
+                    models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED]
             ).distinct()
         if self.value() == "unshipped":
             return queryset.exclude(transactions__packagetransaction__status__in=models.PackageTransaction.shipped_statuses).distinct()
@@ -490,9 +610,13 @@ class CompetitionEntryFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == "yes":
-            return queryset.filter(transactions__useractiontransaction__status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED).distinct()
+            return queryset.\
+                filter(transactions__useractiontransaction__status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED).\
+                distinct()
         if self.value() == "no":
-            return queryset.exclude(transactions__useractiontransaction__status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED).distinct()
+            return queryset.\
+                exclude(transactions__useractiontransaction__status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED).\
+                distinct()
         return queryset
 
 
@@ -519,7 +643,23 @@ class TripAdminInline(EnhancedModelAdminMixin, admin.TabularInline):
 class UserAttendanceResource(resources.ModelResource):
     class Meta:
         model = models.UserAttendance
-        fields = ('id', 'campaign__slug', 'distance', 'team__name', 'approved_for_team', 't_shirt_size__name', 'team__subsidiary__city__name', 'userprofile__language', 'userprofile__telephone', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'dehydrate_subsidiary_name', 'team__subsidiary__company__name', 'created')
+        fields = (
+            'id',
+            'campaign__slug',
+            'distance',
+            'team__name',
+            'approved_for_team',
+            't_shirt_size__name',
+            'team__subsidiary__city__name',
+            'userprofile__language',
+            'userprofile__telephone',
+            'userprofile__user__first_name',
+            'userprofile__user__last_name',
+            'userprofile__user__username',
+            'userprofile__user__email',
+            'dehydrate_subsidiary_name',
+            'team__subsidiary__company__name',
+            'created')
 
     subsidiary_name = fields.Field()
 
@@ -552,12 +692,69 @@ class UserAttendanceResource(resources.ModelResource):
 
 class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixin, CityAdminMixin, LeafletGeoAdmin):
     queryset_city_param = 'team__subsidiary__city__in'
-    list_display = ('id', 'name_for_trusted', 'userprofile__user__email', 'userprofile__telephone', 'distance', 'team__name', 'team__subsidiary', 'team__subsidiary__city', 'team__subsidiary__company', 'approved_for_team', 'campaign__name', 't_shirt_size', 'payment_type', 'payment_status', 'payment_amount', 'team__member_count', 'get_frequency', 'get_length', 'get_rides_count_denorm', 'created')
-    list_filter = (CampaignFilter, ('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('approved_for_team', AllValuesComboFilter), ('t_shirt_size', RelatedFieldComboFilter), 'userprofile__user__is_active', CompetitionEntryFilter, PaymentTypeFilter, PaymentFilter, ('team__member_count', AllValuesComboFilter), PackageConfirmationFilter, ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter), ('userprofile__sex', AllValuesComboFilter), HasVoucherFilter, HasRidesFilter, HasTeamFilter)
+    list_display = (
+        'id',
+        'name_for_trusted',
+        'userprofile__user__email',
+        'userprofile__telephone',
+        'distance',
+        'team__name',
+        'team__subsidiary',
+        'team__subsidiary__city',
+        'team__subsidiary__company',
+        'approved_for_team',
+        'campaign__name',
+        't_shirt_size',
+        'payment_type',
+        'payment_status',
+        'payment_amount',
+        'team__member_count',
+        'get_frequency',
+        'get_length',
+        'get_rides_count_denorm',
+        'created')
+    list_filter = (
+        CampaignFilter,
+        ('team__subsidiary__city', RelatedFieldCheckBoxFilter),
+        ('approved_for_team', AllValuesComboFilter),
+        ('t_shirt_size', RelatedFieldComboFilter),
+        'userprofile__user__is_active',
+        CompetitionEntryFilter,
+        PaymentTypeFilter,
+        PaymentFilter,
+        ('team__member_count', AllValuesComboFilter),
+        PackageConfirmationFilter,
+        ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter),
+        ('userprofile__sex', AllValuesComboFilter),
+        HasVoucherFilter,
+        HasRidesFilter,
+        HasTeamFilter
+    )
     raw_id_fields = ('userprofile', 'team')
-    search_fields = ('userprofile__nickname', 'userprofile__user__first_name', 'userprofile__user__last_name', 'userprofile__user__username', 'userprofile__user__email', 'team__name', 'team__subsidiary__address_street', 'team__subsidiary__address_psc', 'team__subsidiary__address_recipient', 'team__subsidiary__address_city', 'team__subsidiary__address_district', 'team__subsidiary__company__name')
+    search_fields = (
+        'userprofile__nickname',
+        'userprofile__user__first_name',
+        'userprofile__user__last_name',
+        'userprofile__user__username',
+        'userprofile__user__email',
+        'team__name',
+        'team__subsidiary__address_street',
+        'team__subsidiary__address_psc',
+        'team__subsidiary__address_recipient',
+        'team__subsidiary__address_city',
+        'team__subsidiary__address_district',
+        'team__subsidiary__company__name',
+    )
     readonly_fields = ('user_link', 'userprofile__user__email', 'created', 'updated')
-    actions = (actions.update_mailing, actions.approve_am_payment, actions.recalculate_results, actions.show_distance, actions.assign_vouchers, actions.add_trips, actions.touch_user_attendance)
+    actions = (
+        actions.update_mailing,
+        actions.approve_am_payment,
+        actions.recalculate_results,
+        actions.show_distance,
+        actions.assign_vouchers,
+        actions.add_trips,
+        actions.touch_user_attendance,
+    )
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
     list_max_show_all = 10000
@@ -580,7 +777,17 @@ recalculate_team_member_count.short_description = "Přepočítat počet členů 
 
 
 class TeamAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
-    list_display = ('name', 'subsidiary', 'subsidiary__city', 'subsidiary__company', 'member_count', 'campaign', 'get_length', 'get_frequency', 'id', )
+    list_display = (
+        'name',
+        'subsidiary',
+        'subsidiary__city',
+        'subsidiary__company',
+        'member_count',
+        'campaign',
+        'get_length',
+        'get_frequency',
+        'id',
+    )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name']
     list_filter = [CampaignFilter, 'subsidiary__city', 'member_count']
     list_max_show_all = 10000
@@ -590,8 +797,11 @@ class TeamAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
     readonly_fields = ['members', 'invitation_token', 'member_count']
 
     def members(self, obj):
-        return mark_safe("<br/>".join(['<a href="%s">%s</a> - %s' % (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), u, u.approved_for_team)
-                         for u in models.UserAttendance.objects.filter(team=obj)]))
+        return mark_safe(
+            "<br/>".join([
+                '<a href="%s">%s</a> - %s' %
+                (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), u, u.approved_for_team)
+                for u in models.UserAttendance.objects.filter(team=obj)]))
     members.short_description = 'Členové'
 
 
@@ -620,14 +830,20 @@ class UserActionTransactionChildAdmin(TransactionChildAdmin):
 
 class TransactionAdmin(PolymorphicParentModelAdmin):
     list_display = ('id', 'user_attendance', 'created', 'status', 'polymorphic_ctype', 'user_link', 'author')
-    search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username')
+    search_fields = (
+        'user_attendance__userprofile__nickname',
+        'user_attendance__userprofile__user__first_name',
+        'user_attendance__userprofile__user__last_name',
+        'user_attendance__userprofile__user__username')
     list_filter = ['user_attendance__campaign', 'status', 'polymorphic_ctype', ]
 
     readonly_fields = ['user_link', ]
 
     def user_link(self, obj):
         if obj.user_attendance:
-            return mark_safe('<a href="%s">%s</a>' % (reverse('admin:auth_user_change', args=(obj.user_attendance.userprofile.user.pk,)), obj.user_attendance.userprofile.user))
+            return mark_safe(
+                '<a href="%s">%s</a>' %
+                (reverse('admin:auth_user_change', args=(obj.user_attendance.userprofile.user.pk,)), obj.user_attendance.userprofile.user))
     user_link.short_description = 'Uživatel'
 
     base_model = models.Transaction
@@ -640,8 +856,30 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
 
 
 class PaymentAdmin(RelatedFieldAdmin):
-    list_display = ('id', 'user_attendance', 'created', 'realized', 'status', 'session_id', 'trans_id', 'amount', 'pay_type', 'error', 'order_id', 'author', 'user_attendance__team__subsidiary__company__name')
-    search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'session_id', 'trans_id', 'order_id', 'user_attendance__team__subsidiary__company__name', )
+    list_display = (
+        'id',
+        'user_attendance',
+        'created',
+        'realized',
+        'status',
+        'session_id',
+        'trans_id',
+        'amount',
+        'pay_type',
+        'error',
+        'order_id',
+        'author',
+        'user_attendance__team__subsidiary__company__name')
+    search_fields = (
+        'user_attendance__userprofile__nickname',
+        'user_attendance__userprofile__user__first_name',
+        'user_attendance__userprofile__user__last_name',
+        'user_attendance__userprofile__user__username',
+        'session_id',
+        'trans_id',
+        'order_id',
+        'user_attendance__team__subsidiary__company__name',
+    )
     list_filter = ['user_attendance__campaign', 'status', 'error', 'pay_type', ]
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created', 'updated_by')
@@ -650,8 +888,27 @@ class PaymentAdmin(RelatedFieldAdmin):
 
 
 class PackageTransactionAdmin(RelatedFieldAdmin):
-    list_display = ('id', 'user_attendance', 'created', 'realized', 'status', 'author', 'user_attendance__team__subsidiary', 'user_attendance__team__subsidiary__company__name', 't_shirt_size', 'delivery_batch', 'tracking_number_cnc', 'tracking_link')
-    search_fields = ('id', 'user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'user_attendance__team__subsidiary__company__name', )
+    list_display = (
+        'id',
+        'user_attendance',
+        'created',
+        'realized',
+        'status',
+        'author',
+        'user_attendance__team__subsidiary',
+        'user_attendance__team__subsidiary__company__name',
+        't_shirt_size',
+        'delivery_batch',
+        'tracking_number_cnc',
+        'tracking_link')
+    search_fields = (
+        'id',
+        'user_attendance__userprofile__nickname',
+        'user_attendance__userprofile__user__first_name',
+        'user_attendance__userprofile__user__last_name',
+        'user_attendance__userprofile__user__username',
+        'user_attendance__team__subsidiary__company__name',
+    )
     list_filter = ['user_attendance__campaign', 'status', 'delivery_batch']
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created')
@@ -690,8 +947,25 @@ class HasReactionFilter(SimpleListFilter):
 
 
 class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
-    list_display = ('user_attendance', 'user_attendance__userprofile__user__email', 'points_given', 'choices_ids_all', 'question__competition', 'comment', 'choices_all', 'attachment_url', 'comment', 'question__text')
-    search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'question__text', 'question__name', 'question__competition__name', 'user_attendance__team__subsidiary__company__name')
+    list_display = (
+        'user_attendance',
+        'user_attendance__userprofile__user__email',
+        'points_given',
+        'choices_ids_all',
+        'question__competition',
+        'comment',
+        'choices_all',
+        'attachment_url',
+        'comment',
+        'question__text')
+    search_fields = (
+        'user_attendance__userprofile__nickname',
+        'user_attendance__userprofile__user__first_name',
+        'user_attendance__userprofile__user__last_name',
+        'question__text',
+        'question__name',
+        'question__competition__name',
+        'user_attendance__team__subsidiary__company__name')
     list_filter = (QuestionCampaignFilter, HasReactionFilter, 'question__competition__city', 'question__competition')
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
@@ -742,8 +1016,22 @@ class GpxFileInline(EnhancedAdminMixin, admin.TabularInline):
 
 
 class TripAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
-    list_display = ('user_attendance', 'date', 'trip_from', 'trip_to', 'is_working_ride_from', 'is_working_ride_to', 'distance_from', 'distance_to', 'id')
-    search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'user_attendance__team__subsidiary__company__name')
+    list_display = (
+        'user_attendance',
+        'date',
+        'trip_from',
+        'trip_to',
+        'is_working_ride_from',
+        'is_working_ride_to',
+        'distance_from',
+        'distance_to',
+        'id')
+    search_fields = (
+        'user_attendance__userprofile__nickname',
+        'user_attendance__userprofile__user__first_name',
+        'user_attendance__userprofile__user__last_name',
+        'user_attendance__userprofile__user__username',
+        'user_attendance__team__subsidiary__company__name')
     raw_id_fields = ('user_attendance',)
     list_filter = (TripCampaignFilter, 'user_attendance__team__subsidiary__city', 'distance_from')
     actions = (show_distance_trips,)
@@ -754,7 +1042,13 @@ class TripAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
 class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     list_display = ('user_attendance', 'team', 'company', 'result', 'competition')
     list_filter = ('competition__campaign', 'competition',)
-    search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username', 'team__name', 'competition__name')
+    search_fields = (
+        'user_attendance__userprofile__nickname',
+        'user_attendance__userprofile__user__first_name',
+        'user_attendance__userprofile__user__last_name',
+        'user_attendance__userprofile__user__username',
+        'team__name',
+        'competition__name')
     raw_id_fields = ('user_attendance', 'team')
 
 
@@ -837,7 +1131,16 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
 
 
 class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
-    list_display = ('name', 'slug', 'mailing_list_id', 'previous_campaign', 'minimum_rides_base', 'minimum_percentage', 'trip_plus_distance', 'mailing_list_enabled', )
+    list_display = (
+        'name',
+        'slug',
+        'mailing_list_id',
+        'previous_campaign',
+        'minimum_rides_base',
+        'minimum_percentage',
+        'trip_plus_distance',
+        'mailing_list_enabled',
+    )
     inlines = [TShirtSizeInline, PhaseInline, CityInCampaignInline]
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ('city_count',)
@@ -878,9 +1181,27 @@ update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
 
 
 class CompanyAdminAdmin(CityAdminMixin, EnhancedModelAdminMixin, RelatedFieldAdmin):
-    list_display = ['user', 'user__email', 'user__userprofile', 'user__userprofile__telephone', 'company_admin_approved', 'administrated_company__name', 'can_confirm_payments', 'note', 'campaign']
-    list_filter = [CampaignFilter, 'company_admin_approved', HasUserAttendanceFilter, 'administrated_company__subsidiaries__city']
-    search_fields = ['administrated_company__name', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
+    list_display = [
+        'user',
+        'user__email',
+        'user__userprofile',
+        'user__userprofile__telephone',
+        'company_admin_approved',
+        'administrated_company__name',
+        'can_confirm_payments',
+        'note',
+        'campaign']
+    list_filter = [
+        CampaignFilter,
+        'company_admin_approved',
+        HasUserAttendanceFilter,
+        'administrated_company__subsidiaries__city']
+    search_fields = [
+        'administrated_company__name',
+        'user__first_name',
+        'user__last_name',
+        'user__username',
+        'user__email']
     raw_id_fields = ['user', ]
     list_max_show_all = 100000
     actions = (update_mailing_coordinator,)
@@ -925,14 +1246,46 @@ class InvoiceForm(forms.ModelForm):
 class InvoiceResource(resources.ModelResource):
     class Meta:
         model = models.Invoice
-        fields = ('company__name', 'created', 'exposure_date', 'paid_date', 'total_amount', 'invoice_count', 'campaign__name', 'sequence_number', 'order_number', 'company__ico', 'company__dic', 'company_pais_benefitial_fee', 'company__address_street', 'company__address_street_number', 'company__address_recipient', 'company__address_district', 'company__address_psc', 'company__address_city')
+        fields = (
+            'company__name',
+            'created',
+            'exposure_date',
+            'paid_date',
+            'total_amount',
+            'invoice_count',
+            'campaign__name',
+            'sequence_number',
+            'order_number',
+            'company__ico',
+            'company__dic',
+            'company_pais_benefitial_fee',
+            'company__address_street',
+            'company__address_street_number',
+            'company__address_recipient',
+            'company__address_district',
+            'company__address_psc',
+            'company__address_city')
 
     def dehydrate_invoice_count(self, obj):
         return obj.payment_set.count()
 
 
 class InvoiceAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
-    list_display = ['company', 'created', 'exposure_date', 'paid_date', 'total_amount', 'invoice_count', 'invoice_pdf_url', 'campaign', 'sequence_number', 'order_number', 'company__ico', 'company__dic', 'company_pais_benefitial_fee', 'company_address']
+    list_display = [
+        'company',
+        'created',
+        'exposure_date',
+        'paid_date',
+        'total_amount',
+        'invoice_count',
+        'invoice_pdf_url',
+        'campaign',
+        'sequence_number',
+        'order_number',
+        'company__ico',
+        'company__dic',
+        'company_pais_benefitial_fee',
+        'company_address']
     readonly_fields = ['created', 'author', 'updated_by', 'invoice_count']
     list_filter = [CampaignFilter, InvoicePaidFilter, 'company_pais_benefitial_fee']
     search_fields = ['company__name', ]
@@ -957,7 +1310,11 @@ class InvoiceAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
 class GpxFileAdmin(LeafletGeoAdmin):
     model = models.GpxFile
     list_display = ('id', 'trip_date', 'file', 'direction', 'trip', 'user_attendance', 'from_application')
-    search_fields = ('user_attendance__userprofile__nickname', 'user_attendance__userprofile__user__first_name', 'user_attendance__userprofile__user__last_name', 'user_attendance__userprofile__user__username')
+    search_fields = (
+        'user_attendance__userprofile__nickname',
+        'user_attendance__userprofile__user__first_name',
+        'user_attendance__userprofile__user__last_name',
+        'user_attendance__userprofile__user__username')
     raw_id_fields = ('user_attendance', 'trip')
     list_filter = ('from_application', 'user_attendance__team__subsidiary__city')
 

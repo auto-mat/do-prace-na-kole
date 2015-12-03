@@ -57,14 +57,33 @@ import registration.backends.simple.views
 # Model imports
 from .models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, City, UserAttendance, Campaign
 from . import forms
-from .forms import RegistrationFormDPNK, RegistrationAccessFormDPNK, RegisterSubsidiaryForm, RegisterCompanyForm, RegisterTeamForm, ProfileUpdateForm, InviteForm, TeamAdminForm, PaymentTypeForm, ChangeTeamForm, TrackUpdateForm, WorkingScheduleForm
+from .forms import (
+    RegistrationFormDPNK,
+    RegistrationAccessFormDPNK,
+    RegisterSubsidiaryForm,
+    RegisterCompanyForm,
+    RegisterTeamForm,
+    ProfileUpdateForm,
+    InviteForm,
+    TeamAdminForm,
+    PaymentTypeForm,
+    ChangeTeamForm,
+    TrackUpdateForm,
+    WorkingScheduleForm)
 from django.conf import settings
 from django.http import HttpResponse
 from django import http
 # Local imports
 from . import util
 from . import draw
-from dpnk.email import approval_request_mail, register_mail, team_membership_approval_mail, team_membership_denial_mail, team_created_mail, invitation_mail, invitation_register_mail
+from dpnk.email import (
+    approval_request_mail,
+    register_mail,
+    team_membership_approval_mail,
+    team_membership_denial_mail,
+    team_created_mail,
+    invitation_mail,
+    invitation_register_mail)
 from django.db import transaction
 
 from unidecode import unidecode
@@ -137,7 +156,12 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
         if self.user_attendance.team:
             if self.registration_phase not in ('upravit_profil',):
                 if self.user_attendance.approved_for_team == 'undecided':
-                    messages.warning(request, mark_safe(_(u"Vaše členství v týmu %(team)s čeká na vyřízení. Pokud to trvá příliš dlouho, můžete zkusit <a href='%(address)s'>znovu požádat o ověření členství</a>.") % {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
+                    messages.warning(request, mark_safe(
+                        _(
+                            u"Vaše členství v týmu %(team)s čeká na vyřízení."
+                            u" Pokud to trvá příliš dlouho, můžete zkusit"
+                            u" <a href='%(address)s'>znovu požádat o ověření členství</a>.") %
+                        {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
                 elif self.user_attendance.approved_for_team == 'denied':
                     messages.error(request, mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')))
                 elif len(self.user_attendance.team.unapproved_members()) > 0:
@@ -145,7 +169,11 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                 elif self.user_attendance.is_libero():
                     # TODO: get WP slug for city
                     messages.warning(request, mark_safe(
-                        _(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce! <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu.</li><li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete sehnat spolupracovníky, použijte <a href="http://www.dopracenakole.net/locations/%(city)s/seznamka" target="_blank">seznamku</a>.</li></ul>')
+                        _(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce!'
+                          u' <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu.</li>'
+                          u'<li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li>'
+                          u'<li>Pokud nemůžete sehnat spolupracovníky, použijte '
+                          u' <a href="http://www.dopracenakole.net/locations/%(city)s/seznamka" target="_blank">seznamku</a>.</li></ul>')
                         % {
                             'invite_url':
                             reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym'), 'city': self.user_attendance.team.subsidiary.city.slug}))
@@ -153,11 +181,15 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
         if self.registration_phase in ('profile_view',):
             unanswered_questionnaires = self.user_attendance.get_competitions_without_admission().filter(type='questionnaire')
             if unanswered_questionnaires.exists():
-                competitions = ", ".join(["<a href='%(url)s'>%(name)s</a>" % {"url": reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}), "name": q.name} for q in unanswered_questionnaires.all()])
+                competitions = ", ".join([
+                    "<a href='%(url)s'>%(name)s</a>" %
+                    {"url": reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}), "name": q.name} for q in unanswered_questionnaires.all()])
                 messages.info(request, mark_safe(_(u'Nezapomeňte vyplnit odpovědi v následujících soutěžích: %s!') % competitions))
 
         if self.user_attendance.payment_status() not in ('done', 'none',) and self.registration_phase not in ('typ_platby',):
-            messages.info(request, mark_safe(_(u'Vaše platba typu %(payment_type)s ještě nebyla vyřízena. Můžete <a href="%(url)s">zadat novou platbu.</a>') % {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('typ_platby')}))
+            messages.info(request, mark_safe(
+                _(u'Vaše platba typu %(payment_type)s ještě nebyla vyřízena. Můžete <a href="%(url)s">zadat novou platbu.</a>') %
+                {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('typ_platby')}))
 
         company_admin = self.user_attendance.is_company_admin()
         if company_admin and company_admin.company_admin_approved == 'undecided':
@@ -468,8 +500,12 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
     @method_decorator(login_required_simple)
     @must_have_team
     @must_be_in_phase("payment")
-    @user_attendance_has(lambda ua: ua.payment()['status'] == 'done', mark_safe_lazy(format_lazy(_(u"Již máte startovné zaplaceno. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
-    @user_attendance_has(lambda ua: ua.payment()['status'] == 'no_admission', mark_safe_lazy(format_lazy(_(u"Startovné se neplatí. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
+    @user_attendance_has(
+        lambda ua: ua.payment()['status'] == 'done',
+        mark_safe_lazy(format_lazy(_(u"Již máte startovné zaplaceno. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
+    @user_attendance_has(
+        lambda ua: ua.payment()['status'] == 'no_admission',
+        mark_safe_lazy(format_lazy(_(u"Startovné se neplatí. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
     def dispatch(self, request, *args, **kwargs):
         dispatch = super(PaymentTypeView, self).dispatch(request, *args, **kwargs)
         return dispatch
@@ -536,7 +572,9 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
                     status=Payment.Status.NEW,
                     description="Ucastnicky poplatek Do prace na kole")
         p.save()
-        logger.info(u'Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s' % (uid, order_id, session_id, self.user_attendance, self.user_attendance.userprofile.user.username, p.status))
+        logger.info(
+            u'Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s' %
+            (uid, order_id, session_id, self.user_attendance, self.user_attendance.userprofile.user.username, p.status))
         # Render form
         profile = self.user_attendance.userprofile
         firstname = unidecode(profile.user.first_name)  # firstname
@@ -560,7 +598,19 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
         context['language_code'] = language_code
         context['session_id'] = session_id
         context['ts'] = timestamp
-        context['sig'] = make_sig((settings.PAYU_POS_ID, session_id, settings.PAYU_POS_AUTH_KEY, str(amount_hal), description, order_id, firstname, lastname, email, language_code, client_ip, timestamp))
+        context['sig'] = make_sig((
+            settings.PAYU_POS_ID,
+            session_id,
+            settings.PAYU_POS_AUTH_KEY,
+            str(amount_hal),
+            description,
+            order_id,
+            firstname,
+            lastname,
+            email,
+            language_code,
+            client_ip,
+            timestamp))
         return context
 
 
@@ -576,7 +626,9 @@ class PaymentResult(UserAttendanceViewMixin, TemplateView):
     @transaction.atomic
     def get_context_data(self, success, trans_id, session_id, pay_type, error=None, user_attendance=None):
         context_data = super(PaymentResult, self).get_context_data()
-        logger.info(u'Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s (%s)' % (success, trans_id, session_id, pay_type, error, user_attendance, user_attendance.userprofile.user.username))
+        logger.info(
+            u'Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s (%s)' %
+            (success, trans_id, session_id, pay_type, error, user_attendance, user_attendance.userprofile.user.username))
 
         if session_id and session_id != "":
             p = Payment.objects.select_for_update().get(session_id=session_id)
@@ -671,7 +723,11 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
 
     @method_decorator(login_required_simple)
     @must_be_approved_for_team
-    @user_attendance_has(lambda ua: not ua.entered_competition(), mark_safe_lazy(format_lazy(_(u"Vyplnit jízdy můžete až budete mít splněny všechny body <a href='{addr}'>registrace</a>."), addr=reverse_lazy("upravit_profil"))))
+    @user_attendance_has(
+        lambda ua: not ua.entered_competition(),
+        mark_safe_lazy(format_lazy(
+            _(u"Vyplnit jízdy můžete až budete mít splněny všechny body <a href='{addr}'>registrace</a>."),
+            addr=reverse_lazy("upravit_profil"))))
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
     def dispatch(self, request, *args, **kwargs):
@@ -869,7 +925,9 @@ class CompetitionResultsView(TemplateView):
             competition = Competition.objects.get(slug=competition_slug)
         except Competition.DoesNotExist:
             logger.exception('Unknown competition slug %s, request: %s' % (competition_slug, self.request))
-            return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující soutěž">kontakt@dopracenakole.net</a></div>'), status=401)
+            return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme.'
+                                  u' Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na'
+                                  u' <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující soutěž">kontakt@dopracenakole.net</a></div>'), status=401)
 
         results = competition.get_results()
         if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
@@ -969,7 +1027,9 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
             self.competition = Competition.objects.get(slug=questionaire_slug)
         except Competition.DoesNotExist:
             logger.exception('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
-            return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme. Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující dotazník">kontakt@dopracenakole.net</a></div>'), status=401)
+            return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme.'
+                                  u' Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na'
+                                  u' <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující dotazník">kontakt@dopracenakole.net</a></div>'), status=401)
         self.show_points = self.competition.has_finished() or self.userprofile.user.is_superuser
         self.is_actual = self.competition.is_actual()
         self.questions = Question.objects.filter(competition=self.competition).select_related("answer").order_by('order')
@@ -1000,7 +1060,14 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
             except Answer.DoesNotExist:
                 answer = Answer(question=question, user_attendance=self.user_attendance)
             question.points_given = answer.points_given
-            question.form = self.form_class(request.POST, files=request.FILES, instance=answer, question=question, prefix="question-%s" % question.pk, show_points=self.show_points, is_actual=self.is_actual)
+            question.form = self.form_class(
+                request.POST,
+                files=request.FILES,
+                instance=answer,
+                question=question,
+                prefix="question-%s" % question.pk,
+                show_points=self.show_points,
+                is_actual=self.is_actual)
             if not question.form.is_valid():
                 valid = False
 
@@ -1166,21 +1233,42 @@ def answers(request):
 def approve_for_team(request, user_attendance, reason="", approve=False, deny=False):
     if deny:
         if not reason:
-            messages.add_message(request, messages.ERROR, _(u"Při zamítnutí člena týmu musíte vyplnit zprávu."), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
+            messages.add_message(
+                request,
+                messages.ERROR,
+                _(u"Při zamítnutí člena týmu musíte vyplnit zprávu."),
+                extra_tags="user_attendance_%s" % user_attendance.pk,
+                fail_silently=True)
             return
         user_attendance.approved_for_team = 'denied'
         user_attendance.save()
         team_membership_denial_mail(user_attendance, request.user, reason)
-        messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %s ve vašem týmu bylo zamítnuto" % user_attendance), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            _(u"Členství uživatele %s ve vašem týmu bylo zamítnuto" % user_attendance),
+            extra_tags="user_attendance_%s" % user_attendance.pk,
+            fail_silently=True)
         return
     elif approve:
         if len(user_attendance.team.members()) >= settings.MAX_TEAM_MEMBERS:
-            messages.add_message(request, messages.ERROR, _(u"Tým je již plný, další člen již nemůže být potvrzen."), extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
+            messages.add_message(
+                request,
+                messages.ERROR,
+                _(u"Tým je již plný, další člen již nemůže být potvrzen."),
+                extra_tags="user_attendance_%s" % user_attendance.pk,
+                fail_silently=True)
             return
         user_attendance.approved_for_team = 'approved'
         user_attendance.save()
         team_membership_approval_mail(user_attendance)
-        messages.add_message(request, messages.SUCCESS, _(u"Členství uživatele %(user)s v týmu %(team)s bylo odsouhlaseno.") % {"user": user_attendance, "team": user_attendance.team.name}, extra_tags="user_attendance_%s" % user_attendance.pk, fail_silently=True)
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            _(u"Členství uživatele %(user)s v týmu %(team)s bylo odsouhlaseno.") %
+            {"user": user_attendance, "team": user_attendance.team.name},
+            extra_tags="user_attendance_%s" % user_attendance.pk,
+            fail_silently=True)
         return
 
 
@@ -1234,7 +1322,11 @@ class InviteView(UserAttendanceViewMixin, FormView):
                         approve_for_team(self.request, invited_user_attendance, "", True, False)
                     else:
                         invitation_register_mail(self.user_attendance, invited_user_attendance)
-                        messages.add_message(self.request, messages.SUCCESS, _(u"Odeslána pozvánka uživateli %(user)s na email %(email)s") % {"user": invited_user_attendance, "email": email}, fail_silently=True)
+                        messages.add_message(
+                            self.request,
+                            messages.SUCCESS,
+                            _(u"Odeslána pozvánka uživateli %(user)s na email %(email)s") % {"user": invited_user_attendance, "email": email},
+                            fail_silently=True)
                 except models.User.DoesNotExist:
                     invitation_mail(self.user_attendance, email)
                     messages.add_message(self.request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s") % email, fail_silently=True)
@@ -1291,8 +1383,18 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
                 approved_user = UserAttendance.objects.get(id=approve_id)
                 userprofile = approved_user.userprofile
                 if approved_user.approved_for_team not in ('undecided', 'denied') or not userprofile.user.is_active or approved_user.team != self.user_attendance.team:
-                    logger.error(u'Approving user with wrong parameters. User: %s (%s), approval: %s, team: %s, active: %s' % (userprofile.user, userprofile.user.username, approved_user.approved_for_team, approved_user.team, userprofile.user.is_active))
-                    messages.add_message(request, messages.ERROR, mark_safe(_(u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.net?subject=Nejde ověřit člen týmu'>kontakt@dopracenakole.net</a>.")), extra_tags="user_attendance_%s" % approved_user.pk, fail_silently=True)
+                    logger.error(
+                        u'Approving user with wrong parameters. User: %s (%s), approval: %s, team: %s, active: %s' %
+                        (userprofile.user, userprofile.user.username, approved_user.approved_for_team, approved_user.team, userprofile.user.is_active))
+                    messages.add_message(
+                        request,
+                        messages.ERROR,
+                        mark_safe(_(
+                            u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým."
+                            u" Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.net?subject=Nejde ověřit člen týmu'>kontakt@dopracenakole.net</a>."
+                        )),
+                        extra_tags="user_attendance_%s" % approved_user.pk,
+                        fail_silently=True)
                 else:
                     approve_for_team(request, approved_user, request.POST.get('reason-' + str(approved_user.id), ''), action == 'approve', action == 'deny')
         return render_to_response(self.template_name, self.get_context_data(), context_instance=RequestContext(request))
@@ -1369,11 +1471,19 @@ def statistics(
     elif variable == 'pocet-cest-dnes':
         result = period_trips(campaign, util.today(), util.today())
     elif variable == 'pocet-zaplacenych':
-        result = UserAttendance.objects.filter(Q(campaign=campaign) & Q(userprofile__user__is_active=True) & Q(transactions__status__in=models.Payment.done_statuses)).exclude(Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct().count()
+        result = UserAttendance.objects.filter(
+            Q(campaign=campaign) &
+            Q(userprofile__user__is_active=True) &
+            Q(transactions__status__in=models.Payment.done_statuses)
+        ).exclude(Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct().count()
     elif variable == 'pocet-prihlasenych':
         result = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True).distinct().count()
     elif variable == 'pocet-soutezicich':
-        result = UserAttendance.objects.filter(Q(campaign=campaign) & Q(userprofile__user__is_active=True) & (Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0))).distinct().count()
+        result = UserAttendance.objects.filter(
+            Q(campaign=campaign) &
+            Q(userprofile__user__is_active=True) &
+            (Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0))
+        ).distinct().count()
     elif variable == 'pocet-spolecnosti':
         result = Company.objects.filter(Q(subsidiaries__teams__campaign=campaign)).distinct().count()
     elif variable == 'pocet-pobocek':
@@ -1381,7 +1491,12 @@ def statistics(
 
     if variable == 'pocet-soutezicich-firma':
         if request.user.is_authenticated() and models.is_competitor(request.user):
-            result = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True, approved_for_team='approved', team__subsidiary__company=models.get_company(campaign, request.user)).count()
+            result = UserAttendance.objects.filter(
+                campaign=campaign,
+                userprofile__user__is_active=True,
+                approved_for_team='approved',
+                team__subsidiary__company=models.get_company(campaign, request.user)
+            ).count()
         else:
             result = "-"
 

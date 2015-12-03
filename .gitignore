@@ -13,5 +13,4 @@ env
 /project/settings_local.py
 /static/
 /db_backup/
-/setup.cfg
 /run

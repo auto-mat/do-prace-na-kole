@@ -124,7 +124,9 @@ def update_user(user_attendance, ignore_hash):
         mailing_hash = hash(str((list_id, user.first_name, user.last_name, user.email, custom_fields)))
         if ignore_hash or userprofile.mailing_hash != mailing_hash:
             new_mailing_id = mailing.update(list_id, mailing_id, user.first_name, user.last_name, user.email, custom_fields)
-            logger.info(u'User %s (%s) with email %s updated in mailing list with id %s, custom_fields: %s' % (userprofile, userprofile.user, user.email, mailing_id, custom_fields))
+            logger.info(
+                u'User %s (%s) with email %s updated in mailing list with id %s, custom_fields: %s' %
+                (userprofile, userprofile.user, user.email, mailing_id, custom_fields))
             update_mailing_id(user_attendance, new_mailing_id, mailing_hash)
     except createsend.BadRequest as e:
         if e.data.Code == 203:
