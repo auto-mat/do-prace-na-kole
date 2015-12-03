@@ -4,6 +4,7 @@
 {% load analytical %}
 <!DOCTYPE html>
 {% get_available_languages as languages %}
+{% get_current_language as current_language_code %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 {% analytical_head_top %}
@@ -47,13 +48,17 @@
                  <span class="icon-bar"></span>
                </button>
                <nav>
-                <ul class="lang_switch">
+                <div class="lang_switch">
+                   <ul>
                          {% for lang_code, lang_name in languages %}
                            {% language lang_code %}
-                             <a href="{% url request.resolver_match.view_name %}" class="switch-{{ lang_code }}">{{ lang_name }}</a>
+                             <li class="{% if lang_code == current_language_code %}active{% endif %}">
+                               <a href="{% url request.resolver_match.view_name %}" class="switch-{{ lang_code }}" title="{{ lang_name }}">{{ lang_code|upper }}</a>
+                             </li>
                            {% endlanguage %}
                          {% endfor %}
-                    </ul>
+                   </ul>
+                </div>
                   <div id="collapsing_menu" class="collapse navbar-collapse">
                    
                     <ul class="navbar nav navbar-nav" id="the_menu" >
