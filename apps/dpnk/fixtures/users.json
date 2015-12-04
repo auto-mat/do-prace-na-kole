@@ -1,0 +1,133 @@
+[
+    {
+        "fields": {
+            "name": "Testing city"
+        },
+        "model": "dpnk.city",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "name": "Testing company"
+        },
+        "model": "dpnk.company",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "company": 1,
+            "city": 1
+        },
+        "model": "dpnk.subsidiary",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "subsidiary": 1,
+            "name": "Testing team 1"
+        },
+        "model": "dpnk.team",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:18:10",
+            "email": "",
+            "first_name": "Testing",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2015-11-12T18:53:35.982",
+            "last_name": "User 1",
+            "password": "pbkdf2_sha256$20000$91f1TPASND5r$2CHIO+yZYoFPWSZtlEuUKV/F3k3KM0MAyQ8WZYa+Ra0=",
+            "user_permissions": [],
+            "username": "test"
+        },
+        "model": "auth.user",
+        "pk": 1128
+    },
+    {
+        "fields": {
+            "approved_for_team": "approved",
+            "campaign": 339,
+            "created": "2015-11-12T18:18:40.223",
+            "distance": null,
+            "dont_want_insert_track": false,
+            "get_rides_count_denorm": 0,
+            "t_shirt_size": null,
+            "team": 1,
+            "track": null,
+            "updated": "2015-11-12T18:18:40.223",
+            "userprofile": 1117
+        },
+        "model": "dpnk.userattendance",
+        "pk": 1115
+    },
+    {
+        "fields": {
+            "administrated_cities": [],
+            "language": "cs",
+            "mailing_hash": null,
+            "mailing_id": "",
+            "nickname": "",
+            "note": "",
+            "sex": "male",
+            "telephone": "",
+            "user": 1128
+        },
+        "model": "dpnk.userprofile",
+        "pk": 1117
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:18:10",
+            "email": "",
+            "first_name": "Testing",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2015-11-12T18:53:35.982",
+            "last_name": "User",
+            "password": "pbkdf2_sha256$20000$91f1TPASND5r$2CHIO+yZYoFPWSZtlEuUKV/F3k3KM0MAyQ8WZYa+Ra0=",
+            "user_permissions": [],
+            "username": "test1"
+        },
+        "model": "auth.user",
+        "pk": 1031
+    },
+    {
+        "fields": {
+            "approved_for_team": "approved",
+            "campaign": 339,
+            "created": "2015-11-12T18:18:40.223",
+            "distance": null,
+            "dont_want_insert_track": false,
+            "get_rides_count_denorm": 0,
+            "t_shirt_size": null,
+            "team": 1,
+            "track": null,
+            "updated": "2015-11-12T18:18:40.223",
+            "userprofile": 1017
+        },
+        "model": "dpnk.userattendance",
+        "pk": 1015
+    },
+    {
+        "fields": {
+            "administrated_cities": [],
+            "language": "cs",
+            "mailing_hash": null,
+            "mailing_id": "",
+            "nickname": "",
+            "note": "",
+            "sex": "male",
+            "telephone": "",
+            "user": 1031
+        },
+        "model": "dpnk.userprofile",
+        "pk": 1017
+    }
+]

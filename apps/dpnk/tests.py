@@ -20,6 +20,8 @@
 from django.test import TestCase, RequestFactory
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
+from dpnk import results
+from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile
 import datetime
 
 
@@ -28,7 +30,7 @@ import datetime
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminFilterTests(TestCase):
-    fixtures = ['campaign', 'views']
+    fixtures = ['campaign', 'views', 'users']
 
     def setUp(self):
         # Every test needs access to the request factory.
@@ -94,3 +96,28 @@ class AdminFilterTests(TestCase):
         address = reverse('working_schedule')
         response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
         self.assertEqual(response.status_code, 200)
+
+
+class TestTeams(TestCase):
+    fixtures = ['campaign', 'users']
+
+    def test_member_count_update(self):
+        team = Team.objects.get(id=1)
+        team.autoset_member_count()  # TODO: remove this once the signals in tests are repaired
+        self.assertEqual(team.member_count, 2)
+        campaign = Campaign.objects.get(pk=339)
+        user = User.objects.create(first_name="Third", last_name="User", username="third_user")
+        userprofile = UserProfile.objects.create(user=user)
+        UserAttendance.objects.create(team=team, campaign=campaign, userprofile=userprofile, approved_for_team='approved')
+        team.autoset_member_count()  # TODO: remove this once the signals in tests are repaired
+        self.assertEqual(team.member_count, 3)
+
+
+class ResultsTests(TestCase):
+    fixtures = ['users', 'campaign', 'test_results_data']
+
+    def test_get_competitors(self):
+        team = Team.objects.get(id=1)
+        team.autoset_member_count()  # TODO: remove this once the signals in tests are repaired
+        query = results.get_competitors(Competition.objects.get(id=0))
+        self.assertListEqual(list(query.all()), [team])

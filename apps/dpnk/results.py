@@ -24,51 +24,52 @@ from . import util
 import threading
 
 
-def get_competitors(self, potencial_competitors=False):
-    if self.without_admission or potencial_competitors:
+def get_competitors(competition, potencial_competitors=False):
+    """ Return query with competitors attending given competition """
+    if competition.without_admission or potencial_competitors:
         filter_query = {}
-        if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
-            filter_query['campaign'] = self.campaign
+        if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
+            filter_query['campaign'] = competition.campaign
             filter_query['userprofile__user__is_active'] = True
             filter_query['approved_for_team'] = 'approved'
-            if self.city:
-                cities = self.city.all()
+            if competition.city:
+                cities = competition.city.all()
                 if cities:
                     filter_query['team__subsidiary__city__in'] = cities
-            if self.company:
-                filter_query['team__subsidiary__company'] = self.company
-            if self.sex:
-                filter_query['userprofile__sex'] = self.sex
+            if competition.company:
+                filter_query['team__subsidiary__company'] = competition.company
+            if competition.sex:
+                filter_query['userprofile__sex'] = competition.sex
             query = UserAttendance.objects.filter(**filter_query)
-        elif self.competitor_type == 'team':
+        elif competition.competitor_type == 'team':
             filter_query = {}
-            filter_query['campaign'] = self.campaign
-            if self.city:
-                cities = self.city.all()
+            filter_query['campaign'] = competition.campaign
+            if competition.city:
+                cities = competition.city.all()
                 if cities:
                     filter_query['subsidiary__city__in'] = cities
-            if self.company:
-                filter_query['subsidiary__company'] = self.company
+            if competition.company:
+                filter_query['subsidiary__company'] = competition.company
             query = Team.objects.filter(**filter_query)
-        elif self.competitor_type == 'company':
-            if self.company:
-                filter_query['company'] = self.company
+        elif competition.competitor_type == 'company':
+            if competition.company:
+                filter_query['company'] = competition.company
             query = Company.objects.filter(**filter_query)
     else:
-        if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
-            query = self.user_attendance_competitors.all()
-        elif self.competitor_type == 'team':
-            query = self.team_competitors.all()
-        elif self.competitor_type == 'company':
-            query = self.company_competitors.all()
+        if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
+            query = competition.user_attendance_competitors.all()
+        elif competition.competitor_type == 'team':
+            query = competition.team_competitors.all()
+        elif competition.competitor_type == 'company':
+            query = competition.company_competitors.all()
 
-    if self.competitor_type == 'single_user':
+    if competition.competitor_type == 'single_user':
         query = query.filter(team__member_count__gt=1)
-    elif self.competitor_type == 'liberos':
+    elif competition.competitor_type == 'liberos':
         query = query.filter(team__member_count__lte=1)
-    elif self.competitor_type == 'team':
+    elif competition.competitor_type == 'team':
         query = query.filter(member_count__gt=1)
-    elif self.competitor_type == 'company':
+    elif competition.competitor_type == 'company':
         pass
 
     return query
