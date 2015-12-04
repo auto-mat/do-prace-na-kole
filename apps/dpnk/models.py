@@ -1078,11 +1078,10 @@ class UserProfile(models.Model):
         'City',
         related_name="city_admins",
         blank=True)
-    mailing_opt_in = models.BooleanField(
+    mailing_opt_in = models.NullBooleanField(
         verbose_name=_(u"Přeji si dostávat emailem informace o akcích, událostech a dalších informacích souvisejících se soutěží."),
         help_text=_(u"Odběr emailů můžete kdykoliv v průběhu soutěže zrušit."),
-        default=False,
-        null=False)
+        default=None)
 
     def first_name(self):
         return self.user.first_name

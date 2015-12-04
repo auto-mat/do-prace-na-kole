@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userprofile',
             name='mailing_opt_in',
-            field=models.BooleanField(help_text='Odběr emailů můžete kdykoliv v průběhu soutěže zrušit.', verbose_name='Přeji si dostávat emailem informace o akcích, událostech a dalších informacích souvisejících se soutěží.', default=False),
+            field=models.NullBooleanField(help_text='Odběr emailů můžete kdykoliv v průběhu soutěže zrušit.', verbose_name='Přeji si dostávat emailem informace o akcích, událostech a dalších informacích souvisejících se soutěží.', default=None),
         ),
         migrations.AlterField(
             model_name='answer',
