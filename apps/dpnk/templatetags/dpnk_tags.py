@@ -22,6 +22,7 @@ from django.conf import settings
 from django.template import Context
 from django.template.loader import get_template
 from cache_utils.decorators import cached
+from django.utils.safestring import mark_safe
 import slumber
 register = template.Library()
 
@@ -39,7 +40,7 @@ def cyklistesobe(city_slug, order="created_at"):
         cyklistesobe = None
     template = get_template("templatetags/cyklistesobe.html")
     context = Context({'cyklistesobe': cyklistesobe})
-    return template.render(context)
+    return mark_safe(template.render(context))
 
 
 @register.simple_tag
@@ -53,7 +54,7 @@ def wp_news():
         return ""
     template = get_template("templatetags/wp_news.html")
     context = Context({'wp_feed': wp_feed})
-    return template.render(context)
+    return mark_safe(template.render(context))
 
 
 @register.simple_tag
@@ -65,7 +66,7 @@ def wp_article(id):
         wp_article = api.list.get(feed="content_to_backend", _post_type="page", _id=id)
     except:
         return ""
-    return wp_article.values()[0]['content']
+    return mark_safe(wp_article.values()[0]['content'])
 
 
 @register.simple_tag

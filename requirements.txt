@@ -4,15 +4,15 @@ Django
 django-import-export
 -e git+https://github.com/PetrDlouhy/django-smart-selects.git#egg=django-smart-selects
 psycopg2
--e git+https://github.com/linsomniac/python-memcached.git#egg=python-memcached
+python-memcached
 django-chart-tools
 django-extensions
 django-debug-toolbar
 django-softhyphen
 django-admin-enhancer
-django-polymorphic
+-e git+https://github.com/chrisglass/django_polymorphic.git#egg=django-polymorphic
 django-composite-field
-django-registration-redux
+-e git+https://github.com/macropin/django-registration.git#egg=django-registration-redux  # for Django 1.9
 -e git+https://github.com/silverfix/django-nested-inlines.git#egg=django-nested-inlines
 django-su
 unidecode
@@ -28,18 +28,18 @@ flake8
 modulus11
 django-dbbackup
 pillow
--e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator
--e git+https://github.com/PetrDlouhy/django-related-admin.git#egg=django-related-admin
+InvoiceGenerator
+django-related-admin
 newrelic
 easy_thumbnails
 django-crispy-forms
-django-class-based-auth-views
+-e git+https://github.com/LukasRychtecky/django-class-based-auth-views.git@13_django-warning-fix#egg=django-class-based-auth-views  # for Django 1.9
 -e git+https://github.com/fabfuel/django-subdomains.git#egg=django-subdomains
 -e git+https://github.com/PetrDlouhy/django-adminfilters.git@develop#egg=django-adminfilters
 django-compressor
 slumber
 django-bleach
-django-analytical
+-e git+https://github.com/hobarrera/django-analytical.git@django19#egg=django-analytical  # for Django 1.9
 gunicorn
 -e git+https://github.com/Thermondo/django-cache-utils.git#egg=django-cache-utils
 django-settings-context-processor
@@ -52,4 +52,4 @@ django-cachalot
 django-bulk-update
 django-cors-headers
 django-nose
--e git+https://github.com/django-denorm/django-denorm.git@develop#egg=django-denorm
+-e git+https://github.com/PetrDlouhy/django-denorm.git@develop#egg=django-denorm

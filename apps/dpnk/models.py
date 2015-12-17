@@ -46,7 +46,7 @@ from django.core.files import File
 from django.utils.safestring import mark_safe
 from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
-from polymorphic import PolymorphicModel
+from polymorphic.models import PolymorphicModel
 from denorm import denormalized, depend_on_related
 from django.db import transaction
 from modulus11 import mod11
