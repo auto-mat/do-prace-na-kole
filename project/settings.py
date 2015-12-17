@@ -135,7 +135,6 @@ INSTALLED_APPS = (
     'dpnk',
     'smart_selects',
     'composite_field',
-    'admin_enhancer',
     'softhyphen',
     'debug_toolbar',
     'django_extensions',

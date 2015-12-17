@@ -9,7 +9,6 @@ django-chart-tools
 django-extensions
 django-debug-toolbar
 django-softhyphen
-django-admin-enhancer
 -e git+https://github.com/chrisglass/django_polymorphic.git#egg=django-polymorphic
 django-composite-field
 -e git+https://github.com/macropin/django-registration.git#egg=django-registration-redux  # for Django 1.9

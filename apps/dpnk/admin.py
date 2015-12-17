@@ -25,7 +25,6 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.admin import SimpleListFilter
 from django.db.models import Count, Q
 from django.utils.safestring import mark_safe
-from admin_enhancer.admin import EnhancedModelAdminMixin, EnhancedAdminMixin
 from django.core.urlresolvers import reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 from adminsortable2.admin import SortableInlineAdminMixin
@@ -56,14 +55,14 @@ import pprint
 from django.contrib.sessions.models import Session
 
 
-class PaymentInline(EnhancedAdminMixin, NestedTabularInline):
+class PaymentInline(NestedTabularInline):
     model = models.Payment
     extra = 0
     form = models.PaymentForm
     readonly_fields = ['user_attendance', 'order_id', 'session_id', 'trans_id', 'error', 'author', 'updated_by']
 
 
-class PackageTransactionInline(EnhancedAdminMixin, NestedTabularInline):
+class PackageTransactionInline(NestedTabularInline):
     model = models.PackageTransaction
     extra = 0
     readonly_fields = ['author', 'updated_by', 'tracking_link', 't_shirt_size']
@@ -71,32 +70,32 @@ class PackageTransactionInline(EnhancedAdminMixin, NestedTabularInline):
     form = models.PackageTransactionForm
 
 
-class CommonTransactionInline(EnhancedAdminMixin, NestedTabularInline):
+class CommonTransactionInline(NestedTabularInline):
     model = models.CommonTransaction
     extra = 0
     readonly_fields = ['user_attendance', 'author', 'updated_by']
     form = models.CommonTransactionForm
 
 
-class UserActionTransactionInline(EnhancedAdminMixin, NestedTabularInline):
+class UserActionTransactionInline(NestedTabularInline):
     model = models.UserActionTransaction
     extra = 0
     readonly_fields = ['user_attendance']
     form = models.UserActionTransactionForm
 
 
-class TeamInline(EnhancedAdminMixin, admin.TabularInline):
+class TeamInline(admin.TabularInline):
     model = models.Team
     extra = 0
     readonly_fields = ['invitation_token', ]
 
 
-class SubsidiaryInline(EnhancedAdminMixin, admin.TabularInline):
+class SubsidiaryInline(admin.TabularInline):
     model = models.Subsidiary
     extra = 0
 
 
-class CityAdmin(EnhancedModelAdminMixin, LeafletGeoAdmin):
+class CityAdmin(LeafletGeoAdmin):
     list_display = ('name', 'slug', 'cyklistesobe_slug', 'id', )
     prepopulated_fields = {'slug': ('name',), 'cyklistesobe_slug': ('name',)}
 
@@ -122,7 +121,7 @@ class CompanyForm(forms.ModelForm):
             self.fields['address_street'].required = False
 
 
-class CompanyAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.ModelAdmin):
+class CompanyAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     queryset_city_param = 'subsidiaries__city__in'
     list_display = (
         'name',
@@ -168,7 +167,7 @@ class CompanyAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.M
     subsidiary_links.short_description = 'Pobočky'
 
 
-class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admin.ModelAdmin):
+class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     list_display = ('__str__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline, ]
     list_filter = [SubsidiaryCampaignFilter, 'city', 'active']
@@ -201,13 +200,13 @@ class SubsidiaryAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, admi
     team_links.short_description = u"Týmy"
 
 
-class QuestionInline(SortableInlineAdminMixin, EnhancedAdminMixin, admin.TabularInline):
+class QuestionInline(SortableInlineAdminMixin, admin.TabularInline):
     model = models.Question
     form = models.QuestionForm
     extra = 0
 
 
-class CompetitionAdmin(EnhancedModelAdminMixin, CityAdminMixin, ExportMixin, RelatedFieldAdmin):
+class CompetitionAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin):
     list_display = (
         'name',
         'slug',
@@ -377,7 +376,7 @@ class UserAttendanceForm(forms.ModelForm):
             self.fields['t_shirt_size'].required = False
 
 
-class UserAttendanceInline(EnhancedAdminMixin, NestedTabularInline):
+class UserAttendanceInline(NestedTabularInline):
     model = models.UserAttendance
     form = UserAttendanceForm
     extra = 0
@@ -434,7 +433,7 @@ class UserProfileForm(forms.ModelForm):
         self.fields['telephone'].required = False
 
 
-class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
+class UserProfileAdminInline(NestedStackedInline):
     model = models.UserProfile
     form = UserProfileForm
     inlines = [UserAttendanceInline, ]
@@ -457,7 +456,7 @@ class UserProfileAdminInline(EnhancedAdminMixin, NestedStackedInline):
         return obj.team.subsidiary.city
 
 
-class CompanyAdminInline(EnhancedAdminMixin, NestedTabularInline):
+class CompanyAdminInline(NestedTabularInline):
     raw_id_fields = ('administrated_company',)
     extra = 0
     model = models.CompanyAdmin
@@ -498,7 +497,7 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     actions = (remove_mailing_id,)
 
 
-class UserAdmin(ExportMixin, EnhancedModelAdminMixin, NestedModelAdmin, UserAdmin):
+class UserAdmin(ExportMixin, NestedModelAdmin, UserAdmin):
     inlines = (CompanyAdminInline, UserProfileAdminInline)
     list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'userprofile_administrated_cities', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name', ]
@@ -633,7 +632,7 @@ class NotInCityFilter(SimpleListFilter):
         return queryset.exclude(team__subsidiary__city=self.value())
 
 
-class TripAdminInline(EnhancedModelAdminMixin, admin.TabularInline):
+class TripAdminInline(admin.TabularInline):
     list_display = ('user_attendance', 'date', 'trip_from', 'trip_to', 'distance_from', 'distance_to', 'id')
     raw_id_fields = ('user_attendance',)
     extra = 0
@@ -690,7 +689,7 @@ class UserAttendanceResource(resources.ModelResource):
         return obj.payment_amount()
 
 
-class UserAttendanceAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin, ExportMixin, CityAdminMixin, LeafletGeoAdmin):
+class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, CityAdminMixin, LeafletGeoAdmin):
     queryset_city_param = 'team__subsidiary__city__in'
     list_display = (
         'id',
@@ -776,7 +775,7 @@ def recalculate_team_member_count(modeladmin, request, queryset):
 recalculate_team_member_count.short_description = "Přepočítat počet členů týmu"
 
 
-class TeamAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
+class TeamAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'name',
         'subsidiary',
@@ -805,7 +804,7 @@ class TeamAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
     members.short_description = 'Členové'
 
 
-class TransactionChildAdmin(EnhancedModelAdminMixin, PolymorphicChildModelAdmin):
+class TransactionChildAdmin(PolymorphicChildModelAdmin):
     base_model = models.Transaction
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created', 'updated_by')
@@ -916,12 +915,12 @@ class PackageTransactionAdmin(RelatedFieldAdmin):
     form = models.PaymentForm
 
 
-class ChoiceInline(EnhancedAdminMixin, admin.TabularInline):
+class ChoiceInline(admin.TabularInline):
     model = models.Choice
     extra = 3
 
 
-class ChoiceTypeAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+class ChoiceTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'competition', 'universal')
     inlines = [ChoiceInline]
     list_filter = ('competition__campaign', 'competition', )
@@ -946,7 +945,7 @@ class HasReactionFilter(SimpleListFilter):
         return queryset
 
 
-class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
+class AnswerAdmin(RelatedFieldAdmin):
     list_display = (
         'user_attendance',
         'user_attendance__userprofile__user__email',
@@ -982,7 +981,7 @@ class AnswerAdmin(EnhancedModelAdminMixin, RelatedFieldAdmin):
             return mark_safe(u"<a href='%s'>%s</a>" % (obj.attachment.url, obj.attachment))
 
 
-class QuestionAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
+class QuestionAdmin(ExportMixin, admin.ModelAdmin):
     form = models.QuestionForm
     list_display = ('__str__', 'text', 'type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
     ordering = ('order', 'date',)
@@ -1009,13 +1008,13 @@ def show_distance_trips(modeladmin, request, queryset):
 show_distance_trips.short_description = _(u"Ukázat ujetou vzdálenost")
 
 
-class GpxFileInline(EnhancedAdminMixin, admin.TabularInline):
+class GpxFileInline(admin.TabularInline):
     model = models.GpxFile
     raw_id_fields = ('user_attendance', 'trip')
     extra = 0
 
 
-class TripAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
+class TripAdmin(ExportMixin, admin.ModelAdmin):
     list_display = (
         'user_attendance',
         'date',
@@ -1039,7 +1038,7 @@ class TripAdmin(EnhancedModelAdminMixin, ExportMixin, admin.ModelAdmin):
     inlines = [GpxFileInline, ]
 
 
-class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+class CompetitionResultAdmin(admin.ModelAdmin):
     list_display = ('user_attendance', 'team', 'company', 'result', 'competition')
     list_filter = ('competition__campaign', 'competition',)
     search_fields = (
@@ -1052,17 +1051,17 @@ class CompetitionResultAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
     raw_id_fields = ('user_attendance', 'team')
 
 
-class PhaseInline(EnhancedModelAdminMixin, admin.TabularInline):
+class PhaseInline(admin.TabularInline):
     model = models.Phase
     extra = 0
 
 
-class CityInCampaignInline(EnhancedAdminMixin, admin.TabularInline):
+class CityInCampaignInline(admin.TabularInline):
     model = models.CityInCampaign
     extra = 0
 
 
-class TShirtSizeInline(EnhancedAdminMixin, SortableInlineAdminMixin, admin.TabularInline):
+class TShirtSizeInline(SortableInlineAdminMixin, admin.TabularInline):
     model = models.TShirtSize
     extra = 0
 
@@ -1078,7 +1077,7 @@ class DeliveryBatchForm(forms.ModelForm):
         return ret_val
 
 
-class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
+class DeliveryBatchAdmin(admin.ModelAdmin):
     list_display = ['campaign', 'created', 'package_transaction__count', 'customer_sheets__url', 'tnt_order__url']
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction__count', 't_shirt_sizes')
     inlines = [PackageTransactionInline, ]
@@ -1130,7 +1129,7 @@ class DeliveryBatchAdmin(EnhancedAdminMixin, admin.ModelAdmin):
             return mark_safe(u"<a href='%s'>tnt_order</a>" % obj.tnt_order.url)
 
 
-class CampaignAdmin(EnhancedModelAdminMixin, admin.ModelAdmin):
+class CampaignAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'slug',
@@ -1180,7 +1179,7 @@ def update_mailing_coordinator(modeladmin, request, queryset):
 update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
 
 
-class CompanyAdminAdmin(CityAdminMixin, EnhancedModelAdminMixin, RelatedFieldAdmin):
+class CompanyAdminAdmin(CityAdminMixin, RelatedFieldAdmin):
     list_display = [
         'user',
         'user__email',
@@ -1270,7 +1269,7 @@ class InvoiceResource(resources.ModelResource):
         return obj.payment_set.count()
 
 
-class InvoiceAdmin(EnhancedModelAdminMixin, ExportMixin, RelatedFieldAdmin):
+class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = [
         'company',
         'created',
