@@ -393,7 +393,7 @@ class UserAttendanceInline(NestedTabularInline):
     list_max_show_all = 10000
     raw_id_fields = ('team',)
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         return models.UserAttendance.objects.annotate(trips_count=Count('user_trips'))
 
     def trips_count(self, obj):
@@ -514,7 +514,7 @@ class UserAdmin(ExportMixin, NestedModelAdmin, UserAdmin):
     readonly_fields = ['password']
     list_max_show_all = 10000
 
-    # def queryset(self, request):
+    # def get_queryset(self, request):
     #     return User.objects.annotate(trips_count = Count('userprofile__user_trips'))
 
     def trips_count(self, obj):
@@ -764,8 +764,8 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, CityAdminMixin, Leafle
         return mark_safe('<a href="%s">%s</a>' % (reverse('admin:auth_user_change', args=(obj.userprofile.user.pk,)), obj.userprofile.user))
     user_link.short_description = 'Uživatel'
 
-    def queryset(self, request):
-        queryset = super(UserAttendanceAdmin, self).queryset(request)
+    def get_queryset(self, request):
+        queryset = super(UserAttendanceAdmin, self).get_queryset(request)
         return queryset  # .select_related('userprofile__user', 'team__subsidiary__company', 'campaign__cityincampaigns', 't_shirt_size', 'team__subsidiary__city', 'campaign')
 
 
@@ -1356,7 +1356,7 @@ class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
     payment_created.admin_order_field = 'payment_created'
     payment_created.short_description = 'Datum vytvoření platby'
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         campaign = models.Campaign.objects.get(slug=request.subdomain)
         queryset = campaign.user_attendances_for_delivery()
         return queryset

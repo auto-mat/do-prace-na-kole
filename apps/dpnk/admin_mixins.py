@@ -50,8 +50,8 @@ class ReadOnlyModelAdminMixin(object):
 class CityAdminMixin(object):
     queryset_city_param = 'city__in'
 
-    def queryset(self, request):
-        queryset = super(admin.ModelAdmin, self).queryset(request)
+    def get_queryset(self, request):
+        queryset = super(admin.ModelAdmin, self).get_queryset(request)
         if request.user.is_superuser:
             return queryset.distinct()
         kwargs = {self.queryset_city_param: request.user.userprofile.administrated_cities.all()}
