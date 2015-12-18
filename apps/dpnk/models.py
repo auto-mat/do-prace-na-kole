@@ -2266,6 +2266,11 @@ class ChoiceType(models.Model):
 class QuestionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(QuestionForm, self).__init__(*args, **kwargs)
+        if not self.request.user.is_superuser:
+            administrated_cities = self.request.user.userprofile.administrated_cities.all()
+            campaign_slug = self.request.subdomain
+            self.fields['competition'].queryset = Competition.objects.filter(city__in=administrated_cities, campaign__slug=campaign_slug).distinct()
+
         if hasattr(self.instance, 'competition'):
             self.fields['choice_type'].queryset = ChoiceType.objects.filter(Q(competition=self.instance.competition) | Q(universal=True))
         else:
