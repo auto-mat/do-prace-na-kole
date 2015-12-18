@@ -34,7 +34,7 @@ from import_export import resources, fields
 from import_export.admin import ExportMixin, ImportMixin
 from django.utils.translation import ugettext_lazy as _
 from leaflet.admin import LeafletGeoAdmin
-from .admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin
+from .admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin, FormRequestMixin
 import datetime
 # Models
 from .filters import (
@@ -204,7 +204,7 @@ class QuestionInline(SortableInlineAdminMixin, admin.TabularInline):
     extra = 0
 
 
-class CompetitionAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin):
+class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFieldAdmin):
     list_display = (
         'name',
         'slug',
@@ -248,11 +248,6 @@ class CompetitionAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin):
     prepopulated_fields = {'slug': ('name',)}
     list_max_show_all = 10000
     form = models.CompetitionForm
-
-    def get_form(self, request, *args, **kwargs):
-        form = super(CompetitionAdmin, self).get_form(request, *args, **kwargs)
-        form.request = request
-        return form
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser:
@@ -1075,7 +1070,7 @@ class DeliveryBatchForm(forms.ModelForm):
         return ret_val
 
 
-class DeliveryBatchAdmin(admin.ModelAdmin):
+class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     list_display = ['campaign', 'created', 'package_transaction__count', 'customer_sheets__url', 'tnt_order__url']
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction__count', 't_shirt_sizes')
     inlines = [PackageTransactionInline, ]
@@ -1092,11 +1087,6 @@ class DeliveryBatchAdmin(admin.ModelAdmin):
             t_shirt_size.short_description = t_size.name
             setattr(self, field_name, t_shirt_size)
         return self.list_display
-
-    def get_form(self, request, *args, **kwargs):
-        form = super(DeliveryBatchAdmin, self).get_form(request, *args, **kwargs)
-        form.request = request
-        return form
 
     def package_transaction__count(self, obj):
         if not obj.pk:

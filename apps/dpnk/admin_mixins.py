@@ -56,3 +56,10 @@ class CityAdminMixin(object):
             return queryset.distinct()
         kwargs = {self.queryset_city_param: request.user.userprofile.administrated_cities.all()}
         return queryset.filter(**kwargs).distinct()
+
+
+class FormRequestMixin(object):
+    def get_form(self, request, *args, **kwargs):
+        form = super(FormRequestMixin, self).get_form(request, *args, **kwargs)
+        form.request = request
+        return form
