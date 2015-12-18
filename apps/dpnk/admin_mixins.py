@@ -58,6 +58,12 @@ class CityAdminMixin(object):
         return queryset.filter(**kwargs).distinct()
 
 
+def city_admin_mixin_generator(queryset_city):
+    class CAMixin(CityAdminMixin):
+        queryset_city_param = queryset_city
+    return CAMixin
+
+
 class FormRequestMixin(object):
     def get_form(self, request, *args, **kwargs):
         form = super(FormRequestMixin, self).get_form(request, *args, **kwargs)

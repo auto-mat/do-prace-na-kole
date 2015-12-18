@@ -34,7 +34,7 @@ from import_export import resources, fields
 from import_export.admin import ExportMixin, ImportMixin
 from django.utils.translation import ugettext_lazy as _
 from leaflet.admin import LeafletGeoAdmin
-from .admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin, FormRequestMixin
+from .admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin, FormRequestMixin, city_admin_mixin_generator
 import datetime
 # Models
 from .filters import (
@@ -119,8 +119,7 @@ class CompanyForm(forms.ModelForm):
             self.fields['address_street'].required = False
 
 
-class CompanyAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
-    queryset_city_param = 'subsidiaries__city__in'
+class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportMixin, admin.ModelAdmin):
     list_display = (
         'name',
         'subsidiaries_text',
@@ -682,8 +681,7 @@ class UserAttendanceResource(resources.ModelResource):
         return obj.payment_amount()
 
 
-class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, CityAdminMixin, LeafletGeoAdmin):
-    queryset_city_param = 'team__subsidiary__city__in'
+class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_generator('team__subsidiary__city__in'), LeafletGeoAdmin):
     list_display = (
         'id',
         'name_for_trusted',
@@ -974,7 +972,7 @@ class AnswerAdmin(RelatedFieldAdmin):
             return mark_safe(u"<a href='%s'>%s</a>" % (obj.attachment.url, obj.attachment))
 
 
-class QuestionAdmin(ExportMixin, admin.ModelAdmin):
+class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ExportMixin, admin.ModelAdmin):
     form = models.QuestionForm
     list_display = ('__str__', 'text', 'type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
     ordering = ('order', 'date',)
@@ -1167,7 +1165,7 @@ def update_mailing_coordinator(modeladmin, request, queryset):
 update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
 
 
-class CompanyAdminAdmin(CityAdminMixin, RelatedFieldAdmin):
+class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsidiaries__city'), RelatedFieldAdmin):
     list_display = [
         'user',
         'user__email',
@@ -1192,7 +1190,6 @@ class CompanyAdminAdmin(CityAdminMixin, RelatedFieldAdmin):
     raw_id_fields = ['user', ]
     list_max_show_all = 100000
     actions = (update_mailing_coordinator,)
-    queryset_city_param = 'administrated_company__subsidiaries__city'
 
 
 def mark_invoices_paid(modeladmin, request, queryset):
