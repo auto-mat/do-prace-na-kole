@@ -40,9 +40,7 @@ import datetime
 from .filters import (
     CampaignFilter,
     CityCampaignFilter,
-    SubsidiaryCampaignFilter,
-    TripCampaignFilter,
-    QuestionCampaignFilter,
+    campaign_filter_generator,
     HasVoucherFilter,
     HasRidesFilter,
     IsForCompanyFilter,
@@ -170,7 +168,7 @@ class CompanyAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
 class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     list_display = ('__str__', 'company', 'city', 'teams_text', 'id', )
     inlines = [TeamInline, ]
-    list_filter = [SubsidiaryCampaignFilter, 'city', 'active']
+    list_filter = [campaign_filter_generator('teams__campaign'), 'city', 'active']
     search_fields = (
         'address_recipient',
         'company__name',
@@ -491,7 +489,7 @@ remove_mailing_id.short_description = _(u"Odstranit mailing ID a hash")
 
 class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     list_display = ('user', '__str__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
-    list_filter = ('userattendance__campaign', 'language', 'sex', 'userattendance__team__subsidiary__city', 'userattendance__approved_for_team')
+    list_filter = (campaign_filter_generator('userattendance__campaign'), 'language', 'sex', 'userattendance__team__subsidiary__city', 'userattendance__approved_for_team')
     filter_horizontal = ('administrated_cities',)
     search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
     actions = (remove_mailing_id,)
@@ -502,7 +500,7 @@ class UserAdmin(ExportMixin, NestedModelAdmin, UserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'userprofile_administrated_cities', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name', ]
     list_filter = [
-        'userprofile__userattendance__campaign',
+        campaign_filter_generator('userprofile__userattendance__campaign'),
         'is_staff',
         'is_superuser',
         'is_active',
@@ -834,7 +832,7 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
         'user_attendance__userprofile__user__first_name',
         'user_attendance__userprofile__user__last_name',
         'user_attendance__userprofile__user__username')
-    list_filter = ['user_attendance__campaign', 'status', 'polymorphic_ctype', ]
+    list_filter = [campaign_filter_generator('user_attendance__campaign'), 'status', 'polymorphic_ctype', ]
 
     readonly_fields = ['user_link', ]
 
@@ -879,7 +877,7 @@ class PaymentAdmin(RelatedFieldAdmin):
         'order_id',
         'user_attendance__team__subsidiary__company__name',
     )
-    list_filter = ['user_attendance__campaign', 'status', 'error', 'pay_type', ]
+    list_filter = [campaign_filter_generator('user_attendance__campaign'), 'status', 'error', 'pay_type', ]
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created', 'updated_by')
     list_max_show_all = 10000
@@ -908,7 +906,7 @@ class PackageTransactionAdmin(RelatedFieldAdmin):
         'user_attendance__userprofile__user__username',
         'user_attendance__team__subsidiary__company__name',
     )
-    list_filter = ['user_attendance__campaign', 'status', 'delivery_batch']
+    list_filter = [campaign_filter_generator('user_attendance__campaign'), 'status', 'delivery_batch']
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created')
     list_max_show_all = 10000
@@ -923,7 +921,7 @@ class ChoiceInline(admin.TabularInline):
 class ChoiceTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'competition', 'universal')
     inlines = [ChoiceInline]
-    list_filter = ('competition__campaign', 'competition', )
+    list_filter = (campaign_filter_generator('competition__campaign'), 'competition', )
     save_as = True
 
 
@@ -965,7 +963,7 @@ class AnswerAdmin(RelatedFieldAdmin):
         'question__name',
         'question__competition__name',
         'user_attendance__team__subsidiary__company__name')
-    list_filter = (QuestionCampaignFilter, HasReactionFilter, 'question__competition__city', 'question__competition')
+    list_filter = (campaign_filter_generator('question__competition__campaign'), HasReactionFilter, 'question__competition__city', 'question__competition')
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
     raw_id_fields = ('user_attendance', )
@@ -985,7 +983,7 @@ class QuestionAdmin(ExportMixin, admin.ModelAdmin):
     form = models.QuestionForm
     list_display = ('__str__', 'text', 'type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
     ordering = ('order', 'date',)
-    list_filter = ('competition__campaign', 'competition__city', 'competition',)
+    list_filter = (campaign_filter_generator('competition__campaign'), 'competition__city', 'competition',)
     search_fields = ('text',)
     save_as = True
 
@@ -1032,7 +1030,7 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
         'user_attendance__userprofile__user__username',
         'user_attendance__team__subsidiary__company__name')
     raw_id_fields = ('user_attendance',)
-    list_filter = (TripCampaignFilter, 'user_attendance__team__subsidiary__city', 'distance_from')
+    list_filter = (campaign_filter_generator('user_attendance__campaign'), 'user_attendance__team__subsidiary__city', 'distance_from')
     actions = (show_distance_trips,)
     list_max_show_all = 100000
     inlines = [GpxFileInline, ]
@@ -1040,7 +1038,7 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
 
 class CompetitionResultAdmin(admin.ModelAdmin):
     list_display = ('user_attendance', 'team', 'company', 'result', 'competition')
-    list_filter = ('competition__campaign', 'competition',)
+    list_filter = (campaign_filter_generator('competition__campaign'), 'competition',)
     search_fields = (
         'user_attendance__userprofile__nickname',
         'user_attendance__userprofile__user__first_name',

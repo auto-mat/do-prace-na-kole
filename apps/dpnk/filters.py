@@ -67,6 +67,12 @@ class CampaignFilter(SimpleListFilter):
         return queryset.filter(Q(**campaign_queryarg) | Q(**none_queryarg)).distinct()
 
 
+def campaign_filter_generator(campaign_field):
+    class CFilter(CampaignFilter):
+        field = campaign_field
+    return CFilter
+
+
 class CityCampaignFilter(CampaignFilter):
     field = "subsidiaries__teams__campaign"
 
@@ -74,18 +80,6 @@ class CityCampaignFilter(CampaignFilter):
         queryset = super(CityCampaignFilter, self).queryset(request, queryset)
         queryset = queryset.annotate(user_count_sum=Sum('subsidiaries__teams__member_count'))
         return queryset
-
-
-class SubsidiaryCampaignFilter(CampaignFilter):
-    field = 'teams__campaign'
-
-
-class TripCampaignFilter(CampaignFilter):
-    field = 'user_attendance__campaign'
-
-
-class QuestionCampaignFilter(CampaignFilter):
-    field = 'question__competition__campaign'
 
 
 class HasVoucherFilter(SimpleListFilter):
