@@ -10,7 +10,7 @@ django-extensions
 django-debug-toolbar
 django-softhyphen
 -e git+https://github.com/chrisglass/django_polymorphic.git#egg=django-polymorphic
-django-composite-field
+-e git+https://pdlouhy@bitbucket.org/pdlouhy/django-composite-field.git#egg=django-composite-field  # the non-PIP source is for Django 1.9
 -e git+https://github.com/macropin/django-registration.git#egg=django-registration-redux  # for Django 1.9
 -e git+https://github.com/silverfix/django-nested-inlines.git#egg=django-nested-inlines
 django-su
@@ -27,7 +27,7 @@ flake8
 modulus11
 django-dbbackup
 pillow
-InvoiceGenerator
+-e git+https://github.com/creckx/InvoiceGenerator.git#egg=InvoiceGenerator  # the non-PIP source is for Python 3
 django-related-admin
 newrelic
 easy_thumbnails
