@@ -44,7 +44,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files import File
 from django.utils.safestring import mark_safe
-from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
 from polymorphic.models import PolymorphicModel
 from denorm import denormalized, depend_on_related
@@ -68,7 +67,6 @@ def get_address_string(address):
     return ", ".join(filter(lambda x: x != "", [address.recipient, "%s %s" % (address.street, address.street_number), "%s %s" % (util.format_psc(address.psc), address.city)]))
 
 
-@python_2_unicode_compatible
 class Address(CompositeField):
     street = models.CharField(
         verbose_name=_(u"Ulice"),
@@ -124,7 +122,6 @@ class Address(CompositeField):
         return get_address_string(self)
 
 
-@python_2_unicode_compatible
 class City(models.Model):
     """Město"""
 
@@ -158,7 +155,6 @@ class City(models.Model):
         return "%s" % self.name
 
 
-@python_2_unicode_compatible
 class CityInCampaign(models.Model):
     """Město v kampani"""
 
@@ -186,7 +182,6 @@ class CityInCampaign(models.Model):
         return "%(city)s (%(campaign)s)" % {'campaign': self.campaign.name, 'city': self.city.name}
 
 
-@python_2_unicode_compatible
 class Company(models.Model):
     """Firma"""
 
@@ -230,7 +225,6 @@ class Company(models.Model):
         return get_address_string(self.address)
 
 
-@python_2_unicode_compatible
 class Subsidiary(models.Model):
     """Pobočka"""
 
@@ -268,7 +262,6 @@ def validate_length(value, min_length=25):
         raise ValidationError(_(u"Řetězec by neměl být kratší než %(min)s znaků a delší než %(max)s znaků") % {'min': min_length, 'max': str_len})
 
 
-@python_2_unicode_compatible
 class Team(models.Model):
     """Profil týmu"""
 
@@ -355,7 +348,6 @@ class Team(models.Model):
         super(Team, self).save(force_insert, force_update, *args, **kwargs)
 
 
-@python_2_unicode_compatible
 class TeamName(Team):
     class Meta:
         proxy = True
@@ -364,7 +356,6 @@ class TeamName(Team):
         return self.name
 
 
-@python_2_unicode_compatible
 class Campaign(models.Model):
     """kampaň"""
 
@@ -578,7 +569,6 @@ class Phase(models.Model):
         return self.has_started() and not self.has_finished()
 
 
-@python_2_unicode_compatible
 class TShirtSize(models.Model):
     """Velikost trička"""
 
@@ -625,7 +615,6 @@ class UserAttendanceForm(forms.ModelForm):
         self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
 
 
-@python_2_unicode_compatible
 class UserAttendance(models.Model):
     """Účast uživatele v kampani"""
 
@@ -994,7 +983,6 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return super(UserAttendance, self).save(*args, **kwargs)
 
 
-@python_2_unicode_compatible
 class UserAttendanceRelated(UserAttendance):
     class Meta:
         proxy = True
@@ -1003,7 +991,6 @@ class UserAttendanceRelated(UserAttendance):
         return "%s - %s" % (self.userprofile.name(), self.campaign.slug)
 
 
-@python_2_unicode_compatible
 class UserProfile(models.Model):
     """Uživatelský profil"""
 
@@ -1129,7 +1116,6 @@ class UserProfile(models.Model):
         super(UserProfile, self).save(force_insert, force_update, *args, **kwargs)
 
 
-@python_2_unicode_compatible
 class CompanyAdmin(models.Model):
     """Profil firemního administrátora"""
 
@@ -1223,7 +1209,6 @@ class CompanyAdmin(models.Model):
                 company_admin_rejected_mail(self)
 
 
-@python_2_unicode_compatible
 @with_author
 class DeliveryBatch(models.Model):
     """Dávka objednávek"""
@@ -1284,7 +1269,6 @@ def create_delivery_files(sender, instance, created, **kwargs):
         instance.save()
 
 
-@python_2_unicode_compatible
 @with_author
 class Invoice(models.Model):
     """Faktura"""
@@ -1867,7 +1851,6 @@ class Trip(models.Model):
         return self.date >= util.today()
 
 
-@python_2_unicode_compatible
 class Competition(models.Model):
     """Soutěž"""
 
@@ -2135,7 +2118,6 @@ class CompetitionForm(forms.ModelForm):
             self.set_fields_queryset_on_create()
 
 
-@python_2_unicode_compatible
 class CompetitionResult(models.Model):
     """Výsledek soutěže"""
     class Meta:
@@ -2240,7 +2222,6 @@ class CompetitionResult(models.Model):
             return UserAttendance.objects.filter(team__subsidiary__company=self.company)
 
 
-@python_2_unicode_compatible
 class ChoiceType(models.Model):
     """Typ volby"""
     class Meta:
@@ -2278,7 +2259,6 @@ class QuestionForm(forms.ModelForm):
             self.fields['choice_type'].queryset = ChoiceType.objects.filter(universal=True)
 
 
-@python_2_unicode_compatible
 class Question(models.Model):
 
     class Meta:
@@ -2356,7 +2336,6 @@ class Question(models.Model):
         return self.comment_type or self.with_attachment or self.type != 'text' or self.choice_type is not None
 
 
-@python_2_unicode_compatible
 class Choice(models.Model):
 
     class Meta:
@@ -2386,7 +2365,6 @@ class Choice(models.Model):
         return "%s" % self.text
 
 
-@python_2_unicode_compatible
 class Answer(models.Model):
     """Odpověď"""
     class Meta:
