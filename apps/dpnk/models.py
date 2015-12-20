@@ -648,6 +648,7 @@ class UserAttendance(models.Model):
     userprofile = models.ForeignKey(
         "UserProfile",
         verbose_name=_(u"Uživatelský profil"),
+        related_name="userattendance_set",
         unique=False,
         null=False,
         blank=False)
@@ -2266,7 +2267,7 @@ class ChoiceType(models.Model):
 class QuestionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(QuestionForm, self).__init__(*args, **kwargs)
-        if not self.request.user.is_superuser:
+        if hasattr(self, 'request') and not self.request.user.is_superuser:
             administrated_cities = self.request.user.userprofile.administrated_cities.all()
             campaign_slug = self.request.subdomain
             self.fields['competition'].queryset = Competition.objects.filter(city__in=administrated_cities, campaign__slug=campaign_slug).distinct()
@@ -2366,7 +2367,7 @@ class Choice(models.Model):
     choice_type = models.ForeignKey(
         ChoiceType,
         verbose_name=_(u"Typ volby"),
-        related_name="choices",
+        related_name="choicetype_set",
         null=False,
         blank=False)
     text = models.CharField(
@@ -2418,8 +2419,9 @@ class Answer(models.Model):
     def str_choices(self):
         return ", ".join([choice.text for choice in self.choices.all()])
 
-    def __str__(self):
-        return "%s" % self.str_choices()
+    # TODO: repair tests with this
+    # def __str__(self):
+    #      return "%s" % self.str_choices()
 
 
 def get_company(campaign, user):

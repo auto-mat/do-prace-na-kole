@@ -30,7 +30,7 @@ class CampaignFilter(SimpleListFilter):
     field = 'campaign'
 
     def lookups(self, request, model_admin):
-        if not request.subdomain:
+        if not (hasattr(request, 'subdomain') and request.subdomain):
             campaigns = [('all', _('All'))]
             campaigns = [('none', _('None'))]
             campaigns += [(c.slug, c.name) for c in models.Campaign.objects.all()]

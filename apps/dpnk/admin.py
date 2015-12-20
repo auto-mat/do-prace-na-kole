@@ -483,7 +483,13 @@ remove_mailing_id.short_description = _(u"Odstranit mailing ID a hash")
 
 class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     list_display = ('user', '__str__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
-    list_filter = (campaign_filter_generator('userattendance__campaign'), 'language', 'sex', 'userattendance__team__subsidiary__city', 'userattendance__approved_for_team')
+    list_filter = (
+        campaign_filter_generator('userattendance_set__campaign'),
+        'language',
+        'sex',
+        'userattendance_set__team__subsidiary__city',
+        'userattendance_set__approved_for_team'
+    )
     filter_horizontal = ('administrated_cities',)
     search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
     actions = (remove_mailing_id,)
@@ -494,7 +500,7 @@ class UserAdmin(ExportMixin, NestedModelAdmin, UserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'userprofile_administrated_cities', 'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name', ]
     list_filter = [
-        campaign_filter_generator('userprofile__userattendance__campaign'),
+        campaign_filter_generator('userprofile__userattendance_set__campaign'),
         'is_staff',
         'is_superuser',
         'is_active',
@@ -1069,8 +1075,8 @@ class DeliveryBatchForm(forms.ModelForm):
 
 
 class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
-    list_display = ['campaign', 'created', 'package_transaction__count', 'customer_sheets__url', 'tnt_order__url']
-    readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction__count', 't_shirt_sizes')
+    list_display = ['campaign', 'created', 'package_transaction_count', 'customer_sheets__url', 'tnt_order__url']
+    readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 't_shirt_sizes')
     inlines = [PackageTransactionInline, ]
     list_filter = (CampaignFilter,)
     form = DeliveryBatchForm
@@ -1086,11 +1092,11 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
             setattr(self, field_name, t_shirt_size)
         return self.list_display
 
-    def package_transaction__count(self, obj):
+    def package_transaction_count(self, obj):
         if not obj.pk:
             return obj.campaign.user_attendances_for_delivery().count()
         return obj.packagetransaction_set.count()
-    package_transaction__count.short_description = _(u"Balíčků k odeslání")
+    package_transaction_count.short_description = _(u"Balíčků k odeslání")
 
     def t_shirt_sizes(self, obj):
         if not obj.pk:

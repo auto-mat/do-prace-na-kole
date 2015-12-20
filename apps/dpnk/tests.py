@@ -24,6 +24,20 @@ from dpnk import results
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile
 import datetime
 import django
+from django_admin_smoke_tests import tests
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class AdminTest(tests.AdminSiteSmokeTest):
+    fixtures = ['campaign', 'views', 'users']
+
+    def get_request(self):
+        request = super().get_request()
+        request.subdomain = "testing-campaign"
+        return request
 
 
 @override_settings(
@@ -37,19 +51,12 @@ class AdminFilterTests(TestCase):
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
 
-    def test_admin_views(self):
-        """
-        test if the admin pages work
-        """
-        self.assertTrue(self.client.login(username='admin', password='admin'))
-        response = self.client.get(reverse("admin:dpnk_userattendance_changelist"), HTTP_HOST="testing-campaign.testserver")
-        self.assertEqual(response.status_code, 200)
-
     def test_admin_views_competition(self):
         self.assertTrue(self.client.login(username='admin', password='admin'))
         response = self.client.get(reverse("admin:dpnk_competition_add"), HTTP_HOST="testing-campaign.testserver")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'id="id_competitor_type"')
+
         response = self.client.get(reverse("admin:dpnk_competition_change", args=[3]), HTTP_HOST="testing-campaign.testserver")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'id="id_competitor_type"')
