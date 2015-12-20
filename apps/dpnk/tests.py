@@ -23,6 +23,7 @@ from django.test.utils import override_settings
 from dpnk import results
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile
 import datetime
+import django
 
 
 @override_settings(
@@ -121,3 +122,13 @@ class ResultsTests(TestCase):
         team.autoset_member_count()  # TODO: remove this once the signals in tests are repaired
         query = results.get_competitors(Competition.objects.get(id=0))
         self.assertListEqual(list(query.all()), [team])
+
+
+class RunChecksTestCase(TestCase):
+    def test_checks(self):
+        django.setup()
+        from django.core import checks
+        all_issues = checks.run_checks()
+        errors = [str(e) for e in all_issues if e.level >= checks.ERROR]
+        if errors:
+            self.fail('checks failed:\n' + '\n'.join(errors))
