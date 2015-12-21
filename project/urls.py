@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib.gis import admin
 from dpnk.views import questionnaire_results, questionnaire_answers, questions, answers
@@ -11,8 +11,7 @@ from django.conf import settings
 admin.site.index_template = 'admin/my_custom_index.html'
 admin.autodiscover()
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^admin/odpovedi/$',
         answers,
         name='admin_answers'),
@@ -36,21 +35,19 @@ urlpatterns = patterns(
     url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^rest/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += i18n_patterns(
     url(r'^', include("dpnk.urls")),
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:
-    urlpatterns += patterns(
-        '',
+    urlpatterns += [
         url(r'^rosetta/', include('rosetta.urls')),
-    )
+    ]
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns += patterns(
-        '',
+    urlpatterns += [
         url(r'^__debug__/', include(debug_toolbar.urls)),
-    )
+    ]

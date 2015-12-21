@@ -98,26 +98,34 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
 )
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.messages.context_processors.messages',
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.request',
-    'django.core.context_processors.debug',
-    'dpnk.context_processors.site',
-    'dpnk.context_processors.user_attendance',
-    "dpnk.context_processors.settings_properties",
-    'settings_context_processor.context_processors.settings',
-)
 AUTHENTICATION_BACKENDS = (
     'oauth2_provider.backends.OAuth2Backend',
     'dpnk.auth.EmailModelBackend',
     "django_su.backends.SuBackend",
 )
 ROOT_URLCONF = 'urls'
-TEMPLATE_DIRS = (
-    normpath(PROJECT_ROOT, 'templates'),
-    normpath(PROJECT_ROOT, 'apps/dpnk/templates'),
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            normpath(PROJECT_ROOT, 'templates'),
+            normpath(PROJECT_ROOT, 'apps/dpnk/templates'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': (
+                'django.contrib.messages.context_processors.messages',
+                'django.contrib.auth.context_processors.auth',
+                'django.core.context_processors.request',
+                'django.core.context_processors.debug',
+                'dpnk.context_processors.site',
+                'dpnk.context_processors.user_attendance',
+                "dpnk.context_processors.settings_properties",
+                'settings_context_processor.context_processors.settings',
+            )
+        },
+    },
+]
 INSTALLED_APPS = (
     'django_su',
     'django.contrib.auth',
