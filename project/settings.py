@@ -162,6 +162,7 @@ INSTALLED_APPS = (
     'bulk_update',
     'denorm',
     'subdomains',
+    'redactor',
     # 'cachalot',
 )
 TEMPLATE_VISIBLE_SETTINGS = (

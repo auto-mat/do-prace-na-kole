@@ -34,6 +34,7 @@ urlpatterns = patterns(
     url(r'^admin/', include("massadmin.urls")),
     url(r"^su/", include("django_su.urls")),
     url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    url(r'^redactor/', include('redactor.urls')),
     url(r'^rest/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
