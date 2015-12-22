@@ -50,6 +50,7 @@ from denorm import denormalized, depend_on_related
 from django.db import transaction
 from modulus11 import mod11
 from bulk_update.manager import BulkUpdateManager
+from redactor.widgets import RedactorEditor
 # Python library imports
 import datetime
 # Local imports
@@ -2076,6 +2077,13 @@ class Competition(models.Model):
 
 
 class CompetitionForm(forms.ModelForm):
+    class Meta:
+        model = Competition
+        exclude = ()
+        widgets = {
+            'rules': RedactorEditor(),
+        }
+
     def set_fields_queryset_on_update(self):
         if hasattr(self.instance, 'campaign') and 'user_attendance_competitors' in self.fields:
             if self.instance.competitor_type in ['liberos', 'single_user']:
