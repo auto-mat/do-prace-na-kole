@@ -1299,7 +1299,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
 
 class GpxFileAdmin(LeafletGeoAdmin):
     model = models.GpxFile
-    list_display = ('id', 'trip_date', 'file', 'direction', 'trip', 'user_attendance', 'from_application')
+    list_display = ('id', 'trip_date', 'file', 'direction', 'trip', 'user_attendance', 'from_application', 'created')
     search_fields = (
         'user_attendance__userprofile__nickname',
         'user_attendance__userprofile__user__first_name',
