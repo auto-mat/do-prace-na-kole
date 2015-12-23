@@ -2476,6 +2476,7 @@ def normalize_gpx_filename(instance, filename):
     return '-'.join(['gpx_tracks/track', datetime.datetime.now().strftime("%Y-%m-%d"), unidecode(filename)])
 
 
+@with_author
 class GpxFile(models.Model):
     file = models.FileField(
         verbose_name=_(u"GPX soubor"),
@@ -2516,6 +2517,16 @@ class GpxFile(models.Model):
         verbose_name=_(u"Nahráno z aplikace"),
         default=False,
         null=False,
+    )
+    created = models.DateTimeField(
+        verbose_name=_(u"Datum vytvoření"),
+        auto_now_add=True,
+        null=True,
+    )
+    updated = models.DateTimeField(
+        verbose_name=_(u"Datum poslední změny"),
+        auto_now=True,
+        null=True,
     )
 
     objects = models.GeoManager()
