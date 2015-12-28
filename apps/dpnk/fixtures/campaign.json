@@ -82,6 +82,22 @@
     {
         "fields": {
             "campaign": 339,
+            "type": "invoices"
+        },
+        "model": "dpnk.phase",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "type": "payment"
+        },
+        "model": "dpnk.phase",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "campaign": 339,
             "date_from": "2010-12-01",
             "date_to": "2010-12-30",
             "type": "competition"

@@ -97,7 +97,7 @@ def must_be_company_admin(fn):
             messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % request.subdomain)
             raise Http404()
 
-        company_admin = models.get_company_admin(request.user, campaign)
+        company_admin = util.get_company_admin(request.user, campaign)
         if company_admin:
             kwargs['company_admin'] = company_admin
             return fn(view, request, *args, **kwargs)
