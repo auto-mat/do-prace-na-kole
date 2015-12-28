@@ -1412,11 +1412,11 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
                 ('state', None, self.user_attendance.approved_for_team),
                 ('id', None, str(self.user_attendance.id)),
                 ('payment', None, self.user_attendance.payment()),
-                ('name', _(u"Jméno"), unicode(userprofile)),
+                ('name', _(u"Jméno"), str(userprofile)),
                 ('email', _(u"Email"), userprofile.user.email),
                 ('payment_description', _(u"Platba"), self.user_attendance.payment()['status_description']),
                 ('telephone', _(u"Telefon"), userprofile.telephone),
-                ('state_name', _(u"Stav"), unicode(self.user_attendance.get_approved_for_team_display())),
+                ('state_name', _(u"Stav"), str(self.user_attendance.get_approved_for_team_display())),
             ])
         context_data['unapproved_users'] = unapproved_users
         context_data['registration_phase'] = self.registration_phase

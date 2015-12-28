@@ -16,7 +16,12 @@
     },
     {
         "fields": {
-            "name": "Testing company"
+            "name": "Testing company",
+            "ico": "11111",
+            "address_psc": "11111",
+            "address_street_number": "1",
+            "address_street": "Ulice",
+            "address_city": "Praha"
         },
         "model": "dpnk.company",
         "pk": 1
@@ -41,7 +46,7 @@
     {
         "fields": {
             "date_joined": "2015-11-12T18:18:10",
-            "email": "",
+            "email": "test@test.cz",
             "first_name": "Testing",
             "groups": [],
             "is_active": true,
@@ -55,6 +60,17 @@
         },
         "model": "auth.user",
         "pk": 1128
+    },
+    {
+        "fields": {
+            "user": 1128,
+            "can_confirm_payments": true,
+            "campaign": 339,
+            "administrated_company": 1,
+            "company_admin_approved": "approved"
+        },
+        "model": "dpnk.companyadmin",
+        "pk": 1
     },
     {
         "fields": {
@@ -91,7 +107,7 @@
     {
         "fields": {
             "date_joined": "2015-11-12T18:18:10",
-            "email": "",
+            "email": "test@test.cz",
             "first_name": "Testing",
             "groups": [],
             "is_active": true,
