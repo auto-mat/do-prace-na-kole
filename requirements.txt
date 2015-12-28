@@ -56,3 +56,4 @@ django-nose
 django-wysiwyg-redactor
 sqlparse
 django-appconf
+model-mommy

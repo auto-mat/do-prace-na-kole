@@ -8,6 +8,14 @@
     },
     {
         "fields": {
+            "city": 1,
+            "campaign": 339
+        },
+        "model": "dpnk.cityincampaign",
+        "pk": 1
+    },
+    {
+        "fields": {
             "name": "Testing company"
         },
         "model": "dpnk.company",
