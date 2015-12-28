@@ -491,7 +491,6 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
 
 class PaymentTypeView(RegistrationViewMixin, FormView):
     template_name = 'registration/payment_type.html'
-    form_class = PaymentTypeForm
     title = _(u"Platba")
     registration_phase = "typ_platby"
     next_url = "working_schedule"
@@ -521,7 +520,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         context['aklub_url'] = settings.AKLUB_URL
         return context
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=PaymentTypeForm):
         form = super(PaymentTypeView, self).get_form(form_class)
         form.user_attendance = self.user_attendance
         return form
