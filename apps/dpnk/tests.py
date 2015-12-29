@@ -17,14 +17,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, RequestFactory, TransactionTestCase
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from dpnk import results
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile
+from dpnk import models
 import datetime
 import django
 from django_admin_smoke_tests import tests
+from model_mommy import mommy
 
 
 @override_settings(
@@ -44,7 +46,7 @@ class AdminTest(tests.AdminSiteSmokeTest):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class AdminFilterTests(TestCase):
+class ViewsTests(TransactionTestCase):
     fixtures = ['campaign', 'views', 'users']
 
     def setUp(self):
@@ -75,35 +77,90 @@ class AdminFilterTests(TestCase):
         self.assertEqual(response.status_message, "out_of_phase")
         self.assertEqual(response.status_code, 403)
 
+    def test_dpnk_views_gpx_file(self):
+        self.assertTrue(self.client.login(username='test', password='test'))
+        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        mommy.make(models.Trip, user_attendance=user_attendance, date=datetime.date(year=2010, month=11, day=20))
+        gpxfile = mommy.make(models.GpxFile, user_attendance=user_attendance, trip_date=datetime.date(year=2010, month=11, day=20))
+
+        address = reverse('gpx_file', kwargs={"id": gpxfile.pk})
+        response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
+        self.assertEqual(response.status_code, 200)
+
+    def verify_views(self, views, status_code_map):
+        for view in views:
+            status_code = status_code_map[view] if view in status_code_map else 200
+            address = reverse(view)
+            response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
+            self.assertEqual(response.status_code, status_code, "%s view failed with following content: \n%s" % (view, response.content.decode("utf-8")))
+
+    views = [
+        'profil',
+        'zmenit_tym',
+        'upravit_trasu',
+        'upravit_profil',
+        'zmenit_triko',
+        'working_schedule',
+        'company_admin_pay_for_users',
+        'invoices',
+        'edit_company',
+        'company_admin_competitions',
+        'company_structure',
+        'company_admin_competition',
+        'company_admin_application',
+        'emission_calculator',
+        'package',
+        'platba',
+        'typ_platby',
+        'zmenit_triko',
+        'upravit_trasu',
+        'working_schedule',
+        'upravit_profil',
+        'competitions',
+        'jizdy',
+        'other_team_members_results',
+        'team_members',
+        'zaslat_zadost_clenstvi',
+        'pozvanky',
+        'registration_access',
+        'registrace',
+        'edit_team',
+    ]
+
     def test_dpnk_views(self):
         """
         test if the user pages work
         """
         self.assertTrue(self.client.login(username='test', password='test'))
 
-        address = reverse('upravit_profil')
-        response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
-        self.assertEqual(response.status_code, 200)
+        status_code_map = {
+            'profil': 302,
+            'registration_access': 302,
+            'jizdy': 403,
+        }
 
-        address = reverse('profil')
-        response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
-        self.assertEqual(response.status_code, 302)
+        self.verify_views(self.views, status_code_map)
 
-        address = reverse('zmenit_tym')
-        response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
-        self.assertEqual(response.status_code, 200)
+    def test_dpnk_views_registered(self):
+        """
+        test if the user pages work after user registration
+        """
+        self.assertTrue(self.client.login(username='test', password='test'))
+        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        user_attendance.track = 'LINESTRING(0 0,-1 1)'
+        user_attendance.t_shirt_size = mommy.make(models.TShirtSize)
+        team = Team.objects.get(id=1)
+        user_attendance.team = team
+        mommy.make(models.Payment, user_attendance=user_attendance, amount=160, status=99)
+        user_attendance.save()
 
-        address = reverse('upravit_trasu')
-        response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
-        self.assertEqual(response.status_code, 200)
+        status_code_map = {
+            'profil': 302,
+            'registration_access': 302,
+            'typ_platby': 403,
+        }
 
-        address = reverse('zmenit_triko')
-        response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
-        self.assertEqual(response.status_code, 200)
-
-        address = reverse('working_schedule')
-        response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
-        self.assertEqual(response.status_code, 200)
+        self.verify_views(self.views, status_code_map)
 
 
 class TestTeams(TestCase):

@@ -206,7 +206,7 @@ def setup():
     sudo('easy_install pip')
     sudo('pip install virtualenv')
     # we want rid of the defult apache config
-    run('mkdir -p %(path)s; cd %(path)s; virtualenv env --no-site-packages;' % env)
+    run('mkdir -p %(path)s; cd %(path)s; virtualenv env --no-site-packages --python=python3;' % env)
     run('cd %(path)s; mkdir -p releases db_backup static shared packages;' % env)
     deploy()
 
@@ -271,6 +271,7 @@ def upload_tar_from_git():
     require('release', provided_by=[deploy, setup])
     "Create an archive from the current Git master branch and upload it"
     api.local('git archive --format=tar HEAD | gzip > %(release)s.tar.gz' % env)
+    run('rm %(path)s/releases/%(release)s -rf' % env)
     run('mkdir %(path)s/releases/%(release)s' % env)
     put('%(release)s.tar.gz' % env, '%(path)s/packages/' % env)
     run('cd %(path)s/releases/%(release)s && tar zxf ../../packages/%(release)s.tar.gz' % env)
@@ -310,6 +311,7 @@ def install_requirements():
     "Install all new requirements"
     require('release', provided_by=[deploy, setup])
     run('cd %(path)s/releases/%(release)s; bower install' % env)
+    run('cd %(path)s; env/bin/pip install six' % env)
     run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt' % env)
 
 

@@ -50,6 +50,7 @@ from denorm import denormalized, depend_on_related
 from django.db import transaction
 from modulus11 import mod11
 from bulk_update.manager import BulkUpdateManager
+from redactor.widgets import RedactorEditor
 # Python library imports
 import datetime
 # Local imports
@@ -2076,6 +2077,13 @@ class Competition(models.Model):
 
 
 class CompetitionForm(forms.ModelForm):
+    class Meta:
+        model = Competition
+        exclude = ()
+        widgets = {
+            'rules': RedactorEditor(),
+        }
+
     def set_fields_queryset_on_update(self):
         if hasattr(self.instance, 'campaign') and 'user_attendance_competitors' in self.fields:
             if self.instance.competitor_type in ['liberos', 'single_user']:
@@ -2468,6 +2476,7 @@ def normalize_gpx_filename(instance, filename):
     return '-'.join(['gpx_tracks/track', datetime.datetime.now().strftime("%Y-%m-%d"), unidecode(filename)])
 
 
+@with_author
 class GpxFile(models.Model):
     file = models.FileField(
         verbose_name=_(u"GPX soubor"),
@@ -2508,6 +2517,16 @@ class GpxFile(models.Model):
         verbose_name=_(u"Nahráno z aplikace"),
         default=False,
         null=False,
+    )
+    created = models.DateTimeField(
+        verbose_name=_(u"Datum vytvoření"),
+        auto_now_add=True,
+        null=True,
+    )
+    updated = models.DateTimeField(
+        verbose_name=_(u"Datum poslední změny"),
+        auto_now=True,
+        null=True,
     )
 
     objects = models.GeoManager()

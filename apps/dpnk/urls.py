@@ -29,7 +29,7 @@ from django.contrib.auth.decorators import login_required as login_required_simp
 from django.utils.translation import ugettext_lazy as _
 import django
 
-urlpatterns = (
+urlpatterns = [
     url(r'^tym/$',
         views.ChangeTeamView.as_view(),
         name="zmenit_tym"),
@@ -251,4 +251,4 @@ urlpatterns = (
     url(r'^zmena_hesla_hotovo/$',
         django.contrib.auth.views.password_change_done,
         name='password_change_done'),
-)
+]

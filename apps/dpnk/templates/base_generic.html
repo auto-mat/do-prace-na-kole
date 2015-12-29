@@ -2,6 +2,7 @@
 {% load static %}
 {% load compress %}
 {% load analytical %}
+{% load dpnk_tags %}
 <!DOCTYPE html>
 {% get_available_languages as languages %}
 {% get_current_language as current_language_code %}
@@ -51,11 +52,9 @@
                 <div class="lang_switch">
                    <ul>
                          {% for lang_code, lang_name in languages %}
-                           {% language lang_code %}
-                             <li class="{% if lang_code == current_language_code %}active{% endif %}">
-                               <a href="{% url request.resolver_match.view_name %}" class="switch-{{ lang_code }}" title="{{ lang_name }}">{{ lang_code|upper }}</a>
-                             </li>
-                           {% endlanguage %}
+                           <li class="{% if lang_code == current_language_code %}active{% endif %}">
+                             <a href="{% change_lang lang_code %}" class="switch-{{ lang_code }}" title="{{ lang_name }}">{{ lang_code|upper }}</a>
+                           </li>
                          {% endfor %}
                    </ul>
                 </div>
