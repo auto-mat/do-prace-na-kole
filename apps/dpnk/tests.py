@@ -91,7 +91,7 @@ class ViewsTests(TransactionTestCase):
         for view in views:
             status_code = status_code_map[view] if view in status_code_map else 200
             address = reverse(view)
-            response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
+            response = self.client.get(address, HTTP_HOST="testing-campaign.testserver", follow=True)
             self.assertEqual(response.status_code, status_code, "%s view failed with following content: \n%s" % (view, response.content.decode("utf-8")))
 
     views = [
@@ -134,8 +134,8 @@ class ViewsTests(TransactionTestCase):
         self.assertTrue(self.client.login(username='test', password='test'))
 
         status_code_map = {
-            'profil': 302,
-            'registration_access': 302,
+            'profil': 200,
+            'registration_access': 200,
             'jizdy': 403,
         }
 
@@ -155,8 +155,8 @@ class ViewsTests(TransactionTestCase):
         user_attendance.save()
 
         status_code_map = {
-            'profil': 302,
-            'registration_access': 302,
+            'profil': 200,
+            'registration_access': 200,
             'typ_platby': 403,
         }
 
