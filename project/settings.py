@@ -116,8 +116,8 @@ TEMPLATES = [
             'context_processors': (
                 'django.contrib.messages.context_processors.messages',
                 'django.contrib.auth.context_processors.auth',
-                'django.core.context_processors.request',
-                'django.core.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.template.context_processors.debug',
                 'dpnk.context_processors.site',
                 'dpnk.context_processors.user_attendance',
                 "dpnk.context_processors.settings_properties",

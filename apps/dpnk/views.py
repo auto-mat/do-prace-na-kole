@@ -30,7 +30,7 @@ from . import results
 import json
 import collections
 # Django imports
-from django.shortcuts import render_to_response, get_object_or_404, render
+from django.shortcuts import get_object_or_404, render
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -40,7 +40,6 @@ from django.views.decorators.gzip import gzip_page
 from .decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase, must_be_owner
 from django.contrib.auth.decorators import login_required as login_required_simple
 from django.contrib.gis.geos import MultiLineString
-from django.template import RequestContext
 from django.db.models import Sum, Q
 from django.db.transaction import commit
 from django.utils.translation import ugettext_lazy as _
@@ -362,7 +361,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
 
         context_data = self.get_context_data()
         context_data['form'] = form
-        return render_to_response(self.template_name, context_data, context_instance=RequestContext(request))
+        return render(request, self.template_name, context_data)
 
     def get(self, request, *args, **kwargs):
         super(ChangeTeamView, self).get(request, *args, **kwargs)
@@ -377,7 +376,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
 
         context_data = self.get_context_data()
         context_data['form'] = form
-        return render_to_response(self.template_name, context_data, context_instance=RequestContext(request))
+        return render(request, self.template_name, context_data)
 
 
 class RegistrationAccessView(FormView):
@@ -764,7 +763,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
         results.recalculate_result_competitor(self.user_attendance)
 
         messages.add_message(request, messages.SUCCESS, _(u"Jízdy úspěšně vyplněny"), fail_silently=False)
-        return render_to_response(self.template_name, self.get_context_data(), context_instance=RequestContext(request))
+        return render(request, self.template_name, self.get_context_data())
 
     def get_context_data(self, *args, **kwargs):
         days = util.days(self.user_attendance.campaign)
@@ -1121,9 +1120,12 @@ def questions(request):
     if not request.user.is_superuser:
         filter_query = Q(competition__city__in=request.user.userprofile.administrated_cities.all())
     questions = Question.objects.filter(filter_query).order_by('-competition__campaign', 'competition__slug', 'order').distinct()
-    return render_to_response('admin/questions.html', {
-        'questions': questions
-    }, context_instance=RequestContext(request))
+    return render(
+        request,
+        'admin/questions.html',
+        {
+            'questions': questions
+        })
 
 
 @staff_member_required
@@ -1135,11 +1137,14 @@ def questionnaire_results(
         return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve městě, pro které nemáte oprávnění."), "</div>"))
 
     competitors = competition.get_results()
-    return render_to_response('admin/questionnaire_results.html', {
-        'competition_slug': competition_slug,
-        'competitors': competitors,
-        'competition': competition,
-    }, context_instance=RequestContext(request))
+    return render(
+        request,
+        'admin/questionnaire_results.html',
+        {
+            'competition_slug': competition_slug,
+            'competitors': competitors,
+            'competition': competition,
+        })
 
 
 @staff_member_required
@@ -1158,12 +1163,15 @@ def questionnaire_answers(
         user_attendance__in=competitor_result.user_attendances(),
         question__competition__slug=competition_slug)
     total_points = competitor_result.result
-    return render_to_response('admin/questionnaire_answers.html',
-                              {'answers': answers,
-                               'competitor': competitor_result,
-                               'media': settings.MEDIA_URL,
-                               'total_points': total_points
-                               }, context_instance=RequestContext(request))
+    return render(
+        request,
+        'admin/questionnaire_answers.html',
+        {
+            'answers': answers,
+            'competitor': competitor_result,
+            'media': settings.MEDIA_URL,
+            'total_points': total_points
+        })
 
 
 @staff_member_required
@@ -1219,14 +1227,17 @@ def answers(request):
     for k in stat.keys():
         stat[k].sort(key=get_percentage, reverse=True)
 
-    return render_to_response('admin/answers.html',
-                              {'question': question,
-                               'answers': answers,
-                               'stat': stat,
-                               'total_respondents': total_respondents,
-                               'media': settings.MEDIA_URL,
-                               'choice_names': choice_names
-                               }, context_instance=RequestContext(request))
+    return render(
+        request,
+        'admin/answers.html',
+        {
+            'question': question,
+            'answers': answers,
+            'stat': stat,
+            'total_respondents': total_respondents,
+            'media': settings.MEDIA_URL,
+            'choice_names': choice_names
+        })
 
 
 def approve_for_team(request, user_attendance, reason="", approve=False, deny=False):
@@ -1396,7 +1407,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
                         fail_silently=True)
                 else:
                     approve_for_team(request, approved_user, request.POST.get('reason-' + str(approved_user.id), ''), action == 'approve', action == 'deny')
-        return render_to_response(self.template_name, self.get_context_data(), context_instance=RequestContext(request))
+        return render(request, self.template_name, self.get_context_data())
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(TeamMembers, self).get_context_data(*args, **kwargs)
@@ -1502,9 +1513,12 @@ def statistics(
     if not result:
         return HttpResponse(_(u"Neznámá proměnná %s" % variable), status=403)
 
-    return render_to_response(template, {
-        'variable': result
-    }, context_instance=RequestContext(request))
+    return render(
+        request,
+        template,
+        {
+            'variable': result
+        })
 
 
 @cache_page(60)
@@ -1514,11 +1528,14 @@ def daily_chart(
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
     values = [period_distance(campaign, day, day) for day in util.days(campaign)]
-    return render_to_response(template, {
-        'values': values,
-        'days': reversed(util.days(campaign)),
-        'max_value': max(values),
-    }, context_instance=RequestContext(request))
+    return render(
+        request,
+        template,
+        {
+            'values': values,
+            'days': reversed(util.days(campaign)),
+            'max_value': max(values),
+        })
 
 
 @cache_page(60 * 60)

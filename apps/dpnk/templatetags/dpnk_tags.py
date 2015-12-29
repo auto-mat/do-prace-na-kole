@@ -19,7 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django import template
 from django.conf import settings
-from django.template import Context
 from django.template.loader import get_template
 from cache_utils.decorators import cached
 from django.utils.safestring import mark_safe
@@ -41,7 +40,7 @@ def cyklistesobe(city_slug, order="created_at"):
     except:
         cyklistesobe = None
     template = get_template("templatetags/cyklistesobe.html")
-    context = Context({'cyklistesobe': cyklistesobe})
+    context = {'cyklistesobe': cyklistesobe}
     return mark_safe(template.render(context))
 
 
@@ -55,7 +54,7 @@ def wp_news():
     except:
         return ""
     template = get_template("templatetags/wp_news.html")
-    context = Context({'wp_feed': wp_feed})
+    context = {'wp_feed': wp_feed}
     return mark_safe(template.render(context))
 
 

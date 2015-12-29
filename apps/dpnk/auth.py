@@ -106,13 +106,13 @@ class PasswordResetForm(PasswordResetForm):
                 'token': token_generator.make_token(user),
                 'protocol': 'https' if use_https else 'http',
             }
-            subject = loader.render_to_string(subject_template_name, c, context_instance=RequestContext(request))
+            subject = loader.render_to_string(subject_template_name, c, context=RequestContext(request))
             # Email subject *must not* contain newlines
             subject = ''.join(subject.splitlines())
-            email = loader.render_to_string(email_template_name, c, context_instance=RequestContext(request))
+            email = loader.render_to_string(email_template_name, c, context=RequestContext(request))
 
             if html_email_template_name:
-                html_email = loader.render_to_string(html_email_template_name, c, context_instance=RequestContext(request))
+                html_email = loader.render_to_string(html_email_template_name, c, context=RequestContext(request))
             else:
                 html_email = None
             send_mail(subject, email, from_email, [user.email], html_message=html_email)
