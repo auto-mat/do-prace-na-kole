@@ -2551,17 +2551,18 @@ class GpxFile(models.Model):
     def clean(self):
         if self.file:
             try:
-                gpx = gpxpy.parse(self.file.read())
+                gpx = gpxpy.parse(self.file.read().decode)
                 if gpx.tracks:
                     multiline = []
-                    for segment in gpx.tracks[0].segments:
-                        track_list_of_points = []
-                        for point in segment.points:
-                            point_in_segment = Point(point.longitude, point.latitude)
-                            track_list_of_points.append(point_in_segment.coords)
+                    for track in gpx.tracks:
+                        for segment in track.segments:
+                            track_list_of_points = []
+                            for point in segment.points:
+                                point_in_segment = Point(point.longitude, point.latitude)
+                                track_list_of_points.append(point_in_segment.coords)
 
-                        if len(track_list_of_points) > 1:
-                            multiline.append(LineString(track_list_of_points))
+                            if len(track_list_of_points) > 1:
+                                multiline.append(LineString(track_list_of_points))
                     self.track_clean = MultiLineString(multiline)
             except Exception as e:
                 logger.error("Valid GPX file: %s" % e)
