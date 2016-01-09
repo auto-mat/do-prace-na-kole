@@ -1433,10 +1433,6 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
         return context_data
 
 
-def facebook_app(request):
-    return render_to_response('registration/facebook_app.html', {'user': request.user})
-
-
 def distance(trips):
     distance = 0
     distance += trips.filter(trip_from=True, is_working_ride_from=True).aggregate(Sum("distance_from"))['distance_from__sum'] or 0

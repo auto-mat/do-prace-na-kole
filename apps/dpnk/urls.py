@@ -129,8 +129,6 @@ urlpatterns = [
         views.daily_distance_json),
     url(r'^cykloservis/$',
         login_required(must_be_in_group('cykloservis')(views.BikeRepairView.as_view()))),
-    url(r'^facebook_app/$',
-        views.facebook_app),
     url(r'^package/$',
         views.PackageView.as_view(),
         name="package"),
