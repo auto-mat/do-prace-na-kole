@@ -521,7 +521,6 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         return context
 
     def get_form(self, form_class=PaymentTypeForm):
-        self.form_class = form_class
         form = super(PaymentTypeView, self).get_form(form_class)
         form.user_attendance = self.user_attendance
         return form
