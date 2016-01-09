@@ -2,7 +2,7 @@ six
 -e git+https://github.com/PetrDlouhy/django.git@view_permission_django19_backport#egg=Django
 #Django
 django-import-export
--e git+https://github.com/PetrDlouhy/django-smart-selects.git#egg=django-smart-selects
+django-smart-selects
 psycopg2
 python-memcached
 django-chart-tools
