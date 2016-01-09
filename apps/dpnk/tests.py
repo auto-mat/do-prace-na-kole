@@ -44,7 +44,7 @@ class AdminTest(tests.AdminSiteSmokeTest):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class AdminFilterTests(TestCase):
+class ViewsTests(TestCase):
     fixtures = ['campaign', 'views', 'users']
 
     def setUp(self):
