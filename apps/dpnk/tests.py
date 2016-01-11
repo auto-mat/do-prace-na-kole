@@ -22,6 +22,7 @@ from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from dpnk import results
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile
+from dpnk import views
 from dpnk import models
 import datetime
 import django
@@ -105,40 +106,56 @@ class ViewsTests(TransactionTestCase):
     def verify_views(self, views, status_code_map):
         for view in views:
             status_code = status_code_map[view] if view in status_code_map else 200
-            address = reverse(view)
+            address = view
             response = self.client.get(address, follow=True)
-            self.assertEqual(response.status_code, status_code, "%s view failed with following content: \n%s" % (view, response.content.decode("utf-8")))
+            filename = view.replace("/", "_")
+            if response.status_code != status_code:
+                with open("error_%s.html" % filename, "w") as f:
+                    f.write(response.content.decode())
+            self.assertEqual(response.status_code, status_code, "%s view failed, the failed page is saved to error_%s.html file." % (view, filename))
 
     views = [
-        'profil',
-        'zmenit_tym',
-        'upravit_trasu',
-        'upravit_profil',
-        'zmenit_triko',
-        'working_schedule',
-        'company_admin_pay_for_users',
-        'invoices',
-        'edit_company',
-        'company_admin_competitions',
-        'company_structure',
-        'company_admin_competition',
-        'company_admin_application',
-        'emission_calculator',
-        'package',
-        'platba',
-        'typ_platby',
-        'zmenit_triko',
-        'upravit_trasu',
-        'working_schedule',
-        'competitions',
-        'jizdy',
-        'other_team_members_results',
-        'team_members',
-        'zaslat_zadost_clenstvi',
-        'pozvanky',
-        'registration_access',
-        'registrace',
-        'edit_team',
+        reverse('profil'),
+        reverse('zmenit_tym'),
+        reverse('upravit_trasu'),
+        reverse('upravit_profil'),
+        reverse('zmenit_triko'),
+        reverse('working_schedule'),
+        reverse('company_admin_pay_for_users'),
+        reverse('invoices'),
+        reverse('edit_company'),
+        reverse('company_admin_competitions'),
+        reverse('company_structure'),
+        reverse('company_admin_competition'),
+        reverse('company_admin_application'),
+        reverse('emission_calculator'),
+        reverse('package'),
+        reverse('platba'),
+        reverse('typ_platby'),
+        reverse('zmenit_triko'),
+        reverse('upravit_trasu'),
+        reverse('working_schedule'),
+        reverse('competitions'),
+        reverse('jizdy'),
+        reverse('other_team_members_results'),
+        reverse('team_members'),
+        reverse('zaslat_zadost_clenstvi'),
+        reverse('pozvanky'),
+        reverse('registration_access'),
+        reverse('registrace'),
+        reverse('edit_team'),
+        reverse(views.daily_distance_json),
+        reverse(views.daily_chart),
+        reverse(views.statistics, kwargs={'variable': 'ujeta-vzdalenost'}),
+        reverse(views.statistics, kwargs={'variable': 'ujeta-vzdalenost-dnes'}),
+        reverse(views.statistics, kwargs={'variable': 'pocet-cest'}),
+        reverse(views.statistics, kwargs={'variable': 'pocet-cest-dnes'}),
+        reverse(views.statistics, kwargs={'variable': 'pocet-zaplacenych'}),
+        reverse(views.statistics, kwargs={'variable': 'pocet-prihlasenych'}),
+        reverse(views.statistics, kwargs={'variable': 'pocet-soutezicich'}),
+        reverse(views.statistics, kwargs={'variable': 'pocet-spolecnosti'}),
+        reverse(views.statistics, kwargs={'variable': 'pocet-pobocek'}),
+        reverse(views.statistics, kwargs={'variable': 'pocet-soutezicich-firma'}),
     ]
 
     def test_dpnk_views(self):
@@ -148,9 +165,9 @@ class ViewsTests(TransactionTestCase):
         self.assertTrue(self.client.login(username='test', password='test'))
 
         status_code_map = {
-            'profil': 200,
-            'registration_access': 200,
-            'jizdy': 403,
+            reverse('profil'): 200,
+            reverse('registration_access'): 200,
+            reverse('jizdy'): 403,
         }
 
         self.verify_views(self.views, status_code_map)
@@ -169,9 +186,9 @@ class ViewsTests(TransactionTestCase):
         user_attendance.save()
 
         status_code_map = {
-            'profil': 200,
-            'registration_access': 200,
-            'typ_platby': 403,
+            reverse('profil'): 200,
+            reverse('registration_access'): 200,
+            reverse('typ_platby'): 403,
         }
 
         self.verify_views(self.views, status_code_map)

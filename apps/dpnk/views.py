@@ -1471,7 +1471,7 @@ def statistics(
         result = Subsidiary.objects.filter(Q(teams__campaign=campaign)).distinct().count()
 
     if variable == 'pocet-soutezicich-firma':
-        if request.user.is_authenticated() and models.is_competitor(request.user):
+        if request.user.is_authenticated() and util.is_competitor(request.user):
             result = UserAttendance.objects.filter(
                 campaign=campaign,
                 userprofile__user__is_active=True,
@@ -1481,7 +1481,7 @@ def statistics(
         else:
             result = "-"
 
-    if not result:
+    if result is None:
         return HttpResponse(_(u"Neznámá proměnná %s" % variable), status=403)
 
     return render(
