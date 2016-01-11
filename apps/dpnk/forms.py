@@ -400,7 +400,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
 
     class Meta:
         model = User
-        fields = ('email', 'password1', 'password2')
+        fields = ('email', 'password1', 'password2', 'username')
 
 
 class InviteForm(SubmitMixin, forms.Form):

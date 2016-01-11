@@ -69,6 +69,20 @@ class ViewsTests(TransactionTestCase):
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
 
+    def test_dpnk_registration(self):
+        address = reverse('registrace')
+        post_data = {
+            'email': 'test1@test.cz',
+            'password1': 'test',
+            'password2': 'test',
+        }
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('upravit_profil'))
+        user = User.objects.get(email='test1@test.cz')
+        self.assertNotEquals(user, None)
+        self.assertNotEquals(UserProfile.objects.get(user=user), None)
+        self.assertNotEquals(UserAttendance.objects.get(userprofile__user=user), None)
+
     @override_settings(
         FAKE_DATE=datetime.date(year=2010, month=10, day=1),
     )

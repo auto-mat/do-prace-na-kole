@@ -31,7 +31,6 @@ import json
 import collections
 # Django imports
 from django.shortcuts import get_object_or_404, render
-from django.contrib import auth
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.admin.views.decorators import staff_member_required
@@ -50,9 +49,7 @@ from django.views.generic.edit import FormView, UpdateView, CreateView
 from django.views.generic.base import TemplateView
 from class_based_auth_views.views import LoginView
 # Registration imports
-import registration.signals
-import registration.backends
-import registration.backends.simple.views
+from registration.backends.simple.views import RegistrationView as SimpleRegistrationView
 # Model imports
 from .models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, City, UserAttendance, Campaign
 from . import forms
@@ -116,37 +113,6 @@ class UserAttendanceViewMixin(object):
     def get_object(self):
         if hasattr(self, 'user_attendance'):
             return self.user_attendance
-
-
-class UserProfileRegistrationBackend(registration.backends.simple.views.RegistrationView):
-    def register(self, request, campaign, invitation_token, form):
-        new_user = super(UserProfileRegistrationBackend, self).register(request, form)
-        from dpnk.models import UserProfile
-
-        new_user.save()
-
-        userprofile = UserProfile(
-            user=new_user,
-        )
-        userprofile.save()
-
-        approve = False
-        try:
-            team = Team.objects.get(invitation_token=invitation_token)
-            approve = True
-        except Team.DoesNotExist:
-            team = None
-        user_attendance = UserAttendance(
-            userprofile=userprofile,
-            campaign=campaign,
-            team=team,
-        )
-        user_attendance.save()
-        if approve:
-            approve_for_team(request, user_attendance, "", True, False)
-
-        register_mail(user_attendance)
-        return new_user
 
 
 class RegistrationMessagesMixin(UserAttendanceViewMixin):
@@ -403,7 +369,7 @@ class RegistrationAccessView(FormView):
             return redirect(reverse('registrace', kwargs={'initial_email': email}))
 
 
-class RegistrationView(FormView):
+class RegistrationView(SimpleRegistrationView):
     template_name = 'base_generic_form.html'
     form_class = RegistrationFormDPNK
     model = UserProfile
@@ -416,17 +382,26 @@ class RegistrationView(FormView):
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}
 
-    def form_valid(self, form, backend=UserProfileRegistrationBackend):
-        campaign = Campaign.objects.get(slug=self.request.subdomain)
-        super(RegistrationView, self).form_valid(form)
-        backend = backend()
-        backend.register(self.request, campaign, self.kwargs.get('token', None), form)
-        auth_user = auth.authenticate(
-            username=self.request.POST['email'],
-            password=self.request.POST['password1'])
-        auth.login(self.request, auth_user)
+    def register(self, request, form):
+        new_user = super(RegistrationView, self).register(request, form)
+        userprofile = UserProfile.objects.create(user=new_user)
 
-        return redirect(reverse(self.success_url))
+        invitation_token = self.kwargs.get('token', None)
+        try:
+            team = Team.objects.get(invitation_token=invitation_token)
+        except Team.DoesNotExist:
+            team = None
+        campaign = Campaign.objects.get(slug=self.request.subdomain)
+        user_attendance = UserAttendance.objects.create(
+            userprofile=userprofile,
+            campaign=campaign,
+            team=team,
+        )
+        if team:
+            approve_for_team(request, user_attendance, "", True, False)
+
+        register_mail(user_attendance)
+        return new_user
 
 
 class ConfirmDeliveryView(UpdateView):
