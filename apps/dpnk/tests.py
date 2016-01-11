@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.test import TestCase, RequestFactory, TransactionTestCase
+from django.test import TestCase, RequestFactory, TransactionTestCase, Client
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
 from dpnk import results
@@ -52,20 +52,21 @@ class ViewsTests(TransactionTestCase):
     def setUp(self):
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
 
     def test_admin_views_competition(self):
         self.assertTrue(self.client.login(username='admin', password='admin'))
-        response = self.client.get(reverse("admin:dpnk_competition_add"), HTTP_HOST="testing-campaign.testserver")
+        response = self.client.get(reverse("admin:dpnk_competition_add"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'id="id_competitor_type"')
 
-        response = self.client.get(reverse("admin:dpnk_competition_change", args=[3]), HTTP_HOST="testing-campaign.testserver")
+        response = self.client.get(reverse("admin:dpnk_competition_change", args=[3]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'id="id_competitor_type"')
 
     def test_dpnk_views_no_login(self):
         address = reverse('registrace')
-        response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
+        response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
 
     @override_settings(
@@ -73,7 +74,7 @@ class ViewsTests(TransactionTestCase):
     )
     def test_dpnk_registration_out_of_phase(self):
         address = reverse('registrace')
-        response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
+        response = self.client.get(address)
         self.assertEqual(response.status_message, "out_of_phase")
         self.assertEqual(response.status_code, 403)
 
@@ -84,14 +85,14 @@ class ViewsTests(TransactionTestCase):
         gpxfile = mommy.make(models.GpxFile, user_attendance=user_attendance, trip_date=datetime.date(year=2010, month=11, day=20))
 
         address = reverse('gpx_file', kwargs={"id": gpxfile.pk})
-        response = self.client.get(address, HTTP_HOST="testing-campaign.testserver")
+        response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
 
     def verify_views(self, views, status_code_map):
         for view in views:
             status_code = status_code_map[view] if view in status_code_map else 200
             address = reverse(view)
-            response = self.client.get(address, HTTP_HOST="testing-campaign.testserver", follow=True)
+            response = self.client.get(address, follow=True)
             self.assertEqual(response.status_code, status_code, "%s view failed with following content: \n%s" % (view, response.content.decode("utf-8")))
 
     views = [
@@ -115,7 +116,6 @@ class ViewsTests(TransactionTestCase):
         'zmenit_triko',
         'upravit_trasu',
         'working_schedule',
-        'upravit_profil',
         'competitions',
         'jizdy',
         'other_team_members_results',
