@@ -253,6 +253,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFie
             return ['competition_results_link', 'questionnaire_results_link', 'draw_link']
         return ['competition_results_link',
                 'questionnaire_results_link',
+                'url',
                 'draw_link',
                 'date_to',
                 'date_from',
