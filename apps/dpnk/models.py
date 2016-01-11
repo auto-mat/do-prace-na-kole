@@ -1083,8 +1083,11 @@ class UserProfile(models.Model):
             return self.nickname
         else:
             full_name = self.user.get_full_name()
+            email = self.user.email
             if full_name:
                 return full_name
+            elif email:
+                return email
             else:
                 return self.user.username
 
