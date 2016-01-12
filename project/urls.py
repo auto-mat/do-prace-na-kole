@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^redactor/', include('redactor.urls')),
     url(r'^rest/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^', include("dpnk.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += i18n_patterns(
