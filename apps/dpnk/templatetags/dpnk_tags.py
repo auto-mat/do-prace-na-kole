@@ -91,9 +91,14 @@ def change_lang(context, lang=None, *args, **kwargs):
     Get active page's url by a specified language
     Usage: {% change_lang 'en' %}
     """
+    if 'request' not in context:
+        return "/%s" % lang
 
     path = context['request'].path
-    url_parts = resolve(path)
+    try:
+        url_parts = resolve(path)
+    except:
+        return "/%s" % lang
 
     url = path
     cur_language = get_language()
