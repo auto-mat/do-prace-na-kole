@@ -163,6 +163,7 @@ class ViewsTests(TransactionTestCase):
         reverse('registration_access'),
         reverse('registrace'),
         reverse('edit_team'),
+        'error404.txt',
         reverse(views.daily_distance_json),
         reverse(views.daily_chart),
         reverse(views.statistics, kwargs={'variable': 'ujeta-vzdalenost'}),
@@ -187,6 +188,7 @@ class ViewsTests(TransactionTestCase):
             reverse('profil'): 200,
             reverse('registration_access'): 200,
             reverse('jizdy'): 403,
+            'error404.txt': 404,
         }
 
         self.verify_views(self.views, status_code_map)
@@ -208,6 +210,7 @@ class ViewsTests(TransactionTestCase):
             reverse('profil'): 200,
             reverse('registration_access'): 200,
             reverse('typ_platby'): 403,
+            'error404.txt': 404,
         }
 
         self.verify_views(self.views, status_code_map)
