@@ -27,7 +27,7 @@
             "late_admission_fee": 0.0,
             "late_admission_fee_company": 0.0,
             "mailing_list_enabled": false,
-            "mailing_list_id": "",
+            "mailing_list_id": "12345abcde",
             "minimum_percentage": 66,
             "minimum_rides_base": 25,
             "name": "Testing campaign",
