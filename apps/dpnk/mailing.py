@@ -165,7 +165,7 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
         if not user.is_active:
             delete_user(user_attendance)
         else:
-            if util.is_competitor(user_attendance) and user_attendance.get_userprofile().mailing_id:
+            if util.is_competitor(user_attendance.get_userprofile().user) and user_attendance.get_userprofile().mailing_id:
                 update_user(user_attendance, ignore_hash)
             else:
                 add_user(user_attendance)
