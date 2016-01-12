@@ -157,9 +157,9 @@ def get_company_admin(user, campaign):
         return None
 
 
-def is_competitor(self):
+def is_competitor(user):
     try:
-        if self.is_authenticated() and self.userprofile:
+        if user.is_authenticated() and user.userprofile:
             return True
         else:
             return False
