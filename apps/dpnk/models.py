@@ -2417,32 +2417,6 @@ def get_company(campaign, user):
     return user.userprofile.userattendance_set.get(campaign=campaign).company()
 
 
-# TODO: this is quickfix, should be geting campaign slug from URL
-class TeamInCampaignManager(models.Manager):
-
-    def get_query_set(self):
-        return super(TeamInCampaignManager, self).get_query_set().filter(campaign__slug=settings.CAMPAIGN)
-
-
-class TeamInCampaign(Team):
-    objects = TeamInCampaignManager()
-
-    class Meta:
-        proxy = True
-
-
-class SubsidiaryInCampaignManager(models.Manager):
-    def get_query_set(self):
-        return super(SubsidiaryInCampaignManager, self).get_query_set().filter(city__cityincampaign__campaign__slug=settings.CAMPAIGN)
-
-
-class SubsidiaryInCampaign(Subsidiary):
-    objects = SubsidiaryInCampaignManager()
-
-    class Meta:
-        proxy = True
-
-
 class Voucher(models.Model):
     TYPES = [
         ('rekola', _(u"ReKola")),
