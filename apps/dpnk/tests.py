@@ -20,14 +20,14 @@
 from django.test import TestCase, RequestFactory, TransactionTestCase, Client
 from django.core.urlresolvers import reverse
 from django.test.utils import override_settings
-from dpnk import results
+from dpnk import results, models, mailing, views
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile
-from dpnk import views
-from dpnk import models
 import datetime
 import django
 from django_admin_smoke_tests import tests
 from model_mommy import mommy
+import createsend
+from unittest.mock import MagicMock
 
 
 @override_settings(
@@ -92,6 +92,25 @@ class ViewsTests(TransactionTestCase):
         response = self.client.get(address)
         self.assertEqual(response.status_message, "out_of_phase")
         self.assertEqual(response.status_code, 403)
+
+    def test_dpnk_mailing_list(self):
+        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        user_attendance.campaign.mailing_list_enabled = True
+        user_attendance.campaign.save()
+        ret_mailing_id = "344ass"
+        createsend.Subscriber.add = MagicMock(return_value=ret_mailing_id)
+        mailing.add_or_update_user_synchronous(user_attendance)
+        createsend.Subscriber.add.assert_called_with(
+            '12345abcde', 'test@test.cz', 'Testing User 1',
+            [
+                {'Key': 'Mesto', 'Value': None}, {'Key': 'Firemni_spravce', 'Value': True},
+                {'Key': 'Stav_platby', 'Value': None}, {'Key': 'Aktivni', 'Value': True},
+                {'Key': 'Novacek', 'Value': None}, {'Key': 'Kampan', 'Value': 'Testing campaign'},
+                {'Key': 'Vstoupil_do_souteze', 'Value': None}, {'Key': 'Pocet_lidi_v_tymu', 'Value': None}
+            ],
+            True
+        )
+        self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
 
     def test_dpnk_views_gpx_file(self):
         self.assertTrue(self.client.login(username='test', password='test'))
