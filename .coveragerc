@@ -1,2 +1,3 @@
 [run]
-include = *apps/dpnk*
+include = apps/dpnk*
+omit = apps/dpnk/migrations*
