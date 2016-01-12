@@ -258,7 +258,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             foreign_key_app_name="dpnk",
             foreign_key_model_name="Subsidiary",
             foreign_key_field_name="company",
-            to_model_name="SubsidiaryInCampaign",
+            to_model_name="Subsidiary",
             to_model_field="company",
             show_all=False,
             auto_choose=True,
@@ -286,7 +286,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             foreign_key_app_name="dpnk",
             foreign_key_model_name="Subsidiary",
             foreign_key_field_name="company",
-            to_model_name="TeamInCampaign",
+            to_model_name="Team",
             to_model_field="subsidiary",
             show_all=False,
             auto_choose=False,
@@ -333,6 +333,9 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         kwargs['initial'] = initial
 
         super(ChangeTeamForm, self).__init__(*args, **kwargs)
+
+        if request:
+            self.fields["team"].widget.manager = 'team_in_campaign_%s' % request.subdomain
 
         if instance and 'team' not in initial:
             previous_user_attendance = instance.previous_user_attendance()

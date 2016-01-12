@@ -66,6 +66,7 @@ class SelectChainedOrCreate(widgets.ChainedSelect):
                 'to_model_field',
                 'auto_choose',
                 'to_model_name',
+                'manager',
                 'view_name'])
             setattr(self, k, v)
         self.manager = None

@@ -516,6 +516,24 @@ class Campaign(models.Model):
             return None
 
 
+def get_team_in_campaign_manager(campaign_slug):
+    class TeamInCampaignManager(models.Manager):
+        def get_queryset(self):
+            return super(TeamInCampaignManager, self).get_queryset().filter(campaign__slug=campaign_slug)
+
+    class TeamInCampaign(Team):
+        objects = TeamInCampaignManager()
+
+        class Meta:
+            proxy = True
+
+    return TeamInCampaign
+
+
+for campaign in Campaign.objects.all():
+    setattr(Team, 'team_in_campaign_%s' % campaign.slug, get_team_in_campaign_manager(campaign.slug).objects)
+
+
 class Phase(models.Model):
     """fáze kampaně"""
 
@@ -2415,32 +2433,6 @@ class Answer(models.Model):
 
 def get_company(campaign, user):
     return user.userprofile.userattendance_set.get(campaign=campaign).company()
-
-
-# TODO: this is quickfix, should be geting campaign slug from URL
-class TeamInCampaignManager(models.Manager):
-
-    def get_query_set(self):
-        return super(TeamInCampaignManager, self).get_query_set().filter(campaign__slug=settings.CAMPAIGN)
-
-
-class TeamInCampaign(Team):
-    objects = TeamInCampaignManager()
-
-    class Meta:
-        proxy = True
-
-
-class SubsidiaryInCampaignManager(models.Manager):
-    def get_query_set(self):
-        return super(SubsidiaryInCampaignManager, self).get_query_set().filter(city__cityincampaign__campaign__slug=settings.CAMPAIGN)
-
-
-class SubsidiaryInCampaign(Subsidiary):
-    objects = SubsidiaryInCampaignManager()
-
-    class Meta:
-        proxy = True
 
 
 class Voucher(models.Model):
