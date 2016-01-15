@@ -382,8 +382,8 @@ class RegistrationView(SimpleRegistrationView):
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}
 
-    def register(self, request, form):
-        new_user = super(RegistrationView, self).register(request, form)
+    def register(self, request):
+        new_user = super(RegistrationView, self).register(request)
         userprofile = UserProfile.objects.create(user=new_user)
 
         invitation_token = self.kwargs.get('token', None)
