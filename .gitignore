@@ -4,6 +4,7 @@
 *.pyc
 *.swp
 *~
+*.orig
 /apps/dpnk/static/bow
 /sql/
 /dpnk.log
@@ -14,3 +15,5 @@ env
 /static/
 /db_backup/
 /run
+htmlcov/
+.coverage
