@@ -622,6 +622,12 @@ class TShirtSize(models.Model):
         verbose_name=_(u"Náhled trika"),
         upload_to=u't_shirt_preview',
         blank=True, null=True)
+    price = models.IntegerField(
+        verbose_name=_(u"Cena"),
+        default=0,
+        blank=False,
+        null=False,
+    )
 
     class Meta:
         verbose_name = _(u"Velikost trička")
@@ -630,7 +636,10 @@ class TShirtSize(models.Model):
         ordering = ["order"]
 
     def __str__(self):
-        return self.name
+        if self.price == 0:
+            return self.name
+        else:
+            return "%s (%s Kč navíc)" % (self.name, self.price)
 
 
 class UserAttendanceForm(forms.ModelForm):
@@ -749,15 +758,15 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     def admission_fee(self):
         if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
-            return self.campaign.late_admission_fee
+            return self.campaign.late_admission_fee + self.t_shirt_size.price
         else:
-            return self.campaign.admission_fee
+            return self.campaign.admission_fee + self.t_shirt_size.price
 
     def company_admission_fee(self):
         if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
-            return self.campaign.late_admission_fee_company
+            return self.campaign.late_admission_fee_company + self.t_shirt_size.price
         else:
-            return self.campaign.admission_fee_company
+            return self.campaign.admission_fee_company + self.t_shirt_size.price
 
     def payment(self):
         # TODO: commented out in DPNK2015 because it is to power demanding for unused feature
