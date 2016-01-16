@@ -18,10 +18,36 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.template.loader import render_to_string
-import django.forms as forms
+from django import forms
 import smart_selects.widgets as widgets
 from django.forms.widgets import Widget
 import datetime
+from ajax_select.fields import AutoCompleteSelectWidget
+
+
+class SelectOrCreateAutoComplete(AutoCompleteSelectWidget):
+    underlying_form = None
+    create = False
+
+    def __init__(self, channel, underlying_form_class, prefix="", new_description=u"Vytvořit novou položku", *args, **kwargs):
+        super(SelectOrCreateAutoComplete, self).__init__(channel)
+        self.new_description = new_description
+        self.channel = channel
+        self.underlying_form_class = underlying_form_class
+        self.underlying_form = self.underlying_form_class(prefix=prefix)
+
+    def render(self, name, *args, **kwargs):
+        html = super(SelectOrCreateAutoComplete, self).render(name, *args, **kwargs)
+        widget_id = kwargs['attrs']['id']
+
+        widget = render_to_string("form/select_or_create.html", {
+            'html': html,
+            'underlying_form': self.underlying_form,
+            'selected': self.create,
+            'id': widget_id,
+            'new_description': self.new_description,
+        })
+        return widget
 
 
 class SelectOrCreate(forms.Select):

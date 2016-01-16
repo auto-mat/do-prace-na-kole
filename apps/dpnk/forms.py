@@ -27,7 +27,7 @@ from django.utils import formats
 from . import models
 from . import util
 from django.db.models import Q
-from dpnk.widgets import SelectOrCreate, SelectChainedOrCreate
+from dpnk.widgets import SelectChainedOrCreate, SelectOrCreateAutoComplete
 from dpnk.fields import WorkingScheduleField, ShowPointsMultipleModelChoiceField
 from django.forms.widgets import HiddenInput
 from django.utils.translation import ugettext_lazy as _
@@ -230,7 +230,8 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     company = forms.ModelChoiceField(
         label=_(u"Společnost"),
         queryset=models.Company.objects.filter(active=True),
-        widget=SelectOrCreate(
+        widget=SelectOrCreateAutoComplete(
+            'companies',
             RegisterCompanyForm,
             prefix="company",
             new_description=_(u"Společnost v seznamu není, chci založit novou")
@@ -319,12 +320,12 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             previous_user_attendance = instance.previous_user_attendance()
             if previous_user_attendance and previous_user_attendance.team:
                 initial['subsidiary'] = previous_user_attendance.team.subsidiary
-                initial['company'] = previous_user_attendance.team.subsidiary.company
+                initial['company'] = previous_user_attendance.team.subsidiary.company.pk
 
         if instance and instance.team:
             initial['team'] = instance.team
             initial['subsidiary'] = instance.team.subsidiary
-            initial['company'] = instance.team.subsidiary.company
+            initial['company'] = instance.team.subsidiary.company.pk
 
         if request:
             if request.GET.get('team', None):

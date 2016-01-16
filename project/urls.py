@@ -5,6 +5,7 @@ from dpnk.views import questionnaire_results, questionnaire_answers, questions, 
 from dpnk import views
 from django.conf.urls.static import static
 from dpnk.rest import router
+from ajax_select import urls as ajax_select_urls
 
 from django.conf import settings
 
@@ -32,6 +33,7 @@ urlpatterns = [
     url(r'^chaining/', include('smart_selects.urls')),
     url(r'^admin/', include("massadmin.urls")),
     url(r"^su/", include("django_su.urls")),
+    url(r'^ajax_select/', include(ajax_select_urls)),
     url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^redactor/', include('redactor.urls')),
     url(r'^rest/', include(router.urls)),

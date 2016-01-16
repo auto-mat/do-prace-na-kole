@@ -171,6 +171,7 @@ INSTALLED_APPS = (
     'denorm',
     'subdomains',
     'redactor',
+    'ajax_select',
     # 'cachalot',
 )
 TEMPLATE_VISIBLE_SETTINGS = (
