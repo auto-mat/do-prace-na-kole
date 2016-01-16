@@ -328,7 +328,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             initial['company'] = instance.team.subsidiary.company.pk
 
         if request:
-            if request.GET.get('team', None):
+            if 'team' in request.GET:
                 initial['team'] = request.GET['team']
 
         kwargs['initial'] = initial
