@@ -112,8 +112,76 @@ class ViewsTests(TransactionTestCase):
         )
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
 
-    def test_dpnk_views_gpx_file(self):
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class ViewsTestsLogon(TransactionTestCase):
+    fixtures = ['campaign', 'views', 'users']
+
+    def setUp(self):
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.assertTrue(self.client.login(username='test', password='test'))
+
+    def test_dpnk_team_view(self):
+        response = self.client.get(reverse('zmenit_tym'))
+        with open("test.html", "w") as f:
+            f.write(response.content.decode())
+        self.assertContains(response, "Testing company")
+        self.assertContains(response, "Testing team 1")
+
+    def test_dpnk_team_view_choose(self):
+        post_data = {
+            'company': '1',
+            'subsidiary': '1',
+            'team': '1',
+            'next': 'Next',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data)
+        self.assertRedirects(response, reverse("upravit_trasu"))
+
+    def test_dpnk_team_view_create(self):
+        post_data = {
+            'company-name': 'Created company',
+            'id_company_selected': 'on',
+            'subsidiary-city': '1',
+            'subsidiary-address_recipient': 'Created name',
+            'subsidiary-address_street': 'Created street',
+            'subsidiary-address_street_number': '99',
+            'subsidiary-address_psc': '99 999',
+            'subsidiary-address_city': 'Testing city',
+            'id_subsidiary_selected': 'on',
+            'team-name': 'Created team',
+            'company': '1',
+            'subsidiary': '1',
+            'team-campaign': '339',
+            'id_team_selected': 'on',
+            'next': 'Další',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+
+        self.assertRedirects(response, reverse("pozvanky"))
+        self.assertContains(response, "Tým Created team úspěšně vytvořen")
+        user = UserAttendance.objects.get(pk=1115)
+        self.assertEquals(user.team.name, "Created team")
+        self.assertEquals(user.team.subsidiary.address.street, "Created street")
+        self.assertEquals(user.team.subsidiary.company.name, "Created company")
+
+    def test_dpnk_team_view_no_team_set(self):
+        post_data = {
+            'company': '1',
+            'subsidiary': '',
+            'team': '',
+            'next': 'Next',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data)
+        self.assertContains(response, 'error_1_id_team')
+        self.assertContains(response, 'var value = undefined;')
+
+    def test_dpnk_views_gpx_file(self):
         user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
         mommy.make(models.Trip, user_attendance=user_attendance, date=datetime.date(year=2010, month=11, day=20))
         gpxfile = mommy.make(models.GpxFile, user_attendance=user_attendance, trip_date=datetime.date(year=2010, month=11, day=20))
@@ -182,8 +250,6 @@ class ViewsTests(TransactionTestCase):
         """
         test if the user pages work
         """
-        self.assertTrue(self.client.login(username='test', password='test'))
-
         status_code_map = {
             reverse('profil'): 200,
             reverse('registration_access'): 200,
@@ -197,7 +263,6 @@ class ViewsTests(TransactionTestCase):
         """
         test if the user pages work after user registration
         """
-        self.assertTrue(self.client.login(username='test', password='test'))
         user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
         user_attendance.track = 'LINESTRING(0 0,-1 1)'
         user_attendance.t_shirt_size = mommy.make(models.TShirtSize)

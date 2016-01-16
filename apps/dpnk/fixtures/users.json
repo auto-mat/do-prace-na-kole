@@ -107,7 +107,7 @@
     {
         "fields": {
             "date_joined": "2015-11-12T18:18:10",
-            "email": "test@test.cz",
+            "email": "test2@test.cz",
             "first_name": "Testing",
             "groups": [],
             "is_active": true,
