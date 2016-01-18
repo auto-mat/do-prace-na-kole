@@ -18,7 +18,6 @@
     "openlayers": "release-2.13.1",
     "bootstrap": "~3.3.2",
     "jquery-form": "~3.46.0",
-    "bootstrap-select": "~1.6.4",
     "font-awesome": "~4.3.0"
   }
 }

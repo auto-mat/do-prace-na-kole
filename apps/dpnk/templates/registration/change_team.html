@@ -3,14 +3,6 @@
 {% load i18n %}
 {% load static %}
 
-{% block extrahead %}
-<script type="text/javascript" src="{% static "bow/bootstrap-select/dist/js/bootstrap-select.js"%}"></script>
-<link rel="stylesheet" type="text/css" href="{% static "bow/bootstrap-select/dist/css/bootstrap-select.css"%}">
-<script type="text/javascript" src="{% static "bow/jquery-form/jquery.form.js"%}"></script>
-{{ block.super }}
-{% endblock %}
-
-
 {% block messages %}
 <div class="alert alert-info">
    {% blocktrans %}
@@ -66,9 +58,6 @@
       $("#id_company_selected").on("click", switchCompanyForm);
       $("#id_subsidiary_selected").on("click", switchSubsidiaryForm);
       $("#id_team_selected").on("click", switchTeamForm);
-
-      $('#id_company').attr("data-live-search", true);
-      $('#id_company').selectpicker();
    });
 </script>
 {{ block.super }}
