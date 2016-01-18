@@ -128,8 +128,6 @@ class ViewsTestsLogon(TransactionTestCase):
 
     def test_dpnk_team_view(self):
         response = self.client.get(reverse('zmenit_tym'))
-        with open("test.html", "w") as f:
-            f.write(response.content.decode())
         self.assertContains(response, "Testing company")
         self.assertContains(response, "Testing team 1")
 
