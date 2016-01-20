@@ -84,7 +84,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 SECRET_KEY = ''
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'subdomains.middleware.SubdomainMiddleware',
@@ -93,11 +93,10 @@ MIDDLEWARE_CLASSES = (
     'denorm.middleware.DenormMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
-)
+]
 AUTHENTICATION_BACKENDS = (
     'oauth2_provider.backends.OAuth2Backend',
     'dpnk.auth.EmailModelBackend',
@@ -144,7 +143,6 @@ INSTALLED_APPS = (
     'smart_selects',
     'composite_field',
     'softhyphen',
-    'debug_toolbar',
     'django_extensions',
     'chart_tools',
     'massadmin',
