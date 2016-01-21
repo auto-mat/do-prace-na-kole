@@ -226,6 +226,11 @@ class Company(models.Model):
         return get_address_string(self.address)
 
 
+class ActiveManager(models.Manager):
+    def get_queryset(self):
+        return super(ActiveManager, self).get_queryset().filter(active=True)
+
+
 class Subsidiary(models.Model):
     """Pobočka"""
 
@@ -249,6 +254,9 @@ class Subsidiary(models.Model):
         verbose_name=_(u"Aktivní"),
         default=True,
         null=False)
+
+    active_objects = ActiveManager()
+    objects = models.Manager()
 
     def __str__(self):
         return get_address_string(self.address)

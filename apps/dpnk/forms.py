@@ -261,6 +261,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             foreign_key_field_name="company",
             to_model_name="Subsidiary",
             to_model_field="company",
+            manager="active_objects",
             show_all=False,
             auto_choose=True,
         ),
