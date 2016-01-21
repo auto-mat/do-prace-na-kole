@@ -341,7 +341,7 @@ class Team(models.Model):
         return u"%s (%s)" % (self.name, u", ".join([u.userprofile.name() for u in self.members()]))
 
     def __str__(self):
-        return "%s" % self.name
+        return "%s" % self.name_with_members
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         if self.invitation_token == "":
