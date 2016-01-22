@@ -57,3 +57,4 @@ django-wysiwyg-redactor
 sqlparse
 django-appconf
 model-mommy
+django-ajax-selects
