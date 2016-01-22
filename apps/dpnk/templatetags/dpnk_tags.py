@@ -58,7 +58,7 @@ def wp_news_cached():
     url = "http://www.dopracenakole.net/"
     api = slumber.API(url)
     try:
-        wp_feed = api.list.get(feed="content_to_backend", _post_type="post", count=10)
+        wp_feed = api.feed.get(feed="content_to_backend", _post_type="post", _number=10)
     except:
         return ""
     template = get_template("templatetags/wp_news.html")
@@ -76,10 +76,10 @@ def wp_article_cached(id):
     url = "http://www.dopracenakole.net/"
     api = slumber.API(url)
     try:
-        wp_article = api.list.get(feed="content_to_backend", _post_type="page", _id=id)
+        wp_article = api.feed.get(feed="content_to_backend", _post_type="page", _id=id)
     except:
         return ""
-    return wp_article.values()[0]['content']
+    return wp_article[str(id)]['content']
 
 
 @register.simple_tag
