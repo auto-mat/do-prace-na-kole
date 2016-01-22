@@ -29,8 +29,12 @@ register = template.Library()
 
 
 @register.simple_tag
-@cached(600)
 def cyklistesobe(city_slug, order="created_at"):
+    return mark_safe(cyklistesobe_cached(city_slug, order))
+
+
+@cached(600)
+def cyklistesobe_cached(city_slug, order="created_at"):
     api = slumber.API("http://www.cyklistesobe.cz/api/")
     kwargs = {}
     if city_slug:
@@ -41,12 +45,16 @@ def cyklistesobe(city_slug, order="created_at"):
         cyklistesobe = None
     template = get_template("templatetags/cyklistesobe.html")
     context = {'cyklistesobe': cyklistesobe}
-    return mark_safe(template.render(context))
+    return template.render(context)
 
 
 @register.simple_tag
-@cached(600)
 def wp_news():
+    return mark_safe(wp_news_cached())
+
+
+@cached(600)
+def wp_news_cached():
     url = "http://www.dopracenakole.net/"
     api = slumber.API(url)
     try:
@@ -55,19 +63,23 @@ def wp_news():
         return ""
     template = get_template("templatetags/wp_news.html")
     context = {'wp_feed': wp_feed}
-    return mark_safe(template.render(context))
+    return template.render(context)
 
 
 @register.simple_tag
-@cached(600)
 def wp_article(id):
+    return mark_safe(wp_article_cached(id))
+
+
+@cached(600)
+def wp_article_cached(id):
     url = "http://www.dopracenakole.net/"
     api = slumber.API(url)
     try:
         wp_article = api.list.get(feed="content_to_backend", _post_type="page", _id=id)
     except:
         return ""
-    return mark_safe(wp_article.values()[0]['content'])
+    return wp_article.values()[0]['content']
 
 
 @register.simple_tag
