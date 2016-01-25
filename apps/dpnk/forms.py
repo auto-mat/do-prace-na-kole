@@ -663,6 +663,15 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         label=_(u"Nechci, aby moje skutečné jméno bylo veřejně zobrazováno"),
         required=False,
     )
+    mailing_opt_in = forms.ChoiceField(
+        label=_(u"Soutěžní emaily"),
+        help_text=_(u"Odběr emailů můžete kdykoliv v průběhu soutěže zrušit."),
+        choices=[
+            (True, "Přeji si dostávat emailem informace o akcích, událostech a dalších informacích souvisejících se soutěží."),
+            (False, "Nechci dostávat emaily, mohou mi uniknout důležité informace o průběhu soutěže.")
+        ],
+        widget=forms.RadioSelect(),
+    )
 
     def save(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).save(*args, **kwargs)

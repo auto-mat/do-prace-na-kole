@@ -41,8 +41,8 @@ $(function(){
    });
 
    $('.upravit_profil form').submit(function (){
-      if($('#id_mailing_opt_in').prop('checked') == false){
-         return window.confirm("Skutečně nechcete dostávat žádné soutěžní emaily?");
+      if($('#id_mailing_opt_in_2').prop('checked') == true){
+         return window.confirm("Skutečně nechcete dostávat žádné soutěžní emaily? Můžete tak například přijít o některé akce v průběhu soutěže.");
       } else {
          return true;
       }
