@@ -474,7 +474,9 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         company_admin = self.user_attendance.get_asociated_company_admin()
         if payment_type == 'company' and not company_admin:
             raise forms.ValidationError(mark_safe(
-                _(u"Váš zaměstnavatel %(employer)s nemá zvoleného koordinátor společnosti.<ul><li><a href='%(url)s'>Chci se stát koordinátorem mé společnosti</a></li></ul>")
+                _(u"Váš zaměstnavatel %(employer)s nemá zvoleného koordinátor společnosti."
+                  u" Vaše spolenost bude muset nejprve ustanovit zástupce, který za ní bude schvalovat firemní platby."
+                  u"<ul><li><a href='%(url)s'>Chci se stát koordinátorem mé společnosti</a></li></ul>")
                 % {'employer': self.user_attendance.team.subsidiary.company, 'url': reverse('company_admin_application')}))
         elif payment_type == 'company' and not company_admin.can_confirm_payments:
             raise forms.ValidationError(mark_safe(
