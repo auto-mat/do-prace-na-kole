@@ -197,7 +197,7 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
 class ChangeTeamView(RegistrationViewMixin, FormView):
     form_class = ChangeTeamForm
     template_name = 'registration/change_team.html'
-    next_url = 'upravit_trasu'
+    next_url = 'zmenit_triko'
     prev_url = 'upravit_profil'
     title = _(u'Změnit tým')
     registration_phase = "zmenit_tym"
@@ -467,7 +467,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
     template_name = 'registration/payment_type.html'
     title = _(u"Platba")
     registration_phase = "typ_platby"
-    next_url = "working_schedule"
+    next_url = "profil"
     prev_url = "zmenit_triko"
 
     @method_decorator(login_required_simple)
@@ -962,7 +962,7 @@ class ChangeTShirtView(RegistrationViewMixin, UpdateView):
     model = UserAttendance
     success_message = _(u"Velikost trička úspěšně nastavena")
     next_url = 'typ_platby'
-    prev_url = 'upravit_trasu'
+    prev_url = 'zmenit_tym'
     registration_phase = "zmenit_triko"
     title = _(u"Upravit velikost trička")
 

@@ -931,11 +931,9 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     def entered_competition(self):
         return self.tshirt_complete() and\
-            self.track_complete() and\
             self.team_complete() and\
             self.payment_complete() and\
-            self.userprofile.profile_complete() and\
-            self.working_schedule_complete()
+            self.userprofile.profile_complete()
 
     def team_member_count(self):
         if self.team:
