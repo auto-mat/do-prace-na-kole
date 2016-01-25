@@ -41,6 +41,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import string_concat
 from django.http import Http404
+import logging
+logger = logging.getLogger(__name__)
 
 
 def team_full(data):
@@ -306,6 +308,9 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
     def clean_team(self):
         data = self.cleaned_data['team']
+        if data.campaign.slug != self.request.subdomain:
+            logger.error("Team %s not in campaign %s" % (data.pk, self.request.subdomain))
+            raise forms.ValidationError(mark_safe(_(u"Zvolený tým není dostupný v aktuální kampani")))
         if not data:
             return self.instance.team
         if type(data) != RegisterTeamForm:
@@ -314,6 +319,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         return data
 
     def __init__(self, request=None, *args, **kwargs):
+        self.request = request
         initial = kwargs.get('initial', {})
         instance = kwargs.get('instance', False)
 

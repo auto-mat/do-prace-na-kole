@@ -223,7 +223,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
         create_subsidiary = False
         create_team = False
 
-        form = self.form_class(data=request.POST, files=request.FILES, instance=self.user_attendance)
+        form = self.form_class(request, data=request.POST, files=request.FILES, instance=self.user_attendance)
 
         form_company = RegisterCompanyForm(request.POST, prefix="company")
         form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix="subsidiary", campaign=self.user_attendance.campaign)
