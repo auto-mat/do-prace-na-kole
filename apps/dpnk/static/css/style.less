@@ -11,10 +11,10 @@
       display: inline;
 	}
 }
-@links:#f37021;
-@c: #FF6C00;
+@links:#6279bb;
+@c: #6279bb;
 @c2: #FFF2E8;
-@c3:#F7C29A;
+@c3: #8790AB;
 // #collapsing_menu{
 // 	float: left;
 // }
@@ -35,13 +35,17 @@ h1, h2, h3, h4, h5{
       }
    }
 }
+.navbar-fixed-top{
+	margin-top: 0.5rem;
+	border-bottom: 1px solid #000;
+}
 .navbar{
-	background-color:@c2;
+	min-height:38px;
 	ul{
 		margin-bottom: 0;
 		li{
 			a{	
-				padding:15px 10px;
+				padding:5px 10px;
 				// &::after{
 				// 	 content: ">";
 				// }
@@ -105,30 +109,18 @@ h1, h2, h3, h4, h5{
 #the_menu .dropdown-menu, .the_submenu .dropdown-menu{
 	background-color: @c2;
 }
-// .logout{
-// 	background:url(../img/logout.png) no-repeat center center;
-// 	display: inline-block;
-// 	padding:15px;
-// 	overflow: hidden;
-// 	text-indent: 30em;
-// 	opacity: 0.4;
-// 	&:hover{
-// 		opacity: 1;
-// 	}
-// }
+#the_menu{
+	margin-top:0;
+}
 .the_submenu{
 	float: left;
 	clear: both;
-	a{
-		// padding-top: 0;
-		font-size: 0.8em;
-	}
 }
 .navbar-collapse{
 	padding-left: 0;
 }
 .base.container{
-	margin-top:80px;
+	margin-top:110px;
 	margin-bottom: 80px;
 }
 .django_administrace{
@@ -188,6 +180,11 @@ input:disabled+label{
 
 	}
 }
+.logo{
+	margin-top: 0.8rem;
+	margin-bottom: 1.3rem;
+    display: inline-block;
+}
 .lang_switch{
 	float: right;
 	li{
@@ -216,6 +213,10 @@ input:disabled+label{
 		margin-bottom: 1em;
 	}
 }
+.wp_news{
+	margin-bottom: 4rem;
+}
+
 @media (max-width: 768px){
 	.logo_holder{
 		float: left;
@@ -231,6 +232,9 @@ input:disabled+label{
 	.navbar ul li a{
 		padding-left: 0;
 	}
+	.lang_switch{
+   	margin-top:0.8rem;
+   }
 }
 @media only screen and (max-width: 400px) {
    #rides td:nth-child(6),
@@ -252,6 +256,7 @@ input:disabled+label{
 	.narrow-hide-400{
       display: none;
    }
+
 }
 
 input[type=number]::-webkit-inner-spin-button,
