@@ -55,7 +55,7 @@ def wp_news():
 
 @cached(600)
 def wp_news_cached():
-    url = "http://www.dopracenakole.net/"
+    url = "http://www.dopracenakole.cz/"
     api = slumber.API(url)
     try:
         wp_feed = api.feed.get(feed="content_to_backend", _post_type="post", _number=5)
@@ -73,7 +73,7 @@ def wp_article(id):
 
 @cached(600)
 def wp_article_cached(id):
-    url = "http://www.dopracenakole.net/"
+    url = "http://www.dopracenakole.cz/"
     api = slumber.API(url)
     try:
         wp_article = api.feed.get(feed="content_to_backend", _post_type="page", _id=id)

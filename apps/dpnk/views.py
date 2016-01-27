@@ -138,7 +138,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                           u' <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu.</li>'
                           u'<li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li>'
                           u'<li>Pokud nemůžete sehnat spolupracovníky, použijte '
-                          u' <a href="http://www.dopracenakole.net/locations/%(city)s/seznamka" target="_blank">seznamku</a>.</li></ul>')
+                          u' <a href="http://www.dopracenakole.cz/locations/%(city)s/seznamka" target="_blank">seznamku</a>.</li></ul>')
                         % {
                             'invite_url':
                             reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym'), 'city': self.user_attendance.team.subsidiary.city.slug}))
@@ -900,7 +900,7 @@ class CompetitionResultsView(TemplateView):
             logger.exception('Unknown competition slug %s, request: %s' % (competition_slug, self.request))
             return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme.'
                                   u' Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na'
-                                  u' <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující soutěž">kontakt@dopracenakole.net</a></div>'), status=401)
+                                  u' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž">kontakt@dopracenakole.cz</a></div>'), status=401)
 
         results = competition.get_results()
         if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
@@ -1002,7 +1002,7 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
             logger.exception('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
             return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme.'
                                   u' Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na'
-                                  u' <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující dotazník">kontakt@dopracenakole.net</a></div>'), status=401)
+                                  u' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující dotazník">kontakt@dopracenakole.cz</a></div>'), status=401)
         self.show_points = self.competition.has_finished() or self.userprofile.user.is_superuser
         self.is_actual = self.competition.is_actual()
         self.questions = Question.objects.filter(competition=self.competition).select_related("answer").order_by('order')
@@ -1376,7 +1376,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
                         messages.ERROR,
                         mark_safe(_(
                             u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým."
-                            u" Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.net?subject=Nejde ověřit člen týmu'>kontakt@dopracenakole.net</a>."
+                            u" Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.cz?subject=Nejde ověřit člen týmu'>kontakt@dopracenakole.cz</a>."
                         )),
                         extra_tags="user_attendance_%s" % approved_user.pk,
                         fail_silently=True)
