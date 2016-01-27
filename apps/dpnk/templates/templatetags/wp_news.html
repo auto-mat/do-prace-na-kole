@@ -1,16 +1,18 @@
 {% load i18n %}
 {% load bleach_tags %}
 
-{% for key, value in wp_feed.items %}
 <div class="wp_news">
+{% for key, value in wp_feed.items %}
    <h4>
 	   <a href="{{ value.url }}" target="_blank">
 	   		{{ value.title }}
 	   </a>
    </h4>
+   {% if forloop.first %}
    {% if value.image %}
    <img src="{{ value.image }}" alt="Obrázek k podnětu"></img>
    {% endif %}
    {{ value.excerpt|bleach }}
-</div>
+   {% endif %}
 {% endfor %}
+</div>

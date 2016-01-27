@@ -1,21 +1,24 @@
 {% load i18n %}
 {% load bleach_tags %}
 {% if cyklistesobe %}
-{% for feature in cyklistesobe.features %}
 <div class="cyklistesobe">
+{% for feature in cyklistesobe.features %}
 <h4>
 	<a href="http://www.cyklistesobe.cz{{ feature.properties.url }}" target="_blank">
 		{{ feature.properties.title }}
       <span class="vote">{{ feature.properties.vote_count }}</span>
 	</a>
 </h4>
+{% if forloop.first %}
 {% if feature.properties.photo_thumb_url %}
 <img src="http://www.cyklistesobe.cz{{ feature.properties.photo_thumb_url }}" alt="Obrázek k podnětu" target="_blank"></img>
 {% endif %}
 {{ feature.properties.description|bleach }}
 
-<br/>
+{% comment %}
 <!-- {% trans "Vytvořil:" %} {{ feature.properties.created_by }} -->
-</div>
+{% endcomment %}
+{% endif %}
 {% endfor %}
+</div>
 {% endif %}

@@ -40,7 +40,7 @@ def cyklistesobe_cached(city_slug, order="created_at"):
     if city_slug:
         kwargs['group'] = city_slug
     try:
-        cyklistesobe = api.issues.get(order=order, per_page=3, page=0, **kwargs)
+        cyklistesobe = api.issues.get(order=order, per_page=5, page=0, **kwargs)
     except:
         cyklistesobe = None
     template = get_template("templatetags/cyklistesobe.html")
@@ -58,7 +58,7 @@ def wp_news_cached():
     url = "http://www.dopracenakole.net/"
     api = slumber.API(url)
     try:
-        wp_feed = api.feed.get(feed="content_to_backend", _post_type="post", _number=10)
+        wp_feed = api.feed.get(feed="content_to_backend", _post_type="post", _number=5)
     except:
         return ""
     template = get_template("templatetags/wp_news.html")
