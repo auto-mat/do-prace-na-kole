@@ -1894,7 +1894,7 @@ class Trip(models.Model):
 
 
 class Competition(models.Model):
-    """Soutěž"""
+    """Soutěžní kategorie"""
 
     CTYPES = (
         ('length', _(u"Ujetá vzdálenost")),
@@ -1910,8 +1910,8 @@ class Competition(models.Model):
     )
 
     class Meta:
-        verbose_name = _(u"Soutěž")
-        verbose_name_plural = _(u"Soutěže")
+        verbose_name = _(u"Soutěžní kategorie")
+        verbose_name_plural = _(u"Soutěžní kategorie")
         ordering = ('-campaign', 'type', 'name')
 
     name = models.CharField(
