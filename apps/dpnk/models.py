@@ -40,9 +40,11 @@ from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from composite_field import CompositeField
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files import File
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from polymorphic.models import PolymorphicModel
@@ -2112,6 +2114,27 @@ class Competition(models.Model):
                 else:
                     self.company_competitors.remove(userprofile.company())
         results.recalculate_result_competitor_nothread(userprofile)
+
+    def type_string(self):
+        CTYPES_STRINGS = {
+            'questionnaire': _('do&shy;ta&shy;zník'),
+            'frequency': _('soutěž na pravidelnost'),
+            'length': _('soutěž na vzdálenost'),
+        }
+        CCOMPETITORTYPES_STRINGS = {
+            'single_user': _('jed&shy;not&shy;liv&shy;ců'),
+            'liberos': _('li&shy;be&shy;ros'),
+            'team': _('tý&shy;mů'),
+            'company': _('spo&shy;le&shy;čno&shy;stí'),
+        }
+        if self.company:
+            company_string_before = "vnitrofiremní"
+            company_string_after = "společnosti %s" % escape(self.company)
+        else:
+            company_string_before = ""
+            company_string_after = ""
+
+        return string_concat(company_string_before, " ", CTYPES_STRINGS[self.type], " ", CCOMPETITORTYPES_STRINGS[self.competitor_type], " ", company_string_after)
 
     def __str__(self):
         return "%s" % self.name

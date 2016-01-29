@@ -86,6 +86,12 @@ urlpatterns = [
         ),
         name="competitions",
         ),
+    url(r'^souteze/pravidla/(?P<city_slug>[^&]+)/$',
+        views.CompetitionsView.as_view(
+            template_name="registration/competitions_rules.html"
+        ),
+        name="competition-rules-city",
+        ),
     url(r'^vysledky_souteze/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
         views.CompetitionResultsView.as_view(),
         name="competition_results",

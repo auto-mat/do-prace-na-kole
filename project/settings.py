@@ -187,7 +187,9 @@ REST_FRAMEWORK = {
     ),
 }
 
-BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br']
+REDACTOR_OPTIONS = {'formatting': ['p', 'blockquote', 'pre', 'h4', 'h5']}
+BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br', 'span', 'div', 'h4', 'h5', 'pre', 'blockquote', 'ol', 'li', 'ul']
+BLEACH_ALLOWED_ATTRIBUTES = ['href', ]
 COMPRESSOR_ENABLED = True
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),

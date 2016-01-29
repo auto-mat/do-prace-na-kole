@@ -171,9 +171,12 @@ class TitleViewMixin(object):
             self.title = kwargs.get('title')
         return super(TitleViewMixin, self).as_view(*args, **kwargs)
 
+    def get_title(self, *args, **kwargs):
+        return self.title
+
     def get_context_data(self, *args, **kwargs):
         context_data = super(TitleViewMixin, self).get_context_data(*args, **kwargs)
-        context_data['title'] = self.title
+        context_data['title'] = self.get_title(*args, **kwargs)
         return context_data
 
 
@@ -845,6 +848,18 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
             team_members = self.user_attendance.team.all_members().select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign')
         context_data['team_members'] = team_members
         context_data['registration_phase'] = "other_team_members"
+        return context_data
+
+
+class CompetitionsView(TitleViewMixin, TemplateView):
+    def get_title(self, *args, **kwargs):
+        city = City.objects.get(slug=kwargs['city_slug'])
+        return _(u"Pravidla soutěží - %s" % city)
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(CompetitionsView, self).get_context_data(*args, **kwargs)
+        competitions = Competition.objects.filter(city__slug=kwargs['city_slug'], campaign__slug=self.request.subdomain)
+        context_data['competitions'] = competitions
         return context_data
 
 
