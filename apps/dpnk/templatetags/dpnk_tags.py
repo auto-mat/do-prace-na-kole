@@ -53,6 +53,11 @@ def wp_news():
     return mark_safe(wp_news_cached())
 
 
+@register.simple_tag
+def wp_actions():
+    return mark_safe(wp_news_cached())
+
+
 @cached(600)
 def wp_news_cached():
     url = "http://www.dopracenakole.cz/"

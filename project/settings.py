@@ -172,10 +172,14 @@ INSTALLED_APPS = (
     'ajax_select',
     # 'cachalot',
 )
+
+BASE_WP_URL = "http://www.dopracenakole.cz"
+
 TEMPLATE_VISIBLE_SETTINGS = (
     'PAYU_POS_AUTH_KEY',
     'PAYU_POS_ID',
     'PAYU_KEY_1',
+    'BASE_WP_URL',
 )
 
 REST_FRAMEWORK = {

@@ -9,6 +9,11 @@
 {% endblock %}
 
 {% block content %}
+{% block messages %}
+{% include "messages_include.html" %}
+{{ message }}
+{% endblock %}
+
 <script>
    $.get("{% url 'jizdy' %}", function(data) {
       $("#rides-form-container").append(data);
@@ -21,11 +26,6 @@
    });
 </script>
 <div id="rides-form-container"></div>
-
-{% block messages %}
-{% include "messages_include.html" %}
-{{ message }}
-{% endblock %}
 
 <div>
    <h3>{% trans "Vouchery" %}</h3>
@@ -48,8 +48,12 @@
    <div class="col-md-6">
       <h3>{% trans "Novinky" %}</h3>
       {% wp_news %}
-      </div>
-      <div class="col-md-6">
+   </div>
+   <div class="col-md-6">
+      <h3>{% trans "Akce ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ user_attendance.team.subsidiary.city.slug }}">{{ user_attendance.team.subsidiary.city }}</a></h3>
+      {% wp_actions %}
+   </div>
+   <div class="col-md-6">
       <h3>{% trans "Cyklisté sobě" %}</h3>
       <a href="https://www.cyklistesobe.cz/issues/new" target="_blank">Dali jste Cyklistům sobě vědět o problémech na vaši trase?</a>
       {% cyklistesobe user_attendance.team.subsidiary.city.cyklistesobe_slug %}
