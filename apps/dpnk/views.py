@@ -118,8 +118,8 @@ class UserAttendanceViewMixin(object):
 class RegistrationMessagesMixin(UserAttendanceViewMixin):
     def get(self, request, *args, **kwargs):
         ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
-        if self.user_attendance.team:
-            if self.registration_phase not in ('upravit_profil',):
+        if self.registration_phase in ('profile_view',):
+            if self.user_attendance.team:
                 if self.user_attendance.approved_for_team == 'undecided':
                     messages.warning(request, mark_safe(
                         _(
@@ -143,13 +143,19 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                             'invite_url':
                             reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym'), 'city': self.user_attendance.team.subsidiary.city.slug}))
 
-        if self.registration_phase in ('profile_view',):
             unanswered_questionnaires = self.user_attendance.get_competitions_without_admission().filter(type='questionnaire')
             if unanswered_questionnaires.exists():
                 competitions = ", ".join([
                     "<a href='%(url)s'>%(name)s</a>" %
                     {"url": reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}), "name": q.name} for q in unanswered_questionnaires.all()])
                 messages.info(request, mark_safe(_(u'Nezapomeňte vyplnit odpovědi v následujících soutěžích: %s!') % competitions))
+            if not self.user_attendance.track and not self.user_attendance.distance:
+                messages.info(request, mark_safe(
+                    _(u'Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.'
+                      u' Na základě této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty.'
+                      u' Vaše vyplněná trasa se objeví na <a href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
+                      u' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
+                      u' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu')))
 
         if self.user_attendance.payment_status() not in ('done', 'none',) and self.registration_phase not in ('typ_platby',):
             messages.info(request, mark_safe(
@@ -965,7 +971,7 @@ class UpdateTrackView(RegistrationViewMixin, UpdateView):
     next_url = 'zmenit_triko'
     prev_url = 'zmenit_tym'
     registration_phase = "upravit_trasu"
-    title = _("Upravit trasu")
+    title = _("Upravit typickou trasu")
 
     def get_object(self):
         return self.user_attendance
