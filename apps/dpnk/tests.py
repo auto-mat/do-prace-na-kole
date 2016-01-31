@@ -139,7 +139,7 @@ class ViewsTestsLogon(TransactionTestCase):
             'next': 'Next',
         }
         response = self.client.post(reverse('zmenit_tym'), post_data)
-        self.assertRedirects(response, reverse("upravit_trasu"))
+        self.assertRedirects(response, reverse("zmenit_triko"))
 
     def test_dpnk_team_view_create(self):
         post_data = {

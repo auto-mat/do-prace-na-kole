@@ -308,11 +308,12 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
     def clean_team(self):
         data = self.cleaned_data['team']
-        if data.campaign.slug != self.request.subdomain:
-            logger.error("Team %s not in campaign %s" % (data.pk, self.request.subdomain))
-            raise forms.ValidationError(mark_safe(_(u"Zvolený tým není dostupný v aktuální kampani")))
         if not data:
             return self.instance.team
+        else:
+            if data.campaign.slug != self.request.subdomain:
+                logger.error("Team %s not in campaign %s" % (data.pk, self.request.subdomain))
+                raise forms.ValidationError(mark_safe(_(u"Zvolený tým není dostupný v aktuální kampani")))
         if type(data) != RegisterTeamForm:
             if data != self.instance.team:
                 team_full(data)

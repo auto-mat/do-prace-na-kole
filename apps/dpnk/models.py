@@ -767,10 +767,14 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return self.userprofile.name()
 
     def admission_fee(self):
-        if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
-            return self.campaign.late_admission_fee + self.t_shirt_size.price
+        if self.t_shirt_size:
+            t_shirt_price = self.t_shirt_size.price
         else:
-            return self.campaign.admission_fee + self.t_shirt_size.price
+            t_shirt_price = 0
+        if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
+            return self.campaign.late_admission_fee + t_shirt_price
+        else:
+            return self.campaign.admission_fee + t_shirt_price
 
     def company_admission_fee(self):
         if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
