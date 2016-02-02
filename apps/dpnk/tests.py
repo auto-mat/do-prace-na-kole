@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.test import TestCase, RequestFactory, TransactionTestCase, Client
 from django.core.urlresolvers import reverse
+from django.core import mail
 from django.test.utils import override_settings
 from dpnk import results, models, mailing, views
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile
@@ -83,6 +84,18 @@ class ViewsTests(TransactionTestCase):
         self.assertNotEquals(user, None)
         self.assertNotEquals(UserProfile.objects.get(user=user), None)
         self.assertNotEquals(UserAttendance.objects.get(userprofile__user=user), None)
+
+    def test_password_recovery(self):
+        address = reverse('password_reset')
+        post_data = {
+            'email': 'test@test.cz',
+        }
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('password_reset_done'))
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['test@test.cz'])
+        self.assertEqual(msg.subject, 'Zapomenuté heslo Do práce na kole')
+        self.assertTrue('http://testing-campaign.testserver/cs/zapomenute_heslo/zmena/' in msg.body)
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2010, month=10, day=1),
