@@ -937,6 +937,7 @@ class CompetitionResultsView(TemplateView):
 
 
 class UpdateProfileView(RegistrationViewMixin, UpdateView):
+    template_name = 'submenu_personal.html'
     form_class = ProfileUpdateForm
     model = UserProfile
     success_message = _(u"Osobní údaje úspěšně upraveny")
@@ -970,7 +971,7 @@ class UpdateTrackView(RegistrationViewMixin, UpdateView):
     success_message = _(u"Trasa/vzdálenost úspěšně upravena")
     next_url = 'zmenit_triko'
     prev_url = 'zmenit_tym'
-    registration_phase = "upravit_trasu"
+    registration_phase = "upravit_profil"
     title = _("Upravit typickou trasu")
 
     def get_object(self):
