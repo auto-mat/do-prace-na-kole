@@ -1,0 +1,30 @@
+{% load i18n %}
+{% autoescape off %}
+
+{% language lang_code %}
+{% if invited %}
+A message for {{ invited.userprofile }} from the {{invited.team.name}} team in the {{ invited.campaign }} competition.
+{% endif %}
+
+Hello,
+
+Your colleague {{ inviting.userprofile }} would like to have you in the {{inviting.team.name}} team. Do you know why? Send them an e-mail and ask. Here is their e-mail address: {{ inviting.userprofile.user.email }}.
+
+Are you in? This link takes you to a simple pre-filled form.
+{% block register_link %}
+{% if not invited %}
+http://{{ inviting.campaign.slug }}.{{ SITE_URL }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email %}
+{% else %}
+http://{{ invited.campaign.slug }}.{{ SITE_URL }}{% url 'zmenit_tym' token=inviting.team.invitation_token initial_email=email %}
+{% endif %}
+{% endblock %}
+(If the link isn't working, paste and copy it into your favourite browser.)
+
+Many happy kilometers!
+Your {{ inviting.campaign }} team
+
+---
+{{ inviting.campaign.email_footer }}
+{% endlanguage %}
+
+{% endautoescape %}

@@ -1,0 +1,23 @@
+{% load i18n %}
+{% autoescape off %}
+
+{% language user.userprofile.language %}
+A message for {{ user.userprofile }}, participating in the {{ user.campaign }} competition.
+
+Hello,
+
+your membership in the {{user.team.name}} team has just been approved. You can sign in to your profile using
+{% block profile_link %}
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
+{% endblock %}
+
+Thank you for your support and we look forward to seeing you in May!
+
+Your {{ user.campaign }} organization team
+
+---
+{{ user.campaign.email_footer }}
+{% endlanguage %}
+
+
+{% endautoescape %}

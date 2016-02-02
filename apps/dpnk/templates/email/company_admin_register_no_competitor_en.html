@@ -1,0 +1,17 @@
+{% autoescape off %}
+
+A message for {{ company_admin.user }}, a candidate for the company administrator role in {{ company_admin.administrated_company }} in the {{ company_admin.campaign }} competition.
+
+Hello,
+
+you have just registered in the Bike to Work system as a candidate for the company administrator for {{ company }}. If you are not aware of this, let us please know as soon as possible. 
+Given the open character of the competition, anyone can apply for this role. So we would like to ask you to be patient while we verify your application. For verification purposes, representatives of the main organizer, Auto*Mat, may get in touch with you, especially if you don't know any of them personally. We will send you an e-mail once your application has been approved.
+
+Thank you for supporting your colleagues in the {{ company_admin.campaign }} competition and we look forward to further cooperation.
+
+Your {{ company_admin.campaign }} organization team
+
+---
+{{ company_admin.campaign.email_footer }}
+
+{% endautoescape %}

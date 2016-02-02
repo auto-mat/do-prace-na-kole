@@ -27,7 +27,7 @@ def approval_request_mail(user_attendance):
     for team_member in user_attendance.team.members():
         if user_attendance == team_member:
             continue
-        template = get_template('email/approval_request.html')
+        template = get_template('email/approval_request_%s.html' % user_attendance.userprofile.language)
         email = team_member.userprofile.user.email
         message = template.render({
             'team_member': team_member,
@@ -38,7 +38,7 @@ def approval_request_mail(user_attendance):
 
 
 def invitation_register_mail(inviting, invited):
-    template = get_template('email/invitation.html')
+    template = get_template('email/invitation_%s.html' % invited.userprofile.language)
     email = invited.userprofile.user.email
     if not invited:
         lang_code = inviting.userprofile.language
@@ -55,7 +55,7 @@ def invitation_register_mail(inviting, invited):
 
 
 def register_mail(user_attendance):
-    template = get_template('email/registration.html')
+    template = get_template('email/registration_%s.html' % user_attendance.userprofile.language)
     email = user_attendance.userprofile.user.email
     message = template.render({
         'user': user_attendance,
@@ -65,7 +65,7 @@ def register_mail(user_attendance):
 
 
 def team_membership_approval_mail(user_attendance):
-    template = get_template('email/team_membership_approval.html')
+    template = get_template('email/team_membership_approval_%s.html' % user_attendance.userprofile.language)
     email = user_attendance.userprofile.user.email
     message = template.render({
         'user': user_attendance,
@@ -75,7 +75,7 @@ def team_membership_approval_mail(user_attendance):
 
 
 def team_membership_denial_mail(user_attendance, denier, reason):
-    template = get_template('email/team_membership_denial.html')
+    template = get_template('email/team_membership_denial_%s.html' % user_attendance.userprofile.language)
     email = user_attendance.userprofile.user.email
     message = template.render({
         'user': user_attendance,
@@ -87,7 +87,7 @@ def team_membership_denial_mail(user_attendance, denier, reason):
 
 
 def team_created_mail(user_attendance):
-    template = get_template('email/team_created.html')
+    template = get_template('email/team_created_%s.html' % user_attendance.userprofile.language)
     email = user_attendance.userprofile.user.email
     message = template.render({
         'user': user_attendance,
@@ -97,7 +97,7 @@ def team_created_mail(user_attendance):
 
 
 def invitation_mail(user_attendance, email):
-    template = get_template('email/invitation.html')
+    template = get_template('email/invitation_%s.html' % user_attendance.userprofile.language)
     if len(email) != 0:
         message = template.render({
             'inviting': user_attendance,
@@ -109,7 +109,7 @@ def invitation_mail(user_attendance, email):
 
 
 def payment_confirmation_mail(user_attendance):
-    template = get_template('email/payment_confirmation.html')
+    template = get_template('email/payment_confirmation_%s.html' % user_attendance.userprofile.language)
     email = user_attendance.userprofile.user.email
     message = template.render({
         'user': user_attendance,
@@ -118,7 +118,7 @@ def payment_confirmation_mail(user_attendance):
 
 
 def payment_confirmation_company_mail(user_attendance):
-    template = get_template('email/payment_comfirmation_company.html')
+    template = get_template('email/payment_comfirmation_company_%s.html' % user_attendance.userprofile.language)
     email = user_attendance.userprofile.user.email
     message = template.render({
         'user': user_attendance,
@@ -128,7 +128,7 @@ def payment_confirmation_company_mail(user_attendance):
 
 
 def company_admin_register_competitor_mail(user_attendance):
-    template = get_template('email/company_admin_register_competitor.html')
+    template = get_template('email/company_admin_register_competitor_%s.html' % user_attendance.userprofile.language)
     email = user_attendance.userprofile.user.email
     message = template.render({
         'user': user_attendance,
@@ -139,7 +139,7 @@ def company_admin_register_competitor_mail(user_attendance):
 
 
 def company_admin_register_no_competitor_mail(company_admin, company):
-    template = get_template('email/company_admin_register_no_competitor.html')
+    template = get_template('email/company_admin_register_no_competitor_%s.html' % company_admin.get_userprofile().language)
     email = company_admin.user.email
     message = template.render({
         'company_admin': company_admin,
@@ -150,7 +150,7 @@ def company_admin_register_no_competitor_mail(company_admin, company):
 
 
 def company_admin_approval_mail(company_admin):
-    template = get_template('email/company_admin_approval.html')
+    template = get_template('email/company_admin_approval_%s.html' % company_admin.get_userprofile().language)
     email = company_admin.user.email
     message = template.render({
         'company_admin': company_admin,
@@ -161,7 +161,7 @@ def company_admin_approval_mail(company_admin):
 
 
 def company_admin_rejected_mail(company_admin):
-    template = get_template('email/company_admin_rejected.html')
+    template = get_template('email/company_admin_rejected_%s.html' % company_admin.get_userprofile().language)
     email = company_admin.user.email
     message = template.render({
         'company_admin': company_admin,

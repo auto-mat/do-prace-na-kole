@@ -1,0 +1,16 @@
+{% autoescape off %}
+
+A message for {{ company_admin.user }} from the {{ company_admin.campaign }} competition.
+
+Hello, 
+
+Your application for the role of a company administrator hasn't been confirmed. If you don't know why and nobody has contacted you, please contact us and ask for an explanation.
+
+Thank you for the support of {{ company_admin.campaign }}!
+
+Your {{ company_admin.campaign }} organization team
+
+---
+{{ company_admin.campaign.email_footer }}
+
+{% endautoescape %}
