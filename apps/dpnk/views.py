@@ -1027,7 +1027,7 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
                                   u' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující dotazník">kontakt@dopracenakole.cz</a></div>'), status=401)
         self.show_points = self.competition.has_finished() or self.userprofile.user.is_superuser
         self.is_actual = self.competition.is_actual()
-        self.questions = Question.objects.filter(competition=self.competition).select_related("answer").order_by('order')
+        self.questions = Question.objects.filter(competition=self.competition).order_by('order')
         return super(QuestionnaireView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
