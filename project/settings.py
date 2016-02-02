@@ -207,7 +207,7 @@ LOGOUT_NEXT_PAGE = reverse_lazy('profil')
 SITE_URL = ''
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"
-AKLUB_URL = "http://klub.vnitrni.auto-mat.cz"
+AKLUB_URL = "http://klub.auto-mat.cz"
 
 LEAFLET_CONFIG = {
     'DEFAULT_CENTER': (50.0866699218750000, 14.4387817382809995),
