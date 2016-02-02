@@ -105,7 +105,7 @@ def invitation_mail(user_attendance, email):
             'SITE_URL': settings.SITE_URL,
             'email': email,
         })
-        send_mail(_(u"%s - pozvánka do týmu" % user_attendance.campaign), message, None, [email], fail_silently=False)
+        send_mail(_(u"%s - pozvánka do týmu" % user_attendance.campaign), message, user_attendance.userprofile.user.email, [email], fail_silently=False)
 
 
 def payment_confirmation_mail(user_attendance):

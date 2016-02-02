@@ -58,66 +58,82 @@ class TestEmails(TestCase):
         email.approval_request_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - žádost o ověření členství")
+        self.assertEqual(mail.outbox[1].subject, "Testing campaign 1 - žádost o ověření členství")
+        self.assertEqual(mail.outbox[0].to[0], "user2@email.com")
+        self.assertEqual(mail.outbox[1].to[0], "user3@email.com")
 
     def test_send_invitation_register_mail(self):
         email.invitation_register_mail(self.user_attendance, self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - potvrzení registrace")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
     def test_send_register_mail(self):
         email.register_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - potvrzení registrace")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
     def test_send_team_membership_approval_mail(self):
         email.team_membership_approval_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - potvrzení ověření členství v týmu")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
     def test_send_team_membership_denial_mail(self):
         email.team_membership_denial_mail(self.user_attendance, self.user_attendance, "reason of denial")
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - ZAMÍTNUTÍ členství v týmu")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
     def test_send_team_created_mail(self):
         email.team_created_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - potvrzení vytvoření týmu")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
     def test_send_invitation_mail(self):
-        email.invitation_mail(self.user_attendance, "email@email.cz")
+        email.invitation_mail(self.user_attendance, "email@email.com")
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - pozvánka do týmu")
+        self.assertEqual(mail.outbox[0].from_email, "user1@email.com")
+        self.assertEqual(mail.outbox[0].to[0], "email@email.com")
 
     def test_send_payment_confirmation_mail(self):
         email.payment_confirmation_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - přijetí platby")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
     def test_send_payment_confirmation_company_mail(self):
         email.payment_confirmation_company_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - přijetí platby")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
     def test_send_company_admin_register_competitor_mail(self):
         email.company_admin_register_competitor_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - potvrzení registrace")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
     def test_send_company_admin_register_no_competitor_mail(self):
         email.company_admin_register_no_competitor_mail(self.company_admin, self.company)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - potvrzení registrace")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
     def test_send_company_admin_approval_mail(self):
         email.company_admin_approval_mail(self.company_admin)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - schválení správcovství firmy")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
     def test_send_company_admin_rejected_mail(self):
         email.company_admin_rejected_mail(self.company_admin)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - zamítnutí správcovství firmy")
+        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
 
 class TestEmailsEn(TestEmails):
