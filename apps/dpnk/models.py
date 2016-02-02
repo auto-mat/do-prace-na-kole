@@ -248,8 +248,9 @@ class Subsidiary(models.Model):
         blank=False)
     city = models.ForeignKey(
         City,
-        verbose_name=_(u"Soutěžní město"),
-        help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % "http://www.dopracenakole.cz/pravidla",
+        verbose_name=_(u"Spádové město"),
+        help_text=_(u"Rozhoduje o tom, do soutěží jakého města budete zařazeni a kde budete dostávat ceny - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") %
+        "http://www.dopracenakole.cz/pravidla",
         null=False,
         blank=False)
     active = models.BooleanField(
