@@ -25,6 +25,12 @@ from . import email
 from django.core import mail
 
 
+# Uncoment this to check to generate email files in /tmp/dpnk-test-messages
+# from django.test.utils import override_settings
+# @override_settings(
+#     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend',
+#     EMAIL_FILE_PATH = '/tmp/dpnk-test-messages',
+# )
 class TestEmails(TestCase):
     def setUp(self):
         self.campaign = Campaign.objects.create(name="Testing campaign 1", slug="testing_campaign_1")
