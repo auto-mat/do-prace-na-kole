@@ -30,16 +30,24 @@ class CampaignFilter(SimpleListFilter):
     field = 'campaign'
 
     def lookups(self, request, model_admin):
-        if not (hasattr(request, 'subdomain') and request.subdomain):
-            campaigns = [('all', _('All'))]
-            campaigns = [('none', _('None'))]
-            campaigns += [(c.slug, c.name) for c in models.Campaign.objects.all()]
+        if hasattr(request, 'subdomain') and request.subdomain:
+            try:
+                campaign = models.Campaign.objects.get(slug=request.subdomain)
+            except models.Campaign.DoesNotExist:
+                campaign = None
         else:
-            current_campaign = models.Campaign.objects.get(slug=request.subdomain)
+            campaign = None
+
+        if campaign:
+            current_campaign = campaign
             campaigns = [(None, current_campaign.name)]
             campaigns += [(c.slug, c.name) for c in models.Campaign.objects.exclude(slug=request.subdomain)]
             campaigns += [('all', _('All'))]
             campaigns += [('none', _('None'))]
+        else:
+            campaigns = [('all', _('All'))]
+            campaigns += [('none', _('None'))]
+            campaigns += [(c.slug, c.name) for c in models.Campaign.objects.all()]
         return campaigns
 
     def choices(self, cl):

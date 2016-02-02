@@ -20,7 +20,7 @@
 
 from django import forms
 from .forms import AdressForm
-from .models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice
+from .models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice, Subsidiary
 from django.utils.translation import ugettext_lazy as _
 from .util import slugify
 from .forms import SubmitMixin
@@ -66,6 +66,19 @@ class CompanyForm(SubmitMixin, AdressForm):
         self.fields['address_recipient'].label = _(u"Adresát na faktuře")
         self.fields['address_recipient'].help_text = _(u"Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova")
         return ret_val
+
+
+class SubsidiaryForm(SubmitMixin, AdressForm):
+    class Meta:
+        model = Subsidiary
+        fields = (
+            'address_recipient',
+            'address_street',
+            'address_street_number',
+            'address_psc',
+            'address_city',
+            'city',
+        )
 
 
 class CompanyAdminForm(SubmitMixin, forms.ModelForm):

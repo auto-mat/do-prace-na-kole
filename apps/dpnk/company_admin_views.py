@@ -28,12 +28,12 @@ from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView, CreateView
 from django.views.generic.base import TemplateView
 from .decorators import must_be_competitor, must_have_team, request_condition, must_be_company_admin, must_be_in_phase
-from .company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm
+from .company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, SubsidiaryForm
 from . import company_admin_forms
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from django.core.urlresolvers import reverse_lazy
 from .string_lazy import format_lazy
-from .models import Company, CompanyAdmin, Payment, Competition, Campaign, UserProfile
+from .models import Company, CompanyAdmin, Payment, Competition, Campaign, UserProfile, Subsidiary
 from .views import UserAttendanceViewMixin
 from . import models
 import registration.signals
@@ -185,6 +185,22 @@ class CompanyAdminView(UserAttendanceViewMixin, UpdateView):
         ret_val = super(CompanyAdminView, self).form_valid(form)
         company_admin_register_competitor_mail(self.user_attendance)
         return ret_val
+
+
+class EditSubsidiaryView(UpdateView):
+    template_name = 'base_generic_company_admin_form.html'
+    form_class = SubsidiaryForm
+    success_url = reverse_lazy('company_structure')
+    model = Subsidiary
+
+    @method_decorator(login_required)
+    @must_be_company_admin
+    def dispatch(self, request, *args, **kwargs):
+        self.company_admin = kwargs['company_admin']
+        return super(EditSubsidiaryView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return super(EditSubsidiaryView, self).get_queryset().filter(company=self.company_admin.administrated_company)
 
 
 class CompanyCompetitionView(UpdateView):
