@@ -242,6 +242,7 @@ class ViewsTestsLogon(TransactionTestCase):
         reverse('registration_access'),
         reverse('registrace'),
         reverse('edit_team'),
+        reverse('edit_subsidiary', kwargs={'pk': 1}),
         'error404.txt',
         reverse(views.daily_distance_json),
         reverse(views.daily_chart),
