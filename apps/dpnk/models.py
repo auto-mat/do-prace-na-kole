@@ -26,13 +26,11 @@ import random
 import string
 from . import parcel_batch
 from . import avfull
-import gpxpy
 from unidecode import unidecode
 from author.decorators import with_author
 from django import forms
 from django.db.models import Q, Max
 from django.contrib.auth.models import User
-from django.contrib.gis.geos import Point, LineString, MultiLineString
 from django.contrib.gis.db import models
 from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
 from fieldsignals import post_save_changed, pre_save_changed
@@ -57,6 +55,7 @@ from redactor.widgets import RedactorEditor
 import datetime
 # Local imports
 from . import util
+from django_gpxpy import gpx_parse
 from . import mailing
 from dpnk.email import (
     payment_confirmation_mail, company_admin_rejected_mail,
@@ -2593,23 +2592,7 @@ class GpxFile(models.Model):
 
     def clean(self):
         if self.file:
-            try:
-                gpx = gpxpy.parse(self.file.read().decode)
-                if gpx.tracks:
-                    multiline = []
-                    for track in gpx.tracks:
-                        for segment in track.segments:
-                            track_list_of_points = []
-                            for point in segment.points:
-                                point_in_segment = Point(point.longitude, point.latitude)
-                                track_list_of_points.append(point_in_segment.coords)
-
-                            if len(track_list_of_points) > 1:
-                                multiline.append(LineString(track_list_of_points))
-                    self.track_clean = MultiLineString(multiline)
-            except Exception as e:
-                logger.error("Valid GPX file: %s" % e)
-                raise ValidationError(u"Vadný GPX soubor")
+            self.track_clean = gpx_parse.parse_gpx(self.file.read().decode("utf-8"))
 
 
 # Signals:

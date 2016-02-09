@@ -47,6 +47,8 @@ django-oauth-toolkit
 djangorestframework
 django-leaflet
 gpxpy
+lxml  # for faster gpxpy parsing
+django-gpxpy
 django-cachalot
 django-bulk-update
 django-cors-headers
