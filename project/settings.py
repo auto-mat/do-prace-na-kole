@@ -241,6 +241,24 @@ PAYU_KEY_2 = ''
 PAYU_POS_AUTH_KEY = 'NxFcSXh'
 PAYU_POS_ID = "131116"
 
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 6,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,

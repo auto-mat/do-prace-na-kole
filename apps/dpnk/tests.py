@@ -75,8 +75,8 @@ class ViewsTests(TransactionTestCase):
         address = reverse('registrace')
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'test',
-            'password2': 'test',
+            'password1': 'test11',
+            'password2': 'test11',
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('upravit_profil'))
