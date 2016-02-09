@@ -49,21 +49,21 @@ def cyklistesobe_cached(city_slug, order="created_at"):
 
 
 @register.simple_tag
-def wp_news():
+def wp_news(slug):
     return mark_safe(wp_news_cached())
 
 
 @register.simple_tag
-def wp_actions():
-    return mark_safe(wp_news_cached())
+def wp_actions(slug):
+    return mark_safe(wp_news_cached(slug))
 
 
 @cached(600)
-def wp_news_cached():
+def wp_news_cached(slug=None):
     url = "http://www.dopracenakole.cz/"
     api = slumber.API(url)
     try:
-        wp_feed = api.feed.get(feed="content_to_backend", _post_type="post", _number=5)
+        wp_feed = api.feed.get(feed="content_to_backend", _post_type="post", _number=5, _connected_to=slug)
     except:
         return ""
     template = get_template("templatetags/wp_news.html")
