@@ -19,16 +19,31 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.test import TestCase
-from dpnk.models import DeliveryBatch, Campaign
-from .parcel_batch import make_customer_sheets_pdf
-from django.core.files.temp import NamedTemporaryFile
+from dpnk.models import DeliveryBatch
+from PyPDF2 import PdfFileReader
+
 
 class TestParcelBatch(TestCase):
-    fixtures = ['campaign', 'users', 'batches']
+    fixtures = ['campaign', 'users', 'transactions', 'batches']
 
     def test_parcel_batch(self):
         delivery_batch = DeliveryBatch.objects.get(pk=1)
-        print(delivery_batch.packagetransaction_set())
-        temp = NamedTemporaryFile()
-        make_customer_sheets_pdf(temp, delivery_batch)
-        print(str(temp.read()))
+        pdf = PdfFileReader(delivery_batch.customer_sheets)
+        pdf_string = pdf.pages[0].extractText()
+        self.assertTrue("Testing campaign" in pdf_string)
+        self.assertTrue("1-160210-000002" in pdf_string)
+        self.assertTrue("Testing t-shirt size" in pdf_string)
+        self.assertTrue("920351408" in pdf_string)
+        self.assertTrue("Testing company," in pdf_string)
+        self.assertTrue("Testing User 1" in pdf_string)
+        self.assertTrue("U•ivatelsk† jm†no: test" in pdf_string)
+
+    def test_avfull(self):
+        delivery_batch = DeliveryBatch.objects.get(pk=1)
+        avfull_string = delivery_batch.tnt_order.read()
+        self.assertTrue(b"testing-campaign1" in avfull_string)
+        self.assertTrue(b"1-160210-000002" in avfull_string)
+        self.assertTrue(b"OP Automat" in avfull_string)
+        self.assertTrue(b"920351408" in avfull_string)
+        self.assertTrue(b"Testing company," in avfull_string)
+        self.assertTrue(b"Testing User 1" in avfull_string)

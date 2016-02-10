@@ -36,7 +36,7 @@ from unittest.mock import MagicMock
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminTest(tests.AdminSiteSmokeTest):
-    fixtures = ['campaign', 'views', 'users']
+    fixtures = ['campaign', 'views', 'users', 'test_results_data', 'transactions', 'batches']
 
     def get_request(self):
         request = super().get_request()
@@ -131,7 +131,7 @@ class ViewsTests(TransactionTestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsTestsLogon(TransactionTestCase):
-    fixtures = ['campaign', 'views', 'users']
+    fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
         # Every test needs access to the request factory.
