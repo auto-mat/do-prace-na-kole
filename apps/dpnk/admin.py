@@ -150,6 +150,7 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
     def user_count(self, obj):
         return obj.user_count_sum
     user_count.admin_order_field = 'user_count_sum'
+    user_count.short_description = _('Všichni (i neschválení) soutěžící')
 
     def subsidiaries_text(self, obj):
         return mark_safe(" | ".join(
