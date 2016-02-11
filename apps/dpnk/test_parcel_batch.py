@@ -21,17 +21,21 @@
 from django.test import TestCase
 from dpnk.models import DeliveryBatch
 from PyPDF2 import PdfFileReader
+import datetime
 
 
 class TestParcelBatch(TestCase):
     fixtures = ['campaign', 'users', 'transactions', 'batches']
+
+    def get_key_string(self):
+        return "1-%s-000002" % datetime.date.today().strftime("%y%m%d")
 
     def test_parcel_batch(self):
         delivery_batch = DeliveryBatch.objects.get(pk=1)
         pdf = PdfFileReader(delivery_batch.customer_sheets)
         pdf_string = pdf.pages[0].extractText()
         self.assertTrue("Testing campaign" in pdf_string)
-        self.assertTrue("1-160210-000002" in pdf_string)
+        self.assertTrue(self.get_key_string() in pdf_string)
         self.assertTrue("Testing t-shirt size" in pdf_string)
         self.assertTrue("920351408" in pdf_string)
         self.assertTrue("Testing company," in pdf_string)
@@ -42,7 +46,7 @@ class TestParcelBatch(TestCase):
         delivery_batch = DeliveryBatch.objects.get(pk=1)
         avfull_string = delivery_batch.tnt_order.read()
         self.assertTrue(b"testing-campaign1" in avfull_string)
-        self.assertTrue(b"1-160210-000002" in avfull_string)
+        self.assertTrue(bytes(self.get_key_string(), "utf-8") in avfull_string)
         self.assertTrue(b"OP Automat" in avfull_string)
         self.assertTrue(b"920351408" in avfull_string)
         self.assertTrue(b"Testing company," in avfull_string)
