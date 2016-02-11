@@ -23,7 +23,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.admin import SimpleListFilter
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Sum
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
@@ -130,7 +130,6 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
         'address_recipient',
         'address_psc',
         'address_city',
-        'user_count',
         'id',
     )
     inlines = [SubsidiaryInline, ]
@@ -147,11 +146,6 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
     list_max_show_all = 10000
     form = CompanyForm
 
-    def user_count(self, obj):
-        return obj.user_count_sum
-    user_count.admin_order_field = 'user_count_sum'
-    user_count.short_description = _('Všichni (i neschválení) soutěžící')
-
     def subsidiaries_text(self, obj):
         return mark_safe(" | ".join(
             ['%s' % (str(u)) for u in models.Subsidiary.objects.filter(company=obj)]))
@@ -166,7 +160,14 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
 
 
 class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
-    list_display = ('__str__', 'company', 'city', 'teams_text', 'id', )
+    list_display = (
+        '__str__',
+        'company',
+        'city',
+        'user_count',
+        'team_count',
+        'id',
+    )
     inlines = [TeamInline, ]
     list_filter = [campaign_filter_generator('teams__campaign'), 'city', 'active']
     search_fields = (
@@ -184,11 +185,25 @@ class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
 
     readonly_fields = ['team_links', ]
 
-    def teams_text(self, obj):
-        return mark_safe(
-            " | ".join([
-                '%s' % (str(u)) for u in models.Team.objects.filter(subsidiary=obj)]))
-    teams_text.short_description = 'Týmy'
+    def get_queryset(self, request):
+        self.campaign = request.subdomain
+        self.filter_campaign = {}
+        filter_campaign = request.GET.get('campaign', request.subdomain)
+        if filter_campaign != 'all':
+            self.filter_campaign['campaign__slug'] = filter_campaign
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(team_count=Count('teams', distinct=True))
+        return queryset
+
+    def team_count(self, obj):
+        return obj.team_count
+    team_count.short_description = _('Počet týmů ve všech kampaních')
+    team_count.admin_order_field = 'team_count'
+
+    def user_count(self, obj):
+        # TODO: Nejde řadit podle tohoto pole. Bylo by potřeba počet získat pomocí anotací, což je ale značně problematické.
+        return obj.teams.filter(**self.filter_campaign).distinct().aggregate(Sum('member_count'))['member_count__sum']
+    user_count.short_description = _('Počet soutěžících ve vyfiltrované kampani')
 
     def team_links(self, obj):
         return mark_safe(
