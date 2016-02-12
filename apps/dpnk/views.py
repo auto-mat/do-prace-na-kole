@@ -821,6 +821,12 @@ class ProfileView(RegistrationViewMixin, TemplateView):
     registration_phase = 'profile_view'
     template_name = 'registration/competition_profile.html'
 
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data['city_slug'] = self.user_attendance.team.subsidiary.city.slug
+        context_data['map_city_slug'] = 'mapa' if self.user_attendance.team.subsidiary.city.slug == 'praha' else self.user_attendance.team.subsidiary.city.slug
+        return context_data
+
     def get(self, request, *args, **kwargs):
         if self.user_attendance.entered_competition():
             return super(ProfileView, self).get(request, *args, **kwargs)
