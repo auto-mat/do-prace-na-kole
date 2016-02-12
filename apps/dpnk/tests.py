@@ -22,13 +22,14 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.test.utils import override_settings
 from dpnk import results, models, mailing, views
-from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile
+from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment
 import datetime
 import django
 from django_admin_smoke_tests import tests
 from model_mommy import mommy
 import createsend
 from unittest.mock import MagicMock, patch
+from collections import OrderedDict
 
 
 @override_settings(
@@ -130,6 +131,69 @@ class ViewsTests(TransactionTestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
+class PaymentTests(TransactionTestCase):
+    fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
+
+    def setUp(self):
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+
+    @patch('http.client.HTTPSConnection.getresponse')
+    def payment_status_view(self, payu_response, session_id='2075-1J1455206433', amount="15000"):
+        payment_post_data = OrderedDict([
+            ('pos_id', '2075-1'),
+            ('session_id', session_id),
+            ('ts', '1'),
+        ])
+        payment_post_data['sig'] = views.make_sig(tuple(payment_post_data.values()))
+        payment_return_value = OrderedDict([
+            ("trans_pos_id", "2075-1"),
+            ("trans_session_id", session_id),
+            ("trans_order_id", "321"),
+            ("trans_status", "99"),
+            ("trans_amount", amount),
+            ("trans_desc", "desc"),
+            ("trans_ts", "1"),
+        ])
+        payment_return_value['trans_sig'] = views.make_sig(tuple(payment_return_value.values()))
+        payment_return_value.update([
+            ("trans_pay_type", "kb"),
+            ("trans_recv", "2016-1-1"),
+        ])
+        payment_return_value_bytes = bytes("\n".join(["%s: %s" % (u, payment_return_value[u]) for u in payment_return_value]), "utf-8")
+        payu_response.return_value.read.return_value = payment_return_value_bytes
+        return self.client.post(reverse('payment_status'), payment_post_data)
+
+    @patch('http.client.HTTPSConnection.getresponse')
+    def test_dpnk_payment_status_view(self, payu_response):
+        response = self.payment_status_view()
+        self.assertContains(response, "OK")
+        payment = Payment.objects.get(pk=3)
+        self.assertEquals(payment.pay_type, "kb")
+        self.assertEquals(payment.amount, 150)
+        self.assertEquals(payment.status, 99)
+
+    @patch('http.client.HTTPSConnection.getresponse')
+    def test_dpnk_payment_status_bad_amount(self, payu_response):
+        response = self.payment_status_view(amount="15300")
+        self.assertContains(response, "Bad amount", status_code=400)
+        payment = Payment.objects.get(pk=3)
+        self.assertEquals(payment.pay_type, None)
+        self.assertEquals(payment.amount, 150)
+        self.assertEquals(payment.status, 0)
+
+    @patch('http.client.HTTPSConnection.getresponse')
+    def test_dpnk_payment_status_view_create(self, payu_response):
+        response = self.payment_status_view(session_id='2075-1J1455206434', amount="15100")
+        self.assertContains(response, "OK")
+        payment = Payment.objects.get(session_id='2075-1J1455206434')
+        self.assertEquals(payment.pay_type, "kb")
+        self.assertEquals(payment.amount, 151)
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class ViewsTestsLogon(TransactionTestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
@@ -143,26 +207,6 @@ class ViewsTestsLogon(TransactionTestCase):
         response = self.client.get(reverse('zmenit_tym'))
         self.assertContains(response, "Testing company")
         self.assertContains(response, "Testing team 1")
-
-    @patch('http.client.HTTPSConnection.getresponse')
-    def test_dpnk_payment_status_view(self, payu_response):
-        post_data = {
-            'pos_id': '2075-1',
-            'session_id': '2075-1J1455206433',
-            'ts': '1',
-            'sig': 'd8122ef998935e2571402d7d73843054',
-        }
-        payu_response.return_value.read.return_value = \
-            b"trans_sig: d8122ef998935e2571402d7d73843054\n"\
-            b"trans_pos_id: d8122ef998935e2571402d7d73843054\n"\
-            b"trans_session_id: d8122ef998935e2571402d7d73843054\n"\
-            b"trans_status: d8122ef998935e2571402d7d73843054\n"\
-            b"trans_amount: d8122ef998935e2571402d7d73843054\n"\
-            b"trans_desc: d8122ef998935e2571402d7d73843054\n"\
-            b"trans_ts: d8122ef998935e2571402d7d73843054\n"\
-            b"trans_order_id: d8122ef998935e2571402d7d73843054"
-        response = self.client.post(reverse('payment_status'), post_data)
-        self.assertRedirects(response, reverse("zmenit_triko"))
 
     def test_dpnk_team_view_choose(self):
         post_data = {

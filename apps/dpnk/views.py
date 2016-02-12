@@ -66,7 +66,6 @@ from .forms import (
     WorkingScheduleForm)
 from django.conf import settings
 from django.http import HttpResponse
-from django import http
 # Local imports
 from . import util
 from . import draw
@@ -517,7 +516,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
 
         if payment_type == 'pay':
             logger.error(u'Pay payment type, request: %s' % (self.request))
-            return http.HttpResponse(_(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."), status=500)
+            return HttpResponse(_(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."), status=500)
         else:
             payment_choice = payment_choices[payment_type]
             if payment_choice:
@@ -646,8 +645,6 @@ def check_sig(sig, values):
     key2 = settings.PAYU_KEY_2
     hashed_string = bytes("".join(values + (key2,)), "utf-8")
     expected_sig = hashlib.md5(hashed_string).hexdigest()
-    print(sig)
-    print(expected_sig)
     if sig != expected_sig:
         raise ValueError("Zamítnuto")
 
@@ -680,16 +677,22 @@ def payment_status(request):
     check_sig(r['trans_sig'], (r['trans_pos_id'], r['trans_session_id'], r['trans_order_id'],
                                r['trans_status'], r['trans_amount'], r['trans_desc'],
                                r['trans_ts']))
+    amount = int(r['trans_amount']) / 100
     # Update the corresponding payment
     # TODO: use update_or_create in Django 1.7
     p, created = Payment.objects.select_for_update().get_or_create(
         session_id=r['trans_session_id'],
         defaults={
             'order_id': r['trans_order_id'],
-            'amount': int(r['trans_amount']) / 100,
+            'amount': amount,
             'description': r['trans_desc'],
         })
 
+    if p.amount != amount:
+        logger.error(
+            'Payment amount doesn\'t match: pay_type: %s, status: %s, payment response: %s, expected amount: %s' %
+            (p.pay_type, p.status, r, p.amount))
+        return HttpResponse("Bad amount", status=400)
     p.pay_type = r['trans_pay_type']
     p.status = r['trans_status']
     if r['trans_recv'] != '':
@@ -699,7 +702,7 @@ def payment_status(request):
     logger.info('Payment status: pay_type: %s, status: %s, payment response: %s' % (p.pay_type, p.status, r))
 
     # Return positive error code as per PayU protocol
-    return http.HttpResponse("OK")
+    return HttpResponse("OK")
 
 
 class RidesView(UserAttendanceViewMixin, TemplateView):
@@ -1547,7 +1550,7 @@ def daily_distance_json(
     campaign = Campaign.objects.get(slug=campaign_slug)
     values = collections.OrderedDict((str(day), period_distance(campaign, day, day)) for day in util.days(campaign))
     data = json.dumps(values)
-    return http.HttpResponse(data)
+    return HttpResponse(data)
 
 
 class BikeRepairView(CreateView):
