@@ -51,27 +51,35 @@ def cyklistesobe_cached(city_slug, order="created_at"):
 
 @register.simple_tag
 def wp_news(slug=None):
-    return mark_safe(wp_news_cached(_connected_to=slug))
+    return mark_safe(_wp_news_cached(slug, "news"))
 
 
 @register.simple_tag
 def wp_actions(slug=None):
-    return mark_safe(wp_news_cached("locations", _("akce"), False, _page_subtype="event", _post_parent=slug))
+    return mark_safe(_wp_news_cached(slug, "action"))
 
 
 @register.simple_tag
 def wp_prize(slug=None):
-    return mark_safe(wp_news_cached("locations", _("cena"), True, _page_subtype="prize", _post_parent=slug, order="RAND"))
+    return mark_safe(_wp_news_cached(slug, "prize"))
 
 
 @cached(600)
-def wp_news_cached(post_type="post", post_type_string=_("novinka"), unfold_first=True, **other_args):
+def _wp_news_cached(slug=None, wp_type="news"):
+    if wp_type == "action":
+        return _wp_news("locations", _("akce"), unfold="none", _page_subtype="event", _post_parent=slug)
+    elif wp_type == "prize":
+        return _wp_news("locations", _("cena"), unfold="all", count=10, show_description=False, _page_subtype="prize", _post_parent=slug, order="ASC", orderby="menu_order")
+    else:
+        return _wp_news(_connected_to=slug, order="DESC", orderby="DATE")
+
+
+def _wp_news(post_type="post", post_type_string=_("novinka"), unfold="first", count=5, show_description=True, **other_args):
     get_params = {}
     get_params['feed'] = "content_to_backend"
     get_params['_post_type'] = post_type
-    get_params['_number'] = 5
+    get_params['_number'] = count
     get_params.update(other_args)
-    print(get_params)
     url = "http://www.dopracenakole.cz/"
     api = slumber.API(url)
     try:
@@ -82,7 +90,8 @@ def wp_news_cached(post_type="post", post_type_string=_("novinka"), unfold_first
     context = {
         'wp_feed': wp_feed,
         'post_type_string': post_type_string,
-        'unfold_first': unfold_first,
+        'unfold': unfold,
+        'show_description': show_description,
     }
     return template.render(context)
 

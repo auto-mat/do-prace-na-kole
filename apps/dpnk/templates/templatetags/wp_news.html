@@ -8,11 +8,13 @@
 	   		{{ value.title }}
 	   </a>
    </h4>
-   {% if forloop.first and unfold_first %}
-   {% if value.image %}
-   <img src="{{ value.image }}" alt="Obrázek k podnětu"></img>
-   {% endif %}
-   {{ value.excerpt|bleach }}
+   {% if unfold == "all" or forloop.first and unfold == "first" %}
+      {% if value.image %}
+         <img src="{{ value.image }}" alt="Obrázek k podnětu"></img>
+      {% endif %}
+      {% if show_description %}
+         {{ value.excerpt|bleach }}
+      {% endif %}
    {% endif %}
 {% empty %}
    Žádná {{ post_type_string }} není.
