@@ -28,7 +28,7 @@ import django
 from django_admin_smoke_tests import tests
 from model_mommy import mommy
 import createsend
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 
 @override_settings(
@@ -143,6 +143,26 @@ class ViewsTestsLogon(TransactionTestCase):
         response = self.client.get(reverse('zmenit_tym'))
         self.assertContains(response, "Testing company")
         self.assertContains(response, "Testing team 1")
+
+    @patch('http.client.HTTPSConnection.getresponse')
+    def test_dpnk_payment_status_view(self, payu_response):
+        post_data = {
+            'pos_id': '2075-1',
+            'session_id': '2075-1J1455206433',
+            'ts': '1',
+            'sig': 'd8122ef998935e2571402d7d73843054',
+        }
+        payu_response.return_value.read.return_value = \
+            b"trans_sig: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_pos_id: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_session_id: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_status: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_amount: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_desc: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_ts: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_order_id: d8122ef998935e2571402d7d73843054"
+        response = self.client.post(reverse('payment_status'), post_data)
+        self.assertRedirects(response, reverse("zmenit_triko"))
 
     def test_dpnk_team_view_choose(self):
         post_data = {

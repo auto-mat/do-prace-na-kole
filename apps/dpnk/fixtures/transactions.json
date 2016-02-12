@@ -10,6 +10,8 @@
     {
         "fields": {
             "amount": 150,
+            "trans_id": "2075-1",
+            "session_id": "2075-1J1455206433",
             "transaction_ptr": 3
         },
         "model": "dpnk.payment",

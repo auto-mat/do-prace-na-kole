@@ -20,12 +20,10 @@
 
 # Standard library imports
 import time
-try:
-    import httplib
-except ImportError:
-    from http import client as httplib
-import urllib
+from http.client import HTTPSConnection
+from urllib.parse import urlencode
 import hashlib
+import codecs
 from . import results
 import json
 import collections
@@ -640,12 +638,17 @@ class PaymentResult(UserAttendanceViewMixin, TemplateView):
 
 def make_sig(values):
     key1 = settings.PAYU_KEY_1
-    return hashlib.md5((u"".join(values + (key1,))).encode()).hexdigest()
+    hashed_string = bytes("".join(values + (key1,)), "utf-8")
+    return hashlib.md5(hashed_string).hexdigest()
 
 
 def check_sig(sig, values):
     key2 = settings.PAYU_KEY_2
-    if sig != hashlib.md5("".join(values + (key2,))).hexdigest():
+    hashed_string = bytes("".join(values + (key2,)), "utf-8")
+    expected_sig = hashlib.md5(hashed_string).hexdigest()
+    print(sig)
+    print(expected_sig)
+    if sig != expected_sig:
         raise ValueError("Zamítnuto")
 
 
@@ -659,10 +662,10 @@ def payment_status(request):
     logger.info('Payment status - pos_id: %s, session_id: %s, ts: %s, sig: %s' % (pos_id, session_id, ts, sig))
     check_sig(sig, (pos_id, session_id, ts))
     # Determine the status of transaction based on the notification
-    c = httplib.HTTPSConnection("secure.payu.com")
+    c = HTTPSConnection("secure.payu.com")
     timestamp = str(int(time.time()))
     c.request("POST", "/paygw/UTF/Payment/get/txt/",
-              urllib.urlencode({
+              urlencode({
                   'pos_id': pos_id,
                   'session_id': session_id,
                   'ts': timestamp,
@@ -670,7 +673,7 @@ def payment_status(request):
               }),
               {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"})
-    raw_response = c.getresponse().read()
+    raw_response = codecs.decode(c.getresponse().read(), "utf-8")
     r = {}
     for i in [i.split(':', 1) for i in raw_response.split('\n') if i != '']:
         r[i[0]] = i[1].strip()
