@@ -51,33 +51,26 @@ def cyklistesobe_cached(city_slug, order="created_at"):
 
 @register.simple_tag
 def wp_news(slug=None):
-    return mark_safe(wp_news_cached(slug))
+    return mark_safe(wp_news_cached(_connected_to=slug))
 
 
 @register.simple_tag
 def wp_actions(slug=None):
-    return mark_safe(wp_news_cached(None, slug, "locations", _("akce"), "event", False))
+    return mark_safe(wp_news_cached("locations", _("akce"), False, _page_subtype="event", _post_parent=slug))
 
 
 @register.simple_tag
 def wp_prize(slug=None):
-    return mark_safe(wp_news_cached(None, slug, "locations", _("cena"), "prize", True))
+    return mark_safe(wp_news_cached("locations", _("cena"), True, _page_subtype="prize", _post_parent=slug, order="RAND"))
 
 
 @cached(600)
-def wp_news_cached(connected_to_slug=None, post_parent_slug=None, post_type="post", post_type_string=_("novinka"), subtype=None, unfold_first=True):
+def wp_news_cached(post_type="post", post_type_string=_("novinka"), unfold_first=True, **other_args):
     get_params = {}
     get_params['feed'] = "content_to_backend"
-    if post_type:
-        get_params['_post_type'] = post_type
+    get_params['_post_type'] = post_type
     get_params['_number'] = 5
-    if connected_to_slug:
-        get_params['_connected_to'] = connected_to_slug
-    if post_parent_slug:
-        get_params['_post_parent'] = post_parent_slug
-
-    if subtype:
-        get_params['_page_subtype'] = subtype
+    get_params.update(other_args)
     print(get_params)
     url = "http://www.dopracenakole.cz/"
     api = slumber.API(url)
