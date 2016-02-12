@@ -26,13 +26,11 @@ import random
 import string
 from . import parcel_batch
 from . import avfull
-import gpxpy
 from unidecode import unidecode
 from author.decorators import with_author
 from django import forms
 from django.db.models import Q, Max
 from django.contrib.auth.models import User
-from django.contrib.gis.geos import Point, LineString, MultiLineString
 from django.contrib.gis.db import models
 from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
 from fieldsignals import post_save_changed, pre_save_changed
@@ -40,9 +38,11 @@ from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from composite_field import CompositeField
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files import File
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from polymorphic.models import PolymorphicModel
@@ -55,6 +55,7 @@ from redactor.widgets import RedactorEditor
 import datetime
 # Local imports
 from . import util
+from django_gpxpy import gpx_parse
 from . import mailing
 from dpnk.email import (
     payment_confirmation_mail, company_admin_rejected_mail,
@@ -246,8 +247,9 @@ class Subsidiary(models.Model):
         blank=False)
     city = models.ForeignKey(
         City,
-        verbose_name=_(u"Soutěžní město"),
-        help_text=_(u"Rozhoduje o tom, kde budete soutěžit - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") % "http://www.dopracenakole.net/pravidla",
+        verbose_name=_(u"Spádové město"),
+        help_text=_(u"Rozhoduje o tom, do soutěží jakého města budete zařazeni a kde budete dostávat ceny - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") %
+        "http://www.dopracenakole.cz/pravidla",
         null=False,
         blank=False)
     active = models.BooleanField(
@@ -765,10 +767,14 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return self.userprofile.name()
 
     def admission_fee(self):
-        if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
-            return self.campaign.late_admission_fee + self.t_shirt_size.price
+        if self.t_shirt_size:
+            t_shirt_price = self.t_shirt_size.price
         else:
-            return self.campaign.admission_fee + self.t_shirt_size.price
+            t_shirt_price = 0
+        if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
+            return self.campaign.late_admission_fee + t_shirt_price
+        else:
+            return self.campaign.admission_fee + t_shirt_price
 
     def company_admission_fee(self):
         if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
@@ -1894,7 +1900,7 @@ class Trip(models.Model):
 
 
 class Competition(models.Model):
-    """Soutěž"""
+    """Soutěžní kategorie"""
 
     CTYPES = (
         ('length', _(u"Ujetá vzdálenost")),
@@ -1910,8 +1916,8 @@ class Competition(models.Model):
     )
 
     class Meta:
-        verbose_name = _(u"Soutěž")
-        verbose_name_plural = _(u"Soutěže")
+        verbose_name = _(u"Soutěžní kategorie")
+        verbose_name_plural = _(u"Soutěžní kategorie")
         ordering = ('-campaign', 'type', 'name')
 
     name = models.CharField(
@@ -2112,6 +2118,27 @@ class Competition(models.Model):
                 else:
                     self.company_competitors.remove(userprofile.company())
         results.recalculate_result_competitor_nothread(userprofile)
+
+    def type_string(self):
+        CTYPES_STRINGS = {
+            'questionnaire': _('do&shy;ta&shy;zník'),
+            'frequency': _('soutěž na pravidelnost'),
+            'length': _('soutěž na vzdálenost'),
+        }
+        CCOMPETITORTYPES_STRINGS = {
+            'single_user': _('jed&shy;not&shy;liv&shy;ců'),
+            'liberos': _('li&shy;be&shy;ros'),
+            'team': _('tý&shy;mů'),
+            'company': _('spo&shy;le&shy;čno&shy;stí'),
+        }
+        if self.company:
+            company_string_before = "vnitrofiremní"
+            company_string_after = "společnosti %s" % escape(self.company)
+        else:
+            company_string_before = ""
+            company_string_after = ""
+
+        return string_concat(company_string_before, " ", CTYPES_STRINGS[self.type], " ", CCOMPETITORTYPES_STRINGS[self.competitor_type], " ", company_string_after)
 
     def __str__(self):
         return "%s" % self.name
@@ -2565,23 +2592,7 @@ class GpxFile(models.Model):
 
     def clean(self):
         if self.file:
-            try:
-                gpx = gpxpy.parse(self.file.read().decode)
-                if gpx.tracks:
-                    multiline = []
-                    for track in gpx.tracks:
-                        for segment in track.segments:
-                            track_list_of_points = []
-                            for point in segment.points:
-                                point_in_segment = Point(point.longitude, point.latitude)
-                                track_list_of_points.append(point_in_segment.coords)
-
-                            if len(track_list_of_points) > 1:
-                                multiline.append(LineString(track_list_of_points))
-                    self.track_clean = MultiLineString(multiline)
-            except Exception as e:
-                logger.error("Valid GPX file: %s" % e)
-                raise ValidationError(u"Vadný GPX soubor")
+            self.track_clean = gpx_parse.parse_gpx(self.file.read().decode("utf-8"))
 
 
 # Signals:

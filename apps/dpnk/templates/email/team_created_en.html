@@ -1,0 +1,36 @@
+{% load i18n %}
+{% autoescape off %}
+
+{% language user.userprofile.language %}
+A message for {{ user.userprofile }}, the founder of the {{user.team.name}} team in the {{ user.campaign }} competition.
+
+Hello,
+
+Your team {{user.team.name}} has just been created. 
+
+You can invite your colleagues to join your team on
+{% block invite_link %}
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'pozvanky' %}
+{% endblock %}
+
+If you'd like to ask your colleagues to set up their own team, refer them to {{ SITE_URL}}.
+
+You can sign in to your profile through
+{% block profile_link %}
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
+{% endblock %}
+
+Your employer can support your team by paying the start fee for you or even by announcing the Bike to Work campaign for your whole company. This means that you will compete with participants not only in the participating city but also with all the employees of your organization irrespective of their location. How to do this? Please contact the responsible person (head of the CSR department, head of internal communications, head of PR, director etc.) and suggest these option or refer them to the following website: 
+http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'company_admin_application' %}
+
+Thank you for your support and we look forward to seeing you in May!
+
+Your {{ user.campaign }} organization team
+
+P.S. It's really worth it to engage your employer in the competition - it means more competitors, an ideal team-building activity, participation paid by the employer and excellent PR!
+
+---
+{{ user.campaign.email_footer }}
+{% endlanguage %}
+
+{% endautoescape %}

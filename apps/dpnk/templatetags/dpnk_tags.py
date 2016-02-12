@@ -49,16 +49,21 @@ def cyklistesobe_cached(city_slug, order="created_at"):
 
 
 @register.simple_tag
-def wp_news():
+def wp_news(slug):
     return mark_safe(wp_news_cached())
 
 
+@register.simple_tag
+def wp_actions(slug):
+    return mark_safe(wp_news_cached(slug))
+
+
 @cached(600)
-def wp_news_cached():
-    url = "http://www.dopracenakole.net/"
+def wp_news_cached(slug=None):
+    url = "http://www.dopracenakole.cz/"
     api = slumber.API(url)
     try:
-        wp_feed = api.feed.get(feed="content_to_backend", _post_type="post", _number=5)
+        wp_feed = api.feed.get(feed="content_to_backend", _post_type="post", _number=5, _connected_to=slug)
     except:
         return ""
     template = get_template("templatetags/wp_news.html")
@@ -73,7 +78,7 @@ def wp_article(id):
 
 @cached(600)
 def wp_article_cached(id):
-    url = "http://www.dopracenakole.net/"
+    url = "http://www.dopracenakole.cz/"
     api = slumber.API(url)
     try:
         wp_article = api.feed.get(feed="content_to_backend", _post_type="page", _id=id)

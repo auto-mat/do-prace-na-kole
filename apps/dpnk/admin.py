@@ -23,7 +23,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.admin import SimpleListFilter
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Sum
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
@@ -130,7 +130,6 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
         'address_recipient',
         'address_psc',
         'address_city',
-        'user_count',
         'id',
     )
     inlines = [SubsidiaryInline, ]
@@ -147,25 +146,28 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
     list_max_show_all = 10000
     form = CompanyForm
 
-    def user_count(self, obj):
-        return obj.user_count_sum
-    user_count.admin_order_field = 'user_count_sum'
-
     def subsidiaries_text(self, obj):
         return mark_safe(" | ".join(
             ['%s' % (str(u)) for u in models.Subsidiary.objects.filter(company=obj)]))
-    subsidiaries_text.short_description = 'Pobočky'
+    subsidiaries_text.short_description = _('Pobočky')
 
     def subsidiary_links(self, obj):
         return mark_safe(
             "<br/>".join(
                 ['<a href="%s">%s</a>' % (reverse('admin:dpnk_subsidiary_change', args=(u.pk,)), str(u))
                     for u in models.Subsidiary.objects.filter(company=obj)]))
-    subsidiary_links.short_description = 'Pobočky'
+    subsidiary_links.short_description = _('Pobočky')
 
 
 class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
-    list_display = ('__str__', 'company', 'city', 'teams_text', 'id', )
+    list_display = (
+        '__str__',
+        'company',
+        'city',
+        'user_count',
+        'team_count',
+        'id',
+    )
     inlines = [TeamInline, ]
     list_filter = [campaign_filter_generator('teams__campaign'), 'city', 'active']
     search_fields = (
@@ -183,18 +185,32 @@ class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
 
     readonly_fields = ['team_links', ]
 
-    def teams_text(self, obj):
-        return mark_safe(
-            " | ".join([
-                '%s' % (str(u)) for u in models.Team.objects.filter(subsidiary=obj)]))
-    teams_text.short_description = 'Týmy'
+    def get_queryset(self, request):
+        self.campaign = request.subdomain
+        self.filter_campaign = {}
+        filter_campaign = request.GET.get('campaign', request.subdomain)
+        if filter_campaign != 'all':
+            self.filter_campaign['campaign__slug'] = filter_campaign
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(team_count=Count('teams', distinct=True))
+        return queryset
+
+    def team_count(self, obj):
+        return obj.team_count
+    team_count.short_description = _('Počet týmů ve všech kampaních')
+    team_count.admin_order_field = 'team_count'
+
+    def user_count(self, obj):
+        # TODO: Nejde řadit podle tohoto pole. Bylo by potřeba počet získat pomocí anotací, což je ale značně problematické.
+        return obj.teams.filter(**self.filter_campaign).distinct().aggregate(Sum('member_count'))['member_count__sum']
+    user_count.short_description = _('Počet soutěžících ve vyfiltrované kampani')
 
     def team_links(self, obj):
         return mark_safe(
             "<br/>".join(
                 ['<a href="%s">%s</a>' % (reverse('admin:dpnk_team_change', args=(u.pk,)), str(u))
                     for u in models.Team.objects.filter(subsidiary=obj)]))
-    team_links.short_description = u"Týmy"
+    team_links.short_description = _(u"Týmy")
 
 
 class QuestionInline(SortableInlineAdminMixin, admin.TabularInline):
@@ -273,12 +289,12 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFie
     def competition_results_link(self, obj):
         if obj.slug:
             return mark_safe(u'<a href="%s">výsledky</a>' % (reverse('competition_results', kwargs={'competition_slug': obj.slug})))
-    competition_results_link.short_description = u"Výsledky soutěže"
+    competition_results_link.short_description = _(u"Výsledky soutěže")
 
     def questionnaire_results_link(self, obj):
         if obj.type == 'questionnaire' and obj.slug:
             return mark_safe(u'<a href="%s">odpovědi</a>' % (reverse('admin_questionnaire_results', kwargs={'competition_slug': obj.slug})))
-    questionnaire_results_link.short_description = u"Odpovědi"
+    questionnaire_results_link.short_description = _(u"Odpovědi")
 
     def questionnaire_link(self, obj):
         if obj.type == 'questionnaire' and obj.slug:
@@ -288,7 +304,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFie
     def draw_link(self, obj):
         if obj.type == 'frequency' and obj.competitor_type == 'team' and obj.slug:
             return mark_safe(u'<a href="%s">losovani</a>' % (reverse('admin_draw_results', kwargs={'competition_slug': obj.slug})))
-    draw_link.short_description = u"Losování"
+    draw_link.short_description = _(u"Losování")
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == "team_competitors":
@@ -760,7 +776,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
 
     def user_link(self, obj):
         return mark_safe('<a href="%s">%s</a>' % (reverse('admin:auth_user_change', args=(obj.userprofile.user.pk,)), obj.userprofile.user))
-    user_link.short_description = 'Uživatel'
+    user_link.short_description = _('Uživatel')
 
     def get_queryset(self, request):
         queryset = super(UserAttendanceAdmin, self).get_queryset(request)
@@ -770,7 +786,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
 def recalculate_team_member_count(modeladmin, request, queryset):
     for team in queryset.all():
         team.autoset_member_count()
-recalculate_team_member_count.short_description = "Přepočítat počet členů týmu"
+recalculate_team_member_count.short_description = _("Přepočítat počet členů týmu")
 
 
 class TeamAdmin(ExportMixin, RelatedFieldAdmin):
@@ -799,7 +815,7 @@ class TeamAdmin(ExportMixin, RelatedFieldAdmin):
                 '<a href="%s">%s</a> - %s' %
                 (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), u, u.approved_for_team)
                 for u in models.UserAttendance.objects.filter(team=obj)]))
-    members.short_description = 'Členové'
+    members.short_description = _('Členové')
 
 
 class TransactionChildAdmin(PolymorphicChildModelAdmin):
@@ -841,7 +857,7 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
             return mark_safe(
                 '<a href="%s">%s</a>' %
                 (reverse('admin:auth_user_change', args=(obj.user_attendance.userprofile.user.pk,)), obj.user_attendance.userprofile.user))
-    user_link.short_description = 'Uživatel'
+    user_link.short_description = _('Uživatel')
 
     base_model = models.Transaction
     child_models = (

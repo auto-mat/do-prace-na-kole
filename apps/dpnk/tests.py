@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.test import TestCase, RequestFactory, TransactionTestCase, Client
 from django.core.urlresolvers import reverse
+from django.core import mail
 from django.test.utils import override_settings
 from dpnk import results, models, mailing, views
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile
@@ -27,7 +28,7 @@ import django
 from django_admin_smoke_tests import tests
 from model_mommy import mommy
 import createsend
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 
 @override_settings(
@@ -35,7 +36,7 @@ from unittest.mock import MagicMock
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminTest(tests.AdminSiteSmokeTest):
-    fixtures = ['campaign', 'views', 'users']
+    fixtures = ['campaign', 'views', 'users', 'test_results_data', 'transactions', 'batches']
 
     def get_request(self):
         request = super().get_request()
@@ -74,8 +75,8 @@ class ViewsTests(TransactionTestCase):
         address = reverse('registrace')
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'test',
-            'password2': 'test',
+            'password1': 'test11',
+            'password2': 'test11',
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('upravit_profil'))
@@ -83,6 +84,18 @@ class ViewsTests(TransactionTestCase):
         self.assertNotEquals(user, None)
         self.assertNotEquals(UserProfile.objects.get(user=user), None)
         self.assertNotEquals(UserAttendance.objects.get(userprofile__user=user), None)
+
+    def test_password_recovery(self):
+        address = reverse('password_reset')
+        post_data = {
+            'email': 'test@test.cz',
+        }
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('password_reset_done'))
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['test@test.cz'])
+        self.assertEqual(msg.subject, 'Zapomenuté heslo Do práce na kole')
+        self.assertTrue('http://testing-campaign.testserver/cs/zapomenute_heslo/zmena/' in msg.body)
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2010, month=10, day=1),
@@ -118,7 +131,7 @@ class ViewsTests(TransactionTestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsTestsLogon(TransactionTestCase):
-    fixtures = ['campaign', 'views', 'users']
+    fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
         # Every test needs access to the request factory.
@@ -131,6 +144,26 @@ class ViewsTestsLogon(TransactionTestCase):
         self.assertContains(response, "Testing company")
         self.assertContains(response, "Testing team 1")
 
+    @patch('http.client.HTTPSConnection.getresponse')
+    def test_dpnk_payment_status_view(self, payu_response):
+        post_data = {
+            'pos_id': '2075-1',
+            'session_id': '2075-1J1455206433',
+            'ts': '1',
+            'sig': 'd8122ef998935e2571402d7d73843054',
+        }
+        payu_response.return_value.read.return_value = \
+            b"trans_sig: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_pos_id: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_session_id: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_status: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_amount: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_desc: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_ts: d8122ef998935e2571402d7d73843054\n"\
+            b"trans_order_id: d8122ef998935e2571402d7d73843054"
+        response = self.client.post(reverse('payment_status'), post_data)
+        self.assertRedirects(response, reverse("zmenit_triko"))
+
     def test_dpnk_team_view_choose(self):
         post_data = {
             'company': '1',
@@ -139,7 +172,7 @@ class ViewsTestsLogon(TransactionTestCase):
             'next': 'Next',
         }
         response = self.client.post(reverse('zmenit_tym'), post_data)
-        self.assertRedirects(response, reverse("upravit_trasu"))
+        self.assertRedirects(response, reverse("zmenit_triko"))
 
     def test_dpnk_team_view_create(self):
         post_data = {
@@ -229,6 +262,8 @@ class ViewsTestsLogon(TransactionTestCase):
         reverse('registration_access'),
         reverse('registrace'),
         reverse('edit_team'),
+        reverse('questionnaire', kwargs={'questionnaire_slug': 'quest'}),
+        reverse('edit_subsidiary', kwargs={'pk': 1}),
         'error404.txt',
         reverse(views.daily_distance_json),
         reverse(views.daily_chart),

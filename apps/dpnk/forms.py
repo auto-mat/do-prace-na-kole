@@ -308,11 +308,12 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
     def clean_team(self):
         data = self.cleaned_data['team']
-        if data.campaign.slug != self.request.subdomain:
-            logger.error("Team %s not in campaign %s" % (data.pk, self.request.subdomain))
-            raise forms.ValidationError(mark_safe(_(u"Zvolený tým není dostupný v aktuální kampani")))
         if not data:
             return self.instance.team
+        else:
+            if data.campaign.slug != self.request.subdomain:
+                logger.error("Team %s not in campaign %s" % (data.pk, self.request.subdomain))
+                raise forms.ValidationError(mark_safe(_(u"Zvolený tým není dostupný v aktuální kampani")))
         if type(data) != RegisterTeamForm:
             if data != self.instance.team:
                 team_full(data)
@@ -483,7 +484,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 _(u"Koordinátor vašeho zaměstnavatele nemá možnost povolovat platby fakturou."
                   u"<ul><li>Kontaktujte koordinátora %(company_admin)s vašeho zaměstnavatele %(employer)s na emailu %(email)s</li>"
                   u"<li>Koordinátor bude muset nejprve dohodnout spolupráci na adrese"
-                  u" <a href='mailto:kontakt@dopracenakole.net?subject=Žádost o povolení firemních plateb'>kontakt@dopracenakole.net</a>.net</li></ul>")
+                  u" <a href='mailto:kontakt@dopracenakole.cz?subject=Žádost o povolení firemních plateb'>kontakt@dopracenakole.cz</a>.net</li></ul>")
                 % {'company_admin': company_admin, 'employer': company, 'email': company_admin.user.email}))
         return payment_type
 

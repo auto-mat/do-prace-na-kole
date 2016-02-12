@@ -2,11 +2,11 @@
 {% load i18n %}
 
 {% if user_attendance.team %}
-<div class='text-warning'>{% trans "Před výběrem trička prosím zkontrolujte následující adresu pobočky, na kterou bude doručen startovní balíček. V případě, že je špatně, napište na " %}<a href="mailto:kontakt@dopracenakole.net">kontakt@dopracenakole.net</a></div>
+<div class='text-warning'>{% trans "Před výběrem trička prosím zkontrolujte následující adresu pobočky, na kterou bude doručen startovní balíček. V případě, že je špatně, napište na " %}<a href="mailto:kontakt@dopracenakole.cz">kontakt@dopracenakole.cz</a></div>
 
 {% trans "Jméno: " %}{{ user_attendance }}
 <br/>
 {% trans "Adresa: " %}{{ user_attendance.team.subsidiary }}
 {% else %}
-<div class='text-warning'>{% trans "Nemáte vybraný tým a tím pádem ani přidělenou adresu pobočky, na kterou bude doručen balíček. Prosím, zkontrolujte si při výběru týmu, jestli adresa vaší pobočky odpovídá realitě. V případě, že je šapatně napište na " %}<a href="mailto:kontakt@dopracenakole.net">kontakt@dopracenakole.net</a></div>
+<div class='text-warning'>{% trans "Nemáte vybraný tým a tím pádem ani přidělenou adresu pobočky, na kterou bude doručen balíček. Prosím, zkontrolujte si při výběru týmu, jestli adresa vaší pobočky odpovídá realitě. V případě, že je šapatně napište na " %}<a href="mailto:kontakt@dopracenakole.czpracenakole.net</a></div>
 {% endif %}

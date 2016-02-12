@@ -1,0 +1,9 @@
+[
+    {
+        "fields": {
+            "campaign": 339
+        },
+        "model": "dpnk.deliverybatch",
+        "pk": 1
+    }
+]

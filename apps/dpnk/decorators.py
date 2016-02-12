@@ -18,7 +18,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import six
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
@@ -27,9 +26,9 @@ from .models import UserAttendance, Campaign
 from django.http import Http404
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from . import models
 from . import util
 import functools
+from django.utils import formats
 
 
 def must_be_owner(fn):
@@ -140,7 +139,7 @@ def must_have_team(fn):
     return wrapped
 
 
-def must_be_in_phase(*phase_type):
+def must_be_in_phase(phase_type):
     def decorator(fn):
         @functools.wraps(fn)
         def wrapped(view, request, *args, **kwargs):
@@ -149,15 +148,20 @@ def must_be_in_phase(*phase_type):
             except Campaign.DoesNotExist:
                 messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % request.subdomain)
                 raise Http404()
-            phases = campaign.phase_set.filter(type__in=phase_type)
-            for phase in phases:
-                if phase and phase.is_actual():
-                    return fn(view, request, *args, **kwargs)
-            phases_string = _(u" a ").join([six.text_type(models.Phase.TYPE_DICT[p]) for p in phase_type])
+            phase = campaign.phase_set.get(type=phase_type)
+            if phase and phase.is_actual():
+                return fn(view, request, *args, **kwargs)
+            if phase.has_started():
+                message = mark_safe(_(u"Již skončil čas, kdy se tato stránka zobrazuje."))
+            else:
+                message = mark_safe(
+                    _(u"Ještě nenastal čas, kdy by se měla tato stránka zobrazit.<br/>Stránka se zobrazí až %s")
+                    % formats.date_format(phase.date_from, "SHORT_DATE_FORMAT")
+                )
             response = render(
                 request,
                 view.template_name, {
-                    'fullpage_error_message': mark_safe(_(u"Tento formulář se zobrazuje pouze ve fázích soutěže: %s") % phases_string),
+                    'fullpage_error_message': message,
                 },
                 status=403,
             )

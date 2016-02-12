@@ -20,12 +20,10 @@
 
 # Standard library imports
 import time
-try:
-    import httplib
-except ImportError:
-    from http import client as httplib
-import urllib
+from http.client import HTTPSConnection
+from urllib.parse import urlencode
 import hashlib
+import codecs
 from . import results
 import json
 import collections
@@ -118,8 +116,8 @@ class UserAttendanceViewMixin(object):
 class RegistrationMessagesMixin(UserAttendanceViewMixin):
     def get(self, request, *args, **kwargs):
         ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
-        if self.user_attendance.team:
-            if self.registration_phase not in ('upravit_profil',):
+        if self.registration_phase in ('profile_view',):
+            if self.user_attendance.team:
                 if self.user_attendance.approved_for_team == 'undecided':
                     messages.warning(request, mark_safe(
                         _(
@@ -138,18 +136,24 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                           u' <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu.</li>'
                           u'<li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li>'
                           u'<li>Pokud nemůžete sehnat spolupracovníky, použijte '
-                          u' <a href="http://www.dopracenakole.net/locations/%(city)s/seznamka" target="_blank">seznamku</a>.</li></ul>')
+                          u' <a href="http://www.dopracenakole.cz/locations/%(city)s/seznamka" target="_blank">seznamku</a>.</li></ul>')
                         % {
                             'invite_url':
                             reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym'), 'city': self.user_attendance.team.subsidiary.city.slug}))
 
-        if self.registration_phase in ('profile_view',):
             unanswered_questionnaires = self.user_attendance.get_competitions_without_admission().filter(type='questionnaire')
             if unanswered_questionnaires.exists():
                 competitions = ", ".join([
                     "<a href='%(url)s'>%(name)s</a>" %
                     {"url": reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}), "name": q.name} for q in unanswered_questionnaires.all()])
                 messages.info(request, mark_safe(_(u'Nezapomeňte vyplnit odpovědi v následujících soutěžích: %s!') % competitions))
+            if not self.user_attendance.track and not self.user_attendance.distance:
+                messages.info(request, mark_safe(
+                    _(u'Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.'
+                      u' Na základě této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty.'
+                      u' Vaše vyplněná trasa se objeví na <a href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
+                      u' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
+                      u' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu')))
 
         if self.user_attendance.payment_status() not in ('done', 'none',) and self.registration_phase not in ('typ_platby',):
             messages.info(request, mark_safe(
@@ -171,9 +175,12 @@ class TitleViewMixin(object):
             self.title = kwargs.get('title')
         return super(TitleViewMixin, self).as_view(*args, **kwargs)
 
+    def get_title(self, *args, **kwargs):
+        return self.title
+
     def get_context_data(self, *args, **kwargs):
         context_data = super(TitleViewMixin, self).get_context_data(*args, **kwargs)
-        context_data['title'] = self.title
+        context_data['title'] = self.get_title(*args, **kwargs)
         return context_data
 
 
@@ -631,12 +638,17 @@ class PaymentResult(UserAttendanceViewMixin, TemplateView):
 
 def make_sig(values):
     key1 = settings.PAYU_KEY_1
-    return hashlib.md5((u"".join(values + (key1,))).encode()).hexdigest()
+    hashed_string = bytes("".join(values + (key1,)), "utf-8")
+    return hashlib.md5(hashed_string).hexdigest()
 
 
 def check_sig(sig, values):
     key2 = settings.PAYU_KEY_2
-    if sig != hashlib.md5("".join(values + (key2,))).hexdigest():
+    hashed_string = bytes("".join(values + (key2,)), "utf-8")
+    expected_sig = hashlib.md5(hashed_string).hexdigest()
+    print(sig)
+    print(expected_sig)
+    if sig != expected_sig:
         raise ValueError("Zamítnuto")
 
 
@@ -650,10 +662,10 @@ def payment_status(request):
     logger.info('Payment status - pos_id: %s, session_id: %s, ts: %s, sig: %s' % (pos_id, session_id, ts, sig))
     check_sig(sig, (pos_id, session_id, ts))
     # Determine the status of transaction based on the notification
-    c = httplib.HTTPSConnection("secure.payu.com")
+    c = HTTPSConnection("secure.payu.com")
     timestamp = str(int(time.time()))
     c.request("POST", "/paygw/UTF/Payment/get/txt/",
-              urllib.urlencode({
+              urlencode({
                   'pos_id': pos_id,
                   'session_id': session_id,
                   'ts': timestamp,
@@ -661,7 +673,7 @@ def payment_status(request):
               }),
               {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"})
-    raw_response = c.getresponse().read()
+    raw_response = codecs.decode(c.getresponse().read(), "utf-8")
     r = {}
     for i in [i.split(':', 1) for i in raw_response.split('\n') if i != '']:
         r[i[0]] = i[1].strip()
@@ -848,6 +860,18 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
         return context_data
 
 
+class CompetitionsView(TitleViewMixin, TemplateView):
+    def get_title(self, *args, **kwargs):
+        city = City.objects.get(slug=kwargs['city_slug'])
+        return _(u"Pravidla soutěží - %s" % city)
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(CompetitionsView, self).get_context_data(*args, **kwargs)
+        competitions = Competition.objects.filter(city__slug=kwargs['city_slug'], campaign__slug=self.request.subdomain)
+        context_data['competitions'] = competitions
+        return context_data
+
+
 class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
     title = _(u"Výsledky soutěží")
     success_url = reverse_lazy("competitions")
@@ -900,7 +924,7 @@ class CompetitionResultsView(TemplateView):
             logger.exception('Unknown competition slug %s, request: %s' % (competition_slug, self.request))
             return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme.'
                                   u' Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na'
-                                  u' <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující soutěž">kontakt@dopracenakole.net</a></div>'), status=401)
+                                  u' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž">kontakt@dopracenakole.cz</a></div>'), status=401)
 
         results = competition.get_results()
         if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
@@ -916,6 +940,7 @@ class CompetitionResultsView(TemplateView):
 
 
 class UpdateProfileView(RegistrationViewMixin, UpdateView):
+    template_name = 'submenu_personal.html'
     form_class = ProfileUpdateForm
     model = UserProfile
     success_message = _(u"Osobní údaje úspěšně upraveny")
@@ -949,8 +974,8 @@ class UpdateTrackView(RegistrationViewMixin, UpdateView):
     success_message = _(u"Trasa/vzdálenost úspěšně upravena")
     next_url = 'zmenit_triko'
     prev_url = 'zmenit_tym'
-    registration_phase = "upravit_trasu"
-    title = _("Upravit trasu")
+    registration_phase = "upravit_profil"
+    title = _("Upravit typickou trasu")
 
     def get_object(self):
         return self.user_attendance
@@ -1002,10 +1027,10 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
             logger.exception('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
             return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme.'
                                   u' Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na'
-                                  u' <a href="mailto:kontakt@dopracenakole.net?subject=Neexistující dotazník">kontakt@dopracenakole.net</a></div>'), status=401)
+                                  u' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující dotazník">kontakt@dopracenakole.cz</a></div>'), status=401)
         self.show_points = self.competition.has_finished() or self.userprofile.user.is_superuser
         self.is_actual = self.competition.is_actual()
-        self.questions = Question.objects.filter(competition=self.competition).select_related("answer").order_by('order')
+        self.questions = Question.objects.filter(competition=self.competition).order_by('order')
         return super(QuestionnaireView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -1376,7 +1401,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
                         messages.ERROR,
                         mark_safe(_(
                             u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým."
-                            u" Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.net?subject=Nejde ověřit člen týmu'>kontakt@dopracenakole.net</a>."
+                            u" Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.cz?subject=Nejde ověřit člen týmu'>kontakt@dopracenakole.cz</a>."
                         )),
                         extra_tags="user_attendance_%s" % approved_user.pk,
                         fail_silently=True)

@@ -82,6 +82,31 @@
     {
         "fields": {
             "campaign": 339,
+            "city": [],
+            "company": null,
+            "company_competitors": [],
+            "competitor_type": "single_user",
+            "date_from": "2013-05-01",
+            "date_to": "2013-06-02",
+            "entry_after_beginning_days": 7,
+            "is_public": true,
+            "name": "Dotazník",
+            "public_answers": false,
+            "rules": null,
+            "sex": null,
+            "slug": "quest",
+            "team_competitors": [],
+            "type": "questionnaire",
+            "url": "http://www.dopracenakole.net/url/",
+            "user_attendance_competitors": [],
+            "without_admission": true
+        },
+        "model": "dpnk.competition",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "campaign": 339,
             "type": "invoices"
         },
         "model": "dpnk.phase",

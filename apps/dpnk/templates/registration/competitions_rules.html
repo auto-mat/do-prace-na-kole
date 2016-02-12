@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+{% load i18n %}
+{% load humanize %}
+{% load softhyphen_tags %}
+{% load bleach_tags %}
+
+{% block content %}
+{% if competitions %}
+{% for competition in competitions %}
+<h3>{{ competition.name }}</h3>
+<p>
+<i> {{ competition.type_string | safe }} </i>
+</p>
+{{ competition.rules | bleach }}
+{% endfor %}
+{% endif %}
+{% endblock %}

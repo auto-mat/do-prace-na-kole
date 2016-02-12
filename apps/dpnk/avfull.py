@@ -174,7 +174,7 @@ def make_avfull(outfile, delivery_batch):
                 receivers_address=receivers_address,
                 pick_up_address=pick_up_address,
                 delivery_address=delivery_address,
-            ) + "\r\n"))
+            ) + "\r\n").encode())
 
             outfile.write(unidecode(make_bline(
                 con_reference=package_transaction.tnt_con_reference(),
@@ -187,7 +187,7 @@ def make_avfull(outfile, delivery_batch):
                 currency_code="CZK",
                 con_total_value=user_attendance.admission_fee(),
                 weight_in_kg=weight,
-            ) + "\r\n"))
+            ) + "\r\n").encode())
 
             outfile.write(unidecode(make_cline(
                 con_reference=package_transaction.tnt_con_reference(),
@@ -200,7 +200,7 @@ def make_avfull(outfile, delivery_batch):
                 package_width=user_attendance.campaign.package_width,
                 package_depth=user_attendance.campaign.package_depth,
                 package_total_weight_kgs=weight,
-            ) + "\r\n"))
+            ) + "\r\n").encode())
 
             outfile.write(unidecode(make_dline(
                 con_reference=package_transaction.tnt_con_reference(),
@@ -208,6 +208,6 @@ def make_avfull(outfile, delivery_batch):
                 con_note_number=package_transaction.tracking_number_cnc(),
                 package_type_seq_number=1,
                 article_type_sequence_number=1,
-            ) + "\r\n"))
+            ) + "\r\n").encode())
     finally:
         outfile.close

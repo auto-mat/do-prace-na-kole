@@ -1,0 +1,9 @@
+{% extends "base_generic_registration_form.html" %}
+{% load i18n %}
+
+{% block third_menu %}
+<ul class="navbar nav navbar-nav the_submenu">
+<li class="{% if not user_attendance.team_complete %}disabled{% endif %} {% if request.resolver_match.url_name == 'upravit_profil' %}active{% endif %}"><a href="{% url 'upravit_profil' %}">{% trans "Základní údaje" %}</a></li>
+<li class="{% if not user_attendance.team_complete %}disabled{% endif %} {% if request.resolver_match.url_name == 'upravit_trasu' %}active{% endif %}"><a href="{% url 'upravit_trasu' %}">{% trans "Typická trasa" %}</a></li>
+</ul>
+{% endblock %}

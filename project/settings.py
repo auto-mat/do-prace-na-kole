@@ -172,10 +172,14 @@ INSTALLED_APPS = (
     'ajax_select',
     # 'cachalot',
 )
+
+BASE_WP_URL = "http://www.dopracenakole.cz"
+
 TEMPLATE_VISIBLE_SETTINGS = (
     'PAYU_POS_AUTH_KEY',
     'PAYU_POS_ID',
     'PAYU_KEY_1',
+    'BASE_WP_URL',
 )
 
 REST_FRAMEWORK = {
@@ -187,7 +191,9 @@ REST_FRAMEWORK = {
     ),
 }
 
-BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br']
+REDACTOR_OPTIONS = {'formatting': ['p', 'blockquote', 'pre', 'h4', 'h5']}
+BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br', 'span', 'div', 'h4', 'h5', 'pre', 'blockquote', 'ol', 'li', 'ul']
+BLEACH_ALLOWED_ATTRIBUTES = ['href', ]
 COMPRESSOR_ENABLED = True
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),
@@ -201,7 +207,7 @@ LOGOUT_NEXT_PAGE = reverse_lazy('profil')
 SITE_URL = ''
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"
-AKLUB_URL = "http://klub.vnitrni.auto-mat.cz"
+AKLUB_URL = "http://klub.auto-mat.cz"
 
 LEAFLET_CONFIG = {
     'DEFAULT_CENTER': (50.0866699218750000, 14.4387817382809995),
@@ -234,6 +240,24 @@ PAYU_KEY_1 = ''
 PAYU_KEY_2 = ''
 PAYU_POS_AUTH_KEY = 'NxFcSXh'
 PAYU_POS_ID = "131116"
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 6,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 LOGGING = {
     'version': 1,

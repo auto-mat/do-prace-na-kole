@@ -20,7 +20,7 @@
 from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import Q, Count, Sum
+from django.db.models import Q, Count
 from dpnk import models
 
 
@@ -30,16 +30,24 @@ class CampaignFilter(SimpleListFilter):
     field = 'campaign'
 
     def lookups(self, request, model_admin):
-        if not (hasattr(request, 'subdomain') and request.subdomain):
-            campaigns = [('all', _('All'))]
-            campaigns = [('none', _('None'))]
-            campaigns += [(c.slug, c.name) for c in models.Campaign.objects.all()]
+        if hasattr(request, 'subdomain') and request.subdomain:
+            try:
+                campaign = models.Campaign.objects.get(slug=request.subdomain)
+            except models.Campaign.DoesNotExist:
+                campaign = None
         else:
-            current_campaign = models.Campaign.objects.get(slug=request.subdomain)
+            campaign = None
+
+        if campaign:
+            current_campaign = campaign
             campaigns = [(None, current_campaign.name)]
             campaigns += [(c.slug, c.name) for c in models.Campaign.objects.exclude(slug=request.subdomain)]
             campaigns += [('all', _('All'))]
             campaigns += [('none', _('None'))]
+        else:
+            campaigns = [('all', _('All'))]
+            campaigns += [('none', _('None'))]
+            campaigns += [(c.slug, c.name) for c in models.Campaign.objects.all()]
         return campaigns
 
     def choices(self, cl):
@@ -78,7 +86,7 @@ class CityCampaignFilter(CampaignFilter):
 
     def queryset(self, request, queryset):
         queryset = super(CityCampaignFilter, self).queryset(request, queryset)
-        queryset = queryset.annotate(user_count_sum=Sum('subsidiaries__teams__member_count'))
+        # queryset = queryset.annotate(user_count_sum=Sum('subsidiaries__teams__member_count', distinct=True))  TODO: this doesn't count because bug #10060
         return queryset
 
 
