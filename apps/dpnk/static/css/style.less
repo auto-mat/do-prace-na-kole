@@ -36,7 +36,7 @@ h1, h2, h3, h4, h5{
    }
 }
 .navbar-fixed-top{
-	margin-top: 0.5rem;
+	background-color: #fff;
 	border-bottom: 1px solid #000;
 }
 .navbar{
@@ -122,6 +122,14 @@ h1, h2, h3, h4, h5{
 .base.container{
 	margin-top:110px;
 	margin-bottom: 80px;
+	a{
+		text-decoration: underline;
+	}
+	h1, h2, h3, h4, h5{
+		a{
+			text-decoration: none;
+		}
+	}
 }
 .django_administrace{
 	form{
@@ -215,6 +223,9 @@ input:disabled+label{
 }
 .wp_news{
 	margin-bottom: 4rem;
+	h4{
+		line-height:2rem;
+	}
 }
 
 @media (max-width: 768px){
