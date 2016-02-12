@@ -98,6 +98,12 @@ class DPNKLoginView(LoginView):
         else:
             return {}
 
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return redirect(reverse('profil'))
+        else:
+            return super().get(request, *args, **kwargs)
+
 
 class UserAttendanceViewMixin(object):
     @method_decorator(login_required_simple)
