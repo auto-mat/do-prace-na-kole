@@ -24,6 +24,7 @@ from cache_utils.decorators import cached
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import resolve, reverse
 from django.utils.translation import activate, get_language
+from django.utils.translation import ugettext_lazy as _
 import slumber
 register = template.Library()
 
@@ -49,25 +50,47 @@ def cyklistesobe_cached(city_slug, order="created_at"):
 
 
 @register.simple_tag
-def wp_news(slug):
-    return mark_safe(wp_news_cached())
-
-
-@register.simple_tag
-def wp_actions(slug):
+def wp_news(slug=None):
     return mark_safe(wp_news_cached(slug))
 
 
+@register.simple_tag
+def wp_actions(slug=None):
+    return mark_safe(wp_news_cached(None, slug, "locations", _("akce"), "event", False))
+
+
+@register.simple_tag
+def wp_prize(slug=None):
+    return mark_safe(wp_news_cached(None, slug, "locations", _("cena"), "prize", True))
+
+
 @cached(600)
-def wp_news_cached(slug=None):
+def wp_news_cached(connected_to_slug=None, post_parent_slug=None, post_type="post", post_type_string=_("novinka"), subtype=None, unfold_first=True):
+    get_params = {}
+    get_params['feed'] = "content_to_backend"
+    if post_type:
+        get_params['_post_type'] = post_type
+    get_params['_number'] = 5
+    if connected_to_slug:
+        get_params['_connected_to'] = connected_to_slug
+    if post_parent_slug:
+        get_params['_post_parent'] = post_parent_slug
+
+    if subtype:
+        get_params['_page_subtype'] = subtype
+    print(get_params)
     url = "http://www.dopracenakole.cz/"
     api = slumber.API(url)
     try:
-        wp_feed = api.feed.get(feed="content_to_backend", _post_type="post", _number=5, _connected_to=slug)
+        wp_feed = api.feed.get(**get_params)
     except:
         return ""
     template = get_template("templatetags/wp_news.html")
-    context = {'wp_feed': wp_feed}
+    context = {
+        'wp_feed': wp_feed,
+        'post_type_string': post_type_string,
+        'unfold_first': unfold_first,
+    }
     return template.render(context)
 
 
