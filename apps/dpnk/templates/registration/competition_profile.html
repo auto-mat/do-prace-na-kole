@@ -44,7 +44,7 @@
    </table>
 </div>
 
-<div class="row">
+<div class="row base">
    <div class="col-md-6">
       <h3>{% trans "Novinky" %}</h3>
       {% wp_news %}
@@ -53,13 +53,21 @@
       <h3>{% trans "Novinky ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ city_slug }}">{{ user_attendance.team.subsidiary.city }}</a></h3>
       {% wp_news city_slug %}
    </div>
+</div>
+<div class="row base">
    <div class="col-md-6">
       <h3>{% trans "Akce ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ city_slug }}">{{ user_attendance.team.subsidiary.city }}</a></h3>
       {% wp_actions city_slug %}
    </div>
    <div class="col-md-6">
-      <h3>{% trans "Ceny ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ city_slug }}">{{ user_attendance.team.subsidiary.city }}</a></h3>
-      {% wp_prize city_slug %}
+      Obrazky
+   </div>
+</div>
+<div class="row base">
+   <div class="col-md-6">
+      <h3>{% trans "Cyklisté sobě" %}</h3>
+      <a href="https://www.cyklistesobe.cz/issues/new" target="_blank">Dali jste Cyklistům sobě vědět o problémech na vaši trase?</a>
+      {% cyklistesobe user_attendance.team.subsidiary.city.cyklistesobe_slug %}
    </div>
    <div class="col-md-6">
       <h3>Cyklistická mapa</h3>
@@ -68,10 +76,11 @@
       </p>
       <a href="http://{{ map_city_slug }}.dopracenakole.net" target="_blank"><img src="http://tiles.prahounakole.cz/13/4424/2773.png"/></a>
    </div>
-   <div class="col-md-6">
-      <h3>{% trans "Cyklisté sobě" %}</h3>
-      <a href="https://www.cyklistesobe.cz/issues/new" target="_blank">Dali jste Cyklistům sobě vědět o problémech na vaši trase?</a>
-      {% cyklistesobe user_attendance.team.subsidiary.city.cyklistesobe_slug %}
+</div>
+<div class="row base">
+    <div class="col-md-12 prizes">
+      <h3>{% trans "Ceny ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ city_slug }}">{{ user_attendance.team.subsidiary.city }}</a></h3>
+      {% wp_prize city_slug %}
    </div>
 </div>
 {% endblock %}

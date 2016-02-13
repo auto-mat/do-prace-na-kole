@@ -15,11 +15,15 @@
 @c: #6279bb;
 @c2: #FFF2E8;
 @c3: #8790AB;
+@h:#921038;
 // #collapsing_menu{
 // 	float: left;
 // }
+a{
+	text-decoration:underline;
+}
 h1, h2, h3, h4, h5{
-	color:@c3;
+	color:@h;
 	a{
 		color:@links;
 	}
@@ -38,6 +42,8 @@ h1, h2, h3, h4, h5{
 .navbar-fixed-top{
 	background-color: #fff;
 	border-bottom: 1px solid #000;
+	border-top: 3px solid red;
+    padding-top: 3px;
 }
 .navbar{
 	min-height:38px;
@@ -126,9 +132,18 @@ h1, h2, h3, h4, h5{
 		text-decoration: underline;
 	}
 	h1, h2, h3, h4, h5{
+		// a{
+		// 	text-decoration: none;
+		// }
+	}
+	h4{
 		a{
-			text-decoration: none;
+			text-transform: initial;
 		}
+	}
+	img{
+		width:100%;
+		height:auto;
 	}
 }
 .django_administrace{
@@ -227,7 +242,31 @@ input:disabled+label{
 		line-height:2rem;
 	}
 }
-
+.prizes{
+	.item{
+		width:25%;
+		float: left;
+		text-align: center;
+		margin-bottom: 1rem;
+		.bobble{
+			border:1px solid #6279bb;
+			background-color: #fff;
+			overflow: hidden;
+		}
+		h4{
+			min-height: 5rem;
+		}
+	}
+}
+.disabled{
+	a{
+		color:#ccc !important;
+		text-decoration: none;
+	}
+}
+.btn{
+	text-decoration: none !important;
+}
 @media (max-width: 768px){
 	.logo_holder{
 		float: left;
@@ -278,5 +317,6 @@ input[type=number]::-webkit-outer-spin-button {
 
 .wp_news img{
   max-width:100%;
+  width:100%;
   height:auto;
 }

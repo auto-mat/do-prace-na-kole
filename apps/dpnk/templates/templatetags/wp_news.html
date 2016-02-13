@@ -3,20 +3,22 @@
 
 <div class="wp_news">
 {% for key, value in wp_feed.items %}
-   <h4>
-	   <a href="{{ value.url }}" target="_blank">
-	   		{{ value.title }}
-	   </a>
-   </h4>
-   {% if unfold == "all" or forloop.first and unfold == "first" %}
-      {% if value.image %}
-         <img src="{{ value.image }}" alt="Obrázek k podnětu"></img>
+   <div class="item">
+      <h4>
+          <a href="{{ value.url }}" target="_blank">
+                  {{ value.title }}
+          </a>
+      </h4>
+      {% if unfold == "all" or forloop.first and unfold == "first" %}
+         {% if value.image %}
+            <span class="bobble"><img src="{{ value.image }}" alt="Obrázek k podnětu"></img></span>
+         {% endif %}
+         {% if show_description %}
+            {{ value.excerpt|bleach }}
+         {% endif %}
       {% endif %}
-      {% if show_description %}
-         {{ value.excerpt|bleach }}
-      {% endif %}
-   {% endif %}
-{% empty %}
-   Žádná {{ post_type_string }} není.
+   </div>
+   {% empty %}
+      Žádná {{ post_type_string }} není.
 {% endfor %}
 </div>
