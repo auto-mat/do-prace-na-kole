@@ -36,7 +36,7 @@ django-crispy-forms
 -e git+https://github.com/fabfuel/django-subdomains.git#egg=django-subdomains
 -e git+https://github.com/PetrDlouhy/django-adminfilters.git@develop#egg=django-adminfilters
 django-compressor
-slumber
+-e git+https://github.com/PetrDlouhy/slumber.git#egg=slumber
 django-bleach
 -e git+https://github.com/hobarrera/django-analytical.git@django19#egg=django-analytical  # for Django 1.9
 gunicorn
