@@ -67,7 +67,7 @@ def wp_prize(slug=None):
 @cached(600)
 def _wp_news_cached(slug=None, wp_type="news"):
     if wp_type == "action":
-        return _wp_news("locations", _("akce"), unfold="none", _page_subtype="event", _post_parent=slug)
+        return _wp_news("locations", _("akce"), unfold="first", _page_subtype="event", _post_parent=slug)
     elif wp_type == "prize":
         return _wp_news("locations", _("cena"), unfold="all", count=-1, show_description=False, _page_subtype="prize", _post_parent=slug, order="ASC", orderby="menu_order")
     else:
