@@ -326,6 +326,8 @@ MESSAGE_TAGS = {
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
+HEADER_COLOR = "red"
+
 # import local settings
 try:
     from settings_local import *  # noqa
