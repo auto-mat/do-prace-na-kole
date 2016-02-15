@@ -90,7 +90,25 @@ import shutil
 logger = logging.getLogger(__name__)
 
 
-class DPNKLoginView(LoginView):
+class TitleViewMixin(object):
+    @classonlymethod
+    def as_view(self, *args, **kwargs):
+        if 'title' in kwargs:
+            self.title = kwargs.get('title')
+        return super(TitleViewMixin, self).as_view(*args, **kwargs)
+
+    def get_title(self, *args, **kwargs):
+        return self.title
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super(TitleViewMixin, self).get_context_data(*args, **kwargs)
+        context_data['title'] = self.get_title(*args, **kwargs)
+        return context_data
+
+
+class DPNKLoginView(TitleViewMixin, LoginView):
+    title = "Přihlasení soutežících Dopráce na kole"
+
     def get_initial(self):
         initial_email = self.kwargs.get('initial_email')
         if initial_email:
@@ -171,22 +189,6 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
         if company_admin and company_admin.company_admin_approved == 'denied':
             messages.error(request, _(u'Vaše žádost o funkci koordinátora společnosti byla zamítnuta.'))
         return ret_val
-
-
-class TitleViewMixin(object):
-    @classonlymethod
-    def as_view(self, *args, **kwargs):
-        if 'title' in kwargs:
-            self.title = kwargs.get('title')
-        return super(TitleViewMixin, self).as_view(*args, **kwargs)
-
-    def get_title(self, *args, **kwargs):
-        return self.title
-
-    def get_context_data(self, *args, **kwargs):
-        context_data = super(TitleViewMixin, self).get_context_data(*args, **kwargs)
-        context_data['title'] = self.get_title(*args, **kwargs)
-        return context_data
 
 
 class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAttendanceViewMixin):
@@ -357,7 +359,8 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
         return render(request, self.template_name, context_data)
 
 
-class RegistrationAccessView(FormView):
+class RegistrationAccessView(TitleViewMixin, FormView):
+    title = "Registace soutěžících Do práce na kole"
     template_name = 'base_generic_form.html'
     form_class = RegistrationAccessFormDPNK
 
@@ -381,7 +384,8 @@ class RegistrationAccessView(FormView):
             return redirect(reverse('registrace', kwargs={'initial_email': email}))
 
 
-class RegistrationView(SimpleRegistrationView):
+class RegistrationView(TitleViewMixin, SimpleRegistrationView):
+    title = "Registace soutěžících Do práce na kole"
     template_name = 'base_generic_form.html'
     form_class = RegistrationFormDPNK
     model = UserProfile
