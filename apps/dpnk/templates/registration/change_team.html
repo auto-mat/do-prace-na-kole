@@ -6,7 +6,15 @@
 {% block messages %}
 <div class="alert alert-info">
    {% blocktrans %}
-   Pokud je název společnosti, nebo adresa pobočky chybná, nezakládejte novou, ale žádejte opravu na <a href='mailto:kontakt@dopracenakole.cz?subject=Žádost o změnu adresy společnosti, pobočky nebo týmu'>kontakt@dopracenakole.cz</a>.
+   Pokud je název společnosti, nebo adresa pobočky chybná, nezakládejte novou, ale žádejte opravu:
+   <ol>
+      <li>
+         Po firemním koordinátorovi vaší firmy.
+      </li>
+      <li>
+         Na <a href='mailto:kontakt@dopracenakole.cz?subject=Žádost o změnu adresy společnosti, pobočky nebo týmu'>kontakt@dopracenakole.cz</a>.
+      </li>
+   </ol>
    {% endblocktrans %}
 </div>
 {{ block.super }}
