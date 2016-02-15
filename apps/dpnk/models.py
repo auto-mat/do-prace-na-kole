@@ -72,22 +72,22 @@ def get_address_string(address):
 class Address(CompositeField):
     street = models.CharField(
         verbose_name=_(u"Ulice"),
-        help_text=_(u"Např. Šeříková nebo Nám. W. Churchilla"),
+        help_text=_(u"Např. „Šeříková“ nebo „Nám. W. Churchilla“"),
         default="",
         max_length=50,
         null=False,
     )
     street_number = models.CharField(
         verbose_name=_(u"Číslo domu"),
-        help_text=_(u"Např. 2965/12 nebo 156"),
+        help_text=_(u"Např. „2965/12“ nebo „156“"),
         default="",
         max_length=10,
         null=False,
         blank=False,
     )
     recipient = models.CharField(
-        verbose_name=_(u"Název společnosti (pobočky, závodu, kanceláře, fakulty) na adrese"),
-        help_text=_(u"Např. odštěpný závod Brno, oblastní pobočka Liberec, Přírodovědecká fakulta atp."),
+        verbose_name=_(u"Název pobočky (celé společnosti, závodu, kanceláře, fakulty) na adrese"),
+        help_text=_(u"Např. „odštěpný závod Brno“, „oblastní pobočka Liberec“, „Přírodovědecká fakulta“ atp."),
         default="",
         max_length=50,
         null=True,
@@ -102,7 +102,7 @@ class Address(CompositeField):
     )
     psc = models.IntegerField(
         verbose_name=_(u"PSČ"),
-        help_text=_(u"Např.: 130 00"),
+        help_text=_(u"Např.: „130 00“"),
         validators=[
             MaxValueValidator(99999),
             MinValueValidator(10000)
@@ -113,7 +113,7 @@ class Address(CompositeField):
     )
     city = models.CharField(
         verbose_name=_(u"Město"),
-        help_text=_(u"Např. Jablonec n. N. nebo Praha 3-Žižkov"),
+        help_text=_(u"Např. „Jablonec n. N.“ nebo „Praha 3, Žižkov“"),
         default="",
         max_length=50,
         null=False,
@@ -195,7 +195,7 @@ class Company(models.Model):
     name = models.CharField(
         unique=True,
         verbose_name=_(u"Název společnosti"),
-        help_text=_(u"Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova"),
+        help_text=_(u"Např. „Výrobna, a.s.“, „Příspěvková, p.o.“, „Nevládka, z.s.“, „Univerzita Karlova“"),
         max_length=60, null=False)
     address = Address()
     ico = models.PositiveIntegerField(

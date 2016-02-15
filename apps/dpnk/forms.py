@@ -128,7 +128,7 @@ class AdressForm(forms.ModelForm):
 
     address_psc = forms.CharField(
         label=_(u"PSČ"),
-        help_text=_(u"Např.: 130 00"),
+        help_text=_(u"Např.: „130 00“"),
     )
 
     def clean_address_psc(self):
@@ -236,7 +236,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             'companies',
             RegisterCompanyForm,
             prefix="company",
-            new_description=_(u"Společnost v seznamu není, chci založit novou")
+            new_description=_(u"Společnost v seznamu není, chci vyplnit novou")
         ),
         required=True)
     subsidiary = ChainedModelChoiceField(
@@ -254,7 +254,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             RegisterSubsidiaryForm,
             view_name='',
             prefix="subsidiary",
-            new_description=_(u"Adresa v seznamu není, chci založit novou"),
+            new_description=_(u"Adresa pobočky/společnosti v seznamu není, chci vyplnit novou"),
             chained_field="company",
             chained_model_field="company",
             to_app_name="dpnk",
@@ -613,7 +613,7 @@ class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
     telephone = forms.CharField(
         label=_(u"Telefon"),
         validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
-        help_text=_(u"Telefon je pro kurýra, který Vám přiveze soutěžní triko, pro HelpDesk"),
+        help_text=_(u"Telefon použije kurýr, který Vám přiveze soutěžní triko, slouží pro HelpDesk a další účely"),
         max_length=30)
 
     def save(self, *args, **kwargs):
