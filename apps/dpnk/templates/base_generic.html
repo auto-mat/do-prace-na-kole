@@ -26,6 +26,11 @@
 {% compress css %}
 <link href="{% static "css/style.less"%}" type="text/less" rel="stylesheet" media="screen">
 {% endcompress %}
+<style>
+  .navbar-fixed-top{
+    border-top: 3px solid {{ HEADER_COLOR }};
+  }
+</style>
 
 {% endblock %}{% block extrahead %}{% endblock %}
 {% analytical_head_bottom %}

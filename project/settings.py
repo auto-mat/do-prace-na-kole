@@ -119,7 +119,6 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'dpnk.context_processors.site',
                 'dpnk.context_processors.user_attendance',
-                "dpnk.context_processors.settings_properties",
                 'settings_context_processor.context_processors.settings',
             )
         },
@@ -180,6 +179,7 @@ TEMPLATE_VISIBLE_SETTINGS = (
     'PAYU_POS_ID',
     'PAYU_KEY_1',
     'BASE_WP_URL',
+    'HEADER_COLOR',
 )
 
 REST_FRAMEWORK = {
