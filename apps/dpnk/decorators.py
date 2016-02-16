@@ -23,6 +23,7 @@ from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from .models import UserAttendance, Campaign
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -148,10 +149,13 @@ def must_be_in_phase(phase_type):
             except Campaign.DoesNotExist:
                 messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % request.subdomain)
                 raise Http404()
-            phase = campaign.phase_set.get(type=phase_type)
+            try:
+                phase = campaign.phase_set.get(type=phase_type)
+            except ObjectDoesNotExist:
+                phase = None
             if phase and phase.is_actual():
                 return fn(view, request, *args, **kwargs)
-            if phase.has_started():
+            if not phase or phase.has_started():
                 message = mark_safe(_(u"Již skončil čas, kdy se tato stránka zobrazuje."))
             else:
                 message = mark_safe(
