@@ -130,6 +130,8 @@ class ViewsTests(TransactionTestCase):
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    PAYU_KEY_1='123456789',
+    PAYU_KEY_2='98764321',
 )
 class PaymentTests(TransactionTestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
@@ -138,13 +140,15 @@ class PaymentTests(TransactionTestCase):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
 
     @patch('http.client.HTTPSConnection.getresponse')
-    def payment_status_view(self, payu_response, session_id='2075-1J1455206433', amount="15000"):
+    def payment_status_view(
+            self, payu_response, session_id='2075-1J1455206433',
+            amount="15000", trans_sig='ae6f4b9f8fbdbb506edf4eeb1cebcee0', sig='1af62397cfb6e6de5295325801239e4f'):
         payment_post_data = OrderedDict([
             ('pos_id', '2075-1'),
             ('session_id', session_id),
             ('ts', '1'),
         ])
-        payment_post_data['sig'] = views.make_sig(tuple(payment_post_data.values()))
+        payment_post_data['sig'] = sig
         payment_return_value = OrderedDict([
             ("trans_pos_id", "2075-1"),
             ("trans_session_id", session_id),
@@ -154,7 +158,7 @@ class PaymentTests(TransactionTestCase):
             ("trans_desc", "desc"),
             ("trans_ts", "1"),
         ])
-        payment_return_value['trans_sig'] = views.make_sig(tuple(payment_return_value.values()))
+        payment_return_value['trans_sig'] = trans_sig
         payment_return_value.update([
             ("trans_pay_type", "kb"),
             ("trans_recv", "2016-1-1"),
@@ -174,7 +178,7 @@ class PaymentTests(TransactionTestCase):
 
     @patch('http.client.HTTPSConnection.getresponse')
     def test_dpnk_payment_status_bad_amount(self, payu_response):
-        response = self.payment_status_view(amount="15300")
+        response = self.payment_status_view(amount="15300", trans_sig='ae18ec7f141c252e692d470f4c1744c9')
         self.assertContains(response, "Bad amount", status_code=400)
         payment = Payment.objects.get(pk=3)
         self.assertEquals(payment.pay_type, None)
@@ -183,7 +187,9 @@ class PaymentTests(TransactionTestCase):
 
     @patch('http.client.HTTPSConnection.getresponse')
     def test_dpnk_payment_status_view_create(self, payu_response):
-        response = self.payment_status_view(session_id='2075-1J1455206434', amount="15100")
+        response = self.payment_status_view(
+            session_id='2075-1J1455206434', amount="15100",
+            sig='4f59d25cd3dadaf03bef947bb0d9e1b9', trans_sig='c490e30293fe0a96d08b62107accafe8')
         self.assertContains(response, "OK")
         payment = Payment.objects.get(session_id='2075-1J1455206434')
         self.assertEquals(payment.pay_type, "kb")
