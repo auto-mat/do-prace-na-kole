@@ -13,15 +13,25 @@
 
 {% block container_footer %}
 <script>
+function selected_value(){
+   return $('input[name=payment_type]:checked', '#div_id_payment_type').val();
+};
+
 function switch_description(){
    $(".description_switcher_div").hide();
-   selected_value = $('input[name=payment_type]:checked', '#div_id_payment_type').val()
-   $("#" + selected_value + "_description").show()
-   if(selected_value == 'pay' || selected_value == 'member_wannabe')
+   sel_val = selected_value();
+   $("." + sel_val + "_description").show()
+   if(sel_val == 'pay' || sel_val == 'pay_beneficiary' || sel_val == 'member_wannabe')
       $(".form-actions").hide();
    else
       $(".form-actions").show();
-}
+
+   if(sel_val == 'pay_beneficiary') {
+      $("#payment_amount").text("{{ beneficiary_amount }} Kč");
+   } else {
+      $("#payment_amount").text("{{ amount }} Kč");
+   }
+};
 $("#div_id_payment_type").change(function() {
    switch_description();
 });
@@ -37,11 +47,17 @@ $(function(){
       }});
    });
 
-   $("#pay_description form").submit(function(){
+   $(".pay_description form").submit(function(){
+
+      if(selected_value() == 'pay_beneficiary') {
+         var payment_url = '{% url "payment_beneficiary" %}';
+      } else {
+         var payment_url = '{% url "payment" %}';
+      }
       if($("#payu-hidden-values input").length == 0) {
-         $.get("{% url "platba" %}", function(data) {
+         $.get(payment_url, function(data) {
             $("#payu-hidden-values").html(data);
-            $("#pay_description form").submit();
+            $(".pay_description form").submit();
          });
          return false;
       }
@@ -49,14 +65,14 @@ $(function(){
 });
 </script>
 <div id="description_switcher">
-   <div id="free_description" class="description_switcher_div description" style="display:none">
+   <div class="description_switcher_div description free_description" style="display:none">
       <h3>{% trans "Startovné zdarma" %}</h3>
       {% trans "Startovné zdarma můžete čerpat v těchto případech:" %}
       {{ user_attendance.campaign.free_entry_cases_html|safe }}
 
       {% trans "Po zadání tohoto typu platby vyčkejte, než vaši volbu potvrdíme." %}
    </div>
-   <div id="company_description" class="description_switcher_div description" style="display:none">
+   <div class="description_switcher_div description company_description" style="display:none">
       <h3>{% trans "Startovné platí zaměstnavatel" %}</h3>
       {% if user_attendance.get_asociated_company_admin %}
       {% trans "Startovné za mě platí zaměstnavatel, mám to domluvené." %}
@@ -70,20 +86,20 @@ $(function(){
       {% trans "Koordinátor společnosti: " %} {{ user_attendance.get_asociated_company_admin|default:"Není" }}<br/>
       {% trans "Email na koordinátora: " %} {{ user_attendance.get_asociated_company_admin.user.email|default:"Není" }}<br/>
    </div>
-   <div id="member_description" class="description_switcher_div description" style="display:none">
+   <div class="description_switcher_div description member_description" style="display:none">
       <h3>{% trans "Člen Klubu přátel" %}</h3>
       {% trans "Členové Klubu přátel mají startovné zdarma. Pokud jste členem Klubu přátel, stiskněte tlačítko „Další“ a vyčkejte, než vaše členství ověříme." %}
    </div>
-   <div id="member_wannabe_description" class="description_switcher_div description" style="display:none">
+   <div class="description_switcher_div description member_wannabe_description" style="display:none">
       <h3>{% trans "Vstup do Klubu přátel" %}</h3>
       <div id="aklub-form-container"></div>
    </div>
 </div>
-<div id="pay_description" class="description_switcher_div description">
+<div class="description_switcher_div description pay_description pay_beneficiary_description">
    <h3>{% trans "Platba startovného" %}</h3>
    <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform" class="submit-once-form">
    {% trans "Soutěžící:" %} {{ user_attendance.userprofile.user.get_full_name }}<br/>
-   {% trans "Startovné:" %} {{amount}} Kč<br/>
+   {% trans "Startovné:" %} <span id="payment_amount">{{ amount }} Kč</span><br/>
    <div id="payu-hidden-values"></div>
    <script language="JavaScript" type="text/javascript">
    PlnPrintTemplate();

@@ -507,6 +507,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         context['surname'] = profile.user.last_name  # surname
         context['email'] = profile.user.email  # email
         context['amount'] = self.user_attendance.admission_fee()
+        context['beneficiary_amount'] = self.user_attendance.beneficiary_admission_fee()
         context['aklub_url'] = settings.AKLUB_URL
         return context
 
@@ -524,7 +525,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         }
         payment_type = form.cleaned_data['payment_type']
 
-        if payment_type == 'pay':
+        if payment_type in ('pay', 'pay_beneficiary'):
             logger.error(u'Pay payment type, request: %s' % (self.request))
             return HttpResponse(_(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."), status=500)
         else:
@@ -538,6 +539,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
 
 
 class PaymentView(UserAttendanceViewMixin, TemplateView):
+    beneficiary = False
     template_name = 'registration/payment.html'
 
     @method_decorator(login_required_simple)
@@ -554,10 +556,14 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
         order_id = '%s-1' % uid
         session_id = "%sJ%d" % (order_id, int(time.time()))
         # Save new payment record
+        if self.beneficiary:
+            amount = self.user_attendance.beneficiary_admission_fee()
+        else:
+            amount = self.user_attendance.admission_fee()
         p = Payment(session_id=session_id,
                     user_attendance=self.user_attendance,
                     order_id=order_id,
-                    amount=self.user_attendance.admission_fee(),
+                    amount=amount,
                     status=Payment.Status.NEW,
                     description="Ucastnicky poplatek Do prace na kole")
         p.save()
@@ -569,8 +575,7 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
         firstname = unidecode(profile.user.first_name)  # firstname
         lastname = unidecode(profile.user.last_name)  # surname
         email = profile.user.email  # email
-        amount = self.user_attendance.admission_fee()
-        amount_hal = int(self.user_attendance.admission_fee() * 100)  # v halerich
+        amount_hal = int(amount * 100)  # v halerich
         description = "Ucastnicky poplatek Do prace na kole"
         client_ip = util.get_client_ip(self.request)
         timestamp = str(int(time.time()))
@@ -601,6 +606,10 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
             client_ip,
             timestamp))
         return context
+
+
+class BeneficiaryPaymentView(PaymentView):
+    beneficiary = True
 
 
 class PaymentResult(UserAttendanceViewMixin, TemplateView):

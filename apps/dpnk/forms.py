@@ -90,9 +90,9 @@ class PrevNextMixin(object):
             self.url_name = url_name
             self.helper.form_class = url_name + "_form"
         if not hasattr(self, 'no_prev'):
-            self.helper.add_input(Submit('prev', _(u'Předchozí')))
+            self.helper.add_input(Submit('prev', _(u'Předchozí'), css_class="form-actions"))
         if not hasattr(self, 'no_next'):
-            self.helper.add_input(Submit('next', _(u'Další')))
+            self.helper.add_input(Submit('next', _(u'Další'), css_class="form-actions"))
         return super(PrevNextMixin, self).__init__(*args, **kwargs)
 
 
@@ -457,9 +457,10 @@ def small(string):
 class PaymentTypeForm(PrevNextMixin, forms.Form):
     CHOICES = [
         ('pay', _(u"Účastnický poplatek si platím sám.")),
+        ('pay_beneficiary', mark_safe(_(u"Chci podpořit tuto soutěž a zaplatit benefiční startovné. <i class='fa fa-heart'></i>"))),
         ('company', _(u"Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.")),
-        ('member', small(_(u"Jsem členem Klubu přátel Auto*Matu."))),
-        ('member_wannabe', small(_(u"Chci se stát členem Klubu přátel Auto*Matu."))),
+        ('member_wannabe', mark_safe(_(u"Chci podpořit městskou cyklistiku a mít startovné trvale zdarma. <i class='fa fa-heart'></i>"))),
+        ('member', small(_(u"Jsem členem Klubu přátel Auto*Matu, tedy mám startovné zdarma."))),
         ('free', small(_(u"Je mi poskytováno startovné zdarma."))),
     ]
 

@@ -504,6 +504,10 @@ class Campaign(models.Model):
         verbose_name=_(u"Benefiční startovné"),
         null=False,
         default=0)
+    benefitial_admission_fee_company = models.FloatField(
+        verbose_name=_(u"Benefiční startovné pro firmy"),
+        null=False,
+        default=0)
     free_entry_cases_html = models.TextField(
         verbose_name=_(u"Případy, kdy je startovné zdarma"),
         null=True,
@@ -775,6 +779,13 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             return self.campaign.late_admission_fee + t_shirt_price
         else:
             return self.campaign.admission_fee + t_shirt_price
+
+    def beneficiary_admission_fee(self):
+        if self.t_shirt_size:
+            t_shirt_price = self.t_shirt_size.price
+        else:
+            t_shirt_price = 0
+        return self.campaign.benefitial_admission_fee + t_shirt_price
 
     def company_admission_fee(self):
         if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
