@@ -32,6 +32,7 @@ from django import forms
 from django.db.models import Q, Max
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
+from django.db.utils import ProgrammingError
 from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
 from fieldsignals import post_save_changed, pre_save_changed
 from django.dispatch import receiver
@@ -549,8 +550,11 @@ def get_team_in_campaign_manager(campaign_slug):
     return TeamInCampaign
 
 
-for campaign in Campaign.objects.all():
-    setattr(Team, 'team_in_campaign_%s' % campaign.slug, get_team_in_campaign_manager(campaign.slug).objects)
+try:
+    for campaign in Campaign.objects.all():
+        setattr(Team, 'team_in_campaign_%s' % campaign.slug, get_team_in_campaign_manager(campaign.slug).objects)
+except ProgrammingError:
+    logger.error("campaign managers not installed")
 
 
 class Phase(models.Model):
