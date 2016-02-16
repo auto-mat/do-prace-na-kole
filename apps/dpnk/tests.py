@@ -25,6 +25,7 @@ from dpnk import results, models, mailing, views
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment
 import datetime
 import django
+import sys
 from django_admin_smoke_tests import tests
 from model_mommy import mommy
 import createsend
@@ -317,14 +318,20 @@ class ViewsTestsLogon(TransactionTestCase):
 
     def verify_views(self, views, status_code_map):
         for view in views:
-            status_code = status_code_map[view] if view in status_code_map else 200
-            address = view
-            response = self.client.get(address, follow=True)
-            filename = view.replace("/", "_")
-            if response.status_code != status_code:
-                with open("error_%s.html" % filename, "w") as f:
-                    f.write(response.content.decode())
-            self.assertEqual(response.status_code, status_code, "%s view failed, the failed page is saved to error_%s.html file." % (view, filename))
+            try:
+                status_code = status_code_map[view] if view in status_code_map else 200
+                address = view
+                response = self.client.get(address, follow=True)
+                filename = view.replace("/", "_")
+                if response.status_code != status_code:
+                    with open("error_%s.html" % filename, "w") as f:
+                        f.write(response.content.decode())
+                self.assertEqual(response.status_code, status_code, "%s view failed, the failed page is saved to error_%s.html file." % (view, filename))
+            except Exception:
+                raise Exception(
+                    "Problem with view '%s':\n%s" %
+                    (view, sys.exc_info()[2])
+                )
 
     views = [
         reverse('payment'),
