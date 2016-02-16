@@ -73,7 +73,7 @@ Společně s vámi tvoříme město, ve kterém chceme žít. www.auto-mat.cz
 
     for payment in invoice.payment_set.order_by("user_attendance__userprofile__user__last_name", "user_attendance__userprofile__user__first_name"):
         if invoice.company_pais_benefitial_fee:
-            amount = invoice.campaign.benefitial_admission_fee
+            amount = invoice.campaign.benefitial_admission_fee_company
         else:
             amount = payment.amount
         invoice_gen.add_item(Item(1, amount, description=u"Platba za soutěžící/ho %s" % (payment.user_attendance.userprofile.user.get_full_name()), tax=21))

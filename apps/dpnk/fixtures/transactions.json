@@ -20,6 +20,26 @@
     {
         "fields": {
             "user_attendance": 1115,
+            "polymorphic_ctype": ["dpnk", "payment"]
+        },
+        "model": "dpnk.transaction",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "amount": 145,
+            "pay_type": "fc",
+            "trans_id": "2075-2",
+            "session_id": "2075-1J1455206444",
+            "transaction_ptr": 4
+        },
+        "model": "dpnk.payment",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "user_attendance": 1115,
+            "status": 1,
             "polymorphic_ctype": ["dpnk", "packagetransaction"]
         },
         "model": "dpnk.transaction",

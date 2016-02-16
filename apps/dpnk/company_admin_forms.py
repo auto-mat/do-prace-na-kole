@@ -186,6 +186,12 @@ class CreateInvoiceForm(SubmitMixin, forms.ModelForm):
         label=_(u"Údaje jsou správné, chci vytvořit fakturu"),
     )
 
+    def __init__(self, request=None, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
+        amount = kwargs['initial']['campaign'].benefitial_admission_fee_company
+        self.fields['company_pais_benefitial_fee'].help_text = _(u"Benefiční startovné je %i Kč za osobu bez DPH." % amount)
+        return ret_val
+
     class Meta:
         model = Invoice
         fields = ('company_pais_benefitial_fee', 'order_number', 'create_invoice')

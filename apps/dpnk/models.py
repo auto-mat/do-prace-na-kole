@@ -1361,7 +1361,7 @@ class Invoice(models.Model):
         blank=True,
     )
     company_pais_benefitial_fee = models.BooleanField(
-        verbose_name=_(u"Moje firma si přeje podpořit Auto*Mat a zaplatit benefiční startovné (450 Kč za osobu)."),
+        verbose_name=_(u"Moje firma si přeje podpořit Auto*Mat a zaplatit benefiční startovné."),
         default=False,
     )
     total_amount = models.FloatField(

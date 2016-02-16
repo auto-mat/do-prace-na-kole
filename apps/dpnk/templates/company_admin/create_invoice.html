@@ -7,12 +7,16 @@
 {% include "messages_include.html" %}
 
 {% if payments.count > 0 %}
+<p>
 {% wp_article 10816 %}
-{% blocktrans count competitors_count=competitors_count %}
+</p>
+<p>
+{% blocktrans count competitors_count=payments.count %}
 Vytvořit fakturu pro následujícho soutěžícího:
 {% plural %}
 Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících:
 {% endblocktrans %}
+</p>
 <table id="pay_for" class="table table-bordered table-hover table-condensed">
    <thead>
       <tr>

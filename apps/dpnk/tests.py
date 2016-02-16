@@ -30,6 +30,7 @@ from model_mommy import mommy
 import createsend
 from unittest.mock import MagicMock, patch
 from collections import OrderedDict
+from PyPDF2 import PdfFileReader
 
 
 @override_settings(
@@ -251,6 +252,49 @@ class ViewsTestsLogon(TransactionTestCase):
         self.assertEquals(user.team.subsidiary.address.street, "Created street")
         self.assertEquals(user.team.subsidiary.company.name, "Created company")
 
+    def company_payment(self, beneficiary=False):
+        post_data = {
+            'paing_for': '1115',
+            'submit': 'Odeslat',
+        }
+        response = self.client.post(reverse('company_admin_pay_for_users'), post_data, follow=True)
+        self.assertRedirects(response, reverse('company_structure'))
+        p = Payment.objects.get(pk=4)
+        self.assertEquals(p.status, 1005)
+
+        response = self.client.get(reverse('invoices'))
+        self.assertContains(response, "Testing User 1")
+
+        post_data = {
+            'create_invoice': 'on',
+            'submit': 'Odeslat',
+            'order_number': 1323575433,
+        }
+        if beneficiary:
+            post_data['company_pais_benefitial_fee'] = "on"
+        response = self.client.post(reverse('invoices'), post_data, follow=True)
+        self.assertRedirects(response, reverse('invoices'))
+        p = Payment.objects.get(pk=4)
+        self.assertEquals(p.status, 1006)
+        if beneficiary:
+            self.assertEquals(p.invoice.total_amount, 544)
+        else:
+            self.assertEquals(p.invoice.total_amount, 175)
+        pdf = PdfFileReader(p.invoice.invoice_pdf)
+        pdf_string = pdf.pages[0].extractText()
+        if beneficiary:
+            self.assertTrue("Celkem: 450,-" in pdf_string)
+        else:
+            self.assertTrue("Celkem: 145,-" in pdf_string)
+        self.assertTrue("1323575433" in pdf_string)
+        self.assertTrue("Testing company" in pdf_string)
+
+    def test_company_payment(self):
+        self.company_payment()
+
+    def test_company_payment_beneficiary(self):
+        self.company_payment(beneficiary=True)
+
     def test_dpnk_team_view_no_team_set(self):
         post_data = {
             'company': '1',
@@ -283,6 +327,7 @@ class ViewsTestsLogon(TransactionTestCase):
             self.assertEqual(response.status_code, status_code, "%s view failed, the failed page is saved to error_%s.html file." % (view, filename))
 
     views = [
+        reverse('payment'),
         reverse('profil'),
         reverse('zmenit_tym'),
         reverse('upravit_trasu'),
@@ -298,7 +343,6 @@ class ViewsTestsLogon(TransactionTestCase):
         reverse('company_admin_application'),
         reverse('emission_calculator'),
         reverse('package'),
-        reverse('platba'),
         reverse('typ_platby'),
         reverse('zmenit_triko'),
         reverse('upravit_trasu'),
@@ -314,6 +358,7 @@ class ViewsTestsLogon(TransactionTestCase):
         reverse('edit_team'),
         reverse('questionnaire', kwargs={'questionnaire_slug': 'quest'}),
         reverse('edit_subsidiary', kwargs={'pk': 1}),
+        reverse('payment_beneficiary'),
         'error404.txt',
         reverse(views.daily_distance_json),
         reverse(views.daily_chart),
