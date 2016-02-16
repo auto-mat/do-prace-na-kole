@@ -611,26 +611,9 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
 
 
 class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
-    telephone = forms.CharField(
-        label=_(u"Telefon"),
-        validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
-        help_text=_(u"Telefon použije kurýr, který Vám přiveze soutěžní triko, slouží pro HelpDesk a další účely"),
-        max_length=30)
-
-    def save(self, *args, **kwargs):
-        ret_val = super(TShirtUpdateForm, self).save(*args, **kwargs)
-        self.instance.userprofile.telephone = self.cleaned_data.get('telephone')
-        self.instance.userprofile.save()
-        return ret_val
-
-    def __init__(self, *args, **kwargs):
-        ret_val = super(TShirtUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['telephone'].initial = self.instance.userprofile.telephone
-        return ret_val
-
     class Meta:
         model = models.UserAttendance
-        fields = ('t_shirt_size', 'telephone', )
+        fields = ('t_shirt_size', )
 
 
 class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
@@ -673,6 +656,10 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         label=_(u"Nechci, aby moje skutečné jméno bylo veřejně zobrazováno"),
         required=False,
     )
+    personal_data_opt_in = forms.BooleanField(
+        label=_("Souhlasím se zpracováním osobních údajů podle Zásad o ochraně a zpracování údajů A*M."),
+        required=True,
+    )
     mailing_opt_in = forms.ChoiceField(
         label=_(u"Soutěžní emaily"),
         help_text=_(u"Odběr emailů můžete kdykoliv v průběhu soutěže zrušit."),
@@ -682,6 +669,11 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         ],
         widget=forms.RadioSelect(),
     )
+    telephone = forms.CharField(
+        label=_(u"Telefon"),
+        validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
+        help_text=_(u"Telefon použije kurýr, který Vám přiveze soutěžní triko, slouží pro HelpDesk a další účely"),
+        max_length=30)
 
     def save(self, *args, **kwargs):
         ret_val = super(ProfileUpdateForm, self).save(*args, **kwargs)
@@ -723,19 +715,11 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         self.fields['last_name'].initial = self.instance.user.last_name
         self.fields['dont_show_name'].initial = self.instance.nickname is not None
         self.fields['mailing_opt_in'].initial = None
-
-        self.helper.layout = Layout(
-            'language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'mailing_opt_in', 'email',
-            HTML(_(u'Odesláním tohoto formuláře souhlasím s tím, aby poskytnuté údaje'
-                   u' (osobní údaje ve smyslu paragrafu 4 pís. a zákona 101/200 Sb., O ochraně osobních údajů),'
-                   u' byly až do odvolání zpracovány občanským sdružením Auto*Mat, o. s. a místně příslušným organizátorem'
-                   u' kampaně uvedeným u každého města na tomto webu pro účely kampaně Do práce na kole. ')),
-        )
         return ret_val
 
     class Meta:
         model = models.UserProfile
-        fields = ('language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'mailing_opt_in', 'email')
+        fields = ('language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'mailing_opt_in', 'email', 'telephone', 'personal_data_opt_in')
 
 
 class GpxFileForm(FormClassMixin, forms.ModelForm):

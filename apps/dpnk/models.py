@@ -1130,6 +1130,10 @@ class UserProfile(models.Model):
         verbose_name=_(u"Přeji si dostávat emailem informace o akcích, událostech a dalších informacích souvisejících se soutěží."),
         help_text=_(u"Odběr emailů můžete kdykoliv v průběhu soutěže zrušit."),
         default=None)
+    personal_data_opt_in = models.BooleanField(
+        verbose_name=_(u"Souhlas se zpracováním osobních údajů."),
+        blank=False,
+        default=False)
 
     def first_name(self):
         return self.user.first_name
