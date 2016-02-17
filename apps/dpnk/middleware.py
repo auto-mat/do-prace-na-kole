@@ -2,7 +2,7 @@
 
 # Author: Petr Dlouhý <petr.dlouhy@auto-mat.cz>
 #
-# Copyright (C) 2015 o.s. Auto*Mat
+# Copyright (C) 2016 o.s. Auto*Mat
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,12 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.conf import settings  # import the settings file
+from .models import UserAttendance
 
 
-def site(request):
-    return {'SITE_URL': settings.SITE_URL}
-
-
-def user_attendance(request):
-    return {'user_attendance': getattr(request, 'user_attendance', None)}
+class UserAttendanceMiddleware:
+    def process_request(self, request):
+        if request.user and request.user.is_authenticated():
+            campaign_slug = request.subdomain
+            try:
+                request.user_attendance = UserAttendance.\
+                    objects.select_related('campaign', 'team__subsidiary', 't_shirt_size', 'userprofile__user', 'representative_payment', 'related_company_admin').\
+                    get(userprofile__user=request.user, campaign__slug=campaign_slug)
+            except UserAttendance.DoesNotExist:
+                request.user_attendance = None
+        else:
+            request.user_attendance = None

@@ -518,6 +518,12 @@ class Campaign(models.Model):
     def __str__(self):
         return self.name
 
+    @denormalized(models.NullBooleanField, default=None)
+    @depend_on_related('Phase')
+    def late_admission_phase(self):
+        late_admission_phase = self.phase("late_admission")
+        return not late_admission_phase or late_admission_phase.is_actual()
+
     def user_attendances_for_delivery(self):
         return UserAttendance.objects.filter(
             campaign=self,
@@ -779,7 +785,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             t_shirt_price = self.t_shirt_size.price
         else:
             t_shirt_price = 0
-        if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
+        if self.campaign.late_admission_phase:
             return self.campaign.late_admission_fee + t_shirt_price
         else:
             return self.campaign.admission_fee + t_shirt_price
@@ -792,54 +798,67 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return self.campaign.benefitial_admission_fee + t_shirt_price
 
     def company_admission_fee(self):
-        if not self.campaign.phase("late_admission") or self.campaign.phase("late_admission").is_actual():
+        if self.campaign.late_admission_phase:
             return self.campaign.late_admission_fee_company + self.t_shirt_size.price
         else:
             return self.campaign.admission_fee_company + self.t_shirt_size.price
 
-    def payment(self):
-        # TODO: commented out in DPNK2015 because it is to power demanding for unused feature
-        # if self.team and self.team.subsidiary and self.admission_fee() == 0:
-        #    return {'payment': None,
-        #            'status': 'no_admission',
-        #            'status_description': _(u'neplatí se'),
-        #            'class': u'success',
-        #            }
+    @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
+    def representative_payment(self):
+        if self.team and self.team.subsidiary and self.admission_fee() == 0:
+            return None
 
         try:
-            payment = self.payments().filter(status__in=Payment.done_statuses).latest('id')
+            return self.payments().filter(status__in=Payment.done_statuses).latest('id')
+        except Transaction.DoesNotExist:
+            pass
+
+        try:
+            return self.payments().filter(status__in=Payment.waiting_statuses).latest('id')
+        except Transaction.DoesNotExist:
+            pass
+
+        try:
+            return self.payments().latest('id')
+        except Transaction.DoesNotExist:
+            pass
+
+        return None
+
+    def payment(self):
+        payment = self.representative_payment
+        if self.team and self.team.subsidiary and self.admission_fee() == 0:
+            return {'payment': None,
+                    'status': 'no_admission',
+                    'status_description': _(u'neplatí se'),
+                    'class': u'success',
+                    }
+
+        if not payment:
+            return {'payment': None,
+                    'status': 'none',
+                    'status_description': _(u'žádné platby'),
+                    'class': u'error',
+                    }
+
+        if payment.status in Payment.done_statuses:
             return {'payment': payment,
                     'status': 'done',
                     'status_description': _(u'zaplaceno'),
                     'class': u'success',
                     }
-        except Transaction.DoesNotExist:
-            pass
 
-        try:
-            payment = self.payments().filter(status__in=Payment.waiting_statuses).latest('id')
+        if payment.status in Payment.waiting_statuses:
             return {'payment': payment,
                     'status': 'waiting',
                     'status_description': _(u'nepotvrzeno'),
                     'class': u'warning',
                     }
-        except Transaction.DoesNotExist:
-            pass
 
-        try:
-            payment = self.payments()
-            return {'payment': payment.latest('id'),
-                    'status': 'unknown',
-                    'status_description': _(u'neznámý'),
-                    'class': u'warning',
-                    }
-        except Transaction.DoesNotExist:
-            pass
-
-        return {'payment': None,
-                'status': 'none',
-                'status_description': _(u'žádné platby'),
-                'class': u'error',
+        return {'payment': payment,
+                'status': 'unknown',
+                'status_description': _(u'neznámý'),
+                'class': u'warning',
                 }
 
     def payment_status(self):
@@ -1003,7 +1022,8 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         trips = Trip.objects.filter(user_attendance=self, date__in=days).all()
         return trips
 
-    def is_company_admin(self):
+    @denormalized(models.ForeignKey, to='CompanyAdmin', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
+    def related_company_admin(self):
         try:
             ca = CompanyAdmin.objects.get(user=self.userprofile.user, campaign=self.campaign)
             return ca

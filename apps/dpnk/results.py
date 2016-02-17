@@ -92,7 +92,7 @@ def get_competitions(user_attendance):
     else:
         competitions = competitions.exclude(competitor_type='liberos')
 
-    company_admin = user_attendance.is_company_admin()
+    company_admin = user_attendance.related_company_admin
     if company_admin:
         administrated_company = company_admin.administrated_company
         administrated_cities = City.objects.filter(subsidiary__company=administrated_company).distinct()

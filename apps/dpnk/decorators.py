@@ -182,18 +182,16 @@ def must_be_competitor(fn):
             return fn(view, request, *args, **kwargs)
 
         if util.is_competitor(request.user):
-            userprofile = request.user.userprofile
             campaign_slug = request.subdomain
-            try:
-                campaign = Campaign.objects.get(slug=campaign_slug)
-            except Campaign.DoesNotExist:
-                messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % campaign_slug)
-                raise Http404()
-            try:
-                user_attendance = userprofile.userattendance_set.select_related('campaign', 'team', 't_shirt_size').get(campaign__slug=campaign_slug)
-            except UserAttendance.DoesNotExist:
+            user_attendance = request.user_attendance
+            if user_attendance is None:
+                try:
+                    campaign = Campaign.objects.get(slug=campaign_slug)
+                except Campaign.DoesNotExist:
+                    messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % campaign_slug)
+                    raise Http404()
                 user_attendance = UserAttendance(
-                    userprofile=userprofile,
+                    userprofile=request.user.userprofile,
                     campaign=campaign,
                     approved_for_team='undecided',
                 )

@@ -183,7 +183,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                 _(u'Vaše platba typu %(payment_type)s ještě nebyla vyřízena. Můžete <a href="%(url)s">zadat novou platbu.</a>') %
                 {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('typ_platby')}))
 
-        company_admin = self.user_attendance.is_company_admin()
+        company_admin = self.user_attendance.related_company_admin
         if company_admin and company_admin.company_admin_approved == 'undecided':
             messages.warning(request, _(u'Vaše žádost o funkci koordinátora společnosti čeká na vyřízení.'))
         if company_admin and company_admin.company_admin_approved == 'denied':

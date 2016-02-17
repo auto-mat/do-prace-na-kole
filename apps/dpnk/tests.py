@@ -20,6 +20,7 @@
 from django.test import TestCase, RequestFactory, TransactionTestCase, Client
 from django.core.urlresolvers import reverse
 from django.core import mail
+from django.core.management import call_command
 from django.test.utils import override_settings
 from dpnk import results, models, mailing, views
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment
@@ -129,13 +130,74 @@ class ViewsTests(TransactionTestCase):
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
 
 
+class PaymentTests(TransactionTestCase):
+    fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
+
+    def setUp(self):
+        call_command('denorm_init')
+        call_command('denorm_rebuild')
+
+    def tearDown(self):
+        call_command('denorm_drop')
+
+    def test_no_payment_no_admission(self):
+        campaign = Campaign.objects.get(pk=339)
+        campaign.late_admission_fee = 0
+        campaign.save()
+        user = UserAttendance.objects.get(pk=1115)
+        p = user.payment()
+        self.assertEquals(p['status'], 'no_admission')
+        self.assertEquals(p['payment'], None)
+        self.assertEquals(p['class'], 'success')
+        self.assertEquals(str(p['status_description']), 'neplatí se')
+
+    def test_no_payment_waiting(self):
+        user = UserAttendance.objects.get(pk=1115)
+        payment = Payment.objects.get(pk=4)
+        payment.status = 1
+        payment.save()
+        p = user.payment()
+        self.assertEquals(p['status'], 'waiting')
+        self.assertEquals(p['payment'], payment)
+        self.assertEquals(p['class'], 'warning')
+        self.assertEquals(str(p['status_description']), 'nepotvrzeno')
+
+    def test_payment_done(self):
+        user = UserAttendance.objects.get(pk=1115)
+        payment = Payment.objects.get(pk=4)
+        p = user.payment()
+        self.assertEquals(p['status'], 'done')
+        self.assertEquals(p['payment'], payment)
+        self.assertEquals(p['class'], 'success')
+        self.assertEquals(str(p['status_description']), 'zaplaceno')
+
+    def test_payment_unknown(self):
+        user = UserAttendance.objects.get(pk=1115)
+        payment = Payment.objects.get(pk=4)
+        payment.status = 123
+        payment.save()
+        p = user.payment()
+        self.assertEquals(p['status'], 'unknown')
+        self.assertEquals(p['payment'], payment)
+        self.assertEquals(p['class'], 'warning')
+        self.assertEquals(str(p['status_description']), 'neznámý')
+
+    def test_payment_unknown_none(self):
+        user = UserAttendance.objects.get(pk=1016)
+        p = user.payment()
+        self.assertEquals(p['status'], 'none')
+        self.assertEquals(p['payment'], None)
+        self.assertEquals(p['class'], 'error')
+        self.assertEquals(str(p['status_description']), 'žádné platby')
+
+
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
     PAYU_KEY_1='123456789',
     PAYU_KEY_2='98764321',
 )
-class PaymentTests(TransactionTestCase):
+class PayuTests(TransactionTestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):

@@ -96,6 +96,7 @@ MIDDLEWARE_CLASSES = [
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
+    'dpnk.middleware.UserAttendanceMiddleware',
 ]
 AUTHENTICATION_BACKENDS = (
     'oauth2_provider.backends.OAuth2Backend',
