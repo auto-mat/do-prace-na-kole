@@ -33,6 +33,7 @@ import createsend
 from unittest.mock import MagicMock, patch
 from collections import OrderedDict
 from PyPDF2 import PdfFileReader
+import denorm
 
 
 @override_settings(
@@ -144,51 +145,49 @@ class PaymentTests(TransactionTestCase):
         campaign = Campaign.objects.get(pk=339)
         campaign.late_admission_fee = 0
         campaign.save()
+        denorm.flush()
         user = UserAttendance.objects.get(pk=1115)
-        p = user.payment()
-        self.assertEquals(p['status'], 'no_admission')
-        self.assertEquals(p['payment'], None)
-        self.assertEquals(p['class'], 'success')
-        self.assertEquals(str(p['status_description']), 'neplatí se')
+        self.assertEquals(user.payment_status, 'no_admission')
+        self.assertEquals(user.representative_payment, None)
+        self.assertEquals(user.payment_class(), 'success')
+        self.assertEquals(str(user.get_payment_status_display()), 'neplatí se')
 
-    def test_no_payment_waiting(self):
-        user = UserAttendance.objects.get(pk=1115)
+    def test_payment_waiting(self):
         payment = Payment.objects.get(pk=4)
         payment.status = 1
         payment.save()
-        p = user.payment()
-        self.assertEquals(p['status'], 'waiting')
-        self.assertEquals(p['payment'], payment)
-        self.assertEquals(p['class'], 'warning')
-        self.assertEquals(str(p['status_description']), 'nepotvrzeno')
+        denorm.flush()
+        user = UserAttendance.objects.get(pk=1115)
+        self.assertEquals(user.payment_status, 'waiting')
+        self.assertEquals(user.representative_payment, payment)
+        self.assertEquals(user.payment_class(), 'warning')
+        self.assertEquals(str(user.get_payment_status_display()), 'nepotvrzeno')
 
     def test_payment_done(self):
         user = UserAttendance.objects.get(pk=1115)
         payment = Payment.objects.get(pk=4)
-        p = user.payment()
-        self.assertEquals(p['status'], 'done')
-        self.assertEquals(p['payment'], payment)
-        self.assertEquals(p['class'], 'success')
-        self.assertEquals(str(p['status_description']), 'zaplaceno')
+        self.assertEquals(user.payment_status, 'done')
+        self.assertEquals(user.representative_payment, payment)
+        self.assertEquals(user.payment_class(), 'success')
+        self.assertEquals(str(user.get_payment_status_display()), 'zaplaceno')
 
     def test_payment_unknown(self):
-        user = UserAttendance.objects.get(pk=1115)
         payment = Payment.objects.get(pk=4)
         payment.status = 123
         payment.save()
-        p = user.payment()
-        self.assertEquals(p['status'], 'unknown')
-        self.assertEquals(p['payment'], payment)
-        self.assertEquals(p['class'], 'warning')
-        self.assertEquals(str(p['status_description']), 'neznámý')
+        denorm.flush()
+        user = UserAttendance.objects.get(pk=1115)
+        self.assertEquals(user.payment_status, 'unknown')
+        self.assertEquals(user.representative_payment, payment)
+        self.assertEquals(user.payment_class(), 'warning')
+        self.assertEquals(str(user.get_payment_status_display()), 'neznámý')
 
     def test_payment_unknown_none(self):
         user = UserAttendance.objects.get(pk=1016)
-        p = user.payment()
-        self.assertEquals(p['status'], 'none')
-        self.assertEquals(p['payment'], None)
-        self.assertEquals(p['class'], 'error')
-        self.assertEquals(str(p['status_description']), 'žádné platby')
+        self.assertEquals(user.payment_status, 'none')
+        self.assertEquals(user.representative_payment, None)
+        self.assertEquals(user.payment_class(), 'error')
+        self.assertEquals(str(user.get_payment_status_display()), 'žádné platby')
 
 
 @override_settings(
@@ -272,6 +271,8 @@ class ViewsTestsLogon(TransactionTestCase):
         self.factory = RequestFactory()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.assertTrue(self.client.login(username='test', password='test'))
+        call_command('denorm_init')
+        call_command('denorm_rebuild')
 
     def test_dpnk_team_view(self):
         response = self.client.get(reverse('zmenit_tym'))
@@ -481,24 +482,31 @@ class ViewsTestsLogon(TransactionTestCase):
 class TestTeams(TestCase):
     fixtures = ['campaign', 'users']
 
+    def setUp(self):
+        call_command('denorm_init')
+        call_command('denorm_rebuild')
+
     def test_member_count_update(self):
         team = Team.objects.get(id=1)
-        team.autoset_member_count()  # TODO: remove this once the signals in tests are repaired
         self.assertEqual(team.member_count, 2)
         campaign = Campaign.objects.get(pk=339)
         user = User.objects.create(first_name="Third", last_name="User", username="third_user")
         userprofile = UserProfile.objects.create(user=user)
         UserAttendance.objects.create(team=team, campaign=campaign, userprofile=userprofile, approved_for_team='approved')
-        team.autoset_member_count()  # TODO: remove this once the signals in tests are repaired
+        denorm.flush()
+        team = Team.objects.get(id=1)
         self.assertEqual(team.member_count, 3)
 
 
 class ResultsTests(TestCase):
     fixtures = ['users', 'campaign', 'test_results_data']
 
+    def setUp(self):
+        call_command('denorm_init')
+        call_command('denorm_rebuild')
+
     def test_get_competitors(self):
         team = Team.objects.get(id=1)
-        team.autoset_member_count()  # TODO: remove this once the signals in tests are repaired
         query = results.get_competitors(Competition.objects.get(id=0))
         self.assertListEqual(list(query.all()), [team])
 

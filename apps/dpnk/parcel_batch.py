@@ -80,7 +80,7 @@ def make_sheet(package_transaction, canvas):
     canvas.drawString(2 * cm, 20 * cm, u"%s %s" % (user_attendance.team.subsidiary.address_street, user_attendance.team.subsidiary.address_street_number))
     canvas.drawString(2 * cm, 19.5 * cm, u"%s, %s" % (user_attendance.team.subsidiary.address_psc, user_attendance.team.subsidiary.address_city))
 
-    realized = getattr(user_attendance.payment()['payment'], 'realized', None)
+    realized = getattr(user_attendance.representative_payment, 'realized', None)
     if realized:
         canvas.drawString(2 * cm, 18.5 * cm, u"Zaplaceno: %s" % (realized.date()))
 

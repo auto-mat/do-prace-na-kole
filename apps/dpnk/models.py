@@ -308,20 +308,20 @@ class Team(models.Model):
         null=False,
         blank=False)
 
-    # Auto fields:
-    member_count = models.IntegerField(
+    @denormalized(
+        models.IntegerField,
         verbose_name=_(u"Počet právoplatných členů týmu"),
-        null=False,
+        null=True,
         blank=False,
         db_index=True,
-        default=0,
-    )
-
-    def autoset_member_count(self):
-        self.member_count = self.members().count()
-        self.save()
-        if self.member_count > settings.MAX_TEAM_MEMBERS:
+        default=None,
+        skip={'invitation_token'})
+    @depend_on_related('UserAttendance')
+    def member_count(self):
+        member_count = self.members().count()
+        if member_count > settings.MAX_TEAM_MEMBERS:
             logger.error(u"Too many members in team %s" % self)
+        return member_count
 
     def unapproved_members(self):
         return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True, approved_for_team='undecided')
@@ -332,7 +332,7 @@ class Team(models.Model):
     def members(self):
         return self.users.filter(approved_for_team='approved', userprofile__user__is_active=True)
 
-    @denormalized(models.IntegerField, null=True)
+    @denormalized(models.IntegerField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def get_rides_count_denorm(self):
         rides_count = 0
@@ -346,7 +346,7 @@ class Team(models.Model):
     def get_length(self):
         return results.get_team_length(self)
 
-    @denormalized(models.TextField, null=True)
+    @denormalized(models.TextField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def name_with_members(self):
         return u"%s (%s)" % (self.name, u", ".join([u.userprofile.name() for u in self.members()]))
@@ -804,6 +804,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             return self.campaign.admission_fee_company + self.t_shirt_size.price
 
     @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
+    @depend_on_related('Transaction', foreign_key='user_attendance')
     def representative_payment(self):
         if self.team and self.team.subsidiary and self.admission_fee() == 0:
             return None
@@ -825,62 +826,41 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
         return None
 
-    def payment(self):
-        payment = self.representative_payment
-        if self.team and self.team.subsidiary and self.admission_fee() == 0:
-            return {'payment': None,
-                    'status': 'no_admission',
-                    'status_description': _(u'neplatí se'),
-                    'class': u'success',
-                    }
+    PAYMENT_CHOICES = (
+        ('no_admission', _(u'neplatí se')),
+        ('none', _(u'žádné platby')),
+        ('done', _(u'zaplaceno')),
+        ('waiting', _(u'nepotvrzeno')),
+        ('unknown', _(u'neznámý')),
+    )
 
-        if not payment:
-            return {'payment': None,
-                    'status': 'none',
-                    'status_description': _(u'žádné platby'),
-                    'class': u'error',
-                    }
-
-        if payment.status in Payment.done_statuses:
-            return {'payment': payment,
-                    'status': 'done',
-                    'status_description': _(u'zaplaceno'),
-                    'class': u'success',
-                    }
-
-        if payment.status in Payment.waiting_statuses:
-            return {'payment': payment,
-                    'status': 'waiting',
-                    'status_description': _(u'nepotvrzeno'),
-                    'class': u'warning',
-                    }
-
-        return {'payment': payment,
-                'status': 'unknown',
-                'status_description': _(u'neznámý'),
-                'class': u'warning',
-                }
-
+    @denormalized(models.CharField, choices=PAYMENT_CHOICES, max_length=20, null=True, skip={'updated', 'created'})
+    @depend_on_related('Transaction', foreign_key='user_attendance')
     def payment_status(self):
-        return self.payment()['status']
+        if self.team and self.team.subsidiary and self.admission_fee() == 0:
+            return 'no_admission'
+        payment = self.representative_payment
+        if not payment:
+            return 'none'
+        if payment.status in Payment.done_statuses:
+            return 'done'
+        if payment.status in Payment.waiting_statuses:
+            return 'waiting'
+        return 'unknown'
 
-    def payment_type(self):
-        payment = self.payment()['payment']
-        if payment:
-            return payment.pay_type
-        else:
-            return None
-
-    def payment_amount(self):
-        payment = self.payment()['payment']
-        if payment:
-            return payment.amount
-        else:
-            return None
+    def payment_class(self):
+        payment_classes = {
+            'no_admission': 'success',
+            'none': 'error',
+            'done': 'success',
+            'waiting': 'warning',
+            'unknown': 'warning',
+        }
+        return payment_classes[self.payment_status]
 
     def payment_type_string(self):
-        if self.payment_type():
-            return Payment.PAY_TYPES_DICT[self.payment_type()].upper()
+        if self.representative_payment:
+            return Payment.PAY_TYPES_DICT[self.representative_payment.pay_type].upper()
 
     def get_competitions(self):
         return results.get_competitions_with_info(self)
@@ -896,16 +876,29 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     @denormalized(models.IntegerField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
+    @depend_on_related('Campaign')
     def get_rides_count_denorm(self):
         return results.get_rides_count(self)
 
     def get_frequency(self, day=None):
         return results.get_userprofile_frequency(self, day)
 
-    def get_frequency_percentage(self, day=None):
-        return self.get_frequency(day) * 100
+    @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
+    @depend_on_related('Trip')
+    @depend_on_related('Campaign')
+    def frequency(self):
+        return self.get_frequency()
 
-    def get_length(self):
+    def get_frequency_percentage(self, day=None):
+        if day:
+            return self.get_frequency(day) * 100
+        else:
+            return self.frequency * 100
+
+    @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
+    @depend_on_related('Trip')
+    @depend_on_related('Campaign')
+    def trip_length_total(self):
         return results.get_userprofile_length(self)
 
     def get_nonreduced_length(self):
@@ -913,7 +906,11 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     def get_distance(self, round_digits=2):
         if self.track:
-            return round(UserAttendance.objects.length().get(id=self.id).length.km, round_digits)
+            length = UserAttendance.objects.length().get(id=self.id).length
+            if not length:
+                logger.error("length not available for user %s" % self)
+                return 0
+            return round(length.km, round_digits)
         else:
             return self.distance
 
@@ -989,7 +986,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return self.team and self.approved_for_team == 'approved'
 
     def payment_complete(self):
-        return self.payment()['status'] == 'done' or self.payment()['status'] == 'no_admission'
+        return self.payment_status == 'done' or self.payment_status == 'no_admission'
 
     def working_schedule_complete(self):
         return self.user_trips.count() != 0
@@ -1029,6 +1026,15 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             return ca
         except CompanyAdmin.DoesNotExist:
             return None
+
+    def unanswered_questionnaires(self):
+        return results.get_competitions_without_admission(self).filter(type='questionnaire')
+
+    @denormalized(models.NullBooleanField, default=None, skip={'created', 'updated'})
+    @depend_on_related('Team')
+    @depend_on_related('Competition')
+    def has_unanswered_questionnaires(self):
+        return self.unanswered_questionnaires().exists()
 
     def get_asociated_company_admin(self):
         if not self.team:
@@ -1452,7 +1458,7 @@ class Invoice(models.Model):
         payments = self.payments_to_add()
         self.payment_set = payments
         for payment in payments:
-            payment.status = Payment.Status.INVOICE_MADE
+            payment.status = Status.INVOICE_MADE
             payment.save()
 
     def clean(self):
@@ -1464,13 +1470,13 @@ def change_invoice_payments_status(sender, instance, changed_fields=None, **kwar
     field, (old, new) = next(iter(changed_fields.items()))
     if new is not None:
         for payment in instance.payment_set.all():
-            payment.status = Payment.Status.INVOICE_PAID
+            payment.status = Status.INVOICE_PAID
             payment.save()
 post_save_changed.connect(change_invoice_payments_status, sender=Invoice, fields=['paid_date'])
 
 
 def payments_to_invoice(company, campaign):
-    return Payment.objects.filter(pay_type='fc', status=Payment.Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=company, user_attendance__campaign=campaign)
+    return Payment.objects.filter(pay_type='fc', status=Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=company, user_attendance__campaign=campaign)
 
 
 @receiver(post_save, sender=Invoice)
@@ -1486,12 +1492,65 @@ def create_invoice_files(sender, instance, created, **kwargs):
         instance.save()
 
 
+class Status (object):
+    NEW = 1
+    CANCELED = 2
+    REJECTED = 3
+    COMMENCED = 4
+    WAITING_CONFIRMATION = 5
+    REJECTED = 7
+    DONE = 99
+    WRONG_STATUS = 888
+    COMPANY_ACCEPTS = 1005
+    INVOICE_MADE = 1006
+    INVOICE_PAID = 1007
+
+    PACKAGE_NEW = 20001
+    PACKAGE_ACCEPTED_FOR_ASSEMBLY = 20002
+    PACKAGE_ASSEMBLED = 20003
+    PACKAGE_SENT = 20004
+    PACKAGE_DELIVERY_CONFIRMED = 20005
+    PACKAGE_DELIVERY_DENIED = 20006
+    PACKAGE_RECLAIM = 20007
+
+    BIKE_REPAIR = 40001
+
+    COMPETITION_START_CONFIRMED = 30002
+
+STATUS = (
+    (Status.NEW, _(u'Nová')),
+    (Status.CANCELED, _(u'Zrušena')),
+    (Status.REJECTED, _(u'Odmítnuta')),
+    (Status.COMMENCED, _(u'Zahájena')),
+    (Status.WAITING_CONFIRMATION, _(u'Očekává potvrzení')),
+    (Status.REJECTED, _(u'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU')),
+    (Status.DONE, _(u'Platba přijata')),
+    (Status.WRONG_STATUS, _(u'Nesprávný status -- kontaktovat PayU')),
+    (Status.COMPANY_ACCEPTS, _(u'Platba akceptována firmou')),
+    (Status.INVOICE_MADE, _(u'Faktura vystavena')),
+    (Status.INVOICE_PAID, _(u'Faktura zaplacena')),
+
+    (Status.PACKAGE_NEW, 'Nový'),
+    (Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY, 'Přijat k sestavení'),
+    (Status.PACKAGE_ASSEMBLED, 'Sestaven'),
+    (Status.PACKAGE_SENT, 'Odeslán'),
+    (Status.PACKAGE_DELIVERY_CONFIRMED, 'Doručení potvrzeno'),
+    (Status.PACKAGE_DELIVERY_DENIED, 'Dosud nedoručeno'),
+    (Status.PACKAGE_RECLAIM, 'Reklamován'),
+
+    (Status.BIKE_REPAIR, 'Oprava v cykloservisu'),
+
+    (Status.COMPETITION_START_CONFIRMED, 'Potvrzen vstup do soutěže'),
+)
+
+
 @with_author
 class Transaction(PolymorphicModel):
     """Transakce"""
     status = models.PositiveIntegerField(
         verbose_name=_(u"Status"),
         default=0,
+        choices=STATUS,
         null=False, blank=False)
     user_attendance = models.ForeignKey(
         UserAttendance,
@@ -1520,13 +1579,6 @@ class Transaction(PolymorphicModel):
 class CommonTransaction(Transaction):
     """Obecná transakce"""
 
-    class Status (object):
-        BIKE_REPAIR = 40001
-
-    STATUS = (
-        (Status.BIKE_REPAIR, 'Oprava v cykloservisu'),
-    )
-
     class Meta:
         verbose_name = _(u"Obecná transakce")
         verbose_name_plural = _(u"Obecné transakce")
@@ -1545,13 +1597,6 @@ class CommonTransactionForm(forms.ModelForm):
 class UserActionTransaction(Transaction):
     """Uživatelská akce"""
 
-    class Status (object):
-        COMPETITION_START_CONFIRMED = 30002
-
-    STATUS = (
-        (Status.COMPETITION_START_CONFIRMED, 'Potvrzen vstup do soutěže'),
-    )
-
     class Meta:
         verbose_name = _(u"Uživatelská akce")
         verbose_name_plural = _(u"Uživatelské akce")
@@ -1560,7 +1605,7 @@ class UserActionTransaction(Transaction):
 class UserActionTransactionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserActionTransactionForm, self).__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=UserActionTransaction.STATUS)
+        self.fields['status'] = forms.ChoiceField(choices=STATUS)
 
     class Meta:
         model = UserActionTransaction
@@ -1585,25 +1630,6 @@ class PackageTransaction(Transaction):
         verbose_name=_(u"Dávka objednávek"),
         null=False,
         blank=False)
-
-    class Status (object):
-        PACKAGE_NEW = 20001
-        PACKAGE_ACCEPTED_FOR_ASSEMBLY = 20002
-        PACKAGE_ASSEMBLED = 20003
-        PACKAGE_SENT = 20004
-        PACKAGE_DELIVERY_CONFIRMED = 20005
-        PACKAGE_DELIVERY_DENIED = 20006
-        PACKAGE_RECLAIM = 20007
-
-    STATUS = (
-        (Status.PACKAGE_NEW, 'Nový'),
-        (Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY, 'Přijat k sestavení'),
-        (Status.PACKAGE_ASSEMBLED, 'Sestaven'),
-        (Status.PACKAGE_SENT, 'Odeslán'),
-        (Status.PACKAGE_DELIVERY_CONFIRMED, 'Doručení potvrzeno'),
-        (Status.PACKAGE_DELIVERY_DENIED, 'Dosud nedoručeno'),
-        (Status.PACKAGE_RECLAIM, 'Reklamován'),
-    )
 
     shipped_statuses = [
         Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
@@ -1653,7 +1679,7 @@ class PackageTransaction(Transaction):
 class PackageTransactionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PackageTransactionForm, self).__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=PackageTransaction.STATUS)
+        self.fields['status'] = forms.ChoiceField(choices=STATUS)
 
     class Meta:
         model = PackageTransaction
@@ -1662,34 +1688,6 @@ class PackageTransactionForm(forms.ModelForm):
 
 class Payment(Transaction):
     """Platba"""
-
-    class Status (object):
-        NEW = 1
-        CANCELED = 2
-        REJECTED = 3
-        COMMENCED = 4
-        WAITING_CONFIRMATION = 5
-        REJECTED = 7
-        DONE = 99
-        WRONG_STATUS = 888
-        COMPANY_ACCEPTS = 1005
-        INVOICE_MADE = 1006
-        INVOICE_PAID = 1007
-
-    STATUS = (
-        (Status.NEW, _(u'Nová')),
-        (Status.CANCELED, _(u'Zrušena')),
-        (Status.REJECTED, _(u'Odmítnuta')),
-        (Status.COMMENCED, _(u'Zahájena')),
-        (Status.WAITING_CONFIRMATION, _(u'Očekává potvrzení')),
-        (Status.REJECTED, _(u'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU')),
-        (Status.DONE, _(u'Platba přijata')),
-        (Status.WRONG_STATUS, _(u'Nesprávný status -- kontaktovat PayU')),
-        (Status.COMPANY_ACCEPTS, _(u'Platba akceptována firmou')),
-        (Status.INVOICE_MADE, _(u'Faktura vystavena')),
-        (Status.INVOICE_PAID, _(u'Faktura zaplacena')),
-    )
-    STATUS_MAP = dict(STATUS)
 
     done_statuses = [
         Status.DONE,
@@ -1799,11 +1797,11 @@ class Payment(Transaction):
             logger.info(u"Saving payment (before): %s" % Payment.objects.get(pk=self.id).full_string())
         super(Payment, self).save(*args, **kwargs)
 
-        statuses_company_ok = (Payment.Status.COMPANY_ACCEPTS, Payment.Status.INVOICE_MADE, Payment.Status.INVOICE_PAID)
+        statuses_company_ok = (Status.COMPANY_ACCEPTS, Status.INVOICE_MADE, Status.INVOICE_PAID)
         if (
                 self.user_attendance and
-                (status_before_update != Payment.Status.DONE) and
-                self.status == Payment.Status.DONE):
+                (status_before_update != Status.DONE) and
+                self.status == Status.DONE):
             payment_confirmation_mail(self.user_attendance)
         elif (self.user_attendance and
                 (status_before_update not in statuses_company_ok) and
@@ -1811,9 +1809,6 @@ class Payment(Transaction):
             payment_confirmation_company_mail(self.user_attendance)
 
         logger.info(u"Saving payment (after):  %s" % Payment.objects.get(pk=self.id).full_string())
-
-    def get_status_display(self):
-        return Payment.STATUS_MAP[self.status]
 
     def full_string(self):
         if self.user_attendance:
@@ -1841,7 +1836,7 @@ class Payment(Transaction):
 class PaymentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PaymentForm, self).__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=Payment.STATUS)
+        self.fields['status'] = forms.ChoiceField(choices=STATUS)
 
     class Meta:
         model = Payment
@@ -2652,21 +2647,13 @@ def post_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     old_team = Team.objects.get(pk=old) if old else None
     new_team = Team.objects.get(pk=new) if new else None
     if new_team:
-        new_team.autoset_member_count()
         results.recalculate_results_team(new_team)
 
     if old_team:
-        old_team.autoset_member_count()
         results.recalculate_results_team(old_team)
 
     results.recalculate_result_competitor(instance)
 post_save_changed.connect(post_user_team_changed, sender=UserAttendance, fields=['team'])
-
-
-def post_user_approved_for_team(sender, instance, changed_fields=None, **kwargs):
-    if instance.team:
-        instance.team.autoset_member_count()
-post_save_changed.connect(post_user_approved_for_team, sender=UserAttendance, fields=['approved_for_team'])
 
 
 @receiver(post_save, sender=User)
@@ -2712,14 +2699,12 @@ def set_trip_post(sender, instance, *args, **kwargs):
 def update_user_attendance(sender, instance, *args, **kwargs):
     if not kwargs.get('raw', False):
         mailing.add_or_update_user(instance.user_attendance)
-    if instance.user_attendance.team:
-        instance.user_attendance.team.autoset_member_count()
 
 
 @receiver(pre_delete, sender=Invoice)
 def user_attendance_pre_delete(sender, instance, *args, **kwargs):
     for payment in instance.payment_set.all():
-        payment.status = Payment.Status.COMPANY_ACCEPTS
+        payment.status = Status.COMPANY_ACCEPTS
         payment.save()
 
 

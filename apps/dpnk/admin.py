@@ -318,60 +318,6 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFie
         return super(CompetitionAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
 
-class PaymentFilter(SimpleListFilter):
-    title = _(u"stav platby")
-    parameter_name = u'payment_state'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('not_paid', u'nezaplaceno'),
-            ('no_admission', u'neplatí se'),
-            ('done', u'vyřízeno'),
-            ('paid_payu', u'zaplaceno přes PayU'),
-            ('paid', u'zaplaceno'),
-            ('waiting', u'čeká se'),
-            ('unknown', u'neznámý'),
-            ('none', u'bez plateb'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'not_paid':
-            return queryset.\
-                filter(userprofile__user__is_active=True).\
-                exclude(transactions__status__in=models.Payment.done_statuses).\
-                exclude(campaign__admission_fee=0).distinct()
-        elif self.value() == 'no_admission':
-            return queryset.\
-                filter(Q(campaign__admission_fee=0) | Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).\
-                distinct()
-        elif self.value() == 'done':
-            return queryset.\
-                filter(Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0)).\
-                distinct()
-        elif self.value() == 'paid_payu':
-            return queryset.\
-                filter(Q(transactions__status__in=models.Payment.done_statuses) & Q(transactions__payment__pay_type__in=models.Payment.PAYU_PAYING_TYPES)).\
-                distinct()
-        elif self.value() == 'paid':
-            return queryset.\
-                filter(Q(transactions__status__in=models.Payment.done_statuses)).\
-                exclude(Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).\
-                distinct()
-        elif self.value() == 'waiting':
-            return queryset.\
-                exclude(transactions__status__in=models.Payment.done_statuses).\
-                filter(transactions__status__in=models.Payment.waiting_statuses).\
-                distinct()
-        elif self.value() == 'unknown':
-            return queryset.\
-                exclude(campaign__admission_fee=0).\
-                exclude(transactions__status__in=set(models.Payment.done_statuses) | set(models.Payment.waiting_statuses)).\
-                exclude(transactions=None).\
-                distinct()
-        elif self.value() == 'none':
-            return queryset.filter(transactions=None).distinct()
-
-
 class UserAttendanceForm(forms.ModelForm):
     class Meta:
         model = models.UserAttendance
@@ -568,21 +514,6 @@ class UserAdmin(ExportMixin, NestedModelAdmin, UserAdmin):
         return ", ".join([str(c) for c in obj.userprofile.administrated_cities.all()])
 
 
-# TODO: this filters any paymant that user has is of specified type, should be only the last payment
-class PaymentTypeFilter(SimpleListFilter):
-    title = _(u"typ platby")
-    parameter_name = u'payment_type'
-
-    def lookups(self, request, model_admin):
-        return models.Payment.PAY_TYPES
-
-    def queryset(self, request, queryset):
-        if self.value():
-            # TODO: this is slow since it doesn't use querysets
-            users = [u.id for u in queryset.filter(transactions__payment__pay_type=self.value()) if u.payment()['payment'].pay_type == self.value()]
-            return queryset.filter(id__in=users)
-
-
 class PackageConfirmationFilter(SimpleListFilter):
     title = _(u"Doručení startovního balíčku")
     parameter_name = u'package_confirmation'
@@ -718,12 +649,13 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         'approved_for_team',
         'campaign__name',
         't_shirt_size',
-        'payment_type',
         'payment_status',
-        'payment_amount',
+        'representative_payment__pay_type',
+        'representative_payment__status',
+        'representative_payment__amount',
         'team__member_count',
-        'get_frequency',
-        'get_length',
+        'frequency',
+        'trip_length_total',
         'get_rides_count_denorm',
         'created')
     list_filter = (
@@ -733,8 +665,9 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         ('t_shirt_size', RelatedFieldComboFilter),
         'userprofile__user__is_active',
         CompetitionEntryFilter,
-        PaymentTypeFilter,
-        PaymentFilter,
+        'representative_payment__pay_type',
+        'representative_payment__status',
+        'payment_status',
         ('team__member_count', AllValuesComboFilter),
         PackageConfirmationFilter,
         ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter),
@@ -780,7 +713,47 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
 
     def get_queryset(self, request):
         queryset = super(UserAttendanceAdmin, self).get_queryset(request)
-        return queryset  # .select_related('userprofile__user', 'team__subsidiary__company', 'campaign__cityincampaigns', 't_shirt_size', 'team__subsidiary__city', 'campaign')
+        return queryset.select_related('team__subsidiary__city', 'team__subsidiary__company', 't_shirt_size').only(
+            'id',
+            'campaign_id',
+            'userprofile',
+            'team',
+            't_shirt_size',
+            'distance',
+            'approved_for_team',
+            'userprofile__user__email',
+            'userprofile__user__last_name',
+            'userprofile__user__first_name',
+            'userprofile__user__username',
+            'userprofile__telephone',
+            'userprofile__nickname',
+            'userprofile__sex',
+            'distance',
+            'team__name',
+            'team__subsidiary',
+            'team__subsidiary__city',
+            'team__subsidiary__company',
+            'team__subsidiary__address_street_number',
+            'team__subsidiary__address_street',
+            'team__subsidiary__address_recipient',
+            'team__subsidiary__address_psc',
+            'team__subsidiary__address_city',
+            't_shirt_size__name',
+            't_shirt_size__price',
+            'approved_for_team',
+            'campaign__name',
+            'campaign__late_admission_phase',
+            'campaign__admission_fee',
+            'representative_payment__pay_type',
+            'representative_payment__status',
+            'representative_payment__amount',
+            't_shirt_size',
+            'team__member_count',
+            'frequency',
+            'trip_length_total',
+            'get_rides_count_denorm',
+            'created',
+            )
 
 
 def recalculate_team_member_count(modeladmin, request, queryset):

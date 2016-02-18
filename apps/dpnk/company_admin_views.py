@@ -33,7 +33,7 @@ from . import company_admin_forms
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from django.core.urlresolvers import reverse_lazy
 from .string_lazy import format_lazy
-from .models import Company, CompanyAdmin, Payment, Competition, Campaign, UserProfile, Subsidiary
+from .models import Company, CompanyAdmin, Competition, Campaign, UserProfile, Subsidiary
 from .views import UserAttendanceViewMixin
 from . import models
 import registration.signals
@@ -74,7 +74,7 @@ class SelectUsersPayView(FormView):
         for userprofile in paing_for:
             for payment in userprofile.payments().all():
                 if payment.pay_type == 'fc':
-                    payment.status = Payment.Status.COMPANY_ACCEPTS
+                    payment.status = models.Status.COMPANY_ACCEPTS
                     payment.description = payment.description + "\nFA %s odsouhlasil dne %s" % (self.request.user.username, datetime.datetime.now())
                     payment.save()
                     break

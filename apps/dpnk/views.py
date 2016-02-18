@@ -150,7 +150,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                         {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
                 elif self.user_attendance.approved_for_team == 'denied':
                     messages.error(request, mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')))
-                elif len(self.user_attendance.team.unapproved_members()) > 0:
+                elif self.user_attendance.team.member_count > 0:
                     messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members')))
                 elif self.user_attendance.is_libero():
                     # TODO: get WP slug for city
@@ -164,11 +164,10 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                             'invite_url':
                             reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym'), 'city': self.user_attendance.team.subsidiary.city.slug}))
 
-            unanswered_questionnaires = self.user_attendance.get_competitions_without_admission().filter(type='questionnaire')
-            if unanswered_questionnaires.exists():
+            if self.user_attendance.has_unanswered_questionnaires:
                 competitions = ", ".join([
                     "<a href='%(url)s'>%(name)s</a>" %
-                    {"url": reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}), "name": q.name} for q in unanswered_questionnaires.all()])
+                    {"url": reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}), "name": q.name} for q in self.user_attendance.unanswered_questionnaires().all()])
                 messages.info(request, mark_safe(_(u'Nezapomeňte vyplnit odpovědi v následujících soutěžích: %s!') % competitions))
             if not self.user_attendance.track and not self.user_attendance.distance:
                 messages.info(request, mark_safe(
@@ -178,7 +177,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                       u' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
                       u' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu')))
 
-        if self.user_attendance.payment_status() not in ('done', 'none',) and self.registration_phase not in ('typ_platby',):
+        if self.user_attendance.payment_status not in ('done', 'none',) and self.registration_phase not in ('typ_platby',):
             messages.info(request, mark_safe(
                 _(u'Vaše platba typu %(payment_type)s ještě nebyla vyřízena. Můžete <a href="%(url)s">zadat novou platbu.</a>') %
                 {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('typ_platby')}))
@@ -452,7 +451,7 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
         context['old_team'] = self.user_attendance.team
         context['new_team'] = self.new_team
 
-        if self.user_attendance.payment_status() == 'done' and self.user_attendance.team.subsidiary != self.new_team.subsidiary:
+        if self.user_attendance.payment_status == 'done' and self.user_attendance.team.subsidiary != self.new_team.subsidiary:
             return {'fullpage_error_message': _(u"Již máte zaplaceno, nemůžete měnit tým mimo svoji pobočku.")}
 
         if self.user_attendance.campaign != self.new_team.campaign:
@@ -490,10 +489,10 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
     @must_have_team
     @must_be_in_phase("payment")
     @user_attendance_has(
-        lambda ua: ua.payment()['status'] == 'done',
+        lambda ua: ua.payment_status == 'done',
         mark_safe_lazy(format_lazy(_(u"Již máte startovné zaplaceno. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
     @user_attendance_has(
-        lambda ua: ua.payment()['status'] == 'no_admission',
+        lambda ua: ua.payment_status == 'no_admission',
         mark_safe_lazy(format_lazy(_(u"Startovné se neplatí. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
     def dispatch(self, request, *args, **kwargs):
         dispatch = super(PaymentTypeView, self).dispatch(request, *args, **kwargs)
@@ -531,7 +530,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         else:
             payment_choice = payment_choices[payment_type]
             if payment_choice:
-                Payment(user_attendance=self.user_attendance, amount=payment_choice['amount'], pay_type=payment_choice['type'], status=Payment.Status.NEW).save()
+                Payment(user_attendance=self.user_attendance, amount=payment_choice['amount'], pay_type=payment_choice['type'], status=models.Status.NEW).save()
                 messages.add_message(self.request, messages.WARNING, payment_choice['message'], fail_silently=True)
                 logger.info('Inserting %s payment for %s' % (payment_type, self.user_attendance))
 
@@ -550,7 +549,7 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(PaymentView, self).get_context_data(**kwargs)
 
-        if self.user_attendance.payment()['status'] == 'no_admission':
+        if self.user_attendance.payment_status == 'no_admission':
             return redirect(reverse('profil'))
         uid = self.request.user.id
         order_id = '%s-1' % uid
@@ -564,7 +563,7 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
                     user_attendance=self.user_attendance,
                     order_id=order_id,
                     amount=amount,
-                    status=Payment.Status.NEW,
+                    status=models.Status.NEW,
                     description="Ucastnicky poplatek Do prace na kole")
         p.save()
         logger.info(
@@ -632,9 +631,9 @@ class PaymentResult(UserAttendanceViewMixin, TemplateView):
             p = Payment.objects.select_for_update().get(session_id=session_id)
             if p.status not in Payment.done_statuses:
                 if success:
-                    p.status = Payment.Status.COMMENCED
+                    p.status = models.Status.COMMENCED
                 else:
-                    p.status = Payment.Status.REJECTED
+                    p.status = models.Status.REJECTED
             if not p.trans_id:
                 p.trans_id = trans_id
             if not p.pay_type:
@@ -1449,10 +1448,9 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
             unapproved_users.append([
                 ('state', None, self.user_attendance.approved_for_team),
                 ('id', None, str(self.user_attendance.id)),
-                ('payment', None, self.user_attendance.payment()),
                 ('name', _(u"Jméno"), str(userprofile)),
                 ('email', _(u"Email"), userprofile.user.email),
-                ('payment_description', _(u"Platba"), self.user_attendance.payment()['status_description']),
+                ('payment_description', _(u"Platba"), self.user_attendance.get_payment_status_display()),
                 ('telephone', _(u"Telefon"), userprofile.telephone),
                 ('state_name', _(u"Stav"), str(self.user_attendance.get_approved_for_team_display())),
             ])

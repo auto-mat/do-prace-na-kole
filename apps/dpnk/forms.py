@@ -301,7 +301,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(ChangeTeamForm, self).clean()
-        if self.instance.payment_status() == 'done' and self.instance.team:
+        if self.instance.payment_status == 'done' and self.instance.team:
             if 'team' in cleaned_data and cleaned_data['team'].subsidiary != self.instance.team.subsidiary:
                 raise forms.ValidationError(mark_safe(_(u"Po zaplacení není možné měnit tým mimo pobočku")))
         return cleaned_data
@@ -351,7 +351,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             if previous_user_attendance:
                 self.fields["team"].widget.create = True
 
-        if self.instance.payment_status() == 'done' and self.instance.team:
+        if self.instance.payment_status == 'done' and self.instance.team:
             self.fields["subsidiary"].widget = HiddenInput()
             self.fields["company"].widget = HiddenInput()
             self.fields["team"].queryset = models.Team.objects.filter(subsidiary__company=self.instance.team.subsidiary.company)
@@ -492,8 +492,8 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
 
 class ConfirmDeliveryForm(forms.ModelForm):
     CHOICES = [
-        (models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED, _(u"Startovní balíček mi již byl doručen.")),
-        (models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED, _(u"Startovní balíček mi ještě nebyl doručen.")),
+        (models.Status.PACKAGE_DELIVERY_CONFIRMED, _(u"Startovní balíček mi již byl doručen.")),
+        (models.Status.PACKAGE_DELIVERY_DENIED, _(u"Startovní balíček mi ještě nebyl doručen.")),
     ]
 
     status = forms.ChoiceField(
@@ -591,7 +591,7 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
 
     def clean(self):
         try:
-            transaction = models.CommonTransaction.objects.get(user_attendance=self.cleaned_data.get('user_attendance'), status=models.CommonTransaction.Status.BIKE_REPAIR)
+            transaction = models.CommonTransaction.objects.get(user_attendance=self.cleaned_data.get('user_attendance'), status=models.Status.BIKE_REPAIR)
         except models.CommonTransaction.DoesNotExist:
             transaction = None
         if transaction:
@@ -602,7 +602,7 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
         return super(BikeRepairForm, self).clean()
 
     def save(self, *args, **kwargs):
-        self.instance.status = models.CommonTransaction.Status.BIKE_REPAIR
+        self.instance.status = models.Status.BIKE_REPAIR
         return super(BikeRepairForm, self).save(*args, **kwargs)
 
     class Meta:
