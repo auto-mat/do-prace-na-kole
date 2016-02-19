@@ -328,7 +328,6 @@ class UserAttendanceForm(forms.ModelForm):
         if 't_shirt_size' in self.fields:
             if hasattr(self.instance, 'campaign'):
                 self.fields['t_shirt_size'].queryset = models.TShirtSize.objects.filter(campaign=self.instance.campaign)
-            self.fields['t_shirt_size'].required = False
 
 
 class UserAttendanceInline(NestedTabularInline):

@@ -745,7 +745,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         TShirtSize,
         verbose_name=_(u"Velikost trička"),
         null=True,
-        blank=False,
+        blank=True,
     )
     created = models.DateTimeField(
         verbose_name=_(u"Datum vytvoření"),

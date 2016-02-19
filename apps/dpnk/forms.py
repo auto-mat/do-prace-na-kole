@@ -611,6 +611,11 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
 
 
 class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
+    def __init__(self, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
+        self.fields['t_shirt_size'].required = True
+        return ret_val
+
     class Meta:
         model = models.UserAttendance
         fields = ('t_shirt_size', )
