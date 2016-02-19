@@ -986,7 +986,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return self.team and self.approved_for_team == 'approved'
 
     def payment_complete(self):
-        return self.payment_status == 'done' or self.payment_status == 'no_admission'
+        return self.payments().exists()
 
     def working_schedule_complete(self):
         return self.user_trips.count() != 0
