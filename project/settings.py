@@ -90,7 +90,6 @@ MIDDLEWARE_CLASSES = [
     'subdomains.middleware.SubdomainMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'denorm.middleware.DenormMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'author.middlewares.AuthorDefaultBackendMiddleware',

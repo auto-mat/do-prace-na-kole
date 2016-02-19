@@ -289,10 +289,16 @@ def collectstatic():
     run('cd %(path)s/releases/current/;  env/bin/python manage.py collectstatic --noinput' % env)
 
 
+def denorm_rebuild():
+    "Rebuild denorm"
+    run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_rebuild' % env)
+
+
 def denorm():
     "Reinit denorm"
     run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_drop' % env)
     run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_init' % env)
+    run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_daemon' % env)
 
 
 def locale():
