@@ -274,6 +274,9 @@ class ViewsTestsLogon(TransactionTestCase):
         call_command('denorm_init')
         call_command('denorm_rebuild')
 
+    def tearDown(self):
+        call_command('denorm_drop')
+
     def test_dpnk_team_view(self):
         response = self.client.get(reverse('zmenit_tym'))
         self.assertContains(response, "Testing company")
@@ -486,6 +489,9 @@ class TestTeams(TestCase):
         call_command('denorm_init')
         call_command('denorm_rebuild')
 
+    def tearDown(self):
+        call_command('denorm_drop')
+
     def test_member_count_update(self):
         team = Team.objects.get(id=1)
         self.assertEqual(team.member_count, 2)
@@ -504,6 +510,9 @@ class ResultsTests(TestCase):
     def setUp(self):
         call_command('denorm_init')
         call_command('denorm_rebuild')
+
+    def tearDown(self):
+        call_command('denorm_drop')
 
     def test_get_competitors(self):
         team = Team.objects.get(id=1)
