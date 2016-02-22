@@ -38,8 +38,19 @@ DATABASES = {
     },
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = '/tmp/dpnk-emails'
+PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.MD5PasswordHasher',
+)
+
+UNUSED_MIDDLEWARES = [
+    'django.middleware.locale.LocaleMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+for mid in UNUSED_MIDDLEWARES:
+    MIDDLEWARE_CLASSES.remove(mid)
 
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  # XXX
 SITE_URL = 'http://localhost/~petr/dpnk-wp/'
@@ -48,13 +59,4 @@ TESTING_URLS = True
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 
-LOGIN_URL = '/dpnk/login/'
-LOGOUT_NEXT_PAGE = '/dpnk/profil_pristup/'
-
 SECRET_KEY = 'bt@kl##och59s((u!88iny_c^4p#en@o28w3g57$ys-sgw$4$5'
-
-LOGGING['handlers']['logfile']['filename'] = "dpnk.log"
-
-
-def custom_show_toolbar(request):
-    return True  # Always show toolbar, for example purposes only.

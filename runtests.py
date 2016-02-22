@@ -38,9 +38,9 @@ if not settings.configured:
 from django_nose import NoseTestSuiteRunner
 
 
-def runtests(*test_args):
+def runtests(*test_args, **test_kwargs):
     failures = NoseTestSuiteRunner(verbosity=2, interactive=True).run_tests(
-        test_args)
+        test_args, test_kwargs)
     sys.exit(failures)
 
 

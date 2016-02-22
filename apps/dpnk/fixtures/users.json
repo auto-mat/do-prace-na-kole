@@ -54,7 +54,7 @@
             "is_superuser": false,
             "last_login": "2015-11-12T18:53:35.982",
             "last_name": "User 1",
-            "password": "pbkdf2_sha256$20000$91f1TPASND5r$2CHIO+yZYoFPWSZtlEuUKV/F3k3KM0MAyQ8WZYa+Ra0=",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
             "user_permissions": [],
             "username": "test"
         },
@@ -115,7 +115,7 @@
             "is_superuser": false,
             "last_login": "2015-11-12T18:53:35.982",
             "last_name": "User",
-            "password": "pbkdf2_sha256$20000$91f1TPASND5r$2CHIO+yZYoFPWSZtlEuUKV/F3k3KM0MAyQ8WZYa+Ra0=",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
             "user_permissions": [],
             "username": "test1"
         },
@@ -197,7 +197,7 @@
             "is_superuser": false,
             "last_login": "2015-11-12T18:53:35.982",
             "last_name": "User",
-            "password": "pbkdf2_sha256$20000$91f1TPASND5r$2CHIO+yZYoFPWSZtlEuUKV/F3k3KM0MAyQ8WZYa+Ra0=",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
             "user_permissions": [],
             "username": "null_user"
         },

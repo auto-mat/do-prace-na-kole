@@ -10,7 +10,7 @@
             "is_superuser": true,
             "last_login": "2015-11-12T18:35:38.186",
             "last_name": "",
-            "password": "pbkdf2_sha256$20000$9BslzSdAyhcU$eoFApz9/jPK2ECnE7Ssep3m0v3CIQ8mWC7uhEiqyzE0=",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
             "user_permissions": [],
             "username": "admin"
         },
