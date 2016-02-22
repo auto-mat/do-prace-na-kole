@@ -22,11 +22,10 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.core.management import call_command
 from django.test.utils import override_settings
-from dpnk import results, models, mailing, views
+from dpnk import results, models, mailing
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment
 import datetime
 import django
-import sys
 from django_admin_smoke_tests import tests
 from model_mommy import mommy
 import createsend
@@ -279,8 +278,16 @@ class ViewsTestsLogon(TransactionTestCase):
 
     def test_dpnk_team_view(self):
         response = self.client.get(reverse('zmenit_tym'))
+        self.assertNotContains(response, "Testing company")
+        self.assertContains(response, "Testing team 1")
+
+    def test_dpnk_team_view_no_payment(self):
+        Payment.objects.all().delete()
+        denorm.flush()
+        response = self.client.get(reverse('zmenit_tym'))
         self.assertContains(response, "Testing company")
         self.assertContains(response, "Testing team 1")
+        Payment.objects.all().delete()
 
     def test_dpnk_team_view_choose(self):
         post_data = {
@@ -381,105 +388,6 @@ class ViewsTestsLogon(TransactionTestCase):
         address = reverse('gpx_file', kwargs={"id": gpxfile.pk})
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
-
-    def verify_views(self, views, status_code_map):
-        for view in views:
-            try:
-                status_code = status_code_map[view] if view in status_code_map else 200
-                address = view
-                response = self.client.get(address, follow=True)
-                filename = view.replace("/", "_")
-                if response.status_code != status_code:
-                    with open("error_%s.html" % filename, "w") as f:
-                        f.write(response.content.decode())
-                self.assertEqual(response.status_code, status_code, "%s view failed, the failed page is saved to error_%s.html file." % (view, filename))
-            except Exception:
-                raise Exception(
-                    "Problem with view '%s':\n%s" %
-                    (view, sys.exc_info()[2])
-                )
-
-    views = [
-        reverse('payment'),
-        reverse('profil'),
-        reverse('zmenit_tym'),
-        reverse('upravit_trasu'),
-        reverse('upravit_profil'),
-        reverse('zmenit_triko'),
-        reverse('working_schedule'),
-        reverse('company_admin_pay_for_users'),
-        reverse('invoices'),
-        reverse('edit_company'),
-        reverse('company_admin_competitions'),
-        reverse('company_structure'),
-        reverse('company_admin_competition'),
-        reverse('company_admin_application'),
-        reverse('emission_calculator'),
-        reverse('package'),
-        reverse('typ_platby'),
-        reverse('zmenit_triko'),
-        reverse('upravit_trasu'),
-        reverse('working_schedule'),
-        reverse('competitions'),
-        reverse('jizdy'),
-        reverse('other_team_members_results'),
-        reverse('team_members'),
-        reverse('zaslat_zadost_clenstvi'),
-        reverse('pozvanky'),
-        reverse('registration_access'),
-        reverse('registrace'),
-        reverse('edit_team'),
-        reverse('questionnaire', kwargs={'questionnaire_slug': 'quest'}),
-        reverse('edit_subsidiary', kwargs={'pk': 1}),
-        reverse('payment_beneficiary'),
-        'error404.txt',
-        reverse(views.daily_distance_json),
-        reverse(views.daily_chart),
-        reverse(views.statistics, kwargs={'variable': 'ujeta-vzdalenost'}),
-        reverse(views.statistics, kwargs={'variable': 'ujeta-vzdalenost-dnes'}),
-        reverse(views.statistics, kwargs={'variable': 'pocet-cest'}),
-        reverse(views.statistics, kwargs={'variable': 'pocet-cest-dnes'}),
-        reverse(views.statistics, kwargs={'variable': 'pocet-zaplacenych'}),
-        reverse(views.statistics, kwargs={'variable': 'pocet-prihlasenych'}),
-        reverse(views.statistics, kwargs={'variable': 'pocet-soutezicich'}),
-        reverse(views.statistics, kwargs={'variable': 'pocet-spolecnosti'}),
-        reverse(views.statistics, kwargs={'variable': 'pocet-pobocek'}),
-        reverse(views.statistics, kwargs={'variable': 'pocet-soutezicich-firma'}),
-    ]
-
-    def test_dpnk_views(self):
-        """
-        test if the user pages work
-        """
-        status_code_map = {
-            reverse('profil'): 200,
-            reverse('registration_access'): 200,
-            reverse('jizdy'): 403,
-            'error404.txt': 404,
-        }
-
-        self.verify_views(self.views, status_code_map)
-
-    def test_dpnk_views_registered(self):
-        """
-        test if the user pages work after user registration
-        """
-        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
-        user_attendance.track = 'LINESTRING(0 0,-1 1)'
-        user_attendance.t_shirt_size = mommy.make(models.TShirtSize)
-        team = Team.objects.get(id=1)
-        user_attendance.team = team
-        mommy.make(models.Payment, user_attendance=user_attendance, amount=160, status=99)
-        user_attendance.save()
-
-        status_code_map = {
-            reverse('profil'): 200,
-            reverse('registration_access'): 200,
-            reverse('typ_platby'): 403,
-            'error404.txt': 404,
-        }
-
-        self.verify_views(self.views, status_code_map)
 
 
 class TestTeams(TestCase):

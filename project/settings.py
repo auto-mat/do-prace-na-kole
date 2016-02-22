@@ -169,6 +169,7 @@ INSTALLED_APPS = (
     'subdomains',
     'redactor',
     'ajax_select',
+    'django_nose'
     # 'cachalot',
 )
 
