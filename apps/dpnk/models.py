@@ -32,9 +32,7 @@ from django import forms
 from django.db.models import Q, Max
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
-from django.db.utils import ProgrammingError
 from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
-from fieldsignals import post_save_changed, pre_save_changed
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from composite_field import CompositeField
@@ -554,13 +552,6 @@ def get_team_in_campaign_manager(campaign_slug):
             proxy = True
 
     return TeamInCampaign
-
-
-try:
-    for campaign in Campaign.objects.all():
-        setattr(Team, 'team_in_campaign_%s' % campaign.slug, get_team_in_campaign_manager(campaign.slug).objects)
-except ProgrammingError:
-    logger.error("campaign managers not installed")
 
 
 class Phase(models.Model):
@@ -1472,7 +1463,6 @@ def change_invoice_payments_status(sender, instance, changed_fields=None, **kwar
         for payment in instance.payment_set.all():
             payment.status = Status.INVOICE_PAID
             payment.save()
-post_save_changed.connect(change_invoice_payments_status, sender=Invoice, fields=['paid_date'])
 
 
 def payments_to_invoice(company, campaign):
@@ -2639,7 +2629,6 @@ def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
         instance.approved_for_team = 'approved'
     else:
         instance.approved_for_team = 'undecided'
-pre_save_changed.connect(pre_user_team_changed, sender=UserAttendance, fields=['team'])
 
 
 def post_user_team_changed(sender, instance, changed_fields=None, **kwargs):
@@ -2653,7 +2642,6 @@ def post_user_team_changed(sender, instance, changed_fields=None, **kwargs):
         results.recalculate_results_team(old_team)
 
     results.recalculate_result_competitor(instance)
-post_save_changed.connect(post_user_team_changed, sender=UserAttendance, fields=['team'])
 
 
 @receiver(post_save, sender=User)
@@ -2678,7 +2666,6 @@ def set_trip(sender, instance, *args, **kwargs):
 def set_track(sender, instance, changed_fields=None, **kwargs):
     if hasattr(instance, 'track_clean'):
         instance.track = instance.track_clean
-pre_save_changed.connect(set_track, sender=GpxFile, fields=['file'])
 
 
 @receiver(post_save, sender=GpxFile)
