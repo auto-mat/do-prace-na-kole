@@ -214,12 +214,19 @@ def get_team_frequency(user_attendancies, day=None):
 
 
 def get_userprofile_length(user_attendance):
-    trip_plus_distance = (user_attendance.campaign.trip_plus_distance or 0) + (user_attendance.get_distance() or 0)
-    distance_from = (Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True, distance_from__lt=trip_plus_distance).aggregate(Sum('distance_from'))['distance_from__sum'] or 0) + \
-        Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True, distance_from__gte=trip_plus_distance).count() * (trip_plus_distance)
-    distance_to = (Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, trip_to=True, distance_to__lt=trip_plus_distance).aggregate(Sum('distance_to'))['distance_to__sum'] or 0) + \
-        Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, trip_to=True, distance_to__gte=trip_plus_distance).count() * (trip_plus_distance)
+    distance_from = Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
+    distance_to = Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
     return distance_from + distance_to
+
+    # In 2016 the trip_plus_distance was disabled
+    # trip_plus_distance = (user_attendance.campaign.trip_plus_distance or 0) + (user_attendance.get_distance() or 0)
+    # distance_from = (Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True, distance_from__lt=trip_plus_distance).\
+    #       aggregate(Sum('distance_from'))['distance_from__sum'] or 0) + \
+    #     Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True, distance_from__gte=trip_plus_distance).count() * (trip_plus_distance)
+    # distance_to = (Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, trip_to=True, distance_to__lt=trip_plus_distance).\
+    #       aggregate(Sum('distance_to'))['distance_to__sum'] or 0) + \
+    #     Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, trip_to=True, distance_to__gte=trip_plus_distance).count() * (trip_plus_distance)
+    # return distance_from + distance_to
 
 
 def get_userprofile_nonreduced_length(user_attendance):

@@ -82,7 +82,7 @@
             "get_rides_count_denorm": 0,
             "t_shirt_size": null,
             "team": 1,
-            "track": null,
+            "track":  "LINESTRING(0 0,-1 1)",
             "updated": "2015-11-12T18:18:40.223",
             "userprofile": 1117
         },
@@ -132,7 +132,7 @@
             "get_rides_count_denorm": 0,
             "t_shirt_size": null,
             "team": 1,
-            "track": null,
+            "track": "LINESTRING(0 0,-1 1)",
             "updated": "2015-11-12T18:18:40.223",
             "userprofile": 1017
         },
@@ -203,5 +203,55 @@
         },
         "model": "auth.user",
         "pk": 1030
+    },
+    {
+        "fields": {
+            "approved_for_team": "approved",
+            "campaign": 338,
+            "created": "2015-11-12T18:18:40.223",
+            "distance": null,
+            "dont_want_insert_track": false,
+            "get_rides_count_denorm": 0,
+            "t_shirt_size": null,
+            "team": null,
+            "track":  "LINESTRING(0 0,-1 1)",
+            "updated": "2015-11-12T18:18:40.223",
+            "userprofile": 1026
+        },
+        "model": "dpnk.userattendance",
+        "pk": 1027
+    },
+    {
+        "fields": {
+            "administrated_cities": [],
+            "language": "cs",
+            "mailing_hash": null,
+            "mailing_id": "",
+            "nickname": null,
+            "note": null,
+            "sex": "unknown",
+            "telephone": "",
+            "user": 1041
+        },
+        "model": "dpnk.userprofile",
+        "pk": 1026
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:18:10",
+            "email": "test_wa@email.cz",
+            "first_name": "Null",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2015-11-12T18:53:35.982",
+            "last_name": "User",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
+            "user_permissions": [],
+            "username": "user_without_attendance"
+        },
+        "model": "auth.user",
+        "pk": 1041
     }
 ]

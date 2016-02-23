@@ -59,6 +59,10 @@ class ViewsTests(TransactionTestCase):
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        call_command('denorm_init')
+
+    def tearDown(self):
+        call_command('denorm_drop')
 
     def test_admin_views_competition(self):
         self.assertTrue(self.client.login(username='admin', password='test'))
@@ -88,6 +92,15 @@ class ViewsTests(TransactionTestCase):
         self.assertNotEquals(user, None)
         self.assertNotEquals(UserProfile.objects.get(user=user), None)
         self.assertNotEquals(UserAttendance.objects.get(userprofile__user=user), None)
+
+    def test_dpnk_userattendance_creation(self):
+        self.assertTrue(self.client.login(username='user_without_attendance', password='test'))
+        address = reverse('profil')
+        response = self.client.get(address)
+        self.assertRedirects(response, reverse('upravit_profil'))
+        user_attendance = UserAttendance.objects.get(userprofile__user__username='user_without_attendance', campaign__pk=339)
+        self.assertEqual(user_attendance.userprofile.user.pk, 1041)
+        self.assertEqual(user_attendance.get_distance(), 156.9)
 
     def test_password_recovery(self):
         address = reverse('password_reset')
