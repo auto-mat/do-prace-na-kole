@@ -894,7 +894,7 @@ class CompetitionsView(TitleViewMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompetitionsView, self).get_context_data(*args, **kwargs)
-        competitions = Competition.objects.filter(city__slug=kwargs['city_slug'], campaign__slug=self.request.subdomain)
+        competitions = Competition.objects.filter(Q(city__slug=kwargs['city_slug']) | Q(city__isnull=True), campaign__slug=self.request.subdomain)
         context_data['competitions'] = competitions
         return context_data
 
