@@ -27,6 +27,7 @@ views = [
     reverse('company_structure'),
     reverse('company_admin_competition'),
     reverse('company_admin_application'),
+    reverse('register_admin'),
     reverse('emission_calculator'),
     reverse('package'),
     reverse('typ_platby'),

@@ -209,7 +209,9 @@ urlpatterns = [
         name="edit_company",
         ),
     url(r'^spolecnost/registrace_admina/$',
-        company_admin_views.CompanyAdminApplicationView.as_view()),
+        company_admin_views.CompanyAdminApplicationView.as_view(),
+        name="register_admin",
+        ),
     url(r'^login/(?P<initial_email>[^&]+)/$$',
         views.DPNKLoginView.as_view(
             form_class=AuthenticationFormDPNK,
