@@ -24,6 +24,7 @@ from .models import Company, CompanyAdmin, Competition, UserAttendance, Campaign
 from django.utils.translation import ugettext_lazy as _
 from .util import slugify
 from .forms import SubmitMixin
+from ajax_select.fields import AutoCompleteSelectWidget
 import registration.forms
 
 
@@ -82,6 +83,11 @@ class SubsidiaryForm(SubmitMixin, AdressForm):
 
 
 class CompanyAdminForm(SubmitMixin, forms.ModelForm):
+    motivation_company_admin = forms.CharField(
+        label=_(u"Zaměstnanecká pozice"),
+        max_length=100,
+        required=True)
+
     class Meta:
         model = CompanyAdmin
         fields = ('motivation_company_admin', )
@@ -100,6 +106,9 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         required=True)
     administrated_company = forms.ModelChoiceField(
         label=_(u"Administrovaná firma"),
+        widget=AutoCompleteSelectWidget(
+            'companies',
+        ),
         queryset=Company.objects.all(),
         required=True)
     telephone = forms.CharField(
@@ -128,9 +137,9 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
                 raise forms.ValidationError(_(u"Tato společnost již má svého koordinátora."))
         return cleaned_data
 
-    def __init__(self, request=None, *args, **kwargs):
-        ret_val = super(CompanyAdminApplicationForm, self).__init__(*args, **kwargs)
-        self.fields.keyOrder = [
+    class Meta:
+        model = CompanyAdmin
+        fields = (
             'campaign',
             'motivation_company_admin',
             'first_name',
@@ -138,17 +147,9 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
             'administrated_company',
             'email',
             'telephone',
-            'username',
             'password1',
             'password2'
-        ]
-
-        # self.fields['email'].help_text=_(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
-        return ret_val
-
-    class Meta:
-        model = CompanyAdmin
-        fields = "__all__"
+        )
 
 
 class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
