@@ -838,7 +838,7 @@ class RidesView(UserAttendanceViewMixin, TemplateView):
 
 
 class ProfileView(RegistrationViewMixin, TemplateView):
-    title = _(u'Soutěžní profil')
+    title = _(u'Moje jízdy')
     registration_phase = 'profile_view'
     template_name = 'registration/competition_profile.html'
 
