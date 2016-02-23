@@ -34,7 +34,7 @@ from .email import company_admin_register_competitor_mail, company_admin_registe
 from django.core.urlresolvers import reverse_lazy
 from .string_lazy import format_lazy
 from .models import Company, CompanyAdmin, Competition, Campaign, UserProfile, Subsidiary
-from .views import UserAttendanceViewMixin
+from .views import RegistrationViewMixin
 from . import models
 import registration.signals
 import registration.backends
@@ -153,11 +153,13 @@ class CompanyAdminApplicationView(FormView):
         return super(CompanyAdminApplicationView, self).form_valid(form)
 
 
-class CompanyAdminView(UserAttendanceViewMixin, UpdateView):
-    template_name = 'base_generic_company_admin_form.html'
+class CompanyAdminView(RegistrationViewMixin, UpdateView):
+    template_name = 'submenu_payment.html'
     form_class = CompanyAdminForm
     model = CompanyAdmin
     success_url = reverse_lazy('zmenit_tym')
+    registration_phase = "typ_platby"
+    title = _("Chci se stát správcem společnosti")
 
     @method_decorator(login_required)
     @must_be_competitor
