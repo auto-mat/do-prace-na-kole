@@ -28,6 +28,18 @@
     },
     {
         "fields": {
+            "name": "Testing company without admin",
+            "ico": "11111",
+            "address_psc": "11111",
+            "address_street_number": "1",
+            "address_street": "Ulice",
+            "address_city": "Praha"
+        },
+        "model": "dpnk.company",
+        "pk": 2
+    },
+    {
+        "fields": {
             "company": 1,
             "city": 1
         },

@@ -22,7 +22,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponse, Http404
-import django.contrib.auth
 import datetime
 from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView, CreateView
@@ -36,9 +35,7 @@ from .string_lazy import format_lazy
 from .models import Company, CompanyAdmin, Competition, Campaign, UserProfile, Subsidiary
 from .views import RegistrationViewMixin
 from . import models
-import registration.signals
-import registration.backends
-import registration.backends.simple.views
+from registration.backends.simple.views import RegistrationView
 import logging
 logger = logging.getLogger(__name__)
 
@@ -106,9 +103,19 @@ class CompanyEditView(UpdateView):
         return self.company_admin.administrated_company
 
 
-class CompanyAdminRegistrationBackend(registration.backends.simple.views.RegistrationView):
+class CompanyAdminApplicationView(RegistrationView):
+    template_name = 'company_admin/registration.html'
+    form_class = CompanyAdminApplicationForm
+    model = CompanyAdmin
+    success_url = reverse_lazy('company_structure')
+
+    def get_initial(self):
+        return {
+            'campaign': Campaign.objects.get(slug=self.request.subdomain),
+        }
+
     def register(self, request, **cleaned_data):
-        new_user = super(CompanyAdminRegistrationBackend, self).register(request, **cleaned_data)
+        new_user = super().register(request, **cleaned_data)
 
         new_user.first_name = cleaned_data['first_name']
         new_user.last_name = cleaned_data['last_name']
@@ -129,28 +136,6 @@ class CompanyAdminRegistrationBackend(registration.backends.simple.views.Registr
         userprofile.save()
         company_admin_register_no_competitor_mail(admin, cleaned_data['administrated_company'])
         return new_user
-
-
-class CompanyAdminApplicationView(FormView):
-    template_name = 'company_admin/registration.html'
-    form_class = CompanyAdminApplicationForm
-    model = CompanyAdmin
-    success_url = reverse_lazy('company_structure')
-
-    def get_initial(self):
-        return {
-            'campaign': Campaign.objects.get(slug=self.request.subdomain),
-        }
-
-    def form_valid(self, form, backend='dpnk.company_admin_views.CompanyAdminRegistrationBackend'):
-        backend = registration.backends.get_backend(backend)
-        backend.register(self.request, **form.cleaned_data)
-        auth_user = django.contrib.auth.authenticate(
-            username=self.request.POST['username'],
-            password=self.request.POST['password1'])
-        django.contrib.auth.login(self.request, auth_user)
-
-        return super(CompanyAdminApplicationView, self).form_valid(form)
 
 
 class CompanyAdminView(RegistrationViewMixin, UpdateView):

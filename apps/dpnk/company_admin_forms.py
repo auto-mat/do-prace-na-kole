@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from django.contrib.auth.models import User
 from django import forms
 from .forms import AdressForm
 from .models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice, Subsidiary
@@ -127,9 +128,13 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         widget=forms.widgets.HiddenInput(),
         queryset=Campaign.objects.all(),
         required=True)
+    username = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def clean(self):
         cleaned_data = super(CompanyAdminApplicationForm, self).clean()
+        if not self.errors:
+            self.cleaned_data['username'] = '%s%s' % (self.cleaned_data['email'].split('@', 1)[0], User.objects.count())
+
         if 'administrated_company' in cleaned_data:
             obj = cleaned_data['administrated_company']
             campaign = cleaned_data['campaign']
@@ -138,7 +143,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         return cleaned_data
 
     class Meta:
-        model = CompanyAdmin
+        model = User
         fields = (
             'campaign',
             'motivation_company_admin',
@@ -148,7 +153,8 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
             'email',
             'telephone',
             'password1',
-            'password2'
+            'password2',
+            'username',
         )
 
 

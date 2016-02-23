@@ -23,7 +23,7 @@ from django.core import mail
 from django.core.management import call_command
 from django.test.utils import override_settings
 from dpnk import results, models, mailing
-from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment
+from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment, CompanyAdmin
 import datetime
 import django
 from django_admin_smoke_tests import tests
@@ -78,6 +78,28 @@ class ViewsTests(TransactionTestCase):
         address = reverse('registrace')
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
+
+    def test_dpnk_company_admin_registration(self):
+        address = reverse('register_admin')
+        post_data = {
+            'email': 'testadmin@test.cz',
+            'password1': 'test11',
+            'password2': 'test11',
+            'motivation_company_admin': 'some motivation',
+            'telephone': 123456789,
+            'first_name': 'Company',
+            'last_name': 'Admin',
+            'administrated_company': 2,
+            'campaign': 339,
+        }
+        response = self.client.post(address, post_data)
+        with open("error.html", "w") as f:
+            f.write(response.content.decode())
+        self.assertRedirects(response, reverse('upravit_profil'))
+        user = User.objects.get(email='testadmin@test.cz')
+        self.assertNotEquals(user, None)
+        self.assertNotEquals(UserProfile.objects.get(user=user), None)
+        self.assertNotEquals(CompanyAdmin.objects.get(userprofile__user=user).full_name(), "Company Admin")
 
     def test_dpnk_registration(self):
         address = reverse('registrace')
