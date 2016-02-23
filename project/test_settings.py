@@ -50,7 +50,10 @@ UNUSED_MIDDLEWARES = [
 ]
 
 for mid in UNUSED_MIDDLEWARES:
-    MIDDLEWARE_CLASSES.remove(mid)
+    try:
+        MIDDLEWARE_CLASSES.remove(mid)
+    except ValueError:
+        pass
 
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  # XXX
 SITE_URL = 'http://localhost/~petr/dpnk-wp/'
