@@ -1192,7 +1192,7 @@ class UserProfile(models.Model):
         return not competition.city.exists() or not self.administrated_cities.filter(pk__in=competition.city.values_list("pk", flat=True)).exists()
 
     def profile_complete(self):
-        return self.sex and self.first_name() and self.last_name() and self.user.email
+        return self.sex and self.first_name() and self.last_name() and self.user.email and self.personal_data_opt_in
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:

@@ -99,6 +99,7 @@
             "note": "",
             "sex": "male",
             "telephone": "",
+            "personal_data_opt_in": true,
             "user": 1128
         },
         "model": "dpnk.userprofile",
