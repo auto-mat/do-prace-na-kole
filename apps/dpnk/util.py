@@ -24,6 +24,11 @@ import datetime
 from django.http import HttpResponse
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import six
+from django.utils.functional import lazy
+from django.utils.safestring import mark_safe
+
+mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 DAYS_EXCLUDE = (
     datetime.date(year=2014, day=8, month=5),
