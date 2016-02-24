@@ -516,11 +516,13 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         return form
 
     def form_valid(self, form):
+        company_admin_email = self.user_attendance.get_asociated_company_admin().user.email
         payment_choices = {
             'member': {'type': 'am', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
             'member_wannabe': {'type': 'amw', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
             'free': {'type': 'fe', 'message': _(u"Váš nárok na startovné zdarma bude muset být ještě ověřen"), 'amount': 0},
-            'company': {'type': 'fc', 'message': _(u"Platbu ještě musí schválit váš firemní koordinátor"), 'amount': self.user_attendance.company_admission_fee()},
+            'company': {'type': 'fc', 'message': mark_safe(_(u"Platbu ještě musí schválit váš firemní koordinátor <a href='mailto:%(email)s'>%(email)s</a>" % {
+                "email": company_admin_email})), 'amount': self.user_attendance.company_admission_fee()},
         }
         payment_type = form.cleaned_data['payment_type']
 

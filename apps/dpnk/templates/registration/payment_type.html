@@ -84,7 +84,7 @@ $(function(){
       <br/><br/>
       {% trans "Zaměstnavatel: " %} {{ user_attendance.team.subsidiary.company }}<br/>
       {% trans "Koordinátor společnosti: " %} {{ user_attendance.get_asociated_company_admin|default:"Není" }}<br/>
-      {% trans "Email na koordinátora: " %} {{ user_attendance.get_asociated_company_admin.user.email|default:"Není" }}<br/>
+      {% trans "Email na koordinátora: " %}<a href='mailto:{{ user_attendance.get_asociated_company_admin.user.email|default:"Není" }}'>{{ user_attendance.get_asociated_company_admin.user.email|default:"Není" }}</a><br/>
    </div>
    <div class="description_switcher_div description member_description" style="display:none">
       <h3>{% trans "Člen Klubu přátel" %}</h3>
