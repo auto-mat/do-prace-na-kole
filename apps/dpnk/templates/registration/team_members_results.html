@@ -2,7 +2,6 @@
 {% load dpnk_tags %}
 {% load i18n %}
 {% load humanize %}
-{% load softhyphen_tags %}
 
 {% block content %}
 <h3>Výsledky týmu {{ user_attendance.team.name }}</h3>
@@ -18,7 +17,7 @@
       <tr
          {% if not user_attendance.entered_competition %}class="danger"{% endif %}
          >
-      <td>{{ user_attendance.name|softhyphen:"cs-CZ" }}</td>
+      <td>{{ user_attendance.name }}</td>
       {% if not user_attendance.entered_competition %}
          <td colspan="4">{% trans "Ještě nezačal/a soutěžit" %}</td>
       {% else %}
