@@ -92,14 +92,17 @@ class ViewsTests(TransactionTestCase):
             'administrated_company': 2,
             'campaign': 339,
         }
-        response = self.client.post(address, post_data)
+        response = self.client.post(address, post_data, follow=True)
         with open("error.html", "w") as f:
             f.write(response.content.decode())
-        self.assertRedirects(response, reverse('upravit_profil'))
+        self.assertRedirects(response, reverse('company_structure'), target_status_code=403)
         user = User.objects.get(email='testadmin@test.cz')
-        self.assertNotEquals(user, None)
-        self.assertNotEquals(UserProfile.objects.get(user=user), None)
-        self.assertNotEquals(CompanyAdmin.objects.get(userprofile__user=user).full_name(), "Company Admin")
+        self.assertEquals(user.get_full_name(),  "Company Admin")
+        self.assertEquals(UserProfile.objects.get(user=user).telephone, '123456789')
+        self.assertEquals(CompanyAdmin.objects.get(user=user).administrated_company.pk, 2)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
+        self.assertEqual(str(msg.subject), 'Testing campaign - firemní koordinátor - potvrzení registrace')
 
     def test_dpnk_registration(self):
         address = reverse('registrace')

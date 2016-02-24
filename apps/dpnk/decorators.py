@@ -107,7 +107,10 @@ def must_be_company_admin(fn):
             {
                 'fullpage_error_message':
                 mark_safe(_(
-                    u"Tato stránka je určená pouze ověřeným Koordinátorům společností. K tuto funkci se musíte nejdříve <a href='%s'>přihlásit</a>" %
+                    "Tato stránka je určená pouze ověřeným Koordinátorům společností. "
+                    "K tuto funkci se musíte nejdříve <a href='%s'>přihlásit</a>, a vyčkat na naše ověření. "
+                    "Pokud na ověření čekáte příliš dlouho, kontaktujte naši podporu na "
+                    "<a href='mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž'>kontakt@dopracenakole.cz</a>." %
                     reverse("company_admin_application"))),
             },
             status=403,

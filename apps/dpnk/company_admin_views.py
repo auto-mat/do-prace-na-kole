@@ -114,28 +114,24 @@ class CompanyAdminApplicationView(RegistrationView):
             'campaign': Campaign.objects.get(slug=self.request.subdomain),
         }
 
-    def register(self, request, **cleaned_data):
-        new_user = super().register(request, **cleaned_data)
-
-        new_user.first_name = cleaned_data['first_name']
-        new_user.last_name = cleaned_data['last_name']
-        new_user.save()
-
+    def form_valid(self, form):
+        ret_val = super().form_valid(form)
+        new_user = self.request.user
         admin = CompanyAdmin(
-            motivation_company_admin=cleaned_data['motivation_company_admin'],
-            administrated_company=cleaned_data['administrated_company'],
-            campaign=cleaned_data['campaign'],
+            motivation_company_admin=form.cleaned_data['motivation_company_admin'],
+            administrated_company=form.cleaned_data['administrated_company'],
+            campaign=form.cleaned_data['campaign'],
             user=new_user,
         )
         admin.save()
 
         userprofile = UserProfile(
             user=new_user,
-            telephone=cleaned_data['telephone'],
+            telephone=form.cleaned_data['telephone'],
         )
         userprofile.save()
-        company_admin_register_no_competitor_mail(admin, cleaned_data['administrated_company'])
-        return new_user
+        company_admin_register_no_competitor_mail(admin, form.cleaned_data['administrated_company'])
+        return ret_val
 
 
 class CompanyAdminView(RegistrationViewMixin, UpdateView):
