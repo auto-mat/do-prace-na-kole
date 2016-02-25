@@ -578,7 +578,7 @@ class NotInCityFilter(SimpleListFilter):
 
 
 class TripAdminInline(admin.TabularInline):
-    list_display = ('user_attendance', 'date', 'trip_from', 'trip_to', 'distance_from', 'distance_to', 'id')
+    list_display = ('user_attendance', 'date', 'distance', 'direction', 'commute_mode', 'id')
     raw_id_fields = ('user_attendance',)
     extra = 0
     model = models.Trip
@@ -1004,12 +1004,9 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
     list_display = (
         'user_attendance',
         'date',
-        'trip_from',
-        'trip_to',
-        'is_working_ride_from',
-        'is_working_ride_to',
-        'distance_from',
-        'distance_to',
+        'direction',
+        'commute_mode',
+        'distance',
         'id')
     search_fields = (
         'user_attendance__userprofile__nickname',
@@ -1018,7 +1015,13 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
         'user_attendance__userprofile__user__username',
         'user_attendance__team__subsidiary__company__name')
     raw_id_fields = ('user_attendance',)
-    list_filter = (campaign_filter_generator('user_attendance__campaign'), 'user_attendance__team__subsidiary__city', 'distance_from')
+    list_filter = (
+        campaign_filter_generator('user_attendance__campaign'),
+        'direction',
+        'commute_mode',
+        'user_attendance__team__subsidiary__city',
+        'distance',
+        )
     actions = (show_distance_trips,)
     list_max_show_all = 100000
     inlines = [GpxFileInline, ]

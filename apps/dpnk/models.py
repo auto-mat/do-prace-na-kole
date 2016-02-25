@@ -1835,11 +1835,22 @@ class PaymentForm(forms.ModelForm):
 
 class Trip(models.Model):
     """Cesty"""
+    DIRECTIONS = [
+        ('trip_to', _(u"Tam")),
+        ('trip_from', _(u"Zpět")),
+    ]
+    DIRECTIONS_DICT = dict(DIRECTIONS)
+    MODES = [
+        ('bicycle', _("Na kole")),
+        ('by_foot', _("Pěšky/běh")),
+        ('no_work', _("Nepracoval")),
+        ('by_other_vehicle', _("Jiný dopravní prostředek")),
+    ]
 
     class Meta:
         verbose_name = _(u"Cesta")
         verbose_name_plural = _(u"Cesty")
-        unique_together = (("user_attendance", "date"),)
+        unique_together = (("user_attendance", "date", "direction"),)
         ordering = ('date',)
     objects = BulkUpdateManager()
 
@@ -1849,40 +1860,25 @@ class Trip(models.Model):
         null=True,
         blank=True,
         default=None)
-    is_working_ride_to = models.BooleanField(
-        verbose_name=_(u"pracovní cesta do práce"),
-        default=False,
-    )
-    is_working_ride_from = models.BooleanField(
-        verbose_name=_(u"pracovní cesta z práce"),
-        default=False,
-    )
+    direction = models.CharField(
+        verbose_name=_(u"Směr cesty"),
+        choices=DIRECTIONS,
+        max_length=20,
+        null=True, blank=True)
     date = models.DateField(
         verbose_name=_(u"Datum cesty"),
         default=datetime.datetime.now,
         null=False)
-    trip_to = models.NullBooleanField(
-        verbose_name=_(u"Cesta do práce"),
+    commute_mode = models.CharField(
+        verbose_name=_(u"Mód dopravy"),
+        choices=MODES,
+        max_length=20,
         default=None,
-        null=True,
-    )
-    trip_from = models.NullBooleanField(
-        verbose_name=_(u"Cesta z práce"),
-        default=None,
-        null=True,
-    )
-    distance_to = models.FloatField(
-        verbose_name=_(u"Ujetá vzdálenost do práce"),
         null=True,
         blank=True,
-        default=None,
-        validators=[
-            MaxValueValidator(1000),
-            MinValueValidator(0)
-        ],
     )
-    distance_from = models.FloatField(
-        verbose_name=_(u"Ujetá vzdálenost z práce"),
+    distance = models.FloatField(
+        verbose_name=_(u"Ujetá vzdálenost"),
         null=True,
         blank=True,
         default=None,
@@ -2564,7 +2560,7 @@ class GpxFile(models.Model):
         choices=DIRECTIONS,
         max_length=50,
         null=False, blank=False)
-    trip = models.ForeignKey(
+    trip = models.OneToOneField(
         Trip,
         null=True,
         blank=True)
