@@ -979,9 +979,6 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def payment_complete(self):
         return self.payments().exists()
 
-    def working_schedule_complete(self):
-        return self.user_trips.count() != 0
-
     def get_emissions(self, distance=None):
         return util.get_emissions(self.get_nonreduced_length())
 
@@ -1917,9 +1914,6 @@ class Trip(models.Model):
 
     def working_day(self):
         return util.working_day(self.date)
-
-    def active(self):
-        return util.day_active(self.date)
 
 
 class Competition(models.Model):

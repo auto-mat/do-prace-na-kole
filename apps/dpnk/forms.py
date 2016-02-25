@@ -27,7 +27,7 @@ from django.utils import formats
 from . import models
 from django.db.models import Q
 from dpnk.widgets import SelectChainedOrCreate, SelectOrCreateAutoComplete
-from dpnk.fields import WorkingScheduleField, ShowPointsMultipleModelChoiceField
+from dpnk.fields import ShowPointsMultipleModelChoiceField
 from django.forms.widgets import HiddenInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -169,62 +169,6 @@ class RegisterTeamForm(forms.ModelForm):
     class Meta:
         model = models.Team
         fields = ('name', 'campaign')
-
-
-class WorkingScheduleForm(forms.ModelForm):
-    schedule = WorkingScheduleField(
-        label=_(u"Pracovní rozvrh"),
-        required=False,
-    )
-
-    def save(self, *args, **kwargs):
-        ret_val = super(WorkingScheduleForm, self).save(*args, **kwargs)
-        trips = self.cleaned_data['schedule']
-        for trip in trips:
-            if trip.can_edit_working_schedule():
-                trip.save()
-        return ret_val
-
-    def __init__(self, url_name="", *args, **kwargs):
-        self.helper = FormHelper()
-        if url_name:
-            self.url_name = url_name
-            self.helper.form_class = url_name + "_form"
-        self.helper.layout = Layout(
-            'schedule',
-            HTML(_(u"""Jak postupovat ve speciálních případech:  <ul>
-               <li>při práci na krátký dlouhý týden zadejte ve dnech, které pracujete cestu tam i zpět</li>
-               <li>pokud pracujete přes noc, zadejte první den pouze cestu tam a druhý den pouze cestu zpět</li>
-               </ul>""")),
-        )
-        ret_val = super(WorkingScheduleForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('prev', _(u'Předchozí')))
-        entered_competition = self.instance.tshirt_complete() and\
-            self.instance.track_complete() and\
-            self.instance.team_complete() and\
-            self.instance.payment_complete() and\
-            self.instance.userprofile.profile_complete()
-        if not entered_competition:
-            tasks = []
-            if not self.instance.userprofile.profile_complete():
-                tasks.append(_(u"<a href='%s'>vyplnit</a>") % reverse('upravit_profil'))
-            if not self.instance.team_complete():
-                tasks.append(_(u"<a href='%s'>být ověřeným členem týmu</a>") % reverse('zmenit_tym'))
-            if not self.instance.track_complete():
-                tasks.append(_(u"<a href='%s'>vyplnit trasu</a>") % reverse('upravit_trasu'))
-            if not self.instance.payment_complete():
-                tasks.append(_(u"<a href='%s'>mít dokončenou platbu</a>") % reverse('typ_platby'))
-            if not self.instance.tshirt_complete():
-                tasks.append(_(u"<a href='%s'>vyplnit tričko</a>") % reverse('zmenit_triko'))
-            self.helper.layout.extend([HTML(string_concat('<div class="alert alert-warning">', _(u'Před vstupem do profilu budete ještě muset %s') % ", ".join(tasks), '</div>'))])
-            self.helper.add_input(Submit('submit', _(u'Uložit')))
-        self.helper.add_input(Submit('next', _(u'Uložit a přejít do profilu'), **({} if entered_competition else {'disabled': 'True'})))
-        self.fields['schedule'].initial = self.instance.get_all_trips()
-        return ret_val
-
-    class Meta:
-        model = models.UserAttendance
-        fields = ('schedule', )
 
 
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):

@@ -62,7 +62,7 @@ from .forms import (
     PaymentTypeForm,
     ChangeTeamForm,
     TrackUpdateForm,
-    WorkingScheduleForm)
+    )
 from django.conf import settings
 from django.http import HttpResponse
 # Local imports
@@ -490,10 +490,10 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
     @must_be_in_phase("payment")
     @user_attendance_has(
         lambda ua: ua.payment_status == 'done',
-        mark_safe_lazy(format_lazy(_(u"Již máte startovné zaplaceno. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
+        mark_safe_lazy(format_lazy(_(u"Již máte startovné zaplaceno. Pokračujte na <a href='{addr}'>zadávání jízd</a>."), addr=reverse_lazy("profil"))))
     @user_attendance_has(
         lambda ua: ua.payment_status == 'no_admission',
-        mark_safe_lazy(format_lazy(_(u"Startovné se neplatí. Pokračujte na <a href='{addr}'>pracovní rozvrh</a>."), addr=reverse_lazy("working_schedule"))))
+        mark_safe_lazy(format_lazy(_(u"Startovné se neplatí. Pokračujte na <a href='{addr}'>zadávání jízd</a>."), addr=reverse_lazy("profil"))))
     def dispatch(self, request, *args, **kwargs):
         dispatch = super(PaymentTypeView, self).dispatch(request, *args, **kwargs)
         return dispatch
@@ -888,21 +888,6 @@ class UpdateProfileView(RegistrationViewMixin, UpdateView):
 
     def get_object(self):
         return self.request.user.userprofile
-
-
-class WorkingScheduleView(RegistrationViewMixin, UpdateView):
-    form_class = WorkingScheduleForm
-    model = UserAttendance
-    success_message = _(u"Pracovní kalendář úspěšně upraven")
-    prev_url = 'typ_platby'
-    next_url = 'profil'
-    success_url = 'working_schedule'
-    registration_phase = "working_schedule"
-    title = _(u"Upravit pracovní kalendář")
-    template_name = 'registration/working_schedule.html'
-
-    def get_object(self):
-        return self.user_attendance
 
 
 class UpdateTrackView(RegistrationViewMixin, UpdateView):
