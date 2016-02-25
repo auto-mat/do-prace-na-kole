@@ -96,6 +96,7 @@ class SubsidiaryInline(admin.TabularInline):
 class CityAdmin(LeafletGeoAdmin):
     list_display = ('name', 'slug', 'cyklistesobe_slug', 'id', )
     prepopulated_fields = {'slug': ('name',), 'cyklistesobe_slug': ('name',)}
+    list_filter = ('cityincampaign__campaign',)
 
 
 class CompanyForm(forms.ModelForm):
