@@ -682,12 +682,12 @@ def payment_status(request):
     c = HTTPSConnection("secure.payu.com")
     timestamp = str(int(time.time()))
     c.request("POST", "/paygw/UTF/Payment/get/txt/",
-              urlencode({
-                  'pos_id': pos_id,
-                  'session_id': session_id,
-                  'ts': timestamp,
-                  'sig': make_sig((pos_id, session_id, timestamp))
-              }),
+              urlencode((
+                  ('pos_id', pos_id),
+                  ('session_id', session_id),
+                  ('ts', timestamp),
+                  ('sig', make_sig((pos_id, session_id, timestamp)))
+              )),
               {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"})
     raw_response = codecs.decode(c.getresponse().read(), "utf-8")

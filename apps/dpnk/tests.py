@@ -29,6 +29,7 @@ import django
 from django_admin_smoke_tests import tests
 from model_mommy import mommy
 import createsend
+from freezegun import freeze_time
 from unittest.mock import MagicMock, patch
 from collections import OrderedDict
 from PyPDF2 import PdfFileReader
@@ -233,16 +234,19 @@ class PaymentTests(TransactionTestCase):
     PAYU_KEY_1='123456789',
     PAYU_KEY_2='98764321',
 )
+@freeze_time("2010-11-20 12:00")
 class PayuTests(TransactionTestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
 
+    @patch('http.client.HTTPSConnection.request')
     @patch('http.client.HTTPSConnection.getresponse')
     def payment_status_view(
-            self, payu_response, session_id='2075-1J1455206433',
-            amount="15000", trans_sig='ae6f4b9f8fbdbb506edf4eeb1cebcee0', sig='1af62397cfb6e6de5295325801239e4f'):
+            self, payu_response, payu_request, session_id='2075-1J1455206433',
+            amount="15000", trans_sig='ae6f4b9f8fbdbb506edf4eeb1cebcee0', sig='1af62397cfb6e6de5295325801239e4f',
+            post_sig="b6b29bb8437f9e2486fbe5555673372d"):
         payment_post_data = OrderedDict([
             ('pos_id', '2075-1'),
             ('session_id', session_id),
@@ -265,10 +269,16 @@ class PayuTests(TransactionTestCase):
         ])
         payment_return_value_bytes = bytes("\n".join(["%s: %s" % (u, payment_return_value[u]) for u in payment_return_value]), "utf-8")
         payu_response.return_value.read.return_value = payment_return_value_bytes
-        return self.client.post(reverse('payment_status'), payment_post_data)
+        response = self.client.post(reverse('payment_status'), payment_post_data)
+        payu_request.assert_called_with(
+            'POST',
+            '/paygw/UTF/Payment/get/txt/',
+            'pos_id=2075-1&session_id=%(session_id)s&ts=1290254400&sig=%(trans_sig)s' % {"trans_sig": post_sig, "session_id": session_id},
+            {'Content-type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain'}
+        )
+        return response
 
-    @patch('http.client.HTTPSConnection.getresponse')
-    def test_dpnk_payment_status_view(self, payu_response):
+    def test_dpnk_payment_status_view(self):
         response = self.payment_status_view()
         self.assertContains(response, "OK")
         payment = Payment.objects.get(pk=3)
@@ -276,8 +286,7 @@ class PayuTests(TransactionTestCase):
         self.assertEquals(payment.amount, 150)
         self.assertEquals(payment.status, 99)
 
-    @patch('http.client.HTTPSConnection.getresponse')
-    def test_dpnk_payment_status_bad_amount(self, payu_response):
+    def test_dpnk_payment_status_bad_amount(self):
         response = self.payment_status_view(amount="15300", trans_sig='ae18ec7f141c252e692d470f4c1744c9')
         self.assertContains(response, "Bad amount", status_code=400)
         payment = Payment.objects.get(pk=3)
@@ -285,11 +294,11 @@ class PayuTests(TransactionTestCase):
         self.assertEquals(payment.amount, 150)
         self.assertEquals(payment.status, 0)
 
-    @patch('http.client.HTTPSConnection.getresponse')
-    def test_dpnk_payment_status_view_create(self, payu_response):
+    def test_dpnk_payment_status_view_create(self):
         response = self.payment_status_view(
             session_id='2075-1J1455206434', amount="15100",
-            sig='4f59d25cd3dadaf03bef947bb0d9e1b9', trans_sig='c490e30293fe0a96d08b62107accafe8')
+            sig='4f59d25cd3dadaf03bef947bb0d9e1b9', trans_sig='c490e30293fe0a96d08b62107accafe8',
+            post_sig='445db4f3e11bfa16f0221b0272820058')
         self.assertContains(response, "OK")
         payment = Payment.objects.get(session_id='2075-1J1455206434')
         self.assertEquals(payment.pay_type, "kb")
