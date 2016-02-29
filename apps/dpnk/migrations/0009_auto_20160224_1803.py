@@ -10,6 +10,7 @@ def delete_new_trips(apps, schema_editor):
 
 def make_new_trips(apps, schema_editor):
     Trip  = apps.get_model("dpnk", "Trip")
+    GpxFile = apps.get_model("dpnk", "GpxFile")
     trips = Trip.objects.filter(direction__isnull=True)
     print(trips.count())
     trip_count = 0
@@ -36,9 +37,12 @@ def make_new_trips(apps, schema_editor):
             user_attendance=trip.user_attendance,
         )
         trip_to.save()
-        gpxfile_to = trip.gpxfile_set().get(direction='trip_to')
-        gpxfile_to.trip = trip_to
-        gpxfile_to.save()
+        try:
+            gpxfile_to = GpxFile.objects.get(trip=trip, direction='trip_to')
+            gpxfile_to.trip = trip_to
+            gpxfile_to.save()
+        except GpxFile.DoesNotExist:
+            pass
 
         if trip.is_working_ride_from:
             if trip.trip_from:
@@ -59,9 +63,12 @@ def make_new_trips(apps, schema_editor):
             user_attendance=trip.user_attendance,
         )
         trip_from.save()
-        gpxfile_from = trip.gpxfile_set().get(direction='trip_from')
-        gpxfile_from.trip = trip_from
-        gpxfile_from.save()
+        try:
+            gpxfile_from = GpxFile.objects.get(trip=trip, direction='trip_from')
+            gpxfile_from.trip = trip_from
+            gpxfile_from.save()
+        except GpxFile.DoesNotExist:
+            pass
     Trip.objects.filter(direction__isnull=True).delete()
 
 
