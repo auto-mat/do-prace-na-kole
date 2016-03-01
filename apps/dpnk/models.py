@@ -1908,6 +1908,9 @@ class Trip(models.Model):
     def working_day(self):
         return util.working_day(self.date)
 
+    def active(self):
+        return util.day_active(self.date)
+
 
 class Competition(models.Model):
     """Soutěžní kategorie"""
