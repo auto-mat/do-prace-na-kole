@@ -1026,6 +1026,21 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
     list_max_show_all = 100000
     inlines = [GpxFileInline, ]
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related('user_attendance__userprofile__user').only(
+            'user_attendance',
+            'date',
+            'direction',
+            'commute_mode',
+            'distance',
+            'user_attendance__userprofile__nickname',
+            'user_attendance__userprofile__user__email',
+            'user_attendance__userprofile__user__first_name',
+            'user_attendance__userprofile__user__last_name',
+            'user_attendance__userprofile__user__username',
+        )
+
 
 class CompetitionResultAdmin(admin.ModelAdmin):
     list_display = ('user_attendance', 'team', 'company', 'result', 'competition')
