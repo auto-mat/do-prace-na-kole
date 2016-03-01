@@ -35,7 +35,6 @@ views = [
     reverse('upravit_trasu'),
     reverse('working_schedule'),
     reverse('competitions'),
-    reverse('jizdy'),
     reverse('other_team_members_results'),
     reverse('team_members'),
     reverse('zaslat_zadost_clenstvi'),
@@ -98,7 +97,6 @@ class ViewSmokeTests(TestCase):
         status_code_map = {
             reverse('profil'): 200,
             reverse('registration_access'): 200,
-            reverse('jizdy'): 403,
             'error404.txt': 404,
         }
 

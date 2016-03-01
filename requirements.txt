@@ -62,3 +62,4 @@ django-appconf
 model-mommy
 django-ajax-selects
 pypdf2
+django-extra-views

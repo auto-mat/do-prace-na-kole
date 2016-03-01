@@ -2,6 +2,7 @@
 {% load l10n %}
 {% load dpnk_tags %}
 {% load humanize %}
+{% load crispy_forms_tags %}
 
 <script type="text/javascript">
    $(function () {
@@ -11,127 +12,57 @@
 {% if fullpage_error_message %}
 <div class="text-danger">{{ fullpage_error_message }}</div>
 {% else %}
-<form id="rides-form" name="calendar" method="POST" action="{% url "jizdy" %}">
-<input type="hidden" id="day" name="day"/>
-<button class="btn-info btn show_rides_btn" type="button" onclick='$( ".toggle" ).toggle(  );'><span class="toggle">{% trans "Zobrazit všechny jízdy" %}</span><span class="toggle" style="display:none">{% trans "Skrýt všechny jízdy" %}</span></button>
+<button class="btn-info btn show_rides_btn" type="button"><span class="toggle">{% trans "Podrobný přehled jízd" %}</span></button>
+<form id="rides-form" name="calendar" method="POST">
+{{ formset.management_form }}
 <br>
-{% trans "Zadaný počet kilometrů na jednu jízdu: " %}{{ user_attendance.get_distance|floatformat:2 }}&nbsp;Km
-{% trans " (Do políčka zadávejte ujetý počet kilometrů)" %}
+{% trans "Do políčka zadávejte ujetý počet kilometrů" %}
 {% include "messages_include.html" %}
 {{ message }}
 
-<table id="rides" class="table table-bordered table-hover table-condensed {% if not has_active_trip %}toggle{% endif %}" {% if not has_active_trip %}style="display:none"{% endif %}>
+{% if formset.0 %}
+<table id="rides" class="table table-bordered table-hover table-condensed">
 <thead>
    <tr>
       <th scope="col">{% trans "Den" %}</th>
       <th scope="col">{% trans "Do práce" %}</th>
       <th scope="col">{% trans "Z práce" %}</th>
-      <th scope="col">{% trans "Pra&shy;vi&shy;del&shy;nost" %}</th>
-      <th scope="col">{% trans "Vzdá&shy;le&shy;nost" %}</th>
-      <th scope="col"><abbr data-toggle="tooltip" data-placement="left" title="{% trans 'Ušetřeno oproti jízdě autem' %}">CO<sub>2</sub></abbr></th>
    </tr>
 </thead>
-{% for day in calendar %}
-<tr class="
-{% if day.trips_active %}
-   info
-{% else %}
-   toggle
+{% for trip_form in formset %}
+{% if forloop.counter0|divisibleby:2 %}
+<tr class="info">
+<th scope="row" class="date">{{ trip_form.instance.date|naturalday:"D j. M" }}</th>
 {% endif %}
-"
-{% if not day.trips_active %}
-style="display:none"
-{% endif %}
->
-<th scope="row" class="date">{{ day.day|naturalday:"D j. M" }}</th>
 <td>
-   {% if day.working_ride_to %}
-   <input type="checkbox" name="trip_to-{{ day.day|date:"Y-m-d" }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_to %}checked="checked"{% endif %}/>
-   <input type="number" step="any" min="0" max="1000" name="distance_to-{{ day.day|date:"Y-m-d" }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_to|unlocalize }}"/>
-   {% if day.gpxfile_to %}
+   {{ trip_form.id|as_crispy_field  }}
+   {{ trip_form.commute_mode|as_crispy_field  }}
+   {{ trip_form.distance|as_crispy_field  }}
+   {% if trip_form.instance.gpxfile %}
    <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
-   <a href="{% url "gpx_file" id=day.gpxfile_to.id %}">
-      {% if day.trips_active %}
-         <i class="fa fa-edit"></i>
-      {% else %}
-         <i class="fa fa-eye"></i>
-      {% endif %}
+   <a href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}">
+      <i class="fa fa-edit"></i>
    </a>
    </abbr>
    {% else %}
    <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zadat trasu v mapě nebo nahráním GPX souboru' %}">
-   <a href="{% url "gpx_file_create" date=day.day direction='trip_to' %}">
-      {% if day.trips_active %}
-         <i class="fa fa-map-marker"></i>
-      {% endif %}
+   <a href="{% url "gpx_file_create" date=trip_form.instance.date direction=trip_form.instance.direction %}">
+      <i class="fa fa-map-marker"></i>
    </a>
    </abbr>
    {% endif %}
-   {% endif %}
 </td>
-<td>
-   {% if day.working_ride_from %}
-   <input type="checkbox" name="trip_from-{{ day.day|date:"Y-m-d" }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %}  {% if day.default_trip_from %}checked="checked"{% endif %}/>
-   <input type="number" step="any" min="0" max="1000" name="distance_from-{{ day.day|date:"Y-m-d" }}"  {% if not day.trips_active %} readonly="readonly" disabled="disabled"{% endif %} class="form-control" value="{{ day.default_distance_from|unlocalize }}"/>
-   {% if day.gpxfile_from %}
-   <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
-   <a href="{% url "gpx_file" id=day.gpxfile_from.id %}">
-      {% if day.trips_active %}
-         <i class="fa fa-edit"></i>
-      {% else %}
-         <i class="fa fa-eye"></i>
-      {% endif %}
-   </a>
-   </abbr>
-   {% else %}
-   <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zadat trasu v mapě nebo nahráním GPX souboru' %}">
-   <a href="{% url "gpx_file_create" date=day.day direction='trip_from' %}">
-      {% if day.trips_active %}
-         <i class="fa fa-map-marker"></i>
-      {% endif %}
-   </a>
-   </abbr>
-   {% endif %}
-   {% endif %}
-</td>
-<td><div {% if day.percentage >  minimum_percentage %} class="text-success" {% else %} class="text-error" {% endif %}>{{ day.percentage|floatformat:1 }}&nbsp;%</div></td>
-<td>
-   {% if day.distance_was_cutted %}
-      <abbr data-toggle="tooltip" data-placement="right" title='{% blocktrans with plus_distance=user_attendance.campaign.trip_plus_distance distance=user_attendance.get_distance|floatformat:2  %}Za každou jízdu se započítává maximální zajížďka {{ plus_distance }}&nbsp;Km oproti zadané vzdálenosti do práce ({{ distance }}&nbsp;Km).{% endblocktrans %}'>
-   {% endif %}
-   {{ day.distance|intcomma }}&nbsp;km
-   {% if day.distance_was_cutted %}
-      </abbr>
-   {% endif %}
-</td>
-<td>{{ day.emissions.co2|intcomma }}&nbsp;g <a href="{% url 'emission_calculator' %}"><i class="fa fa-info-circle"></i></a></td>
+{% if forloop.counter|divisibleby:2 %}
 </tr>
+{% endif %}
 {% endfor %}
 </table>
-
-{% if other_gpx_files %}
-   <h3>Další nahrané jízdy</h3>
-   <table class="table">
-      {% for gpx_file in other_gpx_files %}
-      <tr>
-         <td>{{ gpx_file.trip_date }}</td>
-         <td>{{ gpx_file.direction_string }}</td>
-         <td>{% if gpx_file.length %}{{ gpx_file.length|floatformat:1 }}&nbsp;Km{% endif %}</td>
-         <td>
-         <a href="{% url "gpx_file" id=gpx_file.id %}">
-            <i class="fa fa-eye"></i>
-         </a>
-         </td>
-      </tr>
-      {% endfor %}
-   </table>
-{% endif %}
-
-{% if allow_adding_rides and not has_active_trip %}
-<div class="toggle alert alert-info">
+{% else %}
+<div class="alert alert-info">
 {% trans "Zde budete zadávat vaše jízdy" %}
 </div>
 {% endif %}
+<input type="submit" name="submit" value="Odeslat" class="btn btn-primary btn-block" id="submit-id-submit">
 </form>
 <div></div>
 {% endif %}

@@ -420,12 +420,82 @@ class ViewsTestsLogon(TransactionTestCase):
 
     def test_dpnk_views_gpx_file(self):
         user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
-        mommy.make(models.Trip, user_attendance=user_attendance, date=datetime.date(year=2010, month=11, day=20))
-        gpxfile = mommy.make(models.GpxFile, user_attendance=user_attendance, trip_date=datetime.date(year=2010, month=11, day=20))
+        trip = mommy.make(models.Trip, user_attendance=user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
+        gpxfile = mommy.make(models.GpxFile, user_attendance=user_attendance, trip_date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
 
         address = reverse('gpx_file', kwargs={"id": gpxfile.pk})
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(models.GpxFile.objects.get(pk=gpxfile.pk).trip, trip)
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=12, day=1),
+)
+class ViewsTestsRegistered(TransactionTestCase):
+    fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
+
+    def setUp(self):
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        self.assertTrue(self.client.login(username='test-registered', password='test'))
+        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test-registered')
+        call_command('denorm_init')
+        call_command('denorm_rebuild')
+        self.assertTrue(self.user_attendance.entered_competition())
+
+    def tearDown(self):
+        call_command('denorm_drop')
+
+    def test_dpnk_rides_view(self):
+        self.assertEquals(self.user_attendance.user_trips.count(), 0)
+        response = self.client.get(reverse('profil'))
+        self.assertContains(response, 'form-1-commute_mode')
+        self.assertEquals(self.user_attendance.user_trips.count(), 2)
+        trip1_pk = models.Trip.objects.get(date=datetime.date(year=2010, month=12, day=1), direction='trip_to').pk
+        trip2_pk = models.Trip.objects.get(date=datetime.date(year=2010, month=12, day=1), direction='trip_from').pk
+        post_data = {
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '2',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-id': trip1_pk,
+            'form-0-commute_mode': 'by_foot',
+            'form-0-distance': '28.89',
+            'form-1-id': trip2_pk,
+            'form-1-commute_mode': 'bicycle',
+            'form-1-distance': '2',
+            'submit': 'Odeslat',
+        }
+        response = self.client.post(reverse('profil'), post_data, follow=True)
+        self.assertContains(response, 'form-1-commute_mode')
+        self.assertEquals(models.Trip.objects.get(pk=trip1_pk).distance, 28.89)
+        self.assertEquals(models.Trip.objects.get(pk=trip2_pk).commute_mode, 'bicycle')
+        denorm.flush()
+        user_attendance = UserAttendance.objects.get(userprofile__user__username='test-registered')
+        self.assertEquals(user_attendance.trip_length_total, 30.89)
+        self.assertEquals(user_attendance.team.get_length(), 10.296666666666667)
+
+    def test_dpnk_views_create_gpx_file(self):
+        date = datetime.date(year=2010, month=12, day=1)
+        direction = "trip_from"
+        trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=date, direction=direction)
+        address = reverse('gpx_file_create', kwargs={"date": date, "direction": direction})
+        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+            post_data = {
+                'file': gpxfile,
+                'direction': direction,
+                'trip_date': date,
+                'user_attendance': self.user_attendance.pk,
+                'submit': 'Odeslat',
+            }
+            response = self.client.post(address, post_data, follow=True)
+            self.assertRedirects(response, reverse('profil'))
+        gpxfile = models.GpxFile.objects.get(trip_date=date, direction=direction, user_attendance=self.user_attendance)
+        trip = models.Trip.objects.get(pk=trip.pk)
+        self.assertEquals(trip.distance, 13.32)
 
 
 class TestTeams(TestCase):
@@ -440,14 +510,14 @@ class TestTeams(TestCase):
 
     def test_member_count_update(self):
         team = Team.objects.get(id=1)
-        self.assertEqual(team.member_count, 2)
+        self.assertEqual(team.member_count, 3)
         campaign = Campaign.objects.get(pk=339)
         user = User.objects.create(first_name="Third", last_name="User", username="third_user")
         userprofile = UserProfile.objects.create(user=user)
         UserAttendance.objects.create(team=team, campaign=campaign, userprofile=userprofile, approved_for_team='approved')
         denorm.flush()
         team = Team.objects.get(id=1)
-        self.assertEqual(team.member_count, 3)
+        self.assertEqual(team.member_count, 4)
 
 
 class ResultsTests(TestCase):

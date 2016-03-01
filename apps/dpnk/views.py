@@ -38,7 +38,6 @@ from .decorators import must_be_approved_for_team, must_be_competitor, must_have
 from django.contrib.auth.decorators import login_required as login_required_simple
 from django.contrib.gis.geos import MultiLineString
 from django.db.models import Sum, Q
-from django.db.transaction import commit
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.safestring import mark_safe
@@ -79,6 +78,7 @@ from dpnk.email import (
     invitation_register_mail)
 from django.db import transaction
 
+from extra_views import ModelFormSetView
 from unidecode import unidecode
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -725,121 +725,30 @@ def payment_status(request):
     return HttpResponse("OK")
 
 
-class RidesView(UserAttendanceViewMixin, TemplateView):
-    template_name = 'registration/rides.html'
-    success_url = "jizdy"
+class RidesView(UserAttendanceViewMixin, ModelFormSetView):
+    model = Trip
+    form_class = forms.TripForm
+    fields = ('commute_mode', 'distance')
+    extra = 0
 
-    @method_decorator(login_required_simple)
-    @must_be_approved_for_team
-    @user_attendance_has(
-        lambda ua: not ua.entered_competition(),
-        mark_safe_lazy(format_lazy(
-            _(u"Vyplnit jízdy můžete až budete mít splněny všechny body <a href='{addr}'>registrace</a>."),
-            addr=reverse_lazy("upravit_profil"))))
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
     def dispatch(self, request, *args, **kwargs):
         return super(RidesView, self).dispatch(request, *args, **kwargs)
 
+    def get_queryset(self, form_class=PaymentTypeForm):
+        allow_adding_rides = models.CityInCampaign.objects.get(city=self.user_attendance.team.subsidiary.city, campaign=self.user_attendance.campaign).allow_adding_rides
+        if allow_adding_rides:
+            return self.user_attendance.get_active_trips().select_related('user_attendance__campaign', 'gpxfile')
+        else:
+            return models.CityInCampaign.objects.none()
+
     def post(self, request, *args, **kwargs):
-        if len(request.POST) == 0:
-            logger.error("Blank POST")
-            return
-
-        trips = self.user_attendance.get_active_trips().select_related('user_attendance__campaign')
-        for day_m, trip in enumerate(trips):
-            day = str(trip.date)
-            if trip.is_working_ride_to:
-                trip.trip_to = request.POST.get('trip_to-' + day) == 'on'
-                try:
-                    trip.distance_to = max(min(float(request.POST.get('distance_to-' + day).replace(',', '.')), 1000), 0)
-                except (ValueError, TypeError, AttributeError):
-                    pass
-
-            if trip.is_working_ride_from:
-                trip.trip_from = request.POST.get('trip_from-' + day) == 'on'
-                try:
-                    trip.distance_from = max(min(float(request.POST.get('distance_from-' + day).replace(',', '.')), 1000), 0)
-                except (ValueError, TypeError, AttributeError):
-                    pass
-
-            logger.info(u'User %s filling in ride: day: %s, trip_from: %s, trip_to: %s, distance_from: %s, distance_to: %s' % (
-                request.user.username, trip.date, trip.trip_from, trip.trip_to, trip.distance_from, trip.distance_to))
-            trip.dont_recalculate = True
-        Trip.objects.bulk_update(trips, update_fields=["trip_to", "trip_from", "distance_to", "distance_from"])
-        commit()
-
+        ret_val = super().post(request, args, kwargs)
         # TODO: use Celery for this
         results.recalculate_result_competitor(self.user_attendance)
+        return ret_val
 
-        messages.add_message(request, messages.SUCCESS, _(u"Jízdy úspěšně vyplněny"), fail_silently=False)
-        return render(request, self.template_name, self.get_context_data())
-
-    def get_context_data(self, *args, **kwargs):
-        days = util.days(self.user_attendance.campaign)
-        trips = {}
-        for t in self.user_attendance.get_all_trips().select_related('user_attendance__campaign'):
-            trips[t.date] = t
-        calendar = []
-
-        distance = 0
-        nonreduced_distance = 0
-        has_active_trip = False
-        default_distance = self.user_attendance.get_distance(1)
-        allow_adding_rides = models.CityInCampaign.objects.get(city=self.user_attendance.team.subsidiary.city, campaign=self.user_attendance.campaign).allow_adding_rides
-        for i, d in enumerate(days):
-            cd = {}
-            cd['day'] = d
-            cd['trips_active'] = util.trip_active(trips[d])
-            if cd['trips_active']:
-                has_active_trip = True
-            if d in trips:
-                cd['gpxfile_to'] = util.get_or_none_rm(trips[d].gpxfile_set, direction='trip_to')
-                cd['gpxfile_from'] = util.get_or_none_rm(trips[d].gpxfile_set, direction='trip_from')
-                cd['working_ride_to'] = trips[d].is_working_ride_to
-                cd['working_ride_from'] = trips[d].is_working_ride_from
-                cd['default_trip_to'] = trips[d].trip_to
-                cd['default_trip_from'] = trips[d].trip_from
-                cd['default_distance_to'] = default_distance if trips[d].distance_to is None else trips[d].distance_to
-                cd['default_distance_from'] = default_distance if trips[d].distance_from is None else trips[d].distance_from
-                cd['distance_was_cutted'] = False
-                if trips[d].trip_to and trips[d].distance_to:
-                    distance_was_cutted, distance_cutted = trips[d].distance_to_cutted()
-                    distance += distance_cutted
-                    if distance_was_cutted:
-                        cd['distance_was_cutted'] = True
-                    nonreduced_distance += trips[d].distance_to
-                if trips[d].trip_from and trips[d].distance_from:
-                    distance_was_cutted, distance_cutted = trips[d].distance_from_cutted()
-                    distance += distance_cutted
-                    if distance_was_cutted:
-                        cd['distance_was_cutted'] = True
-                    nonreduced_distance += trips[d].distance_from
-            else:
-                cd['gpxfile_to'] = False
-                cd['gpxfile_from'] = False
-                cd['working_ride_to'] = False
-                cd['working_ride_from'] = False
-                cd['default_trip_to'] = False
-                cd['default_trip_from'] = False
-                cd['default_distance_to'] = default_distance
-                cd['default_distance_from'] = default_distance
-            cd['percentage'] = self.user_attendance.get_frequency_percentage(d)
-            cd['percentage_str'] = "%.0f" % (cd['percentage'])
-            cd['distance'] = round(distance, 1)
-            cd['emissions'] = util.get_emissions(nonreduced_distance)
-            calendar.append(cd)
-        return {
-            'calendar': calendar,
-            'has_active_trip': has_active_trip,
-            'user_attendance': self.user_attendance,
-            'allow_adding_rides': allow_adding_rides,
-            'minimum_percentage': self.user_attendance.campaign.minimum_percentage,
-            'other_gpx_files': models.GpxFile.objects.filter(user_attendance=self.user_attendance, trip=None),
-        }
-
-
-class ProfileView(RegistrationViewMixin, TemplateView):
     title = _(u'Moje jízdy')
     registration_phase = 'profile_view'
     template_name = 'registration/competition_profile.html'
@@ -852,7 +761,7 @@ class ProfileView(RegistrationViewMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         if self.user_attendance.entered_competition():
-            return super(ProfileView, self).get(request, *args, **kwargs)
+            return super().get(request, *args, **kwargs)
         else:
             return redirect(reverse('upravit_profil'))
 
@@ -1462,10 +1371,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
 
 
 def distance(trips):
-    distance = 0
-    distance += trips.filter(trip_from=True, is_working_ride_from=True).aggregate(Sum("distance_from"))['distance_from__sum'] or 0
-    distance += trips.filter(trip_to=True, is_working_ride_to=True).aggregate(Sum("distance_to"))['distance_to__sum'] or 0
-    return distance
+    return trips.filter(commute_mode__in=('bicycle', 'by_foot')).aggregate(Sum("distance"))['distance__sum'] or 0
 
 
 def total_distance(campaign):
@@ -1477,7 +1383,7 @@ def period_distance(campaign, day_from, day_to):
 
 
 def trips(trips):
-    return trips.filter(trip_from=True).count() + trips.filter(trip_to=True).count()
+    return trips.count()
 
 
 def total_trips(campaign):

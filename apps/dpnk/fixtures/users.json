@@ -57,6 +57,14 @@
     },
     {
         "fields": {
+            "campaign": 339,
+            "name": "Testing t-shirt size"
+        },
+        "model": "dpnk.tshirtsize",
+        "pk": 1
+    },
+    {
+        "fields": {
             "date_joined": "2015-11-12T18:18:10",
             "email": "test@test.cz",
             "first_name": "Testing",
@@ -266,5 +274,56 @@
         },
         "model": "auth.user",
         "pk": 1041
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:18:10",
+            "email": "test-registered@test.cz",
+            "first_name": "Registered",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2015-11-12T18:53:35.982",
+            "last_name": "User 1",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
+            "user_permissions": [],
+            "username": "test-registered"
+        },
+        "model": "auth.user",
+        "pk": 2128
+    },
+    {
+        "fields": {
+            "approved_for_team": "approved",
+            "campaign": 339,
+            "created": "2015-11-12T18:18:40.223",
+            "distance": null,
+            "dont_want_insert_track": false,
+            "get_rides_count_denorm": 0,
+            "t_shirt_size": 1,
+            "team": 1,
+            "track":  "LINESTRING(0 0,-1 1)",
+            "updated": "2015-11-12T18:18:40.223",
+            "userprofile": 2117
+        },
+        "model": "dpnk.userattendance",
+        "pk": 2115
+    },
+    {
+        "fields": {
+            "administrated_cities": [],
+            "language": "cs",
+            "mailing_hash": null,
+            "mailing_id": "",
+            "nickname": "",
+            "note": "",
+            "sex": "male",
+            "telephone": "",
+            "personal_data_opt_in": true,
+            "user": 2128
+        },
+        "model": "dpnk.userprofile",
+        "pk": 2117
     }
 ]

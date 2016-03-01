@@ -96,7 +96,7 @@
             "date_to": "2013-06-02",
             "entry_after_beginning_days": 7,
             "is_public": true,
-            "name": "Pravidelnost (Liberec a Jablonec)",
+            "name": "Pravidelnost",
             "public_answers": false,
             "rules": null,
             "sex": null,
@@ -134,6 +134,31 @@
         },
         "model": "dpnk.competition",
         "pk": 4
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "city": [],
+            "company": null,
+            "company_competitors": [],
+            "competitor_type": "single_user",
+            "date_from": "2010-12-01",
+            "date_to": "2010-12-30",
+            "entry_after_beginning_days": 7,
+            "is_public": true,
+            "name": "Výkonnost",
+            "public_answers": false,
+            "rules": null,
+            "sex": null,
+            "slug": "vykonnost",
+            "team_competitors": [],
+            "type": "length",
+            "url": "http://www.dopracenakole.net/url/",
+            "user_attendance_competitors": [],
+            "without_admission": true
+        },
+        "model": "dpnk.competition",
+        "pk": 5
     },
     {
         "fields": {

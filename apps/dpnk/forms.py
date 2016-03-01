@@ -25,7 +25,6 @@ import registration.forms
 import datetime
 from django.utils import formats
 from . import models
-from . import util
 from django.db.models import Q
 from dpnk.widgets import SelectChainedOrCreate, SelectOrCreateAutoComplete
 from dpnk.fields import WorkingScheduleField, ShowPointsMultipleModelChoiceField
@@ -727,6 +726,17 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         fields = ('language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'mailing_opt_in', 'email', 'telephone', 'personal_data_opt_in')
 
 
+class TripForm(forms.ModelForm):
+    commute_mode = forms.ChoiceField(
+        choices=models.Trip.MODES,
+        widget=forms.RadioSelect(),
+    )
+
+    class Meta:
+        model = models.Trip
+        fields = ('commute_mode', 'distance')
+
+
 class GpxFileForm(FormClassMixin, forms.ModelForm):
     def clean_user_attendance(self):
         return self.initial['user_attendance']
@@ -738,12 +748,12 @@ class GpxFileForm(FormClassMixin, forms.ModelForm):
         return self.initial['direction']
 
     def clean_track(self):
-        if not util.trip_active(self.trip):
+        if not self.trip.active():
             return getattr(self.initial, 'track', None)
         return self.cleaned_data['track']
 
     def clean_file(self):
-        if not util.trip_active(self.trip):
+        if not self.trip.active():
             return getattr(self.initial, 'file', None)
         return self.cleaned_data['file']
 
@@ -751,8 +761,8 @@ class GpxFileForm(FormClassMixin, forms.ModelForm):
         super(GpxFileForm, self).__init__(*args, **kwargs)
         try:
             self.trip_date = self.instance.trip_date or datetime.datetime.strptime(self.initial['trip_date'], "%Y-%m-%d").date()
-            self.trip = models.Trip.objects.get(date=self.trip_date, user_attendance=self.initial['user_attendance'])
-            if util.trip_active(self.trip):
+            self.trip = models.Trip.objects.get(date=self.trip_date, user_attendance=self.initial['user_attendance'], direction=self.initial['direction'])
+            if self.trip.active():
                 self.helper.add_input(Submit('submit', _(u'Odeslat')))
         except ValueError:
             raise Http404

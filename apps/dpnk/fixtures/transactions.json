@@ -1,6 +1,25 @@
 [
     {
         "fields": {
+            "user_attendance": 2115,
+            "polymorphic_ctype": ["dpnk", "payment"]
+        },
+        "model": "dpnk.transaction",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "amount": 150,
+            "pay_type": "fc",
+            "trans_id": "2055-1",
+            "session_id": "2075-1J1455206453",
+            "transaction_ptr": 5
+        },
+        "model": "dpnk.payment",
+        "pk": 5
+    },
+    {
+        "fields": {
             "user_attendance": 1115,
             "polymorphic_ctype": ["dpnk", "payment"]
         },
@@ -45,14 +64,6 @@
         },
         "model": "dpnk.transaction",
         "pk": 2
-    },
-    {
-        "fields": {
-            "campaign": 339,
-            "name": "Testing t-shirt size"
-        },
-        "model": "dpnk.tshirtsize",
-        "pk": 1
     },
     {
         "fields": {

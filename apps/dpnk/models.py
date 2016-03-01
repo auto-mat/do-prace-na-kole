@@ -974,7 +974,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return self.track or self.distance
 
     def team_complete(self):
-        return self.team and self.approved_for_team == 'approved'
+        return self.team
 
     def payment_complete(self):
         return self.payments().exists()
@@ -998,12 +998,15 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         not_created_days = list(set(days) - set(trip_days))
         create_trips = []
         for d in not_created_days:
-            working_day = util.working_day(d)
             create_trips.append(Trip(
                 date=d,
                 user_attendance=self,
-                is_working_ride_to=working_day,
-                is_working_ride_from=working_day,
+                direction='trip_to',
+            ))
+            create_trips.append(Trip(
+                date=d,
+                user_attendance=self,
+                direction='trip_from',
             ))
         Trip.objects.bulk_create(create_trips)
 
@@ -1851,7 +1854,7 @@ class Trip(models.Model):
         verbose_name = _(u"Cesta")
         verbose_name_plural = _(u"Cesty")
         unique_together = (("user_attendance", "date", "direction"),)
-        ordering = ('date',)
+        ordering = ('date', '-direction')
     objects = BulkUpdateManager()
 
     user_attendance = models.ForeignKey(
@@ -1867,7 +1870,7 @@ class Trip(models.Model):
         null=True, blank=True)
     date = models.DateField(
         verbose_name=_(u"Datum cesty"),
-        default=datetime.datetime.now,
+        default=datetime.date.today,
         null=False)
     commute_mode = models.CharField(
         verbose_name=_(u"Mód dopravy"),
@@ -1880,7 +1883,7 @@ class Trip(models.Model):
     distance = models.FloatField(
         verbose_name=_(u"Ujetá vzdálenost"),
         null=True,
-        blank=True,
+        blank=False,
         default=None,
         validators=[
             MaxValueValidator(1000),
@@ -1915,8 +1918,8 @@ class Trip(models.Model):
     def working_day(self):
         return util.working_day(self.date)
 
-    def can_edit_working_schedule(self):
-        return self.date >= util.today()
+    def active(self):
+        return util.day_active(self.date)
 
 
 class Competition(models.Model):
@@ -2653,7 +2656,7 @@ def update_mailing_user(sender, instance, created, **kwargs):
 @receiver(pre_save, sender=GpxFile)
 def set_trip(sender, instance, *args, **kwargs):
     try:
-        trip = Trip.objects.get(user_attendance=instance.user_attendance, date=instance.trip_date)
+        trip = Trip.objects.get(user_attendance=instance.user_attendance, date=instance.trip_date, direction=instance.direction)
     except Trip.DoesNotExist:
         trip = None
     instance.trip = trip
@@ -2666,15 +2669,11 @@ def set_track(sender, instance, changed_fields=None, **kwargs):
 
 @receiver(post_save, sender=GpxFile)
 def set_trip_post(sender, instance, *args, **kwargs):
-    if instance.trip and util.trip_active(instance.trip):
+    if instance.trip and instance.trip.active():
         length = instance.length()
-        if instance.direction == 'trip_to' and length:
-            instance.trip.distance_to = length
-            instance.trip.trip_to = True
-        if instance.direction == 'trip_from' and length:
-            instance.trip.distance_from = length
-            instance.trip.trip_from = True
-        instance.trip.save()
+        if length:
+            instance.trip.distance = length
+            instance.trip.save()
 
 
 @receiver(post_save, sender=UserActionTransaction)

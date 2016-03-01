@@ -3,29 +3,13 @@
 {% load dpnk_tags %}
 {% load i18n %}
 
-{% block extrahead %}
-<script type="text/javascript" src="{% static "bow/jquery-form/jquery.form.js"%}"></script>
-{{ block.super }}
-{% endblock %}
-
 {% block content %}
 {% block messages %}
 {% include "messages_include.html" %}
 {{ message }}
 {% endblock %}
 
-<script>
-   $.get("{% url 'jizdy' %}", function(data) {
-      $("#rides-form-container").append(data);
-      $("#rides-form-container").change(function(){
-         $("#rides-form :input").prop('readonly', true);
-         $("#rides-form").addClass("waiting-for-load");
-         $("#rides-form").ajaxSubmit({replaceTarget: false, target: "#rides-form-container", success: function(){
-            $("#rides-form").removeClass("waiting-for-load");
-      }})});
-   });
-</script>
-<div id="rides-form-container"></div>
+<div id="rides-form-container">{% include "registration/rides.html" %}</div>
 
 <div>
    <h3>{% trans "Vouchery" %}</h3>
