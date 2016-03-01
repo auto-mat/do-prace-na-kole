@@ -33,6 +33,12 @@ views = [
     reverse('zmenit_triko'),
     reverse('upravit_trasu'),
     reverse('competitions'),
+    reverse('competition-rules-city', kwargs={'city_slug': "testing-city"}),
+    reverse('competition_results', kwargs={'competition_slug': "FQ-LB"}),
+    reverse('competition_results', kwargs={'competition_slug': "quest"}),
+    reverse('competition_results', kwargs={'competition_slug': "vykonnost"}),
+    reverse('competition_results', kwargs={'competition_slug': "TF"}),
+    reverse('questionnaire_answers_all', kwargs={'competition_slug': "FQ-LB"}),
     reverse('other_team_members_results'),
     reverse('team_members'),
     reverse('zaslat_zadost_clenstvi'),
@@ -64,7 +70,7 @@ views = [
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewSmokeTests(TestCase):
-    fixtures = ['campaign', 'views', 'users']
+    fixtures = ['campaign', 'views', 'users', 'test_results_data']
 
     def setUp(self):
         # Every test needs access to the request factory.

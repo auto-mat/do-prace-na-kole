@@ -1,6 +1,7 @@
 [
     {
         "fields": {
+            "slug": "testing-city",
             "name": "Testing city"
         },
         "model": "dpnk.city",
