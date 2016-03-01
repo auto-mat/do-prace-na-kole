@@ -991,24 +991,17 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return self.get_trips(days)
 
     def get_trips(self, days):
-        trip_days = Trip.objects.filter(user_attendance=self, date__in=days).values_list('date', flat=True)
-        not_created_days = list(set(days) - set(trip_days))
-        create_trips = []
-        for d in not_created_days:
-            create_trips.append(Trip(
-                date=d,
-                user_attendance=self,
-                direction='trip_to',
-            ))
-            create_trips.append(Trip(
-                date=d,
-                user_attendance=self,
-                direction='trip_from',
-            ))
-        Trip.objects.bulk_create(create_trips)
-
-        trips = Trip.objects.filter(user_attendance=self, date__in=days).all()
-        return trips
+        """
+        Return trips in given days, return days without any trip
+        @param days
+        @return trips in those days
+        @return days without trip
+        """
+        trips = Trip.objects.filter(user_attendance=self, date__in=days)
+        trip_days = trips.values_list('date', 'direction')
+        expected_trip_days = [(day, direction) for day in days for direction in ('trip_from', 'trip_to')]
+        uncreated_trips = sorted(list(set(expected_trip_days) - set(trip_days)))
+        return trips, uncreated_trips
 
     @denormalized(models.ForeignKey, to='CompanyAdmin', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
     def related_company_admin(self):
@@ -1858,7 +1851,7 @@ class Trip(models.Model):
         UserAttendance,
         related_name="user_trips",
         null=True,
-        blank=True,
+        blank=False,
         default=None)
     direction = models.CharField(
         verbose_name=_(u"Směr cesty"),

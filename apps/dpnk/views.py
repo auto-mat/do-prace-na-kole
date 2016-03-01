@@ -725,28 +725,46 @@ def payment_status(request):
     return HttpResponse("OK")
 
 
-class RidesView(UserAttendanceViewMixin, ModelFormSetView):
+class RidesView(UserAttendanceViewMixin, SuccessMessageMixin, ModelFormSetView):
     model = Trip
     form_class = forms.TripForm
-    fields = ('commute_mode', 'distance')
+    fields = ('commute_mode', 'distance', 'direction', 'user_attendance', 'date')
     extra = 0
+    uncreated_trips = []
+    success_message = _(u"Tabulka jízd úspěšně změněna")
 
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
     def dispatch(self, request, *args, **kwargs):
-        return super(RidesView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
-    def get_queryset(self, form_class=PaymentTypeForm):
+    def get_queryset(self):
         allow_adding_rides = models.CityInCampaign.objects.get(city=self.user_attendance.team.subsidiary.city, campaign=self.user_attendance.campaign).allow_adding_rides
         if allow_adding_rides:
-            return self.user_attendance.get_active_trips().select_related('user_attendance__campaign', 'gpxfile')
+            self.trips, self.uncreated_trips = self.user_attendance.get_active_trips()
+            return self.trips.select_related('gpxfile')
         else:
             return models.CityInCampaign.objects.none()
+
+    def get_initial(self):
+        distance = self.user_attendance.get_distance()
+        return [{'distance': distance, 'date': trip[0], 'direction': trip[1], 'user_attendance': self.user_attendance} for trip in self.uncreated_trips]
+
+    def get_factory_kwargs(self):
+        kwargs = super().get_factory_kwargs()
+        kwargs['extra'] = len(self.uncreated_trips)
+        return kwargs
 
     def post(self, request, *args, **kwargs):
         ret_val = super().post(request, args, kwargs)
         # TODO: use Celery for this
         results.recalculate_result_competitor(self.user_attendance)
+        return ret_val
+
+    def construct_formset(self):
+        ret_val = super().construct_formset()
+        ret_val.forms = sorted(ret_val.forms, key=lambda form: form.initial['direction'] or form.instance.direction, reverse=True)
+        ret_val.forms = sorted(ret_val.forms, key=lambda form: form.initial['date'] or form.instance.date)
         return ret_val
 
     title = _(u'Moje jízdy')
@@ -755,8 +773,9 @@ class RidesView(UserAttendanceViewMixin, ModelFormSetView):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        context_data['city_slug'] = self.user_attendance.team.subsidiary.city.slug
-        context_data['map_city_slug'] = 'mapa' if self.user_attendance.team.subsidiary.city.slug == 'praha' else self.user_attendance.team.subsidiary.city.slug
+        city_slug = self.user_attendance.team.subsidiary.city.slug
+        context_data['city_slug'] = city_slug
+        context_data['map_city_slug'] = 'mapa' if city_slug == 'praha' else city_slug
         return context_data
 
     def get(self, request, *args, **kwargs):

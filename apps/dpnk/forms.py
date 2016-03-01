@@ -676,9 +676,23 @@ class TripForm(forms.ModelForm):
         widget=forms.RadioSelect(),
     )
 
+    def clean_user_attendance(self):
+        return self.instance.user_attendance or self.initial['user_attendance']
+
+    def clean_direction(self):
+        return self.initial['direction']
+
+    def clean_date(self):
+        return self.initial['date']
+
     class Meta:
         model = models.Trip
-        fields = ('commute_mode', 'distance')
+        fields = ('commute_mode', 'distance', 'direction', 'user_attendance', 'date')
+        widgets = {
+            'user_attendance': forms.HiddenInput(),
+            'direction': HiddenInput(),
+            'date': HiddenInput(),
+        }
 
 
 class GpxFileForm(FormClassMixin, forms.ModelForm):

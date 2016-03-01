@@ -459,29 +459,35 @@ class ViewsTestsRegistered(TransactionTestCase):
         call_command('denorm_drop')
 
     def test_dpnk_rides_view(self):
-        self.assertEquals(self.user_attendance.user_trips.count(), 0)
         response = self.client.get(reverse('profil'))
+        self.assertContains(response, 'form-0-commute_mode')
         self.assertContains(response, 'form-1-commute_mode')
-        self.assertEquals(self.user_attendance.user_trips.count(), 2)
-        trip1_pk = models.Trip.objects.get(date=datetime.date(year=2010, month=12, day=1), direction='trip_to').pk
-        trip2_pk = models.Trip.objects.get(date=datetime.date(year=2010, month=12, day=1), direction='trip_from').pk
+        self.assertEquals(self.user_attendance.user_trips.count(), 1)
         post_data = {
             'form-TOTAL_FORMS': '2',
-            'form-INITIAL_FORMS': '2',
+            'form-INITIAL_FORMS': '1',
             'form-MIN_NUM_FORMS': '0',
             'form-MAX_NUM_FORMS': '1000',
-            'form-0-id': trip1_pk,
+            'form-0-id': 1,
             'form-0-commute_mode': 'by_foot',
             'form-0-distance': '28.89',
-            'form-1-id': trip2_pk,
+            'form-0-user_attendance': 12,
+            'form-0-direction': 'trip_to',
+            'form-0-user_attendance': 1115,
+            'form-0-date': datetime.date(year=2010, month=12, day=1),
+            'form-1-id': '',
             'form-1-commute_mode': 'bicycle',
             'form-1-distance': '2',
+            'form-1-user_attendance': 1115,
+            'form-1-direction': 'trip_from',
+            'form-1-date': datetime.date(year=2010, month=12, day=1),
             'submit': 'Odeslat',
         }
         response = self.client.post(reverse('profil'), post_data, follow=True)
         self.assertContains(response, 'form-1-commute_mode')
-        self.assertEquals(models.Trip.objects.get(pk=trip1_pk).distance, 28.89)
-        self.assertEquals(models.Trip.objects.get(pk=trip2_pk).commute_mode, 'bicycle')
+        self.assertEquals(self.user_attendance.user_trips.count(), 2)
+        self.assertEquals(models.Trip.objects.get(pk=1).distance, 28.89)
+        self.assertEquals(models.Trip.objects.exclude(pk=1).get().commute_mode, 'bicycle')
         denorm.flush()
         user_attendance = UserAttendance.objects.get(userprofile__user__username='test-registered')
         self.assertEquals(user_attendance.trip_length_total, 30.89)

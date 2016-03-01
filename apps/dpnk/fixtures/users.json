@@ -325,5 +325,15 @@
         },
         "model": "dpnk.userprofile",
         "pk": 2117
+    },
+    {
+        "fields": {
+           "direction": "trip_to",
+           "distance": 5,
+           "date": "2010-12-1",
+           "user_attendance": 2115
+        },
+        "model": "dpnk.trip",
+        "pk": 1
     }
 ]
