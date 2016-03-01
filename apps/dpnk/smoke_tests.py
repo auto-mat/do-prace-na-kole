@@ -106,7 +106,7 @@ class ViewSmokeTests(TestCase):
         test if the user pages work after user registration
         """
         user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
-        user_attendance.track = 'LINESTRING(0 0,-1 1)'
+        user_attendance.track = 'MULTILINESTRING((0 0,-1 1))'
         user_attendance.t_shirt_size = mommy.make(models.TShirtSize)
         team = Team.objects.get(id=1)
         user_attendance.team = team

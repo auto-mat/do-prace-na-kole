@@ -914,8 +914,7 @@ class UpdateTrackView(RegistrationViewMixin, UpdateView):
     form_class = TrackUpdateForm
     model = UserAttendance
     success_message = _(u"Trasa/vzdálenost úspěšně upravena")
-    next_url = 'zmenit_triko'
-    prev_url = 'zmenit_tym'
+    success_url = 'upravit_trasu'
     registration_phase = "upravit_profil"
     title = _("Upravit typickou trasu")
 
@@ -1556,7 +1555,7 @@ class CreateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageM
 
     def get_initial(self):
         if self.user_attendance.track:
-            track = MultiLineString(self.user_attendance.track)
+            track = self.user_attendance.track
         else:
             track = None
 

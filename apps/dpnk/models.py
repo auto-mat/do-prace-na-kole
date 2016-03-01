@@ -695,7 +695,7 @@ class UserAttendance(models.Model):
         default=None,
         blank=True,
         null=True)
-    track = models.LineStringField(
+    track = models.MultiLineStringField(
         verbose_name=_(u"trasa"),
         help_text=_(u"""
 <ul>

@@ -59,7 +59,7 @@ class UserLeafletWidget(LeafletWidget):
 
         super(UserLeafletWidget, self).__init__(
             attrs={
-                "geom_type": 'LINESTRING',
+                "geom_type": 'MULTILINESTRING',
                 "map_height": "500px",
                 "map_width": "100%",
                 'settings_overrides': settings_overrides,
@@ -564,7 +564,7 @@ class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
         fields = ('t_shirt_size', )
 
 
-class TrackUpdateForm(PrevNextMixin, forms.ModelForm):
+class TrackUpdateForm(SubmitMixin, forms.ModelForm):
     def clean(self):
         cleaned_data = super(TrackUpdateForm, self).clean()
         if cleaned_data['dont_want_insert_track']:
