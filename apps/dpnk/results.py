@@ -255,11 +255,15 @@ def recalculate_result_competition(competition):
 
 class RecalculateResultCompetitorThread(threading.Thread):
     def __init__(self, user_attendance, **kwargs):
-        self.user_attendance = user_attendance
+        self.user_attendance_pk = user_attendance.pk
         super(RecalculateResultCompetitorThread, self).__init__(**kwargs)
 
     def run(self):
-        recalculate_result_competitor_nothread(self.user_attendance)
+        try:
+            user_attendance = UserAttendance.objects.get(pk=self.user_attendance_pk)
+        except UserAttendance.DoesNotExist:
+            return
+        recalculate_result_competitor_nothread(user_attendance)
 
 
 def recalculate_result_competitor_nothread(user_attendance):
