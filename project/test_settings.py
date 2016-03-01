@@ -30,7 +30,7 @@ SERVER_EMAIL = 'Do práce na kole <>'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'dpnk',
+        'NAME': 'dpnk_nose',
         'USER': 'dpnk',
         'PASSWORD': '',
         'HOST': 'localhost',
