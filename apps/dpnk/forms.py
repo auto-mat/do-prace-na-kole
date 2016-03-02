@@ -605,7 +605,9 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         required=False,
     )
     personal_data_opt_in = forms.BooleanField(
-        label=_("Souhlasím se zpracováním osobních údajů podle Zásad o ochraně a zpracování údajů A*M."),
+        label=_("Souhlasím se zpracováním osobních údajů podle "
+                "<a href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů A*M</a> "
+                "a s Obchodními podmínkami soutěže Do práce na kole."),
         required=True,
     )
     mailing_opt_in = forms.ChoiceField(
