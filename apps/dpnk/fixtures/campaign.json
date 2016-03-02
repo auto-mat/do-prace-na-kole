@@ -112,6 +112,22 @@
     },
     {
         "fields": {
+           "competition": 4
+        },
+        "model": "dpnk.question",
+        "pk": 1
+    },
+    {
+        "fields": {
+           "team": 1,
+           "result": 100,
+           "competition": 3
+        },
+        "model": "dpnk.competitionresult",
+        "pk": 1
+    },
+    {
+        "fields": {
             "campaign": 339,
             "city": [],
             "company": null,

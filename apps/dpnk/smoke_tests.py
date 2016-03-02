@@ -13,6 +13,15 @@ import datetime
 
 activate('cs')
 views = [
+    "/rest/gpx/",
+    "%s?uid=1" % reverse('admin_questionnaire_answers', kwargs={'competition_slug': "FQ-LB"}),
+    reverse('admin_questionnaire_results', kwargs={'competition_slug': "FQ-LB"}),
+    reverse('admin_draw_results', kwargs={'competition_slug': "FQ-LB"}),
+    reverse('admin_draw_results', kwargs={'competition_slug': "vykonnost"}),
+    reverse('admin_draw_results', kwargs={'competition_slug': "quest"}),
+    reverse('admin_draw_results', kwargs={'competition_slug': "TF"}),
+    "%s?question=1" % reverse('admin_answers', urls),
+    reverse('admin_questions', urls),
     reverse('payment', urls),
     reverse('profil', urls),
     reverse('zmenit_tym'),

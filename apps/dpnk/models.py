@@ -167,7 +167,8 @@ class CityInCampaign(models.Model):
     city = models.ForeignKey(
         City,
         null=False,
-        blank=False)
+        blank=False,
+        related_name="cityincampaign")
     campaign = models.ForeignKey(
         "Campaign",
         null=False,
