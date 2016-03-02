@@ -236,8 +236,8 @@ class Subsidiary(models.Model):
     """Pobočka"""
 
     class Meta:
-        verbose_name = _(u"Pobočka firmy")
-        verbose_name_plural = _(u"Pobočky firem")
+        verbose_name = _(u"Pobočka společnosti")
+        verbose_name_plural = _(u"Pobočky společností")
 
     address = Address()
     company = models.ForeignKey(
@@ -1195,7 +1195,7 @@ class UserProfile(models.Model):
 
 
 class CompanyAdmin(models.Model):
-    """Profil firemního administrátora"""
+    """Profil koordinátora společnosti"""
 
     COMPANY_APPROVAL = (
         ('approved', _(u"Odsouhlasený")),
@@ -1204,8 +1204,8 @@ class CompanyAdmin(models.Model):
     )
 
     class Meta:
-        verbose_name = _(u"Firemní koordinátor")
-        verbose_name_plural = _(u"Firemní koordinátoři")
+        verbose_name = _(u"Koordinátor společnosti")
+        verbose_name_plural = _(u"Koordinátoři společností")
         unique_together = (
             ("user", "campaign"),
             ("administrated_company", "campaign"),
@@ -1238,7 +1238,7 @@ class CompanyAdmin(models.Model):
     administrated_company = models.ForeignKey(
         "Company",
         related_name="company_admin",
-        verbose_name=_(u"Administrovaná společnost"),
+        verbose_name=_(u"Koordinovaná společnost"),
         null=True,
         blank=False)
 
@@ -1930,7 +1930,7 @@ class Competition(models.Model):
         ('single_user', _(u"Jednotliví soutěžící")),
         ('liberos', _(u"Liberos")),
         ('team', _(u"Týmy")),
-        ('company', _(u"Soutěž firem")),
+        ('company', _(u"Soutěž spoleností")),
     )
 
     class Meta:

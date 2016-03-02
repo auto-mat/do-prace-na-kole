@@ -108,12 +108,11 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
 class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFormUniqueEmail):
     motivation_company_admin = forms.CharField(
         label=_(u"Pár vět o vaší pozici"),
-        help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle kterých můžeme ověřit, že vám funkci firemního administrátora můžeme svěřit."),
-        max_length=5000,
-        widget=forms.Textarea,
+        help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle kterých můžeme ověřit, že vám funkci koordinátora společnosti můžeme svěřit."),
+        max_length=100,
         required=True)
     administrated_company = forms.ModelChoiceField(
-        label=_(u"Administrovaná firma"),
+        label=_(u"Koordinovaná společnost"),
         widget=AutoCompleteSelectWidget(
             'companies',
         ),
@@ -121,7 +120,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         required=True)
     telephone = forms.CharField(
         label="Telefon",
-        help_text="Pro možnost kontaktování firemního administrátora",
+        help_text="Pro možnost kontaktování firemního koordinátora",
         max_length=30)
     first_name = forms.CharField(
         label=_(u"Jméno"),
