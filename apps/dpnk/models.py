@@ -1258,6 +1258,10 @@ class CompanyAdmin(models.Model):
         verbose_name=_(u"Může potvrzovat platby"),
         default=False,
         null=False)
+    will_pay_opt_in = models.BooleanField(
+        verbose_name=_(u"Souhlas s platbou za zaměstnance."),
+        blank=False,
+        default=False)
 
     def company_has_invoices(self):
         return self.administrated_company.invoice_set.filter(campaign=self.campaign).exists()

@@ -92,6 +92,7 @@ class ViewsTests(TransactionTestCase):
             'last_name': 'Admin',
             'administrated_company': 2,
             'campaign': 339,
+            'will_pay_opt_in': True,
         }
         response = self.client.post(address, post_data, follow=True)
         with open("error.html", "w") as f:
@@ -426,6 +427,17 @@ class ViewsTestsLogon(TransactionTestCase):
         response = self.client.post(reverse('zmenit_tym'), post_data)
         self.assertContains(response, 'error_1_id_team')
         self.assertContains(response, 'var value = undefined;')
+
+    def test_dpnk_company_admin_application(self):
+        post_data = {
+            'motivation_company_admin': 'Testing position',
+            'will_pay_opt_in': True,
+            'submit': 'Odeslat',
+        }
+        response = self.client.post(reverse('company_admin_application'), post_data, follow=True)
+        self.assertRedirects(response, reverse('upravit_profil'))
+        company_admin = models.CompanyAdmin.objects.get(user__username='test')
+        self.assertEquals(company_admin.motivation_company_admin, 'Testing position')
 
     def test_dpnk_views_gpx_file(self):
         user_attendance = UserAttendance.objects.get(userprofile__user__username='test')

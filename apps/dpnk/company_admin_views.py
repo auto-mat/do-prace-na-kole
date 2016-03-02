@@ -139,7 +139,7 @@ class CompanyAdminView(RegistrationViewMixin, UpdateView):
     template_name = 'submenu_payment.html'
     form_class = CompanyAdminForm
     model = CompanyAdmin
-    success_url = reverse_lazy('zmenit_tym')
+    success_url = 'profil'
     registration_phase = "typ_platby"
     title = _("Chci se stát správcem společnosti")
 

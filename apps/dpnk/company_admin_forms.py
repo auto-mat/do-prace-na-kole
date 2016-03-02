@@ -88,10 +88,17 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
         label=_(u"Zaměstnanecká pozice"),
         max_length=100,
         required=True)
+    will_pay_opt_in = forms.BooleanField(
+        label=_("Zavazuji se, že já, resp. moje společnost, uhradí startovné za zaměstnance jejichž platbu schválím."),
+        required=True,
+    )
 
     class Meta:
         model = CompanyAdmin
-        fields = ('motivation_company_admin', )
+        fields = (
+            'motivation_company_admin',
+            'will_pay_opt_in',
+        )
 
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super(CompanyAdminForm, self).__init__(*args, **kwargs)
@@ -129,6 +136,10 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         queryset=Campaign.objects.all(),
         required=True)
     username = forms.CharField(widget=forms.HiddenInput, required=False)
+    will_pay_opt_in = forms.BooleanField(
+        label=_("Zavazuji se, že já, resp. moje společnost, uhradí startovné za zaměstnance jejichž platbu schválím."),
+        required=True,
+    )
 
     def clean(self):
         cleaned_data = super(CompanyAdminApplicationForm, self).clean()
@@ -155,6 +166,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
             'password1',
             'password2',
             'username',
+            'will_pay_opt_in',
         )
 
 
