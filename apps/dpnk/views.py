@@ -36,7 +36,6 @@ from django.utils.decorators import method_decorator, classonlymethod
 from django.views.decorators.gzip import gzip_page
 from .decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase, must_be_owner
 from django.contrib.auth.decorators import login_required as login_required_simple
-from django.contrib.gis.geos import MultiLineString
 from django.db.models import Sum, Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
