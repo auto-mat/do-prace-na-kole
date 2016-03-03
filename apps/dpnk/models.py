@@ -1878,7 +1878,7 @@ class Trip(models.Model):
     distance = models.FloatField(
         verbose_name=_(u"Ujetá vzdálenost"),
         null=True,
-        blank=False,
+        blank=True,
         default=None,
         validators=[
             MaxValueValidator(1000),

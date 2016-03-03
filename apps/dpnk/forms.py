@@ -676,6 +676,9 @@ class TripForm(forms.ModelForm):
         choices=models.Trip.MODES,
         widget=forms.RadioSelect(),
     )
+    distance = forms.FloatField(
+        required=True,
+    )
 
     def clean_user_attendance(self):
         return self.instance.user_attendance or self.initial['user_attendance']
