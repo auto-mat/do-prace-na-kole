@@ -1115,7 +1115,7 @@ class UserProfile(models.Model):
         null=True,
         blank=True
     )
-    mailing_hash = models.BigIntegerField(
+    mailing_hash = models.TextField(
         verbose_name=_(u"Hash poslední synchronizace s mailingem"),
         default=None,
         null=True,
@@ -2646,6 +2646,13 @@ def update_mailing_user(sender, instance, created, **kwargs):
                 mailing.add_or_update_user(user_attendance)
     except UserProfile.DoesNotExist:
         pass
+
+
+@receiver(post_save, sender=UserProfile)
+def update_mailing_userprofile(sender, instance, created, **kwargs):
+    for user_attendance in instance.userattendance_set.all():
+        if not kwargs.get('raw', False) and user_attendance.campaign:
+            mailing.add_or_update_user(user_attendance)
 
 
 @receiver(pre_save, sender=GpxFile)

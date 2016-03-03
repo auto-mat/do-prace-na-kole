@@ -9,6 +9,14 @@
     },
     {
         "fields": {
+            "slug": "other-city",
+            "name": "Other city"
+        },
+        "model": "dpnk.city",
+        "pk": 2
+    },
+    {
+        "fields": {
             "city": 1,
             "campaign": 339
         },
@@ -121,6 +129,7 @@
             "sex": "male",
             "telephone": "",
             "personal_data_opt_in": true,
+            "mailing_opt_in": true,
             "user": 1128
         },
         "model": "dpnk.userprofile",

@@ -152,22 +152,48 @@ class ViewsTests(TransactionTestCase):
 
     def test_dpnk_mailing_list(self):
         user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
-        user_attendance.campaign.mailing_list_enabled = True
-        user_attendance.campaign.save()
         ret_mailing_id = "344ass"
         createsend.Subscriber.add = MagicMock(return_value=ret_mailing_id)
         mailing.add_or_update_user_synchronous(user_attendance)
-        createsend.Subscriber.add.assert_called_with(
-            '12345abcde', 'test@test.cz', 'Testing User 1',
-            [
-                {'Key': 'Mesto', 'Value': None}, {'Key': 'Firemni_spravce', 'Value': True},
-                {'Key': 'Stav_platby', 'Value': None}, {'Key': 'Aktivni', 'Value': True},
-                {'Key': 'Novacek', 'Value': None}, {'Key': 'Kampan', 'Value': 'Testing campaign'},
-                {'Key': 'Vstoupil_do_souteze', 'Value': None}, {'Key': 'Pocet_lidi_v_tymu', 'Value': None}
-            ],
-            True
-        )
+        custom_fields = [
+            OrderedDict((('Key', 'Mesto'), ('Value', 'testing-city'))),
+            OrderedDict((('Key', 'Firemni_spravce'), ('Value', True))),
+            OrderedDict((('Key', 'Stav_platby'), ('Value', None))),
+            OrderedDict((('Key', 'Aktivni'), ('Value', True))),
+            OrderedDict((('Key', 'Novacek'), ('Value', False))),
+            OrderedDict((('Key', 'Kampan'), ('Value', 'testing-campaign'))),
+            OrderedDict((('Key', 'Vstoupil_do_souteze'), ('Value', None))),
+            OrderedDict((('Key', 'Pocet_lidi_v_tymu'), ('Value', None))),
+            OrderedDict((('Key', 'Povoleni_odesilat_emaily'), ('Value', True))),
+        ]
+        createsend.Subscriber.add.assert_called_once_with('12345abcde', 'test@test.cz', 'Testing User 1', custom_fields, True)
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
+        self.assertEqual(user_attendance.userprofile.mailing_hash, 'd875edb9c3df29a49dd4482560d3b044')
+
+        createsend.Subscriber.update = MagicMock()
+        mailing.add_or_update_user_synchronous(user_attendance)
+        self.assertFalse(createsend.Subscriber.update.called)
+        self.assertEqual(user_attendance.userprofile.mailing_hash, 'd875edb9c3df29a49dd4482560d3b044')
+
+        custom_fields[0] = OrderedDict((('Key', 'Mesto'), ('Value', 'other-city')))
+        user_attendance.team.subsidiary.city = models.City.objects.get(slug="other-city")
+        user_attendance.team.subsidiary.save()
+        createsend.Subscriber.get = MagicMock()
+        createsend.Subscriber.update = MagicMock()
+        mailing.add_or_update_user_synchronous(user_attendance)
+        createsend.Subscriber.get.assert_called_once_with('12345abcde', ret_mailing_id)
+        createsend.Subscriber.update.assert_called_once_with('test@test.cz', 'Testing User 1', custom_fields, True)
+        self.assertEqual(user_attendance.userprofile.mailing_hash, 'a476d0883e6b3f7ad77a45f1d55cb72c')
+
+        user_attendance.userprofile.user.is_active = False
+        user_attendance.userprofile.user.save()
+        createsend.Subscriber.get = MagicMock()
+        createsend.Subscriber.delete = MagicMock(return_value=ret_mailing_id)
+        mailing.add_or_update_user_synchronous(user_attendance)
+        createsend.Subscriber.get.assert_called_once_with('12345abcde', ret_mailing_id)
+        createsend.Subscriber.delete.assert_called_once_with()
+        self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
+        self.assertEqual(user_attendance.userprofile.mailing_hash, None)
 
 
 class PaymentTests(TransactionTestCase):
