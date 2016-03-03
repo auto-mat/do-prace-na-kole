@@ -273,13 +273,12 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
                 initial['subsidiary'] = previous_user_attendance.team.subsidiary
                 initial['company'] = previous_user_attendance.team.subsidiary.company.pk
 
-        if instance and instance.team:
-            initial['team'] = instance.team
-            initial['subsidiary'] = instance.team.subsidiary
-            initial['company'] = instance.team.subsidiary.company.pk
+            if instance.team:
+                initial['team'] = instance.team
+                initial['subsidiary'] = instance.team.subsidiary
+                initial['company'] = instance.team.subsidiary.company.pk
 
-        if request:
-            if 'team' in request.GET:
+        if request and 'team' in request.GET:
                 initial['team'] = request.GET['team']
 
         kwargs['initial'] = initial
