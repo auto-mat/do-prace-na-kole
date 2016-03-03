@@ -78,7 +78,7 @@ views = [
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class ViewSmokeTests(TestCase):
+class BaseViewsTests(TestCase):
     fixtures = ['campaign', 'views', 'users', 'test_results_data']
 
     def setUp(self):
@@ -102,8 +102,7 @@ class ViewSmokeTests(TestCase):
                 f.write(response.content.decode())
         self.assertEqual(response.status_code, status_code, "%s view failed, the failed page is saved to error_%s.html file." % (view, filename))
 
-    @parameterized.expand(views)
-    def test_dpnk_views(self, view):
+    def dpnk_views(self, view):
         """
         test if the user pages work
         """
@@ -115,8 +114,7 @@ class ViewSmokeTests(TestCase):
 
         self.verify_views(view, status_code_map)
 
-    @parameterized.expand(views)
-    def test_dpnk_views_registered(self, view):
+    def dpnk_views_registered(self, view):
         """
         test if the user pages work after user registration
         """
@@ -136,3 +134,34 @@ class ViewSmokeTests(TestCase):
         }
 
         self.verify_views(view, status_code_map)
+
+
+class ViewSmokeTests(BaseViewsTests):
+    @parameterized.expand(views)
+    def test_dpnk_views(self, view):
+        self.dpnk_views(view)
+
+    @parameterized.expand(views)
+    def test_dpnk_views_registered(self, view):
+        self.dpnk_views_registered(view)
+
+views1 = [
+    reverse('payment_successfull', kwargs={"trans_id": "2055", "session_id": "2075-1J1455206453", "pay_type": "kb"}),
+    reverse('payment_unsuccessfull', kwargs={"trans_id": "2055", "session_id": "2075-1J1455206453", "pay_type": "kb", "error": 123}),
+]
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class ViewSmokeTestsPayment(BaseViewsTests):
+    fixtures = ['campaign', 'views', 'users', 'batches', 'transactions', 'test_results_data']
+
+    @parameterized.expand(views1)
+    def test_dpnk_views(self, view):
+        self.dpnk_views(view)
+
+    @parameterized.expand(views1)
+    def test_dpnk_views_registered(self, view):
+        self.dpnk_views_registered(view)
