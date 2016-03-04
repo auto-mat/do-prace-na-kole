@@ -1893,30 +1893,6 @@ class Trip(models.Model):
         ],
     )
 
-    def distance_from_cutted(self):
-        if self.trip_from and self.is_working_ride_from:
-            plus_distance = self.user_attendance.campaign.trip_plus_distance
-            max_distance = (self.user_attendance.get_distance() or 0) + plus_distance
-            ridden_distance = self.distance_from or 0
-            if ridden_distance > max_distance:
-                return (True, max_distance)
-            else:
-                return (False, ridden_distance)
-        else:
-            return (False, 0)
-
-    def distance_to_cutted(self):
-        if self.trip_to and self.is_working_ride_to:
-            plus_distance = self.user_attendance.campaign.trip_plus_distance
-            max_distance = (self.user_attendance.get_distance() or 0) + plus_distance
-            ridden_distance = self.distance_to or 0
-            if ridden_distance > max_distance:
-                return (True, max_distance)
-            else:
-                return (False, ridden_distance)
-        else:
-            return (False, 0)
-
     def working_day(self):
         return util.working_day(self.date)
 
