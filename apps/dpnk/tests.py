@@ -629,6 +629,27 @@ class ResultsTests(TestCase):
         self.assertListEqual(list(query.all()), [team])
 
 
+class ModelTests(TestCase):
+    fixtures = ['users', 'campaign', 'transactions', 'batches']
+
+    def setUp(self):
+        call_command('denorm_init')
+
+    def tearDown(self):
+        call_command('denorm_drop')
+
+    def test_payment_type_string(self):
+        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        user_attendance.save()
+        call_command('denorm_flush')
+        self.assertEquals(user_attendance.payment_type_string(), "FIRMA PLATÍ FAKTUROU")
+
+    def test_payment_type_string_none_type(self):
+        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        user_attendance.representative_payment = Payment(pay_type=None)
+        self.assertEquals(user_attendance.payment_type_string(), None)
+
+
 class RunChecksTestCase(TestCase):
     def test_checks(self):
         django.setup()

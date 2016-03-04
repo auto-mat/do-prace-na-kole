@@ -852,7 +852,9 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     def payment_type_string(self):
         if self.representative_payment:
-            return Payment.PAY_TYPES_DICT[self.representative_payment.pay_type].upper()
+            pay_type = self.representative_payment.pay_type
+            if pay_type:
+                return Payment.PAY_TYPES_DICT[pay_type].upper()
 
     def get_competitions(self):
         return results.get_competitions_with_info(self)
