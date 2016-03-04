@@ -870,7 +870,6 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     @denormalized(models.IntegerField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
-    @depend_on_related('Campaign')
     def get_rides_count_denorm(self):
         return results.get_rides_count(self)
 
@@ -879,7 +878,6 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
-    @depend_on_related('Campaign')
     def frequency(self):
         return self.get_frequency()
 
@@ -891,7 +889,6 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
-    @depend_on_related('Campaign')
     def trip_length_total(self):
         return results.get_userprofile_length(self)
 
@@ -1014,6 +1011,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return trips, uncreated_trips
 
     @denormalized(models.ForeignKey, to='CompanyAdmin', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
+    @depend_on_related('CompanyAdmin')
     def related_company_admin(self):
         try:
             ca = CompanyAdmin.objects.get(user=self.userprofile.user, campaign=self.campaign)
