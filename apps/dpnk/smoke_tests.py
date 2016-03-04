@@ -1,14 +1,13 @@
 
 from project import urls
 from nose_parameterized import parameterized
-from dpnk import models, views
-from dpnk.models import Team, UserAttendance
+from dpnk import views
+from dpnk.models import UserAttendance
 from django.core.urlresolvers import reverse
 from django.core.management import call_command
 from django.test import TestCase, RequestFactory, Client
 from django.test.utils import override_settings
 from django.utils.translation import activate
-from model_mommy import mommy
 import datetime
 
 activate('cs')
@@ -92,58 +91,42 @@ class BaseViewsTests(TestCase):
     def tearDown(self):
         call_command('denorm_drop')
 
-    def verify_views(self, view, status_code_map):
-        status_code = status_code_map[view] if view in status_code_map else 200
-        address = view
-        response = self.client.get(address, follow=True)
+    def verify_views(self, view, status_code=200):
+        response = self.client.get(view, follow=True)
         filename = view.replace("/", "_")
         if response.status_code != status_code:
             with open("error_%s.html" % filename, "w") as f:
                 f.write(response.content.decode())
         self.assertEqual(response.status_code, status_code, "%s view failed, the failed page is saved to error_%s.html file." % (view, filename))
 
-    def dpnk_views(self, view):
-        """
-        test if the user pages work
-        """
-        status_code_map = {
-            reverse('profil'): 200,
-            reverse('registration_access'): 200,
-            'error404.txt': 404,
-        }
-
-        self.verify_views(view, status_code_map)
-
-    def dpnk_views_registered(self, view):
-        """
-        test if the user pages work after user registration
-        """
-        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
-        user_attendance.track = 'MULTILINESTRING((0 0,-1 1))'
-        user_attendance.t_shirt_size = mommy.make(models.TShirtSize)
-        team = Team.objects.get(id=1)
-        user_attendance.team = team
-        mommy.make(models.Payment, user_attendance=user_attendance, amount=160, status=99)
-        user_attendance.save()
-
-        status_code_map = {
-            reverse('profil'): 200,
-            reverse('registration_access'): 200,
-            reverse('typ_platby'): 403,
-            'error404.txt': 404,
-        }
-
-        self.verify_views(view, status_code_map)
-
 
 class ViewSmokeTests(BaseViewsTests):
     @parameterized.expand(views)
     def test_dpnk_views(self, view):
-        self.dpnk_views(view)
+        status_code_map = {
+            'error404.txt': 404,
+        }
+        status_code = status_code_map[view] if view in status_code_map else 200
+        self.verify_views(view, status_code)
+
+
+class ViewSmokeTestsRegistered(BaseViewsTests):
+    fixtures = ['campaign', 'views', 'users', 'batches', 'transactions', 'test_results_data']
+
+    def setUp(self):
+        super().setUp()
+        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        self.assertTrue(user_attendance.entered_competition())
 
     @parameterized.expand(views)
-    def test_dpnk_views_registered(self, view):
-        self.dpnk_views_registered(view)
+    def test_dpnk_views(self, view):
+        status_code_map = {
+            reverse('typ_platby'): 403,
+            'error404.txt': 404,
+        }
+        status_code = status_code_map[view] if view in status_code_map else 200
+        self.verify_views(view, status_code)
+
 
 views1 = [
     reverse('payment_successfull', kwargs={"trans_id": "2055", "session_id": "2075-1J1455206453", "pay_type": "kb"}),
@@ -151,17 +134,9 @@ views1 = [
 ]
 
 
-@override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
 class ViewSmokeTestsPayment(BaseViewsTests):
     fixtures = ['campaign', 'views', 'users', 'batches', 'transactions', 'test_results_data']
 
     @parameterized.expand(views1)
     def test_dpnk_views(self, view):
-        self.dpnk_views(view)
-
-    @parameterized.expand(views1)
-    def test_dpnk_views_registered(self, view):
-        self.dpnk_views_registered(view)
+        self.verify_views(view)

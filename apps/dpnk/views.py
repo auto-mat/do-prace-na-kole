@@ -724,7 +724,7 @@ def payment_status(request):
     return HttpResponse("OK")
 
 
-class RidesView(UserAttendanceViewMixin, SuccessMessageMixin, ModelFormSetView):
+class RidesView(RegistrationMessagesMixin, SuccessMessageMixin, ModelFormSetView):
     model = Trip
     form_class = forms.TripForm
     fields = ('commute_mode', 'distance', 'direction', 'user_attendance', 'date')

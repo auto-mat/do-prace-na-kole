@@ -109,7 +109,7 @@
             "distance": null,
             "dont_want_insert_track": false,
             "get_rides_count_denorm": 0,
-            "t_shirt_size": null,
+            "t_shirt_size": 1,
             "team": 1,
             "track":  "MULTILINESTRING((0 0,-1 1))",
             "updated": "2015-11-12T18:18:40.223",

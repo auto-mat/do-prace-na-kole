@@ -162,18 +162,18 @@ class ViewsTests(TransactionTestCase):
             OrderedDict((('Key', 'Aktivni'), ('Value', True))),
             OrderedDict((('Key', 'Novacek'), ('Value', False))),
             OrderedDict((('Key', 'Kampan'), ('Value', 'testing-campaign'))),
-            OrderedDict((('Key', 'Vstoupil_do_souteze'), ('Value', None))),
+            OrderedDict((('Key', 'Vstoupil_do_souteze'), ('Value', False))),
             OrderedDict((('Key', 'Pocet_lidi_v_tymu'), ('Value', None))),
             OrderedDict((('Key', 'Povoleni_odesilat_emaily'), ('Value', True))),
         ]
         createsend.Subscriber.add.assert_called_once_with('12345abcde', 'test@test.cz', 'Testing User 1', custom_fields, True)
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, 'd875edb9c3df29a49dd4482560d3b044')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '29b17908fe23eebd00d302d3c7a8a942')
 
         createsend.Subscriber.update = MagicMock()
         mailing.add_or_update_user_synchronous(user_attendance)
         self.assertFalse(createsend.Subscriber.update.called)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, 'd875edb9c3df29a49dd4482560d3b044')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '29b17908fe23eebd00d302d3c7a8a942')
 
         custom_fields[0] = OrderedDict((('Key', 'Mesto'), ('Value', 'other-city')))
         user_attendance.team.subsidiary.city = models.City.objects.get(slug="other-city")
@@ -183,7 +183,7 @@ class ViewsTests(TransactionTestCase):
         mailing.add_or_update_user_synchronous(user_attendance)
         createsend.Subscriber.get.assert_called_once_with('12345abcde', ret_mailing_id)
         createsend.Subscriber.update.assert_called_once_with('test@test.cz', 'Testing User 1', custom_fields, True)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, 'a476d0883e6b3f7ad77a45f1d55cb72c')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, 'd3fb264e87e16cd13829c74eff4f15bb')
 
         user_attendance.userprofile.user.is_active = False
         user_attendance.userprofile.user.save()
@@ -346,6 +346,7 @@ class ViewsTestsLogon(TransactionTestCase):
         self.assertTrue(self.client.login(username='test', password='test'))
         call_command('denorm_init')
         call_command('denorm_rebuild')
+        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
 
     def tearDown(self):
         call_command('denorm_drop')
@@ -370,8 +371,30 @@ class ViewsTestsLogon(TransactionTestCase):
             'team': '1',
             'next': 'Next',
         }
-        response = self.client.post(reverse('zmenit_tym'), post_data)
+        models.PackageTransaction.objects.all().delete()
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
         self.assertRedirects(response, reverse("zmenit_triko"))
+
+    def test_dpnk_t_shirt_size(self):
+        post_data = {
+            't_shirt_size': '1',
+            'next': 'Next',
+        }
+        models.PackageTransaction.objects.all().delete()
+        models.Payment.objects.all().delete()
+        response = self.client.post(reverse('zmenit_triko'), post_data, follow=True)
+        self.assertRedirects(response, reverse("typ_platby"))
+        self.assertTrue(self.user_attendance.t_shirt_size.pk, 1)
+
+    def test_dpnk_payment_type(self):
+        post_data = {
+            'payment_type': 'company',
+            'next': 'Next',
+        }
+        models.Payment.objects.all().delete()
+        denorm.flush()
+        response = self.client.post(reverse('typ_platby'), post_data, follow=True)
+        self.assertRedirects(response, reverse("profil"))
 
     def test_dpnk_team_view_create(self):
         post_data = {
@@ -461,14 +484,13 @@ class ViewsTestsLogon(TransactionTestCase):
             'submit': 'Odeslat',
         }
         response = self.client.post(reverse('company_admin_application'), post_data, follow=True)
-        self.assertRedirects(response, reverse('upravit_profil'))
+        self.assertRedirects(response, reverse('profil'))
         company_admin = models.CompanyAdmin.objects.get(user__username='test')
         self.assertEquals(company_admin.motivation_company_admin, 'Testing position')
 
     def test_dpnk_views_gpx_file(self):
-        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
-        trip = mommy.make(models.Trip, user_attendance=user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
-        gpxfile = mommy.make(models.GpxFile, user_attendance=user_attendance, trip_date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
+        trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
+        gpxfile = mommy.make(models.GpxFile, user_attendance=self.user_attendance, trip_date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
 
         address = reverse('gpx_file', kwargs={"id": gpxfile.pk})
         response = self.client.get(address)

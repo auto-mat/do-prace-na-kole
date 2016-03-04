@@ -1328,7 +1328,7 @@ class DeliveryBatch(models.Model):
             pt = PackageTransaction(
                 user_attendance=user_attendance,
                 delivery_batch=self,
-                status=PackageTransaction.Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
+                status=Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
             )
             pt.save()
 
