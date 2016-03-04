@@ -98,9 +98,9 @@ update_mailing.short_description = _(u"Aktualizovat mailing list")
 
 def approve_am_payment(modeladmin, request, queryset):
     for user_attendance in queryset:
-        payment = user_attendance.payment()['payment']
-        if payment and payment.status == models.Payment.Status.NEW:
-            payment.status = models.Payment.Status.DONE
+        payment = user_attendance.representative_payment
+        if payment and payment.status == models.Status.NEW:
+            payment.status = models.Status.DONE
             payment.description += "\nPayment realized by %s\n" % request.user.username
             payment.save()
     modeladmin.message_user(request, _(u"Platby potvrzeny"))

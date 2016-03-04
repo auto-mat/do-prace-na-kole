@@ -47,8 +47,11 @@ def working_day(day):
 
 def days(campaign):
     days = []
-    competition_start = campaign.phase("competition").date_from
-    competition_end = campaign.phase("competition").date_to
+    competition_phase = campaign.phase("competition")
+    if not competition_phase:
+        return []
+    competition_start = competition_phase.date_from
+    competition_end = competition_phase.date_to
     for day in daterange(competition_start, competition_end):
         days.append(day)
     return days

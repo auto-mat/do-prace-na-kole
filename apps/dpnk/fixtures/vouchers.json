@@ -1,0 +1,18 @@
+[
+    {
+        "fields": {
+            "type": "rekola",
+            "token": "vouchertoken"
+        },
+        "model": "dpnk.voucher",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "type": "rekola",
+            "token": "vouchertoken"
+        },
+        "model": "dpnk.voucher",
+        "pk": 2
+    }
+]

@@ -2,6 +2,7 @@
     {
         "fields": {
             "user_attendance": 2115,
+            "status": 1,
             "polymorphic_ctype": ["dpnk", "payment"]
         },
         "model": "dpnk.transaction",
