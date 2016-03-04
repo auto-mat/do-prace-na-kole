@@ -44,7 +44,9 @@
       {% wp_actions city_slug %}
    </div>
    <div class="col-md-6">
+      {% comment %}
       Obrazky
+      {% endcomment%}
    </div>
 </div>
 <div class="row base">
@@ -58,7 +60,7 @@
       <p>
       Nevíte jakou zvolit cestu? Využijte naší cyklistické mapy a vyhledávače.
       </p>
-      <a href="http://{{ map_city_slug }}.dopracenakole.net" target="_blank"><img src="http://tiles.prahounakole.cz/13/4424/2773.png"/></a>
+      <a href="http://{{ map_city_slug }}.dopracenakole.net" target="_blank"><img src="{% static "img/mapa_upoutavka.png" %}"/></a>
    </div>
 </div>
 <div class="row base">
