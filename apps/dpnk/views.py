@@ -149,7 +149,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                         {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
                 elif self.user_attendance.approved_for_team == 'denied':
                     messages.error(request, mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')))
-                elif self.user_attendance.team.member_count > 0:
+                elif self.user_attendance.team_member_count() > 0:
                     messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members')))
                 elif self.user_attendance.is_libero():
                     # TODO: get WP slug for city
@@ -176,9 +176,11 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                       u' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
                       u' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu')))
 
-        if self.user_attendance.payment_status not in ('done', 'none',) and self.registration_phase not in ('typ_platby',):
+        if self.user_attendance.payment_status not in ('done', 'none',):
             messages.info(request, mark_safe(
-                _(u'Vaše platba typu %(payment_type)s ještě nebyla vyřízena. Můžete <a href="%(url)s">zadat novou platbu.</a>') %
+                _('Vaše platba typu %(payment_type)s ještě nebyla vyřízena. '
+                  'Počkejte prosím na její schválení. '
+                  'Pokud schválení není možné, můžete <a href="%(url)s">zadat jiný typ platby</a>.') %
                 {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('typ_platby')}))
 
         company_admin = self.user_attendance.related_company_admin
@@ -515,7 +517,12 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         return form
 
     def form_valid(self, form):
-        company_admin_email = self.user_attendance.get_asociated_company_admin().user.email
+        payment_type = form.cleaned_data['payment_type']
+
+        if payment_type == 'company':
+            company_admin_email = self.user_attendance.get_asociated_company_admin().user.email
+        else:
+            company_admin_email = ""
         payment_choices = {
             'member': {'type': 'am', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
             'member_wannabe': {'type': 'amw', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
@@ -523,7 +530,6 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
             'company': {'type': 'fc', 'message': mark_safe(_(u"Platbu ještě musí schválit váš firemní koordinátor <a href='mailto:%(email)s'>%(email)s</a>" % {
                 "email": company_admin_email})), 'amount': self.user_attendance.company_admission_fee()},
         }
-        payment_type = form.cleaned_data['payment_type']
 
         if payment_type in ('pay', 'pay_beneficiary'):
             logger.error(u'Pay payment type, request: %s' % (self.request))
@@ -778,10 +784,33 @@ class RidesView(RegistrationMessagesMixin, SuccessMessageMixin, ModelFormSetView
         return context_data
 
     def get(self, request, *args, **kwargs):
-        if self.user_attendance.entered_competition():
+        reason = self.user_attendance.entered_competition_reason()
+        if reason is True:
             return super().get(request, *args, **kwargs)
         else:
-            return redirect(reverse('upravit_profil'))
+            redirect_view = {
+                'tshirt_uncomplete': 'zmenit_triko',
+                'team_uncomplete': 'zmenit_tym',
+                'payment_uncomplete': 'typ_platby',
+                'profile_uncomplete': 'upravit_profil',
+                'team_waiting': 'registration_uncomplete',
+                'payment_waiting': 'registration_uncomplete',
+                'track_uncomplete': 'registration_uncomplete',
+            }
+            return redirect(reverse(redirect_view[reason]))
+
+
+class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
+    template_name = 'base_generic_registration_form.html'
+    title = _(u'Registrace není kompletní')
+    registration_phase = 'profile_view'
+
+    def get(self, request, *args, **kwargs):
+        reason = self.user_attendance.entered_competition_reason()
+        if reason is True:
+            return redirect(reverse('profil'))
+        else:
+            return super().get(request, *args, **kwargs)
 
 
 class UserAttendanceView(TitleViewMixin, UserAttendanceViewMixin, TemplateView):

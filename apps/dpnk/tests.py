@@ -394,7 +394,25 @@ class ViewsTestsLogon(TransactionTestCase):
         models.Payment.objects.all().delete()
         denorm.flush()
         response = self.client.post(reverse('typ_platby'), post_data, follow=True)
-        self.assertRedirects(response, reverse("profil"))
+        self.assertRedirects(response, reverse("registration_uncomplete"))
+        self.assertEquals(models.Payment.objects.get().pay_type, 'fc')
+
+    def test_dpnk_payment_type_without_company_admin(self):
+        post_data = {
+            'payment_type': 'company',
+            'next': 'Next',
+        }
+        models.Payment.objects.all().delete()
+        models.CompanyAdmin.objects.all().delete()
+        denorm.flush()
+        response = self.client.post(reverse('typ_platby'), post_data)
+        self.assertContains(response, "Váš zaměstnavatel Testing company nemá zvoleného koordinátor společnosti.")
+
+        post_data['payment_type'] = 'member'
+        response = self.client.post(reverse('typ_platby'), post_data, follow=True)
+        self.assertRedirects(response, reverse("registration_uncomplete"))
+        self.assertContains(response, "Vaše členství v klubu přátel ještě bude muset být schváleno")
+        self.assertEquals(models.Payment.objects.get().pay_type, 'am')
 
     def test_dpnk_team_view_create(self):
         post_data = {
@@ -509,10 +527,10 @@ class ViewsTestsRegistered(TransactionTestCase):
         # Every test needs access to the request factory.
         self.factory = RequestFactory()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.assertTrue(self.client.login(username='test-registered', password='test'))
-        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test-registered')
+        self.assertTrue(self.client.login(username='test', password='test'))
         call_command('denorm_init')
         call_command('denorm_rebuild')
+        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
         self.assertTrue(self.user_attendance.entered_competition())
 
     def tearDown(self):
@@ -549,7 +567,7 @@ class ViewsTestsRegistered(TransactionTestCase):
         self.assertEquals(models.Trip.objects.get(pk=1).distance, 28.89)
         self.assertEquals(models.Trip.objects.exclude(pk=1).get().commute_mode, 'bicycle')
         denorm.flush()
-        user_attendance = UserAttendance.objects.get(userprofile__user__username='test-registered')
+        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
         self.assertEquals(user_attendance.trip_length_total, 30.89)
         self.assertEquals(user_attendance.team.get_length(), 10.296666666666667)
 

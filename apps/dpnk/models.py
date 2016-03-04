@@ -928,24 +928,6 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         team = self.team
         return UserAttendance.objects.filter(team=team, userprofile__user__is_active=True).exclude(approved_for_team='denied').count()
 
-    def can_enter_competition(self):
-        if not self.distance:
-            return 'no_personal_data'
-        elif not self.team:
-            return 'no_team'
-        elif not self.approved_for_team == 'approved':
-            return 'not_approved_for_team'
-        elif not self.t_shirt_size:
-            return 'not_t_shirt'
-        elif self.team.unapproved_members().count() > 0:
-            return 'unapproved_team_members'
-        elif self.team.members().count() < 2:
-            return 'not_enough_team_members'
-        elif self.payment()['status'] != 'done':
-            return 'not_paid'
-        else:
-            return True
-
     def company(self):
         if self.team:
             try:
@@ -958,10 +940,29 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         except CompanyAdmin.DoesNotExist:
             return None
 
+    def entered_competition_reason(self):
+        if not self.userprofile.profile_complete():
+            return 'profile_uncomplete'
+        if not self.team_waiting():
+            if self.team_complete():
+                return 'team_waiting'
+            else:
+                return 'team_uncomplete'
+        if not self.tshirt_complete():
+            return 'tshirt_uncomplete'
+        if not self.payment_waiting():
+            if self.payment_complete():
+                return 'payment_waiting'
+            else:
+                return 'payment_uncomplete'
+        if not self.track_complete():
+            return 'track_uncomplete'
+        return True
+
     def entered_competition(self):
         return self.tshirt_complete() and\
-            self.team_complete() and\
-            self.payment_complete() and\
+            self.team_waiting() and\
+            self.payment_waiting() and\
             self.userprofile.profile_complete()
 
     def team_member_count(self):
@@ -977,8 +978,14 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def team_complete(self):
         return self.team
 
+    def team_waiting(self):
+        return self.team and self.approved_for_team == 'approved'
+
     def payment_complete(self):
-        return self.payments().exists()
+        return self.payment_status not in ('none', None)
+
+    def payment_waiting(self):
+        return self.payment_status in ('done', 'no_admission')
 
     def get_emissions(self, distance=None):
         return util.get_emissions(self.get_nonreduced_length())
