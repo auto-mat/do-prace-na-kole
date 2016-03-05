@@ -126,17 +126,3 @@ class ViewSmokeTestsRegistered(BaseViewsTests):
         }
         status_code = status_code_map[view] if view in status_code_map else 200
         self.verify_views(view, status_code)
-
-
-views1 = [
-    reverse('payment_successfull', kwargs={"trans_id": "2055", "session_id": "2075-1J1455206453", "pay_type": "kb"}),
-    reverse('payment_unsuccessfull', kwargs={"trans_id": "2055", "session_id": "2075-1J1455206453", "pay_type": "kb", "error": 123}),
-]
-
-
-class ViewSmokeTestsPayment(BaseViewsTests):
-    fixtures = ['campaign', 'views', 'users', 'batches', 'transactions', 'test_results_data']
-
-    @parameterized.expand(views1)
-    def test_dpnk_views(self, view):
-        self.verify_views(view)

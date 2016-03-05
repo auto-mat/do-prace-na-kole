@@ -22,7 +22,7 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.core.management import call_command
 from django.test.utils import override_settings
-from dpnk import results, models, mailing
+from dpnk import results, models, mailing, views
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment, CompanyAdmin
 import datetime
 import django
@@ -57,8 +57,6 @@ class ViewsTests(TransactionTestCase):
     fixtures = ['campaign', 'views', 'users']
 
     def setUp(self):
-        # Every test needs access to the request factory.
-        self.factory = RequestFactory()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         call_command('denorm_init')
 
@@ -194,6 +192,44 @@ class ViewsTests(TransactionTestCase):
         createsend.Subscriber.delete.assert_called_once_with()
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
         self.assertEqual(user_attendance.userprofile.mailing_hash, None)
+
+
+class PaymentSuccessTests(TestCase):
+    fixtures = ['campaign', 'views', 'users']
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        self.session_id = "2075-1J1455206457"
+        self.trans_id = "2055"
+        models.Payment.objects.create(
+            session_id=self.session_id,
+            user_attendance=self.user_attendance,
+            amount=150
+        )
+
+    def test_payment_succesfull(self):
+        kwargs = {"trans_id": self.trans_id, "session_id": self.session_id, "pay_type": "kb"}
+        address = reverse('payment_successfull', kwargs=kwargs)
+        request = self.factory.get(address)
+        request.user = self.user_attendance.userprofile.user
+        request.user_attendance = self.user_attendance
+        request.subdomain = "testing-campaign"
+        views.PaymentResult.as_view()(request, success=True, **kwargs)
+        payment = models.Payment.objects.get(session_id=self.session_id)
+        self.assertEquals(payment.pay_type, "kb")
+
+    def test_payment_unsuccesfull(self):
+        kwargs = {"trans_id": self.trans_id, "session_id": self.session_id, "pay_type": "kb", "error": 123}
+        address = reverse('payment_unsuccessfull', kwargs=kwargs)
+        request = self.factory.get(address)
+        request.user = self.user_attendance.userprofile.user
+        request.user_attendance = self.user_attendance
+        request.subdomain = "testing-campaign"
+        views.PaymentResult.as_view()(request, success=False, **kwargs)
+        payment = models.Payment.objects.get(session_id=self.session_id)
+        self.assertEquals(payment.pay_type, "kb")
+        self.assertEquals(payment.error, 123)
 
 
 class PaymentTests(TransactionTestCase):
@@ -340,8 +376,6 @@ class ViewsTestsLogon(TransactionTestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
-        # Every test needs access to the request factory.
-        self.factory = RequestFactory()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.assertTrue(self.client.login(username='test', password='test'))
         call_command('denorm_init')
@@ -524,8 +558,6 @@ class ViewsTestsRegistered(TransactionTestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
-        # Every test needs access to the request factory.
-        self.factory = RequestFactory()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.assertTrue(self.client.login(username='test', password='test'))
         call_command('denorm_init')
