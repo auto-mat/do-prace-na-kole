@@ -126,7 +126,6 @@ class UserAttendanceViewMixin(object):
     @method_decorator(login_required_simple)
     @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
-        self.url_name = request.resolver_match.url_name
         self.user_attendance = kwargs['user_attendance']
         return super(UserAttendanceViewMixin, self).dispatch(request, *args, **kwargs)
 
