@@ -9,16 +9,10 @@
       $('[data-toggle="tooltip"]').tooltip()
    })
 </script>
-{% if fullpage_error_message %}
-<div class="text-danger">{{ fullpage_error_message }}</div>
-{% else %}
 <button class="btn-info btn show_rides_btn" type="button"><span class="toggle">{% trans "Podrobný přehled jízd" %}</span></button>
 <form id="rides-form" name="calendar" method="POST">
 {{ formset.management_form }}
 <br>
-{% trans "Do políčka zadávejte ujetý počet kilometrů" %}
-{% include "messages_include.html" %}
-{{ message }}
 
 {% if formset.0 %}
 <table id="rides" class="table table-bordered table-hover table-condensed">
@@ -65,4 +59,3 @@
 <input type="submit" name="submit" value="Odeslat" class="btn btn-primary btn-block" id="submit-id-submit">
 </form>
 <div></div>
-{% endif %}
