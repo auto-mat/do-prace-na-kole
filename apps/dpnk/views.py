@@ -941,7 +941,7 @@ class UpdateTrackView(RegistrationViewMixin, UpdateView):
     form_class = TrackUpdateForm
     model = UserAttendance
     success_message = _(u"Trasa/vzdálenost úspěšně upravena")
-    success_url = 'upravit_trasu'
+    success_url = 'profil'
     registration_phase = "upravit_profil"
     title = _("Upravit typickou trasu")
 
