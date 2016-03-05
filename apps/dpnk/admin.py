@@ -543,41 +543,6 @@ class PackageConfirmationFilter(SimpleListFilter):
         return queryset
 
 
-class CompetitionEntryFilter(SimpleListFilter):
-    title = _(u"Přihlášení k závodu")
-    parameter_name = u'competition_entry'
-
-    def lookups(self, request, model_admin):
-        return (
-            ("yes", _(u"Ano")),
-            ("no", _(u"Ne")),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == "yes":
-            return queryset.\
-                filter(transactions__useractiontransaction__status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED).\
-                distinct()
-        if self.value() == "no":
-            return queryset.\
-                exclude(transactions__useractiontransaction__status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED).\
-                distinct()
-        return queryset
-
-
-class NotInCityFilter(SimpleListFilter):
-    title = _(u"Ne ve městě")
-    parameter_name = u'not_in_city'
-
-    def lookups(self, request, model_admin):
-        return [(c.pk, c.name) for c in models.City.objects.all()]
-
-    def queryset(self, request, queryset):
-        if not self.value():
-            return queryset
-        return queryset.exclude(team__subsidiary__city=self.value())
-
-
 class TripAdminInline(admin.TabularInline):
     list_display = ('user_attendance', 'date', 'distance', 'direction', 'commute_mode', 'id')
     raw_id_fields = ('user_attendance',)
@@ -664,7 +629,6 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         ('approved_for_team', AllValuesComboFilter),
         ('t_shirt_size', RelatedFieldComboFilter),
         'userprofile__user__is_active',
-        CompetitionEntryFilter,
         'representative_payment__pay_type',
         'representative_payment__status',
         'payment_status',

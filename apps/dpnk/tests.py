@@ -22,7 +22,7 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.core.management import call_command
 from django.test.utils import override_settings
-from dpnk import results, models, mailing, views
+from dpnk import results, models, mailing, views, filters
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment, CompanyAdmin
 import datetime
 import django
@@ -230,6 +230,115 @@ class PaymentSuccessTests(TestCase):
         payment = models.Payment.objects.get(session_id=self.session_id)
         self.assertEquals(payment.pay_type, "kb")
         self.assertEquals(payment.error, 123)
+
+
+class FilterTests(TestCase):
+    fixtures = ['campaign', 'views', 'users']
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        self.session_id = "2075-1J1455206457"
+        self.trans_id = "2055"
+        models.Payment.objects.create(
+            session_id=self.session_id,
+            user_attendance=self.user_attendance,
+            amount=150
+        )
+
+    def test_email_filter_blank(self):
+        request = self.factory.get("")
+        f = filters.EmailFilter(request, {"email": "duplicate"}, models.User, None)
+        q = f.queryset(request, models.User.objects.all())
+        self.assertEquals(q.count(), 0)
+
+    def test_email_filter_duplicate(self):
+        request = self.factory.get("")
+        f = filters.EmailFilter(request, {"email": "blank"}, models.User, None)
+        q = f.queryset(request, models.User.objects.all())
+        self.assertEquals(q.count(), 0)
+
+    def test_has_team_filter_yes(self):
+        request = self.factory.get("")
+        f = filters.HasTeamFilter(request, {"user_has_team": "yes"}, models.UserAttendance, None)
+        q = f.queryset(request, models.UserAttendance.objects.all())
+        self.assertEquals(q.count(), 3)
+
+    def test_has_team_filter_no(self):
+        request = self.factory.get("")
+        f = filters.HasTeamFilter(request, {"user_has_team": "no"}, models.UserAttendance, None)
+        q = f.queryset(request, models.UserAttendance.objects.all())
+        self.assertEquals(q.count(), 2)
+
+    def test_is_for_company_yes(self):
+        request = self.factory.get("")
+        f = filters.IsForCompanyFilter(request, {"is_for_company": "yes"}, models.Competition, None)
+        q = f.queryset(request, models.Competition.objects.all())
+        self.assertEquals(q.count(), 0)
+
+    def test_is_for_company_no(self):
+        request = self.factory.get("")
+        f = filters.IsForCompanyFilter(request, {"is_for_company": "no"}, models.Competition, None)
+        q = f.queryset(request, models.Competition.objects.all())
+        self.assertEquals(q.count(), 3)
+
+    def test_has_rides_filter_yes(self):
+        request = self.factory.get("")
+        f = filters.HasRidesFilter(request, {"has_rides": "yes"}, models.UserAttendance, None)
+        q = f.queryset(request, models.UserAttendance.objects.all())
+        self.assertEquals(q.count(), 1)
+
+    def test_has_rides_filter_no(self):
+        request = self.factory.get("")
+        f = filters.HasRidesFilter(request, {"has_rides": "no"}, models.UserAttendance, None)
+        q = f.queryset(request, models.UserAttendance.objects.all())
+        self.assertEquals(q.count(), 4)
+
+    def test_has_voucher_filter_yes(self):
+        request = self.factory.get("")
+        f = filters.HasVoucherFilter(request, {"has_voucher": "yes"}, models.UserAttendance, None)
+        q = f.queryset(request, models.UserAttendance.objects.all())
+        self.assertEquals(q.count(), 0)
+
+    def test_has_voucher_filter_no(self):
+        request = self.factory.get("")
+        f = filters.HasVoucherFilter(request, {"has_voucher": "no"}, models.UserAttendance, None)
+        q = f.queryset(request, models.UserAttendance.objects.all())
+        self.assertEquals(q.count(), 5)
+
+    def test_campaign_filter_campaign(self):
+        request = self.factory.get("")
+        request.subdomain = "testing-campaign"
+        f = filters.CampaignFilter(request, {"campaign": "testing-campaign"}, models.UserAttendance, None)
+        q = f.queryset(request, models.UserAttendance.objects.all())
+        self.assertEquals(q.count(), 4)
+
+    def test_campaign_filter_none(self):
+        request = self.factory.get("")
+        request.subdomain = "testing-campaign"
+        f = filters.CampaignFilter(request, {"campaign": "none"}, models.UserAttendance, None)
+        q = f.queryset(request, models.UserAttendance.objects.all())
+        self.assertEquals(q.count(), 0)
+
+    def test_campaign_filter_without_subdomain(self):
+        request = self.factory.get("")
+        f = filters.CampaignFilter(request, {"campaign": "none"}, models.UserAttendance, None)
+        q = f.queryset(request, models.UserAttendance.objects.all())
+        self.assertEquals(q.count(), 0)
+
+    def test_campaign_filter_unknown_campaign(self):
+        request = self.factory.get("")
+        request.subdomain = "asdf"
+        f = filters.CampaignFilter(request, {}, models.UserAttendance, None)
+        q = f.queryset(request, models.UserAttendance.objects.all())
+        self.assertEquals(q.count(), 0)
+
+    def test_campaign_filter_all(self):
+        request = self.factory.get("")
+        request.subdomain = "testing-campaign"
+        f = filters.CampaignFilter(request, {"campaign": "all"}, models.UserAttendance, None)
+        q = f.queryset(request, models.UserAttendance.objects.all())
+        self.assertEquals(q.count(), 5)
 
 
 class PaymentTests(TransactionTestCase):
