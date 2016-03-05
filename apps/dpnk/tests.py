@@ -246,6 +246,7 @@ class PaymentTests(TransactionTestCase):
         campaign = Campaign.objects.get(pk=339)
         campaign.late_admission_fee = 0
         campaign.save()
+        UserAttendance.objects.get(pk=1115).save()
         denorm.flush()
         user = UserAttendance.objects.get(pk=1115)
         self.assertEquals(user.payment_status, 'no_admission')
