@@ -322,6 +322,19 @@ class Team(models.Model):
             logger.error(u"Too many members in team %s" % self)
         return member_count
 
+    @denormalized(
+        models.IntegerField,
+        verbose_name=_(u"Počet neschválených členů týmu"),
+        null=True,
+        blank=False,
+        db_index=True,
+        default=None,
+        skip={'invitation_token'})
+    @depend_on_related('UserAttendance')
+    def unapproved_member_count(self):
+        member_count = self.unapproved_members().count()
+        return member_count
+
     def unapproved_members(self):
         return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True, approved_for_team='undecided')
 
@@ -329,7 +342,7 @@ class Team(models.Model):
         return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True)
 
     def members(self):
-        return self.users.filter(approved_for_team='approved', userprofile__user__is_active=True)
+        return self.users.filter(approved_for_team='approved', userprofile__user__is_active=True).order_by("id")
 
     @denormalized(models.IntegerField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
@@ -1025,6 +1038,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     @denormalized(models.NullBooleanField, default=None, skip={'created', 'updated'})
     @depend_on_related('Team')
     @depend_on_related('Competition')
+    @depend_on_related('UserProfile')
     def has_unanswered_questionnaires(self):
         return self.unanswered_questionnaires().exists()
 

@@ -792,6 +792,27 @@ class ModelTests(TestCase):
         self.assertEquals(user_attendance.payment_type_string(), None)
 
 
+class DenormTests(TestCase):
+    fixtures = ['users', 'campaign', 'transactions', 'batches']
+
+    def setUp(self):
+        call_command('denorm_init')
+
+    def tearDown(self):
+        call_command('denorm_drop')
+
+    def test_name_with_members(self):
+        user_attendance = UserAttendance.objects.get(pk=1115)
+        user_attendance.team.save()
+        call_command('denorm_flush')
+        self.assertEquals(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
+        user_attendance.userprofile.nickname = "Testing nick"
+        user_attendance.userprofile.save()
+        call_command('denorm_flush')
+        user_attendance = UserAttendance.objects.get(pk=1115)
+        self.assertEquals(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing nick, Registered User 1)")
+
+
 class RunChecksTestCase(TestCase):
     def test_checks(self):
         django.setup()

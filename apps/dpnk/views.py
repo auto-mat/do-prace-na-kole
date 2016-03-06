@@ -148,7 +148,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                         {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
                 elif self.user_attendance.approved_for_team == 'denied':
                     messages.error(request, mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')))
-                elif self.user_attendance.team_member_count() > 0:
+                elif self.user_attendance.team.unapproved_member_count and self.user_attendance.team.unapproved_member_count > 0:
                     messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members')))
                 elif self.user_attendance.is_libero():
                     # TODO: get WP slug for city
