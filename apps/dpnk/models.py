@@ -1280,7 +1280,7 @@ class CompanyAdmin(models.Model):
         default=False,
         null=False)
     will_pay_opt_in = models.BooleanField(
-        verbose_name=_(u"Souhlas s platbou za zaměstnance."),
+        verbose_name=_(u"Uživatel potvrdil, že bude plati za zaměstnance."),
         blank=False,
         default=False)
 
