@@ -806,11 +806,30 @@ class DenormTests(TestCase):
         user_attendance.team.save()
         call_command('denorm_flush')
         self.assertEquals(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
+        self.assertEquals(user_attendance.team.unapproved_member_count, 0)
+        self.assertEquals(user_attendance.team.member_count, 3)
         user_attendance.userprofile.nickname = "Testing nick"
         user_attendance.userprofile.save()
         call_command('denorm_flush')
         user_attendance = UserAttendance.objects.get(pk=1115)
         self.assertEquals(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing nick, Registered User 1)")
+        self.assertEquals(user_attendance.team.unapproved_member_count, 0)
+        self.assertEquals(user_attendance.team.member_count, 3)
+
+    def test_name_with_members_delete_userattendance(self):
+        user_attendance = UserAttendance.objects.get(pk=1115)
+        user_attendance.team.save()
+        models.Payment.objects.all().delete()
+        call_command('denorm_flush')
+        self.assertEquals(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
+        self.assertEquals(user_attendance.team.unapproved_member_count, 0)
+        self.assertEquals(user_attendance.team.member_count, 3)
+        user_attendance.delete()
+        call_command('denorm_flush')
+        team = Team.objects.get(pk=1)
+        self.assertEquals(team.name_with_members, "Testing team 1 (Nick, Registered User 1)")
+        self.assertEquals(team.unapproved_member_count, 0)
+        self.assertEquals(team.member_count, 2)
 
 
 class RunChecksTestCase(TestCase):
