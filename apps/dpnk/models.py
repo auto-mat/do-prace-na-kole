@@ -713,7 +713,7 @@ class UserAttendance(models.Model):
         verbose_name=_(u"trasa"),
         help_text=_(u"""
 <ul>
-   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko "Nakreslit trasu".</strong></li>
+   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko "Nakreslit trasu", ukončíte kliknutím na cílový bod.</strong></li>
    <li>Změnu trasy provedete po přepnutí do režimu úprav kliknutím na trasu.</li>
    <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede.</li>
    <li>Zadání přesnějšího průběhu nám však může pomoci lépe zjistit jak se lidé na kole pohybují.</li>
@@ -1120,7 +1120,7 @@ class UserProfile(models.Model):
         verbose_name=_(u"Telefon"),
         max_length=30, null=False)
     language = models.CharField(
-        verbose_name=_(u"Jazyk emailů"),
+        verbose_name=_(u"Jazyk emailové komunikace"),
         help_text=_(u"Jazyk, ve kterém vám budou docházet emaily z registračního systému"),
         choices=LANGUAGE,
         max_length=16,

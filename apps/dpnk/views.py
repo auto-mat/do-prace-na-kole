@@ -100,7 +100,10 @@ class TitleViewMixin(object):
         return self.title
 
     def get_opening_message(self, *args, **kwargs):
-        return self.opening_message
+        if hasattr(self, "opening_message"):
+            return self.opening_message
+        else:
+            return ""
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(TitleViewMixin, self).get_context_data(*args, **kwargs)
@@ -110,7 +113,7 @@ class TitleViewMixin(object):
 
 
 class DPNKLoginView(TitleViewMixin, LoginView):
-    title = "Přihlasení soutežících Dopráce na kole"
+    title = "Přihlášení soutežících Do práce na kole"
 
     def get_initial(self):
         initial_email = self.kwargs.get('initial_email')
@@ -141,50 +144,56 @@ class UserAttendanceViewMixin(object):
 class RegistrationMessagesMixin(UserAttendanceViewMixin):
     def get(self, request, *args, **kwargs):
         ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
-        if self.registration_phase in ('profile_view', 'registration_uncomplete'):
+
+        if self.registration_phase in ('registration_uncomplete', 'profile_view'):
+            if self.user_attendance.team and self.user_attendance.team.unapproved_member_count and self.user_attendance.team.unapproved_member_count > 0:
+                messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members')))
+            elif self.user_attendance.is_libero():
+                # TODO: get WP slug for city
+                messages.warning(request, mark_safe(
+                    _(u'Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce!'
+                      u' <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu, pokud jste tak již učinil/a, '
+                      u'vyčkejte na potvrzující email a schvalte jejich členství v týmu.</li>'
+                      u'<li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li>'
+                      u'<li>Pokud nemůžete sehnat spolupracovníky, '
+                      u' <a href="http://www.dopracenakole.cz/locations/%(city)s/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>')
+                    % {
+                        'invite_url':
+                        reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym'), 'city': self.user_attendance.team.subsidiary.city.slug}))
+
+        if self.registration_phase == 'registration_uncomplete':
             if self.user_attendance.team:
                 if self.user_attendance.approved_for_team == 'undecided':
                     messages.warning(request, mark_safe(
                         _(
-                            u"Vaše členství v týmu %(team)s čeká na vyřízení."
-                            u" Pokud to trvá příliš dlouho, můžete zkusit"
+                            u"Vaši kolegové musí v týmu %(team)s ještě musí potvrdit vaše členství."
+                            u" Pokud to trvá podezřele dlouho, můžete zkusit"
                             u" <a href='%(address)s'>znovu požádat o ověření členství</a>.") %
                         {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
                 elif self.user_attendance.approved_for_team == 'denied':
                     messages.error(request, mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')))
-                elif self.user_attendance.team.unapproved_member_count and self.user_attendance.team.unapproved_member_count > 0:
-                    messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members')))
-                elif self.user_attendance.is_libero():
-                    # TODO: get WP slug for city
-                    messages.warning(request, mark_safe(
-                        _(u'Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce!'
-                          u' <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu, pokud jste tak již učinil/a, vyčkejte na potvrzující email a schvalte jejich členství v týmu.</li>'
-                          u'<li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li>'
-                          u'<li>Pokud nemůžete sehnat spolupracovníky, '
-                          u' <a href="http://www.dopracenakole.cz/locations/%(city)s/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>')
-                        % {
-                            'invite_url':
-                            reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym'), 'city': self.user_attendance.team.subsidiary.city.slug}))
 
-            if self.user_attendance.has_unanswered_questionnaires and self.registration_phase in ('profile_view'):
-                competitions = ", ".join([
-                    "<a href='%(url)s'>%(name)s</a>" %
-                    {"url": reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}), "name": q.name} for q in self.user_attendance.unanswered_questionnaires().all()])
-                messages.info(request, mark_safe(_(u'Nezapomeňte vyplnit odpovědi v následujících soutěžích: %s!') % competitions))
             if not self.user_attendance.track and not self.user_attendance.distance:
                 messages.info(request, mark_safe(
                     _(u'Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.'
                       u' Na základě této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty.'
-                      u' Vaše vyplněná trasa se objeví na <a href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
+                      u' Vaše vyplněná trasa se objeví na <a target="_blank" href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
                       u' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
                       u' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu')))
 
-        if self.user_attendance.payment_status not in ('done', 'none',):
-            messages.info(request, mark_safe(
-                _('Vaše platba typu %(payment_type)s ještě nebyla vyřízena. '
-                  'Počkejte prosím na její schválení. '
-                  'Pokud schválení není možné, můžete <a href="%(url)s">zadat jiný typ platby</a>.') %
-                {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('typ_platby')}))
+            if self.user_attendance.payment_status not in ('done', 'none',):
+                messages.info(request, mark_safe(
+                    _('Vaše platba typu %(payment_type)s ještě nebyla vyřízena. '
+                      'Počkejte prosím na její schválení. '
+                      'Pokud schválení není možné, můžete <a href="%(url)s">zadat jiný typ platby</a>.') %
+                    {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('typ_platby')}))
+
+        if self.registration_phase == 'profile_view':
+            if self.user_attendance.has_unanswered_questionnaires:
+                competitions = ", ".join([
+                    "<a href='%(url)s'>%(name)s</a>" %
+                    {"url": reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}), "name": q.name} for q in self.user_attendance.unanswered_questionnaires().all()])
+                messages.info(request, mark_safe(_(u'Nezapomeňte vyplnit odpovědi v následujících soutěžích: %s!') % competitions))
 
         company_admin = self.user_attendance.related_company_admin
         if company_admin and company_admin.company_admin_approved == 'undecided':
@@ -216,7 +225,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
     template_name = 'registration/change_team.html'
     next_url = 'zmenit_triko'
     prev_url = 'upravit_profil'
-    title = _(u'Změnit tým')
+    title = _(u'Vybrat/změnit tým')
     registration_phase = "zmenit_tym"
 
     def get_context_data(self, *args, **kwargs):
@@ -363,7 +372,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
 
 
 class RegistrationAccessView(TitleViewMixin, FormView):
-    title = "Registace soutěžících Do práce na kole"
+    title = "Registrace soutěžících Do práce na kole"
     template_name = 'base_generic_form.html'
     form_class = RegistrationAccessFormDPNK
 
@@ -388,7 +397,7 @@ class RegistrationAccessView(TitleViewMixin, FormView):
 
 
 class RegistrationView(TitleViewMixin, SimpleRegistrationView):
-    title = "Registace soutěžících Do práce na kole"
+    title = "Registrace soutěžících Do práce na kole"
     template_name = 'base_generic_form.html'
     form_class = RegistrationFormDPNK
     model = UserProfile
@@ -806,7 +815,7 @@ class RidesView(RegistrationMessagesMixin, SuccessMessageMixin, ModelFormSetView
 class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
     template_name = 'base_generic_form.html'
     title = _(u'Registrace není kompletní')
-    opening_message = _("Před tím, než budete moct zadávat jízdy, budete muset vyplnit ještě pár věcí:")
+    opening_message = mark_safe(_("Děkujeme za vaší registraci.<br/>Před tím, než budete moct zadávat jízdy, bude ještě nutné vyřešit pár věcí:"))
     registration_phase = 'registration_uncomplete'
 
     def get(self, request, *args, **kwargs):

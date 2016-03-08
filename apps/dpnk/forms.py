@@ -392,6 +392,7 @@ class InviteForm(SubmitMixin, forms.Form):
             'email4',
         )
         self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        self.helper.add_input(Submit('submit', _(u'Přeskočit')))
         return ret_val
 
 
@@ -618,15 +619,15 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
 
     email = forms.EmailField(
         help_text=_(u"Email slouží jako přihlašovací jméno"),
-        required=False)
+        required=True)
     dont_show_name = forms.BooleanField(
         label=_(u"Nechci, aby moje skutečné jméno bylo veřejně zobrazováno"),
         required=False,
     )
     personal_data_opt_in = forms.BooleanField(
         label=_("Souhlasím se zpracováním osobních údajů podle "
-                "<a href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů A*M</a> "
-                "a s Obchodními podmínkami soutěže Do práce na kole."),
+                "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů A*M</a> "
+                "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže Do práce na kole</a>."),
         required=True,
     )
     mailing_opt_in = forms.ChoiceField(
@@ -688,7 +689,7 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
 
     class Meta:
         model = models.UserProfile
-        fields = ('language', 'sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'mailing_opt_in', 'email', 'telephone', 'personal_data_opt_in')
+        fields = ('sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'mailing_opt_in', 'email', 'language', 'telephone', 'personal_data_opt_in')
 
 
 class TripForm(forms.ModelForm):
