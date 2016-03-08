@@ -583,6 +583,7 @@ class UserAttendanceResource(resources.ModelResource):
             'id',
             'campaign__slug',
             'distance',
+            'team__id',
             'team__name',
             'approved_for_team',
             't_shirt_size__name',
