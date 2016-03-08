@@ -99,9 +99,13 @@ class TitleViewMixin(object):
     def get_title(self, *args, **kwargs):
         return self.title
 
+    def get_opening_message(self, *args, **kwargs):
+        return self.opening_message
+
     def get_context_data(self, *args, **kwargs):
         context_data = super(TitleViewMixin, self).get_context_data(*args, **kwargs)
         context_data['title'] = self.get_title(*args, **kwargs)
+        context_data['opening_message'] = self.get_opening_message(*args, **kwargs)
         return context_data
 
 
@@ -137,7 +141,7 @@ class UserAttendanceViewMixin(object):
 class RegistrationMessagesMixin(UserAttendanceViewMixin):
     def get(self, request, *args, **kwargs):
         ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
-        if self.registration_phase in ('profile_view',):
+        if self.registration_phase in ('profile_view', 'registration_uncomplete'):
             if self.user_attendance.team:
                 if self.user_attendance.approved_for_team == 'undecided':
                     messages.warning(request, mark_safe(
@@ -153,16 +157,16 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                 elif self.user_attendance.is_libero():
                     # TODO: get WP slug for city
                     messages.warning(request, mark_safe(
-                        _(u'Jste sám v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce!'
-                          u' <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu.</li>'
+                        _(u'Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce!'
+                          u' <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu, pokud jste tak již učinil/a, vyčkejte na potvrzující email a schvalte jejich členství v týmu.</li>'
                           u'<li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li>'
-                          u'<li>Pokud nemůžete sehnat spolupracovníky, použijte '
-                          u' <a href="http://www.dopracenakole.cz/locations/%(city)s/seznamka" target="_blank">seznamku</a>.</li></ul>')
+                          u'<li>Pokud nemůžete sehnat spolupracovníky, '
+                          u' <a href="http://www.dopracenakole.cz/locations/%(city)s/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>')
                         % {
                             'invite_url':
                             reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym'), 'city': self.user_attendance.team.subsidiary.city.slug}))
 
-            if self.user_attendance.has_unanswered_questionnaires:
+            if self.user_attendance.has_unanswered_questionnaires and self.registration_phase in ('profile_view'):
                 competitions = ", ".join([
                     "<a href='%(url)s'>%(name)s</a>" %
                     {"url": reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}), "name": q.name} for q in self.user_attendance.unanswered_questionnaires().all()])
@@ -800,9 +804,10 @@ class RidesView(RegistrationMessagesMixin, SuccessMessageMixin, ModelFormSetView
 
 
 class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
-    template_name = 'base_generic_registration_form.html'
+    template_name = 'base_generic_form.html'
     title = _(u'Registrace není kompletní')
-    registration_phase = 'profile_view'
+    opening_message = _("Před tím, než budete moct zadávat jízdy, budete muset vyplnit ještě pár věcí:")
+    registration_phase = 'registration_uncomplete'
 
     def get(self, request, *args, **kwargs):
         reason = self.user_attendance.entered_competition_reason()
