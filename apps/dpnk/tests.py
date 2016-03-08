@@ -73,6 +73,22 @@ class ExportTests(TransactionTestCase):
         response = self.client.post(address, post_data)
         self.assertContains(response, "test2@test.cz,Testing company")
 
+    def test_company_export(self):
+        address = "/admin/dpnk/company/export/"
+        post_data = {
+            'file_format': 0,
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(response, "2,Testing company without admin,11111")
+
+    def test_subsidiary_export(self):
+        address = "/admin/dpnk/subsidiary/export/"
+        post_data = {
+            'file_format': 0,
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(response, "1,1,1")
+
 
 @override_settings(
     SITE_ID=2,
@@ -118,8 +134,6 @@ class ViewsTests(TransactionTestCase):
             'will_pay_opt_in': True,
         }
         response = self.client.post(address, post_data, follow=True)
-        with open("error.html", "w") as f:
-            f.write(response.content.decode())
         self.assertRedirects(response, reverse('company_structure'), target_status_code=403)
         user = User.objects.get(email='testadmin@test.cz')
         self.assertEquals(user.get_full_name(),  "Company Admin")

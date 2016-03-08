@@ -120,6 +120,18 @@ class CompanyForm(forms.ModelForm):
             self.fields['address_street'].required = False
 
 
+class CompanyResource(resources.ModelResource):
+    class Meta:
+        model = models.Company
+        fields = (
+            'id',
+            'name',
+            'subsidiaries_text',
+            'ico',
+            'dic',
+            )
+
+
 class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportMixin, admin.ModelAdmin):
     list_display = (
         'name',
@@ -146,6 +158,7 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
         'address_district')
     list_max_show_all = 10000
     form = CompanyForm
+    resource_class = CompanyResource
 
     def subsidiaries_text(self, obj):
         return mark_safe(" | ".join(
@@ -158,6 +171,18 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
                 ['<a href="%s">%s</a>' % (reverse('admin:dpnk_subsidiary_change', args=(u.pk,)), str(u))
                     for u in models.Subsidiary.objects.filter(company=obj)]))
     subsidiary_links.short_description = _('Pobočky')
+
+
+class SubsidiaryResource(resources.ModelResource):
+    class Meta:
+        model = models.Subsidiary
+        fields = (
+            'id',
+            'company',
+            'city',
+            'user_count',
+            'team_count',
+            )
 
 
 class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
@@ -183,6 +208,7 @@ class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     raw_id_fields = ('company',)
     list_max_show_all = 10000
     save_as = True
+    resource_class = SubsidiaryResource
 
     readonly_fields = ['team_links', ]
 
