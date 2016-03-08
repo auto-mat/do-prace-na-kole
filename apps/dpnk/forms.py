@@ -473,7 +473,10 @@ class AnswerForm(forms.ModelForm):
             if question.type == 'choice':
                 choices_layout = Field('choices', template="widgets/radioselectmultiple.html")
             self.fields['choices'].widget = forms.CheckboxSelectMultiple()
-            self.fields['choices'].queryset = question.choice_type.choices.all()
+            if question.choice_type:
+                self.fields['choices'].queryset = question.choice_type.choice_set.all()
+            else:
+                self.fields['choices'].queryset = models.Choice.objects.none()
             self.fields['choices'].show_points = show_points
             self.fields['choices'].required = question.required
             self.fields['choices'].help_text = ""

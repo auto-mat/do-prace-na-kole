@@ -112,9 +112,55 @@
     },
     {
         "fields": {
+           "type": "text",
+           "comment_type": "link",
            "competition": 4
         },
         "model": "dpnk.question",
+        "pk": 4
+    },
+    {
+        "fields": {
+           "type": "text",
+           "comment_type": "one-liner",
+           "competition": 4
+        },
+        "model": "dpnk.question",
+        "pk": 3
+    },
+    {
+        "fields": {
+           "type": "choice",
+           "required": false,
+           "competition": 4
+        },
+        "model": "dpnk.question",
+        "pk": 1
+    },
+    {
+        "fields": {
+           "type": "choice",
+           "choice_type": 1,
+           "competition": 4
+        },
+        "model": "dpnk.question",
+        "pk": 2
+    },
+    {
+        "fields": {
+           "text": "yes",
+           "points": 10,
+           "choice_type": 1
+        },
+        "model": "dpnk.choice",
+        "pk": 1
+    },
+    {
+        "fields": {
+           "name": "yes/no",
+           "competition": 4
+        },
+        "model": "dpnk.choicetype",
         "pk": 1
     },
     {
@@ -146,7 +192,7 @@
             "type": "questionnaire",
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
-            "without_admission": true
+            "without_admission": false
         },
         "model": "dpnk.competition",
         "pk": 4

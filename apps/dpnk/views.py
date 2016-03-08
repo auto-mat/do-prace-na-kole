@@ -397,8 +397,8 @@ class RegistrationView(TitleViewMixin, SimpleRegistrationView):
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}
 
-    def register(self, request):
-        new_user = super(RegistrationView, self).register(request)
+    def register(self, registration_form):
+        new_user = super(RegistrationView, self).register(registration_form)
         userprofile = UserProfile.objects.create(user=new_user)
 
         invitation_token = self.kwargs.get('token', None)
@@ -413,7 +413,7 @@ class RegistrationView(TitleViewMixin, SimpleRegistrationView):
             team=team,
         )
         if team:
-            approve_for_team(request, user_attendance, "", True, False)
+            approve_for_team(self.request, user_attendance, "", True, False)
 
         register_mail(user_attendance)
         return new_user

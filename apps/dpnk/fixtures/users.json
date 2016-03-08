@@ -59,6 +59,7 @@
         "fields": {
             "campaign": 339,
             "subsidiary": 1,
+            "invitation_token": "token123213",
             "name": "Testing team 1"
         },
         "model": "dpnk.team",

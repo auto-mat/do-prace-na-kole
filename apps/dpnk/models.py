@@ -2437,7 +2437,6 @@ class Choice(models.Model):
     choice_type = models.ForeignKey(
         ChoiceType,
         verbose_name=_(u"Typ volby"),
-        related_name="choicetype_set",
         null=False,
         blank=False)
     text = models.CharField(

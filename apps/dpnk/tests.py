@@ -157,6 +157,26 @@ class ViewsTests(TransactionTestCase):
         self.assertNotEquals(UserProfile.objects.get(user=user), None)
         self.assertNotEquals(UserAttendance.objects.get(userprofile__user=user), None)
 
+    def test_dpnk_registration_token(self):
+        kwargs = {
+            "token": "token123213",
+            'initial_email': 'test1@test.cz',
+        }
+        address = reverse('registrace', kwargs=kwargs)
+        post_data = {
+            'email': 'test1@test.cz',
+            'password1': 'test11',
+            'password2': 'test11',
+        }
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('upravit_profil'))
+        user = User.objects.get(email='test1@test.cz')
+        self.assertNotEquals(user, None)
+        self.assertNotEquals(UserProfile.objects.get(user=user), None)
+        ua = UserAttendance.objects.get(userprofile__user=user)
+        self.assertNotEquals(ua, None)
+        self.assertEquals(ua.team.pk, 1)
+
     def test_dpnk_userattendance_creation(self):
         self.assertTrue(self.client.login(username='user_without_attendance', password='test'))
         address = reverse('profil')
@@ -269,6 +289,44 @@ class PaymentSuccessTests(TestCase):
         payment = models.Payment.objects.get(session_id=self.session_id)
         self.assertEquals(payment.pay_type, "kb")
         self.assertEquals(payment.error, 123)
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2013, month=5, day=20),
+)
+class RequestFactoryViewTests(TestCase):
+    fixtures = ['campaign', 'views', 'users']
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        self.session_id = "2075-1J1455206457"
+        self.trans_id = "2055"
+
+    def test_questionnaire_view(self):
+        kwargs = {'questionnaire_slug': 'quest'}
+        address = reverse('questionnaire', kwargs=kwargs),
+        request = self.factory.get(address)
+        request.user = self.user_attendance.userprofile.user
+        request.user_attendance = self.user_attendance
+        request.subdomain = "testing-campaign"
+        response = views.QuestionnaireView.as_view()(request, **kwargs)
+        self.assertContains(response, 'yes')
+
+        post_data = {
+            "question-2-choices": 1,
+            "question-3-comment": 12,
+            "question-4-comment": "http://www.asdf.cz",
+            'submit': 'Odeslat',
+
+        }
+        request = self.factory.post(address, post_data)
+        request.user = self.user_attendance.userprofile.user
+        request.user_attendance = self.user_attendance
+        request.subdomain = "testing-campaign"
+        response = views.QuestionnaireView.as_view()(request, **kwargs)
+        self.assertEquals(response.url, reverse("competitions"))
 
 
 class FilterTests(TestCase):
