@@ -1265,10 +1265,10 @@ class TeamApprovalRequest(UserAttendanceViewMixin, TemplateView):
         return super(TeamApprovalRequest, self).form_valid(form)
 
 
-class InviteView(UserAttendanceViewMixin, FormView):
+class InviteView(UserAttendanceViewMixin, TitleViewMixin, FormView):
     template_name = "submenu_team.html"
     form_class = InviteForm
-    title = _(u'Odeslat pozvánky dalším uživatelům')
+    title = _(u'Pozvětě své kolegy do týmu')
     registration_phase = "zmenit_tym"
     success_url = reverse_lazy('pozvanky')
 

@@ -377,6 +377,23 @@ class InviteForm(SubmitMixin, forms.Form):
         label=_(u"Email kolegy 4"),
         required=False)
 
+    def __init__(self, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML(_(
+                """Napište zde emaily kolegů, které chcete pozvat do svého týmu. Následně vyčkejte, """
+                """až se k vám někdo do týmu připojí (tato informace vám přijde emailem, """
+                """stav vašeho týmu můžete sledovat na <a href="%s">stránce týmu</a> a potvrdit členství vašich kolegů)."""
+                """<br/><br/>""" % reverse("team_members"))),
+            'email1',
+            'email2',
+            'email3',
+            'email4',
+        )
+        self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        return ret_val
+
 
 class TeamAdminForm(SubmitMixin, forms.ModelForm):
     required_css_class = 'required'
