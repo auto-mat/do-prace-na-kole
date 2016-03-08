@@ -132,6 +132,7 @@ class ViewsTests(TransactionTestCase):
             'administrated_company': 2,
             'campaign': 339,
             'will_pay_opt_in': True,
+            'personal_data_opt_in': True,
         }
         response = self.client.post(address, post_data, follow=True)
         self.assertRedirects(response, reverse('company_structure'), target_status_code=403)
@@ -740,6 +741,7 @@ class ViewsTestsLogon(TransactionTestCase):
         post_data = {
             'motivation_company_admin': 'Testing position',
             'will_pay_opt_in': True,
+            'personal_data_opt_in': True,
             'submit': 'Odeslat',
         }
         response = self.client.post(reverse('company_admin_application'), post_data, follow=True)

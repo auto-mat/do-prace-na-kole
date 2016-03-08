@@ -92,6 +92,12 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
         label=_("Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance jejichž platbu schválím."),
         required=True,
     )
+    personal_data_opt_in = forms.BooleanField(
+        label=_("Souhlasím se zpracováním osobních údajů podle "
+                "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů A*M</a> "
+                "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže Do práce na kole</a>."),
+        required=True,
+    )
 
     class Meta:
         model = CompanyAdmin
@@ -137,6 +143,12 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
     username = forms.CharField(widget=forms.HiddenInput, required=False)
     will_pay_opt_in = forms.BooleanField(
         label=_("Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance jejichž platbu schválím."),
+        required=True,
+    )
+    personal_data_opt_in = forms.BooleanField(
+        label=_("Souhlasím se zpracováním osobních údajů podle "
+                "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů A*M</a> "
+                "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže Do práce na kole</a>."),
         required=True,
     )
 
