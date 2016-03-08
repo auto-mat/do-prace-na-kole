@@ -79,11 +79,11 @@ $(function(){
       {% else %}
       {% trans "Váš zaměstnavatel ještě nemá zvoleného koordinátora. Pokud chcete zvolit tento typ platby, je potřeba, aby byla platba startovného fakturou dohodnutá s vaším zaměstnavatelem." %}
       <br/>
-      <a href='{% url "company_admin_application" %}'>{% trans "Chci se sám stát koordinátorem mé společnosti." %}</a>
+      <a href='{% url "company_admin_application" %}'>{% trans "Chci se sám stát koordinátorem mé organizace." %}</a>
       {% endif %}
       <br/><br/>
       {% trans "Zaměstnavatel: " %} {{ user_attendance.team.subsidiary.company }}<br/>
-      {% trans "Koordinátor společnosti: " %} {{ user_attendance.get_asociated_company_admin|default:"Není" }}<br/>
+      {% trans "Koordinátor organizace: " %} {{ user_attendance.get_asociated_company_admin|default:"Není" }}<br/>
       {% trans "Email na koordinátora: " %}<a href='mailto:{{ user_attendance.get_asociated_company_admin.user.email|default:"Není" }}'>{{ user_attendance.get_asociated_company_admin.user.email|default:"Není" }}</a><br/>
    </div>
    <div class="description_switcher_div description member_description" style="display:none">

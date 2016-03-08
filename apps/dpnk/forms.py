@@ -173,13 +173,13 @@ class RegisterTeamForm(forms.ModelForm):
 
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     company = forms.ModelChoiceField(
-        label=_(u"Společnost"),
+        label=_(u"Organizace"),
         queryset=models.Company.objects.filter(active=True),
         widget=SelectOrCreateAutoComplete(
             'companies',
             RegisterCompanyForm,
             prefix="company",
-            new_description=_(u"Společnost v seznamu není, chci vyplnit novou")
+            new_description=_(u"Organizace v seznamu není, chci vyplnit novou")
         ),
         required=True)
     subsidiary = ChainedModelChoiceField(
@@ -189,7 +189,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         chained_model_field="company",
         show_all=False,
         auto_choose=True,
-        label=_(u"Adresa pobočky/společnosti"),
+        label=_(u"Adresa pobočky/organizace"),
         foreign_key_app_name="dpnk",
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
@@ -197,7 +197,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             RegisterSubsidiaryForm,
             view_name='',
             prefix="subsidiary",
-            new_description=_(u"Adresa pobočky/společnosti v seznamu není, chci vyplnit novou"),
+            new_description=_(u"Adresa pobočky/organizace v seznamu není, chci vyplnit novou"),
             chained_field="company",
             chained_model_field="company",
             to_app_name="dpnk",
@@ -435,16 +435,16 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         company_admin = self.user_attendance.get_asociated_company_admin()
         if payment_type == 'company' and not company_admin:
             raise forms.ValidationError(mark_safe(
-                _(u"Váš zaměstnavatel %(employer)s nemá zvoleného koordinátor společnosti."
-                  u" Vaše spolenost bude muset nejprve ustanovit zástupce, který za ní bude schvalovat firemní platby."
-                  u"<ul><li><a href='%(url)s'>Chci se stát koordinátorem mé společnosti</a></li></ul>")
+                _(u"Váš zaměstnavatel %(employer)s nemá zvoleného koordinátora organizace."
+                  u" Vaše organizace bude muset nejprve ustanovit zástupce, který za ní bude schvalovat platby ve vaší organizaci."
+                  u"<ul><li><a href='%(url)s'>Chci se stát koordinátorem mé organizace</a></li></ul>")
                 % {'employer': self.user_attendance.team.subsidiary.company, 'url': reverse('company_admin_application')}))
         elif payment_type == 'company' and not company_admin.can_confirm_payments:
             raise forms.ValidationError(mark_safe(
                 _(u"Koordinátor vašeho zaměstnavatele nemá možnost povolovat platby fakturou."
                   u"<ul><li>Kontaktujte koordinátora %(company_admin)s vašeho zaměstnavatele %(employer)s na emailu %(email)s</li>"
                   u"<li>Koordinátor bude muset nejprve dohodnout spolupráci na adrese"
-                  u" <a href='mailto:kontakt@dopracenakole.cz?subject=Žádost o povolení firemních plateb'>kontakt@dopracenakole.cz</a>.net</li></ul>")
+                  u" <a href='mailto:kontakt@dopracenakole.cz?subject=Žádost o povolení plateb uvnitř vaší organizace'>kontakt@dopracenakole.cz</a>.net</li></ul>")
                 % {'company_admin': company_admin, 'employer': company, 'email': company_admin.user.email}))
         return payment_type
 

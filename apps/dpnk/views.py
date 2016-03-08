@@ -184,9 +184,9 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
 
         company_admin = self.user_attendance.related_company_admin
         if company_admin and company_admin.company_admin_approved == 'undecided':
-            messages.warning(request, _(u'Vaše žádost o funkci koordinátora společnosti čeká na vyřízení.'))
+            messages.warning(request, _(u'Vaše žádost o funkci koordinátora organizace čeká na vyřízení.'))
         if company_admin and company_admin.company_admin_approved == 'denied':
-            messages.error(request, _(u'Vaše žádost o funkci koordinátora společnosti byla zamítnuta.'))
+            messages.error(request, _(u'Vaše žádost o funkci koordinátora organizace byla zamítnuta.'))
         return ret_val
 
 
@@ -283,7 +283,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
 
             if create_company:
                 company = form_company.save()
-                messages.add_message(request, messages.SUCCESS, _(u"Společnost %s úspěšně vytvořena.") % company, fail_silently=True)
+                messages.add_message(request, messages.SUCCESS, _(u"Organizace %s úspěšně vytvořena.") % company, fail_silently=True)
             else:
                 company = Company.objects.get(id=form.data['company'])
 
@@ -526,7 +526,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
             'member': {'type': 'am', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
             'member_wannabe': {'type': 'amw', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
             'free': {'type': 'fe', 'message': _(u"Váš nárok na startovné zdarma bude muset být ještě ověřen"), 'amount': 0},
-            'company': {'type': 'fc', 'message': mark_safe(_(u"Platbu ještě musí schválit váš firemní koordinátor <a href='mailto:%(email)s'>%(email)s</a>" % {
+            'company': {'type': 'fc', 'message': mark_safe(_(u"Platbu ještě musí schválit koordinátor vaší organizace <a href='mailto:%(email)s'>%(email)s</a>" % {
                 "email": company_admin_email})), 'amount': self.user_attendance.company_admission_fee()},
         }
 

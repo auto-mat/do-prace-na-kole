@@ -141,7 +141,7 @@ class CompanyAdminView(RegistrationViewMixin, UpdateView):
     model = CompanyAdmin
     success_url = 'profil'
     registration_phase = "typ_platby"
-    title = _("Chci se stát správcem společnosti")
+    title = _("Chci se stát správcem organizce")
 
     @method_decorator(login_required)
     @must_be_competitor
@@ -153,7 +153,7 @@ class CompanyAdminView(RegistrationViewMixin, UpdateView):
         context_data = super(CompanyAdminView, self).get_context_data(*args, **kwargs)
         old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.filter(campaign=self.user_attendance.campaign).first()
         if old_company_admin and old_company_admin != self.company_admin:
-            return {'fullpage_error_message': _(u"Vaše společnost již svého koordinátora má: %s." % old_company_admin)}
+            return {'fullpage_error_message': _(u"Vaše organizce již svého koordinátora má: %s." % old_company_admin)}
         return context_data
 
     def get_object(self, queryset=None):
@@ -215,7 +215,7 @@ class CompanyCompetitionView(UpdateView):
                 raise Http404(_(u"<div class='text-warning'>K editování této soutěže nemáte oprávnění.</div>"))
         else:
             if Competition.objects.filter(company=company, campaign=campaign).count() >= settings.MAX_COMPETITIONS_PER_COMPANY:
-                raise Http404(_(u"<div class='text-warning'>Překročen maximální počet soutěží pro společnost.</div>"))
+                raise Http404(_(u"<div class='text-warning'>Překročen maximální počet soutěží pro organizaci.</div>"))
             phase = campaign.phase('competition')
             competition = Competition(company=company, campaign=campaign, date_from=phase.date_from, date_to=phase.date_to)
         return competition

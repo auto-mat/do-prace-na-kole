@@ -4,6 +4,6 @@
 {% block third_menu %}
 <ul class="navbar nav navbar-nav the_submenu">
 <li class="{% if request.resolver_match.url_name == 'typ_platby' %}active{% endif %}"><a href="{% url 'typ_platby' %}">{% trans "Platba" %}</a></li>
-<li class="{% if request.resolver_match.url_name == 'company_admin_application' %}active{% endif %}"><a href="{% url 'company_admin_application' %}">{% trans "Chci se stát koordinátorem společnosti" %}</a></li>
+<li class="{% if request.resolver_match.url_name == 'company_admin_application' %}active{% endif %}"><a href="{% url 'company_admin_application' %}">{% trans "Chci se stát koordinátorem organizace" %}</a></li>
 </ul>
 {% endblock %}

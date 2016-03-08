@@ -85,7 +85,7 @@ class Address(CompositeField):
         blank=False,
     )
     recipient = models.CharField(
-        verbose_name=_(u"Název pobočky (celé společnosti, závodu, kanceláře, fakulty) na adrese"),
+        verbose_name=_(u"Název pobočky (celé organizace, závodu, kanceláře, fakulty) na adrese"),
         help_text=_(u"Např. „odštěpný závod Brno“, „oblastní pobočka Liberec“, „Přírodovědecká fakulta“ atp."),
         default="",
         max_length=50,
@@ -185,16 +185,16 @@ class CityInCampaign(models.Model):
 
 
 class Company(models.Model):
-    """Firma"""
+    """Organizace"""
 
     class Meta:
-        verbose_name = _(u"Firma")
-        verbose_name_plural = _(u"Firmy")
+        verbose_name = _(u"Organizace")
+        verbose_name_plural = _(u"Organizace")
         ordering = ('name',)
 
     name = models.CharField(
         unique=True,
-        verbose_name=_(u"Název společnosti"),
+        verbose_name=_(u"Název organizace"),
         help_text=_(u"Např. „Výrobna, a.s.“, „Příspěvková, p.o.“, „Nevládka, z.s.“, „Univerzita Karlova“"),
         max_length=60, null=False)
     address = Address()
@@ -236,8 +236,8 @@ class Subsidiary(models.Model):
     """Pobočka"""
 
     class Meta:
-        verbose_name = _(u"Pobočka společnosti")
-        verbose_name_plural = _(u"Pobočky společností")
+        verbose_name = _(u"Pobočka organizace")
+        verbose_name_plural = _(u"Pobočky organizací")
 
     address = Address()
     company = models.ForeignKey(
@@ -502,7 +502,7 @@ class Campaign(models.Model):
         null=False,
         default=0)
     admission_fee_company = models.FloatField(
-        verbose_name=_(u"Včasné startovné pro firmy"),
+        verbose_name=_(u"Včasné startovné pro organizace"),
         null=False,
         default=0)
     late_admission_fee = models.FloatField(
@@ -510,7 +510,7 @@ class Campaign(models.Model):
         null=False,
         default=0)
     late_admission_fee_company = models.FloatField(
-        verbose_name=_(u"Pozdní startovné pro firmy"),
+        verbose_name=_(u"Pozdní startovné pro organizace"),
         null=False,
         default=0)
     benefitial_admission_fee = models.FloatField(
@@ -518,7 +518,7 @@ class Campaign(models.Model):
         null=False,
         default=0)
     benefitial_admission_fee_company = models.FloatField(
-        verbose_name=_(u"Benefiční startovné pro firmy"),
+        verbose_name=_(u"Benefiční startovné pro organizace"),
         null=False,
         default=0)
     free_entry_cases_html = models.TextField(
@@ -1216,7 +1216,7 @@ class UserProfile(models.Model):
 
 
 class CompanyAdmin(models.Model):
-    """Profil koordinátora společnosti"""
+    """Profil koordinátora organizace"""
 
     COMPANY_APPROVAL = (
         ('approved', _(u"Odsouhlasený")),
@@ -1225,8 +1225,8 @@ class CompanyAdmin(models.Model):
     )
 
     class Meta:
-        verbose_name = _(u"Koordinátor společnosti")
-        verbose_name_plural = _(u"Koordinátoři společností")
+        verbose_name = _(u"Koordinátor organizace")
+        verbose_name_plural = _(u"Koordinátoři organizací")
         unique_together = (
             ("user", "campaign"),
             ("administrated_company", "campaign"),
@@ -1259,7 +1259,7 @@ class CompanyAdmin(models.Model):
     administrated_company = models.ForeignKey(
         "Company",
         related_name="company_admin",
-        verbose_name=_(u"Koordinovaná společnost"),
+        verbose_name=_(u"Koordinovaná organizace"),
         null=True,
         blank=False)
 
@@ -1401,7 +1401,7 @@ class Invoice(models.Model):
         blank=True,
     )
     company_pais_benefitial_fee = models.BooleanField(
-        verbose_name=_(u"Moje firma si přeje podpořit Auto*Mat a zaplatit benefiční startovné."),
+        verbose_name=_(u"Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."),
         default=False,
     )
     total_amount = models.FloatField(
@@ -1416,7 +1416,7 @@ class Invoice(models.Model):
     )
     company = models.ForeignKey(
         Company,
-        verbose_name=_(u"Společnost"),
+        verbose_name=_(u"Organizace"),
         null=False,
         blank=False,
     )
@@ -1535,7 +1535,7 @@ STATUS = (
     (Status.REJECTED, _(u'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU')),
     (Status.DONE, _(u'Platba přijata')),
     (Status.WRONG_STATUS, _(u'Nesprávný status -- kontaktovat PayU')),
-    (Status.COMPANY_ACCEPTS, _(u'Platba akceptována firmou')),
+    (Status.COMPANY_ACCEPTS, _(u'Platba akceptována organizací')),
     (Status.INVOICE_MADE, _(u'Faktura vystavena')),
     (Status.INVOICE_PAID, _(u'Faktura zaplacena')),
 
@@ -1727,7 +1727,7 @@ class Payment(Transaction):
         ('t', _(u'testovací platba')),
 
         ('fa', _(u'faktura mimo PayU')),
-        ('fc', _(u'firma platí fakturou')),
+        ('fc', _(u'organizace platí fakturou')),
         ('am', _(u'člen Klubu přátel Auto*Matu')),
         ('amw', _(u'kandidát na členství v Klubu přátel Auto*Matu')),
         ('fe', _(u'neplatí startovné')),
@@ -1927,7 +1927,7 @@ class Competition(models.Model):
         ('single_user', _(u"Jednotliví soutěžící")),
         ('liberos', _(u"Liberos")),
         ('team', _(u"Týmy")),
-        ('company', _(u"Soutěž spoleností")),
+        ('company', _(u"Soutěž organizací")),
     )
 
     class Meta:
@@ -1994,7 +1994,7 @@ class Competition(models.Model):
         blank=True)
     company_competitors = models.ManyToManyField(
         Company,
-        verbose_name=_(u"Přihlášené soutěžící firmy"),
+        verbose_name=_(u"Přihlášené soutěžící organizace"),
         related_name="competitions",
         blank=True)
     city = models.ManyToManyField(
@@ -2004,7 +2004,7 @@ class Competition(models.Model):
         blank=True)
     company = models.ForeignKey(
         Company,
-        verbose_name=_(u"Soutěž pouze pro firmu"),
+        verbose_name=_(u"Soutěž pouze pro organizace"),
         null=True,
         blank=True)
     sex = models.CharField(
@@ -2148,7 +2148,7 @@ class Competition(models.Model):
         }
         if self.company:
             company_string_before = "vnitrofiremní"
-            company_string_after = "společnosti %s" % escape(self.company)
+            company_string_after = "organizace %s" % escape(self.company)
         else:
             company_string_before = ""
             company_string_after = ""
@@ -2301,7 +2301,7 @@ class CompetitionResult(models.Model):
 
     def clean(self):
         if ((1 if self.user_attendance else 0) + (1 if self.team else 0) + (1 if self.company else 0)) != 1:
-            raise ValidationError(_(u"Musí být zvolen právě jeden uživatel, tým nebo společnost"))
+            raise ValidationError(_(u"Musí být zvolen právě jeden uživatel, tým nebo organizace"))
 
     def user_attendances(self):
         competition = self.competition

@@ -141,7 +141,7 @@ class ViewsTests(TransactionTestCase):
         self.assertEquals(CompanyAdmin.objects.get(user=user).administrated_company.pk, 2)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
-        self.assertEqual(str(msg.subject), 'Testing campaign - firemní koordinátor - potvrzení registrace')
+        self.assertEqual(str(msg.subject), 'Testing campaign - koordinátor organizace - potvrzení registrace')
 
     def test_dpnk_registration(self):
         address = reverse('registrace')
@@ -647,7 +647,7 @@ class ViewsTestsLogon(TransactionTestCase):
         models.CompanyAdmin.objects.all().delete()
         denorm.flush()
         response = self.client.post(reverse('typ_platby'), post_data)
-        self.assertContains(response, "Váš zaměstnavatel Testing company nemá zvoleného koordinátor společnosti.")
+        self.assertContains(response, "Váš zaměstnavatel Testing company nemá zvoleného koordinátora organizace.")
 
         post_data['payment_type'] = 'member'
         response = self.client.post(reverse('typ_platby'), post_data, follow=True)
@@ -881,7 +881,7 @@ class ModelTests(TestCase):
         user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
         user_attendance.save()
         call_command('denorm_flush')
-        self.assertEquals(user_attendance.payment_type_string(), "FIRMA PLATÍ FAKTUROU")
+        self.assertEquals(user_attendance.payment_type_string(), "ORGANIZACE PLATÍ FAKTUROU")
 
     def test_payment_type_string_none_type(self):
         user_attendance = UserAttendance.objects.get(userprofile__user__username='test')

@@ -107,7 +107,7 @@ def must_be_company_admin(fn):
             {
                 'fullpage_error_message':
                 mark_safe(_(
-                    "Tato stránka je určená pouze ověřeným Koordinátorům společností. "
+                    "Tato stránka je určená pouze ověřeným Koordinátorům organizací. "
                     "K tuto funkci se musíte nejdříve <a href='%s'>přihlásit</a>, a vyčkat na naše ověření. "
                     "Pokud na ověření čekáte příliš dlouho, kontaktujte naši podporu na "
                     "<a href='mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž'>kontakt@dopracenakole.cz</a>." %
@@ -209,7 +209,7 @@ def must_be_competitor(fn):
             {
                 'fullpage_error_message':
                 mark_safe(_(
-                    u"V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.") %
+                    u"V soutěži Do práce na kole nesoutěžíte. Pokud jste koordinátorem organizace, použijte <a href='%s'>správu organizace</a>.") %
                     reverse("company_structure")),
             },
             status=403,

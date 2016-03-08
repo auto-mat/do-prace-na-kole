@@ -1290,7 +1290,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
 
     def company_address(self, obj):
         return obj.company.company_address()
-    company_address.short_description = _(u"Adresa společnosti")
+    company_address.short_description = _(u"Adresa organizace")
 
     def invoice_count(self, obj):
         return obj.payment_set.count()

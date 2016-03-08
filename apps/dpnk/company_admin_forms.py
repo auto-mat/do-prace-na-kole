@@ -89,7 +89,7 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
         max_length=100,
         required=True)
     will_pay_opt_in = forms.BooleanField(
-        label=_("Zavazuji se, že já, resp. moje společnost, uhradí startovné za zaměstnance jejichž platbu schválím."),
+        label=_("Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance jejichž platbu schválím."),
         required=True,
     )
 
@@ -108,11 +108,11 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
 class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFormUniqueEmail):
     motivation_company_admin = forms.CharField(
         label=_(u"Pár vět o vaší pozici"),
-        help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle kterých můžeme ověřit, že vám funkci koordinátora společnosti můžeme svěřit."),
+        help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle kterých můžeme ověřit, že vám funkci koordinátora organizace můžeme svěřit."),
         max_length=100,
         required=True)
     administrated_company = forms.ModelChoiceField(
-        label=_(u"Koordinovaná společnost"),
+        label=_(u"Koordinovaná organizace"),
         widget=AutoCompleteSelectWidget(
             'companies',
         ),
@@ -120,7 +120,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         required=True)
     telephone = forms.CharField(
         label="Telefon",
-        help_text="Pro možnost kontaktování firemního koordinátora",
+        help_text="Pro možnost kontaktování koordinátora organizace",
         max_length=30)
     first_name = forms.CharField(
         label=_(u"Jméno"),
@@ -136,7 +136,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         required=True)
     username = forms.CharField(widget=forms.HiddenInput, required=False)
     will_pay_opt_in = forms.BooleanField(
-        label=_("Zavazuji se, že já, resp. moje společnost, uhradí startovné za zaměstnance jejichž platbu schválím."),
+        label=_("Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance jejichž platbu schválím."),
         required=True,
     )
 
@@ -149,7 +149,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
             obj = cleaned_data['administrated_company']
             campaign = cleaned_data['campaign']
             if CompanyAdmin.objects.filter(administrated_company__pk=obj.pk, campaign=campaign).exists():
-                raise forms.ValidationError(_(u"Tato společnost již má svého koordinátora."))
+                raise forms.ValidationError(_(u"Tato organizace již má svého koordinátora."))
         return cleaned_data
 
     class Meta:
