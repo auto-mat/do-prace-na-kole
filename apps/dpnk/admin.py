@@ -580,24 +580,28 @@ class UserAttendanceResource(resources.ModelResource):
     payment_date = fields.Field()
 
     def dehydrate_payment_date(self, obj):
-        payment = obj.payment()['payment']
+        payment = obj.representative_payment
         if payment:
             return payment.realized
 
     payment_status = fields.Field()
 
     def dehydrate_payment_status(self, obj):
-        return obj.payment_status()
+        return obj.payment_status
 
     payment_type = fields.Field()
 
     def dehydrate_payment_type(self, obj):
-        return obj.payment_type()
+        payment = obj.representative_payment
+        if payment:
+            return payment.pay_type
 
     payment_amount = fields.Field()
 
     def dehydrate_payment_amount(self, obj):
-        return obj.payment_amount()
+        payment = obj.representative_payment
+        if payment:
+            return payment.amount
 
 
 class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_generator('team__subsidiary__city__in'), LeafletGeoAdmin):

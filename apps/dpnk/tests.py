@@ -53,6 +53,31 @@ class AdminTest(tests.AdminSiteSmokeTest):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
+class ExportTests(TransactionTestCase):
+    fixtures = ['campaign', 'views', 'users']
+
+    def setUp(self):
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        self.assertTrue(self.client.login(username='admin', password='test'))
+        call_command('denorm_init')
+        call_command('denorm_rebuild')
+
+    def tearDown(self):
+        call_command('denorm_drop')
+
+    def test_userattendance_export(self):
+        address = "/admin/dpnk/userattendance/export/"
+        post_data = {
+            'file_format': 0,
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(response, "test2@test.cz,Testing company")
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class ViewsTests(TransactionTestCase):
     fixtures = ['campaign', 'views', 'users']
 
