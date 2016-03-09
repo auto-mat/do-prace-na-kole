@@ -1,4 +1,3 @@
-from django.core.exceptions import PermissionDenied
 from ajax_select import register, LookupChannel
 from .models import Company
 
@@ -8,9 +7,7 @@ class TagsLookup(LookupChannel):
     model = Company
 
     def check_auth(self, request):
-        if request.user.is_authenticated():
-            return True
-        raise PermissionDenied
+        return True
 
     def get_query(self, q, request):
         query = Company.objects.filter(active=True, name__icontains=q)
