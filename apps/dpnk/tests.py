@@ -53,7 +53,7 @@ class AdminTest(tests.AdminSiteSmokeTest):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class ExportTests(TransactionTestCase):
+class AdminModulesTests(TransactionTestCase):
     fixtures = ['campaign', 'views', 'users']
 
     def setUp(self):
@@ -88,6 +88,18 @@ class ExportTests(TransactionTestCase):
         }
         response = self.client.post(address, post_data)
         self.assertContains(response, "1,1,1")
+
+    def test_competition_masschange(self):
+        address = "/admin/dpnk/competition-masschange/3,5/"
+        response = self.client.get(address)
+        self.assertContains(response, '<option value="338">Testing campaign - last year</option>')
+
+    def test_subsidiary_masschange(self):
+        address = "/admin/dpnk/subsidiary-masschange/1/"
+        response = self.client.get(address)
+        with open("error.html", "w") as f:
+            f.write(response.content.decode())
+        self.assertContains(response, 'id="id_address_street_number"')
 
 
 @override_settings(
