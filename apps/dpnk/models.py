@@ -315,7 +315,7 @@ class Team(models.Model):
         db_index=True,
         default=None,
         skip={'invitation_token'})
-    @depend_on_related('UserAttendance')
+    @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def member_count(self):
         member_count = self.members().count()
         if member_count > settings.MAX_TEAM_MEMBERS:
@@ -330,7 +330,7 @@ class Team(models.Model):
         db_index=True,
         default=None,
         skip={'invitation_token'})
-    @depend_on_related('UserAttendance')
+    @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def unapproved_member_count(self):
         member_count = self.unapproved_members().count()
         return member_count
@@ -809,7 +809,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             return self.campaign.admission_fee_company + self.t_shirt_size.price
 
     @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
-    @depend_on_related('Transaction', foreign_key='user_attendance')
+    @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
     def representative_payment(self):
         if self.team and self.team.subsidiary and self.admission_fee() == 0:
             return None
@@ -840,7 +840,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     )
 
     @denormalized(models.CharField, choices=PAYMENT_CHOICES, max_length=20, null=True, skip={'updated', 'created'})
-    @depend_on_related('Transaction', foreign_key='user_attendance')
+    @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
     def payment_status(self):
         if self.team and self.team.subsidiary and self.admission_fee() == 0:
             return 'no_admission'
@@ -1036,9 +1036,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return results.get_competitions_without_admission(self).filter(type='questionnaire')
 
     @denormalized(models.NullBooleanField, default=None, skip={'created', 'updated'})
-    @depend_on_related('Team')
-    @depend_on_related('Competition')
-    @depend_on_related('UserProfile')
+    @depend_on_related('UserProfile', skip={'mailing_hash'})
     def has_unanswered_questionnaires(self):
         return self.unanswered_questionnaires().exists()
 
