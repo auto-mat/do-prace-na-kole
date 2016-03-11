@@ -18,7 +18,7 @@ unidecode
 -e git+https://github.com/PetrDlouhy/createsend-python.git@python3#egg=createsend
 ordereddict
 django-mass-edit
-django-author
+-e git+https://github.com/lambdalisue/django-author.git#egg=django-author
 django-fieldsignals
 django-admin-sortable2
 reportlab
