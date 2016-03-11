@@ -34,7 +34,7 @@ def cyklistesobe(city_slug, order="created_at"):
     return mark_safe(cyklistesobe_cached(city_slug, order))
 
 
-@cached(600)
+@cached(60 * 60)
 def cyklistesobe_cached(city_slug, order="created_at"):
     api = slumber.API("http://www.cyklistesobe.cz/api/")
     kwargs = {}
@@ -64,7 +64,7 @@ def wp_prize(slug=None):
     return mark_safe(_wp_news_cached(slug, "prize"))
 
 
-@cached(600)
+@cached(60 * 60)
 def _wp_news_cached(slug=None, wp_type="news"):
     if wp_type == "action":
         return _wp_news("locations", _("akce"), unfold="first", _page_subtype="event", _post_parent=slug)
@@ -101,7 +101,7 @@ def wp_article(id):
     return mark_safe(wp_article_cached(id))
 
 
-@cached(600)
+@cached(60 * 60)
 def wp_article_cached(id):
     url = "http://www.dopracenakole.cz/"
     api = slumber.API(url)
