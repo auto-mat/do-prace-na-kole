@@ -325,7 +325,7 @@ def update_requirements():
     "Update all requirements"
     require('release', provided_by=[deploy, setup])
     run('cd %(path)s/releases/%(release)s; bower update' % env)
-    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt --upgrade' % env)
+    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt' % env)
 
 
 def symlink_current_release():
