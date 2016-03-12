@@ -272,7 +272,8 @@ def upload_tar_from_git():
     "Create an archive from the current Git master branch and upload it"
     api.local('git archive --format=tar HEAD | gzip > %(release)s.tar.gz' % env)
     sudo('rm %(path)s/releases/%(release)s -rf' % env)
-    run('mkdir %(path)s/releases/%(release)s' % env)
+    run('mkdir -p %(path)s/releases/%(release)s' % env)
+    run('mkdir -p %(path)s/packages' % env)
     put('%(release)s.tar.gz' % env, '%(path)s/packages/' % env)
     run('cd %(path)s/releases/%(release)s && tar zxf ../../packages/%(release)s.tar.gz' % env)
     run('cd %(path)s/releases/%(release)s/project && ln -s ../../../settings_local.py .' % env)
