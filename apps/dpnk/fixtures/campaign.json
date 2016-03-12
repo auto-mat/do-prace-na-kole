@@ -68,7 +68,7 @@
             "package_width": 26,
             "previous_campaign": 338,
             "slug": "testing-campaign",
-            "tracking_number_first": 0,
+            "tracking_number_first": 1111111,
             "tracking_number_last": 999999999,
             "trip_plus_distance": 5
         },

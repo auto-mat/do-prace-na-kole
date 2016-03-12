@@ -19,7 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.test import TestCase
-from dpnk.models import DeliveryBatch
+from dpnk.models import DeliveryBatch, PackageTransaction
 from PyPDF2 import PdfFileReader
 import datetime
 
@@ -27,8 +27,11 @@ import datetime
 class TestParcelBatch(TestCase):
     fixtures = ['campaign', 'users', 'transactions', 'batches']
 
+    def tearDown(self):
+        PackageTransaction.objects.all().delete()
+
     def get_key_string(self):
-        return "1-%s-000002" % datetime.date.today().strftime("%y%m%d")
+        return "1-%s-" % datetime.date.today().strftime("%y%m%d")
 
     def test_parcel_batch(self):
         delivery_batch = DeliveryBatch.objects.get(pk=1)
@@ -37,7 +40,7 @@ class TestParcelBatch(TestCase):
         self.assertTrue("Testing campaign" in pdf_string)
         self.assertTrue(self.get_key_string() in pdf_string)
         self.assertTrue("Testing t-shirt size" in pdf_string)
-        self.assertTrue("920351408" in pdf_string)
+        self.assertTrue("1111111" in pdf_string)
         self.assertTrue("Testing company," in pdf_string)
         self.assertTrue("Testing User 1" in pdf_string)
         self.assertTrue("U•ivatelsk† jm†no: test" in pdf_string)
@@ -48,6 +51,6 @@ class TestParcelBatch(TestCase):
         self.assertTrue(b"testing-campaign1" in avfull_string)
         self.assertTrue(bytes(self.get_key_string(), "utf-8") in avfull_string)
         self.assertTrue(b"OP Automat" in avfull_string)
-        self.assertTrue(b"920351408" in avfull_string)
+        self.assertTrue(b"1111111" in avfull_string)
         self.assertTrue(b"Testing company," in avfull_string)
         self.assertTrue(b"Testing User 1" in avfull_string)
