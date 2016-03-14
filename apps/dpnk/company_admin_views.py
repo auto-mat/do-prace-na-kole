@@ -150,9 +150,11 @@ class CompanyAdminView(RegistrationViewMixin, UpdateView):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompanyAdminView, self).get_context_data(*args, **kwargs)
-        old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.filter(campaign=self.user_attendance.campaign).first()
-        if old_company_admin and old_company_admin != self.company_admin:
-            return {'fullpage_error_message': _(u"Vaše organizce již svého koordinátora má: %s." % old_company_admin)}
+        old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.\
+            filter(campaign=self.user_attendance.campaign, company_admin_approved='approved').\
+            exclude(pk=self.company_admin.pk)
+        if old_company_admin.exists():
+            return {'fullpage_error_message': _(u"Vaše organizce již svého koordinátora má: %s." % (", ".join([str(c) for c in old_company_admin.all()])))}
         return context_data
 
     def get_object(self, queryset=None):
