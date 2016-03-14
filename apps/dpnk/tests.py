@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.test import TestCase, RequestFactory, Client
+from django.test import TestCase, TransactionTestCase, RequestFactory, Client
 from django.core.urlresolvers import reverse
 from django.core import mail
 from django.core.management import call_command
@@ -961,7 +961,8 @@ class ResultsTests(DenormMixin, TestCase):
         self.assertListEqual(list(query.all()), [team])
 
 
-class ModelTests(DenormMixin, TestCase):
+# TODO: don't use TransactionTestCase, it is slow
+class ModelTests(DenormMixin, TransactionTestCase):
     fixtures = ['users', 'campaign', 'transactions', 'batches']
 
     def test_payment_type_string(self):
@@ -976,7 +977,8 @@ class ModelTests(DenormMixin, TestCase):
         self.assertEquals(user_attendance.payment_type_string(), None)
 
 
-class DenormTests(DenormMixin, TestCase):
+# TODO: don't use TransactionTestCase, it is slow
+class DenormTests(DenormMixin, TransactionTestCase):
     fixtures = ['users', 'campaign', 'transactions', 'batches']
 
     def test_name_with_members(self):
