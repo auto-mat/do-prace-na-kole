@@ -761,6 +761,17 @@ class ViewsTestsLogon(TestCase):
         company_admin = models.CompanyAdmin.objects.get(user__username='test')
         self.assertEquals(company_admin.motivation_company_admin, 'Testing position')
 
+    def test_dpnk_company_admin_application_existing_admin(self):
+        user = User.objects.get(username='test1')
+        models.CompanyAdmin.objects.create(
+            administrated_company=self.user_attendance.team.subsidiary.company,
+            user=user,
+            campaign=self.user_attendance.campaign,
+            company_admin_approved='approved',
+        )
+        response = self.client.get(reverse('company_admin_application'))
+        self.assertContains(response, 'Vaše organizce již svého koordinátora má: Testing User')
+
     def test_dpnk_views_gpx_file(self):
         trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
         gpxfile = mommy.make(models.GpxFile, user_attendance=self.user_attendance, trip_date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
