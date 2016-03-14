@@ -156,6 +156,22 @@ class ViewsTests(TestCase):
         self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
         self.assertEqual(str(msg.subject), 'Testing campaign - koordinátor organizace - potvrzení registrace')
 
+    def test_dpnk_company_admin_registration_existing(self):
+        user = User.objects.get(username='test1')
+        models.CompanyAdmin.objects.create(
+            administrated_company_id=2,
+            user=user,
+            campaign_id=339,
+            company_admin_approved='approved',
+        )
+        address = reverse('register_admin')
+        post_data = {
+            'administrated_company': 2,
+            'campaign': 339,
+        }
+        response = self.client.post(address, post_data, follow=True)
+        self.assertContains(response, "Tato organizace již má svého koordinátora.")
+
     def test_dpnk_registration(self):
         address = reverse('registrace')
         post_data = {
