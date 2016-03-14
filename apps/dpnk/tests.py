@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.test import TestCase, RequestFactory, TransactionTestCase, Client
+from django.test import TestCase, RequestFactory, Client
 from django.core.urlresolvers import reverse
 from django.core import mail
 from django.core.management import call_command
@@ -53,7 +53,7 @@ class AdminTest(tests.AdminSiteSmokeTest):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class AdminModulesTests(TransactionTestCase):
+class AdminModulesTests(TestCase):
     fixtures = ['campaign', 'views', 'users']
 
     def setUp(self):
@@ -106,7 +106,7 @@ class AdminModulesTests(TransactionTestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class ViewsTests(TransactionTestCase):
+class ViewsTests(TestCase):
     fixtures = ['campaign', 'views', 'users']
 
     def setUp(self):
@@ -451,7 +451,7 @@ class FilterTests(TestCase):
         self.assertEquals(q.count(), 5)
 
 
-class PaymentTests(TransactionTestCase):
+class PaymentTests(TestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
@@ -518,7 +518,7 @@ class PaymentTests(TransactionTestCase):
     PAYU_KEY_2='98764321',
 )
 @freeze_time("2010-11-20 12:00")
-class PayuTests(TransactionTestCase):
+class PayuTests(TestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
@@ -592,7 +592,7 @@ class PayuTests(TransactionTestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class ViewsTestsLogon(TransactionTestCase):
+class ViewsTestsLogon(TestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
@@ -789,7 +789,7 @@ def create_post_request(factory, user, post_data={}, address="", subdomain="test
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
-class TestCompanyAdminViews(TransactionTestCase):
+class TestCompanyAdminViews(TestCase):
     fixtures = ['campaign', 'views', 'users', 'company_competition']
 
     def setUp(self):
@@ -840,7 +840,7 @@ class TestCompanyAdminViews(TransactionTestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
-class ViewsTestsRegistered(TransactionTestCase):
+class ViewsTestsRegistered(TestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
