@@ -22,7 +22,7 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.core.management import call_command
 from django.test.utils import override_settings
-from dpnk import results, models, mailing, views, filters
+from dpnk import results, models, mailing, views, filters, company_admin_views
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment, CompanyAdmin
 import datetime
 import django
@@ -769,6 +769,71 @@ class ViewsTestsLogon(TransactionTestCase):
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(models.GpxFile.objects.get(pk=gpxfile.pk).trip, trip)
+
+
+def create_get_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):
+    request = factory.get(address, post_data)
+    request.user = user
+    request.subdomain = subdomain
+    return request
+
+
+def create_post_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):
+    request = factory.post(address, post_data)
+    request.user = user
+    request.subdomain = subdomain
+    return request
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=12, day=1),
+)
+class TestCompanyAdminViews(TransactionTestCase):
+    fixtures = ['campaign', 'views', 'users', 'company_competition']
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+
+    def test_dpnk_company_admin_create_competition(self):
+        post_data = {
+            'name': 'testing company competition',
+            'type': 'length',
+            'competitor_type': 'single_user',
+            'submit': 'Odeslat',
+        }
+        request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
+        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
+        self.assertEquals(response.url, reverse('company_admin_competitions'))
+        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().administrated_company, type='length')
+        self.assertEquals(competition.name, 'testing company competition')
+
+        slug = competition.slug
+        post_data['name'] = 'testing company competition fixed'
+        request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
+        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug=slug)
+        self.assertEquals(response.url, reverse('company_admin_competitions'))
+        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().administrated_company, type='length')
+        self.assertEquals(competition.name, 'testing company competition fixed')
+
+    @override_settings(
+        MAX_COMPETITIONS_PER_COMPANY=0,
+    )
+    def test_dpnk_company_admin_create_competition_max_competitions(self):
+        request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
+        self.assertContains(response, "Překročen maximální počet soutěží pro organizaci.")
+
+    def test_dpnk_company_admin_create_competition_no_permission(self):
+        request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug="FQ-LB")
+        self.assertContains(response, "K editování této soutěže nemáte oprávnění.")
+
+    def test_dpnk_company_admin_competitions_view(self):
+        request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        response = company_admin_views.CompanyCompetitionsShowView.as_view()(request, success=True)
+        self.assertContains(response, "Pravidelnost společnosti")
 
 
 @override_settings(
