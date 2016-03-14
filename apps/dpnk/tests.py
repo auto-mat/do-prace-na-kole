@@ -36,6 +36,14 @@ from PyPDF2 import PdfFileReader
 import denorm
 
 
+class DenormMixin(object):
+    def setUp(self):
+        call_command('denorm_init')
+
+    def tearDown(self):
+        call_command('denorm_drop')
+
+
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
@@ -53,17 +61,14 @@ class AdminTest(tests.AdminSiteSmokeTest):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class AdminModulesTests(TestCase):
+class AdminModulesTests(DenormMixin, TestCase):
     fixtures = ['campaign', 'views', 'users']
 
     def setUp(self):
+        super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.assertTrue(self.client.login(username='admin', password='test'))
-        call_command('denorm_init')
         call_command('denorm_rebuild')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_userattendance_export(self):
         address = "/admin/dpnk/userattendance/export/"
@@ -106,15 +111,12 @@ class AdminModulesTests(TestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class ViewsTests(TestCase):
+class ViewsTests(DenormMixin, TestCase):
     fixtures = ['campaign', 'views', 'users']
 
     def setUp(self):
+        super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        call_command('denorm_init')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_admin_views_competition(self):
         self.assertTrue(self.client.login(username='admin', password='test'))
@@ -467,15 +469,12 @@ class FilterTests(TestCase):
         self.assertEquals(q.count(), 5)
 
 
-class PaymentTests(TestCase):
+class PaymentTests(DenormMixin, TestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
-        call_command('denorm_init')
+        super().setUp()
         call_command('denorm_rebuild')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_no_payment_no_admission(self):
         campaign = Campaign.objects.get(pk=339)
@@ -608,18 +607,15 @@ class PayuTests(TestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class ViewsTestsLogon(TestCase):
+class ViewsTestsLogon(DenormMixin, TestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
+        super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.assertTrue(self.client.login(username='test', password='test'))
-        call_command('denorm_init')
         call_command('denorm_rebuild')
         self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_dpnk_team_view(self):
         response = self.client.get(reverse('zmenit_tym'))
@@ -867,19 +863,16 @@ class TestCompanyAdminViews(TestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
-class ViewsTestsRegistered(TestCase):
+class ViewsTestsRegistered(DenormMixin, TestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
+        super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.assertTrue(self.client.login(username='test', password='test'))
-        call_command('denorm_init')
         call_command('denorm_rebuild')
         self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
         self.assertTrue(self.user_attendance.entered_competition())
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_dpnk_rides_view(self):
         response = self.client.get(reverse('profil'))
@@ -936,15 +929,12 @@ class ViewsTestsRegistered(TestCase):
         self.assertEquals(trip.distance, 13.32)
 
 
-class TestTeams(TestCase):
+class TestTeams(DenormMixin, TestCase):
     fixtures = ['campaign', 'users']
 
     def setUp(self):
-        call_command('denorm_init')
+        super().setUp()
         call_command('denorm_rebuild')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_member_count_update(self):
         team = Team.objects.get(id=1)
@@ -958,15 +948,12 @@ class TestTeams(TestCase):
         self.assertEqual(team.member_count, 4)
 
 
-class ResultsTests(TestCase):
+class ResultsTests(DenormMixin, TestCase):
     fixtures = ['users', 'campaign', 'test_results_data']
 
     def setUp(self):
-        call_command('denorm_init')
+        super().setUp()
         call_command('denorm_rebuild')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_get_competitors(self):
         team = Team.objects.get(id=1)
@@ -974,14 +961,8 @@ class ResultsTests(TestCase):
         self.assertListEqual(list(query.all()), [team])
 
 
-class ModelTests(TestCase):
+class ModelTests(DenormMixin, TestCase):
     fixtures = ['users', 'campaign', 'transactions', 'batches']
-
-    def setUp(self):
-        call_command('denorm_init')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_payment_type_string(self):
         user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
@@ -995,14 +976,8 @@ class ModelTests(TestCase):
         self.assertEquals(user_attendance.payment_type_string(), None)
 
 
-class DenormTests(TestCase):
+class DenormTests(DenormMixin, TestCase):
     fixtures = ['users', 'campaign', 'transactions', 'batches']
-
-    def setUp(self):
-        call_command('denorm_init')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_name_with_members(self):
         user_attendance = UserAttendance.objects.get(pk=1115)
