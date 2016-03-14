@@ -1227,7 +1227,6 @@ class CompanyAdmin(models.Model):
         verbose_name_plural = _(u"Koordinátoři organizací")
         unique_together = (
             ("user", "campaign"),
-            ("administrated_company", "campaign"),
         )
 
     user = models.ForeignKey(
