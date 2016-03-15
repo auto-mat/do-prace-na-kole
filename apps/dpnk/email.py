@@ -97,15 +97,25 @@ def team_created_mail(user_attendance):
 
 
 def invitation_mail(user_attendance, email):
-    template = get_template('email/invitation_%s.html' % user_attendance.userprofile.language)
-    if len(email) != 0:
-        message = template.render({
+    templates = {
+        "cs": get_template('email/invitation_cs.html'),
+        "en": get_template('email/invitation_en.html'),
+    }
+
+    if user_attendance.userprofile.language == "cs":
+        languages = ("cs", "en")
+    else:
+        languages = ("en", "cs")
+    message = ""
+    for language in languages:
+        template = templates[language]
+        message += template.render({
             'inviting': user_attendance,
-            'lang_code': user_attendance.userprofile.language,
+            'lang_code': language,
             'SITE_URL': settings.SITE_URL,
             'email': email,
         })
-        send_mail(_(u"%s - pozvánka do týmu" % user_attendance.campaign), message, user_attendance.userprofile.user.email, [email], fail_silently=False)
+    send_mail(_(u"%s - pozvánka do týmu" % user_attendance.campaign), message, None, [email], fail_silently=False)
 
 
 def payment_confirmation_mail(user_attendance):
