@@ -432,21 +432,12 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
 
     def clean_payment_type(self):
         payment_type = self.cleaned_data['payment_type']
-        company = self.user_attendance.team.subsidiary.company
-        company_admin = self.user_attendance.get_asociated_company_admin()
-        if payment_type == 'company' and not company_admin:
+        if payment_type == 'company' and self.user_attendance.get_asociated_company_admin().exists():
             raise forms.ValidationError(mark_safe(
                 _(u"Váš zaměstnavatel %(employer)s nemá zvoleného koordinátora organizace."
                   u" Vaše organizace bude muset nejprve ustanovit zástupce, který za ní bude schvalovat platby ve vaší organizaci."
                   u"<ul><li><a href='%(url)s'>Chci se stát koordinátorem mé organizace</a></li></ul>")
                 % {'employer': self.user_attendance.team.subsidiary.company, 'url': reverse('company_admin_application')}))
-        elif payment_type == 'company' and not company_admin.can_confirm_payments:
-            raise forms.ValidationError(mark_safe(
-                _(u"Koordinátor vašeho zaměstnavatele nemá možnost povolovat platby fakturou."
-                  u"<ul><li>Kontaktujte koordinátora %(company_admin)s vašeho zaměstnavatele %(employer)s na emailu %(email)s</li>"
-                  u"<li>Koordinátor bude muset nejprve dohodnout spolupráci na adrese"
-                  u" <a href='mailto:kontakt@dopracenakole.cz?subject=Žádost o povolení plateb uvnitř vaší organizace'>kontakt@dopracenakole.cz</a>.net</li></ul>")
-                % {'company_admin': company_admin, 'employer': company, 'email': company_admin.user.email}))
         return payment_type
 
 
