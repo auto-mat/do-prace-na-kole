@@ -74,17 +74,20 @@ $(function(){
    </div>
    <div class="description_switcher_div description company_description" style="display:none">
       <h3>{% trans "Startovné platí zaměstnavatel" %}</h3>
-      {% if user_attendance.get_asociated_company_admin %}
       {% trans "Startovné za mě platí zaměstnavatel, mám to domluvené." %}
-      {% else %}
-      {% trans "Váš zaměstnavatel ještě nemá zvoleného koordinátora. Pokud chcete zvolit tento typ platby, je potřeba, aby byla platba startovného fakturou dohodnutá s vaším zaměstnavatelem." %}
-      <br/>
-      <a href='{% url "company_admin_application" %}'>{% trans "Chci se sám stát koordinátorem mé organizace." %}</a>
-      {% endif %}
       <br/><br/>
       {% trans "Zaměstnavatel: " %} {{ user_attendance.team.subsidiary.company }}<br/>
-      {% trans "Koordinátor organizace: " %} {{ user_attendance.get_asociated_company_admin|default:"Není" }}<br/>
-      {% trans "Email na koordinátora: " %}<a href='mailto:{{ user_attendance.get_asociated_company_admin.user.email|default:"Není" }}'>{{ user_attendance.get_asociated_company_admin.user.email|default:"Není" }}</a><br/>
+      {% for company_admin in user_attendance.get_asociated_company_admin %}
+         {% trans "Koordinátor organizace: " %} {{ company_admin|default:"Není" }}<br/>
+         {% trans "Email na koordinátora: " %}<a href='mailto:{{ company_admin.user.email|default:"Není" }}'>{{ company_admin.user.email|default:"Není" }}</a><br/>
+      {% empty %}
+         <strong>
+         <hr/>
+         {% trans "Váš zaměstnavatel ještě nemá zvoleného koordinátora. Pokud chcete zvolit tento typ platby, je potřeba, aby byla platba startovného fakturou dohodnutá s vaším zaměstnavatelem." %}
+         </strong>
+         <br/>
+         <a href='{% url "company_admin_application" %}'>{% trans "Chci se sám stát koordinátorem mé organizace." %}</a>
+      {% endfor %}
    </div>
    <div class="description_switcher_div description member_description" style="display:none">
       <h3>{% trans "Člen Klubu přátel" %}</h3>
