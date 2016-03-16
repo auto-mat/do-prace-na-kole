@@ -103,8 +103,6 @@ class AdminModulesTests(DenormMixin, TestCase):
     def test_subsidiary_masschange(self):
         address = "/admin/dpnk/subsidiary-masschange/1/"
         response = self.client.get(address)
-        with open("error.html", "w") as f:
-            f.write(response.content.decode())
         self.assertContains(response, 'id="id_address_street_number"')
 
 
@@ -785,6 +783,63 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         }
         response = self.client.post(reverse('team_members'), post_data)
         self.assertContains(response, 'Členství uživatele Nick v týmu Testing team 1 bylo odsouhlaseno.')
+
+    def test_dpnk_team_denial(self):
+        ua = UserAttendance.objects.get(pk=1015)
+        ua.approved_for_team = 'undecided'
+        ua.save()
+        post_data = {
+            'approve': 'deny-1015',
+            'reason-1015': 'reason',
+        }
+        response = self.client.post(reverse('team_members'), post_data)
+        self.assertContains(response, 'Členství uživatele Nick ve vašem týmu bylo zamítnuto')
+
+    def test_dpnk_team_denial_no_message(self):
+        ua = UserAttendance.objects.get(pk=1015)
+        ua.approved_for_team = 'undecided'
+        ua.save()
+        post_data = {
+            'approve': 'deny-1015',
+        }
+        response = self.client.post(reverse('team_members'), post_data)
+        self.assertContains(response, 'Při zamítnutí člena týmu musíte vyplnit zprávu.')
+
+    def test_dpnk_team_invitation_current_user(self):
+        post_data = {
+            'email1': 'test@email.cz',
+            'submit': 'odeslat',
+        }
+        response = self.client.post(reverse('pozvanky'), post_data, follow=True)
+        self.assertContains(response, 'Odeslána pozvánka uživateli Null User na email test@email.cz')
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['test@email.cz'])
+        self.assertEqual(str(msg.subject), 'Testing campaign - potvrzení registrace')
+
+    def test_dpnk_team_invitation_same_team(self):
+        post_data = {
+            'email1': 'test2@test.cz',
+            'submit': 'odeslat',
+        }
+        response = self.client.post(reverse('pozvanky'), post_data, follow=True)
+        self.assertContains(response, 'Uživatel Nick byl přijat do vašeho týmu.')
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['test2@test.cz'])
+        self.assertEqual(str(msg.subject), 'Testing campaign - potvrzení ověření členství v týmu')
+
+    def test_dpnk_team_invitation_unknown(self):
+        post_data = {
+            'email1': 'test-unknown@email.cz',
+            'submit': 'odeslat',
+        }
+        response = self.client.post(reverse('pozvanky'), post_data, follow=True)
+        self.assertContains(response, 'Odeslána pozvánka na email test-unknown@email.cz')
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['test-unknown@email.cz'])
+        self.assertEqual(str(msg.subject), 'Testing campaign - pozvánka do týmu')
 
     def test_dpnk_company_admin_application(self):
         post_data = {

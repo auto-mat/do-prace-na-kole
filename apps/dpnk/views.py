@@ -1316,6 +1316,11 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, FormView):
 
                     if invited_user_attendance.team == self.user_attendance.team:
                         approve_for_team(self.request, invited_user_attendance, "", True, False)
+                        messages.add_message(
+                            self.request,
+                            messages.SUCCESS,
+                            _(u"Uživatel %(user)s byl přijat do vašeho týmu.") % {"user": invited_user_attendance, "email": email},
+                            fail_silently=True)
                     else:
                         invitation_register_mail(self.user_attendance, invited_user_attendance)
                         messages.add_message(
