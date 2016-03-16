@@ -34,6 +34,7 @@ from unittest.mock import MagicMock, patch
 from collections import OrderedDict
 from PyPDF2 import PdfFileReader
 import denorm
+import settings
 
 
 class DenormMixin(object):
@@ -67,7 +68,7 @@ class AdminModulesTests(DenormMixin, TestCase):
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.assertTrue(self.client.login(username='admin', password='test'))
+        self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
         call_command('denorm_rebuild')
 
     def test_userattendance_export(self):
@@ -119,7 +120,7 @@ class ViewsTests(DenormMixin, TestCase):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
 
     def test_admin_views_competition(self):
-        self.assertTrue(self.client.login(username='admin', password='test'))
+        self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
         response = self.client.get(reverse("admin:dpnk_competition_add"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'id="id_competitor_type"')
@@ -209,7 +210,7 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertEquals(ua.team.pk, 1)
 
     def test_dpnk_userattendance_creation(self):
-        self.assertTrue(self.client.login(username='user_without_attendance', password='test'))
+        self.client.force_login(User.objects.get(username='user_without_attendance'), settings.AUTHENTICATION_BACKENDS[0])
         address = reverse('profil')
         response = self.client.get(address)
         self.assertRedirects(response, reverse('upravit_profil'))
@@ -613,7 +614,7 @@ class ViewsTestsLogon(DenormMixin, TestCase):
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.assertTrue(self.client.login(username='test', password='test'))
+        self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
         call_command('denorm_rebuild')
         self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
 
@@ -869,7 +870,7 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.assertTrue(self.client.login(username='test', password='test'))
+        self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
         call_command('denorm_rebuild')
         self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
         self.assertTrue(self.user_attendance.entered_competition())
