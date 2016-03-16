@@ -24,7 +24,7 @@ from . import util
 import threading
 
 
-def get_competitors_without_admission(competition):
+def get_competitors_without_admission(competition):  # noqa
     filter_query = {}
     if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
         filter_query['campaign'] = competition.campaign
@@ -286,7 +286,7 @@ def recalculate_results_team(team):
         recalculate_result_competitor(team_member)
 
 
-def recalculate_result(competition, competitor):
+def recalculate_result(competition, competitor):  # noqa
     if competitor is None:
         return
 

@@ -142,7 +142,7 @@ class UserAttendanceViewMixin(object):
 
 
 class RegistrationMessagesMixin(UserAttendanceViewMixin):
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # noqa
         ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
 
         if self.registration_phase in ('registration_uncomplete', 'profile_view'):
@@ -244,7 +244,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
         if previous_user_attendance and previous_user_attendance.team:
             return previous_user_attendance.team.name
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # noqa
         create_company = False
         create_subsidiary = False
         create_team = False
@@ -1160,7 +1160,7 @@ def questionnaire_answers(
         })
 
 
-@staff_member_required
+@staff_member_required  # noqa
 def answers(request):
     question_id = request.GET['question']
     question = Question.objects.get(id=question_id)
@@ -1441,7 +1441,7 @@ def period_trips(campaign, day_from, day_to):
     return trips(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to))
 
 
-@cache_page(60)
+@cache_page(60)  # noqa
 def statistics(
         request,
         variable,
