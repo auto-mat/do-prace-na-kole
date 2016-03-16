@@ -507,6 +507,9 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
     @user_attendance_has(
         lambda ua: ua.payment_status == 'no_admission',
         mark_safe_lazy(format_lazy(_(u"Startovné se neplatí. Pokračujte na <a href='{addr}'>zadávání jízd</a>."), addr=reverse_lazy("profil"))))
+    @user_attendance_has(
+        lambda ua: not ua.t_shirt_size,
+        _("Před tím, než zaplatíte startovné, musíte mít vybrané triko"))
     def dispatch(self, request, *args, **kwargs):
         dispatch = super(PaymentTypeView, self).dispatch(request, *args, **kwargs)
         return dispatch

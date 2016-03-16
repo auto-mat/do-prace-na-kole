@@ -664,6 +664,19 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         self.assertRedirects(response, reverse("registration_uncomplete"))
         self.assertEquals(models.Payment.objects.get().pay_type, 'fc')
 
+    def test_dpnk_payment_type_no_t_shirt(self):
+        post_data = {
+            'payment_type': 'company',
+            'next': 'Next',
+        }
+        models.Payment.objects.all().delete()
+        ua = UserAttendance.objects.get(pk=1115)
+        ua.t_shirt_size = None
+        ua.save()
+        denorm.flush()
+        response = self.client.post(reverse('typ_platby'), post_data, follow=True)
+        self.assertContains(response, "Před tím, než zaplatíte startovné, musíte mít vybrané triko", status_code=403)
+
     def test_dpnk_payment_type_without_company_admin(self):
         post_data = {
             'payment_type': 'company',
