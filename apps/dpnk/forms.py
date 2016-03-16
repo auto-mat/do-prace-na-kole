@@ -432,7 +432,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
 
     def clean_payment_type(self):
         payment_type = self.cleaned_data['payment_type']
-        if payment_type == 'company' and self.user_attendance.get_asociated_company_admin().exists():
+        if payment_type == 'company' and not self.user_attendance.get_asociated_company_admin().exists():
             raise forms.ValidationError(mark_safe(
                 _(u"Váš zaměstnavatel %(employer)s nemá zvoleného koordinátora organizace."
                   u" Vaše organizace bude muset nejprve ustanovit zástupce, který za ní bude schvalovat platby ve vaší organizaci."
