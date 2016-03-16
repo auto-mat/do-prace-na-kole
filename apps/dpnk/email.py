@@ -40,10 +40,7 @@ def approval_request_mail(user_attendance):
 def invitation_register_mail(inviting, invited):
     template = get_template('email/invitation_%s.html' % invited.userprofile.language)
     email = invited.userprofile.user.email
-    if not invited:
-        lang_code = inviting.userprofile.language
-    else:
-        lang_code = inviting.userprofile.language
+    lang_code = invited.userprofile.language
     message = template.render({
         'inviting': inviting,
         'invited': invited,

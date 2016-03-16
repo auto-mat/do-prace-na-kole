@@ -39,7 +39,7 @@ ADMINS = (
     ('Hynek Hanke', 'hynek.hanke@auto-mat.cz'),
     ('Petr Dlouhý', 'petr.dlouhy@email.cz'),
 )
-DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@dopracenakole.net>'
+DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@dopracenakole.cz>'
 MANAGERS = ADMINS
 DATABASES = {
     'default': {

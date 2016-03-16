@@ -24,8 +24,8 @@ ADMINS = (
     ('', ''),
 )
 DEBUG = True
-DEFAULT_FROM_EMAIL = 'Do práce na kole <>'
-SERVER_EMAIL = 'Do práce na kole <>'
+DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@test.cz>'
+SERVER_EMAIL = 'Do práce na kole <kontakt@tests.cz>'
 
 DATABASES = {
     'default': {
@@ -56,7 +56,7 @@ for mid in UNUSED_MIDDLEWARES:
         pass
 
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  # XXX
-SITE_URL = 'http://localhost/~petr/dpnk-wp/'
+SITE_URL = 'localhost:8000'
 DJANGO_URL = 'http://localhost:8000'
 TESTING_URLS = True
 

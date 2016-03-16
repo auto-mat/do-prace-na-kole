@@ -23,6 +23,7 @@ from dpnk.models import UserAttendance, Company, CompanyAdmin, UserProfile, Camp
 from django.contrib.auth.models import User
 from . import email
 from django.core import mail
+from django.conf import settings
 
 
 # Uncoment this to check to generate email files in /tmp/dpnk-test-messages
@@ -65,14 +66,20 @@ class TestEmails(TestCase):
     def test_send_invitation_register_mail(self):
         email.invitation_register_mail(self.user_attendance, self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - potvrzení registrace")
-        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, "Testing campaign 1 - potvrzení registrace")
+        self.assertEqual(msg.to[0], "user1@email.com")
+        link = 'http://testing_campaign_1.localhost:8000/%s/tym/%s/user1@email.com/' % (self.userprofile.language, self.user_attendance.team.invitation_token)
+        self.assertTrue(link in msg.body)
 
     def test_send_register_mail(self):
         email.register_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - potvrzení registrace")
-        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, "Testing campaign 1 - potvrzení registrace")
+        self.assertEqual(msg.to[0], "user1@email.com")
+        link = 'http://testing_campaign_1.localhost:8000/%s/' % self.userprofile.language
+        self.assertTrue(link in msg.body)
 
     def test_send_team_membership_approval_mail(self):
         email.team_membership_approval_mail(self.user_attendance)
@@ -83,21 +90,33 @@ class TestEmails(TestCase):
     def test_send_team_membership_denial_mail(self):
         email.team_membership_denial_mail(self.user_attendance, self.user_attendance, "reason of denial")
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - ZAMÍTNUTÍ členství v týmu")
-        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, "Testing campaign 1 - ZAMÍTNUTÍ členství v týmu")
+        self.assertEqual(msg.to[0], "user1@email.com")
+        link = 'http://testing_campaign_1.localhost:8000/%s/tym/' % self.userprofile.language
+        self.assertTrue(link in msg.body)
 
     def test_send_team_created_mail(self):
         email.team_created_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - potvrzení vytvoření týmu")
-        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, "Testing campaign 1 - potvrzení vytvoření týmu")
+        self.assertEqual(msg.to[0], "user1@email.com")
+        link = 'http://testing_campaign_1.localhost:8000/%s/pozvanky/' % self.userprofile.language
+        self.assertTrue(link in msg.body)
 
     def test_send_invitation_mail(self):
         email.invitation_mail(self.user_attendance, "email@email.com")
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - pozvánka do týmu")
-        self.assertEqual(mail.outbox[0].from_email, "user1@email.com")
-        self.assertEqual(mail.outbox[0].to[0], "email@email.com")
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, "Testing campaign 1 - pozvánka do týmu")
+        self.assertEqual(msg.from_email, settings.DEFAULT_FROM_EMAIL)
+        self.assertEqual(msg.to[0], "email@email.com")
+        self.assertEqual(msg.to[0], "email@email.com")
+        link_cs = 'http://testing_campaign_1.localhost:8000/cs/registrace/%s/email@email.com/' % self.user_attendance.team.invitation_token
+        self.assertTrue(link_cs in msg.body)
+        link_en = 'http://testing_campaign_1.localhost:8000/en/registrace/%s/email@email.com/' % self.user_attendance.team.invitation_token
+        self.assertTrue(link_en in msg.body)
 
     def test_send_payment_confirmation_mail(self):
         email.payment_confirmation_mail(self.user_attendance)
@@ -114,8 +133,9 @@ class TestEmails(TestCase):
     def test_send_company_admin_register_competitor_mail(self):
         email.company_admin_register_competitor_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - koordinátor organizace - potvrzení registrace")
-        self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, "Testing campaign 1 - koordinátor organizace - potvrzení registrace")
+        self.assertEqual(msg.to[0], "user1@email.com")
 
     def test_send_company_admin_register_no_competitor_mail(self):
         email.company_admin_register_no_competitor_mail(self.company_admin, self.company)
