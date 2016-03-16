@@ -25,9 +25,8 @@ from . import auth
 from . import company_admin_views
 from .decorators import must_be_in_group
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import login_required as login_required_simple
+from django.contrib.auth import views as django_views
 from django.utils.translation import ugettext_lazy as _
-import django
 
 urlpatterns = [
     url(r'^tym/$',
@@ -108,10 +107,10 @@ urlpatterns = [
         name="questionnaire",
         ),
     url(r'^upravit_profil/$',
-        login_required_simple(views.UpdateProfileView.as_view()),
+        login_required(views.UpdateProfileView.as_view()),
         name="upravit_profil"),
     url(r'^upravit_trasu/$',
-        login_required_simple(views.UpdateTrackView.as_view()),
+        login_required(views.UpdateTrackView.as_view()),
         name="upravit_trasu"),
     url(r'^zmenit_triko/$',
         views.ChangeTShirtView.as_view(),
@@ -223,7 +222,7 @@ urlpatterns = [
         name='login',
         ),
     url(r'^logout/$',
-        django.contrib.auth.views.logout,
+        django_views.logout,
         name='logout',
         ),
     url(r'^platba_status$',
@@ -240,25 +239,25 @@ urlpatterns = [
         name="payment_unsuccessfull",
         ),
     url(r'^zapomenute_heslo/$',
-        django.contrib.auth.views.password_reset,
+        django_views.password_reset,
         {'password_reset_form': auth.PasswordResetForm},
         name='password_reset',
         ),
     url(r'^zapomenute_heslo/odeslano/$',
-        django.contrib.auth.views.password_reset_done,
+        django_views.password_reset_done,
         name='password_reset_done'),
     url(r'^zapomenute_heslo/zmena/(?P<uidb64>[0-9A-Za-z_]+)-(?P<token>.+)/$',
-        django.contrib.auth.views.password_reset_confirm,
+        django_views.password_reset_confirm,
         {'set_password_form': auth.SetPasswordForm},
         name='password_reset_confirm'),
     url(r'^zapomenute_heslo/dokonceno/$',
-        django.contrib.auth.views.password_reset_complete,
+        django_views.password_reset_complete,
         name='password_reset_complete'),
     url(r'^zmena_hesla/$',
-        django.contrib.auth.views.password_change,
+        django_views.password_change,
         {'password_change_form': auth.PasswordChangeForm},
         name='password_change'),
     url(r'^zmena_hesla_hotovo/$',
-        django.contrib.auth.views.password_change_done,
+        django_views.password_change_done,
         name='password_change_done'),
 ]
