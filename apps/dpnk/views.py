@@ -532,15 +532,16 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         payment_type = form.cleaned_data['payment_type']
 
         if payment_type == 'company':
-            company_admin_email = self.user_attendance.get_asociated_company_admin().user.email
+            company_admin_email_string = ", ".join(["<a href='mailto:%(email)s'>%(email)s</a>" % {
+                'email': a.user.email} for a in self.user_attendance.get_asociated_company_admin()])
         else:
-            company_admin_email = ""
+            company_admin_email_string = ""
         payment_choices = {
             'member': {'type': 'am', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
             'member_wannabe': {'type': 'amw', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
             'free': {'type': 'fe', 'message': _(u"Váš nárok na startovné zdarma bude muset být ještě ověřen"), 'amount': 0},
-            'company': {'type': 'fc', 'message': mark_safe(_(u"Platbu ještě musí schválit koordinátor vaší organizace <a href='mailto:%(email)s'>%(email)s</a>" % {
-                "email": company_admin_email})), 'amount': self.user_attendance.company_admission_fee()},
+            'company': {'type': 'fc', 'message': mark_safe(_(u"Platbu ještě musí schválit koordinátor vaší organizace %(email)s" % {
+                "email": company_admin_email_string})), 'amount': self.user_attendance.company_admission_fee()},
         }
 
         if payment_type in ('pay', 'pay_beneficiary'):

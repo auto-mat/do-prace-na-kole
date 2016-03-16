@@ -783,7 +783,7 @@ class ViewsTestsLogon(DenormMixin, TestCase):
             company_admin_approved='approved',
         )
         response = self.client.get(reverse('company_admin_application'))
-        self.assertContains(response, 'Vaše organizce již svého koordinátora má: Testing User')
+        self.assertContains(response, 'Vaše organizce již svého koordinátora má: Null User, Testing User.')
 
     def test_dpnk_views_gpx_file(self):
         trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
@@ -830,7 +830,7 @@ class TestCompanyAdminViews(TestCase):
         request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
         self.assertEquals(response.url, reverse('company_admin_competitions'))
-        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().administrated_company, type='length')
+        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().first().administrated_company, type='length')
         self.assertEquals(competition.name, 'testing company competition')
 
         slug = competition.slug
@@ -838,7 +838,7 @@ class TestCompanyAdminViews(TestCase):
         request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug=slug)
         self.assertEquals(response.url, reverse('company_admin_competitions'))
-        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().administrated_company, type='length')
+        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().first().administrated_company, type='length')
         self.assertEquals(competition.name, 'testing company competition fixed')
 
     @override_settings(

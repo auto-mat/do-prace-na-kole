@@ -93,6 +93,17 @@
     },
     {
         "fields": {
+            "user": 1030,
+            "can_confirm_payments": true,
+            "campaign": 339,
+            "administrated_company": 1,
+            "company_admin_approved": "approved"
+        },
+        "model": "dpnk.companyadmin",
+        "pk": 2
+    },
+    {
+        "fields": {
             "user": 1128,
             "can_confirm_payments": true,
             "campaign": 339,
