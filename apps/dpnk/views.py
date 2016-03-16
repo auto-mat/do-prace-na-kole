@@ -1373,7 +1373,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
                 action, approve_id = request.POST['approve'].split('-')
             except ValueError:
                 logger.error(u'Can\'t split POST approve parameter: %s' % (request))
-                messages.add_message(request, messages.ERROR, mark_safe(_(u"Nastala chyba při ověřování uživatele, patrně používáte zastaralý internetový prohlížeč.")))
+                messages.add_message(request, messages.ERROR, mark_safe(_(u"Nastala chyba při přijímání uživatele, patrně používáte zastaralý internetový prohlížeč.")))
 
             if approve_id:
                 approved_user = UserAttendance.objects.get(id=approve_id)
@@ -1386,8 +1386,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
                         request,
                         messages.ERROR,
                         mark_safe(_(
-                            u"Nastala chyba, kvůli které nejde tento člen ověřit pro tým."
-                            u" Pokud problém přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.cz?subject=Nejde ověřit člen týmu'>kontakt@dopracenakole.cz</a>."
+                            u"Tento uživatel již byl přijat do týmu. Pravděpodobně jste dvakrát odeslali formulář."
                         )),
                         extra_tags="user_attendance_%s" % approved_user.pk,
                         fail_silently=True)

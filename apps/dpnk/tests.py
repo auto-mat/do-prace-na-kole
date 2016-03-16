@@ -775,6 +775,17 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         self.assertContains(response, 'error_1_id_team')
         self.assertContains(response, 'var value = undefined;')
 
+    def test_dpnk_team_approval(self):
+        ua = UserAttendance.objects.get(pk=1015)
+        ua.approved_for_team = 'undecided'
+        ua.save()
+        post_data = {
+            'approve': 'approve-1015',
+            'reason-1015': '',
+        }
+        response = self.client.post(reverse('team_members'), post_data)
+        self.assertContains(response, 'Členství uživatele Nick v týmu Testing team 1 bylo odsouhlaseno.')
+
     def test_dpnk_company_admin_application(self):
         post_data = {
             'motivation_company_admin': 'Testing position',
