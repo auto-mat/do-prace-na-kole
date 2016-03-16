@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^redactor/', include('redactor.urls')),
     url(r'^rest/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^js_error_hook/', include('django_js_error_hook.urls')),
     url(r'^', include("dpnk.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

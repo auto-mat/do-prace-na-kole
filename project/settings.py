@@ -170,7 +170,8 @@ INSTALLED_APPS = (
     'subdomains',
     'redactor',
     'ajax_select',
-    'django_nose'
+    'django_nose',
+    'django_js_error_hook',
     # 'cachalot',
 )
 
@@ -314,6 +315,11 @@ LOGGING = {
         'dpnk': {
             'handlers': ['console', 'mail_admins', 'logfile'],
             'level': 'INFO',
+        },
+        'javascript_error': {
+            'handlers': ['mail_admins', 'console'],
+            'level': 'ERROR',
+            'propagate': True,
         },
     }
 }
