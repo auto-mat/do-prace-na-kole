@@ -19,9 +19,8 @@
 
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext_lazy as _
-from django.http import HttpResponse, Http404
 import datetime
 from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView, CreateView
@@ -151,9 +150,11 @@ class CompanyAdminView(RegistrationViewMixin, UpdateView):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompanyAdminView, self).get_context_data(*args, **kwargs)
-        old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.filter(campaign=self.user_attendance.campaign).first()
-        if old_company_admin and old_company_admin != self.company_admin:
-            return {'fullpage_error_message': _(u"Vaše organizce již svého koordinátora má: %s." % old_company_admin)}
+        old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.\
+            filter(campaign=self.user_attendance.campaign, company_admin_approved='approved').\
+            exclude(pk=self.company_admin.pk)
+        if old_company_admin.exists():
+            return {'fullpage_error_message': _(u"Vaše organizce již svého koordinátora má: %s." % (", ".join([str(c) for c in old_company_admin.all()])))}
         return context_data
 
     def get_object(self, queryset=None):
@@ -187,6 +188,10 @@ class EditSubsidiaryView(UpdateView):
         return super(EditSubsidiaryView, self).get_queryset().filter(company=self.company_admin.administrated_company)
 
 
+class CompanyViewException(Exception):
+    pass
+
+
 class CompanyCompetitionView(UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyCompetitionForm
@@ -202,8 +207,8 @@ class CompanyCompetitionView(UpdateView):
     def get(self, *args, **kwargs):
         try:
             return super(CompanyCompetitionView, self).get(*args, **kwargs)
-        except Http404 as e:
-            return HttpResponse(e.message)
+        except CompanyViewException as e:
+            return render(self.request, self.template_name, context={'fullpage_error_message': e.args[0]})
 
     def get_object(self, queryset=None):
         company = self.company_admin.administrated_company
@@ -212,10 +217,10 @@ class CompanyCompetitionView(UpdateView):
         if competition_slug:
             competition = get_object_or_404(Competition.objects, slug=competition_slug)
             if competition.company != company:
-                raise Http404(_(u"<div class='text-warning'>K editování této soutěže nemáte oprávnění.</div>"))
+                raise CompanyViewException(_(u"K editování této soutěže nemáte oprávnění."))
         else:
             if Competition.objects.filter(company=company, campaign=campaign).count() >= settings.MAX_COMPETITIONS_PER_COMPANY:
-                raise Http404(_(u"<div class='text-warning'>Překročen maximální počet soutěží pro organizaci.</div>"))
+                raise CompanyViewException(_(u"Překročen maximální počet soutěží pro organizaci."))
             phase = campaign.phase('competition')
             competition = Competition(company=company, campaign=campaign, date_from=phase.date_from, date_to=phase.date_to)
         return competition

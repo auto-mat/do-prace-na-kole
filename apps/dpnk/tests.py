@@ -17,12 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.test import TestCase, RequestFactory, TransactionTestCase, Client
+from django.test import TestCase, TransactionTestCase, RequestFactory, Client
 from django.core.urlresolvers import reverse
 from django.core import mail
 from django.core.management import call_command
 from django.test.utils import override_settings
-from dpnk import results, models, mailing, views, filters
+from dpnk import results, models, mailing, views, filters, company_admin_views
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment, CompanyAdmin
 import datetime
 import django
@@ -34,6 +34,15 @@ from unittest.mock import MagicMock, patch
 from collections import OrderedDict
 from PyPDF2 import PdfFileReader
 import denorm
+import settings
+
+
+class DenormMixin(object):
+    def setUp(self):
+        call_command('denorm_init')
+
+    def tearDown(self):
+        call_command('denorm_drop')
 
 
 @override_settings(
@@ -53,17 +62,14 @@ class AdminTest(tests.AdminSiteSmokeTest):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class AdminModulesTests(TransactionTestCase):
+class AdminModulesTests(DenormMixin, TestCase):
     fixtures = ['campaign', 'views', 'users']
 
     def setUp(self):
+        super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.assertTrue(self.client.login(username='admin', password='test'))
-        call_command('denorm_init')
+        self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
         call_command('denorm_rebuild')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_userattendance_export(self):
         address = "/admin/dpnk/userattendance/export/"
@@ -106,18 +112,15 @@ class AdminModulesTests(TransactionTestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class ViewsTests(TransactionTestCase):
+class ViewsTests(DenormMixin, TestCase):
     fixtures = ['campaign', 'views', 'users']
 
     def setUp(self):
+        super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        call_command('denorm_init')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_admin_views_competition(self):
-        self.assertTrue(self.client.login(username='admin', password='test'))
+        self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
         response = self.client.get(reverse("admin:dpnk_competition_add"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'id="id_competitor_type"')
@@ -156,6 +159,22 @@ class ViewsTests(TransactionTestCase):
         self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
         self.assertEqual(str(msg.subject), 'Testing campaign - koordinátor organizace - potvrzení registrace')
 
+    def test_dpnk_company_admin_registration_existing(self):
+        user = User.objects.get(username='test1')
+        models.CompanyAdmin.objects.create(
+            administrated_company_id=2,
+            user=user,
+            campaign_id=339,
+            company_admin_approved='approved',
+        )
+        address = reverse('register_admin')
+        post_data = {
+            'administrated_company': 2,
+            'campaign': 339,
+        }
+        response = self.client.post(address, post_data, follow=True)
+        self.assertContains(response, "Tato organizace již má svého koordinátora.")
+
     def test_dpnk_registration(self):
         address = reverse('registrace')
         post_data = {
@@ -191,7 +210,7 @@ class ViewsTests(TransactionTestCase):
         self.assertEquals(ua.team.pk, 1)
 
     def test_dpnk_userattendance_creation(self):
-        self.assertTrue(self.client.login(username='user_without_attendance', password='test'))
+        self.client.force_login(User.objects.get(username='user_without_attendance'), settings.AUTHENTICATION_BACKENDS[0])
         address = reverse('profil')
         response = self.client.get(address)
         self.assertRedirects(response, reverse('upravit_profil'))
@@ -451,15 +470,12 @@ class FilterTests(TestCase):
         self.assertEquals(q.count(), 5)
 
 
-class PaymentTests(TransactionTestCase):
+class PaymentTests(DenormMixin, TestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
-        call_command('denorm_init')
+        super().setUp()
         call_command('denorm_rebuild')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_no_payment_no_admission(self):
         campaign = Campaign.objects.get(pk=339)
@@ -518,7 +534,7 @@ class PaymentTests(TransactionTestCase):
     PAYU_KEY_2='98764321',
 )
 @freeze_time("2010-11-20 12:00")
-class PayuTests(TransactionTestCase):
+class PayuTests(TestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
@@ -592,18 +608,15 @@ class PayuTests(TransactionTestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class ViewsTestsLogon(TransactionTestCase):
+class ViewsTestsLogon(DenormMixin, TestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
+        super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.assertTrue(self.client.login(username='test', password='test'))
-        call_command('denorm_init')
+        self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
         call_command('denorm_rebuild')
         self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_dpnk_team_view(self):
         response = self.client.get(reverse('zmenit_tym'))
@@ -761,6 +774,17 @@ class ViewsTestsLogon(TransactionTestCase):
         company_admin = models.CompanyAdmin.objects.get(user__username='test')
         self.assertEquals(company_admin.motivation_company_admin, 'Testing position')
 
+    def test_dpnk_company_admin_application_existing_admin(self):
+        user = User.objects.get(username='test1')
+        models.CompanyAdmin.objects.create(
+            administrated_company=self.user_attendance.team.subsidiary.company,
+            user=user,
+            campaign=self.user_attendance.campaign,
+            company_admin_approved='approved',
+        )
+        response = self.client.get(reverse('company_admin_application'))
+        self.assertContains(response, 'Vaše organizce již svého koordinátora má: Null User, Testing User.')
+
     def test_dpnk_views_gpx_file(self):
         trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
         gpxfile = mommy.make(models.GpxFile, user_attendance=self.user_attendance, trip_date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
@@ -771,23 +795,85 @@ class ViewsTestsLogon(TransactionTestCase):
         self.assertEqual(models.GpxFile.objects.get(pk=gpxfile.pk).trip, trip)
 
 
+def create_get_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):
+    request = factory.get(address, post_data)
+    request.user = user
+    request.subdomain = subdomain
+    return request
+
+
+def create_post_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):
+    request = factory.post(address, post_data)
+    request.user = user
+    request.subdomain = subdomain
+    return request
+
+
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
-class ViewsTestsRegistered(TransactionTestCase):
+class TestCompanyAdminViews(TestCase):
+    fixtures = ['campaign', 'views', 'users', 'company_competition']
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+
+    def test_dpnk_company_admin_create_competition(self):
+        post_data = {
+            'name': 'testing company competition',
+            'type': 'length',
+            'competitor_type': 'single_user',
+            'submit': 'Odeslat',
+        }
+        request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
+        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
+        self.assertEquals(response.url, reverse('company_admin_competitions'))
+        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().first().administrated_company, type='length')
+        self.assertEquals(competition.name, 'testing company competition')
+
+        slug = competition.slug
+        post_data['name'] = 'testing company competition fixed'
+        request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
+        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug=slug)
+        self.assertEquals(response.url, reverse('company_admin_competitions'))
+        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().first().administrated_company, type='length')
+        self.assertEquals(competition.name, 'testing company competition fixed')
+
+    @override_settings(
+        MAX_COMPETITIONS_PER_COMPANY=0,
+    )
+    def test_dpnk_company_admin_create_competition_max_competitions(self):
+        request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
+        self.assertContains(response, "Překročen maximální počet soutěží pro organizaci.")
+
+    def test_dpnk_company_admin_create_competition_no_permission(self):
+        request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug="FQ-LB")
+        self.assertContains(response, "K editování této soutěže nemáte oprávnění.")
+
+    def test_dpnk_company_admin_competitions_view(self):
+        request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        response = company_admin_views.CompanyCompetitionsShowView.as_view()(request, success=True)
+        self.assertContains(response, "Pravidelnost společnosti")
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=12, day=1),
+)
+class ViewsTestsRegistered(DenormMixin, TestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
+        super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.assertTrue(self.client.login(username='test', password='test'))
-        call_command('denorm_init')
+        self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
         call_command('denorm_rebuild')
         self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
         self.assertTrue(self.user_attendance.entered_competition())
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_dpnk_rides_view(self):
         response = self.client.get(reverse('profil'))
@@ -844,15 +930,12 @@ class ViewsTestsRegistered(TransactionTestCase):
         self.assertEquals(trip.distance, 13.32)
 
 
-class TestTeams(TestCase):
+class TestTeams(DenormMixin, TestCase):
     fixtures = ['campaign', 'users']
 
     def setUp(self):
-        call_command('denorm_init')
+        super().setUp()
         call_command('denorm_rebuild')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_member_count_update(self):
         team = Team.objects.get(id=1)
@@ -866,15 +949,12 @@ class TestTeams(TestCase):
         self.assertEqual(team.member_count, 4)
 
 
-class ResultsTests(TestCase):
+class ResultsTests(DenormMixin, TestCase):
     fixtures = ['users', 'campaign', 'test_results_data']
 
     def setUp(self):
-        call_command('denorm_init')
+        super().setUp()
         call_command('denorm_rebuild')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_get_competitors(self):
         team = Team.objects.get(id=1)
@@ -882,14 +962,9 @@ class ResultsTests(TestCase):
         self.assertListEqual(list(query.all()), [team])
 
 
-class ModelTests(TestCase):
+# TODO: don't use TransactionTestCase, it is slow
+class ModelTests(DenormMixin, TransactionTestCase):
     fixtures = ['users', 'campaign', 'transactions', 'batches']
-
-    def setUp(self):
-        call_command('denorm_init')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_payment_type_string(self):
         user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
@@ -903,14 +978,9 @@ class ModelTests(TestCase):
         self.assertEquals(user_attendance.payment_type_string(), None)
 
 
-class DenormTests(TestCase):
+# TODO: don't use TransactionTestCase, it is slow
+class DenormTests(DenormMixin, TransactionTestCase):
     fixtures = ['users', 'campaign', 'transactions', 'batches']
-
-    def setUp(self):
-        call_command('denorm_init')
-
-    def tearDown(self):
-        call_command('denorm_drop')
 
     def test_name_with_members(self):
         user_attendance = UserAttendance.objects.get(pk=1115)

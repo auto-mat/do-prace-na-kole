@@ -1043,14 +1043,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def get_asociated_company_admin(self):
         if not self.team:
             return None
-        try:
-            ca = self.team.subsidiary.company.company_admin.get(campaign=self.campaign)
-            if ca.company_admin_approved == 'approved':
-                return ca
-            else:
-                return None
-        except CompanyAdmin.DoesNotExist:
-            return None
+        return self.team.subsidiary.company.company_admin.filter(campaign=self.campaign, company_admin_approved='approved')
 
     def previous_user_attendance(self):
         previous_campaign = self.campaign.previous_campaign
@@ -1227,7 +1220,6 @@ class CompanyAdmin(models.Model):
         verbose_name_plural = _(u"Koordinátoři organizací")
         unique_together = (
             ("user", "campaign"),
-            ("administrated_company", "campaign"),
         )
 
     user = models.ForeignKey(

@@ -160,7 +160,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         if 'administrated_company' in cleaned_data:
             obj = cleaned_data['administrated_company']
             campaign = cleaned_data['campaign']
-            if CompanyAdmin.objects.filter(administrated_company__pk=obj.pk, campaign=campaign).exists():
+            if CompanyAdmin.objects.filter(administrated_company__pk=obj.pk, campaign=campaign, company_admin_approved='approved').exists():
                 raise forms.ValidationError(_(u"Tato organizace již má svého koordinátora."))
         return cleaned_data
 
