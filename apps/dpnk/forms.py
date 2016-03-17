@@ -255,7 +255,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             return self.instance.team
         else:
             if data.campaign.slug != self.request.subdomain:
-                logger.error("Team %s not in campaign %s" % (data.pk, self.request.subdomain))
+                logger.error("Team %s not in campaign %s" % (data.pk, self.request.subdomain), extra={'request': self.request})
                 raise forms.ValidationError(mark_safe(_(u"Zvolený tým není dostupný v aktuální kampani")))
         if type(data) != RegisterTeamForm:
             if data != self.instance.team:
