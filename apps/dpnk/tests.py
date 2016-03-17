@@ -1091,6 +1091,13 @@ class DenormTests(DenormMixin, TransactionTestCase):
         self.assertEquals(team.unapproved_member_count, 0)
         self.assertEquals(team.member_count, 2)
 
+    def test_related_company_admin(self):
+        user_attendance = UserAttendance.objects.get(pk=1027)
+        company_admin = models.CompanyAdmin.objects.create(user=user_attendance.userprofile.user, campaign_id=338)
+        self.assertEquals(user_attendance.related_company_admin, None)
+        call_command('denorm_flush')
+        self.assertEquals(user_attendance.related_company_admin, company_admin)
+
 
 class RunChecksTestCase(TestCase):
     def test_checks(self):
