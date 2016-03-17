@@ -1714,6 +1714,7 @@ class Payment(Transaction):
         ('sc', _(u'superCASH')),  # Deprecated
         ('psc', _(u'PaySec')),
         ('mo', _(u'Mobito')),
+        ('uc', _(u'UniCredit')),
         ('t', _(u'testovací platba')),
 
         ('fa', _(u'faktura mimo PayU')),
@@ -1746,6 +1747,7 @@ class Payment(Transaction):
         'sc',
         'psc',
         'mo',
+        'uc',
         't',
     ]
 
