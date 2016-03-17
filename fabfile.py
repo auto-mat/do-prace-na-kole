@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 
 This fabric file makes setting up and deploying a django application much
@@ -175,6 +176,10 @@ def dpnkd():
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
     env.app_name = "dpnk"
+    release = api.local("git rev-parse --short HEAD", capture=True)
+    api.local(
+        'curl -H "x-api-key:13c61e2e601f8148eb9aaebcf353aec7b7c9bf3653ccf52" -d "deployment[app_name]=Do práce na kole" '
+        '-d "deployment[revision]=%s" https://api.newrelic.com/deployments.xml' % release)
 
 
 def dpnk():
