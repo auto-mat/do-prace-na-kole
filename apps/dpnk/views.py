@@ -548,7 +548,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         }
 
         if payment_type in ('pay', 'pay_beneficiary'):
-            logger.error(u'Pay payment type, request: %s' % (self.request))
+            logger.error(u'Pay payment type, request', extra={'request': self.request})
             return HttpResponse(_(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."), status=500)
         else:
             payment_choice = payment_choices[payment_type]
@@ -732,7 +732,7 @@ def payment_status(request):
     if p.amount != amount:
         logger.error(
             'Payment amount doesn\'t match: pay_type: %s, status: %s, payment response: %s, expected amount: %s' %
-            (p.pay_type, p.status, r, p.amount))
+            (p.pay_type, p.status, r, p.amount), extra={'request': request})
         return HttpResponse("Bad amount", status=400)
     p.pay_type = r['trans_pay_type']
     p.status = r['trans_status']
@@ -1377,7 +1377,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
             try:
                 action, approve_id = request.POST['approve'].split('-')
             except ValueError:
-                logger.error(u'Can\'t split POST approve parameter: %s' % (request))
+                logger.error(u'Can\'t split POST approve parameter', extra={'request': request})
                 messages.add_message(request, messages.ERROR, mark_safe(_(u"Nastala chyba při přijímání uživatele, patrně používáte zastaralý internetový prohlížeč.")))
 
             if approve_id:
@@ -1386,7 +1386,8 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
                 if approved_user.approved_for_team not in ('undecided', 'denied') or not userprofile.user.is_active or approved_user.team != self.user_attendance.team:
                     logger.error(
                         u'Approving user with wrong parameters. User: %s (%s), approval: %s, team: %s, active: %s' %
-                        (userprofile.user, userprofile.user.username, approved_user.approved_for_team, approved_user.team, userprofile.user.is_active))
+                        (userprofile.user, userprofile.user.username, approved_user.approved_for_team, approved_user.team, userprofile.user.is_active),
+                        extra={'request': request})
                     messages.add_message(
                         request,
                         messages.ERROR,
