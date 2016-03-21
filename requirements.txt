@@ -64,5 +64,4 @@ django-ajax-selects
 pypdf2
 django-extra-views
 freezegun
--e git+https://github.com/PetrDlouhy/django-js-error-hook.git#egg=django-js-error-hook
 raven

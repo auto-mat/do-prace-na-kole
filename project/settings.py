@@ -172,7 +172,6 @@ INSTALLED_APPS = (
     'redactor',
     'ajax_select',
     'django_nose',
-    'django_js_error_hook',
     'raven.contrib.django.raven_compat',
     # 'cachalot',
 )
@@ -326,11 +325,6 @@ LOGGING = {
         'dpnk': {
             'handlers': ['console', 'mail_admins', 'logfile'],
             'level': 'INFO',
-        },
-        'javascript_error': {
-            'handlers': ['mail_admins', 'console', 'logfile'],
-            'level': 'ERROR',
-            'propagate': True,
         },
         'raven': {
             'level': 'DEBUG',
