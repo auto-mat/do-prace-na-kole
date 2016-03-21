@@ -548,7 +548,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         }
 
         if payment_type in ('pay', 'pay_beneficiary'):
-            logger.error(u'Pay payment type, request', extra={'request': self.request})
+            logger.error("Payment type: '%s'" % payment_type, extra={'request': self.request})
             return HttpResponse(_(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."), status=500)
         else:
             payment_choice = payment_choices[payment_type]
