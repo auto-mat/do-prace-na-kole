@@ -52,7 +52,9 @@ class CompanyStructure(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompanyStructure, self).get_context_data(*args, **kwargs)
         context_data['company'] = self.company_admin.administrated_company
+        context_data['company_address'] = models.get_address_string(self.company_admin.administrated_company.address)
         context_data['campaign'] = self.company_admin.campaign
+        context_data['Status'] = models.Status
         return context_data
 
 

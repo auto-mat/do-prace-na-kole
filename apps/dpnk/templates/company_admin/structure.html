@@ -3,6 +3,8 @@
 {% load i18n %}
 
 {% block content %}
+<b>{{ company }}</b><br/>
+{{ company_address }}
 <ul>
 {% for subsidiary in company.subsidiaries.all %}
    <li>{{ subsidiary }} (<a href="{% url 'edit_subsidiary' subsidiary.pk %}">{% trans "upravit" %}</a>)</li>
@@ -15,22 +17,22 @@
       {% if user.userprofile.user.is_active %}
       <li>
          {{ user.userprofile.name_for_trusted }} <i>{{ user.userprofile.user.email }}</i> -
-            {% if user.payment.payment.pay_type == 'fc' %}
+            {% if user.representative_payment.pay_type == 'fc' %}
                <span class="
-               {% if user.payment.payment.status == user.payment.payment.Status.NEW %}
+               {% if user.representative_payment.status == Status.NEW %}
                   text-error
-               {% elif user.payment.payment.status == user.payment.payment.Status.COMPANY_ACCEPTS %}
+               {% elif user.representative_payment.status == Status.COMPANY_ACCEPTS %}
                   text-warning
-               {% elif user.payment.payment.status == user.payment.payment.Status.INVOICE_MADE %}
+               {% elif user.representative_payment.status == Status.INVOICE_MADE %}
                   text-warning
-               {% elif user.payment.payment.status == user.payment.payment.Status.INVOICE_PAID %}
+               {% elif user.representative_payment.status == Status.INVOICE_PAID %}
                   text-success
                {% endif %}
                ">
-               {{ user.payment.payment.get_pay_type_display }} ({{ user.payment.payment.get_status_display }})
+               {{ user.representative_payment.get_pay_type_display }} ({{ user.representative_payment.get_status_display }})
                </span>
             {% else %}
-               {{ user.payment.status_description }} ({{ user.payment.payment.get_pay_type_display }})
+               {{ user.payment.status_description }} ({{ user.representative_payment.get_pay_type_display }})
             {% endif %}
       </li>
       {% endif %}

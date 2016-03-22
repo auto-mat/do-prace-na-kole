@@ -883,6 +883,15 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(models.GpxFile.objects.get(pk=gpxfile.pk).trip, trip)
 
+    def test_dpnk_company_structure(self):
+        address = reverse("company_structure")
+        response = self.client.get(address)
+        self.assertContains(response, "Testing company")
+        self.assertContains(response, "Testing User 1")
+        self.assertContains(response, "test@test.cz")
+        self.assertContains(response, "organizace platí fakturou")
+        self.assertContains(response, "(Platba přijata)")
+
 
 def create_get_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):
     request = factory.get(address, post_data)
