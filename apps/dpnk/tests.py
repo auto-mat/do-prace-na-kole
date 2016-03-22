@@ -117,6 +117,16 @@ class ViewsTests(DenormMixin, TestCase):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
 
+    def test_login_view(self):
+        address = reverse('login')
+        response = self.client.get(address)
+        self.assertContains(response, "Email (uživatelské jméno)")
+
+        address = reverse('login', kwargs={'initial_email': "test@test.cz"})
+        response = self.client.get(address)
+        self.assertContains(response, "Email (uživatelské jméno)")
+        self.assertContains(response, "test@test.cz")
+
     def test_admin_views_competition(self):
         self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
         response = self.client.get(reverse("admin:dpnk_competition_add"))

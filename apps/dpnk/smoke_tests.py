@@ -20,6 +20,7 @@ views = [
     reverse('admin_draw_results', kwargs={'competition_slug': "quest"}),
     reverse('admin_draw_results', kwargs={'competition_slug': "TF"}),
     "%s?question=1" % reverse('admin_answers', urls),
+    reverse('login'),
     reverse('admin_questions', urls),
     reverse('payment', urls),
     reverse('profil', urls),
