@@ -3,6 +3,7 @@
 {% load i18n %}
 
 {% block form %}
+{% if user_attendance.package_shipped %}
 {% trans "Datum přijetí k sestavení: " %}{{ user_attendance.package_shipped.created.date }}
 <br/>
 {% trans "Triko: " %}{{ user_attendance.package_shipped.t_shirt_size }}
@@ -13,5 +14,6 @@
 {% blocktrans with tnt_href="http://www.tnt.com/webtracker/tracking.do?requestType=GEN&searchType=CON&respLang=cs&respCountry=cz&sourceID=1&sourceCountry=ww&cons="|add:user_attendance.package_shipped.tracking_number_cnc|add:"&navigation=1&genericSiteIdent=" %}
 Balíček můžete <a href="{{ tnt_href }}">sledovat pomocí TNT</a>
 {% endblocktrans %}
+{% endif %}
 {% endif %}
 {% endblock %}

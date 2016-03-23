@@ -17,7 +17,7 @@ django-su
 unidecode
 -e git+https://github.com/PetrDlouhy/createsend-python.git@python3#egg=createsend
 ordereddict
-django-mass-edit
+-e git+https://github.com/PetrDlouhy/django-mass-edit.git#egg=django-mass-edit  # for Django 1.10 warnings and template empty fields
 -e git+https://github.com/lambdalisue/django-author.git#egg=django-author
 django-fieldsignals
 django-admin-sortable2

@@ -44,6 +44,7 @@ def must_be_owner(fn):
                 view.template_name,
                 {
                     'fullpage_error_message': mark_safe(_(u"Nemůžete vidět cizí objekt")),
+                    'title': _("Chybí oprávnění"),
                 },
                 status=403,
             )
@@ -63,6 +64,7 @@ def must_be_approved_for_team(fn):
                 request,
                 view.template_name, {
                     'fullpage_error_message': mark_safe(_(u"Nemáte zvolený tým")),
+                    'title': _("Není zvolený tým"),
                 },
                 status=403,
             )
@@ -79,6 +81,7 @@ def must_be_approved_for_team(fn):
                     mark_safe(
                         _(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") %
                         {'team': user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}),
+                    'title': _("Členství v týmu neověřeno"),
                 },
                 status=403,
             )
@@ -112,6 +115,7 @@ def must_be_company_admin(fn):
                     "Pokud na ověření čekáte příliš dlouho, kontaktujte naši podporu na "
                     "<a href='mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž'>kontakt@dopracenakole.cz</a>." %
                     reverse("company_admin_application"))),
+                'title': _("Nedostatečné oprávnění"),
             },
             status=403,
         )
@@ -169,6 +173,7 @@ def must_be_in_phase(phase_type):
                 request,
                 view.template_name, {
                     'fullpage_error_message': message,
+                    'title': _("Nedostupná stránka"),
                 },
                 status=403,
             )
@@ -211,6 +216,7 @@ def must_be_competitor(fn):
                 mark_safe(_(
                     u"V soutěži Do práce na kole nesoutěžíte. Pokud jste koordinátorem organizace, použijte <a href='%s'>správu organizace</a>.") %
                     reverse("company_structure")),
+                'title': _("Nedostupná stránka"),
             },
             status=403,
         )

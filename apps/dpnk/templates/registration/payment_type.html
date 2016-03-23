@@ -40,7 +40,7 @@ $(function(){
    switch_description();
    $("#div_id_payment_type").append($("#description_switcher"));
 
-   $.get("{{aklub_url}}/regular-dpnk/?firstname={{firstname}}&amp;surname={{surname}}&amp;email={{email}}&amp;telephone={{user_attendance.telephone}}", function(data) {
+   $.get("{{aklub_url}}/regular-dpnk/?firstname={{firstname}}&amp;surname={{surname}}&amp;email={{email}}&amp;telephone={{user_attendance.userprofile.telephone}}", function(data) {
       $("#aklub-form-container").append(data);
       $("#aklub-form").ajaxForm({replaceTarget: false, target: "#aklub-form", success: function(){
          window.scrollTo(0, 0);

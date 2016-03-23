@@ -498,9 +498,9 @@ class AnswerForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Div(
-                choices_layout,
-                'comment',
-                'attachment',
+                choices_layout if question.type != 'text' else None,
+                'comment' if question.comment_type else None,
+                'attachment' if question.with_attachment else None,
                 css_class=None if is_actual else 'readonly'
             )
         )

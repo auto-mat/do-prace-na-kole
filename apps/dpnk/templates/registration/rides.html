@@ -29,9 +29,7 @@
 <th scope="row" class="date">{{ trip_form.initial.date|naturalday:"D j. M" }}</th>
 {% endif %}
 <td>
-   {% for field in trip_form %}
-      {{ field|as_crispy_field }}
-   {% endfor %}
+   {{ trip_form|crispy }}
    {% if trip_form.instance.has_gpxfile %}
    <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
    <a href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}">

@@ -70,11 +70,11 @@
    {% else %}
       {% if competition.competitor_can_admit == 'without_admission' %}
          {% if competition.type == 'questionnaire' %}
-            <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">
-               {% if competition.competitor_has_admission %}
+            {% if competition.competitor_has_admission %}
+               <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">
                   {% trans "Zobrazit informace" %}
-               {% endif %}
-            </a>
+               </a>
+            {% endif %}
          {% endif %}
 
          {# trans "Do té&shy;to sou&shy;tě&shy;že jste při&shy;hlá&shy;šen au&shy;to&shy;ma&shy;ti&shy;cky." #} 
@@ -104,7 +104,7 @@
 
    {% if competition.has_started %}
    {% if competition.type != 'questionnaire' or competition.has_finished %}
-      <a class="btn btn-primary" href="{% url 'competition_results' competition_slug=competition.slug %}#row-{{ competition.my_results.id }}">{% trans "Výsledky" %}</a>
+      <a class="btn btn-primary" href="{% url 'competition_results' competition_slug=competition.slug %}{% if competition.my_results %}#row-{{ competition.my_results.id }}{% endif %}">{% trans "Výsledky" %}</a>
    {% endif %}
    {% endif %}
 {% if competition.url %}

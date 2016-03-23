@@ -3,7 +3,7 @@
 
 {% language lang_code %}
 {% if invited %}
-A message for {{ invited.userprofile }} from the {{invited.team.name}} team in the {{ invited.campaign }} competition.
+A message for {{ invited.userprofile }} {% if invited.team %}from the {{invited.team.name}} team {% endif %}in the {{ invited.campaign }} competition.
 {% endif %}
 
 Hello,

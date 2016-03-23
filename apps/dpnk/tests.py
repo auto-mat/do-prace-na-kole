@@ -67,7 +67,7 @@ class AdminModulesTests(DenormMixin, TestCase):
 
     def setUp(self):
         super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        self.client = Client(HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer")
         self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
         call_command('denorm_rebuild')
 
@@ -351,6 +351,7 @@ class RequestFactoryViewTests(TestCase):
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
         request.subdomain = "testing-campaign"
+        request.resolver_match = {"url_name": "questionnaire"}
         response = views.QuestionnaireView.as_view()(request, **kwargs)
         self.assertContains(response, 'yes')
 
@@ -944,16 +945,19 @@ class TestCompanyAdminViews(TestCase):
     )
     def test_dpnk_company_admin_create_competition_max_competitions(self):
         request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        request.resolver_match = {"url_name": "company_admin_competition"}
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
         self.assertContains(response, "Překročen maximální počet soutěží pro organizaci.")
 
     def test_dpnk_company_admin_create_competition_no_permission(self):
         request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        request.resolver_match = {"url_name": "company_admin_competition"}
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug="FQ-LB")
         self.assertContains(response, "K editování této soutěže nemáte oprávnění.")
 
     def test_dpnk_company_admin_competitions_view(self):
         request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        request.resolver_match = {"url_name": "company_admin_competitions"}
         response = company_admin_views.CompanyCompetitionsShowView.as_view()(request, success=True)
         self.assertContains(response, "Pravidelnost společnosti")
 
