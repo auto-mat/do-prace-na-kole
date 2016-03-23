@@ -97,6 +97,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',
+    'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
 ]
 AUTHENTICATION_BACKENDS = (
     'oauth2_provider.backends.OAuth2Backend',
@@ -104,6 +105,15 @@ AUTHENTICATION_BACKENDS = (
     "django_su.backends.SuBackend",
 )
 ROOT_URLCONF = 'urls'
+
+
+class InvalidStringShowWarning(str):
+    def __mod__(self, other):
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error("Undefined variable or unknown value for: '%s'" % (other,))
+        return ""
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -113,6 +123,7 @@ TEMPLATES = [
         ],
         'APP_DIRS': True,
         'OPTIONS': {
+            'string_if_invalid': InvalidStringShowWarning("%s"),
             'context_processors': (
                 'django.contrib.messages.context_processors.messages',
                 'django.contrib.auth.context_processors.auth',
@@ -171,7 +182,6 @@ INSTALLED_APPS = (
     'redactor',
     'ajax_select',
     'django_nose',
-    'django_js_error_hook',
     'raven.contrib.django.raven_compat',
     # 'cachalot',
 )
@@ -326,10 +336,10 @@ LOGGING = {
             'handlers': ['console', 'mail_admins', 'logfile'],
             'level': 'INFO',
         },
-        'javascript_error': {
-            'handlers': ['mail_admins', 'console', 'logfile'],
-            'level': 'ERROR',
-            'propagate': True,
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
         },
         'raven': {
             'level': 'DEBUG',

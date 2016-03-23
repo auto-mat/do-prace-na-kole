@@ -117,6 +117,16 @@ class ViewsTests(DenormMixin, TestCase):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
 
+    def test_login_view(self):
+        address = reverse('login')
+        response = self.client.get(address)
+        self.assertContains(response, "Email (uživatelské jméno)")
+
+        address = reverse('login', kwargs={'initial_email': "test@test.cz"})
+        response = self.client.get(address)
+        self.assertContains(response, "Email (uživatelské jméno)")
+        self.assertContains(response, "test@test.cz")
+
     def test_admin_views_competition(self):
         self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
         response = self.client.get(reverse("admin:dpnk_competition_add"))
@@ -872,6 +882,15 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(models.GpxFile.objects.get(pk=gpxfile.pk).trip, trip)
+
+    def test_dpnk_company_structure(self):
+        address = reverse("company_structure")
+        response = self.client.get(address)
+        self.assertContains(response, "Testing company")
+        self.assertContains(response, "Testing User 1")
+        self.assertContains(response, "test@test.cz")
+        self.assertContains(response, "organizace platí fakturou")
+        self.assertContains(response, "(Platba přijata)")
 
 
 def create_get_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):

@@ -6,6 +6,7 @@ from dpnk import views
 from django.conf.urls.static import static
 from dpnk.rest import router
 from ajax_select import urls as ajax_select_urls
+from django.http import HttpResponse
 
 from django.conf import settings
 
@@ -38,8 +39,8 @@ urlpatterns = [
     url(r'^redactor/', include('redactor.urls')),
     url(r'^rest/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^js_error_hook/', include('django_js_error_hook.urls')),
     url(r'^', include("dpnk.urls")),
+    url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nAllow:", content_type="text/plain"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += i18n_patterns(
