@@ -32,7 +32,7 @@ django-related-admin
 newrelic
 easy_thumbnails
 django-crispy-forms
--e git+https://github.com/PetrDlouhy/django-class-based-auth-views.git@13_django-warning-fix#egg=django-class-based-auth-views  # for Django 1.9
+-e git+https://github.com/PetrDlouhy/django-class-based-auth-views.git@pull-next#egg=django-class-based-auth-views  # for Django 1.9
 -e git+https://github.com/fabfuel/django-subdomains.git#egg=django-subdomains
 -e git+https://github.com/PetrDlouhy/django-adminfilters.git@develop#egg=django-adminfilters
 django-compressor
