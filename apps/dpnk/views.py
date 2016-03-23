@@ -1378,7 +1378,7 @@ class TeamMembers(UserAttendanceViewMixin, TemplateView):
             try:
                 action, approve_id = request.POST['approve'].split('-')
             except ValueError:
-                logger.error(u'Can\'t split POST approve parameter', extra={'request': request})
+                logger.exception(u'Can\'t split POST approve parameter', extra={'request': request})
                 messages.add_message(request, messages.ERROR, mark_safe(_(u"Nastala chyba při přijímání uživatele, patrně používáte zastaralý internetový prohlížeč.")))
 
             if approve_id:
