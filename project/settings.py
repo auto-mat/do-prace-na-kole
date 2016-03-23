@@ -276,10 +276,6 @@ AUTH_PASSWORD_VALIDATORS = [
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
-    'root': {
-        'level': 'WARNING',
-        'handlers': ['sentry'],
-    },
     'formatters': {
         'verbose': {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
@@ -297,12 +293,12 @@ LOGGING = {
     },
     'handlers': {
         'sentry': {
-            'level': 'ERROR',
+            'level': 'WARNING',
             'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
             'tags': {'custom-tag': 'x'},
         },
         'console': {
-            'level': 'ERROR',
+            'level': 'WARNING',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
@@ -321,29 +317,28 @@ LOGGING = {
             'include_html': True,
         },
     },
+    'root': {
+        'level': 'WARNING',
+        'handlers': ['sentry', 'logfile', 'console'],
+    },
     'loggers': {
         'django': {
-            'handlers': ['console', 'logfile'],
+            'handlers': ['console', 'logfile', 'mail_admins', 'sentry'],
             'propagate': True,
             'level': 'INFO',
         },
         'django.request': {
-            'handlers': ['mail_admins', 'logfile'],
+            'handlers': ['console', 'logfile', 'mail_admins', 'sentry'],
             'level': 'ERROR',
             'propagate': False,
         },
         'dpnk': {
-            'handlers': ['console', 'mail_admins', 'logfile'],
+            'handlers': ['console', 'logfile', 'mail_admins', 'sentry'],
             'level': 'INFO',
         },
         'raven': {
             'level': 'DEBUG',
-            'handlers': ['console'],
-            'propagate': False,
-        },
-        'raven': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
+            'handlers': ['console', 'logfile', 'mail_admins', 'sentry'],
             'propagate': False,
         },
     }
