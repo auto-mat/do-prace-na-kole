@@ -1905,6 +1905,9 @@ class Trip(models.Model):
     def active(self):
         return util.day_active(self.date)
 
+    def has_gpxfile(self):
+        return hasattr(self, "gpxfile")
+
 
 class Competition(models.Model):
     """Soutěžní kategorie"""

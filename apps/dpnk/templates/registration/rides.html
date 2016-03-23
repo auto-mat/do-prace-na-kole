@@ -32,7 +32,7 @@
    {% for field in trip_form %}
       {{ field|as_crispy_field }}
    {% endfor %}
-   {% if trip_form.instance.gpxfile %}
+   {% if trip_form.instance.has_gpxfile %}
    <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
    <a href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}">
       <i class="fa fa-edit"></i>

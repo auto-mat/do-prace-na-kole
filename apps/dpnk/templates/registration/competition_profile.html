@@ -6,7 +6,9 @@
 {% block content %}
 {% block messages %}
 {% include "messages_include.html" %}
+{% if message %}
 {{ message }}
+{% endif %}
 {% endblock %}
 
 <div id="rides-form-container">{% include "registration/rides.html" %}</div>

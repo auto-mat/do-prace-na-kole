@@ -746,13 +746,14 @@ def payment_status(request):
     return HttpResponse("OK")
 
 
-class RidesView(RegistrationMessagesMixin, SuccessMessageMixin, ModelFormSetView):
+class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, ModelFormSetView):
     model = Trip
     form_class = forms.TripForm
     fields = ('commute_mode', 'distance', 'direction', 'user_attendance', 'date')
     extra = 0
     uncreated_trips = []
     success_message = _(u"Tabulka jízd úspěšně změněna")
+    title = _("Jízdy")
 
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
