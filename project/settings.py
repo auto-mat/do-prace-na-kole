@@ -111,7 +111,7 @@ class InvalidStringShowWarning(str):
     def __mod__(self, other):
         import logging
         logger = logging.getLogger(__name__)
-        logger.error("Undefined variable or unknown value for: '%s'" % (other,))
+        logger.warning("Undefined variable or unknown value for: '%s'" % (other,))
         return ""
 
 TEMPLATES = [

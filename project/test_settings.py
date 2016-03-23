@@ -63,3 +63,14 @@ TESTING_URLS = True
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 
 SECRET_KEY = 'bt@kl##och59s((u!88iny_c^4p#en@o28w3g57$ys-sgw$4$5'
+
+
+class InvalidStringError(str):
+    def __mod__(self, other):
+        raise Exception("empty string")
+        return ""
+
+TEMPLATES[0]['OPTIONS']['string_if_invalid'] = InvalidStringError("%s"),
+TEMPLATES[0]['OPTIONS']['debug'] = True
+
+CRISPY_FAIL_SILENTLY = False
