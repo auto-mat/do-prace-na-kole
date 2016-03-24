@@ -214,7 +214,7 @@ urlpatterns = [
         ),
         name='login',
         ),
-    url(r'^login/$',
+    url(r'^login/?$',
         views.DPNKLoginView.as_view(
             form_class=AuthenticationFormDPNK,
             template_name='base_generic_form.html',
