@@ -662,6 +662,14 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         self.assertRedirects(response, reverse("typ_platby"))
         self.assertTrue(self.user_attendance.t_shirt_size.pk, 1)
 
+    def test_dpnk_t_shirt_size_no_team(self):
+        models.PackageTransaction.objects.all().delete()
+        models.Payment.objects.all().delete()
+        self.user_attendance.team = None
+        self.user_attendance.save()
+        response = self.client.get(reverse('zmenit_triko'))
+        self.assertContains(response, "Velikost trička nemůžete měnit, dokud nemáte zvolený tým.", status_code=403)
+
     def test_dpnk_payment_type(self):
         post_data = {
             'payment_type': 'company',
