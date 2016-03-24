@@ -287,6 +287,7 @@ def upload_tar_from_git():
     run('cd %(path)s/releases/%(release)s && ln -s ../../db_backup .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../static .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../media .' % env)
+    run('cd %(path)s/releases/%(release)s && echo %(release)s > release_version' % env)
     api.local('rm %(release)s.tar.gz' % env)
 
 
