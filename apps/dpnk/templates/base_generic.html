@@ -19,7 +19,15 @@
 <script type="text/javascript" src="{% static "bow/bootstrap/dist/js/bootstrap.js"%}"></script>
 <script type="text/javascript" src="{% static "js/form_functions.js"%}"></script>
 <script src="https://cdn.ravenjs.com/2.2.0/raven.min.js"></script>
-<script>Raven.config('{% sentry_public_dsn %}').install()</script>
+<script>
+Raven.config('{% sentry_public_dsn %}').install();
+{% if user.is_authenticated %}
+Raven.setUserContext({
+  email: '{{ user.email }}',
+  id: '{{ user.id }}'
+})
+{% endif %}
+</script>
 
 <link href="{% static "bow/bootstrap/dist/css/bootstrap.css"%}" rel="stylesheet" media="screen">
 <link href="{% static "css/bootstrap_mod.css"%}" rel="stylesheet" media="screen">
