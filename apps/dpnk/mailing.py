@@ -70,7 +70,7 @@ def get_custom_fields(user_attendance):
         city = user_attendance.team.subsidiary.city.slug
     payment_status = user_attendance.payment_status
 
-    is_new_user = user_attendance.other_user_attendances(user_attendance.campaign).count() > 0
+    is_new_user = user_attendance.other_user_attendances(user_attendance.campaign).count() < 0
     entered_competition = user_attendance.entered_competition()
     team_member_count = user_attendance.team_member_count()
     mailing_approval = user_attendance.userprofile.mailing_opt_in and user_attendance.userprofile.personal_data_opt_in

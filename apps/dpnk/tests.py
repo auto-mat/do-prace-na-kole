@@ -248,7 +248,7 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_dpnk_mailing_list(self):
-        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        user_attendance = UserAttendance.objects.get(pk=1115)
         ret_mailing_id = "344ass"
         createsend.Subscriber.add = MagicMock(return_value=ret_mailing_id)
         mailing.add_or_update_user_synchronous(user_attendance)
@@ -298,7 +298,7 @@ class PaymentSuccessTests(TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
-        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        self.user_attendance = UserAttendance.objects.get(pk=1115)
         self.session_id = "2075-1J1455206457"
         self.trans_id = "2055"
         models.Payment.objects.create(
@@ -340,7 +340,7 @@ class RequestFactoryViewTests(TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
-        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        self.user_attendance = UserAttendance.objects.get(pk=1115)
         self.session_id = "2075-1J1455206457"
         self.trans_id = "2055"
 
@@ -375,7 +375,7 @@ class FilterTests(TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
-        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        self.user_attendance = UserAttendance.objects.get(pk=1115)
         self.session_id = "2075-1J1455206457"
         self.trans_id = "2055"
         models.Payment.objects.create(
@@ -400,13 +400,13 @@ class FilterTests(TestCase):
         request = self.factory.get("")
         f = filters.HasTeamFilter(request, {"user_has_team": "yes"}, models.UserAttendance, None)
         q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 3)
+        self.assertEquals(q.count(), 5)
 
     def test_has_team_filter_no(self):
         request = self.factory.get("")
         f = filters.HasTeamFilter(request, {"user_has_team": "no"}, models.UserAttendance, None)
         q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 2)
+        self.assertEquals(q.count(), 1)
 
     def test_is_for_company_yes(self):
         request = self.factory.get("")
@@ -430,7 +430,7 @@ class FilterTests(TestCase):
         request = self.factory.get("")
         f = filters.HasRidesFilter(request, {"has_rides": "no"}, models.UserAttendance, None)
         q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 4)
+        self.assertEquals(q.count(), 5)
 
     def test_has_voucher_filter_yes(self):
         request = self.factory.get("")
@@ -442,7 +442,7 @@ class FilterTests(TestCase):
         request = self.factory.get("")
         f = filters.HasVoucherFilter(request, {"has_voucher": "no"}, models.UserAttendance, None)
         q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 5)
+        self.assertEquals(q.count(), 6)
 
     def test_campaign_filter_campaign(self):
         request = self.factory.get("")
@@ -476,7 +476,7 @@ class FilterTests(TestCase):
         request.subdomain = "testing-campaign"
         f = filters.CampaignFilter(request, {"campaign": "all"}, models.UserAttendance, None)
         q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 5)
+        self.assertEquals(q.count(), 6)
 
 
 class PaymentTests(DenormMixin, TestCase):
@@ -625,7 +625,7 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
         call_command('denorm_rebuild')
-        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        self.user_attendance = UserAttendance.objects.get(pk=1115)
 
     def test_dpnk_team_view(self):
         response = self.client.get(reverse('zmenit_tym'))
@@ -665,15 +665,74 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         self.assertContains(response, "Tým nenalezen", status_code=403)
 
     def test_dpnk_team_view_choose(self):
+        models.PackageTransaction.objects.all().delete()
+        models.Payment.objects.all().delete()
+        self.user_attendance.save()
+        response = self.client.get(reverse('zmenit_tym'))
+        self.assertContains(response, "id_company_text")
+        self.assertContains(response, "id_subsidiary")
+
         post_data = {
             'company': '1',
             'subsidiary': '1',
-            'team': '1',
+            'team': '3',
+            'next': 'Next',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        self.assertRedirects(response, reverse("zmenit_triko"))
+        self.assertEqual(len(mail.outbox), 1)
+
+    @override_settings(
+        MAX_TEAM_MEMBERS=0
+    )
+    def test_dpnk_team_view_choose_team_full(self):
+        post_data = {
+            'company': '1',
+            'subsidiary': '1',
+            'team': '3',
+            'next': 'Next',
+        }
+        models.PackageTransaction.objects.all().delete()
+        models.Payment.objects.all().delete()
+        self.user_attendance.save()
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        self.assertContains(response, "Tento tým již má pět členů a je tedy plný")
+
+    def test_dpnk_team_view_choose_team_out_of_campaign(self):
+        post_data = {
+            'company': '1',
+            'subsidiary': '2',
+            'team': '2',
+            'next': 'Next',
+        }
+        models.PackageTransaction.objects.all().delete()
+        models.Payment.objects.all().delete()
+        self.user_attendance.save()
+        response = self.client.post(reverse('zmenit_tym'), post_data)
+        self.assertContains(response, "Zvolený tým není dostupný v aktuální kampani")
+
+    def test_dpnk_team_view_choose_team_after_payment(self):
+        post_data = {
+            'company': '1',
+            'subsidiary': '2',
+            'team': '3',
+            'next': 'Next',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data)
+        self.assertContains(response, "Po zaplacení není možné měnit tým mimo pobočku")
+
+    def test_dpnk_team_view_choose_nonexistent_city(self):
+        post_data = {
+            'company': '1',
+            'subsidiary': '2',
+            'id_team_selected': 'on',
+            'team-name': 'Testing team last campaign',
+            'team-campaign': 339,
             'next': 'Next',
         }
         models.PackageTransaction.objects.all().delete()
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
-        self.assertRedirects(response, reverse("zmenit_triko"))
+        self.assertContains(response, "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží.")
 
     def test_dpnk_t_shirt_size(self):
         post_data = {
@@ -682,6 +741,7 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         }
         models.PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
+        self.user_attendance.save()
         response = self.client.post(reverse('zmenit_triko'), post_data, follow=True)
         self.assertRedirects(response, reverse("typ_platby"))
         self.assertTrue(self.user_attendance.t_shirt_size.pk, 1)
@@ -689,6 +749,7 @@ class ViewsTestsLogon(DenormMixin, TestCase):
     def test_dpnk_t_shirt_size_no_team(self):
         models.PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
+        self.user_attendance.save()
         self.user_attendance.team = None
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_triko'))
@@ -949,7 +1010,7 @@ class TestCompanyAdminViews(TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
-        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        self.user_attendance = UserAttendance.objects.get(pk=1115)
 
     def test_dpnk_company_admin_create_competition(self):
         post_data = {
@@ -1006,7 +1067,7 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
         call_command('denorm_rebuild')
-        self.user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        self.user_attendance = UserAttendance.objects.get(pk=1115)
         self.assertTrue(self.user_attendance.entered_competition())
 
     def test_dpnk_rides_view(self):
@@ -1040,7 +1101,7 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
         self.assertEquals(models.Trip.objects.get(pk=1).distance, 28.89)
         self.assertEquals(models.Trip.objects.exclude(pk=1).get().commute_mode, 'bicycle')
         denorm.flush()
-        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        user_attendance = UserAttendance.objects.get(pk=1115)
         self.assertEquals(user_attendance.trip_length_total, 30.89)
         self.assertEquals(user_attendance.team.get_length(), 10.296666666666667)
 
@@ -1101,13 +1162,13 @@ class ModelTests(DenormMixin, TransactionTestCase):
     fixtures = ['users', 'campaign', 'transactions', 'batches']
 
     def test_payment_type_string(self):
-        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        user_attendance = UserAttendance.objects.get(pk=1115)
         user_attendance.save()
         call_command('denorm_flush')
         self.assertEquals(user_attendance.payment_type_string(), "ORGANIZACE PLATÍ FAKTUROU")
 
     def test_payment_type_string_none_type(self):
-        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        user_attendance = UserAttendance.objects.get(pk=1115)
         user_attendance.representative_payment = Payment(pay_type=None)
         self.assertEquals(user_attendance.payment_type_string(), None)
 
