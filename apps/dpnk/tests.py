@@ -640,6 +640,30 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         self.assertContains(response, "Testing team 1")
         Payment.objects.all().delete()
 
+    def test_dpnk_team_invitation(self, ):
+        token = self.user_attendance.team.invitation_token
+        email = self.user_attendance.userprofile.user.email
+        address = reverse('zmenit_tym', kwargs={'token': token, 'initial_email': email})
+        response = self.client.get(address)
+        self.assertContains(response, "Pozvánka do týmu")
+
+        post_data = {
+            "question": "on",
+            "submit": "Odeslat",
+        }
+        response = self.client.post(address, post_data, follow=True)
+        self.assertContains(response, "Vybrat/změnit tým")
+
+    def test_dpnk_team_invitation_bad_email(self, ):
+        token = self.user_attendance.team.invitation_token
+        response = self.client.get(reverse('zmenit_tym', kwargs={'token': token, 'initial_email': 'invitation_test@email.com'}), follow=True)
+        self.assertRedirects(response, "/cs/login/invitation_test@email.com/?next=/cs/tym/token123213/invitation_test@email.com/")
+        self.assertContains(response, "invitation_test@email.com")
+
+    def test_dpnk_team_invitation_unknown_team(self, ):
+        response = self.client.get(reverse('zmenit_tym', kwargs={'token': 'asdf', 'initial_email': 'invitation_test@email.com'}))
+        self.assertContains(response, "Tým nenalezen", status_code=403)
+
     def test_dpnk_team_view_choose(self):
         post_data = {
             'company': '1',

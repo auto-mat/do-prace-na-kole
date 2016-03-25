@@ -36,6 +36,7 @@ from django.utils.decorators import method_decorator, classonlymethod
 from django.views.decorators.gzip import gzip_page
 from .decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase, must_be_owner
 from django.contrib.auth.decorators import login_required as login_required_simple
+from django.contrib.auth import logout
 from django.db.models import Sum, Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
@@ -489,9 +490,17 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
 
     @method_decorator(login_required_simple)
     @must_be_competitor
-    @request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, _(u"Tým nenalezen."))
-    @request_condition(lambda r, a, k: r.user.email != k['initial_email'], _(u"Pozvánka je určena jinému uživateli, než je aktuálně přihlášen."))
+    @request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, _(u"Tým nenalezen"), _("Tým nenalezen."))
     def dispatch(self, request, *args, **kwargs):
+        initial_email = kwargs['initial_email']
+        if request.user.email != initial_email:
+            logout(request)
+            messages.add_message(
+                self.request,
+                messages.WARNING,
+                _("Pozvánka je určena jinému uživateli, než je aktuálně přihlášen. Přihlašte se jako uživatel %s." % initial_email)
+            )
+            return redirect("%s?next=%s" % (reverse("login", kwargs={"initial_email": initial_email}), request.get_full_path()))
         invitation_token = self.kwargs['token']
         self.new_team = Team.objects.get(invitation_token=invitation_token)
         return super(ConfirmTeamInvitationView, self).dispatch(request, *args, **kwargs)

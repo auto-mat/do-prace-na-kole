@@ -262,7 +262,7 @@ def user_attendance_has(condition, message):
     return decorator
 
 
-def request_condition(condition, message):
+def request_condition(condition, message, title=_("Nedostatečné oprávnění")):
     def decorator(fn):
         @functools.wraps(fn)
         def wrapped(view, request, *args, **kwargs):
@@ -272,6 +272,7 @@ def request_condition(condition, message):
                     view.template_name,
                     {
                         'fullpage_error_message': message,
+                        'title': title,
                     },
                     status=403,
                 )
