@@ -341,12 +341,6 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', _(u'Odeslat')))
 
-        if request:
-            initial = kwargs.get('initial', {})
-            if request.GET.get('team', None):
-                initial['team'] = request.GET['team']
-            kwargs['initial'] = initial
-
         super(RegistrationFormDPNK, self).__init__(*args, **kwargs)
 
         self.fields['email'].help_text = _(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
@@ -357,11 +351,6 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
                 _(u"Tato e-mailová adresa se již používá. Pokud je vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> obnovu hesla</a>.")
                 % {'password': reverse('password_reset'), 'login': reverse('login')}))
         return self.cleaned_data['email']
-
-    def clean_team(self):
-        data = self.cleaned_data['team']
-        team_full(data)
-        return data
 
     class Meta:
         model = User
