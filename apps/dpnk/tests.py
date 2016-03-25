@@ -197,6 +197,16 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertNotEquals(UserProfile.objects.get(user=user), None)
         self.assertNotEquals(UserAttendance.objects.get(userprofile__user=user), None)
 
+    def test_dpnk_registration_email_used(self):
+        address = reverse('registrace')
+        post_data = {
+            'email': 'test@test.cz',
+            'password1': 'test11',
+            'password2': 'test11',
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(response, "Tato e-mailová adresa se již používá.")
+
     def test_dpnk_registration_token(self):
         kwargs = {
             "token": "token123213",
