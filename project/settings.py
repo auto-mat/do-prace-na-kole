@@ -146,6 +146,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django.contrib.postgres',
     'django.contrib.gis',
     'django.contrib.sites',
 

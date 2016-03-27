@@ -10,7 +10,7 @@ class TagsLookup(LookupChannel):
         return True
 
     def get_query(self, q, request):
-        query = Company.objects.filter(active=True, name__icontains=q)
+        query = Company.objects.filter(active=True, name__unaccent__icontains=q)
         if len(q) < 3:
             return query[:10]
         return query

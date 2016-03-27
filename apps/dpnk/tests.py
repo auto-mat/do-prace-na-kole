@@ -650,6 +650,12 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         self.assertContains(response, "Testing team 1")
         Payment.objects.all().delete()
 
+    def test_ajax_select(self):
+        address = "/ajax_select/ajax_lookup/companies?term=tést"
+        response = self.client.get(address)
+        self.assertContains(response, "<span class=\'tag\'>Testing company</span>")
+        self.assertContains(response, "<span class=\'tag\'>Testing company without admin</span>")
+
     def test_dpnk_team_invitation(self, ):
         token = self.user_attendance.team.invitation_token
         email = self.user_attendance.userprofile.user.email
