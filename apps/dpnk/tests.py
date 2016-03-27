@@ -645,7 +645,7 @@ class PayuTests(TestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class ViewsTestsLogon(DenormMixin, TestCase):
+class ViewsLogon(DenormMixin, TestCase):
     fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
@@ -655,6 +655,8 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         call_command('denorm_rebuild')
         self.user_attendance = UserAttendance.objects.get(pk=1115)
 
+
+class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_team_view(self):
         response = self.client.get(reverse('zmenit_tym'))
         self.assertNotContains(response, "Testing company")
@@ -1048,6 +1050,8 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         response = self.client.get(reverse('company_admin_application'))
         self.assertContains(response, 'Vaše organizce již svého koordinátora má: Null User, Testing User.')
 
+
+class TrackViewTests(ViewsLogon):
     def test_dpnk_views_gpx_file(self):
         trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
         gpxfile = mommy.make(models.GpxFile, user_attendance=self.user_attendance, trip_date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
@@ -1065,6 +1069,61 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         self.assertContains(response, "test@test.cz")
         self.assertContains(response, "organizace platí fakturou")
         self.assertContains(response, "(Platba přijata)")
+
+    def test_dpnk_views_track_gpx_file(self):
+        address = reverse('upravit_trasu')
+        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+            post_data = {
+                'dont_want_insert_track': False,
+                'track': '',
+                'gpx_file': gpxfile,
+                'submit': 'Odeslat',
+            }
+            response = self.client.post(address, post_data, follow=True)
+        self.assertRedirects(response, reverse('profil'))
+        user_attendance = UserAttendance.objects.get(pk=1115)
+        self.assertEquals(user_attendance.get_distance(), 13.32)
+
+    def test_dpnk_views_track(self):
+        address = reverse('upravit_trasu')
+        post_data = {
+            'dont_want_insert_track': False,
+            'gpx_file': '',
+            'track':
+                '{"type": "MultiLineString", "coordinates": [[[14.377684590344607, 50.104472624878724], [14.382855889324802, 50.104637777363834], '
+                '[14.385232326511767, 50.10294493739811], [14.385398623470714, 50.102697199702064], [14.385446903233, 50.102236128912004], '
+                '[14.38538253021666, 50.101957419789834]]]}',
+            'submit': 'Odeslat',
+        }
+        response = self.client.post(address, post_data, follow=True)
+        self.assertRedirects(response, reverse('profil'))
+        user_attendance = UserAttendance.objects.get(pk=1115)
+        self.assertEquals(user_attendance.get_distance(), 0.74)
+
+    def test_dpnk_views_track_only_distance(self):
+        address = reverse('upravit_trasu')
+        post_data = {
+            'dont_want_insert_track': True,
+            'distance': 12,
+            'gpx_file': '',
+            'submit': 'Odeslat',
+        }
+        response = self.client.post(address, post_data, follow=True)
+        self.assertRedirects(response, reverse('profil'))
+        user_attendance = UserAttendance.objects.get(pk=1115)
+        self.assertEquals(user_attendance.track, None)
+        self.assertEquals(user_attendance.get_distance(), 12)
+
+    def test_dpnk_views_track_no_track_distance(self):
+        address = reverse('upravit_trasu')
+        post_data = {
+            'dont_want_insert_track': False,
+            'gpx_file': '',
+            'track': '',
+            'submit': 'Odeslat',
+        }
+        response = self.client.post(address, post_data, follow=True)
+        self.assertContains(response, "Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat.")
 
 
 def create_get_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):

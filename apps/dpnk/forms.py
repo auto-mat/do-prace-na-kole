@@ -41,6 +41,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import string_concat
 from django.http import Http404
 from django.conf import settings
+from django_gpxpy import gpx_parse
 import logging
 logger = logging.getLogger(__name__)
 
@@ -564,8 +565,18 @@ class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
 
 
 class TrackUpdateForm(SubmitMixin, forms.ModelForm):
+    gpx_file = forms.FileField(
+        label=_("GPX soubor"),
+        help_text=_("Zadat trasu nahráním souboru GPX"),
+        required=False,
+    )
+
     def clean(self):
         cleaned_data = super(TrackUpdateForm, self).clean()
+
+        if cleaned_data['gpx_file']:
+            cleaned_data['track'] = gpx_parse.parse_gpx(cleaned_data['gpx_file'].read().decode("utf-8"))
+
         if cleaned_data['dont_want_insert_track']:
             cleaned_data['track'] = None
         else:
@@ -575,7 +586,7 @@ class TrackUpdateForm(SubmitMixin, forms.ModelForm):
 
     class Meta:
         model = models.UserAttendance
-        fields = ('track', 'dont_want_insert_track', 'distance')
+        fields = ('track', 'gpx_file', 'dont_want_insert_track', 'distance')
 
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']
