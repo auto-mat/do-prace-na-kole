@@ -343,7 +343,7 @@ class PaymentSuccessTests(TestCase):
 
 @override_settings(
     SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2013, month=5, day=20),
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class RequestFactoryViewTests(TestCase):
     fixtures = ['campaign', 'views', 'users']
