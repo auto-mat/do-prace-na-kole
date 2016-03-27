@@ -70,17 +70,9 @@ class UserLeafletWidget(LeafletWidget):
         )
 
 
-class FormClassMixin(object):
+class SubmitMixin(object):
     def __init__(self, url_name="", *args, **kwargs):
         self.helper = FormHelper()
-        if url_name:
-            self.url_name = url_name
-            self.helper.form_class = url_name + "_form"
-        super(FormClassMixin, self).__init__(*args, **kwargs)
-
-
-class SubmitMixin(FormClassMixin):
-    def __init__(self, url_name="", *args, **kwargs):
         super(SubmitMixin, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', _(u'Odeslat')))
 
@@ -88,9 +80,6 @@ class SubmitMixin(FormClassMixin):
 class PrevNextMixin(object):
     def __init__(self, url_name="", *args, **kwargs):
         self.helper = FormHelper()
-        if url_name:
-            self.url_name = url_name
-            self.helper.form_class = url_name + "_form"
         if not hasattr(self, 'no_prev'):
             self.helper.add_input(Submit('prev', _(u'Předchozí'), css_class="form-actions"))
         if not hasattr(self, 'no_next'):
@@ -102,7 +91,6 @@ class AuthenticationFormDPNK(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         ret_val = super(AuthenticationFormDPNK, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_class = "login-form"
         self.helper.layout = Layout(
             'username', 'password',
             HTML(_(u"""<a href="%(password_reset_address)s">Zapomněli jste své přihlašovací údaje?</a>
@@ -711,7 +699,7 @@ class TripForm(forms.ModelForm):
         }
 
 
-class GpxFileForm(FormClassMixin, forms.ModelForm):
+class GpxFileForm(forms.ModelForm):
     def clean_user_attendance(self):
         return self.initial['user_attendance']
 
@@ -733,6 +721,7 @@ class GpxFileForm(FormClassMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(GpxFileForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
         try:
             self.trip_date = self.instance.trip_date or datetime.datetime.strptime(self.initial['trip_date'], "%Y-%m-%d").date()
             self.trip = models.Trip.objects.get(date=self.trip_date, user_attendance=self.initial['user_attendance'], direction=self.initial['direction'])
