@@ -716,6 +716,52 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         self.assertRedirects(response, reverse("zmenit_triko"))
         self.assertEqual(len(mail.outbox), 1)
 
+    def test_dpnk_update_profile_view(self):
+        post_data = {
+            'sex': 'male',
+            'first_name': 'Testing',
+            'last_name': 'Name',
+            'nickname': 'My super nick',
+            'mailing_opt_in': 'True',
+            'email': 'testing@email.cz',
+            'language': 'cs',
+            'telephone': '111222333',
+            'dont_show_name': True,
+            'personal_data_opt_in': 'True',
+            'next': 'Další',
+        }
+        address = reverse('upravit_profil')
+        response = self.client.post(address, post_data, follow=True)
+        self.assertRedirects(response, reverse("zmenit_tym"))
+        self.assertContains(response, "My super nick")
+
+    def test_dpnk_update_profile_view_no_nick(self):
+        post_data = {
+            'dont_show_name': True,
+            'next': 'Další',
+        }
+        address = reverse('upravit_profil')
+        response = self.client.post(address, post_data, follow=True)
+        self.assertContains(response, "Pokud si nepřejete zobrazovat své jméno, zadejte, co se má zobrazovat místo něj")
+
+    def test_dpnk_update_profile_view_no_sex(self):
+        post_data = {
+            'sex': 'unknown',
+            'next': 'Další',
+        }
+        address = reverse('upravit_profil')
+        response = self.client.post(address, post_data, follow=True)
+        self.assertContains(response, "Zadejte pohlaví")
+
+    def test_dpnk_update_profile_view_email_exists(self):
+        post_data = {
+            'email': 'test2@test.cz',
+            'next': 'Další',
+        }
+        address = reverse('upravit_profil')
+        response = self.client.post(address, post_data, follow=True)
+        self.assertContains(response, "Tento email již je v našem systému zanesen.")
+
     @override_settings(
         MAX_TEAM_MEMBERS=0
     )
