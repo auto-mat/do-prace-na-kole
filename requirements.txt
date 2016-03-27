@@ -65,3 +65,4 @@ pypdf2
 django-extra-views
 freezegun
 raven
+django_coverage_plugin
