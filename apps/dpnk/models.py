@@ -1026,6 +1026,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     @denormalized(models.ForeignKey, to='CompanyAdmin', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
     @depend_on_related('CompanyAdmin')
     def related_company_admin(self):
+        """ Get company coordinator profile for this user attendance """
         try:
             ca = CompanyAdmin.objects.get(user=self.userprofile.user, campaign=self.campaign)
             return ca
@@ -1041,6 +1042,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return self.unanswered_questionnaires().exists()
 
     def get_asociated_company_admin(self):
+        """ Get coordinator, that manages company of this user attendance """
         if not self.team:
             return None
         return self.team.subsidiary.company.company_admin.filter(campaign=self.campaign, company_admin_approved='approved')
