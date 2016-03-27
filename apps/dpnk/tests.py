@@ -197,6 +197,24 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertNotEquals(UserProfile.objects.get(user=user), None)
         self.assertNotEquals(UserAttendance.objects.get(userprofile__user=user), None)
 
+    def test_dpnk_registration_access(self):
+        address = reverse('registration_access')
+        response = self.client.get(address)
+        self.assertContains(response, "E-mail (uživatelské jméno)")
+        post_data = {
+            'email': 'test@test.cz',
+        }
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('login', kwargs={"initial_email": "test@test.cz"}))
+
+    def test_dpnk_registration_access_email_unknown(self):
+        address = reverse('registration_access')
+        post_data = {
+            'email': 'test1@test.cz',
+        }
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('registrace', kwargs={"initial_email": "test1@test.cz"}))
+
     def test_dpnk_registration_email_used(self):
         address = reverse('registrace')
         post_data = {
