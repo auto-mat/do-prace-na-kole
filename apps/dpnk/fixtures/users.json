@@ -57,6 +57,14 @@
     },
     {
         "fields": {
+            "company": 1,
+            "city": 2
+        },
+        "model": "dpnk.subsidiary",
+        "pk": 2
+    },
+    {
+        "fields": {
             "campaign": 339,
             "subsidiary": 1,
             "invitation_token": "token123213",
@@ -64,6 +72,26 @@
         },
         "model": "dpnk.team",
         "pk": 1
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "subsidiary": 2,
+            "invitation_token": "token123215",
+            "name": "Team in different subsidiary"
+        },
+        "model": "dpnk.team",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "campaign": 338,
+            "subsidiary": 2,
+            "invitation_token": "token123214",
+            "name": "Testing team last campaign"
+        },
+        "model": "dpnk.team",
+        "pk": 2
     },
     {
         "fields": {
@@ -129,6 +157,23 @@
         },
         "model": "dpnk.userattendance",
         "pk": 1115
+    },
+    {
+        "fields": {
+            "approved_for_team": "approved",
+            "campaign": 338,
+            "created": "2015-11-12T18:18:40.223",
+            "distance": null,
+            "dont_want_insert_track": false,
+            "get_rides_count_denorm": 0,
+            "t_shirt_size": 1,
+            "team": 2,
+            "track":  "MULTILINESTRING((0 0,-1 1))",
+            "updated": "2015-11-12T18:18:40.223",
+            "userprofile": 1117
+        },
+        "model": "dpnk.userattendance",
+        "pk": 1116
     },
     {
         "fields": {
@@ -206,7 +251,7 @@
             "dont_want_insert_track": false,
             "get_rides_count_denorm": 0,
             "t_shirt_size": null,
-            "team": null,
+            "team": 3,
             "track": null,
             "updated": "2015-11-12T18:18:40.223",
             "userprofile": 1016

@@ -40,12 +40,15 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import string_concat
 from django.http import Http404
+from django.conf import settings
 import logging
 logger = logging.getLogger(__name__)
 
 
 def team_full(data):
-    if len(models.UserAttendance.objects.filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, userprofile__user__is_active=True)) >= 5:
+    if models.UserAttendance.objects.\
+            filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, userprofile__user__is_active=True).\
+            count() >= settings.MAX_TEAM_MEMBERS:
         raise forms.ValidationError(_(u"Tento tým již má pět členů a je tedy plný"))
 
 
@@ -246,7 +249,15 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         cleaned_data = super(ChangeTeamForm, self).clean()
         if self.instance.payment_status == 'done' and self.instance.team:
             if 'team' in cleaned_data and cleaned_data['team'].subsidiary != self.instance.team.subsidiary:
-                raise forms.ValidationError(mark_safe(_(u"Po zaplacení není možné měnit tým mimo pobočku")))
+                raise forms.ValidationError(_(u"Po zaplacení není možné měnit tým mimo pobočku"))
+
+        if 'subsidiary' in cleaned_data:
+            subsidiary = cleaned_data['subsidiary']
+            if subsidiary and not models.CityInCampaign.objects.filter(city=subsidiary.city, campaign__slug=self.request.subdomain).exists():
+                logger.error("Pobočka ve špatém městě", extra={'request': self.request, 'subsidiary': subsidiary})
+                raise forms.ValidationError(_(
+                    "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží. "
+                    "Prosím žádejte změnu po vašem vnitrofiremním koordinátorovi."))
         return cleaned_data
 
     def clean_team(self):
@@ -256,7 +267,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         else:
             if data.campaign.slug != self.request.subdomain:
                 logger.error("Team %s not in campaign %s" % (data.pk, self.request.subdomain), extra={'request': self.request})
-                raise forms.ValidationError(mark_safe(_(u"Zvolený tým není dostupný v aktuální kampani")))
+                raise forms.ValidationError(_(u"Zvolený tým není dostupný v aktuální kampani"))
         if type(data) != RegisterTeamForm:
             if data != self.instance.team:
                 team_full(data)
@@ -330,12 +341,6 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', _(u'Odeslat')))
 
-        if request:
-            initial = kwargs.get('initial', {})
-            if request.GET.get('team', None):
-                initial['team'] = request.GET['team']
-            kwargs['initial'] = initial
-
         super(RegistrationFormDPNK, self).__init__(*args, **kwargs)
 
         self.fields['email'].help_text = _(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
@@ -346,11 +351,6 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
                 _(u"Tato e-mailová adresa se již používá. Pokud je vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> obnovu hesla</a>.")
                 % {'password': reverse('password_reset'), 'login': reverse('login')}))
         return self.cleaned_data['email']
-
-    def clean_team(self):
-        data = self.cleaned_data['team']
-        team_full(data)
-        return data
 
     class Meta:
         model = User

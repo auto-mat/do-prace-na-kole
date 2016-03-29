@@ -236,7 +236,6 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
 
     @method_decorator(login_required_simple)
     @must_be_competitor
-    # @user_attendance_has(lambda ua: ua.entered_competition(), _(u"Po vstupu do soutěže nemůžete měnit tým."))
     def dispatch(self, request, *args, **kwargs):
         return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
 
@@ -337,7 +336,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
 
             if team_changed and not create_team:
                 self.user_attendance.approved_for_team = 'undecided'
-                approval_request_mail(self.user_attendance)
+                self.user_attendance.save()
 
             if self.user_attendance.approved_for_team != 'approved':
                 approval_request_mail(self.user_attendance)
@@ -1376,7 +1375,6 @@ class UpdateTeam(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, U
     @method_decorator(login_required_simple)
     @must_be_competitor
     @must_be_approved_for_team
-    # @user_attendance_has(lambda ua: ua.entered_competition(), _(u"Po vstupu do soutěže již nemůžete měnit parametry týmu."))
     def dispatch(self, request, *args, **kwargs):
         return super(UpdateTeam, self).dispatch(request, *args, **kwargs)
 

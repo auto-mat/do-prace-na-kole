@@ -116,7 +116,7 @@ class ViewSmokeTestsRegistered(BaseViewsTests):
 
     def setUp(self):
         super().setUp()
-        user_attendance = UserAttendance.objects.get(userprofile__user__username='test')
+        user_attendance = UserAttendance.objects.get(pk=1115)
         self.assertTrue(user_attendance.entered_competition())
 
     @parameterized.expand(views)
