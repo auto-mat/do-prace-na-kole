@@ -925,6 +925,19 @@ class ViewsTestsLogon(DenormMixin, TestCase):
         self.assertContains(response, "organizace platí fakturou")
         self.assertContains(response, "(Platba přijata)")
 
+    def test_dpnk_rest_gpx_gz(self):
+        with open('apps/dpnk/test_files/modranska-rokle.gpx.gz', 'rb') as gpxfile:
+            post_data = {
+                'trip_date': '2010-11-3',
+                'direction': 'trip_to',
+                'file': gpxfile,
+            }
+            response = self.client.post("/rest/gpx/", post_data, format='multipart', follow=True)
+            self.assertEquals(response.status_code, 201)
+        gpx_file = models.GpxFile.objects.get(trip_date=datetime.date(year=2010, month=11, day=3))
+        self.assertEquals(gpx_file.direction, 'trip_to')
+        self.assertEquals(gpx_file.length(), 13.32)
+
     def test_dpnk_rest_gpx(self):
         with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
@@ -936,6 +949,7 @@ class ViewsTestsLogon(DenormMixin, TestCase):
             self.assertEquals(response.status_code, 201)
         gpx_file = models.GpxFile.objects.get(trip_date=datetime.date(year=2010, month=11, day=3))
         self.assertEquals(gpx_file.direction, 'trip_to')
+        self.assertEquals(gpx_file.length(), 13.32)
 
 
 def create_get_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):

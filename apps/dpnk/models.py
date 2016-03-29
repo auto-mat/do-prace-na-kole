@@ -24,6 +24,7 @@
 # Django imports
 import random
 import string
+import gzip
 from . import parcel_batch
 from . import avfull
 from unidecode import unidecode
@@ -2601,7 +2602,11 @@ class GpxFile(models.Model):
 
     def clean(self):
         if self.file:
-            self.track_clean = gpx_parse.parse_gpx(self.file.read().decode("utf-8"))
+            if self.file.name.endswith(".gz"):
+                track_file = gzip.open(self.file).read().decode("utf-8")
+            else:
+                track_file = self.file.read().decode("utf-8")
+            self.track_clean = gpx_parse.parse_gpx(track_file)
 
 
 # Signals:
