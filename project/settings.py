@@ -95,12 +95,10 @@ MIDDLEWARE_CLASSES = [
     'denorm.middleware.DenormMiddleware',
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',
     'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
 ]
 AUTHENTICATION_BACKENDS = (
-    'oauth2_provider.backends.OAuth2Backend',
     'dpnk.auth.EmailModelBackend',
     "django_su.backends.SuBackend",
 )
