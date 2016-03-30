@@ -948,7 +948,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
                 pass
 
         try:
-            return self.userprofile.user.company_admin.get(campaign=self.campaign).administrated_company
+            return self.userprofile.company_admin.get(campaign=self.campaign).administrated_company
         except CompanyAdmin.DoesNotExist:
             return None
 
@@ -1024,11 +1024,11 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return trips, uncreated_trips
 
     @denormalized(models.ForeignKey, to='CompanyAdmin', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
-    @depend_on_related('CompanyAdmin')
+    @depend_on_related('UserProfile', skip={'mailing_hash'})
     def related_company_admin(self):
         """ Get company coordinator profile for this user attendance """
         try:
-            ca = CompanyAdmin.objects.get(user=self.userprofile.user, campaign=self.campaign)
+            ca = CompanyAdmin.objects.get(userprofile=self.userprofile, campaign=self.campaign)
             return ca
         except CompanyAdmin.DoesNotExist:
             return None
@@ -1160,6 +1160,12 @@ class UserProfile(models.Model):
         blank=False,
         default=False)
 
+    @denormalized(models.IntegerField, default=0)
+    @depend_on_related('CompanyAdmin')
+    # This is here to update related_admin property on UserAttendance model
+    def company_admin_count(self):
+        return self.company_admin.count()
+
     def first_name(self):
         return self.user.first_name
 
@@ -1221,12 +1227,12 @@ class CompanyAdmin(models.Model):
         verbose_name = _(u"Koordinátor organizace")
         verbose_name_plural = _(u"Koordinátoři organizací")
         unique_together = (
-            ("user", "campaign"),
+            ("userprofile", "campaign"),
         )
 
-    user = models.ForeignKey(
-        User,
-        verbose_name=_(u"User"),
+    userprofile = models.ForeignKey(
+        UserProfile,
+        verbose_name=_(u"User profile"),
         related_name='company_admin',
         null=False,
         blank=False,
@@ -1276,20 +1282,23 @@ class CompanyAdmin(models.Model):
         blank=False,
         default=False)
 
+    def is_approved(self):
+        return self.company_admin_approved == 'approved'
+
     def company_has_invoices(self):
         return self.administrated_company.invoice_set.filter(campaign=self.campaign).exists()
 
     def user_attendance(self):
         try:
-            return self.user.userprofile.userattendance_set.get(campaign=self.campaign)
+            return self.userprofile.userattendance_set.get(campaign=self.campaign)
         except UserAttendance.DoesNotExist:
             return None
 
     def get_userprofile(self):
-        return self.user.userprofile
+        return self.userprofile
 
     def __str__(self):
-        return self.user.get_full_name()
+        return self.userprofile.user.get_full_name()
 
     def save(self, *args, **kwargs):
         status_before_update = None

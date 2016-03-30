@@ -550,7 +550,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
 
         if payment_type == 'company':
             company_admin_email_string = ", ".join(["<a href='mailto:%(email)s'>%(email)s</a>" % {
-                'email': a.user.email} for a in self.user_attendance.get_asociated_company_admin()])
+                'email': a.userprofile.user.email} for a in self.user_attendance.get_asociated_company_admin()])
         else:
             company_admin_email_string = ""
         payment_choices = {

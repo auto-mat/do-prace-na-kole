@@ -37,6 +37,11 @@ import denorm
 import settings
 
 
+def print_response(response):
+    with open("response.html", "w") as f:
+        f.write(response.content.decode())
+
+
 class DenormMixin(object):
     def setUp(self):
         call_command('denorm_init')
@@ -162,7 +167,7 @@ class ViewsTests(DenormMixin, TestCase):
         user = User.objects.get(email='testadmin@test.cz')
         self.assertEquals(user.get_full_name(),  "Company Admin")
         self.assertEquals(UserProfile.objects.get(user=user).telephone, '123456789')
-        self.assertEquals(CompanyAdmin.objects.get(user=user).administrated_company.pk, 2)
+        self.assertEquals(CompanyAdmin.objects.get(userprofile=user.userprofile).administrated_company.pk, 2)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
         self.assertEqual(str(msg.subject), 'Testing campaign - koordinátor organizace - potvrzení registrace')
@@ -171,7 +176,7 @@ class ViewsTests(DenormMixin, TestCase):
         user = User.objects.get(username='test1')
         models.CompanyAdmin.objects.create(
             administrated_company_id=2,
-            user=user,
+            userprofile=user.userprofile,
             campaign_id=339,
             company_admin_approved='approved',
         )
@@ -1036,14 +1041,14 @@ class ViewsTestsLogon(ViewsLogon):
         }
         response = self.client.post(reverse('company_admin_application'), post_data, follow=True)
         self.assertRedirects(response, reverse('profil'))
-        company_admin = models.CompanyAdmin.objects.get(user__username='test')
+        company_admin = models.CompanyAdmin.objects.get(userprofile__user__username='test')
         self.assertEquals(company_admin.motivation_company_admin, 'Testing position')
 
     def test_dpnk_company_admin_application_existing_admin(self):
         user = User.objects.get(username='test1')
         models.CompanyAdmin.objects.create(
             administrated_company=self.user_attendance.team.subsidiary.company,
-            user=user,
+            userprofile=user.userprofile,
             campaign=self.user_attendance.campaign,
             company_admin_approved='approved',
         )
@@ -1348,9 +1353,10 @@ class DenormTests(DenormMixin, TransactionTestCase):
 
     def test_related_company_admin(self):
         user_attendance = UserAttendance.objects.get(pk=1027)
-        company_admin = models.CompanyAdmin.objects.create(user=user_attendance.userprofile.user, campaign_id=338)
+        company_admin = models.CompanyAdmin.objects.create(userprofile=user_attendance.userprofile, campaign_id=338)
         self.assertEquals(user_attendance.related_company_admin, None)
         call_command('denorm_flush')
+        user_attendance = UserAttendance.objects.get(pk=1027)
         self.assertEquals(user_attendance.related_company_admin, company_admin)
 
 

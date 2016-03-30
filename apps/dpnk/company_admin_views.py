@@ -123,19 +123,19 @@ class CompanyAdminApplicationView(TitleViewMixin, RegistrationView):
     def form_valid(self, form):
         ret_val = super().form_valid(form)
         new_user = self.request.user
-        admin = CompanyAdmin(
-            motivation_company_admin=form.cleaned_data['motivation_company_admin'],
-            administrated_company=form.cleaned_data['administrated_company'],
-            campaign=form.cleaned_data['campaign'],
-            user=new_user,
-        )
-        admin.save()
-
         userprofile = UserProfile(
             user=new_user,
             telephone=form.cleaned_data['telephone'],
         )
         userprofile.save()
+
+        admin = CompanyAdmin(
+            motivation_company_admin=form.cleaned_data['motivation_company_admin'],
+            administrated_company=form.cleaned_data['administrated_company'],
+            campaign=form.cleaned_data['campaign'],
+            userprofile=userprofile,
+        )
+        admin.save()
         company_admin_register_no_competitor_mail(admin, form.cleaned_data['administrated_company'])
         return ret_val
 
@@ -169,9 +169,9 @@ class CompanyAdminView(RegistrationViewMixin, UpdateView):
     def get_object(self, queryset=None):
         campaign = self.user_attendance.campaign
         try:
-            self.company_admin = self.request.user.company_admin.get(campaign=campaign)
+            self.company_admin = self.request.user.userprofile.company_admin.get(campaign=campaign)
         except CompanyAdmin.DoesNotExist:
-            self.company_admin = CompanyAdmin(user=self.request.user, campaign=campaign)
+            self.company_admin = CompanyAdmin(userprofile=self.request.user.userprofile, campaign=campaign)
         self.company_admin.administrated_company = self.user_attendance.team.subsidiary.company
         return self.company_admin
 

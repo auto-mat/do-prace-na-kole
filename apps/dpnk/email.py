@@ -147,7 +147,7 @@ def company_admin_register_competitor_mail(user_attendance):
 
 def company_admin_register_no_competitor_mail(company_admin, company):
     template = get_template('email/company_admin_register_no_competitor_%s.html' % company_admin.get_userprofile().language)
-    email = company_admin.user.email
+    email = company_admin.userprofile.user.email
     message = template.render({
         'company_admin': company_admin,
         'company': company,
@@ -158,7 +158,7 @@ def company_admin_register_no_competitor_mail(company_admin, company):
 
 def company_admin_approval_mail(company_admin):
     template = get_template('email/company_admin_approval_%s.html' % company_admin.get_userprofile().language)
-    email = company_admin.user.email
+    email = company_admin.userprofile.user.email
     message = template.render({
         'company_admin': company_admin,
         'company': company_admin.administrated_company,
@@ -169,7 +169,7 @@ def company_admin_approval_mail(company_admin):
 
 def company_admin_rejected_mail(company_admin):
     template = get_template('email/company_admin_rejected_%s.html' % company_admin.get_userprofile().language)
-    email = company_admin.user.email
+    email = company_admin.userprofile.user.email
     message = template.render({
         'company_admin': company_admin,
         'company': company_admin.administrated_company,
