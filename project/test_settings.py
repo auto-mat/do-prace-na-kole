@@ -27,6 +27,12 @@ DEBUG = True
 DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@test.cz>'
 SERVER_EMAIL = 'Do práce na kole <kontakt@tests.cz>'
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    },
+}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
