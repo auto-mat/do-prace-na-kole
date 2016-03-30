@@ -68,6 +68,7 @@ Společně s vámi tvoříme město, ve kterém chceme žít. www.auto-mat.cz
     invoice_gen.payback = invoice.exposure_date + datetime.timedelta(days=14)
     invoice_gen.taxable_date = invoice.taxable_date
     invoice_gen.rounding_result = True
+    invoice_gen.use_tax = True
     invoice_gen.currency_locale = u"cs_CZ.utf-8"
     invoice_gen.paytype = u"bankovním převodem"
 

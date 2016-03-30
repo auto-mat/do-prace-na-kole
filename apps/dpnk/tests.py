@@ -910,7 +910,9 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEquals(user.team.subsidiary.address.street, "Created street")
         self.assertEquals(user.team.subsidiary.company.name, "Created company")
 
-    def company_payment(self, beneficiary=False):
+    def company_payment(self, amount, amount_tax, beneficiary=False):
+        response = self.client.get(reverse('company_admin_pay_for_users'))
+        self.assertContains(response, "%s Kč: Registered User 1 (test-registered@test.cz)" % amount)
         post_data = {
             'paing_for': '1115',
             'submit': 'Odeslat',
@@ -921,7 +923,8 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEquals(p.status, 1005)
 
         response = self.client.get(reverse('invoices'))
-        self.assertContains(response, "Testing User 1")
+        self.assertContains(response, "<td>Testing User 1</td>")
+        self.assertContains(response, "<td>%i Kč</td>" % amount)
 
         post_data = {
             'create_invoice': 'on',
@@ -934,24 +937,24 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertRedirects(response, reverse('invoices'))
         p = Payment.objects.get(pk=4)
         self.assertEquals(p.status, 1006)
-        if beneficiary:
-            self.assertEquals(p.invoice.total_amount, 544)
-        else:
-            self.assertEquals(p.invoice.total_amount, 175)
+        self.assertEquals(p.invoice.total_amount, amount_tax)
         pdf = PdfFileReader(p.invoice.invoice_pdf)
         pdf_string = pdf.pages[0].extractText()
-        if beneficiary:
-            self.assertTrue("Celkem: 450,-" in pdf_string)
-        else:
-            self.assertTrue("Celkem: 145,-" in pdf_string)
+        self.assertTrue("Celkem s DPH: %s,-" % amount_tax in pdf_string)
         self.assertTrue("1323575433" in pdf_string)
         self.assertTrue("Testing company" in pdf_string)
 
     def test_company_payment(self):
-        self.company_payment()
+        self.company_payment(amount=130.0, amount_tax=157)
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2011, month=4, day=1),
+    )
+    def test_company_payment_late(self):
+        self.company_payment(amount=230.0, amount_tax=278)
 
     def test_company_payment_beneficiary(self):
-        self.company_payment(beneficiary=True)
+        self.company_payment(beneficiary=True, amount=130.0, amount_tax=544)
 
     def test_dpnk_team_view_no_team_set(self):
         post_data = {
@@ -1033,6 +1036,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(str(msg.subject), 'Testing campaign - pozvánka do týmu')
 
     def test_dpnk_company_admin_application(self):
+        response = self.client.get(reverse('company_admin_application'))
         post_data = {
             'motivation_company_admin': 'Testing position',
             'will_pay_opt_in': True,

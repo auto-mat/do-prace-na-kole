@@ -22,7 +22,7 @@ from django.contrib.auth.models import User
 from django import forms
 from .forms import AdressForm
 from .models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice, Subsidiary
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, string_concat
 from .util import slugify
 from .forms import SubmitMixin
 from ajax_select.fields import AutoCompleteSelectWidget
@@ -33,7 +33,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
     paing_for = forms.ModelMultipleChoiceField(
         [],
         label=_(u"Soutěžící, za které bude zaplaceno"),
-        help_text=_(u"<div class='text-info'>Tip: Použijte ctrl nebo shift pro výběr více položek nebo jejich rozsahu.</div>"),
+        help_text=string_concat(_(u"<div class='text-info'>Tip: Použijte ctrl nebo shift pro výběr více položek nebo jejich rozsahu.</div>"), _("<br/>Ceny jsou uváděny bez DPH")),
         widget=forms.SelectMultiple(attrs={'size': '40'}),
     )
 
@@ -48,7 +48,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
             (
                 user_attendance.pk,
                 u"%s Kč: %s (%s)" % (
-                    user_attendance.representative_payment.amount,
+                    user_attendance.company_admission_fee(),
                     user_attendance.userprofile.user.get_full_name(),
                     user_attendance.userprofile.user.email))
             for user_attendance in queryset.all()
@@ -213,7 +213,7 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
 
 class CreateInvoiceForm(SubmitMixin, forms.ModelForm):
     create_invoice = forms.BooleanField(
-        label=_(u"Údaje jsou správné, chci vytvořit fakturu"),
+        label=_(u"Údaje jsou správné, v mé organizaci již nepřibudou žádní další soutěžící. Chci vytvořit fakturu"),
     )
 
     def __init__(self, request=None, *args, **kwargs):

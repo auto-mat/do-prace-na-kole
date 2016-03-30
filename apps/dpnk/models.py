@@ -531,11 +531,12 @@ class Campaign(models.Model):
     def __str__(self):
         return self.name
 
-    @denormalized(models.NullBooleanField, default=None)
-    @depend_on_related('Phase')
-    def late_admission_phase(self):
+    def late_admission_phase_actual(self):
         late_admission_phase = self.phase("late_admission")
-        return not late_admission_phase or late_admission_phase.is_actual()
+        if late_admission_phase:
+            return late_admission_phase.is_actual()
+        else:
+            return True
 
     def user_attendances_for_delivery(self):
         return UserAttendance.objects.filter(
@@ -791,7 +792,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             t_shirt_price = self.t_shirt_size.price
         else:
             t_shirt_price = 0
-        if self.campaign.late_admission_phase:
+        if self.campaign.late_admission_phase_actual():
             return self.campaign.late_admission_fee + t_shirt_price
         else:
             return self.campaign.admission_fee + t_shirt_price
@@ -804,7 +805,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return self.campaign.benefitial_admission_fee + t_shirt_price
 
     def company_admission_fee(self):
-        if self.campaign.late_admission_phase:
+        if self.campaign.late_admission_phase_actual():
             return self.campaign.late_admission_fee_company + self.t_shirt_size.price
         else:
             return self.campaign.admission_fee_company + self.t_shirt_size.price

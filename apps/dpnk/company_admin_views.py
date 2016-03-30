@@ -72,10 +72,11 @@ class SelectUsersPayView(TitleViewMixin, FormView):
 
     def form_valid(self, form):
         paing_for = form.cleaned_data['paing_for']
-        for userprofile in paing_for:
-            for payment in userprofile.payments().all():
+        for user_attendance in paing_for:
+            for payment in user_attendance.payments().all():
                 if payment.pay_type == 'fc':
                     payment.status = models.Status.COMPANY_ACCEPTS
+                    payment.amount = user_attendance.company_admission_fee()
                     payment.description = payment.description + "\nFA %s odsouhlasil dne %s" % (self.request.user.username, datetime.datetime.now())
                     payment.save()
                     break
