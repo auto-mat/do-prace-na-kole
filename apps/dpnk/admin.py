@@ -738,7 +738,6 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
             't_shirt_size__price',
             'approved_for_team',
             'campaign__name',
-            'campaign__late_admission_phase',
             'campaign__admission_fee',
             'representative_payment__pay_type',
             'representative_payment__status',
