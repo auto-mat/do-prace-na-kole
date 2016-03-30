@@ -121,7 +121,7 @@
     },
     {
         "fields": {
-            "user": 1030,
+            "userprofile": 1016,
             "can_confirm_payments": true,
             "campaign": 339,
             "administrated_company": 1,
@@ -132,7 +132,7 @@
     },
     {
         "fields": {
-            "user": 1128,
+            "userprofile": 1117,
             "can_confirm_payments": true,
             "campaign": 339,
             "administrated_company": 1,

@@ -53,7 +53,7 @@ class TestEmails(TestCase):
         self.userprofile_tm2 = UserProfile.objects.create(user=self.user_tm2)
         self.user_attendance_tm2 = UserAttendance.objects.create(userprofile=self.userprofile_tm2, campaign=self.campaign, team=self.team, approved_for_team='approved')
 
-        self.company_admin = CompanyAdmin.objects.create(user=self.user, administrated_company=self.company, campaign=self.campaign)
+        self.company_admin = CompanyAdmin.objects.create(userprofile=self.user.userprofile, administrated_company=self.company, campaign=self.campaign)
 
     def test_send_approval_request_mail(self):
         email.approval_request_mail(self.user_attendance)
@@ -142,22 +142,42 @@ class TestEmails(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - koordinátor organizace - potvrzení registrace")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+        msg = mail.outbox[0]
+        if self.userprofile.language == 'cs':
+            message = "Zpráva pro kandidáta/ku Testing User na koordinátora/ku organizace Testing Company v soutěži Testing campaign 1."
+        else:
+            message = "A message for Testing User, a candidate for the company coordinator role in Testing Company in the Testing campaign 1 competition."
+        self.assertTrue(message in msg.body)
 
     def test_send_company_admin_approval_mail(self):
         email.company_admin_approval_mail(self.company_admin)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - koordinátor organizace - schválení správcovství organizace")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+        msg = mail.outbox[0]
+        link = 'http://testing_campaign_1.localhost:8000/%s/spolecnost/zadost_admina/' % self.userprofile.language
+        self.assertTrue(link in msg.body)
+        if self.userprofile.language == 'cs':
+            message = "Zpráva pro Testing User, koordinátora organizace Testing Company v soutěži Testing campaign 1"
+        else:
+            message = "A message for Testing User, a company coordinator in Testing Company in the Testing campaign 1 competition."
+        self.assertTrue(message in msg.body)
 
     def test_send_company_admin_rejected_mail(self):
         email.company_admin_rejected_mail(self.company_admin)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - koordinátor organizace - zamítnutí správcovství organizace")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
+        msg = mail.outbox[0]
+        if self.userprofile.language == 'cs':
+            message = "Zpráva pro Testing User ze soutěže Testing campaign 1."
+        else:
+            message = "A message for Testing User from the Testing campaign 1 competition."
+        self.assertTrue(message in msg.body)
 
 
 class TestEmailsEn(TestEmails):
     def setUp(self):
         super(TestEmailsEn, self).setUp()
         self.userprofile.language = "en"
-        self.company_admin.user.userprofile.language = "en"
+        self.company_admin.userprofile.language = "en"

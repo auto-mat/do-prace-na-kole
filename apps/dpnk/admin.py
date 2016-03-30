@@ -414,10 +414,16 @@ class UserProfileForm(forms.ModelForm):
         self.fields['telephone'].required = False
 
 
+class CompanyAdminInline(NestedTabularInline):
+    raw_id_fields = ('administrated_company',)
+    extra = 0
+    model = models.CompanyAdmin
+
+
 class UserProfileAdminInline(NestedStackedInline):
     model = models.UserProfile
     form = UserProfileForm
-    inlines = [UserAttendanceInline, ]
+    inlines = [UserAttendanceInline, CompanyAdminInline]
     filter_horizontal = ('administrated_cities',)
     search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username']
 
@@ -435,12 +441,6 @@ class UserProfileAdminInline(NestedStackedInline):
 
     def team__subsidiary__city(self, obj):
         return obj.team.subsidiary.city
-
-
-class CompanyAdminInline(NestedTabularInline):
-    raw_id_fields = ('administrated_company',)
-    extra = 0
-    model = models.CompanyAdmin
 
 
 class HasUserprofileFilter(SimpleListFilter):
@@ -472,6 +472,7 @@ remove_mailing_id.short_description = _(u"Odstranit mailing ID a hash")
 
 class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     list_display = ('user', '__str__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
+    inlines = (CompanyAdminInline,)
     list_filter = (
         campaign_filter_generator('userattendance_set__campaign'),
         'language',
@@ -485,15 +486,15 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
 
 
 class UserAdmin(ExportMixin, NestedModelAdmin, UserAdmin):
-    inlines = (CompanyAdminInline, UserProfileAdminInline)
+    inlines = (UserProfileAdminInline,)
     list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'last_login', 'userprofile_administrated_cities', 'id')
-    search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name', ]
+    search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__company_admin__administrated_company__name', ]
     list_filter = [
         'userprofile__userattendance_set__campaign',
         'is_staff',
         'is_superuser',
         'is_active',
-        'company_admin__company_admin_approved',
+        'userprofile__company_admin__company_admin_approved',
         HasUserprofileFilter,
         'userprofile__sex',
         'userprofile__administrated_cities',
@@ -1176,10 +1177,12 @@ update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
 
 class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsidiaries__city'), RelatedFieldAdmin):
     list_display = [
-        'user',
-        'user__email',
-        'user__userprofile',
-        'user__userprofile__telephone',
+        'userprofile__user',
+        'userprofile__user__email',
+        'userprofile',
+        'userprofile__user__first_name',
+        'userprofile__user__last_name',
+        'userprofile__telephone',
         'company_admin_approved',
         'administrated_company__name',
         'can_confirm_payments',
@@ -1192,11 +1195,12 @@ class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsi
         'administrated_company__subsidiaries__city']
     search_fields = [
         'administrated_company__name',
-        'user__first_name',
-        'user__last_name',
-        'user__username',
-        'user__email']
-    raw_id_fields = ['user', ]
+        'userprofile__nickname',
+        'userprofile__user__first_name',
+        'userprofile__user__last_name',
+        'userprofile__user__username',
+        'userprofile__user__email']
+    raw_id_fields = ['userprofile']
     list_max_show_all = 100000
     actions = (update_mailing_coordinator,)
 
