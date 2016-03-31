@@ -147,7 +147,7 @@ class CompanyAdminView(RegistrationViewMixin, UpdateView):
     model = CompanyAdmin
     success_url = 'profil'
     registration_phase = "typ_platby"
-    title = _("Chci se stát správcem organizce")
+    title = _("Chci se stát koordinátorem organizce")
 
     @method_decorator(login_required)
     @must_be_competitor

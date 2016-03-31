@@ -1234,7 +1234,7 @@ class CompanyAdmin(models.Model):
 
     userprofile = models.ForeignKey(
         UserProfile,
-        verbose_name=_(u"User profile"),
+        verbose_name=_(u"Uživatelský profil"),
         related_name='company_admin',
         null=False,
         blank=False,
