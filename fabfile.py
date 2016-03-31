@@ -182,6 +182,15 @@ def dpnkd():
         '-d "deployment[revision]=%s" https://api.newrelic.com/deployments.xml' % release)
 
 
+def dpnkd_test():
+    "Use the local virtual server"
+    env.hosts = ['rs.dopracenakole.net']
+    env.path = '/home/aplikace/dpnk-devel'
+    env.user = 'pdlouhy'
+    env.virtualhost_path = "/"
+    env.app_name = "dpnk"
+
+
 def dpnk():
     "Use the local virtual server"
     api.local("[ `git rev-parse --abbrev-ref HEAD` = 'master' ] || (read -p 'Do you want to deploy non-master branch?' ans && [ $ans = 'yes' ])")
