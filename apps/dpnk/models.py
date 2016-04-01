@@ -910,11 +910,11 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def get_nonreduced_length(self):
         return results.get_userprofile_nonreduced_length(self)
 
-    def get_distance(self, round_digits=2):
+    def get_distance(self, round_digits=2, request=None):
         if self.track:
             length = UserAttendance.objects.length().get(id=self.id).length
             if not length:
-                logger.error("length not available for user %s" % self)
+                logger.error("length not available", extra={'request': request, 'username': self.userprofile.user.username})
                 return 0
             return round(length.km, round_digits)
         else:

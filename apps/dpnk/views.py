@@ -562,14 +562,14 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         }
 
         if payment_type in ('pay', 'pay_beneficiary'):
-            logger.error("Payment type: '%s'" % payment_type, extra={'request': self.request})
+            logger.error("Wrong payment type", extra={'request': self.request, 'payment_type': payment_type})
             return HttpResponse(_(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."), status=500)
         else:
             payment_choice = payment_choices[payment_type]
             if payment_choice:
                 Payment(user_attendance=self.user_attendance, amount=payment_choice['amount'], pay_type=payment_choice['type'], status=models.Status.NEW).save()
                 messages.add_message(self.request, messages.WARNING, payment_choice['message'], fail_silently=True)
-                logger.info('Inserting %s payment for %s' % (payment_type, self.user_attendance))
+                logger.info('Inserting payment', extra={'payment_type': payment_type, 'username': self.user_attendance.userprofile.user.username})
 
         return super(PaymentTypeView, self).form_valid(form)
 
@@ -745,8 +745,14 @@ def payment_status(request):
 
     if p.amount != amount:
         logger.error(
-            'Payment amount doesn\'t match: pay_type: %s, status: %s, payment response: %s, expected amount: %s' %
-            (p.pay_type, p.status, r, p.amount), extra={'request': request})
+            'Payment amount doesn\'t match',
+            extra={
+                'pay_type': p.pay_type,
+                'status': p.status,
+                'payment_response': r,
+                'expected_amount': p.amount,
+                'request': request
+            })
         return HttpResponse("Bad amount", status=400)
     p.pay_type = r['trans_pay_type']
     p.status = r['trans_status']
@@ -783,7 +789,7 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
             return models.CityInCampaign.objects.none()
 
     def get_initial(self):
-        distance = self.user_attendance.get_distance()
+        distance = self.user_attendance.get_distance(request=self.request)
         return [{'distance': distance, 'date': trip[0], 'direction': trip[1], 'user_attendance': self.user_attendance} for trip in self.uncreated_trips]
 
     def get_factory_kwargs(self):
@@ -939,7 +945,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
         try:
             competition = Competition.objects.get(slug=competition_slug)
         except Competition.DoesNotExist:
-            logger.exception('Unknown competition slug %s, request: %s' % (competition_slug, self.request))
+            logger.exception('Unknown competition', extra={'slug': competition_slug, 'request': self.request})
             return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme.'
                                   u' Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na'
                                   u' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž">kontakt@dopracenakole.cz</a></div>'), status=401)
@@ -1004,7 +1010,7 @@ class ChangeTShirtView(RegistrationViewMixin, UpdateView):
 
 
 def handle_uploaded_file(source, username):
-    logger.info("Saving file: username: %s, filename: %s" % (username, source.name))
+    logger.info("Saving file", extra={'username': username, 'filename': source.name})
     fd, filepath = tempfile.mkstemp(suffix=u"_%s&%s" % (username, unidecode(source.name).replace(" ", "_")), dir=settings.MEDIA_ROOT + u"/questionaire")
     with open(filepath, 'wb') as dest:
         shutil.copyfileobj(source, dest)
@@ -1027,7 +1033,7 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
         try:
             self.competition = Competition.objects.get(slug=questionaire_slug)
         except Competition.DoesNotExist:
-            logger.exception('Unknown questionaire slug %s, request: %s' % (questionaire_slug, request))
+            logger.exception('Unknown questionaire', extra={'slug': questionaire_slug, 'request': request})
             return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme.'
                                   u' Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na'
                                   u' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující dotazník">kontakt@dopracenakole.cz</a></div>'), status=401)
@@ -1407,9 +1413,15 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
                 userprofile = approved_user.userprofile
                 if approved_user.approved_for_team not in ('undecided', 'denied') or not userprofile.user.is_active or approved_user.team != self.user_attendance.team:
                     logger.error(
-                        u'Approving user with wrong parameters. User: %s (%s), approval: %s, team: %s, active: %s' %
-                        (userprofile.user, userprofile.user.username, approved_user.approved_for_team, approved_user.team, userprofile.user.is_active),
-                        extra={'request': request})
+                        'Approving user with wrong parameters.',
+                        extra={
+                            'request': request,
+                            'user': userprofile.user,
+                            'username': userprofile.user.username,
+                            'approval': approved_user.approved_for_team,
+                            'team': approved_user.team,
+                            'active': userprofile.user.is_active,
+                        })
                     messages.add_message(
                         request,
                         messages.ERROR,
