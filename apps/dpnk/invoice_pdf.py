@@ -40,7 +40,7 @@ def make_invoice_sheet_pdf(outfile, invoice):
 
     provider = Provider(
         "Auto*Mat, z.s.",
-        email="auto-mat@auto-mat.cz",
+        email="kontakt@dopracenakole.cz",
         address="Bořivojova 694/108",
         zip="130 00",
         city="Praha 3",
@@ -50,10 +50,9 @@ def make_invoice_sheet_pdf(outfile, invoice):
         ir="22670319",
         phone="212 240 666",
         logo_filename=os.path.join(DIR, "static/img/logo.jpg"),
-        note="""Sdružení Auto*Mat bylo zaregistrováno u MV ČR pod č. VS/1-1/68 776/07-R.
-U Městského soudu v Praze jsme vedeni pod spisovou značkou L 18119.
-Společně s vámi tvoříme město, ve kterém chceme žít. www.auto-mat.cz
-""",
+        note="Spolek je veden u Městského soudu v Praze pod spisovou značkou L 18119.\n"
+             "Auto*mat - společně s vámi tvoříme město, ve kterém chceme žít.\n"
+             "                                       http://www.auto-mat.cz"
     )
 
     creator = Creator(
