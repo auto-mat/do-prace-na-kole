@@ -944,6 +944,11 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertTrue("1323575433" in pdf_string)
         self.assertTrue("Testing company" in pdf_string)
 
+    def test_company_payment_no_t_shirt_size(self):
+        self.user_attendance.t_shirt_size = None
+        self.user_attendance.save()
+        self.company_payment(amount=130.0, amount_tax=157)
+
     def test_company_payment(self):
         self.company_payment(amount=130.0, amount_tax=157)
 

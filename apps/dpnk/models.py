@@ -787,28 +787,26 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def __str__(self):
         return self.userprofile.name()
 
-    def admission_fee(self):
+    def t_shirt_price(self):
         if self.t_shirt_size:
-            t_shirt_price = self.t_shirt_size.price
+            return self.t_shirt_size.price
         else:
-            t_shirt_price = 0
+            return 0
+
+    def admission_fee(self):
         if self.campaign.late_admission_phase_actual():
-            return self.campaign.late_admission_fee + t_shirt_price
+            return self.campaign.late_admission_fee + self.t_shirt_price()
         else:
-            return self.campaign.admission_fee + t_shirt_price
+            return self.campaign.admission_fee + self.t_shirt_price()
 
     def beneficiary_admission_fee(self):
-        if self.t_shirt_size:
-            t_shirt_price = self.t_shirt_size.price
-        else:
-            t_shirt_price = 0
-        return self.campaign.benefitial_admission_fee + t_shirt_price
+        return self.campaign.benefitial_admission_fee + self.t_shirt_price()
 
     def company_admission_fee(self):
         if self.campaign.late_admission_phase_actual():
-            return self.campaign.late_admission_fee_company + self.t_shirt_size.price
+            return self.campaign.late_admission_fee_company + self.t_shirt_price()
         else:
-            return self.campaign.admission_fee_company + self.t_shirt_size.price
+            return self.campaign.admission_fee_company + self.t_shirt_price()
 
     @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
     @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
