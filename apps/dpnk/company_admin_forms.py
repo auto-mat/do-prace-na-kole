@@ -21,7 +21,7 @@
 from django.contrib.auth.models import User
 from django import forms
 from .forms import AdressForm
-from .models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice, Subsidiary
+from .models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice, Subsidiary, City
 from django.utils.translation import ugettext_lazy as _, string_concat
 from .util import slugify
 from .forms import SubmitMixin
@@ -81,6 +81,13 @@ class SubsidiaryForm(SubmitMixin, AdressForm):
             'address_city',
             'city',
         )
+
+    def __init__(self, *args, **kwargs):
+        initial = kwargs.pop('initial', None)
+        company_admin = initial['company_admin']
+        ret_val = super().__init__(*args, **kwargs)
+        self.fields['city'].queryset = City.objects.filter(cityincampaign__campaign=company_admin.campaign)
+        return ret_val
 
 
 class CompanyAdminForm(SubmitMixin, forms.ModelForm):
