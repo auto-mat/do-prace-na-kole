@@ -33,7 +33,7 @@ def make_address(**fields):
 {m[ac_number]:<15.15}\
 {m[name]:<30.30}\
 {m[street1]:<30.30}\
-{m[street2]:<30.30}\
+{m[address_line]:<30.30}\
 {m[town]:<30.30}\
 {m[county]:<30.30}\
 {m[postcode]:<9.9}\
@@ -158,6 +158,7 @@ def make_avfull(outfile, delivery_batch):
                 "contact_name": user_attendance.userprofile.user.get_full_name(),
                 "phone": user_attendance.userprofile.telephone.replace(" ", ""),
                 "street1": u"%s %s" % (subsidiary.address_street, subsidiary.address_street_number),
+                "address_line": user_attendance.userprofile.user.get_full_name(),
                 "town": subsidiary.address_city,
                 "postcode": str(subsidiary.address_psc),
                 "country_code": "CZ",
