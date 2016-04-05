@@ -189,6 +189,11 @@ class EditSubsidiaryView(TitleViewMixin, UpdateView):
     model = Subsidiary
     title = _("Upravit adresu pobočky")
 
+    def get_initial(self):
+        return {
+            'company_admin': self.company_admin,
+        }
+
     @method_decorator(login_required)
     @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
