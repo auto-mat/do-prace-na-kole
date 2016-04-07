@@ -21,7 +21,7 @@
             {% if user.representative_payment.pay_type == 'fc' %}
                <span class="
                {% if user.representative_payment.status == Status.NEW %}
-                  text-error
+                  text-danger
                {% elif user.representative_payment.status == Status.COMPANY_ACCEPTS %}
                   text-warning
                {% elif user.representative_payment.status == Status.INVOICE_MADE %}

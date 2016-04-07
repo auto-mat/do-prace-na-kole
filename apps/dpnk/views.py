@@ -946,7 +946,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
             competition = Competition.objects.get(slug=competition_slug)
         except Competition.DoesNotExist:
             logger.exception('Unknown competition', extra={'slug': competition_slug, 'request': self.request})
-            return HttpResponse(_(u'<div class="text-error">Tuto soutěž v systému nemáme.'
+            return HttpResponse(_(u'<div class="text-danger">Tuto soutěž v systému nemáme.'
                                   u' Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na'
                                   u' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž">kontakt@dopracenakole.cz</a></div>'), status=401)
 
@@ -1034,7 +1034,7 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
             self.competition = Competition.objects.get(slug=questionaire_slug)
         except Competition.DoesNotExist:
             logger.exception('Unknown questionaire', extra={'slug': questionaire_slug, 'request': request})
-            return HttpResponse(_(u'<div class="text-error">Tento dotazník v systému nemáme.'
+            return HttpResponse(_(u'<div class="text-danger">Tento dotazník v systému nemáme.'
                                   u' Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na'
                                   u' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující dotazník">kontakt@dopracenakole.cz</a></div>'), status=401)
         self.show_points = self.competition.has_finished() or self.userprofile.user.is_superuser
@@ -1170,7 +1170,7 @@ def questionnaire_answers(
     try:
         competitor_result = competition.get_results().get(pk=request.GET['uid'])
     except:
-        return HttpResponse(_(u'<div class="text-error">Nesprávně zadaný soutěžící.</div>'), status=401)
+        return HttpResponse(_(u'<div class="text-danger">Nesprávně zadaný soutěžící.</div>'), status=401)
     answers = Answer.objects.filter(
         user_attendance__in=competitor_result.user_attendances(),
         question__competition__slug=competition_slug)
