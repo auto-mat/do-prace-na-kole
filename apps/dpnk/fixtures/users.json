@@ -27,6 +27,7 @@
         "fields": {
             "name": "Testing company",
             "ico": "11111",
+            "dic": "CZ1234567890",
             "address_psc": "11111",
             "address_street_number": "1",
             "address_street": "Ulice",

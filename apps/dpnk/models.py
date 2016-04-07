@@ -207,7 +207,7 @@ class Company(models.Model):
     )
     dic = models.CharField(
         verbose_name=_(u"DIČ"),
-        max_length=10,
+        max_length=15,
         default="",
         null=True,
         blank=True,
