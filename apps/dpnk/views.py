@@ -235,6 +235,9 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
         return context_data
 
     @method_decorator(login_required_simple)
+    @user_attendance_has(
+        lambda ua: ua.team.member_count == 1 and ua.team.unapproved_member_count > 0,
+        _(u"Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."))
     @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
         return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
@@ -283,13 +286,10 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
         else:
             form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign, 'name': self.get_previous_team_name()})
             form.fields['team'].required = True
-        old_team = self.user_attendance.team
 
         form_valid = form.is_valid()
 
         if form_valid and company_valid and subsidiary_valid and team_valid:
-            team_changed = form.cleaned_data and 'team' in form.cleaned_data and old_team != form.cleaned_data['team']
-
             company = None
             subsidiary = None
             team = None
@@ -333,10 +333,6 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
                 team_created_mail(self.user_attendance)
 
             form.save()
-
-            if team_changed and not create_team:
-                self.user_attendance.approved_for_team = 'undecided'
-                self.user_attendance.save()
 
             if self.user_attendance.approved_for_team != 'approved':
                 approval_request_mail(self.user_attendance)

@@ -77,6 +77,16 @@
     {
         "fields": {
             "campaign": 339,
+            "subsidiary": 1,
+            "invitation_token": "token123216",
+            "name": "Empty team"
+        },
+        "model": "dpnk.team",
+        "pk": 4
+    },
+    {
+        "fields": {
+            "campaign": 339,
             "subsidiary": 2,
             "invitation_token": "token123215",
             "name": "Team in different subsidiary"

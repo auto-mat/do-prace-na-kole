@@ -442,7 +442,7 @@ class FilterTests(TestCase):
         request = self.factory.get("")
         f = filters.HasTeamFilter(request, {"user_has_team": "yes"}, models.UserAttendance, None)
         q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 5)
+        self.assertEquals(q.count(), 6)
 
     def test_has_team_filter_no(self):
         request = self.factory.get("")
@@ -472,7 +472,7 @@ class FilterTests(TestCase):
         request = self.factory.get("")
         f = filters.HasRidesFilter(request, {"has_rides": "no"}, models.UserAttendance, None)
         q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 5)
+        self.assertEquals(q.count(), 6)
 
     def test_has_voucher_filter_yes(self):
         request = self.factory.get("")
@@ -484,14 +484,14 @@ class FilterTests(TestCase):
         request = self.factory.get("")
         f = filters.HasVoucherFilter(request, {"has_voucher": "no"}, models.UserAttendance, None)
         q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 6)
+        self.assertEquals(q.count(), 7)
 
     def test_campaign_filter_campaign(self):
         request = self.factory.get("")
         request.subdomain = "testing-campaign"
         f = filters.CampaignFilter(request, {"campaign": "testing-campaign"}, models.UserAttendance, None)
         q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 4)
+        self.assertEquals(q.count(), 5)
 
     def test_campaign_filter_none(self):
         request = self.factory.get("")
@@ -518,7 +518,7 @@ class FilterTests(TestCase):
         request.subdomain = "testing-campaign"
         f = filters.CampaignFilter(request, {"campaign": "all"}, models.UserAttendance, None)
         q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 6)
+        self.assertEquals(q.count(), 7)
 
 
 class PaymentTests(DenormMixin, TestCase):
@@ -731,6 +731,23 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
         self.assertRedirects(response, reverse("zmenit_triko"))
         self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(UserAttendance.objects.get(pk=1115).approved_for_team, "undecided")
+
+    def test_dpnk_team_view_choose_empty_team(self):
+        models.PackageTransaction.objects.all().delete()
+        models.Payment.objects.all().delete()
+        self.user_attendance.approved_for_team = "undecided"
+        self.user_attendance.save()
+        post_data = {
+            'company': '1',
+            'subsidiary': '1',
+            'team': '4',
+            'prev': 'Prev',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        self.assertRedirects(response, reverse("upravit_profil"))
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(UserAttendance.objects.get(pk=1115).approved_for_team, "approved")
 
     def test_dpnk_update_profile_view(self):
         post_data = {
@@ -830,6 +847,35 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
         self.assertContains(response, "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží.")
 
+    def test_dpnk_team_undecided(self):
+        models.PackageTransaction.objects.all().delete()
+        for team_member in self.user_attendance.team.all_members():
+            if team_member != self.user_attendance:
+                team_member.approved_for_team = 'undecided'
+                team_member.save()
+        denorm.flush()
+        team = models.Team.objects.get(pk=1)
+        self.assertEquals(team.member_count, 1)
+        self.assertEquals(team.unapproved_member_count, 2)
+        response = self.client.get(reverse('zmenit_tym'))
+        self.assertContains(response, "Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým.", status_code=403)
+
+    def test_dpnk_team_change_alone(self):
+        models.PackageTransaction.objects.all().delete()
+        models.Payment.objects.all().delete()
+        for team_member in self.user_attendance.team.all_members():
+            if team_member != self.user_attendance:
+                team_member.team = None
+                team_member.save()
+        self.user_attendance.approved_for_team = 'undecided'
+        self.user_attendance.save()
+        denorm.flush()
+        team = models.Team.objects.get(pk=1)
+        self.assertEquals(team.member_count, 0)
+        self.assertEquals(team.unapproved_member_count, 1)
+        response = self.client.get(reverse('zmenit_tym'))
+        self.assertEquals(response.status_code, 200)
+
     def test_dpnk_t_shirt_size(self):
         post_data = {
             't_shirt_size': '1',
@@ -918,6 +964,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEquals(user.team.name, "Created team")
         self.assertEquals(user.team.subsidiary.address.street, "Created street")
         self.assertEquals(user.team.subsidiary.company.name, "Created company")
+        self.assertEquals(UserAttendance.objects.get(pk=1115).approved_for_team, "approved")
 
     def company_payment(self, amount, amount_tax, beneficiary=False):
         response = self.client.get(reverse('company_admin_pay_for_users'))
