@@ -38,6 +38,9 @@
          {% else %}
             {% trans "žádná platba" %}
          {% endif %}
+         {% if user.approved_for_team != 'approved' %}
+            - <span class="text-danger">{% trans "neschválené členství v týmu" %}</span>
+         {% endif %}
       </li>
       {% endif %}
       {% endfor %}

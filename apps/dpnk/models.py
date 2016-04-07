@@ -262,7 +262,7 @@ class Subsidiary(models.Model):
     objects = models.Manager()
 
     def __str__(self):
-        return get_address_string(self.address)
+        return "%s - %s" % (get_address_string(self.address), self.city)
 
     def name(self):
         return get_address_string(self.address)
