@@ -84,9 +84,13 @@ class TestActions(TestCase):
         queryset = models.UserAttendance.objects.all()
         actions.recalculate_results(self.modeladmin, self.request, queryset)
 
-    def test_touch_user_attendance(self):
+    def test_touch_items_user_attendance(self):
         queryset = models.UserAttendance.objects.all()
-        actions.touch_user_attendance(self.modeladmin, self.request, queryset)
+        actions.touch_items(self.modeladmin, self.request, queryset)
+
+    def test_touch_items_team(self):
+        queryset = models.Team.objects.all()
+        actions.touch_items(self.modeladmin, self.request, queryset)
 
     def test_recalculate_competitions_results(self):
         queryset = models.Competition.objects.all()

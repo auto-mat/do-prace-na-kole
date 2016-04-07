@@ -27,6 +27,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils import six
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
+from django.contrib import contenttypes
+import denorm
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
@@ -114,6 +116,17 @@ def get_or_none(model, *args, **kwargs):
         return model.objects.get(*args, **kwargs)
     except model.DoesNotExist:
         return None
+
+
+# TODO: move this to denorm application
+def rebuild_denorm_models(models):
+    for model in models:
+        content_type = contenttypes.models.ContentType.objects.get_for_model(model.__class__)
+        denorm.models.DirtyInstance.objects.create(
+            content_type=content_type,
+            object_id=model.pk,
+        )
+        denorm.flush()
 
 
 def day_active_last7(day):

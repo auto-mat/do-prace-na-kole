@@ -22,7 +22,7 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.core.management import call_command
 from django.test.utils import override_settings
-from dpnk import results, models, mailing, views, filters, company_admin_views, actions
+from dpnk import results, models, mailing, views, filters, company_admin_views, util
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment, CompanyAdmin
 import datetime
 import django
@@ -152,7 +152,7 @@ class ViewsTests(DenormMixin, TestCase):
         for payment in Payment.objects.all():
             payment.status = models.Status.DONE
             payment.save()
-        actions.rebuild_user_attendances(UserAttendance.objects.all())
+        util.rebuild_denorm_models(UserAttendance.objects.all())
         response = self.client.get(address)
         print_response(response)
         self.assertContains(response, "<td>Testing city</td>\n   <td>2</td>")

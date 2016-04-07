@@ -696,7 +696,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         actions.show_distance,
         actions.assign_vouchers,
         actions.add_trips,
-        actions.touch_user_attendance,
+        actions.touch_items,
     )
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
@@ -775,7 +775,10 @@ class TeamAdmin(ExportMixin, RelatedFieldAdmin):
     list_filter = [CampaignFilter, 'subsidiary__city', 'member_count']
     list_max_show_all = 10000
     raw_id_fields = ['subsidiary', ]
-    actions = (recalculate_team_member_count, )
+    actions = (
+        recalculate_team_member_count,
+        actions.touch_items,
+    )
 
     readonly_fields = ['members', 'invitation_token', 'member_count']
 
