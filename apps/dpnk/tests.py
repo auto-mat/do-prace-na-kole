@@ -809,7 +809,7 @@ class ViewsTestsLogon(ViewsLogon):
         models.Payment.objects.all().delete()
         self.user_attendance.save()
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
-        self.assertContains(response, "Tento tým již má pět členů a je tedy plný")
+        self.assertContains(response, "Tento tým již má plný počet členů")
 
     def test_dpnk_team_view_choose_team_out_of_campaign(self):
         post_data = {

@@ -610,8 +610,8 @@ msgid "Prázdný"
 msgstr "Empty"
 
 #: forms.py:53
-msgid "Tento tým již má pět členů a je tedy plný"
-msgstr "This team has already got five members - it is full"
+msgid "Tento tým již má plný počet členů"
+msgstr "This team is already full"
 
 #: forms.py:85
 msgid "Předchozí"

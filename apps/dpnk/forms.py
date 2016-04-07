@@ -50,7 +50,7 @@ def team_full(data):
     if models.UserAttendance.objects.\
             filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, userprofile__user__is_active=True).\
             count() >= settings.MAX_TEAM_MEMBERS:
-        raise forms.ValidationError(_(u"Tento tým již má pět členů a je tedy plný"))
+        raise forms.ValidationError(_(u"Tento tým již má plný počet členů"))
 
 
 class UserLeafletWidget(LeafletWidget):
