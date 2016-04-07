@@ -22,7 +22,7 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.core.management import call_command
 from django.test.utils import override_settings
-from dpnk import results, models, mailing, views, filters, company_admin_views
+from dpnk import results, models, mailing, views, filters, company_admin_views, actions
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment, CompanyAdmin
 import datetime
 import django
@@ -116,7 +116,7 @@ class AdminModulesTests(DenormMixin, TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'views', 'users']
+    fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
 
     def setUp(self):
         super().setUp()
@@ -146,6 +146,16 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('registrace')
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
+
+    def test_competitor_counts(self):
+        address = reverse('competitor_counts')
+        for payment in Payment.objects.all():
+            payment.status = models.Status.DONE
+            payment.save()
+        actions.rebuild_user_attendances(UserAttendance.objects.all())
+        response = self.client.get(address)
+        print_response(response)
+        self.assertContains(response, "<td>Testing city</td>\n   <td>2</td>")
 
     def test_dpnk_company_admin_registration(self):
         address = reverse('register_admin')

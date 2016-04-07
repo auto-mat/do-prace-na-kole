@@ -37,7 +37,7 @@ from django.views.decorators.gzip import gzip_page
 from .decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase, must_be_owner
 from django.contrib.auth.decorators import login_required as login_required_simple
 from django.contrib.auth import logout
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, Count
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.safestring import mark_safe
@@ -1567,6 +1567,34 @@ def daily_distance_json(
     values = collections.OrderedDict((str(day), period_distance(campaign, day, day)) for day in util.days(campaign))
     data = json.dumps(values)
     return HttpResponse(data)
+
+
+class CompetitorCountView(TitleViewMixin, TemplateView):
+    template_name = 'registration/competitor_count.html'
+    title = _("Počty soutěžících")
+
+    @method_decorator(cache_page(60 * 60))  # cache in memcached for 1h
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        campaign_slug = self.request.subdomain
+        campaign = Campaign.objects.get(slug=campaign_slug)
+        context_data['cities'] =\
+            City.objects.\
+            filter(subsidiary__teams__users__payment_status='done', subsidiary__teams__users__campaign=campaign).\
+            annotate(competitor_count=Count('subsidiary__teams__users')).\
+            order_by('-competitor_count')
+        context_data['without_city'] =\
+            UserAttendance.objects.\
+            filter(payment_status='done', campaign=campaign, team=None).\
+            count()
+        context_data['total'] =\
+            UserAttendance.objects.\
+            filter(payment_status='done', campaign=campaign).\
+            count()
+        return context_data
 
 
 class BikeRepairView(CreateView):

@@ -1,0 +1,25 @@
+{% extends "base_generic.html" %}
+{% load i18n %}
+
+{% block content %}
+<table class="table table-striped table-bordered table-hover">
+<tr>
+   <th>{% trans "Město" %}</th>
+   <th>{% trans "Počet soutěžících" %}</th>
+</tr>
+{% for city in cities %}
+<tr>
+   <td>{{ city.name }}</td>
+   <td>{{ city.competitor_count }}</td>
+</tr>
+{% endfor %}
+<tr>
+   <td>{% trans "bez vybraného města" %}</td>
+   <td>{{ without_city }}</td>
+</tr>
+<tr>
+   <th>{% trans "celkem" %}</th>
+   <th>{{ total }}</th>
+</tr>
+</table>
+{% endblock %}
