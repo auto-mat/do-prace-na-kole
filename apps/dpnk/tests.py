@@ -154,7 +154,6 @@ class ViewsTests(DenormMixin, TestCase):
             payment.save()
         util.rebuild_denorm_models(UserAttendance.objects.all())
         response = self.client.get(address)
-        print_response(response)
         self.assertContains(response, "<td>Testing city</td>\n   <td>2</td>")
 
     def test_dpnk_company_admin_registration(self):
