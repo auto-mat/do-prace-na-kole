@@ -22,7 +22,8 @@ from django.utils.translation import ugettext_lazy as _
 from . import results
 from . import views
 from . import models, mailing
-from django.contrib import messages
+from django.contrib import messages, contenttypes
+import denorm
 
 
 def recalculate_competitions_results(modeladmin, request, queryset):
@@ -46,9 +47,18 @@ normalize_questionnqire_admissions.short_description = _(u"Obnovit přihlášky 
 
 # ---- USER_ATTENDANCE -----
 
+def rebuild_user_attendances(user_attendances):
+    content_type = contenttypes.models.ContentType.objects.get_for_model(models.UserAttendance)
+    for user_attendance in user_attendances.all():
+        denorm.models.DirtyInstance.objects.create(
+            content_type=content_type,
+            object_id=user_attendance.pk,
+        )
+    denorm.flush()
+
+
 def touch_user_attendance(modeladmin, request, queryset):
-    for user_attendance in queryset.all():
-        user_attendance.save()
+    rebuild_user_attendances(queryset)
     modeladmin.message_user(request, _(u"Touch proběhl úspěšně"))
 touch_user_attendance.short_description = _(u"Touch vybrané účastníky v kampani")
 
