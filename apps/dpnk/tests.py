@@ -255,7 +255,7 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('profil')
         response = self.client.get(address)
         self.assertRedirects(response, reverse('upravit_profil'))
-        user_attendance = UserAttendance.objects.get(userprofile__user__username='user_without_attendance', campaign__pk=339)
+        user_attendance = UserAttendance.objects.length().get(userprofile__user__username='user_without_attendance', campaign__pk=339)
         self.assertEqual(user_attendance.userprofile.user.pk, 1041)
         self.assertEqual(user_attendance.get_distance(), 156.9)
 
@@ -1095,7 +1095,7 @@ class TrackViewTests(ViewsLogon):
             }
             response = self.client.post(address, post_data, follow=True)
         self.assertRedirects(response, reverse('profil'))
-        user_attendance = UserAttendance.objects.get(pk=1115)
+        user_attendance = UserAttendance.objects.length().get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 13.32)
 
     def test_dpnk_views_track(self):
@@ -1111,7 +1111,7 @@ class TrackViewTests(ViewsLogon):
         }
         response = self.client.post(address, post_data, follow=True)
         self.assertRedirects(response, reverse('profil'))
-        user_attendance = UserAttendance.objects.get(pk=1115)
+        user_attendance = UserAttendance.objects.length().get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 0.74)
 
     def test_dpnk_views_track_only_distance(self):
@@ -1124,7 +1124,7 @@ class TrackViewTests(ViewsLogon):
         }
         response = self.client.post(address, post_data, follow=True)
         self.assertRedirects(response, reverse('profil'))
-        user_attendance = UserAttendance.objects.get(pk=1115)
+        user_attendance = UserAttendance.objects.length().get(pk=1115)
         self.assertEquals(user_attendance.track, None)
         self.assertEquals(user_attendance.get_distance(), 12)
 

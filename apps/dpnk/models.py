@@ -910,7 +910,10 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     def get_distance(self, round_digits=2, request=None):
         if self.track:
-            length = UserAttendance.objects.length().get(id=self.id).length
+            if self.length:
+                length = self.length
+            else:
+                length = UserAttendance.objects.length().only('track').get(id=self.id).length
             if not length:
                 logger.error("length not available", extra={'request': request, 'username': self.userprofile.user.username})
                 return 0
