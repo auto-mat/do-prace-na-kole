@@ -295,6 +295,56 @@
     },
     {
         "fields": {
+            "approved_for_team": "undecided",
+            "campaign": 339,
+            "created": "2015-11-12T18:18:40.223",
+            "distance": null,
+            "dont_want_insert_track": false,
+            "get_rides_count_denorm": 0,
+            "t_shirt_size": null,
+            "team": 3,
+            "track": null,
+            "updated": "2015-11-12T18:18:40.223",
+            "userprofile": 5
+        },
+        "model": "dpnk.userattendance",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "administrated_cities": [],
+            "language": "cs",
+            "mailing_hash": null,
+            "mailing_id": "",
+            "nickname": null,
+            "note": null,
+            "sex": "male",
+            "telephone": "",
+            "user": 5
+        },
+        "model": "dpnk.userprofile",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:18:10",
+            "email": "unapproved@email.cz",
+            "first_name": "Unapproved",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2015-11-12T18:53:35.982",
+            "last_name": "User",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
+            "user_permissions": [],
+            "username": "unapproved_user"
+        },
+        "model": "auth.user",
+        "pk": 5
+    },
+    {
+        "fields": {
             "approved_for_team": "approved",
             "campaign": 338,
             "created": "2015-11-12T18:18:40.223",
