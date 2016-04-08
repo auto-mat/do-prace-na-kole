@@ -31,6 +31,8 @@ from dpnk.fields import ShowPointsMultipleModelChoiceField
 from django.forms.widgets import HiddenInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+from .string_lazy import mark_safe_lazy, format_html_lazy
+from django.utils.html import format_html
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinLengthValidator
 from leaflet.forms.widgets import LeafletWidget
@@ -38,7 +40,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, HTML, Field, Div
 from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import AuthenticationForm
-from django.utils.translation import string_concat
 from django.http import Http404
 from django.conf import settings
 from django_gpxpy import gpx_parse
@@ -399,15 +400,15 @@ class TeamAdminForm(SubmitMixin, forms.ModelForm):
 
 
 def small(string):
-    return mark_safe(string_concat("<small>", string, "</small>"))
+    return format_html_lazy("<small>{}</small>", string)
 
 
 class PaymentTypeForm(PrevNextMixin, forms.Form):
     CHOICES = [
         ('pay', _(u"Účastnický poplatek si platím sám.")),
-        ('pay_beneficiary', mark_safe(_(u"Chci podpořit tuto soutěž a zaplatit benefiční startovné. <i class='fa fa-heart'></i>"))),
+        ('pay_beneficiary', mark_safe_lazy(_(u"Chci podpořit tuto soutěž a zaplatit benefiční startovné. <i class='fa fa-heart'></i>"))),
         ('company', _(u"Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.")),
-        ('member_wannabe', mark_safe(_(u"Chci podpořit městskou cyklistiku a mít startovné trvale zdarma. <i class='fa fa-heart'></i>"))),
+        ('member_wannabe', mark_safe_lazy(_(u"Chci podpořit městskou cyklistiku a mít startovné trvale zdarma. <i class='fa fa-heart'></i>"))),
         ('member', small(_(u"Jsem členem Klubu přátel Auto*Matu, tedy mám startovné zdarma."))),
         ('free', small(_(u"Je mi poskytováno startovné zdarma."))),
     ]
@@ -421,11 +422,12 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
     def clean_payment_type(self):
         payment_type = self.cleaned_data['payment_type']
         if payment_type == 'company' and not self.user_attendance.get_asociated_company_admin().exists():
-            raise forms.ValidationError(mark_safe(
-                _(u"Váš zaměstnavatel %(employer)s nemá zvoleného koordinátora organizace."
-                  u" Vaše organizace bude muset nejprve ustanovit zástupce, který za ní bude schvalovat platby ve vaší organizaci."
-                  u"<ul><li><a href='%(url)s'>Chci se stát koordinátorem mé organizace</a></li></ul>")
-                % {'employer': self.user_attendance.team.subsidiary.company, 'url': reverse('company_admin_application')}))
+            raise forms.ValidationError(format_html(
+                _("Váš zaměstnavatel {employer} nemá zvoleného koordinátora organizace."
+                  " Vaše organizace bude muset nejprve ustanovit zástupce, který za ní bude schvalovat platby ve vaší organizaci."
+                  "<ul><li><a href='{url}'>Chci se stát koordinátorem mé organizace</a></li></ul>"),
+                employer=self.user_attendance.team.subsidiary.company,
+                url=reverse('company_admin_application')))
         return payment_type
 
 

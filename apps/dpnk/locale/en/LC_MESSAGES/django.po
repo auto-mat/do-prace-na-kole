@@ -429,11 +429,11 @@ msgstr "No team chosen"
 #: decorators.py:82
 #, python-format
 msgid ""
-"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a "
-"href='%(address)s'>Znovu požádat o ověření členství</a>."
+"Vaše členství v týmu {team} nebylo odsouhlaseno. <a "
+"href='{address}'>Znovu požádat o ověření členství</a>."
 msgstr ""
-"Your membership in the team %(team)s was not confirmed by the team "
-"coordinator. <a href='%(address)s'>Make a new request for the membership "
+"Your membership in the team {team} was not confirmed by the team "
+"coordinator. <a href='{address}'>Make a new request for the membership "
 "confirmation </a>."
 
 #: decorators.py:84
@@ -765,7 +765,7 @@ msgid ""
 "Chci podpořit tuto soutěž a zaplatit benefiční startovné. <i class='fa fa-"
 "heart'></i>"
 msgstr ""
-"I want to support this competition and pay beneficiary start-fee.<i "
+"I want to support this competition and pay beneficiary start-fee. <i "
 "class='fa fa-heart'></i>"
 
 #: forms.py:410
@@ -795,14 +795,14 @@ msgstr "Payment type"
 #: forms.py:426
 #, python-format
 msgid ""
-"Váš zaměstnavatel %(employer)s nemá zvoleného koordinátora organizace. Vaše "
+"Váš zaměstnavatel {employer} nemá zvoleného koordinátora organizace. Vaše "
 "organizace bude muset nejprve ustanovit zástupce, který za ní bude "
-"schvalovat platby ve vaší organizaci.<ul><li><a href='%(url)s'>Chci se stát "
+"schvalovat platby ve vaší organizaci.<ul><li><a href='{url}'>Chci se stát "
 "koordinátorem mé organizace</a></li></ul>"
 msgstr ""
-"Your employer %(employer)s hasn't selected a Company Coordinator yet. Your "
+"Your employer {employer} hasn't selected a Company Coordinator yet. Your "
 "organization will have to appoint a representative who will approve payments "
-"in your organization on its behalf.<ul><li><a href='%(url)s'>I want to be "
+"in your organization on its behalf.<ul><li><a href='{url}'>I want to be "
 "the Coordinator of my company</a></li></ul>"
 
 #: forms.py:435
@@ -2828,33 +2828,33 @@ msgstr ""
 #, python-format
 msgid ""
 "Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích "
-"určených pro jednotlivce! <ul><li><a href=\"%(invite_url)s\">Pozvěte</a> své "
+"určených pro jednotlivce! <ul><li><a href=\"{invite_url}\">Pozvěte</a> své "
 "kolegy do vašeho týmu, pokud jste tak již učinil/a, vyčkejte na potvrzující "
 "email a schvalte jejich členství v týmu.</li><li>Můžete se pokusit <a href="
-"\"%(join_team_url)s\">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete "
+"\"{join_team_url}\">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete "
 "sehnat spolupracovníky,  <a href=\"http://www.dopracenakole.cz/locations/"
-"%(city)s/seznamka\" target=\"_blank\">najděte si cykloparťáka</a>.</li></ul>"
+"{city}/seznamka\" target=\"_blank\">najděte si cykloparťáka</a>.</li></ul>"
 msgstr ""
 "You are alone in your team. This means that you will only be able to "
-"participate in categories for individuals!<ul><li><a href=\"%(invite_url)s"
+"participate in categories for individuals!<ul><li><a href=\"{invite_url}"
 "\">Invite</a> your colleagues to your team and if you've already done so, "
 "please wait for the confirmation email and approve your colleagues' "
 "membership.</li>\n"
-"<li>You can also try <a href=\"%(join_team_url)s\">to join another team</a>."
+"<li>You can also try <a href=\"{join_team_url}\">to join another team</a>."
 "</li>\n"
 "<li>If you can't gather other team members, use <a href=\"http://www."
-"dopracenakole.cz/locations/%(city)s/seznamka\" target=\"_blank\">the 'lonely "
+"dopracenakole.cz/locations/{city}/seznamka\" target=\"_blank\">the 'lonely "
 "hearts'</a> section.</li></ul>"
 
 #: views.py:170
 #, python-format
 msgid ""
-"Vaši kolegové musí v týmu %(team)s ještě musí potvrdit vaše členství. Pokud "
-"to trvá podezřele dlouho, můžete zkusit <a href='%(address)s'>znovu požádat "
+"Vaši kolegové musí v týmu {team} ještě musí potvrdit vaše členství. Pokud "
+"to trvá podezřele dlouho, můžete zkusit <a href='{address}'>znovu požádat "
 "o ověření členství</a>."
 msgstr ""
-"Your colleagues in the %(team)s team must confirm your membership. If it "
-"takes suspiciously long, you can try <a href='%(address)s'>to make a new "
+"Your colleagues in the {team} team must confirm your membership. If it "
+"takes suspiciously long, you can try <a href='{address}'>to make a new "
 "request for the membership confirmation </a>."
 
 #: views.py:175
@@ -2884,20 +2884,20 @@ msgstr ""
 #: views.py:187
 #, python-format
 msgid ""
-"Vaše platba typu %(payment_type)s ještě nebyla vyřízena. Počkejte prosím na "
-"její schválení. Pokud schválení není možné, můžete <a href=\"%(url)s\">zadat "
+"Vaše platba typu {payment_type} ještě nebyla vyřízena. Počkejte prosím na "
+"její schválení. Pokud schválení není možné, můžete <a href=\"{url}\">zadat "
 "jiný typ platby</a>."
 msgstr ""
-"Your %(payment_type)s payment is pending. Please wait for its approval. If "
-"the approval is not possible, you can <a href=\"%(url)s\">enter another "
+"Your {payment_type} payment is pending. Please wait for its approval. If "
+"the approval is not possible, you can <a href=\"{url}\">enter another "
 "payment type</a>."
 
 #: views.py:197
 #, python-format
-msgid "Nezapomeňte vyplnit odpovědi v následujících soutěžích: %s!"
+msgid "Nezapomeňte vyplnit odpovědi v následujících soutěžích: {}!"
 msgstr ""
 "Please do not forget to fill in the answers in the following competitions: "
-"%s!"
+"{}!"
 
 #: views.py:201
 msgid "Vaše žádost o funkci koordinátora organizace čeká na vyřízení."
@@ -3010,11 +3010,9 @@ msgstr "Your claim for a free start fee will have to be verified"
 #: views.py:560
 #, python-format
 msgid ""
-"Platbu ještě musí schválit koordinátor vaší organizace <a href='mailto:"
-"%(email)s'>%(email)s</a>"
+"Platbu ještě musí schválit koordinátor vaší organizace {email}"
 msgstr ""
-"The payment must be approved by the coordinator of your organization <a "
-"href='mailto:%(email)s'>%(email)s</a>"
+"The payment must be approved by the coordinator of your organization {email}"
 
 #: views.py:566
 msgid ""

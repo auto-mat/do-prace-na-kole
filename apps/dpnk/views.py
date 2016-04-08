@@ -41,6 +41,7 @@ from django.db.models import Sum, Q, Count
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 from django.views.decorators.cache import cache_page, never_cache, cache_control
 from django.views.generic.edit import FormView, UpdateView, CreateView
 from django.views.generic.base import TemplateView
@@ -151,26 +152,26 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                 messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members')))
             elif self.user_attendance.is_libero():
                 # TODO: get WP slug for city
-                messages.warning(request, mark_safe(
-                    _(u'Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce!'
-                      u' <ul><li><a href="%(invite_url)s">Pozvěte</a> své kolegy do vašeho týmu, pokud jste tak již učinil/a, '
-                      u'vyčkejte na potvrzující email a schvalte jejich členství v týmu.</li>'
-                      u'<li>Můžete se pokusit <a href="%(join_team_url)s">přidat se k jinému týmu</a>.</li>'
-                      u'<li>Pokud nemůžete sehnat spolupracovníky, '
-                      u' <a href="http://www.dopracenakole.cz/locations/%(city)s/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>')
-                    % {
-                        'invite_url':
-                        reverse('pozvanky'), 'join_team_url': reverse('zmenit_tym'), 'city': self.user_attendance.team.subsidiary.city.slug}))
+                messages.warning(request, format_html(_(
+                    'Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce!'
+                    ' <ul><li><a href="{invite_url}">Pozvěte</a> své kolegy do vašeho týmu, pokud jste tak již učinil/a, '
+                    'vyčkejte na potvrzující email a schvalte jejich členství v týmu.</li>'
+                    '<li>Můžete se pokusit <a href="{join_team_url}">přidat se k jinému týmu</a>.</li>'
+                    '<li>Pokud nemůžete sehnat spolupracovníky, '
+                    ' <a href="http://www.dopracenakole.cz/locations/{city}/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>'),
+                    invite_url=reverse('pozvanky'),
+                    join_team_url=reverse('zmenit_tym'),
+                    city=self.user_attendance.team.subsidiary.city.slug))
 
         if self.registration_phase == 'registration_uncomplete':
             if self.user_attendance.team:
                 if self.user_attendance.approved_for_team == 'undecided':
-                    messages.warning(request, mark_safe(
+                    messages.warning(request, format_html(
                         _(
-                            u"Vaši kolegové musí v týmu %(team)s ještě musí potvrdit vaše členství."
-                            u" Pokud to trvá podezřele dlouho, můžete zkusit"
-                            u" <a href='%(address)s'>znovu požádat o ověření členství</a>.") %
-                        {'team': self.user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}))
+                            "Vaši kolegové musí v týmu {team} ještě musí potvrdit vaše členství."
+                            " Pokud to trvá podezřele dlouho, můžete zkusit"
+                            " <a href='{address}'>znovu požádat o ověření členství</a>."),
+                        team=self.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi")))
                 elif self.user_attendance.approved_for_team == 'denied':
                     messages.error(request, mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')))
 
@@ -183,18 +184,18 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                       u' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu')))
 
             if self.user_attendance.payment_status not in ('done', 'none',):
-                messages.info(request, mark_safe(
-                    _('Vaše platba typu %(payment_type)s ještě nebyla vyřízena. '
+                messages.info(request, format_html(
+                    _('Vaše platba typu {payment_type} ještě nebyla vyřízena. '
                       'Počkejte prosím na její schválení. '
-                      'Pokud schválení není možné, můžete <a href="%(url)s">zadat jiný typ platby</a>.') %
-                    {'payment_type': self.user_attendance.payment_type_string(), 'url': reverse('typ_platby')}))
+                      'Pokud schválení není možné, můžete <a href="{url}">zadat jiný typ platby</a>.'),
+                    payment_type=self.user_attendance.payment_type_string(), url=reverse('typ_platby')))
 
         if self.registration_phase == 'profile_view':
             if self.user_attendance.has_unanswered_questionnaires:
                 competitions = ", ".join([
                     "<a href='%(url)s'>%(name)s</a>" %
                     {"url": reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}), "name": q.name} for q in self.user_attendance.unanswered_questionnaires().all()])
-                messages.info(request, mark_safe(_(u'Nezapomeňte vyplnit odpovědi v následujících soutěžích: %s!') % competitions))
+                messages.info(request, format_html(_(u'Nezapomeňte vyplnit odpovědi v následujících soutěžích: {}!'), competitions))
 
         company_admin = self.user_attendance.related_company_admin
         if company_admin and company_admin.company_admin_approved == 'undecided':
@@ -545,16 +546,20 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         payment_type = form.cleaned_data['payment_type']
 
         if payment_type == 'company':
-            company_admin_email_string = ", ".join(["<a href='mailto:%(email)s'>%(email)s</a>" % {
-                'email': a.userprofile.user.email} for a in self.user_attendance.get_asociated_company_admin()])
+            company_admin_email_string = mark_safe(", ".join([format_html(
+                "<a href='mailto:{email}'>{email}</a>",
+                email=a.userprofile.user.email
+                ) for a in self.user_attendance.get_asociated_company_admin()]))
         else:
             company_admin_email_string = ""
         payment_choices = {
             'member': {'type': 'am', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
             'member_wannabe': {'type': 'amw', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
             'free': {'type': 'fe', 'message': _(u"Váš nárok na startovné zdarma bude muset být ještě ověřen"), 'amount': 0},
-            'company': {'type': 'fc', 'message': mark_safe(_(u"Platbu ještě musí schválit koordinátor vaší organizace <a href='mailto:%(email)s'>%(email)s</a>" % {
-                "email": company_admin_email_string})), 'amount': self.user_attendance.company_admission_fee()},
+            'company': {'type': 'fc', 'message': format_html(
+                _("Platbu ještě musí schválit koordinátor vaší organizace {email}"),
+                email=company_admin_email_string
+                ), 'amount': self.user_attendance.company_admission_fee()},
         }
 
         if payment_type in ('pay', 'pay_beneficiary'):
@@ -1402,7 +1407,7 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
                 action, approve_id = request.POST['approve'].split('-')
             except ValueError:
                 logger.exception(u'Can\'t split POST approve parameter', extra={'request': request})
-                messages.add_message(request, messages.ERROR, mark_safe(_(u"Nastala chyba při přijímání uživatele, patrně používáte zastaralý internetový prohlížeč.")))
+                messages.add_message(request, messages.ERROR, _(u"Nastala chyba při přijímání uživatele, patrně používáte zastaralý internetový prohlížeč."))
 
             if approve_id:
                 approved_user = UserAttendance.objects.get(id=approve_id)
@@ -1421,9 +1426,7 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
                     messages.add_message(
                         request,
                         messages.ERROR,
-                        mark_safe(_(
-                            u"Tento uživatel již byl přijat do týmu. Pravděpodobně jste dvakrát odeslali formulář."
-                        )),
+                        _("Tento uživatel již byl přijat do týmu. Pravděpodobně jste dvakrát odeslali formulář."),
                         extra_tags="user_attendance_%s" % approved_user.pk,
                         fail_silently=True)
                 else:
