@@ -790,6 +790,10 @@ class TeamAdmin(ExportMixin, RelatedFieldAdmin):
                 for u in models.UserAttendance.objects.filter(team=obj)]))
     members.short_description = _('Členové')
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related('campaign', 'subsidiary__company')
+
 
 class TransactionChildAdmin(PolymorphicChildModelAdmin):
     base_model = models.Transaction
