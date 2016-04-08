@@ -41,7 +41,7 @@ from django.db.models import Sum, Q, Count
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.safestring import mark_safe
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 from django.views.decorators.cache import cache_page, never_cache, cache_control
 from django.views.generic.edit import FormView, UpdateView, CreateView
 from django.views.generic.base import TemplateView
@@ -168,7 +168,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                 if self.user_attendance.approved_for_team == 'undecided':
                     messages.warning(request, format_html(
                         _(
-                            "Vaši kolegové musí v týmu {team} ještě musí potvrdit vaše členství."
+                            "Vaši kolegové v týmu {team} ještě musí potvrdit vaše členství."
                             " Pokud to trvá podezřele dlouho, můžete zkusit"
                             " <a href='{address}'>znovu požádat o ověření členství</a>."),
                         team=self.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi")))
@@ -192,9 +192,12 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
 
         if self.registration_phase == 'profile_view':
             if self.user_attendance.has_unanswered_questionnaires:
-                competitions = ", ".join([
-                    "<a href='%(url)s'>%(name)s</a>" %
-                    {"url": reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}), "name": q.name} for q in self.user_attendance.unanswered_questionnaires().all()])
+                competitions = format_html_join(
+                    ", ",
+                    "<a href='{}'>{}</a>", ((
+                        reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}),
+                        q.name
+                    ) for q in self.user_attendance.unanswered_questionnaires().all()))
                 messages.info(request, format_html(_(u'Nezapomeňte vyplnit odpovědi v následujících soutěžích: {}!'), competitions))
 
         company_admin = self.user_attendance.related_company_admin

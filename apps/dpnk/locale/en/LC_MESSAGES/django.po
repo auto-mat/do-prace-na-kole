@@ -2903,7 +2903,7 @@ msgstr ""
 #: views.py:171
 #, python-brace-format
 msgid ""
-"Vaši kolegové musí v týmu {team} ještě musí potvrdit vaše členství. Pokud to "
+"Vaši kolegové v týmu {team} ještě musí potvrdit vaše členství. Pokud to "
 "trvá podezřele dlouho, můžete zkusit <a href='{address}'>znovu požádat o "
 "ověření členství</a>."
 msgstr ""

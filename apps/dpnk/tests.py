@@ -666,11 +666,17 @@ class ViewsLogon(DenormMixin, TestCase):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
-        call_command('denorm_rebuild')
+        util.rebuild_denorm_models([self.user_attendance])
         self.user_attendance = UserAttendance.objects.get(pk=1115)
 
 
-class ViewsTestsLogon(ViewsLogon):
+class ViewsLogonRebuild(ViewsLogon):
+    def setUp(self):
+        super().setUp()
+        call_command('denorm_rebuild')
+
+
+class ViewsTestsLogon(ViewsLogonRebuild):
     def test_dpnk_team_view(self):
         response = self.client.get(reverse('zmenit_tym'))
         self.assertNotContains(response, "Testing company")
@@ -1125,6 +1131,79 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertContains(response, 'Vaše organizce již svého koordinátora má: Null User, Testing User.')
 
 
+class RegistrationMixinTests(ViewsLogon):
+    def test_dpnk_registration_mixin_team_alone(self):
+        for team_member in self.user_attendance.team.all_members():
+            if team_member != self.user_attendance:
+                team_member.team = None
+                team_member.save()
+        self.user_attendance.track = None
+        self.user_attendance.save()
+        denorm.flush()
+        response = self.client.get(reverse('registration_uncomplete'))
+        self.assertContains(response, "Jste sám/sama v týmu")
+        self.assertContains(response, "Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.")
+
+    def test_dpnk_registration_unapproved_users(self):
+        for team_member in self.user_attendance.team.all_members():
+            if team_member != self.user_attendance:
+                team_member.approved_for_team = 'undecided'
+                team_member.save()
+        self.user_attendance.track = None
+        self.user_attendance.save()
+        denorm.flush()
+        response = self.client.get(reverse('registration_uncomplete'))
+        self.assertContains(response, "Ve vašem týmu jsou neschválení členové")
+
+    def test_dpnk_registration_unapproved(self):
+        self.user_attendance.approved_for_team = 'undecided'
+        self.user_attendance.save()
+        self.user_attendance.track = None
+        self.user_attendance.save()
+        denorm.flush()
+        response = self.client.get(reverse('registration_uncomplete'))
+        self.assertContains(response, "Vaši kolegové v týmu Testing team 1")
+
+    def test_dpnk_registration_denied(self):
+        self.user_attendance.approved_for_team = 'denied'
+        self.user_attendance.save()
+        self.user_attendance.track = None
+        self.user_attendance.save()
+        denorm.flush()
+        response = self.client.get(reverse('registration_uncomplete'))
+        self.assertContains(response, "Vaše členství v týmu bylo bohužel zamítnuto")
+
+    def test_dpnk_registration_no_payment(self):
+        self.user_attendance.track = None
+        self.user_attendance.save()
+        for payment in self.user_attendance.payments():
+            payment.status = models.Status.NEW
+            payment.save()
+        denorm.flush()
+        response = self.client.get(reverse('registration_uncomplete'))
+        self.assertContains(response, "Vaše platba typu ORGANIZACE PLATÍ FAKTUROU ještě nebyla vyřízena.")
+
+    def test_dpnk_registration_questionnaire(self):
+        response = self.client.get(reverse('profil'))
+        self.assertContains(response, "Nezapomeňte vyplnit odpovědi v následujících soutěžích: <a href='/cs/otazka/quest/'>Dotazník</a>!")
+
+    def test_dpnk_registration_company_admin_undecided(self):
+        ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
+        ca.company_admin_approved = 'undecided'
+        ca.save()
+        response = self.client.get(reverse('profil'))
+        denorm.flush()
+        print_response(response)
+        self.assertContains(response, "Vaše žádost o funkci koordinátora organizace čeká na vyřízení.")
+
+    def test_dpnk_registration_company_admin_denied(self):
+        ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
+        ca.company_admin_approved = 'denied'
+        ca.save()
+        response = self.client.get(reverse('profil'))
+        self.assertContains(response, "Vaše žádost o funkci koordinátora organizace byla zamítnuta.")
+
+
 class TrackViewTests(ViewsLogon):
     def test_dpnk_views_gpx_file(self):
         trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
@@ -1136,6 +1215,7 @@ class TrackViewTests(ViewsLogon):
         self.assertEqual(models.GpxFile.objects.get(pk=gpxfile.pk).trip, trip)
 
     def test_dpnk_company_structure(self):
+        util.rebuild_denorm_models([self.user_attendance])
         address = reverse("company_structure")
         response = self.client.get(address)
         self.assertContains(response, "Testing company")
