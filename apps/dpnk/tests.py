@@ -939,6 +939,10 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEquals(models.Payment.objects.get().pay_type, 'am')
 
     def test_dpnk_team_view_create(self):
+        self.user_attendance.team = None
+        self.user_attendance.save()
+        response = self.client.get(reverse('zmenit_tym'))
+        self.assertContains(response, "Testing team last campaign")
         post_data = {
             'company-name': 'Created company',
             'id_company_selected': 'on',
