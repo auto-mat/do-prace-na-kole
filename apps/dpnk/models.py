@@ -1961,7 +1961,7 @@ class Competition(models.Model):
     )
     url = models.URLField(
         default="",
-        verbose_name=u"Odkaz na stránku soutěže",
+        verbose_name=_("Odkaz na stránku soutěže"),
         help_text=_(u"Odkaz na stránku, kde budou pravidla a podrobné informace o soutěži"),
         null=True,
         blank=True,

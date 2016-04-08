@@ -4,7 +4,7 @@
 {% load humanize %}
 
 {% block content %}
-<h3>Výsledky týmu {{ user_attendance.team.name }}</h3>
+<h3>{% trans "Výsledky týmu" %} {{ user_attendance.team.name }}</h3>
 <table class="table table-bordered" id="team_members_table">
    <tr>
       <th>{% trans "Jmé&shy;no" %}</th>

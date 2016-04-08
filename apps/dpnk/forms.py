@@ -370,11 +370,11 @@ class InviteForm(SubmitMixin, forms.Form):
         ret_val = super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML(_(
+            HTML(format_html_lazy(_(
                 """Napište zde emaily kolegů, které chcete pozvat do svého týmu. Následně vyčkejte, """
                 """až se k vám někdo do týmu připojí (tato informace vám přijde emailem, """
-                """stav vašeho týmu můžete sledovat na <a href="%s">stránce týmu</a> a potvrdit členství vašich kolegů)."""
-                """<br/><br/>""" % reverse("team_members"))),
+                """stav vašeho týmu můžete sledovat na <a href="{}">stránce týmu</a> a potvrdit členství vašich kolegů)."""
+                """<br/><br/>"""), reverse("team_members"))),
             'email1',
             'email2',
             'email3',
@@ -625,8 +625,8 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         label=_(u"Soutěžní emaily"),
         help_text=_(u"Odběr emailů můžete kdykoliv v průběhu soutěže zrušit."),
         choices=[
-            (True, "Přeji si dostávat emailem informace o akcích, událostech a dalších informacích souvisejících se soutěží."),
-            (False, "Nechci dostávat emaily, mohou mi uniknout důležité informace o průběhu soutěže.")
+            (True, _("Přeji si dostávat emailem informace o akcích, událostech a dalších informacích souvisejících se soutěží.")),
+            (False, _("Nechci dostávat emaily, mohou mi uniknout důležité informace o průběhu soutěže."))
         ],
         widget=forms.RadioSelect(),
     )

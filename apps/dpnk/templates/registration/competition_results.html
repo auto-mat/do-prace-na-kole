@@ -8,7 +8,7 @@
 {{ block.super }}
 <h4>{% trans "Výsledky v soutěži " %}{{ competition }}:</h4>
 <div></div>
-Čas vygenerování výsledků: {% now "SHORT_DATETIME_FORMAT" %}
+{% trans "Čas vygenerování výsledků:" %} {% now "SHORT_DATETIME_FORMAT" %}
 <br/>
 
 <table class="table table-condensed table-striped table-bordered">
