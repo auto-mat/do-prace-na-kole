@@ -700,12 +700,6 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
             )
 
 
-def recalculate_team_member_count(modeladmin, request, queryset):
-    for team in queryset.all():
-        team.autoset_member_count()
-recalculate_team_member_count.short_description = _("Přepočítat počet členů týmu")
-
-
 class TeamAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'name',
@@ -723,7 +717,6 @@ class TeamAdmin(ExportMixin, RelatedFieldAdmin):
     list_max_show_all = 10000
     raw_id_fields = ['subsidiary', ]
     actions = (
-        recalculate_team_member_count,
         actions.touch_items,
     )
 
