@@ -132,6 +132,17 @@
     },
     {
         "fields": {
+            "userprofile": 1026,
+            "can_confirm_payments": true,
+            "campaign": 339,
+            "administrated_company": 1,
+            "company_admin_approved": "approved"
+        },
+        "model": "dpnk.companyadmin",
+        "pk": 3
+    },
+    {
+        "fields": {
             "userprofile": 1016,
             "can_confirm_payments": true,
             "campaign": 339,
@@ -220,6 +231,23 @@
         },
         "model": "auth.user",
         "pk": 1031
+    },
+    {
+        "fields": {
+            "user_attendance": 1115,
+            "question": 1,
+            "comment": "Testing comment"
+        },
+        "model": "dpnk.answer",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "user_attendance": 1115,
+            "question": 2
+        },
+        "model": "dpnk.answer",
+        "pk": 2
     },
     {
         "fields": {

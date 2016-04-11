@@ -1,0 +1,13 @@
+[
+    {
+        "fields": {
+            "user_attendance": 1115,
+            "date": "2015-11-12",
+            "commute_mode": "bicycle",
+            "distance": 5.3,
+            "direction": "trip_to"
+        },
+        "model": "dpnk.trip",
+        "pk": 1
+    }
+]

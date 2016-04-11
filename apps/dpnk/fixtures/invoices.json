@@ -1,0 +1,11 @@
+[
+    {
+        "fields": {
+           "company": 1,
+           "campaign": 339,
+           "sequence_number": 1
+        },
+        "model": "dpnk.invoice",
+        "pk": 1
+    }
+]

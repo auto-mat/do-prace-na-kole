@@ -55,7 +55,7 @@ class DenormMixin(object):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminTest(tests.AdminSiteSmokeTest):
-    fixtures = ['campaign', 'views', 'users', 'test_results_data', 'transactions', 'batches']
+    fixtures = ['campaign', 'views', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
 
     def get_request(self):
         request = super().get_request()

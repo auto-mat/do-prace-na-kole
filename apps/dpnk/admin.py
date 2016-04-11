@@ -35,7 +35,6 @@ from import_export.admin import ExportMixin, ImportMixin
 from django.utils.translation import ugettext_lazy as _
 from leaflet.admin import LeafletGeoAdmin
 from .admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin, FormRequestMixin, city_admin_mixin_generator
-import datetime
 # Models
 from .filters import (
     CampaignFilter,
@@ -46,7 +45,7 @@ from .filters import (
     IsForCompanyFilter,
     HasTeamFilter,
     EmailFilter)
-from . import models, mailing, actions, views
+from . import models, actions
 from django import forms
 from related_admin import RelatedFieldAdmin
 import pprint
@@ -461,15 +460,6 @@ class HasUserprofileFilter(SimpleListFilter):
         return queryset
 
 
-def remove_mailing_id(modeladmin, request, queryset):
-    for userprofile in queryset:
-        userprofile.mailing_id = None
-        userprofile.mailing_hash = None
-        userprofile.save()
-    modeladmin.message_user(request, _(u"Mailing ID a hash byl úspěšne odebrán %s profilům") % queryset.count())
-remove_mailing_id.short_description = _(u"Odstranit mailing ID a hash")
-
-
 class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     list_display = ('user', '__str__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
     inlines = (CompanyAdminInline,)
@@ -482,7 +472,7 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     )
     filter_horizontal = ('administrated_cities',)
     search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
-    actions = (remove_mailing_id,)
+    actions = (actions.remove_mailing_id,)
 
 
 class UserAdmin(ExportMixin, NestedModelAdmin, UserAdmin):
@@ -992,13 +982,6 @@ class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__c
         return mark_safe('<a href="' + reverse('admin_answers') + u'?question=%d">vyhodnocení odpovědí</a>' % (obj.pk))
 
 
-def show_distance_trips(modeladmin, request, queryset):
-    length = views.distance(queryset)
-    trips = views.trips(queryset)
-    modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
-show_distance_trips.short_description = _(u"Ukázat ujetou vzdálenost")
-
-
 class GpxFileInline(admin.TabularInline):
     model = models.GpxFile
     raw_id_fields = ('user_attendance', 'trip')
@@ -1027,7 +1010,7 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
         'user_attendance__team__subsidiary__city',
         'distance',
         )
-    actions = (show_distance_trips,)
+    actions = (actions.show_distance_trips,)
     list_max_show_all = 100000
     inlines = [GpxFileInline, ]
 
@@ -1171,18 +1154,6 @@ class HasUserAttendanceFilter(SimpleListFilter):
         return queryset
 
 
-def update_mailing_coordinator(modeladmin, request, queryset):
-    for company_admin in queryset:
-        user_attendance = company_admin.user_attendance()
-        if user_attendance:
-            mailing.add_or_update_user_synchronous(user_attendance, ignore_hash=True)
-        else:
-            mailing.add_or_update_user_synchronous(company_admin, ignore_hash=True)
-
-    modeladmin.message_user(request, _(u"Úspěšně aktualiován mailing pro %s koordinátorů") % queryset.count())
-update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
-
-
 class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsidiaries__city'), RelatedFieldAdmin):
     list_display = [
         'userprofile__user',
@@ -1210,14 +1181,7 @@ class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsi
         'userprofile__user__email']
     raw_id_fields = ['userprofile']
     list_max_show_all = 100000
-    actions = (update_mailing_coordinator,)
-
-
-def mark_invoices_paid(modeladmin, request, queryset):
-    for invoice in queryset.all():
-        invoice.paid_date = datetime.date.today()
-        invoice.save()
-mark_invoices_paid.short_description = _(u"Označit faktury jako zaplacené")
+    actions = (actions.update_mailing_coordinator,)
 
 
 class InvoicePaidFilter(SimpleListFilter):
@@ -1295,7 +1259,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
     list_filter = [CampaignFilter, InvoicePaidFilter, 'company_pais_benefitial_fee']
     search_fields = ['company__name', ]
     inlines = [PaymentInline]
-    actions = [mark_invoices_paid]
+    actions = [actions.mark_invoices_paid]
     list_max_show_all = 10000
     form = InvoiceForm
     resource_class = InvoiceResource
@@ -1335,26 +1299,13 @@ class UserAttendanceToBatch(models.UserAttendance):
         proxy = True
 
 
-def create_batch(modeladmin, request, queryset):
-    campaign = models.Campaign.objects.get(slug=request.subdomain)
-    delivery_batch = models.DeliveryBatch()
-    delivery_batch.campaign = campaign
-    delivery_batch.add_packages_on_save = False
-    delivery_batch.save()
-    delivery_batch.add_packages(user_attendances=queryset)
-    delivery_batch.add_packages_on_save = True
-    delivery_batch.save()
-    modeladmin.message_user(request, _(u"Vytvořena nová dávka obsahující %s položek") % queryset.count())
-create_batch.short_description = _(u"Vytvořit dávku z vybraných uživatelů")
-
-
 class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
     list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created')
     list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter), 'transactions__status')
-    actions = (create_batch, )
+    actions = (actions.create_batch, )
 
     def get_actions(self, request):
-        return {'create_batch': (create_batch, 'create_batch', create_batch.short_description)}
+        return {'create_batch': (actions.create_batch, 'create_batch', actions.create_batch.short_description)}
     list_max_show_all = 10000
 
     def payment_created(self, obj):
