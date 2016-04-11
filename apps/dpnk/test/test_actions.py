@@ -19,7 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.test import TestCase, RequestFactory
-from dpnk import actions, models
+from dpnk import actions, models, util
 from django.contrib import admin
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.management import call_command
@@ -39,12 +39,12 @@ class TestActions(TestCase):
         self.messages = FallbackStorage(self.request)
         setattr(self.request, '_messages', self.messages)
         call_command('denorm_init')
-        call_command('denorm_rebuild')
 
     def tearDown(self):
         call_command('denorm_drop')
 
     def test_approve_am_payment(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=2115))
         queryset = models.UserAttendance.objects.all()
         payment = models.Payment.objects.get(pk=5)
         self.assertEquals(payment.status, 1)
