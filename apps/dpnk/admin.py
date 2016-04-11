@@ -890,7 +890,8 @@ class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__c
             '<br/><a href="%s">edit</a>' % reverse('admin:dpnk_choicetype_change', args=(obj.choice_type.pk,)))
 
     def answers_link(self, obj):
-        return mark_safe('<a href="' + reverse('admin_answers') + u'?question=%d">vyhodnocení odpovědí</a>' % (obj.pk))
+        if obj.pk:
+            return mark_safe('<a href="' + reverse('admin_answers') + u'?question=%d">vyhodnocení odpovědí</a>' % (obj.pk))
 
 
 class GpxFileInline(admin.TabularInline):
