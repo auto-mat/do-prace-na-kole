@@ -461,9 +461,19 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     actions = (actions.remove_mailing_id,)
 
 
-class UserAdmin(ExportMixin, NestedModelAdmin, UserAdmin):
+class UserAdmin(RelatedFieldAdmin, ExportMixin, NestedModelAdmin, UserAdmin):
     inlines = (UserProfileAdminInline,)
-    list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'last_login', 'userprofile_administrated_cities', 'id')
+    list_display = (
+        'username',
+        'email',
+        'first_name',
+        'last_name',
+        'userprofile__telephone',
+        'date_joined',
+        'is_active',
+        'last_login',
+        'userprofile_administrated_cities',
+        'id')
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__company_admin__administrated_company__name', ]
     list_filter = [
         'userprofile__userattendance_set__campaign',
@@ -478,40 +488,9 @@ class UserAdmin(ExportMixin, NestedModelAdmin, UserAdmin):
     readonly_fields = ['password']
     list_max_show_all = 10000
 
-    # def get_queryset(self, request):
-    #     return User.objects.annotate(trips_count = Count('userprofile__user_trips'))
-
-    def trips_count(self, obj):
-        return obj.trips_count
-    trips_count.admin_order_field = 'trips_count'
-
-    def userprofile__payment_type(self, obj):
-        pay_type = "(None)"
-        payment = obj.userprofile.payment()['payment']
-        if payment:
-            pay_type = payment.pay_type
-        return pay_type
-
-    def userprofile__telephone(self, obj):
-        return obj.userprofile.telephone
-
-    def userprofile__payment_status(self, obj):
-        return obj.userprofile.payment()['status_description']
-
-    def userprofile__team__name(self, obj):
-        return obj.userprofile.team.name
-
-    def userprofile__distance(self, obj):
-        return obj.userprofile.distance
-
-    def userprofile__team__subsidiary__city(self, obj):
-        return obj.userprofile.team.subsidiary.city
-
-    def userprofile__team__subsidiary__company(self, obj):
-        return obj.userprofile.team.subsidiary.company
-
-    def company_admin__administrated_company(self, obj):
-        return obj.company_admin.administrated_company
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related('userprofile')
 
     def userprofile_administrated_cities(self, obj):
         return ", ".join([str(c) for c in obj.userprofile.administrated_cities.all()])
