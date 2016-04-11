@@ -365,46 +365,8 @@ class UserAttendanceInline(NestedTabularInline):
     form = UserAttendanceForm
     extra = 0
     # inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
-    search_fields = [
-        'first_name',
-        'last_name',
-        'username',
-        'email',
-        'userprofile__team__name',
-        'userprofile__team__subsidiary__company__name',
-        'company_admin__administrated_company__name',
-    ]
     list_max_show_all = 10000
     raw_id_fields = ('team',)
-
-    def get_queryset(self, request):
-        return models.UserAttendance.objects.annotate(trips_count=Count('user_trips'))
-
-    def trips_count(self, obj):
-        return obj.trips_count
-    trips_count.admin_order_field = 'trips_count'
-
-    def userprofile__payment_type(self, obj):
-        pay_type = "(None)"
-        payment = obj.payment()['payment']
-        if payment:
-            pay_type = payment.pay_type
-        return pay_type
-
-    def userprofile__payment_status(self, obj):
-        return obj.payment()['status_description']
-
-    def userprofile__team__name(self, obj):
-        return obj.team.name
-
-    def userprofile__distance(self, obj):
-        return obj.distance
-
-    def team__subsidiary__city(self, obj):
-        return obj.team.subsidiary.city
-
-    def userprofile__team__subsidiary__company(self, obj):
-        return obj.team.subsidiary.company
 
 
 class UserProfileForm(forms.ModelForm):
@@ -428,22 +390,6 @@ class UserProfileAdminInline(NestedStackedInline):
     form = UserProfileForm
     inlines = [UserAttendanceInline, CompanyAdminInline]
     filter_horizontal = ('administrated_cities',)
-    search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username']
-
-    def user__first_name(self, obj):
-        return obj.user.first_name
-
-    def user__last_name(self, obj):
-        return obj.user.last_name
-
-    def user__email(self, obj):
-        return obj.user.email
-
-    def user__date_joined(self, obj):
-        return obj.user.date_joined
-
-    def team__subsidiary__city(self, obj):
-        return obj.team.subsidiary.city
 
 
 class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
