@@ -50,11 +50,11 @@ class CampaignFilter(SimpleListFilter):
             campaigns += [(c.slug, c.name) for c in models.Campaign.objects.all()]
         return campaigns
 
-    def choices(self, cl):
+    def choices(self, changelist):
         for lookup, title in self.lookup_choices:
             yield {
                 'selected': self.value() == lookup,
-                'query_string': cl.get_query_string({
+                'query_string': changelist.get_query_string({
                     self.parameter_name: lookup,
                 }, []),
                 'display': title,
@@ -187,3 +187,105 @@ class EmailFilter(SimpleListFilter):
             return queryset.filter(email__in=duplicates)
         if self.value() == 'blank':
             return queryset.filter(email__exact='')
+        return queryset
+
+
+class PackageConfirmationFilter(SimpleListFilter):
+    title = _(u"Doručení startovního balíčku")
+    parameter_name = u'package_confirmation'
+
+    def lookups(self, request, model_admin):
+        return (
+            ("confirmed", _(u"Potvrzeno")),
+            ("denied", _(u"Nedoručení potvrzeno")),
+            ("unknown", _(u"Odesláno, bez vyjádření")),
+            ("unshipped", _(u"Neodesláno")),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == "confirmed":
+            return queryset.filter(transactions__packagetransaction__status=models.Status.PACKAGE_DELIVERY_CONFIRMED).distinct()
+        if self.value() == "denied":
+            return queryset.filter(transactions__packagetransaction__status=models.Status.PACKAGE_DELIVERY_DENIED).distinct()
+        if self.value() == "unknown":
+            return queryset.filter(
+                transactions__packagetransaction__status__in=models.PackageTransaction.shipped_statuses).exclude(
+                transactions__packagetransaction__status__in=[
+                    models.Status.PACKAGE_DELIVERY_CONFIRMED,
+                    models.Status.PACKAGE_DELIVERY_DENIED]
+            ).distinct()
+        if self.value() == "unshipped":
+            return queryset.exclude(transactions__packagetransaction__status__in=models.PackageTransaction.shipped_statuses).distinct()
+        return queryset
+
+
+class HasUserprofileFilter(SimpleListFilter):
+    title = _(u"Má userprofile")
+    parameter_name = u'has_userprofile'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('yes', 'Yes'),
+            ('no', 'No'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.exclude(userprofile=None)
+        if self.value() == 'no':
+            return queryset.filter(userprofile=None)
+        return queryset
+
+
+class HasReactionFilter(SimpleListFilter):
+    title = _(u"Obsahuje odpověď")
+    parameter_name = u'has_reaction'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', u'Ano'),
+            ('no', u'Ne'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.exclude((Q(comment=None) | Q(comment='')) & (Q(attachment=None) | Q(attachment='')) & Q(points_given=None)).distinct()
+        if self.value() == 'no':
+            return queryset.filter((Q(comment=None) | Q(comment='')) & (Q(attachment=None) | Q(attachment='')) & Q(points_given=None)).distinct()
+        return queryset
+
+
+class HasUserAttendanceFilter(SimpleListFilter):
+    title = _(u"Má účast v kampani")
+    parameter_name = u'has_user_attendance'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', u'Ano'),
+            ('no', u'Ne'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(userattendance__isnull=False)
+        if self.value() == 'no':
+            return queryset.filter(userattendance__isnull=True)
+        return queryset
+
+
+class InvoicePaidFilter(SimpleListFilter):
+    title = _(u"Zaplacení faktury")
+    parameter_name = u'invoice_paid'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', u'Zaplacena'),
+            ('no', u'Nezaplacena'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(paid_date__isnull=False)
+        if self.value() == 'no':
+            return queryset.filter(paid_date__isnull=True)
+        return queryset

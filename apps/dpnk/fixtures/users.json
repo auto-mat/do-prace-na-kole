@@ -50,6 +50,10 @@
     },
     {
         "fields": {
+            "address_psc": "11111",
+            "address_street_number": "1",
+            "address_street": "Ulice",
+            "address_city": "Praha",
             "company": 1,
             "city": 1
         },
@@ -58,6 +62,10 @@
     },
     {
         "fields": {
+            "address_psc": "22222",
+            "address_street_number": "2",
+            "address_street": "Ulice",
+            "address_city": "Brno",
             "company": 1,
             "city": 2
         },

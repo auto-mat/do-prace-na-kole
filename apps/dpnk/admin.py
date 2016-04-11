@@ -22,8 +22,7 @@
 # Django imports
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.admin import SimpleListFilter
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Sum
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
@@ -44,6 +43,11 @@ from .filters import (
     HasRidesFilter,
     IsForCompanyFilter,
     HasTeamFilter,
+    HasUserprofileFilter,
+    HasReactionFilter,
+    HasUserAttendanceFilter,
+    InvoicePaidFilter,
+    PackageConfirmationFilter,
     EmailFilter)
 from . import models, actions
 from django import forms
@@ -442,24 +446,6 @@ class UserProfileAdminInline(NestedStackedInline):
         return obj.team.subsidiary.city
 
 
-class HasUserprofileFilter(SimpleListFilter):
-    title = _(u"Má userprofile")
-    parameter_name = u'has_userprofile'
-
-    def lookups(self, request, model_admin):
-        return [
-            ('yes', 'Yes'),
-            ('no', 'No'),
-        ]
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.exclude(userprofile=None)
-        if self.value() == 'no':
-            return queryset.filter(userprofile=None)
-        return queryset
-
-
 class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     list_display = ('user', '__str__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
     inlines = (CompanyAdminInline,)
@@ -529,35 +515,6 @@ class UserAdmin(ExportMixin, NestedModelAdmin, UserAdmin):
 
     def userprofile_administrated_cities(self, obj):
         return ", ".join([str(c) for c in obj.userprofile.administrated_cities.all()])
-
-
-class PackageConfirmationFilter(SimpleListFilter):
-    title = _(u"Doručení startovního balíčku")
-    parameter_name = u'package_confirmation'
-
-    def lookups(self, request, model_admin):
-        return (
-            ("confirmed", _(u"Potvrzeno")),
-            ("denied", _(u"Nedoručení potvrzeno")),
-            ("unknown", _(u"Odesláno, bez vyjádření")),
-            ("unshipped", _(u"Neodesláno")),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == "confirmed":
-            return queryset.filter(transactions__packagetransaction__status=models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED).distinct()
-        if self.value() == "denied":
-            return queryset.filter(transactions__packagetransaction__status=models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED).distinct()
-        if self.value() == "unknown":
-            return queryset.filter(
-                transactions__packagetransaction__status__in=models.PackageTransaction.shipped_statuses).exclude(
-                transactions__packagetransaction__status__in=[
-                    models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED,
-                    models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED]
-            ).distinct()
-        if self.value() == "unshipped":
-            return queryset.exclude(transactions__packagetransaction__status__in=models.PackageTransaction.shipped_statuses).distinct()
-        return queryset
 
 
 class TripAdminInline(admin.TabularInline):
@@ -908,24 +865,6 @@ class ChoiceTypeAdmin(admin.ModelAdmin):
     save_as = True
 
 
-class HasReactionFilter(SimpleListFilter):
-    title = _(u"Obsahuje odpověď")
-    parameter_name = u'has_reaction'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('yes', u'Ano'),
-            ('no', u'Ne'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.exclude((Q(comment=None) | Q(comment='')) & (Q(attachment=None) | Q(attachment='')) & Q(points_given=None)).distinct()
-        if self.value() == 'no':
-            return queryset.filter((Q(comment=None) | Q(comment='')) & (Q(attachment=None) | Q(attachment='')) & Q(points_given=None)).distinct()
-        return queryset
-
-
 class AnswerAdmin(RelatedFieldAdmin):
     list_display = (
         'user_attendance',
@@ -1136,24 +1075,6 @@ class CampaignAdmin(admin.ModelAdmin):
         return obj.cityincampaign_set.count()
 
 
-class HasUserAttendanceFilter(SimpleListFilter):
-    title = _(u"Má účast v kampani")
-    parameter_name = u'has_user_attendance'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('yes', u'Ano'),
-            ('no', u'Ne'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.filter(user__userprofile__userattendance__isnull=False)
-        if self.value() == 'no':
-            return queryset.filter(user__userprofile__userattendance__isnull=True)
-        return queryset
-
-
 class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsidiaries__city'), RelatedFieldAdmin):
     list_display = [
         'userprofile__user',
@@ -1182,24 +1103,6 @@ class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsi
     raw_id_fields = ['userprofile']
     list_max_show_all = 100000
     actions = (actions.update_mailing_coordinator,)
-
-
-class InvoicePaidFilter(SimpleListFilter):
-    title = _(u"Zaplacení faktury")
-    parameter_name = u'invoice_paid'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('yes', u'Zaplacena'),
-            ('no', u'Nezaplacena'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.filter(paid_date__isnull=False)
-        if self.value() == 'no':
-            return queryset.filter(paid_date__isnull=True)
-        return queryset
 
 
 class InvoiceForm(forms.ModelForm):

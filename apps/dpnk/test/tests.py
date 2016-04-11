@@ -17,16 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.test import TestCase, TransactionTestCase, RequestFactory, Client
+from django.test import TestCase, RequestFactory, Client
 from django.core.urlresolvers import reverse
 from django.core import mail
 from django.core.management import call_command
 from django.test.utils import override_settings
-from dpnk import results, models, mailing, views, filters, company_admin_views, util
+from dpnk import results, models, mailing, views, company_admin_views, util
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment, CompanyAdmin
 import datetime
 import django
-from django_admin_smoke_tests import tests
 from model_mommy import mommy
 import createsend
 from freezegun import freeze_time
@@ -35,80 +34,8 @@ from collections import OrderedDict
 from PyPDF2 import PdfFileReader
 import denorm
 import settings
-
-
-def print_response(response):
-    with open("response.html", "w") as f:
-        f.write(response.content.decode())
-
-
-class DenormMixin(object):
-    def setUp(self):
-        call_command('denorm_init')
-
-    def tearDown(self):
-        call_command('denorm_drop')
-
-
-@override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
-class AdminTest(tests.AdminSiteSmokeTest):
-    fixtures = ['campaign', 'views', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
-
-    def get_request(self):
-        request = super().get_request()
-        request.subdomain = "testing-campaign"
-        return request
-
-
-@override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
-class AdminModulesTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'views', 'users']
-
-    def setUp(self):
-        super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer")
-        self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
-        util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
-
-    def test_userattendance_export(self):
-        address = "/admin/dpnk/userattendance/export/"
-        post_data = {
-            'file_format': 0,
-        }
-        response = self.client.post(address, post_data)
-        self.assertContains(response, "test2@test.cz,Testing company")
-
-    def test_company_export(self):
-        address = "/admin/dpnk/company/export/"
-        post_data = {
-            'file_format': 0,
-        }
-        response = self.client.post(address, post_data)
-        self.assertContains(response, "2,Testing company without admin,11111")
-
-    def test_subsidiary_export(self):
-        address = "/admin/dpnk/subsidiary/export/"
-        post_data = {
-            'file_format': 0,
-        }
-        response = self.client.post(address, post_data)
-        self.assertContains(response, "1,1,1")
-
-    def test_competition_masschange(self):
-        address = "/admin/dpnk/competition-masschange/3,5/"
-        response = self.client.get(address)
-        self.assertContains(response, '<option value="338">Testing campaign - last year</option>')
-
-    def test_subsidiary_masschange(self):
-        address = "/admin/dpnk/subsidiary-masschange/1/"
-        response = self.client.get(address)
-        self.assertContains(response, 'id="id_address_street_number"')
+from dpnk.test.util import print_response  # noqa
+from dpnk.test.util import DenormMixin
 
 
 @override_settings(
@@ -410,115 +337,6 @@ class RequestFactoryViewTests(TestCase):
         request.subdomain = "testing-campaign"
         response = views.QuestionnaireView.as_view()(request, **kwargs)
         self.assertEquals(response.url, reverse("competitions"))
-
-
-class FilterTests(TestCase):
-    fixtures = ['campaign', 'views', 'users']
-
-    def setUp(self):
-        self.factory = RequestFactory()
-        self.user_attendance = UserAttendance.objects.get(pk=1115)
-        self.session_id = "2075-1J1455206457"
-        self.trans_id = "2055"
-        models.Payment.objects.create(
-            session_id=self.session_id,
-            user_attendance=self.user_attendance,
-            amount=150
-        )
-
-    def test_email_filter_blank(self):
-        request = self.factory.get("")
-        f = filters.EmailFilter(request, {"email": "duplicate"}, models.User, None)
-        q = f.queryset(request, models.User.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_email_filter_duplicate(self):
-        request = self.factory.get("")
-        f = filters.EmailFilter(request, {"email": "blank"}, models.User, None)
-        q = f.queryset(request, models.User.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_has_team_filter_yes(self):
-        request = self.factory.get("")
-        f = filters.HasTeamFilter(request, {"user_has_team": "yes"}, models.UserAttendance, None)
-        q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 6)
-
-    def test_has_team_filter_no(self):
-        request = self.factory.get("")
-        f = filters.HasTeamFilter(request, {"user_has_team": "no"}, models.UserAttendance, None)
-        q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 1)
-
-    def test_is_for_company_yes(self):
-        request = self.factory.get("")
-        f = filters.IsForCompanyFilter(request, {"is_for_company": "yes"}, models.Competition, None)
-        q = f.queryset(request, models.Competition.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_is_for_company_no(self):
-        request = self.factory.get("")
-        f = filters.IsForCompanyFilter(request, {"is_for_company": "no"}, models.Competition, None)
-        q = f.queryset(request, models.Competition.objects.all())
-        self.assertEquals(q.count(), 3)
-
-    def test_has_rides_filter_yes(self):
-        request = self.factory.get("")
-        f = filters.HasRidesFilter(request, {"has_rides": "yes"}, models.UserAttendance, None)
-        q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 1)
-
-    def test_has_rides_filter_no(self):
-        request = self.factory.get("")
-        f = filters.HasRidesFilter(request, {"has_rides": "no"}, models.UserAttendance, None)
-        q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 6)
-
-    def test_has_voucher_filter_yes(self):
-        request = self.factory.get("")
-        f = filters.HasVoucherFilter(request, {"has_voucher": "yes"}, models.UserAttendance, None)
-        q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_has_voucher_filter_no(self):
-        request = self.factory.get("")
-        f = filters.HasVoucherFilter(request, {"has_voucher": "no"}, models.UserAttendance, None)
-        q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 7)
-
-    def test_campaign_filter_campaign(self):
-        request = self.factory.get("")
-        request.subdomain = "testing-campaign"
-        f = filters.CampaignFilter(request, {"campaign": "testing-campaign"}, models.UserAttendance, None)
-        q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 5)
-
-    def test_campaign_filter_none(self):
-        request = self.factory.get("")
-        request.subdomain = "testing-campaign"
-        f = filters.CampaignFilter(request, {"campaign": "none"}, models.UserAttendance, None)
-        q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_campaign_filter_without_subdomain(self):
-        request = self.factory.get("")
-        f = filters.CampaignFilter(request, {"campaign": "none"}, models.UserAttendance, None)
-        q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_campaign_filter_unknown_campaign(self):
-        request = self.factory.get("")
-        request.subdomain = "asdf"
-        f = filters.CampaignFilter(request, {}, models.UserAttendance, None)
-        q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_campaign_filter_all(self):
-        request = self.factory.get("")
-        request.subdomain = "testing-campaign"
-        f = filters.CampaignFilter(request, {"campaign": "all"}, models.UserAttendance, None)
-        q = f.queryset(request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 7)
 
 
 class PaymentTests(DenormMixin, TestCase):
@@ -1124,7 +942,7 @@ class ViewsTestsLogon(ViewsLogon):
             company_admin_approved='approved',
         )
         response = self.client.get(reverse('company_admin_application'))
-        self.assertContains(response, 'Vaše organizce již svého koordinátora má: Null User, Testing User.')
+        self.assertContains(response, 'Vaše organizce již svého koordinátora má: Null User, Null User, Testing User.')
 
 
 class RegistrationMixinTests(ViewsLogon):
@@ -1459,7 +1277,7 @@ class TestTeams(DenormMixin, TestCase):
 
 
 class ResultsTests(DenormMixin, TestCase):
-    fixtures = ['users', 'campaign', 'test_results_data']
+    fixtures = ['campaign', 'users', 'test_results_data']
 
     def setUp(self):
         super().setUp()
@@ -1471,9 +1289,8 @@ class ResultsTests(DenormMixin, TestCase):
         self.assertListEqual(list(query.all()), [team])
 
 
-# TODO: don't use TransactionTestCase, it is slow
-class ModelTests(DenormMixin, TransactionTestCase):
-    fixtures = ['users', 'campaign', 'transactions', 'batches']
+class ModelTests(DenormMixin, TestCase):
+    fixtures = ['campaign', 'users', 'transactions', 'batches']
 
     def test_payment_type_string(self):
         user_attendance = UserAttendance.objects.get(pk=1115)
@@ -1487,9 +1304,8 @@ class ModelTests(DenormMixin, TransactionTestCase):
         self.assertEquals(user_attendance.payment_type_string(), None)
 
 
-# TODO: don't use TransactionTestCase, it is slow
-class DenormTests(DenormMixin, TransactionTestCase):
-    fixtures = ['users', 'campaign', 'transactions', 'batches']
+class DenormTests(DenormMixin, TestCase):
+    fixtures = ['campaign', 'users', 'transactions', 'batches']
 
     def test_name_with_members(self):
         user_attendance = UserAttendance.objects.get(pk=1115)
