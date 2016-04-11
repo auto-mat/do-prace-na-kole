@@ -24,6 +24,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db.models import Count, Sum
 from django.utils.safestring import mark_safe
+from django.utils.html import format_html_join, format_html
 from django.core.urlresolvers import reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 from adminsortable2.admin import SortableInlineAdminMixin
@@ -54,6 +55,13 @@ from django import forms
 from related_admin import RelatedFieldAdmin
 import pprint
 from django.contrib.sessions.models import Session
+
+
+def admin_links(args_generator):
+    return format_html_join(
+        mark_safe('<br/>'),
+        '<a href="{}">{}</a>',
+        args_generator)
 
 
 class PaymentInline(NestedTabularInline):
@@ -164,15 +172,14 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
     resource_class = CompanyResource
 
     def subsidiaries_text(self, obj):
-        return mark_safe(" | ".join(
-            ['%s' % (str(u)) for u in models.Subsidiary.objects.filter(company=obj)]))
+        return " | ".join(
+            ['%s' % (str(u)) for u in models.Subsidiary.objects.filter(company=obj)])
     subsidiaries_text.short_description = _('Pobočky')
 
     def subsidiary_links(self, obj):
-        return mark_safe(
-            "<br/>".join(
-                ['<a href="%s">%s</a>' % (reverse('admin:dpnk_subsidiary_change', args=(u.pk,)), str(u))
-                    for u in models.Subsidiary.objects.filter(company=obj)]))
+        return admin_links(
+            [(reverse('admin:dpnk_subsidiary_change', args=(u.pk,)), str(u))
+                for u in models.Subsidiary.objects.filter(company=obj)])
     subsidiary_links.short_description = _('Pobočky')
 
 
@@ -236,10 +243,9 @@ class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     user_count.short_description = _('Počet soutěžících ve vyfiltrované kampani')
 
     def team_links(self, obj):
-        return mark_safe(
-            "<br/>".join(
-                ['<a href="%s">%s</a>' % (reverse('admin:dpnk_team_change', args=(u.pk,)), str(u))
-                    for u in models.Team.objects.filter(subsidiary=obj)]))
+        return admin_links(
+            [(reverse('admin:dpnk_team_change', args=(u.pk,)), str(u))
+                for u in models.Team.objects.filter(subsidiary=obj)])
     team_links.short_description = _(u"Týmy")
 
 
@@ -318,22 +324,22 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFie
 
     def competition_results_link(self, obj):
         if obj.slug:
-            return mark_safe(u'<a href="%s">výsledky</a>' % (reverse('competition_results', kwargs={'competition_slug': obj.slug})))
+            return format_html(u'<a href="{}">výsledky</a>', (reverse('competition_results', kwargs={'competition_slug': obj.slug})))
     competition_results_link.short_description = _(u"Výsledky soutěže")
 
     def questionnaire_results_link(self, obj):
         if obj.type == 'questionnaire' and obj.slug:
-            return mark_safe(u'<a href="%s">odpovědi</a>' % (reverse('admin_questionnaire_results', kwargs={'competition_slug': obj.slug})))
+            return format_html(u'<a href="{}">odpovědi</a>', (reverse('admin_questionnaire_results', kwargs={'competition_slug': obj.slug})))
     questionnaire_results_link.short_description = _(u"Odpovědi")
 
     def questionnaire_link(self, obj):
         if obj.type == 'questionnaire' and obj.slug:
-            return mark_safe(u'<a href="%s">dotazník</a>' % (reverse('questionnaire', kwargs={'questionnaire_slug': obj.slug})))
+            return format_html(u'<a href="{}">dotazník</a>', (reverse('questionnaire', kwargs={'questionnaire_slug': obj.slug})))
     questionnaire_link.short_description = _(u"Dotazník")
 
     def draw_link(self, obj):
         if obj.type == 'frequency' and obj.competitor_type == 'team' and obj.slug:
-            return mark_safe(u'<a href="%s">losovani</a>' % (reverse('admin_draw_results', kwargs={'competition_slug': obj.slug})))
+            return format_html(u'<a href="{}">losovani</a>', (reverse('admin_draw_results', kwargs={'competition_slug': obj.slug})))
     draw_link.short_description = _(u"Losování")
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
@@ -577,7 +583,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
     resource_class = UserAttendanceResource
 
     def user_link(self, obj):
-        return mark_safe('<a href="%s">%s</a>' % (reverse('admin:auth_user_change', args=(obj.userprofile.user.pk,)), obj.userprofile.user))
+        return format_html('<a href="{}">{}</a>', reverse('admin:auth_user_change', args=(obj.userprofile.user.pk,)), obj.userprofile.user)
     user_link.short_description = _('Uživatel')
 
     def get_queryset(self, request):
@@ -648,11 +654,9 @@ class TeamAdmin(ExportMixin, RelatedFieldAdmin):
     readonly_fields = ['members', 'invitation_token', 'member_count']
 
     def members(self, obj):
-        return mark_safe(
-            "<br/>".join([
-                '<a href="%s">%s</a> - %s' %
-                (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), u, u.approved_for_team)
-                for u in models.UserAttendance.objects.filter(team=obj)]))
+        return admin_links(
+            [(reverse('admin:dpnk_userattendance_change', args=(u.pk,)), u, u.approved_for_team)
+                for u in models.UserAttendance.objects.filter(team=obj)])
     members.short_description = _('Členové')
 
     def get_queryset(self, request):
@@ -696,9 +700,10 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
 
     def user_link(self, obj):
         if obj.user_attendance:
-            return mark_safe(
-                '<a href="%s">%s</a>' %
-                (reverse('admin:auth_user_change', args=(obj.user_attendance.userprofile.user.pk,)), obj.user_attendance.userprofile.user))
+            return format_html(
+                '<a href="{}">{}</a>',
+                reverse('admin:auth_user_change', args=(obj.user_attendance.userprofile.user.pk,)),
+                obj.user_attendance.userprofile.user)
     user_link.short_description = _('Uživatel')
 
     base_model = models.Transaction
@@ -816,7 +821,7 @@ class AnswerAdmin(RelatedFieldAdmin):
 
     def attachment_url(self, obj):
         if obj.attachment:
-            return mark_safe(u"<a href='%s'>%s</a>" % (obj.attachment.url, obj.attachment))
+            return format_html(u"<a href='{}'>{}</a>", obj.attachment.url, obj.attachment)
 
 
 class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ExportMixin, admin.ModelAdmin):
@@ -837,7 +842,7 @@ class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__c
 
     def answers_link(self, obj):
         if obj.pk:
-            return mark_safe('<a href="' + reverse('admin_answers') + u'?question=%d">vyhodnocení odpovědí</a>' % (obj.pk))
+            return format_html('<a href="{}?question={}">vyhodnocení odpovědí</a>', reverse('admin_answers'), obj.pk)
 
 
 class GpxFileInline(admin.TabularInline):
@@ -962,16 +967,16 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
                 t_shirts[package_transaction.t_shirt_size] += 1
             else:
                 t_shirts[package_transaction.t_shirt_size] = 1
-        return mark_safe(u"<br/>".join([u"%s: %s" % (t, t_shirts[t]) for t in t_shirts]))
+        return format_html_join(mark_safe("<br/>"), "{}: {}", [(t, t_shirts[t]) for t in t_shirts])
     t_shirt_sizes.short_description = _(u"Velikosti trik")
 
     def customer_sheets__url(self, obj):
         if obj.customer_sheets:
-            return mark_safe(u"<a href='%s'>customer_sheets</a>" % obj.customer_sheets.url)
+            return format_html("<a href='{}'>customer_sheets</a>", obj.customer_sheets.url)
 
     def tnt_order__url(self, obj):
         if obj.tnt_order:
-            return mark_safe(u"<a href='%s'>tnt_order</a>" % obj.tnt_order.url)
+            return format_html("<a href='{}'>tnt_order</a>", obj.tnt_order.url)
 
 
 class CampaignAdmin(admin.ModelAdmin):
@@ -1095,7 +1100,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
     invoice_count.short_description = _(u"Počet plateb")
 
     def invoice_pdf_url(self, obj):
-        return mark_safe(u"<a href='%s'>invoice.pdf</a>" % obj.invoice_pdf.url)
+        return format_html("<a href='{}'>invoice.pdf</a>", obj.invoice_pdf.url)
 
 
 class GpxFileAdmin(LeafletGeoAdmin):
