@@ -21,7 +21,7 @@
 from django.test import TestCase
 from dpnk.models import UserAttendance, Company, CompanyAdmin, UserProfile, Campaign, Team, Subsidiary, City
 from django.contrib.auth.models import User
-from . import email
+from dpnk import email
 from django.core import mail
 from django.conf import settings
 
