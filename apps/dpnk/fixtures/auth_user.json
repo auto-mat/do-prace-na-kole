@@ -1,0 +1,128 @@
+[
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:18:10",
+            "email": "test@email.cz",
+            "first_name": "Null",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2015-11-12T18:53:35.982",
+            "last_name": "User",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
+            "user_permissions": [],
+            "username": "null_user"
+        },
+        "model": "auth.user",
+        "pk": 1030
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:18:10",
+            "email": "unapproved@email.cz",
+            "first_name": "Unapproved",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2015-11-12T18:53:35.982",
+            "last_name": "User",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
+            "user_permissions": [],
+            "username": "unapproved_user"
+        },
+        "model": "auth.user",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:18:10",
+            "email": "test_wa@email.cz",
+            "first_name": "Null",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2015-11-12T18:53:35.982",
+            "last_name": "User",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
+            "user_permissions": [],
+            "username": "user_without_attendance"
+        },
+        "model": "auth.user",
+        "pk": 1041
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:18:10",
+            "email": "test-registered@test.cz",
+            "first_name": "Registered",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2015-11-12T18:53:35.982",
+            "last_name": "User 1",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
+            "user_permissions": [],
+            "username": "test-registered"
+        },
+        "model": "auth.user",
+        "pk": 2128
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:18:10",
+            "email": "test@test.cz",
+            "first_name": "Testing",
+            "groups": [],
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": true,
+            "last_login": "2015-11-12T18:53:35.982",
+            "last_name": "User 1",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
+            "user_permissions": [],
+            "username": "test"
+        },
+        "model": "auth.user",
+        "pk": 1128
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:18:10",
+            "email": "test2@test.cz",
+            "first_name": "Testing",
+            "groups": [],
+            "is_active": true,
+            "is_staff": false,
+            "is_superuser": false,
+            "last_login": "2015-11-12T18:53:35.982",
+            "last_name": "User",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
+            "user_permissions": [],
+            "username": "test1"
+        },
+        "model": "auth.user",
+        "pk": 1031
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:16:03.886",
+            "email": "admin@auto-mat.cz",
+            "first_name": "",
+            "groups": [],
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": true,
+            "last_login": "2015-11-12T18:35:38.186",
+            "last_name": "",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
+            "user_permissions": [],
+            "username": "admin"
+        },
+        "model": "auth.user",
+        "pk": 1027
+    }
+]

@@ -25,7 +25,7 @@ import datetime
 
 
 class TestParcelBatch(TestCase):
-    fixtures = ['campaign', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def tearDown(self):
         PackageTransaction.objects.all().delete()

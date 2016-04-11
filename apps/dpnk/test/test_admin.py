@@ -35,7 +35,7 @@ import settings
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminSmokeTests(smoke_tests.AdminSiteSmokeTest):
-    fixtures = ['campaign', 'views', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
+    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
 
     def get_request(self):
         request = super().get_request()
@@ -48,7 +48,7 @@ class AdminSmokeTests(smoke_tests.AdminSiteSmokeTest):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminModulesTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'views', 'users']
+    fixtures = ['campaign', 'auth_user', 'users']
 
     def setUp(self):
         super().setUp()
@@ -96,7 +96,7 @@ class AdminModulesTests(DenormMixin, TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminTests(TestCase):
-    fixtures = ['campaign', 'views', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
+    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
@@ -140,7 +140,7 @@ class AdminTests(TestCase):
 
 
 class FilterTests(TestCase):
-    fixtures = ['campaign', 'views', 'users', 'invoices']
+    fixtures = ['campaign', 'auth_user', 'users', 'invoices']
 
     def setUp(self):
         self.factory = RequestFactory()

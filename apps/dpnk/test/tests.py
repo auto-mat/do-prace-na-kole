@@ -43,7 +43,7 @@ from dpnk.test.util import DenormMixin
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
         super().setUp()
@@ -263,7 +263,7 @@ class ViewsTests(DenormMixin, TestCase):
 
 
 class PaymentSuccessTests(TestCase):
-    fixtures = ['campaign', 'views', 'users']
+    fixtures = ['campaign', 'auth_user', 'users']
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -305,7 +305,7 @@ class PaymentSuccessTests(TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class RequestFactoryViewTests(TestCase):
-    fixtures = ['campaign', 'views', 'users']
+    fixtures = ['campaign', 'auth_user', 'users']
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -340,7 +340,7 @@ class RequestFactoryViewTests(TestCase):
 
 
 class PaymentTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
         super().setUp()
@@ -405,7 +405,7 @@ class PaymentTests(DenormMixin, TestCase):
 )
 @freeze_time("2010-11-20 12:00")
 class PayuTests(TestCase):
-    fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
@@ -479,7 +479,7 @@ class PayuTests(TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsLogon(DenormMixin, TestCase):
-    fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
         super().setUp()
@@ -1138,7 +1138,7 @@ def create_post_request(factory, user, post_data={}, address="", subdomain="test
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
 class TestCompanyAdminViews(TestCase):
-    fixtures = ['campaign', 'views', 'users', 'company_competition']
+    fixtures = ['campaign', 'auth_user', 'users', 'company_competition']
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -1192,7 +1192,7 @@ class TestCompanyAdminViews(TestCase):
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
 class ViewsTestsRegistered(DenormMixin, TestCase):
-    fixtures = ['campaign', 'views', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
         super().setUp()
@@ -1258,7 +1258,7 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
 
 
 class TestTeams(DenormMixin, TestCase):
-    fixtures = ['campaign', 'users']
+    fixtures = ['campaign', 'auth_user', 'users']
 
     def setUp(self):
         super().setUp()
@@ -1277,7 +1277,7 @@ class TestTeams(DenormMixin, TestCase):
 
 
 class ResultsTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'users', 'test_results_data']
+    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data']
 
     def setUp(self):
         super().setUp()
@@ -1290,7 +1290,7 @@ class ResultsTests(DenormMixin, TestCase):
 
 
 class ModelTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def test_payment_type_string(self):
         user_attendance = UserAttendance.objects.get(pk=1115)
@@ -1305,7 +1305,7 @@ class ModelTests(DenormMixin, TestCase):
 
 
 class DenormTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def test_name_with_members(self):
         user_attendance = UserAttendance.objects.get(pk=1115)

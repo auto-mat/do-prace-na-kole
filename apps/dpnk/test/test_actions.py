@@ -29,7 +29,7 @@ import createsend
 
 
 class TestActions(TestCase):
-    fixtures = ['campaign', 'users', 'transactions', 'batches', 'vouchers', 'trips', 'test_results_data', 'invoices']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'vouchers', 'trips', 'test_results_data', 'invoices']
 
     def setUp(self):
         self.modeladmin = admin.ModelAdmin(models.UserAttendance, "")
