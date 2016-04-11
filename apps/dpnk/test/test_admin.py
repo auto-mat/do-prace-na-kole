@@ -34,8 +34,12 @@ import settings
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class AdminSmokeTests(smoke_tests.AdminSiteSmokeTest):
+class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
     fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
+
+    def setUp(self):
+        super().setUp()
+        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[4, 3, 1]))
 
     def get_request(self):
         request = super().get_request()

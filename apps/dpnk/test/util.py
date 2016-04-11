@@ -27,7 +27,9 @@ def print_response(response):
 
 class DenormMixin(object):
     def setUp(self):
+        super().setUp()
         call_command('denorm_init')
 
     def tearDown(self):
+        super().tearDown()
         call_command('denorm_drop')
