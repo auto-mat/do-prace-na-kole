@@ -542,6 +542,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         'userprofile__user__is_active',
         'representative_payment__pay_type',
         'representative_payment__status',
+        'representative_payment__amount',
         'payment_status',
         ('team__member_count', AllValuesComboFilter),
         PackageConfirmationFilter,
