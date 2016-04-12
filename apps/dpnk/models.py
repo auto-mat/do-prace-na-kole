@@ -142,7 +142,7 @@ class City(models.Model):
         verbose_name=u"Subdoména v URL",
         blank=False
     )
-    cyklistesobe_slug = models.CharField(
+    cyklistesobe_slug = models.SlugField(
         verbose_name=_(u"Jméno skupiny na webu Cyklisté sobě"),
         max_length=40,
         null=True)
