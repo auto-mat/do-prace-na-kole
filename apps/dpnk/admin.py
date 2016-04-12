@@ -25,6 +25,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.db.models import Count, Sum
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html_join, format_html
+from django.utils.translation import string_concat
 from django.core.urlresolvers import reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 from adminsortable2.admin import SortableInlineAdminMixin
@@ -842,7 +843,7 @@ class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__c
 
     def answers_link(self, obj):
         if obj.pk:
-            return format_html('<a href="{}?question={}">vyhodnocení odpovědí</a>', reverse('admin_answers'), obj.pk)
+            return format_html(string_concat('<a href="{}?question={}">', _('vyhodnocení odpovědí'), '</a>'), reverse('admin_answers'), obj.pk)
 
 
 class GpxFileInline(admin.TabularInline):
