@@ -31,6 +31,7 @@ views = [
     reverse('company_admin_pay_for_users'),
     reverse('invoices'),
     reverse('edit_company'),
+    reverse('rides_details'),
     reverse('company_admin_competitions'),
     reverse('company_structure'),
     reverse('company_admin_competition'),
@@ -79,7 +80,7 @@ views = [
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class BaseViewsTests(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data']
+    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'trips']
 
     def setUp(self):
         # Every test needs access to the request factory.
@@ -112,7 +113,7 @@ class ViewSmokeTests(BaseViewsTests):
 
 
 class ViewSmokeTestsRegistered(BaseViewsTests):
-    fixtures = ['campaign', 'auth_user', 'users', 'batches', 'transactions', 'test_results_data']
+    fixtures = ['campaign', 'auth_user', 'users', 'batches', 'transactions', 'test_results_data', 'trips']
 
     def setUp(self):
         super().setUp()

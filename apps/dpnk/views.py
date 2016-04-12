@@ -841,6 +841,18 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
             return redirect(reverse(redirect_view[reason]))
 
 
+class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
+    title = _("Podrobný přehled jízd")
+    template_name = 'registration/rides_details.html'
+    registration_phase = 'profile_view'
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data['trips'], uncreated = self.user_attendance.get_all_trips()
+        context_data['other_gpx_files'] = models.GpxFile.objects.filter(user_attendance=self.user_attendance, trip=None)
+        return context_data
+
+
 class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
     template_name = 'base_generic_form.html'
     title = _(u'Registrace není kompletní')

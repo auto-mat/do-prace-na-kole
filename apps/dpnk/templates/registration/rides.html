@@ -9,7 +9,7 @@
       $('[data-toggle="tooltip"]').tooltip()
    })
 </script>
-<button class="btn-info btn show_rides_btn" type="button"><span class="toggle">{% trans "Podrobný přehled jízd" %}</span></button>
+<a class="btn-info btn show_rides_btn" type="button" href="{% url "rides_details" %}"><span class="toggle">{% trans "Podrobný přehled jízd" %}</span></a>
 <form id="rides-form" name="calendar" method="POST">
 {{ formset.management_form }}
 <br>
