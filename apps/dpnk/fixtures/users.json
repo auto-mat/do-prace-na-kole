@@ -368,6 +368,22 @@
     },
     {
         "fields": {
+            "administrated_cities": [1],
+            "language": "cs",
+            "mailing_hash": null,
+            "mailing_id": "",
+            "nickname": "",
+            "note": "",
+            "sex": "male",
+            "telephone": "",
+            "personal_data_opt_in": true,
+            "user": 2
+        },
+        "model": "dpnk.userprofile",
+        "pk": 2
+    },
+    {
+        "fields": {
             "administrated_cities": [],
             "language": "cs",
             "mailing_hash": null,

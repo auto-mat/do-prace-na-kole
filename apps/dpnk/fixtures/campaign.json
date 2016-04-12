@@ -225,6 +225,31 @@
     {
         "fields": {
             "campaign": 339,
+            "city": [1],
+            "company": null,
+            "company_competitors": [],
+            "competitor_type": "single_user",
+            "date_from": "2010-11-01",
+            "date_to": "2010-12-30",
+            "entry_after_beginning_days": 7,
+            "is_public": true,
+            "name": "Výkonnost ve městě",
+            "public_answers": false,
+            "rules": null,
+            "sex": null,
+            "slug": "vykonnost-mesto",
+            "team_competitors": [],
+            "type": "length",
+            "url": "http://www.dopracenakole.net/url/",
+            "user_attendance_competitors": [],
+            "without_admission": true
+        },
+        "model": "dpnk.competition",
+        "pk": 6
+    },
+    {
+        "fields": {
+            "campaign": 339,
             "date_from": "2011-1-01",
             "type": "late_admission"
         },

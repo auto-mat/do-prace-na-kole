@@ -143,6 +143,24 @@ class AdminTests(TestCase):
         self.assertContains(response, "Testing campaign")
 
 
+class LocalAdminTests(TestCase):
+    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
+
+    def setUp(self):
+        super().setUp()
+        self.client.force_login(User.objects.get(pk=2), settings.AUTHENTICATION_BACKENDS[0])
+
+    def test_competition_change_view_different_city(self):
+        address = reverse('admin:dpnk_competition_change', args=(3,))
+        response = self.client.get(address, follow=True)
+        self.assertEquals(response.status_code, 404)
+
+    def test_competition_change_view(self):
+        address = reverse('admin:dpnk_competition_change', args=(6,))
+        response = self.client.get(address, follow=True)
+        self.assertContains(response, "Výkonnost ve městě")
+
+
 class FilterTests(TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'invoices']
 
@@ -172,7 +190,7 @@ class FilterTests(TestCase):
     def test_email_filter_null(self):
         f = filters.EmailFilter(self.request, {}, User, None)
         q = f.queryset(self.request, User.objects.all())
-        self.assertEquals(q.count(), 7)
+        self.assertEquals(q.count(), 8)
 
     def test_has_team_filter_yes(self):
         f = filters.HasTeamFilter(self.request, {"user_has_team": "yes"}, models.UserAttendance, None)
@@ -197,12 +215,12 @@ class FilterTests(TestCase):
     def test_is_for_company_no(self):
         f = filters.IsForCompanyFilter(self.request, {"is_for_company": "no"}, models.Competition, None)
         q = f.queryset(self.request, models.Competition.objects.all())
-        self.assertEquals(q.count(), 3)
+        self.assertEquals(q.count(), 4)
 
     def test_is_for_company_null(self):
         f = filters.IsForCompanyFilter(self.request, {}, models.Competition, None)
         q = f.queryset(self.request, models.Competition.objects.all())
-        self.assertEquals(q.count(), 3)
+        self.assertEquals(q.count(), 4)
 
     def test_has_rides_filter_yes(self):
         f = filters.HasRidesFilter(self.request, {"has_rides": "yes"}, models.UserAttendance, None)
@@ -314,7 +332,7 @@ class FilterTests(TestCase):
     def test_has_userprofile_filter_yes(self):
         f = filters.HasUserprofileFilter(self.request, {"has_userprofile": "yes"}, User, None)
         q = f.queryset(self.request, User.objects.all())
-        self.assertEquals(q.count(), 6)
+        self.assertEquals(q.count(), 7)
 
     def test_has_userprofile_filter_no(self):
         f = filters.HasUserprofileFilter(self.request, {"has_userprofile": "no"}, User, None)
@@ -324,7 +342,7 @@ class FilterTests(TestCase):
     def test_has_userprofile_filter_null(self):
         f = filters.HasUserprofileFilter(self.request, {}, User, None)
         q = f.queryset(self.request, User.objects.all())
-        self.assertEquals(q.count(), 7)
+        self.assertEquals(q.count(), 8)
 
     def test_package_confirmation_filter_confirmed(self):
         f = filters.PackageConfirmationFilter(self.request, {"package_confirmation": "confirmed"}, models.UserAttendance, None)

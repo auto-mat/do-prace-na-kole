@@ -124,5 +124,92 @@
         },
         "model": "auth.user",
         "pk": 1027
+    },
+    {
+        "fields": {
+            "date_joined": "2015-11-12T18:16:03.886",
+            "email": "local_admin@auto-mat.cz",
+            "first_name": "",
+            "groups": [4],
+            "is_active": true,
+            "is_staff": true,
+            "is_superuser": false,
+            "last_login": "2015-11-12T18:35:38.186",
+            "last_name": "",
+            "password": "md5$XtL9Iyaj7sqm$2848d5685e6022230846161a66cc30e4",
+            "user_permissions": [],
+            "username": "local_admin"
+        },
+        "model": "auth.user",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "name": "mistni koordinator",
+            "permissions": [
+                [
+                    "view_company",
+                    "dpnk",
+                    "company"
+                ],
+                [
+                    "view_companyadmin",
+                    "dpnk",
+                    "companyadmin"
+                ],
+                [
+                    "add_competition",
+                    "dpnk",
+                    "competition"
+                ],
+                [
+                    "delete_competition",
+                    "dpnk",
+                    "competition"
+                ],
+                [
+                    "change_competition",
+                    "dpnk",
+                    "competition"
+                ],
+                [
+                    "view_competition",
+                    "dpnk",
+                    "competition"
+                ],
+                [
+                    "add_question",
+                    "dpnk",
+                    "question"
+                ],
+                [
+                    "delete_question",
+                    "dpnk",
+                    "question"
+                ],
+                [
+                    "change_question",
+                    "dpnk",
+                    "question"
+                ],
+                [
+                    "view_question",
+                    "dpnk",
+                    "question"
+                ],
+                [
+                    "view_subsidiary",
+                    "dpnk",
+                    "subsidiary"
+                ],
+                [
+                    "view_userattendance",
+                    "dpnk",
+                    "userattendance"
+                ]
+            ]
+        },
+        "model": "auth.group",
+        "pk": 4
     }
 ]

@@ -22,7 +22,7 @@ from django.conf import settings
 from django.template.loader import get_template
 from cache_utils.decorators import cached
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import resolve, reverse
+from django.core.urlresolvers import resolve, reverse, NoReverseMatch
 from django.utils.translation import activate, get_language
 from django.utils.translation import ugettext_lazy as _
 import slumber
@@ -147,6 +147,8 @@ def change_lang(context, lang=None, *args, **kwargs):
     try:
         activate(lang)
         url = reverse(url_parts.view_name, kwargs=url_parts.kwargs)
+    except NoReverseMatch:
+        pass
     finally:
         activate(cur_language)
 
