@@ -116,7 +116,7 @@ class TestActions(TestCase):
         queryset = models.Competition.objects.all()
         actions.recalculate_competitions_results(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(str(message), "Úspěšně přepočítáno 4 výsledků")
+        self.assertEquals(str(message), "Úspěšně přepočítáno 5 výsledků")
 
     def test_normalize_questionnqire_admissions(self):
         queryset = models.Competition.objects.all()
@@ -130,7 +130,7 @@ class TestActions(TestCase):
         actions.remove_mailing_id(self.modeladmin, self.request, queryset)
         self.assertEquals(models.UserProfile.objects.get(pk=1026).mailing_id, None)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(message, "Mailing ID a hash byl úspěšne odebrán 6 profilům")
+        self.assertEquals(message, "Mailing ID a hash byl úspěšne odebrán 7 profilům")
 
     def test_show_distance_trips(self):
         queryset = models.Trip.objects.all()
