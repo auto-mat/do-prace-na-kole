@@ -1575,27 +1575,20 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
     template_name = 'registration/competitor_count.html'
     title = _("Počty soutěžících")
 
-    @method_decorator(cache_page(60 * 60))  # cache in memcached for 1h
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         campaign_slug = self.request.subdomain
-        campaign = Campaign.objects.get(slug=campaign_slug)
         context_data['cities'] =\
             City.objects.\
-            filter(subsidiary__teams__users__payment_status='done', subsidiary__teams__users__campaign=campaign).\
+            filter(subsidiary__teams__users__payment_status='done', subsidiary__teams__users__campaign__slug=campaign_slug).\
             annotate(competitor_count=Count('subsidiary__teams__users')).\
             order_by('-competitor_count')
         context_data['without_city'] =\
             UserAttendance.objects.\
-            filter(payment_status='done', campaign=campaign, team=None).\
-            count()
+            filter(payment_status='done', campaign__slug=campaign_slug, team=None)
         context_data['total'] =\
             UserAttendance.objects.\
-            filter(payment_status='done', campaign=campaign).\
-            count()
+            filter(payment_status='done', campaign__slug=campaign_slug)
         return context_data
 
 
