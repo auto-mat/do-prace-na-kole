@@ -56,7 +56,7 @@ django-nose
 nose-parameterized
 nose-timer
 -e git+https://github.com/PetrDlouhy/django-denorm.git@develop#egg=django-denorm
--e git+https://github.com/PetrDlouhy/django-admin-smoke-tests.git#egg=django-admin-smoke-tests  # the non-PIP source is for newest django-polymorphic, that defined both get_queryset and queryset
+-e git+https://github.com/PetrDlouhy/django-admin-smoke-tests.git@supermaster#egg=django-admin-smoke-tests  # the non-PIP source is for newest django-polymorphic, that defined both get_queryset and queryset
 django-wysiwyg-redactor
 sqlparse
 django-appconf
