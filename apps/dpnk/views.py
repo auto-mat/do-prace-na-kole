@@ -942,9 +942,12 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
             competition = Competition.objects.get(slug=competition_slug)
         except Competition.DoesNotExist:
             logger.exception('Unknown competition', extra={'slug': competition_slug, 'request': self.request})
-            return HttpResponse(_(u'<div class="text-danger">Tuto soutěž v systému nemáme.'
-                                  u' Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na'
-                                  u' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž">kontakt@dopracenakole.cz</a></div>'), status=401)
+            return {
+                'fullpage_error_message': mark_safe(_(
+                    'Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na '
+                    '<a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž">kontakt@dopracenakole.cz</a>')),
+                'title': _("Není vybraný tým"),
+            }
 
         results = competition.get_results()
         if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':

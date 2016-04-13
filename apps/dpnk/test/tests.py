@@ -43,7 +43,7 @@ from dpnk.test.util import DenormMixin
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'company_competition']
 
     def setUp(self):
         super().setUp()
@@ -260,6 +260,17 @@ class ViewsTests(DenormMixin, TestCase):
         createsend.Subscriber.delete.assert_called_once_with()
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
         self.assertEqual(user_attendance.userprofile.mailing_hash, None)
+
+    def test_dpnk_competition_results_unknown(self):
+        address = reverse('competition_results', kwargs={'competition_slug': 'unexistent_competition'})
+        response = self.client.get(address)
+        self.assertContains(response, "Tuto soutěž v systému nemáme.")
+
+    def test_dpnk_competition_results_company_competition(self):
+        address = reverse('competition_results', kwargs={'competition_slug': 'vykonnost-spolecnosti'})
+        response = self.client.get(address)
+        print_response(response)
+        self.assertContains(response, "Výsledky v soutěži Výkonnost společností:")
 
 
 class PaymentSuccessTests(TestCase):
