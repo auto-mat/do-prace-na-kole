@@ -286,6 +286,12 @@ def recalculate_results_team(team):
         recalculate_result_competitor(team_member)
 
 
+def points_questionnaire(user_attendances, competition):
+    points = Choice.objects.filter(answer__user_attendance__in=user_attendances, answer__question__competition=competition).aggregate(Sum('points'))['points__sum'] or 0
+    points_given = Answer.objects.filter(user_attendance__in=user_attendances, question__competition=competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
+    return points, points_given
+
+
 def recalculate_result(competition, competitor):  # noqa
     if competitor is None:
         return
@@ -304,8 +310,7 @@ def recalculate_result(competition, competitor):  # noqa
             return
 
         if competition.type == 'questionnaire':
-            points = Choice.objects.filter(answer__user_attendance__in=members, answer__question__competition=competition).aggregate(Sum('points'))['points__sum'] or 0
-            points_given = Answer.objects.filter(user_attendance__in=members, question__competition=competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
+            points, points_given = points_questionnaire(members, competition)
             competition_result.result = float(points + points_given)
         elif competition.type == 'length':
             competition_result.result = get_team_length(team)
@@ -321,8 +326,7 @@ def recalculate_result(competition, competitor):  # noqa
         competition_result, created = CompetitionResult.objects.get_or_create(user_attendance=user_attendance, competition=competition)
 
         if competition.type == 'questionnaire':
-            points = Choice.objects.filter(answer__user_attendance=user_attendance, answer__question__competition=competition).aggregate(Sum('points'))['points__sum'] or 0
-            points_given = Answer.objects.filter(user_attendance=user_attendance, question__competition=competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
+            points, points_given = points_questionnaire([user_attendance], competition)
             competition_result.result = points + points_given
         elif competition.type == 'length':
             competition_result.result = get_userprofile_length(user_attendance)
@@ -332,18 +336,17 @@ def recalculate_result(competition, competitor):  # noqa
     elif competition.competitor_type == 'company':
         company = competitor
         try:
-            company_admin = company.company_admin.get(campaign=competition.campaign).user_attendance()
+            user_attendances = UserAttendance.objects.filter(related_company_admin__administrated_company=company, campaign=competition.campaign)
         except CompanyAdmin.DoesNotExist:
             return
-        if not company_admin or not (competition.has_admission(company_admin)):
+        if not user_attendances or not (competition.has_admission(user_attendances)):
             CompetitionResult.objects.filter(company=company, competition=competition).delete()
             return
 
         competition_result, created = CompetitionResult.objects.get_or_create(company=company, competition=competition)
 
         if competition.type == 'questionnaire':
-            points = Choice.objects.filter(answer__user_attendance=company_admin, answer__question__competition=competition).aggregate(Sum('points'))['points__sum'] or 0
-            points_given = Answer.objects.filter(user_attendance=company_admin, question__competition=competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
+            points, points_given = points_questionnaire([user_attendances], competition)
             competition_result.result = points + points_given
         elif competition.type == 'length' or competition.type == 'frequency':
             raise NotImplementedError("Company length and frequency competitions are not implemented yet")
