@@ -432,26 +432,6 @@ class RegistrationView(TitleViewMixin, SimpleRegistrationView):
         return new_user
 
 
-class ConfirmDeliveryView(UpdateView):
-    template_name = 'base_generic_form.html'
-    form_class = forms.ConfirmDeliveryForm
-    success_url = 'profil'
-
-    def form_valid(self, form):
-        super(ConfirmDeliveryView, self).form_valid(form)
-        return redirect(reverse(self.success_url))
-
-    def get_object(self):
-        return self.user_attendance.package_shipped()
-
-    @user_attendance_has(lambda ua: not ua.t_shirt_size.ship, _(u"Startovní balíček se neodesílá, pokud nechcete žádné tričko."))
-    @user_attendance_has(lambda ua: not ua.package_shipped(), _(u"Startovní balíček ještě nebyl odeslán"))
-    @user_attendance_has(lambda ua: ua.package_delivered(), _(u"Doručení startovního balíčku potvrzeno"))
-    @must_be_competitor
-    def dispatch(self, request, *args, **kwargs):
-        return super(ConfirmDeliveryView, self).dispatch(request, *args, **kwargs)
-
-
 class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
     template_name = 'registration/team_invitation.html'
     form_class = forms.ConfirmTeamInvitationForm

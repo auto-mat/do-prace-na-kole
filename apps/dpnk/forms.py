@@ -431,23 +431,6 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         return payment_type
 
 
-class ConfirmDeliveryForm(forms.ModelForm):
-    CHOICES = [
-        (models.Status.PACKAGE_DELIVERY_CONFIRMED, _(u"Startovní balíček mi již byl doručen.")),
-        (models.Status.PACKAGE_DELIVERY_DENIED, _(u"Startovní balíček mi ještě nebyl doručen.")),
-    ]
-
-    status = forms.ChoiceField(
-        label=_(u"Doručení balíčku"),
-        choices=CHOICES,
-        widget=forms.RadioSelect(),
-    )
-
-    class Meta:
-        model = models.PackageTransaction
-        fields = ('status',)
-
-
 class AnswerForm(forms.ModelForm):
     choices = ShowPointsMultipleModelChoiceField(queryset=(), label="", help_text="")
 

@@ -343,28 +343,3 @@ class FilterTests(TestCase):
         f = filters.HasUserprofileFilter(self.request, {}, User, None)
         q = f.queryset(self.request, User.objects.all())
         self.assertEquals(q.count(), 8)
-
-    def test_package_confirmation_filter_confirmed(self):
-        f = filters.PackageConfirmationFilter(self.request, {"package_confirmation": "confirmed"}, models.UserAttendance, None)
-        q = f.queryset(self.request, UserAttendance.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_package_confirmation_filter_denied(self):
-        f = filters.PackageConfirmationFilter(self.request, {"package_confirmation": "denied"}, models.UserAttendance, None)
-        q = f.queryset(self.request, UserAttendance.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_package_confirmation_filter_unknown(self):
-        f = filters.PackageConfirmationFilter(self.request, {"package_confirmation": "unknown"}, models.UserAttendance, None)
-        q = f.queryset(self.request, UserAttendance.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_package_confirmation_filter_unshipped(self):
-        f = filters.PackageConfirmationFilter(self.request, {"package_confirmation": "unshipped"}, models.UserAttendance, None)
-        q = f.queryset(self.request, UserAttendance.objects.all())
-        self.assertEquals(q.count(), 7)
-
-    def test_package_confirmation_filter_null(self):
-        f = filters.PackageConfirmationFilter(self.request, {}, models.UserAttendance, None)
-        q = f.queryset(self.request, UserAttendance.objects.all())
-        self.assertEquals(q.count(), 7)

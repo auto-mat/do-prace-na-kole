@@ -190,35 +190,6 @@ class EmailFilter(SimpleListFilter):
         return queryset
 
 
-class PackageConfirmationFilter(SimpleListFilter):
-    title = _(u"Doručení startovního balíčku")
-    parameter_name = u'package_confirmation'
-
-    def lookups(self, request, model_admin):
-        return (
-            ("confirmed", _(u"Potvrzeno")),
-            ("denied", _(u"Nedoručení potvrzeno")),
-            ("unknown", _(u"Odesláno, bez vyjádření")),
-            ("unshipped", _(u"Neodesláno")),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == "confirmed":
-            return queryset.filter(transactions__packagetransaction__status=models.Status.PACKAGE_DELIVERY_CONFIRMED).distinct()
-        if self.value() == "denied":
-            return queryset.filter(transactions__packagetransaction__status=models.Status.PACKAGE_DELIVERY_DENIED).distinct()
-        if self.value() == "unknown":
-            return queryset.filter(
-                transactions__packagetransaction__status__in=models.PackageTransaction.shipped_statuses).exclude(
-                transactions__packagetransaction__status__in=[
-                    models.Status.PACKAGE_DELIVERY_CONFIRMED,
-                    models.Status.PACKAGE_DELIVERY_DENIED]
-            ).distinct()
-        if self.value() == "unshipped":
-            return queryset.exclude(transactions__packagetransaction__status__in=models.PackageTransaction.shipped_statuses).distinct()
-        return queryset
-
-
 class HasUserprofileFilter(SimpleListFilter):
     title = _(u"Má userprofile")
     parameter_name = u'has_userprofile'

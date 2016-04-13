@@ -143,9 +143,6 @@ urlpatterns = [
     url(r'^package/$',
         views.PackageView.as_view(),
         name="package"),
-    url(r'^package-confirmation/$',
-        views.ConfirmDeliveryView.as_view(),
-        ),
     url(r'^address/$',
         views.UserAttendanceView.as_view(
             template_name="registration/address.html"
