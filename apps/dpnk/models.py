@@ -24,6 +24,7 @@
 # Django imports
 import random
 import string
+import denorm
 import gzip
 from . import parcel_batch
 from . import avfull
@@ -1356,6 +1357,7 @@ class DeliveryBatch(models.Model):
                 status=Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
             )
             pt.save()
+            denorm.flush()
 
 
 @receiver(post_save, sender=DeliveryBatch)
@@ -1474,6 +1476,7 @@ class Invoice(models.Model):
         for payment in payments:
             payment.status = Status.INVOICE_MADE
             payment.save()
+            denorm.flush()
 
     def clean(self):
         if not self.pk and hasattr(self, 'campaign') and not self.payments_to_add().exists():
@@ -1486,6 +1489,7 @@ def change_invoice_payments_status(sender, instance, changed_fields=None, **kwar
         for payment in instance.payment_set.all():
             payment.status = Status.INVOICE_PAID
             payment.save()
+            denorm.flush()
 
 
 def payments_to_invoice(company, campaign):
@@ -2699,6 +2703,7 @@ def user_attendance_pre_delete(sender, instance, *args, **kwargs):
     for payment in instance.payment_set.all():
         payment.status = Status.COMPANY_ACCEPTS
         payment.save()
+        denorm.flush()
 
 
 @receiver(post_save, sender=UserAttendance)

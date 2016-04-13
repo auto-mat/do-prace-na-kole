@@ -152,7 +152,7 @@ def local():
 
 def dpnk_test():
     "Use the local virtual server"
-    env.hosts = ['auto-mat.cz']
+    env.hosts = ['se.auto-mat.cz']
     env.path = '/home/aplikace/dpnk-devel'
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
@@ -161,7 +161,7 @@ def dpnk_test():
 
 def dpnk2014():
     "Use the local virtual server"
-    env.hosts = ['auto-mat.cz']
+    env.hosts = ['se.auto-mat.cz']
     env.path = '/home/aplikace/dpnk-new'
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
@@ -194,7 +194,7 @@ def dpnkd_test():
 def dpnk():
     "Use the local virtual server"
     api.local("[ `git rev-parse --abbrev-ref HEAD` = 'master' ] || (read -p 'Do you want to deploy non-master branch?' ans && [ $ans = 'yes' ])")
-    env.hosts = ['auto-mat.cz']
+    env.hosts = ['se.auto-mat.cz']
     env.path = '/home/aplikace/dpnk-2015'
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
