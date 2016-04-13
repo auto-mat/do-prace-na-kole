@@ -18,7 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from .models import UserAttendance, Team, Company, Competition, City, CompetitionResult, Trip, Choice, Answer, CompanyAdmin
+from .models import UserAttendance, Team, Company, Competition, City, CompetitionResult, Trip, Choice, Answer
 from django.db.models import Sum, Q
 from . import util
 import threading
@@ -335,10 +335,7 @@ def recalculate_result(competition, competitor):  # noqa
 
     elif competition.competitor_type == 'company':
         company = competitor
-        try:
-            user_attendances = UserAttendance.objects.filter(related_company_admin__administrated_company=company, campaign=competition.campaign)
-        except CompanyAdmin.DoesNotExist:
-            return
+        user_attendances = UserAttendance.objects.filter(related_company_admin__administrated_company=company, campaign=competition.campaign)
         if not user_attendances or not (competition.has_admission(user_attendances)):
             CompetitionResult.objects.filter(company=company, competition=competition).delete()
             return
