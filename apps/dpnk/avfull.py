@@ -135,7 +135,7 @@ def make_dline(**fields):
 def make_avfull(outfile, delivery_batch):
     try:
         today = datetime.datetime.today().strftime("%Y%m%d")
-        tnt_account_reference = 111057
+        tnt_account_reference = 109454
         for package_transaction in delivery_batch.packagetransaction_set.all():
             user_attendance = package_transaction.user_attendance
             if not user_attendance.team:
