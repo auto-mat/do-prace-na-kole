@@ -2,6 +2,7 @@
 {% load static %}
 {% load dpnk_tags %}
 {% load i18n %}
+{% load thumbnail %}
 
 {% block content %}
 {% block messages %}
@@ -48,9 +49,15 @@
       {% wp_actions city_slug %}
    </div>
    <div class="col-md-6">
-      {% comment %}
-      Obrazky
-      {% endcomment%}
+      <h3>{% trans "Fotky z kreativních soutěží" %}</h3>
+      {% trans "Nahrát svoji fotku můžete v soutěžní kategorii" %} <a href="{% url "questionnaire" questionnaire_slug=questionnaire_answer.question.competition.slug %}">{{ questionnaire_answer.question.competition }}</a>
+      {% thumbnail questionnaire_answer.attachment "250x250" as foto_thumb %}
+      {% if foto_thumb %}
+         <a href="{{ questionnaire_answer.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
+         <img src="{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
+      {% else %}
+         <a href="{{ media }}/{{ answer.attachment }}" target="_blank">{{ answer.attachment }}</a>
+      {% endif %}
    </div>
 </div>
 <div class="row base">

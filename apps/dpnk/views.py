@@ -800,6 +800,9 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         city_slug = self.user_attendance.team.subsidiary.city.slug
+        context_data['questionnaire_answer'] = models.Answer.objects.filter(
+            question__competition__in=self.user_attendance.get_competitions(), attachment__isnull=False
+            ).order_by('?').first()
         context_data['city_slug'] = city_slug
         context_data['map_city_slug'] = 'mapa' if city_slug == 'praha' else city_slug
         return context_data
