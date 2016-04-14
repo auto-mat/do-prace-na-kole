@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load dpnk_tags %}
 {% load bleach_tags %}
 
 <div class="wp_news">
@@ -6,7 +7,7 @@
    <div class="item">
       <h4>
           <a href="{{ value.url }}" target="_blank">
-                  {{ value.title }}
+                  {{ value.title|unquote_html }}
           </a>
       </h4>
       {% if unfold == "all" or forloop.first and unfold == "first" %}

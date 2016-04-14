@@ -17,14 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django import template
-from django.conf import settings
-from django.template.loader import get_template
 from cache_utils.decorators import cached
-from django.utils.safestring import mark_safe
+from django.conf import settings
 from django.core.urlresolvers import resolve, reverse, NoReverseMatch
+from django import template
+from django.template.loader import get_template
+from django.utils.safestring import mark_safe
 from django.utils.translation import activate, get_language
 from django.utils.translation import ugettext_lazy as _
+import html.parser
 import slumber
 register = template.Library()
 
@@ -153,3 +154,9 @@ def change_lang(context, lang=None, *args, **kwargs):
         activate(cur_language)
 
     return "%s" % url
+
+
+@register.filter
+def unquote_html(value):
+    html_parser = html.parser.HTMLParser()
+    return html_parser.unescape(value)
