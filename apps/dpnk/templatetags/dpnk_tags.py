@@ -72,7 +72,7 @@ def _wp_news_cached(slug=None, wp_type="news"):
     elif wp_type == "prize":
         return _wp_news("locations", _("cena"), unfold="all", count=-1, show_description=False, _page_subtype="prize", _post_parent=slug, order="ASC", orderby="menu_order")
     else:
-        return _wp_news(_connected_to=slug, order="DESC", orderby="DATE")
+        return _wp_news(_connected_to=slug, order="DESC", orderby="DATE", _global_news=1)
 
 
 def _wp_news(post_type="post", post_type_string=_("novinka"), unfold="first", count=5, show_description=True, **other_args):
