@@ -43,7 +43,7 @@ from django.utils.translation import string_concat
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files import File
-from django.utils.html import escape
+from django.utils.html import escape, format_html_join
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from polymorphic.models import PolymorphicModel
@@ -1050,6 +1050,13 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         if not self.team:
             return None
         return self.team.subsidiary.company.company_admin.filter(campaign=self.campaign, company_admin_approved='approved')
+
+    def company_coordinator_emails(self):
+        company_admins = self.get_asociated_company_admin()
+        if company_admins:
+            return format_html_join(", ", '<a href="mailto:{0}">{0}</a>', ((ca.userprofile.user.email,) for ca in company_admins))
+        else:
+            return None
 
     def previous_user_attendance(self):
         previous_campaign = self.campaign.previous_campaign

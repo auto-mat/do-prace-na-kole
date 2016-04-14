@@ -11,17 +11,8 @@ Když registrovaná není, budete o ní muset vyplnit nějaké údaje.
 {% endblocktrans %}
 <br/>
 <br/>
-   {% blocktrans %}
-   Pokud název organizace, nebo adresa pobočky v senamu je, ale je chybná, nezakládejte novou, ale žádejte opravu:
-   <ol>
-      <li>
-         Po vašem koordinátorovi organizace.
-      </li>
-      <li>
-         Na <a href='mailto:kontakt@dopracenakole.cz?subject=Žádost o změnu adresy organizace, pobočky nebo týmu'>kontakt@dopracenakole.cz</a>.
-      </li>
-   </ol>
-   {% endblocktrans %}
+   {% trans "Pokud název organizace, nebo adresa pobočky v senamu je, ale je chybná, nezakládejte novou, ale žádejte opravu:" %}
+   {% include "registration/request_change_company_coordinator_part.html" %}
 {{ block.super }}
 {% endblock %}
 

@@ -1003,7 +1003,7 @@ class ChangeTShirtView(RegistrationViewMixin, UpdateView):
 
     @method_decorator(login_required_simple)
     @user_attendance_has(lambda ua: not ua.team_complete(), _(u"Velikost trička nemůžete měnit, dokud nemáte zvolený tým."))
-    @user_attendance_has(lambda ua: ua.package_shipped(), _(u"Velikost trika nemůžete měnit, již bylo zařazeno do zpracování"))
+    @user_attendance_has(lambda ua: ua.package_shipped(), _(u"Vaše tričko již je na cestě k vám, už se na něj můžete těšit."))
     def dispatch(self, request, *args, **kwargs):
         return super(ChangeTShirtView, self).dispatch(request, *args, **kwargs)
 
