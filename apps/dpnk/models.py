@@ -927,7 +927,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     def is_libero(self):
         if self.team:
-            return self.team.members().count() <= 1
+            return self.team_member_count() <= 1
         else:
             return False
 
