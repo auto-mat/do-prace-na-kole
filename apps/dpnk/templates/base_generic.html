@@ -15,7 +15,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script type="text/javascript" src="{% static "bow/jquery/dist/jquery.js"%}"></script>
+<script type="text/javascript" src="{% static "bow/jquery/dist/jquery.min.js"%}"></script>
 <script type="text/javascript" src="{% static "bow/bootstrap/dist/js/bootstrap.js"%}"></script>
 <script type="text/javascript" src="{% static "js/form_functions.js"%}"></script>
 <script src="https://cdn.ravenjs.com/2.2.0/raven.min.js"></script>
@@ -29,6 +29,7 @@ Raven.setUserContext({
 {% endif %}
 </script>
 
+<link href="{% static "bow/lightbox2/dist/css/lightbox.css"%}" rel="stylesheet">
 <link href="{% static "bow/bootstrap/dist/css/bootstrap.css"%}" rel="stylesheet" media="screen">
 <link href="{% static "css/bootstrap_mod.css"%}" rel="stylesheet" media="screen">
 <link href="http://www.dopracenakole.cz/style.css" rel="stylesheet" media="screen">
@@ -166,5 +167,6 @@ Raven.setUserContext({
       });
 
     </script>
+<script type="text/javascript" src="{% static "bow/lightbox2/dist/js/lightbox.min.js"%}"></script>
 </body>
 </html>

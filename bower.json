@@ -14,10 +14,11 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": "1.11.2",
+    "jquery": "1.12.3",
     "openlayers": "release-2.13.1",
     "bootstrap": "~3.3.2",
     "jquery-form": "~3.46.0",
-    "font-awesome": "~4.3.0"
+    "font-awesome": "~4.3.0",
+    "lightbox2": "~2.8.2"
   }
 }
