@@ -551,7 +551,10 @@ class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
 class TrackUpdateForm(SubmitMixin, forms.ModelForm):
     gpx_file = forms.FileField(
         label=_("GPX soubor"),
-        help_text=_("Zadat trasu nahráním souboru GPX"),
+        help_text=_(mark_safe(
+            "Zadat trasu nahráním souboru GPX. "
+            "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší <a href='http://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
+        )),
         required=False,
     )
 
