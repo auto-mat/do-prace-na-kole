@@ -23,7 +23,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory, Client
 from django.test.utils import override_settings
 from dpnk import util, models, filters
-from dpnk.models import UserAttendance
+from dpnk.models import UserAttendance, Team
 from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
 import datetime
@@ -58,6 +58,7 @@ class AdminModulesTests(DenormMixin, TestCase):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer")
         self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
 
     def test_userattendance_export(self):
@@ -105,6 +106,7 @@ class AdminTests(TestCase):
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
 
     def test_subsidiary_admin(self):

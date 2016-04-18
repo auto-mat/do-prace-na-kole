@@ -20,13 +20,14 @@
 
 from django.core.management import call_command
 from django.test import TestCase
-from dpnk import models
+from dpnk import models, util
 import datetime
 
 
 class Tests(TestCase):
     def setUp(self):
         call_command('denorm_init')
+        util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
 
     def tearDown(self):
         call_command('denorm_drop')

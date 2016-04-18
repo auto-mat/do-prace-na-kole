@@ -41,6 +41,7 @@ class TestActions(TestCase):
         self.messages = FallbackStorage(self.request)
         setattr(self.request, '_messages', self.messages)
         call_command('denorm_init')
+        util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
 
     def tearDown(self):
         call_command('denorm_drop')
@@ -95,12 +96,14 @@ class TestActions(TestCase):
         self.assertEquals(str(message), "Ujetá vzdálenost: 5.3 Km v 2 jízdách")
 
     def test_recalculate_results(self):
+        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[2, 3]))
         queryset = models.UserAttendance.objects.all()
         actions.recalculate_results(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEquals(str(message), "Výsledky přepočítány")
 
     def test_touch_items_user_attendance(self):
+        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[2, 3]))
         queryset = models.UserAttendance.objects.all()
         actions.touch_items(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
@@ -145,6 +148,7 @@ class TestActions(TestCase):
         self.assertEquals(message, "Úspěšně aktualiován mailing pro 3 koordinátorů")
 
     def test_create_batch(self):
+        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[2, 3]))
         queryset = models.UserAttendance.objects.all()
         actions.create_batch(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message

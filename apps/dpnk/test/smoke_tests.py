@@ -2,7 +2,7 @@
 from project import urls
 from nose_parameterized import parameterized
 from dpnk import views, util
-from dpnk.models import UserAttendance
+from dpnk.models import UserAttendance, Team
 from django.core.urlresolvers import reverse
 from django.core.management import call_command
 from django.test import TestCase, RequestFactory, Client
@@ -88,6 +88,7 @@ class BaseViewsTests(TestCase):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.assertTrue(self.client.login(username='test', password='test'))
         call_command('denorm_init')
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
         util.rebuild_denorm_models(UserAttendance.objects.get(pk=1115).team.all_members())
 
     def tearDown(self):

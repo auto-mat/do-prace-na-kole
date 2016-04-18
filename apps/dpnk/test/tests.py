@@ -47,6 +47,7 @@ class ViewsTests(DenormMixin, TestCase):
 
     def setUp(self):
         super().setUp()
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
 
     def test_login_view(self):
@@ -79,6 +80,7 @@ class ViewsTests(DenormMixin, TestCase):
         for payment in Payment.objects.all():
             payment.status = models.Status.DONE
             payment.save()
+        util.rebuild_denorm_models(Team.objects.all())
         util.rebuild_denorm_models(UserAttendance.objects.all())
         response = self.client.get(address)
         self.assertContains(response, "<td>Testing city</td>\n   <td>2</td>")
@@ -229,17 +231,17 @@ class ViewsTests(DenormMixin, TestCase):
             OrderedDict((('Key', 'Novacek'), ('Value', False))),
             OrderedDict((('Key', 'Kampan'), ('Value', 'testing-campaign'))),
             OrderedDict((('Key', 'Vstoupil_do_souteze'), ('Value', False))),
-            OrderedDict((('Key', 'Pocet_lidi_v_tymu'), ('Value', None))),
+            OrderedDict((('Key', 'Pocet_lidi_v_tymu'), ('Value', 3))),
             OrderedDict((('Key', 'Povoleni_odesilat_emaily'), ('Value', True))),
         ]
         createsend.Subscriber.add.assert_called_once_with('12345abcde', 'test@test.cz', 'Testing User 1', custom_fields, True)
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '29b17908fe23eebd00d302d3c7a8a942')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '7c7a9b0239e35455a712e05846933ddb')
 
         createsend.Subscriber.update = MagicMock()
         mailing.add_or_update_user_synchronous(user_attendance)
         self.assertFalse(createsend.Subscriber.update.called)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '29b17908fe23eebd00d302d3c7a8a942')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '7c7a9b0239e35455a712e05846933ddb')
 
         custom_fields[0] = OrderedDict((('Key', 'Mesto'), ('Value', 'other-city')))
         user_attendance.team.subsidiary.city = models.City.objects.get(slug="other-city")
@@ -249,7 +251,7 @@ class ViewsTests(DenormMixin, TestCase):
         mailing.add_or_update_user_synchronous(user_attendance)
         createsend.Subscriber.get.assert_called_once_with('12345abcde', ret_mailing_id)
         createsend.Subscriber.update.assert_called_once_with('test@test.cz', 'Testing User 1', custom_fields, True)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, 'd3fb264e87e16cd13829c74eff4f15bb')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, 'aa4dae0668a315b79923e1b99a51127c')
 
         user_attendance.userprofile.user.is_active = False
         user_attendance.userprofile.user.save()
@@ -320,6 +322,7 @@ class RequestFactoryViewTests(TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
         self.user_attendance = UserAttendance.objects.get(pk=1115)
         self.session_id = "2075-1J1455206457"
         self.trans_id = "2055"
@@ -355,6 +358,7 @@ class PaymentTests(DenormMixin, TestCase):
 
     def setUp(self):
         super().setUp()
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
 
     def test_no_payment_no_admission(self):
@@ -400,6 +404,7 @@ class PaymentTests(DenormMixin, TestCase):
         self.assertEquals(str(user.get_payment_status_display()), 'neznámý')
 
     def test_payment_unknown_none(self):
+        util.rebuild_denorm_models(Team.objects.filter(pk__in=[1, 3]))
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1016))
         user = UserAttendance.objects.get(pk=1016)
         self.assertEquals(user.payment_status, 'none')
@@ -496,6 +501,7 @@ class ViewsLogon(DenormMixin, TestCase):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk__in=[1115, 2115]))
         self.user_attendance = UserAttendance.objects.get(pk=1115)
 
@@ -547,6 +553,7 @@ class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_team_view_choose(self):
         models.PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
+        util.rebuild_denorm_models(Team.objects.filter(pk=3))
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_tym'))
         self.assertContains(response, "id_company_text")
@@ -581,6 +588,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(UserAttendance.objects.get(pk=1115).approved_for_team, "approved")
 
     def test_dpnk_update_profile_view(self):
+        util.rebuild_denorm_models(Team.objects.filter(pk=2))
         post_data = {
             'sex': 'male',
             'first_name': 'Testing',
@@ -932,6 +940,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(str(msg.subject), 'Testing campaign - pozvánka do týmu')
 
     def test_dpnk_company_admin_application(self):
+        util.rebuild_denorm_models(Team.objects.filter(pk=2))
         response = self.client.get(reverse('company_admin_application'))
         post_data = {
             'motivation_company_admin': 'Testing position',
@@ -1013,6 +1022,7 @@ class RegistrationMixinTests(ViewsLogon):
         self.assertContains(response, "Nezapomeňte vyplnit odpovědi v následujících soutěžích: <a href='/cs/otazka/quest/'>Dotazník</a>!")
 
     def test_dpnk_registration_company_admin_undecided(self):
+        util.rebuild_denorm_models(Team.objects.filter(pk=2))
         ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
         ca.company_admin_approved = 'undecided'
         ca.save()
@@ -1021,6 +1031,7 @@ class RegistrationMixinTests(ViewsLogon):
         self.assertContains(response, "Vaše žádost o funkci koordinátora organizace čeká na vyřízení.")
 
     def test_dpnk_registration_company_admin_denied(self):
+        util.rebuild_denorm_models(Team.objects.filter(pk=2))
         ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
         ca.company_admin_approved = 'denied'
         ca.save()
@@ -1209,6 +1220,7 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
         self.user_attendance = UserAttendance.objects.get(pk=1115)
         self.assertTrue(self.user_attendance.entered_competition())
@@ -1273,6 +1285,7 @@ class TestTeams(DenormMixin, TestCase):
 
     def setUp(self):
         super().setUp()
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
 
     def test_member_count_update(self):
@@ -1292,6 +1305,7 @@ class ResultsTests(DenormMixin, TestCase):
 
     def setUp(self):
         super().setUp()
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
 
     def test_get_competitors(self):
@@ -1302,6 +1316,10 @@ class ResultsTests(DenormMixin, TestCase):
 
 class ModelTests(DenormMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+
+    def setUp(self):
+        super().setUp()
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
 
     def test_payment_type_string(self):
         user_attendance = UserAttendance.objects.get(pk=1115)
@@ -1319,6 +1337,7 @@ class DenormTests(DenormMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def test_name_with_members(self):
+        util.rebuild_denorm_models(Team.objects.filter(pk__in=[2, 3]))
         user_attendance = UserAttendance.objects.get(pk=1115)
         user_attendance.team.save()
         call_command('denorm_flush')
