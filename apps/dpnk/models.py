@@ -921,6 +921,8 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             return round(length.km, round_digits)
         else:
             return self.distance
+    get_distance.short_description = _('Vzdálenost do práce')
+    get_distance.admin_order_field = 'length'
 
     def get_userprofile(self):
         return self.userprofile
