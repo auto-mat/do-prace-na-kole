@@ -205,7 +205,7 @@ def dpnk():
 
 def test():
     "Run the test suite and bail out if it fails"
-    api.local("python manage.py test" % env)
+    run("cd %(path)s/releases/%(release)s; ./runtests.sh" % env)
 
 
 def setup():
@@ -241,10 +241,11 @@ def deploy():
     upload_tar_from_git()
     install_requirements()
     # install_site()
-    symlink_current_release()
     collectstatic()
     denorm()
     locale()
+    test()
+    symlink_current_release()
     restart_webserver()
 
 
