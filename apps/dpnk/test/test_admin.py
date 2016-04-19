@@ -134,7 +134,7 @@ class AdminTests(TestCase):
         address = reverse('admin:dpnk_deliverybatch_changelist')
         response = self.client.get(address, follow=True)
         self.assertContains(response, "Testing campaign")
-        self.assertContains(response, "/media/customer_sheets/customer_sheets")
+        self.assertContains(response, "field-customer_sheets__url")
 
     def test_deliverybatch_admin_change(self):
         address = reverse('admin:dpnk_deliverybatch_change', args=(1,))
