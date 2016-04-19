@@ -562,7 +562,8 @@ class TrackUpdateForm(SubmitMixin, forms.ModelForm):
         cleaned_data = super(TrackUpdateForm, self).clean()
 
         if cleaned_data['gpx_file']:
-            cleaned_data['track'] = gpx_parse.parse_gpx(cleaned_data['gpx_file'].read().decode("utf-8"))
+            gpx_string = cleaned_data['gpx_file'].read().decode("utf-8")
+            cleaned_data['track'] = gpx_parse.parse_gpx(gpx_string)
 
         if cleaned_data['dont_want_insert_track']:
             cleaned_data['track'] = None
