@@ -76,7 +76,7 @@ class InvalidStringError(str):
         raise Exception("empty string")
         return ""
 
-TEMPLATES[0]['OPTIONS']['string_if_invalid'] = InvalidStringError("%s"),
+TEMPLATES[0]['OPTIONS']['string_if_invalid'] = InvalidStringError("%s")
 TEMPLATES[0]['OPTIONS']['debug'] = True
 
 CRISPY_FAIL_SILENTLY = False
