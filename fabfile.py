@@ -188,7 +188,7 @@ def dpnkd_test():
     env.path = '/home/aplikace/dpnk-devel'
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
-    env.app_name = "dpnk"
+    env.app_name = "dpnk_test"
 
 
 def dpnk():
@@ -341,7 +341,7 @@ def update_requirements():
     "Update all requirements"
     require('release', provided_by=[deploy, setup])
     run('cd %(path)s/releases/%(release)s; bower update' % env)
-    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt' % env)
+    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt --upgrade' % env)
 
 
 def symlink_current_release():
