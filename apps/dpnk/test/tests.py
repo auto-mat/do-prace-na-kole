@@ -1062,6 +1062,20 @@ class TrackViewTests(ViewsLogon):
         user_attendance = UserAttendance.objects.length().get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 13.32)
 
+    def test_dpnk_views_track_gpx_file_route(self):
+        address = reverse('upravit_trasu')
+        with open('apps/dpnk/test_files/route.gpx', 'rb') as gpxfile:
+            post_data = {
+                'dont_want_insert_track': False,
+                'track': '',
+                'gpx_file': gpxfile,
+                'submit': 'Odeslat',
+            }
+            response = self.client.post(address, post_data, follow=True)
+        self.assertRedirects(response, reverse('profil'))
+        user_attendance = UserAttendance.objects.length().get(pk=1115)
+        self.assertEquals(user_attendance.get_distance(), 6.72)
+
     def test_dpnk_views_track(self):
         address = reverse('upravit_trasu')
         post_data = {
