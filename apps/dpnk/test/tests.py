@@ -490,7 +490,7 @@ class PayuTests(TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsLogon(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices']
 
     def setUp(self):
         super().setUp()
