@@ -569,7 +569,7 @@ class TrackUpdateForm(SubmitMixin, forms.ModelForm):
             cleaned_data['track'] = None
         else:
             if cleaned_data['track'] is None:
-                raise forms.ValidationError(_(u"Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat."))
+                raise forms.ValidationError(_("Nezadali jste žádnou trasu. Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat."))
         return cleaned_data
 
     class Meta:
