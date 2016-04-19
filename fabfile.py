@@ -291,6 +291,7 @@ def upload_tar_from_git():
     put('%(release)s.tar.gz' % env, '%(path)s/packages/' % env)
     run('cd %(path)s/releases/%(release)s && tar zxf ../../packages/%(release)s.tar.gz' % env)
     run('cd %(path)s/releases/%(release)s/project && ln -s ../../../settings_local.py .' % env)
+    run('cd %(path)s/releases/%(release)s/project && ln -s ../../../test_settings_local.py .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../newrelic.ini .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../env .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../db_backup .' % env)

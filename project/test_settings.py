@@ -80,3 +80,9 @@ TEMPLATES[0]['OPTIONS']['string_if_invalid'] = InvalidStringError("%s")
 TEMPLATES[0]['OPTIONS']['debug'] = True
 
 CRISPY_FAIL_SILENTLY = False
+
+# import local test_settings
+try:
+    from test_settings_local import *  # noqa
+except ImportError:
+    pass
