@@ -188,7 +188,7 @@ def dpnkd_test():
     env.path = '/home/aplikace/dpnk-devel'
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
-    env.app_name = "dpnk"
+    env.app_name = "dpnk_test"
 
 
 def dpnk():
@@ -205,7 +205,7 @@ def dpnk():
 
 def test():
     "Run the test suite and bail out if it fails"
-    api.local("python manage.py test" % env)
+    run("cd %(path)s/releases/%(release)s; ./runtests.sh" % env)
 
 
 def setup():
@@ -241,10 +241,11 @@ def deploy():
     upload_tar_from_git()
     install_requirements()
     # install_site()
-    symlink_current_release()
     collectstatic()
     denorm()
     locale()
+    test()
+    symlink_current_release()
     restart_webserver()
 
 
@@ -291,6 +292,7 @@ def upload_tar_from_git():
     put('%(release)s.tar.gz' % env, '%(path)s/packages/' % env)
     run('cd %(path)s/releases/%(release)s && tar zxf ../../packages/%(release)s.tar.gz' % env)
     run('cd %(path)s/releases/%(release)s/project && ln -s ../../../settings_local.py .' % env)
+    run('cd %(path)s/releases/%(release)s/project && ln -s ../../../test_settings_local.py .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../newrelic.ini .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../env .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../db_backup .' % env)
@@ -341,7 +343,7 @@ def update_requirements():
     "Update all requirements"
     require('release', provided_by=[deploy, setup])
     run('cd %(path)s/releases/%(release)s; bower update' % env)
-    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt' % env)
+    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt --upgrade' % env)
 
 
 def symlink_current_release():

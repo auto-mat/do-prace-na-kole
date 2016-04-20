@@ -490,7 +490,7 @@ class PayuTests(TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsLogon(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices']
 
     def setUp(self):
         super().setUp()
@@ -939,8 +939,8 @@ class ViewsTestsLogon(ViewsLogon):
             'personal_data_opt_in': True,
             'submit': 'Odeslat',
         }
-        response = self.client.post(reverse('company_admin_application'), post_data, follow=True)
-        self.assertRedirects(response, reverse('profil'))
+        response = self.client.post(reverse('company_admin_application'), post_data)
+        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         company_admin = models.CompanyAdmin.objects.get(userprofile__user__username='test')
         self.assertEquals(company_admin.motivation_company_admin, 'Testing position')
 
@@ -1057,10 +1057,24 @@ class TrackViewTests(ViewsLogon):
                 'gpx_file': gpxfile,
                 'submit': 'Odeslat',
             }
-            response = self.client.post(address, post_data, follow=True)
-        self.assertRedirects(response, reverse('profil'))
+            response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         user_attendance = UserAttendance.objects.length().get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 13.32)
+
+    def test_dpnk_views_track_gpx_file_route(self):
+        address = reverse('upravit_trasu')
+        with open('apps/dpnk/test_files/route.gpx', 'rb') as gpxfile:
+            post_data = {
+                'dont_want_insert_track': False,
+                'track': '',
+                'gpx_file': gpxfile,
+                'submit': 'Odeslat',
+            }
+            response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
+        user_attendance = UserAttendance.objects.length().get(pk=1115)
+        self.assertEquals(user_attendance.get_distance(), 6.72)
 
     def test_dpnk_views_track(self):
         address = reverse('upravit_trasu')
@@ -1073,8 +1087,8 @@ class TrackViewTests(ViewsLogon):
                 '[14.38538253021666, 50.101957419789834]]]}',
             'submit': 'Odeslat',
         }
-        response = self.client.post(address, post_data, follow=True)
-        self.assertRedirects(response, reverse('profil'))
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         user_attendance = UserAttendance.objects.length().get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 0.74)
 
@@ -1086,8 +1100,8 @@ class TrackViewTests(ViewsLogon):
             'gpx_file': '',
             'submit': 'Odeslat',
         }
-        response = self.client.post(address, post_data, follow=True)
-        self.assertRedirects(response, reverse('profil'))
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         user_attendance = UserAttendance.objects.length().get(pk=1115)
         self.assertEquals(user_attendance.track, None)
         self.assertEquals(user_attendance.get_distance(), 12)
@@ -1261,8 +1275,8 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
                 'user_attendance': self.user_attendance.pk,
                 'submit': 'Odeslat',
             }
-            response = self.client.post(address, post_data, follow=True)
-            self.assertRedirects(response, reverse('profil'))
+            response = self.client.post(address, post_data)
+            self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         gpxfile = models.GpxFile.objects.get(trip_date=date, direction=direction, user_attendance=self.user_attendance)
         trip = models.Trip.objects.get(pk=trip.pk)
         self.assertEquals(trip.distance, 13.32)

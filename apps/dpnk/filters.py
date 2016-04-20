@@ -260,3 +260,21 @@ class InvoicePaidFilter(SimpleListFilter):
         if self.value() == 'no':
             return queryset.filter(paid_date__isnull=True)
         return queryset
+
+
+class TrackFilter(SimpleListFilter):
+    title = _("Má nahranou trasu")
+    parameter_name = 'has_track'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('yes', _('Ano')),
+            ('no', _('Ne')),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(track__isnull=False).distinct()
+        if self.value() == 'no':
+            return queryset.filter(track__isnull=True).distinct()
+        return queryset

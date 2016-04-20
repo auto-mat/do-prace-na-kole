@@ -134,7 +134,7 @@ class AdminTests(TestCase):
         address = reverse('admin:dpnk_deliverybatch_changelist')
         response = self.client.get(address, follow=True)
         self.assertContains(response, "Testing campaign")
-        self.assertContains(response, "/media/customer_sheets/customer_sheets")
+        self.assertContains(response, "field-customer_sheets__url")
 
     def test_deliverybatch_admin_change(self):
         address = reverse('admin:dpnk_deliverybatch_change', args=(1,))
@@ -343,3 +343,18 @@ class FilterTests(TestCase):
         f = filters.HasUserprofileFilter(self.request, {}, User, None)
         q = f.queryset(self.request, User.objects.all())
         self.assertEquals(q.count(), 8)
+
+    def test_has_track_filter_yes(self):
+        f = filters.TrackFilter(self.request, {"has_track": "yes"}, User, None)
+        q = f.queryset(self.request, UserAttendance.objects.all())
+        self.assertEquals(q.count(), 5)
+
+    def test_has_track_filter_no(self):
+        f = filters.TrackFilter(self.request, {"has_track": "no"}, User, None)
+        q = f.queryset(self.request, UserAttendance.objects.all())
+        self.assertEquals(q.count(), 2)
+
+    def test_has_track_filter_null(self):
+        f = filters.TrackFilter(self.request, {}, User, None)
+        q = f.queryset(self.request, UserAttendance.objects.all())
+        self.assertEquals(q.count(), 7)
