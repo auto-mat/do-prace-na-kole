@@ -1236,7 +1236,6 @@ class TestCompanyAdminViews(TestCase):
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
-    MEDIA_ROOT="apps/dpnk/test_files",
 )
 class ViewsTestsRegistered(DenormMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
@@ -1250,6 +1249,9 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
         self.user_attendance = UserAttendance.objects.get(pk=1115)
         self.assertTrue(self.user_attendance.entered_competition())
 
+    @override_settings(
+        MEDIA_ROOT="apps/dpnk/test_files",
+    )
     def test_dpnk_questionnaire_answers(self):
         competition = models.Competition.objects.filter(slug="quest")
         actions.normalize_questionnqire_admissions(None, None, competition)
@@ -1259,6 +1261,9 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
         self.assertContains(response, '<a href="/media/modranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>')
         self.assertContains(response, '<img src="/media/DSC00002.JPG.250x250_q85.jpg" width="250" height="188">')
 
+    @override_settings(
+        MEDIA_ROOT="apps/dpnk/test_files",
+    )
     @patch('slumber.API')
     def test_dpnk_profile_page(self, slumber_api):
         models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
