@@ -114,6 +114,7 @@
         "fields": {
            "type": "text",
            "comment_type": "link",
+           "with_attachment": true,
            "competition": 4
         },
         "model": "dpnk.question",
@@ -123,6 +124,7 @@
         "fields": {
            "type": "text",
            "comment_type": "one-liner",
+           "with_attachment": true,
            "competition": 4
         },
         "model": "dpnk.question",
@@ -132,6 +134,7 @@
         "fields": {
            "type": "choice",
            "required": false,
+           "with_attachment": false,
            "competition": 4
         },
         "model": "dpnk.question",
@@ -141,6 +144,7 @@
         "fields": {
            "type": "choice",
            "choice_type": 1,
+           "with_attachment": false,
            "competition": 4
         },
         "model": "dpnk.question",
@@ -154,6 +158,15 @@
         },
         "model": "dpnk.choice",
         "pk": 1
+    },
+    {
+        "fields": {
+           "text": "no",
+           "points": 3,
+           "choice_type": 1
+        },
+        "model": "dpnk.choice",
+        "pk": 2
     },
     {
         "fields": {

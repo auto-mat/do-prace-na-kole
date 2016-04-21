@@ -14,12 +14,14 @@
       {% endif %}
       <br/>
       <div class="questionnaire-image">
+      {% if answer.question.with_attachment %}
       {% thumbnail answer.attachment "250x250" as foto_thumb %}
       {% if foto_thumb %}
          <a data-lightbox="image" href="{{ answer.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
          <img src="{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
       {% else %}
          <a href="{{ answer.attachment.url }}" target="_blank">{{ answer.attachment }}</a>
+      {% endif %}
       {% endif %}
       </div>
    {% endfor %}

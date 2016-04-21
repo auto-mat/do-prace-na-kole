@@ -95,6 +95,18 @@ class AdminModulesTests(DenormMixin, TestCase):
         response = self.client.get(address)
         self.assertContains(response, 'id="id_address_street_number"')
 
+    def test_admin_questions(self):
+        address = reverse('admin_questions')
+        response = self.client.get(address)
+        self.assertContains(response, 'Testing campaign -')
+
+    def test_admin_answers(self):
+        address = "%s?question=2" % reverse('admin_answers')
+        response = self.client.get(address)
+        print_response(response)
+        self.assertContains(response, '<a href="/admin/dpnk/answer/?question__competition__id__exact=4">Odpovědi k soutěži Dotazník</a>')
+        self.assertContains(response, '<a href="/media//DSC00002.JPG" target="_blank">DSC00002.JPG</a>')
+
 
 @override_settings(
     SITE_ID=2,
@@ -319,7 +331,7 @@ class FilterTests(TestCase):
     def test_has_reaction_filter_yes(self):
         f = filters.HasReactionFilter(self.request, {"has_reaction": "yes"}, models.Answer, None)
         q = f.queryset(self.request, models.Answer.objects.all())
-        self.assertEquals(q.count(), 1)
+        self.assertEquals(q.count(), 3)
 
     def test_has_reaction_filter_no(self):
         f = filters.HasReactionFilter(self.request, {"has_reaction": "no"}, models.Answer, None)
@@ -329,7 +341,7 @@ class FilterTests(TestCase):
     def test_has_reaction_filter_null(self):
         f = filters.HasReactionFilter(self.request, {}, models.Answer, None)
         q = f.queryset(self.request, models.Answer.objects.all())
-        self.assertEquals(q.count(), 2)
+        self.assertEquals(q.count(), 4)
 
     def test_has_userprofile_filter_yes(self):
         f = filters.HasUserprofileFilter(self.request, {"has_userprofile": "yes"}, User, None)

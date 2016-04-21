@@ -805,6 +805,8 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
             question__competition__type="questionnaire",
             question__competition__campaign=self.user_attendance.campaign,
             attachment__isnull=False,
+        ).exclude(
+            attachment='',
         ).select_related('question__competition').order_by('?').first()
         context_data['city_slug'] = city_slug
         context_data['map_city_slug'] = 'mapa' if city_slug == 'praha' else city_slug

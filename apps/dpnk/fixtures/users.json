@@ -207,7 +207,8 @@
     {
         "fields": {
             "user_attendance": 1115,
-            "question": 1,
+            "question": 3,
+            "attachment": "DSC00002.JPG",
             "comment": "Testing comment"
         },
         "model": "dpnk.answer",
@@ -216,10 +217,29 @@
     {
         "fields": {
             "user_attendance": 1115,
+            "choices": [1],
             "question": 2
         },
         "model": "dpnk.answer",
         "pk": 2
+    },
+    {
+        "fields": {
+            "user_attendance": 1115,
+            "attachment": "modranska-rokle.gpx",
+            "choices": [2],
+            "question": 4
+        },
+        "model": "dpnk.answer",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "user_attendance": 1116,
+            "question": 2
+        },
+        "model": "dpnk.answer",
+        "pk": 3
     },
     {
         "fields": {
@@ -237,6 +257,16 @@
         },
         "model": "dpnk.userattendance",
         "pk": 1015
+    },
+    {
+        "fields": {
+            "user_attendance": 1015,
+            "choices": [2],
+            "question": 2,
+            "attachment": "DSC00002.JPG"
+        },
+        "model": "dpnk.answer",
+        "pk": 4
     },
     {
         "fields": {

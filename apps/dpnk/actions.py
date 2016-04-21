@@ -27,7 +27,8 @@ import datetime
 def recalculate_competitions_results(modeladmin, request, queryset):
     for competition in queryset.all():
         competition.recalculate_results()
-    modeladmin.message_user(request, _(u"Úspěšně přepočítáno %s výsledků" % (queryset.count())))
+    if request:
+        modeladmin.message_user(request, _(u"Úspěšně přepočítáno %s výsledků" % (queryset.count())))
 recalculate_competitions_results.short_description = _(u"Přepočítat výsledku vybraných soutěží")
 
 
@@ -40,7 +41,8 @@ def normalize_questionnqire_admissions(modeladmin, request, queryset):
                 if answer.has_any_answer():
                     competition.user_attendance_competitors.add(answer.user_attendance)
         competition.save()
-    modeladmin.message_user(request, _(u"Úspěšně obnoveno %s přihlášek podle odpovědí na dotazník" % (queryset.count())))
+    if request:
+        modeladmin.message_user(request, _(u"Úspěšně obnoveno %s přihlášek podle odpovědí na dotazník" % (queryset.count())))
 normalize_questionnqire_admissions.short_description = _(u"Obnovit přihlášky podle odpovědí na dotazník")
 
 

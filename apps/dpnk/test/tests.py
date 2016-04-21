@@ -22,7 +22,7 @@ from django.core.urlresolvers import reverse
 from django.core import mail
 from django.core.management import call_command
 from django.test.utils import override_settings
-from dpnk import results, models, mailing, views, company_admin_views, util
+from dpnk import results, models, mailing, views, company_admin_views, util, actions
 from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment, CompanyAdmin
 import datetime
 import django
@@ -1236,6 +1236,7 @@ class TestCompanyAdminViews(TestCase):
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
+    MEDIA_ROOT="apps/dpnk/test_files",
 )
 class ViewsTestsRegistered(DenormMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
@@ -1248,6 +1249,29 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
         self.user_attendance = UserAttendance.objects.get(pk=1115)
         self.assertTrue(self.user_attendance.entered_competition())
+
+    def test_dpnk_questionnaire_answers(self):
+        competition = models.Competition.objects.filter(slug="quest")
+        actions.normalize_questionnqire_admissions(None, None, competition)
+        competition.get().recalculate_results()
+        address = reverse('questionnaire_answers_all', kwargs={'competition_slug': "quest"})
+        response = self.client.get(address)
+        self.assertContains(response, '<a href="/media/modranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>')
+        self.assertContains(response, '<img src="/media/DSC00002.JPG.250x250_q85.jpg" width="250" height="188">')
+
+    @patch('slumber.API')
+    def test_dpnk_profile_page(self, slumber_api):
+        models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
+        slumber_api.feed.get = {}
+        response = self.client.get(reverse('profil'))
+        self.assertContains(response, '<img src="/media/DSC00002.JPG.360x360_q85.jpg" width="360" height="270">')
+
+    @patch('slumber.API')
+    def test_dpnk_profile_page_link(self, slumber_api):
+        models.Answer.objects.filter(pk__in=(1, 4)).delete()
+        slumber_api.feed.get = {}
+        response = self.client.get(reverse('profil'))
+        self.assertContains(response, '<a href="/media/modranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>')
 
     @patch('slumber.API')
     def test_dpnk_rides_view(self, slumber_api):
