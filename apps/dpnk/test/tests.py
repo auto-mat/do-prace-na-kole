@@ -186,7 +186,9 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertNotEquals(ua, None)
         self.assertEquals(ua.team.pk, 1)
 
-    def test_dpnk_userattendance_creation(self):
+    @patch('slumber.API')
+    def test_dpnk_userattendance_creation(self, slumber_api):
+        slumber_api.feed.get = {}
         self.client.force_login(User.objects.get(username='user_without_attendance'), settings.AUTHENTICATION_BACKENDS[0])
         address = reverse('profil')
         response = self.client.get(address)
@@ -1008,11 +1010,15 @@ class RegistrationMixinTests(ViewsLogon):
         response = self.client.get(reverse('registration_uncomplete'))
         self.assertContains(response, "Vaše platba typu ORGANIZACE PLATÍ FAKTUROU ještě nebyla vyřízena.")
 
-    def test_dpnk_registration_questionnaire(self):
+    @patch('slumber.API')
+    def test_dpnk_registration_questionnaire(self, slumber_api):
+        slumber_api.feed.get = {}
         response = self.client.get(reverse('profil'))
         self.assertContains(response, "Nezapomeňte vyplnit odpovědi v následujících soutěžích: <a href='/cs/otazka/quest/'>Dotazník</a>!")
 
-    def test_dpnk_registration_company_admin_undecided(self):
+    @patch('slumber.API')
+    def test_dpnk_registration_company_admin_undecided(self, slumber_api):
+        slumber_api.feed.get = {}
         ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
         ca.company_admin_approved = 'undecided'
         ca.save()
@@ -1020,7 +1026,9 @@ class RegistrationMixinTests(ViewsLogon):
         denorm.flush()
         self.assertContains(response, "Vaše žádost o funkci koordinátora organizace čeká na vyřízení.")
 
-    def test_dpnk_registration_company_admin_denied(self):
+    @patch('slumber.API')
+    def test_dpnk_registration_company_admin_decided(self, slumber_api):
+        slumber_api.feed.get = {}
         ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
         ca.company_admin_approved = 'denied'
         ca.save()
@@ -1229,7 +1237,9 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
         self.user_attendance = UserAttendance.objects.get(pk=1115)
         self.assertTrue(self.user_attendance.entered_competition())
 
-    def test_dpnk_rides_view(self):
+    @patch('slumber.API')
+    def test_dpnk_rides_view(self, slumber_api):
+        slumber_api.feed.get = {}
         response = self.client.get(reverse('profil'))
         self.assertContains(response, 'form-0-commute_mode')
         self.assertContains(response, 'form-1-commute_mode')
