@@ -68,7 +68,7 @@ def get_competitors(competition, potencial_competitors=False):
             query = competition.company_competitors.all()
 
     if competition.competitor_type == 'single_user':
-        query = query.filter(team__member_count__gt=1)
+        pass
     elif competition.competitor_type == 'liberos':
         query = query.filter(team__member_count__lte=1)
     elif competition.competitor_type == 'team':
@@ -88,7 +88,7 @@ def get_competitions(user_attendance):
     competitions = Competition.objects.filter(is_public=True, campaign=user_attendance.campaign)
 
     if user_attendance.is_libero():
-        competitions = competitions.filter(competitor_type='liberos')
+        competitions = competitions.filter(competitor_type__in=('liberos', 'single_user'))
     else:
         competitions = competitions.exclude(competitor_type='liberos')
 

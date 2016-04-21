@@ -2107,7 +2107,7 @@ class Competition(models.Model):
         if self.type != 'questionnaire' and self.has_entry_opened():
             return 'after_beginning'
 
-        if not user_attendance.is_libero() == (self.competitor_type == 'liberos'):
+        if self.competitor_type == 'liberos' and not user_attendance.is_libero():
             return 'not_libero'
         if self.company and self.company != user_attendance.team.subsidiary.company:
             return 'not_for_company'
@@ -2119,7 +2119,7 @@ class Competition(models.Model):
     def has_admission(self, userprofile):
         if not userprofile.entered_competition():
             return False
-        if not userprofile.is_libero() == (self.competitor_type == 'liberos'):
+        if self.competitor_type == 'liberos' and not userprofile.is_libero():
             return False
         if self.company and userprofile.team and self.company != userprofile.team.subsidiary.company:
             return False
