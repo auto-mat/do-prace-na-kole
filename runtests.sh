@@ -1,4 +1,4 @@
 #!/bin/bash
 sudo /etc/init.d/memcached restart
-DJANGO_SETTINGS_MODULE="project.settings" env/bin/coverage run ./runtests.py $@ --with-timer
-DJANGO_SETTINGS_MODULE="project.settings" env/bin/coverage html
+export DJANGO_SETTINGS_MODULE="project.test_settings"
+env/bin/coverage run ./runtests.py $@ --with-timer && env/bin/coverage html

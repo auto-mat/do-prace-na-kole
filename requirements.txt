@@ -27,7 +27,7 @@ flake8
 modulus11
 django-dbbackup
 pillow
--e git+https://github.com/creckx/InvoiceGenerator.git#egg=InvoiceGenerator  # the non-PIP source is for Python 3
+-e git+https://github.com/PetrDlouhy/InvoiceGenerator.git@pull_tests#egg=InvoiceGenerator  # the non-PIP source is for setting locale fixes
 django-related-admin
 newrelic
 easy_thumbnails

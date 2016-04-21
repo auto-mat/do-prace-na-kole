@@ -551,7 +551,10 @@ class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
 class TrackUpdateForm(SubmitMixin, forms.ModelForm):
     gpx_file = forms.FileField(
         label=_("GPX soubor"),
-        help_text=_("Zadat trasu nahráním souboru GPX"),
+        help_text=_(mark_safe(
+            "Zadat trasu nahráním souboru GPX. "
+            "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší <a href='http://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
+        )),
         required=False,
     )
 
@@ -559,13 +562,14 @@ class TrackUpdateForm(SubmitMixin, forms.ModelForm):
         cleaned_data = super(TrackUpdateForm, self).clean()
 
         if cleaned_data['gpx_file']:
-            cleaned_data['track'] = gpx_parse.parse_gpx(cleaned_data['gpx_file'].read().decode("utf-8"))
+            gpx_string = cleaned_data['gpx_file'].read().decode("utf-8")
+            cleaned_data['track'] = gpx_parse.parse_gpx(gpx_string)
 
         if cleaned_data['dont_want_insert_track']:
             cleaned_data['track'] = None
         else:
             if cleaned_data['track'] is None:
-                raise forms.ValidationError(_(u"Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat."))
+                raise forms.ValidationError(_("Nezadali jste žádnou trasu. Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat."))
         return cleaned_data
 
     class Meta:

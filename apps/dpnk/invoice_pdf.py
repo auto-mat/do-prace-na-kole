@@ -70,7 +70,7 @@ def make_invoice_sheet_pdf(outfile, invoice):
     invoice_gen.taxable_date = invoice.taxable_date
     invoice_gen.rounding_result = True
     invoice_gen.use_tax = True
-    invoice_gen.currency_locale = u"cs_CZ.utf-8"
+    invoice_gen.currency_locale = u"cs_CZ.UTF-8"
     invoice_gen.paytype = u"bankovním převodem"
 
     for payment in invoice.payment_set.order_by("user_attendance__userprofile__user__last_name", "user_attendance__userprofile__user__first_name"):

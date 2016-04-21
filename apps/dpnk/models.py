@@ -921,6 +921,8 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
             return round(length.km, round_digits)
         else:
             return self.distance
+    get_distance.short_description = _('Vzdálenost do práce')
+    get_distance.admin_order_field = 'length'
 
     def get_userprofile(self):
         return self.userprofile
@@ -2556,7 +2558,10 @@ def normalize_gpx_filename(instance, filename):
 class GpxFile(models.Model):
     file = models.FileField(
         verbose_name=_(u"GPX soubor"),
-        help_text=_(u"Zadat trasu nahráním souboru GPX"),
+        help_text=_(mark_safe(
+            "Zadat trasu nahráním souboru GPX. "
+            "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší <a href='http://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
+        )),
         upload_to=normalize_gpx_filename,
         blank=True, null=True)
     DIRECTIONS = [

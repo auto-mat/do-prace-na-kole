@@ -49,6 +49,7 @@ from .filters import (
     HasReactionFilter,
     HasUserAttendanceFilter,
     InvoicePaidFilter,
+    TrackFilter,
     EmailFilter)
 from . import models, actions
 from django import forms
@@ -547,6 +548,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         ('team__member_count', AllValuesComboFilter),
         ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter),
         ('userprofile__sex', AllValuesComboFilter),
+        TrackFilter,
         HasVoucherFilter,
         HasRidesFilter,
         HasTeamFilter

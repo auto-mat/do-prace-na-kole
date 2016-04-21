@@ -188,7 +188,9 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertNotEquals(ua, None)
         self.assertEquals(ua.team.pk, 1)
 
-    def test_dpnk_userattendance_creation(self):
+    @patch('slumber.API')
+    def test_dpnk_userattendance_creation(self, slumber_api):
+        slumber_api.feed.get = {}
         self.client.force_login(User.objects.get(username='user_without_attendance'), settings.AUTHENTICATION_BACKENDS[0])
         address = reverse('profil')
         response = self.client.get(address)
@@ -948,8 +950,8 @@ class ViewsTestsLogon(ViewsLogon):
             'personal_data_opt_in': True,
             'submit': 'Odeslat',
         }
-        response = self.client.post(reverse('company_admin_application'), post_data, follow=True)
-        self.assertRedirects(response, reverse('profil'))
+        response = self.client.post(reverse('company_admin_application'), post_data)
+        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         company_admin = models.CompanyAdmin.objects.get(userprofile__user__username='test')
         self.assertEquals(company_admin.motivation_company_admin, 'Testing position')
 
@@ -1017,11 +1019,15 @@ class RegistrationMixinTests(ViewsLogon):
         response = self.client.get(reverse('registration_uncomplete'))
         self.assertContains(response, "Vaše platba typu ORGANIZACE PLATÍ FAKTUROU ještě nebyla vyřízena.")
 
-    def test_dpnk_registration_questionnaire(self):
+    @patch('slumber.API')
+    def test_dpnk_registration_questionnaire(self, slumber_api):
+        slumber_api.feed.get = {}
         response = self.client.get(reverse('profil'))
         self.assertContains(response, "Nezapomeňte vyplnit odpovědi v následujících soutěžích: <a href='/cs/otazka/quest/'>Dotazník</a>!")
 
-    def test_dpnk_registration_company_admin_undecided(self):
+    @patch('slumber.API')
+    def test_dpnk_registration_company_admin_undecided(self, slumber_api):
+        slumber_api.feed.get = {}
         util.rebuild_denorm_models(Team.objects.filter(pk=2))
         ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
         ca.company_admin_approved = 'undecided'
@@ -1030,7 +1036,9 @@ class RegistrationMixinTests(ViewsLogon):
         denorm.flush()
         self.assertContains(response, "Vaše žádost o funkci koordinátora organizace čeká na vyřízení.")
 
-    def test_dpnk_registration_company_admin_denied(self):
+    @patch('slumber.API')
+    def test_dpnk_registration_company_admin_decided(self, slumber_api):
+        slumber_api.feed.get = {}
         util.rebuild_denorm_models(Team.objects.filter(pk=2))
         ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
         ca.company_admin_approved = 'denied'
@@ -1040,6 +1048,8 @@ class RegistrationMixinTests(ViewsLogon):
 
 
 class TrackViewTests(ViewsLogon):
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+
     def test_dpnk_views_gpx_file(self):
         trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
         gpxfile = mommy.make(models.GpxFile, user_attendance=self.user_attendance, trip_date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
@@ -1068,10 +1078,24 @@ class TrackViewTests(ViewsLogon):
                 'gpx_file': gpxfile,
                 'submit': 'Odeslat',
             }
-            response = self.client.post(address, post_data, follow=True)
-        self.assertRedirects(response, reverse('profil'))
+            response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         user_attendance = UserAttendance.objects.length().get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 13.32)
+
+    def test_dpnk_views_track_gpx_file_route(self):
+        address = reverse('upravit_trasu')
+        with open('apps/dpnk/test_files/route.gpx', 'rb') as gpxfile:
+            post_data = {
+                'dont_want_insert_track': False,
+                'track': '',
+                'gpx_file': gpxfile,
+                'submit': 'Odeslat',
+            }
+            response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
+        user_attendance = UserAttendance.objects.length().get(pk=1115)
+        self.assertEquals(user_attendance.get_distance(), 6.72)
 
     def test_dpnk_views_track(self):
         address = reverse('upravit_trasu')
@@ -1084,8 +1108,8 @@ class TrackViewTests(ViewsLogon):
                 '[14.38538253021666, 50.101957419789834]]]}',
             'submit': 'Odeslat',
         }
-        response = self.client.post(address, post_data, follow=True)
-        self.assertRedirects(response, reverse('profil'))
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         user_attendance = UserAttendance.objects.length().get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 0.74)
 
@@ -1097,8 +1121,8 @@ class TrackViewTests(ViewsLogon):
             'gpx_file': '',
             'submit': 'Odeslat',
         }
-        response = self.client.post(address, post_data, follow=True)
-        self.assertRedirects(response, reverse('profil'))
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         user_attendance = UserAttendance.objects.length().get(pk=1115)
         self.assertEquals(user_attendance.track, None)
         self.assertEquals(user_attendance.get_distance(), 12)
@@ -1225,7 +1249,9 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
         self.user_attendance = UserAttendance.objects.get(pk=1115)
         self.assertTrue(self.user_attendance.entered_competition())
 
-    def test_dpnk_rides_view(self):
+    @patch('slumber.API')
+    def test_dpnk_rides_view(self, slumber_api):
+        slumber_api.feed.get = {}
         response = self.client.get(reverse('profil'))
         self.assertContains(response, 'form-0-commute_mode')
         self.assertContains(response, 'form-1-commute_mode')
@@ -1273,8 +1299,8 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
                 'user_attendance': self.user_attendance.pk,
                 'submit': 'Odeslat',
             }
-            response = self.client.post(address, post_data, follow=True)
-            self.assertRedirects(response, reverse('profil'))
+            response = self.client.post(address, post_data)
+            self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         gpxfile = models.GpxFile.objects.get(trip_date=date, direction=direction, user_attendance=self.user_attendance)
         trip = models.Trip.objects.get(pk=trip.pk)
         self.assertEquals(trip.distance, 13.32)
