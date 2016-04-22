@@ -12,7 +12,6 @@ import datetime
 
 activate('cs')
 views = [
-    "/rest/gpx/",
     "%s?uid=1" % reverse('admin_questionnaire_answers', kwargs={'competition_slug': "FQ-LB"}),
     reverse('admin_questionnaire_results', kwargs={'competition_slug': "FQ-LB"}),
     reverse('admin_draw_results', kwargs={'competition_slug': "FQ-LB"}),

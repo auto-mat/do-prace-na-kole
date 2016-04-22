@@ -17,9 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from rest_framework import routers, serializers, viewsets
+from rest_framework import routers, serializers, viewsets, permissions
 from rest_framework.exceptions import APIException
-from .models import GpxFile, UserAttendance, Campaign
+from rest_framework.reverse import reverse
+from .models import GpxFile, UserAttendance, Campaign, Competition, CompetitionResult, Team
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
@@ -37,6 +38,11 @@ class GPXParsingFail(APIException):
 class CampaignDoesNotExist(APIException):
     status_code = 404
     default_detail = "Campaign with this slug not found"
+
+
+class CompetitionDoesNotExist(APIException):
+    status_code = 405
+    default_detail = "Competition with this slug not found"
 
 
 class GpxFileSerializer(serializers.ModelSerializer):
@@ -81,5 +87,54 @@ class GpxFileSet(viewsets.ModelViewSet):
         return GpxFile.objects.filter(user_attendance__userprofile__user=self.request.user)
     serializer_class = GpxFileSerializer
 
+
+class CompetitionSerializer(serializers.HyperlinkedModelSerializer):
+    results = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Competition
+        fields = ('name', 'slug', 'competitor_type', 'type', 'url', 'results')
+
+    def get_results(self, obj):
+        return reverse("result-list", kwargs={"competition_slug": obj.slug}, request=self.context['request'])
+
+
+class CompetitionSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return Competition.objects.filter(campaign__slug=self.request.subdomain)
+    serializer_class = CompetitionSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = ('name', 'member_count')
+
+
+class CompetitionResultSerializer(serializers.HyperlinkedModelSerializer):
+    user_attendance = serializers.CharField(read_only=True)
+    team = TeamSerializer(read_only=True)
+    company = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = CompetitionResult
+        fields = ('user_attendance', 'team', 'company', 'competition', 'result')
+
+
+class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        competition_slug = self.kwargs['competition_slug']
+        try:
+            competition = Competition.objects.get(slug=competition_slug)
+        except Competition.DoesNotExist:
+            raise CompetitionDoesNotExist
+        return competition.get_results().select_related('team')
+    serializer_class = CompetitionResultSerializer
+    permission_classes = [permissions.AllowAny]
+
+
 router = routers.DefaultRouter()
 router.register(r'gpx', GpxFileSet, base_name="gpxfile")
+router.register(r'competition', CompetitionSet, base_name="competition")
+router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, base_name="result")
