@@ -157,6 +157,10 @@ class AdminTests(TestCase):
         self.assertContains(response, "Testing campaign")
 
 
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class LocalAdminTests(TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
 
