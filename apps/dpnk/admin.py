@@ -944,7 +944,8 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     def get_list_display(self, request):
         for t_size in models.TShirtSize.objects.filter(campaign__slug=request.subdomain):
             field_name = "t_shirt_size_" + str(t_size.pk)
-            self.list_display.append(field_name)
+            if field_name not in self.list_display:
+                self.list_display.append(field_name)
 
             def t_shirt_size(obj, t_size_id=t_size.pk):
                 return obj.packagetransaction_set.filter(t_shirt_size__pk=t_size_id).aggregate(Count('t_shirt_size'))['t_shirt_size__count']
