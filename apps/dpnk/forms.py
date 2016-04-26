@@ -672,10 +672,12 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
 
 class TripForm(forms.ModelForm):
     commute_mode = forms.ChoiceField(
+        label=_("Mód dopravy"),
         choices=models.Trip.MODES,
         widget=forms.RadioSelect(),
     )
     distance = forms.FloatField(
+        label=_("Vzdálenost"),
         required=True,
     )
 
@@ -687,6 +689,20 @@ class TripForm(forms.ModelForm):
 
     def clean_date(self):
         return self.initial['date']
+
+    def __init__(self, *args, **kwargs):
+        ret = super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Field('commute_mode', template="bootstrap3/layout/field_rides.html"),
+            'distance',
+            'direction',
+            'user_attendance',
+            'date',
+            'id',
+        )
+        return ret
 
     class Meta:
         model = models.Trip
