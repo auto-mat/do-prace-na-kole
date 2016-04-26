@@ -273,7 +273,6 @@ class ViewsTests(DenormMixin, TestCase):
     def test_dpnk_competition_results_company_competition(self):
         address = reverse('competition_results', kwargs={'competition_slug': 'vykonnost-spolecnosti'})
         response = self.client.get(address)
-        print_response(response)
         self.assertContains(response, "Výsledky v soutěži Výkonnost společností:")
 
 
