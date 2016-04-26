@@ -59,7 +59,7 @@ class RestTests(DenormMixin, TestCase):
             response = self.client.post(address, post_data)
             self.assertContains(
                 response,
-                '"trip_date":"2010-12-02","direction":"trip_to","file":"http://testing-campaign.testserver/media/gpx_tracks/track-2016-04-22-modranska-rokle',
+                '"trip_date":"2010-12-02","direction":"trip_to","file":"http://testing-campaign.testserver/media/gpx_tracks/track-2016-04',
                 status_code=201
             )
             gpx_file = models.GpxFile.objects.get(trip_date=datetime.date(2010, 12, 2))

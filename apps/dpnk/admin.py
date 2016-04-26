@@ -930,12 +930,13 @@ class DeliveryBatchForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         ret_val = super(DeliveryBatchForm, self).__init__(*args, **kwargs)
-        self.instance.campaign = models.Campaign.objects.get(slug=self.request.subdomain)
+        if hasattr(self, 'request'):
+            self.instance.campaign = models.Campaign.objects.get(slug=self.request.subdomain)
         return ret_val
 
 
 class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
-    list_display = ['campaign', 'created', 'package_transaction_count', 'customer_sheets__url', 'tnt_order__url']
+    list_display = ['campaign', 'created', 'dispatched', 'package_transaction_count', 'customer_sheets__url', 'tnt_order__url']
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 't_shirt_sizes')
     # inlines = [PackageTransactionInline, ]
     list_filter = (CampaignFilter,)
@@ -944,7 +945,8 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     def get_list_display(self, request):
         for t_size in models.TShirtSize.objects.filter(campaign__slug=request.subdomain):
             field_name = "t_shirt_size_" + str(t_size.pk)
-            self.list_display.append(field_name)
+            if field_name not in self.list_display:
+                self.list_display.append(field_name)
 
             def t_shirt_size(obj, t_size_id=t_size.pk):
                 return obj.packagetransaction_set.filter(t_shirt_size__pk=t_size_id).aggregate(Count('t_shirt_size'))['t_shirt_size__count']
@@ -1129,7 +1131,7 @@ class UserAttendanceToBatch(models.UserAttendance):
 
 
 class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
-    list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created')
+    list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created', 'representative_payment__realized')
     list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter), 'transactions__status')
     actions = (actions.create_batch, )
 
