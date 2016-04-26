@@ -168,6 +168,36 @@ input[type=checkbox]{
 }
 .controls{
 	margin-bottom: 1em;
+	display:inline-block;
+	// border: 1px solid #ddd;
+	// border-radius: 7px;
+	overflow:hidden;
+	.radio{
+		border: 1px solid #ddd;
+		// border-right: 1px solid #ddd;
+		margin-top:0;
+		&.btn{
+			padding:0;
+		}
+		input[type="radio"]{
+			display:none;
+		}
+		label{
+			display: inline-block;
+    		padding: 6px 12px;
+		}
+		// &:first-child{
+		// 	border:0;
+		// }
+		// &:last-child{
+		// 	border:0;
+		// }
+		input[type="radio"]:checked+label{
+			background-color: #90D890;
+		}
+	}
+
+
 }
 input:disabled+label{
    color:#ccc;

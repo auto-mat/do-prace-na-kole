@@ -20,6 +20,39 @@
 {% include "messages_include.html" %}
 {{ message }}
 
+<!-- START radios template -->
+<fieldset class="controls btn-group" role="group">
+      <div class="radio btn">
+        <input type="radio" name="form-1-commute_mode" id="id_form-1-commute_mode_1" value="bicycle">
+        <label class="" for="id_form-1-commute_mode_1">
+        Na kole
+        </label>
+      </div>
+
+      <div class="radio btn">
+        <input type="radio" name="form-1-commute_mode" id="id_form-1-commute_mode_2" value="by_foot">
+        <label class="" for="id_form-1-commute_mode_2">
+        Pěšky/běh
+        </label>
+      </div>
+
+      <div class="radio btn">
+        <input type="radio" name="form-1-commute_mode" id="id_form-1-commute_mode_3" value="no_work">
+        <label class="" for="id_form-1-commute_mode_3">
+        Nepracoval
+        </label>
+      </div>
+
+      <div class="radio btn">
+        <input type="radio" name="form-1-commute_mode" id="id_form-1-commute_mode_4" value="by_other_vehicle">
+        <label class="" for="id_form-1-commute_mode_4">
+         Jiný dopravní prostředek
+        </label>
+      </div>
+</fieldset>
+<!-- END radios template -->
+
+
 {% if formset.0 %}
 <table id="rides" class="table table-bordered table-hover table-condensed">
 <thead>
