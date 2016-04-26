@@ -1347,6 +1347,12 @@ class DeliveryBatch(models.Model):
         verbose_name=_(u"Objednávka pro TNT"),
         upload_to=u'tnt_order',
         blank=True, null=True)
+    dispatched = models.BooleanField(
+        verbose_name=_("Vyřízeno"),
+        blank=False,
+        null=False,
+        default=False,
+    )
 
     class Meta:
         verbose_name = _(u"Dávka objednávek")

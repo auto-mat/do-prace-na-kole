@@ -930,12 +930,13 @@ class DeliveryBatchForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         ret_val = super(DeliveryBatchForm, self).__init__(*args, **kwargs)
-        self.instance.campaign = models.Campaign.objects.get(slug=self.request.subdomain)
+        if hasattr(self, 'request'):
+            self.instance.campaign = models.Campaign.objects.get(slug=self.request.subdomain)
         return ret_val
 
 
 class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
-    list_display = ['campaign', 'created', 'package_transaction_count', 'customer_sheets__url', 'tnt_order__url']
+    list_display = ['campaign', 'created', 'dispatched', 'package_transaction_count', 'customer_sheets__url', 'tnt_order__url']
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 't_shirt_sizes')
     # inlines = [PackageTransactionInline, ]
     list_filter = (CampaignFilter,)
