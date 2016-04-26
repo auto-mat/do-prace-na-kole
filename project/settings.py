@@ -39,7 +39,7 @@ ADMINS = (
     ('Hynek Hanke', 'hynek.hanke@auto-mat.cz'),
     ('Petr Dlouhý', 'petr.dlouhy@email.cz'),
 )
-DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@dopracenakole.net>'
+DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@dopracenakole.cz>'
 MANAGERS = ADMINS
 DATABASES = {
     'default': {
@@ -92,17 +92,26 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'denorm.middleware.DenormMiddleware',
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',
+    'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
 ]
 AUTHENTICATION_BACKENDS = (
-    'oauth2_provider.backends.OAuth2Backend',
     'dpnk.auth.EmailModelBackend',
     "django_su.backends.SuBackend",
 )
 ROOT_URLCONF = 'urls'
+
+
+class InvalidStringShowWarning(str):
+    def __mod__(self, other):
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning("Undefined variable or unknown value for: '%s'" % (other,))
+        return ""
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -112,6 +121,7 @@ TEMPLATES = [
         ],
         'APP_DIRS': True,
         'OPTIONS': {
+            'string_if_invalid': InvalidStringShowWarning("%s"),
             'context_processors': (
                 'django.contrib.messages.context_processors.messages',
                 'django.contrib.auth.context_processors.auth',
@@ -134,6 +144,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django.contrib.postgres',
     'django.contrib.gis',
     'django.contrib.sites',
 
@@ -169,7 +180,8 @@ INSTALLED_APPS = (
     'subdomains',
     'redactor',
     'ajax_select',
-    'django_nose'
+    'django_nose',
+    'raven.contrib.django.raven_compat',
     # 'cachalot',
 )
 
@@ -184,6 +196,8 @@ TEMPLATE_VISIBLE_SETTINGS = (
 )
 
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100,
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.ext.rest_framework.OAuth2Authentication',
@@ -279,8 +293,13 @@ LOGGING = {
         }
     },
     'handlers': {
+        'sentry': {
+            'level': 'WARNING',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+            'tags': {'custom-tag': 'x'},
+        },
         'console': {
-            'level': 'ERROR',
+            'level': 'WARNING',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
@@ -299,20 +318,29 @@ LOGGING = {
             'include_html': True,
         },
     },
+    'root': {
+        'level': 'WARNING',
+        'handlers': ['sentry', 'logfile', 'console'],
+    },
     'loggers': {
         'django': {
-            'handlers': ['console', 'logfile'],
+            'handlers': ['console', 'logfile', 'mail_admins', 'sentry'],
             'propagate': True,
             'level': 'INFO',
         },
         'django.request': {
-            'handlers': ['mail_admins', 'logfile'],
+            'handlers': ['console', 'logfile', 'mail_admins', 'sentry'],
             'level': 'ERROR',
             'propagate': False,
         },
         'dpnk': {
-            'handlers': ['console', 'mail_admins', 'logfile'],
+            'handlers': ['console', 'logfile', 'mail_admins', 'sentry'],
             'level': 'INFO',
+        },
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': ['console', 'logfile', 'mail_admins', 'sentry'],
+            'propagate': False,
         },
     }
 }

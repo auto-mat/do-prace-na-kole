@@ -10,7 +10,9 @@
 
 {% block messages %}
 {% include "messages_include.html" %}
+{% if message %}
 {{ message }}
+{% endif %}
 {% endblock %}
 
 {% block form_intro %}

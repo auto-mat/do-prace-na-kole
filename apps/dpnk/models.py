@@ -24,6 +24,8 @@
 # Django imports
 import random
 import string
+import denorm
+import gzip
 from . import parcel_batch
 from . import avfull
 from unidecode import unidecode
@@ -41,7 +43,7 @@ from django.utils.translation import string_concat
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files import File
-from django.utils.html import escape
+from django.utils.html import escape, format_html_join
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from polymorphic.models import PolymorphicModel
@@ -85,7 +87,7 @@ class Address(CompositeField):
         blank=False,
     )
     recipient = models.CharField(
-        verbose_name=_(u"Název pobočky (celé společnosti, závodu, kanceláře, fakulty) na adrese"),
+        verbose_name=_(u"Název pobočky (celé organizace, závodu, kanceláře, fakulty) na adrese"),
         help_text=_(u"Např. „odštěpný závod Brno“, „oblastní pobočka Liberec“, „Přírodovědecká fakulta“ atp."),
         default="",
         max_length=50,
@@ -141,7 +143,7 @@ class City(models.Model):
         verbose_name=u"Subdoména v URL",
         blank=False
     )
-    cyklistesobe_slug = models.CharField(
+    cyklistesobe_slug = models.SlugField(
         verbose_name=_(u"Jméno skupiny na webu Cyklisté sobě"),
         max_length=40,
         null=True)
@@ -167,7 +169,8 @@ class CityInCampaign(models.Model):
     city = models.ForeignKey(
         City,
         null=False,
-        blank=False)
+        blank=False,
+        related_name="cityincampaign")
     campaign = models.ForeignKey(
         "Campaign",
         null=False,
@@ -184,16 +187,16 @@ class CityInCampaign(models.Model):
 
 
 class Company(models.Model):
-    """Firma"""
+    """Organizace"""
 
     class Meta:
-        verbose_name = _(u"Firma")
-        verbose_name_plural = _(u"Firmy")
+        verbose_name = _(u"Organizace")
+        verbose_name_plural = _(u"Organizace")
         ordering = ('name',)
 
     name = models.CharField(
         unique=True,
-        verbose_name=_(u"Název společnosti"),
+        verbose_name=_(u"Název organizace"),
         help_text=_(u"Např. „Výrobna, a.s.“, „Příspěvková, p.o.“, „Nevládka, z.s.“, „Univerzita Karlova“"),
         max_length=60, null=False)
     address = Address()
@@ -205,7 +208,7 @@ class Company(models.Model):
     )
     dic = models.CharField(
         verbose_name=_(u"DIČ"),
-        max_length=10,
+        max_length=15,
         default="",
         null=True,
         blank=True,
@@ -235,8 +238,8 @@ class Subsidiary(models.Model):
     """Pobočka"""
 
     class Meta:
-        verbose_name = _(u"Pobočka firmy")
-        verbose_name_plural = _(u"Pobočky firem")
+        verbose_name = _(u"Pobočka organizace")
+        verbose_name_plural = _(u"Pobočky organizací")
 
     address = Address()
     company = models.ForeignKey(
@@ -260,7 +263,7 @@ class Subsidiary(models.Model):
     objects = models.Manager()
 
     def __str__(self):
-        return get_address_string(self.address)
+        return "%s - %s" % (get_address_string(self.address), self.city)
 
     def name(self):
         return get_address_string(self.address)
@@ -314,11 +317,24 @@ class Team(models.Model):
         db_index=True,
         default=None,
         skip={'invitation_token'})
-    @depend_on_related('UserAttendance')
+    @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def member_count(self):
         member_count = self.members().count()
         if member_count > settings.MAX_TEAM_MEMBERS:
             logger.error(u"Too many members in team %s" % self)
+        return member_count
+
+    @denormalized(
+        models.IntegerField,
+        verbose_name=_(u"Počet neschválených členů týmu"),
+        null=True,
+        blank=False,
+        db_index=True,
+        default=None,
+        skip={'invitation_token'})
+    @depend_on_related('UserAttendance', skip={'created', 'updated'})
+    def unapproved_member_count(self):
+        member_count = self.unapproved_members().count()
         return member_count
 
     def unapproved_members(self):
@@ -328,7 +344,7 @@ class Team(models.Model):
         return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True)
 
     def members(self):
-        return self.users.filter(approved_for_team='approved', userprofile__user__is_active=True)
+        return self.users.filter(approved_for_team='approved', userprofile__user__is_active=True).order_by("id")
 
     @denormalized(models.IntegerField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
@@ -488,7 +504,7 @@ class Campaign(models.Model):
         null=False,
         default=0)
     admission_fee_company = models.FloatField(
-        verbose_name=_(u"Včasné startovné pro firmy"),
+        verbose_name=_(u"Včasné startovné pro organizace"),
         null=False,
         default=0)
     late_admission_fee = models.FloatField(
@@ -496,7 +512,7 @@ class Campaign(models.Model):
         null=False,
         default=0)
     late_admission_fee_company = models.FloatField(
-        verbose_name=_(u"Pozdní startovné pro firmy"),
+        verbose_name=_(u"Pozdní startovné pro organizace"),
         null=False,
         default=0)
     benefitial_admission_fee = models.FloatField(
@@ -504,7 +520,7 @@ class Campaign(models.Model):
         null=False,
         default=0)
     benefitial_admission_fee_company = models.FloatField(
-        verbose_name=_(u"Benefiční startovné pro firmy"),
+        verbose_name=_(u"Benefiční startovné pro organizace"),
         null=False,
         default=0)
     free_entry_cases_html = models.TextField(
@@ -516,11 +532,12 @@ class Campaign(models.Model):
     def __str__(self):
         return self.name
 
-    @denormalized(models.NullBooleanField, default=None)
-    @depend_on_related('Phase')
-    def late_admission_phase(self):
+    def late_admission_phase_actual(self):
         late_admission_phase = self.phase("late_admission")
-        return not late_admission_phase or late_admission_phase.is_actual()
+        if late_admission_phase:
+            return late_admission_phase.is_actual()
+        else:
+            return True
 
     def user_attendances_for_delivery(self):
         return UserAttendance.objects.filter(
@@ -699,7 +716,7 @@ class UserAttendance(models.Model):
         verbose_name=_(u"trasa"),
         help_text=_(u"""
 <ul>
-   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko "Nakreslit trasu".</strong></li>
+   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko "Nakreslit trasu", ukončíte kliknutím na cílový bod.</strong></li>
    <li>Změnu trasy provedete po přepnutí do režimu úprav kliknutím na trasu.</li>
    <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede.</li>
    <li>Zadání přesnějšího průběhu nám však může pomoci lépe zjistit jak se lidé na kole pohybují.</li>
@@ -771,31 +788,29 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def __str__(self):
         return self.userprofile.name()
 
-    def admission_fee(self):
+    def t_shirt_price(self):
         if self.t_shirt_size:
-            t_shirt_price = self.t_shirt_size.price
+            return self.t_shirt_size.price
         else:
-            t_shirt_price = 0
-        if self.campaign.late_admission_phase:
-            return self.campaign.late_admission_fee + t_shirt_price
+            return 0
+
+    def admission_fee(self):
+        if self.campaign.late_admission_phase_actual():
+            return self.campaign.late_admission_fee + self.t_shirt_price()
         else:
-            return self.campaign.admission_fee + t_shirt_price
+            return self.campaign.admission_fee + self.t_shirt_price()
 
     def beneficiary_admission_fee(self):
-        if self.t_shirt_size:
-            t_shirt_price = self.t_shirt_size.price
-        else:
-            t_shirt_price = 0
-        return self.campaign.benefitial_admission_fee + t_shirt_price
+        return self.campaign.benefitial_admission_fee + self.t_shirt_price()
 
     def company_admission_fee(self):
-        if self.campaign.late_admission_phase:
-            return self.campaign.late_admission_fee_company + self.t_shirt_size.price
+        if self.campaign.late_admission_phase_actual():
+            return self.campaign.late_admission_fee_company + self.t_shirt_price()
         else:
-            return self.campaign.admission_fee_company + self.t_shirt_size.price
+            return self.campaign.admission_fee_company + self.t_shirt_price()
 
     @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
-    @depend_on_related('Transaction', foreign_key='user_attendance')
+    @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
     def representative_payment(self):
         if self.team and self.team.subsidiary and self.admission_fee() == 0:
             return None
@@ -826,7 +841,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     )
 
     @denormalized(models.CharField, choices=PAYMENT_CHOICES, max_length=20, null=True, skip={'updated', 'created'})
-    @depend_on_related('Transaction', foreign_key='user_attendance')
+    @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
     def payment_status(self):
         if self.team and self.team.subsidiary and self.admission_fee() == 0:
             return 'no_admission'
@@ -851,7 +866,9 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     def payment_type_string(self):
         if self.representative_payment:
-            return Payment.PAY_TYPES_DICT[self.representative_payment.pay_type].upper()
+            pay_type = self.representative_payment.pay_type
+            if pay_type:
+                return Payment.PAY_TYPES_DICT[pay_type].upper()
 
     def get_competitions(self):
         return results.get_competitions_with_info(self)
@@ -867,7 +884,6 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     @denormalized(models.IntegerField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
-    @depend_on_related('Campaign')
     def get_rides_count_denorm(self):
         return results.get_rides_count(self)
 
@@ -876,7 +892,6 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
-    @depend_on_related('Campaign')
     def frequency(self):
         return self.get_frequency()
 
@@ -888,29 +903,33 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
-    @depend_on_related('Campaign')
     def trip_length_total(self):
         return results.get_userprofile_length(self)
 
     def get_nonreduced_length(self):
         return results.get_userprofile_nonreduced_length(self)
 
-    def get_distance(self, round_digits=2):
+    def get_distance(self, round_digits=2, request=None):
         if self.track:
-            length = UserAttendance.objects.length().get(id=self.id).length
+            if self.length:
+                length = self.length
+            else:
+                length = UserAttendance.objects.length().only('track').get(id=self.id).length
             if not length:
-                logger.error("length not available for user %s" % self)
+                logger.error("length not available", extra={'request': request, 'username': self.userprofile.user.username})
                 return 0
             return round(length.km, round_digits)
         else:
             return self.distance
+    get_distance.short_description = _('Vzdálenost do práce')
+    get_distance.admin_order_field = 'length'
 
     def get_userprofile(self):
         return self.userprofile
 
     def is_libero(self):
         if self.team:
-            return self.team.members().count() <= 1
+            return self.team_member_count() <= 1
         else:
             return False
 
@@ -927,24 +946,6 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         team = self.team
         return UserAttendance.objects.filter(team=team, userprofile__user__is_active=True).exclude(approved_for_team='denied').count()
 
-    def can_enter_competition(self):
-        if not self.distance:
-            return 'no_personal_data'
-        elif not self.team:
-            return 'no_team'
-        elif not self.approved_for_team == 'approved':
-            return 'not_approved_for_team'
-        elif not self.t_shirt_size:
-            return 'not_t_shirt'
-        elif self.team.unapproved_members().count() > 0:
-            return 'unapproved_team_members'
-        elif self.team.members().count() < 2:
-            return 'not_enough_team_members'
-        elif self.payment()['status'] != 'done':
-            return 'not_paid'
-        else:
-            return True
-
     def company(self):
         if self.team:
             try:
@@ -953,14 +954,33 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
                 pass
 
         try:
-            return self.userprofile.user.company_admin.get(campaign=self.campaign).administrated_company
+            return self.userprofile.company_admin.get(campaign=self.campaign).administrated_company
         except CompanyAdmin.DoesNotExist:
             return None
 
+    def entered_competition_reason(self):
+        if not self.userprofile.profile_complete():
+            return 'profile_uncomplete'
+        if not self.team_waiting():
+            if self.team_complete():
+                return 'team_waiting'
+            else:
+                return 'team_uncomplete'
+        if not self.tshirt_complete():
+            return 'tshirt_uncomplete'
+        if not self.payment_waiting():
+            if self.payment_complete():
+                return 'payment_waiting'
+            else:
+                return 'payment_uncomplete'
+        if not self.track_complete():
+            return 'track_uncomplete'
+        return True
+
     def entered_competition(self):
         return self.tshirt_complete() and\
-            self.team_complete() and\
-            self.payment_complete() and\
+            self.team_waiting() and\
+            self.payment_waiting() and\
             self.userprofile.profile_complete()
 
     def team_member_count(self):
@@ -976,8 +996,14 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def team_complete(self):
         return self.team
 
+    def team_waiting(self):
+        return self.team and self.approved_for_team == 'approved'
+
     def payment_complete(self):
-        return self.payments().exists()
+        return self.payment_status not in ('none', None)
+
+    def payment_waiting(self):
+        return self.payment_status in ('done', 'no_admission')
 
     def get_emissions(self, distance=None):
         return util.get_emissions(self.get_nonreduced_length())
@@ -1004,9 +1030,11 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return trips, uncreated_trips
 
     @denormalized(models.ForeignKey, to='CompanyAdmin', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
+    @depend_on_related('UserProfile', skip={'mailing_hash'})
     def related_company_admin(self):
+        """ Get company coordinator profile for this user attendance """
         try:
-            ca = CompanyAdmin.objects.get(user=self.userprofile.user, campaign=self.campaign)
+            ca = CompanyAdmin.objects.get(userprofile=self.userprofile, campaign=self.campaign)
             return ca
         except CompanyAdmin.DoesNotExist:
             return None
@@ -1015,21 +1043,21 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return results.get_competitions_without_admission(self).filter(type='questionnaire')
 
     @denormalized(models.NullBooleanField, default=None, skip={'created', 'updated'})
-    @depend_on_related('Team')
-    @depend_on_related('Competition')
+    @depend_on_related('UserProfile', skip={'mailing_hash'})
     def has_unanswered_questionnaires(self):
         return self.unanswered_questionnaires().exists()
 
     def get_asociated_company_admin(self):
+        """ Get coordinator, that manages company of this user attendance """
         if not self.team:
             return None
-        try:
-            ca = self.team.subsidiary.company.company_admin.get(campaign=self.campaign)
-            if ca.company_admin_approved == 'approved':
-                return ca
-            else:
-                return None
-        except CompanyAdmin.DoesNotExist:
+        return self.team.subsidiary.company.company_admin.filter(campaign=self.campaign, company_admin_approved='approved')
+
+    def company_coordinator_emails(self):
+        company_admins = self.get_asociated_company_admin()
+        if company_admins:
+            return format_html_join(", ", '<a href="mailto:{0}">{0}</a>', ((ca.userprofile.user.email,) for ca in company_admins))
+        else:
             return None
 
     def previous_user_attendance(self):
@@ -1098,7 +1126,7 @@ class UserProfile(models.Model):
         verbose_name=_(u"Telefon"),
         max_length=30, null=False)
     language = models.CharField(
-        verbose_name=_(u"Jazyk emailů"),
+        verbose_name=_(u"Jazyk emailové komunikace"),
         help_text=_(u"Jazyk, ve kterém vám budou docházet emaily z registračního systému"),
         choices=LANGUAGE,
         max_length=16,
@@ -1114,7 +1142,7 @@ class UserProfile(models.Model):
         null=True,
         blank=True
     )
-    mailing_hash = models.BigIntegerField(
+    mailing_hash = models.TextField(
         verbose_name=_(u"Hash poslední synchronizace s mailingem"),
         default=None,
         null=True,
@@ -1144,6 +1172,12 @@ class UserProfile(models.Model):
         verbose_name=_(u"Souhlas se zpracováním osobních údajů."),
         blank=False,
         default=False)
+
+    @denormalized(models.IntegerField, default=0)
+    @depend_on_related('CompanyAdmin')
+    # This is here to update related_admin property on UserAttendance model
+    def company_admin_count(self):
+        return self.company_admin.count()
 
     def first_name(self):
         return self.user.first_name
@@ -1194,7 +1228,7 @@ class UserProfile(models.Model):
 
 
 class CompanyAdmin(models.Model):
-    """Profil firemního administrátora"""
+    """Profil koordinátora organizace"""
 
     COMPANY_APPROVAL = (
         ('approved', _(u"Odsouhlasený")),
@@ -1203,16 +1237,15 @@ class CompanyAdmin(models.Model):
     )
 
     class Meta:
-        verbose_name = _(u"Firemní koordinátor")
-        verbose_name_plural = _(u"Firemní koordinátoři")
+        verbose_name = _(u"Koordinátor organizace")
+        verbose_name_plural = _(u"Koordinátoři organizací")
         unique_together = (
-            ("user", "campaign"),
-            ("administrated_company", "campaign"),
+            ("userprofile", "campaign"),
         )
 
-    user = models.ForeignKey(
-        User,
-        verbose_name=_(u"User"),
+    userprofile = models.ForeignKey(
+        UserProfile,
+        verbose_name=_(u"Uživatelský profil"),
         related_name='company_admin',
         null=False,
         blank=False,
@@ -1237,7 +1270,7 @@ class CompanyAdmin(models.Model):
     administrated_company = models.ForeignKey(
         "Company",
         related_name="company_admin",
-        verbose_name=_(u"Administrovaná společnost"),
+        verbose_name=_(u"Koordinovaná organizace"),
         null=True,
         blank=False)
 
@@ -1257,21 +1290,28 @@ class CompanyAdmin(models.Model):
         verbose_name=_(u"Může potvrzovat platby"),
         default=False,
         null=False)
+    will_pay_opt_in = models.BooleanField(
+        verbose_name=_(u"Uživatel potvrdil, že bude plati za zaměstnance."),
+        blank=False,
+        default=False)
+
+    def is_approved(self):
+        return self.company_admin_approved == 'approved'
 
     def company_has_invoices(self):
         return self.administrated_company.invoice_set.filter(campaign=self.campaign).exists()
 
     def user_attendance(self):
         try:
-            return self.user.userprofile.userattendance_set.get(campaign=self.campaign)
+            return self.userprofile.userattendance_set.get(campaign=self.campaign)
         except UserAttendance.DoesNotExist:
             return None
 
     def get_userprofile(self):
-        return self.user.userprofile
+        return self.userprofile
 
     def __str__(self):
-        return self.user.get_full_name()
+        return self.userprofile.user.get_full_name()
 
     def save(self, *args, **kwargs):
         status_before_update = None
@@ -1323,9 +1363,10 @@ class DeliveryBatch(models.Model):
             pt = PackageTransaction(
                 user_attendance=user_attendance,
                 delivery_batch=self,
-                status=PackageTransaction.Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
+                status=Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
             )
             pt.save()
+            denorm.flush()
 
 
 @receiver(post_save, sender=DeliveryBatch)
@@ -1375,7 +1416,7 @@ class Invoice(models.Model):
         blank=True,
     )
     company_pais_benefitial_fee = models.BooleanField(
-        verbose_name=_(u"Moje firma si přeje podpořit Auto*Mat a zaplatit benefiční startovné."),
+        verbose_name=_(u"Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."),
         default=False,
     )
     total_amount = models.FloatField(
@@ -1390,7 +1431,7 @@ class Invoice(models.Model):
     )
     company = models.ForeignKey(
         Company,
-        verbose_name=_(u"Společnost"),
+        verbose_name=_(u"Organizace"),
         null=False,
         blank=False,
     )
@@ -1444,6 +1485,7 @@ class Invoice(models.Model):
         for payment in payments:
             payment.status = Status.INVOICE_MADE
             payment.save()
+            denorm.flush()
 
     def clean(self):
         if not self.pk and hasattr(self, 'campaign') and not self.payments_to_add().exists():
@@ -1456,6 +1498,7 @@ def change_invoice_payments_status(sender, instance, changed_fields=None, **kwar
         for payment in instance.payment_set.all():
             payment.status = Status.INVOICE_PAID
             payment.save()
+            denorm.flush()
 
 
 def payments_to_invoice(company, campaign):
@@ -1509,7 +1552,7 @@ STATUS = (
     (Status.REJECTED, _(u'Platba zamítnuta, prostředky nemožno vrátit, řeší PayU')),
     (Status.DONE, _(u'Platba přijata')),
     (Status.WRONG_STATUS, _(u'Nesprávný status -- kontaktovat PayU')),
-    (Status.COMPANY_ACCEPTS, _(u'Platba akceptována firmou')),
+    (Status.COMPANY_ACCEPTS, _(u'Platba akceptována organizací')),
     (Status.INVOICE_MADE, _(u'Faktura vystavena')),
     (Status.INVOICE_PAID, _(u'Faktura zaplacena')),
 
@@ -1698,10 +1741,11 @@ class Payment(Transaction):
         ('sc', _(u'superCASH')),  # Deprecated
         ('psc', _(u'PaySec')),
         ('mo', _(u'Mobito')),
+        ('uc', _(u'UniCredit')),
         ('t', _(u'testovací platba')),
 
         ('fa', _(u'faktura mimo PayU')),
-        ('fc', _(u'firma platí fakturou')),
+        ('fc', _(u'organizace platí fakturou')),
         ('am', _(u'člen Klubu přátel Auto*Matu')),
         ('amw', _(u'kandidát na členství v Klubu přátel Auto*Matu')),
         ('fe', _(u'neplatí startovné')),
@@ -1730,6 +1774,7 @@ class Payment(Transaction):
         'sc',
         'psc',
         'mo',
+        'uc',
         't',
     ]
 
@@ -1873,7 +1918,7 @@ class Trip(models.Model):
     distance = models.FloatField(
         verbose_name=_(u"Ujetá vzdálenost"),
         null=True,
-        blank=False,
+        blank=True,
         default=None,
         validators=[
             MaxValueValidator(1000),
@@ -1881,35 +1926,14 @@ class Trip(models.Model):
         ],
     )
 
-    def distance_from_cutted(self):
-        if self.trip_from and self.is_working_ride_from:
-            plus_distance = self.user_attendance.campaign.trip_plus_distance
-            max_distance = (self.user_attendance.get_distance() or 0) + plus_distance
-            ridden_distance = self.distance_from or 0
-            if ridden_distance > max_distance:
-                return (True, max_distance)
-            else:
-                return (False, ridden_distance)
-        else:
-            return (False, 0)
-
-    def distance_to_cutted(self):
-        if self.trip_to and self.is_working_ride_to:
-            plus_distance = self.user_attendance.campaign.trip_plus_distance
-            max_distance = (self.user_attendance.get_distance() or 0) + plus_distance
-            ridden_distance = self.distance_to or 0
-            if ridden_distance > max_distance:
-                return (True, max_distance)
-            else:
-                return (False, ridden_distance)
-        else:
-            return (False, 0)
-
     def working_day(self):
         return util.working_day(self.date)
 
     def active(self):
         return util.day_active(self.date)
+
+    def has_gpxfile(self):
+        return hasattr(self, "gpxfile")
 
 
 class Competition(models.Model):
@@ -1925,7 +1949,7 @@ class Competition(models.Model):
         ('single_user', _(u"Jednotliví soutěžící")),
         ('liberos', _(u"Liberos")),
         ('team', _(u"Týmy")),
-        ('company', _(u"Soutěž firem")),
+        ('company', _(u"Soutěž organizací")),
     )
 
     class Meta:
@@ -1950,7 +1974,7 @@ class Competition(models.Model):
     )
     url = models.URLField(
         default="",
-        verbose_name=u"Odkaz na stránku soutěže",
+        verbose_name=_("Odkaz na stránku soutěže"),
         help_text=_(u"Odkaz na stránku, kde budou pravidla a podrobné informace o soutěži"),
         null=True,
         blank=True,
@@ -1992,7 +2016,7 @@ class Competition(models.Model):
         blank=True)
     company_competitors = models.ManyToManyField(
         Company,
-        verbose_name=_(u"Přihlášené soutěžící firmy"),
+        verbose_name=_(u"Přihlášené soutěžící organizace"),
         related_name="competitions",
         blank=True)
     city = models.ManyToManyField(
@@ -2002,7 +2026,7 @@ class Competition(models.Model):
         blank=True)
     company = models.ForeignKey(
         Company,
-        verbose_name=_(u"Soutěž pouze pro firmu"),
+        verbose_name=_(u"Soutěž pouze pro organizace"),
         null=True,
         blank=True)
     sex = models.CharField(
@@ -2083,7 +2107,7 @@ class Competition(models.Model):
         if self.type != 'questionnaire' and self.has_entry_opened():
             return 'after_beginning'
 
-        if not user_attendance.is_libero() == (self.competitor_type == 'liberos'):
+        if self.competitor_type == 'liberos' and not user_attendance.is_libero():
             return 'not_libero'
         if self.company and self.company != user_attendance.team.subsidiary.company:
             return 'not_for_company'
@@ -2095,7 +2119,7 @@ class Competition(models.Model):
     def has_admission(self, userprofile):
         if not userprofile.entered_competition():
             return False
-        if not userprofile.is_libero() == (self.competitor_type == 'liberos'):
+        if self.competitor_type == 'liberos' and not userprofile.is_libero():
             return False
         if self.company and userprofile.team and self.company != userprofile.team.subsidiary.company:
             return False
@@ -2146,7 +2170,7 @@ class Competition(models.Model):
         }
         if self.company:
             company_string_before = "vnitrofiremní"
-            company_string_after = "společnosti %s" % escape(self.company)
+            company_string_after = "organizace %s" % escape(self.company)
         else:
             company_string_before = ""
             company_string_after = ""
@@ -2197,7 +2221,7 @@ class CompetitionForm(forms.ModelForm):
         if not hasattr(self.instance, 'campaign'):
             self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
 
-        if not self.request.user.is_superuser:
+        if hasattr(self, "request") and not self.request.user.is_superuser:
             self.fields["city"].queryset = self.request.user.userprofile.administrated_cities
             self.fields["city"].required = True
 
@@ -2299,7 +2323,7 @@ class CompetitionResult(models.Model):
 
     def clean(self):
         if ((1 if self.user_attendance else 0) + (1 if self.team else 0) + (1 if self.company else 0)) != 1:
-            raise ValidationError(_(u"Musí být zvolen právě jeden uživatel, tým nebo společnost"))
+            raise ValidationError(_(u"Musí být zvolen právě jeden uživatel, tým nebo organizace"))
 
     def user_attendances(self):
         competition = self.competition
@@ -2435,7 +2459,6 @@ class Choice(models.Model):
     choice_type = models.ForeignKey(
         ChoiceType,
         verbose_name=_(u"Typ volby"),
-        related_name="choicetype_set",
         null=False,
         blank=False)
     text = models.CharField(
@@ -2535,7 +2558,10 @@ def normalize_gpx_filename(instance, filename):
 class GpxFile(models.Model):
     file = models.FileField(
         verbose_name=_(u"GPX soubor"),
-        help_text=_(u"Zadat trasu nahráním souboru GPX"),
+        help_text=_(mark_safe(
+            "Zadat trasu nahráním souboru GPX. "
+            "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší <a href='http://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
+        )),
         upload_to=normalize_gpx_filename,
         blank=True, null=True)
     DIRECTIONS = [
@@ -2605,7 +2631,11 @@ class GpxFile(models.Model):
 
     def clean(self):
         if self.file:
-            self.track_clean = gpx_parse.parse_gpx(self.file.read().decode("utf-8"))
+            if self.file.name.endswith(".gz"):
+                track_file = gzip.open(self.file).read().decode("utf-8")
+            else:
+                track_file = self.file.read().decode("utf-8")
+            self.track_clean = gpx_parse.parse_gpx(track_file)
 
 
 # Signals:
@@ -2643,6 +2673,13 @@ def update_mailing_user(sender, instance, created, **kwargs):
         pass
 
 
+@receiver(post_save, sender=UserProfile)
+def update_mailing_userprofile(sender, instance, created, **kwargs):
+    for user_attendance in instance.userattendance_set.all():
+        if not kwargs.get('raw', False) and user_attendance.campaign:
+            mailing.add_or_update_user(user_attendance)
+
+
 @receiver(pre_save, sender=GpxFile)
 def set_trip(sender, instance, *args, **kwargs):
     try:
@@ -2678,6 +2715,7 @@ def user_attendance_pre_delete(sender, instance, *args, **kwargs):
     for payment in instance.payment_set.all():
         payment.status = Status.COMPANY_ACCEPTS
         payment.save()
+        denorm.flush()
 
 
 @receiver(post_save, sender=UserAttendance)

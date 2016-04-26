@@ -22,6 +22,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 from .models import UserAttendance, Campaign
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
@@ -43,7 +44,8 @@ def must_be_owner(fn):
                 request,
                 view.template_name,
                 {
-                    'fullpage_error_message': mark_safe(_(u"Nemůžete vidět cizí objekt")),
+                    'fullpage_error_message': _(u"Nemůžete vidět cizí objekt"),
+                    'title': _("Chybí oprávnění"),
                 },
                 status=403,
             )
@@ -62,7 +64,8 @@ def must_be_approved_for_team(fn):
             response = render(
                 request,
                 view.template_name, {
-                    'fullpage_error_message': mark_safe(_(u"Nemáte zvolený tým")),
+                    'fullpage_error_message': _(u"Nemáte zvolený tým"),
+                    'title': _("Není zvolený tým"),
                 },
                 status=403,
             )
@@ -76,9 +79,10 @@ def must_be_approved_for_team(fn):
                 view.template_name,
                 {
                     'fullpage_error_message':
-                    mark_safe(
-                        _(u"Vaše členství v týmu %(team)s nebylo odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>.") %
-                        {'team': user_attendance.team.name, 'address': reverse("zaslat_zadost_clenstvi")}),
+                    format_html(
+                        _(u"Vaše členství v týmu {team} nebylo odsouhlaseno. <a href='{address}'>Znovu požádat o ověření členství</a>."),
+                        team=user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi")),
+                    'title': _("Členství v týmu neověřeno"),
                 },
                 status=403,
             )
@@ -107,11 +111,12 @@ def must_be_company_admin(fn):
             {
                 'fullpage_error_message':
                 mark_safe(_(
-                    "Tato stránka je určená pouze ověřeným Koordinátorům společností. "
+                    "Tato stránka je určená pouze ověřeným Koordinátorům organizací. "
                     "K tuto funkci se musíte nejdříve <a href='%s'>přihlásit</a>, a vyčkat na naše ověření. "
                     "Pokud na ověření čekáte příliš dlouho, kontaktujte naši podporu na "
                     "<a href='mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž'>kontakt@dopracenakole.cz</a>." %
                     reverse("company_admin_application"))),
+                'title': _("Nedostatečné oprávnění"),
             },
             status=403,
         )
@@ -169,6 +174,7 @@ def must_be_in_phase(phase_type):
                 request,
                 view.template_name, {
                     'fullpage_error_message': message,
+                    'title': _("Nedostupná stránka"),
                 },
                 status=403,
             )
@@ -209,8 +215,9 @@ def must_be_competitor(fn):
             {
                 'fullpage_error_message':
                 mark_safe(_(
-                    u"V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte <a href='%s'>správu firmy</a>.") %
+                    u"V soutěži Do práce na kole nesoutěžíte. Pokud jste koordinátorem organizace, použijte <a href='%s'>správu organizace</a>.") %
                     reverse("company_structure")),
+                'title': _("Nedostupná stránka"),
             },
             status=403,
         )
@@ -256,7 +263,7 @@ def user_attendance_has(condition, message):
     return decorator
 
 
-def request_condition(condition, message):
+def request_condition(condition, message, title=_("Nedostatečné oprávnění")):
     def decorator(fn):
         @functools.wraps(fn)
         def wrapped(view, request, *args, **kwargs):
@@ -266,6 +273,7 @@ def request_condition(condition, message):
                     view.template_name,
                     {
                         'fullpage_error_message': message,
+                        'title': title,
                     },
                     status=403,
                 )

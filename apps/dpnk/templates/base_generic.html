@@ -3,6 +3,7 @@
 {% load compress %}
 {% load analytical %}
 {% load dpnk_tags %}
+{% load raven %}
 <!DOCTYPE html>
 {% get_available_languages as languages %}
 {% get_current_language as current_language_code %}
@@ -14,10 +15,21 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script type="text/javascript" src="{% static "bow/jquery/dist/jquery.js"%}"></script>
+<script type="text/javascript" src="{% static "bow/jquery/dist/jquery.min.js"%}"></script>
 <script type="text/javascript" src="{% static "bow/bootstrap/dist/js/bootstrap.js"%}"></script>
 <script type="text/javascript" src="{% static "js/form_functions.js"%}"></script>
+<script src="https://cdn.ravenjs.com/2.2.0/raven.min.js"></script>
+<script>
+Raven.config('{% sentry_public_dsn %}').install();
+{% if user.is_authenticated %}
+Raven.setUserContext({
+  email: '{{ user.email }}',
+  id: '{{ user.id }}'
+})
+{% endif %}
+</script>
 
+<link href="{% static "bow/lightbox2/dist/css/lightbox.css"%}" rel="stylesheet">
 <link href="{% static "bow/bootstrap/dist/css/bootstrap.css"%}" rel="stylesheet" media="screen">
 <link href="{% static "css/bootstrap_mod.css"%}" rel="stylesheet" media="screen">
 <link href="http://www.dopracenakole.cz/style.css" rel="stylesheet" media="screen">
@@ -28,14 +40,14 @@
 {% endcompress %}
 <style>
   .navbar-fixed-top{
-    border-top: 3px solid {{ HEADER_COLOR }};
+    border-top: 3px solid {% if HEADER_COLOR %}{{ HEADER_COLOR }}{% endif %};
   }
 </style>
 
 {% endblock %}{% block extrahead %}{% endblock %}
 {% analytical_head_bottom %}
 </head>
-<body class="django_administrace {% if request.resolver_match.url_name == 'profil' %}homepage{% endif %} {{ request.resolver_match.url_name }}">
+<body class="django_administrace {% if request.resolver_match.url_name == 'profil' %}homepage{% endif %} {% if request.resolver_match %}{{ request.resolver_match.url_name }}{% endif %}">
 {% analytical_body_top %}
 <div class="navbar navbar-fixed-top" role="navigation">
    <div class="container">
@@ -70,8 +82,8 @@
                         <li class="{% if request.resolver_match.url_name == 'competitions' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'competitions' %}">{% trans "Soutěže" %}</a></li>
                         <li class="{% if request.resolver_match.url_name == 'other_team_members_results' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'other_team_members_results' %}">{% trans "Kolegové" %}</a></li>
                         <li class="{% block settings_link_class %}{% endblock %}"><a href="{% url 'upravit_profil' %}">{% trans "Soutěžní údaje" %}</a></li>
-                        {% if user_attendance.related_company_admin %}
-                        <li><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Správa společnosti" %}</a></li>
+                        {% if user_attendance.related_company_admin.is_approved %}
+                        <li><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Správa organizace" %}</a></li>
                         {% endif %}
                         {% if user.is_staff %}
                         <li><a href="{% url 'admin:index' %}">{% trans "Administrace" %}</a></li>
@@ -100,6 +112,9 @@
             <p class="alert alert-warning browsehappy">{% trans 'Bohužel používáte <strong>zastaralý</strong> prohlížeč internetu. Přes naši snahu nemusí některé části webu dobře fungovat. Pokud můžete, <a href="http://www.whatbrowser.org/intl/cs">nainstalujte si novější prohlížeč' %}</a>.
          <![endif]-->
          {% block caption %}<h2>{{ title }}</h2>{% endblock %}
+         {% if opening_message %}
+         {{ opening_message }}
+         {% endif %}
          {% block error %}
             {% if fullpage_error_message %}
             <div class="alert alert-danger">{{ fullpage_error_message }}</div>
@@ -112,7 +127,7 @@
           <ul class="user_info">
                {% if user.is_authenticated %}
                  <li>{% trans "Uživatel: " %}{{ user_attendance }}</li>
-                 <li>{% trans "Tým: " %}{{ user_attendance.team.name }}</li>
+                 {% if user_attendance.team %}<li>{% trans "Tým: " %}{{ user_attendance.team.name }}</li>{% endif %}
                  <li><a href="{% url 'password_change' %}">{% trans "Změnit heslo" %}</a></li>
                  <li class="logout_django"><a class="btn btn-warning" href="{% url 'logout' %}" class="logout" title="Log out">{% trans "Odhlásit" %}</a></li>
                {% endif %}
@@ -152,5 +167,6 @@
       });
 
     </script>
+<script type="text/javascript" src="{% static "bow/lightbox2/dist/js/lightbox.min.js"%}"></script>
 </body>
 </html>

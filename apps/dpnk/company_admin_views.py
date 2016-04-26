@@ -19,9 +19,8 @@
 
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext_lazy as _
-from django.http import HttpResponse, Http404
 import datetime
 from django.conf import settings
 from django.views.generic.edit import UpdateView, FormView, CreateView
@@ -33,7 +32,7 @@ from .email import company_admin_register_competitor_mail, company_admin_registe
 from django.core.urlresolvers import reverse_lazy
 from .string_lazy import format_lazy
 from .models import Company, CompanyAdmin, Competition, Campaign, UserProfile, Subsidiary
-from .views import RegistrationViewMixin
+from .views import RegistrationViewMixin, TitleViewMixin
 from . import models
 from .util import mark_safe_lazy
 from registration.backends.simple.views import RegistrationView
@@ -41,8 +40,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class CompanyStructure(TemplateView):
+class CompanyStructure(TitleViewMixin, TemplateView):
     template_name = 'company_admin/structure.html'
+    title = _("Struktura společnosti")
 
     @method_decorator(login_required)
     @must_be_company_admin
@@ -53,14 +53,17 @@ class CompanyStructure(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompanyStructure, self).get_context_data(*args, **kwargs)
         context_data['company'] = self.company_admin.administrated_company
+        context_data['company_address'] = models.get_address_string(self.company_admin.administrated_company.address)
         context_data['campaign'] = self.company_admin.campaign
+        context_data['Status'] = models.Status
         return context_data
 
 
-class SelectUsersPayView(FormView):
+class SelectUsersPayView(TitleViewMixin, FormView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = SelectUsersPayForm
     success_url = reverse_lazy('company_structure')
+    title = _("Platba za soutěžící")
 
     def get_initial(self):
         return {
@@ -69,10 +72,11 @@ class SelectUsersPayView(FormView):
 
     def form_valid(self, form):
         paing_for = form.cleaned_data['paing_for']
-        for userprofile in paing_for:
-            for payment in userprofile.payments().all():
+        for user_attendance in paing_for:
+            for payment in user_attendance.payments().all():
                 if payment.pay_type == 'fc':
                     payment.status = models.Status.COMPANY_ACCEPTS
+                    payment.amount = user_attendance.company_admission_fee()
                     payment.description = payment.description + "\nFA %s odsouhlasil dne %s" % (self.request.user.username, datetime.datetime.now())
                     payment.save()
                     break
@@ -88,11 +92,12 @@ class SelectUsersPayView(FormView):
         return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
 
 
-class CompanyEditView(UpdateView):
+class CompanyEditView(TitleViewMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyForm
     model = Company
     success_url = reverse_lazy('company_structure')
+    title = _("Změna adresy organizace")
 
     @method_decorator(login_required)
     @must_be_company_admin
@@ -104,11 +109,12 @@ class CompanyEditView(UpdateView):
         return self.company_admin.administrated_company
 
 
-class CompanyAdminApplicationView(RegistrationView):
+class CompanyAdminApplicationView(TitleViewMixin, RegistrationView):
     template_name = 'company_admin/registration.html'
     form_class = CompanyAdminApplicationForm
     model = CompanyAdmin
     success_url = reverse_lazy('company_structure')
+    title = _("Registrace nesoutěžícího koordinátora organizace")
 
     def get_initial(self):
         return {
@@ -118,19 +124,19 @@ class CompanyAdminApplicationView(RegistrationView):
     def form_valid(self, form):
         ret_val = super().form_valid(form)
         new_user = self.request.user
-        admin = CompanyAdmin(
-            motivation_company_admin=form.cleaned_data['motivation_company_admin'],
-            administrated_company=form.cleaned_data['administrated_company'],
-            campaign=form.cleaned_data['campaign'],
-            user=new_user,
-        )
-        admin.save()
-
         userprofile = UserProfile(
             user=new_user,
             telephone=form.cleaned_data['telephone'],
         )
         userprofile.save()
+
+        admin = CompanyAdmin(
+            motivation_company_admin=form.cleaned_data['motivation_company_admin'],
+            administrated_company=form.cleaned_data['administrated_company'],
+            campaign=form.cleaned_data['campaign'],
+            userprofile=userprofile,
+        )
+        admin.save()
         company_admin_register_no_competitor_mail(admin, form.cleaned_data['administrated_company'])
         return ret_val
 
@@ -139,9 +145,9 @@ class CompanyAdminView(RegistrationViewMixin, UpdateView):
     template_name = 'submenu_payment.html'
     form_class = CompanyAdminForm
     model = CompanyAdmin
-    success_url = reverse_lazy('zmenit_tym')
+    success_url = 'profil'
     registration_phase = "typ_platby"
-    title = _("Chci se stát správcem společnosti")
+    title = _("Chci se stát koordinátorem organizce")
 
     @method_decorator(login_required)
     @must_be_competitor
@@ -151,17 +157,22 @@ class CompanyAdminView(RegistrationViewMixin, UpdateView):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompanyAdminView, self).get_context_data(*args, **kwargs)
-        old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.filter(campaign=self.user_attendance.campaign).first()
-        if old_company_admin and old_company_admin != self.company_admin:
-            return {'fullpage_error_message': _(u"Vaše společnost již svého koordinátora má: %s." % old_company_admin)}
+        old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.\
+            filter(campaign=self.user_attendance.campaign, company_admin_approved='approved').\
+            exclude(pk=self.company_admin.pk)
+        if old_company_admin.exists():
+            return {
+                'fullpage_error_message': _(u"Vaše organizce již svého koordinátora má: %s." % (", ".join([str(c) for c in old_company_admin.all()]))),
+                'title': _("Organizace koordinátora má"),
+                }
         return context_data
 
     def get_object(self, queryset=None):
         campaign = self.user_attendance.campaign
         try:
-            self.company_admin = self.request.user.company_admin.get(campaign=campaign)
+            self.company_admin = self.request.user.userprofile.company_admin.get(campaign=campaign)
         except CompanyAdmin.DoesNotExist:
-            self.company_admin = CompanyAdmin(user=self.request.user, campaign=campaign)
+            self.company_admin = CompanyAdmin(userprofile=self.request.user.userprofile, campaign=campaign)
         self.company_admin.administrated_company = self.user_attendance.team.subsidiary.company
         return self.company_admin
 
@@ -171,11 +182,17 @@ class CompanyAdminView(RegistrationViewMixin, UpdateView):
         return ret_val
 
 
-class EditSubsidiaryView(UpdateView):
+class EditSubsidiaryView(TitleViewMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = SubsidiaryForm
     success_url = reverse_lazy('company_structure')
     model = Subsidiary
+    title = _("Upravit adresu pobočky")
+
+    def get_initial(self):
+        return {
+            'company_admin': self.company_admin,
+        }
 
     @method_decorator(login_required)
     @must_be_company_admin
@@ -187,11 +204,16 @@ class EditSubsidiaryView(UpdateView):
         return super(EditSubsidiaryView, self).get_queryset().filter(company=self.company_admin.administrated_company)
 
 
-class CompanyCompetitionView(UpdateView):
+class CompanyViewException(Exception):
+    pass
+
+
+class CompanyCompetitionView(TitleViewMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyCompetitionForm
     model = Competition
     success_url = reverse_lazy('company_admin_competitions')
+    title = _("Vypsat/upravit vnitrofiremní soutěž")
 
     @method_decorator(login_required)
     @must_be_company_admin
@@ -202,8 +224,8 @@ class CompanyCompetitionView(UpdateView):
     def get(self, *args, **kwargs):
         try:
             return super(CompanyCompetitionView, self).get(*args, **kwargs)
-        except Http404 as e:
-            return HttpResponse(e.message)
+        except CompanyViewException as e:
+            return render(self.request, self.template_name, context={'fullpage_error_message': e.args[0], 'title': e.args[1]})
 
     def get_object(self, queryset=None):
         company = self.company_admin.administrated_company
@@ -212,17 +234,18 @@ class CompanyCompetitionView(UpdateView):
         if competition_slug:
             competition = get_object_or_404(Competition.objects, slug=competition_slug)
             if competition.company != company:
-                raise Http404(_(u"<div class='text-warning'>K editování této soutěže nemáte oprávnění.</div>"))
+                raise CompanyViewException(_(u"K editování této soutěže nemáte oprávnění."), _("Nedostatečné oprávnění"))
         else:
             if Competition.objects.filter(company=company, campaign=campaign).count() >= settings.MAX_COMPETITIONS_PER_COMPANY:
-                raise Http404(_(u"<div class='text-warning'>Překročen maximální počet soutěží pro společnost.</div>"))
+                raise CompanyViewException(_(u"Překročen maximální počet soutěží pro organizaci."), _("Dosažen maximální počet soutěží"))
             phase = campaign.phase('competition')
             competition = Competition(company=company, campaign=campaign, date_from=phase.date_from, date_to=phase.date_to)
         return competition
 
 
-class CompanyCompetitionsShowView(TemplateView):
+class CompanyCompetitionsShowView(TitleViewMixin, TemplateView):
     template_name = 'company_admin/competitions.html'
+    title = _("Vnitrofiremní soutěže")
 
     @method_decorator(login_required)
     @must_be_company_admin
@@ -236,11 +259,12 @@ class CompanyCompetitionsShowView(TemplateView):
         return context_data
 
 
-class InvoicesView(CreateView):
+class InvoicesView(TitleViewMixin, CreateView):
     template_name = 'company_admin/create_invoice.html'
     template_name_created = 'company_admin/invoices.html'
     form_class = company_admin_forms.CreateInvoiceForm
     success_url = reverse_lazy('invoices')
+    title = _("Faktury vaší organizace")
 
     def get_initial(self):
         campaign = Campaign.objects.get(slug=self.request.subdomain)

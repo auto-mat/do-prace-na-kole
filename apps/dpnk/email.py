@@ -40,10 +40,7 @@ def approval_request_mail(user_attendance):
 def invitation_register_mail(inviting, invited):
     template = get_template('email/invitation_%s.html' % invited.userprofile.language)
     email = invited.userprofile.user.email
-    if not invited:
-        lang_code = inviting.userprofile.language
-    else:
-        lang_code = inviting.userprofile.language
+    lang_code = invited.userprofile.language
     message = template.render({
         'inviting': inviting,
         'invited': invited,
@@ -97,15 +94,25 @@ def team_created_mail(user_attendance):
 
 
 def invitation_mail(user_attendance, email):
-    template = get_template('email/invitation_%s.html' % user_attendance.userprofile.language)
-    if len(email) != 0:
-        message = template.render({
+    templates = {
+        "cs": get_template('email/invitation_cs.html'),
+        "en": get_template('email/invitation_en.html'),
+    }
+
+    if user_attendance.userprofile.language == "cs":
+        languages = ("cs", "en")
+    else:
+        languages = ("en", "cs")
+    message = ""
+    for language in languages:
+        template = templates[language]
+        message += template.render({
             'inviting': user_attendance,
-            'lang_code': user_attendance.userprofile.language,
+            'lang_code': language,
             'SITE_URL': settings.SITE_URL,
             'email': email,
         })
-        send_mail(_(u"%s - pozvánka do týmu" % user_attendance.campaign), message, user_attendance.userprofile.user.email, [email], fail_silently=False)
+    send_mail(_(u"%s - pozvánka do týmu" % user_attendance.campaign), message, None, [email], fail_silently=False)
 
 
 def payment_confirmation_mail(user_attendance):
@@ -135,37 +142,37 @@ def company_admin_register_competitor_mail(user_attendance):
         'company': user_attendance.team.subsidiary.company,
         'SITE_URL': settings.SITE_URL,
     })
-    send_mail(_(u"%s - firemní koordinátor - potvrzení registrace" % user_attendance.campaign), message, None, [email], fail_silently=False)
+    send_mail(_(u"%s - koordinátor organizace - potvrzení registrace" % user_attendance.campaign), message, None, [email], fail_silently=False)
 
 
 def company_admin_register_no_competitor_mail(company_admin, company):
     template = get_template('email/company_admin_register_no_competitor_%s.html' % company_admin.get_userprofile().language)
-    email = company_admin.user.email
+    email = company_admin.userprofile.user.email
     message = template.render({
         'company_admin': company_admin,
         'company': company,
         'SITE_URL': settings.SITE_URL,
     })
-    send_mail(_(u"%s - firemní koordinátor - potvrzení registrace" % company_admin.campaign), message, None, [email], fail_silently=False)
+    send_mail(_(u"%s - koordinátor organizace - potvrzení registrace" % company_admin.campaign), message, None, [email], fail_silently=False)
 
 
 def company_admin_approval_mail(company_admin):
     template = get_template('email/company_admin_approval_%s.html' % company_admin.get_userprofile().language)
-    email = company_admin.user.email
+    email = company_admin.userprofile.user.email
     message = template.render({
         'company_admin': company_admin,
         'company': company_admin.administrated_company,
         'SITE_URL': settings.SITE_URL,
     })
-    send_mail(_(u"%s - firemní koordinátor - schválení správcovství firmy" % company_admin.campaign), message, None, [email], fail_silently=False)
+    send_mail(_(u"%s - koordinátor organizace - schválení správcovství organizace" % company_admin.campaign), message, None, [email], fail_silently=False)
 
 
 def company_admin_rejected_mail(company_admin):
     template = get_template('email/company_admin_rejected_%s.html' % company_admin.get_userprofile().language)
-    email = company_admin.user.email
+    email = company_admin.userprofile.user.email
     message = template.render({
         'company_admin': company_admin,
         'company': company_admin.administrated_company,
         'SITE_URL': settings.SITE_URL,
     })
-    send_mail(_(u"%s - firemní koordinátor - zamítnutí správcovství firmy" % company_admin.campaign), message, None, [email], fail_silently=False)
+    send_mail(_(u"%s - koordinátor organizace - zamítnutí správcovství organizace" % company_admin.campaign), message, None, [email], fail_silently=False)

@@ -40,7 +40,7 @@ $(function(){
    switch_description();
    $("#div_id_payment_type").append($("#description_switcher"));
 
-   $.get("{{aklub_url}}/regular-dpnk/?firstname={{firstname}}&amp;surname={{surname}}&amp;email={{email}}&amp;telephone={{user_attendance.telephone}}", function(data) {
+   $.get("{{aklub_url}}/regular-dpnk/?firstname={{firstname}}&amp;surname={{surname}}&amp;email={{email}}&amp;telephone={{user_attendance.userprofile.telephone}}", function(data) {
       $("#aklub-form-container").append(data);
       $("#aklub-form").ajaxForm({replaceTarget: false, target: "#aklub-form", success: function(){
          window.scrollTo(0, 0);
@@ -70,25 +70,28 @@ $(function(){
       {% trans "Startovné zdarma můžete čerpat v těchto případech:" %}
       {{ user_attendance.campaign.free_entry_cases_html|safe }}
 
-      {% trans "Po zadání tohoto typu platby vyčkejte, než vaši volbu potvrdíme." %}
+      {% trans "Po zadání tohoto typu platby vyčkejte, až vaši volbu potvrdíme." %}
    </div>
    <div class="description_switcher_div description company_description" style="display:none">
       <h3>{% trans "Startovné platí zaměstnavatel" %}</h3>
-      {% if user_attendance.get_asociated_company_admin %}
       {% trans "Startovné za mě platí zaměstnavatel, mám to domluvené." %}
-      {% else %}
-      {% trans "Váš zaměstnavatel ještě nemá zvoleného koordinátora. Pokud chcete zvolit tento typ platby, je potřeba, aby byla platba startovného fakturou dohodnutá s vaším zaměstnavatelem." %}
-      <br/>
-      <a href='{% url "company_admin_application" %}'>{% trans "Chci se sám stát koordinátorem mé společnosti." %}</a>
-      {% endif %}
       <br/><br/>
       {% trans "Zaměstnavatel: " %} {{ user_attendance.team.subsidiary.company }}<br/>
-      {% trans "Koordinátor společnosti: " %} {{ user_attendance.get_asociated_company_admin|default:"Není" }}<br/>
-      {% trans "Email na koordinátora: " %}<a href='mailto:{{ user_attendance.get_asociated_company_admin.user.email|default:"Není" }}'>{{ user_attendance.get_asociated_company_admin.user.email|default:"Není" }}</a><br/>
+      {% for company_admin in user_attendance.get_asociated_company_admin %}
+         {% trans "Koordinátor organizace: " %} {{ company_admin|default:"Není" }}<br/>
+         {% trans "Email na koordinátora: " %}<a href='mailto:{{ company_admin.userprofile.user.email|default:"Není" }}'>{{ company_admin.userprofile.user.email|default:"Není" }}</a><br/>
+      {% empty %}
+         <strong>
+         <hr/>
+         {% trans "Váš zaměstnavatel ještě nemá zvoleného koordinátora. Pokud chcete zvolit tento typ platby, je potřeba, aby byla platba startovného fakturou dohodnutá s vaším zaměstnavatelem." %}
+         </strong>
+         <br/>
+         <a href='{% url "company_admin_application" %}'>{% trans "Chci se sám stát koordinátorem mé organizace." %}</a>
+      {% endfor %}
    </div>
    <div class="description_switcher_div description member_description" style="display:none">
       <h3>{% trans "Člen Klubu přátel" %}</h3>
-      {% trans "Členové Klubu přátel mají startovné zdarma. Pokud jste členem Klubu přátel, stiskněte tlačítko „Další“ a vyčkejte, než vaše členství ověříme." %}
+      {% trans "Členové Klubu přátel mají startovné zdarma. Pokud jste členem Klubu přátel, stiskněte tlačítko „Další“ a vyčkejte, až vaše členství ověříme." %}
    </div>
    <div class="description_switcher_div description member_wannabe_description" style="display:none">
       <h3>{% trans "Vstup do Klubu přátel" %}</h3>

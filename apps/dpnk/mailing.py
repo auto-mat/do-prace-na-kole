@@ -22,16 +22,18 @@ from django.conf import settings
 from . import util
 import logging
 import threading
+import hashlib
+from collections import OrderedDict
 logger = logging.getLogger(__name__)
 
 
 class Mailing:
 
     def __init__(self, api_key):
-        createsend.CreateSend.api_key = api_key
+        self.api_key = api_key
 
     def add(self, list_id, name, surname, email, custom_fields):
-        subscriber = createsend.Subscriber()
+        subscriber = createsend.Subscriber({'api_key': self.api_key})
         r = subscriber.add(list_id, email,
                            " ".join([name, surname]),
                            custom_fields,
@@ -39,7 +41,7 @@ class Mailing:
         return r
 
     def update(self, list_id, mailing_id, name, surname, email, custom_fields):
-        subscriber = createsend.Subscriber(list_id, mailing_id)
+        subscriber = createsend.Subscriber({'api_key': self.api_key}, list_id, mailing_id)
         subscriber.get(list_id, mailing_id)
         subscriber.update(email,
                           " ".join([name, surname]),
@@ -48,7 +50,7 @@ class Mailing:
         return subscriber.email_address
 
     def delete(self, list_id, mailing_id):
-        subscriber = createsend.Subscriber(list_id, mailing_id)
+        subscriber = createsend.Subscriber({'api_key': self.api_key}, list_id, mailing_id)
         subscriber.get(list_id, mailing_id)
         r = subscriber.delete()
         return r
@@ -64,26 +66,27 @@ def get_custom_fields(user_attendance):
     entered_competition = None
     team_member_count = None
 
-    if hasattr(user_attendance, 'is_competitor') and user_attendance.is_competitor(user):
-        if user_attendance.team:
-            city = user_attendance.team.subsidiary.city.name
-        payment_status = user_attendance.payment()['status']
+    if user_attendance.team:
+        city = user_attendance.team.subsidiary.city.slug
+    payment_status = user_attendance.payment_status
 
-        is_new_user = user_attendance.other_user_attendances(user_attendance.campaign).count() > 0
-        entered_competition = user_attendance.entered_competition()
-        team_member_count = user_attendance.team_member_count()
+    is_new_user = user_attendance.other_user_attendances(user_attendance.campaign).count() < 0
+    entered_competition = user_attendance.entered_competition()
+    team_member_count = user_attendance.team_member_count()
+    mailing_approval = user_attendance.userprofile.mailing_opt_in and user_attendance.userprofile.personal_data_opt_in
 
     company_admin = util.get_company_admin(user, user_attendance.campaign) is not None
 
     custom_fields = [
-        {'Key': "Mesto", 'Value': city},
-        {'Key': "Firemni_spravce", 'Value': company_admin},
-        {'Key': "Stav_platby", 'Value': payment_status},
-        {'Key': "Aktivni", 'Value': user.is_active},
-        {'Key': "Novacek", 'Value': is_new_user},
-        {'Key': "Kampan", 'Value': user_attendance.campaign.name},
-        {'Key': "Vstoupil_do_souteze", 'Value': entered_competition},
-        {'Key': "Pocet_lidi_v_tymu", 'Value': team_member_count},
+        OrderedDict((('Key', "Mesto"), ('Value', city))),
+        OrderedDict((('Key', "Firemni_spravce"), ('Value', company_admin))),
+        OrderedDict((('Key', "Stav_platby"), ('Value', payment_status))),
+        OrderedDict((('Key', "Aktivni"), ('Value', user.is_active))),
+        OrderedDict((('Key', "Novacek"), ('Value', is_new_user))),
+        OrderedDict((('Key', "Kampan"), ('Value', user_attendance.campaign.slug))),
+        OrderedDict((('Key', "Vstoupil_do_souteze"), ('Value', entered_competition))),
+        OrderedDict((('Key', "Pocet_lidi_v_tymu"), ('Value', team_member_count))),
+        OrderedDict((('Key', "Povoleni_odesilat_emaily"), ('Value', mailing_approval))),
     ]
     return custom_fields
 
@@ -103,7 +106,7 @@ def add_user(user_attendance):
     try:
         list_id = user_attendance.campaign.mailing_list_id
         mailing_id = mailing.add(list_id, user.first_name, user.last_name, user.email, custom_fields)
-        mailing_hash = hash(str((list_id, user.first_name, user.last_name, user.email, custom_fields)))
+        mailing_hash = hashlib.md5(str((list_id, user.first_name, user.last_name, user.email, custom_fields)).encode('utf-8')).hexdigest()
     except Exception:
         update_mailing_id(user_attendance, None, None)
         raise
@@ -121,7 +124,7 @@ def update_user(user_attendance, ignore_hash):
     # Register into mailing list
     try:
         list_id = user_attendance.campaign.mailing_list_id
-        mailing_hash = hash(str((list_id, user.first_name, user.last_name, user.email, custom_fields)))
+        mailing_hash = hashlib.md5(str((list_id, user.first_name, user.last_name, user.email, custom_fields)).encode('utf-8')).hexdigest()
         if ignore_hash or userprofile.mailing_hash != mailing_hash:
             new_mailing_id = mailing.update(list_id, mailing_id, user.first_name, user.last_name, user.email, custom_fields)
             logger.info(
@@ -156,19 +159,17 @@ def delete_user(user_attendance):
 
 
 def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
-    if not user_attendance.campaign.mailing_list_enabled:
-        return
-
-    user = user_attendance.get_userprofile().user
+    userprofile = user_attendance.get_userprofile()
+    user = userprofile.user
 
     try:
-        if not user.is_active:
-            delete_user(user_attendance)
-        else:
+        if user.is_active and userprofile.mailing_opt_in and userprofile.personal_data_opt_in:
             if util.is_competitor(user_attendance.get_userprofile().user) and user_attendance.get_userprofile().mailing_id:
                 update_user(user_attendance, ignore_hash)
             else:
                 add_user(user_attendance)
+        else:
+            delete_user(user_attendance)
     except:
         logger.exception("Problem occured during mailing list record actualization")
 
@@ -184,4 +185,5 @@ class MailingThread(threading.Thread):
 
 
 def add_or_update_user(user_attendance, ignore_hash=False):
-    MailingThread(user_attendance, ignore_hash).start()
+    if user_attendance.campaign.mailing_list_enabled:
+        MailingThread(user_attendance, ignore_hash).start()

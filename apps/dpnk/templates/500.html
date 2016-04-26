@@ -1,8 +1,11 @@
 {% extends "base_generic.html" %}
 {% load i18n %}
 
+{% block title %}{% trans "DPNK" %} - chyba - 500{% endblock %}
+{% block caption %}Chyba stránky{% endblock %}
+
 {% block content %}
 <p>
-{% trans "Došlo k chybě, prosíme obraťte se na <a href='kontakt@dopracenakole.cz'>kontakt@dopracenakole.cz</a>" %}
+{% trans "Došlo k chybě. O této události jsme dostali hlášení, takže se je možné, že se v tuto chvíli už pokoušíme problém opravit. Je také možné, že problém je pouze dočasný a za pár minut již vše bude fungovat správně. Pokud chyba přetrvává delší dobu, prosíme obraťte se na <a href='mailto:kontakt@dopracenakole.cz?subject=Chybová stránka'>kontakt@dopracenakole.cz</a> s podrobným popisem, jak tato chyba nastala." %}
 </p>
 {% endblock %}

@@ -5,6 +5,7 @@
 {% block content %}
 {{ block.super }}
 <h2>{{ competition.name }}</h2>
+{{ competition.rules|safe }}
 {% for competitor in competitors %}
    <h3 id="comp_res_{{competitor.pk}}">{{ competitor }} ({{ competitor.result }} b.)</h3>
    {% for answer in competitor.answers %}
@@ -12,13 +13,17 @@
          {{ answer.comment|linebreaksbr|urlize}}
       {% endif %}
       <br/>
+      <div class="questionnaire-image">
+      {% if answer.question.with_attachment %}
       {% thumbnail answer.attachment "250x250" as foto_thumb %}
       {% if foto_thumb %}
-         <a href="{{ settings.SITE_URL}}{{ answer.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
-         <img src="{{ settings.SITE_URL}}{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
+         <a data-lightbox="image" href="{{ answer.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
+         <img src="{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
       {% else %}
-         <a href="{{ media }}/{{ answer.attachment }}" target="_blank">{{ answer.attachment }}</a>
+         <a href="{{ answer.attachment.url }}" target="_blank">{{ answer.attachment }}</a>
       {% endif %}
+      {% endif %}
+      </div>
    {% endfor %}
 {% endfor %}
 {% endblock %}

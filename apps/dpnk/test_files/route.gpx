@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gpx creator="mapy.cz" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<rte><name>Start -&gt; End</name>
+<rtept lat="50.097190" lon="14.474598"><name>001 Start</name></rtept>
+<rtept lat="50.097459" lon="14.474469"><name>002 Praha 8</name></rtept>
+<rtept lat="50.099048" lon="14.473654"><name>003 Pod Plynojemem</name></rtept>
+<rtept lat="50.100354" lon="14.466257"><name>004 U Rustonky/Voctarova</name></rtept>
+<rtept lat="50.098530" lon="14.464740"><name>005 Voctarova/Rohanske nabrezi</name></rtept>
+<rtept lat="50.093962" lon="14.438227"><name>006 Rohanske nabrezi/Tesnovsky tunel</name></rtept>
+<rtept lat="50.093493" lon="14.432388"><name>007 Tesnovsky tunel/Holbova</name></rtept>
+<rtept lat="50.092556" lon="14.435755"><name>008 Klimentska/Wilsonova</name></rtept>
+<rtept lat="50.092078" lon="14.437382"><name>009 Wilsonova</name></rtept>
+<rtept lat="50.079705" lon="14.430539"><name>010 Wilsonova/Vaclavske namesti</name></rtept>
+<rtept lat="50.077153" lon="14.429255"><name>011 Mezibranska/Sokolska</name></rtept>
+<rtept lat="50.073546" lon="14.429228"><name>012 Sokolska/Rumunska</name></rtept>
+<rtept lat="50.074086" lon="14.432827"><name>013 Rumunska/Belehradska</name></rtept>
+<rtept lat="50.069608" lon="14.434878"><name>014 End</name></rtept>
+</rte></gpx>

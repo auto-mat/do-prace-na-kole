@@ -39,21 +39,20 @@ def make_invoice_sheet_pdf(outfile, invoice):
         client.note = u"Číslo objednávky: %s" % invoice.order_number
 
     provider = Provider(
-        u"Auto*Mat, o.s.",
-        email=u"lucie.mullerova@auto-mat.cz",
-        address=u"Lublaňská 398/18",
-        zip=u"120 00",
-        city=u"Praha 2",
-        bank_name=u"Poštovní spořitelna",
+        "Auto*Mat, z.s.",
+        email="kontakt@dopracenakole.cz",
+        address="Bořivojova 694/108",
+        zip="130 00",
+        city="Praha 3",
+        bank_name="ERA/Poštovní spořitelna",
         bank_account='217 359 444 / 0300',
-        vat_id=u"CZ22670319",
-        ir=u"22670319",
-        phone=u"737 563 750",
+        vat_id="CZ22670319",
+        ir="22670319",
+        phone="212 240 666",
         logo_filename=os.path.join(DIR, "static/img/logo.jpg"),
-        note=u"""Sdružení Auto*Mat bylo zaregistrováno u MV ČR pod č. VS/1-1/68 776/07-R.
-U Městského soudu v Praze jsme vedeni pod spisovou značkou L 18119.
-Společně s vámi tvoříme město, ve kterém chceme žít. www.auto-mat.cz
-""",
+        note="Spolek je veden u Městského soudu v Praze pod spisovou značkou L 18119.\n"
+             "Auto*mat - společně s vámi tvoříme město, ve kterém chceme žít.\n"
+             "                                       http://www.auto-mat.cz"
     )
 
     creator = Creator(
@@ -61,14 +60,17 @@ Společně s vámi tvoříme město, ve kterém chceme žít. www.auto-mat.cz
         stamp_filename=os.path.join(DIR, "static/img/stamp.png"),
     )
 
+    variable_symbol = "%s%03d" % (invoice.exposure_date.year, invoice.sequence_number)
     invoice_gen = Invoice(client, provider, creator)
     invoice_gen.title = u"Faktura %s/%s" % (invoice.sequence_number, invoice.exposure_date.year)
-    invoice_gen.variable_symbol = "%s%03d" % (invoice.exposure_date.year, invoice.sequence_number)
+    invoice_gen.variable_symbol = variable_symbol
+    invoice_gen.number = variable_symbol
     invoice_gen.date = invoice.exposure_date
     invoice_gen.payback = invoice.exposure_date + datetime.timedelta(days=14)
     invoice_gen.taxable_date = invoice.taxable_date
     invoice_gen.rounding_result = True
-    invoice_gen.currency_locale = u"cs_CZ.utf-8"
+    invoice_gen.use_tax = True
+    invoice_gen.currency_locale = u"cs_CZ.UTF-8"
     invoice_gen.paytype = u"bankovním převodem"
 
     for payment in invoice.payment_set.order_by("user_attendance__userprofile__user__last_name", "user_attendance__userprofile__user__first_name"):

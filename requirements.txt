@@ -10,15 +10,15 @@ django-extensions
 django-debug-toolbar
 django-softhyphen
 -e git+https://github.com/chrisglass/django_polymorphic.git#egg=django-polymorphic
--e git+https://pdlouhy@bitbucket.org/pdlouhy/django-composite-field.git#egg=django-composite-field  # the non-PIP source is for Django 1.9
+-e git+https://pdlouhy@bitbucket.org/pdlouhy/django-composite-field.git@fix_sort#egg=django-composite-field  # the non-PIP source is for bug with import-export
 -e git+https://github.com/macropin/django-registration.git#egg=django-registration-redux  # for Django 1.9
 -e git+https://github.com/silverfix/django-nested-inlines.git#egg=django-nested-inlines
 django-su
 unidecode
 -e git+https://github.com/PetrDlouhy/createsend-python.git@python3#egg=createsend
 ordereddict
-django-mass-edit
-django-author
+-e git+https://github.com/PetrDlouhy/django-mass-edit.git#egg=django-mass-edit  # for Django 1.10 warnings and template empty fields
+-e git+https://github.com/lambdalisue/django-author.git#egg=django-author
 django-fieldsignals
 django-admin-sortable2
 reportlab
@@ -27,16 +27,16 @@ flake8
 modulus11
 django-dbbackup
 pillow
--e git+https://github.com/creckx/InvoiceGenerator.git#egg=InvoiceGenerator  # the non-PIP source is for Python 3
+-e git+https://github.com/PetrDlouhy/InvoiceGenerator.git@pull_tests#egg=InvoiceGenerator  # the non-PIP source is for setting locale fixes
 django-related-admin
 newrelic
 easy_thumbnails
 django-crispy-forms
--e git+https://github.com/LukasRychtecky/django-class-based-auth-views.git@13_django-warning-fix#egg=django-class-based-auth-views  # for Django 1.9
+-e git+https://github.com/PetrDlouhy/django-class-based-auth-views.git@pull-next#egg=django-class-based-auth-views  # for Django 1.9
 -e git+https://github.com/fabfuel/django-subdomains.git#egg=django-subdomains
 -e git+https://github.com/PetrDlouhy/django-adminfilters.git@develop#egg=django-adminfilters
 django-compressor
--e git+https://github.com/PetrDlouhy/slumber.git#egg=slumber
+-e git+https://github.com/PetrDlouhy/slumber.git@ordereddict#egg=slumber  # news should be ordered by date
 django-bleach
 -e git+https://github.com/hobarrera/django-analytical.git@django19#egg=django-analytical  # for Django 1.9
 gunicorn
@@ -54,8 +54,9 @@ django-bulk-update
 django-cors-headers
 django-nose
 nose-parameterized
+nose-timer
 -e git+https://github.com/PetrDlouhy/django-denorm.git@develop#egg=django-denorm
--e git+https://github.com/PetrDlouhy/django-admin-smoke-tests.git#egg=django-admin-smoke-tests  # the non-PIP source is for newest django-polymorphic, that defined both get_queryset and queryset
+-e git+https://github.com/PetrDlouhy/django-admin-smoke-tests.git@supermaster#egg=django-admin-smoke-tests  # the non-PIP source is for newest django-polymorphic, that defined both get_queryset and queryset
 django-wysiwyg-redactor
 sqlparse
 django-appconf
@@ -64,3 +65,5 @@ django-ajax-selects
 pypdf2
 django-extra-views
 freezegun
+raven
+django_coverage_plugin

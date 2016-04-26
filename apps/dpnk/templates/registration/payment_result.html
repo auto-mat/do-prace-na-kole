@@ -9,7 +9,7 @@
 
 <p>
 {% if success %}
-<a href="{% url 'working_schedule' %}">{% trans "Pokračujte na pracovní rozvrh" %}</a>
+<a href="{% url 'profil' %}">{% trans "Pokračujte na stránku jízd" %}</a>
 {% else %}
 <a href="{% url 'typ_platby' %}">{% trans "Zkuste zadat platbu znovu" %}</a>
 {% endif %}

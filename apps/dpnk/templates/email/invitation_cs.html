@@ -3,7 +3,7 @@
 
 {% language lang_code %}
 {% if invited %}
-Zpráva pro soutěžící/ho {{ invited.userprofile }} z týmu {{invited.team.name}} v soutěži {{ invited.campaign }}.
+Zpráva pro soutěžící/ho {{ invited.userprofile }} {% if invited.team %}z týmu {{invited.team.name}} {% endif %}v soutěži {{ invited.campaign }}.
 {% endif %}
 
 Dobrý den,

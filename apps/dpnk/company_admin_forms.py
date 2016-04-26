@@ -21,8 +21,8 @@
 from django.contrib.auth.models import User
 from django import forms
 from .forms import AdressForm
-from .models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice, Subsidiary
-from django.utils.translation import ugettext_lazy as _
+from .models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice, Subsidiary, City
+from django.utils.translation import ugettext_lazy as _, string_concat
 from .util import slugify
 from .forms import SubmitMixin
 from ajax_select.fields import AutoCompleteSelectWidget
@@ -33,7 +33,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
     paing_for = forms.ModelMultipleChoiceField(
         [],
         label=_(u"Soutěžící, za které bude zaplaceno"),
-        help_text=_(u"<div class='text-info'>Tip: Použijte ctrl nebo shift pro výběr více položek nebo jejich rozsahu.</div>"),
+        help_text=string_concat(_(u"<div class='text-info'>Tip: Použijte ctrl nebo shift pro výběr více položek nebo jejich rozsahu.</div>"), _("<br/>Ceny jsou uváděny bez DPH")),
         widget=forms.SelectMultiple(attrs={'size': '40'}),
     )
 
@@ -48,7 +48,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
             (
                 user_attendance.pk,
                 u"%s Kč: %s (%s)" % (
-                    user_attendance.representative_payment.amount,
+                    user_attendance.company_admission_fee(),
                     user_attendance.userprofile.user.get_full_name(),
                     user_attendance.userprofile.user.email))
             for user_attendance in queryset.all()
@@ -82,16 +82,36 @@ class SubsidiaryForm(SubmitMixin, AdressForm):
             'city',
         )
 
+    def __init__(self, *args, **kwargs):
+        initial = kwargs.pop('initial', None)
+        company_admin = initial['company_admin']
+        ret_val = super().__init__(*args, **kwargs)
+        self.fields['city'].queryset = City.objects.filter(cityincampaign__campaign=company_admin.campaign)
+        return ret_val
+
 
 class CompanyAdminForm(SubmitMixin, forms.ModelForm):
     motivation_company_admin = forms.CharField(
         label=_(u"Zaměstnanecká pozice"),
         max_length=100,
         required=True)
+    will_pay_opt_in = forms.BooleanField(
+        label=_("Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance jejichž platbu schválím."),
+        required=True,
+    )
+    personal_data_opt_in = forms.BooleanField(
+        label=_("Souhlasím se zpracováním osobních údajů podle "
+                "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů A*M</a> "
+                "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže Do práce na kole</a>."),
+        required=True,
+    )
 
     class Meta:
         model = CompanyAdmin
-        fields = ('motivation_company_admin', )
+        fields = (
+            'motivation_company_admin',
+            'will_pay_opt_in',
+        )
 
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super(CompanyAdminForm, self).__init__(*args, **kwargs)
@@ -101,12 +121,11 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
 class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFormUniqueEmail):
     motivation_company_admin = forms.CharField(
         label=_(u"Pár vět o vaší pozici"),
-        help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle kterých můžeme ověřit, že vám funkci firemního administrátora můžeme svěřit."),
-        max_length=5000,
-        widget=forms.Textarea,
+        help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle kterých můžeme ověřit, že vám funkci koordinátora organizace můžeme svěřit."),
+        max_length=100,
         required=True)
     administrated_company = forms.ModelChoiceField(
-        label=_(u"Administrovaná firma"),
+        label=_(u"Koordinovaná organizace"),
         widget=AutoCompleteSelectWidget(
             'companies',
         ),
@@ -114,7 +133,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         required=True)
     telephone = forms.CharField(
         label="Telefon",
-        help_text="Pro možnost kontaktování firemního administrátora",
+        help_text="Pro možnost kontaktování koordinátora organizace",
         max_length=30)
     first_name = forms.CharField(
         label=_(u"Jméno"),
@@ -129,6 +148,16 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         queryset=Campaign.objects.all(),
         required=True)
     username = forms.CharField(widget=forms.HiddenInput, required=False)
+    will_pay_opt_in = forms.BooleanField(
+        label=_("Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance jejichž platbu schválím."),
+        required=True,
+    )
+    personal_data_opt_in = forms.BooleanField(
+        label=_("Souhlasím se zpracováním osobních údajů podle "
+                "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů A*M</a> "
+                "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže Do práce na kole</a>."),
+        required=True,
+    )
 
     def clean(self):
         cleaned_data = super(CompanyAdminApplicationForm, self).clean()
@@ -138,8 +167,8 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         if 'administrated_company' in cleaned_data:
             obj = cleaned_data['administrated_company']
             campaign = cleaned_data['campaign']
-            if CompanyAdmin.objects.filter(administrated_company__pk=obj.pk, campaign=campaign).exists():
-                raise forms.ValidationError(_(u"Tato společnost již má svého koordinátora."))
+            if CompanyAdmin.objects.filter(administrated_company__pk=obj.pk, campaign=campaign, company_admin_approved='approved').exists():
+                raise forms.ValidationError(_(u"Tato organizace již má svého koordinátora."))
         return cleaned_data
 
     class Meta:
@@ -155,6 +184,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
             'password1',
             'password2',
             'username',
+            'will_pay_opt_in',
         )
 
 
@@ -190,7 +220,7 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
 
 class CreateInvoiceForm(SubmitMixin, forms.ModelForm):
     create_invoice = forms.BooleanField(
-        label=_(u"Údaje jsou správné, chci vytvořit fakturu"),
+        label=_(u"Údaje jsou správné, v mé organizaci již nepřibudou žádní další soutěžící. Chci vytvořit fakturu"),
     )
 
     def __init__(self, request=None, *args, **kwargs):

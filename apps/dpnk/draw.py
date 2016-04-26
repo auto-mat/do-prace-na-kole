@@ -27,7 +27,7 @@ def all_members_paid(team):
 
     for userattendance in team.members():
         if userattendance.userprofile.user.is_active \
-                and userattendance.payment()['status'] != 'done':
+                and userattendance.payment_status != 'done':
             return False
     return True
 

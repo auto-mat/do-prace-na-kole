@@ -68,7 +68,7 @@
             "package_width": 26,
             "previous_campaign": 338,
             "slug": "testing-campaign",
-            "tracking_number_first": 0,
+            "tracking_number_first": 1111111,
             "tracking_number_last": 999999999,
             "trip_plus_distance": 5
         },
@@ -92,8 +92,8 @@
             "company": null,
             "company_competitors": [],
             "competitor_type": "team",
-            "date_from": "2013-05-01",
-            "date_to": "2013-06-02",
+            "date_from": "2010-11-01",
+            "date_to": "2010-12-02",
             "entry_after_beginning_days": 7,
             "is_public": true,
             "name": "Pravidelnost",
@@ -112,17 +112,92 @@
     },
     {
         "fields": {
+           "type": "text",
+           "comment_type": "link",
+           "with_attachment": true,
+           "competition": 4
+        },
+        "model": "dpnk.question",
+        "pk": 4
+    },
+    {
+        "fields": {
+           "type": "text",
+           "comment_type": "one-liner",
+           "with_attachment": true,
+           "competition": 4
+        },
+        "model": "dpnk.question",
+        "pk": 3
+    },
+    {
+        "fields": {
+           "type": "choice",
+           "required": false,
+           "with_attachment": false,
+           "competition": 4
+        },
+        "model": "dpnk.question",
+        "pk": 1
+    },
+    {
+        "fields": {
+           "type": "choice",
+           "choice_type": 1,
+           "with_attachment": false,
+           "competition": 4
+        },
+        "model": "dpnk.question",
+        "pk": 2
+    },
+    {
+        "fields": {
+           "text": "yes",
+           "points": 10,
+           "choice_type": 1
+        },
+        "model": "dpnk.choice",
+        "pk": 1
+    },
+    {
+        "fields": {
+           "text": "no",
+           "points": 3,
+           "choice_type": 1
+        },
+        "model": "dpnk.choice",
+        "pk": 2
+    },
+    {
+        "fields": {
+           "name": "yes/no",
+           "competition": 4
+        },
+        "model": "dpnk.choicetype",
+        "pk": 1
+    },
+    {
+        "fields": {
+           "team": 1,
+           "result": 100,
+           "competition": 3
+        },
+        "model": "dpnk.competitionresult",
+        "pk": 1
+    },
+    {
+        "fields": {
             "campaign": 339,
             "city": [],
             "company": null,
             "company_competitors": [],
             "competitor_type": "single_user",
-            "date_from": "2013-05-01",
-            "date_to": "2013-06-02",
+            "date_from": "2010-11-01",
+            "date_to": "2010-12-02",
             "entry_after_beginning_days": 7,
             "is_public": true,
             "name": "Dotazník",
-            "public_answers": false,
+            "public_answers": true,
             "rules": null,
             "sex": null,
             "slug": "quest",
@@ -130,7 +205,7 @@
             "type": "questionnaire",
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
-            "without_admission": true
+            "without_admission": false
         },
         "model": "dpnk.competition",
         "pk": 4
@@ -142,7 +217,7 @@
             "company": null,
             "company_competitors": [],
             "competitor_type": "single_user",
-            "date_from": "2010-12-01",
+            "date_from": "2010-11-01",
             "date_to": "2010-12-30",
             "entry_after_beginning_days": 7,
             "is_public": true,
@@ -158,6 +233,65 @@
             "without_admission": true
         },
         "model": "dpnk.competition",
+        "pk": 5
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "city": [1],
+            "company": null,
+            "company_competitors": [],
+            "competitor_type": "single_user",
+            "date_from": "2010-11-01",
+            "date_to": "2010-12-30",
+            "entry_after_beginning_days": 7,
+            "is_public": true,
+            "name": "Výkonnost ve městě",
+            "public_answers": false,
+            "rules": null,
+            "sex": null,
+            "slug": "vykonnost-mesto",
+            "team_competitors": [],
+            "type": "length",
+            "url": "http://www.dopracenakole.net/url/",
+            "user_attendance_competitors": [],
+            "without_admission": true
+        },
+        "model": "dpnk.competition",
+        "pk": 6
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "city": [],
+            "company": null,
+            "company_competitors": [],
+            "competitor_type": "company",
+            "date_from": "2010-11-01",
+            "date_to": "2010-12-30",
+            "entry_after_beginning_days": 7,
+            "is_public": true,
+            "name": "Výkonnost společností",
+            "public_answers": false,
+            "rules": null,
+            "sex": null,
+            "slug": "vykonnost-spolecnosti",
+            "team_competitors": [],
+            "type": "length",
+            "url": "http://www.dopracenakole.net/url/",
+            "user_attendance_competitors": [],
+            "without_admission": true
+        },
+        "model": "dpnk.competition",
+        "pk": 8
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "date_from": "2011-1-01",
+            "type": "late_admission"
+        },
+        "model": "dpnk.phase",
         "pk": 5
     },
     {

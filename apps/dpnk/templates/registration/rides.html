@@ -9,16 +9,10 @@
       $('[data-toggle="tooltip"]').tooltip()
    })
 </script>
-{% if fullpage_error_message %}
-<div class="text-danger">{{ fullpage_error_message }}</div>
-{% else %}
-<button class="btn-info btn show_rides_btn" type="button"><span class="toggle">{% trans "Podrobný přehled jízd" %}</span></button>
+<a class="btn-info btn show_rides_btn" type="button" href="{% url "rides_details" %}"><span class="toggle">{% trans "Podrobný přehled jízd" %}</span></a>
 <form id="rides-form" name="calendar" method="POST">
 {{ formset.management_form }}
 <br>
-{% trans "Do políčka zadávejte ujetý počet kilometrů" %}
-{% include "messages_include.html" %}
-{{ message }}
 
 <!-- START radios template -->
 <fieldset class="controls btn-group" role="group">
@@ -68,10 +62,8 @@
 <th scope="row" class="date">{{ trip_form.initial.date|naturalday:"D j. M" }}</th>
 {% endif %}
 <td>
-   {% for field in trip_form %}
-      {{ field|as_crispy_field }}
-   {% endfor %}
-   {% if trip_form.instance.gpxfile %}
+   {{ trip_form|crispy }}
+   {% if trip_form.instance.has_gpxfile %}
    <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
    <a href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}">
       <i class="fa fa-edit"></i>
@@ -90,12 +82,11 @@
 {% endif %}
 {% endfor %}
 </table>
+<input type="submit" name="submit" value="{% trans "Odeslat" %}" class="btn btn-primary btn-block" id="submit-id-submit">
 {% else %}
 <div class="alert alert-info">
 {% trans "Zde budete zadávat vaše jízdy" %}
 </div>
 {% endif %}
-<input type="submit" name="submit" value="Odeslat" class="btn btn-primary btn-block" id="submit-id-submit">
 </form>
 <div></div>
-{% endif %}

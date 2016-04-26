@@ -23,7 +23,7 @@
                "
             {% elif field.0 == 'payment_description' %}
                <tr class="
-                  {{ user.2.2.class }}
+                  {{ user.2.2 }}
                "
             {% else %}
                <tr
@@ -35,7 +35,7 @@
       {% endfor %}
    </table>
    {% if user.0.2 == 'undecided' or user.0.2 == 'denied' %}
-         <button class="submit submit_once btn btn-primary" type="submit" id="approve-{{user.1.2}}" name="approve" value="approve-{{user.1.2}}">{% trans "Ověřit" %}</button>
+         <button class="submit submit_once btn btn-primary" type="submit" id="approve-{{user.1.2}}" name="approve" value="approve-{{user.1.2}}">{% trans "Přijmout do týmu" %}</button>
       {% if user.0.2 == 'undecided' %}
          <br/>
          <label for="reason-{{user.1.2}}">{% trans "Důvod odmítnutí" %}</label>

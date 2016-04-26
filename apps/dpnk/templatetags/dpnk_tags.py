@@ -17,14 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django import template
-from django.conf import settings
-from django.template.loader import get_template
 from cache_utils.decorators import cached
+from django.conf import settings
+from django.core.urlresolvers import resolve, reverse, NoReverseMatch
+from django import template
+from django.template.loader import get_template
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import resolve, reverse
 from django.utils.translation import activate, get_language
 from django.utils.translation import ugettext_lazy as _
+import html.parser
 import slumber
 register = template.Library()
 
@@ -34,7 +35,7 @@ def cyklistesobe(city_slug, order="created_at"):
     return mark_safe(cyklistesobe_cached(city_slug, order))
 
 
-@cached(600)
+@cached(60 * 60)
 def cyklistesobe_cached(city_slug, order="created_at"):
     api = slumber.API("http://www.cyklistesobe.cz/api/")
     kwargs = {}
@@ -64,14 +65,14 @@ def wp_prize(slug=None):
     return mark_safe(_wp_news_cached(slug, "prize"))
 
 
-@cached(600)
+@cached(60 * 60)
 def _wp_news_cached(slug=None, wp_type="news"):
     if wp_type == "action":
         return _wp_news("locations", _("akce"), unfold="first", _page_subtype="event", _post_parent=slug)
     elif wp_type == "prize":
         return _wp_news("locations", _("cena"), unfold="all", count=-1, show_description=False, _page_subtype="prize", _post_parent=slug, order="ASC", orderby="menu_order")
     else:
-        return _wp_news(_connected_to=slug, order="DESC", orderby="DATE")
+        return _wp_news(_connected_to=slug, order="DESC", orderby="DATE", _global_news=1)
 
 
 def _wp_news(post_type="post", post_type_string=_("novinka"), unfold="first", count=5, show_description=True, **other_args):
@@ -101,7 +102,7 @@ def wp_article(id):
     return mark_safe(wp_article_cached(id))
 
 
-@cached(600)
+@cached(60 * 60)
 def wp_article_cached(id):
     url = "http://www.dopracenakole.cz/"
     api = slumber.API(url)
@@ -147,7 +148,15 @@ def change_lang(context, lang=None, *args, **kwargs):
     try:
         activate(lang)
         url = reverse(url_parts.view_name, kwargs=url_parts.kwargs)
+    except NoReverseMatch:
+        pass
     finally:
         activate(cur_language)
 
     return "%s" % url
+
+
+@register.filter
+def unquote_html(value):
+    html_parser = html.parser.HTMLParser()
+    return html_parser.unescape(value)

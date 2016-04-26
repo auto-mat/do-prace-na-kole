@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 
 This fabric file makes setting up and deploying a django application much
@@ -151,7 +152,7 @@ def local():
 
 def dpnk_test():
     "Use the local virtual server"
-    env.hosts = ['auto-mat.cz']
+    env.hosts = ['se.auto-mat.cz']
     env.path = '/home/aplikace/dpnk-devel'
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
@@ -160,7 +161,7 @@ def dpnk_test():
 
 def dpnk2014():
     "Use the local virtual server"
-    env.hosts = ['auto-mat.cz']
+    env.hosts = ['se.auto-mat.cz']
     env.path = '/home/aplikace/dpnk-new'
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
@@ -175,12 +176,25 @@ def dpnkd():
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
     env.app_name = "dpnk"
+    release = api.local("git rev-parse --short HEAD", capture=True)
+    api.local(
+        'curl -H "x-api-key:13c61e2e601f8148eb9aaebcf353aec7b7c9bf3653ccf52" -d "deployment[app_name]=Do práce na kole" '
+        '-d "deployment[revision]=%s" https://api.newrelic.com/deployments.xml' % release)
+
+
+def dpnkd_test():
+    "Use the local virtual server"
+    env.hosts = ['rs.dopracenakole.net']
+    env.path = '/home/aplikace/dpnk-devel'
+    env.user = 'pdlouhy'
+    env.virtualhost_path = "/"
+    env.app_name = "dpnk_test"
 
 
 def dpnk():
     "Use the local virtual server"
     api.local("[ `git rev-parse --abbrev-ref HEAD` = 'master' ] || (read -p 'Do you want to deploy non-master branch?' ans && [ $ans = 'yes' ])")
-    env.hosts = ['auto-mat.cz']
+    env.hosts = ['se.auto-mat.cz']
     env.path = '/home/aplikace/dpnk-2015'
     env.user = 'pdlouhy'
     env.virtualhost_path = "/"
@@ -191,7 +205,7 @@ def dpnk():
 
 def test():
     "Run the test suite and bail out if it fails"
-    api.local("python manage.py test" % env)
+    run("cd %(path)s/releases/%(release)s; ./runtests.sh" % env)
 
 
 def setup():
@@ -227,10 +241,11 @@ def deploy():
     upload_tar_from_git()
     install_requirements()
     # install_site()
-    symlink_current_release()
     collectstatic()
     denorm()
     locale()
+    test()
+    symlink_current_release()
     restart_webserver()
 
 
@@ -272,15 +287,18 @@ def upload_tar_from_git():
     "Create an archive from the current Git master branch and upload it"
     api.local('git archive --format=tar HEAD | gzip > %(release)s.tar.gz' % env)
     sudo('rm %(path)s/releases/%(release)s -rf' % env)
-    run('mkdir %(path)s/releases/%(release)s' % env)
+    run('mkdir -p %(path)s/releases/%(release)s' % env)
+    run('mkdir -p %(path)s/packages' % env)
     put('%(release)s.tar.gz' % env, '%(path)s/packages/' % env)
     run('cd %(path)s/releases/%(release)s && tar zxf ../../packages/%(release)s.tar.gz' % env)
     run('cd %(path)s/releases/%(release)s/project && ln -s ../../../settings_local.py .' % env)
+    run('cd %(path)s/releases/%(release)s/project && ln -s ../../../test_settings_local.py .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../newrelic.ini .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../env .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../db_backup .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../static .' % env)
     run('cd %(path)s/releases/%(release)s && ln -s ../../media .' % env)
+    run('cd %(path)s/releases/%(release)s && echo %(release)s > release_version' % env)
     api.local('rm %(release)s.tar.gz' % env)
 
 
@@ -298,7 +316,7 @@ def denorm():
     "Reinit denorm"
     run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_drop' % env)
     run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_init' % env)
-    run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_daemon' % env)
+    # run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_daemon' % env)
 
 
 def locale():

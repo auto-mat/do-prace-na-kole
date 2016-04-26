@@ -27,6 +27,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils import six
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
+from django.contrib import contenttypes
+import denorm
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
@@ -47,8 +49,11 @@ def working_day(day):
 
 def days(campaign):
     days = []
-    competition_start = campaign.phase("competition").date_from
-    competition_end = campaign.phase("competition").date_to
+    competition_phase = campaign.phase("competition")
+    if not competition_phase:
+        return []
+    competition_start = competition_phase.date_from
+    competition_end = competition_phase.date_to
     for day in daterange(competition_start, competition_end):
         days.append(day)
     return days
@@ -113,6 +118,17 @@ def get_or_none(model, *args, **kwargs):
         return None
 
 
+# TODO: move this to denorm application
+def rebuild_denorm_models(models):
+    for model in models:
+        content_type = contenttypes.models.ContentType.objects.get_for_model(model.__class__)
+        denorm.models.DirtyInstance.objects.create(
+            content_type=content_type,
+            object_id=model.pk,
+        )
+        denorm.flush()
+
+
 def day_active_last7(day):
     day_today = _today()
     return (
@@ -149,7 +165,7 @@ def get_emissions(distance):
 
 def get_company_admin(user, campaign):
     try:
-        return user.company_admin.get(campaign=campaign, company_admin_approved='approved')
+        return user.userprofile.company_admin.get(campaign=campaign, company_admin_approved='approved')
     except ObjectDoesNotExist:
         return None
 

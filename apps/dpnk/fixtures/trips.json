@@ -1,0 +1,32 @@
+[
+    {
+        "fields": {
+            "user_attendance": 1115,
+            "date": "2015-11-12",
+            "commute_mode": "bicycle",
+            "distance": 5.3,
+            "direction": "trip_to"
+        },
+        "model": "dpnk.trip",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "trip": 1,
+            "trip_date": "2010-12-1",
+            "user_attendance": 1115,
+            "direction": "trip_to"
+        },
+        "model": "dpnk.gpxfile",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "trip_date": "2015-11-13",
+            "user_attendance": 1115,
+            "direction": "trip_from"
+        },
+        "model": "dpnk.gpxfile",
+        "pk": 2
+    }
+]

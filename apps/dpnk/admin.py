@@ -22,9 +22,10 @@
 # Django imports
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.admin import SimpleListFilter
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Sum
 from django.utils.safestring import mark_safe
+from django.utils.html import format_html_join, format_html
+from django.utils.translation import string_concat
 from django.core.urlresolvers import reverse
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 from adminsortable2.admin import SortableInlineAdminMixin
@@ -35,7 +36,6 @@ from import_export.admin import ExportMixin, ImportMixin
 from django.utils.translation import ugettext_lazy as _
 from leaflet.admin import LeafletGeoAdmin
 from .admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin, FormRequestMixin, city_admin_mixin_generator
-import datetime
 # Models
 from .filters import (
     CampaignFilter,
@@ -45,12 +45,24 @@ from .filters import (
     HasRidesFilter,
     IsForCompanyFilter,
     HasTeamFilter,
+    HasUserprofileFilter,
+    HasReactionFilter,
+    HasUserAttendanceFilter,
+    InvoicePaidFilter,
+    TrackFilter,
     EmailFilter)
-from . import models, mailing, actions, views
+from . import models, actions
 from django import forms
 from related_admin import RelatedFieldAdmin
 import pprint
 from django.contrib.sessions.models import Session
+
+
+def admin_links(args_generator):
+    return format_html_join(
+        mark_safe('<br/>'),
+        '<a href="{}">{}</a>',
+        args_generator)
 
 
 class PaymentInline(NestedTabularInline):
@@ -120,6 +132,18 @@ class CompanyForm(forms.ModelForm):
             self.fields['address_street'].required = False
 
 
+class CompanyResource(resources.ModelResource):
+    class Meta:
+        model = models.Company
+        fields = (
+            'id',
+            'name',
+            'subsidiaries_text',
+            'ico',
+            'dic',
+            )
+
+
 class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportMixin, admin.ModelAdmin):
     list_display = (
         'name',
@@ -146,18 +170,30 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
         'address_district')
     list_max_show_all = 10000
     form = CompanyForm
+    resource_class = CompanyResource
 
     def subsidiaries_text(self, obj):
-        return mark_safe(" | ".join(
-            ['%s' % (str(u)) for u in models.Subsidiary.objects.filter(company=obj)]))
+        return " | ".join(
+            ['%s' % (str(u)) for u in models.Subsidiary.objects.filter(company=obj)])
     subsidiaries_text.short_description = _('Pobočky')
 
     def subsidiary_links(self, obj):
-        return mark_safe(
-            "<br/>".join(
-                ['<a href="%s">%s</a>' % (reverse('admin:dpnk_subsidiary_change', args=(u.pk,)), str(u))
-                    for u in models.Subsidiary.objects.filter(company=obj)]))
+        return admin_links(
+            [(reverse('admin:dpnk_subsidiary_change', args=(u.pk,)), str(u))
+                for u in models.Subsidiary.objects.filter(company=obj)])
     subsidiary_links.short_description = _('Pobočky')
+
+
+class SubsidiaryResource(resources.ModelResource):
+    class Meta:
+        model = models.Subsidiary
+        fields = (
+            'id',
+            'company',
+            'city',
+            'user_count',
+            'team_count',
+            )
 
 
 class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
@@ -183,6 +219,7 @@ class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     raw_id_fields = ('company',)
     list_max_show_all = 10000
     save_as = True
+    resource_class = SubsidiaryResource
 
     readonly_fields = ['team_links', ]
 
@@ -207,10 +244,9 @@ class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     user_count.short_description = _('Počet soutěžících ve vyfiltrované kampani')
 
     def team_links(self, obj):
-        return mark_safe(
-            "<br/>".join(
-                ['<a href="%s">%s</a>' % (reverse('admin:dpnk_team_change', args=(u.pk,)), str(u))
-                    for u in models.Team.objects.filter(subsidiary=obj)]))
+        return admin_links(
+            [(reverse('admin:dpnk_team_change', args=(u.pk,)), str(u))
+                for u in models.Team.objects.filter(subsidiary=obj)])
     team_links.short_description = _(u"Týmy")
 
 
@@ -289,22 +325,22 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFie
 
     def competition_results_link(self, obj):
         if obj.slug:
-            return mark_safe(u'<a href="%s">výsledky</a>' % (reverse('competition_results', kwargs={'competition_slug': obj.slug})))
+            return format_html(u'<a href="{}">výsledky</a>', (reverse('competition_results', kwargs={'competition_slug': obj.slug})))
     competition_results_link.short_description = _(u"Výsledky soutěže")
 
     def questionnaire_results_link(self, obj):
         if obj.type == 'questionnaire' and obj.slug:
-            return mark_safe(u'<a href="%s">odpovědi</a>' % (reverse('admin_questionnaire_results', kwargs={'competition_slug': obj.slug})))
+            return format_html(u'<a href="{}">odpovědi</a>', (reverse('admin_questionnaire_results', kwargs={'competition_slug': obj.slug})))
     questionnaire_results_link.short_description = _(u"Odpovědi")
 
     def questionnaire_link(self, obj):
         if obj.type == 'questionnaire' and obj.slug:
-            return mark_safe(u'<a href="%s">dotazník</a>' % (reverse('questionnaire', kwargs={'questionnaire_slug': obj.slug})))
+            return format_html(u'<a href="{}">dotazník</a>', (reverse('questionnaire', kwargs={'questionnaire_slug': obj.slug})))
     questionnaire_link.short_description = _(u"Dotazník")
 
     def draw_link(self, obj):
         if obj.type == 'frequency' and obj.competitor_type == 'team' and obj.slug:
-            return mark_safe(u'<a href="%s">losovani</a>' % (reverse('admin_draw_results', kwargs={'competition_slug': obj.slug})))
+            return format_html(u'<a href="{}">losovani</a>', (reverse('admin_draw_results', kwargs={'competition_slug': obj.slug})))
     draw_link.short_description = _(u"Losování")
 
     def formfield_for_manytomany(self, db_field, request, **kwargs):
@@ -336,46 +372,8 @@ class UserAttendanceInline(NestedTabularInline):
     form = UserAttendanceForm
     extra = 0
     # inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
-    search_fields = [
-        'first_name',
-        'last_name',
-        'username',
-        'email',
-        'userprofile__team__name',
-        'userprofile__team__subsidiary__company__name',
-        'company_admin__administrated_company__name',
-    ]
     list_max_show_all = 10000
     raw_id_fields = ('team',)
-
-    def get_queryset(self, request):
-        return models.UserAttendance.objects.annotate(trips_count=Count('user_trips'))
-
-    def trips_count(self, obj):
-        return obj.trips_count
-    trips_count.admin_order_field = 'trips_count'
-
-    def userprofile__payment_type(self, obj):
-        pay_type = "(None)"
-        payment = obj.payment()['payment']
-        if payment:
-            pay_type = payment.pay_type
-        return pay_type
-
-    def userprofile__payment_status(self, obj):
-        return obj.payment()['status_description']
-
-    def userprofile__team__name(self, obj):
-        return obj.team.name
-
-    def userprofile__distance(self, obj):
-        return obj.distance
-
-    def team__subsidiary__city(self, obj):
-        return obj.team.subsidiary.city
-
-    def userprofile__team__subsidiary__company(self, obj):
-        return obj.team.subsidiary.company
 
 
 class UserProfileForm(forms.ModelForm):
@@ -388,64 +386,22 @@ class UserProfileForm(forms.ModelForm):
         self.fields['telephone'].required = False
 
 
-class UserProfileAdminInline(NestedStackedInline):
-    model = models.UserProfile
-    form = UserProfileForm
-    inlines = [UserAttendanceInline, ]
-    filter_horizontal = ('administrated_cities',)
-    search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username']
-
-    def user__first_name(self, obj):
-        return obj.user.first_name
-
-    def user__last_name(self, obj):
-        return obj.user.last_name
-
-    def user__email(self, obj):
-        return obj.user.email
-
-    def user__date_joined(self, obj):
-        return obj.user.date_joined
-
-    def team__subsidiary__city(self, obj):
-        return obj.team.subsidiary.city
-
-
 class CompanyAdminInline(NestedTabularInline):
     raw_id_fields = ('administrated_company',)
     extra = 0
     model = models.CompanyAdmin
 
 
-class HasUserprofileFilter(SimpleListFilter):
-    title = _(u"Má userprofile")
-    parameter_name = u'has_userprofile'
-
-    def lookups(self, request, model_admin):
-        return [
-            ('yes', 'Yes'),
-            ('no', 'No'),
-        ]
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.exclude(userprofile=None)
-        if self.value() == 'no':
-            return queryset.filter(userprofile=None)
-        return queryset
-
-
-def remove_mailing_id(modeladmin, request, queryset):
-    for userprofile in queryset:
-        userprofile.mailing_id = None
-        userprofile.mailing_hash = None
-        userprofile.save()
-    modeladmin.message_user(request, _(u"Mailing ID a hash byl úspěšne odebrán %s profilům") % queryset.count())
-remove_mailing_id.short_description = _(u"Odstranit mailing ID a hash")
+class UserProfileAdminInline(NestedStackedInline):
+    model = models.UserProfile
+    form = UserProfileForm
+    inlines = [UserAttendanceInline, CompanyAdminInline]
+    filter_horizontal = ('administrated_cities',)
 
 
 class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     list_display = ('user', '__str__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
+    inlines = (CompanyAdminInline,)
     list_filter = (
         campaign_filter_generator('userattendance_set__campaign'),
         'language',
@@ -455,19 +411,29 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     )
     filter_horizontal = ('administrated_cities',)
     search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
-    actions = (remove_mailing_id,)
+    actions = (actions.remove_mailing_id,)
 
 
-class UserAdmin(ExportMixin, NestedModelAdmin, UserAdmin):
-    inlines = (CompanyAdminInline, UserProfileAdminInline)
-    list_display = ('username', 'email', 'first_name', 'last_name', 'date_joined', 'is_active', 'last_login', 'userprofile_administrated_cities', 'id')
-    search_fields = ['first_name', 'last_name', 'username', 'email', 'company_admin__administrated_company__name', ]
+class UserAdmin(RelatedFieldAdmin, ExportMixin, NestedModelAdmin, UserAdmin):
+    inlines = (UserProfileAdminInline,)
+    list_display = (
+        'username',
+        'email',
+        'first_name',
+        'last_name',
+        'userprofile__telephone',
+        'date_joined',
+        'is_active',
+        'last_login',
+        'userprofile_administrated_cities',
+        'id')
+    search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__company_admin__administrated_company__name', ]
     list_filter = [
         'userprofile__userattendance_set__campaign',
         'is_staff',
         'is_superuser',
         'is_active',
-        'company_admin__company_admin_approved',
+        'userprofile__company_admin__company_admin_approved',
         HasUserprofileFilter,
         'userprofile__sex',
         'userprofile__administrated_cities',
@@ -475,107 +441,12 @@ class UserAdmin(ExportMixin, NestedModelAdmin, UserAdmin):
     readonly_fields = ['password']
     list_max_show_all = 10000
 
-    # def get_queryset(self, request):
-    #     return User.objects.annotate(trips_count = Count('userprofile__user_trips'))
-
-    def trips_count(self, obj):
-        return obj.trips_count
-    trips_count.admin_order_field = 'trips_count'
-
-    def userprofile__payment_type(self, obj):
-        pay_type = "(None)"
-        payment = obj.userprofile.payment()['payment']
-        if payment:
-            pay_type = payment.pay_type
-        return pay_type
-
-    def userprofile__telephone(self, obj):
-        return obj.userprofile.telephone
-
-    def userprofile__payment_status(self, obj):
-        return obj.userprofile.payment()['status_description']
-
-    def userprofile__team__name(self, obj):
-        return obj.userprofile.team.name
-
-    def userprofile__distance(self, obj):
-        return obj.userprofile.distance
-
-    def userprofile__team__subsidiary__city(self, obj):
-        return obj.userprofile.team.subsidiary.city
-
-    def userprofile__team__subsidiary__company(self, obj):
-        return obj.userprofile.team.subsidiary.company
-
-    def company_admin__administrated_company(self, obj):
-        return obj.company_admin.administrated_company
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related('userprofile')
 
     def userprofile_administrated_cities(self, obj):
         return ", ".join([str(c) for c in obj.userprofile.administrated_cities.all()])
-
-
-class PackageConfirmationFilter(SimpleListFilter):
-    title = _(u"Doručení startovního balíčku")
-    parameter_name = u'package_confirmation'
-
-    def lookups(self, request, model_admin):
-        return (
-            ("confirmed", _(u"Potvrzeno")),
-            ("denied", _(u"Nedoručení potvrzeno")),
-            ("unknown", _(u"Odesláno, bez vyjádření")),
-            ("unshipped", _(u"Neodesláno")),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == "confirmed":
-            return queryset.filter(transactions__packagetransaction__status=models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED).distinct()
-        if self.value() == "denied":
-            return queryset.filter(transactions__packagetransaction__status=models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED).distinct()
-        if self.value() == "unknown":
-            return queryset.filter(
-                transactions__packagetransaction__status__in=models.PackageTransaction.shipped_statuses).exclude(
-                transactions__packagetransaction__status__in=[
-                    models.PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED,
-                    models.PackageTransaction.Status.PACKAGE_DELIVERY_DENIED]
-            ).distinct()
-        if self.value() == "unshipped":
-            return queryset.exclude(transactions__packagetransaction__status__in=models.PackageTransaction.shipped_statuses).distinct()
-        return queryset
-
-
-class CompetitionEntryFilter(SimpleListFilter):
-    title = _(u"Přihlášení k závodu")
-    parameter_name = u'competition_entry'
-
-    def lookups(self, request, model_admin):
-        return (
-            ("yes", _(u"Ano")),
-            ("no", _(u"Ne")),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == "yes":
-            return queryset.\
-                filter(transactions__useractiontransaction__status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED).\
-                distinct()
-        if self.value() == "no":
-            return queryset.\
-                exclude(transactions__useractiontransaction__status=models.UserActionTransaction.Status.COMPETITION_START_CONFIRMED).\
-                distinct()
-        return queryset
-
-
-class NotInCityFilter(SimpleListFilter):
-    title = _(u"Ne ve městě")
-    parameter_name = u'not_in_city'
-
-    def lookups(self, request, model_admin):
-        return [(c.pk, c.name) for c in models.City.objects.all()]
-
-    def queryset(self, request, queryset):
-        if not self.value():
-            return queryset
-        return queryset.exclude(team__subsidiary__city=self.value())
 
 
 class TripAdminInline(admin.TabularInline):
@@ -592,6 +463,7 @@ class UserAttendanceResource(resources.ModelResource):
             'id',
             'campaign__slug',
             'distance',
+            'team__id',
             'team__name',
             'approved_for_team',
             't_shirt_size__name',
@@ -615,24 +487,28 @@ class UserAttendanceResource(resources.ModelResource):
     payment_date = fields.Field()
 
     def dehydrate_payment_date(self, obj):
-        payment = obj.payment()['payment']
+        payment = obj.representative_payment
         if payment:
             return payment.realized
 
     payment_status = fields.Field()
 
     def dehydrate_payment_status(self, obj):
-        return obj.payment_status()
+        return obj.payment_status
 
     payment_type = fields.Field()
 
     def dehydrate_payment_type(self, obj):
-        return obj.payment_type()
+        payment = obj.representative_payment
+        if payment:
+            return payment.pay_type
 
     payment_amount = fields.Field()
 
     def dehydrate_payment_amount(self, obj):
-        return obj.payment_amount()
+        payment = obj.representative_payment
+        if payment:
+            return payment.amount
 
 
 class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_generator('team__subsidiary__city__in'), LeafletGeoAdmin):
@@ -654,6 +530,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         'representative_payment__status',
         'representative_payment__amount',
         'team__member_count',
+        'get_distance',
         'frequency',
         'trip_length_total',
         'get_rides_count_denorm',
@@ -664,14 +541,14 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         ('approved_for_team', AllValuesComboFilter),
         ('t_shirt_size', RelatedFieldComboFilter),
         'userprofile__user__is_active',
-        CompetitionEntryFilter,
         'representative_payment__pay_type',
         'representative_payment__status',
+        'representative_payment__amount',
         'payment_status',
         ('team__member_count', AllValuesComboFilter),
-        PackageConfirmationFilter,
         ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter),
         ('userprofile__sex', AllValuesComboFilter),
+        TrackFilter,
         HasVoucherFilter,
         HasRidesFilter,
         HasTeamFilter
@@ -699,7 +576,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         actions.show_distance,
         actions.assign_vouchers,
         actions.add_trips,
-        actions.touch_user_attendance,
+        actions.touch_items,
     )
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
@@ -708,58 +585,52 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
     resource_class = UserAttendanceResource
 
     def user_link(self, obj):
-        return mark_safe('<a href="%s">%s</a>' % (reverse('admin:auth_user_change', args=(obj.userprofile.user.pk,)), obj.userprofile.user))
+        return format_html('<a href="{}">{}</a>', reverse('admin:auth_user_change', args=(obj.userprofile.user.pk,)), obj.userprofile.user)
     user_link.short_description = _('Uživatel')
 
     def get_queryset(self, request):
         queryset = super(UserAttendanceAdmin, self).get_queryset(request)
-        return queryset.select_related('team__subsidiary__city', 'team__subsidiary__company', 't_shirt_size').only(
-            'id',
-            'campaign_id',
-            'userprofile',
-            'team',
-            't_shirt_size',
-            'distance',
+        return queryset.length().select_related('team__subsidiary__city', 'team__subsidiary__company', 't_shirt_size').only(
             'approved_for_team',
-            'userprofile__user__email',
-            'userprofile__user__last_name',
-            'userprofile__user__first_name',
-            'userprofile__user__username',
-            'userprofile__telephone',
-            'userprofile__nickname',
-            'userprofile__sex',
-            'distance',
-            'team__name',
-            'team__subsidiary',
-            'team__subsidiary__city',
-            'team__subsidiary__company',
-            'team__subsidiary__address_street_number',
-            'team__subsidiary__address_street',
-            'team__subsidiary__address_recipient',
-            'team__subsidiary__address_psc',
-            'team__subsidiary__address_city',
-            't_shirt_size__name',
-            't_shirt_size__price',
-            'approved_for_team',
-            'campaign__name',
-            'campaign__late_admission_phase',
             'campaign__admission_fee',
+            'campaign_id',
+            'campaign__name',
+            'created',
+            'distance',
+            'distance',
+            'frequency',
+            'get_rides_count_denorm',
+            'id',
+            'payment_status',
+            'representative_payment__amount',
             'representative_payment__pay_type',
             'representative_payment__status',
-            'representative_payment__amount',
-            't_shirt_size',
+            'team',
             'team__member_count',
-            'frequency',
+            'team__name',
+            'team__subsidiary',
+            'team__subsidiary__address_city',
+            'team__subsidiary__address_psc',
+            'team__subsidiary__address_recipient',
+            'team__subsidiary__address_street',
+            'team__subsidiary__address_street_number',
+            'team__subsidiary__city',
+            'team__subsidiary__company',
+            'track',
             'trip_length_total',
-            'get_rides_count_denorm',
-            'created',
+            't_shirt_size',
+            't_shirt_size',
+            't_shirt_size__name',
+            't_shirt_size__price',
+            'userprofile',
+            'userprofile__nickname',
+            'userprofile__sex',
+            'userprofile__telephone',
+            'userprofile__user__email',
+            'userprofile__user__first_name',
+            'userprofile__user__last_name',
+            'userprofile__user__username',
             )
-
-
-def recalculate_team_member_count(modeladmin, request, queryset):
-    for team in queryset.all():
-        team.autoset_member_count()
-recalculate_team_member_count.short_description = _("Přepočítat počet členů týmu")
 
 
 class TeamAdmin(ExportMixin, RelatedFieldAdmin):
@@ -778,17 +649,21 @@ class TeamAdmin(ExportMixin, RelatedFieldAdmin):
     list_filter = [CampaignFilter, 'subsidiary__city', 'member_count']
     list_max_show_all = 10000
     raw_id_fields = ['subsidiary', ]
-    actions = (recalculate_team_member_count, )
+    actions = (
+        actions.touch_items,
+    )
 
     readonly_fields = ['members', 'invitation_token', 'member_count']
 
     def members(self, obj):
-        return mark_safe(
-            "<br/>".join([
-                '<a href="%s">%s</a> - %s' %
-                (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), u, u.approved_for_team)
-                for u in models.UserAttendance.objects.filter(team=obj)]))
+        return admin_links(
+            [(reverse('admin:dpnk_userattendance_change', args=(u.pk,)), u, u.approved_for_team)
+                for u in models.UserAttendance.objects.filter(team=obj)])
     members.short_description = _('Členové')
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related('campaign', 'subsidiary__company')
 
 
 class TransactionChildAdmin(PolymorphicChildModelAdmin):
@@ -827,9 +702,10 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
 
     def user_link(self, obj):
         if obj.user_attendance:
-            return mark_safe(
-                '<a href="%s">%s</a>' %
-                (reverse('admin:auth_user_change', args=(obj.user_attendance.userprofile.user.pk,)), obj.user_attendance.userprofile.user))
+            return format_html(
+                '<a href="{}">{}</a>',
+                reverse('admin:auth_user_change', args=(obj.user_attendance.userprofile.user.pk,)),
+                obj.user_attendance.userprofile.user)
     user_link.short_description = _('Uživatel')
 
     base_model = models.Transaction
@@ -914,24 +790,6 @@ class ChoiceTypeAdmin(admin.ModelAdmin):
     save_as = True
 
 
-class HasReactionFilter(SimpleListFilter):
-    title = _(u"Obsahuje odpověď")
-    parameter_name = u'has_reaction'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('yes', u'Ano'),
-            ('no', u'Ne'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.exclude((Q(comment=None) | Q(comment='')) & (Q(attachment=None) | Q(attachment='')) & Q(points_given=None)).distinct()
-        if self.value() == 'no':
-            return queryset.filter((Q(comment=None) | Q(comment='')) & (Q(attachment=None) | Q(attachment='')) & Q(points_given=None)).distinct()
-        return queryset
-
-
 class AnswerAdmin(RelatedFieldAdmin):
     list_display = (
         'user_attendance',
@@ -965,7 +823,7 @@ class AnswerAdmin(RelatedFieldAdmin):
 
     def attachment_url(self, obj):
         if obj.attachment:
-            return mark_safe(u"<a href='%s'>%s</a>" % (obj.attachment.url, obj.attachment))
+            return format_html(u"<a href='{}'>{}</a>", obj.attachment.url, obj.attachment)
 
 
 class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ExportMixin, admin.ModelAdmin):
@@ -985,14 +843,8 @@ class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__c
             '<br/><a href="%s">edit</a>' % reverse('admin:dpnk_choicetype_change', args=(obj.choice_type.pk,)))
 
     def answers_link(self, obj):
-        return mark_safe('<a href="' + reverse('admin_answers') + u'?question=%d">vyhodnocení odpovědí</a>' % (obj.pk))
-
-
-def show_distance_trips(modeladmin, request, queryset):
-    length = views.distance(queryset)
-    trips = views.trips(queryset)
-    modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
-show_distance_trips.short_description = _(u"Ukázat ujetou vzdálenost")
+        if obj.pk:
+            return format_html(string_concat('<a href="{}?question={}">', _('vyhodnocení odpovědí'), '</a>'), reverse('admin_answers'), obj.pk)
 
 
 class GpxFileInline(admin.TabularInline):
@@ -1023,7 +875,7 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
         'user_attendance__team__subsidiary__city',
         'distance',
         )
-    actions = (show_distance_trips,)
+    actions = (actions.show_distance_trips,)
     list_max_show_all = 100000
     inlines = [GpxFileInline, ]
 
@@ -1085,14 +937,15 @@ class DeliveryBatchForm(forms.ModelForm):
 class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     list_display = ['campaign', 'created', 'package_transaction_count', 'customer_sheets__url', 'tnt_order__url']
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 't_shirt_sizes')
-    inlines = [PackageTransactionInline, ]
+    # inlines = [PackageTransactionInline, ]
     list_filter = (CampaignFilter,)
     form = DeliveryBatchForm
 
     def get_list_display(self, request):
         for t_size in models.TShirtSize.objects.filter(campaign__slug=request.subdomain):
             field_name = "t_shirt_size_" + str(t_size.pk)
-            self.list_display.append(field_name)
+            if field_name not in self.list_display:
+                self.list_display.append(field_name)
 
             def t_shirt_size(obj, t_size_id=t_size.pk):
                 return obj.packagetransaction_set.filter(t_shirt_size__pk=t_size_id).aggregate(Count('t_shirt_size'))['t_shirt_size__count']
@@ -1117,16 +970,16 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
                 t_shirts[package_transaction.t_shirt_size] += 1
             else:
                 t_shirts[package_transaction.t_shirt_size] = 1
-        return mark_safe(u"<br/>".join([u"%s: %s" % (t, t_shirts[t]) for t in t_shirts]))
+        return format_html_join(mark_safe("<br/>"), "{}: {}", [(t, t_shirts[t]) for t in t_shirts])
     t_shirt_sizes.short_description = _(u"Velikosti trik")
 
     def customer_sheets__url(self, obj):
         if obj.customer_sheets:
-            return mark_safe(u"<a href='%s'>customer_sheets</a>" % obj.customer_sheets.url)
+            return format_html("<a href='{}'>customer_sheets</a>", obj.customer_sheets.url)
 
     def tnt_order__url(self, obj):
         if obj.tnt_order:
-            return mark_safe(u"<a href='%s'>tnt_order</a>" % obj.tnt_order.url)
+            return format_html("<a href='{}'>tnt_order</a>", obj.tnt_order.url)
 
 
 class CampaignAdmin(admin.ModelAdmin):
@@ -1149,42 +1002,14 @@ class CampaignAdmin(admin.ModelAdmin):
         return obj.cityincampaign_set.count()
 
 
-class HasUserAttendanceFilter(SimpleListFilter):
-    title = _(u"Má účast v kampani")
-    parameter_name = u'has_user_attendance'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('yes', u'Ano'),
-            ('no', u'Ne'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.filter(user__userprofile__userattendance__isnull=False)
-        if self.value() == 'no':
-            return queryset.filter(user__userprofile__userattendance__isnull=True)
-        return queryset
-
-
-def update_mailing_coordinator(modeladmin, request, queryset):
-    for company_admin in queryset:
-        user_attendance = company_admin.user_attendance()
-        if user_attendance:
-            mailing.add_or_update_user_synchronous(user_attendance, ignore_hash=True)
-        else:
-            mailing.add_or_update_user_synchronous(company_admin, ignore_hash=True)
-
-    modeladmin.message_user(request, _(u"Úspěšně aktualiován mailing pro %s koordinátorů") % queryset.count())
-update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
-
-
 class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsidiaries__city'), RelatedFieldAdmin):
     list_display = [
-        'user',
-        'user__email',
-        'user__userprofile',
-        'user__userprofile__telephone',
+        'userprofile__user',
+        'userprofile__user__email',
+        'userprofile',
+        'userprofile__user__first_name',
+        'userprofile__user__last_name',
+        'userprofile__telephone',
         'company_admin_approved',
         'administrated_company__name',
         'can_confirm_payments',
@@ -1197,38 +1022,14 @@ class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsi
         'administrated_company__subsidiaries__city']
     search_fields = [
         'administrated_company__name',
-        'user__first_name',
-        'user__last_name',
-        'user__username',
-        'user__email']
-    raw_id_fields = ['user', ]
+        'userprofile__nickname',
+        'userprofile__user__first_name',
+        'userprofile__user__last_name',
+        'userprofile__user__username',
+        'userprofile__user__email']
+    raw_id_fields = ['userprofile']
     list_max_show_all = 100000
-    actions = (update_mailing_coordinator,)
-
-
-def mark_invoices_paid(modeladmin, request, queryset):
-    for invoice in queryset.all():
-        invoice.paid_date = datetime.date.today()
-        invoice.save()
-mark_invoices_paid.short_description = _(u"Označit faktury jako zaplacené")
-
-
-class InvoicePaidFilter(SimpleListFilter):
-    title = _(u"Zaplacení faktury")
-    parameter_name = u'invoice_paid'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('yes', u'Zaplacena'),
-            ('no', u'Nezaplacena'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.filter(paid_date__isnull=False)
-        if self.value() == 'no':
-            return queryset.filter(paid_date__isnull=True)
-        return queryset
+    actions = (actions.update_mailing_coordinator,)
 
 
 class InvoiceForm(forms.ModelForm):
@@ -1288,21 +1089,21 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
     list_filter = [CampaignFilter, InvoicePaidFilter, 'company_pais_benefitial_fee']
     search_fields = ['company__name', ]
     inlines = [PaymentInline]
-    actions = [mark_invoices_paid]
+    actions = [actions.mark_invoices_paid]
     list_max_show_all = 10000
     form = InvoiceForm
     resource_class = InvoiceResource
 
     def company_address(self, obj):
         return obj.company.company_address()
-    company_address.short_description = _(u"Adresa společnosti")
+    company_address.short_description = _(u"Adresa organizace")
 
     def invoice_count(self, obj):
         return obj.payment_set.count()
     invoice_count.short_description = _(u"Počet plateb")
 
     def invoice_pdf_url(self, obj):
-        return mark_safe(u"<a href='%s'>invoice.pdf</a>" % obj.invoice_pdf.url)
+        return format_html("<a href='{}'>invoice.pdf</a>", obj.invoice_pdf.url)
 
 
 class GpxFileAdmin(LeafletGeoAdmin):
@@ -1328,26 +1129,13 @@ class UserAttendanceToBatch(models.UserAttendance):
         proxy = True
 
 
-def create_batch(modeladmin, request, queryset):
-    campaign = models.Campaign.objects.get(slug=request.subdomain)
-    delivery_batch = models.DeliveryBatch()
-    delivery_batch.campaign = campaign
-    delivery_batch.add_packages_on_save = False
-    delivery_batch.save()
-    delivery_batch.add_packages(user_attendances=queryset)
-    delivery_batch.add_packages_on_save = True
-    delivery_batch.save()
-    modeladmin.message_user(request, _(u"Vytvořena nová dávka obsahující %s položek") % queryset.count())
-create_batch.short_description = _(u"Vytvořit dávku z vybraných uživatelů")
-
-
 class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
-    list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created')
+    list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created', 'representative_payment__realized')
     list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter), 'transactions__status')
-    actions = (create_batch, )
+    actions = (actions.create_batch, )
 
     def get_actions(self, request):
-        return {'create_batch': (create_batch, 'create_batch', create_batch.short_description)}
+        return {'create_batch': (actions.create_batch, 'create_batch', actions.create_batch.short_description)}
     list_max_show_all = 10000
 
     def payment_created(self, obj):

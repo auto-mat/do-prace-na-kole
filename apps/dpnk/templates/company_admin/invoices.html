@@ -12,7 +12,7 @@
    </tr>
    {% for invoice in invoices %}
       <td>{{ invoice.exposure_date }}</td>
-      <td><a href="{{ invoice.invoice_pdf.url }}">soubor</a></td>
+      <td><a href="{{ invoice.invoice_pdf.url }}">{% trans "soubor" %}</a></td>
       <td>{{ invoice.payment_set.count }}</td>
       {% if invoice.paid %}
       <td>{{ invoice.paid_date }}</td>

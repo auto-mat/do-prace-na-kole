@@ -2,6 +2,7 @@
     {
         "fields": {
             "user_attendance": 2115,
+            "status": 1,
             "polymorphic_ctype": ["dpnk", "payment"]
         },
         "model": "dpnk.transaction",
@@ -55,25 +56,5 @@
         },
         "model": "dpnk.payment",
         "pk": 4
-    },
-    {
-        "fields": {
-            "user_attendance": 1115,
-            "status": 1,
-            "polymorphic_ctype": ["dpnk", "packagetransaction"]
-        },
-        "model": "dpnk.transaction",
-        "pk": 2
-    },
-    {
-        "fields": {
-            "user_attendance": 1115,
-            "delivery_batch": 1,
-            "t_shirt_size": 1,
-            "transaction_ptr": 2,
-            "tracking_number": 92035140
-        },
-        "model": "dpnk.packagetransaction",
-        "pk": 2
     }
 ]

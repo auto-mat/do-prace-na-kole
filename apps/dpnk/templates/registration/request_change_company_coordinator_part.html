@@ -1,0 +1,15 @@
+{% load i18n %}
+<ol>
+   {% if user_attendance.company_coordinator_emails %}
+   <li>
+      {% trans "Po koordinátorovi vaší organizace na emailové adrese" %} {{ user_attendance.company_coordinator_emails }}
+   </li>
+   {% else %}
+   <li>
+      <a href="{% url "company_admin_application" %}">{% trans "Požádejte o funkci koordinátora organizace" %}</a>{% trans ", který bude moci adresu změnit." %}
+   </li>
+   <li>
+      {% trans "Po naší podpoře na emailové adrese" %} <a href="mailto:kontakt@dopracenakole.cz?subject={% trans "Žádost o změnu adresy organizace, pobočky nebo týmu" %}">kontakt@dopracenakole.cz</a>.
+   </li>
+   {% endif %}
+</ol>

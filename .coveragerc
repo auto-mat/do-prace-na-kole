@@ -1,3 +1,6 @@
 [run]
 include = apps/dpnk*
 omit = apps/dpnk/migrations*
+plugins =
+    django_coverage_plugin
+branch = True

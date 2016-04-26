@@ -2,15 +2,19 @@
 {% load static %}
 {% load dpnk_tags %}
 {% load i18n %}
+{% load thumbnail %}
 
 {% block content %}
 {% block messages %}
 {% include "messages_include.html" %}
+{% if message %}
 {{ message }}
+{% endif %}
 {% endblock %}
 
 <div id="rides-form-container">{% include "registration/rides.html" %}</div>
 
+{% comment %}
 <div>
    <h3>{% trans "Vouchery" %}</h3>
    {% wp_article 11260 %}
@@ -27,6 +31,7 @@
    {% endfor %}
    </table>
 </div>
+{% endcomment%}
 
 <div class="row base">
    <div class="col-md-6">
@@ -44,7 +49,22 @@
       {% wp_actions city_slug %}
    </div>
    <div class="col-md-6">
-      Obrazky
+      <h3>{% trans "Příspěvky z kreativních soutěží" %}</h3>
+      {% if questionnaire_answer %}
+      {{ questionnaire_answer.question.competition }}<br/>
+      <a href="{% url "questionnaire" questionnaire_slug=questionnaire_answer.question.competition.slug %}">{% trans "Nahrát vlastní příspěvek" %}</a>
+      {% thumbnail questionnaire_answer.attachment "360x360" as foto_thumb %}
+      {% if foto_thumb %}
+         <a href="{% url "questionnaire_answers_all" competition_slug=questionnaire_answer.question.competition.slug %}" title="Všechny fotky z této soutěže">
+         <img src="{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
+      {% else %}
+         <a href="{{ questionnaire_answer.attachment.url }}" target="_blank">{{ questionnaire_answer.attachment }}</a>
+      {% endif %}
+      <br/>
+      {% if questionnaire_answer.comment %}
+         {{ questionnaire_answer.comment|linebreaksbr|urlize}}
+      {% endif %}
+      {% endif %}
    </div>
 </div>
 <div class="row base">
@@ -54,11 +74,11 @@
       {% cyklistesobe user_attendance.team.subsidiary.city.cyklistesobe_slug %}
    </div>
    <div class="col-md-6">
-      <h3>Cyklistická mapa</h3>
+      <h3>{% trans "Cyklistická mapa" %}</h3>
       <p>
       Nevíte jakou zvolit cestu? Využijte naší cyklistické mapy a vyhledávače.
       </p>
-      <a href="http://{{ map_city_slug }}.dopracenakole.net" target="_blank"><img src="http://tiles.prahounakole.cz/13/4424/2773.png"/></a>
+      <a href="http://{{ map_city_slug }}.dopracenakole.net" target="_blank"><img src="{% static "img/mapa_upoutavka.png" %}"/></a>
    </div>
 </div>
 <div class="row base">
