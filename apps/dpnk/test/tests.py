@@ -1260,6 +1260,8 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
         response = self.client.get(address)
         self.assertContains(response, '<a href="/media/modranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>')
         self.assertContains(response, '<img src="/media/DSC00002.JPG.250x250_q85.jpg" width="250" height="188">')
+        self.assertContains(response, 'Answer without attachment')
+        self.assertContains(response, 'Bez přílohy')
 
     @override_settings(
         MEDIA_ROOT="apps/dpnk/test_files",

@@ -144,7 +144,7 @@
         "fields": {
            "type": "choice",
            "choice_type": 1,
-           "with_attachment": false,
+           "with_attachment": true,
            "competition": 4
         },
         "model": "dpnk.question",

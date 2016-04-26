@@ -218,10 +218,12 @@
         "fields": {
             "user_attendance": 1115,
             "choices": [1],
+            "comment": "Answer without attachment",
+            "attachment": null,
             "question": 2
         },
         "model": "dpnk.answer",
-        "pk": 2
+        "pk": 5
     },
     {
         "fields": {
