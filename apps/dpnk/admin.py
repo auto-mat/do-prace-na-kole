@@ -1134,6 +1134,20 @@ class UserAttendanceToBatch(models.UserAttendance):
 class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
     list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created', 'representative_payment__realized')
     list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter), 'transactions__status')
+    search_fields = (
+        'userprofile__nickname',
+        'userprofile__user__first_name',
+        'userprofile__user__last_name',
+        'userprofile__user__username',
+        'userprofile__user__email',
+        'team__name',
+        'team__subsidiary__address_street',
+        'team__subsidiary__address_psc',
+        'team__subsidiary__address_recipient',
+        'team__subsidiary__address_city',
+        'team__subsidiary__address_district',
+        'team__subsidiary__company__name',
+    )
     actions = (actions.create_batch, )
 
     def get_actions(self, request):
