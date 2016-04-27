@@ -1048,7 +1048,7 @@ class RegistrationMixinTests(ViewsLogon):
 
 
 class TrackViewTests(ViewsLogon):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
     def test_dpnk_views_gpx_file(self):
         trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
@@ -1058,6 +1058,11 @@ class TrackViewTests(ViewsLogon):
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(models.GpxFile.objects.get(pk=gpxfile.pk).trip, trip)
+
+    def test_dpnk_views_gpx_file_no_trip(self):
+        address = reverse('gpx_file', kwargs={"id": 2})
+        response = self.client.get(address)
+        self.assertContains(response, "Datum vykonání cesty")
 
     def test_dpnk_company_structure(self):
         util.rebuild_denorm_models([self.user_attendance])
