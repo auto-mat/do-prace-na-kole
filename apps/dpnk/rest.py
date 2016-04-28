@@ -20,7 +20,7 @@
 from rest_framework import routers, serializers, viewsets, permissions
 from rest_framework.exceptions import APIException
 from rest_framework.reverse import reverse
-from .models import GpxFile, UserAttendance, Campaign, Competition, CompetitionResult, Team
+from .models import GpxFile, UserAttendance, Campaign, Competition, CompetitionResult, Team, Trip, Subsidiary, Company, City
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
@@ -78,7 +78,7 @@ class GpxFileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GpxFile
-        fields = ('trip_date', 'direction', 'file')
+        fields = ('id', 'trip_date', 'direction', 'file')
         read_only_fields = ('track',)
 
 
@@ -86,6 +86,7 @@ class GpxFileSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return GpxFile.objects.filter(user_attendance__userprofile__user=self.request.user)
     serializer_class = GpxFileSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class CompetitionSerializer(serializers.HyperlinkedModelSerializer):
@@ -93,7 +94,7 @@ class CompetitionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Competition
-        fields = ('name', 'slug', 'competitor_type', 'type', 'url', 'results')
+        fields = ('id', 'name', 'slug', 'competitor_type', 'type', 'url', 'results')
 
     def get_results(self, obj):
         return reverse("result-list", kwargs={"competition_slug": obj.slug}, request=self.context['request'])
@@ -106,20 +107,94 @@ class CompetitionSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
 
 
-class TeamSerializer(serializers.ModelSerializer):
+class TripSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Trip
+        fields = ('id', 'date', 'direction', 'commute_mode', 'distance')
+
+
+class TripSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return Trip.objects.filter(user_attendance__campaign__slug=self.request.subdomain)
+    serializer_class = TripSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class CitySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = City
+        fields = ('id', 'name',)
+
+
+class CompanySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Company
+        fields = ('id', 'name',)
+
+
+class CompanySet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return Company.objects.filter(subsidiaries__teams__campaign__slug=self.request.subdomain, active=True).distinct()
+    serializer_class = CompanySerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class SubsidiarySerializer(serializers.HyperlinkedModelSerializer):
+    city = CitySerializer(read_only=True)
+
+    class Meta:
+        model = Subsidiary
+        fields = ('id', 'address_street', 'company', 'city')
+
+
+class SubsidiarySet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return Subsidiary.objects.filter(teams__campaign__slug=self.request.subdomain, active=True).distinct()
+    serializer_class = SubsidiarySerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class UserAttendanceSerializer(serializers.HyperlinkedModelSerializer):
+    user_trips = TripSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = UserAttendance
+        fields = ('id', 'name', 'team', 'user_trips', 'frequency', 'trip_length_total')
+
+
+class UserAttendanceSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return UserAttendance.objects.filter(campaign__slug=self.request.subdomain).select_related('userprofile__user')
+    serializer_class = UserAttendanceSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class TeamSerializer(serializers.HyperlinkedModelSerializer):
+    members = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name='userattendance-detail',
+        )
+
     class Meta:
         model = Team
-        fields = ('name', 'member_count')
+        fields = ('id', 'name', 'subsidiary', 'members', 'get_frequency', 'get_length')
+
+
+class TeamSet(viewsets.ReadOnlyModelViewSet):
+    def get_queryset(self):
+        return Team.objects.filter(campaign__slug=self.request.subdomain)
+    serializer_class = TeamSerializer
+    permission_classes = [permissions.AllowAny]
 
 
 class CompetitionResultSerializer(serializers.HyperlinkedModelSerializer):
     user_attendance = serializers.CharField(read_only=True)
-    team = TeamSerializer(read_only=True)
     company = serializers.CharField(read_only=True)
 
     class Meta:
         model = CompetitionResult
-        fields = ('user_attendance', 'team', 'company', 'competition', 'result')
+        fields = ('id', 'user_attendance', 'team', 'company', 'competition', 'result')
 
 
 class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
@@ -137,4 +212,8 @@ class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
 router = routers.DefaultRouter()
 router.register(r'gpx', GpxFileSet, base_name="gpxfile")
 router.register(r'competition', CompetitionSet, base_name="competition")
+router.register(r'team', TeamSet, base_name="team")
+router.register(r'subsidiary', SubsidiarySet, base_name="subsidiary")
+router.register(r'company', CompanySet, base_name="company")
+router.register(r'userattendance', UserAttendanceSet, base_name="userattendance")
 router.register(r'result/(?P<competition_slug>.+)', CompetitionResultSet, base_name="result")
