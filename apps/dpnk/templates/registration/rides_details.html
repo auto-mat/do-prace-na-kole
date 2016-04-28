@@ -14,6 +14,7 @@
    <tr>
       <td>{{ trip.date }}</td>
       <td>{{ trip.get_direction_display }}</td>
+      <td>{{ trip.get_commute_mode_display }}</td>
       <td>{{ trip.distance }}</td>
       <td>
          {% if trip.has_gpxfile %}
