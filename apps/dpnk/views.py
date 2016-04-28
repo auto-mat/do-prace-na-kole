@@ -1047,9 +1047,7 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
         self.show_points = self.competition.has_finished() or self.userprofile.user.is_superuser
         self.is_actual = self.competition.is_actual()
         self.questions = Question.objects.filter(competition=self.competition).order_by('order')
-        return super(QuestionnaireView, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, *args, **kwargs):
         for question in self.questions:
             try:
                 answer = question.answer_set.get(user_attendance=self.user_attendance)
@@ -1057,6 +1055,9 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
             except Answer.DoesNotExist:
                 answer = Answer(question=question, user_attendance=self.user_attendance)
             question.form = self.form_class(instance=answer, question=question, prefix="question-%s" % question.pk, show_points=self.show_points, is_actual=self.is_actual)
+        return super(QuestionnaireView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
         return render(request, self.template_name, self.get_context_data())
 
     def post(self, request, *args, **kwargs):
