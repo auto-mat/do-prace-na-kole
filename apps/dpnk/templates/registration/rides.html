@@ -9,7 +9,6 @@
       $('[data-toggle="tooltip"]').tooltip()
    })
 </script>
-<a class="btn-info btn show_rides_btn" type="button" href="{% url "rides_details" %}"><span class="toggle">{% trans "Podrobný přehled jízd" %}</span></a>
 <form id="rides-form" name="calendar" method="POST">
 {{ formset.management_form }}
 <br>
@@ -34,17 +33,13 @@
 <td>
    {% crispy trip_form %}
    {% if trip_form.instance.has_gpxfile %}
-   <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
    <a href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}">
-      <i class="fa fa-edit"></i>
+      {% trans 'Zobrazit nebo změnit trasu' %}
    </a>
-   </abbr>
    {% else %}
-   <abbr data-toggle="tooltip" data-placement="right" title="{% trans 'Zadat trasu v mapě nebo nahráním GPX souboru' %}">
    <a href="{% url "gpx_file_create" date=trip_form.instance.date direction=trip_form.instance.direction %}">
-      <i class="fa fa-map-marker"></i>
+      {% trans 'Zadat trasu v mapě nebo nahrát GPX soubor' %}
    </a>
-   </abbr>
    {% endif %}
 </td>
 {% if forloop.counter|divisibleby:2 %}
@@ -60,7 +55,7 @@
 </tr>
 <tr class="info">
    <td colspan="2">
-      {% trans "Ujetá započítaná vzdálenost" %}: {{ user_attendance.trip_length_total }}&nbsp;km
+      {% trans "Ujetá započítaná vzdálenost" %}: {{ user_attendance.trip_length_total }}&nbsp;km (<a href="{% url "rides_details" %}">{% trans "Podrobný přehled jízd" %}</a>)
       <br/>
       {% trans "Pravidelnost" %}: {{ user_attendance.get_frequency_percentage|intcomma }}&nbsp;%
       <br/>
