@@ -230,6 +230,7 @@ class ViewsTests(DenormMixin, TestCase):
             OrderedDict((('Key', 'Firemni_spravce'), ('Value', True))),
             OrderedDict((('Key', 'Stav_platby'), ('Value', None))),
             OrderedDict((('Key', 'Aktivni'), ('Value', True))),
+            OrderedDict((('Key', 'Id'), ('Value', 1128))),
             OrderedDict((('Key', 'Novacek'), ('Value', False))),
             OrderedDict((('Key', 'Kampan'), ('Value', 'testing-campaign'))),
             OrderedDict((('Key', 'Vstoupil_do_souteze'), ('Value', False))),
@@ -238,12 +239,12 @@ class ViewsTests(DenormMixin, TestCase):
         ]
         createsend.Subscriber.add.assert_called_once_with('12345abcde', 'test@test.cz', 'Testing User 1', custom_fields, True)
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '7c7a9b0239e35455a712e05846933ddb')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, 'df8923401a70d112dd7d558e832b8e9d')
 
         createsend.Subscriber.update = MagicMock()
         mailing.add_or_update_user_synchronous(user_attendance)
         self.assertFalse(createsend.Subscriber.update.called)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '7c7a9b0239e35455a712e05846933ddb')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, 'df8923401a70d112dd7d558e832b8e9d')
 
         custom_fields[0] = OrderedDict((('Key', 'Mesto'), ('Value', 'other-city')))
         user_attendance.team.subsidiary.city = models.City.objects.get(slug="other-city")
@@ -253,7 +254,7 @@ class ViewsTests(DenormMixin, TestCase):
         mailing.add_or_update_user_synchronous(user_attendance)
         createsend.Subscriber.get.assert_called_once_with('12345abcde', ret_mailing_id)
         createsend.Subscriber.update.assert_called_once_with('test@test.cz', 'Testing User 1', custom_fields, True)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, 'aa4dae0668a315b79923e1b99a51127c')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, 'b8dc6ea4e279fb052c19a2134cc9fb43')
 
         user_attendance.userprofile.user.is_active = False
         user_attendance.userprofile.user.save()
@@ -273,7 +274,6 @@ class ViewsTests(DenormMixin, TestCase):
     def test_dpnk_competition_results_company_competition(self):
         address = reverse('competition_results', kwargs={'competition_slug': 'vykonnost-spolecnosti'})
         response = self.client.get(address)
-        print_response(response)
         self.assertContains(response, "Výsledky v soutěži Výkonnost společností:")
 
 
@@ -1048,7 +1048,7 @@ class RegistrationMixinTests(ViewsLogon):
 
 
 class TrackViewTests(ViewsLogon):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
     def test_dpnk_views_gpx_file(self):
         trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
@@ -1058,6 +1058,11 @@ class TrackViewTests(ViewsLogon):
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(models.GpxFile.objects.get(pk=gpxfile.pk).trip, trip)
+
+    def test_dpnk_views_gpx_file_no_trip(self):
+        address = reverse('gpx_file', kwargs={"id": 2})
+        response = self.client.get(address)
+        self.assertContains(response, "Datum vykonání cesty")
 
     def test_dpnk_company_structure(self):
         util.rebuild_denorm_models([self.user_attendance])
@@ -1260,6 +1265,8 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
         response = self.client.get(address)
         self.assertContains(response, '<a href="/media/modranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>')
         self.assertContains(response, '<img src="/media/DSC00002.JPG.250x250_q85.jpg" width="250" height="188">')
+        self.assertContains(response, 'Answer without attachment')
+        self.assertContains(response, 'Bez přílohy')
 
     @override_settings(
         MEDIA_ROOT="apps/dpnk/test_files",

@@ -52,7 +52,7 @@ class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminModulesTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users']
+    fixtures = ['campaign', 'auth_user', 'users', 'batches']
 
     def setUp(self):
         super().setUp()
@@ -84,6 +84,11 @@ class AdminModulesTests(DenormMixin, TestCase):
         }
         response = self.client.post(address, post_data)
         self.assertContains(response, "1,1,1")
+
+    def test_deliverybatch_masschange(self):
+        address = "/admin/dpnk/deliverybatch-masschange/1/"
+        response = self.client.get(address)
+        self.assertContains(response, 'Zákaznické listy:')
 
     def test_competition_masschange(self):
         address = "/admin/dpnk/competition-masschange/3,5/"
@@ -335,7 +340,7 @@ class FilterTests(TestCase):
     def test_has_reaction_filter_yes(self):
         f = filters.HasReactionFilter(self.request, {"has_reaction": "yes"}, models.Answer, None)
         q = f.queryset(self.request, models.Answer.objects.all())
-        self.assertEquals(q.count(), 3)
+        self.assertEquals(q.count(), 4)
 
     def test_has_reaction_filter_no(self):
         f = filters.HasReactionFilter(self.request, {"has_reaction": "no"}, models.Answer, None)
@@ -345,7 +350,7 @@ class FilterTests(TestCase):
     def test_has_reaction_filter_null(self):
         f = filters.HasReactionFilter(self.request, {}, models.Answer, None)
         q = f.queryset(self.request, models.Answer.objects.all())
-        self.assertEquals(q.count(), 4)
+        self.assertEquals(q.count(), 5)
 
     def test_has_userprofile_filter_yes(self):
         f = filters.HasUserprofileFilter(self.request, {"has_userprofile": "yes"}, User, None)

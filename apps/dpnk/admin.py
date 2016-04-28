@@ -930,12 +930,13 @@ class DeliveryBatchForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         ret_val = super(DeliveryBatchForm, self).__init__(*args, **kwargs)
-        self.instance.campaign = models.Campaign.objects.get(slug=self.request.subdomain)
+        if hasattr(self, 'request'):
+            self.instance.campaign = models.Campaign.objects.get(slug=self.request.subdomain)
         return ret_val
 
 
 class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
-    list_display = ['campaign', 'created', 'package_transaction_count', 'customer_sheets__url', 'tnt_order__url']
+    list_display = ['campaign', 'created', 'dispatched', 'package_transaction_count', 'customer_sheets__url', 'tnt_order__url']
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 't_shirt_sizes')
     # inlines = [PackageTransactionInline, ]
     list_filter = (CampaignFilter,)
@@ -1108,13 +1109,14 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
 
 class GpxFileAdmin(LeafletGeoAdmin):
     model = models.GpxFile
-    list_display = ('id', 'trip_date', 'file', 'direction', 'trip', 'user_attendance', 'from_application', 'created')
+    list_display = ('id', 'trip_date', 'file', 'direction', 'trip', 'user_attendance', 'from_application', 'created', 'author', 'updated_by')
     search_fields = (
         'user_attendance__userprofile__nickname',
         'user_attendance__userprofile__user__first_name',
         'user_attendance__userprofile__user__last_name',
         'user_attendance__userprofile__user__username')
     raw_id_fields = ('user_attendance', 'trip')
+    readonly_fields = ('author', 'updated_by')
     list_filter = ('from_application', 'user_attendance__team__subsidiary__city')
 
 
@@ -1132,6 +1134,20 @@ class UserAttendanceToBatch(models.UserAttendance):
 class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
     list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created', 'representative_payment__realized')
     list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter), 'transactions__status')
+    search_fields = (
+        'userprofile__nickname',
+        'userprofile__user__first_name',
+        'userprofile__user__last_name',
+        'userprofile__user__username',
+        'userprofile__user__email',
+        'team__name',
+        'team__subsidiary__address_street',
+        'team__subsidiary__address_psc',
+        'team__subsidiary__address_recipient',
+        'team__subsidiary__address_city',
+        'team__subsidiary__address_district',
+        'team__subsidiary__company__name',
+    )
     actions = (actions.create_batch, )
 
     def get_actions(self, request):

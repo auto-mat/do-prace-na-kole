@@ -723,8 +723,11 @@ class GpxFileForm(forms.ModelForm):
         self.helper = FormHelper()
         try:
             self.trip_date = self.instance.trip_date or datetime.datetime.strptime(self.initial['trip_date'], "%Y-%m-%d").date()
-            self.trip = models.Trip.objects.get(date=self.trip_date, user_attendance=self.initial['user_attendance'], direction=self.initial['direction'])
-            if self.trip.active():
+            try:
+                self.trip = models.Trip.objects.get(date=self.trip_date, user_attendance=self.initial['user_attendance'], direction=self.initial['direction'])
+            except models.Trip.DoesNotExist:
+                self.trip = None
+            if self.trip and self.trip.active():
                 self.helper.add_input(Submit('submit', _(u'Odeslat')))
         except ValueError:
             raise Http404

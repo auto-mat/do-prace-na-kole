@@ -1,6 +1,7 @@
 {% extends "base_generic.html" %}
 {% load dpnk_tags %}
 {% load thumbnail %}
+{% load i18n %}
 
 {% block content %}
 {{ block.super }}
@@ -20,7 +21,11 @@
          <a data-lightbox="image" href="{{ answer.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
          <img src="{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
       {% else %}
-         <a href="{{ answer.attachment.url }}" target="_blank">{{ answer.attachment }}</a>
+         {% if answer.attachment %}
+            <a href="{{ answer.attachment.url }}" target="_blank">{{ answer.attachment }}</a>
+         {% else %}
+            {% trans "Bez přílohy" %}
+         {% endif %}
       {% endif %}
       {% endif %}
       </div>
