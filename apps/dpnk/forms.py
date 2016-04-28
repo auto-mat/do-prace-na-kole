@@ -752,11 +752,14 @@ class GpxFileForm(forms.ModelForm):
         self.fields['track'].widget = UserLeafletWidget(user_attendance=user_attendance)
         self.fields['track'].widget.attrs['geom_type'] = 'MULTILINESTRING'
 
+        self.fields['trip_date'].required = False
+        self.fields['direction'].required = False
+
     class Meta:
         model = models.GpxFile
         fields = ('trip_date', 'direction', 'user_attendance', 'track', 'file')
         widgets = {
             'user_attendance': HiddenInput(),
-            'trip_date': forms.TextInput(attrs={'readonly': 'readonly'}),
-            'direction': forms.Select(attrs={'readonly': 'readonly'}),
+            'trip_date': forms.TextInput(attrs={'readonly': 'readonly', 'disabled': 'disabled'}),
+            'direction': forms.Select(attrs={'readonly': 'readonly', 'disabled': 'disabled'}),
         }
