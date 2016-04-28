@@ -3,6 +3,7 @@
 {% load dpnk_tags %}
 {% load i18n %}
 {% load thumbnail %}
+{% load cache %}
 
 {% block content %}
 {% block messages %}
@@ -14,6 +15,7 @@
 
 <div id="rides-form-container">{% include "registration/rides.html" %}</div>
 
+{% cache 3600 user_attendance %}
 {% comment %}
 <div>
    <h3>{% trans "Vouchery" %}</h3>
@@ -88,4 +90,5 @@
       {% wp_prize city_slug %}
    </div>
 </div>
+{% endcache %}
 {% endblock %}
