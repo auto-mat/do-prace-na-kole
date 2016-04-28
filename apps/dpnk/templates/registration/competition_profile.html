@@ -52,22 +52,24 @@
    </div>
    <div class="col-md-6">
       <h3>{% trans "Příspěvky z kreativních soutěží" %}</h3>
-      {% if questionnaire_answer %}
-      {{ questionnaire_answer.question.competition }}<br/>
-      <a href="{% url "questionnaire" questionnaire_slug=questionnaire_answer.question.competition.slug %}">{% trans "Nahrát vlastní příspěvek" %}</a>
-      {% thumbnail questionnaire_answer.attachment "360x360" as foto_thumb %}
+      {% with questionnaire_answer.first as answer %}
+      {% if answer %}
+      {{ answer.question.competition }}<br/>
+      <a href="{% url "questionnaire" questionnaire_slug=answer.question.competition.slug %}">{% trans "Nahrát vlastní příspěvek" %}</a>
+      {% thumbnail answer.attachment "360x360" as foto_thumb %}
       {% if foto_thumb %}
-         <a href="{% url "questionnaire_answers_all" competition_slug=questionnaire_answer.question.competition.slug %}" title="Všechny fotky z této soutěže">
+         <a href="{% url "questionnaire_answers_all" competition_slug=answer.question.competition.slug %}" title="Všechny fotky z této soutěže">
          <img src="{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
       {% else %}
          <br/>
-         <a href="{{ questionnaire_answer.attachment.url }}" target="_blank">{{ questionnaire_answer.attachment }}</a>
+         <a href="{{ answer.attachment.url }}" target="_blank">{{ answer.attachment }}</a>
       {% endif %}
       <br/>
-      {% if questionnaire_answer.comment %}
-         {{ questionnaire_answer.comment|linebreaksbr|urlize}}
+      {% if answer.comment %}
+         {{ answer.comment|linebreaksbr|urlize}}
       {% endif %}
       {% endif %}
+      {% endwith %}
    </div>
 </div>
 <div class="row base">
