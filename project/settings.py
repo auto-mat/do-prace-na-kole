@@ -119,7 +119,6 @@ TEMPLATES = [
             normpath(PROJECT_ROOT, 'templates'),
             normpath(PROJECT_ROOT, 'apps/dpnk/templates'),
         ],
-        'APP_DIRS': True,
         'OPTIONS': {
             'string_if_invalid': InvalidStringShowWarning("%s"),
             'context_processors': (
@@ -130,7 +129,13 @@ TEMPLATES = [
                 'dpnk.context_processors.site',
                 'dpnk.context_processors.user_attendance',
                 'settings_context_processor.context_processors.settings',
-            )
+            ),
+            'loaders': [
+                ('django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ]),
+            ],
         },
     },
 ]
