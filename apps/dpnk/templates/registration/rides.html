@@ -17,8 +17,7 @@
 {% if formset.0 %}
 <table id="rides" class="table table-bordered table-hover table-condensed">
 <thead>
-   <tr>
-      <th scope="col">{% trans "Den" %}</th>
+   <tr class="info">
       <th scope="col">{% trans "Do práce" %}</th>
       <th scope="col">{% trans "Z práce" %}</th>
    </tr>
@@ -26,7 +25,11 @@
 {% for trip_form in formset %}
 {% if forloop.counter0|divisibleby:2 %}
 <tr class="info">
-<th scope="row" class="date">{{ trip_form.initial.date|naturalday:"D j. M" }}</th>
+   <th colspan="2" scope="row" class="date">
+      {{ trip_form.initial.date|naturalday:"l j. E Y" }}
+   </th>
+</tr>
+<tr>
 {% endif %}
 <td>
    {% crispy trip_form %}
@@ -48,6 +51,22 @@
 </tr>
 {% endif %}
 {% endfor %}
+<tr class="info">
+   <th colspan="2">
+      <strong>
+      {% trans "Celkem" %}
+      </strong>
+   </th>
+</tr>
+<tr class="info">
+   <td colspan="2">
+      {% trans "Ujetá započítaná vzdálenost" %}: {{ user_attendance.trip_length_total }}&nbsp;km
+      <br/>
+      {% trans "Pravidelnost" %}: {{ user_attendance.get_frequency_percentage|intcomma }}&nbsp;%
+      <br/>
+      {% trans "Ušetřené množství oxidu uhličitého" %}: {{ user_attendance.get_emissions.co2|intcomma }}&nbsp;g  (<a href="{% url 'emission_calculator' %}">{% trans "Emisní kalkulačka" %}</a>)
+   </td>
+</tr>
 </table>
 <input type="submit" name="submit" value="{% trans "Odeslat" %}" class="btn btn-primary btn-block" id="submit-id-submit">
 {% else %}

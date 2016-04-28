@@ -1,12 +1,13 @@
 {% extends "base_generic.html" %}
 {% load humanize %}
 {% load dpnk_tags %}
+{% load i18n %}
 
 {% block content %}
 {% with user_attendance.get_emissions as emissions %}
 <table class="table">
 <tr>
-   <td>Ujetá vzdálenost (neredukovaná)</td><td>{{ user_attendance.get_nonreduced_length|floatformat:1 }}&nbsp;km</td>
+   <td>{% trans "Ujetá vzdálenost" %}</td><td>{{ user_attendance.get_nonreduced_length|floatformat:1 }}&nbsp;km</td>
 </tr>
 <tr>
    <td>CO<sub>2</sub></td><td>{{ emissions.co2|intcomma }}&nbsp;g</td>
@@ -27,10 +28,10 @@
    <td>SO<sub>2</sub></td><td>{{ emissions.ch4|intcomma }}&nbsp;mg</td>
 </tr>
 <tr>
-   <td>Pevné částice</td><td>{{ emissions.solid|intcomma }}&nbsp;mg</td>
+   <td>{% trans "Pevné částice" %}</td><td>{{ emissions.solid|intcomma }}&nbsp;mg</td>
 </tr>
 <tr>
-   <td>Olovo</td><td>{{ emissions.pb|intcomma }}&nbsp;mg</td>
+   <td>{% trans "Olovo" %}</td><td>{{ emissions.pb|intcomma }}&nbsp;mg</td>
 </tr>
 </tr>
 </table>

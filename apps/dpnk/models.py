@@ -1006,7 +1006,7 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return self.payment_status in ('done', 'no_admission')
 
     def get_emissions(self, distance=None):
-        return util.get_emissions(self.get_nonreduced_length())
+        return util.get_emissions(self.trip_length_total)
 
     def get_active_trips(self):
         days = util.days_active(self.campaign)
