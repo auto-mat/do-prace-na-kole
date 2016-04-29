@@ -6,7 +6,8 @@
 
 <script type="text/javascript">
    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
+      $('input[value=bicycle]').parent().attr('title', 'Cesta byla vykonána na kole').attr('data-toggle', 'tooltip').attr('data-placement', 'top').tooltip();
+      $('[data-toggle="tooltip"]').tooltip();
    })
 </script>
 <form id="rides-form" name="calendar" method="POST">
