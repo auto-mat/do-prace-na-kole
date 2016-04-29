@@ -9,6 +9,8 @@
 /sql/
 /dpnk.log
 /dpnk-timelog.log
+/dpnk-devel.log
+.DS_Store
 env
 /env*/
 /project/settings_local.py
@@ -17,3 +19,5 @@ env
 /run
 htmlcov/
 .coverage
+run.sh
+
