@@ -33,10 +33,11 @@
       <td>
          {% crispy trip_form %}
          {% if trip_form.instance.has_gpxfile %}
-            <a href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}">
-               {% trans 'Zobrazit nebo změnit trasu' %}
+            <a class="pin" href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
+               <span class="glyphicon glyphicon-edit"></span>
             </a>
-            {% else %}
+            </abbr>
+         {% else %}
             <a class="pin" href="{% url "gpx_file_create" date=trip_form.instance.date direction=trip_form.instance.direction %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zadat trasu v mapě nebo nahrát GPX soubor' %}">
                <span class="glyphicon glyphicon-map-marker"></span>
             </a>
