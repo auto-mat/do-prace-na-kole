@@ -33,6 +33,30 @@
 	}
 	.controls{
 		margin-bottom: 0.3rem;
+		.radio{
+			border: 1px solid #ddd;
+			// border-right: 1px solid #ddd;
+			margin-top:0;
+			&.btn{
+				padding:0;
+			}
+			input[type="radio"]{
+				display:none;
+			}
+			label{
+				display: inline-block;
+	    		padding: 4px 5px;
+			}
+			// &:first-child{
+			// 	border:0;
+			// }
+			// &:last-child{
+			// 	border:0;
+			// }
+			input[type="radio"]:checked+label{
+				background-color: #90D890 !important;
+			}
+		}
 	}
 	.pin{
 		 position: relative;
@@ -225,30 +249,7 @@ input[type=checkbox]{
 	// border: 1px solid #ddd;
 	// border-radius: 7px;
 	overflow:hidden;
-	.radio{
-		border: 1px solid #ddd;
-		// border-right: 1px solid #ddd;
-		margin-top:0;
-		&.btn{
-			padding:0;
-		}
-		input[type="radio"]{
-			display:none;
-		}
-		label{
-			display: inline-block;
-    		padding: 4px 5px;
-		}
-		// &:first-child{
-		// 	border:0;
-		// }
-		// &:last-child{
-		// 	border:0;
-		// }
-		input[type="radio"]:checked+label{
-			background-color: #90D890 !important;
-		}
-	}
+	// 
 
 
 }
