@@ -36,7 +36,7 @@
 	}
 	.pin{
 		 position: relative;
-	    top: -4.2rem;
+	    top: -3.8rem;
 	    left: 8rem;
 	    font-size: 2rem;
 	    opacity: 0.4;
@@ -57,8 +57,9 @@
 	}
 }
 #id_track_map{
-	position: absolute;
+	position: relative;
 	margin-bottom: 3rem;
+	width:500px !important;
 }
 
 
@@ -220,7 +221,7 @@ input[type=checkbox]{
 
 .controls{
 	margin-bottom: 1em;
-	display:inline-block;
+	// display:inline-block;
 	// border: 1px solid #ddd;
 	// border-radius: 7px;
 	overflow:hidden;
@@ -387,12 +388,13 @@ form{
    }
 }
 
-@media only screen and (max-width: 400px)
-{
+@media only screen and (max-width: 400px){
 	.narrow-hide-400{
       display: none;
    }
-
+		#id_track_map{
+		width:300px !important;
+	}
 }
 // @media only screen and (max-width: 480px)
 // {
