@@ -672,7 +672,7 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
 
 class TripForm(forms.ModelForm):
     commute_mode = forms.ChoiceField(
-        label=_("Mód dopravy"),
+        label=_("Dopravní prostředek"),
         choices=models.Trip.MODES,
         widget=forms.RadioSelect(),
     )

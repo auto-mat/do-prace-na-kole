@@ -1890,10 +1890,10 @@ class Trip(models.Model):
     ]
     DIRECTIONS_DICT = dict(DIRECTIONS)
     MODES = [
-        ('bicycle', _("Na kole")),
-        ('by_foot', _("Pěšky/běh")),
-        ('no_work', _("Nepracoval")),
-        ('by_other_vehicle', _("Jiný dopravní prostředek")),
+        ('bicycle', _("Kolo")),
+        ('by_foot', _("Chůze/běh")),
+        ('by_other_vehicle', _("Jinak")),
+        ('no_work', _("Nijak/vůbec")),
     ]
 
     class Meta:
