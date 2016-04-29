@@ -14,7 +14,7 @@
 <br>
 
 {% if formset.0 %}
-<table id="rides" class="table table-bordered table-hover table-condensed">
+<table id="rides" class="table table-hover table-condensed">
 <thead>
    <tr class="info">
       <th scope="col">{% trans "Do práce" %}</th>
@@ -22,29 +22,29 @@
    </tr>
 </thead>
 {% for trip_form in formset %}
-{% if forloop.counter0|divisibleby:2 %}
-<tr class="info">
-   <th colspan="2" scope="row" class="date">
-      {{ trip_form.initial.date|naturalday:"l j. E Y" }}
-   </th>
-</tr>
-<tr>
-{% endif %}
-<td>
-   {% crispy trip_form %}
-   {% if trip_form.instance.has_gpxfile %}
-   <a href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}">
-      {% trans 'Zobrazit nebo změnit trasu' %}
-   </a>
-   {% else %}
-   <a href="{% url "gpx_file_create" date=trip_form.instance.date direction=trip_form.instance.direction %}">
-      {% trans 'Zadat trasu v mapě nebo nahrát GPX soubor' %}
-   </a>
+   {% if forloop.counter0|divisibleby:2 %}
+      <tr class="info">
+         <th colspan="2" scope="row" class="date">
+            {{ trip_form.initial.date|naturalday:"D. j.n." }}<span>{{ trip_form.initial.date|naturalday:"Y" }}</span>
+         </th>
+      </tr>
+      <tr>
    {% endif %}
-</td>
-{% if forloop.counter|divisibleby:2 %}
-</tr>
-{% endif %}
+      <td>
+         {% crispy trip_form %}
+         {% if trip_form.instance.has_gpxfile %}
+            <a href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}">
+               {% trans 'Zobrazit nebo změnit trasu' %}
+            </a>
+            {% else %}
+            <a class="pin" href="{% url "gpx_file_create" date=trip_form.instance.date direction=trip_form.instance.direction %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zadat trasu v mapě nebo nahrát GPX soubor' %}">
+               <span class="glyphicon glyphicon-map-marker"></span>
+            </a>
+         {% endif %}
+      </td>
+   {% if forloop.counter|divisibleby:2 %}
+   </tr>
+   {% endif %}
 {% endfor %}
 <tr class="info">
    <th colspan="2">

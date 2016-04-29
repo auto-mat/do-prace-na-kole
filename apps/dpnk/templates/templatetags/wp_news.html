@@ -12,7 +12,7 @@
       </h4>
       {% if unfold == "all" or forloop.first and unfold == "first" %}
          {% if value.image %}
-            <span class="{% if not show_description %}bobble{% endif %}"><img src="{{ value.image }}" alt="Obrázek k podnětu"></img></span>
+            <span class="{% if not show_description %}bobble{% endif %}"><img src="{{ value.image }}" alt="Obrázek k podnětu"></span>
          {% endif %}
          {% if show_description %}
             {{ value.excerpt|bleach }}

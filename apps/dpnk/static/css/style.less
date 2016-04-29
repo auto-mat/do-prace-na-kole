@@ -8,9 +8,60 @@
 #rides{
 	.form-control{
 		width:70px;
-      display: inline;
+     	display: inline;
+	}
+	thead{
+		th{
+			background:transparent;
+			font-size: 2rem;
+		}
+	}
+	label{
+		font-weight: 400;
+		color:#999;
+		
+	}
+	.btn-group{
+		label{
+			color:#000;
+			background:#E0E0E0;
+			border-radius: 6px;
+		}
+		.btn{
+			border-color:white;
+		}
+	}
+	.controls{
+		margin-bottom: 0.3rem;
+	}
+	.pin{
+		 position: relative;
+	    top: -4.2rem;
+	    left: 8rem;
+	    font-size: 2rem;
+	    opacity: 0.4;
+	    &:hover{
+	    	opacity:1;
+	    	color:#000;
+	    }
+	}
+	.date{
+		span{
+			opacity:0.5;
+		}
 	}
 }
+#rides-form{
+	.form-group{
+		margin-bottom: 0;
+	}
+}
+#id_track_map{
+	position: absolute;
+	margin-bottom: 3rem;
+}
+
+
 @links:#6279bb;
 @c: #6279bb;
 @c2: #FFF2E8;
@@ -166,6 +217,7 @@ h3, h4{
 input[type=checkbox]{
 	margin-right:0.3em;
 }
+
 .controls{
 	margin-bottom: 1em;
 	display:inline-block;
@@ -184,7 +236,7 @@ input[type=checkbox]{
 		}
 		label{
 			display: inline-block;
-    		padding: 6px 12px;
+    		padding: 4px 5px;
 		}
 		// &:first-child{
 		// 	border:0;
@@ -193,7 +245,7 @@ input[type=checkbox]{
 		// 	border:0;
 		// }
 		input[type="radio"]:checked+label{
-			background-color: #90D890;
+			background-color: #90D890 !important;
 		}
 	}
 
@@ -282,6 +334,11 @@ input:disabled+label{
 .btn{
 	text-decoration: none !important;
 }
+form{
+	label{
+		width:100%;
+	}
+}
 @media (max-width: 768px){
 	.logo_holder{
 		float: left;
@@ -300,6 +357,20 @@ input:disabled+label{
 	.lang_switch{
    	margin-top:0.8rem;
    }
+
+   #rides{
+		.btn-group{
+			.btn{
+				width:100%;
+			}
+			label{
+				white-space: nowrap;
+			  overflow: hidden;
+			  text-overflow: ellipsis;
+			  max-width: 90%;
+			}
+		}
+	}
 }
 @media only screen and (max-width: 400px) {
    #rides td:nth-child(6),
@@ -323,7 +394,10 @@ input:disabled+label{
    }
 
 }
+// @media only screen and (max-width: 480px)
+// {
 
+// }
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
