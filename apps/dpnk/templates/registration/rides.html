@@ -42,7 +42,7 @@
             </a>
             </abbr>
          {% else %}
-            <a class="pin" href="{% url "gpx_file_create" date=trip_form.instance.date direction=trip_form.instance.direction %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zadat trasu v mapě nebo nahrát GPX soubor' %}">
+            <a class="pin" href="{% url "gpx_file_create" date=trip_form.get_date direction=trip_form.get_direction %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zadat trasu v mapě nebo nahrát GPX soubor' %}">
                <span class="glyphicon glyphicon-map-marker"></span>
             </a>
          {% endif %}

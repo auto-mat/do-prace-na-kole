@@ -774,7 +774,13 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
 
     def get_initial(self):
         distance = self.user_attendance.get_distance(request=self.request)
-        return [{'distance': distance, 'date': trip[0], 'direction': trip[1], 'user_attendance': self.user_attendance} for trip in self.uncreated_trips]
+        return [{
+            'distance': distance,
+            'date': trip[0],
+            'direction': trip[1],
+            'user_attendance': self.user_attendance,
+            'commute_mode': 'by_other_vehicle' if util.working_day(trip[0]) else 'no_work',
+        } for trip in self.uncreated_trips]
 
     def get_factory_kwargs(self):
         kwargs = super().get_factory_kwargs()

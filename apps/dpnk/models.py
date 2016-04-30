@@ -2693,10 +2693,14 @@ def update_mailing_userprofile(sender, instance, created, **kwargs):
 
 @receiver(pre_save, sender=GpxFile)
 def set_trip(sender, instance, *args, **kwargs):
-    try:
-        trip = Trip.objects.get(user_attendance=instance.user_attendance, date=instance.trip_date, direction=instance.direction)
-    except Trip.DoesNotExist:
-        trip = None
+    trip, created = Trip.objects.get_or_create(
+        user_attendance=instance.user_attendance,
+        date=instance.trip_date,
+        direction=instance.direction,
+        defaults={
+            'commute_mode': 'bicycle',
+        }
+    )
     instance.trip = trip
 
 

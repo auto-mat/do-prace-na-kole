@@ -24,7 +24,7 @@ from django import forms
 import registration.forms
 import datetime
 from django.utils import formats
-from . import models
+from . import models, util
 from django.db.models import Q
 from dpnk.widgets import SelectChainedOrCreate, SelectOrCreateAutoComplete
 from dpnk.fields import ShowPointsMultipleModelChoiceField
@@ -681,6 +681,12 @@ class TripForm(forms.ModelForm):
         required=True,
     )
 
+    def get_direction(self):
+        return self.initial['direction'] or self.instance.direction
+
+    def get_date(self):
+        return self.initial['date'] or self.instance.date
+
     def clean_user_attendance(self):
         return self.instance.user_attendance or self.initial['user_attendance']
 
@@ -725,12 +731,12 @@ class GpxFileForm(forms.ModelForm):
         return self.initial['direction']
 
     def clean_track(self):
-        if not self.trip.active():
+        if not util.day_active(self.trip_date):
             return getattr(self.initial, 'track', None)
         return self.cleaned_data['track']
 
     def clean_file(self):
-        if not self.trip.active():
+        if not util.day_active(self.trip_date):
             return getattr(self.initial, 'file', None)
         return self.cleaned_data['file']
 
@@ -739,11 +745,7 @@ class GpxFileForm(forms.ModelForm):
         self.helper = FormHelper()
         try:
             self.trip_date = self.instance.trip_date or datetime.datetime.strptime(self.initial['trip_date'], "%Y-%m-%d").date()
-            try:
-                self.trip = models.Trip.objects.get(date=self.trip_date, user_attendance=self.initial['user_attendance'], direction=self.initial['direction'])
-            except models.Trip.DoesNotExist:
-                self.trip = None
-            if self.trip and self.trip.active():
+            if util.day_active(self.trip_date):
                 self.helper.add_input(Submit('submit', _(u'Odeslat')))
         except ValueError:
             raise Http404
