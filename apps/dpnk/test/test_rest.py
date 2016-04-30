@@ -25,10 +25,12 @@ from dpnk import util, models
 from dpnk.models import UserAttendance, Team
 from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
+from freezegun import freeze_time
 import datetime
 import settings
 
 
+@freeze_time("2016-01-14")
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
@@ -46,7 +48,8 @@ class RestTests(DenormMixin, TestCase):
     def test_gpx_get(self):
         address = reverse("gpxfile-list")
         response = self.client.get(address)
-        self.assertContains(response, '{"trip_date":"2010-12-01","direction":"trip_to","file":null}')
+        self.assertContains(response, '{"id":1,"trip_date":"2010-11-01","direction":"trip_to","file":null}')
+        self.assertContains(response, '{"id":2,"trip_date":"2010-11-14","direction":"trip_from","file":"http://testing-campaign.testserver/media/modranska-rokle.gpx"}')
 
     def test_gpx_post(self):
         address = reverse("gpxfile-list")
@@ -57,9 +60,10 @@ class RestTests(DenormMixin, TestCase):
                 'file': gpxfile,
             }
             response = self.client.post(address, post_data)
+            print_response(response)
             self.assertContains(
                 response,
-                '"trip_date":"2010-12-02","direction":"trip_to","file":"http://testing-campaign.testserver/media/gpx_tracks/track-2016-04',
+                '"trip_date":"2010-12-02","direction":"trip_to","file":"http://testing-campaign.testserver/media/gpx_tracks/track-2016-01-14-modranska-rokle',
                 status_code=201
             )
             gpx_file = models.GpxFile.objects.get(trip_date=datetime.date(2010, 12, 2))
@@ -114,7 +118,7 @@ class RestTestsLogout(DenormMixin, TestCase):
     def test_competitionresults_get(self):
         address = reverse("result-list", kwargs={"competition_slug": "FQ-LB"})
         response = self.client.get(address)
-        self.assertContains(response, '"team":{"name":"Testing team 1","member_count":3}')
+        self.assertContains(response, '"team":"http://testing-campaign.testserver/rest/team/1/"')
         self.assertContains(response, '"result":100.0')
 
     def test_competitionresults_get_unknown_competition(self):

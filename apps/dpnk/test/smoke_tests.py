@@ -8,6 +8,8 @@ from django.core.management import call_command
 from django.test import TestCase, RequestFactory, Client
 from django.test.utils import override_settings
 from django.utils.translation import activate
+from dpnk.test.util import ClearCacheMixin
+from unittest.mock import patch
 import datetime
 
 activate('cs')
@@ -76,7 +78,7 @@ views = [
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class BaseViewsTests(TestCase):
+class BaseViewsTests(ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'trips']
 
     def setUp(self):
@@ -91,7 +93,10 @@ class BaseViewsTests(TestCase):
     def tearDown(self):
         call_command('denorm_drop')
 
-    def verify_views(self, view, status_code=200):
+    @patch('slumber.API')
+    def verify_views(self, view, slumber_api, status_code=200):
+        slumber_instance = slumber_api.return_value
+        slumber_instance.feed.get = {}
         response = self.client.get(view, follow=True)
         filename = view.replace("/", "_")
         if response.status_code != status_code:
@@ -107,7 +112,7 @@ class ViewSmokeTests(BaseViewsTests):
             'error404.txt': 404,
         }
         status_code = status_code_map[view] if view in status_code_map else 200
-        self.verify_views(view, status_code)
+        self.verify_views(view, status_code=status_code)
 
 
 class ViewSmokeTestsRegistered(BaseViewsTests):
@@ -125,4 +130,4 @@ class ViewSmokeTestsRegistered(BaseViewsTests):
             'error404.txt': 404,
         }
         status_code = status_code_map[view] if view in status_code_map else 200
-        self.verify_views(view, status_code)
+        self.verify_views(view, status_code=status_code)

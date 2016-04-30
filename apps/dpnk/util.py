@@ -21,7 +21,6 @@
 import unidecode
 import re
 import datetime
-from django.http import HttpResponse
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import six
@@ -35,6 +34,12 @@ mark_safe_lazy = lazy(mark_safe, six.text_type)
 DAYS_EXCLUDE = (
     datetime.date(year=2014, day=8, month=5),
     datetime.date(year=2015, day=8, month=5),
+    datetime.date(year=2016, day=1, month=5),
+    datetime.date(year=2016, day=8, month=5),
+    datetime.date(year=2016, day=5, month=7),
+    datetime.date(year=2016, day=6, month=7),
+    datetime.date(year=2016, day=28, month=9),
+    datetime.date(year=2016, day=28, month=10),
 )
 
 
@@ -47,28 +52,36 @@ def working_day(day):
     return day not in DAYS_EXCLUDE and day.weekday() not in (5, 6)
 
 
-def days(campaign):
-    days = []
-    competition_phase = campaign.phase("competition")
-    if not competition_phase:
-        return []
-    competition_start = competition_phase.date_from
-    competition_end = competition_phase.date_to
-    for day in daterange(competition_start, competition_end):
-        days.append(day)
-    return days
+def dates(competition, day=None):
+    if not day:
+        day = _today()
+    start_day = competition.date_from or competition.campaign.phase("competition").date_from
+    end_day = min(competition.date_to or competition.campaign.phase("competition").date_to, day)
+    return start_day, end_day
 
 
-def days_active(campaign):
-    return [d for d in days(campaign) if day_active(d)]
+def working_days(competition, day=None):
+    start_day, end_day = dates(competition, day)
+    return [d for d in daterange(start_day, end_day) if working_day(d)]
 
 
-def days_count(campaign):
-    if hasattr(campaign, 'days_count'):
-        return campaign.days_count
-    today = _today()
-    campaign.days_count = len([day for day in days(campaign) if day <= today])
-    return campaign.days_count
+def non_working_days(competition, day=None):
+    start_day, end_day = dates(competition, day)
+    return [d for d in daterange(start_day, end_day) if not working_day(d)]
+
+
+def days(competition, day=None):
+    start_day, end_day = dates(competition, day)
+    return daterange(start_day, end_day)
+
+
+def days_count(competition, day=None):
+    start_day, end_day = dates(competition, day)
+    return end_day - start_day + datetime.timedelta(1)
+
+
+def days_active(competition):
+    return [d for d in days(competition) if day_active(d)]
 
 
 def _today():
@@ -79,10 +92,6 @@ def _today():
 
 def today():
     return _today()
-
-
-def redirect(url):
-    return HttpResponse("redirect:" + url)
 
 
 def slugify(str):
@@ -104,20 +113,6 @@ def format_psc(integer):
     return psc_str[:-2] + " " + psc_str[-2:]
 
 
-def get_or_none_rm(model, *args, **kwargs):
-    try:
-        return model.get(*args, **kwargs)
-    except ObjectDoesNotExist:
-        return None
-
-
-def get_or_none(model, *args, **kwargs):
-    try:
-        return model.objects.get(*args, **kwargs)
-    except model.DoesNotExist:
-        return None
-
-
 # TODO: move this to denorm application
 def rebuild_denorm_models(models):
     for model in models:
@@ -137,14 +132,14 @@ def day_active_last7(day):
     )
 
 
-def day_active_last_week(day):
-    day_today = _today()
-    return (
-        (day <= day_today) and
-        ((day.isocalendar()[1] == day_today.isocalendar()[1]) or
-            (day_today.weekday() == 0 and
-                day.isocalendar()[1] + 1 == day_today.isocalendar()[1]))
-    )
+# def day_active_last_week(day):
+#     day_today = _today()
+#     return (
+#         (day <= day_today) and
+#         ((day.isocalendar()[1] == day_today.isocalendar()[1]) or
+#             (day_today.weekday() == 0 and
+#                 day.isocalendar()[1] + 1 == day_today.isocalendar()[1]))
+#     )
 
 day_active = day_active_last7
 

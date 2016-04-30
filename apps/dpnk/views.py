@@ -770,7 +770,7 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
             self.trips, self.uncreated_trips = self.user_attendance.get_active_trips()
             return self.trips.select_related('gpxfile')
         else:
-            return models.CityInCampaign.objects.none()
+            return models.Trip.objects.none()
 
     def get_initial(self):
         distance = self.user_attendance.get_distance(request=self.request)
@@ -1560,13 +1560,13 @@ def daily_chart(
         template='registration/daily-chart.html',):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
-    values = [period_distance(campaign, day, day) for day in util.days(campaign)]
+    values = [period_distance(campaign, day, day) for day in util.days(campaign.phase('competition'))]
     return render(
         request,
         template,
         {
             'values': values,
-            'days': reversed(util.days(campaign)),
+            'days': reversed(list(util.days(campaign.phase('competition')))),
             'max_value': max(values),
         })
 
@@ -1576,7 +1576,7 @@ def daily_distance_json(
         request,):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
-    values = collections.OrderedDict((str(day), period_distance(campaign, day, day)) for day in util.days(campaign))
+    values = collections.OrderedDict((str(day), period_distance(campaign, day, day)) for day in util.days(campaign.phase('competition')))
     data = json.dumps(values)
     return HttpResponse(data)
 

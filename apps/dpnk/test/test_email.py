@@ -19,11 +19,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.test import TestCase
-from dpnk.models import UserAttendance, Company, CompanyAdmin, UserProfile, Campaign, Team, Subsidiary, City
+from dpnk.models import UserAttendance, Company, CompanyAdmin, UserProfile, Campaign, Team, Subsidiary, City, Phase
 from django.contrib.auth.models import User
 from dpnk import email
 from django.core import mail
 from django.conf import settings
+import datetime
 
 
 # Uncoment this to check to generate email files in /tmp/dpnk-test-messages
@@ -35,6 +36,11 @@ from django.conf import settings
 class TestEmails(TestCase):
     def setUp(self):
         self.campaign = Campaign.objects.create(name="Testing campaign 1", slug="testing_campaign_1")
+        self.phase = Phase.objects.create(
+            date_from=datetime.date(year=2010, month=10, day=20),
+            date_to=datetime.date(year=2010, month=11, day=20),
+            campaign=self.campaign, type='competition',
+        )
         self.city = City.objects.create(name="Testing City", slug="testing_city")
 
         self.company = Company.objects.create(name="Testing Company")

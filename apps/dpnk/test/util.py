@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.core.management import call_command
+from django.core.cache import cache
 
 
 def print_response(response):
@@ -33,3 +34,9 @@ class DenormMixin(object):
     def tearDown(self):
         super().tearDown()
         call_command('denorm_drop')
+
+
+class ClearCacheMixin(object):
+    def tearDown(self):
+        super().tearDown()
+        cache.clear()

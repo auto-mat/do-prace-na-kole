@@ -35,7 +35,7 @@ from PyPDF2 import PdfFileReader
 import denorm
 import settings
 from dpnk.test.util import print_response  # noqa
-from dpnk.test.util import DenormMixin
+from dpnk.test.util import DenormMixin, ClearCacheMixin
 
 
 @override_settings(
@@ -80,10 +80,12 @@ class ViewsTests(DenormMixin, TestCase):
         for payment in Payment.objects.all():
             payment.status = models.Status.DONE
             payment.save()
-        util.rebuild_denorm_models(Team.objects.all())
-        util.rebuild_denorm_models(UserAttendance.objects.all())
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
+        util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
         response = self.client.get(address)
         self.assertContains(response, "<td>Testing city</td>\n   <td>2</td>")
+        self.assertContains(response, "<td>bez vybraného města</td>\n   <td>0</td>")
+        self.assertContains(response, "<th>celkem</th>\n   <th>2</th>")
 
     def test_dpnk_company_admin_registration(self):
         address = reverse('register_admin')
@@ -277,7 +279,7 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertContains(response, "Výsledky v soutěži Výkonnost společností:")
 
 
-class PaymentSuccessTests(TestCase):
+class PaymentSuccessTests(ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users']
 
     def setUp(self):
@@ -319,7 +321,7 @@ class PaymentSuccessTests(TestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class RequestFactoryViewTests(TestCase):
+class RequestFactoryViewTests(ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users']
 
     def setUp(self):
@@ -355,7 +357,7 @@ class RequestFactoryViewTests(TestCase):
         self.assertEquals(response.url, reverse("competitions"))
 
 
-class PaymentTests(DenormMixin, TestCase):
+class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
@@ -422,7 +424,7 @@ class PaymentTests(DenormMixin, TestCase):
     PAYU_KEY_2='98764321',
 )
 @freeze_time("2010-11-20 12:00")
-class PayuTests(TestCase):
+class PayuTests(ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
@@ -496,7 +498,7 @@ class PayuTests(TestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class ViewsLogon(DenormMixin, TestCase):
+class ViewsLogon(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
@@ -1188,7 +1190,7 @@ def create_post_request(factory, user, post_data={}, address="", subdomain="test
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
-class TestCompanyAdminViews(TestCase):
+class TestCompanyAdminViews(ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'company_competition']
 
     def setUp(self):
@@ -1240,10 +1242,10 @@ class TestCompanyAdminViews(TestCase):
 
 @override_settings(
     SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=12, day=1),
+    FAKE_DATE=datetime.date(year=2010, month=11, day=1),
 )
-class ViewsTestsRegistered(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
     def setUp(self):
         super().setUp()
@@ -1291,41 +1293,42 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
         response = self.client.get(reverse('profil'))
         self.assertContains(response, 'form-0-commute_mode')
         self.assertContains(response, 'form-1-commute_mode')
-        self.assertEquals(self.user_attendance.user_trips.count(), 1)
+        self.assertEquals(self.user_attendance.user_trips.count(), 4)
         post_data = {
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '1',
             'form-MIN_NUM_FORMS': '0',
             'form-MAX_NUM_FORMS': '1000',
-            'form-0-id': 1,
+            'form-0-id': 101,
             'form-0-commute_mode': 'by_foot',
             'form-0-distance': '28.89',
             'form-0-user_attendance': 12,
             'form-0-direction': 'trip_to',
             'form-0-user_attendance': 1115,
-            'form-0-date': datetime.date(year=2010, month=12, day=1),
+            'form-0-date': datetime.date(year=2010, month=11, day=1),
             'form-1-id': '',
             'form-1-commute_mode': 'bicycle',
-            'form-1-distance': '2',
+            'form-1-distance': '2.34',
             'form-1-user_attendance': 1115,
             'form-1-direction': 'trip_from',
-            'form-1-date': datetime.date(year=2010, month=12, day=1),
+            'form-1-date': datetime.date(year=2010, month=11, day=1),
             'submit': 'Odeslat',
         }
         response = self.client.post(reverse('profil'), post_data, follow=True)
         self.assertContains(response, 'form-1-commute_mode')
-        self.assertEquals(self.user_attendance.user_trips.count(), 2)
-        self.assertEquals(models.Trip.objects.get(pk=1).distance, 28.89)
-        self.assertEquals(models.Trip.objects.exclude(pk=1).get().commute_mode, 'bicycle')
+        self.assertEquals(self.user_attendance.user_trips.count(), 5)
+        self.assertEquals(models.Trip.objects.get(pk=101).distance, 28.89)
+        new_trip = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=1), direction='trip_from')
+        self.assertEquals(new_trip.commute_mode, 'bicycle')
+        self.assertEquals(new_trip.distance, 2.34)
         denorm.flush()
         user_attendance = UserAttendance.objects.get(pk=1115)
-        self.assertEquals(user_attendance.trip_length_total, 30.89)
-        self.assertEquals(user_attendance.team.get_length(), 10.296666666666667)
+        self.assertEquals(user_attendance.trip_length_total, 31.23)
+        self.assertEquals(user_attendance.team.get_length(), 10.41)
 
     def test_dpnk_views_create_gpx_file(self):
-        date = datetime.date(year=2010, month=12, day=1)
+        date = datetime.date(year=2010, month=11, day=1)
         direction = "trip_from"
-        trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=date, direction=direction)
         address = reverse('gpx_file_create', kwargs={"date": date, "direction": direction})
         with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
@@ -1338,11 +1341,27 @@ class ViewsTestsRegistered(DenormMixin, TestCase):
             response = self.client.post(address, post_data)
             self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         gpxfile = models.GpxFile.objects.get(trip_date=date, direction=direction, user_attendance=self.user_attendance)
-        trip = models.Trip.objects.get(pk=trip.pk)
-        self.assertEquals(trip.distance, 13.32)
+        self.assertEquals(gpxfile.trip.distance, 13.32)
+
+    def test_dpnk_views_create_gpx_file_inactive_day(self):
+        date = datetime.date(year=2010, month=12, day=1)
+        direction = "trip_from"
+        address = reverse('gpx_file_create', kwargs={"date": date, "direction": direction})
+        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+            post_data = {
+                'file': gpxfile,
+                'direction': direction,
+                'trip_date': date,
+                'user_attendance': self.user_attendance.pk,
+                'submit': 'Odeslat',
+            }
+            response = self.client.post(address, post_data)
+            self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
+        gpxfile = models.GpxFile.objects.get(trip_date=date, direction=direction, user_attendance=self.user_attendance)
+        self.assertEquals(gpxfile.trip.distance, None)
 
 
-class TestTeams(DenormMixin, TestCase):
+class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users']
 
     def setUp(self):
@@ -1362,7 +1381,7 @@ class TestTeams(DenormMixin, TestCase):
         self.assertEqual(team.member_count, 4)
 
 
-class ResultsTests(DenormMixin, TestCase):
+class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'test_results_data']
 
     def setUp(self):
@@ -1376,7 +1395,7 @@ class ResultsTests(DenormMixin, TestCase):
         self.assertListEqual(list(query.all()), [team])
 
 
-class ModelTests(DenormMixin, TestCase):
+class ModelTests(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
@@ -1395,7 +1414,7 @@ class ModelTests(DenormMixin, TestCase):
         self.assertEquals(user_attendance.payment_type_string(), None)
 
 
-class DenormTests(DenormMixin, TestCase):
+class DenormTests(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def test_name_with_members(self):
@@ -1438,7 +1457,7 @@ class DenormTests(DenormMixin, TestCase):
         self.assertEquals(user_attendance.related_company_admin, company_admin)
 
 
-class RunChecksTestCase(TestCase):
+class RunChecksTestCase(ClearCacheMixin, TestCase):
     def test_checks(self):
         django.setup()
         from django.core import checks

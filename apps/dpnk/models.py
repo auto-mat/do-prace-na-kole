@@ -355,10 +355,10 @@ class Team(models.Model):
         return rides_count
 
     def get_frequency(self):
-        return results.get_team_frequency(self.members())
+        return results.get_team_frequency(self.members(), self.campaign.phase("competition"))
 
     def get_length(self):
-        return results.get_team_length(self)
+        return results.get_team_length(self, self.campaign.phase("competition"))
 
     @denormalized(models.TextField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
@@ -880,15 +880,15 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return results.has_distance_competition(self)
 
     def get_rides_count(self):
-        return results.get_rides_count(self)
+        return results.get_rides_count(self, self.campaign.phase("competition"))
 
     @denormalized(models.IntegerField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
     def get_rides_count_denorm(self):
-        return results.get_rides_count(self)
+        return results.get_rides_count(self, self.campaign.phase("competition"))
 
     def get_frequency(self, day=None):
-        return results.get_userprofile_frequency(self, day)
+        return results.get_userprofile_frequency(self, self.campaign.phase("competition"), day)
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
@@ -904,10 +904,10 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
     def trip_length_total(self):
-        return results.get_userprofile_length(self)
+        return results.get_userprofile_length(self, self.campaign.phase("competition"))
 
     def get_nonreduced_length(self):
-        return results.get_userprofile_nonreduced_length(self)
+        return results.get_userprofile_nonreduced_length(self, self.campaign.phase("competition"))
 
     def get_distance(self, round_digits=2, request=None):
         if self.track:
@@ -1009,11 +1009,11 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
         return util.get_emissions(self.trip_length_total)
 
     def get_active_trips(self):
-        days = util.days_active(self.campaign)
+        days = util.days_active(self.campaign.phase("competition"))
         return self.get_trips(days)
 
     def get_all_trips(self):
-        days = util.days(self.campaign)
+        days = util.days(self.campaign.phase("competition"))
         return self.get_trips(days)
 
     def get_trips(self, days):
@@ -2693,15 +2693,16 @@ def update_mailing_userprofile(sender, instance, created, **kwargs):
 
 @receiver(pre_save, sender=GpxFile)
 def set_trip(sender, instance, *args, **kwargs):
-    trip, created = Trip.objects.get_or_create(
-        user_attendance=instance.user_attendance,
-        date=instance.trip_date,
-        direction=instance.direction,
-        defaults={
-            'commute_mode': 'bicycle',
-        }
-    )
-    instance.trip = trip
+    if not instance.trip:
+        trip, created = Trip.objects.get_or_create(
+            user_attendance=instance.user_attendance,
+            date=instance.trip_date,
+            direction=instance.direction,
+            defaults={
+                'commute_mode': 'bicycle' if util.day_active(instance.trip_date) else 'by_other_vehicle',
+            }
+        )
+        instance.trip = trip
 
 
 def set_track(sender, instance, changed_fields=None, **kwargs):

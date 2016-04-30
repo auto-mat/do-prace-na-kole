@@ -22,12 +22,17 @@ from django.test import TestCase, RequestFactory
 from dpnk import actions, models, util
 from django.contrib import admin
 from django.contrib.messages.storage.fallback import FallbackStorage
+from django.test.utils import override_settings
 from django.core.management import call_command
 from django.contrib.messages.api import get_messages
 from unittest.mock import MagicMock
 import createsend
+import datetime
 
 
+@override_settings(
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class TestActions(TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'vouchers', 'trips', 'test_results_data', 'invoices']
 
@@ -60,6 +65,8 @@ class TestActions(TestCase):
     def test_update_mailing(self):
         ret_mailing_id = "344ass"
         createsend.Subscriber.add = MagicMock(return_value=ret_mailing_id)
+        createsend.Subscriber.get = MagicMock()
+        createsend.Subscriber.update = MagicMock()
         queryset = models.UserAttendance.objects.all()
         actions.update_mailing(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
@@ -93,7 +100,7 @@ class TestActions(TestCase):
         queryset = models.UserAttendance.objects.all()
         actions.show_distance(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(str(message), "Ujetá vzdálenost: 5.3 Km v 2 jízdách")
+        self.assertEquals(str(message), "Ujetá vzdálenost: 167.2 Km v 3 jízdách")
 
     def test_recalculate_results(self):
         util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[2, 3]))
@@ -139,7 +146,7 @@ class TestActions(TestCase):
         queryset = models.Trip.objects.all()
         actions.show_distance_trips(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(message, "Ujetá vzdálenost: 5.3 Km v 2 jízdách")
+        self.assertEquals(message, "Ujetá vzdálenost: 167.2 Km v 4 jízdách")
 
     def test_update_mailing_coordinator(self):
         queryset = models.CompanyAdmin.objects.all()

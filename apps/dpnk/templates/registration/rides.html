@@ -18,7 +18,7 @@
 <br>
 
 {% if formset.0 %}
-<table id="rides" class="table table-hover table-condensed">
+<table id="rides" class="table table-condensed">
 <thead>
    <tr class="info">
       <th scope="col">{% trans "Do práce" %}</th>
@@ -35,6 +35,7 @@
       <tr>
    {% endif %}
       <td>
+         {{ trip_form.instance.id }}
          {% crispy trip_form %}
          {% if trip_form.instance.has_gpxfile %}
             <a class="pin" href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
@@ -63,6 +64,8 @@
       {% trans "Ujetá započítaná vzdálenost" %}: {{ user_attendance.trip_length_total }}&nbsp;km (<a href="{% url "rides_details" %}">{% trans "Podrobný přehled jízd" %}</a>)
       <br/>
       {% trans "Pravidelnost" %}: {{ user_attendance.get_frequency_percentage|intcomma }}&nbsp;%
+      <br/>
+      {% trans "Pravidelnost vašeho týmu" %}: {{ user_attendance.team.get_frequency|intcomma }}&nbsp;%
       <br/>
       {% trans "Ušetřené množství oxidu uhličitého" %}: {{ user_attendance.get_emissions.co2|intcomma }}&nbsp;g  (<a href="{% url 'emission_calculator' %}">{% trans "Emisní kalkulačka" %}</a>)
    </td>

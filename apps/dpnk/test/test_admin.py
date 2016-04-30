@@ -185,7 +185,7 @@ class LocalAdminTests(TestCase):
 
 
 class FilterTests(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'invoices']
+    fixtures = ['campaign', 'auth_user', 'users', 'invoices', 'trips']
 
     def setUp(self):
         self.factory = RequestFactory()
