@@ -29,7 +29,7 @@
    {% if forloop.counter0|divisibleby:2 %}
       <tr class="info">
          <th colspan="2" scope="row" class="date">
-            {{ trip_form.initial.date|naturalday:"D. j.n." }}<span>{{ trip_form.initial.date|naturalday:"Y" }}</span>
+            {{ trip_form.initial.date|naturalday:"D j. n. \<\s\p\a\n\>Y\<\/\s\p\a\n\>"|safe }}
          </th>
       </tr>
       <tr>
