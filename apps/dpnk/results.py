@@ -22,6 +22,7 @@ from .models import UserAttendance, Team, Company, Competition, City, Competitio
 from django.db.models import Sum, Q
 from . import util
 import threading
+import denorm
 
 
 def get_competitors_without_admission(competition):  # noqa
@@ -267,6 +268,8 @@ class RecalculateResultCompetitorThread(threading.Thread):
             user_attendance = UserAttendance.objects.get(pk=self.user_attendance_pk)
         except UserAttendance.DoesNotExist:
             return
+        util.rebuild_denorm_models([user_attendance.team])
+        denorm.flush()
         recalculate_result_competitor_nothread(user_attendance)
 
 

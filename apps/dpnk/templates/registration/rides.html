@@ -64,7 +64,7 @@
       <br/>
       {% trans "Pravidelnost" %}: {{ user_attendance.get_frequency_percentage|floatformat|intcomma }}&nbsp;%
       <br/>
-      {% trans "Pravidelnost vašeho týmu" %}: {{ user_attendance.team.get_frequency|floatformat|intcomma }}&nbsp;% (<a href="{% url "other_team_members_results" %}">{% trans "Přehled o vašem týmu" %}</a>)
+      {% trans "Pravidelnost vašeho týmu" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;% (<a href="{% url "other_team_members_results" %}">{% trans "Přehled o vašem týmu" %}</a>)
       <br/>
       {% trans "Ušetřené množství oxidu uhličitého" %}: {{ user_attendance.get_emissions.co2|intcomma }}&nbsp;g  (<a href="{% url 'emission_calculator' %}">{% trans "Emisní kalkulačka" %}</a>)
    </td>

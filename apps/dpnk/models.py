@@ -357,6 +357,14 @@ class Team(models.Model):
     def get_frequency(self):
         return results.get_team_frequency(self.members(), self.campaign.phase("competition"))
 
+    @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
+    @depend_on_related('UserAttendance', skip={'created', 'updated'})
+    def frequency(self):
+        return self.get_frequency()
+
+    def get_frequency_percentage(self):
+        return (self.frequency or 0) * 100
+
     def get_length(self):
         return results.get_team_length(self, self.campaign.phase("competition"))
 
