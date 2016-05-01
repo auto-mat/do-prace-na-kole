@@ -696,6 +696,12 @@ class TripForm(forms.ModelForm):
     def clean_date(self):
         return self.initial['date']
 
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data['commute_mode'] == 'by_foot' and cleaned_data['distance'] < 1:
+            raise forms.ValidationError(_("Pěší cesta musí mít minimálně jeden kilometr"))
+        return cleaned_data
+
     def __init__(self, *args, **kwargs):
         ret = super().__init__(*args, **kwargs)
         self.helper = FormHelper()
