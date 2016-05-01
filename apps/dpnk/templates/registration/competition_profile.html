@@ -15,7 +15,7 @@
 
 <div id="rides-form-container">{% include "registration/rides.html" %}</div>
 
-{% cache 3600 user_attendance %}
+{% cache 3600 profile user_attendance.team.subsidiary.city.slug %}
 {% comment %}
 <div>
    <h3>{% trans "Vouchery" %}</h3>
