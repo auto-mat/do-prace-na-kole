@@ -678,7 +678,7 @@ class TripForm(forms.ModelForm):
     )
     distance = forms.FloatField(
         label=_("Vzdálenost"),
-        required=True,
+        required=False,
     )
 
     def get_direction(self):
@@ -698,8 +698,13 @@ class TripForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        if cleaned_data['commute_mode'] in ('bicycle', 'by_foot') and not cleaned_data['distance']:
+            raise forms.ValidationError(_("Musíte vyplnit vzdálenost"))
+
         if cleaned_data['commute_mode'] == 'by_foot' and cleaned_data['distance'] < 1:
             raise forms.ValidationError(_("Pěší cesta musí mít minimálně jeden kilometr"))
+
         return cleaned_data
 
     def __init__(self, *args, **kwargs):
