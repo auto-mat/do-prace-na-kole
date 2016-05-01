@@ -9,6 +9,7 @@
    <tr>
       <th>{% trans "Jmé&shy;no" %}</th>
       <th class="fixed_width_column">{% trans "Po&shy;čet jízd" %}</th>
+      <th class="fixed_width_column">{% trans "Počet zapo&shy;čí&shy;ta&shy;ných cest do/z práce" %}</th>
       <th class="fixed_width_column">{% trans "Pro&shy;cen&shy;to jízd" %}</th>
       <th class="fixed_width_column">{% trans "U&shy;je&shy;tá vzdá&shy;le&shy;nost" %}</th>
       <th class="fixed_width_column">{% trans "Na&shy;sta&shy;ve&shy;ná vzdá&shy;le&shy;nost ce&shy;sty" %}</th>
@@ -19,11 +20,14 @@
          >
       <td>{{ user_attendance.name }}</td>
       {% if not user_attendance.entered_competition %}
-         <td colspan="4">{% trans "Ještě nezačal/a soutěžit" %}</td>
+         <td colspan="5">{% trans "Ještě nezačal/a soutěžit" %}</td>
       {% else %}
 
       <td>
          {{ user_attendance.get_rides_count_denorm }}
+      </td>
+      <td>
+         {{ user_attendance.get_working_rides_base_count }}
       </td>
       <td>
          {{ user_attendance.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%
@@ -38,4 +42,5 @@
       </tr>
    {% endfor %}
 </table>
+{% trans "Pravidelnost celkem" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;%
 {% endblock %}

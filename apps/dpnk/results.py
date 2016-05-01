@@ -186,6 +186,12 @@ def get_rides_count(user_attendance, competition, day=None):
     return Trip.objects.filter(user_attendance=user_attendance, commute_mode__in=('bicycle', 'by_foot'), date__in=days).count()
 
 
+def get_minimum_rides_base_proportional(user_attendance, competition=None, day=None):
+    days_count = util.days_count(competition, competition.date_to)
+    days_count_till_now = util.days_count(competition, day)
+    return int(user_attendance.campaign.minimum_rides_base * (days_count_till_now / days_count))
+
+
 def get_working_trips_count(user_attendance, competition=None, day=None):
     if not day:
         day = util.today()
@@ -194,7 +200,8 @@ def get_working_trips_count(user_attendance, competition=None, day=None):
     trips_in_non_working_day = Trip.objects.filter(user_attendance=user_attendance, commute_mode__in=('bicycle', 'by_foot', 'by_other_vehicle'), date__in=non_working_days).count()
     non_working_rides_in_working_day = Trip.objects.filter(user_attendance=user_attendance, commute_mode='no_work', date__in=working_days).count()
     working_days_count = len(util.working_days(competition))
-    return working_days_count * 2 + trips_in_non_working_day - non_working_rides_in_working_day
+    working_trips_count = working_days_count * 2 + trips_in_non_working_day - non_working_rides_in_working_day
+    return max(working_trips_count, get_minimum_rides_base_proportional(user_attendance, competition, day))
 
 
 def get_team_frequency(user_attendancies, competition=None, day=None):
@@ -202,13 +209,8 @@ def get_team_frequency(user_attendancies, competition=None, day=None):
     rides_count = 0
 
     for user_attendance in user_attendancies:
-        days_count = util.days_count(competition, competition.date_to)
-        days_count_till_now = util.days_count(competition, day)
-        minimum_rides_base_proportional = int(user_attendance.campaign.minimum_rides_base * (days_count_till_now / days_count))
-        working_trips_count += max(get_working_trips_count(user_attendance, competition, day), minimum_rides_base_proportional)
-        rides_count_user = get_rides_count(user_attendance, competition, day)
-
-        rides_count += rides_count_user
+        working_trips_count += get_working_trips_count(user_attendance, competition, day)
+        rides_count += get_rides_count(user_attendance, competition, day)
     if working_trips_count == 0:
         return 0
     return float(rides_count) / working_trips_count

@@ -917,6 +917,9 @@ Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby li
     def get_nonreduced_length(self):
         return results.get_userprofile_nonreduced_length(self, self.campaign.phase("competition"))
 
+    def get_working_rides_base_count(self):
+        return results.get_working_trips_count(self, self.campaign.phase("competition"))
+
     def get_distance(self, round_digits=2, request=None):
         if self.track:
             if self.length:
