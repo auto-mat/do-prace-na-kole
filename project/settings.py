@@ -186,6 +186,8 @@ INSTALLED_APPS = (
     'redactor',
     'ajax_select',
     'django_nose',
+    'djcelery',
+    'kombu.transport.django',
     'raven.contrib.django.raven_compat',
     # 'cachalot',
 )
