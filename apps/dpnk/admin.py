@@ -489,7 +489,7 @@ class UserAttendanceResource(resources.ModelResource):
     def dehydrate_payment_date(self, obj):
         payment = obj.representative_payment
         if payment:
-            return payment.realized
+            return payment.realized or payment.created
 
     payment_status = fields.Field()
 
