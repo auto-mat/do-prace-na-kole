@@ -67,3 +67,4 @@ django-extra-views
 freezegun
 raven
 django_coverage_plugin
+django-celery
