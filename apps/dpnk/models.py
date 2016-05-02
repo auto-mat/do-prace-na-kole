@@ -1904,7 +1904,7 @@ class Trip(models.Model):
         ('bicycle', _("Kolo")),
         ('by_foot', _("Chůze/běh")),
         ('by_other_vehicle', _("Jinak")),
-        ('no_work', _("Nijak/vůbec")),
+        ('no_work', _("Žádná cesta")),
     ]
 
     class Meta:
