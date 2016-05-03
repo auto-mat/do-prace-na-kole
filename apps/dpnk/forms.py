@@ -702,8 +702,8 @@ class TripForm(forms.ModelForm):
         if cleaned_data['commute_mode'] in ('bicycle', 'by_foot') and not cleaned_data['distance']:
             raise forms.ValidationError(_("Musíte vyplnit vzdálenost"))
 
-        if cleaned_data['commute_mode'] == 'by_foot' and cleaned_data['distance'] < 1:
-            raise forms.ValidationError(_("Pěší cesta musí mít minimálně jeden kilometr"))
+        if cleaned_data['commute_mode'] == 'by_foot' and cleaned_data['distance'] < 1.5:
+            raise forms.ValidationError(_("Pěší cesta musí mít minimálně jeden a půl kilometru"))
 
         return cleaned_data
 
