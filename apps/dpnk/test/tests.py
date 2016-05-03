@@ -1308,7 +1308,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             'form-0-date': datetime.date(year=2010, month=11, day=1),
             'form-1-id': '',
             'form-1-commute_mode': 'bicycle',
-            'form-1-distance': '2.34',
+            'form-1-distance': '2,34',
             'form-1-user_attendance': 1115,
             'form-1-direction': 'trip_from',
             'form-1-date': datetime.date(year=2010, month=11, day=1),

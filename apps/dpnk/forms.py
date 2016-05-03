@@ -27,7 +27,7 @@ from django.utils import formats
 from . import models, util
 from django.db.models import Q
 from dpnk.widgets import SelectChainedOrCreate, SelectOrCreateAutoComplete
-from dpnk.fields import ShowPointsMultipleModelChoiceField
+from dpnk.fields import ShowPointsMultipleModelChoiceField, CommaFloatField
 from django.forms.widgets import HiddenInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -676,7 +676,7 @@ class TripForm(forms.ModelForm):
         choices=models.Trip.MODES,
         widget=forms.RadioSelect(),
     )
-    distance = forms.FloatField(
+    distance = CommaFloatField(
         label=_("Vzdálenost"),
         required=False,
     )

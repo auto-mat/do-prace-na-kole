@@ -28,3 +28,9 @@ class ShowPointsMultipleModelChoiceField(forms.ModelMultipleChoiceField):
             return u"%s (%s b)" % (obj.text, obj.points)
         else:
             return u"%s" % (obj.text)
+
+
+class CommaFloatField(forms.FloatField):
+    def to_python(self, value):
+        value = value.replace(",", ".")
+        return super().to_python(value)
