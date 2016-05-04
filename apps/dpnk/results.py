@@ -269,7 +269,7 @@ def recalculate_result_competitor_nothread(user_attendance):
 
 
 def recalculate_result_competitor(user_attendance):
-    from apps.dpnk.celery import recalculate_competitor_task
+    from .tasks import recalculate_competitor_task
     recalculate_competitor_task.apply_async([user_attendance.pk])
 
 
