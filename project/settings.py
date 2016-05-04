@@ -194,7 +194,7 @@ INSTALLED_APPS = (
 
 BASE_WP_URL = "http://www.dopracenakole.cz"
 
-ECC_PROVIDER_CODE = "????"
+ECC_PROVIDER_CODE = "DK"
 ECC_URL_BASE = "http://srv.cycling365.eu/services"
 
 TEMPLATE_VISIBLE_SETTINGS = (
