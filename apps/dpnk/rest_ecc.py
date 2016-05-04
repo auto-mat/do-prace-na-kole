@@ -84,11 +84,8 @@ def login_or_register(user_attendance):
 
 
 def track_json(gpx_file, token):
-    if gpx_file.track:
-        points = list(gpx_file.track[0])  # TODO: take the longest track
-    else:
-        points = None
 
+    points = []
     info_points = []
 
     if gpx_file.direction == 'trip_to':
@@ -98,14 +95,16 @@ def track_json(gpx_file, token):
         start_time = datetime.datetime.combine(gpx_file.trip_date, datetime.time(hour=18, minute=0))
         end_time = datetime.datetime.combine(gpx_file.trip_date, datetime.time(hour=18, minute=0))
 
-    if points:
-        for i in range(0, len(points)):
-            info_points.append({
-                "time": start_time.timestamp(),
-                "altitude": "0",
-                "speed": "0",
-                "resumed": "0",
-            })
+    if gpx_file.track:
+        for segment in gpx_file.track:
+            points += list(segment)
+            for i in range(0, len(segment)):
+                info_points.append({
+                    "time": start_time.timestamp(),
+                    "altitude": "0",
+                    "speed": "0",
+                    "resumed": "1" if i == 0 else "0",
+                })
 
     value = {
         "source": "API-%s" % settings.ECC_PROVIDER_CODE,
