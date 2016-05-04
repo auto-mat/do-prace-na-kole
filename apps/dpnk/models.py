@@ -1183,6 +1183,22 @@ class UserProfile(models.Model):
         verbose_name=_(u"Souhlas se zpracováním osobních údajů."),
         blank=False,
         default=False)
+    ecc_email = models.CharField(
+        verbose_name=_("Heslo v ECC"),
+        max_length=128,
+        db_index=True,
+        default="%s@dopracenakole.cz" % User.objects.make_random_password(),
+        null=True,
+        blank=True
+    )
+    ecc_password = models.CharField(
+        verbose_name=_("Email v ECC"),
+        max_length=128,
+        db_index=True,
+        default=User.objects.make_random_password(),
+        null=True,
+        blank=True
+    )
 
     @denormalized(models.IntegerField, default=0)
     @depend_on_related('CompanyAdmin')
@@ -2630,6 +2646,11 @@ class GpxFile(models.Model):
         verbose_name=_(u"Datum poslední změny"),
         auto_now=True,
         null=True,
+    )
+    ecc_last_upload = models.DateTimeField(
+        verbose_name=_(u"Datum posledního nahrátí do ECC"),
+        null=True,
+        blank=True,
     )
 
     objects = models.GeoManager()

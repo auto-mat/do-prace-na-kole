@@ -411,6 +411,10 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     )
     filter_horizontal = ('administrated_cities',)
     search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
+    readonly_fields = (
+        'ecc_password',
+        'ecc_email',
+    )
     actions = (actions.remove_mailing_id,)
 
 
@@ -568,7 +572,12 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         'team__subsidiary__address_district',
         'team__subsidiary__company__name',
     )
-    readonly_fields = ('user_link', 'userprofile__user__email', 'created', 'updated')
+    readonly_fields = (
+        'user_link',
+        'userprofile__user__email',
+        'created',
+        'updated',
+    )
     actions = (
         actions.update_mailing,
         actions.approve_am_payment,
@@ -577,6 +586,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         actions.assign_vouchers,
         actions.add_trips,
         actions.touch_items,
+        actions.send_ecc_user_attendance,
     )
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
@@ -1109,15 +1119,30 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
 
 class GpxFileAdmin(LeafletGeoAdmin):
     model = models.GpxFile
-    list_display = ('id', 'trip_date', 'file', 'direction', 'trip', 'user_attendance', 'from_application', 'created', 'author', 'updated_by')
+    list_display = (
+        'id',
+        'trip_date',
+        'file',
+        'direction',
+        'trip',
+        'user_attendance',
+        'from_application',
+        'created',
+        'author',
+        'updated_by',
+        'created',
+        'updated',
+        'ecc_last_upload'
+    )
     search_fields = (
         'user_attendance__userprofile__nickname',
         'user_attendance__userprofile__user__first_name',
         'user_attendance__userprofile__user__last_name',
         'user_attendance__userprofile__user__username')
     raw_id_fields = ('user_attendance', 'trip')
-    readonly_fields = ('author', 'updated_by')
+    readonly_fields = ('author', 'updated_by', 'updated', 'ecc_last_upload')
     list_filter = ('from_application', 'user_attendance__team__subsidiary__city')
+    actions = (actions.send_ecc_gpxfile, )
 
 
 class VoucherAdmin(ImportMixin, admin.ModelAdmin):

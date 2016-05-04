@@ -18,9 +18,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.utils.translation import ugettext_lazy as _
-from . import results, views, models, mailing, util
+from . import results, views, models, mailing, util, rest_ecc
 from django.contrib import messages
+from django.utils.translation import ugettext_lazy as _
 import datetime
 
 
@@ -155,3 +155,20 @@ def mark_invoices_paid(modeladmin, request, queryset):
         invoice.save()
     modeladmin.message_user(request, _("%s faktur označeno jako 'zaplaceno'") % queryset.count())
 mark_invoices_paid.short_description = _("Označit faktury jako zaplacené")
+
+
+def send_ecc_gpxfile(modeladmin, request, queryset):
+    uploaded_tracks, skipped_tracks = rest_ecc.gpx_files_post(queryset.all())
+    modeladmin.message_user(request, _("%s tras úspěšne synchronizováno s ECC %s tras nahráno, %s tras přeskočeno") % (queryset.count(), uploaded_tracks, skipped_tracks))
+send_ecc_gpxfile.short_description = _("Synchronizovat trasy do ECC")
+
+
+def send_ecc_user_attendance(modeladmin, request, queryset):
+    uploaded_tracks = 0
+    skipped_tracks = 0
+    for user_attendance in queryset.all():
+        uploaded, skipped = rest_ecc.user_attendance_post(user_attendance)
+        uploaded_tracks += uploaded
+        skipped_tracks += skipped
+    modeladmin.message_user(request, _("%s uživatelů úspěšně synchronizováno s ECC. %s tras nahráno, %s tras přeskočeno") % (queryset.count(), uploaded_tracks, skipped_tracks))
+send_ecc_user_attendance.short_description = _("Synchronizovat uživatele do ECC")
