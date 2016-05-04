@@ -21,6 +21,8 @@
 from .models import UserAttendance, Team, Company, Competition, City, CompetitionResult, Trip, Choice, Answer
 from django.db.models import Sum, Q
 from . import util
+import threading
+import denorm
 
 
 def get_competitors_without_admission(competition):  # noqa
@@ -268,9 +270,28 @@ def recalculate_result_competitor_nothread(user_attendance):
             recalculate_result(competition, user_attendance.company())
 
 
+class RecalculateResultCompetitorThread(threading.Thread):
+    def __init__(self, user_attendance, **kwargs):
+        self.user_attendance_pk = user_attendance.pk
+        super(RecalculateResultCompetitorThread, self).__init__(**kwargs)
+
+    def run(self):
+        try:
+            user_attendance = UserAttendance.objects.get(pk=self.user_attendance_pk)
+        except UserAttendance.DoesNotExist:
+            return
+        util.rebuild_denorm_models([user_attendance.team])
+        denorm.flush()
+        recalculate_result_competitor_nothread(user_attendance)
+
+
 def recalculate_result_competitor(user_attendance):
-    from .tasks import recalculate_competitor_task
-    recalculate_competitor_task.apply_async([user_attendance.pk])
+    RecalculateResultCompetitorThread(user_attendance).start()
+
+
+# def recalculate_result_competitor(user_attendance):
+#     from .tasks import recalculate_competitor_task
+#     recalculate_competitor_task.apply_async([user_attendance.pk])
 
 
 def recalculate_results_team(team):
