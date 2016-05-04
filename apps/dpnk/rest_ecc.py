@@ -135,6 +135,9 @@ def track_post(gpx_file, token=None, force=False):
     if not force and gpx_file.ecc_last_upload:  # TODO: reload the track if it changed since then
         return False
 
+    if gpx_file.trip and gpx_file.trip.commute_mode != 'bicycle':
+        return False
+
     if not token:
         token = login_or_register(gpx_file.user_attendance)
     data = track_json(gpx_file, token)
