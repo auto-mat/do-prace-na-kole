@@ -97,7 +97,7 @@ class ECCTests(TestCase):
                 "totaldistance": None
             },
             "trackStart": 1288602000.0,
-            "trackData_points": None,
+            "trackData_points": [],
             "trackData_info": [],
             "source": "API-????",
             "token": "token",
