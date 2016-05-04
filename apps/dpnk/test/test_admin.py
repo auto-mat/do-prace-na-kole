@@ -36,6 +36,7 @@ import settings
 )
 class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
     fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
+    exclude_apps = ['djcelery']
 
     def setUp(self):
         super().setUp()
