@@ -400,7 +400,7 @@ class UserProfileAdminInline(NestedStackedInline):
 
 
 class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
-    list_display = ('user', '__str__', 'sex', 'telephone', 'language', 'mailing_id', 'note')
+    list_display = ('user', '__str__', 'sex', 'telephone', 'language', 'mailing_id', 'note', 'ecc_password', 'ecc_email')
     inlines = (CompanyAdminInline,)
     list_filter = (
         campaign_filter_generator('userattendance_set__campaign'),

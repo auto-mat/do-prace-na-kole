@@ -1187,17 +1187,18 @@ class UserProfile(models.Model):
         verbose_name=_("Heslo v ECC"),
         max_length=128,
         db_index=True,
-        default="%s@dopracenakole.cz" % User.objects.make_random_password(),
-        null=True,
-        blank=True
+        default=None,
+        unique=True,
+        null=False,
+        blank=False
     )
     ecc_password = models.CharField(
         verbose_name=_("Email v ECC"),
         max_length=128,
         db_index=True,
-        default=User.objects.make_random_password(),
-        null=True,
-        blank=True
+        default=None,
+        null=False,
+        blank=False
     )
 
     @denormalized(models.IntegerField, default=0)
@@ -1251,6 +1252,10 @@ class UserProfile(models.Model):
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
             logger.error(u"Mailing id %s is already used" % self.mailing_id)
+
+        if self.pk is None:
+            self.ecc_password = User.objects.make_random_password()
+            self.ecc_email = "%s@dopracenakole.cz" % User.objects.make_random_password()
         super(UserProfile, self).save(force_insert, force_update, *args, **kwargs)
 
 
