@@ -225,12 +225,7 @@ def setup():
     deploy()
 
 
-def deploy():
-    """
-    Deploy the latest version of the site to the servers, install any
-    required third party modules, install the virtual host and
-    then restart the webserver
-    """
+def install_new_version():
     require('hosts', provided_by=[local])
     require('path')
     api.local('test -e fabfile.py')
@@ -245,6 +240,15 @@ def deploy():
     denorm()
     locale()
     test()
+
+
+def deploy():
+    """
+    Deploy the latest version of the site to the servers, install any
+    required third party modules, install the virtual host and
+    then restart the webserver
+    """
+    install_new_version()
     symlink_current_release()
     restart_webserver()
 
@@ -357,7 +361,10 @@ def symlink_current_release():
 def migrate():
     "Update the database"
     dbbackup()
+    install_new_version()
     run('cd %(path)s/releases/current/;  env/bin/python manage.py migrate' % env)
+    symlink_current_release()
+    restart_webserver()
 
 
 def dbbackup():
