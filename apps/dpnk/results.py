@@ -187,8 +187,9 @@ def get_rides_count(user_attendance, competition, day=None):
 
 
 def get_minimum_rides_base_proportional(user_attendance, competition=None, day=None):
-    days_count = util.days_count(competition, competition.date_to)
-    days_count_till_now = util.days_count(competition, day)
+    phase = user_attendance.campaign.phase("competition")
+    days_count = util.days_count(phase, phase.date_to)
+    days_count_till_now = util.days_count(phase, day)
     return int(user_attendance.campaign.minimum_rides_base * (days_count_till_now / days_count))
 
 

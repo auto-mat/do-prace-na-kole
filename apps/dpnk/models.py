@@ -354,6 +354,12 @@ class Team(models.Model):
             rides_count += member.get_rides_count()
         return rides_count
 
+    def get_working_trips_count(self):
+        trip_count = 0
+        for member in self.members():
+            trip_count += results.get_working_trips_count(member, self.campaign.phase("competition"))
+        return trip_count
+
     def get_frequency(self):
         return results.get_team_frequency(self.members(), self.campaign.phase("competition"))
 

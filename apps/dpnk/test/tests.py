@@ -1382,7 +1382,7 @@ class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
 
 
 class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data']
+    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'trips']
 
     def setUp(self):
         super().setUp()
@@ -1393,6 +1393,49 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         team = Team.objects.get(id=1)
         query = results.get_competitors(Competition.objects.get(id=0))
         self.assertListEqual(list(query.all()), [team])
+
+    def test_get_userprofile_length(self):
+        user_attendance = UserAttendance.objects.get(pk=1115)
+        competition = Competition.objects.get(id=5)
+        result = results.get_userprofile_length(user_attendance, competition)
+        self.assertEquals(result, 5.0)
+
+        result = user_attendance.trip_length_total
+        self.assertEquals(result, 5.0)
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    )
+    def test_get_userprofile_frequency(self):
+        user_attendance = UserAttendance.objects.get(pk=1115)
+        competition = Competition.objects.get(id=3)
+
+        result = user_attendance.get_rides_count_denorm
+        self.assertEquals(result, 1)
+
+        result = user_attendance.get_working_rides_base_count()
+        self.assertEquals(result, 31)
+
+        result = user_attendance.frequency
+        self.assertEquals(result, 0.0222222222222222)
+
+        result = user_attendance.team.frequency
+        self.assertEquals(result, 0.0075187969924812)
+
+        result = user_attendance.team.get_rides_count_denorm
+        self.assertEquals(result, 1)
+
+        result = user_attendance.team.get_working_trips_count()
+        self.assertEquals(result, 91)
+
+        result = results.get_working_trips_count(user_attendance, competition)
+        self.assertEquals(result, 23)
+
+        result = results.get_userprofile_frequency(user_attendance, competition)
+        self.assertEquals(result, 0.043478260869565216)
+
+        result = results.get_team_frequency(user_attendance.team.members(), competition)
+        self.assertEquals(result, 0.014925373134328358)
 
 
 class ModelTests(DenormMixin, ClearCacheMixin, TestCase):
