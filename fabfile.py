@@ -362,7 +362,7 @@ def migrate():
     "Update the database"
     dbbackup()
     install_new_version()
-    run('cd %(path)s/releases/current/;  env/bin/python manage.py migrate' % env)
+    run('cd %(path)s/releases/%(release)s;  env/bin/python manage.py migrate' % env)
     symlink_current_release()
     restart_webserver()
 
