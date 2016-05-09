@@ -1242,7 +1242,7 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
 
 @override_settings(
     SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=1),
+    FAKE_DATE=datetime.date(year=2010, month=11, day=2),
 )
 class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
@@ -1295,32 +1295,64 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'form-1-commute_mode')
         self.assertEquals(self.user_attendance.user_trips.count(), 4)
         post_data = {
-            'form-TOTAL_FORMS': '2',
-            'form-INITIAL_FORMS': '1',
+            'form-TOTAL_FORMS': '4',
+            'form-INITIAL_FORMS': '2',
             'form-MIN_NUM_FORMS': '0',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-id': 101,
             'form-0-commute_mode': 'by_foot',
             'form-0-distance': '28.89',
-            'form-0-user_attendance': 12,
             'form-0-direction': 'trip_to',
             'form-0-user_attendance': 1115,
-            'form-0-date': datetime.date(year=2010, month=11, day=1),
-            'form-1-id': '',
-            'form-1-commute_mode': 'bicycle',
-            'form-1-distance': '2,34',
-            'form-1-user_attendance': 1115,
+            'form-0-date': '2010-11-01',
+            'initial-form-0-date': '2010-11-01',
+            'form-2-id': '',
+            'form-2-commute_mode': 'bicycle',
+            'form-2-distance': '2,34',
+            'form-2-direction': 'trip_from',
+            'form-2-user_attendance': 1115,
+            'form-2-date': '2010-11-01',
+            'initial-form-2-date': '2010-11-01',
+            'form-3-id': '',
+            'form-3-commute_mode': 'no_work',
+            'form-3-distance': '',
+            'form-3-direction': 'trip_to',
+            'form-3-user_attendance': 1115,
+            'form-3-date': '2010-11-02',
+            'initial-form-3-date': '2010-11-02',
+            'form-1-id': 103,
+            'form-1-commute_mode': 'by_other_vehicle',
+            'form-1-distance': '3',
             'form-1-direction': 'trip_from',
-            'form-1-date': datetime.date(year=2010, month=11, day=1),
+            'form-1-user_attendance': 1116,
+            'form-1-date': '2010-11-04',
+            'initial-form-1-date': '2010-11-04',
             'submit': 'Odeslat',
         }
         response = self.client.post(reverse('profil'), post_data, follow=True)
         self.assertContains(response, 'form-1-commute_mode')
-        self.assertEquals(self.user_attendance.user_trips.count(), 5)
+        self.assertContains(response, 'Ujetá započítaná vzdálenost: 31,23&nbsp;km')
+        self.assertContains(response, 'Pravidelnost: 66,7&nbsp;%')
+        self.assertContains(response, 'Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g')
+        self.assertEquals(self.user_attendance.user_trips.count(), 6)
         self.assertEquals(models.Trip.objects.get(pk=101).distance, 28.89)
-        new_trip = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=1), direction='trip_from')
-        self.assertEquals(new_trip.commute_mode, 'bicycle')
-        self.assertEquals(new_trip.distance, 2.34)
+
+        trip1 = models.Trip.objects.get(pk=103)
+        self.assertEquals(trip1.distance, 3)
+        self.assertEquals(trip1.user_attendance.pk, 1115)
+        self.assertEquals(trip1.commute_mode, "by_other_vehicle")
+        self.assertEquals(trip1.date, datetime.date(year=2010, month=11, day=2))
+
+        trip2 = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=1), direction='trip_from')
+        self.assertEquals(trip2.commute_mode, 'bicycle')
+        self.assertEquals(trip2.user_attendance.pk, 1115)
+        self.assertEquals(trip2.distance, 2.34)
+
+        trip3 = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=2), direction='trip_to')
+        self.assertEquals(trip3.commute_mode, 'no_work')
+        self.assertEquals(trip3.user_attendance.pk, 1115)
+        self.assertEquals(trip3.distance, None)
+
         denorm.flush()
         user_attendance = UserAttendance.objects.get(pk=1115)
         self.assertEquals(user_attendance.trip_length_total, 31.23)
