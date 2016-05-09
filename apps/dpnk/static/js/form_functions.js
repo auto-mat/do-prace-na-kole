@@ -34,6 +34,8 @@ $(function(){
          return true;
       }
    });
+
+   $('form.dirty-check').areYouSure({'message':"Ve formuláři jsou neuložené změny."});
 });
 
 window.addEventListener("map:init", function (e) {

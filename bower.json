@@ -19,6 +19,7 @@
     "bootstrap": "~3.3.2",
     "jquery-form": "~3.46.0",
     "font-awesome": "~4.3.0",
-    "lightbox2": "~2.8.2"
+    "lightbox2": "~2.8.2",
+    "jquery.are-you-sure": "~1.9.0"
   }
 }
