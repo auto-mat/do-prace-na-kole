@@ -696,6 +696,10 @@ class TripForm(forms.ModelForm):
     def clean_date(self):
         return self.initial['date']
 
+    def __repr__(self):
+        # This is here for debugging reasons
+        return "<TripForm initial: %s>" % (self.initial)
+
     def clean(self):
         cleaned_data = super().clean()
 
