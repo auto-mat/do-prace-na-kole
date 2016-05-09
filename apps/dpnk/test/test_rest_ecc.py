@@ -51,6 +51,10 @@ class ECCTests(TestCase):
         gpx_file = GpxFile.objects.get(pk=2)
         self.assertEquals(gpx_file.ecc_last_upload, datetime.datetime(year=2010, month=11, day=20, hour=12, minute=0))
 
+    def test_ecc_user_attendance_post_no_track(self):
+        result = rest_ecc.user_attendance_post(UserAttendance.objects.get(pk=1116))
+        self.assertEquals(result, (0, 0))
+
     def test_track_post_not_changed(self):
         gpx_file = GpxFile.objects.get(pk=2)
         gpx_file.ecc_last_upload = datetime.datetime.now()

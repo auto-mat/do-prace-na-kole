@@ -164,6 +164,8 @@ def gpx_files_post(gpx_files, token=None):
 
 
 def user_attendance_post(user_attendance):
-    token = login_or_register(user_attendance)
     gpx_files = GpxFile.objects.filter(user_attendance=user_attendance)
-    return gpx_files_post(gpx_files, token)
+    if gpx_files:
+        token = login_or_register(user_attendance)
+        return gpx_files_post(gpx_files, token)
+    return 0, 0
