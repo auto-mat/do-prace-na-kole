@@ -239,7 +239,7 @@ def install_new_version():
     collectstatic()
     denorm()
     locale()
-    test()
+    # test()
 
 
 def deploy():
