@@ -1,17 +1,18 @@
-{% load crispy_forms_filters %}
 {% load l10n %}
 
+<div class="form-group">
+<label for="{{ field.id_for_label }}" class="control-label {{ label_class }}{% if field.field.required %} requiredField{% endif %}">
+  {{ field.label|safe }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
+</label>
 <fieldset class="controls btn-group"{% if flat_attrs %} {{ flat_attrs|safe }}{% endif %} role="group">
-    {% include 'bootstrap3/layout/field_errors_block.html' %}
 
     {% for choice in field.field.choices %}
-      {% if not inline_class %}<div class="radio btn">{% endif %}
-         <input type="radio"{% if choice.0|stringformat:"s" == field.value|stringformat:"s" %} checked="checked"{% endif %} name="{{ field.html_name }}" id="id_{{ field.html_name }}_{{ forloop.counter }}" value="{{ choice.0|unlocalize }}" {{ field.field.widget.attrs|flatatt }}>
-         <label class="{% if inline_class %}radio-{{ inline_class }}{% endif %}" for="id_{{ field.html_name }}_{{ forloop.counter }}">
+      <div class="radio btn">
+         <input type="radio"{% if choice.0|stringformat:"s" == field.value|stringformat:"s" %} checked="checked"{% endif %} name="{{ field.html_name }}" id="id_{{ field.html_name }}_{{ forloop.counter }}" value="{{ choice.0|unlocalize }}">
+         <label for="id_{{ field.html_name }}_{{ forloop.counter }}">
              {{ choice.1|unlocalize }}
          </label>
-      {% if not inline_class %}</div>{% endif %}
+      </div>
     {% endfor %}
-
-    {% include 'bootstrap3/layout/help_text.html' %}
 </fieldset>
+</div>
