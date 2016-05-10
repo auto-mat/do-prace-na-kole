@@ -7,13 +7,13 @@
 <script type="text/javascript">
    $(function () {
       $('input[value=bicycle]').parent().attr('title', '{% trans "Cesta byla vykonána na kole, koloběžce, skateboardu...\nDopravní prostředky se mohou kombinovat,\npočítá se však pouze ujetá vzdálenost." %}').attr('data-toggle', 'tooltip').attr('data-placement', 'top').tooltip();
-      $('input[value=by_foot]').parent().attr('title', '{% trans "Cesta byla vykonána pěšky, nebo během.\nPočítá se minimální vzdálenost 1 km." %}').attr('data-toggle', 'tooltip').attr('data-placement', 'top').tooltip();
+      $('input[value=by_foot]').parent().attr('title', '{% trans "Cesta byla vykonána pěšky, nebo během.\nPočítá se minimální vzdálenost 1,5 km." %}').attr('data-toggle', 'tooltip').attr('data-placement', 'top').tooltip();
       $('input[value=by_other_vehicle]').parent().attr('title', '{% trans "Cesta byla vykonána autem,\nhromadnou dopravou, taxíkem..." %}').attr('data-toggle', 'tooltip').attr('data-placement', 'top').tooltip();
       $('input[value=no_work]').parent().attr('title', '{% trans "Tato cesta nebyla vůbec vykonána.\nSoutěžící daný den tedy vůbec nepracoval,\nnebo cestu z jiného důvodu nevykonal." %}').attr('data-toggle', 'tooltip').attr('data-placement', 'top').tooltip();
       $('[data-toggle="tooltip"]').tooltip();
    })
 </script>
-<form id="rides-form" name="calendar" method="POST">
+<form id="rides-form" name="calendar" method="POST" class="dirty-check submit-once-form">
 {{ formset.management_form }}
 <br>
 

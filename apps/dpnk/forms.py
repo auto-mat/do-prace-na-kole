@@ -27,7 +27,7 @@ from django.utils import formats
 from . import models, util
 from django.db.models import Q
 from dpnk.widgets import SelectChainedOrCreate, SelectOrCreateAutoComplete
-from dpnk.fields import ShowPointsMultipleModelChoiceField
+from dpnk.fields import ShowPointsMultipleModelChoiceField, CommaFloatField
 from django.forms.widgets import HiddenInput
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -676,7 +676,7 @@ class TripForm(forms.ModelForm):
         choices=models.Trip.MODES,
         widget=forms.RadioSelect(),
     )
-    distance = forms.FloatField(
+    distance = CommaFloatField(
         label=_("Vzdálenost"),
         required=False,
     )
@@ -696,14 +696,18 @@ class TripForm(forms.ModelForm):
     def clean_date(self):
         return self.initial['date']
 
+    def __repr__(self):
+        # This is here for debugging reasons
+        return "<TripForm initial: %s>" % (self.initial)
+
     def clean(self):
         cleaned_data = super().clean()
 
         if cleaned_data['commute_mode'] in ('bicycle', 'by_foot') and not cleaned_data['distance']:
             raise forms.ValidationError(_("Musíte vyplnit vzdálenost"))
 
-        if cleaned_data['commute_mode'] == 'by_foot' and cleaned_data['distance'] < 1:
-            raise forms.ValidationError(_("Pěší cesta musí mít minimálně jeden kilometr"))
+        if cleaned_data['commute_mode'] == 'by_foot' and cleaned_data['distance'] < 1.5:
+            raise forms.ValidationError(_("Pěší cesta musí mít minimálně jeden a půl kilometru"))
 
         return cleaned_data
 

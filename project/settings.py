@@ -92,7 +92,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'denorm.middleware.DenormMiddleware',
+    # 'denorm.middleware.DenormMiddleware',
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',
@@ -193,6 +193,9 @@ INSTALLED_APPS = (
 )
 
 BASE_WP_URL = "http://www.dopracenakole.cz"
+
+ECC_PROVIDER_CODE = "DK"
+ECC_URL_BASE = "http://srv.cycling365.eu/services"
 
 TEMPLATE_VISIBLE_SETTINGS = (
     'PAYU_POS_AUTH_KEY',

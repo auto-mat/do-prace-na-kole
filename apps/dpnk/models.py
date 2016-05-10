@@ -354,6 +354,12 @@ class Team(models.Model):
             rides_count += member.get_rides_count()
         return rides_count
 
+    def get_working_trips_count(self):
+        trip_count = 0
+        for member in self.members():
+            trip_count += results.get_working_trips_count(member, self.campaign.phase("competition"))
+        return trip_count
+
     def get_frequency(self):
         return results.get_team_frequency(self.members(), self.campaign.phase("competition"))
 
@@ -1183,6 +1189,23 @@ class UserProfile(models.Model):
         verbose_name=_(u"Souhlas se zpracováním osobních údajů."),
         blank=False,
         default=False)
+    ecc_email = models.CharField(
+        verbose_name=_("Heslo v ECC"),
+        max_length=128,
+        db_index=True,
+        default=None,
+        unique=True,
+        null=False,
+        blank=False
+    )
+    ecc_password = models.CharField(
+        verbose_name=_("Email v ECC"),
+        max_length=128,
+        db_index=True,
+        default=None,
+        null=False,
+        blank=False
+    )
 
     @denormalized(models.IntegerField, default=0)
     @depend_on_related('CompanyAdmin')
@@ -1235,6 +1258,10 @@ class UserProfile(models.Model):
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
             logger.error(u"Mailing id %s is already used" % self.mailing_id)
+
+        if self.pk is None:
+            self.ecc_password = User.objects.make_random_password()
+            self.ecc_email = "%s@dopracenakole.cz" % User.objects.make_random_password()
         super(UserProfile, self).save(force_insert, force_update, *args, **kwargs)
 
 
@@ -2630,6 +2657,11 @@ class GpxFile(models.Model):
         verbose_name=_(u"Datum poslední změny"),
         auto_now=True,
         null=True,
+    )
+    ecc_last_upload = models.DateTimeField(
+        verbose_name=_(u"Datum posledního nahrátí do ECC"),
+        null=True,
+        blank=True,
     )
 
     objects = models.GeoManager()
