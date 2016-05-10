@@ -413,6 +413,11 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
     actions = (actions.remove_mailing_id,)
 
+    def lookup_allowed(self, key, value):
+        if key in ('userattendance_set__team__subsidiary__city__id__exact',):
+            return True
+        return super().lookup_allowed(key, value)
+
 
 class UserAdmin(RelatedFieldAdmin, ExportMixin, NestedModelAdmin, UserAdmin):
     inlines = (UserProfileAdminInline,)
@@ -1031,6 +1036,11 @@ class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsi
     raw_id_fields = ['userprofile']
     list_max_show_all = 100000
     actions = (actions.update_mailing_coordinator,)
+
+    def lookup_allowed(self, key, value):
+        if key in ('administrated_company__subsidiaries__city__id__exact',):
+            return True
+        return super().lookup_allowed(key, value)
 
 
 class InvoiceForm(forms.ModelForm):
