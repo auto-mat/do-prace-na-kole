@@ -754,7 +754,48 @@ class PaymentAdmin(RelatedFieldAdmin):
     form = models.PaymentForm
 
 
-class PackageTransactionAdmin(RelatedFieldAdmin):
+class PackageTransactionResource(resources.ModelResource):
+    class Meta:
+        model = models.PackageTransaction
+        fields = (
+            'id',
+            'user_attendance',
+            'user_attendance__name',
+            'created',
+            'realized',
+            'status',
+            'author__username',
+            'user_attendance__team__subsidiary__name',
+            'user_attendance__team__subsidiary__company__name',
+            't_shirt_size__name',
+            'delivery_batch',
+            'tracking_number_cnc',
+            'tnt_con_reference',
+        )
+
+    user_attendance__name = fields.Field()
+
+    def dehydrate_user_attendance__name(self, obj):
+        return obj.user_attendance.name()
+
+    user_attendance__team__subsidiary__name = fields.Field()
+
+    def dehydrate_user_attendance__team__subsidiary__name(self, obj):
+        return obj.user_attendance.team.subsidiary.name()
+
+    tracking_number_cnc = fields.Field()
+
+    def dehydrate_tracking_number_cnc(self, obj):
+        return obj.tracking_number_cnc()
+
+    tnt_con_reference = fields.Field()
+
+    def dehydrate_tnt_con_reference(self, obj):
+        return obj.tnt_con_reference()
+
+
+class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
+    resource_class = PackageTransactionResource
     list_display = (
         'id',
         'user_attendance',
