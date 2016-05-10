@@ -791,7 +791,8 @@ class PackageTransactionResource(resources.ModelResource):
     user_attendance__team__subsidiary__name = fields.Field()
 
     def dehydrate_user_attendance__team__subsidiary__name(self, obj):
-        return obj.user_attendance.team.subsidiary.name()
+        if obj.user_attendance.team:
+            return obj.user_attendance.team.subsidiary.name()
 
     tracking_number_cnc = fields.Field()
 
