@@ -716,7 +716,7 @@ class TripForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(
-            Field('commute_mode', template="bootstrap3/layout/field_rides.html"),
+            Field('commute_mode', template="bootstrap3/layout/radioselect_rides.html"),
             'distance',
             'direction',
             'user_attendance',
