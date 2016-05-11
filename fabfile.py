@@ -308,24 +308,24 @@ def upload_tar_from_git():
 
 def collectstatic():
     "Collect static files"
-    run('cd %(path)s/releases/current/;  env/bin/python manage.py collectstatic --noinput' % env)
+    run('cd %(path)s/releases/%(release)s/;  env/bin/python manage.py collectstatic --noinput' % env)
 
 
 def denorm_rebuild():
     "Rebuild denorm"
-    run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_rebuild' % env)
+    run('cd %(path)s/releases/%(release)s/;  env/bin/python manage.py denorm_rebuild' % env)
 
 
 def denorm():
     "Reinit denorm"
-    run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_drop' % env)
-    run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_init' % env)
+    run('cd %(path)s/releases/%(release)s/;  env/bin/python manage.py denorm_drop' % env)
+    run('cd %(path)s/releases/%(release)s/;  env/bin/python manage.py denorm_init' % env)
     # run('cd %(path)s/releases/current/;  env/bin/python manage.py denorm_daemon' % env)
 
 
 def locale():
     "Compile locale"
-    run('cd %(path)s/releases/current/apps/dpnk; django-admin compilemessages' % env)
+    run('cd %(path)s/releases/%(release)s/apps/dpnk; django-admin compilemessages' % env)
 
 
 def install_site():
