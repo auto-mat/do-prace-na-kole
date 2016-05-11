@@ -948,7 +948,9 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
         competition_slug = kwargs.get('competition_slug')
         limit = kwargs.get('limit')
 
-        if limit == '':
+        if limit:
+            limit = int(limit)
+        else:
             limit = None
 
         try:
@@ -972,6 +974,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
 
         context_data['competition'] = competition
         context_data['results'] = results[:limit]
+        context_data['limit'] = limit
         return context_data
 
 

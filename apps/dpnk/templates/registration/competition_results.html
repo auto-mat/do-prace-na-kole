@@ -2,12 +2,11 @@
 {% load i18n %}
 {% load dpnk_tags %}
 {% load humanize %}
-{% load dpnk_tags %}
 {% load cache %}
 
 {% block content %}
 {{ block.super }}
-{% cache 3600 competition_results competition %}
+{% cache 3600 competition_results competition limit %}
 <h4>{% trans "Výsledky v soutěži " %}{{ competition }}:</h4>
 <div></div>
 {% trans "Čas vygenerování výsledků:" %} {% now "SHORT_DATETIME_FORMAT" %}
@@ -63,17 +62,7 @@
 
 </tr>
 {% for result in results %}
-   <tr class="
-   {% if competition.competitor_type == 'single_user' and user_attendance == result.user_attendance %}
-         info
-   {% elif competition.competitor_type == 'liberos' and user_attendance == result.user_attendance %}
-         info
-   {% elif competition.competitor_type == 'team' and user_attendance.team == result.team %}
-         info
-   {% elif competition.competitor_type == 'company' and user_attendance.team.subsidiary.company == result.company %}
-         info
-   {% endif %}
-   " id="row-{{result.id}}">
+   <tr id="row-{{result.id}}">
 <td>
 {% ifchanged result.result %}
    {{ forloop.counter|ordinal }}
@@ -95,10 +84,10 @@
 <td>
    {% if competition.public_answers %}
       <a href="{% url 'questionnaire_answers_all' competition_slug=competition.slug %}#comp_res_{{result.pk}}">
-   {% endif %}
-   {{ result }}
-   {% if competition.public_answers %}
+         {{ result }}
       </a>
+   {% else %}
+      {{ result }}
    {% endif %}
 </td>
 {% if competition.competitor_type != 'team' %}
