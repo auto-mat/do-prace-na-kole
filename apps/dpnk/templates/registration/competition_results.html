@@ -3,9 +3,11 @@
 {% load dpnk_tags %}
 {% load humanize %}
 {% load dpnk_tags %}
+{% load cache %}
 
 {% block content %}
 {{ block.super }}
+{% cache 3600 competition_results competition %}
 <h4>{% trans "Výsledky v soutěži " %}{{ competition }}:</h4>
 <div></div>
 {% trans "Čas vygenerování výsledků:" %} {% now "SHORT_DATETIME_FORMAT" %}
@@ -113,4 +115,5 @@
 </tr>
 {% endfor %}
 </table>
+{% endcache %}
 {% endblock %}

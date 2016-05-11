@@ -940,7 +940,6 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
     template_name = 'registration/competition_results.html'
     title = _("Výsledky soutěže")
 
-    @method_decorator(cache_page(60))
     def dispatch(self, request, *args, **kwargs):
         return super(CompetitionResultsView, self).dispatch(request, *args, **kwargs)
 
