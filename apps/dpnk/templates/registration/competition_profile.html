@@ -15,7 +15,8 @@
 
 <div id="rides-form-container">{% include "registration/rides.html" %}</div>
 
-{% cache 3600 profile user_attendance.team.subsidiary.city.slug %}
+{% get_current_language as current_language_code %}
+{% cache 3600 profile user_attendance.team.subsidiary.city.slug current_language_code %}
 {% comment %}
 <div>
    <h3>{% trans "Vouchery" %}</h3>
