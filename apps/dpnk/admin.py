@@ -771,6 +771,7 @@ class PackageTransactionResource(resources.ModelResource):
             'id',
             'user_attendance',
             'user_attendance__name',
+            'user_attendance__userprofile__user__email',
             'created',
             'realized',
             'status',
