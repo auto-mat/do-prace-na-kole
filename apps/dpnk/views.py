@@ -1499,7 +1499,7 @@ def period_trips(campaign, day_from, day_to):
     return trips(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to))
 
 
-@cache_page(60)  # noqa
+@cache_page(60 * 60)  # noqa
 def statistics(
         request,
         variable,
@@ -1556,7 +1556,7 @@ def statistics(
         })
 
 
-@cache_page(60)
+@cache_page(60 * 60)
 def daily_chart(
         request,
         template='registration/daily-chart.html',):
