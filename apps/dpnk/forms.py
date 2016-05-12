@@ -26,7 +26,7 @@ import datetime
 from django.utils import formats
 from . import models, util
 from django.db.models import Q
-from dpnk.widgets import SelectChainedOrCreate, SelectOrCreateAutoComplete
+from dpnk.widgets import SelectChainedOrCreate, SelectOrCreateAutoComplete, CommuteModeSelect
 from dpnk.fields import ShowPointsMultipleModelChoiceField, CommaFloatField
 from django.forms.widgets import HiddenInput
 from django.utils.translation import ugettext_lazy as _
@@ -674,7 +674,7 @@ class TripForm(forms.ModelForm):
     commute_mode = forms.ChoiceField(
         label=_("Dopravní prostředek"),
         choices=models.Trip.MODES,
-        widget=forms.RadioSelect(),
+        widget=CommuteModeSelect(),
     )
     distance = CommaFloatField(
         label=_("Vzdálenost"),
@@ -713,16 +713,6 @@ class TripForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         ret = super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_tag = False
-        self.helper.layout = Layout(
-            Field('commute_mode', template="bootstrap3/layout/radioselect_rides.html"),
-            'distance',
-            'direction',
-            'user_attendance',
-            'date',
-            'id',
-        )
         return ret
 
     class Meta:

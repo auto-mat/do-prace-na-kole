@@ -189,6 +189,7 @@ INSTALLED_APPS = (
     'djcelery',
     'kombu.transport.django',
     'raven.contrib.django.raven_compat',
+    'bootstrap3',
     # 'cachalot',
 )
 

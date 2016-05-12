@@ -2,7 +2,7 @@
 {% load l10n %}
 {% load dpnk_tags %}
 {% load humanize %}
-{% load crispy_forms_tags %}
+{% load bootstrap3 %}
 
 <script type="text/javascript">
    $(function () {
@@ -35,7 +35,7 @@
       <tr>
    {% endif %}
       <td>
-         {% crispy trip_form %}
+         {% bootstrap_form trip_form %}
          {% if trip_form.instance.has_gpxfile %}
             <a class="pin" href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
                <span class="glyphicon glyphicon-edit"></span>

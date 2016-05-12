@@ -111,3 +111,24 @@ class SelectChainedOrCreate(widgets.ChainedSelect):
             'new_description': self.new_description,
         })
         return widget
+
+
+class CommuteModeRenderer(object):
+    def __init__(self, name, value, attrs, choices):
+        self.name = name
+        self.value = value
+        self.attrs = attrs
+        self.choices = choices
+
+    def render(self):
+        widget = render_to_string("bootstrap3/layout/radioselect_rides.html", {
+            'choices': self.choices,
+            'name': self.name,
+            'value': self.value,
+            'attrs': self.attrs,
+        })
+        return widget
+
+
+class CommuteModeSelect(forms.RadioSelect):
+    renderer = CommuteModeRenderer
