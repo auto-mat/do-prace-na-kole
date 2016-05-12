@@ -92,7 +92,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # 'denorm.middleware.DenormMiddleware',
+    'denorm.middleware.DenormMiddleware',
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',
