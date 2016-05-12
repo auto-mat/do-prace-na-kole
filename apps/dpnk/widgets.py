@@ -121,12 +121,24 @@ class CommuteModeRenderer(object):
         self.choices = choices
 
     def render(self):
-        widget = render_to_string("bootstrap3/layout/radioselect_rides.html", {
-            'choices': self.choices,
-            'name': self.name,
-            'value': self.value,
-            'attrs': self.attrs,
-        })
+        # template widget rendering or crispy forms are not used for performance reasons
+        # please bear in mind that this part of code has to be quick as possible
+        widget = '<fieldset class="controls btn-group" role="group">'
+        counter = 0
+        for choice in self.choices:
+            counter += 1
+            widget += '' \
+                '<div class="radio btn">' \
+                '   <input type="radio" {checked} name="{name}" id="id_{name}_{counter}" value="{choice}">' \
+                '   <label for="id_{name}_{counter}">{choice_name}</label>' \
+                '</div>'.format(
+                    checked='checked="checked"' if choice[0] == self.value else '',
+                    counter=counter,
+                    name=self.name,
+                    choice=choice[0],
+                    choice_name=choice[1],
+                )
+        widget += '</fieldset>'
         return widget
 
 
