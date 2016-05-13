@@ -769,14 +769,19 @@ class PackageTransactionResource(resources.ModelResource):
         model = models.PackageTransaction
         fields = (
             'id',
+            'delivery_batch',
+            'user_attendance__representative_payment__realized',
             'user_attendance',
             'user_attendance__name',
+            'user_attendance__userprofile__telephone',
             'user_attendance__userprofile__user__email',
             'created',
             'realized',
             'status',
             'author__username',
-            'user_attendance__team__subsidiary__name',
+            'user_attendance__team__subsidiary__address_street',
+            'user_attendance__team__subsidiary__address_psc',
+            'user_attendance__team__subsidiary__address_city',
             'user_attendance__team__subsidiary__company__name',
             't_shirt_size__name',
             'delivery_batch',
@@ -787,13 +792,25 @@ class PackageTransactionResource(resources.ModelResource):
     user_attendance__name = fields.Field()
 
     def dehydrate_user_attendance__name(self, obj):
-        return obj.user_attendance.name()
+        return "%s %s" % (obj.user_attendance.first_name(), obj.user_attendance.last_name())
 
-    user_attendance__team__subsidiary__name = fields.Field()
+    user_attendance__team__subsidiary__address_street = fields.Field()
 
-    def dehydrate_user_attendance__team__subsidiary__name(self, obj):
+    def dehydrate_user_attendance__team__subsidiary__address_street(self, obj):
         if obj.user_attendance.team:
-            return obj.user_attendance.team.subsidiary.name()
+            return "%s %s" % (obj.user_attendance.team.subsidiary.address_street, obj.user_attendance.team.subsidiary.address_street_number)
+
+    user_attendance__team__subsidiary__address_psc = fields.Field()
+
+    def dehydrate_user_attendance__team__subsidiary__address_psc(self, obj):
+        if obj.user_attendance.team:
+            return obj.user_attendance.team.subsidiary.address_psc
+
+    user_attendance__team__subsidiary__address_city = fields.Field()
+
+    def dehydrate_user_attendance__team__subsidiary__address_city(self, obj):
+        if obj.user_attendance.team:
+            return obj.user_attendance.team.subsidiary.address_city
 
     tracking_number_cnc = fields.Field()
 
