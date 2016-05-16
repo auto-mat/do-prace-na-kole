@@ -128,7 +128,7 @@ urlpatterns = [
     url(r'^platba-beneficni/$',
         views.BeneficiaryPaymentView.as_view(),
         name="payment_beneficiary"),
-    url(r'^statistika/(?P<variable>[0-9A-Za-z\-]+)/$',
+    url(r'^statistika/$',
         views.statistics),
     url(r'^denni-graf/$',
         views.daily_chart),

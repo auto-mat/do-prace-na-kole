@@ -1499,61 +1499,33 @@ def period_trips(campaign, day_from, day_to):
     return trips(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to))
 
 
-@cache_page(60 * 60)  # noqa
+@cache_page(60 * 60)
 def statistics(
         request,
-        variable,
         template='registration/statistics.html'):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
-    result = None
-    if variable == 'ujeta-vzdalenost':
-        result = total_distance(campaign)
-    elif variable == 'ujeta-vzdalenost-dnes':
-        result = period_distance(campaign, util.today(), util.today())
-    elif variable == 'pocet-cest':
-        result = total_trips(campaign)
-    elif variable == 'pocet-cest-dnes':
-        result = period_trips(campaign, util.today(), util.today())
-    elif variable == 'pocet-zaplacenych':
-        result = UserAttendance.objects.filter(
-            Q(campaign=campaign) &
-            Q(userprofile__user__is_active=True) &
-            Q(transactions__status__in=models.Payment.done_statuses)
-        ).exclude(Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct().count()
-    elif variable == 'pocet-prihlasenych':
-        result = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True).distinct().count()
-    elif variable == 'pocet-soutezicich':
-        result = UserAttendance.objects.filter(
-            Q(campaign=campaign) &
-            Q(userprofile__user__is_active=True) &
-            (Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0))
-        ).distinct().count()
-    elif variable == 'pocet-spolecnosti':
-        result = Company.objects.filter(Q(subsidiaries__teams__campaign=campaign)).distinct().count()
-    elif variable == 'pocet-pobocek':
-        result = Subsidiary.objects.filter(Q(teams__campaign=campaign)).distinct().count()
+    variables = {}
+    variables['ujeta-vzdalenost'] = total_distance(campaign)
+    variables['ujeta-vzdalenost-dnes'] = period_distance(campaign, util.today(), util.today())
+    variables['pocet-cest'] = total_trips(campaign)
+    variables['pocet-cest-dnes'] = period_trips(campaign, util.today(), util.today())
+    variables['pocet-zaplacenych'] = UserAttendance.objects.filter(
+        Q(campaign=campaign) &
+        Q(userprofile__user__is_active=True) &
+        Q(transactions__status__in=models.Payment.done_statuses)
+    ).exclude(Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct().count()
+    variables['pocet-prihlasenych'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True).distinct().count()
+    variables['pocet-soutezicich'] = UserAttendance.objects.filter(
+        Q(campaign=campaign) &
+        Q(userprofile__user__is_active=True) &
+        (Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0))
+    ).distinct().count()
+    variables['pocet-spolecnosti'] = Company.objects.filter(Q(subsidiaries__teams__campaign=campaign)).distinct().count()
+    variables['pocet-pobocek'] = Subsidiary.objects.filter(Q(teams__campaign=campaign)).distinct().count()
 
-    if variable == 'pocet-soutezicich-firma':
-        if request.user.is_authenticated() and util.is_competitor(request.user):
-            result = UserAttendance.objects.filter(
-                campaign=campaign,
-                userprofile__user__is_active=True,
-                approved_for_team='approved',
-                team__subsidiary__company=models.get_company(campaign, request.user)
-            ).count()
-        else:
-            result = "-"
-
-    if result is None:
-        return HttpResponse(_(u"Neznámá proměnná %s" % variable), status=403)
-
-    return render(
-        request,
-        template,
-        {
-            'variable': result
-        })
+    data = json.dumps(variables)
+    return HttpResponse(data)
 
 
 @cache_page(60 * 60)
