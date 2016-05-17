@@ -268,6 +268,22 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
         self.assertEqual(user_attendance.userprofile.mailing_hash, None)
 
+    def test_statistics(self):
+        address = reverse(views.statistics)
+        response = self.client.get(address)
+        self.assertEquals(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), {
+            "pocet-zaplacenych": 1,
+            "pocet-soutezicich": 1,
+            "pocet-cest": 0,
+            "pocet-prihlasenych": 5,
+            "pocet-cest-dnes": 0,
+            "ujeta-vzdalenost-dnes": 0,
+            "ujeta-vzdalenost": 0,
+            "pocet-spolecnosti": 1,
+            "pocet-pobocek": 2,
+        })
+
 
 class PaymentSuccessTests(ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users']

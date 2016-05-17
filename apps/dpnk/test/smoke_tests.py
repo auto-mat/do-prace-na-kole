@@ -57,16 +57,6 @@ views = [
     'error404.txt',
     reverse(views.daily_distance_json),
     reverse(views.daily_chart),
-    reverse(views.statistics, kwargs={'variable': 'ujeta-vzdalenost'}),
-    reverse(views.statistics, kwargs={'variable': 'ujeta-vzdalenost-dnes'}),
-    reverse(views.statistics, kwargs={'variable': 'pocet-cest'}),
-    reverse(views.statistics, kwargs={'variable': 'pocet-cest-dnes'}),
-    reverse(views.statistics, kwargs={'variable': 'pocet-zaplacenych'}),
-    reverse(views.statistics, kwargs={'variable': 'pocet-prihlasenych'}),
-    reverse(views.statistics, kwargs={'variable': 'pocet-soutezicich'}),
-    reverse(views.statistics, kwargs={'variable': 'pocet-spolecnosti'}),
-    reverse(views.statistics, kwargs={'variable': 'pocet-pobocek'}),
-    reverse(views.statistics, kwargs={'variable': 'pocet-soutezicich-firma'}),
 ]
 
 
