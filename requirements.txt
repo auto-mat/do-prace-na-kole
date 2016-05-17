@@ -69,3 +69,4 @@ raven
 django_coverage_plugin
 django-celery
 django-bootstrap3
+sqlalchemy
