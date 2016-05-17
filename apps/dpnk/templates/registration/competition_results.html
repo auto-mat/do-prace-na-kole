@@ -7,7 +7,7 @@
 {% block content %}
 {{ block.super }}
 {% get_current_language as current_language_code %}
-{% cache 3600 competition_results competition limit current_language_code %}
+{% cache 3600 competition_results competition.id limit current_language_code %}
 <h4>{% trans "Výsledky v soutěži " %}{{ competition }}:</h4>
 <div></div>
 {% trans "Čas vygenerování výsledků:" %} {% now "SHORT_DATETIME_FORMAT" %}
