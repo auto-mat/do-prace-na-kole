@@ -27,6 +27,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import format_html_join, format_html
 from django.utils.translation import string_concat
 from django.core.urlresolvers import reverse
+from djcelery.models import TaskMeta
 from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 from adminsortable2.admin import SortableInlineAdminMixin
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
@@ -1268,6 +1269,16 @@ class SessionAdmin(admin.ModelAdmin):
     readonly_fields = ['_session_data']
     search_fields = ('session_key',)
     date_hierarchy = 'expire_date'
+
+
+class TaskMetaAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'date_done', 'result_str',)
+    readonly_fields = ('result_str', 'date_done',)
+
+    def result_str(self, obj):
+        return str(obj.result)
+
+admin.site.register(TaskMeta, TaskMetaAdmin)
 admin.site.register(Session, SessionAdmin)
 
 admin.site.register(models.Team, TeamAdmin)
