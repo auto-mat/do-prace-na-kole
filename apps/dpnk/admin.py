@@ -550,6 +550,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         ('approved_for_team', AllValuesComboFilter),
         ('t_shirt_size', RelatedFieldComboFilter),
         'userprofile__user__is_active',
+        'userprofile__mailing_opt_in',
         'representative_payment__pay_type',
         'representative_payment__status',
         'representative_payment__amount',
