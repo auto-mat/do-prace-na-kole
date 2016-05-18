@@ -126,7 +126,7 @@ class TestActions(TestCase):
         queryset = models.Competition.objects.all()
         actions.recalculate_competitions_results(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(str(message), "Úspěšně přepočítáno 6 výsledků")
+        self.assertEquals(str(message), "Zadáno přepočítání 6 výsledků")
 
     def test_normalize_questionnqire_admissions(self):
         queryset = models.Competition.objects.all()

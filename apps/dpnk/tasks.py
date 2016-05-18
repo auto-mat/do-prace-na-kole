@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from celery import shared_task
-from .models import UserAttendance, GpxFile
+from .models import UserAttendance, GpxFile, Competition
 from .results import recalculate_result_competitor_nothread
 from .rest_ecc import gpx_files_post
 import denorm
@@ -28,4 +28,20 @@ def send_ecc_tracks(self):
     )
 
     count = gpx_files_post(gpx_files)
+    return count
+
+
+@shared_task(bind=True)
+def recalculate_competitions_results(self, queryset=None):
+    if not queryset:
+        queryset = Competition.objects.filter(campaign__slug='dpnk2016')
+    count = queryset.count()
+    i = 0
+    for competition in queryset:
+        i += 1
+        competition.recalculate_results()
+        self.update_state(
+            state='PROGRESS',
+            meta={'current': i, 'total': count}
+        )
     return count

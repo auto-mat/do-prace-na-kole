@@ -18,17 +18,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from . import results, views, models, mailing, util, rest_ecc
+from . import results, views, models, mailing, util, rest_ecc, tasks
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 import datetime
 
 
 def recalculate_competitions_results(modeladmin, request, queryset):
-    for competition in queryset.all():
-        competition.recalculate_results()
+    tasks.recalculate_competitions_results.apply_async(args=(queryset,))
     if request:
-        modeladmin.message_user(request, _(u"Úspěšně přepočítáno %s výsledků" % (queryset.count())))
+        modeladmin.message_user(request, _(u"Zadáno přepočítání %s výsledků" % (queryset.count())))
 recalculate_competitions_results.short_description = _(u"Přepočítat výsledku vybraných soutěží")
 
 
