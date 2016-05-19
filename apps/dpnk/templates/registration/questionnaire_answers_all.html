@@ -6,7 +6,10 @@
 {% block content %}
 {{ block.super }}
 <h2>{{ competition.name }}</h2>
+<i> {{ competition.type_string|safe }} </i>
+<div>
 {{ competition.rules|safe }}
+</div>
 {% for competitor in competitors %}
    <h3 id="comp_res_{{competitor.pk}}">{{ competitor }} ({{ competitor.result }} b.)</h3>
    {% for answer in competitor.answers %}

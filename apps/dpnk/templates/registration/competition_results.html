@@ -9,10 +9,12 @@
 {% get_current_language as current_language_code %}
 {% cache 3600 competition_results competition.id limit current_language_code %}
 <h4>{% trans "Výsledky v soutěži " %}{{ competition }}:</h4>
-<div></div>
-{% trans "Čas vygenerování výsledků:" %} {% now "SHORT_DATETIME_FORMAT" %}
-<br/>
+<i> {{ competition.type_string|safe }} </i>
 
+<div>{{ competition.rules|safe }}</div>
+<div>
+{% trans "Čas vygenerování výsledků:" %} {% now "SHORT_DATETIME_FORMAT" %}
+</div>
 <table class="table table-condensed table-striped table-bordered">
 <tr>
 <th scope="column">{% trans "Po&shy;řa&shy;dí" %}</th>
