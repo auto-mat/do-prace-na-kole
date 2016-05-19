@@ -2815,7 +2815,8 @@ def trip_post_save(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Competition)
 def competition_post_save(sender, instance, **kwargs):
-    instance.recalculate_results()
+    from . import tasks
+    tasks.recalculate_competitions_results.apply_async(args=((instance,),))
 
 
 @receiver(post_save, sender=Answer)

@@ -34,10 +34,9 @@ def send_ecc_tracks(self):
 def recalculate_competitions_results(self, queryset=None):
     if not queryset:
         queryset = Competition.objects.filter(campaign__slug='dpnk2016')
-    count = queryset.count()
     for competition in queryset:
         competition.recalculate_results()
-    return count
+    return len(queryset)
 
 
 @shared_task(bind=True)
