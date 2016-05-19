@@ -1272,8 +1272,9 @@ class SessionAdmin(admin.ModelAdmin):
 
 
 class TaskMetaAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'date_done', 'result_str',)
+    list_display = ('task_id', 'status', 'date_done', 'result_str', 'hidden')
     readonly_fields = ('result_str', 'date_done',)
+    date_hierarchy = 'date_done'
 
     def result_str(self, obj):
         return str(obj.result)
