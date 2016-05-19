@@ -39,7 +39,7 @@ from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 from composite_field import CompositeField
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
+from django.utils.translation import string_concat, ungettext_lazy
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files import File
@@ -2218,13 +2218,31 @@ class Competition(models.Model):
             'company': _('spo&shy;le&shy;čno&shy;stí'),
         }
         if self.company:
-            company_string_before = "vnitrofiremní"
-            company_string_after = "organizace %s" % escape(self.company)
+            company_string_before = _("vnitrofiremní")
+            company_string_after = _("organizace %s") % escape(self.company)
         else:
             company_string_before = ""
             company_string_after = ""
 
-        return string_concat(company_string_before, " ", CTYPES_STRINGS[self.type], " ", CCOMPETITORTYPES_STRINGS[self.competitor_type], " ", company_string_after)
+        cities = self.city.all()
+        if cities:
+            city_string = ungettext_lazy(
+                "ve městě %(cities)s",
+                "ve městech %(cities)s",
+                len(cities)
+            ) % {
+                'cities': ", ".join([city.name for city in cities])
+            }
+        else:
+            city_string = ""
+
+        return string_concat(
+            company_string_before, " ",
+            CTYPES_STRINGS[self.type], " ",
+            CCOMPETITORTYPES_STRINGS[self.competitor_type], " ",
+            company_string_after, " ",
+            city_string,
+        )
 
     def __str__(self):
         return "%s" % self.name
