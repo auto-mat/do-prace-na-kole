@@ -593,7 +593,6 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         actions.assign_vouchers,
         actions.add_trips,
         actions.touch_items,
-        actions.send_ecc_user_attendance,
     )
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
