@@ -18,4 +18,4 @@ export PYTHONPATH=$DJANGODIR:$PYTHONPATH
 RUNDIR=$(dirname $SOCKFILE)
 test -d $RUNDIR || mkdir -p $RUNDIR
 
-exec env/bin/celery -A project flower
+exec env/bin/celery -A project flower --persistent
