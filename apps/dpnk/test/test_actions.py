@@ -114,13 +114,13 @@ class TestActions(TestCase):
         queryset = models.UserAttendance.objects.all()
         actions.touch_items(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(str(message), "Obnova denormalizovaných sloupců proběhla úspěšně")
+        self.assertEquals(str(message), "Obnova 7 denormalizovaných položek byla zadána ke zpracování")
 
     def test_touch_items_team(self):
         queryset = models.Team.objects.all()
         actions.touch_items(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(str(message), "Obnova denormalizovaných sloupců proběhla úspěšně")
+        self.assertEquals(str(message), "Obnova 4 denormalizovaných položek byla zadána ke zpracování")
 
     def test_recalculate_competitions_results(self):
         queryset = models.Competition.objects.all()
