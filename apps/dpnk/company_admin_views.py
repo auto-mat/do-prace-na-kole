@@ -162,7 +162,7 @@ class CompanyAdminView(RegistrationViewMixin, UpdateView):
             exclude(pk=self.company_admin.pk)
         if old_company_admin.exists():
             return {
-                'fullpage_error_message': _(u"Vaše organizce již svého koordinátora má: %s." % (", ".join([str(c) for c in old_company_admin.all()]))),
+                'fullpage_error_message': _("Vaše organizce již svého koordinátora má: %s.") % (", ".join([str(c) for c in old_company_admin.all()])),
                 'title': _("Organizace koordinátora má"),
                 }
         return context_data

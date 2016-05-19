@@ -19,8 +19,8 @@
       </td>
    <td>{{ competition.get_type_display }}</td>
    <td>{{ competition.get_competitor_type_display }}</td>
-   <td><a href="{% url 'company_admin_competition' competition_slug=competition.slug %}">edit</a></td>
-   <td><a href="{% url 'competition_results' competition_slug=competition.slug %}">výsledky</a></td>
+   <td><a href="{% url 'company_admin_competition' competition_slug=competition.slug %}">{% trans "upravit" %}</a></td>
+   <td><a href="{% url 'competition_results' competition_slug=competition.slug %}">{% trans "výsledky" %}</a></td>
    </tr>
 {% endfor %}
 </table>
