@@ -18,7 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from . import results, views, models, mailing, util, rest_ecc, tasks
+from . import results, views, models, mailing, rest_ecc, tasks
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 import datetime
@@ -48,8 +48,8 @@ normalize_questionnqire_admissions.short_description = _(u"Obnovit přihlášky 
 # ---- USER_ATTENDANCE -----
 
 def touch_items(modeladmin, request, queryset):
-    util.rebuild_denorm_models(queryset)
-    modeladmin.message_user(request, _("Obnova denormalizovaných sloupců proběhla úspěšně"))
+    tasks.touch_items.apply_async(args=(queryset,))
+    modeladmin.message_user(request, _("Obnova %s denormalizovaných položek byla zadána ke zpracování" % queryset.count()))
 touch_items.short_description = _("Obnovit denormalizované sloupce")
 
 

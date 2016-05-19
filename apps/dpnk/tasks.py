@@ -1,18 +1,18 @@
 from __future__ import absolute_import
 
-from celery import shared_task
+from . import util
 from .models import UserAttendance, GpxFile, Competition
-from .results import recalculate_result_competitor_nothread
 from .rest_ecc import gpx_files_post
+from .results import recalculate_result_competitor_nothread
+from celery import shared_task
 import denorm
-import dpnk
 
 
 @shared_task(bind=True)
 def recalculate_competitor_task(self, user_attendance_pk):
 
     user_attendance = UserAttendance.objects.get(pk=user_attendance_pk)
-    dpnk.util.rebuild_denorm_models([user_attendance.team])
+    util.rebuild_denorm_models([user_attendance.team])
     denorm.flush()
     recalculate_result_competitor_nothread(user_attendance)
 
@@ -36,12 +36,23 @@ def recalculate_competitions_results(self, queryset=None):
     if not queryset:
         queryset = Competition.objects.filter(campaign__slug='dpnk2016')
     count = queryset.count()
-    i = 0
     for competition in queryset:
-        i += 1
         competition.recalculate_results()
-        self.update_state(
-            state='PROGRESS',
-            meta={'current': i, 'total': count}
-        )
     return count
+
+
+@shared_task(bind=True)
+def touch_items(self, queryset):
+    return util.rebuild_denorm_models(queryset)
+
+
+@shared_task(bind=True)
+def touch_user_attendances(self, queryset=None):
+    queryset = UserAttendance.objects.filter(campaign__slug='dpnk2016')
+    return util.rebuild_denorm_models(queryset)
+
+
+@shared_task(bind=True)
+def touch_teams(self, queryset=None):
+    queryset = UserAttendance.objects.filter(campaign__slug='dpnk2016')
+    return util.rebuild_denorm_models(queryset)
