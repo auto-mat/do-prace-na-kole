@@ -374,4 +374,6 @@ def dbbackup():
 def restart_webserver():
     "Restart the web server"
     sudo('sudo supervisorctl restart %(app_name)s' % env)
-    # sudo('/etc/init.d/apache2 restart')
+    sudo('sudo supervisorctl restart flower' % env)
+    sudo('/etc/init.d/celeryd restart')
+    sudo('/etc/init.d/celerybeat restart')
