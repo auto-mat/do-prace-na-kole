@@ -784,6 +784,7 @@ class PackageTransactionResource(resources.ModelResource):
             'user_attendance__team__subsidiary__address_psc',
             'user_attendance__team__subsidiary__address_city',
             'user_attendance__team__subsidiary__company__name',
+            'user_attendance__related_company_admin__userprofile__user__email',
             't_shirt_size__name',
             'delivery_batch',
             'tracking_number_cnc',
