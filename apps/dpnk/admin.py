@@ -143,6 +143,7 @@ class CompanyResource(resources.ModelResource):
             'ico',
             'dic',
             )
+        export_order = fields
 
 
 class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportMixin, admin.ModelAdmin):
@@ -195,6 +196,7 @@ class SubsidiaryResource(resources.ModelResource):
             'user_count',
             'team_count',
             )
+        export_order = fields
 
 
 class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
@@ -487,6 +489,7 @@ class UserAttendanceResource(resources.ModelResource):
             'dehydrate_subsidiary_name',
             'team__subsidiary__company__name',
             'created')
+        export_order = fields
 
     subsidiary_name = fields.Field()
 
@@ -790,6 +793,7 @@ class PackageTransactionResource(resources.ModelResource):
             'tracking_number_cnc',
             'tnt_con_reference',
         )
+        export_order = fields
 
     user_attendance__name = fields.Field()
 
@@ -1147,6 +1151,7 @@ class InvoiceResource(resources.ModelResource):
             'company__address_district',
             'company__address_psc',
             'company__address_city')
+        export_order = fields
 
     def dehydrate_invoice_count(self, obj):
         return obj.payment_set.count()
