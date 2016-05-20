@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from . import util, results
+from . import util
 from .models import UserAttendance, GpxFile, Competition, Team
 from .rest_ecc import gpx_files_post
 from celery import shared_task
@@ -9,7 +9,7 @@ import denorm
 
 @shared_task(bind=True)
 def recalculate_competitor_task(self, user_attendance_pk):
-
+    from . import results
     user_attendance = UserAttendance.objects.get(pk=user_attendance_pk)
     util.rebuild_denorm_models([user_attendance.team])
     denorm.flush()
