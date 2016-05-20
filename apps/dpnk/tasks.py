@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from . import util, results
-from .models import UserAttendance, GpxFile, Competition
+from .models import UserAttendance, GpxFile, Competition, Team
 from .rest_ecc import gpx_files_post
 from celery import shared_task
 import denorm
@@ -52,5 +52,5 @@ def touch_user_attendances(self, queryset=None):
 
 @shared_task(bind=True)
 def touch_teams(self, queryset=None):
-    queryset = UserAttendance.objects.filter(campaign__slug='dpnk2016')
+    queryset = Team.objects.filter(user_attendances__campaign__slug='dpnk2016')
     return util.rebuild_denorm_models(queryset)
