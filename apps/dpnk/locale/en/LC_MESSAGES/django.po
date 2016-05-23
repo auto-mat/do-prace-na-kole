@@ -2866,7 +2866,7 @@ msgstr "Your team overview"
 
 #: templates/registration/rides.html:69
 msgid "Ušetřené množství oxidu uhličitého"
-msgstr "Spared hydrogen dioxide amount"
+msgstr "Spared carbon dioxide amount"
 
 #: templates/registration/rides.html:69 urls.py:167
 msgid "Emisní kalkulačka"
