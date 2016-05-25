@@ -2522,6 +2522,7 @@ class Choice(models.Model):
         verbose_name = _(u"Nabídka k anketním otázce")
         verbose_name_plural = _(u"Nabídky k anketním otázkám")
         unique_together = (("choice_type", "text"),)
+        ordering = ("order", )
 
     choice_type = models.ForeignKey(
         ChoiceType,
@@ -2538,6 +2539,11 @@ class Choice(models.Model):
         null=True,
         blank=True,
         default=None,
+    )
+    order = models.PositiveIntegerField(
+        default=0,
+        blank=False,
+        null=False,
     )
 
     def __str__(self):

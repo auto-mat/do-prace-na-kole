@@ -859,7 +859,7 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
     form = models.PaymentForm
 
 
-class ChoiceInline(admin.TabularInline):
+class ChoiceInline(SortableInlineAdminMixin, admin.TabularInline):
     model = models.Choice
     extra = 3
 
