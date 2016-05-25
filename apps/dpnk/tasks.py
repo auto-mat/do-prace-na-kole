@@ -41,16 +41,19 @@ def recalculate_competitions_results(self, queryset=None):
 
 @shared_task(bind=True)
 def touch_items(self, queryset):
-    return util.rebuild_denorm_models(queryset)
+    util.rebuild_denorm_models(queryset)
+    return len(queryset)
 
 
 @shared_task(bind=True)
-def touch_user_attendances(self, queryset=None):
+def touch_user_attendances(self):
     queryset = UserAttendance.objects.filter(campaign__slug='dpnk2016')
-    return util.rebuild_denorm_models(queryset)
+    util.rebuild_denorm_models(queryset)
+    return len(queryset)
 
 
 @shared_task(bind=True)
-def touch_teams(self, queryset=None):
-    queryset = Team.objects.filter(user_attendances__campaign__slug='dpnk2016')
-    return util.rebuild_denorm_models(queryset)
+def touch_teams(self):
+    queryset = Team.objects.filter(campaign__slug='dpnk2016')
+    util.rebuild_denorm_models(queryset)
+    return len(queryset)
