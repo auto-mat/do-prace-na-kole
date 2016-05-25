@@ -60,7 +60,6 @@ class RestTests(DenormMixin, TestCase):
                 'file': gpxfile,
             }
             response = self.client.post(address, post_data)
-            print_response(response)
             self.assertContains(
                 response,
                 '"trip_date":"2010-12-02","direction":"trip_to","file":"http://testing-campaign.testserver/media/gpx_tracks/track-2016-01-14-modranska-rokle',

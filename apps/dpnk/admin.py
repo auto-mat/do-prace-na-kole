@@ -139,7 +139,6 @@ class CompanyResource(resources.ModelResource):
         fields = (
             'id',
             'name',
-            'subsidiaries_text',
             'ico',
             'dic',
             )
@@ -193,8 +192,6 @@ class SubsidiaryResource(resources.ModelResource):
             'id',
             'company',
             'city',
-            'user_count',
-            'team_count',
             )
         export_order = fields
 
@@ -486,7 +483,7 @@ class UserAttendanceResource(resources.ModelResource):
             'userprofile__user__last_name',
             'userprofile__user__username',
             'userprofile__user__email',
-            'dehydrate_subsidiary_name',
+            'subsidiary_name',
             'team__subsidiary__company__name',
             'created')
         export_order = fields
@@ -787,7 +784,7 @@ class PackageTransactionResource(resources.ModelResource):
             'user_attendance__team__subsidiary__address_psc',
             'user_attendance__team__subsidiary__address_city',
             'user_attendance__team__subsidiary__company__name',
-            'user_attendance__related_company_admin__userprofile__user__email',
+            'company_admin_email',
             't_shirt_size__name',
             'delivery_batch',
             'tracking_number_cnc',
@@ -827,6 +824,11 @@ class PackageTransactionResource(resources.ModelResource):
 
     def dehydrate_tnt_con_reference(self, obj):
         return obj.tnt_con_reference()
+
+    company_admin_email = fields.Field()
+
+    def dehydrate_company_admin_email(self, obj):
+        return obj.user_attendance.get_asociated_company_admin().first().userprofile.user.email
 
 
 class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):

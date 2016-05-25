@@ -17,13 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django_admin_smoke_tests import tests as smoke_tests
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory, Client
 from django.test.utils import override_settings
+from django_admin_smoke_tests import tests as smoke_tests
 from dpnk import util, models, filters
-from dpnk.models import UserAttendance, Team
+from dpnk.models import UserAttendance, Team, DeliveryBatch
 from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
 import datetime
@@ -53,7 +53,7 @@ class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminModulesTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
         super().setUp()
@@ -68,7 +68,21 @@ class AdminModulesTests(DenormMixin, TestCase):
             'file_format': 0,
         }
         response = self.client.post(address, post_data)
-        self.assertContains(response, "test2@test.cz,Testing company")
+        self.assertContains(
+            response,
+            '1015,testing-campaign,,1,Testing team 1,approved,,Testing city,cs,,'
+            'Testing,User,test1,test2@test.cz,"Ulice 1, 111 11 Praha",Testing company,2015-11-12 18:18:40,,,,'
+        )
+
+    def test_packagetransaction_export(self):
+        DeliveryBatch.objects.create(campaign_id=339)
+        address = "/admin/dpnk/packagetransaction/export/"
+        post_data = {
+            'file_format': 0,
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(response, "1,,1115,Testing User 1,,test@test.cz,")
+        self.assertContains(response, ",Ulice 1,11111,Praha,Testing company,test@test.cz,Testing t-shirt size,1,11111117,")
 
     def test_company_export(self):
         address = "/admin/dpnk/company/export/"
@@ -109,7 +123,6 @@ class AdminModulesTests(DenormMixin, TestCase):
     def test_admin_answers(self):
         address = "%s?question=2" % reverse('admin_answers')
         response = self.client.get(address)
-        print_response(response)
         self.assertContains(response, '<a href="/admin/dpnk/answer/?question__competition__id__exact=4">Odpovědi k soutěži Dotazník</a>')
         self.assertContains(response, '<a href="/media//DSC00002.JPG" target="_blank">DSC00002.JPG</a>')
 
