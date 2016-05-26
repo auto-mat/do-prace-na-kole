@@ -1043,7 +1043,6 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         questionaire_slug = kwargs['questionnaire_slug']
         self.user_attendance = kwargs['user_attendance']
-        self.questionnaire = models.Competition.objects.get(slug=questionaire_slug)
         self.userprofile = request.user.userprofile
         try:
             self.competition = Competition.objects.get(slug=questionaire_slug)
@@ -1072,7 +1071,7 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
         if not self.is_actual:
             return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž již nelze vyplňovat"), "</div>"))
 
-        valid = True
+        invalid_count = 0
         for question in self.questions:
             if not question.with_answer():
                 continue
@@ -1092,24 +1091,26 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
                 show_points=self.show_points,
                 is_actual=self.is_actual)
             if not question.form.is_valid():
-                valid = False
+                invalid_count += 1
 
-        if valid:
+        if invalid_count == 0:
             for question in self.questions:
                 if not question.with_answer():
                     continue
                 question.form.save()
             self.competition.make_admission(self.user_attendance)
             return redirect(self.success_url)
-        return render(request, self.template_name, self.get_context_data())
+        context_data = self.get_context_data()
+        context_data['invalid_count'] = invalid_count
+        return render(request, self.template_name, context_data)
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(QuestionnaireView, self).get_context_data(*args, **kwargs)
 
         context_data.update({
             'questions': self.questions,
-            'questionaire': self.questionnaire,
-            'show_submit': self.is_actual and not self.questionnaire.without_admission,
+            'questionaire': self.competition,
+            'show_submit': self.is_actual and not self.competition.without_admission,
             'show_points': self.show_points,
         })
         return context_data

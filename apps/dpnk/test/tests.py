@@ -347,6 +347,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         request.resolver_match = {"url_name": "questionnaire"}
         response = views.QuestionnaireView.as_view()(request, **kwargs)
         self.assertContains(response, 'yes')
+        self.assertContains(response, 'Question text')
 
         post_data = {
             "question-2-choices": 1,
@@ -361,6 +362,51 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         request.subdomain = "testing-campaign"
         response = views.QuestionnaireView.as_view()(request, **kwargs)
         self.assertEquals(response.url, reverse("competitions"))
+
+    def test_questionnaire_view_unknown(self):
+        kwargs = {'questionnaire_slug': 'quest1'}
+        address = reverse('questionnaire', kwargs=kwargs),
+        request = self.factory.get(address)
+        request.user = self.user_attendance.userprofile.user
+        request.user_attendance = self.user_attendance
+        request.subdomain = "testing-campaign"
+        request.resolver_match = {"url_name": "questionnaire"}
+        response = views.QuestionnaireView.as_view()(request, **kwargs)
+        self.assertContains(response, 'Tento dotazník v systému nemáme.', status_code=401)
+
+    def test_questionnaire_view_uncomplete(self):
+        kwargs = {'questionnaire_slug': 'quest'}
+        address = reverse('questionnaire', kwargs=kwargs),
+
+        post_data = {
+            "question-2-choices": 1,
+            "question-3-comment": 12,
+            "question-4-comment": "",
+            'submit': 'Odeslat',
+
+        }
+        request = self.factory.post(address, post_data)
+        request.user = self.user_attendance.userprofile.user
+        request.user_attendance = self.user_attendance
+        request.subdomain = "testing-campaign"
+        response = views.QuestionnaireView.as_view()(request, **kwargs)
+        self.assertContains(response, "Jeden formulář obsahuje chybu. Prosím opravte tuto chybu a znovu stiskněte tlačítko Odeslat.")
+        self.assertContains(response, '<a href="/media/DSC00002.JPG">DSC00002.JPG</a>')
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2016, month=11, day=20),
+    )
+    def test_questionnaire_view_late(self):
+        kwargs = {'questionnaire_slug': 'quest'}
+        address = reverse('questionnaire', kwargs=kwargs),
+
+        post_data = {}
+        request = self.factory.post(address, post_data)
+        request.user = self.user_attendance.userprofile.user
+        request.user_attendance = self.user_attendance
+        request.subdomain = "testing-campaign"
+        response = views.QuestionnaireView.as_view()(request, **kwargs)
+        self.assertContains(response, "Soutěž již nelze vyplňovat")
 
 
 class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):

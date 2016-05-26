@@ -7,8 +7,20 @@
 {{ questionaire.rules|safe }}
 <a class="btn btn-block btn-info" href="{{ questionaire.url }}" target="_blank">{% trans "Další informace o soutěži" %}</a>
 <br/>
+{% if invalid_count > 0 %}
+<div class="alert alert-danger">
+   {% blocktrans count invalid_count as invalid_count %}
+   Jeden formulář obsahuje chybu. Prosím opravte tuto chybu a znovu stiskněte tlačítko Odeslat.
+   {% plural %}
+   {{ invalid_count }} formuláře obsahují chybu. Prosím opravte tyto chyby a znovu stiskněte tlačítko Odeslat.
+   {% endblocktrans %}
+</div>
+{% endif %}
 <div id="questionaire-{{ questionaire.slug }}" class="questionnaire" >
 <form name="question" method="POST" enctype="multipart/form-data">
+{% for form in formset %}
+{% crispy form %}
+{% endfor %}
 {% for question in questions %}
 {% if question.name %}
    <h3>{{ question.name }}{% if question.required %}<span class="asteriskField">*</span>{% endif %}</h3>

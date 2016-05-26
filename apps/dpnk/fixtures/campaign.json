@@ -113,8 +113,22 @@
     {
         "fields": {
            "type": "text",
+           "comment_type": null,
+           "with_attachment": false,
+           "text": "Question text",
+           "name": "Question 5 name",
+           "required": false,
+           "competition": 4
+        },
+        "model": "dpnk.question",
+        "pk": 5
+    },
+    {
+        "fields": {
+           "type": "text",
            "comment_type": "link",
            "with_attachment": true,
+           "name": "Question 4 name",
            "competition": 4
         },
         "model": "dpnk.question",

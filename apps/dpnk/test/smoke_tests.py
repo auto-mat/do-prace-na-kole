@@ -51,7 +51,6 @@ views = [
     reverse('registration_access'),
     reverse('registrace'),
     reverse('edit_team'),
-    reverse('questionnaire', kwargs={'questionnaire_slug': 'quest'}),
     reverse('edit_subsidiary', kwargs={'pk': 1}),
     reverse('payment_beneficiary'),
     'error404.txt',
