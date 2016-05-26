@@ -15,11 +15,6 @@ import datetime
 activate('cs')
 views = [
     "%s?uid=1" % reverse('admin_questionnaire_answers', kwargs={'competition_slug': "FQ-LB"}),
-    reverse('admin_questionnaire_results', kwargs={'competition_slug': "FQ-LB"}),
-    reverse('admin_draw_results', kwargs={'competition_slug': "FQ-LB"}),
-    reverse('admin_draw_results', kwargs={'competition_slug': "vykonnost"}),
-    reverse('admin_draw_results', kwargs={'competition_slug': "quest"}),
-    reverse('admin_draw_results', kwargs={'competition_slug': "TF"}),
     reverse('login'),
     reverse('payment', urls),
     reverse('profil', urls),

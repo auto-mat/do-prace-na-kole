@@ -10,7 +10,7 @@
 {% for result in results %}
    <ul>
       <li>
-         {{ forloop.counter }}. tah: Tým {{ result }} z organizace {{ result.team.subsidiary.company }}
+         {{ forloop.counter }}. tah: Tým {{ result }} {% if result.team %}z organizace {{ result.team.subsidiary.company }}{% endif %}
          <br/>
          pravidelnost jízd {{ result.get_result_percentage|floatformat:-1|intcomma }}&nbsp;%
          {% if result.competition.competitor_type == 'team' %}

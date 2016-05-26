@@ -22,7 +22,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase, RequestFactory, Client
 from django.test.utils import override_settings
 from django_admin_smoke_tests import tests as smoke_tests
-from dpnk import util, models, filters
+from dpnk import util, models, filters, actions
 from dpnk.models import UserAttendance, Team, DeliveryBatch
 from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
@@ -138,7 +138,8 @@ class AdminTests(TestCase):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
         util.rebuild_denorm_models(Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
+        self.user_attendance = UserAttendance.objects.filter(pk=1115)
+        util.rebuild_denorm_models(self.user_attendance)
 
     def test_subsidiary_admin(self):
         address = reverse('admin:dpnk_subsidiary_changelist')
@@ -174,6 +175,68 @@ class AdminTests(TestCase):
         response = self.client.get(address, follow=True)
         self.assertContains(response, "Testing t-shirt size: 1")
         self.assertContains(response, "Testing campaign")
+
+    def test_admin_questionnaire_results(self):
+        competition = models.Competition.objects.filter(slug="quest")
+        actions.normalize_questionnqire_admissions(None, None, competition)
+        competition.get().recalculate_results()
+        address = reverse('admin_questionnaire_results', kwargs={'competition_slug': "quest"})
+        response = self.client.get(address)
+        self.assertContains(response, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
+
+    def test_admin_questionnaire_answers(self):
+        competition = models.Competition.objects.filter(slug="quest")
+        actions.normalize_questionnqire_admissions(None, None, competition)
+        competition.get().recalculate_results()
+        cr = models.CompetitionResult.objects.get(competition=competition)
+        address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "quest"}), cr.id)
+        response = self.client.get(address)
+        self.assertContains(response, "/media//DSC00002.JPG")
+        self.assertContains(response, "Příloha:")
+        self.assertContains(response, "Dohromady bodů: 13,0")
+
+    def test_admin_draw_results_fq_lb(self):
+        models.Payment.objects.create(user_attendance_id=1015, status=models.Status.DONE, amount=1)
+        models.Payment.objects.create(user_attendance_id=2115, status=models.Status.DONE, amount=1)
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(id__in=[1015, 2115]))
+        competition = models.Competition.objects.get(slug="FQ-LB")
+        cr = models.CompetitionResult.objects.get(team_id=1, competition=competition)
+        cr.result = 0.8
+        cr.save()
+        address = reverse('admin_draw_results', kwargs={'competition_slug': "FQ-LB"})
+        response = self.client.get(address)
+        self.assertContains(response, "1. tah: Tým Testing team 1 z organizace Testing company")
+
+    def test_admin_draw_results_fq_lb_not_all_paying(self):
+        competition = models.Competition.objects.get(slug="FQ-LB")
+        cr = models.CompetitionResult.objects.get(team_id=1, competition=competition)
+        cr.result = 0.8
+        cr.save()
+        address = reverse('admin_draw_results', kwargs={'competition_slug': "FQ-LB"})
+        response = self.client.get(address)
+        self.assertContains(response, "Tato soutěž nemá žádné týmy splňující kritéria")
+
+    def test_admin_draw_results_vykonnost(self):
+        competition = models.Competition.objects.filter(slug="vykonnost")
+        competition.get().recalculate_results()
+        address = reverse('admin_draw_results', kwargs={'competition_slug': "vykonnost"})
+        response = self.client.get(address)
+        self.assertContains(response, "1. tah: Tým Testing User 1")
+
+    def test_admin_draw_results_quest(self):
+        competition = models.Competition.objects.filter(slug="quest")
+        actions.normalize_questionnqire_admissions(None, None, competition)
+        competition.get().recalculate_results()
+        address = reverse('admin_draw_results', kwargs={'competition_slug': "quest"})
+        response = self.client.get(address)
+        self.assertContains(response, "1. tah: Tým Testing User 1")
+
+    def test_admin_draw_results_tf(self):
+        competition = models.Competition.objects.filter(slug="TF")
+        competition.get().recalculate_results()
+        address = reverse('admin_draw_results', kwargs={'competition_slug': "TF"})
+        response = self.client.get(address)
+        self.assertContains(response, "Tato soutěž nemá žádné týmy splňující kritéria")
 
 
 @override_settings(
