@@ -2207,15 +2207,15 @@ class Competition(models.Model):
 
     def type_string(self):
         CTYPES_STRINGS = {
-            'questionnaire': _('do&shy;ta&shy;zník'),
+            'questionnaire': _('dotazník'),
             'frequency': _('soutěž na pravidelnost'),
             'length': _('soutěž na vzdálenost'),
         }
         CCOMPETITORTYPES_STRINGS = {
-            'single_user': _('jed&shy;not&shy;liv&shy;ců'),
-            'liberos': _('li&shy;be&shy;ros'),
-            'team': _('tý&shy;mů'),
-            'company': _('spo&shy;le&shy;čno&shy;stí'),
+            'single_user': _('jednotlivců'),
+            'liberos': _('liberos'),
+            'team': _('týmů'),
+            'company': _('společností'),
         }
         if self.company:
             company_string_before = _("vnitrofiremní")

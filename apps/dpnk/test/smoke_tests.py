@@ -41,7 +41,6 @@ views = [
     reverse('typ_platby'),
     reverse('zmenit_triko'),
     reverse('upravit_trasu'),
-    reverse('competitions'),
     reverse('competition-rules-city', kwargs={'city_slug': "testing-city"}),
     reverse('questionnaire_answers_all', kwargs={'competition_slug': "FQ-LB"}),
     reverse('other_team_members_results'),

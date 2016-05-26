@@ -20,15 +20,14 @@
    {% if competition.my_results.result and competition.competitor_has_admission %}
       {{ competition.my_results.position|ordinal }}{% trans " místo z " %}{{ competition.competitor_count|intcomma }}
       {% if competition.competitor_type == 'single_user' %}
-         {% trans "jed&shy;not&shy;liv&shy;ců" %}
+         {% trans "jednotlivců" %}
       {% elif competition.competitor_type == 'liberos' %}
-         {% trans "li&shy;be&shy;ros" %}
+         {% trans "liberos" %}
       {% elif competition.competitor_type == 'team' %}
-         {% trans "tý&shy;mů" %}
+         {% trans "týmů" %}
       {% elif competition.competitor_type == 'company' %}
-         {% trans "spo&shy;le&shy;čno&shy;stí" %}
+         {% trans "společností" %}
       {% endif %}
-      {% spaceless %}
       (
          {% if competition.type == 'length' %}
            {{ competition.my_results.result|floatformat:-1|intcomma }}&nbsp;km
@@ -38,7 +37,6 @@
            {{ competition.my_results.result|floatformat:-1|intcomma }}b.
          {% endif %}
       )
-      {% endspaceless %}
       <br/>
    {% endif %}
    {% endif %}
@@ -50,7 +48,7 @@
    {% if competition.type == 'questionnaire' %}
       <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">
          {% if competition.competitor_has_admission %}
-            {% trans "Změ&shy;nit od&shy;po&shy;vě&shy;di" %}
+            {% trans "Změnit odpovědi" %}
          {% else %}
             {% trans "Vyplnit odpovědi" %}
          {% endif %}
@@ -62,9 +60,9 @@
       {% endif %}
    {% elif competition.type == 'frequency' or competition.type == 'length' %}
       {% if competition.competitor_has_admission %}
-         <button type="submit" class="submit btn btn-primary" onclick='$("#cancellation_competition_id").val("{{ competition.id }}")'>{% trans "Od&shy;hlá&shy;sit ze sou&shy;tě&shy;že" %}</button>
+         <button type="submit" class="submit btn btn-primary" onclick='$("#cancellation_competition_id").val("{{ competition.id }}")'>{% trans "Odhlásit ze soutěže" %}</button>
       {% else %}
-         <button type="submit" class="submit btn btn-primary" onclick='$("#admission_competition_id").val("{{ competition.id }}")'>{% trans "Při&shy;hlá&shy;sit do sou&shy;tě&shy;že" %}</button>
+         <button type="submit" class="submit btn btn-primary" onclick='$("#admission_competition_id").val("{{ competition.id }}")'>{% trans "Přihlásit do soutěže" %}</button>
       {% endif %}
    {% endif %}
    {% else %}
@@ -77,24 +75,24 @@
             {% endif %}
          {% endif %}
 
-         {# trans "Do té&shy;to sou&shy;tě&shy;že jste při&shy;hlá&shy;šen au&shy;to&shy;ma&shy;ti&shy;cky." #} 
+         {# trans "Do této soutěže jste přihlášen automaticky." #}
       {% elif competition.competitor_can_admit == 'after_beginning' %}
          {% if competition.competitor_has_admission %}
-            {% trans "Sou&shy;těž za&shy;ča&shy;la, již není mož&shy;né se od&shy;hlá&shy;sit." %} 
+            {% trans "Soutěž začala, již není možné se odhlásit." %}
          {% else %}
-            {% trans "Sou&shy;těž za&shy;ča&shy;la, již není mož&shy;né se při&shy;hlá&shy;sit." %} 
+            {% trans "Soutěž začala, již není možné se přihlásit." %}
          {% endif %}
       {% elif competition.competitor_can_admit == 'before_beginning' %}
-         {% trans "Do&shy;taz&shy;ník ješ&shy;tě ne&shy;ní ak&shy;tiv&shy;ní." %}
+         {% trans "Dotazník ještě není aktivní." %}
       {% elif competition.competitor_can_admit == 'after_end' %}
-         {% trans "Do&shy;taz&shy;ník již ne&shy;ní ak&shy;tiv&shy;ní." %}
+         {% trans "Dotazník již není aktivní." %}
          <br/>
-         <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">zo&shy;bra&shy;zit vy&shy;hod&shy;no&shy;ce&shy;ní </a>
+         <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">zobrazit vyhodnocení </a>
       {% elif competition.competitor_can_admit == 'not_company_admin' %}
          {% if competition.competitor_has_admission %}
-            {% trans "Do té&shy;to sou&shy;tě&shy;že fi&shy;rem vás při&shy;hlá&shy;sil váš fi&shy;rem&shy;ní koordinátor." %}
+            {% trans "Do této soutěže firem vás přihlásil váš firemní koordinátor." %}
          {% else %}
-            {% trans "Do té&shy;to sou&shy;tě&shy;že fi&shy;rem vás mu&shy;sí při&shy;hlá&shy;sit váš fi&shy;rem&shy;ní koordinátor." %}
+            {% trans "Do této soutěže firem vás musí přihlásit váš firemní koordinátor." %}
          {% endif %}
       {% else %}
          {{ competition.competitor_can_admit }}

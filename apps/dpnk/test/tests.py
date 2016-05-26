@@ -1444,6 +1444,50 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         gpxfile = models.GpxFile.objects.get(trip_date=date, direction=direction, user_attendance=self.user_attendance)
         self.assertEquals(gpxfile.trip.distance, None)
 
+    def test_dpnk_competitions_page(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.all())
+        util.rebuild_denorm_models(Team.objects.all())
+        for competition in models.Competition.objects.all():
+            if competition.competitor_type != 'company':
+                competition.recalculate_results()
+        competition = models.Competition.objects.filter(slug="quest")
+        actions.normalize_questionnqire_admissions(None, None, competition)
+        competition.get().recalculate_results()
+        response = self.client.get(reverse('competitions'))
+        self.assertContains(response, 'soutěž na vzdálenost jednotlivců  ve městě Testing city')
+        self.assertContains(response, 'Změnit odpovědi')
+
+    def test_dpnk_competitions_page_change(self):
+        response = self.client.get(reverse('competitions'))
+        self.assertContains(response, 'soutěž na vzdálenost jednotlivců')
+        self.assertContains(response, 'Vyplnit odpovědi')
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2009, month=11, day=20),
+    )
+    def test_dpnk_competitions_page_before(self):
+        response = self.client.get(reverse('competitions'))
+        self.assertContains(response, 'Výkonnost ve městě')
+        self.assertContains(response, 'Tato soutěž ještě nezačala')
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2016, month=11, day=20),
+    )
+    def test_dpnk_competitions_page_finished(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.all())
+        util.rebuild_denorm_models(Team.objects.all())
+        for competition in models.Competition.objects.all():
+            if competition.competitor_type != 'company':
+                competition.recalculate_results()
+        competition = models.Competition.objects.filter(slug="quest")
+        actions.normalize_questionnqire_admissions(None, None, competition)
+        competition.get().recalculate_results()
+        response = self.client.get(reverse('competitions'))
+        self.assertContains(response, 'dotazník jednotlivců')
+        self.assertContains(response, "2. místo z 1\n      \n         týmů\n      \n      (\n         \n           1,3&nbsp;%\n         \n      )")
+        self.assertContains(response, "1. místo z 1\n      \n         jednotlivců\n      \n      (\n         \n           5&nbsp;km\n         \n      )")
+        self.assertContains(response, "1. místo z 1\n      \n         jednotlivců\n      \n      (\n         \n           13b.\n         \n      )")
+
 
 class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users']
