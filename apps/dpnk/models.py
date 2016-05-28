@@ -66,6 +66,20 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+MAP_DESCRIPTION = _("""
+<ul>
+   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko "Nakreslit trasu", ukončíte kliknutím na cílový bod.</strong></li>
+   <li>Změnu trasy provedete po přepnutí do režimu úprav kliknutím na trasu.</li>
+   <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede.</li>
+   <li>Zadání přesnějšího průběhu nám však může pomoci lépe zjistit jak se lidé na kole pohybují.</li>
+   <li>Trasu bude možné změnit nebo upřesnit i později v průběhu soutěže.</li>
+   <li>Polohu začátku a konce trasy stačí zadávat s přesností 100m.</li>
+</ul>
+Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve městě na kole. Vaše cesta se zobrazí vašim týmovým kolegům.
+<br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na úvodní stránce.
+""")
+
+
 def get_address_string(address):
     return ", ".join(filter(lambda x: x != "", [address.recipient, "%s %s" % (address.street, address.street_number), "%s %s" % (util.format_psc(address.psc), address.city)]))
 
@@ -728,18 +742,7 @@ class UserAttendance(models.Model):
         null=True)
     track = models.MultiLineStringField(
         verbose_name=_(u"trasa"),
-        help_text=_(u"""
-<ul>
-   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko "Nakreslit trasu", ukončíte kliknutím na cílový bod.</strong></li>
-   <li>Změnu trasy provedete po přepnutí do režimu úprav kliknutím na trasu.</li>
-   <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede.</li>
-   <li>Zadání přesnějšího průběhu nám však může pomoci lépe zjistit jak se lidé na kole pohybují.</li>
-   <li>Trasu bude možné změnit nebo upřesnit i později v průběhu soutěže.</li>
-   <li>Polohu začátku a konce trasy stačí zadávat s přesností 100m.</li>
-</ul>
-Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve městě na kole. Vaše cesta se zobrazí vašim týmovým kolegům.
-<br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na úvodní stránce.
-"""),
+        help_text=MAP_DESCRIPTION,
         srid=4326,
         null=True,
         blank=True,
@@ -2658,6 +2661,7 @@ class GpxFile(models.Model):
         blank=True)
     track = models.MultiLineStringField(
         verbose_name=_(u"trasa"),
+        help_text=MAP_DESCRIPTION,
         srid=4326,
         null=True,
         blank=True,
