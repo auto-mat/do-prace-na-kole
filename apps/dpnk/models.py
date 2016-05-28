@@ -1193,21 +1193,21 @@ class UserProfile(models.Model):
         blank=False,
         default=False)
     ecc_email = models.CharField(
-        verbose_name=_("Heslo v ECC"),
+        verbose_name=_("Email v ECC"),
         max_length=128,
         db_index=True,
         default=None,
         unique=True,
         null=False,
-        blank=False
+        blank=True
     )
     ecc_password = models.CharField(
-        verbose_name=_("Email v ECC"),
+        verbose_name=_("Heslo v ECC"),
         max_length=128,
         db_index=True,
         default=None,
         null=False,
-        blank=False
+        blank=True
     )
 
     @denormalized(models.IntegerField, default=0)
