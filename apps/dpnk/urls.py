@@ -134,6 +134,8 @@ urlpatterns = [
         views.daily_chart),
     url(r'^denni-vzdalenost/$',
         views.daily_distance_json),
+    url(r'^denni-vzdalenost-extra/$',
+        views.daily_distance_extra_json),
     url(r'^pocty-soutezicich/$',
         views.CompetitorCountView.as_view(),
         name="competitor_counts",

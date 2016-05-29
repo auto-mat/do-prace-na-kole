@@ -1476,16 +1476,16 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
         return context_data
 
 
-def distance(trips):
-    return trips.filter(commute_mode__in=('bicycle', 'by_foot')).aggregate(Sum("distance"))['distance__sum'] or 0
+def distance(trips, commute_mode_list=('bicycle', 'by_foot')):
+    return trips.filter(commute_mode__in=commute_mode_list).aggregate(Sum("distance"))['distance__sum'] or 0
 
 
 def total_distance(campaign):
     return distance(Trip.objects.filter(user_attendance__campaign=campaign))
 
 
-def period_distance(campaign, day_from, day_to):
-    return distance(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to))
+def period_distance(campaign, day_from, day_to, commute_mode_list=('bicycle', 'by_foot')):
+    return distance(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to), commute_mode_list)
 
 
 def trips(trips):
@@ -1546,12 +1546,31 @@ def daily_chart(
         })
 
 
+# TODO: this is overcommed by daily_distance_extra_json, remove after it is not used any more
 @cache_page(60 * 60)
 def daily_distance_json(
         request,):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
     values = collections.OrderedDict((str(day), period_distance(campaign, day, day)) for day in util.days(campaign.phase('competition')))
+    data = json.dumps(values)
+    return HttpResponse(data)
+
+
+@cache_page(60 * 60)
+def daily_distance_extra_json(
+        request,):
+    campaign_slug = request.subdomain
+    campaign = Campaign.objects.get(slug=campaign_slug)
+    values = collections.OrderedDict(
+        (str(day), {
+            'distance': period_distance(campaign, day, day),
+            'distance_bicycle': period_distance(campaign, day, day, ('bicycle',)),
+            'distance_foot': period_distance(campaign, day, day, ('by_foot',)),
+            'emissions_co2': util.get_emissions(period_distance(campaign, day, day))['co2'],
+        }
+        ) for day in util.days(campaign.phase('competition'))
+    )
     data = json.dumps(values)
     return HttpResponse(data)
 
