@@ -1384,7 +1384,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         response = self.client.get(reverse('profil'))
         self.assertContains(response, 'form-0-commute_mode')
         self.assertContains(response, 'form-1-commute_mode')
-        self.assertEquals(self.user_attendance.user_trips.count(), 4)
+        self.assertEquals(self.user_attendance.user_trips.count(), 5)
         post_data = {
             'form-TOTAL_FORMS': '4',
             'form-INITIAL_FORMS': '2',

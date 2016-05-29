@@ -25,7 +25,6 @@ views = [
     reverse('company_admin_pay_for_users'),
     reverse('invoices'),
     reverse('edit_company'),
-    reverse('rides_details'),
     reverse('company_admin_competitions'),
     reverse('company_structure'),
     reverse('company_admin_competition'),

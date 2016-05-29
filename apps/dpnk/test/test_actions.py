@@ -140,7 +140,7 @@ class TestActions(TestCase):
         queryset = models.Trip.objects.all()
         actions.show_distance_trips(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(message, "Ujetá vzdálenost: 167.2 Km v 4 jízdách")
+        self.assertEquals(message, "Ujetá vzdálenost: 167.2 Km v 5 jízdách")
 
     def test_update_mailing_coordinator(self):
         queryset = models.CompanyAdmin.objects.all()
