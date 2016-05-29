@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-29 12:26+0200\n"
-"PO-Revision-Date: 2016-05-29 12:27+0058\n"
+"POT-Creation-Date: 2016-05-29 12:41+0200\n"
+"PO-Revision-Date: 2016-05-29 12:41+0058\n"
 "Last-Translator: b'Petr Dlouhy <a href=\"aasdf\"></a> <petr.dlouhy@auto-mat.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
 "MIME-Version: 1.0\n"
@@ -2399,13 +2399,30 @@ msgstr "Creative competitons submissions"
 msgid "Nahrát vlastní příspěvek"
 msgstr "Submit my content"
 
+#: templates/registration/competition_profile.html:62
+msgid "Všechny fotky z této soutěže"
+msgstr "All photos from this competition"
+
 #: templates/registration/competition_profile.html:78
 msgid "Cyklisté sobě"
 msgstr "Cyklisté sobě"
 
+#: templates/registration/competition_profile.html:79
+msgid "Dali jste Cyklistům sobě vědět o problémech na vaši trase?"
+msgstr "Did you already report problems on your way to Cyklisté sobě?"
+
 #: templates/registration/competition_profile.html:83
 msgid "Cyklistická mapa"
 msgstr "Cycle map"
+
+#: templates/registration/competition_profile.html:85
+msgid ""
+"Nevíte jakou zvolit cestu? Využijte naší cyklistické mapy a vyhledávače."
+msgstr "Don't know what way to ride? Use our cycle map and track planner."
+
+#: templates/registration/competition_profile.html:87
+msgid "mapa Prahou na kole"
+msgstr "Prahou na kole map"
 
 #: templates/registration/competition_profile.html:92
 msgid "Ceny ve městě "
@@ -2987,6 +3004,10 @@ msgstr "Edit name"
 #: templates/submenu_team.html:9
 msgid "Pozvat kolegy"
 msgstr "Invite colleagues"
+
+#: templates/templatetags/cyklistesobe.html:14
+msgid "Obrázek k podnětu"
+msgstr "Picture for the issue"
 
 #: templates/templatetags/wp_news.html:23
 #, python-format
