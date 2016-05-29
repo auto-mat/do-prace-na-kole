@@ -841,9 +841,16 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
     registration_phase = 'profile_view'
 
     def get_context_data(self, *args, **kwargs):
+        trips, uncreated_trips = self.user_attendance.get_all_trips(util.today())
+        uncreated_trips = list((trip[0], models.Trip.DIRECTIONS_DICT[trip[1]], _("Jinak") if util.working_day(trip[0]) else _("Žádná cesta")) for trip in uncreated_trips)
+        trips = list(trips) + uncreated_trips
+        trips = sorted(trips, key=lambda trip: trip.direction if type(trip) == Trip else trip[1], reverse=True)
+        trips = sorted(trips, key=lambda trip: trip.date if type(trip) == Trip else trip[0])
+        days = list(util.days(self.user_attendance.campaign.phase("competition"), util.today()))
+
         context_data = super().get_context_data(*args, **kwargs)
-        context_data['trips'], uncreated = self.user_attendance.get_all_trips()
-        context_data['other_gpx_files'] = models.GpxFile.objects.filter(user_attendance=self.user_attendance, trip=None)
+        context_data['trips'] = trips
+        context_data['other_gpx_files'] = models.GpxFile.objects.filter(user_attendance=self.user_attendance).exclude(trip__date__in=days)
         return context_data
 
 

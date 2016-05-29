@@ -1027,11 +1027,11 @@ class UserAttendance(models.Model):
         return util.get_emissions(self.trip_length_total)
 
     def get_active_trips(self):
-        days = util.days_active(self.campaign.phase("competition"))
+        days = list(util.days_active(self.campaign.phase("competition")))
         return self.get_trips(days)
 
-    def get_all_trips(self):
-        days = util.days(self.campaign.phase("competition"))
+    def get_all_trips(self, day=None):
+        days = list(util.days(self.campaign.phase("competition"), day))
         return self.get_trips(days)
 
     def get_trips(self, days):
@@ -2693,9 +2693,6 @@ class GpxFile(models.Model):
             ("trip", "direction"),
         )
         ordering = ('trip_date', 'direction')
-
-    def direction_string(self):
-        return self.DIRECTIONS_DICT[self.direction]
 
     def length(self):
         length = GpxFile.objects.length().get(pk=self.pk).length

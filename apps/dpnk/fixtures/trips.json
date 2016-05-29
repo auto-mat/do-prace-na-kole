@@ -52,5 +52,14 @@
         },
         "model": "dpnk.gpxfile",
         "pk": 1
+    },
+    {
+        "fields": {
+            "trip_date": "2009-11-1",
+            "user_attendance": 1115,
+            "direction": "trip_to"
+        },
+        "model": "dpnk.gpxfile",
+        "pk": 3
     }
 ]

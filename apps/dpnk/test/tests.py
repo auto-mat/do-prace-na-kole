@@ -1226,7 +1226,6 @@ class TrackViewTests(ViewsLogon):
     def test_daily_distance_extra_json(self):
         address = reverse(views.daily_distance_extra_json)
         response = self.client.get(address)
-        print_response(response)
         self.assertEquals(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), {
             "2010-11-01": {"distance": 5.0, "distance_bicycle": 0, "distance_foot": 5.0, "emissions_co2": 645.0},
@@ -1250,6 +1249,18 @@ class TrackViewTests(ViewsLogon):
             "2010-11-19": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
             "2010-11-20": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0}
         })
+
+
+class RidesDetailsTests(ViewsLogon):
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+
+    def test_dpnk_rides_details(self):
+        response = self.client.get(reverse('rides_details'))
+        self.assertContains(response, '/cs/gpx_file/1')
+        self.assertContains(response, '5,0')
+        self.assertContains(response, 'Chůze/běh')
+        self.assertContains(response, 'Podrobný přehled jízd')
+        self.assertContains(response, '1. listopadu 2009')
 
 
 def create_get_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):
