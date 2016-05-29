@@ -390,7 +390,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         request.user_attendance = self.user_attendance
         request.subdomain = "testing-campaign"
         response = views.QuestionnaireView.as_view()(request, **kwargs)
-        self.assertContains(response, "Jeden formulář obsahuje chybu. Prosím opravte tuto chybu a znovu stiskněte tlačítko Odeslat.")
+        self.assertContains(response, "Odpověď na jednu otázku obsahuje chybu. Prosím opravte tuto chybu a znovu stiskněte tlačítko Odeslat.")
         self.assertContains(response, '<a href="/media/DSC00002.JPG">DSC00002.JPG</a>')
 
     @override_settings(
