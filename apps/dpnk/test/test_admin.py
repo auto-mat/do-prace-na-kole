@@ -124,7 +124,7 @@ class AdminModulesTests(DenormMixin, TestCase):
         address = "%s?question=2" % reverse('admin_answers')
         response = self.client.get(address)
         self.assertContains(response, '<a href="/admin/dpnk/answer/?question__competition__id__exact=4">Odpovědi k soutěži Dotazník</a>')
-        self.assertContains(response, '<a href="/media//DSC00002.JPG" target="_blank">DSC00002.JPG</a>')
+        self.assertContains(response, '<a href="%s/DSC00002.JPG" target="_blank">DSC00002.JPG</a>' % settings.MEDIA_URL)
 
 
 @override_settings(
@@ -191,7 +191,7 @@ class AdminTests(TestCase):
         cr = models.CompetitionResult.objects.get(competition=competition)
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "quest"}), cr.id)
         response = self.client.get(address)
-        self.assertContains(response, "/media//DSC00002.JPG")
+        self.assertContains(response, "%s/DSC00002.JPG" % settings.MEDIA_URL)
         self.assertContains(response, "Příloha:")
         self.assertContains(response, "Dohromady bodů: 13,0")
 

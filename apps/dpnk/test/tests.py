@@ -391,7 +391,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         request.subdomain = "testing-campaign"
         response = views.QuestionnaireView.as_view()(request, **kwargs)
         self.assertContains(response, "Odpověď na jednu otázku obsahuje chybu. Prosím opravte tuto chybu a znovu stiskněte tlačítko Odeslat.")
-        self.assertContains(response, '<a href="/media/DSC00002.JPG">DSC00002.JPG</a>')
+        self.assertContains(response, '<a href="%sDSC00002.JPG">DSC00002.JPG</a>' % settings.MEDIA_URL)
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2016, month=11, day=20),
@@ -1356,8 +1356,8 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition.get().recalculate_results()
         address = reverse('questionnaire_answers_all', kwargs={'competition_slug': "quest"})
         response = self.client.get(address)
-        self.assertContains(response, '<a href="/media/modranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>')
-        self.assertContains(response, '<img src="/media/DSC00002.JPG.250x250_q85.jpg" width="250" height="188">')
+        self.assertContains(response, '<a href="%smodranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>' % settings.MEDIA_URL)
+        self.assertContains(response, '<img src="%sDSC00002.JPG.250x250_q85.jpg" width="250" height="188">' % settings.MEDIA_URL)
         self.assertContains(response, 'Answer without attachment')
         self.assertContains(response, 'Bez přílohy')
 
@@ -1369,14 +1369,14 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
         slumber_api.feed.get = {}
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<img src="/media/DSC00002.JPG.360x360_q85.jpg" width="360" height="270">')
+        self.assertContains(response, '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270">' % settings.MEDIA_URL)
 
     @patch('slumber.API')
     def test_dpnk_profile_page_link(self, slumber_api):
         models.Answer.objects.filter(pk__in=(1, 4)).delete()
         slumber_api.feed.get = {}
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<a href="/media/modranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>')
+        self.assertContains(response, '<a href="%smodranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>' % settings.MEDIA_URL)
 
     @patch('slumber.API')
     def test_dpnk_rides_view(self, slumber_api):
@@ -1425,7 +1425,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'Ujetá započítaná vzdálenost: 31,23&nbsp;km')
         self.assertContains(response, 'Pravidelnost: 66,7&nbsp;%')
         self.assertContains(response, 'Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g')
-        self.assertEquals(self.user_attendance.user_trips.count(), 6)
+        self.assertEquals(self.user_attendance.user_trips.count(), 7)
         self.assertEquals(models.Trip.objects.get(pk=101).distance, 28.89)
 
         trip1 = models.Trip.objects.get(pk=103)
