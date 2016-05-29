@@ -591,7 +591,6 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         actions.recalculate_results,
         actions.show_distance,
         actions.assign_vouchers,
-        actions.add_trips,
         actions.touch_items,
     )
     form = UserAttendanceForm

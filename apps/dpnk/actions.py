@@ -81,14 +81,6 @@ def assign_vouchers(modeladmin, request, queryset):
 assign_vouchers.short_description = _(u"Přiřadit vouchery")
 
 
-def add_trips(modeladmin, request, queryset):
-    count = queryset.count()
-    for user_attendance in queryset.all():
-        user_attendance.get_all_trips()
-    modeladmin.message_user(request, _(u"Úspěšně přiřazeno %s cest" % (count)))
-add_trips.short_description = _(u"Vytvořit cesty")
-
-
 def update_mailing(modeladmin, request, queryset):
     for user_attendance in queryset:
         mailing.add_or_update_user_synchronous(user_attendance, ignore_hash=True)

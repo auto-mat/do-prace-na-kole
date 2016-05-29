@@ -72,12 +72,6 @@ class TestActions(TestCase):
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEquals(message, "Mailing list byl úspěšne aktualizován 7 uživatelům")
 
-    def test_add_trips(self):
-        queryset = models.UserAttendance.objects.all()
-        actions.add_trips(self.modeladmin, self.request, queryset)
-        message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(str(message), "Úspěšně přiřazeno 7 cest")
-
     def test_assign_vouchers(self):
         queryset = models.UserAttendance.objects.all()[1:2]
         voucher = models.Voucher.objects.get(pk=1)
