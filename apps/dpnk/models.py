@@ -617,8 +617,6 @@ class Phase(models.Model):
             ('invoices', _(u"vytváření faktur")),
             ]
 
-    TYPE_DICT = dict(TYPE)
-
     campaign = models.ForeignKey(
         Campaign,
         verbose_name=_(u"Kampaň"),
@@ -2590,15 +2588,11 @@ class Answer(models.Model):
     #      return "%s" % self.str_choices()
 
 
-def get_company(campaign, user):
-    return user.userprofile.userattendance_set.get(campaign=campaign).company()
-
-
 class Voucher(models.Model):
     TYPES = [
         ('rekola', _(u"ReKola")),
+        ('sportlife', _(u"SportLife")),
     ]
-    TYPE_DICT = dict(TYPES)
     type = models.CharField(
         verbose_name=_(u"typ voucheru"),
         choices=TYPES,
@@ -2621,9 +2615,6 @@ class Voucher(models.Model):
     class Meta:
         verbose_name = _(u"Voucher")
         verbose_name_plural = _(u"Vouchery")
-
-    def type_string(self):
-        return self.TYPE_DICT[self.type]
 
 
 def normalize_gpx_filename(instance, filename):

@@ -16,8 +16,10 @@
 <div id="rides-form-container">{% include "registration/rides.html" %}</div>
 
 {% get_current_language as current_language_code %}
-{% cache 3600 profile user_attendance.team.subsidiary.city.slug current_language_code %}
-{% comment %}
+
+{% cache 3600 profile_voucher user_attendance.id %}
+{% endcache %}
+{% if user_attendance.voucher_set.exists %}
 <div>
    <h3>{% trans "Vouchery" %}</h3>
    {% wp_article 11260 %}
@@ -25,7 +27,7 @@
    {% for voucher in user_attendance.voucher_set.all %}
    <tr>
       <td>
-         {{ voucher.type_string }}
+         {{ voucher.get_type_display }}
       </td>
       <td>
          {{ voucher.token }}
@@ -34,8 +36,9 @@
    {% endfor %}
    </table>
 </div>
-{% endcomment%}
+{% endif %}
 
+{% cache 3600 profile user_attendance.team.subsidiary.city.slug current_language_code %}
 <div class="row base">
    <div class="col-md-6">
       <h3>{% trans "Novinky" %}</h3>

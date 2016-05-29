@@ -1225,6 +1225,7 @@ class GpxFileAdmin(LeafletGeoAdmin):
 
 class VoucherAdmin(ImportMixin, admin.ModelAdmin):
     list_display = ('id', 'type', 'token', 'user_attendance')
+    raw_id_fields = ('user_attendance',)
 
 
 class UserAttendanceToBatch(models.UserAttendance):
