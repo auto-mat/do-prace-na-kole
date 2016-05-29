@@ -10,9 +10,9 @@
 {% if invalid_count > 0 %}
 <div class="alert alert-danger">
    {% blocktrans count invalid_count as invalid_count %}
-   Jeden formulář obsahuje chybu. Prosím opravte tuto chybu a znovu stiskněte tlačítko Odeslat.
+   Odpověď na jednu otázku obsahuje chybu. Prosím opravte tuto chybu a znovu stiskněte tlačítko Odeslat.
    {% plural %}
-   {{ invalid_count }} formuláře obsahují chybu. Prosím opravte tyto chyby a znovu stiskněte tlačítko Odeslat.
+   Odpovědi na {{ invalid_count }} otázky obsahují chybu. Prosím opravte tyto chyby a znovu stiskněte tlačítko Odeslat.
    {% endblocktrans %}
 </div>
 {% endif %}

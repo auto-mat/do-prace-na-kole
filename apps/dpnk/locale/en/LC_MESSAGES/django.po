@@ -7,17 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-26 16:41+0200\n"
-"PO-Revision-Date: 2016-04-08 13:34+0058\n"
-"Last-Translator: b'Petr Dlouhy <a href=\"aasdf\"></a> <petr.dlo`&^?"
-"=uhy@email.cz>'\n"
+"POT-Creation-Date: 2016-05-29 12:26+0200\n"
+"PO-Revision-Date: 2016-05-29 12:27+0058\n"
+"Last-Translator: b'Petr Dlouhy <a href=\"aasdf\"></a> <petr.dlouhy@auto-mat.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "X-Poedit-Language: en\n"
-"X-Translated-Using: django-rosetta 0.7.10\n"
+"X-Translated-Using: django-rosetta 0.7.11\n"
 
 #: actions.py:30
 #, python-format
@@ -141,7 +140,7 @@ msgstr "Teams in all campaigns"
 msgid "Počet soutěžících ve vyfiltrované kampani"
 msgstr "Teams in filtered campaign"
 
-#: admin.py:250 models.py:283 models.py:2000
+#: admin.py:250 models.py:297 models.py:2003
 msgid "Týmy"
 msgstr "Teams"
 
@@ -149,11 +148,11 @@ msgstr "Teams"
 msgid "Výsledky soutěže"
 msgstr "Competition results"
 
-#: admin.py:334 models.py:2557
+#: admin.py:334 models.py:2560
 msgid "Odpovědi"
 msgstr "Answers"
 
-#: admin.py:339 models.py:1994
+#: admin.py:339 models.py:1997
 msgid "Dotazník"
 msgstr "Questionnaire"
 
@@ -233,7 +232,7 @@ msgstr ""
 "For example Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita "
 "Karlova"
 
-#: company_admin_forms.py:95 models.py:1300
+#: company_admin_forms.py:95 models.py:1303
 msgid "Zaměstnanecká pozice"
 msgstr "Occupied position"
 
@@ -242,18 +241,18 @@ msgid ""
 "Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance "
 "jejichž platbu schválím."
 msgstr ""
-"I (i.e. my organisation) oblige to pay for the start fee for employees whose "
-"payment I approve."
+"I (i.e. my organisation) oblige to pay for the start fee for employees whose"
+" payment I approve."
 
 #: company_admin_forms.py:103 company_admin_forms.py:156 forms.py:606
 msgid ""
 "Souhlasím se zpracováním osobních údajů podle <a target='_blank' "
-"href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů A*M</"
-"a> a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-"
+"href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů "
+"A*M</a> a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-"
 "podminky'>Obchodními podmínkami soutěže Do práce na kole</a>."
 msgstr ""
-"I agree with processing personal details according to the <a target='_blank' "
-"href='http://www.auto-mat.cz/zasady'>Guidelines for the Protection and "
+"I agree with processing personal details according to the <a target='_blank'"
+" href='http://www.auto-mat.cz/zasady'>Guidelines for the Protection and "
 "Processing of Personal Information A*M</a> and with <a target='_blank' "
 "href='http://www.dopracenakole.cz/obchodni-podminky'>Bike to Work Terms and "
 "Conditions </a>."
@@ -270,12 +269,12 @@ msgstr ""
 "Please let u know what is your position in your company according to which "
 "we can verify that we can entrust you with the team leader position."
 
-#: company_admin_forms.py:128 models.py:1311
+#: company_admin_forms.py:128 models.py:1314
 msgid "Koordinovaná organizace"
 msgstr "Coordinated company"
 
-#: company_admin_forms.py:139 forms.py:590 models.py:137 models.py:795
-#: models.py:800 models.py:2417 models.py:2463
+#: company_admin_forms.py:139 forms.py:590 models.py:151 models.py:798
+#: models.py:803 models.py:2420 models.py:2466
 #: templates/company_admin/competitions.html:7 views.py:1468
 msgid "Jméno"
 msgstr "Name"
@@ -292,7 +291,7 @@ msgstr "This company already has its coordinator."
 msgid "Typ soutěže"
 msgstr "Competition type"
 
-#: company_admin_forms.py:198 models.py:2051
+#: company_admin_forms.py:198 models.py:2054
 msgid "Typ soutěžícího"
 msgstr "Competitor type"
 
@@ -384,8 +383,8 @@ msgstr "Invoices of your company"
 #: company_admin_views.py:303
 #, python-brace-format
 msgid ""
-"Před vystavením faktury prosím <a href='{addr}'>vyplňte údaje o vaší firmě</"
-"a>"
+"Před vystavením faktury prosím <a href='{addr}'>vyplňte údaje o vaší "
+"firmě</a>"
 msgstr ""
 "Please <a href='{addr}'>fill in your company details</a> before creating an "
 "invoice."
@@ -426,7 +425,8 @@ msgstr "Team membership disapproved"
 
 #: decorators.py:100 decorators.py:158 decorators.py:200
 #, python-format
-msgid "Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu."
+msgid ""
+"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu."
 msgstr ""
 "There is no campaign with the %s identificator. Please enter the correct "
 "address"
@@ -440,8 +440,8 @@ msgid ""
 "<a href='mailto:kontakt@dopracenakole.cz?subject=Neexistující "
 "soutěž'>kontakt@dopracenakole.cz</a>."
 msgstr ""
-"This page is intended only for verified Company Coordinators. You first have "
-"to <a href='%s'>apply</a> for this role and wait for your verification. If "
+"This page is intended only for verified Company Coordinators. You first have"
+" to <a href='%s'>apply</a> for this role and wait for your verification. If "
 "you've been waiting for too long, please contact our support at <a "
 "href='mailto:kontakt@dopracenakole.cz?subject=Non-existent "
 "competition'>kontakt@dopracenakole.cz</a>."
@@ -475,8 +475,8 @@ msgstr "Page not accessible"
 #: decorators.py:218
 #, python-format
 msgid ""
-"V soutěži Do práce na kole nesoutěžíte. Pokud jste koordinátorem organizace, "
-"použijte <a href='%s'>správu organizace</a>."
+"V soutěži Do práce na kole nesoutěžíte. Pokud jste koordinátorem organizace,"
+" použijte <a href='%s'>správu organizace</a>."
 msgstr ""
 "You do not compete in the Bike to Work competition. If you are a Company "
 "Coordinator, please use <a href='%s'> company administration</a>."
@@ -487,8 +487,8 @@ msgid ""
 "<div class='text-warning'>Pro přístup k této stránce musíte být ve skupině "
 "%s</div>"
 msgstr ""
-"<div class='text-warning'>To access this page you must be in the group%s</"
-"div>"
+"<div class='text-warning'>To access this page you must be in the "
+"group%s</div>"
 
 #: email.py:37
 #, python-format
@@ -544,8 +544,8 @@ msgstr "%s - Company Coordinator - company administration approval"
 msgid "%s - koordinátor organizace - zamítnutí správcovství organizace"
 msgstr "%s - Company Coordinator - company administration denial"
 
-#: filters.py:28 forms.py:156 forms.py:392 models.py:308 models.py:610
-#: models.py:650 models.py:713 models.py:1377 models.py:1484 models.py:2015
+#: filters.py:28 forms.py:156 forms.py:392 models.py:322 models.py:624
+#: models.py:664 models.py:727 models.py:1380 models.py:1487 models.py:2018
 msgid "Kampaň"
 msgstr "Campaign"
 
@@ -628,17 +628,14 @@ msgstr "Next"
 #: forms.py:98
 #, python-format
 msgid ""
-"<a href=\"%(password_reset_address)s\">Zapomněli jste své přihlašovací údaje?"
-"</a>\n"
+"<a href=\"%(password_reset_address)s\">Zapomněli jste své přihlašovací údaje?</a>\n"
 "                <br/><br/>\n"
-"                Ještě nemáte účet? <a href=\"%(registration_address)s"
-"\">Registrujte se</a> do soutěže Do práce na kole.<br/><br/>\n"
+"                Ještě nemáte účet? <a href=\"%(registration_address)s\">Registrujte se</a> do soutěže Do práce na kole.<br/><br/>\n"
 "            "
 msgstr ""
 "<a href=\"%(password_reset_address)s\">Did you forgot your login data?</a>\n"
 "<br/><br/>\n"
-"Haven't account yet? <a href=\"%(registration_address)s\">Register now</a> "
-"to competition Do práce na kole.<br/><br/>"
+"Haven't account yet? <a href=\"%(registration_address)s\">Register now</a> to competition Do práce na kole.<br/><br/>"
 
 #: forms.py:103 templates/base_generic.html.py:93
 #: templates/registration/logged_out.html:5
@@ -649,15 +646,15 @@ msgstr "Login"
 msgid "Email (uživatelské jméno)"
 msgstr "Email (username)"
 
-#: forms.py:122 models.py:105
+#: forms.py:122 models.py:119
 msgid "PSČ"
 msgstr "ZIP code (PSČ)"
 
-#: forms.py:123 models.py:106
+#: forms.py:123 models.py:120
 msgid "Např.: „130 00“"
 msgstr "For example 130 00"
 
-#: forms.py:168 models.py:193 models.py:194 models.py:1478
+#: forms.py:168 models.py:207 models.py:208 models.py:1481
 msgid "Organizace"
 msgstr "Organization"
 
@@ -678,7 +675,7 @@ msgstr ""
 msgid "Můj tým v seznamu není, vytvořit nový"
 msgstr "My team is not on the list, I want to create a new one"
 
-#: forms.py:233 models.py:282 models.py:756
+#: forms.py:233 models.py:296 models.py:759
 #: templates/base_generic_registration_form.html:15
 #: templates/registration/competition_results.html:55
 msgid "Tým"
@@ -722,12 +719,12 @@ msgstr "For information during the campaign, for a forgotten login"
 #, python-format
 msgid ""
 "Tato e-mailová adresa se již používá. Pokud je vaše, buď se rovnou <a "
-"href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> obnovu "
-"hesla</a>."
+"href='%(login)s'>přihlašte</a>, nebo použijte <a href='%(password)s'> obnovu"
+" hesla</a>."
 msgstr ""
 "This e-mail address is already being used. If it is yours, <a "
-"href='%(login)s'>log in</a> or use <a href='%(password)s'> password reset </"
-"a>. "
+"href='%(login)s'>log in</a> or use <a href='%(password)s'> password reset "
+"</a>. "
 
 #: forms.py:354
 msgid "Email kolegy 1"
@@ -749,8 +746,8 @@ msgstr "Colleague No. 4 e-mail"
 msgid ""
 "Napište zde emaily kolegů, které chcete pozvat do svého týmu. Následně "
 "vyčkejte, až se k vám někdo do týmu připojí (tato informace vám přijde "
-"emailem, stav vašeho týmu můžete sledovat na <a href=\"{}\">stránce týmu</a> "
-"a potvrdit členství vašich kolegů).<br/><br/>"
+"emailem, stav vašeho týmu můžete sledovat na <a href=\"{}\">stránce týmu</a>"
+" a potvrdit členství vašich kolegů).<br/><br/>"
 msgstr ""
 "Enter e-mails of your colleagues who you wish to invite to your team. Then "
 "wait until someone joins your team (you will receive this information via "
@@ -793,7 +790,7 @@ msgstr "I am an Auto*Mat Friends Club member, so my start fee is for free."
 msgid "Je mi poskytováno startovné zdarma."
 msgstr "Organizer provides me free entry."
 
-#: forms.py:417 models.py:1854
+#: forms.py:417 models.py:1857
 msgid "Typ platby"
 msgstr "Payment type"
 
@@ -806,9 +803,9 @@ msgid ""
 "koordinátorem mé organizace</a></li></ul>"
 msgstr ""
 "Your employer {employer} hasn't selected a Company Coordinator yet. Your "
-"organization will have to appoint a representative who will approve payments "
-"in your organization on its behalf.<ul><li><a href='{url}'>I want to be the "
-"Coordinator of my company</a></li></ul>"
+"organization will have to appoint a representative who will approve payments"
+" in your organization on its behalf.<ul><li><a href='{url}'>I want to be the"
+" Coordinator of my company</a></li></ul>"
 
 #: forms.py:490
 msgid "Chci být zařazen do nového týmu"
@@ -844,10 +841,10 @@ msgid ""
 "Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: "
 "%(note)s)."
 msgstr ""
-"This user has already been %(time)s in the bike shop %(bike_shop)s (poznámka:"
-"%(note)s)."
+"This user has already been %(time)s in the bike shop %(bike_shop)s "
+"(poznámka:%(note)s)."
 
-#: forms.py:553 models.py:2633 models.py:2694
+#: forms.py:553 models.py:2636 models.py:2698
 msgid "GPX soubor"
 msgstr "GPX file"
 
@@ -881,11 +878,11 @@ msgstr "I don't want to display my true name publicly"
 msgid "Soutěžní emaily"
 msgstr "Competition emails"
 
-#: forms.py:613 models.py:1186
+#: forms.py:613 models.py:1189
 msgid "Odběr emailů můžete kdykoliv v průběhu soutěže zrušit."
 msgstr "You can cancel receiving e-mails any time during the competition."
 
-#: forms.py:615 models.py:1185
+#: forms.py:615 models.py:1188
 msgid ""
 "Přeji si dostávat emailem informace o akcích, událostech a dalších "
 "informacích souvisejících se soutěží."
@@ -901,7 +898,7 @@ msgstr ""
 "I don't want to get competition emails. I might not get important "
 "information."
 
-#: forms.py:621 models.py:1143 views.py:1471
+#: forms.py:621 models.py:1146 views.py:1471
 msgid "Telefon"
 msgstr "Telephone"
 
@@ -911,8 +908,8 @@ msgstr "The telephone has to be composed from numbers, gaps and the plus sign"
 
 #: forms.py:623
 msgid ""
-"Telefon použije kurýr, který Vám přiveze soutěžní triko, slouží pro HelpDesk "
-"a další účely"
+"Telefon použije kurýr, který Vám přiveze soutěžní triko, slouží pro HelpDesk"
+" a další účely"
 msgstr ""
 "The telephone is for a messenger, which will deliver you the T-shirt. It is "
 "also for Helpdesk and other purposes."
@@ -937,7 +934,7 @@ msgstr "Fill in your gender"
 msgid "Dopravní prostředek"
 msgstr "Means of transport"
 
-#: forms.py:680 models.py:724
+#: forms.py:680 models.py:738
 msgid "Vzdálenost"
 msgstr "Distance"
 
@@ -949,29 +946,55 @@ msgstr "You have to fill in distance"
 msgid "Pěší cesta musí mít minimálně jeden a půl kilometru"
 msgstr "Pedestrian trip has to be at least one and half kilometer long"
 
-#: models.py:75
+#: models.py:69
+msgid ""
+"\n"
+"<ul>\n"
+"   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko \"Nakreslit trasu\", ukončíte kliknutím na cílový bod.</strong></li>\n"
+"   <li>Změnu trasy provedete po přepnutí do režimu úprav kliknutím na trasu.</li>\n"
+"   <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede.</li>\n"
+"   <li>Zadání přesnějšího průběhu nám však může pomoci lépe zjistit jak se lidé na kole pohybují.</li>\n"
+"   <li>Trasu bude možné změnit nebo upřesnit i později v průběhu soutěže.</li>\n"
+"   <li>Polohu začátku a konce trasy stačí zadávat s přesností 100m.</li>\n"
+"</ul>\n"
+"Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve městě na kole. Vaše cesta se zobrazí vašim týmovým kolegům.\n"
+"<br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na úvodní stránce.\n"
+msgstr ""
+"\n"
+"<ul>\n"
+"<li><strong>Click \"Draw a route\" button to start entering your route. Click on the destination point to finish your route.</strong></li>\n"
+"<li>Change your route by clicking on your route and switching to the editing mode.</li>\n"
+"<li>It is sufficient if it is clear which streets the route takes.</li>\n"
+"<li>However, a more detailed route will help us understand how and where people cycle.</li>\n"
+"<li>It is possible to change or modify the route during the competition, too. </li>\n"
+"<li>It is sufficient to indicate the start and the end of the route within a 100 m radius.</li>\n"
+"</ul>\n"
+"The purpose of the route is to calculate the distance and it can also help us determine the needs of people using bikes in town. Your route will be displayed to your team members.\n"
+"<br/>Anonymised routes of all participants will be displayed on the start page.\n"
+
+#: models.py:89
 msgid "Ulice"
 msgstr "Street"
 
-#: models.py:76
+#: models.py:90
 msgid "Např. „Šeříková“ nebo „Nám. W. Churchilla“"
 msgstr "For example Šeříková nebo Nám. W. Churchilla"
 
-#: models.py:82
+#: models.py:96
 msgid "Číslo domu"
 msgstr "House number"
 
-#: models.py:83
+#: models.py:97
 msgid "Např. „2965/12“ nebo „156“"
 msgstr "For example. 2965/12 or 156"
 
-#: models.py:90
+#: models.py:104
 msgid "Název pobočky (celé organizace, závodu, kanceláře, fakulty) na adrese"
 msgstr ""
 "Subsidiary name (the whole company, factory, office, university department) "
 "at the address"
 
-#: models.py:91
+#: models.py:105
 msgid ""
 "Např. „odštěpný závod Brno“, „oblastní pobočka Liberec“, „Přírodovědecká "
 "fakulta“ atp."
@@ -979,47 +1002,47 @@ msgstr ""
 "For example organizational entity Brno, local subsidiary Liberec, The "
 "department of Natural Sciences etc. "
 
-#: models.py:98
+#: models.py:112
 msgid "Městská část"
 msgstr "City part"
 
-#: models.py:116 models.py:132 templates/registration/competitor_count.html:9
+#: models.py:130 models.py:146 templates/registration/competitor_count.html:9
 msgid "Město"
 msgstr "Town"
 
-#: models.py:117
+#: models.py:131
 msgid "Např. „Jablonec n. N.“ nebo „Praha 3, Žižkov“"
 msgstr "For example Jablonec n. N. or Praha 3-Žižkov"
 
-#: models.py:133
+#: models.py:147
 msgid "Města"
 msgstr "Towns"
 
-#: models.py:147
+#: models.py:161
 msgid "Jméno skupiny na webu Cyklisté sobě"
 msgstr "Name of group on Cyklisté sobě website"
 
-#: models.py:151
+#: models.py:165
 msgid "poloha města"
 msgstr "city position"
 
-#: models.py:165
+#: models.py:179
 msgid "Město v kampani"
 msgstr "Town in the campaign"
 
-#: models.py:166
+#: models.py:180
 msgid "Města v kampani"
 msgstr "Towns in the campaign"
 
-#: models.py:179
+#: models.py:193
 msgid "povolit zapisování jízd"
 msgstr "enable entering trips"
 
-#: models.py:199
+#: models.py:213
 msgid "Název organizace"
 msgstr "Name of organization"
 
-#: models.py:200
+#: models.py:214
 msgid ""
 "Např. „Výrobna, a.s.“, „Příspěvková, p.o.“, „Nevládka, z.s.“, „Univerzita "
 "Karlova“"
@@ -1027,31 +1050,31 @@ msgstr ""
 "For example Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita "
 "Karlova"
 
-#: models.py:205
+#: models.py:219
 msgid "IČO"
 msgstr "Company registration number (IČO)"
 
-#: models.py:210
+#: models.py:224
 msgid "DIČ"
 msgstr "VAT ID"
 
-#: models.py:217 models.py:258
+#: models.py:231 models.py:272
 msgid "Aktivní"
 msgstr "Active"
 
-#: models.py:241
+#: models.py:255
 msgid "Pobočka organizace"
 msgstr "Subdivision"
 
-#: models.py:242
+#: models.py:256
 msgid "Pobočky organizací"
 msgstr "Organization branches"
 
-#: models.py:252
+#: models.py:266
 msgid "Spádové město"
 msgstr "Catchment town"
 
-#: models.py:253
+#: models.py:267
 #, python-format
 msgid ""
 "Rozhoduje o tom, do soutěží jakého města budete zařazeni a kde budete "
@@ -1060,362 +1083,323 @@ msgstr ""
 "Decides about in which cities you will compete and where you will receive "
 "prizes - see the <a href='%s' target='_blank'>competition rules</a>"
 
-#: models.py:275
+#: models.py:289
 #, python-format
-msgid "Řetězec by neměl být kratší než %(min)s znaků a delší než %(max)s znaků"
+msgid ""
+"Řetězec by neměl být kratší než %(min)s znaků a delší než %(max)s znaků"
 msgstr ""
 "The string should be longer than %(min)s, but is %(max)s characters long"
 
-#: models.py:288
+#: models.py:302
 msgid "Název týmu"
 msgstr "Team name"
 
-#: models.py:293
+#: models.py:307
 msgid "Pobočka"
 msgstr "Subdivision"
 
-#: models.py:298
+#: models.py:312
 msgid "Token pro pozvánky"
 msgstr "Invitation token"
 
-#: models.py:314
+#: models.py:328
 msgid "Počet právoplatných členů týmu"
 msgstr "Number of authorized team members"
 
-#: models.py:329
+#: models.py:343
 msgid "Počet neschválených členů týmu"
 msgstr "Number of unauthorized team members"
 
-#: models.py:408
+#: models.py:422
 msgid "kampaň"
 msgstr "campaign"
 
-#: models.py:409
+#: models.py:423
 msgid "kampaně"
 msgstr "campaigns"
 
-#: models.py:413
+#: models.py:427
 msgid "Jméno kampaně"
 msgstr "Name of campaign"
 
-#: models.py:424
+#: models.py:438
 msgid "Předchozí kampaň"
 msgstr "Previous campaign"
 
-#: models.py:428
+#: models.py:442
 msgid "Patička uživatelských emailů"
 msgstr "Users e-mail footer"
 
-#: models.py:435
+#: models.py:449
 msgid "ID mailing listu"
 msgstr "ID mailing list"
 
-#: models.py:441
+#: models.py:455
 msgid "Povolit mailing list"
 msgstr "Permit mailing list"
 
-#: models.py:445
+#: models.py:459
 msgid "Minimální základ počtu jízd"
 msgstr "Minimal rides number base"
 
-#: models.py:446
+#: models.py:460
 msgid ""
 "Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout "
 "100% jízd"
-msgstr "Minimal rides count, with which is possible to reach 100% rides ridden"
+msgstr ""
+"Minimal rides count, with which is possible to reach 100% rides ridden"
 
-#: models.py:452
+#: models.py:466
 msgid "Minimální procento pro kvalifikaci do pravidelnostní soutěže"
 msgstr "Minimal percentage for competition qualification"
 
-#: models.py:458
+#: models.py:472
 msgid "Maximální navýšení vzdálenosti"
 msgstr "Maximal distance increase"
 
-#: models.py:459
+#: models.py:473
 msgid "Počet kilometrů, o které je možné prodloužit si jednu jízdu"
 msgstr ""
 "How much can competitor increase his/her ride against ordinary distance (in "
 "km)"
 
-#: models.py:465
+#: models.py:479
 msgid "První číslo řady pro doručování balíčků"
 msgstr "First digit of the start kit delivery"
 
-#: models.py:471
+#: models.py:485
 msgid "Poslední číslo řady pro doručování balíčků"
 msgstr "Last digit of the start kit delivery"
 
-#: models.py:477
+#: models.py:491
 msgid "Výška balíku"
 msgstr "Package height"
 
-#: models.py:483
+#: models.py:497
 msgid "Šířka balíku"
 msgstr "Package width"
 
-#: models.py:489
+#: models.py:503
 msgid "Hloubka balíku"
 msgstr "Package depth"
 
-#: models.py:495
+#: models.py:509
 msgid "Váha balíku"
 msgstr "Package weight"
 
-#: models.py:505
+#: models.py:519
 msgid "První číslo řady pro faktury"
 msgstr "First sequence number for invoices"
 
-#: models.py:511
+#: models.py:525
 msgid "Poslední číslo řady pro faktury"
 msgstr "Last sequence number for invoices"
 
-#: models.py:517
+#: models.py:531
 msgid "Včasné startovné"
 msgstr "Early registration fee"
 
-#: models.py:521
+#: models.py:535
 msgid "Včasné startovné pro organizace"
 msgstr "Early-bird registration fee for companies"
 
-#: models.py:525
+#: models.py:539
 msgid "Pozdní startovné"
 msgstr "Late starting fee"
 
-#: models.py:529
+#: models.py:543
 msgid "Pozdní startovné pro organizace"
 msgstr "Late registration fee for companies"
 
-#: models.py:533
+#: models.py:547
 msgid "Benefiční startovné"
 msgstr "Beneficiary registration fee"
 
-#: models.py:537
+#: models.py:551
 msgid "Benefiční startovné pro organizace"
 msgstr "Beneficiary registration fee for companies"
 
-#: models.py:541
+#: models.py:555
 msgid "Případy, kdy je startovné zdarma"
 msgstr "Free registration cases"
 
-#: models.py:592 models.py:593
+#: models.py:606 models.py:607
 msgid "fáze kampaně"
 msgstr "champaign phase"
 
-#: models.py:596
+#: models.py:610
 msgid "registrační"
 msgstr "registration"
 
-#: models.py:597
+#: models.py:611
 msgid "pozdní startovné"
 msgstr "late registration fee"
 
-#: models.py:598
+#: models.py:612
 msgid "vstup do soutěže (zastaralé)"
 msgstr "competition entry (deprecated)"
 
-#: models.py:599
+#: models.py:613
 msgid "placení startovného"
 msgstr "registration fee payment"
 
-#: models.py:600
+#: models.py:614
 msgid "soutěžní"
 msgstr "competition"
 
-#: models.py:601
+#: models.py:615
 msgid "výsledková"
 msgstr "results"
 
-#: models.py:602
+#: models.py:616
 msgid "přihlašovací do soutěží"
 msgstr "apply for competitions"
 
-#: models.py:603
+#: models.py:617
 msgid "vytváření faktur"
 msgstr "invoice creation"
 
-#: models.py:614
+#: models.py:628
 msgid "Typ fáze"
 msgstr "Phase type"
 
-#: models.py:620
+#: models.py:634
 msgid "Datum začátku fáze"
 msgstr "Phase beginning date"
 
-#: models.py:624
+#: models.py:638
 msgid "Datum konce fáze"
 msgstr "Phase end date"
 
-#: models.py:646 models.py:679 models.py:768 models.py:1695
+#: models.py:660 models.py:693 models.py:771 models.py:1698
 msgid "Velikost trička"
 msgstr "T-shirt size"
 
-#: models.py:659
+#: models.py:673
 msgid "Posílá se?"
 msgstr "Ships?"
 
-#: models.py:663
+#: models.py:677
 msgid "Je dostupné?"
 msgstr "Is available?"
 
-#: models.py:664
+#: models.py:678
 msgid "Zobrazuje se v nabídce trik"
 msgstr "Is shown in the t-shirt sizes"
 
-#: models.py:668
+#: models.py:682
 msgid "Náhled trika"
 msgstr "T-shirt preview"
 
-#: models.py:672
+#: models.py:686
 msgid "Cena"
 msgstr "Price"
 
-#: models.py:680
+#: models.py:694
 msgid "Velikosti trička"
 msgstr "T-shirt size"
 
-#: models.py:701
+#: models.py:715
 msgid "Účastník kampaně"
 msgstr "Campaign attendee"
 
-#: models.py:702
+#: models.py:716
 msgid "Účastníci kampaně"
 msgstr "Campaign attendees"
 
-#: models.py:706 models.py:1272
+#: models.py:720 models.py:1275
 msgid "Odsouhlasený"
 msgstr "Confirmed"
 
-#: models.py:707 models.py:1273
+#: models.py:721 models.py:1276
 msgid "Nerozhodnuto"
 msgstr "Unconfirmed"
 
-#: models.py:708 models.py:1274
+#: models.py:722 models.py:1277
 msgid "Zamítnutý"
 msgstr "Denied"
 
-#: models.py:718 models.py:1113 models.py:1286
+#: models.py:732 models.py:1116 models.py:1289
 msgid "Uživatelský profil"
 msgstr "User profile"
 
-#: models.py:725
+#: models.py:739
 msgid "Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"
 msgstr "Average distance from home to work (in km in one direction)"
 
-#: models.py:730 models.py:2660
+#: models.py:744 models.py:2663
 msgid "trasa"
 msgstr "track"
 
-#: models.py:731
-msgid ""
-"\n"
-"<ul>\n"
-"   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko \"Nakreslit "
-"trasu\", ukončíte kliknutím na cílový bod.</strong></li>\n"
-"   <li>Změnu trasy provedete po přepnutí do režimu úprav kliknutím na trasu."
-"</li>\n"
-"   <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede.</li>\n"
-"   <li>Zadání přesnějšího průběhu nám však může pomoci lépe zjistit jak se "
-"lidé na kole pohybují.</li>\n"
-"   <li>Trasu bude možné změnit nebo upřesnit i později v průběhu soutěže.</"
-"li>\n"
-"   <li>Polohu začátku a konce trasy stačí zadávat s přesností 100m.</li>\n"
-"</ul>\n"
-"Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí "
-"pohybuících se ve městě na kole. Vaše cesta se zobrazí vašim týmovým "
-"kolegům.\n"
-"<br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na úvodní "
-"stránce.\n"
-msgstr ""
-"\n"
-"<ul>\n"
-"<li><strong>Click \"Draw a route\" button to start entering your route. "
-"Click on the destination point to finish your route.</strong></li>\n"
-"<li>Change your route by clicking on your route and switching to the editing "
-"mode.</li>\n"
-"<li>It is sufficient if it is clear which streets the route takes.</li>\n"
-"<li>However, a more detailed route will help us understand how and where "
-"people cycle.</li>\n"
-"<li>It is possible to change or modify the route during the competition, "
-"too. </li>\n"
-"<li>It is sufficient to indicate the start and the end of the route within a "
-"100 m radius.</li>\n"
-"</ul>\n"
-"The purpose of the route is to calculate the distance and it can also help "
-"us determine the needs of people using bikes in town. Your route will be "
-"displayed to your team members.\n"
-"<br/>Anonymised routes of all participants will be displayed on the start "
-"page.\n"
-
-#: models.py:749
+#: models.py:752
 msgid "Nepřeji si zadávat svoji trasu."
 msgstr "I don't want to fill in my track."
 
-#: models.py:761
+#: models.py:764
 msgid "Souhlas týmu"
 msgstr "Team approval"
 
-#: models.py:773 models.py:1372 models.py:1443 models.py:2676
+#: models.py:776 models.py:1375 models.py:1446 models.py:2680
 msgid "Datum vytvoření"
 msgstr "Created"
 
-#: models.py:778 models.py:2681
+#: models.py:781 models.py:2685
 msgid "Datum poslední změny"
 msgstr "Last change date"
 
-#: models.py:850
+#: models.py:853
 msgid "neplatí se"
 msgstr "not paying"
 
-#: models.py:851
+#: models.py:854
 msgid "žádné platby"
 msgstr "no payments"
 
-#: models.py:852
+#: models.py:855
 msgid "zaplaceno"
 msgstr "paid"
 
-#: models.py:853
+#: models.py:856
 msgid "nepotvrzeno"
 msgstr "unconfirmed"
 
-#: models.py:854
+#: models.py:857
 msgid "neznámý"
 msgstr "unknown"
 
-#: models.py:941
+#: models.py:944
 msgid "Vzdálenost do práce"
 msgstr "Distance to work"
 
-#: models.py:1114
+#: models.py:1117
 msgid "Uživatelské profily"
 msgstr "User profiles"
 
-#: models.py:1118
+#: models.py:1121
 msgid "-------"
 msgstr "-------"
 
-#: models.py:1119
+#: models.py:1122
 msgid "Muž"
 msgstr "Male"
 
-#: models.py:1120
+#: models.py:1123
 msgid "Žena"
 msgstr "Female"
 
-#: models.py:1124
+#: models.py:1127
 msgid "Čeština"
 msgstr "Czech"
 
-#: models.py:1125
+#: models.py:1128
 msgid "Angličtna"
 msgstr "English"
 
-#: models.py:1136
+#: models.py:1139
 msgid "Zobrazené jméno"
 msgstr "Displayed name"
 
-#: models.py:1137
+#: models.py:1140
 msgid ""
 "Zobrazí se ve všech veřejných výpisech místo vašeho jména. Zadávejte takové "
 "jméno, podle kterého vás vaši kolegové poznají"
@@ -1423,435 +1407,436 @@ msgstr ""
 "Will be displayed instead of your name in all public outputs. Fill in such "
 "name, that your coleauges know that it is You."
 
-#: models.py:1146
+#: models.py:1149
 msgid "Jazyk emailové komunikace"
 msgstr "Email communication language"
 
-#: models.py:1147
+#: models.py:1150
 msgid "Jazyk, ve kterém vám budou docházet emaily z registračního systému"
 msgstr "Language, in whitch will be delivered emails from registration system"
 
-#: models.py:1153
+#: models.py:1156
 msgid "ID uživatele v mailing listu"
 msgstr "Mailing list ID"
 
-#: models.py:1163
+#: models.py:1166
 msgid "Hash poslední synchronizace s mailingem"
 msgstr "Hash of last synchronization with mailing list"
 
-#: models.py:1169
+#: models.py:1172
 msgid "Pohlaví"
 msgstr "Gender"
 
-#: models.py:1170
+#: models.py:1173
 msgid "Slouží k zařazení do výkonnostních kategorií"
 msgstr "For distinguishing in performance categories"
 
-#: models.py:1176 models.py:1321
+#: models.py:1179 models.py:1324
 msgid "Interní poznámka"
 msgstr "Internal note"
 
-#: models.py:1189
+#: models.py:1192
 msgid "Souhlas se zpracováním osobních údajů."
 msgstr "Agreement with processing personal details."
 
-#: models.py:1193
-msgid "Heslo v ECC"
-msgstr "Password in ECC"
-
-#: models.py:1202
+#: models.py:1196
 msgid "Email v ECC"
 msgstr "E-mail in ECC"
 
-#: models.py:1278
+#: models.py:1205
+msgid "Heslo v ECC"
+msgstr "Password in ECC"
+
+#: models.py:1281
 msgid "Koordinátor organizace"
 msgstr "Organization's Coordinator"
 
-#: models.py:1279
+#: models.py:1282
 msgid "Koordinátoři organizací"
 msgstr "Organization's Coordinators"
 
-#: models.py:1293
+#: models.py:1296
 msgid "Správcovství organizace schváleno"
 msgstr "Company administration approved"
 
-#: models.py:1301
+#: models.py:1304
 msgid "Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici"
 msgstr "Please, write us, which position you occupy in your company"
 
-#: models.py:1328
+#: models.py:1331
 msgid "Může potvrzovat platby"
 msgstr "Can confirm payments"
 
-#: models.py:1332
+#: models.py:1335
 msgid "Uživatel potvrdil, že bude plati za zaměstnance."
 msgstr "User confirmed that that he/she will pay for employees"
 
-#: models.py:1381
+#: models.py:1384
 msgid "Zákaznické listy"
 msgstr "Customer sheets"
 
-#: models.py:1385
+#: models.py:1388
 msgid "Objednávka pro TNT"
 msgstr "TNT order"
 
-#: models.py:1389
+#: models.py:1392
 msgid "Vyřízeno"
 msgstr "Dispatched"
 
-#: models.py:1396 models.py:1705
+#: models.py:1399 models.py:1708
 msgid "Dávka objednávek"
 msgstr "Delivery batch"
 
-#: models.py:1397
+#: models.py:1400
 msgid "Dávky objednávek"
 msgstr "Delivery batches"
 
-#: models.py:1438
+#: models.py:1441
 msgid "Faktura"
 msgstr "Invoice"
 
-#: models.py:1439 templates/base_generic_company_admin_form.html.py:17
+#: models.py:1442 templates/base_generic_company_admin_form.html.py:17
 msgid "Faktury"
 msgstr "Invoices"
 
-#: models.py:1447 templates/company_admin/invoices.html.py:8
+#: models.py:1450 templates/company_admin/invoices.html.py:8
 msgid "Den vystavení daňového dokladu"
 msgstr "Invoice exposure date"
 
-#: models.py:1452
+#: models.py:1455
 msgid "Den uskutečnění zdanitelného plnění"
 msgstr "Taxable date"
 
-#: models.py:1457
+#: models.py:1460
 msgid "Datum zaplacení"
 msgstr "Payment date"
 
-#: models.py:1463
+#: models.py:1466
 msgid ""
 "Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."
 msgstr ""
 "My company wants to support Auto*mat by paying the beneficiary starting fee."
 
-#: models.py:1467
+#: models.py:1470
 msgid "Celková částka"
 msgstr "Total amount"
 
-#: models.py:1471
+#: models.py:1474
 msgid "PDF faktury"
 msgstr "PDF invoice"
 
-#: models.py:1488
+#: models.py:1491
 msgid "Pořadové číslo faktury"
 msgstr "Invoice sequence number"
 
-#: models.py:1491
+#: models.py:1494
 msgid "Číslo objednávky (nepovinné)"
 msgstr "Order number (optional)"
 
-#: models.py:1513
+#: models.py:1516
 msgid "Došla číselná řada faktury"
 msgstr "Invoice number sequence ran out"
 
-#: models.py:1536
+#: models.py:1539
 msgid "Neexistuje žádná nefakturovaná platba"
 msgstr "No payment without invoice"
 
-#: models.py:1596
+#: models.py:1599
 msgid "Nová"
 msgstr "New"
 
-#: models.py:1597
+#: models.py:1600
 msgid "Zrušena"
 msgstr "Cancelled"
 
-#: models.py:1598
+#: models.py:1601
 msgid "Odmítnuta"
 msgstr "Denied"
 
-#: models.py:1599
+#: models.py:1602
 msgid "Zahájena"
 msgstr "Initiated"
 
-#: models.py:1600
+#: models.py:1603
 msgid "Očekává potvrzení"
 msgstr "Waiting for confirmation"
 
-#: models.py:1601
+#: models.py:1604
 msgid "Platba zamítnuta, prostředky nemožno vrátit, řeší PayU"
 msgstr "Payment denied, resources unrecoverable, is being solved by PayU"
 
-#: models.py:1602
+#: models.py:1605
 msgid "Platba přijata"
 msgstr "Payment accepted"
 
-#: models.py:1603
+#: models.py:1606
 msgid "Nesprávný status -- kontaktovat PayU"
 msgstr "Bad status -- PayU needs to by contacted"
 
-#: models.py:1604
+#: models.py:1607
 msgid "Platba akceptována organizací"
 msgstr "Payment accepted by company"
 
-#: models.py:1605
+#: models.py:1608
 msgid "Faktura vystavena"
 msgstr "Invoice issued"
 
-#: models.py:1606
+#: models.py:1609
 msgid "Faktura zaplacena"
 msgstr "Invoice paid"
 
-#: models.py:1626
+#: models.py:1629
 msgid "Status"
 msgstr "Status"
 
-#: models.py:1637
+#: models.py:1640
 msgid "Vytvoření"
 msgstr "Created"
 
-#: models.py:1641
+#: models.py:1644
 msgid "Popis"
 msgstr "Description"
 
-#: models.py:1646
+#: models.py:1649
 msgid "Realizace"
 msgstr "Realized"
 
-#: models.py:1650 models.py:1651
+#: models.py:1653 models.py:1654
 msgid "Transakce"
 msgstr "Transaction"
 
-#: models.py:1658
+#: models.py:1661
 msgid "Obecná transakce"
 msgstr "Common transaction"
 
-#: models.py:1659
+#: models.py:1662
 msgid "Obecné transakce"
 msgstr "Common transactions"
 
-#: models.py:1676
+#: models.py:1679
 msgid "Uživatelská akce"
 msgstr "User action"
 
-#: models.py:1677
+#: models.py:1680
 msgid "Uživatelské akce"
 msgstr "User actions"
 
-#: models.py:1700
+#: models.py:1703
 msgid "Tracking number TNT"
 msgstr "TNT tracking number"
 
-#: models.py:1718 models.py:1719
+#: models.py:1721 models.py:1722
 msgid "Transakce balíku"
 msgstr "Package transaction"
 
-#: models.py:1747
+#: models.py:1750
 msgid "Došla číselná řada pro balíčkové transakce"
 msgstr "Transaction number sequence ran out"
 
-#: models.py:1778
+#: models.py:1781
 msgid "mPenize - mBank"
 msgstr "mPenize - mBank"
 
-#: models.py:1779
+#: models.py:1782
 msgid "MojePlatba"
 msgstr "MojePlatba"
 
-#: models.py:1780
+#: models.py:1783
 msgid "ePlatby pro eKonto"
 msgstr "ePlatby pro eKonto"
 
-#: models.py:1781
+#: models.py:1784
 msgid "GE Money Bank"
 msgstr "GE Money Bank"
 
-#: models.py:1782
+#: models.py:1785
 msgid "Sberbank (Volksbank)"
 msgstr "Sberbank (Volksbank)"
 
-#: models.py:1783
+#: models.py:1786
 msgid "Fio banka"
 msgstr "Fio banka"
 
-#: models.py:1784
+#: models.py:1787
 msgid "PLATBA 24 – Česká spořitelna"
 msgstr "PLATBA 24 – Česká spořitelna"
 
-#: models.py:1785
+#: models.py:1788
 msgid "Era - Poštovní spořitelna"
 msgstr "Era - Poštovní spořitelna"
 
-#: models.py:1786
+#: models.py:1789
 msgid "ČSOB"
 msgstr "ČSOB"
 
-#: models.py:1787
+#: models.py:1790
 msgid "Kreditní karta přes GPE"
 msgstr "Credit card via GPE"
 
-#: models.py:1788
+#: models.py:1791
 msgid "bankovní převod"
 msgstr "bank transfer"
 
-#: models.py:1789
+#: models.py:1792
 msgid "převod přes poštu"
 msgstr "transfer by post office"
 
-#: models.py:1790
+#: models.py:1793
 msgid "superCASH"
 msgstr "superCASH"
 
-#: models.py:1791
+#: models.py:1794
 msgid "PaySec"
 msgstr "PaySec"
 
-#: models.py:1792
+#: models.py:1795
 msgid "Mobito"
 msgstr "Mobito"
 
-#: models.py:1793
+#: models.py:1796
 msgid "UniCredit"
 msgstr "UniCredit"
 
-#: models.py:1794
+#: models.py:1797
 msgid "testovací platba"
 msgstr "testing payment"
 
-#: models.py:1796
+#: models.py:1799
 msgid "faktura mimo PayU"
 msgstr "invoice outside PayU"
 
-#: models.py:1797
+#: models.py:1800
 msgid "organizace platí fakturou"
 msgstr "company pays by invoice"
 
-#: models.py:1798
+#: models.py:1801
 msgid "člen Klubu přátel Auto*Matu"
 msgstr "Auto*Mat Friends Club member"
 
-#: models.py:1799
+#: models.py:1802
 msgid "kandidát na členství v Klubu přátel Auto*Matu"
 msgstr "Auto*Mat Friends Club member wannabe"
 
-#: models.py:1800
+#: models.py:1803
 msgid "neplatí startovné"
 msgstr "pay no registration fee"
 
-#: models.py:1831 models.py:1832
+#: models.py:1834 models.py:1835
 msgid "Platební transakce"
 msgstr "Payment transaction"
 
-#: models.py:1851 templates/company_admin/create_invoice.html.py:24
+#: models.py:1854 templates/company_admin/create_invoice.html.py:24
 msgid "Částka"
 msgstr "Amount"
 
-#: models.py:1859
+#: models.py:1862
 msgid "Chyba"
 msgstr "Error"
 
-#: models.py:1926 models.py:2641
+#: models.py:1929 models.py:2644
 msgid "Tam"
 msgstr "There"
 
-#: models.py:1927 models.py:2642
+#: models.py:1930 models.py:2645
 msgid "Zpět"
 msgstr "Back"
 
-#: models.py:1931
+#: models.py:1934
 msgid "Kolo"
 msgstr "Bicycle"
 
-#: models.py:1932
+#: models.py:1935
 msgid "Chůze/běh"
 msgstr "Walk/run"
 
-#: models.py:1933
+#: models.py:1936
 msgid "Jinak"
 msgstr "Other"
 
-#: models.py:1934
+#: models.py:1937
 msgid "Žádná cesta"
 msgstr "No trip"
 
-#: models.py:1938
+#: models.py:1941
 msgid "Cesta"
 msgstr "Trip"
 
-#: models.py:1939
+#: models.py:1942
 msgid "Cesty"
 msgstr "Trips"
 
-#: models.py:1951 models.py:2651
+#: models.py:1954 models.py:2654
 msgid "Směr cesty"
 msgstr "Trip direction"
 
-#: models.py:1956
+#: models.py:1959
 msgid "Datum cesty"
 msgstr "Trip date"
 
-#: models.py:1960
+#: models.py:1963
 msgid "Mód dopravy"
 msgstr "Transportation mode"
 
-#: models.py:1968 models.py:1992
+#: models.py:1971 models.py:1995
 #: templates/registration/emission_calculator.html:10
 msgid "Ujetá vzdálenost"
 msgstr "Distance ridden"
 
-#: models.py:1993
+#: models.py:1996
 msgid "Pravidelnost jízd na kole"
 msgstr "Bike rides regularity"
 
-#: models.py:1998
+#: models.py:2001
 msgid "Jednotliví soutěžící"
 msgstr "Individual competitors"
 
-#: models.py:1999
+#: models.py:2002
 msgid "Liberos"
 msgstr "Liberos"
 
-#: models.py:2001
+#: models.py:2004
 msgid "Soutěž organizací"
 msgstr "Competition of organizations"
 
-#: models.py:2005 models.py:2006
+#: models.py:2008 models.py:2009
 msgid "Soutěžní kategorie"
 msgstr "Competition category"
 
-#: models.py:2011
+#: models.py:2014
 msgid "Jméno soutěže"
 msgstr "Competition name"
 
-#: models.py:2026
+#: models.py:2029
 msgid "Odkaz na stránku soutěže"
 msgstr "Competition page link"
 
-#: models.py:2027
+#: models.py:2030
 msgid "Odkaz na stránku, kde budou pravidla a podrobné informace o soutěži"
 msgstr ""
 "Link to a page with rules and detailed information about the competition"
 
-#: models.py:2032
+#: models.py:2035
 msgid "Datum začátku soutěže"
 msgstr "Competition beginning date"
 
-#: models.py:2033
+#: models.py:2036
 msgid "Od tohoto data se počítají jízdy"
 msgstr "The rides are counting from this date"
 
-#: models.py:2037
+#: models.py:2040
 msgid "Datum konce soutěže"
 msgstr "Competition end date"
 
-#: models.py:2038
+#: models.py:2041
 msgid "Po tomto datu nebude možné soutěžit (vyplňovat dotazník)"
-msgstr "After this date the competition will be closed (or fill questionnaire)"
+msgstr ""
+"After this date the competition will be closed (or fill questionnaire)"
 
-#: models.py:2042 models.py:2477
+#: models.py:2045 models.py:2480
 msgid "Typ"
 msgstr "Type"
 
-#: models.py:2044
+#: models.py:2047
 msgid ""
 "Určuje, zdali bude soutěž výkonnostní (na ujetou vzdálenost), nebo na "
 "pravidelnost. Volba \"Dotazník\" slouží pro kreativní soutěže, "
@@ -1862,7 +1847,7 @@ msgstr ""
 "categories, cyclo-employer of the year and other questionnaires; it is "
 "necessary to define questions."
 
-#: models.py:2052
+#: models.py:2055
 msgid ""
 "Určuje, zdali bude soutěž týmová, nebo pro jednotlivce. Ostatní volby "
 "vybírejte jen pokud víte, k čemu slouží."
@@ -1870,23 +1855,23 @@ msgstr ""
 "Determines whether the competition will be for teams or for individuals. "
 "Please select other options only if you know their purpose."
 
-#: models.py:2058
+#: models.py:2061
 msgid "Přihlášení soutěžící jednotlivci"
 msgstr "Registered participating individuals "
 
-#: models.py:2063
+#: models.py:2066
 msgid "Přihlášené soutěžící týmy"
 msgstr "Registered participating teams "
 
-#: models.py:2068
+#: models.py:2071
 msgid "Přihlášené soutěžící organizace"
 msgstr "Registered participating organisations "
 
-#: models.py:2073
+#: models.py:2076
 msgid "Soutěž pouze pro města"
 msgstr "Competition is only for selected cities"
 
-#: models.py:2074
+#: models.py:2077
 msgid ""
 "Soutěž bude probíhat ve vybraných městech. Pokud zůstane prázdné, soutěž "
 "probíhá ve všech městech."
@@ -1894,239 +1879,239 @@ msgstr ""
 "The competition will take place in selected towns. If the field is empty, "
 "the competition takes place in all towns."
 
-#: models.py:2078
+#: models.py:2081
 msgid "Soutěž pouze pro organizace"
 msgstr "Competition for organizations only"
 
-#: models.py:2082
+#: models.py:2085
 msgid "Soutěž pouze pro pohlaví"
 msgstr "Competition is only for selected gender"
 
-#: models.py:2083
+#: models.py:2086
 msgid ""
-"Pokud chcete oddělit výsledky pro muže a ženy, je potřeba vypsat dvě soutěže "
-"- jednu pro muže a druhou pro ženy. Jinak nechte prázdné."
+"Pokud chcete oddělit výsledky pro muže a ženy, je potřeba vypsat dvě soutěže"
+" - jednu pro muže a druhou pro ženy. Jinak nechte prázdné."
 msgstr ""
-"If you want to separate results for men and women, it is necessary to set up "
-"two competitions - one for men and one for women. Otherwise leave blank."
+"If you want to separate results for men and women, it is necessary to set up"
+" two competitions - one for men and one for women. Otherwise leave blank."
 
-#: models.py:2091
+#: models.py:2094
 msgid "Soutěž bez přihlášek (pro všechny)"
 msgstr "Competition is without admission"
 
-#: models.py:2092
+#: models.py:2095
 msgid ""
 "Dotazník je obvykle na přihlášky, výkonnost také a pravidelnost bez nich."
 msgstr ""
 "Questionnaire is usually with admission, frequency and regularity without "
 "admission."
 
-#: models.py:2096
+#: models.py:2099
 msgid "Zveřejňovat soutěžní odpovědi"
 msgstr "Public competition answers"
 
-#: models.py:2100
+#: models.py:2103
 msgid "Soutěž je veřejná"
 msgstr "Competition is public"
 
-#: models.py:2104
+#: models.py:2107
 msgid "Prodloužené přihlášky"
 msgstr "Prolonged admissions"
 
-#: models.py:2105
+#: models.py:2108
 msgid "Počet dní po začátku soutěže, kdy je ještě možné se přihlásit"
 msgstr ""
 "Days from begining, when it is still possible to admit the competition."
 
-#: models.py:2111
+#: models.py:2114
 msgid "Pravidla soutěže"
 msgstr "Competition rules"
 
-#: models.py:2210
+#: models.py:2213
 msgid "dotazník"
 msgstr "questionnaire"
 
-#: models.py:2211
+#: models.py:2214
 msgid "soutěž na pravidelnost"
 msgstr "regularity competition"
 
-#: models.py:2212
+#: models.py:2215
 msgid "soutěž na vzdálenost"
 msgstr "distance competition"
 
-#: models.py:2215 templates/registration/competitions.html.py:23
+#: models.py:2218 templates/registration/competitions.html.py:23
 msgid "jednotlivců"
 msgstr "for individuals"
 
-#: models.py:2216 templates/registration/competitions.html.py:25
+#: models.py:2219 templates/registration/competitions.html.py:25
 msgid "liberos"
 msgstr "for liberos"
 
-#: models.py:2217 templates/registration/competitions.html.py:27
+#: models.py:2220 templates/registration/competitions.html.py:27
 msgid "týmů"
 msgstr "for teams"
 
-#: models.py:2218 templates/registration/competitions.html.py:29
+#: models.py:2221 templates/registration/competitions.html.py:29
 msgid "společností"
 msgstr "for companies"
 
-#: models.py:2221
+#: models.py:2224
 msgid "vnitrofiremní"
 msgstr "inter-company"
 
-#: models.py:2222
+#: models.py:2225
 #, python-format
 msgid "organizace %s"
 msgstr "in organization %s"
 
-#: models.py:2230
+#: models.py:2233
 #, python-format
 msgid "ve městě %(cities)s"
 msgid_plural "ve městech %(cities)s"
 msgstr[0] "in city %(cities)s"
 msgstr[1] "in cities %(cities)s"
 
-#: models.py:2304
+#: models.py:2307
 msgid "Výsledek soutěže"
 msgstr "Competition result"
 
-#: models.py:2305 views.py:909
+#: models.py:2308 views.py:909
 msgid "Výsledky soutěží"
 msgstr "Competition results"
 
-#: models.py:2336
+#: models.py:2339
 msgid "Výsledek"
 msgstr "Result"
 
-#: models.py:2393
+#: models.py:2396
 msgid "Musí být zvolen právě jeden uživatel, tým nebo organizace"
 msgstr "Exacly one user, team or company must be selectec"
 
-#: models.py:2408 models.py:2409 models.py:2503 models.py:2529
+#: models.py:2411 models.py:2412 models.py:2506 models.py:2532
 msgid "Typ volby"
 msgstr "Choice type"
 
-#: models.py:2421
+#: models.py:2424
 msgid "Typ volby je použitelný pro víc otázek"
 msgstr "Choice type can be used for more questions"
 
-#: models.py:2445
+#: models.py:2448
 msgid "Anketní otázka"
 msgstr "Survey question"
 
-#: models.py:2446
+#: models.py:2449
 msgid "Anketní otázky"
 msgstr "Survey questions"
 
-#: models.py:2450 models.py:2457
+#: models.py:2453 models.py:2460
 msgid "Text"
 msgstr "Text"
 
-#: models.py:2451
+#: models.py:2454
 msgid "Výběr odpovědi"
 msgstr "Choice"
 
-#: models.py:2452
+#: models.py:2455
 msgid "Výběr z více odpovědí"
 msgstr "Multiple choice "
 
-#: models.py:2456
+#: models.py:2459
 msgid "Nic"
 msgstr "Nothing"
 
-#: models.py:2458
+#: models.py:2461
 msgid "Odkaz"
 msgstr "Link"
 
-#: models.py:2459
+#: models.py:2462
 msgid "Jeden řádek textu"
 msgstr "One line of text"
 
-#: models.py:2469
+#: models.py:2472
 msgid "Otázka"
 msgstr "Question"
 
-#: models.py:2474
+#: models.py:2477
 msgid "Den"
 msgstr "Day"
 
-#: models.py:2483
+#: models.py:2486
 msgid "Typ komentáře"
 msgstr "Type of comment"
 
-#: models.py:2490
+#: models.py:2493
 msgid "Povolit přílohu"
 msgstr "Allow attachment"
 
-#: models.py:2494
+#: models.py:2497
 msgid "Pořadí"
 msgstr "Order"
 
-#: models.py:2498
+#: models.py:2501
 msgid "Soutěž"
 msgstr "Competition"
 
-#: models.py:2508
+#: models.py:2511
 msgid "Povinná otázka"
 msgstr "Mandatory question"
 
-#: models.py:2522
+#: models.py:2525
 msgid "Nabídka k anketním otázce"
 msgstr "Choice to questionnaire questions"
 
-#: models.py:2523
+#: models.py:2526
 msgid "Nabídky k anketním otázkám"
 msgstr "Choices to questionnaire questions"
 
-#: models.py:2533
+#: models.py:2536
 msgid "Nabídka"
 msgstr "Choice"
 
-#: models.py:2538
+#: models.py:2541
 msgid "Body"
 msgstr "Points"
 
-#: models.py:2556
+#: models.py:2559
 msgid "Odpověď"
 msgstr "Answer"
 
-#: models.py:2568
+#: models.py:2571
 msgid "Komentář"
 msgstr "Comment"
 
-#: models.py:2596
+#: models.py:2599
 msgid "ReKola"
 msgstr "ReKola"
 
-#: models.py:2600
+#: models.py:2603
 msgid "typ voucheru"
 msgstr "voucher type"
 
-#: models.py:2608
+#: models.py:2611
 msgid "token"
 msgstr "token"
 
-#: models.py:2619
+#: models.py:2622
 msgid "Voucher"
 msgstr "Voucher"
 
-#: models.py:2620
+#: models.py:2623
 msgid "Vouchery"
 msgstr "Vouchers"
 
-#: models.py:2646
+#: models.py:2649
 msgid "Datum vykonání cesty"
 msgstr "Trip date"
 
-#: models.py:2671
+#: models.py:2675
 msgid "Nahráno z aplikace"
 msgstr "Uploaded from application"
 
-#: models.py:2686
+#: models.py:2690
 msgid "Datum posledního nahrátí do ECC"
 msgstr "Last upload to ECC date"
 
-#: models.py:2695
+#: models.py:2699
 msgid "GPX soubory"
 msgstr "GPX files"
 
@@ -2136,12 +2121,13 @@ msgstr "DPNK"
 
 #: templates/404.html:9
 msgid ""
-"Omlouváme se, ale taková stránka zde neexistuje. Pokud si myslíte, že by zde "
-"být měla, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.cz?"
-"subject=Neexistující stránka'>kontakt@dopracenakole.cz</a>"
+"Omlouváme se, ale taková stránka zde neexistuje. Pokud si myslíte, že by zde"
+" být měla, prosím kontaktujte <a "
+"href='mailto:kontakt@dopracenakole.cz?subject=Neexistující "
+"stránka'>kontakt@dopracenakole.cz</a>"
 msgstr ""
-"We are sorry but this page does not exist. If you thing there should be one, "
-"please contact <a href='kontakt@dopracenakole.cz' subject=Neexistující "
+"We are sorry but this page does not exist. If you thing there should be one,"
+" please contact <a href='kontakt@dopracenakole.cz' subject=Neexistující "
 "stránka'>kontakt@dopracenakole.cz</a>"
 
 #: templates/500.html:9
@@ -2149,9 +2135,10 @@ msgid ""
 "Došlo k chybě. O této události jsme dostali hlášení, takže se je možné, že "
 "se v tuto chvíli už pokoušíme problém opravit. Je také možné, že problém je "
 "pouze dočasný a za pár minut již vše bude fungovat správně. Pokud chyba "
-"přetrvává delší dobu, prosíme obraťte se na <a href='mailto:"
-"kontakt@dopracenakole.cz?subject=Chybová stránka'>kontakt@dopracenakole.cz</"
-"a> s podrobným popisem, jak tato chyba nastala."
+"přetrvává delší dobu, prosíme obraťte se na <a "
+"href='mailto:kontakt@dopracenakole.cz?subject=Chybová "
+"stránka'>kontakt@dopracenakole.cz</a> s podrobným popisem, jak tato chyba "
+"nastala."
 msgstr ""
 "System error occurred. We have been informed about this event, so it is "
 "possible, that we are solving the problem right now. It is also possible, "
@@ -2197,12 +2184,13 @@ msgstr "Administration"
 #: templates/base_generic.html:113
 msgid ""
 "Bohužel používáte <strong>zastaralý</strong> prohlížeč internetu. Přes naši "
-"snahu nemusí některé části webu dobře fungovat. Pokud můžete, <a href="
-"\"http://www.whatbrowser.org/intl/cs\">nainstalujte si novější prohlížeč"
+"snahu nemusí některé části webu dobře fungovat. Pokud můžete, <a "
+"href=\"http://www.whatbrowser.org/intl/cs\">nainstalujte si novější "
+"prohlížeč"
 msgstr ""
 "Unfortunately, you are using <strong>an old</strong> internet browser. "
-"Despite our efforts, some parts of the website may not work well. If you can "
-"<a href=\"http://www.whatbrowser.org/intl/cs\">install a newer browser."
+"Despite our efforts, some parts of the website may not work well. If you can"
+" <a href=\"http://www.whatbrowser.org/intl/cs\">install a newer browser."
 
 #: templates/base_generic.html:130
 msgid "Uživatel: "
@@ -2304,8 +2292,8 @@ msgstr "Change company address"
 #: templates/company_admin/create_invoice.html:50
 msgid "Nemáte žádné soutěžící, pro které by bylo možné vytvořit fakturu"
 msgstr ""
-"You don't have any competition participants for whom it would be possible to "
-"generate an invoice"
+"You don't have any competition participants for whom it would be possible to"
+" generate an invoice"
 
 #: templates/company_admin/invoices.html:9
 msgid "Soubor s fakturou"
@@ -2353,28 +2341,24 @@ msgstr "Address: "
 
 #: templates/registration/address.html:11
 msgid ""
-"Nemáte vybraný tým a tím pádem ani přidělenou adresu pobočky, na kterou bude "
-"doručen balíček. Prosím, zkontrolujte si při výběru týmu, jestli adresa vaší "
-"pobočky odpovídá realitě. V případě, že je šapatně napište na "
+"Nemáte vybraný tým a tím pádem ani přidělenou adresu pobočky, na kterou bude"
+" doručen balíček. Prosím, zkontrolujte si při výběru týmu, jestli adresa "
+"vaší pobočky odpovídá realitě. V případě, že je šapatně napište na "
 msgstr ""
-"You have no selected team and therefore no subdivision address. Please check "
-"the address of subdivision, when you will be choosing your team. If the "
+"You have no selected team and therefore no subdivision address. Please check"
+" the address of subdivision, when you will be choosing your team. If the "
 "address is wrong, you can always write to "
 
 #: templates/registration/change_team.html:7
 msgid ""
 "\n"
-"Na této stránce zvolte váš tým. Každý tým musí být registrovaný pod nějakou "
-"organizací a její pobočkou.\n"
-"Jestliže je organizace/pobočka v našem systému již registrovaná, stačí je "
-"vybrat ze seznamu.\n"
+"Na této stránce zvolte váš tým. Každý tým musí být registrovaný pod nějakou organizací a její pobočkou.\n"
+"Jestliže je organizace/pobočka v našem systému již registrovaná, stačí je vybrat ze seznamu.\n"
 "Když registrovaná není, budete o ní muset vyplnit nějaké údaje.\n"
 msgstr ""
 "\n"
-"Please select your team on this page. Each team must be registered under "
-"some organisation and its branch.\n"
-"If the organisation/branch has already been registered, all you need to do "
-"is select them from the list.\n"
+"Please select your team on this page. Each team must be registered under some organisation and its branch.\n"
+"If the organisation/branch has already been registered, all you need to do is select them from the list.\n"
 "If it is not registered, you will have to fill in some details about it.\n"
 
 #: templates/registration/change_team.html:14
@@ -2391,8 +2375,8 @@ msgid ""
 "pobočku vaší organizace. Před výběrem trička prosím zkontrolujte, že je "
 "adresa pobočky správně. Pokud správně není, žádejte změnu:"
 msgstr ""
-"The starter pack with a T-shirt is delivered to a previously selected branch "
-"of your organisation. Before you choose your T-shirt, please check whether "
+"The starter pack with a T-shirt is delivered to a previously selected branch"
+" of your organisation. Before you choose your T-shirt, please check whether "
 "the branch address is correct. If it is not correct, request a correction:"
 
 #: templates/registration/competition_profile.html:41
@@ -2556,7 +2540,8 @@ msgstr "About competition"
 
 #: templates/registration/competitions.html:115
 msgid ""
-"Momentálně nejsou vypsány žádné soutěže, do kterých byste se mohl/a přihlásit"
+"Momentálně nejsou vypsány žádné soutěže, do kterých byste se mohl/a "
+"přihlásit"
 msgstr "There are no available competitions at the moment"
 
 #: templates/registration/competitor_count.html:10
@@ -2598,8 +2583,7 @@ msgid ""
 "Balíček můžete <a href=\"%(tnt_href)s\">sledovat pomocí TNT</a>\n"
 msgstr ""
 "\n"
-"You can <a href=\"%(tnt_href)s\">follow</a> your package with TNT tracking "
-"service.\n"
+"You can <a href=\"%(tnt_href)s\">follow</a> your package with TNT tracking service.\n"
 
 #: templates/registration/password_change_done.html:5
 msgid "Heslo bylo změněno."
@@ -2662,8 +2646,8 @@ msgid ""
 "Zapoměli jste přihlašovací jméno nebo heslo? Vyplňte níže svou emailovou "
 "adresu a my vám zašleme instrukce, jak pokračovat."
 msgstr ""
-"Have you forgotten your login or password? Please fill in the e-mail address "
-"and we will send you instructions."
+"Have you forgotten your login or password? Please fill in the e-mail address"
+" and we will send you instructions."
 
 #: templates/registration/payment_result.html:12
 msgid "Pokračujte na stránku jízd"
@@ -2709,8 +2693,8 @@ msgstr "Company coordinator email: "
 #: templates/registration/payment_type.html:86
 msgid ""
 "Váš zaměstnavatel ještě nemá zvoleného koordinátora. Pokud chcete zvolit "
-"tento typ platby, je potřeba, aby byla platba startovného fakturou dohodnutá "
-"s vaším zaměstnavatelem."
+"tento typ platby, je potřeba, aby byla platba startovného fakturou dohodnutá"
+" s vaším zaměstnavatelem."
 msgstr ""
 "Your employer doesn't have company coordinator. If you want to choose this "
 "type of payment, you have to ask your employer."
@@ -2755,16 +2739,18 @@ msgstr "Pay"
 #, python-format
 msgid ""
 "\n"
-"   Jeden formulář obsahuje chybu. Prosím opravte tuto chybu a znovu "
-"stiskněte tlačítko Odeslat.\n"
+"   Odpověď na jednu otázku obsahuje chybu. Prosím opravte tuto chybu a znovu stiskněte tlačítko Odeslat.\n"
 "   "
 msgid_plural ""
 "\n"
-"   %(invalid_count)s formuláře obsahují chybu. Prosím opravte tyto chyby a "
-"znovu stiskněte tlačítko Odeslat.\n"
+"   Odpovědi na %(invalid_count)s otázky obsahují chybu. Prosím opravte tyto chyby a znovu stiskněte tlačítko Odeslat.\n"
 "   "
 msgstr[0] ""
+"\n"
+"Answer to one question contains an error. Please correct that error and press Send button."
 msgstr[1] ""
+"\n"
+"Answer to %(invalid_count)s question contains errors. Please correct those errors and press Send button."
 
 #: templates/registration/questionaire.html:31
 msgid "b"
@@ -2803,13 +2789,13 @@ msgid "Pokračujte na "
 msgstr "Continue to "
 
 #: templates/registration/request_team_approval.html:7
-msgid "výběr trasy"
-msgstr "select route"
+msgid "zadávání jízd"
+msgstr "rides page"
 
 #: templates/registration/rides.html:9
 msgid ""
-"Cesta byla vykonána na kole, koloběžce, skateboardu...\\nDopravní prostředky "
-"se mohou kombinovat,\\npočítá se však pouze ujetá vzdálenost."
+"Cesta byla vykonána na kole, koloběžce, skateboardu...\\nDopravní prostředky"
+" se mohou kombinovat,\\npočítá se však pouze ujetá vzdálenost."
 msgstr ""
 "Trip was made on bicycle, kick scooter, skateboard...\\n traffic modes can "
 "be combined,\\nbut only ridden distanc can be filled in."
@@ -2827,11 +2813,11 @@ msgstr "Trip was made by car,\\n public transport, taxi..."
 
 #: templates/registration/rides.html:12
 msgid ""
-"Tato cesta nebyla vůbec vykonána.\\nSoutěžící daný den tedy vůbec nepracoval,"
-"\\nnebo cestu z jiného důvodu nevykonal."
+"Tato cesta nebyla vůbec vykonána.\\nSoutěžící daný den tedy vůbec "
+"nepracoval,\\nnebo cestu z jiného důvodu nevykonal."
 msgstr ""
-"This trip was not done at all.\\nCompetitor did not work that day,\\n or did "
-"not make the trip for other reason."
+"This trip was not done at all.\\nCompetitor did not work that day,\\n or did"
+" not make the trip for other reason."
 
 #: templates/registration/rides.html:24
 msgid "Do práce"
@@ -2957,8 +2943,7 @@ msgid ""
 "Při nestandardním pracovním rozvrhu vyplňte následující tabulku:\n"
 "</strong>\n"
 "<hr/>\n"
-"Zatrhněte, kdy budete cestovat do nebo z práce (jakýmkoliv dopravním "
-"prostředkem):  \n"
+"Zatrhněte, kdy budete cestovat do nebo z práce (jakýmkoliv dopravním prostředkem):  \n"
 "<br/>\n"
 "Rozvrh bude v průběhu soutěže možné měnit, vždy však pouze do budoucnosti.\n"
 "<br/>\n"
@@ -2969,8 +2954,7 @@ msgstr ""
 "If you have non-standard working schedule, change following table:\n"
 "</strong>\n"
 "<hr/>\n"
-"Check, when you will be traveling to or from work (doesn't matter by which "
-"mean of transportation)\n"
+"Check, when you will be traveling to or from work (doesn't matter by which mean of transportation)\n"
 "<br/>\n"
 "Working schedule will be possible to change, but always only future days.\n"
 "<br/>\n"
@@ -3027,47 +3011,41 @@ msgid ""
 "Ve vašem týmu jsou neschválení členové, prosíme, <a href=\"%s\">posuďte "
 "jejich členství</a>."
 msgstr ""
-"There are members in your team which are not approved. <a href=\"%s\">Please "
-"review their approval</a>."
+"There are members in your team which are not approved. <a href=\"%s\">Please"
+" review their approval</a>."
 
 #: views.py:156
 #, python-brace-format
 msgid ""
-"Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích "
-"určených pro jednotlivce! <ul><li><a href=\"{invite_url}\">Pozvěte</a> své "
+"Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích"
+" určených pro jednotlivce! <ul><li><a href=\"{invite_url}\">Pozvěte</a> své "
 "kolegy do vašeho týmu, pokud jste tak již učinil/a, vyčkejte na potvrzující "
-"email a schvalte jejich členství v týmu.</li><li>Můžete se pokusit <a href="
-"\"{join_team_url}\">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete "
-"sehnat spolupracovníky,  <a href=\"http://www.dopracenakole.cz/locations/"
-"{city}/seznamka\" target=\"_blank\">najděte si cykloparťáka</a>.</li></ul>"
+"email a schvalte jejich členství v týmu.</li><li>Můžete se pokusit <a "
+"href=\"{join_team_url}\">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete"
+" sehnat spolupracovníky,  <a "
+"href=\"http://www.dopracenakole.cz/locations/{city}/seznamka\" "
+"target=\"_blank\">najděte si cykloparťáka</a>.</li></ul>"
 msgstr ""
-"You are alone in your team. This means that you will only be able to "
-"participate in categories for individuals!<ul><li><a href="
-"\"{invite_url}\">Invite</a> your colleagues to your team and if you've "
-"already done so, please wait for the confirmation email and approve your "
-"colleagues' membership.</li>\n"
-"<li>You can also try <a href=\"{join_team_url}\">to join another team</a>.</"
-"li>\n"
-"<li>If you can't gather other team members, use <a href=\"http://www."
-"dopracenakole.cz/locations/{city}/seznamka\" target=\"_blank\">the 'lonely "
-"hearts'</a> section.</li></ul>"
+"You are alone in your team. This means that you will only be able to participate in categories for individuals!<ul><li><a href=\"{invite_url}\">Invite</a> your colleagues to your team and if you've already done so, please wait for the confirmation email and approve your colleagues' membership.</li>\n"
+"<li>You can also try <a href=\"{join_team_url}\">to join another team</a>.</li>\n"
+"<li>If you can't gather other team members, use <a href=\"http://www.dopracenakole.cz/locations/{city}/seznamka\" target=\"_blank\">the 'lonely hearts'</a> section.</li></ul>"
 
 #: views.py:171
 #, python-brace-format
 msgid ""
-"Vaši kolegové v týmu {team} ještě musí potvrdit vaše členství. Pokud to trvá "
-"podezřele dlouho, můžete zkusit <a href='{address}'>znovu požádat o ověření "
-"členství</a>."
+"Vaši kolegové v týmu {team} ještě musí potvrdit vaše členství. Pokud to trvá"
+" podezřele dlouho, můžete zkusit <a href='{address}'>znovu požádat o ověření"
+" členství</a>."
 msgstr ""
-"Your colleagues in the {team} team must confirm your membership. If it takes "
-"suspiciously long, you can try <a href='{address}'>to make a new request for "
-"the membership confirmation </a>."
+"Your colleagues in the {team} team must confirm your membership. If it takes"
+" suspiciously long, you can try <a href='{address}'>to make a new request "
+"for the membership confirmation </a>."
 
 #: views.py:176
 #, python-format
 msgid ""
-"Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href=\"%s"
-"\">zvolit jiný tým</a>"
+"Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a "
+"href=\"%s\">zvolit jiný tým</a>"
 msgstr "Team membership denied, <a href=\"%s\">choose a different team</a>"
 
 #: views.py:180
@@ -3075,17 +3053,17 @@ msgstr "Team membership denied, <a href=\"%s\">choose a different team</a>"
 msgid ""
 "Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce. Na základě "
 "této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost "
-"vaší cesty. Vaše vyplněná trasa se objeví na <a target=\"_blank\" href="
-"\"http://mapa.prahounakole.cz/?layers=_Wgt\">cyklistické dopravní heatmapě</"
-"a> a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br> <a "
-"href=\"%s\">Vyplnit typickou trasu</a>"
+"vaší cesty. Vaše vyplněná trasa se objeví na <a target=\"_blank\" "
+"href=\"http://mapa.prahounakole.cz/?layers=_Wgt\">cyklistické dopravní "
+"heatmapě</a> a pomůže při plánování cyklistické infrastruktury ve vašem "
+"městě.</br> <a href=\"%s\">Vyplnit typickou trasu</a>"
 msgstr ""
 "You haven't entered your typical route or distance to work yet. Based on "
 "this route, your daily route and its distance will be pre-filled during the "
-"competition. Your route will appear on <a target=\"_blank\" href=\"http://"
-"mapa.prahounakole.cz/?layers=_Wgt\">the heat map for cyclists</a> and will "
-"help in planning the infrastructure for cyclists in your town.</br> <a href="
-"\"%s\">Enter typical route</a>"
+"competition. Your route will appear on <a target=\"_blank\" "
+"href=\"http://mapa.prahounakole.cz/?layers=_Wgt\">the heat map for "
+"cyclists</a> and will help in planning the infrastructure for cyclists in "
+"your town.</br> <a href=\"%s\">Enter typical route</a>"
 
 #: views.py:188
 #, python-brace-format
@@ -3094,8 +3072,8 @@ msgid ""
 "její schválení. Pokud schválení není možné, můžete <a href=\"{url}\">zadat "
 "jiný typ platby</a>."
 msgstr ""
-"Your {payment_type} payment is pending. Please wait for its approval. If the "
-"approval is not possible, you can <a href=\"{url}\">enter another payment "
+"Your {payment_type} payment is pending. Please wait for its approval. If the"
+" approval is not possible, you can <a href=\"{url}\">enter another payment "
 "type</a>."
 
 #: views.py:201
@@ -3118,8 +3096,8 @@ msgstr "Choose/change team"
 
 #: views.py:244
 msgid ""
-"Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho "
-"schvalte a pak změňte tým."
+"Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho"
+" schvalte a pak změňte tým."
 msgstr ""
 "You can't leave team, if there are only unapproved users. Approve somebody "
 "for a team member first."
@@ -3174,24 +3152,25 @@ msgstr "No team found."
 #: views.py:480
 #, python-format
 msgid ""
-"Pozvánka je určena jinému uživateli, než je aktuálně přihlášen. Přihlašte se "
-"jako uživatel %s."
+"Pozvánka je určena jinému uživateli, než je aktuálně přihlášen. Přihlašte se"
+" jako uživatel %s."
 msgstr ""
-"Invitation was intended to user different than user logged in. Login as user "
-"%s"
+"Invitation was intended to user different than user logged in. Login as user"
+" %s"
 
 #: views.py:500
 #, python-brace-format
 msgid ""
-"Již máte startovné zaplaceno. Pokračujte na <a href='{addr}'>zadávání jízd</"
-"a>."
+"Již máte startovné zaplaceno. Pokračujte na <a href='{addr}'>zadávání "
+"jízd</a>."
 msgstr ""
 "Your start fee has already been paid. Please follow to <a "
 "href='{addr}'>entering trips</a>."
 
 #: views.py:503
 #, python-brace-format
-msgid "Startovné se neplatí. Pokračujte na <a href='{addr}'>zadávání jízd</a>."
+msgid ""
+"Startovné se neplatí. Pokračujte na <a href='{addr}'>zadávání jízd</a>."
 msgstr ""
 "No start fee needs to be paid. Please follow to <a href='{addr}'>entering "
 "trips</a>."
@@ -3270,12 +3249,13 @@ msgstr "Competition rules - %s"
 #: views.py:962
 msgid ""
 "Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky "
-"nějaké soutěže, napište prosím na <a href=\"mailto:kontakt@dopracenakole.cz?"
-"subject=Neexistující soutěž\">kontakt@dopracenakole.cz</a>"
+"nějaké soutěže, napište prosím na <a "
+"href=\"mailto:kontakt@dopracenakole.cz?subject=Neexistující "
+"soutěž\">kontakt@dopracenakole.cz</a>"
 msgstr ""
 "This competition is not in the system. If you think there should be some "
-"results, please write an e-mail to <a href=\"mailto:kontakt@dopracenakole.cz?"
-"subject=Nonexisten competition\">"
+"results, please write an e-mail to <a "
+"href=\"mailto:kontakt@dopracenakole.cz?subject=Nonexisten competition\">"
 
 #: views.py:964 views.py:1458
 msgid "Není vybraný tým"
@@ -3317,14 +3297,14 @@ msgstr "Fill in your answers"
 #: views.py:1051
 msgid ""
 "<div class=\"text-danger\">Tento dotazník v systému nemáme. Pokud si "
-"myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na <a href="
-"\"mailto:kontakt@dopracenakole.cz?subject=Neexistující dotazník"
-"\">kontakt@dopracenakole.cz</a></div>"
+"myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na <a "
+"href=\"mailto:kontakt@dopracenakole.cz?subject=Neexistující "
+"dotazník\">kontakt@dopracenakole.cz</a></div>"
 msgstr ""
 "<div class=\"text-danger\">This questionnaire is not in the system. If you "
-"think there should be some results, please write an e-mail to <a href="
-"\"mailto:kontakt@dopracenakole.cz?subject=Nonexistent questionnaire"
-"\">kontakt@dopracenakole.cz</a></div>"
+"think there should be some results, please write an e-mail to <a "
+"href=\"mailto:kontakt@dopracenakole.cz?subject=Nonexistent "
+"questionnaire\">kontakt@dopracenakole.cz</a></div>"
 
 #: views.py:1072
 msgid "Soutěž již nelze vyplňovat"
@@ -3366,7 +3346,8 @@ msgstr "Questionnaire answers"
 
 #: views.py:1212
 msgid "Otázka je položená ve městě, pro které nemáte oprávnění."
-msgstr "The question is asked in a town for which you don't have a permission."
+msgstr ""
+"The question is asked in a town for which you don't have a permission."
 
 #: views.py:1269
 msgid "Odpověd na dotazník"
@@ -3458,11 +3439,15 @@ msgstr "Competitors count"
 #: views.py:1584
 #, python-format
 msgid "%(user_attendance)s je nováček a právě si zažádal o opravu kola"
-msgstr "%(user_attendance)s is a newcomer and has requested the bicycle repair"
+msgstr ""
+"%(user_attendance)s is a newcomer and has requested the bicycle repair"
 
 #: views.py:1633 views.py:1651
 msgid "Zadat trasu"
 msgstr "Fill in track"
+
+#~ msgid "výběr trasy"
+#~ msgstr "select route"
 
 #~ msgid "do&shy;ta&shy;zník"
 #~ msgstr "questionnaire"
@@ -3486,11 +3471,11 @@ msgstr "Fill in track"
 #~ msgstr "Didn't work"
 
 #~ msgid ""
-#~ "Došlo k chybě, prosíme obraťte se na <a href='kontakt@dopracenakole."
-#~ "cz'>kontakt@dopracenakole.cz</a>"
+#~ "Došlo k chybě, prosíme obraťte se na <a "
+#~ "href='kontakt@dopracenakole.cz'>kontakt@dopracenakole.cz</a>"
 #~ msgstr ""
-#~ "Error, please contact <a href='kontakt@dopracenakole."
-#~ "cz'>kontakt@dopracenakole.cz</a>"
+#~ "Error, please contact <a "
+#~ "href='kontakt@dopracenakole.cz'>kontakt@dopracenakole.cz</a>"
 
 #~ msgid "Požádejte"
 #~ msgstr "Ask"
@@ -3503,25 +3488,19 @@ msgstr "Fill in track"
 
 #~ msgid ""
 #~ "\n"
-#~ "   Pokud název organizace, nebo adresa pobočky v senamu je, ale je "
-#~ "chybná, nezakládejte novou, ale žádejte opravu:\n"
+#~ "   Pokud název organizace, nebo adresa pobočky v senamu je, ale je chybná, nezakládejte novou, ale žádejte opravu:\n"
 #~ "   <ol>\n"
 #~ "      <li>\n"
 #~ "         Po vašem koordinátorovi organizace.\n"
 #~ "      </li>\n"
 #~ "      <li>\n"
-#~ "         Na <a href='mailto:kontakt@dopracenakole.cz?subject=Žádost o "
-#~ "změnu adresy organizace, pobočky nebo týmu'>kontakt@dopracenakole.cz</"
-#~ "a>.\n"
+#~ "         Na <a href='mailto:kontakt@dopracenakole.cz?subject=Žádost o změnu adresy organizace, pobočky nebo týmu'>kontakt@dopracenakole.cz</a>.\n"
 #~ "      </li>\n"
 #~ "   </ol>\n"
 #~ "   "
 #~ msgstr ""
 #~ "\n"
-#~ "If the name of the company or the subsidiary appears on the list but it "
-#~ "is wrong, don't make a new one, but request a correction at <a "
-#~ "href='mailto:kontakt@dopracenakole.cz?subject=Company or subsidiary "
-#~ "change request'>kontakt@dopracenakole.cz</a>.\n"
+#~ "If the name of the company or the subsidiary appears on the list but it is wrong, don't make a new one, but request a correction at <a href='mailto:kontakt@dopracenakole.cz?subject=Company or subsidiary change request'>kontakt@dopracenakole.cz</a>.\n"
 #~ "    "
 
 #~ msgid "Doručení startovního balíčku"
@@ -3552,8 +3531,7 @@ msgstr "Fill in track"
 #~ msgstr "Start kit delivery"
 
 #~ msgid "Startovní balíček se neodesílá, pokud nechcete žádné tričko."
-#~ msgstr ""
-#~ "If you don't want any t-shirt, you will not receive any starting kit"
+#~ msgstr "If you don't want any t-shirt, you will not receive any starting kit"
 
 #~ msgid "Startovní balíček ještě nebyl odeslán"
 #~ msgstr "The starting kit has not been sent yet"
@@ -3565,19 +3543,19 @@ msgstr "Fill in track"
 #~ msgstr "Data are correct, create invoice"
 
 #~ msgid ""
-#~ "Koordinátor vašeho zaměstnavatele nemá možnost povolovat platby fakturou."
-#~ "<ul><li>Kontaktujte koordinátora %(company_admin)s vašeho zaměstnavatele "
-#~ "%(employer)s na emailu %(email)s</li><li>Koordinátor bude muset nejprve "
-#~ "dohodnout spolupráci na adrese <a href='mailto:kontakt@dopracenakole.cz?"
-#~ "subject=Žádost o povolení plateb uvnitř vaší "
-#~ "organizace'>kontakt@dopracenakole.cz</a>.net</li></ul>"
+#~ "Koordinátor vašeho zaměstnavatele nemá možnost povolovat platby "
+#~ "fakturou.<ul><li>Kontaktujte koordinátora %(company_admin)s vašeho "
+#~ "zaměstnavatele %(employer)s na emailu %(email)s</li><li>Koordinátor bude "
+#~ "muset nejprve dohodnout spolupráci na adrese <a "
+#~ "href='mailto:kontakt@dopracenakole.cz?subject=Žádost o povolení plateb "
+#~ "uvnitř vaší organizace'>kontakt@dopracenakole.cz</a>.net</li></ul>"
 #~ msgstr ""
-#~ "Your employer's  Coordinator can't enable payments by invoice."
-#~ "<ul><li>Please contact the coordinator %(company_admin)s for your "
-#~ "employer %(employer)s via this email %(email)s</li><li>The Coordinator "
-#~ "will first have to arrange the cooperation by writing to <a href='mailto:"
-#~ "kontakt@dopracenakole.cz?subject=Request for payment enablement within "
-#~ "your organization'>kontakt@dopracenakole.cz</a>.net</li></ul>"
+#~ "Your employer's  Coordinator can't enable payments by invoice.<ul><li>Please"
+#~ " contact the coordinator %(company_admin)s for your employer %(employer)s "
+#~ "via this email %(email)s</li><li>The Coordinator will first have to arrange "
+#~ "the cooperation by writing to <a "
+#~ "href='mailto:kontakt@dopracenakole.cz?subject=Request for payment enablement"
+#~ " within your organization'>kontakt@dopracenakole.cz</a>.net</li></ul>"
 
 #~ msgid "User"
 #~ msgstr "Uživatel"
@@ -3593,12 +3571,13 @@ msgstr "Fill in track"
 
 #~ msgid ""
 #~ "Nastala chyba, kvůli které nejde tento člen ověřit pro tým. Pokud problém "
-#~ "přetrvává, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.cz?"
-#~ "subject=Nejde ověřit člen týmu'>kontakt@dopracenakole.cz</a>."
+#~ "přetrvává, prosím kontaktujte <a "
+#~ "href='mailto:kontakt@dopracenakole.cz?subject=Nejde ověřit člen "
+#~ "týmu'>kontakt@dopracenakole.cz</a>."
 #~ msgstr ""
 #~ "Error, this member can not be verified. If the problem persists, please "
-#~ "contact <a href='mailto:kontakt@dopracenakole.cz?subject=Can't verify "
-#~ "team menber'>kontakt@dopracenakole.cz</a>."
+#~ "contact <a href='mailto:kontakt@dopracenakole.cz?subject=Can't verify team "
+#~ "menber'>kontakt@dopracenakole.cz</a>."
 
 #~ msgid "stav platby"
 #~ msgstr "payment state"
@@ -3627,18 +3606,14 @@ msgstr "Fill in track"
 
 #~ msgid ""
 #~ "Jak postupovat ve speciálních případech:  <ul>\n"
-#~ "               <li>při práci na krátký dlouhý týden zadejte ve dnech, "
-#~ "které pracujete cestu tam i zpět</li>\n"
-#~ "               <li>pokud pracujete přes noc, zadejte první den pouze "
-#~ "cestu tam a druhý den pouze cestu zpět</li>\n"
+#~ "               <li>při práci na krátký dlouhý týden zadejte ve dnech, které pracujete cestu tam i zpět</li>\n"
+#~ "               <li>pokud pracujete přes noc, zadejte první den pouze cestu tam a druhý den pouze cestu zpět</li>\n"
 #~ "               </ul>"
 #~ msgstr ""
 #~ "In special cases:\n"
 #~ "<ul>\n"
-#~ "<li>if you are working short-long week, fill in days you are working ride "
-#~ "\"Back\" and \"There\"</li>\n"
-#~ "<li>if you are working overnight, fill \"There\" the first day and \"Back"
-#~ "\" the second day</li>\n"
+#~ "<li>if you are working short-long week, fill in days you are working ride \"Back\" and \"There\"</li>\n"
+#~ "<li>if you are working overnight, fill \"There\" the first day and \"Back\" the second day</li>\n"
 #~ "</ul>"
 
 #~ msgid "<a href='%s'>vyplnit</a>"
@@ -3754,8 +3729,8 @@ msgstr "Fill in track"
 #~ msgstr "Fill in questionnaire"
 
 #~ msgid ""
-#~ "Do té&shy;to sou&shy;tě&shy;že jste při&shy;hlá&shy;šen au&shy;to&shy;"
-#~ "ma&shy;ti&shy;cky."
+#~ "Do té&shy;to sou&shy;tě&shy;že jste při&shy;hlá&shy;šen "
+#~ "au&shy;to&shy;ma&shy;ti&shy;cky."
 #~ msgstr "You are registered into this competition automatically"
 
 #~ msgid "Je nutné vyplnit tuto volbu"
@@ -3792,8 +3767,8 @@ msgstr "Fill in track"
 #~ msgstr "Saved against car"
 
 #~ msgid ""
-#~ "Za každou jízdu se započítává maximální zajížďka %(plus_distance)s&nbsp;"
-#~ "Km oproti zadané vzdálenosti do práce (%(distance)s&nbsp;Km)."
+#~ "Za každou jízdu se započítává maximální zajížďka %(plus_distance)s&nbsp;Km "
+#~ "oproti zadané vzdálenosti do práce (%(distance)s&nbsp;Km)."
 #~ msgstr ""
 #~ "Every ride can be extended olny by %(plus_distance)s&nbsp;Km against your "
 #~ "filled distance to work (%(distance)s&nbsp;Km)."
@@ -3862,11 +3837,9 @@ msgstr "Fill in track"
 #~ msgid "mít zaplaceno"
 #~ msgstr "have paid"
 
-#~ msgid ""
-#~ "Před vytvořením faktury schvalte platbu soutěžícím ve vaší společnosti"
+#~ msgid "Před vytvořením faktury schvalte platbu soutěžícím ve vaší společnosti"
 #~ msgstr ""
-#~ "Before creating an invoice, confirm payment of competitors in your "
-#~ "company."
+#~ "Before creating an invoice, confirm payment of competitors in your company."
 
 #~ msgid "Před vytvořením faktury vyplňte údaje o vaší společnosti"
 #~ msgstr "Before creating an invoice, you must fill in company details"
@@ -3897,8 +3870,8 @@ msgstr "Fill in track"
 #~ "administrator"
 
 #~ msgid ""
-#~ "Do té&shy;to sou&shy;tě&shy;že fi&shy;rem vás mu&shy;sí při&shy;hlá&shy;"
-#~ "sit váš fi&shy;rem&shy;ní sprá&shy;vce."
+#~ "Do té&shy;to sou&shy;tě&shy;že fi&shy;rem vás mu&shy;sí při&shy;hlá&shy;sit "
+#~ "váš fi&shy;rem&shy;ní sprá&shy;vce."
 #~ msgstr ""
 #~ "You have to be registered into the company competition by your company "
 #~ "administrator"
@@ -3908,8 +3881,7 @@ msgstr "Fill in track"
 
 #~ msgid "Ve vašem týmu jsou neodsouhlasení členové. Odsouhlaste je!"
 #~ msgstr ""
-#~ "There are members in your team which are not approved. Please approve "
-#~ "them. "
+#~ "There are members in your team which are not approved. Please approve them. "
 
 #~ msgid "Startovní balíček odeslán, sledovat jeho pohyb"
 #~ msgstr "The start kit has been sent, follow its trail"
@@ -3939,8 +3911,7 @@ msgstr "Fill in track"
 #~ msgstr "Fill in your t-shirt size"
 
 #~ msgid ""
-#~ "Aby byl tým úplný, potřebuje mít víc než jednoho člena. Pozvěte své "
-#~ "kolegy!"
+#~ "Aby byl tým úplný, potřebuje mít víc než jednoho člena. Pozvěte své kolegy!"
 #~ msgstr ""
 #~ "To create a team it must contain at lease two members. Please invite your "
 #~ "colleagues."
@@ -3967,8 +3938,7 @@ msgstr "Fill in track"
 #~ msgstr "Pay the registration fee"
 
 #~ msgid "Pokud nechcete žádné triko, startovní balíček se neposílá"
-#~ msgstr ""
-#~ "If you don't want any t-shirt, you will not receive the starting kit"
+#~ msgstr "If you don't want any t-shirt, you will not receive the starting kit"
 
 #~ msgid "Startovní balíček doručen"
 #~ msgstr "The start kit has been delivered"
@@ -3977,8 +3947,8 @@ msgstr "Fill in track"
 #~ "Startovní balíček pošleme až budete mít vybraný tým, tričko a zaplacené "
 #~ "startovné"
 #~ msgstr ""
-#~ "We will send the start kit as soon as you will choose a team, T-shirt "
-#~ "size and you will pay the fee"
+#~ "We will send the start kit as soon as you will choose a team, T-shirt size "
+#~ "and you will pay the fee"
 
 #~ msgid "Přihlašování do soutěží ještě není aktivní"
 #~ msgstr "Signing into the competitions is not active yet"
@@ -3996,11 +3966,10 @@ msgstr "Fill in track"
 #~ msgstr "Confirm Auto*Mat Club of Friends payment"
 
 #~ msgid ""
-#~ "<div class=\"text-warning\">Vaše firma již svého koordinátora má: %s.</"
-#~ "div>"
+#~ "<div class=\"text-warning\">Vaše firma již svého koordinátora má: %s.</div>"
 #~ msgstr ""
-#~ "<div class=\"text-warning\">Your company already has its coordinator: %s."
-#~ "</div>"
+#~ "<div class=\"text-warning\">Your company already has its coordinator: "
+#~ "%s.</div>"
 
 #~ msgid "Vaše společnost již má fakturu vystavenou"
 #~ msgstr "Your company already has invoice created"
@@ -4009,9 +3978,8 @@ msgstr "Fill in track"
 #~ msgstr "<div class='text-warning'>You haven't selected your team yet</div>"
 
 #~ msgid ""
-#~ "<div class='text-warning'>Vaše členství v týmu %(team)s nebylo "
-#~ "odsouhlaseno. <a href='%(address)s'>Znovu požádat o ověření členství</a>."
-#~ "</div>"
+#~ "<div class='text-warning'>Vaše členství v týmu %(team)s nebylo odsouhlaseno."
+#~ " <a href='%(address)s'>Znovu požádat o ověření členství</a>.</div>"
 #~ msgstr ""
 #~ "<div class='text-warning'>Your membership in the team %(team)s was not "
 #~ "confirmed. <a href='%(address)s'>Make a new request for the membership "
@@ -4029,17 +3997,16 @@ msgstr "Fill in track"
 
 #~ msgid ""
 #~ "Zadávání trasy ukončíte dvouklikem.<br/><br/>Trasa slouží k výpočtu "
-#~ "vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve městě "
-#~ "na kole. Vaše cesta se zobrazí vašim týmovým kolegům.<br/>Trasy všech "
-#~ "účastníků budou v anonymizované podobě zobrazené na úvodní stránce.<br/"
-#~ "><br/>Polohu začátku a konce trasy stačí zadávat s přesností 100m."
+#~ "vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve městě na "
+#~ "kole. Vaše cesta se zobrazí vašim týmovým kolegům.<br/>Trasy všech účastníků"
+#~ " budou v anonymizované podobě zobrazené na úvodní stránce.<br/><br/>Polohu "
+#~ "začátku a konce trasy stačí zadávat s přesností 100m."
 #~ msgstr ""
-#~ "Finnish your track with doubleclick<br/><br/>Track is used to count "
-#~ "distance and helps us to better define needs of people transfering in the "
-#~ "city on bicycle. Your track will be displayed to your colleagues.<br/"
-#~ ">Tracks of all atendees will be displayed anonymously on front page.<br/"
-#~ "><br/>It is enough to fill in the location of start and end of track with "
-#~ "100m accuracy."
+#~ "Finnish your track with doubleclick<br/><br/>Track is used to count distance"
+#~ " and helps us to better define needs of people transfering in the city on "
+#~ "bicycle. Your track will be displayed to your colleagues.<br/>Tracks of all "
+#~ "atendees will be displayed anonymously on front page.<br/><br/>It is enough "
+#~ "to fill in the location of start and end of track with 100m accuracy."
 
 #~ msgid "Platba vytvořena, čeká se na její potvrzení"
 #~ msgstr "The payment created, waiting for approval"
@@ -4073,20 +4040,20 @@ msgstr "Fill in track"
 
 #~ msgid ""
 #~ "<div class='text-warning'>Nejste koordinátorem týmu %(team)s, nemáte tedy "
-#~ "oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je "
-#~ "%(coordinator)s, vy jste: %(you)s </div>"
+#~ "oprávnění editovat jeho údaje. Koordinátorem vašeho týmu je %(coordinator)s,"
+#~ " vy jste: %(you)s </div>"
 #~ msgstr ""
-#~ "You are not a coordinator of the team %(team)s. You don't have permission "
-#~ "to edit its data. The coordinator of your team is %(coordinator)s, you "
-#~ "are %(you)s </div>"
+#~ "You are not a coordinator of the team %(team)s. You don't have permission to"
+#~ " edit its data. The coordinator of your team is %(coordinator)s, you are "
+#~ "%(you)s </div>"
 
 #~ msgid "%s - zpráva pro nového koordinátor týmu"
 #~ msgstr "%s - Message for the new team coordinator"
 
 #~ msgid "Tým v seznamu není, chci si založit nový (budu jeho koordinátorem)"
 #~ msgstr ""
-#~ "This team is not on the list, I want to create a new one (I will be the "
-#~ "team coordinator)"
+#~ "This team is not on the list, I want to create a new one (I will be the team"
+#~ " coordinator)"
 
 #~ msgid "Jsem členem klubu přátel Auto*mat nebo se jím hodlám stát."
 #~ msgstr "I am an Auto*Mat Friends Club member or I intend to become one"
@@ -4101,8 +4068,8 @@ msgstr "Fill in track"
 #~ msgstr "Users"
 
 #~ msgid ""
-#~ "Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a href=\"%s"
-#~ "\">zvolit jiného koordinátora</a>."
+#~ "Jako koordinátor týmu nemůžete měnit svůj tým. Napřed musíte <a "
+#~ "href=\"%s\">zvolit jiného koordinátora</a>."
 #~ msgstr ""
 #~ "As a team coordinator you can not change your team. First you have to <a "
 #~ "href=\"%s\">choose a different coordinator</a>."
@@ -4182,5 +4149,4 @@ msgstr "Fill in track"
 #~ msgstr "admissions"
 
 #~ msgid "Po tomto datu nebude možné se do soutěže přihlásit"
-#~ msgstr ""
-#~ "After this date it will not be possible to apply for this competition"
+#~ msgstr "After this date it will not be possible to apply for this competition"
