@@ -132,6 +132,17 @@ def day_active_last7(day):
     )
 
 
+def day_active_last7_cut_after_may(day):
+    day_today = _today()
+    if day_today > datetime.date(2016, 6, 2) and day_today < datetime.date(2016, 6, 8):
+        date_from = datetime.date(2016, 5, 31)
+    else:
+        date_from = day_today - datetime.timedelta(days=7)
+    return (
+        (day <= day_today) and
+        (day > date_from)
+    )
+
 # def day_active_last_week(day):
 #     day_today = _today()
 #     return (
@@ -141,7 +152,7 @@ def day_active_last7(day):
 #                 day.isocalendar()[1] + 1 == day_today.isocalendar()[1]))
 #     )
 
-day_active = day_active_last7
+day_active = day_active_last7_cut_after_may
 
 
 def get_emissions(distance):
