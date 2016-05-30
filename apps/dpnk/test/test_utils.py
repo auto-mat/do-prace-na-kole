@@ -62,5 +62,6 @@ class UtilTests(TestCase):
 
 class TodayTests(TestCase):
     def test_today(self):
-        del settings.FAKE_DATE
+        if hasattr(settings, 'FAKE_DATE'):
+            del settings.FAKE_DATE
         self.assertEquals(util._today(), datetime.date.today())
