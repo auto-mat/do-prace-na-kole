@@ -984,6 +984,10 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
         context_data['limit'] = limit
         return context_data
 
+    # This is here for NewRelic to distinguish from TemplateView.get
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 class UpdateProfileView(RegistrationViewMixin, UpdateView):
     template_name = 'submenu_personal.html'
