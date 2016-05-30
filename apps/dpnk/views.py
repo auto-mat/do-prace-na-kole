@@ -1487,8 +1487,8 @@ def distance(trips, commute_mode_list=('bicycle', 'by_foot')):
     return trips.filter(commute_mode__in=commute_mode_list).aggregate(Sum("distance"))['distance__sum'] or 0
 
 
-def total_distance(campaign):
-    return distance(Trip.objects.filter(user_attendance__campaign=campaign))
+def total_distance(campaign, commute_mode_list=('bicycle', 'by_foot')):
+    return distance(Trip.objects.filter(user_attendance__campaign=campaign), commute_mode_list)
 
 
 def period_distance(campaign, day_from, day_to, commute_mode_list=('bicycle', 'by_foot')):
@@ -1515,6 +1515,9 @@ def statistics(
     campaign = Campaign.objects.get(slug=campaign_slug)
     variables = {}
     variables['ujeta-vzdalenost'] = total_distance(campaign)
+    variables['usetrene-emise-co2'] = util.get_emissions(total_distance(campaign))['co2']
+    variables['ujeta-vzdalenost-kolo'] = total_distance(campaign, ('bicycle',))
+    variables['ujeta-vzdalenost-pesky'] = total_distance(campaign, ('by_foot',))
     variables['ujeta-vzdalenost-dnes'] = period_distance(campaign, util.today(), util.today())
     variables['pocet-cest'] = total_trips(campaign)
     variables['pocet-cest-dnes'] = period_trips(campaign, util.today(), util.today())

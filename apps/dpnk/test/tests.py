@@ -268,22 +268,6 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
         self.assertEqual(user_attendance.userprofile.mailing_hash, None)
 
-    def test_statistics(self):
-        address = reverse(views.statistics)
-        response = self.client.get(address)
-        self.assertEquals(response.status_code, 200)
-        self.assertJSONEqual(response.content.decode(), {
-            "pocet-zaplacenych": 1,
-            "pocet-soutezicich": 1,
-            "pocet-cest": 0,
-            "pocet-prihlasenych": 5,
-            "pocet-cest-dnes": 0,
-            "ujeta-vzdalenost-dnes": 0,
-            "ujeta-vzdalenost": 0,
-            "pocet-spolecnosti": 1,
-            "pocet-pobocek": 2,
-        })
-
 
 class PaymentSuccessTests(ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users']
@@ -1248,6 +1232,29 @@ class TrackViewTests(ViewsLogon):
             "2010-11-18": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
             "2010-11-19": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
             "2010-11-20": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0}
+        })
+
+
+class StatisticsTests(ViewsLogon):
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+
+    def test_statistics(self):
+        address = reverse(views.statistics)
+        response = self.client.get(address)
+        self.assertEquals(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode(), {
+            "pocet-zaplacenych": 1,
+            "pocet-soutezicich": 1,
+            "pocet-cest": 5,
+            "pocet-prihlasenych": 5,
+            "pocet-cest-dnes": 0,
+            "ujeta-vzdalenost-dnes": 0,
+            "ujeta-vzdalenost": 167.2,
+            "ujeta-vzdalenost-pesky": 5.0,
+            "usetrene-emise-co2": 21568.8,
+            "ujeta-vzdalenost-kolo": 162.2,
+            "pocet-spolecnosti": 1,
+            "pocet-pobocek": 2,
         })
 
 
