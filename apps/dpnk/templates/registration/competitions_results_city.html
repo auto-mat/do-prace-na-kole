@@ -1,0 +1,21 @@
+{% extends "base_generic.html" %}
+{% load i18n %}
+{% load bleach_tags %}
+{% load cache %}
+
+{% block content %}
+{% get_current_language as current_language_code %}
+{% cache 3600 competition_results_city city_slug current_language_code %}
+{% trans "Čas vygenerování výsledků:" %} {% now "SHORT_DATETIME_FORMAT" %}
+{% if competitions %}
+{% for competition in competitions %}
+   <h3>{{ competition.name }}</h3>
+   <p>
+   <i> {{ competition.type_string | safe }} </i>
+   {% with results=competition.get_results_first3 %}
+      {% include "registration/competition_results_table.html" %}
+   {% endwith %}
+{% endfor %}
+{% endif %}
+{% endcache %}
+{% endblock %}

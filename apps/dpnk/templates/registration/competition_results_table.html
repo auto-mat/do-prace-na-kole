@@ -1,0 +1,95 @@
+{% load i18n %}
+{% load humanize %}
+
+<table class="table table-condensed table-striped table-bordered">
+<tr>
+<th scope="column">{% trans "Po&shy;řa&shy;dí" %}</th>
+<th scope="column">
+   {% if competition.type == 'length' %}
+      {% trans "Ki&shy;lo&shy;me&shy;trů" %}
+   {% elif competition.type == 'frequency' %}
+      {% trans "% jízd" %}
+   {% elif competition.type == 'questionnaire' %}
+      {% trans "Bo&shy;dů" %}
+   {% endif %}
+   {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.type != 'questionnaire' %}
+      {% trans "prů&shy;měr&shy;ně" %}
+   {% endif %}
+</th>
+
+{% if competition.type == 'frequency' %}
+   <th>{% trans "Cel&shy;ko&shy;vý po&shy;čet jí&shy;zd" %}</th>
+{% elif competition.type == 'length' and competition.competitor_type == 'team' %}
+   <th>{% trans "Cel&shy;ko&shy;vý po&shy;čet ki&shy;lo&shy;me&shy;trů" %}</th>
+{% endif %}
+
+{% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.competitor_type != 'company'%}
+<th scope="column">{% trans "Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch v " %}
+   {% if competition.competitor_type == 'team' %}
+      {% trans "tý&shy;mu" %}
+   {% elif competition.competitor_type == 'company' %}
+      {% trans "fir&shy;mě" %}
+   {% endif %}
+</th>
+{% endif %}
+
+<th scope="column">
+   {% trans "Sou&shy;tě&shy;ží&shy;cí" %}
+</th>
+{% if competition.competitor_type != 'team' %}
+<th scope="column" class="narrow-hide-400">
+   {% trans "Tým" %}
+</th>
+{% endif %}
+<th scope="column" class="narrow-hide-400">
+   {% trans "Spo&shy;leč&shy;nost" %}
+</th>
+<th scope="column" class="narrow-hide-400">
+   {% trans "Měs&shy;to" %}
+</th>
+
+
+</tr>
+{% for result in results %}
+   <tr id="row-{{result.id}}">
+<td>
+{% ifchanged result.result %}
+   {{ forloop.counter|ordinal }}
+{% endifchanged %}
+</td>
+{% if competition.type == 'frequency' %}
+   <td>{{ result.get_result_percentage |intcomma  }}</td>
+{% else %}
+   <td>{{ result.get_result|intcomma  }}</td>
+{% endif %}
+
+{% if competition.type == 'frequency' or competition.type == 'length' and competition.competitor_type == 'team' %}
+   <td>{{ result.get_total_result|intcomma }}</td>
+{% endif %}
+
+{% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.competitor_type != 'company'%}
+<td>{{ result.team.member_count|intcomma }}</td>
+{% endif %}
+<td>
+   {% if competition.public_answers %}
+      <a href="{% url 'questionnaire_answers_all' competition_slug=competition.slug %}#comp_res_{{result.pk}}">
+         {{ result }}
+      </a>
+   {% else %}
+      {{ result }}
+   {% endif %}
+</td>
+{% if competition.competitor_type != 'team' %}
+<td class="narrow-hide-400">
+   {{ result.get_team.name }}
+</td>
+{% endif %}
+<td class="narrow-hide-400">
+   {{ result.get_team.subsidiary.address_street }} / {{ result.get_company }}
+</td>
+<td class="narrow-hide-400">
+   {{ result.get_city }}
+</td>
+</tr>
+{% endfor %}
+</table>

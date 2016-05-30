@@ -262,7 +262,7 @@
             "is_public": true,
             "name": "Výkonnost ve městě",
             "public_answers": false,
-            "rules": null,
+            "rules": "Competition vykonnostr rules",
             "sex": null,
             "slug": "vykonnost-mesto",
             "team_competitors": [],

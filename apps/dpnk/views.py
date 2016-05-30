@@ -901,14 +901,18 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
 
 
 class CompetitionsView(TitleViewMixin, TemplateView):
+    title_base = _("Pravidla soutěží")
+
     def get_title(self, *args, **kwargs):
         city = City.objects.get(slug=kwargs['city_slug'])
-        return _(u"Pravidla soutěží - %s" % city)
+        return "%s - %s" % (self.title_base, city)
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompetitionsView, self).get_context_data(*args, **kwargs)
-        competitions = Competition.objects.filter(Q(city__slug=kwargs['city_slug']) | Q(city__isnull=True, company=None), campaign__slug=self.request.subdomain)
+        city_slug = kwargs['city_slug']
+        competitions = Competition.objects.filter(Q(city__slug=city_slug) | Q(city__isnull=True, company=None), campaign__slug=self.request.subdomain)
         context_data['competitions'] = competitions
+        context_data['city_slug'] = city_slug
         return context_data
 
 

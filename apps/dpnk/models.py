@@ -2124,6 +2124,9 @@ class Competition(models.Model):
     def get_results(self):
         return results.get_results(self)
 
+    def get_results_first3(self):
+        return results.get_results(self)[:3]
+
     def has_started(self):
         if self.date_from:
             return self.date_from <= util.today()
