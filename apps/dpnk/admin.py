@@ -872,7 +872,7 @@ class ChoiceTypeAdmin(admin.ModelAdmin):
     save_as = True
 
 
-class AnswerAdmin(RelatedFieldAdmin):
+class AnswerAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'user_attendance',
         'user_attendance__userprofile__user__email',
