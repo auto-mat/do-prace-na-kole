@@ -899,6 +899,10 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
         context_data['registration_phase'] = "other_team_members"
         return context_data
 
+    # This is here for NewRelic to distinguish from TemplateView.get
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 class CompetitionsView(TitleViewMixin, TemplateView):
     title_base = _("Pravidla soutěží")
@@ -945,6 +949,10 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
         context_data['competitions'] = competitions
         context_data['registration_phase'] = "competitions"
         return context_data
+
+    # This is here for NewRelic to distinguish from TemplateView.get
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 
 class CompetitionResultsView(TitleViewMixin, TemplateView):
