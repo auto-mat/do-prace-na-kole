@@ -2125,7 +2125,17 @@ class Competition(models.Model):
         return results.get_results(self)
 
     def get_results_first3(self):
-        return results.get_results(self)[:3]
+        ret_list = []
+        order = 1
+        last_result = None
+        for result in results.get_results(self).all()[:100]:
+            if last_result != result.result:
+                order += 1
+            last_result = result.result
+            ret_list.append(result)
+            if order > 3:
+                return ret_list
+        return ret_list
 
     def has_started(self):
         if self.date_from:
