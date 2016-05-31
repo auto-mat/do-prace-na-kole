@@ -31,6 +31,13 @@
          {% endif %}
       {% endif %}
       {% endif %}
+      {% if answer.comment_given and show_points %}
+         <br/>
+         <strong>{% trans "Komentář hodnotitele" %}</strong>
+         <p>
+         {{ answer.comment_given|linebreaks }}
+         </p>
+      {% endif %}
       </div>
    {% endfor %}
 {% endfor %}

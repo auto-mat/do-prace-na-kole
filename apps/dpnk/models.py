@@ -2574,6 +2574,11 @@ class Answer(models.Model):
         null=True, blank=True)
     points_given = models.IntegerField(
         null=True, blank=True, default=None)
+    comment_given = models.TextField(
+        verbose_name=_("Hodnotitelský komentář"),
+        null=True,
+        blank=True,
+    )
     attachment = models.FileField(
         upload_to=u"questionaire/",
         max_length=600,
