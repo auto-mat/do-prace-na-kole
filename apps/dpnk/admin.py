@@ -410,7 +410,15 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
         'userattendance_set__approved_for_team'
     )
     filter_horizontal = ('administrated_cities',)
-    search_fields = ['nickname', 'user__first_name', 'user__last_name', 'user__username', 'user__email']
+    search_fields = [
+        'nickname',
+        'user__first_name',
+        'user__last_name',
+        'user__username',
+        'user__email',
+        'ecc_password',
+        'ecc_email',
+    ]
     readonly_fields = (
         'ecc_password',
         'ecc_email',
