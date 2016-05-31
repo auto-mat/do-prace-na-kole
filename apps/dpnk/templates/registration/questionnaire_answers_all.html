@@ -11,7 +11,7 @@
 {{ competition.rules|safe }}
 </div>
 {% for competitor in competitors %}
-   <h3 id="comp_res_{{competitor.pk}}">{{ competitor }}{% if show_points %} ({{ competitor.result }} b.){% endif %}</h3>
+   <h3 id="comp_res_{{competitor.pk}}">{{ competitor }} {% if competitor.user_attendance %}- {{ competitor.user_attendance.team.subsidiary.city }}{% endif %}{% if show_points %} ({{ competitor.result }} b.){% endif %}</h3>
    {% for answer in competitor.answers %}
       {% if answer.comment %}
          {{ answer.comment|linebreaksbr|urlize}}
