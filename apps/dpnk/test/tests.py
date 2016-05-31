@@ -1245,7 +1245,9 @@ class StatisticsTests(ViewsLogon):
         self.assertJSONEqual(response.content.decode(), {
             "pocet-zaplacenych": 1,
             "pocet-soutezicich": 1,
-            "pocet-cest": 5,
+            "pocet-cest": 3,
+            "pocet-cest-kolo": 2,
+            "pocet-cest-pesky": 1,
             "pocet-prihlasenych": 5,
             "pocet-cest-dnes": 0,
             "ujeta-vzdalenost-dnes": 0,

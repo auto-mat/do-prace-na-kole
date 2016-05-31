@@ -1515,12 +1515,12 @@ def trips(trips):
     return trips.count()
 
 
-def total_trips(campaign):
-    return trips(Trip.objects.filter(user_attendance__campaign=campaign))
+def total_trips(campaign, commute_mode_list=('bicycle', 'by_foot')):
+    return trips(Trip.objects.filter(user_attendance__campaign=campaign, commute_mode__in=commute_mode_list))
 
 
-def period_trips(campaign, day_from, day_to):
-    return trips(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to))
+def period_trips(campaign, day_from, day_to, commute_mode_list=('bicycle', 'by_foot')):
+    return trips(Trip.objects.filter(user_attendance__campaign=campaign, commute_mode__in=commute_mode_list, date__gte=day_from, date__lte=day_to))
 
 
 @cache_page(60 * 60)
@@ -1536,6 +1536,8 @@ def statistics(
     variables['ujeta-vzdalenost-pesky'] = total_distance(campaign, ('by_foot',))
     variables['ujeta-vzdalenost-dnes'] = period_distance(campaign, util.today(), util.today())
     variables['pocet-cest'] = total_trips(campaign)
+    variables['pocet-cest-pesky'] = total_trips(campaign, ('by_foot',))
+    variables['pocet-cest-kolo'] = total_trips(campaign, ('bicycle',))
     variables['pocet-cest-dnes'] = period_trips(campaign, util.today(), util.today())
     variables['pocet-zaplacenych'] = UserAttendance.objects.filter(
         Q(campaign=campaign) &
