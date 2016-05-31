@@ -1159,6 +1159,7 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
             competitor.answers = Answer.objects.filter(
                 user_attendance__in=competitor.user_attendances(),
                 question__competition__slug=competition_slug)
+        context_data['show_points'] = competition.has_finished() or (self.request.user.is_authenticated() and self.request.user.userprofile.user.is_superuser)
         context_data['competitors'] = competitors
         context_data['competition'] = competition
         return context_data
