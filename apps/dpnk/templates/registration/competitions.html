@@ -4,12 +4,7 @@
 {% load softhyphen_tags %}
 
 {% block content %}
-<div></div>
 {% if competitions %}
-
-<form name="admissions" method="POST">
-<input type="hidden" id="admission_competition_id" name="admission_competition_id"/>
-<input type="hidden" id="cancellation_competition_id" name="cancellation_competition_id"/>
 {% for competition in competitions %}
 <h4>{{ competition.name }}</h4>
 <i> {{ competition.type_string | safe }} </i>
@@ -17,7 +12,7 @@
 <br/>
 {% if competition.has_started %}
    {% if competition.type != 'questionnaire' or competition.has_finished %}
-   {% if competition.my_results.result and competition.competitor_has_admission %}
+   {% if competition.my_results.result %}
       {{ competition.my_results.position|ordinal }}{% trans " místo z " %}{{ competition.competitor_count|intcomma }}
       {% if competition.competitor_type == 'single_user' %}
          {% trans "jednotlivců" %}
@@ -45,53 +40,32 @@
    {% if competition.competitor_can_admit == True %}
    {% if competition.type == 'questionnaire' %}
       <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">
-         {% if competition.competitor_has_admission %}
-            {% trans "Změnit odpovědi" %}
-         {% else %}
-            {% trans "Vyplnit odpovědi" %}
-         {% endif %}
+         {% trans "Vyplnit odpovědi" %}
       </a>
       {% if competition.public_answers %}
          <a class="btn btn-primary" href="{% url 'questionnaire_answers_all' competition_slug=competition.slug %}">
             {% trans "Všechny odpovědi" %}
          </a>
       {% endif %}
-   {% elif competition.type == 'frequency' or competition.type == 'length' %}
-      {% if competition.competitor_has_admission %}
-         <button type="submit" class="submit btn btn-primary" onclick='$("#cancellation_competition_id").val("{{ competition.id }}")'>{% trans "Odhlásit ze soutěže" %}</button>
-      {% else %}
-         <button type="submit" class="submit btn btn-primary" onclick='$("#admission_competition_id").val("{{ competition.id }}")'>{% trans "Přihlásit do soutěže" %}</button>
-      {% endif %}
    {% endif %}
    {% else %}
       {% if competition.competitor_can_admit == 'without_admission' %}
          {% if competition.type == 'questionnaire' %}
-            {% if competition.competitor_has_admission %}
-               <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">
-                  {% trans "Zobrazit informace" %}
-               </a>
-            {% endif %}
+            <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">
+               {% trans "Zobrazit informace" %}
+            </a>
          {% endif %}
 
-         {# trans "Do této soutěže jste přihlášen automaticky." #}
       {% elif competition.competitor_can_admit == 'after_beginning' %}
-         {% if competition.competitor_has_admission %}
-            {% trans "Soutěž začala, již není možné se odhlásit." %}
-         {% else %}
-            {% trans "Soutěž začala, již není možné se přihlásit." %}
-         {% endif %}
+         {% trans "Soutěž již začala." %}
       {% elif competition.competitor_can_admit == 'before_beginning' %}
          {% trans "Dotazník ještě není aktivní." %}
       {% elif competition.competitor_can_admit == 'after_end' %}
          {% trans "Dotazník již není aktivní." %}
          <br/>
-         <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">zobrazit vyhodnocení </a>
+         <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">{% trans "Zobrazit vyhodnocení" %}</a>
       {% elif competition.competitor_can_admit == 'not_company_admin' %}
-         {% if competition.competitor_has_admission %}
-            {% trans "Do této soutěže firem vás přihlásil váš firemní koordinátor." %}
-         {% else %}
-            {% trans "Do této soutěže firem vás musí přihlásit váš firemní koordinátor." %}
-         {% endif %}
+         {% trans "Tuto soutěž firem může vyplňovat pouze firemní koordinátor." %}
       {% else %}
          {{ competition.competitor_can_admit }}
       {% endif %}
@@ -108,8 +82,7 @@
 {% endif %}
 <br/>
 {% endfor %}
-</form>
 {% else %}
-<div class="text-info">{% trans "Momentálně nejsou vypsány žádné soutěže, do kterých byste se mohl/a přihlásit" %}</div>
+<div class="text-info">{% trans "Momentálně nejsou vypsány žádné soutěže." %}</div>
 {% endif %}
 {% endblock %}

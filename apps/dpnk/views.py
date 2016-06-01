@@ -931,20 +931,10 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         return super(AdmissionsView, self).dispatch(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        if 'admission_competition_id' in request.POST and request.POST['admission_competition_id']:
-            competition = Competition.objects.get(id=request.POST['admission_competition_id'])
-            competition.make_admission(self.user_attendance, True)
-        if 'cancellation_competition_id' in request.POST and request.POST['cancellation_competition_id']:
-            competition = Competition.objects.get(id=request.POST['cancellation_competition_id'])
-            competition.make_admission(self.user_attendance, False)
-        return redirect(self.success_url)
-
     def get_context_data(self, *args, **kwargs):
         context_data = super(AdmissionsView, self).get_context_data(*args, **kwargs)
         competitions = self.user_attendance.get_competitions()
         for competition in competitions:
-            competition.competitor_has_admission = competition.has_admission(self.user_attendance)
             competition.competitor_can_admit = competition.can_admit(self.user_attendance)
         context_data['competitions'] = competitions
         context_data['registration_phase'] = "competitions"
