@@ -9,6 +9,10 @@
 <h4>{{ competition.name }}</h4>
 <i> {{ competition.type_string | safe }} </i>
 <br/>
+<i>
+   {% if competition.date_from %}od {{ competition.date_from }}{% endif %}
+   {% if competition.date_to %}do {{ competition.date_to }}{% endif %}
+</i>
 <br/>
 {% if competition.has_started %}
    {% if competition.type != 'questionnaire' or competition.has_finished %}
