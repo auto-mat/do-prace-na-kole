@@ -28,15 +28,13 @@
       {% elif competition.competitor_type == 'company' %}
          {% trans "společností" %}
       {% endif %}
-      (
-         {% if competition.type == 'length' %}
-           {{ competition.my_results.result|floatformat:-1|intcomma }}&nbsp;km
-         {% elif competition.type == 'frequency' %}
-           {{ competition.my_results.get_result_percentage |floatformat:-1|intcomma }}&nbsp;%
-         {% elif competition.type == 'questionnaire' %}
-           {{ competition.my_results.result|floatformat:-1|intcomma }}b.
-         {% endif %}
-      )
+      {% if competition.type == 'length' %}
+        ({{ competition.my_results.result|floatformat:-1|intcomma }}&nbsp;km)
+      {% elif competition.type == 'frequency' %}
+        ({{ competition.my_results.get_result_percentage |floatformat:-1|intcomma }}&nbsp;%)
+      {% elif competition.type == 'questionnaire' %}
+        ({{ competition.my_results.result|floatformat:-1|intcomma }}b.)
+      {% endif %}
       <br/>
    {% endif %}
    {% endif %}
