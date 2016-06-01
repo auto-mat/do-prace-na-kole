@@ -201,7 +201,7 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
 
     class Meta:
         model = Competition
-        fields = ('name', 'url', 'type', 'competitor_type', )
+        fields = ('name', 'url', 'type', 'competitor_type', 'sex', )
 
     def clean_name(self):
         if not self.instance.pk:

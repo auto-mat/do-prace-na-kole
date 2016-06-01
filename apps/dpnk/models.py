@@ -2231,6 +2231,10 @@ class Competition(models.Model):
             'team': _('týmů'),
             'company': _('společností'),
         }
+        SEX_STRINGS = {
+            'male': _('pro muže'),
+            'female': _('pro ženy'),
+        }
         if self.company:
             company_string_before = _("vnitrofiremní")
             company_string_after = _("organizace %s") % escape(self.company)
@@ -2250,12 +2254,18 @@ class Competition(models.Model):
         else:
             city_string = ""
 
+        if self.sex:
+            sex_string = SEX_STRINGS[self.sex]
+        else:
+            sex_string = ""
+
         return string_concat(
             company_string_before, " ",
             CTYPES_STRINGS[self.type], " ",
             CCOMPETITORTYPES_STRINGS[self.competitor_type], " ",
             company_string_after, " ",
             city_string,
+            sex_string,
         )
 
     def __str__(self):
