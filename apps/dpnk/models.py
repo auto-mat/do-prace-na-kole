@@ -2105,6 +2105,10 @@ class Competition(models.Model):
         verbose_name=_(u"Soutěž je veřejná"),
         default=True,
         null=False)
+    show_results = models.BooleanField(
+        verbose_name=_("Zobrazovat výsledky soutěže"),
+        default=True,
+        null=False)
     entry_after_beginning_days = models.IntegerField(
         verbose_name=_(u"Prodloužené přihlášky"),
         help_text=_(u"Počet dní po začátku soutěže, kdy je ještě možné se přihlásit"),
@@ -2118,6 +2122,11 @@ class Competition(models.Model):
         blank=True,
         null=True,
     )
+
+    def show_competition_results(self):
+        if self.type == 'questionnaire' and not self.has_finished():
+            return False
+        return self.show_results
 
     def get_competitors(self, potencial_competitors=False):
         return results.get_competitors(self, potencial_competitors)
