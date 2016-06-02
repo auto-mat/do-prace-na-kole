@@ -315,12 +315,12 @@ class FilterTests(TestCase):
     def test_is_for_company_no(self):
         f = filters.IsForCompanyFilter(self.request, {"is_for_company": "no"}, models.Competition, None)
         q = f.queryset(self.request, models.Competition.objects.all())
-        self.assertEquals(q.count(), 5)
+        self.assertEquals(q.count(), 6)
 
     def test_is_for_company_null(self):
         f = filters.IsForCompanyFilter(self.request, {}, models.Competition, None)
         q = f.queryset(self.request, models.Competition.objects.all())
-        self.assertEquals(q.count(), 5)
+        self.assertEquals(q.count(), 6)
 
     def test_has_rides_filter_yes(self):
         f = filters.HasRidesFilter(self.request, {"has_rides": "yes"}, models.UserAttendance, None)

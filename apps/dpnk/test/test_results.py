@@ -87,6 +87,16 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
         self.assertContains(response, "161,9")
         self.assertContains(response, "Testing User 1")
 
+    def test_dpnk_competition_results_vykonnost_tymu(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.all())
+        models.Competition.objects.get(slug="vykonnost-tymu").recalculate_results()
+        address = reverse('competition_results', kwargs={'competition_slug': 'vykonnost-tymu'})
+        response = self.client.get(address)
+        self.assertContains(response, "Výsledky v soutěži Výkonnost týmů:")
+        self.assertContains(response, "Cel&shy;ko&shy;vý po&shy;čet ki&shy;lo&shy;me&shy;trů")
+        self.assertContains(response, "161,9")
+        self.assertContains(response, "Testing team 1")
+
     def test_dpnk_competition_results_TF(self):
         address = reverse('competition_results', kwargs={'competition_slug': 'TF'})
         response = self.client.get(address)
