@@ -1074,6 +1074,7 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
             try:
                 answer = question.answer_set.get(user_attendance=self.user_attendance)
                 question.points_given = answer.points_given
+                question.comment_given = answer.comment_given
             except Answer.DoesNotExist:
                 answer = Answer(question=question, user_attendance=self.user_attendance)
             question.form = self.form_class(instance=answer, question=question, prefix="question-%s" % question.pk, show_points=self.show_points, is_actual=self.is_actual)

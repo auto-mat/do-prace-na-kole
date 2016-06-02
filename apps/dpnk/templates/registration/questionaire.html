@@ -29,6 +29,13 @@
 {% crispy question.form %}
 {% if show_points %}
    ({% if question.points_given != None %} {{question.points_given}} {% else %} - {% endif %} {% trans "b" %})
+   {% if question.comment_given %}
+   <br/>
+   <strong>{% trans "Komentář hodnotitele" %}</strong>
+   <p>
+   {{ question.comment_given|linebreaks }}
+   </p>
+   {% endif %}
 {% endif %}
 {% endfor %}
 {% if show_submit %}
