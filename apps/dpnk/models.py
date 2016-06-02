@@ -578,11 +578,15 @@ class Campaign(models.Model):
             order_by('payment_created').\
             distinct()
 
+    phases = {}
+
     def phase(self, phase_type):
-        try:
-            return self.phase_set.get(type=phase_type)
-        except Phase.DoesNotExist:
-            return None
+        if phase_type not in self.phases:
+            try:
+                self.phases[phase_type] = self.phase_set.get(type=phase_type)
+            except Phase.DoesNotExist:
+                self.phases[phase_type] = None
+        return self.phases[phase_type]
 
 
 def get_team_in_campaign_manager(campaign_slug):
