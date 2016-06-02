@@ -53,6 +53,19 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
         self.assertContains(response, "3,0")
         self.assertContains(response, "Testing team 1")
 
+    def test_dpnk_competition_results_quest_not_finished(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.all())
+        competition = models.Competition.objects.filter(slug="quest")
+        actions.normalize_questionnqire_admissions(None, None, competition)
+        competition.get().recalculate_results()
+        address = reverse('competition_results', kwargs={'competition_slug': 'quest'})
+        response = self.client.get(address)
+        self.assertContains(response, "Výsledky v soutěži Dotazník:")
+        self.assertContains(response, "Výsledky této soutěže se nezobrazují")
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=12, day=20),
+    )
     def test_dpnk_competition_results_quest(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
         competition = models.Competition.objects.filter(slug="quest")
