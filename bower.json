@@ -21,5 +21,8 @@
     "font-awesome": "~4.3.0",
     "lightbox2": "~2.8.2",
     "jquery.are-you-sure": "~1.9.0"
+  },
+  "resolutions": {
+    "jquery": "1.12.3"
   }
 }
