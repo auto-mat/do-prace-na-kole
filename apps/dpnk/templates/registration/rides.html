@@ -53,9 +53,9 @@
 {% endfor %}
 <tr class="info">
    <th colspan="2">
-      <strong>
       {% trans "Celkem" %}
-      </strong>
+      {% if competition_phase.date_from %}{% trans "od" %} {{ competition_phase.date_from }}{% endif %}
+      {% if competition_phase.date_to %}{% trans "do" %} {{ competition_phase.date_to }}{% endif %}
    </th>
 </tr>
 <tr class="info">

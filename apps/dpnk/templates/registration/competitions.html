@@ -10,8 +10,8 @@
 <i> {{ competition.type_string | safe }} </i>
 <br/>
 <i>
-   {% if competition.date_from %}od {{ competition.date_from }}{% endif %}
-   {% if competition.date_to %}do {{ competition.date_to }}{% endif %}
+   {% if competition.date_from %}{% trans "od" %} {{ competition.date_from }}{% endif %}
+   {% if competition.date_to %}{% trans "do" %} {{ competition.date_to }}{% endif %}
 </i>
 <br/>
 {% if competition.has_started %}

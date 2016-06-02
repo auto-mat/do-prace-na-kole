@@ -15,6 +15,7 @@
    {% with results=competition.get_results_first3 %}
       {% include "registration/competition_results_table.html" %}
    {% endwith %}
+   <a href="{% url "competition_results" competition.slug %}">{% trans "Kompletní výsledky" %}</a>
 {% endfor %}
 {% endif %}
 {% endcache %}

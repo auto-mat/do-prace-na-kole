@@ -806,16 +806,18 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         city_slug = self.user_attendance.team.subsidiary.city.slug
+        campaign = self.user_attendance.campaign
         context_data['questionnaire_answer'] = models.Answer.objects.filter(
             question__competition__city=None,
             question__competition__type="questionnaire",
-            question__competition__campaign=self.user_attendance.campaign,
+            question__competition__campaign=campaign,
             attachment__isnull=False,
         ).exclude(
             attachment='',
         ).select_related('question__competition').order_by('?')
         context_data['city_slug'] = city_slug
         context_data['map_city_slug'] = 'mapa' if city_slug == 'praha' else city_slug
+        context_data['competition_phase'] = campaign.phase("competition")
         return context_data
 
     def get(self, request, *args, **kwargs):

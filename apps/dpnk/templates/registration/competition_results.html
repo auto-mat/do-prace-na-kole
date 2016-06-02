@@ -13,7 +13,10 @@
 
 <div>{{ competition.rules|safe }}</div>
 <div>
-{% trans "Čas vygenerování výsledků:" %} {% now "SHORT_DATETIME_FORMAT" %}
+   {% if competition.date_from %}{% trans "Soutěž trvá" %} {% trans "od" %} {{ competition.date_from }}{% endif %}
+   {% if competition.date_to %}{% trans "do" %} {{ competition.date_to }}{% endif %}
+   <br/>
+   {% trans "Čas vygenerování výsledků:" %} {% now "SHORT_DATETIME_FORMAT" %}
 </div>
 
 {% include "registration/competition_results_table.html" %}
