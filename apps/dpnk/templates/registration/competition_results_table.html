@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load humanize %}
 
+{% if competition.show_competition_results %}
 <table class="table table-condensed table-striped table-bordered">
 <tr>
 <th scope="column">{% trans "Po&shy;řa&shy;dí" %}</th>
@@ -93,3 +94,8 @@
 </tr>
 {% endfor %}
 </table>
+{% else %}
+   <p>
+   {% trans "Výsledky této soutěže se nezobrazují" %}
+   </p>
+{% endif %}

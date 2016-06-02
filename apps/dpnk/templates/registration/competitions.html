@@ -77,7 +77,7 @@
    {% endif %}
 
    {% if competition.has_started %}
-   {% if competition.type != 'questionnaire' or competition.has_finished %}
+   {% if competition.show_competition_results %}
       <a class="btn btn-primary" href="{% url 'competition_results' competition_slug=competition.slug %}{% if competition.my_results %}#row-{{ competition.my_results.id }}{% endif %}">{% trans "Výsledky" %}</a>
    {% endif %}
    {% endif %}
