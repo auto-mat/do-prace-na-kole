@@ -71,3 +71,4 @@ django-celery
 django-bootstrap3
 sqlalchemy
 flower
+django-daterange-filter

@@ -190,6 +190,7 @@ INSTALLED_APPS = (
     'kombu.transport.django',
     'raven.contrib.django.raven_compat',
     'bootstrap3',
+    'daterange_filter',
     # 'cachalot',
 )
 

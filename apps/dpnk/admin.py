@@ -20,6 +20,7 @@
 """Administrátorské rozhraní pro Do práce na kole"""
 
 # Django imports
+from daterange_filter.filter import DateRangeFilter
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db.models import Count, Sum
@@ -964,6 +965,7 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
         campaign_filter_generator('user_attendance__campaign'),
         'direction',
         'commute_mode',
+        ('date', DateRangeFilter),
         'user_attendance__team__subsidiary__city',
         'distance',
         )
