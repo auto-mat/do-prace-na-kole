@@ -1382,10 +1382,11 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
 
     @patch('slumber.API')
     def test_dpnk_profile_page_link(self, slumber_api):
-        models.Answer.objects.filter(pk__in=(1, 4)).delete()
+        models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
         slumber_api.feed.get = {}
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<a href="%smodranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>' % settings.MEDIA_URL)
+        self.assertContains(response, '<a href="%sDSC00002.JPG" target="_blank">DSC00002.JPG</a>' % settings.MEDIA_URL)
+        self.assertContains(response, 'Všechny příspěvky z této soutěže')
 
     @patch('slumber.API')
     def test_dpnk_rides_view(self, slumber_api):

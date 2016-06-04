@@ -2408,8 +2408,8 @@ msgid "Nahrát vlastní příspěvek"
 msgstr "Submit my content"
 
 #: templates/registration/competition_profile.html:65
-msgid "Všechny fotky z této soutěže"
-msgstr "All photos from this competition"
+msgid "Všechny příspěvky z této soutěže"
+msgstr "All contributions from this competition"
 
 #: templates/registration/competition_profile.html:81
 msgid "Cyklisté sobě"

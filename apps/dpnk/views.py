@@ -808,6 +808,9 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
         city_slug = self.user_attendance.team.subsidiary.city.slug
         campaign = self.user_attendance.campaign
         context_data['questionnaire_answer'] = models.Answer.objects.filter(
+            Q(attachment__icontains=".jpg") | Q(attachment__icontains=".jpeg") |
+            Q(attachment__icontains=".png") | Q(attachment__icontains=".gif") |
+            Q(attachment__icontains=".bmp") | Q(attachment__icontains=".tiff"),
             question__competition__city=None,
             question__competition__type="questionnaire",
             question__competition__campaign=campaign,
