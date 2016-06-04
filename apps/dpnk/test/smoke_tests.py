@@ -46,7 +46,6 @@ views = [
     reverse('edit_subsidiary', kwargs={'pk': 1}),
     reverse('payment_beneficiary'),
     'error404.txt',
-    reverse(views.daily_distance_json),
     reverse(views.daily_chart),
 ]
 

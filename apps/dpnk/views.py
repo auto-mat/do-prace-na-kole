@@ -1571,17 +1571,6 @@ def daily_chart(
         })
 
 
-# TODO: this is overcommed by daily_distance_extra_json, remove after it is not used any more
-@cache_page(60 * 60)
-def daily_distance_json(
-        request,):
-    campaign_slug = request.subdomain
-    campaign = Campaign.objects.get(slug=campaign_slug)
-    values = collections.OrderedDict((str(day), period_distance(campaign, day, day)) for day in util.days(campaign.phase('competition')))
-    data = json.dumps(values)
-    return HttpResponse(data)
-
-
 @cache_page(60 * 60)
 def daily_distance_extra_json(
         request,):
