@@ -42,24 +42,29 @@
 {% endif %}
 
    {% if competition.competitor_can_admit == True %}
+      {% if competition.type == 'questionnaire' %}
+         <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">
+            {% trans "Vyplnit odpovědi" %}
+         </a>
+      {% endif %}
+   {% endif %}
+
    {% if competition.type == 'questionnaire' %}
-      <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">
-         {% trans "Vyplnit odpovědi" %}
-      </a>
       {% if competition.public_answers %}
          <a class="btn btn-primary" href="{% url 'questionnaire_answers_all' competition_slug=competition.slug %}">
             {% trans "Všechny odpovědi" %}
          </a>
       {% endif %}
    {% endif %}
-   {% else %}
-      {% if competition.competitor_can_admit == 'without_admission' %}
-         {% if competition.type == 'questionnaire' %}
-            <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">
-               {% trans "Zobrazit informace" %}
-            </a>
-         {% endif %}
 
+   {% if competition.competitor_can_admit == 'without_admission' %}
+      {% if competition.type == 'questionnaire' %}
+         <a class="btn btn-primary" href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">
+            {% trans "Zobrazit informace" %}
+         </a>
+      {% endif %}
+
+   {% if competition.competitor_can_admit != True %}
       {% elif competition.competitor_can_admit == 'after_beginning' %}
          {% trans "Soutěž již začala." %}
       {% elif competition.competitor_can_admit == 'before_beginning' %}
