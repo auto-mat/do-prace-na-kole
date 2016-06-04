@@ -913,7 +913,7 @@ class CompetitionsView(TitleViewMixin, TemplateView):
     title_base = _("Pravidla soutěží")
 
     def get_title(self, *args, **kwargs):
-        city = City.objects.get(slug=kwargs['city_slug'])
+        city = get_object_or_404(City, slug=kwargs['city_slug'])
         return "%s - %s" % (self.title_base, city)
 
     def get_context_data(self, *args, **kwargs):
