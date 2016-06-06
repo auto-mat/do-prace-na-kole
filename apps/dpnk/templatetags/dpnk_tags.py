@@ -18,9 +18,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from cache_utils.decorators import cached
+from django import template
 from django.conf import settings
 from django.core.urlresolvers import resolve, reverse, NoReverseMatch
-from django import template
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 from django.utils.translation import activate, get_language
@@ -68,7 +68,7 @@ def wp_prize(slug=None):
 @cached(60 * 60)
 def _wp_news_cached(slug=None, wp_type="news"):
     if wp_type == "action":
-        return _wp_news("locations", _("akce"), unfold="first", _page_subtype="event", _post_parent=slug)
+        return _wp_news("locations", _("akce"), unfold="first", _page_subtype="event", _post_parent=slug, sort_key='start_date')
     elif wp_type == "prize":
         return _wp_news("locations", _("cena"), unfold="all", count=-1, show_description=False, _page_subtype="prize", _post_parent=slug, order="ASC", orderby="menu_order")
     else:
@@ -76,10 +76,10 @@ def _wp_news_cached(slug=None, wp_type="news"):
             _global_news = {}
         else:
             _global_news = {'_global_news': 1}
-        return _wp_news(_connected_to=slug, order="DESC", orderby="DATE", **_global_news)
+        return _wp_news(_connected_to=slug, order="DESC", orderby="DATE", count=5, **_global_news)
 
 
-def _wp_news(post_type="post", post_type_string=_("novinka"), unfold="first", count=5, show_description=True, **other_args):
+def _wp_news(post_type="post", post_type_string=_("novinka"), unfold="first", count=-1, show_description=True, sort_key='published', reverse=True, **other_args):
     get_params = {}
     get_params['feed'] = "content_to_backend"
     get_params['_post_type'] = post_type
@@ -91,9 +91,11 @@ def _wp_news(post_type="post", post_type_string=_("novinka"), unfold="first", co
         wp_feed = api.feed.get(**get_params)
     except:
         return ""
+    if len(wp_feed) > 0:
+        wp_feed = sorted(wp_feed.values(), key=lambda item: item[sort_key], reverse=reverse)
     template = get_template("templatetags/wp_news.html")
     context = {
-        'wp_feed': wp_feed,
+        'wp_feed': wp_feed[:5],
         'post_type_string': post_type_string,
         'unfold': unfold,
         'show_description': show_description,
