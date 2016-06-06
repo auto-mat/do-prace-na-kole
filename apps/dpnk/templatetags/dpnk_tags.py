@@ -19,7 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from cache_utils.decorators import cached
 from django import template
-from django.conf import settings
 from django.core.urlresolvers import resolve, reverse, NoReverseMatch
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
@@ -117,21 +116,6 @@ def wp_article_cached(id):
     except:
         return ""
     return wp_article[str(id)]['content']
-
-
-@register.simple_tag
-def site_url():
-    return settings.SITE_URL
-
-
-@register.filter
-def split(str, splitter):
-        return str.split(splitter)
-
-
-@register.filter
-def times(count):
-    return range(int(count))
 
 
 @register.simple_tag(takes_context=True)
