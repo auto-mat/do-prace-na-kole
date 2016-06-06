@@ -1374,11 +1374,34 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         MEDIA_ROOT="apps/dpnk/test_files",
     )
     @patch('slumber.API')
-    def test_dpnk_profile_page(self, slumber_api):
+    def test_dpnk_profile_page(self, slumber_mock):
         models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
-        slumber_api.feed.get = {}
+        m = MagicMock()
+        m.feed.get.return_value = {
+            '1234': {
+                'published': '2010-01-01',
+                'start_date': '2010-01-01',
+                'url': 'http://www.test.cz',
+                'title': 'Testing title',
+                'excerpt': 'Testing excerpt',
+                'image': 'http://www.test.cz',
+            }}
+        slumber_mock.return_value = m
         response = self.client.get(reverse('profil'))
         self.assertContains(response, '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270">' % settings.MEDIA_URL)
+        self.assertContains(response, '<a href="http://www.dopracenakole.cz/locations/testing-city">Testing city</a>')
+        self.assertContains(response, 'Novinky ve městě')
+        self.assertContains(response, 'Testing title')
+        self.assertContains(response, 'Testing excerpt')
+
+    @patch('slumber.API')
+    def test_dpnk_profile_page_blank_feed(self, slumber_mock):
+        models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_mock.return_value = m
+        response = self.client.get(reverse('profil'))
+        self.assertContains(response, 'Žádná akce není.')
 
     @patch('slumber.API')
     def test_dpnk_profile_page_link(self, slumber_api):

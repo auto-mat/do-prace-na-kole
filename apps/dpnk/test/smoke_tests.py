@@ -17,7 +17,6 @@ views = [
     "%s?uid=1" % reverse('admin_questionnaire_answers', kwargs={'competition_slug': "FQ-LB"}),
     reverse('login'),
     reverse('payment', urls),
-    reverse('profil', urls),
     reverse('zmenit_tym'),
     reverse('upravit_trasu'),
     reverse('upravit_profil'),

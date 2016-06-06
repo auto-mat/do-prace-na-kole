@@ -3,7 +3,7 @@
 {% load bleach_tags %}
 
 <div class="wp_news">
-{% for key, value in wp_feed.items %}
+{% for value in wp_feed %}
    <div class="item">
       <h4>
           <a href="{{ value.url }}" target="_blank">
