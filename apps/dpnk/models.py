@@ -2605,7 +2605,7 @@ class Answer(models.Model):
         verbose_name=_(u"Komentář"),
         max_length=600,
         null=True, blank=True)
-    points_given = models.IntegerField(
+    points_given = models.FloatField(
         null=True, blank=True, default=None)
     comment_given = models.TextField(
         verbose_name=_("Hodnotitelský komentář"),

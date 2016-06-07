@@ -211,6 +211,7 @@
             "user_attendance": 1115,
             "question": 3,
             "attachment": "DSC00002.JPG",
+            "points_given": 3.2,
             "comment": "Testing comment"
         },
         "model": "dpnk.answer",

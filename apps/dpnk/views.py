@@ -1236,7 +1236,7 @@ def answers(request):
         for p in points:
             if not p[1] in ('', 'None', None):
                 answer = Answer.objects.get(id=p[0])
-                answer.points_given = int(p[1])
+                answer.points_given = float(p[1].replace(",", "."))
                 answer.save()
 
     answers = Answer.objects.filter(question_id=question_id).order_by('-points_given')
