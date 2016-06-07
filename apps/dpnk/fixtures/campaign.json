@@ -103,6 +103,7 @@
             "slug": "FQ-LB",
             "team_competitors": [],
             "type": "frequency",
+            "minimum_rides_base": 23,
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
             "without_admission": true

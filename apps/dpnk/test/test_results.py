@@ -21,7 +21,7 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.test.utils import override_settings
-from dpnk import models, util, actions
+from dpnk import models, util, actions, results
 from dpnk.test.util import DenormMixin, ClearCacheMixin
 from dpnk.test.util import print_response  # noqa
 import datetime
@@ -50,9 +50,9 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
         address = reverse('competition_results', kwargs={'competition_slug': 'FQ-LB', 'limit': 1})
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Pravidelnost týmů:")
-        self.assertContains(response, ">3,0<")
+        self.assertContains(response, ">2,9<")
         self.assertContains(response, ">2<")
-        self.assertContains(response, ">67<")
+        self.assertContains(response, ">69<")
         self.assertContains(response, ">3<")
         self.assertContains(response, "Testing team 1")
 
@@ -106,3 +106,21 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
         address = reverse('competition_results', kwargs={'competition_slug': 'TF'})
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Team frequency:")
+
+
+class RidesBaseTests(TestCase):
+    fixtures = ['campaign', 'auth_user', 'users']
+
+    def test_get_minimum_rides_base_proportional(self):
+        competition = models.Competition.objects.get(slug="FQ-LB")
+        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 1)), 1)
+        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 7)), 10)
+        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 15)), 23)
+        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 30)), 23)
+
+    def test_get_minimum_rides_base_proportional_phase(self):
+        competition = models.Phase.objects.get(pk=2)
+        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 1)), 0)
+        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 7)), 5)
+        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 15)), 12)
+        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 30)), 25)

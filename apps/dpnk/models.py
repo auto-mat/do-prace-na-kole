@@ -641,6 +641,9 @@ class Phase(models.Model):
         default=None,
         null=True, blank=True)
 
+    def get_minimum_rides_base(self):
+        return self.campaign.minimum_rides_base
+
     def has_started(self):
         if not self.date_from:
             return True
@@ -2093,6 +2096,13 @@ class Competition(models.Model):
         null=True,
         blank=True,
     )
+    minimum_rides_base = models.PositiveIntegerField(
+        verbose_name=_("Minimální základ počtu jízd"),
+        help_text=_("Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout 100% jízd"),
+        default=28,
+        blank=False,
+        null=False,
+    )
     without_admission = models.BooleanField(
         verbose_name=_(u"Soutěž bez přihlášek (pro všechny)"),
         help_text=_(u"Dotazník je obvykle na přihlášky, výkonnost také a pravidelnost bez nich."),
@@ -2123,6 +2133,9 @@ class Competition(models.Model):
         blank=True,
         null=True,
     )
+
+    def get_minimum_rides_base(self):
+        return self.minimum_rides_base
 
     def show_competition_results(self):
         if self.type == 'questionnaire' and not self.has_finished():

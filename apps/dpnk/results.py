@@ -184,11 +184,10 @@ def get_rides_count(user_attendance, competition, day=None):
     return Trip.objects.filter(user_attendance=user_attendance, commute_mode__in=('bicycle', 'by_foot'), date__in=days).count()
 
 
-def get_minimum_rides_base_proportional(user_attendance, competition=None, day=None):
-    phase = user_attendance.campaign.phase("competition")
-    days_count = util.days_count(phase, phase.date_to)
-    days_count_till_now = util.days_count(phase, day)
-    return int(user_attendance.campaign.minimum_rides_base * (days_count_till_now / days_count))
+def get_minimum_rides_base_proportional(competition, day):
+    days_count = util.days_count(competition, competition.date_to)
+    days_count_till_now = util.days_count(competition, day)
+    return int(competition.get_minimum_rides_base() * (days_count_till_now / days_count))
 
 
 def get_working_trips_count(user_attendance, competition=None, day=None):
@@ -200,7 +199,7 @@ def get_working_trips_count(user_attendance, competition=None, day=None):
     non_working_rides_in_working_day = Trip.objects.filter(user_attendance=user_attendance, commute_mode='no_work', date__in=working_days).count()
     working_days_count = len(util.working_days(competition))
     working_trips_count = working_days_count * 2 + trips_in_non_working_day - non_working_rides_in_working_day
-    return max(working_trips_count, get_minimum_rides_base_proportional(user_attendance, competition, day))
+    return max(working_trips_count, get_minimum_rides_base_proportional(competition, day))
 
 
 def get_team_frequency(user_attendancies, competition=None, day=None):
