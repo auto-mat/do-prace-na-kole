@@ -193,7 +193,7 @@ class AdminTests(TestCase):
         response = self.client.get(address)
         self.assertContains(response, "%s/DSC00002.JPG" % settings.MEDIA_URL)
         self.assertContains(response, "Příloha:")
-        self.assertContains(response, "Dohromady bodů: 13,0")
+        self.assertContains(response, "Dohromady bodů: 16,2")
 
     def test_admin_draw_results_fq_lb(self):
         models.Payment.objects.create(user_attendance_id=1015, status=models.Status.DONE, amount=1)

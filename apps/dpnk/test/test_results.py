@@ -74,7 +74,7 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
         address = reverse('competition_results', kwargs={'competition_slug': 'quest'})
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Dotazník:")
-        self.assertContains(response, "13,0")
+        self.assertContains(response, "16,2")
         self.assertContains(response, '<a href="/cs/questionnaire_answers/quest/#comp_res_')
         self.assertContains(response, 'Testing User 1')
 

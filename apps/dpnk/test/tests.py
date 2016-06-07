@@ -1558,7 +1558,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'dotazník jednotlivců')
         self.assertContains(response, "2. místo z 1\n      \n         týmů\n      \n      \n        (1,3&nbsp;%)")
         self.assertContains(response, "1. místo z 1\n      \n         jednotlivců\n      \n      \n        (5&nbsp;km)")
-        self.assertContains(response, "1. místo z 1\n      \n         jednotlivců\n      \n      \n        (13b.)")
+        self.assertContains(response, "1. místo z 1\n      \n         jednotlivců\n      \n      \n        (16,2b.)")
 
 
 class TestTeams(DenormMixin, ClearCacheMixin, TestCase):

@@ -1443,6 +1443,7 @@ class Invoice(models.Model):
         verbose_name = _(u"Faktura")
         verbose_name_plural = _(u"Faktury")
         unique_together = (("sequence_number", "campaign"),)
+        ordering = ('sequence_number', 'campaign', )
 
     created = models.DateTimeField(
         verbose_name=_(u"Datum vytvoření"),
@@ -1499,7 +1500,7 @@ class Invoice(models.Model):
     )
 
     def __str__(self):
-        return "%s" % self.sequence_number
+        return "%s - %s" % (self.sequence_number, self.campaign.slug)
 
     def paid(self):
         if not self.paid_date:
