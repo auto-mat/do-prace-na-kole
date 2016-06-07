@@ -375,7 +375,7 @@ class Team(models.Model):
         return trip_count
 
     def get_frequency(self):
-        return results.get_team_frequency(self.members(), self.campaign.phase("competition"))
+        return results.get_team_frequency(self.members(), self.campaign.phase("competition"))[2]
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
@@ -386,7 +386,7 @@ class Team(models.Model):
         return (self.frequency or 0) * 100
 
     def get_length(self):
-        return results.get_team_length(self, self.campaign.phase("competition"))
+        return results.get_team_length(self, self.campaign.phase("competition"))[2]
 
     @denormalized(models.TextField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
@@ -907,7 +907,7 @@ class UserAttendance(models.Model):
         return results.get_rides_count(self, self.campaign.phase("competition"))
 
     def get_frequency(self, day=None):
-        return results.get_userprofile_frequency(self, self.campaign.phase("competition"), day)
+        return results.get_userprofile_frequency(self, self.campaign.phase("competition"), day)[2]
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
@@ -2377,6 +2377,18 @@ class CompetitionResult(models.Model):
         default=None,
         db_index=True,
     )
+    result_divident = models.FloatField(
+        verbose_name=_("Dělenec"),
+        null=True,
+        blank=True,
+        default=None,
+    )
+    result_divisor = models.FloatField(
+        verbose_name=_("Dělitel"),
+        null=True,
+        blank=True,
+        default=None,
+    )
 
     def get_team(self):
         if self.competition.competitor_type in ['liberos', 'single_user']:
@@ -2402,20 +2414,6 @@ class CompetitionResult(models.Model):
             return round(self.result * 100, 1)
         else:
             return 0
-
-    def get_total_result(self):
-        # TODO: don't use this function, show rides table instead
-        if self.competition.type == 'length':
-            if self.user_attendance:
-                return round(self.result, 1)
-            if self.team:
-                return round(self.result * self.team.member_count, 1)
-
-        elif self.competition.type == 'frequency':
-            if self.user_attendance:
-                return self.user_attendance.get_rides_count_denorm or ""
-            if self.team:
-                return self.team.get_rides_count_denorm or ""
 
     def __str__(self):
         if self.competition.competitor_type == 'team':

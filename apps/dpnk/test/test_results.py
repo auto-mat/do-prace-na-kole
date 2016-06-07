@@ -50,7 +50,10 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
         address = reverse('competition_results', kwargs={'competition_slug': 'FQ-LB', 'limit': 1})
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Pravidelnost týmů:")
-        self.assertContains(response, "3,0")
+        self.assertContains(response, ">3,0<")
+        self.assertContains(response, ">2<")
+        self.assertContains(response, ">67<")
+        self.assertContains(response, ">3<")
         self.assertContains(response, "Testing team 1")
 
     def test_dpnk_competition_results_quest_not_finished(self):
@@ -84,7 +87,7 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
         address = reverse('competition_results', kwargs={'competition_slug': 'vykonnost'})
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Výkonnost:")
-        self.assertContains(response, "161,9")
+        self.assertContains(response, ">161,9<")
         self.assertContains(response, "Testing User 1")
 
     def test_dpnk_competition_results_vykonnost_tymu(self):
@@ -93,8 +96,10 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
         address = reverse('competition_results', kwargs={'competition_slug': 'vykonnost-tymu'})
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Výkonnost týmů:")
-        self.assertContains(response, "Cel&shy;ko&shy;vý po&shy;čet ki&shy;lo&shy;me&shy;trů")
-        self.assertContains(response, "161,9")
+        self.assertContains(response, "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů")
+        self.assertContains(response, ">54,0<")
+        self.assertContains(response, ">161,9<")
+        self.assertContains(response, ">3<")
         self.assertContains(response, "Testing team 1")
 
     def test_dpnk_competition_results_TF(self):

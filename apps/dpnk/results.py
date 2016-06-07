@@ -211,8 +211,8 @@ def get_team_frequency(user_attendancies, competition=None, day=None):
         working_trips_count += get_working_trips_count(user_attendance, competition, day)
         rides_count += get_rides_count(user_attendance, competition, day)
     if working_trips_count == 0:
-        return 0
-    return float(rides_count) / working_trips_count
+        return 0, 0, 0
+    return rides_count, working_trips_count, float(rides_count) / working_trips_count
 
 
 def get_userprofile_nonreduced_length(user_attendance, competition):
@@ -243,14 +243,14 @@ def get_team_length(team, competition):
     members = team.members().all()
 
     if member_count == 0:
-        return None
+        return None, None, None
     members = team.members().all()
     # distance_from = Trip.objects.filter(user__in=members).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
     # distance_to   = Trip.objects.filter(user__in=members).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
     distance = 0
     for member in members:
         distance += get_userprofile_length(member, competition)
-    return float(distance) / float(member_count)
+    return distance, member_count, float(distance) / float(member_count)
 
 
 def recalculate_result_competition(competition):
@@ -306,9 +306,9 @@ def recalculate_result(competition, competitor):  # noqa
             points, points_given = points_questionnaire(members, competition)
             competition_result.result = float(points + points_given)
         elif competition.type == 'length':
-            competition_result.result = get_team_length(team, competition)
+            competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_length(team, competition)
         elif competition.type == 'frequency':
-            competition_result.result = get_team_frequency(team.members(), competition)
+            competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_frequency(team.members(), competition)
 
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
         user_attendance = competitor
@@ -324,7 +324,7 @@ def recalculate_result(competition, competitor):  # noqa
         elif competition.type == 'length':
             competition_result.result = get_userprofile_length(user_attendance, competition)
         elif competition.type == 'frequency':
-            competition_result.result = get_userprofile_frequency(user_attendance, competition)
+            competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_userprofile_frequency(user_attendance, competition)
 
     elif competition.competitor_type == 'company':
         company = competitor

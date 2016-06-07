@@ -19,9 +19,10 @@
 </th>
 
 {% if competition.type == 'frequency' %}
-   <th>{% trans "Cel&shy;ko&shy;vý po&shy;čet jí&shy;zd" %}</th>
+   <th>{% trans "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd" %}</th>
+   <th>{% trans "Cel&shy;ko&shy;vý po&shy;čet cest" %}</th>
 {% elif competition.type == 'length' and competition.competitor_type == 'team' %}
-   <th>{% trans "Cel&shy;ko&shy;vý po&shy;čet ki&shy;lo&shy;me&shy;trů" %}</th>
+   <th>{% trans "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů" %}</th>
 {% endif %}
 
 {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.competitor_type != 'company'%}
@@ -64,8 +65,14 @@
    <td>{{ result.get_result|intcomma  }}</td>
 {% endif %}
 
-{% if competition.type == 'frequency' or competition.type == 'length' and competition.competitor_type == 'team' %}
-   <td>{{ result.get_total_result|intcomma }}</td>
+{% if competition.type == 'length' and competition.competitor_type == 'team' %}
+   <td>{{ result.result_divident|default:""|intcomma }}</td>
+{% endif %}
+{% if competition.type == 'frequency' %}
+   <td>{{ result.result_divident|default:""|floatformat:"0" }}</td>
+{% endif %}
+{% if competition.type == 'frequency' %}
+   <td>{{ result.result_divisor|default:""|floatformat:"0" }}</td>
 {% endif %}
 
 {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.competitor_type != 'company'%}

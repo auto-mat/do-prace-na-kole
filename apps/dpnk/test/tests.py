@@ -1632,10 +1632,10 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         self.assertEquals(result, 23)
 
         result = results.get_userprofile_frequency(user_attendance, competition)
-        self.assertEquals(result, 0.043478260869565216)
+        self.assertEquals(result, (1, 23, 1/23.0))
 
         result = results.get_team_frequency(user_attendance.team.members(), competition)
-        self.assertEquals(result, 0.014925373134328358)
+        self.assertEquals(result, (1, 67, 1/67.0))
 
 
 class ModelTests(DenormMixin, ClearCacheMixin, TestCase):

@@ -990,7 +990,7 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
 
 
 class CompetitionResultAdmin(admin.ModelAdmin):
-    list_display = ('user_attendance', 'team', 'company', 'result', 'competition')
+    list_display = ('user_attendance', 'team', 'company', 'result', 'result_divident', 'result_divisor', 'competition')
     list_filter = (campaign_filter_generator('competition__campaign'), 'competition',)
     search_fields = (
         'user_attendance__userprofile__nickname',
