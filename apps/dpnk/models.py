@@ -2013,7 +2013,7 @@ class Competition(models.Model):
     class Meta:
         verbose_name = _(u"Soutěžní kategorie")
         verbose_name_plural = _(u"Soutěžní kategorie")
-        ordering = ('-campaign', 'type', 'name')
+        ordering = ('-campaign', 'name')
 
     name = models.CharField(
         unique=False,
