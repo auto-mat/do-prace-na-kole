@@ -7,7 +7,6 @@ psycopg2
 python-memcached
 django-chart-tools
 django-extensions
-django-debug-toolbar
 django-softhyphen
 -e git+https://github.com/chrisglass/django_polymorphic.git#egg=django-polymorphic
 -e git+https://pdlouhy@bitbucket.org/pdlouhy/django-composite-field.git@fix_sort#egg=django-composite-field  # the non-PIP source is for bug with import-export
@@ -52,21 +51,16 @@ django-gpxpy
 django-cachalot
 django-bulk-update
 django-cors-headers
-django-nose
-nose-parameterized
-nose-timer
 -e git+https://github.com/PetrDlouhy/django-denorm.git@develop#egg=django-denorm
 -e git+https://github.com/PetrDlouhy/django-admin-smoke-tests.git@supermaster#egg=django-admin-smoke-tests  # the non-PIP source is for newest django-polymorphic, that defined both get_queryset and queryset
 django-wysiwyg-redactor
 sqlparse
 django-appconf
-model-mommy
 django-ajax-selects
 pypdf2
 django-extra-views
 freezegun
 raven
-django_coverage_plugin
 django-celery
 django-bootstrap3
 sqlalchemy
