@@ -1556,9 +1556,12 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition.get().recalculate_results()
         response = self.client.get(reverse('competitions'))
         self.assertContains(response, 'dotazník jednotlivců')
-        self.assertContains(response, "2. místo z 1\n      \n         týmů\n      \n      \n        (1,4&nbsp;%)")
-        self.assertContains(response, "1. místo z 1\n      \n         jednotlivců\n      \n      \n        (5&nbsp;km)")
-        self.assertContains(response, "1. místo z 1\n      \n         jednotlivců\n      \n      \n        (16,2b.)")
+        self.assertContains(response, "2. místo z 1\n      \n         týmů")
+        self.assertContains(response, "1,4&nbsp;%")
+        self.assertContains(response, "1. místo z 1\n      \n         jednotlivců")
+        self.assertContains(response, "5&nbsp;km")
+        self.assertContains(response, "1. místo z 1\n      \n         jednotlivců")
+        self.assertContains(response, "16,2b.")
 
 
 class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
