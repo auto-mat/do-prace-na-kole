@@ -69,6 +69,12 @@
       {% trans "Ušetřené množství oxidu uhličitého" %}: {{ user_attendance.get_emissions.co2|intcomma }}&nbsp;g  (<a href="{% url 'emission_calculator' %}">{% trans "Emisní kalkulačka" %}</a>)
    </td>
 </tr>
+<tr class="info">
+   <th colspan="2">
+      {% trans "Výsledky za květen naleznete na stránce" %}
+      <a href="{% url "competitions" %}">{% trans "výsledků jednotlivých soutěží" %}</a>.
+   </th>
+</tr>
 </table>
 <input type="submit" name="submit" value="{% trans "Odeslat" %}" class="btn btn-primary btn-block" id="submit-id-submit">
 {% else %}
