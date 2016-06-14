@@ -1566,7 +1566,8 @@ def create_invoice_files(sender, instance, created, **kwargs):
     if not instance.invoice_pdf:
         temp = NamedTemporaryFile()
         invoice_pdf.make_invoice_sheet_pdf(temp, instance)
-        filename = "invoice_%s_%s_%s_%s.pdf" % (
+        filename = "%s/invoice_%s_%s_%s_%s.pdf" % (
+            instance.campaign.slug,
             instance.sequence_number,
             unidecode(instance.company.name[0:40]),
             instance.exposure_date.strftime("%Y-%m-%d"),
@@ -2599,6 +2600,10 @@ class Choice(models.Model):
         return "%s" % self.text
 
 
+def questionnaire_filename(instance, filename):
+    return 'questionaire/%s/%s/%s' % (instance.question.competition.campaign.slug, instance.question.competition.slug, unidecode(filename))
+
+
 class Answer(models.Model):
     """Odpověď"""
     class Meta:
@@ -2625,7 +2630,7 @@ class Answer(models.Model):
         blank=True,
     )
     attachment = models.FileField(
-        upload_to=u"questionaire/",
+        upload_to=questionnaire_filename,
         max_length=600,
         blank=True,
     )
@@ -2671,7 +2676,7 @@ class Voucher(models.Model):
 
 
 def normalize_gpx_filename(instance, filename):
-    return '-'.join(['gpx_tracks/track', datetime.datetime.now().strftime("%Y-%m-%d"), unidecode(filename)])
+    return '-'.join(['gpx_tracks/%s/track' % instance.user_attendance.competition.slug, datetime.datetime.now().strftime("%Y-%m-%d"), unidecode(filename)])
 
 
 @with_author

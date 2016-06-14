@@ -906,7 +906,7 @@ class AnswerAdmin(ExportMixin, RelatedFieldAdmin):
     list_filter = (campaign_filter_generator('question__competition__campaign'), HasReactionFilter, 'question__competition__city', 'question__competition')
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
-    raw_id_fields = ('user_attendance', )
+    raw_id_fields = ('user_attendance', 'question')
 
     def choices_all(self, obj):
         return " | ".join([ch.text for ch in obj.choices.all()])
@@ -924,7 +924,7 @@ class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__c
     list_display = ('__str__', 'text', 'type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
     ordering = ('order', 'date',)
     list_filter = (campaign_filter_generator('competition__campaign'), 'competition__city', 'competition',)
-    search_fields = ('text',)
+    search_fields = ('text', 'competition__name')
     save_as = True
 
     readonly_fields = ['choices', 'answers_link', ]
