@@ -2682,7 +2682,7 @@ class Voucher(models.Model):
 
 
 def normalize_gpx_filename(instance, filename):
-    return '-'.join(['gpx_tracks/%s/track' % instance.user_attendance.competition.slug, datetime.datetime.now().strftime("%Y-%m-%d"), unidecode(filename)])
+    return '-'.join(['gpx_tracks/%s/track' % instance.user_attendance.campaign.slug, datetime.datetime.now().strftime("%Y-%m-%d"), unidecode(filename)])
 
 
 @with_author
