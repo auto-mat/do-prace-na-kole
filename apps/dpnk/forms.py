@@ -736,27 +736,30 @@ class GpxFileForm(forms.ModelForm):
         return self.initial['direction']
 
     def clean_track(self):
-        if not util.day_active(self.trip_date):
+        if not self.day_active:
             return getattr(self.initial, 'track', None)
         return self.cleaned_data['track']
 
     def clean_file(self):
-        if not util.day_active(self.trip_date):
+        if not self.day_active:
             return getattr(self.initial, 'file', None)
         return self.cleaned_data['file']
 
     def __init__(self, *args, **kwargs):
         super(GpxFileForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.user_attendance = self.initial['user_attendance']
         try:
             self.trip_date = self.instance.trip_date or datetime.datetime.strptime(self.initial['trip_date'], "%Y-%m-%d").date()
-            if util.day_active(self.trip_date):
+            if util.day_active(self.trip_date, self.user_attendance.campaign):
                 self.helper.add_input(Submit('submit', _(u'Odeslat')))
+                self.day_active = True
+            else:
+                self.day_active = False
         except ValueError:
             raise Http404
-        user_attendance = self.initial['user_attendance']
 
-        self.fields['track'].widget = UserLeafletWidget(user_attendance=user_attendance)
+        self.fields['track'].widget = UserLeafletWidget(user_attendance=self.user_attendance)
         self.fields['track'].widget.attrs['geom_type'] = 'MULTILINESTRING'
 
         self.fields['trip_date'].required = False

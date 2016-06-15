@@ -22,6 +22,7 @@ from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
 from dpnk import util
+from dpnk.models import Campaign
 import datetime
 
 
@@ -29,35 +30,41 @@ import datetime
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class UtilTests(TestCase):
-    def test_day_active_last7(self):
-        self.assertTrue(util.day_active_last7(datetime.date(2010, 11, 14)))
-        self.assertTrue(util.day_active_last7(datetime.date(2010, 11, 20)))
-        self.assertFalse(util.day_active_last7(datetime.date(2010, 11, 13)))
-        self.assertFalse(util.day_active_last7(datetime.date(2010, 11, 21)))
+    fixtures = ['campaign', 'auth_user', 'users']
 
-    def test_day_active_last7_cut_after_may(self):
-        self.assertTrue(util.day_active_last7_cut_after_may(datetime.date(2010, 11, 14)))
-        self.assertTrue(util.day_active_last7_cut_after_may(datetime.date(2010, 11, 20)))
-        self.assertFalse(util.day_active_last7_cut_after_may(datetime.date(2010, 11, 13)))
-        self.assertFalse(util.day_active_last7_cut_after_may(datetime.date(2010, 11, 21)))
+    def test_day_active_last(self):
+        campaign = Campaign.objects.get(pk=339)
+        self.assertTrue(util.day_active_last(datetime.date(2010, 11, 14), campaign))
+        self.assertTrue(util.day_active_last(datetime.date(2010, 11, 20), campaign))
+        self.assertFalse(util.day_active_last(datetime.date(2010, 11, 13), campaign))
+        self.assertFalse(util.day_active_last(datetime.date(2010, 11, 21), campaign))
+
+    def test_day_active_last_cut_after_may(self):
+        campaign = Campaign.objects.get(pk=339)
+        self.assertTrue(util.day_active_last_cut_after_may(datetime.date(2010, 11, 14), campaign))
+        self.assertTrue(util.day_active_last_cut_after_may(datetime.date(2010, 11, 20), campaign))
+        self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2010, 11, 13), campaign))
+        self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2010, 11, 21), campaign))
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2016, month=6, day=3),
     )
-    def test_day_active_last7_cut_after_may_may(self):
-        self.assertTrue(util.day_active_last7_cut_after_may(datetime.date(2016, 6, 1)))
-        self.assertTrue(util.day_active_last7_cut_after_may(datetime.date(2016, 6, 3)))
-        self.assertFalse(util.day_active_last7_cut_after_may(datetime.date(2016, 5, 31)))
-        self.assertFalse(util.day_active_last7_cut_after_may(datetime.date(2016, 6, 4)))
+    def test_day_active_last_cut_after_may_may(self):
+        campaign = Campaign.objects.get(pk=339)
+        self.assertTrue(util.day_active_last_cut_after_may(datetime.date(2016, 6, 1), campaign))
+        self.assertTrue(util.day_active_last_cut_after_may(datetime.date(2016, 6, 3), campaign))
+        self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2016, 5, 31), campaign))
+        self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2016, 6, 4), campaign))
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2016, month=6, day=7),
     )
-    def test_day_active_last7_cut_after_may_may9(self):
-        self.assertTrue(util.day_active_last7_cut_after_may(datetime.date(2016, 6, 1)))
-        self.assertTrue(util.day_active_last7_cut_after_may(datetime.date(2016, 6, 7)))
-        self.assertFalse(util.day_active_last7_cut_after_may(datetime.date(2016, 5, 31)))
-        self.assertFalse(util.day_active_last7_cut_after_may(datetime.date(2016, 6, 8)))
+    def test_day_active_last_cut_after_may_may9(self):
+        campaign = Campaign.objects.get(pk=339)
+        self.assertTrue(util.day_active_last_cut_after_may(datetime.date(2016, 6, 1), campaign))
+        self.assertTrue(util.day_active_last_cut_after_may(datetime.date(2016, 6, 7), campaign))
+        self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2016, 5, 31), campaign))
+        self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2016, 6, 8), campaign))
 
 
 class TodayTests(TestCase):

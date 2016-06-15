@@ -455,6 +455,12 @@ class Campaign(models.Model):
         verbose_name=_(u"Povolit mailing list"),
         default=False,
         null=False)
+    days_active = models.PositiveIntegerField(
+        verbose_name=_("Počet minulých dní, které jdou zapisovat"),
+        default=7,
+        blank=False,
+        null=False,
+    )
     minimum_rides_base = models.PositiveIntegerField(
         verbose_name=_(u"Minimální základ počtu jízd"),
         help_text=_(u"Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout 100% jízd"),
@@ -1989,7 +1995,7 @@ class Trip(models.Model):
         return util.working_day(self.date)
 
     def active(self):
-        return util.day_active(self.date)
+        return util.day_active(self.date, self.user_attendance.campaign)
 
     def has_gpxfile(self):
         return hasattr(self, "gpxfile")
@@ -2816,7 +2822,7 @@ def set_trip(sender, instance, *args, **kwargs):
             date=instance.trip_date,
             direction=instance.direction,
             defaults={
-                'commute_mode': 'bicycle' if util.day_active(instance.trip_date) else 'by_other_vehicle',
+                'commute_mode': 'bicycle' if util.day_active(instance.trip_date, instance.user_attendance.campaign) else 'by_other_vehicle',
             }
         )
         instance.trip = trip

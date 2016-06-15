@@ -81,7 +81,7 @@ def days_count(competition, day=None):
 
 
 def days_active(competition):
-    return [d for d in days(competition) if day_active(d)]
+    return [d for d in days(competition) if day_active(d, competition.campaign)]
 
 
 def _today():
@@ -124,20 +124,20 @@ def rebuild_denorm_models(models):
         denorm.flush()
 
 
-def day_active_last7(day):
+def day_active_last(day, campaign):
     day_today = _today()
     return (
         (day <= day_today) and
-        (day > day_today - datetime.timedelta(days=7))
+        (day > day_today - datetime.timedelta(days=campaign.days_active))
     )
 
 
-def day_active_last7_cut_after_may(day):
+def day_active_last_cut_after_may(day, campaign):
     day_today = _today()
     if day_today > datetime.date(2016, 6, 2) and day_today < datetime.date(2016, 6, 8):
         date_from = datetime.date(2016, 5, 31)
     else:
-        date_from = day_today - datetime.timedelta(days=7)
+        date_from = day_today - datetime.timedelta(days=campaign.days_active)
     return (
         (day <= day_today) and
         (day > date_from)
@@ -152,7 +152,7 @@ def day_active_last7_cut_after_may(day):
 #                 day.isocalendar()[1] + 1 == day_today.isocalendar()[1]))
 #     )
 
-day_active = day_active_last7_cut_after_may
+day_active = day_active_last_cut_after_may
 
 
 def get_emissions(distance):
