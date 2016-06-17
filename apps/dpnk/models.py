@@ -2647,6 +2647,9 @@ class Answer(models.Model):
     def str_choices(self):
         return ", ".join([choice.text for choice in self.choices.all()])
 
+    def str_choices_ids(self):
+        return ", ".join([(str(ch.pk)) for ch in self.choices.all()])
+
     # TODO: repair tests with this
     # def __str__(self):
     #      return "%s" % self.str_choices()

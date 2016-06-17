@@ -883,15 +883,46 @@ class ChoiceTypeAdmin(admin.ModelAdmin):
     save_as = True
 
 
+class AnswerResource(resources.ModelResource):
+    class Meta:
+        model = models.Answer
+        fields = (
+            'id',
+            'user_attendance__userprofile__user__first_name',
+            'user_attendance__userprofile__user__last_name',
+            'user_attendance__team__name',
+            'user_attendance__team__subsidiary__address_street',
+            'user_attendance__team__subsidiary__address_street_number',
+            'user_attendance__team__subsidiary__address_recipient',
+            'user_attendance__team__subsidiary__address_district',
+            'user_attendance__team__subsidiary__address_psc',
+            'user_attendance__team__subsidiary__address_city',
+            'user_attendance__team__subsidiary__company__name',
+            'user_attendance__team__subsidiary__city__name',
+            'question',
+            'question__name',
+            'question__text',
+            'choices',
+            'str_choices',
+            'comment',
+        )
+        export_order = fields
+
+    str_choices = fields.Field()
+
+    def dehydrate_str_choices(self, obj):
+        return obj.str_choices()
+
+
 class AnswerAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'user_attendance',
         'user_attendance__userprofile__user__email',
         'points_given',
-        'choices_ids_all',
         'question__competition',
         'comment',
-        'choices_all',
+        'str_choices_ids',
+        'str_choices',
         'attachment_url',
         'comment',
         'question__text')
@@ -907,12 +938,7 @@ class AnswerAdmin(ExportMixin, RelatedFieldAdmin):
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
     raw_id_fields = ('user_attendance', 'question')
-
-    def choices_all(self, obj):
-        return " | ".join([ch.text for ch in obj.choices.all()])
-
-    def choices_ids_all(self, obj):
-        return ", ".join([(str(ch.pk)) for ch in obj.choices.all()])
+    resource_class = AnswerResource
 
     def attachment_url(self, obj):
         if obj.attachment:
