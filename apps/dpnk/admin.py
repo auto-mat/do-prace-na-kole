@@ -1192,6 +1192,8 @@ class InvoiceResource(resources.ModelResource):
             'company__address_city')
         export_order = fields
 
+    invoice_count = fields.Field()
+
     def dehydrate_invoice_count(self, obj):
         return obj.payment_set.count()
 
