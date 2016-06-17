@@ -53,7 +53,7 @@ class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminModulesTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices']
 
     def setUp(self):
         super().setUp()
@@ -100,6 +100,22 @@ class AdminModulesTests(DenormMixin, TestCase):
         response = self.client.post(address, post_data)
         self.assertContains(response, "1,1,1")
 
+    def test_answer_export(self):
+        address = "/admin/dpnk/answer/export/"
+        post_data = {
+            'file_format': 0,
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(response, "5,Testing,User 1,Testing team 1,Ulice,1,,,11111,Praha,Testing company,Testing city,2,,,1,yes,Answer without attachment")
+
+    def test_invoice_export(self):
+        address = "/admin/dpnk/invoice/export/"
+        post_data = {
+            'file_format': 0,
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(response, "0.0,0,Testing campaign,1,,11111,CZ1234567890,0,Ulice,1,,,11111,Praha")
+
     def test_deliverybatch_masschange(self):
         address = "/admin/dpnk/deliverybatch-masschange/1/"
         response = self.client.get(address)
@@ -125,6 +141,49 @@ class AdminModulesTests(DenormMixin, TestCase):
         response = self.client.get(address)
         self.assertContains(response, '<a href="/admin/dpnk/answer/?question__competition__id__exact=4">Odpovědi k soutěži Dotazník</a>')
         self.assertContains(response, '<a href="%s/DSC00002.JPG" target="_blank">DSC00002.JPG</a>' % settings.MEDIA_URL)
+
+    def test_admin_companyadmin(self):
+        address = "%s?administrated_company__subsidiaries__city__id__exact=1" % reverse('admin:dpnk_companyadmin_changelist')
+        response = self.client.get(address)
+        self.assertContains(response, 'test_wa@email.cz')
+        self.assertContains(response, 'Null User')
+
+    def test_admin_companyadmin_admin_approved_filter(self):
+        address = "%s?company_admin_approved__exact=approved" % reverse('admin:dpnk_companyadmin_changelist')
+        response = self.client.get(address)
+        self.assertContains(response, 'test_wa@email.cz')
+        self.assertContains(response, 'Null User')
+
+    def test_admin_userprofile(self):
+        address = "%s?userattendance_set__team__subsidiary__city__id__exact=1" % reverse('admin:dpnk_userprofile_changelist')
+        response = self.client.get(address)
+        self.assertContains(response, 'email1031@dopracenakole.cz')
+        self.assertContains(response, 'Registered User 1')
+
+    def test_admin_userprofile_sex_filter(self):
+        address = "%s?sex__exact=male" % reverse('admin:dpnk_userprofile_changelist')
+        response = self.client.get(address)
+        self.assertContains(response, 'email1031@dopracenakole.cz')
+        self.assertContains(response, 'Registered User 1')
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class BatchAdminTests(TestCase):
+    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'trips']
+
+    def setUp(self):
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
+
+    def test_userattendancetobatch_admin(self):
+        address = reverse('admin:dpnk_userattendancetobatch_changelist')
+        response = self.client.get(address, follow=True)
+        self.assertContains(response, "Ulice 1, 111 11 Praha - Testing city")
+        self.assertContains(response, "1 Uživatel na dávku objednávek")
+        self.assertContains(response, "field-payment_created")
 
 
 @override_settings(
