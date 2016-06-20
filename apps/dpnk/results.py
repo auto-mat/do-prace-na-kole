@@ -49,8 +49,12 @@ def get_competitors_without_admission(competition):  # noqa
             filter_query['subsidiary__company'] = competition.company
         return Team.objects.filter(**filter_query)
     elif competition.competitor_type == 'company':
+        if competition.city:
+            cities = competition.city.all()
+            if cities:
+                filter_query['subsidiaries__city__in'] = cities
         if competition.company:
-            filter_query['company'] = competition.company
+            filter_query['pk'] = competition.company.pk
         return Company.objects.filter(**filter_query)
 
 

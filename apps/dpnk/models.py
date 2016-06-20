@@ -2298,7 +2298,7 @@ class Competition(models.Model):
             CTYPES_STRINGS[self.type], " ",
             CCOMPETITORTYPES_STRINGS[self.competitor_type], " ",
             company_string_after, " ",
-            city_string,
+            city_string, " ",
             sex_string,
         )
 

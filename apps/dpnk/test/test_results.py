@@ -39,7 +39,7 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
         response = self.client.get(address)
         self.assertContains(response, "Tuto soutěž v systému nemáme.")
 
-    def test_dpnk_competition_results_company_competition(self):
+    def test_dpnk_competition_results_company_length_competition(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
         models.Competition.objects.get(slug="vykonnost-spolecnosti").recalculate_results()
         address = reverse('competition_results', kwargs={'competition_slug': 'vykonnost-spolecnosti'})
@@ -133,6 +133,52 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
         self.assertContains(response, ">161,9<")
         self.assertContains(response, ">3<")
         self.assertContains(response, "Testing team 1")
+
+    def test_dpnk_competition_results_pravidelnost_jednotlivcu(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.all())
+        models.Competition.objects.get(slug="pravidelnost-jednotlivcu").recalculate_results()
+        address = reverse('competition_results', kwargs={'competition_slug': 'pravidelnost-jednotlivcu'})
+        response = self.client.get(address)
+        self.assertContains(response, "Výsledky v soutěži Pravidelnost jednotlivců:")
+        self.assertContains(response, "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd")
+        self.assertContains(response, "1.")
+        self.assertContains(response, ">8,7<")
+        self.assertContains(response, ">2<")
+        self.assertContains(response, ">23<")
+        self.assertContains(response, "Testing User 1")
+        self.assertContains(response, "Testing team 1")
+        self.assertContains(response, "Testing city")
+
+    def test_dpnk_competition_results_company_competition(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.all())
+        models.Competition.objects.get(slug="comp").recalculate_results()
+        address = reverse('competition_results', kwargs={'competition_slug': 'comp'})
+        response = self.client.get(address)
+        self.assertContains(response, "Výsledky v soutěži Pravidelnost společnosti:")
+        self.assertContains(response, "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd")
+        self.assertContains(response, "1.")
+        self.assertContains(response, ">0<")
+        self.assertContains(response, ">3<")
+        self.assertContains(response, "Ulice / Testing company")
+        self.assertContains(response, "Testing team 1")
+        self.assertContains(response, "Testing city")
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=12, day=20),
+    )
+    def test_dpnk_competition_results_dotaznik_tymu(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.all())
+        models.Competition.objects.get(slug="team-questionnaire").recalculate_results()
+        address = reverse('competition_results', kwargs={'competition_slug': 'team-questionnaire'})
+        response = self.client.get(address)
+        self.assertContains(response, "Výsledky v soutěži Dotazník týmů:")
+        self.assertContains(response, "Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch v")
+        self.assertContains(response, "1.")
+        self.assertContains(response, ">0,0<")
+        self.assertContains(response, ">3<")
+        self.assertContains(response, "Testing team 1")
+        self.assertContains(response, "Ulice / Testing company")
+        self.assertContains(response, "Testing city")
 
     def test_dpnk_competition_results_TF(self):
         address = reverse('competition_results', kwargs={'competition_slug': 'TF'})

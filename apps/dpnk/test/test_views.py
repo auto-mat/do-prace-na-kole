@@ -30,7 +30,7 @@ class CompetitionsViewTests(ViewsLogon):
         self.assertContains(response, "DPNK - Pravidla soutěží - Testing city")
         self.assertContains(response, "Competition vykonnostr rules")
         self.assertContains(response, "soutěž na vzdálenost jednotlivců  ve městě Testing city")
-        self.assertContains(response, "soutěž na vzdálenost týmů  pro muže")
+        self.assertContains(response, "soutěž na vzdálenost týmů  ve městě Testing city pro muže")
 
     def test_competition_results(self):
         address = reverse('competition-results-city', kwargs={'city_slug': "testing-city"})

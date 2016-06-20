@@ -49,22 +49,22 @@ class Tests(TestCase):
 
     def test_competition_type_string(self):
         competition = models.Competition.objects.get(pk=3)
-        self.assertEquals(str(competition.type_string()), " soutěž na pravidelnost týmů  ")
+        self.assertEquals(str(competition.type_string()), " soutěž na pravidelnost týmů   ")
 
         competition = models.Competition.objects.get(pk=4)
-        self.assertEquals(str(competition.type_string()), " dotazník jednotlivců  ")
+        self.assertEquals(str(competition.type_string()), " dotazník jednotlivců   ")
 
         competition = models.Competition.objects.get(pk=5)
-        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost jednotlivců  ")
+        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost jednotlivců  ve městě Testing city pro muže")
 
         competition = models.Competition.objects.get(pk=6)
-        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost jednotlivců  ve městě Testing city")
+        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost jednotlivců  ve městě Testing city ")
 
         competition = models.Competition.objects.get(pk=7)
-        self.assertEquals(str(competition.type_string()), "vnitrofiremní soutěž na pravidelnost týmů organizace Testing company ")
+        self.assertEquals(str(competition.type_string()), "vnitrofiremní soutěž na pravidelnost týmů organizace Testing company  ")
 
         competition = models.Competition.objects.get(pk=8)
-        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost společností  ")
+        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost společností  ve městě Testing city ")
 
         competition = models.Competition.objects.get(pk=9)
-        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost týmů  pro muže")
+        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost týmů  ve městě Testing city pro muže")

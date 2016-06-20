@@ -113,6 +113,32 @@
     },
     {
         "fields": {
+            "campaign": 339,
+            "city": [],
+            "company": 1,
+            "company_competitors": [],
+            "competitor_type": "single_user",
+            "date_from": "2010-11-01",
+            "date_to": "2010-11-15",
+            "entry_after_beginning_days": 7,
+            "is_public": true,
+            "name": "Pravidelnost jednotlivců",
+            "public_answers": false,
+            "rules": null,
+            "sex": null,
+            "slug": "pravidelnost-jednotlivcu",
+            "team_competitors": [],
+            "type": "frequency",
+            "minimum_rides_base": 23,
+            "url": "http://www.dopracenakole.net/url/",
+            "user_attendance_competitors": [],
+            "without_admission": true
+        },
+        "model": "dpnk.competition",
+        "pk": 12
+    },
+    {
+        "fields": {
            "type": "text",
            "comment_type": null,
            "with_attachment": false,
@@ -231,6 +257,31 @@
             "city": [],
             "company": null,
             "company_competitors": [],
+            "competitor_type": "team",
+            "date_from": "2010-11-01",
+            "date_to": "2010-12-02",
+            "entry_after_beginning_days": 7,
+            "is_public": true,
+            "name": "Dotazník týmů",
+            "public_answers": true,
+            "rules": null,
+            "sex": null,
+            "slug": "team-questionnaire",
+            "team_competitors": [1],
+            "type": "questionnaire",
+            "url": "http://www.dopracenakole.net/url/",
+            "user_attendance_competitors": [],
+            "without_admission": false
+        },
+        "model": "dpnk.competition",
+        "pk": 13
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "city": [1],
+            "company": null,
+            "company_competitors": [],
             "competitor_type": "single_user",
             "date_from": "2010-11-01",
             "date_to": "2010-12-30",
@@ -239,7 +290,7 @@
             "name": "Výkonnost",
             "public_answers": false,
             "rules": null,
-            "sex": null,
+            "sex": "male",
             "slug": "vykonnost",
             "team_competitors": [],
             "type": "length",
@@ -253,7 +304,7 @@
     {
         "fields": {
             "campaign": 339,
-            "city": [],
+            "city": [1],
             "company": null,
             "company_competitors": [],
             "competitor_type": "team",
@@ -303,7 +354,7 @@
     {
         "fields": {
             "campaign": 339,
-            "city": [],
+            "city": [1],
             "company": null,
             "company_competitors": [],
             "competitor_type": "company",
@@ -328,8 +379,8 @@
     {
         "fields": {
             "campaign": 339,
-            "city": [],
-            "company": null,
+            "city": [1],
+            "company": 1,
             "company_competitors": [],
             "competitor_type": "company",
             "date_from": "2010-11-01",
