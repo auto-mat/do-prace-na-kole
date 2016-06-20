@@ -145,12 +145,6 @@ def get_competitions_without_admission(user_attendance):
     return competitions
 
 
-def has_distance_competition(user_attendance):
-    competitions = get_competitions_with_admission(user_attendance)
-    competitions = competitions.filter(type='length')
-    return competitions.count() > 0
-
-
 def get_competitions_with_info(user_attendance):
     competitions = get_competitions(user_attendance).select_related('campaign', 'company')
 

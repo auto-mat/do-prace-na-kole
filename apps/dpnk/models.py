@@ -901,12 +901,6 @@ class UserAttendance(models.Model):
     def get_competitions(self):
         return results.get_competitions_with_info(self)
 
-    def get_competitions_without_admission(self):
-        return results.get_competitions_without_admission(self)
-
-    def has_distance_competition(self):
-        return results.has_distance_competition(self)
-
     def get_rides_count(self):
         return results.get_rides_count(self, self.campaign.phase("competition"))
 
@@ -967,15 +961,8 @@ class UserAttendance(models.Model):
     def package_shipped(self):
         return self.transactions.filter(instance_of=PackageTransaction, status__in=PackageTransaction.shipped_statuses).last()
 
-    def package_delivered(self):
-        return self.transactions.filter(instance_of=PackageTransaction, status=PackageTransaction.Status.PACKAGE_DELIVERY_CONFIRMED).last()
-
     def other_user_attendances(self, campaign):
         return self.userprofile.userattendance_set.exclude(campaign=campaign)
-
-    def undenied_team_member_count(self):
-        team = self.team
-        return UserAttendance.objects.filter(team=team, userprofile__user__is_active=True).exclude(approved_for_team='denied').count()
 
     def company(self):
         if self.team:
@@ -1110,14 +1097,6 @@ class UserAttendance(models.Model):
                     if t_shirt_size.count() == 1:
                         self.t_shirt_size = t_shirt_size.first()
         return super(UserAttendance, self).save(*args, **kwargs)
-
-
-class UserAttendanceRelated(UserAttendance):
-    class Meta:
-        proxy = True
-
-    def __str__(self):
-        return "%s - %s" % (self.userprofile.name(), self.campaign.slug)
 
 
 class UserProfile(models.Model):
@@ -1990,9 +1969,6 @@ class Trip(models.Model):
             MinValueValidator(0)
         ],
     )
-
-    def working_day(self):
-        return util.working_day(self.date)
 
     def active(self):
         return util.day_active(self.date, self.user_attendance.campaign)
