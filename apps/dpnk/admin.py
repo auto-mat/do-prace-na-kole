@@ -1082,16 +1082,11 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
 
     def t_shirt_sizes(self, obj):
         if not obj.pk:
-            package_transactions = obj.campaign.user_attendances_for_delivery().select_related('t_shirt_size')
+            package_transactions = obj.campaign.user_attendances_for_delivery()
         else:
-            package_transactions = obj.packagetransaction_set.all().select_related('t_shirt_size')
-        t_shirts = {}
-        for package_transaction in package_transactions:
-            if package_transaction.t_shirt_size in t_shirts:
-                t_shirts[package_transaction.t_shirt_size] += 1
-            else:
-                t_shirts[package_transaction.t_shirt_size] = 1
-        return format_html_join(mark_safe("<br/>"), "{}: {}", [(t, t_shirts[t]) for t in t_shirts])
+            package_transactions = obj.packagetransaction_set.all()
+        t_shirts = models.TShirtSize.objects.filter(packagetransaction__in=package_transactions).annotate(size_count=Count('packagetransaction')).values_list('name', 'size_count')
+        return format_html_join(mark_safe("<br/>"), "{}: {}", t_shirts)
     t_shirt_sizes.short_description = _(u"Velikosti trik")
 
     def customer_sheets__url(self, obj):

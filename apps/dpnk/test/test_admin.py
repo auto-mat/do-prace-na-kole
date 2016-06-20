@@ -230,9 +230,10 @@ class AdminTests(TestCase):
         self.assertContains(response, "field-customer_sheets__url")
 
     def test_deliverybatch_admin_change(self):
+        models.PackageTransaction.objects.create(delivery_batch_id=1, t_shirt_size_id=1, user_attendance_id=1115)
         address = reverse('admin:dpnk_deliverybatch_change', args=(1,))
         response = self.client.get(address, follow=True)
-        self.assertContains(response, "Testing t-shirt size: 1")
+        self.assertContains(response, "Testing t-shirt size: 2")
         self.assertContains(response, "Testing campaign")
 
     def test_admin_questionnaire_results(self):
