@@ -11,7 +11,9 @@
 <h4>{% trans "Výsledky v soutěži " %}{{ competition }}:</h4>
 <i> {{ competition.type_string|safe }} </i>
 
+{% if competition.rules %}
 <div>{{ competition.rules|safe }}</div>
+{% endif %}
 <div>
    {% if competition.date_from %}{% trans "Soutěž trvá" %} {% trans "od" %} {{ competition.date_from }}{% endif %}
    {% if competition.date_to %}{% trans "do" %} {{ competition.date_to }}{% endif %}

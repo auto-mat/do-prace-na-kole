@@ -214,13 +214,13 @@ def get_team_frequency(user_attendancies, competition=None, day=None):
     return rides_count, working_trips_count, float(rides_count) / working_trips_count
 
 
-def get_userprofile_nonreduced_length(user_attendance, competition):
+def get_userprofile_nonreduced_length(user_attendances, competition):
     days = util.days(competition)
-    return Trip.objects.filter(user_attendance=user_attendance, commute_mode__in=('bicycle', 'by_foot'), date__in=days).aggregate(Sum('distance'))['distance__sum'] or 0
+    return Trip.objects.filter(user_attendance__in=user_attendances, commute_mode__in=('bicycle', 'by_foot'), date__in=days).aggregate(Sum('distance'))['distance__sum'] or 0
 
 
-def get_userprofile_length(user_attendance, competition):
-    return get_userprofile_nonreduced_length(user_attendance, competition)
+def get_userprofile_length(user_attendances, competition):
+    return get_userprofile_nonreduced_length(user_attendances, competition)
 
     # In 2016 the trip_plus_distance was disabled
     # trip_plus_distance = (user_attendance.campaign.trip_plus_distance or 0) + (user_attendance.get_distance() or 0)
@@ -248,7 +248,7 @@ def get_team_length(team, competition):
     # distance_to   = Trip.objects.filter(user__in=members).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
     distance = 0
     for member in members:
-        distance += get_userprofile_length(member, competition)
+        distance += get_userprofile_length([member], competition)
     return distance, member_count, float(distance) / float(member_count)
 
 
@@ -321,23 +321,25 @@ def recalculate_result(competition, competitor):  # noqa
             points, points_given = points_questionnaire([user_attendance], competition)
             competition_result.result = points + points_given
         elif competition.type == 'length':
-            competition_result.result = get_userprofile_length(user_attendance, competition)
+            competition_result.result = get_userprofile_length([user_attendance], competition)
         elif competition.type == 'frequency':
             competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_userprofile_frequency(user_attendance, competition)
 
     elif competition.competitor_type == 'company':
         company = competitor
         user_attendances = UserAttendance.objects.filter(related_company_admin__administrated_company=company, campaign=competition.campaign)
-        if not user_attendances or not (competition.has_admission(user_attendances)):
+        if not user_attendances:
             CompetitionResult.objects.filter(company=company, competition=competition).delete()
             return
 
         competition_result, created = CompetitionResult.objects.get_or_create(company=company, competition=competition)
 
         if competition.type == 'questionnaire':
-            points, points_given = points_questionnaire([user_attendances], competition)
+            points, points_given = points_questionnaire(user_attendances, competition)
             competition_result.result = points + points_given
-        elif competition.type == 'length' or competition.type == 'frequency':
-            raise NotImplementedError("Company length and frequency competitions are not implemented yet")
+        elif competition.type == 'length':
+            competition_result.result = get_userprofile_length(user_attendances, competition)
+        elif competition.type == 'frequency':
+            competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_frequency(user_attendances, competition)
 
     competition_result.save()

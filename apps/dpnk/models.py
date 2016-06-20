@@ -932,10 +932,10 @@ class UserAttendance(models.Model):
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
     def trip_length_total(self):
-        return results.get_userprofile_length(self, self.campaign.phase("competition"))
+        return results.get_userprofile_length([self], self.campaign.phase("competition"))
 
     def get_nonreduced_length(self):
-        return results.get_userprofile_nonreduced_length(self, self.campaign.phase("competition"))
+        return results.get_userprofile_nonreduced_length([self], self.campaign.phase("competition"))
 
     def get_working_rides_base_count(self):
         return results.get_working_trips_count(self, self.campaign.phase("competition"))
@@ -2417,9 +2417,16 @@ class CompetitionResult(models.Model):
             return self.team
 
     def get_company(self):
+        if self.competition.competitor_type == 'company':
+            return self.company
         team = self.get_team()
         if team:
             return team.subsidiary.company
+
+    def get_street(self):
+        team = self.get_team()
+        if team:
+            return team.subsidiary.address_street
 
     def get_city(self):
         team = self.get_team()

@@ -40,9 +40,41 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
         self.assertContains(response, "Tuto soutěž v systému nemáme.")
 
     def test_dpnk_competition_results_company_competition(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.all())
+        models.Competition.objects.get(slug="vykonnost-spolecnosti").recalculate_results()
         address = reverse('competition_results', kwargs={'competition_slug': 'vykonnost-spolecnosti'})
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Výkonnost společností:")
+        self.assertContains(response, "Competition rules")
+        self.assertContains(response, ">161,9<")
+        self.assertContains(response, "Testing company")
+
+    def test_dpnk_competition_results_company_competition_frequency(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.all())
+        models.Competition.objects.get(slug="pravidelnost-spolecnosti").recalculate_results()
+        address = reverse('competition_results', kwargs={'competition_slug': 'pravidelnost-spolecnosti'})
+        response = self.client.get(address)
+        self.assertContains(response, "Výsledky v soutěži Pravidelnost společností:")
+        self.assertContains(response, "Competition rules")
+        self.assertContains(response, "1.")
+        self.assertContains(response, ">3,3<")
+        self.assertContains(response, ">2<")
+        self.assertContains(response, ">61<")
+        self.assertContains(response, "Testing company")
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2011, month=12, day=20),
+    )
+    def test_dpnk_competition_results_company_competition_questionnaire(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.all())
+        models.Competition.objects.get(slug="dotaznik-spolecnosti").recalculate_results()
+        address = reverse('competition_results', kwargs={'competition_slug': 'dotaznik-spolecnosti'})
+        response = self.client.get(address)
+        self.assertContains(response, "Výsledky v soutěži Dotazník společností:")
+        self.assertContains(response, "Competition rules")
+        self.assertContains(response, "1.")
+        self.assertContains(response, ">0,0<")
+        self.assertContains(response, "Testing company")
 
     def test_dpnk_competition_results_FQ_LB(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())

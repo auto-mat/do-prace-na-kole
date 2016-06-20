@@ -1600,7 +1600,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
     def test_get_userprofile_length(self):
         user_attendance = UserAttendance.objects.get(pk=1115)
         competition = Competition.objects.get(id=5)
-        result = results.get_userprofile_length(user_attendance, competition)
+        result = results.get_userprofile_length([user_attendance], competition)
         self.assertEquals(result, 5.0)
 
         result = user_attendance.trip_length_total

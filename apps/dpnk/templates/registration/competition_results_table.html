@@ -38,17 +38,19 @@
 <th scope="column">
    {% trans "Sou&shy;tě&shy;ží&shy;cí" %}
 </th>
-{% if competition.competitor_type != 'team' %}
+{% if competition.competitor_type != 'team' and competition.competitor_type != 'company'%}
 <th scope="column" class="narrow-hide-400">
    {% trans "Tým" %}
 </th>
 {% endif %}
+{% if competition.competitor_type != 'company'%}
 <th scope="column" class="narrow-hide-400">
    {% trans "Spo&shy;leč&shy;nost" %}
 </th>
 <th scope="column" class="narrow-hide-400">
    {% trans "Měs&shy;to" %}
 </th>
+{% endif %}
 
 
 </tr>
@@ -87,17 +89,19 @@
       {{ result }}
    {% endif %}
 </td>
-{% if competition.competitor_type != 'team' %}
+{% if competition.competitor_type != 'team' and competition.competitor_type != 'company'%}
 <td class="narrow-hide-400">
    {{ result.get_team.name }}
 </td>
 {% endif %}
+{% if competition.competitor_type != 'company'%}
 <td class="narrow-hide-400">
-   {{ result.get_team.subsidiary.address_street }} / {{ result.get_company }}
+   {{ result.get_street }} / {{ result.get_company }}
 </td>
 <td class="narrow-hide-400">
    {{ result.get_city }}
 </td>
+{% endif %}
 </tr>
 {% endfor %}
 </table>
