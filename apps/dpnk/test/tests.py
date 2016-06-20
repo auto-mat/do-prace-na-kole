@@ -1207,6 +1207,22 @@ class TrackViewTests(ViewsLogon):
         self.assertEquals(gpx_file.direction, 'trip_to')
         self.assertEquals(gpx_file.length(), 13.32)
 
+    @patch('slumber.API')
+    def test_emission_calculator(self, slumber_api):
+        slumber_instance = slumber_api.return_value
+        slumber_instance.feed.get = {}
+        address = reverse('emission_calculator')
+        response = self.client.get(address)
+        self.assertContains(response, "Emisní kalkulačka")
+        self.assertContains(response, "<td>Ujetá vzdálenost</td><td>161,9&nbsp;km</td>")
+        self.assertContains(response, "<td>CO</td><td>117 280,4&nbsp;mg</td>")
+        self.assertContains(response, "<td>NO<sub>X</sub></td><td>27 474,4&nbsp;mg</td>")
+        self.assertContains(response, "<td>N<sub>2</sub>O</td><td>4 047,5&nbsp;mg</td>")
+        self.assertContains(response, "<td>CH<sub>4</sub></td><td>1 246,6&nbsp;mg</td>")
+        self.assertContains(response, "<td>SO<sub>2</sub></td><td>1 246,6&nbsp;mg</td>")
+        self.assertContains(response, "<td>Pevné částice</td><td>5 666,5&nbsp;mg</td>")
+        self.assertContains(response, "<td>Olovo</td><td>1,8&nbsp;mg</td>")
+
     def test_daily_distance_extra_json(self):
         address = reverse(views.daily_distance_extra_json)
         response = self.client.get(address)

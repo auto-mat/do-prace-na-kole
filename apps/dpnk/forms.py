@@ -503,8 +503,9 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
 
     def clean_user_attendance(self):
         campaign = self.initial['campaign']
+        user_attendance = self.cleaned_data.get('user_attendance')
         try:
-            user_attendance = models.UserAttendance.objects.get(userprofile__user__username=self.cleaned_data.get('user_attendance'), campaign=campaign)
+            user_attendance = models.UserAttendance.objects.get(Q(userprofile__user__username=user_attendance) | Q(userprofile__user__email=user_attendance), campaign=campaign)
         except models.UserAttendance.DoesNotExist:
             raise forms.ValidationError(_(u"Takový uživatel neexistuje"))
 

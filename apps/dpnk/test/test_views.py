@@ -18,9 +18,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from django.core import mail
 from django.core.urlresolvers import reverse
+from django.test import TestCase, Client
+from django.test.utils import override_settings
+from dpnk import models, util, views
 from dpnk.test.tests import ViewsLogon
+from dpnk.test.util import ClearCacheMixin
 from dpnk.test.util import print_response  # noqa
+from unittest.mock import patch
+import settings
 
 
 class CompetitionsViewTests(ViewsLogon):
@@ -39,3 +46,142 @@ class CompetitionsViewTests(ViewsLogon):
         self.assertContains(response, "Ulice / Testing company")
         self.assertContains(response, "DPNK - Výsledky soutěží - Testing city")
         self.assertContains(response, "soutěž na vzdálenost jednotlivců  ve městě Testing city")
+
+    def test_payment(self):
+        address = reverse('payment')
+        response = self.client.get(address)
+        self.assertContains(response, '<input type="hidden" name="amount" value="12000">')
+        self.assertContains(response, '<input type="hidden" name="pos_id" value="188289">')
+        self.assertContains(response, '<input type="hidden" name="order_id" value="1128-1">')
+
+    def test_team_members(self):
+        util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
+        util.rebuild_denorm_models(models.UserAttendance.objects.get(pk=1115).team.all_members())
+        address = reverse('team_members')
+        response = self.client.get(address)
+        self.assertContains(response, 'Odsouhlasený')
+        self.assertContains(response, 'test-registered@test.cz')
+
+    def test_other_team_members(self):
+        address = reverse('other_team_members_results')
+        response = self.client.get(address)
+        self.assertContains(response, 'Ještě nezačal/a soutěžit')
+        self.assertContains(response, '30')
+        self.assertContains(response, '156,9&nbsp;km')
+
+    def test_edit_team(self):
+        address = reverse('edit_team')
+        response = self.client.get(address)
+        self.assertContains(response, 'Upravit název týmu')
+        self.assertContains(response, 'Testing team 1')
+
+    def test_daily_chart(self):
+        address = reverse(views.daily_chart)
+        response = self.client.get(address)
+        self.assertContains(response, '<img src=\'http://chart.apis.google.com/chart?chxl=0:|1:|2010-11-20|')
+
+    def test_update_team(self):
+        address = reverse('zmenit_tym')
+        response = self.client.get(address)
+        self.assertContains(response, 'Po koordinátorovi vaší organizace na emailové adrese')
+        self.assertContains(response, 'test_wa@email.cz')
+        self.assertContains(response, 'test@email.cz')
+        self.assertContains(response, 'test@test.cz')
+        self.assertContains(response, 'Testing team 1 (Nick, Testing User 1, Registered User 1)')
+
+    def test_team_approval_request(self):
+        address = reverse('zaslat_zadost_clenstvi')
+        response = self.client.get(address)
+        self.assertContains(response, 'Žádost o ověření členství byla odeslána.')
+        self.assertEqual(len(mail.outbox), 2)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['test2@test.cz'])
+        msg = mail.outbox[1]
+        self.assertEqual(msg.recipients(), ['test-registered@test.cz'])
+
+    def test_payment_beneficiary(self):
+        address = reverse('payment_beneficiary')
+        response = self.client.get(address)
+        self.assertContains(response, '<input type="hidden" name="amount" value="35000">')
+        self.assertContains(response, '<input type="hidden" name="pos_id" value="188289">')
+        self.assertContains(response, '<input type="hidden" name="order_id" value="1128-1">')
+
+    def test_bike_repair(self):
+        address = reverse('bike_repair')
+        response = self.client.get(address)
+        self.assertContains(response, 'Cykloservis')
+        self.assertContains(response, 'Uživatelské jméno zákazníka')
+        self.assertContains(response, 'Uživatelské jméno, které vám sdělí zákazník')
+        self.assertContains(response, 'Poznámka')
+
+    def test_bike_repair_post(self):
+        address = reverse('bike_repair')
+        post_data = {
+            "user_attendance": "test@email.cz",
+            "description": "Bike repair note",
+            "submit": "Odeslat",
+        }
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('bike_repair'))
+
+        response = self.client.post(address, post_data)
+        self.assertContains(response, 'Tento uživatel byl již')
+        self.assertContains(response, 'v cykloservisu Testing User 1 (poznámka: Bike repair note).')
+        self.assertEquals(response.status_code, 200)
+
+    def test_bike_repair_post_nonexistent_user(self):
+        address = reverse('bike_repair')
+        post_data = {
+            "user_attendance": "test test",
+            "description": "Bike repair note",
+            "submit": "Odeslat",
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(response, 'Takový uživatel neexistuje')
+        self.assertEquals(response.status_code, 200)
+
+    def test_bike_repair_post_last_campaign(self):
+        address = reverse('bike_repair')
+        post_data = {
+            "user_attendance": "test@test.cz",
+            "description": "Bike repair note",
+            "submit": "Odeslat",
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(response, 'Tento uživatel není nováček, soutěžil již v předcházejících kampaních: Testing campaign - last year')
+        self.assertEquals(response.status_code, 200)
+
+    @patch('slumber.API')
+    def test_login(self, slumber_api):
+        slumber_instance = slumber_api.return_value
+        slumber_instance.feed.get = {}
+        address = reverse('login')
+        response = self.client.get(address)
+        self.assertRedirects(response, reverse('profil'), status_code=302)
+
+    @patch('slumber.API')
+    def test_registration_access(self, slumber_api):
+        slumber_instance = slumber_api.return_value
+        slumber_instance.feed.get = {}
+        address = reverse('registration_access')
+        response = self.client.get(address)
+        self.assertRedirects(response, reverse('profil'), status_code=302)
+
+
+@override_settings(
+    SITE_ID=2,
+)
+class BaseViewsTests(ClearCacheMixin, TestCase):
+    fixtures = ['campaign', 'auth_user', 'users']
+
+    def setUp(self):
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+
+    @patch('slumber.API')
+    def test_registration_access(self, slumber_api):
+        slumber_instance = slumber_api.return_value
+        slumber_instance.feed.get = {}
+        address = reverse('profil')
+        response = self.client.get(address)
+        self.assertRedirects(response, reverse('typ_platby'))

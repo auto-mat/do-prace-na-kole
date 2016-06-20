@@ -76,7 +76,7 @@
             "date_joined": "2015-11-12T18:18:10",
             "email": "test@test.cz",
             "first_name": "Testing",
-            "groups": [],
+            "groups": [5],
             "is_active": true,
             "is_staff": true,
             "is_superuser": true,
@@ -211,5 +211,13 @@
         },
         "model": "auth.group",
         "pk": 4
+    },
+    {
+        "fields": {
+            "name": "cykloservis",
+            "permissions": []
+        },
+        "model": "auth.group",
+        "pk": 5
     }
 ]

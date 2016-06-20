@@ -255,6 +255,27 @@ class AdminTests(TestCase):
         self.assertContains(response, "Příloha:")
         self.assertContains(response, "Dohromady bodů: 16,2")
 
+    def test_admin_questionnaire_answers_FB_LQ(self):
+        competition = models.Competition.objects.filter(slug="FQ-LB")
+        actions.normalize_questionnqire_admissions(None, None, competition)
+        competition.get().recalculate_results()
+        cr = models.CompetitionResult.objects.get(competition=competition)
+        address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "FQ-LB"}), cr.id)
+        response = self.client.get(address)
+        self.assertContains(response, "Soutěžící: Testing team 1")
+        self.assertContains(response, "Dohromady bodů: 0,0289855072463768")
+
+    def test_admin_questionnaire_answers_dotaznik_spolecnosti(self):
+        competition = models.Competition.objects.filter(slug="dotaznik-spolecnosti")
+        actions.normalize_questionnqire_admissions(None, None, competition)
+        competition.get().recalculate_results()
+        cr = models.CompetitionResult.objects.get(competition=competition)
+        address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "dotaznik-spolecnosti"}), cr.id)
+        response = self.client.get(address)
+        print_response(response)
+        self.assertContains(response, "Soutěžící: Testing company")
+        self.assertContains(response, "Dohromady bodů: 0,0")
+
     def test_admin_draw_results_fq_lb(self):
         models.Payment.objects.create(user_attendance_id=1015, status=models.Status.DONE, amount=1)
         models.Payment.objects.create(user_attendance_id=2115, status=models.Status.DONE, amount=1)

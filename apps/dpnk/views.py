@@ -1341,11 +1341,8 @@ class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, TemplateView)
     @method_decorator(login_required_simple)
     @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
+        approval_request_mail(request.user_attendance)
         return super(TeamApprovalRequest, self).dispatch(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        approval_request_mail(self.user_attendance)
-        return super(TeamApprovalRequest, self).form_valid(form)
 
 
 class InviteView(UserAttendanceViewMixin, TitleViewMixin, FormView):
@@ -1610,12 +1607,13 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
         return context_data
 
 
-class BikeRepairView(CreateView):
+class BikeRepairView(TitleViewMixin, CreateView):
     template_name = 'base_generic_form.html'
     form_class = forms.BikeRepairForm
     success_url = 'bike_repair'
     success_message = _(u"%(user_attendance)s je nováček a právě si zažádal o opravu kola")
     model = models.CommonTransaction
+    title = _("Cykloservis")
 
     def get_initial(self):
         campaign = Campaign.objects.get(slug=self.request.subdomain)
