@@ -27,7 +27,7 @@ Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících:
    {% for payment in payments %}
    <tr>
       <td>{{ payment.user_attendance.name_for_trusted }}</td>
-      <td>{{ payment.amount }} Kč</td>
+      <td>{{ payment.user_attendance.company_admission_fee }} Kč</td>
    </tr>
    {% endfor %}
 </table>

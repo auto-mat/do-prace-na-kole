@@ -122,6 +122,15 @@
     },
     {
         "fields": {
+            "campaign": 339,
+            "price": 100,
+            "name": "Testing t-shirt size with price"
+        },
+        "model": "dpnk.tshirtsize",
+        "pk": 2
+    },
+    {
+        "fields": {
             "userprofile": 1026,
             "can_confirm_payments": true,
             "campaign": 339,

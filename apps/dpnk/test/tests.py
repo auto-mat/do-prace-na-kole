@@ -590,7 +590,11 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.get(reverse('zmenit_tym', kwargs={'token': 'asdf', 'initial_email': 'invitation_test@email.com'}))
         self.assertContains(response, "Tým nenalezen", status_code=403)
 
-    def test_dpnk_team_view_choose(self):
+    @patch('slumber.API')
+    def test_dpnk_team_view_choose(self, slumber_api):
+        m = MagicMock()
+        m.feed.get.return_value = {"10196": {"content": "T-shirt description text"}}
+        slumber_api.return_value = m
         models.PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
         util.rebuild_denorm_models(Team.objects.filter(pk=3))
@@ -607,6 +611,7 @@ class ViewsTestsLogon(ViewsLogon):
         }
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
         self.assertRedirects(response, reverse("zmenit_triko"))
+        self.assertContains(response, "T-shirt description text")
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(UserAttendance.objects.get(pk=1115).approved_for_team, "undecided")
 
@@ -849,21 +854,24 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEquals(user.team.subsidiary.company.name, "Created company")
         self.assertEquals(UserAttendance.objects.get(pk=1115).approved_for_team, "approved")
 
-    def company_payment(self, amount, amount_tax, beneficiary=False):
+    @patch('slumber.API')
+    def company_payment(self, slumber_api, amount, amount_tax, beneficiary=False):
+        slumber_instance = slumber_api.return_value
+        slumber_instance.feed.get = {}
         response = self.client.get(reverse('company_admin_pay_for_users'))
         self.assertContains(response, "%s Kč: Registered User 1 (test-registered@test.cz)" % amount)
         post_data = {
-            'paing_for': '1115',
+            'paing_for': '2115',
             'submit': 'Odeslat',
         }
         response = self.client.post(reverse('company_admin_pay_for_users'), post_data, follow=True)
         self.assertRedirects(response, reverse('company_structure'))
-        p = Payment.objects.get(pk=4)
-        self.assertEquals(p.status, 1005)
+        p = UserAttendance.objects.get(id=2115).representative_payment
+        self.assertEquals(p.status, models.Status.COMPANY_ACCEPTS)
 
         response = self.client.get(reverse('invoices'))
-        self.assertContains(response, "<td>Testing User 1</td>")
-        self.assertContains(response, "<td>%i Kč</td>" % amount)
+        self.assertContains(response, "<td>Registered User 1</td>")
+        self.assertContains(response, "<td>%i,0 Kč</td>" % amount)
 
         post_data = {
             'create_invoice': 'on',
@@ -874,7 +882,7 @@ class ViewsTestsLogon(ViewsLogon):
             post_data['company_pais_benefitial_fee'] = "on"
         response = self.client.post(reverse('invoices'), post_data, follow=True)
         self.assertRedirects(response, reverse('invoices'))
-        p = Payment.objects.get(pk=4)
+        p = UserAttendance.objects.get(id=2115).representative_payment
         self.assertEquals(p.status, 1006)
         self.assertEquals(p.invoice.total_amount, amount_tax)
         pdf = PdfFileReader(p.invoice.invoice_pdf)
@@ -884,9 +892,16 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertTrue("Testing company" in pdf_string)
 
     def test_company_payment_no_t_shirt_size(self):
-        self.user_attendance.t_shirt_size = None
-        self.user_attendance.save()
+        user_attendance = UserAttendance.objects.get(id=2115)
+        user_attendance.t_shirt_size = None
+        user_attendance.save()
         self.company_payment(amount=130.0, amount_tax=157)
+
+    def test_company_payment_paid_t_shirt_size(self):
+        user_attendance = UserAttendance.objects.get(id=2115)
+        user_attendance.t_shirt_size_id = 2
+        user_attendance.save()
+        self.company_payment(amount=230.0, amount_tax=278)
 
     def test_company_payment(self):
         self.company_payment(amount=130.0, amount_tax=157)
