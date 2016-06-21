@@ -52,6 +52,53 @@ class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
+class LocalAdminModulesTests(DenormMixin, TestCase):
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices']
+
+    def setUp(self):
+        super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer")
+        self.client.force_login(User.objects.get(username='local_admin'), settings.AUTHENTICATION_BACKENDS[0])
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
+        util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
+
+    def test_admin_userattendance(self):
+        address = reverse('admin:dpnk_userattendance_changelist')
+        response = self.client.get(address)
+        self.assertContains(response, 'test-registered@test.cz')
+        self.assertContains(response, '3 Účastníci kampaně')
+
+    def test_admin_questionnaire_answers_no_permission(self):
+        competition = models.Competition.objects.filter(slug="FQ-LB")
+        actions.normalize_questionnqire_admissions(None, None, competition)
+        competition.get().recalculate_results()
+        cr = models.CompetitionResult.objects.get(competition=competition)
+        address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "FQ-LB"}), cr.id)
+        response = self.client.get(address)
+        self.assertContains(response, "Soutěž je vypsána ve městě, pro které nemáte oprávnění.")
+
+    def test_admin_questionnaire_answers_bad_user(self):
+        competition = models.Competition.objects.filter(slug="team-questionnaire")
+        actions.normalize_questionnqire_admissions(None, None, competition)
+        competition.get().recalculate_results()
+        address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "team-questionnaire"}), 999)
+        response = self.client.get(address)
+        self.assertContains(response, "Nesprávně zadaný soutěžící.", status_code=401)
+
+    def test_admin_question_change(self):
+        address = reverse('admin:dpnk_question_change', args=(6,))
+        response = self.client.get(address)
+        self.assertContains(response, 'Answers link')
+        self.assertNotContains(response, 'Pravidelnost týmů')
+        self.assertContains(response, 'Team question')
+        self.assertContains(response, 'Team question text')
+        self.assertContains(response, '<option value="5">Výkonnost</option>')
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
 class AdminModulesTests(DenormMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices']
 
@@ -166,6 +213,20 @@ class AdminModulesTests(DenormMixin, TestCase):
         self.assertContains(response, 'email1031@dopracenakole.cz')
         self.assertContains(response, 'Registered User 1')
 
+    def test_admin_question_changelist(self):
+        address = reverse('admin:dpnk_question_changelist')
+        response = self.client.get(address)
+        self.assertContains(response, 'Question 5 name')
+        self.assertContains(response, 'yes/no')
+
+    def test_admin_question_change(self):
+        address = reverse('admin:dpnk_question_change', args=(5,))
+        response = self.client.get(address)
+        self.assertContains(response, 'Answers link')
+        self.assertContains(response, '<option value="3">Pravidelnost týmů</option>')
+        self.assertContains(response, 'Question 5 name')
+        self.assertContains(response, 'Question text')
+
 
 @override_settings(
     SITE_ID=2,
@@ -272,7 +333,6 @@ class AdminTests(TestCase):
         cr = models.CompetitionResult.objects.get(competition=competition)
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "dotaznik-spolecnosti"}), cr.id)
         response = self.client.get(address)
-        print_response(response)
         self.assertContains(response, "Soutěžící: Testing company")
         self.assertContains(response, "Dohromady bodů: 0,0")
 

@@ -1206,7 +1206,7 @@ def questionnaire_answers(
 
     try:
         competitor_result = competition.get_results().get(pk=request.GET['uid'])
-    except:
+    except models.CompetitionResult.DoesNotExist:
         return HttpResponse(_(u'<div class="text-danger">Nesprávně zadaný soutěžící.</div>'), status=401)
     answers = Answer.objects.filter(
         user_attendance__in=competitor_result.user_attendances(),

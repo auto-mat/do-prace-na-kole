@@ -142,6 +142,19 @@
            "type": "text",
            "comment_type": null,
            "with_attachment": false,
+           "text": "Team question text",
+           "name": "Team question",
+           "required": false,
+           "competition": 13
+        },
+        "model": "dpnk.question",
+        "pk": 6
+    },
+    {
+        "fields": {
+           "type": "text",
+           "comment_type": null,
+           "with_attachment": false,
            "text": "Question text",
            "name": "Question 5 name",
            "required": false,
@@ -254,7 +267,7 @@
     {
         "fields": {
             "campaign": 339,
-            "city": [],
+            "city": [1],
             "company": null,
             "company_competitors": [],
             "competitor_type": "team",
