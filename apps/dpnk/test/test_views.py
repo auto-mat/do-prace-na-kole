@@ -30,6 +30,9 @@ from unittest.mock import patch
 import settings
 
 
+@override_settings(
+    PAYU_POS_ID="123321"
+)
 class CompetitionsViewTests(ViewsLogon):
     def test_competition_rules(self):
         address = reverse('competition-rules-city', kwargs={'city_slug': "testing-city"})
@@ -51,7 +54,7 @@ class CompetitionsViewTests(ViewsLogon):
         address = reverse('payment')
         response = self.client.get(address)
         self.assertContains(response, '<input type="hidden" name="amount" value="12000">')
-        self.assertContains(response, '<input type="hidden" name="pos_id" value="188289">')
+        self.assertContains(response, '<input type="hidden" name="pos_id" value="123321">')
         self.assertContains(response, '<input type="hidden" name="order_id" value="1128-1">')
 
     def test_team_members(self):
@@ -103,7 +106,7 @@ class CompetitionsViewTests(ViewsLogon):
         address = reverse('payment_beneficiary')
         response = self.client.get(address)
         self.assertContains(response, '<input type="hidden" name="amount" value="35000">')
-        self.assertContains(response, '<input type="hidden" name="pos_id" value="188289">')
+        self.assertContains(response, '<input type="hidden" name="pos_id" value="123321">')
         self.assertContains(response, '<input type="hidden" name="order_id" value="1128-1">')
 
     def test_bike_repair(self):
