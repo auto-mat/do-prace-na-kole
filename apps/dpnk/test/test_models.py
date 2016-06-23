@@ -32,7 +32,7 @@ class Tests(TestCase):
     def tearDown(self):
         call_command('denorm_drop')
 
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'invoices', 'company_competition']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'invoices', 'company_competition', 'batches']
 
     def test_change_invoice_payments_status(self):
         payment = models.Payment.objects.get(pk=3)

@@ -1274,12 +1274,12 @@ class StatisticsTests(ViewsLogon):
         response = self.client.get(address)
         self.assertEquals(response.status_code, 200)
         self.assertJSONEqual(response.content.decode(), {
-            "pocet-zaplacenych": 1,
-            "pocet-soutezicich": 1,
+            "pocet-zaplacenych": 2,
+            "pocet-soutezicich": 2,
             "pocet-cest": 3,
             "pocet-cest-kolo": 2,
             "pocet-cest-pesky": 1,
-            "pocet-prihlasenych": 5,
+            "pocet-prihlasenych": 6,
             "pocet-cest-dnes": 0,
             "ujeta-vzdalenost-dnes": 0,
             "ujeta-vzdalenost": 167.2,

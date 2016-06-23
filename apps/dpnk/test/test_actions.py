@@ -70,7 +70,7 @@ class TestActions(TestCase):
         queryset = models.UserAttendance.objects.all()
         actions.update_mailing(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(message, "Mailing list byl úspěšne aktualizován 7 uživatelům")
+        self.assertEquals(message, "Mailing list byl úspěšne aktualizován 8 uživatelům")
 
     def test_assign_vouchers(self):
         queryset = models.UserAttendance.objects.all()[1:2]
@@ -108,7 +108,7 @@ class TestActions(TestCase):
         queryset = models.UserAttendance.objects.all()
         actions.touch_items(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(str(message), "Obnova 7 denormalizovaných položek byla zadána ke zpracování")
+        self.assertEquals(str(message), "Obnova 8 denormalizovaných položek byla zadána ke zpracování")
 
     def test_touch_items_team(self):
         queryset = models.Team.objects.all()
@@ -134,7 +134,7 @@ class TestActions(TestCase):
         actions.remove_mailing_id(self.modeladmin, self.request, queryset)
         self.assertEquals(models.UserProfile.objects.get(pk=1026).mailing_id, None)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(message, "Mailing ID a hash byl úspěšne odebrán 7 profilům")
+        self.assertEquals(message, "Mailing ID a hash byl úspěšne odebrán 8 profilům")
 
     def test_show_distance_trips(self):
         queryset = models.Trip.objects.all()
@@ -153,7 +153,7 @@ class TestActions(TestCase):
         queryset = models.UserAttendance.objects.all()
         actions.create_batch(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(message, "Vytvořena nová dávka obsahující 7 položek")
+        self.assertEquals(message, "Vytvořena nová dávka obsahující 8 položek")
 
     def test_mark_invoices_paid(self):
         queryset = models.Invoice.objects.all()

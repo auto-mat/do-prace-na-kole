@@ -23,7 +23,7 @@ from django.test import TestCase, RequestFactory, Client
 from django.test.utils import override_settings
 from django_admin_smoke_tests import tests as smoke_tests
 from dpnk import util, models, filters, actions
-from dpnk.models import UserAttendance, Team, DeliveryBatch
+from dpnk.models import UserAttendance, Team
 from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
 import datetime
@@ -122,14 +122,16 @@ class AdminModulesTests(DenormMixin, TestCase):
         )
 
     def test_packagetransaction_export(self):
-        DeliveryBatch.objects.create(campaign_id=339)
-        address = "/admin/dpnk/packagetransaction/export/"
+        address = "/admin/dpnk/packagetransaction/export/?o=3"
         post_data = {
             'file_format': 0,
         }
         response = self.client.post(address, post_data)
-        self.assertContains(response, "1,,1115,Testing User 1,,test@test.cz,")
-        self.assertContains(response, ",Ulice 1,11111,Praha,Testing company,test@test.cz,Testing t-shirt size,1,11111117,")
+        self.assertContains(response, "7,1,,3,Null User,,without_team@email.cz,2015-11-12 18:18:40,,99,,,,,,,,1,111121170,1-151112-000007")
+        self.assertContains(
+            response,
+            "6,1,,1115,Testing User 1,,test@test.cz,2015-11-12 18:18:40,,99,,Ulice 1,11111,Praha,Testing company,test@test.cz,,1,111111172,1-151112-000006"
+        )
 
     def test_company_export(self):
         address = "/admin/dpnk/company/export/"
@@ -233,7 +235,7 @@ class AdminModulesTests(DenormMixin, TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class BatchAdminTests(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'trips']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions']
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
@@ -431,7 +433,7 @@ class FilterTests(TestCase):
     def test_email_filter_null(self):
         f = filters.EmailFilter(self.request, {}, User, None)
         q = f.queryset(self.request, User.objects.all())
-        self.assertEquals(q.count(), 8)
+        self.assertEquals(q.count(), 9)
 
     def test_has_team_filter_yes(self):
         f = filters.HasTeamFilter(self.request, {"user_has_team": "yes"}, models.UserAttendance, None)
@@ -441,12 +443,12 @@ class FilterTests(TestCase):
     def test_has_team_filter_no(self):
         f = filters.HasTeamFilter(self.request, {"user_has_team": "no"}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 1)
+        self.assertEquals(q.count(), 2)
 
     def test_has_team_filter_null(self):
         f = filters.HasTeamFilter(self.request, {}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 7)
+        self.assertEquals(q.count(), 8)
 
     def test_is_for_company_yes(self):
         f = filters.IsForCompanyFilter(self.request, {"is_for_company": "yes"}, models.Competition, None)
@@ -471,12 +473,12 @@ class FilterTests(TestCase):
     def test_has_rides_filter_no(self):
         f = filters.HasRidesFilter(self.request, {"has_rides": "no"}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 6)
+        self.assertEquals(q.count(), 7)
 
     def test_has_rides_filter_null(self):
         f = filters.HasRidesFilter(self.request, {}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 7)
+        self.assertEquals(q.count(), 8)
 
     def test_has_voucher_filter_yes(self):
         f = filters.HasVoucherFilter(self.request, {"has_voucher": "yes"}, models.UserAttendance, None)
@@ -486,17 +488,17 @@ class FilterTests(TestCase):
     def test_has_voucher_filter_no(self):
         f = filters.HasVoucherFilter(self.request, {"has_voucher": "no"}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 7)
+        self.assertEquals(q.count(), 8)
 
     def test_has_voucher_filter_null(self):
         f = filters.HasVoucherFilter(self.request, {}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 7)
+        self.assertEquals(q.count(), 8)
 
     def test_campaign_filter_campaign(self):
         f = filters.CampaignFilter(self.request, {"campaign": "testing-campaign"}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 5)
+        self.assertEquals(q.count(), 6)
 
     def test_campaign_filter_none(self):
         f = filters.CampaignFilter(self.request, {"campaign": "none"}, models.UserAttendance, None)
@@ -518,7 +520,7 @@ class FilterTests(TestCase):
     def test_campaign_filter_all(self):
         f = filters.CampaignFilter(self.request, {"campaign": "all"}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 7)
+        self.assertEquals(q.count(), 8)
 
     def test_city_campaign_filter_all(self):
         f = filters.CityCampaignFilter(self.request, {"campaign": "all"}, models.City, None)
@@ -573,7 +575,7 @@ class FilterTests(TestCase):
     def test_has_userprofile_filter_yes(self):
         f = filters.HasUserprofileFilter(self.request, {"has_userprofile": "yes"}, User, None)
         q = f.queryset(self.request, User.objects.all())
-        self.assertEquals(q.count(), 7)
+        self.assertEquals(q.count(), 8)
 
     def test_has_userprofile_filter_no(self):
         f = filters.HasUserprofileFilter(self.request, {"has_userprofile": "no"}, User, None)
@@ -583,7 +585,7 @@ class FilterTests(TestCase):
     def test_has_userprofile_filter_null(self):
         f = filters.HasUserprofileFilter(self.request, {}, User, None)
         q = f.queryset(self.request, User.objects.all())
-        self.assertEquals(q.count(), 8)
+        self.assertEquals(q.count(), 9)
 
     def test_has_track_filter_yes(self):
         f = filters.TrackFilter(self.request, {"has_track": "yes"}, User, None)
@@ -593,9 +595,9 @@ class FilterTests(TestCase):
     def test_has_track_filter_no(self):
         f = filters.TrackFilter(self.request, {"has_track": "no"}, User, None)
         q = f.queryset(self.request, UserAttendance.objects.all())
-        self.assertEquals(q.count(), 2)
+        self.assertEquals(q.count(), 3)
 
     def test_has_track_filter_null(self):
         f = filters.TrackFilter(self.request, {}, User, None)
         q = f.queryset(self.request, UserAttendance.objects.all())
-        self.assertEquals(q.count(), 7)
+        self.assertEquals(q.count(), 8)

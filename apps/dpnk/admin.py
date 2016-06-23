@@ -838,7 +838,11 @@ class PackageTransactionResource(resources.ModelResource):
     company_admin_email = fields.Field()
 
     def dehydrate_company_admin_email(self, obj):
-        return obj.user_attendance.get_asociated_company_admin().first().userprofile.user.email
+        company_admin = obj.user_attendance.get_asociated_company_admin()
+        if company_admin:
+            return company_admin.first().userprofile.user.email
+        else:
+            return ""
 
 
 class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
