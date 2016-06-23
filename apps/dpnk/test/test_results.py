@@ -67,7 +67,8 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
     )
     def test_dpnk_competition_results_company_competition_questionnaire(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
-        models.Competition.objects.get(slug="dotaznik-spolecnosti").recalculate_results()
+        competition = models.Competition.objects.filter(slug="dotaznik-spolecnosti")
+        competition.get().recalculate_results()
         address = reverse('competition_results', kwargs={'competition_slug': 'dotaznik-spolecnosti'})
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Dotazník společností:")

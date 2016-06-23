@@ -419,7 +419,7 @@
             "campaign": 339,
             "city": [],
             "company": null,
-            "company_competitors": [],
+            "company_competitors": [1],
             "competitor_type": "company",
             "date_from": "2010-11-01",
             "date_to": "2010-12-30",
@@ -434,7 +434,7 @@
             "type": "questionnaire",
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
-            "without_admission": true
+            "without_admission": false
         },
         "model": "dpnk.competition",
         "pk": 11

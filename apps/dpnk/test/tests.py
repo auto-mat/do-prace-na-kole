@@ -1551,12 +1551,13 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
         util.rebuild_denorm_models(Team.objects.all())
         for competition in models.Competition.objects.all():
-            if competition.competitor_type != 'company':
-                competition.recalculate_results()
+            competition.recalculate_results()
         competition = models.Competition.objects.filter(slug="quest")
         actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         response = self.client.get(reverse('competitions'))
+        self.assertContains(response, 'vnitrofiremní soutěž na pravidelnost jednotlivců organizace Testing company')
+        self.assertContains(response, '1. místo z 1\n      \n         společností')
         self.assertContains(response, 'soutěž na vzdálenost jednotlivců  ve městě Testing city')
         self.assertContains(response, 'Vyplnit odpovědi')
 
@@ -1580,8 +1581,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
         util.rebuild_denorm_models(Team.objects.all())
         for competition in models.Competition.objects.all():
-            if competition.competitor_type != 'company':
-                competition.recalculate_results()
+            competition.recalculate_results()
         competition = models.Competition.objects.filter(slug="quest")
         actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
