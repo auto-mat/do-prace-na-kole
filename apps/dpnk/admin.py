@@ -781,7 +781,7 @@ class PackageTransactionResource(resources.ModelResource):
         fields = (
             'id',
             'delivery_batch',
-            'user_attendance__representative_payment__realized',
+            'payment_complete_date',
             'user_attendance',
             'user_attendance__name',
             'user_attendance__userprofile__telephone',
@@ -801,6 +801,12 @@ class PackageTransactionResource(resources.ModelResource):
             'tnt_con_reference',
         )
         export_order = fields
+
+    payment_complete_date = fields.Field()
+
+    def dehydrate_payment_complete_date(self, obj):
+        if obj.user_attendance.representative_payment:
+            return obj.user_attendance.representative_payment.payment_complete_date()
 
     user_attendance__name = fields.Field()
 

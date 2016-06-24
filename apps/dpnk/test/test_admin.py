@@ -100,14 +100,14 @@ class LocalAdminModulesTests(DenormMixin, TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminModulesTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices']
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices', 'am_payments']
 
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer")
         self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
         util.rebuild_denorm_models(Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
+        util.rebuild_denorm_models(UserAttendance.objects.filter(pk__in=(1115, 2115)))
 
     def test_userattendance_export(self):
         address = "/admin/dpnk/userattendance/export/"
@@ -130,7 +130,12 @@ class AdminModulesTests(DenormMixin, TestCase):
         self.assertContains(response, "7,1,,3,Null User,,without_team@email.cz,2015-11-12 18:18:40,,99,,,,,,,,1,111121170,1-151112-000007")
         self.assertContains(
             response,
-            "6,1,,1115,Testing User 1,,test@test.cz,2015-11-12 18:18:40,,99,,Ulice 1,11111,Praha,Testing company,test@test.cz,,1,111111172,1-151112-000006"
+            "6,1,2010-11-01 00:00:00,1115,Testing User 1,,test@test.cz,2015-11-12 18:18:40,,99,,Ulice 1,11111,Praha,Testing company,test@test.cz,,1,111111172,1-151112-000006"
+        )
+        self.assertContains(
+            response,
+            "8,1,2015-01-01 00:00:00,2115,Registered User 1,,test-registered@test.cz,2015-12-11 17:18:40,,99"
+            ",,Ulice 1,11111,Praha,Testing company,test@test.cz,,1,131121179,1-151112-000008"
         )
 
     def test_company_export(self):

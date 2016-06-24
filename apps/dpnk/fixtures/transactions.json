@@ -3,6 +3,7 @@
         "fields": {
             "user_attendance": 2115,
             "status": 1,
+            "created": "2014-12-01",
             "polymorphic_ctype": ["dpnk", "payment"]
         },
         "model": "dpnk.transaction",
@@ -41,6 +42,7 @@
         "fields": {
             "user_attendance": 1115,
             "status": 99,
+            "realized": "2010-11-01",
             "polymorphic_ctype": ["dpnk", "payment"]
         },
         "model": "dpnk.transaction",

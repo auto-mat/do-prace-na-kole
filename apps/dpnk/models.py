@@ -1862,6 +1862,12 @@ class Payment(Transaction):
         related_name=("payment_set"),
     )
 
+    def payment_complete_date(self):
+        if self.pay_type in ('am', 'amw'):
+            return self.created
+        else:
+            return self.realized
+
     def save(self, *args, **kwargs):
         status_before_update = None
         if self.id:
