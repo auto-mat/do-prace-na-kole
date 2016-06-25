@@ -92,7 +92,7 @@ class LocalAdminModulesTests(DenormMixin, TestCase):
         self.assertNotContains(response, 'Pravidelnost týmů')
         self.assertContains(response, 'Team question')
         self.assertContains(response, 'Team question text')
-        self.assertContains(response, '<option value="5">Výkonnost</option>')
+        self.assertContains(response, '<option value="5">Výkonnost</option>', html=True)
 
 
 @override_settings(
@@ -178,7 +178,7 @@ class AdminModulesTests(DenormMixin, TestCase):
     def test_competition_masschange(self):
         address = "/admin/dpnk/competition-masschange/3,5/"
         response = self.client.get(address)
-        self.assertContains(response, '<option value="338">Testing campaign - last year</option>')
+        self.assertContains(response, '<option value="338">Testing campaign - last year</option>', html=True)
 
     def test_subsidiary_masschange(self):
         address = "/admin/dpnk/subsidiary-masschange/1/"
@@ -193,8 +193,8 @@ class AdminModulesTests(DenormMixin, TestCase):
     def test_admin_answers(self):
         address = "%s?question=2" % reverse('admin_answers')
         response = self.client.get(address)
-        self.assertContains(response, '<a href="/admin/dpnk/answer/?question__competition__id__exact=4">Odpovědi k soutěži Dotazník</a>')
-        self.assertContains(response, '<a href="%s/DSC00002.JPG" target="_blank">DSC00002.JPG</a>' % settings.MEDIA_URL)
+        self.assertContains(response, '<a href="/admin/dpnk/answer/?question__competition__id__exact=4">Odpovědi k soutěži Dotazník</a>', html=True)
+        self.assertContains(response, '<a href="%s/DSC00002.JPG" target="_blank">DSC00002.JPG</a>' % settings.MEDIA_URL, html=True)
 
     def test_admin_companyadmin(self):
         address = "%s?administrated_company__subsidiaries__city__id__exact=1" % reverse('admin:dpnk_companyadmin_changelist')
@@ -230,7 +230,7 @@ class AdminModulesTests(DenormMixin, TestCase):
         address = reverse('admin:dpnk_question_change', args=(5,))
         response = self.client.get(address)
         self.assertContains(response, 'Answers link')
-        self.assertContains(response, '<option value="3">Pravidelnost týmů</option>')
+        self.assertContains(response, '<option value="3">Pravidelnost týmů</option>', html=True)
         self.assertContains(response, 'Question 5 name')
         self.assertContains(response, 'Question text')
 

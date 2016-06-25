@@ -53,9 +53,9 @@ class CompetitionsViewTests(ViewsLogon):
     def test_payment(self):
         address = reverse('payment')
         response = self.client.get(address)
-        self.assertContains(response, '<input type="hidden" name="amount" value="12000">')
-        self.assertContains(response, '<input type="hidden" name="pos_id" value="123321">')
-        self.assertContains(response, '<input type="hidden" name="order_id" value="1128-1">')
+        self.assertContains(response, '<input type="hidden" name="amount" value="12000">', html=True)
+        self.assertContains(response, '<input type="hidden" name="pos_id" value="123321">', html=True)
+        self.assertContains(response, '<input type="hidden" name="order_id" value="1128-1">', html=True)
 
     def test_team_members(self):
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
@@ -105,9 +105,9 @@ class CompetitionsViewTests(ViewsLogon):
     def test_payment_beneficiary(self):
         address = reverse('payment_beneficiary')
         response = self.client.get(address)
-        self.assertContains(response, '<input type="hidden" name="amount" value="35000">')
-        self.assertContains(response, '<input type="hidden" name="pos_id" value="123321">')
-        self.assertContains(response, '<input type="hidden" name="order_id" value="1128-1">')
+        self.assertContains(response, '<input type="hidden" name="amount" value="35000">', html=True)
+        self.assertContains(response, '<input type="hidden" name="pos_id" value="123321">', html=True)
+        self.assertContains(response, '<input type="hidden" name="order_id" value="1128-1">', html=True)
 
     def test_bike_repair(self):
         address = reverse('bike_repair')

@@ -17,6 +17,7 @@
 {% if competition.has_started %}
    {% if competition.type != 'questionnaire' or competition.has_finished %}
    {% if competition.my_results.result %}
+      <p>
       {{ competition.my_results.position|ordinal }}{% trans " místo z " %}{{ competition.competitor_count|intcomma }}
       {% if competition.competitor_type == 'single_user' %}
          {% trans "jednotlivců" %}
@@ -27,21 +28,22 @@
       {% elif competition.competitor_type == 'company' %}
          {% trans "společností" %}
       {% endif %}
-      <br/>
+      </p>
+      <p>
       {% if competition.type == 'length' %}
         {{ competition.my_results.result|floatformat:-1|intcomma }}&nbsp;km
         {% if competition.competitor_type == 'team' %}
-           <br/>
+           </p><p>
            {{ competition.my_results.result_divident|floatformat:0 }}&nbsp;km {% trans "ve" %} {{ competition.my_results.result_divisor|floatformat:0 }} {% trans "lidech" %}
         {% endif %}
       {% elif competition.type == 'frequency' %}
         {{ competition.my_results.get_result_percentage |floatformat:-1|intcomma }}&nbsp;%
-        <br/>
+         </p><p>
         {{ competition.my_results.result_divident|floatformat:0 }} {% trans "z" %} {{ competition.my_results.result_divisor|floatformat:0 }} {% trans "jízd" %}
       {% elif competition.type == 'questionnaire' %}
         {{ competition.my_results.result|floatformat:-1|intcomma }}b.
       {% endif %}
-      <br/>
+      </p>
    {% endif %}
    {% endif %}
 {% else %}

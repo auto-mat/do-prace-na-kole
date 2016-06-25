@@ -83,9 +83,9 @@ class ViewsTests(DenormMixin, TestCase):
         util.rebuild_denorm_models(Team.objects.filter(pk=1))
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
         response = self.client.get(address)
-        self.assertContains(response, "<td>Testing city</td>\n   <td>2</td>")
-        self.assertContains(response, "<td>bez vybraného města</td>\n   <td>0</td>")
-        self.assertContains(response, "<th>celkem</th>\n   <th>2</th>")
+        self.assertContains(response, "<tr><td>Testing city</td><td>2</td></tr>", html=True)
+        self.assertContains(response, "<tr><td>bez vybraného města</td><td>0</td></tr>", html=True)
+        self.assertContains(response, "<tr><th>celkem</th><th>2</th></tr>", html=True)
 
     def test_dpnk_company_admin_registration(self):
         address = reverse('register_admin')
@@ -375,7 +375,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         request.subdomain = "testing-campaign"
         response = views.QuestionnaireView.as_view()(request, **kwargs)
         self.assertContains(response, "Odpověď na jednu otázku obsahuje chybu. Prosím opravte tuto chybu a znovu stiskněte tlačítko Odeslat.")
-        self.assertContains(response, '<a href="%sDSC00002.JPG">DSC00002.JPG</a>' % settings.MEDIA_URL)
+        self.assertContains(response, '<a href="%sDSC00002.JPG">DSC00002.JPG</a>' % settings.MEDIA_URL, html=True)
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2016, month=11, day=20),
@@ -563,8 +563,8 @@ class ViewsTestsLogon(ViewsLogon):
     def test_ajax_select(self):
         address = "/ajax_select/ajax_lookup/companies?term=tést"
         response = self.client.get(address)
-        self.assertContains(response, "<span class=\'tag\'>Testing company</span>")
-        self.assertContains(response, "<span class=\'tag\'>Testing company without admin</span>")
+        self.assertContains(response, "<span class=\'tag\'>Testing company</span>", html=True)
+        self.assertContains(response, "<span class=\'tag\'>Testing company without admin</span>", html=True)
 
     def test_dpnk_team_invitation(self, ):
         token = self.user_attendance.team.invitation_token
@@ -870,8 +870,8 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEquals(p.status, models.Status.COMPANY_ACCEPTS)
 
         response = self.client.get(reverse('invoices'))
-        self.assertContains(response, "<td>Registered User 1</td>")
-        self.assertContains(response, "<td>%i,0 Kč</td>" % amount)
+        self.assertContains(response, "<td>Registered User 1</td>", html=True)
+        self.assertContains(response, "<td>%i,0 Kč</td>" % amount, html=True)
 
         post_data = {
             'create_invoice': 'on',
@@ -1224,19 +1224,21 @@ class TrackViewTests(ViewsLogon):
 
     @patch('slumber.API')
     def test_emission_calculator(self, slumber_api):
-        slumber_instance = slumber_api.return_value
-        slumber_instance.feed.get = {}
+        m = MagicMock()
+        m.feed.get.return_value = {"11340": {"content": "Emission calculator description text"}}
+        slumber_api.return_value = m
         address = reverse('emission_calculator')
         response = self.client.get(address)
         self.assertContains(response, "Emisní kalkulačka")
-        self.assertContains(response, "<td>Ujetá vzdálenost</td><td>161,9&nbsp;km</td>")
-        self.assertContains(response, "<td>CO</td><td>117 280,4&nbsp;mg</td>")
-        self.assertContains(response, "<td>NO<sub>X</sub></td><td>27 474,4&nbsp;mg</td>")
-        self.assertContains(response, "<td>N<sub>2</sub>O</td><td>4 047,5&nbsp;mg</td>")
-        self.assertContains(response, "<td>CH<sub>4</sub></td><td>1 246,6&nbsp;mg</td>")
-        self.assertContains(response, "<td>SO<sub>2</sub></td><td>1 246,6&nbsp;mg</td>")
-        self.assertContains(response, "<td>Pevné částice</td><td>5 666,5&nbsp;mg</td>")
-        self.assertContains(response, "<td>Olovo</td><td>1,8&nbsp;mg</td>")
+        self.assertContains(response, "<tr><td>Ujetá vzdálenost</td><td>161,9&nbsp;km</td></tr>", html=True)
+        self.assertContains(response, "<tr><td>CO</td><td>117 280,4&nbsp;mg</td></tr>", html=True)
+        self.assertContains(response, "<tr><td>NO<sub>X</sub></td><td>27 474,4&nbsp;mg</td></tr>", html=True)
+        self.assertContains(response, "<tr><td>N<sub>2</sub>O</td><td>4 047,5&nbsp;mg</td></tr>", html=True)
+        self.assertContains(response, "<tr><td>CH<sub>4</sub></td><td>1 246,6&nbsp;mg</td></tr>", html=True)
+        self.assertContains(response, "<tr><td>SO<sub>2</sub></td><td>1 246,6&nbsp;mg</td></tr>", html=True)
+        self.assertContains(response, "<tr><td>Pevné částice</td><td>5 666,5&nbsp;mg</td></tr>", html=True)
+        self.assertContains(response, "<tr><td>Olovo</td><td>1,8&nbsp;mg</td></tr>", html=True)
+        self.assertContains(response, "Emission calculator description text")
 
     def test_daily_distance_extra_json(self):
         address = reverse(views.daily_distance_extra_json)
@@ -1396,8 +1398,8 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition.get().recalculate_results()
         address = reverse('questionnaire_answers_all', kwargs={'competition_slug': "quest"})
         response = self.client.get(address)
-        self.assertContains(response, '<a href="%smodranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>' % settings.MEDIA_URL)
-        self.assertContains(response, '<img src="%sDSC00002.JPG.250x250_q85.jpg" width="250" height="188">' % settings.MEDIA_URL)
+        self.assertContains(response, '<a href="%smodranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>' % settings.MEDIA_URL, html=True)
+        self.assertContains(response, '<img src="%sDSC00002.JPG.250x250_q85.jpg" width="250" height="188">' % settings.MEDIA_URL, html=True)
         self.assertContains(response, 'Answer without attachment')
         self.assertContains(response, 'Bez přílohy')
 
@@ -1419,8 +1421,8 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             }}
         slumber_mock.return_value = m
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270">' % settings.MEDIA_URL)
-        self.assertContains(response, '<a href="http://www.dopracenakole.cz/locations/testing-city">Testing city</a>')
+        self.assertContains(response, '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270">' % settings.MEDIA_URL, html=True)
+        self.assertContains(response, '<a href="http://www.dopracenakole.cz/locations/testing-city">Testing city</a>', html=True)
         self.assertContains(response, 'Novinky ve městě')
         self.assertContains(response, 'Testing title')
         self.assertContains(response, 'Testing excerpt')
@@ -1433,7 +1435,6 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         }
         slumber_mock.return_value = m
         response = self.client.get(reverse('profil'))
-        print_response(response)
         self.assertContains(response, '<div class="col-md-6"><h3>Novinky</h3></div>', html=True)
 
     @patch('slumber.API')
@@ -1450,7 +1451,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
         slumber_api.feed.get = {}
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<a href="%sDSC00002.JPG" target="_blank">DSC00002.JPG</a>' % settings.MEDIA_URL)
+        self.assertContains(response, '<a href="%sDSC00002.JPG" target="_blank">DSC00002.JPG</a>' % settings.MEDIA_URL, html=True)
         self.assertContains(response, 'Všechny příspěvky z této soutěže')
 
     @patch('slumber.API')
@@ -1568,7 +1569,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition.get().recalculate_results()
         response = self.client.get(reverse('competitions'))
         self.assertContains(response, 'vnitrofiremní soutěž na pravidelnost jednotlivců organizace Testing company')
-        self.assertContains(response, '1. místo z 1\n      \n         společností')
+        self.assertContains(response, '<p>1. místo z 1 společností</p>', html=True)
         self.assertContains(response, 'soutěž na vzdálenost jednotlivců  ve městě Testing city')
         self.assertContains(response, 'Vyplnit odpovědi')
 
@@ -1597,13 +1598,14 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         response = self.client.get(reverse('competitions'))
-        self.assertContains(response, 'dotazník jednotlivců')
-        self.assertContains(response, "2. místo z 1\n      \n         týmů")
-        self.assertContains(response, "1,4&nbsp;%")
-        self.assertContains(response, "1. místo z 1\n      \n         jednotlivců")
-        self.assertContains(response, "5&nbsp;km")
-        self.assertContains(response, "1. místo z 1\n      \n         jednotlivců")
-        self.assertContains(response, "16,2b.")
+        self.assertContains(response, '<i>dotazník jednotlivců</i>', html=True)
+        self.assertContains(response, "<p>2. místo z 1 týmů</p>", html=True)
+        self.assertContains(response, "<p>1,4&nbsp;%</p>", html=True)
+        self.assertContains(response, "<p>1 z 69 jízd</p>", html=True)
+        self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
+        self.assertContains(response, "<p>5&nbsp;km</p>", html=True)
+        self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
+        self.assertContains(response, "<p>16,2b.</p>", html=True)
 
 
 class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
