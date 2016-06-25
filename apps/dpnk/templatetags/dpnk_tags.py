@@ -25,8 +25,10 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import activate, get_language
 from django.utils.translation import ugettext_lazy as _
 import html.parser
+import logging
 import slumber
 register = template.Library()
+logger = logging.getLogger(__name__)
 
 
 @register.simple_tag
@@ -43,6 +45,7 @@ def cyklistesobe_cached(city_slug, order="created_at"):
     try:
         cyklistesobe = api.issues.get(order=order, per_page=5, page=0, **kwargs)
     except:
+        logger.exception(u'Error fetching cyklistesobe page')
         cyklistesobe = None
     template = get_template("templatetags/cyklistesobe.html")
     context = {'cyklistesobe': cyklistesobe}
@@ -91,6 +94,7 @@ def _wp_news(post_type="post", post_type_string=_("novinka"), unfold="first", co
         if len(wp_feed) > 0:
             wp_feed = sorted(wp_feed.values(), key=lambda item: item[sort_key], reverse=reverse)
     except:
+        logger.exception(u'Error fetching wp news')
         return ""
     template = get_template("templatetags/wp_news.html")
     context = {
@@ -115,6 +119,7 @@ def wp_article_cached(id):
         wp_article = api.feed.get(feed="content_to_backend", _post_type="page", _id=id)
         return wp_article[str(id)]['content']
     except:
+        logger.exception(u'Error fetching wp article')
         return ""
 
 
@@ -131,6 +136,7 @@ def change_lang(context, lang=None, *args, **kwargs):
     try:
         url_parts = resolve(path)
     except:
+        logger.exception(u'Error in change lang function')
         return "/%s" % lang
 
     url = path
