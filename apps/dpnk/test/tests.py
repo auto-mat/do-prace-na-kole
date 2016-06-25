@@ -1426,6 +1426,17 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'Testing excerpt')
 
     @patch('slumber.API')
+    def test_failed_wp_page(self, slumber_mock):
+        m = MagicMock()
+        m.feed.get.return_value = {
+            '1234': "error page"
+        }
+        slumber_mock.return_value = m
+        response = self.client.get(reverse('profil'))
+        print_response(response)
+        self.assertContains(response, '<div class="col-md-6"><h3>Novinky</h3></div>', html=True)
+
+    @patch('slumber.API')
     def test_dpnk_profile_page_blank_feed(self, slumber_mock):
         models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
         m = MagicMock()

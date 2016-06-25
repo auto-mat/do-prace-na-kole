@@ -88,10 +88,10 @@ def _wp_news(post_type="post", post_type_string=_("novinka"), unfold="first", co
     api = slumber.API(url)
     try:
         wp_feed = api.feed.get(**get_params)
+        if len(wp_feed) > 0:
+            wp_feed = sorted(wp_feed.values(), key=lambda item: item[sort_key], reverse=reverse)
     except:
         return ""
-    if len(wp_feed) > 0:
-        wp_feed = sorted(wp_feed.values(), key=lambda item: item[sort_key], reverse=reverse)
     template = get_template("templatetags/wp_news.html")
     context = {
         'wp_feed': wp_feed[:5],
@@ -113,9 +113,9 @@ def wp_article_cached(id):
     api = slumber.API(url)
     try:
         wp_article = api.feed.get(feed="content_to_backend", _post_type="page", _id=id)
+        return wp_article[str(id)]['content']
     except:
         return ""
-    return wp_article[str(id)]['content']
 
 
 @register.simple_tag(takes_context=True)

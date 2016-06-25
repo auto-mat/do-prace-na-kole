@@ -40,7 +40,6 @@
             <a class="pin" href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
                <span class="glyphicon glyphicon-edit"></span>
             </a>
-            </abbr>
          {% else %}
             <a class="pin" href="{% url "gpx_file_create" date=trip_form.get_date direction=trip_form.get_direction %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zadat trasu v mapě nebo nahrát GPX soubor' %}">
                <span class="glyphicon glyphicon-map-marker"></span>
