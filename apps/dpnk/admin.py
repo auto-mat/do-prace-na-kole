@@ -490,6 +490,7 @@ class UserAttendanceResource(resources.ModelResource):
             'team__subsidiary__city__name',
             'userprofile__language',
             'userprofile__telephone',
+            'userprofile__user__id',
             'userprofile__user__first_name',
             'userprofile__user__last_name',
             'userprofile__user__username',
