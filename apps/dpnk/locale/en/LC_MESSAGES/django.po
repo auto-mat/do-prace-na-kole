@@ -1059,7 +1059,7 @@ msgstr "Subdivision"
 
 #: models.py:256
 msgid "Pobočky organizací"
-msgstr "Organization branches"
+msgstr "Organization subsidiaries"
 
 #: models.py:266
 msgid "Spádové město"
