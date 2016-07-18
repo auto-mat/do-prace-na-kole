@@ -624,7 +624,6 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
             'campaign__name',
             'created',
             'distance',
-            'distance',
             'frequency',
             'get_rides_count_denorm',
             'id',
@@ -977,6 +976,21 @@ class GpxFileInline(admin.TabularInline):
     extra = 0
 
 
+class TripResource(resources.ModelResource):
+    class Meta:
+        model = models.Trip
+        fields = (
+            'id',
+            'user_attendance__userprofile__user__id',
+            'user_attendance',
+            'date',
+            'direction',
+            'commute_mode',
+            'distance',
+        )
+        export_order = fields
+
+
 class TripAdmin(ExportMixin, admin.ModelAdmin):
     list_display = (
         'user_attendance',
@@ -1003,6 +1017,7 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
     actions = (actions.show_distance_trips,)
     list_max_show_all = 100000
     inlines = [GpxFileInline, ]
+    resource_class = TripResource
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
