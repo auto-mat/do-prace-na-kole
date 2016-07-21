@@ -30,7 +30,7 @@ urlpatterns = [
         views.DrawResultsView.as_view(),
         name="admin_draw_results",
         ),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^chaining/', include('smart_selects.urls')),
     url(r'^admin/', include("massadmin.urls")),
     url(r"^su/", include("django_su.urls")),

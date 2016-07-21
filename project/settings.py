@@ -146,7 +146,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.sessions',
-    'nested_inlines',
+    'nested_inline',
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'django.contrib.humanize',

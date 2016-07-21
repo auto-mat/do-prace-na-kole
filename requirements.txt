@@ -11,7 +11,7 @@ django-softhyphen
 -e git+https://github.com/chrisglass/django_polymorphic.git#egg=django-polymorphic
 -e git+https://pdlouhy@bitbucket.org/pdlouhy/django-composite-field.git@fix_sort#egg=django-composite-field  # the non-PIP source is for bug with import-export
 -e git+https://github.com/macropin/django-registration.git#egg=django-registration-redux  # for Django 1.9
--e git+https://github.com/silverfix/django-nested-inlines.git#egg=django-nested-inlines
+django-nested-inline
 django-su
 unidecode
 -e git+https://github.com/PetrDlouhy/createsend-python.git@python3#egg=createsend
