@@ -69,9 +69,11 @@ Raven.setUserContext({
                 <div class="lang_switch">
                    <ul>
                          {% for lang_code, lang_name in languages %}
+                         {% if lang_code != "dsnk" %}
                            <li class="{% if lang_code == current_language_code %}active{% endif %}">
                              <a href="{% change_lang lang_code %}" class="switch-{{ lang_code }}" title="{{ lang_name }}">{{ lang_code|upper }}</a>
                            </li>
+                         {% endif %}
                          {% endfor %}
                    </ul>
                 </div>
