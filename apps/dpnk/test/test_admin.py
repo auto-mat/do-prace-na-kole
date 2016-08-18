@@ -42,8 +42,8 @@ class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
         super().setUp()
         util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[4, 3, 1]))
 
-    def get_request(self):
-        request = super().get_request()
+    def get_request(self, params={}):
+        request = super().get_request(params)
         request.subdomain = "testing-campaign"
         return request
 
