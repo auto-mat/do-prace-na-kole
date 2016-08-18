@@ -1,4 +1,6 @@
 django-debug-toolbar
+django-debug-toolbar-line-profiler
+django-debug-toolbar-template-timings
 model-mommy
 django_coverage_plugin
 django-nose

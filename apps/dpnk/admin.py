@@ -29,7 +29,7 @@ from django.utils.html import format_html_join, format_html
 from django.utils.translation import string_concat
 from django.core.urlresolvers import reverse
 from djcelery.models import TaskMeta
-from nested_inlines.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
+from nested_inline.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 from adminsortable2.admin import SortableInlineAdminMixin
 from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
 from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter, AllValuesComboFilter
