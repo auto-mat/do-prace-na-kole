@@ -32,8 +32,9 @@ class DPNKConfig(AppConfig):
             change_invoice_payments_status, Invoice, UserAttendance, pre_user_team_changed, post_user_team_changed, set_track, GpxFile
         from fieldsignals import post_save_changed, pre_save_changed
         try:
-            for campaign in Campaign.objects.all():
-                setattr(Team, 'team_in_campaign_%s' % campaign.slug, get_team_in_campaign_manager(campaign.slug).objects)
+            slugs = Campaign.objects.values_list('slug', flat=True)
+            for campaign_slug in slugs:
+                setattr(Team, 'team_in_campaign_%s' % campaign_slug, get_team_in_campaign_manager(campaign_slug).objects)
         except ProgrammingError:
             pass
 
