@@ -1952,7 +1952,8 @@ class Trip(models.Model):
         verbose_name=_(u"Směr cesty"),
         choices=DIRECTIONS,
         max_length=20,
-        null=True, blank=True)
+        default=None,
+        null=False, blank=False)
     date = models.DateField(
         verbose_name=_(u"Datum cesty"),
         default=datetime.date.today,
@@ -1962,8 +1963,8 @@ class Trip(models.Model):
         choices=MODES,
         max_length=20,
         default=None,
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
     )
     distance = models.FloatField(
         verbose_name=_(u"Ujetá vzdálenost"),

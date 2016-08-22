@@ -1104,7 +1104,7 @@ class TrackViewTests(ViewsLogon):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
     def test_dpnk_views_gpx_file(self):
-        trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
+        trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from', commute_mode='bicycle')
         gpxfile = mommy.make(models.GpxFile, user_attendance=self.user_attendance, trip_date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
 
         address = reverse('gpx_file', kwargs={"id": gpxfile.pk})
