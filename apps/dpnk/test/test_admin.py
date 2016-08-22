@@ -17,16 +17,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import datetime
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import TestCase, RequestFactory, Client
+from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
+
 from django_admin_smoke_tests import tests as smoke_tests
-from dpnk import util, models, filters, actions
-from dpnk.models import UserAttendance, Team
+
+from dpnk import actions, filters, models, util
+from dpnk.models import Team, UserAttendance
 from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
-import datetime
 import settings
 
 

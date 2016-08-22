@@ -19,75 +19,83 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 # Standard library imports
-import time
-from http.client import HTTPSConnection
-from urllib.parse import urlencode
-import hashlib
+
+
 import codecs
-from . import results
-import json
 import collections
+import hashlib
+import json
+import logging
+import shutil
+import tempfile
+import time
+
+from http.client import HTTPSConnection
+
+from urllib.parse import urlencode
+
 # Django imports
-from django.shortcuts import get_object_or_404, render
-from django.contrib import messages
-from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.admin.views.decorators import staff_member_required
-from django.utils.decorators import method_decorator, classonlymethod
-from django.views.decorators.gzip import gzip_page
-from .decorators import must_be_approved_for_team, must_be_competitor, must_have_team, user_attendance_has, request_condition, must_be_in_phase, must_be_owner
-from django.contrib.auth.decorators import login_required as login_required_simple
-from django.contrib.auth import logout
-from django.db.models import Sum, Q, Count
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
-from django.utils.safestring import mark_safe
-from django.utils.html import format_html, format_html_join
-from django.views.decorators.cache import cache_page, never_cache, cache_control
-from django.views.generic.edit import FormView, UpdateView, CreateView
-from django.views.generic.base import TemplateView
 from class_based_auth_views.views import LoginView
-# Registration imports
-from registration.backends.simple.views import RegistrationView as SimpleRegistrationView
-# Model imports
-from .models import UserProfile, Trip, Answer, Question, Team, Payment, Subsidiary, Company, Competition, City, UserAttendance, Campaign
-from . import forms
-from .forms import (
-    RegistrationFormDPNK,
-    RegistrationAccessFormDPNK,
-    RegisterSubsidiaryForm,
-    RegisterCompanyForm,
-    RegisterTeamForm,
-    ProfileUpdateForm,
-    InviteForm,
-    TeamAdminForm,
-    PaymentTypeForm,
-    ChangeTeamForm,
-    TrackUpdateForm,
-    )
+
 from django.conf import settings
-from django.http import HttpResponse
-# Local imports
-from . import util
-from . import draw
-from dpnk.email import (
-    approval_request_mail,
-    register_mail,
-    team_membership_approval_mail,
-    team_membership_denial_mail,
-    team_created_mail,
-    invitation_mail,
-    invitation_register_mail)
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required as login_required_simple
+from django.contrib.messages.views import SuccessMessageMixin
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
+from django.db.models import Count, Q, Sum
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
+from django.shortcuts import redirect
+from django.utils.decorators import classonlymethod, method_decorator
+from django.utils.html import format_html, format_html_join
+from django.utils.safestring import mark_safe
+from django.utils.translation import string_concat
+from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.cache import cache_control, cache_page, never_cache
+from django.views.decorators.gzip import gzip_page
+from django.views.generic.base import TemplateView
+from django.views.generic.edit import CreateView, FormView, UpdateView
 
 from extra_views import ModelFormSetView
+
+from registration.backends.simple.views import RegistrationView as SimpleRegistrationView
+
 from unidecode import unidecode
-from django.shortcuts import redirect
-from django.core.urlresolvers import reverse, reverse_lazy
-from .string_lazy import mark_safe_lazy, format_lazy
-import logging
+# Local imports
+from . import draw
+from . import forms
 from . import models
-import tempfile
-import shutil
+from . import results
+from . import util
+from .decorators import must_be_approved_for_team, must_be_competitor, must_be_in_phase, must_be_owner, must_have_team, request_condition, user_attendance_has
+from .email import (
+    approval_request_mail,
+    invitation_mail,
+    invitation_register_mail,
+    register_mail,
+    team_created_mail,
+    team_membership_approval_mail,
+    team_membership_denial_mail,
+)
+from .forms import (
+    ChangeTeamForm,
+    InviteForm,
+    PaymentTypeForm,
+    ProfileUpdateForm,
+    RegisterCompanyForm,
+    RegisterSubsidiaryForm,
+    RegisterTeamForm,
+    RegistrationAccessFormDPNK,
+    RegistrationFormDPNK,
+    TeamAdminForm,
+    TrackUpdateForm,
+    )
+from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
+from .string_lazy import format_lazy, mark_safe_lazy
+
 logger = logging.getLogger(__name__)
 
 

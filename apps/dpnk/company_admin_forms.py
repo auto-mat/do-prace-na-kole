@@ -18,15 +18,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.contrib.auth.models import User
-from django import forms
-from .forms import AdressForm
-from .models import Company, CompanyAdmin, Competition, UserAttendance, Campaign, Invoice, Subsidiary, City
-from django.utils.translation import ugettext_lazy as _, string_concat
-from .util import slugify
-from .forms import SubmitMixin
 from ajax_select.fields import AutoCompleteSelectWidget
+
+from django import forms
+from django.contrib.auth.models import User
+from django.utils.translation import string_concat, ugettext_lazy as _
+
 import registration.forms
+
+from .forms import AdressForm
+from .forms import SubmitMixin
+from .models import Campaign, City, Company, CompanyAdmin, Competition, Invoice, Subsidiary, UserAttendance
+from .util import slugify
 
 
 class SelectUsersPayForm(SubmitMixin, forms.Form):

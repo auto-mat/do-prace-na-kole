@@ -19,9 +19,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.models import User
+from django.db.models import Count, Q
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import Q, Count
-from dpnk import models
+
+from . import models
 
 
 class CampaignFilter(SimpleListFilter):

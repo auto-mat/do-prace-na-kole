@@ -1,10 +1,12 @@
 from __future__ import absolute_import
 
-from . import util
-from .models import UserAttendance, GpxFile, Competition, Team
-from .rest_ecc import gpx_files_post
 from celery import shared_task
+
 import denorm
+
+from . import util
+from .models import Competition, GpxFile, Team, UserAttendance
+from .rest_ecc import gpx_files_post
 
 
 @shared_task(bind=True)

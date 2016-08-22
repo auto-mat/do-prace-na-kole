@@ -21,48 +21,57 @@
 
 """Modely pro Do práce na kole"""
 
-# Django imports
+import datetime
+import gzip
+import logging
 import random
 import string
-import denorm
-import gzip
-from . import parcel_batch
-from . import avfull
-from unidecode import unidecode
+
 from author.decorators import with_author
+
+from bulk_update.manager import BulkUpdateManager
+
+from composite_field import CompositeField
+
+import denorm
+from denorm import denormalized, depend_on_related
+
 from django import forms
-from django.db.models import Q, Max
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
-from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
-from django.dispatch import receiver
 from django.core.exceptions import ValidationError
-from composite_field import CompositeField
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat, ungettext_lazy
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.core.files.temp import NamedTemporaryFile
 from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import transaction
+from django.db.models import Max, Q
+from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
+from django.dispatch import receiver
 from django.utils.html import escape, format_html_join
 from django.utils.safestring import mark_safe
-from django.conf import settings
-from polymorphic.models import PolymorphicModel
-from denorm import denormalized, depend_on_related
-from django.db import transaction
-from modulus11 import mod11
-from bulk_update.manager import BulkUpdateManager
-from redactor.widgets import RedactorEditor
-# Python library imports
-import datetime
-# Local imports
-from . import util
+from django.utils.translation import string_concat, ungettext_lazy
+from django.utils.translation import ugettext_lazy as _
+
 from django_gpxpy import gpx_parse
+
+from modulus11 import mod11
+
+from polymorphic.models import PolymorphicModel
+
+from redactor.widgets import RedactorEditor
+
+from unidecode import unidecode
+
+from . import invoice_pdf
+from . import parcel_batch
+from . import avfull
+from . import util
 from . import mailing
-from dpnk.email import (
-    payment_confirmation_mail, company_admin_rejected_mail,
-    company_admin_approval_mail, payment_confirmation_company_mail)
-from dpnk import invoice_pdf
-import logging
+from .email import (
+    company_admin_approval_mail, company_admin_rejected_mail,
+    payment_confirmation_company_mail, payment_confirmation_mail)
+
 logger = logging.getLogger(__name__)
 
 

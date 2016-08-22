@@ -18,16 +18,20 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.test import TestCase, RequestFactory
-from dpnk import actions, models, util
-from django.contrib import admin
-from django.contrib.messages.storage.fallback import FallbackStorage
-from django.test.utils import override_settings
-from django.core.management import call_command
-from django.contrib.messages.api import get_messages
-from unittest.mock import MagicMock
-import createsend
 import datetime
+
+from unittest.mock import MagicMock
+
+import createsend
+
+from django.contrib import admin
+from django.contrib.messages.api import get_messages
+from django.contrib.messages.storage.fallback import FallbackStorage
+from django.core.management import call_command
+from django.test import RequestFactory, TestCase
+from django.test.utils import override_settings
+
+from dpnk import actions, models, util
 
 
 @override_settings(

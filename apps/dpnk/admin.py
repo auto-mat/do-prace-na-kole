@@ -19,45 +19,55 @@
 
 """Administrátorské rozhraní pro Do práce na kole"""
 
-# Django imports
+import pprint
+
+from adminfilters.filters import AllValuesComboFilter, RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
+
+from adminsortable2.admin import SortableInlineAdminMixin
+
 from daterange_filter.filter import DateRangeFilter
+
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.db.models import Count, Sum
-from django.utils.safestring import mark_safe
-from django.utils.html import format_html_join, format_html
-from django.utils.translation import string_concat
+from django.contrib.sessions.models import Session
 from django.core.urlresolvers import reverse
-from djcelery.models import TaskMeta
-from nested_inline.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
-from adminsortable2.admin import SortableInlineAdminMixin
-from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
-from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter, AllValuesComboFilter
-from import_export import resources, fields
-from import_export.admin import ExportMixin, ImportMixin
+from django.db.models import Count, Sum
+from django.utils.html import format_html, format_html_join
+from django.utils.safestring import mark_safe
+from django.utils.translation import string_concat
 from django.utils.translation import ugettext_lazy as _
+
+from djcelery.models import TaskMeta
+
+from import_export import fields, resources
+from import_export.admin import ExportMixin, ImportMixin
+
 from leaflet.admin import LeafletGeoAdmin
-from .admin_mixins import ReadOnlyModelAdminMixin, CityAdminMixin, FormRequestMixin, city_admin_mixin_generator
-# Models
+
+from nested_inline.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
+
+from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
+
+from related_admin import RelatedFieldAdmin
+
+from . import actions, models
+from .admin_mixins import CityAdminMixin, FormRequestMixin, ReadOnlyModelAdminMixin, city_admin_mixin_generator
 from .filters import (
     CampaignFilter,
     CityCampaignFilter,
-    campaign_filter_generator,
-    HasVoucherFilter,
-    HasRidesFilter,
-    IsForCompanyFilter,
-    HasTeamFilter,
-    HasUserprofileFilter,
+    EmailFilter,
     HasReactionFilter,
+    HasRidesFilter,
+    HasTeamFilter,
     HasUserAttendanceFilter,
+    HasUserprofileFilter,
+    HasVoucherFilter,
     InvoicePaidFilter,
+    IsForCompanyFilter,
     TrackFilter,
-    EmailFilter)
-from . import models, actions
-from django import forms
-from related_admin import RelatedFieldAdmin
-import pprint
-from django.contrib.sessions.models import Session
+    campaign_filter_generator,
+)
 
 
 def admin_links(args_generator):

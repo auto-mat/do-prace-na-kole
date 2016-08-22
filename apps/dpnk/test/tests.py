@@ -17,25 +17,33 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.test import TestCase, RequestFactory, Client
-from django.core.urlresolvers import reverse
+import datetime
+from collections import OrderedDict
+from unittest.mock import MagicMock, patch
+
+from PyPDF2 import PdfFileReader
+
+import createsend
+
+import denorm
+
+import django
 from django.core import mail
 from django.core.management import call_command
+from django.core.urlresolvers import reverse
+from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
-from dpnk import results, models, mailing, views, company_admin_views, util, actions
-from dpnk.models import Competition, Team, UserAttendance, Campaign, User, UserProfile, Payment, CompanyAdmin
-import datetime
-import django
-from model_mommy import mommy
-import createsend
-from freezegun import freeze_time
-from unittest.mock import MagicMock, patch
-from collections import OrderedDict
-from PyPDF2 import PdfFileReader
-import denorm
-import settings
+
+from dpnk import actions, company_admin_views, mailing, models, results, util, views
+from dpnk.models import Campaign, CompanyAdmin, Competition, Payment, Team, User, UserAttendance, UserProfile
+from dpnk.test.util import ClearCacheMixin, DenormMixin
 from dpnk.test.util import print_response  # noqa
-from dpnk.test.util import DenormMixin, ClearCacheMixin
+
+from freezegun import freeze_time
+
+from model_mommy import mommy
+
+import settings
 
 
 @override_settings(

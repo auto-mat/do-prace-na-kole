@@ -19,7 +19,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from PyPDF2 import PdfFileReader
+
 from django.test import TestCase
+
 from dpnk.models import DeliveryBatch, PackageTransaction
 
 

@@ -18,16 +18,15 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.conf.urls import url
-
-from . import views
-from .forms import AuthenticationFormDPNK
-from . import auth
-from . import company_admin_views
-from .decorators import must_be_in_group
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import views as django_views
+from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 
+from . import auth
+from . import company_admin_views
+from . import views
+from .decorators import must_be_in_group
+from .forms import AuthenticationFormDPNK
 urlpatterns = [
     url(r'^tym/$',
         views.ChangeTeamView.as_view(),

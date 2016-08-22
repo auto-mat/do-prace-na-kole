@@ -17,11 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import datetime
 
-from . import results, views, models, mailing, tasks
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
-import datetime
+
+from . import mailing, models, results, tasks, views
 
 
 def recalculate_competitions_results(modeladmin, request, queryset):

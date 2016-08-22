@@ -17,15 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import html.parser
+import logging
+
 from cache_utils.decorators import cached
+
 from django import template
-from django.core.urlresolvers import resolve, reverse, NoReverseMatch
+from django.core.urlresolvers import NoReverseMatch, resolve, reverse
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 from django.utils.translation import activate, get_language
 from django.utils.translation import ugettext_lazy as _
-import html.parser
-import logging
+
 import slumber
 register = template.Library()
 logger = logging.getLogger(__name__)

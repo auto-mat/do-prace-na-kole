@@ -1,14 +1,15 @@
-from django.conf.urls import include, url
-from django.conf.urls.i18n import i18n_patterns
-from django.contrib.gis import admin
-from dpnk.views import questionnaire_results, questionnaire_answers, questions, answers
-from dpnk import views
-from django.conf.urls.static import static
-from dpnk.rest import router
 from ajax_select import urls as ajax_select_urls
-from django.http import HttpResponse
 
 from django.conf import settings
+from django.conf.urls import include, url
+from django.conf.urls.i18n import i18n_patterns
+from django.conf.urls.static import static
+from django.contrib.gis import admin
+from django.http import HttpResponse
+
+from dpnk import views
+from dpnk.rest import router
+from dpnk.views import answers, questionnaire_answers, questionnaire_results, questions
 
 admin.site.index_template = 'admin/my_custom_index.html'
 admin.autodiscover()

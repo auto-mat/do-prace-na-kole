@@ -19,8 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.utils import six  # Python 3 compatibility
 from django.utils.functional import lazy
-from django.utils.safestring import mark_safe
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 

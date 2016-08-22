@@ -17,20 +17,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import functools
 
+from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
+from django.http import Http404
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import mark_safe
-from django.utils.html import format_html
-from .models import UserAttendance, Campaign
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404
-from django.contrib import messages
-from django.core.urlresolvers import reverse
-from . import util
-import functools
 from django.utils import formats
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
+
+from . import util
+from .models import Campaign, UserAttendance
 
 
 def must_be_owner(fn):

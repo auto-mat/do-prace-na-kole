@@ -18,9 +18,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from . import util, tasks
-from .models import UserAttendance, Team, Company, Competition, City, CompetitionResult, Trip, Choice, Answer
-from django.db.models import Sum, Q
+from django.db.models import Q, Sum
+
+from . import tasks, util
+from .models import Answer, Choice, City, Company, Competition, CompetitionResult, Team, Trip, UserAttendance
 
 
 def get_competitors_without_admission(competition):  # noqa

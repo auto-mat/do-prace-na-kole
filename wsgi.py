@@ -16,9 +16,13 @@ framework.
 import os
 import site
 import sys
-from project.settings import PROJECT_ROOT
-import newrelic.agent
+
 from django.core.wsgi import get_wsgi_application
+
+import newrelic.agent
+
+from project.settings import PROJECT_ROOT
+
 
 newrelic.agent.initialize(os.path.join(PROJECT_ROOT, 'newrelic.ini'))
 

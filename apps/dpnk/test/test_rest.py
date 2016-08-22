@@ -17,16 +17,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import datetime
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.test.utils import override_settings
-from dpnk import util, models
-from dpnk.models import UserAttendance, Team
+
+from dpnk import models, util
+from dpnk.models import Team, UserAttendance
 from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
+
 from freezegun import freeze_time
-import datetime
+
 import settings
 
 

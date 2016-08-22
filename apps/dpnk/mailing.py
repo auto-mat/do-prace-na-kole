@@ -17,13 +17,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-import createsend
-from django.conf import settings
-from . import util
+import hashlib
 import logging
 import threading
-import hashlib
 from collections import OrderedDict
+
+import createsend
+
+from django.conf import settings
+
+from . import util
 logger = logging.getLogger(__name__)
 
 

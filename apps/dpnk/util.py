@@ -18,16 +18,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import unidecode
-import re
 import datetime
+import re
+
+import denorm
+
 from django.conf import settings
+from django.contrib import contenttypes
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import six
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
-from django.contrib import contenttypes
-import denorm
+
+import unidecode
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 

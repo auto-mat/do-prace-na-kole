@@ -21,8 +21,9 @@
 
 import os
 import sys
-from django.core.urlresolvers import reverse_lazy
+
 from django.contrib.messages import constants as message_constants
+from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
 

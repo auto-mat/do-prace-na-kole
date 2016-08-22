@@ -17,10 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.template.loader import render_to_string
-from django import forms
-import smart_selects.widgets as widgets
 from ajax_select.fields import AutoCompleteSelectWidget
+
+from django import forms
+from django.template.loader import render_to_string
+
+import smart_selects.widgets as widgets
 
 
 class SelectOrCreateAutoComplete(AutoCompleteSelectWidget):

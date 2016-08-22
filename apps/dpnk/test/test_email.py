@@ -17,14 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-from django.test import TestCase
-from dpnk.models import UserAttendance, Company, CompanyAdmin, UserProfile, Campaign, Team, Subsidiary, City, Phase
-from django.contrib.auth.models import User
-from dpnk import email
-from django.core import mail
-from django.conf import settings
 import datetime
+
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.core import mail
+from django.test import TestCase
+
+from dpnk import email
+from dpnk.models import Campaign, City, Company, CompanyAdmin, Phase, Subsidiary, Team, UserAttendance, UserProfile
 
 
 # Uncoment this to check to generate email files in /tmp/dpnk-test-messages

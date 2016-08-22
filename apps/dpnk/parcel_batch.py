@@ -19,14 +19,16 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import os
+
 import reportlab
-from reportlab.platypus import Image
-from reportlab.pdfgen.canvas import Canvas
+from reportlab.graphics.barcode import code128
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm, mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.graphics.barcode import code128
+from reportlab.pdfgen.canvas import Canvas
+from reportlab.platypus import Image
+
 from svg2rlg import svg2rlg
 
 

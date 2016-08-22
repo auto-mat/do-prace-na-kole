@@ -17,16 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from unittest.mock import patch
 
 from django.core import mail
 from django.core.urlresolvers import reverse
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.test.utils import override_settings
+
 from dpnk import models, util, views
 from dpnk.test.tests import ViewsLogon
 from dpnk.test.util import ClearCacheMixin
 from dpnk.test.util import print_response  # noqa
-from unittest.mock import patch
+
 import settings
 
 

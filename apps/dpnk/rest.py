@@ -17,12 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from rest_framework import routers, serializers, viewsets, permissions
-from rest_framework.exceptions import APIException
-from rest_framework.reverse import reverse
-from .models import GpxFile, UserAttendance, Campaign, Competition, CompetitionResult, Team, Trip, Subsidiary, Company, City
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
+
+from rest_framework import permissions, routers, serializers, viewsets
+from rest_framework.exceptions import APIException
+from rest_framework.reverse import reverse
+
+from .models import Campaign, City, Company, Competition, CompetitionResult, GpxFile, Subsidiary, Team, Trip, UserAttendance
 
 
 class DuplicateGPX(APIException):

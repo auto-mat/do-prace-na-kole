@@ -17,26 +17,29 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render
-from django.utils.translation import ugettext_lazy as _
 import datetime
-from django.conf import settings
-from django.views.generic.edit import UpdateView, FormView, CreateView
-from django.views.generic.base import TemplateView
-from .decorators import must_be_competitor, must_have_team, request_condition, must_be_company_admin, must_be_in_phase
-from .company_admin_forms import SelectUsersPayForm, CompanyForm, CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, SubsidiaryForm
-from . import company_admin_forms
-from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
-from django.core.urlresolvers import reverse_lazy
-from .string_lazy import format_lazy
-from .models import Company, CompanyAdmin, Competition, Campaign, UserProfile, Subsidiary
-from .views import RegistrationViewMixin, TitleViewMixin
-from . import models
-from .util import mark_safe_lazy
-from registration.backends.simple.views import RegistrationView
 import logging
+
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse_lazy
+from django.shortcuts import get_object_or_404, render
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext_lazy as _
+from django.views.generic.base import TemplateView
+from django.views.generic.edit import CreateView, FormView, UpdateView
+
+from registration.backends.simple.views import RegistrationView
+
+from . import company_admin_forms
+from . import models
+from .company_admin_forms import CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
+from .decorators import must_be_company_admin, must_be_competitor, must_be_in_phase, must_have_team, request_condition
+from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
+from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
+from .string_lazy import format_lazy
+from .util import mark_safe_lazy
+from .views import RegistrationViewMixin, TitleViewMixin
 logger = logging.getLogger(__name__)
 
 

@@ -17,14 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import datetime
+
+from unittest.mock import MagicMock, patch
 
 from django.test import TestCase
 from django.test.utils import override_settings
+
 from dpnk import rest_ecc
-from dpnk.models import UserAttendance, GpxFile
+from dpnk.models import GpxFile, UserAttendance
+
 from freezegun import freeze_time
-from unittest.mock import MagicMock, patch
-import datetime
 
 
 @override_settings(

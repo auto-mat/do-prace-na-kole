@@ -130,10 +130,10 @@ do the following.
     fab local test deploy
 
 """
-from fabric.state import env
+from fabric import api
 from fabric.api import put, require, run, settings, sudo
 # abort, cd, get, hide, hosts, prompt, roles, runs_once, show, warn
-from fabric import api
+from fabric.state import env
 
 # globals
 

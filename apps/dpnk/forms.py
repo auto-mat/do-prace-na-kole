@@ -17,33 +17,40 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from smart_selects.form_fields import ChainedModelChoiceField
-from django.contrib.auth.models import User
-from django import forms
-# Registration imports
-import registration.forms
 import datetime
-from django.utils import formats
-from . import models, util
-from django.db.models import Q
-from dpnk.widgets import SelectChainedOrCreate, SelectOrCreateAutoComplete, CommuteModeSelect
-from dpnk.fields import ShowPointsMultipleModelChoiceField, CommaFloatField
-from django.forms.widgets import HiddenInput
-from django.utils.translation import ugettext_lazy as _
-from django.utils.safestring import mark_safe
-from .string_lazy import mark_safe_lazy, format_html_lazy
-from django.utils.html import format_html
-from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator, MinLengthValidator
-from leaflet.forms.widgets import LeafletWidget
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, HTML, Field, Div
-from django.core.urlresolvers import reverse
-from django.contrib.auth.forms import AuthenticationForm
-from django.http import Http404
-from django.conf import settings
-from django_gpxpy import gpx_parse
 import logging
+
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Div, Field, HTML, Layout, Submit
+
+from django import forms
+from django.conf import settings
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
+from django.core.validators import MinLengthValidator, RegexValidator
+from django.db.models import Q
+from django.forms.widgets import HiddenInput
+from django.http import Http404
+from django.utils import formats
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
+
+from django_gpxpy import gpx_parse
+
+from dpnk.fields import CommaFloatField, ShowPointsMultipleModelChoiceField
+from dpnk.widgets import CommuteModeSelect, SelectChainedOrCreate, SelectOrCreateAutoComplete
+
+from leaflet.forms.widgets import LeafletWidget
+
+import registration.forms
+
+from smart_selects.form_fields import ChainedModelChoiceField
+
+from . import models, util
+from .string_lazy import format_html_lazy, mark_safe_lazy
 logger = logging.getLogger(__name__)
 
 

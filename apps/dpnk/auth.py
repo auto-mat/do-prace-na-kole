@@ -18,14 +18,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.contrib.auth.backends import ModelBackend
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import PasswordResetForm, PasswordChangeForm, SetPasswordForm
-from django.utils.translation import ugettext_lazy as _
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+
 from django import forms
-from dpnk.forms import SubmitMixin
+from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm, SetPasswordForm
+from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
+
+from .forms import SubmitMixin
 
 
 class EmailModelBackend(ModelBackend):

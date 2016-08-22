@@ -17,13 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import datetime
 
 from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
+
 from dpnk import util
 from dpnk.models import Campaign
-import datetime
 
 
 @override_settings(

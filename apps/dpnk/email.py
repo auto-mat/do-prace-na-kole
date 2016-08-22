@@ -17,9 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.template.loader import get_template
-from django.core.mail import send_mail
 from django.conf import settings
+from django.core.mail import send_mail
+from django.template.loader import get_template
 from django.utils.translation import ugettext_lazy as _
 
 
