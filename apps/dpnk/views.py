@@ -855,7 +855,7 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         trips, uncreated_trips = self.user_attendance.get_all_trips(util.today())
-        uncreated_trips = list((trip[0], models.Trip.DIRECTIONS_DICT[trip[1]], _("Jinak") if util.working_day(trip[0]) else _("Žádná cesta")) for trip in uncreated_trips)
+        uncreated_trips = [(trip[0], models.Trip.DIRECTIONS_DICT[trip[1]], _("Jinak") if util.working_day(trip[0]) else _("Žádná cesta")) for trip in uncreated_trips]
         trips = list(trips) + uncreated_trips
         trips = sorted(trips, key=lambda trip: trip.direction if type(trip) == Trip else trip[1], reverse=True)
         trips = sorted(trips, key=lambda trip: trip.date if type(trip) == Trip else trip[0])
@@ -1249,9 +1249,9 @@ def answers(request):
 
     answers = Answer.objects.filter(question_id=question_id).order_by('-points_given')
     total_respondents = answers.count()
-    count = dict((c, {}) for c in City.objects.all())
+    count = {c: {} for c in City.objects.all()}
     count_all = {}
-    respondents = dict((c, 0) for c in City.objects.all())
+    respondents = {c: 0 for c in City.objects.all()}
     choice_names = {}
 
     for a in answers:
@@ -1272,7 +1272,7 @@ def answers(request):
                     except KeyError:
                         count_all[c.id] = 1
 
-    stat = dict((c, []) for c in City.objects.all())
+    stat = {c: [] for c in City.objects.all()}
     stat['Celkem'] = []
     for city, city_count in count.items():
         for k, v in city_count.items():

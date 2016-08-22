@@ -22,7 +22,7 @@ from ajax_select.fields import AutoCompleteSelectWidget
 from django import forms
 from django.template.loader import render_to_string
 
-import smart_selects.widgets as widgets
+from smart_selects import widgets
 
 
 class SelectOrCreateAutoComplete(AutoCompleteSelectWidget):
