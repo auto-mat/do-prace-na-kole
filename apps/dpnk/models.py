@@ -593,6 +593,11 @@ class Campaign(models.Model):
             order_by('payment_created').\
             distinct()
 
+    @depend_on_related('TShirtSize', foreign_key='tshirtsize_set')
+    @denormalized(models.BooleanField, default=True)
+    def has_any_tshirt(self):
+        return self.tshirtsize_set.exists()
+
     phases = {}
 
     def phase(self, phase_type):
@@ -837,6 +842,9 @@ class UserAttendance(models.Model):
         else:
             return self.campaign.admission_fee + self.t_shirt_price()
 
+    def has_admission_fee(self):
+        return self.admission_fee() > 0
+
     def beneficiary_admission_fee(self):
         return self.campaign.benefitial_admission_fee + self.t_shirt_price()
 
@@ -849,7 +857,7 @@ class UserAttendance(models.Model):
     @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
     @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
     def representative_payment(self):
-        if self.team and self.team.subsidiary and self.admission_fee() == 0:
+        if self.team and self.team.subsidiary and not self.has_admission_fee():
             return None
 
         try:
@@ -880,7 +888,7 @@ class UserAttendance(models.Model):
     @denormalized(models.CharField, choices=PAYMENT_CHOICES, max_length=20, null=True, skip={'updated', 'created'})
     @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
     def payment_status(self):
-        if self.team and self.team.subsidiary and self.admission_fee() == 0:
+        if self.team and self.team.subsidiary and not self.has_admission_fee():
             return 'no_admission'
         payment = self.representative_payment
         if not payment:
@@ -1015,7 +1023,7 @@ class UserAttendance(models.Model):
             return self.team.member_count
 
     def tshirt_complete(self):
-        return self.t_shirt_size
+        return (not self.campaign.has_any_tshirt) or self.t_shirt_size
 
     def track_complete(self):
         return self.track or self.distance
@@ -1030,7 +1038,7 @@ class UserAttendance(models.Model):
         return self.payment_status not in ('none', None)
 
     def payment_waiting(self):
-        return self.payment_status in ('done', 'no_admission')
+        return (not self.has_admission_fee()) or self.payment_status in ('done', 'no_admission')
 
     def get_emissions(self, distance=None):
         return util.get_emissions(self.trip_length_total)

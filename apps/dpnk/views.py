@@ -191,7 +191,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                       u' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
                       u' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu')))
 
-            if self.user_attendance.payment_status not in ('done', 'none',):
+            if not self.user_attendance.payment_waiting():
                 messages.info(request, format_html(
                     _('Vaše platba typu {payment_type} ještě nebyla vyřízena. '
                       'Počkejte prosím na její schválení. '
@@ -513,8 +513,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         lambda ua: not ua.t_shirt_size,
         _("Před tím, než zaplatíte startovné, musíte mít vybrané triko"))
     def dispatch(self, request, *args, **kwargs):
-        dispatch = super(PaymentTypeView, self).dispatch(request, *args, **kwargs)
-        return dispatch
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(PaymentTypeView, self).get_context_data(**kwargs)
@@ -1047,7 +1046,13 @@ class ChangeTShirtView(RegistrationViewMixin, UpdateView):
     @user_attendance_has(lambda ua: not ua.team_complete(), _(u"Velikost trička nemůžete měnit, dokud nemáte zvolený tým."))
     @user_attendance_has(lambda ua: ua.package_shipped(), _(u"Vaše tričko již je na cestě k vám, už se na něj můžete těšit."))
     def dispatch(self, request, *args, **kwargs):
-        return super(ChangeTShirtView, self).dispatch(request, *args, **kwargs)
+        if kwargs["user_attendance"].campaign.has_any_tshirt:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            if kwargs["user_attendance"].has_admission_fee():
+                return redirect(reverse('typ_platby'))
+            else:
+                return redirect(reverse('profil'))
 
 
 def handle_uploaded_file(source, username):
