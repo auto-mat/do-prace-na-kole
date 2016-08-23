@@ -103,9 +103,6 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
         required=True,
     )
     personal_data_opt_in = forms.BooleanField(
-        label=_("Souhlasím se zpracováním osobních údajů podle "
-                "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů A*M</a> "
-                "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže Do práce na kole</a>."),
         required=True,
     )
 
@@ -118,6 +115,10 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
 
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super(CompanyAdminForm, self).__init__(*args, **kwargs)
+        self.fields['personal_data_opt_in'].label = _(
+            "Souhlasím se zpracováním osobních údajů podle "
+            "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
+            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>." % self.instance.campaign)
         return ret_val
 
 
@@ -156,9 +157,6 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         required=True,
     )
     personal_data_opt_in = forms.BooleanField(
-        label=_("Souhlasím se zpracováním osobních údajů podle "
-                "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů A*M</a> "
-                "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže Do práce na kole</a>."),
         required=True,
     )
 
@@ -173,6 +171,15 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
             if CompanyAdmin.objects.filter(administrated_company__pk=obj.pk, campaign=campaign, company_admin_approved='approved').exists():
                 raise forms.ValidationError(_(u"Tato organizace již má svého koordinátora."))
         return cleaned_data
+
+    def __init__(self, request=None, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
+        campaign = self.initial['campaign']
+        self.fields['personal_data_opt_in'].label = _(
+            "Souhlasím se zpracováním osobních údajů podle "
+            "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
+            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>." % campaign)
+        return ret_val
 
     class Meta:
         model = User

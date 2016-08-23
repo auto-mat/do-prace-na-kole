@@ -233,9 +233,9 @@ msgstr ""
 #: company_admin_forms.py:103 company_admin_forms.py:156 forms.py:606
 msgid ""
 "Souhlasím se zpracováním osobních údajů podle <a target='_blank' "
-"href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů "
-"A*M</a> a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-"
-"podminky'>Obchodními podmínkami soutěže Do práce na kole</a>."
+"href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</"
+"a> a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-"
+"podminky'>Obchodními podmínkami soutěže %s</a>."
 msgstr ""
 
 #: company_admin_forms.py:123

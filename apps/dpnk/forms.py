@@ -611,9 +611,6 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         required=False,
     )
     personal_data_opt_in = forms.BooleanField(
-        label=_("Souhlasím se zpracováním osobních údajů podle "
-                "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů A*M</a> "
-                "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže Do práce na kole</a>."),
         required=True,
     )
     mailing_opt_in = forms.ChoiceField(
@@ -665,12 +662,17 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
             return self.cleaned_data['sex']
 
     def __init__(self, *args, **kwargs):
+        campaign = kwargs.pop('campaign')
         ret_val = super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         self.fields['email'].initial = self.instance.user.email
         self.fields['first_name'].initial = self.instance.user.first_name
         self.fields['last_name'].initial = self.instance.user.last_name
         self.fields['dont_show_name'].initial = self.instance.nickname is not None
         self.fields['mailing_opt_in'].initial = None
+        self.fields['personal_data_opt_in'].label = _(
+            "Souhlasím se zpracováním osobních údajů podle "
+            "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
+            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>." % campaign)
         return ret_val
 
     class Meta:

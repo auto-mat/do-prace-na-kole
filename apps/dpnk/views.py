@@ -1012,6 +1012,11 @@ class UpdateProfileView(RegistrationViewMixin, UpdateView):
     registration_phase = "upravit_profil"
     title = _(u"Osobní údaje")
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['campaign'] = self.user_attendance.campaign
+        return kwargs
+
     def get_object(self):
         return self.request.user.userprofile
 
