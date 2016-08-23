@@ -20,7 +20,7 @@
 
 import random
 
-from dpnk.models import Competition, CompetitionResult
+from .models import Competition, CompetitionResult
 
 
 def all_members_paid(team):
