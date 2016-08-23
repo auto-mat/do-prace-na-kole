@@ -114,7 +114,7 @@ def get_competitions(user_attendance):
             Q(competitor_type__in=('company',)) &
             (Q(company=None) | Q(company=administrated_company)) &
             (Q(city=None) | Q(city__in=administrated_cities))
-        )
+        ),
     ).distinct()
     return competitions
 
@@ -125,7 +125,7 @@ def get_competitions_without_admission(user_attendance):
             Q(user_attendance_competitors=user_attendance) |
             Q(team_competitors=user_attendance.team) |
             Q(company_competitors=user_attendance.company())
-        )
+        ),
     ).distinct()
     return competitions
 

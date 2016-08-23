@@ -121,7 +121,7 @@ class AdminModulesTests(DenormMixin, TestCase):
         self.assertContains(
             response,
             '1015,testing-campaign,,1,Testing team 1,approved,,Testing city,cs,,'
-            '1031,Testing,User,test1,test2@test.cz,"Ulice 1, 111 11 Praha",Testing company,2015-11-12 18:18:40,,,,'
+            '1031,Testing,User,test1,test2@test.cz,"Ulice 1, 111 11 Praha",Testing company,2015-11-12 18:18:40,,,,',
         )
 
     def test_packagetransaction_export(self):
@@ -133,12 +133,12 @@ class AdminModulesTests(DenormMixin, TestCase):
         self.assertContains(response, "7,1,,3,Null User,,without_team@email.cz,2015-11-12 18:18:40,,99,,,,,,,,1,111121170,1-151112-000007")
         self.assertContains(
             response,
-            "6,1,2010-11-01 00:00:00,1115,Testing User 1,,test@test.cz,2015-11-12 18:18:40,,99,,Ulice 1,11111,Praha,Testing company,test@test.cz,,1,111111172,1-151112-000006"
+            "6,1,2010-11-01 00:00:00,1115,Testing User 1,,test@test.cz,2015-11-12 18:18:40,,99,,Ulice 1,11111,Praha,Testing company,test@test.cz,,1,111111172,1-151112-000006",
         )
         self.assertContains(
             response,
             "8,1,2015-01-01 00:00:00,2115,Registered User 1,,test-registered@test.cz,2015-12-11 17:18:40,,99"
-            ",,Ulice 1,11111,Praha,Testing company,test@test.cz,,1,131121179,1-151112-000008"
+            ",,Ulice 1,11111,Praha,Testing company,test@test.cz,,1,131121179,1-151112-000008",
         )
 
     def test_company_export(self):
@@ -423,7 +423,7 @@ class FilterTests(TestCase):
         models.Payment.objects.create(
             session_id=self.session_id,
             user_attendance=self.user_attendance,
-            amount=150
+            amount=150,
         )
         self.request = self.factory.get("")
         self.request.subdomain = "testing-campaign"

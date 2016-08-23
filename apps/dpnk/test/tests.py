@@ -288,7 +288,7 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         models.Payment.objects.create(
             session_id=self.session_id,
             user_attendance=self.user_attendance,
-            amount=150
+            amount=150,
         )
 
     def test_payment_succesfull(self):
@@ -479,7 +479,8 @@ class PayuTests(ClearCacheMixin, TestCase):
     def payment_status_view(
             self, payu_response, payu_request, session_id='2075-1J1455206433',
             amount="15000", trans_sig='ae6f4b9f8fbdbb506edf4eeb1cebcee0', sig='1af62397cfb6e6de5295325801239e4f',
-            post_sig="b6b29bb8437f9e2486fbe5555673372d"):
+            post_sig="b6b29bb8437f9e2486fbe5555673372d",
+            ):
         payment_post_data = OrderedDict([
             ('pos_id', '2075-1'),
             ('session_id', session_id),
@@ -506,8 +507,11 @@ class PayuTests(ClearCacheMixin, TestCase):
         payu_request.assert_called_with(
             'POST',
             '/paygw/UTF/Payment/get/txt/',
-            'pos_id=2075-1&session_id=%(session_id)s&ts=1290254400&sig=%(trans_sig)s' % {"trans_sig": post_sig, "session_id": session_id},
-            {'Content-type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain'}
+            'pos_id=2075-1&session_id=%(session_id)s&ts=1290254400&sig=%(trans_sig)s' % {"trans_sig": post_sig, "session_id": session_id, },
+            {
+                'Content-type': 'application/x-www-form-urlencoded',
+                'Accept': 'text/plain',
+            },
         )
         return response
 
@@ -531,7 +535,8 @@ class PayuTests(ClearCacheMixin, TestCase):
         response = self.payment_status_view(
             session_id='2075-1J1455206434', amount="15100",
             sig='4f59d25cd3dadaf03bef947bb0d9e1b9', trans_sig='c490e30293fe0a96d08b62107accafe8',
-            post_sig='445db4f3e11bfa16f0221b0272820058')
+            post_sig='445db4f3e11bfa16f0221b0272820058',
+        )
         self.assertContains(response, "OK")
         payment = Payment.objects.get(session_id='2075-1J1455206434')
         self.assertEquals(payment.pay_type, "kb")
@@ -1275,28 +1280,31 @@ class TrackViewTests(ViewsLogon):
         address = reverse(views.daily_distance_extra_json)
         response = self.client.get(address)
         self.assertEquals(response.status_code, 200)
-        self.assertJSONEqual(response.content.decode(), {
-            "2010-11-01": {"distance": 5.0, "distance_bicycle": 0, "distance_foot": 5.0, "emissions_co2": 645.0},
-            "2010-11-02": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-03": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-04": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-05": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-06": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-07": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-08": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-09": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-10": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-11": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-12": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-13": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-14": {"distance": 156.9, "distance_bicycle": 156.9, "distance_foot": 0, "emissions_co2": 20240.1},
-            "2010-11-15": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-16": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-17": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-18": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-19": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
-            "2010-11-20": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0}
-        })
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "2010-11-01": {"distance": 5.0, "distance_bicycle": 0, "distance_foot": 5.0, "emissions_co2": 645.0},
+                "2010-11-02": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-03": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-04": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-05": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-06": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-07": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-08": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-09": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-10": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-11": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-12": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-13": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-14": {"distance": 156.9, "distance_bicycle": 156.9, "distance_foot": 0, "emissions_co2": 20240.1},
+                "2010-11-15": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-16": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-17": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-18": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-19": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+                "2010-11-20": {"distance": 0, "distance_bicycle": 0, "distance_foot": 0, "emissions_co2": 0},
+            },
+        )
 
 
 class StatisticsTests(ViewsLogon):
@@ -1306,22 +1314,25 @@ class StatisticsTests(ViewsLogon):
         address = reverse(views.statistics)
         response = self.client.get(address)
         self.assertEquals(response.status_code, 200)
-        self.assertJSONEqual(response.content.decode(), {
-            "pocet-zaplacenych": 2,
-            "pocet-soutezicich": 2,
-            "pocet-cest": 3,
-            "pocet-cest-kolo": 2,
-            "pocet-cest-pesky": 1,
-            "pocet-prihlasenych": 6,
-            "pocet-cest-dnes": 0,
-            "ujeta-vzdalenost-dnes": 0,
-            "ujeta-vzdalenost": 167.2,
-            "ujeta-vzdalenost-pesky": 5.0,
-            "usetrene-emise-co2": 21568.8,
-            "ujeta-vzdalenost-kolo": 162.2,
-            "pocet-spolecnosti": 1,
-            "pocet-pobocek": 2,
-        })
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "pocet-zaplacenych": 2,
+                "pocet-soutezicich": 2,
+                "pocet-cest": 3,
+                "pocet-cest-kolo": 2,
+                "pocet-cest-pesky": 1,
+                "pocet-prihlasenych": 6,
+                "pocet-cest-dnes": 0,
+                "ujeta-vzdalenost-dnes": 0,
+                "ujeta-vzdalenost": 167.2,
+                "ujeta-vzdalenost-pesky": 5.0,
+                "usetrene-emise-co2": 21568.8,
+                "ujeta-vzdalenost-kolo": 162.2,
+                "pocet-spolecnosti": 1,
+                "pocet-pobocek": 2,
+            },
+        )
 
 
 class RidesDetailsTests(ViewsLogon):
@@ -1449,7 +1460,8 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
                 'title': 'Testing title',
                 'excerpt': 'Testing excerpt',
                 'image': 'http://www.test.cz',
-            }}
+            },
+        }
         slumber_mock.return_value = m
         response = self.client.get(reverse('profil'))
         self.assertContains(response, '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270">' % settings.MEDIA_URL, html=True)
@@ -1462,7 +1474,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
     def test_failed_wp_page(self, slumber_mock):
         m = MagicMock()
         m.feed.get.return_value = {
-            '1234': "error page"
+            '1234': "error page",
         }
         slumber_mock.return_value = m
         response = self.client.get(reverse('profil'))

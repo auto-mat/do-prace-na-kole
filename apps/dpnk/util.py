@@ -97,9 +97,9 @@ def today():
     return _today()
 
 
-def slugify(str):
-    str = unidecode.unidecode(str).lower()
-    return re.sub(r'\W+', '-', str)
+def slugify(slug_str):
+    slug_str = unidecode.unidecode(slug_str).lower()
+    return re.sub(r'\W+', '-', slug_str)
 
 
 def get_client_ip(request):

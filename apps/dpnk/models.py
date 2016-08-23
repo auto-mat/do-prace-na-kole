@@ -129,7 +129,7 @@ class Address(CompositeField):
         help_text=_(u"Např.: „130 00“"),
         validators=[
             MaxValueValidator(99999),
-            MinValueValidator(10000)
+            MinValueValidator(10000),
         ],
         default=None,
         null=True,
@@ -160,16 +160,18 @@ class City(models.Model):
         verbose_name=_(u"Jméno"),
         unique=True,
         max_length=40,
-        null=False)
+        null=False,
+    )
     slug = models.SlugField(
         unique=True,
         verbose_name=u"Subdoména v URL",
-        blank=False
+        blank=False,
     )
     cyklistesobe_slug = models.SlugField(
         verbose_name=_(u"Jméno skupiny na webu Cyklisté sobě"),
         max_length=40,
-        null=True)
+        null=True,
+    )
     location = models.PointField(
         verbose_name=_(u"poloha města"),
         srid=4326,
@@ -193,11 +195,13 @@ class CityInCampaign(models.Model):
         City,
         null=False,
         blank=False,
-        related_name="cityincampaign")
+        related_name="cityincampaign",
+    )
     campaign = models.ForeignKey(
         "Campaign",
         null=False,
-        blank=False)
+        blank=False,
+    )
     allow_adding_rides = models.BooleanField(
         verbose_name=_(u"povolit zapisování jízd"),
         null=False,
@@ -221,7 +225,9 @@ class Company(models.Model):
         unique=True,
         verbose_name=_(u"Název organizace"),
         help_text=_(u"Např. „Výrobna, a.s.“, „Příspěvková, p.o.“, „Nevládka, z.s.“, „Univerzita Karlova“"),
-        max_length=60, null=False)
+        max_length=60,
+        null=False,
+    )
     address = Address()
     ico = models.PositiveIntegerField(
         default=None,
@@ -239,7 +245,8 @@ class Company(models.Model):
     active = models.BooleanField(
         verbose_name=_(u"Aktivní"),
         default=True,
-        null=False)
+        null=False,
+    )
 
     def has_filled_contact_information(self):
         address_complete = self.address.street and self.address.street_number and self.address.psc and self.address.city
@@ -269,18 +276,21 @@ class Subsidiary(models.Model):
         Company,
         related_name="subsidiaries",
         null=False,
-        blank=False)
+        blank=False,
+    )
     city = models.ForeignKey(
         City,
         verbose_name=_(u"Spádové město"),
         help_text=_(u"Rozhoduje o tom, do soutěží jakého města budete zařazeni a kde budete dostávat ceny - vizte <a href='%s' target='_blank'>pravidla soutěže</a>") %
         "http://www.dopracenakole.cz/pravidla",
         null=False,
-        blank=False)
+        blank=False,
+    )
     active = models.BooleanField(
         verbose_name=_(u"Aktivní"),
         default=True,
-        null=False)
+        null=False,
+    )
 
     active_objects = ActiveManager()
     objects = models.Manager()
@@ -310,13 +320,15 @@ class Team(models.Model):
     name = models.CharField(
         verbose_name=_(u"Název týmu"),
         max_length=50, null=False,
-        unique=False)
+        unique=False,
+    )
     subsidiary = models.ForeignKey(
         Subsidiary,
         verbose_name=_(u"Pobočka"),
         related_name='teams',
         null=False,
-        blank=False)
+        blank=False,
+    )
     invitation_token = models.CharField(
         verbose_name=_(u"Token pro pozvánky"),
         default="",
@@ -330,7 +342,8 @@ class Team(models.Model):
         "Campaign",
         verbose_name=_(u"Kampaň"),
         null=False,
-        blank=False)
+        blank=False,
+    )
 
     @denormalized(
         models.IntegerField,
@@ -435,18 +448,20 @@ class Campaign(models.Model):
         unique=True,
         verbose_name=_(u"Jméno kampaně"),
         max_length=60,
-        null=False)
+        null=False,
+    )
     slug = models.SlugField(
         unique=True,
         default="",
         verbose_name=u"Doména v URL",
-        blank=False
+        blank=False,
     )
     previous_campaign = models.ForeignKey(
         'Campaign',
         verbose_name=_(u"Předchozí kampaň"),
         null=True,
-        blank=True)
+        blank=True,
+    )
     email_footer = models.TextField(
         verbose_name=_(u"Patička uživatelských emailů"),
         default="",
@@ -459,11 +474,13 @@ class Campaign(models.Model):
         max_length=60,
         default="",
         blank=True,
-        null=False)
+        null=False,
+    )
     mailing_list_enabled = models.BooleanField(
         verbose_name=_(u"Povolit mailing list"),
         default=False,
-        null=False)
+        null=False,
+    )
     days_active = models.PositiveIntegerField(
         verbose_name=_("Počet minulých dní, které jdou zapisovat"),
         default=7,
@@ -527,7 +544,7 @@ class Campaign(models.Model):
         default=0.25,
         validators=[
             MaxValueValidator(1000),
-            MinValueValidator(0)
+            MinValueValidator(0),
         ],
     )
     invoice_sequence_number_first = models.PositiveIntegerField(
@@ -545,27 +562,33 @@ class Campaign(models.Model):
     admission_fee = models.FloatField(
         verbose_name=_(u"Včasné startovné"),
         null=False,
-        default=0)
+        default=0,
+    )
     admission_fee_company = models.FloatField(
         verbose_name=_(u"Včasné startovné pro organizace"),
         null=False,
-        default=0)
+        default=0,
+    )
     late_admission_fee = models.FloatField(
         verbose_name=_(u"Pozdní startovné"),
         null=False,
-        default=0)
+        default=0,
+    )
     late_admission_fee_company = models.FloatField(
         verbose_name=_(u"Pozdní startovné pro organizace"),
         null=False,
-        default=0)
+        default=0,
+    )
     benefitial_admission_fee = models.FloatField(
         verbose_name=_(u"Benefiční startovné"),
         null=False,
-        default=0)
+        default=0,
+    )
     benefitial_admission_fee_company = models.FloatField(
         verbose_name=_(u"Benefiční startovné pro organizace"),
         null=False,
-        default=0)
+        default=0,
+    )
     free_entry_cases_html = models.TextField(
         verbose_name=_(u"Případy, kdy je startovné zdarma"),
         null=True,
@@ -631,35 +654,42 @@ class Phase(models.Model):
         verbose_name_plural = _(u"fáze kampaně")
         unique_together = (("type", "campaign"),)
 
-    TYPE = [('registration', _(u"registrační")),
-            ('late_admission', _(u"pozdní startovné")),
-            ('compet_entry', _(u"vstup do soutěže (zastaralé)")),
-            ('payment', _(u"placení startovného")),
-            ('competition', _(u"soutěžní")),
-            ('results', _(u"výsledková")),
-            ('admissions', _(u"přihlašovací do soutěží")),
-            ('invoices', _(u"vytváření faktur")),
-            ]
+    TYPE = [
+        ('registration', _(u"registrační")),
+        ('late_admission', _(u"pozdní startovné")),
+        ('compet_entry', _(u"vstup do soutěže (zastaralé)")),
+        ('payment', _(u"placení startovného")),
+        ('competition', _(u"soutěžní")),
+        ('results', _(u"výsledková")),
+        ('admissions', _(u"přihlašovací do soutěží")),
+        ('invoices', _(u"vytváření faktur")),
+    ]
 
     campaign = models.ForeignKey(
         Campaign,
         verbose_name=_(u"Kampaň"),
         null=False,
-        blank=False)
+        blank=False,
+    )
     type = models.CharField(
         verbose_name=_(u"Typ fáze"),
         choices=TYPE,
         max_length=16,
         null=False,
-        default='registration')
+        default='registration',
+    )
     date_from = models.DateField(
         verbose_name=_(u"Datum začátku fáze"),
         default=None,
-        null=True, blank=True)
+        null=True,
+        blank=True,
+    )
     date_to = models.DateField(
         verbose_name=_(u"Datum konce fáze"),
         default=None,
-        null=True, blank=True)
+        null=True,
+        blank=True,
+    )
 
     def get_minimum_rides_base(self):
         return self.campaign.minimum_rides_base
@@ -683,12 +713,15 @@ class TShirtSize(models.Model):
 
     name = models.CharField(
         verbose_name=_(u"Velikost trička"),
-        max_length=40, null=False)
+        max_length=40,
+        null=False,
+    )
     campaign = models.ForeignKey(
         Campaign,
         verbose_name=_(u"Kampaň"),
         null=False,
-        blank=False)
+        blank=False,
+    )
     order = models.PositiveIntegerField(
         default=0,
         blank=False,
@@ -697,16 +730,20 @@ class TShirtSize(models.Model):
     ship = models.BooleanField(
         verbose_name=_(u"Posílá se?"),
         default=True,
-        null=False)
+        null=False,
+    )
     available = models.BooleanField(
         verbose_name=_(u"Je dostupné?"),
         help_text=_(u"Zobrazuje se v nabídce trik"),
         default=True,
-        null=False)
+        null=False,
+    )
     t_shirt_preview = models.FileField(
         verbose_name=_(u"Náhled trika"),
         upload_to=u't_shirt_preview',
-        blank=True, null=True)
+        blank=True,
+        null=True,
+    )
     price = models.IntegerField(
         verbose_name=_(u"Cena"),
         default=0,
@@ -751,20 +788,23 @@ class UserAttendance(models.Model):
         Campaign,
         verbose_name=_(u"Kampaň"),
         null=False,
-        blank=False)
+        blank=False,
+    )
     userprofile = models.ForeignKey(
         "UserProfile",
         verbose_name=_(u"Uživatelský profil"),
         related_name="userattendance_set",
         unique=False,
         null=False,
-        blank=False)
+        blank=False,
+    )
     distance = models.FloatField(
         verbose_name=_(u"Vzdálenost"),
         help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
         default=None,
         blank=True,
-        null=True)
+        null=True,
+    )
     track = models.MultiLineStringField(
         verbose_name=_(u"trasa"),
         help_text=MAP_DESCRIPTION,
@@ -776,7 +816,8 @@ class UserAttendance(models.Model):
     dont_want_insert_track = models.BooleanField(
         verbose_name=_(u"Nepřeji si zadávat svoji trasu."),
         default=False,
-        null=False)
+        null=False,
+    )
     objects = models.GeoManager()
     team = models.ForeignKey(
         Team,
@@ -784,13 +825,15 @@ class UserAttendance(models.Model):
         verbose_name=_(u"Tým"),
         null=True,
         blank=True,
-        default=None)
+        default=None,
+    )
     approved_for_team = models.CharField(
         verbose_name=_(u"Souhlas týmu"),
         choices=TEAMAPPROVAL,
         max_length=16,
         null=False,
-        default='undecided')
+        default='undecided',
+    )
     t_shirt_size = models.ForeignKey(
         TShirtSize,
         verbose_name=_(u"Velikost trička"),
@@ -1151,14 +1194,17 @@ class UserProfile(models.Model):
     )
     telephone = models.CharField(
         verbose_name=_(u"Telefon"),
-        max_length=30, null=False)
+        max_length=30,
+        null=False,
+    )
     language = models.CharField(
         verbose_name=_(u"Jazyk emailové komunikace"),
         help_text=_(u"Jazyk, ve kterém vám budou docházet emaily z registračního systému"),
         choices=LANGUAGE,
         max_length=16,
         null=False,
-        default='cs')
+        default='cs',
+    )
     mailing_id = models.CharField(
         verbose_name=_(u"ID uživatele v mailing listu"),
         max_length=128,
@@ -1167,13 +1213,13 @@ class UserProfile(models.Model):
         # TODO:
         # unique=True,
         null=True,
-        blank=True
+        blank=True,
     )
     mailing_hash = models.TextField(
         verbose_name=_(u"Hash poslední synchronizace s mailingem"),
         default=None,
         null=True,
-        blank=True
+        blank=True,
     )
     sex = models.CharField(
         verbose_name=_(u"Pohlaví"),
@@ -1190,15 +1236,18 @@ class UserProfile(models.Model):
     administrated_cities = models.ManyToManyField(
         'City',
         related_name="city_admins",
-        blank=True)
+        blank=True,
+    )
     mailing_opt_in = models.NullBooleanField(
         verbose_name=_(u"Přeji si dostávat emailem informace o akcích, událostech a dalších informacích souvisejících se soutěží."),
         help_text=_(u"Odběr emailů můžete kdykoliv v průběhu soutěže zrušit."),
-        default=None)
+        default=None,
+    )
     personal_data_opt_in = models.BooleanField(
         verbose_name=_(u"Souhlas se zpracováním osobních údajů."),
         blank=False,
-        default=False)
+        default=False,
+    )
     ecc_email = models.CharField(
         verbose_name=_("Email v ECC"),
         max_length=128,
@@ -1206,7 +1255,7 @@ class UserProfile(models.Model):
         default=None,
         unique=True,
         null=False,
-        blank=True
+        blank=True,
     )
     ecc_password = models.CharField(
         verbose_name=_("Heslo v ECC"),
@@ -1214,7 +1263,7 @@ class UserProfile(models.Model):
         db_index=True,
         default=None,
         null=False,
-        blank=True
+        blank=True,
     )
 
     @denormalized(models.IntegerField, default=0)
@@ -1304,7 +1353,8 @@ class CompanyAdmin(models.Model):
         choices=COMPANY_APPROVAL,
         max_length=16,
         null=False,
-        default='undecided')
+        default='undecided',
+    )
 
     motivation_company_admin = models.TextField(
         verbose_name=_(u"Zaměstnanecká pozice"),
@@ -1320,12 +1370,14 @@ class CompanyAdmin(models.Model):
         related_name="company_admin",
         verbose_name=_(u"Koordinovaná organizace"),
         null=True,
-        blank=False)
+        blank=False,
+    )
 
     campaign = models.ForeignKey(
         Campaign,
         null=False,
-        blank=False)
+        blank=False,
+    )
 
     note = models.TextField(
         verbose_name=_(u"Interní poznámka"),
@@ -1337,11 +1389,13 @@ class CompanyAdmin(models.Model):
     can_confirm_payments = models.BooleanField(
         verbose_name=_(u"Může potvrzovat platby"),
         default=False,
-        null=False)
+        null=False,
+    )
     will_pay_opt_in = models.BooleanField(
         verbose_name=_(u"Uživatel potvrdil, že bude plati za zaměstnance."),
         blank=False,
-        default=False)
+        default=False,
+    )
 
     def is_approved(self):
         return self.company_admin_approved == 'approved'
@@ -1381,20 +1435,26 @@ class DeliveryBatch(models.Model):
     created = models.DateTimeField(
         verbose_name=_(u"Datum vytvoření"),
         default=datetime.datetime.now,
-        null=False)
+        null=False,
+    )
     campaign = models.ForeignKey(
         Campaign,
         verbose_name=_(u"Kampaň"),
         null=False,
-        blank=False)
+        blank=False,
+    )
     customer_sheets = models.FileField(
         verbose_name=_(u"Zákaznické listy"),
         upload_to=u'customer_sheets',
-        blank=True, null=True)
+        blank=True,
+        null=True,
+    )
     tnt_order = models.FileField(
         verbose_name=_(u"Objednávka pro TNT"),
         upload_to=u'tnt_order',
-        blank=True, null=True)
+        blank=True,
+        null=True,
+    )
     dispatched = models.BooleanField(
         verbose_name=_("Vyřízeno"),
         blank=False,
@@ -1453,7 +1513,8 @@ class Invoice(models.Model):
     created = models.DateTimeField(
         verbose_name=_(u"Datum vytvoření"),
         default=datetime.datetime.now,
-        null=False)
+        null=False,
+    )
     exposure_date = models.DateField(
         verbose_name=_(u"Den vystavení daňového dokladu"),
         default=datetime.date.today,
@@ -1477,7 +1538,8 @@ class Invoice(models.Model):
     total_amount = models.FloatField(
         verbose_name=_(u"Celková částka"),
         null=False,
-        default=0)
+        default=0,
+    )
     invoice_pdf = models.FileField(
         verbose_name=_(u"PDF faktury"),
         upload_to=u'invoices',
@@ -1494,10 +1556,12 @@ class Invoice(models.Model):
         Campaign,
         verbose_name=_(u"Kampaň"),
         null=False,
-        blank=False)
+        blank=False,
+    )
     sequence_number = models.PositiveIntegerField(
         verbose_name=_(u"Pořadové číslo faktury"),
-        null=False)
+        null=False,
+    )
     order_number = models.BigIntegerField(
         verbose_name=_(u"Číslo objednávky (nepovinné)"),
         null=True,
@@ -1638,25 +1702,31 @@ class Transaction(PolymorphicModel):
         verbose_name=_(u"Status"),
         default=0,
         choices=STATUS,
-        null=False, blank=False)
+        null=False,
+        blank=False,
+    )
     user_attendance = models.ForeignKey(
         UserAttendance,
         related_name="transactions",
         null=True,
         blank=False,
-        default=None)
+        default=None,
+    )
     created = models.DateTimeField(
         verbose_name=_(u"Vytvoření"),
         default=datetime.datetime.now,
-        null=False)
+        null=False,
+    )
     description = models.TextField(
         verbose_name=_(u"Popis"),
         null=True,
         blank=True,
-        default="")
+        default="",
+    )
     realized = models.DateTimeField(
         verbose_name=_(u"Realizace"),
-        null=True, blank=True)
+        null=True, blank=True,
+    )
 
     class Meta:
         verbose_name = _(u"Transakce")
@@ -1711,12 +1781,14 @@ class PackageTransaction(Transaction):
     tracking_number = models.PositiveIntegerField(
         verbose_name=_(u"Tracking number TNT"),
         unique=True,
-        null=False)
+        null=False,
+    )
     delivery_batch = models.ForeignKey(
         DeliveryBatch,
         verbose_name=_(u"Dávka objednávek"),
         null=False,
-        blank=False)
+        blank=False,
+    )
 
     shipped_statuses = [
         Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
@@ -1742,7 +1814,7 @@ class PackageTransaction(Transaction):
         return mark_safe(
             "<a href='http://www.tnt.com/webtracker/tracking.do?"
             "requestType=GEN&searchType=REF&respLang=cs&respCountry=cz&sourceID=1&sourceCountry=ww&cons=%(number)s&navigation=1&genericSiteIdent='>%(number)s</a>" %
-            {'number': self.tnt_con_reference()}
+            {'number': self.tnt_con_reference()},
         )
 
     @transaction.atomic
@@ -1780,11 +1852,13 @@ class Payment(Transaction):
         Status.DONE,
         Status.COMPANY_ACCEPTS,
         Status.INVOICE_MADE,
-        Status.INVOICE_PAID]
+        Status.INVOICE_PAID,
+    ]
     waiting_statuses = [
         Status.NEW,
         Status.COMMENCED,
-        Status.WAITING_CONFIRMATION]
+        Status.WAITING_CONFIRMATION,
+    ]
 
     PAY_TYPES = (
         ('mp', _(u'mPenize - mBank')),
@@ -1848,28 +1922,34 @@ class Payment(Transaction):
         max_length=50,
         null=True,
         blank=True,
-        default="")
+        default="",
+    )
     session_id = models.CharField(
         verbose_name="Session ID",
         max_length=50,
         unique=True,
         null=True,
         blank=True,
-        default=None)
+        default=None,
+    )
     trans_id = models.CharField(
         verbose_name="Transaction ID",
-        max_length=50, null=True, blank=True)
+        max_length=50, null=True, blank=True,
+    )
     amount = models.PositiveIntegerField(
         verbose_name=_(u"Částka"),
-        null=False)
+        null=False,
+    )
     pay_type = models.CharField(
         verbose_name=_(u"Typ platby"),
         choices=PAY_TYPES,
         max_length=50,
-        null=True, blank=True)
+        null=True, blank=True,
+    )
     error = models.PositiveIntegerField(
         verbose_name=_(u"Chyba"),
-        null=True, blank=True)
+        null=True, blank=True,
+    )
     invoice = models.ForeignKey(
         Invoice,
         null=True,
@@ -1912,20 +1992,34 @@ class Payment(Transaction):
         else:
             user = None
             username = None
-        return u"id: %s, user: %s (%s), order_id: %s, session_id: %s, trans_id: %s, amount: %s, description: %s, created: %s, realized: %s, pay_type: %s, status: %s, error: %s" % (
-            self.pk,
-            user,
-            username,
-            self.order_id,
-            getattr(self, "session_id", ""),
-            self.trans_id,
-            self.amount,
-            self.description,
-            self.created,
-            self.realized,
-            self.pay_type,
-            self.status,
-            self.error)
+        return (
+            "id: %s, "
+            "user: %s (%s), "
+            "order_id: %s, "
+            "session_id: %s, "
+            "trans_id: %s, "
+            "amount: %s, "
+            "description: %s, "
+            "created: %s, "
+            "realized: %s, "
+            "pay_type: %s, "
+            "status: %s, "
+            "error: %s" % (
+                self.pk,
+                user,
+                username,
+                self.order_id,
+                getattr(self, "session_id", ""),
+                self.trans_id,
+                self.amount,
+                self.description,
+                self.created,
+                self.realized,
+                self.pay_type,
+                self.status,
+                self.error,
+            )
+        )
 
 
 class PaymentForm(forms.ModelForm):
@@ -1964,17 +2058,21 @@ class Trip(models.Model):
         related_name="user_trips",
         null=True,
         blank=False,
-        default=None)
+        default=None,
+    )
     direction = models.CharField(
         verbose_name=_(u"Směr cesty"),
         choices=DIRECTIONS,
         max_length=20,
         default=None,
-        null=False, blank=False)
+        null=False,
+        blank=False,
+    )
     date = models.DateField(
         verbose_name=_(u"Datum cesty"),
         default=datetime.date.today,
-        null=False)
+        null=False,
+    )
     commute_mode = models.CharField(
         verbose_name=_(u"Mód dopravy"),
         choices=MODES,
@@ -1990,7 +2088,7 @@ class Trip(models.Model):
         default=None,
         validators=[
             MaxValueValidator(1000),
-            MinValueValidator(0)
+            MinValueValidator(0),
         ],
     )
 
@@ -2025,17 +2123,19 @@ class Competition(models.Model):
     name = models.CharField(
         unique=False,
         verbose_name=_(u"Jméno soutěže"),
-        max_length=160, null=False)
+        max_length=160, null=False,
+    )
     campaign = models.ForeignKey(
         Campaign,
         verbose_name=_(u"Kampaň"),
         null=False,
-        blank=False)
+        blank=False,
+    )
     slug = models.SlugField(
         unique=True,
         default="",
         verbose_name=u"Doména v URL",
-        blank=False
+        blank=False,
     )
     url = models.URLField(
         default="",
@@ -2048,12 +2148,16 @@ class Competition(models.Model):
         verbose_name=_(u"Datum začátku soutěže"),
         help_text=_(u"Od tohoto data se počítají jízdy"),
         default=None,
-        null=True, blank=True)
+        null=True,
+        blank=True,
+    )
     date_to = models.DateField(
         verbose_name=_(u"Datum konce soutěže"),
         help_text=_(u"Po tomto datu nebude možné soutěžit (vyplňovat dotazník)"),
         default=None,
-        null=True, blank=True)
+        null=True,
+        blank=True,
+    )
     type = models.CharField(
         verbose_name=_(u"Typ"),
         help_text=_(
@@ -2062,38 +2166,45 @@ class Competition(models.Model):
             u" cyklozaměstnavatele roku a další dotazníky; je nutné definovat otázky."),
         choices=CTYPES,
         max_length=16,
-        null=False)
+        null=False,
+    )
     competitor_type = models.CharField(
         verbose_name=_(u"Typ soutěžícího"),
         help_text=_(u"Určuje, zdali bude soutěž týmová, nebo pro jednotlivce. Ostatní volby vybírejte jen pokud víte, k čemu slouží."),
         choices=CCOMPETITORTYPES,
         max_length=16,
-        null=False)
+        null=False,
+    )
     user_attendance_competitors = models.ManyToManyField(
         UserAttendance,
         verbose_name=_(u"Přihlášení soutěžící jednotlivci"),
         related_name="competitions",
-        blank=True)
+        blank=True,
+    )
     team_competitors = models.ManyToManyField(
         Team,
         verbose_name=_(u"Přihlášené soutěžící týmy"),
         related_name="competitions",
-        blank=True)
+        blank=True,
+    )
     company_competitors = models.ManyToManyField(
         Company,
         verbose_name=_(u"Přihlášené soutěžící organizace"),
         related_name="competitions",
-        blank=True)
+        blank=True,
+    )
     city = models.ManyToManyField(
         City,
         verbose_name=_(u"Soutěž pouze pro města"),
         help_text=_(u"Soutěž bude probíhat ve vybraných městech. Pokud zůstane prázdné, soutěž probíhá ve všech městech."),
-        blank=True)
+        blank=True,
+    )
     company = models.ForeignKey(
         Company,
         verbose_name=_(u"Soutěž pouze pro organizace"),
         null=True,
-        blank=True)
+        blank=True,
+    )
     sex = models.CharField(
         verbose_name=_(u"Soutěž pouze pro pohlaví"),
         help_text=_(u"Pokud chcete oddělit výsledky pro muže a ženy, je potřeba vypsat dvě soutěže - jednu pro muže a druhou pro ženy. Jinak nechte prázdné."),
@@ -2114,19 +2225,23 @@ class Competition(models.Model):
         verbose_name=_(u"Soutěž bez přihlášek (pro všechny)"),
         help_text=_(u"Dotazník je obvykle na přihlášky, výkonnost také a pravidelnost bez nich."),
         default=True,
-        null=False)
+        null=False,
+    )
     public_answers = models.BooleanField(
         verbose_name=_(u"Zveřejňovat soutěžní odpovědi"),
         default=False,
-        null=False)
+        null=False,
+    )
     is_public = models.BooleanField(
         verbose_name=_(u"Soutěž je veřejná"),
         default=True,
-        null=False)
+        null=False,
+    )
     show_results = models.BooleanField(
         verbose_name=_("Zobrazovat výsledky soutěže"),
         default=True,
-        null=False)
+        null=False,
+    )
     entry_after_beginning_days = models.IntegerField(
         verbose_name=_(u"Prodloužené přihlášky"),
         help_text=_(u"Počet dní po začátku soutěže, kdy je ještě možné se přihlásit"),
@@ -2281,9 +2396,9 @@ class Competition(models.Model):
             city_string = ungettext_lazy(
                 "ve městě %(cities)s",
                 "ve městech %(cities)s",
-                len(cities)
+                len(cities),
             ) % {
-                'cities': ", ".join([city.name for city in cities])
+                'cities': ", ".join([city.name for city in cities]),
             }
         else:
             city_string = ""
@@ -2475,14 +2590,18 @@ class ChoiceType(models.Model):
     competition = models.ForeignKey(
         Competition,
         null=False,
-        blank=False)
+        blank=False,
+    )
     name = models.CharField(
         verbose_name=_(u"Jméno"),
         unique=True,
-        max_length=40, null=True)
+        max_length=40,
+        null=True,
+    )
     universal = models.BooleanField(
         verbose_name=_(u"Typ volby je použitelný pro víc otázek"),
-        default=False)
+        default=False,
+    )
 
     def __str__(self):
         return "%s" % self.name
@@ -2535,42 +2654,52 @@ class Question(models.Model):
     )
     date = models.DateField(
         verbose_name=_(u"Den"),
-        null=True, blank=True)
+        null=True,
+        blank=True,
+    )
     type = models.CharField(
         verbose_name=_(u"Typ"),
         choices=QTYPES,
         default='text',
         max_length=16,
-        null=False)
+        null=False,
+    )
     comment_type = models.CharField(
         verbose_name=_(u"Typ komentáře"),
         choices=COMMENT_TYPES,
         default=None,
         max_length=16,
         blank=True,
-        null=True)
+        null=True,
+    )
     with_attachment = models.BooleanField(
         verbose_name=_(u"Povolit přílohu"),
         default=False,
-        null=False)
+        null=False,
+    )
     order = models.IntegerField(
         verbose_name=_(u"Pořadí"),
-        null=True, blank=True)
+        null=True,
+        blank=True,
+    )
     competition = models.ForeignKey(
         Competition,
         verbose_name=_(u"Soutěž"),
         null=False,
-        blank=False)
+        blank=False,
+    )
     choice_type = models.ForeignKey(
         ChoiceType,
         verbose_name=_(u"Typ volby"),
         default=None,
         null=True,
-        blank=True)
+        blank=True,
+    )
     required = models.BooleanField(
         verbose_name=_(u"Povinná otázka"),
         default=True,
-        null=False)
+        null=False,
+    )
 
     def __str__(self):
         return "%s" % (self.name or self.text)
@@ -2591,12 +2720,14 @@ class Choice(models.Model):
         ChoiceType,
         verbose_name=_(u"Typ volby"),
         null=False,
-        blank=False)
+        blank=False,
+    )
     text = models.CharField(
         verbose_name=_(u"Nabídka"),
         max_length=250,
         db_index=True,
-        null=False)
+        null=False,
+    )
     points = models.IntegerField(
         verbose_name=_(u"Body"),
         null=True,
@@ -2634,9 +2765,11 @@ class Answer(models.Model):
     comment = models.TextField(
         verbose_name=_(u"Komentář"),
         max_length=600,
-        null=True, blank=True)
+        null=True, blank=True,
+    )
     points_given = models.FloatField(
-        null=True, blank=True, default=None)
+        null=True, blank=True, default=None,
+    )
     comment_given = models.TextField(
         verbose_name=_("Hodnotitelský komentář"),
         null=True,
@@ -2699,12 +2832,16 @@ def normalize_gpx_filename(instance, filename):
 class GpxFile(models.Model):
     file = models.FileField(
         verbose_name=_(u"GPX soubor"),
-        help_text=_(mark_safe(
-            "Zadat trasu nahráním souboru GPX. "
-            "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší <a href='http://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
-        )),
+        help_text=_(
+            mark_safe(
+                "Zadat trasu nahráním souboru GPX. "
+                "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší <a href='http://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
+            ),
+        ),
         upload_to=normalize_gpx_filename,
-        blank=True, null=True)
+        blank=True,
+        null=True,
+    )
     DIRECTIONS = [
         ('trip_to', _(u"Tam")),
         ('trip_from', _(u"Zpět")),
@@ -2713,17 +2850,20 @@ class GpxFile(models.Model):
     trip_date = models.DateField(
         verbose_name=_(u"Datum vykonání cesty"),
         null=False,
-        blank=False
+        blank=False,
     )
     direction = models.CharField(
         verbose_name=_(u"Směr cesty"),
         choices=DIRECTIONS,
         max_length=50,
-        null=False, blank=False)
+        null=False,
+        blank=False,
+    )
     trip = models.OneToOneField(
         Trip,
         null=True,
-        blank=True)
+        blank=True,
+    )
     track = models.MultiLineStringField(
         verbose_name=_(u"trasa"),
         help_text=MAP_DESCRIPTION,
@@ -2735,7 +2875,8 @@ class GpxFile(models.Model):
     user_attendance = models.ForeignKey(
         UserAttendance,
         null=False,
-        blank=False)
+        blank=False,
+    )
     from_application = models.BooleanField(
         verbose_name=_(u"Nahráno z aplikace"),
         default=False,
@@ -2833,7 +2974,7 @@ def set_trip(sender, instance, *args, **kwargs):
             direction=instance.direction,
             defaults={
                 'commute_mode': 'bicycle' if util.day_active(instance.trip_date, instance.user_attendance.campaign) else 'by_other_vehicle',
-            }
+            },
         )
         instance.trip = trip
 

@@ -37,19 +37,24 @@ class Mailing:
 
     def add(self, list_id, name, surname, email, custom_fields):
         subscriber = createsend.Subscriber({'api_key': self.api_key})
-        r = subscriber.add(list_id, email,
-                           " ".join([name, surname]),
-                           custom_fields,
-                           True)
+        r = subscriber.add(
+            list_id,
+            email,
+            " ".join([name, surname]),
+            custom_fields,
+            True,
+        )
         return r
 
     def update(self, list_id, mailing_id, name, surname, email, custom_fields):
         subscriber = createsend.Subscriber({'api_key': self.api_key}, list_id, mailing_id)
         subscriber.get(list_id, mailing_id)
-        subscriber.update(email,
-                          " ".join([name, surname]),
-                          custom_fields,
-                          True)
+        subscriber.update(
+            email,
+            " ".join([name, surname]),
+            custom_fields,
+            True,
+        )
         return subscriber.email_address
 
     def delete(self, list_id, mailing_id):
@@ -133,7 +138,8 @@ def update_user(user_attendance, ignore_hash):
             new_mailing_id = mailing.update(list_id, mailing_id, user.first_name, user.last_name, user.email, custom_fields)
             logger.info(
                 u'User %s (%s) with email %s updated in mailing list with id %s, custom_fields: %s' %
-                (userprofile, userprofile.user, user.email, mailing_id, custom_fields))
+                (userprofile, userprofile.user, user.email, mailing_id, custom_fields),
+            )
             update_mailing_id(user_attendance, new_mailing_id, mailing_hash)
     except createsend.BadRequest as e:
         if e.data.Code == 203:

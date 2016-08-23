@@ -42,7 +42,9 @@ if not settings.configured:
 
 def runtests(*test_args, **test_kwargs):
     failures = NoseTestSuiteRunner(verbosity=2, interactive=True).run_tests(
-        test_args, test_kwargs)
+        test_args,
+        test_kwargs,
+    )
     sys.exit(failures)
 
 

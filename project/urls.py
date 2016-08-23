@@ -15,22 +15,31 @@ admin.site.index_template = 'admin/my_custom_index.html'
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^admin/odpovedi/$',
+    url(
+        r'^admin/odpovedi/$',
         answers,
-        name='admin_answers'),
-    url(r'^admin/otazky/$',
+        name='admin_answers',
+    ),
+    url(
+        r'^admin/otazky/$',
         questions,
-        name='admin_questions'),
-    url(r'^admin/dotaznik_odpovedi/(?P<competition_slug>[0-9A-Za-z_\-]+)$',
+        name='admin_questions',
+    ),
+    url(
+        r'^admin/dotaznik_odpovedi/(?P<competition_slug>[0-9A-Za-z_\-]+)$',
         questionnaire_answers,
-        name='admin_questionnaire_answers'),
-    url(r'^admin/dotaznik/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        name='admin_questionnaire_answers',
+    ),
+    url(
+        r'^admin/dotaznik/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
         questionnaire_results,
-        name='admin_questionnaire_results'),
-    url(r'^admin/losovani/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        name='admin_questionnaire_results',
+    ),
+    url(
+        r'^admin/losovani/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
         views.DrawResultsView.as_view(),
         name="admin_draw_results",
-        ),
+    ),
     url(r'^admin/', admin.site.urls),
     url(r'^chaining/', include('smart_selects.urls')),
     url(r'^admin/', include("massadmin.urls")),
@@ -41,7 +50,7 @@ urlpatterns = [
     url(r'^rest/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^', include("dpnk.urls")),
-    url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nAllow:", content_type="text/plain"))
+    url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nAllow:", content_type="text/plain")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += i18n_patterns(

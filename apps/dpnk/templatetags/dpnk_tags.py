@@ -110,17 +110,17 @@ def _wp_news(post_type="post", post_type_string=_("novinka"), unfold="first", co
 
 
 @register.simple_tag
-def wp_article(id):
-    return mark_safe(wp_article_cached(id))
+def wp_article(article_id):
+    return mark_safe(wp_article_cached(article_id))
 
 
 @cached(60 * 60)
-def wp_article_cached(id):
+def wp_article_cached(article_id):
     url = "http://www.dopracenakole.cz/"
     api = slumber.API(url)
     try:
         wp_article = api.feed.get(feed="content_to_backend", _post_type="page", _id=id)
-        return wp_article[str(id)]['content']
+        return wp_article[str(article_id)]['content']
     except:
         logger.exception(u'Error fetching wp article')
         return ""

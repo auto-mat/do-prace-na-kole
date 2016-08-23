@@ -50,7 +50,7 @@ def user_data(user_attendance):
             "male": "M",
             "female": "F",
             "unknown": "O",
-            None: "O"
+            None: "O",
         }[user_attendance.userprofile.sex],
         "team": "56fa9f7788c53763287aaac0",
         "source": "API-%s" % settings.ECC_PROVIDER_CODE,

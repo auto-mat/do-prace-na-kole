@@ -40,13 +40,16 @@ class SelectOrCreateAutoComplete(AutoCompleteSelectWidget):
         html = super(SelectOrCreateAutoComplete, self).render(name, *args, **kwargs)
         widget_id = kwargs['attrs']['id']
 
-        widget = render_to_string("form/select_or_create.html", {
-            'html': html,
-            'underlying_form': self.underlying_form,
-            'selected': self.create,
-            'id': widget_id,
-            'new_description': self.new_description,
-        })
+        widget = render_to_string(
+            "form/select_or_create.html",
+            {
+                'html': html,
+                'underlying_form': self.underlying_form,
+                'selected': self.create,
+                'id': widget_id,
+                'new_description': self.new_description,
+            },
+        )
         return widget
 
 
@@ -64,13 +67,16 @@ class SelectOrCreate(forms.Select):
         html = super(SelectOrCreate, self).render(name, *args, **kwargs)
         widget_id = kwargs['attrs']['id']
 
-        widget = render_to_string("form/select_or_create.html", {
-            'html': html,
-            'underlying_form': self.underlying_form,
-            'selected': self.create,
-            'id': widget_id,
-            'new_description': self.new_description,
-        })
+        widget = render_to_string(
+            "form/select_or_create.html",
+            {
+                'html': html,
+                'underlying_form': self.underlying_form,
+                'selected': self.create,
+                'id': widget_id,
+                'new_description': self.new_description,
+            },
+        )
         return widget
 
 
@@ -93,7 +99,8 @@ class SelectChainedOrCreate(widgets.ChainedSelect):
                 'auto_choose',
                 'to_model_name',
                 'manager',
-                'view_name'])
+                'view_name',
+            ])
             setattr(self, k, v)
         self.manager = None
 
@@ -105,13 +112,15 @@ class SelectChainedOrCreate(widgets.ChainedSelect):
         html = super(SelectChainedOrCreate, self).render(name, *args, **kwargs)
         widget_id = kwargs['attrs']['id']
 
-        widget = render_to_string("form/select_or_create.html", {
-            'html': html,
-            'underlying_form': self.underlying_form,
-            'selected': self.create,
-            'id': widget_id,
-            'new_description': self.new_description,
-        })
+        widget = render_to_string(
+            "form/select_or_create.html", {
+                'html': html,
+                'underlying_form': self.underlying_form,
+                'selected': self.create,
+                'id': widget_id,
+                'new_description': self.new_description,
+            },
+        )
         return widget
 
 

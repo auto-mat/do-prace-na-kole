@@ -97,7 +97,8 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
     motivation_company_admin = forms.CharField(
         label=_(u"Zaměstnanecká pozice"),
         max_length=100,
-        required=True)
+        required=True,
+    )
     will_pay_opt_in = forms.BooleanField(
         label=_("Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance jejichž platbu schválím."),
         required=True,
@@ -118,7 +119,8 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
         self.fields['personal_data_opt_in'].label = _(
             "Souhlasím se zpracováním osobních údajů podle "
             "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
-            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>." % self.instance.campaign)
+            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>." % self.instance.campaign,
+        )
         return ret_val
 
 
@@ -127,30 +129,36 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         label=_(u"Pár vět o vaší pozici"),
         help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle kterých můžeme ověřit, že vám funkci koordinátora organizace můžeme svěřit."),
         max_length=100,
-        required=True)
+        required=True,
+    )
     administrated_company = forms.ModelChoiceField(
         label=_(u"Koordinovaná organizace"),
         widget=AutoCompleteSelectWidget(
             'companies',
         ),
         queryset=Company.objects.all(),
-        required=True)
+        required=True,
+    )
     telephone = forms.CharField(
         label="Telefon",
         help_text="Pro možnost kontaktování koordinátora organizace",
-        max_length=30)
+        max_length=30,
+    )
     first_name = forms.CharField(
         label=_(u"Jméno"),
         max_length=30,
-        required=True)
+        required=True,
+    )
     last_name = forms.CharField(
         label=_(u"Příjmení"),
         max_length=30,
-        required=True)
+        required=True,
+    )
     campaign = forms.ModelChoiceField(
         widget=forms.widgets.HiddenInput(),
         queryset=Campaign.objects.all(),
-        required=True)
+        required=True,
+    )
     username = forms.CharField(widget=forms.HiddenInput, required=False)
     will_pay_opt_in = forms.BooleanField(
         label=_("Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance jejichž platbu schválím."),
@@ -178,7 +186,8 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         self.fields['personal_data_opt_in'].label = _(
             "Souhlasím se zpracováním osobních údajů podle "
             "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
-            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>." % campaign)
+            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>." % campaign,
+        )
         return ret_val
 
     class Meta:
@@ -202,12 +211,14 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
     type = forms.ChoiceField(
         label=_(u"Typ soutěže"),
         choices=[x for x in Competition.CTYPES if x[0] != 'questionnaire'],
-        required=True)
+        required=True,
+    )
 
     competitor_type = forms.ChoiceField(
         label=_(u"Typ soutěžícího"),
         choices=[x for x in Competition.CCOMPETITORTYPES if x[0] in ['single_user', 'team']],
-        required=True)
+        required=True,
+    )
 
     class Meta:
         model = Competition
@@ -217,8 +228,11 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
         if not self.instance.pk:
             self.instance.slug = 'FA-%s-%s' % (self.instance.campaign.slug, slugify(self.cleaned_data['name'])[0:30])
             if Competition.objects.filter(slug=self.instance.slug).exists():
-                raise forms.ValidationError(_(u"%(model_name)s with this %(field_label)s already exists.") % {
-                    "model_name": self.instance._meta.verbose_name, "field_label": self.instance._meta.get_field('name').verbose_name})
+                raise forms.ValidationError(
+                    _(u"%(model_name)s with this %(field_label)s already exists.") % {
+                        "model_name": self.instance._meta.verbose_name, "field_label": self.instance._meta.get_field('name').verbose_name,
+                    },
+                )
         return self.cleaned_data['name']
 
     def save(self, force_insert=False, force_update=False, commit=True):

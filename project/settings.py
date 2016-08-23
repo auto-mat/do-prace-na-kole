@@ -50,7 +50,7 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '',
-        'OPTIONS': {'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci'}
+        'OPTIONS': {'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci'},
     },
 }
 
@@ -278,7 +278,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
         'OPTIONS': {
             'min_length': 6,
-        }
+        },
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -293,18 +293,19 @@ LOGGING = {
     'disable_existing_loggers': True,
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s',
         },
         'simple': {
-            'format': '%(levelname)s %(message)s'
+            'format': '%(levelname)s %(message)s',
         },
         'plain': {
-            'format': '%(asctime)s %(message)s'},
+            'format': '%(asctime)s %(message)s',
+        },
     },
     'filters': {
         'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
     },
     'handlers': {
         'sentry': {
@@ -315,7 +316,7 @@ LOGGING = {
         'console': {
             'level': 'WARNING',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'formatter': 'simple',
         },
         'logfile': {
             'level': 'DEBUG',
@@ -356,7 +357,7 @@ LOGGING = {
             'handlers': ['console', 'logfile', 'mail_admins', 'sentry'],
             'propagate': False,
         },
-    }
+    },
 }
 
 MESSAGE_TAGS = {

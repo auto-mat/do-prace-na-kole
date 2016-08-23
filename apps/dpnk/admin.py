@@ -74,7 +74,8 @@ def admin_links(args_generator):
     return format_html_join(
         mark_safe('<br/>'),
         '<a href="{}">{}</a>',
-        args_generator)
+        args_generator,
+    )
 
 
 class PaymentInline(NestedTabularInline):
@@ -179,7 +180,8 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
         'address_recipient',
         'address_psc',
         'address_city',
-        'address_district')
+        'address_district',
+    )
     list_max_show_all = 10000
     form = CompanyForm
     resource_class = CompanyResource
@@ -191,8 +193,11 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
 
     def subsidiary_links(self, obj):
         return admin_links(
-            [(reverse('admin:dpnk_subsidiary_change', args=(u.pk,)), str(u))
-                for u in models.Subsidiary.objects.filter(company=obj)])
+            [
+                (reverse('admin:dpnk_subsidiary_change', args=(u.pk,)), str(u))
+                for u in models.Subsidiary.objects.filter(company=obj)
+            ]
+        )
     subsidiary_links.short_description = _('Pobočky')
 
 
@@ -256,8 +261,11 @@ class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
 
     def team_links(self, obj):
         return admin_links(
-            [(reverse('admin:dpnk_team_change', args=(u.pk,)), str(u))
-                for u in models.Team.objects.filter(subsidiary=obj)])
+            [
+                (reverse('admin:dpnk_team_change', args=(u.pk,)), str(u))
+                for u in models.Team.objects.filter(subsidiary=obj)
+            ],
+        )
     team_links.short_description = _(u"Týmy")
 
 
@@ -317,21 +325,23 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFie
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser:
             return ['competition_results_link', 'questionnaire_results_link', 'draw_link']
-        return ['competition_results_link',
-                'questionnaire_results_link',
-                'url',
-                'draw_link',
-                'date_to',
-                'date_from',
-                'company',
-                'without_admission',
-                'public_answers',
-                'is_public',
-                'entry_after_beginning_days',
-                'team_competitors',
-                'company_competitors',
-                'user_attendance_competitors',
-                'campaign']
+        return [
+            'competition_results_link',
+            'questionnaire_results_link',
+            'url',
+            'draw_link',
+            'date_to',
+            'date_from',
+            'company',
+            'without_admission',
+            'public_answers',
+            'is_public',
+            'entry_after_beginning_days',
+            'team_competitors',
+            'company_competitors',
+            'user_attendance_competitors',
+            'campaign',
+        ]
 
     def city_list(self, obj):
         return ", ".join([str(c) for c in obj.city.all()])
@@ -456,7 +466,8 @@ class UserAdmin(RelatedFieldAdmin, ExportMixin, NestedModelAdmin, UserAdmin):
         'is_active',
         'last_login',
         'userprofile_administrated_cities',
-        'id')
+        'id',
+    )
     search_fields = ['first_name', 'last_name', 'username', 'email', 'userprofile__company_admin__administrated_company__name', ]
     list_filter = [
         'userprofile__userattendance_set__campaign',
@@ -467,7 +478,8 @@ class UserAdmin(RelatedFieldAdmin, ExportMixin, NestedModelAdmin, UserAdmin):
         HasUserprofileFilter,
         'userprofile__sex',
         'userprofile__administrated_cities',
-        EmailFilter]
+        EmailFilter,
+    ]
     readonly_fields = ['password']
     list_max_show_all = 10000
 
@@ -693,8 +705,11 @@ class TeamAdmin(ExportMixin, RelatedFieldAdmin):
 
     def members(self, obj):
         return admin_links(
-            [(reverse('admin:dpnk_userattendance_change', args=(u.pk,)), u, u.approved_for_team)
-                for u in models.UserAttendance.objects.filter(team=obj)])
+            [
+                (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), u, u.approved_for_team)
+                for u in models.UserAttendance.objects.filter(team=obj)
+            ],
+        )
     members.short_description = _('Členové')
 
     def get_queryset(self, request):
@@ -741,7 +756,8 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
             return format_html(
                 '<a href="{}">{}</a>',
                 reverse('admin:auth_user_change', args=(obj.user_attendance.userprofile.user.pk,)),
-                obj.user_attendance.userprofile.user)
+                obj.user_attendance.userprofile.user,
+            )
     user_link.short_description = _('Uživatel')
 
     base_model = models.Transaction
@@ -979,7 +995,8 @@ class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__c
         return mark_safe(
             "<br/>".join(
                 [choice.text for choice in obj.choice_type.choices.all()]) +
-            '<br/><a href="%s">edit</a>' % reverse('admin:dpnk_choicetype_change', args=(obj.choice_type.pk,)))
+            '<br/><a href="%s">edit</a>' % reverse('admin:dpnk_choicetype_change', args=(obj.choice_type.pk,)),
+        )
 
     def answers_link(self, obj):
         if obj.pk:
@@ -1166,19 +1183,22 @@ class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsi
         'administrated_company__name',
         'can_confirm_payments',
         'note',
-        'campaign']
+        'campaign',
+    ]
     list_filter = [
         CampaignFilter,
         'company_admin_approved',
         HasUserAttendanceFilter,
-        'administrated_company__subsidiaries__city']
+        'administrated_company__subsidiaries__city',
+    ]
     search_fields = [
         'administrated_company__name',
         'userprofile__nickname',
         'userprofile__user__first_name',
         'userprofile__user__last_name',
         'userprofile__user__username',
-        'userprofile__user__email']
+        'userprofile__user__email',
+    ]
     raw_id_fields = ['userprofile']
     list_max_show_all = 100000
     actions = (actions.update_mailing_coordinator,)
@@ -1244,7 +1264,8 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'company__ico',
         'company__dic',
         'company_pais_benefitial_fee',
-        'company_address']
+        'company_address',
+    ]
     readonly_fields = ['created', 'author', 'updated_by', 'invoice_count']
     list_filter = [CampaignFilter, InvoicePaidFilter, 'company_pais_benefitial_fee']
     search_fields = ['company__name', ]

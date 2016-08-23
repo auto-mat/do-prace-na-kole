@@ -53,7 +53,7 @@ def make_invoice_sheet_pdf(outfile, invoice):
         logo_filename=os.path.join(DIR, "static/img/logo.jpg"),
         note="Spolek je veden u Městského soudu v Praze pod spisovou značkou L 18119.\n"
              "Auto*mat - společně s vámi tvoříme město, ve kterém chceme žít.\n"
-             "                                       http://www.auto-mat.cz"
+             "                                       http://www.auto-mat.cz",
     )
 
     creator = Creator(

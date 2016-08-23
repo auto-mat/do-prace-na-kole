@@ -25,7 +25,7 @@ def send_ecc_tracks(self):
         ecc_last_upload__isnull=True,
         user_attendance__team__subsidiary__city__slug='praha',
         user_attendance__payment_status='done',
-        user_attendance__campaign__slug='dpnk2016'
+        user_attendance__campaign__slug='dpnk2016',
     )
 
     count = gpx_files_post(gpx_files)

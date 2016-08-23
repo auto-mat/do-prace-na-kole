@@ -160,52 +160,72 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                 messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members')))
             elif self.user_attendance.is_libero():
                 # TODO: get WP slug for city
-                messages.warning(request, format_html(_(
-                    'Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce!'
-                    ' <ul><li><a href="{invite_url}">Pozvěte</a> své kolegy do vašeho týmu, pokud jste tak již učinil/a, '
-                    'vyčkejte na potvrzující email a schvalte jejich členství v týmu.</li>'
-                    '<li>Můžete se pokusit <a href="{join_team_url}">přidat se k jinému týmu</a>.</li>'
-                    '<li>Pokud nemůžete sehnat spolupracovníky, '
-                    ' <a href="http://www.dopracenakole.cz/locations/{city}/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>'),
-                    invite_url=reverse('pozvanky'),
-                    join_team_url=reverse('zmenit_tym'),
-                    city=self.user_attendance.team.subsidiary.city.slug))
+                messages.warning(
+                    request,
+                    format_html(
+                        _(
+                            'Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce!'
+                            ' <ul><li><a href="{invite_url}">Pozvěte</a> své kolegy do vašeho týmu, pokud jste tak již učinil/a, '
+                            'vyčkejte na potvrzující email a schvalte jejich členství v týmu.</li>'
+                            '<li>Můžete se pokusit <a href="{join_team_url}">přidat se k jinému týmu</a>.</li>'
+                            '<li>Pokud nemůžete sehnat spolupracovníky, '
+                            ' <a href="http://www.dopracenakole.cz/locations/{city}/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>'
+                        ),
+                        invite_url=reverse('pozvanky'),
+                        join_team_url=reverse('zmenit_tym'),
+                        city=self.user_attendance.team.subsidiary.city.slug,
+                    ),
+                )
 
         if self.registration_phase == 'registration_uncomplete':
             if self.user_attendance.team:
                 if self.user_attendance.approved_for_team == 'undecided':
-                    messages.warning(request, format_html(
-                        _(
-                            "Vaši kolegové v týmu {team} ještě musí potvrdit vaše členství."
-                            " Pokud to trvá podezřele dlouho, můžete zkusit"
-                            " <a href='{address}'>znovu požádat o ověření členství</a>."),
-                        team=self.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi")))
+                    messages.warning(
+                        request,
+                        format_html(
+                            _(
+                                "Vaši kolegové v týmu {team} ještě musí potvrdit vaše členství."
+                                " Pokud to trvá podezřele dlouho, můžete zkusit"
+                                " <a href='{address}'>znovu požádat o ověření členství</a>."),
+                            team=self.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi"),
+                        ),
+                    )
                 elif self.user_attendance.approved_for_team == 'denied':
                     messages.error(request, mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')))
 
             if not self.user_attendance.track and not self.user_attendance.distance:
-                messages.info(request, mark_safe(
-                    _(u'Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.'
-                      u' Na základě této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty.'
-                      u' Vaše vyplněná trasa se objeví na <a target="_blank" href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
-                      u' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
-                      u' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu')))
+                messages.info(
+                    request,
+                    mark_safe(
+                        _(u'Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.'
+                          u' Na základě této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty.'
+                          u' Vaše vyplněná trasa se objeví na <a target="_blank" href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
+                          u' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
+                          u' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu'),
+                    ),
+                )
 
             if not self.user_attendance.payment_waiting():
-                messages.info(request, format_html(
-                    _('Vaše platba typu {payment_type} ještě nebyla vyřízena. '
-                      'Počkejte prosím na její schválení. '
-                      'Pokud schválení není možné, můžete <a href="{url}">zadat jiný typ platby</a>.'),
-                    payment_type=self.user_attendance.payment_type_string(), url=reverse('typ_platby')))
+                messages.info(
+                    request,
+                    format_html(
+                        _('Vaše platba typu {payment_type} ještě nebyla vyřízena. '
+                          'Počkejte prosím na její schválení. '
+                          'Pokud schválení není možné, můžete <a href="{url}">zadat jiný typ platby</a>.'),
+                        payment_type=self.user_attendance.payment_type_string(), url=reverse('typ_platby'),
+                    ),
+                )
 
         if self.registration_phase == 'profile_view':
             if self.user_attendance.has_unanswered_questionnaires:
                 competitions = format_html_join(
                     ", ",
-                    "<a href='{}'>{}</a>", ((
+                    "<a href='{}'>{}</a>",
+                    ((
                         reverse_lazy("questionnaire", kwargs={"questionnaire_slug": q.slug}),
                         q.name
-                    ) for q in self.user_attendance.unanswered_questionnaires().all()))
+                    ) for q in self.user_attendance.unanswered_questionnaires().all()),
+                )
                 messages.info(request, format_html(_(u'Nezapomeňte vyplnit odpovědi v následujících soutěžích: {}!'), competitions))
 
         company_admin = self.user_attendance.related_company_admin
@@ -485,7 +505,7 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
             messages.add_message(
                 self.request,
                 messages.WARNING,
-                _("Pozvánka je určena jinému uživateli, než je aktuálně přihlášen. Přihlašte se jako uživatel %s." % initial_email)
+                _("Pozvánka je určena jinému uživateli, než je aktuálně přihlášen. Přihlašte se jako uživatel %s." % initial_email),
             )
             return redirect("%s?next=%s" % (reverse("login", kwargs={"initial_email": initial_email}), request.get_full_path()))
         invitation_token = self.kwargs['token']
@@ -536,20 +556,30 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         payment_type = form.cleaned_data['payment_type']
 
         if payment_type == 'company':
-            company_admin_email_string = mark_safe(", ".join([format_html(
-                "<a href='mailto:{email}'>{email}</a>",
-                email=a.userprofile.user.email
-                ) for a in self.user_attendance.get_asociated_company_admin()]))
+            company_admin_email_string = mark_safe(
+                ", ".join(
+                    [
+                        format_html(
+                            "<a href='mailto:{email}'>{email}</a>",
+                            email=a.userprofile.user.email,
+                        ) for a in self.user_attendance.get_asociated_company_admin()
+                    ]
+                ),
+            )
         else:
             company_admin_email_string = ""
         payment_choices = {
             'member': {'type': 'am', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
             'member_wannabe': {'type': 'amw', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
             'free': {'type': 'fe', 'message': _(u"Váš nárok na startovné zdarma bude muset být ještě ověřen"), 'amount': 0},
-            'company': {'type': 'fc', 'message': format_html(
-                _("Platbu ještě musí schválit koordinátor vaší organizace {email}"),
-                email=company_admin_email_string
-                ), 'amount': self.user_attendance.company_admission_fee()},
+            'company': {
+                'type': 'fc',
+                'message': format_html(
+                    _("Platbu ještě musí schválit koordinátor vaší organizace {email}"),
+                    email=company_admin_email_string,
+                ),
+                'amount': self.user_attendance.company_admission_fee(),
+            },
         }
 
         if payment_type in ('pay', 'pay_beneficiary'):
@@ -587,16 +617,25 @@ class PaymentView(UserAttendanceViewMixin, TemplateView):
             amount = self.user_attendance.beneficiary_admission_fee()
         else:
             amount = self.user_attendance.admission_fee()
-        p = Payment(session_id=session_id,
-                    user_attendance=self.user_attendance,
-                    order_id=order_id,
-                    amount=amount,
-                    status=models.Status.NEW,
-                    description="Ucastnicky poplatek Do prace na kole")
+        p = Payment(
+            session_id=session_id,
+            user_attendance=self.user_attendance,
+            order_id=order_id,
+            amount=amount,
+            status=models.Status.NEW,
+            description="Ucastnicky poplatek Do prace na kole",
+        )
         p.save()
         logger.info(
-            u'Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s' %
-            (uid, order_id, session_id, self.user_attendance, self.user_attendance.userprofile.user.username, p.status))
+            u'Inserting payment with uid: %s, order_id: %s, session_id: %s, userprofile: %s (%s), status: %s' % (
+                uid,
+                order_id,
+                session_id,
+                self.user_attendance,
+                self.user_attendance.userprofile.user.username,
+                p.status,
+            ),
+        )
         # Render form
         profile = self.user_attendance.userprofile
         firstname = unidecode(profile.user.first_name)  # firstname
@@ -653,7 +692,16 @@ class PaymentResult(UserAttendanceViewMixin, TemplateView):
         context_data = super(PaymentResult, self).get_context_data()
         logger.info(
             u'Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s (%s)' %
-            (success, trans_id, session_id, pay_type, error, user_attendance, user_attendance.userprofile.user.username))
+            (
+                success,
+                trans_id,
+                session_id,
+                pay_type,
+                error,
+                user_attendance,
+                user_attendance.userprofile.user.username,
+            ),
+        )
 
         if session_id and session_id != "":
             p = Payment.objects.select_for_update().get(session_id=session_id)
@@ -707,22 +755,36 @@ def payment_status(request):
     # Determine the status of transaction based on the notification
     c = HTTPSConnection("secure.payu.com")
     timestamp = str(int(time.time()))
-    c.request("POST", "/paygw/UTF/Payment/get/txt/",
-              urlencode((
-                  ('pos_id', pos_id),
-                  ('session_id', session_id),
-                  ('ts', timestamp),
-                  ('sig', make_sig((pos_id, session_id, timestamp)))
-              )),
-              {"Content-type": "application/x-www-form-urlencoded",
-               "Accept": "text/plain"})
+    c.request(
+        "POST",
+        "/paygw/UTF/Payment/get/txt/",
+        urlencode((
+            ('pos_id', pos_id),
+            ('session_id', session_id),
+            ('ts', timestamp),
+            ('sig', make_sig((pos_id, session_id, timestamp)))
+        )),
+        {
+            "Content-type": "application/x-www-form-urlencoded",
+            "Accept": "text/plain",
+        },
+    )
     raw_response = codecs.decode(c.getresponse().read(), "utf-8")
     r = {}
     for i in [i.split(':', 1) for i in raw_response.split('\n') if i != '']:
         r[i[0]] = i[1].strip()
-    check_sig(r['trans_sig'], (r['trans_pos_id'], r['trans_session_id'], r['trans_order_id'],
-                               r['trans_status'], r['trans_amount'], r['trans_desc'],
-                               r['trans_ts']))
+    check_sig(
+        r['trans_sig'],
+        (
+            r['trans_pos_id'],
+            r['trans_session_id'],
+            r['trans_order_id'],
+            r['trans_status'],
+            r['trans_amount'],
+            r['trans_desc'],
+            r['trans_ts'],
+        ),
+    )
     amount = int(r['trans_amount']) / 100
     # Update the corresponding payment
     # TODO: use update_or_create in Django 1.7
@@ -732,7 +794,8 @@ def payment_status(request):
             'order_id': r['trans_order_id'],
             'amount': amount,
             'description': r['trans_desc'],
-        })
+        },
+    )
 
     if p.amount != amount:
         logger.error(
@@ -742,8 +805,9 @@ def payment_status(request):
                 'status': p.status,
                 'payment_response': r,
                 'expected_amount': p.amount,
-                'request': request
-            })
+                'request': request,
+            },
+        )
         return HttpResponse("Bad amount", status=400)
     p.pay_type = r['trans_pay_type']
     p.status = r['trans_status']
@@ -781,13 +845,15 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
 
     def get_initial(self):
         distance = self.user_attendance.get_distance(request=self.request)
-        return [{
-            'distance': distance,
-            'date': trip[0],
-            'direction': trip[1],
-            'user_attendance': self.user_attendance,
-            'commute_mode': 'by_other_vehicle' if util.working_day(trip[0]) else 'no_work',
-        } for trip in self.uncreated_trips]
+        return [
+            {
+                'distance': distance,
+                'date': trip[0],
+                'direction': trip[1],
+                'user_attendance': self.user_attendance,
+                'commute_mode': 'by_other_vehicle' if util.working_day(trip[0]) else 'no_work',
+            } for trip in self.uncreated_trips
+        ]
 
     def get_factory_kwargs(self):
         kwargs = super().get_factory_kwargs()
@@ -979,9 +1045,12 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
         except Competition.DoesNotExist:
             logger.exception('Unknown competition', extra={'slug': competition_slug, 'request': self.request})
             return {
-                'fullpage_error_message': mark_safe(_(
-                    'Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na '
-                    '<a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž">kontakt@dopracenakole.cz</a>')),
+                'fullpage_error_message': mark_safe(
+                    _(
+                        'Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky nějaké soutěže, napište prosím na '
+                        '<a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž">kontakt@dopracenakole.cz</a>'
+                    ),
+                ),
                 'title': _("Není vybraný tým"),
             }
 
@@ -1084,9 +1153,14 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
             self.competition = Competition.objects.get(slug=questionaire_slug)
         except Competition.DoesNotExist:
             logger.exception('Unknown questionaire', extra={'slug': questionaire_slug, 'request': request})
-            return HttpResponse(_(u'<div class="text-danger">Tento dotazník v systému nemáme.'
-                                  u' Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na'
-                                  u' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující dotazník">kontakt@dopracenakole.cz</a></div>'), status=401)
+            return HttpResponse(
+                _(
+                    '<div class="text-danger">Tento dotazník v systému nemáme.'
+                    ' Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na'
+                    ' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující dotazník">kontakt@dopracenakole.cz</a></div>'
+                ),
+                status=401,
+            )
         self.show_points = self.competition.has_finished() or self.userprofile.user.is_superuser
         self.is_actual = self.competition.is_actual()
         self.questions = Question.objects.filter(competition=self.competition).order_by('order')
@@ -1126,7 +1200,8 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
                 question=question,
                 prefix="question-%s" % question.pk,
                 show_points=self.show_points,
-                is_actual=self.is_actual)
+                is_actual=self.is_actual,
+            )
             if not question.form.is_valid():
                 invalid_count += 1
 
@@ -1172,7 +1247,8 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
         for competitor in competitors:
             competitor.answers = Answer.objects.filter(
                 user_attendance__in=competitor.user_attendances(),
-                question__competition__slug=competition_slug)
+                question__competition__slug=competition_slug,
+            )
         context_data['show_points'] = competition.has_finished() or (self.request.user.is_authenticated() and self.request.user.userprofile.user.is_superuser)
         context_data['competitors'] = competitors
         context_data['competition'] = competition
@@ -1190,8 +1266,9 @@ def questions(request):
         'admin/questions.html',
         {
             'title': _("Otázky v dotaznících"),
-            'questions': questions
-        })
+            'questions': questions,
+        },
+    )
 
 
 @staff_member_required
@@ -1211,7 +1288,8 @@ def questionnaire_results(
             'competitors': competitors,
             'competition': competition,
             'title': _("Výsledky odpovědí na dotazník"),
-        })
+        },
+    )
 
 
 @staff_member_required
@@ -1228,7 +1306,8 @@ def questionnaire_answers(
         return HttpResponse(_(u'<div class="text-danger">Nesprávně zadaný soutěžící.</div>'), status=401)
     answers = Answer.objects.filter(
         user_attendance__in=competitor_result.user_attendances(),
-        question__competition__slug=competition_slug)
+        question__competition__slug=competition_slug,
+    )
     total_points = competitor_result.result
     return render(
         request,
@@ -1238,8 +1317,9 @@ def questionnaire_answers(
             'competitor': competitor_result,
             'media': settings.MEDIA_URL,
             'title': _("Odpovědi na dotazník"),
-            'total_points': total_points
-        })
+            'total_points': total_points,
+        },
+    )
 
 
 @staff_member_required  # noqa
@@ -1305,8 +1385,9 @@ def answers(request):
             'total_respondents': total_respondents,
             'media': settings.MEDIA_URL,
             'title': _("Odpověd na dotazník"),
-            'choice_names': choice_names
-        })
+            'choice_names': choice_names,
+        },
+    )
 
 
 def approve_for_team(request, user_attendance, reason="", approve=False, deny=False):
@@ -1317,7 +1398,8 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
                 messages.ERROR,
                 _(u"Při zamítnutí člena týmu musíte vyplnit zprávu."),
                 extra_tags="user_attendance_%s" % user_attendance.pk,
-                fail_silently=True)
+                fail_silently=True,
+            )
             return
         user_attendance.approved_for_team = 'denied'
         user_attendance.save()
@@ -1327,7 +1409,8 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
             messages.SUCCESS,
             _(u"Členství uživatele %s ve vašem týmu bylo zamítnuto" % user_attendance),
             extra_tags="user_attendance_%s" % user_attendance.pk,
-            fail_silently=True)
+            fail_silently=True,
+        )
         return
     elif approve:
         if len(user_attendance.team.members()) >= settings.MAX_TEAM_MEMBERS:
@@ -1336,7 +1419,8 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
                 messages.ERROR,
                 _(u"Tým je již plný, další člen již nemůže být potvrzen."),
                 extra_tags="user_attendance_%s" % user_attendance.pk,
-                fail_silently=True)
+                fail_silently=True,
+            )
             return
         user_attendance.approved_for_team = 'approved'
         user_attendance.save()
@@ -1347,7 +1431,8 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
             _(u"Členství uživatele %(user)s v týmu %(team)s bylo odsouhlaseno.") %
             {"user": user_attendance, "team": user_attendance.team.name},
             extra_tags="user_attendance_%s" % user_attendance.pk,
-            fail_silently=True)
+            fail_silently=True,
+        )
         return
 
 
@@ -1400,14 +1485,16 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, FormView):
                             self.request,
                             messages.SUCCESS,
                             _(u"Uživatel %(user)s byl přijat do vašeho týmu.") % {"user": invited_user_attendance, "email": email},
-                            fail_silently=True)
+                            fail_silently=True,
+                        )
                     else:
                         invitation_register_mail(self.user_attendance, invited_user_attendance)
                         messages.add_message(
                             self.request,
                             messages.SUCCESS,
                             _(u"Odeslána pozvánka uživateli %(user)s na email %(email)s") % {"user": invited_user_attendance, "email": email},
-                            fail_silently=True)
+                            fail_silently=True,
+                        )
                 except models.User.DoesNotExist:
                     invitation_mail(self.user_attendance, email)
                     messages.add_message(self.request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s") % email, fail_silently=True)
@@ -1473,13 +1560,15 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
                             'approval': approved_user.approved_for_team,
                             'team': approved_user.team,
                             'active': userprofile.user.is_active,
-                        })
+                        },
+                    )
                     messages.add_message(
                         request,
                         messages.ERROR,
                         _("Tento uživatel již byl přijat do týmu. Pravděpodobně jste dvakrát odeslali formulář."),
                         extra_tags="user_attendance_%s" % approved_user.pk,
-                        fail_silently=True)
+                        fail_silently=True,
+                    )
                 else:
                     approve_for_team(request, approved_user, request.POST.get('reason-' + str(approved_user.id), ''), action == 'approve', action == 'deny')
         return render(request, self.template_name, self.get_context_data())
@@ -1538,7 +1627,8 @@ def period_trips(campaign, day_from, day_to, commute_mode_list=('bicycle', 'by_f
 @cache_page(60 * 60)
 def statistics(
         request,
-        template='registration/statistics.html'):
+        template='registration/statistics.html',
+        ):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
     variables = {}
@@ -1554,13 +1644,13 @@ def statistics(
     variables['pocet-zaplacenych'] = UserAttendance.objects.filter(
         Q(campaign=campaign) &
         Q(userprofile__user__is_active=True) &
-        Q(transactions__status__in=models.Payment.done_statuses)
+        Q(transactions__status__in=models.Payment.done_statuses),
     ).exclude(Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct().count()
     variables['pocet-prihlasenych'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True).distinct().count()
     variables['pocet-soutezicich'] = UserAttendance.objects.filter(
         Q(campaign=campaign) &
         Q(userprofile__user__is_active=True) &
-        (Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0))
+        (Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0)),
     ).distinct().count()
     variables['pocet-spolecnosti'] = Company.objects.filter(Q(subsidiaries__teams__campaign=campaign)).distinct().count()
     variables['pocet-pobocek'] = Subsidiary.objects.filter(Q(teams__campaign=campaign)).distinct().count()
@@ -1583,7 +1673,8 @@ def daily_chart(
             'values': values,
             'days': reversed(list(util.days(campaign.phase('competition')))),
             'max_value': max(values),
-        })
+        },
+    )
 
 
 @cache_page(60 * 60)
@@ -1592,13 +1683,17 @@ def daily_distance_extra_json(
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
     values = collections.OrderedDict(
-        (str(day), {
-            'distance': period_distance(campaign, day, day),
-            'distance_bicycle': period_distance(campaign, day, day, ('bicycle',)),
-            'distance_foot': period_distance(campaign, day, day, ('by_foot',)),
-            'emissions_co2': util.get_emissions(period_distance(campaign, day, day))['co2'],
-        }
-        ) for day in util.days(campaign.phase('competition'))
+        (
+            str(day),
+            {
+                'distance': period_distance(campaign, day, day),
+                'distance_bicycle': period_distance(campaign, day, day, ('bicycle',)),
+                'distance_foot': period_distance(campaign, day, day, ('by_foot',)),
+                'emissions_co2': util.get_emissions(period_distance(campaign, day, day))['co2'],
+            },
+        ) for day in util.days(
+            campaign.phase('competition'),
+        )
     )
     data = json.dumps(values)
     return HttpResponse(data)

@@ -82,7 +82,8 @@ def must_be_approved_for_team(fn):
                     'fullpage_error_message':
                     format_html(
                         _(u"Vaše členství v týmu {team} nebylo odsouhlaseno. <a href='{address}'>Znovu požádat o ověření členství</a>."),
-                        team=user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi")),
+                        team=user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi"),
+                    ),
                     'title': _("Členství v týmu neověřeno"),
                 },
                 status=403,
@@ -111,12 +112,15 @@ def must_be_company_admin(fn):
             view.template_name,
             {
                 'fullpage_error_message':
-                mark_safe(_(
-                    "Tato stránka je určená pouze ověřeným Koordinátorům organizací. "
-                    "K tuto funkci se musíte nejdříve <a href='%s'>přihlásit</a>, a vyčkat na naše ověření. "
-                    "Pokud na ověření čekáte příliš dlouho, kontaktujte naši podporu na "
-                    "<a href='mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž'>kontakt@dopracenakole.cz</a>." %
-                    reverse("company_admin_application"))),
+                mark_safe(
+                    _(
+                        "Tato stránka je určená pouze ověřeným Koordinátorům organizací. "
+                        "K tuto funkci se musíte nejdříve <a href='%s'>přihlásit</a>, a vyčkat na naše ověření. "
+                        "Pokud na ověření čekáte příliš dlouho, kontaktujte naši podporu na "
+                        "<a href='mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž'>kontakt@dopracenakole.cz</a>." %
+                        reverse("company_admin_application"),
+                    ),
+                ),
                 'title': _("Nedostatečné oprávnění"),
             },
             status=403,
@@ -169,7 +173,7 @@ def must_be_in_phase(phase_type):
             else:
                 message = mark_safe(
                     _(u"Ještě nenastal čas, kdy by se měla tato stránka zobrazit.<br/>Stránka se zobrazí až %s")
-                    % formats.date_format(phase.date_from, "SHORT_DATE_FORMAT")
+                    % formats.date_format(phase.date_from, "SHORT_DATE_FORMAT"),
                 )
             response = render(
                 request,
@@ -215,9 +219,10 @@ def must_be_competitor(fn):
             view.template_name,
             {
                 'fullpage_error_message':
-                mark_safe(_(
-                    u"V soutěži Do práce na kole nesoutěžíte. Pokud jste koordinátorem organizace, použijte <a href='%s'>správu organizace</a>.") %
-                    reverse("company_structure")),
+                mark_safe(
+                    _(u"V soutěži Do práce na kole nesoutěžíte. Pokud jste koordinátorem organizace, použijte <a href='%s'>správu organizace</a>.") %
+                    reverse("company_structure"),
+                ),
                 'title': _("Nedostupná stránka"),
             },
             status=403,

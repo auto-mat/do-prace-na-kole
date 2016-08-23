@@ -55,7 +55,7 @@ class RestTests(DenormMixin, TestCase):
         self.assertContains(response, '{"id":1,"trip_date":"2010-11-01","direction":"trip_to","file":null}')
         self.assertContains(
             response,
-            '{"id":2,"trip_date":"2010-11-14","direction":"trip_from","file":"http://testing-campaign.testserver%smodranska-rokle.gpx"}' % settings.MEDIA_URL
+            '{"id":2,"trip_date":"2010-11-14","direction":"trip_from","file":"http://testing-campaign.testserver%smodranska-rokle.gpx"}' % settings.MEDIA_URL,
         )
 
     def test_gpx_post(self):
@@ -71,7 +71,7 @@ class RestTests(DenormMixin, TestCase):
                 response,
                 '"trip_date":"2010-12-02","direction":"trip_to","file":"http://testing-campaign.testserver%sgpx_tracks/testing-campaign/track-2016-01-14-modranska-rokle' %
                 settings.MEDIA_URL,
-                status_code=201
+                status_code=201,
             )
             gpx_file = models.GpxFile.objects.get(trip_date=datetime.date(2010, 12, 2))
             self.assertEquals(gpx_file.direction, "trip_to")

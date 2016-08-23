@@ -302,9 +302,13 @@ class InvoicesView(TitleViewMixin, CreateView):
     @must_be_company_admin
     @request_condition(
         lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(),
-        mark_safe_lazy(format_lazy(
-            _(u"Před vystavením faktury prosím <a href='{addr}'>vyplňte údaje o vaší firmě</a>"),
-            addr=reverse_lazy('edit_company'))))
+        mark_safe_lazy(
+            format_lazy(
+                _(u"Před vystavením faktury prosím <a href='{addr}'>vyplňte údaje o vaší firmě</a>"),
+                addr=reverse_lazy('edit_company'),
+            ),
+        )
+    )
     @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, _(u"Vystavování faktur nemáte povoleno"))
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']

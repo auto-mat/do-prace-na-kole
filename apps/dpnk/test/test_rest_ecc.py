@@ -68,16 +68,18 @@ class ECCTests(TestCase):
     def test_ecc_user_data(self):
         user_attendance = UserAttendance.objects.get(pk=1115)
         data = rest_ecc.user_data(user_attendance)
-        self.assertDictEqual(data, {
-            'nickName': '',
-            'gender': 'M',
-            'firstName': 'Testing',
-            'source': 'API-????',
-            'lastName': 'User 1',
-            'team': '56fa9f7788c53763287aaac0',
-            'email': user_attendance.userprofile.ecc_email,
-            'password': user_attendance.userprofile.ecc_password,
-        })
+        self.assertDictEqual(
+            data, {
+                'nickName': '',
+                'gender': 'M',
+                'firstName': 'Testing',
+                'source': 'API-????',
+                'lastName': 'User 1',
+                'team': '56fa9f7788c53763287aaac0',
+                'email': user_attendance.userprofile.ecc_email,
+                'password': user_attendance.userprofile.ecc_password,
+            },
+        )
 
     @override_settings(
         MEDIA_ROOT="apps/dpnk/test_files",
@@ -89,24 +91,26 @@ class ECCTests(TestCase):
         modranska_rokle.save()
 
         json = rest_ecc.track_json(GpxFile.objects.get(pk=1), "token")
-        self.assertJSONEqual(json, {
-            "trackEnd_hr": "2010-11-01 10:00:00",
-            "trackEnd": 1288602000.0,
-            "trackDuration": "0",
-            "trackDuration_hr": "0:0:0",
-            "extrainfo": {
-                "start_year": 2010,
-                "start_month": 11,
-                "averagespeed": "0",
-                "start_day": 1,
-                "maxspeed": "0",
-                "mapcenter": "0",
-                "totaldistance": None
+        self.assertJSONEqual(
+            json, {
+                "trackEnd_hr": "2010-11-01 10:00:00",
+                "trackEnd": 1288602000.0,
+                "trackDuration": "0",
+                "trackDuration_hr": "0:0:0",
+                "extrainfo": {
+                    "start_year": 2010,
+                    "start_month": 11,
+                    "averagespeed": "0",
+                    "start_day": 1,
+                    "maxspeed": "0",
+                    "mapcenter": "0",
+                    "totaldistance": None,
+                },
+                "trackStart": 1288602000.0,
+                "trackData_points": [],
+                "trackData_info": [],
+                "source": "API-????",
+                "token": "token",
+                "trackStart_hr": "2010-11-01 10:00:00",
             },
-            "trackStart": 1288602000.0,
-            "trackData_points": [],
-            "trackData_info": [],
-            "source": "API-????",
-            "token": "token",
-            "trackStart_hr": "2010-11-01 10:00:00"
-        })
+        )

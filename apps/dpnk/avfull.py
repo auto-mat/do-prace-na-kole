@@ -133,6 +133,14 @@ def make_dline(**fields):
 """.format(m=Default(fields))
 
 
+def add_line(outfile, line):
+    outfile.write(
+        unidecode(
+            line + "\r\n",
+        ).encode(),
+    )
+
+
 def make_avfull(outfile, delivery_batch):
     try:
         today = datetime.datetime.today().strftime("%Y%m%d")
@@ -167,49 +175,61 @@ def make_avfull(outfile, delivery_batch):
             pick_up_address = {}
             delivery_address = {}
 
-            outfile.write(unidecode(make_aline(
-                carrier_code="TNT03",
-                con_reference=package_transaction.tnt_con_reference(),
-                con_sequence_number=sequence_number,
-                con_note_number=package_transaction.tracking_number_cnc(),
-                sender_address=sender_address,
-                receivers_address=receivers_address,
-                pick_up_address=pick_up_address,
-                delivery_address=delivery_address,
-            ) + "\r\n").encode())
+            add_line(
+                outfile,
+                make_aline(
+                    carrier_code="TNT03",
+                    con_reference=package_transaction.tnt_con_reference(),
+                    con_sequence_number=sequence_number,
+                    con_note_number=package_transaction.tracking_number_cnc(),
+                    sender_address=sender_address,
+                    receivers_address=receivers_address,
+                    pick_up_address=pick_up_address,
+                    delivery_address=delivery_address,
+                ),
+            )
 
-            outfile.write(unidecode(make_bline(
-                con_reference=package_transaction.tnt_con_reference(),
-                con_sequence_number=sequence_number,
-                con_note_number=package_transaction.tracking_number_cnc(),
-                con_sending_date=today,
-                service_code=serviceID,
-                payment_indicator="S",
-                total_no_packages=1,
-                currency_code="CZK",
-                con_total_value=user_attendance.admission_fee(),
-                weight_in_kg=weight,
-            ) + "\r\n").encode())
+            add_line(
+                outfile,
+                make_bline(
+                    con_reference=package_transaction.tnt_con_reference(),
+                    con_sequence_number=sequence_number,
+                    con_note_number=package_transaction.tracking_number_cnc(),
+                    con_sending_date=today,
+                    service_code=serviceID,
+                    payment_indicator="S",
+                    total_no_packages=1,
+                    currency_code="CZK",
+                    con_total_value=user_attendance.admission_fee(),
+                    weight_in_kg=weight,
+                ),
+            )
 
-            outfile.write(unidecode(make_cline(
-                con_reference=package_transaction.tnt_con_reference(),
-                con_sequence_number=sequence_number,
-                con_note_number=package_transaction.tracking_number_cnc(),
-                package_type_seq_number=1,
-                package_type_desc=user_attendance.campaign.slug,
-                package_type_count=1,
-                package_height=user_attendance.campaign.package_height,
-                package_width=user_attendance.campaign.package_width,
-                package_depth=user_attendance.campaign.package_depth,
-                package_total_weight_kgs=weight,
-            ) + "\r\n").encode())
+            add_line(
+                outfile,
+                make_cline(
+                    con_reference=package_transaction.tnt_con_reference(),
+                    con_sequence_number=sequence_number,
+                    con_note_number=package_transaction.tracking_number_cnc(),
+                    package_type_seq_number=1,
+                    package_type_desc=user_attendance.campaign.slug,
+                    package_type_count=1,
+                    package_height=user_attendance.campaign.package_height,
+                    package_width=user_attendance.campaign.package_width,
+                    package_depth=user_attendance.campaign.package_depth,
+                    package_total_weight_kgs=weight,
+                ),
+            )
 
-            outfile.write(unidecode(make_dline(
-                con_reference=package_transaction.tnt_con_reference(),
-                con_sequence_number=sequence_number,
-                con_note_number=package_transaction.tracking_number_cnc(),
-                package_type_seq_number=1,
-                article_type_sequence_number=1,
-            ) + "\r\n").encode())
+            add_line(
+                outfile,
+                make_dline(
+                    con_reference=package_transaction.tnt_con_reference(),
+                    con_sequence_number=sequence_number,
+                    con_note_number=package_transaction.tracking_number_cnc(),
+                    package_type_seq_number=1,
+                    article_type_sequence_number=1,
+                ),
+            )
     finally:
         outfile.close

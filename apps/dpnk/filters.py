@@ -55,9 +55,12 @@ class CampaignFilter(SimpleListFilter):
         for lookup, title in self.lookup_choices:
             yield {
                 'selected': self.value() == lookup,
-                'query_string': changelist.get_query_string({
-                    self.parameter_name: lookup,
-                }, []),
+                'query_string': changelist.get_query_string(
+                    {
+                        self.parameter_name: lookup,
+                    },
+                    [],
+                ),
                 'display': title,
             }
 
