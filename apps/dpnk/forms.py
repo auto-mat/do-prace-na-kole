@@ -98,6 +98,7 @@ class PrevNextMixin(object):
 
 class AuthenticationFormDPNK(AuthenticationForm):
     def __init__(self, *args, **kwargs):
+        campaign = kwargs.pop('campaign')
         ret_val = super(AuthenticationFormDPNK, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -106,10 +107,11 @@ class AuthenticationFormDPNK(AuthenticationForm):
                 _(
                     """<a href="%(password_reset_address)s">Zapomněli jste své přihlašovací údaje?</a>
                     <br/><br/>
-                    Ještě nemáte účet? <a href="%(registration_address)s">Registrujte se</a> do soutěže Do práce na kole.<br/><br/>
+                    Ještě nemáte účet? <a href="%(registration_address)s">Registrujte se</a> do soutěže %(campaign)s.<br/><br/>
                     """ % {
                         'password_reset_address': reverse("password_reset"),
                         'registration_address': reverse("registration_access"),
+                        'campaign': campaign,
                     },
                 ),
             ),

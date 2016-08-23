@@ -109,6 +109,13 @@ class TitleViewMixin(object):
     def get_title(self, *args, **kwargs):
         return self.title
 
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.campaign = Campaign.objects.get(slug=request.subdomain)
+        except Campaign.DoesNotExist:
+            self.campaign = None
+        return super().dispatch(request, *args, **kwargs)
+
     def get_opening_message(self, *args, **kwargs):
         if hasattr(self, "opening_message"):
             return self.opening_message
@@ -123,7 +130,13 @@ class TitleViewMixin(object):
 
 
 class DPNKLoginView(TitleViewMixin, LoginView):
-    title = "Přihlášení soutežících Do práce na kole"
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['campaign'] = self.campaign
+        return kwargs
+
+    def get_title(self, *args, **kwargs):
+        return _("Přihlášení do soutěže %s" % self.campaign)
 
     def get_initial(self):
         initial_email = self.kwargs.get('initial_email')
