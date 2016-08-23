@@ -780,6 +780,29 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertRedirects(response, reverse("typ_platby"))
         self.assertTrue(self.user_attendance.t_shirt_size.pk, 1)
 
+    def test_dpnk_t_shirt_size_no_sizes(self):
+        models.PackageTransaction.objects.all().delete()
+        models.Payment.objects.all().delete()
+        models.TShirtSize.objects.all().delete()
+        self.user_attendance.t_shirt_size = None
+        self.user_attendance.save()
+        self.user_attendance.campaign.save()
+        denorm.flush()
+        response = self.client.get(reverse('zmenit_triko'))
+        self.assertRedirects(response, reverse("typ_platby"), target_status_code=403)
+
+    def test_dpnk_t_shirt_size_no_sizes_no_admission(self):
+        models.PackageTransaction.objects.all().delete()
+        models.Payment.objects.all().delete()
+        models.TShirtSize.objects.all().delete()
+        self.user_attendance.t_shirt_size = None
+        self.user_attendance.save()
+        self.user_attendance.campaign.admission_fee = 0
+        self.user_attendance.campaign.save()
+        denorm.flush()
+        response = self.client.get(reverse('zmenit_triko'), follow=True)
+        self.assertRedirects(response, reverse("profil"))
+
     def test_dpnk_t_shirt_size_no_team(self):
         models.PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
