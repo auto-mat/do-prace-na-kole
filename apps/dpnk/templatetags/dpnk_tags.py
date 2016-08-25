@@ -56,41 +56,44 @@ def cyklistesobe_cached(city_slug, order="created_at"):
 
 
 @register.simple_tag
-def wp_news(slug=None):
-    return mark_safe(_wp_news_cached(slug, "news"))
+def wp_news(campaign, slug=None):
+    return mark_safe(_wp_news_cached(campaign, slug, "news"))
 
 
 @register.simple_tag
-def wp_actions(slug=None):
-    return mark_safe(_wp_news_cached(slug, "action"))
+def wp_actions(campaign, slug=None):
+    return mark_safe(_wp_news_cached(campaign, slug, "action"))
 
 
 @register.simple_tag
-def wp_prize(slug=None):
-    return mark_safe(_wp_news_cached(slug, "prize"))
+def wp_prize(campaign, slug=None):
+    return mark_safe(_wp_news_cached(campaign, slug, "prize"))
 
 
 @cached(60 * 60)
-def _wp_news_cached(slug=None, wp_type="news"):
+def _wp_news_cached(campaign, slug=None, wp_type="news"):
     if wp_type == "action":
-        return _wp_news("locations", _("akce"), unfold="first", _page_subtype="event", _post_parent=slug, sort_key='start_date')
+        return _wp_news(campaign, "locations", _("akce"), unfold="first", _page_subtype="event", _post_parent=slug, sort_key='start_date')
     elif wp_type == "prize":
-        return _wp_news("locations", _("cena"), unfold="all", count=-1, show_description=False, _page_subtype="prize", _post_parent=slug, order="ASC", orderby="menu_order")
+        return _wp_news(
+            campaign, "locations", _("cena"), unfold="all", count=-1, show_description=False,
+            _page_subtype="prize", _post_parent=slug, order="ASC", orderby="menu_order",
+        )
     else:
         if slug:
             _global_news = {}
         else:
             _global_news = {'_global_news': 1}
-        return _wp_news(_connected_to=slug, order="DESC", orderby="DATE", count=5, **_global_news)
+        return _wp_news(campaign, _connected_to=slug, order="DESC", orderby="DATE", count=5, **_global_news)
 
 
-def _wp_news(post_type="post", post_type_string=_("novinka"), unfold="first", count=-1, show_description=True, sort_key='published', reverse=True, **other_args):
+def _wp_news(campaign, post_type="post", post_type_string=_("novinka"), unfold="first", count=-1, show_description=True, sort_key='published', reverse=True, **other_args):
     get_params = {}
     get_params['feed'] = "content_to_backend"
     get_params['_post_type'] = post_type
     get_params['_number'] = count
     get_params.update(other_args)
-    url = "http://www.dopracenakole.cz/"
+    url = campaign.wp_api_url
     api = slumber.API(url)
     try:
         wp_feed = api.feed.get(**get_params)
@@ -110,13 +113,13 @@ def _wp_news(post_type="post", post_type_string=_("novinka"), unfold="first", co
 
 
 @register.simple_tag
-def wp_article(article_id):
-    return mark_safe(wp_article_cached(article_id))
+def wp_article(campaign, article_id):
+    return mark_safe(wp_article_cached(campaign, article_id))
 
 
 @cached(60 * 60)
-def wp_article_cached(article_id):
-    url = "http://www.dopracenakole.cz/"
+def wp_article_cached(campaign, article_id):
+    url = campaign.wp_api_url
     api = slumber.API(url)
     try:
         wp_article = api.feed.get(feed="content_to_backend", _post_type="page", _id=id)

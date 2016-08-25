@@ -594,6 +594,25 @@ class Campaign(models.Model):
         null=True,
         blank=True,
     )
+    wp_api_url = models.URLField(
+        default="http://www.dopracenakole.cz/",
+        verbose_name=_("Adresa pro Wordpress API se články"),
+        null=True,
+        blank=True,
+    )
+
+    LANGUAGE_PREFIXES = [
+        ('dpnk', _("Do práce na kole")),
+        ('dsnk', _("Do školy na kole")),
+    ]
+    language_prefixes = models.CharField(
+        verbose_name=_("Jazyková sada"),
+        choices=LANGUAGE_PREFIXES,
+        max_length=16,
+        null=False,
+        blank=False,
+        default='dpnk',
+    )
 
     def __str__(self):
         return self.name

@@ -22,7 +22,7 @@
 {% if user_attendance.voucher_set.exists %}
 <div>
    <h3>{% trans "Vouchery" %}</h3>
-   {% wp_article 11260 %}
+   {% wp_article user_attendance.campaign 11260 %}
    <table class="table">
    {% for voucher in user_attendance.voucher_set.all %}
    <tr>
@@ -42,17 +42,17 @@
 <div class="row base">
    <div class="col-md-6">
       <h3>{% trans "Novinky" %}</h3>
-      {% wp_news %}
+      {% wp_news user_attendance.campaign %}
    </div>
    <div class="col-md-6">
       <h3>{% trans "Novinky ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ city_slug }}">{{ user_attendance.team.subsidiary.city }}</a></h3>
-      {% wp_news city_slug %}
+      {% wp_news user_attendance.campaign city_slug %}
    </div>
 </div>
 <div class="row base">
    <div class="col-md-6">
       <h3>{% trans "Akce ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ city_slug }}">{{ user_attendance.team.subsidiary.city }}</a></h3>
-      {% wp_actions city_slug %}
+      {% wp_actions user_attendance.campaign city_slug %}
    </div>
    <div class="col-md-6">
       <h3>{% trans "Příspěvky z kreativních soutěží" %}</h3>
@@ -97,7 +97,7 @@
 <div class="row base">
     <div class="col-md-12 prizes">
       <h3>{% trans "Ceny ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ city_slug }}">{{ user_attendance.team.subsidiary.city }}</a></h3>
-      {% wp_prize city_slug %}
+      {% wp_prize user_attendance.campaign city_slug %}
    </div>
 </div>
 {% endcache %}

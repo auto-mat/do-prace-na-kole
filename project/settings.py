@@ -67,8 +67,8 @@ CACHES = {
 LOCALE_PATHS = (normpath(PROJECT_ROOT, 'apps/dpnk/locale'),)
 TIME_ZONE = 'Europe/Prague'
 LANGUAGES = (
+    ('dsnkcs', _('Do školy na kole - czech')),
     ('cs', _('Czech')),
-    ('dsnk', _('Do školy na kole')),
     ('en', _('English')),
 )
 LANGUAGE_CODE = 'cs'
