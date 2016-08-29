@@ -331,7 +331,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
 
     def test_questionnaire_view(self):
         kwargs = {'questionnaire_slug': 'quest'}
-        address = reverse('questionnaire', kwargs=kwargs),
+        address = reverse('questionnaire', kwargs=kwargs)
         request = self.factory.get(address)
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
@@ -357,7 +357,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
 
     def test_questionnaire_view_unknown(self):
         kwargs = {'questionnaire_slug': 'quest1'}
-        address = reverse('questionnaire', kwargs=kwargs),
+        address = reverse('questionnaire', kwargs=kwargs)
         request = self.factory.get(address)
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
@@ -368,7 +368,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
 
     def test_questionnaire_view_uncomplete(self):
         kwargs = {'questionnaire_slug': 'quest'}
-        address = reverse('questionnaire', kwargs=kwargs),
+        address = reverse('questionnaire', kwargs=kwargs)
 
         post_data = {
             "question-2-choices": 1,
@@ -390,7 +390,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
     )
     def test_questionnaire_view_late(self):
         kwargs = {'questionnaire_slug': 'quest'}
-        address = reverse('questionnaire', kwargs=kwargs),
+        address = reverse('questionnaire', kwargs=kwargs)
 
         post_data = {}
         request = self.factory.post(address, post_data)
@@ -893,7 +893,7 @@ class ViewsTestsLogon(ViewsLogon):
     @patch('slumber.API')
     def company_payment(self, slumber_api, amount, amount_tax, beneficiary=False):
         slumber_instance = slumber_api.return_value
-        slumber_instance.feed.get = {}
+        slumber_instance.feed.get.return_value = {"10816": {"content": "Emission calculator description text"}}
         response = self.client.get(reverse('company_admin_pay_for_users'))
         self.assertContains(response, "%s Kč: Registered User 1 (test-registered@test.cz)" % amount)
         post_data = {

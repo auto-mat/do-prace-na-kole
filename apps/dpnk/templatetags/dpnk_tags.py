@@ -23,7 +23,7 @@ import logging
 from cache_utils.decorators import cached
 
 from django import template
-from django.core.urlresolvers import NoReverseMatch, resolve, reverse
+from django.core.urlresolvers import NoReverseMatch, Resolver404, resolve, reverse
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 from django.utils.translation import activate, get_language
@@ -141,7 +141,7 @@ def change_lang(context, lang=None, *args, **kwargs):
     path = context['request'].path
     try:
         url_parts = resolve(path)
-    except:
+    except Resolver404:
         logger.exception(u'Error in change lang function')
         return "/%s" % lang
 

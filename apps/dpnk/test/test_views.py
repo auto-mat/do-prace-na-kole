@@ -156,10 +156,21 @@ class CompetitionsViewTests(ViewsLogon):
         self.assertContains(response, 'Tento uživatel není nováček, soutěžil již v předcházejících kampaních: Testing campaign - last year')
         self.assertEquals(response.status_code, 200)
 
+    feed_value = {
+        "11340": {
+            "content": "Emission calculator description text",
+            "published": "2016-12-12",
+            "start_date": "2016-12-12",
+            "title": "Title",
+            "url": "http://example.com",
+            "excerpt": "Excerpt",
+        },
+    }
+
     @patch('slumber.API')
     def test_login(self, slumber_api):
         slumber_instance = slumber_api.return_value
-        slumber_instance.feed.get = {}
+        slumber_instance.feed.get.return_value = self.feed_value
         address = reverse('login')
         response = self.client.get(address)
         self.assertRedirects(response, reverse('profil'), status_code=302)
@@ -167,7 +178,7 @@ class CompetitionsViewTests(ViewsLogon):
     @patch('slumber.API')
     def test_registration_access(self, slumber_api):
         slumber_instance = slumber_api.return_value
-        slumber_instance.feed.get = {}
+        slumber_instance.feed.get.return_value = self.feed_value
         address = reverse('registration_access')
         response = self.client.get(address)
         self.assertRedirects(response, reverse('profil'), status_code=302)
