@@ -19,7 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from .settings import *  # noqa
-from .settings import MIDDLEWARE_CLASSES, TEMPLATES
+from .settings import LOGGING, MIDDLEWARE_CLASSES, TEMPLATES
 
 ADMINS = (
     ('', ''),
@@ -79,6 +79,8 @@ class InvalidStringError(str):
 
 TEMPLATES[0]['OPTIONS']['string_if_invalid'] = InvalidStringError("%s")
 TEMPLATES[0]['OPTIONS']['debug'] = True
+
+LOGGING['handlers']['logfile']['filename'] = "test-dpnk.log"
 
 CRISPY_FAIL_SILENTLY = False
 
