@@ -1426,7 +1426,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         )
         return
     elif approve:
-        if len(user_attendance.team.members()) >= settings.MAX_TEAM_MEMBERS:
+        if user_attendance.campaign.too_much_members(len(user_attendance.team.members())):
             messages.add_message(
                 request,
                 messages.ERROR,

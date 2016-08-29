@@ -692,10 +692,10 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, "Tento email již je v našem systému zanesen.")
 
-    @override_settings(
-        MAX_TEAM_MEMBERS=0
-    )
     def test_dpnk_team_view_choose_team_full(self):
+        campaign = Campaign.objects.get(pk=339)
+        campaign.max_team_members = 0
+        campaign.save()
         post_data = {
             'company': '1',
             'subsidiary': '1',

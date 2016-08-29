@@ -24,7 +24,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Div, Field, HTML, Layout, Submit
 
 from django import forms
-from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -54,10 +53,11 @@ from .string_lazy import format_html_lazy, mark_safe_lazy
 logger = logging.getLogger(__name__)
 
 
-def team_full(data):
-    if models.UserAttendance.objects.\
-            filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=data, userprofile__user__is_active=True).\
-            count() >= settings.MAX_TEAM_MEMBERS:
+def team_full(team):
+    if team.campaign.too_much_members(
+            models.UserAttendance.objects.
+            filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=team, userprofile__user__is_active=True).
+            count(),):
         raise forms.ValidationError(_(u"Tento tým již má plný počet členů"))
 
 

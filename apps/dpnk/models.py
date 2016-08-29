@@ -356,7 +356,7 @@ class Team(models.Model):
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def member_count(self):
         member_count = self.members().count()
-        if member_count > settings.MAX_TEAM_MEMBERS:
+        if self.campaign.too_much_members(member_count):
             logger.error(u"Too many members in team %s" % self)
         return member_count
 
@@ -613,9 +613,20 @@ class Campaign(models.Model):
         blank=False,
         default='dpnk',
     )
+    max_team_members = models.PositiveIntegerField(
+        verbose_name=_("Počet lidí v týmu"),
+        default=5,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return self.name
+
+    def too_much_members(self, member_count):
+        if self.max_team_members == 0:
+            return True
+        return member_count > self.max_team_members
 
     def late_admission_phase_actual(self):
         late_admission_phase = self.phase("late_admission")
