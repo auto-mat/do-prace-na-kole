@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import sys
-from flake8.run import git_hook
+from flake8.main import git
 
 STRICT = True
 
 
 if __name__ == '__main__':
-    sys.exit(git_hook(strict=STRICT))
+    sys.exit(git.hook(strict=STRICT))
