@@ -624,8 +624,8 @@ class Campaign(models.Model):
         return self.name
 
     def too_much_members(self, member_count):
-        if self.max_team_members == 0:
-            return True
+        if self.max_team_members is None:
+            return False
         return member_count > self.max_team_members
 
     def late_admission_phase_actual(self):
