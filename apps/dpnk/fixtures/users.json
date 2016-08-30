@@ -2,6 +2,7 @@
     {
         "fields": {
             "slug": "testing-city",
+            "cyklistesobe_slug": "testing-city",
             "name": "Testing city"
         },
         "model": "dpnk.city",
@@ -10,6 +11,7 @@
     {
         "fields": {
             "slug": "other-city",
+            "cyklistesobe_slug": "other-city",
             "name": "Other city"
         },
         "model": "dpnk.city",

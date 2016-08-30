@@ -1274,7 +1274,7 @@ class TrackViewTests(ViewsLogon):
         self.assertContains(response, "<tr><td>SO<sub>2</sub></td><td>1 246,6&nbsp;mg</td></tr>", html=True)
         self.assertContains(response, "<tr><td>Pevné částice</td><td>5 666,5&nbsp;mg</td></tr>", html=True)
         self.assertContains(response, "<tr><td>Olovo</td><td>1,8&nbsp;mg</td></tr>", html=True)
-        self.assertContains(response, "Emission calculator description text")
+        self.assertContains(response, '<div id="calculator_description">Emission calculator description text</div>', html=True)
 
     def test_daily_distance_extra_json(self):
         address = reverse(views.daily_distance_extra_json)
@@ -1419,6 +1419,51 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=2),
 )
+class DpnkTagsTests(DenormMixin, ClearCacheMixin, TestCase):
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+
+    def setUp(self):
+        super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+        util.rebuild_denorm_models(Team.objects.filter(pk=1))
+        util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
+        self.user_attendance = UserAttendance.objects.get(pk=1115)
+        self.assertTrue(self.user_attendance.entered_competition())
+
+    @patch('slumber.API')
+    def test_failed_wp_page(self, slumber_mock):
+        m = MagicMock()
+        m.feed.get.return_value = {
+            '1234': "error page",
+        }
+        m.issues.get = {}
+        slumber_mock.return_value = m
+        response = self.client.get(reverse('profil'))
+        self.assertContains(response, '<div class="col-md-6"><h3>Novinky</h3></div>', html=True)
+
+    @patch('slumber.API')
+    def test_failed_wp_article(self, slumber_mock):
+        """ Test if wp_article template tag returns blank output with bad input """
+        m = MagicMock()
+        m.feed.get.return_value = {
+            '1234': "error page",
+        }
+        slumber_mock.return_value = m
+        response = self.client.get(reverse('emission_calculator'))
+        self.assertContains(response, '<h2>Emisní kalkulačka</h2>', html=True)
+        self.assertContains(response, '<div id="calculator_description"> </div>', html=True)
+
+    def test_failed_change_lang(self):
+        """ Test how change_lang templatetag works on bad page """
+        response = self.client.get('test-fail')
+        self.assertContains(response, 'Omlouváme se, ale taková stránka zde neexistuje', status_code=404)
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=2),
+)
 class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
@@ -1469,16 +1514,6 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'Novinky ve městě')
         self.assertContains(response, 'Testing title')
         self.assertContains(response, 'Testing excerpt')
-
-    @patch('slumber.API')
-    def test_failed_wp_page(self, slumber_mock):
-        m = MagicMock()
-        m.feed.get.return_value = {
-            '1234': "error page",
-        }
-        slumber_mock.return_value = m
-        response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<div class="col-md-6"><h3>Novinky</h3></div>', html=True)
 
     @patch('slumber.API')
     def test_dpnk_profile_page_blank_feed(self, slumber_mock):
