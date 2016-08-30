@@ -1419,51 +1419,6 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=2),
 )
-class DpnkTagsTests(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
-
-    def setUp(self):
-        super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
-        util.rebuild_denorm_models(Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
-        self.user_attendance = UserAttendance.objects.get(pk=1115)
-        self.assertTrue(self.user_attendance.entered_competition())
-
-    @patch('slumber.API')
-    def test_failed_wp_page(self, slumber_mock):
-        m = MagicMock()
-        m.feed.get.return_value = {
-            '1234': "error page",
-        }
-        m.issues.get = {}
-        slumber_mock.return_value = m
-        response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<div class="col-md-6"><h3>Novinky</h3></div>', html=True)
-
-    @patch('slumber.API')
-    def test_failed_wp_article(self, slumber_mock):
-        """ Test if wp_article template tag returns blank output with bad input """
-        m = MagicMock()
-        m.feed.get.return_value = {
-            '1234': "error page",
-        }
-        slumber_mock.return_value = m
-        response = self.client.get(reverse('emission_calculator'))
-        self.assertContains(response, '<h2>Emisní kalkulačka</h2>', html=True)
-        self.assertContains(response, '<div id="calculator_description"> </div>', html=True)
-
-    def test_failed_change_lang(self):
-        """ Test how change_lang templatetag works on bad page """
-        response = self.client.get('test-fail')
-        self.assertContains(response, 'Omlouváme se, ale taková stránka zde neexistuje', status_code=404)
-
-
-@override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=2),
-)
 class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
