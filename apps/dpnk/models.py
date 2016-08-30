@@ -1026,7 +1026,7 @@ class UserAttendance(models.Model):
 
     def get_distance(self, round_digits=2, request=None):
         if self.track:
-            if self.length:
+            if hasattr(self, 'length') and self.length:
                 length = self.length
             else:
                 length = UserAttendance.objects.length().only('track').get(id=self.id).length
@@ -1056,10 +1056,7 @@ class UserAttendance(models.Model):
 
     def company(self):
         if self.team:
-            try:
-                return self.team.subsidiary.company
-            except UserProfile.DoesNotExist:
-                pass
+            return self.team.subsidiary.company
 
         try:
             return self.userprofile.company_admin.get(campaign=self.campaign).administrated_company
