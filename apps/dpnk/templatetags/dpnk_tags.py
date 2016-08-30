@@ -47,7 +47,7 @@ def cyklistesobe_cached(city_slug, order="created_at"):
         kwargs['group'] = city_slug
     try:
         cyklistesobe = api.issues.get(order=order, per_page=5, page=0, **kwargs)
-    except:
+    except slumber.exceptions.SlumberBaseException:
         logger.exception(u'Error fetching cyklistesobe page')
         cyklistesobe = None
     template = get_template("templatetags/cyklistesobe.html")
@@ -73,7 +73,7 @@ def wp_prize(campaign, slug=None):
 @cached(60 * 60)
 def _wp_news_cached(campaign, slug=None, wp_type="news"):
     if wp_type == "action":
-        return _wp_news(campaign, "locations", _("akce"), unfold="first", _page_subtype="event", _post_parent=slug, sort_key='start_date')
+        return _wp_news(campaign, "locations", _("akce"), unfold="first", _page_subtype="event", _post_parent=slug, orderby='start_date')
     elif wp_type == "prize":
         return _wp_news(
             campaign, "locations", _("cena"), unfold="all", count=-1, show_description=False,
@@ -87,7 +87,7 @@ def _wp_news_cached(campaign, slug=None, wp_type="news"):
         return _wp_news(campaign, _connected_to=slug, order="DESC", orderby="DATE", count=5, **_global_news)
 
 
-def _wp_news(campaign, post_type="post", post_type_string=_("novinka"), unfold="first", count=-1, show_description=True, sort_key='published', reverse=True, **other_args):
+def _wp_news(campaign, post_type="post", post_type_string=_("novinka"), unfold="first", count=-1, show_description=True, orderby='published', reverse=True, **other_args):
     get_params = {}
     get_params['feed'] = "content_to_backend"
     get_params['_post_type'] = post_type
@@ -97,9 +97,7 @@ def _wp_news(campaign, post_type="post", post_type_string=_("novinka"), unfold="
     api = slumber.API(url)
     try:
         wp_feed = api.feed.get(**get_params)
-        if len(wp_feed) > 0:
-            wp_feed = sorted(wp_feed.values(), key=lambda item: item[sort_key], reverse=reverse)
-    except:
+    except slumber.exceptions.SlumberBaseException:
         logger.exception(u'Error fetching wp news')
         return ""
     template = get_template("templatetags/wp_news.html")
@@ -123,9 +121,13 @@ def wp_article_cached(campaign, article_id):
     api = slumber.API(url)
     try:
         wp_article = api.feed.get(feed="content_to_backend", _post_type="page", _id=id)
-        return wp_article[str(article_id)]['content']
-    except:
+    except slumber.exceptions.SlumberBaseException:
         logger.exception(u'Error fetching wp article')
+        return ""
+    try:
+        return wp_article[str(article_id)]['content']
+    except KeyError:
+        logger.exception(u'Bad wp article id')
         return ""
 
 

@@ -156,8 +156,8 @@ class CompetitionsViewTests(ViewsLogon):
         self.assertContains(response, 'Tento uživatel není nováček, soutěžil již v předcházejících kampaních: Testing campaign - last year')
         self.assertEquals(response.status_code, 200)
 
-    feed_value = {
-        "11340": {
+    feed_value = (
+        {
             "content": "Emission calculator description text",
             "published": "2016-12-12",
             "start_date": "2016-12-12",
@@ -165,7 +165,7 @@ class CompetitionsViewTests(ViewsLogon):
             "url": "http://example.com",
             "excerpt": "Excerpt",
         },
-    }
+    )
 
     @patch('slumber.API')
     def test_login(self, slumber_api):

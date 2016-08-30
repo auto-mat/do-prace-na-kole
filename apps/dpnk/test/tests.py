@@ -796,7 +796,9 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.get(reverse('zmenit_triko'))
         self.assertRedirects(response, reverse("typ_platby"), target_status_code=403)
 
-    def test_dpnk_t_shirt_size_no_sizes_no_admission(self):
+    @patch('slumber.API')
+    def test_dpnk_t_shirt_size_no_sizes_no_admission(self, slumber_api):
+        slumber_api.feed.get = {}
         models.PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
         models.TShirtSize.objects.all().delete()
@@ -1452,8 +1454,8 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
     def test_dpnk_profile_page(self, slumber_mock):
         models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
         m = MagicMock()
-        m.feed.get.return_value = {
-            '1234': {
+        m.feed.get.return_value = (
+            {
                 'published': '2010-01-01',
                 'start_date': '2010-01-01',
                 'url': 'http://www.test.cz',
@@ -1461,7 +1463,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
                 'excerpt': 'Testing excerpt',
                 'image': 'http://www.test.cz',
             },
-        }
+        )
         slumber_mock.return_value = m
         response = self.client.get(reverse('profil'))
         self.assertContains(response, '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270">' % settings.MEDIA_URL, html=True)

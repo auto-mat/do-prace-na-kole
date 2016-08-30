@@ -26,6 +26,8 @@ from django.test import RequestFactory, TestCase
 from dpnk.models import UserAttendance
 from dpnk.test.util import ClearCacheMixin
 
+import slumber
+
 
 class DpnkTagsTests(ClearCacheMixin, TestCase):
     fixtures = ['campaign', 'auth_user', 'users']
@@ -48,6 +50,16 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         self.assertHTMLEqual(response, '<div></div>')
 
     @patch('slumber.API')
+    def test_wp_article_slumber_error(self, slumber_mock):
+        m = MagicMock()
+        m.feed.get.side_effect = slumber.exceptions.SlumberBaseException
+        slumber_mock.return_value = m
+        template = Template("{% load dpnk_tags %}<div>{% wp_article campaign 4321 %}</div>")
+        context = Context({'campaign': self.user_attendance.campaign})
+        response = template.render(context)
+        self.assertHTMLEqual(response, '<div></div>')
+
+    @patch('slumber.API')
     def test_no_news(self, slumber_mock):
         m = MagicMock()
         m.feed.get.return_value = ()
@@ -60,9 +72,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
     @patch('slumber.API')
     def test_failed_wp_news(self, slumber_mock):
         m = MagicMock()
-        m.feed.get.return_value = {
-            1234: "error page",
-        }
+        m.feed.get.side_effect = slumber.exceptions.SlumberBaseException
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}<div>{% wp_news campaign 4321 %}</div>")
         context = Context({'campaign': self.user_attendance.campaign})
@@ -86,8 +96,8 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
     @patch('slumber.API')
     def test_wp_news_no_slug(self, slumber_mock):
         m = MagicMock()
-        m.feed.get.return_value = {
-            '1234': {
+        m.feed.get.return_value = (
+            {
                 'published': '2010-01-01',
                 'start_date': '2010-01-01',
                 'url': 'http://www.test.cz',
@@ -95,7 +105,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
                 'excerpt': 'Testing excerpt',
                 'image': 'http://www.test.cz',
             },
-        }
+        )
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_news campaign %}")
         context = Context({'campaign': self.user_attendance.campaign})
@@ -120,8 +130,8 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
     @patch('slumber.API')
     def test_wp_news(self, slumber_mock):
         m = MagicMock()
-        m.feed.get.return_value = {
-            '1234': {
+        m.feed.get.return_value = (
+            {
                 'published': '2010-01-01',
                 'start_date': '2010-01-01',
                 'url': 'http://www.test.cz',
@@ -129,7 +139,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
                 'excerpt': 'Testing excerpt',
                 'image': 'http://www.test.cz',
             },
-        }
+        )
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_news campaign 'test_city' %}")
         context = Context({'campaign': self.user_attendance.campaign})
@@ -154,8 +164,8 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
     @patch('slumber.API')
     def test_wp_actions(self, slumber_mock):
         m = MagicMock()
-        m.feed.get.return_value = {
-            '1234': {
+        m.feed.get.return_value = (
+            {
                 'published': '2010-01-01',
                 'start_date': '2010-01-01',
                 'url': 'http://www.test.cz',
@@ -163,7 +173,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
                 'excerpt': 'Testing excerpt',
                 'image': 'http://www.test.cz',
             },
-        }
+        )
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_actions campaign 'test_city' %}")
         context = Context({'campaign': self.user_attendance.campaign})
@@ -188,8 +198,8 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
     @patch('slumber.API')
     def test_wp_prize(self, slumber_mock):
         m = MagicMock()
-        m.feed.get.return_value = {
-            '1234': {
+        m.feed.get.return_value = (
+            {
                 'published': '2010-01-01',
                 'start_date': '2010-01-01',
                 'url': 'http://www.test.cz',
@@ -197,7 +207,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
                 'excerpt': 'Testing excerpt',
                 'image': 'http://www.test.cz',
             },
-        }
+        )
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_prize campaign 'test_city' %}")
         context = Context({'campaign': self.user_attendance.campaign})
@@ -221,7 +231,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
     @patch('slumber.API')
     def test_cyklistesobe_fail(self, slumber_mock):
         m = MagicMock()
-        m.issues.get = {}
+        m.issues.get.side_effect = slumber.exceptions.SlumberBaseException
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}<div>{% cyklistesobe 'test_slug' %}</div>")
         context = Context()
