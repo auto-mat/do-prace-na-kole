@@ -80,6 +80,16 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         self.assertHTMLEqual(response, '<div></div>')
 
     @patch('slumber.API')
+    def test_failed_wp_news_type_error(self, slumber_mock):
+        m = MagicMock()
+        m.feed.get.return_value = {'Test1': 'Test'}
+        slumber_mock.return_value = m
+        template = Template("{% load dpnk_tags %}<div>{% wp_news campaign 4321 %}</div>")
+        context = Context({'campaign': self.user_attendance.campaign})
+        response = template.render(context)
+        self.assertHTMLEqual(response, '<div></div>')
+
+    @patch('slumber.API')
     def test_wp_article(self, slumber_mock):
         m = MagicMock()
         m.feed.get.return_value = {

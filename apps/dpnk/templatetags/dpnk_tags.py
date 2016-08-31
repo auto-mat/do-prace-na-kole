@@ -96,13 +96,16 @@ def _wp_news(campaign, post_type="post", post_type_string=_("novinka"), unfold="
     url = campaign.wp_api_url
     api = slumber.API(url)
     try:
-        wp_feed = api.feed.get(**get_params)
+        wp_feed = api.feed.get(**get_params)[:5]
     except slumber.exceptions.SlumberBaseException:
         logger.exception(u'Error fetching wp news')
         return ""
+    except TypeError:
+        logger.exception(u'Error encoding wp news format')
+        return ""
     template = get_template("templatetags/wp_news.html")
     context = {
-        'wp_feed': wp_feed[:5],
+        'wp_feed': wp_feed,
         'post_type_string': post_type_string,
         'unfold': unfold,
         'show_description': show_description,
