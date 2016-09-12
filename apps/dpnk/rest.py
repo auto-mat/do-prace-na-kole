@@ -176,7 +176,7 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
         many=True,
         read_only=True,
         view_name='userattendance-detail',
-        )
+    )
 
     class Meta:
         model = Team

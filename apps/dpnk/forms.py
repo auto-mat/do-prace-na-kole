@@ -573,9 +573,9 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
             created_formated_date = formats.date_format(transaction.created, "SHORT_DATETIME_FORMAT")
             raise forms.ValidationError(
                 _(u"Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: %(note)s).") % {
-                        'time': created_formated_date,
-                        'bike_shop': transaction.author.get_full_name(),
-                        'note': transaction.description,
+                    'time': created_formated_date,
+                    'bike_shop': transaction.author.get_full_name(),
+                    'note': transaction.description,
                 },
             )
         return super(BikeRepairForm, self).clean()

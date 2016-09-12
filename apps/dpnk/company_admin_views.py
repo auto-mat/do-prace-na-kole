@@ -167,7 +167,7 @@ class CompanyAdminView(RegistrationViewMixin, UpdateView):
             return {
                 'fullpage_error_message': _("Vaše organizce již svého koordinátora má: %s.") % (", ".join([str(c) for c in old_company_admin.all()])),
                 'title': _("Organizace koordinátora má"),
-                }
+            }
         return context_data
 
     def get_object(self, queryset=None):

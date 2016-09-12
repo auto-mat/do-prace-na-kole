@@ -93,7 +93,7 @@ from .forms import (
     RegistrationFormDPNK,
     TeamAdminForm,
     TrackUpdateForm,
-    )
+)
 from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
 from .string_lazy import format_lazy, mark_safe_lazy
 
@@ -1652,9 +1652,9 @@ def period_trips(campaign, day_from, day_to, commute_mode_list=('bicycle', 'by_f
 
 @cache_page(60 * 60)
 def statistics(
-        request,
-        template='registration/statistics.html',
-        ):
+    request,
+    template='registration/statistics.html',
+):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
     variables = {}

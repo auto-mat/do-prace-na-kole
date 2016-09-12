@@ -153,7 +153,7 @@ class CompanyResource(resources.ModelResource):
             'name',
             'ico',
             'dic',
-            )
+        )
         export_order = fields
 
 
@@ -208,7 +208,7 @@ class SubsidiaryResource(resources.ModelResource):
             'id',
             'company',
             'city',
-            )
+        )
         export_order = fields
 
 
@@ -678,7 +678,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
             'userprofile__user__first_name',
             'userprofile__user__last_name',
             'userprofile__user__username',
-            )
+        )
 
 
 class TeamAdmin(ExportMixin, RelatedFieldAdmin):
@@ -1046,7 +1046,7 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
         ('date', DateRangeFilter),
         'user_attendance__team__subsidiary__city',
         'distance',
-        )
+    )
     actions = (actions.show_distance_trips,)
     list_max_show_all = 100000
     inlines = [GpxFileInline, ]

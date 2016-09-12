@@ -113,7 +113,7 @@ class ViewsTests(DenormMixin, TestCase):
         response = self.client.post(address, post_data, follow=True)
         self.assertRedirects(response, reverse('company_structure'), target_status_code=403)
         user = User.objects.get(email='testadmin@test.cz')
-        self.assertEquals(user.get_full_name(),  "Company Admin")
+        self.assertEquals(user.get_full_name(), "Company Admin")
         self.assertEquals(UserProfile.objects.get(user=user).telephone, '123456789')
         self.assertEquals(CompanyAdmin.objects.get(userprofile=user.userprofile).administrated_company.pk, 2)
         msg = mail.outbox[0]
@@ -477,10 +477,10 @@ class PayuTests(ClearCacheMixin, TestCase):
     @patch('http.client.HTTPSConnection.request')
     @patch('http.client.HTTPSConnection.getresponse')
     def payment_status_view(
-            self, payu_response, payu_request, session_id='2075-1J1455206433',
-            amount="15000", trans_sig='ae6f4b9f8fbdbb506edf4eeb1cebcee0', sig='1af62397cfb6e6de5295325801239e4f',
-            post_sig="b6b29bb8437f9e2486fbe5555673372d",
-            ):
+        self, payu_response, payu_request, session_id='2075-1J1455206433',
+        amount="15000", trans_sig='ae6f4b9f8fbdbb506edf4eeb1cebcee0', sig='1af62397cfb6e6de5295325801239e4f',
+        post_sig="b6b29bb8437f9e2486fbe5555673372d",
+    ):
         payment_post_data = OrderedDict([
             ('pos_id', '2075-1'),
             ('session_id', session_id),
@@ -1756,10 +1756,10 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         self.assertEquals(result, 23)
 
         result = results.get_userprofile_frequency(user_attendance, competition)
-        self.assertEquals(result, (1, 23, 1/23.0))
+        self.assertEquals(result, (1, 23, 1 / 23.0))
 
         result = results.get_team_frequency(user_attendance.team.members(), competition)
-        self.assertEquals(result, (1, 69, 1/69.0))
+        self.assertEquals(result, (1, 69, 1 / 69.0))
 
 
 class ModelTests(DenormMixin, ClearCacheMixin, TestCase):

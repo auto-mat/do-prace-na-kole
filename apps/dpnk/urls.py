@@ -239,7 +239,7 @@ urlpatterns = [
             title=_(u"Emisní kalkulačka"),
         ),
         name="emission_calculator",
-        ),
+    ),
 
 
     # company admin:
@@ -300,7 +300,7 @@ urlpatterns = [
             template_name='base_generic_form.html',
         ),
         name='login',
-        ),
+    ),
     url(
         r'^login/?$',
         views.DPNKLoginView.as_view(
@@ -308,7 +308,7 @@ urlpatterns = [
             template_name='base_generic_form.html',
         ),
         name='login',
-        ),
+    ),
     url(
         r'^logout/$',
         django_views.logout,
