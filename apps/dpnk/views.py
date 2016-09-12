@@ -890,13 +890,13 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
         return ret_val
 
     def construct_formset(self):
-        ret_val = super().construct_formset()
-        ret_val.forms = [form for form in ret_val.forms if ('direction' in form.initial)]
-        ret_val.forms_max_number = len(ret_val.forms)
+        formset = super().construct_formset()
+        formset.forms = [form for form in formset.forms if ('direction' in form.initial)]
+        formset.forms_max_number = len(formset.forms)
 
-        ret_val.forms = sorted(ret_val.forms, key=lambda form: form.initial['direction'] or form.instance.direction, reverse=True)
-        ret_val.forms = sorted(ret_val.forms, key=lambda form: form.initial['date'] or form.instance.date)
-        return ret_val
+        formset.forms = sorted(formset.forms, key=lambda form: form.initial['direction'] or form.instance.direction, reverse=True)
+        formset.forms = sorted(formset.forms, key=lambda form: form.initial['date'] or form.instance.date)
+        return formset
 
     title = _(u'Moje jízdy')
     registration_phase = 'profile_view'
