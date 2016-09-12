@@ -1575,9 +1575,9 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         }
         response = self.client.post(reverse('profil'), post_data, follow=True)
         self.assertContains(response, 'form-1-commute_mode')
-        self.assertContains(response, 'Ujetá započítaná vzdálenost: 31,23&nbsp;km')
-        self.assertContains(response, 'Pravidelnost: 66,7&nbsp;%')
-        self.assertContains(response, 'Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g')
+        self.assertContains(response, '<div>Ujetá započítaná vzdálenost: 31,23&nbsp;km (<a href="/cs/jizdy-podrobne/">Podrobný přehled jízd</a>)</div>', html=True)
+        self.assertContains(response, '<div>Pravidelnost: 66,7&nbsp;%</div>', html=True)
+        self.assertContains(response, '<div>Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g (<a href="/cs/emisni_kalkulacka/">Emisní kalkulačka</a>)</div>', html=True)
         self.assertEquals(self.user_attendance.user_trips.count(), 7)
         self.assertEquals(models.Trip.objects.get(pk=101).distance, 28.89)
 
