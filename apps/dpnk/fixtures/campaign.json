@@ -70,7 +70,6 @@
             "slug": "testing-campaign",
             "tracking_number_first": 1111111,
             "tracking_number_last": 999999999,
-            "days_active": 2,
             "trip_plus_distance": 5
         },
         "model": "dpnk.campaign",

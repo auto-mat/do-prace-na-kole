@@ -1490,7 +1490,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'Všechny příspěvky z této soutěže')
 
     @override_settings(
-        FAKE_DATE=datetime.date(year=2010, month=11, day=3),
+        FAKE_DATE=datetime.date(year=2010, month=11, day=8),
     )
     @patch('slumber.API')
     def test_dpnk_rides_view_key_error(self, slumber_api):
