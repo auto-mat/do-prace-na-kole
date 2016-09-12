@@ -1489,6 +1489,48 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, '<a href="%sDSC00002.JPG" target="_blank">DSC00002.JPG</a>' % settings.MEDIA_URL, html=True)
         self.assertContains(response, 'Všechny příspěvky z této soutěže')
 
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=3),
+    )
+    @patch('slumber.API')
+    def test_dpnk_rides_view_key_error(self, slumber_api):
+        "Test if the rides saves, when between loading and sending the form date changes."
+        "The non-active days should not be saved, but active days should be saved"
+        post_data = {
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '2',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-id': 101,
+            'form-0-commute_mode': 'by_other_vehicle',
+            'form-0-distance': '6',
+            'form-0-direction': 'trip_from',
+            'form-0-user_attendance': 1115,
+            'form-0-date': '2010-11-01',
+            'initial-form-0-date': '2010-11-01',
+            'form-1-id': 103,
+            'form-1-commute_mode': 'bicycle',
+            'form-1-distance': '34',
+            'form-1-direction': 'trip_from',
+            'form-1-user_attendance': 1115,
+            'form-1-date': '2010-11-02',
+            'initial-form-1-date': '2010-11-02',
+            'submit': 'Odeslat',
+        }
+        response = self.client.post(reverse('profil'), post_data, follow=True)
+        self.assertContains(response, 'form-0-commute_mode')
+        self.assertContains(response, 'form-3-commute_mode')
+        self.assertContains(response, '<th colspan="2" scope="row" class="date"> út 2. 11. <span>2010</span> </th>', html=True)
+        self.assertContains(response, '<th colspan="2" scope="row" class="date"> st 3. 11. <span>2010</span></th>', html=True)
+        self.assertEquals(self.user_attendance.user_trips.count(), 5)
+        self.assertEquals(models.Trip.objects.get(pk=101).distance, 5)
+        self.assertEquals(models.Trip.objects.get(pk=103).distance, 34)
+
+        denorm.flush()
+        user_attendance = UserAttendance.objects.get(pk=1115)
+        self.assertEquals(user_attendance.trip_length_total, 39.0)
+        self.assertEquals(user_attendance.team.get_length(), 13.0)
+
     @patch('slumber.API')
     def test_dpnk_rides_view(self, slumber_api):
         slumber_api.feed.get = {}

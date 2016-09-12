@@ -46,6 +46,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 from django.db.models import Count, Q, Sum
+from django.forms.models import BaseModelFormSet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.shortcuts import redirect
@@ -834,9 +835,18 @@ def payment_status(request):
     return HttpResponse("OK")
 
 
+class RidesFormSet(BaseModelFormSet):
+    def total_form_count(self):
+        form_count = super().total_form_count()
+        if hasattr(self, 'forms_max_number'):
+            return min(self.forms_max_number, form_count)
+        return form_count
+
+
 class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, ModelFormSetView):
     model = Trip
     form_class = forms.TripForm
+    formset_class = RidesFormSet
     fields = ('commute_mode', 'distance', 'direction', 'user_attendance', 'date')
     extra = 0
     uncreated_trips = []
@@ -881,6 +891,9 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
 
     def construct_formset(self):
         ret_val = super().construct_formset()
+        ret_val.forms = [form for form in ret_val.forms if ('direction' in form.initial)]
+        ret_val.forms_max_number = len(ret_val.forms)
+
         ret_val.forms = sorted(ret_val.forms, key=lambda form: form.initial['direction'] or form.instance.direction, reverse=True)
         ret_val.forms = sorted(ret_val.forms, key=lambda form: form.initial['date'] or form.instance.date)
         return ret_val
