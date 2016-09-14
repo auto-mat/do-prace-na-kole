@@ -83,13 +83,14 @@ class PaymentInline(NestedTabularInline):
     extra = 0
     form = models.PaymentForm
     readonly_fields = ['user_attendance', 'order_id', 'session_id', 'trans_id', 'error', 'author', 'updated_by']
+    raw_id_fields = ['invoice', ]
 
 
 class PackageTransactionInline(NestedTabularInline):
     model = models.PackageTransaction
     extra = 0
     readonly_fields = ['author', 'updated_by', 'tracking_number_cnc', 'tracking_link', 't_shirt_size']
-    raw_id_fields = ['user_attendance', ]
+    raw_id_fields = ['user_attendance', 'delivery_batch']
     form = models.PackageTransactionForm
 
 
@@ -103,7 +104,7 @@ class CommonTransactionInline(NestedTabularInline):
 class UserActionTransactionInline(NestedTabularInline):
     model = models.UserActionTransaction
     extra = 0
-    readonly_fields = ['user_attendance']
+    readonly_fields = ['user_attendance', 'author', 'updated_by']
     form = models.UserActionTransactionForm
 
 
