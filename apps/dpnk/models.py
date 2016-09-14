@@ -594,6 +594,11 @@ class Campaign(models.Model):
         null=True,
         blank=True,
     )
+    track_required = models.BooleanField(
+        verbose_name=_("Je povinné zadávat trasu"),
+        default=True,
+        null=False,
+    )
     wp_api_url = models.URLField(
         default="http://www.dopracenakole.cz/",
         verbose_name=_("Adresa pro Wordpress API se články"),
@@ -1078,7 +1083,7 @@ class UserAttendance(models.Model):
                 return 'payment_waiting'
             else:
                 return 'payment_uncomplete'
-        if not self.track_complete():
+        if self.campaign.track_required and not self.track_complete():
             return 'track_uncomplete'
         return True
 

@@ -190,6 +190,17 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                         city=self.user_attendance.team.subsidiary.city.slug,
                     ),
                 )
+            if not self.user_attendance.track and not self.user_attendance.distance:
+                messages.info(
+                    request,
+                    mark_safe(
+                        _(u'Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.'
+                          u' Na základě této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty.'
+                          u' Vaše vyplněná trasa se objeví na <a target="_blank" href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
+                          u' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
+                          u' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu'),
+                    ),
+                )
 
         if self.registration_phase == 'registration_uncomplete':
             if self.user_attendance.team:
@@ -206,18 +217,6 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                     )
                 elif self.user_attendance.approved_for_team == 'denied':
                     messages.error(request, mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')))
-
-            if not self.user_attendance.track and not self.user_attendance.distance:
-                messages.info(
-                    request,
-                    mark_safe(
-                        _(u'Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.'
-                          u' Na základě této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty.'
-                          u' Vaše vyplněná trasa se objeví na <a target="_blank" href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
-                          u' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
-                          u' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu'),
-                    ),
-                )
 
             if not self.user_attendance.payment_waiting():
                 messages.info(
