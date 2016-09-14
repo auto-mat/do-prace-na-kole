@@ -112,7 +112,10 @@ class TitleViewMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         try:
-            self.campaign = Campaign.objects.get(slug=request.subdomain)
+            if hasattr(self.request, 'user_attendance') and self.request.user_attendance:
+                self.campaign = self.request.user_attendance
+            else:
+                self.campaign = Campaign.objects.get(slug=request.subdomain)
         except Campaign.DoesNotExist:
             self.campaign = None
         return super().dispatch(request, *args, **kwargs)
@@ -857,9 +860,13 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
+    def allow_adding_rides(self):
+        if not hasattr(self, 'allow_adding_rides'):  # cache result
+            self.allow_adding_rides = models.CityInCampaign.objects.get(city=self.user_attendance.team.subsidiary.city, campaign=self.user_attendance.campaign).allow_adding_rides
+        return self.allow_adding_rides
+
     def get_queryset(self):
-        allow_adding_rides = models.CityInCampaign.objects.get(city=self.user_attendance.team.subsidiary.city, campaign=self.user_attendance.campaign).allow_adding_rides
-        if allow_adding_rides:
+        if self.allow_adding_rides():
             self.trips, self.uncreated_trips = self.user_attendance.get_active_trips()
             return self.trips.select_related('gpxfile')
         else:
