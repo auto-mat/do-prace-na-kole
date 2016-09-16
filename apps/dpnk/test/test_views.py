@@ -176,6 +176,19 @@ class CompetitionsViewTests(ViewsLogon):
         self.assertRedirects(response, reverse('profil'), status_code=302)
 
     @patch('slumber.API')
+    def test_dont_allow_adding_rides(self, slumber_api):
+        slumber_instance = slumber_api.return_value
+        slumber_instance.feed.get.return_value = self.feed_value
+        cityincampaign = models.CityInCampaign.objects.get(city=self.user_attendance.team.subsidiary.city, campaign=self.user_attendance.campaign)
+        cityincampaign.allow_adding_rides = False
+        cityincampaign.save()
+
+        address = reverse('profil')
+        response = self.client.get(address)
+        print_response(response)
+        self.assertContains(response, '<div class="alert alert-info">Zde budete zadávat vaše jízdy</div>', html=True)
+
+    @patch('slumber.API')
     def test_registration_access(self, slumber_api):
         slumber_instance = slumber_api.return_value
         slumber_instance.feed.get.return_value = self.feed_value

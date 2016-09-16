@@ -860,13 +860,13 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    def allow_adding_rides(self):
+    def has_allow_adding_rides(self):
         if not hasattr(self, 'allow_adding_rides'):  # cache result
             self.allow_adding_rides = models.CityInCampaign.objects.get(city=self.user_attendance.team.subsidiary.city, campaign=self.user_attendance.campaign).allow_adding_rides
         return self.allow_adding_rides
 
     def get_queryset(self):
-        if self.allow_adding_rides():
+        if self.has_allow_adding_rides():
             self.trips, self.uncreated_trips = self.user_attendance.get_active_trips()
             return self.trips.select_related('gpxfile')
         else:
