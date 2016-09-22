@@ -1405,6 +1405,17 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().first().administrated_company, type='length')
         self.assertEquals(competition.name, 'testing company competition fixed')
 
+    def test_dpnk_company_admin_create_competition_name_exists(self):
+        post_data = {
+            'name': 'Pravidelnost společnosti',
+            'type': 'length',
+            'competitor_type': 'single_user',
+            'submit': 'Odeslat',
+        }
+        request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
+        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
+        self.assertContains(response, "<strong>Položka Soutěžní kategorie s touto hodnotou v poli Jméno soutěže již existuje.</strong>", html=True)
+
     @override_settings(
         MAX_COMPETITIONS_PER_COMPANY=0,
     )

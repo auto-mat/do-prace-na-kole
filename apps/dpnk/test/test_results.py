@@ -153,8 +153,8 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
 
     def test_dpnk_competition_results_company_competition(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
-        models.Competition.objects.get(slug="comp").recalculate_results()
-        address = reverse('competition_results', kwargs={'competition_slug': 'comp'})
+        models.Competition.objects.get(slug="FA-testing-campaign-pravidelnost-spolecnosti").recalculate_results()
+        address = reverse('competition_results', kwargs={'competition_slug': 'FA-testing-campaign-pravidelnost-spolecnosti'})
         response = self.client.get(address)
         self.assertContains(response, "Výsledky v soutěži Pravidelnost společnosti:")
         self.assertContains(response, "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd")
