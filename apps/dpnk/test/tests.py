@@ -340,6 +340,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         response = views.QuestionnaireView.as_view()(request, **kwargs)
         self.assertContains(response, 'yes')
         self.assertContains(response, 'Question text')
+        self.assertContains(response, '<p>Given comment</p>')
 
         post_data = {
             "question-2-choices": 1,

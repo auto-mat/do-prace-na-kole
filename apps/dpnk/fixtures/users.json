@@ -243,6 +243,7 @@
         "fields": {
             "user_attendance": 1115,
             "attachment": "modranska-rokle.gpx",
+            "comment_given": "Given comment",
             "choices": [2],
             "question": 4
         },
