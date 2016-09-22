@@ -235,7 +235,7 @@ LOGIN_REDIRECT_URL = reverse_lazy("profil")
 LOGOUT_NEXT_PAGE = reverse_lazy('profil')
 SITE_URL = ''
 DJANGO_URL = ''
-SMART_SELECTS_URL_PREFIX = "http://localhost:8000"
+SMART_SELECTS_URL_PREFIX = ""
 AKLUB_URL = "http://klub.auto-mat.cz"
 
 LEAFLET_CONFIG = {
