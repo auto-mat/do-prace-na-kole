@@ -1119,6 +1119,14 @@ class RegistrationMixinTests(ViewsLogon):
         self.assertContains(response, "Nezapomeňte vyplnit odpovědi v následujících soutěžích: <a href='/cs/otazka/quest/'>Dotazník</a>!")
 
     @patch('slumber.API')
+    def test_dpnk_registration_vouchers(self, slumber_api):
+        slumber_api.feed.get = {}
+        models.Voucher.objects.create(user_attendance=self.user_attendance, token="1234")
+        response = self.client.get(reverse('profil'))
+        self.assertContains(response, "<h3>Vouchery</h3>", html=True)
+        self.assertContains(response, "<tr> <td> ReKola </td> <td> 1234 </td> </tr>", html=True)
+
+    @patch('slumber.API')
     def test_dpnk_registration_company_admin_undecided(self, slumber_api):
         slumber_api.feed.get = {}
         util.rebuild_denorm_models(Team.objects.filter(pk=2))
