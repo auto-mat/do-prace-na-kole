@@ -22,8 +22,8 @@ from django.core.management import call_command
 
 
 def print_response(response):
-    with open("response.html", "w") as f:
-        f.write(response.content.decode())
+    with open("response.html", "w") as f:  # pragma: no cover
+        f.write(response.content.decode())  # pragma: no cover
 
 
 class DenormMixin(object):

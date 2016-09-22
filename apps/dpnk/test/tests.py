@@ -1832,4 +1832,4 @@ class RunChecksTestCase(ClearCacheMixin, TestCase):
         all_issues = checks.run_checks()
         errors = [str(e) for e in all_issues if e.level >= checks.ERROR]
         if errors:
-            self.fail('checks failed:\n' + '\n'.join(errors))
+            self.fail('checks failed:\n' + '\n'.join(errors))  # pragma: no cover
