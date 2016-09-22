@@ -538,12 +538,12 @@ class FilterTests(TestCase):
     def test_invoice_paid_filters_yes(self):
         f = filters.InvoicePaidFilter(self.request, {"invoice_paid": "yes"}, models.Invoice, None)
         q = f.queryset(self.request, models.Invoice.objects.all())
-        self.assertEquals(q.count(), 0)
+        self.assertEquals(q.count(), 1)
 
     def test_invoice_paid_filters_no(self):
         f = filters.InvoicePaidFilter(self.request, {"invoice_paid": "no"}, models.Invoice, None)
         q = f.queryset(self.request, models.Invoice.objects.all())
-        self.assertEquals(q.count(), 1)
+        self.assertEquals(q.count(), 0)
 
     def test_invoice_paid_filters_null(self):
         f = filters.InvoicePaidFilter(self.request, {}, models.Invoice, None)

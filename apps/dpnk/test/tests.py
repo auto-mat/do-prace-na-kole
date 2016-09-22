@@ -920,6 +920,7 @@ class ViewsTestsLogon(ViewsLogon):
         if beneficiary:
             post_data['company_pais_benefitial_fee'] = "on"
         response = self.client.post(reverse('invoices'), post_data, follow=True)
+        self.assertContains(response, "<td>Zaplacení nepotvrzeno</td>", html=True)
         self.assertRedirects(response, reverse('invoices'))
         p = UserAttendance.objects.get(id=2115).representative_payment
         self.assertEquals(p.status, 1006)

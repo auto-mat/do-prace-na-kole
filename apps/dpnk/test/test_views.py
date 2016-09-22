@@ -187,7 +187,6 @@ class CompetitionsViewTests(ViewsLogon):
 
         address = reverse('profil')
         response = self.client.get(address)
-        print_response(response)
         self.assertContains(response, '<div class="alert alert-info">Zde budete zadávat vaše jízdy</div>', html=True)
 
     @patch('slumber.API')
@@ -197,6 +196,22 @@ class CompetitionsViewTests(ViewsLogon):
         address = reverse('registration_access')
         response = self.client.get(address)
         self.assertRedirects(response, reverse('profil'), status_code=302)
+
+
+@override_settings(
+    SITE_ID=2,
+)
+class InvoiceTests(ClearCacheMixin, TestCase):
+    fixtures = ['campaign', 'auth_user', 'users', 'invoices']
+
+    def setUp(self):
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+
+    def test_invoices(self):
+        address = reverse('invoices')
+        response = self.client.get(address)
+        self.assertContains(response, '<td>10. října 2010</td>', html=True)
 
 
 @override_settings(
