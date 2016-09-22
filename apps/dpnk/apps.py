@@ -35,6 +35,7 @@ class DPNKConfig(AppConfig):
             slugs = Campaign.objects.values_list('slug', flat=True)
             for campaign_slug in slugs:
                 setattr(Team, 'team_in_campaign_%s' % campaign_slug, get_team_in_campaign_manager(campaign_slug).objects)
+            setattr(Team, 'team_in_campaign_testing-campaign', get_team_in_campaign_manager('testing-campaign').objects)
         except ProgrammingError:
             pass
 

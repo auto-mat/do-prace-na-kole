@@ -19,6 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from unittest.mock import patch
 
+import denorm
+
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
@@ -214,3 +216,23 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
         address = reverse('profil')
         response = self.client.get(address)
         self.assertRedirects(response, reverse('typ_platby'))
+
+    def test_chaining(self):
+        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=(1, 4)))
+        denorm.flush()
+        kwargs = {
+            'app': 'dpnk',
+            'model': 'Team',
+            'manager': 'team_in_campaign_testing-campaign',
+            'field': 'subsidiary',
+            'foreign_key_app_name': 'dpnk',
+            'foreign_key_model_name': 'Subsidiary',
+            'foreign_key_field_name': 'company',
+            'value': '1',
+        }
+        address = reverse('chained_filter', kwargs=kwargs)
+        response = self.client.get(address)
+        self.assertJSONEqual(
+            response.content.decode(),
+            [{'value': 4, 'display': 'Empty team ()'}, {'value': 1, 'display': 'Testing team 1 (Nick, Testing User 1, Registered User 1)'}],
+        )
