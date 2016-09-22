@@ -1059,6 +1059,16 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.get(reverse('company_admin_application'))
         self.assertContains(response, 'Vaše organizce již svého koordinátora má: Null User, Null User, Testing User.')
 
+    def test_dpnk_company_admin_application_create(self):
+        user = User.objects.get(username='test1')
+        models.CompanyAdmin.objects.all().delete()
+        response = self.client.get(reverse('company_admin_application'))
+        self.assertContains(
+            response,
+            '<label for="id_motivation_company_admin" class="control-label  requiredField"> Zaměstnanecká pozice<span class="asteriskField">*</span> </label>',
+            html=True,
+        )
+
 
 class RegistrationMixinTests(ViewsLogon):
     def test_dpnk_registration_mixin_team_alone(self):
