@@ -251,3 +251,22 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
             response.content.decode(),
             [{'value': 4, 'display': 'Empty team ()'}, {'value': 1, 'display': 'Testing team 1 (Nick, Testing User 1, Registered User 1)'}],
         )
+
+
+class DistanceTests(TestCase):
+    fixtures = ['campaign', 'users', 'auth_user', 'trips']
+
+    def test_distance(self):
+        trips = models.Trip.objects.all()
+        distance = views.distance_all_modes(trips)
+        self.assertEquals(
+            distance,
+            {
+                'distance__sum': 10.3,
+                'distance_bicycle': 5.3,
+                'distance_foot': 5.0,
+                'count__sum': 2,
+                'count_bicycle': 1,
+                'count_foot': 1,
+            },
+        )

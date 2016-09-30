@@ -45,7 +45,8 @@ from django.contrib.auth.decorators import login_required as login_required_simp
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
-from django.db.models import Count, Q, Sum
+from django.db.models import Case, Count, F, FloatField, IntegerField, Q, Sum, When
+from django.db.models.functions import Coalesce
 from django.forms.models import BaseModelFormSet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -1632,28 +1633,55 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
         return context_data
 
 
-def distance(trips, commute_mode_list=('bicycle', 'by_foot')):
-    return trips.filter(commute_mode__in=commute_mode_list).aggregate(Sum("distance"))['distance__sum'] or 0
+def distance_all_modes(trips):
+    return trips.filter(commute_mode__in=('bicycle', 'by_foot')).aggregate(
+        distance__sum=Coalesce(Sum("distance"), 0.0),
+        count__sum=Coalesce(Count("id"), 0),
+        count_bicycle=Sum(
+            Case(
+                When(commute_mode='bicycle', then=1),
+                output_field=IntegerField(),
+                default=0,
+            ),
+        ),
+        distance_bicycle=Sum(
+            Case(
+                When(commute_mode='bicycle', then=F('distance')),
+                output_field=FloatField(),
+                default=0,
+            ),
+        ),
+        count_foot=Sum(
+            Case(
+                When(commute_mode='by_foot', then=1),
+                output_field=IntegerField(),
+                default=0,
+            ),
+        ),
+        distance_foot=Sum(
+            Case(
+                When(commute_mode='by_foot', then=F('distance')),
+                output_field=FloatField(),
+                default=0,
+            ),
+        ),
+    )
 
 
-def total_distance(campaign, commute_mode_list=('bicycle', 'by_foot')):
-    return distance(Trip.objects.filter(user_attendance__campaign=campaign), commute_mode_list)
+def distance(trips):
+    return distance_all_modes(trips)['distance__sum'] or 0
 
 
-def period_distance(campaign, day_from, day_to, commute_mode_list=('bicycle', 'by_foot')):
-    return distance(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to), commute_mode_list)
+def total_distance(campaign):
+    return distance_all_modes(Trip.objects.filter(user_attendance__campaign=campaign))
+
+
+def period_distance(campaign, day_from, day_to):
+    return distance_all_modes(Trip.objects.filter(user_attendance__campaign=campaign, date__gte=day_from, date__lte=day_to))
 
 
 def trips(trips):
     return trips.count()
-
-
-def total_trips(campaign, commute_mode_list=('bicycle', 'by_foot')):
-    return trips(Trip.objects.filter(user_attendance__campaign=campaign, commute_mode__in=commute_mode_list))
-
-
-def period_trips(campaign, day_from, day_to, commute_mode_list=('bicycle', 'by_foot')):
-    return trips(Trip.objects.filter(user_attendance__campaign=campaign, commute_mode__in=commute_mode_list, date__gte=day_from, date__lte=day_to))
 
 
 @cache_page(60 * 60)
@@ -1663,16 +1691,18 @@ def statistics(
 ):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
+    distances = total_distance(campaign)
+    distances_today = period_distance(campaign, util.today(), util.today())
     variables = {}
-    variables['ujeta-vzdalenost'] = total_distance(campaign)
-    variables['usetrene-emise-co2'] = util.get_emissions(total_distance(campaign))['co2']
-    variables['ujeta-vzdalenost-kolo'] = total_distance(campaign, ('bicycle',))
-    variables['ujeta-vzdalenost-pesky'] = total_distance(campaign, ('by_foot',))
-    variables['ujeta-vzdalenost-dnes'] = period_distance(campaign, util.today(), util.today())
-    variables['pocet-cest'] = total_trips(campaign)
-    variables['pocet-cest-pesky'] = total_trips(campaign, ('by_foot',))
-    variables['pocet-cest-kolo'] = total_trips(campaign, ('bicycle',))
-    variables['pocet-cest-dnes'] = period_trips(campaign, util.today(), util.today())
+    variables['ujeta-vzdalenost'] = distances['distance__sum'] or 0
+    variables['usetrene-emise-co2'] = util.get_emissions(distances['distance__sum'] or 0)['co2']
+    variables['ujeta-vzdalenost-kolo'] = distances['distance_bicycle']
+    variables['ujeta-vzdalenost-pesky'] = distances['distance_foot']
+    variables['ujeta-vzdalenost-dnes'] = distances_today['distance__sum']
+    variables['pocet-cest'] = distances['count__sum'] or 0
+    variables['pocet-cest-pesky'] = distances['count_foot']
+    variables['pocet-cest-kolo'] = distances['count_bicycle']
+    variables['pocet-cest-dnes'] = distances_today['count__sum']
     variables['pocet-zaplacenych'] = UserAttendance.objects.filter(
         Q(campaign=campaign) &
         Q(userprofile__user__is_active=True) &
@@ -1697,7 +1727,7 @@ def daily_chart(
         template='registration/daily-chart.html',):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
-    values = [period_distance(campaign, day, day) for day in util.days(campaign.phase('competition'))]
+    values = [period_distance(campaign, day, day)['distance__sum'] or 0 for day in util.days(campaign.phase('competition'))]
     return render(
         request,
         template,
@@ -1714,19 +1744,16 @@ def daily_distance_extra_json(
         request,):
     campaign_slug = request.subdomain
     campaign = Campaign.objects.get(slug=campaign_slug)
-    values = collections.OrderedDict(
-        (
-            str(day),
-            {
-                'distance': period_distance(campaign, day, day),
-                'distance_bicycle': period_distance(campaign, day, day, ('bicycle',)),
-                'distance_foot': period_distance(campaign, day, day, ('by_foot',)),
-                'emissions_co2': util.get_emissions(period_distance(campaign, day, day))['co2'],
-            },
-        ) for day in util.days(
-            campaign.phase('competition'),
-        )
-    )
+    values = collections.OrderedDict()
+    for day in util.days(campaign.phase('competition')):
+        distances = period_distance(campaign, day, day)
+        emissions_co2 = util.get_emissions(distances['distance__sum'] or 0)['co2']
+        values[str(day)] = {
+            'distance': distances['distance__sum'] or 0,
+            'distance_bicycle': distances['distance_bicycle'] or 0,
+            'distance_foot': distances['distance_foot'] or 0,
+            'emissions_co2': emissions_co2,
+        }
     data = json.dumps(values)
     return HttpResponse(data)
 
