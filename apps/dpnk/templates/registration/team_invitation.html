@@ -5,9 +5,13 @@
 {% block form %}
 {% include "messages_include.html" %}
 {% if old_team %}
+<div>
 Přejete si být přeřazeni z týmu {{ old_team }} do týmu {{ new_team }}?
+</div>
 {% else %}
+<div>
 Přejete si být zařazeni do týmu {{ new_team }}?
+</div>
 {% endif %}
 
 {{ block.super }}

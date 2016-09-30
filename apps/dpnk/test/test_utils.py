@@ -71,5 +71,5 @@ class UtilTests(TestCase):
 class TodayTests(TestCase):
     def test_today(self):
         if hasattr(settings, 'FAKE_DATE'):
-            del settings.FAKE_DATE
+            del settings.FAKE_DATE  # pragma: no cover
         self.assertEquals(util._today(), datetime.date.today())

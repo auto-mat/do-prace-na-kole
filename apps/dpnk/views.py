@@ -489,7 +489,7 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
         context['old_team'] = self.user_attendance.team
         context['new_team'] = self.new_team
 
-        if self.user_attendance.payment_status == 'done' and self.user_attendance.team.subsidiary != self.new_team.subsidiary:
+        if self.user_attendance.payment_status == 'done' and self.user_attendance.team and self.user_attendance.team.subsidiary != self.new_team.subsidiary:
             return {
                 'fullpage_error_message': _(u"Již máte zaplaceno, nemůžete měnit tým mimo svoji pobočku."),
                 'title': _("Startovné již zaplaceno"),
