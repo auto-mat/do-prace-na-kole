@@ -47,6 +47,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}<div>{% wp_article campaign 4321 %}</div>")
         context = Context({'campaign': self.user_attendance.campaign})
         response = template.render(context)
+        m.feed.get.assert_called_once_with(feed="content_to_backend", _id=4321, _post_type="page")
         self.assertHTMLEqual(response, '<div></div>')
 
     @patch('slumber.API')
@@ -57,6 +58,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}<div>{% wp_article campaign 4321 %}</div>")
         context = Context({'campaign': self.user_attendance.campaign})
         response = template.render(context)
+        m.feed.get.assert_called_once_with(feed="content_to_backend", _id=4321, _post_type="page")
         self.assertHTMLEqual(response, '<div></div>')
 
     @patch('slumber.API')
@@ -67,6 +69,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}{% wp_news campaign 4321 %}")
         context = Context({'campaign': self.user_attendance.campaign})
         response = template.render(context)
+        m.feed.get.assert_called_once_with(feed="content_to_backend", _number=5, _connected_to=4321, _post_type="post", order="DESC")
         self.assertHTMLEqual(response, '<div class="wp_news">Žádná novinka není.</div>')
 
     @patch('slumber.API')
@@ -77,6 +80,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}<div>{% wp_news campaign 4321 %}</div>")
         context = Context({'campaign': self.user_attendance.campaign})
         response = template.render(context)
+        m.feed.get.assert_called_once_with(feed="content_to_backend", _number=5, _connected_to=4321, _post_type="post", order="DESC")
         self.assertHTMLEqual(response, '<div></div>')
 
     @patch('slumber.API')
@@ -87,20 +91,22 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}<div>{% wp_news campaign 4321 %}</div>")
         context = Context({'campaign': self.user_attendance.campaign})
         response = template.render(context)
+        m.feed.get.assert_called_once_with(feed="content_to_backend", _number=5, _connected_to=4321, _post_type="post", order="DESC")
         self.assertHTMLEqual(response, '<div></div>')
 
     @patch('slumber.API')
     def test_wp_article(self, slumber_mock):
         m = MagicMock()
-        m.feed.get.return_value = {
-            "1234": {
+        m.feed.get.return_value = [
+            {
                 "content": "Test content",
             },
-        }
+        ]
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}<div>{% wp_article campaign 1234 %}</div>")
         context = Context({'campaign': self.user_attendance.campaign})
         response = template.render(context)
+        m.feed.get.assert_called_once_with(feed="content_to_backend", _post_type="page", _id=1234)
         self.assertHTMLEqual(response, '<div>Test content</div>')
 
     @patch('slumber.API')
@@ -120,6 +126,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}{% wp_news campaign %}")
         context = Context({'campaign': self.user_attendance.campaign})
         response = template.render(context)
+        m.feed.get.assert_called_once_with(_number=5, _connected_to=None, feed="content_to_backend", _post_type="post", _global_news=1, order="DESC")
         self.assertHTMLEqual(
             response,
             '''
@@ -154,6 +161,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}{% wp_news campaign 'test_city' %}")
         context = Context({'campaign': self.user_attendance.campaign})
         response = template.render(context)
+        m.feed.get.assert_called_once_with(_number=5, feed="content_to_backend", _post_type="post", _connected_to="test_city", order="DESC")
         self.assertHTMLEqual(
             response,
             '''
@@ -188,6 +196,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}{% wp_actions campaign 'test_city' %}")
         context = Context({'campaign': self.user_attendance.campaign})
         response = template.render(context)
+        m.feed.get.assert_called_once_with(_number=-1, feed="content_to_backend", _page_subtype="event", _post_type="locations", _post_parent="test_city")
         self.assertHTMLEqual(
             response,
             '''
@@ -222,6 +231,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}{% wp_prize campaign 'test_city' %}")
         context = Context({'campaign': self.user_attendance.campaign})
         response = template.render(context)
+        m.feed.get.assert_called_once_with(_number=-1, feed="content_to_backend", _page_subtype="prize", _post_type="locations", _post_parent="test_city", order="ASC")
         self.assertHTMLEqual(
             response,
             '''
@@ -268,6 +278,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}{% cyklistesobe 'test_slug' %}")
         context = Context()
         response = template.render(context)
+        m.issues.get.assert_called_once_with(group="test_slug", order="created_at", page=0, per_page=5)
         self.assertHTMLEqual(
             response,
             '''

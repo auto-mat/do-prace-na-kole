@@ -123,12 +123,12 @@ def wp_article_cached(campaign, article_id):
     url = campaign.wp_api_url
     api = slumber.API(url)
     try:
-        wp_article = api.feed.get(feed="content_to_backend", _post_type="page", _id=id)
+        wp_article = api.feed.get(feed="content_to_backend", _post_type="page", _id=article_id)
     except slumber.exceptions.SlumberBaseException:
         logger.exception(u'Error fetching wp article')
         return ""
     try:
-        return wp_article[str(article_id)]['content']
+        return wp_article[0]['content']
     except KeyError:
         logger.exception(u'Bad wp article id')
         return ""

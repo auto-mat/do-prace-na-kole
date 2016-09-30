@@ -607,7 +607,7 @@ class ViewsTestsLogon(ViewsLogon):
     @patch('slumber.API')
     def test_dpnk_team_view_choose(self, slumber_api):
         m = MagicMock()
-        m.feed.get.return_value = {"10196": {"content": "T-shirt description text"}}
+        m.feed.get.return_value = [{"content": "T-shirt description text"}]
         slumber_api.return_value = m
         models.PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
@@ -1060,7 +1060,6 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertContains(response, 'Vaše organizce již svého koordinátora má: Null User, Null User, Testing User.')
 
     def test_dpnk_company_admin_application_create(self):
-        user = User.objects.get(username='test1')
         models.CompanyAdmin.objects.all().delete()
         response = self.client.get(reverse('company_admin_application'))
         self.assertContains(
@@ -1283,7 +1282,7 @@ class TrackViewTests(ViewsLogon):
     @patch('slumber.API')
     def test_emission_calculator(self, slumber_api):
         m = MagicMock()
-        m.feed.get.return_value = {"11340": {"content": "Emission calculator description text"}}
+        m.feed.get.return_value = [{"content": "Emission calculator description text"}]
         slumber_api.return_value = m
         address = reverse('emission_calculator')
         response = self.client.get(address)
