@@ -112,6 +112,26 @@ class AdminModulesTests(DenormMixin, TestCase):
         util.rebuild_denorm_models(Team.objects.filter(pk=1))
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk__in=(1115, 2115)))
 
+    def test_userattendance_admin_post(self):
+        campaign = models.Campaign.objects.get(pk=339)
+        campaign.max_team_members = 1
+        campaign.save()
+        address = reverse("admin:dpnk_userattendance_change", args=(1115,))
+        post_data = {
+            'approved_for_team': 'approved',
+            'team': '1',
+            'transactions-TOTAL_FORMS': 0,
+            'transactions-INITIAL_FORMS': 0,
+            'transactions-2-TOTAL_FORMS': 0,
+            'transactions-2-INITIAL_FORMS': 0,
+            'transactions-3-TOTAL_FORMS': 0,
+            'transactions-3-INITIAL_FORMS': 0,
+            'user_trips-TOTAL_FORMS': 0,
+            'user_trips-INITIAL_FORMS': 0,
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(response, "<li>Tento tým není možné zvolit, protože by měl příliš mnoho odsouhlasených členů.</li>", html=True)
+
     def test_userattendance_export(self):
         address = "/admin/dpnk/userattendance/export/"
         post_data = {

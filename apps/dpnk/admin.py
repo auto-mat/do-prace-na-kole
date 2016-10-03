@@ -390,6 +390,19 @@ class UserAttendanceForm(forms.ModelForm):
             if hasattr(self.instance, 'campaign'):
                 self.fields['t_shirt_size'].queryset = models.TShirtSize.objects.filter(campaign=self.instance.campaign)
 
+    def clean(self):
+        new_team = self.cleaned_data['team']
+        new_approved_for_team = self.cleaned_data['approved_for_team']
+        if new_team:
+            new_member_count = new_team.members().exclude(pk=self.instance.pk).count()
+            if new_approved_for_team == 'approved':
+                new_member_count += 1
+            if self.instance.campaign.too_much_members(new_member_count):
+                message = _("Tento tým není možné zvolit, protože by měl příliš mnoho odsouhlasených členů.")
+                self.add_error("team", message)
+                self.add_error("approved_for_team", message)
+        return super().clean()
+
 
 class UserAttendanceInline(NestedTabularInline):
     model = models.UserAttendance
