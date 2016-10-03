@@ -50,6 +50,11 @@ class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
         request.subdomain = "testing-campaign"
         return request
 
+    def post_request(self, params={}):
+        request = super().get_request(params)
+        request.subdomain = "testing-campaign"
+        return request
+
 
 @override_settings(
     SITE_ID=2,

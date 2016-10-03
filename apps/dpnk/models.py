@@ -2585,7 +2585,8 @@ class CompetitionResult(models.Model):
 
     def __str__(self):
         if self.competition.competitor_type == 'team':
-            return "%s" % self.team.name
+            if self.team:
+                return "%s" % self.team.name
         elif self.competition.competitor_type == 'company':
             return "%s" % self.company.name
         else:
