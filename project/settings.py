@@ -379,7 +379,10 @@ IGNORABLE_404_URLS = [
     re.compile(r'^/wordpress$'),
     re.compile(r'^/wp$'),
     re.compile(r'^/blog$'),
+    re.compile(r'^/sitenews$'),
+    re.compile(r'^/site$'),
     re.compile(r'^/blog/robots.txt$'),
+    re.compile(r'^xmlrpc.php$'),
 ]
 
 # import local settings
