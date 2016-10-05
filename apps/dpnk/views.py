@@ -114,7 +114,7 @@ class TitleViewMixin(object):
     def dispatch(self, request, *args, **kwargs):
         try:
             if hasattr(self.request, 'user_attendance') and self.request.user_attendance:
-                self.campaign = self.request.user_attendance
+                self.campaign = self.request.user_attendance.campaign
             else:
                 self.campaign = Campaign.objects.get(slug=request.subdomain)
         except Campaign.DoesNotExist:
@@ -1120,7 +1120,7 @@ class UpdateProfileView(RegistrationViewMixin, UpdateView):
         return kwargs
 
     def get_object(self):
-        return self.request.user.userprofile
+        return self.user_attendance.userprofile
 
 
 class UpdateTrackView(RegistrationViewMixin, UpdateView):
