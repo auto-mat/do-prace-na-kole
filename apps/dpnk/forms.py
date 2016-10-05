@@ -589,10 +589,11 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
         fields = ('user_attendance', 'description')
 
 
-class TShirtUpdateForm(PrevNextMixin, models.UserAttendanceForm):
+class TShirtUpdateForm(PrevNextMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['t_shirt_size'].required = True
+        self.fields['t_shirt_size'].queryset = models.TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
         return ret_val
 
     class Meta:

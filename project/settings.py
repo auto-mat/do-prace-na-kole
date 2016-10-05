@@ -20,6 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import os
+import re
 import sys
 
 from django.contrib.messages import constants as message_constants
@@ -370,6 +371,16 @@ MESSAGE_TAGS = {
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 HEADER_COLOR = "red"
+
+IGNORABLE_404_URLS = [
+    re.compile(r'^/apple-touch-icon.*\.png$'),
+    re.compile(r'^/favicon\.ico$'),
+    re.compile(r'^/robots\.txt$'),
+    re.compile(r'^/wordpress$'),
+    re.compile(r'^/wp$'),
+    re.compile(r'^/blog$'),
+    re.compile(r'^/blog/robots.txt$'),
+]
 
 # import local settings
 try:

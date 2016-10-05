@@ -799,12 +799,6 @@ class TShirtSize(models.Model):
             return "%s (%s Kč navíc)" % (self.name, self.price)
 
 
-class UserAttendanceForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(UserAttendanceForm, self).__init__(*args, **kwargs)
-        self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
-
-
 class UserAttendance(models.Model):
     """Účast uživatele v kampani"""
 
@@ -2591,7 +2585,8 @@ class CompetitionResult(models.Model):
 
     def __str__(self):
         if self.competition.competitor_type == 'team':
-            return "%s" % self.team.name
+            if self.team:
+                return "%s" % self.team.name
         elif self.competition.competitor_type == 'company':
             return "%s" % self.company.name
         else:
