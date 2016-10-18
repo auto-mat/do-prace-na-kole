@@ -9,6 +9,7 @@ run apt-get install -y libtiff5-dev libjpeg-dev zlib1g-dev libfreetype6-dev libl
 run apt-get install -y libxml2-dev libxslt-dev
 run apt-get install -y node-less yui-compressor
 run apt-get install -y libgeos-dev
+run apt-get install -y gunicorn
 
 run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
@@ -21,4 +22,6 @@ run pip install -r test_requirements.txt
 copy . .
 
 EXPOSE 8000
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+RUN mkdir media logs
+VOLUME ["logs", "media"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
