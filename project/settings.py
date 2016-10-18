@@ -194,6 +194,7 @@ INSTALLED_APPS = (
     'raven.contrib.django.raven_compat',
     'bootstrap3',
     'daterange_filter',
+    'storages',
     # 'cachalot',
 )
 
