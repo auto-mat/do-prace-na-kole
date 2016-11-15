@@ -251,9 +251,6 @@ def create_subsidiary_resource(campaign_slugs):
     return SubsidiaryResource
 
 
-subsidiary_resource = create_subsidiary_resource(models.Campaign.objects.values_list("slug", flat=True))
-
-
 class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     list_display = (
         'name',
@@ -277,7 +274,7 @@ class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     raw_id_fields = ('company',)
     list_max_show_all = 10000
     save_as = True
-    resource_class = subsidiary_resource
+    resource_class = create_subsidiary_resource(models.Campaign.objects.values_list("slug", flat=True))
 
     readonly_fields = ['team_links', ]
 
@@ -517,9 +514,6 @@ def create_userprofile_resource(campaign_slugs):
     return UserProileResource
 
 
-userprofile_resource = create_userprofile_resource(models.Campaign.objects.values_list("slug", flat=True))
-
-
 class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     list_display = (
         'user',
@@ -534,7 +528,7 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
         'user_attendances_count',
     )
     inlines = (CompanyAdminInline,)
-    resource_class = userprofile_resource
+    resource_class = create_userprofile_resource(models.Campaign.objects.values_list("slug", flat=True))
     list_filter = (
         campaign_filter_generator('userattendance_set__campaign'),
         'language',
