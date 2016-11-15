@@ -20,6 +20,7 @@
 """Administrátorské rozhraní pro Do práce na kole"""
 
 import pprint
+import types
 
 from adminfilters.filters import AllValuesComboFilter, RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
 
@@ -202,20 +203,60 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
     subsidiary_links.short_description = _('Pobočky')
 
 
-class SubsidiaryResource(resources.ModelResource):
-    class Meta:
-        model = models.Subsidiary
-        fields = (
-            'id',
-            'company',
-            'city',
-        )
-        export_order = fields
+def create_subsidiary_resource(campaign_slugs):
+    campaign_fields = ["user_count_%s" % sl for sl in campaign_slugs]
+
+    class SubsidiaryResource(resources.ModelResource):
+        class Meta:
+            model = models.Subsidiary
+            fields = [
+                'id',
+                'name',
+                'address_street',
+                'address_street_number',
+                'address_recipient',
+                'address_psc',
+                'address_city',
+                'address_district',
+                'company__name',
+                'city__name',
+                'user_count',
+                'team_count',
+            ] + campaign_fields
+            export_order = fields
+
+        name = fields.Field()
+
+        def dehydrate_name(self, obj):
+            return obj.name()
+
+        team_count = fields.Field()
+
+        def dehydrate_team_count(self, obj):
+            return obj.team_count
+
+        user_count = fields.Field()
+
+        def dehydrate_user_count(self, obj):
+            return obj.teams.distinct().aggregate(Sum('member_count'))['member_count__sum']
+
+        for slug in campaign_slugs:
+            vars()['user_count_%s' % slug] = fields.Field()
+
+    for slug in campaign_slugs:
+        def func(slug, obj):
+            return obj.teams.filter(campaign__slug=slug).distinct().aggregate(Sum('member_count'))['member_count__sum']
+        setattr(SubsidiaryResource, "dehydrate_user_count_%s" % slug, types.MethodType(func, slug))
+
+    return SubsidiaryResource
+
+
+subsidiary_resource = create_subsidiary_resource(models.Campaign.objects.values_list("slug", flat=True))
 
 
 class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     list_display = (
-        '__str__',
+        'name',
         'company',
         'city',
         'user_count',
@@ -236,7 +277,7 @@ class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     raw_id_fields = ('company',)
     list_max_show_all = 10000
     save_as = True
-    resource_class = SubsidiaryResource
+    resource_class = subsidiary_resource
 
     readonly_fields = ['team_links', ]
 
