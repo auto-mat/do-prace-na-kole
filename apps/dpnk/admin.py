@@ -477,9 +477,64 @@ class UserProfileAdminInline(NestedStackedInline):
     filter_horizontal = ('administrated_cities',)
 
 
+def create_userprofile_resource(campaign_slugs):
+    campaign_fields = ["user_attended_%s" % sl for sl in campaign_slugs]
+
+    class UserProileResource(resources.ModelResource):
+        class Meta:
+            model = models.UserProfile
+            fields = [
+                'name',
+                'email',
+                'sex',
+                'telephone',
+                'language',
+                'mailing_id',
+                'note',
+                'ecc_password',
+                'ecc_email',
+            ] + campaign_fields
+            export_order = fields
+
+        name = fields.Field()
+
+        def dehydrate_name(self, obj):
+            return obj.name()
+
+        email = fields.Field()
+
+        def dehydrate_email(self, obj):
+            return obj.user.email
+
+        for slug in campaign_slugs:
+            vars()['user_attended_%s' % slug] = fields.Field()
+
+    for slug in campaign_slugs:
+        def func(slug, obj):
+            return obj.userattendance_set.filter(campaign__slug=slug).exists()
+        setattr(UserProileResource, "dehydrate_user_attended_%s" % slug, types.MethodType(func, slug))
+
+    return UserProileResource
+
+
+userprofile_resource = create_userprofile_resource(models.Campaign.objects.values_list("slug", flat=True))
+
+
 class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
-    list_display = ('user', '__str__', 'sex', 'telephone', 'language', 'mailing_id', 'note', 'ecc_password', 'ecc_email')
+    list_display = (
+        'user',
+        '__str__',
+        'sex',
+        'telephone',
+        'language',
+        'mailing_id',
+        'note',
+        'ecc_password',
+        'ecc_email',
+        'user_attendances_count',
+    )
     inlines = (CompanyAdminInline,)
+    resource_class = userprofile_resource
     list_filter = (
         campaign_filter_generator('userattendance_set__campaign'),
         'language',
@@ -507,6 +562,13 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
         if key in ('userattendance_set__team__subsidiary__city__id__exact',):
             return True
         return super().lookup_allowed(key, value)
+
+    def get_queryset(self, request):
+        return models.UserProfile.objects.annotate(userattendance_count=Count('userattendance_set'))
+
+    def user_attendances_count(self, obj):
+        return obj.userattendance_set.count()
+    user_attendances_count.admin_order_field = "userattendance_count"
 
 
 class UserAdmin(RelatedFieldAdmin, ExportMixin, NestedModelAdmin, UserAdmin):
