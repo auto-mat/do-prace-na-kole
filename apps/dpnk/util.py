@@ -155,6 +155,7 @@ def day_active_last_cut_after_may(day, campaign):
 #                 day.isocalendar()[1] + 1 == day_today.isocalendar()[1]))
 #     )
 
+
 day_active = day_active_last_cut_after_may
 
 

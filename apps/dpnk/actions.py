@@ -29,6 +29,8 @@ def recalculate_competitions_results(modeladmin, request, queryset):
     tasks.recalculate_competitions_results.apply_async(args=(queryset,))
     if request:
         modeladmin.message_user(request, _(u"Zadáno přepočítání %s výsledků" % (queryset.count())))
+
+
 recalculate_competitions_results.short_description = _(u"Přepočítat výsledku vybraných soutěží")
 
 
@@ -43,6 +45,8 @@ def normalize_questionnqire_admissions(modeladmin, request, queryset):
         competition.save()
     if request:
         modeladmin.message_user(request, _(u"Úspěšně obnoveno %s přihlášek podle odpovědí na dotazník" % (queryset.count())))
+
+
 normalize_questionnqire_admissions.short_description = _(u"Obnovit přihlášky podle odpovědí na dotazník")
 
 
@@ -51,6 +55,8 @@ normalize_questionnqire_admissions.short_description = _(u"Obnovit přihlášky 
 def touch_items(modeladmin, request, queryset):
     tasks.touch_items.apply_async(args=(queryset,))
     modeladmin.message_user(request, _("Obnova %s denormalizovaných položek byla zadána ke zpracování" % queryset.count()))
+
+
 touch_items.short_description = _("Obnovit denormalizované sloupce")
 
 
@@ -58,6 +64,8 @@ def recalculate_results(modeladmin, request, queryset):
     for user_attendance in queryset.all():
         results.recalculate_result_competitor_nothread(user_attendance)
     modeladmin.message_user(request, _(u"Výsledky přepočítány"))
+
+
 recalculate_results.short_description = _(u"Přepočítat výsledky soutěží pro vybrané účasti v kampani")
 
 
@@ -66,6 +74,8 @@ def show_distance(modeladmin, request, queryset):
     length = views.distance(trips_query)
     trips = views.trips(trips_query)
     modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
+
+
 show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 
 
@@ -79,6 +89,8 @@ def assign_vouchers(modeladmin, request, queryset):
         voucher.user_attendance = user_attendance
         voucher.save()
     modeladmin.message_user(request, _(u"Úspěšně přiřazeno %s voucherů" % (count)))
+
+
 assign_vouchers.short_description = _(u"Přiřadit vouchery")
 
 
@@ -86,6 +98,8 @@ def update_mailing(modeladmin, request, queryset):
     for user_attendance in queryset:
         mailing.add_or_update_user_synchronous(user_attendance, ignore_hash=True)
     modeladmin.message_user(request, _(u"Mailing list byl úspěšne aktualizován %s uživatelům") % queryset.count())
+
+
 update_mailing.short_description = _(u"Aktualizovat mailing list")
 
 
@@ -97,6 +111,8 @@ def approve_am_payment(modeladmin, request, queryset):
             payment.description += "\nPayment realized by %s\n" % request.user.username
             payment.save()
     modeladmin.message_user(request, _(u"Platby potvrzeny"))
+
+
 approve_am_payment.short_description = _(u"Potvrdit platbu")
 
 
@@ -106,6 +122,8 @@ def remove_mailing_id(modeladmin, request, queryset):
         userprofile.mailing_hash = None
         userprofile.save()
     modeladmin.message_user(request, _(u"Mailing ID a hash byl úspěšne odebrán %s profilům") % queryset.count())
+
+
 remove_mailing_id.short_description = _(u"Odstranit mailing ID a hash")
 
 
@@ -113,6 +131,8 @@ def show_distance_trips(modeladmin, request, queryset):
     length = views.distance(queryset)
     trips = views.trips(queryset)
     modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))
+
+
 show_distance_trips.short_description = _(u"Ukázat ujetou vzdálenost")
 
 
@@ -125,6 +145,8 @@ def update_mailing_coordinator(modeladmin, request, queryset):
             mailing.add_or_update_user_synchronous(company_admin, ignore_hash=True)
 
     modeladmin.message_user(request, _(u"Úspěšně aktualiován mailing pro %s koordinátorů") % queryset.count())
+
+
 update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
 
 
@@ -138,6 +160,8 @@ def create_batch(modeladmin, request, queryset):
     delivery_batch.add_packages_on_save = True
     delivery_batch.save()
     modeladmin.message_user(request, _(u"Vytvořena nová dávka obsahující %s položek") % queryset.count())
+
+
 create_batch.short_description = _(u"Vytvořit dávku z vybraných uživatelů")
 
 
@@ -146,4 +170,6 @@ def mark_invoices_paid(modeladmin, request, queryset):
         invoice.paid_date = datetime.date.today()
         invoice.save()
     modeladmin.message_user(request, _("%s faktur označeno jako 'zaplaceno'") % queryset.count())
+
+
 mark_invoices_paid.short_description = _("Označit faktury jako zaplacené")

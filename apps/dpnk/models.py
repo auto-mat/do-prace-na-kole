@@ -1694,6 +1694,7 @@ class Status (object):
 
     COMPETITION_START_CONFIRMED = 30002
 
+
 STATUS = (
     (Status.NEW, _(u'Nová')),
     (Status.CANCELED, _(u'Zrušena')),

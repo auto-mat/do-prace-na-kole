@@ -63,6 +63,7 @@ class Mailing:
         r = subscriber.delete()
         return r
 
+
 mailing = Mailing(api_key=settings.MAILING_API_KEY)
 
 

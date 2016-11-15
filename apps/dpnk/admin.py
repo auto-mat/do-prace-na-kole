@@ -1489,6 +1489,7 @@ class TaskMetaAdmin(admin.ModelAdmin):
     def result_str(self, obj):
         return str(obj.result)
 
+
 admin.site.register(TaskMeta, TaskMetaAdmin)
 admin.site.register(Session, SessionAdmin)
 

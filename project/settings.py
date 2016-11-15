@@ -31,6 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 def normpath(*args):
     return os.path.normpath(os.path.abspath(os.path.join(*args)))
 
+
 PROJECT_ROOT = normpath(__file__, "..", "..")
 
 sys.path.append(normpath(PROJECT_ROOT, "project"))
@@ -114,6 +115,7 @@ class InvalidStringShowWarning(str):
         logger = logging.getLogger(__name__)
         logger.warning("Undefined variable or unknown value for: '%s'" % (other,))
         return ""
+
 
 TEMPLATES = [
     {
