@@ -61,7 +61,8 @@ pypdf2
 django-extra-views
 freezegun
 raven
-django-celery
+django-celery<4.0.0
+celery<4.0.0
 django-bootstrap3
 sqlalchemy
 flower
