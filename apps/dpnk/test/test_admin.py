@@ -180,7 +180,15 @@ class AdminModulesTests(DenormMixin, TestCase):
             'file_format': 0,
         }
         response = self.client.post(address, post_data)
-        self.assertContains(response, "1,1,1")
+        self.assertContains(response, '1,"Ulice 1, 111 11 Praha",Ulice,1,,11111,Praha,,Testing company,Testing city')
+
+    def test_userprofile_export(self):
+        address = "/admin/dpnk/userprofile/export/"
+        post_data = {
+            'file_format': 0,
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(response, 'Testing User 1,test@test.cz,male,,cs,,,secret,email1128@dopracenakole.cz,')
 
     def test_answer_export(self):
         address = "/admin/dpnk/answer/export/"
@@ -299,7 +307,7 @@ class AdminTests(TestCase):
     def test_subsidiary_admin(self):
         address = reverse('admin:dpnk_subsidiary_changelist')
         response = self.client.get(address, follow=True)
-        self.assertContains(response, "Ulice 1, 111 11 Praha - Testing city")
+        self.assertContains(response, "Ulice 1, 111 11 Praha")
 
     def test_competition_admin(self):
         address = reverse('admin:dpnk_competition_changelist')
