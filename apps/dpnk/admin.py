@@ -512,7 +512,9 @@ def create_userprofile_resource(campaign_slugs):
 
     for slug in campaign_slugs:
         def func(slug, obj):
-            return obj.userattendance_set.filter(campaign__slug=slug).exists()
+            user_profile = obj.userattendance_set.filter(campaign__slug=slug)
+            if user_profile.exists():
+                return user_profile.get().payment_status
         setattr(UserProileResource, "dehydrate_user_attended_%s" % slug, types.MethodType(func, slug))
 
     return UserProileResource
