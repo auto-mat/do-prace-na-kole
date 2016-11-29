@@ -43,7 +43,7 @@ from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
 from django.db import transaction
 from django.db.models import Max, Q
 from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
@@ -2850,6 +2850,98 @@ class Voucher(models.Model):
     class Meta:
         verbose_name = _(u"Voucher")
         verbose_name_plural = _(u"Vouchery")
+
+
+class DiscountCouponType(models.Model):
+    name = models.CharField(
+        verbose_name=_(u"jméno typu voucheru"),
+        max_length=20,
+        blank=False,
+        null=False,
+    )
+    prefix = models.CharField(
+        validators=[
+            RegexValidator(
+                regex='^[A-Z]*$',
+                message=_('Prefix musí sestávat pouze z velkých písmen'),
+                code='invalid_prefix',
+            ),
+        ],
+        verbose_name=_("prefix"),
+        max_length=10,
+        null=False,
+        blank=False,
+        unique=True,
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Typ slevového kupónu")
+        verbose_name_plural = _("Typy slevového kupónu")
+
+
+class DiscountCoupon(models.Model):
+    coupon_type = models.ForeignKey(
+        DiscountCouponType,
+        verbose_name=_("typ voucheru"),
+        null=False,
+        blank=False,
+        default='',
+    )
+    token = models.TextField(
+        verbose_name=_("token"),
+        blank=False,
+        null=False,
+        unique=True,
+    )
+    user_attendance = models.OneToOneField(
+        UserAttendance,
+        null=True,
+        blank=True,
+    )
+    discount = models.PositiveIntegerField(
+        verbose_name=_("sleva (v procentech)"),
+        null=False,
+        blank=False,
+        default=100,
+    )
+    note = models.CharField(
+        verbose_name=_("poznámka"),
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    receiver = models.CharField(
+        verbose_name=_("příjemce"),
+        max_length=50,
+        blank=True,
+        null=True,
+    )
+    sent = models.BooleanField(
+        verbose_name=_("Odeslaný"),
+        default=False,
+        null=False,
+    )
+
+    class Meta:
+        verbose_name = _("Slevový kupón")
+        verbose_name_plural = _("Slevové kupóny")
+        unique_together = (
+            ("token", "coupon_type"),
+        )
+
+    def __str__(self):
+        return "%s-%s" % (self.coupon_type.prefix, self.token)
+
+    def name(self):
+        return self.__str__()
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            self.token = User.objects.make_random_password(length=6, allowed_chars='ABCDEFGHJKLMNPQRSTUVWXYZ')
+        super().save(*args, **kwargs)
 
 
 def normalize_gpx_filename(instance, filename):

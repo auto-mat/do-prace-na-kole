@@ -1439,6 +1439,18 @@ class VoucherAdmin(ImportMixin, admin.ModelAdmin):
     raw_id_fields = ('user_attendance',)
 
 
+class DiscountCouponTypeAdmin(ImportMixin, ExportMixin, admin.ModelAdmin):
+    list_display = ('name', 'prefix',)
+
+
+class DiscountCouponAdmin(ImportMixin, ExportMixin, RelatedFieldAdmin):
+    list_display = ('name', 'coupon_type__prefix', 'token', 'coupon_type', 'discount', 'user_attendance', 'note', 'receiver', 'sent')
+    raw_id_fields = ('user_attendance',)
+    readonly_fields = ('token',)
+    list_editable = ('note', 'receiver', 'discount', 'sent')
+    list_filter = ('coupon_type__name', 'sent')
+
+
 class UserAttendanceToBatch(models.UserAttendance):
     class Meta:
         verbose_name = _(u"Uživatel na dávku objednávek")
@@ -1524,6 +1536,8 @@ admin.site.register(models.DeliveryBatch, DeliveryBatchAdmin)
 admin.site.register(models.Invoice, InvoiceAdmin)
 admin.site.register(models.GpxFile, GpxFileAdmin)
 admin.site.register(models.Voucher, VoucherAdmin)
+admin.site.register(models.DiscountCoupon, DiscountCouponAdmin)
+admin.site.register(models.DiscountCouponType, DiscountCouponTypeAdmin)
 
 admin.site.unregister(models.User)
 admin.site.register(models.User, UserAdmin)
