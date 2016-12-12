@@ -621,10 +621,16 @@ class DiscountCouponView(RegistrationViewMixin, FormView):
     registration_phase = 'typ_platby'
     title = _("Uplatnit slevový voucher")
 
+    def get_success_url(self):
+        if self.discount_coupon.discount == 100:
+            return reverse_lazy('profil')
+        else:
+            return self.success_url
+
     def form_valid(self, form):
-        discount_coupon = form.cleaned_data['discount_coupon']
-        discount_coupon.user_attendance = self.user_attendance
-        discount_coupon.save()
+        self.discount_coupon = form.cleaned_data['discount_coupon']
+        self.discount_coupon.user_attendance = self.user_attendance
+        self.discount_coupon.save()
         ret_val = super().form_valid(form)
         return ret_val
 

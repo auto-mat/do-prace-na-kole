@@ -908,11 +908,17 @@ class UserAttendance(models.Model):
         else:
             return 0
 
+    def discount_multiplier(self):
+        if hasattr(self, 'discountcoupon'):
+            return self.discountcoupon.discount_multiplier()
+        else:
+            return 1
+
     def admission_fee(self):
         if self.campaign.late_admission_phase_actual():
-            return self.campaign.late_admission_fee + self.t_shirt_price()
+            return (self.campaign.late_admission_fee + self.t_shirt_price()) * self.discount_multiplier()
         else:
-            return self.campaign.admission_fee + self.t_shirt_price()
+            return (self.campaign.admission_fee + self.t_shirt_price()) * self.discount_multiplier()
 
     def has_admission_fee(self):
         return self.admission_fee() > 0
@@ -922,12 +928,13 @@ class UserAttendance(models.Model):
 
     def company_admission_fee(self):
         if self.campaign.late_admission_phase_actual():
-            return self.campaign.late_admission_fee_company + self.t_shirt_price()
+            return (self.campaign.late_admission_fee_company + self.t_shirt_price()) * self.discount_multiplier()
         else:
-            return self.campaign.admission_fee_company + self.t_shirt_price()
+            return (self.campaign.admission_fee_company + self.t_shirt_price()) * self.discount_multiplier()
 
     @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
     @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
+    @depend_on_related('DiscountCoupon', foreign_key='user_attendance', skip={'updated', 'created'})
     def representative_payment(self):
         if self.team and self.team.subsidiary and not self.has_admission_fee():
             return None
@@ -959,6 +966,7 @@ class UserAttendance(models.Model):
 
     @denormalized(models.CharField, choices=PAYMENT_CHOICES, max_length=20, null=True, skip={'updated', 'created'})
     @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
+    @depend_on_related('DiscountCoupon', foreign_key='user_attendance', skip={'updated', 'created'})
     def payment_status(self):
         if self.team and self.team.subsidiary and not self.has_admission_fee():
             return 'no_admission'
@@ -2946,6 +2954,9 @@ class DiscountCoupon(models.Model):
 
     def __str__(self):
         return "%s-%s" % (self.coupon_type.prefix, self.token)
+
+    def discount_multiplier(self):
+        return (100 - self.discount) / 100.0
 
     def name(self):
         return self.__str__()
