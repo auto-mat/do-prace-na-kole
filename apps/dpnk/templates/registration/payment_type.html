@@ -65,13 +65,6 @@ $(function(){
 });
 </script>
 <div id="description_switcher">
-   <div class="description_switcher_div description free_description" style="display:none">
-      <h3>{% trans "Startovné zdarma" %}</h3>
-      {% trans "Startovné zdarma můžete čerpat v těchto případech:" %}
-      {{ user_attendance.campaign.free_entry_cases_html|safe }}
-
-      {% trans "Po zadání tohoto typu platby vyčkejte, až vaši volbu potvrdíme." %}
-   </div>
    <div class="description_switcher_div description company_description" style="display:none">
       <h3>{% trans "Startovné platí zaměstnavatel" %}</h3>
       {% trans "Startovné za mě platí zaměstnavatel, mám to domluvené." %}
@@ -89,9 +82,9 @@ $(function(){
          <a href='{% url "company_admin_application" %}'>{% trans "Chci se sám stát koordinátorem mé organizace." %}</a>
       {% endfor %}
    </div>
-   <div class="description_switcher_div description member_description" style="display:none">
-      <h3>{% trans "Člen Klubu přátel" %}</h3>
-      {% trans "Členové Klubu přátel mají startovné zdarma. Pokud jste členem Klubu přátel, stiskněte tlačítko „Další“ a vyčkejte, až vaše členství ověříme." %}
+   <div class="description_switcher_div description coupon_description" style="display:none">
+      <h3>{% trans "Slevový voucher" %}</h3>
+      {% trans "Pokud jste obdrželi voucher, zde můžete uplatnit slevu, nebo nárok na soutěž zdarma." %}
    </div>
    <div class="description_switcher_div description member_wannabe_description" style="display:none">
       <h3>{% trans "Vstup do Klubu přátel" %}</h3>

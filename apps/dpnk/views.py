@@ -583,12 +583,12 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
                     ]
                 ),
             )
+        elif payment_type == 'coupon':
+            return redirect(reverse('discount_coupon'))
         else:
             company_admin_email_string = ""
         payment_choices = {
-            'member': {'type': 'am', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
             'member_wannabe': {'type': 'amw', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
-            'free': {'type': 'fe', 'message': _(u"Váš nárok na startovné zdarma bude muset být ještě ověřen"), 'amount': 0},
             'company': {
                 'type': 'fc',
                 'message': format_html(
@@ -610,6 +610,23 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
                 logger.info('Inserting payment', extra={'payment_type': payment_type, 'username': self.user_attendance.userprofile.user.username})
 
         return super(PaymentTypeView, self).form_valid(form)
+
+
+class DiscountCouponView(RegistrationViewMixin, FormView):
+    template_name = 'base_generic_registration_form.html'
+    form_class = forms.DiscountCouponForm
+    success_url = reverse_lazy('typ_platby')
+    next_url = 'typ_platby'
+    prev_url = 'typ_platby'
+    registration_phase = 'typ_platby'
+    title = _("Uplatnit slevový voucher")
+
+    def form_valid(self, form):
+        discount_coupon = form.cleaned_data['discount_coupon']
+        discount_coupon.user_attendance = self.user_attendance
+        discount_coupon.save()
+        ret_val = super().form_valid(form)
+        return ret_val
 
 
 class PaymentView(UserAttendanceViewMixin, TemplateView):

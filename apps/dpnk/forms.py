@@ -450,8 +450,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         ('pay_beneficiary', mark_safe_lazy(_(u"Chci podpořit tuto soutěž a zaplatit benefiční startovné. <i class='fa fa-heart'></i>"))),
         ('company', _(u"Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.")),
         ('member_wannabe', mark_safe_lazy(_(u"Chci podpořit městskou cyklistiku a mít startovné trvale zdarma. <i class='fa fa-heart'></i>"))),
-        ('member', small(_(u"Jsem členem Klubu přátel Auto*Matu, tedy mám startovné zdarma."))),
-        ('free', small(_(u"Je mi poskytováno startovné zdarma."))),
+        ('coupon', _("Chci uplatnit voucher.")),
     ]
 
     payment_type = forms.ChoiceField(
@@ -473,6 +472,29 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 ),
             )
         return payment_type
+
+
+class DiscountCouponForm(PrevNextMixin, forms.Form):
+    code = forms.CharField(
+        label=_("Kód voucheru"),
+        max_length=10,
+        required=True,
+        validators=[RegexValidator(r'^[a-zA-Z]+-[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ]+$', _('Nesprávný formát voucheru')), MinLengthValidator(9)],
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if 'code' in cleaned_data:
+            prefix, base_code = cleaned_data['code'].upper().split("-")
+            try:
+                cleaned_data['discount_coupon'] = models.DiscountCoupon.objects.get(
+                    coupon_type__prefix=prefix,
+                    token=base_code,
+                    user_attendance=None,
+                )
+            except models.DiscountCoupon.DoesNotExist:
+                raise ValidationError(_("Tento slevový kupón neexistuje, nebo již byl použit"))
+        return cleaned_data
 
 
 class AnswerForm(forms.ModelForm):

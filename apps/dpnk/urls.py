@@ -178,6 +178,11 @@ urlpatterns = [
         name="payment_beneficiary",
     ),
     url(
+        r'^voucher/$',
+        views.DiscountCouponView.as_view(),
+        name="discount_coupon",
+    ),
+    url(
         r'^statistika/$',
         views.statistics,
     ),
