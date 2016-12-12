@@ -2882,6 +2882,7 @@ class DiscountCouponType(models.Model):
         verbose_name_plural = _("Typy slevového kupónu")
 
 
+@with_author
 class DiscountCoupon(models.Model):
     coupon_type = models.ForeignKey(
         DiscountCouponType,
@@ -2900,6 +2901,7 @@ class DiscountCoupon(models.Model):
         UserAttendance,
         null=True,
         blank=True,
+        unique=True,
     )
     discount = models.PositiveIntegerField(
         verbose_name=_("sleva (v procentech)"),
@@ -2923,6 +2925,16 @@ class DiscountCoupon(models.Model):
         verbose_name=_("Odeslaný"),
         default=False,
         null=False,
+    )
+    created = models.DateTimeField(
+        verbose_name=_(u"Datum vytvoření"),
+        auto_now_add=True,
+        null=True,
+    )
+    updated = models.DateTimeField(
+        verbose_name=_(u"Datum poslední změny"),
+        auto_now=True,
+        null=True,
     )
 
     class Meta:
