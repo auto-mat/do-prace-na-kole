@@ -1444,9 +1444,9 @@ class DiscountCouponTypeAdmin(ImportMixin, ExportMixin, admin.ModelAdmin):
 
 
 class DiscountCouponAdmin(ImportMixin, ExportMixin, RelatedFieldAdmin):
-    list_display = ('name', 'coupon_type__prefix', 'token', 'coupon_type', 'discount', 'note', 'receiver', 'sent')
+    list_display = ('name', 'coupon_type__prefix', 'token', 'coupon_type', 'discount', 'user_attendance_number', 'note', 'receiver', 'sent')
     readonly_fields = ('token', 'created', 'updated', 'author', 'updated_by')
-    list_editable = ('note', 'receiver', 'discount', 'sent')
+    list_editable = ('note', 'receiver', 'discount', 'user_attendance_number', 'sent')
     list_filter = ('coupon_type__name', 'sent')
 
 
