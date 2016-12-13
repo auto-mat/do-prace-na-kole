@@ -878,11 +878,10 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(reverse('typ_platby'), post_data)
         self.assertContains(response, "Váš zaměstnavatel Testing company nemá zvoleného koordinátora organizace.")
 
-        post_data['payment_type'] = 'member'
+        post_data['payment_type'] = 'coupon'
         response = self.client.post(reverse('typ_platby'), post_data, follow=True)
-        self.assertRedirects(response, reverse("registration_uncomplete"))
-        self.assertContains(response, "Vaše členství v klubu přátel ještě bude muset být schváleno")
-        self.assertEquals(models.Payment.objects.get().pay_type, 'am')
+        self.assertRedirects(response, reverse("discount_coupon"))
+        self.assertContains(response, "<h2>Uplatnit slevový voucher</h2>", html=True)
 
     def test_dpnk_team_view_create(self):
         self.user_attendance.team = None

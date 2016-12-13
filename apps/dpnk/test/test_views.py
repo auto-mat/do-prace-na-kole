@@ -253,6 +253,23 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
         )
 
 
+class DiscountCouponViewTests(ViewsLogon):
+    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+
+    def setUp(self):
+        super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+
+    def test_discount_coupon_view(self):
+        post_data = {
+            'code': 'as-asdfsd',
+            'next': 'Next',
+        }
+        response = self.client.post(reverse('discount_coupon'), post_data)
+        self.assertContains(response, "<li>Tento slevový kupón neexistuje, nebo již byl použit</li>", html=True)
+
+
 class DistanceTests(TestCase):
     fixtures = ['campaign', 'users', 'auth_user', 'trips']
 
