@@ -487,11 +487,13 @@ class DiscountCouponForm(PrevNextMixin, forms.Form):
         if 'code' in cleaned_data:
             prefix, base_code = cleaned_data['code'].upper().split("-")
             try:
-                cleaned_data['discount_coupon'] = models.DiscountCoupon.objects.get(
+                discount_coupon = models.DiscountCoupon.objects.get(
                     coupon_type__prefix=prefix,
                     token=base_code,
-                    user_attendance=None,
                 )
+                if not discount_coupon.available():
+                    raise ValidationError(_("Tento slevový kupón již byl použit"))
+                cleaned_data['discount_coupon'] = discount_coupon
             except models.DiscountCoupon.DoesNotExist:
                 raise ValidationError(_("Tento slevový kupón neexistuje, nebo již byl použit"))
         return cleaned_data

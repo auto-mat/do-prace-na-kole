@@ -869,6 +869,12 @@ class UserAttendance(models.Model):
         null=True,
         blank=True,
     )
+    discount_coupon = models.ForeignKey(
+        'DiscountCoupon',
+        verbose_name=_("Slevový kupón"),
+        null=True,
+        blank=True,
+    )
     created = models.DateTimeField(
         verbose_name=_(u"Datum vytvoření"),
         auto_now_add=True,
@@ -909,8 +915,8 @@ class UserAttendance(models.Model):
             return 0
 
     def discount_multiplier(self):
-        if hasattr(self, 'discountcoupon'):
-            return self.discountcoupon.discount_multiplier()
+        if self.discount_coupon:
+            return self.discount_coupon.discount_multiplier()
         else:
             return 1
 
@@ -934,7 +940,6 @@ class UserAttendance(models.Model):
 
     @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
     @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
-    @depend_on_related('DiscountCoupon', foreign_key='user_attendance', skip={'updated', 'created'})
     def representative_payment(self):
         if self.team and self.team.subsidiary and not self.has_admission_fee():
             return None
@@ -966,7 +971,6 @@ class UserAttendance(models.Model):
 
     @denormalized(models.CharField, choices=PAYMENT_CHOICES, max_length=20, null=True, skip={'updated', 'created'})
     @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
-    @depend_on_related('DiscountCoupon', foreign_key='user_attendance', skip={'updated', 'created'})
     def payment_status(self):
         if self.team and self.team.subsidiary and not self.has_admission_fee():
             return 'no_admission'
@@ -2905,17 +2909,19 @@ class DiscountCoupon(models.Model):
         null=False,
         unique=True,
     )
-    user_attendance = models.OneToOneField(
-        UserAttendance,
-        null=True,
-        blank=True,
-        unique=True,
-    )
     discount = models.PositiveIntegerField(
         verbose_name=_("sleva (v procentech)"),
         null=False,
         blank=False,
         default=100,
+        validators=[MaxValueValidator(100)],
+    )
+    user_attendance_number = models.PositiveIntegerField(
+        verbose_name=_("Počet možných využití"),
+        help_text=_("Pokud se nevyplní, bude počet využití neomezený"),
+        null=True,
+        blank=True,
+        default=1,
     )
     note = models.CharField(
         verbose_name=_("poznámka"),
@@ -2944,6 +2950,12 @@ class DiscountCoupon(models.Model):
         auto_now=True,
         null=True,
     )
+
+    def available(self):
+        if self.user_attendance_number is None:
+            return True
+        user_count = self.userattendance_set.count()
+        return self.user_attendance_number > user_count
 
     class Meta:
         verbose_name = _("Slevový kupón")

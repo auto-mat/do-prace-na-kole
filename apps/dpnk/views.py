@@ -629,8 +629,8 @@ class DiscountCouponView(RegistrationViewMixin, FormView):
 
     def form_valid(self, form):
         self.discount_coupon = form.cleaned_data['discount_coupon']
-        self.discount_coupon.user_attendance = self.user_attendance
-        self.discount_coupon.save()
+        self.user_attendance.discount_coupon = self.discount_coupon
+        self.user_attendance.save()
         ret_val = super().form_valid(form)
         return ret_val
 
