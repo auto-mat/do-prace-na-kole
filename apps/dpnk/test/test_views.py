@@ -289,6 +289,60 @@ class DiscountCouponViewTests(ViewsLogon):
         self.assertRedirects(response, reverse('typ_platby'))
 
 
+class PaymentTypeViewTests(ViewsLogon):
+    def test_dpnk_payment_type(self):
+        post_data = {
+            'payment_type': 'company',
+            'next': 'Next',
+        }
+        models.Payment.objects.all().delete()
+        denorm.flush()
+        response = self.client.post(reverse('typ_platby'), post_data, follow=True)
+        self.assertRedirects(response, reverse("registration_uncomplete"))
+        self.assertEquals(models.Payment.objects.get().pay_type, 'fc')
+
+    def test_dpnk_payment_type_no_t_shirt(self):
+        post_data = {
+            'payment_type': 'company',
+            'next': 'Next',
+        }
+        models.Payment.objects.all().delete()
+        ua = models.UserAttendance.objects.get(pk=1115)
+        ua.t_shirt_size = None
+        ua.save()
+        denorm.flush()
+        response = self.client.post(reverse('typ_platby'), post_data, follow=True)
+        self.assertContains(response, "Před tím, než zaplatíte startovné, musíte mít vybrané triko", status_code=403)
+
+    def test_dpnk_payment_type_without_company_admin(self):
+        post_data = {
+            'payment_type': 'company',
+            'next': 'Next',
+        }
+        models.Payment.objects.all().delete()
+        models.CompanyAdmin.objects.all().delete()
+        denorm.flush()
+        response = self.client.post(reverse('typ_platby'), post_data)
+        self.assertContains(response, "Váš zaměstnavatel Testing company nemá zvoleného koordinátora organizace.")
+
+        post_data['payment_type'] = 'coupon'
+        response = self.client.post(reverse('typ_platby'), post_data, follow=True)
+        self.assertRedirects(response, reverse("discount_coupon"))
+        self.assertContains(response, "<h2>Uplatnit slevový voucher</h2>", html=True)
+
+    def test_dpnk_payment_type_pay_admin(self):
+        post_data = {
+            'payment_type': 'pay',
+            'next': 'Next',
+        }
+        models.Payment.objects.all().delete()
+        models.CompanyAdmin.objects.all().delete()
+        denorm.flush()
+        response = self.client.post(reverse('typ_platby'), post_data)
+        print_response(response)
+        self.assertContains(response, "Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript.", status_code=500)
+
+
 class DistanceTests(TestCase):
     fixtures = ['campaign', 'users', 'auth_user', 'trips']
 
