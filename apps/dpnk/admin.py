@@ -34,7 +34,6 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.sessions.models import Session
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Sum
-from django.db.utils import ProgrammingError
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import string_concat
@@ -121,6 +120,7 @@ class SubsidiaryInline(admin.TabularInline):
     extra = 0
 
 
+@admin.register(models.City)
 class CityAdmin(LeafletGeoAdmin):
     list_display = ('name', 'slug', 'cyklistesobe_slug', 'id', )
     prepopulated_fields = {'slug': ('name',), 'cyklistesobe_slug': ('name',)}
@@ -160,6 +160,7 @@ class CompanyResource(resources.ModelResource):
         export_order = fields
 
 
+@admin.register(models.Company)
 class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportMixin, admin.ModelAdmin):
     list_display = (
         'name',
@@ -252,6 +253,7 @@ def create_subsidiary_resource(campaign_slugs):
     return SubsidiaryResource
 
 
+@admin.register(models.Subsidiary)
 class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     list_display = (
         'name',
@@ -275,12 +277,12 @@ class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     raw_id_fields = ('company',)
     list_max_show_all = 10000
     save_as = True
-    try:
-        resource_class = create_subsidiary_resource(models.Campaign.objects.values_list("slug", flat=True))
-    except ProgrammingError:
-        pass
 
     readonly_fields = ['team_links', ]
+
+    @property
+    def resource_class(self):
+        return create_subsidiary_resource(models.Campaign.objects.values_list("slug", flat=True))
 
     def get_queryset(self, request):
         self.campaign = request.subdomain
@@ -318,6 +320,7 @@ class QuestionInline(SortableInlineAdminMixin, admin.TabularInline):
     extra = 0
 
 
+@admin.register(models.Competition)
 class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFieldAdmin):
     list_display = (
         'name',
@@ -520,6 +523,7 @@ def create_userprofile_resource(campaign_slugs):
     return UserProileResource
 
 
+@admin.register(models.UserProfile)
 class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     list_display = (
         'user',
@@ -534,10 +538,6 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
         'user_attendances_count',
     )
     inlines = (CompanyAdminInline,)
-    try:
-        resource_class = create_userprofile_resource(models.Campaign.objects.values_list("slug", flat=True))
-    except ProgrammingError:
-        pass
     list_filter = (
         campaign_filter_generator('userattendance_set__campaign'),
         'language',
@@ -561,6 +561,10 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     )
     actions = (actions.remove_mailing_id,)
 
+    @property
+    def resource_class(self):
+        return create_userprofile_resource(models.Campaign.objects.values_list("slug", flat=True))
+
     def lookup_allowed(self, key, value):
         if key in ('userattendance_set__team__subsidiary__city__id__exact',):
             return True
@@ -574,6 +578,10 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
     user_attendances_count.admin_order_field = "userattendance_count"
 
 
+admin.site.unregister(models.User)
+
+
+@admin.register(models.User)
 class UserAdmin(RelatedFieldAdmin, ExportMixin, NestedModelAdmin, UserAdmin):
     inlines = (UserProfileAdminInline,)
     list_display = (
@@ -675,6 +683,7 @@ class UserAttendanceResource(resources.ModelResource):
             return payment.amount
 
 
+@admin.register(models.UserAttendance)
 class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_generator('team__subsidiary__city__in'), LeafletGeoAdmin):
     list_display = (
         'id',
@@ -801,6 +810,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         )
 
 
+@admin.register(models.Team)
 class TeamAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'name',
@@ -860,6 +870,7 @@ class UserActionTransactionChildAdmin(TransactionChildAdmin):
     form = models.UserActionTransactionForm
 
 
+@admin.register(models.Transaction)
 class TransactionAdmin(PolymorphicParentModelAdmin):
     list_display = ('id', 'user_attendance', 'created', 'status', 'polymorphic_ctype', 'user_link', 'author')
     search_fields = (
@@ -889,6 +900,7 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
     )
 
 
+@admin.register(models.Payment)
 class PaymentAdmin(RelatedFieldAdmin):
     list_display = (
         'id',
@@ -997,6 +1009,7 @@ class PackageTransactionResource(resources.ModelResource):
             return ""
 
 
+@admin.register(models.PackageTransaction)
 class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
     resource_class = PackageTransactionResource
     list_display = (
@@ -1032,6 +1045,7 @@ class ChoiceInline(SortableInlineAdminMixin, admin.TabularInline):
     extra = 3
 
 
+@admin.register(models.ChoiceType)
 class ChoiceTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'competition', 'universal')
     inlines = [ChoiceInline]
@@ -1070,6 +1084,7 @@ class AnswerResource(resources.ModelResource):
         return obj.str_choices()
 
 
+@admin.register(models.Answer)
 class AnswerAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'user_attendance',
@@ -1101,6 +1116,7 @@ class AnswerAdmin(ExportMixin, RelatedFieldAdmin):
             return format_html(u"<a href='{}'>{}</a>", obj.attachment.url, obj.attachment)
 
 
+@admin.register(models.Question)
 class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ExportMixin, admin.ModelAdmin):
     form = models.QuestionForm
     list_display = ('__str__', 'text', 'type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
@@ -1144,6 +1160,7 @@ class TripResource(resources.ModelResource):
         export_order = fields
 
 
+@admin.register(models.Trip)
 class TripAdmin(ExportMixin, admin.ModelAdmin):
     list_display = (
         'user_attendance',
@@ -1188,6 +1205,7 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
         )
 
 
+@admin.register(models.CompetitionResult)
 class CompetitionResultAdmin(admin.ModelAdmin):
     list_display = ('user_attendance', 'team', 'company', 'result', 'result_divident', 'result_divisor', 'competition')
     list_filter = (campaign_filter_generator('competition__campaign'), 'competition',)
@@ -1228,6 +1246,7 @@ class DeliveryBatchForm(forms.ModelForm):
         return ret_val
 
 
+@admin.register(models.DeliveryBatch)
 class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     list_display = ['id', 'campaign', 'created', 'dispatched', 'package_transaction_count', 'author', 'customer_sheets__url', 'tnt_order__url']
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 't_shirt_sizes')
@@ -1271,6 +1290,7 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
             return format_html("<a href='{}'>tnt_order</a>", obj.tnt_order.url)
 
 
+@admin.register(models.Campaign)
 class CampaignAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -1291,6 +1311,7 @@ class CampaignAdmin(admin.ModelAdmin):
         return obj.cityincampaign_set.count()
 
 
+@admin.register(models.CompanyAdmin)
 class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsidiaries__city'), RelatedFieldAdmin):
     list_display = [
         'userprofile__user',
@@ -1369,6 +1390,7 @@ class InvoiceResource(resources.ModelResource):
         return obj.payment_set.count()
 
 
+@admin.register(models.Invoice)
 class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = [
         'company',
@@ -1407,6 +1429,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         return format_html("<a href='{}'>invoice.pdf</a>", obj.invoice_pdf.url)
 
 
+@admin.register(models.GpxFile)
 class GpxFileAdmin(LeafletGeoAdmin):
     model = models.GpxFile
     list_display = (
@@ -1434,15 +1457,18 @@ class GpxFileAdmin(LeafletGeoAdmin):
     list_filter = (campaign_filter_generator('user_attendance__campaign'), 'from_application', 'user_attendance__team__subsidiary__city')
 
 
+@admin.register(models.Voucher)
 class VoucherAdmin(ImportMixin, admin.ModelAdmin):
     list_display = ('id', 'type', 'token', 'user_attendance')
     raw_id_fields = ('user_attendance',)
 
 
+@admin.register(models.DiscountCouponType)
 class DiscountCouponTypeAdmin(ImportMixin, ExportMixin, admin.ModelAdmin):
     list_display = ('name', 'prefix',)
 
 
+@admin.register(models.DiscountCoupon)
 class DiscountCouponAdmin(ImportMixin, ExportMixin, RelatedFieldAdmin):
     list_display = ('name', 'coupon_type__prefix', 'token', 'coupon_type', 'discount', 'user_attendance_number', 'note', 'receiver', 'sent')
     readonly_fields = ('token', 'created', 'updated', 'author', 'updated_by')
@@ -1457,6 +1483,7 @@ class UserAttendanceToBatch(models.UserAttendance):
         proxy = True
 
 
+@admin.register(models.UserAttendanceToBatch)
 class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
     list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created', 'representative_payment__realized')
     list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter), 'transactions__status')
@@ -1491,6 +1518,7 @@ class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
         return queryset
 
 
+@admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
     def _session_data(self, obj):
         return pprint.pformat(obj.get_decoded()).replace('\n', '<br>\n')
@@ -1501,6 +1529,7 @@ class SessionAdmin(admin.ModelAdmin):
     date_hierarchy = 'expire_date'
 
 
+@admin.register(TaskMeta)
 class TaskMetaAdmin(admin.ModelAdmin):
     list_display = ('task_id', 'status', 'date_done', 'result_str', 'hidden')
     readonly_fields = ('result_str', 'date_done',)
@@ -1508,35 +1537,3 @@ class TaskMetaAdmin(admin.ModelAdmin):
 
     def result_str(self, obj):
         return str(obj.result)
-
-
-admin.site.register(TaskMeta, TaskMetaAdmin)
-admin.site.register(Session, SessionAdmin)
-
-admin.site.register(models.Team, TeamAdmin)
-admin.site.register(models.Transaction, TransactionAdmin)
-admin.site.register(models.PackageTransaction, PackageTransactionAdmin)
-admin.site.register(models.Payment, PaymentAdmin)
-admin.site.register(models.Question, QuestionAdmin)
-admin.site.register(models.ChoiceType, ChoiceTypeAdmin)
-admin.site.register(models.City, CityAdmin)
-admin.site.register(models.Subsidiary, SubsidiaryAdmin)
-admin.site.register(models.Company, CompanyAdmin)
-admin.site.register(models.Competition, CompetitionAdmin)
-admin.site.register(models.CompetitionResult, CompetitionResultAdmin)
-admin.site.register(models.Answer, AnswerAdmin)
-admin.site.register(models.Trip, TripAdmin)
-admin.site.register(models.Campaign, CampaignAdmin)
-admin.site.register(models.UserAttendance, UserAttendanceAdmin)
-admin.site.register(UserAttendanceToBatch, UserAttendanceToBatchAdmin)
-admin.site.register(models.UserProfile, UserProfileAdmin)
-admin.site.register(models.CompanyAdmin, CompanyAdminAdmin)
-admin.site.register(models.DeliveryBatch, DeliveryBatchAdmin)
-admin.site.register(models.Invoice, InvoiceAdmin)
-admin.site.register(models.GpxFile, GpxFileAdmin)
-admin.site.register(models.Voucher, VoucherAdmin)
-admin.site.register(models.DiscountCoupon, DiscountCouponAdmin)
-admin.site.register(models.DiscountCouponType, DiscountCouponTypeAdmin)
-
-admin.site.unregister(models.User)
-admin.site.register(models.User, UserAdmin)

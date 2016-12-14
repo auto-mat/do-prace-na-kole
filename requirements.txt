@@ -1,6 +1,5 @@
 six
--e git+https://github.com/PetrDlouhy/django.git@view_permission_django19_backport#egg=Django
-#Django
+-e git+https://github.com/olivierdalang/django.git@view_permission_master#egg=Django
 django-import-export
 -e git+https://github.com/halfnibble/django-smart-selects.git#egg=django-smart-selects  # for Django 1.10 compatibility
 psycopg2
