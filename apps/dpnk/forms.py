@@ -440,10 +440,6 @@ class TeamAdminForm(SubmitMixin, forms.ModelForm):
         fields = ('name', 'campaign')
 
 
-def small(string):
-    return format_html_lazy("<small>{}</small>", string)
-
-
 class PaymentTypeForm(PrevNextMixin, forms.Form):
     CHOICES = [
         ('pay', _(u"Účastnický poplatek si platím sám.")),
