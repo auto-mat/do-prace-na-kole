@@ -38,7 +38,7 @@ import settings
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
-    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
+    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips', 'coupons']
     exclude_apps = ['djcelery']
 
     def setUp(self):

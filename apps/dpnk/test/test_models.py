@@ -226,3 +226,11 @@ class TestMethods(TestCase):
         models.Answer.objects.create(question=question, user_attendance_id=1115)
         self.assertEquals(models.CompetitionResult.objects.get().result, None)
         self.assertEquals(models.CompetitionResult.objects.get().team_id, 1)
+
+
+class DiscountCouponTests(TestCase):
+    fixtures = ['auth_user', 'coupons']
+
+    def test_save(self):
+        discount_coupon = models.DiscountCoupon.objects.create(coupon_type_id=1)
+        self.assertRegex(discount_coupon.name(), r"AA-[A-Z]{6}")
