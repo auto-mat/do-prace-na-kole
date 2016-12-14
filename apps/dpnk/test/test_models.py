@@ -130,8 +130,9 @@ class TestMethods(TestCase):
 
     def test_invoice_raises_sequence_number_overrun(self):
         campaign = models.Campaign.objects.create(
-            invoice_sequence_number_first=0,
-            invoice_sequence_number_last=0,
+            invoice_sequence_number_first=1,
+            invoice_sequence_number_last=1,
+            slug="camp",
         )
         models.Phase.objects.create(
             type="competition",
@@ -140,6 +141,11 @@ class TestMethods(TestCase):
             date_to="2016-1-1",
         )
         company = models.Company.objects.create()
+        invoice = models.Invoice.objects.create(
+            campaign=campaign,
+            company=company,
+        )
+        self.assertEqual(invoice.sequence_number, 1)
         with self.assertRaisesRegexp(Exception, "Došla číselná řada faktury"):
             models.Invoice.objects.create(
                 campaign=campaign,
@@ -148,8 +154,14 @@ class TestMethods(TestCase):
 
     def test_package_transaction_raises_sequence_number_overrun(self):
         campaign = models.Campaign.objects.create(
-            tracking_number_first=0,
-            tracking_number_last=0,
+            tracking_number_first=1,
+            tracking_number_last=1,
+        )
+        models.Phase.objects.create(
+            type="competition",
+            campaign=campaign,
+            date_from="2016-1-1",
+            date_to="2016-1-1",
         )
         user = models.User.objects.create(first_name="Test", last_name="Name")
         userprofile = models.UserProfile.objects.create(user=user)
@@ -158,13 +170,14 @@ class TestMethods(TestCase):
             campaign=campaign,
         )
         models.Company.objects.create()
-        models.PackageTransaction.objects.create(
-            delivery_batch_id=1234,
+        package_transaction = models.PackageTransaction.objects.create(
+            delivery_batch_id=1,
             user_attendance=user_attendance,
         )
+        self.assertEqual(package_transaction.tracking_number, 1)
         with self.assertRaisesRegexp(Exception, "Došla číselná řada pro balíčkové transakce"):
             models.PackageTransaction.objects.create(
-                delivery_batch_id=1234,
+                delivery_batch_id=1,
                 user_attendance=user_attendance,
             )
 
@@ -173,7 +186,7 @@ class TestMethods(TestCase):
             competitor_type="single_user",
             type="questionnaire",
             without_admission=True,
-            campaign_id=1,
+            campaign_id=339,
         )
         question = models.Question.objects.create(competition=competition)
         models.CompetitionResult.objects.filter().delete()
