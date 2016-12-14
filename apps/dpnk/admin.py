@@ -275,12 +275,12 @@ class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
     raw_id_fields = ('company',)
     list_max_show_all = 10000
     save_as = True
-    try:
-        resource_class = create_subsidiary_resource(models.Campaign.objects.values_list("slug", flat=True))
-    except ProgrammingError:
-        pass
 
     readonly_fields = ['team_links', ]
+
+    @property
+    def resource_class(self):
+        return create_subsidiary_resource(models.Campaign.objects.values_list("slug", flat=True))
 
     def get_queryset(self, request):
         self.campaign = request.subdomain
@@ -534,10 +534,6 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
         'user_attendances_count',
     )
     inlines = (CompanyAdminInline,)
-    try:
-        resource_class = create_userprofile_resource(models.Campaign.objects.values_list("slug", flat=True))
-    except ProgrammingError:
-        pass
     list_filter = (
         campaign_filter_generator('userattendance_set__campaign'),
         'language',
@@ -560,6 +556,10 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
         'ecc_email',
     )
     actions = (actions.remove_mailing_id,)
+
+    @property
+    def resource_class(self):
+        return create_userprofile_resource(models.Campaign.objects.values_list("slug", flat=True))
 
     def lookup_allowed(self, key, value):
         if key in ('userattendance_set__team__subsidiary__city__id__exact',):
