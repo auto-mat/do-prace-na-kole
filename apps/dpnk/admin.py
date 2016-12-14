@@ -1483,7 +1483,7 @@ class UserAttendanceToBatch(models.UserAttendance):
         proxy = True
 
 
-@admin.register(models.UserAttendanceToBatch)
+@admin.register(UserAttendanceToBatch)
 class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
     list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created', 'representative_payment__realized')
     list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter), 'transactions__status')
