@@ -78,6 +78,8 @@ class InvalidStringError(str):
         return ""
 
 
+ALLOWED_HOSTS = ['testing-campaign.testserver', 'testing-campaign-unknown.testserver']
+
 TEMPLATES[0]['OPTIONS']['string_if_invalid'] = InvalidStringError("%s")
 TEMPLATES[0]['OPTIONS']['debug'] = True
 

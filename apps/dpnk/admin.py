@@ -34,7 +34,6 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.sessions.models import Session
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Sum
-from django.db.utils import ProgrammingError
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import string_concat
