@@ -52,7 +52,7 @@ from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModel
 
 from related_admin import RelatedFieldAdmin
 
-from . import actions, models
+from . import actions, models, transaction_forms
 from .admin_mixins import CityAdminMixin, FormRequestMixin, ReadOnlyModelAdminMixin, city_admin_mixin_generator
 from .filters import (
     CampaignFilter,
@@ -82,7 +82,7 @@ def admin_links(args_generator):
 class PaymentInline(NestedTabularInline):
     model = models.Payment
     extra = 0
-    form = models.PaymentForm
+    form = transaction_forms.PaymentForm
     readonly_fields = ['user_attendance', 'order_id', 'session_id', 'trans_id', 'error', 'author', 'updated_by']
     raw_id_fields = ['invoice', ]
 
@@ -92,21 +92,21 @@ class PackageTransactionInline(NestedTabularInline):
     extra = 0
     readonly_fields = ['author', 'updated_by', 'tracking_number_cnc', 'tracking_link', 't_shirt_size']
     raw_id_fields = ['user_attendance', 'delivery_batch']
-    form = models.PackageTransactionForm
+    form = transaction_forms.PackageTransactionForm
 
 
 class CommonTransactionInline(NestedTabularInline):
     model = models.CommonTransaction
     extra = 0
     readonly_fields = ['user_attendance', 'author', 'updated_by']
-    form = models.CommonTransactionForm
+    form = transaction_forms.CommonTransactionForm
 
 
 class UserActionTransactionInline(NestedTabularInline):
     model = models.UserActionTransaction
     extra = 0
     readonly_fields = ['user_attendance', 'author', 'updated_by']
-    form = models.UserActionTransactionForm
+    form = transaction_forms.UserActionTransactionForm
 
 
 class TeamInline(admin.TabularInline):
@@ -854,20 +854,20 @@ class TransactionChildAdmin(PolymorphicChildModelAdmin):
 
 
 class PaymentChildAdmin(TransactionChildAdmin):
-    form = models.PaymentForm
+    form = transaction_forms.PaymentForm
 
 
 class PackageTransactionChildAdmin(TransactionChildAdmin):
     readonly_fields = ['created', 'author', 'updated_by', 'tracking_number_cnc', 'tracking_link', 't_shirt_size']
-    form = models.PackageTransactionForm
+    form = transaction_forms.PackageTransactionForm
 
 
 class CommonTransactionChildAdmin(TransactionChildAdmin):
-    form = models.CommonTransactionForm
+    form = transaction_forms.CommonTransactionForm
 
 
 class UserActionTransactionChildAdmin(TransactionChildAdmin):
-    form = models.UserActionTransactionForm
+    form = transaction_forms.UserActionTransactionForm
 
 
 @admin.register(models.Transaction)
@@ -930,7 +930,7 @@ class PaymentAdmin(RelatedFieldAdmin):
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created', 'updated_by')
     list_max_show_all = 10000
-    form = models.PaymentForm
+    form = transaction_forms.PaymentForm
 
 
 class PackageTransactionResource(resources.ModelResource):
@@ -1037,7 +1037,7 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created')
     list_max_show_all = 10000
-    form = models.PaymentForm
+    form = transaction_forms.PaymentForm
 
 
 class ChoiceInline(SortableInlineAdminMixin, admin.TabularInline):

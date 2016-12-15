@@ -39,9 +39,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_gpxpy import gpx_parse
 
-from dpnk.fields import CommaFloatField, ShowPointsMultipleModelChoiceField
-from dpnk.widgets import CommuteModeSelect, SelectChainedOrCreate, SelectOrCreateAutoComplete
-
 from leaflet.forms.widgets import LeafletWidget
 
 import registration.forms
@@ -49,7 +46,10 @@ import registration.forms
 from smart_selects.form_fields import ChainedModelChoiceField
 
 from . import models, util
+from .fields import CommaFloatField, ShowPointsMultipleModelChoiceField
 from .string_lazy import format_html_lazy, mark_safe_lazy
+from .widgets import CommuteModeSelect, SelectChainedOrCreate, SelectOrCreateAutoComplete
+
 logger = logging.getLogger(__name__)
 
 

@@ -20,6 +20,7 @@
 
 
 from django.apps import AppConfig
+from django.contrib.gis.db import models
 from django.db.utils import ProgrammingError
 
 
@@ -28,8 +29,20 @@ class DPNKConfig(AppConfig):
     verbose_name = "Do práce na kole"
 
     def ready(self):
-        from .models import Campaign, Team, get_team_in_campaign_manager,\
-            change_invoice_payments_status, Invoice, UserAttendance, pre_user_team_changed, post_user_team_changed, set_track, GpxFile
+        def get_team_in_campaign_manager(campaign_slug):
+            class TeamInCampaignManager(models.Manager):
+                def get_queryset(self):
+                    return super(TeamInCampaignManager, self).get_queryset().filter(campaign__slug=campaign_slug)
+
+            class TeamInCampaign(Team):
+                objects = TeamInCampaignManager()
+
+                class Meta:
+                    proxy = True
+
+            return TeamInCampaign
+
+        from .models import Campaign, Team, change_invoice_payments_status, Invoice, UserAttendance, pre_user_team_changed, post_user_team_changed, set_track, GpxFile
         from fieldsignals import post_save_changed, pre_save_changed
         try:
             slugs = Campaign.objects.values_list('slug', flat=True)
