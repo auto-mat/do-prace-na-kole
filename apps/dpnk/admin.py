@@ -1161,9 +1161,9 @@ class TripResource(resources.ModelResource):
 
 
 @admin.register(models.Trip)
-class TripAdmin(ExportMixin, admin.ModelAdmin):
+class TripAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
-        'user_attendance',
+        'user_attendance__name_for_trusted',
         'date',
         'direction',
         'commute_mode',
@@ -1182,7 +1182,6 @@ class TripAdmin(ExportMixin, admin.ModelAdmin):
         'commute_mode',
         ('date', DateRangeFilter),
         'user_attendance__team__subsidiary__city',
-        'distance',
     )
     actions = (actions.show_distance_trips,)
     list_max_show_all = 100000
