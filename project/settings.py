@@ -158,6 +158,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
 
     'registration',
+    'coupons',
     'dpnk',
     'smart_selects',
     'composite_field',

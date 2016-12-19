@@ -20,40 +20,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from author.decorators import with_author
 
+from coupons.models.discount_coupon_type import DiscountCouponType
+
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
-from django.core.validators import MaxValueValidator, RegexValidator
+from django.core.validators import MaxValueValidator
 from django.utils.translation import ugettext_lazy as _
-
-
-class DiscountCouponType(models.Model):
-    name = models.CharField(
-        verbose_name=_(u"jméno typu voucheru"),
-        max_length=20,
-        blank=False,
-        null=False,
-    )
-    prefix = models.CharField(
-        validators=[
-            RegexValidator(
-                regex='^[A-Z]*$',
-                message=_('Prefix musí sestávat pouze z velkých písmen'),
-                code='invalid_prefix',
-            ),
-        ],
-        verbose_name=_("prefix"),
-        max_length=10,
-        null=False,
-        blank=False,
-        unique=True,
-    )
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = _("Typ slevového kupónu")
-        verbose_name_plural = _("Typy slevového kupónu")
 
 
 @with_author
@@ -125,6 +97,7 @@ class DiscountCoupon(models.Model):
         unique_together = (
             ("token", "coupon_type"),
         )
+        app_label = "coupons"
 
     def __str__(self):
         return "%s-%s" % (self.coupon_type.prefix, self.token)

@@ -612,29 +612,6 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         return super(PaymentTypeView, self).form_valid(form)
 
 
-class DiscountCouponView(RegistrationViewMixin, FormView):
-    template_name = 'base_generic_registration_form.html'
-    form_class = forms.DiscountCouponForm
-    success_url = reverse_lazy('typ_platby')
-    next_url = 'typ_platby'
-    prev_url = 'typ_platby'
-    registration_phase = 'typ_platby'
-    title = _("Uplatnit slevový voucher")
-
-    def get_success_url(self):
-        if self.discount_coupon.discount == 100:
-            return reverse_lazy('profil')
-        else:
-            return self.success_url
-
-    def form_valid(self, form):
-        self.discount_coupon = form.cleaned_data['discount_coupon']
-        self.user_attendance.discount_coupon = self.discount_coupon
-        self.user_attendance.save()
-        ret_val = super().form_valid(form)
-        return ret_val
-
-
 class PaymentView(UserAttendanceViewMixin, TemplateView):
     beneficiary = False
     template_name = 'registration/payment.html'

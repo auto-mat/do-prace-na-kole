@@ -33,7 +33,6 @@ from .company_admin import CompanyAdmin
 from .competition import Competition, CompetitionForm
 from .competition_result import CompetitionResult
 from .delivery_batch import DeliveryBatch
-from .discount_coupon import DiscountCoupon, DiscountCouponType
 from .gpxfile import GpxFile, normalize_gpx_filename
 from .invoice import Invoice, change_invoice_payments_status, payments_to_invoice
 from .phase import Phase
@@ -60,8 +59,6 @@ __all__ = (
     CompetitionForm,
     CompetitionResult,
     DeliveryBatch,
-    DiscountCoupon,
-    DiscountCouponType,
     GpxFile,
     Invoice,
     Phase,

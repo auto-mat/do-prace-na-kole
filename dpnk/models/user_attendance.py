@@ -20,6 +20,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import logging
 
+from coupons.models import DiscountCoupon
+
 from denorm import denormalized, depend_on_related
 
 from django.contrib.gis.db import models
@@ -109,7 +111,7 @@ class UserAttendance(models.Model):
         blank=True,
     )
     discount_coupon = models.ForeignKey(
-        'DiscountCoupon',
+        DiscountCoupon,
         verbose_name=_("Slevový kupón"),
         null=True,
         blank=True,

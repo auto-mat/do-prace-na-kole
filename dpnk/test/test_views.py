@@ -253,42 +253,6 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
         )
 
 
-class DiscountCouponViewTests(ViewsLogon):
-    fixtures = ['campaign', 'users', 'auth_user', 'trips', 'coupons']
-
-    def setUp(self):
-        super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
-
-    def test_discount_coupon_view_nonexistent(self):
-        post_data = {
-            'code': 'as-asdfsd',
-            'next': 'Next',
-        }
-        response = self.client.post(reverse('discount_coupon'), post_data)
-        self.assertContains(response, "<li>Tento slevový kupón neexistuje, nebo již byl použit</li>", html=True)
-
-    def test_discount_coupon_view_found(self):
-        post_data = {
-            'code': 'Aa-aaaAaa',
-            'next': 'Next',
-        }
-        response = self.client.post(reverse('discount_coupon'), post_data)
-        self.assertRedirects(response, reverse('profil'))
-        response = self.client.post(reverse('discount_coupon'), post_data)
-        self.assertContains(response, "<li>Tento slevový kupón již byl použit</li>", html=True)
-
-    def test_discount_coupon_view_found_discount(self):
-        post_data = {
-            'code': 'Aa-aaaAab',
-            'next': 'Next',
-        }
-        response = self.client.post(reverse('discount_coupon'), post_data, follow=True)
-        self.assertContains(response, '<span id="payment_amount">60,0 Kč</span>', html=True)
-        self.assertRedirects(response, reverse('typ_platby'))
-
-
 class PaymentTypeViewTests(ViewsLogon):
     def test_dpnk_payment_type(self):
         post_data = {

@@ -1,6 +1,10 @@
 [run]
-include = dpnk*
-omit = dpnk/migrations*
+include =
+   dpnk*,
+   coupons*
+omit =
+   dpnk/migrations*,
+   coupons/migrations*
 plugins =
     django_coverage_plugin
 branch = True
