@@ -35,7 +35,6 @@ def normpath(*args):
 PROJECT_ROOT = normpath(__file__, "..", "..")
 
 sys.path.append(normpath(PROJECT_ROOT, "project"))
-sys.path.append(normpath(PROJECT_ROOT, "apps"))
 
 DEBUG = False
 ADMINS = (
@@ -66,7 +65,7 @@ CACHES = {
     },
 }
 
-LOCALE_PATHS = (normpath(PROJECT_ROOT, 'apps/dpnk/locale'),)
+LOCALE_PATHS = (normpath(PROJECT_ROOT, 'dpnk/locale'),)
 TIME_ZONE = 'Europe/Prague'
 LANGUAGES = (
     ('dsnkcs', _('Do školy na kole - czech')),
@@ -122,7 +121,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             normpath(PROJECT_ROOT, 'templates'),
-            normpath(PROJECT_ROOT, 'apps/dpnk/templates'),
+            normpath(PROJECT_ROOT, 'dpnk/templates'),
         ],
         'OPTIONS': {
             'string_if_invalid': InvalidStringShowWarning("%s"),

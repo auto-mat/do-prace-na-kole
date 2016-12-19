@@ -1168,7 +1168,7 @@ class TrackViewTests(ViewsLogon):
 
     def test_dpnk_views_track_gpx_file(self):
         address = reverse('upravit_trasu')
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'dont_want_insert_track': False,
                 'track': '',
@@ -1182,7 +1182,7 @@ class TrackViewTests(ViewsLogon):
 
     def test_dpnk_views_track_gpx_file_route(self):
         address = reverse('upravit_trasu')
-        with open('apps/dpnk/test_files/route.gpx', 'rb') as gpxfile:
+        with open('dpnk/test_files/route.gpx', 'rb') as gpxfile:
             post_data = {
                 'dont_want_insert_track': False,
                 'track': '',
@@ -1236,7 +1236,7 @@ class TrackViewTests(ViewsLogon):
         self.assertContains(response, "Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat.")
 
     def test_dpnk_rest_gpx_gz(self):
-        with open('apps/dpnk/test_files/modranska-rokle.gpx.gz', 'rb') as gpxfile:
+        with open('dpnk/test_files/modranska-rokle.gpx.gz', 'rb') as gpxfile:
             post_data = {
                 'trip_date': '2010-11-3',
                 'direction': 'trip_to',
@@ -1249,7 +1249,7 @@ class TrackViewTests(ViewsLogon):
         self.assertEquals(gpx_file.length(), 13.32)
 
     def test_dpnk_rest_gpx(self):
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'trip_date': '2010-11-3',
                 'direction': 'trip_to',
@@ -1446,7 +1446,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertTrue(self.user_attendance.entered_competition())
 
     @override_settings(
-        MEDIA_ROOT="apps/dpnk/test_files",
+        MEDIA_ROOT="dpnk/test_files",
     )
     def test_dpnk_questionnaire_answers(self):
         competition = models.Competition.objects.filter(slug="quest")
@@ -1460,7 +1460,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'Bez přílohy')
 
     @override_settings(
-        MEDIA_ROOT="apps/dpnk/test_files",
+        MEDIA_ROOT="dpnk/test_files",
     )
     @patch('slumber.API')
     def test_dpnk_profile_page(self, slumber_mock):
@@ -1618,7 +1618,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         date = datetime.date(year=2010, month=11, day=1)
         direction = "trip_from"
         address = reverse('gpx_file_create', kwargs={"date": date, "direction": direction})
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'file': gpxfile,
                 'direction': direction,
@@ -1635,7 +1635,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         date = datetime.date(year=2010, month=12, day=1)
         direction = "trip_from"
         address = reverse('gpx_file_create', kwargs={"date": date, "direction": direction})
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'file': gpxfile,
                 'direction': direction,

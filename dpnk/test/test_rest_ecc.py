@@ -82,7 +82,7 @@ class ECCTests(TestCase):
         )
 
     @override_settings(
-        MEDIA_ROOT="apps/dpnk/test_files",
+        MEDIA_ROOT="dpnk/test_files",
     )
     def test_ecc_track_json(self):
         modranska_rokle = GpxFile.objects.get(pk=2)

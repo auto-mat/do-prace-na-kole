@@ -60,7 +60,7 @@ class RestTests(DenormMixin, TestCase):
 
     def test_gpx_post(self):
         address = reverse("gpxfile-list")
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'trip_date': "2010-12-02",
                 'direction': 'trip_to',
@@ -80,7 +80,7 @@ class RestTests(DenormMixin, TestCase):
         self.client = Client(HTTP_HOST="testing-campaign-unknown.testserver", HTTP_REFERER="test-referer")
         self.client.force_login(User.objects.get(pk=1128), settings.AUTHENTICATION_BACKENDS[0])
         address = reverse("gpxfile-list")
-        with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'trip_date': "2010-12-02",
                 'direction': 'trip_to',
@@ -92,7 +92,7 @@ class RestTests(DenormMixin, TestCase):
     # TODO: make this working
     # def test_gpx_duplicate_gpx(self):
     #     address = reverse("gpxfile-list")
-    #     with open('apps/dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+    #     with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
     #         post_data = {
     #             'trip_date': "2010-12-01",
     #             'direction': 'trip_to',
