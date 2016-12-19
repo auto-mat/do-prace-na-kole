@@ -1,0 +1,31 @@
+
+[
+    {
+        "fields": {
+           "name": "Testing coupon",
+           "prefix": "AA"
+        },
+        "model": "dpnk.discountcoupontype",
+        "pk": 1
+    },
+    {
+        "fields": {
+           "token": "AAAAAA",
+           "coupon_type": 1,
+           "discount": 100,
+           "user_attendance_number": 1
+        },
+        "model": "dpnk.discountcoupon",
+        "pk": 1
+    },
+    {
+        "fields": {
+           "token": "AAAAAB",
+           "coupon_type": 1,
+           "discount": 50,
+           "user_attendance_number": null
+        },
+        "model": "dpnk.discountcoupon",
+        "pk": 2
+    }
+]
