@@ -947,7 +947,6 @@ class PackageTransactionResource(resources.ModelResource):
             'created',
             'realized',
             'status',
-            'author__username',
             'user_attendance__team__subsidiary__address_street',
             'user_attendance__team__subsidiary__address_psc',
             'user_attendance__team__subsidiary__address_city',
@@ -957,6 +956,7 @@ class PackageTransactionResource(resources.ModelResource):
             'delivery_batch',
             'tracking_number_cnc',
             'tnt_con_reference',
+            'author__username',
         )
         export_order = fields
 
