@@ -49,7 +49,8 @@ class DiscountCouponViewTests(ViewsLogon):
             'next': 'Next',
         }
         response = self.client.post(reverse('discount_coupon'), post_data)
-        self.assertRedirects(response, reverse('profil'))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('profil'))
         response = self.client.post(reverse('discount_coupon'), post_data)
         self.assertContains(response, "<li>Tento slevový kupón již byl použit</li>", html=True)
 
