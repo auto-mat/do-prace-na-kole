@@ -17,23 +17,29 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.core.urlresolvers import reverse
-from django.test import Client
+import datetime
 
-from dpnk import models
-from dpnk.test.tests import ViewsLogon
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.test import Client, TestCase
+from django.test.utils import override_settings
+
 from dpnk.test.util import print_response  # noqa
 
 import settings
 
 
-class DiscountCouponViewTests(ViewsLogon):
-    fixtures = ['campaign', 'users', 'auth_user', 'trips', 'coupons']
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class DiscountCouponViewTests(TestCase):
+    fixtures = ['campaign', 'auth_user', 'users', 'coupons']
 
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+        self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
 
     def test_discount_coupon_view_nonexistent(self):
         post_data = {

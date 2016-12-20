@@ -19,23 +19,27 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
+from django.contrib.auth.models import User
+from django.test import Client
 from django.test.utils import override_settings
 
 from django_admin_smoke_tests import tests as smoke_tests
 
-from dpnk.test.util import DenormMixin
+import settings
 
 
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
+class AdminSmokeTests(smoke_tests.AdminSiteSmokeTest):
     fixtures = ['campaign', 'auth_user', 'users', 'coupons']
     exclude_apps = ['djcelery', 'dpnk']
 
     def setUp(self):
         super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
 
     def get_request(self, params={}):
         request = super().get_request(params)
