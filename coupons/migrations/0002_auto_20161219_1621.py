@@ -46,4 +46,20 @@ class Migration(migrations.Migration):
             name='updated_by',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='discountcoupon_update', to=settings.AUTH_USER_MODEL, verbose_name='last updated by'),
         ),
+        migrations.AddField(
+            model_name='discountcoupon',
+            name='coupon_pdf',
+            field=models.FileField(blank=True, null=True, upload_to='coupons', verbose_name='PDF kupón'),
+        ),
+        migrations.AddField(
+            model_name='discountcoupontype',
+            name='campaign',
+            field=models.ForeignKey(default=7, on_delete=django.db.models.deletion.CASCADE, to='dpnk.Campaign', verbose_name='Kampaň'),
+            preserve_default=False,
+        ),
+        migrations.AddField(
+            model_name='discountcoupontype',
+            name='valid_until',
+            field=models.DateField(blank=True, default=None, null=True, verbose_name='Platný do'),
+        ),
     ]

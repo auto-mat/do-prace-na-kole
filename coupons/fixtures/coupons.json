@@ -3,6 +3,8 @@
     {
         "fields": {
            "name": "Testing coupon",
+           "campaign": 339,
+           "valid_until": "2017-12-12",
            "prefix": "AA"
         },
         "model": "coupons.discountcoupontype",
@@ -13,6 +15,7 @@
            "token": "AAAAAA",
            "coupon_type": 1,
            "discount": 100,
+           "coupon_pdf": null,
            "user_attendance_number": 1
         },
         "model": "coupons.discountcoupon",
@@ -23,6 +26,7 @@
            "token": "AAAAAB",
            "coupon_type": 1,
            "discount": 50,
+           "coupon_pdf": null,
            "user_attendance_number": null
         },
         "model": "coupons.discountcoupon",

@@ -25,10 +25,22 @@ from django.utils.translation import ugettext_lazy as _
 
 class DiscountCouponType(models.Model):
     name = models.CharField(
-        verbose_name=_(u"jméno typu voucheru"),
+        verbose_name=_("jméno typu voucheru"),
         max_length=20,
         blank=False,
         null=False,
+    )
+    campaign = models.ForeignKey(
+        'dpnk.Campaign',
+        verbose_name=_("Kampaň"),
+        null=False,
+        blank=False,
+    )
+    valid_until = models.DateField(
+        verbose_name=_("Platný do"),
+        default=None,
+        null=True,
+        blank=True,
     )
     prefix = models.CharField(
         validators=[
