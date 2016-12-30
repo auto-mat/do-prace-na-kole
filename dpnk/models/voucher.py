@@ -30,7 +30,7 @@ class Voucher(models.Model):
         ('rekola', _(u"ReKola")),
         ('sportlife', _(u"SportLife")),
     ]
-    type = models.CharField(
+    voucher_type = models.CharField(
         verbose_name=_(u"typ voucheru"),
         choices=TYPES,
         max_length=10,

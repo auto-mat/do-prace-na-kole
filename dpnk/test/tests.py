@@ -1378,14 +1378,14 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
     def test_dpnk_company_admin_create_competition(self):
         post_data = {
             'name': 'testing company competition',
-            'type': 'length',
+            'competition_type': 'length',
             'competitor_type': 'single_user',
             'submit': 'Odeslat',
         }
         request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
         self.assertEquals(response.url, reverse('company_admin_competitions'))
-        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().first().administrated_company, type='length')
+        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().first().administrated_company, competition_type='length')
         self.assertEquals(competition.name, 'testing company competition')
 
         slug = competition.slug
@@ -1393,13 +1393,13 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug=slug)
         self.assertEquals(response.url, reverse('company_admin_competitions'))
-        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().first().administrated_company, type='length')
+        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().first().administrated_company, competition_type='length')
         self.assertEquals(competition.name, 'testing company competition fixed')
 
     def test_dpnk_company_admin_create_competition_name_exists(self):
         post_data = {
             'name': 'Pravidelnost společnosti',
-            'type': 'length',
+            'competition_type': 'length',
             'competitor_type': 'single_user',
             'submit': 'Odeslat',
         }

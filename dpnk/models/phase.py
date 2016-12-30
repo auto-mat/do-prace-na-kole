@@ -31,7 +31,7 @@ class Phase(models.Model):
     class Meta:
         verbose_name = _(u"fáze kampaně")
         verbose_name_plural = _(u"fáze kampaně")
-        unique_together = (("type", "campaign"),)
+        unique_together = (("phase_type", "campaign"),)
 
     TYPE = [
         ('registration', _(u"registrační")),
@@ -50,7 +50,7 @@ class Phase(models.Model):
         null=False,
         blank=False,
     )
-    type = models.CharField(
+    phase_type = models.CharField(
         verbose_name=_(u"Typ fáze"),
         choices=TYPE,
         max_length=16,

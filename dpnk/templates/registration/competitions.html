@@ -15,7 +15,7 @@
 </i>
 <br/>
 {% if competition.has_started %}
-   {% if competition.type != 'questionnaire' or competition.has_finished %}
+   {% if competition.competition_type != 'questionnaire' or competition.has_finished %}
    {% if competition.my_results.result %}
       <p>
       {{ competition.my_results.position|ordinal }}{% trans " místo z " %}{{ competition.competitor_count|intcomma }}
@@ -30,17 +30,17 @@
       {% endif %}
       </p>
       <p>
-      {% if competition.type == 'length' %}
+      {% if competition.competition_type == 'length' %}
         {{ competition.my_results.result|floatformat:-1|intcomma }}&nbsp;km
         {% if competition.competitor_type == 'team' %}
            </p><p>
            {{ competition.my_results.result_divident|floatformat:0 }}&nbsp;km {% trans "ve" %} {{ competition.my_results.result_divisor|floatformat:0 }} {% trans "lidech" %}
         {% endif %}
-      {% elif competition.type == 'frequency' %}
+      {% elif competition.competition_type == 'frequency' %}
         {{ competition.my_results.get_result_percentage |floatformat:-1|intcomma }}&nbsp;%
          </p><p>
         {{ competition.my_results.result_divident|floatformat:0 }} {% trans "z" %} {{ competition.my_results.result_divisor|floatformat:0 }} {% trans "jízd" %}
-      {% elif competition.type == 'questionnaire' %}
+      {% elif competition.competition_type == 'questionnaire' %}
         {{ competition.my_results.result|floatformat:-1|intcomma }}b.
       {% endif %}
       </p>
@@ -51,13 +51,13 @@
 {% endif %}
 
    {% if competition.competitor_can_admit == True %}
-      {% if competition.type == 'questionnaire' %}
+      {% if competition.competition_type == 'questionnaire' %}
          <a href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">{% trans "Vyplnit odpovědi" %}</a>
          <br/>
       {% endif %}
    {% endif %}
 
-   {% if competition.type == 'questionnaire' %}
+   {% if competition.competition_type == 'questionnaire' %}
       {% if competition.public_answers %}
          <a href="{% url 'questionnaire_answers_all' competition_slug=competition.slug %}">{% trans "Všechny odpovědi" %}</a>
          <br/>
@@ -65,7 +65,7 @@
    {% endif %}
 
    {% if competition.competitor_can_admit == 'without_admission' %}
-      {% if competition.type == 'questionnaire' %}
+      {% if competition.competition_type == 'questionnaire' %}
          <a href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">{% trans "Zobrazit informace" %}</a>
          <br/>
       {% endif %}

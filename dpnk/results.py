@@ -284,12 +284,12 @@ def recalculate_result(competition, competitor):  # noqa
             competition_result.save()
             return
 
-        if competition.type == 'questionnaire':
+        if competition.competition_type == 'questionnaire':
             points, points_given = points_questionnaire(members, competition)
             competition_result.result = float(points + points_given)
-        elif competition.type == 'length':
+        elif competition.competition_type == 'length':
             competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_length(team, competition)
-        elif competition.type == 'frequency':
+        elif competition.competition_type == 'frequency':
             competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_frequency(team.members(), competition)
 
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
@@ -300,12 +300,12 @@ def recalculate_result(competition, competitor):  # noqa
 
         competition_result, created = CompetitionResult.objects.get_or_create(user_attendance=user_attendance, competition=competition)
 
-        if competition.type == 'questionnaire':
+        if competition.competition_type == 'questionnaire':
             points, points_given = points_questionnaire([user_attendance], competition)
             competition_result.result = points + points_given
-        elif competition.type == 'length':
+        elif competition.competition_type == 'length':
             competition_result.result = get_userprofile_length([user_attendance], competition)
-        elif competition.type == 'frequency':
+        elif competition.competition_type == 'frequency':
             competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_userprofile_frequency(user_attendance, competition)
 
     elif competition.competitor_type == 'company':
@@ -317,12 +317,12 @@ def recalculate_result(competition, competitor):  # noqa
 
         competition_result, created = CompetitionResult.objects.get_or_create(company=company, competition=competition)
 
-        if competition.type == 'questionnaire':
+        if competition.competition_type == 'questionnaire':
             points, points_given = points_questionnaire(user_attendances, competition)
             competition_result.result = points + points_given
-        elif competition.type == 'length':
+        elif competition.competition_type == 'length':
             competition_result.result = get_userprofile_length(user_attendances, competition)
-        elif competition.type == 'frequency':
+        elif competition.competition_type == 'frequency':
             competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_frequency(user_attendances, competition)
 
     competition_result.save()

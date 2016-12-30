@@ -16,7 +16,7 @@
             "sex": null,
             "slug": "FA-testing-campaign-pravidelnost-spolecnosti",
             "team_competitors": [],
-            "type": "frequency",
+            "competition_type": "frequency",
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
             "without_admission": true

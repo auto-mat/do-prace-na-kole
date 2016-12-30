@@ -208,7 +208,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
 
 
 class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
-    type = forms.ChoiceField(
+    competition_type = forms.ChoiceField(
         label=_(u"Typ soutěže"),
         choices=[x for x in Competition.CTYPES if x[0] != 'questionnaire'],
         required=True,
@@ -222,7 +222,7 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
 
     class Meta:
         model = Competition
-        fields = ('name', 'url', 'type', 'competitor_type', 'sex', )
+        fields = ('name', 'url', 'competition_type', 'competitor_type', 'sex', )
 
     def clean_name(self):
         if not self.instance.pk:

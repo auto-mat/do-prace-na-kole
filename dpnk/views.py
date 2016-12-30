@@ -918,7 +918,7 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
             Q(attachment__icontains=".png") | Q(attachment__icontains=".gif") |
             Q(attachment__icontains=".bmp") | Q(attachment__icontains=".tiff"),
             question__competition__city=None,
-            question__competition__type="questionnaire",
+            question__competition__competition_type="questionnaire",
             question__competition__campaign=campaign,
             attachment__isnull=False,
         ).exclude(
@@ -1380,7 +1380,7 @@ def answers(request):
     for a in answers:
         a.city = a.user_attendance.team.subsidiary.city if a.user_attendance.team else None
 
-    if question.type in ('choice', 'multiple-choice'):
+    if question.question_type in ('choice', 'multiple-choice'):
         for a in answers:
             if a.city:
                 respondents[a.city] += 1

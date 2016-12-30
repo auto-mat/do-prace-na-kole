@@ -254,7 +254,7 @@ class Campaign(models.Model):
         if phase_type not in self.phases:
             from .phase import Phase
             try:
-                self.phases[phase_type] = self.phase_set.get(type=phase_type)
+                self.phases[phase_type] = self.phase_set.get(phase_type=phase_type)
             except Phase.DoesNotExist:
                 self.phases[phase_type] = None
         return self.phases[phase_type]

@@ -109,7 +109,7 @@ class Question(models.Model):
         null=True,
         blank=True,
     )
-    type = models.CharField(
+    question_type = models.CharField(
         verbose_name=_(u"Typ"),
         choices=QTYPES,
         default='text',
@@ -157,7 +157,7 @@ class Question(models.Model):
         return "%s" % (self.name or self.text)
 
     def with_answer(self):
-        return self.comment_type or self.with_attachment or self.type != 'text' or self.choice_type is not None
+        return self.comment_type or self.with_attachment or self.question_type != 'text' or self.choice_type is not None
 
 
 class Choice(models.Model):

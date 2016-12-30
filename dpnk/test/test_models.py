@@ -135,7 +135,7 @@ class TestMethods(TestCase):
             slug="camp",
         )
         models.Phase.objects.create(
-            type="competition",
+            phase_type="competition",
             campaign=campaign,
             date_from="2016-1-1",
             date_to="2016-1-1",
@@ -158,7 +158,7 @@ class TestMethods(TestCase):
             tracking_number_last=1,
         )
         models.Phase.objects.create(
-            type="competition",
+            phase_type="competition",
             campaign=campaign,
             date_from="2016-1-1",
             date_to="2016-1-1",
@@ -184,7 +184,7 @@ class TestMethods(TestCase):
     def test_answer_post_save_single_user(self):
         competition = models.Competition.objects.create(
             competitor_type="single_user",
-            type="questionnaire",
+            competition_type="questionnaire",
             without_admission=True,
             campaign_id=339,
         )
@@ -201,7 +201,7 @@ class TestMethods(TestCase):
         campaign = models.Campaign.objects.get(pk=339)
         competition = models.Competition.objects.create(
             competitor_type="company",
-            type="questionnaire",
+            competition_type="questionnaire",
             without_admission=True,
             campaign=campaign,
         )

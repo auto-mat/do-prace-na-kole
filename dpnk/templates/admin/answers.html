@@ -9,7 +9,7 @@
 <a href="{% url 'admin:dpnk_answer_changelist' %}?question__competition__id__exact={{ question.competition.pk }}">Odpovědi k soutěži {{ question.competition }}</a>
 </p>
 
-{% if question.type != 'text' %}
+{% if question.question_type != 'text' %}
 <h2>Statistika</h2>
 {% for city, city_stat in stat.items %}
 <h3> {{city}} </h3>

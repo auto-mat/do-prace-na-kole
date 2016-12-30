@@ -40,7 +40,7 @@ def draw(competition_slug, limit=10):
     threshold = competition.campaign.minimum_percentage / 100.0
     condition = {}
     condition['competition'] = competition
-    if competition.type == 'frequency':
+    if competition.competition_type == 'frequency':
         condition['result__gt'] = threshold
     results = CompetitionResult.objects.filter(**condition)
 
@@ -48,7 +48,7 @@ def draw(competition_slug, limit=10):
         results = \
             [result for result in results if all_members_paid(result.team)]
 
-    if competition.type == 'frequency' and competition.competitor_type == 'team':
+    if competition.competition_type == 'frequency' and competition.competitor_type == 'team':
         return draw_weighed(results)
 
     results = sorted(results[:limit], key=lambda x: random.random())

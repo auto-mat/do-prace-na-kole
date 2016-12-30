@@ -18,7 +18,7 @@
             {{ competition.name }}
          {% if competition.url %}</a>{% endif %}
       </td>
-   <td>{{ competition.get_type_display }}</td>
+   <td>{{ competition.get_competition_type_display }}</td>
    <td>{{ competition.get_competitor_type_display }}</td>
    <td>{{ competition.get_sex_display|default_if_none:"Všechna" }}</td>
    <td><a href="{% url 'company_admin_competition' competition_slug=competition.slug %}">{% trans "upravit" %}</a></td>

@@ -40,7 +40,7 @@ class TestEmails(TestCase):
         self.phase = Phase.objects.create(
             date_from=datetime.date(year=2010, month=10, day=20),
             date_to=datetime.date(year=2010, month=11, day=20),
-            campaign=self.campaign, type='competition',
+            campaign=self.campaign, phase_type='competition',
         )
         self.city = City.objects.create(name="Testing City", slug="testing_city")
 

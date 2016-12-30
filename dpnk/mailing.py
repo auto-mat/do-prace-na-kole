@@ -181,7 +181,7 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
                 add_user(user_attendance)
         else:
             delete_user(user_attendance)
-    except:
+    except:  # noqa
         logger.exception("Problem occured during mailing list record actualization")
 
 

@@ -27,7 +27,7 @@
    {% for voucher in user_attendance.voucher_set.all %}
    <tr>
       <td>
-         {{ voucher.get_type_display }}
+         {{ voucher.get_voucher_type_display }}
       </td>
       <td>
          {{ voucher.token }}

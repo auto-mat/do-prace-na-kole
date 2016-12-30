@@ -35,7 +35,7 @@ recalculate_competitions_results.short_description = _(u"Přepočítat výsledku
 
 
 def normalize_questionnqire_admissions(modeladmin, request, queryset):
-    queryset = queryset.filter(type='questionnaire', competitor_type='single_user')
+    queryset = queryset.filter(competition_type='questionnaire', competitor_type='single_user')
     for competition in queryset.all():
         competition.user_attendance_competitors.clear()
         for question in competition.question_set.all():

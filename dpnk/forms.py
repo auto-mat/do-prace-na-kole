@@ -484,14 +484,14 @@ class AnswerForm(forms.ModelForm):
             if question.comment_type == 'one-liner':
                 self.fields['comment'] = forms.CharField()
             self.fields['comment'].label = ""
-            if question.type == 'text':
+            if question.question_type == 'text':
                 self.fields['comment'].required = question.required
         else:
             del self.fields['comment']
 
         choices_layout = Field('choices')
-        if question.type != 'text':
-            if question.type == 'choice':
+        if question.question_type != 'text':
+            if question.question_type == 'choice':
                 choices_layout = Field('choices', template="widgets/radioselectmultiple.html")
             self.fields['choices'].widget = forms.CheckboxSelectMultiple()
             if question.choice_type:
@@ -510,7 +510,7 @@ class AnswerForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Div(
-                choices_layout if question.type != 'text' else None,
+                choices_layout if question.question_type != 'text' else None,
                 'comment' if question.comment_type else None,
                 'attachment' if question.with_attachment else None,
                 css_class=None if is_actual else 'readonly',

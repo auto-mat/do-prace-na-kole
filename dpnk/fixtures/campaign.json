@@ -80,7 +80,7 @@
             "campaign": 339,
             "date_from": "2010-11-01",
             "date_to": "2010-11-30",
-            "type": "registration"
+            "phase_type": "registration"
         },
         "model": "dpnk.phase",
         "pk": 1
@@ -102,7 +102,7 @@
             "sex": null,
             "slug": "FQ-LB",
             "team_competitors": [],
-            "type": "frequency",
+            "competition_type": "frequency",
             "minimum_rides_base": 23,
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
@@ -128,7 +128,7 @@
             "sex": null,
             "slug": "pravidelnost-jednotlivcu",
             "team_competitors": [],
-            "type": "frequency",
+            "competition_type": "frequency",
             "minimum_rides_base": 23,
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
@@ -139,7 +139,7 @@
     },
     {
         "fields": {
-           "type": "text",
+           "question_type": "text",
            "comment_type": null,
            "with_attachment": false,
            "text": "Team question text",
@@ -152,7 +152,7 @@
     },
     {
         "fields": {
-           "type": "text",
+           "question_type": "text",
            "comment_type": null,
            "with_attachment": false,
            "text": "Question text",
@@ -165,7 +165,7 @@
     },
     {
         "fields": {
-           "type": "text",
+           "question_type": "text",
            "comment_type": "link",
            "with_attachment": true,
            "name": "Question 4 name",
@@ -176,7 +176,7 @@
     },
     {
         "fields": {
-           "type": "text",
+           "question_type": "text",
            "comment_type": "one-liner",
            "with_attachment": true,
            "competition": 4
@@ -186,7 +186,7 @@
     },
     {
         "fields": {
-           "type": "choice",
+           "question_type": "choice",
            "required": false,
            "with_attachment": false,
            "competition": 4
@@ -196,7 +196,7 @@
     },
     {
         "fields": {
-           "type": "choice",
+           "question_type": "choice",
            "choice_type": 1,
            "with_attachment": true,
            "competition": 4
@@ -256,7 +256,7 @@
             "sex": null,
             "slug": "quest",
             "team_competitors": [],
-            "type": "questionnaire",
+            "competition_type": "questionnaire",
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
             "without_admission": false
@@ -281,7 +281,7 @@
             "sex": null,
             "slug": "team-questionnaire",
             "team_competitors": [1],
-            "type": "questionnaire",
+            "competition_type": "questionnaire",
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
             "without_admission": false
@@ -306,7 +306,7 @@
             "sex": "male",
             "slug": "vykonnost",
             "team_competitors": [],
-            "type": "length",
+            "competition_type": "length",
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
             "without_admission": true
@@ -331,7 +331,7 @@
             "sex": "male",
             "slug": "vykonnost-tymu",
             "team_competitors": [],
-            "type": "length",
+            "competition_type": "length",
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
             "without_admission": true
@@ -356,7 +356,7 @@
             "sex": null,
             "slug": "vykonnost-mesto",
             "team_competitors": [],
-            "type": "length",
+            "competition_type": "length",
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
             "without_admission": true
@@ -381,7 +381,7 @@
             "sex": null,
             "slug": "vykonnost-spolecnosti",
             "team_competitors": [],
-            "type": "length",
+            "competition_type": "length",
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
             "without_admission": true
@@ -406,7 +406,7 @@
             "sex": null,
             "slug": "pravidelnost-spolecnosti",
             "team_competitors": [],
-            "type": "frequency",
+            "competition_type": "frequency",
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
             "without_admission": true
@@ -431,7 +431,7 @@
             "sex": null,
             "slug": "dotaznik-spolecnosti",
             "team_competitors": [],
-            "type": "questionnaire",
+            "competition_type": "questionnaire",
             "url": "http://www.dopracenakole.net/url/",
             "user_attendance_competitors": [],
             "without_admission": false
@@ -443,7 +443,7 @@
         "fields": {
             "campaign": 339,
             "date_from": "2011-1-01",
-            "type": "late_admission"
+            "phase_type": "late_admission"
         },
         "model": "dpnk.phase",
         "pk": 5
@@ -451,7 +451,7 @@
     {
         "fields": {
             "campaign": 339,
-            "type": "invoices"
+            "phase_type": "invoices"
         },
         "model": "dpnk.phase",
         "pk": 4
@@ -459,7 +459,7 @@
     {
         "fields": {
             "campaign": 339,
-            "type": "payment"
+            "phase_type": "payment"
         },
         "model": "dpnk.phase",
         "pk": 3
@@ -469,7 +469,7 @@
             "campaign": 339,
             "date_from": "2010-11-01",
             "date_to": "2010-11-30",
-            "type": "competition"
+            "phase_type": "competition"
         },
         "model": "dpnk.phase",
         "pk": 2
@@ -479,7 +479,7 @@
             "campaign": 338,
             "date_from": "2009-12-01",
             "date_to": "2009-12-30",
-            "type": "competition"
+            "phase_type": "competition"
         },
         "model": "dpnk.phase",
         "pk": 6

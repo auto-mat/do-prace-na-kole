@@ -6,22 +6,22 @@
 <tr>
 <th scope="column">{% trans "Po&shy;řa&shy;dí" %}</th>
 <th scope="column">
-   {% if competition.type == 'length' %}
+   {% if competition.competition_type == 'length' %}
       {% trans "Ki&shy;lo&shy;me&shy;trů" %}
-   {% elif competition.type == 'frequency' %}
+   {% elif competition.competition_type == 'frequency' %}
       {% trans "% jízd" %}
-   {% elif competition.type == 'questionnaire' %}
+   {% elif competition.competition_type == 'questionnaire' %}
       {% trans "Bo&shy;dů" %}
    {% endif %}
-   {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.type != 'questionnaire' %}
+   {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.competition_type != 'questionnaire' %}
       {% trans "prů&shy;měr&shy;ně" %}
    {% endif %}
 </th>
 
-{% if competition.type == 'frequency' %}
+{% if competition.competition_type == 'frequency' %}
    <th>{% trans "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd" %}</th>
    <th>{% trans "Cel&shy;ko&shy;vý po&shy;čet cest" %}</th>
-{% elif competition.type == 'length' and competition.competitor_type == 'team' %}
+{% elif competition.competition_type == 'length' and competition.competitor_type == 'team' %}
    <th>{% trans "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů" %}</th>
 {% endif %}
 
@@ -61,19 +61,19 @@
    {{ forloop.counter|ordinal }}
 {% endifchanged %}
 </td>
-{% if competition.type == 'frequency' %}
+{% if competition.competition_type == 'frequency' %}
    <td>{{ result.get_result_percentage |intcomma  }}</td>
 {% else %}
    <td>{{ result.get_result|intcomma  }}</td>
 {% endif %}
 
-{% if competition.type == 'length' and competition.competitor_type == 'team' %}
+{% if competition.competition_type == 'length' and competition.competitor_type == 'team' %}
    <td>{{ result.result_divident|default:""|intcomma }}</td>
 {% endif %}
-{% if competition.type == 'frequency' %}
+{% if competition.competition_type == 'frequency' %}
    <td>{{ result.result_divident|default:""|floatformat:"0" }}</td>
 {% endif %}
-{% if competition.type == 'frequency' %}
+{% if competition.competition_type == 'frequency' %}
    <td>{{ result.result_divisor|default:""|floatformat:"0" }}</td>
 {% endif %}
 

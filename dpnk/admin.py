@@ -325,7 +325,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFie
     list_display = (
         'name',
         'slug',
-        'type',
+        'competition_type',
         'competitor_type',
         'without_admission',
         'is_public',
@@ -358,7 +358,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFie
         'public_answers',
         'show_results',
         'competitor_type',
-        'type',
+        'competition_type',
         IsForCompanyFilter,
         'sex')
     save_as = True
@@ -398,17 +398,17 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFie
     competition_results_link.short_description = _(u"Výsledky soutěže")
 
     def questionnaire_results_link(self, obj):
-        if obj.type == 'questionnaire' and obj.slug:
+        if obj.competition_type == 'questionnaire' and obj.slug:
             return format_html(u'<a href="{}">odpovědi</a>', (reverse('admin_questionnaire_results', kwargs={'competition_slug': obj.slug})))
     questionnaire_results_link.short_description = _(u"Odpovědi")
 
     def questionnaire_link(self, obj):
-        if obj.type == 'questionnaire' and obj.slug:
+        if obj.competition_type == 'questionnaire' and obj.slug:
             return format_html(u'<a href="{}">dotazník</a>', (reverse('questionnaire', kwargs={'questionnaire_slug': obj.slug})))
     questionnaire_link.short_description = _(u"Dotazník")
 
     def draw_link(self, obj):
-        if obj.type == 'frequency' and obj.competitor_type == 'team' and obj.slug:
+        if obj.competition_type == 'frequency' and obj.competitor_type == 'team' and obj.slug:
             return format_html(u'<a href="{}">losovani</a>', (reverse('admin_draw_results', kwargs={'competition_slug': obj.slug})))
     draw_link.short_description = _(u"Losování")
 
@@ -1119,7 +1119,7 @@ class AnswerAdmin(ExportMixin, RelatedFieldAdmin):
 @admin.register(models.Question)
 class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ExportMixin, admin.ModelAdmin):
     form = models.QuestionForm
-    list_display = ('__str__', 'text', 'type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
+    list_display = ('__str__', 'text', 'question_type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
     ordering = ('order', 'date',)
     list_filter = (campaign_filter_generator('competition__campaign'), 'competition__city', 'competition',)
     search_fields = ('text', 'competition__name')
@@ -1458,7 +1458,7 @@ class GpxFileAdmin(LeafletGeoAdmin):
 
 @admin.register(models.Voucher)
 class VoucherAdmin(ImportMixin, admin.ModelAdmin):
-    list_display = ('id', 'type', 'token', 'user_attendance')
+    list_display = ('id', 'voucher_type', 'token', 'user_attendance')
     raw_id_fields = ('user_attendance',)
 
 

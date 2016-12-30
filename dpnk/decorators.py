@@ -163,7 +163,7 @@ def must_be_in_phase(phase_type):
                 messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % request.subdomain)
                 raise Http404()
             try:
-                phase = campaign.phase_set.get(type=phase_type)
+                phase = campaign.phase_set.get(phase_type=phase_type)
             except ObjectDoesNotExist:
                 phase = None
             if phase and phase.is_actual():

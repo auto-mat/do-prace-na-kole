@@ -98,7 +98,7 @@ class Competition(models.Model):
         null=True,
         blank=True,
     )
-    type = models.CharField(
+    competition_type = models.CharField(
         verbose_name=_(u"Typ"),
         help_text=_(
             u"Určuje, zdali bude soutěž výkonnostní (na ujetou vzdálenost),"
@@ -200,7 +200,7 @@ class Competition(models.Model):
         return self.minimum_rides_base
 
     def show_competition_results(self):
-        if self.type == 'questionnaire' and not self.has_finished():
+        if self.competition_type == 'questionnaire' and not self.has_finished():
             return False
         return self.show_results
 
@@ -256,11 +256,11 @@ class Competition(models.Model):
             return 'without_admission'
         if not util.get_company_admin(user_attendance.userprofile.user, self.campaign) and self.competitor_type == 'company':
             return 'not_company_admin'
-        if self.type == 'questionnaire' and not self.has_started():
+        if self.competition_type == 'questionnaire' and not self.has_started():
             return 'before_beginning'
-        if self.type == 'questionnaire' and self.has_finished():
+        if self.competition_type == 'questionnaire' and self.has_finished():
             return 'after_end'
-        if self.type != 'questionnaire' and self.has_entry_opened():
+        if self.competition_type != 'questionnaire' and self.has_entry_opened():
             return 'after_beginning'
 
         if self.competitor_type == 'liberos' and not user_attendance.is_libero():
@@ -355,7 +355,7 @@ class Competition(models.Model):
 
         return string_concat(
             company_string_before, " ",
-            CTYPES_STRINGS[self.type], " ",
+            CTYPES_STRINGS[self.competition_type], " ",
             CCOMPETITORTYPES_STRINGS[self.competitor_type], " ",
             company_string_after, " ",
             city_string, " ",
