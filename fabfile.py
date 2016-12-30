@@ -326,7 +326,7 @@ def denorm():
 
 def locale():
     "Compile locale"
-    run('cd %(path)s/releases/%(release)s/apps/dpnk; django-admin compilemessages' % env)
+    run('cd %(path)s/releases/%(release)s/dpnk; django-admin compilemessages' % env)
 
 
 def install_site():
