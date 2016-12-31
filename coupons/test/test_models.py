@@ -30,7 +30,7 @@ class DiscountCouponTests(TestCase):
     def test_save(self):
         discount_coupon = models.DiscountCoupon.objects.create(coupon_type_id=1)
         self.assertRegex(discount_coupon.name(), r"AA-[A-Z]{6}")
-        self.assertRegex(discount_coupon.coupon_pdf.name, r"coupons\/testing-campaign\/coupon_[-]?[0-9]+\.pdf")
+        self.assertRegex(discount_coupon.coupon_pdf.name, r"coupon_[-]?[0-9]+\.pdf")
         pdf = PdfFileReader(discount_coupon.coupon_pdf)
         pdf_string = pdf.pages[0].extractText()
         self.assertTrue(discount_coupon.name() in pdf_string)
