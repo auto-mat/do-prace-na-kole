@@ -19,27 +19,40 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
-from django.contrib.auth.models import User
 from django.test import Client
 from django.test.utils import override_settings
 
 from django_admin_smoke_tests import tests as smoke_tests
 
+from model_mommy import mommy
+
 import settings
 
 
 @override_settings(
-    SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminSmokeTests(smoke_tests.AdminSiteSmokeTest):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'coupons']
+    fixtures = []
     exclude_apps = ['djcelery', 'dpnk']
 
     def setUp(self):
         super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+        user = mommy.make(
+            'auth.User',
+            user__username='test',
+            user__is_superuser=True,
+        )
+        mommy.make(
+            "coupons.DiscountCoupon",
+            coupon_type__prefix="AA",
+            coupon_type__valid_until=datetime.date(year=2017, month=12, day=12),
+            discount=100,
+            token="AAAAAA",
+            pk=1,
+        )
+        self.client = Client(HTTP_HOST="testing-campaign.example.com")
+        self.client.force_login(user, settings.AUTHENTICATION_BACKENDS[0])
 
     def get_request(self, params={}):
         request = super().get_request(params)
