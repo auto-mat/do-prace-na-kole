@@ -251,8 +251,7 @@ class UserAttendance(models.Model):
     @denormalized(models.IntegerField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
     def get_rides_count_denorm(self):
-        from .. import results
-        return results.get_rides_count(self, self.campaign.phase("competition"))
+        return self.get_rides_count()
 
     def get_frequency(self, day=None):
         from .. import results
