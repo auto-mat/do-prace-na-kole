@@ -19,7 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 from django.test.utils import override_settings
@@ -32,17 +31,36 @@ import settings
 
 
 @override_settings(
-    SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class DiscountCouponViewTests(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users']
-
     def setUp(self):
         super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        payment_phase = mommy.make(
+            "dpnk.Phase",
+            phase_type="payment",
+            campaign__slug="testing-campaign",
+            campaign__late_admission_fee=120,
+        )
+        self.campaign = payment_phase.campaign
+        mommy.make(
+            "dpnk.Phase",
+            phase_type="competition",
+            campaign=self.campaign,
+            date_from=datetime.date(year=2010, month=1, day=1),
+            date_to=datetime.date(year=2019, month=12, day=12),
+        )
+        userattendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team__campaign=self.campaign,
+            team__name="test team",
+            t_shirt_size__name="XXXL",
+            userprofile__user__username='test',
+        )
+        self.client = Client(HTTP_HOST="testing-campaign.example.com")
         self.client.force_login(
-            User.objects.get(username='test'),
+            userattendance.userprofile.user,
             settings.AUTHENTICATION_BACKENDS[0],
         )
 
@@ -59,6 +77,7 @@ class DiscountCouponViewTests(TestCase):
             "coupons.DiscountCoupon",
             coupon_type__prefix="AA",
             coupon_type__valid_until=datetime.date(year=2017, month=12, day=12),
+            coupon_type__campaign=self.campaign,
             discount=100,
             token="AAAAAA",
             pk=1,
@@ -78,6 +97,7 @@ class DiscountCouponViewTests(TestCase):
             "coupons.DiscountCoupon",
             coupon_type__prefix="AA",
             coupon_type__valid_until=datetime.date(year=2017, month=12, day=12),
+            coupon_type__campaign=self.campaign,
             discount=50,
             token="AAAAAB",
             pk=2,
