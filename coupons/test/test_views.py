@@ -26,6 +26,8 @@ from django.test.utils import override_settings
 
 from dpnk.test.util import print_response  # noqa
 
+from model_mommy import mommy
+
 import settings
 
 
@@ -34,12 +36,15 @@ import settings
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class DiscountCouponViewTests(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'coupons']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users']
 
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+        self.client.force_login(
+            User.objects.get(username='test'),
+            settings.AUTHENTICATION_BACKENDS[0],
+        )
 
     def test_discount_coupon_view_nonexistent(self):
         post_data = {
@@ -50,6 +55,14 @@ class DiscountCouponViewTests(TestCase):
         self.assertContains(response, "<li>Tento slevový kupón neexistuje, nebo již byl použit</li>", html=True)
 
     def test_discount_coupon_view_found(self):
+        mommy.make(
+            "coupons.DiscountCoupon",
+            coupon_type__prefix="AA",
+            coupon_type__valid_until=datetime.date(year=2017, month=12, day=12),
+            discount=100,
+            token="AAAAAA",
+            pk=1,
+        )
         post_data = {
             'code': 'Aa-aaaAaa',
             'next': 'Next',
@@ -61,6 +74,14 @@ class DiscountCouponViewTests(TestCase):
         self.assertContains(response, "<li>Tento slevový kupón již byl použit</li>", html=True)
 
     def test_discount_coupon_view_found_discount(self):
+        mommy.make(
+            "coupons.DiscountCoupon",
+            coupon_type__prefix="AA",
+            coupon_type__valid_until=datetime.date(year=2017, month=12, day=12),
+            discount=50,
+            token="AAAAAB",
+            pk=2,
+        )
         post_data = {
             'code': 'Aa-aaaAab',
             'next': 'Next',
