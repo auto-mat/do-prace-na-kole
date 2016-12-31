@@ -41,3 +41,11 @@ class DiscountCouponTests(TestCase):
         self.assertTrue(discount_coupon.name() in pdf_string)
         self.assertTrue("Startovné Do práce na kole" in pdf_string)
         self.assertTrue("12. prosinec 2017" in pdf_string)
+
+    def test_available(self):
+        discount_coupon = mommy.make(
+            'coupons.DiscountCoupon',
+            coupon_type__campaign__slug="testing-campaign",
+            user_attendance_number=None,
+        )
+        self.assertTrue(discount_coupon.available())

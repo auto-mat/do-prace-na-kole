@@ -41,7 +41,8 @@ def generate_coupon_pdf(outputStream, code, valid_until):
     can = canvas.Canvas(packet, pagesize=letter)
     can.setFont('Zirkel-Regular', 20)
     can.drawString(150, 110, code)
-    can.drawString(380, 110, valid_until)
+    if valid_until:
+        can.drawString(380, 110, valid_until)
     can.save()
 
     # move to the beginning of the StringIO buffer
