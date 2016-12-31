@@ -31,7 +31,7 @@ from dpnk.models import Campaign
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class UtilTests(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users']
 
     def test_day_active_last(self):
         campaign = Campaign.objects.get(pk=339)

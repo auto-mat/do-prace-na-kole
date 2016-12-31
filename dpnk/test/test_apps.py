@@ -31,7 +31,7 @@ from dpnk import apps, models
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AppsTests(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users']
 
     def test_apps_ready(self):
         module = sys.modules['dpnk']

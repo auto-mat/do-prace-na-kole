@@ -40,7 +40,7 @@ import settings
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class RestTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
     def setUp(self):
         super().setUp()
@@ -107,7 +107,7 @@ class RestTests(DenormMixin, TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class RestTestsLogout(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users']
 
     def setUp(self):
         super().setUp()

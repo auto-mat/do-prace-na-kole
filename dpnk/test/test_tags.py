@@ -30,7 +30,7 @@ import slumber
 
 
 class DpnkTagsTests(ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users']
 
     def setUp(self):
         super().setUp()

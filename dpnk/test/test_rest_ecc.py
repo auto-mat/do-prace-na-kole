@@ -38,7 +38,7 @@ from freezegun import freeze_time
 )
 @freeze_time("2010-11-20 12:00")
 class ECCTests(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
     @patch('requests.post')
     def test_ecc_user_attendance_post(self, post):

@@ -51,7 +51,7 @@ import settings
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'company_competition']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'company_competition']
 
     def setUp(self):
         super().setUp()
@@ -278,7 +278,7 @@ class ViewsTests(DenormMixin, TestCase):
 
 
 class PaymentSuccessTests(ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users']
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -320,7 +320,7 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class RequestFactoryViewTests(ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users']
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -403,7 +403,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
 
 
 class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
         super().setUp()
@@ -470,7 +470,7 @@ class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
 )
 @freeze_time("2010-11-20 12:00")
 class PayuTests(ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
@@ -549,7 +549,7 @@ class PayuTests(ClearCacheMixin, TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsLogon(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
         super().setUp()
@@ -1140,7 +1140,7 @@ class RegistrationMixinTests(ViewsLogon):
 
 
 class TrackViewTests(ViewsLogon):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
     def test_dpnk_views_gpx_file(self):
         trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from', commute_mode='bicycle')
@@ -1311,7 +1311,7 @@ class TrackViewTests(ViewsLogon):
 
 
 class StatisticsTests(ViewsLogon):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
     def test_statistics(self):
         address = reverse(views.statistics)
@@ -1339,7 +1339,7 @@ class StatisticsTests(ViewsLogon):
 
 
 class RidesDetailsTests(ViewsLogon):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
     def test_dpnk_rides_details(self):
         response = self.client.get(reverse('rides_details'))
@@ -1369,7 +1369,7 @@ def create_post_request(factory, user, post_data={}, address="", subdomain="test
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
 class TestCompanyAdminViews(ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'company_competition']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'company_competition']
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -1434,7 +1434,7 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=2),
 )
 class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
     def setUp(self):
         super().setUp()
@@ -1698,7 +1698,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
 
 
 class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users']
 
     def setUp(self):
         super().setUp()
@@ -1718,7 +1718,7 @@ class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
 
 
 class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'trips']
 
     def setUp(self):
         super().setUp()
@@ -1775,7 +1775,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
 
 
 class ModelTests(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
         super().setUp()
@@ -1794,7 +1794,7 @@ class ModelTests(DenormMixin, ClearCacheMixin, TestCase):
 
 
 class DenormTests(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def test_name_with_members(self):
         util.rebuild_denorm_models(Team.objects.filter(pk__in=[2, 3]))

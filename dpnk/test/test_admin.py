@@ -38,7 +38,7 @@ import settings
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
-    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
     exclude_apps = ['djcelery', 'coupons']
 
     def setUp(self):
@@ -61,7 +61,7 @@ class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class LocalAdminModulesTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices']
 
     def setUp(self):
         super().setUp()
@@ -108,7 +108,7 @@ class LocalAdminModulesTests(DenormMixin, TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminModulesTests(DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices', 'am_payments']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices', 'am_payments']
 
     def setUp(self):
         super().setUp()
@@ -276,7 +276,7 @@ class AdminModulesTests(DenormMixin, TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class BatchAdminTests(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions']
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
@@ -295,7 +295,7 @@ class BatchAdminTests(TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminTests(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
@@ -428,7 +428,7 @@ class AdminTests(TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class LocalAdminTests(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
 
     def setUp(self):
         super().setUp()
@@ -446,7 +446,7 @@ class LocalAdminTests(TestCase):
 
 
 class FilterTests(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'invoices', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'invoices', 'trips']
 
     def setUp(self):
         self.factory = RequestFactory()

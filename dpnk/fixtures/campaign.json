@@ -1,22 +1,6 @@
 [
     {
         "fields": {
-            "domain": "localhost:8000",
-            "name": "localhost:8000"
-        },
-        "model": "sites.site",
-        "pk": 1
-    },
-    {
-        "fields": {
-            "domain": "testserver",
-            "name": "testserver"
-        },
-        "model": "sites.site",
-        "pk": 2
-    },
-    {
-        "fields": {
             "admission_fee": 120.0,
             "admission_fee_company": 130.0,
             "benefitial_admission_fee": 350.0,

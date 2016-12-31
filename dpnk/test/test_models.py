@@ -35,7 +35,7 @@ class Tests(TestCase):
     def tearDown(self):
         call_command('denorm_drop')
 
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'invoices', 'company_competition', 'batches']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'invoices', 'company_competition', 'batches']
 
     def test_change_invoice_payments_status(self):
         payment = models.Payment.objects.get(pk=3)
@@ -74,7 +74,7 @@ class Tests(TestCase):
 
 
 class TestMethods(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'invoices', 'company_competition', 'batches']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'invoices', 'company_competition', 'batches']
 
     def test_too_much_members(self):
         campaign = models.Campaign(max_team_members=None)

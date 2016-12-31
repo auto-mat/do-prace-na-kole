@@ -26,7 +26,7 @@ from dpnk.models import DeliveryBatch, PackageTransaction
 
 
 class TestParcelBatch(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def tearDown(self):
         PackageTransaction.objects.all().delete()

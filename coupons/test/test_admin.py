@@ -33,7 +33,7 @@ import settings
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class AdminSmokeTests(smoke_tests.AdminSiteSmokeTest):
-    fixtures = ['campaign', 'auth_user', 'users', 'coupons']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'coupons']
     exclude_apps = ['djcelery', 'dpnk']
 
     def setUp(self):

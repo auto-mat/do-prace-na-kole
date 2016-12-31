@@ -38,7 +38,7 @@ from dpnk import actions, models, util
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class TestActions(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'vouchers', 'trips', 'test_results_data', 'invoices']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'vouchers', 'trips', 'test_results_data', 'invoices']
 
     def setUp(self):
         self.modeladmin = admin.ModelAdmin(models.UserAttendance, "")

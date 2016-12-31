@@ -33,7 +33,7 @@ from dpnk.test.util import print_response  # noqa
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'transactions', 'batches', 'company_competition', 'test_results_data', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'company_competition', 'test_results_data', 'trips']
 
     def test_dpnk_competition_results_unknown(self):
         address = reverse('competition_results', kwargs={'competition_slug': 'unexistent_competition'})
@@ -189,7 +189,7 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
 
 
 class RidesBaseTests(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users']
 
     def test_get_minimum_rides_base_proportional(self):
         competition = models.Competition.objects.get(slug="FQ-LB")

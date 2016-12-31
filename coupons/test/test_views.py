@@ -34,7 +34,7 @@ import settings
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class DiscountCouponViewTests(TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'coupons']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'coupons']
 
     def setUp(self):
         super().setUp()

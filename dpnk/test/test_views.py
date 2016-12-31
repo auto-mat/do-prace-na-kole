@@ -202,7 +202,7 @@ class CompetitionsViewTests(ViewsLogon):
     SITE_ID=2,
 )
 class InvoiceTests(ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users', 'invoices']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'invoices']
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
@@ -218,7 +218,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
     SITE_ID=2,
 )
 class BaseViewsTests(ClearCacheMixin, TestCase):
-    fixtures = ['campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users']
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
@@ -308,7 +308,7 @@ class PaymentTypeViewTests(ViewsLogon):
 
 
 class DistanceTests(TestCase):
-    fixtures = ['campaign', 'users', 'auth_user', 'trips']
+    fixtures = ['sites', 'campaign', 'users', 'auth_user', 'trips']
 
     def test_distance(self):
         trips = models.Trip.objects.all()
