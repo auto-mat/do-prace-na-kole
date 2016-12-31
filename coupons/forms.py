@@ -25,6 +25,7 @@ from django.core.validators import MinLengthValidator, RegexValidator
 from django.utils.translation import ugettext_lazy as _
 
 from dpnk.forms import PrevNextMixin
+from dpnk.util import today
 
 from . import models
 
@@ -44,7 +45,10 @@ class DiscountCouponForm(PrevNextMixin, forms.Form):
         if 'code' in cleaned_data:
             prefix, base_code = cleaned_data['code'].upper().split("-")
             try:
-                discount_coupon = models.DiscountCoupon.objects.get(
+                discount_coupon = models.DiscountCoupon.objects.exclude(
+                    coupon_type__valid_until__isnull=False,
+                    coupon_type__valid_until__lt=today(),
+                ).get(
                     coupon_type__prefix=prefix,
                     token=base_code,
                 )

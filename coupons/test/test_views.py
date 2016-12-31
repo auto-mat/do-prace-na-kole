@@ -76,7 +76,6 @@ class DiscountCouponViewTests(TestCase):
         mommy.make(
             "coupons.DiscountCoupon",
             coupon_type__prefix="AA",
-            coupon_type__valid_until=datetime.date(year=2017, month=12, day=12),
             coupon_type__campaign=self.campaign,
             discount=100,
             token="AAAAAA",
@@ -96,7 +95,7 @@ class DiscountCouponViewTests(TestCase):
         mommy.make(
             "coupons.DiscountCoupon",
             coupon_type__prefix="AA",
-            coupon_type__valid_until=datetime.date(year=2017, month=12, day=12),
+            coupon_type__valid_until=datetime.date(year=2010, month=11, day=20),
             coupon_type__campaign=self.campaign,
             discount=50,
             token="AAAAAB",
@@ -109,3 +108,20 @@ class DiscountCouponViewTests(TestCase):
         response = self.client.post(reverse('discount_coupon'), post_data, follow=True)
         self.assertContains(response, '<span id="payment_amount">60,0 Kč</span>', html=True)
         self.assertRedirects(response, reverse('typ_platby'))
+
+    def test_discount_coupon_view_expired(self):
+        mommy.make(
+            "coupons.DiscountCoupon",
+            coupon_type__prefix="AA",
+            coupon_type__valid_until=datetime.date(year=2010, month=11, day=19),
+            coupon_type__campaign=self.campaign,
+            discount=50,
+            token="AAAAAB",
+            pk=2,
+        )
+        post_data = {
+            'code': 'Aa-aaaAab',
+            'next': 'Next',
+        }
+        response = self.client.post(reverse('discount_coupon'), post_data, follow=True)
+        self.assertContains(response, "<li>Tento slevový kupón neexistuje, nebo již byl použit</li>", html=True)

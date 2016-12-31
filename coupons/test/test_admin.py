@@ -46,7 +46,6 @@ class AdminSmokeTests(smoke_tests.AdminSiteSmokeTest):
         mommy.make(
             "coupons.DiscountCoupon",
             coupon_type__prefix="AA",
-            coupon_type__valid_until=datetime.date(year=2017, month=12, day=12),
             discount=100,
             token="AAAAAA",
             pk=1,
