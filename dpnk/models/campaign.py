@@ -248,13 +248,17 @@ class Campaign(models.Model):
     def has_any_tshirt(self):
         return self.tshirtsize_set.exists()
 
-    phases = {}
-
     def phase(self, phase_type):
-        if phase_type not in self.phases:
+        """
+        Return phase of given type from this campaign.
+        @phase_type Type of phase.
+        """
+        if not hasattr(self, "_phases"):
+            self._phases = {}
+        if phase_type not in self._phases:
             from .phase import Phase
             try:
-                self.phases[phase_type] = self.phase_set.get(phase_type=phase_type)
+                self._phases[phase_type] = self.phase_set.get(phase_type=phase_type)
             except Phase.DoesNotExist:
-                self.phases[phase_type] = None
-        return self.phases[phase_type]
+                self._phases[phase_type] = None
+        return self._phases[phase_type]
