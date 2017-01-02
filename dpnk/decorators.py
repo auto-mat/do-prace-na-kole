@@ -204,12 +204,11 @@ def must_be_competitor(fn):
                 except Campaign.DoesNotExist:
                     messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % campaign_slug)
                     raise Http404()
-                user_attendance = UserAttendance(
+                user_attendance = UserAttendance.objects.create(
                     userprofile=request.user.userprofile,
                     campaign=campaign,
                     approved_for_team='undecided',
                 )
-                user_attendance.save()
 
             kwargs['user_attendance'] = user_attendance
             return fn(view, request, *args, **kwargs)
