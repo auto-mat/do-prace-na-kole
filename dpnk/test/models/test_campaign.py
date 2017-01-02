@@ -34,3 +34,18 @@ class TestCampaignMethods(TestCase):
         campaign1 = models.Campaign.objects.create(name="Campaign 1", slug="campaign1")
         phase1 = models.Phase.objects.create(campaign=campaign1, phase_type="competition")
         self.assertEqual(campaign1.phase("competition"), phase1)
+
+    def test_late_admission_phase_actual(self):
+        """
+        Test that late_admission_phase_actual function works properly
+        """
+        campaign = models.Campaign.objects.create(name="Campaign", slug="campaign")
+        models.Phase.objects.create(campaign=campaign, phase_type="late_admission")
+        self.assertEqual(campaign.late_admission_phase_actual(), True)
+
+    def test_late_admission_phase_actual_no_phase(self):
+        """
+        Test that late_admission_phase_actual function works properly if no phase is found
+        """
+        campaign = models.Campaign.objects.create(name="Campaign", slug="campaign")
+        self.assertEqual(campaign.late_admission_phase_actual(), True)
