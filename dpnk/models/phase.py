@@ -85,3 +85,6 @@ class Phase(models.Model):
 
     def is_actual(self):
         return self.has_started() and not self.has_finished()
+
+    def __str__(self):
+        return "%s" % self.phase_type
