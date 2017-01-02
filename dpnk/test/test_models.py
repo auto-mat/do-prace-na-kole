@@ -89,25 +89,6 @@ class TestMethods(TestCase):
         campaign = models.Campaign(max_team_members=5)
         self.assertTrue(campaign.too_much_members(6))
 
-    def test_campaign_phase_does_not_exist(self):
-        campaign = models.Campaign()
-        self.assertEquals(campaign.phase("unknown_phase"), None)
-
-    def test_user_attendance_get_distance(self):
-        user_attendance = models.UserAttendance.objects.length().get(pk=1115)
-        self.assertEquals(user_attendance.get_distance(), 156.9)
-
-    def test_user_attendance_get_distance_no_length(self):
-        user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEquals(user_attendance.get_distance(), 156.9)
-
-    def test_user_attendance_get_distance_fail(self):
-        user_attendance = models.UserAttendance.objects.get(pk=1115)
-        user_attendance.track = "MULTILINESTRING((0 0, 0 0))"
-        user_attendance.save()
-        user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEqual(user_attendance.get_distance(), 0)
-
     def test_company_admin_name_for_trusted(self):
         user = models.User.objects.create(first_name="Test", last_name="Name")
         userprofile = models.UserProfile.objects.create(user=user)

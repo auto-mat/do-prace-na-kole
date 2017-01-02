@@ -21,6 +21,8 @@ import datetime
 
 from django.test import TestCase
 
+from dpnk import models
+
 from model_mommy import mommy
 
 
@@ -147,3 +149,44 @@ class TestEnteredCompetitionReason(TestCase):
         self.campaign.late_admission_fee = 100
         reason = self.user_attendance.entered_competition_reason()
         self.assertEqual(reason, True)
+
+
+class TestGetDistance(TestCase):
+    def setUp(self):
+        phase = mommy.make(
+            'dpnk.Phase',
+            phase_type="competition",
+            date_from=datetime.date(year=2017, month=11, day=1),
+            date_to=datetime.date(year=2017, month=12, day=12),
+        )
+        self.campaign = phase.campaign
+        mommy.make(
+            'dpnk.UserAttendance',
+            track="MULTILINESTRING((0 0,-1 1))",
+            campaign=phase.campaign,
+            distance=123,
+            pk=1115,
+        )
+
+    def test_no_track(self):
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            distance=123,
+        )
+        self.assertEquals(user_attendance.get_distance(), 123)
+
+    def test_user_attendance_get_distance(self):
+        user_attendance = models.UserAttendance.objects.length().get(pk=1115)
+        self.assertEquals(user_attendance.get_distance(), 156.9)
+
+    def test_user_attendance_get_distance_no_length(self):
+        user_attendance = models.UserAttendance.objects.get(pk=1115)
+        self.assertEquals(user_attendance.get_distance(), 156.9)
+
+    def test_user_attendance_get_distance_fail(self):
+        user_attendance = models.UserAttendance.objects.get(pk=1115)
+        user_attendance.track = "MULTILINESTRING((0 0, 0 0))"
+        user_attendance.save()
+        user_attendance = models.UserAttendance.objects.get(pk=1115)
+        self.assertEqual(user_attendance.get_distance(), 0)

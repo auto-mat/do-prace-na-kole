@@ -49,3 +49,9 @@ class TestCampaignMethods(TestCase):
         """
         campaign = models.Campaign.objects.create(name="Campaign", slug="campaign")
         self.assertEqual(campaign.late_admission_phase_actual(), True)
+
+
+class TestMethods(TestCase):
+    def test_campaign_phase_does_not_exist(self):
+        campaign = models.Campaign()
+        self.assertEquals(campaign.phase("unknown_phase"), None)
