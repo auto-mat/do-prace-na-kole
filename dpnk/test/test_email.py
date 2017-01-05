@@ -54,11 +54,21 @@ class TestEmails(TestCase):
 
         self.user_tm1 = User.objects.create(first_name="Team", last_name="Member 1", username="user2", email="user2@email.com")
         self.userprofile_tm1 = UserProfile.objects.create(user=self.user_tm1)
-        self.user_attendance_tm1 = UserAttendance.objects.create(userprofile=self.userprofile_tm1, campaign=self.campaign, team=self.team, approved_for_team='approved')
+        self.user_attendance_tm1 = UserAttendance.objects.create(
+            userprofile=self.userprofile_tm1,
+            campaign=self.campaign,
+            team=self.team,
+            approved_for_team='approved',
+        )
 
         self.user_tm2 = User.objects.create(first_name="Team", last_name="Member 2", username="user3", email="user3@email.com")
         self.userprofile_tm2 = UserProfile.objects.create(user=self.user_tm2)
-        self.user_attendance_tm2 = UserAttendance.objects.create(userprofile=self.userprofile_tm2, campaign=self.campaign, team=self.team, approved_for_team='approved')
+        self.user_attendance_tm2 = UserAttendance.objects.create(
+            userprofile=self.userprofile_tm2,
+            campaign=self.campaign,
+            team=self.team,
+            approved_for_team='approved',
+        )
 
         self.company_admin = CompanyAdmin.objects.create(userprofile=self.user.userprofile, administrated_company=self.company, campaign=self.campaign)
 

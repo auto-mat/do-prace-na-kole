@@ -122,7 +122,13 @@ class Invoice(models.Model):
             campaign = self.campaign
             first = campaign.invoice_sequence_number_first
             last = campaign.invoice_sequence_number_last
-            last_transaction = Invoice.objects.filter(campaign=campaign, sequence_number__gte=first, sequence_number__lte=last).order_by("sequence_number").last()
+            last_transaction = Invoice.objects.filter(
+                campaign=campaign,
+                sequence_number__gte=first,
+                sequence_number__lte=last,
+            )
+            last_transaction = last_transaction.order_by("sequence_number")
+            last_transaction = last_transaction.last()
             if last_transaction:
                 if last_transaction.sequence_number == last:
                     raise Exception(_(u"Došla číselná řada faktury"))
@@ -161,7 +167,12 @@ def change_invoice_payments_status(sender, instance, changed_fields=None, **kwar
 
 
 def payments_to_invoice(company, campaign):
-    return Payment.objects.filter(pay_type='fc', status=Status.COMPANY_ACCEPTS, user_attendance__team__subsidiary__company=company, user_attendance__campaign=campaign)
+    return Payment.objects.filter(
+        pay_type='fc',
+        status=Status.COMPANY_ACCEPTS,
+        user_attendance__team__subsidiary__company=company,
+        user_attendance__campaign=campaign,
+    )
 
 
 @receiver(post_save, sender=Invoice)

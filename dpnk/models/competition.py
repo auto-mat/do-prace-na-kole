@@ -377,9 +377,11 @@ class CompetitionForm(forms.ModelForm):
     def set_fields_queryset_on_update(self):
         if hasattr(self.instance, 'campaign') and 'user_attendance_competitors' in self.fields:
             if self.instance.competitor_type in ['liberos', 'single_user']:
-                self.fields['user_attendance_competitors'].queryset = self.instance.get_competitors(potencial_competitors=True).select_related('userprofile__user', 'campaign')
+                queryset = self.instance.get_competitors(potencial_competitors=True)
             else:
-                self.fields['user_attendance_competitors'].queryset = self.instance.user_attendance_competitors.select_related('userprofile__user', 'campaign')
+                queryset = self.instance.user_attendance_competitors
+            queryset = queryset.select_related('userprofile__user', 'campaign')
+            self.fields['user_attendance_competitors'].queryset = queryset
 
         if 'team_competitors' in self.fields:
             if self.instance.competitor_type == 'team':

@@ -34,7 +34,7 @@ class DPNKConfig(AppConfig):
                 def get_queryset(self):
                     return super(TeamInCampaignManager, self).get_queryset().filter(campaign__slug=campaign_slug)
 
-            class TeamInCampaign(Team):
+            class TeamInCampaign(dpnk_models.Team):
                 objects = TeamInCampaignManager()
 
                 class Meta:
@@ -42,17 +42,17 @@ class DPNKConfig(AppConfig):
 
             return TeamInCampaign
 
-        from .models import Campaign, Team, change_invoice_payments_status, Invoice, UserAttendance, pre_user_team_changed, post_user_team_changed, set_track, GpxFile
+        from . import models as dpnk_models
         from fieldsignals import post_save_changed, pre_save_changed
         try:
-            slugs = Campaign.objects.values_list('slug', flat=True)
+            slugs = dpnk_models.Campaign.objects.values_list('slug', flat=True)
             for campaign_slug in slugs:
-                setattr(Team, 'team_in_campaign_%s' % campaign_slug, get_team_in_campaign_manager(campaign_slug).objects)
-            setattr(Team, 'team_in_campaign_testing-campaign', get_team_in_campaign_manager('testing-campaign').objects)
+                setattr(dpnk_models.Team, 'team_in_campaign_%s' % campaign_slug, get_team_in_campaign_manager(campaign_slug).objects)
+            setattr(dpnk_models.Team, 'team_in_campaign_testing-campaign', get_team_in_campaign_manager('testing-campaign').objects)
         except ProgrammingError:
             pass
 
-        post_save_changed.connect(change_invoice_payments_status, sender=Invoice, fields=['paid_date'])
-        pre_save_changed.connect(pre_user_team_changed, sender=UserAttendance, fields=['team'])
-        post_save_changed.connect(post_user_team_changed, sender=UserAttendance, fields=['team'])
-        pre_save_changed.connect(set_track, sender=GpxFile, fields=['file'])
+        post_save_changed.connect(dpnk_models.change_invoice_payments_status, sender=dpnk_models.Invoice, fields=['paid_date'])
+        pre_save_changed.connect(dpnk_models.pre_user_team_changed, sender=dpnk_models.UserAttendance, fields=['team'])
+        post_save_changed.connect(dpnk_models.post_user_team_changed, sender=dpnk_models.UserAttendance, fields=['team'])
+        pre_save_changed.connect(dpnk_models.set_track, sender=dpnk_models.GpxFile, fields=['file'])

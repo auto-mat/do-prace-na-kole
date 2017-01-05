@@ -36,14 +36,21 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
     paing_for = forms.ModelMultipleChoiceField(
         [],
         label=_(u"Soutěžící, za které bude zaplaceno"),
-        help_text=string_concat(_(u"<div class='text-info'>Tip: Použijte ctrl nebo shift pro výběr více položek nebo jejich rozsahu.</div>"), _("<br/>Ceny jsou uváděny bez DPH")),
+        help_text=string_concat(
+            _(u"<div class='text-info'>Tip: Použijte ctrl nebo shift pro výběr více položek nebo jejich rozsahu.</div>"),
+            _("<br/>Ceny jsou uváděny bez DPH"),
+        ),
         widget=forms.SelectMultiple(attrs={'size': '40'}),
     )
 
     def __init__(self, *args, **kwargs):
         initial = kwargs.pop('initial', None)
         company_admin = initial['company_admin']
-        queryset = UserAttendance.objects.filter(team__subsidiary__company=company_admin.administrated_company, campaign=company_admin.campaign, userprofile__user__is_active=True)
+        queryset = UserAttendance.objects.filter(
+            team__subsidiary__company=company_admin.administrated_company,
+            campaign=company_admin.campaign,
+            userprofile__user__is_active=True,
+        )
 
         ret_val = super(SelectUsersPayForm, self).__init__(*args, **kwargs)
         self.fields['paing_for'].queryset = queryset
@@ -127,7 +134,10 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
 class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFormUniqueEmail):
     motivation_company_admin = forms.CharField(
         label=_(u"Pár vět o vaší pozici"),
-        help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle kterých můžeme ověřit, že vám funkci koordinátora organizace můžeme svěřit."),
+        help_text=_(
+            "Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici,"
+            "podle kterých můžeme ověřit, že vám funkci koordinátora organizace můžeme svěřit."
+        ),
         max_length=100,
         required=True,
     )

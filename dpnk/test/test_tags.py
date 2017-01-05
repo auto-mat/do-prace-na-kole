@@ -231,7 +231,14 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}{% wp_prize campaign 'test_city' %}")
         context = Context({'campaign': self.user_attendance.campaign})
         response = template.render(context)
-        m.feed.get.assert_called_once_with(_number=-1, feed="content_to_backend", _page_subtype="prize", _post_type="locations", _post_parent="test_city", order="ASC")
+        m.feed.get.assert_called_once_with(
+            _number=-1,
+            feed="content_to_backend",
+            _page_subtype="prize",
+            _post_type="locations",
+            _post_parent="test_city",
+            order="ASC",
+        )
         self.assertHTMLEqual(
             response,
             '''

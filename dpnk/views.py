@@ -175,7 +175,10 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
 
         if self.registration_phase in ('registration_uncomplete', 'profile_view'):
             if self.user_attendance.team and self.user_attendance.team.unapproved_member_count and self.user_attendance.team.unapproved_member_count > 0:
-                messages.warning(request, mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members')))
+                messages.warning(
+                    request,
+                    mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members')),
+                )
             elif self.user_attendance.is_libero():
                 # TODO: get WP slug for city
                 messages.warning(
@@ -198,11 +201,12 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                 messages.info(
                     request,
                     mark_safe(
-                        _(u'Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.'
-                          u' Na základě této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty.'
-                          u' Vaše vyplněná trasa se objeví na <a target="_blank" href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
-                          u' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
-                          u' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu'),
+                        _('Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.'
+                          ' Na základě této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty.'
+                          ' Vaše vyplněná trasa se objeví na '
+                          '<a target="_blank" href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
+                          ' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
+                          ' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu'),
                     ),
                 )
 
@@ -220,7 +224,10 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                         ),
                     )
                 elif self.user_attendance.approved_for_team == 'denied':
-                    messages.error(request, mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')))
+                    messages.error(
+                        request,
+                        mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')),
+                    )
 
             if not self.user_attendance.payment_waiting():
                 messages.info(
@@ -600,8 +607,14 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         }
 
         if payment_type in ('pay', 'pay_beneficiary'):
-            logger.error("Wrong payment type", extra={'request': self.request, 'payment_type': payment_type})
-            return HttpResponse(_(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."), status=500)
+            logger.error(
+                "Wrong payment type",
+                extra={'request': self.request, 'payment_type': payment_type},
+            )
+            return HttpResponse(
+                _(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."),
+                status=500,
+            )
         else:
             payment_choice = payment_choices[payment_type]
             if payment_choice:
@@ -863,7 +876,10 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
 
     def has_allow_adding_rides(self):
         if not hasattr(self, 'allow_adding_rides'):  # cache result
-            self.allow_adding_rides = models.CityInCampaign.objects.get(city=self.user_attendance.team.subsidiary.city, campaign=self.user_attendance.campaign).allow_adding_rides
+            self.allow_adding_rides = models.CityInCampaign.objects.get(
+                city=self.user_attendance.team.subsidiary.city,
+                campaign=self.user_attendance.campaign,
+            ).allow_adding_rides
         return self.allow_adding_rides
 
     def get_queryset(self):
@@ -953,7 +969,13 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         trips, uncreated_trips = self.user_attendance.get_all_trips(util.today())
-        uncreated_trips = [(trip[0], models.Trip.DIRECTIONS_DICT[trip[1]], _("Jinak") if util.working_day(trip[0]) else _("Žádná cesta")) for trip in uncreated_trips]
+        uncreated_trips = [
+            (
+                trip[0],
+                models.Trip.DIRECTIONS_DICT[trip[1]],
+                _("Jinak") if util.working_day(trip[0]) else _("Žádná cesta"),
+            ) for trip in uncreated_trips
+        ]
         trips = list(trips) + uncreated_trips
         trips = sorted(trips, key=lambda trip: trip.direction if type(trip) == Trip else trip[1], reverse=True)
         trips = sorted(trips, key=lambda trip: trip.date if type(trip) == Trip else trip[0])
@@ -1005,7 +1027,8 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
         context_data = super(OtherTeamMembers, self).get_context_data(*args, **kwargs)
         team_members = []
         if self.user_attendance.team:
-            team_members = self.user_attendance.team.all_members().length().select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign')
+            team_members = self.user_attendance.team.all_members().length()
+            team_members = team_members.select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign')
         context_data['team_members'] = team_members
         context_data['registration_phase'] = "other_team_members"
         return context_data
@@ -1089,7 +1112,11 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
 
         results = competition.get_results()
         if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
-            results = results.select_related('user_attendance__userprofile__user', 'user_attendance__team__subsidiary__company', 'user_attendance__team__subsidiary__city')
+            results = results.select_related(
+                'user_attendance__userprofile__user',
+                'user_attendance__team__subsidiary__company',
+                'user_attendance__team__subsidiary__city',
+            )
         elif competition.competitor_type == 'team':
             results = results.select_related('team__subsidiary__company', 'team__subsidiary__company', 'team__subsidiary__city')
         elif competition.competitor_type == 'company':
@@ -1205,7 +1232,13 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
                 question.comment_given = answer.comment_given
             except Answer.DoesNotExist:
                 answer = Answer(question=question, user_attendance=self.user_attendance)
-            question.form = self.form_class(instance=answer, question=question, prefix="question-%s" % question.pk, show_points=self.show_points, is_actual=self.is_actual)
+            question.form = self.form_class(
+                instance=answer,
+                question=question,
+                prefix="question-%s" % question.pk,
+                show_points=self.show_points,
+                is_actual=self.is_actual,
+            )
         return super(QuestionnaireView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -1583,7 +1616,8 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
             if approve_id:
                 approved_user = UserAttendance.objects.get(id=approve_id)
                 userprofile = approved_user.userprofile
-                if approved_user.approved_for_team not in ('undecided', 'denied') or not userprofile.user.is_active or approved_user.team != self.user_attendance.team:
+                if approved_user.approved_for_team not in ('undecided', 'denied') or \
+                   not userprofile.user.is_active or approved_user.team != self.user_attendance.team:
                     logger.error(
                         'Approving user with wrong parameters.',
                         extra={

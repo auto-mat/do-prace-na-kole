@@ -604,7 +604,13 @@ class ViewsTestsLogon(ViewsLogon):
         email = self.user_attendance.userprofile.user.email
         address = reverse('zmenit_tym', kwargs={'token': "token123214", 'initial_email': email})
         response = self.client.get(address)
-        self.assertContains(response, '<div class="alert alert-danger">Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku).</div>', html=True)
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">'
+            'Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku).'
+            '</div>',
+            html=True,
+        )
 
     def test_dpnk_team_invitation(self):
         token = self.user_attendance.team.invitation_token
@@ -782,7 +788,12 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEquals(team.member_count, 1)
         self.assertEquals(team.unapproved_member_count, 2)
         response = self.client.get(reverse('zmenit_tym'))
-        self.assertContains(response, "Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým.", status_code=403)
+        self.assertContains(
+            response,
+            "Nemůžete opustit tým, ve kterém jsou samí neschválení členové. "
+            "Napřed někoho schvalte a pak změňte tým.",
+            status_code=403,
+        )
 
     def test_dpnk_team_change_alone(self):
         models.PackageTransaction.objects.all().delete()
@@ -1146,8 +1157,19 @@ class TrackViewTests(ViewsLogon):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
     def test_dpnk_views_gpx_file(self):
-        trip = mommy.make(models.Trip, user_attendance=self.user_attendance, date=datetime.date(year=2010, month=11, day=20), direction='trip_from', commute_mode='bicycle')
-        gpxfile = mommy.make(models.GpxFile, user_attendance=self.user_attendance, trip_date=datetime.date(year=2010, month=11, day=20), direction='trip_from')
+        trip = mommy.make(
+            models.Trip,
+            user_attendance=self.user_attendance,
+            date=datetime.date(year=2010, month=11, day=20),
+            direction='trip_from',
+            commute_mode='bicycle',
+        )
+        gpxfile = mommy.make(
+            models.GpxFile,
+            user_attendance=self.user_attendance,
+            trip_date=datetime.date(year=2010, month=11, day=20),
+            direction='trip_from',
+        )
 
         address = reverse('gpx_file', kwargs={"id": gpxfile.pk})
         response = self.client.get(address)
@@ -1388,7 +1410,10 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
         self.assertEquals(response.url, reverse('company_admin_competitions'))
-        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().first().administrated_company, competition_type='length')
+        competition = models.Competition.objects.get(
+            company=self.user_attendance.get_asociated_company_admin().first().administrated_company,
+            competition_type='length',
+        )
         self.assertEquals(competition.name, 'testing company competition')
 
         slug = competition.slug
@@ -1396,7 +1421,10 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug=slug)
         self.assertEquals(response.url, reverse('company_admin_competitions'))
-        competition = models.Competition.objects.get(company=self.user_attendance.get_asociated_company_admin().first().administrated_company, competition_type='length')
+        competition = models.Competition.objects.get(
+            company=self.user_attendance.get_asociated_company_admin().first().administrated_company,
+            competition_type='length',
+        )
         self.assertEquals(competition.name, 'testing company competition fixed')
 
     def test_dpnk_company_admin_create_competition_name_exists(self):
@@ -1590,9 +1618,21 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         }
         response = self.client.post(reverse('profil'), post_data, follow=True)
         self.assertContains(response, 'form-1-commute_mode')
-        self.assertContains(response, '<div>Ujetá započítaná vzdálenost: 31,23&nbsp;km (<a href="/cs/jizdy-podrobne/">Podrobný přehled jízd</a>)</div>', html=True)
-        self.assertContains(response, '<div>Pravidelnost: 66,7&nbsp;%</div>', html=True)
-        self.assertContains(response, '<div>Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g (<a href="/cs/emisni_kalkulacka/">Emisní kalkulačka</a>)</div>', html=True)
+        self.assertContains(
+            response,
+            '<div>Ujetá započítaná vzdálenost: 31,23&nbsp;km (<a href="/cs/jizdy-podrobne/">Podrobný přehled jízd</a>)</div>',
+            html=True,
+        )
+        self.assertContains(
+            response,
+            '<div>Pravidelnost: 66,7&nbsp;%</div>',
+            html=True,
+        )
+        self.assertContains(
+            response,
+            '<div>Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g (<a href="/cs/emisni_kalkulacka/">Emisní kalkulačka</a>)</div>',
+            html=True,
+        )
         self.assertEquals(self.user_attendance.user_trips.count(), 7)
         self.assertEquals(models.Trip.objects.get(pk=101).distance, 28.89)
 

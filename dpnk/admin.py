@@ -1276,7 +1276,9 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
             package_transactions = obj.campaign.user_attendances_for_delivery()
         else:
             package_transactions = obj.packagetransaction_set.all()
-        t_shirts = models.TShirtSize.objects.filter(packagetransaction__in=package_transactions).annotate(size_count=Count('packagetransaction')).values_list('name', 'size_count')
+        t_shirts = models.TShirtSize.objects.filter(packagetransaction__in=package_transactions)
+        t_shirts = t_shirts.annotate(size_count=Count('packagetransaction'))
+        t_shirts = t_shirts.values_list('name', 'size_count')
         return format_html_join(mark_safe("<br/>"), "{}: {}", t_shirts)
     t_shirt_sizes.short_description = _(u"Velikosti trik")
 

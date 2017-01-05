@@ -304,7 +304,11 @@ class PaymentTypeViewTests(ViewsLogon):
         denorm.flush()
         response = self.client.post(reverse('typ_platby'), post_data)
         print_response(response)
-        self.assertContains(response, "Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript.", status_code=500)
+        self.assertContains(
+            response,
+            "Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript.",
+            status_code=500,
+        )
 
 
 class DistanceTests(TestCase):
