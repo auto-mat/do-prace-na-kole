@@ -68,3 +68,4 @@ flower
 django-daterange-filter
 django-storages
 django-model-utils
+django-price-level

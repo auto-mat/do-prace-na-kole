@@ -393,9 +393,9 @@ IGNORABLE_404_URLS = [
     re.compile(r'^xmlrpc.php$'),
 ]
 
-PRICE_LEVELS_MODEL = 'dpnk.Campaign'
-PRICE_LEVELS_CATEGORY_CHOICES = Choices(('basic', _('Základní')), ('company', _('Pro firmy')))
-PRICE_LEVELS_CATEGORY_DEFAULT = 'basic'
+PRICE_LEVEL_MODEL = 'dpnk.Campaign'
+PRICE_LEVEL_CATEGORY_CHOICES = Choices(('basic', _('Základní')), ('company', _('Pro firmy')))
+PRICE_LEVEL_CATEGORY_DEFAULT = 'basic'
 
 # import local settings
 try:
