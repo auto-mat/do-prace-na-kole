@@ -133,7 +133,7 @@ class DiscountCoupon(models.Model):
 def create_coupon_file(sender, instance, created, **kwargs):
     if not instance.coupon_pdf:
         temp = NamedTemporaryFile()
-        locale.setlocale(locale.LC_TIME, "")
+        locale.setlocale(locale.LC_TIME, "cs_CZ.utf8")
         generate_coupon_pdf(
             temp,
             instance.name(),
