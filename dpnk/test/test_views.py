@@ -308,7 +308,7 @@ class PaymentTypeViewTests(ViewsLogon):
 
 
 class DistanceTests(TestCase):
-    fixtures = ['sites', 'campaign', 'users', 'auth_user', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'trips']
 
     def test_distance(self):
         trips = models.Trip.objects.all()

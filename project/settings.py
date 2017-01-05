@@ -27,6 +27,8 @@ from django.contrib.messages import constants as message_constants
 from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
+from model_utils import Choices
+
 
 def normpath(*args):
     return os.path.normpath(os.path.abspath(os.path.join(*args)))
@@ -158,8 +160,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
 
     'registration',
+
+    'price_level',
     'coupons',
     'dpnk',
+
     'smart_selects',
     'composite_field',
     'softhyphen',
@@ -387,6 +392,10 @@ IGNORABLE_404_URLS = [
     re.compile(r'^/blog/robots.txt$'),
     re.compile(r'^xmlrpc.php$'),
 ]
+
+PRICE_LEVELS_MODEL = 'dpnk.Campaign'
+PRICE_LEVELS_CATEGORY_CHOICES = Choices(('basic', _('Základní')), ('company', _('Pro firmy')))
+PRICE_LEVELS_CATEGORY_DEFAULT = 'basic'
 
 # import local settings
 try:

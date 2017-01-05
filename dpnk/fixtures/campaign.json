@@ -425,12 +425,43 @@
     },
     {
         "fields": {
-            "campaign": 339,
-            "date_from": "2011-1-01",
-            "phase_type": "late_admission"
+            "pricable": 339,
+            "takes_effect_on": "2000-1-01",
+            "price": 120,
+            "category": "basic"
         },
-        "model": "dpnk.phase",
-        "pk": 5
+        "model": "price_level.PriceLevel",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "pricable": 339,
+            "takes_effect_on": "2000-1-01",
+            "price": 130,
+            "category": "company"
+        },
+        "model": "price_level.PriceLevel",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "pricable": 339,
+            "takes_effect_on": "2011-1-01",
+            "price": 210,
+            "category": "basic"
+        },
+        "model": "price_level.PriceLevel",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "pricable": 339,
+            "takes_effect_on": "2011-1-01",
+            "price": 230,
+            "category": "company"
+        },
+        "model": "price_level.PriceLevel",
+        "pk": 4
     },
     {
         "fields": {

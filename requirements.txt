@@ -67,3 +67,4 @@ sqlalchemy
 flower
 django-daterange-filter
 django-storages
+django-model-utils

@@ -25,11 +25,13 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 
+from price_level.models import Pricable
+
 from .transactions import PackageTransaction, Payment
 from .user_attendance import UserAttendance
 
 
-class Campaign(models.Model):
+class Campaign(Pricable, models.Model):
     """kampaň"""
 
     class Meta:
