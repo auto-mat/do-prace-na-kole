@@ -16,7 +16,7 @@ unidecode
 -e git+https://github.com/PetrDlouhy/createsend-python.git@python3#egg=createsend
 ordereddict
 -e git+https://github.com/PetrDlouhy/django-mass-edit.git#egg=django-mass-edit  # for Django 1.10 warnings and template empty fields
--e git+https://github.com/lambdalisue/django-author.git#egg=django-author
+django-author
 django-fieldsignals
 django-admin-sortable2
 reportlab
@@ -51,7 +51,7 @@ django-cachalot
 django-bulk-update
 django-cors-headers
 -e git+https://github.com/PetrDlouhy/django-denorm.git@develop#egg=django-denorm
--e git+https://github.com/PetrDlouhy/django-admin-smoke-tests.git@master#egg=django-admin-smoke-tests  # the non-PIP source is for newest django-polymorphic, that defined both get_queryset and queryset
+django-admin-smoke-tests
 -e git+https://github.com/adilkhash/django-wysiwyg-redactor.git#egg=django-wysiwyg-redactor  # version compatible with Django 1.10
 sqlparse
 django-appconf
