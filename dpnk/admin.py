@@ -772,7 +772,6 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         queryset = super(UserAttendanceAdmin, self).get_queryset(request)
         return queryset.length().select_related('team__subsidiary__city', 'team__subsidiary__company', 't_shirt_size').only(
             'approved_for_team',
-            'campaign__admission_fee',
             'campaign_id',
             'campaign__name',
             'created',

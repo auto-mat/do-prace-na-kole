@@ -414,7 +414,6 @@ class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
 
     def test_no_payment_no_admission(self):
         campaign = Campaign.objects.get(pk=339)
-        campaign.late_admission_fee = 0
         price_level_models.PriceLevel.objects.all().delete()
         campaign.save()
         UserAttendance.objects.get(pk=1115).save()

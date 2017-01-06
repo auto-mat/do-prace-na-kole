@@ -153,26 +153,6 @@ class Campaign(Pricable, models.Model):
         blank=False,
         null=False,
     )
-    admission_fee = models.FloatField(
-        verbose_name=_(u"Včasné startovné"),
-        null=False,
-        default=0,
-    )
-    admission_fee_company = models.FloatField(
-        verbose_name=_(u"Včasné startovné pro organizace"),
-        null=False,
-        default=0,
-    )
-    late_admission_fee = models.FloatField(
-        verbose_name=_(u"Pozdní startovné"),
-        null=False,
-        default=0,
-    )
-    late_admission_fee_company = models.FloatField(
-        verbose_name=_(u"Pozdní startovné pro organizace"),
-        null=False,
-        default=0,
-    )
     benefitial_admission_fee = models.FloatField(
         verbose_name=_(u"Benefiční startovné"),
         null=False,

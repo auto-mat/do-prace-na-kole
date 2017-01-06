@@ -1746,7 +1746,7 @@ def statistics(
     variables['pocet-soutezicich'] = UserAttendance.objects.filter(
         Q(campaign=campaign) &
         Q(userprofile__user__is_active=True) &
-        (Q(transactions__status__in=models.Payment.done_statuses) | Q(campaign__admission_fee=0)),
+        Q(transactions__status__in=models.Payment.done_statuses),
     ).distinct().count()
     variables['pocet-spolecnosti'] = Company.objects.filter(Q(subsidiaries__teams__campaign=campaign)).distinct().count()
     variables['pocet-pobocek'] = Subsidiary.objects.filter(Q(teams__campaign=campaign)).distinct().count()
