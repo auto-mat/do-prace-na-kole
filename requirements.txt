@@ -51,8 +51,8 @@ django-cachalot
 django-bulk-update
 django-cors-headers
 -e git+https://github.com/PetrDlouhy/django-denorm.git@develop#egg=django-denorm
--e git+https://github.com/PetrDlouhy/django-admin-smoke-tests.git@master#egg=django-admin-smoke-tests  # the non-PIP source is for newest django-polymorphic, that defined both get_queryset and queryset
--e git+https://github.com/adilkhash/django-wysiwyg-redactor.git#egg=django-wysiwyg-redactor  # version compatible with Django 1.10
+django-admin-smoke-tests
+django-wysiwyg-redactor
 sqlparse
 django-appconf
 django-ajax-selects

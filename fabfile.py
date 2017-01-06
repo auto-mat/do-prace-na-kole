@@ -279,11 +279,6 @@ def rollback():
     restart_webserver()
 
 
-def update():
-    "Update requirements and other"
-    update_requirements()
-    restart_webserver()
-
 # Helpers. These are called by other functions rather than directly
 
 
@@ -341,14 +336,7 @@ def install_requirements():
     require('release', provided_by=[deploy, setup])
     run('cd %(path)s/releases/%(release)s; bower install' % env)
     run('cd %(path)s; env/bin/pip install six' % env)
-    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt' % env)
-
-
-def update_requirements():
-    "Update all requirements"
-    require('release', provided_by=[deploy, setup])
-    run('cd %(path)s/releases/%(release)s; bower update' % env)
-    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.txt --upgrade' % env)
+    run('cd %(path)s; env/bin/pip install -r ./releases/%(release)s/requirements.freeze.txt' % env)
 
 
 def symlink_current_release():
