@@ -50,6 +50,8 @@ from nested_inline.admin import NestedModelAdmin, NestedStackedInline, NestedTab
 
 from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
 
+from price_level import models as price_level_models
+
 from related_admin import RelatedFieldAdmin
 
 from . import actions, models, transaction_forms
@@ -1223,6 +1225,12 @@ class PhaseInline(admin.TabularInline):
     extra = 0
 
 
+class PriceLevelInline(admin.TabularInline):
+    readonly_fields = ('created', 'author', 'updated_by')
+    model = price_level_models.PriceLevel
+    extra = 0
+
+
 class CityInCampaignInline(admin.TabularInline):
     model = models.CityInCampaign
     extra = 0
@@ -1303,7 +1311,12 @@ class CampaignAdmin(admin.ModelAdmin):
         'trip_plus_distance',
         'mailing_list_enabled',
     )
-    inlines = [TShirtSizeInline, PhaseInline, CityInCampaignInline]
+    inlines = [
+        TShirtSizeInline,
+        PhaseInline,
+        CityInCampaignInline,
+        PriceLevelInline,
+    ]
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ('city_count',)
     save_as = True
