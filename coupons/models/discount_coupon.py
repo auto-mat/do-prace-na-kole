@@ -18,8 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-import locale
-
 from author.decorators import with_author
 
 from coupons.models.discount_coupon_type import DiscountCouponType
@@ -133,11 +131,10 @@ class DiscountCoupon(models.Model):
 def create_coupon_file(sender, instance, created, **kwargs):
     if not instance.coupon_pdf:
         temp = NamedTemporaryFile()
-        locale.setlocale(locale.LC_TIME, "")
         generate_coupon_pdf(
             temp,
             instance.name(),
-            instance.coupon_type.valid_until.strftime("%d. %B %Y") if instance.coupon_type.valid_until else None,
+            instance.coupon_type.valid_until.strftime("%d. %m. %Y") if instance.coupon_type.valid_until else None,
         )
         filename = "%s/coupon_%s.pdf" % (
             instance.coupon_type.campaign.slug,
