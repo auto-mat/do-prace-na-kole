@@ -37,8 +37,8 @@ CACHES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'dpnk_nose',
-        'USER': 'dpnk',
+        'NAME': 'circle_test',
+        'USER': 'ubuntu',
         'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '',
