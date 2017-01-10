@@ -368,6 +368,10 @@ LOGGING = {
     },
 }
 
+MIGRATION_MODULES = {
+    'price_level': 'price_level_migrations',
+}
+
 MESSAGE_TAGS = {
     message_constants.DEBUG: 'debug',
     message_constants.INFO: 'info',
