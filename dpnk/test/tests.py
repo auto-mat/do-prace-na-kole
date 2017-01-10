@@ -891,7 +891,7 @@ class ViewsTestsLogon(ViewsLogon):
     @patch('slumber.API')
     def company_payment(self, slumber_api, amount, amount_tax, beneficiary=False):
         slumber_instance = slumber_api.return_value
-        slumber_instance.feed.get.return_value = {"10816": {"content": "Emission calculator description text"}}
+        slumber_instance.feed.get.return_value = [{"content": "Emission calculator description text"}]
         response = self.client.get(reverse('company_admin_pay_for_users'))
         self.assertContains(response, "%s Kč: Registered User 1 (test-registered@test.cz)" % amount)
         post_data = {
