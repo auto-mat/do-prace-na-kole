@@ -1,16 +1,12 @@
 [
     {
         "fields": {
-            "admission_fee": 120.0,
-            "admission_fee_company": 130.0,
             "benefitial_admission_fee": 350.0,
             "benefitial_admission_fee_company": 450.0,
             "email_footer": "",
             "free_entry_cases_html": "",
             "invoice_sequence_number_first": 0,
             "invoice_sequence_number_last": 999999999,
-            "late_admission_fee": 210.0,
-            "late_admission_fee_company": 230.0,
             "mailing_list_enabled": false,
             "mailing_list_id": "12345abcde",
             "minimum_percentage": 66,
@@ -31,16 +27,12 @@
     },
     {
         "fields": {
-            "admission_fee": 120.0,
-            "admission_fee_company": 130.0,
             "benefitial_admission_fee": 350.0,
             "benefitial_admission_fee_company": 450.0,
             "email_footer": "",
             "free_entry_cases_html": "",
             "invoice_sequence_number_first": 0,
             "invoice_sequence_number_last": 999999999,
-            "late_admission_fee": 210.0,
-            "late_admission_fee_company": 230.0,
             "mailing_list_enabled": false,
             "mailing_list_id": "12345abcde",
             "minimum_percentage": 66,
@@ -425,12 +417,43 @@
     },
     {
         "fields": {
-            "campaign": 339,
-            "date_from": "2011-1-01",
-            "phase_type": "late_admission"
+            "pricable": 339,
+            "takes_effect_on": "2000-1-01",
+            "price": 120,
+            "category": "basic"
         },
-        "model": "dpnk.phase",
-        "pk": 5
+        "model": "price_level.PriceLevel",
+        "pk": 1
+    },
+    {
+        "fields": {
+            "pricable": 339,
+            "takes_effect_on": "2000-1-01",
+            "price": 130,
+            "category": "company"
+        },
+        "model": "price_level.PriceLevel",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "pricable": 339,
+            "takes_effect_on": "2011-1-01",
+            "price": 210,
+            "category": "basic"
+        },
+        "model": "price_level.PriceLevel",
+        "pk": 3
+    },
+    {
+        "fields": {
+            "pricable": 339,
+            "takes_effect_on": "2011-1-01",
+            "price": 230,
+            "category": "company"
+        },
+        "model": "price_level.PriceLevel",
+        "pk": 4
     },
     {
         "fields": {

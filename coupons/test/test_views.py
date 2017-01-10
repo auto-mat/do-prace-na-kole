@@ -40,9 +40,15 @@ class DiscountCouponViewTests(TestCase):
             "dpnk.Phase",
             phase_type="payment",
             campaign__slug="testing-campaign",
-            campaign__late_admission_fee=120,
         )
         self.campaign = payment_phase.campaign
+        mommy.make(
+            'price_level.PriceLevel',
+            price=120,
+            pricable=self.campaign,
+            takes_effect_on=datetime.date(year=2010, month=1, day=1),
+            category='basic',
+        )
         mommy.make(
             "dpnk.Phase",
             phase_type="competition",

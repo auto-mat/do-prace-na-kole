@@ -178,7 +178,11 @@ def get_working_trips_count(user_attendance, competition=None, day=None):
         day = util.today()
     non_working_days = util.non_working_days(competition, day)
     working_days = util.working_days(competition, day)
-    trips_in_non_working_day = Trip.objects.filter(user_attendance=user_attendance, commute_mode__in=('bicycle', 'by_foot', 'by_other_vehicle'), date__in=non_working_days).count()
+    trips_in_non_working_day = Trip.objects.filter(
+        user_attendance=user_attendance,
+        commute_mode__in=('bicycle', 'by_foot', 'by_other_vehicle'),
+        date__in=non_working_days,
+    ).count()
     non_working_rides_in_working_day = Trip.objects.filter(user_attendance=user_attendance, commute_mode='no_work', date__in=working_days).count()
     working_days_count = len(util.working_days(competition))
     working_trips_count = working_days_count * 2 + trips_in_non_working_day - non_working_rides_in_working_day
@@ -199,21 +203,15 @@ def get_team_frequency(user_attendancies, competition=None, day=None):
 
 def get_userprofile_nonreduced_length(user_attendances, competition):
     days = util.days(competition)
-    return Trip.objects.filter(user_attendance__in=user_attendances, commute_mode__in=('bicycle', 'by_foot'), date__in=days).aggregate(Sum('distance'))['distance__sum'] or 0
+    return Trip.objects.filter(
+        user_attendance__in=user_attendances,
+        commute_mode__in=('bicycle', 'by_foot'),
+        date__in=days,
+    ).aggregate(Sum('distance'))['distance__sum'] or 0
 
 
 def get_userprofile_length(user_attendances, competition):
     return get_userprofile_nonreduced_length(user_attendances, competition)
-
-    # In 2016 the trip_plus_distance was disabled
-    # trip_plus_distance = (user_attendance.campaign.trip_plus_distance or 0) + (user_attendance.get_distance() or 0)
-    # distance_from = (Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True, distance_from__lt=trip_plus_distance).\
-    #       aggregate(Sum('distance_from'))['distance_from__sum'] or 0) + \
-    #     Trip.objects.filter(user_attendance=user_attendance, is_working_ride_from=True, trip_from=True, distance_from__gte=trip_plus_distance).count() * (trip_plus_distance)
-    # distance_to = (Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, trip_to=True, distance_to__lt=trip_plus_distance).\
-    #       aggregate(Sum('distance_to'))['distance_to__sum'] or 0) + \
-    #     Trip.objects.filter(user_attendance=user_attendance, is_working_ride_to=True, trip_to=True, distance_to__gte=trip_plus_distance).count() * (trip_plus_distance)
-    # return distance_from + distance_to
 
 
 def get_userprofile_frequency(user_attendance, competition=None, day=None):
@@ -262,8 +260,14 @@ def recalculate_results_team(team):
 
 
 def points_questionnaire(user_attendances, competition):
-    points = Choice.objects.filter(answer__user_attendance__in=user_attendances, answer__question__competition=competition).aggregate(Sum('points'))['points__sum'] or 0
-    points_given = Answer.objects.filter(user_attendance__in=user_attendances, question__competition=competition).aggregate(Sum('points_given'))['points_given__sum'] or 0
+    points = Choice.objects.filter(
+        answer__user_attendance__in=user_attendances,
+        answer__question__competition=competition,
+    ).aggregate(Sum('points'))['points__sum'] or 0
+    points_given = Answer.objects.filter(
+        user_attendance__in=user_attendances,
+        question__competition=competition,
+    ).aggregate(Sum('points_given'))['points_given__sum'] or 0
     return points, points_given
 
 
@@ -290,7 +294,11 @@ def recalculate_result(competition, competitor):  # noqa
         elif competition.competition_type == 'length':
             competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_length(team, competition)
         elif competition.competition_type == 'frequency':
-            competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_frequency(team.members(), competition)
+            (
+                competition_result.result_divident,
+                competition_result.result_divisor,
+                competition_result.result,
+            ) = get_team_frequency(team.members(), competition)
 
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
         user_attendance = competitor
@@ -306,7 +314,11 @@ def recalculate_result(competition, competitor):  # noqa
         elif competition.competition_type == 'length':
             competition_result.result = get_userprofile_length([user_attendance], competition)
         elif competition.competition_type == 'frequency':
-            competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_userprofile_frequency(user_attendance, competition)
+            (
+                competition_result.result_divident,
+                competition_result.result_divisor,
+                competition_result.result,
+            ) = get_userprofile_frequency(user_attendance, competition)
 
     elif competition.competitor_type == 'company':
         company = competitor
@@ -323,6 +335,10 @@ def recalculate_result(competition, competitor):  # noqa
         elif competition.competition_type == 'length':
             competition_result.result = get_userprofile_length(user_attendances, competition)
         elif competition.competition_type == 'frequency':
-            competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_frequency(user_attendances, competition)
+            (
+                competition_result.result_divident,
+                competition_result.result_divisor,
+                competition_result.result,
+            ) = get_team_frequency(user_attendances, competition)
 
     competition_result.save()

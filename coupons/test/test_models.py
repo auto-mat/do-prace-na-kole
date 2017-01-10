@@ -39,7 +39,7 @@ class DiscountCouponTests(TestCase):
         pdf = PdfFileReader(discount_coupon.coupon_pdf)
         pdf_string = pdf.pages[0].extractText()
         self.assertTrue(discount_coupon.name() in pdf_string)
-        self.assertTrue("12. prosinec 2017" in pdf_string)
+        self.assertTrue("12. 12. 2017" in pdf_string)
 
     def test_available(self):
         discount_coupon = mommy.make(

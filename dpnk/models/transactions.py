@@ -191,7 +191,15 @@ class PackageTransaction(Transaction):
     def tracking_link(self):
         return mark_safe(
             "<a href='http://www.tnt.com/webtracker/tracking.do?"
-            "requestType=GEN&searchType=REF&respLang=cs&respCountry=cz&sourceID=1&sourceCountry=ww&cons=%(number)s&navigation=1&genericSiteIdent='>%(number)s</a>" %
+            "requestType=GEN&"
+            "searchType=REF&"
+            "respLang=cs&"
+            "respCountry=cz&"
+            "sourceID=1&"
+            "sourceCountry=ww&"
+            "cons=%(number)s&"
+            "navigation=1&"
+            "genericSiteIdent='>%(number)s</a>" %
             {'number': self.tnt_con_reference()},
         )
 

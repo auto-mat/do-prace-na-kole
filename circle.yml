@@ -1,0 +1,16 @@
+machine:
+  python:
+    version: 3.5.1
+  services:
+    - rabbitmq-server
+
+dependencies:
+  pre:
+    - pip install six
+  post:
+    - pip install -r requirements-test.txt
+    - npm install -g less
+
+test:
+  override:
+    - ./runtests.sh

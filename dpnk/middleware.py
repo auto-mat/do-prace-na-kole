@@ -25,9 +25,16 @@ class UserAttendanceMiddleware:
         if request.user and request.user.is_authenticated():
             campaign_slug = request.subdomain
             try:
-                request.user_attendance = UserAttendance.\
-                    objects.length().select_related('campaign', 'team__subsidiary__city', 't_shirt_size', 'userprofile__user', 'representative_payment', 'related_company_admin').\
-                    get(userprofile__user=request.user, campaign__slug=campaign_slug)
+                user_attendance_set = UserAttendance.objects.length()
+                user_attendance_set = user_attendance_set.select_related(
+                    'campaign',
+                    'team__subsidiary__city',
+                    't_shirt_size',
+                    'userprofile__user',
+                    'representative_payment',
+                    'related_company_admin',
+                )
+                request.user_attendance = user_attendance_set.get(userprofile__user=request.user, campaign__slug=campaign_slug)
             except UserAttendance.DoesNotExist:
                 request.user_attendance = None
         else:

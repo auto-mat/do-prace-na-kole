@@ -50,6 +50,8 @@ from nested_inline.admin import NestedModelAdmin, NestedStackedInline, NestedTab
 
 from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
 
+from price_level import models as price_level_models
+
 from related_admin import RelatedFieldAdmin
 
 from . import actions, models, transaction_forms
@@ -770,7 +772,6 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         queryset = super(UserAttendanceAdmin, self).get_queryset(request)
         return queryset.length().select_related('team__subsidiary__city', 'team__subsidiary__company', 't_shirt_size').only(
             'approved_for_team',
-            'campaign__admission_fee',
             'campaign_id',
             'campaign__name',
             'created',
@@ -1223,6 +1224,12 @@ class PhaseInline(admin.TabularInline):
     extra = 0
 
 
+class PriceLevelInline(admin.TabularInline):
+    readonly_fields = ('created', 'author', 'updated_by')
+    model = price_level_models.PriceLevel
+    extra = 0
+
+
 class CityInCampaignInline(admin.TabularInline):
     model = models.CityInCampaign
     extra = 0
@@ -1276,7 +1283,9 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
             package_transactions = obj.campaign.user_attendances_for_delivery()
         else:
             package_transactions = obj.packagetransaction_set.all()
-        t_shirts = models.TShirtSize.objects.filter(packagetransaction__in=package_transactions).annotate(size_count=Count('packagetransaction')).values_list('name', 'size_count')
+        t_shirts = models.TShirtSize.objects.filter(packagetransaction__in=package_transactions)
+        t_shirts = t_shirts.annotate(size_count=Count('packagetransaction'))
+        t_shirts = t_shirts.values_list('name', 'size_count')
         return format_html_join(mark_safe("<br/>"), "{}: {}", t_shirts)
     t_shirt_sizes.short_description = _(u"Velikosti trik")
 
@@ -1301,7 +1310,12 @@ class CampaignAdmin(admin.ModelAdmin):
         'trip_plus_distance',
         'mailing_list_enabled',
     )
-    inlines = [TShirtSizeInline, PhaseInline, CityInCampaignInline]
+    inlines = [
+        TShirtSizeInline,
+        PhaseInline,
+        CityInCampaignInline,
+        PriceLevelInline,
+    ]
     prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ('city_count',)
     save_as = True

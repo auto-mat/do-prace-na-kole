@@ -161,23 +161,26 @@ class UserAttendance(models.Model):
         else:
             return 1
 
-    def admission_fee(self):
-        if self.campaign.late_admission_phase_actual():
-            return (self.campaign.late_admission_fee + self.t_shirt_price()) * self.discount_multiplier()
+    def admission_fee_for_category(self, category):
+        price_level = self.campaign.get_current_price_level(date_time=util.today(), category=category)
+        if price_level:
+            base_price = price_level.price
         else:
-            return (self.campaign.admission_fee + self.t_shirt_price()) * self.discount_multiplier()
+            base_price = 0
+        return (base_price + self.t_shirt_price()) * self.discount_multiplier()
+
+    def admission_fee(self):
+        return self.admission_fee_for_category('basic')
 
     def has_admission_fee(self):
-        return self.admission_fee() > 0
+        return self.campaign.get_current_price_level(date_time=util.today(), category='basic') is not None or \
+            self.campaign.get_current_price_level(date_time=util.today(), category='company') is not None
 
     def beneficiary_admission_fee(self):
         return self.campaign.benefitial_admission_fee + self.t_shirt_price()
 
     def company_admission_fee(self):
-        if self.campaign.late_admission_phase_actual():
-            return (self.campaign.late_admission_fee_company + self.t_shirt_price()) * self.discount_multiplier()
-        else:
-            return (self.campaign.admission_fee_company + self.t_shirt_price()) * self.discount_multiplier()
+        return self.admission_fee_for_category('company')
 
     @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
     @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})

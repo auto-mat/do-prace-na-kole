@@ -87,7 +87,17 @@ def _wp_news_cached(campaign, slug=None, wp_type="news"):
         return _wp_news(campaign, _connected_to=slug, order="DESC", orderby="DATE", count=5, **_global_news)
 
 
-def _wp_news(campaign, post_type="post", post_type_string=_("novinka"), unfold="first", count=-1, show_description=True, orderby='published', reverse=True, **other_args):
+def _wp_news(
+        campaign,
+        post_type="post",
+        post_type_string=_("novinka"),
+        unfold="first",
+        count=-1,
+        show_description=True,
+        orderby='published',
+        reverse=True,
+        **other_args
+):
     get_params = {}
     get_params['feed'] = "content_to_backend"
     get_params['_post_type'] = post_type

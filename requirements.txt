@@ -16,7 +16,7 @@ unidecode
 -e git+https://github.com/PetrDlouhy/createsend-python.git@python3#egg=createsend
 ordereddict
 -e git+https://github.com/PetrDlouhy/django-mass-edit.git#egg=django-mass-edit  # for Django 1.10 warnings and template empty fields
--e git+https://github.com/lambdalisue/django-author.git#egg=django-author
+django-author
 django-fieldsignals
 django-admin-sortable2
 reportlab
@@ -67,3 +67,5 @@ sqlalchemy
 flower
 django-daterange-filter
 django-storages
+django-model-utils
+django-price-level

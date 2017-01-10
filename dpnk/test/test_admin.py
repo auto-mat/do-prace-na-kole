@@ -158,7 +158,8 @@ class AdminModulesTests(DenormMixin, TestCase):
         self.assertContains(response, "7,1,,3,Null User,,without_team@email.cz,2015-11-12 18:18:40,,99,,,,,,,1,111121170,1-151112-000007")
         self.assertContains(
             response,
-            "6,1,2010-11-01 00:00:00,1115,Testing User 1,,test@test.cz,2015-11-12 18:18:40,,99,Ulice 1,11111,Praha,Testing company,test@test.cz,,1,111111172,1-151112-000006",
+            "6,1,2010-11-01 00:00:00,1115,Testing User 1,,test@test.cz,2015-11-12 18:18:40,,99,"
+            "Ulice 1,11111,Praha,Testing company,test@test.cz,,1,111111172,1-151112-000006",
         )
         self.assertContains(
             response,

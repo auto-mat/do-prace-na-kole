@@ -20,6 +20,7 @@
 import datetime
 
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from dpnk import models
 
@@ -54,6 +55,9 @@ class TestFrequencyPercentage(TestCase):
         self.assertEqual(frequency, 0)
 
 
+@override_settings(
+    FAKE_DATE=datetime.date(year=2017, month=1, day=2),
+)
 class TestEnteredCompetitionReason(TestCase):
     def setUp(self):
         tshirt_size = mommy.make(
@@ -120,7 +124,11 @@ class TestEnteredCompetitionReason(TestCase):
         """
         Test that entered_competition_reason function works properly for payment_waiting
         """
-        self.campaign.late_admission_fee = 100
+        mommy.make(
+            'price_level.PriceLevel',
+            takes_effect_on=datetime.date(year=2017, month=1, day=1),
+            pricable=self.campaign,
+        )
         self.user_attendance.payment_status = 'waiting'
         reason = self.user_attendance.entered_competition_reason()
         self.assertEqual(reason, 'payment_waiting')
@@ -129,7 +137,11 @@ class TestEnteredCompetitionReason(TestCase):
         """
         Test that entered_competition_reason function works properly for payment_uncomplete
         """
-        self.campaign.late_admission_fee = 100
+        mommy.make(
+            'price_level.PriceLevel',
+            takes_effect_on=datetime.date(year=2017, month=1, day=1),
+            pricable=self.campaign,
+        )
         self.user_attendance.payment_status = 'none'
         reason = self.user_attendance.entered_competition_reason()
         self.assertEqual(reason, 'payment_uncomplete')
@@ -146,9 +158,75 @@ class TestEnteredCompetitionReason(TestCase):
         """
         Test that entered_competition_reason function works properly for True result
         """
-        self.campaign.late_admission_fee = 100
         reason = self.user_attendance.entered_competition_reason()
         self.assertEqual(reason, True)
+
+
+@override_settings(
+    FAKE_DATE=datetime.date(year=2017, month=1, day=2),
+)
+class TestAdmissionFee(TestCase):
+    def setUp(self):
+        phase = mommy.make(
+            'dpnk.Phase',
+            phase_type="competition",
+            date_from=datetime.date(year=2017, month=11, day=1),
+            date_to=datetime.date(year=2017, month=12, day=12),
+        )
+        self.campaign = phase.campaign
+        phase = mommy.make(
+            'price_level.PriceLevel',
+            price=100,
+            category='basic',
+            takes_effect_on=datetime.date(year=2017, month=1, day=1),
+            pricable=self.campaign,
+        )
+        phase = mommy.make(
+            'price_level.PriceLevel',
+            price=200,
+            category='company',
+            takes_effect_on=datetime.date(year=2017, month=1, day=1),
+            pricable=self.campaign,
+        )
+        phase = mommy.make(
+            'price_level.PriceLevel',
+            price=150,
+            category='basic',
+            takes_effect_on=datetime.date(year=2017, month=2, day=1),
+            pricable=self.campaign,
+        )
+        phase = mommy.make(
+            'price_level.PriceLevel',
+            price=250,
+            category='company',
+            takes_effect_on=datetime.date(year=2017, month=2, day=1),
+            pricable=self.campaign,
+        )
+        self.user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            track="MULTILINESTRING((0 0,-1 1))",
+            campaign=self.campaign,
+            distance=123,
+            pk=1115,
+        )
+
+    def test_company_admission_fee(self):
+        self.assertEquals(self.user_attendance.company_admission_fee(), 200)
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2017, month=2, day=1),
+    )
+    def test_company_admission_fee_second(self):
+        self.assertEquals(self.user_attendance.company_admission_fee(), 250)
+
+    def test_admission_fee(self):
+        self.assertEquals(self.user_attendance.admission_fee(), 100)
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2017, month=2, day=1),
+    )
+    def test_admission_fee_second(self):
+        self.assertEquals(self.user_attendance.admission_fee(), 150)
 
 
 class TestGetDistance(TestCase):
