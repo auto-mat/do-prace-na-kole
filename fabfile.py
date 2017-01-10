@@ -206,7 +206,7 @@ def dpnk():
 
 def test():
     "Run the test suite and bail out if it fails"
-    run("cd %(path)s/releases/%(release)s; ./runtests.sh" % env)
+    run("cd %(path)s/releases/%(release)s; source env/bin/activate; ./runtests.sh; deactivate" % env)
 
 
 def setup():
