@@ -7,10 +7,13 @@ machine:
 dependencies:
   pre:
     - pip install six
+  override:
+    - pip install -r requirements.freeze.txt
   post:
-    - pip install -r requirements-test.txt
     - npm install -g less
 
 test:
   override:
     - ./runtests.sh
+  post:
+    - coveralls
