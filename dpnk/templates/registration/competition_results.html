@@ -18,7 +18,6 @@
 <i> {{ competition.type_string|safe }} </i>
 
 {% if competition.rules %}
-<div>{{ competition.rules|safe }}</div>
 {% endif %}
 <div>
    {% if competition.date_from %}{% trans "Soutěž trvá" %} {% trans "od" %} {{ competition.date_from }}{% endif %}
