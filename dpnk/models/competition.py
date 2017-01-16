@@ -251,6 +251,14 @@ class Competition(models.Model):
         from .. import results
         return results.recalculate_result_competition(self)
 
+    def get_company_querystring(self):
+        if self.competitor_type == 'single_user':
+            return 'user_attendance__team__subsidiary__company'
+        elif self.competitor_type == 'team':
+            return 'team__subsidiary__company'
+        elif self.competitor_type == 'company':
+            return 'company'
+
     def can_admit(self, user_attendance):
         if self.without_admission:
             return 'without_admission'

@@ -18,9 +18,9 @@ $(document).ready(function() {
             "url": "{% static "js/datatables-plugins/i18n/" %}{{ current_language_code }}.json"
         },
         "initComplete": function(settings, json) {
-            $("div.search-company-div").html('<input id="search-company" class="form-control input-sm" type="text" placeholder="Filtrovat společnost" />');
+            $("div.search-company-div").html('{% trans "Společnost:" %} <input id="search-company" class="form-control input-sm" type="text" placeholder="" />');
             $('#search-company').keyup(function () {
-                oTable.column(7).search($(this).val()).draw();
+                oTable.column(0).search($(this).val()).draw();
             } );
         },
         "ajax": "{% url 'competition_result_list_json' competition.slug %}"

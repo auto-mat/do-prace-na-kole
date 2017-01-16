@@ -1,0 +1,85 @@
+# -*- coding: utf-8 -*-
+# Author: Petr Dlouhý <petr.dlouhy@email.cz>
+#
+# Copyright (C) 2017 o.s. Auto*Mat
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+import re
+
+from django.db.models import Q
+
+from django_datatables_view.base_datatable_view import BaseDatatableView
+
+from . import models
+
+
+class CompetitionResultListJson(BaseDatatableView):
+    model = models.CompetitionResult
+    max_display_length = 100
+
+    def get_columns(self):
+        columns = self.competition.get_columns()
+        return list(zip(*columns))[1]
+
+    def render_column(self, row, column):
+        if column == 'team__member_count':
+            return str(row.team.member_count)
+        if column == 'user_attendance':
+            return str(row.user_attendance)
+        if column == 'get_sequence_range':
+            sequence_range = row.get_sequence_range()
+            if sequence_range[0] == sequence_range[1]:
+                return "%s." % sequence_range[0]
+            else:
+                return "%s.&nbsp;-&nbsp;%s." % sequence_range
+        if column in ('get_company', 'get_city', 'get_street', 'get_subsidiary'):
+            return str(getattr(row, column)())
+        if column in ('get_result_percentage'):
+            return getattr(row, column)()
+        if column == 'get_team':
+            return row.get_team().name
+        else:
+            return super().render_column(row, column)
+
+    def get_initial_queryset(self):
+        self.competition = models.Competition.objects.get(
+            campaign__slug=self.request.subdomain,
+            slug=self.kwargs['competition_slug'],
+        )
+        return self.competition.get_results()
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(
+                Q(team__subsidiary__company__name__istartswith=search) |
+                Q(team__subsidiary__address_street__istartswith=search) |
+                Q(team__name__istartswith=search),
+            )
+
+        search = self.request.GET.get('columns[0][search][value]', None)  # the column 7 means always company column
+        if search:
+            querystring = self.competition.get_company_querystring()
+
+            m = re.match(r'^"(.*)"$', search)
+            if m:
+                search_operation = 'iexact'
+                search = m.group(1)
+            else:
+                search_operation = 'icontains'
+            qs = qs.filter(**{'%s__name__unaccent__%s' % (querystring, search_operation): search})
+
+        return qs
