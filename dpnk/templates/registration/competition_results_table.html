@@ -32,53 +32,9 @@ $(document).ready(function() {
 <table id="results-table" class="table datatable table-condensed table-striped table-bordered">
 <thead>
 <tr>
-<th scope="column">{% trans "Po&shy;řa&shy;dí" %}</th>
-<th scope="column">
-   {% if competition.competition_type == 'length' %}
-      {% trans "Ki&shy;lo&shy;me&shy;trů" %}
-   {% elif competition.competition_type == 'frequency' %}
-      {% trans "% jízd" %}
-   {% elif competition.competition_type == 'questionnaire' %}
-      {% trans "Bo&shy;dů" %}
-   {% endif %}
-   {% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.competition_type != 'questionnaire' %}
-      {% trans "prů&shy;měr&shy;ně" %}
-   {% endif %}
-</th>
-
-{% if competition.competition_type == 'frequency' %}
-   <th>{% trans "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd" %}</th>
-   <th>{% trans "Cel&shy;ko&shy;vý po&shy;čet cest" %}</th>
-{% elif competition.competition_type == 'length' and competition.competitor_type == 'team' %}
-   <th>{% trans "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů" %}</th>
-{% endif %}
-
-{% if competition.competitor_type != 'single_user' and competition.competitor_type != 'liberos' and competition.competitor_type != 'company'%}
-<th scope="column">{% trans "Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch" %}
-   {% if competition.competitor_type == 'team' %}
-      {% trans "v&nbsp;tý&shy;mu" %}
-   {% elif competition.competitor_type == 'company' %}
-      {% trans "ve&nbsp;fir&shy;mě" %}
-   {% endif %}
-</th>
-{% endif %}
-
-<th scope="column">
-   {% trans "Sou&shy;tě&shy;ží&shy;cí" %}
-</th>
-{% if competition.competitor_type != 'team' and competition.competitor_type != 'company'%}
-<th scope="column" class="narrow-hide-400">
-   {% trans "Tým" %}
-</th>
-{% endif %}
-{% if competition.competitor_type != 'company'%}
-<th scope="column" class="narrow-hide-400">
-   {% trans "Spo&shy;leč&shy;nost" %}
-</th>
-<th scope="column" class="narrow-hide-400">
-   {% trans "Měs&shy;to" %}
-</th>
-{% endif %}
+{% for col in competition.get_columns %}
+   <th scope="column" id={{ col.0 }}>{{ col.2|safe }}</th>
+{% endfor %}
 </thead>
 <tbody>
 </tbody>

@@ -272,6 +272,54 @@ class Competition(models.Model):
 
         return True
 
+    def get_columns(self):
+        columns = [('result_order', 'get_sequence_range', _("Po&shy;řa&shy;dí"))]
+
+        if self.competitor_type not in ('single_user', 'liberos') and self.competition_type != 'questionnaire':
+            average_string = _(" prů&shy;měr&shy;ně")
+        else:
+            average_string = ""
+
+        columns.append(
+            {
+                'length': ('result_value', 'get_result', _("Ki&shy;lo&shy;me&shy;trů%s" % average_string)),
+                'frequency': ('result_value', 'get_result_percentage', _("%% jízd%s" % average_string)),
+                'questionnaire': ('result_value', 'get_result', _("Bo&shy;dů%s" % average_string)),
+            }[self.competition_type],
+        )
+
+        if self.competition_type == 'frequency':
+            columns.append(('result_divident', 'result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd")))
+            columns.append(('result_divisor', 'result_divisor', _("Cel&shy;ko&shy;vý po&shy;čet cest")))
+        elif self.competition_type == 'length' and self.competitor_type == 'team':
+            columns.append(('result_divident', 'result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů")))
+
+        if self.competitor_type not in ('single_user', 'liberos', 'company'):
+            where = {
+                'team': _("v&nbsp;tý&shy;mu"),
+                'single_user': "",
+                'liberos': "",
+                'company': _("ve&nbsp;fir&shy;mě"),
+            }[self.competitor_type]
+            columns.append(('member_count', 'team__member_count', _("Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch %s" % where)))
+
+        competitor = {
+            'team': 'get_team',
+            'single_user': 'user_attendance',
+            'liberos': 'user_attendance',
+            'company': 'get_company',
+        }[self.competitor_type]
+        columns.append(('competitor', competitor, _("Sou&shy;tě&shy;ží&shy;cí")))
+
+        if self.competitor_type not in ('team', 'company'):
+            columns.append(('team', 'get_team', _("Tým")))
+
+        if self.competitor_type != 'company':
+            columns.append(('company', 'get_company', _("Spo&shy;leč&shy;nost")))
+
+        columns.append(('city', 'get_city', _("Měs&shy;to")))
+        return columns
+
     def has_admission(self, userprofile):
         if not userprofile.entered_competition():
             return False
