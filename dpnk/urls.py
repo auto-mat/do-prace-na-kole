@@ -138,7 +138,7 @@ urlpatterns = [
     ),
     url(
         r'^vysledky_souteze_json/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
-        login_required(views_results.CompetitionResultListJson.as_view()),
+        views_results.CompetitionResultListJson.as_view(),
         name='competition_result_list_json',
     ),
     url(
