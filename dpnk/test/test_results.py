@@ -129,6 +129,7 @@ class ResultTests(ClearCacheMixin, DenormMixin, TestCase):
         models.Competition.objects.get(slug="vykonnost-tymu").recalculate_results()
         address = reverse('competition_results', kwargs={'competition_slug': 'vykonnost-tymu'})
         response = self.client.get(address)
+        print_response(response)
         self.assertContains(response, "Výsledky v soutěži Výkonnost týmů:")
         self.assertContains(response, "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů")
         self.assertContains(response, "<td>54,0</td>", html=True)
