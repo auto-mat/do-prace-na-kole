@@ -128,7 +128,7 @@ class RestTestsLogout(DenormMixin, TestCase):
         address = reverse("result-list", kwargs={"competition_slug": "FQ-LB"})
         response = self.client.get(address)
         self.assertContains(response, '"team":"http://testing-campaign.testserver/rest/team/1/"')
-        self.assertContains(response, '"result":100.0')
+        self.assertContains(response, '"result":"100.000000"')
 
     def test_competitionresults_get_unknown_competition(self):
         address = reverse("result-list", kwargs={"competition_slug": "unknown"})
