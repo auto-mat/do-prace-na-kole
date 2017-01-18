@@ -20,7 +20,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib.gis.db import models
-from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from .company import Company
@@ -150,10 +149,6 @@ class CompetitionResult(models.Model):
             if self.user_attendance:
                 return "%s" % self.user_attendance.userprofile.name()
         return ""
-
-    def clean(self):
-        if ((1 if self.user_attendance else 0) + (1 if self.team else 0) + (1 if self.company else 0)) != 1:
-            raise ValidationError(_(u"Musí být zvolen právě jeden uživatel, tým nebo organizace"))
 
     def user_attendances(self):
         competition = self.competition
