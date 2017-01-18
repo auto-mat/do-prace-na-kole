@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import datetime
+
 from unittest.mock import patch
 
 import denorm
@@ -26,9 +28,9 @@ from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 
-from dpnk import models, util, views
+from dpnk import actions, models, util, views
 from dpnk.test.tests import ViewsLogon
-from dpnk.test.util import ClearCacheMixin
+from dpnk.test.util import ClearCacheMixin, DenormMixin
 from dpnk.test.util import print_response  # noqa
 
 import settings
@@ -328,3 +330,43 @@ class DistanceTests(TestCase):
                 'count_foot': 1,
             },
         )
+
+
+@override_settings(
+    SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'company_competition', 'test_results_data', 'trips']
+
+    def test_dpnk_competition_results_unknown(self):
+        address = reverse('competition_results', kwargs={'competition_slug': 'unexistent_competition'})
+        response = self.client.get(address)
+        self.assertContains(response, "Tuto soutěž v systému nemáme.")
+
+    def test_dpnk_competition_results_vykonnost_tymu(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.all())
+        models.Competition.objects.get(slug="vykonnost-tymu").recalculate_results()
+        address = reverse('competition_results', kwargs={'competition_slug': 'vykonnost-tymu'})
+        response = self.client.get(address)
+        self.assertContains(response, "Výsledky v soutěži Výkonnost týmů:")
+        self.assertContains(
+            response,
+            '<th scope="column" id=result_divident>Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů</th>',
+            html=True,
+        )
+
+    def test_dpnk_competition_results_quest_not_finished(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.all())
+        competition = models.Competition.objects.filter(slug="quest")
+        actions.normalize_questionnqire_admissions(None, None, competition)
+        competition.get().recalculate_results()
+        address = reverse('competition_results', kwargs={'competition_slug': 'quest'})
+        response = self.client.get(address)
+        self.assertContains(response, "Výsledky v soutěži Dotazník:")
+        self.assertContains(response, "Výsledky této soutěže se nezobrazují")
+
+    def test_dpnk_competition_results_TF(self):
+        address = reverse('competition_results', kwargs={'competition_slug': 'TF'})
+        response = self.client.get(address)
+        self.assertContains(response, "Výsledky v soutěži Team frequency:")
