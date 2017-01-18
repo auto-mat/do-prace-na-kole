@@ -19,7 +19,7 @@
 
 import re
 
-from django.db.models import Q
+from django.db.models import Case, CharField, Q, Value, When
 
 from django_datatables_view.base_datatable_view import BaseDatatableView
 
@@ -64,22 +64,39 @@ class CompetitionResultListJson(BaseDatatableView):
     def filter_queryset(self, qs):
         search = self.request.GET.get('search[value]', None)
         if search:
-            qs = qs.filter(
-                Q(team__subsidiary__company__name__istartswith=search) |
-                Q(team__subsidiary__address_street__istartswith=search) |
-                Q(team__name__istartswith=search),
-            )
+            for s in search.split():
+                qs = qs.annotate(
+                    first_name=Case(
+                        When(user_attendance__userprofile__nickname__isnull=False, then=Value(None)),
+                        default="user_attendance__userprofile__user__first_name",
+                        output_field=CharField(),
+                    ),
+                    last_name=Case(
+                        When(user_attendance__userprofile__nickname__isnull=False, then=Value(None)),
+                        default="user_attendance__userprofile__user__last_name",
+                        output_field=CharField(),
+                    ),
+                )
+                qs = qs.filter(
+                    Q(user_attendance__userprofile__nickname__unaccent__icontains=s) |
+                    Q(first_name__unaccent__icontains=s) |
+                    Q(last_name__unaccent__icontains=s) |
+                    Q(team__subsidiary__city__name__unaccent__icontains=s) |
+                    Q(team__subsidiary__company__name__unaccent__icontains=s) |
+                    Q(team__subsidiary__address_street__unaccent__icontains=s) |
+                    Q(team__name__unaccent__icontains=s),
+                )
 
-        search = self.request.GET.get('columns[0][search][value]', None)  # the column 7 means always company column
-        if search:
+        company_search = self.request.GET.get('columns[0][search][value]', None)  # the column 7 means always company column
+        if company_search:
             querystring = self.competition.get_company_querystring()
 
-            m = re.match(r'^"(.*)"$', search)
+            m = re.match(r'^"(.*)"$', company_search)
             if m:
                 search_operation = 'iexact'
-                search = m.group(1)
+                company_search = m.group(1)
             else:
                 search_operation = 'icontains'
-            qs = qs.filter(**{'%s__name__unaccent__%s' % (querystring, search_operation): search})
+            qs = qs.filter(**{'%s__name__unaccent__%s' % (querystring, search_operation): company_search})
 
         return qs
