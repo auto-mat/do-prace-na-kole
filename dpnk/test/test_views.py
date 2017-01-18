@@ -51,8 +51,6 @@ class CompetitionsViewTests(ViewsLogon):
     def test_competition_results(self):
         address = reverse('competition-results-city', kwargs={'city_slug': "testing-city"})
         response = self.client.get(address)
-        self.assertContains(response, "10 000,0")
-        self.assertContains(response, "Ulice / Testing company")
         self.assertContains(response, "DPNK - Výsledky soutěží - Testing city")
         self.assertContains(response, "soutěž na vzdálenost jednotlivců  ve městě Testing city")
 
