@@ -86,6 +86,10 @@ class CompetitionResult(models.Model):
     )
 
     def get_sequence_range(self):
+        """
+        Return range of places of this result.
+        Means, that the competitor is placed on one or more places.
+        """
         lower_range = CompetitionResult.objects.filter(
             competition=self.competition,
             result__gt=self.result,
@@ -123,9 +127,14 @@ class CompetitionResult(models.Model):
             return team.subsidiary.city
 
     def get_result(self):
+        """ Get result in kilometers rounded to reasonable number of decimal places. """
         return round(self.result, 1)
 
     def get_result_percentage(self):
+        """
+        Get result as percentage of all rides.
+        @return percentage in rounded integer
+        """
         if self.result:
             return round(self.result * 100, 1)
         else:
@@ -140,6 +149,7 @@ class CompetitionResult(models.Model):
         else:
             if self.user_attendance:
                 return "%s" % self.user_attendance.userprofile.name()
+        return ""
 
     def clean(self):
         if ((1 if self.user_attendance else 0) + (1 if self.team else 0) + (1 if self.company else 0)) != 1:
