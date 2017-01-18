@@ -24,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from . import auth
 from . import company_admin_views
-from . import views
+from . import views, views_results
 from .decorators import must_be_in_group
 from .forms import AuthenticationFormDPNK
 urlpatterns = [
@@ -135,6 +135,11 @@ urlpatterns = [
         r'^vysledky_souteze/(?P<competition_slug>[0-9A-Za-z_\-]+)/(?P<limit>[0-9]+)/$',
         views.CompetitionResultsView.as_view(),
         name="competition_results",
+    ),
+    url(
+        r'^vysledky_souteze_json/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        login_required(views_results.CompetitionResultListJson.as_view()),
+        name='competition_result_list_json',
     ),
     url(
         r'^questionnaire_answers/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',

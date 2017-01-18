@@ -85,6 +85,17 @@ class CompetitionResult(models.Model):
         default=None,
     )
 
+    def get_sequence_range(self):
+        lower_range = CompetitionResult.objects.filter(
+            competition=self.competition,
+            result__gt=self.result,
+        ).count() + 1
+        upper_range = CompetitionResult.objects.filter(
+            competition=self.competition,
+            result__gte=self.result,
+        ).count()
+        return lower_range, upper_range
+
     def get_team(self):
         if self.competition.competitor_type in ['liberos', 'single_user']:
             return self.user_attendance.team
@@ -97,6 +108,9 @@ class CompetitionResult(models.Model):
         team = self.get_team()
         if team:
             return team.subsidiary.company
+
+    def get_subsidiary(self):
+        return "%s / %s" % (self.get_street(), self.get_company())
 
     def get_street(self):
         team = self.get_team()

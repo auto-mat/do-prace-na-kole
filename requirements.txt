@@ -69,3 +69,4 @@ django-daterange-filter
 django-storages
 django-model-utils
 django-price-level
+django-datatables-view
