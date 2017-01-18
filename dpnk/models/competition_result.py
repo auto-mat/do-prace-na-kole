@@ -63,8 +63,10 @@ class CompetitionResult(models.Model):
         null=False,
         blank=False,
     )
-    result = models.FloatField(
+    result = models.DecimalField(
         verbose_name=_(u"Výsledek"),
+        max_digits=10,
+        decimal_places=6,
         null=True,
         blank=True,
         default=None,
