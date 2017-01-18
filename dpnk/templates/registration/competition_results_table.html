@@ -6,7 +6,7 @@
 {% if competition.show_competition_results %}
 <script>
 $(document).ready(function() {
-    var oTable = $('#results-table').DataTable({
+    var oTable = $('#results-table-{{ competition.slug }}').DataTable({
         "processing": true,
         "serverSide": true,
         "ordering": false,
@@ -29,7 +29,7 @@ $(document).ready(function() {
 });
 </script>
 
-<table id="results-table" class="table datatable table-condensed table-striped table-bordered">
+<table id="results-table-{{ competition.slug }}" class="table datatable table-condensed table-striped table-bordered">
 <thead>
 <tr>
 {% for col in competition.get_columns %}
