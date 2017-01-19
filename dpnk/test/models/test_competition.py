@@ -394,3 +394,71 @@ class TestHasEntryNotOpened(TestCase):
             entry_after_beginning_days=0,
         )
         self.assertEqual(competition.has_entry_not_opened(), False)
+
+
+class TestTypeString(TestCase):
+    def setUp(self):
+        self.city = mommy.make('dpnk.City', name="Testing city")
+
+    def test_team_frequency(self):
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="team",
+            competition_type="frequency",
+        )
+        self.assertEquals(str(competition.type_string()), " soutěž na pravidelnost týmů   ")
+
+    def test_single_questionnaire(self):
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="single_user",
+            competition_type="questionnaire",
+        )
+        self.assertEquals(str(competition.type_string()), " dotazník jednotlivců   ")
+
+    def test_single_length_city_sex(self):
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="single_user",
+            competition_type="length",
+            city=[self.city],
+            sex="male",
+        )
+        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost jednotlivců  ve městě Testing city pro muže")
+
+    def test_single_length_city(self):
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="single_user",
+            competition_type="length",
+            city=[self.city],
+        )
+        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost jednotlivců  ve městě Testing city ")
+
+    def test_team_frequency_company(self):
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="team",
+            competition_type="frequency",
+            company__name="Testing company",
+        )
+        self.assertEquals(str(competition.type_string()), "vnitrofiremní soutěž na pravidelnost týmů organizace Testing company  ")
+
+    def test_company_length_city(self):
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="company",
+            competition_type="length",
+            city=[self.city],
+        )
+        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost společností  ve městě Testing city ")
+
+    def test_team_length_city_sex(self):
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="team",
+            competition_type="length",
+            city=[self.city],
+            sex="male",
+        )
+        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost týmů  ve městě Testing city pro muže")
