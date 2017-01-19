@@ -369,7 +369,7 @@ class UserAttendance(models.Model):
         return self.payment_status not in ('none', None)
 
     def payment_waiting(self):
-        return (not self.has_admission_fee()) or self.payment_status in ('done', 'no_admission')
+        return self.payment_status in ('done', 'no_admission') or (not self.has_admission_fee())
 
     def get_emissions(self, distance=None):
         return util.get_emissions(self.trip_length_total)
