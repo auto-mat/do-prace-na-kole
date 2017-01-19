@@ -252,6 +252,9 @@ class Competition(models.Model):
         return results.recalculate_result_competition(self)
 
     def get_company_querystring(self):
+        """
+        Returns string with wich is possible to filter results of this competition by company.
+        """
         if self.competitor_type == 'single_user':
             return 'user_attendance__team__subsidiary__company'
         elif self.competitor_type == 'team':

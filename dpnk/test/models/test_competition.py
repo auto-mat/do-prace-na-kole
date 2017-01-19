@@ -124,3 +124,35 @@ class TestGetColumns(TestCase):
             ('city', 'get_city', 'Měs&shy;to'),
         ]
         self.assertListEqual(columns, expected_columns)
+
+
+class TestGetCompanyQuerystring(TestCase):
+    def test_company(self):
+        """
+        Test that get_company_querystring works properly for company competition
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type='company',
+        )
+        self.assertEqual(competition.get_company_querystring(), "company")
+
+    def test_team(self):
+        """
+        Test that get_company_querystring works properly for team competition
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type='team',
+        )
+        self.assertEqual(competition.get_company_querystring(), "team__subsidiary__company")
+
+    def test_single_user(self):
+        """
+        Test that get_company_querystring works properly for single_user competition
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type='single_user',
+        )
+        self.assertEqual(competition.get_company_querystring(), "user_attendance__team__subsidiary__company")
