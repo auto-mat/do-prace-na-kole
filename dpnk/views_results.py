@@ -19,6 +19,7 @@
 
 import re
 
+from django.contrib.humanize.templatetags.humanize import intcomma
 from django.db.models import Case, CharField, Q, Value, When
 
 from django_datatables_view.base_datatable_view import BaseDatatableView
@@ -48,7 +49,7 @@ class CompetitionResultListJson(BaseDatatableView):
         if column in ('get_company', 'get_city', 'get_street', 'get_subsidiary'):
             return str(getattr(row, column)())
         if column in ('get_result_percentage'):
-            return getattr(row, column)()
+            return intcomma(getattr(row, column)())
         if column == 'get_team':
             return row.get_team().name
         else:
