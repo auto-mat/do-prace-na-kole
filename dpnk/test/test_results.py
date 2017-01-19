@@ -24,19 +24,32 @@ from django.test import TestCase
 from dpnk import models, results
 from dpnk.test.util import print_response  # noqa
 
+from model_mommy import mommy
+
 
 class RidesBaseTests(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users']
-
     def test_get_minimum_rides_base_proportional(self):
-        competition = models.Competition.objects.get(slug="FQ-LB")
+        competition = mommy.make(
+            "dpnk.Competition",
+            competition_type="frequency",
+            competitor_type="team",
+            date_from=datetime.date(year=2010, month=11, day=1),
+            date_to=datetime.date(year=2010, month=11, day=15),
+            minimum_rides_base=23,
+        )
+
         self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 1)), 1)
         self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 7)), 10)
         self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 15)), 23)
         self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 30)), 23)
 
     def test_get_minimum_rides_base_proportional_phase(self):
-        competition = models.Phase.objects.get(pk=2)
+        competition = mommy.make(
+            "dpnk.Phase",
+            phase_type="competition",
+            date_from=datetime.date(year=2010, month=11, day=1),
+            date_to=datetime.date(year=2010, month=11, day=30),
+        )
         self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 1)), 0)
         self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 7)), 5)
         self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 15)), 12)
