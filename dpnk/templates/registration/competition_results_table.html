@@ -11,14 +11,16 @@ $(document).ready(function() {
         "serverSide": true,
         "ordering": false,
         "searching": true,
-        "dom": "<'row'<'col-sm-4'l><'col-sm-4 search-company-div'><'col-sm-4'f>>" +
+        "dom": "<'row'<'col-md-4'l><'col-md-4 search-company-div'><'col-md-4'f>>" +
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-5'i><'col-sm-7'p>>",
         "language": {
             "url": "{% static "js/datatables-plugins/i18n/" %}{{ current_language_code }}.json"
         },
         "initComplete": function(settings, json) {
-            $("div.search-company-div").html('{% trans "Společnost:" %} <input id="search-company" class="form-control input-sm" type="text" placeholder="" />');
+            $("div.search-company-div").html(
+               '<div class="dataTables_filter"><label>{% trans "Společnost:" %} <input id="search-company" class="form-control input-sm" type="text" placeholder="" /></label></div>'
+            );
             $('#search-company').keyup(function () {
                 oTable.column(0).search($(this).val()).draw();
             } );
