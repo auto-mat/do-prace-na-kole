@@ -128,6 +128,27 @@ class TestGetColumns(TestCase):
         ]
         self.assertListEqual(columns, expected_columns)
 
+    def test_team_length(self):
+        """
+        Test that get_columns works properly for team length competition
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type='team',
+            competition_type='length',
+        )
+        columns = competition.get_columns()
+        expected_columns = [
+            ('result_order', 'get_sequence_range', 'Po&shy;řa&shy;dí'),
+            ('result_value', 'get_result', 'Ki&shy;lo&shy;me&shy;trů prů&shy;měr&shy;ně'),
+            ('result_divident', 'result_divident', 'Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů'),
+            ('member_count', 'team__member_count', 'Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch v&nbsp;tý&shy;mu'),
+            ('competitor', 'get_team', 'Sou&shy;tě&shy;ží&shy;cí'),
+            ('company', 'get_company', 'Spo&shy;leč&shy;nost'),
+            ('city', 'get_city', 'Měs&shy;to'),
+        ]
+        self.assertListEqual(columns, expected_columns)
+
 
 class TestGetCompanyQuerystring(TestCase):
     def test_company(self):
