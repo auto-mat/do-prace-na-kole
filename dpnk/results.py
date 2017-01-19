@@ -84,14 +84,10 @@ def get_competitors(competition, potencial_competitors=False):
         elif competition.competitor_type == 'company':
             query = competition.company_competitors.all()
 
-    if competition.competitor_type == 'single_user':
-        pass
-    elif competition.competitor_type == 'liberos':
+    if competition.competitor_type == 'liberos':
         query = query.filter(team__member_count__lte=1)
-    elif competition.competitor_type == 'team':
+    if competition.competitor_type == 'team':
         query = query.filter(member_count__gt=1)
-    elif competition.competitor_type == 'company':
-        pass
 
     return query
 

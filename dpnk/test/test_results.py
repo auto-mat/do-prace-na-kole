@@ -165,6 +165,124 @@ class GetCompetitorsWithoutAdmissionTests(TestCase):
         )
 
 
+class GetCompetitorsTests(TestCase):
+    def setUp(self):
+        self.campaign = mommy.make(
+            'dpnk.Campaign',
+            name="Foo campaign",
+        )
+        mommy.make(
+            "dpnk.Phase",
+            phase_type="competition",
+            date_from=datetime.date(year=2010, month=11, day=1),
+            date_to=datetime.date(year=2010, month=11, day=30),
+            campaign=self.campaign,
+        )
+
+    def test_get_competitors(self):
+        team = mommy.make(
+            "dpnk.Team",
+            name="Foo team",
+            campaign=self.campaign,
+        )
+        for name in ["Foo user", "Bar user"]:
+            mommy.make(
+                "dpnk.UserAttendance",
+                userprofile__nickname=name,
+                team=team,
+                campaign=self.campaign,
+                approved_for_team='approved',
+            )
+        team.save()
+        competition = mommy.make(
+            "dpnk.Competition",
+            competitor_type="team",
+            without_admission=True,
+            campaign=self.campaign,
+        )
+        query = results.get_competitors(competition)
+        self.assertQuerysetEqual(query.all(), ['<Team: Foo team (Foo user, Bar user)>'])
+
+    def test_get_competitors_with_admission_single(self):
+        user_attendance = mommy.make(
+            "dpnk.UserAttendance",
+            userprofile__nickname="Foo user",
+            campaign=self.campaign,
+        )
+        competition = mommy.make(
+            "dpnk.Competition",
+            competitor_type="single_user",
+            without_admission=False,
+            campaign=self.campaign,
+            user_attendance_competitors=[user_attendance],
+        )
+        query = results.get_competitors(competition)
+        self.assertQuerysetEqual(query.all(), ['<UserAttendance: Foo user>'])
+
+    def test_get_competitors_with_admission_team(self):
+        team = mommy.make(
+            "dpnk.Team",
+            name="Foo team",
+            campaign=self.campaign,
+        )
+        for name in ["Foo user", "Bar user"]:
+            mommy.make(
+                "dpnk.UserAttendance",
+                userprofile__nickname=name,
+                team=team,
+                campaign=self.campaign,
+                approved_for_team='approved',
+            )
+        team.save()
+        competition = mommy.make(
+            "dpnk.Competition",
+            competitor_type="team",
+            without_admission=False,
+            campaign=self.campaign,
+            team_competitors=[team],
+        )
+        query = results.get_competitors(competition)
+        self.assertQuerysetEqual(query.all(), ['<Team: Foo team (Foo user, Bar user)>'])
+
+    def test_get_competitors_with_admission_company(self):
+        company = mommy.make(
+            "dpnk.Company",
+            name="Foo company",
+        )
+        competition = mommy.make(
+            "dpnk.Competition",
+            competitor_type="company",
+            without_admission=False,
+            campaign=self.campaign,
+            company_competitors=[company],
+        )
+        query = results.get_competitors(competition)
+        self.assertQuerysetEqual(query.all(), ['<Company: Foo company>'])
+
+    def test_get_competitors_liberos(self):
+        team = mommy.make(
+            "dpnk.Team",
+            name="Foo team",
+            campaign=self.campaign,
+        )
+        mommy.make(
+            "dpnk.UserAttendance",
+            userprofile__nickname="Foo user",
+            team=team,
+            campaign=self.campaign,
+            approved_for_team='approved',
+        )
+        team.save()
+        competition = mommy.make(
+            "dpnk.Competition",
+            competitor_type="liberos",
+            without_admission=True,
+            campaign=self.campaign,
+        )
+        query = results.get_competitors(competition)
+        self.assertQuerysetEqual(query.all(), ['<UserAttendance: Foo user>'])
+
+
 class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'trips']
 
@@ -172,11 +290,6 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         super().setUp()
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
         util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1115))
-
-    def test_get_competitors(self):
-        team = models.Team.objects.get(id=1)
-        query = results.get_competitors(models.Competition.objects.get(id=0))
-        self.assertListEqual(list(query.all()), [team])
 
     def test_get_userprofile_length(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
