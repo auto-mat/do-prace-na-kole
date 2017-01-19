@@ -24,45 +24,58 @@ from . import tasks, util
 from .models import Answer, Choice, City, Company, Competition, CompetitionResult, Team, Trip, UserAttendance
 
 
-def get_competitors_without_admission(competition):  # noqa
+def _filter_query_single_user(competition):
     filter_query = {}
+    filter_query['campaign'] = competition.campaign
+    filter_query['userprofile__user__is_active'] = True
+    filter_query['approved_for_team'] = 'approved'
+    if competition.city:
+        cities = competition.city.all()
+        if cities:
+            filter_query['team__subsidiary__city__in'] = cities
+    if competition.company:
+        filter_query['team__subsidiary__company'] = competition.company
+    if competition.sex:
+        filter_query['userprofile__sex'] = competition.sex
+    return filter_query
+
+
+def _filter_query_team(competition):
+    filter_query = {}
+    filter_query['campaign'] = competition.campaign
+    if competition.city:
+        cities = competition.city.all()
+        if cities:
+            filter_query['subsidiary__city__in'] = cities
+    if competition.company:
+        filter_query['subsidiary__company'] = competition.company
+    return filter_query
+
+
+def _filter_query_company(competition):
+    filter_query = {}
+    if competition.city:
+        cities = competition.city.all()
+        if cities:
+            filter_query['subsidiaries__city__in'] = cities
+    if competition.company:
+        filter_query['pk'] = competition.company.pk
+    return filter_query
+
+
+def _get_competitors_without_admission(competition):
     if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-        filter_query['campaign'] = competition.campaign
-        filter_query['userprofile__user__is_active'] = True
-        filter_query['approved_for_team'] = 'approved'
-        if competition.city:
-            cities = competition.city.all()
-            if cities:
-                filter_query['team__subsidiary__city__in'] = cities
-        if competition.company:
-            filter_query['team__subsidiary__company'] = competition.company
-        if competition.sex:
-            filter_query['userprofile__sex'] = competition.sex
-        return UserAttendance.objects.filter(**filter_query)
+        return UserAttendance.objects.filter(**_filter_query_single_user(competition))
     elif competition.competitor_type == 'team':
-        filter_query = {}
-        filter_query['campaign'] = competition.campaign
-        if competition.city:
-            cities = competition.city.all()
-            if cities:
-                filter_query['subsidiary__city__in'] = cities
-        if competition.company:
-            filter_query['subsidiary__company'] = competition.company
-        return Team.objects.filter(**filter_query)
+        return Team.objects.filter(**_filter_query_team(competition))
     elif competition.competitor_type == 'company':
-        if competition.city:
-            cities = competition.city.all()
-            if cities:
-                filter_query['subsidiaries__city__in'] = cities
-        if competition.company:
-            filter_query['pk'] = competition.company.pk
-        return Company.objects.filter(**filter_query)
+        return Company.objects.filter(**_filter_query_company(competition))
 
 
 def get_competitors(competition, potencial_competitors=False):
     """ Return query with competitors attending given competition """
     if competition.without_admission or potencial_competitors:
-        query = get_competitors_without_admission(competition)
+        query = _get_competitors_without_admission(competition)
     else:
         if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
             query = competition.user_attendance_competitors.all()

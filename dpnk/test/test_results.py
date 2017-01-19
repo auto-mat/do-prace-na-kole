@@ -58,6 +58,113 @@ class RidesBaseTests(TestCase):
         self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 30)), 25)
 
 
+class GetCompetitorsWithoutAdmissionTests(TestCase):
+    def setUp(self):
+        self.campaign = mommy.make(
+            'dpnk.Campaign',
+            name="Foo campaign",
+        )
+
+    def test_single_user_frequency(self):
+        """ Test if _filter_query_single_user function returns correct filter_query dict. """
+        competition = mommy.make(
+            "dpnk.Competition",
+            competition_type="frequency",
+            competitor_type="single_user",
+            campaign=self.campaign,
+            sex='male',
+            company__name="Foo company",
+        )
+        filter_query = results._filter_query_single_user(competition)
+        expected_dict = {
+            'approved_for_team': 'approved',
+            'campaign': self.campaign,
+            'userprofile__user__is_active': True,
+            'team__subsidiary__company': competition.company,
+            'userprofile__sex': 'male',
+        }
+        self.assertDictEqual(filter_query, expected_dict)
+
+    def test_single_user_frequency_city(self):
+        """ Test if _filter_query_single_user function returns correct filter_query dict with city filter. """
+        city = mommy.make('dpnk.City', name="City 1")
+        competition = mommy.make(
+            "dpnk.Competition",
+            competition_type="frequency",
+            competitor_type="single_user",
+            campaign=self.campaign,
+            city=[city],
+        )
+        filter_query = results._filter_query_single_user(competition)
+        self.assertQuerysetEqual(
+            filter_query['team__subsidiary__city__in'],
+            ['<City: City 1>'],
+        )
+
+    def test_team_frequency(self):
+        """ Test if _filter_query_team function returns correct filter_query dict. """
+        competition = mommy.make(
+            "dpnk.Competition",
+            competition_type="frequency",
+            competitor_type="team",
+            campaign=self.campaign,
+            company__name="Foo company",
+        )
+        filter_query = results._filter_query_team(competition)
+        expected_dict = {
+            'campaign': self.campaign,
+            'subsidiary__company': competition.company,
+        }
+        self.assertDictEqual(filter_query, expected_dict)
+
+    def test_team_frequency_city(self):
+        """ Test if _filter_query_team function returns correct filter_query dict with city filter. """
+        city = mommy.make('dpnk.City', name="City 1")
+        competition = mommy.make(
+            "dpnk.Competition",
+            competition_type="frequency",
+            competitor_type="team",
+            campaign=self.campaign,
+            city=[city],
+        )
+        filter_query = results._filter_query_team(competition)
+        self.assertQuerysetEqual(
+            filter_query['subsidiary__city__in'],
+            ['<City: City 1>'],
+        )
+
+    def test_company_frequency(self):
+        """ Test if _filter_query_company function returns correct filter_query dict. """
+        competition = mommy.make(
+            "dpnk.Competition",
+            competition_type="frequency",
+            competitor_type="company",
+            campaign=self.campaign,
+            company__name="Foo company",
+        )
+        filter_query = results._filter_query_company(competition)
+        expected_dict = {
+            'pk': competition.company.pk,
+        }
+        self.assertDictEqual(filter_query, expected_dict)
+
+    def test_company_frequency_city(self):
+        """ Test if _filter_query_company function returns correct filter_query dict with city filter. """
+        city = mommy.make('dpnk.City', name="City 1")
+        competition = mommy.make(
+            "dpnk.Competition",
+            competition_type="frequency",
+            competitor_type="company",
+            campaign=self.campaign,
+            city=[city],
+        )
+        filter_query = results._filter_query_company(competition)
+        self.assertQuerysetEqual(
+            filter_query['subsidiaries__city__in'],
+            ['<City: City 1>'],
+        )
+
+
 class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'trips']
 
