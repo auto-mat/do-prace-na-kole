@@ -17,7 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import datetime
+
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from model_mommy import mommy
 
@@ -156,3 +159,238 @@ class TestGetCompanyQuerystring(TestCase):
             competitor_type='single_user',
         )
         self.assertEqual(competition.get_company_querystring(), "user_attendance__team__subsidiary__company")
+
+
+class TestCanAdmit(TestCase):
+    def setUp(self):
+        self.campaign = mommy.make(
+            'dpnk.Campaign',
+        )
+        mommy.make(
+            "dpnk.Phase",
+            phase_type="competition",
+            campaign=self.campaign,
+            date_from=datetime.date(year=2010, month=1, day=1),
+            date_to=datetime.date(year=2019, month=12, day=12),
+        )
+
+    def test_without_admission(self):
+        """
+        Test that can_admin function works properly for competition without admission
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            without_admission=True,
+            campaign=self.campaign,
+        )
+        self.assertEqual(competition.can_admit(None), "without_admission")
+
+    def test_not_company_admin(self):
+        """
+        Test that can_admin function works properly for competition when not company admin
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="company",
+            without_admission=False,
+            campaign=self.campaign,
+        )
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+        )
+        self.assertEqual(competition.can_admit(user_attendance), "not_company_admin")
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    )
+    def test_before_beginning(self):
+        """
+        Test that can_admin function works properly when questionnaire competition is before beginning
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="single_user",
+            competition_type="questionnaire",
+            without_admission=False,
+            campaign=self.campaign,
+            date_from=datetime.date(year=2010, month=11, day=21),
+        )
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+        )
+        self.assertEqual(competition.can_admit(user_attendance), "before_beginning")
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=22),
+    )
+    def test_has_finished(self):
+        """
+        Test that can_admin function works properly when questionnaire competition has finished
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="single_user",
+            competition_type="questionnaire",
+            without_admission=False,
+            campaign=self.campaign,
+            date_from=datetime.date(year=2010, month=11, day=19),
+            date_to=datetime.date(year=2010, month=11, day=21),
+        )
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+        )
+        self.assertEqual(competition.can_admit(user_attendance), "after_end")
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    )
+    def test_after_beginning(self):
+        """
+        Test that can_admin function works properly when non-questionnaire competition already started
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="single_user",
+            competition_type="length",
+            without_admission=False,
+            entry_after_beginning_days=0,
+            campaign=self.campaign,
+            date_from=datetime.date(year=2010, month=11, day=19),
+            date_to=datetime.date(year=2010, month=11, day=21),
+        )
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+        )
+        self.assertEqual(competition.can_admit(user_attendance), "after_beginning")
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=18),
+    )
+    def test_not_libero(self):
+        """
+        Test that can_admin function works properly when non-libero compbetitor enters libero competition
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="liberos",
+            competition_type="length",
+            without_admission=False,
+            entry_after_beginning_days=0,
+            campaign=self.campaign,
+            date_from=datetime.date(year=2010, month=11, day=19),
+            date_to=datetime.date(year=2010, month=11, day=21),
+        )
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+        )
+        mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team=user_attendance.team,
+        )
+        self.assertEqual(competition.can_admit(user_attendance), "not_libero")
+
+    def test_not_for_company(self):
+        """
+        Test that can_admin function works properly when competition is not for users company
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="single_user",
+            competition_type="length",
+            without_admission=False,
+            campaign=self.campaign,
+            company__name="Company 1",
+        )
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team__subsidiary__company__name="Company 2",
+            team__campaign=self.campaign,
+        )
+        self.assertEqual(competition.can_admit(user_attendance), "not_for_company")
+
+    def test_not_for_city(self):
+        """
+        Test that can_admin function works properly when competition is not for users city
+        """
+        city1 = mommy.make('dpnk.City', name="City 1")
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="single_user",
+            competition_type="length",
+            without_admission=False,
+            campaign=self.campaign,
+            city=[city1],
+        )
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team__subsidiary__city__name="City 2",
+            team__campaign=self.campaign,
+        )
+        self.assertEqual(competition.can_admit(user_attendance), "not_for_city")
+
+    def test_true(self):
+        """
+        Test that can_admin function works properly for admission
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="single_user",
+            competition_type="length",
+            without_admission=False,
+            campaign=self.campaign,
+        )
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+        )
+        self.assertEqual(competition.can_admit(user_attendance), True)
+
+
+class TestHasEntryNotOpened(TestCase):
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=19),
+    )
+    def test_true(self):
+        """
+        Test that has_entry_not_opened function returns true
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            entry_after_beginning_days=0,
+            date_from=datetime.date(year=2010, month=11, day=19),
+            date_to=datetime.date(year=2010, month=11, day=21),
+        )
+        self.assertEqual(competition.has_entry_not_opened(), True)
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=18),
+    )
+    def test_false(self):
+        """
+        Test that has_entry_not_opened function returns false
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            entry_after_beginning_days=0,
+            date_from=datetime.date(year=2010, month=11, day=19),
+            date_to=datetime.date(year=2010, month=11, day=21),
+        )
+        self.assertEqual(competition.has_entry_not_opened(), False)
+
+    def test_not_fail(self):
+        """
+        Test that has_entry_not_opened function doesn't fail if date is not set
+        """
+        competition = mommy.make(
+            'dpnk.Competition',
+            entry_after_beginning_days=0,
+        )
+        self.assertEqual(competition.has_entry_not_opened(), False)

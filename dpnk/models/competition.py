@@ -235,8 +235,11 @@ class Competition(models.Model):
         else:
             return True
 
-    def has_entry_opened(self):
-        return self.date_from + datetime.timedelta(self.entry_after_beginning_days) <= util.today()
+    def has_entry_not_opened(self):
+        if self.date_from:
+            return self.date_from + datetime.timedelta(self.entry_after_beginning_days) <= util.today()
+        else:
+            return False
 
     def has_finished(self):
         if self.date_to:
@@ -263,6 +266,9 @@ class Competition(models.Model):
             return 'company'
 
     def can_admit(self, user_attendance):
+        """
+        Returns True if user can admit for this competition, othervise it returns the reason why user can't admit.
+        """
         if self.without_admission:
             return 'without_admission'
         if not util.get_company_admin(user_attendance.userprofile.user, self.campaign) and self.competitor_type == 'company':
@@ -271,7 +277,7 @@ class Competition(models.Model):
             return 'before_beginning'
         if self.competition_type == 'questionnaire' and self.has_finished():
             return 'after_end'
-        if self.competition_type != 'questionnaire' and self.has_entry_opened():
+        if self.competition_type != 'questionnaire' and self.has_entry_not_opened():
             return 'after_beginning'
 
         if self.competitor_type == 'liberos' and not user_attendance.is_libero():
