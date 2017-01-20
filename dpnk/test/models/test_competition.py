@@ -530,3 +530,29 @@ class SelectRelatedResultsTests(TestCase):
         qs = competition.select_related_results(competition.results)
         expected_qs = ['<CompetitionResult: >']
         self.assertQuerysetEqual(qs, expected_qs)
+
+
+class TestHasStarted(TestCase):
+    def test_no_date_from(self):
+        competition = mommy.make('dpnk.Competition')
+        self.assertEqual(competition.has_started(), True)
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=22),
+    )
+    def test_no_true(self):
+        competition = mommy.make(
+            'dpnk.Competition',
+            date_from=datetime.date(year=2010, month=11, day=21),
+        )
+        self.assertEqual(competition.has_started(), True)
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    )
+    def test_no_false(self):
+        competition = mommy.make(
+            'dpnk.Competition',
+            date_from=datetime.date(year=2010, month=11, day=21),
+        )
+        self.assertEqual(competition.has_started(), False)
