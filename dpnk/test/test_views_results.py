@@ -154,7 +154,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
             date_from=datetime.date(year=2010, month=1, day=1),
             date_to=datetime.date(year=2019, month=12, day=12),
         )
-        single_frequency_competition = mommy.make(
+        self.single_frequency_competition = mommy.make(
             'dpnk.Competition',
             campaign=self.campaign,
             competition_type='frequency',
@@ -166,7 +166,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
             result="1",
             result_divident="1.3",
             result_divisor="1.1",
-            competition=single_frequency_competition,
+            competition=self.single_frequency_competition,
             user_attendance__userprofile__nickname="foo user",
             user_attendance__userprofile__user__first_name="Adam",
             user_attendance__userprofile__user__last_name="Rosa",
@@ -182,7 +182,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
             result="1",
             result_divident="1.2",
             result_divisor="1.1",
-            competition=single_frequency_competition,
+            competition=self.single_frequency_competition,
             user_attendance__userprofile__nickname=None,
             user_attendance__userprofile__user__first_name="Jan",
             user_attendance__userprofile__user__last_name="Novák",
@@ -208,6 +208,44 @@ class CompetitionResultListJsonSingleTests(TestCase):
             "draw": 0,
             "result": "ok",
             "recordsFiltered": 2,
+        }
+        self.assertJSONEqual(response.content.decode(), expected_json)
+
+    def test_paging_filter(self):
+        """
+        Test if single user frequency competition result JSON is returned
+        Test if paging works correctly when filter is enabled.
+        This test ensures, that ranks are correctly counted for filtered items.
+        """
+        mommy.make(
+            'dpnk.CompetitionResult',
+            result="1",
+            result_divident="1.2",
+            result_divisor="1.1",
+            competition=self.single_frequency_competition,
+            user_attendance__userprofile__nickname="baz user",
+            user_attendance__campaign=self.campaign,
+            user_attendance__team__campaign=self.campaign,
+            user_attendance__team__member_count=1,
+            user_attendance__team__subsidiary__city__name="baz city",
+            user_attendance__team__subsidiary__company__name="baz company",
+            user_attendance__team__name="baz team",
+        )
+        get_params = {
+            'length': 1,
+            'search[value]': 'baz user',
+        }
+        request = self.factory.get('', get_params)
+        request.subdomain = "testing-campaign"
+        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        expected_json = {
+            "recordsTotal": 3,
+            "data": [
+                ["1.&nbsp;-&nbsp;3.", "100,0", 1.2, 1.1, "baz user", "baz team", "baz company", "baz city"],
+            ],
+            "draw": 0,
+            "result": "ok",
+            "recordsFiltered": 1,
         }
         self.assertJSONEqual(response.content.decode(), expected_json)
 

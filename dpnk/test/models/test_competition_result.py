@@ -101,6 +101,17 @@ class TestCompetitionResult(TestCase):
         )
         self.assertEqual(str(competition_result), "Foo company")
 
+    def test_str_company_none(self):
+        """
+        Test that __str__ returns CompetitionResult correct string if competition is for companies without company
+        """
+        competition_result = mommy.make(
+            'dpnk.CompetitionResult',
+            competition__competitor_type="company",
+            competition__campaign=self.campaign,
+        )
+        self.assertEqual(str(competition_result), "")
+
     def test_get_result(self):
         """
         Test that get_result function works correctly

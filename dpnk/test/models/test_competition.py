@@ -483,3 +483,50 @@ class TestTypeString(TestCase):
             sex="male",
         )
         self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost týmů  ve městě Testing city pro muže")
+
+
+class GetResultsIdRankDictTests(TestCase):
+    def test_dict(self):
+        competition = mommy.make('dpnk.Competition')
+        mommy.make('dpnk.CompetitionResult', result="3", competition=competition, id=1),
+        mommy.make('dpnk.CompetitionResult', result="3", competition=competition, id=2),
+        mommy.make('dpnk.CompetitionResult', result="2", competition=competition, id=3),
+        mommy.make('dpnk.CompetitionResult', result="2", competition=competition, id=4),
+        mommy.make('dpnk.CompetitionResult', result="2", competition=competition, id=5),
+        mommy.make('dpnk.CompetitionResult', result="1", competition=competition, id=6),
+        expected_dict = {
+            1: (1, 2),
+            2: (1, 2),
+            3: (3, 5),
+            4: (3, 5),
+            5: (3, 5),
+            6: (6, 6),
+        }
+        results = competition.annotate_results_rank(competition.results)
+        self.assertDictEqual(competition.get_result_id_rank_dict(results), expected_dict)
+
+
+class SelectRelatedResultsTests(TestCase):
+    def test_single(self):
+        """ Test if selecting related on single user competition doesn't fail """
+        competition = mommy.make('dpnk.Competition', competitor_type='single_user')
+        mommy.make('dpnk.CompetitionResult', competition=competition),
+        qs = competition.select_related_results(competition.results)
+        expected_qs = ['<CompetitionResult: >']
+        self.assertQuerysetEqual(qs, expected_qs)
+
+    def test_team(self):
+        """ Test if selecting related on team competition doesn't fail """
+        competition = mommy.make('dpnk.Competition', competitor_type='team')
+        mommy.make('dpnk.CompetitionResult', competition=competition),
+        qs = competition.select_related_results(competition.results)
+        expected_qs = ['<CompetitionResult: >']
+        self.assertQuerysetEqual(qs, expected_qs)
+
+    def test_company(self):
+        """ Test if selecting related on company competition doesn't fail """
+        competition = mommy.make('dpnk.Competition', competitor_type='company')
+        mommy.make('dpnk.CompetitionResult', competition=competition),
+        qs = competition.select_related_results(competition.results)
+        expected_qs = ['<CompetitionResult: >']
+        self.assertQuerysetEqual(qs, expected_qs)

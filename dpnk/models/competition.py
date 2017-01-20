@@ -28,6 +28,8 @@ from django.utils.html import escape
 from django.utils.translation import string_concat, ungettext_lazy
 from django.utils.translation import ugettext_lazy as _
 
+from rank import Rank, UpperRank
+
 from redactor.widgets import RedactorEditor
 
 from .campaign import Campaign
@@ -214,6 +216,45 @@ class Competition(models.Model):
     def get_results(self):
         from .. import results
         return results.get_results(self)
+
+    def select_related_results(self, results):
+        """
+        Add select_related objects to the results queryeset
+        which are needed to display results.
+        """
+        if self.competitor_type == 'single_user' or self.competitor_type == 'libero':
+            results = results.select_related(
+                'user_attendance__userprofile__user',
+                'user_attendance__team__subsidiary__company',
+                'user_attendance__team__subsidiary__city',
+            )
+        elif self.competitor_type == 'team':
+            results = results.select_related(
+                'team__subsidiary__company',
+                'team__subsidiary__city',
+            )
+        elif self.competitor_type == 'company':
+            results = results.select_related(
+                'company',
+            )
+        return results
+
+    def annotate_results_rank(self, results):
+        """
+        Annotate results list with lower_rank and upper_rank.
+        The result cannot be filtered, so use get_result_id_rank_list function to get the rank list.
+        """
+        results = results.annotate(
+            lower_rank=Rank('result'),
+            upper_rank=UpperRank('result'),
+        )
+        return results
+
+    def get_result_id_rank_dict(self, results):
+        """
+        Make dict {result_id: (lower_rank, upper_rank)} out from results annotated with their ranks.
+        """
+        return {i[0]: i[1:] for i in results.values_list('id', 'lower_rank', 'upper_rank')}
 
     def get_results_first3(self):
         ret_list = []

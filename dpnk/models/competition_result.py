@@ -23,7 +23,6 @@ from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from .company import Company
-from .competition import Competition
 from .team import Team
 from .user_attendance import UserAttendance
 
@@ -57,7 +56,7 @@ class CompetitionResult(models.Model):
         default=None,
     )
     competition = models.ForeignKey(
-        Competition,
+        'Competition',
         related_name="results",
         null=False,
         blank=False,
@@ -144,7 +143,8 @@ class CompetitionResult(models.Model):
             if self.team:
                 return "%s" % self.team.name
         elif self.competition.competitor_type == 'company':
-            return "%s" % self.company.name
+            if self.company:
+                return "%s" % self.company.name
         else:
             if self.user_attendance:
                 return "%s" % self.user_attendance.userprofile.name()

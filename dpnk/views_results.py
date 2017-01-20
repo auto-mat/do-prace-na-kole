@@ -41,7 +41,7 @@ class CompetitionResultListJson(BaseDatatableView):
         if column == 'user_attendance':
             return str(row.user_attendance)
         if column == 'get_sequence_range':
-            sequence_range = row.get_sequence_range()
+            sequence_range = self.rank_dict[row.id]
             if sequence_range[0] == sequence_range[1]:
                 return "%s." % sequence_range[0]
             else:
@@ -56,28 +56,40 @@ class CompetitionResultListJson(BaseDatatableView):
             return super().render_column(row, column)
 
     def get_initial_queryset(self):
-        self.competition = models.Competition.objects.get(
-            campaign__slug=self.request.subdomain,
-            slug=self.kwargs['competition_slug'],
-        )
-        return self.competition.get_results()
+        if not hasattr(self, 'competition'):
+            self.competition = models.Competition.objects.get(
+                campaign__slug=self.request.subdomain,
+                slug=self.kwargs['competition_slug'],
+            )
+        results = self.competition.get_results()
+        return self.competition.select_related_results(results)
+
+    def prepare_results(self, results):
+        all_results = self.get_initial_queryset()
+        if not self.queryset_filtered:
+            all_results = self.paging(all_results)
+        all_results = self.competition.annotate_results_rank(all_results)
+        self.rank_dict = self.competition.get_result_id_rank_dict(all_results)
+        return super().prepare_results(results)
 
     def filter_queryset(self, qs):
+        self.queryset_filtered = False
         search = self.request.GET.get('search[value]', None)
         if search:
+            self.queryset_filtered = True
+            qs = qs.annotate(
+                first_name=Case(
+                    When(user_attendance__userprofile__nickname__isnull=False, then=Value(None)),
+                    default="user_attendance__userprofile__user__first_name",
+                    output_field=CharField(),
+                ),
+                last_name=Case(
+                    When(user_attendance__userprofile__nickname__isnull=False, then=Value(None)),
+                    default="user_attendance__userprofile__user__last_name",
+                    output_field=CharField(),
+                ),
+            )
             for s in search.split():
-                qs = qs.annotate(
-                    first_name=Case(
-                        When(user_attendance__userprofile__nickname__isnull=False, then=Value(None)),
-                        default="user_attendance__userprofile__user__first_name",
-                        output_field=CharField(),
-                    ),
-                    last_name=Case(
-                        When(user_attendance__userprofile__nickname__isnull=False, then=Value(None)),
-                        default="user_attendance__userprofile__user__last_name",
-                        output_field=CharField(),
-                    ),
-                )
                 qs = qs.filter(
                     Q(user_attendance__userprofile__nickname__unaccent__icontains=s) |
                     Q(first_name__unaccent__icontains=s) |
@@ -90,6 +102,7 @@ class CompetitionResultListJson(BaseDatatableView):
 
         company_search = self.request.GET.get('columns[0][search][value]', None)  # the column 7 means always company column
         if company_search:
+            self.queryset_filtered = True
             querystring = self.competition.get_company_querystring()
 
             m = re.match(r'^"(.*)"$', company_search)
