@@ -538,7 +538,7 @@ class TestHasStarted(TestCase):
         self.assertEqual(competition.has_started(), True)
 
     @override_settings(
-        FAKE_DATE=datetime.date(year=2010, month=11, day=22),
+        FAKE_DATE=datetime.date(year=2010, month=11, day=21),
     )
     def test_no_true(self):
         competition = mommy.make(
@@ -556,3 +556,29 @@ class TestHasStarted(TestCase):
             date_from=datetime.date(year=2010, month=11, day=21),
         )
         self.assertEqual(competition.has_started(), False)
+
+
+class TestHasFinished(TestCase):
+    def test_no_date_from(self):
+        competition = mommy.make('dpnk.Competition')
+        self.assertEqual(competition.has_finished(), False)
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=22),
+    )
+    def test_no_true(self):
+        competition = mommy.make(
+            'dpnk.Competition',
+            date_to=datetime.date(year=2010, month=11, day=21),
+        )
+        self.assertEqual(competition.has_finished(), True)
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=21),
+    )
+    def test_no_false(self):
+        competition = mommy.make(
+            'dpnk.Competition',
+            date_to=datetime.date(year=2010, month=11, day=21),
+        )
+        self.assertEqual(competition.has_finished(), False)
