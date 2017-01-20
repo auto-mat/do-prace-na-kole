@@ -20,7 +20,7 @@
 
 from django.core.urlresolvers import reverse
 
-from dpnk.test.tests import ViewsLogon
+from dpnk.test.test_views import ViewsLogon
 from dpnk.test.util import print_response  # noqa
 
 

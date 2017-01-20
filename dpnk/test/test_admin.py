@@ -368,7 +368,7 @@ class AdminTests(TestCase):
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "FQ-LB"}), cr.id)
         response = self.client.get(address)
         self.assertContains(response, "Soutěžící: Testing team 1")
-        self.assertContains(response, "Dohromady bodů: 0,0289855072463768")
+        self.assertContains(response, "Dohromady bodů: 0,028986")
 
     def test_admin_questionnaire_answers_dotaznik_spolecnosti(self):
         competition = models.Competition.objects.filter(slug="dotaznik-spolecnosti")

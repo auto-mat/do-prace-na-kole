@@ -1089,15 +1089,9 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompetitionResultsView, self).get_context_data(*args, **kwargs)
         competition_slug = kwargs.get('competition_slug')
-        limit = kwargs.get('limit')
-
-        if limit:
-            limit = int(limit)
-        else:
-            limit = None
 
         try:
-            competition = Competition.objects.get(slug=competition_slug)
+            context_data['competition'] = Competition.objects.get(slug=competition_slug)
         except Competition.DoesNotExist:
             logger.exception('Unknown competition', extra={'slug': competition_slug, 'request': self.request})
             return {
@@ -1109,22 +1103,6 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
                 ),
                 'title': _("Není vybraný tým"),
             }
-
-        results = competition.get_results()
-        if competition.competitor_type == 'single_user' or competition.competitor_type == 'libero':
-            results = results.select_related(
-                'user_attendance__userprofile__user',
-                'user_attendance__team__subsidiary__company',
-                'user_attendance__team__subsidiary__city',
-            )
-        elif competition.competitor_type == 'team':
-            results = results.select_related('team__subsidiary__company', 'team__subsidiary__company', 'team__subsidiary__city')
-        elif competition.competitor_type == 'company':
-            results = results.select_related('company')
-
-        context_data['competition'] = competition
-        context_data['results'] = results[:limit]
-        context_data['limit'] = limit
         return context_data
 
     # This is here for NewRelic to distinguish from TemplateView.get

@@ -28,6 +28,8 @@ from django.utils.html import escape
 from django.utils.translation import string_concat, ungettext_lazy
 from django.utils.translation import ugettext_lazy as _
 
+from rank import Rank, UpperRank
+
 from redactor.widgets import RedactorEditor
 
 from .campaign import Campaign
@@ -215,19 +217,44 @@ class Competition(models.Model):
         from .. import results
         return results.get_results(self)
 
-    def get_results_first3(self):
-        ret_list = []
-        order = 1
-        last_result = None
-        from .. import results
-        for result in results.get_results(self).all()[:100]:
-            if last_result != result.result:
-                order += 1
-            last_result = result.result
-            ret_list.append(result)
-            if order > 3:
-                return ret_list
-        return ret_list
+    def select_related_results(self, results):
+        """
+        Add select_related objects to the results queryeset
+        which are needed to display results.
+        """
+        if self.competitor_type == 'single_user' or self.competitor_type == 'libero':
+            results = results.select_related(
+                'user_attendance__userprofile__user',
+                'user_attendance__team__subsidiary__company',
+                'user_attendance__team__subsidiary__city',
+            )
+        elif self.competitor_type == 'team':
+            results = results.select_related(
+                'team__subsidiary__company',
+                'team__subsidiary__city',
+            )
+        elif self.competitor_type == 'company':
+            results = results.select_related(
+                'company',
+            )
+        return results
+
+    def annotate_results_rank(self, results):
+        """
+        Annotate results list with lower_rank and upper_rank.
+        The result cannot be filtered, so use get_result_id_rank_list function to get the rank list.
+        """
+        results = results.annotate(
+            lower_rank=Rank('result'),
+            upper_rank=UpperRank('result'),
+        )
+        return results
+
+    def get_result_id_rank_dict(self, results):
+        """
+        Make dict {result_id: (lower_rank, upper_rank)} out from results annotated with their ranks.
+        """
+        return {i[0]: i[1:] for i in results.values_list('id', 'lower_rank', 'upper_rank')}
 
     def has_started(self):
         if self.date_from:
@@ -235,8 +262,11 @@ class Competition(models.Model):
         else:
             return True
 
-    def has_entry_opened(self):
-        return self.date_from + datetime.timedelta(self.entry_after_beginning_days) <= util.today()
+    def has_entry_not_opened(self):
+        if self.date_from:
+            return self.date_from + datetime.timedelta(self.entry_after_beginning_days) <= util.today()
+        else:
+            return False
 
     def has_finished(self):
         if self.date_to:
@@ -251,7 +281,21 @@ class Competition(models.Model):
         from .. import results
         return results.recalculate_result_competition(self)
 
+    def get_company_querystring(self):
+        """
+        Returns string with wich is possible to filter results of this competition by company.
+        """
+        if self.competitor_type == 'single_user':
+            return 'user_attendance__team__subsidiary__company'
+        elif self.competitor_type == 'team':
+            return 'team__subsidiary__company'
+        elif self.competitor_type == 'company':
+            return 'company'
+
     def can_admit(self, user_attendance):
+        """
+        Returns True if user can admit for this competition, othervise it returns the reason why user can't admit.
+        """
         if self.without_admission:
             return 'without_admission'
         if not util.get_company_admin(user_attendance.userprofile.user, self.campaign) and self.competitor_type == 'company':
@@ -260,7 +304,7 @@ class Competition(models.Model):
             return 'before_beginning'
         if self.competition_type == 'questionnaire' and self.has_finished():
             return 'after_end'
-        if self.competition_type != 'questionnaire' and self.has_entry_opened():
+        if self.competition_type != 'questionnaire' and self.has_entry_not_opened():
             return 'after_beginning'
 
         if self.competitor_type == 'liberos' and not user_attendance.is_libero():
@@ -271,6 +315,54 @@ class Competition(models.Model):
             return 'not_for_city'
 
         return True
+
+    def get_columns(self):
+        columns = [('result_order', 'get_sequence_range', _("Po&shy;řa&shy;dí"))]
+
+        if self.competitor_type not in ('single_user', 'liberos') and self.competition_type != 'questionnaire':
+            average_string = _(" prů&shy;měr&shy;ně")
+        else:
+            average_string = ""
+
+        columns.append(
+            {
+                'length': ('result_value', 'get_result', _("Ki&shy;lo&shy;me&shy;trů%s" % average_string)),
+                'frequency': ('result_value', 'get_result_percentage', _("%% jízd%s" % average_string)),
+                'questionnaire': ('result_value', 'get_result', _("Bo&shy;dů%s" % average_string)),
+            }[self.competition_type],
+        )
+
+        if self.competition_type == 'frequency':
+            columns.append(('result_divident', 'result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd")))
+            columns.append(('result_divisor', 'result_divisor', _("Cel&shy;ko&shy;vý po&shy;čet cest")))
+        elif self.competition_type == 'length' and self.competitor_type == 'team':
+            columns.append(('result_divident', 'result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů")))
+
+        if self.competitor_type not in ('single_user', 'liberos', 'company'):
+            where = {
+                'team': _("v&nbsp;tý&shy;mu"),
+                'single_user': "",
+                'liberos': "",
+                'company': _("ve&nbsp;fir&shy;mě"),
+            }[self.competitor_type]
+            columns.append(('member_count', 'team__member_count', _("Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch %s" % where)))
+
+        competitor = {
+            'team': 'get_team',
+            'single_user': 'user_attendance',
+            'liberos': 'user_attendance',
+            'company': 'get_company',
+        }[self.competitor_type]
+        columns.append(('competitor', competitor, _("Sou&shy;tě&shy;ží&shy;cí")))
+
+        if self.competitor_type not in ('team', 'company'):
+            columns.append(('team', 'get_team', _("Tým")))
+
+        if self.competitor_type != 'company':
+            columns.append(('company', 'get_company', _("Spo&shy;leč&shy;nost")))
+
+        columns.append(('city', 'get_city', _("Měs&shy;to")))
+        return columns
 
     def has_admission(self, userprofile):
         if not userprofile.entered_competition():

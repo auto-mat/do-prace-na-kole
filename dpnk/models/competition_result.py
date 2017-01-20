@@ -20,11 +20,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib.gis.db import models
-from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from .company import Company
-from .competition import Competition
 from .team import Team
 from .user_attendance import UserAttendance
 
@@ -58,13 +56,15 @@ class CompetitionResult(models.Model):
         default=None,
     )
     competition = models.ForeignKey(
-        Competition,
+        'Competition',
         related_name="results",
         null=False,
         blank=False,
     )
-    result = models.FloatField(
+    result = models.DecimalField(
         verbose_name=_(u"Výsledek"),
+        max_digits=10,
+        decimal_places=6,
         null=True,
         blank=True,
         default=None,
@@ -83,6 +83,21 @@ class CompetitionResult(models.Model):
         default=None,
     )
 
+    def get_sequence_range(self):
+        """
+        Return range of places of this result.
+        Means, that the competitor is placed on one or more places.
+        """
+        lower_range = CompetitionResult.objects.filter(
+            competition=self.competition,
+            result__gt=self.result,
+        ).count() + 1
+        upper_range = CompetitionResult.objects.filter(
+            competition=self.competition,
+            result__gte=self.result,
+        ).count()
+        return lower_range, upper_range
+
     def get_team(self):
         if self.competition.competitor_type in ['liberos', 'single_user']:
             return self.user_attendance.team
@@ -96,6 +111,9 @@ class CompetitionResult(models.Model):
         if team:
             return team.subsidiary.company
 
+    def get_subsidiary(self):
+        return "%s / %s" % (self.get_street(), self.get_company())
+
     def get_street(self):
         team = self.get_team()
         if team:
@@ -107,9 +125,14 @@ class CompetitionResult(models.Model):
             return team.subsidiary.city
 
     def get_result(self):
+        """ Get result in kilometers rounded to reasonable number of decimal places. """
         return round(self.result, 1)
 
     def get_result_percentage(self):
+        """
+        Get result as percentage of all rides.
+        @return percentage in rounded integer
+        """
         if self.result:
             return round(self.result * 100, 1)
         else:
@@ -120,14 +143,12 @@ class CompetitionResult(models.Model):
             if self.team:
                 return "%s" % self.team.name
         elif self.competition.competitor_type == 'company':
-            return "%s" % self.company.name
+            if self.company:
+                return "%s" % self.company.name
         else:
             if self.user_attendance:
                 return "%s" % self.user_attendance.userprofile.name()
-
-    def clean(self):
-        if ((1 if self.user_attendance else 0) + (1 if self.team else 0) + (1 if self.company else 0)) != 1:
-            raise ValidationError(_(u"Musí být zvolen právě jeden uživatel, tým nebo organizace"))
+        return ""
 
     def user_attendances(self):
         competition = self.competition

@@ -174,6 +174,9 @@ def get_emissions(distance):
 
 
 def get_company_admin(user, campaign):
+    """
+    Get CompanyAdmin object for given @user in given @campaign.
+    """
     try:
         return user.userprofile.company_admin.get(campaign=campaign, company_admin_approved='approved')
     except ObjectDoesNotExist:

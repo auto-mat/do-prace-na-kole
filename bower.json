@@ -1,5 +1,5 @@
 {
-  "directory": "apps/dpnk/static/js/bow/",
+  "directory": "dpnk/static/js/bow/",
   "name": "dopracenakole2015",
   "version": "0.0.0",
   "authors": [
@@ -20,7 +20,9 @@
     "jquery-form": "~3.46.0",
     "font-awesome": "~4.3.0",
     "lightbox2": "~2.8.2",
-    "jquery.are-you-sure": "~1.9.0"
+    "jquery.are-you-sure": "~1.9.0",
+    "datatables.net": "~1.10.13",
+    "datatables.net-bs": "~1.10.13"
   },
   "resolutions": {
     "jquery": "1.12.3"

@@ -1,7 +1,15 @@
 {% extends "base_generic.html" %}
 {% load i18n %}
+{% load static %}
 {% load bleach_tags %}
 {% load cache %}
+
+{% block extrahead %}
+<link rel="stylesheet" type="text/css" href="{% static "bow/datatables.net-bs/css/dataTables.bootstrap.css" %}">
+<script type="text/javascript" charset="utf8" src="{% static "bow/datatables.net/js/jquery.dataTables.js" %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static "bow/datatables.net-bs/js/dataTables.bootstrap.js" %}"></script>
+{{ block.super }}
+{% endblock %}
 
 {% block content %}
 {% get_current_language as current_language_code %}
@@ -12,11 +20,8 @@
    <h3>{{ competition.name }}</h3>
    <p>
    <i> {{ competition.type_string | safe }} </i>
-   {% with results=competition.get_results_first3 %}
-      {% include "registration/competition_results_table.html" %}
-   {% endwith %}
    {% if competition.show_competition_results %}
-   <a href="{% url "competition_results" competition.slug %}">{% trans "Kompletní výsledky" %}</a>
+      {% include "registration/competition_results_table.html" %}
    {% endif %}
 {% endfor %}
 {% endif %}

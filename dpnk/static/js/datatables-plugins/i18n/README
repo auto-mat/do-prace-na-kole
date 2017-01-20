@@ -1,0 +1,2 @@
+Language files in datatables-plugins are mess, they don't use language codes and must be compliled from .lang to .json.
+We should use them, but those issues must be fixed first.

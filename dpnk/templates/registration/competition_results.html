@@ -1,26 +1,28 @@
 {% extends "base_generic.html" %}
 {% load i18n %}
+{% load static %}
 {% load dpnk_tags %}
 {% load humanize %}
-{% load cache %}
+
+{% block extrahead %}
+<link rel="stylesheet" type="text/css" href="{% static "bow/datatables.net-bs/css/dataTables.bootstrap.css" %}">
+<script type="text/javascript" charset="utf8" src="{% static "bow/datatables.net/js/jquery.dataTables.js" %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static "bow/datatables.net-bs/js/dataTables.bootstrap.js" %}"></script>
+{{ block.super }}
+{% endblock %}
 
 {% block content %}
 {{ block.super }}
 {% get_current_language as current_language_code %}
-{% cache 3600 competition_results competition.id limit current_language_code %}
 <h4>{% trans "Výsledky v soutěži " %}{{ competition }}:</h4>
 <i> {{ competition.type_string|safe }} </i>
 
 {% if competition.rules %}
-<div>{{ competition.rules|safe }}</div>
 {% endif %}
 <div>
    {% if competition.date_from %}{% trans "Soutěž trvá" %} {% trans "od" %} {{ competition.date_from }}{% endif %}
    {% if competition.date_to %}{% trans "do" %} {{ competition.date_to }}{% endif %}
-   <br/>
-   {% trans "Čas vygenerování výsledků:" %} {% now "SHORT_DATETIME_FORMAT" %}
 </div>
 
 {% include "registration/competition_results_table.html" %}
-{% endcache %}
 {% endblock %}
