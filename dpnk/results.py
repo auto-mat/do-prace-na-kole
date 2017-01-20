@@ -93,7 +93,7 @@ def get_competitors(competition, potencial_competitors=False):
 
 
 def get_results(self):
-    competitors = self.results.exclude(result=None).order_by('-result', '-team__member_count', '-result_divident')
+    competitors = self.results.exclude(result=None).order_by('-result', '-team__member_count', '-id')
     return competitors
 
 
