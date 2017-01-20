@@ -232,6 +232,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
             user_attendance__team__subsidiary__city__name="baz city",
             user_attendance__team__subsidiary__company__name="baz company",
             user_attendance__team__name="baz team",
+            id=1,
         )
         get_params = {
             'length': 1,
