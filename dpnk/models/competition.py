@@ -256,20 +256,6 @@ class Competition(models.Model):
         """
         return {i[0]: i[1:] for i in results.values_list('id', 'lower_rank', 'upper_rank')}
 
-    def get_results_first3(self):
-        ret_list = []
-        order = 1
-        last_result = None
-        from .. import results
-        for result in results.get_results(self).all()[:100]:
-            if last_result != result.result:
-                order += 1
-            last_result = result.result
-            ret_list.append(result)
-            if order > 3:
-                return ret_list
-        return ret_list
-
     def has_started(self):
         if self.date_from:
             return self.date_from <= util.today()

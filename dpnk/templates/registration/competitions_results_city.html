@@ -20,11 +20,8 @@
    <h3>{{ competition.name }}</h3>
    <p>
    <i> {{ competition.type_string | safe }} </i>
-   {% with results=competition.get_results_first3 %}
-      {% include "registration/competition_results_table.html" %}
-   {% endwith %}
    {% if competition.show_competition_results %}
-   <a href="{% url "competition_results" competition.slug %}">{% trans "Kompletní výsledky" %}</a>
+      {% include "registration/competition_results_table.html" %}
    {% endif %}
 {% endfor %}
 {% endif %}
