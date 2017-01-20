@@ -176,6 +176,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
             user_attendance__team__subsidiary__city__name="foo city",
             user_attendance__team__subsidiary__company__name="foo company",
             user_attendance__team__name="foo team",
+            id=3,
         )
         mommy.make(
             'dpnk.CompetitionResult',
@@ -192,6 +193,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
             user_attendance__team__subsidiary__city__name="bar city",
             user_attendance__team__subsidiary__company__name="bar company",
             user_attendance__team__name="bar team",
+            id=2,
         )
 
     def test_get(self):
