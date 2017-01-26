@@ -67,7 +67,10 @@ CACHES = {
     },
 }
 
-LOCALE_PATHS = (normpath(PROJECT_ROOT, 'dpnk/locale'),)
+LOCALE_PATHS = (
+    normpath(PROJECT_ROOT, 'dpnk/locale'),
+    normpath(PROJECT_ROOT, 'coupons/locale'),
+)
 TIME_ZONE = 'Europe/Prague'
 LANGUAGES = (
     ('dsnkcs', _('Do školy na kole - czech')),

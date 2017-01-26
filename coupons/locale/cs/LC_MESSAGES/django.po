@@ -1,0 +1,120 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-01-26 16:23+0100\n"
+"PO-Revision-Date: 2017-01-26 16:31+0058\n"
+"Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Translated-Using: django-rosetta 0.7.12\n"
+
+#: forms.py:37
+msgid "Kód voucheru"
+msgstr ""
+
+#: forms.py:40
+msgid "Nesprávný formát voucheru"
+msgstr ""
+
+#: forms.py:56
+msgid "Tento slevový kupón již byl použit"
+msgstr ""
+
+#: forms.py:59
+msgid "Tento slevový kupón neexistuje, nebo již byl použit"
+msgstr ""
+
+#: models/discount_coupon.py:42
+msgid "typ voucheru"
+msgstr ""
+
+#: models/discount_coupon.py:48
+msgid "token"
+msgstr ""
+
+#: models/discount_coupon.py:54
+msgid "sleva (v procentech)"
+msgstr ""
+
+#: models/discount_coupon.py:61
+msgid "Počet možných využití"
+msgstr ""
+
+#: models/discount_coupon.py:62
+msgid "Pokud se nevyplní, bude počet využití neomezený"
+msgstr ""
+
+#: models/discount_coupon.py:68
+msgid "poznámka"
+msgstr ""
+
+#: models/discount_coupon.py:74
+msgid "příjemce"
+msgstr ""
+
+#: models/discount_coupon.py:80
+msgid "Odeslaný"
+msgstr ""
+
+#: models/discount_coupon.py:85
+msgid "PDF kupón"
+msgstr ""
+
+#: models/discount_coupon.py:91
+msgid "Datum vytvoření"
+msgstr ""
+
+#: models/discount_coupon.py:96
+msgid "Datum poslední změny"
+msgstr ""
+
+#: models/discount_coupon.py:108
+msgid "Slevový kupón"
+msgstr ""
+
+#: models/discount_coupon.py:109
+msgid "Slevové kupóny"
+msgstr ""
+
+#: models/discount_coupon_type.py:28
+msgid "jméno typu voucheru"
+msgstr ""
+
+#: models/discount_coupon_type.py:35
+msgid "Kampaň"
+msgstr ""
+
+#: models/discount_coupon_type.py:40
+msgid "Platný do"
+msgstr ""
+
+#: models/discount_coupon_type.py:49
+msgid "Prefix musí sestávat pouze z velkých písmen"
+msgstr ""
+
+#: models/discount_coupon_type.py:53
+msgid "prefix"
+msgstr ""
+
+#: models/discount_coupon_type.py:64
+msgid "Typ slevového kupónu"
+msgstr ""
+
+#: models/discount_coupon_type.py:65
+msgid "Typy slevového kupónu"
+msgstr ""
+
+#: views.py:43
+msgid "Uplatnit slevový voucher"
+msgstr ""
