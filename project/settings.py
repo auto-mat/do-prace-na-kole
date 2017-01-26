@@ -164,10 +164,10 @@ INSTALLED_APPS = (
 
     'registration',
 
-    't_shirt_delivery',
     'price_level',
     'coupons',
     'dpnk',
+    't_shirt_delivery',
 
     'smart_selects',
     'composite_field',

@@ -157,12 +157,6 @@ urlpatterns = [
         name="upravit_trasu",
     ),
     url(
-        r'^zmenit_triko/$',
-        views.ChangeTShirtView.as_view(),
-        {'success_url': 'typ_platby'},
-        name="zmenit_triko",
-    ),
-    url(
         r'^typ_platby/$',
         views.PaymentTypeView.as_view(),
         name="typ_platby",

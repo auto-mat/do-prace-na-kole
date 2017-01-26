@@ -32,7 +32,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
-from .transactions import PackageTransaction, Status
+from .package_transaction import PackageTransaction, Status
 from .. import avfull
 from .. import parcel_batch
 
@@ -47,7 +47,7 @@ class DeliveryBatch(models.Model):
         null=False,
     )
     campaign = models.ForeignKey(
-        'Campaign',
+        'dpnk.Campaign',
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,

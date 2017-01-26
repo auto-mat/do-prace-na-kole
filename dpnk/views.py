@@ -1141,32 +1141,6 @@ class UpdateTrackView(RegistrationViewMixin, UpdateView):
         return self.user_attendance
 
 
-class ChangeTShirtView(RegistrationViewMixin, UpdateView):
-    template_name = 'registration/change_tshirt.html'
-    form_class = forms.TShirtUpdateForm
-    model = UserAttendance
-    success_message = _(u"Velikost trička úspěšně nastavena")
-    next_url = 'typ_platby'
-    prev_url = 'zmenit_tym'
-    registration_phase = "zmenit_triko"
-    title = _(u"Upravit velikost trička")
-
-    def get_object(self):
-        return self.user_attendance
-
-    @method_decorator(login_required_simple)
-    @user_attendance_has(lambda ua: not ua.team_complete(), _(u"Velikost trička nemůžete měnit, dokud nemáte zvolený tým."))
-    @user_attendance_has(lambda ua: ua.package_shipped(), _(u"Vaše tričko již je na cestě k vám, už se na něj můžete těšit."))
-    def dispatch(self, request, *args, **kwargs):
-        if kwargs["user_attendance"].campaign.has_any_tshirt:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            if kwargs["user_attendance"].has_admission_fee():
-                return redirect(reverse('typ_platby'))
-            else:
-                return redirect(reverse('profil'))
-
-
 def handle_uploaded_file(source, username):
     logger.info("Saving file", extra={'username': username, 'filename': source.name})
     fd, filepath = tempfile.mkstemp(suffix=u"_%s&%s" % (username, unidecode(source.name).replace(" ", "_")), dir=settings.MEDIA_ROOT + u"/questionaire")

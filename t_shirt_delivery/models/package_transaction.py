@@ -49,7 +49,7 @@ class PackageTransaction(Transaction):
         blank=False,
     )
     team_package = models.ForeignKey(
-        'packages.TeamPackage',
+        'TeamPackage',
         verbose_name=_("Týmový balíček"),
         null=True,
         blank=False,

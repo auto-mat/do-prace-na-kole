@@ -2,7 +2,7 @@
 
 # Author: Petr Dlouhý <petr.dlouhy@auto-mat.cz>
 #
-# Copyright (C) 2016 o.s. Auto*Mat
+# Copyright (C) 2017 o.s. Auto*Mat
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,34 +20,29 @@
 
 from django import forms
 
-from . import models
+from dpnk.forms import PrevNextMixin
+from dpnk.models import UserAttendance, STATUS
+
+from .models import PackageTransaction, TShirtSize
 
 
-class PaymentForm(forms.ModelForm):
+class TShirtUpdateForm(PrevNextMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=models.STATUS)
+        ret_val = super().__init__(*args, **kwargs)
+        self.fields['t_shirt_size'].required = True
+        self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
+        return ret_val
 
     class Meta:
-        model = models.Payment
-        fields = "__all__"
+        model = UserAttendance
+        fields = ('t_shirt_size', )
 
 
-class CommonTransactionForm(forms.ModelForm):
+class PackageTransactionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=models.CommonTransaction.STATUS)
+        self.fields['status'] = forms.ChoiceField(choices=STATUS)
 
     class Meta:
-        model = models.CommonTransaction
-        fields = "__all__"
-
-
-class UserActionTransactionForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=models.STATUS)
-
-    class Meta:
-        model = models.UserActionTransaction
+        model = PackageTransaction
         fields = "__all__"

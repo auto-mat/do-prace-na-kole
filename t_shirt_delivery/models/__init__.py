@@ -19,12 +19,16 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 """Import all models."""
+from .delivery_batch import DeliveryBatch
 from .package_transaction import PackageTransaction
 from .subsidiary_box import SubsidiaryBox
+from .t_shirt_size import TShirtSize
 from .team_package import TeamPackage
 
 __all__ = (
+    DeliveryBatch,
     PackageTransaction,
     SubsidiaryBox,
+    TShirtSize,
     TeamPackage,
 )

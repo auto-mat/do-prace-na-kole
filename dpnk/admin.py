@@ -54,6 +54,9 @@ from price_level import models as price_level_models
 
 from related_admin import RelatedFieldAdmin
 
+from t_shirt_delivery.models import PackageTransaction, TShirtSize
+# from t_shirt_delivery.forms import PackageTransactionForm
+
 from . import actions, models, transaction_forms
 from .admin_mixins import CityAdminMixin, FormRequestMixin, ReadOnlyModelAdminMixin, city_admin_mixin_generator
 from .filters import (
@@ -90,11 +93,11 @@ class PaymentInline(NestedTabularInline):
 
 
 class PackageTransactionInline(NestedTabularInline):
-    model = models.PackageTransaction
+    model = PackageTransaction
     extra = 0
     readonly_fields = ['author', 'updated_by', 'tracking_number_cnc', 'tracking_link', 't_shirt_size']
     raw_id_fields = ['user_attendance', 'delivery_batch']
-    form = transaction_forms.PackageTransactionForm
+    # form = PackageTransactionForm
 
 
 class CommonTransactionInline(NestedTabularInline):
@@ -426,34 +429,34 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFie
         return super(CompetitionAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
 
-class UserAttendanceForm(forms.ModelForm):
-    class Meta:
-        model = models.UserAttendance
-        fields = "__all__"
-
-    def __init__(self, *args, **kwargs):
-        super(UserAttendanceForm, self).__init__(*args, **kwargs)
-        if 't_shirt_size' in self.fields:
-            if hasattr(self.instance, 'campaign'):
-                self.fields['t_shirt_size'].queryset = models.TShirtSize.objects.filter(campaign=self.instance.campaign)
-
-    def clean(self):
-        new_team = self.cleaned_data['team']
-        new_approved_for_team = self.cleaned_data['approved_for_team']
-        if new_team:
-            new_member_count = new_team.members().exclude(pk=self.instance.pk).count()
-            if new_approved_for_team == 'approved':
-                new_member_count += 1
-            if self.instance.campaign.too_much_members(new_member_count):
-                message = _("Tento tým není možné zvolit, protože by měl příliš mnoho odsouhlasených členů.")
-                self.add_error("team", message)
-                self.add_error("approved_for_team", message)
-        return super().clean()
+# class UserAttendanceForm(forms.ModelForm):
+#     class Meta:
+#         model = models.UserAttendance
+#         fields = "__all__"
+# 
+#     def __init__(self, *args, **kwargs):
+#         super(UserAttendanceForm, self).__init__(*args, **kwargs)
+#         if 't_shirt_size' in self.fields:
+#             if hasattr(self.instance, 'campaign'):
+#                 self.fields['t_shirt_size'].queryset = models.TShirtSize.objects.filter(campaign=self.instance.campaign)
+# 
+#     def clean(self):
+#         new_team = self.cleaned_data['team']
+#         new_approved_for_team = self.cleaned_data['approved_for_team']
+#         if new_team:
+#             new_member_count = new_team.members().exclude(pk=self.instance.pk).count()
+#             if new_approved_for_team == 'approved':
+#                 new_member_count += 1
+#             if self.instance.campaign.too_much_members(new_member_count):
+#                 message = _("Tento tým není možné zvolit, protože by měl příliš mnoho odsouhlasených členů.")
+#                 self.add_error("team", message)
+#                 self.add_error("approved_for_team", message)
+#         return super().clean()
 
 
 class UserAttendanceInline(NestedTabularInline):
     model = models.UserAttendance
-    form = UserAttendanceForm
+    # form = UserAttendanceForm
     extra = 0
     # inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
     list_max_show_all = 10000
@@ -628,61 +631,61 @@ class TripAdminInline(admin.TabularInline):
     model = models.Trip
 
 
-class UserAttendanceResource(resources.ModelResource):
-    class Meta:
-        model = models.UserAttendance
-        fields = (
-            'id',
-            'campaign__slug',
-            'distance',
-            'team__id',
-            'team__name',
-            'approved_for_team',
-            't_shirt_size__name',
-            'team__subsidiary__city__name',
-            'userprofile__language',
-            'userprofile__telephone',
-            'userprofile__user__id',
-            'userprofile__user__first_name',
-            'userprofile__user__last_name',
-            'userprofile__user__username',
-            'userprofile__user__email',
-            'subsidiary_name',
-            'team__subsidiary__company__name',
-            'created')
-        export_order = fields
-
-    subsidiary_name = fields.Field()
-
-    def dehydrate_subsidiary_name(self, obj):
-        if obj.team and obj.team.subsidiary:
-            return obj.team.subsidiary.name()
-
-    payment_date = fields.Field()
-
-    def dehydrate_payment_date(self, obj):
-        payment = obj.representative_payment
-        if payment:
-            return payment.realized or payment.created
-
-    payment_status = fields.Field()
-
-    def dehydrate_payment_status(self, obj):
-        return obj.payment_status
-
-    payment_type = fields.Field()
-
-    def dehydrate_payment_type(self, obj):
-        payment = obj.representative_payment
-        if payment:
-            return payment.pay_type
-
-    payment_amount = fields.Field()
-
-    def dehydrate_payment_amount(self, obj):
-        payment = obj.representative_payment
-        if payment:
-            return payment.amount
+# class UserAttendanceResource(resources.ModelResource):
+#     class Meta:
+#         model = models.UserAttendance
+#         fields = (
+#             'id',
+#             'campaign__slug',
+#             'distance',
+#             'team__id',
+#             'team__name',
+#             'approved_for_team',
+#             't_shirt_size__name',
+#             'team__subsidiary__city__name',
+#             'userprofile__language',
+#             'userprofile__telephone',
+#             'userprofile__user__id',
+#             'userprofile__user__first_name',
+#             'userprofile__user__last_name',
+#             'userprofile__user__username',
+#             'userprofile__user__email',
+#             'subsidiary_name',
+#             'team__subsidiary__company__name',
+#             'created')
+#         export_order = fields
+# 
+#     subsidiary_name = fields.Field()
+# 
+#     def dehydrate_subsidiary_name(self, obj):
+#         if obj.team and obj.team.subsidiary:
+#             return obj.team.subsidiary.name()
+# 
+#     payment_date = fields.Field()
+# 
+#     def dehydrate_payment_date(self, obj):
+#         payment = obj.representative_payment
+#         if payment:
+#             return payment.realized or payment.created
+# 
+#     payment_status = fields.Field()
+# 
+#     def dehydrate_payment_status(self, obj):
+#         return obj.payment_status
+# 
+#     payment_type = fields.Field()
+# 
+#     def dehydrate_payment_type(self, obj):
+#         payment = obj.representative_payment
+#         if payment:
+#             return payment.pay_type
+# 
+#     payment_amount = fields.Field()
+# 
+#     def dehydrate_payment_amount(self, obj):
+#         payment = obj.representative_payment
+#         if payment:
+#             return payment.amount
 
 
 @admin.register(models.UserAttendance)
@@ -758,11 +761,11 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         actions.assign_vouchers,
         actions.touch_items,
     )
-    form = UserAttendanceForm
+    # form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
     list_max_show_all = 10000
     list_per_page = 10
-    resource_class = UserAttendanceResource
+    # resource_class = UserAttendanceResource
 
     def user_link(self, obj):
         return format_html('<a href="{}">{}</a>', reverse('admin:auth_user_change', args=(obj.userprofile.user.pk,)), obj.userprofile.user)
@@ -860,7 +863,7 @@ class PaymentChildAdmin(TransactionChildAdmin):
 
 class PackageTransactionChildAdmin(TransactionChildAdmin):
     readonly_fields = ['created', 'author', 'updated_by', 'tracking_number_cnc', 'tracking_link', 't_shirt_size']
-    form = transaction_forms.PackageTransactionForm
+    # form = PackageTransactionForm
 
 
 class CommonTransactionChildAdmin(TransactionChildAdmin):
@@ -895,7 +898,7 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
     base_model = models.Transaction
     child_models = (
         (models.Payment, PaymentChildAdmin),
-        (models.PackageTransaction, PackageTransactionChildAdmin),
+        (PackageTransaction, PackageTransactionChildAdmin),
         (models.CommonTransaction, CommonTransactionChildAdmin),
         (models.UserActionTransaction, UserActionTransactionChildAdmin),
     )
@@ -930,113 +933,6 @@ class PaymentAdmin(RelatedFieldAdmin):
     list_filter = [campaign_filter_generator('user_attendance__campaign'), 'status', 'error', 'pay_type', ]
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created', 'updated_by')
-    list_max_show_all = 10000
-    form = transaction_forms.PaymentForm
-
-
-class PackageTransactionResource(resources.ModelResource):
-    class Meta:
-        model = models.PackageTransaction
-        fields = (
-            'id',
-            'delivery_batch',
-            'payment_complete_date',
-            'user_attendance',
-            'user_attendance__name',
-            'user_attendance__userprofile__telephone',
-            'user_attendance__userprofile__user__email',
-            'created',
-            'realized',
-            'status',
-            'user_attendance__team__subsidiary__address_street',
-            'user_attendance__team__subsidiary__address_psc',
-            'user_attendance__team__subsidiary__address_city',
-            'user_attendance__team__subsidiary__company__name',
-            'company_admin_email',
-            't_shirt_size__name',
-            'delivery_batch',
-            'tracking_number_cnc',
-            'tnt_con_reference',
-            'author__username',
-        )
-        export_order = fields
-
-    payment_complete_date = fields.Field()
-
-    def dehydrate_payment_complete_date(self, obj):
-        if obj.user_attendance.representative_payment:
-            return obj.user_attendance.representative_payment.payment_complete_date()
-
-    user_attendance__name = fields.Field()
-
-    def dehydrate_user_attendance__name(self, obj):
-        return "%s %s" % (obj.user_attendance.first_name(), obj.user_attendance.last_name())
-
-    user_attendance__team__subsidiary__address_street = fields.Field()
-
-    def dehydrate_user_attendance__team__subsidiary__address_street(self, obj):
-        if obj.user_attendance.team:
-            return "%s %s" % (obj.user_attendance.team.subsidiary.address_street, obj.user_attendance.team.subsidiary.address_street_number)
-
-    user_attendance__team__subsidiary__address_psc = fields.Field()
-
-    def dehydrate_user_attendance__team__subsidiary__address_psc(self, obj):
-        if obj.user_attendance.team:
-            return obj.user_attendance.team.subsidiary.address_psc
-
-    user_attendance__team__subsidiary__address_city = fields.Field()
-
-    def dehydrate_user_attendance__team__subsidiary__address_city(self, obj):
-        if obj.user_attendance.team:
-            return obj.user_attendance.team.subsidiary.address_city
-
-    tracking_number_cnc = fields.Field()
-
-    def dehydrate_tracking_number_cnc(self, obj):
-        return obj.tracking_number_cnc()
-
-    tnt_con_reference = fields.Field()
-
-    def dehydrate_tnt_con_reference(self, obj):
-        return obj.tnt_con_reference()
-
-    company_admin_email = fields.Field()
-
-    def dehydrate_company_admin_email(self, obj):
-        company_admin = obj.user_attendance.get_asociated_company_admin()
-        if company_admin:
-            return company_admin.first().userprofile.user.email
-        else:
-            return ""
-
-
-@admin.register(models.PackageTransaction)
-class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
-    resource_class = PackageTransactionResource
-    list_display = (
-        'id',
-        'user_attendance',
-        'created',
-        'realized',
-        'status',
-        'author',
-        'user_attendance__team__subsidiary',
-        'user_attendance__team__subsidiary__company__name',
-        't_shirt_size',
-        'delivery_batch',
-        'tracking_number_cnc',
-        'tracking_link')
-    search_fields = (
-        'id',
-        'user_attendance__userprofile__nickname',
-        'user_attendance__userprofile__user__first_name',
-        'user_attendance__userprofile__user__last_name',
-        'user_attendance__userprofile__user__username',
-        'user_attendance__team__subsidiary__company__name',
-    )
-    list_filter = [campaign_filter_generator('user_attendance__campaign'), 'status', 'delivery_batch']
-    raw_id_fields = ('user_attendance',)
-    readonly_fields = ('author', 'created')
     list_max_show_all = 10000
     form = transaction_forms.PaymentForm
 
@@ -1236,66 +1132,8 @@ class CityInCampaignInline(admin.TabularInline):
 
 
 class TShirtSizeInline(SortableInlineAdminMixin, admin.TabularInline):
-    model = models.TShirtSize
+    model = TShirtSize
     extra = 0
-
-
-class DeliveryBatchForm(forms.ModelForm):
-    class Meta:
-        model = models.DeliveryBatch
-        fields = "__all__"
-
-    def __init__(self, *args, **kwargs):
-        ret_val = super(DeliveryBatchForm, self).__init__(*args, **kwargs)
-        if hasattr(self, 'request'):
-            self.instance.campaign = models.Campaign.objects.get(slug=self.request.subdomain)
-        return ret_val
-
-
-@admin.register(models.DeliveryBatch)
-class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
-    list_display = ['id', 'campaign', 'created', 'dispatched', 'package_transaction_count', 'author', 'customer_sheets__url', 'tnt_order__url']
-    readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 't_shirt_sizes')
-    # inlines = [PackageTransactionInline, ]
-    list_filter = (CampaignFilter,)
-    form = DeliveryBatchForm
-
-    def get_list_display(self, request):
-        for t_size in models.TShirtSize.objects.filter(campaign__slug=request.subdomain):
-            field_name = "t_shirt_size_" + str(t_size.pk)
-            if field_name not in self.list_display:
-                self.list_display.append(field_name)
-
-            def t_shirt_size(obj, t_size_id=t_size.pk):
-                return obj.packagetransaction_set.filter(t_shirt_size__pk=t_size_id).aggregate(Count('t_shirt_size'))['t_shirt_size__count']
-            t_shirt_size.short_description = t_size.name
-            setattr(self, field_name, t_shirt_size)
-        return self.list_display
-
-    def package_transaction_count(self, obj):
-        if not obj.pk:
-            return obj.campaign.user_attendances_for_delivery().count()
-        return obj.packagetransaction_set.count()
-    package_transaction_count.short_description = _(u"Balíčků k odeslání")
-
-    def t_shirt_sizes(self, obj):
-        if not obj.pk:
-            package_transactions = obj.campaign.user_attendances_for_delivery()
-        else:
-            package_transactions = obj.packagetransaction_set.all()
-        t_shirts = models.TShirtSize.objects.filter(packagetransaction__in=package_transactions)
-        t_shirts = t_shirts.annotate(size_count=Count('packagetransaction'))
-        t_shirts = t_shirts.values_list('name', 'size_count')
-        return format_html_join(mark_safe("<br/>"), "{}: {}", t_shirts)
-    t_shirt_sizes.short_description = _(u"Velikosti trik")
-
-    def customer_sheets__url(self, obj):
-        if obj.customer_sheets:
-            return format_html("<a href='{}'>customer_sheets</a>", obj.customer_sheets.url)
-
-    def tnt_order__url(self, obj):
-        if obj.tnt_order:
-            return format_html("<a href='{}'>tnt_order</a>", obj.tnt_order.url)
 
 
 @admin.register(models.Campaign)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Author: Petr Dlouhý <petr.dlouhy@email.cz>
+# Author: Petr Dlouhý <petr.dlouhy@auto-mat.cz>
 #
 # Copyright (C) 2017 o.s. Auto*Mat
 #
@@ -18,26 +18,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.contrib.gis.db import models
-from django.utils.translation import ugettext_lazy as _
+
+from django.conf.urls import url
+
+from . import views
 
 
-class SubsidiaryBox(models.Model):
-    """ Krabice pro firmu """
-
-    class Meta:
-        verbose_name = _("Krabice pro firmu")
-        verbose_name_plural = _("Krabice pro firmu")
-
-    delivery_batch = models.ForeignKey(
-        'DeliveryBatch',
-        verbose_name=_("Dávka objednávek"),
-        null=False,
-        blank=False,
-    )
-    subsidiary = models.ForeignKey(
-        'dpnk.Subsidiary',
-        verbose_name=_("Pobočka"),
-        null=False,
-        blank=False,
-    )
+urlpatterns = [
+    url(
+        r'^zmenit_triko/$',
+        views.ChangeTShirtView.as_view(),
+        {'success_url': 'typ_platby'},
+        name="zmenit_triko",
+    ),
+]

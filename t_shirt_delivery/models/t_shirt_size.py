@@ -32,7 +32,7 @@ class TShirtSize(models.Model):
         null=False,
     )
     campaign = models.ForeignKey(
-        'Campaign',
+        'dpnk.Campaign',
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,
