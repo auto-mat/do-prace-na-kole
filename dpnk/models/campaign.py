@@ -27,7 +27,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from price_level.models import Pricable
 
-from .transactions import PackageTransaction, Payment
+from .transactions import Payment
 from .user_attendance import UserAttendance
 
 
@@ -215,6 +215,7 @@ class Campaign(Pricable, models.Model):
             return True
 
     def user_attendances_for_delivery(self):
+        from t_shirt_delivery.models import PackageTransaction
         return UserAttendance.objects.filter(
             campaign=self,
             transactions__payment__status__in=Payment.done_statuses,

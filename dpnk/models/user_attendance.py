@@ -31,8 +31,7 @@ from django.utils.html import format_html_join
 from django.utils.translation import ugettext_lazy as _
 
 from .company_admin import CompanyAdmin
-from .t_shirt_size import TShirtSize
-from .transactions import PackageTransaction, Payment, Transaction
+from .transactions import Payment, Transaction
 from .trip import Trip
 from .util import MAP_DESCRIPTION
 from .. import mailing, util
@@ -105,7 +104,7 @@ class UserAttendance(models.Model):
         default='undecided',
     )
     t_shirt_size = models.ForeignKey(
-        TShirtSize,
+        'TShirtSize',
         verbose_name=_(u"Velikost trička"),
         null=True,
         blank=True,
@@ -310,6 +309,7 @@ class UserAttendance(models.Model):
             return False
 
     def package_shipped(self):
+        from t_shirt_delivery.models import PackageTransaction
         return self.transactions.filter(instance_of=PackageTransaction, status__in=PackageTransaction.shipped_statuses).last()
 
     def other_user_attendances(self, campaign):

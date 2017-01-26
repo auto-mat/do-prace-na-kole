@@ -32,15 +32,13 @@ from .company import Company
 from .company_admin import CompanyAdmin
 from .competition import Competition, CompetitionForm
 from .competition_result import CompetitionResult
-from .delivery_batch import DeliveryBatch
 from .gpxfile import GpxFile, normalize_gpx_filename
 from .invoice import Invoice, change_invoice_payments_status, payments_to_invoice
 from .phase import Phase
 from .questionnaire import Answer, Choice, ChoiceType, Question, QuestionForm, questionnaire_filename
 from .subsidiary import Subsidiary
-from .t_shirt_size import TShirtSize
 from .team import Team, post_user_team_changed, pre_user_team_changed, validate_length
-from .transactions import CommonTransaction, PackageTransaction, Payment, STATUS, Status, Transaction, UserActionTransaction
+from .transactions import CommonTransaction, Payment, STATUS, Status, Transaction, UserActionTransaction
 from .trip import Trip
 from .user_attendance import UserAttendance
 from .user_profile import UserProfile
@@ -58,7 +56,6 @@ __all__ = (
     Competition,
     CompetitionForm,
     CompetitionResult,
-    DeliveryBatch,
     GpxFile,
     Invoice,
     Phase,
@@ -70,12 +67,10 @@ __all__ = (
     Subsidiary,
     Team,
     Transaction,
-    PackageTransaction,
     CommonTransaction,
     Payment,
     UserActionTransaction,
     Trip,
-    TShirtSize,
     UserAttendance,
     UserProfile,
     Voucher,
