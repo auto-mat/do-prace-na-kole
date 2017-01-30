@@ -21,7 +21,7 @@
 from django import forms
 
 from dpnk.forms import PrevNextMixin
-from dpnk.models import UserAttendance, STATUS
+from dpnk.models import STATUS, UserAttendance
 
 from .models import PackageTransaction, TShirtSize
 
