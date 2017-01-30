@@ -43,6 +43,8 @@ from price_level import models as price_level_models
 
 import settings
 
+from t_shirt_delivery.models import PackageTransaction
+
 
 @override_settings(
     SITE_ID=2,
@@ -790,7 +792,7 @@ class ViewsTestsLogon(ViewsLogon):
         m = MagicMock()
         m.feed.get.return_value = [{"content": "T-shirt description text"}]
         slumber_api.return_value = m
-        models.PackageTransaction.objects.all().delete()
+        PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
         util.rebuild_denorm_models(models.Team.objects.filter(pk=3))
         self.user_attendance.save()
@@ -812,7 +814,7 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_team_view_choose_empty_team(self):
         util.rebuild_denorm_models(models.Team.objects.all())
-        models.PackageTransaction.objects.all().delete()
+        PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
         self.user_attendance.approved_for_team = "undecided"
         self.user_attendance.save()
@@ -884,7 +886,7 @@ class ViewsTestsLogon(ViewsLogon):
             'team': '3',
             'next': 'Next',
         }
-        models.PackageTransaction.objects.all().delete()
+        PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
         self.user_attendance.save()
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
@@ -897,7 +899,7 @@ class ViewsTestsLogon(ViewsLogon):
             'team': '2',
             'next': 'Next',
         }
-        models.PackageTransaction.objects.all().delete()
+        PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
         self.user_attendance.save()
         response = self.client.post(reverse('zmenit_tym'), post_data)
@@ -922,12 +924,12 @@ class ViewsTestsLogon(ViewsLogon):
             'team-campaign': 339,
             'next': 'Next',
         }
-        models.PackageTransaction.objects.all().delete()
+        PackageTransaction.objects.all().delete()
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
         self.assertContains(response, "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží.")
 
     def test_dpnk_team_undecided(self):
-        models.PackageTransaction.objects.all().delete()
+        PackageTransaction.objects.all().delete()
         for team_member in self.user_attendance.team.all_members():
             if team_member != self.user_attendance:
                 team_member.approved_for_team = 'undecided'
@@ -945,7 +947,7 @@ class ViewsTestsLogon(ViewsLogon):
         )
 
     def test_dpnk_team_change_alone(self):
-        models.PackageTransaction.objects.all().delete()
+        PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
         for team_member in self.user_attendance.team.all_members():
             if team_member != self.user_attendance:
@@ -965,7 +967,7 @@ class ViewsTestsLogon(ViewsLogon):
             't_shirt_size': '1',
             'next': 'Next',
         }
-        models.PackageTransaction.objects.all().delete()
+        PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
         self.user_attendance.save()
         response = self.client.post(reverse('zmenit_triko'), post_data, follow=True)
@@ -973,7 +975,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertTrue(self.user_attendance.t_shirt_size.pk, 1)
 
     def test_dpnk_t_shirt_size_no_sizes(self):
-        models.PackageTransaction.objects.all().delete()
+        PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
         models.TShirtSize.objects.all().delete()
         self.user_attendance.t_shirt_size = None
@@ -986,7 +988,7 @@ class ViewsTestsLogon(ViewsLogon):
     @patch('slumber.API')
     def test_dpnk_t_shirt_size_no_sizes_no_admission(self, slumber_api):
         slumber_api.feed.get = {}
-        models.PackageTransaction.objects.all().delete()
+        PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
         models.TShirtSize.objects.all().delete()
         self.user_attendance.t_shirt_size = None
@@ -998,7 +1000,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertRedirects(response, reverse("profil"))
 
     def test_dpnk_t_shirt_size_no_team(self):
-        models.PackageTransaction.objects.all().delete()
+        PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
         self.user_attendance.save()
         self.user_attendance.team = None

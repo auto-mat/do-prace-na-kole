@@ -4,7 +4,7 @@
             "created": "2015-11-12T18:18:40.223",
             "campaign": 339
         },
-        "model": "dpnk.deliverybatch",
+        "model": "t_shirt_delivery.deliverybatch",
         "pk": 1
     },
     {
@@ -12,7 +12,7 @@
             "user_attendance": 3,
             "status": 99,
             "created": "2015-11-12T18:18:40.223",
-            "polymorphic_ctype": ["dpnk", "packagetransaction"]
+            "polymorphic_ctype": ["t_shirt_delivery", "packagetransaction"]
         },
         "model": "dpnk.transaction",
         "pk": 7
@@ -23,7 +23,7 @@
            "tracking_number": 11112117,
            "delivery_batch": 1
         },
-        "model": "dpnk.packagetransaction",
+        "model": "t_shirt_delivery.packagetransaction",
         "pk": 7
     },
     {
@@ -31,7 +31,7 @@
             "user_attendance": 1115,
             "status": 99,
             "created": "2015-11-12T18:18:40.223",
-            "polymorphic_ctype": ["dpnk", "packagetransaction"]
+            "polymorphic_ctype": ["t_shirt_delivery", "packagetransaction"]
         },
         "model": "dpnk.transaction",
         "pk": 6
@@ -42,7 +42,7 @@
            "tracking_number": 11111117,
            "delivery_batch": 1
         },
-        "model": "dpnk.packagetransaction",
+        "model": "t_shirt_delivery.packagetransaction",
         "pk": 6
     }
 ]

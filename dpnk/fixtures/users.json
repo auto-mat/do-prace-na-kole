@@ -119,7 +119,7 @@
             "campaign": 339,
             "name": "Testing t-shirt size"
         },
-        "model": "dpnk.tshirtsize",
+        "model": "t_shirt_delivery.tshirtsize",
         "pk": 1
     },
     {
@@ -128,7 +128,7 @@
             "price": 100,
             "name": "Testing t-shirt size with price"
         },
-        "model": "dpnk.tshirtsize",
+        "model": "t_shirt_delivery.tshirtsize",
         "pk": 2
     },
     {
