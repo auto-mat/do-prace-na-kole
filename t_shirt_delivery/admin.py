@@ -33,90 +33,93 @@ from dpnk.filters import CampaignFilter, campaign_filter_generator
 from import_export import fields, resources
 from import_export.admin import ExportMixin
 
+from nested_inline.admin import NestedTabularInline
+
 from related_admin import RelatedFieldAdmin
 
 from . import models
+from .forms import PackageTransactionForm
 
 
-# class PackageTransactionResource(resources.ModelResource):
-#     class Meta:
-#         model = models.PackageTransaction
-#         fields = (
-#             'id',
-#             'delivery_batch',
-#             'payment_complete_date',
-#             'user_attendance',
-#             'user_attendance__name',
-#             'user_attendance__userprofile__telephone',
-#             'user_attendance__userprofile__user__email',
-#             'created',
-#             'realized',
-#             'status',
-#             'user_attendance__team__subsidiary__address_street',
-#             'user_attendance__team__subsidiary__address_psc',
-#             'user_attendance__team__subsidiary__address_city',
-#             'user_attendance__team__subsidiary__company__name',
-#             'company_admin_email',
-#             't_shirt_size__name',
-#             'delivery_batch',
-#             'tracking_number_cnc',
-#             'tnt_con_reference',
-#             'author__username',
-#         )
-#         export_order = fields
-# 
-#     payment_complete_date = fields.Field()
-# 
-#     def dehydrate_payment_complete_date(self, obj):
-#         if obj.user_attendance.representative_payment:
-#             return obj.user_attendance.representative_payment.payment_complete_date()
-# 
-#     user_attendance__name = fields.Field()
-# 
-#     def dehydrate_user_attendance__name(self, obj):
-#         return "%s %s" % (obj.user_attendance.first_name(), obj.user_attendance.last_name())
-# 
-#     user_attendance__team__subsidiary__address_street = fields.Field()
-# 
-#     def dehydrate_user_attendance__team__subsidiary__address_street(self, obj):
-#         if obj.user_attendance.team:
-#             return "%s %s" % (obj.user_attendance.team.subsidiary.address_street, obj.user_attendance.team.subsidiary.address_street_number)
-# 
-#     user_attendance__team__subsidiary__address_psc = fields.Field()
-# 
-#     def dehydrate_user_attendance__team__subsidiary__address_psc(self, obj):
-#         if obj.user_attendance.team:
-#             return obj.user_attendance.team.subsidiary.address_psc
-# 
-#     user_attendance__team__subsidiary__address_city = fields.Field()
-# 
-#     def dehydrate_user_attendance__team__subsidiary__address_city(self, obj):
-#         if obj.user_attendance.team:
-#             return obj.user_attendance.team.subsidiary.address_city
-# 
-#     tracking_number_cnc = fields.Field()
-# 
-#     def dehydrate_tracking_number_cnc(self, obj):
-#         return obj.tracking_number_cnc()
-# 
-#     tnt_con_reference = fields.Field()
-# 
-#     def dehydrate_tnt_con_reference(self, obj):
-#         return obj.tnt_con_reference()
-# 
-#     company_admin_email = fields.Field()
-# 
-#     def dehydrate_company_admin_email(self, obj):
-#         company_admin = obj.user_attendance.get_asociated_company_admin()
-#         if company_admin:
-#             return company_admin.first().userprofile.user.email
-#         else:
-#             return ""
-# 
+class PackageTransactionResource(resources.ModelResource):
+    class Meta:
+        model = models.PackageTransaction
+        fields = (
+            'id',
+            'delivery_batch',
+            'payment_complete_date',
+            'user_attendance',
+            'user_attendance__name',
+            'user_attendance__userprofile__telephone',
+            'user_attendance__userprofile__user__email',
+            'created',
+            'realized',
+            'status',
+            'user_attendance__team__subsidiary__address_street',
+            'user_attendance__team__subsidiary__address_psc',
+            'user_attendance__team__subsidiary__address_city',
+            'user_attendance__team__subsidiary__company__name',
+            'company_admin_email',
+            't_shirt_size__name',
+            'delivery_batch',
+            'tracking_number_cnc',
+            'tnt_con_reference',
+            'author__username',
+        )
+        export_order = fields
+
+    payment_complete_date = fields.Field()
+
+    def dehydrate_payment_complete_date(self, obj):
+        if obj.user_attendance.representative_payment:
+            return obj.user_attendance.representative_payment.payment_complete_date()
+
+    user_attendance__name = fields.Field()
+
+    def dehydrate_user_attendance__name(self, obj):
+        return "%s %s" % (obj.user_attendance.first_name(), obj.user_attendance.last_name())
+
+    user_attendance__team__subsidiary__address_street = fields.Field()
+
+    def dehydrate_user_attendance__team__subsidiary__address_street(self, obj):
+        if obj.user_attendance.team:
+            return "%s %s" % (obj.user_attendance.team.subsidiary.address_street, obj.user_attendance.team.subsidiary.address_street_number)
+
+    user_attendance__team__subsidiary__address_psc = fields.Field()
+
+    def dehydrate_user_attendance__team__subsidiary__address_psc(self, obj):
+        if obj.user_attendance.team:
+            return obj.user_attendance.team.subsidiary.address_psc
+
+    user_attendance__team__subsidiary__address_city = fields.Field()
+
+    def dehydrate_user_attendance__team__subsidiary__address_city(self, obj):
+        if obj.user_attendance.team:
+            return obj.user_attendance.team.subsidiary.address_city
+
+    tracking_number_cnc = fields.Field()
+
+    def dehydrate_tracking_number_cnc(self, obj):
+        return obj.tracking_number_cnc()
+
+    tnt_con_reference = fields.Field()
+
+    def dehydrate_tnt_con_reference(self, obj):
+        return obj.tnt_con_reference()
+
+    company_admin_email = fields.Field()
+
+    def dehydrate_company_admin_email(self, obj):
+        company_admin = obj.user_attendance.get_asociated_company_admin()
+        if company_admin:
+            return company_admin.first().userprofile.user.email
+        else:
+            return ""
+
 
 @admin.register(models.PackageTransaction)
 class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
-    #resource_class = PackageTransactionResource
+    resource_class = PackageTransactionResource
     list_display = (
         'id',
         'user_attendance',
@@ -145,25 +148,33 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
     form = transaction_forms.PaymentForm
 
 
-# class DeliveryBatchForm(forms.ModelForm):
-#     class Meta:
-#         model = models.DeliveryBatch
-#         fields = "__all__"
-# 
-#     def __init__(self, *args, **kwargs):
-#         ret_val = super(DeliveryBatchForm, self).__init__(*args, **kwargs)
-#         if hasattr(self, 'request'):
-#             self.instance.campaign = models.Campaign.objects.get(slug=self.request.subdomain)
-#         return ret_val
+class DeliveryBatchForm(forms.ModelForm):
+    class Meta:
+        model = models.DeliveryBatch
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        ret_val = super(DeliveryBatchForm, self).__init__(*args, **kwargs)
+        if hasattr(self, 'request'):
+            self.instance.campaign = models.Campaign.objects.get(slug=self.request.subdomain)
+        return ret_val
+
+
+class PackageTransactionInline(NestedTabularInline):
+    model = models.PackageTransaction
+    extra = 0
+    readonly_fields = ['author', 'updated_by', 'tracking_number_cnc', 'tracking_link', 't_shirt_size']
+    raw_id_fields = ['user_attendance', 'delivery_batch']
+    form = PackageTransactionForm
 
 
 @admin.register(models.DeliveryBatch)
 class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     list_display = ['id', 'campaign', 'created', 'dispatched', 'package_transaction_count', 'author', 'customer_sheets__url', 'tnt_order__url']
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 't_shirt_sizes')
-    # inlines = [PackageTransactionInline, ]
+    inlines = [PackageTransactionInline, ]
     list_filter = (CampaignFilter,)
-    # form = DeliveryBatchForm
+    form = DeliveryBatchForm
 
     def get_list_display(self, request):
         for t_size in models.TShirtSize.objects.filter(campaign__slug=request.subdomain):
