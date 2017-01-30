@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('dpnk', '0049_auto_20170126_1527'),
+        ('dpnk', '0050_move_models_to_t_shirt_delivery'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -31,6 +31,7 @@ class Migration(migrations.Migration):
                 ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='deliverybatch_update', to=settings.AUTH_USER_MODEL, verbose_name='last updated by')),
             ],
             options={
+                'db_table': 't_shirt_delivery_deliverybatch',
                 'verbose_name': 'Dávka objednávek',
                 'verbose_name_plural': 'Dávky objednávek',
             },
@@ -43,6 +44,7 @@ class Migration(migrations.Migration):
                 ('delivery_batch', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='t_shirt_delivery.DeliveryBatch', verbose_name='Dávka objednávek')),
             ],
             options={
+                'db_table': 't_shirt_delivery_packagetransaction',
                 'verbose_name': 'Transakce balíku',
                 'verbose_name_plural': 'Transakce balíku',
             },
@@ -61,10 +63,16 @@ class Migration(migrations.Migration):
                 ('campaign', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dpnk.Campaign', verbose_name='Kampaň')),
             ],
             options={
+                'db_table': 't_shirt_delivery_tshirtsize',
                 'verbose_name': 'Velikost trička',
                 'verbose_name_plural': 'Velikosti trička',
                 'ordering': ['order'],
             },
+        ),
+        migrations.AddField(
+            model_name='packagetransaction',
+            name='t_shirt_size',
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='t_shirt_delivery.TShirtSize', verbose_name='Velikost trička'),
         ),
     ]
 
