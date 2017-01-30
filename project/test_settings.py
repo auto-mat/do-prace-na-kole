@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import os
 
 from .settings import *  # noqa
 from .settings import LOGGING, MIDDLEWARE_CLASSES, TEMPLATES
@@ -37,11 +38,11 @@ CACHES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'circle_test',
-        'USER': 'ubuntu',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': os.environ.get('DPNK_DB_NAME', 'circle_test'),
+        'USER': os.environ.get('DPNK_DB_USER', 'ubuntu'),
+        'PASSWORD': os.environ.get('DPNK_DB_PASSWORD', ''),
+        'HOST': os.environ.get('DPNK_DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DPNK_DB_PORT', ''),
     },
 }
 
