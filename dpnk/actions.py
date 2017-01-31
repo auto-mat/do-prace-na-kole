@@ -22,6 +22,8 @@ import datetime
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 
+from t_shirt_delivery.models import DeliveryBatch
+
 from . import mailing, models, results, tasks, views
 
 
@@ -152,7 +154,7 @@ update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")
 
 def create_batch(modeladmin, request, queryset):
     campaign = models.Campaign.objects.get(slug=request.subdomain)
-    delivery_batch = models.DeliveryBatch()
+    delivery_batch = DeliveryBatch()
     delivery_batch.campaign = campaign
     delivery_batch.add_packages_on_save = False
     delivery_batch.save()

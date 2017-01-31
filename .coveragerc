@@ -1,9 +1,11 @@
 [run]
 include =
    dpnk*,
+   t_shirt_delivery*,
    coupons*
 omit =
    dpnk/migrations*,
+   t_shirt_delivery/migrations*,
    coupons/migrations*
 plugins =
     django_coverage_plugin
