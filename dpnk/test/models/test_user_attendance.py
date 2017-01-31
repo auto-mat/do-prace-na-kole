@@ -61,7 +61,7 @@ class TestFrequencyPercentage(TestCase):
 class TestEnteredCompetitionReason(TestCase):
     def setUp(self):
         tshirt_size = mommy.make(
-            'dpnk.TShirtSize',
+            't_shirt_delivery.TShirtSize',
             name='XXXL',
             campaign__track_required=False,
         )
