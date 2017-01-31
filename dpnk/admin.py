@@ -451,7 +451,6 @@ class UserAttendanceInline(NestedTabularInline):
     model = models.UserAttendance
     form = UserAttendanceForm
     extra = 0
-    inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline]
     list_max_show_all = 10000
     raw_id_fields = ('team',)
 
