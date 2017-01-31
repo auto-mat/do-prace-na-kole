@@ -418,7 +418,10 @@ class UserAttendance(models.Model):
         """ Get coordinator, that manages company of this user attendance """
         if not self.team:
             return None
-        return self.team.subsidiary.company.company_admin.filter(campaign=self.campaign, company_admin_approved='approved')
+        return self.team.subsidiary.company.company_admin.filter(
+            campaign=self.campaign,
+            company_admin_approved='approved',
+        )
 
     def company_coordinator_emails(self):
         company_admins = self.get_asociated_company_admin()

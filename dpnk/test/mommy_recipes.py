@@ -28,7 +28,8 @@ PhaseRecipe = Recipe(
     phase_type="competition",
     date_from="2010-1-1",
     date_to="2020-1-1",
-    campaign__slug="Foo",  # this will be overriden by the related campaign
+    campaign__slug="temporary-campaign",  # this will be overriden by the related campaign
+    campaign__name="Temporary campaign",
 )
 CampaignRecipe = Recipe(
     "Campaign",

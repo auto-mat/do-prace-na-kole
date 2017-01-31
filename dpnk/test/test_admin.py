@@ -32,8 +32,6 @@ from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
 import settings
 
-from t_shirt_delivery.models import PackageTransaction
-
 
 @override_settings(
     SITE_ID=2,
@@ -151,24 +149,6 @@ class AdminModulesTests(DenormMixin, TestCase):
             '1031,Testing,User,test1,test2@test.cz,"Ulice 1, 111 11 Praha",Testing company,2015-11-12 18:18:40,,,,',
         )
 
-    def test_packagetransaction_export(self):
-        address = "/admin/dpnk/packagetransaction/export/?o=3"
-        post_data = {
-            'file_format': 0,
-        }
-        response = self.client.post(address, post_data)
-        self.assertContains(response, "7,1,,3,Null User,,without_team@email.cz,2015-11-12 18:18:40,,99,,,,,,,1,111121170,1-151112-000007")
-        self.assertContains(
-            response,
-            "6,1,2010-11-01 00:00:00,1115,Testing User 1,,test@test.cz,2015-11-12 18:18:40,,99,"
-            "Ulice 1,11111,Praha,Testing company,test@test.cz,,1,111111172,1-151112-000006",
-        )
-        self.assertContains(
-            response,
-            "8,1,2015-01-01 00:00:00,2115,Registered User 1,,test-registered@test.cz,2015-12-11 17:18:40,,99"
-            ",Ulice 1,11111,Praha,Testing company,test@test.cz,,1,131121179,1-151112-000008",
-        )
-
     def test_company_export(self):
         address = "/admin/dpnk/company/export/"
         post_data = {
@@ -208,11 +188,6 @@ class AdminModulesTests(DenormMixin, TestCase):
         }
         response = self.client.post(address, post_data)
         self.assertContains(response, "0.0,0,Testing campaign,1,,11111,CZ1234567890,0,Ulice,1,,,11111,Praha")
-
-    def test_deliverybatch_masschange(self):
-        address = "/admin/dpnk/deliverybatch-masschange/1/"
-        response = self.client.get(address)
-        self.assertContains(response, 'Zákaznické listy:')
 
     def test_competition_masschange(self):
         address = "/admin/dpnk/competition-masschange/3,5/"
@@ -329,19 +304,6 @@ class AdminTests(TestCase):
         response = self.client.get(address, follow=True)
         self.assertContains(response, "Testing")
         self.assertContains(response, "User 1")
-
-    def test_deliverybatch_admin(self):
-        address = reverse('admin:dpnk_deliverybatch_changelist')
-        response = self.client.get(address, follow=True)
-        self.assertContains(response, "Testing campaign")
-        self.assertContains(response, "field-customer_sheets__url")
-
-    def test_deliverybatch_admin_change(self):
-        PackageTransaction.objects.create(delivery_batch_id=1, t_shirt_size_id=1, user_attendance_id=1115)
-        address = reverse('admin:dpnk_deliverybatch_change', args=(1,))
-        response = self.client.get(address, follow=True)
-        self.assertContains(response, "Testing t-shirt size: 2")
-        self.assertContains(response, "Testing campaign")
 
     def test_admin_questionnaire_results(self):
         competition = models.Competition.objects.filter(slug="quest")
