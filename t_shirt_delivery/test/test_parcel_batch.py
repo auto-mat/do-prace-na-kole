@@ -22,7 +22,7 @@ from PyPDF2 import PdfFileReader
 
 from django.test import TestCase
 
-from dpnk.models import DeliveryBatch, PackageTransaction
+from t_shirt_delivery.models import DeliveryBatch, PackageTransaction
 
 
 class TestParcelBatch(TestCase):

@@ -111,35 +111,6 @@ class TestMethods(TestCase):
                 company=company,
             )
 
-    def test_package_transaction_raises_sequence_number_overrun(self):
-        campaign = models.Campaign.objects.create(
-            tracking_number_first=1,
-            tracking_number_last=1,
-        )
-        models.Phase.objects.create(
-            phase_type="competition",
-            campaign=campaign,
-            date_from="2016-1-1",
-            date_to="2016-1-1",
-        )
-        user = models.User.objects.create(first_name="Test", last_name="Name")
-        userprofile = models.UserProfile.objects.create(user=user)
-        user_attendance = models.UserAttendance.objects.create(
-            userprofile=userprofile,
-            campaign=campaign,
-        )
-        models.Company.objects.create()
-        package_transaction = models.PackageTransaction.objects.create(
-            delivery_batch_id=1,
-            user_attendance=user_attendance,
-        )
-        self.assertEqual(package_transaction.tracking_number, 1)
-        with self.assertRaisesRegexp(Exception, "Došla číselná řada pro balíčkové transakce"):
-            models.PackageTransaction.objects.create(
-                delivery_batch_id=1,
-                user_attendance=user_attendance,
-            )
-
     def test_answer_post_save_single_user(self):
         competition = models.Competition.objects.create(
             competitor_type="single_user",

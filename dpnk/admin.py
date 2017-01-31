@@ -431,7 +431,7 @@ class UserAttendanceForm(forms.ModelForm):
         super(UserAttendanceForm, self).__init__(*args, **kwargs)
         if 't_shirt_size' in self.fields:
             if hasattr(self.instance, 'campaign'):
-                self.fields['t_shirt_size'].queryset = models.TShirtSize.objects.filter(campaign=self.instance.campaign)
+                self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign)
 
     def clean(self):
         new_team = self.cleaned_data['team']

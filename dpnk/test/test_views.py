@@ -39,8 +39,6 @@ from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
 
-from price_level import models as price_level_models
-
 import settings
 
 from t_shirt_delivery.models import PackageTransaction
@@ -961,52 +959,6 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEquals(team.unapproved_member_count, 1)
         response = self.client.get(reverse('zmenit_tym'))
         self.assertEquals(response.status_code, 200)
-
-    def test_dpnk_t_shirt_size(self):
-        post_data = {
-            't_shirt_size': '1',
-            'next': 'Next',
-        }
-        PackageTransaction.objects.all().delete()
-        models.Payment.objects.all().delete()
-        self.user_attendance.save()
-        response = self.client.post(reverse('zmenit_triko'), post_data, follow=True)
-        self.assertRedirects(response, reverse("typ_platby"))
-        self.assertTrue(self.user_attendance.t_shirt_size.pk, 1)
-
-    def test_dpnk_t_shirt_size_no_sizes(self):
-        PackageTransaction.objects.all().delete()
-        models.Payment.objects.all().delete()
-        models.TShirtSize.objects.all().delete()
-        self.user_attendance.t_shirt_size = None
-        self.user_attendance.save()
-        self.user_attendance.campaign.save()
-        denorm.flush()
-        response = self.client.get(reverse('zmenit_triko'))
-        self.assertRedirects(response, reverse("typ_platby"), target_status_code=403)
-
-    @patch('slumber.API')
-    def test_dpnk_t_shirt_size_no_sizes_no_admission(self, slumber_api):
-        slumber_api.feed.get = {}
-        PackageTransaction.objects.all().delete()
-        models.Payment.objects.all().delete()
-        models.TShirtSize.objects.all().delete()
-        self.user_attendance.t_shirt_size = None
-        self.user_attendance.save()
-        price_level_models.PriceLevel.objects.all().delete()
-        self.user_attendance.campaign.save()
-        denorm.flush()
-        response = self.client.get(reverse('zmenit_triko'), follow=True)
-        self.assertRedirects(response, reverse("profil"))
-
-    def test_dpnk_t_shirt_size_no_team(self):
-        PackageTransaction.objects.all().delete()
-        models.Payment.objects.all().delete()
-        self.user_attendance.save()
-        self.user_attendance.team = None
-        self.user_attendance.save()
-        response = self.client.get(reverse('zmenit_triko'))
-        self.assertContains(response, "Velikost trička nemůžete měnit, dokud nemáte zvolený tým.", status_code=403)
 
     def test_dpnk_team_view_create(self):
         self.user_attendance.team = None

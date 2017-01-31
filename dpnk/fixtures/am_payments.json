@@ -4,7 +4,7 @@
             "user_attendance": 2115,
             "status": 99,
             "created": "2015-12-11T17:18:40.223",
-            "polymorphic_ctype": ["dpnk", "packagetransaction"]
+            "polymorphic_ctype": ["t_shirt_delivery", "packagetransaction"]
         },
         "model": "dpnk.transaction",
         "pk": 8
@@ -15,7 +15,7 @@
            "tracking_number": 13112117,
            "delivery_batch": 1
         },
-        "model": "dpnk.packagetransaction",
+        "model": "t_shirt_delivery.packagetransaction",
         "pk": 8
     },
     {

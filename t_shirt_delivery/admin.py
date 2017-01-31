@@ -29,6 +29,7 @@ from django.utils.translation import ugettext_lazy as _
 from dpnk import transaction_forms
 from dpnk.admin_mixins import FormRequestMixin
 from dpnk.filters import CampaignFilter, campaign_filter_generator
+from dpnk.models import Campaign
 
 from import_export import fields, resources
 from import_export.admin import ExportMixin
@@ -156,7 +157,7 @@ class DeliveryBatchForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         ret_val = super(DeliveryBatchForm, self).__init__(*args, **kwargs)
         if hasattr(self, 'request'):
-            self.instance.campaign = models.Campaign.objects.get(slug=self.request.subdomain)
+            self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
         return ret_val
 
 

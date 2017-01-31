@@ -32,6 +32,8 @@ from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
 import settings
 
+from t_shirt_delivery.models import PackageTransaction
+
 
 @override_settings(
     SITE_ID=2,
@@ -335,7 +337,7 @@ class AdminTests(TestCase):
         self.assertContains(response, "field-customer_sheets__url")
 
     def test_deliverybatch_admin_change(self):
-        models.PackageTransaction.objects.create(delivery_batch_id=1, t_shirt_size_id=1, user_attendance_id=1115)
+        PackageTransaction.objects.create(delivery_batch_id=1, t_shirt_size_id=1, user_attendance_id=1115)
         address = reverse('admin:dpnk_deliverybatch_change', args=(1,))
         response = self.client.get(address, follow=True)
         self.assertContains(response, "Testing t-shirt size: 2")
