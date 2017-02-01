@@ -6,6 +6,11 @@ import django
 from django.db import migrations, models
 
 
+def rename_content_types(apps, schema_editor):
+    ContentType = apps.get_model("contenttypes", "ContentType")
+    ContentType.objects.filter(model='packagetransaction').update(app_label='t_shirt_size')
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -34,4 +39,5 @@ class Migration(migrations.Migration):
             database_operations=database_operations,
             state_operations=state_operations,
 		),
+        migrations.RunPython(rename_content_types),
     ]
