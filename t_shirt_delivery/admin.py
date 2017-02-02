@@ -118,6 +118,30 @@ class PackageTransactionResource(resources.ModelResource):
             return ""
 
 
+@admin.register(models.SubsidiaryBox)
+class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
+    list_display = (
+        'delivery_batch',
+        'subsidiary',
+    )
+    raw_id_fields = (
+        'delivery_batch',
+        'subsidiary',
+    )
+
+
+@admin.register(models.TeamPackage)
+class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
+    list_display = (
+        'box',
+        'team',
+    )
+    raw_id_fields = (
+        'box',
+        'team',
+    )
+
+
 @admin.register(models.PackageTransaction)
 class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
     resource_class = PackageTransactionResource
