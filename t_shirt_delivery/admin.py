@@ -217,7 +217,7 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
         if not obj.pk:
             return obj.campaign.user_attendances_for_delivery().count()
         return obj.packagetransaction_set.count()
-    package_transaction_count.short_description = _(u"Balíčků k odeslání")
+    package_transaction_count.short_description = _("Trik k odeslání")
 
     def t_shirt_sizes(self, obj):
         if not obj.pk:

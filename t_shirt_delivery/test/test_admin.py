@@ -194,7 +194,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
         self.assertContains(
             response,
             "<div>"
-            "<label>Balíčků k odeslání:</label>"
+            "<label>Trik k odeslání:</label>"
             "<p>0</p>"
             "</div>",
             html=True,
