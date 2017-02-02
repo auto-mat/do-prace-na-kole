@@ -76,7 +76,7 @@ class DeliveryBatch(models.Model):
         verbose_name_plural = _(u"Dávky objednávek")
 
     def __str__(self):
-        return str(self.created)
+        return "id %s vytvořená %s" % (self.id, self.created.strftime("%Y-%m-%d %H:%M:%S"))
 
     @transaction.atomic
     def add_packages(self, user_attendances=None):

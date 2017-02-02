@@ -41,3 +41,6 @@ class TeamPackage(models.Model):
         null=False,
         blank=False,
     )
+
+    def __str__(self):
+        return _("Balíček pro tým %s") % self.team.name
