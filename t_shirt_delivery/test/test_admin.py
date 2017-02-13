@@ -51,8 +51,12 @@ class DeliveryBatchAdminMasschangeTests(AdminTestBase):
             dispatched="2017-01-01",
             id=1,
         )
-        address = "/admin/t_shirt_delivery/deliverybatch-masschange/1/"
-        response = self.client.get(address)
+        address = reverse('admin:t_shirt_delivery_deliverybatch_changelist')
+        post_data = {
+            'action': 'mass_update',
+            '_selected_action': '1',
+        }
+        response = self.client.post(address, post_data)
         self.assertContains(response, 'Zákaznické listy:')
 
 

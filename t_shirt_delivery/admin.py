@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from adminactions import actions as admin_actions
 
 from django import forms
 from django.contrib import admin
@@ -237,3 +238,8 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     def tnt_order__url(self, obj):
         if obj.tnt_order:
             return format_html("<a href='{}'>tnt_order</a>", obj.tnt_order.url)
+
+
+# register all adminactions
+admin.site.add_action(admin_actions.mass_update)
+admin.site.add_action(admin_actions.merge)
