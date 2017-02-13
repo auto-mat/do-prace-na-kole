@@ -174,7 +174,6 @@ INSTALLED_APPS = (
     'softhyphen',
     'django_extensions',
     'chart_tools',
-    'massadmin',
     'import_export',
     'polymorphic',
     'author',
@@ -206,6 +205,7 @@ INSTALLED_APPS = (
     'bootstrap3',
     'daterange_filter',
     'storages',
+    'adminactions',
     # 'cachalot',
 )
 

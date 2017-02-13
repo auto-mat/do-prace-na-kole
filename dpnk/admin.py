@@ -22,6 +22,8 @@
 import pprint
 import types
 
+from adminactions import actions as admin_actions, merge
+
 from adminfilters.filters import AllValuesComboFilter, RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
 
 from adminsortable2.admin import SortableInlineAdminMixin
@@ -125,13 +127,9 @@ class CityAdmin(LeafletGeoAdmin):
     list_filter = ('cityincampaign__campaign',)
 
 
-class CompanyForm(forms.ModelForm):
-    class Meta:
-        model = models.Company
-        fields = "__all__"
-
+class DontValidateCompnayFieldsMixin(object):
     def __init__(self, *args, **kwargs):
-        super(CompanyForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if 'dic' in self.fields:
             self.fields['dic'].required = False
         if 'ico' in self.fields:
@@ -144,6 +142,19 @@ class CompanyForm(forms.ModelForm):
             self.fields['address_street_number'].required = False
         if 'address_street' in self.fields:
             self.fields['address_street'].required = False
+
+
+class CompanyForm(DontValidateCompnayFieldsMixin, forms.ModelForm):
+    class Meta:
+        model = models.Company
+        fields = "__all__"
+
+
+class CompanyMergeForm(DontValidateCompnayFieldsMixin, merge.MergeForm):
+    def full_clean(self):
+        super().full_clean()
+        if 'address_psc' in self._errors:
+            del self._errors['address_psc']
 
 
 class CompanyResource(resources.ModelResource):
@@ -186,6 +197,7 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
     )
     list_max_show_all = 10000
     form = CompanyForm
+    merge_form = CompanyMergeForm
     resource_class = CompanyResource
 
     def subsidiaries_text(self, obj):
@@ -1367,3 +1379,8 @@ class TaskMetaAdmin(admin.ModelAdmin):
 
     def result_str(self, obj):
         return str(obj.result)
+
+
+# register all adminactions
+admin.site.add_action(admin_actions.mass_update)
+admin.site.add_action(admin_actions.merge)

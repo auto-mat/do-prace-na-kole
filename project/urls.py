@@ -42,7 +42,7 @@ urlpatterns = [
     ),
     url(r'^admin/', admin.site.urls),
     url(r'^chaining/', include('smart_selects.urls')),
-    url(r'^admin/', include("massadmin.urls")),
+    url(r'^adminactions/', include('adminactions.urls')),
     url(r"^su/", include("django_su.urls")),
     url(r'^ajax_select/', include(ajax_select_urls)),
     url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
