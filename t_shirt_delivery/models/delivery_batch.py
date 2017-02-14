@@ -32,7 +32,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
-from .package_transaction import PackageTransaction, Status
+from dpnk.models import Subsidiary
+
+from .package_transaction import Status
 from .. import avfull
 from .. import parcel_batch
 
@@ -80,15 +82,27 @@ class DeliveryBatch(models.Model):
 
     @transaction.atomic
     def add_packages(self, user_attendances=None):
+        from .team_package import TeamPackage
+        from .package_transaction import PackageTransaction
+        from .subsidiary_box import SubsidiaryBox
         if not user_attendances:
             user_attendances = self.campaign.user_attendances_for_delivery()
-        for user_attendance in user_attendances:
-            pt = PackageTransaction(
-                user_attendance=user_attendance,
+        for subsidiary in Subsidiary.objects.filter(teams__users__in=user_attendances):
+            subsidiary_box = SubsidiaryBox(
                 delivery_batch=self,
-                status=Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
+                subsidiary=subsidiary,
             )
-            pt.save()
+            for team in subsidiary.teams.filter(users__in=user_attendances):
+                subsidiary_box = TeamPackage(
+                    box=subsidiary_box,
+                    team=team,
+                )
+                for user_attendance in user_attendances & team.users.distinct():
+                    pt = PackageTransaction(
+                        user_attendance=user_attendance,
+                        status=Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
+                    )
+                    pt.save()
             denorm.flush()
 
 

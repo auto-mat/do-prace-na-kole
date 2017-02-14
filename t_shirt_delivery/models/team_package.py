@@ -19,7 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib.gis.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 
 class TeamPackage(models.Model):
@@ -38,9 +38,12 @@ class TeamPackage(models.Model):
     team = models.ForeignKey(
         'dpnk.Team',
         verbose_name=_("Tým"),
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
     )
 
     def __str__(self):
-        return _("Balíček pro tým %s") % self.team.name
+        if self.team:
+            return _("Balíček pro tým %s") % self.team.name
+        else:
+            return _("Balíček bez týmu")

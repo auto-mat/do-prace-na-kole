@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('delivery_batch', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='t_shirt_delivery.DeliveryBatch', verbose_name='Dávka objednávek')),
-                ('subsidiary', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dpnk.Subsidiary', verbose_name='Pobočka')),
+                ('subsidiary', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dpnk.Subsidiary', verbose_name='Pobočka', null=True, blank=True)),
             ],
             options={
                 'verbose_name': 'Krabice pro firmu',
@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('box', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='t_shirt_delivery.SubsidiaryBox', verbose_name='Krabice')),
-                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dpnk.Team', verbose_name='Tým')),
+                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dpnk.Team', verbose_name='Tým', null=True, blank=True)),
             ],
             options={
                 'verbose_name': 'týmový balíček',
@@ -49,14 +49,14 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelTable(
             name='deliverybatch',
-            table=None,
+            table="t_shirt_delivery_deliverybatch",
         ),
         migrations.AlterModelTable(
             name='packagetransaction',
-            table=None,
+            table="t_shirt_delivery_packagetransaction",
         ),
         migrations.AlterModelTable(
             name='tshirtsize',
-            table=None,
+            table="t_shirt_delivery_tshirtsize",
         ),
     ]

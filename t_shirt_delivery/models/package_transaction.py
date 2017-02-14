@@ -32,24 +32,24 @@ class PackageTransaction(Transaction):
     """Transakce balíku"""
 
     t_shirt_size = models.ForeignKey(
-        'TShirtSize',
+        't_shirt_delivery.TShirtSize',
         verbose_name=_(u"Velikost trička"),
         null=True,
         blank=False,
     )
     tracking_number = models.PositiveIntegerField(
-        verbose_name=_(u"Tracking number TNT"),
+        verbose_name=_(u"Tracking number"),
         unique=True,
         null=False,
     )
     delivery_batch = models.ForeignKey(
-        'DeliveryBatch',
+        't_shirt_delivery.DeliveryBatch',
         verbose_name=_(u"Dávka objednávek"),
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
     )
     team_package = models.ForeignKey(
-        'TeamPackage',
+        't_shirt_delivery.TeamPackage',
         verbose_name=_("Týmový balíček"),
         null=True,
         blank=False,

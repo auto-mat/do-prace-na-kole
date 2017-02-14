@@ -38,8 +38,8 @@ class SubsidiaryBox(models.Model):
     subsidiary = models.ForeignKey(
         'dpnk.Subsidiary',
         verbose_name=_("Pobočka"),
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
     )
 
     def __str__(self):

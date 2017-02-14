@@ -34,3 +34,17 @@ class TestTeamPackage(TestCase):
             str(team_package),
             "Balíček pro tým Foo team",
         )
+
+    def test_str_noteam(self):
+        """
+        Test that __str__ returns TeamPackage string
+        when team is None
+        """
+        team_package = mommy.make(
+            'TeamPackage',
+            team=None,
+        )
+        self.assertEqual(
+            str(team_package),
+            "Balíček bez týmu",
+        )
