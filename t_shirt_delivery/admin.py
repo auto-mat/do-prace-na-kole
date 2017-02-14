@@ -123,6 +123,8 @@ class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'delivery_batch',
         'subsidiary',
+        'customer_sheets',
+        'created',
     )
     raw_id_fields = (
         'delivery_batch',
@@ -135,10 +137,16 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'box',
         'team',
+        'team__subsidiary',
     )
     raw_id_fields = (
         'box',
         'team',
+    )
+    search_fields = (
+        'team__name',
+        'team__subsidiary__address_street',
+        'team__subsidiary__company__name',
     )
 
 

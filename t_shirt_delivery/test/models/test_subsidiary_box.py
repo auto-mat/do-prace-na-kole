@@ -17,7 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.test import TestCase
+import os
+
+from django.test import TestCase, override_settings
+
+from freezegun import freeze_time
 
 from model_mommy import mommy
 
@@ -40,4 +44,20 @@ class TestSubsidiaryBox(TestCase):
         self.assertEqual(
             str(subsidiary_box),
             "Krabice pro pobočku Foo recipient, Foo street 7, 123 45 Foo city - Foo city",
+        )
+
+    @freeze_time("2010-11-20")
+    @override_settings(MEDIA_ROOT='/tmp/django_test')
+    def test_create_customer_sheets(self):
+        """
+        Test that customer sheets are created
+        """
+        subsidiary_box = mommy.make(
+            'SubsidiaryBox',
+            id=123,
+        )
+        os.system("rm /tmp/django_test/customer_sheets/customer_sheets_123_2010-11-20.pdf")
+        self.assertEqual(
+            subsidiary_box.customer_sheets.name,
+            "customer_sheets/customer_sheets_123_2010-11-20.pdf",
         )

@@ -19,21 +19,35 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib.gis.db import models
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
+from model_utils.models import TimeStampedModel
 
-class SubsidiaryBox(models.Model):
-    """ Krabice pro firmu """
+from .. import customer_sheets
+
+
+class SubsidiaryBox(TimeStampedModel, models.Model):
+    """ Krabice pro pobočku """
 
     class Meta:
-        verbose_name = _("Krabice pro firmu")
-        verbose_name_plural = _("Krabice pro firmu")
+        verbose_name = _("Krabice pro pobočku")
+        verbose_name_plural = _("Krabice pro pobočky")
 
     delivery_batch = models.ForeignKey(
         'DeliveryBatch',
         verbose_name=_("Dávka objednávek"),
         null=False,
         blank=False,
+    )
+    customer_sheets = models.FileField(
+        verbose_name=_(u"Zákaznické listy"),
+        upload_to=u'customer_sheets',
+        blank=True,
+        null=True,
     )
     subsidiary = models.ForeignKey(
         'dpnk.Subsidiary',
@@ -44,3 +58,12 @@ class SubsidiaryBox(models.Model):
 
     def __str__(self):
         return _("Krabice pro pobočku %s") % self.subsidiary
+
+
+@receiver(post_save, sender=SubsidiaryBox)
+def create_customer_sheets(sender, instance, created, **kwargs):
+    if not instance.customer_sheets and getattr(instance, 'add_packages_on_save', True):
+        with NamedTemporaryFile() as temp:
+            customer_sheets.make_customer_sheets_pdf(temp, instance)
+            instance.customer_sheets.save("customer_sheets_%s_%s.pdf" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
+            instance.save()

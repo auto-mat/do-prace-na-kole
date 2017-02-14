@@ -21,8 +21,10 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext as _
 
+from model_utils.models import TimeStampedModel
 
-class TeamPackage(models.Model):
+
+class TeamPackage(TimeStampedModel, models.Model):
     """ Balíček pro tým """
 
     class Meta:

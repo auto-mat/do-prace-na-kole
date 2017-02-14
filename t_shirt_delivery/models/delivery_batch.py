@@ -36,7 +36,6 @@ from dpnk.models import Subsidiary
 
 from .package_transaction import Status
 from .. import avfull
-from .. import parcel_batch
 
 
 @with_author
@@ -110,14 +109,8 @@ def create_delivery_files(sender, instance, created, **kwargs):
     if created and getattr(instance, 'add_packages_on_save', True):
         instance.add_packages()
 
-    if not instance.customer_sheets and getattr(instance, 'add_packages_on_save', True):
-        temp = NamedTemporaryFile()
-        parcel_batch.make_customer_sheets_pdf(temp, instance)
-        instance.customer_sheets.save("customer_sheets_%s_%s.pdf" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
-        instance.save()
-
     if not instance.tnt_order and getattr(instance, 'add_packages_on_save', True):
-        temp = NamedTemporaryFile()
-        avfull.make_avfull(temp, instance)
-        instance.tnt_order.save("delivery_batch_%s_%s.txt" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
-        instance.save()
+        with NamedTemporaryFile() as temp:
+            avfull.make_avfull(temp, instance)
+            instance.tnt_order.save("delivery_batch_%s_%s.txt" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
+            instance.save()
