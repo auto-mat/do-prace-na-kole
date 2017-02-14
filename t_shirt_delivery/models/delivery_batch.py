@@ -88,21 +88,20 @@ class DeliveryBatch(models.Model):
         if not user_attendances:
             user_attendances = self.campaign.user_attendances_for_delivery()
         for subsidiary in Subsidiary.objects.filter(teams__users__in=user_attendances):
-            subsidiary_box = SubsidiaryBox(
+            subsidiary_box = SubsidiaryBox.objects.create(
                 delivery_batch=self,
                 subsidiary=subsidiary,
             )
             for team in subsidiary.teams.filter(users__in=user_attendances):
-                subsidiary_box = TeamPackage(
+                subsidiary_box = TeamPackage.objects.create(
                     box=subsidiary_box,
                     team=team,
                 )
-                for user_attendance in user_attendances & team.users.distinct():
-                    pt = PackageTransaction(
+                for user_attendance in user_attendances.distinct() & team.users.distinct():
+                    PackageTransaction.objects.create(
                         user_attendance=user_attendance,
                         status=Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
                     )
-                    pt.save()
             denorm.flush()
 
 

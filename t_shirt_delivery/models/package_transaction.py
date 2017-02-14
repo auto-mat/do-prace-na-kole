@@ -72,8 +72,9 @@ class PackageTransaction(Transaction):
         return str_tn + str(mod11.calc_check_digit(str_tn))
 
     def tnt_con_reference(self):
-        batch_date = self.delivery_batch.created.strftime("%y%m%d")
-        return "{:s}-{:s}-{:0>6.0f}".format(str(self.delivery_batch.pk), batch_date, self.pk)
+        if self.delivery_batch:
+            batch_date = self.delivery_batch.created.strftime("%y%m%d")
+            return "{:s}-{:s}-{:0>6.0f}".format(str(self.delivery_batch.pk), batch_date, self.pk)
 
     def tracking_link(self):
         return mark_safe(
