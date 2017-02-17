@@ -854,7 +854,7 @@ class PaymentChildAdmin(TransactionChildAdmin):
 
 
 class PackageTransactionChildAdmin(TransactionChildAdmin):
-    readonly_fields = ['created', 'author', 'updated_by', 'tracking_number_cnc', 'tracking_link', 't_shirt_size']
+    readonly_fields = ['created', 'author', 'updated_by', 't_shirt_size']
     form = PackageTransactionForm
 
 

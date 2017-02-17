@@ -116,7 +116,7 @@ class PackageTransactionTests(AdminTestBase):
             "foo@email.cz,2015-11-12 18:18:40,"
             "2015-11-12 18:18:40,99,Foo street ,11111,"
             "Foo city,Foo company,,"
-            "Foo size,1,111121170,1-151112-000007,"
+            "Foo size,1,"
             "foo_username",
         )
 
@@ -144,7 +144,7 @@ class PackageTransactionTests(AdminTestBase):
             "foo@email.cz,2015-11-12 18:18:40,"
             "2015-11-12 18:18:40,99,Foo street ,11111,"
             "Foo city,Foo company,foo_ca@email.cz,"
-            "Foo size,1,111121170,1-151112-000007,"
+            "Foo size,1,"
             "foo_username",
         )
 

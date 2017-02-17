@@ -63,8 +63,6 @@ class PackageTransactionResource(resources.ModelResource):
             'company_admin_email',
             't_shirt_size__name',
             'delivery_batch',
-            'tracking_number_cnc',
-            'tnt_con_reference',
             'author__username',
         )
         export_order = fields
@@ -97,16 +95,6 @@ class PackageTransactionResource(resources.ModelResource):
     def dehydrate_user_attendance__team__subsidiary__address_city(self, obj):
         if obj.user_attendance.team:
             return obj.user_attendance.team.subsidiary.address_city
-
-    tracking_number_cnc = fields.Field()
-
-    def dehydrate_tracking_number_cnc(self, obj):
-        return obj.tracking_number_cnc()
-
-    tnt_con_reference = fields.Field()
-
-    def dehydrate_tnt_con_reference(self, obj):
-        return obj.tnt_con_reference()
 
     company_admin_email = fields.Field()
 
@@ -168,8 +156,7 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         'user_attendance__team__subsidiary__company__name',
         't_shirt_size',
         'delivery_batch',
-        'tracking_number_cnc',
-        'tracking_link')
+    )
     search_fields = (
         'id',
         'user_attendance__userprofile__nickname',
@@ -200,7 +187,7 @@ class DeliveryBatchForm(forms.ModelForm):
 class PackageTransactionInline(NestedTabularInline):
     model = models.PackageTransaction
     extra = 0
-    readonly_fields = ['author', 'updated_by', 'tracking_number_cnc', 'tracking_link', 't_shirt_size']
+    readonly_fields = ['author', 'updated_by', 't_shirt_size']
     raw_id_fields = ['user_attendance', 'delivery_batch']
     form = PackageTransactionForm
 
