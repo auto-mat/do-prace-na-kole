@@ -31,8 +31,12 @@ from .. import util
 def get_address_string(address):
     return ", ".join(
         filter(
-            lambda x: x != "",
-            [address.recipient, "%s %s" % (address.street, address.street_number), "%s %s" % (util.format_psc(address.psc), address.city)],
+            None,
+            [
+                getattr(address, 'recipient', ''),
+                ("%s %s" % (address.street, address.street_number)).strip(),
+                ("%s %s" % (util.format_psc(address.psc), address.city)).strip(),
+            ],
         ),
     )
 

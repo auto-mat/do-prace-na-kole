@@ -98,7 +98,7 @@ class TestBatchCsv(TestCase):
                 csv_string_lines[0],
             )
             self.assertEquals(
-                ',Testing User,,Foo city,Foo street 123,12234,Testing User,'
+                ',Foo recipient; Foo company,CZ,Foo city,Foo street 123,12234,Testing User,'
                 'foo@email.cz,123456789,,,,,,1603824,0.5,0.125,1,,,',
                 csv_string_lines[1],
             )

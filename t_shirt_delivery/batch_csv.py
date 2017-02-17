@@ -51,8 +51,8 @@ def generate_csv(csvfile, delivery_batch):
         user_attendance = subsidiary_box.get_representative_user_attendance()
         spamwriter.writerow([
             "",  # Číslo dokladu",
-            user_attendance.userprofile.user.get_full_name() if user_attendance else "",
-            "",  # CZ",
+            subsidiary.get_recipient_string(),
+            "CZ",
             subsidiary.address_city,
             "%s %s" % (subsidiary.address_street, subsidiary.address_street_number),
             subsidiary.address_psc,
