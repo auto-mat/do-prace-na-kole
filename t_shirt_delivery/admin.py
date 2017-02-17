@@ -201,11 +201,23 @@ class PackageTransactionInline(NestedTabularInline):
     form = PackageTransactionForm
 
 
+class SubsidiaryBoxInline(NestedTabularInline):
+    model = models.SubsidiaryBox
+    extra = 0
+    readonly_fields = [
+        'created',
+    ]
+    raw_id_fields = (
+        'delivery_batch',
+        'subsidiary',
+    )
+
+
 @admin.register(models.DeliveryBatch)
 class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     list_display = ['id', 'campaign', 'created', 'dispatched', 'package_transaction_count', 'author', 'customer_sheets__url', 'tnt_order__url']
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 't_shirt_sizes')
-    inlines = [PackageTransactionInline, ]
+    inlines = [SubsidiaryBoxInline, ]
     list_filter = (CampaignFilter,)
     form = DeliveryBatchForm
 
