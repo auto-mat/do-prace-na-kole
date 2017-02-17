@@ -19,6 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
+from io import StringIO
 
 from author.decorators import with_author
 
@@ -26,7 +27,6 @@ import denorm
 
 from django.contrib.gis.db import models
 from django.core.files import File
-from django.core.files.temp import NamedTemporaryFile
 from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -35,7 +35,7 @@ from django.utils.translation import ugettext_lazy as _
 from dpnk.models import Subsidiary
 
 from .package_transaction import Status
-from .. import avfull
+from .. import batch_csv
 
 
 @with_author
@@ -60,8 +60,8 @@ class DeliveryBatch(models.Model):
         null=True,
     )
     tnt_order = models.FileField(
-        verbose_name=_(u"Objednávka pro TNT"),
-        upload_to=u'tnt_order',
+        verbose_name=_(u"CSV objednávka"),
+        upload_to=u'csv_delivery',
         blank=True,
         null=True,
     )
@@ -110,7 +110,7 @@ def create_delivery_files(sender, instance, created, **kwargs):
         instance.add_packages()
 
     if not instance.tnt_order and getattr(instance, 'add_packages_on_save', True):
-        with NamedTemporaryFile() as temp:
-            avfull.make_avfull(temp, instance)
-            instance.tnt_order.save("delivery_batch_%s_%s.txt" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
-            instance.save()
+        temp = StringIO()
+        batch_csv.generate_csv(temp, instance)
+        instance.tnt_order.save("delivery_batch_%s_%s.csv" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
+        instance.save()

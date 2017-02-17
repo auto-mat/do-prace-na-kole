@@ -18,8 +18,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
+import os
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from model_mommy import mommy
 
@@ -37,4 +38,20 @@ class TestDeliveryBatch(TestCase):
         self.assertEqual(
             str(delivery_batch),
             "id 11 vytvořená 2016-01-01 01:01:01",
+        )
+
+    @override_settings(MEDIA_ROOT='/tmp/django_test')
+    def test_batch_csv_sheets(self):
+        """
+        Test that batch CSV is created
+        """
+        os.system("rm -f /tmp/django_test/csv_delivery/delivery_batch_123_2010-11-20.csv")
+        delivery_batch = mommy.make(
+            'DeliveryBatch',
+            created=datetime.date(year=2010, month=11, day=20),
+            id=123,
+        )
+        self.assertEqual(
+            delivery_batch.tnt_order.name,
+            "csv_delivery/delivery_batch_123_2010-11-20.csv",
         )
