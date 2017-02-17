@@ -111,7 +111,7 @@ def make_team_sheet(team_package, canvas):
     im.drawOn(canvas, 1 * cm, 27 * cm)
 
     offset = 3
-    for user_attendance in team_package.team.users.all():
+    for user_attendance in team_package.team.members():
         canvas.setFont('DejaVu', 10)
         canvas.drawString(2 * cm, (offset + 19 + 6 * 0.5) * cm, "Uživatelské jméno:")
         canvas.drawString(6 * cm, (offset + 19 + 6 * 0.5) * cm, "%s" % user_attendance.userprofile.user.username)

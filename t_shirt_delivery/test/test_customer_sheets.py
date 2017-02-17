@@ -73,6 +73,9 @@ class TestCreateCustomerSheets(TestCase):
             name="Foo team with max name lenth fooo foo foo foo fooo",
             campaign=campaign,
         )
+        unapproved_user_attendance = team.users.all()[1]
+        unapproved_user_attendance.approved_for_team = 'undecided'
+        unapproved_user_attendance.save()
 
         self.subsidiary_box = mommy.make(
             "SubsidiaryBox",
@@ -117,3 +120,4 @@ class TestCreateCustomerSheets(TestCase):
             self.assertTrue("123456794" in pdf_string)
             self.assertTrue("2017-02-01" in pdf_string)
             self.assertTrue("Testing t-shirt size" in pdf_string)
+            self.assertTrue("Testing User 2" not in pdf_string)
