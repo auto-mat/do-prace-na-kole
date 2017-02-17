@@ -19,7 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib.gis.db import models
-from django.db import transaction
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
@@ -92,7 +91,6 @@ class PackageTransaction(Transaction):
             {'number': self.tnt_con_reference()},
         )
 
-    @transaction.atomic
     def save(self, *args, **kwargs):
         if not self.t_shirt_size:
             self.t_shirt_size = self.user_attendance.t_shirt_size

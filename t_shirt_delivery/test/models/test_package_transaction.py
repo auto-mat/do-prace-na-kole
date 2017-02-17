@@ -20,29 +20,17 @@
 
 from django.test import TestCase
 
-from dpnk.test.mommy_recipes import CampaignRecipe
+from dpnk.test.mommy_recipes import UserAttendanceRecipe
 
 from model_mommy import mommy
 
 
 class TestMethods(TestCase):
-    def test_package_transaction_raises_sequence_number_overrun(self):
-        campaign = CampaignRecipe.make(
-            tracking_number_first=1,
-            tracking_number_last=2,
-        )
+    def test_save(self):
+        t_shirt_size = mommy.make("TShirtSize")
+        user_attendance = UserAttendanceRecipe.make(t_shirt_size=t_shirt_size)
         package_transaction = mommy.make(
             "PackageTransaction",
-            delivery_batch__campaign=campaign,
-            user_attendance__campaign=campaign,
-            tracking_number=None,
+            user_attendance=user_attendance,
         )
-        self.assertEqual(package_transaction.tracking_number, 1)
-        with self.assertRaisesRegexp(Exception, "Došla číselná řada pro balíčkové transakce"):
-            package_transaction = mommy.make(
-                "PackageTransaction",
-                delivery_batch__campaign=campaign,
-                user_attendance__campaign=campaign,
-                tracking_number=None,
-                _quantity=2,
-            )
+        self.assertEqual(package_transaction.t_shirt_size, t_shirt_size)
