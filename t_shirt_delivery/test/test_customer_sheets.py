@@ -24,6 +24,7 @@ from itertools import cycle
 from PyPDF2 import PdfFileReader
 
 from django.core.files.temp import NamedTemporaryFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
 from dpnk.test.mommy_recipes import UserAttendanceRecipe
@@ -40,7 +41,12 @@ class TestCreateCustomerSheets(TestCase):
             "TShirtSize",
             name="Testing t-shirt size",
             campaign__slug="temporary_campaign",
-            t_shirt_preview="t_shirt_preview/dpnk2014_tshirt_men.svg",
+            t_shirt_preview=SimpleUploadedFile(
+                "t_shirt_preview.svg",
+                b'<svg xmlns="http://www.w3.org/2000/svg">'
+                b'<text>Example SVG text 1</text>'
+                b'</svg>',
+            ),
         )
         user_attendances = UserAttendanceRecipe.make(
             campaign__name="Testing campaign",
@@ -120,4 +126,5 @@ class TestCreateCustomerSheets(TestCase):
             self.assertTrue("123456794" in pdf_string)
             self.assertTrue("2017-02-01" in pdf_string)
             self.assertTrue("Testing t-shirt size" in pdf_string)
+            self.assertTrue("Example SVG text 1" in pdf_string)
             self.assertTrue("Testing User 2" not in pdf_string)
