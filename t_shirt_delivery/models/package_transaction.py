@@ -40,7 +40,8 @@ class PackageTransaction(Transaction):
     tracking_number = models.PositiveIntegerField(
         verbose_name=_(u"Tracking number"),
         unique=True,
-        null=False,
+        null=True,
+        default=None,
     )
     delivery_batch = models.ForeignKey(
         't_shirt_delivery.DeliveryBatch',
@@ -95,15 +96,4 @@ class PackageTransaction(Transaction):
     def save(self, *args, **kwargs):
         if not self.t_shirt_size:
             self.t_shirt_size = self.user_attendance.t_shirt_size
-        if not self.tracking_number:
-            campaign = self.user_attendance.campaign
-            first = campaign.tracking_number_first
-            last = campaign.tracking_number_last
-            last_transaction = PackageTransaction.objects.filter(tracking_number__gte=first, tracking_number__lte=last).order_by("tracking_number").last()
-            if last_transaction:
-                if last_transaction.tracking_number == last:
-                    raise Exception(_(u"Došla číselná řada pro balíčkové transakce"))
-                self.tracking_number = last_transaction.tracking_number + 1
-            else:
-                self.tracking_number = first
         super().save(*args, **kwargs)
