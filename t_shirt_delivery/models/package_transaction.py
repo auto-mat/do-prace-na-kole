@@ -64,8 +64,8 @@ class PackageTransaction(Transaction):
     ]
 
     class Meta:
-        verbose_name = _(u"Transakce balíku")
-        verbose_name_plural = _(u"Transakce balíku")
+        verbose_name = _("Transakce trika")
+        verbose_name_plural = _("Transakce trika")
 
     def tracking_number_cnc(self):
         str_tn = str(self.tracking_number)

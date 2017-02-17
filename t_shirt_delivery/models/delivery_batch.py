@@ -92,12 +92,13 @@ class DeliveryBatch(models.Model):
                 subsidiary=subsidiary,
             )
             for team in subsidiary.teams.filter(users__in=user_attendances):
-                subsidiary_box = TeamPackage.objects.create(
+                team_package = TeamPackage.objects.create(
                     box=subsidiary_box,
                     team=team,
                 )
                 for user_attendance in user_attendances.distinct() & team.users.distinct():
                     PackageTransaction.objects.create(
+                        team_package=team_package,
                         user_attendance=user_attendance,
                         status=Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
                     )
