@@ -20,6 +20,8 @@
 import datetime
 import os
 
+from PyPDF2 import PdfFileReader
+
 from django.test import TestCase, override_settings
 
 from dpnk.test.mommy_recipes import CampaignRecipe, UserAttendanceRecipe
@@ -89,6 +91,7 @@ class TestDeliveryBatch(TestCase):
         campaign = CampaignRecipe.make(name="Testin campaign")
         UserAttendanceRecipe.make(
             campaign=campaign,
+            userprofile__user__username="test_username",
             team__subsidiary__address_street="Foo street",
             team__subsidiary__address_psc=12234,
             team__subsidiary__address_street_number="123",
@@ -97,6 +100,7 @@ class TestDeliveryBatch(TestCase):
             team__subsidiary__address_recipient="Foo recipient",
             team__campaign=campaign,
             t_shirt_size__campaign=campaign,
+            approved_for_team='approved',
             transactions=[
                 mommy.make(
                     "Payment",
@@ -116,7 +120,13 @@ class TestDeliveryBatch(TestCase):
             PackageTransaction.objects.all(),
             ('<PackageTransaction: PackageTransaction object>',),
         )
+        # Test that PackageTransaction object is created
         self.assertEqual(
             PackageTransaction.objects.first().team_package.box.delivery_batch,
             delivery_batch,
         )
+
+        # Test that PDF is created correctly - with the t-shirt sizes for all UserAttendance objects
+        pdf = PdfFileReader(delivery_batch.subsidiarybox_set.first().customer_sheets)
+        pdf_string = pdf.pages[1].extractText()
+        self.assertTrue("test_username" in pdf_string)
