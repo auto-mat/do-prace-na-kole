@@ -25,6 +25,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
+from dpnk.models import UserAttendance
+
 from model_utils.models import TimeStampedModel
 
 from . import PackageTransaction
@@ -62,13 +64,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
 
     def get_representative_user_attendance(self):
         """ Returns UserAttendance to which this box should be addressed """
-        team_package = self.teampackage_set.first()
-        if not team_package:
-            return None
-        package = team_package.packagetransaction_set.first()
-        if not package:
-            return None
-        return self.teampackage_set.first().packagetransaction_set.first().user_attendance
+        return UserAttendance.objects.filter(transactions__packagetransaction__team_package__box=self).first()
 
     def get_t_shirt_count(self):
         return PackageTransaction.objects.filter(team_package__box=self).count()

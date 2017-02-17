@@ -136,8 +136,12 @@ class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
 class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'box',
+        'box__delivery_batch',
         'team',
         'team__subsidiary',
+    )
+    list_filter = (
+        'box__delivery_batch',
     )
     raw_id_fields = (
         'box',
@@ -215,8 +219,8 @@ class SubsidiaryBoxInline(NestedTabularInline):
 
 @admin.register(models.DeliveryBatch)
 class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
-    list_display = ['id', 'campaign', 'created', 'dispatched', 'package_transaction_count', 'author', 'customer_sheets__url', 'tnt_order__url']
-    readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 't_shirt_sizes')
+    list_display = ['id', 'campaign', 'created', 'dispatched', 'package_transaction_count', 'box_count', 'author', 'customer_sheets__url', 'tnt_order__url']
+    readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 'box_count', 't_shirt_sizes')
     inlines = [SubsidiaryBoxInline, ]
     list_filter = (CampaignFilter,)
     form = DeliveryBatchForm

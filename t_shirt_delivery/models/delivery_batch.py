@@ -79,6 +79,9 @@ class DeliveryBatch(models.Model):
     def __str__(self):
         return "id %s vytvořená %s" % (self.id, self.created.strftime("%Y-%m-%d %H:%M:%S"))
 
+    def box_count(self):
+        return self.subsidiarybox_set.count()
+
     @transaction.atomic
     def add_packages(self, user_attendances=None):
         from .team_package import TeamPackage

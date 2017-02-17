@@ -44,6 +44,28 @@ class TestDeliveryBatch(TestCase):
             "id 11 vytvořená 2016-01-01 01:01:01",
         )
 
+    def test_box_count_zero(self):
+        """
+        Test box_count() with zero boxes
+        """
+        delivery_batch = mommy.make('DeliveryBatch')
+        self.assertEqual(delivery_batch.box_count(), 0)
+
+    def test_box_count_non_zero(self):
+        """
+        Test box_count() with nonzero boxes
+        """
+        campaign = CampaignRecipe.make(name="Testin campaign")
+        delivery_batch = mommy.make(
+            'DeliveryBatch',
+            subsidiarybox_set=mommy.prepare(
+                "SubsidiaryBox",
+                _quantity=2,
+            ),
+            campaign=campaign,
+        )
+        self.assertEqual(delivery_batch.box_count(), 2)
+
     @override_settings(MEDIA_ROOT='/tmp/django_test')
     def test_batch_csv_sheets(self):
         """
