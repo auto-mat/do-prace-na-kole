@@ -70,6 +70,7 @@ class TShirtSize(models.Model):
         verbose_name = _(u"Velikost trička")
         verbose_name_plural = _(u"Velikosti trička")
         unique_together = (("name", "campaign"),)
+        db_table = 't_shirt_delivery_tshirtsize'
         ordering = ["order"]
 
     def __str__(self):

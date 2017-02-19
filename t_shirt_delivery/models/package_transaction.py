@@ -63,6 +63,7 @@ class PackageTransaction(Transaction):
     class Meta:
         verbose_name = _("Transakce trika")
         verbose_name_plural = _("Transakce trika")
+        db_table = 't_shirt_delivery_packagetransaction'
 
     def save(self, *args, **kwargs):
         if not self.t_shirt_size:

@@ -75,6 +75,7 @@ class DeliveryBatch(models.Model):
     class Meta:
         verbose_name = _(u"Dávka objednávek")
         verbose_name_plural = _(u"Dávky objednávek")
+        db_table = 't_shirt_delivery_deliverybatch'
 
     def __str__(self):
         return "id %s vytvořená %s" % (self.id, self.created.strftime("%Y-%m-%d %H:%M:%S"))
