@@ -111,7 +111,8 @@ def make_team_sheet(team_package, canvas):
     im.drawOn(canvas, 1 * cm, 27 * cm)
 
     offset = 3
-    for user_attendance in team_package.team.members():
+    for package_transaction in team_package.packagetransaction_set.all():
+        user_attendance = package_transaction.user_attendance
         canvas.setFont('DejaVu', 10)
         canvas.drawString(2 * cm, (offset + 19 + 6 * 0.5) * cm, "Uživatelské jméno:")
         canvas.drawString(6 * cm, (offset + 19 + 6 * 0.5) * cm, "%s" % user_attendance.userprofile.user.username)
@@ -135,12 +136,12 @@ def make_team_sheet(team_package, canvas):
             canvas.drawString(2 * cm, (offset + 19 + 1 * 0.5) * cm, "Zaplaceno:")
             canvas.drawString(6 * cm, (offset + 19 + 1 * 0.5) * cm, "%s" % (realized.date()))
 
-        if user_attendance.t_shirt_size:
+        if package_transaction.t_shirt_size:
             canvas.setFont('DejaVuB', 20)
-            canvas.drawString(2 * cm, (offset + 18) * cm, user_attendance.t_shirt_size.__str__())
+            canvas.drawString(2 * cm, (offset + 18) * cm, package_transaction.t_shirt_size.__str__())
 
-            if user_attendance.t_shirt_size.t_shirt_preview:
-                svg_tshirt = svg2rlg(user_attendance.t_shirt_size.t_shirt_preview.path)
+            if package_transaction.t_shirt_size.t_shirt_preview:
+                svg_tshirt = svg2rlg(package_transaction.t_shirt_size.t_shirt_preview.path)
                 svg_tshirt.scale(0.1, 0.1)
                 svg_tshirt.drawOn(canvas, 15 * cm, (offset + 18) * cm)
         canvas.line(0, (offset + 22.5) * cm, 100 * cm, (offset + 22.5) * cm)

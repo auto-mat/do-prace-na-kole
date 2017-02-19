@@ -102,12 +102,13 @@ class DeliveryBatch(models.Model):
                     box=subsidiary_box,
                     team=team,
                 )
-                for user_attendance in user_attendances.distinct() & team.users.distinct():
-                    PackageTransaction.objects.create(
-                        team_package=team_package,
-                        user_attendance=user_attendance,
-                        status=Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
-                    )
+                for user_attendance in user_attendances.distinct() & team.members().distinct():
+                    if user_attendance.t_shirt_size.ship:
+                        PackageTransaction.objects.create(
+                            team_package=team_package,
+                            user_attendance=user_attendance,
+                            status=Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
+                        )
             subsidiary_box.add_packages_on_save = True
             subsidiary_box.save()
             denorm.flush()

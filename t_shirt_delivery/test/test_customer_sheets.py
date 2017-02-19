@@ -27,7 +27,7 @@ from django.core.files.temp import NamedTemporaryFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
-from dpnk.test.mommy_recipes import UserAttendanceRecipe
+from dpnk.test.mommy_recipes import CampaignRecipe, UserAttendanceRecipe
 
 from model_mommy import mommy
 from model_mommy.recipe import seq
@@ -37,19 +37,26 @@ from t_shirt_delivery import customer_sheets
 
 class TestCreateCustomerSheets(TestCase):
     def setUp(self):
+        campaign = CampaignRecipe.make(name="Testing campaign")
         t_shirt_size = mommy.make(
             "TShirtSize",
             name="Testing t-shirt size",
-            campaign__slug="temporary_campaign",
+            campaign=campaign,
             t_shirt_preview=SimpleUploadedFile(
                 "t_shirt_preview.svg",
                 b'<svg xmlns="http://www.w3.org/2000/svg">'
                 b'<text>Example SVG text 1</text>'
                 b'</svg>',
             ),
+            ship=True,
+        )
+        mommy.make(
+            'price_level.PriceLevel',
+            takes_effect_on=datetime.date(year=2017, month=1, day=1),
+            pricable=campaign,
         )
         user_attendances = UserAttendanceRecipe.make(
-            campaign__name="Testing campaign",
+            campaign=campaign,
             userprofile__user__username=seq("test_username "),
             userprofile__user__first_name="Testing",
             userprofile__user__email="foo@email.cz",
@@ -66,23 +73,6 @@ class TestCreateCustomerSheets(TestCase):
             ],
             _quantity=5,
         )
-        campaign = user_attendances[0].campaign
-        mommy.make(
-            'price_level.PriceLevel',
-            takes_effect_on=datetime.date(year=2017, month=1, day=1),
-            pricable=campaign,
-        )
-        user_attendances[0].save()
-        team = mommy.make(
-            "dpnk.Team",
-            users=user_attendances,
-            name="Foo team with max name lenth fooo foo foo foo fooo",
-            campaign=campaign,
-        )
-        unapproved_user_attendance = team.users.all()[1]
-        unapproved_user_attendance.approved_for_team = 'undecided'
-        unapproved_user_attendance.save()
-
         self.subsidiary_box = mommy.make(
             "SubsidiaryBox",
             subsidiary__address_street="Foo street",
@@ -99,8 +89,16 @@ class TestCreateCustomerSheets(TestCase):
         mommy.make(
             "TeamPackage",
             box=self.subsidiary_box,
-            team=team,
+            team__users=user_attendances,
+            team__name="Foo team with max name lenth fooo foo foo foo fooo",
+            team__campaign=campaign,
             id=34567812,
+            packagetransaction_set=mommy.make(
+                "PackageTransaction",
+                t_shirt_size=t_shirt_size,
+                user_attendance=cycle(user_attendances),
+                _quantity=5,
+            ),
         )
 
     def test_make_customer_sheets_pdf(self):
@@ -127,4 +125,3 @@ class TestCreateCustomerSheets(TestCase):
             self.assertTrue("2017-02-01" in pdf_string)
             self.assertTrue("Testing t-shirt size" in pdf_string)
             self.assertTrue("Example SVG text 1" in pdf_string)
-            self.assertTrue("Testing User 2" not in pdf_string)
