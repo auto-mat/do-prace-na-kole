@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 
@@ -109,7 +110,6 @@ class PackageTransactionTests(AdminTestBase):
             'file_format': 0,
         }
         response = self.client.post(address, post_data)
-        print_response(response)
         self.assertContains(
             response,
             "7,1,2015-11-12 18:18:40,3,Null User,123321123,"
@@ -163,6 +163,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
         delivery_batch = mommy.make(
             "DeliveryBatch",
             campaign=campaign,
+            customer_sheets=SimpleUploadedFile("customer_sheets.txt", ""),
             id=1,
         )
         mommy.make(
@@ -177,6 +178,8 @@ class DeliveryBatchAdminTests(AdminTestBase):
         response = self.client.get(address, follow=True)
         self.assertContains(response, "Testing campaign")
         self.assertContains(response, "field-customer_sheets__url")
+        self.assertContains(response, "customer_sheets/customer_sheet")
+        self.assertContains(response, "csv_delivery/delivery_batch")
         self.assertContains(response, "<span>Testing t-shirt size</span>", html=True)
 
     def test_deliverybatch_admin_change(self):
@@ -207,3 +210,47 @@ class DeliveryBatchAdminTests(AdminTestBase):
             "</div>",
             html=True,
         )
+
+
+class UserAttendanceToBatchAdminTests(AdminTestBase):
+    def setUp(self):
+        super().setUp()
+        campaign = CampaignRecipe.make()
+        self.user_attendance = UserAttendanceRecipe.make(
+            t_shirt_size__ship=True,
+            t_shirt_size__name="Foo T-Shirt size",
+            transactions=[mommy.make("Payment", status=99)],
+            userprofile__user__first_name="Foo",
+            userprofile__user__last_name="name",
+            team__name="Testing team",
+            team__campaign=campaign,
+            campaign=campaign,
+            id=1,
+        )
+
+    def test_userattendancetobatchadmin_admin_changelist(self):
+        address = reverse('admin:t_shirt_delivery_userattendancetobatch_changelist')
+        response = self.client.get(address, follow=True)
+        self.assertContains(response, "Foo T-Shirt size")
+        self.assertContains(
+            response,
+            '<a href="/admin/t_shirt_delivery/userattendancetobatch/1/change/">Foo name</a>',
+            html=True,
+        )
+
+    def test_userattendancetobatchadmin_admin_change(self):
+        address = reverse(
+            'admin:t_shirt_delivery_userattendancetobatch_change',
+            args=(1,),
+        )
+        response = self.client.get(address, follow=True)
+        self.assertContains(
+            response,
+            "<div><label>Tým:</label><p>Testing team ()</p></div>",
+            html=True,
+        )
+
+    def test_userattendancetobatchadmin_admin_add(self):
+        address = reverse('admin:t_shirt_delivery_userattendancetobatch_add')
+        response = self.client.get(address, follow=True)
+        self.assertEquals(response.status_code, 403)
