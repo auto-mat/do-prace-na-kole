@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
 
 from django import forms
 from django.contrib import admin
@@ -29,7 +30,7 @@ from django.utils.translation import ugettext_lazy as _
 from dpnk import transaction_forms
 from dpnk.admin_mixins import FormRequestMixin
 from dpnk.filters import CampaignFilter, campaign_filter_generator
-from dpnk.models import Campaign
+from dpnk.models import Campaign, UserAttendance
 
 from import_export import fields, resources
 from import_export.admin import ExportMixin
@@ -38,7 +39,8 @@ from nested_inline.admin import NestedTabularInline
 
 from related_admin import RelatedFieldAdmin
 
-from . import models
+from . import actions, models
+from .admin_mixins import ReadOnlyModelAdminMixin
 from .forms import PackageTransactionForm
 
 
@@ -248,3 +250,45 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     def tnt_order__url(self, obj):
         if obj.tnt_order:
             return format_html("<a href='{}'>tnt_order</a>", obj.tnt_order.url)
+
+
+class UserAttendanceToBatch(UserAttendance):
+    class Meta:
+        verbose_name = _(u"Uživatel na dávku objednávek")
+        verbose_name_plural = _(u"Uživatelé na dávku objednávek")
+        proxy = True
+
+
+@admin.register(UserAttendanceToBatch)
+class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
+    list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created', 'representative_payment__realized')
+    list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter), 'transactions__status')
+    search_fields = (
+        'userprofile__nickname',
+        'userprofile__user__first_name',
+        'userprofile__user__last_name',
+        'userprofile__user__username',
+        'userprofile__user__email',
+        'team__name',
+        'team__subsidiary__address_street',
+        'team__subsidiary__address_psc',
+        'team__subsidiary__address_recipient',
+        'team__subsidiary__address_city',
+        'team__subsidiary__address_district',
+        'team__subsidiary__company__name',
+    )
+    actions = (actions.create_batch, )
+
+    def get_actions(self, request):
+        return {'create_batch': (actions.create_batch, 'create_batch', actions.create_batch.short_description)}
+    list_max_show_all = 10000
+
+    def payment_created(self, obj):
+        return obj.payment_created
+    payment_created.admin_order_field = 'payment_created'
+    payment_created.short_description = 'Datum vytvoření platby'
+
+    def get_queryset(self, request):
+        campaign = Campaign.objects.get(slug=request.subdomain)
+        queryset = campaign.user_attendances_for_delivery()
+        return queryset

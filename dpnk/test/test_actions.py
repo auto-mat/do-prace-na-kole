@@ -152,13 +152,6 @@ class TestActions(TestCase):
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEquals(message, "Úspěšně aktualiován mailing pro 3 koordinátorů")
 
-    def test_create_batch(self):
-        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[2, 3]))
-        queryset = models.UserAttendance.objects.all()
-        actions.create_batch(self.modeladmin, self.request, queryset)
-        message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(message, "Vytvořena nová dávka obsahující 8 položek")
-
     def test_mark_invoices_paid(self):
         queryset = models.Invoice.objects.all()
         actions.mark_invoices_paid(self.modeladmin, self.request, queryset)
