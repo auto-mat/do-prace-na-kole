@@ -27,11 +27,11 @@ from django.test import Client, TestCase
 from dpnk.test.mommy_recipes import CampaignRecipe, UserAttendanceRecipe
 from dpnk.test.util import print_response  # noqa
 
+from model_mommy import mommy
+
 from price_level.models import PriceLevel
 
 import settings
-
-from model_mommy import mommy
 
 from t_shirt_delivery.models import TShirtSize
 
