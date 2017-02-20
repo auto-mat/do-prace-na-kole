@@ -53,10 +53,20 @@ class Migration(migrations.Migration):
             name='tnt_order',
             field=models.FileField(blank=True, null=True, upload_to='csv_delivery', verbose_name='CSV objednávka'),
         ),
-        migrations.AlterField(
+        migrations.RemoveField(
             model_name='packagetransaction',
             name='delivery_batch',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='t_shirt_delivery.DeliveryBatch', verbose_name='Dávka objednávek'),
+        ),
+        migrations.CreateModel(
+            name='UserAttendanceToBatch',
+            fields=[
+            ],
+            options={
+                'verbose_name': 'Uživatel na dávku objednávek',
+                'verbose_name_plural': 'Uživatelé na dávku objednávek',
+                'proxy': True,
+            },
+            bases=('dpnk.userattendance',),
         ),
         migrations.AlterField(
             model_name='packagetransaction',

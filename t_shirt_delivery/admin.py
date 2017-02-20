@@ -49,7 +49,6 @@ class PackageTransactionResource(resources.ModelResource):
         model = models.PackageTransaction
         fields = (
             'id',
-            'delivery_batch',
             'payment_complete_date',
             'user_attendance',
             'user_attendance__name',
@@ -64,7 +63,6 @@ class PackageTransactionResource(resources.ModelResource):
             'user_attendance__team__subsidiary__company__name',
             'company_admin_email',
             't_shirt_size__name',
-            'delivery_batch',
             'author__username',
         )
         export_order = fields
@@ -157,7 +155,6 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         'user_attendance__team__subsidiary',
         'user_attendance__team__subsidiary__company__name',
         't_shirt_size',
-        'delivery_batch',
     )
     search_fields = (
         'id',
@@ -167,7 +164,10 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         'user_attendance__userprofile__user__username',
         'user_attendance__team__subsidiary__company__name',
     )
-    list_filter = [campaign_filter_generator('user_attendance__campaign'), 'status', 'delivery_batch']
+    list_filter = [
+        campaign_filter_generator('user_attendance__campaign'),
+        'status',
+    ]
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created')
     list_max_show_all = 10000
@@ -190,7 +190,9 @@ class PackageTransactionInline(NestedTabularInline):
     model = models.PackageTransaction
     extra = 0
     readonly_fields = ['author', 'updated_by', 't_shirt_size']
-    raw_id_fields = ['user_attendance', 'delivery_batch']
+    raw_id_fields = [
+        'user_attendance',
+    ]
     form = PackageTransactionForm
 
 
@@ -221,7 +223,8 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
                 self.list_display.append(field_name)
 
             def t_shirt_size(obj, t_size_id=t_size.pk):
-                return obj.packagetransaction_set.filter(t_shirt_size__pk=t_size_id).aggregate(Count('t_shirt_size'))['t_shirt_size__count']
+                package_transactions = models.PackageTransaction.objects.filter(team_package__box__delivery_batch=obj)
+                return package_transactions.filter(t_shirt_size__pk=t_size_id).aggregate(Count('t_shirt_size'))['t_shirt_size__count']
             t_shirt_size.short_description = t_size.name
             setattr(self, field_name, t_shirt_size)
         return self.list_display
@@ -229,14 +232,14 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     def package_transaction_count(self, obj):
         if not obj.pk:
             return obj.campaign.user_attendances_for_delivery().count()
-        return obj.packagetransaction_set.count()
+        return models.PackageTransaction.objects.filter(team_package__box__delivery_batch=obj).count()
     package_transaction_count.short_description = _("Trik k odeslání")
 
     def t_shirt_sizes(self, obj):
         if not obj.pk:
             package_transactions = obj.campaign.user_attendances_for_delivery()
         else:
-            package_transactions = obj.packagetransaction_set.all()
+            package_transactions = models.PackageTransaction.objects.filter(team_package__box__delivery_batch=obj)
         t_shirts = models.TShirtSize.objects.filter(packagetransaction__in=package_transactions)
         t_shirts = t_shirts.annotate(size_count=Count('packagetransaction'))
         t_shirts = t_shirts.values_list('name', 'size_count')

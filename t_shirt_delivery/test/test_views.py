@@ -17,62 +17,85 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import datetime
+
 from unittest.mock import patch
 
-import denorm
-
 from django.core.urlresolvers import reverse
+from django.test import Client, TestCase
 
-from dpnk.models import Payment
-from dpnk.test.test_views import ViewsLogon
+from dpnk.test.mommy_recipes import CampaignRecipe, UserAttendanceRecipe
+from dpnk.test.util import print_response  # noqa
 
 from price_level.models import PriceLevel
 
-from t_shirt_delivery.models import PackageTransaction, TShirtSize
+import settings
+
+from model_mommy import mommy
+
+from t_shirt_delivery.models import TShirtSize
 
 
-class ViewsTestsLogon(ViewsLogon):
+class ViewsTestsLogon(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
+        campaign = CampaignRecipe.make(slug="testing-campaign")
+        mommy.make(
+            "TShirtSize",
+            id=1,
+            campaign=campaign,
+        )
+        campaign.save()
+        mommy.make(
+            "price_level.PriceLevel",
+            takes_effect_on=datetime.date(year=2010, month=2, day=1),
+            pricable=campaign,
+        )
+        mommy.make(
+            "Phase",
+            phase_type="payment",
+            campaign=campaign,
+        )
+        self.user_attendance = UserAttendanceRecipe.make(
+            campaign=campaign,
+            approved_for_team="approved",
+            team__name="Testing team",
+            team__subsidiary__city__cityincampaign__campaign=campaign,
+            userprofile__user__first_name="Testing",
+            userprofile__user__last_name="User",
+            userprofile__user__email="testing.user@email.com",
+            userprofile__personal_data_opt_in=True,
+            distance=5,
+        )
+        self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+
     def test_dpnk_t_shirt_size(self):
         post_data = {
             't_shirt_size': '1',
             'next': 'Next',
         }
-        PackageTransaction.objects.all().delete()
-        Payment.objects.all().delete()
-        self.user_attendance.save()
         response = self.client.post(reverse('zmenit_triko'), post_data, follow=True)
         self.assertRedirects(response, reverse("typ_platby"))
+        self.user_attendance.refresh_from_db()
         self.assertTrue(self.user_attendance.t_shirt_size.pk, 1)
 
     def test_dpnk_t_shirt_size_no_sizes(self):
-        PackageTransaction.objects.all().delete()
-        Payment.objects.all().delete()
         TShirtSize.objects.all().delete()
-        self.user_attendance.t_shirt_size = None
-        self.user_attendance.save()
         self.user_attendance.campaign.save()
-        denorm.flush()
         response = self.client.get(reverse('zmenit_triko'))
         self.assertRedirects(response, reverse("typ_platby"), target_status_code=403)
 
     @patch('slumber.API')
     def test_dpnk_t_shirt_size_no_sizes_no_admission(self, slumber_api):
         slumber_api.feed.get = {}
-        PackageTransaction.objects.all().delete()
-        Payment.objects.all().delete()
         TShirtSize.objects.all().delete()
-        self.user_attendance.t_shirt_size = None
-        self.user_attendance.save()
         PriceLevel.objects.all().delete()
         self.user_attendance.campaign.save()
-        denorm.flush()
         response = self.client.get(reverse('zmenit_triko'), follow=True)
         self.assertRedirects(response, reverse("profil"))
 
     def test_dpnk_t_shirt_size_no_team(self):
-        PackageTransaction.objects.all().delete()
-        Payment.objects.all().delete()
-        self.user_attendance.save()
         self.user_attendance.team = None
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_triko'))

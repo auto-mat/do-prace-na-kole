@@ -39,12 +39,6 @@ class PackageTransaction(Transaction):
         null=True,
         default=None,
     )
-    delivery_batch = models.ForeignKey(
-        't_shirt_delivery.DeliveryBatch',
-        verbose_name=_(u"Dávka objednávek"),
-        null=True,
-        blank=True,
-    )
     team_package = models.ForeignKey(
         't_shirt_delivery.TeamPackage',
         verbose_name=_("Týmový balíček"),

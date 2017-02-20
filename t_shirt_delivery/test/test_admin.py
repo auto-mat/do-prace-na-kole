@@ -112,11 +112,11 @@ class PackageTransactionTests(AdminTestBase):
         response = self.client.post(address, post_data)
         self.assertContains(
             response,
-            "7,1,2015-11-12 18:18:40,3,Null User,123321123,"
+            "7,2015-11-12 18:18:40,3,Null User,123321123,"
             "foo@email.cz,2015-11-12 18:18:40,"
             "2015-11-12 18:18:40,99,Foo street ,11111,"
             "Foo city,Foo company,,"
-            "Foo size,1,"
+            "Foo size,"
             "foo_username",
         )
 
@@ -140,11 +140,11 @@ class PackageTransactionTests(AdminTestBase):
         response = self.client.post(address, post_data)
         self.assertContains(
             response,
-            "7,1,2015-11-12 18:18:40,3,Null User,123321123,"
+            "7,2015-11-12 18:18:40,3,Null User,123321123,"
             "foo@email.cz,2015-11-12 18:18:40,"
             "2015-11-12 18:18:40,99,Foo street ,11111,"
             "Foo city,Foo company,foo_ca@email.cz,"
-            "Foo size,1,"
+            "Foo size,"
             "foo_username",
         )
 
@@ -168,7 +168,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
         )
         mommy.make(
             "PackageTransaction",
-            delivery_batch=delivery_batch,
+            team_package__box__delivery_batch=delivery_batch,
             t_shirt_size=t_shirt_size,
             _quantity=2,
         )
