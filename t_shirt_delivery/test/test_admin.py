@@ -237,6 +237,8 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
             '<a href="/admin/t_shirt_delivery/userattendancetobatch/1/change/">Foo name</a>',
             html=True,
         )
+        self.assertContains(response, "1 Uživatel na dávku objednávek")
+        self.assertContains(response, "field-payment_created")
 
     def test_userattendancetobatchadmin_admin_change(self):
         address = reverse(
