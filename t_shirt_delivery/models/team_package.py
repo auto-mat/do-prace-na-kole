@@ -43,6 +43,16 @@ class TeamPackage(TimeStampedModel, models.Model):
         null=True,
         blank=True,
     )
+    dispatched = models.BooleanField(
+        verbose_name=_("Vyřízeno"),
+        blank=False,
+        null=False,
+        default=False,
+    )
+
+    def identifier(self):
+        if self.id:
+            return "T%s" % self.id
 
     def __str__(self):
         if self.team:

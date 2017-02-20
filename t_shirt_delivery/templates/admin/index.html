@@ -1,0 +1,15 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block content %}
+{{ block.super }}
+<div class="module">
+    <table summary="{% blocktrans with name="preferences" %}Models available in the preferences application.{% endblocktrans %}">
+        <caption><a href="preferences" class="section">{% blocktrans with name="preferences" %}T_Shirt_Delivery{% endblocktrans %}</a></caption>
+            <tr>
+					<th scope="row"><a href="{% url 'dispatch' %}">{% trans 'Označit balíky/krabice jako vyřízené' %}</a></th>
+                <td></td>
+            </tr>
+    </table>
+</div>
+{% endblock %}

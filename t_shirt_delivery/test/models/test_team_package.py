@@ -48,3 +48,28 @@ class TestTeamPackage(TestCase):
             str(team_package),
             "Balíček bez týmu",
         )
+
+    def test_identifier(self):
+        """
+        Test identifier()
+        """
+        team_package = mommy.make(
+            'TeamPackage',
+            id=1,
+        )
+        self.assertEqual(
+            team_package.identifier(),
+            "T1",
+        )
+
+    def test_identifier_new(self):
+        """
+        Test identifier() on new package
+        """
+        team_package = mommy.prepare(
+            'TeamPackage',
+        )
+        self.assertEqual(
+            team_package.identifier(),
+            None,
+        )

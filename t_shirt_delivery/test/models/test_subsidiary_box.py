@@ -137,3 +137,28 @@ class TestSubsidiaryBox(TestCase):
             delivery_batch__campaign=campaign,
         )
         self.assertEqual(subsidiary_box.get_representative_user_attendance(), None)
+
+    def test_identifier(self):
+        """
+        Test identifier()
+        """
+        subsidiary_box = mommy.make(
+            'SubsidiaryBox',
+            id=1,
+        )
+        self.assertEqual(
+            subsidiary_box.identifier(),
+            "S1",
+        )
+
+    def test_identifier_new(self):
+        """
+        Test identifier() on new package
+        """
+        subsidiary_box = mommy.prepare(
+            'SubsidiaryBox',
+        )
+        self.assertEqual(
+            subsidiary_box.identifier(),
+            None,
+        )

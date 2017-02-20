@@ -17,23 +17,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+
+from django import forms
+from django.core.validators import RegexValidator
+from django.utils.translation import ugettext_lazy as _
 
 
-from django.conf.urls import url
+class DispatchForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        super().__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', _('Balík/krabice s tímto číslem byl sestaven')))
+        self.fields['dispatch_id'].widget.attrs['autofocus'] = True
 
-from . import admin_views, views
-
-
-urlpatterns = [
-    url(
-        r'^zmenit_triko/$',
-        views.ChangeTShirtView.as_view(),
-        {'success_url': 'typ_platby'},
-        name="zmenit_triko",
-    ),
-    url(
-        r'^admin/dispatch/$',
-        admin_views.DispatchView.as_view(),
-        name="dispatch",
-    ),
-]
+    dispatch_id = forms.CharField(
+        validators=[
+            RegexValidator(
+                regex='^[TS][0-9]+$',
+                message='Číslo balíku/krabice je v nesprávném formátu',
+            ),
+        ],
+    )

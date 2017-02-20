@@ -72,7 +72,7 @@ def make_subsidiary_sheet(subsidiary_box, canvas):
     im.drawOn(canvas, 1 * cm, 27 * cm)
 
     canvas.setFont('DejaVu', 10)
-    barcode = code128.Code128("K%s" % subsidiary_box.id, barWidth=0.5 * mm, barHeight=20 * mm, humanReadable=True)
+    barcode = code128.Code128(subsidiary_box.identifier(), barWidth=0.5 * mm, barHeight=20 * mm, humanReadable=True)
     barcode.drawOn(canvas, 14.5 * cm, 26 * cm)
     canvas.drawString(15 * cm, 28.25 * cm, "ID krabice pro pobočku:")
 
@@ -98,7 +98,7 @@ def make_subsidiary_sheet(subsidiary_box, canvas):
 
 
 def make_team_sheet(team_package, canvas):
-    barcode = code128.Code128("T%s" % team_package.id, barWidth=0.5 * mm, barHeight=20 * mm, humanReadable=True)
+    barcode = code128.Code128(team_package.identifier(), barWidth=0.5 * mm, barHeight=20 * mm, humanReadable=True)
     barcode.drawOn(canvas, 14.5 * cm, 26 * cm)
     canvas.drawString(15 * cm, 28.25 * cm, "ID týmového balíku:")
 

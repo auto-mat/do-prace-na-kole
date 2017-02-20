@@ -109,26 +109,34 @@ class PackageTransactionResource(resources.ModelResource):
 @admin.register(models.SubsidiaryBox)
 class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
+        'identifier',
         'delivery_batch',
         'subsidiary',
         'customer_sheets',
+        'dispatched',
         'created',
     )
     raw_id_fields = (
         'delivery_batch',
         'subsidiary',
     )
+    search_fields = (
+        'id',
+    )
 
 
 @admin.register(models.TeamPackage)
 class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
+        'identifier',
+        'dispatched',
         'box',
         'box__delivery_batch',
         'team',
         'team__subsidiary',
     )
     list_filter = (
+        'dispatched',
         'box__delivery_batch',
     )
     raw_id_fields = (
@@ -136,6 +144,7 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
         'team',
     )
     search_fields = (
+        'id',
         'team__name',
         'team__subsidiary__address_street',
         'team__subsidiary__company__name',
