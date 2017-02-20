@@ -717,7 +717,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         'representative_payment__amount',
         'payment_status',
         ('team__member_count', AllValuesComboFilter),
-        ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter),
+        ('transactions__packagetransaction__team_package__box__delivery_batch', RelatedFieldComboFilter),
         ('userprofile__sex', AllValuesComboFilter),
         TrackFilter,
         HasVoucherFilter,

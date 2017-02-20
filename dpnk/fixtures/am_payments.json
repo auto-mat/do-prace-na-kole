@@ -12,8 +12,7 @@
     {
         "fields": {
            "transaction_ptr": 8,
-           "tracking_number": 13112117,
-           "delivery_batch": 1
+           "tracking_number": 13112117
         },
         "model": "t_shirt_delivery.packagetransaction",
         "pk": 8
