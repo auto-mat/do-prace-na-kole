@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from adminactions import actions as admin_actions
+from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
 
 from django import forms
 from django.contrib import admin
@@ -30,7 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 from dpnk import transaction_forms
 from dpnk.admin_mixins import FormRequestMixin
 from dpnk.filters import CampaignFilter, campaign_filter_generator
-from dpnk.models import Campaign
+from dpnk.models import Campaign, UserAttendance
 
 from import_export import fields, resources
 from import_export.admin import ExportMixin
@@ -39,7 +40,8 @@ from nested_inline.admin import NestedTabularInline
 
 from related_admin import RelatedFieldAdmin
 
-from . import models
+from . import actions, models
+from .admin_mixins import ReadOnlyModelAdminMixin
 from .forms import PackageTransactionForm
 
 
@@ -48,7 +50,6 @@ class PackageTransactionResource(resources.ModelResource):
         model = models.PackageTransaction
         fields = (
             'id',
-            'delivery_batch',
             'payment_complete_date',
             'user_attendance',
             'user_attendance__name',
@@ -63,9 +64,6 @@ class PackageTransactionResource(resources.ModelResource):
             'user_attendance__team__subsidiary__company__name',
             'company_admin_email',
             't_shirt_size__name',
-            'delivery_batch',
-            'tracking_number_cnc',
-            'tnt_con_reference',
             'author__username',
         )
         export_order = fields
@@ -99,16 +97,6 @@ class PackageTransactionResource(resources.ModelResource):
         if obj.user_attendance.team:
             return obj.user_attendance.team.subsidiary.address_city
 
-    tracking_number_cnc = fields.Field()
-
-    def dehydrate_tracking_number_cnc(self, obj):
-        return obj.tracking_number_cnc()
-
-    tnt_con_reference = fields.Field()
-
-    def dehydrate_tnt_con_reference(self, obj):
-        return obj.tnt_con_reference()
-
     company_admin_email = fields.Field()
 
     def dehydrate_company_admin_email(self, obj):
@@ -122,24 +110,45 @@ class PackageTransactionResource(resources.ModelResource):
 @admin.register(models.SubsidiaryBox)
 class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
+        'identifier',
         'delivery_batch',
         'subsidiary',
+        'customer_sheets',
+        'dispatched',
+        'created',
     )
     raw_id_fields = (
         'delivery_batch',
         'subsidiary',
+    )
+    search_fields = (
+        'id',
     )
 
 
 @admin.register(models.TeamPackage)
 class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
+        'identifier',
+        'dispatched',
         'box',
+        'box__delivery_batch',
         'team',
+        'team__subsidiary',
+    )
+    list_filter = (
+        'dispatched',
+        'box__delivery_batch',
     )
     raw_id_fields = (
         'box',
         'team',
+    )
+    search_fields = (
+        'id',
+        'team__name',
+        'team__subsidiary__address_street',
+        'team__subsidiary__company__name',
     )
 
 
@@ -156,9 +165,7 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         'user_attendance__team__subsidiary',
         'user_attendance__team__subsidiary__company__name',
         't_shirt_size',
-        'delivery_batch',
-        'tracking_number_cnc',
-        'tracking_link')
+    )
     search_fields = (
         'id',
         'user_attendance__userprofile__nickname',
@@ -167,7 +174,10 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         'user_attendance__userprofile__user__username',
         'user_attendance__team__subsidiary__company__name',
     )
-    list_filter = [campaign_filter_generator('user_attendance__campaign'), 'status', 'delivery_batch']
+    list_filter = [
+        campaign_filter_generator('user_attendance__campaign'),
+        'status',
+    ]
     raw_id_fields = ('user_attendance',)
     readonly_fields = ('author', 'created')
     list_max_show_all = 10000
@@ -189,16 +199,30 @@ class DeliveryBatchForm(forms.ModelForm):
 class PackageTransactionInline(NestedTabularInline):
     model = models.PackageTransaction
     extra = 0
-    readonly_fields = ['author', 'updated_by', 'tracking_number_cnc', 'tracking_link', 't_shirt_size']
-    raw_id_fields = ['user_attendance', 'delivery_batch']
+    readonly_fields = ['author', 'updated_by', 't_shirt_size']
+    raw_id_fields = [
+        'user_attendance',
+    ]
     form = PackageTransactionForm
+
+
+class SubsidiaryBoxInline(NestedTabularInline):
+    model = models.SubsidiaryBox
+    extra = 0
+    readonly_fields = [
+        'created',
+    ]
+    raw_id_fields = (
+        'delivery_batch',
+        'subsidiary',
+    )
 
 
 @admin.register(models.DeliveryBatch)
 class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
-    list_display = ['id', 'campaign', 'created', 'dispatched', 'package_transaction_count', 'author', 'customer_sheets__url', 'tnt_order__url']
-    readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 't_shirt_sizes')
-    inlines = [PackageTransactionInline, ]
+    list_display = ['id', 'campaign', 'created', 'dispatched', 'package_transaction_count', 'box_count', 'author', 'customer_sheets__url', 'tnt_order__url']
+    readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 'box_count', 't_shirt_sizes')
+    inlines = [SubsidiaryBoxInline, ]
     list_filter = (CampaignFilter,)
     form = DeliveryBatchForm
 
@@ -209,7 +233,8 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
                 self.list_display.append(field_name)
 
             def t_shirt_size(obj, t_size_id=t_size.pk):
-                return obj.packagetransaction_set.filter(t_shirt_size__pk=t_size_id).aggregate(Count('t_shirt_size'))['t_shirt_size__count']
+                package_transactions = models.PackageTransaction.objects.filter(team_package__box__delivery_batch=obj)
+                return package_transactions.filter(t_shirt_size__pk=t_size_id).aggregate(Count('t_shirt_size'))['t_shirt_size__count']
             t_shirt_size.short_description = t_size.name
             setattr(self, field_name, t_shirt_size)
         return self.list_display
@@ -217,14 +242,14 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     def package_transaction_count(self, obj):
         if not obj.pk:
             return obj.campaign.user_attendances_for_delivery().count()
-        return obj.packagetransaction_set.count()
+        return models.PackageTransaction.objects.filter(team_package__box__delivery_batch=obj).count()
     package_transaction_count.short_description = _("Trik k odeslání")
 
     def t_shirt_sizes(self, obj):
         if not obj.pk:
             package_transactions = obj.campaign.user_attendances_for_delivery()
         else:
-            package_transactions = obj.packagetransaction_set.all()
+            package_transactions = models.PackageTransaction.objects.filter(team_package__box__delivery_batch=obj)
         t_shirts = models.TShirtSize.objects.filter(packagetransaction__in=package_transactions)
         t_shirts = t_shirts.annotate(size_count=Count('packagetransaction'))
         t_shirts = t_shirts.values_list('name', 'size_count')
@@ -238,6 +263,48 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     def tnt_order__url(self, obj):
         if obj.tnt_order:
             return format_html("<a href='{}'>tnt_order</a>", obj.tnt_order.url)
+
+
+class UserAttendanceToBatch(UserAttendance):
+    class Meta:
+        verbose_name = _(u"Uživatel na dávku objednávek")
+        verbose_name_plural = _(u"Uživatelé na dávku objednávek")
+        proxy = True
+
+
+@admin.register(UserAttendanceToBatch)
+class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
+    list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created', 'representative_payment__realized')
+    list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter), 'transactions__status')
+    search_fields = (
+        'userprofile__nickname',
+        'userprofile__user__first_name',
+        'userprofile__user__last_name',
+        'userprofile__user__username',
+        'userprofile__user__email',
+        'team__name',
+        'team__subsidiary__address_street',
+        'team__subsidiary__address_psc',
+        'team__subsidiary__address_recipient',
+        'team__subsidiary__address_city',
+        'team__subsidiary__address_district',
+        'team__subsidiary__company__name',
+    )
+    actions = (actions.create_batch, )
+
+    def get_actions(self, request):
+        return {'create_batch': (actions.create_batch, 'create_batch', actions.create_batch.short_description)}
+    list_max_show_all = 10000
+
+    def payment_created(self, obj):
+        return obj.payment_created
+    payment_created.admin_order_field = 'payment_created'
+    payment_created.short_description = 'Datum vytvoření platby'
+
+    def get_queryset(self, request):
+        campaign = Campaign.objects.get(slug=request.subdomain)
+        queryset = campaign.user_attendances_for_delivery()
+        return queryset
 
 
 # register all adminactions

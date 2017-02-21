@@ -61,7 +61,7 @@ from t_shirt_delivery.forms import PackageTransactionForm
 from t_shirt_delivery.models import PackageTransaction, TShirtSize
 
 from . import actions, models, transaction_forms
-from .admin_mixins import CityAdminMixin, FormRequestMixin, ReadOnlyModelAdminMixin, city_admin_mixin_generator
+from .admin_mixins import CityAdminMixin, FormRequestMixin, city_admin_mixin_generator
 from .filters import (
     CampaignFilter,
     CityCampaignFilter,
@@ -729,7 +729,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         'representative_payment__amount',
         'payment_status',
         ('team__member_count', AllValuesComboFilter),
-        ('transactions__packagetransaction__delivery_batch', RelatedFieldComboFilter),
+        ('transactions__packagetransaction__team_package__box__delivery_batch', RelatedFieldComboFilter),
         ('userprofile__sex', AllValuesComboFilter),
         TrackFilter,
         HasVoucherFilter,
@@ -866,7 +866,7 @@ class PaymentChildAdmin(TransactionChildAdmin):
 
 
 class PackageTransactionChildAdmin(TransactionChildAdmin):
-    readonly_fields = ['created', 'author', 'updated_by', 'tracking_number_cnc', 'tracking_link', 't_shirt_size']
+    readonly_fields = ['created', 'author', 'updated_by', 't_shirt_size']
     form = PackageTransactionForm
 
 
@@ -1316,48 +1316,6 @@ class GpxFileAdmin(LeafletGeoAdmin):
 class VoucherAdmin(ImportMixin, admin.ModelAdmin):
     list_display = ('id', 'voucher_type', 'token', 'user_attendance')
     raw_id_fields = ('user_attendance',)
-
-
-class UserAttendanceToBatch(models.UserAttendance):
-    class Meta:
-        verbose_name = _(u"Uživatel na dávku objednávek")
-        verbose_name_plural = _(u"Uživatelé na dávku objednávek")
-        proxy = True
-
-
-@admin.register(UserAttendanceToBatch)
-class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
-    list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created', 'representative_payment__realized')
-    list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter), 'transactions__status')
-    search_fields = (
-        'userprofile__nickname',
-        'userprofile__user__first_name',
-        'userprofile__user__last_name',
-        'userprofile__user__username',
-        'userprofile__user__email',
-        'team__name',
-        'team__subsidiary__address_street',
-        'team__subsidiary__address_psc',
-        'team__subsidiary__address_recipient',
-        'team__subsidiary__address_city',
-        'team__subsidiary__address_district',
-        'team__subsidiary__company__name',
-    )
-    actions = (actions.create_batch, )
-
-    def get_actions(self, request):
-        return {'create_batch': (actions.create_batch, 'create_batch', actions.create_batch.short_description)}
-    list_max_show_all = 10000
-
-    def payment_created(self, obj):
-        return obj.payment_created
-    payment_created.admin_order_field = 'payment_created'
-    payment_created.short_description = 'Datum vytvoření platby'
-
-    def get_queryset(self, request):
-        campaign = models.Campaign.objects.get(slug=request.subdomain)
-        queryset = campaign.user_attendances_for_delivery()
-        return queryset
 
 
 @admin.register(Session)

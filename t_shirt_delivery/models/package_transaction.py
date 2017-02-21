@@ -19,37 +19,28 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib.gis.db import models
-from django.db import transaction
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from dpnk.models import Status, Transaction
-
-from modulus11 import mod11
 
 
 class PackageTransaction(Transaction):
     """Transakce balíku"""
 
     t_shirt_size = models.ForeignKey(
-        'TShirtSize',
+        't_shirt_delivery.TShirtSize',
         verbose_name=_(u"Velikost trička"),
         null=True,
         blank=False,
     )
     tracking_number = models.PositiveIntegerField(
-        verbose_name=_(u"Tracking number TNT"),
+        verbose_name=_(u"Tracking number"),
         unique=True,
-        null=False,
-    )
-    delivery_batch = models.ForeignKey(
-        'DeliveryBatch',
-        verbose_name=_(u"Dávka objednávek"),
-        null=False,
-        blank=False,
+        null=True,
+        default=None,
     )
     team_package = models.ForeignKey(
-        'TeamPackage',
+        't_shirt_delivery.TeamPackage',
         verbose_name=_("Týmový balíček"),
         null=True,
         blank=False,
@@ -64,45 +55,11 @@ class PackageTransaction(Transaction):
     ]
 
     class Meta:
-        verbose_name = _(u"Transakce balíku")
-        verbose_name_plural = _(u"Transakce balíku")
+        verbose_name = _("Transakce trika")
+        verbose_name_plural = _("Transakce trika")
+        db_table = 't_shirt_delivery_packagetransaction'
 
-    def tracking_number_cnc(self):
-        str_tn = str(self.tracking_number)
-        return str_tn + str(mod11.calc_check_digit(str_tn))
-
-    def tnt_con_reference(self):
-        batch_date = self.delivery_batch.created.strftime("%y%m%d")
-        return "{:s}-{:s}-{:0>6.0f}".format(str(self.delivery_batch.pk), batch_date, self.pk)
-
-    def tracking_link(self):
-        return mark_safe(
-            "<a href='http://www.tnt.com/webtracker/tracking.do?"
-            "requestType=GEN&"
-            "searchType=REF&"
-            "respLang=cs&"
-            "respCountry=cz&"
-            "sourceID=1&"
-            "sourceCountry=ww&"
-            "cons=%(number)s&"
-            "navigation=1&"
-            "genericSiteIdent='>%(number)s</a>" %
-            {'number': self.tnt_con_reference()},
-        )
-
-    @transaction.atomic
     def save(self, *args, **kwargs):
         if not self.t_shirt_size:
             self.t_shirt_size = self.user_attendance.t_shirt_size
-        if not self.tracking_number:
-            campaign = self.user_attendance.campaign
-            first = campaign.tracking_number_first
-            last = campaign.tracking_number_last
-            last_transaction = PackageTransaction.objects.filter(tracking_number__gte=first, tracking_number__lte=last).order_by("tracking_number").last()
-            if last_transaction:
-                if last_transaction.tracking_number == last:
-                    raise Exception(_(u"Došla číselná řada pro balíčkové transakce"))
-                self.tracking_number = last_transaction.tracking_number + 1
-            else:
-                self.tracking_number = first
         super().save(*args, **kwargs)

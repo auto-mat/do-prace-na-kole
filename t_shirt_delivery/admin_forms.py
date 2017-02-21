@@ -17,20 +17,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 
-from django.test import TestCase
-
-from dpnk.test.mommy_recipes import UserAttendanceRecipe
-
-from model_mommy import mommy
+from django import forms
+from django.core.validators import RegexValidator
+from django.utils.translation import ugettext_lazy as _
 
 
-class TestMethods(TestCase):
-    def test_save(self):
-        t_shirt_size = mommy.make("TShirtSize")
-        user_attendance = UserAttendanceRecipe.make(t_shirt_size=t_shirt_size)
-        package_transaction = mommy.make(
-            "PackageTransaction",
-            user_attendance=user_attendance,
-        )
-        self.assertEqual(package_transaction.t_shirt_size, t_shirt_size)
+class DispatchForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        super().__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', _('Balík/krabice s tímto číslem byl sestaven')))
+        self.fields['dispatch_id'].widget.attrs['autofocus'] = True
+
+    dispatch_id = forms.CharField(
+        validators=[
+            RegexValidator(
+                regex='^[TS][0-9]+$',
+                message='Číslo balíku/krabice je v nesprávném formátu',
+            ),
+        ],
+    )

@@ -220,11 +220,15 @@ class Campaign(Pricable, models.Model):
             campaign=self,
             transactions__payment__status__in=Payment.done_statuses,
             t_shirt_size__ship=True,
-        ).exclude(transactions__packagetransaction__status__in=PackageTransaction.shipped_statuses).\
-            exclude(team=None).\
-            annotate(payment_created=Max('transactions__payment__created')).\
-            order_by('payment_created').\
-            distinct()
+        ).exclude(
+            transactions__packagetransaction__status__in=PackageTransaction.shipped_statuses,
+        ).exclude(
+            team=None,
+        ).annotate(
+            payment_created=Max('transactions__payment__created'),
+        ).order_by(
+            'payment_created',
+        ).distinct()
 
     @depend_on_related('TShirtSize', foreign_key='tshirtsize_set')
     @denormalized(models.BooleanField, default=True)

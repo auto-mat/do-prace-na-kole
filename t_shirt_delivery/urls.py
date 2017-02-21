@@ -21,7 +21,7 @@
 
 from django.conf.urls import url
 
-from . import views
+from . import admin_views, views
 
 
 urlpatterns = [
@@ -30,5 +30,10 @@ urlpatterns = [
         views.ChangeTShirtView.as_view(),
         {'success_url': 'typ_platby'},
         name="zmenit_triko",
+    ),
+    url(
+        r'^admin/dispatch/$',
+        admin_views.DispatchView.as_view(),
+        name="dispatch",
     ),
 ]

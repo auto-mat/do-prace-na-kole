@@ -261,25 +261,6 @@ class AdminModulesTests(DenormMixin, TestCase):
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class BatchAdminTests(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions']
-
-    def setUp(self):
-        self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
-
-    def test_userattendancetobatch_admin(self):
-        address = reverse('admin:dpnk_userattendancetobatch_changelist')
-        response = self.client.get(address, follow=True)
-        self.assertContains(response, "Ulice 1, 111 11 Praha - Testing city")
-        self.assertContains(response, "1 Uživatel na dávku objednávek")
-        self.assertContains(response, "field-payment_created")
-
-
-@override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
 class AdminTests(TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
 

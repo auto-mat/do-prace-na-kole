@@ -19,10 +19,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib.gis.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
+
+from model_utils.models import TimeStampedModel
 
 
-class TeamPackage(models.Model):
+class TeamPackage(TimeStampedModel, models.Model):
     """ Balíček pro tým """
 
     class Meta:
@@ -38,9 +40,22 @@ class TeamPackage(models.Model):
     team = models.ForeignKey(
         'dpnk.Team',
         verbose_name=_("Tým"),
-        null=False,
+        null=True,
+        blank=True,
+    )
+    dispatched = models.BooleanField(
+        verbose_name=_("Vyřízeno"),
         blank=False,
+        null=False,
+        default=False,
     )
 
+    def identifier(self):
+        if self.id:
+            return "T%s" % self.id
+
     def __str__(self):
-        return _("Balíček pro tým %s") % self.team.name
+        if self.team:
+            return _("Balíček pro tým %s") % self.team.name
+        else:
+            return _("Balíček bez týmu")

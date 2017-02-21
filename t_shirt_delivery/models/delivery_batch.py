@@ -19,6 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
+from io import StringIO
 
 from author.decorators import with_author
 
@@ -26,15 +27,15 @@ import denorm
 
 from django.contrib.gis.db import models
 from django.core.files import File
-from django.core.files.temp import NamedTemporaryFile
 from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
-from .package_transaction import PackageTransaction, Status
-from .. import avfull
-from .. import parcel_batch
+from dpnk.models import Subsidiary
+
+from .package_transaction import Status
+from .. import batch_csv
 
 
 @with_author
@@ -59,8 +60,8 @@ class DeliveryBatch(models.Model):
         null=True,
     )
     tnt_order = models.FileField(
-        verbose_name=_(u"Objednávka pro TNT"),
-        upload_to=u'tnt_order',
+        verbose_name=_(u"CSV objednávka"),
+        upload_to=u'csv_delivery',
         blank=True,
         null=True,
     )
@@ -74,21 +75,42 @@ class DeliveryBatch(models.Model):
     class Meta:
         verbose_name = _(u"Dávka objednávek")
         verbose_name_plural = _(u"Dávky objednávek")
+        db_table = 't_shirt_delivery_deliverybatch'
 
     def __str__(self):
         return "id %s vytvořená %s" % (self.id, self.created.strftime("%Y-%m-%d %H:%M:%S"))
 
+    def box_count(self):
+        return self.subsidiarybox_set.count()
+
     @transaction.atomic
     def add_packages(self, user_attendances=None):
+        from .team_package import TeamPackage
+        from .package_transaction import PackageTransaction
+        from .subsidiary_box import SubsidiaryBox
         if not user_attendances:
             user_attendances = self.campaign.user_attendances_for_delivery()
-        for user_attendance in user_attendances:
-            pt = PackageTransaction(
-                user_attendance=user_attendance,
+        for subsidiary in Subsidiary.objects.filter(teams__users__in=user_attendances).distinct():
+            subsidiary_box = SubsidiaryBox(
                 delivery_batch=self,
-                status=Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
+                subsidiary=subsidiary,
             )
-            pt.save()
+            subsidiary_box.add_packages_on_save = False
+            subsidiary_box.save()
+            for team in subsidiary.teams.filter(users__in=user_attendances).distinct():
+                team_package = TeamPackage.objects.create(
+                    box=subsidiary_box,
+                    team=team,
+                )
+                for user_attendance in user_attendances.distinct() & team.members().distinct():
+                    if user_attendance.t_shirt_size.ship:
+                        PackageTransaction.objects.create(
+                            team_package=team_package,
+                            user_attendance=user_attendance,
+                            status=Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY,
+                        )
+            subsidiary_box.add_packages_on_save = True
+            subsidiary_box.save()
             denorm.flush()
 
 
@@ -97,14 +119,8 @@ def create_delivery_files(sender, instance, created, **kwargs):
     if created and getattr(instance, 'add_packages_on_save', True):
         instance.add_packages()
 
-    if not instance.customer_sheets and getattr(instance, 'add_packages_on_save', True):
-        temp = NamedTemporaryFile()
-        parcel_batch.make_customer_sheets_pdf(temp, instance)
-        instance.customer_sheets.save("customer_sheets_%s_%s.pdf" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
-        instance.save()
-
     if not instance.tnt_order and getattr(instance, 'add_packages_on_save', True):
-        temp = NamedTemporaryFile()
-        avfull.make_avfull(temp, instance)
-        instance.tnt_order.save("delivery_batch_%s_%s.txt" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
+        temp = StringIO()
+        batch_csv.generate_csv(temp, instance)
+        instance.tnt_order.save("delivery_batch_%s_%s.csv" % (instance.pk, instance.created.strftime("%Y-%m-%d")), File(temp))
         instance.save()

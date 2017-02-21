@@ -127,6 +127,7 @@ TEMPLATES = [
         'DIRS': [
             normpath(PROJECT_ROOT, 'templates'),
             normpath(PROJECT_ROOT, 'dpnk/templates'),
+            normpath(PROJECT_ROOT, 't_shirt_delivery/templates'),
         ],
         'OPTIONS': {
             'string_if_invalid': InvalidStringShowWarning("%s"),

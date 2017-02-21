@@ -71,3 +71,10 @@ class Subsidiary(models.Model):
 
     def name(self):
         return get_address_string(self.address)
+
+    def get_recipient_string(self):
+        """ makes recipient from address_recipient and company name """
+        if self.address_recipient.lower().strip() == self.company.name.lower().strip():
+            return self.address_recipient
+        else:
+            return "; ".join(filter(None, [self.address_recipient, self.company.name]))

@@ -21,6 +21,11 @@ class Migration(migrations.Migration):
         migrations.AlterModelTable('DeliveryBatch', 't_shirt_delivery_deliverybatch'),
         migrations.AlterModelTable('PackageTransaction', 't_shirt_delivery_packagetransaction'),
         migrations.AlterModelTable('TShirtSize', 't_shirt_delivery_tshirtsize'),
+		migrations.AlterField(
+			model_name='userattendance',
+			name='t_shirt_size',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='t_shirt_delivery.TShirtSize', verbose_name='Velikost trička'),
+		)
     ]
 
     state_operations = [

@@ -112,8 +112,10 @@ def get_client_ip(request):
 
 
 def format_psc(integer):
+    if integer is None:
+        return ""
     psc_str = str(integer)
-    return psc_str[:-2] + " " + psc_str[-2:]
+    return " ".join([psc_str[:-2], psc_str[-2:]]).strip()
 
 
 # TODO: move this to denorm application
