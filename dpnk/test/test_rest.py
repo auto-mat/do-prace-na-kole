@@ -104,33 +104,33 @@ class RestTests(DenormMixin, TestCase):
     #         self.assertContains(response, '{"detail":"GPX for this day and trip already uploaded"}', status_code=409)
 
 
-@override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
-class RestTestsLogout(DenormMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users']
-
-    def setUp(self):
-        super().setUp()
-        self.client = Client(HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer")
-        util.rebuild_denorm_models(Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
-
-    def test_competition_get(self):
-        address = reverse("competition-list")
-        response = self.client.get(address)
-        self.assertContains(response, '"slug":"FQ-LB"')
-        self.assertContains(response, '"name":"Pravidelnost týmů"')
-        self.assertContains(response, '"results":"http://testing-campaign.testserver/rest/result/FQ-LB/"')
-
-    def test_competitionresults_get(self):
-        address = reverse("result-list", kwargs={"competition_slug": "FQ-LB"})
-        response = self.client.get(address)
-        self.assertContains(response, '"team":"http://testing-campaign.testserver/rest/team/1/"')
-        self.assertContains(response, '"result":100.0')
-
-    def test_competitionresults_get_unknown_competition(self):
-        address = reverse("result-list", kwargs={"competition_slug": "unknown"})
-        response = self.client.get(address)
-        self.assertContains(response, '{"detail":"Competition with this slug not found"}', status_code=405)
+# @override_settings(
+#     SITE_ID=2,
+#     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+# )
+# class RestTestsLogout(DenormMixin, TestCase):
+#     fixtures = ['sites', 'campaign', 'auth_user', 'users']
+#
+#     def setUp(self):
+#         super().setUp()
+#         self.client = Client(HTTP_HOST="testing-campaign.testserver", HTTP_REFERER="test-referer")
+#         util.rebuild_denorm_models(Team.objects.filter(pk=1))
+#         util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
+#
+#     def test_competition_get(self):
+#         address = reverse("competition-list")
+#         response = self.client.get(address)
+#         self.assertContains(response, '"slug":"FQ-LB"')
+#         self.assertContains(response, '"name":"Pravidelnost týmů"')
+#         self.assertContains(response, '"results":"http://testing-campaign.testserver/rest/result/FQ-LB/"')
+#
+#     def test_competitionresults_get(self):
+#         address = reverse("result-list", kwargs={"competition_slug": "FQ-LB"})
+#         response = self.client.get(address)
+#         self.assertContains(response, '"team":"http://testing-campaign.testserver/rest/team/1/"')
+#         self.assertContains(response, '"result":100.0')
+#
+#     def test_competitionresults_get_unknown_competition(self):
+#         address = reverse("result-list", kwargs={"competition_slug": "unknown"})
+#         response = self.client.get(address)
+#         self.assertContains(response, '{"detail":"Competition with this slug not found"}', status_code=405)
