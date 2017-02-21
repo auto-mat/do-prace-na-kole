@@ -73,4 +73,14 @@ class Migration(migrations.Migration):
             name='tracking_number',
             field=models.PositiveIntegerField(default=None, null=True, unique=True, verbose_name='Tracking number'),
         ),
+        migrations.AddField(
+            model_name='subsidiarybox',
+            name='dispatched',
+            field=models.BooleanField(default=False, verbose_name='Vyřízeno'),
+        ),
+        migrations.AddField(
+            model_name='teampackage',
+            name='dispatched',
+            field=models.BooleanField(default=False, verbose_name='Vyřízeno'),
+        ),
     ]
