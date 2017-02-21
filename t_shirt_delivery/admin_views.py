@@ -22,8 +22,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _
 from django.utils.html import format_html
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic.edit import FormView
 
 from .admin_forms import DispatchForm
