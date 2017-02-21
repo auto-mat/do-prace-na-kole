@@ -107,7 +107,7 @@ class TestCreateCustomerSheets(TestCase):
             pdf = PdfFileReader(temp_file)
             pdf_string = pdf.pages[0].extractText()
             self.assertTrue("Testing campaign" in pdf_string)
-            self.assertTrue("K1603824" in pdf_string)
+            self.assertTrue("S1603824" in pdf_string)
             self.assertTrue("Foo company" in pdf_string)
             self.assertTrue("1231321313" in pdf_string)
             self.assertTrue("Foo recipient" in pdf_string)
