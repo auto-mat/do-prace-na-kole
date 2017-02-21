@@ -91,6 +91,9 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         t_shirt_count = self.get_t_shirt_count()
         return t_shirt_volume * t_shirt_count
 
+    def all_packages_dispatched(self):
+        return not self.teampackage_set.filter(dispatched=False).exists()
+
 
 @receiver(post_save, sender=SubsidiaryBox)
 def create_customer_sheets(sender, instance, created, **kwargs):

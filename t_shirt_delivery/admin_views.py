@@ -20,9 +20,10 @@
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import format_html
 from django.views.generic.edit import FormView
 
 from .admin_forms import DispatchForm
@@ -52,12 +53,27 @@ class DispatchView(FormView):
                     _("Balíček/krabice byl v minulosti již zařazen k sestavení: %s") % package,
                 )
             else:
-                package.dispatched = True
-                package.save()
-                messages.success(
-                    self.request,
-                    _("Balíček/krabice zařazen jako sestavený: %s") % package,
-                )
+                if isinstance(package, SubsidiaryBox) and not package.all_packages_dispatched():
+                    messages.warning(
+                        self.request,
+                        format_html(
+                            _(
+                                "Tato krabice obsahuje balíčky, které ještě nebyli zařazeny k sestavení: "
+                                "<a href='{}?box__id__exact={}&amp;dispatched__exact=0'>"
+                                "zobrazit seznam nesestavených balíčků"
+                                "</a>"
+                            ),
+                            reverse('admin:t_shirt_delivery_teampackage_changelist'),
+                            package.pk,
+                        ),
+                    )
+                else:
+                    package.dispatched = True
+                    package.save()
+                    messages.success(
+                        self.request,
+                        _("Balíček/krabice zařazen jako sestavený: %s") % package,
+                    )
         except ObjectDoesNotExist:
             messages.warning(
                 self.request,

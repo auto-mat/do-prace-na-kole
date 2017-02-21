@@ -65,6 +65,31 @@ class DispatchViewTests(TestCase):
             html=True,
         )
 
+    def test_subsidiary_dispatch_teampackage_not(self):
+        """
+        Test, that warning shows if subsidiary package has undispatched team packages.
+        """
+        mommy.make(
+            "TeamPackage",
+            dispatched=False,
+            box__id=123,
+            id=123,
+        )
+        post_data = {
+            'dispatch_id': 'S123',
+            'next': 'Next',
+        }
+        response = self.client.post(reverse('dispatch'), post_data, follow=True)
+        self.assertContains(
+            response,
+            "<li class='warning'>"
+            "Tato krabice obsahuje balíčky, které ještě nebyli zařazeny k sestavení: "
+            "<a href='/admin/t_shirt_delivery/teampackage/?box__id__exact=123&amp;dispatched__exact=0'>"
+            "zobrazit seznam nesestavených balíčků"
+            "</a></li>",
+            html=True,
+        )
+
     def test_not_found(self):
         """ Test, that warning shows if package is not found """
         post_data = {

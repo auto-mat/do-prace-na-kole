@@ -162,3 +162,28 @@ class TestSubsidiaryBox(TestCase):
             subsidiary_box.identifier(),
             None,
         )
+
+    def test_all_packages_dispatched(self):
+        team_package = mommy.make(
+            'TeamPackage',
+            dispatched=True,
+        )
+        subsidiary_box = team_package.box
+        self.assertEquals(subsidiary_box.teampackage_set.count(), 1)
+        self.assertTrue(subsidiary_box.all_packages_dispatched())
+
+    def test_all_packages_dispatched_no_package(self):
+        subsidiary_box = mommy.prepare(
+            'SubsidiaryBox',
+        )
+        self.assertEquals(subsidiary_box.teampackage_set.count(), 0)
+        self.assertTrue(subsidiary_box.all_packages_dispatched())
+
+    def test_all_packages_dispatched_false(self):
+        team_package = mommy.make(
+            'TeamPackage',
+            dispatched=False,
+        )
+        subsidiary_box = team_package.box
+        self.assertEquals(subsidiary_box.teampackage_set.count(), 1)
+        self.assertFalse(subsidiary_box.all_packages_dispatched())
