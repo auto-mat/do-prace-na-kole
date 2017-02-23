@@ -1,4 +1,4 @@
-from python:3.5
+from python:3.6
 
 maintainer Automat
 
@@ -13,9 +13,9 @@ run apt-get install -y gunicorn
 
 run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
-copy requirements.txt ./
+copy requirements.freeze.txt ./
 run pip install six
-run pip install -r requirements.txt
+run pip install -r requirements.freeze.txt
 copy test_requirements.txt ./
 run pip install -r test_requirements.txt
 
