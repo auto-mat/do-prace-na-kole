@@ -42,7 +42,7 @@ from django.utils.translation import ugettext_lazy as _
 from djcelery.models import TaskMeta
 
 from import_export import fields, resources
-from import_export.admin import ExportMixin, ImportMixin
+from import_export.admin import ExportMixin, ImportMixin, ImportExportMixin
 
 from leaflet.admin import LeafletGeoAdmin
 
@@ -323,7 +323,7 @@ class QuestionInline(SortableInlineAdminMixin, admin.TabularInline):
 
 
 @admin.register(models.Competition)
-class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ExportMixin, RelatedFieldAdmin):
+class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, RelatedFieldAdmin):
     list_display = (
         'name',
         'slug',
