@@ -42,7 +42,7 @@ from django.utils.translation import ugettext_lazy as _
 from djcelery.models import TaskMeta
 
 from import_export import fields, resources
-from import_export.admin import ExportMixin, ImportMixin, ImportExportMixin
+from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
 
 from leaflet.admin import LeafletGeoAdmin
 
