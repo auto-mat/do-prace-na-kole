@@ -1,4 +1,4 @@
-from python:3.6
+from python:3.5
 
 maintainer Automat
 
@@ -16,8 +16,8 @@ WORKDIR "/home/aplikace"
 copy requirements.freeze.txt ./
 run pip install six
 run pip install -r requirements.freeze.txt
-copy test_requirements.txt ./
-run pip install -r test_requirements.txt
+copy requirements-test.txt ./
+run pip install -r requirements-test.txt
 
 copy . .
 
