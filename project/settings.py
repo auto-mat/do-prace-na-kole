@@ -47,13 +47,12 @@ DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@dopracenakole.cz>'
 MANAGERS = ADMINS
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '',
-        'OPTIONS': {'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci'},
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': os.environ.get('DPNK_DB_NAME', ''),
+        'USER': os.environ.get('DPNK_DB_USER', ''),
+        'PASSWORD': os.environ.get('DPNK_DB_PASSWORD', ''),
+        'HOST': os.environ.get('DPNK_DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DPNK_DB_PORT', ''),
     },
 }
 
@@ -276,12 +275,12 @@ DBBACKUP_BACKUP_DIRECTORY = normpath(PROJECT_ROOT, 'db_backup')
 
 MAX_COMPETITIONS_PER_COMPANY = 4
 
-MAILING_API_KEY = ''
+MAILING_API_KEY = os.environ.get('DPNK_MAILING_API_KEY', '')
 
-PAYU_KEY_1 = ''
-PAYU_KEY_2 = ''
-PAYU_POS_AUTH_KEY = 'NxFcSXh'
-PAYU_POS_ID = "131116"
+PAYU_KEY_1 = os.environ.get('DPNK_PAYU_KEY_1', '')
+PAYU_KEY_2 = os.environ.get('DPNK_PAYU_KEY_2', '')
+PAYU_POS_AUTH_KEY = os.environ.get('DPNK_PAYU_POS_AUTH_KEY', 'NxFcSXh')
+PAYU_POS_ID = os.environ.get('DPNK_PAYU_POS_ID', "131116")
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -334,7 +333,7 @@ LOGGING = {
         'logfile': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': "/var/log/django/dpnk.log",
+            'filename': os.environ.get('DPNK_LOG_FILE', "/var/log/django/dpnk.log"),
             'backupCount': 50,
             'maxBytes': 10000000,
             'formatter': 'verbose',
@@ -372,6 +371,8 @@ LOGGING = {
         },
     },
 }
+
+ALLOWED_HOSTS = os.environ.get('DPNK_ALLOWED_HOSTS', '').split(',')
 
 MIGRATION_MODULES = {
     'price_level': 'price_level_migrations',

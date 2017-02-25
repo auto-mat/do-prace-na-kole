@@ -1,3 +1,7 @@
+*.pyc
+*.swp
+*~
+*.orig
 .git
 env*
 db_backup
@@ -6,4 +10,5 @@ htmlcov
 htmlcov-max
 sql
 run
-dpnk.log
+dpnk.log*
+project/settings_local.py

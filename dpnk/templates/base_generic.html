@@ -68,6 +68,7 @@ Raven.setUserContext({
                <nav>
                 <div class="lang_switch">
                    <ul>
+                         {% block langchanger %}
                          {% for lang_code, lang_name in languages %}
                          {% if user_attendance.campaign.language_prefixes in lang_code or user_attendance.campaign.language_prefixes == "dpnk" and lang_code|length == 2 %}
                            <li class="{% if lang_code == current_language_code %}active{% endif %}">
@@ -75,6 +76,7 @@ Raven.setUserContext({
                            </li>
                          {% endif %}
                          {% endfor %}
+                         {% endblock %}
                    </ul>
                 </div>
                   <div id="collapsing_menu" class="collapse navbar-collapse">
