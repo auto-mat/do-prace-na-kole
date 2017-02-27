@@ -201,7 +201,7 @@ INSTALLED_APPS = (
     'adminfilters',
     'compressor',
     'django_bleach',
-    'analytical',
+    'gtm',
     'leaflet',
     'settings_context_processor',
     'oauth2_provider',
@@ -386,6 +386,8 @@ LOGGING = {
         },
     },
 }
+
+GOOGLE_TAG_ID = os.environ.get('DPNK_GOOGLE_TAG_ID', '')
 
 ALLOWED_HOSTS = os.environ.get('DPNK_ALLOWED_HOSTS', '').split(',')
 

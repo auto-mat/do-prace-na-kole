@@ -72,3 +72,4 @@ django-datatables-view
 django-rank-query
 django-admin-actions
 boto
+django-google-tag-manager
