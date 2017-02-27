@@ -71,3 +71,4 @@ django-price-level
 django-datatables-view
 django-rank-query
 django-admin-actions
+boto

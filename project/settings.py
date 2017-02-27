@@ -81,15 +81,28 @@ PREFIX_DEFAULT_LOCALE = False
 SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
-MEDIA_ROOT = normpath(PROJECT_ROOT, 'media/upload')
-MEDIA_URL = '/media/upload/'
-STATIC_ROOT = normpath(PROJECT_ROOT, "static")
-STATIC_URL = '/static/'
+
+
+MEDIA_ROOT = os.environ.get('DPNK_MEDIA_ROOT', normpath(PROJECT_ROOT, 'media/upload'))
+MEDIA_URL = os.environ.get('DPNK_MEDIA_URL', '/media/upload/')
+STATIC_ROOT = os.environ.get('DPNK_STATIC_ROOT', normpath(PROJECT_ROOT, "static"))
+STATIC_URL = os.environ.get('DPNK_STATIC_URL', '/static/')
+
+AWS_ACCESS_KEY_ID = os.environ.get('DPNK_AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('DPNK_AWS_SECRET_ACCESS_KEY')
+AWS_S3_HOST = os.environ.get('DPNK_AWS_S3_HOST', 's3-eu-west-1.amazonaws.com')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('DPNK_AWS_STORAGE_BUCKET_NAME', 'dpnk')
+if AWS_ACCESS_KEY_ID:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
+
+
 SECRET_KEY = os.environ.get('DPNK_SECRET_KEY')
 MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -236,7 +249,9 @@ REST_FRAMEWORK = {
 REDACTOR_OPTIONS = {'formatting': ['p', 'blockquote', 'pre', 'h4', 'h5']}
 BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br', 'span', 'div', 'h4', 'h5', 'pre', 'blockquote', 'ol', 'li', 'ul']
 BLEACH_ALLOWED_ATTRIBUTES = ['href', ]
-COMPRESSOR_ENABLED = True
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True
+COMPRESS_ROOT = normpath(PROJECT_ROOT, "dpnk/static")
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),
 )
