@@ -13,7 +13,8 @@ exec gunicorn wsgi:application \
     --name dpnk \
     --bind 0.0.0.0:8000 \
     --workers 3 \
-    --log-level=info \
+    --timeout 6000 \
+    --log-level=debug \
     --log-file=/home/aplikace/logs/gunicorn.log \
     --access-logfile=/home/aplikace/logs/access.log \
     "$@"
