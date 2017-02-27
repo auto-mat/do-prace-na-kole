@@ -203,6 +203,7 @@ class PackageTransactionInline(NestedTabularInline):
     readonly_fields = ['author', 'updated_by', 't_shirt_size']
     raw_id_fields = [
         'user_attendance',
+        'team_package',
     ]
     form = PackageTransactionForm
 
