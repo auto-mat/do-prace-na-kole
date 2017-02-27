@@ -5,7 +5,7 @@
 *.swp
 *~
 *.orig
-/apps/dpnk/static/bow
+/dpnk/static/bow
 /sql/
 /dpnk.log*
 /dpnk-timelog.log
@@ -20,6 +20,6 @@
 /htmlcov-max/
 .coverage
 /run.sh
-/apps/dpnk/static/css/style.css
+/dpnk/static/css/style.css
 /response.html
-/apps/dpnk/test_files/DSC00002.JPG.*_*.jpg
+/dpnk/test_files/DSC00002.JPG.*_*.jpg
