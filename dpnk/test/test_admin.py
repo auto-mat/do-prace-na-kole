@@ -179,7 +179,10 @@ class AdminModulesTests(DenormMixin, TestCase):
             'file_format': 0,
         }
         response = self.client.post(address, post_data)
-        self.assertContains(response, "5,Testing,User 1,Testing team 1,Ulice,1,,,11111,Praha,Testing company,Testing city,2,,,1,yes,Answer without attachment")
+        self.assertContains(
+            response,
+            "5,Testing,User 1,1128,Testing team 1,Ulice,1,,,11111,Praha,Testing company,Testing city,2,,,1,yes,Answer without attachment",
+        )
 
     def test_invoice_export(self):
         address = "/admin/dpnk/invoice/export/"
