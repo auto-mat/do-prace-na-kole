@@ -3,12 +3,15 @@ machine:
     version: 3.5.1
   services:
     - rabbitmq-server
+    - docker
 
 dependencies:
   pre:
     - pip install six
   override:
     - pip install -r requirements.freeze.txt
+    - docker info
+    - docker build --rm=false -t petrdlouhy/dopracenakole .
   post:
     - npm install -g less
 
@@ -17,3 +20,10 @@ test:
     - ./runtests.sh
   post:
     - coveralls
+
+deployment:
+  hub:
+    branch: master
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push petrdlouhy/dopracenakole
