@@ -10,7 +10,7 @@ django-softhyphen
 django-polymorphic
 django-composite-field
 django-registration-redux
--e git+https://github.com/PetrDlouhy/django-nested-inline.git#egg=django-nested-inline  #for Django 1.10 fix
+django-nested-inline
 django-su
 unidecode
 -e git+https://github.com/PetrDlouhy/createsend-python.git@python3#egg=createsend
@@ -70,7 +70,7 @@ django-model-utils
 django-price-level
 django-datatables-view
 django-rank-query
-django-admin-actions
+django-adminactions
 boto
 django-google-tag-manager
 django-ses

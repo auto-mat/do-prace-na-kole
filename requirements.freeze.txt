@@ -49,7 +49,7 @@ django-gpxpy==0.0.2
 django-import-export==0.5.1
 django-leaflet==0.19.0
 django-model-utils==2.6
--e git+https://github.com/PetrDlouhy/django-nested-inline.git@432653176fcc3bee7210b99af92f671e8c72e7da#egg=django_nested_inline
+django_nested_inline==0.3.7
 django-nose==1.4.4
 django-oauth-toolkit==0.11.0
 django-polymorphic==1.0.2
