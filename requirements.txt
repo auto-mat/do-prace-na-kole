@@ -74,3 +74,4 @@ django-admin-actions
 boto
 django-google-tag-manager
 django-ses
+whitenoise
