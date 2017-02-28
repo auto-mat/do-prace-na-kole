@@ -40,8 +40,7 @@ sys.path.append(normpath(PROJECT_ROOT, "project"))
 
 DEBUG = False
 ADMINS = (
-    ('Hynek Hanke', 'hynek.hanke@auto-mat.cz'),
-    ('Petr Dlouhý', 'petr.dlouhy@email.cz'),
+    ('Petr Dlouhý', 'petr.dlouhy@auto-mat.cz'),
 )
 DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@dopracenakole.cz>'
 MANAGERS = ADMINS
@@ -95,6 +94,9 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get('DPNK_AWS_STORAGE_BUCKET_NAME', 'dpnk')
 if AWS_ACCESS_KEY_ID:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    EMAIL_BACKEND = 'django_ses.SESBackend'
+    AWS_SES_REGION_NAME = 'eu-west-1'
+    AWS_SES_REGION_ENDPOINT = 'email.eu-west-1.amazonaws.com'
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
