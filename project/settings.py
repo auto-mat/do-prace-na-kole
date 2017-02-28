@@ -259,7 +259,7 @@ COMPRESS_PRECOMPILERS = (
 )
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-SERVER_EMAIL = 'root@auto-mat.cz'
+SERVER_EMAIL = 'kontakt@dopracenakole.cz'
 LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy("profil")
 LOGOUT_NEXT_PAGE = reverse_lazy('profil')
