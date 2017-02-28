@@ -389,6 +389,10 @@ LOGGING = {
     },
 }
 
+RAVEN_CONFIG = {
+    'dsn': os.environ.get('DPNK_RAVEN_DNS', '')
+}
+
 GOOGLE_TAG_ID = os.environ.get('DPNK_GOOGLE_TAG_ID', '')
 
 ALLOWED_HOSTS = os.environ.get('DPNK_ALLOWED_HOSTS', '').split(',')
