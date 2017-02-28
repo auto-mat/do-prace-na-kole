@@ -12,3 +12,5 @@ sql
 run
 dpnk.log*
 project/settings_local.py
+dpnk/static/CACHE/
+amazon_script.sh
