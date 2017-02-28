@@ -46,7 +46,7 @@ DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@dopracenakole.cz>'
 MANAGERS = ADMINS
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'ENGINE': os.environ.get('DPNK_DB_ENGINE', 'django.contrib.gis.db.backends.postgis'),
         'NAME': os.environ.get('DPNK_DB_NAME', ''),
         'USER': os.environ.get('DPNK_DB_USER', ''),
         'PASSWORD': os.environ.get('DPNK_DB_PASSWORD', ''),
