@@ -10,6 +10,7 @@ run apt-get install -y libxml2-dev libxslt-dev
 run apt-get install -y node-less yui-compressor
 run apt-get install -y libgeos-dev
 run apt-get install -y gunicorn
+run apt-get install -y binutils libproj-dev gdal-bin
 
 run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
