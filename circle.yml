@@ -17,6 +17,7 @@ dependencies:
 
 test:
   override:
+	 - python manage.py compress
     - ./runtests.sh
   post:
     - coveralls
