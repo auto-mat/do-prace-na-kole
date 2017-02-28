@@ -296,8 +296,8 @@ MAILING_API_KEY = os.environ.get('DPNK_MAILING_API_KEY', '')
 
 PAYU_KEY_1 = os.environ.get('DPNK_PAYU_KEY_1', '')
 PAYU_KEY_2 = os.environ.get('DPNK_PAYU_KEY_2', '')
-PAYU_POS_AUTH_KEY = os.environ.get('DPNK_PAYU_POS_AUTH_KEY', 'NxFcSXh')
-PAYU_POS_ID = os.environ.get('DPNK_PAYU_POS_ID', "131116")
+PAYU_POS_AUTH_KEY = os.environ.get('DPNK_PAYU_POS_AUTH_KEY', '')
+PAYU_POS_ID = os.environ.get('DPNK_PAYU_POS_ID', '')
 
 AUTH_PASSWORD_VALIDATORS = [
     {
