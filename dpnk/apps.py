@@ -44,6 +44,10 @@ class DPNKConfig(AppConfig):
 
         from . import models as dpnk_models
         from fieldsignals import post_save_changed, pre_save_changed
+        from django.conf import settings
+        if not settings.DATABASE_CONFIGURED:
+            return
+
         try:
             slugs = dpnk_models.Campaign.objects.values_list('slug', flat=True)
             for campaign_slug in slugs:

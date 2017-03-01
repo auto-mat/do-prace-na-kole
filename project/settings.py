@@ -55,6 +55,8 @@ DATABASES = {
     },
 }
 
+DATABASE_CONFIGURED = DATABASES['default']['NAME'] != ''
+
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 CACHES = {
@@ -390,7 +392,7 @@ LOGGING = {
 }
 
 RAVEN_CONFIG = {
-    'dsn': os.environ.get('DPNK_RAVEN_DNS', '')
+    'dsn': os.environ.get('DPNK_RAVEN_DNS', ''),
 }
 
 GOOGLE_TAG_ID = os.environ.get('DPNK_GOOGLE_TAG_ID', '')
