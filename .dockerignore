@@ -2,6 +2,7 @@
 *.swp
 *~
 *.orig
+*__pycache__
 .git
 env*
 db_backup
@@ -15,3 +16,5 @@ project/settings_local.py
 dpnk/static/CACHE/
 amazon_script.sh
 make_graph.sh
+fabfile.py
+cookies.txt
