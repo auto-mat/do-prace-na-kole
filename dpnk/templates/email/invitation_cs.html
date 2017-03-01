@@ -8,9 +8,9 @@ Zpráva pro soutěžící/ho {{ invited.userprofile }} {% if invited.team %}z t�
 
 Dobrý den,
 
-Váš kolega/kolegyně {{ inviting.userprofile }} chce jezdit s Vámi v týmu {{inviting.team.name}}. Víte proč? Zeptejte se ho/jí na mailu {{ inviting.userprofile.user.email }}.
+Váš kolega/kolegyně {{ inviting.userprofile }} Vás zve, abyste se zúčastnil/a soutěže {{ invited.campaign }} a stal/a se členem soutěžního týmu {{inviting.team.name}}.
 
-Jdete do toho? Tento odkaz vede k jednoduchému předvyplněnému formuláři.
+Jdete do toho? Přidejte se doplněním inforamcí na odkazu
 {% block register_link %}
 {% if not invited %}
 http://{{ inviting.campaign.slug }}.{{ SITE_URL }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email %}
@@ -18,7 +18,10 @@ http://{{ inviting.campaign.slug }}.{{ SITE_URL }}{% url 'registrace' token=invi
 http://{{ invited.campaign.slug }}.{{ SITE_URL }}{% url 'zmenit_tym' token=inviting.team.invitation_token initial_email=email %}
 {% endif %}
 {% endblock %}
-(Pokud Vám odkaz nefunguje, zkopírujte ho přes schránku do oblíbeného prohlížeče.)
+(Pokud Vám odkaz nefunguje, zkopírujte ho do svého webového prohlížeče.)
+
+Chcete vědět víc? Zeptejte se {{ inviting.userprofile }} na emailu {{ inviting.userprofile.user.email }} nebo se podívejte na stránky http://www.dopracenakole.cz
+
 
 Hodně šťastných kilometrů!
 Váš tým soutěže {{ inviting.campaign }}

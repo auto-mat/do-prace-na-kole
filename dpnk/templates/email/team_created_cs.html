@@ -21,8 +21,7 @@ Ke svému profilu se můžete přihlásit pomocí adresy
 http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
 {% endblock %}
 
-Vašemu týmu může vyjádřit podporu Váš zaměstnavatel tím, že za Vás uhradí startovné, nebo dokonce že vyhlásí celofiremní kampaň Do práce na kole. Soutěžit pak budete nejen v soutěžním městě, ale také se všemi zaměstnanci Vaší organizace, ať už pracují kdekoli. Jak na to? Kontaktujte osobu, do jejíž kompetence podobné věci patří (vedoucí CSR oddělení, vedoucí vnitřní komunikace, vedoucí PR, ředitel/ka atd.) a nabídněte jí tyto možnosti nebo odkaz na web 
-http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'company_admin_application' %}
+Vašemu týmu může vyjádřit podporu Váš zaměstnavatel tím, že za Vás uhradí startovné, nebo dokonce že vyhlásí celofiremní kampaň {{ user.campaign }}. Soutěžit pak budete nejen v soutěžním městě, ale také se všemi zaměstnanci Vaší organizace, ať už pracují kdekoli. Jak na to? Kontaktujte osobu, do jejíž kompetence podobné věci patří (vedoucí CSR oddělení, vedoucí vnitřní komunikace, vedoucí PR, ředitel/ka atd.) a nabídněte jí tyto možnosti nebo odkaz na stránku http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'company_admin_application' %}
 
 Děkujeme Vám za přízeň a těšíme se na viděnou v květnu!
 Váš organizační tým soutěže {{ user.campaign }}

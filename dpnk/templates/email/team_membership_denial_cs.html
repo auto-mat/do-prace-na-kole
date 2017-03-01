@@ -6,13 +6,13 @@ Zpráva pro soutěžící/ho {{ user.userprofile }} v soutěži {{ user.campaign
 
 Dobrý den,
 
-bohužel Vaše členství v týmu {{user.team.name}} bylo právě ZAMÍTNUTO členem týmu {{ denier }} z důvodu: {{reason}}
+bohužel Vaše členství v týmu {{user.team.name}} bylo právě zamítnuto členem týmu {{ denier }} z důvodu: {{reason}}
 
 Budete se muset přihlásit do editace profilu na adrese
 {% block profile_link %}
 http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'zmenit_tym' %}
 {% endblock %}
-a vybrat si jiný tým, nebo si založit tým vlastní.
+a vybrat si jiný tým, nebo si založit tým vlastní! :-).
 
 Tak nevěšte hlavu a pojďte do toho!
 
