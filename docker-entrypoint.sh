@@ -11,7 +11,7 @@ echo Starting Gunicorn.
 exec gunicorn wsgi:application \
     --name dpnk \
     --bind 0.0.0.0:8000 \
-    --workers 3 \
+    --workers $GUNICORN_NUM_WORKERS \
     --timeout 6000 \
     --log-level=debug \
     --log-file=/home/aplikace/logs/gunicorn.log \
