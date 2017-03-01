@@ -259,7 +259,9 @@ def recalculate_result_competitor_nothread(user_attendance):
 
 
 def recalculate_result_competitor(user_attendance):
-    tasks.recalculate_competitor_task.apply_async([user_attendance.pk])
+    pass
+    # Recalculating is disabled due to non-working Celery in AWS
+    # tasks.recalculate_competitor_task.apply_async([user_attendance.pk])
 
 
 def recalculate_results_team(team):
