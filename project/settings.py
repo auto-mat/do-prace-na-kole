@@ -432,6 +432,7 @@ PRICE_LEVEL_MODEL = 'dpnk.Campaign'
 PRICE_LEVEL_CATEGORY_CHOICES = Choices(('basic', _('Základní')), ('company', _('Pro firmy')))
 PRICE_LEVEL_CATEGORY_DEFAULT = 'basic'
 
+SITE_URL = 'dopracenakole.cz'
 # import local settings
 try:
     from settings_local import *  # noqa
