@@ -6,6 +6,8 @@ touch logs/gunicorn.log
 touch logs/access.log
 tail -n 0 -f logs/*.log &
 
+service memcached restart
+
 # Start Gunicorn processes
 echo Starting Gunicorn.
 exec gunicorn wsgi:application \

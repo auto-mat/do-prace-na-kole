@@ -11,6 +11,7 @@ run apt-get install -y node-less yui-compressor
 run apt-get install -y libgeos-dev
 run apt-get install -y gunicorn
 run apt-get install -y binutils libproj-dev gdal-bin
+run apt-get install -y memcached
 
 run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
