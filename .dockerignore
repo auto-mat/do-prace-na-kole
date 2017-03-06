@@ -6,7 +6,7 @@
 .git
 env*
 db_backup
-static
+media
 htmlcov
 htmlcov-max
 sql
