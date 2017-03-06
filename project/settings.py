@@ -77,7 +77,7 @@ LANGUAGES = (
 )
 LANGUAGE_CODE = 'cs'
 PREFIX_DEFAULT_LOCALE = False
-SITE_ID = 1
+SITE_ID = os.environ.get('DPNK_SITE_ID', 1)
 USE_I18N = True
 USE_L10N = True
 
@@ -263,7 +263,6 @@ SERVER_EMAIL = 'kontakt@dopracenakole.cz'
 LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy("profil")
 LOGOUT_NEXT_PAGE = reverse_lazy('profil')
-SITE_URL = ''
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = ""
 AKLUB_URL = "http://klub.auto-mat.cz"
@@ -396,6 +395,8 @@ RAVEN_CONFIG = {
 GOOGLE_TAG_ID = os.environ.get('DPNK_GOOGLE_TAG_ID', '')
 
 ALLOWED_HOSTS = os.environ.get('DPNK_ALLOWED_HOSTS', '').split(',')
+
+BROKER_URL = os.environ.get('DPNK_BROKER_URL', '')
 
 MIGRATION_MODULES = {
     'price_level': 'price_level_migrations',

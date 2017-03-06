@@ -6,19 +6,30 @@ machine:
     - docker
 
 dependencies:
+  cache_directories:
+    - "~/docker"
   pre:
     - pip install six
+    - npm install bower -g
+    - npm install -g less
+    - bower install
+    - python manage.py compress
+    - cd dpnk && django-admin compilemessages
+    - cd t_shirt_delivery && django-admin compilemessages
+    - cd coupons && django-admin compilemessages
+    - DPNK_SECRET_KEY="fake_key" python manage.py collectstatic --noinput
   override:
     - pip install -r requirements.freeze.txt
-    - docker info
+    - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
     - docker build --rm=false -t petrdlouhy/dopracenakole .
-  post:
-    - npm install -g less
+    - mkdir -p ~/docker; docker save petrdlouhy/dopracenakole > ~/docker/image.tar
 
 test:
+  pre:
+    - flake8
   override:
-    - python manage.py compress
-    - ./runtests.sh
+    - docker run -d --hostname dpnk-rabbit --name dpnk-rabbit rabbitmq
+    - docker run -e TEST=test -e DPNK_DB_HOST=$(ip addr show docker0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1) -e DPNK_SECRET_KEY=secret -e DPNK_DB_NAME=circle_test -e DPNK_DB_USER=ubuntu -e DPNK_BROKER_URL="amqp://rabbit" --link dpnk-rabbit:rabbit petrdlouhy/dopracenakole
   post:
     - coveralls
 
