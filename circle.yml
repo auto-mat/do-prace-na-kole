@@ -42,5 +42,5 @@ deployment:
     branch: /^(?!master$).*$/  # not the master branch
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - docker tag dopracenakole-testing:latest petrdlouhy/dopracenakole-testing:latest
+      - docker tag dopracenakole:latest petrdlouhy/dopracenakole-testing:latest
       - docker push petrdlouhy/dopracenakole-testing
