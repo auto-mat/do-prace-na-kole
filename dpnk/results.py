@@ -20,7 +20,7 @@
 
 from django.db.models import Q, Sum
 
-from . import tasks, util
+from . import util
 from .models import Answer, Choice, City, Company, Competition, CompetitionResult, Team, Trip, UserAttendance
 
 
