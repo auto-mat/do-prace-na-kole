@@ -22,7 +22,7 @@ import csv
 
 
 def generate_csv(csvfile, delivery_batch):
-    spamwriter = csv.writer(csvfile)
+    spamwriter = csv.writer(csvfile, delimiter=";")
     spamwriter.writerow([
         "Číslo dokladu",
         "Příjemce - Název",
