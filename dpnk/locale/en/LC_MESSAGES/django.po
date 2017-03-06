@@ -3486,20 +3486,23 @@ msgstr "Fill in track"
 #~ msgid "Uživatelé na dávku objednávek"
 #~ msgstr "Users for delivery batch"
 
-#~ msgid "Zákaznické listy"
-#~ msgstr "Customer sheets"
+#~ msgid "Jsem členem Klubu přátel Auto*Matu, tedy mám startovné zdarma."
+#~ msgstr "I am an Auto*Mat Friends Club member, so my start fee is for free."
 
-#~ msgid "Objednávka pro TNT"
-#~ msgstr "TNT order"
+#~ msgid "Je mi poskytováno startovné zdarma."
+#~ msgstr "Organizer provides me free entry."
 
-#~ msgid "Vyřízeno"
-#~ msgstr "Dispatched"
+#~ msgid "Včasné startovné"
+#~ msgstr "Early registration fee"
 
-#~ msgid "Dávka objednávek"
-#~ msgstr "Delivery batch"
+#~ msgid "Včasné startovné pro organizace"
+#~ msgstr "Early-bird registration fee for companies"
 
-#~ msgid "Dávky objednávek"
-#~ msgstr "Delivery batches"
+#~ msgid "Pozdní startovné"
+#~ msgstr "Late starting fee"
+
+#~ msgid "Pozdní startovné pro organizace"
+#~ msgstr "Late registration fee for companies"
 
 #~ msgid "Posílá se?"
 #~ msgstr "Ships?"
@@ -3519,6 +3522,21 @@ msgstr "Fill in track"
 #~ msgid "Velikosti trička"
 #~ msgstr "T-shirt size"
 
+#~ msgid "Zákaznické listy"
+#~ msgstr "Customer sheets"
+
+#~ msgid "Objednávka pro TNT"
+#~ msgstr "TNT order"
+
+#~ msgid "Vyřízeno"
+#~ msgstr "Dispatched"
+
+#~ msgid "Dávka objednávek"
+#~ msgstr "Delivery batch"
+
+#~ msgid "Dávky objednávek"
+#~ msgstr "Delivery batches"
+
 #~ msgid "Tracking number TNT"
 #~ msgstr "TNT tracking number"
 
@@ -3527,37 +3545,6 @@ msgstr "Fill in track"
 
 #~ msgid "Došla číselná řada pro balíčkové transakce"
 #~ msgstr "Transaction number sequence ran out"
-
-#~ msgid "Velikost trička úspěšně nastavena"
-#~ msgstr "T-shirt size successfully set"
-
-#~ msgid "Upravit velikost trička"
-#~ msgstr "Change t-shirt size"
-
-#~ msgid "Velikost trička nemůžete měnit, dokud nemáte zvolený tým."
-#~ msgstr ""
-#~ "You can't change your t-shirt size. You have to choose your team first."
-
-#~ msgid "Vaše tričko již je na cestě k vám, už se na něj můžete těšit."
-#~ msgstr "Your t-shirt is being delivered to you. You can look forward to it."
-
-#~ msgid "Jsem členem Klubu přátel Auto*Matu, tedy mám startovné zdarma."
-#~ msgstr "I am an Auto*Mat Friends Club member, so my start fee is for free."
-
-#~ msgid "Je mi poskytováno startovné zdarma."
-#~ msgstr "Organizer provides me free entry."
-
-#~ msgid "Včasné startovné"
-#~ msgstr "Early registration fee"
-
-#~ msgid "Včasné startovné pro organizace"
-#~ msgstr "Early-bird registration fee for companies"
-
-#~ msgid "Pozdní startovné"
-#~ msgstr "Late starting fee"
-
-#~ msgid "Pozdní startovné pro organizace"
-#~ msgstr "Late registration fee for companies"
 
 #~ msgid "Musí být zvolen právě jeden uživatel, tým nebo organizace"
 #~ msgstr "Exacly one user, team or company must be selectec"
@@ -3588,6 +3575,19 @@ msgstr "Fill in track"
 
 #~ msgid "Váš nárok na startovné zdarma bude muset být ještě ověřen"
 #~ msgstr "Your claim for a free start fee will have to be verified"
+
+#~ msgid "Velikost trička úspěšně nastavena"
+#~ msgstr "T-shirt size successfully set"
+
+#~ msgid "Upravit velikost trička"
+#~ msgstr "Change t-shirt size"
+
+#~ msgid "Velikost trička nemůžete měnit, dokud nemáte zvolený tým."
+#~ msgstr ""
+#~ "You can't change your t-shirt size. You have to choose your team first."
+
+#~ msgid "Vaše tričko již je na cestě k vám, už se na něj můžete těšit."
+#~ msgstr "Your t-shirt is being delivered to you. You can look forward to it."
 
 #~| msgid "Tato soutěž ještě nezačala"
 #~ msgid "Soutěž již začala."
