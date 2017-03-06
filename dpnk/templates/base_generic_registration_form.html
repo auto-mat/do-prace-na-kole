@@ -11,13 +11,13 @@
 {{ block.super }}
 <ul class="navbar nav navbar-nav steps the_submenu">
 
-<li class="{% if registration_phase == 'upravit_profil' %}active{% endif %} {% if not user_attendance.userprofile.profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' %}">{% trans "Osobní údaje" %}</a></li>
-<li class="{% if registration_phase == 'zmenit_tym' %}active{% endif %} {% if not user_attendance.team_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_tym' %}">{% trans "Tým" %}</a></li>
+<li class="{% if registration_phase == 'upravit_profil' %}active{% endif %} {% if not user_attendance.userprofile.profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' %}">1. {% trans "Osobní údaje" %}</a></li>
+<li class="{% if registration_phase == 'zmenit_tym' %}active{% endif %} {% if not user_attendance.team_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_tym' %}">2. {% trans "Tým" %}</a></li>
 {% if user_attendance.campaign.has_any_tshirt %}
-   <li class="{% if registration_phase == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}">{% trans "Triko" %}</a></li>
+   <li class="{% if registration_phase == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}">3. {% trans "Triko" %}</a></li>
 {% endif %}
 {% if user_attendance.has_admission_fee %}
-   <li class="{% if registration_phase == 'typ_platby' %}active{% endif %} {% if not user_attendance.payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' %}">{% trans "Startovné" %}</a></li>
+   <li class="{% if registration_phase == 'typ_platby' %}active{% endif %} {% if not user_attendance.payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' %}">4. {% trans "Startovné" %}</a></li>
 {% endif %}
 </ul>
 {% endblock %}
