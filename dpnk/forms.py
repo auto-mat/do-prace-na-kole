@@ -26,6 +26,7 @@ from crispy_forms.layout import Div, Field, HTML, Layout, Submit
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
+from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.core.validators import MinLengthValidator, RegexValidator
@@ -441,17 +442,8 @@ class TeamAdminForm(SubmitMixin, forms.ModelForm):
 
 
 class PaymentTypeForm(PrevNextMixin, forms.Form):
-    CHOICES = [
-        ('pay', _(u"Účastnický poplatek si platím sám.")),
-        ('pay_beneficiary', mark_safe_lazy(_(u"Chci podpořit tuto soutěž a zaplatit benefiční startovné. <i class='fa fa-heart'></i>"))),
-        ('company', _(u"Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené.")),
-        ('member_wannabe', mark_safe_lazy(_(u"Chci podpořit městskou cyklistiku a mít startovné trvale zdarma. <i class='fa fa-heart'></i>"))),
-        ('coupon', _("Chci uplatnit voucher.")),
-    ]
-
     payment_type = forms.ChoiceField(
         label=_(u"Typ platby"),
-        choices=CHOICES,
         widget=forms.RadioSelect(),
     )
 
@@ -468,6 +460,26 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 ),
             )
         return payment_type
+
+    def __init__(self, *args, **kwargs):
+        self.user_attendance = kwargs.pop('user_attendance')
+        ret_val = super().__init__(*args, **kwargs)
+        self.fields['payment_type'].choices = [
+            ('pay', _("Účastnický poplatek (%s Kč) si platím sám.") % intcomma(self.user_attendance.admission_fee())),
+            ('pay_beneficiary', mark_safe_lazy(
+                _("Chci podpořit tuto soutěž a zaplatit benefiční startovné (%s Kč). <i class='fa fa-heart'></i>") %
+                intcomma(self.user_attendance.beneficiary_admission_fee()),
+            )),
+            ('company', _(u"Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené se zaměstnavatelem nebo koordinátorem mé organizace.")),
+            ('member_wannabe', mark_safe_lazy(
+                _(
+                    "Chci trvale podporovat městskou cyklistiku, stát se členem klubu přátel a neplatit účastnický poplatek ani letos ani následující roky. "
+                    "<i class='fa fa-heart'></i>",
+                ),
+            )),
+            ('coupon', _("Mám nárok na slevu nebo startovné zdarma, mám voucher.")),
+        ]
+        return ret_val
 
 
 class AnswerForm(forms.ModelForm):

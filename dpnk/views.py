@@ -571,6 +571,11 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         context['aklub_url'] = settings.AKLUB_URL
         return context
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user_attendance'] = self.user_attendance
+        return kwargs
+
     def get_form(self, form_class=PaymentTypeForm):
         form = super(PaymentTypeView, self).get_form(form_class)
         form.user_attendance = self.user_attendance
