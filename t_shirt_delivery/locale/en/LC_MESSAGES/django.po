@@ -1,0 +1,212 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-03-06 10:07+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: actions.py:36
+#, python-format
+msgid "Vytvořena nová dávka obsahující %s položek"
+msgstr "New delivery batch with %s items created"
+
+#: actions.py:39
+msgid "Vytvořit dávku z vybraných uživatelů"
+msgstr "Create a delivery batch"
+
+#: admin.py:248
+msgid "Trik k odeslání"
+msgstr ""
+
+#: admin.py:259
+msgid "Velikosti trik"
+msgstr "T-shirt sizes"
+
+#: admin.py:272
+msgid "Uživatel na dávku objednávek"
+msgstr "User for delivery batch"
+
+#: admin.py:273
+msgid "Uživatelé na dávku objednávek"
+msgstr "Users for delivery batch"
+
+#: admin_forms.py:32
+msgid "Balík/krabice s tímto číslem byl sestaven"
+msgstr ""
+
+#: admin_views.py:53
+#, python-format
+msgid "Balíček/krabice byl v minulosti již zařazen k sestavení: %s"
+msgstr ""
+
+#: admin_views.py:61
+msgid ""
+"Tato krabice obsahuje balíčky, které ještě nebyli zařazeny k sestavení: <a "
+"href='{}?box__id__exact={}&amp;dispatched__exact=0'>zobrazit seznam "
+"nesestavených balíčků</a>"
+msgstr ""
+
+#: admin_views.py:75
+#, python-format
+msgid "Balíček/krabice zařazen jako sestavený: %s"
+msgstr ""
+
+#: admin_views.py:80
+msgid "Balíček/krabice nebyl nalezen."
+msgstr ""
+
+#: admin_views.py:86
+msgid "Zařadit balíky k sestavení"
+msgstr ""
+
+#: models/delivery_batch.py:47
+msgid "Datum vytvoření"
+msgstr "Created"
+
+#: models/delivery_batch.py:53 models/t_shirt_size.py:36
+msgid "Kampaň"
+msgstr "Campaign"
+
+#: models/delivery_batch.py:58 models/subsidiary_box.py:50
+msgid "Zákaznické listy"
+msgstr "Customer sheets"
+
+#: models/delivery_batch.py:64
+msgid "CSV objednávka"
+msgstr ""
+
+#: models/delivery_batch.py:70 models/subsidiary_box.py:62
+#: models/team_package.py:47
+msgid "Vyřízeno"
+msgstr "Dispatched"
+
+#: models/delivery_batch.py:77 models/subsidiary_box.py:45
+msgid "Dávka objednávek"
+msgstr "Delivery batch"
+
+#: models/delivery_batch.py:78
+msgid "Dávky objednávek"
+msgstr "Delivery batches"
+
+#: models/package_transaction.py:32 models/t_shirt_size.py:30
+#: models/t_shirt_size.py:70
+msgid "Velikost trička"
+msgstr "T-shirt size"
+
+#: models/package_transaction.py:37
+msgid "Tracking number"
+msgstr "Tracking number"
+
+#: models/package_transaction.py:44
+msgid "Týmový balíček"
+msgstr ""
+
+#: models/package_transaction.py:58 models/package_transaction.py:59
+msgid "Transakce trika"
+msgstr ""
+
+#: models/subsidiary_box.py:40
+msgid "Krabice pro pobočku"
+msgstr ""
+
+#: models/subsidiary_box.py:41
+msgid "Krabice pro pobočky"
+msgstr ""
+
+#: models/subsidiary_box.py:57
+msgid "Pobočka"
+msgstr "Subsidiary"
+
+#: models/subsidiary_box.py:73
+#, python-format
+msgid "Krabice pro pobočku %s"
+msgstr ""
+
+#: models/t_shirt_size.py:46
+msgid "Posílá se?"
+msgstr "Ships?"
+
+#: models/t_shirt_size.py:51
+msgid "Je dostupné?"
+msgstr "Is available?"
+
+#: models/t_shirt_size.py:52
+msgid "Zobrazuje se v nabídce trik"
+msgstr "Is shown in the t-shirt sizes"
+
+#: models/t_shirt_size.py:57
+msgid "Náhled trika"
+msgstr "T-shirt preview"
+
+#: models/t_shirt_size.py:63
+msgid "Cena"
+msgstr "Price"
+
+#: models/t_shirt_size.py:71
+msgid "Velikosti trička"
+msgstr "T-shirt size"
+
+#: models/team_package.py:31
+msgid "týmový balíček"
+msgstr ""
+
+#: models/team_package.py:32
+msgid "týmové balíčky"
+msgstr ""
+
+#: models/team_package.py:36
+msgid "Krabice"
+msgstr ""
+
+#: models/team_package.py:42
+msgid "Tým"
+msgstr "Team"
+
+#: models/team_package.py:59
+#, python-format
+msgid "Balíček pro tým %s"
+msgstr ""
+
+#: models/team_package.py:61
+msgid "Balíček bez týmu"
+msgstr ""
+
+#: templates/admin/index.html:7
+msgid "Models available in the preferences application."
+msgstr ""
+
+#: templates/admin/index.html:8
+msgid "T_Shirt_Delivery"
+msgstr ""
+
+#: templates/admin/index.html:10
+msgid "Označit balíky/krabice jako vyřízené"
+msgstr ""
+
+#: views.py:40
+msgid "Velikost trička úspěšně nastavena"
+msgstr "T-shirt size successfully set"
+
+#: views.py:44
+msgid "Upravit velikost trička"
+msgstr "Change t-shirt size"
+
+#: views.py:50
+msgid "Velikost trička nemůžete měnit, dokud nemáte zvolený tým."
+msgstr "You can't change your t-shirt size. You have to choose your team first."
+
+#: views.py:51
+msgid "Vaše tričko již je na cestě k vám, už se na něj můžete těšit."
+msgstr "Your t-shirt is being delivered to you. You can look forward to it."

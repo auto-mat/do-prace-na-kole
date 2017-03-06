@@ -1829,7 +1829,7 @@ msgstr "Team name"
 
 #: models/team.py:58
 msgid "Pobočka"
-msgstr "Subdivision"
+msgstr "Subsidiary"
 
 #: models/team.py:64
 msgid "Token pro pozvánky"
