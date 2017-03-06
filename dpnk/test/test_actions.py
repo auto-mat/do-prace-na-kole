@@ -150,7 +150,7 @@ class TestActions(TestCase):
         queryset = models.CompanyAdmin.objects.all()
         actions.update_mailing_coordinator(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(message, "Úspěšně aktualiován mailing pro 3 koordinátorů")
+        self.assertEquals(message, "Úspěšně aktualizován mailing pro 3 koordinátorů")
 
     def test_mark_invoices_paid(self):
         queryset = models.Invoice.objects.all()
