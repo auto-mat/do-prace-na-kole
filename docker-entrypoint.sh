@@ -12,7 +12,7 @@ service memcached restart
 if [ $TEST == "test" ]; then
 	echo Starting tests
 	./runtests.sh
-	coveralls
+	# coveralls
 else
 	echo Starting Gunicorn.
 	exec gunicorn wsgi:application \
