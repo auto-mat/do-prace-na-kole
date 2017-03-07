@@ -217,6 +217,8 @@ class UserAttendance(models.Model):
     def payment_status(self):
         if self.team and self.team.subsidiary and not self.has_admission_fee():
             return 'no_admission'
+        if self.admission_fee() == 0:
+            return 'done'
         payment = self.representative_payment
         if not payment:
             return 'none'

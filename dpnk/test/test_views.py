@@ -43,6 +43,8 @@ import settings
 
 from t_shirt_delivery.models import PackageTransaction
 
+from .mommy_recipes import CampaignRecipe, UserAttendanceRecipe
+
 
 @override_settings(
     SITE_ID=2,
@@ -277,16 +279,78 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
         )
 
 
-class PaymentTypeViewTests(ViewsLogon):
-    def test_dpnk_payment_type(self):
+@override_settings(
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class PaymentTypeViewTests(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
+        self.campaign = CampaignRecipe.make(
+            slug="testing-campaign",
+        )
+        t_shirt_size = mommy.make(
+            "TShirtSize",
+            campaign=self.campaign,
+            name="Foo t-shirt-size",
+        )
+        mommy.make(
+            "price_level.PriceLevel",
+            takes_effect_on=datetime.date(year=2010, month=2, day=1),
+            price=100,
+            pricable=self.campaign,
+        )
+        mommy.make(
+            "dpnk.Phase",
+            phase_type="payment",
+            date_from="2010-1-1",
+            date_to="2020-1-1",
+            campaign=self.campaign,
+        )
+        self.user_attendance = UserAttendanceRecipe.make(
+            campaign=self.campaign,
+            t_shirt_size=t_shirt_size,
+            team__name="Foo team",
+            team__subsidiary__company__name="Testing company",
+            team__campaign=self.campaign,
+        )
+        self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+
+    def test_dpnk_payment_type_with_discount_coupon(self):
+        self.user_attendance.discount_coupon = mommy.make(
+            "DiscountCoupon",
+            discount=100,
+            coupon_type__name="Foo coupon type",
+        )
+        self.user_attendance.save()
+        response = self.client.get(reverse('typ_platby'))
+        print_response(response)
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Již máte účastnický poplatek zaplacen. Pokračujte na <a href="/cs/">zadávání jízd</a>.</div>',
+            html=True,
+            status_code=403,
+        )
+
+    def test_dpnk_payment_type_company(self):
+        mommy.make(
+            "CompanyAdmin",
+            administrated_company=self.user_attendance.team.subsidiary.company,
+            userprofile__user__email="foo@email.com",
+            company_admin_approved='approved',
+            campaign=self.campaign,
+        )
         post_data = {
             'payment_type': 'company',
             'next': 'Next',
         }
-        models.Payment.objects.all().delete()
-        denorm.flush()
         response = self.client.post(reverse('typ_platby'), post_data, follow=True)
-        self.assertRedirects(response, reverse("registration_uncomplete"))
+        self.assertRedirects(response, reverse("upravit_profil"))
+        self.assertContains(
+            response,
+            '<div class="alert alert-warning">Platbu ještě musí schválit koordinátor vaší organizace <a href="mailto:foo@email.com">foo@email.com</a></div>',
+            html=True,
+        )
         self.assertEquals(models.Payment.objects.get().pay_type, 'fc')
 
     def test_dpnk_payment_type_no_t_shirt(self):
@@ -294,11 +358,8 @@ class PaymentTypeViewTests(ViewsLogon):
             'payment_type': 'company',
             'next': 'Next',
         }
-        models.Payment.objects.all().delete()
-        ua = models.UserAttendance.objects.get(pk=1115)
-        ua.t_shirt_size = None
-        ua.save()
-        denorm.flush()
+        self.user_attendance.t_shirt_size = None
+        self.user_attendance.save()
         response = self.client.post(reverse('typ_platby'), post_data, follow=True)
         self.assertContains(response, "Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko", status_code=403)
 
@@ -307,13 +368,14 @@ class PaymentTypeViewTests(ViewsLogon):
             'payment_type': 'company',
             'next': 'Next',
         }
-        models.Payment.objects.all().delete()
-        models.CompanyAdmin.objects.all().delete()
-        denorm.flush()
         response = self.client.post(reverse('typ_platby'), post_data)
         self.assertContains(response, "Váš zaměstnavatel Testing company nemá zvoleného firemního koordinátora.")
 
-        post_data['payment_type'] = 'coupon'
+    def test_dpnk_payment_type_discount_coupon(self):
+        post_data = {
+            'payment_type': 'coupon',
+            'next': 'Next',
+        }
         response = self.client.post(reverse('typ_platby'), post_data, follow=True)
         self.assertRedirects(response, reverse("discount_coupon"))
         self.assertContains(response, "<h2>Uplatnit slevový voucher</h2>", html=True)
@@ -323,9 +385,6 @@ class PaymentTypeViewTests(ViewsLogon):
             'payment_type': 'pay',
             'next': 'Next',
         }
-        models.Payment.objects.all().delete()
-        models.CompanyAdmin.objects.all().delete()
-        denorm.flush()
         response = self.client.post(reverse('typ_platby'), post_data)
         print_response(response)
         self.assertContains(
