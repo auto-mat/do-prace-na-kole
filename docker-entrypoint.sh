@@ -1,5 +1,7 @@
 #!/bin/bash
 python manage.py migrate --noinput                # Apply database migrations
+python manage.py denorm_drop
+python manage.py denorm_init
 
 # Prepare log files and start outputting logs to stdout
 touch logs/gunicorn.log
