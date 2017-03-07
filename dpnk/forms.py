@@ -727,7 +727,20 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
 
     class Meta:
         model = models.UserProfile
-        fields = ('sex', 'first_name', 'last_name', 'dont_show_name', 'nickname', 'mailing_opt_in', 'email', 'language', 'telephone', 'personal_data_opt_in')
+        fields = (
+            'sex',
+            'first_name',
+            'last_name',
+            'dont_show_name',
+            'nickname',
+            'occupation',
+            'age_group',
+            'mailing_opt_in',
+            'email',
+            'language',
+            'telephone',
+            'personal_data_opt_in',
+        )
 
 
 class TripForm(forms.ModelForm):
