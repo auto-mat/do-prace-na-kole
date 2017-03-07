@@ -268,6 +268,12 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
         context_data['registration_phase'] = self.registration_phase
         return context_data
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if hasattr(self, 'prev_url'):
+            kwargs['prev_url'] = self.prev_url
+        return kwargs
+
     def get_success_url(self):
         if 'next' in self.request.POST:
             return reverse(self.next_url)
@@ -308,7 +314,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
         create_subsidiary = False
         create_team = False
 
-        form = self.form_class(request, data=request.POST, files=request.FILES, instance=self.user_attendance)
+        form = self.form_class(request, data=request.POST, files=request.FILES, instance=self.user_attendance, prev_url=self.prev_url)
 
         form_company = RegisterCompanyForm(request.POST, prefix="company")
         form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix="subsidiary", campaign=self.user_attendance.campaign)
@@ -409,7 +415,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         super(ChangeTeamView, self).get(request, *args, **kwargs)
-        form = self.form_class(request, instance=self.user_attendance)
+        form = self.form_class(request, instance=self.user_attendance, prev_url=self.prev_url)
         form_company = RegisterCompanyForm(prefix="company")
         form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=self.user_attendance.campaign)
         form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign, 'name': self.get_previous_team_name()})

@@ -21,7 +21,7 @@ import datetime
 import logging
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Div, Field, HTML, Layout, Submit
+from crispy_forms.layout import Button, Div, Field, HTML, Layout, Submit
 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
@@ -91,7 +91,9 @@ class PrevNextMixin(object):
     def __init__(self, url_name="", *args, **kwargs):
         self.helper = FormHelper()
         if not hasattr(self, 'no_prev'):
-            self.helper.add_input(Submit('prev', _(u'Předchozí'), css_class="form-actions"))
+            prev_url = kwargs.pop('prev_url', None)
+            self.helper.form_class = "dirty-check"
+            self.helper.add_input(Button('prev', _('Předchozí'), css_class="btn-default", onclick='window.location.href="{}"'.format(reverse(prev_url))))
         if not hasattr(self, 'no_next'):
             self.helper.add_input(Submit('next', _(u'Další'), css_class="form-actions"))
         return super(PrevNextMixin, self).__init__(*args, **kwargs)
@@ -405,6 +407,7 @@ class InviteForm(SubmitMixin, forms.Form):
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.form_class = "dirty-check"
         self.helper.layout = Layout(
             HTML(
                 format_html_lazy(
@@ -422,8 +425,10 @@ class InviteForm(SubmitMixin, forms.Form):
             'email3',
             'email4',
         )
-        self.helper.add_input(Submit('submit', _(u'Odeslat')))
-        self.helper.add_input(Submit('submit', _(u'Přeskočit')))
+        self.helper.add_input(Submit('submit', _('Odeslat pozvánky')))
+        self.helper.add_input(
+            Button('submit', _('Neposílat, přeskočit'), css_class="btn-default", onclick='window.location.href="{}"'.format(reverse("zmenit_triko"))),
+        )
         return ret_val
 
 
