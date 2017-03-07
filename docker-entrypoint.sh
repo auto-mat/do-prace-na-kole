@@ -1,5 +1,5 @@
 #!/bin/bash
-python manage.py migrate                  # Apply database migrations
+python manage.py migrate --noinput                # Apply database migrations
 
 # Prepare log files and start outputting logs to stdout
 touch logs/gunicorn.log
