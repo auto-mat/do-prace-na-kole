@@ -59,7 +59,7 @@ def dates(competition, day=None):
     if not day:
         day = _today()
     start_day = competition.date_from or competition.campaign.phase("competition").date_from
-    end_day = min(competition.date_to or competition.campaign.phase("competition").date_to, day)
+    end_day = min(competition.date_to or competition.campaign.phase("competition").date_to or day, day)
     return start_day, end_day
 
 
