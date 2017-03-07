@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load static %}
 {% load compress %}
-{% load analytical %}
+{% load gtm_tags %}
 {% load dpnk_tags %}
 {% load raven %}
 <!DOCTYPE html>
@@ -9,7 +9,6 @@
 {% get_current_language as current_language_code %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-{% analytical_head_top %}
 <title>{% block title %}{% trans "DPNK" %}{% if title %} - {{ title }}{% endif %}{% endblock %}</title>
 {% block default_head %}
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -46,10 +45,9 @@ Raven.setUserContext({
 </style>
 
 {% endblock %}{% block extrahead %}{% endblock %}
-{% analytical_head_bottom %}
 </head>
 <body class="django_administrace {% if request.resolver_match.url_name == 'profil' %}homepage{% endif %} {% if request.resolver_match %}{{ request.resolver_match.url_name }}{% endif %}">
-{% analytical_body_top %}
+{% gtm %}
 <div class="navbar navbar-fixed-top" role="navigation">
    <div class="container">
       <div class="row">
@@ -68,6 +66,7 @@ Raven.setUserContext({
                <nav>
                 <div class="lang_switch">
                    <ul>
+                         {% block langchanger %}
                          {% for lang_code, lang_name in languages %}
                          {% if user_attendance.campaign.language_prefixes in lang_code or user_attendance.campaign.language_prefixes == "dpnk" and lang_code|length == 2 %}
                            <li class="{% if lang_code == current_language_code %}active{% endif %}">
@@ -75,6 +74,7 @@ Raven.setUserContext({
                            </li>
                          {% endif %}
                          {% endfor %}
+                         {% endblock %}
                    </ul>
                 </div>
                   <div id="collapsing_menu" class="collapse navbar-collapse">
@@ -139,7 +139,6 @@ Raven.setUserContext({
       </div>
    </div>
 </div>
-{% analytical_body_bottom %}
  <script>
       jQuery(document).ready(function($) {
         // help menu not to cover content

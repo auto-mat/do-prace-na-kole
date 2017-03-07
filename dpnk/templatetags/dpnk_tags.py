@@ -157,7 +157,7 @@ def change_lang(context, lang=None, *args, **kwargs):
     try:
         url_parts = resolve(path)
     except Resolver404:
-        logger.exception(u'Error in change lang function')
+        logger.exception(u'Error in change lang function', extra={'resolved_path': path})
         return "/%s" % lang
 
     url = path

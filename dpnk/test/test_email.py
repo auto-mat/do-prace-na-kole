@@ -161,7 +161,7 @@ class TestEmails(TestCase):
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
         msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
-            message = "Zpráva pro kandidáta/ku Testing User na koordinátora/ku organizace Testing Company v soutěži Testing campaign 1."
+            message = "Zpráva pro kandidáta Testing User na funkci firemního koordinátora v organizaci Testing Company v soutěži Testing campaign 1."
         else:
             message = "A message for Testing User, a candidate for the company coordinator role in Testing Company in the Testing campaign 1 competition."
         self.assertTrue(message in msg.body)
@@ -175,7 +175,7 @@ class TestEmails(TestCase):
         link = 'http://testing_campaign_1.localhost:8000/%s/spolecnost/zadost_admina/' % self.userprofile.language
         self.assertTrue(link in msg.body)
         if self.userprofile.language == 'cs':
-            message = "Zpráva pro Testing User, koordinátora organizace Testing Company v soutěži Testing campaign 1"
+            message = "Zpráva pro Testing User, firemního koordinátora v organizaci Testing Company v soutěži Testing campaign 1"
         else:
             message = "A message for Testing User, a company coordinator in Testing Company in the Testing campaign 1 competition."
         self.assertTrue(message in msg.body)

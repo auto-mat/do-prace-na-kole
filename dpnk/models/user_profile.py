@@ -28,7 +28,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
-from .. import mailing
+from .occupation import Occupation
+from .. import mailing, util
 
 logger = logging.getLogger(__name__)
 
@@ -121,6 +122,18 @@ class UserProfile(models.Model):
         verbose_name=_(u"Souhlas se zpracováním osobních údajů."),
         blank=False,
         default=False,
+    )
+    occupation = models.ForeignKey(
+        Occupation,
+        verbose_name=_("Povolání"),
+        null=True,
+        blank=True,
+    )
+    age_group = models.PositiveIntegerField(
+        verbose_name=_("Ročník"),
+        null=True,
+        blank=True,
+        choices=[(i, i) for i in range(util.today().year, util.today().year - 100, -1)],
     )
     ecc_email = models.CharField(
         verbose_name=_("Email v ECC"),

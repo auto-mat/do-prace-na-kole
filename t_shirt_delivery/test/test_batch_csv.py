@@ -89,17 +89,17 @@ class TestBatchCsv(TestCase):
         with open(temp_file.name) as temp_file:
             csv_string_lines = temp_file.read().split("\n")
             self.assertEquals(
-                'Číslo dokladu,Příjemce - Název,Příjemce - Stát,'
-                'Příjemce - Město,Příjemce - Ulice,Příjemce - PSČ,'
-                'Přijemce - kontaktní osoba,Příjemce - kontaktní email,'
-                'Přijemce - kontaktní telefon,Datum svozu,Reference,'
-                'EXW,Dobírka (COD),Hodnota dobírky,Variabilní symbol,'
-                'Hmotnost,Objem,Počet,Popis zboží,Druh obalu (zkratka),Typ zásilky',
+                'Číslo dokladu;Příjemce - Název;Příjemce - Stát;'
+                'Příjemce - Město;Příjemce - Ulice;Příjemce - PSČ;'
+                'Přijemce - kontaktní osoba;Příjemce - kontaktní email;'
+                'Přijemce - kontaktní telefon;Datum svozu;Reference;'
+                'EXW;Dobírka (COD);Hodnota dobírky;Variabilní symbol;'
+                'Hmotnost;Objem;Počet;Popis zboží;Druh obalu (zkratka);Typ zásilky',
                 csv_string_lines[0],
             )
             self.assertEquals(
-                ',Foo recipient; Foo company,CZ,Foo city,Foo street 123,12234,Testing User,'
-                'foo@email.cz,123456789,,,,,,1603824,0.5,0.125,1,,,',
+                ';Foo recipient| Foo company;CZ;Foo city;Foo street 123;12234;Testing User;'
+                'foo@email.cz;123456789;;;;;;1603824;0.5;0.125;1;;;',
                 csv_string_lines[1],
             )
         os.system("rm %s" % temp_file.name)

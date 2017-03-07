@@ -94,7 +94,7 @@ class TestSubsidiaryMethods(TestCase):
         )
         self.assertEqual(
             subsidiary.get_recipient_string(),
-            "Foo recipient; Foo company",
+            "Foo recipient| Foo company",
         )
 
     def test_get_recipient_string_recipient_blank(self):

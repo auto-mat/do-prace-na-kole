@@ -4,20 +4,22 @@
 {% language user.userprofile.language %}
 Zpráva pro soutěžící/ho {{ user.userprofile }} v soutěži {{ user.campaign }}.
 
-Vítejte v soutěži Do práce na kole!
+Vítejte!
 
-Právě jste se registroval/a do kampaně {{ user.campaign }}. Než budete moct vyjet, projděte prosím ještě všechny kroky na adrese:
-{% block profile_link %}
-http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'upravit_profil' %}
-{% endblock %}
+Právě jste se zaregistroval/a do kampaně {{ user.campaign }}.
 
-Váš email, se kterým se budete přihlašovat je {{ user.userprofile.user.email }}. Vaše heslo zde kvůli bezpečnosti neuvádíme, ale můžete si ho kdykoli nechat zaslat znovu z webu http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'password_change' %}
+Váš email, kterým se budete přihlašovat do vašeho profilu je {{ user.userprofile.user.email }}. Vaše heslo zde kvůli bezpečnosti neuvádíme, ale můžete si ho kdykoli nechat zaslat znovu z webu http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'password_change' %}
 
-Máte už soupeře? Soutěž bude pro Vás zábavnější, když se do ní zapojí i Vaši známí. Koho byste rádi vyzvali? Kolegy z Vašeho nebo jiného oddělení? Vaše dodavatele nebo zákazníky? Nebo změříte síly a vytrvalost s konkurencí?
+Soutěž začíná 1. května.
+Než vyrazíte a začnete zaznamenávat své jízdy ve svém profilu http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}:
+• zkontrolujte si, že máte v týmu dost kolegů, a případně pozvěte další,
+• stáhněte si do svého chytrého telefonu aplikaci Urban Cyclers[LM1], která vám jízdy do naší soutěže zapíše sama,
+• pokud chytrý telefon nemáte, nastavte si ve svém profilu svou typickou trasu, kterou budete jezdit. Usnadníte si tak každodenní zapisování jízd,
+• sledujte novinky na našem webu [LM2]a podstránky vašeho města[LM3], pod kterým jste přihlášeni. Dozvíte se tak více o akcích ve vašem městě.
 
-Každý týden Vám zašleme zprávu s novinkami, ať už se budou týkat registrační fáze (do konce dubna) nebo soutěžní fáze (v květnu). Prosíme Vás, sledujte čas od času Váš osobní profil 
-http://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}
-, který budete využívat až do konce soutěže jako Váš osobní rozcestník - můžete tam měnit Vaše osobní údaje, zvolíte si soutěžní kategorie a budete si zde evidovat jízdy na kole. Pokud si něčím nejste jistí, ozvěte se na <kontakt@dopracenakole.cz>.
+Máte už soupeře? Soutěž bude pro vás zábavnější, když se do ní zapojí i vaši známí. Koho byste rádi vyzvali? Kolegy z vašeho nebo jiného oddělení? Vaše dodavatele nebo zákazníky? Nebo změříte síly a vytrvalost s konkurencí? Oslovte je a řekněte jim o soutěži.
+
+Pokud si něčím nejste jistí, ozvěte se na <kontakt@dopracenakole.cz>.
 
 Děkujeme Vám za zájem a těšíme se na viděnou v květnu!
 Váš organizační tým soutěže {{ user.campaign }}

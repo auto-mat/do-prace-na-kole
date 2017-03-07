@@ -40,20 +40,18 @@ sys.path.append(normpath(PROJECT_ROOT, "project"))
 
 DEBUG = False
 ADMINS = (
-    ('Hynek Hanke', 'hynek.hanke@auto-mat.cz'),
-    ('Petr Dlouhý', 'petr.dlouhy@email.cz'),
+    ('Petr Dlouhý', 'petr.dlouhy@auto-mat.cz'),
 )
 DEFAULT_FROM_EMAIL = 'Do práce na kole <kontakt@dopracenakole.cz>'
 MANAGERS = ADMINS
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '',
-        'OPTIONS': {'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci'},
+        'ENGINE': os.environ.get('DPNK_DB_ENGINE', 'django.contrib.gis.db.backends.postgis'),
+        'NAME': os.environ.get('DPNK_DB_NAME', ''),
+        'USER': os.environ.get('DPNK_DB_USER', ''),
+        'PASSWORD': os.environ.get('DPNK_DB_PASSWORD', ''),
+        'HOST': os.environ.get('DPNK_DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DPNK_DB_PORT', ''),
     },
 }
 
@@ -79,18 +77,33 @@ LANGUAGES = (
 )
 LANGUAGE_CODE = 'cs'
 PREFIX_DEFAULT_LOCALE = False
-SITE_ID = 1
+SITE_ID = os.environ.get('DPNK_SITE_ID', 1)
 USE_I18N = True
 USE_L10N = True
-MEDIA_ROOT = normpath(PROJECT_ROOT, 'media/upload')
-MEDIA_URL = '/media/upload/'
-STATIC_ROOT = normpath(PROJECT_ROOT, "static")
-STATIC_URL = '/static/'
+
+
+MEDIA_ROOT = os.environ.get('DPNK_MEDIA_ROOT', normpath(PROJECT_ROOT, 'media/upload'))
+MEDIA_URL = os.environ.get('DPNK_MEDIA_URL', '/media/upload/')
+STATIC_ROOT = os.environ.get('DPNK_STATIC_ROOT', normpath(PROJECT_ROOT, "static"))
+STATIC_URL = os.environ.get('DPNK_STATIC_URL', '/static/')
+
+AWS_ACCESS_KEY_ID = os.environ.get('DPNK_AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('DPNK_AWS_SECRET_ACCESS_KEY')
+AWS_S3_HOST = os.environ.get('DPNK_AWS_S3_HOST', 's3-eu-west-1.amazonaws.com')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('DPNK_AWS_STORAGE_BUCKET_NAME', 'dpnk')
+if AWS_ACCESS_KEY_ID:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    EMAIL_BACKEND = 'django_ses.SESBackend'
+    AWS_SES_REGION_NAME = 'eu-west-1'
+    AWS_SES_REGION_ENDPOINT = 'email.eu-west-1.amazonaws.com'
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
+
+
 SECRET_KEY = os.environ.get('DPNK_SECRET_KEY')
 MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -105,6 +118,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',
     'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 AUTHENTICATION_BACKENDS = (
     'dpnk.auth.EmailModelBackend',
@@ -189,7 +203,7 @@ INSTALLED_APPS = (
     'adminfilters',
     'compressor',
     'django_bleach',
-    'analytical',
+    'gtm',
     'leaflet',
     'settings_context_processor',
     'oauth2_provider',
@@ -237,17 +251,18 @@ REST_FRAMEWORK = {
 REDACTOR_OPTIONS = {'formatting': ['p', 'blockquote', 'pre', 'h4', 'h5']}
 BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br', 'span', 'div', 'h4', 'h5', 'pre', 'blockquote', 'ol', 'li', 'ul']
 BLEACH_ALLOWED_ATTRIBUTES = ['href', ]
-COMPRESSOR_ENABLED = True
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True
+COMPRESS_ROOT = normpath(PROJECT_ROOT, "dpnk/static")
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile}'),
 )
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-SERVER_EMAIL = 'root@auto-mat.cz'
+SERVER_EMAIL = 'kontakt@dopracenakole.cz'
 LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy("profil")
 LOGOUT_NEXT_PAGE = reverse_lazy('profil')
-SITE_URL = ''
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = ""
 AKLUB_URL = "http://klub.auto-mat.cz"
@@ -276,12 +291,12 @@ DBBACKUP_BACKUP_DIRECTORY = normpath(PROJECT_ROOT, 'db_backup')
 
 MAX_COMPETITIONS_PER_COMPANY = 4
 
-MAILING_API_KEY = ''
+MAILING_API_KEY = os.environ.get('DPNK_MAILING_API_KEY', '')
 
-PAYU_KEY_1 = ''
-PAYU_KEY_2 = ''
-PAYU_POS_AUTH_KEY = 'NxFcSXh'
-PAYU_POS_ID = "131116"
+PAYU_KEY_1 = os.environ.get('DPNK_PAYU_KEY_1', '')
+PAYU_KEY_2 = os.environ.get('DPNK_PAYU_KEY_2', '')
+PAYU_POS_AUTH_KEY = os.environ.get('DPNK_PAYU_POS_AUTH_KEY', '')
+PAYU_POS_ID = os.environ.get('DPNK_PAYU_POS_ID', '')
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -334,7 +349,7 @@ LOGGING = {
         'logfile': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': "/var/log/django/dpnk.log",
+            'filename': os.environ.get('DPNK_LOG_FILE', "dpnk.log"),
             'backupCount': 50,
             'maxBytes': 10000000,
             'formatter': 'verbose',
@@ -373,6 +388,16 @@ LOGGING = {
     },
 }
 
+RAVEN_CONFIG = {
+    'dsn': os.environ.get('DPNK_RAVEN_DNS', ''),
+}
+
+GOOGLE_TAG_ID = os.environ.get('DPNK_GOOGLE_TAG_ID', '')
+
+ALLOWED_HOSTS = os.environ.get('DPNK_ALLOWED_HOSTS', '').split(',')
+
+BROKER_URL = os.environ.get('DPNK_BROKER_URL', '')
+
 MIGRATION_MODULES = {
     'price_level': 'price_level_migrations',
 }
@@ -406,8 +431,11 @@ PRICE_LEVEL_MODEL = 'dpnk.Campaign'
 PRICE_LEVEL_CATEGORY_CHOICES = Choices(('basic', _('Základní')), ('company', _('Pro firmy')))
 PRICE_LEVEL_CATEGORY_DEFAULT = 'basic'
 
+SITE_URL = 'dopracenakole.cz'
 # import local settings
 try:
     from settings_local import *  # noqa
 except ImportError:
     pass
+
+DATABASE_CONFIGURED = DATABASES['default']['NAME'] != ''

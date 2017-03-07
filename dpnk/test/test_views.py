@@ -300,7 +300,7 @@ class PaymentTypeViewTests(ViewsLogon):
         ua.save()
         denorm.flush()
         response = self.client.post(reverse('typ_platby'), post_data, follow=True)
-        self.assertContains(response, "Před tím, než zaplatíte startovné, musíte mít vybrané triko", status_code=403)
+        self.assertContains(response, "Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko", status_code=403)
 
     def test_dpnk_payment_type_without_company_admin(self):
         post_data = {
@@ -311,7 +311,7 @@ class PaymentTypeViewTests(ViewsLogon):
         models.CompanyAdmin.objects.all().delete()
         denorm.flush()
         response = self.client.post(reverse('typ_platby'), post_data)
-        self.assertContains(response, "Váš zaměstnavatel Testing company nemá zvoleného koordinátora organizace.")
+        self.assertContains(response, "Váš zaměstnavatel Testing company nemá zvoleného firemního koordinátora.")
 
         post_data['payment_type'] = 'coupon'
         response = self.client.post(reverse('typ_platby'), post_data, follow=True)
@@ -482,7 +482,7 @@ class ViewsTests(DenormMixin, TestCase):
             'campaign': 339,
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, "Tato organizace již má svého koordinátora.")
+        self.assertContains(response, "Tato organizace již má svého firemního koordinátora.")
 
     def test_dpnk_registration(self):
         address = reverse('registrace')
@@ -1156,7 +1156,7 @@ class ViewsTestsLogon(ViewsLogon):
             company_admin_approved='approved',
         )
         response = self.client.get(reverse('company_admin_application'))
-        self.assertContains(response, 'Vaše organizce již svého koordinátora má: Null User, Null User, Testing User.')
+        self.assertContains(response, 'Vaše organizace již svého koordinátora má: Null User, Null User, Testing User.')
 
     def test_dpnk_company_admin_application_create(self):
         models.CompanyAdmin.objects.all().delete()

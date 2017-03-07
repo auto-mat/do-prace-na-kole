@@ -57,6 +57,8 @@ urlpatterns = [
 
 urlpatterns += i18n_patterns(
     url(r'^', include("dpnk.urls")),
+    url(r'^', include("t_shirt_delivery.urls")),
+    url(r'^', include("coupons.urls")),
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:

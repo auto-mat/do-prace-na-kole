@@ -34,6 +34,7 @@ from .competition import Competition, CompetitionForm
 from .competition_result import CompetitionResult
 from .gpxfile import GpxFile, normalize_gpx_filename
 from .invoice import Invoice, change_invoice_payments_status, payments_to_invoice
+from .occupation import Occupation
 from .phase import Phase
 from .questionnaire import Answer, Choice, ChoiceType, Question, QuestionForm, questionnaire_filename
 from .subsidiary import Subsidiary
@@ -58,6 +59,7 @@ __all__ = (
     CompetitionResult,
     GpxFile,
     Invoice,
+    Occupation,
     Phase,
     ChoiceType,
     QuestionForm,

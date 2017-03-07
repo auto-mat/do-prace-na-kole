@@ -15,7 +15,6 @@
   ],
   "dependencies": {
     "jquery": "1.12.3",
-    "ol2-bower": "2.13.1",
     "bootstrap": "~3.3.2",
     "jquery-form": "~3.46.0",
     "font-awesome": "~4.3.0",

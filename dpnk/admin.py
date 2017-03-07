@@ -26,7 +26,7 @@ from adminactions import actions as admin_actions, merge
 
 from adminfilters.filters import AllValuesComboFilter, RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
 
-from adminsortable2.admin import SortableInlineAdminMixin
+from adminsortable2.admin import SortableAdminMixin, SortableInlineAdminMixin
 
 from daterange_filter.filter import DateRangeFilter
 
@@ -1118,6 +1118,11 @@ class CompetitionResultAdmin(admin.ModelAdmin):
         'team__name',
         'competition__name')
     raw_id_fields = ('user_attendance', 'team')
+
+
+@admin.register(models.Occupation)
+class OccupationAdmin(ImportExportMixin, SortableAdminMixin, admin.ModelAdmin):
+    list_display = ('name', )
 
 
 class PhaseInline(admin.TabularInline):
