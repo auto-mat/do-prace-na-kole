@@ -33,6 +33,7 @@ class DiscountCouponTests(TestCase):
             coupon_type__prefix="AA",
             coupon_type__campaign__slug="testing-campaign",
             coupon_type__valid_until=datetime.datetime(2017, 12, 12),
+            token="",
         )
         self.assertRegex(discount_coupon.name(), r"AA-[A-Z]{6}")
         self.assertRegex(discount_coupon.coupon_pdf.name, r"coupon_[-]?[0-9]+\.pdf")
