@@ -26,7 +26,6 @@ from author.decorators import with_author
 import denorm
 
 from django.contrib.gis.db import models
-from django.core.files import File
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models.signals import post_save
@@ -121,11 +120,12 @@ def create_delivery_files(sender, instance, created, **kwargs):
         instance.add_packages()
 
     if not instance.tnt_order and getattr(instance, 'add_packages_on_save', True):
-        temp = StringIO()
-        batch_csv.generate_csv(temp, instance)
+        buf = StringIO()
+        batch_csv.generate_csv(buf, instance)
         file_name = "delivery_batch_%s_%s.csv" % (instance.pk, instance.created.strftime("%Y-%m-%d"))
-        read_content = temp.read()
+        buf.seek(0)
+        read_content = buf.read()
         read_content = read_content.encode('utf-8')
         temp_read = ContentFile(read_content, name=file_name)
-        instance.tnt_order.save(file_name, File(temp_read))
+        instance.tnt_order.save(file_name, temp_read)
         instance.save()
