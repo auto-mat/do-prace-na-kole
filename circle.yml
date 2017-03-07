@@ -13,13 +13,14 @@ dependencies:
     - npm install bower -g
     - npm install -g less
     - bower install
+    - pip install -r requirements.freeze.txt
+    - pip install -r requirements-test.txt
     - python manage.py compress
     - cd dpnk && django-admin compilemessages
     - cd t_shirt_delivery && django-admin compilemessages
     - cd coupons && django-admin compilemessages
     - DPNK_SECRET_KEY="fake_key" python manage.py collectstatic --noinput
   override:
-    - pip install flake8 flake8-blind-except flake8-comprehensions flake8-import-order flake8-tidy-imports flake8-builtins flake8-strict
     - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
     - docker build --rm=false -t dopracenakole .
     - mkdir -p ~/docker; docker save dopracenakole > ~/docker/image.tar
