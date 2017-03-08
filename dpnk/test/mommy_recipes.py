@@ -31,10 +31,18 @@ PhaseRecipe = Recipe(
     campaign__slug="temporary-campaign",  # this will be overriden by the related campaign
     campaign__name="Temporary campaign",
 )
+RegistrationPhaseRecipe = Recipe(
+    "dpnk.Phase",
+    phase_type="registration",
+    date_from=None,
+    date_to=None,
+    campaign__slug="temporary-campaign1",  # this will be overriden by the related campaign
+    campaign__name="Temporary campaign1",
+)
 CampaignRecipe = Recipe(
     "Campaign",
     slug="testing-campaign",
-    phase_set=related(PhaseRecipe),
+    phase_set=related(PhaseRecipe, RegistrationPhaseRecipe),
 )
 UserAttendanceRecipe = Recipe(
     UserAttendance,

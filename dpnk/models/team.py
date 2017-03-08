@@ -91,6 +91,9 @@ class Team(models.Model):
             logger.error(u"Too many members in team %s" % self)
         return member_count
 
+    def is_full(self):
+        return self.member_count >= self.campaign.max_team_members
+
     @denormalized(
         models.IntegerField,
         verbose_name=_(u"Počet neschválených členů týmu"),

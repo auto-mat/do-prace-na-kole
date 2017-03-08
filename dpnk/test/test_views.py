@@ -585,26 +585,6 @@ class ViewsTests(DenormMixin, TestCase):
         response = self.client.post(address, post_data)
         self.assertContains(response, "Tato e-mailová adresa se již používá.")
 
-    def test_dpnk_registration_token(self):
-        kwargs = {
-            "token": "token123213",
-            'initial_email': 'test1@test.cz',
-        }
-        address = reverse('registrace', kwargs=kwargs)
-        post_data = {
-            'email': 'test1@test.cz',
-            'password1': 'test11',
-            'password2': 'test11',
-        }
-        response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('upravit_profil'))
-        user = models.User.objects.get(email='test1@test.cz')
-        self.assertNotEquals(user, None)
-        self.assertNotEquals(models.UserProfile.objects.get(user=user), None)
-        ua = models.UserAttendance.objects.get(userprofile__user=user)
-        self.assertNotEquals(ua, None)
-        self.assertEquals(ua.team.pk, 1)
-
     @patch('slumber.API')
     def test_dpnk_userattendance_creation(self, slumber_api):
         slumber_api.feed.get = {}
@@ -682,6 +662,69 @@ class ViewsTests(DenormMixin, TestCase):
         createsend.Subscriber.delete.assert_called_once_with()
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
         self.assertEqual(user_attendance.userprofile.mailing_hash, None)
+
+
+@override_settings(
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class RegistrationViewTests(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.example.com")
+
+    def test_dpnk_registration_token(self):
+        mommy.make(
+            "Team",
+            invitation_token="token123213",
+            campaign=CampaignRecipe.make(),
+            id=1,
+        )
+        kwargs = {
+            "token": "token123213",
+            'initial_email': 'test1@test.cz',
+        }
+        address = reverse('registrace', kwargs=kwargs)
+        post_data = {
+            'email': 'test1@test.cz',
+            'password1': 'test11',
+            'password2': 'test11',
+        }
+        response = self.client.post(address, post_data)
+        self.assertRedirects(response, reverse('upravit_profil'))
+        user = models.User.objects.get(email='test1@test.cz')
+        self.assertNotEquals(user, None)
+        self.assertNotEquals(models.UserProfile.objects.get(user=user), None)
+        ua = models.UserAttendance.objects.get(userprofile__user=user)
+        self.assertNotEquals(ua, None)
+        self.assertEquals(ua.team.pk, 1)
+
+    def test_dpnk_registration_token_team_full(self):
+        mommy.make(
+            "Team",
+            invitation_token="token123213",
+            campaign=CampaignRecipe.make(max_team_members=0),
+            id=1,
+        )
+        kwargs = {
+            "token": "token123213",
+            'initial_email': 'test1@test.cz',
+        }
+        address = reverse('registrace', kwargs=kwargs)
+        post_data = {
+            'email': 'test1@test.cz',
+            'password1': 'test11',
+            'password2': 'test11',
+        }
+        response = self.client.post(address, post_data, follow=True)
+        self.assertRedirects(response, reverse('upravit_profil'))
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo vytvořit jiný tým.</div>',
+            html=True,
+        )
+        user = models.User.objects.get(email='test1@test.cz')
+        ua = models.UserAttendance.objects.get(userprofile__user=user)
+        self.assertEquals(ua.team, None)
 
 
 @override_settings(

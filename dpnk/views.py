@@ -475,6 +475,9 @@ class RegistrationView(TitleViewMixin, SimpleRegistrationView):
         invitation_token = self.kwargs.get('token', None)
         try:
             team = Team.objects.get(invitation_token=invitation_token)
+            if team.is_full():
+                messages.error(self.request, _('Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo vytvořit jiný tým.'))
+                team = None
         except Team.DoesNotExist:
             team = None
         campaign = Campaign.objects.get(slug=self.request.subdomain)
