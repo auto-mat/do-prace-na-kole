@@ -39,7 +39,7 @@ MAP_DESCRIPTION = format_lazy(
    <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko {draw}, ukončíte kliknutím na cílový bod.</strong></li>
    <li>Změnu trasy provedete po přepnutí do režimu úprav ({edit}) kliknutím na trasu.</li>
    <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede.</li>
-   <li>Zadání přesnějšího průběhu nám však může pomoci lépe zjistit jak se lidé na kole pohybují.</li>
+   <li>Zadání přesnějšího průběhu nám však může pomoci lépe zjistit, jak se lidé na kole pohybují.</li>
    <li>Trasu bude možné změnit nebo upřesnit i později v průběhu soutěže.</li>
    <li>Polohu začátku a konce trasy stačí zadávat se 100m přesností.</li>
 </ul>
