@@ -3144,7 +3144,7 @@ msgstr ""
 
 #: views.py:1003
 msgid ""
-"Děkujeme za vaší registraci.<br/>Před tím, než budete moct zadávat jízdy, "
+"Před tím, než budete moct zadávat jízdy, "
 "bude ještě nutné vyřešit pár věcí:"
 msgstr ""
 

@@ -3333,10 +3333,10 @@ msgstr "Registration is not complete"
 
 #: views.py:1003
 msgid ""
-"Děkujeme za vaší registraci.<br/>Před tím, než budete moct zadávat jízdy, "
+"Před tím, než budete moct zadávat jízdy, "
 "bude ještě nutné vyřešit pár věcí:"
 msgstr ""
-"Thank you for your registration.<br/>Before you can start entering your "
+"Before you can start entering your "
 "routes, there are a few necessities that need to be done: "
 
 #: views.py:1020

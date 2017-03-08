@@ -999,8 +999,8 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
 
 class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
     template_name = 'base_generic_form.html'
-    title = _(u'Registrace není kompletní')
-    opening_message = mark_safe(_("Děkujeme za vaší registraci.<br/>Před tím, než budete moct zadávat jízdy, bude ještě nutné vyřešit pár věcí:"))
+    title = _('Stav registrace')
+    opening_message = mark_safe(_("Před tím, než budete moct zadávat jízdy, bude ještě nutné vyřešit pár věcí:"))
     registration_phase = 'registration_uncomplete'
 
     def get(self, request, *args, **kwargs):
