@@ -307,10 +307,16 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
 
-    def get_previous_team_name(self):
+    def get_previous_team(self):
         previous_user_attendance = self.user_attendance.previous_user_attendance()
         if previous_user_attendance and previous_user_attendance.team:
-            return previous_user_attendance.team.name
+            try:
+                return Team.objects.get(
+                    name=previous_user_attendance.team.name,
+                    campaign=self.user_attendance.campaign,
+                )
+            except Team.DoesNotExist:
+                return previous_user_attendance.team.name
 
     def post(self, request, *args, **kwargs):  # noqa
         create_company = False
@@ -349,7 +355,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
             team_valid = form_team.is_valid()
             form.fields['team'].required = False
         else:
-            form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign, 'name': self.get_previous_team_name()})
+            form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign, 'name': self.get_previous_team()})
             form.fields['team'].required = True
 
         form_valid = form.is_valid()
@@ -418,10 +424,14 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         super(ChangeTeamView, self).get(request, *args, **kwargs)
-        form = self.form_class(request, instance=self.user_attendance, prev_url=self.prev_url)
+        previous_team = self.get_previous_team()
+        initial = {}
+        if isinstance(previous_team, Team):
+            initial = {'team': previous_team}
+        form = self.form_class(request, instance=self.user_attendance, prev_url=self.prev_url, initial=initial)
         form_company = RegisterCompanyForm(prefix="company")
         form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=self.user_attendance.campaign)
-        form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign, 'name': self.get_previous_team_name()})
+        form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign, 'name': self.get_previous_team()})
 
         form.fields['company'].widget.underlying_form = form_company
         form.fields['subsidiary'].widget.underlying_form = form_subsidiary
