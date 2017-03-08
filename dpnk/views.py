@@ -187,7 +187,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                         _(
                             'Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce!'
                             ' <ul><li><a href="{invite_url}">Pozvěte</a> své kolegy do vašeho týmu, pokud jste tak již učinil/a, '
-                            'vyčkejte na potvrzující email a schvalte jejich členství v týmu.</li>'
+                            'vyčkejte na potvrzující e-mail a schvalte jejich členství v týmu.</li>'
                             '<li>Můžete se pokusit <a href="{join_team_url}">přidat se k jinému týmu</a>.</li>'
                             '<li>Pokud nemůžete sehnat spolupracovníky, '
                             ' <a href="http://www.dopracenakole.cz/locations/{city}/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>'
@@ -1521,12 +1521,12 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, FormView):
                         messages.add_message(
                             self.request,
                             messages.SUCCESS,
-                            _(u"Odeslána pozvánka uživateli %(user)s na email %(email)s") % {"user": invited_user_attendance, "email": email},
+                            _(u"Odeslána pozvánka uživateli %(user)s na e-mail %(email)s") % {"user": invited_user_attendance, "email": email},
                             fail_silently=True,
                         )
                 except models.User.DoesNotExist:
                     invitation_mail(self.user_attendance, email)
-                    messages.add_message(self.request, messages.SUCCESS, _(u"Odeslána pozvánka na email %s") % email, fail_silently=True)
+                    messages.add_message(self.request, messages.SUCCESS, _(u"Odeslána pozvánka na e-mail %s") % email, fail_silently=True)
 
         invite_success_url = self.request.session.get('invite_success_url')
         self.request.session['invite_success_url'] = None
@@ -1620,7 +1620,7 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
                 ('id', None, str(self.user_attendance.id)),
                 ('class', None, self.user_attendance.payment_class()),
                 ('name', _(u"Jméno"), str(userprofile)),
-                ('email', _(u"Email"), userprofile.user.email),
+                ('email', _(u"E-mail"), userprofile.user.email),
                 ('payment_description', _(u"Platba"), self.user_attendance.get_payment_status_display()),
                 ('telephone', _(u"Telefon"), userprofile.telephone),
                 ('state_name', _(u"Stav"), str(self.user_attendance.get_approved_for_team_display())),

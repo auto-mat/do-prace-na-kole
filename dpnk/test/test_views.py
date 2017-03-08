@@ -116,7 +116,7 @@ class CompetitionsViewTests(ViewsLogon):
     def test_update_team(self):
         address = reverse('zmenit_tym')
         response = self.client.get(address)
-        self.assertContains(response, 'Po koordinátorovi vaší organizace na emailové adrese')
+        self.assertContains(response, 'Po koordinátorovi vaší organizace na e-mailové adrese')
         self.assertContains(response, 'test_wa@email.cz')
         self.assertContains(response, 'test@email.cz')
         self.assertContains(response, 'test@test.cz')
@@ -468,11 +468,11 @@ class ViewsTests(DenormMixin, TestCase):
     def test_login_view(self):
         address = reverse('login')
         response = self.client.get(address)
-        self.assertContains(response, "Email (uživatelské jméno)")
+        self.assertContains(response, "E-mail (uživatelské jméno)")
 
         address = reverse('login', kwargs={'initial_email': "test@test.cz"})
         response = self.client.get(address)
-        self.assertContains(response, "Email (uživatelské jméno)")
+        self.assertContains(response, "E-mail (uživatelské jméno)")
         self.assertContains(response, "test@test.cz")
 
     def test_admin_views_competition(self):
@@ -931,7 +931,7 @@ class ViewsTestsLogon(ViewsLogon):
         }
         address = reverse('upravit_profil')
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, "Tento email již je v našem systému zanesen.")
+        self.assertContains(response, "Tento e-mail již je v našem systému zanesen.")
 
     def test_dpnk_team_view_choose_team_full(self):
         campaign = models.Campaign.objects.get(pk=339)
@@ -1162,7 +1162,7 @@ class ViewsTestsLogon(ViewsLogon):
             'submit': 'odeslat',
         }
         response = self.client.post(reverse('pozvanky'), post_data, follow=True)
-        self.assertContains(response, 'Odeslána pozvánka uživateli Null User na email test@email.cz')
+        self.assertContains(response, 'Odeslána pozvánka uživateli Null User na e-mail test@email.cz')
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@email.cz'])
@@ -1186,7 +1186,7 @@ class ViewsTestsLogon(ViewsLogon):
             'submit': 'odeslat',
         }
         response = self.client.post(reverse('pozvanky'), post_data, follow=True)
-        self.assertContains(response, 'Odeslána pozvánka na email test-unknown@email.cz')
+        self.assertContains(response, 'Odeslána pozvánka na e-mail test-unknown@email.cz')
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test-unknown@email.cz'])

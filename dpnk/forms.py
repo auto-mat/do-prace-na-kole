@@ -120,7 +120,7 @@ class AuthenticationFormDPNK(AuthenticationForm):
             ),
         )
         self.helper.add_input(Submit('submit', _(u'Přihlásit')))
-        self.fields['username'].label = _(u"Email (uživatelské jméno)")
+        self.fields['username'].label = _(u"E-mail (uživatelské jméno)")
         return ret_val
 
 
@@ -332,7 +332,7 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
     email = forms.CharField(
         required=True,
         label=_(u"E-mail (uživatelské jméno)"),
-        help_text=_(u"Zadejte váš email. Pokud jste se účastnili v minulém roce, zadejte stejný email jako v minulém roce."),
+        help_text=_(u"Zadejte váš e-mail. Pokud jste se účastnili v minulém roce, zadejte stejný e-mail jako v minulém roce."),
     )
 
 
@@ -385,22 +385,22 @@ class InviteForm(SubmitMixin, forms.Form):
     error_css_class = 'error'
 
     email1 = forms.EmailField(
-        label=_(u"Email kolegy 1"),
+        label=_(u"E-mail kolegy 1"),
         required=False,
     )
 
     email2 = forms.EmailField(
-        label=_(u"Email kolegy 2"),
+        label=_(u"E-mail kolegy 2"),
         required=False,
     )
 
     email3 = forms.EmailField(
-        label=_(u"Email kolegy 3"),
+        label=_(u"E-mail kolegy 3"),
         required=False,
     )
 
     email4 = forms.EmailField(
-        label=_(u"Email kolegy 4"),
+        label=_(u"E-mail kolegy 4"),
         required=False,
     )
 
@@ -412,10 +412,15 @@ class InviteForm(SubmitMixin, forms.Form):
             HTML(
                 format_html_lazy(
                     _(
-                        """Napište zde emaily kolegů, které chcete pozvat do svého týmu. Následně vyčkejte, """
-                        """až se k vám někdo do týmu připojí (tato informace vám přijde emailem, """
-                        """stav vašeho týmu můžete sledovat na <a href="{}">stránce týmu</a> a potvrdit členství vašich kolegů)."""
-                        """<br/><br/>"""
+                        "Můžete pozvat kolegy do týmu přes náš rozesílač - stačí napsat níže e-maily "
+                        "kolegů, které chcete do svého týmu (samozřejmě je můžete pozvat jakkoliv, "
+                        "třeba osobně).<br/>"
+                        "Následně vyčkejte, až se k vám někdo do týmu připojí "
+                        "(tato informace vám přijde e-mailem, stav vašeho týmu můžete sledovat na <a "
+                        "href=\"{}\">stránce vašeho týmu</a>, tamtéž můžete i potvrdit členství "
+                        "vašich kolegů).<br/>"
+                        "Tým může mít maximálně 5 členů."
+                        "<br/><br/>"
                     ),
                     reverse("team_members"),
                 ),
@@ -656,7 +661,8 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
     )
 
     email = forms.EmailField(
-        help_text=_(u"Email slouží jako přihlašovací jméno"),
+        label=_("E-mail"),
+        help_text=_(u"E-mail slouží jako přihlašovací jméno"),
         required=True,
     )
     dont_show_name = forms.BooleanField(
@@ -667,11 +673,11 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         required=True,
     )
     mailing_opt_in = forms.ChoiceField(
-        label=_(u"Soutěžní emaily"),
-        help_text=_(u"Odběr emailů můžete kdykoliv v průběhu soutěže zrušit."),
+        label=_(u"Soutěžní e-maily"),
+        help_text=_(u"Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
         choices=[
-            (True, _("Přeji si dostávat emailem informace o akcích, událostech a dalších informacích souvisejících se soutěží.")),
-            (False, _("Nechci dostávat emaily, mohou mi uniknout důležité informace o průběhu soutěže.")),
+            (True, _("Přeji si dostávat e-mailem informace o akcích, událostech a dalších informacích souvisejících se soutěží.")),
+            (False, _("Nechci dostávat e-maily, mohou mi uniknout důležité informace o průběhu soutěže.")),
         ],
         widget=forms.RadioSelect(),
     )
@@ -705,7 +711,7 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         Validate that the email is not already in use.
         """
         if User.objects.filter(email__iexact=self.cleaned_data['email']).exclude(pk=self.instance.user.pk).exists():
-            raise forms.ValidationError(_(u"Tento email již je v našem systému zanesen."))
+            raise forms.ValidationError(_(u"Tento e-mail již je v našem systému zanesen."))
         else:
             return self.cleaned_data['email']
 

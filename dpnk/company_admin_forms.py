@@ -135,7 +135,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
     motivation_company_admin = forms.CharField(
         label=_(u"Pár vět o vaší pozici"),
         help_text=_(
-            "Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici,"
+            "Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, "
             "podle kterých můžeme ověřit, že vám funkci koordinátora organizace můžeme svěřit."
         ),
         max_length=100,

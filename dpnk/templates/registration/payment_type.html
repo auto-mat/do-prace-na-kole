@@ -72,7 +72,7 @@ $(function(){
       {% trans "Zaměstnavatel: " %} {{ user_attendance.team.subsidiary.company }}<br/>
       {% for company_admin in user_attendance.get_asociated_company_admin %}
          {% trans "Koordinátor organizace: " %} {{ company_admin|default:"Není" }}<br/>
-         {% trans "Email na koordinátora: " %}<a href='mailto:{{ company_admin.userprofile.user.email|default:"Není" }}'>{{ company_admin.userprofile.user.email|default:"Není" }}</a><br/>
+         {% trans "E-mail na koordinátora: " %}<a href='mailto:{{ company_admin.userprofile.user.email|default:"Není" }}'>{{ company_admin.userprofile.user.email|default:"Není" }}</a><br/>
       {% empty %}
          <strong>
          <hr/>

@@ -64,7 +64,7 @@ class PasswordResetForm(PasswordResetForm):
         if User.objects.filter(email__iexact=self.cleaned_data['email']).exists():
             return self.cleaned_data['email']
         else:
-            raise forms.ValidationError(_(u"Tento email v systému není zanesen."))
+            raise forms.ValidationError(_(u"Tento e-mail v systému není zanesen."))
 
     def save(self, *args, **kwargs):
         kwargs['extra_email_context'] = {'subdomain': kwargs['request'].subdomain}

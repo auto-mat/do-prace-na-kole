@@ -171,7 +171,7 @@ class HasTeamFilter(SimpleListFilter):
 
 
 class EmailFilter(SimpleListFilter):
-    title = _(u"Email")
+    title = _(u"E-mail")
     parameter_name = u'email'
 
     def lookups(self, request, model_admin):

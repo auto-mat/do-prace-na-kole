@@ -73,8 +73,8 @@ class UserProfile(models.Model):
         null=False,
     )
     language = models.CharField(
-        verbose_name=_(u"Jazyk emailové komunikace"),
-        help_text=_(u"Jazyk, ve kterém vám budou docházet emaily z registračního systému"),
+        verbose_name=_(u"Jazyk e-mailové komunikace"),
+        help_text=_(u"Jazyk, ve kterém vám budou docházet e-maily z registračního systému"),
         choices=LANGUAGE,
         max_length=16,
         null=False,
@@ -114,8 +114,8 @@ class UserProfile(models.Model):
         blank=True,
     )
     mailing_opt_in = models.NullBooleanField(
-        verbose_name=_(u"Přeji si dostávat emailem informace o akcích, událostech a dalších informacích souvisejících se soutěží."),
-        help_text=_(u"Odběr emailů můžete kdykoliv v průběhu soutěže zrušit."),
+        verbose_name=_(u"Přeji si dostávat e-mailem informace o akcích, událostech a dalších informacích souvisejících se soutěží."),
+        help_text=_(u"Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
         default=None,
     )
     personal_data_opt_in = models.BooleanField(
@@ -138,7 +138,7 @@ class UserProfile(models.Model):
         choices=[(i, i) for i in range(util.today().year, util.today().year - 100, -1)],
     )
     ecc_email = models.CharField(
-        verbose_name=_("Email v ECC"),
+        verbose_name=_("E-mail v ECC"),
         max_length=128,
         db_index=True,
         default=None,
