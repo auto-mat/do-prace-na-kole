@@ -21,15 +21,30 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-MAP_DESCRIPTION = _("""
+from ..string_lazy import format_lazy
+
+button_icons = {
+    'draw':
+    '<span style="display: inline-block;" class="leaflet-draw-toolbar leaflet-bar leaflet-draw-toolbar-top">'
+    '<a class="leaflet-draw-draw-polyline" href="#"></a>'
+    '</span>',
+    'edit':
+    '<span style="display: inline-block;" class="leaflet-draw-toolbar leaflet-bar">'
+    '<a class="leaflet-draw-edit-edit" href="#"></a>'
+    '</span>',
+}
+MAP_DESCRIPTION = format_lazy(
+    _("""
 <ul>
-   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko "Nakreslit trasu", ukončíte kliknutím na cílový bod.</strong></li>
-   <li>Změnu trasy provedete po přepnutí do režimu úprav kliknutím na trasu.</li>
+   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko {draw}, ukončíte kliknutím na cílový bod.</strong></li>
+   <li>Změnu trasy provedete po přepnutí do režimu úprav ({edit}) kliknutím na trasu.</li>
    <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede.</li>
    <li>Zadání přesnějšího průběhu nám však může pomoci lépe zjistit jak se lidé na kole pohybují.</li>
    <li>Trasu bude možné změnit nebo upřesnit i později v průběhu soutěže.</li>
-   <li>Polohu začátku a konce trasy stačí zadávat s přesností 100m.</li>
+   <li>Polohu začátku a konce trasy stačí zadávat se 100m přesností.</li>
 </ul>
 Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve městě na kole. Vaše cesta se zobrazí vašim týmovým kolegům.
 <br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na úvodní stránce.
-""")
+"""),
+    **button_icons,
+)
