@@ -298,7 +298,7 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
 
     @method_decorator(login_required_simple)
     @user_attendance_has(
-        lambda ua: ua.team and ua.team.member_count == 1 and ua.team.unapproved_member_count > 0,
+        lambda ua: ua.approved_for_team == 'approved' and ua.team and ua.team.member_count == 1 and ua.team.unapproved_member_count > 0,
         _(u"Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."))
     @must_be_competitor
     def dispatch(self, request, *args, **kwargs):

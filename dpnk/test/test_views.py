@@ -985,40 +985,6 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
         self.assertContains(response, "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží.")
 
-    def test_dpnk_team_undecided(self):
-        PackageTransaction.objects.all().delete()
-        for team_member in self.user_attendance.team.all_members():
-            if team_member != self.user_attendance:
-                team_member.approved_for_team = 'undecided'
-                team_member.save()
-        denorm.flush()
-        team = models.Team.objects.get(pk=1)
-        self.assertEquals(team.member_count, 1)
-        self.assertEquals(team.unapproved_member_count, 2)
-        response = self.client.get(reverse('zmenit_tym'))
-        self.assertContains(
-            response,
-            "Nemůžete opustit tým, ve kterém jsou samí neschválení členové. "
-            "Napřed někoho schvalte a pak změňte tým.",
-            status_code=403,
-        )
-
-    def test_dpnk_team_change_alone(self):
-        PackageTransaction.objects.all().delete()
-        models.Payment.objects.all().delete()
-        for team_member in self.user_attendance.team.all_members():
-            if team_member != self.user_attendance:
-                team_member.team = None
-                team_member.save()
-        self.user_attendance.approved_for_team = 'undecided'
-        self.user_attendance.save()
-        denorm.flush()
-        team = models.Team.objects.get(pk=1)
-        self.assertEquals(team.member_count, 0)
-        self.assertEquals(team.unapproved_member_count, 1)
-        response = self.client.get(reverse('zmenit_tym'))
-        self.assertEquals(response.status_code, 200)
-
     def test_dpnk_team_view_create(self):
         self.user_attendance.team = None
         self.user_attendance.save()
@@ -1225,6 +1191,63 @@ class ViewsTestsLogon(ViewsLogon):
             '<label for="id_motivation_company_admin" class="control-label  requiredField"> Pár vět o vaší pozici<span class="asteriskField">*</span> </label>',
             html=True,
         )
+
+
+class ChangeTeamViewTests(TestCase):
+    def setUp(self):
+        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
+        self.campaign = CampaignRecipe.make()
+        self.team = mommy.make(
+            "Team",
+            campaign=self.campaign,
+        )
+
+    def test_dpnk_team_change_me_undecided(self):
+        """ If I my team membership is undecided, I have to be able to leave the team """
+        UserAttendanceRecipe.make(approved_for_team='approved', campaign=self.campaign, team=self.team)
+        user_attendance = UserAttendanceRecipe.make(approved_for_team='undecided', campaign=self.campaign, team=self.team)
+        self.team.save()
+        self.client.force_login(user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+        self.assertEquals(self.team.member_count, 1)
+        self.assertEquals(self.team.unapproved_member_count, 1)
+        response = self.client.get(reverse('zmenit_tym'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_dpnk_team_undecided(self):
+        """ If I am olny approved team member of team where all others are undicided, I can't leave the team """
+        UserAttendanceRecipe.make(approved_for_team='undecided', campaign=self.campaign, team=self.team)
+        user_attendance = UserAttendanceRecipe.make(approved_for_team='approved', campaign=self.campaign, team=self.team)
+        self.team.save()
+        self.client.force_login(user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+        self.assertEquals(self.team.member_count, 1)
+        self.assertEquals(self.team.unapproved_member_count, 1)
+        response = self.client.get(reverse('zmenit_tym'))
+        self.assertContains(
+            response,
+            "Nemůžete opustit tým, ve kterém jsou samí neschválení členové. "
+            "Napřed někoho schvalte a pak změňte tým.",
+            status_code=403,
+        )
+
+    def test_dpnk_team_change_alone_undecided(self):
+        """ If I am in the team alone, I can leave the team if I am undecided """
+        user_attendance = UserAttendanceRecipe.make(approved_for_team='undecided', campaign=self.campaign, team=self.team)
+        self.team.save()
+        self.client.force_login(user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+        self.assertEquals(self.team.member_count, 0)
+        self.assertEquals(self.team.unapproved_member_count, 1)
+        response = self.client.get(reverse('zmenit_tym'))
+        self.assertEquals(response.status_code, 200)
+
+    def test_dpnk_team_change_alone_approved(self):
+        """ If I am in the team alone, I can leave the team if I am approved """
+        user_attendance = UserAttendanceRecipe.make(approved_for_team='approved', campaign=self.campaign, team=self.team)
+        self.team.save()
+        self.client.force_login(user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+        self.assertEquals(self.team.member_count, 1)
+        self.assertEquals(self.team.unapproved_member_count, 0)
+        response = self.client.get(reverse('zmenit_tym'))
+        self.assertEquals(response.status_code, 200)
 
 
 class RegistrationMixinTests(ViewsLogon):
