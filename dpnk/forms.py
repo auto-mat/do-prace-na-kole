@@ -239,7 +239,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             RegisterTeamForm,
             view_name='',
             prefix="team",
-            new_description=_("Můj tým v seznamu není, vytvořit nový."),
+            new_description=_("Můj tým v seznamu není, chci vytvořit nový."),
             chained_field="subsidiary",
             chained_model_field="subsidiary",
             to_app_name="dpnk",
@@ -357,7 +357,7 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
 
         super(RegistrationFormDPNK, self).__init__(*args, **kwargs)
 
-        self.fields['email'].help_text = _(u"Pro informace v průběhu kampaně, k zaslání zapomenutého loginu")
+        self.fields['email'].help_text = _("Tento e-mail bude použit pro zasílání informací v průběhu kampaně a k zaslání zapomenutého hesla.")
 
     def clean_email(self):
         if User.objects.filter(email__iexact=self.cleaned_data['email']):
@@ -462,9 +462,9 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         if payment_type == 'company' and not self.user_attendance.get_asociated_company_admin().exists():
             raise forms.ValidationError(
                 format_html(
-                    _("Váš zaměstnavatel {employer} nemá zvoleného koordinátora organizace."
-                      " Vaše organizace bude muset nejprve ustanovit zástupce, který za ní bude schvalovat platby ve vaší organizaci."
-                      "<ul><li><a href='{url}'>Chci se stát koordinátorem mé organizace</a></li></ul>"),
+                    _("Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora."
+                      "Vaše organizace bude muset nejprve ustanovit zástupce, který za ní bude schvalovat platby ve vaší organizaci."
+                      "<ul><li><a href='{url}'>Chci se stát firemním koordinátorem</a></li></ul>"),
                     employer=self.user_attendance.team.subsidiary.company,
                     url=reverse('company_admin_application'),
                 ),
@@ -475,19 +475,19 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         self.user_attendance = kwargs.pop('user_attendance')
         ret_val = super().__init__(*args, **kwargs)
         self.fields['payment_type'].choices = [
-            ('pay', _("Účastnický poplatek (%s Kč) si platím sám.") % intcomma(self.user_attendance.admission_fee())),
+            ('pay', _("Zaplatím běžný účastnický poplatek (%s Kč).") % intcomma(self.user_attendance.admission_fee())),
             ('pay_beneficiary', mark_safe_lazy(
-                _("Chci podpořit tuto soutěž a zaplatit benefiční startovné (%s Kč). <i class='fa fa-heart'></i>") %
+                _("Podpořím soutěž benefičním poplatkem (%s Kč). <i class='fa fa-heart'></i>") %
                 intcomma(self.user_attendance.beneficiary_admission_fee()),
             )),
-            ('company', _(u"Účastnický poplatek za mě zaplatí zaměstnavatel, mám to domluvené se zaměstnavatelem nebo koordinátorem mé organizace.")),
+            ('company', _("Učastnický poplatek mi platí zaměstnavatel.")),
             ('member_wannabe', mark_safe_lazy(
                 _(
-                    "Chci trvale podporovat městskou cyklistiku, stát se členem klubu přátel a neplatit účastnický poplatek ani letos ani následující roky. "
+                    "Chci účastnický poplatek zdarma (pro ty, kteří chtějí trvale podporovat udržitelnou mobilitu). "
                     "<i class='fa fa-heart'></i>",
                 ),
             )),
-            ('coupon', _("Mám nárok na slevu nebo startovné zdarma, mám voucher.")),
+            ('coupon', _("Chci uplatnit voucher (sleva či účastnický poplatek zdarma, např. pro Klub přátel).")),
         ]
         return ret_val
 
@@ -676,15 +676,15 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         label=_(u"Soutěžní e-maily"),
         help_text=_(u"Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
         choices=[
-            (True, _("Přeji si dostávat e-mailem informace o akcích, událostech a dalších informacích souvisejících se soutěží.")),
-            (False, _("Nechci dostávat e-maily, mohou mi uniknout důležité informace o průběhu soutěže.")),
+            (True, _("Přeji si dostávat e-mailem informace o akcích, událostech a dalších záležitostech souvisejících se soutěží.")),
+            (False, _("Nechci dostávat e-maily (a beru na vědomí, že mi mohou uniknout důležité informace o průběhu soutěže).")),
         ],
         widget=forms.RadioSelect(),
     )
     telephone = forms.CharField(
         label=_(u"Telefon"),
         validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
-        help_text=_(u"Telefon použije kurýr, který Vám přiveze soutěžní triko, slouží pro HelpDesk a další účely"),
+        help_text=_("Telefonní číslo slouží jako kontakt pro help desk a pro kurýra, který vám přiveze soutěžní triko."),
         max_length=30,
     )
 

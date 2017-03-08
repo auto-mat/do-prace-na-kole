@@ -148,7 +148,7 @@ def company_admin_register_competitor_mail(user_attendance):
         'company': user_attendance.team.subsidiary.company,
         'SITE_URL': settings.SITE_URL,
     })
-    send_mail(_(u"%s - koordinátor organizace - potvrzení registrace" % user_attendance.campaign), message, None, [email], fail_silently=False)
+    send_mail(_(u"%s - firemní koordinátor - potvrzení registrace" % user_attendance.campaign), message, None, [email], fail_silently=False)
 
 
 def company_admin_register_no_competitor_mail(company_admin, company):
@@ -159,7 +159,7 @@ def company_admin_register_no_competitor_mail(company_admin, company):
         'company': company,
         'SITE_URL': settings.SITE_URL,
     })
-    send_mail(_(u"%s - koordinátor organizace - potvrzení registrace" % company_admin.campaign), message, None, [email], fail_silently=False)
+    send_mail(_(u"%s - firemní koordinátor - potvrzení registrace" % company_admin.campaign), message, None, [email], fail_silently=False)
 
 
 def company_admin_approval_mail(company_admin):
@@ -170,7 +170,7 @@ def company_admin_approval_mail(company_admin):
         'company': company_admin.administrated_company,
         'SITE_URL': settings.SITE_URL,
     })
-    send_mail(_(u"%s - koordinátor organizace - schválení správcovství organizace" % company_admin.campaign), message, None, [email], fail_silently=False)
+    send_mail(_(u"%s - firemní koordinátor - schválení správcovství organizace" % company_admin.campaign), message, None, [email], fail_silently=False)
 
 
 def company_admin_rejected_mail(company_admin):
@@ -181,4 +181,4 @@ def company_admin_rejected_mail(company_admin):
         'company': company_admin.administrated_company,
         'SITE_URL': settings.SITE_URL,
     })
-    send_mail(_(u"%s - koordinátor organizace - zamítnutí správcovství organizace" % company_admin.campaign), message, None, [email], fail_silently=False)
+    send_mail(_(u"%s - firemní koordinátor - zamítnutí správcovství organizace" % company_admin.campaign), message, None, [email], fail_silently=False)

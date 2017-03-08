@@ -521,7 +521,7 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
         if self.user_attendance.payment_status == 'done' and self.user_attendance.team and self.user_attendance.team.subsidiary != self.new_team.subsidiary:
             return {
                 'fullpage_error_message': _(u"Již máte zaplaceno, nemůžete měnit tým mimo svoji pobočku."),
-                'title': _("Startovné již zaplaceno"),
+                'title': _("Účastnický poplatek již zaplacen"),
             }
 
         if self.user_attendance.campaign != self.new_team.campaign:
@@ -571,13 +571,13 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
     @must_be_in_phase("payment")
     @user_attendance_has(
         lambda ua: ua.payment_status == 'done',
-        mark_safe_lazy(format_lazy(_(u"Již máte startovné zaplaceno. Pokračujte na <a href='{addr}'>zadávání jízd</a>."), addr=reverse_lazy("profil"))))
+        mark_safe_lazy(format_lazy(_("Již máte účastnický poplatek zaplacen. Pokračujte na <a href='{addr}'>zadávání jízd</a>."), addr=reverse_lazy("profil"))))
     @user_attendance_has(
         lambda ua: ua.payment_status == 'no_admission',
-        mark_safe_lazy(format_lazy(_(u"Startovné se neplatí. Pokračujte na <a href='{addr}'>zadávání jízd</a>."), addr=reverse_lazy("profil"))))
+        mark_safe_lazy(format_lazy(_("Účastnický poplatek se neplatí. Pokračujte na <a href='{addr}'>zadávání jízd</a>."), addr=reverse_lazy("profil"))))
     @user_attendance_has(
         lambda ua: not ua.t_shirt_size,
-        _("Před tím, než zaplatíte startovné, musíte mít vybrané triko"))
+        _("Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"))
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -621,7 +621,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         else:
             company_admin_email_string = ""
         payment_choices = {
-            'member_wannabe': {'type': 'amw', 'message': _(u"Vaše členství v klubu přátel ještě bude muset být schváleno"), 'amount': 0},
+            'member_wannabe': {'type': 'amw', 'message': _("Vaše členství v klubu přátel ještě bude muset být schváleno."), 'amount': 0},
             'company': {
                 'type': 'fc',
                 'message': format_html(
@@ -778,7 +778,11 @@ class PaymentResult(UserAttendanceViewMixin, TemplateView):
         context_data['success'] = success
 
         if success:
-            context_data['payment_message'] = _(u"Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět.")
+            context_data['payment_message'] = _(
+                "Vaše platba byla úspěšně zadána. "
+                "Až platbu obdržíme, dáme vám vědět na e-mail. "
+                "Tím bude vaše registrace úspěšně dokončena.",
+            )
         else:
             context_data['payment_message'] = _(u"Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
         context_data['registration_phase'] = self.registration_phase

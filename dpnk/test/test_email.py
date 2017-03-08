@@ -151,13 +151,13 @@ class TestEmails(TestCase):
         email.company_admin_register_competitor_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
-        self.assertEqual(msg.subject, "Testing campaign 1 - koordinátor organizace - potvrzení registrace")
+        self.assertEqual(msg.subject, "Testing campaign 1 - firemní koordinátor - potvrzení registrace")
         self.assertEqual(msg.to[0], "user1@email.com")
 
     def test_send_company_admin_register_no_competitor_mail(self):
         email.company_admin_register_no_competitor_mail(self.company_admin, self.company)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - koordinátor organizace - potvrzení registrace")
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - potvrzení registrace")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
         msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
@@ -169,7 +169,7 @@ class TestEmails(TestCase):
     def test_send_company_admin_approval_mail(self):
         email.company_admin_approval_mail(self.company_admin)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - koordinátor organizace - schválení správcovství organizace")
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - schválení správcovství organizace")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
         msg = mail.outbox[0]
         link = 'http://testing_campaign_1.localhost:8000/%s/spolecnost/zadost_admina/' % self.userprofile.language
@@ -183,7 +183,7 @@ class TestEmails(TestCase):
     def test_send_company_admin_rejected_mail(self):
         email.company_admin_rejected_mail(self.company_admin)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - koordinátor organizace - zamítnutí správcovství organizace")
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - zamítnutí správcovství organizace")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
         msg = mail.outbox[0]
         if self.userprofile.language == 'cs':

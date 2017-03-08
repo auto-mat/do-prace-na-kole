@@ -92,7 +92,7 @@ Raven.setUserContext({
                         <li class="{% if request.resolver_match.url_name == 'other_team_members_results' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'other_team_members_results' %}">{% trans "Kolegové" %}</a></li>
                         <li class="{% block settings_link_class %}{% endblock %}"><a href="{% url 'upravit_profil' %}">{% trans "Soutěžní údaje" %}</a></li>
                         {% if user_attendance.related_company_admin.is_approved %}
-                        <li><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Správa organizace" %}</a></li>
+                        <li><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Firemní koordinátor" %}</a></li>
                         {% endif %}
                         {% if user.is_staff %}
                         <li><a href="{% url 'admin:index' %}">{% trans "Administrace" %}</a></li>

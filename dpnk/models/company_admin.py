@@ -27,7 +27,7 @@ from ..email import company_admin_approval_mail, company_admin_rejected_mail
 
 
 class CompanyAdmin(models.Model):
-    """Profil koordinátora organizace"""
+    """Profil firemního koordinátora"""
 
     COMPANY_APPROVAL = (
         ('approved', _(u"Odsouhlasený")),
@@ -36,8 +36,8 @@ class CompanyAdmin(models.Model):
     )
 
     class Meta:
-        verbose_name = _(u"Koordinátor organizace")
-        verbose_name_plural = _(u"Koordinátoři organizací")
+        verbose_name = _("Firemní koordinátor")
+        verbose_name_plural = _(u"Firemní koordinátoři")
         unique_together = (
             ("userprofile", "campaign"),
         )
@@ -51,7 +51,7 @@ class CompanyAdmin(models.Model):
     )
 
     company_admin_approved = models.CharField(
-        verbose_name=_(u"Správcovství organizace schváleno"),
+        verbose_name=_("Schválena funkce firemního koordinátora"),
         choices=COMPANY_APPROVAL,
         max_length=16,
         null=False,
@@ -60,7 +60,7 @@ class CompanyAdmin(models.Model):
 
     motivation_company_admin = models.TextField(
         verbose_name=_(u"Zaměstnanecká pozice"),
-        help_text=_(u"Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici"),
+        help_text=_("Napište nám prosím, jakou zastáváte u vašeho zaměstnavatele pozici"),
         default="",
         max_length=5000,
         null=True,

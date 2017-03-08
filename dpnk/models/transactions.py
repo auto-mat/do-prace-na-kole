@@ -181,7 +181,7 @@ class Payment(Transaction):
         ('fc', _(u'organizace platí fakturou')),
         ('am', _(u'člen Klubu přátel Auto*Matu')),
         ('amw', _(u'kandidát na členství v Klubu přátel Auto*Matu')),
-        ('fe', _(u'neplatí startovné')),
+        ('fe', _('neplatí účastnický poplatek ')),
     )
     PAY_TYPES_DICT = dict(PAY_TYPES)
 

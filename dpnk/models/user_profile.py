@@ -74,7 +74,7 @@ class UserProfile(models.Model):
     )
     language = models.CharField(
         verbose_name=_(u"Jazyk e-mailové komunikace"),
-        help_text=_(u"Jazyk, ve kterém vám budou docházet e-maily z registračního systému"),
+        help_text=_("V tomto jazyce vám budou přicházet e-maily z registračního systému"),
         choices=LANGUAGE,
         max_length=16,
         null=False,
@@ -114,7 +114,7 @@ class UserProfile(models.Model):
         blank=True,
     )
     mailing_opt_in = models.NullBooleanField(
-        verbose_name=_(u"Přeji si dostávat e-mailem informace o akcích, událostech a dalších informacích souvisejících se soutěží."),
+        verbose_name=_("Přeji si dostávat e-mailem informace o akcích, událostech a dalších záležitostech souvisejících se soutěží."),
         help_text=_(u"Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
         default=None,
     )
@@ -126,7 +126,7 @@ class UserProfile(models.Model):
     occupation = models.ForeignKey(
         Occupation,
         verbose_name=_("Profese"),
-        help_text=_("Nepovinné, bude zobrazeno ve pro zajímavost výsledcích"),
+        help_text=_("Nepovinné, bude použito pro účely žebříčků dle jednotlivých profesí"),
         null=True,
         blank=True,
     )

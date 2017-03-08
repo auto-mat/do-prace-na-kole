@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 
 class CompanyStructure(TitleViewMixin, TemplateView):
     template_name = 'company_admin/structure.html'
-    title = _("Struktura společnosti")
+    title = _("Struktura organizace")
 
     @method_decorator(login_required)
     @must_be_company_admin
@@ -176,7 +176,7 @@ class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, UpdateView):
     model = CompanyAdmin
     success_url = 'profil'
     registration_phase = "typ_platby"
-    title = _("Chci se stát koordinátorem organizce")
+    title = _("Chci se stát firemním koordinátorem")
 
     @method_decorator(login_required)
     @must_be_competitor
@@ -192,7 +192,7 @@ class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, UpdateView):
         if old_company_admin.exists():
             return {
                 'fullpage_error_message': _("Vaše organizce již svého koordinátora má: %s.") % (", ".join([str(c) for c in old_company_admin.all()])),
-                'title': _("Organizace koordinátora má"),
+                'title': _("Organizace firemního koordinátora má"),
             }
         return context_data
 

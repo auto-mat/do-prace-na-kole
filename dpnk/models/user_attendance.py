@@ -105,7 +105,7 @@ class UserAttendance(models.Model):
     )
     t_shirt_size = models.ForeignKey(
         't_shirt_delivery.TShirtSize',
-        verbose_name=_(u"Velikost trička"),
+        verbose_name=_("Velikost trika"),
         null=True,
         blank=True,
     )

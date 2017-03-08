@@ -324,7 +324,6 @@ class PaymentTypeViewTests(TestCase):
         )
         self.user_attendance.save()
         response = self.client.get(reverse('typ_platby'))
-        print_response(response)
         self.assertContains(
             response,
             '<div class="alert alert-danger">Již máte účastnický poplatek zaplacen. Pokračujte na <a href="/cs/">zadávání jízd</a>.</div>',
@@ -525,7 +524,7 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertEquals(models.CompanyAdmin.objects.get(userprofile=user.userprofile).administrated_company.pk, 2)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
-        self.assertEqual(str(msg.subject), 'Testing campaign - koordinátor organizace - potvrzení registrace')
+        self.assertEqual(str(msg.subject), 'Testing campaign - firemní koordinátor - potvrzení registrace')
 
     def test_dpnk_company_admin_registration_existing(self):
         user = models.User.objects.get(username='test1')
@@ -1224,7 +1223,11 @@ class ViewsTestsLogon(ViewsLogon):
             company_admin_approved='approved',
         )
         response = self.client.get(reverse('company_admin_application'))
-        self.assertContains(response, 'Vaše organizace již svého koordinátora má: Null User, Null User, Testing User.')
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Vaše organizce již svého koordinátora má: Null User, Null User, Testing User.</div>',
+            html=True,
+        )
 
     def test_dpnk_company_admin_application_create(self):
         models.CompanyAdmin.objects.all().delete()

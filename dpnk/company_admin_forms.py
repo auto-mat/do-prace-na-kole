@@ -105,7 +105,7 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
         label=_("Pár vět o vaší pozici"),
         help_text=_(
             "Napište nám prosím, jakou zastáváte u vašeho zaměstnavatele pozici, "
-            "podle kterých můžeme ověřit, že vám funkci koordinátora organizace můžeme svěřit."
+            "podle kterých můžeme ověřit, že vám funkci firemního koordinátora můžeme svěřit."
         ),
         max_length=100,
         required=True,
@@ -182,7 +182,7 @@ class CompanyAdminApplicationForm(CompanyAdminForm, registration.forms.Registrat
             obj = cleaned_data['administrated_company']
             campaign = cleaned_data['campaign']
             if CompanyAdmin.objects.filter(administrated_company__pk=obj.pk, campaign=campaign, company_admin_approved='approved').exists():
-                raise forms.ValidationError(_(u"Tato organizace již má svého koordinátora."))
+                raise forms.ValidationError(_(u"Tato organizace již má svého firemního koordinátora."))
         return cleaned_data
 
     class Meta:

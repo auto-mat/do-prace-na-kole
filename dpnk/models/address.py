@@ -58,8 +58,11 @@ class Address(CompositeField):
         blank=False,
     )
     recipient = models.CharField(
-        verbose_name=_(u"Název pobočky (celé organizace, závodu, kanceláře, fakulty) na adrese"),
-        help_text=_(u"Např. „odštěpný závod Brno“, „oblastní pobočka Liberec“, „Přírodovědecká fakulta“ atp."),
+        verbose_name=_("Název pobočky (závodu, kanceláře, fakulty), nepovinné pole"),
+        help_text=_(
+            "Např. „odštěpný závod Brno“, „oblastní pobočka Liberec“, „Přírodovědecká fakulta“ atp. "
+            "Nemá-li vaše organizace pobočky, pak nechte pole prázdné.",
+        ),
         default="",
         max_length=50,
         null=True,
