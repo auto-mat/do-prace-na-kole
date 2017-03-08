@@ -185,12 +185,13 @@ class RegisterTeamForm(forms.ModelForm):
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     company = forms.ModelChoiceField(
         label=_(u"Organizace"),
+        help_text="asdf",
         queryset=models.Company.objects.filter(active=True),
         widget=SelectOrCreateAutoComplete(
             'companies',
             RegisterCompanyForm,
             prefix="company",
-            new_description=_(u"Organizace v seznamu není, chci vyplnit novou"),
+            new_description=_("Organizace v seznamu není, chci vyplnit novou."),
         ),
         required=True,
     )
@@ -209,7 +210,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             RegisterSubsidiaryForm,
             view_name='',
             prefix="subsidiary",
-            new_description=_(u"Adresa pobočky/organizace v seznamu není, chci vyplnit novou"),
+            new_description=_("Adresa pobočky/organizace v seznamu není, chci vyplnit novou."),
             chained_field="company",
             chained_model_field="company",
             to_app_name="dpnk",
@@ -239,7 +240,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             RegisterTeamForm,
             view_name='',
             prefix="team",
-            new_description=_(u"Můj tým v seznamu není, vytvořit nový"),
+            new_description=_("Můj tým v seznamu není, vytvořit nový."),
             chained_field="subsidiary",
             chained_model_field="subsidiary",
             to_app_name="dpnk",
