@@ -102,7 +102,11 @@ class SubsidiaryForm(SubmitMixin, AdressForm):
 
 class CompanyAdminForm(SubmitMixin, forms.ModelForm):
     motivation_company_admin = forms.CharField(
-        label=_(u"Zaměstnanecká pozice"),
+        label=_("Pár vět o vaší pozici"),
+        help_text=_(
+            "Napište nám prosím, jakou zastáváte u vašeho zaměstnavatele pozici, "
+            "podle kterých můžeme ověřit, že vám funkci koordinátora organizace můžeme svěřit."
+        ),
         max_length=100,
         required=True,
     )
@@ -119,28 +123,23 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
         fields = (
             'motivation_company_admin',
             'will_pay_opt_in',
+            'personal_data_opt_in',
         )
 
+    def get_campaign(self):
+        return self.instance.campaign
+
     def __init__(self, request=None, *args, **kwargs):
-        ret_val = super(CompanyAdminForm, self).__init__(*args, **kwargs)
+        ret_val = super().__init__(*args, **kwargs)
         self.fields['personal_data_opt_in'].label = _(
             "Souhlasím se zpracováním osobních údajů podle "
             "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
-            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>." % self.instance.campaign,
+            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>." % self.get_campaign(),
         )
         return ret_val
 
 
-class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFormUniqueEmail):
-    motivation_company_admin = forms.CharField(
-        label=_(u"Pár vět o vaší pozici"),
-        help_text=_(
-            "Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, "
-            "podle kterých můžeme ověřit, že vám funkci koordinátora organizace můžeme svěřit."
-        ),
-        max_length=100,
-        required=True,
-    )
+class CompanyAdminApplicationForm(CompanyAdminForm, registration.forms.RegistrationFormUniqueEmail):
     administrated_company = forms.ModelChoiceField(
         label=_(u"Koordinovaná organizace"),
         widget=AutoCompleteSelectWidget(
@@ -170,13 +169,9 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
         required=True,
     )
     username = forms.CharField(widget=forms.HiddenInput, required=False)
-    will_pay_opt_in = forms.BooleanField(
-        label=_("Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance jejichž platbu schválím."),
-        required=True,
-    )
-    personal_data_opt_in = forms.BooleanField(
-        required=True,
-    )
+
+    def get_campaign(self):
+        return self.initial['campaign']
 
     def clean(self):
         cleaned_data = super(CompanyAdminApplicationForm, self).clean()
@@ -189,16 +184,6 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
             if CompanyAdmin.objects.filter(administrated_company__pk=obj.pk, campaign=campaign, company_admin_approved='approved').exists():
                 raise forms.ValidationError(_(u"Tato organizace již má svého koordinátora."))
         return cleaned_data
-
-    def __init__(self, request=None, *args, **kwargs):
-        ret_val = super().__init__(*args, **kwargs)
-        campaign = self.initial['campaign']
-        self.fields['personal_data_opt_in'].label = _(
-            "Souhlasím se zpracováním osobních údajů podle "
-            "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
-            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>." % campaign,
-        )
-        return ret_val
 
     class Meta:
         model = User
@@ -214,6 +199,7 @@ class CompanyAdminApplicationForm(SubmitMixin, registration.forms.RegistrationFo
             'password2',
             'username',
             'will_pay_opt_in',
+            'personal_data_opt_in',
         )
 
 

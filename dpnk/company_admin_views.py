@@ -22,9 +22,11 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
@@ -112,12 +114,36 @@ class CompanyEditView(TitleViewMixin, UpdateView):
         return self.company_admin.administrated_company
 
 
-class CompanyAdminApplicationView(TitleViewMixin, RegistrationView):
-    template_name = 'company_admin/registration.html'
+class CompanyAdminMixin(SuccessMessageMixin):
+    success_message = _("Byla vytvořena žádost o funkci firemního koordinátora. Vyčkejte, než dojde ke schválení této funkce.")
+    opening_message = mark_safe(
+        _(
+            "<p>"
+            "Vaše organizace ještě nemá zvoleného firemního koordinátora. "
+            "</p>"
+            "<p>"
+            "Tato role není pro soutěž povinná, ale usnadní ostatním ostatním kolegům účast v soutěži. "
+            "Hlavní úkol pro firemního koordinátora je pokusit se zaměstnavatelem domluvit, aby uhradil účastnický poplatek za zaměstnance."
+            "</p>"
+            "<p>"
+            "V případě, že zaměstnavatel přislíbí účastnické poplatky uhradit,"
+            "pak firemní koordinátor zajistí hromadnou platbu účastnického poplatku přes fakturu."
+            "Odměnou mu za to budou speciální slevy pro firemní koordinátory."
+            "</p>"
+            "<p>"
+            "Návod jak provést hromadnou platbu, slevy pro koordinátory a další informace pro koordinátory najdete "
+            "<a href='http://www.dopracenakole.cz/firemni-koordinator'>zde</a>."
+            "<p>"
+        ),
+    )
+
+
+class CompanyAdminApplicationView(TitleViewMixin, CompanyAdminMixin, RegistrationView):
+    template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyAdminApplicationForm
     model = CompanyAdmin
     success_url = reverse_lazy('company_structure')
-    title = _("Registrace nesoutěžícího koordinátora organizace")
+    title = _("Registrace nesoutěžícího firemního koordinátora")
 
     def get_initial(self):
         return {
@@ -144,7 +170,7 @@ class CompanyAdminApplicationView(TitleViewMixin, RegistrationView):
         return ret_val
 
 
-class CompanyAdminView(RegistrationViewMixin, UpdateView):
+class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, UpdateView):
     template_name = 'submenu_payment.html'
     form_class = CompanyAdminForm
     model = CompanyAdmin

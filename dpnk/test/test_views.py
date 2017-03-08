@@ -1222,7 +1222,7 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.get(reverse('company_admin_application'))
         self.assertContains(
             response,
-            '<label for="id_motivation_company_admin" class="control-label  requiredField"> Zaměstnanecká pozice<span class="asteriskField">*</span> </label>',
+            '<label for="id_motivation_company_admin" class="control-label  requiredField"> Pár vět o vaší pozici<span class="asteriskField">*</span> </label>',
             html=True,
         )
 
