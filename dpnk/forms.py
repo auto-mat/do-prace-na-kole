@@ -185,7 +185,6 @@ class RegisterTeamForm(forms.ModelForm):
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     company = forms.ModelChoiceField(
         label=_(u"Organizace"),
-        help_text="asdf",
         queryset=models.Company.objects.filter(active=True),
         widget=SelectOrCreateAutoComplete(
             'companies',
