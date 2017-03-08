@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-08 22:34+0100\n"
+"POT-Creation-Date: 2017-03-09 00:35+0100\n"
 "PO-Revision-Date: 2017-03-08 19:12+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -259,8 +259,8 @@ msgid ""
 "Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance "
 "jejichž platbu schválím."
 msgstr ""
-"I (i.e. my organisation) oblige to pay for the participant fee for employees whose "
-"payment I approve."
+"I (i.e. my organisation) oblige to pay for the participant fee for employees "
+"whose payment I approve."
 
 #: company_admin_forms.py:135 forms.py:733
 #, python-format
@@ -459,6 +459,7 @@ msgstr ""
 "address"
 
 #: decorators.py:117
+#, python-format
 msgid ""
 "Tato stránka je určená pouze ověřeným firemním koordinátorům. K této funkci "
 "se musíte nejdříve <a href='%s'>přihlásit</a>, a vyčkat na naše ověření. "
@@ -499,6 +500,7 @@ msgid "Nedostupná stránka"
 msgstr "Page not accessible"
 
 #: decorators.py:222
+#, python-format
 msgid ""
 "V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, "
 "použijte záložku <a href='%s'>Firemní koordinátor</a>."
@@ -555,14 +557,17 @@ msgid "(není vybraná)"
 msgstr "(not selected)"
 
 #: email.py:151 email.py:162
+#, python-format
 msgid "%s - firemní koordinátor - potvrzení registrace"
 msgstr "%s - Company Coordinator - registration confirmation"
 
 #: email.py:173
+#, python-format
 msgid "%s - firemní koordinátor - schválení správcovství organizace"
 msgstr "%s - Company Coordinator - company administration approval"
 
 #: email.py:184
+#, python-format
 msgid "%s - firemní koordinátor - zamítnutí správcovství organizace"
 msgstr "%s - Company Coordinator - company administration denial"
 
@@ -793,6 +798,7 @@ msgid "Typ platby"
 msgstr "Payment type"
 
 #: forms.py:465
+#, python-brace-format
 msgid ""
 "Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora.Vaše "
 "organizace bude muset nejprve ustanovit zástupce, který za ní bude "
@@ -805,15 +811,14 @@ msgstr ""
 "Coordinator of my company</a></li></ul>"
 
 #: forms.py:478
-msgid "Zaplatím běžný účastnický poplatek (%s Kč)."
-msgstr "I will pay the participation fee (%s Kč)"
+msgid "Zaplatím běžný účastnický poplatek %s Kč."
+msgstr "I will pay the participation fee %s Kč"
 
 #: forms.py:480
-msgid ""
-"Podpořím soutěž benefičním poplatkem (%s Kč). <i class='fa fa-heart'></i>"
+msgid "Podpořím soutěž benefičním poplatkem %s Kč. <i class='fa fa-heart'></i>"
 msgstr ""
-"I want to support this competition and with beneficiary participant fee (%s Kč). <i "
-"class='fa fa-heart'></i>"
+"I want to support this competition and with beneficiary participant fee %s "
+"Kč. <i class='fa fa-heart'></i>"
 
 #: forms.py:483
 msgid "Učastnický poplatek mi platí zaměstnavatel."
@@ -911,8 +916,8 @@ msgid ""
 "Přeji si dostávat e-mailem informace o akcích, událostech a dalších "
 "záležitostech souvisejících se soutěží."
 msgstr ""
-"I wish to receive information e-mails about events and other issues "
-"related to the competition."
+"I wish to receive information e-mails about events and other issues related "
+"to the competition."
 
 #: forms.py:680
 msgid ""
@@ -987,7 +992,8 @@ msgstr "For example. 2965/12 or 156"
 #: models/address.py:61
 msgid "Název pobočky (závodu, kanceláře, fakulty), nepovinné pole"
 msgstr ""
-"Subsidiary name (the whole company, factory, office, university department), optional field"
+"Subsidiary name (the whole company, factory, office, university department), "
+"optional field"
 
 #: models/address.py:63
 msgid ""
@@ -995,7 +1001,8 @@ msgid ""
 "fakulta“ atp. Nemá-li vaše organizace pobočky, pak nechte pole prázdné."
 msgstr ""
 "For example organizational entity Brno, local subsidiary Liberec, The "
-"department of Natural Sciences etc. If your organization doesn't have subsidiaries, leave this field blank."
+"department of Natural Sciences etc. If your organization doesn't have "
+"subsidiaries, leave this field blank."
 
 #: models/address.py:72
 msgid "Městská část"
@@ -3257,6 +3264,7 @@ msgstr ""
 "%s"
 
 #: views.py:574
+#, python-brace-format
 msgid ""
 "Již máte účastnický poplatek zaplacen. Pokračujte na <a "
 "href='{addr}'>zadávání jízd</a>."
@@ -3265,12 +3273,13 @@ msgstr ""
 "href='{addr}'>entering trips</a>."
 
 #: views.py:577
+#, python-brace-format
 msgid ""
 "Účastnický poplatek se neplatí. Pokračujte na <a href='{addr}'>zadávání "
 "jízd</a>."
 msgstr ""
-"No participant fee needs to be paid. Please follow to <a href='{addr}'>entering "
-"trips</a>."
+"No participant fee needs to be paid. Please follow to <a "
+"href='{addr}'>entering trips</a>."
 
 #: views.py:580
 msgid "Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-08 22:34+0100\n"
+"POT-Creation-Date: 2017-03-09 00:35+0100\n"
 "PO-Revision-Date: 2016-06-30 15:05+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -474,6 +474,7 @@ msgid "Nedostupná stránka"
 msgstr ""
 
 #: decorators.py:222
+#, python-format
 msgid ""
 "V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, "
 "použijte záložku <a href='%s'>Firemní koordinátor</a>."
@@ -528,14 +529,17 @@ msgid "(není vybraná)"
 msgstr ""
 
 #: email.py:151 email.py:162
+#, python-format
 msgid "%s - firemní koordinátor - potvrzení registrace"
 msgstr "%s - koordinátor školy - potvrzení registrace"
 
 #: email.py:173
+#, python-format
 msgid "%s - firemní koordinátor - schválení správcovství organizace"
 msgstr "%s - koordinátor školy - schválení správcovství školy"
 
 #: email.py:184
+#, python-format
 msgid "%s - firemní koordinátor - zamítnutí správcovství organizace"
 msgstr "%s - koordinátor školy - zamítnutí správcovství školy"
 
@@ -764,13 +768,12 @@ msgstr ""
 
 #: forms.py:478
 #, python-format
-msgid "Zaplatím běžný účastnický poplatek (%s Kč)."
+msgid "Zaplatím běžný účastnický poplatek %s Kč."
 msgstr ""
 
 #: forms.py:480
 #, python-format
-msgid ""
-"Podpořím soutěž benefičním poplatkem (%s Kč). <i class='fa fa-heart'></i>"
+msgid "Podpořím soutěž benefičním poplatkem %s Kč. <i class='fa fa-heart'></i>"
 msgstr ""
 
 #: forms.py:483
@@ -1153,8 +1156,7 @@ msgstr ""
 
 #: models/company_admin.py:63
 msgid "Napište nám prosím, jakou zastáváte u vašeho zaměstnavatele pozici"
-msgstr ""
-"Napište nám prosím, jakou zastáváte u vašeho zaměstnavatele pozici"
+msgstr "Napište nám prosím, jakou zastáváte u vašeho zaměstnavatele pozici"
 
 #: models/company_admin.py:85 models/user_profile.py:107
 msgid "Interní poznámka"

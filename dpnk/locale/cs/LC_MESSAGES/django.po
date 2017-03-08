@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-08 22:34+0100\n"
+"POT-Creation-Date: 2017-03-09 00:35+0100\n"
 "PO-Revision-Date: 2017-03-08 22:34+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -757,13 +757,12 @@ msgstr ""
 
 #: forms.py:478
 #, python-format
-msgid "Zaplatím běžný účastnický poplatek (%s Kč)."
+msgid "Zaplatím běžný účastnický poplatek %s Kč."
 msgstr ""
 
 #: forms.py:480
 #, python-format
-msgid ""
-"Podpořím soutěž benefičním poplatkem (%s Kč). <i class='fa fa-heart'></i>"
+msgid "Podpořím soutěž benefičním poplatkem %s Kč. <i class='fa fa-heart'></i>"
 msgstr ""
 
 #: forms.py:483

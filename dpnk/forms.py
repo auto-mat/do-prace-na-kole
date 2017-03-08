@@ -475,9 +475,9 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         self.user_attendance = kwargs.pop('user_attendance')
         ret_val = super().__init__(*args, **kwargs)
         self.fields['payment_type'].choices = [
-            ('pay', _("Zaplatím běžný účastnický poplatek (%s Kč).") % intcomma(self.user_attendance.admission_fee())),
+            ('pay', _("Zaplatím běžný účastnický poplatek %s Kč.") % intcomma(self.user_attendance.admission_fee())),
             ('pay_beneficiary', mark_safe_lazy(
-                _("Podpořím soutěž benefičním poplatkem (%s Kč). <i class='fa fa-heart'></i>") %
+                _("Podpořím soutěž benefičním poplatkem %s Kč. <i class='fa fa-heart'></i>") %
                 intcomma(self.user_attendance.beneficiary_admission_fee()),
             )),
             ('company', _("Učastnický poplatek mi platí zaměstnavatel.")),
