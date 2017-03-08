@@ -1324,6 +1324,7 @@ class RegistrationMixinTests(ViewsLogon):
         self.user_attendance.save()
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
+        self.assertNotContains(response, "Ve vašem týmu jsou neschválení členové")
         self.assertContains(response, "Vaši kolegové v týmu Testing team 1")
 
     def test_dpnk_registration_denied(self):

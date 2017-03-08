@@ -174,7 +174,10 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
         ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
 
         if self.registration_phase in ('registration_uncomplete', 'profile_view'):
-            if self.user_attendance.team and self.user_attendance.team.unapproved_member_count and self.user_attendance.team.unapproved_member_count > 0:
+            if self.user_attendance.approved_for_team == 'approved' and \
+                    self.user_attendance.team and \
+                    self.user_attendance.team.unapproved_member_count and \
+                    self.user_attendance.team.unapproved_member_count > 0:
                 messages.warning(
                     request,
                     mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members')),
