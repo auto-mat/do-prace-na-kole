@@ -220,6 +220,7 @@ INSTALLED_APPS = (
     'bootstrap3',
     'daterange_filter',
     'storages',
+    'favicon',
     'adminactions',
     # 'cachalot',
 )
@@ -426,6 +427,8 @@ IGNORABLE_404_URLS = [
     re.compile(r'^/blog/robots.txt$'),
     re.compile(r'^xmlrpc.php$'),
 ]
+
+FAVICON_PATH = STATIC_URL + 'img/favicon/favicon.ico'
 
 PRICE_LEVEL_MODEL = 'dpnk.Campaign'
 PRICE_LEVEL_CATEGORY_CHOICES = Choices(('basic', _('Základní')), ('company', _('Pro firmy')))

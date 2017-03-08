@@ -43,6 +43,7 @@ django-debug-toolbar-template-timings==0.7
 -e git+https://github.com/PetrDlouhy/django-denorm.git@71754b150fe0094e56a927491f3455964cf32aef#egg=django_denorm
 django-extensions==1.7.5
 django-extra-views==0.8.0
+django-favicon==0.1.3
 django-fieldsignals==0.2.3
 django-google-tag-manager==0.0.2
 django-gpxpy==0.0.2

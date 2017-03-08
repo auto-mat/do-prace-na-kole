@@ -75,3 +75,4 @@ boto
 django-google-tag-manager
 django-ses
 whitenoise
+django-favicon
