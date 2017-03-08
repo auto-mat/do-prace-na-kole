@@ -125,12 +125,14 @@ class UserProfile(models.Model):
     )
     occupation = models.ForeignKey(
         Occupation,
-        verbose_name=_("Povolání"),
+        verbose_name=_("Profese"),
+        help_text=_("Nepovinné, bude zobrazeno ve pro zajímavost výsledcích"),
         null=True,
         blank=True,
     )
     age_group = models.PositiveIntegerField(
-        verbose_name=_("Ročník"),
+        verbose_name=_("Ročník narození"),
+        help_text=_("Nepovinné, slouží pouze pro účely statistky"),
         null=True,
         blank=True,
         choices=[(i, i) for i in range(util.today().year, util.today().year - 100, -1)],
