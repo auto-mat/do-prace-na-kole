@@ -4,6 +4,8 @@
 {% load i18n %}
 
 {% block extrahead %}
+{% get_available_languages as languages %}
+{% get_current_language as current_language_code %}
 <script language='javascript' type='text/javascript' src='https://secure.payu.com/paygw/UTF/js/{{ PAYU_POS_ID }}/{{ PAYU_KEY_1|slice:":2" }}/template:3/ext_calc:0/paytype.js'></script>
 <script type="text/javascript" src="{% static "bow/jquery-form/jquery.form.js"%}"></script>
 {{ block.super }}
@@ -40,7 +42,7 @@ $(function(){
    switch_description();
    $("#div_id_payment_type").append($("#description_switcher"));
 
-   $.get("{{AKLUB_URL}}/regular-dpnk/?firstname={{firstname}}&amp;surname={{surname}}&amp;email={{email}}&amp;telephone={{user_attendance.userprofile.telephone}}", function(data) {
+   $.get("{{AKLUB_URL}}/{{ current_language_code }}/regular-dpnk/?firstname={{firstname}}&amp;surname={{surname}}&amp;email={{email}}&amp;telephone={{user_attendance.userprofile.telephone}}", function(data) {
       $("#aklub-form-container").append(data);
       $("#aklub-form").ajaxForm({replaceTarget: false, target: "#aklub-form", success: function(){
          window.scrollTo(0, 0);
