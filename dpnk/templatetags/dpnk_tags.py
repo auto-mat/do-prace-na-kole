@@ -80,11 +80,7 @@ def _wp_news_cached(campaign, slug=None, wp_type="news"):
             _page_subtype="prize", _post_parent=slug, order="ASC", orderby="menu_order",
         )
     else:
-        if slug:
-            _global_news = {}
-        else:
-            _global_news = {'_global_news': 1}
-        return _wp_news(campaign, _connected_to=slug, order="DESC", orderby="DATE", count=5, **_global_news)
+        return _wp_news(campaign, _connected_to=slug, order="DESC", orderby="DATE", count=5)
 
 
 def _wp_news(
