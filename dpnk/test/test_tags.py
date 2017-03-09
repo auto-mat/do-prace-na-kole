@@ -23,18 +23,17 @@ from django.core.urlresolvers import reverse
 from django.template import Context, Template
 from django.test import RequestFactory, TestCase
 
-from dpnk.models import UserAttendance
 from dpnk.test.util import ClearCacheMixin
 
 import slumber
 
+from model_mommy import mommy
+
 
 class DpnkTagsTests(ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users']
-
     def setUp(self):
         super().setUp()
-        self.user_attendance = UserAttendance.objects.get(pk=1115)
+        self.campaign = mommy.make("Campaign")
         self.factory = RequestFactory()
 
     @patch('slumber.API')
@@ -45,7 +44,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         }
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}<div>{% wp_article campaign 4321 %}</div>")
-        context = Context({'campaign': self.user_attendance.campaign})
+        context = Context({'campaign': self.campaign})
         response = template.render(context)
         m.feed.get.assert_called_once_with(feed="content_to_backend", _id=4321, _post_type="page")
         self.assertHTMLEqual(response, '<div></div>')
@@ -56,7 +55,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         m.feed.get.side_effect = slumber.exceptions.SlumberBaseException
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}<div>{% wp_article campaign 4321 %}</div>")
-        context = Context({'campaign': self.user_attendance.campaign})
+        context = Context({'campaign': self.campaign})
         response = template.render(context)
         m.feed.get.assert_called_once_with(feed="content_to_backend", _id=4321, _post_type="page")
         self.assertHTMLEqual(response, '<div></div>')
@@ -67,9 +66,9 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         m.feed.get.return_value = ()
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_news campaign 4321 %}")
-        context = Context({'campaign': self.user_attendance.campaign})
+        context = Context({'campaign': self.campaign})
         response = template.render(context)
-        m.feed.get.assert_called_once_with(feed="content_to_backend", _number=5, _connected_to=4321, _post_type="post", order="DESC")
+        m.feed.get.assert_called_once_with(feed="content_to_backend", _number=5, _connected_to=4321, _post_type="post", order="DESC", orderby="DATE")
         self.assertHTMLEqual(response, '<div class="wp_news">Žádná novinka není.</div>')
 
     @patch('slumber.API')
@@ -78,9 +77,9 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         m.feed.get.side_effect = slumber.exceptions.SlumberBaseException
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}<div>{% wp_news campaign 4321 %}</div>")
-        context = Context({'campaign': self.user_attendance.campaign})
+        context = Context({'campaign': self.campaign})
         response = template.render(context)
-        m.feed.get.assert_called_once_with(feed="content_to_backend", _number=5, _connected_to=4321, _post_type="post", order="DESC")
+        m.feed.get.assert_called_once_with(feed="content_to_backend", _number=5, _connected_to=4321, _post_type="post", order="DESC", orderby="DATE")
         self.assertHTMLEqual(response, '<div></div>')
 
     @patch('slumber.API')
@@ -89,10 +88,21 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         m.feed.get.return_value = {'Test1': 'Test'}
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}<div>{% wp_news campaign 4321 %}</div>")
-        context = Context({'campaign': self.user_attendance.campaign})
+        context = Context({'campaign': self.campaign})
         response = template.render(context)
-        m.feed.get.assert_called_once_with(feed="content_to_backend", _number=5, _connected_to=4321, _post_type="post", order="DESC")
-        self.assertHTMLEqual(response, '<div></div>')
+        m.feed.get.assert_called_once_with(feed="content_to_backend", _number=5, _connected_to=4321, _post_type="post", order="DESC", orderby="DATE")
+        self.assertHTMLEqual(
+            '<div>'
+            '<div class="wp_news">'
+            '   <div class="item">'
+            '      <h4>'
+            '          <a href="" target="_blank">Test1</a>'
+            '      </h4>'
+            '   </div>'
+            '</div>'
+            '</div>',
+            response,
+        )
 
     @patch('slumber.API')
     def test_wp_article(self, slumber_mock):
@@ -104,7 +114,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         ]
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}<div>{% wp_article campaign 1234 %}</div>")
-        context = Context({'campaign': self.user_attendance.campaign})
+        context = Context({'campaign': self.campaign})
         response = template.render(context)
         m.feed.get.assert_called_once_with(feed="content_to_backend", _post_type="page", _id=1234)
         self.assertHTMLEqual(response, '<div>Test content</div>')
@@ -124,9 +134,9 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         )
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_news campaign %}")
-        context = Context({'campaign': self.user_attendance.campaign})
+        context = Context({'campaign': self.campaign})
         response = template.render(context)
-        m.feed.get.assert_called_once_with(_number=5, _connected_to=None, feed="content_to_backend", _post_type="post", _global_news=1, order="DESC")
+        m.feed.get.assert_called_once_with(_number=5, _connected_to=None, feed="content_to_backend", _post_type="post", order="DESC", orderby="DATE")
         self.assertHTMLEqual(
             response,
             '''
@@ -159,9 +169,9 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         )
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_news campaign 'test_city' %}")
-        context = Context({'campaign': self.user_attendance.campaign})
+        context = Context({'campaign': self.campaign})
         response = template.render(context)
-        m.feed.get.assert_called_once_with(_number=5, feed="content_to_backend", _post_type="post", _connected_to="test_city", order="DESC")
+        m.feed.get.assert_called_once_with(_number=5, feed="content_to_backend", _post_type="post", _connected_to="test_city", order="DESC", orderby="DATE")
         self.assertHTMLEqual(
             response,
             '''
@@ -194,9 +204,16 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         )
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_actions campaign 'test_city' %}")
-        context = Context({'campaign': self.user_attendance.campaign})
+        context = Context({'campaign': self.campaign})
         response = template.render(context)
-        m.feed.get.assert_called_once_with(_number=-1, feed="content_to_backend", _page_subtype="event", _post_type="locations", _post_parent="test_city")
+        m.feed.get.assert_called_once_with(
+            _number=-1,
+            feed="content_to_backend",
+            _page_subtype="event",
+            _post_type="locations",
+            _post_parent="test_city",
+            orderby="start_date",
+        )
         self.assertHTMLEqual(
             response,
             '''
@@ -229,15 +246,16 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         )
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}{% wp_prize campaign 'test_city' %}")
-        context = Context({'campaign': self.user_attendance.campaign})
+        context = Context({'campaign': self.campaign})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
-            _number=-1,
+            _number=8,
             feed="content_to_backend",
             _page_subtype="prize",
             _post_type="locations",
             _post_parent="test_city",
             order="ASC",
+            orderby='menu_order',
         )
         self.assertHTMLEqual(
             response,

@@ -76,7 +76,7 @@ def _wp_news_cached(campaign, slug=None, wp_type="news"):
         return _wp_news(campaign, "locations", _("akce"), unfold="first", _page_subtype="event", _post_parent=slug, orderby='start_date')
     elif wp_type == "prize":
         return _wp_news(
-            campaign, "locations", _("cena"), unfold="all", count=-1, show_description=False,
+            campaign, "locations", _("cena"), unfold="all", count=8, show_description=False,
             _page_subtype="prize", _post_parent=slug, order="ASC", orderby="menu_order",
         )
     else:
@@ -102,11 +102,12 @@ def _wp_news(
     get_params['feed'] = "content_to_backend"
     get_params['_post_type'] = post_type
     get_params['_number'] = count
+    get_params['orderby'] = orderby
     get_params.update(other_args)
     url = campaign.wp_api_url
     api = slumber.API(url)
     try:
-        wp_feed = api.feed.get(**get_params)[:5]
+        wp_feed = api.feed.get(**get_params)
     except slumber.exceptions.SlumberBaseException:
         logger.exception(u'Error fetching wp news')
         return ""

@@ -98,6 +98,7 @@
     <div class="col-md-12 prizes">
       <h3>{% trans "Ceny ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ city_slug }}">{{ user_attendance.team.subsidiary.city }}</a></h3>
       {% wp_prize user_attendance.campaign city_slug %}
+      {% blocktrans %}A další ceny můžete najít na <a href='{{ BASE_WP_URL }}/locations/{{ city_slug }}'>stránkách vašeho města</a>.{% endblocktrans %}
    </div>
 </div>
 {% endcache %}
