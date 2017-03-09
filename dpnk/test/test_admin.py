@@ -146,7 +146,7 @@ class AdminModulesTests(DenormMixin, TestCase):
         self.assertContains(
             response,
             '1015,testing-campaign,,1,Testing team 1,approved,,Testing city,cs,,'
-            '1031,Testing,User,test1,test2@test.cz,"Ulice 1, 111 11 Praha",Testing company,2015-11-12 18:18:40,,,,',
+            '1031,Testing,User,test1,test2@test.cz,,,"Ulice 1, 111 11 Praha",Testing company,2015-11-12 18:18:40,,,,',
         )
 
     def test_company_export(self):

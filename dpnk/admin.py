@@ -545,6 +545,8 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
         'ecc_password',
         'ecc_email',
         'user_attendances_count',
+        'occupation',
+        'age_group',
     )
     inlines = (CompanyAdminInline,)
     list_filter = (
@@ -552,7 +554,9 @@ class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
         'language',
         'sex',
         'userattendance_set__team__subsidiary__city',
-        'userattendance_set__approved_for_team'
+        'userattendance_set__approved_for_team',
+        'occupation',
+        'age_group',
     )
     filter_horizontal = ('administrated_cities',)
     search_fields = [
@@ -654,6 +658,8 @@ class UserAttendanceResource(resources.ModelResource):
             'userprofile__user__last_name',
             'userprofile__user__username',
             'userprofile__user__email',
+            'userprofile__occupation',
+            'userprofile__age_group',
             'subsidiary_name',
             'team__subsidiary__company__name',
             'created')
@@ -734,7 +740,7 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         TrackFilter,
         HasVoucherFilter,
         HasRidesFilter,
-        HasTeamFilter
+        HasTeamFilter,
     )
     raw_id_fields = ('userprofile', 'team', 'discount_coupon')
     search_fields = (
