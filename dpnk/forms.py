@@ -92,8 +92,11 @@ class PrevNextMixin(object):
         self.helper = FormHelper()
         if not hasattr(self, 'no_prev'):
             prev_url = kwargs.pop('prev_url', None)
-            self.helper.form_class = "dirty-check"
-            self.helper.add_input(Button('prev', _('Předchozí'), css_class="btn-default", onclick='window.location.href="{}"'.format(reverse(prev_url))))
+            if not hasattr(self, 'no_dirty'):
+                self.helper.form_class = "dirty-check"
+            self.helper.add_input(
+                Button('prev', _('Předchozí'), css_class="btn-default form-actions", onclick='window.location.href="{}"'.format(reverse(prev_url))),
+            )
         if not hasattr(self, 'no_next'):
             self.helper.add_input(Submit('next', _(u'Další'), css_class="form-actions"))
         return super(PrevNextMixin, self).__init__(*args, **kwargs)
@@ -452,6 +455,7 @@ class TeamAdminForm(SubmitMixin, forms.ModelForm):
 
 
 class PaymentTypeForm(PrevNextMixin, forms.Form):
+    no_dirty = True
     payment_type = forms.ChoiceField(
         label=_(u"Typ platby"),
         widget=forms.RadioSelect(),

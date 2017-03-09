@@ -590,6 +590,7 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         context['email'] = profile.user.email  # email
         context['amount'] = self.user_attendance.admission_fee()
         context['beneficiary_amount'] = self.user_attendance.beneficiary_admission_fee()
+        context['prev_url'] = self.prev_url
         return context
 
     def get_form_kwargs(self):
