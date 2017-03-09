@@ -45,7 +45,7 @@ Raven.setUserContext({
 <link href="{% static "css/style.less"%}" type="text/less" rel="stylesheet" media="screen">
 {% endcompress %}
 <style>
-  .navbar-fixed-top{
+  .navbar-top{
     border-top: 3px solid {% if HEADER_COLOR %}{{ HEADER_COLOR }}{% endif %};
   }
 </style>
@@ -54,7 +54,7 @@ Raven.setUserContext({
 </head>
 <body class="django_administrace {% if request.resolver_match.url_name == 'profil' %}homepage{% endif %} {% if request.resolver_match %}{{ request.resolver_match.url_name }}{% endif %}">
 {% gtm %}
-<div class="navbar navbar-fixed-top" role="navigation">
+<div class="navbar navbar-top" role="navigation">
    <div class="container">
       <div class="row">
          <div class="col-md-2 logo_holder">
