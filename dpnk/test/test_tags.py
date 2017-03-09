@@ -17,11 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import datetime
+
 from unittest.mock import MagicMock, patch
 
 from django.core.urlresolvers import reverse
 from django.template import Context, Template
 from django.test import RequestFactory, TestCase
+from django.test.utils import override_settings
 
 from dpnk.test.util import ClearCacheMixin
 
@@ -30,6 +33,9 @@ import slumber
 from model_mommy import mommy
 
 
+@override_settings(
+    FAKE_DATE=datetime.date(year=2016, month=11, day=20),
+)
 class DpnkTagsTests(ClearCacheMixin, TestCase):
     def setUp(self):
         super().setUp()
@@ -68,7 +74,15 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}{% wp_news campaign 4321 %}")
         context = Context({'campaign': self.campaign})
         response = template.render(context)
-        m.feed.get.assert_called_once_with(feed="content_to_backend", _number=5, _connected_to=4321, _post_type="post", order="DESC", orderby="DATE")
+        m.feed.get.assert_called_once_with(
+            feed="content_to_backend",
+            _number=5,
+            _connected_to=4321,
+            _post_type="post",
+            order="DESC",
+            orderby="DATE",
+            _year=2016,
+        )
         self.assertHTMLEqual(response, '<div class="wp_news">Žádná novinka není.</div>')
 
     @patch('slumber.API')
@@ -79,7 +93,15 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}<div>{% wp_news campaign 4321 %}</div>")
         context = Context({'campaign': self.campaign})
         response = template.render(context)
-        m.feed.get.assert_called_once_with(feed="content_to_backend", _number=5, _connected_to=4321, _post_type="post", order="DESC", orderby="DATE")
+        m.feed.get.assert_called_once_with(
+            feed="content_to_backend",
+            _number=5,
+            _connected_to=4321,
+            _post_type="post",
+            order="DESC",
+            orderby="DATE",
+            _year=2016,
+        )
         self.assertHTMLEqual(response, '<div></div>')
 
     @patch('slumber.API')
@@ -90,7 +112,15 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}<div>{% wp_news campaign 4321 %}</div>")
         context = Context({'campaign': self.campaign})
         response = template.render(context)
-        m.feed.get.assert_called_once_with(feed="content_to_backend", _number=5, _connected_to=4321, _post_type="post", order="DESC", orderby="DATE")
+        m.feed.get.assert_called_once_with(
+            feed="content_to_backend",
+            _number=5,
+            _connected_to=4321,
+            _post_type="post",
+            order="DESC",
+            orderby="DATE",
+            _year=2016,
+        )
         self.assertHTMLEqual(
             '<div>'
             '<div class="wp_news">'
@@ -136,7 +166,15 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}{% wp_news campaign %}")
         context = Context({'campaign': self.campaign})
         response = template.render(context)
-        m.feed.get.assert_called_once_with(_number=5, _connected_to=None, feed="content_to_backend", _post_type="post", order="DESC", orderby="DATE")
+        m.feed.get.assert_called_once_with(
+            _number=5,
+            _connected_to=None,
+            feed="content_to_backend",
+            _post_type="post",
+            order="DESC",
+            orderby="DATE",
+            _year=2016,
+        )
         self.assertHTMLEqual(
             response,
             '''
@@ -171,7 +209,15 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}{% wp_news campaign 'test_city' %}")
         context = Context({'campaign': self.campaign})
         response = template.render(context)
-        m.feed.get.assert_called_once_with(_number=5, feed="content_to_backend", _post_type="post", _connected_to="test_city", order="DESC", orderby="DATE")
+        m.feed.get.assert_called_once_with(
+            _number=5,
+            feed="content_to_backend",
+            _post_type="post",
+            _connected_to="test_city",
+            order="DESC",
+            orderby="DATE",
+            _year=2016,
+        )
         self.assertHTMLEqual(
             response,
             '''
@@ -213,6 +259,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
             _post_type="locations",
             _post_parent="test_city",
             orderby="start_date",
+            _year=2016,
         )
         self.assertHTMLEqual(
             response,

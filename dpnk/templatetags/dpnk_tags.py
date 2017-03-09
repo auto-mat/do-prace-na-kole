@@ -30,6 +30,9 @@ from django.utils.translation import activate, get_language
 from django.utils.translation import ugettext_lazy as _
 
 import slumber
+
+from .. import util
+
 register = template.Library()
 logger = logging.getLogger(__name__)
 
@@ -73,14 +76,30 @@ def wp_prize(campaign, slug=None):
 @cached(60 * 60)
 def _wp_news_cached(campaign, slug=None, wp_type="news"):
     if wp_type == "action":
-        return _wp_news(campaign, "locations", _("akce"), unfold="first", _page_subtype="event", _post_parent=slug, orderby='start_date')
+        return _wp_news(
+            campaign,
+            "locations",
+            _("akce"),
+            unfold="first",
+            _page_subtype="event",
+            _post_parent=slug,
+            orderby='start_date',
+            _year=util.today().year,
+        )
     elif wp_type == "prize":
         return _wp_news(
             campaign, "locations", _("cena"), unfold="all", count=8, show_description=False,
             _page_subtype="prize", _post_parent=slug, order="ASC", orderby="menu_order",
         )
     else:
-        return _wp_news(campaign, _connected_to=slug, order="DESC", orderby="DATE", count=5)
+        return _wp_news(
+            campaign,
+            _connected_to=slug,
+            order="DESC",
+            orderby="DATE",
+            count=5,
+            _year=util.today().year,
+        )
 
 
 def _wp_news(
