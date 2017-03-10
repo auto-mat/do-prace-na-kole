@@ -75,7 +75,7 @@ SECRET_KEY = 'bt@kl##och59s((u!88iny_c^4p#en@o28w3g57$ys-sgw$4$5'
 
 class InvalidStringError(str):
     def __mod__(self, other):
-        raise Exception("empty string")
+        raise Exception("empty string %s" % other)
         return ""
 
 
