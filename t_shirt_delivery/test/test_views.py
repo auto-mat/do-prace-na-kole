@@ -19,7 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
@@ -87,8 +87,10 @@ class ViewsTestsLogon(TestCase):
         self.assertRedirects(response, reverse("typ_platby"), target_status_code=403)
 
     @patch('slumber.API')
-    def test_dpnk_t_shirt_size_no_sizes_no_admission(self, slumber_api):
-        slumber_api.feed.get = {}
+    def test_dpnk_t_shirt_size_no_sizes_no_admission(self, slumber_mock):
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_mock.return_value = m
         TShirtSize.objects.all().delete()
         PriceLevel.objects.all().delete()
         self.user_attendance.campaign.save()

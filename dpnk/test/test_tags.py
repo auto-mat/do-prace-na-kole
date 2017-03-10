@@ -128,7 +128,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
             orderby="DATE",
             _year=2016,
         )
-        mock_logger.exception.assert_called_with("Error encoding wp news format")
+        mock_logger.exception.assert_called_with("Error encoding wp news format", extra={'wp_feed': {'Test1': 'Test'}})
         self.assertHTMLEqual('<div/>', response)
 
     @patch('slumber.API')

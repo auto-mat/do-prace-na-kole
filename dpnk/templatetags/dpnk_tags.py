@@ -127,7 +127,7 @@ def _wp_news(
         logger.exception(u'Error fetching wp news')
         return ""
     if not isinstance(wp_feed, list) and not isinstance(wp_feed, tuple):
-        logger.exception(u'Error encoding wp news format')
+        logger.exception('Error encoding wp news format', extra={'wp_feed': wp_feed})
         return ""
     template = get_template("templatetags/wp_news.html")
     context = {

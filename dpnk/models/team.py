@@ -88,7 +88,7 @@ class Team(models.Model):
     def member_count(self):
         member_count = self.members().count()
         if self.campaign.too_much_members(member_count):
-            logger.error(u"Too many members in team %s" % self)
+            logger.error("Too many members in team", extra={'team': self})
         return member_count
 
     def is_full(self):

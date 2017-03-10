@@ -19,7 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 from collections import OrderedDict
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, patch
 
 import denorm
 
@@ -200,13 +200,24 @@ class PayuTests(ClearCacheMixin, TestCase):
         self.assertEquals(payment.amount, 150)
         self.assertEquals(payment.status, 99)
 
-    def test_dpnk_payment_status_bad_amount(self):
+    @patch('dpnk.views.logger')
+    def test_dpnk_payment_status_bad_amount(self, mock_logger):
         response = self.payment_status_view(amount="15300", trans_sig='ae18ec7f141c252e692d470f4c1744c9')
         self.assertContains(response, "Bad amount", status_code=400)
         payment = models.Payment.objects.get(pk=3)
         self.assertEquals(payment.pay_type, None)
         self.assertEquals(payment.amount, 150)
         self.assertEquals(payment.status, 0)
+        mock_logger.error.assert_called_with(
+            "Payment amount doesn't match",
+            extra={
+                'request': ANY,
+                'pay_type': None,
+                'expected_amount': 150,
+                'payment_response': ANY,
+                'status': 0,
+            },
+        )
 
     def test_dpnk_payment_status_view_create(self):
         response = self.payment_status_view(
@@ -372,7 +383,9 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
     @patch('slumber.API')
     def test_dpnk_profile_page_link(self, slumber_api):
         models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
-        slumber_api.feed.get = {}
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_api.return_value = m
         response = self.client.get(reverse('profil'))
         self.assertContains(response, '<a href="%sDSC00002.JPG" target="_blank">DSC00002.JPG</a>' % settings.MEDIA_URL, html=True)
         self.assertContains(response, 'Všechny příspěvky z této soutěže')
@@ -382,6 +395,9 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
     )
     @patch('slumber.API')
     def test_dpnk_rides_view_key_error(self, slumber_api):
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_api.return_value = m
         "Test if the rides saves, when between loading and sending the form date changes."
         "The non-active days should not be saved, but active days should be saved"
         post_data = {
@@ -421,7 +437,9 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
 
     @patch('slumber.API')
     def test_dpnk_rides_view(self, slumber_api):
-        slumber_api.feed.get = {}
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_api.return_value = m
         response = self.client.get(reverse('profil'))
         self.assertContains(response, 'form-0-commute_mode')
         self.assertContains(response, 'form-1-commute_mode')

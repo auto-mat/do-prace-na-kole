@@ -268,7 +268,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         if 'subsidiary' in cleaned_data:
             subsidiary = cleaned_data['subsidiary']
             if subsidiary and not models.CityInCampaign.objects.filter(city=subsidiary.city, campaign__slug=self.request.subdomain).exists():
-                logger.error("Pobočka ve špatém městě", extra={'request': self.request, 'subsidiary': subsidiary})
+                logger.error("Subsidiary in city that doesn't belong to this campaign", extra={'request': self.request, 'subsidiary': subsidiary})
                 raise forms.ValidationError(
                     _(
                         "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží. "
@@ -283,7 +283,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             return self.instance.team
         else:
             if data.campaign.slug != self.request.subdomain:
-                logger.error("Team %s not in campaign %s" % (data.pk, self.request.subdomain), extra={'request': self.request})
+                logger.error("Team not in campaign", extra={'request': self.request, 'team': data.pk, 'subdomain': self.request.subdomain})
                 raise forms.ValidationError(_(u"Zvolený tým není dostupný v aktuální kampani"))
         if type(data) != RegisterTeamForm:
             if data != self.instance.team:

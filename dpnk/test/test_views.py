@@ -20,7 +20,7 @@
 import datetime
 from collections import OrderedDict
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import ANY, MagicMock, call, patch
 
 from PyPDF2 import PdfFileReader
 
@@ -379,18 +379,19 @@ class PaymentTypeViewTests(TestCase):
         self.assertRedirects(response, reverse("discount_coupon"))
         self.assertContains(response, "<h2>Uplatnit slevový voucher</h2>", html=True)
 
-    def test_dpnk_payment_type_pay_admin(self):
+    @patch('dpnk.views.logger')
+    def test_dpnk_payment_type_pay_admin(self, mock_logger):
         post_data = {
             'payment_type': 'pay',
             'next': 'Next',
         }
         response = self.client.post(reverse('typ_platby'), post_data)
-        print_response(response)
         self.assertContains(
             response,
             "Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript.",
             status_code=500,
         )
+        mock_logger.error.assert_called_with("Wrong payment type", extra={'request': ANY, 'payment_type': 'pay'})
 
 
 class DistanceTests(TestCase):
@@ -419,9 +420,11 @@ class DistanceTests(TestCase):
 class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'company_competition', 'test_results_data', 'trips']
 
-    def test_dpnk_competition_results_unknown(self):
+    @patch('dpnk.views.logger')
+    def test_dpnk_competition_results_unknown(self, mock_logger):
         address = reverse('competition_results', kwargs={'competition_slug': 'unexistent_competition'})
         response = self.client.get(address)
+        mock_logger.exception.assert_called_with("Unknown competition", extra={'slug': 'unexistent_competition', 'request': ANY})
         self.assertContains(response, "Tuto soutěž v systému nemáme.")
 
     def test_dpnk_competition_results_vykonnost_tymu(self):
@@ -767,7 +770,8 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         response = views.QuestionnaireView.as_view()(request, **kwargs)
         self.assertEquals(response.url, reverse("competitions"))
 
-    def test_questionnaire_view_unknown(self):
+    @patch('dpnk.views.logger')
+    def test_questionnaire_view_unknown(self, mock_logger):
         kwargs = {'questionnaire_slug': 'quest1'}
         address = reverse('questionnaire', kwargs=kwargs)
         request = self.factory.get(address)
@@ -776,6 +780,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         request.subdomain = "testing-campaign"
         request.resolver_match = {"url_name": "questionnaire"}
         response = views.QuestionnaireView.as_view()(request, **kwargs)
+        mock_logger.exception.assert_called_with('Unknown questionaire', extra={'request': ANY, 'slug': 'quest1'})
         self.assertContains(response, 'Tento dotazník v systému nemáme.', status_code=401)
 
     def test_questionnaire_view_uncomplete(self):
@@ -975,7 +980,8 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, "Tento e-mail již je v našem systému zanesen.")
 
-    def test_dpnk_team_view_choose_team_full(self):
+    @patch('dpnk.models.team.logger')
+    def test_dpnk_team_view_choose_team_full(self, mock_logger):
         campaign = models.Campaign.objects.get(pk=339)
         campaign.max_team_members = 0
         campaign.save()
@@ -989,9 +995,11 @@ class ViewsTestsLogon(ViewsLogon):
         models.Payment.objects.all().delete()
         self.user_attendance.save()
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        mock_logger.error.assert_called_with("Too many members in team", extra={'team': ANY})
         self.assertContains(response, "Tento tým již má plný počet členů")
 
-    def test_dpnk_team_view_choose_team_out_of_campaign(self):
+    @patch('dpnk.forms.logger')
+    def test_dpnk_team_view_choose_team_out_of_campaign(self, mock_logger):
         post_data = {
             'company': '1',
             'subsidiary': '2',
@@ -1002,6 +1010,10 @@ class ViewsTestsLogon(ViewsLogon):
         models.Payment.objects.all().delete()
         self.user_attendance.save()
         response = self.client.post(reverse('zmenit_tym'), post_data)
+        assert mock_logger.error.mock_calls == [
+            call("Team not in campaign", extra={'request': ANY, 'team': ANY, 'subdomain': ANY}),
+            call("Subsidiary in city that doesn't belong to this campaign", extra={'request': ANY, 'subsidiary': ANY}),
+        ]
         self.assertContains(response, "Zvolený tým není dostupný v aktuální kampani")
 
     def test_dpnk_team_view_choose_team_after_payment(self):
@@ -1014,7 +1026,8 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(reverse('zmenit_tym'), post_data)
         self.assertContains(response, "Po zaplacení není možné měnit tým mimo pobočku")
 
-    def test_dpnk_team_view_choose_nonexistent_city(self):
+    @patch('dpnk.forms.logger')
+    def test_dpnk_team_view_choose_nonexistent_city(self, mock_logger):
         post_data = {
             'company': '1',
             'subsidiary': '2',
@@ -1025,6 +1038,7 @@ class ViewsTestsLogon(ViewsLogon):
         }
         PackageTransaction.objects.all().delete()
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        mock_logger.error.assert_called_with("Subsidiary in city that doesn't belong to this campaign", extra={'request': ANY, 'subsidiary': ANY})
         self.assertContains(response, "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží.")
 
     def test_dpnk_team_view_create(self):
@@ -1351,7 +1365,9 @@ class RegistrationMixinTests(ViewsLogon):
 
     @patch('slumber.API')
     def test_dpnk_registration_questionnaire(self, slumber_api):
-        slumber_api.feed.get = {}
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_api.return_value = m
         response = self.client.get(reverse('profil'))
         self.assertContains(response, "Nezapomeňte vyplnit odpovědi v následujících soutěžích: <a href='/cs/otazka/quest/'>Dotazník</a>!")
 
@@ -1374,7 +1390,9 @@ class RegistrationMixinTests(ViewsLogon):
 
     @patch('slumber.API')
     def test_dpnk_registration_company_admin_undecided(self, slumber_api):
-        slumber_api.feed.get = {}
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_api.return_value = m
         util.rebuild_denorm_models(models.Team.objects.filter(pk=2))
         ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
         ca.company_admin_approved = 'undecided'
@@ -1385,7 +1403,9 @@ class RegistrationMixinTests(ViewsLogon):
 
     @patch('slumber.API')
     def test_dpnk_registration_company_admin_decided(self, slumber_api):
-        slumber_api.feed.get = {}
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_api.return_value = m
         util.rebuild_denorm_models(models.Team.objects.filter(pk=2))
         ca = models.CompanyAdmin.objects.get(userprofile=self.user_attendance.userprofile, campaign_id=339)
         ca.company_admin_approved = 'denied'

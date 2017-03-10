@@ -19,6 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
+from unittest.mock import ANY, patch
+
 from django.test import TestCase
 from django.test.utils import override_settings
 
@@ -262,9 +264,11 @@ class TestGetDistance(TestCase):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 156.9)
 
-    def test_user_attendance_get_distance_fail(self):
+    @patch('dpnk.models.user_attendance.logger')
+    def test_user_attendance_get_distance_fail(self, mock_logger):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.track = "MULTILINESTRING((0 0, 0 0))"
         user_attendance.save()
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.assertEqual(user_attendance.get_distance(), 0)
+        mock_logger.error.assert_called_with("length not available", extra={'request': None, 'username': ANY})
