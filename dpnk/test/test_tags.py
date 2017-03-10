@@ -28,9 +28,9 @@ from django.test.utils import override_settings
 
 from dpnk.test.util import ClearCacheMixin
 
-import slumber
-
 from model_mommy import mommy
+
+import slumber
 
 
 @override_settings(
@@ -42,8 +42,9 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         self.campaign = mommy.make("Campaign")
         self.factory = RequestFactory()
 
+    @patch('dpnk.templatetags.dpnk_tags.logger')
     @patch('slumber.API')
-    def test_failed_wp_article(self, slumber_mock):
+    def test_failed_wp_article(self, slumber_mock, mock_logger):
         m = MagicMock()
         m.feed.get.return_value = {
             1234: "error page",
@@ -52,17 +53,20 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         template = Template("{% load dpnk_tags %}<div>{% wp_article campaign 4321 %}</div>")
         context = Context({'campaign': self.campaign})
         response = template.render(context)
+        mock_logger.exception.assert_called_with("Bad wp article id")
         m.feed.get.assert_called_once_with(feed="content_to_backend", _id=4321, _post_type="page")
         self.assertHTMLEqual(response, '<div></div>')
 
+    @patch('dpnk.templatetags.dpnk_tags.logger')
     @patch('slumber.API')
-    def test_wp_article_slumber_error(self, slumber_mock):
+    def test_wp_article_slumber_error(self, slumber_mock, mock_logger):
         m = MagicMock()
         m.feed.get.side_effect = slumber.exceptions.SlumberBaseException
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}<div>{% wp_article campaign 4321 %}</div>")
         context = Context({'campaign': self.campaign})
         response = template.render(context)
+        mock_logger.exception.assert_called_with("Error fetching wp article")
         m.feed.get.assert_called_once_with(feed="content_to_backend", _id=4321, _post_type="page")
         self.assertHTMLEqual(response, '<div></div>')
 
@@ -85,14 +89,16 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         )
         self.assertHTMLEqual(response, '<div class="wp_news">Žádná novinka není.</div>')
 
+    @patch('dpnk.templatetags.dpnk_tags.logger')
     @patch('slumber.API')
-    def test_failed_wp_news(self, slumber_mock):
+    def test_failed_wp_news(self, slumber_mock, mock_logger):
         m = MagicMock()
         m.feed.get.side_effect = slumber.exceptions.SlumberBaseException
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}<div>{% wp_news campaign 4321 %}</div>")
         context = Context({'campaign': self.campaign})
         response = template.render(context)
+        mock_logger.exception.assert_called_with("Error fetching wp news")
         m.feed.get.assert_called_once_with(
             feed="content_to_backend",
             _number=5,
@@ -104,8 +110,9 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         )
         self.assertHTMLEqual(response, '<div></div>')
 
+    @patch('dpnk.templatetags.dpnk_tags.logger')
     @patch('slumber.API')
-    def test_failed_wp_news_type_error(self, slumber_mock):
+    def test_failed_wp_news_type_error(self, slumber_mock, mock_logger):
         m = MagicMock()
         m.feed.get.return_value = {'Test1': 'Test'}
         slumber_mock.return_value = m
@@ -121,18 +128,8 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
             orderby="DATE",
             _year=2016,
         )
-        self.assertHTMLEqual(
-            '<div>'
-            '<div class="wp_news">'
-            '   <div class="item">'
-            '      <h4>'
-            '          <a href="" target="_blank">Test1</a>'
-            '      </h4>'
-            '   </div>'
-            '</div>'
-            '</div>',
-            response,
-        )
+        mock_logger.exception.assert_called_with("Error encoding wp news format")
+        self.assertHTMLEqual('<div/>', response)
 
     @patch('slumber.API')
     def test_wp_article(self, slumber_mock):
@@ -320,14 +317,16 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
             ''',
         )
 
+    @patch('dpnk.templatetags.dpnk_tags.logger')
     @patch('slumber.API')
-    def test_cyklistesobe_fail(self, slumber_mock):
+    def test_cyklistesobe_fail(self, slumber_mock, mock_logger):
         m = MagicMock()
         m.issues.get.side_effect = slumber.exceptions.SlumberBaseException
         slumber_mock.return_value = m
         template = Template("{% load dpnk_tags %}<div>{% cyklistesobe 'test_slug' %}</div>")
         context = Context()
         response = template.render(context)
+        mock_logger.exception.assert_called_with("Error fetching cyklistesobe page")
         self.assertHTMLEqual(response, '<div></div>')
 
     @patch('slumber.API')
@@ -386,11 +385,13 @@ class ChangeLangTests(ClearCacheMixin, TestCase):
         response = template.render(context)
         self.assertHTMLEqual(response, '/en/dalsi_clenove/')
 
-    def test_change_lang_request(self):
+    @patch('dpnk.templatetags.dpnk_tags.logger')
+    def test_change_lang_request(self, mock_logger):
         template = Template("{% load dpnk_tags %}{% change_lang 'en' %}")
         request = self.factory.get("test")
         context = Context({'request': request})
         response = template.render(context)
+        mock_logger.exception.assert_called_with('Error in change lang function', extra={'resolved_path': '/test'})
         self.assertHTMLEqual(response, '/en')
 
     def test_change_lang_request_no_reverse_match(self):

@@ -126,7 +126,7 @@ def _wp_news(
     except slumber.exceptions.SlumberBaseException:
         logger.exception(u'Error fetching wp news')
         return ""
-    except TypeError:
+    if not isinstance(wp_feed, list) and not isinstance(wp_feed, tuple):
         logger.exception(u'Error encoding wp news format')
         return ""
     template = get_template("templatetags/wp_news.html")
