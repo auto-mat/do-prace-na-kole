@@ -69,7 +69,7 @@ $(function(){
 <div id="description_switcher">
    <div class="description_switcher_div description company_description" style="display:none">
       <h3>{% trans "Účastnický poplatek platí zaměstnavatel" %}</h3>
-      {% trans "Účastnický poplatek za mě platí zaměstnavatel, mám to domluvené." %}
+      {% trans "Účastnický poplatek za mě platí zaměstnavatel, mám to s ním nebo jeho koordinátorem domluvené." %}
       <br/><br/>
       {% trans "Zaměstnavatel: " %} {{ user_attendance.team.subsidiary.company }}<br/>
       {% for company_admin in user_attendance.get_asociated_company_admin %}

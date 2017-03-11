@@ -2734,8 +2734,12 @@ msgid "Účastnický poplatek platí zaměstnavatel"
 msgstr "My participant fee will be paid by my employer"
 
 #: templates/registration/payment_type.html:72
-msgid "Účastnický poplatek za mě platí zaměstnavatel, mám to domluvené."
-msgstr "My participant fee will be paid by my employer, he agrees with it."
+msgid ""
+"Účastnický poplatek za mě platí zaměstnavatel, mám to s ním nebo jeho "
+"koordinátorem domluvené."
+msgstr ""
+"My participant fee will be paid by my employer, he or company coordinator "
+"agrees with it."
 
 #: templates/registration/payment_type.html:74
 msgid "Zaměstnavatel: "
