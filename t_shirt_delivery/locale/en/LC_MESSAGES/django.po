@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-06 10:07+0100\n"
+"POT-Creation-Date: 2017-03-11 09:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,32 +71,32 @@ msgstr ""
 msgid "Zařadit balíky k sestavení"
 msgstr ""
 
-#: models/delivery_batch.py:47
+#: models/delivery_batch.py:46
 msgid "Datum vytvoření"
 msgstr "Created"
 
-#: models/delivery_batch.py:53 models/t_shirt_size.py:36
+#: models/delivery_batch.py:52 models/t_shirt_size.py:36
 msgid "Kampaň"
 msgstr "Campaign"
 
-#: models/delivery_batch.py:58 models/subsidiary_box.py:50
+#: models/delivery_batch.py:57 models/subsidiary_box.py:50
 msgid "Zákaznické listy"
 msgstr "Customer sheets"
 
-#: models/delivery_batch.py:64
+#: models/delivery_batch.py:63
 msgid "CSV objednávka"
 msgstr ""
 
-#: models/delivery_batch.py:70 models/subsidiary_box.py:62
+#: models/delivery_batch.py:69 models/subsidiary_box.py:62
 #: models/team_package.py:47
 msgid "Vyřízeno"
 msgstr "Dispatched"
 
-#: models/delivery_batch.py:77 models/subsidiary_box.py:45
+#: models/delivery_batch.py:76 models/subsidiary_box.py:45
 msgid "Dávka objednávek"
 msgstr "Delivery batch"
 
-#: models/delivery_batch.py:78
+#: models/delivery_batch.py:77
 msgid "Dávky objednávek"
 msgstr "Delivery batches"
 
@@ -183,14 +183,6 @@ msgstr ""
 msgid "Balíček bez týmu"
 msgstr ""
 
-#: templates/admin/index.html:7
-msgid "Models available in the preferences application."
-msgstr ""
-
-#: templates/admin/index.html:8
-msgid "T_Shirt_Delivery"
-msgstr ""
-
 #: templates/admin/index.html:10
 msgid "Označit balíky/krabice jako vyřízené"
 msgstr ""
@@ -205,7 +197,8 @@ msgstr "Change t-shirt size"
 
 #: views.py:50
 msgid "Velikost trička nemůžete měnit, dokud nemáte zvolený tým."
-msgstr "You can't change your t-shirt size. You have to choose your team first."
+msgstr ""
+"You can't change your t-shirt size. You have to choose your team first."
 
 #: views.py:51
 msgid "Vaše tričko již je na cestě k vám, už se na něj můžete těšit."
