@@ -238,7 +238,7 @@ msgstr ""
 "href='http://www.auto-mat.cz/zasady'>Guidelines for the Protection and "
 "Processing of Personal Information Auto*Mat z.s.</a> and with <a "
 "target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>%s "
-"Terms and Conditions </a>."
+"Terms and Conditions</a>."
 
 #: company_admin_forms.py:144 models/company_admin.py:73
 msgid "Koordinovaná organizace"
@@ -1760,17 +1760,16 @@ msgid "Spádové město"
 msgstr "Catchment town"
 
 #: models/subsidiary.py:53
-#, python-format
 msgid ""
 "Vyberte nejbližší soutěžní město. Vaše pobočka bude zařazena do žebříčků za "
 "vybrané město a případnou výhru si přeberete na závěrečném večírku pořádaném "
-"tímto městem. Sledujte  <a href='%s' target='_blank'>pravidla soutěže</a> "
-"svého města."
+"tímto městem. Sledujte <a href='http://www.dopracenakole.cz/pravidla' "
+"target='_blank'>pravidla soutěže</a> svého města."
 msgstr ""
 "Select the closest competition town. Your branch will be then included into "
 "to town's ranking. In this town the closing party with award ceremony will "
-"be held. Follow town's site to learn news and specifics <a href='%s' "
-"target='_blank'>pravidla soutěže</a> "
+"be held. Follow town's site to learn news and specifics <a href='http://www."
+"dopracenakole.cz/pravidla' target='_blank'>pravidla soutěže</a>."
 
 #: models/team.py:39
 #, python-format

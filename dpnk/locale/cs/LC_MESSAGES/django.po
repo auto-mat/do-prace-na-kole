@@ -1648,12 +1648,11 @@ msgid "Spádové město"
 msgstr ""
 
 #: models/subsidiary.py:53
-#, python-format
 msgid ""
 "Vyberte nejbližší soutěžní město. Vaše pobočka bude zařazena do žebříčků za "
 "vybrané město a případnou výhru si přeberete na závěrečném večírku pořádaném "
-"tímto městem. Sledujte  <a href='%s' target='_blank'>pravidla soutěže</a> "
-"svého města."
+"tímto městem. Sledujte <a href='http://www.dopracenakole.cz/pravidla' "
+"target='_blank'>pravidla soutěže</a> svého města."
 msgstr ""
 
 #: models/team.py:39

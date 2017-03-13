@@ -53,8 +53,8 @@ class Subsidiary(models.Model):
             "Vyberte nejbližší soutěžní město. "
             "Vaše pobočka bude zařazena do žebříčků za vybrané město "
             "a případnou výhru si přeberete na závěrečném večírku pořádaném tímto městem. "
-            "Sledujte  <a href='%s' target='_blank'>pravidla soutěže</a> svého města."
-        ) % "http://www.dopracenakole.cz/pravidla",
+            "Sledujte <a href='http://www.dopracenakole.cz/pravidla' target='_blank'>pravidla soutěže</a> svého města.",
+        ),
         null=False,
         blank=False,
     )
