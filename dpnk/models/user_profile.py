@@ -42,6 +42,10 @@ class UserProfile(models.Model):
         verbose_name_plural = _(u"Uživatelské profily")
         ordering = ["user__last_name", "user__first_name"]
 
+        permissions = (
+            ('can_edit_all_cities', _('Může editovat všechna města')),
+        )
+
     GENDER = (
         ('unknown', _(u'-------')),
         ('male', _(u'Muž')),
