@@ -615,6 +615,7 @@ class UserAdmin(RelatedFieldAdmin, ExportMixin, NestedModelAdmin, UserAdmin):
         'is_staff',
         'is_superuser',
         'is_active',
+        'groups',
         'userprofile__company_admin__company_admin_approved',
         HasUserprofileFilter,
         'userprofile__sex',
