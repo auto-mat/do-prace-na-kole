@@ -48,6 +48,8 @@ from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
 
 from leaflet.admin import LeafletGeoAdmin
 
+from modeltranslation.admin import TranslationTabularInline
+
 from nested_inline.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 
 from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
@@ -1147,7 +1149,7 @@ class CityInCampaignInline(admin.TabularInline):
     extra = 0
 
 
-class TShirtSizeInline(SortableInlineAdminMixin, admin.TabularInline):
+class TShirtSizeInline(SortableInlineAdminMixin, TranslationTabularInline):
     model = TShirtSize
     extra = 0
 

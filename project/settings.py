@@ -79,6 +79,8 @@ LANGUAGES = (
     ('en', _('English')),
 )
 LANGUAGE_CODE = 'cs'
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'cs'
+MODELTRANSLATION_LANGUAGES = ('en', 'cs')
 PREFIX_DEFAULT_LOCALE = False
 SITE_ID = os.environ.get('DPNK_SITE_ID', 1)
 USE_I18N = True
@@ -167,6 +169,8 @@ TEMPLATES = [
     },
 ]
 INSTALLED_APPS = (
+    'modeltranslation',
+
     'django_su',
     'django.contrib.auth',
     'django.contrib.contenttypes',
