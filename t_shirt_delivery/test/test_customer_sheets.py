@@ -44,8 +44,9 @@ class TestCreateCustomerSheets(TestCase):
             campaign=campaign,
             t_shirt_preview=SimpleUploadedFile(
                 "t_shirt_preview.svg",
-                b'<svg xmlns="http://www.w3.org/2000/svg">'
+                b'<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600">'
                 b'<text>Example SVG text 1</text>'
+                b'<rect x="0" y="0" width="600" height="600"/>'
                 b'</svg>',
             ),
             ship=True,
@@ -119,9 +120,7 @@ class TestCreateCustomerSheets(TestCase):
             self.assertTrue("Testing t-shirt size" in pdf_string)
             self.assertTrue("Testing User 1" in pdf_string)
             self.assertTrue("foo@email.cz" in pdf_string)
-            self.assertTrue("test_username 1" in pdf_string)
             self.assertTrue("Foo team with max name lenth" in pdf_string)
             self.assertTrue("123456794" in pdf_string)
-            self.assertTrue("2017-02-01" in pdf_string)
             self.assertTrue("Testing t-shirt size" in pdf_string)
             self.assertTrue("Example SVG text 1" in pdf_string)

@@ -22,7 +22,6 @@ import os
 
 import reportlab
 from reportlab.graphics.barcode import code128
-from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm, mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -35,9 +34,18 @@ from svg2rlg import svg2rlg
 DIR = os.path.dirname(__file__)
 logo_file = os.path.join(DIR, "static/img/logo.jpg")
 
+page_height = 10
+page_width = 15
+
+text_line_height = 0.4
+first_column = 0.5
+second_column = 2
+third_column = 7
+fourth_column = 9
+
 
 def make_customer_sheets_pdf(outfile, subsidiary_box):
-    canvas = Canvas(outfile, pagesize=A4)
+    canvas = Canvas(outfile, pagesize=(page_width * cm, page_height * cm))
 
     folder = '/usr/share/fonts/truetype/ttf-dejavu'
     reportlab.rl_config.TTFSearchPath.append(folder)
@@ -61,90 +69,82 @@ def make_subsidiary_sheet(subsidiary_box, canvas):
     if not subsidiary:
         return
 
-    canvas.setFont('DejaVuB', 15)
-    canvas.drawString(5.5 * cm, 28.2 * cm, subsidiary_box.delivery_batch.campaign.__str__())
-    canvas.drawString(5.5 * cm, 27.5 * cm, "Krabice pro pobočku firmy")
+    canvas.setFont('DejaVuB', 12)
+    canvas.drawString(first_column * cm, (page_height - 2.5) * cm, subsidiary_box.delivery_batch.campaign.__str__())
+    canvas.drawString(first_column * cm, (page_height - 3) * cm, "Krabice pro pobočku firmy")
 
     canvas.setFont('DejaVu', 10)
-    canvas.drawString(5.5 * cm, 27 * cm, "%s" % (subsidiary.company))
+    canvas.drawString(first_column * cm, (page_height - 3.5) * cm, "%s" % (subsidiary.company))
 
     im = Image(logo_file, 3.98 * cm, 1.5 * cm)
-    im.drawOn(canvas, 1 * cm, 27 * cm)
+    im.drawOn(canvas, first_column * cm, (page_height - 2) * cm)
 
     canvas.setFont('DejaVu', 10)
     barcode = code128.Code128(subsidiary_box.identifier(), barWidth=0.5 * mm, barHeight=20 * mm, humanReadable=True)
-    barcode.drawOn(canvas, 14.5 * cm, 26 * cm)
-    canvas.drawString(15 * cm, 28.25 * cm, "ID krabice pro pobočku:")
+    barcode.drawOn(canvas, 8.3 * cm, (page_height - 2.7) * cm)
+    canvas.drawString(9 * cm, (page_height - 0.45) * cm, "ID krabice pro pobočku:")
 
+    offset = 5
+    second_column = 4
     canvas.setFont('DejaVu', 10)
-    canvas.drawString(2 * cm, (20 + 5 * 0.5) * cm, "Společnost:")
-    canvas.drawString(5 * cm, (20 + 5 * 0.5) * cm, "%s" % subsidiary.company)
+    canvas.drawString(first_column * cm, (page_height - offset - 0 * 0.5) * cm, "Společnost:")
+    canvas.drawString(4 * cm, (page_height - offset - 0 * 0.5) * cm, "%s" % subsidiary.company)
 
-    canvas.drawString(2 * cm, (20 + 4 * 0.5) * cm, "IČO:")
+    canvas.drawString(first_column * cm, (page_height - offset - 1 * 0.5) * cm, "IČO:")
     if subsidiary.company.ico:
-        canvas.drawString(5 * cm, (20 + 4 * 0.5) * cm, "%s" % subsidiary.company.ico)
+        canvas.drawString(second_column * cm, (page_height - offset - 1 * 0.5) * cm, "%s" % subsidiary.company.ico)
 
-    canvas.drawString(2 * cm, (20 + 3 * 0.5) * cm, "Adresát:")
-    canvas.drawString(5 * cm, (20 + 3 * 0.5) * cm, "%s" % subsidiary.address_recipient)
+    canvas.drawString(first_column * cm, (page_height - offset - 2 * 0.5) * cm, "Adresát:")
+    canvas.drawString(second_column * cm, (page_height - offset - 2 * 0.5) * cm, "%s" % subsidiary.address_recipient)
 
-    canvas.drawString(2 * cm, (20 + 2 * 0.5) * cm, "Ulice:")
-    canvas.drawString(5 * cm, (20 + 2 * 0.5) * cm, "%s %s" % (subsidiary.address_street, subsidiary.address_street_number))
+    canvas.drawString(first_column * cm, (page_height - offset - 3 * 0.5) * cm, "Ulice:")
+    canvas.drawString(second_column * cm, (page_height - offset - 3 * 0.5) * cm, "%s %s" % (subsidiary.address_street, subsidiary.address_street_number))
 
-    canvas.drawString(2 * cm, (20 + 1 * 0.5) * cm, "PSČ:")
-    canvas.drawString(5 * cm, (20 + 1 * 0.5) * cm, "%s" % subsidiary.address_psc)
+    canvas.drawString(first_column * cm, (page_height - offset - 4 * 0.5) * cm, "PSČ:")
+    canvas.drawString(second_column * cm, (page_height - offset - 4 * 0.5) * cm, "%s" % subsidiary.address_psc)
 
-    canvas.drawString(2 * cm, (20 + 0 * 0.5) * cm, "Město:")
-    canvas.drawString(5 * cm, (20 + 0 * 0.5) * cm, "%s" % subsidiary.address_city)
+    canvas.drawString(first_column * cm, (page_height - offset - 5 * 0.5) * cm, "Město:")
+    canvas.drawString(second_column * cm, (page_height - offset - 5 * 0.5) * cm, "%s" % subsidiary.address_city)
 
 
 def make_team_sheet(team_package, canvas):
     barcode = code128.Code128(team_package.identifier(), barWidth=0.5 * mm, barHeight=20 * mm, humanReadable=True)
-    barcode.drawOn(canvas, 14.5 * cm, 26 * cm)
-    canvas.drawString(15 * cm, 28.25 * cm, "ID týmového balíku:")
+    barcode.drawOn(canvas, 8.3 * cm, (page_height - 2.7) * cm)
+    canvas.drawString(9 * cm, (page_height - 0.45) * cm, "ID týmového balíku:")
 
-    canvas.setFont('DejaVuB', 15)
-    canvas.drawString(5.5 * cm, 28 * cm, "Balíček pro tým")
-    canvas.setFont('DejaVu', 10)
-    canvas.drawString(5.5 * cm, 27 * cm, team_package.team.name)
+    canvas.setFont('DejaVuB', 12)
+    canvas.drawString(4.5 * cm, (page_height - 1.2) * cm, "Balíček pro tým")
+    canvas.setFont('DejaVu', 8)
+    canvas.drawString(first_column * cm, (page_height - 2.3) * cm, "Tým: ")
+    canvas.drawString(second_column * cm, (page_height - 2.3) * cm, team_package.team.name)
+    canvas.drawString(first_column * cm, (page_height - 2.7) * cm, "ID krab.: ")
+    canvas.drawString(second_column * cm, (page_height - 2.7) * cm, "%s" % team_package.box.id)
 
     im = Image(logo_file, 3.98 * cm, 1.5 * cm)
-    im.drawOn(canvas, 1 * cm, 27 * cm)
+    im.drawOn(canvas, first_column * cm, (page_height - 2) * cm)
 
-    offset = 3
+    offset = page_height - 3.2
+    canvas.line(0, offset * cm, 100 * cm, offset * cm)
     for package_transaction in team_package.packagetransaction_set.all():
         user_attendance = package_transaction.user_attendance
-        canvas.setFont('DejaVu', 10)
-        canvas.drawString(2 * cm, (offset + 19 + 6 * 0.5) * cm, "Uživatelské jméno:")
-        canvas.drawString(6 * cm, (offset + 19 + 6 * 0.5) * cm, "%s" % user_attendance.userprofile.user.username)
+        canvas.setFont('DejaVu', 8)
+        canvas.drawString(first_column * cm, (offset - 1 * text_line_height) * cm, "Email:")
+        canvas.drawString(second_column * cm, (offset - 1 * text_line_height) * cm, "%s" % user_attendance.userprofile.user.email)
 
-        canvas.drawString(2 * cm, (offset + 19 + 5 * 0.5) * cm, "Email:")
-        canvas.drawString(6 * cm, (offset + 19 + 5 * 0.5) * cm, "%s" % user_attendance.userprofile.user.email)
+        canvas.drawString(first_column * cm, (offset - 2 * text_line_height) * cm, "Jméno:")
+        canvas.drawString(second_column * cm, (offset - 2 * text_line_height) * cm, "%s" % user_attendance.userprofile.user.get_full_name())
 
-        canvas.drawString(2 * cm, (offset + 19 + 4 * 0.5) * cm, "Jméno:")
-        canvas.drawString(6 * cm, (offset + 19 + 4 * 0.5) * cm, "%s" % user_attendance.userprofile.user.get_full_name())
-
-        nickname = user_attendance.userprofile.nickname
-        if nickname:
-            canvas.drawString(2 * cm, (offset + 19 + 3 * 0.5) * cm, "Přezdívka:")
-            canvas.drawString(6 * cm, (offset + 19 + 3 * 0.5) * cm, "%s" % nickname)
-
-        canvas.drawString(2 * cm, (offset + 19 + 2 * 0.5) * cm, "Telefon:")
-        canvas.drawString(6 * cm, (offset + 19 + 2 * 0.5) * cm, "%s" % user_attendance.userprofile.telephone)
-
-        realized = getattr(user_attendance.representative_payment, 'realized', None)
-        if realized:
-            canvas.drawString(2 * cm, (offset + 19 + 1 * 0.5) * cm, "Zaplaceno:")
-            canvas.drawString(6 * cm, (offset + 19 + 1 * 0.5) * cm, "%s" % (realized.date()))
+        canvas.drawString(first_column * cm, (offset - 3 * text_line_height) * cm, "Telefon:")
+        canvas.drawString(second_column * cm, (offset - 3 * text_line_height) * cm, "%s" % user_attendance.userprofile.telephone)
 
         if package_transaction.t_shirt_size:
-            canvas.setFont('DejaVuB', 20)
-            canvas.drawString(2 * cm, (offset + 18) * cm, package_transaction.t_shirt_size.__str__())
+            canvas.setFont('DejaVuB', 10)
+            canvas.drawString(third_column * cm, (offset - 1 * text_line_height - 0.1) * cm, package_transaction.t_shirt_size.__str__())
 
             if package_transaction.t_shirt_size.t_shirt_preview:
                 svg_tshirt = svg2rlg(package_transaction.t_shirt_size.t_shirt_preview.path)
-                svg_tshirt.scale(0.1, 0.1)
-                svg_tshirt.drawOn(canvas, 15 * cm, (offset + 18) * cm)
-        canvas.line(0, (offset + 22.5) * cm, 100 * cm, (offset + 22.5) * cm)
+                svg_tshirt.scale(1.1 * cm / svg_tshirt.height, 1.1 * cm / svg_tshirt.width)
+                svg_tshirt.drawOn(canvas, 12 * cm, (offset - 3 * text_line_height - 0.05) * cm)
+        canvas.line(0, (offset - 3 * text_line_height - 0.2) * cm, 100 * cm, (offset - 3 * text_line_height - 0.2) * cm)
 
-        offset -= 5
-    canvas.line(0, (offset + 22.5) * cm, 100 * cm, (offset + 22.5) * cm)
+        offset -= 3 * text_line_height + 0.1
