@@ -17,7 +17,7 @@
 
 {% get_current_language as current_language_code %}
 
-{% cache 3600 profile_voucher user_attendance.id %}
+{% cache 3600 "profile_voucher" user_attendance.id %}
 {% endcache %}
 {% if user_attendance.voucher_set.exists %}
 <div>
@@ -38,7 +38,7 @@
 </div>
 {% endif %}
 
-{% cache 3600 profile user_attendance.team.subsidiary.city.slug current_language_code %}
+{% cache 3600 "profile_news" user_attendance.team.subsidiary.city.slug current_language_code user_attendance.campaign.slug %}
 <div class="row base">
    <div class="col-md-6">
       <h3>{% trans "Novinky" %}</h3>

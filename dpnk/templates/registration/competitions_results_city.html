@@ -13,7 +13,7 @@
 
 {% block content %}
 {% get_current_language as current_language_code %}
-{% cache 3600 competition_results_city city_slug current_language_code %}
+{% cache 3600 "competition_results_city" city_slug current_language_code campaign_slug %}
 {% trans "Čas vygenerování výsledků:" %} {% now "SHORT_DATETIME_FORMAT" %}
 {% if competitions %}
 {% for competition in competitions %}

@@ -3,7 +3,7 @@
 {% load cache %}
 
 {% block content %}
-{% cache 3600 "competitor_count2" %}
+{% cache 3600 "competitor_count2" campaign_slug %}
 <table class="table table-striped table-bordered table-hover">
 <tr>
    <th>{% trans "Město" %}</th>

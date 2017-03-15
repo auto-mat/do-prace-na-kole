@@ -5,7 +5,7 @@
 
 {% block content %}
 {% get_current_language as current_language_code %}
-{% cache 3600 competition_rules_city city_slug current_language_code %}
+{% cache 3600 "competition_rules_city" city_slug current_language_code campaign_slug %}
 {% if competitions %}
 {% for competition in competitions %}
 <h3>{{ competition.name }}</h3>
