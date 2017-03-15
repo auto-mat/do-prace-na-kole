@@ -250,7 +250,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         context = Context({'campaign': self.campaign})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
-            _number=-1,
+            _number=5,
             feed="content_to_backend",
             _page_subtype="event",
             _post_type="locations",

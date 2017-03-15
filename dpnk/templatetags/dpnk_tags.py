@@ -85,6 +85,7 @@ def _wp_news_cached(campaign, slug=None, wp_type="news"):
             _post_parent=slug,
             orderby='start_date',
             _year=util.today().year,
+            count=5,
         )
     elif wp_type == "prize":
         return _wp_news(
