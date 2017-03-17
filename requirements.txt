@@ -78,3 +78,4 @@ whitenoise
 django-sslify-admin
 django-favicon
 django-modeltranslation
+django-mass-edit

@@ -230,6 +230,7 @@ INSTALLED_APPS = (
     'storages',
     'favicon',
     'adminactions',
+    'massadmin',
     # 'cachalot',
 )
 

@@ -49,6 +49,7 @@ django-google-tag-manager==0.0.2
 django-gpxpy==0.0.2
 django-import-export==0.5.1
 django-leaflet==0.19.0
+django-mass-edit==3.0
 django-model-utils==2.6
 django-modeltranslation==0.12
 django_nested_inline==0.3.7
