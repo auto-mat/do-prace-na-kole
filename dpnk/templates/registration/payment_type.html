@@ -30,8 +30,10 @@ function switch_description(){
 
    if(sel_val == 'pay_beneficiary') {
       $("#payment_amount").text("{{ beneficiary_amount }} Kč");
+      $("#beneficiary-motivation").show()
    } else {
       $("#payment_amount").text("{{ amount }} Kč");
+      $("#beneficiary-motivation").hide()
    }
 };
 $("#div_id_payment_type").change(function() {
@@ -93,22 +95,11 @@ $(function(){
       <div id="aklub-form-container"></div>
    </div>
 </div>
-<div class="description_switcher_div description pay_description">
+<div class="description_switcher_div description pay_description pay_beneficiary_description">
    <h3>{% trans "Platba účastnického poplatku" %}</h3>
-   <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform" class="submit-once-form">
-   {% trans "Soutěžící:" %} {{ user_attendance.userprofile.user.get_full_name }}<br/>
-   {% trans "Účastnický poplatek:" %} <span id="payment_amount">{{ amount }} Kč</span><br/>
-   <div id="payu-hidden-values"></div>
-   <script language="JavaScript" type="text/javascript">
-   PlnPrintTemplate();
-   </script>
-   <input type="button" name="prev" value="{% trans "Předchozí" %}" class="btn btn-default" id="button-id-prev" onclick="window.location.href='{% url prev_url %}'">
-   <input type="submit" class="btn btn-primary" value="{% trans "Zaplatit" %}"/>
-</form>
-</div>
-<div class="description_switcher_div description pay_beneficiary_description">
-   <h3>{% trans "Platba benefičního účastnického poplatku" %}</h3>
+   <div id="beneficiary-motivation" style="display:none">
    {% trans "Platbou benefičního startovného podpoříte Auto*Mat ve zlepšování dopravních návyků obyvatel měst, v rozšíření kampaně Do práce na kole do nových lokalit a ve zlepšování podmínek pro městské městské cyklisty." %}
+   </div>
    <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform" class="submit-once-form">
    {% trans "Soutěžící:" %} {{ user_attendance.userprofile.user.get_full_name }}<br/>
    {% trans "Účastnický poplatek:" %} <span id="payment_amount">{{ amount }} Kč</span><br/>
