@@ -125,6 +125,10 @@ class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
     search_fields = (
         'id',
     )
+    list_filter = [
+        campaign_filter_generator('delivery_batch__campaign'),
+        'delivery_batch',
+    ]
 
 
 @admin.register(models.TeamPackage)
@@ -139,6 +143,7 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
     )
     list_filter = (
         'dispatched',
+        campaign_filter_generator('box__delivery_batch__campaign'),
         'box__delivery_batch',
     )
     raw_id_fields = (
