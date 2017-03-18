@@ -4,8 +4,6 @@ python manage.py denorm_drop
 python manage.py denorm_init
 
 # Prepare log files and start outputting logs to stdout
-touch logs/gunicorn.log
-touch logs/access.log
 tail -n 0 -f logs/*.log &
 
 service memcached restart
@@ -23,7 +21,7 @@ else
 		 --workers $GUNICORN_NUM_WORKERS \
 		 --timeout 6000 \
 		 --log-level=debug \
-		 --log-file=/home/aplikace/logs/gunicorn.log \
-		 --access-logfile=/home/aplikace/logs/access.log \
+		 --log-file=- \
+		 --access-logfile=- \
 		 "$@"
 fi
