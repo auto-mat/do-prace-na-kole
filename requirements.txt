@@ -75,5 +75,6 @@ boto
 django-google-tag-manager
 django-ses
 whitenoise
+django-sslify-admin
 django-favicon
 django-modeltranslation

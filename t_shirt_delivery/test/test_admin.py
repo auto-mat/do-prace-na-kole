@@ -22,6 +22,7 @@ import datetime
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
+from django.test.utils import override_settings
 
 from dpnk.test.mommy_recipes import CampaignRecipe, UserAttendanceRecipe
 from dpnk.test.util import print_response  # noqa
@@ -31,6 +32,9 @@ from model_mommy import mommy
 import settings
 
 
+@override_settings(
+    SSLIFY_ADMIN_DISABLE=True,
+)
 class AdminTestBase(TestCase):
     def setUp(self):
         super().setUp()

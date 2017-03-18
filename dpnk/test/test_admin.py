@@ -59,6 +59,7 @@ class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SSLIFY_ADMIN_DISABLE=True,
 )
 class LocalAdminModulesTests(DenormMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices']
@@ -106,6 +107,7 @@ class LocalAdminModulesTests(DenormMixin, TestCase):
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SSLIFY_ADMIN_DISABLE=True,
 )
 class AdminModulesTests(DenormMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'invoices', 'am_payments']
@@ -263,6 +265,7 @@ class AdminModulesTests(DenormMixin, TestCase):
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SSLIFY_ADMIN_DISABLE=True,
 )
 class AdminTests(TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']

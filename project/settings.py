@@ -111,6 +111,7 @@ STATICFILES_FINDERS = (
 
 SECRET_KEY = os.environ.get('DPNK_SECRET_KEY')
 MIDDLEWARE_CLASSES = [
+    'sslifyadmin.middleware.SSLifyAdminMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'subdomains.middleware.SubdomainMiddleware',
@@ -414,6 +415,8 @@ BROKER_URL = os.environ.get('DPNK_BROKER_URL', '')
 MIGRATION_MODULES = {
     'price_level': 'price_level_migrations',
 }
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 MESSAGE_TAGS = {
     message_constants.DEBUG: 'debug',

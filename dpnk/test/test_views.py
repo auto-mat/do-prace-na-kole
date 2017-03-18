@@ -458,6 +458,7 @@ class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    SSLIFY_ADMIN_DISABLE=True,
 )
 class ViewsTests(DenormMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'company_competition']
