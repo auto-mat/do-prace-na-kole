@@ -277,9 +277,9 @@ LOGOUT_NEXT_PAGE = reverse_lazy('profil')
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = ""
 if PRODUCTION_ENVIRONMENT:
-    AKLUB_URL = "http://klub.auto-mat.cz"
+    AKLUB_URL = "https://klub.auto-mat.cz"
 else:
-    AKLUB_URL = "http://devel-klub.auto-mat.cz"
+    AKLUB_URL = "https://devel-klub.auto-mat.cz"
 
 LEAFLET_CONFIG = {
     'DEFAULT_CENTER': (50.0866699218750000, 14.4387817382809995),
