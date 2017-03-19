@@ -83,7 +83,10 @@ class TestBatchCsv(TestCase):
         )
 
     def test_batch_csv(self):
+        """ Test generating batch CSV """
         batch = self.delivery_batch
+        self.subsidiary_box.subsidiary.box_addressee_name = ""
+        self.subsidiary_box.subsidiary.save()
         with NamedTemporaryFile(mode="w", delete=False) as temp_file:
             batch_csv.generate_csv(temp_file, batch)
         with open(temp_file.name) as temp_file:
@@ -100,6 +103,24 @@ class TestBatchCsv(TestCase):
             self.assertEquals(
                 ';Foo recipient| Foo company;CZ;Foo city;Foo street 123;12234;Testing User;'
                 'foo@email.cz;123456789;;;;;;1603824;0.5;0.125;1;;;',
+                csv_string_lines[1],
+            )
+        os.system("rm %s" % temp_file.name)
+
+    def test_batch_csv_addressee(self):
+        """ Test, that if subsidiary.addressee_name is filled, it will appear in CSV """
+        batch = self.delivery_batch
+        self.subsidiary_box.subsidiary.box_addressee_name = "Addressee name"
+        self.subsidiary_box.subsidiary.box_addressee_email = "addressee@email.cz"
+        self.subsidiary_box.subsidiary.box_addressee_telephone = "987654321"
+        self.subsidiary_box.subsidiary.save()
+        with NamedTemporaryFile(mode="w", delete=False) as temp_file:
+            batch_csv.generate_csv(temp_file, batch)
+        with open(temp_file.name) as temp_file:
+            csv_string_lines = temp_file.read().split("\n")
+            self.assertEquals(
+                ';Foo recipient| Foo company;CZ;Foo city;Foo street 123;12234;Addressee name;'
+                'addressee@email.cz;987654321;;;;;;1603824;0.5;0.125;1;;;',
                 csv_string_lines[1],
             )
         os.system("rm %s" % temp_file.name)

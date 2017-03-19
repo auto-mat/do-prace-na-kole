@@ -100,6 +100,10 @@ class TestSubsidiaryBox(TestCase):
         campaign = CampaignRecipe.make()
         user_attendance = UserAttendanceRecipe.make(
             campaign=campaign,
+            userprofile__user__first_name="Foo",
+            userprofile__user__last_name="name",
+            userprofile__telephone="123456789",
+            userprofile__user__email="foo@email.cz",
         )
         subsidiary_box = mommy.make(
             'SubsidiaryBox',
@@ -115,7 +119,32 @@ class TestSubsidiaryBox(TestCase):
             ],
             delivery_batch__campaign=campaign,
         )
-        self.assertEqual(subsidiary_box.get_representative_user_attendance(), user_attendance)
+        self.assertEqual(
+            subsidiary_box.get_representative_addressee(),
+            {
+                'name': "Foo name",
+                'telephone': "123456789",
+                'email': "foo@email.cz",
+            },
+        )
+
+    def test_get_representative_user_attendance_subsidiary_addressee(self):
+        campaign = CampaignRecipe.make()
+        subsidiary_box = mommy.make(
+            'SubsidiaryBox',
+            subsidiary__box_addressee_name="Foo name",
+            subsidiary__box_addressee_telephone="123456789",
+            subsidiary__box_addressee_email="foo@email.cz",
+            delivery_batch__campaign=campaign,
+        )
+        self.assertEqual(
+            subsidiary_box.get_representative_addressee(),
+            {
+                'name': "Foo name",
+                'telephone': "123456789",
+                'email': "foo@email.cz",
+            },
+        )
 
     def test_get_representative_user_attendance_no_package_transaction(self):
         campaign = CampaignRecipe.make()
@@ -128,7 +157,14 @@ class TestSubsidiaryBox(TestCase):
             ],
             delivery_batch__campaign=campaign,
         )
-        self.assertEqual(subsidiary_box.get_representative_user_attendance(), None)
+        self.assertEqual(
+            subsidiary_box.get_representative_addressee(),
+            {
+                'name': "",
+                'telephone': "",
+                'email': "",
+            },
+        )
 
     def test_get_representative_user_attendance_no_teampackage(self):
         campaign = CampaignRecipe.make()
@@ -136,7 +172,14 @@ class TestSubsidiaryBox(TestCase):
             'SubsidiaryBox',
             delivery_batch__campaign=campaign,
         )
-        self.assertEqual(subsidiary_box.get_representative_user_attendance(), None)
+        self.assertEqual(
+            subsidiary_box.get_representative_addressee(),
+            {
+                'name': "",
+                'telephone': "",
+                'email': "",
+            },
+        )
 
     def test_identifier(self):
         """

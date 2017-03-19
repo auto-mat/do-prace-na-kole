@@ -72,9 +72,22 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
     def __str__(self):
         return _("Krabice pro pobočku %s") % self.subsidiary
 
-    def get_representative_user_attendance(self):
+    def get_representative_addressee(self):
         """ Returns UserAttendance to which this box should be addressed """
-        return UserAttendance.objects.filter(transactions__packagetransaction__team_package__box=self).first()
+        if self.subsidiary and self.subsidiary.box_addressee_name:
+            name = self.subsidiary.box_addressee_name
+            email = self.subsidiary.box_addressee_email
+            telephone = self.subsidiary.box_addressee_telephone
+        else:
+            user_attendance = UserAttendance.objects.filter(transactions__packagetransaction__team_package__box=self).first()
+            name = user_attendance.userprofile.user.get_full_name() if user_attendance else ""
+            email = user_attendance.userprofile.user.email if user_attendance else ""
+            telephone = user_attendance.userprofile.telephone if user_attendance else ""
+        return {
+            'name': name,
+            'email': email,
+            'telephone': telephone,
+        }
 
     def get_t_shirt_count(self):
         return PackageTransaction.objects.filter(team_package__box=self).count()

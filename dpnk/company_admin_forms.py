@@ -89,6 +89,9 @@ class SubsidiaryForm(SubmitMixin, AdressForm):
             'address_street_number',
             'address_psc',
             'address_city',
+            'box_addressee_name',
+            'box_addressee_telephone',
+            'box_addressee_email',
             'city',
         )
 
