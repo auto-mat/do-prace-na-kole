@@ -102,6 +102,13 @@ if AWS_ACCESS_KEY_ID:
     AWS_SES_REGION_NAME = 'eu-west-1'
     AWS_SES_REGION_ENDPOINT = 'email.eu-west-1.amazonaws.com'
 
+    DBBACKUP_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    DBBACKUP_STORAGE_OPTIONS = {
+        'access_key': AWS_ACCESS_KEY_ID,
+        'secret_key': AWS_SECRET_ACCESS_KEY,
+        'bucket_name': 'dpnk-dbbackup',
+    }
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
