@@ -91,7 +91,8 @@ class TestDeliveryBatch(TestCase):
         campaign = CampaignRecipe.make(name="Testin campaign")
         UserAttendanceRecipe.make(
             campaign=campaign,
-            userprofile__user__username="test_username",
+            userprofile__user__first_name="Foo",
+            userprofile__user__last_name="Name",
             team__subsidiary__address_street="Foo street",
             team__subsidiary__address_psc=12234,
             team__subsidiary__address_street_number="123",
@@ -129,7 +130,7 @@ class TestDeliveryBatch(TestCase):
         # Test that PDF is created correctly - with the t-shirt sizes for all UserAttendance objects
         pdf = PdfFileReader(delivery_batch.subsidiarybox_set.first().customer_sheets)
         pdf_string = pdf.pages[1].extractText()
-        self.assertTrue("test_username" in pdf_string)
+        self.assertTrue("Foo Name" in pdf_string)
 
     def test_create_packages_not_member(self):
         """
