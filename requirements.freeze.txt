@@ -55,7 +55,7 @@ django-modeltranslation==0.12
 django_nested_inline==0.3.7
 django-nose==1.4.4
 django-oauth-toolkit==0.11.0
-django-polymorphic==1.0.2
+django-polymorphic==1.1
 django-price-level==0.2.1
 django-registration-redux==1.4
 django-related-admin==0.4.0
