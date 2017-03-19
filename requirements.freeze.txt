@@ -1,5 +1,6 @@
 amqp==1.4.9
 anyjson==0.3.3
+appdirs==1.4.3
 Babel==2.3.4
 beautifulsoup4==4.5.3
 billiard==3.3.0.23
@@ -52,17 +53,18 @@ django-leaflet==0.19.0
 django-mass-edit==3.0
 django-model-utils==2.6
 django-modeltranslation==0.12
-django_nested_inline==0.3.7
+django-nested-inline==0.3.7
 django-nose==1.4.4
 django-oauth-toolkit==0.11.0
 django-polymorphic==1.1
 django-price-level==0.2.1
+django-rank-query==0.1.0
 django-registration-redux==1.4
 django-related-admin==0.4.0
 django-rosetta==0.7.12
 django-ses==0.8.1
 django-settings-context-processor==0.2
--e git+https://github.com/halfnibble/django-smart-selects.git@1444107a3a7ffdf002773830a06c535b221ebe0b#egg=django_smart_selects
+django-smart-selects==1.3.4
 django-softhyphen==1.1.0
 django-sslify-admin==0.5.0
 django-storages==1.5.1
@@ -70,6 +72,7 @@ django-su==0.5.2
 django-subdomains==2.1.0
 django-wysiwyg-redactor==0.4.9.1
 djangorestframework==3.5.3
+docopt==0.6.2
 easy-thumbnails==2.3
 enum-compat==0.0.2
 flake8==3.2.1
@@ -81,6 +84,7 @@ flake8-strict==0.1.4
 flake8-tidy-imports==1.0.3
 flower==0.9.1
 freezegun==0.3.8
+future==0.16.0
 gpxpy==1.1.2
 gunicorn==19.6.0
 html5lib==0.9999999
@@ -101,6 +105,7 @@ nose-timer==0.6.0
 oauthlib==1.1.2
 olefile==0.44
 ordereddict==1.1
+packaging==16.8
 pexpect==4.2.1
 pickleshare==0.7.4
 Pillow==4.0.0
@@ -112,6 +117,7 @@ pudb==2016.2
 pycodestyle==2.2.0
 pyflakes==1.3.0
 Pygments==2.1.3
+pyparsing==2.2.0
 PyPDF2==1.26.0
 python-dateutil==2.6.0
 python-memcached==1.58
@@ -134,9 +140,11 @@ tablib==0.11.3
 termcolor==1.1.0
 tornado==4.2
 traitlets==4.3.1
+unicodecsv==0.14.1
 Unidecode==0.4.20
 urwid==1.3.1
 vine==1.1.3
 wcwidth==0.1.7
 whitenoise==3.3.0
-django-rank-query==0.1.0
+xlrd==1.0.0
+xlwt-future==0.8.0

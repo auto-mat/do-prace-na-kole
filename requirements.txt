@@ -1,7 +1,7 @@
 six
 -e git+https://github.com/PetrDlouhy/django.git@view_permission_django19_backport#egg=Django
 django-import-export
--e git+https://github.com/halfnibble/django-smart-selects.git#egg=django-smart-selects  # for Django 1.10 compatibility
+django-smart-selects
 psycopg2
 python-memcached
 django-chart-tools
@@ -35,7 +35,6 @@ django-subdomains
 django-compressor
 -e git+https://github.com/PetrDlouhy/slumber.git@ordereddict#egg=slumber  # news should be ordered by date
 django-bleach
-django-analytical
 gunicorn
 -e git+https://github.com/Thermondo/django-cache-utils.git#egg=django-cache-utils
 django-settings-context-processor

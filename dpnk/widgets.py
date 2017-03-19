@@ -83,6 +83,7 @@ class SelectOrCreate(forms.Select):
 class SelectChainedOrCreate(widgets.ChainedSelect):
     underlying_form = None
     create = False
+    sort = True
 
     def __init__(self, underlying_form_class, prefix="", new_description=u"Vytvořit novou položku", *args, **kwargs):
         super(widgets.ChainedSelect, self).__init__()
