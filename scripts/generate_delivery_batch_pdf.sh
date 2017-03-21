@@ -2,6 +2,7 @@
 
 pdftk $1 burst
 
+mkdir pdf_output
 
 file_ids=`echo $3 | sed s/\.pdf//`
 OIFS=$IFS
