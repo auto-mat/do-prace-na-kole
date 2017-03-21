@@ -45,8 +45,8 @@ def make_invoice_sheet_pdf(outfile, invoice):
         address="Bořivojova 694/108",
         zip="130 00",
         city="Praha 3",
-        bank_name="ERA/Poštovní spořitelna",
-        bank_account='217 359 444 / 0300',
+        bank_name="Fio banka",
+        bank_account='2601085491 / 2010',
         vat_id="CZ22670319",
         ir="22670319",
         phone="212 240 666",
@@ -57,7 +57,7 @@ def make_invoice_sheet_pdf(outfile, invoice):
     )
 
     creator = Creator(
-        u'Lucie Mullerová',
+        'Klára Dušáková',
         stamp_filename=os.path.join(DIR, "static/img/stamp.png"),
     )
 
