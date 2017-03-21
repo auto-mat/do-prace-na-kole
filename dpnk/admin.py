@@ -266,14 +266,23 @@ def create_subsidiary_resource(campaign_slugs):
 
 
 @admin.register(models.Subsidiary)
-class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
+class SubsidiaryAdmin(CityAdminMixin, ImportExportMixin, admin.ModelAdmin):
     list_display = (
-        'name',
+        'id',
         'company',
+        'address_recipient',
+        'address_street',
+        'address_street_number',
+        'address_psc',
+        'address_city',
+        'address_district',
         'city',
         'user_count',
         'team_count',
         'id',
+    )
+    list_editable = (
+        'address_psc',
     )
     inlines = [TeamInline, ]
     list_filter = [campaign_filter_generator('teams__campaign'), 'city', 'active']
@@ -282,10 +291,10 @@ class SubsidiaryAdmin(CityAdminMixin, ExportMixin, admin.ModelAdmin):
         'company__name',
         'address_street',
         'address_street_number',
-        'address_recipient',
         'address_psc',
         'address_city',
-        'address_district')
+        'address_district',
+    )
     raw_id_fields = ('company',)
     list_max_show_all = 10000
     save_as = True
