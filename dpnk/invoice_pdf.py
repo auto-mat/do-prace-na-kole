@@ -28,12 +28,12 @@ def make_invoice_sheet_pdf(outfile, invoice):
     DIR = os.path.dirname(__file__)
 
     client = Client(
-        invoice.company.name,
-        address=u"%s %s" % (invoice.company.address_street, invoice.company.address_street_number),
-        zip=invoice.company.address_psc,
-        city=invoice.company.address_city,
-        ir=invoice.company.ico,
-        vat_id=invoice.company.dic,
+        invoice.company_name,
+        address="%s %s" % (invoice.company_address_street, invoice.company_address_street_number),
+        zip=invoice.company_address_psc,
+        city=invoice.company_address_city,
+        ir=invoice.company_ico,
+        vat_id=invoice.company_dic,
     )
 
     if invoice.order_number:
@@ -61,11 +61,10 @@ def make_invoice_sheet_pdf(outfile, invoice):
         stamp_filename=os.path.join(DIR, "static/img/stamp.png"),
     )
 
-    variable_symbol = "%s%03d" % (invoice.exposure_date.year, invoice.sequence_number)
     invoice_gen = Invoice(client, provider, creator)
     invoice_gen.title = u"Faktura %s/%s" % (invoice.sequence_number, invoice.exposure_date.year)
-    invoice_gen.variable_symbol = variable_symbol
-    invoice_gen.number = variable_symbol
+    invoice_gen.variable_symbol = invoice.variable_symbol()
+    invoice_gen.number = invoice.document_number()
     invoice_gen.date = invoice.exposure_date
     invoice_gen.payback = invoice.exposure_date + datetime.timedelta(days=14)
     invoice_gen.taxable_date = invoice.taxable_date

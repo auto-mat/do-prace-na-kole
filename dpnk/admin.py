@@ -1294,10 +1294,10 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'campaign',
         'sequence_number',
         'order_number',
-        'company__ico',
-        'company__dic',
+        'company_ico',
+        'company_dic',
         'company_pais_benefitial_fee',
-        'company_address',
+        'company_address_street',
     ]
     readonly_fields = ['created', 'author', 'updated_by', 'invoice_count']
     list_filter = [CampaignFilter, InvoicePaidFilter, 'company_pais_benefitial_fee']

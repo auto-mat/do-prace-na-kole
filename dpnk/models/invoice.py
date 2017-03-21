@@ -36,6 +36,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from unidecode import unidecode
 
+from .address import AddressOptional
 from .company import Company
 from .transactions import Payment, Status
 from .. import invoice_pdf, util
@@ -107,6 +108,27 @@ class Invoice(models.Model):
         null=True,
         blank=True,
     )
+    company_name = models.CharField(
+        verbose_name=_("Název organizace"),
+        help_text=_("Název organizace. Pokud je prázdné, vyplní se všechny údaje podle nastavené organizace."),
+        max_length=60,
+        null=True,
+        blank=True,
+    )
+    company_address = AddressOptional()
+    company_ico = models.PositiveIntegerField(
+        default=None,
+        verbose_name=_("IČO organizace"),
+        null=True,
+        blank=True,
+    )
+    company_dic = models.CharField(
+        verbose_name=_("DIČ organizace"),
+        max_length=15,
+        default="",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return "%s - %s" % (self.sequence_number, self.campaign.slug)
@@ -116,8 +138,16 @@ class Invoice(models.Model):
             return False
         return self.paid_date <= util.today()
 
+    def variable_symbol(self):
+        return "%sD%03d" % (self.exposure_date.year, self.sequence_number)
+
+    def document_number(self):
+        return "%s%03d" % (self.exposure_date.year, self.sequence_number)
+
     @transaction.atomic
     def save(self, *args, **kwargs):
+        self.fill_company_details()
+
         if not self.sequence_number:
             campaign = self.campaign
             first = campaign.invoice_sequence_number_first
@@ -152,6 +182,13 @@ class Invoice(models.Model):
             payment.save()
             denorm.flush()
 
+    def fill_company_details(self):
+        if not self.company_name:  # set invoice parameters from company
+            self.company_name = self.company.name
+            self.company_address = self.company.address
+            self.company_ico = self.company.ico
+            self.company_dic = self.company.dic
+
     def clean(self):
         if not self.pk and hasattr(self, 'campaign') and not self.payments_to_add().exists():
             raise ValidationError(_(u"Neexistuje žádná nefakturovaná platba"))
@@ -177,6 +214,8 @@ def payments_to_invoice(company, campaign):
 
 @receiver(post_save, sender=Invoice)
 def create_invoice_files(sender, instance, created, **kwargs):
+    instance.fill_company_details()
+
     if created:
         instance.add_payments()
 

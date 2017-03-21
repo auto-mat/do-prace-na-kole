@@ -41,59 +41,67 @@ def get_address_string(address):
     )
 
 
-class Address(CompositeField):
-    street = models.CharField(
-        verbose_name=_(u"Ulice"),
-        help_text=_(u"Např. „Šeříková“ nebo „Nám. W. Churchilla“"),
-        default="",
-        max_length=50,
-        null=False,
-    )
-    street_number = models.CharField(
-        verbose_name=_(u"Číslo domu"),
-        help_text=_(u"Např. „2965/12“ nebo „156“"),
-        default="",
-        max_length=10,
-        null=False,
-        blank=False,
-    )
-    recipient = models.CharField(
-        verbose_name=_("Název pobočky (závodu, kanceláře, fakulty), nepovinné pole"),
-        help_text=_(
-            "Např. „odštěpný závod Brno“, „oblastní pobočka Liberec“, „Přírodovědecká fakulta“ atp. "
-            "Nemá-li vaše organizace pobočky, pak nechte pole prázdné.",
-        ),
-        default="",
-        max_length=50,
-        null=True,
-        blank=True,
-    )
-    district = models.CharField(
-        verbose_name=_(u"Městská část"),
-        default="",
-        max_length=50,
-        null=True,
-        blank=True,
-    )
-    psc = models.IntegerField(
-        verbose_name=_(u"PSČ"),
-        help_text=_(u"Např.: „130 00“"),
-        validators=[
-            MaxValueValidator(99999),
-            MinValueValidator(10000),
-        ],
-        default=None,
-        null=True,
-        blank=False,
-    )
-    city = models.CharField(
-        verbose_name=_(u"Město"),
-        help_text=_(u"Např. „Jablonec n. N.“ nebo „Praha 3, Žižkov“"),
-        default="",
-        max_length=50,
-        null=False,
-        blank=False,
-    )
+def address_generator(null_blank=False):
+    class AddressField(CompositeField):
+        street = models.CharField(
+            verbose_name=_(u"Ulice"),
+            help_text=_(u"Např. „Šeříková“ nebo „Nám. W. Churchilla“"),
+            default="",
+            max_length=50,
+            null=null_blank,
+            blank=null_blank,
+        )
+        street_number = models.CharField(
+            verbose_name=_(u"Číslo domu"),
+            help_text=_(u"Např. „2965/12“ nebo „156“"),
+            default="",
+            max_length=10,
+            null=null_blank,
+            blank=null_blank,
+        )
+        recipient = models.CharField(
+            verbose_name=_("Název pobočky (závodu, kanceláře, fakulty), nepovinné pole"),
+            help_text=_(
+                "Např. „odštěpný závod Brno“, „oblastní pobočka Liberec“, „Přírodovědecká fakulta“ atp. "
+                "Nemá-li vaše organizace pobočky, pak nechte pole prázdné.",
+            ),
+            default="",
+            max_length=50,
+            null=True,
+            blank=True,
+        )
+        district = models.CharField(
+            verbose_name=_(u"Městská část"),
+            default="",
+            max_length=50,
+            null=True,
+            blank=True,
+        )
+        psc = models.IntegerField(
+            verbose_name=_(u"PSČ"),
+            help_text=_(u"Např.: „130 00“"),
+            validators=[
+                MaxValueValidator(99999),
+                MinValueValidator(10000),
+            ],
+            default=None,
+            null=True,
+            blank=null_blank,
+        )
+        city = models.CharField(
+            verbose_name=_(u"Město"),
+            help_text=_(u"Např. „Jablonec n. N.“ nebo „Praha 3, Žižkov“"),
+            default="",
+            max_length=50,
+            null=null_blank,
+            blank=null_blank,
+        )
 
-    def __str__(self):
-        return get_address_string(self)
+        def __str__(self):
+            return get_address_string(self)
+
+    return AddressField
+
+
+Address = address_generator()
+AddressOptional = address_generator(True)
