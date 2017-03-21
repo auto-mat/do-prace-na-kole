@@ -46,7 +46,7 @@ from djcelery.models import TaskMeta
 from import_export import fields, resources
 from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
 
-from leaflet.admin import LeafletGeoAdmin
+from leaflet.admin import LeafletGeoAdmin, LeafletGeoAdminMixin
 
 from modeltranslation.admin import TranslationTabularInline
 
@@ -461,7 +461,7 @@ class UserAttendanceForm(forms.ModelForm):
         return super().clean()
 
 
-class UserAttendanceInline(NestedTabularInline):
+class UserAttendanceInline(LeafletGeoAdminMixin, NestedTabularInline):
     model = models.UserAttendance
     form = UserAttendanceForm
     extra = 0
@@ -1050,9 +1050,19 @@ class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__c
             return format_html(string_concat('<a href="{}?question={}">', _('vyhodnocení odpovědí'), '</a>'), reverse('admin_answers'), obj.pk)
 
 
-class GpxFileInline(admin.TabularInline):
+class GpxFileInline(LeafletGeoAdminMixin, admin.TabularInline):
     model = models.GpxFile
-    raw_id_fields = ('user_attendance', 'trip')
+    raw_id_fields = (
+        'user_attendance',
+        'trip',
+    )
+    readonly_fields = (
+        'author',
+        'created',
+    )
+    exclude = (
+        'ecc_last_upload',
+    )
     extra = 0
 
 
