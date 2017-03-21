@@ -55,7 +55,7 @@ class CompanyAdmin(models.Model):
         choices=COMPANY_APPROVAL,
         max_length=16,
         null=False,
-        default='undecided',
+        default='approved',
     )
 
     motivation_company_admin = models.TextField(
@@ -90,7 +90,7 @@ class CompanyAdmin(models.Model):
 
     can_confirm_payments = models.BooleanField(
         verbose_name=_(u"Může potvrzovat platby"),
-        default=False,
+        default=True,
         null=False,
     )
     will_pay_opt_in = models.BooleanField(

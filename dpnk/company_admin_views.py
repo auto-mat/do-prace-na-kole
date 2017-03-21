@@ -161,6 +161,7 @@ class CompanyAdminApplicationView(TitleViewMixin, CompanyAdminMixin, Registratio
 
         admin = CompanyAdmin(
             motivation_company_admin=form.cleaned_data['motivation_company_admin'],
+            will_pay_opt_in=form.cleaned_data['will_pay_opt_in'],
             administrated_company=form.cleaned_data['administrated_company'],
             campaign=form.cleaned_data['campaign'],
             userprofile=userprofile,

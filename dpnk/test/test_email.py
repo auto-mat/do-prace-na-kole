@@ -70,7 +70,12 @@ class TestEmails(TestCase):
             approved_for_team='approved',
         )
 
-        self.company_admin = CompanyAdmin.objects.create(userprofile=self.user.userprofile, administrated_company=self.company, campaign=self.campaign)
+        self.company_admin = CompanyAdmin.objects.create(
+            userprofile=self.user.userprofile,
+            administrated_company=self.company,
+            campaign=self.campaign,
+            company_admin_approved='undecided',
+        )
 
     def test_send_approval_request_mail(self):
         email.approval_request_mail(self.user_attendance)

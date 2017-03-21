@@ -1203,7 +1203,9 @@ class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsi
         'company_admin_approved',
         'administrated_company__name',
         'can_confirm_payments',
+        'will_pay_opt_in',
         'note',
+        'motivation_company_admin',
         'campaign',
     ]
     list_filter = [
