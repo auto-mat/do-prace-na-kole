@@ -37,6 +37,7 @@ class PackageTransaction(Transaction):
         verbose_name=_(u"Tracking number"),
         unique=True,
         null=True,
+        blank=True,
         default=None,
     )
     team_package = models.ForeignKey(
