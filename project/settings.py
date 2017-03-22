@@ -114,7 +114,6 @@ if AWS_ACCESS_KEY_ID:
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
 )
 
 
@@ -218,7 +217,6 @@ INSTALLED_APPS = (
     'easy_thumbnails',
     'crispy_forms',
     'adminfilters',
-    'compressor',
     'django_bleach',
     'gtm',
     'leaflet',
@@ -274,12 +272,6 @@ REST_FRAMEWORK = {
 REDACTOR_OPTIONS = {'formatting': ['p', 'blockquote', 'pre', 'h4', 'h5']}
 BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br', 'span', 'div', 'h4', 'h5', 'pre', 'blockquote', 'ol', 'li', 'ul']
 BLEACH_ALLOWED_ATTRIBUTES = ['href', ]
-COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = True
-COMPRESS_ROOT = normpath(PROJECT_ROOT, "dpnk/static")
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc {infile} {outfile}'),
-)
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SERVER_EMAIL = 'kontakt@dopracenakole.cz'

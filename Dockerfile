@@ -27,6 +27,8 @@ run pip install -r requirements-test.txt
 
 copy . .
 
+run DPNK_SECRET_KEY="fake_key" python manage.py collectstatic --noinput
+
 EXPOSE 8000
 RUN mkdir media logs
 VOLUME ["logs", "media"]

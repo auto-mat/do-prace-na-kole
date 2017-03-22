@@ -9,19 +9,13 @@ tail -n 0 -f logs/*.log &
 service memcached restart
 
 # Start Gunicorn processes
-if [ $TEST == "test" ]; then
-	echo Starting tests
-	./runtests.sh
-	# coveralls
-else
-	echo Starting Gunicorn.
-	exec gunicorn wsgi:application \
-		 --name dpnk \
-		 --bind 0.0.0.0:8000 \
-		 --workers $GUNICORN_NUM_WORKERS \
-		 --timeout 6000 \
-		 --log-level=debug \
-		 --log-file=- \
-		 --access-logfile=- \
-		 "$@"
-fi
+echo Starting Gunicorn.
+exec gunicorn wsgi:application \
+	 --name dpnk \
+	 --bind 0.0.0.0:8000 \
+	 --workers $GUNICORN_NUM_WORKERS \
+	 --timeout 6000 \
+	 --log-level=debug \
+	 --log-file=- \
+	 --access-logfile=- \
+	 "$@"
