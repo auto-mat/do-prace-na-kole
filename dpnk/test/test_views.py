@@ -521,12 +521,16 @@ class ViewsTests(DenormMixin, TestCase):
             'personal_data_opt_in': True,
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertRedirects(response, reverse('company_structure'), target_status_code=403)
+        self.assertRedirects(response, reverse('company_structure'))
         user = models.User.objects.get(email='testadmin@test.cz')
         self.assertEquals(user.get_full_name(), "Company Admin")
         self.assertEquals(models.UserProfile.objects.get(user=user).telephone, '123456789')
         self.assertEquals(models.CompanyAdmin.objects.get(userprofile=user.userprofile).administrated_company.pk, 2)
+        self.assertEqual(len(mail.outbox), 2)
         msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
+        self.assertEqual(str(msg.subject), 'Testing campaign - firemní koordinátor - schválení správcovství organizace')
+        msg = mail.outbox[1]
         self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
         self.assertEqual(str(msg.subject), 'Testing campaign - firemní koordinátor - potvrzení registrace')
 

@@ -280,7 +280,11 @@ class AdminTests(TestCase):
     def test_subsidiary_admin(self):
         address = reverse('admin:dpnk_subsidiary_changelist')
         response = self.client.get(address, follow=True)
-        self.assertContains(response, "Ulice 1, 111 11 Praha")
+        self.assertContains(
+            response,
+            '<td class="field-address_street">Ulice</td>',
+            html=True,
+        )
 
     def test_competition_admin(self):
         address = reverse('admin:dpnk_competition_changelist')
