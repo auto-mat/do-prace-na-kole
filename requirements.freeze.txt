@@ -88,7 +88,7 @@ future==0.16.0
 gpxpy==1.1.2
 gunicorn==19.6.0
 html5lib==0.9999999
--e git+https://github.com/PetrDlouhy/InvoiceGenerator.git@6431e1677c3be3d5832fc7bbfa6cb6d52b7860d0#egg=InvoiceGenerator
+InvoiceGenerator==0.5.4
 ipython==5.1.0
 ipython-genutils==0.1.0
 kombu==3.0.37
