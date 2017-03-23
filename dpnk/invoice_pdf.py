@@ -64,9 +64,9 @@ def make_invoice_sheet_pdf(outfile, invoice):
     invoice_gen.title = u"Faktura %s/%s" % (invoice.sequence_number, invoice.exposure_date.year)
     invoice_gen.variable_symbol = invoice.variable_symbol()
     invoice_gen.number = invoice.document_number()
-    invoice_gen.date = invoice.exposure_date
-    invoice_gen.payback = invoice.payback_date
-    invoice_gen.taxable_date = invoice.taxable_date
+    invoice_gen.date = invoice.exposure_date.strftime("%d.%m.%Y")
+    invoice_gen.payback = invoice.payback_date.strftime("%d.%m.%Y")
+    invoice_gen.taxable_date = invoice.taxable_date.strftime("%d.%m.%Y")
     invoice_gen.rounding_result = True
     invoice_gen.use_tax = True
     invoice_gen.currency_locale = u"cs_CZ.UTF-8"
