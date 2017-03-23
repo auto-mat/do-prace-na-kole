@@ -58,13 +58,18 @@ class Invoice(models.Model):
     )
     exposure_date = models.DateField(
         verbose_name=_(u"Den vystavení daňového dokladu"),
-        default=datetime.date.today,
         null=True,
+        blank=True,
     )
     taxable_date = models.DateField(
         verbose_name=_(u"Den uskutečnění zdanitelného plnění"),
-        default=datetime.date.today,
         null=True,
+        blank=True,
+    )
+    payback_date = models.DateField(
+        verbose_name=_("Datum splatnosti"),
+        null=True,
+        blank=True,
     )
     paid_date = models.DateField(
         verbose_name=_(u"Datum zaplacení"),
@@ -144,6 +149,21 @@ class Invoice(models.Model):
     def document_number(self):
         return "%s%03d" % (self.exposure_date.year, self.sequence_number)
 
+    def set_taxable_date(self):
+        self.taxable_date = min(
+            util.today(),
+            self.campaign.phase("competition").date_to,
+        )
+
+    def set_payback_date(self):
+        self.payback_date = util.today() + datetime.timedelta(days=14)
+
+    def set_exposure_date(self):
+        self.exposure_date = min(
+            util.today(),
+            self.campaign.phase("competition").date_to + datetime.timedelta(days=14),
+        )
+
     @transaction.atomic
     def save(self, *args, **kwargs):
         self.fill_company_details()
@@ -166,7 +186,14 @@ class Invoice(models.Model):
             else:
                 self.sequence_number = first
 
-            self.taxable_date = min(datetime.date.today(), self.campaign.phase("competition").date_from)
+        if not self.taxable_date:
+            self.set_taxable_date()
+
+        if not self.payback_date:
+            self.set_payback_date()
+
+        if not self.exposure_date:
+            self.set_exposure_date()
         super(Invoice, self).save(*args, **kwargs)
 
     def payments_to_add(self):
