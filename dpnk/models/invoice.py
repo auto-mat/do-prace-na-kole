@@ -30,7 +30,7 @@ from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.db import transaction
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
@@ -166,8 +166,6 @@ class Invoice(models.Model):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
-        self.fill_company_details()
-
         if not self.sequence_number:
             campaign = self.campaign
             first = campaign.invoice_sequence_number_first
@@ -185,15 +183,6 @@ class Invoice(models.Model):
                 self.sequence_number = last_transaction.sequence_number + 1
             else:
                 self.sequence_number = first
-
-        if not self.taxable_date:
-            self.set_taxable_date()
-
-        if not self.payback_date:
-            self.set_payback_date()
-
-        if not self.exposure_date:
-            self.set_exposure_date()
         super(Invoice, self).save(*args, **kwargs)
 
     def payments_to_add(self):
@@ -239,10 +228,22 @@ def payments_to_invoice(company, campaign):
     )
 
 
-@receiver(post_save, sender=Invoice)
-def create_invoice_files(sender, instance, created, **kwargs):
+@receiver(pre_save, sender=Invoice)
+def fill_invoice_parameters(sender, instance, **kwargs):
     instance.fill_company_details()
 
+    if not instance.taxable_date:
+        instance.set_taxable_date()
+
+    if not instance.payback_date:
+        instance.set_payback_date()
+
+    if not instance.exposure_date:
+        instance.set_exposure_date()
+
+
+@receiver(post_save, sender=Invoice)
+def create_invoice_files(sender, instance, created, **kwargs):
     if created:
         instance.add_payments()
 
