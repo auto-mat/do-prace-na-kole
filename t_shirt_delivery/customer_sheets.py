@@ -59,9 +59,13 @@ def make_customer_sheets_pdf(outfile, subsidiary_box):
 def make_sheet(subsidiary_box, canvas):
     make_subsidiary_sheet(subsidiary_box, canvas)
     canvas.showPage()
+    package_count = subsidiary_box.teampackage_set.count()
+    page_number = 1
     for team_package in subsidiary_box.teampackage_set.all():
-        make_team_sheet(team_package, canvas)
+        package_counter = "%s/%s" % (page_number, package_count)
+        make_team_sheet(team_package, canvas, package_counter)
         canvas.showPage()
+        page_number += 1
 
 
 def make_subsidiary_sheet(subsidiary_box, canvas):
@@ -107,13 +111,14 @@ def make_subsidiary_sheet(subsidiary_box, canvas):
     canvas.drawString(second_column * cm, (page_height - offset - 5 * 0.5) * cm, "%s" % subsidiary.address_city)
 
 
-def make_team_sheet(team_package, canvas):
+def make_team_sheet(team_package, canvas, package_counter):
     barcode = code128.Code128(team_package.identifier(), barWidth=0.5 * mm, barHeight=20 * mm, humanReadable=True)
     barcode.drawOn(canvas, 8.3 * cm, (page_height - 2.7) * cm)
     canvas.drawString(9 * cm, (page_height - 0.45) * cm, "ID týmového balíku:")
 
     canvas.setFont('DejaVuB', 12)
     canvas.drawString(4.5 * cm, (page_height - 1.2) * cm, "Balíček pro tým")
+    canvas.drawString(4.5 * cm, (page_height - 1.8) * cm, package_counter)
     canvas.setFont('DejaVu', 8)
     canvas.drawString(first_column * cm, (page_height - 2.3) * cm, "Tým: ")
     canvas.drawString(second_column * cm, (page_height - 2.3) * cm, team_package.team.name)
