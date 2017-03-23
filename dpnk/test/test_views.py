@@ -858,6 +858,22 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.get(address)
         self.assertContains(response, '<div class="alert alert-danger">Již máte zaplaceno, nemůžete měnit tým mimo svoji pobočku.</div>', html=True)
 
+    def test_dpnk_team_invitation_full(self):
+        self.user_attendance.campaign.max_team_members = 1
+        self.user_attendance.campaign.save()
+        token = "token123215"
+        team = models.Team.objects.get(invitation_token=token)
+        team.save()
+        denorm.flush()
+        email = self.user_attendance.userprofile.user.email
+        address = reverse('zmenit_tym', kwargs={'token': token, 'initial_email': email})
+        response = self.client.get(address)
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo vytvořit jiný tým.</div>',
+            html=True,
+        )
+
     def test_dpnk_team_invitation_team_last_campaign(self):
         models.Payment.objects.all().delete()
         denorm.flush()

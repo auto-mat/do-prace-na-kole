@@ -92,7 +92,8 @@ class Team(models.Model):
         return member_count
 
     def is_full(self):
-        return self.member_count >= self.campaign.max_team_members
+        if self.member_count is not None:
+            return self.member_count >= self.campaign.max_team_members
 
     @denormalized(
         models.IntegerField,
