@@ -124,9 +124,16 @@ class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
     )
     search_fields = (
         'id',
+        'subsidiary__address_street',
+        'subsidiary__address_psc',
+        'subsidiary__address_recipient',
+        'subsidiary__address_city',
+        'subsidiary__address_district',
+        'subsidiary__company__name',
     )
     list_filter = [
         campaign_filter_generator('delivery_batch__campaign'),
+        'dispatched',
         'delivery_batch',
     ]
 
@@ -142,8 +149,8 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
         'team__subsidiary',
     )
     list_filter = (
-        'dispatched',
         campaign_filter_generator('box__delivery_batch__campaign'),
+        'dispatched',
         'box__delivery_batch',
     )
     raw_id_fields = (
