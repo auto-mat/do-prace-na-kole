@@ -19,6 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
+from django.utils.translation import ugettext_lazy as _
 
 from import_export.admin import ImportExportMixin
 
@@ -30,6 +32,25 @@ from . import models
 @admin.register(models.DiscountCouponType)
 class DiscountCouponTypeAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ('name', 'prefix',)
+
+
+class NullUserAttendanceListFilter(SimpleListFilter):
+    title = _('Účastník kampaně')
+    parameter_name = 'userattendance'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('False', _('Přiřazen'), ),
+            ('True', _('Nepřiřazen'), ),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() in ('False', 'True'):
+            kwargs = {
+                '{0}__isnull'.format(self.parameter_name): self.value() == 'True',
+            }
+            return queryset.filter(**kwargs)
+        return queryset
 
 
 @admin.register(models.DiscountCoupon)
@@ -49,5 +70,5 @@ class DiscountCouponAdmin(ImportExportMixin, RelatedFieldAdmin):
     )
     readonly_fields = ('token', 'created', 'updated', 'author', 'updated_by')
     list_editable = ('note', 'receiver', 'discount', 'user_attendance_number', 'sent')
-    list_filter = ('coupon_type__name', 'sent')
+    list_filter = ('coupon_type__name', 'sent', 'user_attendance_number', NullUserAttendanceListFilter)
     search_fields = ('token', 'note', 'receiver')

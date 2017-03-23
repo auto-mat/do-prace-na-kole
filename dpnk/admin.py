@@ -749,6 +749,8 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         ('team__member_count', AllValuesComboFilter),
         ('transactions__packagetransaction__team_package__box__delivery_batch', RelatedFieldComboFilter),
         ('userprofile__sex', AllValuesComboFilter),
+        'discount_coupon__coupon_type__name',
+        'discount_coupon__discount',
         TrackFilter,
         HasVoucherFilter,
         HasRidesFilter,

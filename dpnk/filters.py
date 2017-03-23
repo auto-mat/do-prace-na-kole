@@ -95,7 +95,7 @@ class CityCampaignFilter(CampaignFilter):
 
 
 class HasVoucherFilter(SimpleListFilter):
-    title = _(u"Má nějaké vouchery")
+    title = _("Má nějaké vouchery třetích stran")
     parameter_name = u'has_voucher'
     field = 'has_voucher'
 
