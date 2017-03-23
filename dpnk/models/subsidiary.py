@@ -97,4 +97,7 @@ class Subsidiary(models.Model):
         if self.address_recipient.lower().strip() == self.company.name.lower().strip():
             return self.address_recipient
         else:
-            return "| ".join(filter(None, [self.address_recipient, self.company.name]))
+            if self.address_recipient:
+                return "%s (%s)" % (self.address_recipient, self.company.name)
+            else:
+                return self.company.name
