@@ -129,7 +129,7 @@ class TestDeliveryBatch(TestCase):
 
         # Test that PDF is created correctly - with the t-shirt sizes for all UserAttendance objects
         pdf = PdfFileReader(delivery_batch.subsidiarybox_set.first().customer_sheets)
-        pdf_string = pdf.pages[1].extractText()
+        pdf_string = pdf.pages[0].extractText()
         self.assertTrue("Foo Name" in pdf_string)
 
     def test_create_packages_not_member(self):

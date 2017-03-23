@@ -40,8 +40,7 @@ page_width = 15
 text_line_height = 0.4
 first_column = 0.5
 second_column = 2
-third_column = 7
-fourth_column = 9
+third_column = 10
 
 
 def make_customer_sheets_pdf(outfile, subsidiary_box):
@@ -57,8 +56,6 @@ def make_customer_sheets_pdf(outfile, subsidiary_box):
 
 
 def make_sheet(subsidiary_box, canvas):
-    make_subsidiary_sheet(subsidiary_box, canvas)
-    canvas.showPage()
     package_count = subsidiary_box.teampackage_set.count()
     page_number = 1
     for team_package in subsidiary_box.teampackage_set.all():
@@ -122,8 +119,10 @@ def make_team_sheet(team_package, canvas, package_counter):
     canvas.setFont('DejaVu', 8)
     canvas.drawString(first_column * cm, (page_height - 2.3) * cm, "Tým: ")
     canvas.drawString(second_column * cm, (page_height - 2.3) * cm, team_package.team.name)
-    canvas.drawString(first_column * cm, (page_height - 2.7) * cm, "ID krab.: ")
-    canvas.drawString(second_column * cm, (page_height - 2.7) * cm, "%s" % team_package.box.id)
+    canvas.drawString(first_column * cm, (page_height - 2.65) * cm, "ID krab.: ")
+    canvas.drawString(second_column * cm, (page_height - 2.65) * cm, "%s" % team_package.box.id)
+    canvas.drawString(first_column * cm, (page_height - 3.0) * cm, "Spol.:")
+    canvas.drawString(second_column * cm, (page_height - 3.0) * cm, "%s" % team_package.team.subsidiary.company)
 
     im = Image(logo_file, 3.98 * cm, 1.5 * cm)
     im.drawOn(canvas, first_column * cm, (page_height - 2) * cm)
@@ -149,7 +148,7 @@ def make_team_sheet(team_package, canvas, package_counter):
             if package_transaction.t_shirt_size.t_shirt_preview:
                 svg_tshirt = svg2rlg(package_transaction.t_shirt_size.t_shirt_preview.path)
                 svg_tshirt.scale(1.1 * cm / svg_tshirt.height, 1.1 * cm / svg_tshirt.width)
-                svg_tshirt.drawOn(canvas, 12 * cm, (offset - 3 * text_line_height - 0.05) * cm)
+                svg_tshirt.drawOn(canvas, 13 * cm, (offset - 3 * text_line_height - 0.05) * cm)
         canvas.line(0, (offset - 3 * text_line_height - 0.2) * cm, 100 * cm, (offset - 3 * text_line_height - 0.2) * cm)
 
         offset -= 3 * text_line_height + 0.1

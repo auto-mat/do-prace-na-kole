@@ -82,8 +82,6 @@ class TestCreateCustomerSheets(TestCase):
             subsidiary__address_city="Foo city",
             subsidiary__address_recipient="Foo recipient",
             subsidiary__id=123,
-            subsidiary__company__name="Foo company",
-            subsidiary__company__ico=1231321313,
             delivery_batch__campaign=campaign,
             id=1603824,
         )
@@ -93,6 +91,8 @@ class TestCreateCustomerSheets(TestCase):
             team__users=user_attendances,
             team__name="Foo team with max name lenth fooo foo foo foo fooo",
             team__campaign=campaign,
+            team__subsidiary__company__name="Foo company",
+            team__subsidiary__company__ico=1231321313,
             id=34567812,
             packagetransaction_set=mommy.make(
                 "PackageTransaction",
@@ -107,15 +107,8 @@ class TestCreateCustomerSheets(TestCase):
             customer_sheets.make_customer_sheets_pdf(temp_file, self.subsidiary_box)
             pdf = PdfFileReader(temp_file)
             pdf_string = pdf.pages[0].extractText()
-            self.assertTrue("Testing campaign" in pdf_string)
-            self.assertTrue("S1603824" in pdf_string)
+            self.assertTrue("1603824" in pdf_string)
             self.assertTrue("Foo company" in pdf_string)
-            self.assertTrue("1231321313" in pdf_string)
-            self.assertTrue("Foo recipient" in pdf_string)
-            self.assertTrue("Foo street 123" in pdf_string)
-            self.assertTrue("12234" in pdf_string)
-            self.assertTrue("Foo city" in pdf_string)
-            pdf_string = pdf.pages[1].extractText()
             self.assertTrue("T34567812" in pdf_string)
             self.assertTrue("Testing t-shirt size" in pdf_string)
             self.assertTrue("Testing User 1" in pdf_string)
