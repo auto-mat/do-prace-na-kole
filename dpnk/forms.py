@@ -111,15 +111,15 @@ class AuthenticationFormDPNK(AuthenticationForm):
             'username', 'password',
             HTML(
                 _(
-                    """<a href="%(password_reset_address)s">Zapomněli jste své přihlašovací údaje?</a>
-                    <br/><br/>
-                    Ještě nemáte účet? <a href="%(registration_address)s">Registrujte se</a> do soutěže %(campaign)s.<br/><br/>
-                    """ % {
-                        'password_reset_address': reverse("password_reset"),
-                        'registration_address': reverse("registration_access"),
-                        'campaign': campaign,
-                    },
-                ),
+                    '<a href="%(password_reset_address)s">Zapomněli jste své přihlašovací údaje?</a>'
+                    '<br/><br/>'
+                    'Ještě nemáte účet? <a href="%(registration_address)s">Registrujte se</a> do soutěže %(campaign)s.'
+                    '<br/><br/>'
+                ) % {
+                    'password_reset_address': reverse("password_reset"),
+                    'registration_address': reverse("registration_access"),
+                    'campaign': campaign,
+                },
             ),
         )
         self.helper.add_input(Submit('submit', _(u'Přihlásit')))
@@ -357,6 +357,18 @@ class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
     def __init__(self, request=None, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        self.helper.layout = Layout(
+            'email', 'password1', 'password2', 'username',
+            HTML(
+                _(
+                    'Chcete se stát firemním koordinátorem a nechcete soutěžit?'
+                    ' <a href="%(company_admin_registration)s">Využijte registraci firemního koordinátora</a>.'
+                    '<br/><br/>'
+                ) % {
+                    'company_admin_registration': reverse("register_admin"),
+                },
+            ),
+        )
 
         super(RegistrationFormDPNK, self).__init__(*args, **kwargs)
 
