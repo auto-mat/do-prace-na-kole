@@ -160,24 +160,25 @@ class PackageTransactionTests(AdminTestBase):
 class DeliveryBatchAdminTests(AdminTestBase):
     def setUp(self):
         super().setUp()
-        campaign = CampaignRecipe.make(
+        self.campaign = CampaignRecipe.make(
             name="Testing campaign",
         )
-        t_shirt_size = mommy.make(
+        self.t_shirt_size = mommy.make(
             "TShirtSize",
-            campaign=campaign,
+            campaign=self.campaign,
             name="Testing t-shirt size",
+            ship=True,
         )
         delivery_batch = mommy.make(
             "DeliveryBatch",
-            campaign=campaign,
+            campaign=self.campaign,
             customer_sheets=SimpleUploadedFile("customer_sheets.txt", ""),
             id=1,
         )
         mommy.make(
             "PackageTransaction",
             team_package__box__delivery_batch=delivery_batch,
-            t_shirt_size=t_shirt_size,
+            t_shirt_size=self.t_shirt_size,
             _quantity=2,
         )
 
@@ -214,7 +215,34 @@ class DeliveryBatchAdminTests(AdminTestBase):
             response,
             "<div>"
             "<label>Velikosti trik:</label>"
-            "<p>-</p>"
+            "<p></p>"
+            "</div>",
+            html=True,
+        )
+
+    def test_deliverybatch_admin_add_t_shirt(self):
+        """ Test with t_shirts to add """
+        self.user_attendance = UserAttendanceRecipe.make(
+            t_shirt_size=self.t_shirt_size,
+            transactions=[mommy.make("Payment", status=99)],
+            team__name="Foo team",
+            campaign=self.campaign,
+        )
+        address = reverse('admin:t_shirt_delivery_deliverybatch_add')
+        response = self.client.get(address, follow=True)
+        self.assertContains(
+            response,
+            "<div>"
+            "<label>Trik k odeslání:</label>"
+            "<p>1</p>"
+            "</div>",
+            html=True,
+        )
+        self.assertContains(
+            response,
+            "<div>"
+            "<label>Velikosti trik:</label>"
+            "<p>Testing t-shirt size: 1</p>"
             "</div>",
             html=True,
         )
