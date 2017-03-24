@@ -144,10 +144,10 @@ class Invoice(models.Model):
         return self.paid_date <= util.today()
 
     def variable_symbol(self):
-        return "%sD%03d" % (self.exposure_date.year, self.sequence_number)
+        return "%s%03d" % (self.exposure_date.year, self.sequence_number)
 
     def document_number(self):
-        return "%s%03d" % (self.exposure_date.year, self.sequence_number)
+        return "%sD%03d" % (self.exposure_date.year, self.sequence_number)
 
     def set_taxable_date(self):
         self.taxable_date = min(
