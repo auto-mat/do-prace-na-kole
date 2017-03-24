@@ -18,6 +18,7 @@ django-admin-smoke-tests==0.3.0
 django-admin-sortable2==0.6.7
 django-adminactions==1.4
 -e git+https://github.com/PetrDlouhy/django-adminfilters.git@af22f3c6a6a826302e9b5b26890844bcc6a65983#egg=django_adminfilters
+-e git+https://github.com/PetrDlouhy/django-advanced-filters.git@1fcf4277edc52f3fc94f8ed23234746197eec3bd#egg=django_advanced_filters
 django-ajax-selects==1.5.2
 django-appconf==1.0.2
 django-author==0.4.5

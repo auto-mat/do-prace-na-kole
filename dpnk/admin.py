@@ -28,6 +28,8 @@ from adminfilters.filters import AllValuesComboFilter, RelatedFieldCheckBoxFilte
 
 from adminsortable2.admin import SortableAdminMixin, SortableInlineAdminMixin
 
+from advanced_filters.admin import AdminAdvancedFiltersMixin
+
 from daterange_filter.filter import DateRangeFilter
 
 from django import forms
@@ -266,7 +268,7 @@ def create_subsidiary_resource(campaign_slugs):
 
 
 @admin.register(models.Subsidiary)
-class SubsidiaryAdmin(CityAdminMixin, ImportExportMixin, admin.ModelAdmin):
+class SubsidiaryAdmin(AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMixin, admin.ModelAdmin):
     list_display = (
         'id',
         'company',
@@ -279,13 +281,16 @@ class SubsidiaryAdmin(CityAdminMixin, ImportExportMixin, admin.ModelAdmin):
         'city',
         'user_count',
         'team_count',
-        'id',
     )
     list_editable = (
         'address_psc',
     )
     inlines = [TeamInline, ]
-    list_filter = [campaign_filter_generator('teams__campaign'), 'city', 'active']
+    list_filter = (
+        campaign_filter_generator('teams__campaign'),
+        'city',
+        'active',
+    )
     search_fields = (
         'address_recipient',
         'company__name',
@@ -294,6 +299,18 @@ class SubsidiaryAdmin(CityAdminMixin, ImportExportMixin, admin.ModelAdmin):
         'address_psc',
         'address_city',
         'address_district',
+    )
+    advanced_filter_fields = (
+        'company__name',
+        'address_recipient',
+        'address_street',
+        'address_street_number',
+        'address_psc',
+        'address_city',
+        'address_district',
+        'city',
+        'user_count',
+        'team_count',
     )
     raw_id_fields = ('company',)
     list_max_show_all = 10000
@@ -711,7 +728,7 @@ class UserAttendanceResource(resources.ModelResource):
 
 
 @admin.register(models.UserAttendance)
-class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_generator('team__subsidiary__city__in'), LeafletGeoAdmin):
+class UserAttendanceAdmin(AdminAdvancedFiltersMixin, RelatedFieldAdmin, ExportMixin, city_admin_mixin_generator('team__subsidiary__city__in'), LeafletGeoAdmin):
     list_display = (
         'id',
         'name_for_trusted',
@@ -755,6 +772,23 @@ class UserAttendanceAdmin(RelatedFieldAdmin, ExportMixin, city_admin_mixin_gener
         HasVoucherFilter,
         HasRidesFilter,
         HasTeamFilter,
+    )
+    advanced_filter_fields = (
+        'campaign',
+        'team__subsidiary__city',
+        'approved_for_team',
+        't_shirt_size',
+        'userprofile__user__is_active',
+        'userprofile__mailing_opt_in',
+        'representative_payment__pay_type',
+        'representative_payment__status',
+        'representative_payment__amount',
+        'payment_status',
+        'team__member_count',
+        'transactions__packagetransaction__team_package__box__delivery_batch',
+        'userprofile__sex',
+        'discount_coupon__coupon_type__name',
+        'discount_coupon__discount',
     )
     raw_id_fields = ('userprofile', 'team', 'discount_coupon')
     search_fields = (

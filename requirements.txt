@@ -32,6 +32,7 @@ django-crispy-forms
 django-class-based-auth-views
 django-subdomains
 -e git+https://github.com/PetrDlouhy/django-adminfilters.git@develop#egg=django-adminfilters  # for empty variable fix
+-e git+https://github.com/PetrDlouhy/django-advanced-filters.git@develop#egg=django-advanced-filters  # for empty variable fix
 django-compressor
 -e git+https://github.com/PetrDlouhy/slumber.git@ordereddict#egg=slumber  # news should be ordered by date
 django-bleach

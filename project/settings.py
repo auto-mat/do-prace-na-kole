@@ -238,6 +238,7 @@ INSTALLED_APPS = (
     'favicon',
     'adminactions',
     'massadmin',
+    'advanced_filters',
     # 'cachalot',
 )
 

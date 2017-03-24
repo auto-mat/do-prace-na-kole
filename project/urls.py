@@ -42,6 +42,7 @@ urlpatterns = [
     ),
     url(r'^admin/', admin.site.urls),
     url(r'^admin/', include("massadmin.urls")),
+    url(r'^advanced_filters/', include('advanced_filters.urls')),
     url(r'^chaining/', include('smart_selects.urls')),
     url(r'^adminactions/', include('adminactions.urls')),
     url(r"^su/", include("django_su.urls")),
