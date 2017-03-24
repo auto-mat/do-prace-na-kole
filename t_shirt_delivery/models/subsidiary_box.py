@@ -106,6 +106,17 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
 
     def all_packages_dispatched(self):
         return not self.teampackage_set.filter(dispatched=False).exists()
+    all_packages_dispatched.boolean = True
+    all_packages_dispatched.short_description = _("Všechny balíčky vyřízeny")
+
+    def dispatched_packages(self):
+        return self.teampackage_set.filter(dispatched=True)
+
+    def dispatched_packages_count(self):
+        return self.dispatched_packages().count()
+
+    def packages_count(self):
+        return self.teampackage_set.count()
 
 
 @receiver(post_save, sender=SubsidiaryBox)

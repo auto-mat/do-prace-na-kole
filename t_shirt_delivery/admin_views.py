@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -40,6 +39,7 @@ class DispatchView(FormView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
+        context = self.get_context_data(form=form)
         try:
             dispatch_id = form.cleaned_data.get("dispatch_id")
             package_class = {
@@ -48,38 +48,35 @@ class DispatchView(FormView):
             }[dispatch_id[0]]
             package = package_class.objects.get(id=int(dispatch_id[1:]))
             if package.dispatched:
-                messages.warning(
-                    self.request,
-                    _("Balíček/krabice byl v minulosti již zařazen k sestavení: %s") % package,
-                )
+                context['package_message'] = _("Balíček/krabice byl v minulosti již zařazen k sestavení: %s") % package
+                context['package_message_color'] = "orange"
             else:
                 if isinstance(package, SubsidiaryBox) and not package.all_packages_dispatched():
-                    messages.warning(
-                        self.request,
-                        format_html(
-                            _(
-                                "Tato krabice obsahuje balíčky, které ještě nebyli zařazeny k sestavení: "
-                                "<a href='{}?box__id__exact={}&amp;dispatched__exact=0'>"
-                                "zobrazit seznam nesestavených balíčků"
-                                "</a>"
-                            ),
-                            reverse('admin:t_shirt_delivery_teampackage_changelist'),
-                            package.pk,
+                    context['package_message'] = format_html(
+                        _(
+                            "Tato krabice obsahuje balíčky, které ještě nebyli zařazeny k sestavení: "
+                            "<a href='{}?box__id__exact={}&amp;dispatched__exact=0'>"
+                            "zobrazit seznam nesestavených balíčků"
+                            "</a>"
                         ),
+                        reverse('admin:t_shirt_delivery_teampackage_changelist'),
+                        package.pk,
                     )
+                    context['package_message_color'] = "red"
                 else:
                     package.dispatched = True
                     package.save()
-                    messages.success(
-                        self.request,
-                        _("Balíček/krabice zařazen jako sestavený: %s") % package,
-                    )
+                    context['package_message'] = _("Balíček/krabice zařazen jako sestavený: %s") % package
+                    context['package_message_color'] = "green"
+
+            if package_class == TeamPackage:
+                context['box'] = package.box
+            elif package_class == SubsidiaryBox:
+                context['box'] = package
         except ObjectDoesNotExist:
-            messages.warning(
-                self.request,
-                _("Balíček/krabice nebyl nalezen."),
-            )
-        return super().form_valid(form)
+            context['package_message'] = _("Balíček/krabice nebyl nalezen.")
+            context['package_message_color'] = "red"
+        return self.render_to_response(context)
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)

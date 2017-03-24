@@ -41,7 +41,7 @@ from nested_inline.admin import NestedTabularInline
 
 from related_admin import RelatedFieldAdmin
 
-from . import actions, models
+from . import actions, filters, models
 from .admin_mixins import ReadOnlyModelAdminMixin
 from .forms import PackageTransactionForm
 
@@ -112,10 +112,13 @@ class PackageTransactionResource(resources.ModelResource):
 class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'identifier',
+        'dispatched',
+        'all_packages_dispatched',
+        'dispatched_packages_count',
+        'packages_count',
         'delivery_batch',
         'subsidiary',
         'customer_sheets',
-        'dispatched',
         'created',
     )
     raw_id_fields = (
@@ -134,6 +137,7 @@ class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
     list_filter = [
         campaign_filter_generator('delivery_batch__campaign'),
         'dispatched',
+        filters.AllPackagesDispatched,
         'delivery_batch',
     ]
 
@@ -225,6 +229,8 @@ class SubsidiaryBoxInline(NestedTabularInline):
     extra = 0
     readonly_fields = [
         'created',
+        'identifier',
+        'all_packages_dispatched',
     ]
     raw_id_fields = (
         'delivery_batch',
@@ -234,7 +240,7 @@ class SubsidiaryBoxInline(NestedTabularInline):
 
 @admin.register(models.DeliveryBatch)
 class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
-    list_display = ['id', 'campaign', 'created', 'dispatched', 'package_transaction_count', 'box_count', 'author', 'customer_sheets__url', 'tnt_order__url']
+    list_display = ['id', 'campaign', 'created', 'dispatched', 'package_transaction_count', 'box_count', 'author', 'customer_sheets__url', 'csv_data_url']
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 'box_count', 't_shirt_sizes')
     inlines = [SubsidiaryBoxInline, ]
     list_filter = (CampaignFilter,)
@@ -274,9 +280,9 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
         if obj.customer_sheets:
             return format_html("<a href='{}'>customer_sheets</a>", obj.customer_sheets.url)
 
-    def tnt_order__url(self, obj):
+    def csv_data_url(self, obj):
         if obj.tnt_order:
-            return format_html("<a href='{}'>tnt_order</a>", obj.tnt_order.url)
+            return format_html("<a href='{}'>csv_data</a>", obj.tnt_order.url)
 
 
 class UserAttendanceToBatch(UserAttendance):

@@ -61,7 +61,7 @@ class DispatchViewTests(TestCase):
         response = self.client.post(reverse('dispatch'), post_data, follow=True)
         self.assertContains(
             response,
-            '<div class="alert alert-warning">Balíček/krabice byl v minulosti již zařazen k sestavení: Balíček bez týmu</div>',
+            '<strong style="color:orange">Balíček/krabice byl v minulosti již zařazen k sestavení: Balíček bez týmu</strong>',
             html=True,
         )
 
@@ -82,11 +82,11 @@ class DispatchViewTests(TestCase):
         response = self.client.post(reverse('dispatch'), post_data, follow=True)
         self.assertContains(
             response,
-            "<li class='warning'>"
+            "<strong style='color:red'>"
             "Tato krabice obsahuje balíčky, které ještě nebyli zařazeny k sestavení: "
             "<a href='/admin/t_shirt_delivery/teampackage/?box__id__exact=123&amp;dispatched__exact=0'>"
             "zobrazit seznam nesestavených balíčků"
-            "</a></li>",
+            "</a></strong>",
             html=True,
         )
 
@@ -99,7 +99,7 @@ class DispatchViewTests(TestCase):
         response = self.client.post(reverse('dispatch'), post_data, follow=True)
         self.assertContains(
             response,
-            '<div class="alert alert-warning">Balíček/krabice nebyl nalezen.</div>',
+            '<strong style="color:red">Balíček/krabice nebyl nalezen.</strong>',
             html=True,
         )
 
@@ -116,7 +116,7 @@ class DispatchViewTests(TestCase):
         response = self.client.post(reverse('dispatch'), post_data, follow=True)
         self.assertContains(
             response,
-            '<div class="alert alert-success">Balíček/krabice zařazen jako sestavený: Balíček bez týmu</div>',
+            '<strong style="color:green">Balíček/krabice zařazen jako sestavený: Balíček bez týmu</strong>',
             html=True,
         )
         team_package.refresh_from_db()

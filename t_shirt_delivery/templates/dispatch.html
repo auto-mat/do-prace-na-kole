@@ -13,4 +13,19 @@
        {% endif %}
     {% endfor %}
 {% endif %}
+<br/>
+   {% if package_message %}
+      <div>
+         <strong style="color:{{ package_message_color }}">
+            {{ package_message }}
+         </strong>
+      </div>
+   {% endif %}
+   {% if box %}
+      <div>
+         <strong style="color:{% if box.all_packages_dispatched %}green{% else %}red{% endif %}">
+               Z krabice {{ box.identifier }} bylo sestaveno {{ box.dispatched_packages_count }} z {{ box.packages_count }} balíčků.
+         </strong>
+      </div>
+   {% endif %}
 {% endblock %}
