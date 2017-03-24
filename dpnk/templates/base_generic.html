@@ -74,9 +74,9 @@ Raven.setUserContext({
                    <ul>
                          {% block langchanger %}
                          {% for lang_code, lang_name in languages %}
-                         {% if user_attendance.campaign.language_prefixes in lang_code or user_attendance.campaign.language_prefixes == "dpnk" and lang_code|length == 2 %}
+                         {% if campaign.language_prefixes in lang_code or campaign.language_prefixes == "dpnk" and lang_code|length == 2 %}
                            <li class="{% if lang_code == current_language_code %}active{% endif %}">
-                             <a href="{% change_lang lang_code %}" class="switch-{{ lang_code }}" title="{{ lang_name }}">{{ lang_code|cut:user_attendance.campaign.language_prefixes|upper }}</a>
+                             <a href="{% change_lang lang_code %}" class="switch-{{ lang_code }}" title="{{ lang_name }}">{{ lang_code|cut:campaign.language_prefixes|upper }}</a>
                            </li>
                          {% endif %}
                          {% endfor %}
