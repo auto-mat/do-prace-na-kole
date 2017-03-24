@@ -1335,7 +1335,13 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'company_pais_benefitial_fee',
         'company_address_street',
     ]
-    readonly_fields = ['created', 'author', 'updated_by', 'invoice_count']
+    readonly_fields = [
+        'created',
+        'author',
+        'updated_by',
+        'invoice_count',
+        'total_amount',
+    ]
     list_filter = [CampaignFilter, InvoicePaidFilter, 'company_pais_benefitial_fee']
     search_fields = ['company__name', ]
     inlines = [PaymentInline]
