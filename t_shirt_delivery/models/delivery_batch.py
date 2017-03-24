@@ -90,7 +90,7 @@ class DeliveryBatch(models.Model):
         from .subsidiary_box import SubsidiaryBox
         if not user_attendances:
             user_attendances = self.campaign.user_attendances_for_delivery()
-        for subsidiary in Subsidiary.objects.filter(teams__users__in=user_attendances).distinct():
+        for subsidiary in Subsidiary.objects.filter(teams__users__in=user_attendances).order_by("city__slug").distinct():
             subsidiary_box = SubsidiaryBox(
                 delivery_batch=self,
                 subsidiary=subsidiary,
