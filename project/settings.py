@@ -408,6 +408,13 @@ LOGGING = {
             'handlers': ['console', 'logfile', 'mail_admins', 'sentry'],
             'propagate': False,
         },
+        # Don't send HTTP_HEADER warnings since it is too verbose on Amazon AWS.
+        # Better soulution would be to filter invalid requests before reaching Django.
+        'django.security.DisallowedHost': {
+            'handlers': ['mail_admins', 'sentry'],
+            'level': 'CRITICAL',
+            'propagate': False,
+        },
     },
 }
 
