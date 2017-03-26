@@ -78,6 +78,7 @@ from .filters import (
     HasVoucherFilter,
     InvoicePaidFilter,
     IsForCompanyFilter,
+    PSCFilter,
     TrackFilter,
     campaign_filter_generator,
 )
@@ -288,6 +289,7 @@ class SubsidiaryAdmin(AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMix
     inlines = [TeamInline, ]
     list_filter = (
         campaign_filter_generator('teams__campaign'),
+        PSCFilter,
         'city',
         'active',
     )

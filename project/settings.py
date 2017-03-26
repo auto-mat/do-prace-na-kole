@@ -239,6 +239,7 @@ INSTALLED_APPS = (
     'adminactions',
     'massadmin',
     'advanced_filters',
+    'psc',
     # 'cachalot',
 )
 

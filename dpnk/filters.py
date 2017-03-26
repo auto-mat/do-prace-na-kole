@@ -22,6 +22,8 @@ from django.contrib.auth.models import User
 from django.db.models import Count, Q
 from django.utils.translation import ugettext_lazy as _
 
+from psc.models import PSC
+
 from . import models
 
 
@@ -281,4 +283,24 @@ class TrackFilter(SimpleListFilter):
             return queryset.filter(track__isnull=False).distinct()
         if self.value() == 'no':
             return queryset.filter(track__isnull=True).distinct()
+        return queryset
+
+
+class PSCFilter(SimpleListFilter):
+    title = _("PSČ")
+    parameter_name = 'psc'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('valid', _('Platná')),
+            ('invalid', _('Neplatná')),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() in ('valid', 'invalid'):
+            psc_list = PSC.objects.values('psc').distinct()
+            if self.value() == 'valid':
+                return queryset.filter(address_psc__in=psc_list)
+            else:
+                return queryset.exclude(address_psc__in=psc_list)
         return queryset
