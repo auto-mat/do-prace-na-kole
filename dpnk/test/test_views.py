@@ -1128,6 +1128,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEquals(p.invoice.total_amount, amount_tax)
         pdf = PdfFileReader(p.invoice.invoice_pdf)
         pdf_string = pdf.pages[0].extractText()
+        self.assertTrue("2010D001" in pdf_string)
         self.assertTrue("Celkem s DPH: %s,-" % amount_tax in pdf_string)
         self.assertTrue("1323575433" in pdf_string)
         self.assertTrue("Testing company" in pdf_string)

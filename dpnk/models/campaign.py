@@ -143,7 +143,7 @@ class Campaign(Pricable, models.Model):
     )
     invoice_sequence_number_first = models.PositiveIntegerField(
         verbose_name=_(u"První číslo řady pro faktury"),
-        default=0,
+        default=1,
         blank=False,
         null=False,
     )
