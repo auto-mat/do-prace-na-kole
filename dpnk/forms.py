@@ -110,14 +110,25 @@ class AuthenticationFormDPNK(AuthenticationForm):
         self.helper.layout = Layout(
             'username', 'password',
             HTML(
+                format_html_lazy(
+                    '<a class="btn btn-block btn-social btn-google" href="{{% url "social:begin" "google-oauth2" %}}">'
+                    '  <span class="fa fa-google"></span>{}'
+                    '</a>'
+                    '<a class="btn btn-block btn-social btn-facebook" href="{{% url "social:begin" "facebook" %}}">'
+                    '  <span class="fa fa-facebook"></span>{}'
+                    '</a>'
+                    '<br/><br/>',
+                    _("Přihlásit se pomocí Google"),
+                    _("Přihlásit se pomocí Facebooku"),
+                ),
+            ),
+            HTML(
                 _(
-                    '<a href="%(password_reset_address)s">Zapomněli jste své přihlašovací údaje?</a>'
+                    '<a href="{%% url "password_reset" %%}">Zapomněli jste své přihlašovací údaje?</a>'
                     '<br/><br/>'
-                    'Ještě nemáte účet? <a href="%(registration_address)s">Registrujte se</a> do soutěže %(campaign)s.'
+                    'Ještě nemáte účet? <a href="{%% url "registration_access" %%}">Registrujte se</a> do soutěže %(campaign)s.'
                     '<br/><br/>'
                 ) % {
-                    'password_reset_address': reverse("password_reset"),
-                    'registration_address': reverse("registration_access"),
                     'campaign': campaign,
                 },
             ),

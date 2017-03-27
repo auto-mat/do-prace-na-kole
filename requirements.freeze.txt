@@ -112,6 +112,7 @@ pyparsing==2.2.0
 PyPDF2==1.26.0
 python-dateutil==2.6.0
 python-memcached==1.58
+python3-openid==3.1.0
 pytz==2017.2
 qrcode==5.3
 qrplatba==0.3.4
@@ -127,6 +128,8 @@ six==1.10.0
 -e git+https://github.com/PetrDlouhy/slumber.git@6327c9d58bc9b832277295af0b4ea2ea5a9c2324#egg=slumber
 SQLAlchemy==1.1.9
 sqlparse==0.2.3
+social-auth-app-django==1.1.0
+social-auth-core==1.2.0
 -e git+https://github.com/aquavitae/svg2rlg.git@0ba12ebc519597b02999cf7938eacf5eee344ebb#egg=svg2rlg
 tablib==0.11.4
 tornado==4.2

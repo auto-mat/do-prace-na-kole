@@ -150,6 +150,11 @@ MIDDLEWARE_CLASSES = [
     'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
 ]
 AUTHENTICATION_BACKENDS = (
+    'social_core.backends.open_id.OpenIdAuth',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+
+    'django.contrib.auth.backends.ModelBackend',
     'dpnk.auth.EmailModelBackend',
     "django_su.backends.SuBackend",
 )
@@ -159,6 +164,29 @@ ROOT_URLCONF = 'urls'
 # SECURE_BROWSER_XSS_FILTER = True
 # SECURE_CONTENT_TYPE_NOSNIFF = True
 # X_FRAME_OPTIONS = 'DENY'
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('DPNK_SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', '')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('DPNK_SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', '')
+SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get('DPNK_SOCIAL_AUTH_FACEBOOK_KEY', '')
+SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get('DPNK_SOCIAL_AUTH_FACEBOOK_SECRET', '')
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'id,name,email,gender',
+}
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    'dpnk.social_pipeline.create_userprofile',
+)
 
 
 class InvalidStringShowWarning(str):
@@ -187,6 +215,8 @@ TEMPLATES = [
                 'dpnk.context_processors.site',
                 'dpnk.context_processors.user_attendance',
                 'settings_context_processor.context_processors.settings',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ),
             'loaders': [
                 ('django.template.loaders.cached.Loader', [
@@ -265,6 +295,7 @@ INSTALLED_APPS = (
     'django_celery_beat',
     'secretballot',
     'likes',
+    'social_django',
     # 'cachalot',
 )
 
