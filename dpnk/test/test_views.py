@@ -1200,6 +1200,19 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(reverse('team_members'), post_data)
         self.assertContains(response, 'Při zamítnutí člena týmu musíte vyplnit zprávu.')
 
+    def test_dpnk_team_denial_no_message_team_full(self):
+        ua = models.UserAttendance.objects.get(pk=1015)
+        ua.approved_for_team = 'undecided'
+        ua.save()
+        campaign = models.Campaign.objects.get(pk=339)
+        campaign.max_team_members = 2
+        campaign.save()
+        post_data = {
+            'approve': 'approve-1015',
+        }
+        response = self.client.post(reverse('team_members'), post_data)
+        self.assertContains(response, 'Tým je již plný, další člen již nemůže být potvrzen.')
+
     def test_dpnk_team_invitation_current_user(self):
         post_data = {
             'email1': 'test@email.cz',
