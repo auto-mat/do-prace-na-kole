@@ -228,7 +228,7 @@ INSTALLED_APPS = (
     'denorm',
     'subdomains',
     'redactor',
-    'ajax_select',
+    'selectable',
     'django_nose',
     'djcelery',
     'kombu.transport.django',

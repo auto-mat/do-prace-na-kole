@@ -1,5 +1,3 @@
-from ajax_select import urls as ajax_select_urls
-
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.i18n import i18n_patterns
@@ -46,7 +44,7 @@ urlpatterns = [
     url(r'^chaining/', include('smart_selects.urls')),
     url(r'^adminactions/', include('adminactions.urls')),
     url(r"^su/", include("django_su.urls")),
-    url(r'^ajax_select/', include(ajax_select_urls)),
+    url(r'^selectable/', include('selectable.urls')),
     url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^redactor/', include('redactor.urls')),
     url(r'^rest/', include(router.urls)),

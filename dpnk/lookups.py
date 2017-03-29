@@ -1,20 +1,13 @@
-from ajax_select import LookupChannel, register
+from selectable.base import ModelLookup
+from selectable.registry import registry
 
 from .models import Company
 
 
-@register('companies')
-class TagsLookup(LookupChannel):
+class CompanyLookup(ModelLookup):
     model = Company
+    search_fields = ('name__unaccent__icontains',)
+    filters = {'active': True}
 
-    def check_auth(self, request):
-        return True
 
-    def get_query(self, q, request):
-        query = Company.objects.filter(active=True, name__unaccent__icontains=q)
-        if len(q) < 3:
-            return query[:10]
-        return query
-
-    def format_item_display(self, item):
-        return u"<span class='tag'>%s</span>" % item.name
+registry.register(CompanyLookup)

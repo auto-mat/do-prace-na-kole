@@ -21,7 +21,8 @@
     "lightbox2": "~2.8.2",
     "jquery.are-you-sure": "~1.9.0",
     "datatables.net": "~1.10.13",
-    "datatables.net-bs": "~1.10.13"
+    "datatables.net-bs": "~1.10.13",
+    "jquery-ui": "~1.11.4"
   },
   "resolutions": {
     "jquery": "1.12.3"

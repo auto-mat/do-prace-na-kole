@@ -838,10 +838,23 @@ class ViewsTestsLogon(ViewsLogon):
         models.Payment.objects.all().delete()
 
     def test_ajax_select(self):
-        address = "/ajax_select/ajax_lookup/companies?term=tést"
+        address = "/selectable/dpnk-companylookup/??term=tést"
         response = self.client.get(address)
-        self.assertContains(response, "<span class=\'tag\'>Testing company</span>", html=True)
-        self.assertContains(response, "<span class=\'tag\'>Testing company without admin</span>", html=True)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "data": [
+                    {"value": "Testing company", "label": "Testing company", "id": 1},
+                    {"value": "Testing company without admin", "label": "Testing company without admin", "id": 2},
+                ],
+                "meta": {
+                    "more": "Show more results",
+                    "page": 1,
+                    "term": "",
+                    "limit": 25,
+                },
+            },
+        )
 
     def test_dpnk_team_invitation_no_last_team(self):
         token = self.user_attendance.team.invitation_token
@@ -922,11 +935,19 @@ class ViewsTestsLogon(ViewsLogon):
         util.rebuild_denorm_models(models.Team.objects.filter(pk=3))
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_tym'))
-        self.assertContains(response, "id_company_text")
+        print_response(response)
+        self.assertContains(
+            response,
+            '<label for="id_company-name" class="control-label  requiredField">'
+            'Název organizace'
+            '<span class="asteriskField">*</span>'
+            '</label>',
+            html=True,
+        )
         self.assertContains(response, "id_subsidiary")
 
         post_data = {
-            'company': '1',
+            'company_1': '1',
             'subsidiary': '1',
             'team': '3',
             'next': 'Next',
@@ -944,7 +965,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.user_attendance.approved_for_team = "undecided"
         self.user_attendance.save()
         post_data = {
-            'company': '1',
+            'company_1': '1',
             'subsidiary': '1',
             'team': '4',
             'prev': 'Prev',
@@ -1007,7 +1028,7 @@ class ViewsTestsLogon(ViewsLogon):
         campaign.max_team_members = 0
         campaign.save()
         post_data = {
-            'company': '1',
+            'company_1': '1',
             'subsidiary': '1',
             'team': '3',
             'next': 'Next',
@@ -1022,7 +1043,7 @@ class ViewsTestsLogon(ViewsLogon):
     @patch('dpnk.forms.logger')
     def test_dpnk_team_view_choose_team_out_of_campaign(self, mock_logger):
         post_data = {
-            'company': '1',
+            'company_1': '1',
             'subsidiary': '2',
             'team': '2',
             'next': 'Next',
@@ -1039,7 +1060,7 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_team_view_choose_team_after_payment(self):
         post_data = {
-            'company': '1',
+            'company_1': '1',
             'subsidiary': '2',
             'team': '3',
             'next': 'Next',
@@ -1050,7 +1071,7 @@ class ViewsTestsLogon(ViewsLogon):
     @patch('dpnk.forms.logger')
     def test_dpnk_team_view_choose_nonexistent_city(self, mock_logger):
         post_data = {
-            'company': '1',
+            'company_1': '1',
             'subsidiary': '2',
             'id_team_selected': 'on',
             'team-name': 'Testing team last campaign',
@@ -1078,7 +1099,7 @@ class ViewsTestsLogon(ViewsLogon):
             'subsidiary-address_city': 'Testing city',
             'id_subsidiary_selected': 'on',
             'team-name': 'Created team',
-            'company': '1',
+            'company_1': '1',
             'subsidiary': '1',
             'team-campaign': '339',
             'id_team_selected': 'on',
@@ -1159,7 +1180,7 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_team_view_no_team_set(self):
         post_data = {
-            'company': '1',
+            'company_1': '1',
             'subsidiary': '',
             'team': '',
             'next': 'Next',

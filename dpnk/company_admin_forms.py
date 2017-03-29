@@ -18,13 +18,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from ajax_select.fields import AutoCompleteSelectWidget
-
 from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import string_concat, ugettext_lazy as _
 
 import registration.forms
+
+from selectable.forms.widgets import AutoCompleteSelectWidget
 
 from .forms import AdressForm
 from .forms import SubmitMixin
@@ -146,7 +146,7 @@ class CompanyAdminApplicationForm(CompanyAdminForm, registration.forms.Registrat
     administrated_company = forms.ModelChoiceField(
         label=_(u"Koordinovaná organizace"),
         widget=AutoCompleteSelectWidget(
-            'companies',
+            lookup_class='dpnk.lookups.CompanyLookup',
         ),
         queryset=Company.objects.all(),
         required=True,

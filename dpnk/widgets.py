@@ -17,10 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from ajax_select.fields import AutoCompleteSelectWidget
-
 from django import forms
 from django.template.loader import render_to_string
+
+from selectable.forms.widgets import AutoCompleteSelectWidget
 
 from smart_selects import widgets
 
@@ -30,7 +30,7 @@ class SelectOrCreateAutoComplete(AutoCompleteSelectWidget):
     create = False
 
     def __init__(self, channel, underlying_form_class, prefix="", new_description=u"Vytvořit novou položku", *args, **kwargs):
-        super(SelectOrCreateAutoComplete, self).__init__(channel)
+        super(SelectOrCreateAutoComplete, self).__init__(lookup_class='dpnk.lookups.CompanyLookup')
         self.new_description = new_description
         self.channel = channel
         self.underlying_form_class = underlying_form_class

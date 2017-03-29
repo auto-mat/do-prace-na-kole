@@ -54,7 +54,7 @@ django-admin-smoke-tests
 django-wysiwyg-redactor
 sqlparse
 django-appconf
-django-ajax-selects
+django-selectable
 pypdf2
 django-extra-views
 freezegun

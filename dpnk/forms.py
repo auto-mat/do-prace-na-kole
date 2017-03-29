@@ -198,7 +198,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         required=True,
     )
     subsidiary = ChainedModelChoiceField(
-        chained_field="company",
+        chained_field="company_1",
         to_app_name="dpnk",
         to_model_name="Subsidiary",
         chained_model_field="company",
@@ -213,7 +213,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             view_name='',
             prefix="subsidiary",
             new_description=_("Adresa pobočky/organizace v seznamu není, chci vyplnit novou."),
-            chained_field="company",
+            chained_field="company_1",
             chained_model_field="company",
             to_app_name="dpnk",
             foreign_key_app_name="dpnk",
