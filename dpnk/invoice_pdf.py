@@ -62,7 +62,7 @@ def make_invoice_sheet_pdf(outfile, invoice):
 
     invoice_gen = Invoice(client, provider, creator)
     invoice_gen.title = u"Faktura %s/%s" % (invoice.sequence_number, invoice.exposure_date.year)
-    invoice_gen.variable_symbol = invoice.variable_symbol()
+    invoice_gen.variable_symbol = invoice.variable_symbol
     invoice_gen.number = invoice.document_number()
     invoice_gen.date = invoice.exposure_date.strftime("%d.%m.%Y")
     invoice_gen.payback = invoice.payback_date.strftime("%d.%m.%Y")

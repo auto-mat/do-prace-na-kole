@@ -318,6 +318,8 @@ MAX_COMPETITIONS_PER_COMPANY = 4
 
 MAILING_API_KEY = os.environ.get('DPNK_MAILING_API_KEY', '')
 
+FIO_TOKEN = os.environ.get('DPNK_FIO_TOKEN', '')
+
 PAYU_KEY_1 = os.environ.get('DPNK_PAYU_KEY_1', '')
 PAYU_KEY_2 = os.environ.get('DPNK_PAYU_KEY_2', '')
 PAYU_POS_AUTH_KEY = os.environ.get('DPNK_PAYU_POS_AUTH_KEY', '')

@@ -134,6 +134,14 @@ class Invoice(models.Model):
         null=True,
         blank=True,
     )
+    variable_symbol = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        unique=True,
+        verbose_name=_("Variable symbol"),
+        help_text=_("Variable symbol of the invoice"),
+    )
 
     def __str__(self):
         return "%s - %s" % (self.sequence_number, self.campaign.slug)
@@ -143,7 +151,7 @@ class Invoice(models.Model):
             return False
         return self.paid_date <= util.today()
 
-    def variable_symbol(self):
+    def generate_variable_symbol(self):
         return "%s%03d" % (self.exposure_date.year, self.sequence_number)
 
     def document_number(self):
@@ -154,6 +162,9 @@ class Invoice(models.Model):
             util.today(),
             self.campaign.phase("competition").date_to,
         )
+
+    def set_variable_symbol(self):
+        self.variable_symbol = self.generate_variable_symbol()
 
     def set_payback_date(self):
         self.payback_date = util.today() + datetime.timedelta(days=14)
@@ -240,6 +251,9 @@ def fill_invoice_parameters(sender, instance, **kwargs):
 
     if not instance.exposure_date:
         instance.set_exposure_date()
+
+    if not instance.variable_symbol:
+        instance.set_variable_symbol()
 
 
 @receiver(post_save, sender=Invoice)

@@ -44,10 +44,12 @@ class TestDates(TestCase):
             "Invoice",
             campaign__slug="test_campaign",
             campaign__phase_set=[self.competition_phase],
+            sequence_number=666,
         )
         self.assertEqual(str(invoice.taxable_date), "2010-05-20")
         self.assertEqual(str(invoice.payback_date), "2010-06-03")
         self.assertEqual(str(invoice.exposure_date), "2010-05-20")
+        self.assertEqual(str(invoice.variable_symbol), "2010666")
 
     @override_settings(
         FAKE_DATE=datetime.date(2010, 6, 1),
