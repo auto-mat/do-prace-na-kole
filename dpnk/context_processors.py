@@ -25,4 +25,7 @@ def site(request):
 
 
 def user_attendance(request):
-    return {'user_attendance': getattr(request, 'user_attendance', None)}
+    return {
+        'user_attendance': getattr(request, 'user_attendance', None),
+        'campaign': getattr(request, 'campaign', None),
+    }

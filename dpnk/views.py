@@ -131,7 +131,6 @@ class TitleViewMixin(object):
         context_data = super(TitleViewMixin, self).get_context_data(*args, **kwargs)
         context_data['title'] = self.get_title(*args, **kwargs)
         context_data['opening_message'] = self.get_opening_message(*args, **kwargs)
-        context_data['campaign'] = self.campaign
         return context_data
 
 

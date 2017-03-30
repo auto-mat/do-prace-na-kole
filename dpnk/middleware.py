@@ -17,13 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from .models import UserAttendance
+from .models import Campaign, UserAttendance
 
 
 class UserAttendanceMiddleware:
     def process_request(self, request):
+        campaign_slug = request.subdomain
         if request.user and request.user.is_authenticated():
-            campaign_slug = request.subdomain
             try:
                 user_attendance_set = UserAttendance.objects.length()
                 user_attendance_set = user_attendance_set.select_related(
@@ -35,7 +35,16 @@ class UserAttendanceMiddleware:
                     'related_company_admin',
                 )
                 request.user_attendance = user_attendance_set.get(userprofile__user=request.user, campaign__slug=campaign_slug)
+                request.campaign = request.user_attendance.campaign
             except UserAttendance.DoesNotExist:
                 request.user_attendance = None
         else:
             request.user_attendance = None
+
+        if not hasattr(request, 'campaign') and campaign_slug:
+            try:
+                request.campaign = Campaign.objects.get(slug=campaign_slug)
+            except Campaign.DoesNotExist:
+                request.campaign = None
+        else:
+            request.campaign = None
