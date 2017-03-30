@@ -26,8 +26,7 @@ import registration.forms
 
 from selectable.forms.widgets import AutoCompleteSelectWidget
 
-from .forms import AdressForm
-from .forms import SubmitMixin
+from .forms import AdressForm, EmailUsernameMixin, SubmitMixin
 from .models import Campaign, City, Company, CompanyAdmin, Competition, Invoice, Subsidiary, UserAttendance
 from .util import slugify
 
@@ -142,7 +141,7 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
         return ret_val
 
 
-class CompanyAdminApplicationForm(CompanyAdminForm, registration.forms.RegistrationFormUniqueEmail):
+class CompanyAdminApplicationForm(EmailUsernameMixin, CompanyAdminForm, registration.forms.RegistrationFormUniqueEmail):
     administrated_company = forms.ModelChoiceField(
         label=_(u"Koordinovaná organizace"),
         widget=AutoCompleteSelectWidget(
@@ -182,12 +181,6 @@ class CompanyAdminApplicationForm(CompanyAdminForm, registration.forms.Registrat
         if CompanyAdmin.objects.filter(administrated_company__pk=company.pk, campaign=campaign, company_admin_approved='approved').exists():
             raise forms.ValidationError(_(u"Tato organizace již má svého firemního koordinátora."))
         return company
-
-    def clean(self):
-        cleaned_data = super(CompanyAdminApplicationForm, self).clean()
-        if not self.errors:
-            self.cleaned_data['username'] = '%s%s' % (self.cleaned_data['email'].split('@', 1)[0], User.objects.count())
-        return cleaned_data
 
     class Meta:
         model = User

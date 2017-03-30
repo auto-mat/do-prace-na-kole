@@ -339,20 +339,22 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
     )
 
 
-class RegistrationFormDPNK(registration.forms.RegistrationFormUniqueEmail):
-    required_css_class = 'required'
-
-    username = forms.CharField(widget=forms.HiddenInput, required=False)
-
+class EmailUsernameMixin():
     def clean_username(self):
         "This function is required to overwrite an inherited username clean"
         return self.cleaned_data['username']
 
     def clean(self):
+        cleaned_data = super().clean()
         if not self.errors:
-            self.cleaned_data['username'] = '%s%s' % (self.cleaned_data['email'].split('@', 1)[0], User.objects.count())
-        super(RegistrationFormDPNK, self).clean()
-        return self.cleaned_data
+            cleaned_data['username'] = '%s%s' % (cleaned_data['email'].split('@', 1)[0], User.objects.count())
+        return cleaned_data
+
+
+class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFormUniqueEmail):
+    required_css_class = 'required'
+
+    username = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, request=None, *args, **kwargs):
         self.helper = FormHelper()
