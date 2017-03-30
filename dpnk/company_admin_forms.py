@@ -176,16 +176,17 @@ class CompanyAdminApplicationForm(CompanyAdminForm, registration.forms.Registrat
     def get_campaign(self):
         return self.initial['campaign']
 
+    def clean_administrated_company(self):
+        company = self.cleaned_data['administrated_company']
+        campaign = self.get_campaign()
+        if CompanyAdmin.objects.filter(administrated_company__pk=company.pk, campaign=campaign, company_admin_approved='approved').exists():
+            raise forms.ValidationError(_(u"Tato organizace již má svého firemního koordinátora."))
+        return company
+
     def clean(self):
         cleaned_data = super(CompanyAdminApplicationForm, self).clean()
         if not self.errors:
             self.cleaned_data['username'] = '%s%s' % (self.cleaned_data['email'].split('@', 1)[0], User.objects.count())
-
-        if 'administrated_company' in cleaned_data:
-            obj = cleaned_data['administrated_company']
-            campaign = cleaned_data['campaign']
-            if CompanyAdmin.objects.filter(administrated_company__pk=obj.pk, campaign=campaign, company_admin_approved='approved').exists():
-                raise forms.ValidationError(_(u"Tato organizace již má svého firemního koordinátora."))
         return cleaned_data
 
     class Meta:
