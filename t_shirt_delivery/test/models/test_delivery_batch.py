@@ -88,9 +88,7 @@ class TestDeliveryBatch(TestCase):
         """
         Test that packages are created on save
         """
-        campaign = CampaignRecipe.make(name="Testin campaign")
-        UserAttendanceRecipe.make(
-            campaign=campaign,
+        user_attendance = UserAttendanceRecipe.make(
             userprofile__user__first_name="Foo",
             userprofile__user__last_name="Name",
             team__subsidiary__address_street="Foo street",
@@ -99,8 +97,6 @@ class TestDeliveryBatch(TestCase):
             team__subsidiary__address_city="Foo city",
             team__subsidiary__city__name="Foo city",
             team__subsidiary__address_recipient="Foo recipient",
-            team__campaign=campaign,
-            t_shirt_size__campaign=campaign,
             approved_for_team='approved',
             transactions=[
                 mommy.make(
@@ -111,7 +107,7 @@ class TestDeliveryBatch(TestCase):
         )
         delivery_batch = mommy.make(
             'DeliveryBatch',
-            campaign=campaign,
+            campaign=user_attendance.campaign,
         )
         self.assertQuerysetEqual(
             delivery_batch.subsidiarybox_set.all(),
@@ -139,32 +135,22 @@ class TestDeliveryBatch(TestCase):
         if UserAttendance is approved for team
         and the t_shirt is shipped
         """
-        campaign = CampaignRecipe.make(name="Testin campaign")
-        UserAttendanceRecipe.make(
-            campaign=campaign,
-            team__campaign=campaign,
-            t_shirt_size__campaign=campaign,
+        user_attendance = UserAttendanceRecipe.make(
             approved_for_team='undecided',
             transactions=[mommy.make("Payment", status=99)],
         )
         added_user_attendance = UserAttendanceRecipe.make(
-            campaign=campaign,
-            team__campaign=campaign,
-            t_shirt_size__campaign=campaign,
             approved_for_team='approved',
             transactions=[mommy.make("Payment", status=99)],
         )
         UserAttendanceRecipe.make(
-            campaign=campaign,
-            team__campaign=campaign,
-            t_shirt_size__campaign=campaign,
             t_shirt_size__ship=False,
             approved_for_team='approved',
             transactions=[mommy.make("Payment", status=99)],
         )
         mommy.make(
             'DeliveryBatch',
-            campaign=campaign,
+            campaign=user_attendance.campaign,
         )
         self.assertEqual(
             PackageTransaction.objects.get().user_attendance,  # Only one package transaction is created

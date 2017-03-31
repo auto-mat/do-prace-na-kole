@@ -27,7 +27,7 @@ from django.core.files.temp import NamedTemporaryFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
-from dpnk.test.mommy_recipes import CampaignRecipe, UserAttendanceRecipe
+from dpnk.test.mommy_recipes import UserAttendanceRecipe, testing_campaign
 
 from model_mommy import mommy
 from model_mommy.recipe import seq
@@ -37,11 +37,10 @@ from t_shirt_delivery import customer_sheets
 
 class TestCreateCustomerSheets(TestCase):
     def setUp(self):
-        campaign = CampaignRecipe.make(name="Testing campaign")
         t_shirt_size = mommy.make(
             "TShirtSize",
             name="Testing t-shirt size",
-            campaign=campaign,
+            campaign=testing_campaign,
             t_shirt_preview=SimpleUploadedFile(
                 "t_shirt_preview.svg",
                 b'<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600">'
@@ -54,10 +53,10 @@ class TestCreateCustomerSheets(TestCase):
         mommy.make(
             'price_level.PriceLevel',
             takes_effect_on=datetime.date(year=2017, month=1, day=1),
-            pricable=campaign,
+            pricable=testing_campaign,
         )
         user_attendances = UserAttendanceRecipe.make(
-            campaign=campaign,
+            campaign=testing_campaign,
             userprofile__user__username=seq("test_username "),
             userprofile__user__first_name="Testing",
             userprofile__user__email="foo@email.cz",
@@ -82,7 +81,7 @@ class TestCreateCustomerSheets(TestCase):
             subsidiary__address_city="Foo city",
             subsidiary__address_recipient="Foo recipient",
             subsidiary__id=123,
-            delivery_batch__campaign=campaign,
+            delivery_batch__campaign=testing_campaign,
             id=1603824,
         )
         mommy.make(
@@ -90,7 +89,7 @@ class TestCreateCustomerSheets(TestCase):
             box=self.subsidiary_box,
             team__users=user_attendances,
             team__name="Foo team with max name lenth fooo foo foo foo fooo",
-            team__campaign=campaign,
+            team__campaign=testing_campaign,
             team__subsidiary__company__name="Foo company",
             team__subsidiary__company__ico=1231321313,
             id=34567812,

@@ -43,7 +43,7 @@ import settings
 
 from t_shirt_delivery.models import PackageTransaction
 
-from .mommy_recipes import CampaignRecipe, UserAttendanceRecipe
+from .mommy_recipes import CampaignRecipe, UserAttendanceRecipe, testing_campaign
 
 
 @override_settings(
@@ -286,9 +286,7 @@ class PaymentTypeViewTests(TestCase):
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
-        self.campaign = CampaignRecipe.make(
-            slug="testing-campaign",
-        )
+        self.campaign = testing_campaign
         t_shirt_size = mommy.make(
             "TShirtSize",
             campaign=self.campaign,
@@ -683,7 +681,7 @@ class RegistrationViewTests(TestCase):
         mommy.make(
             "Team",
             invitation_token="token123213",
-            campaign=CampaignRecipe.make(),
+            campaign=testing_campaign,
             id=1,
         )
         kwargs = {
@@ -709,7 +707,7 @@ class RegistrationViewTests(TestCase):
         mommy.make(
             "Team",
             invitation_token="token123213",
-            campaign=CampaignRecipe.make(max_team_members=0),
+            campaign=CampaignRecipe.make(max_team_members=0, slug="testing-campaign"),
             id=1,
         )
         kwargs = {
@@ -935,7 +933,6 @@ class ViewsTestsLogon(ViewsLogon):
         util.rebuild_denorm_models(models.Team.objects.filter(pk=3))
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_tym'))
-        print_response(response)
         self.assertContains(
             response,
             '<label for="id_company-name" class="control-label  requiredField">'
@@ -1312,7 +1309,7 @@ class ViewsTestsLogon(ViewsLogon):
 class ChangeTeamViewTests(TestCase):
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
-        self.campaign = CampaignRecipe.make()
+        self.campaign = testing_campaign
         self.team = mommy.make(
             "Team",
             campaign=self.campaign,

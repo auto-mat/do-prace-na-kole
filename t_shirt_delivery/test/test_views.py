@@ -24,7 +24,7 @@ from unittest.mock import MagicMock, patch
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 
-from dpnk.test.mommy_recipes import CampaignRecipe, UserAttendanceRecipe
+from dpnk.test.mommy_recipes import UserAttendanceRecipe, testing_campaign
 from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
@@ -40,34 +40,32 @@ class ViewsTestsLogon(TestCase):
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
-        campaign = CampaignRecipe.make(slug="testing-campaign")
         mommy.make(
             "TShirtSize",
             id=1,
-            campaign=campaign,
+            campaign=testing_campaign,
         )
-        campaign.save()
         mommy.make(
             "price_level.PriceLevel",
             takes_effect_on=datetime.date(year=2010, month=2, day=1),
-            pricable=campaign,
+            pricable=testing_campaign,
         )
         mommy.make(
             "Phase",
             phase_type="payment",
-            campaign=campaign,
+            campaign=testing_campaign,
         )
         self.user_attendance = UserAttendanceRecipe.make(
-            campaign=campaign,
             approved_for_team="approved",
-            team__name="Testing team",
-            team__subsidiary__city__cityincampaign__campaign=campaign,
+            team__subsidiary__city__cityincampaign__campaign=testing_campaign,
             userprofile__user__first_name="Testing",
             userprofile__user__last_name="User",
             userprofile__user__email="testing.user@email.com",
             userprofile__personal_data_opt_in=True,
             distance=5,
         )
+        self.user_attendance.campaign.save()
+        self.user_attendance.save()
         self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
 
     def test_dpnk_t_shirt_size(self):

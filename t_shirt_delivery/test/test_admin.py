@@ -24,7 +24,7 @@ from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 
-from dpnk.test.mommy_recipes import CampaignRecipe, UserAttendanceRecipe
+from dpnk.test.mommy_recipes import UserAttendanceRecipe, testing_campaign
 from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
@@ -52,7 +52,7 @@ class DeliveryBatchAdminMasschangeTests(AdminTestBase):
     def test_deliverybatch_masschange(self):
         mommy.make(
             "t_shirt_delivery.DeliveryBatch",
-            campaign=CampaignRecipe.make(name="Testing campaign"),
+            campaign=testing_campaign,
             dispatched="2017-01-01",
             id=1,
         )
@@ -160,9 +160,7 @@ class PackageTransactionTests(AdminTestBase):
 class DeliveryBatchAdminTests(AdminTestBase):
     def setUp(self):
         super().setUp()
-        self.campaign = CampaignRecipe.make(
-            name="Testing campaign",
-        )
+        self.campaign = testing_campaign
         self.t_shirt_size = mommy.make(
             "TShirtSize",
             campaign=self.campaign,
@@ -251,7 +249,6 @@ class DeliveryBatchAdminTests(AdminTestBase):
 class UserAttendanceToBatchAdminTests(AdminTestBase):
     def setUp(self):
         super().setUp()
-        campaign = CampaignRecipe.make()
         self.user_attendance = UserAttendanceRecipe.make(
             t_shirt_size__ship=True,
             t_shirt_size__name="Foo T-Shirt size",
@@ -259,8 +256,8 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
             userprofile__user__first_name="Foo",
             userprofile__user__last_name="name",
             team__name="Testing team",
-            team__campaign=campaign,
-            campaign=campaign,
+            team__campaign=testing_campaign,
+            campaign=testing_campaign,
             id=1,
         )
 

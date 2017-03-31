@@ -19,9 +19,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-from dpnk.models import UserAttendance
+from dpnk.models import Campaign, UserAttendance
 
-from model_mommy.recipe import Recipe, foreign_key, related
+from model_mommy.recipe import Recipe, related
 
 PhaseRecipe = Recipe(
     "dpnk.Phase",
@@ -37,11 +37,29 @@ RegistrationPhaseRecipe = Recipe(
 )
 CampaignRecipe = Recipe(
     "Campaign",
-    slug="testing-campaign",
-    name="Testing campaign",
     phase_set=related(PhaseRecipe, RegistrationPhaseRecipe),
 )
+
+
+def campaign_get_or_create(**kwargs):
+    def get_campaign():
+        try:
+            campaign = Campaign.objects.get(**kwargs)
+        except Campaign.DoesNotExist:
+            campaign = CampaignRecipe.make(**kwargs)
+        return campaign
+
+    return get_campaign
+
+
+testing_campaign = campaign_get_or_create(
+    slug="testing-campaign",
+    name='Testing campaign',
+)
+
 UserAttendanceRecipe = Recipe(
     UserAttendance,
-    campaign=foreign_key(CampaignRecipe),
+    campaign=testing_campaign,
+    t_shirt_size__campaign=testing_campaign,
+    team__campaign=testing_campaign,
 )
