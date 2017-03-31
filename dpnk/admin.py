@@ -1241,8 +1241,28 @@ class CampaignAdmin(admin.ModelAdmin):
         return obj.cityincampaign_set.count()
 
 
+class CompanyAdminResource(resources.ModelResource):
+    class Meta:
+        model = models.CompanyAdmin
+        fields = (
+            'userprofile__user',
+            'userprofile__user__email',
+            'userprofile',
+            'userprofile__user__first_name',
+            'userprofile__user__last_name',
+            'userprofile__telephone',
+            'company_admin_approved',
+            'administrated_company__name',
+            'can_confirm_payments',
+            'will_pay_opt_in',
+            'note',
+            'motivation_company_admin',
+            'campaign',
+        )
+
+
 @admin.register(models.CompanyAdmin)
-class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsidiaries__city'), RelatedFieldAdmin):
+class CompanyAdminAdmin(ImportExportMixin, city_admin_mixin_generator('administrated_company__subsidiaries__city'), RelatedFieldAdmin):
     list_display = [
         'userprofile__user',
         'userprofile__user__email',
@@ -1275,6 +1295,7 @@ class CompanyAdminAdmin(city_admin_mixin_generator('administrated_company__subsi
     raw_id_fields = ['userprofile']
     list_max_show_all = 100000
     actions = (actions.update_mailing_coordinator,)
+    resource_class = CompanyAdminResource
 
     def lookup_allowed(self, key, value):
         if key in ('administrated_company__subsidiaries__city__id__exact',):
