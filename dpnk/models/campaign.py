@@ -27,7 +27,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from price_level.models import Pricable
 
-from .transactions import Payment
 from .user_attendance import UserAttendance
 
 
@@ -46,7 +45,6 @@ class Campaign(Pricable, models.Model):
     )
     slug = models.SlugField(
         unique=True,
-        default="",
         verbose_name=u"Doména v URL",
         blank=False,
     )
@@ -218,7 +216,7 @@ class Campaign(Pricable, models.Model):
         from t_shirt_delivery.models import PackageTransaction
         return UserAttendance.objects.filter(
             campaign=self,
-            transactions__payment__status__in=Payment.done_statuses,
+            payment_status__in=('done', 'no_admission'),
             t_shirt_size__ship=True,
         ).exclude(
             transactions__packagetransaction__status__in=PackageTransaction.shipped_statuses,

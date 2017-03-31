@@ -17,9 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import datetime
+
 from django.test import TestCase
 
 from dpnk import models
+
+from model_mommy import mommy
 
 
 class TestCampaignMethods(TestCase):
@@ -55,3 +59,75 @@ class TestMethods(TestCase):
     def test_campaign_phase_does_not_exist(self):
         campaign = models.Campaign()
         self.assertEquals(campaign.phase("unknown_phase"), None)
+
+
+class TestUserAttendancesForDelivery(TestCase):
+    def test_no_admission(self):
+        user_attendance = mommy.make_recipe(
+            'dpnk.test.UserAttendanceRecipe',
+            t_shirt_size__ship=True,
+            team__name="Foo team",
+            userprofile__user__first_name="Foo",
+        )
+        self.assertEqual(
+            user_attendance.payment_status,
+            'no_admission',
+        )
+        self.assertQuerysetEqual(
+            user_attendance.campaign.user_attendances_for_delivery(),
+            ['<UserAttendance: Foo>'],
+        )
+
+    def test_token_user(self):
+        token = mommy.make(
+            'DiscountCoupon',
+            discount=100,
+            coupon_type__name="Foo coupon type",
+        )
+        user_attendance = mommy.make_recipe(
+            'dpnk.test.UserAttendanceRecipe',
+            discount_coupon=token,
+            t_shirt_size__ship=True,
+            team__name="Foo team",
+            userprofile__user__first_name="Foo",
+        )
+        mommy.make(
+            "price_level.PriceLevel",
+            takes_effect_on=datetime.date(year=2010, month=2, day=1),
+            price=100,
+            category='basic',
+            pricable=user_attendance.campaign,
+        )
+        user_attendance.save()
+        self.assertEqual(
+            user_attendance.payment_status,
+            'done',
+        )
+        self.assertQuerysetEqual(
+            user_attendance.campaign.user_attendances_for_delivery(),
+            ['<UserAttendance: Foo>'],
+        )
+
+    def test_none(self):
+        user_attendance = mommy.make_recipe(
+            'dpnk.test.UserAttendanceRecipe',
+            t_shirt_size__ship=True,
+            team__name="Foo team",
+            userprofile__user__first_name="Foo",
+        )
+        mommy.make(
+            "price_level.PriceLevel",
+            takes_effect_on=datetime.date(year=2010, month=2, day=1),
+            price=100,
+            category='basic',
+            pricable=user_attendance.campaign,
+        )
+        user_attendance.save()
+        self.assertEqual(
+            user_attendance.payment_status,
+            'none',
+        )
+        self.assertQuerysetEqual(
+            user_attendance.campaign.user_attendances_for_delivery(),
+            [],
+        )
