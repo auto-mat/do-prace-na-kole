@@ -95,6 +95,7 @@ class UserAttendance(models.Model):
         null=True,
         blank=True,
         default=None,
+        on_delete=models.SET_NULL,
     )
     approved_for_team = models.CharField(
         verbose_name=_(u"Souhlas týmu"),
@@ -108,12 +109,14 @@ class UserAttendance(models.Model):
         verbose_name=_("Velikost trika"),
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
     discount_coupon = models.ForeignKey(
         DiscountCoupon,
         verbose_name=_("Slevový kupón"),
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
     created = models.DateTimeField(
         verbose_name=_(u"Datum vytvoření"),
