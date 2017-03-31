@@ -129,6 +129,12 @@ class Campaign(Pricable, models.Model):
         blank=True,
         null=True,
     )
+    package_max_count = models.PositiveIntegerField(
+        verbose_name=_("Maximální počet triček v krabici"),
+        default=50,
+        blank=True,
+        null=True,
+    )
     package_weight = models.FloatField(
         verbose_name=_(u"Váha balíku"),
         null=True,
