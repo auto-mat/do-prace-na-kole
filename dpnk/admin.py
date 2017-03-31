@@ -250,7 +250,8 @@ def create_subsidiary_resource(campaign_slugs):
         team_count = fields.Field()
 
         def dehydrate_team_count(self, obj):
-            return obj.team_count
+            if hasattr(obj, 'team_count'):
+                return obj.team_count
 
         user_count = fields.Field()
 
