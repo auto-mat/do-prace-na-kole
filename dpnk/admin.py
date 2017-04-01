@@ -1350,6 +1350,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'created',
         'exposure_date',
         'paid_date',
+        'variable_symbol',
         'total_amount',
         'invoice_count',
         'invoice_pdf_url',
@@ -1375,10 +1376,6 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
     list_max_show_all = 10000
     form = InvoiceForm
     resource_class = InvoiceResource
-
-    def company_address(self, obj):
-        return obj.company.company_address()
-    company_address.short_description = _(u"Adresa organizace")
 
     def invoice_count(self, obj):
         return obj.payment_set.count()
