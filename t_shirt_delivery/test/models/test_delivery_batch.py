@@ -24,7 +24,7 @@ from PyPDF2 import PdfFileReader
 
 from django.test import TestCase, override_settings
 
-from dpnk.test.mommy_recipes import CampaignRecipe, UserAttendanceRecipe
+from dpnk.test.mommy_recipes import CampaignRecipe, UserAttendanceRecipe, testing_campaign
 
 from model_mommy import mommy
 from model_mommy.recipe import seq
@@ -194,25 +194,108 @@ class TestDeliveryBatch(TestCase):
             ],
         )
 
+    def test_create_packages_large_team(self):
+        """
+        Test that packages are created on save.
+        Also unapproved team members will get package.
+        If there is more than 5 members of the team, the package should be divided.
+        """
+        city = mommy.make("City", name="Foo city")
+        subsidiary = mommy.make(
+            "Subsidiary",
+            address_street="Foo street",
+            address_psc=12234,
+            address_street_number="123",
+            address_city="Foo city",
+            city=city,
+            address_recipient="Foo recipient",
+        )
+        team = mommy.make(
+            "Team",
+            subsidiary=subsidiary,
+            name="Foo Team",
+            campaign=testing_campaign,
+        )
+        user_attendance = UserAttendanceRecipe.make(
+            userprofile__user__first_name="Foo",
+            userprofile__user__last_name="Name",
+            approved_for_team='undecided',
+            team=team,
+            discount_coupon__discount=100,
+            discount_coupon__coupon_type__name="Discount",
+            _quantity=6,
+        )
+        user_attendance[0].campaign.package_max_count = 1
+        user_attendance[0].campaign.save()
+        delivery_batch = mommy.make(
+            'DeliveryBatch',
+            campaign=user_attendance[0].campaign,
+        )
+        self.assertQuerysetEqual(
+            delivery_batch.subsidiarybox_set.all().order_by('pk'),
+            (
+                '<SubsidiaryBox: Krabice pro pobočku Foo recipient, Foo street 123, 122 34 Foo city - Foo city>',
+            ),
+        )
+        self.assertQuerysetEqual(
+            delivery_batch.subsidiarybox_set.first().teampackage_set.all().order_by('pk'),
+            [
+                '<TeamPackage: Balíček pro tým Foo Team>',
+                '<TeamPackage: Balíček pro tým Foo Team>',
+            ],
+        )
+        self.assertQuerysetEqual(
+            delivery_batch.subsidiarybox_set.first().teampackage_set.all()[0].packagetransaction_set.all().order_by('pk'),
+            [
+                '<PackageTransaction: PackageTransaction object>',
+                '<PackageTransaction: PackageTransaction object>',
+                '<PackageTransaction: PackageTransaction object>',
+                '<PackageTransaction: PackageTransaction object>',
+                '<PackageTransaction: PackageTransaction object>',
+            ],
+        )
+        self.assertQuerysetEqual(
+            delivery_batch.subsidiarybox_set.first().teampackage_set.all()[1].packagetransaction_set.all().order_by('pk'),
+            [
+                '<PackageTransaction: PackageTransaction object>',
+            ],
+        )
+
     def test_create_packages_not_member(self):
         """
         Test that packages are created on save
         PackageTransaction should be added only
-        if UserAttendance is approved for team
+        if UserAttendance has paid
         and the t_shirt is shipped
+        the approval for tema should not matter
         """
+        mommy.make(
+            'PriceLevel',
+            pricable=testing_campaign,
+            price=100,
+            takes_effect_on=datetime.date(year=2010, month=2, day=1),
+        )
         user_attendance = UserAttendanceRecipe.make(
+            transactions=[mommy.make("Payment", status=1)],
+            userprofile__user__first_name="Foo",
+            campaign=testing_campaign,
+        )
+        user_attendance.save()
+        self.assertTrue(user_attendance.payment_status, 'none')
+        added_user_attendance = UserAttendanceRecipe.make(
             approved_for_team='undecided',
             transactions=[mommy.make("Payment", status=99)],
+            userprofile__user__first_name="Bar",
+            campaign=testing_campaign,
         )
-        added_user_attendance = UserAttendanceRecipe.make(
-            approved_for_team='approved',
-            transactions=[mommy.make("Payment", status=99)],
-        )
+        added_user_attendance.save()
+        self.assertTrue(added_user_attendance.payment_status, 'done')
         UserAttendanceRecipe.make(
             t_shirt_size__ship=False,
             approved_for_team='approved',
             transactions=[mommy.make("Payment", status=99)],
+            userprofile__user__first_name="Baz",
+            campaign=testing_campaign,
         )
         mommy.make(
             'DeliveryBatch',
