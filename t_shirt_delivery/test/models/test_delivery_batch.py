@@ -101,7 +101,7 @@ class TestDeliveryBatch(TestCase):
         )
         user_attendance = UserAttendanceRecipe.make(
             userprofile__user__first_name="Foo",
-            userprofile__user__last_name="Name",
+            userprofile__user__last_name=seq("Name "),
             approved_for_team='approved',
             team__subsidiary=subsidiary,
             team__name=seq('Team '),
@@ -127,8 +127,8 @@ class TestDeliveryBatch(TestCase):
         self.assertQuerysetEqual(
             PackageTransaction.objects.all().order_by('pk'),
             [
-                '<PackageTransaction: PackageTransaction object>',
-                '<PackageTransaction: PackageTransaction object>',
+                '<PackageTransaction: Package transaction for user Foo Name 1>',
+                '<PackageTransaction: Package transaction for user Foo Name 2>',
             ],
         )
         # Test that PackageTransaction object is created
@@ -159,7 +159,7 @@ class TestDeliveryBatch(TestCase):
         )
         user_attendance = UserAttendanceRecipe.make(
             userprofile__user__first_name="Foo",
-            userprofile__user__last_name="Name",
+            userprofile__user__last_name=seq("Name "),
             approved_for_team='approved',
             team__subsidiary=subsidiary,
             team__name=seq('Team '),
@@ -189,8 +189,8 @@ class TestDeliveryBatch(TestCase):
         self.assertQuerysetEqual(
             PackageTransaction.objects.all().order_by('pk'),
             [
-                '<PackageTransaction: PackageTransaction object>',
-                '<PackageTransaction: PackageTransaction object>',
+                '<PackageTransaction: Package transaction for user Foo Name 1>',
+                '<PackageTransaction: Package transaction for user Foo Name 2>',
             ],
         )
 
@@ -218,7 +218,7 @@ class TestDeliveryBatch(TestCase):
         )
         user_attendance = UserAttendanceRecipe.make(
             userprofile__user__first_name="Foo",
-            userprofile__user__last_name="Name",
+            userprofile__user__last_name=seq("Name "),
             approved_for_team='undecided',
             team=team,
             discount_coupon__discount=100,
@@ -247,17 +247,17 @@ class TestDeliveryBatch(TestCase):
         self.assertQuerysetEqual(
             delivery_batch.subsidiarybox_set.first().teampackage_set.all()[0].packagetransaction_set.all().order_by('pk'),
             [
-                '<PackageTransaction: PackageTransaction object>',
-                '<PackageTransaction: PackageTransaction object>',
-                '<PackageTransaction: PackageTransaction object>',
-                '<PackageTransaction: PackageTransaction object>',
-                '<PackageTransaction: PackageTransaction object>',
+                '<PackageTransaction: Package transaction for user Foo Name 1>',
+                '<PackageTransaction: Package transaction for user Foo Name 2>',
+                '<PackageTransaction: Package transaction for user Foo Name 3>',
+                '<PackageTransaction: Package transaction for user Foo Name 4>',
+                '<PackageTransaction: Package transaction for user Foo Name 5>',
             ],
         )
         self.assertQuerysetEqual(
             delivery_batch.subsidiarybox_set.first().teampackage_set.all()[1].packagetransaction_set.all().order_by('pk'),
             [
-                '<PackageTransaction: PackageTransaction object>',
+                '<PackageTransaction: Package transaction for user Foo Name 6>',
             ],
         )
 

@@ -64,3 +64,6 @@ class PackageTransaction(Transaction):
         if not self.t_shirt_size:
             self.t_shirt_size = self.user_attendance.t_shirt_size
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "Package transaction for user %s" % self.user_attendance
