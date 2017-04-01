@@ -109,14 +109,14 @@ class Team(models.Model):
         return member_count
 
     def unapproved_members(self):
-        from .user_attendance import UserAttendance
-        return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True, approved_for_team='undecided')
+        return self.users.filter(userprofile__user__is_active=True, approved_for_team='undecided')
 
     def all_members(self):
-        from .user_attendance import UserAttendance
-        return UserAttendance.objects.filter(campaign=self.campaign, team=self, userprofile__user__is_active=True)
+        """ Return all members of this team, including unapproved. """
+        return self.users.filter(userprofile__user__is_active=True)
 
     def members(self):
+        """ Return approved members of this team. """
         return self.users.filter(approved_for_team='approved', userprofile__user__is_active=True).order_by("id")
 
     @denormalized(models.IntegerField, null=True, skip={'invitation_token'})
