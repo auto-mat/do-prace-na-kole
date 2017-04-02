@@ -23,8 +23,6 @@ from io import StringIO
 
 from author.decorators import with_author
 
-import denorm
-
 from django.contrib.gis.db import models
 from django.core.files.base import ContentFile
 from django.db import transaction
@@ -92,8 +90,12 @@ class DeliveryBatch(models.Model):
             user_attendances = self.campaign.user_attendances_for_delivery()
         for subsidiary in Subsidiary.objects.filter(teams__users__in=user_attendances).order_by("city__slug").distinct():
             t_shirt_count_in_box = None
+            subsidiary_box = None
             for team in subsidiary.teams.filter(users__in=user_attendances).distinct():
                 if t_shirt_count_in_box is None or t_shirt_count_in_box + team.members().count() > self.campaign.package_max_count:
+                    if subsidiary_box is not None:
+                        subsidiary_box.add_packages_on_save = True
+                        subsidiary_box.save()
                     subsidiary_box = SubsidiaryBox(
                         delivery_batch=self,
                         subsidiary=subsidiary,
@@ -120,7 +122,6 @@ class DeliveryBatch(models.Model):
                         )
             subsidiary_box.add_packages_on_save = True
             subsidiary_box.save()
-            denorm.flush()
 
 
 @receiver(post_save, sender=DeliveryBatch)

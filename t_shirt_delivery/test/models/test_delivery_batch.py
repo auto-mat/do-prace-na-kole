@@ -173,15 +173,24 @@ class TestDeliveryBatch(TestCase):
             'DeliveryBatch',
             campaign=user_attendance[0].campaign,
         )
+        subsidiary_boxes = delivery_batch.subsidiarybox_set
         self.assertQuerysetEqual(
-            delivery_batch.subsidiarybox_set.all().order_by('pk'),
+            subsidiary_boxes.all().order_by('pk'),
             (
                 '<SubsidiaryBox: Krabice pro pobočku Foo recipient, Foo street 123, 122 34 Foo city - Foo city>',
                 '<SubsidiaryBox: Krabice pro pobočku Foo recipient, Foo street 123, 122 34 Foo city - Foo city>',
             ),
         )
+        pdf = PdfFileReader(subsidiary_boxes.all()[0].customer_sheets)
+        pdf_string = pdf.pages[0].extractText()
+        self.assertTrue("Foo Name 2" in pdf_string)
+
+        pdf = PdfFileReader(subsidiary_boxes.all()[1].customer_sheets)
+        pdf_string = pdf.pages[0].extractText()
+        self.assertTrue("Foo Name 1" in pdf_string)
+
         self.assertQuerysetEqual(
-            delivery_batch.subsidiarybox_set.first().teampackage_set.all().order_by('pk'),
+            subsidiary_boxes.first().teampackage_set.all().order_by('pk'),
             [
                 '<TeamPackage: Balíček pro tým Team 1>',
             ],
@@ -237,15 +246,16 @@ class TestDeliveryBatch(TestCase):
                 '<SubsidiaryBox: Krabice pro pobočku Foo recipient, Foo street 123, 122 34 Foo city - Foo city>',
             ),
         )
+        team_packages = delivery_batch.subsidiarybox_set.first().teampackage_set.all()
         self.assertQuerysetEqual(
-            delivery_batch.subsidiarybox_set.first().teampackage_set.all().order_by('pk'),
+            team_packages.order_by('pk'),
             [
                 '<TeamPackage: Balíček pro tým Foo Team>',
                 '<TeamPackage: Balíček pro tým Foo Team>',
             ],
         )
         self.assertQuerysetEqual(
-            delivery_batch.subsidiarybox_set.first().teampackage_set.all()[0].packagetransaction_set.all().order_by('pk'),
+            team_packages[0].packagetransaction_set.all().order_by('pk'),
             [
                 '<PackageTransaction: Package transaction for user Foo Name 1>',
                 '<PackageTransaction: Package transaction for user Foo Name 2>',
@@ -255,7 +265,7 @@ class TestDeliveryBatch(TestCase):
             ],
         )
         self.assertQuerysetEqual(
-            delivery_batch.subsidiarybox_set.first().teampackage_set.all()[1].packagetransaction_set.all().order_by('pk'),
+            team_packages[1].packagetransaction_set.all().order_by('pk'),
             [
                 '<PackageTransaction: Package transaction for user Foo Name 6>',
             ],
