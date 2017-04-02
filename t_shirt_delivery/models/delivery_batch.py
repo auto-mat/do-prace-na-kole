@@ -91,9 +91,9 @@ class DeliveryBatch(models.Model):
         if not user_attendances:
             user_attendances = self.campaign.user_attendances_for_delivery()
         for subsidiary in Subsidiary.objects.filter(teams__users__in=user_attendances).order_by("city__slug").distinct():
-            t_shirt_count_in_box = 0
+            t_shirt_count_in_box = None
             for team in subsidiary.teams.filter(users__in=user_attendances).distinct():
-                if t_shirt_count_in_box == 0 or t_shirt_count_in_box + team.members().count() > self.campaign.package_max_count:
+                if t_shirt_count_in_box is None or t_shirt_count_in_box + team.members().count() > self.campaign.package_max_count:
                     subsidiary_box = SubsidiaryBox(
                         delivery_batch=self,
                         subsidiary=subsidiary,
@@ -102,10 +102,10 @@ class DeliveryBatch(models.Model):
                     subsidiary_box.save()
                     t_shirt_count_in_box = 0
 
-                t_shirt_count_in_package = 0
+                t_shirt_count_in_package = None
                 for user_attendance in user_attendances.distinct() & team.all_members().distinct():
                     if user_attendance.t_shirt_size.ship:
-                        if t_shirt_count_in_package == 0 or t_shirt_count_in_package >= 5:
+                        if t_shirt_count_in_package is None or t_shirt_count_in_package >= 5:
                             team_package = TeamPackage.objects.create(
                                 box=subsidiary_box,
                                 team=team,
