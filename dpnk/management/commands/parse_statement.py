@@ -49,6 +49,8 @@ class Command(BaseCommand):
         for payment in gen:
             if payment['amount'] >= 0:
                 variable_symbol = payment['variable_symbol']
+                if not variable_symbol:
+                    continue
                 try:
                     invoice = Invoice.objects.get(
                         variable_symbol=variable_symbol,
