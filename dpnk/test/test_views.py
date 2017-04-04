@@ -1129,7 +1129,7 @@ class ViewsTestsLogon(ViewsLogon):
 
         response = self.client.get(reverse('invoices'))
         self.assertContains(response, "<td>Registered User 1</td>", html=True)
-        self.assertContains(response, "<td>%i,0 Kč</td>" % amount, html=True)
+        self.assertContains(response, "<td>%i Kč</td>" % amount, html=True)
 
         post_data = {
             'create_invoice': 'on',
