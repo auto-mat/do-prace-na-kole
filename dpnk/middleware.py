@@ -41,10 +41,7 @@ class UserAttendanceMiddleware:
         else:
             request.user_attendance = None
 
-        if not hasattr(request, 'campaign') and campaign_slug:
-            try:
-                request.campaign = Campaign.objects.get(slug=campaign_slug)
-            except Campaign.DoesNotExist:
-                request.campaign = None
-        else:
+        try:
+            request.campaign = Campaign.objects.get(slug=campaign_slug)
+        except Campaign.DoesNotExist:
             request.campaign = None
