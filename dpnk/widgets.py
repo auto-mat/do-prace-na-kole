@@ -29,12 +29,13 @@ class SelectOrCreateAutoComplete(AutoCompleteSelectWidget):
     underlying_form = None
     create = False
 
-    def __init__(self, channel, underlying_form_class, prefix="", new_description=u"Vytvořit novou položku", *args, **kwargs):
+    def __init__(self, channel, underlying_form_class, prefix="", new_description=u"Vytvořit novou položku", help_text=None, *args, **kwargs):
         super(SelectOrCreateAutoComplete, self).__init__(lookup_class='dpnk.lookups.CompanyLookup')
         self.new_description = new_description
         self.channel = channel
         self.underlying_form_class = underlying_form_class
         self.underlying_form = self.underlying_form_class(prefix=prefix)
+        self.help_text = help_text
 
     def render(self, name, *args, **kwargs):
         html = super(SelectOrCreateAutoComplete, self).render(name, *args, **kwargs)
@@ -48,6 +49,7 @@ class SelectOrCreateAutoComplete(AutoCompleteSelectWidget):
                 'selected': self.create,
                 'id': widget_id,
                 'new_description': self.new_description,
+                'help_text': self.help_text,
             },
         )
         return widget

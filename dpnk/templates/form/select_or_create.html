@@ -1,6 +1,9 @@
 {% load crispy_forms_tags %}
 <fieldset id="{{id}}_div" {% if selected %}disabled{% endif %}>
     {{ html }}
+   {% if  help_text %}
+   <p id="hint_id_company" class="help-block">{{ help_text }}</p>
+   {% endif %}
 </fieldset>
 
 {# this is hack #}
