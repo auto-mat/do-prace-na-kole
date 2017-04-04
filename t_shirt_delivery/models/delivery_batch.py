@@ -23,6 +23,8 @@ from io import StringIO
 
 from author.decorators import with_author
 
+import denorm
+
 from django.contrib.gis.db import models
 from django.core.files.base import ContentFile
 from django.db import transaction
@@ -122,6 +124,7 @@ class DeliveryBatch(models.Model):
                         )
             subsidiary_box.add_packages_on_save = True
             subsidiary_box.save()
+            denorm.flush()  # This is here to prevent total blockage of the system after creating the delivery batch
 
 
 @receiver(post_save, sender=DeliveryBatch)
