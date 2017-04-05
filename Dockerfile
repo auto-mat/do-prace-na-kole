@@ -2,15 +2,28 @@ from python:3.5
 
 maintainer Automat
 
-run apt-get update
-run apt-get install -y build-essential git
-run apt-get install -y postgresql-common libpq-dev
-run apt-get install -y libtiff5-dev libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk
-run apt-get install -y libxml2-dev libxslt-dev
-run apt-get install -y libgeos-dev
-run apt-get install -y gunicorn
-run apt-get install -y binutils libproj-dev gdal-bin
-run apt-get install -y memcached
+run apt-get update && apt-get install -y \
+   binutils \
+   build-essential \
+   gdal-bin \
+   git \
+   gunicorn \
+   libfreetype6-dev \
+   libgeos-dev \
+   libjpeg-dev \
+   liblcms2-dev \
+   libpq-dev \
+   libproj-dev \
+   libtiff5-dev \
+   libwebp-dev \
+   libxml2-dev \
+   libxslt-dev \
+   memcached \
+   postgresql-common \
+   python-tk \
+   tcl8.6-dev \
+   tk8.6-dev \
+   zlib1g-dev
 
 run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
