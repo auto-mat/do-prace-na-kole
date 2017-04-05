@@ -236,6 +236,7 @@ INSTALLED_APPS = (
     'adminactions',
     'massadmin',
     'advanced_filters',
+    'django_celery_beat',
     'psc',
     # 'cachalot',
 )

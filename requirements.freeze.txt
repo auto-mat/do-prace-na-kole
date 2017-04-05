@@ -25,6 +25,7 @@ django-braces==1.10.0
 django-bulk-update==1.1.10
 django-cachalot==1.4.1
 -e git+https://github.com/Thermondo/django-cache-utils.git@0e1ccf5af7692396089270f21f7ff01f9b6c6ef1#egg=django_cache_utils
+django-celery-beat==1.0.1
 django-chart-tools==1.0
 django-class-based-auth-views==0.4
 django-composite-field==0.7.6

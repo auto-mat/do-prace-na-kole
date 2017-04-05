@@ -77,3 +77,4 @@ django-modeltranslation
 django-mass-edit
 fiobank
 django-ipware
+django-celery-beat
