@@ -49,14 +49,12 @@ django-cachalot
 django-bulk-update
 django-cors-headers
 -e git+https://github.com/PetrDlouhy/django-denorm.git@develop#egg=django-denorm
-django-admin-smoke-tests
 django-wysiwyg-redactor
 sqlparse
 django-appconf
 django-selectable
 pypdf2
 django-extra-views
-freezegun
 raven
 django-celery<4.0.0
 celery<4.0.0

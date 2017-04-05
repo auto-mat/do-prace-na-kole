@@ -22,8 +22,6 @@ run pip install -e git+https://github.com/PetrDlouhy/django.git@e38714cc8d5560f4
 copy requirements.freeze.txt ./
 run pip install six
 run pip install -r requirements.freeze.txt
-copy requirements-test.txt ./
-run pip install -r requirements-test.txt
 
 copy . .
 

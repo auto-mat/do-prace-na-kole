@@ -228,7 +228,6 @@ INSTALLED_APPS = (
     'subdomains',
     'redactor',
     'selectable',
-    'django_nose',
     'djcelery',
     'kombu.transport.django',
     'raven.contrib.django.raven_compat',

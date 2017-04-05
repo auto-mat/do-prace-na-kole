@@ -20,7 +20,7 @@
 import os
 
 from .settings import *  # noqa
-from .settings import LOGGING, MIDDLEWARE_CLASSES, TEMPLATES
+from .settings import INSTALLED_APPS, LOGGING, MIDDLEWARE_CLASSES, TEMPLATES
 
 ADMINS = (
     ('', ''),
@@ -56,6 +56,10 @@ UNUSED_MIDDLEWARES = [
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 ]
+
+INSTALLED_APPS += (
+    'django_nose',
+)
 
 for mid in UNUSED_MIDDLEWARES:
     try:

@@ -1,3 +1,6 @@
+coverage
+freezegun
+django-admin-smoke-tests
 django-debug-toolbar
 django-debug-toolbar-line-profiler
 django-debug-toolbar-template-timings
