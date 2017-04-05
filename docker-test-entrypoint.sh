@@ -4,7 +4,7 @@
 echo Starting tests
 pip install -r requirements-test.txt
 flake8
-./runtests.sh
+./runtests.sh $TEST_PARAMS
 mkdir reports -p
 cp htmlcov/ reports -R
 cp .coverage reports/
