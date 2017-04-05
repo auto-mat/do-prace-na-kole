@@ -70,7 +70,6 @@ for mid in UNUSED_MIDDLEWARES:
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  # XXX
 SITE_URL = 'localhost:8000'
 DJANGO_URL = 'http://localhost:8000'
-TESTING_URLS = True
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 

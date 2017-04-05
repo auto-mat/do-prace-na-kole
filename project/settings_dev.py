@@ -45,7 +45,6 @@ EMAIL_FILE_PATH = '/tmp/dpnk-emails'
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  # XXX
 SITE_URL = 'http://localhost/~petr/dpnk-wp/'
 DJANGO_URL = 'http://localhost:8000'
-TESTING_URLS = True
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 
