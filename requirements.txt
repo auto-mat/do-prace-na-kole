@@ -56,8 +56,7 @@ django-selectable
 pypdf2
 django-extra-views
 raven
-django-celery<4.0.0
-celery<4.0.0
+celery
 django-bootstrap3
 sqlalchemy
 flower

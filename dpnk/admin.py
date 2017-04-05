@@ -43,8 +43,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import string_concat
 from django.utils.translation import ugettext_lazy as _
 
-from djcelery.models import TaskMeta
-
 from import_export import fields, resources
 from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
 
@@ -1428,16 +1426,6 @@ class SessionAdmin(admin.ModelAdmin):
     readonly_fields = ['_session_data']
     search_fields = ('session_key',)
     date_hierarchy = 'expire_date'
-
-
-@admin.register(TaskMeta)
-class TaskMetaAdmin(admin.ModelAdmin):
-    list_display = ('task_id', 'status', 'date_done', 'result_str', 'hidden')
-    readonly_fields = ('result_str', 'date_done',)
-    date_hierarchy = 'date_done'
-
-    def result_str(self, obj):
-        return str(obj.result)
 
 
 # register all adminactions

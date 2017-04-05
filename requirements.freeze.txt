@@ -1,12 +1,12 @@
-amqp==1.4.9
+amqp==2.1.4
 anyjson==0.3.3
 appdirs==1.4.3
-Babel==2.3.4
+Babel==2.4.0
 beautifulsoup4==4.5.3
-billiard==3.3.0.23
+billiard==3.5.0.2
 bleach==1.5.0
 boto==2.46.1
-celery==3.1.25
+celery==4.0.2
 contextlib2==0.5.4
 coveralls==1.1
 -e git+https://github.com/PetrDlouhy/createsend-python.git@29e8f327059004d3241a10a9c07b7a7f9f8c80a2#egg=createsend
@@ -25,7 +25,6 @@ django-braces==1.10.0
 django-bulk-update==1.1.10
 django-cachalot==1.4.1
 -e git+https://github.com/Thermondo/django-cache-utils.git@0e1ccf5af7692396089270f21f7ff01f9b6c6ef1#egg=django_cache_utils
-django-celery==3.2.1
 django-chart-tools==1.0
 django-class-based-auth-views==0.4
 django-composite-field==0.7.6
@@ -78,7 +77,7 @@ html5lib==0.9999999
 InvoiceGenerator==0.5.4
 ipython==5.1.0
 ipython-genutils==0.1.0
-kombu==3.0.37
+kombu==4.0.2
 line-profiler==2.0
 lxml==3.7.2
 mccabe==0.5.3

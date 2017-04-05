@@ -228,8 +228,6 @@ INSTALLED_APPS = (
     'subdomains',
     'redactor',
     'selectable',
-    'djcelery',
-    'kombu.transport.django',
     'raven.contrib.django.raven_compat',
     'bootstrap3',
     'daterange_filter',

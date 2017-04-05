@@ -513,4 +513,4 @@ class CompetitionForm(forms.ModelForm):
 @receiver(post_save, sender=Competition)
 def competition_post_save(sender, instance, **kwargs):
     from .. import tasks
-    tasks.recalculate_competitions_results.apply_async(args=((instance,),))
+    tasks.recalculate_competitions_results.apply_async(args=((instance.pk,),))
