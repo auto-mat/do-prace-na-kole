@@ -58,6 +58,8 @@ from price_level import models as price_level_models
 
 from related_admin import RelatedFieldAdmin
 
+from rest_framework.authtoken.admin import TokenAdmin
+
 from t_shirt_delivery.admin import PackageTransactionInline
 from t_shirt_delivery.forms import PackageTransactionForm
 from t_shirt_delivery.models import PackageTransaction, TShirtSize
@@ -1426,6 +1428,15 @@ class SessionAdmin(admin.ModelAdmin):
     readonly_fields = ['_session_data']
     search_fields = ('session_key',)
     date_hierarchy = 'expire_date'
+
+
+TokenAdmin.raw_id_fields = ('user',)
+TokenAdmin.search_fields = (
+    'user__email',
+    'user__first_name',
+    'user__last_name',
+    'user__username',
+)
 
 
 # register all adminactions
