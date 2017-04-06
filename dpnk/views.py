@@ -963,7 +963,7 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        city_slug = self.user_attendance.team.subsidiary.city.slug
+        city_slug = self.user_attendance.team.subsidiary.city.get_wp_slug()
         campaign = self.user_attendance.campaign
         context_data['questionnaire_answer'] = models.Answer.objects.filter(
             Q(attachment__icontains=".jpg") | Q(attachment__icontains=".jpeg") |
