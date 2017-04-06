@@ -20,8 +20,6 @@ django-fieldsignals
 django-admin-sortable2
 reportlab
 -e git+https://github.com/aquavitae/svg2rlg.git#egg=svg2rlg
-flake8
-modulus11
 django-dbbackup
 pillow
 InvoiceGenerator
