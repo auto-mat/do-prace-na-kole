@@ -68,7 +68,7 @@ django-wysiwyg-redactor==0.4.9.1
 djangorestframework==3.5.3
 djangorestframework-gis==0.11
 docopt==0.6.2
-easy-thumbnails==2.3
+sorl-thumbnail==12.3
 enum-compat==0.0.2
 fiobank==1.2.0
 flower==0.9.1

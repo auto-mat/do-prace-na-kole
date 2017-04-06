@@ -25,7 +25,7 @@ pillow
 InvoiceGenerator
 django-related-admin
 newrelic
-easy_thumbnails
+sorl-thumbnail
 django-crispy-forms
 django-class-based-auth-views
 django-subdomains
