@@ -71,6 +71,7 @@ CACHES = {
 LOCALE_PATHS = (
     normpath(PROJECT_ROOT, 'dpnk/locale'),
     normpath(PROJECT_ROOT, 'coupons/locale'),
+    normpath(PROJECT_ROOT, 't_shirt_delivery/locale'),
 )
 TIME_ZONE = 'Europe/Prague'
 LANGUAGES = (
