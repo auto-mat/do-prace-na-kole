@@ -5,6 +5,7 @@
 *.swp
 *~
 *.orig
+*__pycache__
 /dpnk/static/bow
 /sql/
 /dpnk.log*
@@ -23,3 +24,4 @@
 /dpnk/static/css/style.css
 /response.html
 /dpnk/test_files/DSC00002.JPG.*_*.jpg
+/media/
