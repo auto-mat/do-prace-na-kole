@@ -223,6 +223,7 @@ INSTALLED_APPS = (
     'settings_context_processor',
     'oauth2_provider',
     'rest_framework',
+    'rest_framework_gis',
     'bulk_update',
     'denorm',
     'subdomains',

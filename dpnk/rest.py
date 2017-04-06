@@ -69,7 +69,8 @@ class GpxFileSerializer(serializers.ModelSerializer):
         try:
             instance = GpxFile(**validated_data)
             instance.clean()
-            instance.track = instance.track_clean
+            if hasattr(instance, 'track_clean'):
+                instance.track = instance.track_clean
             instance.from_application = True
             instance.save()
         except IntegrityError:
@@ -80,8 +81,10 @@ class GpxFileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GpxFile
-        fields = ('id', 'trip_date', 'direction', 'file')
-        read_only_fields = ('track',)
+        fields = ('id', 'trip_date', 'direction', 'file', 'track')
+        extra_kwargs = {
+            'track': {'write_only': True},
+        }
 
 
 class GpxFileSet(viewsets.ModelViewSet):
