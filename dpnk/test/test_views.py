@@ -1025,7 +1025,7 @@ class ViewsTestsLogon(ViewsLogon):
         campaign.max_team_members = 0
         campaign.save()
         post_data = {
-            'company_1': '1',
+            'company': '1',
             'subsidiary': '1',
             'team': '3',
             'next': 'Next',

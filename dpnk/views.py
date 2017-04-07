@@ -369,7 +369,8 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
                 company = form_company.save()
                 messages.add_message(request, messages.SUCCESS, _(u"Organizace %s úspěšně vytvořena.") % company, fail_silently=True)
             else:
-                company = Company.objects.get(id=form.data['company_1'])
+                company_id = form.data['company_1'] if 'company_1' in form.data else form.data['company']
+                company = Company.objects.get(id=company_id)
 
             if create_subsidiary:
                 subsidiary = form_subsidiary.save(commit=False)
