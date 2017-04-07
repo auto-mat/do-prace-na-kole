@@ -369,7 +369,8 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
                 company = form_company.save()
                 messages.add_message(request, messages.SUCCESS, _(u"Organizace %s úspěšně vytvořena.") % company, fail_silently=True)
             else:
-                company = Company.objects.get(id=form.data['company_1'])
+                company_id = form.data['company_1'] if 'company_1' in form.data else form.data['company']
+                company = Company.objects.get(id=company_id)
 
             if create_subsidiary:
                 subsidiary = form_subsidiary.save(commit=False)
@@ -963,7 +964,7 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        city_slug = self.user_attendance.team.subsidiary.city.slug
+        city_slug = self.user_attendance.team.subsidiary.city.get_wp_slug()
         campaign = self.user_attendance.campaign
         context_data['questionnaire_answer'] = models.Answer.objects.filter(
             Q(attachment__icontains=".jpg") | Q(attachment__icontains=".jpeg") |

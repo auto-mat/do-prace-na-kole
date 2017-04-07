@@ -26,7 +26,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
@@ -116,7 +115,7 @@ class CompanyEditView(TitleViewMixin, UpdateView):
 
 class CompanyAdminMixin(SuccessMessageMixin):
     success_message = _("Byla vytvořena žádost o funkci firemního koordinátora. Vyčkejte, než dojde ke schválení této funkce.")
-    opening_message = mark_safe(
+    opening_message = mark_safe_lazy(
         _(
             "<p>"
             "Vaše organizace ještě nemá zvoleného firemního koordinátora. "

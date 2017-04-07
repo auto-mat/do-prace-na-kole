@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-26 16:23+0100\n"
+"POT-Creation-Date: 2017-04-06 17:09+0200\n"
 "PO-Revision-Date: 2017-01-26 16:31+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Translated-Using: django-rosetta 0.7.12\n"
+
+#: admin.py:38
+msgid "Účastník kampaně"
+msgstr ""
+
+#: admin.py:43
+msgid "Přiřazen"
+msgstr ""
+
+#: admin.py:44
+msgid "Nepřiřazen"
+msgstr ""
 
 #: forms.py:37
 msgid "Kód voucheru"

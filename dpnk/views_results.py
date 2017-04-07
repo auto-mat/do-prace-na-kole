@@ -58,7 +58,6 @@ class CompetitionResultListJson(BaseDatatableView):
     def get_initial_queryset(self):
         if not hasattr(self, 'competition'):
             self.competition = models.Competition.objects.get(
-                campaign__slug=self.request.subdomain,
                 slug=self.kwargs['competition_slug'],
             )
         results = self.competition.get_results()

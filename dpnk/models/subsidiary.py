@@ -65,20 +65,20 @@ class Subsidiary(models.Model):
     )
 
     box_addressee_name = models.CharField(
-        verbose_name=_("Jméno adresáta krabice pro tým"),
+        verbose_name=_("Jméno adresáta krabice pro pobočku"),
         help_text=_("Jmené osoby, která převezme krabici s tričky a zajistí jeich rozdělení na této pobočce. Nemusí se účastnit soutěže."),
         max_length=30,
         null=True,
         blank=True,
     )
     box_addressee_telephone = models.CharField(
-        verbose_name=_("Telefon adresáta krabice pro tým"),
+        verbose_name=_("Telefon adresáta krabice pro pobočku"),
         max_length=30,
         null=True,
         blank=True,
     )
     box_addressee_email = models.EmailField(
-        verbose_name=_("Email adresáta krabice pro tým"),
+        verbose_name=_("Email adresáta krabice pro pobočku"),
         null=True,
         blank=True,
     )

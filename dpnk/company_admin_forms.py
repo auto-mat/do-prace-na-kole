@@ -136,8 +136,8 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
         self.fields['personal_data_opt_in'].label = _(
             "Souhlasím se zpracováním osobních údajů podle "
             "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
-            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>." % self.get_campaign(),
-        )
+            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>.",
+        ) % self.get_campaign()
         return ret_val
 
 
@@ -152,7 +152,7 @@ class CompanyAdminApplicationForm(EmailUsernameMixin, CompanyAdminForm, registra
     )
     telephone = forms.CharField(
         label="Telefon",
-        help_text="Pro možnost kontaktování koordinátora organizace",
+        help_text=_("Pro možnost kontaktování firemního koordinátora"),
         max_length=30,
     )
     first_name = forms.CharField(

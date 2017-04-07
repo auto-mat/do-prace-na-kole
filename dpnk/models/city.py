@@ -39,8 +39,15 @@ class City(models.Model):
     )
     slug = models.SlugField(
         unique=True,
-        verbose_name=u"Subdoména v URL",
+        verbose_name=_("Subdoména v URL"),
         blank=False,
+    )
+    wp_slug = models.SlugField(
+        unique=True,
+        verbose_name=_("Subdoména na WordPressu"),
+        help_text=_("Pokud není vyplněno, použije se slug"),
+        blank=True,
+        null=True,
     )
     cyklistesobe_slug = models.SlugField(
         verbose_name=_(u"Jméno skupiny na webu Cyklisté sobě"),
@@ -56,3 +63,8 @@ class City(models.Model):
 
     def __str__(self):
         return "%s" % self.name
+
+    def get_wp_slug(self):
+        if self.wp_slug:
+            return self.wp_slug
+        return self.slug

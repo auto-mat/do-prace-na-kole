@@ -139,8 +139,8 @@ class Invoice(models.Model):
         blank=True,
         null=True,
         unique=True,
-        verbose_name=_("Variable symbol"),
-        help_text=_("Variable symbol of the invoice"),
+        verbose_name=_("Variabilní symbol"),
+        help_text=_("Variabilní symbol faktury"),
     )
 
     def __str__(self):

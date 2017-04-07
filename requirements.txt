@@ -70,7 +70,7 @@ django-model-utils
 django-price-level
 django-datatables-view
 django-rank-query
-django-adminactions
+-e git+https://github.com/saxix/django-adminactions@develop#egg=django-adminactions  # for fixes of merge action
 boto
 django-google-tag-manager
 django-ses
