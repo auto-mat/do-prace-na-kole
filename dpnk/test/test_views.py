@@ -86,6 +86,19 @@ class CompetitionsViewTests(ViewsLogon):
         self.assertContains(response, '<input type="hidden" name="amount" value="12000">', html=True)
         self.assertContains(response, '<input type="hidden" name="pos_id" value="123321">', html=True)
         self.assertContains(response, '<input type="hidden" name="order_id" value="1128-1">', html=True)
+        self.assertContains(response, '<input type="hidden" name="client_ip" value="0.0.0.0">', html=True)
+
+    def test_payment_http_x_forwarded_for(self):
+        """ Test in case, when IP is being delivered through HTTP_X_FORWARDED_FOR """
+        address = reverse('payment')
+        response = self.client.get(address, HTTP_X_FORWARDED_FOR="123.123.123.123")
+        self.assertContains(response, '<input type="hidden" name="client_ip" value="123.123.123.123">', html=True)
+
+    def test_payment_http_x_forwarded_for_proxy(self):
+        """ Test in case, when IP is being delivered through HTTP_X_FORWARDED_FOR and the client is behid proxy """
+        address = reverse('payment')
+        response = self.client.get(address, HTTP_X_FORWARDED_FOR="unknown, 123.123.123.123")
+        self.assertContains(response, '<input type="hidden" name="client_ip" value="123.123.123.123">', html=True)
 
     def test_team_members(self):
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))

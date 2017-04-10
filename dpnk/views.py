@@ -743,7 +743,6 @@ class BeneficiaryPaymentView(PaymentView):
 
 class PaymentResult(UserAttendanceViewMixin, TemplateView):
     registration_phase = 'typ_platby'
-    title = "Stav platby"
     template_name = 'registration/payment_result.html'
 
     @method_decorator(login_required_simple)
@@ -785,12 +784,25 @@ class PaymentResult(UserAttendanceViewMixin, TemplateView):
         context_data['success'] = success
 
         if success:
+            context_data['title'] = _("Platba úspěšná")
             context_data['payment_message'] = _(
                 "Vaše platba byla úspěšně zadána. "
                 "Až platbu obdržíme, dáme vám vědět na e-mail. "
                 "Tím bude vaše registrace úspěšně dokončena.",
             )
         else:
+            context_data['title'] = _("Platba neúspěšná")
+            logger.warning(
+                'Payment unsuccessful',
+                extra={
+                    'success': success,
+                    'pay_type': pay_type,
+                    'trans_id': trans_id,
+                    'session_id': session_id,
+                    'user': user_attendance.userprofile.user,
+                    'request': self.request,
+                },
+            )
             context_data['payment_message'] = _(u"Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
         context_data['registration_phase'] = self.registration_phase
         return context_data

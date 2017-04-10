@@ -30,6 +30,8 @@ from django.utils import six
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
 
+from ipware.ip import get_real_ip
+
 import unidecode
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
@@ -103,12 +105,11 @@ def slugify(slug_str):
 
 
 def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
+    ip = get_real_ip(request)
+    if ip is not None:
+        return ip
     else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+        return "0.0.0.0"
 
 
 def format_psc(integer):
