@@ -320,7 +320,7 @@ urlpatterns = [
         name="payment_successfull",
     ),
     url(
-        r'^platba_neuspesna/(?P<trans_id>[0-9]*)/(?P<session_id>[0-9A-Za-z\-]+)/(?P<pay_type>[0-9A-Za-z]+)/(?P<error>[^&]+)/$$',
+        r'^platba_neuspesna/(?P<trans_id>[0-9]*)/(?P<session_id>[0-9A-Za-z\-]+)/(?P<pay_type>[0-9A-Za-z]*)/(?P<error>[^&]+)/$$',
         views.PaymentResult.as_view(),
         {'success': False},
         name="payment_unsuccessfull",

@@ -80,3 +80,4 @@ django-favicon
 django-modeltranslation
 django-mass-edit
 fiobank
+django-ipware
