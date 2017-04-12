@@ -1,0 +1,11 @@
+{% extends "base_generic_form.html" %}
+{% load i18n %}
+
+{% block second_menu %}
+<ul class="navbar nav navbar-nav the_submenu">
+<li class="{% if request.resolver_match.url_name == 'profil' %}active{% endif %}"><a href="{% url 'profil' %}">{% trans "Základní stránka" %}</a></li>
+<li class="{% if request.resolver_match.url_name == 'rides_details' %}active{% endif %}"><a href="{% url 'rides_details' %}">{% trans "Podrobný přehled jízd" %}</a></li>
+</ul>
+{% endblock %}
+
+{% block rides_link_class %}active{% endblock %}

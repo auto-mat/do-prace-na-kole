@@ -1,17 +1,11 @@
-{% extends "base_generic.html" %}
+{% extends "submenu_rides.html" %}
 {% load static %}
 {% load dpnk_tags %}
 {% load i18n %}
 {% load thumbnail %}
 {% load cache %}
 
-{% block content %}
-{% block messages %}
-{% include "messages_include.html" %}
-{% if message %}
-{{ message }}
-{% endif %}
-{% endblock %}
+{% block form %}
 
 <div id="rides-form-container">{% include "registration/rides.html" %}</div>
 
