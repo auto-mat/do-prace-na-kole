@@ -48,6 +48,10 @@ class CompetitionDoesNotExist(APIException):
 
 
 class GpxFileSerializer(serializers.ModelSerializer):
+    distanceMeters = serializers.IntegerField(required=False, min_value=0, source='distance')
+    durationSeconds = serializers.IntegerField(required=False, min_value=0, source='duration')
+    sourceApplication = serializers.CharField(required=False, source='source_application')
+
     def create(self, validated_data):
         user = self.context['request'].user
         subdomain = self.context['request'].subdomain
@@ -81,7 +85,16 @@ class GpxFileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GpxFile
-        fields = ('id', 'trip_date', 'direction', 'file', 'track')
+        fields = (
+            'id',
+            'trip_date',
+            'direction',
+            'file',
+            'track',
+            'durationSeconds',
+            'distanceMeters',
+            'sourceApplication',
+        )
         extra_kwargs = {
             'track': {'write_only': True},
         }
