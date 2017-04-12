@@ -107,7 +107,7 @@ python-memcached==1.58
 pytz==2016.10
 qrcode==5.3
 qrplatba==0.3.4
-raven==5.32.0
+raven==6.0.0
 rcssmin==1.0.6
 reportlab==3.3.0
 requests==2.12.4
