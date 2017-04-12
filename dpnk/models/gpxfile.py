@@ -171,7 +171,7 @@ def set_trip(sender, instance, *args, **kwargs):
 @receiver(post_save, sender=GpxFile)
 def set_trip_post(sender, instance, *args, **kwargs):
     if instance.trip and instance.trip.active():
-        length = instance.length()
+        length = instance.distance / 1000.0 if instance.distance else instance.length()
         if length:
             instance.trip.distance = length
             instance.trip.save()
