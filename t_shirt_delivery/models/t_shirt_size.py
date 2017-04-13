@@ -71,10 +71,16 @@ class TShirtSize(models.Model):
         verbose_name_plural = _(u"Velikosti trička")
         unique_together = (("name", "campaign"),)
         db_table = 't_shirt_delivery_tshirtsize'
-        ordering = ["order"]
+        ordering = ["campaign", "order"]
 
-    def __str__(self):
+    def user_string(self):
         if self.price == 0:
             return self.name
         else:
             return "%s (%s Kč navíc)" % (self.name, self.price)
+
+    def __str__(self):
+        if self.price == 0:
+            return "%s (%s)" % (self.name, self.campaign.slug)
+        else:
+            return "%s (%s, %s Kč navíc)" % (self.name, self.campaign.slug, self.price)

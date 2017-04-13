@@ -31,6 +31,7 @@ class TShirtUpdateForm(PrevNextMixin, forms.ModelForm):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['t_shirt_size'].required = True
         self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
+        self.fields['t_shirt_size'].label_from_instance = lambda i: i.user_string()
         return ret_val
 
     class Meta:
