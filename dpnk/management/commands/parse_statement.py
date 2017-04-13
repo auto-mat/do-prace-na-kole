@@ -50,13 +50,14 @@ class Command(BaseCommand):
             if payment['amount'] >= 0:
                 variable_symbol = payment['variable_symbol']
                 if not variable_symbol:
+                    print(payment)
                     continue
                 try:
                     invoice = Invoice.objects.get(
-                        variable_symbol=variable_symbol,
+                        variable_symbol=int(variable_symbol),
                     )
                     if invoice.total_amount == payment['amount'] and 'CZK' == payment['currency']:
                         invoice.paid_date = payment['date']
                         invoice.save()
                 except Invoice.DoesNotExist:
-                    invoice = None
+                    print(payment)
