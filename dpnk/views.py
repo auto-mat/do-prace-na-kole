@@ -1060,6 +1060,12 @@ class PackageView(RegistrationViewMixin, TemplateView):
     registration_phase = "zmenit_tym"
 
 
+class ApplicationView(RegistrationViewMixin, TemplateView):
+    template_name = "registration/applications.html"
+    title = _("Aplikace")
+    registration_phase = "application"
+
+
 class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
     template_name = 'registration/team_members.html'
     title = _(u"Výsledky členů týmu")

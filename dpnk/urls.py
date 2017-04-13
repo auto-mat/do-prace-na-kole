@@ -203,6 +203,11 @@ urlpatterns = [
         name="package",
     ),
     url(
+        r'^aplikace/$',
+        views.ApplicationView.as_view(),
+        name="application",
+    ),
+    url(
         r'^address/$',
         views.UserAttendanceView.as_view(
             template_name="registration/address.html",
