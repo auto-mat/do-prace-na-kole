@@ -195,8 +195,15 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         campaign_filter_generator('user_attendance__campaign'),
         'status',
     ]
-    raw_id_fields = ('user_attendance',)
-    readonly_fields = ('author', 'created')
+    raw_id_fields = [
+        'user_attendance',
+        'team_package',
+    ]
+    readonly_fields = (
+        'author',
+        'created',
+        'updated_by',
+    )
     list_max_show_all = 10000
     form = transaction_forms.PaymentForm
 
