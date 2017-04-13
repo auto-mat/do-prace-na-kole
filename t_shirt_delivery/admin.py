@@ -141,6 +141,14 @@ class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
         'delivery_batch',
     ]
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related(
+            'subsidiary__city',
+        ).prefetch_related(
+            'teampackage_set',
+        )
+
 
 @admin.register(models.TeamPackage)
 class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
@@ -167,6 +175,14 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
         'team__subsidiary__address_street',
         'team__subsidiary__company__name',
     )
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related(
+            'team__subsidiary__city',
+            'box__subsidiary__city',
+            'box__delivery_batch',
+        )
 
 
 @admin.register(models.PackageTransaction)
@@ -206,6 +222,14 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
     )
     list_max_show_all = 10000
     form = transaction_forms.PaymentForm
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related(
+            'user_attendance__userprofile__user',
+            'user_attendance__team__subsidiary__city',
+            't_shirt_size__campaign',
+        )
 
 
 class DeliveryBatchForm(forms.ModelForm):
@@ -292,6 +316,13 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     def csv_data_url(self, obj):
         if obj.tnt_order:
             return format_html("<a href='{}'>csv_data</a>", obj.tnt_order.url)
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related(
+            'author',
+            'campaign',
+        )
 
 
 class UserAttendanceToBatch(UserAttendance):
