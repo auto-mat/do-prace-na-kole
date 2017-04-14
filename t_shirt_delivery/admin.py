@@ -119,6 +119,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         'all_packages_dispatched',
         'dispatched_packages_count',
         'packages_count',
+        'carrier_identification',
         'delivery_batch',
         'subsidiary',
         'customer_sheets',
@@ -130,6 +131,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
     )
     search_fields = (
         'id',
+        'carrier_identification',
         'subsidiary__address_street',
         'subsidiary__address_psc',
         'subsidiary__address_recipient',
@@ -138,6 +140,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         'subsidiary__company__name',
     )
     advanced_filter_fields = (
+        'carrier_identification',
         'dispatched',
         'delivery_batch',
         'subsidiary',

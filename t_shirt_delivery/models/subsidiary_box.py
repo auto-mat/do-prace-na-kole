@@ -64,6 +64,12 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         null=False,
         default=False,
     )
+    carrier_identification = models.CharField(
+        verbose_name=_("Identifikace u dopravce"),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
 
     def identifier(self):
         if self.id:
