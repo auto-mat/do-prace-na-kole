@@ -839,10 +839,14 @@ class UserAttendanceAdmin(AdminAdvancedFiltersMixin, RelatedFieldAdmin, ExportMi
 
     def get_queryset(self, request):
         queryset = super(UserAttendanceAdmin, self).get_queryset(request)
-        return queryset.length().select_related('team__subsidiary__city', 'team__subsidiary__company', 't_shirt_size').only(
+        return queryset.length().select_related(
+            'team__subsidiary__city',
+            'team__subsidiary__company',
+            't_shirt_size__campaign',
+        ).only(
             'approved_for_team',
-            'campaign_id',
             'campaign__name',
+            'campaign_id',
             'created',
             'distance',
             'frequency',
@@ -851,8 +855,14 @@ class UserAttendanceAdmin(AdminAdvancedFiltersMixin, RelatedFieldAdmin, ExportMi
             'payment_status',
             'representative_payment__amount',
             'representative_payment__pay_type',
-            'representative_payment__status',
             'representative_payment__realized',
+            'representative_payment__status',
+            't_shirt_size',
+            't_shirt_size__campaign__slug',
+            't_shirt_size__name',
+            't_shirt_size__name_cs',
+            't_shirt_size__name_en',
+            't_shirt_size__price',
             'team',
             'team__member_count',
             'team__name',
@@ -866,10 +876,6 @@ class UserAttendanceAdmin(AdminAdvancedFiltersMixin, RelatedFieldAdmin, ExportMi
             'team__subsidiary__company',
             'track',
             'trip_length_total',
-            't_shirt_size',
-            't_shirt_size',
-            't_shirt_size__name',
-            't_shirt_size__price',
             'userprofile',
             'userprofile__nickname',
             'userprofile__sex',
