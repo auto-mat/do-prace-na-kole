@@ -16,7 +16,7 @@ diff-match-patch==20121119
 django-admin-sortable2==0.6.7
 -e git+https://github.com/saxix/django-adminactions@92800bad924bf9f4b0d094da5586f701c0f73bfc#egg=django_adminactions
 -e git+https://github.com/PetrDlouhy/django-adminfilters.git@af22f3c6a6a826302e9b5b26890844bcc6a65983#egg=django_adminfilters
--e git+https://github.com/PetrDlouhy/django-advanced-filters.git@c81012f268646100dd8b89b4023416af61379796#egg=django_advanced_filters
+-e git+https://github.com/PetrDlouhy/django-advanced-filters.git@508b9bb803100a2ed002b75b0e09828626c1794d#egg=django_advanced_filters
 django-appconf==1.0.2
 django-author==0.4.5
 django-bleach==0.3.0

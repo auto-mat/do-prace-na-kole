@@ -749,6 +749,7 @@ class UserAttendanceAdmin(AdminAdvancedFiltersMixin, RelatedFieldAdmin, ExportMi
         'representative_payment__pay_type',
         'representative_payment__status',
         'representative_payment__amount',
+        'representative_payment__realized',
         'team__member_count',
         'get_distance',
         'frequency',
@@ -786,6 +787,7 @@ class UserAttendanceAdmin(AdminAdvancedFiltersMixin, RelatedFieldAdmin, ExportMi
         'representative_payment__pay_type',
         'representative_payment__status',
         'representative_payment__amount',
+        ('representative_payment__realized', _('Datum realizace platby')),
         'payment_status',
         'team__member_count',
         ('t_shirt_size__ship', _('Posílá se triko?')),
@@ -794,6 +796,7 @@ class UserAttendanceAdmin(AdminAdvancedFiltersMixin, RelatedFieldAdmin, ExportMi
         'userprofile__sex',
         'discount_coupon__coupon_type__name',
         'discount_coupon__discount',
+        'team__subsidiary__company__name',
     )
     raw_id_fields = ('userprofile', 'team', 'discount_coupon')
     search_fields = (
@@ -849,6 +852,7 @@ class UserAttendanceAdmin(AdminAdvancedFiltersMixin, RelatedFieldAdmin, ExportMi
             'representative_payment__amount',
             'representative_payment__pay_type',
             'representative_payment__status',
+            'representative_payment__realized',
             'team',
             'team__member_count',
             'team__name',
