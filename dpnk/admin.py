@@ -1418,8 +1418,9 @@ class GpxFileAdmin(LeafletGeoAdmin):
 
 @admin.register(models.Voucher)
 class VoucherAdmin(ImportMixin, admin.ModelAdmin):
-    list_display = ('id', 'voucher_type', 'token', 'user_attendance')
+    list_display = ('id', 'voucher_type', 'token', 'user_attendance', 'campaign')
     raw_id_fields = ('user_attendance',)
+    list_filter = [CampaignFilter, 'voucher_type']
 
 
 @admin.register(Session)

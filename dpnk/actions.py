@@ -81,7 +81,10 @@ show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 
 def assign_vouchers(modeladmin, request, queryset):
     count = queryset.count()
-    vouchers = models.Voucher.objects.filter(user_attendance=None).all()[:count]
+    vouchers = models.Voucher.objects.filter(
+        user_attendance=None,
+        campaign__slug=request.subdomain,
+    ).all()[:count]
     if vouchers.count() != count:
         messages.error(request, _(u"Není dost volných voucherů"))
         return

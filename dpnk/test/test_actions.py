@@ -33,12 +33,67 @@ from django.test.utils import override_settings
 
 from dpnk import actions, models, util
 
+from model_mommy import mommy
+
+
+class TestActionsMommy(TestCase):
+    """ Tests that are independend of fixtures """
+    def setUp(self):
+        self.modeladmin = admin.ModelAdmin(models.UserAttendance, "")
+        self.factory = RequestFactory()
+        self.request = self.factory.get("")
+        self.request.subdomain = "testing-campaign"
+        self.request.user = mommy.make(
+            "auth.User",
+            username="test",
+            is_staff=True,
+            is_superuser=True,
+        )
+        setattr(self.request, 'session', 'session')
+        self.messages = FallbackStorage(self.request)
+        setattr(self.request, '_messages', self.messages)
+
+    def test_assign_vouchers(self):
+        mommy.make_recipe('dpnk.test.UserAttendanceRecipe')
+        queryset = models.UserAttendance.objects.all()
+        vouchers = mommy.make(
+            "Voucher",
+            voucher_type="rekola",
+            token="vouchertoken",
+            campaign=queryset[0].campaign,
+            _quantity=2,
+        )
+        voucher = vouchers[0]
+        self.assertEquals(voucher.user_attendance, None)
+        actions.assign_vouchers(self.modeladmin, self.request, queryset)
+        voucher.refresh_from_db()
+        self.assertNotEquals(voucher.user_attendance.pk, None)
+        message = get_messages(self.request)._queued_messages[0].message
+        self.assertEquals(str(message), "Úspěšně přiřazeno 1 voucherů")
+
+    def test_assign_vouchers_not_enough(self):
+        mommy.make_recipe(
+            'dpnk.test.UserAttendanceRecipe',
+            _quantity=2,
+        )
+        queryset = models.UserAttendance.objects.all()
+        actions.assign_vouchers(self.modeladmin, self.request, queryset)
+        voucher = mommy.make(
+            "Voucher",
+            voucher_type="rekola",
+            token="vouchertoken",
+            campaign=queryset[0].campaign,
+        )
+        self.assertEquals(voucher.user_attendance, None)
+        message = get_messages(self.request)._queued_messages[0].message
+        self.assertEquals(str(message), "Není dost volných voucherů")
+
 
 @override_settings(
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class TestActions(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'vouchers', 'trips', 'test_results_data', 'invoices']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'test_results_data', 'invoices']
 
     def setUp(self):
         self.modeladmin = admin.ModelAdmin(models.UserAttendance, "")
@@ -75,24 +130,6 @@ class TestActions(TestCase):
         actions.update_mailing(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEquals(message, "Mailing list byl úspěšne aktualizován 8 uživatelům")
-
-    def test_assign_vouchers(self):
-        queryset = models.UserAttendance.objects.all()[1:2]
-        voucher = models.Voucher.objects.get(pk=1)
-        self.assertEquals(voucher.user_attendance, None)
-        actions.assign_vouchers(self.modeladmin, self.request, queryset)
-        voucher = models.Voucher.objects.get(pk=1)
-        self.assertNotEquals(voucher.user_attendance.pk, None)
-        message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(str(message), "Úspěšně přiřazeno 1 voucherů")
-
-    def test_assign_vouchers_not_enough(self):
-        queryset = models.UserAttendance.objects.all()
-        actions.assign_vouchers(self.modeladmin, self.request, queryset)
-        voucher = models.Voucher.objects.get(pk=1)
-        self.assertEquals(voucher.user_attendance, None)
-        message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(str(message), "Není dost volných voucherů")
 
     def test_show_distance(self):
         queryset = models.UserAttendance.objects.all()
