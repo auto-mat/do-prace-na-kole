@@ -24,7 +24,8 @@ from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFi
 
 from django import forms
 from django.contrib import admin
-from django.db.models import Count
+from django.db.models import Count, TextField
+from django.forms import Textarea
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -252,6 +253,9 @@ class PackageTransactionInline(NestedTabularInline):
         'user_attendance',
         'team_package',
     ]
+    formfield_overrides = {
+        TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
+    }
     form = PackageTransactionForm
 
 

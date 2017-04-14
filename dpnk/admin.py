@@ -37,7 +37,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.sessions.models import Session
 from django.core.urlresolvers import reverse
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, TextField
+from django.forms import Textarea
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import string_concat
@@ -98,6 +99,9 @@ class PaymentInline(NestedTabularInline):
     form = transaction_forms.PaymentForm
     readonly_fields = ['user_attendance', 'order_id', 'session_id', 'trans_id', 'error', 'author', 'updated_by']
     raw_id_fields = ['invoice', ]
+    formfield_overrides = {
+        TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
+    }
 
 
 class CommonTransactionInline(NestedTabularInline):
@@ -112,6 +116,9 @@ class UserActionTransactionInline(NestedTabularInline):
     extra = 0
     readonly_fields = ['user_attendance', 'author', 'updated_by']
     form = transaction_forms.UserActionTransactionForm
+    formfield_overrides = {
+        TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
+    }
 
 
 class TeamInline(admin.TabularInline):
@@ -174,6 +181,15 @@ class CompanyResource(resources.ModelResource):
         export_order = fields
 
 
+class CompanyAdminInline(NestedTabularInline):
+    raw_id_fields = ('administrated_company', 'userprofile')
+    extra = 0
+    model = models.CompanyAdmin
+    formfield_overrides = {
+        TextField: {'widget': Textarea(attrs={'rows': 1, 'cols': 30})},
+    }
+
+
 @admin.register(models.Company)
 class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportMixin, admin.ModelAdmin):
     list_display = (
@@ -188,7 +204,7 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
         'address_city',
         'id',
     )
-    inlines = [SubsidiaryInline, ]
+    inlines = [SubsidiaryInline, CompanyAdminInline]
     list_filter = [CityCampaignFilter, 'subsidiaries__city', 'active']
     readonly_fields = ['subsidiary_links']
     search_fields = (
@@ -496,6 +512,8 @@ class UserAttendanceInline(LeafletGeoAdminMixin, NestedTabularInline):
     extra = 0
     list_max_show_all = 10000
     raw_id_fields = ('team',)
+    map_width = '200px'
+    map_height = '200px'
 
 
 class UserProfileForm(forms.ModelForm):
@@ -506,12 +524,6 @@ class UserProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
         self.fields['telephone'].required = False
-
-
-class CompanyAdminInline(NestedTabularInline):
-    raw_id_fields = ('administrated_company',)
-    extra = 0
-    model = models.CompanyAdmin
 
 
 class UserProfileAdminInline(NestedStackedInline):
