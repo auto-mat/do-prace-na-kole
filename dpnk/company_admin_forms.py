@@ -64,6 +64,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
             if user_attendance.representative_payment and user_attendance.representative_payment.pay_type == 'fc' and
             user_attendance.payment_status != 'done']
         self.fields['paing_for'].choices = choices
+        self.helper.form_class = "dirty-check"
         return ret_val
 
 
