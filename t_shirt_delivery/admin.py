@@ -22,6 +22,8 @@ from adminactions import actions as admin_actions
 
 from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
 
+from advanced_filters.admin import AdminAdvancedFiltersMixin
+
 from django import forms
 from django.contrib import admin
 from django.db.models import Count, TextField
@@ -36,7 +38,7 @@ from dpnk.filters import CampaignFilter, campaign_filter_generator
 from dpnk.models import Campaign, UserAttendance
 
 from import_export import fields, resources
-from import_export.admin import ExportMixin
+from import_export.admin import ExportMixin, ImportExportMixin
 
 from nested_inline.admin import NestedTabularInline
 
@@ -110,7 +112,7 @@ class PackageTransactionResource(resources.ModelResource):
 
 
 @admin.register(models.SubsidiaryBox)
-class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
+class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFieldAdmin):
     list_display = (
         'identifier',
         'dispatched',
@@ -134,6 +136,13 @@ class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
         'subsidiary__address_city',
         'subsidiary__address_district',
         'subsidiary__company__name',
+    )
+    advanced_filter_fields = (
+        'dispatched',
+        'delivery_batch',
+        'subsidiary',
+        'customer_sheets',
+        'created',
     )
     list_filter = [
         campaign_filter_generator('delivery_batch__campaign'),
