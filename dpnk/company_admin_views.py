@@ -57,6 +57,13 @@ class CompanyStructure(TitleViewMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompanyStructure, self).get_context_data(*args, **kwargs)
         context_data['company'] = self.company_admin.administrated_company
+        context_data['subsidiaries'] = context_data['company'].subsidiaries.prefetch_related(
+            'teams__users__userprofile__user',
+            'teams__users__team__subsidiary__city',
+            'teams__campaign',
+            'teams__users__team__campaign',
+            'teams__users__representative_payment',
+        )
         context_data['company_address'] = models.get_address_string(self.company_admin.administrated_company.address)
         context_data['campaign'] = self.company_admin.campaign
         context_data['Status'] = models.Status
