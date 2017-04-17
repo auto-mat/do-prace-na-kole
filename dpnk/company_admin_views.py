@@ -70,10 +70,11 @@ class CompanyStructure(TitleViewMixin, TemplateView):
         return context_data
 
 
-class SelectUsersPayView(TitleViewMixin, FormView):
+class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, FormView):
     template_name = 'company_admin/select_users_pay_for.html'
     form_class = SelectUsersPayForm
-    success_url = reverse_lazy('company_structure')
+    success_url = reverse_lazy('company_admin_pay_for_users')
+    success_message = _("Potvrzena platba za %s soutěžících, kteří od teď mohou bez obav soutěžit.")
     title = _("Platba za soutěžící")
 
     def get_initial(self):
@@ -83,9 +84,11 @@ class SelectUsersPayView(TitleViewMixin, FormView):
 
     def form_valid(self, form):
         paing_for = form.cleaned_data['paing_for']
+        self.confirmed_count = 0
         for user_attendance in paing_for:
             for payment in user_attendance.payments().all():
                 if payment.pay_type == 'fc':
+                    self.confirmed_count += 1
                     payment.status = models.Status.COMPANY_ACCEPTS
                     payment.amount = user_attendance.company_admission_fee()
                     payment.description = payment.description + "\nFA %s odsouhlasil dne %s" % (self.request.user.username, datetime.datetime.now())
@@ -101,6 +104,9 @@ class SelectUsersPayView(TitleViewMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % self.confirmed_count
 
 
 class CompanyEditView(TitleViewMixin, UpdateView):
