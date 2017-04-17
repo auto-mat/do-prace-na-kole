@@ -64,7 +64,7 @@ django-sslify-admin==0.5.0
 django-storages==1.5.1
 django-su==0.5.2
 django-subdomains==2.1.0
-django-table-select-widget==1.0.0
+django-table-select-widget==1.1.0
 django-wysiwyg-redactor==0.4.9.1
 djangorestframework==3.5.3
 djangorestframework-gis==0.11
