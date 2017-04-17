@@ -38,7 +38,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
         [],
         label=_(u"Soutěžící, za které bude zaplaceno"),
         help_text=string_concat(
-            _(u"<div class='text-info'>Tip: Použijte ctrl nebo shift pro výběr více položek nebo jejich rozsahu.</div>"),
+            _(u"<div class='text-info'>Tip: Použijte shift pro výběr rozsahu položek.</div>"),
             _("<br/>Ceny jsou uváděny bez DPH"),
         ),
         widget=TableSelectMultiple(
