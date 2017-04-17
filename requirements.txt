@@ -77,3 +77,4 @@ fiobank
 django-ipware
 django-celery-beat
 djangorestframework-gis
+django-table-select-widget

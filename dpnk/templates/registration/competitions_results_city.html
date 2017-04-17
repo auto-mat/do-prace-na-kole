@@ -1,13 +1,10 @@
 {% extends "base_generic.html" %}
 {% load i18n %}
-{% load static %}
 {% load bleach_tags %}
 {% load cache %}
 
 {% block extrahead %}
-<link rel="stylesheet" type="text/css" href="{% static "bow/datatables.net-bs/css/dataTables.bootstrap.css" %}">
-<script type="text/javascript" charset="utf8" src="{% static "bow/datatables.net/js/jquery.dataTables.js" %}"></script>
-<script type="text/javascript" charset="utf8" src="{% static "bow/datatables.net-bs/js/dataTables.bootstrap.js" %}"></script>
+{% include "datatables_header.html" %}
 {{ block.super }}
 {% endblock %}
 

@@ -1130,13 +1130,27 @@ class ViewsTestsLogon(ViewsLogon):
         slumber_instance = slumber_api.return_value
         slumber_instance.feed.get.return_value = [{"content": "Emission calculator description text"}]
         response = self.client.get(reverse('company_admin_pay_for_users'))
-        self.assertContains(response, "%s Kč: Registered User 1 (test-registered@test.cz)" % amount)
+        self.assertContains(
+            response,
+            '<tr>'
+            '<td>'
+            '<input class="tableselectmultiple selectable-checkbox form-check-input" id="id_paing_for_0" name="paing_for" type="checkbox" value="2115" />'
+            '</td>'
+            '<td>%s</td>'
+            '<td>Registered</td>'
+            '<td>User 1</td>'
+            '<td></td>'
+            '<td>test-registered@test.cz</td>'
+            '<td>Testing city</td>'
+            '</tr>' % amount,
+            html=True,
+        )
         post_data = {
             'paing_for': '2115',
             'submit': 'Odeslat',
         }
         response = self.client.post(reverse('company_admin_pay_for_users'), post_data, follow=True)
-        self.assertRedirects(response, reverse('company_structure'))
+        self.assertRedirects(response, reverse('company_admin_pay_for_users'))
         p = models.UserAttendance.objects.get(id=2115).representative_payment
         self.assertEquals(p.status, models.Status.COMPANY_ACCEPTS)
 

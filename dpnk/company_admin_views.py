@@ -64,7 +64,7 @@ class CompanyStructure(TitleViewMixin, TemplateView):
 
 
 class SelectUsersPayView(TitleViewMixin, FormView):
-    template_name = 'base_generic_company_admin_form.html'
+    template_name = 'company_admin/select_users_pay_for.html'
     form_class = SelectUsersPayForm
     success_url = reverse_lazy('company_structure')
     title = _("Platba za soutěžící")
