@@ -5,9 +5,7 @@
 <ul class="navbar nav navbar-nav the_submenu">
 <li class="{% if request.resolver_match.url_name == 'profil' %}active{% endif %}"><a href="{% url 'profil' %}">{% trans "Přehled" %}</a></li>
 <li class="{% if request.resolver_match.url_name == 'rides_details' %}active{% endif %}"><a href="{% url 'rides_details' %}">{% trans "Podrobný přehled jízd" %}</a></li>
-{% comment %}
 <li class="{% if request.resolver_match.url_name == 'application' %}active{% endif %}"><a href="{% url 'application' %}">{% trans "Aplikace" %}</a></li>
-{% endcomment %}
 </ul>
 {% endblock %}
 
