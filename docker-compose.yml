@@ -1,0 +1,24 @@
+# Django web server
+dpnk-web:
+ hostname: dpnk-web
+ image: "petrdlouhy/dopracenakole${DOCKER_POSTFIX}:${TAG}"
+ ports:
+  - "80:8000"
+ env_file:
+  - ./docker.env
+
+# Celery worker
+dpnk-worker:
+ hostname: dpnk-worker
+ entrypoint: /home/aplikace/docker-celery-entrypoint.sh
+ image: "petrdlouhy/dopracenakole${DOCKER_POSTFIX}:${TAG}"
+ env_file:
+  - ./docker.env
+
+# Celery worker
+dpnk-beat:
+ hostname: dpnk-beat
+ entrypoint: /home/aplikace/docker-celerybeat-entrypoint.sh
+ image: "petrdlouhy/dopracenakole${DOCKER_POSTFIX}:${TAG}"
+ env_file:
+  - ./docker.env
