@@ -2,10 +2,12 @@
 include =
    dpnk*,
    t_shirt_delivery*,
+   psc*,
    coupons*
 omit =
    dpnk/migrations*,
    t_shirt_delivery/migrations*,
+   psc/migrations*,
    coupons/migrations*
 plugins =
     django_coverage_plugin

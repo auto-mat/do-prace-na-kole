@@ -19,13 +19,13 @@ def recalculate_competitor_task(self, user_attendance_pk):
 
 
 @shared_task(bind=True)
-def send_ecc_tracks(self):
+def send_ecc_tracks(self, campaign_slug=''):
     gpx_files = GpxFile.objects.filter(
         trip__commute_mode='bicycle',
         ecc_last_upload__isnull=True,
         user_attendance__team__subsidiary__city__slug='praha',
         user_attendance__payment_status='done',
-        user_attendance__campaign__slug='dpnk2016',
+        user_attendance__campaign__slug=campaign_slug,
     )
 
     count = gpx_files_post(gpx_files)
@@ -33,9 +33,11 @@ def send_ecc_tracks(self):
 
 
 @shared_task(bind=True)
-def recalculate_competitions_results(self, queryset=None):
-    if not queryset:
-        queryset = Competition.objects.filter(campaign__slug='dpnk2016')
+def recalculate_competitions_results(self, pks=None, campaign_slug=''):
+    if not pks:
+        queryset = Competition.objects.filter(campaign__slug=campaign_slug)
+    else:
+        queryset = Competition.objects.filter(pk__in=pks)
     for competition in queryset:
         competition.recalculate_results()
     return len(queryset)
@@ -48,14 +50,14 @@ def touch_items(self, queryset):
 
 
 @shared_task(bind=True)
-def touch_user_attendances(self):
-    queryset = UserAttendance.objects.filter(campaign__slug='dpnk2016')
+def touch_user_attendances(self, campaign_slug=''):
+    queryset = UserAttendance.objects.filter(campaign__slug=campaign_slug)
     util.rebuild_denorm_models(queryset)
     return len(queryset)
 
 
 @shared_task(bind=True)
-def touch_teams(self):
-    queryset = Team.objects.filter(campaign__slug='dpnk2016')
+def touch_teams(self, campaign_slug=''):
+    queryset = Team.objects.filter(campaign__slug=campaign_slug)
     util.rebuild_denorm_models(queryset)
     return len(queryset)

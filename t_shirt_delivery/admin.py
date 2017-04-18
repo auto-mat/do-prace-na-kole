@@ -22,9 +22,12 @@ from adminactions import actions as admin_actions
 
 from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
 
+from advanced_filters.admin import AdminAdvancedFiltersMixin
+
 from django import forms
 from django.contrib import admin
-from django.db.models import Count
+from django.db.models import Count, TextField
+from django.forms import Textarea
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -35,7 +38,7 @@ from dpnk.filters import CampaignFilter, campaign_filter_generator
 from dpnk.models import Campaign, UserAttendance
 
 from import_export import fields, resources
-from import_export.admin import ExportMixin
+from import_export.admin import ExportMixin, ImportExportMixin
 
 from nested_inline.admin import NestedTabularInline
 
@@ -109,13 +112,14 @@ class PackageTransactionResource(resources.ModelResource):
 
 
 @admin.register(models.SubsidiaryBox)
-class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
+class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFieldAdmin):
     list_display = (
         'identifier',
         'dispatched',
         'all_packages_dispatched',
         'dispatched_packages_count',
         'packages_count',
+        'carrier_identification',
         'delivery_batch',
         'subsidiary',
         'customer_sheets',
@@ -127,6 +131,7 @@ class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
     )
     search_fields = (
         'id',
+        'carrier_identification',
         'subsidiary__address_street',
         'subsidiary__address_psc',
         'subsidiary__address_recipient',
@@ -134,12 +139,28 @@ class SubsidiaryBoxAdmin(ExportMixin, RelatedFieldAdmin):
         'subsidiary__address_district',
         'subsidiary__company__name',
     )
+    advanced_filter_fields = (
+        'carrier_identification',
+        'dispatched',
+        'delivery_batch',
+        'subsidiary',
+        'customer_sheets',
+        'created',
+    )
     list_filter = [
         campaign_filter_generator('delivery_batch__campaign'),
         'dispatched',
         filters.AllPackagesDispatched,
         'delivery_batch',
     ]
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related(
+            'subsidiary__city',
+        ).prefetch_related(
+            'teampackage_set',
+        )
 
 
 @admin.register(models.TeamPackage)
@@ -168,6 +189,14 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
         'team__subsidiary__company__name',
     )
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related(
+            'team__subsidiary__city',
+            'box__subsidiary__city',
+            'box__delivery_batch',
+        )
+
 
 @admin.register(models.PackageTransaction)
 class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
@@ -195,10 +224,25 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         campaign_filter_generator('user_attendance__campaign'),
         'status',
     ]
-    raw_id_fields = ('user_attendance',)
-    readonly_fields = ('author', 'created')
+    raw_id_fields = [
+        'user_attendance',
+        'team_package',
+    ]
+    readonly_fields = (
+        'author',
+        'created',
+        'updated_by',
+    )
     list_max_show_all = 10000
     form = transaction_forms.PaymentForm
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related(
+            'user_attendance__userprofile__user',
+            'user_attendance__team__subsidiary__city',
+            't_shirt_size__campaign',
+        )
 
 
 class DeliveryBatchForm(forms.ModelForm):
@@ -221,6 +265,9 @@ class PackageTransactionInline(NestedTabularInline):
         'user_attendance',
         'team_package',
     ]
+    formfield_overrides = {
+        TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
+    }
     form = PackageTransactionForm
 
 
@@ -285,6 +332,13 @@ class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
     def csv_data_url(self, obj):
         if obj.tnt_order:
             return format_html("<a href='{}'>csv_data</a>", obj.tnt_order.url)
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related(
+            'author',
+            'campaign',
+        )
 
 
 class UserAttendanceToBatch(UserAttendance):

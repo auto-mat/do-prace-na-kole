@@ -20,7 +20,7 @@
 import os
 
 from .settings import *  # noqa
-from .settings import LOGGING, MIDDLEWARE_CLASSES, TEMPLATES
+from .settings import INSTALLED_APPS, LOGGING, MIDDLEWARE_CLASSES, TEMPLATES
 
 ADMINS = (
     ('', ''),
@@ -57,6 +57,10 @@ UNUSED_MIDDLEWARES = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
+INSTALLED_APPS += (
+    'django_nose',
+)
+
 for mid in UNUSED_MIDDLEWARES:
     try:
         MIDDLEWARE_CLASSES.remove(mid)
@@ -66,7 +70,6 @@ for mid in UNUSED_MIDDLEWARES:
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  # XXX
 SITE_URL = 'localhost:8000'
 DJANGO_URL = 'http://localhost:8000'
-TESTING_URLS = True
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 

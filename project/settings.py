@@ -114,7 +114,6 @@ if AWS_ACCESS_KEY_ID:
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
 )
 
 
@@ -215,24 +214,22 @@ INSTALLED_APPS = (
     'reportlab',
     'dbbackup',
     'related_admin',
-    'easy_thumbnails',
+    'sorl.thumbnail',
     'crispy_forms',
     'adminfilters',
-    'compressor',
     'django_bleach',
     'gtm',
     'leaflet',
     'settings_context_processor',
     'oauth2_provider',
     'rest_framework',
+    'rest_framework_gis',
+    'rest_framework.authtoken',
     'bulk_update',
     'denorm',
     'subdomains',
     'redactor',
     'selectable',
-    'django_nose',
-    'djcelery',
-    'kombu.transport.django',
     'raven.contrib.django.raven_compat',
     'bootstrap3',
     'daterange_filter',
@@ -241,6 +238,7 @@ INSTALLED_APPS = (
     'adminactions',
     'massadmin',
     'advanced_filters',
+    'django_celery_beat',
     'psc',
     # 'cachalot',
 )
@@ -268,18 +266,13 @@ REST_FRAMEWORK = {
         'oauth2_provider.ext.rest_framework.OAuth2Authentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
 }
 
 REDACTOR_OPTIONS = {'formatting': ['p', 'blockquote', 'pre', 'h4', 'h5']}
 BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br', 'span', 'div', 'h4', 'h5', 'pre', 'blockquote', 'ol', 'li', 'ul']
 BLEACH_ALLOWED_ATTRIBUTES = ['href', ]
-COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = True
-COMPRESS_ROOT = normpath(PROJECT_ROOT, "dpnk/static")
-COMPRESS_PRECOMPILERS = (
-    ('text/less', 'lessc {infile} {outfile}'),
-)
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SERVER_EMAIL = 'kontakt@dopracenakole.cz'
@@ -435,6 +428,7 @@ BROKER_URL = os.environ.get('DPNK_BROKER_URL', '')
 
 MIGRATION_MODULES = {
     'price_level': 'price_level_migrations',
+    'thumbnail': 'thumbnail_migrations',
 }
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -472,6 +466,8 @@ FAVICON_PATH = STATIC_URL + 'img/favicon/favicon.ico'
 PRICE_LEVEL_MODEL = 'dpnk.Campaign'
 PRICE_LEVEL_CATEGORY_CHOICES = Choices(('basic', _('Základní')), ('company', _('Pro firmy')))
 PRICE_LEVEL_CATEGORY_DEFAULT = 'basic'
+
+THUMBNAIL_FORCE_OVERWRITE = True
 
 SITE_URL = 'dopracenakole.cz'
 # import local settings

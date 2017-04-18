@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-11 09:50+0100\n"
+"POT-Creation-Date: 2017-04-06 09:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,50 +26,65 @@ msgstr "New delivery batch with %s items created"
 msgid "Vytvořit dávku z vybraných uživatelů"
 msgstr "Create a delivery batch"
 
-#: admin.py:248
+#: admin.py:266
 msgid "Trik k odeslání"
-msgstr ""
+msgstr "T-shirts for sending"
 
-#: admin.py:259
+#: admin.py:279
 msgid "Velikosti trik"
 msgstr "T-shirt sizes"
 
-#: admin.py:272
+#: admin.py:292
 msgid "Uživatel na dávku objednávek"
 msgstr "User for delivery batch"
 
-#: admin.py:273
+#: admin.py:293
 msgid "Uživatelé na dávku objednávek"
 msgstr "Users for delivery batch"
 
 #: admin_forms.py:32
 msgid "Balík/krabice s tímto číslem byl sestaven"
-msgstr ""
+msgstr "Package/box with this ID was assembled"
 
-#: admin_views.py:53
+#: admin_views.py:51
 #, python-format
 msgid "Balíček/krabice byl v minulosti již zařazen k sestavení: %s"
-msgstr ""
+msgstr "Package/box with this ID was already assembled: %s"
 
-#: admin_views.py:61
+#: admin_views.py:57
 msgid ""
 "Tato krabice obsahuje balíčky, které ještě nebyli zařazeny k sestavení: <a "
 "href='{}?box__id__exact={}&amp;dispatched__exact=0'>zobrazit seznam "
 "nesestavených balíčků</a>"
 msgstr ""
+"This box contains packages, that was not marked as assebled: <a href='{}?"
+"box__id__exact={}&amp;dispatched__exact=0'>show list of unassebled packages</"
+"a>"
 
-#: admin_views.py:75
+#: admin_views.py:69
 #, python-format
 msgid "Balíček/krabice zařazen jako sestavený: %s"
-msgstr ""
+msgstr "Package/box was marked as assebled: %s"
 
-#: admin_views.py:80
+#: admin_views.py:77
 msgid "Balíček/krabice nebyl nalezen."
-msgstr ""
+msgstr "Package/box was not found"
 
-#: admin_views.py:86
+#: admin_views.py:83
 msgid "Zařadit balíky k sestavení"
-msgstr ""
+msgstr "Mark packages as assebled"
+
+#: filters.py:26 models/subsidiary_box.py:110
+msgid "Všechny balíčky vyřízeny"
+msgstr "All packages assebled"
+
+#: filters.py:31
+msgid "Ano"
+msgstr "Yes"
+
+#: filters.py:32
+msgid "Ne"
+msgstr "No"
 
 #: models/delivery_batch.py:46
 msgid "Datum vytvoření"
@@ -85,7 +100,7 @@ msgstr "Customer sheets"
 
 #: models/delivery_batch.py:63
 msgid "CSV objednávka"
-msgstr ""
+msgstr "CSV order"
 
 #: models/delivery_batch.py:69 models/subsidiary_box.py:62
 #: models/team_package.py:47
@@ -109,21 +124,21 @@ msgstr "T-shirt size"
 msgid "Tracking number"
 msgstr "Tracking number"
 
-#: models/package_transaction.py:44
+#: models/package_transaction.py:45
 msgid "Týmový balíček"
-msgstr ""
+msgstr "Team package"
 
-#: models/package_transaction.py:58 models/package_transaction.py:59
+#: models/package_transaction.py:59 models/package_transaction.py:60
 msgid "Transakce trika"
-msgstr ""
+msgstr "T-shirt transaction"
 
 #: models/subsidiary_box.py:40
 msgid "Krabice pro pobočku"
-msgstr ""
+msgstr "Box for subsidiary"
 
 #: models/subsidiary_box.py:41
 msgid "Krabice pro pobočky"
-msgstr ""
+msgstr "Box for subsidiaries"
 
 #: models/subsidiary_box.py:57
 msgid "Pobočka"
@@ -132,7 +147,7 @@ msgstr "Subsidiary"
 #: models/subsidiary_box.py:73
 #, python-format
 msgid "Krabice pro pobočku %s"
-msgstr ""
+msgstr "Box for subsidiary %s"
 
 #: models/t_shirt_size.py:46
 msgid "Posílá se?"
@@ -160,15 +175,15 @@ msgstr "T-shirt size"
 
 #: models/team_package.py:31
 msgid "týmový balíček"
-msgstr ""
+msgstr "team package"
 
 #: models/team_package.py:32
 msgid "týmové balíčky"
-msgstr ""
+msgstr "team packages"
 
 #: models/team_package.py:36
 msgid "Krabice"
-msgstr ""
+msgstr "Box"
 
 #: models/team_package.py:42
 msgid "Tým"
@@ -177,15 +192,15 @@ msgstr "Team"
 #: models/team_package.py:59
 #, python-format
 msgid "Balíček pro tým %s"
-msgstr ""
+msgstr "Package for team %s"
 
 #: models/team_package.py:61
 msgid "Balíček bez týmu"
-msgstr ""
+msgstr "Package without team"
 
 #: templates/admin/index.html:10
 msgid "Označit balíky/krabice jako vyřízené"
-msgstr ""
+msgstr "Mark packages/boxes as done"
 
 #: views.py:40
 msgid "Velikost trička úspěšně nastavena"

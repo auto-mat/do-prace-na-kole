@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
+import json
 from collections import OrderedDict
 from unittest.mock import ANY, MagicMock, patch
 
@@ -38,6 +39,8 @@ from freezegun import freeze_time
 from price_level import models as price_level_models
 
 import settings
+
+from sorl.thumbnail.models import KVStore
 
 
 class PaymentSuccessTests(ClearCacheMixin, TestCase):
@@ -341,8 +344,10 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition.get().recalculate_results()
         address = reverse('questionnaire_answers_all', kwargs={'competition_slug': "quest"})
         response = self.client.get(address)
+        image_file_values = KVStore.objects.get(value__contains='[250, 188]').value
+        image_filename = json.loads(image_file_values)['name']
         self.assertContains(response, '<a href="%smodranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>' % settings.MEDIA_URL, html=True)
-        self.assertContains(response, '<img src="%sDSC00002.JPG.250x250_q85.jpg" width="250" height="188">' % settings.MEDIA_URL, html=True)
+        self.assertContains(response, '<img src="%s%s" width="250" height="188">' % (settings.MEDIA_URL, image_filename), html=True)
         self.assertContains(response, 'Answer without attachment')
         self.assertContains(response, 'Bez přílohy')
 
@@ -365,7 +370,9 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         )
         slumber_mock.return_value = m
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270">' % settings.MEDIA_URL, html=True)
+        image_file_values = KVStore.objects.get(value__contains='[360, 270]').value
+        image_filename = json.loads(image_file_values)['name']
+        self.assertContains(response, '<img src="%s%s" width="360" height="270">' % (settings.MEDIA_URL, image_filename), html=True)
         self.assertContains(response, '<a href="http://www.dopracenakole.cz/locations/testing-city">Testing city</a>', html=True)
         self.assertContains(response, 'Novinky ve městě')
         self.assertContains(response, 'Testing title')

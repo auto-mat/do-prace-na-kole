@@ -1,24 +1,22 @@
-amqp==1.4.9
+amqp==2.1.4
 anyjson==0.3.3
 appdirs==1.4.3
-Babel==2.3.4
+Babel==2.4.0
 beautifulsoup4==4.5.3
-billiard==3.3.0.23
+billiard==3.5.0.2
 bleach==1.5.0
 boto==2.46.1
-celery==3.1.25
+celery==4.0.2
 contextlib2==0.5.4
-coverage==4.3.1
 coveralls==1.1
 -e git+https://github.com/PetrDlouhy/createsend-python.git@29e8f327059004d3241a10a9c07b7a7f9f8c80a2#egg=createsend
 decorator==4.0.10
 diff-match-patch==20121119
 -e git+https://github.com/PetrDlouhy/django.git@e38714cc8d5560f43cafea83cf0c9f298bee9267#egg=Django
-django-admin-smoke-tests==0.3.0
 django-admin-sortable2==0.6.7
 -e git+https://github.com/saxix/django-adminactions@92800bad924bf9f4b0d094da5586f701c0f73bfc#egg=django_adminactions
 -e git+https://github.com/PetrDlouhy/django-adminfilters.git@af22f3c6a6a826302e9b5b26890844bcc6a65983#egg=django_adminfilters
--e git+https://github.com/PetrDlouhy/django-advanced-filters.git@c81012f268646100dd8b89b4023416af61379796#egg=django_advanced_filters
+-e git+https://github.com/PetrDlouhy/django-advanced-filters.git@508b9bb803100a2ed002b75b0e09828626c1794d#egg=django_advanced_filters
 django-appconf==1.0.2
 django-author==0.4.5
 django-bleach==0.3.0
@@ -27,20 +25,15 @@ django-braces==1.10.0
 django-bulk-update==1.1.10
 django-cachalot==1.4.1
 -e git+https://github.com/Thermondo/django-cache-utils.git@0e1ccf5af7692396089270f21f7ff01f9b6c6ef1#egg=django_cache_utils
-django-celery==3.2.1
+django-celery-beat==1.0.1
 django-chart-tools==1.0
 django-class-based-auth-views==0.4
 django-composite-field==0.7.6
-django-compressor==2.1
 django-cors-headers==2.0.0
-django-coverage-plugin==1.3.1
 django-crispy-forms==1.6.1
 django-datatables-view==1.13.2
 django-daterange-filter==1.3.0
 django-dbbackup==3.1.3
-django-debug-toolbar==1.6
-django-debug-toolbar-line-profiler==0.6.1
-django-debug-toolbar-template-timings==0.7
 -e git+https://github.com/PetrDlouhy/django-denorm.git@71754b150fe0094e56a927491f3455964cf32aef#egg=django_denorm
 django-extensions==1.7.5
 django-extra-views==0.8.0
@@ -55,7 +48,6 @@ django-mass-edit==3.0
 django-model-utils==2.6
 django-modeltranslation==0.12
 django-nested-inline==0.3.7
-django-nose==1.4.4
 django-oauth-toolkit==0.11.0
 django-polymorphic==1.1
 django-price-level==0.2.1
@@ -72,21 +64,15 @@ django-sslify-admin==0.5.0
 django-storages==1.5.1
 django-su==0.5.2
 django-subdomains==2.1.0
+django-table-select-widget==1.1.0
 django-wysiwyg-redactor==0.4.9.1
 djangorestframework==3.5.3
+djangorestframework-gis==0.11
 docopt==0.6.2
-easy-thumbnails==2.3
+sorl-thumbnail==12.3
 enum-compat==0.0.2
 fiobank==1.2.0
-flake8==3.2.1
-flake8-blind-except==0.1.1
-flake8-builtins==0.2
-flake8-comprehensions==1.2.1
-flake8-import-order==0.11
-flake8-strict==0.1.4
-flake8-tidy-imports==1.0.3
 flower==0.9.1
-freezegun==0.3.8
 future==0.16.0
 gpxpy==1.1.2
 gunicorn==19.6.0
@@ -94,17 +80,13 @@ html5lib==0.9999999
 InvoiceGenerator==0.5.4
 ipython==5.1.0
 ipython-genutils==0.1.0
-kombu==3.0.37
+kombu==4.0.2
 line-profiler==2.0
 lxml==3.7.2
 mccabe==0.5.3
 microsofttranslator==0.8
-model-mommy==1.3.1
 modulus11==0.1
 newrelic==2.78.0.57
-nose==1.3.7
-nose-parameterized==0.5.0
-nose-timer==0.6.0
 oauthlib==1.1.2
 olefile==0.44
 ordereddict==1.1
@@ -116,7 +98,6 @@ polib==1.0.8
 prompt-toolkit==1.0.9
 psycopg2==2.6.2
 ptyprocess==0.5.1
-pudb==2016.2
 pycodestyle==2.2.0
 pyflakes==1.3.0
 Pygments==2.1.3
@@ -127,7 +108,7 @@ python-memcached==1.58
 pytz==2016.10
 qrcode==5.3
 qrplatba==0.3.4
-raven==5.32.0
+raven==6.0.0
 rcssmin==1.0.6
 reportlab==3.3.0
 requests==2.12.4

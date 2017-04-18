@@ -1,0 +1,86 @@
+version: 2
+jobs:
+  build:
+    working_directory: /home/aplikace
+    docker:
+      - image: python:3.5
+
+    steps:
+      - checkout
+      - run: apt-get -qq update; apt-get -y install npm gettext libgettextpo-dev
+      - run: npm install -g less bower
+      - run: ln -s /usr/bin/nodejs /usr/bin/node
+      - run: bower --allow-root install
+      - run: pip install Django coveralls django_coverage_plugin
+      - run: cd dpnk && django-admin compilemessages
+      - run: cd t_shirt_delivery && django-admin compilemessages
+      - run: cd coupons && django-admin compilemessages
+      - run: cd dpnk/static/css && lessc style.less style.css
+      - setup_remote_docker:
+          reusable: true
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run:
+         name: Build Docker image
+         command: docker build -t dopracenakole .
+      - run:
+         name: Start PostGIS container
+         command: |
+            docker run -d --hostname dpnk-postgres --name dpnk-postgres -e POSTGRES_PASSWORD=password mdillon/postgis
+      - run:
+         name: Start RabbitMQ container
+         command: |
+            docker run -d --hostname dpnk-rabbit --name dpnk-rabbit rabbitmq
+      - run:
+         name: Test Docker container
+         command: |
+            sleep 10
+            docker run \
+               --entrypoint="/home/aplikace/docker-test-entrypoint.sh" \
+               --env DPNK_DB_HOST=postgres \
+               --env DPNK_SECRET_KEY=secret \
+               --env DPNK_DB_NAME=postgres \
+               --env DPNK_DB_USER=postgres \
+               --env DPNK_DB_PASSWORD=password \
+               --env DPNK_BROKER_URL="amqp://rabbit" \
+               --link dpnk-rabbit:rabbit \
+               --link dpnk-postgres:postgres \
+               --name dpnk-test \
+               dopracenakole
+
+      - deploy:
+          name: Deploy master branch
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              TAG="2017.${CIRCLE_BUILD_NUM}"
+              docker tag dopracenakole:latest petrdlouhy/dopracenakole:$TAG
+              docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+              docker push petrdlouhy/dopracenakole:$TAG
+            fi
+
+      - deploy:
+          name: Deploy development branch
+          command: |
+            if [ "${CIRCLE_BRANCH}" != "master" ]; then
+              TAG="2017.${CIRCLE_BUILD_NUM}"
+              docker tag dopracenakole:latest petrdlouhy/dopracenakole-testing:$TAG
+              docker tag dopracenakole:latest petrdlouhy/dopracenakole-testing:latest
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
+              docker push petrdlouhy/dopracenakole-testing:$TAG
+              docker push petrdlouhy/dopracenakole-testing:latest
+            fi
+
+      - run: docker cp dpnk-test:/home/aplikace/reports /tmp/reports
+      - run: cp /tmp/reports/.coverage .
+      - run: coveralls
+      - run: pip freeze > /tmp/reports/requirements.freeze.txt
+
+      - store_artifacts:
+          path: /tmp/reports
+          destination: reports

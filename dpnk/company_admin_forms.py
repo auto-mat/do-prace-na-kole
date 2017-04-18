@@ -26,6 +26,8 @@ import registration.forms
 
 from selectable.forms.widgets import AutoCompleteSelectWidget
 
+from table_select_widget import TableSelectMultiple
+
 from .forms import AdressForm, EmailUsernameMixin, SubmitMixin
 from .models import Campaign, City, Company, CompanyAdmin, Competition, Invoice, Subsidiary, UserAttendance
 from .util import slugify
@@ -36,10 +38,22 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
         [],
         label=_(u"Soutěžící, za které bude zaplaceno"),
         help_text=string_concat(
-            _(u"<div class='text-info'>Tip: Použijte ctrl nebo shift pro výběr více položek nebo jejich rozsahu.</div>"),
+            _(u"<div class='text-info'>Tip: Použijte shift pro výběr rozsahu položek.</div>"),
             _("<br/>Ceny jsou uváděny bez DPH"),
         ),
-        widget=forms.SelectMultiple(attrs={'size': '40'}),
+        widget=TableSelectMultiple(
+            item_attrs=[
+                ('company_admission_fee', _("Částka")),
+                ('userprofile__user__first_name', _("Jméno")),
+                ('userprofile__user__last_name', _("Příjmení")),
+                ('userprofile__nickname', _("Přezdívka")),
+                ('userprofile__user__email', _("E-mail")),
+                ('team__subsidiary__city', _("Město")),
+            ],
+            enable_shift_select=True,
+            enable_datatables=True,
+            bootstrap_style=True,
+        ),
     )
 
     def __init__(self, *args, **kwargs):
@@ -49,21 +63,24 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
             team__subsidiary__company=company_admin.administrated_company,
             campaign=company_admin.campaign,
             userprofile__user__is_active=True,
+            representative_payment__pay_type='fc',
+        ).exclude(
+            payment_status='done',
+        ).select_related(
+            'userprofile__user',
+            'campaign',
+            'team__subsidiary__city',
+            't_shirt_size',
+            'representative_payment',
+        ).order_by(
+            'team__subsidiary__city',
+            'userprofile__user__last_name',
+            'userprofile__user__first_name',
         )
 
         ret_val = super(SelectUsersPayForm, self).__init__(*args, **kwargs)
         self.fields['paing_for'].queryset = queryset
-        choices = [
-            (
-                user_attendance.pk,
-                u"%s Kč: %s (%s)" % (
-                    user_attendance.company_admission_fee(),
-                    user_attendance.userprofile.user.get_full_name(),
-                    user_attendance.userprofile.user.email))
-            for user_attendance in queryset.all()
-            if user_attendance.representative_payment and user_attendance.representative_payment.pay_type == 'fc' and
-            user_attendance.payment_status != 'done']
-        self.fields['paing_for'].choices = choices
+        self.helper.form_class = "dirty-check"
         return ret_val
 
 

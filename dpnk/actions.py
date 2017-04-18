@@ -26,7 +26,7 @@ from . import mailing, models, results, tasks, views
 
 
 def recalculate_competitions_results(modeladmin, request, queryset):
-    tasks.recalculate_competitions_results.apply_async(args=(queryset,))
+    tasks.recalculate_competitions_results.apply_async(args=(list(queryset.values_list('pk', flat=True)),))
     if request:
         modeladmin.message_user(request, _(u"Zadáno přepočítání %s výsledků" % (queryset.count())))
 
@@ -53,7 +53,7 @@ normalize_questionnqire_admissions.short_description = _(u"Obnovit přihlášky 
 # ---- USER_ATTENDANCE -----
 
 def touch_items(modeladmin, request, queryset):
-    tasks.touch_items.apply_async(args=(queryset,))
+    tasks.touch_items.apply_async(args=(list(queryset.values_list('pk', flat=True)),))
     modeladmin.message_user(request, _("Obnova %s denormalizovaných položek byla zadána ke zpracování" % queryset.count()))
 
 
@@ -81,7 +81,10 @@ show_distance.short_description = _(u"Ukázat ujetou vzdálenost")
 
 def assign_vouchers(modeladmin, request, queryset):
     count = queryset.count()
-    vouchers = models.Voucher.objects.filter(user_attendance=None).all()[:count]
+    vouchers = models.Voucher.objects.filter(
+        user_attendance=None,
+        campaign__slug=request.subdomain,
+    ).all()[:count]
     if vouchers.count() != count:
         messages.error(request, _(u"Není dost volných voucherů"))
         return

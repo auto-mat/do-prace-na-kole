@@ -87,6 +87,22 @@ class GpxFile(models.Model):
         blank=True,
         geography=True,
     )
+    distance = models.PositiveIntegerField(
+        verbose_name=_("Vzdálenost v metrech"),
+        null=True,
+        blank=True,
+    )
+    duration = models.PositiveIntegerField(
+        verbose_name=_("Doba v sekundách"),
+        null=True,
+        blank=True,
+    )
+    source_application = models.CharField(
+        verbose_name=_("Zdrojová aplikace"),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
     user_attendance = models.ForeignKey(
         UserAttendance,
         null=False,
@@ -155,7 +171,7 @@ def set_trip(sender, instance, *args, **kwargs):
 @receiver(post_save, sender=GpxFile)
 def set_trip_post(sender, instance, *args, **kwargs):
     if instance.trip and instance.trip.active():
-        length = instance.length()
+        length = instance.distance / 1000.0 if instance.distance else instance.length()
         if length:
             instance.trip.distance = length
             instance.trip.save()

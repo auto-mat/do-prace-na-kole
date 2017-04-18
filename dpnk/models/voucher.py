@@ -22,6 +22,7 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from .campaign import Campaign
 from .user_attendance import UserAttendance
 
 
@@ -48,7 +49,12 @@ class Voucher(models.Model):
         null=True,
         blank=True,
     )
+    campaign = models.ForeignKey(
+        Campaign,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
-        verbose_name = _(u"Voucher")
-        verbose_name_plural = _(u"Vouchery")
+        verbose_name = _("Voucher třetí strany")
+        verbose_name_plural = _("Vouchery třetích stran")

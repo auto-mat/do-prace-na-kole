@@ -20,9 +20,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 """Import all models."""
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+from rest_framework.authtoken.models import Token
 
 from .address import Address, get_address_string
 from .campaign import Campaign
@@ -97,6 +100,12 @@ def update_mailing_user(sender, instance, created, **kwargs):
                 mailing.add_or_update_user(user_attendance)
     except UserProfile.DoesNotExist:
         pass
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
 
 
 def set_track(sender, instance, changed_fields=None, **kwargs):

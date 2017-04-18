@@ -38,12 +38,11 @@
    <td><a href="{% url 'admin:dpnk_answer_change' a.id %}">{{a.comment|linebreaksbr}}</a></td>
    <td>
       {% thumbnail a.attachment "250x250" as foto_thumb %}
-      {% if foto_thumb %}
          <a href="{{ settings.SITE_URL}}{{ a.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
          <img src="{{ settings.SITE_URL}}{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
-      {% else %}
+      {% empty %}
          <a href="{{ media }}/{{ a.attachment }}" target="_blank">{{ a.attachment }}</a>
-      {% endif %}
+      {% endthumbnail %}
    </td>
    <td><input type="text" name="points-{{ a.id }}" value="{{a.points_given}}"/></td>
   </tr>

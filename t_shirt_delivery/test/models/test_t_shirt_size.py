@@ -31,8 +31,9 @@ class TestMethods(TestCase):
             "TShirtSize",
             price=0,
             name="Foo size",
+            campaign__slug="foo_campaign",
         )
-        self.assertEqual(str(t_shirt_size), "Foo size")
+        self.assertEqual(str(t_shirt_size), "Foo size (foo_campaign)")
 
     def test_str_price(self):
         """ Test __str__() """
@@ -40,5 +41,24 @@ class TestMethods(TestCase):
             "TShirtSize",
             price=10,
             name="Foo size",
+            campaign__slug="foo_campaign",
         )
-        self.assertEqual(str(t_shirt_size), "Foo size (10 Kč navíc)")
+        self.assertEqual(str(t_shirt_size), "Foo size (foo_campaign, 10 Kč navíc)")
+
+    def test_user_string(self):
+        """ Test user_string() """
+        t_shirt_size = mommy.make(
+            "TShirtSize",
+            price=0,
+            name="Foo size",
+        )
+        self.assertEqual(t_shirt_size.user_string(), "Foo size")
+
+    def test_user_string_price(self):
+        """ Test user_string() """
+        t_shirt_size = mommy.make(
+            "TShirtSize",
+            price=10,
+            name="Foo size",
+        )
+        self.assertEqual(t_shirt_size.user_string(), "Foo size (10 Kč navíc)")

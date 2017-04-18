@@ -57,16 +57,24 @@ class CompanyStructure(TitleViewMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompanyStructure, self).get_context_data(*args, **kwargs)
         context_data['company'] = self.company_admin.administrated_company
+        context_data['subsidiaries'] = context_data['company'].subsidiaries.prefetch_related(
+            'teams__users__userprofile__user',
+            'teams__users__team__subsidiary__city',
+            'teams__campaign',
+            'teams__users__team__campaign',
+            'teams__users__representative_payment',
+        )
         context_data['company_address'] = models.get_address_string(self.company_admin.administrated_company.address)
         context_data['campaign'] = self.company_admin.campaign
         context_data['Status'] = models.Status
         return context_data
 
 
-class SelectUsersPayView(TitleViewMixin, FormView):
-    template_name = 'base_generic_company_admin_form.html'
+class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, FormView):
+    template_name = 'company_admin/select_users_pay_for.html'
     form_class = SelectUsersPayForm
-    success_url = reverse_lazy('company_structure')
+    success_url = reverse_lazy('company_admin_pay_for_users')
+    success_message = _("Potvrzena platba za %s soutěžících, kteří od teď mohou bez obav soutěžit.")
     title = _("Platba za soutěžící")
 
     def get_initial(self):
@@ -76,9 +84,11 @@ class SelectUsersPayView(TitleViewMixin, FormView):
 
     def form_valid(self, form):
         paing_for = form.cleaned_data['paing_for']
+        self.confirmed_count = 0
         for user_attendance in paing_for:
             for payment in user_attendance.payments().all():
                 if payment.pay_type == 'fc':
+                    self.confirmed_count += 1
                     payment.status = models.Status.COMPANY_ACCEPTS
                     payment.amount = user_attendance.company_admission_fee()
                     payment.description = payment.description + "\nFA %s odsouhlasil dne %s" % (self.request.user.username, datetime.datetime.now())
@@ -94,6 +104,9 @@ class SelectUsersPayView(TitleViewMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
         return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % self.confirmed_count
 
 
 class CompanyEditView(TitleViewMixin, UpdateView):

@@ -35,6 +35,7 @@ from freezegun import freeze_time
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
     ECC_PROVIDER_CODE="????",
     ECC_URL_BASE="http://localhost/services",
+    TIME_ZONE="GMT",
 )
 @freeze_time("2010-11-20 12:00")
 class ECCTests(TestCase):
@@ -94,7 +95,7 @@ class ECCTests(TestCase):
         self.assertJSONEqual(
             json, {
                 "trackEnd_hr": "2010-11-01 10:00:00",
-                "trackEnd": 1288602000.0,
+                "trackEnd": 1288605600.0,
                 "trackDuration": "0",
                 "trackDuration_hr": "0:0:0",
                 "extrainfo": {
@@ -106,7 +107,7 @@ class ECCTests(TestCase):
                     "mapcenter": "0",
                     "totaldistance": None,
                 },
-                "trackStart": 1288602000.0,
+                "trackStart": 1288605600.0,
                 "trackData_points": [],
                 "trackData_info": [],
                 "source": "API-????",

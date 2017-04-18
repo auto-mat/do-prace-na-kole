@@ -194,6 +194,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             RegisterCompanyForm,
             prefix="company",
             new_description=_("Organizace v seznamu není, chci vyplnit novou."),
+            help_text=_("Napište část názvu organizace a vyberte ji ze seznamu."),
         ),
         required=True,
     )
