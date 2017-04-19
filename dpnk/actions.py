@@ -147,7 +147,7 @@ def update_mailing_coordinator(modeladmin, request, queryset):
         else:
             mailing.add_or_update_user_synchronous(company_admin, ignore_hash=True)
 
-    modeladmin.message_user(request, _(u"Úspěšně aktualiován mailing pro %s koordinátorů") % queryset.count())
+    modeladmin.message_user(request, _("Úspěšně aktualizován mailing pro %s koordinátorů") % queryset.count())
 
 
 update_mailing_coordinator.short_description = _(u"Aktualizovat mailing list")

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from crispy_forms.layout import HTML, Layout
 
 from django import forms
 from django.contrib.auth.models import User
@@ -36,10 +37,9 @@ from .util import slugify
 class SelectUsersPayForm(SubmitMixin, forms.Form):
     paing_for = forms.ModelMultipleChoiceField(
         [],
-        label=_(u"Soutěžící, za které bude zaplaceno"),
+        label=_("Vyberte soutěžící, za které zaplatíte fakturou"),
         help_text=string_concat(
-            _(u"<div class='text-info'>Tip: Použijte shift pro výběr rozsahu položek.</div>"),
-            _("<br/>Ceny jsou uváděny bez DPH"),
+            _("Ceny jsou uváděny bez DPH"),
         ),
         widget=TableSelectMultiple(
             item_attrs=[
@@ -81,6 +81,12 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
         ret_val = super(SelectUsersPayForm, self).__init__(*args, **kwargs)
         self.fields['paing_for'].queryset = queryset
         self.helper.form_class = "dirty-check"
+        self.helper.layout = Layout(
+            HTML("<div class='text-info'>"),
+            HTML(_("Tip: Použijte shift pro výběr rozsahu položek.")),
+            HTML("</div><br/>"),
+            'paing_for',
+        )
         return ret_val
 
 
