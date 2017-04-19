@@ -665,7 +665,6 @@ class UserAdmin(RelatedFieldAdmin, ExportMixin, NestedModelAdmin, UserAdmin):
         'userprofile__administrated_cities',
         EmailFilter,
     ]
-    readonly_fields = ['password']
     list_max_show_all = 10000
 
     def get_queryset(self, request):
