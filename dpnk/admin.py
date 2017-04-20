@@ -540,6 +540,8 @@ def create_userprofile_resource(campaign_slugs):
         class Meta:
             model = models.UserProfile
             fields = [
+                'id',
+                'user',
                 'name',
                 'email',
                 'sex',
@@ -576,7 +578,7 @@ def create_userprofile_resource(campaign_slugs):
 
 
 @admin.register(models.UserProfile)
-class UserProfileAdmin(ExportMixin, admin.ModelAdmin):
+class UserProfileAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
         'user',
         '__str__',
@@ -638,7 +640,7 @@ admin.site.unregister(models.User)
 
 
 @admin.register(models.User)
-class UserAdmin(RelatedFieldAdmin, ExportMixin, NestedModelAdmin, UserAdmin):
+class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmin):
     inlines = (UserProfileAdminInline,)
     list_display = (
         'username',
@@ -665,7 +667,6 @@ class UserAdmin(RelatedFieldAdmin, ExportMixin, NestedModelAdmin, UserAdmin):
         'userprofile__administrated_cities',
         EmailFilter,
     ]
-    readonly_fields = ['password']
     list_max_show_all = 10000
 
     def get_queryset(self, request):
@@ -688,6 +689,7 @@ class UserAttendanceResource(resources.ModelResource):
         model = models.UserAttendance
         fields = (
             'id',
+            'campaign',
             'campaign__slug',
             'distance',
             'team__id',
@@ -695,6 +697,7 @@ class UserAttendanceResource(resources.ModelResource):
             'approved_for_team',
             't_shirt_size__name',
             'team__subsidiary__city__name',
+            'userprofile',
             'userprofile__language',
             'userprofile__telephone',
             'userprofile__user__id',
@@ -743,7 +746,13 @@ class UserAttendanceResource(resources.ModelResource):
 
 
 @admin.register(models.UserAttendance)
-class UserAttendanceAdmin(AdminAdvancedFiltersMixin, RelatedFieldAdmin, ExportMixin, city_admin_mixin_generator('team__subsidiary__city__in'), LeafletGeoAdmin):
+class UserAttendanceAdmin(
+    AdminAdvancedFiltersMixin,
+    RelatedFieldAdmin,
+    ImportExportMixin,
+    city_admin_mixin_generator('team__subsidiary__city__in'),
+    LeafletGeoAdmin,
+):
     list_display = (
         'id',
         'name_for_trusted',
@@ -900,7 +909,7 @@ class UserAttendanceAdmin(AdminAdvancedFiltersMixin, RelatedFieldAdmin, ExportMi
 
 
 @admin.register(models.Team)
-class TeamAdmin(ExportMixin, RelatedFieldAdmin):
+class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
     list_display = (
         'name',
         'subsidiary',
@@ -990,7 +999,7 @@ class TransactionAdmin(PolymorphicParentModelAdmin):
 
 
 @admin.register(models.Payment)
-class PaymentAdmin(RelatedFieldAdmin):
+class PaymentAdmin(ImportExportMixin, RelatedFieldAdmin):
     list_display = (
         'id',
         'user_attendance',

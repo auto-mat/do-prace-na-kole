@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-17 18:26+0200\n"
-"PO-Revision-Date: 2017-03-08 22:34+0058\n"
+"POT-Creation-Date: 2017-04-19 17:46+0200\n"
+"PO-Revision-Date: 2017-04-19 14:59+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -99,8 +99,8 @@ msgstr ""
 
 #: actions.py:150
 #, python-format
-msgid "Úspěšně aktualiován mailing pro %s koordinátorů"
-msgstr "Úspěšně aktualizován mailing pro %s koordinátorů"
+msgid "Úspěšně aktualizován mailing pro %s koordinátorů"
+msgstr ""
 
 #: actions.py:160
 #, python-format
@@ -149,27 +149,27 @@ msgid ""
 "členů."
 msgstr ""
 
-#: admin.py:802
+#: admin.py:801
 msgid "Datum realizace platby"
 msgstr ""
 
-#: admin.py:805
+#: admin.py:804
 msgid "Posílá se triko?"
 msgstr ""
 
-#: admin.py:850 admin.py:981
+#: admin.py:849 admin.py:980
 msgid "Uživatel"
 msgstr ""
 
-#: admin.py:932 templates/submenu_team.html:7
+#: admin.py:931 templates/submenu_team.html:7
 msgid "Členové"
 msgstr ""
 
-#: admin.py:1127
+#: admin.py:1126
 msgid "vyhodnocení odpovědí"
 msgstr ""
 
-#: admin.py:1409 templates/company_admin/invoices.html:10
+#: admin.py:1408 templates/company_admin/invoices.html:10
 msgid "Počet plateb"
 msgstr ""
 
@@ -183,17 +183,12 @@ msgstr ""
 msgid "Tento e-mail v systému není zanesen."
 msgstr ""
 
-#: company_admin_forms.py:39
-msgid "Soutěžící, za které bude zaplaceno"
-msgstr ""
-
-#: company_admin_forms.py:41
-msgid ""
-"<div class='text-info'>Tip: Použijte shift pro výběr rozsahu položek.</div>"
+#: company_admin_forms.py:40
+msgid "Vyberte soutěžící, za které zaplatíte fakturou"
 msgstr ""
 
 #: company_admin_forms.py:42
-msgid "<br/>Ceny jsou uváděny bez DPH"
+msgid "Ceny jsou uváděny bez DPH"
 msgstr ""
 
 #: company_admin_forms.py:46 models/transactions.py:238
@@ -201,14 +196,14 @@ msgstr ""
 msgid "Částka"
 msgstr ""
 
-#: company_admin_forms.py:47 company_admin_forms.py:176 forms.py:672
+#: company_admin_forms.py:47 company_admin_forms.py:182 forms.py:672
 #: models/city.py:35 models/questionnaire.py:48 models/questionnaire.py:97
 #: models/user_attendance.py:144 models/user_attendance.py:149
 #: templates/company_admin/competitions.html:7 views.py:1667
 msgid "Jméno"
 msgstr ""
 
-#: company_admin_forms.py:48 company_admin_forms.py:181 forms.py:677
+#: company_admin_forms.py:48 company_admin_forms.py:187 forms.py:677
 msgid "Příjmení"
 msgstr ""
 
@@ -225,32 +220,36 @@ msgstr ""
 msgid "Město"
 msgstr ""
 
-#: company_admin_forms.py:94
+#: company_admin_forms.py:86
+msgid "Tip: Použijte shift pro výběr rozsahu položek."
+msgstr ""
+
+#: company_admin_forms.py:100
 msgid "Adresát na faktuře"
 msgstr ""
 
-#: company_admin_forms.py:95
+#: company_admin_forms.py:101
 msgid ""
 "Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova"
 msgstr ""
 
-#: company_admin_forms.py:124
+#: company_admin_forms.py:130
 msgid "Pár vět o vaší pozici"
 msgstr ""
 
-#: company_admin_forms.py:126
+#: company_admin_forms.py:132
 msgid ""
 "Napište nám prosím, jakou zastáváte u vašeho zaměstnavatele pozici, podle "
 "kterých můžeme ověřit, že vám funkci firemního koordinátora můžeme svěřit."
 msgstr ""
 
-#: company_admin_forms.py:133
+#: company_admin_forms.py:139
 msgid ""
 "Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance "
 "jejichž platbu schválím."
 msgstr ""
 
-#: company_admin_forms.py:154 forms.py:752
+#: company_admin_forms.py:160 forms.py:752
 #, python-format
 msgid ""
 "Souhlasím se zpracováním osobních údajů podle <a target='_blank' "
@@ -259,38 +258,38 @@ msgid ""
 "obchodni-podminky'>Obchodními podmínkami soutěže %s</a>."
 msgstr ""
 
-#: company_admin_forms.py:163 models/company_admin.py:73
+#: company_admin_forms.py:169 models/company_admin.py:73
 msgid "Koordinovaná organizace"
 msgstr ""
 
-#: company_admin_forms.py:172
+#: company_admin_forms.py:178
 msgid "Pro možnost kontaktování firemního koordinátora"
 msgstr ""
 
-#: company_admin_forms.py:199
+#: company_admin_forms.py:205
 msgid "Tato organizace již má svého firemního koordinátora."
 msgstr ""
 
-#: company_admin_forms.py:222 templates/company_admin/competitions.html:8
+#: company_admin_forms.py:228 templates/company_admin/competitions.html:8
 msgid "Typ soutěže"
 msgstr ""
 
-#: company_admin_forms.py:228 models/competition.py:114
+#: company_admin_forms.py:234 models/competition.py:114
 msgid "Typ soutěžícího"
 msgstr ""
 
-#: company_admin_forms.py:242
+#: company_admin_forms.py:248
 #, python-format
 msgid "%(model_name)s with this %(field_label)s already exists."
 msgstr ""
 
-#: company_admin_forms.py:257
+#: company_admin_forms.py:263
 msgid ""
 "Údaje jsou správné, v mé organizaci již nepřibudou žádní další soutěžící. "
 "Chci vytvořit fakturu"
 msgstr ""
 
-#: company_admin_forms.py:263
+#: company_admin_forms.py:269
 #, python-format
 msgid "Benefiční startovné je %i Kč za osobu bez DPH."
 msgstr ""
