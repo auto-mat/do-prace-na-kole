@@ -22,7 +22,7 @@ reportlab
 -e git+https://github.com/aquavitae/svg2rlg.git#egg=svg2rlg
 django-dbbackup
 pillow
-InvoiceGenerator
+-e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator  # For changes in variable symbol label
 django-related-admin
 newrelic
 sorl-thumbnail
