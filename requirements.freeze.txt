@@ -109,6 +109,7 @@ pytz==2016.10
 qrcode==5.3
 qrplatba==0.3.4
 raven==6.0.0
+redis==2.10.5
 rcssmin==1.0.6
 reportlab==3.3.0
 requests==2.12.4
