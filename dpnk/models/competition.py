@@ -45,6 +45,7 @@ class Competition(models.Model):
     """Soutěžní kategorie"""
 
     CTYPES = (
+        ('length_by_foot', _("Uběhnutá/ujdená vzdálenost")),
         ('length', _(u"Ujetá vzdálenost")),
         ('frequency', _(u"Pravidelnost jízd na kole")),
         ('questionnaire', _(u"Dotazník")),
@@ -326,6 +327,7 @@ class Competition(models.Model):
 
         columns.append(
             {
+                'length_by_foot': ('result_value', 'get_result', _("Ki&shy;lo&shy;me&shy;trů%s" % average_string)),
                 'length': ('result_value', 'get_result', _("Ki&shy;lo&shy;me&shy;trů%s" % average_string)),
                 'frequency': ('result_value', 'get_result_percentage', _("%% jízd%s" % average_string)),
                 'questionnaire': ('result_value', 'get_result', _("Bo&shy;dů%s" % average_string)),
@@ -335,7 +337,7 @@ class Competition(models.Model):
         if self.competition_type == 'frequency':
             columns.append(('result_divident', 'result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd")))
             columns.append(('result_divisor', 'result_divisor', _("Cel&shy;ko&shy;vý po&shy;čet cest")))
-        elif self.competition_type == 'length' and self.competitor_type == 'team':
+        elif self.competition_type in ('length', 'length_by_foot') and self.competitor_type == 'team':
             columns.append(('result_divident', 'result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů")))
 
         if self.competitor_type not in ('single_user', 'liberos', 'company'):
@@ -409,6 +411,7 @@ class Competition(models.Model):
         CTYPES_STRINGS = {
             'questionnaire': _('dotazník'),
             'frequency': _('soutěž na pravidelnost'),
+            'length_by_foot': _('soutěž na ujdenou/uběhnutou vzdálenost'),
             'length': _('soutěž na vzdálenost'),
         }
         CCOMPETITORTYPES_STRINGS = {

@@ -19,14 +19,18 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
+from itertools import cycle
+
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from dpnk import models, results, util
+from dpnk import results, util
 from dpnk.test.util import print_response  # noqa
 from dpnk.test.util import ClearCacheMixin, DenormMixin
 
 from model_mommy import mommy
+
+from .mommy_recipes import UserAttendanceRecipe, testing_campaign
 
 
 class RidesBaseTests(TestCase):
@@ -283,53 +287,130 @@ class GetCompetitorsTests(TestCase):
         self.assertQuerysetEqual(query.all(), ['<UserAttendance: Foo user>'])
 
 
+@override_settings(
+    FAKE_DATE=datetime.date(year=2017, month=5, day=5),
+)
 class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'trips']
-
     def setUp(self):
         super().setUp()
-        util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1115))
+        team = mommy.make('Team', campaign=testing_campaign)
+        UserAttendanceRecipe.make(
+            approved_for_team='approved',
+            team=team,
+        )
+        self.user_attendance = UserAttendanceRecipe.make(
+            approved_for_team='approved',
+            team=team,
+        )
+        mommy.make(
+            'Trip',
+            commute_mode='bicycle',
+            distance='1',
+            direction='trip_to',
+            user_attendance=self.user_attendance,
+            date='2017-05-01',
+        )
+        mommy.make(
+            'Trip',
+            commute_mode='bicycle',
+            distance='3',
+            direction='trip_from',
+            date='2017-05-01',
+            user_attendance=self.user_attendance,
+        )
+        mommy.make(
+            'Trip',
+            commute_mode='no_work',
+            direction=cycle(['trip_to', 'trip_from']),
+            date='2017-05-02',
+            user_attendance=self.user_attendance,
+            _quantity=2,
+        )
+        mommy.make(
+            'Trip',
+            commute_mode='by_foot',
+            distance='1',
+            direction='trip_from',
+            date='2017-05-03',
+            user_attendance=self.user_attendance,
+        )
+        self.user_attendance.campaign.phase_set.filter(
+            phase_type='competition',
+        ).update(
+            date_from=datetime.date(2017, 4, 2),
+            date_to=datetime.date(2017, 5, 20),
+        )
+        self.user_attendance.campaign.phase('competition').refresh_from_db()
+        self.user_attendance.team.campaign.phase('competition').refresh_from_db()
 
     def test_get_userprofile_length(self):
-        user_attendance = models.UserAttendance.objects.get(pk=1115)
-        competition = models.Competition.objects.get(id=5)
-        result = results.get_userprofile_length([user_attendance], competition)
+        competition = mommy.make(
+            'Competition',
+            competition_type='length',
+            competitor_type='single_user',
+            campaign=testing_campaign,
+            date_from=datetime.date(2017, 4, 3),
+            date_to=datetime.date(2017, 5, 23),
+        )
+        result = results.get_userprofile_length([self.user_attendance], competition)
         self.assertEquals(result, 5.0)
 
-        result = user_attendance.trip_length_total
+        util.rebuild_denorm_models([self.user_attendance])
+        self.user_attendance.refresh_from_db()
+
+        result = self.user_attendance.trip_length_total
         self.assertEquals(result, 5.0)
 
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-    )
     def test_get_userprofile_frequency(self):
-        user_attendance = models.UserAttendance.objects.get(pk=1115)
-        competition = models.Competition.objects.get(id=3)
+        competition = mommy.make(
+            'Competition',
+            competition_type='frequency',
+            competitor_type='team',
+            campaign=testing_campaign,
+            date_from=datetime.date(2017, 4, 3),
+            date_to=datetime.date(2017, 5, 23),
+        )
 
-        result = user_attendance.get_rides_count_denorm
-        self.assertEquals(result, 1)
+        util.rebuild_denorm_models([self.user_attendance])
+        self.user_attendance.refresh_from_db()
+        self.user_attendance.team.refresh_from_db()
 
-        result = user_attendance.get_working_rides_base_count()
-        self.assertEquals(result, 31)
+        result = self.user_attendance.get_rides_count_denorm
+        self.assertEquals(result, 3)
 
-        result = user_attendance.frequency
-        self.assertEquals(result, 0.0222222222222222)
+        result = self.user_attendance.get_working_rides_base_count()
+        self.assertEquals(result, 48)
 
-        result = user_attendance.team.frequency
-        self.assertEquals(result, 0.0075187969924812)
+        result = self.user_attendance.frequency
+        self.assertEquals(result, 0.0625)
 
-        result = user_attendance.team.get_rides_count_denorm
-        self.assertEquals(result, 1)
+        result = self.user_attendance.team.frequency
+        self.assertEquals(result, 0.0306122448979592)
 
-        result = user_attendance.team.get_working_trips_count()
-        self.assertEquals(result, 91)
+        result = self.user_attendance.team.get_rides_count_denorm
+        self.assertEquals(result, 3)
 
-        result = results.get_working_trips_count(user_attendance, competition)
-        self.assertEquals(result, 23)
+        # import pudb; pudb.set_trace()
+        result = self.user_attendance.team.get_working_trips_count()
+        self.assertEquals(result, 98)
 
-        result = results.get_userprofile_frequency(user_attendance, competition)
-        self.assertEquals(result, (1, 23, 1 / 23.0))
+        result = results.get_working_trips_count(self.user_attendance, competition)
+        self.assertEquals(result, 48)
 
-        result = results.get_team_frequency(user_attendance.team.members(), competition)
-        self.assertEquals(result, (1, 69, 1 / 69.0))
+        result = results.get_userprofile_frequency(self.user_attendance, competition)
+        self.assertEquals(result, (3, 48, 3 / 48.0))
+
+        result = results.get_team_frequency(self.user_attendance.team.members(), competition)
+        self.assertEquals(result, (3, 98, 3 / 98.0))
+
+    def test_get_userprofile_length_by_foot(self):
+        competition = mommy.make(
+            'Competition',
+            competition_type='length_by_foot',
+            competitor_type='single_user',
+            campaign=testing_campaign,
+            date_from=datetime.date(2017, 4, 1),
+            date_to=datetime.date(2017, 5, 31),
+        )
+        result = results.get_userprofile_length([self.user_attendance], competition)
+        self.assertEquals(result, 1.0)
