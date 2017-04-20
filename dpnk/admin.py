@@ -329,7 +329,6 @@ class SubsidiaryAdmin(AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMix
         'address_district',
         'city',
         'user_count',
-        'team_count',
     )
     raw_id_fields = ('company',)
     list_max_show_all = 10000
