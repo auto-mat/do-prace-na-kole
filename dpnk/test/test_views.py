@@ -939,7 +939,7 @@ class ViewsTestsLogon(ViewsLogon):
     @patch('slumber.API')
     def test_dpnk_team_view_choose(self, slumber_api):
         m = MagicMock()
-        m.feed.get.return_value = [{"content": "T-shirt description text"}]
+        m.feed.get.return_value = []
         slumber_api.return_value = m
         PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
@@ -964,7 +964,6 @@ class ViewsTestsLogon(ViewsLogon):
         }
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
         self.assertRedirects(response, reverse("zmenit_triko"))
-        self.assertContains(response, "T-shirt description text")
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(models.UserAttendance.objects.get(pk=1115).approved_for_team, "undecided")
 
