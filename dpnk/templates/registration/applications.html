@@ -1,8 +1,11 @@
 {% extends "submenu_rides.html" %}
 {% load i18n %}
 {% load l10n %}
+{% load scribbler_tags %}
 
 {% block form %}
-<a href="https://p29ek.app.goo.gl/?link=http://urbancyclers.com/competitions.php?c%3Ddpnk2017%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.bikeapp&amv=104&isi=1213867271&ibi=com.umotional.bikeapp&utm_source=dpnk2017&at=dpnk2017">Propojit s UrbanCyclers</a><br/>
-<a href="https://p29ek.app.goo.gl/?link=http://nakoleprahou.cz/competitions.php?c%3Ddpnk2017%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.ucpraha&amv=104&isi=1213867293&ibi=com.umotional.ucpraha&utm_source=dpnk2017&at=dpnk2017">Propojit s Na kole Prahou</a>
+{% scribble 'app_links' %}
+<a target="_blank" href="https://p29ek.app.goo.gl/?link=http://urbancyclers.com/competitions.php?c%3Ddpnk2017%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.bikeapp&utm_source=dpnk&amv=104&isi=1213867271&ibi=com.umotional.bikeapp&utm_source=dpnk2017&at=dpnk2017">Propojit s UrbanCyclers</a><br/>
+<a target="_blank" href="https://p29ek.app.goo.gl/?link=http://nakoleprahou.cz/competitions.php?c%3Ddpnk2017%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.ucpraha&utm_source=dpnk&amv=104&isi=1213867293&ibi=com.umotional.ucpraha&utm_source=dpnk2017&at=dpnk2017">Propojit s Na kole Prahou</a>
+{% endscribble %}
 {% endblock %}
