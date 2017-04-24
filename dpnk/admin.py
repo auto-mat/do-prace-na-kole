@@ -510,7 +510,7 @@ class UserAttendanceInline(LeafletGeoAdminMixin, NestedTabularInline):
     form = UserAttendanceForm
     extra = 0
     list_max_show_all = 10000
-    raw_id_fields = ('team',)
+    raw_id_fields = ('team', 'discount_coupon')
     map_width = '200px'
     map_height = '200px'
 
