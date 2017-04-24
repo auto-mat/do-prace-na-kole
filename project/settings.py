@@ -238,6 +238,7 @@ INSTALLED_APPS = (
     'denorm',
     'subdomains',
     'redactor',
+    'scribbler',
     'selectable',
     'raven.contrib.django.raven_compat',
     'bootstrap3',

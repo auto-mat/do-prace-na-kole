@@ -55,6 +55,7 @@ django-rank-query==0.1.0
 django-registration-redux==1.4
 django-related-admin==0.4.0
 django-rosetta==0.7.12
+django-scribbler==0.8.0
 django-selectable==0.9.0
 django-ses==0.8.1
 django-settings-context-processor==0.2

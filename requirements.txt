@@ -79,3 +79,4 @@ django-celery-beat
 djangorestframework-gis
 django-table-select-widget
 redis
+django-scribbler
