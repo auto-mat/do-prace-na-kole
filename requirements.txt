@@ -10,7 +10,7 @@ django-softhyphen
 django-polymorphic
 django-composite-field
 django-registration-redux
-django-nested-inline
+-e git+https://github.com/PetrDlouhy/django-nested-inline#egg=django-nested-inline  # for forms-nested.css fix
 django-su
 unidecode
 -e git+https://github.com/PetrDlouhy/createsend-python.git@python3#egg=createsend
@@ -22,7 +22,7 @@ reportlab
 -e git+https://github.com/aquavitae/svg2rlg.git#egg=svg2rlg
 django-dbbackup
 pillow
-InvoiceGenerator
+-e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator  # For changes in variable symbol label
 django-related-admin
 newrelic
 sorl-thumbnail
@@ -78,3 +78,5 @@ django-ipware
 django-celery-beat
 djangorestframework-gis
 django-table-select-widget
+redis
+django-scribbler

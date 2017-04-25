@@ -119,6 +119,10 @@ STATICFILES_FINDERS = (
 
 SECRET_KEY = os.environ.get('DPNK_SECRET_KEY')
 MIDDLEWARE_CLASSES = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'sslifyadmin.middleware.SSLifyAdminMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -132,13 +136,17 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',
     'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 AUTHENTICATION_BACKENDS = (
     'dpnk.auth.EmailModelBackend',
     "django_su.backends.SuBackend",
 )
 ROOT_URLCONF = 'urls'
+
+CSRF_COOKIE_HTTPONLY = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
 
 
 class InvalidStringShowWarning(str):
@@ -229,6 +237,7 @@ INSTALLED_APPS = (
     'denorm',
     'subdomains',
     'redactor',
+    'scribbler',
     'selectable',
     'raven.contrib.django.raven_compat',
     'bootstrap3',

@@ -9,6 +9,7 @@
 env*
 db_backup
 media
+static
 scripts
 htmlcov
 htmlcov-max
@@ -21,3 +22,6 @@ make_graph.sh
 fabfile.py
 cookies.txt
 docker.env
+dpnk/static/bow/jquery-ui/*
+!dpnk/static/bow/jquery-ui/themes/base
+!dpnk/static/bow/jquery-ui/jquery-ui.min.js

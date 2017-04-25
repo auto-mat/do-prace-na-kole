@@ -39,6 +39,8 @@ from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
 
+from rest_framework.authtoken.models import Token
+
 import settings
 
 from t_shirt_delivery.models import PackageTransaction
@@ -637,6 +639,7 @@ class ViewsTests(DenormMixin, TestCase):
 
     def test_dpnk_mailing_list(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
+        Token.objects.filter(user=user_attendance.userprofile.user).update(key='d201a3c9e88ecd433fdbbc3a2e451cbd3f80c4ba')
         ret_mailing_id = "344ass"
         createsend.Subscriber.add = MagicMock(return_value=ret_mailing_id)
         mailing.add_or_update_user_synchronous(user_attendance)
@@ -645,6 +648,7 @@ class ViewsTests(DenormMixin, TestCase):
             OrderedDict((('Key', 'Firemni_spravce'), ('Value', True))),
             OrderedDict((('Key', 'Stav_platby'), ('Value', None))),
             OrderedDict((('Key', 'Aktivni'), ('Value', True))),
+            OrderedDict((('Key', 'Auth_token'), ('Value', 'd201a3c9e88ecd433fdbbc3a2e451cbd3f80c4ba'))),
             OrderedDict((('Key', 'Id'), ('Value', 1128))),
             OrderedDict((('Key', 'Novacek'), ('Value', False))),
             OrderedDict((('Key', 'Kampan'), ('Value', 'testing-campaign'))),
@@ -654,12 +658,12 @@ class ViewsTests(DenormMixin, TestCase):
         ]
         createsend.Subscriber.add.assert_called_once_with('12345abcde', 'test@test.cz', 'Testing User 1', custom_fields, True)
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, 'df8923401a70d112dd7d558e832b8e9d')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '2ddd65f5dc0ca3755885e23fefc956f1')
 
         createsend.Subscriber.update = MagicMock()
         mailing.add_or_update_user_synchronous(user_attendance)
         self.assertFalse(createsend.Subscriber.update.called)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, 'df8923401a70d112dd7d558e832b8e9d')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '2ddd65f5dc0ca3755885e23fefc956f1')
 
         custom_fields[0] = OrderedDict((('Key', 'Mesto'), ('Value', 'other-city')))
         user_attendance.team.subsidiary.city = models.City.objects.get(slug="other-city")
@@ -669,7 +673,7 @@ class ViewsTests(DenormMixin, TestCase):
         mailing.add_or_update_user_synchronous(user_attendance)
         createsend.Subscriber.get.assert_called_once_with('12345abcde', ret_mailing_id)
         createsend.Subscriber.update.assert_called_once_with('test@test.cz', 'Testing User 1', custom_fields, True)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, 'b8dc6ea4e279fb052c19a2134cc9fb43')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '264683d74013ab0fa8619ba7bbdefec6')
 
         user_attendance.userprofile.user.is_active = False
         user_attendance.userprofile.user.save()
@@ -939,7 +943,7 @@ class ViewsTestsLogon(ViewsLogon):
     @patch('slumber.API')
     def test_dpnk_team_view_choose(self, slumber_api):
         m = MagicMock()
-        m.feed.get.return_value = [{"content": "T-shirt description text"}]
+        m.feed.get.return_value = []
         slumber_api.return_value = m
         PackageTransaction.objects.all().delete()
         models.Payment.objects.all().delete()
@@ -964,7 +968,6 @@ class ViewsTestsLogon(ViewsLogon):
         }
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
         self.assertRedirects(response, reverse("zmenit_triko"))
-        self.assertContains(response, "T-shirt description text")
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(models.UserAttendance.objects.get(pk=1115).approved_for_team, "undecided")
 

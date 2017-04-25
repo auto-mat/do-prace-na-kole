@@ -3,6 +3,7 @@
 {% load gtm_tags %}
 {% load dpnk_tags %}
 {% load raven %}
+{% load scribbler_tags %}
 <!DOCTYPE html>
 {% get_available_languages as languages %}
 {% get_current_language as current_language_code %}
@@ -24,6 +25,7 @@
 <script type="text/javascript" src="{% static "bow/jquery.are-you-sure/jquery.are-you-sure.js"%}"></script>
 <script type="text/javascript" src="{% static "bow/bootstrap/dist/js/bootstrap.js"%}"></script>
 <script type="text/javascript" src="{% static "js/form_functions.js"%}"></script>
+<script type="text/javascript" src="{% static 'scribbler/js/scribbler-min.js' %}"></script>
 <script src="https://cdn.ravenjs.com/2.2.0/raven.min.js"></script>
 <script>
 Raven.config('{% sentry_public_dsn %}').install();
@@ -35,6 +37,7 @@ Raven.setUserContext({
 {% endif %}
 </script>
 
+<link href="{% static 'scribbler/css/scribbler.css' %}" rel="stylesheet">
 <link href="{% static "bow/lightbox2/dist/css/lightbox.css"%}" rel="stylesheet">
 <link href="{% static "bow/bootstrap/dist/css/bootstrap.css"%}" rel="stylesheet" media="screen">
 <link href="{% static "bow/jquery-ui/themes/base/jquery-ui.min.css"%}" rel="stylesheet" media="screen">
@@ -127,7 +130,9 @@ Raven.setUserContext({
             {% if fullpage_error_message %}
             <div class="alert alert-danger">{{ fullpage_error_message }}</div>
             {% else %}
+            {% scribble 'before_content' %}{% endscribble %}
             {% block content %}{% endblock %}
+            {% scribble 'after_content' %}{% endscribble %}
             {% endif %}
          {% endblock %}
       </div>

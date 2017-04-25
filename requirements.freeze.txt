@@ -47,7 +47,7 @@ django-leaflet==0.19.0
 django-mass-edit==3.0
 django-model-utils==2.6
 django-modeltranslation==0.12
-django-nested-inline==0.3.7
+-e git+https://github.com/PetrDlouhy/django-nested-inline@274c156fba10d843908a6398950408cef2cc93d7#egg=django_nested_inline
 django-oauth-toolkit==0.11.0
 django-polymorphic==1.1
 django-price-level==0.2.1
@@ -55,6 +55,7 @@ django-rank-query==0.1.0
 django-registration-redux==1.4
 django-related-admin==0.4.0
 django-rosetta==0.7.12
+django-scribbler==0.8.0
 django-selectable==0.9.0
 django-ses==0.8.1
 django-settings-context-processor==0.2
@@ -77,7 +78,7 @@ future==0.16.0
 gpxpy==1.1.2
 gunicorn==19.6.0
 html5lib==0.9999999
-InvoiceGenerator==0.5.4
+-e git+https://github.com/PetrDlouhy/InvoiceGenerator.git@7305449dcc09b33bd3231cd9f1cd44a06d76253e#egg=InvoiceGenerator
 ipython==5.1.0
 ipython-genutils==0.1.0
 kombu==4.0.2
@@ -109,6 +110,7 @@ pytz==2016.10
 qrcode==5.3
 qrplatba==0.3.4
 raven==6.0.0
+redis==2.10.5
 rcssmin==1.0.6
 reportlab==3.3.0
 requests==2.12.4

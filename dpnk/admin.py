@@ -329,7 +329,6 @@ class SubsidiaryAdmin(AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMix
         'address_district',
         'city',
         'user_count',
-        'team_count',
     )
     raw_id_fields = ('company',)
     list_max_show_all = 10000
@@ -511,7 +510,7 @@ class UserAttendanceInline(LeafletGeoAdminMixin, NestedTabularInline):
     form = UserAttendanceForm
     extra = 0
     list_max_show_all = 10000
-    raw_id_fields = ('team',)
+    raw_id_fields = ('team', 'discount_coupon')
     map_width = '200px'
     map_height = '200px'
 
