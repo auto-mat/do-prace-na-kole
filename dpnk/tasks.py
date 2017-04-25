@@ -22,7 +22,7 @@ from celery import shared_task
 
 import denorm
 
-from . import util
+from . import mailing, util
 from .models import Competition, GpxFile, Team, UserAttendance
 from .rest_ecc import gpx_files_post
 from .statement import parse
@@ -60,6 +60,13 @@ def recalculate_competitions_results(self, pks=None, campaign_slug=''):
     for competition in queryset:
         competition.recalculate_results()
     return len(queryset)
+
+
+@shared_task(bind=True)
+def update_mailing(self, user_attendance_pks):
+    user_attendances = UserAttendance.objects.filter(pk__in=user_attendance_pks)
+    for user_attendance in user_attendances:
+        mailing.add_or_update_user_synchronous(user_attendance, ignore_hash=True)
 
 
 @shared_task(bind=True)
