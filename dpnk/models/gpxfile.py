@@ -108,6 +108,14 @@ class GpxFile(models.Model):
         null=False,
         blank=False,
     )
+    commute_mode = models.CharField(
+        verbose_name=_("Mód dopravy"),
+        choices=Trip.MODES,
+        max_length=20,
+        default='bicycle',
+        null=False,
+        blank=False,
+    )
     from_application = models.BooleanField(
         verbose_name=_(u"Nahráno z aplikace"),
         default=False,
@@ -162,7 +170,7 @@ def set_trip(sender, instance, *args, **kwargs):
             date=instance.trip_date,
             direction=instance.direction,
             defaults={
-                'commute_mode': 'bicycle' if util.day_active(instance.trip_date, instance.user_attendance.campaign) else 'by_other_vehicle',
+                'commute_mode': instance.commute_mode if util.day_active(instance.trip_date, instance.user_attendance.campaign) else 'by_other_vehicle',
             },
         )
         instance.trip = trip

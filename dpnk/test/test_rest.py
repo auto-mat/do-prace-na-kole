@@ -52,14 +52,16 @@ class RestTests(DenormMixin, TestCase):
     def test_gpx_get(self):
         address = reverse("gpxfile-list")
         response = self.client.get(address)
+        print_response(response)
         self.assertContains(
             response,
-            '{"id":1,"trip_date":"2010-11-01","direction":"trip_to","file":null,"durationSeconds":null,"distanceMeters":null,"sourceApplication":null}',
+            '{"id":1,"trip_date":"2010-11-01","direction":"trip_to","file":null,"commuteMode":"bicycle",'
+            '"durationSeconds":null,"distanceMeters":null,"sourceApplication":null}',
         )
         self.assertContains(
             response,
             '{"id":2,"trip_date":"2010-11-14","direction":"trip_from","file":"http://testing-campaign.testserver%smodranska-rokle.gpx",'
-            '"durationSeconds":null,"distanceMeters":null,"sourceApplication":null}' % settings.MEDIA_URL,
+            '"commuteMode":"bicycle","durationSeconds":null,"distanceMeters":null,"sourceApplication":null}' % settings.MEDIA_URL,
         )
 
     def test_gpx_post(self):
