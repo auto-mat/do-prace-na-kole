@@ -32,7 +32,7 @@ from .. import util
 
 
 class Trip(models.Model):
-    """Cesty"""
+    """Jízdy"""
     DIRECTIONS = [
         ('trip_to', _(u"Tam")),
         ('trip_from', _(u"Zpět")),
@@ -46,8 +46,8 @@ class Trip(models.Model):
     ]
 
     class Meta:
-        verbose_name = _(u"Cesta")
-        verbose_name_plural = _(u"Cesty")
+        verbose_name = _("Jízda")
+        verbose_name_plural = _("Jízdy")
         unique_together = (("user_attendance", "date", "direction"),)
         ordering = ('date', '-direction')
     objects = BulkUpdateManager()
