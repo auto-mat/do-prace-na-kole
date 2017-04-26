@@ -63,6 +63,8 @@ from related_admin import RelatedFieldAdmin
 
 from rest_framework.authtoken.admin import TokenAdmin
 
+from scribbler import models as scribbler_models
+
 from t_shirt_delivery.admin import PackageTransactionInline
 from t_shirt_delivery.forms import PackageTransactionForm
 from t_shirt_delivery.models import PackageTransaction, TShirtSize
@@ -1447,6 +1449,21 @@ class GpxFileAdmin(LeafletGeoAdmin):
     raw_id_fields = ('user_attendance', 'trip')
     readonly_fields = ('author', 'updated_by', 'updated', 'ecc_last_upload')
     list_filter = (campaign_filter_generator('user_attendance__campaign'), 'from_application', 'user_attendance__team__subsidiary__city')
+
+
+@admin.register(scribbler_models.Scribble)
+class ScribbleAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'slug',
+        'url',
+        'content',
+    )
+    search_fields = (
+        'name',
+        'slug',
+        'url',
+    )
 
 
 @admin.register(models.Voucher)

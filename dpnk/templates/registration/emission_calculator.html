@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 {% load humanize %}
-{% load dpnk_tags %}
 {% load i18n %}
+{% load scribbler_tags %}
 
 {% block content %}
 {% with user_attendance.get_emissions as emissions %}
@@ -34,8 +34,12 @@
    <td>{% trans "Olovo" %}</td><td>{{ emissions.pb|intcomma }}&nbsp;mg</td>
 </tr>
 </table>
-<div id="calculator_description">
-{% wp_article user_attendance.campaign 11340 %}
-</div>
 {% endwith %}
+<div id="calculator_description">
+   {% scribble 'emmission_calculator_description' %}
+   {% load i18n %}
+   <h3>{% trans "Popis emisní kalkulačky" %}</h3>
+   <p>{% trans "V kalkulačce je metoda přepočtu celkových udávaných emisí z IAD v ČR na její výkon. Výsledkem jsou hmotnostní jednotky daných látek na kilometr. Zdrojem dat je Ročenka dopravy ČR za rok 2013." %}</p>
+   {% endscribble %}
+</div>
 {% endblock %}
