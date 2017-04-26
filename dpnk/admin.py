@@ -47,6 +47,8 @@ from django.utils.translation import ugettext_lazy as _
 from import_export import fields, resources
 from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
 
+from isnull_filter import isnull_filter
+
 from leaflet.admin import LeafletGeoAdmin, LeafletGeoAdminMixin
 
 from modeltranslation.admin import TranslationTabularInline
@@ -72,15 +74,7 @@ from .filters import (
     CityCampaignFilter,
     EmailFilter,
     HasReactionFilter,
-    HasRidesFilter,
-    HasTeamFilter,
-    HasUserAttendanceFilter,
-    HasUserprofileFilter,
-    HasVoucherFilter,
-    InvoicePaidFilter,
-    IsForCompanyFilter,
     PSCFilter,
-    TrackFilter,
     campaign_filter_generator,
 )
 
@@ -415,7 +409,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
         'show_results',
         'competitor_type',
         'competition_type',
-        IsForCompanyFilter,
+        isnull_filter('company', _("Není vnitrofiremní soutěž?")),
         'sex')
     save_as = True
     actions = [actions.recalculate_competitions_results, actions.normalize_questionnqire_admissions]
@@ -661,7 +655,7 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
         'is_active',
         'groups',
         'userprofile__company_admin__company_admin_approved',
-        HasUserprofileFilter,
+        isnull_filter('userprofile', _("Nemá uživatelský profil?")),
         'userprofile__sex',
         'userprofile__administrated_cities',
         EmailFilter,
@@ -792,10 +786,10 @@ class UserAttendanceAdmin(
         ('userprofile__sex', AllValuesComboFilter),
         'discount_coupon__coupon_type__name',
         'discount_coupon__discount',
-        TrackFilter,
-        HasVoucherFilter,
-        HasRidesFilter,
-        HasTeamFilter,
+        isnull_filter('track', _("Nemá nahranou trasu?")),
+        isnull_filter('voucher', _("Nemá přiřazené vouchery?")),
+        isnull_filter('user_trips', _("Nemá žádné cesty?")),
+        isnull_filter('team', _("Uživatel nemá zvolený tým?")),
     )
     advanced_filter_fields = (
         'campaign',
@@ -1316,7 +1310,7 @@ class CompanyAdminAdmin(ImportExportMixin, city_admin_mixin_generator('administr
     list_filter = [
         CampaignFilter,
         'company_admin_approved',
-        HasUserAttendanceFilter,
+        isnull_filter('userattendance', _("Nemá účast v kampani?")),
         'administrated_company__subsidiaries__city',
     ]
     search_fields = [
@@ -1404,7 +1398,11 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'invoice_count',
         'total_amount',
     ]
-    list_filter = [CampaignFilter, InvoicePaidFilter, 'company_pais_benefitial_fee']
+    list_filter = [
+        CampaignFilter,
+        isnull_filter('paid_date', _("Nezaplacené faktury")),
+        'company_pais_benefitial_fee',
+    ]
     search_fields = ['company__name', ]
     inlines = [PaymentInline]
     actions = [actions.mark_invoices_paid]
@@ -1455,7 +1453,7 @@ class GpxFileAdmin(LeafletGeoAdmin):
 class VoucherAdmin(ImportMixin, admin.ModelAdmin):
     list_display = ('id', 'voucher_type', 'token', 'user_attendance', 'campaign')
     raw_id_fields = ('user_attendance',)
-    list_filter = [CampaignFilter, 'voucher_type']
+    list_filter = [CampaignFilter, 'voucher_type', isnull_filter('user_attendance', _("Nemá účast v kampani"))]
 
 
 @admin.register(Session)

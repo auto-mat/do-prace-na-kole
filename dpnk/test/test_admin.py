@@ -441,66 +441,6 @@ class FilterTests(TestCase):
         q = f.queryset(self.request, User.objects.all())
         self.assertEquals(q.count(), 9)
 
-    def test_has_team_filter_yes(self):
-        f = filters.HasTeamFilter(self.request, {"user_has_team": "yes"}, models.UserAttendance, None)
-        q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 6)
-
-    def test_has_team_filter_no(self):
-        f = filters.HasTeamFilter(self.request, {"user_has_team": "no"}, models.UserAttendance, None)
-        q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 2)
-
-    def test_has_team_filter_null(self):
-        f = filters.HasTeamFilter(self.request, {}, models.UserAttendance, None)
-        q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 8)
-
-    def test_is_for_company_yes(self):
-        f = filters.IsForCompanyFilter(self.request, {"is_for_company": "yes"}, models.Competition, None)
-        q = f.queryset(self.request, models.Competition.objects.all())
-        self.assertEquals(q.count(), 2)
-
-    def test_is_for_company_no(self):
-        f = filters.IsForCompanyFilter(self.request, {"is_for_company": "no"}, models.Competition, None)
-        q = f.queryset(self.request, models.Competition.objects.all())
-        self.assertEquals(q.count(), 8)
-
-    def test_is_for_company_null(self):
-        f = filters.IsForCompanyFilter(self.request, {}, models.Competition, None)
-        q = f.queryset(self.request, models.Competition.objects.all())
-        self.assertEquals(q.count(), 10)
-
-    def test_has_rides_filter_yes(self):
-        f = filters.HasRidesFilter(self.request, {"has_rides": "yes"}, models.UserAttendance, None)
-        q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 1)
-
-    def test_has_rides_filter_no(self):
-        f = filters.HasRidesFilter(self.request, {"has_rides": "no"}, models.UserAttendance, None)
-        q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 7)
-
-    def test_has_rides_filter_null(self):
-        f = filters.HasRidesFilter(self.request, {}, models.UserAttendance, None)
-        q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 8)
-
-    def test_has_voucher_filter_yes(self):
-        f = filters.HasVoucherFilter(self.request, {"has_voucher": "yes"}, models.UserAttendance, None)
-        q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_has_voucher_filter_no(self):
-        f = filters.HasVoucherFilter(self.request, {"has_voucher": "no"}, models.UserAttendance, None)
-        q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 8)
-
-    def test_has_voucher_filter_null(self):
-        f = filters.HasVoucherFilter(self.request, {}, models.UserAttendance, None)
-        q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 8)
-
     def test_campaign_filter_campaign(self):
         f = filters.CampaignFilter(self.request, {"campaign": "testing-campaign"}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
@@ -533,36 +473,6 @@ class FilterTests(TestCase):
         q = f.queryset(self.request, models.City.objects.all())
         self.assertEquals(q.count(), 2)
 
-    def test_invoice_paid_filters_yes(self):
-        f = filters.InvoicePaidFilter(self.request, {"invoice_paid": "yes"}, models.Invoice, None)
-        q = f.queryset(self.request, models.Invoice.objects.all())
-        self.assertEquals(q.count(), 1)
-
-    def test_invoice_paid_filters_no(self):
-        f = filters.InvoicePaidFilter(self.request, {"invoice_paid": "no"}, models.Invoice, None)
-        q = f.queryset(self.request, models.Invoice.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_invoice_paid_filters_null(self):
-        f = filters.InvoicePaidFilter(self.request, {}, models.Invoice, None)
-        q = f.queryset(self.request, models.Invoice.objects.all())
-        self.assertEquals(q.count(), 1)
-
-    def test_has_useratendance_filter_yes(self):
-        f = filters.HasUserAttendanceFilter(self.request, {"has_user_attendance": "yes"}, models.CompanyAdmin, None)
-        q = f.queryset(self.request, models.CompanyAdmin.objects.all())
-        self.assertEquals(q.count(), 0)
-
-    def test_has_useratendance_filter_no(self):
-        f = filters.HasUserAttendanceFilter(self.request, {"has_user_attendance": "no"}, models.CompanyAdmin, None)
-        q = f.queryset(self.request, models.CompanyAdmin.objects.all())
-        self.assertEquals(q.count(), 3)
-
-    def test_has_useratendance_filter_null(self):
-        f = filters.HasUserAttendanceFilter(self.request, {}, models.CompanyAdmin, None)
-        q = f.queryset(self.request, models.CompanyAdmin.objects.all())
-        self.assertEquals(q.count(), 3)
-
     def test_has_reaction_filter_yes(self):
         f = filters.HasReactionFilter(self.request, {"has_reaction": "yes"}, models.Answer, None)
         q = f.queryset(self.request, models.Answer.objects.all())
@@ -577,33 +487,3 @@ class FilterTests(TestCase):
         f = filters.HasReactionFilter(self.request, {}, models.Answer, None)
         q = f.queryset(self.request, models.Answer.objects.all())
         self.assertEquals(q.count(), 5)
-
-    def test_has_userprofile_filter_yes(self):
-        f = filters.HasUserprofileFilter(self.request, {"has_userprofile": "yes"}, User, None)
-        q = f.queryset(self.request, User.objects.all())
-        self.assertEquals(q.count(), 8)
-
-    def test_has_userprofile_filter_no(self):
-        f = filters.HasUserprofileFilter(self.request, {"has_userprofile": "no"}, User, None)
-        q = f.queryset(self.request, User.objects.all())
-        self.assertEquals(q.count(), 1)
-
-    def test_has_userprofile_filter_null(self):
-        f = filters.HasUserprofileFilter(self.request, {}, User, None)
-        q = f.queryset(self.request, User.objects.all())
-        self.assertEquals(q.count(), 9)
-
-    def test_has_track_filter_yes(self):
-        f = filters.TrackFilter(self.request, {"has_track": "yes"}, User, None)
-        q = f.queryset(self.request, UserAttendance.objects.all())
-        self.assertEquals(q.count(), 5)
-
-    def test_has_track_filter_no(self):
-        f = filters.TrackFilter(self.request, {"has_track": "no"}, User, None)
-        q = f.queryset(self.request, UserAttendance.objects.all())
-        self.assertEquals(q.count(), 3)
-
-    def test_has_track_filter_null(self):
-        f = filters.TrackFilter(self.request, {}, User, None)
-        q = f.queryset(self.request, UserAttendance.objects.all())
-        self.assertEquals(q.count(), 8)

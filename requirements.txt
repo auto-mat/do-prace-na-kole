@@ -80,3 +80,4 @@ djangorestframework-gis
 django-table-select-widget
 redis
 django-scribbler
+django-isnull-list-filter
