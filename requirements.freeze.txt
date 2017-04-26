@@ -53,6 +53,7 @@ django-oauth-toolkit==0.11.0
 django-polymorphic==1.1
 django-price-level==0.2.1
 django-rank-query==0.1.0
+django-redis==4.8.0
 django-registration-redux==1.4
 django-related-admin==0.4.0
 django-rosetta==0.7.12

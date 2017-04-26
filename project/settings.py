@@ -59,14 +59,23 @@ DATABASES = {
 }
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
-CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-        'KEY_PREFIX': 'dpnkch',
-    },
-}
+
+DPNK_CACHE_REDIS_LOCATION = os.environ.get('DPNK_CACHE_REDIS_LOCATION', None)
+if DPNK_CACHE_REDIS_LOCATION is not None:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': DPNK_CACHE_REDIS_LOCATION,
+        },
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': '127.0.0.1:11211',
+            'KEY_PREFIX': 'dpnkch',
+        },
+    }
 
 LOCALE_PATHS = (
     normpath(PROJECT_ROOT, 'dpnk/locale'),

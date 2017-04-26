@@ -81,3 +81,4 @@ django-table-select-widget
 redis
 django-scribbler
 django-isnull-list-filter
+django-redis
