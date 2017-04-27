@@ -254,24 +254,24 @@ def create_subsidiary_resource(campaign_slugs):
             ] + campaign_fields
             export_order = fields
 
-        name = fields.Field()
+        name = fields.Field(readonly=True)
 
         def dehydrate_name(self, obj):
             return obj.name()
 
-        team_count = fields.Field()
+        team_count = fields.Field(readonly=True)
 
         def dehydrate_team_count(self, obj):
             if hasattr(obj, 'team_count'):
                 return obj.team_count
 
-        user_count = fields.Field()
+        user_count = fields.Field(readonly=True)
 
         def dehydrate_user_count(self, obj):
             return obj.teams.distinct().aggregate(Sum('member_count'))['member_count__sum']
 
         for slug in campaign_slugs:
-            vars()['user_count_%s' % slug] = fields.Field()
+            vars()['user_count_%s' % slug] = fields.Field(readonly=True)
 
     for slug in campaign_slugs:
         def func(slug, obj):
@@ -549,18 +549,20 @@ def create_userprofile_resource(campaign_slugs):
             ] + campaign_fields
             export_order = fields
 
-        name = fields.Field()
+        name = fields.Field(readonly=True)
 
         def dehydrate_name(self, obj):
-            return obj.name()
+            if hasattr(obj, 'user'):
+                return obj.name()
 
-        email = fields.Field()
+        email = fields.Field(readonly=True)
 
         def dehydrate_email(self, obj):
-            return obj.user.email
+            if hasattr(obj, 'user'):
+                return obj.user.email
 
         for slug in campaign_slugs:
-            vars()['user_attended_%s' % slug] = fields.Field()
+            vars()['user_attended_%s' % slug] = fields.Field(readonly=True)
 
     for slug in campaign_slugs:
         def func(slug, obj):
@@ -687,9 +689,10 @@ class UserAttendanceResource(resources.ModelResource):
             'campaign',
             'campaign__slug',
             'distance',
-            'team__id',
+            'team',
             'team__name',
             'approved_for_team',
+            't_shirt_size',
             't_shirt_size__name',
             'team__subsidiary__city__name',
             'userprofile',
@@ -707,32 +710,32 @@ class UserAttendanceResource(resources.ModelResource):
             'created')
         export_order = fields
 
-    subsidiary_name = fields.Field()
+    subsidiary_name = fields.Field(readonly=True)
 
     def dehydrate_subsidiary_name(self, obj):
         if obj.team and obj.team.subsidiary:
             return obj.team.subsidiary.name()
 
-    payment_date = fields.Field()
+    payment_date = fields.Field(readonly=True)
 
     def dehydrate_payment_date(self, obj):
         payment = obj.representative_payment
         if payment:
             return payment.realized or payment.created
 
-    payment_status = fields.Field()
+    payment_status = fields.Field(readonly=True)
 
     def dehydrate_payment_status(self, obj):
         return obj.payment_status
 
-    payment_type = fields.Field()
+    payment_type = fields.Field(readonly=True)
 
     def dehydrate_payment_type(self, obj):
         payment = obj.representative_payment
         if payment:
             return payment.pay_type
 
-    payment_amount = fields.Field()
+    payment_amount = fields.Field(readonly=True)
 
     def dehydrate_payment_amount(self, obj):
         payment = obj.representative_payment
@@ -1070,7 +1073,7 @@ class AnswerResource(resources.ModelResource):
         )
         export_order = fields
 
-    str_choices = fields.Field()
+    str_choices = fields.Field(readonly=True)
 
     def dehydrate_str_choices(self, obj):
         return obj.str_choices()
@@ -1368,7 +1371,7 @@ class InvoiceResource(resources.ModelResource):
             'company__address_city')
         export_order = fields
 
-    invoice_count = fields.Field()
+    invoice_count = fields.Field(readonly=True)
 
     def dehydrate_invoice_count(self, obj):
         return obj.payment_set.count()
