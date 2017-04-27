@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('dpnk', '0049_auto_20170113_1552'),
+        ('t_shirt_delivery', '0000_zero'),
     ]
 
     database_operations = [

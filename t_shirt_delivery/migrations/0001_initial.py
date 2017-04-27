@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('t_shirt_delivery', '0000_zero'),
         ('dpnk', '0050_move_models_to_t_shirt_delivery'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
@@ -49,25 +50,6 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Transakce balíku',
             },
             bases=('dpnk.transaction',),
-        ),
-        migrations.CreateModel(
-            name='TShirtSize',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=40, verbose_name='Velikost trička')),
-                ('order', models.PositiveIntegerField(default=0)),
-                ('ship', models.BooleanField(default=True, verbose_name='Posílá se?')),
-                ('available', models.BooleanField(default=True, help_text='Zobrazuje se v nabídce trik', verbose_name='Je dostupné?')),
-                ('t_shirt_preview', models.FileField(blank=True, null=True, upload_to='t_shirt_preview', verbose_name='Náhled trika')),
-                ('price', models.IntegerField(default=0, verbose_name='Cena')),
-                ('campaign', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dpnk.Campaign', verbose_name='Kampaň')),
-            ],
-            options={
-                'db_table': 't_shirt_delivery_tshirtsize',
-                'verbose_name': 'Velikost trička',
-                'verbose_name_plural': 'Velikosti trička',
-                'ordering': ['order'],
-            },
         ),
         migrations.AddField(
             model_name='packagetransaction',
