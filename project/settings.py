@@ -195,6 +195,7 @@ TEMPLATES = [
 ]
 INSTALLED_APPS = (
     'modeltranslation',
+    'admin_view_permission',
 
     'django_su',
     'django.contrib.auth',
