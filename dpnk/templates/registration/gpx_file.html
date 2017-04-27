@@ -1,21 +1,8 @@
 {% extends "base_generic_form.html" %}
-{% load leaflet_tags %}
 {% load i18n %}
 
 {% block extrahead %}
-{% leaflet_js plugins="ALL" %}
-{% leaflet_css plugins="ALL" %}
-<style type="text/css">
-   .leaflet-clickable {
-       stroke:red;
-       stroke-opacity: 1;
-   }
-
-   .leaflet-draw-guide-dash {
-       background-color: red !important;
-       opacity: 1 !important;
-   }
-</style>
+{% include "registration/leaflet_include.html" %}
 {{ block.super }}
 {% endblock %}
 
