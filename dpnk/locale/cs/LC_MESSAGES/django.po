@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-26 23:08+0200\n"
+"POT-Creation-Date: 2017-04-27 11:04+0200\n"
 "PO-Revision-Date: 2017-04-19 14:59+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -624,7 +624,7 @@ msgid ""
 "\">Registrujte se</a> do soutěže %(campaign)s.<br/><br/>"
 msgstr ""
 
-#: forms.py:125 templates/base_generic.html:103 templates/page_generic.html:101
+#: forms.py:125 templates/base_generic.html:103
 #: templates/registration/logged_out.html:5
 msgid "Přihlásit"
 msgstr ""
@@ -1049,7 +1049,6 @@ msgid "Adresa pro Wordpress API se články"
 msgstr ""
 
 #: models/campaign.py:188 templates/base_generic.html:12
-#: templates/page_generic.html:12
 msgid "Do práce na kole"
 msgstr ""
 
@@ -1136,7 +1135,6 @@ msgid "Zamítnutý"
 msgstr ""
 
 #: models/company_admin.py:39 templates/base_generic.html:97
-#: templates/page_generic.html:95
 msgid "Firemní koordinátor"
 msgstr ""
 
@@ -1987,8 +1985,7 @@ msgstr ""
 msgid "Jízda"
 msgstr ""
 
-#: models/trip.py:50 templates/base_generic.html:92
-#: templates/page_generic.html:90 views.py:919
+#: models/trip.py:50 templates/base_generic.html:92 views.py:919
 msgid "Jízdy"
 msgstr ""
 
@@ -2213,42 +2210,41 @@ msgstr ""
 
 #: templates/base_generic.html:93
 #: templates/base_generic_company_admin_form.html:15
-#: templates/page_generic.html:91
 msgid "Soutěže"
 msgstr ""
 
-#: templates/base_generic.html:94 templates/page_generic.html:92
+#: templates/base_generic.html:94
 msgid "Kolegové"
 msgstr ""
 
-#: templates/base_generic.html:95 templates/page_generic.html:93
+#: templates/base_generic.html:95
 msgid "Soutěžní údaje"
 msgstr ""
 
-#: templates/base_generic.html:100 templates/page_generic.html:98
+#: templates/base_generic.html:100
 msgid "Administrace"
 msgstr ""
 
-#: templates/base_generic.html:123 templates/page_generic.html:121
+#: templates/base_generic.html:123
 msgid ""
 "Bohužel používáte <strong>zastaralý</strong> prohlížeč internetu. Přes naši "
 "snahu nemusí některé části webu dobře fungovat. Pokud můžete, <a href="
 "\"http://www.whatbrowser.org/intl/cs\">nainstalujte si novější prohlížeč"
 msgstr ""
 
-#: templates/base_generic.html:143 templates/page_generic.html:139
+#: templates/base_generic.html:143
 msgid "Uživatel: "
 msgstr ""
 
-#: templates/base_generic.html:144 templates/page_generic.html:140
+#: templates/base_generic.html:144
 msgid "Tým: "
 msgstr ""
 
-#: templates/base_generic.html:145 templates/page_generic.html:141
+#: templates/base_generic.html:145
 msgid "Změnit heslo"
 msgstr ""
 
-#: templates/base_generic.html:147 templates/page_generic.html:142
+#: templates/base_generic.html:147
 msgid "Odhlásit"
 msgstr ""
 
@@ -2401,6 +2397,11 @@ msgid ""
 "pobočky odpovídá realitě. V případě, že je šapatně napište na "
 msgstr ""
 
+#: templates/registration/applications.html:8
+#: templates/registration/applications.html:11
+msgid "Propojit s"
+msgstr ""
+
 #: templates/registration/change_team.html:7
 msgid ""
 "\n"
@@ -2416,7 +2417,7 @@ msgid ""
 "chybné, nezakládejte novou pobočku. Žádejte o opravu:"
 msgstr ""
 
-#: templates/registration/change_track.html:24
+#: templates/registration/change_track.html:11
 #, python-format
 msgid ""
 "\n"
@@ -2617,7 +2618,7 @@ msgid ""
 "2013."
 msgstr ""
 
-#: templates/registration/gpx_file.html:24
+#: templates/registration/gpx_file.html:11
 #, python-format
 msgid ""
 "Tip: Trasy všech svých cest můžete nahrávat pomocí <a href="

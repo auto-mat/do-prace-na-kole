@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-26 23:08+0200\n"
-"PO-Revision-Date: 2017-04-26 23:08+0058\n"
+"POT-Creation-Date: 2017-04-27 11:04+0200\n"
+"PO-Revision-Date: 2017-04-27 11:04+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
 "Language: \n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: en\n"
-"X-Translated-Using: django-rosetta 0.7.12\n"
+"X-Translated-Using: django-rosetta 0.7.13\n"
 
 #: actions.py:31
 #, python-format
@@ -676,7 +676,7 @@ msgstr ""
 "%(campaign)s.<br/><br/>"
 
 #: forms.py:125 templates/base_generic.html:103
-#: templates/page_generic.html:101 templates/registration/logged_out.html:5
+#: templates/registration/logged_out.html:5
 msgid "Přihlásit"
 msgstr "Login"
 
@@ -1151,7 +1151,6 @@ msgid "Adresa pro Wordpress API se články"
 msgstr "Address for Wordpress article API"
 
 #: models/campaign.py:188 templates/base_generic.html:12
-#: templates/page_generic.html:12
 msgid "Do práce na kole"
 msgstr "Bike to work"
 
@@ -1240,7 +1239,6 @@ msgid "Zamítnutý"
 msgstr "Denied"
 
 #: models/company_admin.py:39 templates/base_generic.html:97
-#: templates/page_generic.html:95
 msgid "Firemní koordinátor"
 msgstr "Company coordinator"
 
@@ -2117,8 +2115,7 @@ msgstr "No trip"
 msgid "Jízda"
 msgstr "Ride"
 
-#: models/trip.py:50 templates/base_generic.html:92
-#: templates/page_generic.html:90 views.py:919
+#: models/trip.py:50 templates/base_generic.html:92 views.py:919
 msgid "Jízdy"
 msgstr "Rides"
 
@@ -2268,20 +2265,6 @@ msgstr "Password in ECC"
 
 #: models/util.py:39
 #, python-brace-format
-#| msgid ""
-#| "\n"
-#| "<ul>\n"
-#| "   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko {draw}.</strong></li>\n"
-#| "   <li>Další body zadáváte kliknutím do mapy, <strong>cílový bod zadáte dvouklikem.</strong></li>\n"
-#| "   <li>Změnu trasy provedete po přepnutí do režimu úprav ({edit}) kliknutím na trasu.</li>\n"
-#| "   <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede. \n"
-#| "   (Zadání přesnějšího průběhu nám však může pomoci lépe zjistit, jak se lidé na kole pohybují.)</li>\n"
-#| "   <li>Trasu bude možné změnit nebo upřesnit i později v průběhu soutěže.\n"
-#| "   (Trasy za jednotlivé dny však jen 7 dní nazpět.)</li>\n"
-#| "   <li>Polohu začátku a konce trasy stačí zadávat se 100m přesností.</li>\n"
-#| "</ul>\n"
-#| "Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve městě na kole.\n"
-#| "<br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na <a href=\"https://mapa.prahounakole.cz/\">mapě Prahou na kole</a>.\n"
 msgid ""
 "\n"
 "<ul>\n"
@@ -2376,23 +2359,22 @@ msgstr "Questions"
 
 #: templates/base_generic.html:93
 #: templates/base_generic_company_admin_form.html:15
-#: templates/page_generic.html:91
 msgid "Soutěže"
 msgstr "Competitions"
 
-#: templates/base_generic.html:94 templates/page_generic.html:92
+#: templates/base_generic.html:94
 msgid "Kolegové"
 msgstr "Colleagues"
 
-#: templates/base_generic.html:95 templates/page_generic.html:93
+#: templates/base_generic.html:95
 msgid "Soutěžní údaje"
 msgstr "Competition details"
 
-#: templates/base_generic.html:100 templates/page_generic.html:98
+#: templates/base_generic.html:100
 msgid "Administrace"
 msgstr "Administration"
 
-#: templates/base_generic.html:123 templates/page_generic.html:121
+#: templates/base_generic.html:123
 msgid ""
 "Bohužel používáte <strong>zastaralý</strong> prohlížeč internetu. Přes naši "
 "snahu nemusí některé části webu dobře fungovat. Pokud můžete, <a "
@@ -2403,19 +2385,19 @@ msgstr ""
 "Despite our efforts, some parts of the website may not work well. If you can"
 " <a href=\"http://www.whatbrowser.org/intl/cs\">install a newer browser."
 
-#: templates/base_generic.html:143 templates/page_generic.html:139
+#: templates/base_generic.html:143
 msgid "Uživatel: "
 msgstr "User: "
 
-#: templates/base_generic.html:144 templates/page_generic.html:140
+#: templates/base_generic.html:144
 msgid "Tým: "
 msgstr "Team: "
 
-#: templates/base_generic.html:145 templates/page_generic.html:141
+#: templates/base_generic.html:145
 msgid "Změnit heslo"
 msgstr "Change password"
 
-#: templates/base_generic.html:147 templates/page_generic.html:142
+#: templates/base_generic.html:147
 msgid "Odhlásit"
 msgstr "Logout"
 
@@ -2571,6 +2553,11 @@ msgstr ""
 " the address of subdivision, when you will be choosing your team. If the "
 "address is wrong, you can always write to "
 
+#: templates/registration/applications.html:8
+#: templates/registration/applications.html:11
+msgid "Propojit s"
+msgstr "Connect with"
+
 #: templates/registration/change_team.html:7
 msgid ""
 "\n"
@@ -2591,7 +2578,7 @@ msgstr ""
 "If the name of the company or the subsidiary appears on the list but it is "
 "wrong, don't make a new one, but request a correction at:"
 
-#: templates/registration/change_track.html:24
+#: templates/registration/change_track.html:11
 #, python-format
 msgid ""
 "\n"
@@ -2803,7 +2790,7 @@ msgstr ""
 "volume. Results of this are weight units of particular substances per "
 "kilometre. Data are based on Czech transportation yearbook 2013."
 
-#: templates/registration/gpx_file.html:24
+#: templates/registration/gpx_file.html:11
 #, python-format
 msgid ""
 "Tip: Trasy všech svých cest můžete nahrávat pomocí <a "
