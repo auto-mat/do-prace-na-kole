@@ -121,8 +121,8 @@ SECRET_KEY = os.environ.get('DPNK_SECRET_KEY')
 MIDDLEWARE_CLASSES = [
     # 'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'sslifyadmin.middleware.SSLifyAdminMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
