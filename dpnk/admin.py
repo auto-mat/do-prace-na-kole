@@ -1454,6 +1454,7 @@ class GpxFileAdmin(LeafletGeoAdmin):
 @admin.register(scribbler_models.Scribble)
 class ScribbleAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'name',
         'slug',
         'url',
@@ -1464,6 +1465,7 @@ class ScribbleAdmin(admin.ModelAdmin):
         'slug',
         'url',
     )
+    save_as = True
 
 
 @admin.register(models.Voucher)
