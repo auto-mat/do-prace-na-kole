@@ -4,6 +4,7 @@ from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib.gis import admin
 from django.http import HttpResponse
+from django.views.generic import RedirectView
 
 from dpnk import views
 from dpnk.rest import router
@@ -11,6 +12,15 @@ from dpnk.views import answers, questionnaire_answers, questionnaire_results, qu
 
 admin.site.index_template = 'admin/my_custom_index.html'
 admin.autodiscover()
+
+
+class OldLanguageRedirectView(RedirectView):
+
+    permanent = True
+
+    def get_redirect_url(self):
+        return self.request.get_full_path().replace("/cs", "")
+
 
 urlpatterns = [
     url(
@@ -55,12 +65,14 @@ urlpatterns = [
     url(r'^t_shirt/', include("t_shirt_delivery.urls")),
     url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nAllow:", content_type="text/plain")),
     url(r'^', include('favicon.urls')),
+    url(r'^cs/.*$', OldLanguageRedirectView.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += i18n_patterns(
     url(r'^', include("dpnk.urls")),
     url(r'^', include("t_shirt_delivery.urls")),
     url(r'^', include("coupons.urls")),
+    prefix_default_language=False,
 )
 
 if 'rosetta' in settings.INSTALLED_APPS:
