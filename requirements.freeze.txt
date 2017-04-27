@@ -14,7 +14,7 @@ decorator==4.0.10
 diff-match-patch==20121119
 Django<1.11
 django-admin-sortable2==0.6.10
-django-admin-view-permission==0.8
+-e git+https://github.com/PetrDlouhy/django-admin-view-permission.git@0f6cd02c8be845cbe98c3ad7ebbfe199f56863e5#egg=django_admin_view_permission
 -e git+https://github.com/saxix/django-adminactions@92800bad924bf9f4b0d094da5586f701c0f73bfc#egg=django_adminactions
 -e git+https://github.com/PetrDlouhy/django-adminfilters.git@af22f3c6a6a826302e9b5b26890844bcc6a65983#egg=django_adminfilters
 -e git+https://github.com/PetrDlouhy/django-advanced-filters.git@508b9bb803100a2ed002b75b0e09828626c1794d#egg=django_advanced_filters
@@ -73,7 +73,7 @@ django-wysiwyg-redactor==0.5.1
 djangorestframework==3.6.2
 djangorestframework-gis==0.11
 docopt==0.6.2
-sorl-thumbnail==12.3
+-e git+https://github.com/mariocesar/sorl-thumbnail.git@7e61948e7a987714097ba50a54120f584db9c843#egg=sorl_thumbnail
 enum-compat==0.0.2
 fiobank==1.2.0
 flower==0.9.1

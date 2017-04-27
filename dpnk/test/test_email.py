@@ -28,6 +28,13 @@ from dpnk import email
 from dpnk.models import Campaign, City, Company, CompanyAdmin, Phase, Subsidiary, Team, UserAttendance, UserProfile
 
 
+def language_url_infix(language):
+    if language == 'cs':
+        return ""
+    else:
+        return "/en"
+
+
 # Uncoment this to check to generate email files in /tmp/dpnk-test-messages
 # from django.test.utils import override_settings
 # @override_settings(
@@ -91,7 +98,10 @@ class TestEmails(TestCase):
         msg = mail.outbox[0]
         self.assertEqual(msg.subject, "Testing campaign 1 - potvrzení registrace")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'http://testing_campaign_1.localhost:8000/%s/tym/%s/user1@email.com/' % (self.userprofile.language, self.user_attendance.team.invitation_token)
+        link = 'http://testing_campaign_1.localhost:8000%s/tym/%s/user1@email.com/' % (
+            language_url_infix(self.userprofile.language),
+            self.user_attendance.team.invitation_token,
+        )
         self.assertTrue(link in msg.body)
 
     def test_send_register_mail(self):
@@ -100,7 +110,7 @@ class TestEmails(TestCase):
         msg = mail.outbox[0]
         self.assertEqual(msg.subject, "Testing campaign 1 - potvrzení registrace")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'http://testing_campaign_1.localhost:8000/%s/' % self.userprofile.language
+        link = 'http://testing_campaign_1.localhost:8000%s/' % language_url_infix(self.userprofile.language)
         self.assertTrue(link in msg.body)
 
     def test_send_team_membership_approval_mail(self):
@@ -115,7 +125,7 @@ class TestEmails(TestCase):
         msg = mail.outbox[0]
         self.assertEqual(msg.subject, "Testing campaign 1 - ZAMÍTNUTÍ členství v týmu")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'http://testing_campaign_1.localhost:8000/%s/tym/' % self.userprofile.language
+        link = 'http://testing_campaign_1.localhost:8000%s/tym/' % language_url_infix(self.userprofile.language)
         self.assertTrue(link in msg.body)
 
     def test_send_team_created_mail(self):
@@ -124,7 +134,7 @@ class TestEmails(TestCase):
         msg = mail.outbox[0]
         self.assertEqual(msg.subject, "Testing campaign 1 - potvrzení vytvoření týmu")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'http://testing_campaign_1.localhost:8000/%s/pozvanky/' % self.userprofile.language
+        link = 'http://testing_campaign_1.localhost:8000%s/pozvanky/' % language_url_infix(self.userprofile.language)
         self.assertTrue(link in msg.body)
 
     def test_send_invitation_mail(self):
@@ -135,7 +145,7 @@ class TestEmails(TestCase):
         self.assertEqual(msg.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(msg.to[0], "email@email.com")
         self.assertEqual(msg.to[0], "email@email.com")
-        link_cs = 'http://testing_campaign_1.localhost:8000/cs/registrace/%s/email@email.com/' % self.user_attendance.team.invitation_token
+        link_cs = 'http://testing_campaign_1.localhost:8000/registrace/%s/email@email.com/' % self.user_attendance.team.invitation_token
         self.assertTrue(link_cs in msg.body)
         link_en = 'http://testing_campaign_1.localhost:8000/en/registrace/%s/email@email.com/' % self.user_attendance.team.invitation_token
         self.assertTrue(link_en in msg.body)
@@ -177,7 +187,7 @@ class TestEmails(TestCase):
         self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - schválení správcovství organizace")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
         msg = mail.outbox[0]
-        link = 'http://testing_campaign_1.localhost:8000/%s/spolecnost/zadost_admina/' % self.userprofile.language
+        link = 'http://testing_campaign_1.localhost:8000%s/spolecnost/zadost_admina/' % language_url_infix(self.userprofile.language)
         self.assertTrue(link in msg.body)
         if self.userprofile.language == 'cs':
             message = "Zpráva pro Testing User, firemního koordinátora v organizaci Testing Company v soutěži Testing campaign 1"

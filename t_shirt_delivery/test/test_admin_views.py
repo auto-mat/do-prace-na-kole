@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
+from django.test.utils import override_settings
 
 from dpnk.test.util import print_response  # noqa
 
@@ -27,6 +28,9 @@ from model_mommy import mommy
 import settings
 
 
+@override_settings(
+    SSLIFY_ADMIN_DISABLE=True,
+)
 class DispatchViewTests(TestCase):
     def setUp(self):
         super().setUp()

@@ -334,6 +334,7 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=2),
+    MEDIA_ROOT="dpnk/test_files",
 )
 class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
@@ -347,9 +348,6 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.assertTrue(self.user_attendance.entered_competition())
 
-    @override_settings(
-        MEDIA_ROOT="dpnk/test_files",
-    )
     def test_dpnk_questionnaire_answers(self):
         competition = models.Competition.objects.filter(slug="quest")
         actions.normalize_questionnqire_admissions(None, None, competition)
@@ -363,9 +361,6 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'Answer without attachment')
         self.assertContains(response, 'Bez přílohy')
 
-    @override_settings(
-        MEDIA_ROOT="dpnk/test_files",
-    )
     @patch('slumber.API')
     def test_dpnk_profile_page(self, slumber_mock):
         models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
@@ -406,8 +401,15 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         m.feed.get.return_value = []
         slumber_api.return_value = m
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<a href="%sDSC00002.JPG" target="_blank">DSC00002.JPG</a>' % settings.MEDIA_URL, html=True)
-        self.assertContains(response, 'Všechny příspěvky z této soutěže')
+        image_file_values = KVStore.objects.get(value__contains='[360, 270]').value
+        image_filename = json.loads(image_file_values)['name']
+        self.assertContains(
+            response,
+            '<a href="/questionnaire_answers/quest/" title="Všechny příspěvky z této soutěže">'
+            '<img src="/media/upload/%s" width="360" height="270">'
+            '</a>' % image_filename,
+            html=True,
+        )
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2010, month=11, day=8),
@@ -502,7 +504,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'form-1-commute_mode')
         self.assertContains(
             response,
-            '<div>Ujetá započítaná vzdálenost: 31,23&nbsp;km (<a href="/cs/jizdy-podrobne/">Podrobný přehled jízd</a>)</div>',
+            '<div>Ujetá započítaná vzdálenost: 31,23&nbsp;km (<a href="/jizdy-podrobne/">Podrobný přehled jízd</a>)</div>',
             html=True,
         )
         self.assertContains(
@@ -512,7 +514,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         )
         self.assertContains(
             response,
-            '<div>Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g (<a href="/cs/emisni_kalkulacka/">Emisní kalkulačka</a>)</div>',
+            '<div>Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g (<a href="/emisni_kalkulacka/">Emisní kalkulačka</a>)</div>',
             html=True,
         )
         self.assertEquals(self.user_attendance.user_trips.count(), 7)
