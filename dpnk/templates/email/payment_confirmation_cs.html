@@ -1,6 +1,6 @@
 {% autoescape off %}
 
-Zpráva pro soutěžící/ho {{ user }} z týmu {{user.team.name}} v soutěži {{ user.campaign }}.
+Zpráva pro soutěžící/ho {{ user }} {% if user.team %}z týmu {{user.team.name}}{% endif %} v soutěži {{ user.campaign }}.
 
 Vážená/ý účastnice/íku soutěže {{ user.campaign }},
 
