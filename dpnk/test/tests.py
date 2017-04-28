@@ -222,6 +222,18 @@ class PayuTests(ClearCacheMixin, TestCase):
             },
         )
 
+    def test_dpnk_payment_status_view_create_round(self):
+        """ Test that payment amount is rounded to whole crowns """
+        response = self.payment_status_view(
+            session_id='2075-1J1455206434', amount="15150",
+            sig='4f59d25cd3dadaf03bef947bb0d9e1b9', trans_sig='5a1fa473feba5dcd7c0d8bd21b1aecec',
+            post_sig='445db4f3e11bfa16f0221b0272820058',
+        )
+        self.assertContains(response, "OK")
+        payment = models.Payment.objects.get(session_id='2075-1J1455206434')
+        self.assertEquals(payment.pay_type, "kb")
+        self.assertEquals(payment.amount, 151)
+
     def test_dpnk_payment_status_view_create(self):
         response = self.payment_status_view(
             session_id='2075-1J1455206434', amount="15100",
