@@ -61,7 +61,7 @@ Raven.setUserContext({
       <div class="row">
          <div class="col-md-2 logo_holder">
             <a class="logo" href="http://www.dopracenakole.cz/">
-               <img src="{% static "img/dpnk_logo.png"%}" />
+               <img src="{% static "img/dpnk_logo.png"%}" alt="Logo Do práce na kole" />
             </a>
          </div>
             <div class="col-md-10">
@@ -137,14 +137,17 @@ Raven.setUserContext({
          {% endblock %}
       </div>
       <div class="col-md-2 col-sm-3">
+          {% if user.is_authenticated %}
+          {% scribble 'before_right_panel' current_language_code %}{% endscribble %}
           <ul class="user_info">
-               {% if user.is_authenticated %}
                  <li>{% trans "Uživatel: " %}{{ user_attendance }}</li>
                  {% if user_attendance.team %}<li>{% trans "Tým: " %}{{ user_attendance.team.name }}</li>{% endif %}
                  <li><a href="{% url 'password_change' %}">{% trans "Změnit heslo" %}</a></li>
-                 <li class="logout_django"><a class="btn btn-warning" href="{% url 'logout' %}" class="logout" title="Log out">{% trans "Odhlásit" %}</a></li>
-               {% endif %}
-             </ul>
+                 <li>{% scribble 'inside_right_panel' current_language_code %}{% endscribble %}</li>
+                 <li class="logout_django"><a class="btn btn-warning logout" href="{% url 'logout' %}" title="Log out">{% trans "Odhlásit" %}</a></li>
+          </ul>
+          {% scribble 'after_right_panel' current_language_code %}{% endscribble %}
+          {% endif %}
             
       </div>
    </div>

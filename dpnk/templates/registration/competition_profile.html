@@ -4,6 +4,7 @@
 {% load i18n %}
 {% load thumbnail %}
 {% load cache %}
+{% load scribbler_tags %}
 
 {% block form %}
 
@@ -16,7 +17,10 @@
 {% if user_attendance.voucher_set.exists %}
 <div>
    <h3>{% trans "Vouchery" %}</h3>
-   {% wp_article user_attendance.campaign 11260 %}
+   {% scribble 'before_vouchers' %}
+   {% load i18n %}
+   {% trans "Zde můžete nalézt vouchery" %}
+   {% endscribble %}
    <table class="table">
    {% for voucher in user_attendance.voucher_set.all %}
    <tr>
@@ -29,6 +33,7 @@
    </tr>
    {% endfor %}
    </table>
+   {% scribble 'after_vouchers' %}{% endscribble %}
 </div>
 {% endif %}
 

@@ -50,6 +50,7 @@ class CompetitionDoesNotExist(APIException):
 class GpxFileSerializer(serializers.ModelSerializer):
     distanceMeters = serializers.IntegerField(required=False, min_value=0, source='distance')
     durationSeconds = serializers.IntegerField(required=False, min_value=0, source='duration')
+    commuteMode = serializers.ChoiceField(required=False, source='commute_mode', choices=Trip.MODES)
     sourceApplication = serializers.CharField(required=False, source='source_application')
 
     def create(self, validated_data):
@@ -91,6 +92,7 @@ class GpxFileSerializer(serializers.ModelSerializer):
             'direction',
             'file',
             'track',
+            'commuteMode',
             'durationSeconds',
             'distanceMeters',
             'sourceApplication',

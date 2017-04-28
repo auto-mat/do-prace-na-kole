@@ -96,82 +96,6 @@ class CityCampaignFilter(CampaignFilter):
         return queryset
 
 
-class HasVoucherFilter(SimpleListFilter):
-    title = _("Má nějaké vouchery třetích stran")
-    parameter_name = u'has_voucher'
-    field = 'has_voucher'
-
-    def lookups(self, request, model_admin):
-        return [
-            ('yes', _('Ano')),
-            ('no', _('Ne')),
-        ]
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.filter(voucher__isnull=False).distinct()
-        if self.value() == 'no':
-            return queryset.filter(voucher__isnull=True).distinct()
-        return queryset
-
-
-class HasRidesFilter(SimpleListFilter):
-    title = _(u"Má nějaké jízdy")
-    parameter_name = u'has_rides'
-    field = 'has_rides'
-
-    def lookups(self, request, model_admin):
-        return [
-            ('yes', _('Ano')),
-            ('no', _('Ne')),
-        ]
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.filter(user_trips__isnull=False).distinct()
-        if self.value() == 'no':
-            return queryset.filter(user_trips__isnull=True).distinct()
-        return queryset
-
-
-class IsForCompanyFilter(SimpleListFilter):
-    title = _(u"Je vnitrofiremní soutěž")
-    parameter_name = u'is_for_company'
-    field = 'is_for_company'
-
-    def lookups(self, request, model_admin):
-        return [
-            ('yes', _('Ano')),
-            ('no', _('Ne')),
-        ]
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.filter(company__isnull=False).distinct()
-        if self.value() == 'no':
-            return queryset.exclude(company__isnull=False).distinct()
-        return queryset
-
-
-class HasTeamFilter(SimpleListFilter):
-    title = _(u"Uživatel má zvolený tým")
-    parameter_name = u'user_has_team'
-    field = 'user_has_team'
-
-    def lookups(self, request, model_admin):
-        return [
-            ('yes', _('Ano')),
-            ('no', _('Ne')),
-        ]
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.filter(team__isnull=False).distinct()
-        if self.value() == 'no':
-            return queryset.exclude(team__isnull=False).distinct()
-        return queryset
-
-
 class EmailFilter(SimpleListFilter):
     title = _(u"E-mail")
     parameter_name = u'email'
@@ -196,24 +120,6 @@ class EmailFilter(SimpleListFilter):
         return queryset
 
 
-class HasUserprofileFilter(SimpleListFilter):
-    title = _(u"Má userprofile")
-    parameter_name = u'has_userprofile'
-
-    def lookups(self, request, model_admin):
-        return [
-            ('yes', 'Yes'),
-            ('no', 'No'),
-        ]
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.exclude(userprofile=None)
-        if self.value() == 'no':
-            return queryset.filter(userprofile=None)
-        return queryset
-
-
 class HasReactionFilter(SimpleListFilter):
     title = _(u"Obsahuje odpověď")
     parameter_name = u'has_reaction'
@@ -229,60 +135,6 @@ class HasReactionFilter(SimpleListFilter):
             return queryset.exclude((Q(comment=None) | Q(comment='')) & (Q(attachment=None) | Q(attachment='')) & Q(points_given=None)).distinct()
         if self.value() == 'no':
             return queryset.filter((Q(comment=None) | Q(comment='')) & (Q(attachment=None) | Q(attachment='')) & Q(points_given=None)).distinct()
-        return queryset
-
-
-class HasUserAttendanceFilter(SimpleListFilter):
-    title = _(u"Má účast v kampani")
-    parameter_name = u'has_user_attendance'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('yes', u'Ano'),
-            ('no', u'Ne'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.filter(userattendance__isnull=False)
-        if self.value() == 'no':
-            return queryset.filter(userattendance__isnull=True)
-        return queryset
-
-
-class InvoicePaidFilter(SimpleListFilter):
-    title = _(u"Zaplacení faktury")
-    parameter_name = u'invoice_paid'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('yes', u'Zaplacena'),
-            ('no', u'Nezaplacena'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.filter(paid_date__isnull=False)
-        if self.value() == 'no':
-            return queryset.filter(paid_date__isnull=True)
-        return queryset
-
-
-class TrackFilter(SimpleListFilter):
-    title = _("Má nahranou trasu")
-    parameter_name = 'has_track'
-
-    def lookups(self, request, model_admin):
-        return [
-            ('yes', _('Ano')),
-            ('no', _('Ne')),
-        ]
-
-    def queryset(self, request, queryset):
-        if self.value() == 'yes':
-            return queryset.filter(track__isnull=False).distinct()
-        if self.value() == 'no':
-            return queryset.filter(track__isnull=True).distinct()
         return queryset
 
 

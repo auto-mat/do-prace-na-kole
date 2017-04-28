@@ -1,19 +1,19 @@
 {% extends "submenu_personal.html" %}
-{% load leaflet_tags %}
+{% load i18n %}
 
 {% block extrahead %}
-{% leaflet_js plugins="ALL" %}
-{% leaflet_css plugins="ALL" %}
-<style type="text/css">
-   .leaflet-clickable {
-       stroke:red;
-       stroke-opacity: 1;
-   }
+{% include "registration/leaflet_include.html" %}
+{{ block.super }}
+{% endblock %}
 
-   .leaflet-draw-guide-dash {
-       background-color: red !important;
-       opacity: 1 !important;
-   }
-</style>
+{% block form %}
+{% url "application" as application_url %}
+{% blocktrans %}
+Na této stránce můžete buď zadat trasu, nebo jen vzdálenost vaší denní trasy do práce. 
+Zadaná vzdálenost nebo délka trasy se potom použije jako předvyplněná vzdálenost pro jednotlivé jízdy.
+<br/>
+Pokud budete zadávat trasy pro jednotlivé dny, tak se tato trasa použije jako základ, který případně můžete měnit.
+Jednotlivé jízdy můžete zadávat také pomocí <a href="{{ application_url }}">mobilních aplikací</a>.
+{% endblocktrans %}
 {{ block.super }}
 {% endblock %}

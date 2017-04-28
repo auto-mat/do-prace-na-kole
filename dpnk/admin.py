@@ -47,6 +47,8 @@ from django.utils.translation import ugettext_lazy as _
 from import_export import fields, resources
 from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
 
+from isnull_filter import isnull_filter
+
 from leaflet.admin import LeafletGeoAdmin, LeafletGeoAdminMixin
 
 from modeltranslation.admin import TranslationTabularInline
@@ -61,6 +63,8 @@ from related_admin import RelatedFieldAdmin
 
 from rest_framework.authtoken.admin import TokenAdmin
 
+from scribbler import models as scribbler_models
+
 from t_shirt_delivery.admin import PackageTransactionInline
 from t_shirt_delivery.forms import PackageTransactionForm
 from t_shirt_delivery.models import PackageTransaction, TShirtSize
@@ -72,15 +76,7 @@ from .filters import (
     CityCampaignFilter,
     EmailFilter,
     HasReactionFilter,
-    HasRidesFilter,
-    HasTeamFilter,
-    HasUserAttendanceFilter,
-    HasUserprofileFilter,
-    HasVoucherFilter,
-    InvoicePaidFilter,
-    IsForCompanyFilter,
     PSCFilter,
-    TrackFilter,
     campaign_filter_generator,
 )
 
@@ -258,24 +254,24 @@ def create_subsidiary_resource(campaign_slugs):
             ] + campaign_fields
             export_order = fields
 
-        name = fields.Field()
+        name = fields.Field(readonly=True)
 
         def dehydrate_name(self, obj):
             return obj.name()
 
-        team_count = fields.Field()
+        team_count = fields.Field(readonly=True)
 
         def dehydrate_team_count(self, obj):
             if hasattr(obj, 'team_count'):
                 return obj.team_count
 
-        user_count = fields.Field()
+        user_count = fields.Field(readonly=True)
 
         def dehydrate_user_count(self, obj):
             return obj.teams.distinct().aggregate(Sum('member_count'))['member_count__sum']
 
         for slug in campaign_slugs:
-            vars()['user_count_%s' % slug] = fields.Field()
+            vars()['user_count_%s' % slug] = fields.Field(readonly=True)
 
     for slug in campaign_slugs:
         def func(slug, obj):
@@ -415,7 +411,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
         'show_results',
         'competitor_type',
         'competition_type',
-        IsForCompanyFilter,
+        isnull_filter('company', _("Není vnitrofiremní soutěž?")),
         'sex')
     save_as = True
     actions = [actions.recalculate_competitions_results, actions.normalize_questionnqire_admissions]
@@ -553,18 +549,20 @@ def create_userprofile_resource(campaign_slugs):
             ] + campaign_fields
             export_order = fields
 
-        name = fields.Field()
+        name = fields.Field(readonly=True)
 
         def dehydrate_name(self, obj):
-            return obj.name()
+            if hasattr(obj, 'user'):
+                return obj.name()
 
-        email = fields.Field()
+        email = fields.Field(readonly=True)
 
         def dehydrate_email(self, obj):
-            return obj.user.email
+            if hasattr(obj, 'user'):
+                return obj.user.email
 
         for slug in campaign_slugs:
-            vars()['user_attended_%s' % slug] = fields.Field()
+            vars()['user_attended_%s' % slug] = fields.Field(readonly=True)
 
     for slug in campaign_slugs:
         def func(slug, obj):
@@ -661,7 +659,7 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
         'is_active',
         'groups',
         'userprofile__company_admin__company_admin_approved',
-        HasUserprofileFilter,
+        isnull_filter('userprofile', _("Nemá uživatelský profil?")),
         'userprofile__sex',
         'userprofile__administrated_cities',
         EmailFilter,
@@ -691,9 +689,10 @@ class UserAttendanceResource(resources.ModelResource):
             'campaign',
             'campaign__slug',
             'distance',
-            'team__id',
+            'team',
             'team__name',
             'approved_for_team',
+            't_shirt_size',
             't_shirt_size__name',
             'team__subsidiary__city__name',
             'userprofile',
@@ -711,32 +710,32 @@ class UserAttendanceResource(resources.ModelResource):
             'created')
         export_order = fields
 
-    subsidiary_name = fields.Field()
+    subsidiary_name = fields.Field(readonly=True)
 
     def dehydrate_subsidiary_name(self, obj):
         if obj.team and obj.team.subsidiary:
             return obj.team.subsidiary.name()
 
-    payment_date = fields.Field()
+    payment_date = fields.Field(readonly=True)
 
     def dehydrate_payment_date(self, obj):
         payment = obj.representative_payment
         if payment:
             return payment.realized or payment.created
 
-    payment_status = fields.Field()
+    payment_status = fields.Field(readonly=True)
 
     def dehydrate_payment_status(self, obj):
         return obj.payment_status
 
-    payment_type = fields.Field()
+    payment_type = fields.Field(readonly=True)
 
     def dehydrate_payment_type(self, obj):
         payment = obj.representative_payment
         if payment:
             return payment.pay_type
 
-    payment_amount = fields.Field()
+    payment_amount = fields.Field(readonly=True)
 
     def dehydrate_payment_amount(self, obj):
         payment = obj.representative_payment
@@ -792,10 +791,10 @@ class UserAttendanceAdmin(
         ('userprofile__sex', AllValuesComboFilter),
         'discount_coupon__coupon_type__name',
         'discount_coupon__discount',
-        TrackFilter,
-        HasVoucherFilter,
-        HasRidesFilter,
-        HasTeamFilter,
+        isnull_filter('track', _("Nemá nahranou trasu?")),
+        isnull_filter('voucher', _("Nemá přiřazené vouchery?")),
+        isnull_filter('user_trips', _("Nemá žádné cesty?")),
+        isnull_filter('team', _("Uživatel nemá zvolený tým?")),
     )
     advanced_filter_fields = (
         'campaign',
@@ -1074,7 +1073,7 @@ class AnswerResource(resources.ModelResource):
         )
         export_order = fields
 
-    str_choices = fields.Field()
+    str_choices = fields.Field(readonly=True)
 
     def dehydrate_str_choices(self, obj):
         return obj.str_choices()
@@ -1316,7 +1315,7 @@ class CompanyAdminAdmin(ImportExportMixin, city_admin_mixin_generator('administr
     list_filter = [
         CampaignFilter,
         'company_admin_approved',
-        HasUserAttendanceFilter,
+        isnull_filter('userattendance', _("Nemá účast v kampani?")),
         'administrated_company__subsidiaries__city',
     ]
     search_fields = [
@@ -1372,7 +1371,7 @@ class InvoiceResource(resources.ModelResource):
             'company__address_city')
         export_order = fields
 
-    invoice_count = fields.Field()
+    invoice_count = fields.Field(readonly=True)
 
     def dehydrate_invoice_count(self, obj):
         return obj.payment_set.count()
@@ -1404,7 +1403,11 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'invoice_count',
         'total_amount',
     ]
-    list_filter = [CampaignFilter, InvoicePaidFilter, 'company_pais_benefitial_fee']
+    list_filter = [
+        CampaignFilter,
+        isnull_filter('paid_date', _("Nezaplacené faktury")),
+        'company_pais_benefitial_fee',
+    ]
     search_fields = ['company__name', ]
     inlines = [PaymentInline]
     actions = [actions.mark_invoices_paid]
@@ -1451,11 +1454,28 @@ class GpxFileAdmin(LeafletGeoAdmin):
     list_filter = (campaign_filter_generator('user_attendance__campaign'), 'from_application', 'user_attendance__team__subsidiary__city')
 
 
+@admin.register(scribbler_models.Scribble)
+class ScribbleAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'name',
+        'slug',
+        'url',
+        'content',
+    )
+    search_fields = (
+        'name',
+        'slug',
+        'url',
+    )
+    save_as = True
+
+
 @admin.register(models.Voucher)
 class VoucherAdmin(ImportMixin, admin.ModelAdmin):
     list_display = ('id', 'voucher_type', 'token', 'user_attendance', 'campaign')
     raw_id_fields = ('user_attendance',)
-    list_filter = [CampaignFilter, 'voucher_type']
+    list_filter = [CampaignFilter, 'voucher_type', isnull_filter('user_attendance', _("Nemá účast v kampani"))]
 
 
 @admin.register(Session)

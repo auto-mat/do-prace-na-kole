@@ -140,27 +140,6 @@ def _wp_news(
     return template.render(context)
 
 
-@register.simple_tag
-def wp_article(campaign, article_id):
-    return mark_safe(wp_article_cached(campaign, article_id))
-
-
-@cached(60 * 60)
-def wp_article_cached(campaign, article_id):
-    url = campaign.wp_api_url
-    api = slumber.API(url)
-    try:
-        wp_article = api.feed.get(feed="content_to_backend", _post_type="page", _id=article_id)
-    except slumber.exceptions.SlumberBaseException:
-        logger.exception(u'Error fetching wp article')
-        return ""
-    try:
-        return wp_article[0]['content']
-    except KeyError:
-        logger.exception(u'Bad wp article id')
-        return ""
-
-
 @register.simple_tag(takes_context=True)
 def change_lang(context, lang=None, *args, **kwargs):
     """

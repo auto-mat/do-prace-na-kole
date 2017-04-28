@@ -1,6 +1,6 @@
 {% autoescape off %}
 
-A message for {{ user }} from the {{user.team.name}} team in the {{ user.campaign }}competition.
+A message for {{ user }} {% if user.team %}from the {{user.team.name}}{% endif %} team in the {{ user.campaign }}competition.
 
 Dear {{ user.campaign }} participant,
 

@@ -1630,14 +1630,10 @@ class TrackViewTests(ViewsLogon):
         self.assertEquals(gpx_file.direction, 'trip_to')
         self.assertEquals(gpx_file.length(), 13.32)
 
-    @patch('slumber.API')
-    def test_emission_calculator(self, slumber_api):
-        m = MagicMock()
-        m.feed.get.return_value = [{"content": "Emission calculator description text"}]
-        slumber_api.return_value = m
+    def test_emission_calculator(self):
         address = reverse('emission_calculator')
         response = self.client.get(address)
-        self.assertContains(response, "Emisní kalkulačka")
+        self.assertContains(response, "<h2>Emisní kalkulačka</h2>", html=True)
         self.assertContains(response, "<tr><td>Ujetá vzdálenost</td><td>161,9&nbsp;km</td></tr>", html=True)
         self.assertContains(response, "<tr><td>CO</td><td>117 280,4&nbsp;mg</td></tr>", html=True)
         self.assertContains(response, "<tr><td>NO<sub>X</sub></td><td>27 474,4&nbsp;mg</td></tr>", html=True)
@@ -1646,7 +1642,7 @@ class TrackViewTests(ViewsLogon):
         self.assertContains(response, "<tr><td>SO<sub>2</sub></td><td>1 246,6&nbsp;mg</td></tr>", html=True)
         self.assertContains(response, "<tr><td>Pevné částice</td><td>5 666,5&nbsp;mg</td></tr>", html=True)
         self.assertContains(response, "<tr><td>Olovo</td><td>1,8&nbsp;mg</td></tr>", html=True)
-        self.assertContains(response, '<div id="calculator_description">Emission calculator description text</div>', html=True)
+        self.assertContains(response, '<h3>Popis emisní kalkulačky</h3>', html=True)
 
     def test_daily_distance_extra_json(self):
         address = reverse(views.daily_distance_extra_json)

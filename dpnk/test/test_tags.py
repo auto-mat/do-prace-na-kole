@@ -42,34 +42,6 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         self.campaign = mommy.make("Campaign")
         self.factory = RequestFactory()
 
-    @patch('dpnk.templatetags.dpnk_tags.logger')
-    @patch('slumber.API')
-    def test_failed_wp_article(self, slumber_mock, mock_logger):
-        m = MagicMock()
-        m.feed.get.return_value = {
-            1234: "error page",
-        }
-        slumber_mock.return_value = m
-        template = Template("{% load dpnk_tags %}<div>{% wp_article campaign 4321 %}</div>")
-        context = Context({'campaign': self.campaign})
-        response = template.render(context)
-        mock_logger.exception.assert_called_with("Bad wp article id")
-        m.feed.get.assert_called_once_with(feed="content_to_backend", _id=4321, _post_type="page")
-        self.assertHTMLEqual(response, '<div></div>')
-
-    @patch('dpnk.templatetags.dpnk_tags.logger')
-    @patch('slumber.API')
-    def test_wp_article_slumber_error(self, slumber_mock, mock_logger):
-        m = MagicMock()
-        m.feed.get.side_effect = slumber.exceptions.SlumberBaseException
-        slumber_mock.return_value = m
-        template = Template("{% load dpnk_tags %}<div>{% wp_article campaign 4321 %}</div>")
-        context = Context({'campaign': self.campaign})
-        response = template.render(context)
-        mock_logger.exception.assert_called_with("Error fetching wp article")
-        m.feed.get.assert_called_once_with(feed="content_to_backend", _id=4321, _post_type="page")
-        self.assertHTMLEqual(response, '<div></div>')
-
     @patch('slumber.API')
     def test_no_news(self, slumber_mock):
         m = MagicMock()
@@ -130,21 +102,6 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         )
         mock_logger.exception.assert_called_with("Error encoding wp news format", extra={'wp_feed': {'Test1': 'Test'}})
         self.assertHTMLEqual('<div/>', response)
-
-    @patch('slumber.API')
-    def test_wp_article(self, slumber_mock):
-        m = MagicMock()
-        m.feed.get.return_value = [
-            {
-                "content": "Test content",
-            },
-        ]
-        slumber_mock.return_value = m
-        template = Template("{% load dpnk_tags %}<div>{% wp_article campaign 1234 %}</div>")
-        context = Context({'campaign': self.campaign})
-        response = template.render(context)
-        m.feed.get.assert_called_once_with(feed="content_to_backend", _post_type="page", _id=1234)
-        self.assertHTMLEqual(response, '<div>Test content</div>')
 
     @patch('slumber.API')
     def test_wp_news_no_slug(self, slumber_mock):
@@ -360,7 +317,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
                       <span class="vote">5</span>
                   </a>
                 </h4>
-                <img src="http://www.cyklistesobe.cz/image.png" alt="Obrázek k podnětu" target="_blank">
+                <img src="http://www.cyklistesobe.cz/image.png" alt="Obrázek k podnětu">
                 Description
             </div>
             ''',

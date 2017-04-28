@@ -1,19 +1,13 @@
 {% extends "base_generic_form.html" %}
-{% load leaflet_tags %}
+{% load i18n %}
 
 {% block extrahead %}
-{% leaflet_js plugins="ALL" %}
-{% leaflet_css plugins="ALL" %}
-<style type="text/css">
-   .leaflet-clickable {
-       stroke:red;
-       stroke-opacity: 1;
-   }
+{% include "registration/leaflet_include.html" %}
+{{ block.super }}
+{% endblock %}
 
-   .leaflet-draw-guide-dash {
-       background-color: red !important;
-       opacity: 1 !important;
-   }
-</style>
+{% block form %}
+{% url "application" as application_url %}
+<div class="text-info">{% blocktrans %}Tip: Trasy všech svých cest můžete nahrávat pomocí <a href="{{ application_url }}">mobilních aplikací</a>.{% endblocktrans %}</div>
 {{ block.super }}
 {% endblock %}

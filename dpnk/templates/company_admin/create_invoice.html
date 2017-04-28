@@ -1,14 +1,23 @@
 {% extends "base_generic_company_admin_form.html" %}
 {% load crispy_forms_tags %}
 {% load i18n %}
-{% load dpnk_tags %}
+{% load scribbler_tags %}
 
 {% block content %}
 {% include "messages_include.html" %}
 
 {% if payments.count > 0 %}
 <p>
-{% wp_article user_attendance.campaign 10816 %}
+   {% scribble 'before_invoice' %}
+   {% load i18n %}
+   {% blocktrans %}
+   Do práce na kole pořádá pátým rokem nezisková organizace <a title="Auto-Mat" href="http://www.auto-mat.cz/" target="_blank">Auto*Mat</a>, která se již více než 10 let snaží o zlepšení kvality života v našich městech.
+   Protože věříme, že jedním ze zásadních faktorů ovliňujících kvalitu života ve městě je organizace a plánování dopravy, snažíme se naše město a život v něm měnit právě skrze tuto sféru.
+   <strong>Nabízíme všem firmám, které se zapojují do soutěže, možnost zaplatit benefiční startovné</strong>, kterým podpoří přímo činnost Auto*Matu.
+   Zejména tím podpoříte naši činnost v oblasti “cyklo-advokacie”, kde se snažíme různými způsoby prosazovat chytrá koncepční opatření pro zlepšení cyklo-infastruktury a související dopravní infrastruktury ve městě.
+   <strong>Pokud si přejete podpořit Auto*Mat benefičním startovným, zvolte možnost níže.</strong>
+   {% endblocktrans %}
+   {% endscribble %}
 </p>
 <p>
 {% blocktrans count competitors_count=payments.count %}
