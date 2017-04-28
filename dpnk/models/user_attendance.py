@@ -25,6 +25,7 @@ from coupons.models import DiscountCoupon
 from denorm import denormalized, depend_on_related
 
 from django.contrib.gis.db import models
+from django.contrib.gis.db.models.functions import Length
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html_join
@@ -87,7 +88,6 @@ class UserAttendance(models.Model):
         default=False,
         null=False,
     )
-    objects = models.GeoManager()
     team = models.ForeignKey(
         'Team',
         related_name='users',
@@ -294,7 +294,7 @@ class UserAttendance(models.Model):
             if hasattr(self, 'length') and self.length:
                 length = self.length
             else:
-                length = UserAttendance.objects.length().only('track').get(id=self.id).length
+                length = UserAttendance.objects.annotate(length=Length('track')).only('track').get(id=self.id).length
             if not length:
                 logger.error("length not available", extra={'request': request, 'username': self.userprofile.user.username})
                 return 0

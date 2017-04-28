@@ -43,6 +43,7 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required as login_required_simple
+from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
@@ -1083,7 +1084,7 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
         context_data = super(OtherTeamMembers, self).get_context_data(*args, **kwargs)
         team_members = []
         if self.user_attendance.team:
-            team_members = self.user_attendance.team.all_members().length()
+            team_members = self.user_attendance.team.all_members().annotate(length=Length('track'))
             team_members = team_members.select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign')
         context_data['team_members'] = team_members
         context_data['registration_phase'] = "other_team_members"

@@ -28,6 +28,7 @@ import createsend
 
 import denorm
 
+from django.contrib.gis.db.models.functions import Length
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import Client, RequestFactory, TestCase
@@ -612,7 +613,12 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('profil')
         response = self.client.get(address)
         self.assertRedirects(response, reverse('upravit_profil'))
-        user_attendance = models.UserAttendance.objects.length().get(userprofile__user__username='user_without_attendance', campaign__pk=339)
+        user_attendance = models.UserAttendance.objects.annotate(
+            length=Length('track'),
+        ).get(
+            userprofile__user__username='user_without_attendance',
+            campaign__pk=339,
+        )
         self.assertEqual(user_attendance.userprofile.user.pk, 1041)
         self.assertEqual(user_attendance.get_distance(), 156.9)
 
@@ -1546,7 +1552,7 @@ class TrackViewTests(ViewsLogon):
             }
             response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.length().get(pk=1115)
+        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 13.32)
 
     def test_dpnk_views_track_gpx_file_route(self):
@@ -1560,7 +1566,7 @@ class TrackViewTests(ViewsLogon):
             }
             response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.length().get(pk=1115)
+        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 6.72)
 
     def test_dpnk_views_track(self):
@@ -1576,7 +1582,7 @@ class TrackViewTests(ViewsLogon):
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.length().get(pk=1115)
+        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 0.74)
 
     def test_dpnk_views_track_only_distance(self):
@@ -1589,7 +1595,7 @@ class TrackViewTests(ViewsLogon):
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.length().get(pk=1115)
+        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
         self.assertEquals(user_attendance.track, None)
         self.assertEquals(user_attendance.get_distance(), 12)
 

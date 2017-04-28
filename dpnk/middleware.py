@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from django.contrib.gis.db.models.functions import Length
+
 from .models import Campaign, UserAttendance
 
 
@@ -25,16 +27,19 @@ class UserAttendanceMiddleware:
         campaign_slug = request.subdomain
         if request.user and request.user.is_authenticated():
             try:
-                user_attendance_set = UserAttendance.objects.length()
-                user_attendance_set = user_attendance_set.select_related(
+                request.user_attendance = UserAttendance.objects.select_related(
                     'campaign',
                     'team__subsidiary__city',
                     't_shirt_size',
                     'userprofile__user',
                     'representative_payment',
                     'related_company_admin',
+                ).annotate(
+                    length=Length('track'),
+                ).get(
+                    userprofile__user=request.user,
+                    campaign__slug=campaign_slug,
                 )
-                request.user_attendance = user_attendance_set.get(userprofile__user=request.user, campaign__slug=campaign_slug)
                 request.campaign = request.user_attendance.campaign
             except UserAttendance.DoesNotExist:
                 request.user_attendance = None

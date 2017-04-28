@@ -21,6 +21,7 @@ import datetime
 
 from unittest.mock import ANY, patch
 
+from django.contrib.gis.db.models.functions import Length
 from django.test import TestCase
 from django.test.utils import override_settings
 
@@ -257,7 +258,7 @@ class TestGetDistance(TestCase):
         self.assertEquals(user_attendance.get_distance(), 123)
 
     def test_user_attendance_get_distance(self):
-        user_attendance = models.UserAttendance.objects.length().get(pk=1115)
+        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 156.9)
 
     def test_user_attendance_get_distance_no_length(self):
