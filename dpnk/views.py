@@ -26,6 +26,7 @@ import collections
 import hashlib
 import json
 import logging
+import math
 import shutil
 import tempfile
 import time
@@ -864,7 +865,7 @@ def payment_status(request):
             r['trans_ts'],
         ),
     )
-    amount = int(r['trans_amount']) / 100
+    amount = math.floor(int(r['trans_amount']) / 100)
     # Update the corresponding payment
     # TODO: use update_or_create in Django 1.7
     p, created = Payment.objects.select_for_update().get_or_create(
