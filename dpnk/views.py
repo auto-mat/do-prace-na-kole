@@ -969,7 +969,7 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
         formset.forms_max_number = len(formset.forms)
 
         formset.forms = sorted(formset.forms, key=lambda form: form.initial['direction'] or form.instance.direction, reverse=True)
-        formset.forms = sorted(formset.forms, key=lambda form: form.initial['date'] or form.instance.date)
+        formset.forms = sorted(formset.forms, key=lambda form: form.initial['date'] or form.instance.date, reverse=True)
         return formset
 
     title = _(u'Moje jízdy')

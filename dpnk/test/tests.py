@@ -504,17 +504,17 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'form-1-commute_mode')
         self.assertContains(
             response,
-            '<div>Ujetá započítaná vzdálenost: 31,23&nbsp;km (<a href="/jizdy-podrobne/">Podrobný přehled jízd</a>)</div>',
+            '<td>Ujetá započítaná vzdálenost: 31,23&nbsp;km (<a href="/jizdy-podrobne/">Podrobný přehled jízd</a>)</td>',
             html=True,
         )
         self.assertContains(
             response,
-            '<div>Pravidelnost: 66,7&nbsp;%</div>',
+            '<td>Pravidelnost: 66,7&nbsp;%</td>',
             html=True,
         )
         self.assertContains(
             response,
-            '<div>Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g (<a href="/emisni_kalkulacka/">Emisní kalkulačka</a>)</div>',
+            '<td>Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g (<a href="/emisni_kalkulacka/">Emisní kalkulačka</a>)</td>',
             html=True,
         )
         self.assertEquals(self.user_attendance.user_trips.count(), 7)

@@ -3,6 +3,7 @@
 {% load dpnk_tags %}
 {% load humanize %}
 {% load bootstrap3 %}
+{% load scribbler_tags %}
 
 <script type="text/javascript">
    $(function () {
@@ -13,12 +14,49 @@
       $('[data-toggle="tooltip"]').tooltip();
    })
 </script>
+<table class="table table-condensed table-bordered">
+<tr class="info">
+   <th>
+      {% trans "Celkem" %}
+      {% if competition_phase.date_from %}{% trans "od" %} {{ competition_phase.date_from }}{% endif %}
+      {% if competition_phase.date_to %}{% trans "do" %} {{ competition_phase.date_to }}{% endif %}
+   </th>
+</tr>
+<tr class="info">
+   <td>
+      {% trans "Ujetá započítaná vzdálenost" %}: {{ user_attendance.trip_length_total }}&nbsp;km (<a href="{% url "rides_details" %}">{% trans "Podrobný přehled jízd" %}</a>)
+   </td>
+</tr>
+<tr class="info">
+   <td>
+      {% trans "Pravidelnost" %}: {{ user_attendance.get_frequency_percentage|floatformat|intcomma }}&nbsp;%
+   </td>
+</tr>
+<tr class="info">
+   <td>
+      {% trans "Pravidelnost vašeho týmu" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;% (<a href="{% url "other_team_members_results" %}">{% trans "Přehled o vašem týmu" %}</a>)
+   </td>
+</tr>
+<tr class="info">
+   <td>
+      {% trans "Ušetřené množství oxidu uhličitého" %}: {{ user_attendance.get_emissions.co2|intcomma }}&nbsp;g  (<a href="{% url 'emission_calculator' %}">{% trans "Emisní kalkulačka" %}</a>)
+   </td>
+</tr>
+<tr class="info">
+   <th>
+      {% scribble 'rides_info_table_end' %}
+      {% load i18n %}
+      {% trans "Podrobné výsledky naleznete na stránce" %}
+      <a href="{% url "competitions" %}">{% trans "výsledků jednotlivých soutěží" %}</a>.
+      {% endscribble %}
+   </th>
+</tr>
+</table>
 <form id="rides-form" name="calendar" method="POST" class="dirty-check submit-once-form">
 {% csrf_token %}
 {{ formset.management_form }}
-<br>
-
 {% if formset.0 %}
+<input type="submit" name="submit" value="{% trans "Odeslat jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-top">
 <table id="rides" class="table table-condensed">
 <thead>
    <tr class="info">
@@ -51,34 +89,10 @@
    </tr>
    {% endif %}
 {% endfor %}
-<tr class="info">
-   <th colspan="2">
-      {% trans "Celkem" %}
-      {% if competition_phase.date_from %}{% trans "od" %} {{ competition_phase.date_from }}{% endif %}
-      {% if competition_phase.date_to %}{% trans "do" %} {{ competition_phase.date_to }}{% endif %}
-   </th>
-</tr>
-<tr class="info">
-   <td colspan="2">
-      <div>
-      {% trans "Ujetá započítaná vzdálenost" %}: {{ user_attendance.trip_length_total }}&nbsp;km (<a href="{% url "rides_details" %}">{% trans "Podrobný přehled jízd" %}</a>)
-      </div><div>
-      {% trans "Pravidelnost" %}: {{ user_attendance.get_frequency_percentage|floatformat|intcomma }}&nbsp;%
-      </div><div>
-      {% trans "Pravidelnost vašeho týmu" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;% (<a href="{% url "other_team_members_results" %}">{% trans "Přehled o vašem týmu" %}</a>)
-      </div><div>
-      {% trans "Ušetřené množství oxidu uhličitého" %}: {{ user_attendance.get_emissions.co2|intcomma }}&nbsp;g  (<a href="{% url 'emission_calculator' %}">{% trans "Emisní kalkulačka" %}</a>)
-      </div>
-   </td>
-</tr>
-<tr class="info">
-   <th colspan="2">
-      {% trans "Výsledky naleznete na stránce" %}
-      <a href="{% url "competitions" %}">{% trans "výsledků jednotlivých soutěží" %}</a>.
-   </th>
-</tr>
+<tr><td colspan="2">
+<input type="submit" name="submit" value="{% trans "Odeslat jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-bottom">
+</td></tr>
 </table>
-<input type="submit" name="submit" value="{% trans "Odeslat" %}" class="btn btn-primary btn-block" id="submit-id-submit">
 {% else %}
 <div class="alert alert-info">
 {% trans "Zde budete zadávat vaše jízdy" %}
