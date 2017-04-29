@@ -286,7 +286,7 @@ class Competition(models.Model):
         """
         Returns string with wich is possible to filter results of this competition by company.
         """
-        if self.competitor_type == 'single_user':
+        if self.competitor_type in ('single_user', 'liberos'):
             return 'user_attendance__team__subsidiary__company'
         elif self.competitor_type == 'team':
             return 'team__subsidiary__company'
