@@ -40,7 +40,7 @@ from .email import company_admin_register_competitor_mail, company_admin_registe
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
 from .string_lazy import format_lazy
 from .util import mark_safe_lazy
-from .views import RegistrationViewMixin, TitleViewMixin
+from .views import AdmissionsView, RegistrationViewMixin, TitleViewMixin
 logger = logging.getLogger(__name__)
 
 
@@ -68,6 +68,14 @@ class CompanyStructure(TitleViewMixin, TemplateView):
         context_data['campaign'] = self.company_admin.campaign
         context_data['Status'] = models.Status
         return context_data
+
+
+class RelatedCompetitionsView(AdmissionsView):
+    template_name = "company_admin/related_competitions.html"
+
+    @must_be_company_admin
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 
 class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, FormView):

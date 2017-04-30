@@ -243,6 +243,11 @@ urlpatterns = [
 
     # company admin:
     url(
+        r'^spolecnost/oficialni_souteze/$',
+        company_admin_views.RelatedCompetitionsView.as_view(),
+        name="company_admin_related_competitions",
+    ),
+    url(
         r'^spolecnost/zadost_admina/$',
         company_admin_views.CompanyAdminView.as_view(),
         name='company_admin_application',
