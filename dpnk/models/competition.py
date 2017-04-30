@@ -327,10 +327,10 @@ class Competition(models.Model):
 
         columns.append(
             {
-                'length_by_foot': ('result_value', 'get_result', _("Ki&shy;lo&shy;me&shy;trů%s" % average_string)),
-                'length': ('result_value', 'get_result', _("Ki&shy;lo&shy;me&shy;trů%s" % average_string)),
-                'frequency': ('result_value', 'get_result_percentage', _("%% jízd%s" % average_string)),
-                'questionnaire': ('result_value', 'get_result', _("Bo&shy;dů%s" % average_string)),
+                'length_by_foot': ('result_value', 'get_result', _("Ki&shy;lo&shy;me&shy;trů%s") % average_string),
+                'length': ('result_value', 'get_result', _("Ki&shy;lo&shy;me&shy;trů%s") % average_string),
+                'frequency': ('result_value', 'get_result_percentage', _("%% jízd%s") % average_string),
+                'questionnaire': ('result_value', 'get_result', _("Bo&shy;dů%s") % average_string),
             }[self.competition_type],
         )
 
@@ -347,7 +347,7 @@ class Competition(models.Model):
                 'liberos': "",
                 'company': _("ve&nbsp;fir&shy;mě"),
             }[self.competitor_type]
-            columns.append(('member_count', 'team__member_count', _("Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch %s" % where)))
+            columns.append(('member_count', 'team__member_count', _("Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch %s") % where))
 
         competitor = {
             'team': 'get_team',
