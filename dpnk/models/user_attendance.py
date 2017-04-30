@@ -247,9 +247,9 @@ class UserAttendance(models.Model):
             if pay_type:
                 return Payment.PAY_TYPES_DICT[pay_type].upper()
 
-    def get_competitions(self):
+    def get_competitions(self, competition_types=None):
         from .. import results
-        return results.get_competitions_with_info(self)
+        return results.get_competitions_with_info(self, competition_types)
 
     def get_rides_count(self):
         from .. import results

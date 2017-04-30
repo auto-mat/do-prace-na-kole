@@ -139,8 +139,10 @@ def get_competitions_without_admission(user_attendance):
     return competitions
 
 
-def get_competitions_with_info(user_attendance):
+def get_competitions_with_info(user_attendance, competition_types=None):
     competitions = get_competitions(user_attendance).select_related('campaign', 'company')
+    if competition_types:
+        competitions = competitions.filter(competition_type__in=competition_types)
 
     for competition in competitions:
         results = competition.get_results()

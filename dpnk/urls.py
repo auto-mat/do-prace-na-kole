@@ -106,21 +106,24 @@ urlpatterns = [
     ),
     url(
         r'^souteze/$',
-        views.AdmissionsView.as_view(
-            template_name="registration/competitions.html",
-        ),
+        views.CompetitionsView.as_view(),
         name="competitions",
     ),
     url(
+        r'^dotaznikove_souteze/$',
+        views.QuestionareCompetitionsView.as_view(),
+        name="questionnaire_competitions",
+    ),
+    url(
         r'^souteze/pravidla/(?P<city_slug>[^&]+)/$',
-        views.CompetitionsView.as_view(
+        views.CompetitionsRulesView.as_view(
             template_name="registration/competitions_rules.html",
         ),
         name="competition-rules-city",
     ),
     url(
         r'^souteze/vysledky/(?P<city_slug>[^&]+)/$',
-        views.CompetitionsView.as_view(
+        views.CompetitionsRulesView.as_view(
             title_base=_("Výsledky soutěží"),
             template_name="registration/competitions_results_city.html",
         ),
