@@ -13,7 +13,7 @@ coreschema==0.0.4
 createsend==4.2.1
 defusedxml==0.5.0
 diff-match-patch==20121119
-Django<1.11
+Django<1.12
 django-admin-sortable2==0.6.13
 django-admin-view-permission==1.1
 -e git+https://github.com/saxix/django-adminactions@ef32750d82250490c7ef95a2efbc531b514618ac#egg=django_adminactions

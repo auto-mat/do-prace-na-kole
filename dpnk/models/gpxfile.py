@@ -115,7 +115,7 @@ class GpxFile(models.Model):
     commute_mode = models.ForeignKey(
         'CommuteMode',
         verbose_name=_("Mód dopravy"),
-        on_delete=models.deletion.CASCADE,
+        on_delete=models.CASCADE,
         default=1,
         null=False,
         blank=False,
