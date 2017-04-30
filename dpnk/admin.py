@@ -857,7 +857,7 @@ class UserAttendanceAdmin(
 
     def get_queryset(self, request):
         queryset = super(UserAttendanceAdmin, self).get_queryset(request)
-        return queryset.length().select_related(
+        return queryset.select_related(
             'team__subsidiary__city',
             'team__subsidiary__company',
             't_shirt_size__campaign',

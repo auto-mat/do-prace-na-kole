@@ -334,6 +334,7 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=2),
+    MEDIA_ROOT="dpnk/test_files",
 )
 class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
@@ -347,9 +348,6 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.assertTrue(self.user_attendance.entered_competition())
 
-    @override_settings(
-        MEDIA_ROOT="dpnk/test_files",
-    )
     def test_dpnk_questionnaire_answers(self):
         competition = models.Competition.objects.filter(slug="quest")
         actions.normalize_questionnqire_admissions(None, None, competition)
@@ -363,9 +361,6 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'Answer without attachment')
         self.assertContains(response, 'Bez přílohy')
 
-    @override_settings(
-        MEDIA_ROOT="dpnk/test_files",
-    )
     @patch('slumber.API')
     def test_dpnk_profile_page(self, slumber_mock):
         models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
@@ -406,8 +401,15 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         m.feed.get.return_value = []
         slumber_api.return_value = m
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<a href="%sDSC00002.JPG" target="_blank">DSC00002.JPG</a>' % settings.MEDIA_URL, html=True)
-        self.assertContains(response, 'Všechny příspěvky z této soutěže')
+        image_file_values = KVStore.objects.get(value__contains='[360, 270]').value
+        image_filename = json.loads(image_file_values)['name']
+        self.assertContains(
+            response,
+            '<a href="/questionnaire_answers/quest/" title="Všechny příspěvky z této soutěže">'
+            '<img src="/media/upload/%s" width="360" height="270">'
+            '</a>' % image_filename,
+            html=True,
+        )
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2010, month=11, day=8),
@@ -502,17 +504,17 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'form-1-commute_mode')
         self.assertContains(
             response,
-            '<div>Ujetá započítaná vzdálenost: 31,23&nbsp;km (<a href="/cs/jizdy-podrobne/">Podrobný přehled jízd</a>)</div>',
+            '<td>Ujetá započítaná vzdálenost: 31,23&nbsp;km (<a href="/jizdy-podrobne/">Podrobný přehled jízd</a>)</td>',
             html=True,
         )
         self.assertContains(
             response,
-            '<div>Pravidelnost: 66,7&nbsp;%</div>',
+            '<td>Pravidelnost: 66,7&nbsp;%</td>',
             html=True,
         )
         self.assertContains(
             response,
-            '<div>Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g (<a href="/cs/emisni_kalkulacka/">Emisní kalkulačka</a>)</div>',
+            '<td>Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g (<a href="/emisni_kalkulacka/">Emisní kalkulačka</a>)</td>',
             html=True,
         )
         self.assertEquals(self.user_attendance.user_trips.count(), 7)
@@ -585,12 +587,18 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'vnitrofiremní soutěž na pravidelnost jednotlivců organizace Testing company')
         self.assertContains(response, '<p>1. místo z 1 společností</p>', html=True)
         self.assertContains(response, 'soutěž na vzdálenost jednotlivců  ve městě Testing city')
-        self.assertContains(response, 'Vyplnit odpovědi')
 
     def test_dpnk_competitions_page_change(self):
         response = self.client.get(reverse('competitions'))
-        self.assertContains(response, 'soutěž na vzdálenost jednotlivců')
-        self.assertContains(response, 'Vyplnit odpovědi')
+        self.assertContains(response, '<i>soutěž na vzdálenost jednotlivců  ve městě Testing city pro muže</i>', html=True)
+        self.assertContains(response, '<h4>Výkonnost společností</h4>', html=True)
+        self.assertContains(response, '<a href="/vysledky_souteze/FQ-LB/#row-1">Výsledky</a>', html=True)
+
+    def test_dpnk_questionnaire_competitions_page_change(self):
+        response = self.client.get(reverse('questionnaire_competitions'))
+        self.assertContains(response, '<h4>Dotazník</h4>', html=True)
+        self.assertContains(response, '<a href="/otazka/quest/">Vyplnit odpovědi</a>', html=True)
+        self.assertContains(response, '<i>dotazník týmů  ve městě Testing city</i>', html=True)
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2009, month=11, day=20),
@@ -611,15 +619,16 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition = models.Competition.objects.filter(slug="quest")
         actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
-        response = self.client.get(reverse('competitions'))
+        response = self.client.get(reverse('questionnaire_competitions'))
         self.assertContains(response, '<i>dotazník jednotlivců</i>', html=True)
+        self.assertContains(response, "<p>16,2b.</p>", html=True)
+        response = self.client.get(reverse('competitions'))
         self.assertContains(response, "<p>1. místo z 1 týmů</p>", html=True)
         self.assertContains(response, "<p>1,4&nbsp;%</p>", html=True)
         self.assertContains(response, "<p>1 z 69 jízd</p>", html=True)
         self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
         self.assertContains(response, "<p>5&nbsp;km</p>", html=True)
         self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
-        self.assertContains(response, "<p>16,2b.</p>", html=True)
 
 
 class TestTeams(DenormMixin, ClearCacheMixin, TestCase):

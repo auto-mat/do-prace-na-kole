@@ -43,6 +43,7 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required as login_required_simple
+from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
@@ -968,7 +969,7 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
         formset.forms_max_number = len(formset.forms)
 
         formset.forms = sorted(formset.forms, key=lambda form: form.initial['direction'] or form.instance.direction, reverse=True)
-        formset.forms = sorted(formset.forms, key=lambda form: form.initial['date'] or form.instance.date)
+        formset.forms = sorted(formset.forms, key=lambda form: form.initial['date'] or form.instance.date, reverse=True)
         return formset
 
     title = _(u'Moje jízdy')
@@ -1083,7 +1084,7 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
         context_data = super(OtherTeamMembers, self).get_context_data(*args, **kwargs)
         team_members = []
         if self.user_attendance.team:
-            team_members = self.user_attendance.team.all_members().length()
+            team_members = self.user_attendance.team.all_members().annotate(length=Length('track'))
             team_members = team_members.select_related('userprofile__user', 'team__subsidiary__city', 'team__subsidiary__company', 'campaign')
         context_data['team_members'] = team_members
         context_data['registration_phase'] = "other_team_members"
@@ -1094,7 +1095,7 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-class CompetitionsView(TitleViewMixin, TemplateView):
+class CompetitionsRulesView(TitleViewMixin, TemplateView):
     title_base = _("Pravidla soutěží")
 
     def get_title(self, *args, **kwargs):
@@ -1102,7 +1103,7 @@ class CompetitionsView(TitleViewMixin, TemplateView):
         return "%s - %s" % (self.title_base, city)
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(CompetitionsView, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         city_slug = kwargs['city_slug']
         competitions = Competition.objects.filter(Q(city__slug=city_slug) | Q(city__isnull=True, company=None), campaign__slug=self.request.subdomain)
         context_data['competitions'] = competitions
@@ -1114,6 +1115,7 @@ class CompetitionsView(TitleViewMixin, TemplateView):
 class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
     title = _(u"Výsledky soutěží")
     success_url = reverse_lazy("competitions")
+    competition_types = None
 
     @method_decorator(login_required_simple)
     @must_be_competitor
@@ -1124,7 +1126,7 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(AdmissionsView, self).get_context_data(*args, **kwargs)
-        competitions = self.user_attendance.get_competitions()
+        competitions = self.user_attendance.get_competitions(competition_types=self.competition_types)
         for competition in competitions:
             competition.competitor_can_admit = competition.can_admit(self.user_attendance)
         context_data['competitions'] = competitions
@@ -1134,6 +1136,18 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
     # This is here for NewRelic to distinguish from TemplateView.get
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+
+
+class CompetitionsView(AdmissionsView):
+    title = _("Výsledky pravidelnostních a výkonnostních soutěží")
+    competition_types = ('length_by_foot', 'length', 'frequency')
+    template_name = "registration/competitions.html"
+
+
+class QuestionareCompetitionsView(AdmissionsView):
+    title = _("Výsledky dotazníkových soutěží a soutěží na kreativitu")
+    competition_types = ('questionnaire',)
+    template_name = "registration/competitions.html"
 
 
 class CompetitionResultsView(TitleViewMixin, TemplateView):

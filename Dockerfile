@@ -29,10 +29,6 @@ run apt-get update && apt-get install -y \
 run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
 
-# This here for performance reasons
-# if we install Django first, then we doesn't need to download it every time some dependency changes
-run pip install -e git+https://github.com/PetrDlouhy/django.git@e38714cc8d5560f43cafea83cf0c9f298bee9267#egg=Django
-
 copy requirements.freeze.txt ./
 run pip install six
 run pip install -r requirements.freeze.txt

@@ -24,6 +24,7 @@ import gzip
 from author.decorators import with_author
 
 from django.contrib.gis.db import models
+from django.contrib.gis.db.models.functions import Length
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils.safestring import mark_safe
@@ -137,8 +138,6 @@ class GpxFile(models.Model):
         blank=True,
     )
 
-    objects = models.GeoManager()
-
     class Meta:
         verbose_name = _(u"GPX soubor")
         verbose_name_plural = _(u"GPX soubory")
@@ -149,7 +148,7 @@ class GpxFile(models.Model):
         ordering = ('trip_date', 'direction')
 
     def length(self):
-        length = GpxFile.objects.length().get(pk=self.pk).length
+        length = GpxFile.objects.annotate(length=Length('track')).get(pk=self.pk).length
         if length:
             return round(length.km, 2)
 

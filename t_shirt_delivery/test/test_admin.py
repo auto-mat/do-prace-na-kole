@@ -53,7 +53,7 @@ class DeliveryBatchAdminMasschangeTests(AdminTestBase):
         mommy.make(
             "t_shirt_delivery.DeliveryBatch",
             campaign=testing_campaign,
-            dispatched="2017-01-01",
+            dispatched=True,
             id=1,
         )
         address = reverse('admin:t_shirt_delivery_deliverybatch_changelist')

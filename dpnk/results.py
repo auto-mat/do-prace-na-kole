@@ -20,7 +20,7 @@
 
 from django.db.models import Q, Sum
 
-from . import tasks, util
+from . import models, tasks, util
 from .models import Answer, Choice, City, Company, Competition, CompetitionResult, Team, Trip, UserAttendance
 
 
@@ -139,8 +139,10 @@ def get_competitions_without_admission(user_attendance):
     return competitions
 
 
-def get_competitions_with_info(user_attendance):
+def get_competitions_with_info(user_attendance, competition_types=None):
     competitions = get_competitions(user_attendance).select_related('campaign', 'company')
+    if competition_types:
+        competitions = competitions.filter(competition_type__in=competition_types)
 
     for competition in competitions:
         results = competition.get_results()
@@ -212,9 +214,17 @@ def get_team_frequency(user_attendancies, competition=None, day=None):
 
 def get_userprofile_nonreduced_length(user_attendances, competition):
     days = util.days(competition)
+    if isinstance(competition, models.Phase):
+        commute_modes = ('bicycle', 'by_foot')
+    elif competition.competition_type == 'length':
+        commute_modes = ('bicycle', 'by_foot')
+    elif competition.competition_type == 'length_by_foot':
+        commute_modes = ('by_foot',)
+    else:
+        raise NotImplementedError("Unknown competition_type %s" % competition.competition_type)
     return Trip.objects.filter(
         user_attendance__in=user_attendances,
-        commute_mode__in=('bicycle', 'by_foot'),
+        commute_mode__in=commute_modes,
         date__in=days,
     ).aggregate(Sum('distance'))['distance__sum'] or 0
 
@@ -300,7 +310,7 @@ def recalculate_result(competition, competitor):  # noqa
         if competition.competition_type == 'questionnaire':
             points, points_given = points_questionnaire(members, competition)
             competition_result.result = float(points + points_given)
-        elif competition.competition_type == 'length':
+        elif competition.competition_type in ('length', 'length_by_foot'):
             competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_length(team, competition)
         elif competition.competition_type == 'frequency':
             (
@@ -320,7 +330,7 @@ def recalculate_result(competition, competitor):  # noqa
         if competition.competition_type == 'questionnaire':
             points, points_given = points_questionnaire([user_attendance], competition)
             competition_result.result = points + points_given
-        elif competition.competition_type == 'length':
+        elif competition.competition_type in ('length', 'length_by_foot'):
             competition_result.result = get_userprofile_length([user_attendance], competition)
         elif competition.competition_type == 'frequency':
             (
@@ -341,7 +351,7 @@ def recalculate_result(competition, competitor):  # noqa
         if competition.competition_type == 'questionnaire':
             points, points_given = points_questionnaire(user_attendances, competition)
             competition_result.result = points + points_given
-        elif competition.competition_type == 'length':
+        elif competition.competition_type in ('length', 'length_by_foot'):
             competition_result.result = get_userprofile_length(user_attendances, competition)
         elif competition.competition_type == 'frequency':
             (

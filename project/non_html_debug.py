@@ -23,7 +23,10 @@ class NonHtmlDebugToolbarMiddleware(object):
                 content = response.content
                 try:
                     json_ = json.loads(content.decode('utf-8'))
-                    content = json.dumps(json_, sort_keys=True, indent=2)
+                    if json_['result'] == 'error':
+                        content = json_['error']
+                    else:
+                        content = json.dumps(json_, sort_keys=True, indent=2)
                 except ValueError:
                     pass
                 response = HttpResponse(

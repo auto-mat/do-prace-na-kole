@@ -34,7 +34,7 @@ jobs:
       - run:
          name: Start PostGIS container
          command: |
-            docker run -d --hostname dpnk-postgres --name dpnk-postgres -e POSTGRES_PASSWORD=password mdillon/postgis
+            docker run -d --hostname dpnk-postgres --name dpnk-postgres -e POSTGRES_PASSWORD=password mdillon/postgis:9.6
       - run:
          name: Start RabbitMQ container
          command: |

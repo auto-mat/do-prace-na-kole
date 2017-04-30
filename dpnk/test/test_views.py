@@ -28,6 +28,7 @@ import createsend
 
 import denorm
 
+from django.contrib.gis.db.models.functions import Length
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import Client, RequestFactory, TestCase
@@ -339,7 +340,7 @@ class PaymentTypeViewTests(TestCase):
         response = self.client.get(reverse('typ_platby'))
         self.assertContains(
             response,
-            '<div class="alert alert-danger">Již máte účastnický poplatek zaplacen. Pokračujte na <a href="/cs/">zadávání jízd</a>.</div>',
+            '<div class="alert alert-danger">Již máte účastnický poplatek zaplacen. Pokračujte na <a href="/">zadávání jízd</a>.</div>',
             html=True,
             status_code=403,
         )
@@ -612,7 +613,12 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('profil')
         response = self.client.get(address)
         self.assertRedirects(response, reverse('upravit_profil'))
-        user_attendance = models.UserAttendance.objects.length().get(userprofile__user__username='user_without_attendance', campaign__pk=339)
+        user_attendance = models.UserAttendance.objects.annotate(
+            length=Length('track'),
+        ).get(
+            userprofile__user__username='user_without_attendance',
+            campaign__pk=339,
+        )
         self.assertEqual(user_attendance.userprofile.user.pk, 1041)
         self.assertEqual(user_attendance.get_distance(), 156.9)
 
@@ -626,7 +632,7 @@ class ViewsTests(DenormMixin, TestCase):
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@test.cz'])
         self.assertEqual(msg.subject, 'Zapomenuté heslo Do práce na kole')
-        self.assertTrue('http://testing-campaign.testserver/cs/zapomenute_heslo/zmena/' in msg.body)
+        self.assertTrue('http://testing-campaign.testserver/zapomenute_heslo/zmena/' in msg.body)
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2010, month=10, day=1),
@@ -933,7 +939,7 @@ class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_team_invitation_bad_email(self):
         token = self.user_attendance.team.invitation_token
         response = self.client.get(reverse('zmenit_tym', kwargs={'token': token, 'initial_email': 'invitation_test@email.com'}), follow=True)
-        self.assertRedirects(response, "/cs/login/invitation_test@email.com/?next=/cs/tym/token123213/invitation_test@email.com/")
+        self.assertRedirects(response, "/login/invitation_test@email.com/?next=/tym/token123213/invitation_test@email.com/")
         self.assertContains(response, "invitation_test@email.com")
 
     def test_dpnk_team_invitation_unknown_team(self):
@@ -1137,7 +1143,8 @@ class ViewsTestsLogon(ViewsLogon):
             response,
             '<tr>'
             '<td>'
-            '<input class="tableselectmultiple selectable-checkbox form-check-input" id="id_paing_for_0" name="paing_for" type="checkbox" value="2115" />'
+            '<input class="tableselectmultiple selectable-checkbox form-check-input" '
+            'id="id_paing_for_0" name="paing_for" type="checkbox" value="2115" required />'
             '</td>'
             '<td>%s</td>'
             '<td>Registered</td>'
@@ -1452,7 +1459,7 @@ class RegistrationMixinTests(ViewsLogon):
         m.feed.get.return_value = []
         slumber_api.return_value = m
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, "Nezapomeňte vyplnit odpovědi v následujících soutěžích: <a href='/cs/otazka/quest/'>Dotazník</a>!")
+        self.assertContains(response, "Nezapomeňte vyplnit odpovědi v následujících soutěžích: <a href='/otazka/quest/'>Dotazník</a>!")
 
     @patch('slumber.API')
     def test_dpnk_registration_vouchers(self, slumber_api):
@@ -1546,7 +1553,7 @@ class TrackViewTests(ViewsLogon):
             }
             response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.length().get(pk=1115)
+        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 13.32)
 
     def test_dpnk_views_track_gpx_file_route(self):
@@ -1560,7 +1567,7 @@ class TrackViewTests(ViewsLogon):
             }
             response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.length().get(pk=1115)
+        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 6.72)
 
     def test_dpnk_views_track(self):
@@ -1576,7 +1583,7 @@ class TrackViewTests(ViewsLogon):
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.length().get(pk=1115)
+        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 0.74)
 
     def test_dpnk_views_track_only_distance(self):
@@ -1589,7 +1596,7 @@ class TrackViewTests(ViewsLogon):
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.length().get(pk=1115)
+        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
         self.assertEquals(user_attendance.track, None)
         self.assertEquals(user_attendance.get_distance(), 12)
 
@@ -1708,7 +1715,7 @@ class RidesDetailsTests(ViewsLogon):
 
     def test_dpnk_rides_details(self):
         response = self.client.get(reverse('rides_details'))
-        self.assertContains(response, '/cs/gpx_file/1')
+        self.assertContains(response, '/gpx_file/1')
         self.assertContains(response, '5,0')
         self.assertContains(response, 'Chůze/běh')
         self.assertContains(response, 'Podrobný přehled jízd')
