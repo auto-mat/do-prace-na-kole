@@ -93,6 +93,11 @@ class CompetitionResultListJson(BaseDatatableView):
                     Q(user_attendance__userprofile__nickname__unaccent__icontains=s) |
                     Q(first_name__unaccent__icontains=s) |
                     Q(last_name__unaccent__icontains=s) |
+                    Q(company__name__unaccent__icontains=s) |
+                    Q(user_attendance__team__subsidiary__city__name__unaccent__icontains=s) |
+                    Q(user_attendance__team__subsidiary__company__name__unaccent__icontains=s) |
+                    Q(user_attendance__team__subsidiary__address_street__unaccent__icontains=s) |
+                    Q(user_attendance__team__name__unaccent__icontains=s) |
                     Q(team__subsidiary__city__name__unaccent__icontains=s) |
                     Q(team__subsidiary__company__name__unaccent__icontains=s) |
                     Q(team__subsidiary__address_street__unaccent__icontains=s) |
