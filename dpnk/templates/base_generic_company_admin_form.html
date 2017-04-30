@@ -18,3 +18,5 @@
 <li class="{% if request.resolver_match.url_name == 'invoices' %}active{% endif %}"><a href="{% url 'invoices' %}">{% trans "Faktury" %}</a></li>
 </ul>
 {% endblock %}
+
+{% block company_admin_link_class %}active{% endblock %}

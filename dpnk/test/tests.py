@@ -587,12 +587,18 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'vnitrofiremní soutěž na pravidelnost jednotlivců organizace Testing company')
         self.assertContains(response, '<p>1. místo z 1 společností</p>', html=True)
         self.assertContains(response, 'soutěž na vzdálenost jednotlivců  ve městě Testing city')
-        self.assertContains(response, 'Vyplnit odpovědi')
 
     def test_dpnk_competitions_page_change(self):
         response = self.client.get(reverse('competitions'))
-        self.assertContains(response, 'soutěž na vzdálenost jednotlivců')
-        self.assertContains(response, 'Vyplnit odpovědi')
+        self.assertContains(response, '<i>soutěž na vzdálenost jednotlivců  ve městě Testing city pro muže</i>', html=True)
+        self.assertContains(response, '<h4>Výkonnost společností</h4>', html=True)
+        self.assertContains(response, '<a href="/vysledky_souteze/FQ-LB/#row-1">Výsledky</a>', html=True)
+
+    def test_dpnk_questionnaire_competitions_page_change(self):
+        response = self.client.get(reverse('questionnaire_competitions'))
+        self.assertContains(response, '<h4>Dotazník</h4>', html=True)
+        self.assertContains(response, '<a href="/otazka/quest/">Vyplnit odpovědi</a>', html=True)
+        self.assertContains(response, '<i>dotazník týmů  ve městě Testing city</i>', html=True)
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2009, month=11, day=20),
@@ -613,15 +619,16 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition = models.Competition.objects.filter(slug="quest")
         actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
-        response = self.client.get(reverse('competitions'))
+        response = self.client.get(reverse('questionnaire_competitions'))
         self.assertContains(response, '<i>dotazník jednotlivců</i>', html=True)
+        self.assertContains(response, "<p>16,2b.</p>", html=True)
+        response = self.client.get(reverse('competitions'))
         self.assertContains(response, "<p>1. místo z 1 týmů</p>", html=True)
         self.assertContains(response, "<p>1,4&nbsp;%</p>", html=True)
         self.assertContains(response, "<p>1 z 69 jízd</p>", html=True)
         self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
         self.assertContains(response, "<p>5&nbsp;km</p>", html=True)
         self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
-        self.assertContains(response, "<p>16,2b.</p>", html=True)
 
 
 class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
