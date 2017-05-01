@@ -317,7 +317,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
                       <span class="vote">5</span>
                   </a>
                 </h4>
-                <img src="http://www.cyklistesobe.cz/image.png" alt="Obrázek k podnětu">
+                <img src="https://www.cyklistesobe.cz/image.png" alt="Obrázek k podnětu">
                 Description
             </div>
             ''',
