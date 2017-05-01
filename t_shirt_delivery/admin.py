@@ -119,7 +119,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         'all_packages_dispatched',
         'dispatched_packages_count',
         'packages_count',
-        'carrier_identification',
+        'tracking_link',
         'delivery_batch',
         'subsidiary',
         'customer_sheets',
@@ -153,6 +153,9 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         filters.AllPackagesDispatched,
         'delivery_batch',
     ]
+    readonly_fields = (
+        'tracking_link',
+    )
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
