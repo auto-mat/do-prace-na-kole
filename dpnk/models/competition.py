@@ -185,6 +185,11 @@ class Competition(models.Model):
         default=True,
         null=False,
     )
+    enable_likes = models.BooleanField(
+        verbose_name=_("Povolit likování příspěvků dotazníku"),
+        default=False,
+        null=False,
+    )
     entry_after_beginning_days = models.IntegerField(
         verbose_name=_(u"Prodloužené přihlášky"),
         help_text=_(u"Počet dní po začátku soutěže, kdy je ještě možné se přihlásit"),

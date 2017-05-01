@@ -48,6 +48,7 @@ django-import-export==0.5.1
 django-ipware==1.1.6
 django-isnull-list-filter==0.1.0
 django-leaflet==0.22.0
+-e git+https://github.com/PetrDlouhy/django-likes.git@4bbe4348bc1c538596a88ac9479e37946700834a#egg=django_likes
 django-mass-edit==3.0
 django-model-utils==2.6.1
 django-modeltranslation==0.12.1

@@ -85,3 +85,4 @@ django-redis
 -e git+https://github.com/PetrDlouhy/django-admin-view-permission.git#egg=django-admin-view-permission  # For fix of compatibility with django-advanced-filters
 coreapi
 django-celery-email
+-e git+https://github.com/PetrDlouhy/django-likes.git#egg=django-likes  # For fixes for Django 1.10 and static files

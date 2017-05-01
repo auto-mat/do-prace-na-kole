@@ -2,6 +2,7 @@
 {% load dpnk_tags %}
 {% load thumbnail %}
 {% load i18n %}
+{% load likes_inclusion_tags %}
 
 {% block content %}
 {{ block.super }}
@@ -38,6 +39,11 @@
          </p>
       {% endif %}
       </div>
+      {% if competition.enable_likes %}
+         <b>
+            {% likes answer %}
+         </b>
+      {% endif %}
    {% endfor %}
 {% endfor %}
 {% endblock %}

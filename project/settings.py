@@ -145,6 +145,7 @@ MIDDLEWARE_CLASSES = [
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',
+    'dpnk.middleware.SecretBallotUserMiddleware',
     'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
 ]
 AUTHENTICATION_BACKENDS = (
@@ -218,6 +219,7 @@ INSTALLED_APPS = (
     'coupons',
     'dpnk',
     't_shirt_delivery',
+    'psc',
 
     'smart_selects',
     'composite_field',
@@ -260,7 +262,8 @@ INSTALLED_APPS = (
     'advanced_filters',
     'djcelery_email',
     'django_celery_beat',
-    'psc',
+    'secretballot',
+    'likes',
     # 'cachalot',
 )
 
