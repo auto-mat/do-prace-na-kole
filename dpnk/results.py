@@ -287,7 +287,7 @@ def points_questionnaire(user_attendances, competition):
         user_attendance__in=user_attendances,
         question__competition=competition,
     ).aggregate(Sum('points_given'))['points_given__sum'] or 0
-    return points, points_given
+    return points + points_given
 
 
 def recalculate_result(competition, competitor):  # noqa
@@ -308,8 +308,7 @@ def recalculate_result(competition, competitor):  # noqa
             return
 
         if competition.competition_type == 'questionnaire':
-            points, points_given = points_questionnaire(members, competition)
-            competition_result.result = float(points + points_given)
+            competition_result.result = float(points_questionnaire(members, competition))
         elif competition.competition_type in ('length', 'length_by_foot'):
             competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_length(team, competition)
         elif competition.competition_type == 'frequency':
@@ -328,8 +327,7 @@ def recalculate_result(competition, competitor):  # noqa
         competition_result, created = CompetitionResult.objects.get_or_create(user_attendance=user_attendance, competition=competition)
 
         if competition.competition_type == 'questionnaire':
-            points, points_given = points_questionnaire([user_attendance], competition)
-            competition_result.result = points + points_given
+            competition_result.result = points_questionnaire([user_attendance], competition)
         elif competition.competition_type in ('length', 'length_by_foot'):
             competition_result.result = get_userprofile_length([user_attendance], competition)
         elif competition.competition_type == 'frequency':
@@ -349,8 +347,7 @@ def recalculate_result(competition, competitor):  # noqa
         competition_result, created = CompetitionResult.objects.get_or_create(company=company, competition=competition)
 
         if competition.competition_type == 'questionnaire':
-            points, points_given = points_questionnaire(user_attendances, competition)
-            competition_result.result = points + points_given
+            competition_result.result = points_questionnaire(user_attendances, competition)
         elif competition.competition_type in ('length', 'length_by_foot'):
             competition_result.result = get_userprofile_length(user_attendances, competition)
         elif competition.competition_type == 'frequency':
