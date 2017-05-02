@@ -128,6 +128,7 @@ class AuthenticationFormDPNK(AuthenticationForm):
 
 
 class RegisterCompanyForm(forms.ModelForm):
+    use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
 
@@ -137,6 +138,7 @@ class RegisterCompanyForm(forms.ModelForm):
 
 
 class AdressForm(forms.ModelForm):
+    use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
 
