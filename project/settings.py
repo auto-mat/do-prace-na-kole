@@ -487,6 +487,9 @@ PRICE_LEVEL_CATEGORY_DEFAULT = 'basic'
 
 THUMBNAIL_FORCE_OVERWRITE = True
 
+# We have large inline fields, so it is necesarry to set this
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+
 SITE_URL = 'dopracenakole.cz'
 # import local settings
 try:
