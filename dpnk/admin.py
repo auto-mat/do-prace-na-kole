@@ -51,6 +51,8 @@ from isnull_filter import isnull_filter
 
 from leaflet.admin import LeafletGeoAdmin, LeafletGeoAdminMixin
 
+from massadmin.massadmin import mass_change_selected
+
 from modeltranslation.admin import TranslationTabularInline
 
 from nested_inline.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
@@ -1500,3 +1502,6 @@ TokenAdmin.search_fields = (
 # register all adminactions
 admin.site.add_action(admin_actions.mass_update)
 admin.site.add_action(admin_actions.merge)
+
+# This is fix for massadmin not adding itself automatically
+admin.site.add_action(mass_change_selected)
