@@ -1144,7 +1144,7 @@ class ViewsTestsLogon(ViewsLogon):
             '<tr>'
             '<td>'
             '<input class="tableselectmultiple selectable-checkbox form-check-input" '
-            'id="id_paing_for_0" name="paing_for" type="checkbox" value="2115" required />'
+            'id="id_paing_for_0" name="paing_for" type="checkbox" value="2115"/>'
             '</td>'
             '<td>%s</td>'
             '<td>Registered</td>'
