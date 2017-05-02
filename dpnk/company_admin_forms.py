@@ -38,6 +38,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
     paing_for = forms.ModelMultipleChoiceField(
         [],
         label=_("Vyberte soutěžící, za které zaplatíte fakturou"),
+        required=False,
         help_text=string_concat(
             _("Ceny jsou uváděny bez DPH"),
         ),

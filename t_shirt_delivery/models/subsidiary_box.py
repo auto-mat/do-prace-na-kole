@@ -23,6 +23,7 @@ from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
 from dpnk.models import UserAttendance
@@ -123,6 +124,15 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
 
     def packages_count(self):
         return self.teampackage_set.count()
+
+    def tracking_link(self):
+        if self.carrier_identification:
+            return format_html(
+                "<a target='_blank' href='https://gls-group.eu/CZ/cs/sledovani-zasilek?match={}'>{}</a>",
+                self.carrier_identification,
+                self.carrier_identification,
+            )
+    tracking_link.admin_order_field = 'carrier_identification'
 
 
 @receiver(post_save, sender=SubsidiaryBox)
