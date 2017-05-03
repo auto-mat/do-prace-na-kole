@@ -173,6 +173,7 @@ class RegisterSubsidiaryForm(AdressForm):
 
 
 class RegisterTeamForm(forms.ModelForm):
+    use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
 
@@ -188,6 +189,7 @@ class RegisterTeamForm(forms.ModelForm):
 
 
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
+    use_required_attribute = False
     company = forms.ModelChoiceField(
         label=_(u"Organizace"),
         queryset=models.Company.objects.filter(active=True),
