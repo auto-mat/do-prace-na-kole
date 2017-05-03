@@ -106,7 +106,9 @@ def update_mailing_id(user_attendance, mailing_id, mailing_hash):
     userprofile = user_attendance.get_userprofile()
     userprofile.mailing_id = mailing_id
     userprofile.mailing_hash = mailing_hash
+    userprofile.don_save_mailing = True
     userprofile.save()
+    userprofile.don_save_mailing = False
 
 
 def add_user(user_attendance):
