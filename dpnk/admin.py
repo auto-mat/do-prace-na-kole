@@ -637,9 +637,28 @@ class UserProfileAdmin(ImportExportMixin, admin.ModelAdmin):
 admin.site.unregister(models.User)
 
 
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = models.User
+        exclude = []
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        username = self.cleaned_data.get('username')
+        if email and models.User.objects.filter(email__iexact=email).exclude(username=username).count():
+            raise forms.ValidationError(_('Tento e-mail je již v systému použit.'))
+        return email
+
+    def __init__(self, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
+        self.fields['email'].required = True
+        return ret_val
+
+
 @admin.register(models.User)
 class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmin):
     inlines = (UserProfileAdminInline,)
+    form = UserForm
     list_display = (
         'username',
         'email',
