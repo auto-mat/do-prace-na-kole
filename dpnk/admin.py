@@ -499,6 +499,12 @@ class UserAttendanceForm(forms.ModelForm):
                 message = _("Tento tým není možné zvolit, protože by měl příliš mnoho odsouhlasených členů.")
                 self.add_error("team", message)
                 self.add_error("approved_for_team", message)
+
+        if self.instance.payment_status == 'done' and new_team is None:
+            self.add_error(
+                "team",
+                _("Není možné odstranit tým učastníkovi kampaně, který již zaplatil"),
+            )
         return super().clean()
 
 
