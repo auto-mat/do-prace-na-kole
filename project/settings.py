@@ -102,13 +102,15 @@ MEDIA_URL = os.environ.get('DPNK_MEDIA_URL', '/media/upload/')
 STATIC_ROOT = os.environ.get('DPNK_STATIC_ROOT', normpath(PROJECT_ROOT, "static"))
 STATIC_URL = os.environ.get('DPNK_STATIC_URL', '/static/')
 
+EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
+
 AWS_ACCESS_KEY_ID = os.environ.get('DPNK_AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('DPNK_AWS_SECRET_ACCESS_KEY')
 AWS_S3_HOST = os.environ.get('DPNK_AWS_S3_HOST', 's3-eu-west-1.amazonaws.com')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('DPNK_AWS_STORAGE_BUCKET_NAME', 'dpnk')
 if AWS_ACCESS_KEY_ID:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    EMAIL_BACKEND = 'django_ses.SESBackend'
+    CELERY_EMAIL_BACKEND = 'django_ses.SESBackend'
     AWS_SES_REGION_NAME = 'eu-west-1'
     AWS_SES_REGION_ENDPOINT = 'email.eu-west-1.amazonaws.com'
 
@@ -256,6 +258,7 @@ INSTALLED_APPS = (
     'adminactions',
     'massadmin',
     'advanced_filters',
+    'djcelery_email',
     'django_celery_beat',
     'psc',
     # 'cachalot',

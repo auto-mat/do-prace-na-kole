@@ -28,6 +28,7 @@ django-bulk-update==1.1.10
 django-cachalot==1.4.1
 -e git+https://github.com/Thermondo/django-cache-utils.git@0e1ccf5af7692396089270f21f7ff01f9b6c6ef1#egg=django_cache_utils
 django-celery-beat==1.0.1
+django-celery-email==1.1.5
 django-chart-tools==1.0
 django-class-based-auth-views==0.4
 django-composite-field==0.8.0
@@ -53,6 +54,7 @@ django-modeltranslation==0.12.1
 -e git+https://github.com/PetrDlouhy/django-nested-inline@274c156fba10d843908a6398950408cef2cc93d7#egg=django_nested_inline
 django-oauth-toolkit==0.12.0
 django-polymorphic==1.1
+django-post-office==2.0.8
 django-price-level==0.2.1
 django-rank-query==0.1.0
 django-redis==4.8.0
