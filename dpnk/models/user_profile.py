@@ -219,6 +219,7 @@ class UserProfile(models.Model):
 
 @receiver(post_save, sender=UserProfile)
 def update_mailing_userprofile(sender, instance, created, **kwargs):
-    for user_attendance in instance.userattendance_set.all():
-        if not kwargs.get('raw', False) and user_attendance.campaign:
-            mailing.add_or_update_user(user_attendance)
+    if not getattr(instance, 'don_save_mailing', False):  # this signal was not caused by mailing id/hash update
+        for user_attendance in instance.userattendance_set.all():
+            if not kwargs.get('raw', False) and user_attendance.campaign:
+                mailing.add_or_update_user(user_attendance)
