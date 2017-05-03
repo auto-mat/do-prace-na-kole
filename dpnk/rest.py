@@ -48,10 +48,29 @@ class CompetitionDoesNotExist(APIException):
 
 
 class GpxFileSerializer(serializers.ModelSerializer):
-    distanceMeters = serializers.IntegerField(required=False, min_value=0, source='distance')
-    durationSeconds = serializers.IntegerField(required=False, min_value=0, source='duration')
-    commuteMode = serializers.ChoiceField(required=False, source='commute_mode', choices=Trip.MODES)
-    sourceApplication = serializers.CharField(required=False, source='source_application')
+    distanceMeters = serializers.IntegerField(
+        required=False,
+        min_value=0,
+        source='distance',
+        help_text='Distance in meters. If not set, distance will be calculated from the track',
+    )
+    durationSeconds = serializers.IntegerField(
+        required=False,
+        min_value=0,
+        source='duration',
+        help_text='Duration of track in seconds',
+    )
+    commuteMode = serializers.ChoiceField(
+        required=False,
+        source='commute_mode',
+        choices=Trip.MODES,
+        help_text='Transport mode of the trip',
+    )
+    sourceApplication = serializers.CharField(
+        required=False,
+        source='source_application',
+        help_text='Any string identifiing the source application of the track',
+    )
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -98,14 +117,41 @@ class GpxFileSerializer(serializers.ModelSerializer):
             'sourceApplication',
         )
         extra_kwargs = {
-            'track': {'write_only': True},
+            'track': {
+                'write_only': True,
+                'help_text': 'Track in GeoJSON MultiLineString format',
+            },
+            'file': {'help_text': 'GPX file with the track'},
+            'trip_date': {'help_text': 'Date of the trip e.g. "1970-01-23"'},
+            'direction': {'help_text': 'Direction of the trip "trip_to" for trip to work, "trip_from" for trip from work'},
         }
 
 
+class GpxFileDetailSerializer(GpxFileSerializer):
+    class Meta(GpxFileSerializer.Meta):
+        extra_kwargs = {}
+
+
 class GpxFileSet(viewsets.ModelViewSet):
+    """
+    Documentation: https://www.dopracenakole.cz/rest-docs/
+
+    get:
+    Return a list of all tracks for logged user.
+
+    get on /rest/gpx/{id}:
+    Return track detail including a track geometry.
+
+    post:
+    Create a new track instance. Track can be sent ether by GPX file (file parameter) or in GeoJSON format (track parameter).
+    """
+
     def get_queryset(self):
         return GpxFile.objects.filter(user_attendance__userprofile__user=self.request.user)
-    serializer_class = GpxFileSerializer
+
+    def get_serializer_class(self):
+        return GpxFileDetailSerializer if self.action == 'retrieve' else GpxFileSerializer
+
     permission_classes = [permissions.IsAuthenticated]
 
 

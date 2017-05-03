@@ -8,6 +8,7 @@ bleach==2.0.0
 boto==2.46.1
 celery==4.0.2
 contextlib2==0.5.4
+coreapi==2.3.0
 coveralls==1.1
 -e git+https://github.com/PetrDlouhy/createsend-python.git@29e8f327059004d3241a10a9c07b7a7f9f8c80a2#egg=createsend
 decorator==4.0.10

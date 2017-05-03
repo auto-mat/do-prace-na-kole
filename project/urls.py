@@ -10,6 +10,8 @@ from dpnk import views
 from dpnk.rest import router
 from dpnk.views import answers, questionnaire_answers, questionnaire_results, questions
 
+from rest_framework.documentation import include_docs_urls
+
 admin.site.index_template = 'admin/my_custom_index.html'
 admin.autodiscover()
 
@@ -60,6 +62,7 @@ urlpatterns = [
     url(r'^rest/', include(router.urls)),
     url(r'^scribbler/', include('scribbler.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^rest-docs/', include_docs_urls(title='Do práce na kole API')),
     url(r'^', include("dpnk.urls")),
     url(r'^coupons/', include("coupons.urls")),
     url(r'^t_shirt/', include("t_shirt_delivery.urls")),
