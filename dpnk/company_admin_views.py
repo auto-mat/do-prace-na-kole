@@ -73,6 +73,7 @@ class CompanyStructure(TitleViewMixin, TemplateView):
 class RelatedCompetitionsView(AdmissionsView):
     template_name = "company_admin/related_competitions.html"
 
+    @method_decorator(login_required)
     @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
