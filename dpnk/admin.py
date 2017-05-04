@@ -1525,7 +1525,6 @@ TokenAdmin.search_fields = (
 
 
 # register all adminactions
-admin.site.add_action(admin_actions.mass_update)
 admin.site.add_action(admin_actions.merge)
 
 # This is fix for massadmin not adding itself automatically
