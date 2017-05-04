@@ -22,6 +22,8 @@ from celery import shared_task
 
 import denorm
 
+from django.contrib import contenttypes
+
 from . import mailing, util
 from .models import Competition, GpxFile, Team, UserAttendance
 from .rest_ecc import gpx_files_post
@@ -70,9 +72,15 @@ def update_mailing(self, user_attendance_pks):
 
 
 @shared_task(bind=True)
-def touch_items(self, queryset):
-    util.rebuild_denorm_models(queryset)
-    return len(queryset)
+def touch_items(self, pks, object_app_label, object_model_name):
+    for pk in pks:
+        content_type = contenttypes.models.ContentType.objects.get(app_label=object_app_label, model=object_model_name)
+        denorm.models.DirtyInstance.objects.create(
+            content_type=content_type,
+            object_id=pk,
+        )
+        denorm.flush()
+    return len(pks)
 
 
 @shared_task(bind=True)
