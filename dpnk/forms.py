@@ -810,7 +810,7 @@ class TripForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        if cleaned_data['commute_mode'] in ('bicycle', 'by_foot') and not cleaned_data['distance']:
+        if cleaned_data['commute_mode'] in ('bicycle', 'by_foot') and not cleaned_data.get('distance', False):
             raise forms.ValidationError(_("Musíte vyplnit vzdálenost"))
 
         if cleaned_data['commute_mode'] == 'by_foot' and cleaned_data['distance'] < 1.5:
