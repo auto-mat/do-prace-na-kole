@@ -456,6 +456,48 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertEquals(user_attendance.trip_length_total, 39.0)
         self.assertEquals(user_attendance.team.get_length(), 13.0)
 
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=1),
+    )
+    @patch('slumber.API')
+    def test_dpnk_rides_view_key_error_km(self, slumber_api):
+        """ Test, that if user sends "6,0 km", the application wont fail. """
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_api.return_value = m
+        post_data = {
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '1',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-id': 101,
+            'form-0-commute_mode': 'by_foot',
+            'form-0-distance': '6,0 km',
+            'form-0-direction': 'trip_from',
+            'form-0-user_attendance': 1115,
+            'form-0-date': '2010-11-01',
+            'initial-form-0-date': '2010-11-01',
+            'form-1-id': None,
+            'form-1-commute_mode': 'bicycle',
+            'form-1-distance': '34',
+            'form-1-direction': 'trip_to',
+            'form-1-user_attendance': 1115,
+            'form-1-date': '2010-11-01',
+            'initial-form-1-date': '2010-11-01',
+            'submit': 'Odeslat jízdy',
+        }
+        response = self.client.post(reverse('profil'), post_data, follow=True)
+        print_response(response)
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger alert-dismissable alert-link">'
+            '    <button class="close" type="button" data-dismiss="alert" aria-hidden="true">&#215;</button>'
+            '    Zadejte číslo.<br>'
+            '    Musíte vyplnit vzdálenost'
+            '</div>',
+            html=True,
+        )
+
     @patch('slumber.API')
     def test_dpnk_rides_view(self, slumber_api):
         m = MagicMock()

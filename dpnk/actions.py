@@ -53,7 +53,13 @@ normalize_questionnqire_admissions.short_description = _(u"Obnovit přihlášky 
 # ---- USER_ATTENDANCE -----
 
 def touch_items(modeladmin, request, queryset):
-    tasks.touch_items.apply_async(args=(list(queryset.values_list('pk', flat=True)),))
+    tasks.touch_items.apply_async(
+        kwargs={
+            'pks': list(queryset.values_list('pk', flat=True)),
+            'object_app_label': queryset.model._meta.app_label,
+            'object_model_name': queryset.model.__name__.lower(),
+        },
+    )
     modeladmin.message_user(request, _("Obnova %s denormalizovaných položek byla zadána ke zpracování" % queryset.count()))
 
 

@@ -26,6 +26,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
+import secretballot
+
 from unidecode import unidecode
 
 from .competition import Competition
@@ -245,6 +247,9 @@ class Answer(models.Model):
     # TODO: repair tests with this
     # def __str__(self):
     #      return "%s" % self.str_choices()
+
+
+secretballot.enable_voting_on(Answer)
 
 
 @receiver(post_save, sender=Answer)

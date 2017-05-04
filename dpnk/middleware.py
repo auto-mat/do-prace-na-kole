@@ -19,6 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.contrib.gis.db.models.functions import Length
 
+from secretballot.middleware import SecretBallotIpUseragentMiddleware
+
 from .models import Campaign, UserAttendance
 
 
@@ -50,3 +52,12 @@ class UserAttendanceMiddleware:
             request.campaign = Campaign.objects.get(slug=campaign_slug)
         except Campaign.DoesNotExist:
             request.campaign = None
+
+
+class SecretBallotUserMiddleware(SecretBallotIpUseragentMiddleware):
+
+    def generate_token(self, request):
+        if request.user.is_authenticated():
+            return request.user.username
+        else:
+            return None

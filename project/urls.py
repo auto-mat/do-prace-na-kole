@@ -61,6 +61,7 @@ urlpatterns = [
     url(r'^redactor/', include('redactor.urls')),
     url(r'^rest/', include(router.urls)),
     url(r'^scribbler/', include('scribbler.urls')),
+    url(r'^likes/', include('likes.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^rest-docs/', include_docs_urls(title='Do práce na kole API')),
     url(r'^', include("dpnk.urls")),
