@@ -18,14 +18,16 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from __future__ import absolute_import
 
+from datetime import timedelta
+
 from celery import shared_task
 
 import denorm
 
 from django.contrib import contenttypes
 
-from . import mailing, util
-from .models import Competition, GpxFile, Team, UserAttendance
+from . import email, mailing, util
+from .models import Campaign, Competition, GpxFile, Team, UserAttendance
 from .rest_ecc import gpx_files_post
 from .statement import parse
 
@@ -100,3 +102,21 @@ def touch_teams(self, campaign_slug=''):
 @shared_task(bind=True)
 def parse_statement(self, days_back=7):
     parse(days_back=days_back)
+
+
+@shared_task(bind=True)
+def send_unfilled_rides_notification(self, campaign_slug=''):
+    campaign = Campaign.objects.get(slug=campaign_slug)
+    date = util.today()
+    days_unfilled = campaign.days_active - 2
+    date = date - timedelta(days=days_unfilled)
+    queryset = UserAttendance.objects.filter(
+        campaign=campaign,
+        payment_status='done',
+        approved_for_team='approved',
+    ).exclude(
+        user_trips__date__gte=date,
+    )
+    for user_attendance in queryset:
+        email.unfilled_rides_mail(user_attendance, days_unfilled)
+    return len(queryset)

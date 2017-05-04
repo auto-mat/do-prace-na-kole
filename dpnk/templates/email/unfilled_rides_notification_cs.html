@@ -1,0 +1,18 @@
+{% load i18n %}
+{% autoescape off %}
+
+{% language lang_code %}
+Zpráva pro soutěžící/ho {{ user_attendance.userprofile }} v soutěži {{ user_attendance.campaign }}.
+
+Dobrý den,
+
+zjistili jsme, že za posledních {{ days_unfilled }} dní jste si nevyplnil/a jízdy ve svém profilu.
+Chceme vám připomenout, že jídzy lze vyplňovat pouze {{ user_attendance.campaign.days_active }} dní zpět. 
+Pokud jste si jízdy zapomněl/a vyplnit, můžete tak učinit ve vašem profilu 
+https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}
+
+---
+{{ user_attendance.campaign.email_footer }}
+
+{% endlanguage %}
+{% endautoescape %}

@@ -1,0 +1,18 @@
+{% load i18n %}
+{% autoescape off %}
+
+{% language lang_code %}
+A message for {{ user_attendance.userprofile }}, participating in the {{ user_attendance.campaign }} competition.
+
+Hello,
+
+we found out, that you didn't fill in any ride in last {{ days_unfilled }} days.
+We want to remind you that rides can only be filled in for {{ user_attendance.campaign.days_active }} days back.
+If you have forgotten to fill in your rides, you can do so in your profile
+https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}
+
+---
+{{ user_attendance.campaign.email_footer }}
+
+{% endlanguage %}
+{% endautoescape %}

@@ -113,6 +113,25 @@ class TestEmails(TestCase):
         link = 'http://testing_campaign_1.localhost:8000%s/' % language_url_infix(self.userprofile.language)
         self.assertTrue(link in msg.body)
 
+    def test_unfilled_rides_notification(self):
+        email.unfilled_rides_mail(self.user_attendance, 5)
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(str(msg.subject), "Testing campaign 1 - připomenutí nevyplněných jízd")
+        self.assertEqual(msg.to[0], "user1@email.com")
+        link = 'https://testing_campaign_1.localhost:8000%s/' % language_url_infix(self.userprofile.language)
+        self.assertTrue(link in msg.body)
+        if self.userprofile.language == 'cs':
+            message = "za posledních 5 dní jste si nevyplnil/a jízdy"
+        else:
+            message = "in last 5 days"
+        self.assertTrue(message in msg.body)
+        if self.userprofile.language == 'cs':
+            message = "že jídzy lze vyplňovat pouze 7 dní zpět"
+        else:
+            message = "filled in for 7 days back"
+        self.assertTrue(message in msg.body)
+
     def test_send_team_membership_approval_mail(self):
         email.team_membership_approval_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 1)
