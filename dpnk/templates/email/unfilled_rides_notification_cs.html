@@ -7,9 +7,11 @@ Zpráva pro soutěžící/ho {{ user_attendance.userprofile }} v soutěži {{ us
 Dobrý den,
 
 zjistili jsme, že za posledních {{ days_unfilled }} dní jste si nevyplnil/a jízdy ve svém profilu.
-Chceme vám připomenout, že jídzy lze vyplňovat pouze {{ user_attendance.campaign.days_active }} dní zpět. 
-Pokud jste si jízdy zapomněl/a vyplnit, můžete tak učinit ve vašem profilu 
+Chceme vám připomenout, že jízdy lze vyplňovat pouze {{ user_attendance.campaign.days_active }} dní zpětně.
+Pokud jste si jízdy zapomněl/a vyplnit, můžete tak učinit ve svém profilu
 https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}
+
+Celý tým Auto*Matu zdraví a přeje šťastnou cestu.
 
 ---
 {{ user_attendance.campaign.email_footer }}
