@@ -105,13 +105,16 @@ def parse_statement(self, days_back=7):
 
 
 @shared_task(bind=True)
-def send_unfilled_rides_notification(self, campaign_slug=''):
+def send_unfilled_rides_notification(self, pks=None, campaign_slug=''):
     campaign = Campaign.objects.get(slug=campaign_slug)
     date = util.today()
     days_unfilled = campaign.days_active - 2
     date = date - timedelta(days=days_unfilled)
-    queryset = UserAttendance.objects.filter(
-        campaign=campaign,
+    if not pks:
+        queryset = UserAttendance.objects.filter(campaign=campaign)
+    else:
+        queryset = UserAttendance.objects.filter(pk__in=pks, campaign=campaign)
+    queryset = queryset.filter(
         payment_status='done',
         approved_for_team='approved',
     ).exclude(

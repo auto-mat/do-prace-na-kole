@@ -122,3 +122,34 @@ class TestSendUnfilledRidesNotification(TestCase):
         mail_count = tasks.send_unfilled_rides_notification(campaign_slug="testing-campaign")
         self.assertEqual(mail_count, 0)
         self.assertEqual(len(mail.outbox), 0)
+
+    def test_notification_pks(self):
+        """ Test that email is send, if the user has't got rides in last 5 days """
+        self.user_attendance = UserAttendanceRecipe.make(
+            campaign=testing_campaign,
+            team__campaign=testing_campaign,
+            approved_for_team='approved',
+            userprofile__user__email='test@test.cz',
+            user_trips=[
+                mommy.make(
+                    'Trip',
+                    date='2017-05-02',
+                    commute_mode='bicycle',
+                    direction='trip_to',
+                ),
+            ],
+            transactions=[
+                mommy.make(
+                    "Payment",
+                    status=99,
+                    realized=datetime.date(2017, 2, 1),
+                    amount=100,
+                ),
+            ],
+        )
+        self.user_attendance.save()
+        mail_count = tasks.send_unfilled_rides_notification(
+            pks=[self.user_attendance.id],
+            campaign_slug="testing-campaign",
+        )
+        self.assertEqual(mail_count, 1)

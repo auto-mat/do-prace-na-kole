@@ -894,6 +894,7 @@ class UserAttendanceAdmin(
         actions.show_distance,
         actions.assign_vouchers,
         actions.touch_items,
+        actions.send_notifications,
     )
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
