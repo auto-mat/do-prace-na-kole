@@ -78,6 +78,7 @@ from .filters import (
     CityCampaignFilter,
     EmailFilter,
     HasReactionFilter,
+    ICOFilter,
     PSCFilter,
     campaign_filter_generator,
 )
@@ -203,7 +204,12 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
         'id',
     )
     inlines = [SubsidiaryInline, CompanyAdminInline]
-    list_filter = [CityCampaignFilter, 'subsidiaries__city', 'active']
+    list_filter = [
+        CityCampaignFilter,
+        'subsidiaries__city',
+        'active',
+        ICOFilter,
+    ]
     readonly_fields = ['subsidiary_links']
     search_fields = (
         'name',
@@ -535,7 +541,7 @@ class UserProfileAdminInline(NestedStackedInline):
     filter_horizontal = ('administrated_cities',)
 
 
-def create_userprofile_resource(campaign_slugs):
+def create_userprofile_resource(campaign_slugs):  # noqa: C901
     campaign_fields = ["user_attended_%s" % sl for sl in campaign_slugs]
 
     class UserProileResource(resources.ModelResource):
@@ -549,6 +555,9 @@ def create_userprofile_resource(campaign_slugs):
                 'sex',
                 'telephone',
                 'language',
+                'occupation',
+                'occupation_name',
+                'age_group',
                 'mailing_id',
                 'note',
                 'ecc_password',
@@ -567,6 +576,12 @@ def create_userprofile_resource(campaign_slugs):
         def dehydrate_email(self, obj):
             if hasattr(obj, 'user'):
                 return obj.user.email
+
+        occupation_name = fields.Field(readonly=True)
+
+        def dehydrate_occupation_name(self, obj):
+            if getattr(obj, 'occupation'):
+                return obj.occupation.name
 
         for slug in campaign_slugs:
             vars()['user_attended_%s' % slug] = fields.Field(readonly=True)
@@ -621,6 +636,9 @@ class UserProfileAdmin(ImportExportMixin, admin.ModelAdmin):
         'ecc_password',
         'ecc_email',
     )
+    raw_id_fields = (
+        'user',
+    )
     actions = (actions.remove_mailing_id,)
 
     @property
@@ -633,10 +651,15 @@ class UserProfileAdmin(ImportExportMixin, admin.ModelAdmin):
         return super().lookup_allowed(key, value)
 
     def get_queryset(self, request):
-        return models.UserProfile.objects.annotate(userattendance_count=Count('userattendance_set'))
+        return models.UserProfile.objects.annotate(
+            userattendance_count=Count('userattendance_set'),
+        ).select_related(
+            'occupation',
+            'user',
+        )
 
     def user_attendances_count(self, obj):
-        return obj.userattendance_set.count()
+        return obj.userattendance_count
     user_attendances_count.admin_order_field = "userattendance_count"
 
 
@@ -871,6 +894,7 @@ class UserAttendanceAdmin(
         actions.show_distance,
         actions.assign_vouchers,
         actions.touch_items,
+        actions.send_notifications,
     )
     form = UserAttendanceForm
     inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
@@ -1272,6 +1296,9 @@ class CityInCampaignInline(admin.TabularInline):
 
 class TShirtSizeInline(SortableInlineAdminMixin, TranslationTabularInline):
     model = TShirtSize
+    readonly_fields = (
+        'order',
+    )
     extra = 0
 
 
