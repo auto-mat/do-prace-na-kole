@@ -1326,7 +1326,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test-unknown@email.cz'])
-        self.assertEqual(str(msg.subject), 'Testing campaign - pozvánka do týmu')
+        self.assertEqual(str(msg.subject), 'Testing campaign - pozvánka do týmu (invitation to a team)')
 
     def test_dpnk_company_admin_application(self):
         util.rebuild_denorm_models(models.Team.objects.filter(pk=2))
