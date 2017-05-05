@@ -844,6 +844,30 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         self.assertContains(response, "Soutěž již nelze vyplňovat")
 
 
+class ViewsTestsLogonMommy(ViewsLogon):
+    def setUp(self):
+        super().setUp()
+        user_attendance = UserAttendanceRecipe.make()
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        self.client.force_login(user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+
+    def test_dpnk_team_view_create_duplicate_ico(self):
+        """ Test, that duplicate IČO error is reported to the user """
+        mommy.make('Company', ico='1234')
+        post_data = {
+            'company-ico': '1234',
+            'id_company_selected': 'on',
+            'id_subsidiary_selected': 'on',
+            'id_team_selected': 'on',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        self.assertContains(
+            response,
+            "<strong>Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu výše</strong>",
+            html=True,
+        )
+
+
 class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_team_view(self):
         response = self.client.get(reverse('zmenit_tym'))

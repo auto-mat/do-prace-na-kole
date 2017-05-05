@@ -96,10 +96,7 @@ class CityCampaignFilter(CampaignFilter):
         return queryset
 
 
-class EmailFilter(SimpleListFilter):
-    title = _(u"E-mail")
-    parameter_name = u'email'
-
+class DuplicateFilter(SimpleListFilter):
     def lookups(self, request, model_admin):
         return (
             ('duplicate', _(u'Duplicitní')),
@@ -108,16 +105,46 @@ class EmailFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'duplicate':
-            duplicates = User.objects.filter(email__isnull=False).\
-                exclude(email__exact='').\
-                values('email').\
-                annotate(Count('id')).values('email').\
-                order_by().filter(id__count__gt=1).\
-                values_list('email', flat=True)
-            return queryset.filter(email__in=duplicates)
+            duplicates = self.filter_model.objects.filter(
+                **{'%s__isnull' % self.filter_field: False},
+            ).exclude(
+                **{'%s__exact' % self.filter_field: self.blank_value},
+            ).values(
+                self.filter_field,
+            ).annotate(
+                Count('id'),
+            ).values(
+                self.filter_field,
+            ). order_by().filter(
+                id__count__gt=1,
+            ).values_list(
+                self.filter_field,
+                flat=True,
+            )
+            return queryset.filter(
+                **{'%s__in' % self.filter_field: duplicates},
+            )
         if self.value() == 'blank':
-            return queryset.filter(email__exact='')
+            return queryset.filter(
+                **{'%s__exact' % self.filter_field: self.blank_value},
+            )
         return queryset
+
+
+class EmailFilter(DuplicateFilter):
+    title = _("E-mail")
+    parameter_name = 'email_state'
+    filter_field = 'email'
+    filter_model = User
+    blank_value = ''
+
+
+class ICOFilter(DuplicateFilter):
+    title = _("IČO")
+    parameter_name = 'ico_state'
+    filter_field = 'ico'
+    filter_model = models.Company
+    blank_value = None
 
 
 class HasReactionFilter(SimpleListFilter):

@@ -78,6 +78,7 @@ from .filters import (
     CityCampaignFilter,
     EmailFilter,
     HasReactionFilter,
+    ICOFilter,
     PSCFilter,
     campaign_filter_generator,
 )
@@ -203,7 +204,12 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
         'id',
     )
     inlines = [SubsidiaryInline, CompanyAdminInline]
-    list_filter = [CityCampaignFilter, 'subsidiaries__city', 'active']
+    list_filter = [
+        CityCampaignFilter,
+        'subsidiaries__city',
+        'active',
+        ICOFilter,
+    ]
     readonly_fields = ['subsidiary_links']
     search_fields = (
         'name',

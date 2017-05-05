@@ -430,12 +430,12 @@ class FilterTests(TestCase):
         self.request.subdomain = "testing-campaign"
 
     def test_email_filter_blank(self):
-        f = filters.EmailFilter(self.request, {"email": "duplicate"}, User, None)
+        f = filters.EmailFilter(self.request, {"email_state": "duplicate"}, User, None)
         q = f.queryset(self.request, User.objects.all())
         self.assertEquals(q.count(), 0)
 
     def test_email_filter_duplicate(self):
-        f = filters.EmailFilter(self.request, {"email": "blank"}, User, None)
+        f = filters.EmailFilter(self.request, {"email_state": "blank"}, User, None)
         q = f.queryset(self.request, User.objects.all())
         self.assertEquals(q.count(), 0)
 
