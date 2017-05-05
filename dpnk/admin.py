@@ -621,6 +621,9 @@ class UserProfileAdmin(ImportExportMixin, admin.ModelAdmin):
         'ecc_password',
         'ecc_email',
     )
+    raw_id_fields = (
+        'user',
+    )
     actions = (actions.remove_mailing_id,)
 
     @property
