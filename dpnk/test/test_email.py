@@ -140,7 +140,7 @@ class TestEmails(TestCase):
             message = "in last 5 days"
         self.assertTrue(message in msg.body)
         if self.userprofile.language == 'cs':
-            message = "že jídzy lze vyplňovat pouze 7 dní zpět"
+            message = "že jízdy lze vyplňovat pouze 7 dní zpětně"
         else:
             message = "filled in for 7 days back"
         self.assertTrue(message in msg.body)
