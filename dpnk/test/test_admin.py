@@ -173,7 +173,10 @@ class AdminModulesTests(DenormMixin, TestCase):
             'file_format': 0,
         }
         response = self.client.post(address, post_data)
-        self.assertContains(response, 'Testing User 1,test@test.cz,male,,cs,,,secret,email1128@dopracenakole.cz,')
+        self.assertContains(
+            response,
+            '1117,1128,Testing User 1,test@test.cz,male,,cs,,,,,,secret,email1128@dopracenakole.cz,,done',
+        )
 
     def test_answer_export(self):
         address = "/admin/dpnk/answer/export/"

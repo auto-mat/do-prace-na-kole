@@ -535,7 +535,7 @@ class UserProfileAdminInline(NestedStackedInline):
     filter_horizontal = ('administrated_cities',)
 
 
-def create_userprofile_resource(campaign_slugs):
+def create_userprofile_resource(campaign_slugs):  # noqa: C901
     campaign_fields = ["user_attended_%s" % sl for sl in campaign_slugs]
 
     class UserProileResource(resources.ModelResource):
@@ -549,6 +549,9 @@ def create_userprofile_resource(campaign_slugs):
                 'sex',
                 'telephone',
                 'language',
+                'occupation',
+                'occupation_name',
+                'age_group',
                 'mailing_id',
                 'note',
                 'ecc_password',
@@ -567,6 +570,12 @@ def create_userprofile_resource(campaign_slugs):
         def dehydrate_email(self, obj):
             if hasattr(obj, 'user'):
                 return obj.user.email
+
+        occupation_name = fields.Field(readonly=True)
+
+        def dehydrate_occupation_name(self, obj):
+            if getattr(obj, 'occupation'):
+                return obj.occupation.name
 
         for slug in campaign_slugs:
             vars()['user_attended_%s' % slug] = fields.Field(readonly=True)
@@ -636,10 +645,15 @@ class UserProfileAdmin(ImportExportMixin, admin.ModelAdmin):
         return super().lookup_allowed(key, value)
 
     def get_queryset(self, request):
-        return models.UserProfile.objects.annotate(userattendance_count=Count('userattendance_set'))
+        return models.UserProfile.objects.annotate(
+            userattendance_count=Count('userattendance_set'),
+        ).select_related(
+            'occupation',
+            'user',
+        )
 
     def user_attendances_count(self, obj):
-        return obj.userattendance_set.count()
+        return obj.userattendance_count
     user_attendances_count.admin_order_field = "userattendance_count"
 
 
