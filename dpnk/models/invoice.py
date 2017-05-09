@@ -89,6 +89,7 @@ class Invoice(models.Model):
     invoice_pdf = models.FileField(
         verbose_name=_(u"PDF faktury"),
         upload_to=u'invoices',
+        max_length=512,
         blank=True,
         null=True,
     )
