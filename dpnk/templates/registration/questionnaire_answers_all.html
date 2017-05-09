@@ -39,7 +39,7 @@
          </p>
       {% endif %}
       </div>
-      {% if competition.enable_likes %}
+      {% if competition.enable_likes and forloop.last %}
          <b>
             {% likes answer %}
          </b>
