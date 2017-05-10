@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 {% get_available_languages as languages %}
 {% get_current_language as current_language_code %}
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ current_language_code }}" lang="{{ current_language_code }}">
 <head>
 <title>{% block title %}{% trans "Do práce na kole" %}{% if title %} - {{ title }}{% endif %}{% endblock %}</title>
 <link rel="apple-touch-icon" sizes="180x180" href="{% static "img/favicon/apple-touch-icon.png" %}">
