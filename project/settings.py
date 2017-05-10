@@ -145,7 +145,7 @@ MIDDLEWARE_CLASSES = [
     'author.middlewares.AuthorDefaultBackendMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',
-    'dpnk.middleware.SecretBallotUserMiddleware',
+    'dpnk.votes.SecretBallotUserMiddleware',
     'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
 ]
 AUTHENTICATION_BACKENDS = (

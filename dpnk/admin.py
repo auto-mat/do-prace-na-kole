@@ -35,6 +35,7 @@ from daterange_filter.filter import DateRangeFilter
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UserChangeForm
 from django.contrib.sessions.models import Session
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Sum, TextField
@@ -666,7 +667,7 @@ class UserProfileAdmin(ImportExportMixin, admin.ModelAdmin):
 admin.site.unregister(models.User)
 
 
-class UserForm(forms.ModelForm):
+class UserForm(UserChangeForm):
     class Meta:
         model = models.User
         exclude = []
@@ -823,7 +824,9 @@ class UserAttendanceAdmin(
         'frequency',
         'trip_length_total',
         'get_rides_count_denorm',
-        'created')
+        'created',
+        'updated',
+    )
     list_filter = (
         CampaignFilter,
         ('team__subsidiary__city', RelatedFieldCheckBoxFilter),
@@ -1261,7 +1264,18 @@ class TripAdmin(ExportMixin, RelatedFieldAdmin):
 
 @admin.register(models.CompetitionResult)
 class CompetitionResultAdmin(admin.ModelAdmin):
-    list_display = ('user_attendance', 'team', 'company', 'result', 'result_divident', 'result_divisor', 'competition')
+    list_display = (
+        'id',
+        'user_attendance',
+        'team',
+        'company',
+        'result',
+        'result_divident',
+        'result_divisor',
+        'competition',
+        'created',
+        'updated',
+    )
     list_filter = (campaign_filter_generator('competition__campaign'), 'competition',)
     search_fields = (
         'user_attendance__userprofile__nickname',
