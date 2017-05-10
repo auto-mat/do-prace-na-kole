@@ -35,6 +35,7 @@ from daterange_filter.filter import DateRangeFilter
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UserChangeForm
 from django.contrib.sessions.models import Session
 from django.core.urlresolvers import reverse
 from django.db.models import Count, Sum, TextField
@@ -666,7 +667,7 @@ class UserProfileAdmin(ImportExportMixin, admin.ModelAdmin):
 admin.site.unregister(models.User)
 
 
-class UserForm(forms.ModelForm):
+class UserForm(UserChangeForm):
     class Meta:
         model = models.User
         exclude = []
