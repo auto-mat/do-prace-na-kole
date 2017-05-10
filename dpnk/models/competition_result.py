@@ -82,6 +82,16 @@ class CompetitionResult(models.Model):
         blank=True,
         default=None,
     )
+    created = models.DateTimeField(
+        verbose_name=_(u"Datum vytvoření"),
+        auto_now_add=True,
+        null=True,
+    )
+    updated = models.DateTimeField(
+        verbose_name=_(u"Datum poslední změny"),
+        auto_now=True,
+        null=True,
+    )
 
     def get_sequence_range(self):
         """

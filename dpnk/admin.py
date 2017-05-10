@@ -824,7 +824,9 @@ class UserAttendanceAdmin(
         'frequency',
         'trip_length_total',
         'get_rides_count_denorm',
-        'created')
+        'created',
+        'updated',
+    )
     list_filter = (
         CampaignFilter,
         ('team__subsidiary__city', RelatedFieldCheckBoxFilter),
@@ -1262,7 +1264,18 @@ class TripAdmin(ExportMixin, RelatedFieldAdmin):
 
 @admin.register(models.CompetitionResult)
 class CompetitionResultAdmin(admin.ModelAdmin):
-    list_display = ('user_attendance', 'team', 'company', 'result', 'result_divident', 'result_divisor', 'competition')
+    list_display = (
+        'id',
+        'user_attendance',
+        'team',
+        'company',
+        'result',
+        'result_divident',
+        'result_divisor',
+        'competition',
+        'created',
+        'updated',
+    )
     list_filter = (campaign_filter_generator('competition__campaign'), 'competition',)
     search_fields = (
         'user_attendance__userprofile__nickname',
