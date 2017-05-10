@@ -449,7 +449,7 @@ class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
         self.assertContains(response, "Výsledky v soutěži Výkonnost týmů:")
         self.assertContains(
             response,
-            '<th scope="column" id=result_divident>Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů</th>',
+            '<th scope="col" id=result_divident-9>Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů</th>',
             html=True,
         )
 
