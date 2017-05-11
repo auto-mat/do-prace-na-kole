@@ -416,7 +416,7 @@ class Competition(models.Model):
         CTYPES_STRINGS = {
             'questionnaire': _('dotazník'),
             'frequency': _('soutěž na pravidelnost'),
-            'length_by_foot': _('soutěž na ujdenou/uběhnutou vzdálenost'),
+            'length_by_foot': _('soutěž na ušlou/uběhnutou vzdálenost'),
             'length': _('soutěž na vzdálenost'),
         }
         CCOMPETITORTYPES_STRINGS = {

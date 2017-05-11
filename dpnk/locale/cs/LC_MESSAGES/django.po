@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-05 14:52+0200\n"
+"POT-Creation-Date: 2017-05-11 12:08+0200\n"
 "PO-Revision-Date: 2017-04-19 14:59+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -120,109 +120,109 @@ msgstr ""
 msgid "Odeslat notifikaci nevyplněných jízd"
 msgstr ""
 
-#: admin.py:231 admin.py:240
+#: admin.py:232 admin.py:241
 msgid "Pobočky"
 msgstr ""
 
-#: admin.py:358
+#: admin.py:359
 msgid "Počet týmů ve všech kampaních"
 msgstr ""
 
-#: admin.py:364
+#: admin.py:365
 msgid "Počet soutěžících ve vyfiltrované kampani"
 msgstr ""
 
-#: admin.py:373 models/competition.py:57 models/team.py:47
+#: admin.py:374 models/competition.py:57 models/team.py:47
 msgid "Týmy"
 msgstr ""
 
-#: admin.py:421
+#: admin.py:422
 msgid "Není vnitrofiremní soutěž?"
 msgstr ""
 
-#: admin.py:457 views.py:1155
+#: admin.py:458 views.py:1155
 msgid "Výsledky soutěže"
 msgstr ""
 
-#: admin.py:462 models/questionnaire.py:209
+#: admin.py:463 models/questionnaire.py:209
 msgid "Odpovědi"
 msgstr ""
 
-#: admin.py:467 models/competition.py:51
+#: admin.py:468 models/competition.py:51
 msgid "Dotazník"
 msgstr ""
 
-#: admin.py:472 views.py:1861
+#: admin.py:473 views.py:1861
 msgid "Losování"
 msgstr ""
 
-#: admin.py:505
+#: admin.py:506
 msgid ""
 "Tento tým není možné zvolit, protože by měl příliš mnoho odsouhlasených "
 "členů."
 msgstr ""
 
-#: admin.py:512
+#: admin.py:513
 msgid "Není možné odstranit tým učastníkovi kampaně, který již zaplatil"
 msgstr ""
 
-#: admin.py:678
+#: admin.py:679
 msgid "Tento e-mail je již v systému použit."
 msgstr ""
 
-#: admin.py:711
+#: admin.py:712
 msgid "Nemá uživatelský profil?"
 msgstr ""
 
-#: admin.py:843
+#: admin.py:846
 msgid "Nemá nahranou trasu?"
 msgstr ""
 
-#: admin.py:844
+#: admin.py:847
 msgid "Nemá přiřazené vouchery?"
 msgstr ""
 
-#: admin.py:845
+#: admin.py:848
 msgid "Nemá žádné cesty?"
 msgstr ""
 
-#: admin.py:846
+#: admin.py:849
 msgid "Uživatel nemá zvolený tým?"
 msgstr ""
 
-#: admin.py:858
+#: admin.py:861
 msgid "Datum realizace platby"
 msgstr ""
 
-#: admin.py:861
+#: admin.py:864
 msgid "Posílá se triko?"
 msgstr ""
 
-#: admin.py:907 admin.py:1038
+#: admin.py:910 admin.py:1041
 msgid "Uživatel"
 msgstr ""
 
-#: admin.py:989 templates/submenu_team.html:7
+#: admin.py:992 templates/submenu_team.html:7
 msgid "Členové"
 msgstr ""
 
-#: admin.py:1184
+#: admin.py:1187
 msgid "vyhodnocení odpovědí"
 msgstr ""
 
-#: admin.py:1371
+#: admin.py:1385
 msgid "Nemá účast v kampani?"
 msgstr ""
 
-#: admin.py:1461
+#: admin.py:1475
 msgid "Nezaplacené faktury"
 msgstr ""
 
-#: admin.py:1473 templates/company_admin/invoices.html:10
+#: admin.py:1487 templates/company_admin/invoices.html:10
 msgid "Počet plateb"
 msgstr ""
 
-#: admin.py:1531
+#: admin.py:1545
 msgid "Nemá účast v kampani"
 msgstr ""
 
@@ -584,7 +584,7 @@ msgid "%s - připomenutí nevyplněných jízd"
 msgstr ""
 
 #: filters.py:31 forms.py:189 forms.py:474 models/competition.py:73
-#: models/invoice.py:103 models/phase.py:49 models/team.py:74
+#: models/invoice.py:104 models/phase.py:49 models/team.py:74
 #: models/user_attendance.py:59
 msgid "Kampaň"
 msgstr ""
@@ -658,7 +658,7 @@ msgstr ""
 msgid "Např.: „130 00“"
 msgstr ""
 
-#: forms.py:202 models/company.py:32 models/company.py:33 models/invoice.py:97
+#: forms.py:202 models/company.py:32 models/company.py:33 models/invoice.py:98
 msgid "Organizace"
 msgstr ""
 
@@ -1121,7 +1121,7 @@ msgstr ""
 msgid "povolit zapisování jízd"
 msgstr ""
 
-#: models/company.py:38 models/invoice.py:117
+#: models/company.py:38 models/invoice.py:118
 msgid "Název organizace"
 msgstr ""
 
@@ -1408,7 +1408,7 @@ msgid "soutěž na pravidelnost"
 msgstr ""
 
 #: models/competition.py:419
-msgid "soutěž na ujdenou/uběhnutou vzdálenost"
+msgid "soutěž na ušlou/uběhnutou vzdálenost"
 msgstr ""
 
 #: models/competition.py:420
@@ -1475,6 +1475,16 @@ msgstr ""
 msgid "Dělitel"
 msgstr ""
 
+#: models/competition_result.py:86 models/gpxfile.py:126 models/invoice.py:55
+#: models/user_attendance.py:122
+msgid "Datum vytvoření"
+msgstr ""
+
+#: models/competition_result.py:91 models/gpxfile.py:131
+#: models/user_attendance.py:127
+msgid "Datum poslední změny"
+msgstr ""
+
 #: models/gpxfile.py:62 models/trip.py:37
 msgid "Tam"
 msgstr ""
@@ -1513,14 +1523,6 @@ msgstr ""
 
 #: models/gpxfile.py:121
 msgid "Nahráno z aplikace"
-msgstr ""
-
-#: models/gpxfile.py:126 models/invoice.py:55 models/user_attendance.py:122
-msgid "Datum vytvoření"
-msgstr ""
-
-#: models/gpxfile.py:131 models/user_attendance.py:127
-msgid "Datum poslední změny"
 msgstr ""
 
 #: models/gpxfile.py:136
@@ -1568,41 +1570,41 @@ msgstr ""
 msgid "PDF faktury"
 msgstr ""
 
-#: models/invoice.py:108
+#: models/invoice.py:109
 msgid "Pořadové číslo faktury"
 msgstr ""
 
-#: models/invoice.py:112
+#: models/invoice.py:113
 msgid "Číslo objednávky (nepovinné)"
 msgstr ""
 
-#: models/invoice.py:118
+#: models/invoice.py:119
 msgid ""
 "Název organizace. Pokud je prázdné, vyplní se všechny údaje podle nastavené "
 "organizace."
 msgstr ""
 
-#: models/invoice.py:126
+#: models/invoice.py:127
 msgid "IČO organizace"
 msgstr ""
 
-#: models/invoice.py:131
+#: models/invoice.py:132
 msgid "DIČ organizace"
 msgstr ""
 
-#: models/invoice.py:142
+#: models/invoice.py:143
 msgid "Variabilní symbol"
 msgstr ""
 
-#: models/invoice.py:143
+#: models/invoice.py:144
 msgid "Variabilní symbol faktury"
 msgstr ""
 
-#: models/invoice.py:193
+#: models/invoice.py:194
 msgid "Došla číselná řada faktury"
 msgstr ""
 
-#: models/invoice.py:221
+#: models/invoice.py:222
 msgid "Neexistuje žádná nefakturovaná platba"
 msgstr ""
 
