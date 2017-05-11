@@ -533,7 +533,9 @@ class AnswerForm(forms.ModelForm):
         ret_val = super(AnswerForm, self).__init__(*args, **kwargs)
         if question.comment_type:
             if question.comment_type == 'link':
-                self.fields['comment'] = forms.URLField()
+                self.fields['comment'] = forms.URLField(
+                    help_text=_("Adresa URL včetně úvodního http/https"),
+                )
             if question.comment_type == 'one-liner':
                 self.fields['comment'] = forms.CharField()
             self.fields['comment'].label = ""
