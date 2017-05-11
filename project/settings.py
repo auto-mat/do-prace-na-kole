@@ -130,6 +130,7 @@ STATICFILES_FINDERS = (
 SECRET_KEY = os.environ.get('DPNK_SECRET_KEY')
 MIDDLEWARE_CLASSES = [
     # 'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
@@ -137,7 +138,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'subdomains.middleware.SubdomainMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -328,7 +328,13 @@ LEAFLET_CONFIG = {
     'SPATIAL_EXTENT': [11.953, 48.517, 19.028, 51.097],
 }
 
-ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
+CORS_ORIGIN_WHITELIST = [
+    "dpnk.dopracenakole.cz",
+    "dpnk2016.dopracenakole.cz",
+    "skoly2016.dopracenakole.cz",
+    "www.dopracenakole.cz",
+    "dopracenakole.cz",
+]
 
 DBBACKUP_BACKUP_DIRECTORY = normpath(PROJECT_ROOT, 'db_backup')
 
