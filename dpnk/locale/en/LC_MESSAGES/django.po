@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Do prace na kole\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-05 14:52+0200\n"
+"POT-Creation-Date: 2017-05-11 12:08+0200\n"
 "PO-Revision-Date: 2017-05-05 14:52+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: en <technik@auto-mat.cz>\n"
@@ -119,43 +119,43 @@ msgstr "Sending of %s notifications was planned"
 msgid "Odeslat notifikaci nevyplněných jízd"
 msgstr "Send unfilled rides notification"
 
-#: admin.py:231 admin.py:240
+#: admin.py:232 admin.py:241
 msgid "Pobočky"
 msgstr "Subdivisions"
 
-#: admin.py:358
+#: admin.py:359
 msgid "Počet týmů ve všech kampaních"
 msgstr "Teams in all campaigns"
 
-#: admin.py:364
+#: admin.py:365
 msgid "Počet soutěžících ve vyfiltrované kampani"
 msgstr "Teams in filtered campaign"
 
-#: admin.py:373 models/competition.py:57 models/team.py:47
+#: admin.py:374 models/competition.py:57 models/team.py:47
 msgid "Týmy"
 msgstr "Teams"
 
-#: admin.py:421
+#: admin.py:422
 msgid "Není vnitrofiremní soutěž?"
 msgstr "Isn't company competition?"
 
-#: admin.py:457 views.py:1155
+#: admin.py:458 views.py:1155
 msgid "Výsledky soutěže"
 msgstr "Competition results"
 
-#: admin.py:462 models/questionnaire.py:209
+#: admin.py:463 models/questionnaire.py:209
 msgid "Odpovědi"
 msgstr "Answers"
 
-#: admin.py:467 models/competition.py:51
+#: admin.py:468 models/competition.py:51
 msgid "Dotazník"
 msgstr "Questionnaire"
 
-#: admin.py:472 views.py:1861
+#: admin.py:473 views.py:1861
 msgid "Losování"
 msgstr "Drawing"
 
-#: admin.py:505
+#: admin.py:506
 msgid ""
 "Tento tým není možné zvolit, protože by měl příliš mnoho odsouhlasených "
 "členů."
@@ -163,67 +163,67 @@ msgstr ""
 "This team cannot be selected as it has reached the maximum of approved "
 "members. "
 
-#: admin.py:512
+#: admin.py:513
 msgid "Není možné odstranit tým učastníkovi kampaně, který již zaplatil"
 msgstr "If the user attendance has paid, it is not possible to erase team"
 
-#: admin.py:678
+#: admin.py:679
 msgid "Tento e-mail je již v systému použit."
 msgstr "This e-mail is already registered in our system."
 
-#: admin.py:711
+#: admin.py:712
 msgid "Nemá uživatelský profil?"
 msgstr "Hasn't user profile?"
 
-#: admin.py:843
+#: admin.py:846
 msgid "Nemá nahranou trasu?"
 msgstr "Hasn't uploaded track?"
 
-#: admin.py:844
+#: admin.py:847
 msgid "Nemá přiřazené vouchery?"
 msgstr "Hasn't assigned vouchers?"
 
-#: admin.py:845
+#: admin.py:848
 msgid "Nemá žádné cesty?"
 msgstr "Hasn't any trip?"
 
-#: admin.py:846
+#: admin.py:849
 msgid "Uživatel nemá zvolený tým?"
 msgstr "User hasn't chosen team?"
 
-#: admin.py:858
+#: admin.py:861
 msgid "Datum realizace platby"
 msgstr "Payment realization date"
 
-#: admin.py:861
+#: admin.py:864
 msgid "Posílá se triko?"
 msgstr "Does t-shirt ship?"
 
-#: admin.py:907 admin.py:1038
+#: admin.py:910 admin.py:1041
 msgid "Uživatel"
 msgstr "User"
 
-#: admin.py:989 templates/submenu_team.html:7
+#: admin.py:992 templates/submenu_team.html:7
 msgid "Členové"
 msgstr "Members"
 
-#: admin.py:1184
+#: admin.py:1187
 msgid "vyhodnocení odpovědí"
 msgstr "answer evaluation"
 
-#: admin.py:1371
+#: admin.py:1385
 msgid "Nemá účast v kampani?"
 msgstr "Hasn't user attendance?"
 
-#: admin.py:1461
+#: admin.py:1475
 msgid "Nezaplacené faktury"
 msgstr "Hasn't paid invoices?"
 
-#: admin.py:1473 templates/company_admin/invoices.html:10
+#: admin.py:1487 templates/company_admin/invoices.html:10
 msgid "Počet plateb"
 msgstr "Payment count"
 
-#: admin.py:1531
+#: admin.py:1545
 msgid "Nemá účast v kampani"
 msgstr "Hasn't user attendance?"
 
@@ -628,7 +628,7 @@ msgid "%s - připomenutí nevyplněných jízd"
 msgstr "%s - reminder of unfilled rides"
 
 #: filters.py:31 forms.py:189 forms.py:474 models/competition.py:73
-#: models/invoice.py:103 models/phase.py:49 models/team.py:74
+#: models/invoice.py:104 models/phase.py:49 models/team.py:74
 #: models/user_attendance.py:59
 msgid "Kampaň"
 msgstr "Campaign"
@@ -705,7 +705,7 @@ msgstr "E-mail (username)"
 msgid "Např.: „130 00“"
 msgstr "For example 130 00"
 
-#: forms.py:202 models/company.py:32 models/company.py:33 models/invoice.py:97
+#: forms.py:202 models/company.py:32 models/company.py:33 models/invoice.py:98
 msgid "Organizace"
 msgstr "Organization"
 
@@ -1217,7 +1217,7 @@ msgstr "Towns in the campaign"
 msgid "povolit zapisování jízd"
 msgstr "enable entering trips"
 
-#: models/company.py:38 models/invoice.py:117
+#: models/company.py:38 models/invoice.py:118
 msgid "Název organizace"
 msgstr "Name of organization"
 
@@ -1521,7 +1521,7 @@ msgid "soutěž na pravidelnost"
 msgstr "regularity competition"
 
 #: models/competition.py:419
-msgid "soutěž na ujdenou/uběhnutou vzdálenost"
+msgid "soutěž na ušlou/uběhnutou vzdálenost"
 msgstr "competition by ran/walked distance"
 
 #: models/competition.py:420
@@ -1588,6 +1588,16 @@ msgstr "Divident"
 msgid "Dělitel"
 msgstr "Divisor"
 
+#: models/competition_result.py:86 models/gpxfile.py:126 models/invoice.py:55
+#: models/user_attendance.py:122
+msgid "Datum vytvoření"
+msgstr "Created"
+
+#: models/competition_result.py:91 models/gpxfile.py:131
+#: models/user_attendance.py:127
+msgid "Datum poslední změny"
+msgstr "Last change date"
+
 #: models/gpxfile.py:62 models/trip.py:37
 msgid "Tam"
 msgstr "There"
@@ -1627,14 +1637,6 @@ msgstr "Transportation mode"
 #: models/gpxfile.py:121
 msgid "Nahráno z aplikace"
 msgstr "Uploaded from application"
-
-#: models/gpxfile.py:126 models/invoice.py:55 models/user_attendance.py:122
-msgid "Datum vytvoření"
-msgstr "Created"
-
-#: models/gpxfile.py:131 models/user_attendance.py:127
-msgid "Datum poslední změny"
-msgstr "Last change date"
 
 #: models/gpxfile.py:136
 msgid "Datum posledního nahrátí do ECC"
@@ -1682,42 +1684,42 @@ msgstr "Total amount"
 msgid "PDF faktury"
 msgstr "PDF invoice"
 
-#: models/invoice.py:108
+#: models/invoice.py:109
 msgid "Pořadové číslo faktury"
 msgstr "Invoice sequence number"
 
-#: models/invoice.py:112
+#: models/invoice.py:113
 msgid "Číslo objednávky (nepovinné)"
 msgstr "Order number (optional)"
 
-#: models/invoice.py:118
+#: models/invoice.py:119
 msgid ""
 "Název organizace. Pokud je prázdné, vyplní se všechny údaje podle nastavené "
 "organizace."
 msgstr ""
 "Organization name. If blank, all company properties are copied to invoice"
 
-#: models/invoice.py:126
+#: models/invoice.py:127
 msgid "IČO organizace"
 msgstr "Organization IČO"
 
-#: models/invoice.py:131
+#: models/invoice.py:132
 msgid "DIČ organizace"
 msgstr "Organization DIČ"
 
-#: models/invoice.py:142
+#: models/invoice.py:143
 msgid "Variabilní symbol"
 msgstr "Variable symbol"
 
-#: models/invoice.py:143
+#: models/invoice.py:144
 msgid "Variabilní symbol faktury"
 msgstr "Variable symbol of the invoice"
 
-#: models/invoice.py:193
+#: models/invoice.py:194
 msgid "Došla číselná řada faktury"
 msgstr "Invoice number sequence ran out"
 
-#: models/invoice.py:221
+#: models/invoice.py:222
 msgid "Neexistuje žádná nefakturovaná platba"
 msgstr "No payment without invoice"
 
