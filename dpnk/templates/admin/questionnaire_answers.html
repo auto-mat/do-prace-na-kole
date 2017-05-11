@@ -30,11 +30,12 @@ Soutěžící: {{ competitor }}<br/>
     {% if a.question.with_attachment %}
       Příloha:
       {% thumbnail a.attachment "250x250" as foto_thumb %}
+      {% if foto_thumb %}
          <a href="{{ settings.SITE_URL}}{{ a.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
          <img src="{{ settings.SITE_URL}}{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
-      {% empty %}
+      {% else %}
          <a href="{{ media }}/{{ a.attachment }}" target="_blank">{{ a.attachment }}</a>
-      {% endthumbnail %}
+      {% endif %}
     {% endif %}
   </li>
   {% endfor %}

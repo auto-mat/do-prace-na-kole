@@ -77,7 +77,7 @@ django-wysiwyg-redactor==0.5.1
 djangorestframework==3.6.2
 djangorestframework-gis==0.11
 docopt==0.6.2
--e git+https://github.com/mariocesar/sorl-thumbnail.git@7e61948e7a987714097ba50a54120f584db9c843#egg=sorl_thumbnail
+easy-thumbnails==2.4.1
 enum-compat==0.0.2
 fiobank==1.2.0
 flower==0.9.1
