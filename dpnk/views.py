@@ -1157,7 +1157,7 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
 
 class CompetitionsView(AdmissionsView):
     title = _("Výsledky pravidelnostních a výkonnostních soutěží")
-    competition_types = ('length_by_foot', 'length', 'frequency')
+    competition_types = ('length', 'frequency')
     template_name = "registration/competitions.html"
 
 

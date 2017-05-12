@@ -34,6 +34,7 @@ from redactor.widgets import RedactorEditor
 
 from .campaign import Campaign
 from .city import City
+from .commute_mode import CommuteMode
 from .company import Company
 from .team import Team, TeamName
 from .user_attendance import UserAttendance
@@ -41,13 +42,16 @@ from .user_profile import UserProfile
 from .. import util
 
 
+def default_commute_modes():
+    return CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot'))
+
+
 class Competition(models.Model):
     """Soutěžní kategorie"""
 
     CTYPES = (
-        ('length_by_foot', _("Uběhnutá/ujdená vzdálenost")),
-        ('length', _(u"Ujetá vzdálenost")),
-        ('frequency', _(u"Pravidelnost jízd na kole")),
+        ('length', _("Výkonnost")),
+        ('frequency', _("Pravidelnost")),
         ('questionnaire', _(u"Dotazník")),
     )
 
@@ -117,6 +121,12 @@ class Competition(models.Model):
         choices=CCOMPETITORTYPES,
         max_length=16,
         null=False,
+    )
+    commute_modes = models.ManyToManyField(
+        CommuteMode,
+        verbose_name=_("Počítané módy dopravy"),
+        blank=True,
+        default=default_commute_modes,
     )
     user_attendance_competitors = models.ManyToManyField(
         UserAttendance,
@@ -332,7 +342,6 @@ class Competition(models.Model):
 
         columns.append(
             {
-                'length_by_foot': ('result_value', 'get_result', _("Ki&shy;lo&shy;me&shy;trů%s") % average_string),
                 'length': ('result_value', 'get_result', _("Ki&shy;lo&shy;me&shy;trů%s") % average_string),
                 'frequency': ('result_value', 'get_result_percentage', _("%% jízd%s") % average_string),
                 'questionnaire': ('result_value', 'get_result', _("Bo&shy;dů%s") % average_string),
@@ -342,7 +351,7 @@ class Competition(models.Model):
         if self.competition_type == 'frequency':
             columns.append(('result_divident', 'result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd")))
             columns.append(('result_divisor', 'result_divisor', _("Cel&shy;ko&shy;vý po&shy;čet cest")))
-        elif self.competition_type in ('length', 'length_by_foot') and self.competitor_type == 'team':
+        elif self.competition_type == 'length' and self.competitor_type == 'team':
             columns.append(('result_divident', 'result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů")))
 
         if self.competitor_type not in ('single_user', 'liberos', 'company'):
@@ -416,7 +425,6 @@ class Competition(models.Model):
         CTYPES_STRINGS = {
             'questionnaire': _('dotazník'),
             'frequency': _('soutěž na pravidelnost'),
-            'length_by_foot': _('soutěž na ušlou/uběhnutou vzdálenost'),
             'length': _('soutěž na vzdálenost'),
         }
         CCOMPETITORTYPES_STRINGS = {
@@ -453,6 +461,11 @@ class Competition(models.Model):
         else:
             sex_string = ""
 
+        if self.competition_type != 'questionnaire' and self.commute_modes.exists():
+            commute_modes_string = " pro cesty s prostředky %s" % ", ".join(self.commute_modes.values_list('name', flat=True))
+        else:
+            commute_modes_string = ""
+
         return string_concat(
             company_string_before, " ",
             CTYPES_STRINGS[self.competition_type], " ",
@@ -460,6 +473,7 @@ class Competition(models.Model):
             company_string_after, " ",
             city_string, " ",
             sex_string,
+            commute_modes_string,
         )
 
     def __str__(self):

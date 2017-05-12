@@ -622,7 +622,11 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
 
     def test_dpnk_competitions_page_change(self):
         response = self.client.get(reverse('competitions'))
-        self.assertContains(response, '<i>soutěž na vzdálenost jednotlivců  ve městě Testing city pro muže</i>', html=True)
+        self.assertContains(
+            response,
+            '<i>soutěž na vzdálenost jednotlivců  ve městě Testing city pro muže pro cesty s prostředky Kolo, Chůze/běh</i>',
+            html=True,
+        )
         self.assertContains(response, '<h4>Výkonnost společností</h4>', html=True)
         self.assertContains(response, '<a href="/vysledky_souteze/FQ-LB/#row-1">Výsledky</a>', html=True)
 

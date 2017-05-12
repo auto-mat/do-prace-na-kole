@@ -24,7 +24,7 @@ from itertools import cycle
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from dpnk import results, util
+from dpnk import models, results, util
 from dpnk.test.util import print_response  # noqa
 from dpnk.test.util import ClearCacheMixin, DenormMixin
 
@@ -351,6 +351,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
             campaign=testing_campaign,
             date_from=datetime.date(2017, 4, 3),
             date_to=datetime.date(2017, 5, 23),
+            commute_modes=models.CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot')),
         )
         result = results.get_userprofile_length([self.user_attendance], competition)
         self.assertEquals(result, 5.0)
@@ -369,6 +370,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
             campaign=testing_campaign,
             date_from=datetime.date(2017, 4, 3),
             date_to=datetime.date(2017, 5, 23),
+            commute_modes=models.CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot')),
         )
 
         util.rebuild_denorm_models([self.user_attendance])
@@ -390,7 +392,6 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         result = self.user_attendance.team.get_rides_count_denorm
         self.assertEquals(result, 3)
 
-        # import pudb; pudb.set_trace()
         result = self.user_attendance.team.get_working_trips_count()
         self.assertEquals(result, 98)
 
@@ -406,11 +407,12 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
     def test_get_userprofile_length_by_foot(self):
         competition = mommy.make(
             'Competition',
-            competition_type='length_by_foot',
+            competition_type='length',
             competitor_type='single_user',
             campaign=testing_campaign,
             date_from=datetime.date(2017, 4, 1),
             date_to=datetime.date(2017, 5, 31),
+            commute_modes=models.CommuteMode.objects.filter(slug__in=('by_foot',)),
         )
         result = results.get_userprofile_length([self.user_attendance], competition)
         self.assertEquals(result, 1.0)

@@ -22,6 +22,8 @@ import datetime
 from django.test import TestCase
 from django.test.utils import override_settings
 
+from dpnk import models
+
 from model_mommy import mommy
 
 
@@ -464,6 +466,15 @@ class TestTypeString(TestCase):
             company__name="Testing company",
         )
         self.assertEquals(str(competition.type_string()), "vnitrofiremní soutěž na pravidelnost týmů organizace Testing company  ")
+
+    def test_team_frequency_commute_modes(self):
+        competition = mommy.make(
+            'dpnk.Competition',
+            competitor_type="team",
+            competition_type="frequency",
+            commute_modes=models.CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot')),
+        )
+        self.assertEquals(str(competition.type_string()), " soutěž na pravidelnost týmů    pro cesty s prostředky Kolo, Chůze/běh")
 
     def test_company_length_city(self):
         competition = mommy.make(
