@@ -304,7 +304,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         )
         mommy.make(
             'Trip',
-            commute_mode='bicycle',
+            commute_mode_id=1,
             distance='1',
             direction='trip_to',
             user_attendance=self.user_attendance,
@@ -312,7 +312,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         )
         mommy.make(
             'Trip',
-            commute_mode='bicycle',
+            commute_mode_id=1,
             distance='3',
             direction='trip_from',
             date='2017-05-01',
@@ -320,7 +320,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         )
         mommy.make(
             'Trip',
-            commute_mode='no_work',
+            commute_mode_id=4,
             direction=cycle(['trip_to', 'trip_from']),
             date='2017-05-02',
             user_attendance=self.user_attendance,
@@ -328,7 +328,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         )
         mommy.make(
             'Trip',
-            commute_mode='by_foot',
+            commute_mode_id=2,
             distance='1',
             direction='trip_from',
             date='2017-05-03',

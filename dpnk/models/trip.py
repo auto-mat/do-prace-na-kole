@@ -38,12 +38,6 @@ class Trip(models.Model):
         ('trip_from', _(u"Zpět")),
     ]
     DIRECTIONS_DICT = dict(DIRECTIONS)
-    MODES = [
-        ('bicycle', _("Kolo")),
-        ('by_foot', _("Chůze/běh")),
-        ('by_other_vehicle', _("Jinak")),
-        ('no_work', _("Žádná cesta")),
-    ]
 
     class Meta:
         verbose_name = _("Jízda")
@@ -72,11 +66,11 @@ class Trip(models.Model):
         default=datetime.date.today,
         null=False,
     )
-    commute_mode = models.CharField(
-        verbose_name=_(u"Mód dopravy"),
-        choices=MODES,
-        max_length=20,
-        default=None,
+    commute_mode = models.ForeignKey(
+        'CommuteMode',
+        verbose_name=_("Mód dopravy"),
+        on_delete=models.deletion.CASCADE,
+        default=1,
         null=False,
         blank=False,
     )

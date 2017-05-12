@@ -137,7 +137,7 @@ def track_post(gpx_file, token=None, force=False):
     if not force and gpx_file.ecc_last_upload:  # TODO: reload the track if it changed since then
         return False
 
-    if gpx_file.trip and gpx_file.trip.commute_mode != 'bicycle':
+    if gpx_file.trip and gpx_file.trip.commute_mode.slug != 'bicycle':
         return False
 
     if not token:

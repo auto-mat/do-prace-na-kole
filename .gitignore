@@ -7,6 +7,7 @@
 *.orig
 *__pycache__
 /dpnk/static/bow
+/dpnk/static/CACHE
 /sql/
 /dpnk.log*
 /dpnk-timelog.log

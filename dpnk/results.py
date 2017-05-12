@@ -175,7 +175,7 @@ def get_rides_count(user_attendance, competition, day=None):
     if not day:
         day = util.today()
     days = util.days(competition, day)
-    return Trip.objects.filter(user_attendance=user_attendance, commute_mode__in=('bicycle', 'by_foot'), date__in=days).count()
+    return Trip.objects.filter(user_attendance=user_attendance, commute_mode__slug__in=('bicycle', 'by_foot'), date__in=days).count()
 
 
 def get_minimum_rides_base_proportional(competition, day):
@@ -191,10 +191,10 @@ def get_working_trips_count(user_attendance, competition=None, day=None):
     working_days = util.working_days(competition, day)
     trips_in_non_working_day = Trip.objects.filter(
         user_attendance=user_attendance,
-        commute_mode__in=('bicycle', 'by_foot', 'by_other_vehicle'),
+        commute_mode__does_count=True,
         date__in=non_working_days,
     ).count()
-    non_working_rides_in_working_day = Trip.objects.filter(user_attendance=user_attendance, commute_mode='no_work', date__in=working_days).count()
+    non_working_rides_in_working_day = Trip.objects.filter(user_attendance=user_attendance, commute_mode__does_count=False, date__in=working_days).count()
     working_days_count = len(util.working_days(competition))
     working_trips_count = working_days_count * 2 + trips_in_non_working_day - non_working_rides_in_working_day
     return max(working_trips_count, get_minimum_rides_base_proportional(competition, day))
@@ -224,7 +224,7 @@ def get_userprofile_nonreduced_length(user_attendances, competition):
         raise NotImplementedError("Unknown competition_type %s" % competition.competition_type)
     return Trip.objects.filter(
         user_attendance__in=user_attendances,
-        commute_mode__in=commute_modes,
+        commute_mode__slug__in=commute_modes,
         date__in=days,
     ).aggregate(Sum('distance'))['distance__sum'] or 0
 

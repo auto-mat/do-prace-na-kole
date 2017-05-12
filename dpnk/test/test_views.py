@@ -1537,7 +1537,7 @@ class TrackViewTests(ViewsLogon):
             user_attendance=self.user_attendance,
             date=datetime.date(year=2010, month=11, day=20),
             direction='trip_from',
-            commute_mode='bicycle',
+            commute_mode_id=1,
         )
         gpxfile = mommy.make(
             models.GpxFile,

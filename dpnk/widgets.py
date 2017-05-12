@@ -136,7 +136,7 @@ class CommuteModeRenderer(object):
 
     def render(self):
         # template widget rendering or crispy forms are not used for performance reasons
-        # please bear in mind that this part of code has to be quick as possible
+        # please bear in mind that this part of code has to be as quick as possible
         widget = '<fieldset class="controls btn-group" role="group">'
         counter = 0
         for choice in self.choices:
@@ -146,7 +146,7 @@ class CommuteModeRenderer(object):
                 '   <input type="radio" {checked} name="{name}" id="id_{name}_{counter}" value="{choice}">' \
                 '   <label for="id_{name}_{counter}">{choice_name}</label>' \
                 '</div>'.format(
-                    checked='checked="checked"' if choice[0] == self.value else '',
+                    checked='checked="checked"' if str(choice[0]) == str(self.value) else '',
                     counter=counter,
                     name=self.name,
                     choice=choice[0],

@@ -31,6 +31,7 @@ from .address import Address, get_address_string
 from .campaign import Campaign
 from .city import City
 from .city_in_campaign import CityInCampaign
+from .commute_mode import CommuteMode
 from .company import Company
 from .company_admin import CompanyAdmin
 from .competition import Competition, CompetitionForm
@@ -55,8 +56,9 @@ __all__ = (
     Campaign,
     CityInCampaign,
     City,
-    CompanyAdmin,
+    CommuteMode,
     Company,
+    CompanyAdmin,
     Competition,
     CompetitionForm,
     CompetitionResult,

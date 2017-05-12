@@ -30,7 +30,7 @@
       {% endif %}
       </p>
       <p>
-      {% if competition.competition_type == 'length' or competition.competition_type == 'length_by_foot' %}
+      {% if competition.competition_type == 'length' %}
         {{ competition.my_results.result|floatformat:-1|intcomma }}&nbsp;km
         {% if competition.competitor_type == 'team' %}
            </p><p>

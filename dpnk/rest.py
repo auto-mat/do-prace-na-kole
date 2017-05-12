@@ -24,7 +24,7 @@ from rest_framework import permissions, routers, serializers, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.reverse import reverse
 
-from .models import Campaign, City, Company, Competition, CompetitionResult, GpxFile, Subsidiary, Team, Trip, UserAttendance
+from .models import Campaign, City, CommuteMode, Company, Competition, CompetitionResult, GpxFile, Subsidiary, Team, Trip, UserAttendance
 
 
 class DuplicateGPX(APIException):
@@ -60,10 +60,12 @@ class GpxFileSerializer(serializers.ModelSerializer):
         source='duration',
         help_text='Duration of track in seconds',
     )
-    commuteMode = serializers.ChoiceField(
+    commuteMode = serializers.SlugRelatedField(
+        many=False,
         required=False,
+        slug_field='slug',
         source='commute_mode',
-        choices=Trip.MODES,
+        queryset=CommuteMode.objects.all(),
         help_text='Transport mode of the trip',
     )
     sourceApplication = serializers.CharField(

@@ -942,13 +942,15 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
 
     def get_initial(self):
         distance = self.user_attendance.get_distance(request=self.request)
+        no_work = models.CommuteMode.objects.get(slug='no_work')
+        by_other_vehicle = models.CommuteMode.objects.get(slug='by_other_vehicle')
         return [
             {
                 'distance': distance,
                 'date': trip[0],
                 'direction': trip[1],
                 'user_attendance': self.user_attendance,
-                'commute_mode': 'by_other_vehicle' if util.working_day(trip[0]) else 'no_work',
+                'commute_mode': by_other_vehicle if util.working_day(trip[0]) else no_work,
             } for trip in self.uncreated_trips
         ]
 
@@ -970,6 +972,20 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
 
         formset.forms = sorted(formset.forms, key=lambda form: form.initial['direction'] or form.instance.direction, reverse=True)
         formset.forms = sorted(formset.forms, key=lambda form: form.initial['date'] or form.instance.date, reverse=True)
+
+        # This is hack, to get commute mode queryset cached:
+        qs = models.CommuteMode.objects.all()
+        cache = [p for p in qs]
+
+        class CacheQuerysetAll(object):
+            def __iter__(self):
+                return iter(cache)
+
+            def _prefetch_related_lookups(self):
+                return False
+        qs.all = CacheQuerysetAll
+        for form in formset.forms:
+            form.fields['commute_mode'].queryset = qs
         return formset
 
     title = _(u'Moje jízdy')
@@ -994,6 +1010,7 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
         context_data['city_slug'] = city_slug
         context_data['map_city_slug'] = 'mapa' if city_slug == 'praha' else city_slug
         context_data['competition_phase'] = campaign.phase("competition")
+        context_data['commute_modes'] = models.CommuteMode.objects.all()
         return context_data
 
     def get(self, request, *args, **kwargs):
@@ -1691,33 +1708,33 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
 
 
 def distance_all_modes(trips):
-    return trips.filter(commute_mode__in=('bicycle', 'by_foot')).aggregate(
+    return trips.filter(commute_mode__slug__in=('bicycle', 'by_foot')).aggregate(
         distance__sum=Coalesce(Sum("distance"), 0.0),
         count__sum=Coalesce(Count("id"), 0),
         count_bicycle=Sum(
             Case(
-                When(commute_mode='bicycle', then=1),
+                When(commute_mode__slug='bicycle', then=1),
                 output_field=IntegerField(),
                 default=0,
             ),
         ),
         distance_bicycle=Sum(
             Case(
-                When(commute_mode='bicycle', then=F('distance')),
+                When(commute_mode__slug='bicycle', then=F('distance')),
                 output_field=FloatField(),
                 default=0,
             ),
         ),
         count_foot=Sum(
             Case(
-                When(commute_mode='by_foot', then=1),
+                When(commute_mode__slug='by_foot', then=1),
                 output_field=IntegerField(),
                 default=0,
             ),
         ),
         distance_foot=Sum(
             Case(
-                When(commute_mode='by_foot', then=F('distance')),
+                When(commute_mode__slug='by_foot', then=F('distance')),
                 output_field=FloatField(),
                 default=0,
             ),
