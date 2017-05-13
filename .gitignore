@@ -25,5 +25,8 @@
 /dpnk/static/css/style.css
 /response.html
 /dpnk/test_files/DSC00002.JPG.*_*.jpg
+/dpnk/test_files/cache
+/dpnk/test_files/csv_delivery
+/dpnk/test_files/gpx_tracks
 /media/
 docker.env
