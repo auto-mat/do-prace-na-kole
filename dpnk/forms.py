@@ -789,7 +789,7 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
 
 class TripForm(forms.ModelForm):
     distance = CommaFloatField(
-        label=_("Vzdálenost"),
+        label=_("Vzdálenost (km)"),
         required=False,
     )
 

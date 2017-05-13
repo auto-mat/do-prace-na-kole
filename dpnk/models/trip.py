@@ -68,7 +68,7 @@ class Trip(models.Model):
     )
     commute_mode = models.ForeignKey(
         'CommuteMode',
-        verbose_name=_("Mód dopravy"),
+        verbose_name=_("Dopravní prostředek"),
         on_delete=models.deletion.CASCADE,
         default=1,
         null=False,
