@@ -54,7 +54,7 @@ class TestSendUnfilledRidesNotification(TestCase):
                 mommy.make(
                     'Trip',
                     date='2017-05-02',
-                    commute_mode='bicycle',
+                    commute_mode_id=1,
                     direction='trip_to',
                 ),
             ],
@@ -85,7 +85,7 @@ class TestSendUnfilledRidesNotification(TestCase):
                 mommy.make(
                     'Trip',
                     date='2017-05-03',
-                    commute_mode='bicycle',
+                    commute_mode_id=1,
                     direction='trip_to',
                 ),
             ],
@@ -113,7 +113,7 @@ class TestSendUnfilledRidesNotification(TestCase):
                 mommy.make(
                     'Trip',
                     date='2017-05-02',
-                    commute_mode='bicycle',
+                    commute_mode_id=1,
                     direction='trip_to',
                 ),
             ],
@@ -134,7 +134,7 @@ class TestSendUnfilledRidesNotification(TestCase):
                 mommy.make(
                     'Trip',
                     date='2017-05-02',
-                    commute_mode='bicycle',
+                    commute_mode_id=1,
                     direction='trip_to',
                 ),
             ],

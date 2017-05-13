@@ -54,7 +54,7 @@ from leaflet.admin import LeafletGeoAdmin, LeafletGeoAdminMixin
 
 from massadmin.massadmin import mass_change_selected
 
-from modeltranslation.admin import TranslationTabularInline
+from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 
 from nested_inline.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 
@@ -1499,6 +1499,7 @@ class GpxFileAdmin(LeafletGeoAdmin):
         'file',
         'direction',
         'trip',
+        'commute_mode',
         'user_attendance',
         'from_application',
         'source_application',
@@ -1543,6 +1544,15 @@ class VoucherAdmin(ImportMixin, admin.ModelAdmin):
     list_display = ('id', 'voucher_type', 'token', 'user_attendance', 'campaign')
     raw_id_fields = ('user_attendance',)
     list_filter = [CampaignFilter, 'voucher_type', isnull_filter('user_attendance', _("Nemá účast v kampani"))]
+
+
+@admin.register(models.CommuteMode)
+class CommuteModeAdmin(SortableAdminMixin, TranslationAdmin):
+    list_display = (
+        'name',
+        'slug',
+        'does_count',
+    )
 
 
 @admin.register(Session)

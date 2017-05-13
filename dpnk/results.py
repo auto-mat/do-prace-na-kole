@@ -171,11 +171,23 @@ def get_competitions_with_info(user_attendance, competition_types=None):
     return competitions
 
 
-def get_rides_count(user_attendance, competition, day=None):
+def get_trips(user_attendances, competition, day=None):
     if not day:
         day = util.today()
     days = util.days(competition, day)
-    return Trip.objects.filter(user_attendance=user_attendance, commute_mode__in=('bicycle', 'by_foot'), date__in=days).count()
+    trip_query = Trip.objects.all()
+    if isinstance(competition, models.Phase):
+        trip_query = trip_query.filter(commute_mode__slug__in=('bicycle', 'by_foot'))
+    else:
+        trip_query = trip_query.filter(commute_mode__in=competition.commute_modes.all())
+    return trip_query.filter(
+        user_attendance__in=user_attendances,
+        date__in=days,
+    )
+
+
+def get_rides_count(user_attendance, competition, day=None):
+    return get_trips([user_attendance], competition, day).count()
 
 
 def get_minimum_rides_base_proportional(competition, day):
@@ -191,10 +203,10 @@ def get_working_trips_count(user_attendance, competition=None, day=None):
     working_days = util.working_days(competition, day)
     trips_in_non_working_day = Trip.objects.filter(
         user_attendance=user_attendance,
-        commute_mode__in=('bicycle', 'by_foot', 'by_other_vehicle'),
+        commute_mode__does_count=True,
         date__in=non_working_days,
     ).count()
-    non_working_rides_in_working_day = Trip.objects.filter(user_attendance=user_attendance, commute_mode='no_work', date__in=working_days).count()
+    non_working_rides_in_working_day = Trip.objects.filter(user_attendance=user_attendance, commute_mode__does_count=False, date__in=working_days).count()
     working_days_count = len(util.working_days(competition))
     working_trips_count = working_days_count * 2 + trips_in_non_working_day - non_working_rides_in_working_day
     return max(working_trips_count, get_minimum_rides_base_proportional(competition, day))
@@ -213,20 +225,7 @@ def get_team_frequency(user_attendancies, competition=None, day=None):
 
 
 def get_userprofile_nonreduced_length(user_attendances, competition):
-    days = util.days(competition)
-    if isinstance(competition, models.Phase):
-        commute_modes = ('bicycle', 'by_foot')
-    elif competition.competition_type == 'length':
-        commute_modes = ('bicycle', 'by_foot')
-    elif competition.competition_type == 'length_by_foot':
-        commute_modes = ('by_foot',)
-    else:
-        raise NotImplementedError("Unknown competition_type %s" % competition.competition_type)
-    return Trip.objects.filter(
-        user_attendance__in=user_attendances,
-        commute_mode__in=commute_modes,
-        date__in=days,
-    ).aggregate(Sum('distance'))['distance__sum'] or 0
+    return get_trips(user_attendances, competition).aggregate(Sum('distance'))['distance__sum'] or 0
 
 
 def get_userprofile_length(user_attendances, competition):
@@ -309,7 +308,7 @@ def recalculate_result(competition, competitor):  # noqa
 
         if competition.competition_type == 'questionnaire':
             competition_result.result = float(points_questionnaire(members, competition))
-        elif competition.competition_type in ('length', 'length_by_foot'):
+        elif competition.competition_type == 'length':
             competition_result.result_divident, competition_result.result_divisor, competition_result.result = get_team_length(team, competition)
         elif competition.competition_type == 'frequency':
             (
@@ -328,7 +327,7 @@ def recalculate_result(competition, competitor):  # noqa
 
         if competition.competition_type == 'questionnaire':
             competition_result.result = points_questionnaire([user_attendance], competition)
-        elif competition.competition_type in ('length', 'length_by_foot'):
+        elif competition.competition_type == 'length':
             competition_result.result = get_userprofile_length([user_attendance], competition)
         elif competition.competition_type == 'frequency':
             (
@@ -348,7 +347,7 @@ def recalculate_result(competition, competitor):  # noqa
 
         if competition.competition_type == 'questionnaire':
             competition_result.result = points_questionnaire(user_attendances, competition)
-        elif competition.competition_type in ('length', 'length_by_foot'):
+        elif competition.competition_type == 'length':
             competition_result.result = get_userprofile_length(user_attendances, competition)
         elif competition.competition_type == 'frequency':
             (

@@ -18,7 +18,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
-import json
 from collections import OrderedDict
 from unittest.mock import ANY, MagicMock, patch
 
@@ -39,8 +38,6 @@ from freezegun import freeze_time
 from price_level import models as price_level_models
 
 import settings
-
-from sorl.thumbnail.models import KVStore
 
 
 class PaymentSuccessTests(ClearCacheMixin, TestCase):
@@ -354,10 +351,8 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition.get().recalculate_results()
         address = reverse('questionnaire_answers_all', kwargs={'competition_slug': "quest"})
         response = self.client.get(address)
-        image_file_values = KVStore.objects.get(value__contains='[250, 188]').value
-        image_filename = json.loads(image_file_values)['name']
         self.assertContains(response, '<a href="%smodranska-rokle.gpx" target="_blank">modranska-rokle.gpx</a>' % settings.MEDIA_URL, html=True)
-        self.assertContains(response, '<img src="%s%s" width="250" height="188">' % (settings.MEDIA_URL, image_filename), html=True)
+        self.assertContains(response, '<img src="%sDSC00002.JPG.250x250_q85.jpg" width="250" height="188">' % settings.MEDIA_URL, html=True)
         self.assertContains(response, 'Answer without attachment')
         self.assertContains(response, 'Bez přílohy')
 
@@ -377,9 +372,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         )
         slumber_mock.return_value = m
         response = self.client.get(reverse('profil'))
-        image_file_values = KVStore.objects.get(value__contains='[360, 270]').value
-        image_filename = json.loads(image_file_values)['name']
-        self.assertContains(response, '<img src="%s%s" width="360" height="270">' % (settings.MEDIA_URL, image_filename), html=True)
+        self.assertContains(response, '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270">' % settings.MEDIA_URL, html=True)
         self.assertContains(response, '<a href="http://www.dopracenakole.cz/locations/testing-city">Testing city</a>', html=True)
         self.assertContains(response, 'Novinky ve městě')
         self.assertContains(response, 'Testing title')
@@ -401,13 +394,11 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         m.feed.get.return_value = []
         slumber_api.return_value = m
         response = self.client.get(reverse('profil'))
-        image_file_values = KVStore.objects.get(value__contains='[360, 270]').value
-        image_filename = json.loads(image_file_values)['name']
         self.assertContains(
             response,
             '<a href="/questionnaire_answers/quest/" title="Všechny příspěvky z této soutěže">'
-            '<img src="/media/upload/%s" width="360" height="270">'
-            '</a>' % image_filename,
+            '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270">'
+            '</a>' % settings.MEDIA_URL,
             html=True,
         )
 
@@ -427,14 +418,14 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             'form-MIN_NUM_FORMS': '0',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-id': 101,
-            'form-0-commute_mode': 'by_other_vehicle',
+            'form-0-commute_mode': 3,
             'form-0-distance': '6',
             'form-0-direction': 'trip_from',
             'form-0-user_attendance': 1115,
             'form-0-date': '2010-11-01',
             'initial-form-0-date': '2010-11-01',
             'form-1-id': 103,
-            'form-1-commute_mode': 'bicycle',
+            'form-1-commute_mode': 1,
             'form-1-distance': '34',
             'form-1-direction': 'trip_from',
             'form-1-user_attendance': 1115,
@@ -471,23 +462,22 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             'form-MIN_NUM_FORMS': '0',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-id': 101,
-            'form-0-commute_mode': 'by_foot',
+            'form-0-commute_mode': 2,
             'form-0-distance': '6,0 km',
             'form-0-direction': 'trip_from',
             'form-0-user_attendance': 1115,
             'form-0-date': '2010-11-01',
             'initial-form-0-date': '2010-11-01',
             'form-1-id': None,
-            'form-1-commute_mode': 'bicycle',
+            'form-1-commute_mode': 1,
             'form-1-distance': '34',
             'form-1-direction': 'trip_to',
             'form-1-user_attendance': 1115,
             'form-1-date': '2010-11-01',
             'initial-form-1-date': '2010-11-01',
-            'submit': 'Odeslat jízdy',
+            'submit': 'Uložit jízdy',
         }
         response = self.client.post(reverse('profil'), post_data, follow=True)
-        print_response(response)
         self.assertContains(
             response,
             '<div class="alert alert-danger alert-dismissable alert-link">'
@@ -513,28 +503,28 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             'form-MIN_NUM_FORMS': '0',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-id': 101,
-            'form-0-commute_mode': 'by_foot',
+            'form-0-commute_mode': 2,
             'form-0-distance': '28.89',
             'form-0-direction': 'trip_to',
             'form-0-user_attendance': 1115,
             'form-0-date': '2010-11-01',
             'initial-form-0-date': '2010-11-01',
             'form-2-id': '',
-            'form-2-commute_mode': 'bicycle',
+            'form-2-commute_mode': 1,
             'form-2-distance': '2,34',
             'form-2-direction': 'trip_from',
             'form-2-user_attendance': 1115,
             'form-2-date': '2010-11-01',
             'initial-form-2-date': '2010-11-01',
             'form-3-id': '',
-            'form-3-commute_mode': 'no_work',
+            'form-3-commute_mode': 4,
             'form-3-distance': '',
             'form-3-direction': 'trip_to',
             'form-3-user_attendance': 1115,
             'form-3-date': '2010-11-02',
             'initial-form-3-date': '2010-11-02',
             'form-1-id': 103,
-            'form-1-commute_mode': 'by_other_vehicle',
+            'form-1-commute_mode': 3,
             'form-1-distance': '3',
             'form-1-direction': 'trip_from',
             'form-1-user_attendance': 1116,
@@ -565,16 +555,16 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         trip1 = models.Trip.objects.get(pk=103)
         self.assertEquals(trip1.distance, 3)
         self.assertEquals(trip1.user_attendance.pk, 1115)
-        self.assertEquals(trip1.commute_mode, "by_other_vehicle")
+        self.assertEquals(trip1.commute_mode.slug, "by_other_vehicle")
         self.assertEquals(trip1.date, datetime.date(year=2010, month=11, day=2))
 
         trip2 = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=1), direction='trip_from')
-        self.assertEquals(trip2.commute_mode, 'bicycle')
+        self.assertEquals(trip2.commute_mode.slug, 'bicycle')
         self.assertEquals(trip2.user_attendance.pk, 1115)
         self.assertEquals(trip2.distance, 2.34)
 
         trip3 = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=2), direction='trip_to')
-        self.assertEquals(trip3.commute_mode, 'no_work')
+        self.assertEquals(trip3.commute_mode.slug, 'no_work')
         self.assertEquals(trip3.user_attendance.pk, 1115)
         self.assertEquals(trip3.distance, None)
 
@@ -632,7 +622,11 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
 
     def test_dpnk_competitions_page_change(self):
         response = self.client.get(reverse('competitions'))
-        self.assertContains(response, '<i>soutěž na vzdálenost jednotlivců  ve městě Testing city pro muže</i>', html=True)
+        self.assertContains(
+            response,
+            '<i>soutěž na vzdálenost jednotlivců  ve městě Testing city pro muže pro cesty s prostředky Kolo, Chůze/běh</i>',
+            html=True,
+        )
         self.assertContains(response, '<h4>Výkonnost společností</h4>', html=True)
         self.assertContains(response, '<a href="/vysledky_souteze/FQ-LB/#row-1">Výsledky</a>', html=True)
 
@@ -669,7 +663,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, "<p>1,4&nbsp;%</p>", html=True)
         self.assertContains(response, "<p>1 z 69 jízd</p>", html=True)
         self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
-        self.assertContains(response, "<p>5&nbsp;km</p>", html=True)
+        self.assertContains(response, "<p>5,0&nbsp;km</p>", html=True)
         self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
 
 

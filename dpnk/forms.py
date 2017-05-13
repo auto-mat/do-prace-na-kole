@@ -533,7 +533,9 @@ class AnswerForm(forms.ModelForm):
         ret_val = super(AnswerForm, self).__init__(*args, **kwargs)
         if question.comment_type:
             if question.comment_type == 'link':
-                self.fields['comment'] = forms.URLField()
+                self.fields['comment'] = forms.URLField(
+                    help_text=_("Adresa URL včetně úvodního http:// nebo https://"),
+                )
             if question.comment_type == 'one-liner':
                 self.fields['comment'] = forms.CharField()
             self.fields['comment'].label = ""
@@ -786,13 +788,8 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
 
 
 class TripForm(forms.ModelForm):
-    commute_mode = forms.ChoiceField(
-        label=_("Dopravní prostředek"),
-        choices=models.Trip.MODES,
-        widget=CommuteModeSelect(),
-    )
     distance = CommaFloatField(
-        label=_("Vzdálenost"),
+        label=_("Vzdálenost (km)"),
         required=False,
     )
 
@@ -818,17 +815,15 @@ class TripForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        if cleaned_data['commute_mode'] in ('bicycle', 'by_foot') and not cleaned_data.get('distance', False):
-            raise forms.ValidationError(_("Musíte vyplnit vzdálenost"))
+        if 'commute_mode' in cleaned_data:
+            commute_mode_slug = cleaned_data['commute_mode'].slug
+            if commute_mode_slug in ('bicycle', 'by_foot') and not cleaned_data.get('distance', False):
+                raise forms.ValidationError(_("Musíte vyplnit vzdálenost"))
 
-        if cleaned_data['commute_mode'] == 'by_foot' and cleaned_data['distance'] < 1.5:
-            raise forms.ValidationError(_("Pěší cesta musí mít minimálně jeden a půl kilometru"))
+            if commute_mode_slug == 'by_foot' and cleaned_data['distance'] < 1.5:
+                raise forms.ValidationError(_("Pěší cesta musí mít minimálně jeden a půl kilometru"))
 
         return cleaned_data
-
-    def __init__(self, *args, **kwargs):
-        ret = super().__init__(*args, **kwargs)
-        return ret
 
     class Meta:
         model = models.Trip
@@ -837,6 +832,7 @@ class TripForm(forms.ModelForm):
             'user_attendance': forms.HiddenInput(),
             'direction': HiddenInput(),
             'date': HiddenInput(),
+            'commute_mode': CommuteModeSelect(),
         }
 
 

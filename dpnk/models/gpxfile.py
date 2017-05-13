@@ -34,6 +34,7 @@ from django_gpxpy import gpx_parse
 
 from unidecode import unidecode
 
+from .commute_mode import CommuteMode
 from .trip import Trip
 from .user_attendance import UserAttendance
 from .util import MAP_DESCRIPTION
@@ -109,11 +110,11 @@ class GpxFile(models.Model):
         null=False,
         blank=False,
     )
-    commute_mode = models.CharField(
+    commute_mode = models.ForeignKey(
+        'CommuteMode',
         verbose_name=_("Mód dopravy"),
-        choices=Trip.MODES,
-        max_length=20,
-        default='bicycle',
+        on_delete=models.deletion.CASCADE,
+        default=1,
         null=False,
         blank=False,
     )
@@ -163,13 +164,14 @@ class GpxFile(models.Model):
 
 @receiver(pre_save, sender=GpxFile)
 def set_trip(sender, instance, *args, **kwargs):
+    by_other_vehicle = CommuteMode.objects.get(slug='by_other_vehicle')
     if not instance.trip:
         trip, created = Trip.objects.get_or_create(
             user_attendance=instance.user_attendance,
             date=instance.trip_date,
             direction=instance.direction,
             defaults={
-                'commute_mode': instance.commute_mode if util.day_active(instance.trip_date, instance.user_attendance.campaign) else 'by_other_vehicle',
+                'commute_mode': instance.commute_mode if util.day_active(instance.trip_date, instance.user_attendance.campaign) else by_other_vehicle,
             },
         )
         instance.trip = trip

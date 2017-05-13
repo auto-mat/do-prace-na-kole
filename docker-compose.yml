@@ -4,6 +4,7 @@ dpnk-web:
  image: "petrdlouhy/dopracenakole${DOCKER_POSTFIX}:${TAG}"
  ports:
   - "80:8000"
+  - "5555:5555"
  env_file:
   - ./docker.env
 

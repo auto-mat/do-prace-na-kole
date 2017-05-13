@@ -76,7 +76,7 @@ recalculate_results.short_description = _(u"Přepočítat výsledky soutěží p
 
 
 def show_distance(modeladmin, request, queryset):
-    trips_query = models.Trip.objects.filter(user_attendance__in=queryset, commute_mode__in=('bicycle', 'by_foot'))
+    trips_query = models.Trip.objects.filter(user_attendance__in=queryset, commute_mode__slug__in=('bicycle', 'by_foot'))
     length = views.distance(trips_query)
     trips = views.trips(trips_query)
     modeladmin.message_user(request, "Ujetá vzdálenost: %s Km v %s jízdách" % (length, trips))

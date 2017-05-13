@@ -235,7 +235,7 @@ INSTALLED_APPS = (
     'reportlab',
     'dbbackup',
     'related_admin',
-    'sorl.thumbnail',
+    'easy_thumbnails',
     'crispy_forms',
     'adminfilters',
     'django_bleach',
@@ -458,7 +458,6 @@ BROKER_URL = os.environ.get('DPNK_BROKER_URL', '')
 
 MIGRATION_MODULES = {
     'price_level': 'price_level_migrations',
-    'thumbnail': 'thumbnail_migrations',
 }
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -496,8 +495,6 @@ FAVICON_PATH = STATIC_URL + 'img/favicon/favicon.ico'
 PRICE_LEVEL_MODEL = 'dpnk.Campaign'
 PRICE_LEVEL_CATEGORY_CHOICES = Choices(('basic', _('Základní')), ('company', _('Pro firmy')))
 PRICE_LEVEL_CATEGORY_DEFAULT = 'basic'
-
-THUMBNAIL_FORCE_OVERWRITE = True
 
 # We have large inline fields, so it is necesarry to set this
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
