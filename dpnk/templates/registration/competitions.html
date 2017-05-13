@@ -31,17 +31,17 @@
       </p>
       <p>
       {% if competition.competition_type == 'length' %}
-        {{ competition.my_results.result|floatformat:-1|intcomma }}&nbsp;km
+        {{ competition.my_results.get_result|intcomma }}&nbsp;km
         {% if competition.competitor_type == 'team' %}
            </p><p>
            {{ competition.my_results.result_divident|floatformat:0 }}&nbsp;km {% trans "ve" %} {{ competition.my_results.result_divisor|floatformat:0 }} {% trans "lidech" %}
         {% endif %}
       {% elif competition.competition_type == 'frequency' %}
-        {{ competition.my_results.get_result_percentage |floatformat:-1|intcomma }}&nbsp;%
+        {{ competition.my_results.get_result_percentage |intcomma }}&nbsp;%
          </p><p>
         {{ competition.my_results.result_divident|floatformat:0 }} {% trans "z" %} {{ competition.my_results.result_divisor|floatformat:0 }} {% trans "jízd" %}
       {% elif competition.competition_type == 'questionnaire' %}
-        {{ competition.my_results.result|floatformat:-1|intcomma }}b.
+        {{ competition.my_results.get_result|intcomma }}b.
       {% endif %}
       </p>
    {% endif %}

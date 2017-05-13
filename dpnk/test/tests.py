@@ -663,7 +663,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, "<p>1,4&nbsp;%</p>", html=True)
         self.assertContains(response, "<p>1 z 69 jízd</p>", html=True)
         self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
-        self.assertContains(response, "<p>5&nbsp;km</p>", html=True)
+        self.assertContains(response, "<p>5,0&nbsp;km</p>", html=True)
         self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
 
 
