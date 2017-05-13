@@ -3151,8 +3151,9 @@ msgid "výsledků jednotlivých soutěží"
 msgstr "results from individual competitions"
 
 #: templates/registration/rides.html:58 templates/registration/rides.html:92
-msgid "Odeslat jízdy"
-msgstr "Send rides"
+#| msgid "Vyplnit jízdy"
+msgid "Uložit jízdy"
+msgstr "Fill in rides"
 
 #: templates/registration/rides.html:62
 msgid "Do práce"
@@ -3793,6 +3794,9 @@ msgstr "Bike service"
 #: views.py:1911 views.py:1929
 msgid "Zadat trasu"
 msgstr "Fill in track"
+
+#~ msgid "Odeslat jízdy"
+#~ msgstr "Send rides"
 
 #~ msgid "Uběhnutá/ujdená vzdálenost"
 #~ msgstr "Distance ran/walked"
@@ -4754,9 +4758,6 @@ msgstr "Fill in track"
 
 #~ msgid "Vybrat způsob platby"
 #~ msgstr "Choose a payment type"
-
-#~ msgid "Vyplnit jízdy"
-#~ msgstr "Fill in rides"
 
 #~ msgid "cca"
 #~ msgstr "c."

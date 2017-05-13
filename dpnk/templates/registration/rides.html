@@ -55,7 +55,7 @@
 {% csrf_token %}
 {{ formset.management_form }}
 {% if formset.0 %}
-<input type="submit" name="submit" value="{% trans "Odeslat jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-top">
+<input type="submit" name="submit" value="{% trans "Uložit jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-top">
 <table id="rides" class="table table-condensed">
 <thead>
    <tr class="info">
@@ -89,7 +89,7 @@
    {% endif %}
 {% endfor %}
 <tr><td colspan="2">
-<input type="submit" name="submit" value="{% trans "Odeslat jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-bottom">
+<input type="submit" name="submit" value="{% trans "Uložit jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-bottom">
 </td></tr>
 </table>
 {% else %}

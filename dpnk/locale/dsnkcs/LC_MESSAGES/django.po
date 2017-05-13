@@ -2963,7 +2963,7 @@ msgid "výsledků jednotlivých soutěží"
 msgstr ""
 
 #: templates/registration/rides.html:58 templates/registration/rides.html:92
-msgid "Odeslat jízdy"
+msgid "Uložit jízdy"
 msgstr ""
 
 #: templates/registration/rides.html:62

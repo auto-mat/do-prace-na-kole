@@ -475,7 +475,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             'form-1-user_attendance': 1115,
             'form-1-date': '2010-11-01',
             'initial-form-1-date': '2010-11-01',
-            'submit': 'Odeslat jízdy',
+            'submit': 'Uložit jízdy',
         }
         response = self.client.post(reverse('profil'), post_data, follow=True)
         self.assertContains(
