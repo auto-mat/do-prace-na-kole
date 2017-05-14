@@ -58,6 +58,7 @@ class GpxFile(models.Model):
         upload_to=normalize_gpx_filename,
         blank=True,
         null=True,
+        max_length=512,
     )
     DIRECTIONS = [
         ('trip_to', _(u"Tam")),

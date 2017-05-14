@@ -52,6 +52,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         upload_to=u'customer_sheets',
         blank=True,
         null=True,
+        max_length=512,
     )
     subsidiary = models.ForeignKey(
         'dpnk.Subsidiary',

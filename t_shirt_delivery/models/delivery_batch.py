@@ -58,12 +58,14 @@ class DeliveryBatch(models.Model):
         upload_to=u'customer_sheets',
         blank=True,
         null=True,
+        max_length=512,
     )
     tnt_order = models.FileField(
         verbose_name=_(u"CSV objednávka"),
         upload_to=u'csv_delivery',
         blank=True,
         null=True,
+        max_length=512,
     )
     dispatched = models.BooleanField(
         verbose_name=_("Vyřízeno"),
