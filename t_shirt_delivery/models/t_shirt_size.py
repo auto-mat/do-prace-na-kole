@@ -58,6 +58,7 @@ class TShirtSize(models.Model):
         upload_to=u't_shirt_preview',
         blank=True,
         null=True,
+        max_length=512,
     )
     price = models.IntegerField(
         verbose_name=_(u"Cena"),

@@ -1239,7 +1239,7 @@ def handle_uploaded_file(source, username):
 
 class QuestionnaireView(TitleViewMixin, TemplateView):
     template_name = 'registration/questionaire.html'
-    success_url = reverse_lazy('competitions')
+    success_url = reverse_lazy('questionnaire_competitions')
     title = _(u"Vyplňte odpovědi")
     form_class = forms.AnswerForm
 
