@@ -794,7 +794,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         request.user_attendance = self.user_attendance
         request.subdomain = "testing-campaign"
         response = views.QuestionnaireView.as_view()(request, **kwargs)
-        self.assertEquals(response.url, reverse("competitions"))
+        self.assertEquals(response.url, reverse("questionnaire_competitions"))
 
     @patch('dpnk.views.logger')
     def test_questionnaire_view_unknown(self, mock_logger):
