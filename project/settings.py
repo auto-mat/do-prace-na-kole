@@ -109,6 +109,7 @@ AWS_SECRET_ACCESS_KEY = os.environ.get('DPNK_AWS_SECRET_ACCESS_KEY')
 AWS_S3_HOST = os.environ.get('DPNK_AWS_S3_HOST', 's3-eu-west-1.amazonaws.com')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('DPNK_AWS_STORAGE_BUCKET_NAME', 'dpnk')
 if AWS_ACCESS_KEY_ID:
+    THUMBNAIL_DEFAULT_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     CELERY_EMAIL_BACKEND = 'django_ses.SESBackend'
     AWS_SES_REGION_NAME = 'eu-west-1'
