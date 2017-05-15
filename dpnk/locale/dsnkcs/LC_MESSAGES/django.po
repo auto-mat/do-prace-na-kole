@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-13 22:01+0200\n"
+"POT-Creation-Date: 2017-05-15 17:32+0200\n"
 "PO-Revision-Date: 2017-04-19 17:47+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -227,7 +227,7 @@ msgstr ""
 msgid "Nemá účast v kampani"
 msgstr ""
 
-#: auth.py:50 auth.py:57 forms.py:87 forms.py:374 forms.py:866
+#: auth.py:50 auth.py:57 forms.py:87 forms.py:374 forms.py:872
 #: templates/registration/questionaire.html:42
 msgid "Odeslat"
 msgstr ""
@@ -855,7 +855,7 @@ msgid ""
 "%(note)s)."
 msgstr ""
 
-#: forms.py:647 models/gpxfile.py:51 models/gpxfile.py:143
+#: forms.py:647 models/gpxfile.py:51 models/gpxfile.py:144
 msgid "GPX soubor"
 msgstr ""
 
@@ -932,11 +932,11 @@ msgstr ""
 msgid "Vzdálenost (km)"
 msgstr ""
 
-#: forms.py:821
+#: forms.py:824
 msgid "Musíte vyplnit vzdálenost"
 msgstr ""
 
-#: forms.py:824
+#: forms.py:827
 msgid "Pěší cesta musí mít minimálně jeden a půl kilometru"
 msgstr ""
 
@@ -1136,7 +1136,7 @@ msgstr ""
 msgid "povolit zapisování jízd"
 msgstr ""
 
-#: models/commute_mode.py:26 models/gpxfile.py:115
+#: models/commute_mode.py:26 models/gpxfile.py:116
 msgid "Mód dopravy"
 msgstr ""
 
@@ -1243,7 +1243,7 @@ msgstr ""
 msgid "Výkonnost"
 msgstr ""
 
-#: models/competition.py:54 templates/registration/rides.html:31
+#: models/competition.py:54 templates/registration/rides.html:34
 msgid "Pravidelnost"
 msgstr ""
 
@@ -1517,57 +1517,57 @@ msgstr ""
 msgid "Dělitel"
 msgstr ""
 
-#: models/competition_result.py:86 models/gpxfile.py:127 models/invoice.py:55
+#: models/competition_result.py:86 models/gpxfile.py:128 models/invoice.py:55
 #: models/user_attendance.py:122
 msgid "Datum vytvoření"
 msgstr ""
 
-#: models/competition_result.py:91 models/gpxfile.py:132
+#: models/competition_result.py:91 models/gpxfile.py:133
 #: models/user_attendance.py:127
 msgid "Datum poslední změny"
 msgstr ""
 
-#: models/gpxfile.py:63 models/trip.py:37
+#: models/gpxfile.py:64 models/trip.py:37
 msgid "Tam"
 msgstr ""
 
-#: models/gpxfile.py:64 models/trip.py:38
+#: models/gpxfile.py:65 models/trip.py:38
 msgid "Zpět"
 msgstr ""
 
-#: models/gpxfile.py:68
+#: models/gpxfile.py:69
 msgid "Datum vykonání cesty"
 msgstr ""
 
-#: models/gpxfile.py:73 models/trip.py:57
+#: models/gpxfile.py:74 models/trip.py:57
 msgid "Směr cesty"
 msgstr ""
 
-#: models/gpxfile.py:85 models/user_attendance.py:79
+#: models/gpxfile.py:86 models/user_attendance.py:79
 msgid "trasa"
 msgstr ""
 
-#: models/gpxfile.py:93
+#: models/gpxfile.py:94
 msgid "Vzdálenost v metrech"
 msgstr ""
 
-#: models/gpxfile.py:98
+#: models/gpxfile.py:99
 msgid "Doba v sekundách"
 msgstr ""
 
-#: models/gpxfile.py:103
+#: models/gpxfile.py:104
 msgid "Zdrojová aplikace"
 msgstr ""
 
-#: models/gpxfile.py:122
+#: models/gpxfile.py:123
 msgid "Nahráno z aplikace"
 msgstr ""
 
-#: models/gpxfile.py:137
+#: models/gpxfile.py:138
 msgid "Datum posledního nahrátí do ECC"
 msgstr ""
 
-#: models/gpxfile.py:144
+#: models/gpxfile.py:145
 msgid "GPX soubory"
 msgstr ""
 
@@ -2106,7 +2106,7 @@ msgstr ""
 msgid "neznámý"
 msgstr ""
 
-#: models/user_attendance.py:304
+#: models/user_attendance.py:311
 msgid "Vzdálenost do práce"
 msgstr ""
 
@@ -2526,66 +2526,70 @@ msgid ""
 "je adresa pobočky správně. Pokud správně není, žádejte změnu:"
 msgstr ""
 
-#: templates/registration/competition_profile.html:19
+#: templates/registration/competition_profile.html:20
 msgid "Vouchery"
 msgstr ""
 
-#: templates/registration/competition_profile.html:22
+#: templates/registration/competition_profile.html:23
 msgid "Zde můžete nalézt vouchery"
 msgstr ""
 
-#: templates/registration/competition_profile.html:43
+#: templates/registration/competition_profile.html:45
 msgid "Novinky"
 msgstr ""
 
-#: templates/registration/competition_profile.html:47
+#: templates/registration/competition_profile.html:49
 msgid "Novinky ve městě "
 msgstr ""
 
-#: templates/registration/competition_profile.html:53
+#: templates/registration/competition_profile.html:55
 msgid "Akce ve městě "
 msgstr ""
 
-#: templates/registration/competition_profile.html:57
+#: templates/registration/competition_profile.html:59
 msgid "Příspěvky z kreativních soutěží"
 msgstr ""
 
-#: templates/registration/competition_profile.html:61
+#: templates/registration/competition_profile.html:63
 msgid "Nahrát vlastní příspěvek"
 msgstr ""
 
-#: templates/registration/competition_profile.html:64
-#: templates/registration/competition_profile.html:70
-#: templates/registration/competition_profile.html:71
+#: templates/registration/competition_profile.html:66
+#: templates/registration/competition_profile.html:72
+#: templates/registration/competition_profile.html:73
 msgid "Všechny příspěvky z této soutěže"
 msgstr ""
 
-#: templates/registration/competition_profile.html:84
+#: templates/registration/competition_profile.html:67
+msgid "Příspěvek do kreativní soutěže"
+msgstr ""
+
+#: templates/registration/competition_profile.html:86
 msgid "Cyklisté sobě"
 msgstr ""
 
-#: templates/registration/competition_profile.html:85
+#: templates/registration/competition_profile.html:87
 msgid "Dali jste Cyklistům sobě vědět o problémech na vaši trase?"
 msgstr ""
 
-#: templates/registration/competition_profile.html:89
+#: templates/registration/competition_profile.html:91
 msgid "Cyklistická mapa"
 msgstr ""
 
-#: templates/registration/competition_profile.html:91
+#: templates/registration/competition_profile.html:93
 msgid ""
 "Nevíte jakou zvolit cestu? Využijte naší cyklistické mapy a vyhledávače."
 msgstr ""
 
-#: templates/registration/competition_profile.html:93
+#: templates/registration/competition_profile.html:95
 msgid "mapa Prahou na kole"
 msgstr ""
 
-#: templates/registration/competition_profile.html:98
+#: templates/registration/competition_profile.html:100
 msgid "Ceny ve městě "
 msgstr ""
 
-#: templates/registration/competition_profile.html:100
+#: templates/registration/competition_profile.html:102
 #, python-format
 msgid ""
 "Všechny další ceny můžete najít na <a href='%(BASE_WP_URL)s/locations/"
@@ -2602,13 +2606,13 @@ msgstr ""
 
 #: templates/registration/competition_results.html:20
 #: templates/registration/competitions.html:13
-#: templates/registration/rides.html:20
+#: templates/registration/rides.html:23
 msgid "od"
 msgstr ""
 
 #: templates/registration/competition_results.html:21
 #: templates/registration/competitions.html:14
-#: templates/registration/rides.html:21
+#: templates/registration/rides.html:24
 msgid "do"
 msgstr ""
 
@@ -2633,6 +2637,7 @@ msgid "lidech"
 msgstr ""
 
 #: templates/registration/competitions.html:42
+#: templates/registration/rides.html:40
 msgid "z"
 msgstr ""
 
@@ -2925,64 +2930,83 @@ msgstr ""
 msgid "zadávání jízd"
 msgstr ""
 
-#: templates/registration/rides.html:19
+#: templates/registration/rides.html:22
 msgid "Celkem"
 msgstr ""
 
-#: templates/registration/rides.html:26
-msgid "Ujetá započítaná vzdálenost"
+#: templates/registration/rides.html:29
+msgid "Uražená započítaná vzdálenost"
 msgstr ""
 
-#: templates/registration/rides.html:26 templates/submenu_rides.html:7
+#: templates/registration/rides.html:29 templates/submenu_rides.html:7
 #: views.py:1034
 msgid "Podrobný přehled jízd"
 msgstr ""
 
-#: templates/registration/rides.html:36
+#: templates/registration/rides.html:40
+#, fuzzy
+#| msgid "Počet zapo&shy;čí&shy;ta&shy;ných cest do/z práce"
+msgid "Počet započítaných cest"
+msgstr "Počet zapo&shy;čí&shy;ta&shy;ných cest do/ze školy"
+
+#: templates/registration/rides.html:44
+#: templates/registration/team_members_results.html:49
+#, python-format
+msgid "Do konce soutěže je potřeba urazit alespoň %(minimum_rides_base)s cest."
+msgstr ""
+
+#: templates/registration/rides.html:45
+#, python-format
+msgid ""
+"Počet vašich cest byl tedy zvýšen poměrově k tomuto číslu na "
+"%(get_minimum_rides_base_proportional)s cest."
+msgstr ""
+
+#: templates/registration/rides.html:53
 msgid "Pravidelnost vašeho týmu"
 msgstr "Pravidelnost vaší třídy"
 
-#: templates/registration/rides.html:36
+#: templates/registration/rides.html:53
 msgid "Přehled o vašem týmu"
 msgstr "Přehled o vaší třídě"
 
-#: templates/registration/rides.html:41
+#: templates/registration/rides.html:58
 msgid "Ušetřené množství oxidu uhličitého"
 msgstr ""
 
-#: templates/registration/rides.html:41 urls.py:241
+#: templates/registration/rides.html:58 urls.py:241
 msgid "Emisní kalkulačka"
 msgstr ""
 
-#: templates/registration/rides.html:48
+#: templates/registration/rides.html:65
 msgid "Podrobné výsledky naleznete na stránce"
 msgstr ""
 
-#: templates/registration/rides.html:49
+#: templates/registration/rides.html:66
 msgid "výsledků jednotlivých soutěží"
 msgstr ""
 
-#: templates/registration/rides.html:58 templates/registration/rides.html:92
+#: templates/registration/rides.html:75 templates/registration/rides.html:109
 msgid "Uložit jízdy"
 msgstr ""
 
-#: templates/registration/rides.html:62
+#: templates/registration/rides.html:79
 msgid "Do práce"
 msgstr ""
 
-#: templates/registration/rides.html:63
+#: templates/registration/rides.html:80
 msgid "Z práce"
 msgstr ""
 
-#: templates/registration/rides.html:78
+#: templates/registration/rides.html:95
 msgid "Zobrazit trasu nebo zadat novou"
 msgstr ""
 
-#: templates/registration/rides.html:82
+#: templates/registration/rides.html:99
 msgid "Zadat trasu v mapě nebo nahrát GPX soubor"
 msgstr ""
 
-#: templates/registration/rides.html:97
+#: templates/registration/rides.html:114
 msgid "Zde budete zadávat vaše jízdy"
 msgstr ""
 
@@ -3047,8 +3071,12 @@ msgstr ""
 msgid "Ještě nezačal/a soutěžit"
 msgstr ""
 
-#: templates/registration/team_members_results.html:45
+#: templates/registration/team_members_results.html:47
 msgid "Pravidelnost celkem"
+msgstr ""
+
+#: templates/registration/team_members_results.html:50
+msgid "Počet cest u označených soutěžících byl zvýšen poměrově k tomuto číslu."
 msgstr ""
 
 #: templates/registration/working_schedule.html:5
