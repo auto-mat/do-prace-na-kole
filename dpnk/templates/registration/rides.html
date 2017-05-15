@@ -3,8 +3,10 @@
 {% load dpnk_tags %}
 {% load humanize %}
 {% load bootstrap3 %}
+{% load cache %}
 {% load scribbler_tags %}
 
+{% cache 3600 "commute_mode_tooltips" %}
 <script type="text/javascript">
    $(function () {
       {% for commute_mode in commute_modes %}
@@ -13,6 +15,7 @@
       $('[data-toggle="tooltip"]').tooltip();
    })
 </script>
+{% endcache %}
 <table class="table table-condensed table-bordered">
 <tr class="info">
    <th>
