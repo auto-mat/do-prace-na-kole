@@ -281,6 +281,9 @@ class UserAttendance(models.Model):
         from .. import results
         return results.get_userprofile_length([self], self.campaign.phase("competition"))
 
+    def trip_length_total_rounded(self):
+        return round(self.trip_length_total, 2)
+
     def get_nonreduced_length(self):
         from .. import results
         return results.get_userprofile_nonreduced_length([self], self.campaign.phase("competition"))

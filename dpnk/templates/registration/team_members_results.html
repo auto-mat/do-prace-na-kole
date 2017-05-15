@@ -35,10 +35,10 @@
          {{ user_attendance.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%
       </td>
       <td>
-         {{ user_attendance.trip_length_total|floatformat:-1|intcomma }}&nbsp;km
+         {{ user_attendance.trip_length_total_rounded|intcomma }}&nbsp;km
       </td>
       <td>
-         {{ user_attendance.get_distance|floatformat:-1|intcomma }}&nbsp;km
+         {{ user_attendance.get_distance|intcomma }}&nbsp;km
       </td>
       {% endif %}
       </tr>

@@ -26,7 +26,7 @@
 </tr>
 <tr class="info">
    <td>
-      {% trans "Uražená započítaná vzdálenost" %}: {{ user_attendance.trip_length_total }}&nbsp;km (<a href="{% url "rides_details" %}">{% trans "Podrobný přehled jízd" %}</a>)
+      {% trans "Uražená započítaná vzdálenost" %}: {{ user_attendance.trip_length_total_rounded|intcomma }}&nbsp;km (<a href="{% url "rides_details" %}">{% trans "Podrobný přehled jízd" %}</a>)
    </td>
 </tr>
 <tr class="info">
@@ -41,9 +41,8 @@
          {{ get_working_rides_base_count }}{% if get_working_rides_base_count == get_minimum_rides_base_proportional %}*
             <br/>
             <small>
-            *{% blocktrans %}Do konce soutěže je potřeba urazit alespoň {{ minimum_rides_base }} cest.
-            Počet vašich cest byl tedy zvýšen poměrově k tomuto číslu na {{ get_minimum_rides_base_proportional }} cest.
-            {% endblocktrans %}
+            *{% blocktrans %}Do konce soutěže je potřeba urazit alespoň {{ minimum_rides_base }} cest.{% endblocktrans %}
+            {% blocktrans %}Počet vašich cest byl tedy zvýšen poměrově k tomuto číslu na {{ get_minimum_rides_base_proportional }} cest.{% endblocktrans %}
             </small>
          {% endif %}
       {% endwith %}
