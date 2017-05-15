@@ -83,7 +83,7 @@
 {% for trip_form in formset %}
    {% if forloop.counter0|divisibleby:2 %}
       <tr class="info">
-         <th colspan="2" scope="row" class="date">
+         <th colspan="2" scope="row" class="date{% if not trip_form.working_day %} weekend-day{% endif %}">
             {{ trip_form.initial.date|naturalday:"D j. n. \<\s\p\a\n\>Y\<\/\s\p\a\n\>"|safe }}
          </th>
       </tr>

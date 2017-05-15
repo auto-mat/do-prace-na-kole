@@ -793,6 +793,9 @@ class TripForm(forms.ModelForm):
         required=False,
     )
 
+    def working_day(self):
+        return util.working_day(self.initial['date'])
+
     def get_direction(self):
         return self.initial['direction'] or self.instance.direction
 
