@@ -64,7 +64,7 @@
       {% thumbnail answer.attachment "360x360" as foto_thumb %}
       {% if foto_thumb %}
          <a href="{% url "questionnaire_answers_all" competition_slug=answer.question.competition.slug %}" title="{% trans "Všechny příspěvky z této soutěže" %}">
-         <img src="{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
+         <img src="{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}" alt="{% trans "Příspěvek do kreativní soutěže" %}"></a>
       {% else %}
          <br/>
          <a href="{{ answer.attachment.url }}" target="_blank">{{ answer.attachment }}</a>
