@@ -289,6 +289,10 @@ class UserAttendance(models.Model):
         from .. import results
         return results.get_working_trips_count(self, self.campaign.phase("competition"))
 
+    def get_minimum_rides_base_proportional(self):
+        from .. import results
+        return results.get_minimum_rides_base_proportional(self.campaign.phase("competition"), util.today())
+
     def get_distance(self, round_digits=2, request=None):
         if self.track:
             if hasattr(self, 'length') and self.length:

@@ -33,6 +33,21 @@
 </tr>
 <tr class="info">
    <td>
+      {% with get_working_rides_base_count=user_attendance.get_working_rides_base_count get_minimum_rides_base_proportional=user_attendance.get_minimum_rides_base_proportional minimum_rides_base=user_attendance.campaign.minimum_rides_base%}
+         {% trans "Počet započítaných cest" %}: {{ user_attendance.get_rides_count_denorm }} {% trans "z" %}
+         {{ get_working_rides_base_count }}{% if get_working_rides_base_count == get_minimum_rides_base_proportional %}*
+            <br/>
+            <small>
+            *{% blocktrans %}Do konce soutěže je potřeba urazit alespoň {{ minimum_rides_base }} cest.
+            Počet vašich cest byl tedy zvýšen poměrově k tomuto číslu na {{ get_minimum_rides_base_proportional }} cest.
+            {% endblocktrans %}
+            </small>
+         {% endif %}
+      {% endwith %}
+   </td>
+</tr>
+<tr class="info">
+   <td>
       {% trans "Pravidelnost vašeho týmu" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;% (<a href="{% url "other_team_members_results" %}">{% trans "Přehled o vašem týmu" %}</a>)
    </td>
 </tr>
