@@ -828,6 +828,9 @@ class TripForm(forms.ModelForm):
 
         return cleaned_data
 
+    def has_changed(self, *args, **kwargs):
+        return True
+
     class Meta:
         model = models.Trip
         fields = ('commute_mode', 'distance', 'direction', 'user_attendance', 'date')

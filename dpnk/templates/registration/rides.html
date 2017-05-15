@@ -89,7 +89,7 @@
       </tr>
       <tr>
    {% endif %}
-      <td>
+      <td class="{% if not trip_form.instance.id %}un{% endif %}changed">
          {% bootstrap_form trip_form %}
          {% if trip_form.instance.has_gpxfile %}
             <a class="pin" href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
