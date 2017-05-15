@@ -10,7 +10,7 @@
 <script type="text/javascript">
    $(function () {
       {% for commute_mode in commute_modes %}
-      $('input[value={{ commute_mode.slug }}]').parent().attr('title', '{{ commute_mode.tooltip|escapejs }}').attr('data-toggle', 'tooltip').attr('data-placement', 'top').tooltip();
+      $('input[value={{ commute_mode.id }}]').parent().attr('title', '{{ commute_mode.tooltip|escapejs }}').attr('data-toggle', 'tooltip').attr('data-placement', 'top').tooltip();
       {% endfor %}
       $('[data-toggle="tooltip"]').tooltip();
    })
