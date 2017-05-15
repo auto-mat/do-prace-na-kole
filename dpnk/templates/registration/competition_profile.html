@@ -14,15 +14,16 @@
 
 {% cache 3600 "profile_voucher" user_attendance.id %}
 {% endcache %}
-{% if user_attendance.voucher_set.exists %}
+{% for voucher in user_attendance.voucher_set.all %}
+{% if forloop.first %}
 <div>
    <h3>{% trans "Vouchery" %}</h3>
    {% scribble 'before_vouchers' %}
    {% load i18n %}
    {% trans "Zde můžete nalézt vouchery" %}
    {% endscribble %}
+{% endif %}
    <table class="table">
-   {% for voucher in user_attendance.voucher_set.all %}
    <tr>
       <td>
          {{ voucher.get_voucher_type_display }}
@@ -31,11 +32,12 @@
          {{ voucher.token }}
       </td>
    </tr>
-   {% endfor %}
+{% if forloop.last %}
    </table>
    {% scribble 'after_vouchers' %}{% endscribble %}
 </div>
 {% endif %}
+{% endfor %}
 
 {% cache 3600 "profile_news" city_slug current_language_code user_attendance.campaign.slug %}
 <div class="row base">
