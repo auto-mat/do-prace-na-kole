@@ -59,6 +59,7 @@ def wp_news(campaign, city=None):
         _year=util.today().year,
         header=_("Novinky"),
         city=city,
+        **({} if city else {'_global_news': 1}),
     )
 
 

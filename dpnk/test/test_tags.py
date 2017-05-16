@@ -127,6 +127,7 @@ class DpnkTagsTests(TestCase):
             order="DESC",
             orderby="DATE",
             _year=2016,
+            _global_news=1,
         )
         self.assertHTMLEqual(
             response,
