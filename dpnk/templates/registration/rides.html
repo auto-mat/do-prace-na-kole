@@ -3,16 +3,19 @@
 {% load dpnk_tags %}
 {% load humanize %}
 {% load bootstrap3 %}
+{% load cache %}
 {% load scribbler_tags %}
 
+{% cache 3600 "commute_mode_tooltips" %}
 <script type="text/javascript">
    $(function () {
       {% for commute_mode in commute_modes %}
-      $('input[value={{ commute_mode.slug }}]').parent().attr('title', '{{ commute_mode.tooltip|escapejs }}').attr('data-toggle', 'tooltip').attr('data-placement', 'top').tooltip();
+      $('input[value={{ commute_mode.id }}]').parent().attr('title', '{{ commute_mode.tooltip|escapejs }}').attr('data-toggle', 'tooltip').attr('data-placement', 'top').tooltip();
       {% endfor %}
       $('[data-toggle="tooltip"]').tooltip();
    })
 </script>
+{% endcache %}
 <table class="table table-condensed table-bordered">
 <tr class="info">
    <th>
@@ -23,12 +26,26 @@
 </tr>
 <tr class="info">
    <td>
-      {% trans "Ujetá započítaná vzdálenost" %}: {{ user_attendance.trip_length_total }}&nbsp;km (<a href="{% url "rides_details" %}">{% trans "Podrobný přehled jízd" %}</a>)
+      {% trans "Uražená započítaná vzdálenost" %}: {{ user_attendance.trip_length_total_rounded|intcomma }}&nbsp;km (<a href="{% url "rides_details" %}">{% trans "Podrobný přehled jízd" %}</a>)
    </td>
 </tr>
 <tr class="info">
    <td>
       {% trans "Pravidelnost" %}: {{ user_attendance.get_frequency_percentage|floatformat|intcomma }}&nbsp;%
+   </td>
+</tr>
+<tr class="info">
+   <td>
+      {% with get_working_rides_base_count=user_attendance.get_working_rides_base_count get_minimum_rides_base_proportional=user_attendance.get_minimum_rides_base_proportional minimum_rides_base=user_attendance.campaign.minimum_rides_base%}
+         {% trans "Počet započítaných cest" %}: {{ user_attendance.get_rides_count_denorm }} {% trans "z" %}
+         {{ get_working_rides_base_count }}{% if get_working_rides_base_count == get_minimum_rides_base_proportional %}*
+            <br/>
+            <small>
+            *{% blocktrans %}Do konce soutěže je potřeba urazit alespoň {{ minimum_rides_base }} cest.{% endblocktrans %}
+            {% blocktrans %}Počet vašich cest byl tedy zvýšen poměrově k tomuto číslu na {{ get_minimum_rides_base_proportional }} cest.{% endblocktrans %}
+            </small>
+         {% endif %}
+      {% endwith %}
    </td>
 </tr>
 <tr class="info">
@@ -66,13 +83,13 @@
 {% for trip_form in formset %}
    {% if forloop.counter0|divisibleby:2 %}
       <tr class="info">
-         <th colspan="2" scope="row" class="date">
+         <th colspan="2" scope="row" class="date{% if not trip_form.working_day %} weekend-day{% endif %}">
             {{ trip_form.initial.date|naturalday:"D j. n. \<\s\p\a\n\>Y\<\/\s\p\a\n\>"|safe }}
          </th>
       </tr>
       <tr>
    {% endif %}
-      <td>
+      <td class="{% if not trip_form.instance.id %}un{% endif %}changed">
          {% bootstrap_form trip_form %}
          {% if trip_form.instance.has_gpxfile %}
             <a class="pin" href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">

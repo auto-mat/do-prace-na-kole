@@ -281,6 +281,9 @@ class UserAttendance(models.Model):
         from .. import results
         return results.get_userprofile_length([self], self.campaign.phase("competition"))
 
+    def trip_length_total_rounded(self):
+        return round(self.trip_length_total, 2)
+
     def get_nonreduced_length(self):
         from .. import results
         return results.get_userprofile_nonreduced_length([self], self.campaign.phase("competition"))
@@ -288,6 +291,10 @@ class UserAttendance(models.Model):
     def get_working_rides_base_count(self):
         from .. import results
         return results.get_working_trips_count(self, self.campaign.phase("competition"))
+
+    def get_minimum_rides_base_proportional(self):
+        from .. import results
+        return results.get_minimum_rides_base_proportional(self.campaign.phase("competition"), util.today())
 
     def get_distance(self, round_digits=2, request=None):
         if self.track:

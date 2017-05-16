@@ -27,20 +27,26 @@
          {{ user_attendance.get_rides_count_denorm }}
       </td>
       <td>
-         {{ user_attendance.get_working_rides_base_count }}
+         {% with get_working_rides_base_count=user_attendance.get_working_rides_base_count %}
+         {{ get_working_rides_base_count }}{% if get_working_rides_base_count == user_attendance.get_minimum_rides_base_proportional %}*{% endif %}
+         {% endwith %}
       </td>
       <td>
          {{ user_attendance.get_frequency_percentage|floatformat:-1|intcomma }}&nbsp;%
       </td>
       <td>
-         {{ user_attendance.trip_length_total|floatformat:-1|intcomma }}&nbsp;km
+         {{ user_attendance.trip_length_total_rounded|intcomma }}&nbsp;km
       </td>
       <td>
-         {{ user_attendance.get_distance|floatformat:-1|intcomma }}&nbsp;km
+         {{ user_attendance.get_distance|intcomma }}&nbsp;km
       </td>
       {% endif %}
       </tr>
    {% endfor %}
 </table>
 {% trans "Pravidelnost celkem" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;%
+<p><small>
+*{% blocktrans with minimum_rides_base=user_attendance.campaign.minimum_rides_base %}Do konce soutěže je potřeba urazit alespoň {{ minimum_rides_base }} cest.{% endblocktrans %}
+{% trans "Počet cest u označených soutěžících byl zvýšen poměrově k tomuto číslu." %}
+</small></p>
 {% endblock %}

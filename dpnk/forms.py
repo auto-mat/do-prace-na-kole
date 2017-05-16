@@ -793,6 +793,9 @@ class TripForm(forms.ModelForm):
         required=False,
     )
 
+    def working_day(self):
+        return util.working_day(self.initial['date'])
+
     def get_direction(self):
         return self.initial['direction'] or self.instance.direction
 
@@ -824,6 +827,9 @@ class TripForm(forms.ModelForm):
                 raise forms.ValidationError(_("Pěší cesta musí mít minimálně jeden a půl kilometru"))
 
         return cleaned_data
+
+    def has_changed(self, *args, **kwargs):
+        return True
 
     class Meta:
         model = models.Trip

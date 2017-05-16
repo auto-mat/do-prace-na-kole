@@ -372,7 +372,11 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         )
         slumber_mock.return_value = m
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270">' % settings.MEDIA_URL, html=True)
+        self.assertContains(
+            response,
+            '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270" alt="Příspěvek do kreativní soutěže">' % settings.MEDIA_URL,
+            html=True,
+        )
         self.assertContains(response, '<a href="http://www.dopracenakole.cz/locations/testing-city">Testing city</a>', html=True)
         self.assertContains(response, 'Novinky ve městě')
         self.assertContains(response, 'Testing title')
@@ -397,7 +401,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(
             response,
             '<a href="/questionnaire_answers/quest/" title="Všechny příspěvky z této soutěže">'
-            '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270">'
+            '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270" alt="Příspěvek do kreativní soutěže">'
             '</a>' % settings.MEDIA_URL,
             html=True,
         )
@@ -536,7 +540,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'form-1-commute_mode')
         self.assertContains(
             response,
-            '<td>Ujetá započítaná vzdálenost: 31,23&nbsp;km (<a href="/jizdy-podrobne/">Podrobný přehled jízd</a>)</td>',
+            '<td>Uražená započítaná vzdálenost: 31,23&nbsp;km (<a href="/jizdy-podrobne/">Podrobný přehled jízd</a>)</td>',
             html=True,
         )
         self.assertContains(
