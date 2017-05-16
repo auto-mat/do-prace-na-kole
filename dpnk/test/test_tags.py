@@ -26,8 +26,6 @@ from django.template import Context, Template
 from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 
-from dpnk.test.util import ClearCacheMixin
-
 from model_mommy import mommy
 
 import slumber
@@ -36,7 +34,7 @@ import slumber
 @override_settings(
     FAKE_DATE=datetime.date(year=2016, month=11, day=20),
 )
-class DpnkTagsTests(ClearCacheMixin, TestCase):
+class DpnkTagsTests(TestCase):
     def setUp(self):
         super().setUp()
         self.campaign = mommy.make("Campaign")
@@ -223,6 +221,11 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         self.assertHTMLEqual(
             response,
             '''
+            <h3>
+            Akce ve městě<a href="http://www.dopracenakole.cz/locations/test_city">
+            City
+            </a>
+            </h3>
             <div class="wp_news">
                <div class="item">
                   <h4>
@@ -332,7 +335,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         )
 
 
-class ChangeLangTests(ClearCacheMixin, TestCase):
+class ChangeLangTests(TestCase):
     def setUp(self):
         super().setUp()
         self.factory = RequestFactory()

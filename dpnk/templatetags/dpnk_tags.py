@@ -20,13 +20,9 @@
 import html.parser
 import logging
 
-from cache_utils.decorators import cached
-
 from django import template
 from django.conf import settings
 from django.core.urlresolvers import NoReverseMatch, Resolver404, resolve, reverse
-from django.template.loader import get_template
-from django.utils.safestring import mark_safe
 from django.utils.translation import activate, get_language
 from django.utils.translation import ugettext_lazy as _
 
@@ -38,13 +34,8 @@ register = template.Library()
 logger = logging.getLogger(__name__)
 
 
-@register.simple_tag
+@register.inclusion_tag("templatetags/cyklistesobe.html")
 def cyklistesobe(city_slug, order="created_at"):
-    return mark_safe(cyklistesobe_cached(city_slug, order))
-
-
-@cached(60 * 60)
-def cyklistesobe_cached(city_slug, order="created_at"):
     api = slumber.API("http://www.cyklistesobe.cz/api/")
     kwargs = {}
     if city_slug:
@@ -54,71 +45,56 @@ def cyklistesobe_cached(city_slug, order="created_at"):
     except slumber.exceptions.SlumberBaseException:
         logger.exception(u'Error fetching cyklistesobe page')
         cyklistesobe = None
-    template = get_template("templatetags/cyklistesobe.html")
-    context = {'cyklistesobe': cyklistesobe}
-    return template.render(context)
+    return {'cyklistesobe': cyklistesobe}
 
 
-@register.simple_tag
+@register.inclusion_tag("templatetags/wp_news.html")
 def wp_news(campaign, city=None):
-    return mark_safe(_wp_news_cached(campaign, city, "news", _("Novinky")))
+    return _wp_news(
+        campaign,
+        _connected_to=city.slug if city else None,
+        order="DESC",
+        orderby="DATE",
+        count=5,
+        _year=util.today().year,
+        header=_("Novinky"),
+        city=city,
+    )
 
 
-@register.simple_tag
+@register.inclusion_tag("templatetags/wp_news.html")
 def wp_actions(campaign, city=None):
-    return mark_safe(_wp_news_cached(campaign, city, "action", _("Akce")))
+    return _wp_news(
+        campaign,
+        "locations",
+        _("akce"),
+        unfold="first",
+        _page_subtype="event",
+        _post_parent=city.slug if city else None,
+        orderby='start_date',
+        _year=util.today().year,
+        count=5,
+        header=_("Akce"),
+        city=city,
+    )
 
 
-@register.simple_tag
+@register.inclusion_tag("templatetags/wp_news.html")
 def wp_prize(campaign, city=None):
-    return mark_safe(_wp_news_cached(campaign, city, "prize", _("Ceny")))
-
-
-@cached(60 * 60)
-def _wp_news_cached(campaign, city=None, wp_type="news", header=None):
-    if city:
-        slug = city.slug
-    else:
-        slug = None
-    if wp_type == "action":
-        return _wp_news(
-            campaign,
-            "locations",
-            _("akce"),
-            unfold="first",
-            _page_subtype="event",
-            _post_parent=slug,
-            orderby='start_date',
-            _year=util.today().year,
-            count=5,
-            city=city,
-        )
-    elif wp_type == "prize":
-        return _wp_news(
-            campaign,
-            "locations",
-            _("cena"),
-            unfold="all",
-            count=8,
-            show_description=False,
-            _page_subtype="prize",
-            _post_parent=slug,
-            order="ASC",
-            orderby="menu_order",
-            header=header,
-            city=city,
-        )
-    else:
-        return _wp_news(
-            campaign,
-            _connected_to=slug,
-            order="DESC",
-            orderby="DATE",
-            count=5,
-            _year=util.today().year,
-            header=header,
-            city=city,
-        )
+    return _wp_news(
+        campaign,
+        "locations",
+        _("cena"),
+        unfold="all",
+        count=8,
+        show_description=False,
+        _page_subtype="prize",
+        _post_parent=city.slug if city else None,
+        order="ASC",
+        orderby="menu_order",
+        header=_("Ceny"),
+        city=city,
+    )
 
 
 def _wp_news(
@@ -150,8 +126,7 @@ def _wp_news(
     if not isinstance(wp_feed, list) and not isinstance(wp_feed, tuple):
         logger.exception('Error encoding wp news format', extra={'wp_feed': wp_feed})
         return ""
-    template = get_template("templatetags/wp_news.html")
-    context = {
+    return {
         'wp_feed': wp_feed,
         'post_type_string': post_type_string,
         'unfold': unfold,
@@ -160,7 +135,6 @@ def _wp_news(
         'city': city,
         'BASE_WP_URL': settings.BASE_WP_URL,
     }
-    return template.render(context)
 
 
 @register.simple_tag(takes_context=True)
