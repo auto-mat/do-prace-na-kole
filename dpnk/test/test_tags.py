@@ -40,6 +40,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
     def setUp(self):
         super().setUp()
         self.campaign = mommy.make("Campaign")
+        self.city = mommy.make("City", name="City", slug="test_city")
         self.factory = RequestFactory()
 
     @patch('slumber.API')
@@ -47,19 +48,19 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         m = MagicMock()
         m.feed.get.return_value = ()
         slumber_mock.return_value = m
-        template = Template("{% load dpnk_tags %}{% wp_news campaign 4321 %}")
-        context = Context({'campaign': self.campaign})
+        template = Template("{% load dpnk_tags %}{% wp_news campaign city %}")
+        context = Context({'campaign': self.campaign, 'city': self.city})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
             feed="content_to_backend",
             _number=5,
-            _connected_to=4321,
+            _connected_to='test_city',
             _post_type="post",
             order="DESC",
             orderby="DATE",
             _year=2016,
         )
-        self.assertHTMLEqual(response, '<div class="wp_news">Žádná novinka není.</div>')
+        self.assertHTMLEqual(response, '')
 
     @patch('dpnk.templatetags.dpnk_tags.logger')
     @patch('slumber.API')
@@ -67,14 +68,14 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         m = MagicMock()
         m.feed.get.side_effect = slumber.exceptions.SlumberBaseException
         slumber_mock.return_value = m
-        template = Template("{% load dpnk_tags %}<div>{% wp_news campaign 4321 %}</div>")
-        context = Context({'campaign': self.campaign})
+        template = Template("{% load dpnk_tags %}<div>{% wp_news campaign city %}</div>")
+        context = Context({'campaign': self.campaign, 'city': self.city})
         response = template.render(context)
         mock_logger.exception.assert_called_with("Error fetching wp news")
         m.feed.get.assert_called_once_with(
             feed="content_to_backend",
             _number=5,
-            _connected_to=4321,
+            _connected_to="test_city",
             _post_type="post",
             order="DESC",
             orderby="DATE",
@@ -88,13 +89,13 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         m = MagicMock()
         m.feed.get.return_value = {'Test1': 'Test'}
         slumber_mock.return_value = m
-        template = Template("{% load dpnk_tags %}<div>{% wp_news campaign 4321 %}</div>")
-        context = Context({'campaign': self.campaign})
+        template = Template("{% load dpnk_tags %}<div>{% wp_news campaign city %}</div>")
+        context = Context({'campaign': self.campaign, 'city': self.city})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
             feed="content_to_backend",
             _number=5,
-            _connected_to=4321,
+            _connected_to='test_city',
             _post_type="post",
             order="DESC",
             orderby="DATE",
@@ -132,6 +133,7 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         self.assertHTMLEqual(
             response,
             '''
+            <h3>Novinky</h3>
             <div class="wp_news">
                <div class="item">
                   <h4>
@@ -160,8 +162,8 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
             },
         )
         slumber_mock.return_value = m
-        template = Template("{% load dpnk_tags %}{% wp_news campaign 'test_city' %}")
-        context = Context({'campaign': self.campaign})
+        template = Template("{% load dpnk_tags %}{% wp_news campaign city %}")
+        context = Context({'campaign': self.campaign, 'city': self.city})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
             _number=5,
@@ -175,6 +177,9 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         self.assertHTMLEqual(
             response,
             '''
+            <h3>
+            Novinky ve městě<a href="http://www.dopracenakole.cz/locations/test_city">City</a>
+            </h3>
             <div class="wp_news">
                <div class="item">
                   <h4>
@@ -203,8 +208,8 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
             },
         )
         slumber_mock.return_value = m
-        template = Template("{% load dpnk_tags %}{% wp_actions campaign 'test_city' %}")
-        context = Context({'campaign': self.campaign})
+        template = Template("{% load dpnk_tags %}{% wp_actions campaign city %}")
+        context = Context({'campaign': self.campaign, 'city': self.city})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
             _number=5,
@@ -246,8 +251,8 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
             },
         )
         slumber_mock.return_value = m
-        template = Template("{% load dpnk_tags %}{% wp_prize campaign 'test_city' %}")
-        context = Context({'campaign': self.campaign})
+        template = Template("{% load dpnk_tags %}{% wp_prize campaign city %}")
+        context = Context({'campaign': self.campaign, 'city': self.city})
         response = template.render(context)
         m.feed.get.assert_called_once_with(
             _number=8,
@@ -261,6 +266,9 @@ class DpnkTagsTests(ClearCacheMixin, TestCase):
         self.assertHTMLEqual(
             response,
             '''
+            <h3>
+            Ceny ve městě<a href="http://www.dopracenakole.cz/locations/test_city">City</a>
+            </h3>
             <div class="wp_news">
                <div class="item">
                   <h4>

@@ -23,6 +23,7 @@ import logging
 from cache_utils.decorators import cached
 
 from django import template
+from django.conf import settings
 from django.core.urlresolvers import NoReverseMatch, Resolver404, resolve, reverse
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
@@ -59,22 +60,26 @@ def cyklistesobe_cached(city_slug, order="created_at"):
 
 
 @register.simple_tag
-def wp_news(campaign, slug=None):
-    return mark_safe(_wp_news_cached(campaign, slug, "news"))
+def wp_news(campaign, city=None):
+    return mark_safe(_wp_news_cached(campaign, city, "news", _("Novinky")))
 
 
 @register.simple_tag
-def wp_actions(campaign, slug=None):
-    return mark_safe(_wp_news_cached(campaign, slug, "action"))
+def wp_actions(campaign, city=None):
+    return mark_safe(_wp_news_cached(campaign, city, "action", _("Akce")))
 
 
 @register.simple_tag
-def wp_prize(campaign, slug=None):
-    return mark_safe(_wp_news_cached(campaign, slug, "prize"))
+def wp_prize(campaign, city=None):
+    return mark_safe(_wp_news_cached(campaign, city, "prize", _("Ceny")))
 
 
 @cached(60 * 60)
-def _wp_news_cached(campaign, slug=None, wp_type="news"):
+def _wp_news_cached(campaign, city=None, wp_type="news", header=None):
+    if city:
+        slug = city.slug
+    else:
+        slug = None
     if wp_type == "action":
         return _wp_news(
             campaign,
@@ -86,11 +91,22 @@ def _wp_news_cached(campaign, slug=None, wp_type="news"):
             orderby='start_date',
             _year=util.today().year,
             count=5,
+            city=city,
         )
     elif wp_type == "prize":
         return _wp_news(
-            campaign, "locations", _("cena"), unfold="all", count=8, show_description=False,
-            _page_subtype="prize", _post_parent=slug, order="ASC", orderby="menu_order",
+            campaign,
+            "locations",
+            _("cena"),
+            unfold="all",
+            count=8,
+            show_description=False,
+            _page_subtype="prize",
+            _post_parent=slug,
+            order="ASC",
+            orderby="menu_order",
+            header=header,
+            city=city,
         )
     else:
         return _wp_news(
@@ -100,6 +116,8 @@ def _wp_news_cached(campaign, slug=None, wp_type="news"):
             orderby="DATE",
             count=5,
             _year=util.today().year,
+            header=header,
+            city=city,
         )
 
 
@@ -112,6 +130,8 @@ def _wp_news(
         show_description=True,
         orderby='published',
         reverse=True,
+        header=None,
+        city=None,
         **other_args
 ):
     get_params = {}
@@ -136,6 +156,9 @@ def _wp_news(
         'post_type_string': post_type_string,
         'unfold': unfold,
         'show_description': show_description,
+        'header': header,
+        'city': city,
+        'BASE_WP_URL': settings.BASE_WP_URL,
     }
     return template.render(context)
 

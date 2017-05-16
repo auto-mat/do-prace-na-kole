@@ -2,8 +2,13 @@
 {% load dpnk_tags %}
 {% load bleach_tags %}
 
-<div class="wp_news">
 {% for value in wp_feed %}
+{% if forloop.first %}
+   {% if header %}
+   <h3>{{ header }}{% if city %}{% trans " ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ city.slug }}">{{ city }}</a>{% endif %}</h3>
+   {% endif %}
+   <div class="wp_news">
+{% endif %}
    <div class="item">
       <h4>
           <a href="{{ value.url }}" target="_blank">
@@ -19,7 +24,7 @@
          {% endif %}
       {% endif %}
    </div>
-   {% empty %}
-   {% blocktrans %}Žádná {{ post_type_string }} není.{% endblocktrans %}
+{% if forloop.last %}
+   </div>
+{% endif %}
 {% endfor %}
-</div>

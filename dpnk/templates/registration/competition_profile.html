@@ -42,18 +42,13 @@
 {% cache 3600 "profile_news" city_slug current_language_code user_attendance.campaign.slug %}
 <div class="row base">
    <div class="col-md-6">
-      <h3>{% trans "Novinky" %}</h3>
       {% wp_news user_attendance.campaign %}
    </div>
    <div class="col-md-6">
-      <h3>{% trans "Novinky ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ city_slug }}">{{ user_attendance.team.subsidiary.city }}</a></h3>
-      {% wp_news user_attendance.campaign city_slug %}
+      {% wp_news user_attendance.campaign user_attendance.team.subsidiary.city %}
    </div>
-</div>
-<div class="row base">
    <div class="col-md-6">
-      <h3>{% trans "Akce ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ city_slug }}">{{ user_attendance.team.subsidiary.city }}</a></h3>
-      {% wp_actions user_attendance.campaign city_slug %}
+      {% wp_actions user_attendance.campaign user_attendance.team.subsidiary.city %}
    </div>
    <div class="col-md-6">
       <h3>{% trans "Příspěvky z kreativních soutěží" %}</h3>
@@ -80,8 +75,6 @@
       {% endif %}
       {% endwith %}
    </div>
-</div>
-<div class="row base">
    <div class="col-md-6">
       <h3>{% trans "Cyklisté sobě" %}</h3>
       <a href="https://www.cyklistesobe.cz/issues/new" target="_blank">{% trans "Dali jste Cyklistům sobě vědět o problémech na vaši trase?" %}</a>
@@ -96,12 +89,8 @@
    </div>
 </div>
 <div class="row base">
-    <div class="col-md-12 prizes">
-      <h3>{% trans "Ceny ve městě " %}<a href="{{ BASE_WP_URL }}/locations/{{ city_slug }}">{{ user_attendance.team.subsidiary.city }}</a></h3>
-      <div>
-         {% blocktrans %}Všechny další ceny můžete najít na <a href='{{ BASE_WP_URL }}/locations/{{ city_slug }}'>stránkách vašeho města</a>.{% endblocktrans %}
-      </div>
-      {% wp_prize user_attendance.campaign city_slug %}
+   <div class="col-md-12 prizes">
+      {% wp_prize user_attendance.campaign user_attendance.team.subsidiary.city %}
    </div>
 </div>
 {% endcache %}
