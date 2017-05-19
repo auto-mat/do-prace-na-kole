@@ -29,6 +29,7 @@ import createsend
 import denorm
 
 from django.contrib.gis.db.models.functions import Length
+from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import Client, RequestFactory, TestCase
@@ -790,6 +791,9 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
 
         }
         request = self.factory.post(address, post_data)
+        setattr(request, 'session', 'session')
+        self.messages = FallbackStorage(request)
+        setattr(request, '_messages', self.messages)
         request.user = self.user_attendance.userprofile.user
         request.user_attendance = self.user_attendance
         request.subdomain = "testing-campaign"
