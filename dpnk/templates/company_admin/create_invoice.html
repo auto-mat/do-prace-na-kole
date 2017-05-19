@@ -6,7 +6,10 @@
 {% block content %}
 {% include "messages_include.html" %}
 
+{% include "company_admin/invoices.html" %}
+
 {% if payments.count > 0 %}
+<h2>{% trans "Vystavit novou fakturu" %}</h2>
 <p>
    {% scribble 'before_invoice' %}
    {% load i18n %}
@@ -58,7 +61,7 @@ Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících:
 <hr/>
 {{ block.super }}
 {% else %}
-<div class="alert alert-info">{% trans "Nemáte žádné soutěžící, pro které by bylo možné vytvořit fakturu" %}</div>
+<div class="alert alert-info">{% trans "Nemáte žádné další soutěžící, pro které by bylo možné vytvořit fakturu" %}</div>
 {% endif %}
 
 {% endblock %}

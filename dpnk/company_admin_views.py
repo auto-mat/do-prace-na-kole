@@ -312,7 +312,6 @@ class CompanyCompetitionsShowView(TitleViewMixin, TemplateView):
 
 class InvoicesView(TitleViewMixin, CreateView):
     template_name = 'company_admin/create_invoice.html'
-    template_name_created = 'company_admin/invoices.html'
     form_class = company_admin_forms.CreateInvoiceForm
     success_url = reverse_lazy('invoices')
     title = _("Faktury vaší organizace")
@@ -322,12 +321,6 @@ class InvoicesView(TitleViewMixin, CreateView):
         return {
             'campaign': campaign,
         }
-
-    def get_template_names(self):
-        if self.company_admin.company_has_invoices():
-            return self.template_name_created
-        else:
-            return self.template_name
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
