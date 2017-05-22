@@ -40,17 +40,17 @@
 {% endfor %}
 
 {% cache 3600 "profile_news" city_slug current_language_code user_attendance.campaign.slug %}
-<div class="row base">
-   <div class="col-md-6">
+<div class="row base news-row">
+   <div class="dpnk-content-box">
       {% wp_news user_attendance.campaign %}
    </div>
-   <div class="col-md-6">
+   <div class="dpnk-content-box">
       {% wp_news user_attendance.campaign user_attendance.team.subsidiary.city %}
    </div>
-   <div class="col-md-6">
+   <div class="dpnk-content-box">
       {% wp_actions user_attendance.campaign user_attendance.team.subsidiary.city %}
    </div>
-   <div class="col-md-6">
+   <div class="dpnk-content-box">
       <h3>{% trans "Příspěvky z kreativních soutěží" %}</h3>
       {% with questionnaire_answer.first as answer %}
       {% if answer %}
@@ -75,12 +75,12 @@
       {% endif %}
       {% endwith %}
    </div>
-   <div class="col-md-6">
+   <div class="dpnk-content-box">
       <h3>{% trans "Cyklisté sobě" %}</h3>
       <a href="https://www.cyklistesobe.cz/issues/new" target="_blank">{% trans "Dali jste Cyklistům sobě vědět o problémech na vaši trase?" %}</a>
       {% cyklistesobe user_attendance.team.subsidiary.city.cyklistesobe_slug %}
    </div>
-   <div class="col-md-6">
+   <div class="dpnk-content-box">
       <h3>{% trans "Cyklistická mapa" %}</h3>
       <p>
       {% trans "Nevíte jakou zvolit cestu? Využijte naší cyklistické mapy a vyhledávače." %}

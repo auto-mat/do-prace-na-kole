@@ -391,7 +391,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         response = self.client.get(reverse('profil'))
         self.assertContains(
             response,
-            '<div class="col-md-6"></div>',
+            '<div class="dpnk-content-box"></div>',
             html=True,
         )
 
