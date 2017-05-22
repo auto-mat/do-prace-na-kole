@@ -32,6 +32,7 @@ from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
 from django.core.urlresolvers import reverse
+from django.db import transaction
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
 
@@ -1598,6 +1599,23 @@ class TrackViewTests(ViewsLogon):
         user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
         self.assertEquals(user_attendance.get_distance(), 6.72)
 
+    def test_dpnk_views_track_gpx_file_parsing_error(self):
+        """ Test that error message is shown to the user where non-gpx file is submitted """
+        address = reverse('upravit_trasu')
+        with open('dpnk/test_files/DSC00002.JPG', 'rb') as gpxfile:
+            post_data = {
+                'dont_want_insert_track': False,
+                'track': '',
+                'gpx_file': gpxfile,
+                'submit': 'Odeslat',
+            }
+            response = self.client.post(address, post_data)
+        self.assertContains(
+            response,
+            '<strong>Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?</strong>',
+            html=True,
+        )
+
     def test_dpnk_views_track(self):
         address = reverse('upravit_trasu')
         post_data = {
@@ -1651,6 +1669,46 @@ class TrackViewTests(ViewsLogon):
         gpx_file = models.GpxFile.objects.get(trip_date=datetime.date(year=2010, month=11, day=3))
         self.assertEquals(gpx_file.direction, 'trip_to')
         self.assertEquals(gpx_file.length(), 13.32)
+
+    def test_dpnk_rest_gpx_gz_parse_error(self):
+        with open('dpnk/test_files/DSC00002.JPG', 'rb') as gpxfile:
+            post_data = {
+                'trip_date': '2010-11-06',
+                'direction': 'trip_to',
+                'file': gpxfile,
+            }
+            response = self.client.post('/rest/gpx/', post_data, format='multipart', follow=True)
+            self.assertJSONEqual(response.content.decode(), {"detail": "Can't parse GPX file"})
+            self.assertEqual(response.status_code, 400)
+
+    def test_dpnk_rest_gpx_gz_duplicate_error(self):
+        post_data = {
+            'trip_date': '2010-11-01',
+            'direction': 'trip_to',
+        }
+        with transaction.atomic():
+            response = self.client.post('/rest/gpx/', post_data, format='multipart', follow=True)
+        self.assertJSONEqual(response.content.decode(), {'detail': 'GPX for this day and trip already uploaded'})
+        self.assertEqual(response.status_code, 409)
+
+    def test_dpnk_rest_gpx_gz_no_login(self):
+        post_data = {
+            'trip_date': '2010-11-01',
+            'direction': 'trip_to',
+        }
+        self.client.logout()
+        response = self.client.post('/rest/gpx/', post_data, format='multipart', follow=True)
+        self.assertJSONEqual(response.content.decode(), {'detail': 'Nebyly zadány přihlašovací údaje.'})
+        self.assertEqual(response.status_code, 401)
+
+    def test_dpnk_rest_gpx_gz_campaign_error(self):
+        post_data = {
+            'trip_date': '2010-11-01',
+            'direction': 'trip_to',
+        }
+        response = self.client.post('/rest/gpx/', post_data, HTTP_HOST='noncampaign.testserver', format='multipart', follow=True)
+        self.assertJSONEqual(response.content.decode(), {'detail': 'Campaign with this slug not found'})
+        self.assertEqual(response.status_code, 404)
 
     def test_dpnk_rest_gpx(self):
         with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:

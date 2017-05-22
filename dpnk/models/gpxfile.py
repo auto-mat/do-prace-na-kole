@@ -25,6 +25,7 @@ from author.decorators import with_author
 
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Length
+from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils.safestring import mark_safe
@@ -157,9 +158,13 @@ class GpxFile(models.Model):
     def clean(self):
         if self.file:
             if self.file.name.endswith(".gz"):
-                track_file = gzip.open(self.file).read().decode("utf-8")
+                track_file = gzip.open(self.file)
             else:
-                track_file = self.file.read().decode("utf-8")
+                track_file = self.file
+            try:
+                track_file = track_file.read().decode("utf-8")
+            except UnicodeDecodeError:
+                raise ValidationError({'file': _('Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?')})
             self.track_clean = gpx_parse.parse_gpx(track_file)
 
 

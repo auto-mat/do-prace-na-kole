@@ -658,14 +658,17 @@ class TrackUpdateForm(SubmitMixin, forms.ModelForm):
         cleaned_data = super(TrackUpdateForm, self).clean()
 
         if cleaned_data['gpx_file']:
-            gpx_string = cleaned_data['gpx_file'].read().decode("utf-8")
+            try:
+                gpx_string = cleaned_data['gpx_file'].read().decode("utf-8")
+            except UnicodeDecodeError:
+                raise ValidationError({'gpx_file': _('Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?')})
             cleaned_data['track'] = gpx_parse.parse_gpx(gpx_string)
 
         if cleaned_data['dont_want_insert_track']:
             cleaned_data['track'] = None
         else:
             if cleaned_data['track'] is None:
-                raise forms.ValidationError(_("Nezadali jste žádnou trasu. Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat."))
+                raise forms.ValidationError({'track': _("Nezadali jste žádnou trasu. Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat.")})
         return cleaned_data
 
     class Meta:
