@@ -268,8 +268,6 @@ INSTALLED_APPS = (
     # 'cachalot',
 )
 
-BASE_WP_URL = "http://www.dopracenakole.cz"
-
 ECC_PROVIDER_CODE = "DK"
 ECC_URL_BASE = "http://srv.cycling365.eu/services"
 
@@ -277,7 +275,6 @@ TEMPLATE_VISIBLE_SETTINGS = (
     'PAYU_POS_AUTH_KEY',
     'PAYU_POS_ID',
     'PAYU_KEY_1',
-    'BASE_WP_URL',
     'HEADER_COLOR',
     'AKLUB_URL',
     'SITE_URL',

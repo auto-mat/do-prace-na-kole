@@ -21,10 +21,11 @@ import html.parser
 import logging
 
 from django import template
-from django.conf import settings
 from django.core.urlresolvers import NoReverseMatch, Resolver404, resolve, reverse
 from django.utils.translation import activate, get_language
 from django.utils.translation import ugettext_lazy as _
+
+import requests
 
 import slumber
 
@@ -42,7 +43,7 @@ def cyklistesobe(city_slug, order="created_at"):
         kwargs['group'] = city_slug
     try:
         cyklistesobe = api.issues.get(order=order, per_page=5, page=0, **kwargs)
-    except slumber.exceptions.SlumberBaseException:
+    except (slumber.exceptions.SlumberBaseException, requests.exceptions.ConnectionError) as e:
         logger.exception(u'Error fetching cyklistesobe page')
         cyklistesobe = None
     return {'cyklistesobe': cyklistesobe}
@@ -121,12 +122,12 @@ def _wp_news(
     api = slumber.API(url)
     try:
         wp_feed = api.feed.get(**get_params)
-    except slumber.exceptions.SlumberBaseException:
+    except (slumber.exceptions.SlumberBaseException, requests.exceptions.ConnectionError) as e:
         logger.exception(u'Error fetching wp news')
-        return ""
+        return {}
     if not isinstance(wp_feed, list) and not isinstance(wp_feed, tuple):
         logger.exception('Error encoding wp news format', extra={'wp_feed': wp_feed})
-        return ""
+        return {}
     return {
         'wp_feed': wp_feed,
         'post_type_string': post_type_string,
@@ -134,7 +135,7 @@ def _wp_news(
         'show_description': show_description,
         'header': header,
         'city': city,
-        'BASE_WP_URL': settings.BASE_WP_URL,
+        'BASE_WP_URL': url,
     }
 
 

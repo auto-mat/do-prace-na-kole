@@ -178,7 +178,7 @@ class Campaign(Pricable, models.Model):
         null=False,
     )
     wp_api_url = models.URLField(
-        default="http://www.dopracenakole.cz/",
+        default="http://www.dopracenakole.cz",
         verbose_name=_("Adresa pro Wordpress API se články"),
         null=True,
         blank=True,
