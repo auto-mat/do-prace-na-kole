@@ -111,6 +111,26 @@ class PackageTransactionResource(resources.ModelResource):
             return ""
 
 
+class PackageTransactionInline(NestedTabularInline):
+    model = models.PackageTransaction
+    extra = 0
+    readonly_fields = ['author', 'updated_by', 't_shirt_size']
+    raw_id_fields = [
+        'user_attendance',
+        'team_package',
+    ]
+    formfield_overrides = {
+        TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
+    }
+    form = PackageTransactionForm
+
+
+class TeamPackageInline(NestedTabularInline):
+    model = models.TeamPackage
+    extra = 0
+    raw_id_fields = ('team',)
+
+
 @admin.register(models.SubsidiaryBox)
 class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFieldAdmin):
     list_display = (
@@ -124,6 +144,9 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         'subsidiary',
         'customer_sheets',
         'created',
+    )
+    inlines = (
+        TeamPackageInline,
     )
     raw_id_fields = (
         'delivery_batch',
@@ -155,6 +178,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
     ]
     readonly_fields = (
         'tracking_link',
+        'all_packages_dispatched',
     )
 
     def get_queryset(self, request):
@@ -190,6 +214,10 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
         'team__name',
         'team__subsidiary__address_street',
         'team__subsidiary__company__name',
+        'box__id',
+    )
+    inlines = (
+        PackageTransactionInline,
     )
 
     def get_queryset(self, request):
@@ -258,20 +286,6 @@ class DeliveryBatchForm(forms.ModelForm):
         if hasattr(self, 'request'):
             self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
         return ret_val
-
-
-class PackageTransactionInline(NestedTabularInline):
-    model = models.PackageTransaction
-    extra = 0
-    readonly_fields = ['author', 'updated_by', 't_shirt_size']
-    raw_id_fields = [
-        'user_attendance',
-        'team_package',
-    ]
-    formfield_overrides = {
-        TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
-    }
-    form = PackageTransactionForm
 
 
 class SubsidiaryBoxInline(NestedTabularInline):
