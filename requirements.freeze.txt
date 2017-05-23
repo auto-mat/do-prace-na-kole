@@ -52,7 +52,7 @@ django-leaflet==0.22.0
 django-mass-edit==3.0
 django-model-utils==2.6.1
 django-modeltranslation==0.12.1
--e git+https://github.com/PetrDlouhy/django-nested-inline@274c156fba10d843908a6398950408cef2cc93d7#egg=django_nested_inline
+-e git+https://github.com/PetrDlouhy/django-nested-inline@c80551d3a2adde1ab4c3050310dbc51fe295d0e1#egg=django_nested_inline
 django-oauth-toolkit==0.12.0
 django-polymorphic==1.1
 django-post-office==2.0.8
