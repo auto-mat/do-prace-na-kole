@@ -125,6 +125,7 @@ class Competition(models.Model):
     commute_modes = models.ManyToManyField(
         CommuteMode,
         verbose_name=_("Počítané módy dopravy"),
+        help_text=_("Můžete vybrat víc položek pomocí klávesy shift. Většina soutěží je vypsána jako kolo + chůze/běh"),
         blank=True,
         default=default_commute_modes,
     )
