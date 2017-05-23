@@ -396,6 +396,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
         'entry_after_beginning_days',
         'city_list',
         'sex',
+        'commute_modes_list',
         'company__name',
         'competition_results_link',
         'questionnaire_results_link',
@@ -419,6 +420,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
         'show_results',
         'competitor_type',
         'competition_type',
+        'commute_modes',
         isnull_filter('company', _("Není vnitrofiremní soutěž?")),
         'sex')
     save_as = True
@@ -448,6 +450,9 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
             'user_attendance_competitors',
             'campaign',
         ]
+
+    def commute_modes_list(self, obj):
+        return ", ".join([str(c) for c in obj.commute_modes.all()])
 
     def city_list(self, obj):
         return ", ".join([str(c) for c in obj.city.all()])
