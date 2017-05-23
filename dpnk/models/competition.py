@@ -379,6 +379,9 @@ class Competition(models.Model):
         if self.competitor_type != 'company':
             columns.append(('company', 'get_company', _("Spo&shy;leč&shy;nost")))
 
+        if self.competitor_type in ('single_user', 'liberos'):
+            columns.append(('occupation', 'get_occupation', _("Pro&shy;fe&shy;se")))
+
         columns.append(('city', 'get_city', _("Měs&shy;to")))
         return columns
 

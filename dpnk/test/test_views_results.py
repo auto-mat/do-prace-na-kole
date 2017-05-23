@@ -204,8 +204,8 @@ class CompetitionResultListJsonSingleTests(TestCase):
         expected_json = {
             "recordsTotal": 2,
             "data": [
-                ["1.&nbsp;-&nbsp;2.", "100,0", 1.3, 1.1, "foo user", "foo team", "foo company", "foo city"],
-                ["1.&nbsp;-&nbsp;2.", "100,0", 1.2, 1.1, "Jan Novák", "bar team", "bar company", "bar city"],
+                ["1.&nbsp;-&nbsp;2.", "100,0", 1.3, 1.1, "foo user", "foo team", "foo company", "-", "foo city"],
+                ["1.&nbsp;-&nbsp;2.", "100,0", 1.2, 1.1, "Jan Novák", "bar team", "bar company", "-", "bar city"],
             ],
             "draw": 0,
             "result": "ok",
@@ -226,6 +226,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
             result_divisor="1.1",
             competition=self.single_frequency_competition,
             user_attendance__userprofile__nickname="baz user",
+            user_attendance__userprofile__occupation__name='Foo ocupation',
             user_attendance__campaign=self.campaign,
             user_attendance__team__campaign=self.campaign,
             user_attendance__team__member_count=1,
@@ -244,7 +245,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
         expected_json = {
             "recordsTotal": 3,
             "data": [
-                ["1.&nbsp;-&nbsp;3.", "100,0", 1.2, 1.1, "baz user", "baz team", "baz company", "baz city"],
+                ["1.&nbsp;-&nbsp;3.", "100,0", 1.2, 1.1, "baz user", "baz team", "baz company", "Foo ocupation", "baz city"],
             ],
             "draw": 0,
             "result": "ok",
@@ -261,7 +262,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
         expected_json = {
             "recordsTotal": 2,
             "data": [
-                ["1.&nbsp;-&nbsp;2.", "100,0", 1.3, 1.1, "foo user", "foo team", "foo company", "foo city"],
+                ["1.&nbsp;-&nbsp;2.", "100,0", 1.3, 1.1, "foo user", "foo team", "foo company", "-", "foo city"],
             ],
             "draw": 0,
             "result": "ok",
@@ -278,7 +279,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
         expected_json = {
             "recordsTotal": 2,
             "data": [
-                ["1.&nbsp;-&nbsp;2.", "100,0", 1.2, 1.1, "Jan Novák", "bar team", "bar company", "bar city"],
+                ["1.&nbsp;-&nbsp;2.", "100,0", 1.2, 1.1, "Jan Novák", "bar team", "bar company", "-", "bar city"],
             ],
             "draw": 0,
             "result": "ok",
