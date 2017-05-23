@@ -1317,6 +1317,7 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
                     continue
                 question.form.save()
             self.competition.make_admission(self.user_attendance)
+            messages.add_message(request, messages.SUCCESS, _("Odpovědi byli úspěšně zadány"))
             return redirect(self.success_url)
         context_data = self.get_context_data()
         context_data['invalid_count'] = invalid_count

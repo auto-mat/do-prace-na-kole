@@ -25,7 +25,7 @@ from .models import Campaign, UserAttendance
 class UserAttendanceMiddleware:
     def process_request(self, request):
         campaign_slug = request.subdomain
-        if request.user and request.user.is_authenticated():
+        if request.user and request.user.is_authenticated:
             try:
                 request.user_attendance = UserAttendance.objects.select_related(
                     'campaign',

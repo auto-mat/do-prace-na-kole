@@ -389,7 +389,11 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         m.feed.get.return_value = []
         slumber_mock.return_value = m
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, 'Žádná akce není.')
+        self.assertContains(
+            response,
+            '<div class="dpnk-content-box"></div>',
+            html=True,
+        )
 
     @patch('slumber.API')
     def test_dpnk_profile_page_link(self, slumber_api):

@@ -44,5 +44,7 @@ def parse(days_back=7):
                 if invoice.total_amount == payment['amount'] and 'CZK' == payment['currency']:
                     invoice.paid_date = payment['date']
                     invoice.save()
+                else:
+                    print(payment)
             except Invoice.DoesNotExist:
                 print(payment)

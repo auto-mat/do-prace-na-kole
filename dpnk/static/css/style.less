@@ -442,3 +442,20 @@ input[type=number]::-webkit-outer-spin-button {
     white-space:pre-wrap;
     max-width:none;
 }
+
+.news-row {
+  padding: 0 15px 0 15px;
+  -webkit-columns: 355px 2;
+  -moz-columns: 355px 2;
+  columns: 355px 2;
+}
+
+.dpnk-content-box {
+  -webkit-column-break-inside: avoid;
+            page-break-inside: avoid;
+                 break-inside: avoid;
+}
+
+.news-row .dpnk-content-box:first-child h3:first-child {
+  margin-top:0px;
+}
