@@ -1491,7 +1491,8 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
 
 
 @admin.register(models.GpxFile)
-class GpxFileAdmin(LeafletGeoAdmin):
+class GpxFileAdmin(CityAdminMixin, LeafletGeoAdmin):
+    queryset_city_param = 'user_attendance__team__subsidiary__city__in'
     model = models.GpxFile
     list_display = (
         'id',
@@ -1520,6 +1521,13 @@ class GpxFileAdmin(LeafletGeoAdmin):
     raw_id_fields = ('user_attendance', 'trip')
     readonly_fields = ('author', 'updated_by', 'updated', 'ecc_last_upload')
     list_filter = (campaign_filter_generator('user_attendance__campaign'), 'from_application', 'user_attendance__team__subsidiary__city')
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = super().get_readonly_fields(request, obj)
+        return [x for x in readonly_fields if x != 'track']
+
+    def get_fields(self, request, obj=None):
+        return super().get_readonly_fields(request, obj)
 
 
 @admin.register(scribbler_models.Scribble)
