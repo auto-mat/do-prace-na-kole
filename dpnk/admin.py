@@ -1134,11 +1134,12 @@ class AnswerResource(resources.ModelResource):
     str_choices = fields.Field(readonly=True)
 
     def dehydrate_str_choices(self, obj):
-        return obj.str_choices()
+        if obj.id:
+            return obj.str_choices()
 
 
 @admin.register(models.Answer)
-class AnswerAdmin(ExportMixin, RelatedFieldAdmin):
+class AnswerAdmin(ImportExportMixin, RelatedFieldAdmin):
     list_display = (
         'user_attendance',
         'user_attendance__userprofile__user__email',
