@@ -49,7 +49,7 @@ django-ipware==1.1.6
 django-isnull-list-filter==0.1.0
 django-leaflet==0.22.0
 -e git+https://github.com/PetrDlouhy/django-likes.git@4bbe4348bc1c538596a88ac9479e37946700834a#egg=django_likes
-django-mass-edit==3.0
+-e git+https://github.com/burke-software/django-mass-edit.git@043028e2be579963b9b7c5aafb0894bb2cc4ccc6#egg=django_mass_edit
 django-model-utils==2.6.1
 django-modeltranslation==0.12.1
 -e git+https://github.com/PetrDlouhy/django-nested-inline@c80551d3a2adde1ab4c3050310dbc51fe295d0e1#egg=django_nested_inline

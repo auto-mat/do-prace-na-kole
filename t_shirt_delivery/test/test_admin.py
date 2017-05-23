@@ -58,10 +58,10 @@ class DeliveryBatchAdminMasschangeTests(AdminTestBase):
         )
         address = reverse('admin:t_shirt_delivery_deliverybatch_changelist')
         post_data = {
-            'action': 'mass_update',
+            'action': 'mass_change_selected',
             '_selected_action': '1',
         }
-        response = self.client.post(address, post_data)
+        response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, 'Zákaznické listy:')
 
 

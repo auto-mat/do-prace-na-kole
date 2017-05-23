@@ -72,7 +72,7 @@ whitenoise
 django-sslify-admin
 django-favicon
 django-modeltranslation
-django-mass-edit
+-e git+https://github.com/burke-software/django-mass-edit.git#egg=django-mass-edit  # for the removal of onclick_attrib
 fiobank
 django-ipware
 django-celery-beat

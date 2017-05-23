@@ -401,5 +401,4 @@ class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
 
 
 # register all adminactions
-admin.site.add_action(admin_actions.mass_update)
 admin.site.add_action(admin_actions.merge)
