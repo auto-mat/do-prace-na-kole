@@ -1441,13 +1441,21 @@ class InvoiceResource(resources.ModelResource):
             'company__address_recipient',
             'company__address_district',
             'company__address_psc',
-            'company__address_city')
+            'company__address_city',
+            'company_admin_emails',
+        )
         export_order = fields
 
     invoice_count = fields.Field(readonly=True)
 
     def dehydrate_invoice_count(self, obj):
         return obj.payment_set.count()
+
+    company_admin_emails = fields.Field(readonly=True)
+
+    def dehydrate_company_admin_emails(self, obj):
+        admins = obj.company.company_admin.filter(campaign=obj.campaign)
+        return ", ".join([a.userprofile.user.email for a in admins])
 
 
 @admin.register(models.Invoice)
