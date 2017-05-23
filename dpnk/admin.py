@@ -1157,6 +1157,7 @@ class AnswerAdmin(ExportMixin, RelatedFieldAdmin):
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
     raw_id_fields = ('user_attendance', 'question')
+    save_as = True
     resource_class = AnswerResource
 
     def attachment_url(self, obj):
