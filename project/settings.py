@@ -490,6 +490,8 @@ IGNORABLE_404_URLS = [
     re.compile(r'^/blog$'),
     re.compile(r'^/sitenews$'),
     re.compile(r'^/site$'),
+    re.compile(r'^/browserconfig.xml$'),
+    re.compile(r'^/.well-known/dnt-policy.txt$'),
     re.compile(r'^/blog/robots.txt$'),
     re.compile(r'^xmlrpc.php$'),
 ]
