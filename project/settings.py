@@ -292,9 +292,15 @@ REST_FRAMEWORK = {
     ),
 }
 
-REDACTOR_OPTIONS = {'formatting': ['p', 'blockquote', 'pre', 'h4', 'h5']}
-BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br', 'span', 'div', 'h4', 'h5', 'pre', 'blockquote', 'ol', 'li', 'ul']
-BLEACH_ALLOWED_ATTRIBUTES = ['href', ]
+REDACTOR_OPTIONS = {
+    "plugins": ["source"],
+    'formatting': ['div', 'p', 'blockquote', 'pre', 'h4', 'h5'],
+    'imageResizable': 'true',
+    'imagePosition': 'true',
+}
+BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br', 'span', 'div', 'h4', 'h5', 'pre', 'blockquote', 'ol', 'li', 'ul', 'figure', 'img']
+BLEACH_ALLOWED_ATTRIBUTES = ['href', 'src', 'height', 'width', 'style']
+BLEACH_ALLOWED_STYLES = ['height', 'width']
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SERVER_EMAIL = 'kontakt@dopracenakole.cz'
