@@ -187,11 +187,13 @@ class Competition(models.Model):
     )
     is_public = models.BooleanField(
         verbose_name=_(u"Soutěž je veřejná"),
+        help_text=_("Zobrazovat v přehledech soutěží a výsledků?"),
         default=True,
         null=False,
     )
     show_results = models.BooleanField(
         verbose_name=_("Zobrazovat výsledky soutěže"),
+        help_text=_("Povolit možnost prohlížet výsledky soutěže."),
         default=True,
         null=False,
     )
