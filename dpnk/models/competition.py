@@ -125,6 +125,7 @@ class Competition(models.Model):
     commute_modes = models.ManyToManyField(
         CommuteMode,
         verbose_name=_("Počítané módy dopravy"),
+        help_text=_("Můžete vybrat víc položek pomocí klávesy shift. Většina soutěží je vypsána jako kolo + chůze/běh"),
         blank=True,
         default=default_commute_modes,
     )
@@ -187,11 +188,13 @@ class Competition(models.Model):
     )
     is_public = models.BooleanField(
         verbose_name=_(u"Soutěž je veřejná"),
+        help_text=_("Zobrazovat v přehledech soutěží a výsledků?"),
         default=True,
         null=False,
     )
     show_results = models.BooleanField(
         verbose_name=_("Zobrazovat výsledky soutěže"),
+        help_text=_("Povolit možnost prohlížet výsledky soutěže."),
         default=True,
         null=False,
     )
@@ -377,6 +380,10 @@ class Competition(models.Model):
         if self.competitor_type != 'company':
             columns.append(('company', 'get_company', _("Spo&shy;leč&shy;nost")))
 
+        if self.competitor_type in ('single_user', 'liberos'):
+            columns.append(('occupation', 'get_occupation', _("Pro&shy;fe&shy;se")))
+            columns.append(('sex', 'get_sex', _("Po&shy;hla&shy;ví")))
+
         columns.append(('city', 'get_city', _("Měs&shy;to")))
         return columns
 
@@ -400,6 +407,12 @@ class Competition(models.Model):
             elif self.competitor_type == 'company' and userprofile.company():
                 return self.company_competitors.filter(pk=userprofile.company().pk).exists()
             return True
+
+    def commute_modes_list(self):
+        return ", ".join([str(c) for c in self.commute_modes.all()])
+
+    def city_list(self):
+        return ", ".join([str(c) for c in self.city.all()])
 
     def make_admission(self, userprofile, admission=True):
         if not self.without_admission and self.can_admit(userprofile):

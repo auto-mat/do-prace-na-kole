@@ -13,6 +13,7 @@ $(document).ready(function() {
     if(searchString === undefined){
        searchString = "";
     }
+    searchString = decodeURIComponent(searchString);
     var oTable = $('#results-table-{{ competition.slug }}').DataTable({
         "processing": true,
         "serverSide": true,

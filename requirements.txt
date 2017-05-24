@@ -10,7 +10,7 @@ django-softhyphen
 django-polymorphic
 django-composite-field
 django-registration-redux
--e git+https://github.com/PetrDlouhy/django-nested-inline#egg=django-nested-inline  # for forms-nested.css fix
+-e git+https://github.com/PetrDlouhy/django-nested-inline@dpnk-master#egg=django-nested-inline  # for forms-nested.css fix
 django-su
 unidecode
 -e git+https://github.com/PetrDlouhy/createsend-python.git@python3#egg=createsend
@@ -72,7 +72,7 @@ whitenoise
 django-sslify-admin
 django-favicon
 django-modeltranslation
-django-mass-edit
+-e git+https://github.com/burke-software/django-mass-edit.git#egg=django-mass-edit  # for the removal of onclick_attrib
 fiobank
 django-ipware
 django-celery-beat

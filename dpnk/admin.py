@@ -396,6 +396,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
         'entry_after_beginning_days',
         'city_list',
         'sex',
+        'commute_modes_list',
         'company__name',
         'competition_results_link',
         'questionnaire_results_link',
@@ -419,6 +420,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
         'show_results',
         'competitor_type',
         'competition_type',
+        'commute_modes',
         isnull_filter('company', _("Není vnitrofiremní soutěž?")),
         'sex')
     save_as = True
@@ -448,9 +450,6 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
             'user_attendance_competitors',
             'campaign',
         ]
-
-    def city_list(self, obj):
-        return ", ".join([str(c) for c in obj.city.all()])
 
     def competition_results_link(self, obj):
         if obj.slug:
@@ -813,7 +812,7 @@ class UserAttendanceAdmin(
         'team__subsidiary__company',
         'approved_for_team',
         'campaign__name',
-        't_shirt_size',
+        't_shirt_size__name',
         'payment_status',
         'representative_payment__pay_type',
         'representative_payment__status',
@@ -1129,11 +1128,12 @@ class AnswerResource(resources.ModelResource):
     str_choices = fields.Field(readonly=True)
 
     def dehydrate_str_choices(self, obj):
-        return obj.str_choices()
+        if obj.id:
+            return obj.str_choices()
 
 
 @admin.register(models.Answer)
-class AnswerAdmin(ExportMixin, RelatedFieldAdmin):
+class AnswerAdmin(ImportExportMixin, RelatedFieldAdmin):
     list_display = (
         'user_attendance',
         'user_attendance__userprofile__user__email',
@@ -1157,6 +1157,7 @@ class AnswerAdmin(ExportMixin, RelatedFieldAdmin):
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
     raw_id_fields = ('user_attendance', 'question')
+    save_as = True
     resource_class = AnswerResource
 
     def attachment_url(self, obj):
@@ -1165,7 +1166,7 @@ class AnswerAdmin(ExportMixin, RelatedFieldAdmin):
 
 
 @admin.register(models.Question)
-class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ExportMixin, admin.ModelAdmin):
+class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ImportExportMixin, admin.ModelAdmin):
     form = models.QuestionForm
     list_display = ('__str__', 'text', 'question_type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
     ordering = ('order', 'date',)
@@ -1435,13 +1436,21 @@ class InvoiceResource(resources.ModelResource):
             'company__address_recipient',
             'company__address_district',
             'company__address_psc',
-            'company__address_city')
+            'company__address_city',
+            'company_admin_emails',
+        )
         export_order = fields
 
     invoice_count = fields.Field(readonly=True)
 
     def dehydrate_invoice_count(self, obj):
         return obj.payment_set.count()
+
+    company_admin_emails = fields.Field(readonly=True)
+
+    def dehydrate_company_admin_emails(self, obj):
+        admins = obj.company.company_admin.filter(campaign=obj.campaign)
+        return ", ".join([a.userprofile.user.email for a in admins])
 
 
 @admin.register(models.Invoice)
@@ -1491,7 +1500,8 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
 
 
 @admin.register(models.GpxFile)
-class GpxFileAdmin(LeafletGeoAdmin):
+class GpxFileAdmin(CityAdminMixin, LeafletGeoAdmin):
+    queryset_city_param = 'user_attendance__team__subsidiary__city__in'
     model = models.GpxFile
     list_display = (
         'id',
@@ -1520,6 +1530,13 @@ class GpxFileAdmin(LeafletGeoAdmin):
     raw_id_fields = ('user_attendance', 'trip')
     readonly_fields = ('author', 'updated_by', 'updated', 'ecc_last_upload')
     list_filter = (campaign_filter_generator('user_attendance__campaign'), 'from_application', 'user_attendance__team__subsidiary__city')
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = super().get_readonly_fields(request, obj)
+        return [x for x in readonly_fields if x != 'track']
+
+    def get_fields(self, request, obj=None):
+        return super().get_readonly_fields(request, obj)
 
 
 @admin.register(scribbler_models.Scribble)

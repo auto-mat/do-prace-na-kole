@@ -58,10 +58,10 @@ class DeliveryBatchAdminMasschangeTests(AdminTestBase):
         )
         address = reverse('admin:t_shirt_delivery_deliverybatch_changelist')
         post_data = {
-            'action': 'mass_update',
+            'action': 'mass_change_selected',
             '_selected_action': '1',
         }
-        response = self.client.post(address, post_data)
+        response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, 'Zákaznické listy:')
 
 
@@ -282,6 +282,26 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
         self.assertContains(
             response,
             "<div><label>Tým:</label><p>Testing team ()</p></div>",
+            html=True,
+        )
+
+    def test_teampackage_admin_changelist(self):
+        mommy.make('TeamPackage', box__delivery_batch__campaign=testing_campaign)
+        address = reverse('admin:t_shirt_delivery_teampackage_changelist')
+        response = self.client.get(address, follow=True)
+        self.assertContains(
+            response,
+            '<td class="field-box__name">Krabice pro pobočku None</td>',
+            html=True,
+        )
+
+    def test_subsidiarybox_admin_changelist(self):
+        mommy.make('SubsidiaryBox', delivery_batch__campaign=testing_campaign, carrier_identification=1234)
+        address = reverse('admin:t_shirt_delivery_subsidiarybox_changelist')
+        response = self.client.get(address, follow=True)
+        self.assertContains(
+            response,
+            '<td class="field-tracking_link"><a target="_blank" href="https://gls-group.eu/CZ/cs/sledovani-zasilek?match=1234">1234</a></td>',
             html=True,
         )
 

@@ -201,19 +201,19 @@ class AdminModulesTests(DenormMixin, TestCase):
     def test_competition_masschange(self):
         address = reverse('admin:dpnk_competition_changelist')
         post_data = {
-            'action': 'mass_update',
+            'action': 'mass_change_selected',
             '_selected_action': '5',
         }
-        response = self.client.post(address, post_data)
+        response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, '<option value="338">Testing campaign - last year</option>', html=True)
 
     def test_subsidiary_masschange(self):
         address = reverse('admin:dpnk_subsidiary_changelist')
         post_data = {
-            'action': 'mass_update',
+            'action': 'mass_change_selected',
             '_selected_action': '1',
         }
-        response = self.client.post(address, post_data)
+        response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, 'id="id_address_street_number"')
 
     def test_admin_questions(self):

@@ -293,6 +293,10 @@ class CompanyCompetitionView(TitleViewMixin, UpdateView):
             competition = Competition(company=company, campaign=campaign, date_from=phase.date_from, date_to=phase.date_to)
         return competition
 
+    def get_initial(self):
+        if self.object.id is None:
+            return {'commute_modes': models.competition.default_commute_modes()}
+
 
 class CompanyCompetitionsShowView(TitleViewMixin, TemplateView):
     template_name = 'company_admin/competitions.html'

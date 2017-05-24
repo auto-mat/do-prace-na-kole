@@ -61,7 +61,7 @@ def make_invoice_sheet_pdf(outfile, invoice):
     )
 
     invoice_gen = Invoice(client, provider, creator)
-    invoice_gen.title = u"Faktura %s/%s" % (invoice.sequence_number, invoice.exposure_date.year)
+    invoice_gen.title = u"Faktura %s/%03d" % (invoice.exposure_date.year, invoice.sequence_number)
     invoice_gen.variable_symbol = invoice.variable_symbol
     invoice_gen.number = invoice.document_number()
     invoice_gen.date = invoice.exposure_date.strftime("%d.%m.%Y")
@@ -77,7 +77,14 @@ def make_invoice_sheet_pdf(outfile, invoice):
             amount = invoice.campaign.benefitial_admission_fee_company
         else:
             amount = payment.amount
-        invoice_gen.add_item(Item(1, amount, description=u"Platba za soutěžící/ho %s" % (payment.user_attendance.userprofile.user.get_full_name()), tax=21))
+        invoice_gen.add_item(
+            Item(
+                1,
+                amount,
+                description="Platba za soutěžící/ho %s" % ("" if invoice.anonymize else payment.user_attendance.name_for_trusted()),
+                tax=21,
+            ),
+        )
     invoice.total_amount = invoice_gen.price_tax
     pdf = SimpleInvoice(invoice_gen)
     pdf.gen(outfile, generate_qr_code=True)

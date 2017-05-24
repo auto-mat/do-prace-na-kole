@@ -44,6 +44,8 @@ class TestGetColumns(TestCase):
             ('competitor', 'user_attendance', 'Sou&shy;tě&shy;ží&shy;cí'),
             ('team', 'get_team', 'Tým'),
             ('company', 'get_company', 'Spo&shy;leč&shy;nost'),
+            ('occupation', 'get_occupation', 'Pro&shy;fe&shy;se'),
+            ('sex', 'get_sex', 'Po&shy;hla&shy;ví'),
             ('city', 'get_city', 'Měs&shy;to'),
         ]
         self.assertListEqual(columns, expected_columns)
@@ -66,6 +68,8 @@ class TestGetColumns(TestCase):
             ('competitor', 'user_attendance', 'Sou&shy;tě&shy;ží&shy;cí'),
             ('team', 'get_team', 'Tým'),
             ('company', 'get_company', 'Spo&shy;leč&shy;nost'),
+            ('occupation', 'get_occupation', 'Pro&shy;fe&shy;se'),
+            ('sex', 'get_sex', 'Po&shy;hla&shy;ví'),
             ('city', 'get_city', 'Měs&shy;to'),
         ]
         self.assertListEqual(columns, expected_columns)
@@ -108,6 +112,8 @@ class TestGetColumns(TestCase):
             ('competitor', 'user_attendance', 'Sou&shy;tě&shy;ží&shy;cí'),
             ('team', 'get_team', 'Tým'),
             ('company', 'get_company', 'Spo&shy;leč&shy;nost'),
+            ('occupation', 'get_occupation', 'Pro&shy;fe&shy;se'),
+            ('sex', 'get_sex', 'Po&shy;hla&shy;ví'),
             ('city', 'get_city', 'Měs&shy;to'),
         ]
         self.assertListEqual(columns, expected_columns)

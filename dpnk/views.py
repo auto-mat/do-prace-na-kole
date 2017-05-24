@@ -1122,7 +1122,11 @@ class CompetitionsRulesView(TitleViewMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         city_slug = kwargs['city_slug']
-        competitions = Competition.objects.filter(Q(city__slug=city_slug) | Q(city__isnull=True, company=None), campaign__slug=self.request.subdomain)
+        competitions = Competition.objects.filter(
+            Q(city__slug=city_slug) | Q(city__isnull=True, company=None),
+            campaign__slug=self.request.subdomain,
+            is_public=True,
+        )
         context_data['competitions'] = competitions
         context_data['city_slug'] = city_slug
         context_data['campaign_slug'] = self.request.subdomain
@@ -1317,7 +1321,7 @@ class QuestionnaireView(TitleViewMixin, TemplateView):
                     continue
                 question.form.save()
             self.competition.make_admission(self.user_attendance)
-            messages.add_message(request, messages.SUCCESS, _("Odpovědi byli úspěšně zadány"))
+            messages.add_message(request, messages.SUCCESS, _("Odpovědi byly úspěšně zadány"))
             return redirect(self.success_url)
         context_data = self.get_context_data()
         context_data['invalid_count'] = invalid_count

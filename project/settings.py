@@ -292,9 +292,15 @@ REST_FRAMEWORK = {
     ),
 }
 
-REDACTOR_OPTIONS = {'formatting': ['p', 'blockquote', 'pre', 'h4', 'h5']}
-BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br', 'span', 'div', 'h4', 'h5', 'pre', 'blockquote', 'ol', 'li', 'ul']
-BLEACH_ALLOWED_ATTRIBUTES = ['href', ]
+REDACTOR_OPTIONS = {
+    "plugins": ["source"],
+    'formatting': ['div', 'p', 'blockquote', 'pre', 'h4', 'h5'],
+    'imageResizable': 'true',
+    'imagePosition': 'true',
+}
+BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br', 'span', 'div', 'h4', 'h5', 'pre', 'blockquote', 'ol', 'li', 'ul', 'figure', 'img']
+BLEACH_ALLOWED_ATTRIBUTES = ['href', 'src', 'height', 'width', 'style']
+BLEACH_ALLOWED_STYLES = ['height', 'width']
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 SERVER_EMAIL = 'kontakt@dopracenakole.cz'
@@ -484,6 +490,8 @@ IGNORABLE_404_URLS = [
     re.compile(r'^/blog$'),
     re.compile(r'^/sitenews$'),
     re.compile(r'^/site$'),
+    re.compile(r'^/browserconfig.xml$'),
+    re.compile(r'^/.well-known/dnt-policy.txt$'),
     re.compile(r'^/blog/robots.txt$'),
     re.compile(r'^xmlrpc.php$'),
 ]

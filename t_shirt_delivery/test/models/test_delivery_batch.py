@@ -183,11 +183,11 @@ class TestDeliveryBatch(TestCase):
         )
         pdf = PdfFileReader(subsidiary_boxes.all()[0].customer_sheets)
         pdf_string = pdf.pages[0].extractText()
-        self.assertTrue("Foo Name 2" in pdf_string)
+        self.assertTrue("Foo Name 1" in pdf_string)
 
         pdf = PdfFileReader(subsidiary_boxes.all()[1].customer_sheets)
         pdf_string = pdf.pages[0].extractText()
-        self.assertTrue("Foo Name 1" in pdf_string)
+        self.assertTrue("Foo Name 2" in pdf_string)
 
         self.assertQuerysetEqual(
             subsidiary_boxes.first().teampackage_set.all().order_by('pk'),

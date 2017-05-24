@@ -81,6 +81,10 @@ class Invoice(models.Model):
         verbose_name=_(u"Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."),
         default=False,
     )
+    anonymize = models.BooleanField(
+        verbose_name=_("Anonimizovat položky na faktuře"),
+        default=False,
+    )
     total_amount = models.FloatField(
         verbose_name=_(u"Celková částka"),
         null=False,

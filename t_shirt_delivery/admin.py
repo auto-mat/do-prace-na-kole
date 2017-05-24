@@ -24,6 +24,8 @@ from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFi
 
 from advanced_filters.admin import AdminAdvancedFiltersMixin
 
+from daterange_filter.filter import DateRangeFilter
+
 from django import forms
 from django.contrib import admin
 from django.db.models import Count, TextField
@@ -42,7 +44,7 @@ from import_export.admin import ExportMixin, ImportExportMixin
 
 from nested_inline.admin import NestedTabularInline
 
-from related_admin import RelatedFieldAdmin
+from related_admin import RelatedFieldAdmin, getter_for_related_field
 
 from . import actions, filters, models
 from .admin_mixins import ReadOnlyModelAdminMixin
@@ -111,6 +113,26 @@ class PackageTransactionResource(resources.ModelResource):
             return ""
 
 
+class PackageTransactionInline(NestedTabularInline):
+    model = models.PackageTransaction
+    extra = 0
+    readonly_fields = ['author', 'updated_by', 't_shirt_size']
+    raw_id_fields = [
+        'user_attendance',
+        'team_package',
+    ]
+    formfield_overrides = {
+        TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
+    }
+    form = PackageTransactionForm
+
+
+class TeamPackageInline(NestedTabularInline):
+    model = models.TeamPackage
+    extra = 0
+    raw_id_fields = ('team',)
+
+
 @admin.register(models.SubsidiaryBox)
 class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFieldAdmin):
     list_display = (
@@ -120,10 +142,15 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         'dispatched_packages_count',
         'packages_count',
         'tracking_link',
-        'delivery_batch',
-        'subsidiary',
+        'delivery_batch__id',
+        'delivery_batch__created',
+        'subsidiary__name',
+        'subsidiary__city',
         'customer_sheets',
         'created',
+    )
+    inlines = (
+        TeamPackageInline,
     )
     raw_id_fields = (
         'delivery_batch',
@@ -142,7 +169,8 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
     advanced_filter_fields = (
         'carrier_identification',
         'dispatched',
-        'delivery_batch',
+        'delivery_batch__id',
+        'delivery_batch__created',
         'subsidiary',
         'customer_sheets',
         'created',
@@ -151,10 +179,12 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         campaign_filter_generator('delivery_batch__campaign'),
         'dispatched',
         filters.AllPackagesDispatched,
-        'delivery_batch',
+        ('delivery_batch__created', DateRangeFilter),
+        'delivery_batch__id',
     ]
     readonly_fields = (
         'tracking_link',
+        'all_packages_dispatched',
     )
 
     def get_queryset(self, request):
@@ -171,15 +201,21 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'identifier',
         'dispatched',
-        'box',
-        'box__delivery_batch',
-        'team',
+        'box__identifier',
+        'box__name',
+        'box__delivery_batch__id',
+        'box__delivery_batch__created',
+        'team__name',
         'team__subsidiary',
     )
+    box__identifier = getter_for_related_field('box__identifier', short_description=_('ID krabice'))
+    team__name = getter_for_related_field('team__name', short_description=_('Tým'))
+    box__name = getter_for_related_field('box__name', short_description=_('Krabice'))
     list_filter = (
         campaign_filter_generator('box__delivery_batch__campaign'),
         'dispatched',
-        'box__delivery_batch',
+        ('box__delivery_batch__created', DateRangeFilter),
+        'box__delivery_batch__id',
     )
     raw_id_fields = (
         'box',
@@ -190,6 +226,10 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
         'team__name',
         'team__subsidiary__address_street',
         'team__subsidiary__company__name',
+        'box__id',
+    )
+    inlines = (
+        PackageTransactionInline,
     )
 
     def get_queryset(self, request):
@@ -213,7 +253,7 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         'author',
         'user_attendance__team__subsidiary',
         'user_attendance__team__subsidiary__company__name',
-        't_shirt_size',
+        't_shirt_size__name',
     )
     search_fields = (
         'id',
@@ -258,20 +298,6 @@ class DeliveryBatchForm(forms.ModelForm):
         if hasattr(self, 'request'):
             self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
         return ret_val
-
-
-class PackageTransactionInline(NestedTabularInline):
-    model = models.PackageTransaction
-    extra = 0
-    readonly_fields = ['author', 'updated_by', 't_shirt_size']
-    raw_id_fields = [
-        'user_attendance',
-        'team_package',
-    ]
-    formfield_overrides = {
-        TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
-    }
-    form = PackageTransactionForm
 
 
 class SubsidiaryBoxInline(NestedTabularInline):
@@ -387,5 +413,4 @@ class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
 
 
 # register all adminactions
-admin.site.add_action(admin_actions.mass_update)
 admin.site.add_action(admin_actions.merge)

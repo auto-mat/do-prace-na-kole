@@ -27,6 +27,8 @@ from freezegun import freeze_time
 
 from model_mommy import mommy
 
+from t_shirt_delivery.models import SubsidiaryBox
+
 
 class TestSubsidiaryBox(TestCase):
     def test_str(self):
@@ -43,10 +45,9 @@ class TestSubsidiaryBox(TestCase):
             subsidiary__company__name="Foo company",
             subsidiary__city__name="Foo city",
         )
-        self.assertEqual(
-            str(subsidiary_box),
-            "Krabice pro pobočku Foo recipient, Foo street 7, 123 45 Foo city - Foo city",
-        )
+        expected_name = "Krabice pro pobočku Foo recipient, Foo street 7, 123 45 Foo city - Foo city"
+        self.assertEqual(str(subsidiary_box), expected_name)
+        self.assertEqual(subsidiary_box.name(), expected_name)
 
     @freeze_time("2010-11-20")
     @override_settings(MEDIA_ROOT='/tmp/django_test')
@@ -212,14 +213,24 @@ class TestSubsidiaryBox(TestCase):
             dispatched=True,
         )
         subsidiary_box = team_package.box
-        self.assertEquals(subsidiary_box.teampackage_set.count(), 1)
+        self.assertEquals(subsidiary_box.packages_count(), 1)
+        self.assertEquals(subsidiary_box.dispatched_packages_count(), 1)
+        self.assertTrue(subsidiary_box.all_packages_dispatched())
+
+    def test_all_packages_dispatched_annotation(self):
+        """ Test that the dispatched packages functions work through annotations """
+        mommy.make('TeamPackage', dispatched=True)
+        subsidiary_box = SubsidiaryBox.objects.first()
+        self.assertEquals(subsidiary_box.packages_count(), 1)
+        self.assertEquals(subsidiary_box.dispatched_packages_count(), 1)
         self.assertTrue(subsidiary_box.all_packages_dispatched())
 
     def test_all_packages_dispatched_no_package(self):
         subsidiary_box = mommy.prepare(
             'SubsidiaryBox',
         )
-        self.assertEquals(subsidiary_box.teampackage_set.count(), 0)
+        self.assertEquals(subsidiary_box.packages_count(), 0)
+        self.assertEquals(subsidiary_box.dispatched_packages_count(), 0)
         self.assertTrue(subsidiary_box.all_packages_dispatched())
 
     def test_all_packages_dispatched_false(self):
@@ -228,5 +239,20 @@ class TestSubsidiaryBox(TestCase):
             dispatched=False,
         )
         subsidiary_box = team_package.box
-        self.assertEquals(subsidiary_box.teampackage_set.count(), 1)
+        self.assertEquals(subsidiary_box.packages_count(), 1)
+        self.assertEquals(subsidiary_box.dispatched_packages_count(), 0)
         self.assertFalse(subsidiary_box.all_packages_dispatched())
+
+    def test_tracking_link(self):
+        subsidiary_box = mommy.make(
+            'SubsidiaryBox',
+            carrier_identification=12345,
+        )
+        self.assertEquals(
+            subsidiary_box.tracking_link(),
+            "<a target='_blank' href='https://gls-group.eu/CZ/cs/sledovani-zasilek?match=12345'>12345</a>",
+        )
+
+    def test_tracking_link_none(self):
+        subsidiary_box = mommy.make('SubsidiaryBox')
+        self.assertEquals(subsidiary_box.tracking_link(), None)

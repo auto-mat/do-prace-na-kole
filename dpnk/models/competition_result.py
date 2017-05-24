@@ -108,6 +108,14 @@ class CompetitionResult(models.Model):
         ).count()
         return lower_range, upper_range
 
+    def get_occupation(self):
+        if self.user_attendance:
+            return getattr(self.user_attendance.userprofile.occupation, 'name', '-')
+
+    def get_sex(self):
+        if self.user_attendance:
+            return self.user_attendance.userprofile.get_sex_display()
+
     def get_team(self):
         if self.competition.competitor_type in ['liberos', 'single_user']:
             return self.user_attendance.team

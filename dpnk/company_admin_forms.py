@@ -239,7 +239,7 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
 
     class Meta:
         model = Competition
-        fields = ('name', 'url', 'competition_type', 'competitor_type', 'sex', )
+        fields = ('name', 'url', 'competition_type', 'competitor_type', 'commute_modes', 'sex', )
 
     def clean_name(self):
         if not self.instance.pk:
@@ -251,12 +251,6 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
                     },
                 )
         return self.cleaned_data['name']
-
-    def save(self, force_insert=False, force_update=False, commit=True):
-        competition = super(CompanyCompetitionForm, self).save(commit=False)
-        if commit:
-            competition.save()
-        return competition
 
 
 class CreateInvoiceForm(SubmitMixin, forms.ModelForm):

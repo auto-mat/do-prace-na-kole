@@ -46,7 +46,7 @@ class CompetitionResultListJson(BaseDatatableView):
                 return "%s." % sequence_range[0]
             else:
                 return "%s.&nbsp;-&nbsp;%s." % sequence_range
-        if column in ('get_company', 'get_city', 'get_street', 'get_subsidiary'):
+        if column in ('get_company', 'get_city', 'get_street', 'get_subsidiary', 'get_occupation', 'get_sex'):
             return str(getattr(row, column)())
         if column in ('get_result_percentage'):
             return intcomma(getattr(row, column)())
@@ -90,9 +90,15 @@ class CompetitionResultListJson(BaseDatatableView):
                     output_field=CharField(),
                 ),
             )
+            if search.lower() == "muž":
+                search = "male"
+            elif search.lower() == "žena":
+                search = "female"
             for s in search.split():
                 qs = qs.filter(
                     Q(user_attendance__userprofile__nickname__unaccent__icontains=s) |
+                    Q(user_attendance__userprofile__occupation__name__unaccent__icontains=s) |
+                    Q(user_attendance__userprofile__sex=s) |
                     Q(first_name__unaccent__icontains=s) |
                     Q(last_name__unaccent__icontains=s) |
                     Q(company__name__unaccent__icontains=s) |
