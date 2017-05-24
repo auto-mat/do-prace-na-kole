@@ -90,9 +90,15 @@ class CompetitionResultListJson(BaseDatatableView):
                     output_field=CharField(),
                 ),
             )
+            if search.lower() == "muž":
+                search = "male"
+            elif search.lower() == "žena":
+                search = "female"
             for s in search.split():
                 qs = qs.filter(
                     Q(user_attendance__userprofile__nickname__unaccent__icontains=s) |
+                    Q(user_attendance__userprofile__occupation__name__unaccent__icontains=s) |
+                    Q(user_attendance__userprofile__sex__unaccent__icontains=s) |
                     Q(first_name__unaccent__icontains=s) |
                     Q(last_name__unaccent__icontains=s) |
                     Q(company__name__unaccent__icontains=s) |
