@@ -65,47 +65,49 @@ def make_sheet(subsidiary_box, canvas):
         page_number += 1
 
 
-def make_subsidiary_sheet(subsidiary_box, canvas):
-    subsidiary = subsidiary_box.subsidiary
-    if not subsidiary:
-        return
-
-    canvas.setFont('DejaVuB', 12)
-    canvas.drawString(first_column * cm, (page_height - 2.5) * cm, subsidiary_box.delivery_batch.campaign.__str__())
-    canvas.drawString(first_column * cm, (page_height - 3) * cm, "Krabice pro pobočku firmy")
-
-    canvas.setFont('DejaVu', 10)
-    canvas.drawString(first_column * cm, (page_height - 3.5) * cm, "%s" % (subsidiary.company))
-
-    im = Image(logo_file, 3.98 * cm, 1.5 * cm)
-    im.drawOn(canvas, first_column * cm, (page_height - 2) * cm)
-
-    canvas.setFont('DejaVu', 10)
-    barcode = code128.Code128(subsidiary_box.identifier(), barWidth=0.5 * mm, barHeight=20 * mm, humanReadable=True)
-    barcode.drawOn(canvas, 8.3 * cm, (page_height - 2.7) * cm)
-    canvas.drawString(9 * cm, (page_height - 0.45) * cm, "ID krabice pro pobočku:")
-
-    offset = 5
-    second_column = 4
-    canvas.setFont('DejaVu', 10)
-    canvas.drawString(first_column * cm, (page_height - offset - 0 * 0.5) * cm, "Společnost:")
-    canvas.drawString(4 * cm, (page_height - offset - 0 * 0.5) * cm, "%s" % subsidiary.company)
-
-    canvas.drawString(first_column * cm, (page_height - offset - 1 * 0.5) * cm, "IČO:")
-    if subsidiary.company.ico:
-        canvas.drawString(second_column * cm, (page_height - offset - 1 * 0.5) * cm, "%s" % subsidiary.company.ico)
-
-    canvas.drawString(first_column * cm, (page_height - offset - 2 * 0.5) * cm, "Adresát:")
-    canvas.drawString(second_column * cm, (page_height - offset - 2 * 0.5) * cm, "%s" % subsidiary.address_recipient)
-
-    canvas.drawString(first_column * cm, (page_height - offset - 3 * 0.5) * cm, "Ulice:")
-    canvas.drawString(second_column * cm, (page_height - offset - 3 * 0.5) * cm, "%s %s" % (subsidiary.address_street, subsidiary.address_street_number))
-
-    canvas.drawString(first_column * cm, (page_height - offset - 4 * 0.5) * cm, "PSČ:")
-    canvas.drawString(second_column * cm, (page_height - offset - 4 * 0.5) * cm, "%s" % subsidiary.address_psc)
-
-    canvas.drawString(first_column * cm, (page_height - offset - 5 * 0.5) * cm, "Město:")
-    canvas.drawString(second_column * cm, (page_height - offset - 5 * 0.5) * cm, "%s" % subsidiary.address_city)
+# This is unused code for generating sheets for subsidiary:
+#
+# def make_subsidiary_sheet(subsidiary_box, canvas):
+#     subsidiary = subsidiary_box.subsidiary
+#     if not subsidiary:
+#         return
+#
+#     canvas.setFont('DejaVuB', 12)
+#     canvas.drawString(first_column * cm, (page_height - 2.5) * cm, subsidiary_box.delivery_batch.campaign.__str__())
+#     canvas.drawString(first_column * cm, (page_height - 3) * cm, "Krabice pro pobočku firmy")
+#
+#     canvas.setFont('DejaVu', 10)
+#     canvas.drawString(first_column * cm, (page_height - 3.5) * cm, "%s" % (subsidiary.company))
+#
+#     im = Image(logo_file, 3.98 * cm, 1.5 * cm)
+#     im.drawOn(canvas, first_column * cm, (page_height - 2) * cm)
+#
+#     canvas.setFont('DejaVu', 10)
+#     barcode = code128.Code128(subsidiary_box.identifier(), barWidth=0.5 * mm, barHeight=20 * mm, humanReadable=True)
+#     barcode.drawOn(canvas, 8.3 * cm, (page_height - 2.7) * cm)
+#     canvas.drawString(9 * cm, (page_height - 0.45) * cm, "ID krabice pro pobočku:")
+#
+#     offset = 5
+#     second_column = 4
+#     canvas.setFont('DejaVu', 10)
+#     canvas.drawString(first_column * cm, (page_height - offset - 0 * 0.5) * cm, "Společnost:")
+#     canvas.drawString(4 * cm, (page_height - offset - 0 * 0.5) * cm, "%s" % subsidiary.company)
+#
+#     canvas.drawString(first_column * cm, (page_height - offset - 1 * 0.5) * cm, "IČO:")
+#     if subsidiary.company.ico:
+#         canvas.drawString(second_column * cm, (page_height - offset - 1 * 0.5) * cm, "%s" % subsidiary.company.ico)
+#
+#     canvas.drawString(first_column * cm, (page_height - offset - 2 * 0.5) * cm, "Adresát:")
+#     canvas.drawString(second_column * cm, (page_height - offset - 2 * 0.5) * cm, "%s" % subsidiary.address_recipient)
+#
+#     canvas.drawString(first_column * cm, (page_height - offset - 3 * 0.5) * cm, "Ulice:")
+#     canvas.drawString(second_column * cm, (page_height - offset - 3 * 0.5) * cm, "%s %s" % (subsidiary.address_street, subsidiary.address_street_number))
+#
+#     canvas.drawString(first_column * cm, (page_height - offset - 4 * 0.5) * cm, "PSČ:")
+#     canvas.drawString(second_column * cm, (page_height - offset - 4 * 0.5) * cm, "%s" % subsidiary.address_psc)
+#
+#     canvas.drawString(first_column * cm, (page_height - offset - 5 * 0.5) * cm, "Město:")
+#     canvas.drawString(second_column * cm, (page_height - offset - 5 * 0.5) * cm, "%s" % subsidiary.address_city)
 
 
 def make_team_sheet(team_package, canvas, package_counter):
