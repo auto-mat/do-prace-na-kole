@@ -451,12 +451,6 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
             'campaign',
         ]
 
-    def commute_modes_list(self, obj):
-        return ", ".join([str(c) for c in obj.commute_modes.all()])
-
-    def city_list(self, obj):
-        return ", ".join([str(c) for c in obj.city.all()])
-
     def competition_results_link(self, obj):
         if obj.slug:
             return format_html(u'<a href="{}">výsledky</a>', (reverse('competition_results', kwargs={'competition_slug': obj.slug})))

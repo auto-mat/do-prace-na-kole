@@ -8,6 +8,7 @@
 <th>{% trans "Typ soutěže" %}</th>
 <th>{% trans "Typ soutěžících" %}</th>
 <th>{% trans "Pohlaví" %}</th>
+<th>{% trans "Módy dopravy" %}</th>
 <th>{% trans "Upravit" %}</th>
 <th>{% trans "Výsledky" %}</th>
 </tr>
@@ -21,6 +22,7 @@
    <td>{{ competition.get_competition_type_display }}</td>
    <td>{{ competition.get_competitor_type_display }}</td>
    <td>{{ competition.get_sex_display|default_if_none:"Všechna" }}</td>
+   <td>{{ competition.commute_modes_list }}</td>
    <td><a href="{% url 'company_admin_competition' competition_slug=competition.slug %}">{% trans "upravit" %}</a></td>
    <td><a href="{% url 'competition_results' competition_slug=competition.slug %}">{% trans "výsledky" %}</a></td>
    </tr>

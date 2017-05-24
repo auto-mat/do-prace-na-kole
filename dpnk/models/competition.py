@@ -408,6 +408,12 @@ class Competition(models.Model):
                 return self.company_competitors.filter(pk=userprofile.company().pk).exists()
             return True
 
+    def commute_modes_list(self):
+        return ", ".join([str(c) for c in self.commute_modes.all()])
+
+    def city_list(self):
+        return ", ".join([str(c) for c in self.city.all()])
+
     def make_admission(self, userprofile, admission=True):
         if not self.without_admission and self.can_admit(userprofile):
             if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
