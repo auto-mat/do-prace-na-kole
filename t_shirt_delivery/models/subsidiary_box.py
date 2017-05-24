@@ -21,6 +21,7 @@
 from django.contrib.gis.db import models
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
+from django.db.models import Case, IntegerField, Sum, When
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html
@@ -34,12 +35,27 @@ from . import PackageTransaction
 from .. import customer_sheets
 
 
+class SubsidiaryBoxManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().annotate(
+            dispatched_packages_count_annot=Sum(
+                Case(
+                    When(teampackage__dispatched=True, then=1),
+                    When(teampackage__dispatched=False, then=0),
+                    default=0,
+                    output_field=IntegerField(),
+                ),
+            ),
+        )
+
+
 class SubsidiaryBox(TimeStampedModel, models.Model):
     """ Krabice pro pobočku """
 
     class Meta:
         verbose_name = _("Krabice pro pobočku")
         verbose_name_plural = _("Krabice pro pobočky")
+        ordering = ['id']
 
     delivery_batch = models.ForeignKey(
         'DeliveryBatch',
@@ -80,6 +96,9 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
     def __str__(self):
         return _("Krabice pro pobočku %s") % self.subsidiary
 
+    def name(self):
+        return self.__str__()
+
     def get_representative_addressee(self):
         """ Returns UserAttendance to which this box should be addressed """
         if self.subsidiary and self.subsidiary.box_addressee_name:
@@ -113,7 +132,10 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         return t_shirt_volume * t_shirt_count
 
     def all_packages_dispatched(self):
-        return not self.teampackage_set.filter(dispatched=False).exists()
+        if hasattr(self, 'dispatched_packages_count_annot'):
+            return self.dispatched_packages_count_annot == self.packages_count()
+        else:
+            return not self.teampackage_set.filter(dispatched=False).exists()
     all_packages_dispatched.boolean = True
     all_packages_dispatched.short_description = _("Všechny balíčky vyřízeny")
 
@@ -121,7 +143,12 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         return self.teampackage_set.filter(dispatched=True)
 
     def dispatched_packages_count(self):
-        return self.dispatched_packages().count()
+        if hasattr(self, 'dispatched_packages_count_annot'):
+            return self.dispatched_packages_count_annot
+        else:
+            return self.dispatched_packages().count()
+    dispatched_packages_count.short_description = _("Počet vyřízených balíků")
+    dispatched_packages_count.admin_order_field = 'dispatched_packages_count_annot'
 
     def packages_count(self):
         return self.teampackage_set.count()
@@ -134,6 +161,8 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
                 self.carrier_identification,
             )
     tracking_link.admin_order_field = 'carrier_identification'
+
+    objects = SubsidiaryBoxManager()
 
 
 @receiver(post_save, sender=SubsidiaryBox)

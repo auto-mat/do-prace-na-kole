@@ -24,6 +24,8 @@ from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFi
 
 from advanced_filters.admin import AdminAdvancedFiltersMixin
 
+from daterange_filter.filter import DateRangeFilter
+
 from django import forms
 from django.contrib import admin
 from django.db.models import Count, TextField
@@ -42,7 +44,7 @@ from import_export.admin import ExportMixin, ImportExportMixin
 
 from nested_inline.admin import NestedTabularInline
 
-from related_admin import RelatedFieldAdmin
+from related_admin import RelatedFieldAdmin, getter_for_related_field
 
 from . import actions, filters, models
 from .admin_mixins import ReadOnlyModelAdminMixin
@@ -140,8 +142,10 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         'dispatched_packages_count',
         'packages_count',
         'tracking_link',
-        'delivery_batch',
-        'subsidiary',
+        'delivery_batch__id',
+        'delivery_batch__created',
+        'subsidiary__name',
+        'subsidiary__city',
         'customer_sheets',
         'created',
     )
@@ -165,7 +169,8 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
     advanced_filter_fields = (
         'carrier_identification',
         'dispatched',
-        'delivery_batch',
+        'delivery_batch__id',
+        'delivery_batch__created',
         'subsidiary',
         'customer_sheets',
         'created',
@@ -174,7 +179,8 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         campaign_filter_generator('delivery_batch__campaign'),
         'dispatched',
         filters.AllPackagesDispatched,
-        'delivery_batch',
+        ('delivery_batch__created', DateRangeFilter),
+        'delivery_batch__id',
     ]
     readonly_fields = (
         'tracking_link',
@@ -195,15 +201,21 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'identifier',
         'dispatched',
-        'box',
-        'box__delivery_batch',
-        'team',
+        'box__identifier',
+        'box__name',
+        'box__delivery_batch__id',
+        'box__delivery_batch__created',
+        'team__name',
         'team__subsidiary',
     )
+    box__identifier = getter_for_related_field('box__identifier', short_description=_('ID krabice'))
+    team__name = getter_for_related_field('team__name', short_description=_('Tým'))
+    box__name = getter_for_related_field('box__name', short_description=_('Krabice'))
     list_filter = (
         campaign_filter_generator('box__delivery_batch__campaign'),
         'dispatched',
-        'box__delivery_batch',
+        ('box__delivery_batch__created', DateRangeFilter),
+        'box__delivery_batch__id',
     )
     raw_id_fields = (
         'box',
