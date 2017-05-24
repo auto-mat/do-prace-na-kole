@@ -294,7 +294,8 @@ class CompanyCompetitionView(TitleViewMixin, UpdateView):
         return competition
 
     def get_initial(self):
-        return {'commute_modes': models.competition.default_commute_modes()}
+        if self.object.id is None:
+            return {'commute_modes': models.competition.default_commute_modes()}
 
 
 class CompanyCompetitionsShowView(TitleViewMixin, TemplateView):
