@@ -98,7 +98,7 @@ class CompetitionResultListJson(BaseDatatableView):
                 qs = qs.filter(
                     Q(user_attendance__userprofile__nickname__unaccent__icontains=s) |
                     Q(user_attendance__userprofile__occupation__name__unaccent__icontains=s) |
-                    Q(user_attendance__userprofile__sex__unaccent__icontains=s) |
+                    Q(user_attendance__userprofile__sex=s) |
                     Q(first_name__unaccent__icontains=s) |
                     Q(last_name__unaccent__icontains=s) |
                     Q(company__name__unaccent__icontains=s) |

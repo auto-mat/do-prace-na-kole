@@ -288,6 +288,38 @@ class CompetitionResultListJsonSingleTests(TestCase):
         }
         self.assertJSONEqual(response.content.decode(), expected_json)
 
+    def test_search_sex_female(self):
+        """ Test if searching by female sex name field works """
+        get_params = {'search[value]': 'Žena'}
+        request = self.factory.get('', get_params)
+        request.subdomain = "testing-campaign"
+        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        expected_json = {
+            "recordsTotal": 2,
+            "data": [
+                ["1.&nbsp;-&nbsp;2.", "100,0", 1.2, 1.1, "Jan Novák", "bar team", "bar company", "-", "Žena", "bar city"],
+            ],
+            "draw": 0,
+            "result": "ok",
+            "recordsFiltered": 1,
+        }
+        self.assertJSONEqual(response.content.decode(), expected_json)
+
+    def test_search_sex_male(self):
+        """ Test if searching by male sex name field works """
+        get_params = {'search[value]': 'Muž'}
+        request = self.factory.get('', get_params)
+        request.subdomain = "testing-campaign"
+        response = CompetitionResultListJson.as_view()(request, competition_slug='competition')
+        expected_json = {
+            "recordsTotal": 2,
+            "data": [],
+            "draw": 0,
+            "result": "ok",
+            "recordsFiltered": 0,
+        }
+        self.assertJSONEqual(response.content.decode(), expected_json)
+
     def test_search_user_name_not_found(self):
         """
         If the user has nickname, we can't find by his name,
