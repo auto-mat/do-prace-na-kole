@@ -1172,7 +1172,7 @@ class AnswerAdmin(ImportExportMixin, RelatedFieldAdmin):
 
 
 @admin.register(models.Question)
-class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ExportMixin, admin.ModelAdmin):
+class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ImportExportMixin, admin.ModelAdmin):
     form = models.QuestionForm
     list_display = ('__str__', 'text', 'question_type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
     ordering = ('order', 'date',)
