@@ -6,13 +6,6 @@
 {% block content %}
 {% crispy form %}
 
-{% if messages %}
-    {% for message in messages %}
-       {% if not required_tag and not message.extra_tags or required_tag in message.extra_tags %}
-          <div class="alert alert-{{ message.level_tag }}">{{ message }}</div>
-       {% endif %}
-    {% endfor %}
-{% endif %}
 <br/>
    {% if package_message %}
       <div>
