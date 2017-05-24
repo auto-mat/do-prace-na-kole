@@ -58,7 +58,7 @@ from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 
 from nested_inline.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 
-from polymorphic.admin import PolymorphicChildModelAdmin, PolymorphicParentModelAdmin
+from polymorphic.admin import PolymorphicChildModelAdmin
 
 from price_level import models as price_level_models
 
@@ -70,7 +70,7 @@ from scribbler import models as scribbler_models
 
 from t_shirt_delivery.admin import PackageTransactionInline
 from t_shirt_delivery.forms import PackageTransactionForm
-from t_shirt_delivery.models import PackageTransaction, TShirtSize
+from t_shirt_delivery.models import TShirtSize
 
 from . import actions, models, transaction_forms
 from .admin_mixins import CityAdminMixin, FormRequestMixin, city_admin_mixin_generator
@@ -102,13 +102,6 @@ class PaymentInline(NestedTabularInline):
     formfield_overrides = {
         TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
     }
-
-
-class CommonTransactionInline(NestedTabularInline):
-    model = models.CommonTransaction
-    extra = 0
-    readonly_fields = ['user_attendance', 'author', 'updated_by']
-    form = transaction_forms.CommonTransactionForm
 
 
 class UserActionTransactionInline(NestedTabularInline):
@@ -1010,42 +1003,8 @@ class PackageTransactionChildAdmin(TransactionChildAdmin):
     form = PackageTransactionForm
 
 
-class CommonTransactionChildAdmin(TransactionChildAdmin):
-    form = transaction_forms.CommonTransactionForm
-
-
 class UserActionTransactionChildAdmin(TransactionChildAdmin):
     form = transaction_forms.UserActionTransactionForm
-
-
-@admin.register(models.Transaction)
-class TransactionAdmin(PolymorphicParentModelAdmin):
-    list_display = ('id', 'user_attendance', 'created', 'status', 'polymorphic_ctype', 'user_link', 'author')
-    search_fields = (
-        'user_attendance__userprofile__nickname',
-        'user_attendance__userprofile__user__first_name',
-        'user_attendance__userprofile__user__last_name',
-        'user_attendance__userprofile__user__username')
-    list_filter = [campaign_filter_generator('user_attendance__campaign'), 'status', 'polymorphic_ctype', ]
-
-    readonly_fields = ['user_link', ]
-
-    def user_link(self, obj):
-        if obj.user_attendance:
-            return format_html(
-                '<a href="{}">{}</a>',
-                reverse('admin:auth_user_change', args=(obj.user_attendance.userprofile.user.pk,)),
-                obj.user_attendance.userprofile.user,
-            )
-    user_link.short_description = _('Uživatel')
-
-    base_model = models.Transaction
-    child_models = (
-        (models.Payment, PaymentChildAdmin),
-        (PackageTransaction, PackageTransactionChildAdmin),
-        (models.CommonTransaction, CommonTransactionChildAdmin),
-        (models.UserActionTransaction, UserActionTransactionChildAdmin),
-    )
 
 
 @admin.register(models.Payment)
@@ -1075,7 +1034,10 @@ class PaymentAdmin(ImportExportMixin, RelatedFieldAdmin):
         'user_attendance__team__subsidiary__company__name',
     )
     list_filter = [campaign_filter_generator('user_attendance__campaign'), 'status', 'error', 'pay_type', ]
-    raw_id_fields = ('user_attendance',)
+    raw_id_fields = (
+        'user_attendance',
+        'invoice',
+    )
     readonly_fields = ('author', 'created', 'updated_by')
     list_max_show_all = 10000
     form = transaction_forms.PaymentForm

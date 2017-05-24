@@ -34,7 +34,6 @@ from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from dpnk import transaction_forms
 from dpnk.admin_mixins import FormRequestMixin
 from dpnk.filters import CampaignFilter, campaign_filter_generator
 from dpnk.models import Campaign, UserAttendance
@@ -277,7 +276,7 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         'updated_by',
     )
     list_max_show_all = 10000
-    form = transaction_forms.PaymentForm
+    form = PackageTransactionForm
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)

@@ -43,7 +43,9 @@ from .phase import Phase
 from .questionnaire import Answer, Choice, ChoiceType, Question, QuestionForm, questionnaire_filename
 from .subsidiary import Subsidiary
 from .team import Team, post_user_team_changed, pre_user_team_changed, validate_length
-from .transactions import CommonTransaction, Payment, STATUS, Status, Transaction, UserActionTransaction
+from .transactions import (
+    COMPETITION_STATUSES, CommonTransaction, PACKAGE_STATUSES, PAYMENT_STATUSES, Payment, STATUS, Status, Transaction, UserActionTransaction
+)
 from .trip import Trip
 from .user_attendance import UserAttendance
 from .user_profile import UserProfile
@@ -89,6 +91,9 @@ __all__ = (
     get_address_string,
     validate_length,
     STATUS,
+    COMPETITION_STATUSES,
+    PACKAGE_STATUSES,
+    PAYMENT_STATUSES,
     Status,
     payments_to_invoice,
 )

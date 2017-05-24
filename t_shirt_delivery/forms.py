@@ -21,7 +21,7 @@
 from django import forms
 
 from dpnk.forms import PrevNextMixin
-from dpnk.models import STATUS, UserAttendance
+from dpnk.models import PACKAGE_STATUSES, UserAttendance
 
 from .models import PackageTransaction, TShirtSize
 
@@ -42,7 +42,7 @@ class TShirtUpdateForm(PrevNextMixin, forms.ModelForm):
 class PackageTransactionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=STATUS)
+        self.fields['status'] = forms.ChoiceField(choices=tuple(PACKAGE_STATUSES))
 
     class Meta:
         model = PackageTransaction
