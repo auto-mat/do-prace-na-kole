@@ -818,7 +818,7 @@ class UserAttendanceAdmin(
         'team__subsidiary__company',
         'approved_for_team',
         'campaign__name',
-        't_shirt_size',
+        't_shirt_size__name',
         'payment_status',
         'representative_payment__pay_type',
         'representative_payment__status',

@@ -253,7 +253,7 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         'author',
         'user_attendance__team__subsidiary',
         'user_attendance__team__subsidiary__company__name',
-        't_shirt_size',
+        't_shirt_size__name',
     )
     search_fields = (
         'id',
