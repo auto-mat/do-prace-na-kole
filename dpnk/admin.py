@@ -1094,8 +1094,17 @@ class AnswerResource(resources.ModelResource):
             return obj.str_choices()
 
 
+class AnswerForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'instance' in kwargs:
+            self.fields['choices'].queryset = models.Choice.objects.filter(choice_type__question=kwargs['instance'].question)
+        else:
+            self.fields['choices'].queryset = models.Choice.objects.filter(choice_type__question__competition__campaign__slug=self.request.subdomain)
+
+
 @admin.register(models.Answer)
-class AnswerAdmin(ImportExportMixin, RelatedFieldAdmin):
+class AnswerAdmin(FormRequestMixin, ImportExportMixin, RelatedFieldAdmin):
     list_display = (
         'user_attendance',
         'user_attendance__userprofile__user__email',
@@ -1121,6 +1130,7 @@ class AnswerAdmin(ImportExportMixin, RelatedFieldAdmin):
     raw_id_fields = ('user_attendance', 'question')
     save_as = True
     resource_class = AnswerResource
+    form = AnswerForm
 
     def attachment_url(self, obj):
         if obj.attachment:
