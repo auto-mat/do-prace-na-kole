@@ -210,7 +210,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                           ' Na základě této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty.'
                           ' Vaše vyplněná trasa se objeví na '
                           '<a target="_blank" href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
-                          ' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
+                          ' a pomůže při plánování cyklistické infrastruktury ve vašem městě.<br>'
                           ' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu'),
                     ),
                 )

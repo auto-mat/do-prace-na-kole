@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-24 16:29+0200\n"
+"POT-Creation-Date: 2017-05-25 15:54+0200\n"
 "PO-Revision-Date: 2017-04-19 14:59+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -120,109 +120,109 @@ msgstr ""
 msgid "Odeslat notifikaci nevyplněných jízd"
 msgstr ""
 
-#: admin.py:232 admin.py:241
+#: admin.py:225 admin.py:234
 msgid "Pobočky"
 msgstr ""
 
-#: admin.py:359
+#: admin.py:352
 msgid "Počet týmů ve všech kampaních"
 msgstr ""
 
-#: admin.py:365
+#: admin.py:358
 msgid "Počet soutěžících ve vyfiltrované kampani"
 msgstr ""
 
-#: admin.py:374 models/competition.py:61 models/team.py:47
+#: admin.py:367 models/competition.py:61 models/team.py:47
 msgid "Týmy"
 msgstr ""
 
-#: admin.py:424
+#: admin.py:417
 msgid "Není vnitrofiremní soutěž?"
 msgstr ""
 
-#: admin.py:463 views.py:1176
+#: admin.py:450 views.py:1176
 msgid "Výsledky soutěže"
 msgstr ""
 
-#: admin.py:468 models/questionnaire.py:209
+#: admin.py:455 models/questionnaire.py:209
 msgid "Odpovědi"
 msgstr ""
 
-#: admin.py:473 models/competition.py:55
+#: admin.py:460 models/competition.py:55
 msgid "Dotazník"
 msgstr ""
 
-#: admin.py:478 views.py:1883
+#: admin.py:465 views.py:1883
 msgid "Losování"
 msgstr ""
 
-#: admin.py:511
+#: admin.py:498
 msgid ""
 "Tento tým není možné zvolit, protože by měl příliš mnoho odsouhlasených "
 "členů."
 msgstr ""
 
-#: admin.py:518
+#: admin.py:505
 msgid "Není možné odstranit tým učastníkovi kampaně, který již zaplatil"
 msgstr ""
 
-#: admin.py:684
+#: admin.py:671
 msgid "Tento e-mail je již v systému použit."
 msgstr ""
 
-#: admin.py:717
+#: admin.py:704
 msgid "Nemá uživatelský profil?"
 msgstr ""
 
-#: admin.py:851
+#: admin.py:838
 msgid "Nemá nahranou trasu?"
 msgstr ""
 
-#: admin.py:852
+#: admin.py:839
 msgid "Nemá přiřazené vouchery?"
 msgstr ""
 
-#: admin.py:853
+#: admin.py:840
 msgid "Nemá žádné cesty?"
 msgstr ""
 
-#: admin.py:854
+#: admin.py:841
 msgid "Uživatel nemá zvolený tým?"
 msgstr ""
 
-#: admin.py:866
+#: admin.py:853
 msgid "Datum realizace platby"
 msgstr ""
 
-#: admin.py:869
+#: admin.py:856
 msgid "Posílá se triko?"
 msgstr ""
 
-#: admin.py:915 admin.py:1046
+#: admin.py:902
 msgid "Uživatel"
 msgstr ""
 
-#: admin.py:997 templates/submenu_team.html:7
+#: admin.py:984 templates/submenu_team.html:7
 msgid "Členové"
 msgstr ""
 
-#: admin.py:1194
+#: admin.py:1150
 msgid "vyhodnocení odpovědí"
 msgstr ""
 
-#: admin.py:1392
+#: admin.py:1348
 msgid "Nemá účast v kampani?"
 msgstr ""
 
-#: admin.py:1490
+#: admin.py:1446
 msgid "Nezaplacené faktury"
 msgstr ""
 
-#: admin.py:1502 templates/company_admin/invoices.html:8
+#: admin.py:1458 templates/company_admin/invoices.html:8
 msgid "Počet plateb"
 msgstr ""
 
-#: admin.py:1569
+#: admin.py:1525
 msgid "Nemá účast v kampani"
 msgstr ""
 
@@ -243,7 +243,7 @@ msgstr ""
 msgid "Ceny jsou uváděny bez DPH"
 msgstr ""
 
-#: company_admin_forms.py:47 models/transactions.py:238
+#: company_admin_forms.py:47 models/transactions.py:246
 #: templates/company_admin/create_invoice.html:38
 msgid "Částka"
 msgstr ""
@@ -430,22 +430,22 @@ msgstr ""
 msgid "Dosažen maximální počet soutěží"
 msgstr ""
 
-#: company_admin_views.py:302
+#: company_admin_views.py:303
 msgid "Vnitrofiremní soutěže"
 msgstr ""
 
-#: company_admin_views.py:320
+#: company_admin_views.py:321
 msgid "Faktury vaší organizace"
 msgstr ""
 
-#: company_admin_views.py:351
+#: company_admin_views.py:352
 #, python-brace-format
 msgid ""
 "Před vystavením faktury prosím <a href='{addr}'>vyplňte údaje o vaší firmě</"
 "a>"
 msgstr ""
 
-#: company_admin_views.py:356
+#: company_admin_views.py:357
 msgid "Vystavování faktur nemáte povoleno"
 msgstr ""
 
@@ -764,7 +764,7 @@ msgstr ""
 msgid "Neposílat, přeskočit"
 msgstr ""
 
-#: forms.py:487 models/transactions.py:242
+#: forms.py:487 models/transactions.py:250
 msgid "Typ platby"
 msgstr ""
 
@@ -1129,7 +1129,7 @@ msgstr ""
 msgid "Mód dopravy"
 msgstr ""
 
-#: models/commute_mode.py:27
+#: models/commute_mode.py:27 templates/company_admin/competitions.html:11
 msgid "Módy dopravy"
 msgstr ""
 
@@ -1456,52 +1456,52 @@ msgstr ""
 msgid "Měs&shy;to"
 msgstr ""
 
-#: models/competition.py:433
+#: models/competition.py:439
 msgid "dotazník"
 msgstr ""
 
-#: models/competition.py:434
+#: models/competition.py:440
 msgid "soutěž na pravidelnost"
 msgstr ""
 
-#: models/competition.py:435
+#: models/competition.py:441
 msgid "soutěž na vzdálenost"
 msgstr ""
 
-#: models/competition.py:438 templates/registration/competitions.html:23
+#: models/competition.py:444 templates/registration/competitions.html:23
 msgid "jednotlivců"
 msgstr ""
 
-#: models/competition.py:439 templates/registration/competitions.html:25
+#: models/competition.py:445 templates/registration/competitions.html:25
 msgid "liberos"
 msgstr ""
 
-#: models/competition.py:440 templates/registration/competitions.html:27
+#: models/competition.py:446 templates/registration/competitions.html:27
 msgid "týmů"
 msgstr ""
 
-#: models/competition.py:441 templates/registration/competitions.html:29
+#: models/competition.py:447 templates/registration/competitions.html:29
 msgid "společností"
 msgstr ""
 
-#: models/competition.py:444
+#: models/competition.py:450
 msgid "pro muže"
 msgstr ""
 
-#: models/competition.py:445
+#: models/competition.py:451
 msgid "pro ženy"
 msgstr ""
 
-#: models/competition.py:448
+#: models/competition.py:454
 msgid "vnitrofiremní"
 msgstr ""
 
-#: models/competition.py:449
+#: models/competition.py:455
 #, python-format
 msgid "organizace %s"
 msgstr ""
 
-#: models/competition.py:457
+#: models/competition.py:463
 #, python-format
 msgid "ve městě %(cities)s"
 msgid_plural "ve městech %(cities)s"
@@ -1873,179 +1873,179 @@ msgstr ""
 msgid "Počet neschválených členů týmu"
 msgstr ""
 
-#: models/transactions.py:66
+#: models/transactions.py:76
 msgid "Nová"
 msgstr ""
 
-#: models/transactions.py:67
+#: models/transactions.py:77
 msgid "Zrušena"
 msgstr ""
 
-#: models/transactions.py:68
+#: models/transactions.py:78
 msgid "Odmítnuta"
 msgstr ""
 
-#: models/transactions.py:69
+#: models/transactions.py:79
 msgid "Zahájena"
 msgstr ""
 
-#: models/transactions.py:70
+#: models/transactions.py:80
 msgid "Očekává potvrzení"
 msgstr ""
 
-#: models/transactions.py:71
+#: models/transactions.py:81
 msgid "Platba zamítnuta, prostředky nemožno vrátit, řeší PayU"
 msgstr ""
 
-#: models/transactions.py:72
+#: models/transactions.py:82
 msgid "Platba přijata"
 msgstr ""
 
-#: models/transactions.py:73
+#: models/transactions.py:83
 msgid "Nesprávný status -- kontaktovat PayU"
 msgstr ""
 
-#: models/transactions.py:74
+#: models/transactions.py:84
 msgid "Platba akceptována organizací"
 msgstr ""
 
-#: models/transactions.py:75
+#: models/transactions.py:85
 msgid "Faktura vystavena"
 msgstr ""
 
-#: models/transactions.py:76
+#: models/transactions.py:86
 msgid "Faktura zaplacena"
 msgstr ""
 
-#: models/transactions.py:96
+#: models/transactions.py:104
 msgid "Status"
 msgstr ""
 
-#: models/transactions.py:110
+#: models/transactions.py:118
 msgid "Vytvoření"
 msgstr ""
 
-#: models/transactions.py:115
+#: models/transactions.py:123
 msgid "Popis"
 msgstr ""
 
-#: models/transactions.py:121
+#: models/transactions.py:129
 msgid "Realizace"
 msgstr ""
 
-#: models/transactions.py:126 models/transactions.py:127
+#: models/transactions.py:134 models/transactions.py:135
 msgid "Transakce"
 msgstr ""
 
-#: models/transactions.py:134
+#: models/transactions.py:142
 msgid "Obecná transakce"
 msgstr ""
 
-#: models/transactions.py:135
+#: models/transactions.py:143
 msgid "Obecné transakce"
 msgstr ""
 
-#: models/transactions.py:142
+#: models/transactions.py:150
 msgid "Uživatelská akce"
 msgstr ""
 
-#: models/transactions.py:143
+#: models/transactions.py:151
 msgid "Uživatelské akce"
 msgstr ""
 
-#: models/transactions.py:162
+#: models/transactions.py:170
 msgid "mPenize - mBank"
 msgstr ""
 
-#: models/transactions.py:163
+#: models/transactions.py:171
 msgid "MojePlatba"
 msgstr ""
 
-#: models/transactions.py:164
+#: models/transactions.py:172
 msgid "ePlatby pro eKonto"
 msgstr ""
 
-#: models/transactions.py:165
+#: models/transactions.py:173
 msgid "GE Money Bank"
 msgstr ""
 
-#: models/transactions.py:166
+#: models/transactions.py:174
 msgid "Sberbank (Volksbank)"
 msgstr ""
 
-#: models/transactions.py:167
+#: models/transactions.py:175
 msgid "Fio banka"
 msgstr ""
 
-#: models/transactions.py:168
+#: models/transactions.py:176
 msgid "PLATBA 24 – Česká spořitelna"
 msgstr ""
 
-#: models/transactions.py:169
+#: models/transactions.py:177
 msgid "Era - Poštovní spořitelna"
 msgstr ""
 
-#: models/transactions.py:170
+#: models/transactions.py:178
 msgid "ČSOB"
 msgstr ""
 
-#: models/transactions.py:171
+#: models/transactions.py:179
 msgid "Kreditní karta přes GPE"
 msgstr ""
 
-#: models/transactions.py:172
+#: models/transactions.py:180
 msgid "bankovní převod"
 msgstr ""
 
-#: models/transactions.py:173
+#: models/transactions.py:181
 msgid "převod přes poštu"
 msgstr ""
 
-#: models/transactions.py:174
+#: models/transactions.py:182
 msgid "superCASH"
 msgstr ""
 
-#: models/transactions.py:175
+#: models/transactions.py:183
 msgid "PaySec"
 msgstr ""
 
-#: models/transactions.py:176
+#: models/transactions.py:184
 msgid "Mobito"
 msgstr ""
 
-#: models/transactions.py:177
+#: models/transactions.py:185
 msgid "UniCredit"
 msgstr ""
 
-#: models/transactions.py:178
+#: models/transactions.py:186
 msgid "testovací platba"
 msgstr ""
 
-#: models/transactions.py:180
+#: models/transactions.py:188
 msgid "faktura mimo PayU"
 msgstr ""
 
-#: models/transactions.py:181
+#: models/transactions.py:189
 msgid "organizace platí fakturou"
 msgstr ""
 
-#: models/transactions.py:182
+#: models/transactions.py:190
 msgid "člen Klubu přátel Auto*Matu"
 msgstr ""
 
-#: models/transactions.py:183
+#: models/transactions.py:191
 msgid "kandidát na členství v Klubu přátel Auto*Matu"
 msgstr ""
 
-#: models/transactions.py:184
+#: models/transactions.py:192
 msgid "neplatí účastnický poplatek "
 msgstr ""
 
-#: models/transactions.py:215 models/transactions.py:216
+#: models/transactions.py:223 models/transactions.py:224
 msgid "Platební transakce"
 msgstr ""
 
-#: models/transactions.py:248
+#: models/transactions.py:256
 msgid "Chyba"
 msgstr ""
 
@@ -2367,22 +2367,22 @@ msgstr ""
 msgid "Typ soutěžících"
 msgstr ""
 
-#: templates/company_admin/competitions.html:11
+#: templates/company_admin/competitions.html:12
 msgid "Upravit"
 msgstr ""
 
-#: templates/company_admin/competitions.html:12
+#: templates/company_admin/competitions.html:13
 #: templates/company_admin/related_competitions.html:10
 #: templates/registration/competitions.html:81
 msgid "Výsledky"
 msgstr ""
 
-#: templates/company_admin/competitions.html:24
+#: templates/company_admin/competitions.html:26
 #: templates/company_admin/structure.html:10
 msgid "upravit"
 msgstr ""
 
-#: templates/company_admin/competitions.html:25
+#: templates/company_admin/competitions.html:27
 msgid "výsledky"
 msgstr ""
 
@@ -2612,11 +2612,11 @@ msgstr ""
 msgid "do"
 msgstr ""
 
-#: templates/registration/competition_results_table.html:32
+#: templates/registration/competition_results_table.html:33
 msgid "Společnost:"
 msgstr ""
 
-#: templates/registration/competition_results_table.html:56
+#: templates/registration/competition_results_table.html:57
 msgid "Výsledky této soutěže se nezobrazují"
 msgstr ""
 
@@ -3191,7 +3191,7 @@ msgid ""
 "této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost "
 "vaší cesty. Vaše vyplněná trasa se objeví na <a target=\"_blank\" href="
 "\"http://mapa.prahounakole.cz/?layers=_Wgt\">cyklistické dopravní heatmapě</"
-"a> a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br> <a "
+"a> a pomůže při plánování cyklistické infrastruktury ve vašem městě.<br> <a "
 "href=\"%s\">Vyplnit typickou trasu</a>"
 msgstr ""
 
