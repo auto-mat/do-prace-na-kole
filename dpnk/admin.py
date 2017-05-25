@@ -1498,7 +1498,10 @@ class GpxFileAdmin(CityAdminMixin, LeafletGeoAdmin):
         return [x for x in readonly_fields if x != 'track']
 
     def get_fields(self, request, obj=None):
-        return super().get_readonly_fields(request, obj)
+        fields = super().get_fields(request, obj)
+        if 'track' not in fields:
+            fields.append('track')
+        return fields
 
 
 @admin.register(scribbler_models.Scribble)
