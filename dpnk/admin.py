@@ -1488,7 +1488,9 @@ class GpxFileAdmin(CityAdminMixin, LeafletGeoAdmin):
         'user_attendance__userprofile__nickname',
         'user_attendance__userprofile__user__first_name',
         'user_attendance__userprofile__user__last_name',
-        'user_attendance__userprofile__user__username')
+        'user_attendance__userprofile__user__username',
+        'user_attendance__userprofile__user__email',
+    )
     raw_id_fields = ('user_attendance', 'trip')
     readonly_fields = ('author', 'updated_by', 'updated', 'ecc_last_upload')
     list_filter = (
