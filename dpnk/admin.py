@@ -1491,7 +1491,12 @@ class GpxFileAdmin(CityAdminMixin, LeafletGeoAdmin):
         'user_attendance__userprofile__user__username')
     raw_id_fields = ('user_attendance', 'trip')
     readonly_fields = ('author', 'updated_by', 'updated', 'ecc_last_upload')
-    list_filter = (campaign_filter_generator('user_attendance__campaign'), 'from_application', 'user_attendance__team__subsidiary__city')
+    list_filter = (
+        campaign_filter_generator('user_attendance__campaign'),
+        'from_application',
+        'source_application',
+        'user_attendance__team__subsidiary__city'
+    )
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super().get_readonly_fields(request, obj)
