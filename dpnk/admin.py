@@ -1449,7 +1449,6 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'author',
         'updated_by',
         'invoice_count',
-        'total_amount',
     ]
     list_filter = [
         CampaignFilter,

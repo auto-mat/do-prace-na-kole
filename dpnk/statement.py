@@ -25,7 +25,33 @@ from fiobank import FioBank
 from .models import Invoice
 
 
+columns = [
+    'specific_symbol',
+    'account_number_full',
+    'type',
+    'variable_symbol',
+    'amount',
+    'recipient_message',
+    'account_name',
+    'date',
+    'constant_symbol',
+    'instruction_id',
+    'transaction_id',
+    'comment',
+    'bank_name',
+    'account_number',
+    'currency',
+    'bank_code',
+    'user_identification',
+]
+
+
+def print_missing_payment(payment):
+    print(", ".join(["'%s'" % str(payment[column]) for column in columns]))
+
+
 def parse(days_back=7):
+    print(", ".join(["'%s'" % column for column in columns]))
     client = FioBank(token=settings.FIO_TOKEN)
     gen = client.period(
         datetime.datetime.now() - datetime.timedelta(days=days_back),
@@ -34,17 +60,19 @@ def parse(days_back=7):
     for payment in gen:
         if payment['amount'] >= 0:
             variable_symbol = payment['variable_symbol']
-            if not variable_symbol:
-                print(payment)
-                continue
+            recipient_message = payment['recipient_message']
+            if recipient_message:
+                recipient_message_without_d = recipient_message.replace("D", "")
+            else:
+                recipient_message_without_d = ""
             try:
                 invoice = Invoice.objects.get(
-                    variable_symbol=int(variable_symbol),
+                    variable_symbol__in=(variable_symbol, recipient_message, recipient_message_without_d),
                 )
                 if invoice.total_amount == payment['amount'] and 'CZK' == payment['currency']:
                     invoice.paid_date = payment['date']
                     invoice.save()
                 else:
-                    print(payment)
+                    print_missing_payment(payment)
             except Invoice.DoesNotExist:
-                print(payment)
+                print_missing_payment(payment)
