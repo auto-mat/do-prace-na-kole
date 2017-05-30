@@ -201,6 +201,7 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'identifier',
         'dispatched',
+        'box__dispatched',
         'box__identifier',
         'box__name',
         'box__delivery_batch__id',
@@ -215,6 +216,7 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
     list_filter = (
         campaign_filter_generator('box__delivery_batch__campaign'),
         'dispatched',
+        'box__dispatched',
         ('box__delivery_batch__created', DateRangeFilter),
         'box__delivery_batch__id',
     )

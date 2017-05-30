@@ -44,7 +44,7 @@ class TeamPackage(TimeStampedModel, models.Model):
         blank=True,
     )
     dispatched = models.BooleanField(
-        verbose_name=_("Vyřízeno"),
+        verbose_name=_("Balíek vyřízen"),
         blank=False,
         null=False,
         default=False,

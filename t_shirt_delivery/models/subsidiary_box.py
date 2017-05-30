@@ -77,7 +77,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         blank=True,
     )
     dispatched = models.BooleanField(
-        verbose_name=_("Vyřízeno"),
+        verbose_name=_("Krabice vyřízena"),
         blank=False,
         null=False,
         default=False,
