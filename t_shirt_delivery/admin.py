@@ -203,6 +203,7 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
         'dispatched',
         'box__dispatched',
         'box__identifier',
+        'box__tracking_link',
         'box__name',
         'box__delivery_batch__id',
         'box__delivery_batch__created',
@@ -230,6 +231,7 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
         'team__subsidiary__address_street',
         'team__subsidiary__company__name',
         'box__id',
+        'box__carrier_identification',
     )
     inlines = (
         PackageTransactionInline,
