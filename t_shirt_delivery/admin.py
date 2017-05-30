@@ -42,7 +42,7 @@ from dpnk.models import Campaign, UserAttendance
 from import_export import fields, resources
 from import_export.admin import ExportMixin, ImportExportMixin
 
-from nested_inline.admin import NestedTabularInline
+from nested_inline.admin import NestedModelAdmin, NestedTabularInline
 
 from related_admin import RelatedFieldAdmin, getter_for_related_field
 
@@ -132,10 +132,13 @@ class TeamPackageInline(NestedTabularInline):
     model = models.TeamPackage
     extra = 0
     raw_id_fields = ('team',)
+    inlines = (
+        PackageTransactionInline,
+    )
 
 
 @admin.register(models.SubsidiaryBox)
-class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFieldAdmin):
+class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, NestedModelAdmin, RelatedFieldAdmin):
     list_display = (
         'identifier',
         'dispatched',
