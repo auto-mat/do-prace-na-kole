@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import re
 
 from adminactions import actions as admin_actions
 
@@ -46,6 +47,7 @@ from nested_inline.admin import NestedTabularInline
 from related_admin import RelatedFieldAdmin, getter_for_related_field
 
 from . import actions, filters, models
+from .admin_forms import IDENTIFIER_REGEXP
 from .admin_mixins import ReadOnlyModelAdminMixin
 from .forms import PackageTransactionForm
 
@@ -195,6 +197,15 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
             'teampackage_set',
         )
 
+    def get_search_results(self, request, queryset, search_term):
+        search_term = search_term.strip()
+        if re.match(IDENTIFIER_REGEXP, search_term) and search_term[0] == 'S':
+                queryset = queryset.filter(id=search_term[1:])
+                use_distinct = True
+        else:
+            queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        return queryset, use_distinct
+
 
 @admin.register(models.TeamPackage)
 class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
@@ -244,6 +255,19 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
             'box__subsidiary__city',
             'box__delivery_batch',
         )
+
+    def get_search_results(self, request, queryset, search_term):
+        search_term = search_term.strip()
+        if re.match(IDENTIFIER_REGEXP, search_term):
+            if search_term[0] == 'T':
+                queryset = queryset.filter(id=search_term[1:])
+                use_distinct = True
+            elif search_term[0] == 'S':
+                queryset = queryset.filter(box__id=search_term[1:])
+                use_distinct = True
+        else:
+            queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        return queryset, use_distinct
 
 
 @admin.register(models.PackageTransaction)
