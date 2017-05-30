@@ -195,7 +195,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                             'vyčkejte na potvrzující e-mail a schvalte jejich členství v týmu.</li>'
                             '<li>Můžete se pokusit <a href="{join_team_url}">přidat se k jinému týmu</a>.</li>'
                             '<li>Pokud nemůžete sehnat spolupracovníky, '
-                            ' <a href="http://www.dopracenakole.cz/locations/{city}/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>'
+                            ' <a href="https://www.dopracenakole.cz/locations/{city}/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>'
                         ),
                         invite_url=reverse('pozvanky'),
                         join_team_url=reverse('zmenit_tym'),
@@ -209,7 +209,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                         _('Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.'
                           ' Na základě této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty.'
                           ' Vaše vyplněná trasa se objeví na '
-                          '<a target="_blank" href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
+                          '<a target="_blank" href="https://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
                           ' a pomůže při plánování cyklistické infrastruktury ve vašem městě.<br>'
                           ' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu'),
                     ),

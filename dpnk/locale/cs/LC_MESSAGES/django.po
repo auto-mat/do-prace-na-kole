@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-25 15:54+0200\n"
+"POT-Creation-Date: 2017-05-30 10:01+0200\n"
 "PO-Revision-Date: 2017-04-19 14:59+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -206,23 +206,23 @@ msgstr ""
 msgid "Členové"
 msgstr ""
 
-#: admin.py:1150
+#: admin.py:1160
 msgid "vyhodnocení odpovědí"
 msgstr ""
 
-#: admin.py:1348
+#: admin.py:1358
 msgid "Nemá účast v kampani?"
 msgstr ""
 
-#: admin.py:1446
+#: admin.py:1456
 msgid "Nezaplacené faktury"
 msgstr ""
 
-#: admin.py:1458 templates/company_admin/invoices.html:8
+#: admin.py:1468 templates/company_admin/invoices.html:8
 msgid "Počet plateb"
 msgstr ""
 
-#: admin.py:1525
+#: admin.py:1545
 msgid "Nemá účast v kampani"
 msgstr ""
 
@@ -3180,7 +3180,7 @@ msgid ""
 "kolegy do vašeho týmu, pokud jste tak již učinil/a, vyčkejte na potvrzující "
 "e-mail a schvalte jejich členství v týmu.</li><li>Můžete se pokusit <a href="
 "\"{join_team_url}\">přidat se k jinému týmu</a>.</li><li>Pokud nemůžete "
-"sehnat spolupracovníky,  <a href=\"http://www.dopracenakole.cz/locations/"
+"sehnat spolupracovníky,  <a href=\"https://www.dopracenakole.cz/locations/"
 "{city}/seznamka\" target=\"_blank\">najděte si cykloparťáka</a>.</li></ul>"
 msgstr ""
 
@@ -3190,7 +3190,7 @@ msgid ""
 "Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce. Na základě "
 "této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost "
 "vaší cesty. Vaše vyplněná trasa se objeví na <a target=\"_blank\" href="
-"\"http://mapa.prahounakole.cz/?layers=_Wgt\">cyklistické dopravní heatmapě</"
+"\"https://mapa.prahounakole.cz/?layers=_Wgt\">cyklistické dopravní heatmapě</"
 "a> a pomůže při plánování cyklistické infrastruktury ve vašem městě.<br> <a "
 "href=\"%s\">Vyplnit typickou trasu</a>"
 msgstr ""

@@ -319,12 +319,12 @@ LEAFLET_CONFIG = {
     'TILES': [
         (
             _(u'cyklomapa'),
-            'http://tiles.prahounakole.cz/{z}/{x}/{y}.png',
-            {'attribution': u'&copy; přispěvatelé <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
+            'https://tiles.prahounakole.cz/{z}/{x}/{y}.png',
+            {'attribution': u'&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
         (
             _(u'Všeobecná mapa'),
-            'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            {'attribution': u'&copy; přispěvatelé <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {'attribution': u'&copy; přispěvatelé <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}),
     ],
     'DEFAULT_ZOOM': 8,
     'MIN_ZOOM': 8,

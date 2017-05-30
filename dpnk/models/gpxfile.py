@@ -53,7 +53,7 @@ class GpxFile(models.Model):
         help_text=_(
             mark_safe(
                 "Zadat trasu nahráním souboru GPX. "
-                "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší <a href='http://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
+                "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší <a href='https://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
             ),
         ),
         upload_to=normalize_gpx_filename,
