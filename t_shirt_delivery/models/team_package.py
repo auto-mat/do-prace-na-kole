@@ -53,6 +53,7 @@ class TeamPackage(TimeStampedModel, models.Model):
     def identifier(self):
         if self.id:
             return "T%s" % self.id
+    identifier.admin_order_field = 'id'
 
     def __str__(self):
         if self.team:
