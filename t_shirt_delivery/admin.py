@@ -143,6 +143,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         'tracking_link',
         'delivery_batch__id',
         'delivery_batch__created',
+        'subsidiary__company__name',
         'subsidiary__name',
         'subsidiary__city',
         'customer_sheets',
@@ -206,6 +207,7 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
         'box__delivery_batch__created',
         'team__name',
         'team__subsidiary',
+        'team__subsidiary__company',
     )
     box__identifier = getter_for_related_field('box__identifier', short_description=_('ID krabice'))
     team__name = getter_for_related_field('team__name', short_description=_('Tým'))
