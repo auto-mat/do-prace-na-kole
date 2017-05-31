@@ -25,6 +25,9 @@ from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
 
 
+IDENTIFIER_REGEXP = r'^[TS][0-9]+$'
+
+
 class DispatchForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
@@ -35,7 +38,7 @@ class DispatchForm(forms.Form):
     dispatch_id = forms.CharField(
         validators=[
             RegexValidator(
-                regex='^[TS][0-9]+$',
+                regex=IDENTIFIER_REGEXP,
                 message='Číslo balíku/krabice je v nesprávném formátu',
             ),
         ],

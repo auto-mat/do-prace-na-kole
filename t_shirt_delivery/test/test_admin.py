@@ -295,6 +295,16 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
             html=True,
         )
 
+    def test_teampackage_admin_change(self):
+        team_package = mommy.make('TeamPackage', box__delivery_batch__campaign=testing_campaign, box__id=1)
+        address = reverse('admin:t_shirt_delivery_teampackage_change', args=(team_package.pk,))
+        response = self.client.get(address, follow=True)
+        self.assertContains(
+            response,
+            '<strong><a href="/admin/t_shirt_delivery/subsidiarybox/1/change/">Krabice pro pobočku None</a></strong>',
+            html=True,
+        )
+
     def test_subsidiarybox_admin_changelist(self):
         mommy.make('SubsidiaryBox', delivery_batch__campaign=testing_campaign, carrier_identification=1234)
         address = reverse('admin:t_shirt_delivery_subsidiarybox_changelist')

@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import re
 
 from adminactions import actions as admin_actions
 
@@ -34,7 +35,6 @@ from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from dpnk import transaction_forms
 from dpnk.admin_mixins import FormRequestMixin
 from dpnk.filters import CampaignFilter, campaign_filter_generator
 from dpnk.models import Campaign, UserAttendance
@@ -42,11 +42,12 @@ from dpnk.models import Campaign, UserAttendance
 from import_export import fields, resources
 from import_export.admin import ExportMixin, ImportExportMixin
 
-from nested_inline.admin import NestedTabularInline
+from nested_inline.admin import NestedModelAdmin, NestedTabularInline
 
 from related_admin import RelatedFieldAdmin, getter_for_related_field
 
 from . import actions, filters, models
+from .admin_forms import IDENTIFIER_REGEXP
 from .admin_mixins import ReadOnlyModelAdminMixin
 from .forms import PackageTransactionForm
 
@@ -131,10 +132,13 @@ class TeamPackageInline(NestedTabularInline):
     model = models.TeamPackage
     extra = 0
     raw_id_fields = ('team',)
+    inlines = (
+        PackageTransactionInline,
+    )
 
 
 @admin.register(models.SubsidiaryBox)
-class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFieldAdmin):
+class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, NestedModelAdmin, RelatedFieldAdmin):
     list_display = (
         'identifier',
         'dispatched',
@@ -144,6 +148,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         'tracking_link',
         'delivery_batch__id',
         'delivery_batch__created',
+        'subsidiary__company__name',
         'subsidiary__name',
         'subsidiary__city',
         'customer_sheets',
@@ -195,18 +200,30 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
             'teampackage_set',
         )
 
+    def get_search_results(self, request, queryset, search_term):
+        search_term = search_term.strip()
+        if re.match(IDENTIFIER_REGEXP, search_term) and search_term[0] == 'S':
+                queryset = queryset.filter(id=search_term[1:])
+                use_distinct = True
+        else:
+            queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        return queryset, use_distinct
+
 
 @admin.register(models.TeamPackage)
 class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = (
         'identifier',
         'dispatched',
+        'box__dispatched',
         'box__identifier',
+        'box__tracking_link',
         'box__name',
         'box__delivery_batch__id',
         'box__delivery_batch__created',
         'team__name',
         'team__subsidiary',
+        'team__subsidiary__company',
     )
     box__identifier = getter_for_related_field('box__identifier', short_description=_('ID krabice'))
     team__name = getter_for_related_field('team__name', short_description=_('Tým'))
@@ -214,6 +231,7 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
     list_filter = (
         campaign_filter_generator('box__delivery_batch__campaign'),
         'dispatched',
+        'box__dispatched',
         ('box__delivery_batch__created', DateRangeFilter),
         'box__delivery_batch__id',
     )
@@ -227,6 +245,7 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
         'team__subsidiary__address_street',
         'team__subsidiary__company__name',
         'box__id',
+        'box__carrier_identification',
     )
     inlines = (
         PackageTransactionInline,
@@ -239,6 +258,19 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
             'box__subsidiary__city',
             'box__delivery_batch',
         )
+
+    def get_search_results(self, request, queryset, search_term):
+        search_term = search_term.strip()
+        if re.match(IDENTIFIER_REGEXP, search_term):
+            if search_term[0] == 'T':
+                queryset = queryset.filter(id=search_term[1:])
+                use_distinct = True
+            elif search_term[0] == 'S':
+                queryset = queryset.filter(box__id=search_term[1:])
+                use_distinct = True
+        else:
+            queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        return queryset, use_distinct
 
 
 @admin.register(models.PackageTransaction)
@@ -277,7 +309,7 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         'updated_by',
     )
     list_max_show_all = 10000
-    form = transaction_forms.PaymentForm
+    form = PackageTransactionForm
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)

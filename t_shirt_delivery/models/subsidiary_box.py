@@ -77,7 +77,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         blank=True,
     )
     dispatched = models.BooleanField(
-        verbose_name=_("Vyřízeno"),
+        verbose_name=_("Krabice vyřízena"),
         blank=False,
         null=False,
         default=False,
@@ -92,6 +92,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
     def identifier(self):
         if self.id:
             return "S%s" % self.id
+    identifier.admin_order_field = 'id'
 
     def __str__(self):
         return _("Krabice pro pobočku %s") % self.subsidiary

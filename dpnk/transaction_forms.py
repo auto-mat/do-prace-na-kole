@@ -26,27 +26,17 @@ from . import models
 class PaymentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=models.STATUS)
+        self.fields['status'] = forms.ChoiceField(choices=tuple(models.PAYMENT_STATUSES))
 
     class Meta:
         model = models.Payment
         fields = "__all__"
 
 
-class CommonTransactionForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=models.CommonTransaction.STATUS)
-
-    class Meta:
-        model = models.CommonTransaction
-        fields = "__all__"
-
-
 class UserActionTransactionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['status'] = forms.ChoiceField(choices=models.STATUS)
+        self.fields['status'] = forms.ChoiceField(choices=tuple(models.COMPETITION_STATUSES))
 
     class Meta:
         model = models.UserActionTransaction

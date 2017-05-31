@@ -62,7 +62,17 @@ class Status(object):
     COMPETITION_START_CONFIRMED = 30002
 
 
-STATUS = (
+PACKAGE_STATUSES = [
+    (Status.PACKAGE_NEW, 'Nový'),
+    (Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY, 'Přijat k sestavení'),
+    (Status.PACKAGE_ASSEMBLED, 'Sestaven'),
+    (Status.PACKAGE_SENT, 'Odeslán'),
+    (Status.PACKAGE_DELIVERY_CONFIRMED, 'Doručení potvrzeno'),
+    (Status.PACKAGE_DELIVERY_DENIED, 'Dosud nedoručeno'),
+    (Status.PACKAGE_RECLAIM, 'Reklamován'),
+]
+
+PAYMENT_STATUSES = [
     (Status.NEW, _(u'Nová')),
     (Status.CANCELED, _(u'Zrušena')),
     (Status.REJECTED, _(u'Odmítnuta')),
@@ -74,19 +84,17 @@ STATUS = (
     (Status.COMPANY_ACCEPTS, _(u'Platba akceptována organizací')),
     (Status.INVOICE_MADE, _(u'Faktura vystavena')),
     (Status.INVOICE_PAID, _(u'Faktura zaplacena')),
+]
 
-    (Status.PACKAGE_NEW, 'Nový'),
-    (Status.PACKAGE_ACCEPTED_FOR_ASSEMBLY, 'Přijat k sestavení'),
-    (Status.PACKAGE_ASSEMBLED, 'Sestaven'),
-    (Status.PACKAGE_SENT, 'Odeslán'),
-    (Status.PACKAGE_DELIVERY_CONFIRMED, 'Doručení potvrzeno'),
-    (Status.PACKAGE_DELIVERY_DENIED, 'Dosud nedoručeno'),
-    (Status.PACKAGE_RECLAIM, 'Reklamován'),
-
+BIKE_REPAIR_STATUSES = [
     (Status.BIKE_REPAIR, 'Oprava v cykloservisu'),
+]
 
+COMPETITION_STATUSES = [
     (Status.COMPETITION_START_CONFIRMED, 'Potvrzen vstup do soutěže'),
-)
+]
+
+STATUS = tuple(PACKAGE_STATUSES + PAYMENT_STATUSES + BIKE_REPAIR_STATUSES + COMPETITION_STATUSES)
 
 
 @with_author

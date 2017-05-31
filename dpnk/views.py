@@ -195,7 +195,7 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                             'vyčkejte na potvrzující e-mail a schvalte jejich členství v týmu.</li>'
                             '<li>Můžete se pokusit <a href="{join_team_url}">přidat se k jinému týmu</a>.</li>'
                             '<li>Pokud nemůžete sehnat spolupracovníky, '
-                            ' <a href="http://www.dopracenakole.cz/locations/{city}/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>'
+                            ' <a href="https://www.dopracenakole.cz/locations/{city}/seznamka" target="_blank">najděte si cykloparťáka</a>.</li></ul>'
                         ),
                         invite_url=reverse('pozvanky'),
                         join_team_url=reverse('zmenit_tym'),
@@ -209,8 +209,8 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                         _('Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.'
                           ' Na základě této trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty.'
                           ' Vaše vyplněná trasa se objeví na '
-                          '<a target="_blank" href="http://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
-                          ' a pomůže při plánování cyklistické infrastruktury ve vašem městě.</br>'
+                          '<a target="_blank" href="https://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
+                          ' a pomůže při plánování cyklistické infrastruktury ve vašem městě.<br>'
                           ' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu'),
                     ),
                 )
@@ -1354,12 +1354,13 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
             return context_data
 
         competitors = competition.get_results()
+        competitors = competitors.select_related('user_attendance__team__subsidiary__city', 'user_attendance__userprofile__user')
 
         for competitor in competitors:
             competitor.answers = Answer.objects.filter(
                 user_attendance__in=competitor.user_attendances(),
                 question__competition__slug=competition_slug,
-            )
+            ).select_related('question')
         context_data['show_points'] = competition.has_finished() or (self.request.user.is_authenticated() and self.request.user.userprofile.user.is_superuser)
         context_data['competitors'] = competitors
         context_data['competition'] = competition
@@ -1368,10 +1369,14 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
 
 @staff_member_required
 def questions(request):
-    filter_query = Q()
+    questions = Question.objects.all()
     if not request.user.is_superuser:
-        filter_query = Q(competition__city__in=request.user.userprofile.administrated_cities.all())
-    questions = Question.objects.filter(filter_query).order_by('-competition__campaign', 'competition__slug', 'order').distinct()
+        questions = questions.filter(competition__city__in=request.user.userprofile.administrated_cities.all())
+    questions = questions.filter(competition__campaign__slug=request.subdomain)
+    questions = questions.order_by('-competition__campaign', 'competition__slug', 'order')
+    questions = questions.distinct()
+    questions = questions.select_related('competition__campaign', 'choice_type')
+    questions = questions.prefetch_related('answer_set', 'competition__city')
     return render(
         request,
         'admin/questions.html',
@@ -1449,6 +1454,8 @@ def answers(request):
                 answer.save()
 
     answers = Answer.objects.filter(question_id=question_id).order_by('-points_given')
+    answers = answers.select_related('user_attendance__team__subsidiary__city', 'user_attendance__userprofile__user')
+    answers = answers.prefetch_related('choices')
     total_respondents = answers.count()
     count = {c: {} for c in City.objects.all()}
     count_all = {}
