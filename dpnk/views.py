@@ -1454,6 +1454,8 @@ def answers(request):
                 answer.save()
 
     answers = Answer.objects.filter(question_id=question_id).order_by('-points_given')
+    answers = answers.select_related('user_attendance__team__subsidiary__city', 'user_attendance__userprofile__user')
+    answers = answers.prefetch_related('choices')
     total_respondents = answers.count()
     count = {c: {} for c in City.objects.all()}
     count_all = {}
