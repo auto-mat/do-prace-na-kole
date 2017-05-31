@@ -753,6 +753,10 @@ class UserAttendanceResource(resources.ModelResource):
             'team__subsidiary__company__name',
             'company_admin_emails',
             'created',
+            'payment_date',
+            'payment_status',
+            'payment_type',
+            'payment_amount',
         )
         export_order = fields
 

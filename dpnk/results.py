@@ -29,6 +29,7 @@ def _filter_query_single_user(competition):
     filter_query['campaign'] = competition.campaign
     filter_query['userprofile__user__is_active'] = True
     filter_query['approved_for_team'] = 'approved'
+    filter_query['payment_status__in'] = ('done', 'no_admission')
     if competition.city:
         cities = competition.city.all()
         if cities:

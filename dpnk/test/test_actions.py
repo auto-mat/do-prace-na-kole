@@ -111,6 +111,7 @@ class TestActions(TestCase):
         call_command('denorm_drop')
 
     def test_approve_am_payment(self):
+        models.Payment.objects.get(pk=17).delete()
         util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=2115))
         queryset = models.UserAttendance.objects.all()
         payment = models.Payment.objects.get(pk=5)

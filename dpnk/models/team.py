@@ -117,7 +117,11 @@ class Team(models.Model):
 
     def members(self):
         """ Return approved members of this team. """
-        return self.users.filter(approved_for_team='approved', userprofile__user__is_active=True).order_by("id")
+        return self.users.filter(
+            approved_for_team='approved',
+            payment_status__in=('done', 'no_admission'),
+            userprofile__user__is_active=True,
+        ).order_by("id")
 
     @denormalized(models.IntegerField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})

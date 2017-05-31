@@ -18,6 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
+import random
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -78,6 +79,7 @@ class LocalAdminModulesTests(DenormMixin, TestCase):
         self.assertContains(response, '3 Účastníci kampaně')
 
     def test_admin_questionnaire_answers_no_permission(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=2115))
         competition = models.Competition.objects.filter(slug="FQ-LB")
         actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
@@ -149,7 +151,7 @@ class AdminModulesTests(DenormMixin, TestCase):
             response,
             '1015,339,testing-campaign,,,,1,Testing team 1,approved,,,Testing city,1017,cs,,'
             '1031,Testing,User,test1,test2@test.cz,,,"Ulice 1, 111 11 Praha",Testing company,'
-            '"test_wa@email.cz, test@email.cz, test@test.cz",2015-11-12 18:18:40,,,,',
+            '"test_wa@email.cz, test@email.cz, test@test.cz",2015-11-12 18:18:40,,done,,',
         )
 
     def test_company_export(self):
@@ -301,9 +303,9 @@ class AdminTests(TestCase):
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(User.objects.get(username='admin'), settings.AUTHENTICATION_BACKENDS[0])
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
         util.rebuild_denorm_models(Team.objects.filter(pk=1))
         self.user_attendance = UserAttendance.objects.filter(pk=1115)
-        util.rebuild_denorm_models(self.user_attendance)
 
     def test_subsidiary_admin(self):
         address = reverse('admin:dpnk_subsidiary_changelist')
@@ -381,9 +383,37 @@ class AdminTests(TestCase):
         cr.save()
         address = reverse('admin_draw_results', kwargs={'competition_slug': "FQ-LB"})
         response = self.client.get(address)
-        self.assertContains(response, "1. tah: Tým Testing team 1 z organizace Testing company")
+        self.assertContains(
+            response,
+            "<li>"
+            "1. tah: Tým Testing team 1 z organizace Testing company"
+            "<br/>"
+            "pravidelnost jízd 80&nbsp;%"
+            "   <br/>"
+            "   Členové:"
+            "      <ul>"
+            "         <li>"
+            "            Testing User: "
+            "         </li>"
+            "      </ul>"
+            "      <ul>"
+            "         <li>"
+            "            Testing User 1: "
+            "         </li>"
+            "      </ul>"
+            "   "
+            "      <ul>"
+            "         <li>"
+            "            Registered User 1: "
+            "         </li>"
+            "      </ul>"
+            "</li>",
+            html=True,
+        )
 
     def test_admin_draw_results_fq_lb_not_all_paying(self):
+        models.Payment.objects.all().delete()
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(id__in=[1115, 1015, 2115]))
         competition = models.Competition.objects.get(slug="FQ-LB")
         cr = models.CompetitionResult.objects.get(team_id=1, competition=competition)
         cr.result = 0.8
@@ -393,11 +423,19 @@ class AdminTests(TestCase):
         self.assertContains(response, "Tato soutěž nemá žádné týmy splňující kritéria")
 
     def test_admin_draw_results_vykonnost(self):
+        random.seed(1236)
         competition = models.Competition.objects.filter(slug="vykonnost")
         competition.get().recalculate_results()
         address = reverse('admin_draw_results', kwargs={'competition_slug': "vykonnost"})
         response = self.client.get(address)
-        self.assertContains(response, "1. tah: Tým Testing User 1")
+        self.assertContains(
+            response,
+            "<li> 1. tah: Tým Testing User 1"
+            "<br/>"
+            "ujetá vzdálenost 16 190&nbsp;km"
+            "</li>",
+            html=True,
+        )
 
     def test_admin_draw_results_quest(self):
         competition = models.Competition.objects.filter(slug="quest")
@@ -405,7 +443,14 @@ class AdminTests(TestCase):
         competition.get().recalculate_results()
         address = reverse('admin_draw_results', kwargs={'competition_slug': "quest"})
         response = self.client.get(address)
-        self.assertContains(response, "1. tah: Tým Testing User 1")
+        self.assertContains(
+            response,
+            "<li> 1. tah: Tým Testing User 1"
+            "<br/>"
+            "1 620&nbsp;bodů"
+            "</li>",
+            html=True,
+        )
 
     def test_admin_draw_results_tf(self):
         competition = models.Competition.objects.filter(slug="TF")

@@ -58,5 +58,68 @@
         },
         "model": "dpnk.payment",
         "pk": 4
-    }
+    },
+    {
+        "fields": {
+            "user_attendance": 1015,
+            "status": 99,
+            "realized": "2010-11-01",
+            "polymorphic_ctype": ["dpnk", "payment"]
+        },
+        "model": "dpnk.transaction",
+        "pk": 16
+    },
+    {
+        "fields": {
+            "amount": 145,
+            "pay_type": "fc",
+            "trans_id": "2075-2",
+            "session_id": "2075-1J145520666",
+            "transaction_ptr": 16
+        },
+        "model": "dpnk.payment",
+        "pk": 16
+    },
+    {
+        "fields": {
+            "user_attendance": 2115,
+            "status": 99,
+            "realized": "2010-11-01",
+            "polymorphic_ctype": ["dpnk", "payment"]
+        },
+        "model": "dpnk.transaction",
+        "pk": 17
+    },
+    {
+        "fields": {
+            "amount": 145,
+            "pay_type": "fc",
+            "trans_id": "2075-3",
+            "session_id": "2075-1J145520667",
+            "transaction_ptr": 17
+        },
+        "model": "dpnk.payment",
+        "pk": 17
+	},
+   {
+        "fields": {
+            "user_attendance": 1016,
+            "status": 99,
+            "realized": "2010-11-01",
+            "polymorphic_ctype": ["dpnk", "payment"]
+        },
+        "model": "dpnk.transaction",
+        "pk": 18
+    },
+    {
+        "fields": {
+            "amount": 145,
+            "pay_type": "fc",
+            "trans_id": "2075-3",
+            "session_id": "2075-1J145520668",
+            "transaction_ptr": 18
+        },
+        "model": "dpnk.payment",
+        "pk": 18
+	}
 ]

@@ -62,8 +62,8 @@ class ViewsLogon(DenormMixin, ClearCacheMixin, TestCase):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1015, 1115, 2115, 1016]))
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115]))
         self.user_attendance = models.UserAttendance.objects.get(pk=1115)
 
 
@@ -262,7 +262,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
     SITE_ID=2,
 )
 class BaseViewsTests(ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions']
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
@@ -270,13 +270,17 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
 
     @patch('slumber.API')
     def test_registration_access(self, slumber_api):
+        user_attendance = models.UserAttendance.objects.get(pk=1115)
+        user_attendance.payments().delete()
+        util.rebuild_denorm_models([user_attendance])
         slumber_instance = slumber_api.return_value
-        slumber_instance.feed.get = {}
+        slumber_instance.feed.get.return_value = []
         address = reverse('profil')
         response = self.client.get(address)
         self.assertRedirects(response, reverse('typ_platby'))
 
     def test_chaining(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
         util.rebuild_denorm_models(models.Team.objects.filter(pk__in=(1, 4)))
         denorm.flush()
         kwargs = {
@@ -687,6 +691,8 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_dpnk_mailing_list(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1115))
+        util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         Token.objects.filter(user=user_attendance.userprofile.user).update(key='d201a3c9e88ecd433fdbbc3a2e451cbd3f80c4ba')
         ret_mailing_id = "344ass"
@@ -695,24 +701,24 @@ class ViewsTests(DenormMixin, TestCase):
         custom_fields = [
             OrderedDict((('Key', 'Mesto'), ('Value', 'testing-city'))),
             OrderedDict((('Key', 'Firemni_spravce'), ('Value', True))),
-            OrderedDict((('Key', 'Stav_platby'), ('Value', None))),
+            OrderedDict((('Key', 'Stav_platby'), ('Value', 'done'))),
             OrderedDict((('Key', 'Aktivni'), ('Value', True))),
             OrderedDict((('Key', 'Auth_token'), ('Value', 'd201a3c9e88ecd433fdbbc3a2e451cbd3f80c4ba'))),
             OrderedDict((('Key', 'Id'), ('Value', 1128))),
             OrderedDict((('Key', 'Novacek'), ('Value', False))),
             OrderedDict((('Key', 'Kampan'), ('Value', 'testing-campaign'))),
-            OrderedDict((('Key', 'Vstoupil_do_souteze'), ('Value', False))),
+            OrderedDict((('Key', 'Vstoupil_do_souteze'), ('Value', True))),
             OrderedDict((('Key', 'Pocet_lidi_v_tymu'), ('Value', 3))),
             OrderedDict((('Key', 'Povoleni_odesilat_emaily'), ('Value', True))),
         ]
         createsend.Subscriber.add.assert_called_once_with('12345abcde', 'test@test.cz', 'Testing User 1', custom_fields, True)
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '2ddd65f5dc0ca3755885e23fefc956f1')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '85840a240266bdabfdd0d755f0514466')
 
         createsend.Subscriber.update = MagicMock()
         mailing.add_or_update_user_synchronous(user_attendance)
         self.assertFalse(createsend.Subscriber.update.called)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '2ddd65f5dc0ca3755885e23fefc956f1')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '85840a240266bdabfdd0d755f0514466')
 
         custom_fields[0] = OrderedDict((('Key', 'Mesto'), ('Value', 'other-city')))
         user_attendance.team.subsidiary.city = models.City.objects.get(slug="other-city")
@@ -722,7 +728,7 @@ class ViewsTests(DenormMixin, TestCase):
         mailing.add_or_update_user_synchronous(user_attendance)
         createsend.Subscriber.get.assert_called_once_with('12345abcde', ret_mailing_id)
         createsend.Subscriber.update.assert_called_once_with('test@test.cz', 'Testing User 1', custom_fields, True)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '264683d74013ab0fa8619ba7bbdefec6')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '80a15449129189ecacd2cd9c9468b110')
 
         user_attendance.userprofile.user.is_active = False
         user_attendance.userprofile.user.save()
@@ -963,6 +969,8 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertContains(response, '<div class="alert alert-danger">Již máte zaplaceno, nemůžete měnit tým mimo svoji pobočku.</div>', html=True)
 
     def test_dpnk_team_invitation_full(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1016]))
+        util.rebuild_denorm_models(models.Team.objects.filter(pk=3))
         self.user_attendance.campaign.max_team_members = 1
         self.user_attendance.campaign.save()
         token = "token123215"
@@ -1022,7 +1030,7 @@ class ViewsTestsLogon(ViewsLogon):
         m.feed.get.return_value = []
         slumber_api.return_value = m
         PackageTransaction.objects.all().delete()
-        models.Payment.objects.all().delete()
+        self.user_attendance.payments().all().delete()
         util.rebuild_denorm_models(models.Team.objects.filter(pk=3))
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_tym'))
@@ -1045,6 +1053,9 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
         self.assertRedirects(response, reverse("zmenit_triko"))
         self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['test@email.cz'])
+        self.assertEqual(str(msg.subject), 'Testing campaign - žádost o ověření členství')
         self.assertEqual(models.UserAttendance.objects.get(pk=1115).approved_for_team, "undecided")
 
     def test_dpnk_team_view_choose_empty_team(self):
@@ -1206,6 +1217,8 @@ class ViewsTestsLogon(ViewsLogon):
 
     @patch('slumber.API')
     def company_payment(self, slumber_api, amount, amount_tax, beneficiary=False):
+        models.Payment.objects.get(id=17).delete()
+        denorm.flush()
         slumber_instance = slumber_api.return_value
         slumber_instance.feed.get.return_value = [{"content": "Emission calculator description text"}]
         response = self.client.get(reverse('company_admin_pay_for_users'))
@@ -1819,8 +1832,8 @@ class StatisticsTests(ViewsLogon):
         self.assertJSONEqual(
             response.content.decode(),
             {
-                "pocet-zaplacenych": 1,
-                "pocet-soutezicich": 1,
+                "pocet-zaplacenych": 4,
+                "pocet-soutezicich": 4,
                 "pocet-cest": 3,
                 "pocet-cest-kolo": 2,
                 "pocet-cest-pesky": 1,

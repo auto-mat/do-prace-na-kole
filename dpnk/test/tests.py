@@ -129,6 +129,7 @@ class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
         self.assertEquals(str(user.get_payment_status_display()), 'neznámý')
 
     def test_payment_unknown_none(self):
+        models.Payment.objects.all().delete()
         util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[1, 3]))
         util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1016))
         user = models.UserAttendance.objects.get(pk=1016)
@@ -341,7 +342,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1115))
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
         self.user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.assertTrue(self.user_attendance.entered_competition())
 
@@ -670,18 +671,17 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, "<p>1. místo z 1 týmů</p>", html=True)
         self.assertContains(response, "<p>1,4&nbsp;%</p>", html=True)
         self.assertContains(response, "<p>1 z 69 jízd</p>", html=True)
-        self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
+        self.assertContains(response, "<p>1. místo z 2 jednotlivců</p>", html=True)
         self.assertContains(response, "<p>5,0&nbsp;km</p>", html=True)
-        self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
 
 
 class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions']
 
     def setUp(self):
         super().setUp()
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1115))
 
     def test_member_count_update(self):
         team = models.Team.objects.get(id=1)
@@ -689,7 +689,8 @@ class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
         campaign = models.Campaign.objects.get(pk=339)
         user = models.User.objects.create(first_name="Third", last_name="User", username="third_user")
         userprofile = models.UserProfile.objects.create(user=user)
-        models.UserAttendance.objects.create(team=team, campaign=campaign, userprofile=userprofile, approved_for_team='approved')
+        user_attendance = models.UserAttendance.objects.create(team=team, campaign=campaign, userprofile=userprofile, approved_for_team='approved')
+        models.Payment.objects.create(status=99, amount=1, user_attendance=user_attendance)
         denorm.flush()
         team = models.Team.objects.get(id=1)
         self.assertEqual(team.member_count, 4)
@@ -736,11 +737,11 @@ class DenormTests(DenormMixin, ClearCacheMixin, TestCase):
     def test_name_with_members_delete_userattendance(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.team.save()
-        models.Payment.objects.all().delete()
         call_command('denorm_flush')
         self.assertEquals(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
         self.assertEquals(user_attendance.team.unapproved_member_count, 0)
         self.assertEquals(user_attendance.team.member_count, 3)
+        user_attendance.payments().delete()
         user_attendance.delete()
         call_command('denorm_flush')
         team = models.Team.objects.get(pk=1)
