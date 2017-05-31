@@ -1368,10 +1368,14 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
 
 @staff_member_required
 def questions(request):
-    filter_query = Q()
+    questions = Question.objects.all()
     if not request.user.is_superuser:
-        filter_query = Q(competition__city__in=request.user.userprofile.administrated_cities.all())
-    questions = Question.objects.filter(filter_query).order_by('-competition__campaign', 'competition__slug', 'order').distinct()
+        questions = questions.filter(competition__city__in=request.user.userprofile.administrated_cities.all())
+    questions = questions.filter(competition__campaign__slug=request.subdomain)
+    questions = questions.order_by('-competition__campaign', 'competition__slug', 'order')
+    questions = questions.distinct()
+    questions = questions.select_related('competition__campaign', 'choice_type')
+    questions = questions.prefetch_related('answer_set', 'competition__city')
     return render(
         request,
         'admin/questions.html',
