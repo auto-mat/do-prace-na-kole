@@ -1354,12 +1354,13 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
             return context_data
 
         competitors = competition.get_results()
+        competitors = competitors.select_related('user_attendance__team__subsidiary__city', 'user_attendance__userprofile__user')
 
         for competitor in competitors:
             competitor.answers = Answer.objects.filter(
                 user_attendance__in=competitor.user_attendances(),
                 question__competition__slug=competition_slug,
-            )
+            ).select_related('question')
         context_data['show_points'] = competition.has_finished() or (self.request.user.is_authenticated() and self.request.user.userprofile.user.is_superuser)
         context_data['competitors'] = competitors
         context_data['competition'] = competition
