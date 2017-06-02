@@ -1236,7 +1236,7 @@ class TripAdmin(ExportMixin, RelatedFieldAdmin):
 
 
 @admin.register(models.CompetitionResult)
-class CompetitionResultAdmin(admin.ModelAdmin):
+class CompetitionResultAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
         'id',
         'user_attendance',
