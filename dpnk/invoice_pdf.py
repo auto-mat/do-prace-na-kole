@@ -29,7 +29,7 @@ def make_invoice_sheet_pdf(outfile, invoice):
     client = Client(
         invoice.company_name,
         address="%s %s" % (invoice.company_address_street, invoice.company_address_street_number),
-        zip=invoice.company_address_psc,
+        zip=invoice.company_address_psc or "",
         city=invoice.company_address_city,
         ir=invoice.company_ico,
         vat_id=invoice.company_dic,

@@ -1396,6 +1396,8 @@ class InvoiceResource(resources.ModelResource):
             'company__name',
             'created',
             'exposure_date',
+            'taxable_date',
+            'payback_date',
             'paid_date',
             'total_amount',
             'invoice_count',
@@ -1431,8 +1433,8 @@ class InvoiceResource(resources.ModelResource):
 class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
     list_display = [
         'company',
-        'created',
         'exposure_date',
+        'payback_date',
         'paid_date',
         'variable_symbol',
         'total_amount',
