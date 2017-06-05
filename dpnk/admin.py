@@ -731,6 +731,8 @@ class UserAttendanceResource(resources.ModelResource):
             'campaign',
             'campaign__slug',
             'distance',
+            'frequency',
+            'trip_length_total',
             'team',
             'team__name',
             'approved_for_team',
