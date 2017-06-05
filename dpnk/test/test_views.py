@@ -48,7 +48,7 @@ import settings
 
 from t_shirt_delivery.models import PackageTransaction
 
-from .mommy_recipes import CampaignRecipe, UserAttendanceRecipe, testing_campaign
+from .mommy_recipes import CampaignRecipe, PriceLevelRecipe, UserAttendancePaidRecipe, UserAttendanceRecipe, testing_campaign
 
 
 @override_settings(
@@ -471,6 +471,57 @@ class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
         self.assertContains(response, "Výsledky v soutěži Team frequency:")
 
 
+class ViewsTestsMommy(ClearCacheMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.example.com")
+
+    def test_competitor_counts(self):
+        city = mommy.make("City", name="Foo city")
+        PriceLevelRecipe.make()
+        user_attendances = [
+            UserAttendancePaidRecipe.make(team=None),
+            UserAttendancePaidRecipe.make(
+                team__subsidiary__city=city,
+                user_trips=[mommy.make("Trip", direction="trip_to", distance=2, commute_mode_id=2)],
+            ),
+            UserAttendancePaidRecipe.make(
+                team__subsidiary__city=city,
+                user_trips=[mommy.make("Trip", direction="trip_to", distance=3)],
+            ),
+        ]
+        for ua in user_attendances:
+            ua.save()
+        response = self.client.get(reverse('competitor_counts'))
+        self.assertContains(
+            response,
+            "<tr>"
+            "   <td>Foo city</td>"
+            "   <td>2</td>"
+            "   <td>3,0</td>"
+            "   <td>2,0</td>"
+            "   <td>5,0</td>"
+            "   <td>1</td>"
+            "   <td>1</td>"
+            "</tr>",
+            html=True,
+        )
+        self.assertContains(response, "<tr><td>bez vybraného města</td><td>1</td><td></td><td></td><td></td><td></td><td></td></tr>", html=True)
+        self.assertContains(
+            response,
+            "<tr>"
+            "   <th>celkem</th>"
+            "   <th>3</th>"
+            "   <th>3,0</th>"
+            "   <th>2,0</th>"
+            "   <th>5,0</th>"
+            "   <th>1</th>"
+            "   <th>1</th>"
+            "</tr>",
+            html=True,
+        )
+
+
 @override_settings(
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
@@ -508,18 +559,6 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('registrace')
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
-
-    def test_competitor_counts(self):
-        address = reverse('competitor_counts')
-        for payment in models.Payment.objects.all():
-            payment.status = models.Status.DONE
-            payment.save()
-        util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1115))
-        response = self.client.get(address)
-        self.assertContains(response, "<tr><td>Testing city</td><td>2</td></tr>", html=True)
-        self.assertContains(response, "<tr><td>bez vybraného města</td><td>0</td></tr>", html=True)
-        self.assertContains(response, "<tr><th>celkem</th><th>2</th></tr>", html=True)
 
     def test_dpnk_company_admin_registration(self):
         address = reverse('register_admin')
@@ -1778,8 +1817,8 @@ class StatisticsTests(ViewsLogon):
         self.assertJSONEqual(
             response.content.decode(),
             {
-                "pocet-zaplacenych": 2,
-                "pocet-soutezicich": 2,
+                "pocet-zaplacenych": 1,
+                "pocet-soutezicich": 1,
                 "pocet-cest": 3,
                 "pocet-cest-kolo": 2,
                 "pocet-cest-pesky": 1,

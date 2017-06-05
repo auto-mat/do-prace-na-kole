@@ -176,4 +176,7 @@ def unquote_html(value):
 
 @register.filter
 def round_number(value, decimal_places=1):
-    return round(value, decimal_places)
+    try:
+        return round(value, decimal_places)
+    except TypeError:
+        return value

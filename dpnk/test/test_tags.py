@@ -370,3 +370,33 @@ class ChangeLangTests(TestCase):
         context = Context({'request': request})
         response = template.render(context)
         self.assertHTMLEqual(response, '/admin/dpnk/competition/6/change/')
+
+
+class RoundNumberTests(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.factory = RequestFactory()
+
+    def test_without_parameters(self):
+        template = Template("{% load dpnk_tags %}{{ i|round_number }}")
+        context = Context({"i": 2.123456})
+        response = template.render(context)
+        self.assertHTMLEqual(response, '2,1')
+
+    def test_without_three_places(self):
+        template = Template("{% load dpnk_tags %}{{ i|round_number:3 }}")
+        context = Context({"i": 2.123456})
+        response = template.render(context)
+        self.assertHTMLEqual(response, '2,123')
+
+    def test_none(self):
+        template = Template("{% load dpnk_tags %}{{ i|round_number:3 }}")
+        context = Context({"i": None})
+        response = template.render(context)
+        self.assertHTMLEqual(response, 'None')
+
+    def test_no_number(self):
+        template = Template("{% load dpnk_tags %}{{ i|round_number:3 }}")
+        context = Context({"i": "foo"})
+        response = template.render(context)
+        self.assertHTMLEqual(response, 'foo')
