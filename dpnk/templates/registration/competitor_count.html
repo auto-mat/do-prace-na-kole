@@ -1,6 +1,8 @@
 {% extends "base_generic.html" %}
 {% load i18n %}
 {% load cache %}
+{% load humanize %}
+{% load dpnk_tags %}
 
 {% block content %}
 {% cache 3600 "competitor_count2" campaign_slug %}
@@ -8,20 +10,40 @@
 <tr>
    <th>{% trans "Město" %}</th>
    <th>{% trans "Počet soutěžících" %}</th>
+   <th>{% trans "Vzdálenost na kole" %}</th>
+   <th>{% trans "Vzdálenost pěšky" %}</th>
+   <th>{% trans "Celková vzdálenost" %}</th>
+   <th>{% trans "Počet cest na kole" %}</th>
+   <th>{% trans "Počet cest pěšky" %}</th>
 </tr>
 {% for city in cities %}
 <tr>
    <td>{{ city.name }}</td>
    <td>{{ city.competitor_count }}</td>
+   <td>{{ city.distances.distance_bicycle|round_number|intcomma }}</td>
+   <td>{{ city.distances.distance_foot|round_number|intcomma }}</td>
+   <td>{{ city.distances.distance__sum|round_number|intcomma }}</td>
+   <td>{{ city.distances.count_bicycle|round_number|intcomma }}</td>
+   <td>{{ city.distances.count_foot|round_number|intcomma }}</td>
 </tr>
 {% endfor %}
 <tr>
    <td>{% trans "bez vybraného města" %}</td>
    <td>{{ without_city.count }}</td>
+   <td></td>
+   <td></td>
+   <td></td>
+   <td></td>
+   <td></td>
 </tr>
 <tr>
    <th>{% trans "celkem" %}</th>
    <th>{{ total.count }}</th>
+   <th>{{ total_distances.distance_bicycle|round_number|intcomma }}</th>
+   <th>{{ total_distances.distance_foot|round_number|intcomma }}</th>
+   <th>{{ total_distances.distance__sum|round_number|intcomma }}</th>
+   <th>{{ total_distances.count_bicycle|round_number|intcomma }}</th>
+   <th>{{ total_distances.count_foot|round_number|intcomma }}</th>
 </tr>
 </table>
 {% endcache %}

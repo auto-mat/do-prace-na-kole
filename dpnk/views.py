@@ -1856,17 +1856,30 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
         context_data = super().get_context_data(*args, **kwargs)
         campaign_slug = self.request.subdomain
         context_data['campaign_slug'] = campaign_slug
-        context_data['cities'] =\
-            City.objects.\
+        cities = City.objects.\
             filter(subsidiary__teams__users__payment_status='done', subsidiary__teams__users__campaign__slug=campaign_slug).\
             annotate(competitor_count=Count('subsidiary__teams__users')).\
             order_by('-competitor_count')
+        for city in cities:
+            city.distances = distance_all_modes(
+                models.Trip.objects.filter(
+                    user_attendance__team__subsidiary__city=city,
+                    user_attendance__campaign__slug=campaign_slug,
+                ),
+            )
+        context_data['cities'] = cities
         context_data['without_city'] =\
             UserAttendance.objects.\
             filter(payment_status='done', campaign__slug=campaign_slug, team=None)
         context_data['total'] =\
             UserAttendance.objects.\
             filter(payment_status='done', campaign__slug=campaign_slug)
+        context_data['total_distances'] = distance_all_modes(
+            models.Trip.objects.filter(
+                user_attendance__payment_status='done',
+                user_attendance__campaign__slug=campaign_slug,
+            ),
+        )
         return context_data
 
 
