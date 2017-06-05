@@ -48,6 +48,7 @@ class Status(object):
     COMPANY_ACCEPTS = 1005
     INVOICE_MADE = 1006
     INVOICE_PAID = 1007
+    FREE_FOR_PARTNER = 1008
 
     PACKAGE_NEW = 20001
     PACKAGE_ACCEPTED_FOR_ASSEMBLY = 20002
@@ -82,6 +83,7 @@ PAYMENT_STATUSES = [
     (Status.DONE, _(u'Platba přijata')),
     (Status.WRONG_STATUS, _(u'Nesprávný status -- kontaktovat PayU')),
     (Status.COMPANY_ACCEPTS, _(u'Platba akceptována organizací')),
+    (Status.FREE_FOR_PARTNER, _('Partner má startovné zdarma')),
     (Status.INVOICE_MADE, _(u'Faktura vystavena')),
     (Status.INVOICE_PAID, _(u'Faktura zaplacena')),
 ]
@@ -157,6 +159,7 @@ class Payment(Transaction):
     done_statuses = [
         Status.DONE,
         Status.COMPANY_ACCEPTS,
+        Status.FREE_FOR_PARTNER,
         Status.INVOICE_MADE,
         Status.INVOICE_PAID,
     ]
