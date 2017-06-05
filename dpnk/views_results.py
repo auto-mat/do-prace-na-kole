@@ -50,6 +50,8 @@ class CompetitionResultListJson(BaseDatatableView):
             return str(getattr(row, column)())
         if column in ('get_result_percentage'):
             return intcomma(getattr(row, column)())
+        if column in ('result_divident', 'result_divisor'):
+            return intcomma(getattr(row, column))
         if column == 'get_team':
             team = row.get_team()
             if team:
