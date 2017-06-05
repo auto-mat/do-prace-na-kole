@@ -731,6 +731,8 @@ class UserAttendanceResource(resources.ModelResource):
             'campaign',
             'campaign__slug',
             'distance',
+            'frequency',
+            'trip_length_total',
             'team',
             'team__name',
             'approved_for_team',
@@ -1236,7 +1238,7 @@ class TripAdmin(ExportMixin, RelatedFieldAdmin):
 
 
 @admin.register(models.CompetitionResult)
-class CompetitionResultAdmin(admin.ModelAdmin):
+class CompetitionResultAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
         'id',
         'user_attendance',
