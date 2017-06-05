@@ -1450,7 +1450,11 @@ def answers(request):
         for p in points:
             if not p[1] in ('', 'None', None):
                 answer = Answer.objects.get(id=p[0])
-                answer.points_given = float(p[1].replace(",", "."))
+                try:
+                    answer.points_given = float(p[1].replace(",", "."))
+                except ValueError:
+                    answer.points_given = None
+
                 answer.save()
 
     answers = Answer.objects.filter(question_id=question_id).order_by('-points_given')
@@ -1463,7 +1467,7 @@ def answers(request):
     choice_names = {}
 
     for a in answers:
-        a.city = a.user_attendance.team.subsidiary.city if a.user_attendance.team else None
+        a.city = a.user_attendance.team.subsidiary.city if a.user_attendance and a.user_attendance.team else None
 
     if question.question_type in ('choice', 'multiple-choice'):
         for a in answers:
