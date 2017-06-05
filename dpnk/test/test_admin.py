@@ -147,7 +147,7 @@ class AdminModulesTests(DenormMixin, TestCase):
         response = self.client.post(address, post_data)
         self.assertContains(
             response,
-            '1015,339,testing-campaign,,1,Testing team 1,approved,,,Testing city,1017,cs,,'
+            '1015,339,testing-campaign,,,,1,Testing team 1,approved,,,Testing city,1017,cs,,'
             '1031,Testing,User,test1,test2@test.cz,,,"Ulice 1, 111 11 Praha",Testing company,2015-11-12 18:18:40,,,,',
         )
 
