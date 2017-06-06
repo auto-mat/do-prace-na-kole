@@ -503,10 +503,11 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
             "   <td>5,0</td>"
             "   <td>1</td>"
             "   <td>1</td>"
+            "   <td>645,0</td>"
             "</tr>",
             html=True,
         )
-        self.assertContains(response, "<tr><td>bez vybraného města</td><td>1</td><td></td><td></td><td></td><td></td><td></td></tr>", html=True)
+        self.assertContains(response, "<tr><td>bez vybraného města</td><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>", html=True)
         self.assertContains(
             response,
             "<tr>"
@@ -517,6 +518,7 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
             "   <th>5,0</th>"
             "   <th>1</th>"
             "   <th>1</th>"
+            "   <th>645,0</th>"
             "</tr>",
             html=True,
         )

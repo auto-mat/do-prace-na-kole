@@ -10,11 +10,12 @@
 <tr>
    <th>{% trans "Město" %}</th>
    <th>{% trans "Počet soutěžících" %}</th>
-   <th>{% trans "Vzdálenost na kole" %}</th>
-   <th>{% trans "Vzdálenost pěšky" %}</th>
-   <th>{% trans "Celková vzdálenost" %}</th>
+   <th>{% trans "Vzdálenost na kole (km)" %}</th>
+   <th>{% trans "Vzdálenost pěšky (km)" %}</th>
+   <th>{% trans "Celková vzdálenost (km)" %}</th>
    <th>{% trans "Počet cest na kole" %}</th>
    <th>{% trans "Počet cest pěšky" %}</th>
+   <th>{% trans "Ušetřené emise CO<sub>2</sub> (g)" %}</th>
 </tr>
 {% for city in cities %}
 <tr>
@@ -25,11 +26,13 @@
    <td>{{ city.distances.distance__sum|round_number|intcomma }}</td>
    <td>{{ city.distances.count_bicycle|round_number|intcomma }}</td>
    <td>{{ city.distances.count_foot|round_number|intcomma }}</td>
+   <td>{{ city.emissions.co2|intcomma }}</td>
 </tr>
 {% endfor %}
 <tr>
    <td>{% trans "bez vybraného města" %}</td>
    <td>{{ without_city.count }}</td>
+   <td></td>
    <td></td>
    <td></td>
    <td></td>
@@ -44,6 +47,7 @@
    <th>{{ total_distances.distance__sum|round_number|intcomma }}</th>
    <th>{{ total_distances.count_bicycle|round_number|intcomma }}</th>
    <th>{{ total_distances.count_foot|round_number|intcomma }}</th>
+   <th>{{ total_emissions.co2|intcomma }}</th>
 </tr>
 </table>
 {% endcache %}
