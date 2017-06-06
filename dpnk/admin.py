@@ -1108,7 +1108,7 @@ class AnswerResource(resources.ModelResource):
 class AnswerForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if 'instance' in kwargs:
+        if 'instance' in kwargs and kwargs['instance']:
             self.fields['choices'].queryset = models.Choice.objects.filter(choice_type__question=kwargs['instance'].question)
         else:
             self.fields['choices'].queryset = models.Choice.objects.filter(choice_type__question__competition__campaign__slug=self.request.subdomain)
