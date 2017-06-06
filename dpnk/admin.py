@@ -751,7 +751,9 @@ class UserAttendanceResource(resources.ModelResource):
             'userprofile__age_group',
             'subsidiary_name',
             'team__subsidiary__company__name',
-            'created')
+            'company_admin_emails',
+            'created',
+        )
         export_order = fields
 
     subsidiary_name = fields.Field(readonly=True)
@@ -785,6 +787,13 @@ class UserAttendanceResource(resources.ModelResource):
         payment = obj.representative_payment
         if payment:
             return payment.amount
+
+    company_admin_emails = fields.Field(readonly=True)
+
+    def dehydrate_company_admin_emails(self, obj):
+        if obj.team:
+            admins = obj.team.subsidiary.company.company_admin.filter(campaign=obj.campaign)
+            return ", ".join([a.userprofile.user.email for a in admins])
 
 
 @admin.register(models.UserAttendance)
