@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import datetime
 
 
 from dpnk.models import Campaign, UserAttendance
@@ -62,4 +63,23 @@ UserAttendanceRecipe = Recipe(
     campaign=testing_campaign,
     t_shirt_size__campaign=testing_campaign,
     team__campaign=testing_campaign,
+)
+
+
+PriceLevelRecipe = Recipe(
+    "price_level.PriceLevel",
+    takes_effect_on=datetime.date(year=2010, month=2, day=1),
+    price=100,
+    pricable=testing_campaign,
+)
+
+PaymentRecipe = Recipe(
+    "dpnk.Payment",
+    status=99,
+    realized=datetime.date(year=2017, month=2, day=1),
+)
+
+
+UserAttendancePaidRecipe = UserAttendanceRecipe.extend(
+    transactions=related(PaymentRecipe),
 )

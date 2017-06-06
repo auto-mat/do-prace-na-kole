@@ -1450,7 +1450,11 @@ def answers(request):
         for p in points:
             if not p[1] in ('', 'None', None):
                 answer = Answer.objects.get(id=p[0])
-                answer.points_given = float(p[1].replace(",", "."))
+                try:
+                    answer.points_given = float(p[1].replace(",", "."))
+                except ValueError:
+                    answer.points_given = None
+
                 answer.save()
 
     answers = Answer.objects.filter(question_id=question_id).order_by('-points_given')
@@ -1463,7 +1467,7 @@ def answers(request):
     choice_names = {}
 
     for a in answers:
-        a.city = a.user_attendance.team.subsidiary.city if a.user_attendance.team else None
+        a.city = a.user_attendance.team.subsidiary.city if a.user_attendance and a.user_attendance.team else None
 
     if question.question_type in ('choice', 'multiple-choice'):
         for a in answers:
@@ -1791,14 +1795,12 @@ def statistics(
     variables['pocet-cest-dnes'] = distances_today['count__sum']
     variables['pocet-zaplacenych'] = UserAttendance.objects.filter(
         Q(campaign=campaign) &
-        Q(userprofile__user__is_active=True) &
-        Q(transactions__status__in=models.Payment.done_statuses),
+        Q(payment_status='done'),
     ).exclude(Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct().count()
-    variables['pocet-prihlasenych'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True).distinct().count()
+    variables['pocet-prihlasenych'] = UserAttendance.objects.filter(campaign=campaign).distinct().count()
     variables['pocet-soutezicich'] = UserAttendance.objects.filter(
         Q(campaign=campaign) &
-        Q(userprofile__user__is_active=True) &
-        Q(transactions__status__in=models.Payment.done_statuses),
+        Q(payment_status='done'),
     ).distinct().count()
     variables['pocet-spolecnosti'] = Company.objects.filter(Q(subsidiaries__teams__campaign=campaign)).distinct().count()
     variables['pocet-pobocek'] = Subsidiary.objects.filter(Q(teams__campaign=campaign)).distinct().count()
@@ -1852,17 +1854,30 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
         context_data = super().get_context_data(*args, **kwargs)
         campaign_slug = self.request.subdomain
         context_data['campaign_slug'] = campaign_slug
-        context_data['cities'] =\
-            City.objects.\
+        cities = City.objects.\
             filter(subsidiary__teams__users__payment_status='done', subsidiary__teams__users__campaign__slug=campaign_slug).\
             annotate(competitor_count=Count('subsidiary__teams__users')).\
             order_by('-competitor_count')
+        for city in cities:
+            city.distances = distance_all_modes(
+                models.Trip.objects.filter(
+                    user_attendance__team__subsidiary__city=city,
+                    user_attendance__campaign__slug=campaign_slug,
+                ),
+            )
+        context_data['cities'] = cities
         context_data['without_city'] =\
             UserAttendance.objects.\
             filter(payment_status='done', campaign__slug=campaign_slug, team=None)
         context_data['total'] =\
             UserAttendance.objects.\
             filter(payment_status='done', campaign__slug=campaign_slug)
+        context_data['total_distances'] = distance_all_modes(
+            models.Trip.objects.filter(
+                user_attendance__payment_status='done',
+                user_attendance__campaign__slug=campaign_slug,
+            ),
+        )
         return context_data
 
 

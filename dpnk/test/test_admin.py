@@ -148,7 +148,8 @@ class AdminModulesTests(DenormMixin, TestCase):
         self.assertContains(
             response,
             '1015,339,testing-campaign,,,,1,Testing team 1,approved,,,Testing city,1017,cs,,'
-            '1031,Testing,User,test1,test2@test.cz,,,"Ulice 1, 111 11 Praha",Testing company,2015-11-12 18:18:40,,,,',
+            '1031,Testing,User,test1,test2@test.cz,,,"Ulice 1, 111 11 Praha",Testing company,'
+            '"test_wa@email.cz, test@email.cz, test@test.cz",2015-11-12 18:18:40,,,,',
         )
 
     def test_company_export(self):
@@ -264,6 +265,29 @@ class AdminModulesTests(DenormMixin, TestCase):
         self.assertContains(response, '<option value="3">Pravidelnost týmů</option>', html=True)
         self.assertContains(response, 'Question 5 name')
         self.assertContains(response, 'Question text')
+
+    def test_admin_answer_add(self):
+        address = reverse('admin:dpnk_answer_add')
+        post_data = {
+            '_save': 'Uložit',
+            'attachment': '',
+            'comment': 'https://www.foo.cz',
+            'comment_given': '',
+            'points_given': '2',
+            'question': '411',
+            'user_attendance': '1015',
+        }
+        response = self.client.post(address, post_data)
+        self.assertContains(
+            response,
+            '<ul class="errorlist"><li>Vyberte platnou možnost. Tato není k dispozici.</li></ul>',
+            html=True,
+        )
+        self.assertContains(
+            response,
+            '<input class="vForeignKeyRawIdAdminField" id="id_user_attendance" name="user_attendance" type="text" value="1015">',
+            html=True,
+        )
 
 
 @override_settings(

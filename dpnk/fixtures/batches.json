@@ -10,7 +10,7 @@
     {
         "fields": {
             "user_attendance": 3,
-            "status": 99,
+            "status": 20003,
             "created": "2015-11-12T18:18:40.223",
             "polymorphic_ctype": ["t_shirt_delivery", "packagetransaction"]
         },
@@ -28,7 +28,7 @@
     {
         "fields": {
             "user_attendance": 1115,
-            "status": 99,
+            "status": 20003,
             "created": "2015-11-12T18:18:40.223",
             "polymorphic_ctype": ["t_shirt_delivery", "packagetransaction"]
         },

@@ -172,3 +172,11 @@ def change_lang(context, lang=None, *args, **kwargs):
 def unquote_html(value):
     html_parser = html.parser.HTMLParser()
     return html_parser.unescape(value)
+
+
+@register.filter
+def round_number(value, decimal_places=1):
+    try:
+        return round(value, decimal_places)
+    except TypeError:
+        return value
