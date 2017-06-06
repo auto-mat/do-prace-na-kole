@@ -498,12 +498,12 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
             "<tr>"
             "   <td>Foo city</td>"
             "   <td>2</td>"
-            "   <td>3,0</td>"
-            "   <td>2,0</td>"
-            "   <td>5,0</td>"
+            "   <td>3.0</td>"
+            "   <td>2.0</td>"
+            "   <td>5.0</td>"
             "   <td>1</td>"
             "   <td>1</td>"
-            "   <td>645,0</td>"
+            "   <td>645.0</td>"
             "</tr>",
             html=True,
         )
