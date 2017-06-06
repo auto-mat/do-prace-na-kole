@@ -1795,13 +1795,11 @@ def statistics(
     variables['pocet-cest-dnes'] = distances_today['count__sum']
     variables['pocet-zaplacenych'] = UserAttendance.objects.filter(
         Q(campaign=campaign) &
-        Q(userprofile__user__is_active=True) &
         Q(payment_status='done'),
     ).exclude(Q(transactions__payment__pay_type__in=models.Payment.NOT_PAYING_TYPES)).distinct().count()
-    variables['pocet-prihlasenych'] = UserAttendance.objects.filter(campaign=campaign, userprofile__user__is_active=True).distinct().count()
+    variables['pocet-prihlasenych'] = UserAttendance.objects.filter(campaign=campaign).distinct().count()
     variables['pocet-soutezicich'] = UserAttendance.objects.filter(
         Q(campaign=campaign) &
-        Q(userprofile__user__is_active=True) &
         Q(payment_status='done'),
     ).distinct().count()
     variables['pocet-spolecnosti'] = Company.objects.filter(Q(subsidiaries__teams__campaign=campaign)).distinct().count()
