@@ -68,8 +68,9 @@ def parse(days_back=7):
             try:
                 invoice = Invoice.objects.get(
                     variable_symbol__in=(variable_symbol, recipient_message, recipient_message_without_d),
+                    total_amount=payment['amount'],
                 )
-                if invoice.total_amount == payment['amount'] and 'CZK' == payment['currency']:
+                if 'CZK' == payment['currency']:
                     invoice.paid_date = payment['date']
                     invoice.save()
                 else:

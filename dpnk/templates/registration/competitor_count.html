@@ -1,35 +1,71 @@
 {% extends "base_generic.html" %}
 {% load i18n %}
+{% load l10n %}
 {% load cache %}
 {% load humanize %}
 {% load dpnk_tags %}
 
+{% block extrahead %}
+{% include "datatables_header.html" %}
+{{ block.super }}
+{% endblock %}
+
 {% block content %}
+<script>
+$(document).ready(function() {
+   $('.table-ordered').DataTable( {
+      "order": [[ 3, "desc" ]],
+      "paging": false,
+      "language": {
+          "decimal": ",",
+          "thousands": " "
+      },
+      "columns": [
+          { "type": "html" },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 0, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 1, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 1, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 1, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 1, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 1, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 1, '' ) },
+        ],
+   } );
+} );
+</script>
 {% cache 3600 "competitor_count2" campaign_slug %}
-<table class="table table-striped table-bordered table-hover">
+<table class="table table-striped table-bordered table-ordered table-hover">
+<thead>
 <tr>
    <th>{% trans "Město" %}</th>
    <th>{% trans "Počet soutěžících" %}</th>
-   <th>{% trans "Vzdálenost na kole" %}</th>
-   <th>{% trans "Vzdálenost pěšky" %}</th>
-   <th>{% trans "Celková vzdálenost" %}</th>
+   <th>{% trans "Vzdálenost na kole (km)" %}</th>
+   <th>{% trans "Vzdálenost pěšky (km)" %}</th>
+   <th>{% trans "Celková vzdálenost (km)" %}</th>
    <th>{% trans "Počet cest na kole" %}</th>
    <th>{% trans "Počet cest pěšky" %}</th>
+   <th>{% trans "Ušetřené emise CO<sub>2</sub> (g)" %}</th>
 </tr>
+</thead>
+<tbody>
 {% for city in cities %}
 <tr>
    <td>{{ city.name }}</td>
-   <td>{{ city.competitor_count }}</td>
-   <td>{{ city.distances.distance_bicycle|round_number|intcomma }}</td>
-   <td>{{ city.distances.distance_foot|round_number|intcomma }}</td>
-   <td>{{ city.distances.distance__sum|round_number|intcomma }}</td>
-   <td>{{ city.distances.count_bicycle|round_number|intcomma }}</td>
-   <td>{{ city.distances.count_foot|round_number|intcomma }}</td>
+   <td>{{ city.competitor_count|unlocalize }}</td>
+   <td>{{ city.distances.distance_bicycle|unlocalize }}</td>
+   <td>{{ city.distances.distance_foot|unlocalize }}</td>
+   <td>{{ city.distances.distance__sum|unlocalize }}</td>
+   <td>{{ city.distances.count_bicycle|unlocalize }}</td>
+   <td>{{ city.distances.count_foot|unlocalize }}</td>
+   <td>{{ city.emissions.co2|unlocalize }}</td>
 </tr>
 {% endfor %}
+</tbody>
+<tfoot>
 <tr>
    <td>{% trans "bez vybraného města" %}</td>
    <td>{{ without_city.count }}</td>
+   <td></td>
    <td></td>
    <td></td>
    <td></td>
@@ -44,7 +80,9 @@
    <th>{{ total_distances.distance__sum|round_number|intcomma }}</th>
    <th>{{ total_distances.count_bicycle|round_number|intcomma }}</th>
    <th>{{ total_distances.count_foot|round_number|intcomma }}</th>
+   <th>{{ total_emissions.co2|intcomma }}</th>
 </tr>
+</tfoot>
 </table>
 {% endcache %}
 {% endblock %}

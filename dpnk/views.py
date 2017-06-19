@@ -1865,6 +1865,7 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
                     user_attendance__campaign__slug=campaign_slug,
                 ),
             )
+            city.emissions = util.get_emissions(city.distances['distance__sum'])
         context_data['cities'] = cities
         context_data['without_city'] =\
             UserAttendance.objects.\
@@ -1878,6 +1879,7 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
                 user_attendance__campaign__slug=campaign_slug,
             ),
         )
+        context_data['total_emissions'] = util.get_emissions(context_data['total_distances']['distance__sum'])
         return context_data
 
 
