@@ -86,3 +86,4 @@ django-redis
 coreapi
 django-celery-email
 -e git+https://github.com/PetrDlouhy/django-likes.git#egg=django-likes  # For fixes for Django 1.10 and static files
+social-auth-app-django
