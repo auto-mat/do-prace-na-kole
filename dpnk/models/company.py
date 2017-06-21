@@ -70,3 +70,7 @@ class Company(models.Model):
 
     def company_address(self):
         return get_address_string(self.address)
+
+    def admin_emails(self, campaign):
+        admins = self.company_admin.filter(campaign=campaign)
+        return ", ".join([a.userprofile.user.email for a in admins])

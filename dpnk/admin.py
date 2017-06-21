@@ -1434,8 +1434,7 @@ class InvoiceResource(resources.ModelResource):
     company_admin_emails = fields.Field(readonly=True)
 
     def dehydrate_company_admin_emails(self, obj):
-        admins = obj.company.company_admin.filter(campaign=obj.campaign)
-        return ", ".join([a.userprofile.user.email for a in admins])
+        return obj.company.admin_emails(obj.campaign)
 
 
 @admin.register(models.Invoice)
@@ -1456,6 +1455,8 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'company_dic',
         'company_pais_benefitial_fee',
         'company_address_street',
+        'note',
+        'company_admin_emails',
     ]
     readonly_fields = [
         'created',
@@ -1481,6 +1482,9 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
 
     def invoice_pdf_url(self, obj):
         return format_html("<a href='{}'>invoice.pdf</a>", obj.invoice_pdf.url)
+
+    def company_admin_emails(self, obj):
+        return obj.company.admin_emails(obj.campaign)
 
 
 @admin.register(models.GpxFile)

@@ -132,6 +132,11 @@ class Invoice(models.Model):
         null=True,
         blank=True,
     )
+    note = models.TextField(
+        verbose_name=_(u"Interní poznámka"),
+        null=True,
+        blank=True,
+    )
     company_dic = models.CharField(
         verbose_name=_("DIČ organizace"),
         max_length=15,
