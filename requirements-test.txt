@@ -4,6 +4,7 @@ django-admin-smoke-tests
 django-debug-toolbar
 django-debug-toolbar-line-profiler
 django-debug-toolbar-template-timings
+django-debug-toolbar-request-history
 model-mommy
 django_coverage_plugin
 django-nose
