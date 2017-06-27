@@ -251,11 +251,6 @@ class Migration(migrations.Migration):
             name='trip',
             options={'ordering': ('date', '-direction'), 'verbose_name': 'Cesta', 'verbose_name_plural': 'Cesty'},
         ),
-        migrations.AddField(
-            model_name='userattendance',
-            name='multi_track',
-            field=django.contrib.gis.db.models.fields.MultiLineStringField(blank=True, geography=True, help_text='\n<ul>\n   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko "Nakreslit trasu".</strong></li>\n   <li>Změnu trasy provedete po přepnutí do režimu úprav kliknutím na trasu.</li>\n   <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede.</li>\n   <li>Zadání přesnějšího průběhu nám však může pomoci lépe zjistit jak se lidé na kole pohybují.</li>\n   <li>Trasu bude možné změnit nebo upřesnit i později v průběhu soutěže.</li>\n   <li>Polohu začátku a konce trasy stačí zadávat s přesností 100m.</li>\n</ul>\nTrasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve městě na kole. Vaše cesta se zobrazí vašim týmovým kolegům.\n<br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na úvodní stránce.\n', null=True, srid=4326, verbose_name='trasa'),
-        ),
         migrations.AlterField(
             model_name='trip',
             name='date',
@@ -266,22 +261,13 @@ class Migration(migrations.Migration):
             name='distance',
             field=models.FloatField(default=None, null=True, validators=[django.core.validators.MaxValueValidator(1000), django.core.validators.MinValueValidator(0)], verbose_name='Ujetá vzdálenost'),
         ),
-        migrations.RemoveField(
-            model_name='userattendance',
-            name='track',
-        ),
-        migrations.RenameField(
-            model_name='userattendance',
-            old_name='multi_track',
-            new_name='track',
-        ),
         migrations.AlterModelOptions(
             name='companyadmin',
             options={'verbose_name': 'Koordinátor společnosti', 'verbose_name_plural': 'Koordinátoři společností'},
         ),
         migrations.AlterModelOptions(
             name='subsidiary',
-            options={'verbose_name': 'Pobočka společnosti', 'verbose_name_plural': 'Pobočky společností'},
+            options={'verbose_name': 'Pobočka organizace', 'verbose_name_plural': 'Pobočky organizací'},
         ),
         migrations.AddField(
             model_name='companyadmin',
@@ -330,10 +316,6 @@ class Migration(migrations.Migration):
         migrations.AlterModelOptions(
             name='companyadmin',
             options={'verbose_name': 'Koordinátor organizace', 'verbose_name_plural': 'Koordinátoři organizací'},
-        ),
-        migrations.AlterModelOptions(
-            name='subsidiary',
-            options={'verbose_name': 'Pobočka organizace', 'verbose_name_plural': 'Pobočky organizací'},
         ),
         migrations.AlterField(
             model_name='campaign',
