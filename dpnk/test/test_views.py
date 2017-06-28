@@ -300,6 +300,29 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
             [{'value': 4, 'display': 'Empty team ()'}, {'value': 1, 'display': 'Testing team 1 (Nick, Testing User 1, Registered User 1)'}],
         )
 
+    def test_chaining_subsidiary(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
+        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=(1, 4)))
+        denorm.flush()
+        kwargs = {
+            'app': 'dpnk',
+            'model': 'Subsidiary',
+            'field': 'company',
+            'foreign_key_app_name': 'dpnk',
+            'foreign_key_model_name': 'Subsidiary',
+            'foreign_key_field_name': 'company',
+            'value': '1',
+        }
+        address = reverse('chained_filter', kwargs=kwargs)
+        response = self.client.get(address)
+        self.assertJSONEqual(
+            response.content.decode(),
+            [
+                {'display': 'Ulice 1, 111 11 Praha - Testing city', 'value': 1},
+                {'display': 'Ulice 2, 222 22 Brno - Other city', 'value': 2},
+            ],
+        )
+
 
 @override_settings(
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
@@ -1304,7 +1327,14 @@ class ViewsTestsLogon(ViewsLogon):
         }
         response = self.client.post(reverse('zmenit_tym'), post_data)
         self.assertContains(response, 'error_1_id_team')
-        self.assertContains(response, 'var value = undefined;')
+        self.assertContains(
+            response,
+            '<select class="selectchainedorcreate form-control form-control-danger chained-fk"'
+            'data-auto_choose="false" data-chainfield="subsidiary" data-empty_label="--------"'
+            'data-url="/chaining/filter/dpnk/Team/team_in_campaign_testing-campaign/subsidiary/dpnk/Subsidiary/company"'
+            'data-value="null" id="id_team" name="team"> </select>',
+            html=True,
+        )
 
     def test_dpnk_team_approval(self):
         ua = models.UserAttendance.objects.get(pk=1015)

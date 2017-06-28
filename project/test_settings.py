@@ -67,7 +67,6 @@ for mid in UNUSED_MIDDLEWARES:
     except ValueError:
         pass
 
-SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  # XXX
 SITE_URL = 'localhost:8000'
 DJANGO_URL = 'http://localhost:8000'
 
