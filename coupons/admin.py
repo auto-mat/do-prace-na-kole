@@ -49,7 +49,7 @@ class NullUserAttendanceListFilter(SimpleListFilter):
             kwargs = {
                 '{0}__isnull'.format(self.parameter_name): self.value() == 'True',
             }
-            return queryset.filter(**kwargs)
+            return queryset.filter(**kwargs).distinct()
         return queryset
 
 
