@@ -535,7 +535,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
 
 
 class AnswerForm(forms.ModelForm):
-    choices = ShowPointsMultipleModelChoiceField(queryset=(), label="", help_text="")
+    choices = ShowPointsMultipleModelChoiceField(queryset=models.Choice.objects.none(), label="", help_text="")
 
     def __init__(self, *args, **kwargs):
         question = kwargs.pop('question')
