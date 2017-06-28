@@ -66,6 +66,7 @@ class DiscountCouponAdmin(ImportExportMixin, RelatedFieldAdmin):
         'note',
         'receiver',
         'attached_user_attendances_list',
+        'attached_user_attendances_count',
         'sent',
     )
     readonly_fields = ('token', 'created', 'updated', 'author', 'updated_by')

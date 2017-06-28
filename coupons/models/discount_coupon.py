@@ -124,6 +124,9 @@ class DiscountCoupon(models.Model):
     def attached_user_attendances_list(self):
         return ", ".join([str(u) for u in self.userattendance_set.all()])
 
+    def attached_user_attendances_count(self):
+        return self.userattendance_set.count()
+
     def save(self, *args, **kwargs):
         if self.token is None or self.token == "":
             self.token = User.objects.make_random_password(length=6, allowed_chars='ABCDEFGHJKLMNPQRSTUVWXYZ')
