@@ -945,7 +945,7 @@ class ViewsTestsLogon(ViewsLogon):
                     {"value": "Testing company without admin", "label": "Testing company without admin", "id": 2},
                 ],
                 "meta": {
-                    "more": "Show more results",
+                    "more": "Zobrazit další výsledky",
                     "page": 1,
                     "term": "",
                     "limit": 25,

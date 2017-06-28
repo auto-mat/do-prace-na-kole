@@ -282,7 +282,7 @@ class AdminModulesTests(DenormMixin, TestCase):
         response = self.client.post(address, post_data)
         self.assertContains(
             response,
-            '<ul class="errorlist"><li>Vyberte platnou možnost. Tato není k dispozici.</li></ul>',
+            '<ul class="errorlist"><li>Vyberte platnou volbu. Tato volba není mezi platnými možnostmi.</li></ul>',
             html=True,
         )
         self.assertContains(
