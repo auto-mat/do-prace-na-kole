@@ -50,7 +50,7 @@ django-cors-headers
 django-wysiwyg-redactor
 sqlparse
 django-appconf
-django-selectable
+-e git+https://github.com/mlavin/django-selectable.git#egg=django-selectable  # For the Django 1.11 fixes
 pypdf2
 django-extra-views
 raven
