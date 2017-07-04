@@ -14,7 +14,7 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": "1.12.3",
+    "jquery": "2.2.0",
     "bootstrap": "~3.3.2",
     "jquery-form": "~3.46.0",
     "font-awesome": "~4.7.0",
@@ -26,6 +26,6 @@
     "jquery-ui": "~1.11.4"
   },
   "resolutions": {
-    "jquery": "1.12.3"
+    "jquery": "2.2.0"
   }
 }
