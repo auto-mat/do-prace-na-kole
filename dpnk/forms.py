@@ -233,7 +233,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
         widget=SelectChainedOrCreate(
-            RegisterSubsidiaryForm,
+            underlying_form_class=RegisterSubsidiaryForm,
             view_name='',
             prefix="subsidiary",
             new_description=_("Adresa pobočky/organizace v seznamu není, chci vyplnit novou."),
@@ -244,7 +244,6 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             foreign_key_model_name="Subsidiary",
             foreign_key_field_name="company",
             to_model_name="Subsidiary",
-            to_model_field="company",
             manager="active_objects",
             show_all=False,
             auto_choose=True,
@@ -263,7 +262,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
         widget=SelectChainedOrCreate(
-            RegisterTeamForm,
+            underlying_form_class=RegisterTeamForm,
             view_name='',
             prefix="team",
             new_description=_("Můj tým v seznamu není, chci vytvořit nový."),
@@ -274,7 +273,6 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             foreign_key_model_name="Subsidiary",
             foreign_key_field_name="company",
             to_model_name="Team",
-            to_model_field="subsidiary",
             show_all=False,
             auto_choose=False,
         ),
@@ -348,7 +346,10 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         if self.instance.payment_status == 'done' and self.instance.team:
             self.fields["subsidiary"].widget = HiddenInput()
             self.fields["company"].widget = HiddenInput()
-            self.fields["team"].queryset = models.Team.objects.filter(subsidiary__company=self.instance.team.subsidiary.company)
+            self.fields["team"].queryset = models.Team.objects.filter(
+                subsidiary__company=self.instance.team.subsidiary.company,
+                campaign=self.instance.campaign,
+            )
 
     class Meta:
         model = models.UserAttendance

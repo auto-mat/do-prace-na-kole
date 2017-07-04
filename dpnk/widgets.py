@@ -18,16 +18,28 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django import forms
-from django.template.loader import render_to_string
 
 from selectable.forms.widgets import AutoCompleteSelectWidget
 
 from smart_selects import widgets
 
 
-class SelectOrCreateAutoComplete(AutoCompleteSelectWidget):
+class SelectOrCreateRenderMixin(object):
+    def get_underlying_context(self, name, value, attrs):
+        context = {}
+        context['underlying_form'] = self.underlying_form
+        context['selected'] = self.create
+        context['id'] = attrs['id']
+        context['new_description'] = self.new_description
+        if hasattr(self, 'help_text'):
+            context['help_text'] = self.help_text
+        return context
+
+
+class SelectOrCreateAutoComplete(SelectOrCreateRenderMixin, AutoCompleteSelectWidget):
     underlying_form = None
     create = False
+    widget_template_name = "form/select_or_create.html"
 
     def __init__(self, channel, underlying_form_class, prefix="", new_description=u"Vytvořit novou položku", help_text=None, *args, **kwargs):
         super(SelectOrCreateAutoComplete, self).__init__(lookup_class='dpnk.lookups.CompanyLookup')
@@ -37,94 +49,39 @@ class SelectOrCreateAutoComplete(AutoCompleteSelectWidget):
         self.underlying_form = self.underlying_form_class(prefix=prefix)
         self.help_text = help_text
 
-    def render(self, name, *args, **kwargs):
-        html = super(SelectOrCreateAutoComplete, self).render(name, *args, **kwargs)
-        widget_id = kwargs['attrs']['id']
-
-        widget = render_to_string(
-            "form/select_or_create.html",
-            {
-                'html': html,
-                'underlying_form': self.underlying_form,
-                'selected': self.create,
-                'id': widget_id,
-                'new_description': self.new_description,
-                'help_text': self.help_text,
-            },
-        )
-        return widget
+    def render(self, name, value, attrs=None, renderer=None):
+        context = self.get_underlying_context(name, value, attrs)
+        context['html'] = super().render(name, value, {**attrs, **self.attrs}, renderer)
+        return self._render(self.widget_template_name, context, renderer)
 
 
-class SelectOrCreate(forms.Select):
-    underlying_form = None
-    create = False
-
-    def __init__(self, underlying_form_class, prefix="", new_description=u"Vytvořit novou položku", *args, **kwargs):
-        super(forms.Select, self).__init__()
-        self.new_description = new_description
-        self.underlying_form_class = underlying_form_class
-        self.underlying_form = self.underlying_form_class(prefix=prefix)
-
-    def render(self, name, *args, **kwargs):
-        html = super(SelectOrCreate, self).render(name, *args, **kwargs)
-        widget_id = kwargs['attrs']['id']
-
-        widget = render_to_string(
-            "form/select_or_create.html",
-            {
-                'html': html,
-                'underlying_form': self.underlying_form,
-                'selected': self.create,
-                'id': widget_id,
-                'new_description': self.new_description,
-            },
-        )
-        return widget
-
-
-class SelectChainedOrCreate(widgets.ChainedSelect):
+class SelectChainedOrCreate(SelectOrCreateRenderMixin, widgets.ChainedSelect):
     underlying_form = None
     create = False
     sort = True
+    widget_template_name = "form/select_or_create.html"
 
-    def __init__(self, underlying_form_class, prefix="", new_description=u"Vytvořit novou položku", *args, **kwargs):
-        super(widgets.ChainedSelect, self).__init__()
-        for k, v in kwargs.items():
-            assert(k in [
-                'chained_field',
-                'chained_model_field',
-                'show_all',
-                'to_app_name',
-                'foreign_key_app_name',
-                'foreign_key_model_name',
-                'foreign_key_field_name',
-                'to_model_field',
-                'auto_choose',
-                'to_model_name',
-                'manager',
-                'view_name',
-            ])
-            setattr(self, k, v)
-        self.manager = None
+    def __init__(
+            self, to_app_name, to_model_name, chained_field, chained_model_field,
+            foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
+            show_all, auto_choose, sort=True, manager=None, view_name=None,
+            underlying_form_class=None, prefix="", new_description="Vytvořit novou položku",
+    ):
+        super().__init__(
+            to_app_name, to_model_name, chained_field, chained_model_field,
+            foreign_key_app_name, foreign_key_model_name, foreign_key_field_name,
+            show_all, auto_choose, sort=True, manager=None, view_name=None,
+        )
+        self.manager = manager
 
         self.new_description = new_description
         self.underlying_form_class = underlying_form_class
         self.underlying_form = self.underlying_form_class(prefix=prefix)
 
-    def render(self, name, *args, **kwargs):
-        html = super(SelectChainedOrCreate, self).render(name, *args, **kwargs)
-        widget_id = kwargs['attrs']['id']
-
-        widget = render_to_string(
-            "form/select_or_create.html", {
-                'html': html,
-                'underlying_form': self.underlying_form,
-                'selected': self.create,
-                'id': widget_id,
-                'new_description': self.new_description,
-            },
-        )
-        return widget
+    def render(self, name, value, attrs=None, choices=(), renderer=None):
+        context = self.get_underlying_context(name, value, attrs)
+        context['html'] = super().render(name, value, {**attrs, **self.attrs}, choices)
+        return self._render(self.widget_template_name, context, renderer)
 
 
 class CommuteModeSelect(forms.RadioSelect):
