@@ -127,14 +127,8 @@ class SelectChainedOrCreate(widgets.ChainedSelect):
         return widget
 
 
-class CommuteModeRenderer(object):
-    def __init__(self, name, value, attrs, choices):
-        self.name = name
-        self.value = value
-        self.attrs = attrs
-        self.choices = choices
-
-    def render(self):
+class CommuteModeSelect(forms.RadioSelect):
+    def render(self, name, value, **kwargs):
         # template widget rendering or crispy forms are not used for performance reasons
         # please bear in mind that this part of code has to be as quick as possible
         widget = '<fieldset class="controls btn-group" role="group">'
@@ -146,15 +140,11 @@ class CommuteModeRenderer(object):
                 '   <input type="radio" {checked} name="{name}" id="id_{name}_{counter}" value="{choice}">' \
                 '   <label for="id_{name}_{counter}">{choice_name}</label>' \
                 '</div>'.format(
-                    checked='checked="checked"' if str(choice[0]) == str(self.value) else '',
+                    checked='checked="checked"' if str(choice[0]) == str(value) else '',
                     counter=counter,
-                    name=self.name,
+                    name=name,
                     choice=choice[0],
                     choice_name=choice[1],
                 )
         widget += '</fieldset>'
         return widget
-
-
-class CommuteModeSelect(forms.RadioSelect):
-    renderer = CommuteModeRenderer
