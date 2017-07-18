@@ -21,7 +21,7 @@ from django import forms
 
 from selectable.forms.widgets import AutoCompleteSelectWidget
 
-from smart_selects import widgets
+from smart_selects.widgets import ChainedSelect
 
 
 class SelectOrCreateRenderMixin(object):
@@ -55,7 +55,7 @@ class SelectOrCreateAutoComplete(SelectOrCreateRenderMixin, AutoCompleteSelectWi
         return self._render(self.widget_template_name, context, renderer)
 
 
-class SelectChainedOrCreate(SelectOrCreateRenderMixin, widgets.ChainedSelect):
+class SelectChainedOrCreate(SelectOrCreateRenderMixin, ChainedSelect):
     underlying_form = None
     create = False
     sort = True
