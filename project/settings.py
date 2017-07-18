@@ -340,6 +340,8 @@ LOGIN_REDIRECT_URL = reverse_lazy("profil")
 LOGOUT_NEXT_PAGE = reverse_lazy('profil')
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = ""
+USE_DJANGO_JQUERY = True
+JQUERY_URL = None
 if PRODUCTION_ENVIRONMENT:
     AKLUB_URL = "https://klub.auto-mat.cz"
 else:
