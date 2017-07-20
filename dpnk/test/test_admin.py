@@ -469,14 +469,25 @@ class LocalAdminTests(TestCase):
 
     def setUp(self):
         super().setUp()
-        self.client.force_login(User.objects.get(pk=2), settings.AUTHENTICATION_BACKENDS[0])
+        self.client.force_login(User.objects.get(username='local_admin'), settings.AUTHENTICATION_BACKENDS[0])
 
     def test_competition_change_view_different_city(self):
+        """
+        Test that competition with ID 3 exists, but is NOT editable by local admin from another city.
+        """
         address = reverse('admin:dpnk_competition_change', args=(3,))
         response = self.client.get(address, follow=True)
-        self.assertEquals(response.status_code, 404)
+        self.assertTrue(models.Competition.objects.filter(pk=3).exists())
+        self.assertContains(
+            response,
+            '<li class="warning">Objekt Soutěžní kategorie s klíčem &quot;3&quot; neexistuje. Možná byl odstraněn.</li>',
+            html=True,
+        )
 
     def test_competition_change_view(self):
+        """
+        Test that competition with ID 6 exists, but IS editable by local admin from this city.
+        """
         address = reverse('admin:dpnk_competition_change', args=(6,))
         response = self.client.get(address, follow=True)
         self.assertContains(response, "Výkonnost ve městě")
