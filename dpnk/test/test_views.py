@@ -1329,10 +1329,17 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertContains(response, 'error_1_id_team')
         self.assertContains(
             response,
-            '<select class="selectchainedorcreate form-control form-control-danger chained-fk"'
-            'data-auto_choose="false" data-chainfield="subsidiary" data-empty_label="--------"'
+            '<select '
+            'class="selectchainedorcreate form-control form-control-danger chained-fk"'
+            'data-auto_choose="false" '
+            'data-chainfield="subsidiary" '
+            'data-empty_label="--------"'
             'data-url="/chaining/filter/dpnk/Team/team_in_campaign_testing-campaign/subsidiary/dpnk/Subsidiary/company"'
-            'data-value="null" id="id_team" name="team"> </select>',
+            'data-value="null" '
+            'id="id_team" '
+            'name="team"'
+            'name="team"'
+            '> </select>',
             html=True,
         )
 
