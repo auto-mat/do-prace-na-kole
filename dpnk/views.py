@@ -909,6 +909,16 @@ class RidesFormSet(BaseModelFormSet):
             return min(self.forms_max_number, form_count)
         return form_count
 
+    @property
+    def initial_forms(self):
+        """Return a list of all the initial forms in this formset."""
+        return [form for form in self.forms if form.instance.pk is not None]
+
+    @property
+    def extra_forms(self):
+        """Return a list of all the extra forms in this formset."""
+        return [form for form in self.forms if form.instance.pk is None]
+
 
 class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, ModelFormSetView):
     model = Trip
