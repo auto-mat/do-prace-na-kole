@@ -1075,6 +1075,9 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(str(msg.subject), 'Testing campaign - žádost o ověření členství')
         self.assertEqual(models.UserAttendance.objects.get(pk=1115).approved_for_team, "undecided")
 
+    @override_settings(
+        DEBUG=True,
+    )
     def test_dpnk_team_view_choose_empty_team(self):
         util.rebuild_denorm_models(models.Team.objects.all())
         PackageTransaction.objects.all().delete()

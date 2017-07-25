@@ -120,7 +120,7 @@ def make_team_sheet(team_package, canvas, package_counter):
     canvas.drawString(4.5 * cm, (page_height - 1.8) * cm, package_counter)
     canvas.setFont('DejaVu', 8)
     canvas.drawString(first_column * cm, (page_height - 2.3) * cm, "Tým: ")
-    canvas.drawString(second_column * cm, (page_height - 2.3) * cm, team_package.team.name)
+    canvas.drawString(second_column * cm, (page_height - 2.3) * cm, team_package.team.name or "")
     canvas.drawString(first_column * cm, (page_height - 2.65) * cm, "ID krab.: ")
     canvas.drawString(second_column * cm, (page_height - 2.65) * cm, "%s" % team_package.box.id)
     canvas.drawString(first_column * cm, (page_height - 3.0) * cm, "Spol.:")

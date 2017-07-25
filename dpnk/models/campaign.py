@@ -206,6 +206,9 @@ class Campaign(Pricable, models.Model):
     def __str__(self):
         return self.name
 
+    def competitors_choose_team(self):
+        return self.max_team_members > 1
+
     def too_much_members(self, member_count):
         if self.max_team_members is None:
             return False

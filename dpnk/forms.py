@@ -340,6 +340,10 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             if previous_user_attendance:
                 self.fields["team"].widget.create = True
 
+        if instance and not instance.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
+            self.fields["team"].widget = HiddenInput()
+            self.fields["team"].required = False
+
     class Meta:
         model = models.UserAttendance
         fields = ('company', 'subsidiary', 'team')

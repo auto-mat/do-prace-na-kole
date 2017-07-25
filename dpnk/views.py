@@ -353,7 +353,10 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
             form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=self.user_attendance.campaign)
             form.fields['subsidiary'].required = True
 
-        if create_team:
+        if not request.campaign.competitors_choose_team():
+            create_team = True
+            team_valid = True
+        elif create_team:
             team_valid = form_team.is_valid()
             form.fields['team'].required = False
         else:
@@ -382,7 +385,21 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
             else:
                 subsidiary = Subsidiary.objects.get(id=form.data['subsidiary'])
 
-            if create_team:
+            if not request.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
+                if not kwargs['user_attendance'].team:
+                    team = Team()
+                    team.subsidiary = subsidiary
+                    team.campaign = self.user_attendance.campaign
+                    team.save()
+                    self.user_attendance.team = team
+                else:
+                    self.user_attendance.team.subsidiary = subsidiary
+                    self.user_attendance.team.save()
+                self.user_attendance.approved_for_team = 'approved'
+                self.user_attendance.save()
+                self.next_url = "profil"
+                create_team = False
+            elif create_team:
                 team = form_team.save(commit=False)
                 team.subsidiary = subsidiary
                 team.campaign = self.user_attendance.campaign

@@ -50,7 +50,7 @@ class Team(models.Model):
 
     name = models.CharField(
         verbose_name=_(u"Název týmu"),
-        max_length=50, null=False,
+        max_length=50, null=True,
         unique=False,
     )
     subsidiary = models.ForeignKey(
