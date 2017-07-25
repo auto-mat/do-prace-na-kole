@@ -946,7 +946,7 @@ class ViewsTestsLogonMommy(ViewsLogon):
 class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_team_view(self):
         response = self.client.get(reverse('zmenit_tym'))
-        self.assertNotContains(response, "Testing company")
+        self.assertContains(response, "Testing company")
         self.assertContains(response, "Testing team 1")
 
     def test_dpnk_team_view_no_payment(self):
@@ -984,12 +984,6 @@ class ViewsTestsLogon(ViewsLogon):
         address = reverse('zmenit_tym', kwargs={'token': token, 'initial_email': email})
         response = self.client.get(address)
         self.assertContains(response, "<div>Přejete si být zařazeni do týmu Testing team 1 (Nick, Testing User 1, Registered User 1)?</div>", html=True)
-
-    def test_dpnk_team_invitation_admission_payed(self):
-        email = self.user_attendance.userprofile.user.email
-        address = reverse('zmenit_tym', kwargs={'token': "token123215", 'initial_email': email})
-        response = self.client.get(address)
-        self.assertContains(response, '<div class="alert alert-danger">Již máte zaplaceno, nemůžete měnit tým mimo svoji pobočku.</div>', html=True)
 
     def test_dpnk_team_invitation_full(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1016]))
@@ -1180,16 +1174,6 @@ class ViewsTestsLogon(ViewsLogon):
             call("Subsidiary in city that doesn't belong to this campaign", extra={'request': ANY, 'subsidiary': ANY}),
         ]
         self.assertContains(response, "Zvolený tým není dostupný v aktuální kampani")
-
-    def test_dpnk_team_view_choose_team_after_payment(self):
-        post_data = {
-            'company_1': '1',
-            'subsidiary': '2',
-            'team': '3',
-            'next': 'Next',
-        }
-        response = self.client.post(reverse('zmenit_tym'), post_data)
-        self.assertContains(response, "Po zaplacení není možné měnit tým mimo pobočku")
 
     @patch('dpnk.forms.logger')
     def test_dpnk_team_view_choose_nonexistent_city(self, mock_logger):

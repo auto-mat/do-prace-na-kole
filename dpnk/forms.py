@@ -283,9 +283,6 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(ChangeTeamForm, self).clean()
-        if self.instance.payment_status == 'done' and self.instance.team:
-            if 'team' in cleaned_data and cleaned_data['team'].subsidiary != self.instance.team.subsidiary:
-                raise forms.ValidationError(_(u"Po zaplacení není možné měnit tým mimo pobočku"))
 
         if 'subsidiary' in cleaned_data:
             subsidiary = cleaned_data['subsidiary']
@@ -342,14 +339,6 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             previous_user_attendance = instance.previous_user_attendance()
             if previous_user_attendance:
                 self.fields["team"].widget.create = True
-
-        if self.instance.payment_status == 'done' and self.instance.team:
-            self.fields["subsidiary"].widget = HiddenInput()
-            self.fields["company"].widget = HiddenInput()
-            self.fields["team"].queryset = models.Team.objects.filter(
-                subsidiary__company=self.instance.team.subsidiary.company,
-                campaign=self.instance.campaign,
-            )
 
     class Meta:
         model = models.UserAttendance
