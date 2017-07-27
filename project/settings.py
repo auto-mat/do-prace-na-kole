@@ -296,6 +296,7 @@ INSTALLED_APPS = (
     'secretballot',
     'likes',
     'social_django',
+    'fm',
     # 'cachalot',
 )
 

@@ -31,6 +31,8 @@ import shutil
 import tempfile
 import time
 
+from fm.views import AjaxCreateView
+
 from http.client import HTTPSConnection
 
 from urllib.parse import urlencode
@@ -89,9 +91,6 @@ from .forms import (
     InviteForm,
     PaymentTypeForm,
     ProfileUpdateForm,
-    RegisterCompanyForm,
-    RegisterSubsidiaryForm,
-    RegisterTeamForm,
     RegistrationAccessFormDPNK,
     RegistrationFormDPNK,
     TeamAdminForm,
@@ -288,26 +287,13 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
             return reverse(self.prev_url)
 
 
-class ChangeTeamView(RegistrationViewMixin, FormView):
+class ChangeTeamView(RegistrationViewMixin, UpdateView):
     form_class = ChangeTeamForm
     template_name = 'registration/change_team.html'
     next_url = 'zmenit_triko'
     prev_url = 'upravit_profil'
     title = _(u'Vybrat/změnit tým')
     registration_phase = "zmenit_tym"
-
-    def get_context_data(self, *args, **kwargs):
-        context_data = super(ChangeTeamView, self).get_context_data(*args, **kwargs)
-        context_data['campaign_slug'] = self.user_attendance.campaign.slug
-        return context_data
-
-    @method_decorator(login_required_simple)
-    @user_attendance_has(
-        lambda ua: ua.approved_for_team == 'approved' and ua.team and ua.team.member_count == 1 and ua.team.unapproved_member_count > 0,
-        _(u"Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."))
-    @must_be_competitor
-    def dispatch(self, request, *args, **kwargs):
-        return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
 
     def get_previous_team(self):
         previous_user_attendance = self.user_attendance.previous_user_attendance()
@@ -318,148 +304,82 @@ class ChangeTeamView(RegistrationViewMixin, FormView):
                     campaign=self.user_attendance.campaign,
                 )
             except Team.DoesNotExist:
-                return previous_user_attendance.team.name
+                return None
 
-    def post(self, request, *args, **kwargs):  # noqa
-        create_company = False
-        create_subsidiary = False
-        create_team = False
-
-        form = self.form_class(request, data=request.POST, files=request.FILES, instance=self.user_attendance, prev_url=self.prev_url)
-
-        form_company = RegisterCompanyForm(request.POST, prefix="company")
-        form_subsidiary = RegisterSubsidiaryForm(request.POST, prefix="subsidiary", campaign=self.user_attendance.campaign)
-        form_team = RegisterTeamForm(request.POST, prefix="team", initial={"campaign": self.user_attendance.campaign})
-        create_team = 'id_team_selected' in request.POST
-        if create_team:
-            create_subsidiary = 'id_subsidiary_selected' in request.POST
-        if create_team and create_subsidiary:
-            create_company = 'id_company_selected' in request.POST
-        company_valid = True
-        subsidiary_valid = True
-        team_valid = True
-
-        if create_company:
-            company_valid = form_company.is_valid()
-            form.fields['company'].required = False
+    def get_initial(self):
+        if self.user_attendance.team:
+            return {
+                'subsidiary': self.user_attendance.team.subsidiary,
+                'company': self.user_attendance.team.subsidiary.company,
+            }
         else:
-            form_company = RegisterCompanyForm(prefix="company")
-            form.fields['company'].required = True
+            previous_team = self.get_previous_team()
+            if previous_team:
+                return {
+                    'team': previous_team,
+                    'subsidiary': previous_team.subsidiary,
+                    'company': previous_team.subsidiary.company,
+                }
 
-        if create_subsidiary:
-            subsidiary_valid = form_subsidiary.is_valid()
-            form.fields['subsidiary'].required = False
-        else:
-            form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=self.user_attendance.campaign)
-            form.fields['subsidiary'].required = True
+    def get_object(self):
+        return self.user_attendance
 
-        if not request.campaign.competitors_choose_team():
-            create_team = True
-            team_valid = True
-        elif create_team:
-            team_valid = form_team.is_valid()
-            form.fields['team'].required = False
-        else:
-            form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign, 'name': self.get_previous_team()})
-            form.fields['team'].required = True
+    @method_decorator(login_required_simple)
+    @user_attendance_has(
+        lambda ua: ua.approved_for_team == 'approved' and ua.team and ua.team.member_count == 1 and ua.team.unapproved_member_count > 0,
+        _("Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."))
+    @must_be_competitor
+    def dispatch(self, request, *args, **kwargs):
+        return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
 
-        form_valid = form.is_valid()
 
-        if form_valid and company_valid and subsidiary_valid and team_valid:
-            company = None
-            subsidiary = None
-            team = None
+class RegisterTeamView(UserAttendanceViewMixin, AjaxCreateView):
+    form_class = forms.RegisterTeamForm
+    model = models.Team
 
-            if create_company:
-                company = form_company.save()
-                messages.add_message(request, messages.SUCCESS, _(u"Organizace %s úspěšně vytvořena.") % company, fail_silently=True)
-            else:
-                company_id = form.data['company_1'] if 'company_1' in form.data else form.data['company']
-                company = Company.objects.get(id=company_id)
+    def get_success_result(self):
+        team_created_mail(self.user_attendance)
+        return {
+            'status': 'ok',
+            'name': self.object.name,
+            'id': self.object.id,
+        }
 
-            if create_subsidiary:
-                subsidiary = form_subsidiary.save(commit=False)
-                subsidiary.company = company
-                form_subsidiary.save()
-                messages.add_message(request, messages.SUCCESS, _(u"Pobočka %s úspěšně vytvořena.") % subsidiary, fail_silently=True)
-            else:
-                subsidiary = Subsidiary.objects.get(id=form.data['subsidiary'])
+    def get_initial(self):
+        previous_user_attendance = self.user_attendance.previous_user_attendance()
+        return {
+            'subsidiary': models.Subsidiary.objects.get(pk=self.kwargs['subsidiary_id']),
+            'campaign': self.user_attendance.campaign,
+            'name': previous_user_attendance.team.name if previous_user_attendance else None,
+        }
 
-            if not request.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
-                if not kwargs['user_attendance'].team:
-                    team = Team()
-                    team.subsidiary = subsidiary
-                    team.campaign = self.user_attendance.campaign
-                    team.save()
-                    self.user_attendance.team = team
-                else:
-                    self.user_attendance.team.subsidiary = subsidiary
-                    self.user_attendance.team.save()
-                self.user_attendance.approved_for_team = 'approved'
-                self.user_attendance.save()
-                self.next_url = "profil"
-                create_team = False
-            elif create_team:
-                team = form_team.save(commit=False)
-                team.subsidiary = subsidiary
-                team.campaign = self.user_attendance.campaign
-                form_team.save()
-                messages.add_message(request, messages.SUCCESS, _(u"Tým %s úspěšně vytvořen.") % team.name, fail_silently=True)
-            else:
-                team = form.cleaned_data['team']
 
-            if create_team:
-                team = form_team.save(commit=False)
+class RegisterCompanyView(AjaxCreateView):
+    form_class = forms.RegisterCompanyForm
+    model = models.Company
 
-                self.user_attendance.team = team
-                self.user_attendance.approved_for_team = 'approved'
+    def get_success_result(self):
+        return {
+            'status': 'ok',
+            'name': self.object.name,
+            'id': self.object.id,
+        }
 
-                form_team.save()
 
-                self.user_attendance.team = team
-                request.session['invite_success_url'] = self.get_success_url()
-                self.next_url = "pozvanky"
-                self.prev_url = "pozvanky"
+class RegisterSubsidiaryView(AjaxCreateView):
+    form_class = forms.RegisterSubsidiaryForm
+    model = models.Subsidiary
 
-                team_created_mail(self.user_attendance)
+    def get_initial(self):
+        return {
+            'company': models.Company.objects.get(pk=self.kwargs['company_id']),
+        }
 
-            form.save()
-
-            if self.user_attendance.approved_for_team != 'approved':
-                approval_request_mail(self.user_attendance)
-
-            return redirect(self.get_success_url())
-        form.fields['company'].widget.underlying_form = form_company
-        form.fields['company'].widget.create = create_company
-
-        form.fields['subsidiary'].widget.underlying_form = form_subsidiary
-        form.fields['subsidiary'].widget.create = create_subsidiary
-
-        form.fields['team'].widget.underlying_form = form_team
-        form.fields['team'].widget.create = create_team
-
-        context_data = self.get_context_data()
-        context_data['form'] = form
-        return render(request, self.template_name, context_data)
-
-    def get(self, request, *args, **kwargs):
-        super(ChangeTeamView, self).get(request, *args, **kwargs)
-        previous_team = self.get_previous_team()
-        initial = {}
-        if isinstance(previous_team, Team):
-            initial = {'team': previous_team}
-        form = self.form_class(request, instance=self.user_attendance, prev_url=self.prev_url, initial=initial)
-        form_company = RegisterCompanyForm(prefix="company")
-        form_subsidiary = RegisterSubsidiaryForm(prefix="subsidiary", campaign=self.user_attendance.campaign)
-        form_team = RegisterTeamForm(prefix="team", initial={"campaign": self.user_attendance.campaign, 'name': self.get_previous_team()})
-
-        form.fields['company'].widget.underlying_form = form_company
-        form.fields['subsidiary'].widget.underlying_form = form_subsidiary
-        form.fields['team'].widget.underlying_form = form_team
-
-        context_data = self.get_context_data()
-        context_data['form'] = form
-        return render(request, self.template_name, context_data)
+    def get_success_result(self):
+        return {
+            'status': 'ok',
+            'id': self.object.id,
+        }
 
 
 class RegistrationAccessView(TitleViewMixin, FormView):

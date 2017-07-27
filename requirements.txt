@@ -1,7 +1,7 @@
 six
 Django
 django-import-export
-django-smart-selects
+-e git+https://github.com/PetrDlouhy/django-smart-selects@fix_css_class#egg=django-smart-selects
 psycopg2
 python-memcached
 django-chart-tools
@@ -87,3 +87,4 @@ coreapi
 django-celery-email
 -e git+https://github.com/PetrDlouhy/django-likes.git@develop#egg=django-likes  # For static template tag fix
 social-auth-app-django
+django-fm

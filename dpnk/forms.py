@@ -20,6 +20,7 @@
 import datetime
 import logging
 
+from crispy_forms.bootstrap import FieldWithButtons, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Button, Div, Field, HTML, Layout, Submit
 
@@ -36,7 +37,7 @@ from django.http import Http404
 from django.utils import formats
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat, ugettext_lazy as _
 
 from django_gpxpy import gpx_parse
 
@@ -44,12 +45,14 @@ from leaflet.forms.widgets import LeafletWidget
 
 import registration.forms
 
+from selectable.forms.widgets import AutoCompleteSelectWidget
+
 from smart_selects.form_fields import ChainedModelChoiceField
 
-from . import models, util
+from . import email, models, util
 from .fields import CommaFloatField, ShowPointsMultipleModelChoiceField
 from .string_lazy import format_html_lazy, mark_safe_lazy
-from .widgets import CommuteModeSelect, SelectChainedOrCreate, SelectOrCreateAutoComplete
+from .widgets import CommuteModeSelect
 
 logger = logging.getLogger(__name__)
 
@@ -139,7 +142,6 @@ class AuthenticationFormDPNK(AuthenticationForm):
 
 
 class RegisterCompanyForm(forms.ModelForm):
-    use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
 
@@ -149,7 +151,7 @@ class RegisterCompanyForm(forms.ModelForm):
             ico=ico,
             active=True,
         ).exists():
-            raise ValidationError('Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu výše')
+            raise ValidationError('Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu')
 
     class Meta:
         model = models.Company
@@ -157,7 +159,6 @@ class RegisterCompanyForm(forms.ModelForm):
 
 
 class AdressForm(forms.ModelForm):
-    use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
 
@@ -188,11 +189,19 @@ class AdressForm(forms.ModelForm):
 
 
 class RegisterSubsidiaryForm(AdressForm):
-    pass
+    company = forms.ModelChoiceField(
+        label=_("Organizace"),
+        queryset=models.Company.objects.filter(active=True),
+        widget=AutoCompleteSelectWidget(lookup_class='dpnk.lookups.CompanyLookup'),
+        required=True,
+    )
+
+    class Meta:
+        model = models.Subsidiary
+        fields = ('company', 'city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
 
 class RegisterTeamForm(forms.ModelForm):
-    use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
 
@@ -201,24 +210,25 @@ class RegisterTeamForm(forms.ModelForm):
         queryset=models.Campaign.objects.all(),
         widget=HiddenInput(),
     )
+    subsidiary = forms.ModelChoiceField(
+        queryset=models.Subsidiary.objects.filter(active=True),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['subsidiary'].queryset = kwargs['initial']['subsidiary'].company.subsidiaries.filter(active=True)
+        self.fields['subsidiary'].empty_label = None
 
     class Meta:
         model = models.Team
-        fields = ('name', 'campaign')
+        fields = ('subsidiary', 'name', 'campaign')
 
 
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
-    use_required_attribute = False
     company = forms.ModelChoiceField(
         label=_(u"Organizace"),
         queryset=models.Company.objects.filter(active=True),
-        widget=SelectOrCreateAutoComplete(
-            'companies',
-            RegisterCompanyForm,
-            prefix="company",
-            new_description=_("Organizace v seznamu není, chci vyplnit novou."),
-            help_text=_("Napište část názvu organizace a vyberte ji ze seznamu."),
-        ),
+        widget=AutoCompleteSelectWidget(lookup_class='dpnk.lookups.CompanyLookup'),
         required=True,
     )
     subsidiary = ChainedModelChoiceField(
@@ -232,22 +242,6 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         foreign_key_app_name="dpnk",
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
-        widget=SelectChainedOrCreate(
-            underlying_form_class=RegisterSubsidiaryForm,
-            view_name='',
-            prefix="subsidiary",
-            new_description=_("Adresa pobočky/organizace v seznamu není, chci vyplnit novou."),
-            chained_field="company_1",
-            chained_model_field="company",
-            to_app_name="dpnk",
-            foreign_key_app_name="dpnk",
-            foreign_key_model_name="Subsidiary",
-            foreign_key_field_name="company",
-            to_model_name="Subsidiary",
-            manager="active_objects",
-            show_all=False,
-            auto_choose=True,
-        ),
         queryset=models.Subsidiary.objects.filter(active=True),
         required=True,
     )
@@ -261,21 +255,6 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         foreign_key_app_name="dpnk",
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
-        widget=SelectChainedOrCreate(
-            underlying_form_class=RegisterTeamForm,
-            view_name='',
-            prefix="team",
-            new_description=_("Můj tým v seznamu není, chci vytvořit nový."),
-            chained_field="subsidiary",
-            chained_model_field="subsidiary",
-            to_app_name="dpnk",
-            foreign_key_app_name="dpnk",
-            foreign_key_model_name="Subsidiary",
-            foreign_key_field_name="company",
-            to_model_name="Team",
-            show_all=False,
-            auto_choose=False,
-        ),
         label=_(u"Tým"),
         queryset=models.Team.objects.all(),
         required=True,
@@ -286,63 +265,95 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
         if 'subsidiary' in cleaned_data:
             subsidiary = cleaned_data['subsidiary']
-            if subsidiary and not models.CityInCampaign.objects.filter(city=subsidiary.city, campaign__slug=self.request.subdomain).exists():
-                logger.error("Subsidiary in city that doesn't belong to this campaign", extra={'request': self.request, 'subsidiary': subsidiary})
+            if subsidiary and not models.CityInCampaign.objects.filter(city=subsidiary.city, campaign__slug=self.instance.campaign.slug).exists():
+                logger.error("Subsidiary in city that doesn't belong to this campaign", extra={'subsidiary': subsidiary})
                 raise forms.ValidationError(
                     _(
                         "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží. "
                         "Prosím žádejte změnu po vašem vnitrofiremním koordinátorovi."
                     ),
                 )
+
+        if not self.instance.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
+            if self.instance.team:
+                self.instance.team.subsidiary = subsidiary
+                self.instance.team.save()
+            else:
+                team = models.Team()
+                team.subsidiary = subsidiary
+                team.campaign = self.instance.campaign
+                team.save()
+            self.instance.approved_for_team = 'approved'
+            self.instance.save()
+
         return cleaned_data
 
     def clean_team(self):
-        data = self.cleaned_data['team']
-        if not data:
-            return self.instance.team
-        else:
-            if data.campaign.slug != self.request.subdomain:
-                logger.error("Team not in campaign", extra={'request': self.request, 'team': data.pk, 'subdomain': self.request.subdomain})
-                raise forms.ValidationError(_(u"Zvolený tým není dostupný v aktuální kampani"))
-        if type(data) != RegisterTeamForm:
-            if data != self.instance.team:
-                team_full(data)
-        return data
+        team = self.cleaned_data['team']
+        if team.campaign.slug != self.instance.campaign.slug:
+            logger.error("Team not in campaign", extra={'team': team.pk, 'subdomain': self.instance.campaign.slug})
+            raise forms.ValidationError(_("Zvolený tým není dostupný v aktuální kampani"))
+        if team != self.instance.team:
+            team_full(team)
+        return team
 
-    def __init__(self, request=None, *args, **kwargs):
-        self.request = request
-        initial = kwargs.get('initial', {})
-        instance = kwargs.get('instance', False)
+    def save(self, *args, **kwargs):
+        user_attendance = super().save(*args, **kwargs)
+        if user_attendance.approved_for_team != 'approved':
+            email.approval_request_mail(user_attendance)
+        return user_attendance
 
-        if instance:
-            previous_user_attendance = instance.previous_user_attendance()
-            if previous_user_attendance and previous_user_attendance.team:
-                initial['subsidiary'] = previous_user_attendance.team.subsidiary
-                initial['company'] = previous_user_attendance.team.subsidiary.company.pk
-
-            if instance.team:
-                initial['team'] = instance.team
-                initial['subsidiary'] = instance.team.subsidiary
-                initial['company'] = instance.team.subsidiary.company.pk
-
-        if request and 'team' in request.GET:
-                initial['team'] = request.GET['team']
-
-        kwargs['initial'] = initial
-
+    def __init__(self, *args, **kwargs):
         super(ChangeTeamForm, self).__init__(*args, **kwargs)
 
-        if request:
-            self.fields["team"].widget.manager = 'team_in_campaign_%s' % request.subdomain
+        self.fields["team"].widget.manager = 'team_in_campaign_%s' % self.instance.campaign.slug
 
-        if instance and 'team' not in initial:
-            previous_user_attendance = instance.previous_user_attendance()
-            if previous_user_attendance:
-                self.fields["team"].widget.create = True
-
-        if instance and not instance.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
+        if not self.instance.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
             self.fields["team"].widget = HiddenInput()
             self.fields["team"].required = False
+
+        company = self.initial.get('company')
+        subsidiary = self.initial.get('subsidiary')
+        self.helper.layout = Layout(
+            FieldWithButtons(
+                'company',
+                StrictButton(
+                    string_concat('<span class="glyphicon glyphicon-plus"></span> ', _('Přidat společnost')),
+                    href=reverse("register_company"),
+                    data_fm_head=_("Vytvořit novou společnost"),
+                    data_fm_callback="createCompanyCallback",
+                    css_class="btn-success fm-create",
+                    id="fm-create-company",
+                ),
+            ),
+            FieldWithButtons(
+                'subsidiary',
+                StrictButton(
+                    string_concat('<span class="glyphicon glyphicon-plus"></span> ', _('Přidat pobočku')),
+                    href=reverse("register_subsidiary", args=(company.id,)) if company else "",
+                    data_fm_head=_("Vytvořit novou pobočku"),
+                    data_fm_callback="createSubsidiaryCallback",
+                    css_class="btn-success fm-create",
+                    id="fm-create-subsidiary",
+                ),
+            ),
+            FieldWithButtons(
+                'team',
+                StrictButton(
+                    string_concat('<span class="glyphicon glyphicon-plus"></span> ', _('Přidat tým')),
+                    href=reverse("register_team", args=(subsidiary.id,)) if subsidiary else "",
+                    data_fm_head=_("Vytvořit nový tým"),
+                    data_fm_callback="createTeamCallback",
+                    css_class="btn-success fm-create",
+                    id="fm-create-team",
+                ),
+            ),
+        )
+
+        if not self.instance.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
+            self.fields["team"].widget = HiddenInput()
+            self.fields["team"].required = False
+            del self.helper.layout.fields[2]
 
     class Meta:
         model = models.UserAttendance

@@ -34,6 +34,21 @@ urlpatterns = [
         name="zmenit_tym",
     ),
     url(
+        r'^registrovat_spolecnost/$',
+        views.RegisterCompanyView.as_view(),
+        name="register_company",
+    ),
+    url(
+        r'^registrovat_pobocku/(?P<company_id>\d*)$',
+        views.RegisterSubsidiaryView.as_view(),
+        name="register_subsidiary",
+    ),
+    url(
+        r'^registrovat_tym/(?P<subsidiary_id>\d*)$',
+        views.RegisterTeamView.as_view(),
+        name="register_team",
+    ),
+    url(
         r'^upravit_tym/$',
         views.UpdateTeam.as_view(),
         name="edit_team",
