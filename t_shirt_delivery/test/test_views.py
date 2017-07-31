@@ -100,3 +100,14 @@ class ViewsTestsLogon(TestCase):
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_triko'))
         self.assertContains(response, "Velikost trička nemůžete měnit, dokud nemáte zvolený tým.", status_code=403)
+
+    def test_dpnk_t_shirt_size_get(self):
+        response = self.client.get(reverse('zmenit_triko'))
+        self.assertContains(
+            response,
+            '<label for="id_t_shirt_size" class="control-label  requiredField">'
+            'Velikost trika'
+            '<span class="asteriskField">*</span>'
+            '</label>',
+            html=True,
+        )
