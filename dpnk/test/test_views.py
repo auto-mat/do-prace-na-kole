@@ -692,18 +692,6 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertEqual(user_attendance.userprofile.user.pk, 1041)
         self.assertEqual(user_attendance.get_distance(), 156.9)
 
-    def test_password_recovery(self):
-        address = reverse('password_reset')
-        post_data = {
-            'email': 'test@test.cz',
-        }
-        response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('password_reset_done'))
-        msg = mail.outbox[0]
-        self.assertEqual(msg.recipients(), ['test@test.cz'])
-        self.assertEqual(msg.subject, 'Zapomenuté heslo Do práce na kole')
-        self.assertTrue('http://testing-campaign.testserver/zapomenute_heslo/zmena/' in msg.body)
-
     @override_settings(
         FAKE_DATE=datetime.date(year=2010, month=10, day=1),
     )
