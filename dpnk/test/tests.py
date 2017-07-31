@@ -497,6 +497,37 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             html=True,
         )
 
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=1),
+    )
+    @patch('slumber.API')
+    def test_dpnk_rides_view_key_error_not_enough_km_by_foot(self, slumber_api):
+        """ Test, that if user sends "1,2 km", it is too few when choosen type by foot. """
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_api.return_value = m
+        post_data = {
+            'form-TOTAL_FORMS': '1',
+            'form-INITIAL_FORMS': '1',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-id': 101,
+            'form-0-commute_mode': 2,
+            'form-0-distance': '1,2',
+            'form-0-direction': 'trip_from',
+            'form-0-user_attendance': 1115,
+            'form-0-date': '2010-11-01',
+            'initial-form-0-date': '2010-11-01',
+            'initial-form-1-date': '2010-11-01',
+            'submit': 'Uložit jízdy',
+        }
+        response = self.client.post(reverse('profil'), post_data, follow=True)
+        self.assertContains(
+            response,
+            '<button class="close" type="button" data-dismiss="alert" aria-hidden="true">&#215;</button>',
+            html=True,
+        )
+
     @patch('slumber.API')
     def test_dpnk_rides_view(self, slumber_api):
         m = MagicMock()
