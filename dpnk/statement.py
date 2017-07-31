@@ -16,13 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 import datetime
+import logging
 
 from django.conf import settings
 
-from fiobank import FioBank
+import fiobank
 
 from .models import Invoice
+
+logger = logging.getLogger(__name__)
 
 
 columns = [
@@ -47,12 +51,12 @@ columns = [
 
 
 def print_missing_payment(payment):
-    print(", ".join(["'%s'" % str(payment[column]) for column in columns]))
+    logger.warn(", ".join(["'%s'" % str(payment[column]) for column in columns]))
 
 
 def parse(days_back=7):
-    print(", ".join(["'%s'" % column for column in columns]))
-    client = FioBank(token=settings.FIO_TOKEN)
+    logger.warn(", ".join(["'%s'" % column for column in columns]))
+    client = fiobank.FioBank(token=settings.FIO_TOKEN)
     gen = client.period(
         datetime.datetime.now() - datetime.timedelta(days=days_back),
         datetime.datetime.now(),
