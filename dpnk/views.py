@@ -302,6 +302,7 @@ class ChangeTeamView(RegistrationViewMixin, UpdateView):
                 return Team.objects.get(
                     name=previous_user_attendance.team.name,
                     campaign=self.user_attendance.campaign,
+                    subsidiary__company=previous_user_attendance.team.subsidiary.company,
                 )
             except Team.DoesNotExist:
                 return None

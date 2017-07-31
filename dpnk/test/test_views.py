@@ -1416,6 +1416,19 @@ class ViewsTestsLogon(ViewsLogon):
 
 
 class ChangeTeamViewTests(TestCase):
+    blank_team_html = """<select
+        name="team"
+        name="team"
+        data-value="null"
+        data-url="/chaining/filter/dpnk/Team/team_in_campaign_testing-campaign/subsidiary/dpnk/Subsidiary/company"
+        data-empty_label="--------"
+        data-auto_choose="false"
+        id="id_team"
+        class="chainedselect form-control chained-fk"
+        data-chainfield="subsidiary"
+        required>
+        </select>"""
+
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
         self.campaign = testing_campaign()
@@ -1506,32 +1519,86 @@ class ChangeTeamViewTests(TestCase):
         response = self.client.get(reverse('zmenit_tym'))
         self.assertContains(  # Test blank select
             response,
-            '<select '
-            'name="team" '
-            'name="team" '
-            'data-value="null" '
-            'data-url="/chaining/filter/dpnk/Team/team_in_campaign_testing-campaign/subsidiary/dpnk/Subsidiary/company" '
-            'data-empty_label="--------" '
-            'data-auto_choose="false" id="id_team" '
-            'class="chainedselect form-control chained-fk" '
-            'data-chainfield="subsidiary" '
-            'required>'
-            '</select>',
+            self.blank_team_html,
             html=True,
         )
 
     def test_get_previous(self):
+        """ Test that team with same name as in last year is preselected """
         previous_campaign = CampaignRecipe.make()
         self.campaign.previous_campaign = previous_campaign
         self.campaign.save()
-        previous_user_attendance = UserAttendanceRecipe.make(campaign=previous_campaign, userprofile=self.user_attendance.userprofile)
+        previous_user_attendance = UserAttendanceRecipe.make(
+            campaign=previous_campaign,
+            userprofile=self.user_attendance.userprofile,
+            team__name="Foo team lasts",
+            team__campaign=previous_campaign,
+        )
+        new_team = mommy.make(
+            "Team",
+            name="Foo team lasts",
+            campaign=self.campaign,
+            subsidiary__company=previous_user_attendance.team.subsidiary.company,
+        )
         self.user_attendance.team = None
         self.user_attendance.save()
         address = reverse('zmenit_tym')
         response = self.client.get(address)
+
         self.assertContains(
             response,
-            '<option value="%s" selected>None ()</option>' % previous_user_attendance.team.id,
+            '<option value="%s" selected>Foo team lasts ()</option>' % new_team.id,
+            html=True,
+        )
+
+    def test_get_previous_none_team(self):
+        """ Test that team with same name asi in last year doesn't exist, no team is preselected """
+        previous_campaign = CampaignRecipe.make()
+        self.campaign.previous_campaign = previous_campaign
+        self.campaign.save()
+        UserAttendanceRecipe.make(
+            campaign=previous_campaign,
+            userprofile=self.user_attendance.userprofile,
+            team__name="Foo team lasts",
+            team__campaign=previous_campaign,
+        )
+        self.user_attendance.team = None
+        self.user_attendance.save()
+        address = reverse('zmenit_tym')
+        response = self.client.get(address)
+
+        self.assertContains(  # No team is preselected
+            response,
+            self.blank_team_html,
+            html=True,
+        )
+
+    def test_get_previous_different_company(self):
+        """ Test that team with same name asi in last year exists, but is in different company, no team is preselected """
+        previous_campaign = CampaignRecipe.make()
+        previous_campaign = CampaignRecipe.make()
+        self.campaign.previous_campaign = previous_campaign
+        self.campaign.save()
+        UserAttendanceRecipe.make(
+            campaign=previous_campaign,
+            userprofile=self.user_attendance.userprofile,
+            team__name="Foo team lasts",
+            team__campaign=previous_campaign,
+        )
+        mommy.make(
+            "Team",
+            name="Foo team lasts",
+            campaign=self.campaign,
+            subsidiary__company=mommy.make("Company"),
+        )
+        self.user_attendance.team = None
+        self.user_attendance.save()
+        address = reverse('zmenit_tym')
+        response = self.client.get(address)
+
+        self.assertContains(  # No team is preselected
+            response,
+            self.blank_team_html,
             html=True,
         )
 
