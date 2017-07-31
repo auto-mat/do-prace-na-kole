@@ -1418,12 +1418,14 @@ class ViewsTestsLogon(ViewsLogon):
 class ChangeTeamViewTests(TestCase):
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
-        self.campaign = testing_campaign
+        self.campaign = testing_campaign()
         self.team = mommy.make(
             "Team",
             name="Foo name",
             campaign=self.campaign,
+            subsidiary__city__name="Foo city",
         )
+        mommy.make('CityInCampaign', city=self.team.subsidiary.city, campaign=self.campaign)
         self.user_attendance = UserAttendanceRecipe.make(campaign=self.campaign, team=self.team)
         self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
 
@@ -1475,19 +1477,33 @@ class ChangeTeamViewTests(TestCase):
         self.assertEquals(response.status_code, 200)
 
     def test_get(self):
-        address = reverse('zmenit_tym')
-        response = self.client.get(address)
+        response = self.client.get(reverse('zmenit_tym'))
         self.assertContains(
             response,
             '<option value="%s" selected>Foo name ()</option>' % self.team.id,
             html=True,
         )
 
+    def test_get_one_team_member(self):
+        """ Test that user chooses only subsidiary when in campaign with 1 team member """
+        self.campaign.max_team_members = 1
+        self.campaign.save()
+        response = self.client.get(reverse('zmenit_tym'))
+        self.assertNotContains(
+            response,
+            '<option value="%s" selected>Foo name ()</option>' % self.team.id,
+            html=True,
+        )
+        self.assertNotContains(
+            response,
+            '<option value="%s" selected=""> - Foo city</option>' % self.team.subsidiary.id,
+            html=True,
+        )
+
     def test_get_blank(self):
         self.user_attendance.team = None
         self.user_attendance.save()
-        address = reverse('zmenit_tym')
-        response = self.client.get(address)
+        response = self.client.get(reverse('zmenit_tym'))
         self.assertContains(  # Test blank select
             response,
             '<select '
@@ -1505,10 +1521,9 @@ class ChangeTeamViewTests(TestCase):
         )
 
     def test_get_previous(self):
-        campaign = self.campaign()
         previous_campaign = CampaignRecipe.make()
-        campaign.previous_campaign = previous_campaign
-        campaign.save()
+        self.campaign.previous_campaign = previous_campaign
+        self.campaign.save()
         previous_user_attendance = UserAttendanceRecipe.make(campaign=previous_campaign, userprofile=self.user_attendance.userprofile)
         self.user_attendance.team = None
         self.user_attendance.save()
@@ -1537,6 +1552,44 @@ class ChangeTeamViewTests(TestCase):
         self.user_attendance.refresh_from_db()
         self.assertEquals(self.user_attendance.team, new_team)
         self.assertEqual(self.user_attendance.approved_for_team, "approved")
+
+    def test_change_one_team_member(self):
+        """ Test that user chooses only subsidiary when in campaign with 1 team member """
+        self.campaign.max_team_members = 1
+        self.campaign.save()
+        new_subsidiary = mommy.make('Subsidiary', address_street="Foo street", city=self.team.subsidiary.city)
+        post_data = {
+            "subsidiary": new_subsidiary.id,
+            "company_0": "Foo",
+            "company_1": new_subsidiary.company.id,
+            'next': 'Další',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+
+        self.assertRedirects(response, reverse('zmenit_triko'))
+        self.team.refresh_from_db()
+        self.assertEquals(self.team, self.team)
+        self.assertEquals(self.team.subsidiary, new_subsidiary)
+
+    def test_change_one_team_member_without_team(self):
+        """ Test that user chooses only subsidiary when in campaign with 1 team member """
+        self.user_attendance.team = None
+        self.user_attendance.save()
+        self.campaign.max_team_members = 1
+        self.campaign.save()
+        new_subsidiary = mommy.make('Subsidiary', address_street="Foo street", city=self.team.subsidiary.city)
+        post_data = {
+            "subsidiary": new_subsidiary.id,
+            "company_0": "Foo",
+            "company_1": new_subsidiary.company.id,
+            'next': 'Další',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+
+        self.assertRedirects(response, reverse('zmenit_triko'))
+        self.user_attendance.refresh_from_db()
+        self.assertNotEquals(self.team, self.user_attendance.team)  # User is in new team
+        self.assertEquals(self.user_attendance.team.subsidiary, new_subsidiary)
 
     def test_change_team_has_users(self):
         city = mommy.make('City')
@@ -1630,9 +1683,8 @@ class ChangeTeamViewTests(TestCase):
 
     @patch('dpnk.models.team.logger')
     def test_choose_full_team(self, mock_logger):
-        campaign = self.campaign()
-        campaign.max_team_members = 2
-        campaign.save()
+        self.campaign.max_team_members = 2
+        self.campaign.save()
         city = mommy.make('City')
         mommy.make('CityInCampaign', city=city, campaign=self.campaign)
         new_team = mommy.make(

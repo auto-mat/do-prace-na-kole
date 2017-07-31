@@ -274,27 +274,28 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
                     ),
                 )
 
-        if not self.instance.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
-            if self.instance.team:
-                self.instance.team.subsidiary = subsidiary
-                self.instance.team.save()
-            else:
-                team = models.Team()
+            if not self.instance.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
+                team = cleaned_data['team']
                 team.subsidiary = subsidiary
-                team.campaign = self.instance.campaign
                 team.save()
-            self.instance.approved_for_team = 'approved'
-            self.instance.save()
+                self.instance.team = team
+                self.instance.approved_for_team = 'approved'
+                self.instance.save()
 
         return cleaned_data
 
     def clean_team(self):
-        team = self.cleaned_data['team']
-        if team.campaign.slug != self.instance.campaign.slug:
-            logger.error("Team not in campaign", extra={'team': team.pk, 'subdomain': self.instance.campaign.slug})
-            raise forms.ValidationError(_("Zvolený tým není dostupný v aktuální kampani"))
-        if team != self.instance.team:
-            team_full(team)
+        if self.instance.campaign.competitors_choose_team():  # We ask only for team
+            team = self.cleaned_data['team']
+            if team.campaign.slug != self.instance.campaign.slug:
+                logger.error("Team not in campaign", extra={'team': team.pk, 'subdomain': self.instance.campaign.slug})
+                raise forms.ValidationError(_("Zvolený tým není dostupný v aktuální kampani"))
+            if team != self.instance.team:
+                team_full(team)
+        elif not self.instance.team:
+                team = models.Team(campaign=self.instance.campaign)
+        else:
+            team = self.instance.team
         return team
 
     def save(self, *args, **kwargs):
@@ -307,10 +308,6 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         super(ChangeTeamForm, self).__init__(*args, **kwargs)
 
         self.fields["team"].widget.manager = 'team_in_campaign_%s' % self.instance.campaign.slug
-
-        if not self.instance.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
-            self.fields["team"].widget = HiddenInput()
-            self.fields["team"].required = False
 
         company = self.initial.get('company')
         subsidiary = self.initial.get('subsidiary')
