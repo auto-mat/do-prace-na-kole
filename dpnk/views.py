@@ -367,9 +367,14 @@ class RegisterCompanyView(AjaxCreateView):
         }
 
 
-class RegisterSubsidiaryView(AjaxCreateView):
+class RegisterSubsidiaryView(UserAttendanceViewMixin, AjaxCreateView):
     form_class = forms.RegisterSubsidiaryForm
     model = models.Subsidiary
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['campaign'] = self.user_attendance.campaign
+        return kwargs
 
     def get_initial(self):
         return {

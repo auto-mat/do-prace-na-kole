@@ -158,7 +158,7 @@ class RegisterCompanyForm(forms.ModelForm):
         fields = ('name', 'ico')
 
 
-class AdressForm(forms.ModelForm):
+class AddressForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
@@ -179,8 +179,8 @@ class AdressForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         campaign = kwargs.pop('campaign', None)
-        super(AdressForm, self).__init__(*args, **kwargs)
-        if campaign:
+        super(AddressForm, self).__init__(*args, **kwargs)
+        if 'city' in self.fields:
             self.fields['city'].queryset = models.City.objects.filter(cityincampaign__campaign=campaign)
 
     class Meta:
@@ -188,7 +188,7 @@ class AdressForm(forms.ModelForm):
         fields = ('city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
 
-class RegisterSubsidiaryForm(AdressForm):
+class RegisterSubsidiaryForm(AddressForm):
     company = forms.ModelChoiceField(
         label=_("Organizace"),
         queryset=models.Company.objects.filter(active=True),

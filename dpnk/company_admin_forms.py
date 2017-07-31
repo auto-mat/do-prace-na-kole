@@ -29,7 +29,7 @@ from selectable.forms.widgets import AutoCompleteSelectWidget
 
 from table_select_widget import TableSelectMultiple
 
-from .forms import AdressForm, EmailUsernameMixin, SubmitMixin
+from .forms import AddressForm, EmailUsernameMixin, SubmitMixin
 from .models import Campaign, City, Company, CompanyAdmin, Competition, Invoice, Subsidiary, UserAttendance
 from .util import slugify
 
@@ -91,7 +91,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
         return ret_val
 
 
-class CompanyForm(SubmitMixin, AdressForm):
+class CompanyForm(SubmitMixin, AddressForm):
     class Meta:
         model = Company
         fields = ('name', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city', 'ico', 'dic')
@@ -103,7 +103,7 @@ class CompanyForm(SubmitMixin, AdressForm):
         return ret_val
 
 
-class SubsidiaryForm(SubmitMixin, AdressForm):
+class SubsidiaryForm(SubmitMixin, AddressForm):
     class Meta:
         model = Subsidiary
         fields = (

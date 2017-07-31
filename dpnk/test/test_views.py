@@ -986,6 +986,7 @@ class TestRegisterCompanyView(ViewsLogonMommy):
 class TestRegisterSubsidiaryView(ViewsLogonMommy):
     def test_create(self):
         city = mommy.make('City')
+        mommy.make('CityInCampaign', city=city, campaign=self.user_attendance.campaign)
         company = mommy.make('Company')
         post_data = {
             "company_0": 'Foo',
@@ -1015,6 +1016,23 @@ class TestRegisterSubsidiaryView(ViewsLogonMommy):
         company = mommy.make('Company')
         post_data = {
             "address_psc": "123",
+        }
+        response = self.client.post(
+            reverse('register_subsidiary', args=(company.id,)),
+            post_data,
+            follow=True,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
+        self.assertContains(
+            response,
+            "<strong>PSČ musí být pěticiferné číslo</strong>",
+            html=True,
+        )
+
+    def test_psc_failing_no_integer(self):
+        company = mommy.make('Company')
+        post_data = {
+            "address_psc": "FOO",
         }
         response = self.client.post(
             reverse('register_subsidiary', args=(company.id,)),
