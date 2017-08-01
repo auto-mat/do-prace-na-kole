@@ -26,6 +26,8 @@ from django.template import Context, Template
 from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 
+from dpnk.templatetags import dpnk_tags
+
 from model_mommy import mommy
 
 import slumber
@@ -336,10 +338,18 @@ class DpnkTagsTests(TestCase):
         )
 
 
+class UnquoteHtmlTests(TestCase):
+    def test_direct(self):
+        self.assertEqual(dpnk_tags.unquote_html('&lt;&gt;'), '<>')
+
+
 class ChangeLangTests(TestCase):
     def setUp(self):
         super().setUp()
         self.factory = RequestFactory()
+
+    def test_direct(self):
+        self.assertEqual(dpnk_tags.change_lang(Context(), lang='en'), '/en')
 
     def test_change_lang(self):
         template = Template("{% load dpnk_tags %}{% change_lang 'en' %}")
@@ -376,6 +386,9 @@ class RoundNumberTests(TestCase):
     def setUp(self):
         super().setUp()
         self.factory = RequestFactory()
+
+    def test_direct(self):
+        self.assertEqual(dpnk_tags.round_number(2.123456), 2.1)
 
     def test_without_parameters(self):
         template = Template("{% load dpnk_tags %}{{ i|round_number }}")
