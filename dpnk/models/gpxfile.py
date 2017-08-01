@@ -43,7 +43,11 @@ from .. import util
 
 
 def normalize_gpx_filename(instance, filename):
-    return '-'.join(['gpx_tracks/%s/track' % instance.user_attendance.campaign.slug, datetime.datetime.now().strftime("%Y-%m-%d"), unidecode(filename)])
+    return '-'.join([
+        'gpx_tracks/%s/track' % instance.user_attendance.campaign.slug,
+        datetime.datetime.now().strftime("%Y-%m-%d"),
+        unidecode(filename),
+    ])
 
 
 @with_author
@@ -53,7 +57,8 @@ class GpxFile(models.Model):
         help_text=_(
             mark_safe(
                 "Zadat trasu nahráním souboru GPX. "
-                "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší <a href='https://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
+                "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší "
+                "<a href='https://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
             ),
         ),
         upload_to=normalize_gpx_filename,

@@ -57,7 +57,12 @@ class TestEmails(TestCase):
 
         self.user = User.objects.create(first_name="Testing", last_name="User", username="user1", email="user1@email.com")
         self.userprofile = UserProfile.objects.create(user=self.user)
-        self.user_attendance = UserAttendance.objects.create(userprofile=self.userprofile, campaign=self.campaign, team=self.team, approved_for_team='approved')
+        self.user_attendance = UserAttendance.objects.create(
+            userprofile=self.userprofile,
+            campaign=self.campaign,
+            team=self.team,
+            approved_for_team='approved',
+        )
 
         self.user_tm1 = User.objects.create(first_name="Team", last_name="Member 1", username="user2", email="user2@email.com")
         self.userprofile_tm1 = UserProfile.objects.create(user=self.user_tm1)
@@ -233,7 +238,10 @@ class TestEmails(TestCase):
         if self.userprofile.language == 'cs':
             message = "Zpráva pro kandidáta Testing User na funkci firemního koordinátora v organizaci Testing Company v soutěži Testing campaign 1."
         else:
-            message = "A message for Testing User, a candidate for the company coordinator role in Testing Company in the Testing campaign 1 competition."
+            message = (
+                "A message for Testing User, "
+                "a candidate for the company coordinator role in Testing Company in the Testing campaign 1 competition."
+            )
         self.assertTrue(message in msg.body)
 
     def test_send_company_admin_approval_mail(self):

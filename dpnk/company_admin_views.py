@@ -34,7 +34,9 @@ from registration.backends.simple.views import RegistrationView
 
 from . import company_admin_forms
 from . import models
-from .company_admin_forms import CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
+from .company_admin_forms import (
+    CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
+)
 from .decorators import must_be_company_admin, must_be_competitor, must_be_in_phase, must_have_team, request_condition
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile

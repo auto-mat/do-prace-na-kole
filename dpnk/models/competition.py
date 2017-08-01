@@ -161,7 +161,10 @@ class Competition(models.Model):
     )
     sex = models.CharField(
         verbose_name=_(u"Soutěž pouze pro pohlaví"),
-        help_text=_(u"Pokud chcete oddělit výsledky pro muže a ženy, je potřeba vypsat dvě soutěže - jednu pro muže a druhou pro ženy. Jinak nechte prázdné."),
+        help_text=_(
+            "Pokud chcete oddělit výsledky pro muže a ženy, je potřeba vypsat dvě soutěže - jednu pro muže a druhou pro ženy. "
+            "Jinak nechte prázdné.",
+        ),
         choices=UserProfile.GENDER,
         default=None,
         max_length=50,

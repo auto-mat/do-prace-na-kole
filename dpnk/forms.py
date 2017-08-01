@@ -632,7 +632,10 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
 
     def clean(self):
         try:
-            transaction = models.CommonTransaction.objects.get(user_attendance=self.cleaned_data.get('user_attendance'), status=models.Status.BIKE_REPAIR)
+            transaction = models.CommonTransaction.objects.get(
+                user_attendance=self.cleaned_data.get('user_attendance'),
+                status=models.Status.BIKE_REPAIR,
+            )
         except models.CommonTransaction.DoesNotExist:
             transaction = None
         if transaction:
@@ -661,7 +664,8 @@ class TrackUpdateForm(SubmitMixin, forms.ModelForm):
         help_text=mark_safe_lazy(
             _(
                 "Zadat trasu nahráním souboru GPX. "
-                "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší <a href='http://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
+                "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší "
+                "<a href='http://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
             ),
         ),
         required=False,

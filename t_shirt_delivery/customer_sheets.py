@@ -101,7 +101,9 @@ def make_sheet(subsidiary_box, canvas):
 #     canvas.drawString(second_column * cm, (page_height - offset - 2 * 0.5) * cm, "%s" % subsidiary.address_recipient)
 #
 #     canvas.drawString(first_column * cm, (page_height - offset - 3 * 0.5) * cm, "Ulice:")
-#     canvas.drawString(second_column * cm, (page_height - offset - 3 * 0.5) * cm, "%s %s" % (subsidiary.address_street, subsidiary.address_street_number))
+#     canvas.drawString(
+#         second_column * cm, (page_height - offset - 3 * 0.5) * cm, "%s %s" % (subsidiary.address_street, subsidiary.address_street_number)
+#     )
 #
 #     canvas.drawString(first_column * cm, (page_height - offset - 4 * 0.5) * cm, "PSČ:")
 #     canvas.drawString(second_column * cm, (page_height - offset - 4 * 0.5) * cm, "%s" % subsidiary.address_psc)

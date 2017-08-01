@@ -330,8 +330,34 @@ REDACTOR_OPTIONS = {
     'imageResizable': 'true',
     'imagePosition': 'true',
 }
-BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br', 'span', 'div', 'h4', 'h5', 'pre', 'blockquote', 'ol', 'li', 'ul', 'figure', 'img']
-BLEACH_ALLOWED_ATTRIBUTES = ['href', 'src', 'height', 'width', 'style']
+BLEACH_ALLOWED_TAGS = [
+    'a',
+    'b',
+    'blockquote',
+    'br',
+    'div',
+    'em',
+    'figure',
+    'h4',
+    'h5',
+    'i',
+    'img',
+    'li',
+    'ol',
+    'p',
+    'pre',
+    'span',
+    'strong',
+    'u',
+    'ul',
+]
+BLEACH_ALLOWED_ATTRIBUTES = [
+    'height',
+    'href',
+    'src',
+    'style',
+    'width',
+]
 BLEACH_ALLOWED_STYLES = ['height', 'width']
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

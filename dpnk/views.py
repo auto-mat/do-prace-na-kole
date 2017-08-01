@@ -76,7 +76,15 @@ from . import forms
 from . import models
 from . import results
 from . import util
-from .decorators import must_be_approved_for_team, must_be_competitor, must_be_in_phase, must_be_owner, must_have_team, request_condition, user_attendance_has
+from .decorators import (
+    must_be_approved_for_team,
+    must_be_competitor,
+    must_be_in_phase,
+    must_be_owner,
+    must_have_team,
+    request_condition,
+    user_attendance_has,
+)
 from .email import (
     approval_request_mail,
     invitation_mail,
@@ -181,7 +189,9 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                     self.user_attendance.team.unapproved_member_count > 0:
                 messages.warning(
                     request,
-                    mark_safe(_(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members')),
+                    mark_safe(
+                        _(u'Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members'),
+                    ),
                 )
             elif self.user_attendance.is_libero():
                 # TODO: get WP slug for city
@@ -230,7 +240,11 @@ class RegistrationMessagesMixin(UserAttendanceViewMixin):
                 elif self.user_attendance.approved_for_team == 'denied':
                     messages.error(
                         request,
-                        mark_safe(_(u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>') % reverse('zmenit_tym')),
+                        mark_safe(
+                            _(
+                                u'Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href="%s">zvolit jiný tým</a>',
+                            ) % reverse('zmenit_tym'),
+                        ),
                     )
 
             if not self.user_attendance.payment_waiting():
@@ -517,10 +531,20 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
     @must_be_in_phase("payment")
     @user_attendance_has(
         lambda ua: ua.payment_status == 'done',
-        mark_safe_lazy(format_lazy(_("Již máte účastnický poplatek zaplacen. Pokračujte na <a href='{addr}'>zadávání jízd</a>."), addr=reverse_lazy("profil"))))
+        mark_safe_lazy(
+            format_lazy(
+                _("Již máte účastnický poplatek zaplacen. Pokračujte na <a href='{addr}'>zadávání jízd</a>."),
+                addr=reverse_lazy("profil"),
+            ),
+        ))
     @user_attendance_has(
         lambda ua: ua.payment_status == 'no_admission',
-        mark_safe_lazy(format_lazy(_("Účastnický poplatek se neplatí. Pokračujte na <a href='{addr}'>zadávání jízd</a>."), addr=reverse_lazy("profil"))))
+        mark_safe_lazy(
+            format_lazy(
+                _("Účastnický poplatek se neplatí. Pokračujte na <a href='{addr}'>zadávání jízd</a>."),
+                addr=reverse_lazy("profil"),
+            ),
+        ))
     @user_attendance_has(
         lambda ua: not ua.t_shirt_size,
         _("Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"))
@@ -591,7 +615,12 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         else:
             payment_choice = payment_choices[payment_type]
             if payment_choice:
-                Payment(user_attendance=self.user_attendance, amount=payment_choice['amount'], pay_type=payment_choice['type'], status=models.Status.NEW).save()
+                Payment(
+                    user_attendance=self.user_attendance,
+                    amount=payment_choice['amount'],
+                    pay_type=payment_choice['type'],
+                    status=models.Status.NEW,
+                ).save()
                 messages.add_message(self.request, messages.WARNING, payment_choice['message'], fail_silently=True)
                 logger.info('Inserting payment', extra={'payment_type': payment_type, 'username': self.user_attendance.userprofile.user.username})
 
@@ -1183,7 +1212,10 @@ class UpdateTrackView(RegistrationViewMixin, UpdateView):
 
 def handle_uploaded_file(source, username):
     logger.info("Saving file", extra={'username': username, 'filename': source.name})
-    fd, filepath = tempfile.mkstemp(suffix=u"_%s&%s" % (username, unidecode(source.name).replace(" ", "_")), dir=settings.MEDIA_ROOT + u"/questionaire")
+    fd, filepath = tempfile.mkstemp(
+        suffix=u"_%s&%s" % (username, unidecode(source.name).replace(" ", "_")),
+        dir=settings.MEDIA_ROOT + u"/questionaire",
+    )
     with open(filepath, 'wb') as dest:
         shutil.copyfileobj(source, dest)
     return u"questionaire/" + filepath.rsplit("/", 1)[1]
@@ -1296,7 +1328,11 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
 
         competition_slug = kwargs.get('competition_slug')
         competition = Competition.objects.get(slug=competition_slug)
-        if not competition.public_answers and not self.request.user.is_superuser and self.request.user.userprofile.competition_edition_allowed(competition):
+        if (
+                not competition.public_answers and
+                not self.request.user.is_superuser and
+                self.request.user.userprofile.competition_edition_allowed(competition)
+        ):
             context_data['fullpage_error_message'] = _(u"Tato soutěž nemá povolené prohlížení odpovědí.")
             context_data['title'] = _(u"Odpovědi nejsou dostupné")
             return context_data
@@ -1309,7 +1345,11 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
                 user_attendance__in=competitor.user_attendances(),
                 question__competition__slug=competition_slug,
             ).select_related('question')
-        context_data['show_points'] = competition.has_finished() or (self.request.user.is_authenticated() and self.request.user.userprofile.user.is_superuser)
+        context_data['show_points'] = (
+            competition.has_finished() or
+            (self.request.user.is_authenticated() and
+             self.request.user.userprofile.user.is_superuser)
+        )
         context_data['competitors'] = competitors
         context_data['competition'] = competition
         return context_data
@@ -1391,7 +1431,10 @@ def answers(request):
     question_id = request.GET['question']
     question = Question.objects.get(id=question_id)
     if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(question.competition):
-        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Otázka je položená ve městě, pro které nemáte oprávnění."), "</div>"), status=401)
+        return HttpResponse(
+            string_concat("<div class='text-warning'>", _(u"Otázka je položená ve městě, pro které nemáte oprávnění."), "</div>"),
+            status=401,
+        )
 
     if request.method == 'POST':
         points = [(k.split('-')[1], v) for k, v in request.POST.items() if k.startswith('points-')]
@@ -1615,7 +1658,11 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
                 action, approve_id = request.POST['approve'].split('-')
             except ValueError:
                 logger.exception(u'Can\'t split POST approve parameter', extra={'request': request})
-                messages.add_message(request, messages.ERROR, _(u"Nastala chyba při přijímání uživatele, patrně používáte zastaralý internetový prohlížeč."))
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    _(u"Nastala chyba při přijímání uživatele, patrně používáte zastaralý internetový prohlížeč."),
+                )
 
             if approve_id:
                 approved_user = UserAttendance.objects.get(id=approve_id)
@@ -1641,7 +1688,13 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
                         fail_silently=True,
                     )
                 else:
-                    approve_for_team(request, approved_user, request.POST.get('reason-' + str(approved_user.id), ''), action == 'approve', action == 'deny')
+                    approve_for_team(
+                        request,
+                        approved_user,
+                        request.POST.get('reason-' + str(approved_user.id), ''),
+                        action == 'approve',
+                        action == 'deny',
+                    )
         return render(request, self.template_name, self.get_context_data())
 
     def get_context_data(self, *args, **kwargs):

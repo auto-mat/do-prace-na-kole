@@ -219,8 +219,10 @@ def must_be_competitor(fn):
             {
                 'fullpage_error_message':
                 mark_safe(
-                    _("V soutěži Do práce na kole nesoutěžíte. Pokud jste firemním koordinátorem, použijte záložku <a href='%s'>Firemní koordinátor</a>.") %
-                    reverse("company_structure"),
+                    _(
+                        "V soutěži Do práce na kole nesoutěžíte. "
+                        "Pokud jste firemním koordinátorem, použijte záložku <a href='%s'>Firemní koordinátor</a>."
+                    ) % reverse("company_structure"),
                 ),
                 'title': _("Nedostupná stránka"),
             },

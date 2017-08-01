@@ -374,7 +374,9 @@ class PaymentTypeViewTests(TestCase):
         self.assertRedirects(response, reverse("upravit_profil"))
         self.assertContains(
             response,
-            '<div class="alert alert-warning">Platbu ještě musí schválit koordinátor vaší organizace <a href="mailto:foo@email.com">foo@email.com</a></div>',
+            '<div class="alert alert-warning">'
+            'Platbu ještě musí schválit koordinátor vaší organizace '
+            '<a href="mailto:foo@email.com">foo@email.com</a></div>',
             html=True,
         )
         self.assertEquals(models.Payment.objects.get().pay_type, 'fc')
@@ -518,7 +520,11 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
             "</tr>",
             html=True,
         )
-        self.assertContains(response, "<tr><td>bez vybraného města</td><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>", html=True)
+        self.assertContains(
+            response,
+            "<tr><td>bez vybraného města</td><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>",
+            html=True,
+        )
         self.assertContains(
             response,
             "<tr>"
@@ -1080,7 +1086,11 @@ class ViewsTestsLogon(ViewsLogon):
         email = self.user_attendance.userprofile.user.email
         address = reverse('zmenit_tym', kwargs={'token': token, 'initial_email': email})
         response = self.client.get(address)
-        self.assertContains(response, "<div>Přejete si být zařazeni do týmu Testing team 1 (Nick, Testing User 1, Registered User 1)?</div>", html=True)
+        self.assertContains(
+            response,
+            "<div>Přejete si být zařazeni do týmu Testing team 1 (Nick, Testing User 1, Registered User 1)?</div>",
+            html=True,
+        )
 
     def test_dpnk_team_invitation_full(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1016]))
@@ -1400,7 +1410,10 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.get(reverse('company_admin_application'))
         self.assertContains(
             response,
-            '<label for="id_motivation_company_admin" class="control-label  requiredField"> Pár vět o vaší pozici<span class="asteriskField">*</span> </label>',
+            '<label for="id_motivation_company_admin" class="control-label  requiredField">'
+            'Pár vět o vaší pozici'
+            '<span class="asteriskField">*</span>'
+            '</label>',
             html=True,
         )
 

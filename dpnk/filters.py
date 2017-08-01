@@ -92,7 +92,8 @@ class CityCampaignFilter(CampaignFilter):
 
     def queryset(self, request, queryset):
         queryset = super(CityCampaignFilter, self).queryset(request, queryset)
-        # queryset = queryset.annotate(user_count_sum=Sum('subsidiaries__teams__member_count', distinct=True))  TODO: this doesn't count because bug #10060
+        # TODO: this doesn't count because bug #10060
+        # queryset = queryset.annotate(user_count_sum=Sum('subsidiaries__teams__member_count', distinct=True))
         return queryset
 
 

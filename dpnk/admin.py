@@ -1139,7 +1139,12 @@ class AnswerAdmin(FormRequestMixin, ImportExportMixin, RelatedFieldAdmin):
         'question__name',
         'question__competition__name',
         'user_attendance__team__subsidiary__company__name')
-    list_filter = (campaign_filter_generator('question__competition__campaign'), HasReactionFilter, 'question__competition__city', 'question__competition')
+    list_filter = (
+        campaign_filter_generator('question__competition__campaign'),
+        HasReactionFilter,
+        'question__competition__city',
+        'question__competition',
+    )
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
     raw_id_fields = ('user_attendance', 'question')
