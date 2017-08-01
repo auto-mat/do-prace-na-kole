@@ -245,22 +245,6 @@ class CompetitionsViewTests(ViewsLogon):
 @override_settings(
     SITE_ID=2,
 )
-class InvoiceTests(ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'invoices']
-
-    def setUp(self):
-        self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
-
-    def test_invoices(self):
-        address = reverse('invoices')
-        response = self.client.get(address)
-        self.assertContains(response, '<td>10. října 2010</td>', html=True)
-
-
-@override_settings(
-    SITE_ID=2,
-)
 class BaseViewsTests(ClearCacheMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions']
 
