@@ -73,6 +73,29 @@ class TestPasswordForms(ViewsLogonMommy):
             html=True,
         )
 
+    def test_password_reset_confirm_post(self):
+        """ Test, that password must be at least 6 characters long """
+        user = mommy.make("User", email='test@test.cz')
+        token_generator = PasswordResetTokenGenerator()
+        token = token_generator.make_token(user)
+        uidb64 = base64.b64encode(bytes(str(user.id), "utf-8")).decode("utf-8")
+        address = reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
+        response = self.client.post(address, {"new_password1": "a", "new_password2": "a"})
+        self.assertContains(
+            response,
+            '<strong>Heslo je příliš krátké. Musí mít délku aspoň 6 znaků.</strong>',
+            html=True,
+        )
+
+    def test_password_reset_confirm_bad_token(self):
+        address = reverse('password_reset_confirm', kwargs={'uidb64': 'bad', 'token': 'token'})
+        response = self.client.get(address)
+        self.assertContains(
+            response,
+            '<h3>Obnovení hesla nebylo úspěšné</h3>',
+            html=True,
+        )
+
     def test_password_change(self):
         response = self.client.get(reverse('password_change'))
         self.assertContains(
