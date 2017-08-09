@@ -30,6 +30,7 @@ Do pole organizace napište několik začátečních písmen názvu vaší organ
                     $('#id_company_1').change();
                     $('#id_subsidiary').one('change', function(event, ui) {
                        $('#id_subsidiary').val(data.id);
+                       $('#id_subsidiary').change();
                     });
                 },
                 "createTeamCallback": function(data, options) {
@@ -40,11 +41,15 @@ Do pole organizace napište několik začátečních písmen názvu vaší organ
                 }
             }
         });
-        $('#id_company_1').change(function(event, ui) {
+        updateSubsidiary = function(event, ui) {
            $("#fm-create-subsidiary").attr('href', "{% url 'register_subsidiary' "" %}" + $('#id_company_1').val());
-        });
+           $("#fm-create-subsidiary").prop('disabled', $('#id_company_1').val() == "");
+        }
+        $('#id_company_0').on('djselectablechange', updateSubsidiary);
+        $('#id_company_1').change(updateSubsidiary);
         $('#id_subsidiary').change(function(event, ui) {
            $("#fm-create-team").attr('href', "{% url 'register_team' "" %}" + $('#id_subsidiary').val());
+           $("#fm-create-team").prop('disabled', $('#id_subsidiary').val() == "");
         });
     });
 </script>

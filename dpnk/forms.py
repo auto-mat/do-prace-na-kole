@@ -332,6 +332,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
                     data_fm_callback="createSubsidiaryCallback",
                     css_class="btn-success fm-create",
                     id="fm-create-subsidiary",
+                    **({'disabled': True} if company is None else {}),  # Disable button if no company is selected
                 ),
             ),
             FieldWithButtons(
@@ -343,6 +344,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
                     data_fm_callback="createTeamCallback",
                     css_class="btn-success fm-create",
                     id="fm-create-team",
+                    **({'disabled': True} if subsidiary is None else {}),  # Disable button if no subsidiary is selected
                 ),
             ),
         )
