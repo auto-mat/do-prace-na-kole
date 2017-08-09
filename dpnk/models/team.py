@@ -115,6 +115,14 @@ class Team(models.Model):
         """ Return all members of this team, including unapproved. """
         return self.users.filter(userprofile__user__is_active=True)
 
+    def undenied_members(self):
+        """ Return approved members of this team. """
+        return self.users.filter(
+            userprofile__user__is_active=True,
+        ).exclude(
+            approved_for_team='denied',
+        )
+
     def members(self):
         """ Return approved members of this team. """
         return self.users.filter(

@@ -57,14 +57,6 @@ from .widgets import CommuteModeSelect
 logger = logging.getLogger(__name__)
 
 
-def team_full(team):
-    if team.campaign.too_much_members(
-            models.UserAttendance.objects.
-            filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=team, userprofile__user__is_active=True).
-            count(),):
-        raise forms.ValidationError(_(u"Tento tým již má plný počet členů"))
-
-
 class UserLeafletWidget(LeafletWidget):
     def __init__(self, *args, **kwargs):
         user_attendance = kwargs['user_attendance']
@@ -290,8 +282,6 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             if team.campaign.slug != self.instance.campaign.slug:
                 logger.error("Team not in campaign", extra={'team': team.pk, 'subdomain': self.instance.campaign.slug})
                 raise forms.ValidationError(_("Zvolený tým není dostupný v aktuální kampani"))
-            if team != self.instance.team:
-                team_full(team)
         elif not self.instance.team:
                 team = models.Team(campaign=self.instance.campaign)
         else:

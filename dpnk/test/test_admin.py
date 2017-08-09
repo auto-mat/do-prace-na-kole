@@ -139,7 +139,7 @@ class AdminModulesTests(DenormMixin, TestCase):
             'user_trips-INITIAL_FORMS': 0,
         }
         response = self.client.post(address, post_data)
-        self.assertContains(response, "<li>Tento tým není možné zvolit, protože by měl příliš mnoho odsouhlasených členů.</li>", html=True)
+        self.assertContains(response, "<li>Tento tým již má plný počet členů</li>", html=True)
 
     def test_userattendance_export(self):
         address = "/admin/dpnk/userattendance/export/"

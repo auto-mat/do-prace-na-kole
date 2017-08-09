@@ -26,6 +26,7 @@ from denorm import denormalized, depend_on_related
 
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Length
+from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html_join
@@ -448,6 +449,12 @@ class UserAttendance(models.Model):
             return self.userprofile.userattendance_set.get(campaign=previous_campaign)
         except UserAttendance.DoesNotExist:
             return None
+
+    def clean(self):
+        if self.team and self.approved_for_team != 'denied':
+            team_members_count = self.team.undenied_members().exclude(pk=self.pk).count() + 1
+            if self.team.campaign.too_much_members(team_members_count):
+                raise ValidationError({'team': _("Tento tým již má plný počet členů")})
 
     def save(self, *args, **kwargs):
         if self.pk is None:

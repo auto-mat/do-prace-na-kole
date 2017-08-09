@@ -489,15 +489,6 @@ class UserAttendanceForm(forms.ModelForm):
 
     def clean(self):
         new_team = self.cleaned_data['team']
-        new_approved_for_team = self.cleaned_data['approved_for_team']
-        if new_team:
-            new_member_count = new_team.members().exclude(pk=self.instance.pk).count()
-            if new_approved_for_team == 'approved':
-                new_member_count += 1
-            if self.instance.campaign.too_much_members(new_member_count):
-                message = _("Tento tým není možné zvolit, protože by měl příliš mnoho odsouhlasených členů.")
-                self.add_error("team", message)
-                self.add_error("approved_for_team", message)
 
         if self.instance.payment_status == 'done' and new_team is None:
             self.add_error(
@@ -992,7 +983,7 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
     def members(self, obj):
         return admin_links(
             [
-                (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), u, u.approved_for_team)
+                (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), "%s - %s" % (u, u.approved_for_team))
                 for u in models.UserAttendance.objects.filter(team=obj)
             ],
         )

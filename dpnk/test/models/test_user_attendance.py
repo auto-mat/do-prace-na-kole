@@ -22,6 +22,7 @@ import datetime
 from unittest.mock import ANY, patch
 
 from django.contrib.gis.db.models.functions import Length
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
 
@@ -273,3 +274,40 @@ class TestGetDistance(TestCase):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.assertEqual(user_attendance.get_distance(), 0)
         mock_logger.error.assert_called_with("length not available", extra={'request': None, 'username': ANY})
+
+
+class TestClean(TestCase):
+    def setUp(self):
+        phase = mommy.make(
+            'dpnk.Phase',
+            phase_type="competition",
+            date_from=datetime.date(year=2017, month=11, day=1),
+            date_to=datetime.date(year=2017, month=12, day=12),
+            campaign__max_team_members=1,
+        )
+        self.campaign = phase.campaign
+
+    def test_clean_team_none(self):
+        user_attendance = mommy.make('dpnk.UserAttendance', campaign=self.campaign, team=None)
+        user_attendance.clean()
+
+    def test_clean_team(self):
+        user_attendance = mommy.make('dpnk.UserAttendance', campaign=self.campaign, team__name='Foo team')
+        user_attendance.clean()
+
+    def test_too_much_team_members(self):
+        team = mommy.make('Team', campaign=self.campaign)
+        mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team=team,
+            approved_for_team='approved',
+        )
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team=team,
+            approved_for_team='undecided',
+        )
+        with self.assertRaises(ValidationError):
+            user_attendance.clean()
