@@ -292,9 +292,12 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
             kwargs['prev_url'] = self.prev_url
         return kwargs
 
+    def get_next_url(self):
+        return self.next_url
+
     def get_success_url(self):
         if 'next' in self.request.POST:
-            return reverse(self.next_url)
+            return reverse(self.get_next_url())
         elif 'submit' in self.request.POST:
             return reverse(self.success_url)
         else:
@@ -308,6 +311,11 @@ class ChangeTeamView(RegistrationViewMixin, UpdateView):
     prev_url = 'upravit_profil'
     title = _(u'Vybrat/změnit tým')
     registration_phase = "zmenit_tym"
+
+    def get_next_url(self):
+        if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():
+            return 'pozvanky'
+        return super().get_next_url()
 
     def get_previous_team(self):
         previous_user_attendance = self.user_attendance.previous_user_attendance()

@@ -1618,7 +1618,7 @@ class ChangeTeamViewTests(TestCase):
         }
         response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
 
-        self.assertRedirects(response, reverse('upravit_profil'))
+        self.assertRedirects(response, reverse('pozvanky'))
         self.user_attendance.refresh_from_db()
         self.assertEquals(self.user_attendance.team, new_team)
         self.assertEqual(self.user_attendance.approved_for_team, "approved")
