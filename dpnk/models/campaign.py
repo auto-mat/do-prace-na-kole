@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from cache_utils.decorators import cached
+
 from denorm import denormalized, depend_on_related
 
 from django.contrib.gis.db import models
@@ -242,17 +244,10 @@ class Campaign(Pricable, models.Model):
     def has_any_tshirt(self):
         return self.tshirtsize_set.exists()
 
+    @cached(60)
     def phase(self, phase_type):
         """
         Return phase of given type from this campaign.
         @phase_type Type of phase.
         """
-        if not hasattr(self, "_phases"):
-            self._phases = {}
-        if phase_type not in self._phases:
-            from .phase import Phase
-            try:
-                self._phases[phase_type] = self.phase_set.get(phase_type=phase_type)
-            except Phase.DoesNotExist:
-                self._phases[phase_type] = None
-        return self._phases[phase_type]
+        return self.phase_set.get(phase_type=phase_type)

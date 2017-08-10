@@ -28,6 +28,7 @@ from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
+from .phase import Phase
 from .subsidiary import Subsidiary
 
 logger = logging.getLogger(__name__)
@@ -148,7 +149,10 @@ class Team(models.Model):
 
     def get_frequency(self):
         from .. import results
-        return results.get_team_frequency(self.members(), self.campaign.phase("competition"))[2]
+        try:
+            return results.get_team_frequency(self.members(), self.campaign.phase("competition"))[2]
+        except Phase.DoesNotExist:
+            return 0
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})

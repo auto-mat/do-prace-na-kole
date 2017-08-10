@@ -33,6 +33,7 @@ from django.utils.html import format_html_join
 from django.utils.translation import ugettext_lazy as _
 
 from .company_admin import CompanyAdmin
+from .phase import Phase
 from .transactions import Payment, Transaction
 from .trip import Trip
 from .util import MAP_DESCRIPTION
@@ -254,7 +255,10 @@ class UserAttendance(models.Model):
 
     def get_rides_count(self):
         from .. import results
-        return results.get_rides_count(self, self.campaign.phase("competition"))
+        try:
+            return results.get_rides_count(self, self.campaign.phase("competition"))
+        except Phase.DoesNotExist:
+            return 0
 
     @denormalized(models.IntegerField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
@@ -263,7 +267,10 @@ class UserAttendance(models.Model):
 
     def get_frequency(self, day=None):
         from .. import results
-        return results.get_userprofile_frequency(self, self.campaign.phase("competition"), day)[2]
+        try:
+            return results.get_userprofile_frequency(self, self.campaign.phase("competition"), day)[2]
+        except Phase.DoesNotExist:
+            return 0
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
@@ -280,7 +287,10 @@ class UserAttendance(models.Model):
     @depend_on_related('Trip')
     def trip_length_total(self):
         from .. import results
-        return results.get_userprofile_length([self], self.campaign.phase("competition"))
+        try:
+            return results.get_userprofile_length([self], self.campaign.phase("competition"))
+        except Phase.DoesNotExist:
+            return 0
 
     def trip_length_total_rounded(self):
         return round(self.trip_length_total, 2)

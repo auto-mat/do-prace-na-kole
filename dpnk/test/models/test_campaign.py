@@ -58,7 +58,8 @@ class TestCampaignMethods(TestCase):
 class TestMethods(TestCase):
     def test_campaign_phase_does_not_exist(self):
         campaign = models.Campaign()
-        self.assertEquals(campaign.phase("unknown_phase"), None)
+        with self.assertRaises(models.Phase.DoesNotExist):
+            campaign.phase("unknown_phase")
 
 
 class TestUserAttendancesForDelivery(TestCase):

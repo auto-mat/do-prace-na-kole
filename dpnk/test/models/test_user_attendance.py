@@ -33,16 +33,7 @@ from model_mommy import mommy
 
 class TestFrequencyPercentage(TestCase):
     def setUp(self):
-        phase = mommy.make(
-            'dpnk.Phase',
-            phase_type="competition",
-            date_from=datetime.date(year=2017, month=11, day=1),
-            date_to=datetime.date(year=2017, month=12, day=12),
-        )
-        self.user_attendance = mommy.make(
-            'dpnk.UserAttendance',
-            campaign=phase.campaign,
-        )
+        self.user_attendance = mommy.make('dpnk.UserAttendance')
 
     def test_without_day(self):
         """
@@ -71,13 +62,6 @@ class TestEnteredCompetitionReason(TestCase):
         )
         self.campaign = tshirt_size.campaign
         self.campaign.has_any_tshirt = True
-        mommy.make(
-            'dpnk.Phase',
-            phase_type="competition",
-            date_from=datetime.date(year=2017, month=11, day=1),
-            date_to=datetime.date(year=2017, month=12, day=12),
-            campaign=self.campaign,
-        )
         self.user_attendance = mommy.make(
             'dpnk.UserAttendance',
             campaign=self.campaign,
@@ -235,17 +219,11 @@ class TestAdmissionFee(TestCase):
 
 class TestGetDistance(TestCase):
     def setUp(self):
-        phase = mommy.make(
-            'dpnk.Phase',
-            phase_type="competition",
-            date_from=datetime.date(year=2017, month=11, day=1),
-            date_to=datetime.date(year=2017, month=12, day=12),
-        )
-        self.campaign = phase.campaign
+        self.campaign = mommy.make('dpnk.Campaign')
         mommy.make(
             'dpnk.UserAttendance',
             track="MULTILINESTRING((0 0,-1 1))",
-            campaign=phase.campaign,
+            campaign=self.campaign,
             distance=123,
             pk=1115,
         )
@@ -278,14 +256,10 @@ class TestGetDistance(TestCase):
 
 class TestClean(TestCase):
     def setUp(self):
-        phase = mommy.make(
-            'dpnk.Phase',
-            phase_type="competition",
-            date_from=datetime.date(year=2017, month=11, day=1),
-            date_to=datetime.date(year=2017, month=12, day=12),
-            campaign__max_team_members=1,
+        self.campaign = mommy.make(
+            'dpnk.campaign',
+            max_team_members=1,
         )
-        self.campaign = phase.campaign
 
     def test_clean_team_none(self):
         user_attendance = mommy.make('dpnk.UserAttendance', campaign=self.campaign, team=None)
