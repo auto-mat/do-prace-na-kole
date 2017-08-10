@@ -481,6 +481,16 @@ class UserAttendance(models.Model):
                     t_shirt_size = self.campaign.tshirtsize_set.filter(name=previous_user_attendance.t_shirt_size.name)
                     if t_shirt_size.count() == 1:
                         self.t_shirt_size = t_shirt_size.first()
+        if self.team and self.team.campaign != self.campaign:
+            logger.error(
+                "UserAttendance campaign doesn't match team campaign",
+                extra={
+                    'user_attendance': self,
+                    'new_team': self.team,
+                    'campaign': self.campaign,
+                    'team_campaign': self.team.campaign,
+                },
+            )
         return super(UserAttendance, self).save(*args, **kwargs)
 
 

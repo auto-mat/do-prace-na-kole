@@ -331,3 +331,23 @@ class TestClean(TestCase):
             r"'campaign': \['Zvolená kampaň \(Bar campaign\) musí být shodná s kampaní týmu \(Foo campaign\)'\]",
         ):
             user_attendance.clean()
+
+    @patch('dpnk.models.user_attendance.logger')
+    def test_campaign_mismatch_logger(self, mock_logger):
+        team = mommy.make('Team', campaign=self.campaign)
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team=team,
+        )
+        user_attendance.team = mommy.make('Team', campaign__name="Bar campaign")
+        user_attendance.save()
+        mock_logger.error.assert_called_with(
+            "UserAttendance campaign doesn't match team campaign",
+            extra={
+                'user_attendance': user_attendance,
+                'campaign': user_attendance.campaign,
+                'new_team': user_attendance.team,
+                'team_campaign': user_attendance.team.campaign,
+            },
+        )
