@@ -35,8 +35,6 @@ class Phase(models.Model):
 
     TYPE = [
         ('registration', _(u"registrační")),
-        ('late_admission', _(u"pozdní startovné")),
-        ('compet_entry', _(u"vstup do soutěže (zastaralé)")),
         ('payment', _(u"placení startovného")),
         ('competition', _(u"soutěžní")),
         ('results', _(u"výsledková")),

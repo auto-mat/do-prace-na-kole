@@ -216,13 +216,6 @@ class Campaign(Pricable, models.Model):
             return False
         return member_count > self.max_team_members
 
-    def late_admission_phase_actual(self):
-        late_admission_phase = self.phase("late_admission")
-        if late_admission_phase:
-            return late_admission_phase.is_actual()
-        else:
-            return True
-
     def user_attendances_for_delivery(self):
         from t_shirt_delivery.models import PackageTransaction
         return UserAttendance.objects.filter(
