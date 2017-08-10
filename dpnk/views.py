@@ -1132,10 +1132,7 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(AdmissionsView, self).get_context_data(*args, **kwargs)
-        competitions = self.user_attendance.get_competitions(competition_types=self.competition_types)
-        for competition in competitions:
-            competition.competitor_can_admit = competition.can_admit(self.user_attendance)
-        context_data['competitions'] = competitions
+        context_data['competitions'] = self.user_attendance.get_competitions(competition_types=self.competition_types)
         context_data['registration_phase'] = "competitions"
         return context_data
 

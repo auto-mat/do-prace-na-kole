@@ -314,30 +314,6 @@ class Competition(models.Model):
         elif self.competitor_type == 'company':
             return 'company'
 
-    def can_admit(self, user_attendance):
-        """
-        Returns True if user can admit for this competition, othervise it returns the reason why user can't admit.
-        """
-        if self.without_admission:
-            return 'without_admission'
-        if not util.get_company_admin(user_attendance.userprofile.user, self.campaign) and self.competitor_type == 'company':
-            return 'not_company_admin'
-        if self.competition_type == 'questionnaire' and not self.has_started():
-            return 'before_beginning'
-        if self.competition_type == 'questionnaire' and self.has_finished():
-            return 'after_end'
-        if self.competition_type != 'questionnaire' and self.has_entry_not_opened():
-            return 'after_beginning'
-
-        if self.competitor_type == 'liberos' and not user_attendance.is_libero():
-            return 'not_libero'
-        if self.company and self.company != user_attendance.team.subsidiary.company:
-            return 'not_for_company'
-        if self.city.exists() and not self.city.filter(pk=user_attendance.team.subsidiary.city.pk).exists():
-            return 'not_for_city'
-
-        return True
-
     def get_columns(self):
         columns = [('result_order', 'get_sequence_range', _("Po&shy;řa&shy;dí"))]
 
