@@ -27,8 +27,11 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from dpnk import models
+from dpnk import util
 
 from model_mommy import mommy
+
+from ..mommy_recipes import PriceLevelRecipe, UserAttendancePaidRecipe
 
 
 class TestFrequencyPercentage(TestCase):
@@ -252,6 +255,24 @@ class TestGetDistance(TestCase):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.assertEqual(user_attendance.get_distance(), 0)
         mock_logger.error.assert_called_with("length not available", extra={'request': None, 'username': ANY})
+
+
+class TestIsLibero(TestCase):
+    def setUp(self):
+        PriceLevelRecipe.make()
+        self.user_attendance = UserAttendancePaidRecipe.make(approved_for_team='approved')
+        util.rebuild_denorm_models([self.user_attendance])
+        util.rebuild_denorm_models([self.user_attendance.team])
+        self.user_attendance.refresh_from_db()
+        self.user_attendance.team.refresh_from_db()
+
+    def test_true(self):
+        self.user_attendance.campaign.max_team_members = 2
+        self.assertTrue(self.user_attendance.is_libero())
+
+    def test_false(self):
+        self.user_attendance.campaign.max_team_members = 1
+        self.assertFalse(self.user_attendance.is_libero())
 
 
 class TestClean(TestCase):

@@ -326,7 +326,7 @@ class UserAttendance(models.Model):
         return self.userprofile
 
     def is_libero(self):
-        if self.team and self.team_member_count():
+        if self.team and self.team_member_count() and self.campaign.competitors_choose_team():
             return self.team_member_count() <= 1
         else:
             return False
