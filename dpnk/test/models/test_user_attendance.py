@@ -23,7 +23,7 @@ from unittest.mock import ANY, patch
 
 from django.contrib.gis.db.models.functions import Length
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.test.utils import override_settings
 
 from dpnk import models
@@ -257,7 +257,10 @@ class TestGetDistance(TestCase):
         mock_logger.error.assert_called_with("length not available", extra={'request': None, 'username': ANY})
 
 
-class TestIsLibero(TestCase):
+class TestIsLibero(TransactionTestCase):
+    # This is here, because creating Payment messes up with indexes and other subsequent tests will fail.
+    reset_sequences = True
+
     def setUp(self):
         PriceLevelRecipe.make()
         self.user_attendance = UserAttendancePaidRecipe.make(approved_for_team='approved')
