@@ -178,7 +178,7 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
 
     try:
         if user.is_active and userprofile.mailing_opt_in and userprofile.personal_data_opt_in:
-            if util.is_competitor(user_attendance.get_userprofile().user) and user_attendance.get_userprofile().mailing_id:
+            if user_attendance.get_userprofile().mailing_id:
                 update_user(user_attendance, ignore_hash)
             else:
                 add_user(user_attendance)

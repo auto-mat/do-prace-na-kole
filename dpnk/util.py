@@ -184,13 +184,3 @@ def get_company_admin(user, campaign):
         return user.userprofile.company_admin.get(campaign=campaign, company_admin_approved='approved')
     except ObjectDoesNotExist:
         return None
-
-
-def is_competitor(user):
-    try:
-        if user.is_authenticated:
-            return True
-        else:
-            return False
-    except ObjectDoesNotExist:
-        return False

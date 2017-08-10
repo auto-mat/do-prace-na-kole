@@ -195,7 +195,7 @@ def must_be_competitor(fn):
         if kwargs.get('user_attendance', None):
             return fn(view, request, *args, **kwargs)
 
-        if util.is_competitor(request.user):
+        if request.user.is_authenticated():
             campaign_slug = request.subdomain
             user_attendance = request.user_attendance
             if user_attendance is None:
