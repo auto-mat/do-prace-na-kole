@@ -282,15 +282,25 @@ class TestClean(TestCase):
     def setUp(self):
         self.campaign = mommy.make(
             'dpnk.campaign',
+            name="Foo campaign",
             max_team_members=1,
         )
 
     def test_clean_team_none(self):
-        user_attendance = mommy.make('dpnk.UserAttendance', campaign=self.campaign, team=None)
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team=None,
+        )
         user_attendance.clean()
 
     def test_clean_team(self):
-        user_attendance = mommy.make('dpnk.UserAttendance', campaign=self.campaign, team__name='Foo team')
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team__name='Foo team',
+            team__campaign=self.campaign,
+        )
         user_attendance.clean()
 
     def test_too_much_team_members(self):
@@ -307,5 +317,17 @@ class TestClean(TestCase):
             team=team,
             approved_for_team='undecided',
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesRegex(ValidationError, r"{'team': \['Tento tým již má plný počet členů'\]}"):
+            user_attendance.clean()
+
+    def test_campaign_mismatch(self):
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=mommy.make("Campaign", name="Bar campaign"),
+            team=mommy.make('Team', campaign=self.campaign),
+        )
+        with self.assertRaisesRegex(
+            ValidationError,
+            r"'campaign': \['Zvolená kampaň \(Bar campaign\) musí být shodná s kampaní týmu \(Foo campaign\)'\]",
+        ):
             user_attendance.clean()

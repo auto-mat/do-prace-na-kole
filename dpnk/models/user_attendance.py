@@ -466,6 +466,10 @@ class UserAttendance(models.Model):
             if self.team.campaign.too_much_members(team_members_count):
                 raise ValidationError({'team': _("Tento tým již má plný počet členů")})
 
+        if self.team and self.team.campaign != self.campaign:
+            message = _("Zvolená kampaň (%s) musí být shodná s kampaní týmu (%s)" % (self.campaign, self.team.campaign))
+            raise ValidationError({'team': message, 'campaign': message})
+
     def save(self, *args, **kwargs):
         if self.pk is None:
             previous_user_attendance = self.previous_user_attendance()
