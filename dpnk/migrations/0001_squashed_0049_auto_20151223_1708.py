@@ -319,7 +319,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=50, verbose_name='Název týmu')),
-                ('invitation_token', models.CharField(default='', max_length=100, unique=True, validators=[dpnk.models.validate_length], verbose_name='Token pro pozvánky')),
+                ('invitation_token', models.CharField(default='', max_length=100, unique=True, verbose_name='Token pro pozvánky')),
                 ('member_count', models.IntegerField(db_index=True, default=0, verbose_name='Počet právoplatných členů týmu')),
                 ('get_rides_count_denorm', models.IntegerField(editable=False, null=True)),
                 ('campaign', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dpnk.Campaign', verbose_name='Kampaň')),

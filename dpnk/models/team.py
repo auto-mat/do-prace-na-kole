@@ -25,19 +25,13 @@ import string
 from denorm import denormalized, depend_on_related
 
 from django.contrib.gis.db import models
-from django.core.exceptions import ValidationError
+from django.core.validators import MinLengthValidator
 from django.utils.translation import ugettext_lazy as _
 
 from .phase import Phase
 from .subsidiary import Subsidiary
 
 logger = logging.getLogger(__name__)
-
-
-def validate_length(value, min_length=25):
-    str_len = len(str(value))
-    if str_len < min_length:
-        raise ValidationError(_(u"Řetězec by neměl být kratší než %(min)s znaků a delší než %(max)s znaků") % {'min': min_length, 'max': str_len})
 
 
 class Team(models.Model):
@@ -68,7 +62,7 @@ class Team(models.Model):
         null=False,
         blank=False,
         unique=True,
-        validators=[validate_length],
+        validators=[MinLengthValidator(25)],
     )
     campaign = models.ForeignKey(
         "Campaign",
