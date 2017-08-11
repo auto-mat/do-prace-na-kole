@@ -78,6 +78,7 @@ from . import models
 from . import results
 from . import util
 from .decorators import (
+    GroupRequiredResponseMixin,
     must_be_approved_for_team,
     must_be_competitor,
     must_be_in_phase,
@@ -1704,7 +1705,8 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
         return context_data
 
 
-class BikeRepairView(CampaignParameterMixin, TitleViewMixin, CreateView):
+class BikeRepairView(CampaignParameterMixin, TitleViewMixin, GroupRequiredResponseMixin, LoginRequiredMixin, CreateView):
+    group_required = 'cykloservis'
     template_name = 'base_generic_form.html'
     form_class = forms.BikeRepairForm
     success_url = 'bike_repair'

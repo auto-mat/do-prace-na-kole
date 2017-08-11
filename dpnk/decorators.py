@@ -19,6 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import functools
 
+from braces.views import GroupRequiredMixin
+
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
@@ -226,15 +228,11 @@ def must_be_competitor(fn):
     return wrapper
 
 
-def must_be_in_group(group):
-    def decorator(fn):
-        @functools.wraps(fn)
-        def wrapped(request, *args, **kwargs):
-            if request.user.groups.filter(name=group).count() == 0:
-                return HttpResponse(_(u"<div class='text-warning'>Pro přístup k této stránce musíte být ve skupině %s</div>") % group)
-            return fn(request, *args, **kwargs)
-        return wrapped
-    return decorator
+class GroupRequiredResponseMixin(GroupRequiredMixin):
+    def handle_no_permission(self, request):
+        if request.user.is_authenticated():
+            return HttpResponse(_("<div class='text-warning'>Pro přístup k této stránce musíte být ve skupině %s</div>") % self.group_required)
+        return super().handle_no_permission(request)
 
 
 def user_attendance_has(condition, message):

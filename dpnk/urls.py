@@ -25,7 +25,6 @@ from django.utils.translation import ugettext_lazy as _
 from . import auth
 from . import company_admin_views
 from . import views, views_results
-from .decorators import must_be_in_group
 from .forms import AuthenticationFormDPNK
 urlpatterns = [
     url(
@@ -212,7 +211,7 @@ urlpatterns = [
     ),
     url(
         r'^cykloservis/$',
-        login_required(must_be_in_group('cykloservis')(views.BikeRepairView.as_view())),
+        views.BikeRepairView.as_view(),
         name="bike_repair",
     ),
     url(
