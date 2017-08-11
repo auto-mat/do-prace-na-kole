@@ -350,7 +350,7 @@ class UserAttendance(models.Model):
     def entered_competition_reason(self):
         if not self.userprofile.profile_complete():
             return 'profile_uncomplete'
-        if not self.team_waiting():
+        if not self.is_team_approved():
             if self.team_complete():
                 return 'team_waiting'
             else:
@@ -368,7 +368,7 @@ class UserAttendance(models.Model):
 
     def entered_competition(self):
         return self.tshirt_complete() and\
-            self.team_waiting() and\
+            self.is_team_approved() and\
             self.payment_waiting() and\
             self.userprofile.profile_complete()
 
@@ -385,7 +385,7 @@ class UserAttendance(models.Model):
     def team_complete(self):
         return self.team
 
-    def team_waiting(self):
+    def is_team_approved(self):
         return self.team and self.approved_for_team == 'approved'
 
     def payment_complete(self):

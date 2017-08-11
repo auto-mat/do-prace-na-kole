@@ -469,6 +469,7 @@ class LocalAdminTests(TestCase):
 
     def setUp(self):
         super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(User.objects.get(username='local_admin'), settings.AUTHENTICATION_BACKENDS[0])
 
     def test_competition_change_view_different_city(self):

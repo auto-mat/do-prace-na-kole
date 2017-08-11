@@ -25,7 +25,6 @@ from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from .decorators import must_be_competitor
 from .models import Campaign
 from .util import mark_safe_lazy
 
@@ -55,9 +54,8 @@ class CompanyAdminMixin(SuccessMessageMixin):
 
 
 class UserAttendanceViewMixin(object):
-    @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
-        self.user_attendance = kwargs['user_attendance']
+        self.user_attendance = request.user_attendance
         return super(UserAttendanceViewMixin, self).dispatch(request, *args, **kwargs)
 
     def get_object(self):

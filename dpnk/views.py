@@ -79,8 +79,7 @@ from . import results
 from . import util
 from .decorators import (
     GroupRequiredResponseMixin,
-    must_be_approved_for_team,
-    must_be_competitor,
+    MustBeApprovedForTeamMixin,
     must_be_in_phase,
     must_be_owner,
     must_have_team,
@@ -185,7 +184,6 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     @user_attendance_has(
         lambda ua: ua.approved_for_team == 'approved' and ua.team and ua.team.member_count == 1 and ua.team.unapproved_member_count > 0,
         _("Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."))
-    @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
         return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
 
@@ -338,7 +336,6 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
         approve_for_team(self.request, self.user_attendance, "", True, False)
         return super(ConfirmTeamInvitationView, self).form_valid(form)
 
-    @must_be_competitor
     @request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, _(u"Tým nenalezen"), _("Tým nenalezen."))
     def dispatch(self, request, *args, **kwargs):
         initial_email = kwargs['initial_email']
@@ -543,11 +540,8 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
     registration_phase = 'typ_platby'
     template_name = 'registration/payment_result.html'
 
-    def dispatch(self, request, *args, **kwargs):
-        return super(PaymentResult, self).dispatch(request, *args, **kwargs)
-
     @transaction.atomic
-    def get_context_data(self, success, trans_id, session_id, pay_type, error=None, user_attendance=None):
+    def get_context_data(self, success, trans_id, session_id, pay_type, error=None):
         context_data = super(PaymentResult, self).get_context_data()
         logger.info(
             u'Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s (%s)' %
@@ -557,8 +551,8 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
                 session_id,
                 pay_type,
                 error,
-                user_attendance,
-                user_attendance.userprofile.user.username,
+                self.user_attendance,
+                self.user_attendance.userprofile.user.username,
             ),
         )
 
@@ -596,7 +590,7 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
                     'pay_type': pay_type,
                     'trans_id': trans_id,
                     'session_id': session_id,
-                    'user': user_attendance.userprofile.user,
+                    'user': self.user_attendance.userprofile.user,
                     'request': self.request,
                 },
             )
@@ -890,12 +884,10 @@ class ApplicationView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
     registration_phase = "application"
 
 
-class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin, TemplateView):
+class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/team_members.html'
     title = _(u"Výsledky členů týmu")
 
-    @must_be_competitor
-    @must_be_approved_for_team
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
     def dispatch(self, request, *args, **kwargs):
@@ -942,7 +934,6 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin
     success_url = reverse_lazy("competitions")
     competition_types = None
 
-    @must_be_competitor
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
     def dispatch(self, request, *args, **kwargs):
@@ -1052,10 +1043,9 @@ class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
     title = _(u"Vyplňte odpovědi")
     form_class = forms.AnswerForm
 
-    @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
         questionaire_slug = kwargs['questionnaire_slug']
-        self.user_attendance = kwargs['user_attendance']
+        self.user_attendance = request.user_attendance
         self.userprofile = request.user.userprofile
         try:
             self.competition = Competition.objects.get(slug=questionaire_slug)
@@ -1379,13 +1369,12 @@ class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequired
     title = _(u"Znovu odeslat žádost o členství")
     registration_phase = "zmenit_tym"
 
-    @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
         approval_request_mail(request.user_attendance)
         return super(TeamApprovalRequest, self).dispatch(request, *args, **kwargs)
 
 
-class InviteView(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin, FormView):
+class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, FormView):
     template_name = "submenu_team.html"
     form_class = InviteForm
     title = _(u'Pozvětě své kolegy do týmu')
@@ -1396,11 +1385,6 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin, Fo
         context_data = super(InviteView, self).get_context_data(*args, **kwargs)
         context_data['registration_phase'] = self.registration_phase
         return context_data
-
-    @must_be_approved_for_team
-    @must_be_competitor
-    def dispatch(self, request, *args, **kwargs):
-        return super(InviteView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         emails = [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4']]
@@ -1440,7 +1424,7 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin, Fo
         return redirect(invite_success_url or self.success_url)
 
 
-class UpdateTeam(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+class UpdateTeam(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, UpdateView):
     template_name = 'submenu_team.html'
     form_class = TeamAdminForm
     success_url = reverse_lazy('edit_team')
@@ -1453,22 +1437,16 @@ class UpdateTeam(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, L
         context_data['registration_phase'] = self.registration_phase
         return context_data
 
-    @must_be_competitor
-    @must_be_approved_for_team
-    def dispatch(self, request, *args, **kwargs):
-        return super(UpdateTeam, self).dispatch(request, *args, **kwargs)
-
     def get_object(self):
         return self.user_attendance.team
 
 
-class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
+class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/team_admin_members.html'
     registration_phase = "zmenit_tym"
     title = _("Schvalování členů týmu")
 
     @method_decorator(never_cache)
-    @must_be_approved_for_team
     def dispatch(self, request, *args, **kwargs):
         return super(TeamMembers, self).dispatch(request, *args, **kwargs)
 

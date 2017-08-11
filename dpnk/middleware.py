@@ -18,6 +18,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.contrib.gis.db.models.functions import Length
+from django.http import Http404
+from django.utils.translation import ugettext_lazy as _
 
 from .models import Campaign, UserAttendance
 
@@ -25,7 +27,13 @@ from .models import Campaign, UserAttendance
 class UserAttendanceMiddleware:
     def process_request(self, request):
         campaign_slug = request.subdomain
-        if request.user and request.user.is_authenticated:
+
+        try:
+            request.campaign = Campaign.objects.get(slug=campaign_slug)
+        except Campaign.DoesNotExist:
+            raise Http404(_("Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % campaign_slug)
+
+        if request.user and request.user.is_authenticated():
             try:
                 request.user_attendance = UserAttendance.objects.select_related(
                     'campaign',
@@ -40,13 +48,12 @@ class UserAttendanceMiddleware:
                     userprofile__user=request.user,
                     campaign__slug=campaign_slug,
                 )
-                request.campaign = request.user_attendance.campaign
             except UserAttendance.DoesNotExist:
-                request.user_attendance = None
+                if hasattr(request.user, 'userprofile'):
+                    request.user_attendance = UserAttendance.objects.create(
+                        userprofile=request.user.userprofile,
+                        campaign=request.campaign,
+                        approved_for_team='undecided',
+                    )
         else:
             request.user_attendance = None
-
-        try:
-            request.campaign = Campaign.objects.get(slug=campaign_slug)
-        except Campaign.DoesNotExist:
-            request.campaign = None

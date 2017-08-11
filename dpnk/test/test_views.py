@@ -449,6 +449,10 @@ class DistanceTests(TestCase):
 class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'company_competition', 'test_results_data', 'trips']
 
+    def setUp(self):
+        super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+
     @patch('dpnk.views.logger')
     def test_dpnk_competition_results_unknown(self, mock_logger):
         address = reverse('competition_results', kwargs={'competition_slug': 'unexistent_competition'})
@@ -2074,8 +2078,12 @@ class TrackViewTests(ViewsLogon):
             'direction': 'trip_to',
         }
         response = self.client.post('/rest/gpx/', post_data, HTTP_HOST='noncampaign.testserver', format='multipart', follow=True)
-        self.assertJSONEqual(response.content.decode(), {'detail': 'Campaign with this slug not found'})
-        self.assertEqual(response.status_code, 404)
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Kampaň s identifikátorem noncampaign neexistuje. Zadejte prosím správnou adresu.</div>',
+            html=True,
+            status_code=404,
+        )
 
     def test_dpnk_rest_gpx(self):
         with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:

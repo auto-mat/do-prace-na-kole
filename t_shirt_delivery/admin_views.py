@@ -17,10 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from django.contrib.admin.views.decorators import staff_member_required
+from braces.views import StaffuserRequiredMixin
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.utils.decorators import method_decorator
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.edit import FormView
@@ -29,14 +29,11 @@ from .admin_forms import DispatchForm
 from .models import SubsidiaryBox, TeamPackage
 
 
-class DispatchView(FormView):
+class DispatchView(StaffuserRequiredMixin, FormView):
+    raise_exception = True
     success_url = reverse_lazy('dispatch')
     template_name = "dispatch.html"
     form_class = DispatchForm
-
-    @method_decorator(staff_member_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         context = self.get_context_data(form=form)

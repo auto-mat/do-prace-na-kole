@@ -107,6 +107,7 @@ class TestPasswordForms(ViewsLogonMommy):
 
 class TestEmailBackend(TestCase):
     def setUp(self):
+        mommy.make("Campaign", slug='testing-campaign')
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
 
     def test_login_by_email(self):

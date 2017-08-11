@@ -49,10 +49,10 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     @user_attendance_has(lambda ua: not ua.team_complete(), _(u"Velikost trička nemůžete měnit, dokud nemáte zvolený tým."))
     @user_attendance_has(lambda ua: ua.package_shipped(), _(u"Vaše tričko již je na cestě k vám, už se na něj můžete těšit."))
     def dispatch(self, request, *args, **kwargs):
-        if kwargs["user_attendance"].campaign.has_any_tshirt:
+        if request.user_attendance.campaign.has_any_tshirt:
             return super().dispatch(request, *args, **kwargs)
         else:
-            if kwargs["user_attendance"].has_admission_fee():
+            if request.user_attendance.has_admission_fee():
                 return redirect(reverse('typ_platby'))
             else:
                 return redirect(reverse('profil'))

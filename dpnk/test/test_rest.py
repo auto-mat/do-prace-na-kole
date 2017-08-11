@@ -52,7 +52,6 @@ class RestTests(DenormMixin, TestCase):
     def test_gpx_get(self):
         address = reverse("gpxfile-list")
         response = self.client.get(address)
-        print_response(response)
         self.assertContains(
             response,
             '{"id":1,"trip_date":"2010-11-01","direction":"trip_to","file":null,"commuteMode":"bicycle",'
@@ -95,7 +94,12 @@ class RestTests(DenormMixin, TestCase):
                 'file': gpxfile,
             }
             response = self.client.post(address, post_data)
-            self.assertContains(response, '{"detail":"Campaign with this slug not found"}', status_code=404)
+            self.assertContains(
+                response,
+                '<div class="alert alert-danger">Kampaň s identifikátorem testing-campaign-unknown neexistuje. Zadejte prosím správnou adresu.</div>',
+                html=True,
+                status_code=404,
+            )
 
     # TODO: make this working
     # def test_gpx_duplicate_gpx(self):

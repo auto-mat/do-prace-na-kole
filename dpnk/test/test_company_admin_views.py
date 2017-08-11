@@ -109,7 +109,6 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             exposure_date=datetime.date(2010, 10, 10),
         )
         response = self.client.get(reverse('invoices'))
-        print_response(response)
         self.assertContains(
             response,
             '<tr>'

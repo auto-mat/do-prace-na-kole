@@ -19,34 +19,21 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import functools
 
-from braces.views import GroupRequiredMixin
+from braces.views import GroupRequiredMixin, UserPassesTestMixin
 
-from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
-from django.http import Http404
 from django.shortcuts import render
 from django.utils import formats
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from .models import UserAttendance
-
-
-def get_campaign(request):
-    campaign = request.campaign
-    if not campaign:
-        messages.error(request, _("Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % request.subdomain)
-        raise Http404()
-    return campaign
-
 
 def must_be_owner(fn):
     @functools.wraps(fn)
-    @must_be_competitor
     def wrapper(view, request, *args, **kwargs):
-        user_attendance = kwargs['user_attendance']
+        user_attendance = request.user_attendance
         view_object = view.get_object()
         if view_object and not user_attendance == view_object.user_attendance:
             response = render(
@@ -64,47 +51,10 @@ def must_be_owner(fn):
     return wrapper
 
 
-def must_be_approved_for_team(fn):
-    @functools.wraps(fn)
-    @must_be_competitor
-    def wrapper(view, request, *args, **kwargs):
-        user_attendance = kwargs['user_attendance']
-        if not user_attendance.team:
-            response = render(
-                request,
-                view.template_name, {
-                    'fullpage_error_message': _(u"Nemáte zvolený tým"),
-                    'title': _("Není zvolený tým"),
-                },
-                status=403,
-            )
-            response.status_message = "team_not_chosen"
-            return response
-        if user_attendance.approved_for_team == 'approved':
-            return fn(view, request, *args, **kwargs)
-        else:
-            response = render(
-                request,
-                view.template_name,
-                {
-                    'fullpage_error_message':
-                    format_html(
-                        _(u"Vaše členství v týmu {team} nebylo odsouhlaseno. <a href='{address}'>Znovu požádat o ověření členství</a>."),
-                        team=user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi"),
-                    ),
-                    'title': _("Členství v týmu neověřeno"),
-                },
-                status=403,
-            )
-            response.status_message = "not_approved_for_team"
-            return response
-    return wrapper
-
-
 def must_be_company_admin(fn):
     @functools.wraps(fn)
     def wrapper(view, request, *args, **kwargs):
-        campaign = get_campaign(request)
+        campaign = request.campaign
         company_admin = request.user.userprofile.get_company_admin_for_campaign(campaign=campaign)
         if company_admin and company_admin.is_approved():
             kwargs['company_admin'] = company_admin
@@ -135,7 +85,6 @@ def must_be_company_admin(fn):
 
 def must_have_team(fn):
     @functools.wraps(fn)
-    @must_be_competitor
     def wrapped(view, request, user_attendance=None, *args, **kwargs):
         if not user_attendance.team:
             response = render(
@@ -160,7 +109,7 @@ def must_be_in_phase(phase_type):
     def decorator(fn):
         @functools.wraps(fn)
         def wrapped(view, request, *args, **kwargs):
-            campaign = get_campaign(request)
+            campaign = request.campaign
             try:
                 phase = campaign.phase_set.get(phase_type=phase_type)
             except ObjectDoesNotExist:
@@ -186,45 +135,6 @@ def must_be_in_phase(phase_type):
             return response
         return wrapped
     return decorator
-
-
-def must_be_competitor(fn):
-    @functools.wraps(fn)
-    def wrapper(view, request, *args, **kwargs):
-        if 'user_attendance' in kwargs:
-            return fn(view, request, *args, **kwargs)
-
-        if request.user.is_authenticated():
-            user_attendance = request.user_attendance
-            if user_attendance is None:
-                campaign = get_campaign(request)
-                user_attendance = UserAttendance.objects.create(
-                    userprofile=request.user.userprofile,
-                    campaign=campaign,
-                    approved_for_team='undecided',
-                )
-
-            kwargs['user_attendance'] = user_attendance
-            return fn(view, request, *args, **kwargs)
-
-        response = render(
-            request,
-            view.template_name,
-            {
-                'fullpage_error_message':
-                mark_safe(
-                    _(
-                        "V soutěži Do práce na kole nesoutěžíte. "
-                        "Pokud jste firemním koordinátorem, použijte záložku <a href='%s'>Firemní koordinátor</a>."
-                    ) % reverse("company_structure"),
-                ),
-                'title': _("Nedostupná stránka"),
-            },
-            status=403,
-        )
-        response.status_message = "not_competitor"
-        return response
-    return wrapper
 
 
 class FullPageMessageMixin(object):
@@ -257,12 +167,42 @@ class GroupRequiredResponseMixin(FullPageMessageMixin, GroupRequiredMixin):
     error_title = _("Nedostatečné oprávnění")
 
 
+class UserAttendancePassesTestMixin(UserPassesTestMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user_attendance:
+            user_test_result = self.get_test_func()(request.user_attendance)
+        else:
+            user_test_result = False
+
+        if not user_test_result:
+            return self.handle_no_permission(request)
+
+        return super(UserPassesTestMixin, self).dispatch(
+            request, *args, **kwargs,
+        )
+
+
+class MustBeApprovedForTeamMixin(FullPageMessageMixin, UserAttendancePassesTestMixin):
+    error_title = _("Členství v týmu neověřeno")
+
+    def test_func(self, user_attendance):
+        return user_attendance.is_team_approved()
+
+    def get_error_message(self, request):
+        if request.user_attendance.team:
+            return format_html(
+                _(u"Vaše členství v týmu {team} nebylo odsouhlaseno. <a href='{address}'>Znovu požádat o ověření členství</a>."),
+                team=request.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi"),
+            )
+        else:
+            return _(u"Nemáte zvolený tým"),
+
+
 def user_attendance_has(condition, message):
     def decorator(fn):
         @functools.wraps(fn)
-        @must_be_competitor
         def wrapped(view, request, *args, **kwargs):
-            user_attendance = kwargs['user_attendance']
+            user_attendance = request.user_attendance
             if condition(user_attendance):
                 response = render(
                     request,

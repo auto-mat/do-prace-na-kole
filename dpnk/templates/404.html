@@ -9,6 +9,9 @@
 {% block content %}
 <p>
 {% trans "Omlouváme se, ale taková stránka zde neexistuje. Pokud si myslíte, že by zde být měla, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.cz?subject=Neexistující stránka'>kontakt@dopracenakole.cz</a>" %}
+</p><p>
+<div class='alert alert-danger'>{{ exception }}</div>
+</p><p>
 {% if messages %}
    <ul class="messages">
       {% for message in messages %}
