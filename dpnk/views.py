@@ -107,6 +107,7 @@ from .forms import (
 )
 from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
 from .string_lazy import format_lazy, mark_safe_lazy
+from .views_mixins import CampaignFormKwargsMixin, UserAttendanceFormKwargsMixin
 
 logger = logging.getLogger(__name__)
 
@@ -144,12 +145,7 @@ class TitleViewMixin(object):
         return context_data
 
 
-class DPNKLoginView(TitleViewMixin, LoginView):
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['campaign'] = self.campaign
-        return kwargs
-
+class DPNKLoginView(CampaignFormKwargsMixin, TitleViewMixin, LoginView):
     def get_title(self, *args, **kwargs):
         return _("Přihlášení do soutěže %s" % self.campaign)
 
@@ -388,14 +384,9 @@ class RegisterCompanyView(AjaxCreateView):
         }
 
 
-class RegisterSubsidiaryView(UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateView):
+class RegisterSubsidiaryView(CampaignFormKwargsMixin, UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateView):
     form_class = forms.RegisterSubsidiaryForm
     model = models.Subsidiary
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['campaign'] = self.user_attendance.campaign
-        return kwargs
 
     def get_initial(self):
         return {
@@ -525,7 +516,7 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, LoginRequiredMixin, FormV
         return super(ConfirmTeamInvitationView, self).dispatch(request, *args, **kwargs)
 
 
-class PaymentTypeView(RegistrationViewMixin, LoginRequiredMixin, FormView):
+class PaymentTypeView(UserAttendanceFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, FormView):
     template_name = 'registration/payment_type.html'
     title = _(u"Platba")
     registration_phase = "typ_platby"
@@ -567,11 +558,6 @@ class PaymentTypeView(RegistrationViewMixin, LoginRequiredMixin, FormView):
         context['beneficiary_amount'] = self.user_attendance.beneficiary_admission_fee()
         context['prev_url'] = self.prev_url
         return context
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user_attendance'] = self.user_attendance
-        return kwargs
 
     def get_form(self, form_class=PaymentTypeForm):
         form = super(PaymentTypeView, self).get_form(form_class)
@@ -1177,7 +1163,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-class UpdateProfileView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
+class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'submenu_personal.html'
     form_class = ProfileUpdateForm
     model = UserProfile
@@ -1185,11 +1171,6 @@ class UpdateProfileView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     next_url = "zmenit_tym"
     registration_phase = "upravit_profil"
     title = _(u"Osobní údaje")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['campaign'] = self.user_attendance.campaign
-        return kwargs
 
     def get_object(self):
         return self.user_attendance.userprofile
