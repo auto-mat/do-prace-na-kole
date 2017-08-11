@@ -15,7 +15,7 @@ Are you in? This link takes you to a simple pre-filled form.
 {% if not invited %}
 http://{{ inviting.campaign.slug }}.{{ SITE_URL }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email %}
 {% else %}
-http://{{ invited.campaign.slug }}.{{ SITE_URL }}{% url 'zmenit_tym' token=inviting.team.invitation_token initial_email=email %}
+http://{{ invited.campaign.slug }}.{{ SITE_URL }}{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email %}
 {% endif %}
 {% endblock %}
 (If the link isn't working, paste and copy it into your favourite browser.)

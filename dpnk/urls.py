@@ -56,7 +56,7 @@ urlpatterns = [
     url(
         r'^tym/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>[^&]+)/$$',
         views.ConfirmTeamInvitationView.as_view(),
-        name="zmenit_tym",
+        name="change_team_invitation",
     ),
     url(
         r'^registrace/$',
