@@ -37,7 +37,7 @@ from . import models
 from .company_admin_forms import (
     CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
 )
-from .decorators import must_be_company_admin, must_be_in_phase, must_have_team, request_condition
+from .decorators import MustHaveTeamMixin, must_be_company_admin, must_be_in_phase, request_condition
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
 from .string_lazy import format_lazy
@@ -167,17 +167,13 @@ class CompanyAdminApplicationView(TitleViewMixin, CompanyAdminMixin, Registratio
         return ret_val
 
 
-class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, LoginRequiredMixin, UpdateView):
+class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, MustHaveTeamMixin, LoginRequiredMixin, UpdateView):
     template_name = 'submenu_payment.html'
     form_class = CompanyAdminForm
     model = CompanyAdmin
     success_url = 'profil'
     registration_phase = "typ_platby"
     title = _("Chci se stát firemním koordinátorem")
-
-    @must_have_team
-    def dispatch(self, request, *args, **kwargs):
-        return super(CompanyAdminView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompanyAdminView, self).get_context_data(*args, **kwargs)

@@ -83,28 +83,6 @@ def must_be_company_admin(fn):
     return wrapper
 
 
-def must_have_team(fn):
-    @functools.wraps(fn)
-    def wrapped(view, request, user_attendance=None, *args, **kwargs):
-        if not user_attendance.team:
-            response = render(
-                request,
-                view.template_name,
-                {
-                    'fullpage_error_message': mark_safe(_(u"Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse("zmenit_tym")),
-                    'user_attendance': user_attendance,
-                    'title': getattr(view, 'title', _(u"Musíte mít vybraný tým")),
-                    'registration_phase': getattr(view, 'registration_phase', ''),
-                    'form': None,
-                },
-                status=403,
-            )
-            response.status_message = "have_no_team"
-            return response
-        return fn(view, request, user_attendance=user_attendance, *args, **kwargs)
-    return wrapped
-
-
 def must_be_in_phase(phase_type):
     def decorator(fn):
         @functools.wraps(fn)
@@ -182,7 +160,17 @@ class UserAttendancePassesTestMixin(UserPassesTestMixin):
         )
 
 
-class MustBeApprovedForTeamMixin(FullPageMessageMixin, UserAttendancePassesTestMixin):
+class MustHaveTeamMixin(FullPageMessageMixin, UserAttendancePassesTestMixin):
+    error_title = _("Musíte mít vybraný tým")
+
+    def get_error_message(self, request):
+        return mark_safe(_("Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse("zmenit_tym"))
+
+    def test_func(self, user_attendance):
+        return user_attendance.team
+
+
+class MustBeApprovedForTeamMixin(MustHaveTeamMixin, FullPageMessageMixin, UserAttendancePassesTestMixin):
     error_title = _("Členství v týmu neověřeno")
 
     def test_func(self, user_attendance):
@@ -195,7 +183,7 @@ class MustBeApprovedForTeamMixin(FullPageMessageMixin, UserAttendancePassesTestM
                 team=request.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi"),
             )
         else:
-            return _(u"Nemáte zvolený tým"),
+            return super().get_error_message(request)
 
 
 def user_attendance_has(condition, message):

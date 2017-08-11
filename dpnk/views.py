@@ -80,9 +80,9 @@ from . import util
 from .decorators import (
     GroupRequiredResponseMixin,
     MustBeApprovedForTeamMixin,
+    MustHaveTeamMixin,
     must_be_in_phase,
     must_be_owner,
-    must_have_team,
     request_condition,
     user_attendance_has,
 )
@@ -352,14 +352,13 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
         return super(ConfirmTeamInvitationView, self).dispatch(request, *args, **kwargs)
 
 
-class PaymentTypeView(UserAttendanceFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, FormView):
+class PaymentTypeView(UserAttendanceFormKwargsMixin, RegistrationViewMixin, MustHaveTeamMixin, LoginRequiredMixin, FormView):
     template_name = 'registration/payment_type.html'
     title = _(u"Platba")
     registration_phase = "typ_platby"
     next_url = "profil"
     prev_url = "zmenit_triko"
 
-    @must_have_team
     @must_be_in_phase("payment")
     @user_attendance_has(
         lambda ua: ua.payment_status == 'done',
@@ -454,13 +453,9 @@ class PaymentTypeView(UserAttendanceFormKwargsMixin, RegistrationViewMixin, Logi
         return super(PaymentTypeView, self).form_valid(form)
 
 
-class PaymentView(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
+class PaymentView(UserAttendanceViewMixin, MustHaveTeamMixin, LoginRequiredMixin, TemplateView):
     beneficiary = False
     template_name = 'registration/payment.html'
-
-    @must_have_team
-    def dispatch(self, request, *args, **kwargs):
-        return super(PaymentView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(PaymentView, self).get_context_data(**kwargs)
