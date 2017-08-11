@@ -20,12 +20,12 @@
 import datetime
 import logging
 
+from braces.views import LoginRequiredMixin
+
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404, render
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
@@ -46,11 +46,10 @@ from .views import AdmissionsView, RegistrationViewMixin, TitleViewMixin
 logger = logging.getLogger(__name__)
 
 
-class CompanyStructure(TitleViewMixin, TemplateView):
+class CompanyStructure(TitleViewMixin, LoginRequiredMixin, TemplateView):
     template_name = 'company_admin/structure.html'
     title = _("Struktura organizace")
 
-    @method_decorator(login_required)
     @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
@@ -75,13 +74,12 @@ class CompanyStructure(TitleViewMixin, TemplateView):
 class RelatedCompetitionsView(AdmissionsView):
     template_name = "company_admin/related_competitions.html"
 
-    @method_decorator(login_required)
     @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
 
-class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, FormView):
+class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, LoginRequiredMixin, FormView):
     template_name = 'company_admin/select_users_pay_for.html'
     form_class = SelectUsersPayForm
     success_url = reverse_lazy('company_admin_pay_for_users')
@@ -108,7 +106,6 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, FormView):
         logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x, paing_for)))
         return super(SelectUsersPayView, self).form_valid(form)
 
-    @method_decorator(login_required)
     @must_be_company_admin
     @must_be_in_phase("payment")
     @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, _(u"Potvrzování plateb nemáte povoleno"))
@@ -120,14 +117,13 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, FormView):
         return self.success_message % self.confirmed_count
 
 
-class CompanyEditView(TitleViewMixin, UpdateView):
+class CompanyEditView(TitleViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyForm
     model = Company
     success_url = reverse_lazy('company_structure')
     title = _("Změna adresy organizace")
 
-    @method_decorator(login_required)
     @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
@@ -194,7 +190,7 @@ class CompanyAdminApplicationView(TitleViewMixin, CompanyAdminMixin, Registratio
         return ret_val
 
 
-class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, UpdateView):
+class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, LoginRequiredMixin, UpdateView):
     template_name = 'submenu_payment.html'
     form_class = CompanyAdminForm
     model = CompanyAdmin
@@ -202,7 +198,6 @@ class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, UpdateView):
     registration_phase = "typ_platby"
     title = _("Chci se stát firemním koordinátorem")
 
-    @method_decorator(login_required)
     @must_be_competitor
     @must_have_team
     def dispatch(self, request, *args, **kwargs):
@@ -235,7 +230,7 @@ class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, UpdateView):
         return ret_val
 
 
-class EditSubsidiaryView(TitleViewMixin, UpdateView):
+class EditSubsidiaryView(TitleViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = SubsidiaryForm
     success_url = reverse_lazy('company_structure')
@@ -247,7 +242,6 @@ class EditSubsidiaryView(TitleViewMixin, UpdateView):
             'company_admin': self.company_admin,
         }
 
-    @method_decorator(login_required)
     @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
@@ -261,14 +255,13 @@ class CompanyViewException(Exception):
     pass
 
 
-class CompanyCompetitionView(TitleViewMixin, UpdateView):
+class CompanyCompetitionView(TitleViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyCompetitionForm
     model = Competition
     success_url = reverse_lazy('company_admin_competitions')
     title = _("Vypsat/upravit vnitrofiremní soutěž")
 
-    @method_decorator(login_required)
     @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
@@ -300,11 +293,10 @@ class CompanyCompetitionView(TitleViewMixin, UpdateView):
             return {'commute_modes': models.competition.default_commute_modes()}
 
 
-class CompanyCompetitionsShowView(TitleViewMixin, TemplateView):
+class CompanyCompetitionsShowView(TitleViewMixin, LoginRequiredMixin, TemplateView):
     template_name = 'company_admin/competitions.html'
     title = _("Vnitrofiremní soutěže")
 
-    @method_decorator(login_required)
     @must_be_company_admin
     def dispatch(self, request, *args, **kwargs):
         self.company_admin = kwargs['company_admin']
@@ -316,7 +308,7 @@ class CompanyCompetitionsShowView(TitleViewMixin, TemplateView):
         return context_data
 
 
-class InvoicesView(TitleViewMixin, CreateView):
+class InvoicesView(TitleViewMixin, LoginRequiredMixin, CreateView):
     template_name = 'company_admin/create_invoice.html'
     form_class = company_admin_forms.CreateInvoiceForm
     success_url = reverse_lazy('invoices')
@@ -344,7 +336,6 @@ class InvoicesView(TitleViewMixin, CreateView):
         context['invoices'] = self.company_admin.administrated_company.invoice_set.filter(campaign=self.company_admin.campaign)
         return context
 
-    @method_decorator(login_required)
     @must_be_in_phase("invoices")
     @must_be_company_admin
     @request_condition(

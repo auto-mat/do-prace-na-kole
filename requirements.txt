@@ -88,3 +88,4 @@ django-celery-email
 -e git+https://github.com/PetrDlouhy/django-likes.git@develop#egg=django-likes  # For static template tag fix
 social-auth-app-django
 django-fm
+django-braces

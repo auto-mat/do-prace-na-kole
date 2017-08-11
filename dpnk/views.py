@@ -38,13 +38,14 @@ from http.client import HTTPSConnection
 from urllib.parse import urlencode
 
 # Django imports
+from braces.views import LoginRequiredMixin
+
 from class_based_auth_views.views import LoginView
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required as login_required_simple
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -167,7 +168,6 @@ class DPNKLoginView(TitleViewMixin, LoginView):
 
 
 class UserAttendanceViewMixin(object):
-    @method_decorator(login_required_simple)
     @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = kwargs['user_attendance']
@@ -304,7 +304,7 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
             return reverse(self.prev_url)
 
 
-class ChangeTeamView(RegistrationViewMixin, UpdateView):
+class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     form_class = ChangeTeamForm
     template_name = 'registration/change_team.html'
     next_url = 'zmenit_triko'
@@ -347,7 +347,6 @@ class ChangeTeamView(RegistrationViewMixin, UpdateView):
     def get_object(self):
         return self.user_attendance
 
-    @method_decorator(login_required_simple)
     @user_attendance_has(
         lambda ua: ua.approved_for_team == 'approved' and ua.team and ua.team.member_count == 1 and ua.team.unapproved_member_count > 0,
         _("Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."))
@@ -356,7 +355,7 @@ class ChangeTeamView(RegistrationViewMixin, UpdateView):
         return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
 
 
-class RegisterTeamView(UserAttendanceViewMixin, AjaxCreateView):
+class RegisterTeamView(UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateView):
     form_class = forms.RegisterTeamForm
     model = models.Team
 
@@ -389,7 +388,7 @@ class RegisterCompanyView(AjaxCreateView):
         }
 
 
-class RegisterSubsidiaryView(UserAttendanceViewMixin, AjaxCreateView):
+class RegisterSubsidiaryView(UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateView):
     form_class = forms.RegisterSubsidiaryForm
     model = models.Subsidiary
 
@@ -474,7 +473,7 @@ class RegistrationView(TitleViewMixin, SimpleRegistrationView):
         return new_user
 
 
-class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
+class ConfirmTeamInvitationView(RegistrationViewMixin, LoginRequiredMixin, FormView):
     template_name = 'registration/team_invitation.html'
     form_class = forms.ConfirmTeamInvitationForm
     success_url = reverse_lazy('zmenit_tym')
@@ -509,7 +508,6 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
             approve_for_team(self.request, self.user_attendance, "", True, False)
         return super(ConfirmTeamInvitationView, self).form_valid(form)
 
-    @method_decorator(login_required_simple)
     @must_be_competitor
     @request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, _(u"Tým nenalezen"), _("Tým nenalezen."))
     def dispatch(self, request, *args, **kwargs):
@@ -527,14 +525,13 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, FormView):
         return super(ConfirmTeamInvitationView, self).dispatch(request, *args, **kwargs)
 
 
-class PaymentTypeView(RegistrationViewMixin, FormView):
+class PaymentTypeView(RegistrationViewMixin, LoginRequiredMixin, FormView):
     template_name = 'registration/payment_type.html'
     title = _(u"Platba")
     registration_phase = "typ_platby"
     next_url = "profil"
     prev_url = "zmenit_triko"
 
-    @method_decorator(login_required_simple)
     @must_have_team
     @must_be_in_phase("payment")
     @user_attendance_has(
@@ -635,11 +632,10 @@ class PaymentTypeView(RegistrationViewMixin, FormView):
         return super(PaymentTypeView, self).form_valid(form)
 
 
-class PaymentView(UserAttendanceViewMixin, TemplateView):
+class PaymentView(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
     beneficiary = False
     template_name = 'registration/payment.html'
 
-    @method_decorator(login_required_simple)
     @must_have_team
     def dispatch(self, request, *args, **kwargs):
         return super(PaymentView, self).dispatch(request, *args, **kwargs)
@@ -718,11 +714,10 @@ class BeneficiaryPaymentView(PaymentView):
     beneficiary = True
 
 
-class PaymentResult(UserAttendanceViewMixin, TemplateView):
+class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
     registration_phase = 'typ_platby'
     template_name = 'registration/payment_result.html'
 
-    @method_decorator(login_required_simple)
     def dispatch(self, request, *args, **kwargs):
         return super(PaymentResult, self).dispatch(request, *args, **kwargs)
 
@@ -895,7 +890,7 @@ class RidesFormSet(BaseModelFormSet):
         return [form for form in self.forms if form.instance.pk is None]
 
 
-class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, ModelFormSetView):
+class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, LoginRequiredMixin, ModelFormSetView):
     model = Trip
     form_class = forms.TripForm
     formset_class = RidesFormSet
@@ -1015,7 +1010,7 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
             return redirect(reverse(redirect_view[reason]))
 
 
-class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
+class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
     title = _("Podrobný přehled jízd")
     template_name = 'registration/rides_details.html'
     registration_phase = 'profile_view'
@@ -1040,7 +1035,7 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
         return context_data
 
 
-class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, TemplateView):
+class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
     template_name = 'base_generic_form.html'
     title = _('Stav registrace')
     opening_message = _("Před tím, než budete moct zadávat jízdy, bude ještě nutné vyřešit pár věcí:")
@@ -1054,27 +1049,26 @@ class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, Temp
             return super().get(request, *args, **kwargs)
 
 
-class UserAttendanceView(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
+class UserAttendanceView(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
     pass
 
 
-class PackageView(RegistrationViewMixin, TemplateView):
+class PackageView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
     template_name = "registration/package.html"
     title = _(u"Sledování balíčku")
     registration_phase = "zmenit_tym"
 
 
-class ApplicationView(RegistrationViewMixin, TemplateView):
+class ApplicationView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
     template_name = "registration/applications.html"
     title = _("Aplikace")
     registration_phase = "application"
 
 
-class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
+class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/team_members.html'
     title = _(u"Výsledky členů týmu")
 
-    @method_decorator(login_required_simple)
     @must_be_competitor
     @must_be_approved_for_team
     @method_decorator(never_cache)
@@ -1118,12 +1112,11 @@ class CompetitionsRulesView(TitleViewMixin, TemplateView):
         return context_data
 
 
-class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, TemplateView):
+class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin, TemplateView):
     title = _(u"Výsledky soutěží")
     success_url = reverse_lazy("competitions")
     competition_types = None
 
-    @method_decorator(login_required_simple)
     @must_be_competitor
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
@@ -1184,7 +1177,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-class UpdateProfileView(RegistrationViewMixin, UpdateView):
+class UpdateProfileView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'submenu_personal.html'
     form_class = ProfileUpdateForm
     model = UserProfile
@@ -1202,7 +1195,7 @@ class UpdateProfileView(RegistrationViewMixin, UpdateView):
         return self.user_attendance.userprofile
 
 
-class UpdateTrackView(RegistrationViewMixin, UpdateView):
+class UpdateTrackView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'registration/change_track.html'
     form_class = TrackUpdateForm
     model = UserAttendance
@@ -1226,13 +1219,12 @@ def handle_uploaded_file(source, username):
     return u"questionaire/" + filepath.rsplit("/", 1)[1]
 
 
-class QuestionnaireView(TitleViewMixin, TemplateView):
+class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/questionaire.html'
     success_url = reverse_lazy('questionnaire_competitions')
     title = _(u"Vyplňte odpovědi")
     form_class = forms.AnswerForm
 
-    @method_decorator(login_required_simple)
     @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
         questionaire_slug = kwargs['questionnaire_slug']
@@ -1555,19 +1547,18 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         return
 
 
-class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
+class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/request_team_approval.html'
     title = _(u"Znovu odeslat žádost o členství")
     registration_phase = "zmenit_tym"
 
-    @method_decorator(login_required_simple)
     @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
         approval_request_mail(request.user_attendance)
         return super(TeamApprovalRequest, self).dispatch(request, *args, **kwargs)
 
 
-class InviteView(UserAttendanceViewMixin, TitleViewMixin, FormView):
+class InviteView(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin, FormView):
     template_name = "submenu_team.html"
     form_class = InviteForm
     title = _(u'Pozvětě své kolegy do týmu')
@@ -1579,7 +1570,6 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, FormView):
         context_data['registration_phase'] = self.registration_phase
         return context_data
 
-    @method_decorator(login_required_simple)
     @must_be_approved_for_team
     @must_be_competitor
     def dispatch(self, request, *args, **kwargs):
@@ -1623,7 +1613,7 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, FormView):
         return redirect(invite_success_url or self.success_url)
 
 
-class UpdateTeam(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, UpdateView):
+class UpdateTeam(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     template_name = 'submenu_team.html'
     form_class = TeamAdminForm
     success_url = reverse_lazy('edit_team')
@@ -1636,7 +1626,6 @@ class UpdateTeam(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, U
         context_data['registration_phase'] = self.registration_phase
         return context_data
 
-    @method_decorator(login_required_simple)
     @must_be_competitor
     @must_be_approved_for_team
     def dispatch(self, request, *args, **kwargs):
@@ -1646,12 +1635,11 @@ class UpdateTeam(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, U
         return self.user_attendance.team
 
 
-class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, TemplateView):
+class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/team_admin_members.html'
     registration_phase = "zmenit_tym"
     title = _("Schvalování členů týmu")
 
-    @method_decorator(login_required_simple)
     @method_decorator(never_cache)
     @must_be_approved_for_team
     def dispatch(self, request, *args, **kwargs):
@@ -1939,7 +1927,7 @@ class CombinedTracksKMLView(TemplateView):
         return context_data
 
 
-class UpdateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, UpdateView):
+class UpdateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, LoginRequiredMixin, UpdateView):
     form_class = forms.GpxFileForm
     model = models.GpxFile
     template_name = "registration/gpx_file.html"
@@ -1957,7 +1945,7 @@ class UpdateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageM
         return super(UpdateGpxFileView, self).dispatch(request, *args, **kwargs)
 
 
-class CreateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, CreateView):
+class CreateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, LoginRequiredMixin, CreateView):
     form_class = forms.GpxFileForm
     model = models.GpxFile
     template_name = "registration/gpx_file.html"
