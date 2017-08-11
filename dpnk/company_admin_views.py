@@ -43,6 +43,7 @@ from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, Us
 from .string_lazy import format_lazy
 from .util import mark_safe_lazy
 from .views import AdmissionsView, RegistrationViewMixin, TitleViewMixin
+from .views_mixins import CompanyAdminMixin
 logger = logging.getLogger(__name__)
 
 
@@ -131,30 +132,6 @@ class CompanyEditView(TitleViewMixin, LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         return self.company_admin.administrated_company
-
-
-class CompanyAdminMixin(SuccessMessageMixin):
-    success_message = _("Byla vytvořena žádost o funkci firemního koordinátora. Vyčkejte, než dojde ke schválení této funkce.")
-    opening_message = mark_safe_lazy(
-        _(
-            "<p>"
-            "Vaše organizace ještě nemá zvoleného firemního koordinátora. "
-            "</p>"
-            "<p>"
-            "Tato role není pro soutěž povinná, ale usnadní ostatním ostatním kolegům účast v soutěži. "
-            "Hlavní úkol pro firemního koordinátora je pokusit se zaměstnavatelem domluvit, aby uhradil účastnický poplatek za zaměstnance."
-            "</p>"
-            "<p>"
-            "V případě, že zaměstnavatel přislíbí účastnické poplatky uhradit,"
-            "pak firemní koordinátor zajistí hromadnou platbu účastnického poplatku přes fakturu."
-            "Odměnou mu za to budou speciální slevy pro firemní koordinátory."
-            "</p>"
-            "<p>"
-            "Návod jak provést hromadnou platbu, slevy pro koordinátory a další informace pro koordinátory najdete "
-            "<a href='http://www.dopracenakole.cz/firemni-koordinator'>zde</a>."
-            "<p>"
-        ),
-    )
 
 
 class CompanyAdminApplicationView(TitleViewMixin, CompanyAdminMixin, RegistrationView):
