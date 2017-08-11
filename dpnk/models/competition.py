@@ -375,11 +375,6 @@ class Competition(models.Model):
             return False
         if user_attendance.team and self.city.exists() and not self.city.filter(pk=user_attendance.team.subsidiary.city.pk).exists():
             return False
-        if (
-            self.competitor_type == 'questionnaire' and
-            not models.Answer.objects.filter(user_attendance=user_attendance, question__competition=self).exists()
-        ):
-            return False
 
         return True
 
