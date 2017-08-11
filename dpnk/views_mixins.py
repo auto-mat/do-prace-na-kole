@@ -175,16 +175,6 @@ class TitleViewMixin(object):
     def get_title(self, *args, **kwargs):
         return self.title
 
-    def dispatch(self, request, *args, **kwargs):
-        try:
-            if hasattr(self.request, 'user_attendance') and self.request.user_attendance:
-                self.campaign = self.request.user_attendance.campaign
-            else:
-                self.campaign = Campaign.objects.get(slug=request.subdomain)
-        except Campaign.DoesNotExist:
-            self.campaign = None
-        return super().dispatch(request, *args, **kwargs)
-
     def get_opening_message(self, *args, **kwargs):
         if hasattr(self, "opening_message"):
             return self.opening_message
@@ -231,8 +221,20 @@ class UserAttendanceFormKwargsMixin(object):
         return kwargs
 
 
-class CampaignFormKwargsMixin(object):
+class CampaignParameterMixin(object):
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            if hasattr(self.request, 'user_attendance') and self.request.user_attendance:
+                self.campaign = self.request.user_attendance.campaign
+            else:
+                self.campaign = Campaign.objects.get(slug=request.subdomain)
+        except Campaign.DoesNotExist:
+            self.campaign = None
+        return super().dispatch(request, *args, **kwargs)
+
+
+class CampaignFormKwargsMixin(CampaignParameterMixin):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['campaign'] = self.user_attendance.campaign
+        kwargs['campaign'] = self.campaign
         return kwargs

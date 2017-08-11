@@ -109,6 +109,7 @@ from .models import Answer, Campaign, City, Company, Competition, Payment, Quest
 from .string_lazy import format_lazy, mark_safe_lazy
 from .views_mixins import (
     CampaignFormKwargsMixin,
+    CampaignParameterMixin,
     RegistrationMessagesMixin,
     RegistrationViewMixin,
     TitleViewMixin,
@@ -262,7 +263,7 @@ class RegistrationAccessView(TitleViewMixin, FormView):
             return redirect(reverse('registrace', kwargs={'initial_email': email}))
 
 
-class RegistrationView(TitleViewMixin, SimpleRegistrationView):
+class RegistrationView(CampaignParameterMixin, TitleViewMixin, SimpleRegistrationView):
     title = "Registrace soutěžících Do práce na kole"
     template_name = 'base_generic_form.html'
     form_class = RegistrationFormDPNK
@@ -288,10 +289,9 @@ class RegistrationView(TitleViewMixin, SimpleRegistrationView):
                 team = None
         except Team.DoesNotExist:
             team = None
-        campaign = Campaign.objects.get(slug=self.request.subdomain)
         user_attendance = UserAttendance.objects.create(
             userprofile=userprofile,
-            campaign=campaign,
+            campaign=self.campaign,
             team=team,
         )
         if team:
@@ -313,6 +313,7 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, LoginRequiredMixin, FormV
         context['old_team'] = self.user_attendance.team
         context['new_team'] = self.new_team
 
+        # TODO: both of these ches seems to be redundant (UserAttendance.clean should provide this).
         if self.new_team.is_full():
             return {
                 'fullpage_error_message': _('Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo vytvořit jiný tým.'),
@@ -914,7 +915,7 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMix
         return super().get(request, *args, **kwargs)
 
 
-class CompetitionsRulesView(TitleViewMixin, TemplateView):
+class CompetitionsRulesView(CampaignFormKwargsMixin, TitleViewMixin, TemplateView):
     title_base = _("Pravidla soutěží")
 
     def get_title(self, *args, **kwargs):
@@ -926,12 +927,12 @@ class CompetitionsRulesView(TitleViewMixin, TemplateView):
         city_slug = kwargs['city_slug']
         competitions = Competition.objects.filter(
             Q(city__slug=city_slug) | Q(city__isnull=True, company=None),
-            campaign__slug=self.request.subdomain,
+            campaign=self.campaign,
             is_public=True,
         )
         context_data['competitions'] = competitions
         context_data['city_slug'] = city_slug
-        context_data['campaign_slug'] = self.request.subdomain
+        context_data['campaign_slug'] = self.campaign.slug
         return context_data
 
 
