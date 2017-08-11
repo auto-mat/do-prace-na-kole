@@ -19,7 +19,6 @@
 
 from django.conf.urls import url
 from django.contrib.auth import views as django_views
-from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 
 from . import auth
@@ -165,12 +164,12 @@ urlpatterns = [
     ),
     url(
         r'^upravit_profil/$',
-        login_required(views.UpdateProfileView.as_view()),
+        views.UpdateProfileView.as_view(),
         name="upravit_profil",
     ),
     url(
         r'^upravit_trasu/$',
-        login_required(views.UpdateTrackView.as_view()),
+        views.UpdateTrackView.as_view(),
         name="upravit_trasu",
     ),
     url(
