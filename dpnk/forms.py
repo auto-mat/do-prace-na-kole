@@ -41,6 +41,8 @@ from django.utils.translation import string_concat, ugettext_lazy as _
 
 from django_gpxpy import gpx_parse
 
+from initial_field import InitialFieldsMixin
+
 from leaflet.forms.widgets import LeafletWidget
 
 import registration.forms
@@ -584,10 +586,15 @@ class AnswerForm(forms.ModelForm):
         fields = ('choices', 'comment', 'attachment')
 
 
-class ConfirmTeamInvitationForm(SubmitMixin, forms.Form):
+class ConfirmTeamInvitationForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm):
+    initial_fields = ('team', 'campaign')
     question = forms.BooleanField(
         label=_(u"Chci být zařazen do nového týmu"),
     )
+
+    class Meta:
+        model = models.UserAttendance
+        fields = ('team', 'question', 'campaign')
 
 
 class BikeRepairForm(SubmitMixin, forms.ModelForm):

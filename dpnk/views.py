@@ -301,19 +301,24 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, SimpleRegistratio
         return new_user
 
 
-class ConfirmTeamInvitationView(RegistrationViewMixin, LoginRequiredMixin, FormView):
+class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, LoginRequiredMixin, FormView):
     template_name = 'registration/team_invitation.html'
     form_class = forms.ConfirmTeamInvitationForm
     success_url = reverse_lazy('zmenit_tym')
     registration_phase = 'zmenit_tym'
     title = _(u"Pozvánka do týmu")
 
+    def get_initial(self):
+        return {
+            'team': self.new_team,
+            'campaign': self.campaign,
+        }
+
     def get_context_data(self, **kwargs):
         context = super(ConfirmTeamInvitationView, self).get_context_data(**kwargs)
         context['old_team'] = self.user_attendance.team
         context['new_team'] = self.new_team
 
-        # TODO: both of these ches seems to be redundant (UserAttendance.clean should provide this).
         if self.new_team.is_full():
             return {
                 'fullpage_error_message': _('Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo vytvořit jiný tým.'),
@@ -331,10 +336,7 @@ class ConfirmTeamInvitationView(RegistrationViewMixin, LoginRequiredMixin, FormV
         return self.success_url
 
     def form_valid(self, form):
-        if form.cleaned_data['question']:
-            self.user_attendance.team = self.new_team
-            self.user_attendance.save()
-            approve_for_team(self.request, self.user_attendance, "", True, False)
+        approve_for_team(self.request, self.user_attendance, "", True, False)
         return super(ConfirmTeamInvitationView, self).form_valid(form)
 
     @must_be_competitor

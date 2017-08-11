@@ -45,6 +45,7 @@ django-fm==0.2.5
 django-google-tag-manager==0.0.2
 django-gpxpy==0.0.2
 django-import-export==0.5.1
+django-initial-field==0.1.0
 django-ipware==1.1.6
 django-isnull-list-filter==0.1.0
 django-leaflet==0.22.0

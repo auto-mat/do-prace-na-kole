@@ -1134,9 +1134,26 @@ class ViewsTestsLogon(ViewsLogon):
         post_data = {
             "question": "on",
             "submit": "Odeslat",
+            "team": self.user_attendance.team.id,
+            "campaign": self.user_attendance.campaign.id,
         }
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, "Vybrat/změnit tým")
+
+    def test_dpnk_team_invitation_confirmation_unchecked(self):
+        token = self.user_attendance.team.invitation_token
+        email = self.user_attendance.userprofile.user.email
+        address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
+
+        post_data = {
+            "submit": "Odeslat",
+        }
+        response = self.client.post(address, post_data, follow=True)
+        self.assertContains(
+            response,
+            '<span id="error_1_id_question" class="help-block"><strong>Toto pole je vyžadováno.</strong></span>',
+            html=True,
+        )
 
     def test_dpnk_team_invitation_bad_email(self):
         token = self.user_attendance.team.invitation_token
