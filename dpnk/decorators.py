@@ -31,7 +31,15 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from . import util
-from .models import Campaign, UserAttendance
+from .models import UserAttendance
+
+
+def get_campaign(request):
+    campaign = request.campaign
+    if not campaign:
+        messages.error(request, _("Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % request.subdomain)
+        raise Http404()
+    return campaign
 
 
 def must_be_owner(fn):
@@ -96,11 +104,7 @@ def must_be_approved_for_team(fn):
 def must_be_company_admin(fn):
     @functools.wraps(fn)
     def wrapper(view, request, *args, **kwargs):
-        try:
-            campaign = Campaign.objects.get(slug=request.subdomain)
-        except Campaign.DoesNotExist:
-            messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % request.subdomain)
-            raise Http404()
+        campaign = get_campaign(request)
 
         company_admin = util.get_company_admin(request.user, campaign)
         if company_admin:
@@ -157,11 +161,7 @@ def must_be_in_phase(phase_type):
     def decorator(fn):
         @functools.wraps(fn)
         def wrapped(view, request, *args, **kwargs):
-            try:
-                campaign = Campaign.objects.get(slug=request.subdomain)
-            except Campaign.DoesNotExist:
-                messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % request.subdomain)
-                raise Http404()
+            campaign = get_campaign(request)
             try:
                 phase = campaign.phase_set.get(phase_type=phase_type)
             except ObjectDoesNotExist:
@@ -192,18 +192,13 @@ def must_be_in_phase(phase_type):
 def must_be_competitor(fn):
     @functools.wraps(fn)
     def wrapper(view, request, *args, **kwargs):
-        if kwargs.get('user_attendance', None):
+        if 'user_attendance' in kwargs:
             return fn(view, request, *args, **kwargs)
 
         if request.user.is_authenticated():
-            campaign_slug = request.subdomain
             user_attendance = request.user_attendance
             if user_attendance is None:
-                try:
-                    campaign = Campaign.objects.get(slug=campaign_slug)
-                except Campaign.DoesNotExist:
-                    messages.error(request, _(u"Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % campaign_slug)
-                    raise Http404()
+                campaign = get_campaign(request)
                 user_attendance = UserAttendance.objects.create(
                     userprofile=request.user.userprofile,
                     campaign=campaign,

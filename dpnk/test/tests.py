@@ -244,16 +244,18 @@ class PayuTests(ClearCacheMixin, TestCase):
         self.assertEquals(payment.amount, 151)
 
 
-def create_get_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):
+def create_get_request(factory, user_attendance, post_data={}, address="", subdomain="testing-campaign"):
     request = factory.get(address, post_data)
-    request.user = user
+    request.user = user_attendance.userprofile.user
+    request.campaign = user_attendance.campaign
     request.subdomain = subdomain
     return request
 
 
-def create_post_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):
+def create_post_request(factory, user_attendance, post_data={}, address="", subdomain="testing-campaign"):
     request = factory.post(address, post_data)
-    request.user = user
+    request.user = user_attendance.userprofile.user
+    request.campaign = user_attendance.campaign
     request.subdomain = subdomain
     return request
 
@@ -276,7 +278,7 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
             'competitor_type': 'single_user',
             'submit': 'Odeslat',
         }
-        request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
+        request = create_post_request(self.factory, self.user_attendance, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
         self.assertEquals(response.url, reverse('company_admin_competitions'))
         competition = models.Competition.objects.get(
@@ -287,7 +289,7 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
 
         slug = competition.slug
         post_data['name'] = 'testing company competition fixed'
-        request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
+        request = create_post_request(self.factory, self.user_attendance, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug=slug)
         self.assertEquals(response.url, reverse('company_admin_competitions'))
         competition = models.Competition.objects.get(
@@ -303,7 +305,7 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
             'competitor_type': 'single_user',
             'submit': 'Odeslat',
         }
-        request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
+        request = create_post_request(self.factory, self.user_attendance, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
         self.assertContains(response, "<strong>Položka Soutěžní kategorie s touto hodnotou v poli Jméno soutěže již existuje.</strong>", html=True)
 
@@ -311,19 +313,19 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         MAX_COMPETITIONS_PER_COMPANY=0,
     )
     def test_dpnk_company_admin_create_competition_max_competitions(self):
-        request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        request = create_get_request(self.factory, self.user_attendance)
         request.resolver_match = {"url_name": "company_admin_competition"}
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
         self.assertContains(response, "Překročen maximální počet soutěží pro organizaci.")
 
     def test_dpnk_company_admin_create_competition_no_permission(self):
-        request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        request = create_get_request(self.factory, self.user_attendance)
         request.resolver_match = {"url_name": "company_admin_competition"}
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug="FQ-LB")
         self.assertContains(response, "K editování této soutěže nemáte oprávnění.")
 
     def test_dpnk_company_admin_competitions_view(self):
-        request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        request = create_get_request(self.factory, self.user_attendance)
         request.resolver_match = {"url_name": "company_admin_competitions"}
         response = company_admin_views.CompanyCompetitionsShowView.as_view()(request, success=True)
         self.assertContains(response, "Pravidelnost společnosti")
