@@ -195,15 +195,11 @@ class RegisterSubsidiaryForm(AddressForm):
         fields = ('company', 'city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
 
-class RegisterTeamForm(forms.ModelForm):
+class RegisterTeamForm(InitialFieldsMixin, forms.ModelForm):
+    initial_fields = ('campaign',)
     required_css_class = 'required'
     error_css_class = 'error'
 
-    campaign = forms.ModelChoiceField(
-        label=_(u"Kampaň"),
-        queryset=models.Campaign.objects.all(),
-        widget=HiddenInput(),
-    )
     subsidiary = forms.ModelChoiceField(
         queryset=models.Subsidiary.objects.filter(active=True),
     )
@@ -474,14 +470,10 @@ class InviteForm(SubmitMixin, forms.Form):
         return ret_val
 
 
-class TeamAdminForm(SubmitMixin, forms.ModelForm):
+class TeamAdminForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm):
+    initial_fields = ("campaign",)
     required_css_class = 'required'
     error_css_class = 'error'
-    campaign = forms.ModelChoiceField(
-        label=_(u"Kampaň"),
-        queryset=models.Campaign.objects.all(),
-        widget=HiddenInput(),
-    )
 
     class Meta:
         model = models.Team
@@ -806,7 +798,8 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         )
 
 
-class TripForm(forms.ModelForm):
+class TripForm(InitialFieldsMixin, forms.ModelForm):
+    initial_fields = ('direction', 'date')
     distance = CommaFloatField(
         label=_("Vzdálenost (km)"),
         required=False,
@@ -823,12 +816,6 @@ class TripForm(forms.ModelForm):
 
     def clean_user_attendance(self):
         return self.instance.user_attendance or self.initial['user_attendance']
-
-    def clean_direction(self):
-        return self.initial['direction']
-
-    def clean_date(self):
-        return self.initial['date']
 
     def clean(self):
         cleaned_data = super().clean()
@@ -851,15 +838,12 @@ class TripForm(forms.ModelForm):
         fields = ('commute_mode', 'distance', 'direction', 'user_attendance', 'date')
         widgets = {
             'user_attendance': forms.HiddenInput(),
-            'direction': HiddenInput(),
-            'date': HiddenInput(),
             'commute_mode': CommuteModeSelect(),
         }
 
 
-class GpxFileForm(forms.ModelForm):
-    def clean_user_attendance(self):
-        return self.initial['user_attendance']
+class GpxFileForm(InitialFieldsMixin, forms.ModelForm):
+    initial_fields = ('user_attendance',)
 
     def clean_trip_date(self):
         return self.initial['trip_date']
@@ -901,7 +885,6 @@ class GpxFileForm(forms.ModelForm):
         model = models.GpxFile
         fields = ('trip_date', 'direction', 'user_attendance', 'track', 'file')
         widgets = {
-            'user_attendance': HiddenInput(),
             'trip_date': forms.TextInput(attrs={'readonly': 'readonly', 'disabled': 'disabled'}),
             'direction': forms.Select(attrs={'readonly': 'readonly', 'disabled': 'disabled'}),
         }
