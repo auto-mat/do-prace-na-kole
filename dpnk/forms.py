@@ -20,6 +20,10 @@
 import datetime
 import logging
 
+from collections import OrderedDict
+
+from betterforms.multiform import MultiModelForm
+
 from crispy_forms.bootstrap import FieldWithButtons, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Button, Div, Field, HTML, Layout, Submit
@@ -30,7 +34,6 @@ from django.contrib.auth.models import User
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
-from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models import Q
 from django.forms.widgets import HiddenInput
 from django.http import Http404
@@ -99,9 +102,15 @@ class PrevNextMixin(object):
         return super(PrevNextMixin, self).__init__(*args, **kwargs)
 
 
-class AuthenticationFormDPNK(AuthenticationForm):
+class CampaignMixin(object):
+    """ set self.campaign parameter from kwargs """
     def __init__(self, *args, **kwargs):
-        campaign = kwargs.pop('campaign')
+        self.campaign = kwargs.pop('campaign', None)
+        return super().__init__(*args, **kwargs)
+
+
+class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
+    def __init__(self, *args, **kwargs):
         ret_val = super(AuthenticationFormDPNK, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -126,7 +135,7 @@ class AuthenticationFormDPNK(AuthenticationForm):
                     'Ještě nemáte účet? <a href="{%% url "registration_access" %%}">Registrujte se</a> do soutěže %(campaign)s.'
                     '<br/><br/>'
                 ) % {
-                    'campaign': campaign,
+                    'campaign': self.campaign,
                 },
             ),
         )
@@ -152,7 +161,7 @@ class RegisterCompanyForm(forms.ModelForm):
         fields = ('name', 'ico')
 
 
-class AddressForm(forms.ModelForm):
+class AddressForm(CampaignMixin, forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
@@ -172,10 +181,9 @@ class AddressForm(forms.ModelForm):
         return address_psc
 
     def __init__(self, *args, **kwargs):
-        campaign = kwargs.pop('campaign', None)
         super(AddressForm, self).__init__(*args, **kwargs)
         if 'city' in self.fields:
-            self.fields['city'].queryset = models.City.objects.filter(cityincampaign__campaign=campaign)
+            self.fields['city'].queryset = models.City.objects.filter(cityincampaign__campaign=self.campaign)
 
     class Meta:
         model = models.Subsidiary
@@ -690,55 +698,38 @@ class TrackUpdateForm(SubmitMixin, forms.ModelForm):
         self.fields['track'].widget = UserLeafletWidget(user_attendance=instance)
 
 
-class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
-    no_prev = True
+class UserUpdateForm(CampaignMixin, forms.ModelForm):
+    def clean_email(self):
+        """
+        Validate that the email is not already in use.
+        """
+        if User.objects.filter(email__iexact=self.cleaned_data['email']).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError(_("Tento e-mail již je v našem systému zanesen."))
+        else:
+            return self.cleaned_data['email']
 
-    first_name = forms.CharField(
-        label=_(u"Jméno"),
-        max_length=30,
-        required=True,
-    )
-    last_name = forms.CharField(
-        label=_(u"Příjmení"),
-        max_length=30,
-        required=True,
-    )
+    def __init__(self, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
+        self.fields['email'].required = True
+        return ret_val
 
-    email = forms.EmailField(
-        label=_("E-mail"),
-        help_text=_(u"E-mail slouží jako přihlašovací jméno"),
-        required=True,
-    )
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'first_name',
+            'last_name',
+        )
+        help_texts = {
+            'email': _("E-mail slouží jako přihlašovací jméno"),
+        }
+
+
+class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
     dont_show_name = forms.BooleanField(
         label=_(u"Nechci, aby moje skutečné jméno bylo veřejně zobrazováno"),
         required=False,
     )
-    personal_data_opt_in = forms.BooleanField(
-        required=True,
-    )
-    mailing_opt_in = forms.ChoiceField(
-        label=_(u"Soutěžní e-maily"),
-        help_text=_(u"Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
-        choices=[
-            (True, _("Přeji si dostávat e-mailem informace o akcích, událostech a dalších záležitostech souvisejících se soutěží.")),
-            (False, _("Nechci dostávat e-maily (a beru na vědomí, že mi mohou uniknout důležité informace o průběhu soutěže).")),
-        ],
-        widget=forms.RadioSelect(),
-    )
-    telephone = forms.CharField(
-        label=_(u"Telefon"),
-        validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
-        help_text=_("Telefonní číslo slouží jako kontakt pro help desk a pro kurýra, který vám přiveze soutěžní triko."),
-        max_length=30,
-    )
-
-    def save(self, *args, **kwargs):
-        ret_val = super(ProfileUpdateForm, self).save(*args, **kwargs)
-        self.instance.user.email = self.cleaned_data.get('email')
-        self.instance.user.first_name = self.cleaned_data.get('first_name')
-        self.instance.user.last_name = self.cleaned_data.get('last_name')
-        self.instance.user.save()
-        return ret_val
 
     def clean_nickname(self):
         nickname = self.cleaned_data['nickname']
@@ -750,15 +741,6 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
         else:
             return None
 
-    def clean_email(self):
-        """
-        Validate that the email is not already in use.
-        """
-        if User.objects.filter(email__iexact=self.cleaned_data['email']).exclude(pk=self.instance.user.pk).exists():
-            raise forms.ValidationError(_(u"Tento e-mail již je v našem systému zanesen."))
-        else:
-            return self.cleaned_data['email']
-
     def clean_sex(self):
         if self.cleaned_data['sex'] == 'unknown':
             raise forms.ValidationError(_(u"Zadejte pohlaví"))
@@ -766,36 +748,46 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
             return self.cleaned_data['sex']
 
     def __init__(self, *args, **kwargs):
-        campaign = kwargs.pop('campaign')
-        ret_val = super(ProfileUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['email'].initial = self.instance.user.email
-        self.fields['first_name'].initial = self.instance.user.first_name
-        self.fields['last_name'].initial = self.instance.user.last_name
+        ret_val = super().__init__(*args, **kwargs)
         self.fields['dont_show_name'].initial = self.instance.nickname is not None
         self.fields['mailing_opt_in'].initial = None
+        self.fields['mailing_opt_in'].choices = [
+            (True, _("Přeji si dostávat e-mailem informace o akcích, událostech a dalších záležitostech souvisejících se soutěží.")),
+            (False, _("Nechci dostávat e-maily (a beru na vědomí, že mi mohou uniknout důležité informace o průběhu soutěže).")),
+        ]
+        self.fields['personal_data_opt_in'].required = True
         self.fields['personal_data_opt_in'].label = _(
             "Souhlasím se zpracováním osobních údajů podle "
             "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
             "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>.",
-        ) % campaign
+        ) % self.campaign
         return ret_val
 
     class Meta:
         model = models.UserProfile
         fields = (
-            'sex',
-            'first_name',
-            'last_name',
             'dont_show_name',
             'nickname',
+            'sex',
             'occupation',
             'age_group',
             'mailing_opt_in',
-            'email',
             'language',
             'telephone',
             'personal_data_opt_in',
         )
+        widgets = {
+            'mailing_opt_in': forms.RadioSelect(),
+        }
+
+
+class ProfileUpdateForm(PrevNextMixin, MultiModelForm):
+    no_prev = True
+
+    form_classes = OrderedDict([
+        ('user', UserUpdateForm),
+        ('userprofile', UserProfileUpdateForm),
+    ])
 
 
 class TripForm(InitialFieldsMixin, forms.ModelForm):

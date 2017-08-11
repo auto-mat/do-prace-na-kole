@@ -21,6 +21,7 @@ django-admin-view-permission==1.1
 -e git+https://github.com/PetrDlouhy/django-advanced-filters.git@508b9bb803100a2ed002b75b0e09828626c1794d#egg=django_advanced_filters
 django-appconf==1.0.2
 django-author==0.4.5
+django-betterforms==1.1.4
 django-bleach==0.3.0
 django-bootstrap3==8.2.3
 django-braces==1.4.0

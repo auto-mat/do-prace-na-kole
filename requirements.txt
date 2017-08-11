@@ -90,3 +90,4 @@ social-auth-app-django
 django-fm
 django-braces
 django-initial-field
+django-betterforms

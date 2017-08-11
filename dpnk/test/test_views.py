@@ -1191,16 +1191,16 @@ class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_update_profile_view(self):
         util.rebuild_denorm_models(models.Team.objects.filter(pk=2))
         post_data = {
-            'sex': 'male',
-            'first_name': 'Testing',
-            'last_name': 'Name',
-            'nickname': 'My super nick',
-            'mailing_opt_in': 'True',
-            'email': 'testing@email.cz',
-            'language': 'cs',
-            'telephone': '111222333',
-            'dont_show_name': True,
-            'personal_data_opt_in': 'True',
+            'user-email': 'testing@email.cz',
+            'user-first_name': 'Testing',
+            'user-last_name': 'Name',
+            'userprofile-dont_show_name': True,
+            'userprofile-language': 'cs',
+            'userprofile-mailing_opt_in': 'True',
+            'userprofile-nickname': 'My super nick',
+            'userprofile-personal_data_opt_in': 'True',
+            'userprofile-sex': 'male',
+            'userprofile-telephone': '111222333',
             'next': 'Další',
         }
         address = reverse('upravit_profil')
@@ -1210,7 +1210,7 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_update_profile_view_no_nick(self):
         post_data = {
-            'dont_show_name': True,
+            'userprofile-dont_show_name': True,
             'next': 'Další',
         }
         address = reverse('upravit_profil')
@@ -1219,7 +1219,7 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_update_profile_view_no_sex(self):
         post_data = {
-            'sex': 'unknown',
+            'userprofile-sex': 'unknown',
             'next': 'Další',
         }
         address = reverse('upravit_profil')
@@ -1228,7 +1228,7 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_update_profile_view_email_exists(self):
         post_data = {
-            'email': 'test2@test.cz',
+            'user-email': 'test2@test.cz',
             'next': 'Další',
         }
         address = reverse('upravit_profil')

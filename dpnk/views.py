@@ -227,9 +227,7 @@ class RegisterSubsidiaryView(CampaignFormKwargsMixin, UserAttendanceViewMixin, L
     model = models.Subsidiary
 
     def get_initial(self):
-        return {
-            'company': models.Company.objects.get(pk=self.kwargs['company_id']),
-        }
+        return {'company': models.Company.objects.get(pk=self.kwargs['company_id'])}
 
     def get_success_result(self):
         return {
@@ -1012,8 +1010,15 @@ class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginReq
     registration_phase = "upravit_profil"
     title = _(u"Osobní údaje")
 
-    def get_object(self):
-        return self.user_attendance.userprofile
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update(
+            instance={
+                'user': self.user_attendance.userprofile.user,
+                'userprofile': self.user_attendance.userprofile,
+            },
+        )
+        return kwargs
 
 
 class UpdateTrackView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
@@ -1699,7 +1704,7 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
         return context_data
 
 
-class BikeRepairView(TitleViewMixin, CreateView):
+class BikeRepairView(CampaignParameterMixin, TitleViewMixin, CreateView):
     template_name = 'base_generic_form.html'
     form_class = forms.BikeRepairForm
     success_url = 'bike_repair'
@@ -1708,10 +1713,7 @@ class BikeRepairView(TitleViewMixin, CreateView):
     title = _("Cykloservis")
 
     def get_initial(self):
-        campaign = Campaign.objects.get(slug=self.request.subdomain)
-        return {
-            'campaign': campaign,
-        }
+        return {'campaign': self.campaign}
 
     def form_valid(self, form):
         super(BikeRepairView, self).form_valid(form)
