@@ -423,8 +423,7 @@ class UserAttendance(models.Model):
     def related_company_admin(self):
         """ Get company coordinator profile for this user attendance """
         try:
-            ca = CompanyAdmin.objects.get(userprofile=self.userprofile, campaign=self.campaign)
-            return ca
+            return CompanyAdmin.objects.get(userprofile=self.userprofile, campaign=self.campaign)
         except CompanyAdmin.DoesNotExist:
             return None
 
