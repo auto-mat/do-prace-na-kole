@@ -25,7 +25,6 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.http import Http404
-from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import formats
 from django.utils.html import format_html
@@ -228,11 +227,34 @@ def must_be_competitor(fn):
     return wrapper
 
 
-class GroupRequiredResponseMixin(GroupRequiredMixin):
+class FullPageMessageMixin(object):
+    def get_error_message(self, request):
+        return self.error_message
+
+    def get_error_title(self, request):
+        return self.error_title
+
+    def get_template_name(self):
+        return self.template_name
+
     def handle_no_permission(self, request):
         if request.user.is_authenticated():
-            return HttpResponse(_("<div class='text-warning'>Pro přístup k této stránce musíte být ve skupině %s</div>") % self.group_required)
+            return render(
+                request,
+                self.get_template_name(),
+                {
+                    'fullpage_error_message': self.get_error_message(request),
+                    'title': self.get_error_title(request),
+                },
+                status=403,
+            )
         return super().handle_no_permission(request)
+
+
+class GroupRequiredResponseMixin(FullPageMessageMixin, GroupRequiredMixin):
+    def get_error_message(self, request):
+        return _("Pro přístup k této stránce musíte být ve skupině %s") % self.group_required
+    error_title = _("Nedostatečné oprávnění")
 
 
 def user_attendance_has(condition, message):
