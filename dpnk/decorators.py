@@ -30,7 +30,6 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from . import util
 from .models import UserAttendance
 
 
@@ -105,9 +104,8 @@ def must_be_company_admin(fn):
     @functools.wraps(fn)
     def wrapper(view, request, *args, **kwargs):
         campaign = get_campaign(request)
-
-        company_admin = util.get_company_admin(request.user, campaign)
-        if company_admin:
+        company_admin = request.user.userprofile.get_company_admin_for_campaign(campaign=campaign)
+        if company_admin and company_admin.is_approved():
             kwargs['company_admin'] = company_admin
             return fn(view, request, *args, **kwargs)
 

@@ -26,7 +26,6 @@ import createsend
 
 from django.conf import settings
 
-from . import util
 logger = logging.getLogger(__name__)
 
 
@@ -84,11 +83,12 @@ def get_custom_fields(user_attendance):
     team_member_count = user_attendance.team_member_count()
     mailing_approval = user_attendance.userprofile.mailing_opt_in and user_attendance.userprofile.personal_data_opt_in
 
-    company_admin = util.get_company_admin(user, user_attendance.campaign) is not None
+    company_admin = user_attendance.related_company_admin
+    company_admin_approved = company_admin.company_admin_approved if company_admin else False
 
     custom_fields = [
         OrderedDict((('Key', "Mesto"), ('Value', city))),
-        OrderedDict((('Key', "Firemni_spravce"), ('Value', company_admin))),
+        OrderedDict((('Key', "Firemni_spravce"), ('Value', company_admin_approved))),
         OrderedDict((('Key', "Stav_platby"), ('Value', payment_status))),
         OrderedDict((('Key', "Aktivni"), ('Value', user.is_active))),
         OrderedDict((('Key', "Auth_token"), ('Value', user.auth_token.key))),
