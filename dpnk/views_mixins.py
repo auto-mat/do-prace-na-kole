@@ -25,7 +25,6 @@ from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Campaign
 from .util import mark_safe_lazy
 
 
@@ -223,13 +222,7 @@ class UserAttendanceFormKwargsMixin(object):
 
 class CampaignParameterMixin(object):
     def dispatch(self, request, *args, **kwargs):
-        try:
-            if hasattr(self.request, 'user_attendance') and self.request.user_attendance:
-                self.campaign = self.request.user_attendance.campaign
-            else:
-                self.campaign = Campaign.objects.get(slug=request.subdomain)
-        except Campaign.DoesNotExist:
-            self.campaign = None
+        self.campaign = self.request.campaign
         return super().dispatch(request, *args, **kwargs)
 
 
