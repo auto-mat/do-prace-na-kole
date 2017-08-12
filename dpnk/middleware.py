@@ -31,7 +31,10 @@ class UserAttendanceMiddleware:
         try:
             request.campaign = Campaign.objects.get(slug=campaign_slug)
         except Campaign.DoesNotExist:
-            raise Http404(_("Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % campaign_slug)
+            if '/admin/' not in request.path:  # We want to make admin accessible to be able to set campaigns.
+                raise Http404(_("Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % campaign_slug)
+            else:
+                request.campaign = None
 
         if request.user and request.user.is_authenticated():
             try:
@@ -49,7 +52,7 @@ class UserAttendanceMiddleware:
                     campaign__slug=campaign_slug,
                 )
             except UserAttendance.DoesNotExist:
-                if hasattr(request.user, 'userprofile'):
+                if hasattr(request.user, 'userprofile') and request.campaign:
                     request.user_attendance = UserAttendance.objects.create(
                         userprofile=request.user.userprofile,
                         campaign=request.campaign,
