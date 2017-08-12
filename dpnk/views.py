@@ -80,9 +80,9 @@ from . import util
 from .decorators import (
     GroupRequiredResponseMixin,
     MustBeApprovedForTeamMixin,
+    MustBeOwner,
     MustHaveTeamMixin,
     must_be_in_phase,
-    must_be_owner,
     request_condition,
     user_attendance_has,
 )
@@ -114,6 +114,7 @@ from .views_mixins import (
     RegistrationViewMixin,
     TitleViewMixin,
     UserAttendanceFormKwargsMixin,
+    UserAttendanceParameterMixin,
     UserAttendanceViewMixin,
 )
 
@@ -1419,7 +1420,7 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamM
         return redirect(invite_success_url or self.success_url)
 
 
-class UpdateTeam(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, UpdateView):
+class UpdateTeam(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, UpdateView):
     template_name = 'submenu_team.html'
     form_class = TeamAdminForm
     success_url = reverse_lazy('edit_team')
@@ -1725,7 +1726,7 @@ class CombinedTracksKMLView(TemplateView):
         return context_data
 
 
-class UpdateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, LoginRequiredMixin, UpdateView):
+class UpdateGpxFileView(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, MustBeOwner, LoginRequiredMixin, UpdateView):
     form_class = forms.GpxFileForm
     model = models.GpxFile
     template_name = "registration/gpx_file.html"
@@ -1738,12 +1739,8 @@ class UpdateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageM
     def get_object(self, queryset=None):
         return get_object_or_404(models.GpxFile, id=self.kwargs['id'])
 
-    @must_be_owner
-    def dispatch(self, request, *args, **kwargs):
-        return super(UpdateGpxFileView, self).dispatch(request, *args, **kwargs)
 
-
-class CreateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageMixin, LoginRequiredMixin, CreateView):
+class CreateGpxFileView(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, LoginRequiredMixin, CreateView):
     form_class = forms.GpxFileForm
     model = models.GpxFile
     template_name = "registration/gpx_file.html"
@@ -1762,7 +1759,3 @@ class CreateGpxFileView(TitleViewMixin, UserAttendanceViewMixin, SuccessMessageM
             'trip_date': self.kwargs['date'],
             'track': track,
         }
-
-    @must_be_owner
-    def dispatch(self, request, *args, **kwargs):
-        return super(CreateGpxFileView, self).dispatch(request, *args, **kwargs)

@@ -53,17 +53,19 @@ class CompanyAdminMixin(SuccessMessageMixin):
     )
 
 
-class UserAttendanceViewMixin(object):
+class UserAttendanceParameterMixin(object):
     def dispatch(self, request, *args, **kwargs):
         self.user_attendance = request.user_attendance
-        return super(UserAttendanceViewMixin, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
+
+class UserAttendanceViewMixin(UserAttendanceParameterMixin):
     def get_object(self):
         if hasattr(self, 'user_attendance'):
             return self.user_attendance
 
 
-class RegistrationMessagesMixin(UserAttendanceViewMixin):
+class RegistrationMessagesMixin(UserAttendanceParameterMixin):
     def get(self, request, *args, **kwargs):  # noqa
         ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
 

@@ -30,27 +30,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 
-def must_be_owner(fn):
-    @functools.wraps(fn)
-    def wrapper(view, request, *args, **kwargs):
-        user_attendance = request.user_attendance
-        view_object = view.get_object()
-        if view_object and not user_attendance == view_object.user_attendance:
-            response = render(
-                request,
-                view.template_name,
-                {
-                    'fullpage_error_message': _(u"Nemůžete vidět cizí objekt"),
-                    'title': _("Chybí oprávnění"),
-                },
-                status=403,
-            )
-            response.status_message = "not_owner"
-            return response
-        return fn(view, request, *args, **kwargs)
-    return wrapper
-
-
 def must_be_company_admin(fn):
     @functools.wraps(fn)
     def wrapper(view, request, *args, **kwargs):
@@ -167,7 +146,7 @@ class MustHaveTeamMixin(FullPageMessageMixin, UserAttendancePassesTestMixin):
         return mark_safe(_("Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse("zmenit_tym"))
 
     def test_func(self, user_attendance):
-        return user_attendance.team
+        return user_attendance.team is not None
 
 
 class MustBeApprovedForTeamMixin(MustHaveTeamMixin, FullPageMessageMixin, UserAttendancePassesTestMixin):
@@ -184,6 +163,15 @@ class MustBeApprovedForTeamMixin(MustHaveTeamMixin, FullPageMessageMixin, UserAt
             )
         else:
             return super().get_error_message(request)
+
+
+class MustBeOwner(FullPageMessageMixin, UserAttendancePassesTestMixin):
+    error_message = _("Nemůžete vidět cizí objekt")
+    error_title = _("Chybí oprávnění")
+
+    def test_func(self, user_attendance):
+        view_object = self.get_object()
+        return view_object and user_attendance == view_object.user_attendance
 
 
 def user_attendance_has(condition, message):
