@@ -29,22 +29,3 @@ class TestUserProfile(TestCase):
         """
         userprofile = mommy.make('UserProfile', user__first_name="Foo", user__last_name="Name")
         self.assertEqual(str(userprofile), "Foo Name")
-
-
-class TestGetCompanyAdminForCampaign(TestCase):
-    def test_none(self):
-        """
-        Test that get_company_admin_for_campaign return None if no associated CompanyAdmin
-        """
-        campaign = mommy.make('campaign')
-        userprofile = mommy.make('UserProfile', user__first_name="Foo", user__last_name="Name")
-        self.assertEqual(userprofile.get_company_admin_for_campaign(campaign), None)
-
-    def test_return(self):
-        """
-        Test that get_company_admin_for_campaign function
-        """
-        campaign = mommy.make('campaign')
-        userprofile = mommy.make('UserProfile', user__first_name="Foo", user__last_name="Name")
-        company_admin = mommy.make('CompanyAdmin', userprofile=userprofile, campaign=campaign)
-        self.assertEqual(userprofile.get_company_admin_for_campaign(campaign), company_admin)

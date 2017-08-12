@@ -59,6 +59,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             team__subsidiary__company__address_city="Foo city",
             team__subsidiary__company__name="Foo name",
             team__subsidiary__company__ico=1234234,
+            team__campaign=testing_campaign,
         )
         mommy.make(
             "CompanyAdmin",
@@ -74,6 +75,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             date_from="2010-1-1",
             date_to="2020-1-1",
         )
+        self.user_attendance.save()
         self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
 
     def test_get_blank(self):
@@ -147,6 +149,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             pay_type="fc",
             user_attendance__team__subsidiary__company=self.user_attendance.team.subsidiary.company,
             user_attendance__campaign=testing_campaign,
+            user_attendance__team__campaign=testing_campaign,
             user_attendance__userprofile__user__first_name="Foo",
             user_attendance__userprofile__user__last_name="User",
             amount=123,
@@ -170,6 +173,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             pay_type="fc",
             user_attendance__team__subsidiary__company=self.user_attendance.team.subsidiary.company,
             user_attendance__campaign=testing_campaign,
+            user_attendance__team__campaign=testing_campaign,
             user_attendance__userprofile__user__first_name="Foo",
             user_attendance__userprofile__user__last_name="User",
             amount=123,

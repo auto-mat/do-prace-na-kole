@@ -24,8 +24,9 @@ from braces.views import LoginRequiredMixin
 
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, render
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
@@ -37,24 +38,17 @@ from . import models
 from .company_admin_forms import (
     CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
 )
-from .decorators import MustHaveTeamMixin, must_be_company_admin, must_be_in_phase, request_condition
+from .decorators import MustBeCompanyAdmin, MustHaveTeamMixin, must_be_in_phase, request_condition
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
-from .string_lazy import format_lazy
-from .util import mark_safe_lazy
 from .views import AdmissionsView, RegistrationViewMixin, TitleViewMixin
 from .views_mixins import CompanyAdminMixin
 logger = logging.getLogger(__name__)
 
 
-class CompanyStructure(TitleViewMixin, LoginRequiredMixin, TemplateView):
+class CompanyStructure(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, TemplateView):
     template_name = 'company_admin/structure.html'
     title = _("Struktura organizace")
-
-    @must_be_company_admin
-    def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(CompanyStructure, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompanyStructure, self).get_context_data(*args, **kwargs)
@@ -72,15 +66,11 @@ class CompanyStructure(TitleViewMixin, LoginRequiredMixin, TemplateView):
         return context_data
 
 
-class RelatedCompetitionsView(AdmissionsView):
+class RelatedCompetitionsView(MustBeCompanyAdmin, AdmissionsView):
     template_name = "company_admin/related_competitions.html"
 
-    @must_be_company_admin
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
-
-class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, LoginRequiredMixin, FormView):
+class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, FormView):
     template_name = 'company_admin/select_users_pay_for.html'
     form_class = SelectUsersPayForm
     success_url = reverse_lazy('company_admin_pay_for_users')
@@ -107,28 +97,21 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, LoginRequiredMixin
         logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x, paing_for)))
         return super(SelectUsersPayView, self).form_valid(form)
 
-    @must_be_company_admin
     @must_be_in_phase("payment")
     @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, _(u"Potvrzování plateb nemáte povoleno"))
     def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
         return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
 
     def get_success_message(self, cleaned_data):
         return self.success_message % self.confirmed_count
 
 
-class CompanyEditView(TitleViewMixin, LoginRequiredMixin, UpdateView):
+class CompanyEditView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyForm
     model = Company
     success_url = reverse_lazy('company_structure')
     title = _("Změna adresy organizace")
-
-    @must_be_company_admin
-    def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(CompanyEditView, self).dispatch(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
         return self.company_admin.administrated_company
@@ -202,7 +185,7 @@ class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, MustHaveTeamMix
         return ret_val
 
 
-class EditSubsidiaryView(TitleViewMixin, LoginRequiredMixin, UpdateView):
+class EditSubsidiaryView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = SubsidiaryForm
     success_url = reverse_lazy('company_structure')
@@ -214,11 +197,6 @@ class EditSubsidiaryView(TitleViewMixin, LoginRequiredMixin, UpdateView):
             'company_admin': self.company_admin,
         }
 
-    @must_be_company_admin
-    def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(EditSubsidiaryView, self).dispatch(request, *args, **kwargs)
-
     def get_queryset(self):
         return super(EditSubsidiaryView, self).get_queryset().filter(company=self.company_admin.administrated_company)
 
@@ -227,17 +205,12 @@ class CompanyViewException(Exception):
     pass
 
 
-class CompanyCompetitionView(TitleViewMixin, LoginRequiredMixin, UpdateView):
+class CompanyCompetitionView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyCompetitionForm
     model = Competition
     success_url = reverse_lazy('company_admin_competitions')
     title = _("Vypsat/upravit vnitrofiremní soutěž")
-
-    @must_be_company_admin
-    def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(CompanyCompetitionView, self).dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         try:
@@ -265,14 +238,9 @@ class CompanyCompetitionView(TitleViewMixin, LoginRequiredMixin, UpdateView):
             return {'commute_modes': models.competition.default_commute_modes()}
 
 
-class CompanyCompetitionsShowView(TitleViewMixin, LoginRequiredMixin, TemplateView):
+class CompanyCompetitionsShowView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, TemplateView):
     template_name = 'company_admin/competitions.html'
     title = _("Vnitrofiremní soutěže")
-
-    @must_be_company_admin
-    def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(CompanyCompetitionsShowView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context_data = super(CompanyCompetitionsShowView, self).get_context_data(**kwargs)
@@ -280,7 +248,7 @@ class CompanyCompetitionsShowView(TitleViewMixin, LoginRequiredMixin, TemplateVi
         return context_data
 
 
-class InvoicesView(TitleViewMixin, LoginRequiredMixin, CreateView):
+class InvoicesView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, CreateView):
     template_name = 'company_admin/create_invoice.html'
     form_class = company_admin_forms.CreateInvoiceForm
     success_url = reverse_lazy('invoices')
@@ -309,17 +277,16 @@ class InvoicesView(TitleViewMixin, LoginRequiredMixin, CreateView):
         return context
 
     @must_be_in_phase("invoices")
-    @must_be_company_admin
-    @request_condition(
-        lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(),
-        mark_safe_lazy(
-            format_lazy(
-                _(u"Před vystavením faktury prosím <a href='{addr}'>vyplňte údaje o vaší firmě</a>"),
-                addr=reverse_lazy('edit_company'),
-            ),
-        )
-    )
-    @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, _(u"Vystavování faktur nemáte povoleno"))
     def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(InvoicesView, self).dispatch(request, *args, **kwargs)
+        company_admin = request.user_attendance.related_company_admin
+        if company_admin and not company_admin.administrated_company.has_filled_contact_information():
+            return self.fullpage_error_response(
+                request,
+                mark_safe(_("Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>") % reverse('edit_company')),
+            )
+        if company_admin and not company_admin.can_confirm_payments:
+            return self.fullpage_error_response(
+                request,
+                _("Vystavování faktur nemáte povoleno"),
+            )
+        return super().dispatch(request, *args, **kwargs)

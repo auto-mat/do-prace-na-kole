@@ -32,38 +32,6 @@ from django.utils.translation import ugettext_lazy as _
 from .string_lazy import format_lazy, mark_safe_lazy
 
 
-def must_be_company_admin(fn):
-    @functools.wraps(fn)
-    def wrapper(view, request, *args, **kwargs):
-        campaign = request.campaign
-        company_admin = request.user.userprofile.get_company_admin_for_campaign(campaign=campaign)
-        if company_admin and company_admin.is_approved():
-            kwargs['company_admin'] = company_admin
-            return fn(view, request, *args, **kwargs)
-
-        response = render(
-            request,
-            view.template_name,
-            {
-                'fullpage_error_message':
-                mark_safe(
-                    _(
-                        "Tato stránka je určená pouze ověřeným firemním koordinátorům. "
-                        "K této funkci se musíte nejdříve <a href='%s'>přihlásit</a>, a vyčkat na naše ověření. "
-                        "Pokud na ověření čekáte příliš dlouho, kontaktujte naši podporu na "
-                        "<a href='mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž'>kontakt@dopracenakole.cz</a>." %
-                        reverse("company_admin_application"),
-                    ),
-                ),
-                'title': _("Nedostatečné oprávnění"),
-            },
-            status=403,
-        )
-        response.status_message = "not_company_admin"
-        return response
-    return wrapper
-
-
 def must_be_in_phase(phase_type):
     def decorator(fn):
         @functools.wraps(fn)
@@ -106,16 +74,24 @@ class FullPageMessageMixin(object):
     def get_template_name(self):
         return self.template_name
 
+    def fullpage_error_response(self, request, message, title=_("Nedostatečné oprávnění")):
+        return render(
+            request,
+            self.get_template_name(),
+            {
+                'fullpage_error_message': message,
+                'title': title,
+            },
+            status=403,
+        )
+        return
+
     def handle_no_permission(self, request):
         if request.user.is_authenticated():
-            return render(
+            return self.fullpage_error_response(
                 request,
-                self.get_template_name(),
-                {
-                    'fullpage_error_message': self.get_error_message(request),
-                    'title': self.get_error_title(request),
-                },
-                status=403,
+                self.get_error_message(request),
+                self.get_error_title(request),
             )
         return super().handle_no_permission(request)
 
@@ -177,6 +153,27 @@ class MustBeOwner(FullPageMessageMixin, UserAttendancePassesTestMixin):
     def test_func(self, user_attendance):
         view_object = self.get_object()
         return view_object and user_attendance == view_object.user_attendance
+
+
+class MustBeCompanyAdmin(FullPageMessageMixin, UserAttendancePassesTestMixin):
+    """
+    Tests if user is company admin.
+    Also sets CompanyAdmin object to self.company_admin
+    """
+    error_message = mark_safe_lazy(
+        format_lazy(
+            "Tato stránka je určená pouze ověřeným firemním koordinátorům. "
+            "K této funkci se musíte nejdříve <a href='{addr}'>přihlásit</a>, a vyčkat na naše ověření. "
+            "Pokud na ověření čekáte příliš dlouho, kontaktujte naši podporu na "
+            "<a href='mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž'>kontakt@dopracenakole.cz</a>.",
+            addr=reverse_lazy("company_admin_application"),
+        ),
+    )
+    error_title = _("Nedostatečné oprávnění")
+
+    def test_func(self, user_attendance):
+        self.company_admin = user_attendance.related_company_admin
+        return self.company_admin is not None and self.company_admin.is_approved()
 
 
 def user_attendance_has(condition, message):
