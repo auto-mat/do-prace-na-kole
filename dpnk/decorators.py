@@ -139,7 +139,7 @@ class MustBeApprovedForTeamMixin(MustHaveTeamMixin, FullPageMessageMixin, UserAt
     def get_error_message(self, request):
         if request.user_attendance.team:
             return format_html(
-                _(u"Vaše členství v týmu {team} nebylo odsouhlaseno. <a href='{address}'>Znovu požádat o ověření členství</a>."),
+                _("Vaše členství v týmu {team} nebylo odsouhlaseno. <a href='{address}'>Znovu požádat o ověření členství</a>."),
                 team=request.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi"),
             )
         else:

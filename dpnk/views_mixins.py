@@ -66,7 +66,7 @@ class UserAttendanceViewMixin(UserAttendanceParameterMixin):
 
 class RegistrationMessagesMixin(UserAttendanceParameterMixin):
     def get(self, request, *args, **kwargs):  # noqa
-        ret_val = super(RegistrationMessagesMixin, self).get(request, *args, **kwargs)
+        ret_val = super().get(request, *args, **kwargs)
 
         if self.registration_phase in ('registration_uncomplete', 'profile_view'):
             if self.user_attendance.approved_for_team == 'approved' and \
@@ -169,7 +169,7 @@ class TitleViewMixin(object):
     def as_view(self, *args, **kwargs):
         if 'title' in kwargs:
             self.title = kwargs.get('title')
-        return super(TitleViewMixin, self).as_view(*args, **kwargs)
+        return super().as_view(*args, **kwargs)
 
     def get_title(self, *args, **kwargs):
         return self.title
@@ -181,7 +181,7 @@ class TitleViewMixin(object):
             return ""
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(TitleViewMixin, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         context_data['title'] = self.get_title(*args, **kwargs)
         context_data['opening_message'] = self.get_opening_message(*args, **kwargs)
         return context_data
@@ -191,7 +191,7 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
     template_name = 'base_generic_registration_form.html'
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(RegistrationViewMixin, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         context_data['registration_phase'] = self.registration_phase
         return context_data
 
