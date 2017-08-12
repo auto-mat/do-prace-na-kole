@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+{% load i18n %}
+
+{% block langchanger %}{% endblock %}
+
+{% block title %}{% trans "DPNK" %} - přístup odepřen - 403{% endblock %}
+{% block caption %}Přístup odepřen{% endblock %}
+
+{% block content %}
+<p>
+{% trans "Na tuto stránku nemáte povolený přístup." %}
+</p><p>
+<div class='alert alert-danger'>{{ exception }}</div>
+</p><p>
+{% if messages %}
+   <ul class="messages">
+      {% for message in messages %}
+         <li>{{ message }}</li>
+      {% endfor %}
+   </ul>
+{% endif %}
+</p>
+{% endblock %}

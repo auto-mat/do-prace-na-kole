@@ -24,9 +24,9 @@ from braces.views import LoginRequiredMixin
 
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, render
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
@@ -38,9 +38,10 @@ from . import models
 from .company_admin_forms import (
     CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
 )
-from .decorators import MustBeCompanyAdmin, MustHaveTeamMixin, fullpage_error_response, must_be_in_phase
+from .decorators import MustBeCompanyAdmin, MustHaveTeamMixin, must_be_in_phase
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
+from .string_lazy import mark_safe_lazy
 from .views import AdmissionsView, RegistrationViewMixin, TitleViewMixin
 from .views_mixins import CompanyAdminMixin
 logger = logging.getLogger(__name__)
@@ -99,15 +100,11 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeCompanyAdmin
 
     @must_be_in_phase("payment")
     def dispatch(self, request, *args, **kwargs):
+        ret_val = super().dispatch(request, *args, **kwargs)
         if request.user_attendance:
-            company_admin = request.user_attendance.related_company_admin
-            if company_admin and not company_admin.can_confirm_payments:
-                return fullpage_error_response(
-                    request,
-                    _("Potvrzování plateb nemáte povoleno"),
-                    template_name=self.get_template_name(),
-                )
-        return super().dispatch(request, *args, **kwargs)
+            if not self.company_admin.can_confirm_payments:
+                raise PermissionDenied(_("Potvrzování plateb nemáte povoleno"))
+        return ret_val
 
     def get_success_message(self, cleaned_data):
         return self.success_message % self.confirmed_count
@@ -285,19 +282,12 @@ class InvoicesView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, Creat
 
     @must_be_in_phase("invoices")
     def dispatch(self, request, *args, **kwargs):
+        ret_val = super().dispatch(request, *args, **kwargs)
         if request.user_attendance:
-            company_admin = request.user_attendance.related_company_admin
-            if company_admin:
-                if not company_admin.administrated_company.has_filled_contact_information():
-                    return fullpage_error_response(
-                        request,
-                        mark_safe(_("Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>") % reverse('edit_company')),
-                        template_name=self.get_template_name(),
-                    )
-                if not company_admin.can_confirm_payments:
-                    return fullpage_error_response(
-                        request,
-                        _("Vystavování faktur nemáte povoleno"),
-                        template_name=self.get_template_name(),
-                    )
-        return super().dispatch(request, *args, **kwargs)
+            if not self.company_admin.administrated_company.has_filled_contact_information():
+                raise PermissionDenied(
+                    mark_safe_lazy(_("Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>") % reverse('edit_company')),
+                )
+            if not self.company_admin.can_confirm_payments:
+                raise PermissionDenied(_("Vystavování faktur nemáte povoleno"))
+        return ret_val

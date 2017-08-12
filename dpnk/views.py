@@ -48,6 +48,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 from django.db.models import Case, Count, F, FloatField, IntegerField, Q, Sum, When
@@ -82,7 +83,6 @@ from .decorators import (
     MustBeApprovedForTeamMixin,
     MustBeOwner,
     MustHaveTeamMixin,
-    fullpage_error_response,
     must_be_in_phase,
     user_attendance_has,
 )
@@ -339,7 +339,7 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
 
     def dispatch(self, request, *args, **kwargs):
         if Team.objects.filter(invitation_token=kwargs['token']).count() != 1:
-            return fullpage_error_response(request, _("Tým nenalezen"), _("Tým nenalezen"), self.template_name)
+            raise PermissionDenied(_("Tým nenalezen"))
 
         initial_email = kwargs['initial_email']
         if request.user.email != initial_email:
