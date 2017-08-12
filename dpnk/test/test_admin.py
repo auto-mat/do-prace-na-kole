@@ -31,6 +31,9 @@ from dpnk import actions, filters, models, util
 from dpnk.models import Team, UserAttendance
 from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
+
+from model_mommy import mommy
+
 import settings
 
 
@@ -55,6 +58,21 @@ class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
         request = super().get_request(params)
         request.subdomain = "testing-campaign"
         return request
+
+
+@override_settings(
+    SSLIFY_ADMIN_DISABLE=True,
+)
+class BadSubdomainTests(DenormMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        admin = mommy.make("User", is_superuser=True, is_staff=True)
+        self.client.force_login(admin, settings.AUTHENTICATION_BACKENDS[0])
+
+    def test_admin_userattendance(self):
+        address = reverse('admin:dpnk_userattendance_changelist')
+        response = self.client.get(address)
+        self.assertContains(response, '<h1>Vyberte položku Účastník kampaně ke změně</h1>', html=True)
 
 
 @override_settings(
