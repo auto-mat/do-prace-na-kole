@@ -26,10 +26,11 @@ from django.test.utils import override_settings
 
 from dpnk import models, util
 from dpnk.models import Team, UserAttendance
-from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
 
 from freezegun import freeze_time
+
+from model_mommy import mommy
 
 import settings
 
@@ -39,7 +40,7 @@ import settings
     SITE_ID=2,
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
-class RestTests(DenormMixin, TestCase):
+class RestTests(TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
     def setUp(self):
@@ -101,17 +102,25 @@ class RestTests(DenormMixin, TestCase):
                 status_code=404,
             )
 
-    # TODO: make this working
-    # def test_gpx_duplicate_gpx(self):
-    #     address = reverse("gpxfile-list")
-    #     with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
-    #         post_data = {
-    #             'trip_date': "2010-12-01",
-    #             'direction': 'trip_to',
-    #             'file': gpxfile,
-    #         }
-    #         response = self.client.post(address, post_data)
-    #         self.assertContains(response, '{"detail":"GPX for this day and trip already uploaded"}', status_code=409)
+    def test_gpx_duplicate_gpx(self):
+        mommy.make(
+            'GpxFile',
+            trip_date=datetime.date(2010, 12, 1),
+            direction="trip_to",
+            user_attendance=UserAttendance.objects.get(pk=1115),
+        )
+        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
+            post_data = {
+                'trip_date': "2010-12-01",
+                'direction': 'trip_to',
+                'file': gpxfile,
+            }
+            response = self.client.post(reverse("gpxfile-list"), post_data)
+            self.assertJSONEqual(
+                response.content.decode(),
+                {"detail": "GPX for this day and trip already uploaded"},
+            )
+            self.assertEqual(response.status_code, 409)
 
 
 # @override_settings(
