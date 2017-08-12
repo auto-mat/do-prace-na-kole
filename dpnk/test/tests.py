@@ -35,9 +35,13 @@ from dpnk.test.util import print_response  # noqa
 
 from freezegun import freeze_time
 
+from model_mommy import mommy
+
 from price_level import models as price_level_models
 
 import settings
+
+from .mommy_recipes import testing_campaign
 
 
 class PaymentSuccessTests(ClearCacheMixin, TestCase):
@@ -247,6 +251,7 @@ class PayuTests(ClearCacheMixin, TestCase):
 def create_get_request(factory, user_attendance, post_data={}, address="", subdomain="testing-campaign"):
     request = factory.get(address, post_data)
     request.user = user_attendance.userprofile.user
+    request.user_attendance = user_attendance
     request.campaign = user_attendance.campaign
     request.subdomain = subdomain
     return request
@@ -255,6 +260,7 @@ def create_get_request(factory, user_attendance, post_data={}, address="", subdo
 def create_post_request(factory, user_attendance, post_data={}, address="", subdomain="testing-campaign"):
     request = factory.post(address, post_data)
     request.user = user_attendance.userprofile.user
+    request.user_attendance = user_attendance
     request.campaign = user_attendance.campaign
     request.subdomain = subdomain
     return request
@@ -265,11 +271,23 @@ def create_post_request(factory, user_attendance, post_data={}, address="", subd
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
 class TestCompanyAdminViews(ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'company_competition']
-
     def setUp(self):
         self.factory = RequestFactory()
-        self.user_attendance = models.UserAttendance.objects.get(pk=1115)
+        self.company = mommy.make("Company")
+        self.user_attendance = mommy.make(
+            "UserAttendance",
+            userprofile__company_admin__campaign=testing_campaign,
+            userprofile__company_admin__administrated_company=self.company,
+            campaign=testing_campaign,
+            team__campaign=testing_campaign,
+        )
+        mommy.make(
+            "Competition",
+            name='Pravidelnost společnosti',
+            slug='FA-testing-campaign-pravidelnost-spolecnosti',
+            company=self.company,
+            campaign=testing_campaign,
+        )
 
     def test_dpnk_company_admin_create_competition(self):
         post_data = {
@@ -281,22 +299,25 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         request = create_post_request(self.factory, self.user_attendance, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
         self.assertEquals(response.url, reverse('company_admin_competitions'))
-        competition = models.Competition.objects.get(
-            company=self.user_attendance.get_asociated_company_admin().first().administrated_company,
-            competition_type='length',
-        )
-        self.assertEquals(competition.name, 'testing company competition')
+        competition = models.Competition.objects.get(name='testing company competition')
+        self.assertEquals(competition.slug, 'FA-testing-campaign-testing-company-competition')
 
-        slug = competition.slug
-        post_data['name'] = 'testing company competition fixed'
+    def test_dpnk_company_admin_edit_competition(self):
+        post_data = {
+            'name': 'testing company competition fixed',
+            'competition_type': 'length',
+            'competitor_type': 'single_user',
+            'submit': 'Odeslat',
+        }
         request = create_post_request(self.factory, self.user_attendance, post_data)
-        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug=slug)
-        self.assertEquals(response.url, reverse('company_admin_competitions'))
-        competition = models.Competition.objects.get(
-            company=self.user_attendance.get_asociated_company_admin().first().administrated_company,
-            competition_type='length',
+        response = company_admin_views.CompanyCompetitionView.as_view()(
+            request,
+            success=True,
+            competition_slug='FA-testing-campaign-pravidelnost-spolecnosti',
         )
-        self.assertEquals(competition.name, 'testing company competition fixed')
+        self.assertEquals(response.url, reverse('company_admin_competitions'))
+        competition = models.Competition.objects.get(name='testing company competition fixed')
+        self.assertEquals(competition.slug, 'FA-testing-campaign-pravidelnost-spolecnosti')
 
     def test_dpnk_company_admin_create_competition_name_exists(self):
         post_data = {
@@ -319,6 +340,7 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         self.assertContains(response, "Překročen maximální počet soutěží pro organizaci.")
 
     def test_dpnk_company_admin_create_competition_no_permission(self):
+        mommy.make("Competition", slug="FQ-LB")
         request = create_get_request(self.factory, self.user_attendance)
         request.resolver_match = {"url_name": "company_admin_competition"}
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug="FQ-LB")

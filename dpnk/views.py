@@ -82,6 +82,7 @@ from .decorators import (
     MustBeApprovedForTeamMixin,
     MustBeOwner,
     MustHaveTeamMixin,
+    fullpage_error_response,
     must_be_in_phase,
     user_attendance_has,
 )
@@ -338,7 +339,7 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
 
     def dispatch(self, request, *args, **kwargs):
         if Team.objects.filter(invitation_token=kwargs['token']).count() != 1:
-            return self.fullpage_error_response(request, _("Tým nenalezen"), _("Tým nenalezen"))
+            return fullpage_error_response(request, _("Tým nenalezen"), _("Tým nenalezen"), self.template_name)
 
         initial_email = kwargs['initial_email']
         if request.user.email != initial_email:

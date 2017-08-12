@@ -38,7 +38,7 @@ from . import models
 from .company_admin_forms import (
     CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
 )
-from .decorators import MustBeCompanyAdmin, MustHaveTeamMixin, must_be_in_phase
+from .decorators import MustBeCompanyAdmin, MustHaveTeamMixin, fullpage_error_response, must_be_in_phase
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
 from .views import AdmissionsView, RegistrationViewMixin, TitleViewMixin
@@ -104,6 +104,7 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeCompanyAdmin
             return self.fullpage_error_response(
                 request,
                 _("Potvrzování plateb nemáte povoleno"),
+                self.get_template_name(),
             )
         return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
 
@@ -285,13 +286,15 @@ class InvoicesView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, Creat
     def dispatch(self, request, *args, **kwargs):
         company_admin = request.user_attendance.related_company_admin
         if company_admin and not company_admin.administrated_company.has_filled_contact_information():
-            return self.fullpage_error_response(
+            return fullpage_error_response(
                 request,
                 mark_safe(_("Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>") % reverse('edit_company')),
+                template_name=self.get_template_name(),
             )
         if company_admin and not company_admin.can_confirm_payments:
-            return self.fullpage_error_response(
+            return fullpage_error_response(
                 request,
                 _("Vystavování faktur nemáte povoleno"),
+                self.get_template_name(),
             )
         return super().dispatch(request, *args, **kwargs)

@@ -64,6 +64,18 @@ def must_be_in_phase(phase_type):
     return decorator
 
 
+def fullpage_error_response(request, message, title=_("Nedostatečné oprávnění"), template_name=""):
+    return render(
+        request,
+        template_name,
+        {
+            'fullpage_error_message': message,
+            'title': title,
+        },
+        status=403,
+    )
+
+
 class FullPageMessageMixin(object):
     def get_error_message(self, request):
         return self.error_message
@@ -74,24 +86,13 @@ class FullPageMessageMixin(object):
     def get_template_name(self):
         return self.template_name
 
-    def fullpage_error_response(self, request, message, title=_("Nedostatečné oprávnění")):
-        return render(
-            request,
-            self.get_template_name(),
-            {
-                'fullpage_error_message': message,
-                'title': title,
-            },
-            status=403,
-        )
-        return
-
     def handle_no_permission(self, request):
         if request.user.is_authenticated():
-            return self.fullpage_error_response(
+            return fullpage_error_response(
                 request,
                 self.get_error_message(request),
                 self.get_error_title(request),
+                self.get_template_name(),
             )
         return super().handle_no_permission(request)
 
