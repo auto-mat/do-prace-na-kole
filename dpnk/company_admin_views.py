@@ -38,7 +38,7 @@ from . import models
 from .company_admin_forms import (
     CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
 )
-from .decorators import MustBeCompanyAdmin, MustHaveTeamMixin, must_be_in_phase
+from .decorators import MustBeCompanyAdmin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
 from .string_lazy import mark_safe_lazy
@@ -71,7 +71,7 @@ class RelatedCompetitionsView(MustBeCompanyAdmin, AdmissionsView):
     template_name = "company_admin/related_competitions.html"
 
 
-class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, FormView):
+class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeInPaymentPhaseMixin, MustBeCompanyAdmin, LoginRequiredMixin, FormView):
     template_name = 'company_admin/select_users_pay_for.html'
     form_class = SelectUsersPayForm
     success_url = reverse_lazy('company_admin_pay_for_users')
@@ -98,7 +98,6 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeCompanyAdmin
         logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x, paing_for)))
         return super().form_valid(form)
 
-    @must_be_in_phase("payment")
     def dispatch(self, request, *args, **kwargs):
         ret_val = super().dispatch(request, *args, **kwargs)
         if request.user_attendance:
@@ -252,7 +251,7 @@ class CompanyCompetitionsShowView(TitleViewMixin, MustBeCompanyAdmin, LoginRequi
         return context_data
 
 
-class InvoicesView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, CreateView):
+class InvoicesView(TitleViewMixin, MustBeInInvoicesPhaseMixin, MustBeCompanyAdmin, LoginRequiredMixin, CreateView):
     template_name = 'company_admin/create_invoice.html'
     form_class = company_admin_forms.CreateInvoiceForm
     success_url = reverse_lazy('invoices')
@@ -280,7 +279,6 @@ class InvoicesView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, Creat
         context['invoices'] = self.company_admin.administrated_company.invoice_set.filter(campaign=self.company_admin.campaign)
         return context
 
-    @must_be_in_phase("invoices")
     def dispatch(self, request, *args, **kwargs):
         ret_val = super().dispatch(request, *args, **kwargs)
         if request.user_attendance:

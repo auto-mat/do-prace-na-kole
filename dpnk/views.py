@@ -81,9 +81,10 @@ from . import util
 from .decorators import (
     GroupRequiredResponseMixin,
     MustBeApprovedForTeamMixin,
+    MustBeInPaymentPhaseMixin,
+    MustBeInRegistrationPhaseMixin,
     MustBeOwner,
     MustHaveTeamMixin,
-    must_be_in_phase,
     user_attendance_has,
 )
 from .email import (
@@ -261,14 +262,13 @@ class RegistrationAccessView(TitleViewMixin, FormView):
             return redirect(reverse('registrace', kwargs={'initial_email': email}))
 
 
-class RegistrationView(CampaignParameterMixin, TitleViewMixin, SimpleRegistrationView):
+class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrationPhaseMixin, SimpleRegistrationView):
     title = "Registrace soutěžících Do práce na kole"
     template_name = 'base_generic_form.html'
     form_class = RegistrationFormDPNK
     model = UserProfile
     success_url = 'upravit_profil'
 
-    @must_be_in_phase("registration")
     def dispatch(self, request, *args, **kwargs):
         return super(RegistrationView, self).dispatch(request, *args, **kwargs)
 
@@ -355,14 +355,20 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
         return super(ConfirmTeamInvitationView, self).dispatch(request, *args, **kwargs)
 
 
-class PaymentTypeView(UserAttendanceFormKwargsMixin, RegistrationViewMixin, MustHaveTeamMixin, LoginRequiredMixin, FormView):
+class PaymentTypeView(
+        UserAttendanceFormKwargsMixin,
+        RegistrationViewMixin,
+        MustBeInPaymentPhaseMixin,
+        MustHaveTeamMixin,
+        LoginRequiredMixin,
+        FormView,
+):
     template_name = 'registration/payment_type.html'
     title = _(u"Platba")
     registration_phase = "typ_platby"
     next_url = "profil"
     prev_url = "zmenit_triko"
 
-    @must_be_in_phase("payment")
     @user_attendance_has(
         lambda ua: ua.payment_status == 'done',
         mark_safe_lazy(

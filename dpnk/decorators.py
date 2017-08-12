@@ -26,42 +26,41 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import render
 from django.utils import formats
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from .string_lazy import mark_safe_lazy
 
 
-def must_be_in_phase(phase_type):
-    def decorator(fn):
-        @functools.wraps(fn)
-        def wrapped(view, request, *args, **kwargs):
-            campaign = request.campaign
-            try:
-                phase = campaign.phase_set.get(phase_type=phase_type)
-            except ObjectDoesNotExist:
-                phase = None
-            if phase and phase.is_actual():
-                return fn(view, request, *args, **kwargs)
-            if not phase or phase.has_started():
-                message = _("Již skončil čas, kdy se tato stránka zobrazuje.")
-            else:
-                message = mark_safe(
-                    _(u"Ještě nenastal čas, kdy by se měla tato stránka zobrazit.<br/>Stránka se zobrazí až %s")
-                    % formats.date_format(phase.date_from, "SHORT_DATE_FORMAT"),
-                )
-            response = render(
-                request,
-                view.template_name, {
-                    'fullpage_error_message': message,
-                    'title': _("Nedostupná stránka"),
-                },
-                status=403,
-            )
-            response.status_message = "out_of_phase"
-            return response
-        return wrapped
-    return decorator
+class MustBeInPhaseMixin(object):
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            phase = request.campaign.phase_set.get(phase_type=self.must_be_in_phase_type)
+        except ObjectDoesNotExist:
+            raise PermissionDenied(_("Tato stránka nemůže být v této kampani zobrazena."))
+
+        if phase.is_actual():
+            return super().dispatch(request, *args, **kwargs)
+
+        if phase.has_started():
+            raise PermissionDenied(_("Již skončil čas, kdy se tato stránka zobrazuje."))
+        raise PermissionDenied(
+            mark_safe_lazy(
+                _("Ještě nenastal čas, kdy by se měla tato stránka zobrazit.<br/>Stránka se zobrazí až %s")
+                % formats.date_format(phase.date_from, "SHORT_DATE_FORMAT"),
+            ),
+        )
+
+
+class MustBeInRegistrationPhaseMixin(object):
+    must_be_in_phase = "registration"
+
+
+class MustBeInPaymentPhaseMixin(object):
+    must_be_in_phase = "payment"
+
+
+class MustBeInInvoicesPhaseMixin(object):
+    must_be_in_phase = "invoices"
 
 
 class GroupRequiredResponseMixin(GroupRequiredMixin):
