@@ -692,7 +692,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             html=True,
         )
         self.assertContains(response, '<h4>Výkonnost společností</h4>', html=True)
-        self.assertContains(response, '<a href="/vysledky_souteze/FQ-LB/#row-1">Výsledky</a>', html=True)
+        self.assertContains(response, '<a href="/vysledky_souteze/FQ-LB/#row-0">Výsledky</a>', html=True)
 
     def test_dpnk_questionnaire_competitions_page_change(self):
         response = self.client.get(reverse('questionnaire_competitions'))

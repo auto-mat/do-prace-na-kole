@@ -25,8 +25,6 @@ from django.core.urlresolvers import reverse
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
 
-from django_admin_smoke_tests import tests as smoke_tests
-
 from dpnk import actions, filters, models, util
 from dpnk.models import Team, UserAttendance
 from dpnk.test.util import DenormMixin
@@ -35,29 +33,6 @@ from dpnk.test.util import print_response  # noqa
 from model_mommy import mommy
 
 import settings
-
-
-@override_settings(
-    SITE_ID=2,
-    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
-)
-class AdminSmokeTests(DenormMixin, smoke_tests.AdminSiteSmokeTest):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'test_results_data', 'transactions', 'batches', 'invoices', 'trips']
-    exclude_apps = ['djcelery', 'coupons']
-
-    def setUp(self):
-        super().setUp()
-        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[4, 3, 1]))
-
-    def get_request(self, params={}):
-        request = super().get_request(params)
-        request.subdomain = "testing-campaign"
-        return request
-
-    def post_request(self, params={}):
-        request = super().get_request(params)
-        request.subdomain = "testing-campaign"
-        return request
 
 
 @override_settings(
