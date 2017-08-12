@@ -22,12 +22,14 @@ import functools
 from braces.views import GroupRequiredMixin, UserPassesTestMixin
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import render
 from django.utils import formats
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+
+from .string_lazy import format_lazy, mark_safe_lazy
 
 
 def must_be_company_admin(fn):
@@ -141,9 +143,12 @@ class UserAttendancePassesTestMixin(UserPassesTestMixin):
 
 class MustHaveTeamMixin(FullPageMessageMixin, UserAttendancePassesTestMixin):
     error_title = _("Musíte mít vybraný tým")
-
-    def get_error_message(self, request):
-        return mark_safe(_("Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse("zmenit_tym"))
+    error_message = mark_safe_lazy(
+        format_lazy(
+            _("Napřed musíte mít <a href='{addr}'>vybraný tým</a>."),
+            addr=reverse_lazy("zmenit_tym"),
+        ),
+    )
 
     def test_func(self, user_attendance):
         return user_attendance.team is not None
