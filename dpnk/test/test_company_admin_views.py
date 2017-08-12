@@ -61,7 +61,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             team__subsidiary__company__ico=1234234,
             team__campaign=testing_campaign,
         )
-        mommy.make(
+        self.company_admin = mommy.make(
             "CompanyAdmin",
             userprofile=self.user_attendance.userprofile,
             company_admin_approved='approved',
@@ -89,7 +89,6 @@ class InvoiceTests(ClearCacheMixin, TestCase):
 
     def test_get_unfilled_company_details(self):
         """ Test, that if company doesn't have it's details filled in, the invoice couldn't be generated """
-        mommy.make("Invoice", company=self.user_attendance.team.subsidiary.company, campaign=testing_campaign)
         self.user_attendance.team.subsidiary.company.ico = None
         self.user_attendance.team.subsidiary.company.save()
         response = self.client.get(reverse('invoices'))
@@ -98,6 +97,20 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             "<div class='alert alert-danger'>"
             "Před vystavením faktury prosím"
             "<a href='/spolecnost/editovat_spolecnost/'>vyplňte údaje o vaší firmě</a>"
+            "</div>",
+            html=True,
+            status_code=403,
+        )
+
+    def test_get_not_allowed(self):
+        """ Test, that if company doesn't have it's details filled in, the invoice couldn't be generated """
+        self.company_admin.can_confirm_payments = False
+        self.company_admin.save()
+        response = self.client.get(reverse('invoices'))
+        self.assertContains(
+            response,
+            "<div class='alert alert-danger'>"
+            "Vystavování faktur nemáte povoleno"
             "</div>",
             html=True,
             status_code=403,

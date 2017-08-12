@@ -295,6 +295,6 @@ class InvoicesView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, Creat
             return fullpage_error_response(
                 request,
                 _("Vystavování faktur nemáte povoleno"),
-                self.get_template_name(),
+                template_name=self.get_template_name(),
             )
         return super().dispatch(request, *args, **kwargs)
