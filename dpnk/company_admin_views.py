@@ -38,7 +38,7 @@ from . import models
 from .company_admin_forms import (
     CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
 )
-from .decorators import MustBeCompanyAdmin, MustHaveTeamMixin, must_be_in_phase, request_condition
+from .decorators import MustBeCompanyAdmin, MustHaveTeamMixin, must_be_in_phase
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
 from .views import AdmissionsView, RegistrationViewMixin, TitleViewMixin
@@ -98,8 +98,13 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeCompanyAdmin
         return super(SelectUsersPayView, self).form_valid(form)
 
     @must_be_in_phase("payment")
-    @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, _(u"Potvrzování plateb nemáte povoleno"))
     def dispatch(self, request, *args, **kwargs):
+        company_admin = request.user_attendance.related_company_admin
+        if company_admin and not company_admin.can_confirm_payments:
+            return self.fullpage_error_response(
+                request,
+                _("Potvrzování plateb nemáte povoleno"),
+            )
         return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
 
     def get_success_message(self, cleaned_data):

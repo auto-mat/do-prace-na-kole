@@ -199,24 +199,3 @@ def user_attendance_has(condition, message):
             return fn(view, request, *args, **kwargs)
         return wrapped
     return decorator
-
-
-def request_condition(condition, message, title=_("Nedostatečné oprávnění")):
-    def decorator(fn):
-        @functools.wraps(fn)
-        def wrapped(view, request, *args, **kwargs):
-            if condition(request, args, kwargs):
-                response = render(
-                    request,
-                    view.template_name,
-                    {
-                        'fullpage_error_message': message,
-                        'title': title,
-                    },
-                    status=403,
-                )
-                response.status_message = "request_condition"
-                return response
-            return fn(view, request, *args, **kwargs)
-        return wrapped
-    return decorator

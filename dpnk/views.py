@@ -83,7 +83,6 @@ from .decorators import (
     MustBeOwner,
     MustHaveTeamMixin,
     must_be_in_phase,
-    request_condition,
     user_attendance_has,
 )
 from .email import (
@@ -337,8 +336,10 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
         approve_for_team(self.request, self.user_attendance, "", True, False)
         return super(ConfirmTeamInvitationView, self).form_valid(form)
 
-    @request_condition(lambda r, a, k: Team.objects.filter(invitation_token=k['token']).count() != 1, _(u"Tým nenalezen"), _("Tým nenalezen."))
     def dispatch(self, request, *args, **kwargs):
+        if Team.objects.filter(invitation_token=kwargs['token']).count() != 1:
+            return self.fullpage_error_response(request, _("Tým nenalezen"), _("Tým nenalezen"))
+
         initial_email = kwargs['initial_email']
         if request.user.email != initial_email:
             logout(request)
