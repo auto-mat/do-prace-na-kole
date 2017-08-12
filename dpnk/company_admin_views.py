@@ -99,14 +99,15 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeCompanyAdmin
 
     @must_be_in_phase("payment")
     def dispatch(self, request, *args, **kwargs):
-        company_admin = request.user_attendance.related_company_admin
-        if company_admin and not company_admin.can_confirm_payments:
-            return fullpage_error_response(
-                request,
-                _("Potvrzování plateb nemáte povoleno"),
-                template_name=self.get_template_name(),
-            )
-        return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
+        if request.user_attendance:
+            company_admin = request.user_attendance.related_company_admin
+            if company_admin and not company_admin.can_confirm_payments:
+                return fullpage_error_response(
+                    request,
+                    _("Potvrzování plateb nemáte povoleno"),
+                    template_name=self.get_template_name(),
+                )
+        return super().dispatch(request, *args, **kwargs)
 
     def get_success_message(self, cleaned_data):
         return self.success_message % self.confirmed_count
@@ -284,17 +285,19 @@ class InvoicesView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, Creat
 
     @must_be_in_phase("invoices")
     def dispatch(self, request, *args, **kwargs):
-        company_admin = request.user_attendance.related_company_admin
-        if company_admin and not company_admin.administrated_company.has_filled_contact_information():
-            return fullpage_error_response(
-                request,
-                mark_safe(_("Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>") % reverse('edit_company')),
-                template_name=self.get_template_name(),
-            )
-        if company_admin and not company_admin.can_confirm_payments:
-            return fullpage_error_response(
-                request,
-                _("Vystavování faktur nemáte povoleno"),
-                template_name=self.get_template_name(),
-            )
+        if request.user_attendance:
+            company_admin = request.user_attendance.related_company_admin
+            if company_admin:
+                if not company_admin.administrated_company.has_filled_contact_information():
+                    return fullpage_error_response(
+                        request,
+                        mark_safe(_("Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>") % reverse('edit_company')),
+                        template_name=self.get_template_name(),
+                    )
+                if not company_admin.can_confirm_payments:
+                    return fullpage_error_response(
+                        request,
+                        _("Vystavování faktur nemáte povoleno"),
+                        template_name=self.get_template_name(),
+                    )
         return super().dispatch(request, *args, **kwargs)

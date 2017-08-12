@@ -67,13 +67,17 @@ class SelectUsersPayTests(ClearCacheMixin, TestCase):
         self.company_admin.can_confirm_payments = False
         self.company_admin.save()
         response = self.client.get(reverse('company_admin_pay_for_users'))
-        print_response(response)
         self.assertContains(
             response,
             "<div class='alert alert-danger'>Potvrzování plateb nemáte povoleno</div>",
             html=True,
             status_code=403,
         )
+
+    def test_not_logged_in(self):
+        self.client.logout()
+        response = self.client.get(reverse('company_admin_pay_for_users'))
+        self.assertRedirects(response, '/login?next=/zaplatit_za_uzivatele/')
 
 
 class InvoiceTests(ClearCacheMixin, TestCase):
@@ -230,3 +234,9 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             '<td>Zaplacení nepotvrzeno</td>',
             html=True,
         )
+
+    def test_not_logged_in(self):
+        self.client.logout()
+        response = self.client.get(reverse('invoices'))
+        print_response(response)
+        self.assertRedirects(response, '/login?next=/faktury/')
