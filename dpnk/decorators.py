@@ -34,7 +34,7 @@ from .string_lazy import mark_safe_lazy
 class MustBeInPhaseMixin(object):
     def dispatch(self, request, *args, **kwargs):
         try:
-            phase = request.campaign.phase_set.get(phase_type=self.must_be_in_phase_type)
+            phase = request.campaign.phase_set.get(phase_type=self.must_be_in_phase)
         except ObjectDoesNotExist:
             raise PermissionDenied(_("Tato stránka nemůže být v této kampani zobrazena."))
 
@@ -51,15 +51,15 @@ class MustBeInPhaseMixin(object):
         )
 
 
-class MustBeInRegistrationPhaseMixin(object):
+class MustBeInRegistrationPhaseMixin(MustBeInPhaseMixin):
     must_be_in_phase = "registration"
 
 
-class MustBeInPaymentPhaseMixin(object):
+class MustBeInPaymentPhaseMixin(MustBeInPhaseMixin):
     must_be_in_phase = "payment"
 
 
-class MustBeInInvoicesPhaseMixin(object):
+class MustBeInInvoicesPhaseMixin(MustBeInPhaseMixin):
     must_be_in_phase = "invoices"
 
 

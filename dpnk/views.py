@@ -242,9 +242,6 @@ class RegistrationAccessView(TitleViewMixin, FormView):
     template_name = 'base_generic_form.html'
     form_class = RegistrationAccessFormDPNK
 
-    def dispatch(self, request, *args, **kwargs):
-        return super(RegistrationAccessView, self).dispatch(request, *args, **kwargs)
-
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             return redirect(reverse('profil'))
@@ -268,9 +265,6 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrat
     form_class = RegistrationFormDPNK
     model = UserProfile
     success_url = 'upravit_profil'
-
-    def dispatch(self, request, *args, **kwargs):
-        return super(RegistrationView, self).dispatch(request, *args, **kwargs)
 
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}
@@ -969,9 +963,6 @@ class QuestionareCompetitionsView(AdmissionsView):
 class CompetitionResultsView(TitleViewMixin, TemplateView):
     template_name = 'registration/competition_results.html'
     title = _("Výsledky soutěže")
-
-    def dispatch(self, request, *args, **kwargs):
-        return super(CompetitionResultsView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context_data = super(CompetitionResultsView, self).get_context_data(*args, **kwargs)

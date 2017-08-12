@@ -238,5 +238,4 @@ class InvoiceTests(ClearCacheMixin, TestCase):
     def test_not_logged_in(self):
         self.client.logout()
         response = self.client.get(reverse('invoices'))
-        print_response(response)
         self.assertRedirects(response, '/login?next=/faktury/')

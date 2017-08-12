@@ -686,15 +686,6 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertEqual(user_attendance.userprofile.user.pk, 1041)
         self.assertEqual(user_attendance.get_distance(), 156.9)
 
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2010, month=10, day=1),
-    )
-    def test_dpnk_registration_out_of_phase(self):
-        address = reverse('registrace')
-        response = self.client.get(address)
-        self.assertEqual(response.status_message, "out_of_phase")
-        self.assertEqual(response.status_code, 403)
-
     def test_dpnk_mailing_list(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1115))
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
@@ -744,6 +735,60 @@ class ViewsTests(DenormMixin, TestCase):
         createsend.Subscriber.delete.assert_called_once_with()
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
         self.assertEqual(user_attendance.userprofile.mailing_hash, None)
+
+
+class RegistrationPhaseTests(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.example.com")
+        self.campaign = mommy.make("dpnk.campaign", slug="testing-campaign")
+
+    def test_dpnk_registration_no_phase(self):
+        response = self.client.get(reverse('registrace'))
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Tato stránka nemůže být v této kampani zobrazena.</div>',
+            html=True,
+            status_code=403,
+        )
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2020, month=10, day=1),
+    )
+    def test_dpnk_registration_after_phase(self):
+        mommy.make(
+            "dpnk.Phase",
+            phase_type="registration",
+            date_from="2011-01-01",
+            date_to="2011-02-01",
+            campaign=self.campaign,
+        )
+        response = self.client.get(reverse('registrace'))
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Již skončil čas, kdy se tato stránka zobrazuje.</div>',
+            html=True,
+            status_code=403,
+        )
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=10, day=1),
+    )
+    def test_dpnk_registration_before_phase(self):
+        mommy.make(
+            "dpnk.Phase",
+            phase_type="registration",
+            date_from="2011-01-01",
+            date_to="2011-02-01",
+            campaign=self.campaign,
+        )
+        response = self.client.get(reverse('registrace'))
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Ještě nenastal čas, kdy by se měla tato stránka zobrazit.<br>Stránka se zobrazí až 01.01.2011</div>',
+            html=True,
+            status_code=403,
+        )
 
 
 @override_settings(
