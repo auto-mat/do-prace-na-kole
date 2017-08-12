@@ -51,7 +51,7 @@ class CompanyStructure(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, T
     title = _("Struktura organizace")
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(CompanyStructure, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         context_data['company'] = self.company_admin.administrated_company
         context_data['subsidiaries'] = context_data['company'].subsidiaries.prefetch_related(
             'teams__users__userprofile__user',
@@ -95,7 +95,7 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeCompanyAdmin
                     payment.save()
                     break
         logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x, paing_for)))
-        return super(SelectUsersPayView, self).form_valid(form)
+        return super().form_valid(form)
 
     @must_be_in_phase("payment")
     def dispatch(self, request, *args, **kwargs):
@@ -166,7 +166,7 @@ class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, MustHaveTeamMix
     title = _("Chci se stát firemním koordinátorem")
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(CompanyAdminView, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.\
             filter(campaign=self.user_attendance.campaign, company_admin_approved='approved').\
             exclude(pk=self.company_admin.pk)
@@ -187,7 +187,7 @@ class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, MustHaveTeamMix
         return self.company_admin
 
     def form_valid(self, form):
-        ret_val = super(CompanyAdminView, self).form_valid(form)
+        ret_val = super().form_valid(form)
         company_admin_register_competitor_mail(self.user_attendance)
         return ret_val
 
@@ -205,7 +205,7 @@ class EditSubsidiaryView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin,
         }
 
     def get_queryset(self):
-        return super(EditSubsidiaryView, self).get_queryset().filter(company=self.company_admin.administrated_company)
+        return super().get_queryset().filter(company=self.company_admin.administrated_company)
 
 
 class CompanyViewException(Exception):
@@ -221,7 +221,7 @@ class CompanyCompetitionView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMi
 
     def get(self, *args, **kwargs):
         try:
-            return super(CompanyCompetitionView, self).get(*args, **kwargs)
+            return super().get(*args, **kwargs)
         except CompanyViewException as e:
             return render(self.request, self.template_name, context={'fullpage_error_message': e.args[0], 'title': e.args[1]})
 
@@ -250,7 +250,7 @@ class CompanyCompetitionsShowView(TitleViewMixin, MustBeCompanyAdmin, LoginRequi
     title = _("Vnitrofiremní soutěže")
 
     def get_context_data(self, **kwargs):
-        context_data = super(CompanyCompetitionsShowView, self).get_context_data(**kwargs)
+        context_data = super().get_context_data(**kwargs)
         context_data['competitions'] = self.company_admin.administrated_company.competition_set.filter(campaign=self.company_admin.campaign)
         return context_data
 
@@ -272,10 +272,10 @@ class InvoicesView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, Creat
         self.object.company = self.company_admin.administrated_company
         self.object.campaign = self.company_admin.campaign
         self.object.save()
-        return super(InvoicesView, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_context_data(self, *args, **kwargs):
-        context = super(InvoicesView, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         payments = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
         context['payments'] = payments
         context['company'] = self.company_admin.administrated_company
