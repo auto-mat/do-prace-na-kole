@@ -48,6 +48,34 @@ class CompanyAdminViewTests(ViewsLogon):
         self.assertContains(response, "CZ1234567890")
 
 
+class SelectUsersPayTests(ClearCacheMixin, TestCase):
+    def setUp(self):
+        self.client = Client(HTTP_HOST="testing-campaign.example.com")
+        self.user_attendance = UserAttendanceRecipe.make()
+        mommy.make("Phase", phase_type="payment", campaign=testing_campaign)
+        self.company_admin = mommy.make(
+            "CompanyAdmin",
+            userprofile=self.user_attendance.userprofile,
+            company_admin_approved='approved',
+            campaign=testing_campaign,
+            administrated_company=self.user_attendance.team.subsidiary.company,
+        )
+        self.user_attendance.save()
+        self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+
+    def test_not_allowed(self):
+        self.company_admin.can_confirm_payments = False
+        self.company_admin.save()
+        response = self.client.get(reverse('company_admin_pay_for_users'))
+        print_response(response)
+        self.assertContains(
+            response,
+            "<div class='alert alert-danger'>Potvrzování plateb nemáte povoleno</div>",
+            html=True,
+            status_code=403,
+        )
+
+
 class InvoiceTests(ClearCacheMixin, TestCase):
 
     def setUp(self):

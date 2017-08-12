@@ -101,10 +101,10 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeCompanyAdmin
     def dispatch(self, request, *args, **kwargs):
         company_admin = request.user_attendance.related_company_admin
         if company_admin and not company_admin.can_confirm_payments:
-            return self.fullpage_error_response(
+            return fullpage_error_response(
                 request,
                 _("Potvrzování plateb nemáte povoleno"),
-                self.get_template_name(),
+                template_name=self.get_template_name(),
             )
         return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
 
