@@ -50,10 +50,10 @@
    <div class="dpnk-content-box">
       {% wp_actions user_attendance.campaign user_attendance.team.subsidiary.city %}
    </div>
+   {% with questionnaire_answer.first as answer %}
+   {% if answer %}
    <div class="dpnk-content-box">
       <h3>{% trans "Příspěvky z kreativních soutěží" %}</h3>
-      {% with questionnaire_answer.first as answer %}
-      {% if answer %}
       {{ answer.question.competition }}<br/>
       <a href="{% url "questionnaire" questionnaire_slug=answer.question.competition.slug %}">{% trans "Nahrát vlastní příspěvek" %}</a>
       {% thumbnail answer.attachment "360x360" as foto_thumb %}
@@ -72,9 +72,9 @@
       {% if answer.comment %}
          {{ answer.comment|linebreaksbr|urlize}}
       {% endif %}
-      {% endif %}
-      {% endwith %}
    </div>
+   {% endif %}
+   {% endwith %}
    <div class="dpnk-content-box">
       <h3>{% trans "Cyklisté sobě" %}</h3>
       <a href="https://www.cyklistesobe.cz/issues/new" target="_blank">{% trans "Dali jste Cyklistům sobě vědět o problémech na vaši trase?" %}</a>
