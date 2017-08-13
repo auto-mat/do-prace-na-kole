@@ -1985,6 +1985,17 @@ class TrackViewTests(ViewsLogon):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(models.GpxFile.objects.get(pk=gpxfile.pk).trip, trip)
 
+    def test_other_user_object(self):
+        gpxfile = mommy.make("GpxFile")
+        address = reverse('gpx_file', kwargs={"id": gpxfile.pk})
+        response = self.client.get(address)
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Nemůžete vidět cizí objekt</div>',
+            html=True,
+            status_code=403,
+        )
+
     def test_dpnk_views_gpx_file_no_trip(self):
         address = reverse('gpx_file', kwargs={"id": 2})
         response = self.client.get(address)
