@@ -27,8 +27,6 @@ import hashlib
 import json
 import logging
 import math
-import shutil
-import tempfile
 import time
 
 from fm.views import AjaxCreateView
@@ -1012,17 +1010,6 @@ class UpdateTrackView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return self.user_attendance
-
-
-def handle_uploaded_file(source, username):
-    logger.info("Saving file", extra={'username': username, 'filename': source.name})
-    fd, filepath = tempfile.mkstemp(
-        suffix=u"_%s&%s" % (username, unidecode(source.name).replace(" ", "_")),
-        dir=settings.MEDIA_ROOT + u"/questionaire",
-    )
-    with open(filepath, 'wb') as dest:
-        shutil.copyfileobj(source, dest)
-    return u"questionaire/" + filepath.rsplit("/", 1)[1]
 
 
 class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
