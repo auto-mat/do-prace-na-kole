@@ -17,13 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-import functools
-
 from braces.views import GroupRequiredMixin
 
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.shortcuts import render
 from django.utils import formats
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
@@ -120,28 +117,3 @@ class MustBeCompanyAdmin(object):
                 reverse("company_admin_application"),
             ),
         )
-
-
-def user_attendance_has(condition, message):
-    def decorator(fn):
-        @functools.wraps(fn)
-        def wrapped(view, request, *args, **kwargs):
-            user_attendance = request.user_attendance
-            if condition(user_attendance):
-                response = render(
-                    request,
-                    view.template_name,
-                    {
-                        'fullpage_error_message': message,
-                        'user_attendance': user_attendance,
-                        'title': getattr(view, 'title', ''),
-                        'registration_phase': getattr(view, 'registration_phase', ''),
-                        'form': None,
-                    },
-                    status=403,
-                )
-                response.status_message = "condition_not_fulfilled"
-                return response
-            return fn(view, request, *args, **kwargs)
-        return wrapped
-    return decorator

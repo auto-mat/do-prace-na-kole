@@ -85,7 +85,6 @@ from .decorators import (
     MustBeInRegistrationPhaseMixin,
     MustBeOwner,
     MustHaveTeamMixin,
-    user_attendance_has,
 )
 from .email import (
     approval_request_mail,
@@ -107,7 +106,7 @@ from .forms import (
     TrackUpdateForm,
 )
 from .models import Answer, Campaign, City, Company, Competition, Payment, Question, Subsidiary, Team, Trip, UserAttendance, UserProfile
-from .string_lazy import format_lazy, mark_safe_lazy
+from .string_lazy import mark_safe_lazy
 from .views_mixins import (
     CampaignFormKwargsMixin,
     CampaignParameterMixin,
@@ -183,10 +182,14 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     def get_object(self):
         return self.user_attendance
 
-    @user_attendance_has(
-        lambda ua: ua.approved_for_team == 'approved' and ua.team and ua.team.member_count == 1 and ua.team.unapproved_member_count > 0,
-        _("Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."))
     def dispatch(self, request, *args, **kwargs):
+        if request.user_attendance and (
+                request.user_attendance.approved_for_team == 'approved' and
+                request.user_attendance.team and
+                request.user_attendance.team.member_count == 1 and
+                request.user_attendance.team.unapproved_member_count > 0
+        ):
+                raise PermissionDenied(_("Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."))
         return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
 
 
@@ -363,26 +366,18 @@ class PaymentTypeView(
     next_url = "profil"
     prev_url = "zmenit_triko"
 
-    @user_attendance_has(
-        lambda ua: ua.payment_status == 'done',
-        mark_safe_lazy(
-            format_lazy(
-                _("Již máte účastnický poplatek zaplacen. Pokračujte na <a href='{addr}'>zadávání jízd</a>."),
-                addr=reverse_lazy("profil"),
-            ),
-        ))
-    @user_attendance_has(
-        lambda ua: ua.payment_status == 'no_admission',
-        mark_safe_lazy(
-            format_lazy(
-                _("Účastnický poplatek se neplatí. Pokračujte na <a href='{addr}'>zadávání jízd</a>."),
-                addr=reverse_lazy("profil"),
-            ),
-        ))
-    @user_attendance_has(
-        lambda ua: not ua.t_shirt_size,
-        _("Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"))
     def dispatch(self, request, *args, **kwargs):
+        if request.user_attendance:
+            if request.user_attendance.payment_status == 'done':
+                raise PermissionDenied(
+                    mark_safe_lazy(_("Již máte účastnický poplatek zaplacen. Pokračujte na <a href='%s'>zadávání jízd</a>.") % reverse("profil")),
+                )
+            if request.user_attendance.payment_status == 'no_admission':
+                raise PermissionDenied(
+                    mark_safe_lazy(_("Účastnický poplatek se neplatí. Pokračujte na <a href='{addr}'>zadávání jízd</a>.") % reverse("profil")),
+                )
+            if not request.user_attendance.t_shirt_size:
+                raise PermissionDenied(_("Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"))
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

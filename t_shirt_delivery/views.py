@@ -21,12 +21,12 @@
 
 from braces.views import LoginRequiredMixin
 
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.edit import UpdateView
 
-from dpnk.decorators import user_attendance_has
 from dpnk.models import UserAttendance
 from dpnk.views import RegistrationViewMixin
 
@@ -46,13 +46,16 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     def get_object(self):
         return self.user_attendance
 
-    @user_attendance_has(lambda ua: not ua.team_complete(), _(u"Velikost trička nemůžete měnit, dokud nemáte zvolený tým."))
-    @user_attendance_has(lambda ua: ua.package_shipped(), _(u"Vaše tričko již je na cestě k vám, už se na něj můžete těšit."))
     def dispatch(self, request, *args, **kwargs):
-        if request.user_attendance.campaign.has_any_tshirt:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            if request.user_attendance.has_admission_fee():
-                return redirect(reverse('typ_platby'))
-            else:
-                return redirect(reverse('profil'))
+        if request.user_attendance:
+            if not request.user_attendance.team_complete():
+                raise PermissionDenied(_("Velikost trička nemůžete měnit, dokud nemáte zvolený tým."))
+            if request.user_attendance.package_shipped():
+                raise PermissionDenied(_("Vaše tričko již je na cestě k vám, už se na něj můžete těšit."))
+
+            if not request.user_attendance.campaign.has_any_tshirt:
+                if request.user_attendance.has_admission_fee():
+                    return redirect(reverse('typ_platby'))
+                else:
+                    return redirect(reverse('profil'))
+        return super().dispatch(request, *args, **kwargs)
