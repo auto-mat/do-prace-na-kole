@@ -214,7 +214,7 @@ class RegisterTeamView(UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateVi
         }
 
 
-class RegisterCompanyView(AjaxCreateView):
+class RegisterCompanyView(LoginRequiredMixin, AjaxCreateView):
     form_class = forms.RegisterCompanyForm
     model = models.Company
 
@@ -1358,7 +1358,8 @@ class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequired
     registration_phase = "zmenit_tym"
 
     def dispatch(self, request, *args, **kwargs):
-        approval_request_mail(request.user_attendance)
+        if request.user_attendance:
+            approval_request_mail(request.user_attendance)
         return super(TeamApprovalRequest, self).dispatch(request, *args, **kwargs)
 
 

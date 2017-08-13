@@ -74,11 +74,6 @@ class SelectUsersPayTests(ClearCacheMixin, TestCase):
             status_code=403,
         )
 
-    def test_not_logged_in(self):
-        self.client.logout()
-        response = self.client.get(reverse('company_admin_pay_for_users'))
-        self.assertRedirects(response, '/login?next=/zaplatit_za_uzivatele/')
-
 
 class InvoiceTests(ClearCacheMixin, TestCase):
 
@@ -234,8 +229,3 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             '<td>Zaplacení nepotvrzeno</td>',
             html=True,
         )
-
-    def test_not_logged_in(self):
-        self.client.logout()
-        response = self.client.get(reverse('invoices'))
-        self.assertRedirects(response, '/login?next=/faktury/')

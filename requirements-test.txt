@@ -20,3 +20,4 @@ flake8-builtins
 flake8-strict
 pudb
 coveralls
+ddt

@@ -26,6 +26,8 @@ from PyPDF2 import PdfFileReader
 
 import createsend
 
+from ddt import data, ddt
+
 import denorm
 
 from django.contrib.gis.db.models.functions import Length
@@ -362,7 +364,6 @@ class PaymentTypeViewTests(TestCase):
         self.price_level.delete()
         self.user_attendance.save()
         response = self.client.get(reverse('typ_platby'))
-        print_response(response)
         self.assertContains(
             response,
             '<div class="alert alert-danger">Účastnický poplatek se neplatí. Pokračujte na <a href="/">zadávání jízd</a>.</div>',
@@ -2238,3 +2239,68 @@ class RidesDetailsTests(ViewsLogon):
         self.assertContains(response, 'Chůze/běh')
         self.assertContains(response, 'Podrobný přehled jízd')
         self.assertContains(response, '1. listopadu 2009')
+
+
+@ddt
+class TestNotLoggedIn(TestCase):
+    """ Test, that views in which user must be logged on redirects to login page. """
+    def setUp(self):
+        self.client = Client(HTTP_HOST="testing-campaign.example.com")
+        self.campaign = testing_campaign()
+
+    @data(
+        "application",
+        "bike_repair",
+        "company_admin_application",
+        "company_admin_competition",
+        "company_admin_competitions",
+        "company_admin_related_competitions",
+        "company_structure",
+        "competitions",
+        "edit_company",
+        "edit_team",
+        "emission_calculator",
+        "other_team_members_results",
+        "package",
+        "pozvanky",
+        "profil",
+        "questionnaire_competitions",
+        "register_company",
+        "registration_uncomplete",
+        "rides_details",
+        "team_members",
+        "upravit_profil",
+        "upravit_trasu",
+        "zaslat_zadost_clenstvi",
+        "zmenit_tym",
+    )
+    def test_not_logged_in(self, view):
+        response = self.client.get(reverse(view))
+        self.assertRedirects(response, '/login?next=%s' % reverse(view))
+
+    def test_invoices(self):
+        mommy.make(
+            "dpnk.Phase",
+            campaign=testing_campaign,
+            phase_type="invoices",
+            date_from="2010-1-1",
+        )
+        view = 'invoices'
+        response = self.client.get(reverse(view))
+        self.assertRedirects(response, '/login?next=%s' % reverse(view))
+
+    @data(
+        "company_admin_pay_for_users",
+        "payment",
+        "payment_beneficiary",
+        "typ_platby",
+    )
+    def test_not_logged_in_payment_phase(self, view):
+        mommy.make(
+            "dpnk.Phase",
+            campaign=testing_campaign,
+            phase_type="payment",
+            date_from="2010-1-1",
+        )
+        response = self.client.get(reverse(view))
+        self.assertRedirects(response, '/login?next=%s' % reverse(view))

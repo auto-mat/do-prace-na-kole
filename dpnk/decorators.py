@@ -67,23 +67,22 @@ class GroupRequiredResponseMixin(GroupRequiredMixin):
 
 class MustHaveTeamMixin(object):
     def dispatch(self, request, *args, **kwargs):
-        if request.user_attendance.team:
-            return super().dispatch(request, *args, **kwargs)
+        if request.user_attendance and not request.user_attendance.team:
+            raise PermissionDenied(mark_safe_lazy(_("Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse_lazy("zmenit_tym")))
 
-        raise PermissionDenied(mark_safe_lazy(_("Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse_lazy("zmenit_tym")))
+        return super().dispatch(request, *args, **kwargs)
 
 
 class MustBeApprovedForTeamMixin(object):
     def dispatch(self, request, *args, **kwargs):
-        if request.user_attendance.team and request.user_attendance.is_team_approved():
-            return super().dispatch(request, *args, **kwargs)
-
-        raise PermissionDenied(
-            format_html(
-                _("Vaše členství v týmu {team} nebylo odsouhlaseno. <a href='{address}'>Znovu požádat o ověření členství</a>."),
-                team=request.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi"),
-            ),
-        )
+        if request.user_attendance and not (request.user_attendance.team and request.user_attendance.is_team_approved()):
+            raise PermissionDenied(
+                format_html(
+                    _("Vaše členství v týmu {team} nebylo odsouhlaseno. <a href='{address}'>Znovu požádat o ověření členství</a>."),
+                    team=request.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi"),
+                ),
+            )
+        return super().dispatch(request, *args, **kwargs)
 
 
 class MustBeOwner(object):
