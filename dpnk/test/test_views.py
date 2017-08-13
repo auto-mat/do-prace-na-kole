@@ -760,7 +760,7 @@ class RegistrationPhaseTests(TestCase):
         response = self.client.get(reverse('registrace'))
         self.assertContains(
             response,
-            '<div class="alert alert-danger">Tato stránka nemůže být v této kampani zobrazena.</div>',
+            '<div class="alert alert-danger">Tato stránka nemůže být v této kampani zobrazena. Neexistuje v ní registrační fáze.</div>',
             html=True,
             status_code=403,
         )

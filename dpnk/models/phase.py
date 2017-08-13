@@ -24,6 +24,16 @@ from django.utils.translation import ugettext_lazy as _
 
 from .. import util
 
+TYPE = [
+    ('registration', _(u"registrační")),
+    ('payment', _(u"placení startovného")),
+    ('competition', _(u"soutěžní")),
+    ('results', _(u"výsledková")),
+    ('admissions', _(u"přihlašovací do soutěží")),
+    ('invoices', _(u"vytváření faktur")),
+]
+PHASE_TYPE_DICT = dict(TYPE)
+
 
 class Phase(models.Model):
     """fáze kampaně"""
@@ -32,15 +42,6 @@ class Phase(models.Model):
         verbose_name = _(u"fáze kampaně")
         verbose_name_plural = _(u"fáze kampaně")
         unique_together = (("phase_type", "campaign"),)
-
-    TYPE = [
-        ('registration', _(u"registrační")),
-        ('payment', _(u"placení startovného")),
-        ('competition', _(u"soutěžní")),
-        ('results', _(u"výsledková")),
-        ('admissions', _(u"přihlašovací do soutěží")),
-        ('invoices', _(u"vytváření faktur")),
-    ]
 
     campaign = models.ForeignKey(
         'Campaign',

@@ -25,6 +25,8 @@ from django.utils import formats
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
+from dpnk.models import PHASE_TYPE_DICT
+
 from .string_lazy import mark_safe_lazy
 
 
@@ -33,7 +35,9 @@ class MustBeInPhaseMixin(object):
         try:
             phase = request.campaign.phase_set.get(phase_type=self.must_be_in_phase)
         except ObjectDoesNotExist:
-            raise PermissionDenied(_("Tato stránka nemůže být v této kampani zobrazena."))
+            raise PermissionDenied(
+                _("Tato stránka nemůže být v této kampani zobrazena. Neexistuje v ní %s fáze." % PHASE_TYPE_DICT[self.must_be_in_phase]),
+            )
 
         if phase.is_actual():
             return super().dispatch(request, *args, **kwargs)
