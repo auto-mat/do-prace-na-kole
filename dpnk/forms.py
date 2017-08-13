@@ -109,37 +109,39 @@ class CampaignMixin(object):
         return super().__init__(*args, **kwargs)
 
 
+social_html = HTML(
+    format_html_lazy(
+        '<a class="btn btn-block btn-social btn-google" href="{{% url "social:begin" "google-oauth2" %}}">'
+        '  <span class="fa fa-google"></span>{}'
+        '</a>'
+        '<a class="btn btn-block btn-social btn-facebook" href="{{% url "social:begin" "facebook" %}}">'
+        '  <span class="fa fa-facebook"></span>{}'
+        '</a>',
+        _("Přihlásit se pomocí Google"),
+        _("Přihlásit se pomocí Facebooku"),
+    ),
+)
+
+
 class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
     def __init__(self, *args, **kwargs):
         ret_val = super(AuthenticationFormDPNK, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             'username', 'password',
+            Submit('submit', _('Přihlásit')),
+            HTML('<br/><br/>'),
+            social_html,
+            HTML('<br/>'),
+            HTML('<a href="{%% url "password_reset" %%}">%s</a>' % _("Zapomněli jste své přihlašovací údaje?")),
+            HTML('<br/><br/>'),
+            HTML(_('Ještě nemáte účet?')),
             HTML(
-                format_html_lazy(
-                    '<a class="btn btn-block btn-social btn-google" href="{{% url "social:begin" "google-oauth2" %}}">'
-                    '  <span class="fa fa-google"></span>{}'
-                    '</a>'
-                    '<a class="btn btn-block btn-social btn-facebook" href="{{% url "social:begin" "facebook" %}}">'
-                    '  <span class="fa fa-facebook"></span>{}'
-                    '</a>'
-                    '<br/><br/>',
-                    _("Přihlásit se pomocí Google"),
-                    _("Přihlásit se pomocí Facebooku"),
-                ),
+                ' <a href="{%% url "registration_access" %%}">%s</a>' %
+                _('Registrujte se do soutěže %s.' % self.campaign),
             ),
-            HTML(
-                _(
-                    '<a href="{%% url "password_reset" %%}">Zapomněli jste své přihlašovací údaje?</a>'
-                    '<br/><br/>'
-                    'Ještě nemáte účet? <a href="{%% url "registration_access" %%}">Registrujte se</a> do soutěže %(campaign)s.'
-                    '<br/><br/>'
-                ) % {
-                    'campaign': self.campaign,
-                },
-            ),
+            HTML('<br/><br/>'),
         )
-        self.helper.add_input(Submit('submit', _(u'Přihlásit')))
         self.fields['username'].label = _(u"E-mail (uživatelské jméno)")
         return ret_val
 
@@ -363,7 +365,7 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
     )
 
 
-class EmailUsernameMixin():
+class EmailUsernameMixin(object):
     def clean_username(self):
         "This function is required to overwrite an inherited username clean"
         return self.cleaned_data['username']
@@ -385,14 +387,17 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
         self.helper.add_input(Submit('submit', _(u'Odeslat')))
         self.helper.layout = Layout(
             'email', 'password1', 'password2', 'username',
+            Submit('submit', _('Odeslat')),
+            HTML('<br/><br/>'),
+            HTML(_('Případně se můžete přímo přihlásit pomocí účtů na sociálních sítích:')),
+            social_html,
+            HTML('<br/>'),
             HTML(
-                _(
-                    'Chcete se stát firemním koordinátorem a nechcete soutěžit?'
-                    ' <a href="%(company_admin_registration)s">Využijte registraci firemního koordinátora</a>.'
-                    '<br/><br/>'
-                ) % {
-                    'company_admin_registration': reverse("register_admin"),
-                },
+                '%s <a href="{%% url "register_admin" %%}">%s</a>.'
+                '<br/><br/>' % (
+                    _("Chcete se stát firemním koordinátorem a nechcete soutěžit?"),
+                    _("Využijte registraci firemního koordinátora"),
+                ),
             ),
         )
 
