@@ -144,7 +144,7 @@ Raven.setUserContext({
           {% scribble 'before_right_panel' current_language_code %}{% endscribble %}
           <ul class="user_info">
                  <li>{% trans "Uživatel: " %}{{ user_attendance }}</li>
-                 {% if user_attendance.team %}<li>{% trans "Tým: " %}{{ user_attendance.team.name }}</li>{% endif %}
+                 {% if user_attendance.team and user_attendance.campaign.competitors_choose_team %}<li>{% trans "Tým: " %}{{ user_attendance.team.name }}</li>{% endif %}
                  <li><a href="{% url 'password_change' %}">{% trans "Změnit heslo" %}</a></li>
                  <li>{% scribble 'inside_right_panel' current_language_code %}{% endscribble %}</li>
                  <li class="logout_django"><a class="btn btn-warning logout" href="{% url 'logout' %}" title="Log out">{% trans "Odhlásit" %}</a></li>
