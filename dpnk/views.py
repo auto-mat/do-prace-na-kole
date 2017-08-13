@@ -368,14 +368,12 @@ class PaymentTypeView(
 
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance:
-            if request.user_attendance.payment_status == 'done':
-                raise PermissionDenied(
-                    mark_safe_lazy(_("Již máte účastnický poplatek zaplacen. Pokračujte na <a href='%s'>zadávání jízd</a>.") % reverse("profil")),
-                )
-            if request.user_attendance.payment_status == 'no_admission':
-                raise PermissionDenied(
-                    mark_safe_lazy(_("Účastnický poplatek se neplatí. Pokračujte na <a href='{addr}'>zadávání jízd</a>.") % reverse("profil")),
-                )
+            if request.user_attendance.has_paid():
+                if request.user_attendance.payment_status == 'done':
+                    message = _("Již máte účastnický poplatek zaplacen.")
+                else:
+                    message = _("Účastnický poplatek se neplatí.")
+                raise PermissionDenied(mark_safe_lazy(_("%s Pokračujte na <a href='%s'>zadávání jízd</a>.") % (message, reverse("profil"))))
             if not request.user_attendance.t_shirt_size:
                 raise PermissionDenied(_("Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"))
         return super().dispatch(request, *args, **kwargs)

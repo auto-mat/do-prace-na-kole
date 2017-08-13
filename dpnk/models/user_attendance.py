@@ -357,7 +357,7 @@ class UserAttendance(models.Model):
                 return 'team_uncomplete'
         if not self.tshirt_complete():
             return 'tshirt_uncomplete'
-        if not self.payment_waiting():
+        if not self.has_paid():
             if self.payment_complete():
                 return 'payment_waiting'
             else:
@@ -369,7 +369,7 @@ class UserAttendance(models.Model):
     def entered_competition(self):
         return self.tshirt_complete() and\
             self.is_team_approved() and\
-            self.payment_waiting() and\
+            self.has_paid() and\
             self.userprofile.profile_complete()
 
     def team_member_count(self):
@@ -391,7 +391,7 @@ class UserAttendance(models.Model):
     def payment_complete(self):
         return self.payment_status not in ('none', None)
 
-    def payment_waiting(self):
+    def has_paid(self):
         return self.payment_status in ('done', 'no_admission') or (not self.has_admission_fee())
 
     def get_emissions(self, distance=None):

@@ -40,7 +40,7 @@ class ViewsTestsLogon(TestCase):
     def setUp(self):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
-        mommy.make(
+        self.t_shirt_size = mommy.make(
             "TShirtSize",
             id=1,
             campaign=testing_campaign,
@@ -83,6 +83,11 @@ class ViewsTestsLogon(TestCase):
         self.user_attendance.campaign.save()
         response = self.client.get(reverse('zmenit_triko'))
         self.assertRedirects(response, reverse("typ_platby"), target_status_code=403)
+
+    def test_dpnk_t_shirt_size_shipped(self):
+        mommy.make("PackageTransaction", status=20002, t_shirt_size=self.t_shirt_size, user_attendance=self.user_attendance)
+        response = self.client.get(reverse('zmenit_triko'))
+        self.assertContains(response, "Vaše tričko již je na cestě k vám, už se na něj můžete těšit.", status_code=403)
 
     @patch('slumber.API')
     def test_dpnk_t_shirt_size_no_sizes_no_admission(self, slumber_mock):

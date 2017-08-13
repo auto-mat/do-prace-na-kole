@@ -321,7 +321,7 @@ class PaymentTypeViewTests(TestCase):
             campaign=self.campaign,
             name="Foo t-shirt-size",
         )
-        mommy.make(
+        self.price_level = mommy.make(
             "price_level.PriceLevel",
             takes_effect_on=datetime.date(year=2010, month=2, day=1),
             price=100,
@@ -354,6 +354,18 @@ class PaymentTypeViewTests(TestCase):
         self.assertContains(
             response,
             '<div class="alert alert-danger">Již máte účastnický poplatek zaplacen. Pokračujte na <a href="/">zadávání jízd</a>.</div>',
+            html=True,
+            status_code=403,
+        )
+
+    def test_dpnk_payment_type_no_admission_fee(self):
+        self.price_level.delete()
+        self.user_attendance.save()
+        response = self.client.get(reverse('typ_platby'))
+        print_response(response)
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Účastnický poplatek se neplatí. Pokračujte na <a href="/">zadávání jízd</a>.</div>',
             html=True,
             status_code=403,
         )

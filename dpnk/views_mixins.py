@@ -133,7 +133,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                         ),
                     )
 
-            if not self.user_attendance.payment_waiting():
+            if not self.user_attendance.has_paid():
                 messages.info(
                     request,
                     format_html(
