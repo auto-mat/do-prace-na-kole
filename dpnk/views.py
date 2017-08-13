@@ -114,7 +114,7 @@ from .views_permission_mixins import (
     MustBeApprovedForTeamMixin,
     MustBeInPaymentPhaseMixin,
     MustBeInRegistrationPhaseMixin,
-    MustBeOwner,
+    MustBeOwnerMixin,
     MustHaveTeamMixin,
 )
 
@@ -1719,7 +1719,7 @@ class CombinedTracksKMLView(TemplateView):
         return context_data
 
 
-class UpdateGpxFileView(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, MustBeOwner, LoginRequiredMixin, UpdateView):
+class UpdateGpxFileView(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, MustBeOwnerMixin, LoginRequiredMixin, UpdateView):
     form_class = forms.GpxFileForm
     model = models.GpxFile
     template_name = "registration/gpx_file.html"

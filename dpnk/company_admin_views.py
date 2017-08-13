@@ -43,11 +43,11 @@ from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, Us
 from .string_lazy import mark_safe_lazy
 from .views import AdmissionsView, RegistrationViewMixin, TitleViewMixin
 from .views_mixins import CompanyAdminMixin
-from .views_permission_mixins import MustBeCompanyAdmin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
+from .views_permission_mixins import MustBeCompanyAdminMixin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
 logger = logging.getLogger(__name__)
 
 
-class CompanyStructure(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, TemplateView):
+class CompanyStructure(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, TemplateView):
     template_name = 'company_admin/structure.html'
     title = _("Struktura organizace")
 
@@ -67,11 +67,11 @@ class CompanyStructure(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, T
         return context_data
 
 
-class RelatedCompetitionsView(MustBeCompanyAdmin, AdmissionsView):
+class RelatedCompetitionsView(MustBeCompanyAdminMixin, AdmissionsView):
     template_name = "company_admin/related_competitions.html"
 
 
-class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeInPaymentPhaseMixin, MustBeCompanyAdmin, LoginRequiredMixin, FormView):
+class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeInPaymentPhaseMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, FormView):
     template_name = 'company_admin/select_users_pay_for.html'
     form_class = SelectUsersPayForm
     success_url = reverse_lazy('company_admin_pay_for_users')
@@ -109,7 +109,7 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeInPaymentPha
         return self.success_message % self.confirmed_count
 
 
-class CompanyEditView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, UpdateView):
+class CompanyEditView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyForm
     model = Company
@@ -188,7 +188,7 @@ class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, MustHaveTeamMix
         return ret_val
 
 
-class EditSubsidiaryView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, UpdateView):
+class EditSubsidiaryView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = SubsidiaryForm
     success_url = reverse_lazy('company_structure')
@@ -208,7 +208,7 @@ class CompanyViewException(Exception):
     pass
 
 
-class CompanyCompetitionView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, UpdateView):
+class CompanyCompetitionView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyCompetitionForm
     model = Competition
@@ -241,7 +241,7 @@ class CompanyCompetitionView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMi
             return {'commute_modes': models.competition.default_commute_modes()}
 
 
-class CompanyCompetitionsShowView(TitleViewMixin, MustBeCompanyAdmin, LoginRequiredMixin, TemplateView):
+class CompanyCompetitionsShowView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, TemplateView):
     template_name = 'company_admin/competitions.html'
     title = _("Vnitrofiremní soutěže")
 
@@ -251,7 +251,7 @@ class CompanyCompetitionsShowView(TitleViewMixin, MustBeCompanyAdmin, LoginRequi
         return context_data
 
 
-class InvoicesView(TitleViewMixin, MustBeInInvoicesPhaseMixin, MustBeCompanyAdmin, LoginRequiredMixin, CreateView):
+class InvoicesView(TitleViewMixin, MustBeInInvoicesPhaseMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, CreateView):
     template_name = 'company_admin/create_invoice.html'
     form_class = company_admin_forms.CreateInvoiceForm
     success_url = reverse_lazy('invoices')

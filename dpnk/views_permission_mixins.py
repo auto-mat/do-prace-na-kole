@@ -65,8 +65,10 @@ class MustBeInInvoicesPhaseMixin(MustBeInPhaseMixin):
 
 
 class GroupRequiredResponseMixin(GroupRequiredMixin):
-    def get_error_message(self, request):
-        raise PermissionDenied(_("Pro přístup k této stránce musíte být ve skupině %s") % self.group_required)
+    def no_permissions_fail(self, request):
+        if request.user.is_authenticated():
+            raise PermissionDenied(_("Pro přístup k této stránce musíte být ve skupině %s") % self.group_required)
+        return super().no_permissions_fail(request)
 
 
 class MustHaveTeamMixin(object):
@@ -79,7 +81,11 @@ class MustHaveTeamMixin(object):
 
 class MustBeApprovedForTeamMixin(object):
     def dispatch(self, request, *args, **kwargs):
-        if request.user_attendance and not (request.user_attendance.team and request.user_attendance.is_team_approved()):
+        if (
+                request.user_attendance and
+                request.user_attendance.team and
+                not (request.user_attendance.team and request.user_attendance.is_team_approved())
+        ):
             raise PermissionDenied(
                 format_html(
                     _("Vaše členství v týmu {team} nebylo odsouhlaseno. <a href='{address}'>Znovu požádat o ověření členství</a>."),
@@ -89,16 +95,16 @@ class MustBeApprovedForTeamMixin(object):
         return super().dispatch(request, *args, **kwargs)
 
 
-class MustBeOwner(object):
+class MustBeOwnerMixin(object):
     def dispatch(self, request, *args, **kwargs):
         view_object = self.get_object()
-        if view_object and request.user_attendance == view_object.user_attendance:
+        if request.user_attendance and view_object and request.user_attendance == view_object.user_attendance:
             return super().dispatch(request, *args, **kwargs)
 
         raise PermissionDenied(_("Nemůžete vidět cizí objekt"))
 
 
-class MustBeCompanyAdmin(object):
+class MustBeCompanyAdminMixin(object):
     """
     Tests if user is company admin.
     Also sets CompanyAdmin object to self.company_admin
