@@ -38,12 +38,12 @@ from . import models
 from .company_admin_forms import (
     CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
 )
-from .decorators import MustBeCompanyAdmin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
 from .string_lazy import mark_safe_lazy
 from .views import AdmissionsView, RegistrationViewMixin, TitleViewMixin
 from .views_mixins import CompanyAdminMixin
+from .views_permission_mixins import MustBeCompanyAdmin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
 logger = logging.getLogger(__name__)
 
 

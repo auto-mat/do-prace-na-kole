@@ -78,14 +78,6 @@ from . import forms
 from . import models
 from . import results
 from . import util
-from .decorators import (
-    GroupRequiredResponseMixin,
-    MustBeApprovedForTeamMixin,
-    MustBeInPaymentPhaseMixin,
-    MustBeInRegistrationPhaseMixin,
-    MustBeOwner,
-    MustHaveTeamMixin,
-)
 from .email import (
     approval_request_mail,
     invitation_mail,
@@ -116,6 +108,14 @@ from .views_mixins import (
     UserAttendanceFormKwargsMixin,
     UserAttendanceParameterMixin,
     UserAttendanceViewMixin,
+)
+from .views_permission_mixins import (
+    GroupRequiredResponseMixin,
+    MustBeApprovedForTeamMixin,
+    MustBeInPaymentPhaseMixin,
+    MustBeInRegistrationPhaseMixin,
+    MustBeOwner,
+    MustHaveTeamMixin,
 )
 
 logger = logging.getLogger(__name__)
