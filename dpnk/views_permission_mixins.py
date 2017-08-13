@@ -22,12 +22,11 @@ from braces.views import GroupRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils import formats
-from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
 from dpnk.models import PHASE_TYPE_DICT
 
-from .string_lazy import mark_safe_lazy
+from .string_lazy import format_html_lazy, mark_safe_lazy
 
 
 class MustBeInPhaseMixin(object):
@@ -87,7 +86,7 @@ class MustBeApprovedForTeamMixin(object):
                 not (request.user_attendance.team and request.user_attendance.is_team_approved())
         ):
             raise PermissionDenied(
-                format_html(
+                format_html_lazy(
                     _("Vaše členství v týmu {team} nebylo odsouhlaseno. <a href='{address}'>Znovu požádat o ověření členství</a>."),
                     team=request.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi"),
                 ),
