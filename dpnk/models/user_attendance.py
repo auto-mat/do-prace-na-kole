@@ -466,7 +466,12 @@ class UserAttendance(models.Model):
                 raise ValidationError({'team': _("Tento tým již má plný počet členů")})
 
         if self.team and self.team.campaign != self.campaign:
-            message = _("Zvolená kampaň (%s) musí být shodná s kampaní týmu (%s)" % (self.campaign, self.team.campaign))
+            message = _(
+                "Zvolená kampaň (%(campaign)s) musí být shodná s kampaní týmu (%(team)s)" % {
+                    'campaign': self.campaign,
+                    'team': self.team.campaign,
+                },
+            )
             raise ValidationError({'team': message, 'campaign': message})
 
     def save(self, *args, **kwargs):

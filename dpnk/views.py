@@ -371,7 +371,7 @@ class PaymentTypeView(
                     message = _("Již máte účastnický poplatek zaplacen.")
                 else:
                     message = _("Účastnický poplatek se neplatí.")
-                raise PermissionDenied(mark_safe_lazy(_("%s Pokračujte na <a href='%s'>zadávání jízd</a>.") % (message, reverse("profil"))))
+                raise PermissionDenied(mark_safe_lazy(message + " " + _("Pokračujte na <a href='%s'>zadávání jízd</a>.") % reverse("profil")))
             if not request.user_attendance.t_shirt_size:
                 raise PermissionDenied(_("Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"))
         return super().dispatch(request, *args, **kwargs)
