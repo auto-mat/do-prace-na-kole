@@ -384,7 +384,6 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
 
     def __init__(self, request=None, *args, **kwargs):
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', _(u'Odeslat')))
         self.helper.layout = Layout(
             'email', 'password1', 'password2', 'username',
             Submit('submit', _('Odeslat')),
