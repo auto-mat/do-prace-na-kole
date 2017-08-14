@@ -94,6 +94,8 @@ LOGGING['handlers']['logfile']['filename'] = "test-dpnk.log"
 
 CRISPY_FAIL_SILENTLY = False
 
+SECURE_SSL_REDIRECT = False
+
 # import local test_settings
 try:
     from test_settings_local import *  # noqa

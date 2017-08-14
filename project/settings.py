@@ -130,12 +130,11 @@ STATICFILES_FINDERS = (
 
 SECRET_KEY = os.environ.get('DPNK_SECRET_KEY')
 MIDDLEWARE_CLASSES = [
-    # 'django.middleware.security.SecurityMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
-    'sslifyadmin.middleware.SSLifyAdminMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'subdomains.middleware.SubdomainMiddleware',
@@ -159,11 +158,6 @@ AUTHENTICATION_BACKENDS = (
     "django_su.backends.SuBackend",
 )
 ROOT_URLCONF = 'urls'
-
-# CSRF_COOKIE_HTTPONLY = True
-# SECURE_BROWSER_XSS_FILTER = True
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-# X_FRAME_OPTIONS = 'DENY'
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('DPNK_SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', '')

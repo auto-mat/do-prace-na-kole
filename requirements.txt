@@ -69,7 +69,6 @@ boto
 django-google-tag-manager
 django-ses
 whitenoise
-django-sslify-admin
 django-favicon
 django-modeltranslation
 -e git+https://github.com/burke-software/django-mass-edit.git#egg=django-mass-edit  # for the removal of onclick_attrib

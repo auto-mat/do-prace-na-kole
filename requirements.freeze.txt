@@ -70,7 +70,6 @@ django-ses==0.8.2
 django-settings-context-processor==0.2
 -e git+https://github.com/PetrDlouhy/django-smart-selects@1fb0639756b1eb565caf1013f667bf2e85a6c071#egg=django_smart_selects
 django-softhyphen==1.1.0
-django-sslify-admin==0.5.0
 django-storages==1.6.3
 django-su==0.5.2
 django-subdomains==2.1.0
