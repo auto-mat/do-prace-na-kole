@@ -173,6 +173,7 @@ class CompanyAdminApplicationForm(EmailUsernameMixin, CompanyAdminForm, registra
         ),
         queryset=Company.objects.all(),
         required=True,
+        help_text=_("Napište část názvu organizace a vyberte ji ze seznamu."),
     )
     telephone = forms.CharField(
         label="Telefon",

@@ -198,6 +198,7 @@ class RegisterSubsidiaryForm(AddressForm):
         queryset=models.Company.objects.filter(active=True),
         widget=AutoCompleteSelectWidget(lookup_class='dpnk.lookups.CompanyLookup'),
         required=True,
+        help_text=_("Napište část názvu organizace a vyberte ji ze seznamu."),
     )
 
     class Meta:
@@ -230,6 +231,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         queryset=models.Company.objects.filter(active=True),
         widget=AutoCompleteSelectWidget(lookup_class='dpnk.lookups.CompanyLookup'),
         required=True,
+        help_text=_("Napište část názvu organizace a vyberte ji ze seznamu."),
     )
     subsidiary = ChainedModelChoiceField(
         chained_field="company_1",
