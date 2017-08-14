@@ -19,12 +19,17 @@ Do pole organizace napište několik začátečních písmen názvu vaší organ
 {% include "fm/modal.html" %}
 <script type="text/javascript">
     $(function() {
+        updateSubsidiary = function(event, ui) {
+           $("#fm-create-subsidiary").attr('href', "{% url 'register_subsidiary' "" %}" + $('#id_company_1').val());
+           $("#fm-create-subsidiary").prop('disabled', $('#id_company_1').val() == "");
+        }
         $.fm({
             debug: true,
             custom_callbacks: {
                 "createCompanyCallback": function(data, options) {
                     $('#id_company_0').attr('value', data.name);
                     $('#id_company_1').attr('value', data.id);
+                    updateSubsidiary();
                 },
                 "createSubsidiaryCallback": function(data, options) {
                     $('#id_company_1').change();
@@ -41,10 +46,6 @@ Do pole organizace napište několik začátečních písmen názvu vaší organ
                 }
             }
         });
-        updateSubsidiary = function(event, ui) {
-           $("#fm-create-subsidiary").attr('href', "{% url 'register_subsidiary' "" %}" + $('#id_company_1').val());
-           $("#fm-create-subsidiary").prop('disabled', $('#id_company_1').val() == "");
-        }
         $('#id_company_0').on('djselectablechange', updateSubsidiary);
         $('#id_company_1').change(updateSubsidiary);
         $('#id_subsidiary').change(function(event, ui) {
