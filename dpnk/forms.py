@@ -138,7 +138,7 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
             HTML(_('Ještě nemáte účet?')),
             HTML(
                 ' <a href="{%% url "registration_access" %%}">%s</a>' %
-                _('Registrujte se do soutěže %s.' % self.campaign),
+                (_('Registrujte se do soutěže %s.') % self.campaign.name),
             ),
             HTML('<br/><br/>'),
         )

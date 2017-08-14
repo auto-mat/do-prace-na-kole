@@ -121,7 +121,7 @@ logger = logging.getLogger(__name__)
 
 class DPNKLoginView(CampaignFormKwargsMixin, TitleViewMixin, LoginView):
     def get_title(self, *args, **kwargs):
-        return _("Přihlášení do soutěže %s" % self.campaign)
+        return _("Přihlášení do soutěže %s") % self.campaign.name
 
     def get_initial(self):
         initial_email = self.kwargs.get('initial_email')
