@@ -161,18 +161,6 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
             return 'pozvanky'
         return super().get_next_url()
 
-    def get_previous_team(self):
-        previous_user_attendance = self.user_attendance.previous_user_attendance()
-        if previous_user_attendance and previous_user_attendance.team:
-            try:
-                return Team.objects.get(
-                    name=previous_user_attendance.team.name,
-                    campaign=self.user_attendance.campaign,
-                    subsidiary__company=previous_user_attendance.team.subsidiary.company,
-                )
-            except Team.DoesNotExist:
-                return None
-
     def get_initial(self):
         if self.user_attendance.team:
             return {
@@ -180,12 +168,11 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
                 'company': self.user_attendance.team.subsidiary.company,
             }
         else:
-            previous_team = self.get_previous_team()
-            if previous_team:
+            previous_user_attendance = self.user_attendance.previous_user_attendance()
+            if previous_user_attendance and previous_user_attendance.team:
                 return {
-                    'team': previous_team,
-                    'subsidiary': previous_team.subsidiary,
-                    'company': previous_team.subsidiary.company,
+                    'subsidiary': previous_user_attendance.team.subsidiary,
+                    'company': previous_user_attendance.team.subsidiary.company,
                 }
 
     def get_object(self):

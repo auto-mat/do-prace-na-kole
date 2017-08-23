@@ -1613,17 +1613,11 @@ class ChangeTeamViewTests(TestCase):
         previous_campaign = CampaignRecipe.make()
         self.campaign.previous_campaign = previous_campaign
         self.campaign.save()
-        previous_user_attendance = UserAttendanceRecipe.make(
+        UserAttendanceRecipe.make(
             campaign=previous_campaign,
             userprofile=self.user_attendance.userprofile,
-            team__name="Foo team lasts",
+            team__subsidiary__company__name="Foo company lasts",
             team__campaign=previous_campaign,
-        )
-        new_team = mommy.make(
-            "Team",
-            name="Foo team lasts",
-            campaign=self.campaign,
-            subsidiary__company=previous_user_attendance.team.subsidiary.company,
         )
         self.user_attendance.team = None
         self.user_attendance.save()
@@ -1632,7 +1626,10 @@ class ChangeTeamViewTests(TestCase):
 
         self.assertContains(
             response,
-            '<option value="%s" selected>Foo team lasts ()</option>' % new_team.id,
+            '<input type="text" name="company_0" value="Foo company lasts" '
+            'data-selectable-allow-new="false" id="id_company_0" '
+            'class="autocompletewidget form-control" data-selectable-type="text" '
+            'required data-selectable-url="/selectable/dpnk-companylookup/" />',
             html=True,
         )
 
