@@ -142,8 +142,19 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'registration/change_team.html'
     next_url = 'zmenit_triko'
     prev_url = 'upravit_profil'
-    title = _(u'Vybrat/změnit tým')
     registration_phase = "zmenit_tym"
+
+    def get_title(self, *args, **kwargs):
+        if self.user_attendance.team:
+            action_text = _('Změnit')
+        else:
+            action_text = _('Vybrat')
+
+        if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():
+            subject_text = _('tým')
+        else:
+            subject_text = _('organizaci')
+        return "%s %s" % (action_text, subject_text)
 
     def get_next_url(self):
         if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():

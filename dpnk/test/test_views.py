@@ -1200,7 +1200,7 @@ class ViewsTestsLogon(ViewsLogon):
             "campaign": self.user_attendance.campaign.id,
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, "Vybrat/změnit tým")
+        self.assertContains(response, "Změnit tým")
 
     def test_dpnk_team_invitation_confirmation_unchecked(self):
         token = self.user_attendance.team.invitation_token
