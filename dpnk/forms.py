@@ -192,14 +192,20 @@ class AddressForm(CampaignMixin, forms.ModelForm):
         fields = ('city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
 
+company_field = forms.ModelChoiceField(
+    label=_("Organizace"),
+    queryset=models.Company.objects.filter(active=True),
+    widget=AutoCompleteSelectWidget(lookup_class='dpnk.lookups.CompanyLookup'),
+    required=True,
+    help_text=_(
+        "Napište několik začátečních písmen názvu svého zaměstnavatele a pokud již existuje, nabídne se vám k výběru. "
+        "Vyberte ji kliknutím na položku v seznamu.",
+    ),
+)
+
+
 class RegisterSubsidiaryForm(AddressForm):
-    company = forms.ModelChoiceField(
-        label=_("Organizace"),
-        queryset=models.Company.objects.filter(active=True),
-        widget=AutoCompleteSelectWidget(lookup_class='dpnk.lookups.CompanyLookup'),
-        required=True,
-        help_text=_("Napište část názvu organizace a vyberte ji ze seznamu."),
-    )
+    company = company_field
 
     class Meta:
         model = models.Subsidiary
@@ -226,13 +232,8 @@ class RegisterTeamForm(InitialFieldsMixin, forms.ModelForm):
 
 
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
-    company = forms.ModelChoiceField(
-        label=_(u"Organizace"),
-        queryset=models.Company.objects.filter(active=True),
-        widget=AutoCompleteSelectWidget(lookup_class='dpnk.lookups.CompanyLookup'),
-        required=True,
-        help_text=_("Napište část názvu organizace a vyberte ji ze seznamu."),
-    )
+    company = company_field
+
     subsidiary = ChainedModelChoiceField(
         chained_field="company_1",
         to_app_name="dpnk",
