@@ -30,7 +30,7 @@ $(document).ready(function() {
         },
         "initComplete": function(settings, json) {
             $("div.search-company-div-{{ competition.id }}").html(
-               '<div class="dataTables_filter"><label>{% trans "Společnost:" %} <input id="search-company-{{ competition.id }}" class="form-control input-sm" type="text" placeholder="" value="' + searchString + '" /></label></div>'
+               '<div class="dataTables_filter"><label>{% trans "Organizace:" %} <input id="search-company-{{ competition.id }}" class="form-control input-sm" type="text" placeholder="" value="' + searchString + '" /></label></div>'
             );
             $('#search-company-{{ competition.id }}').keyup(function () {
                 oTable.column(0).search($(this).val()).draw();

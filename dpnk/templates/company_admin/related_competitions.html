@@ -17,7 +17,7 @@
          {% if competition.url %}</a>{% endif %}
       </td>
    <td>{{ competition.type_string }}</td>
-   <td><a href="{% url 'competition_results' competition_slug=competition.slug %}#search_company={{user_attendance.related_company_admin.administrated_company}}">{% trans "výsledky za mojí společnost" %}</a></td>
+   <td><a href="{% url 'competition_results' competition_slug=competition.slug %}#search_company={{user_attendance.related_company_admin.administrated_company}}">{% trans "výsledky za mojí organizaci" %}</a></td>
    </tr>
 {% endfor %}
 </table>

@@ -681,7 +681,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition.get().recalculate_results()
         response = self.client.get(reverse('competitions'))
         self.assertContains(response, 'vnitrofiremní soutěž na pravidelnost jednotlivců organizace Testing company')
-        self.assertContains(response, '<p>1. místo z 1 společností</p>', html=True)
+        self.assertContains(response, '<p>1. místo z 1 organizací</p>', html=True)
         self.assertContains(response, 'soutěž na vzdálenost jednotlivců  ve městě Testing city')
 
     def test_dpnk_competitions_page_change(self):

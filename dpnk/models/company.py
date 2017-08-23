@@ -44,7 +44,7 @@ class Company(models.Model):
     ico = models.PositiveIntegerField(
         default=None,
         verbose_name=_(u"IČO"),
-        help_text=_("Pokud má vaše společnost IČO, prosím vyplňte, jinak nechte prázdné."),
+        help_text=_("Pokud má vaše organizace IČO, prosím vyplňte, jinak nechte prázdné."),
         null=True,
         blank=True,
     )

@@ -394,7 +394,7 @@ class Competition(models.Model):
             'single_user': _('jednotlivců'),
             'liberos': _('liberos'),
             'team': _('týmů'),
-            'company': _('společností'),
+            'company': _('organizací'),
         }
         SEX_STRINGS = {
             'male': _('pro muže'),

@@ -316,9 +316,9 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             FieldWithButtons(
                 'company',
                 StrictButton(
-                    string_concat('<span class="glyphicon glyphicon-plus"></span> ', _('Přidat společnost')),
+                    string_concat('<span class="glyphicon glyphicon-plus"></span> ', _('Přidat organizaci')),
                     href=reverse("register_company"),
-                    data_fm_head=_("Vytvořit novou společnost"),
+                    data_fm_head=_("Vytvořit novou organizaci"),
                     data_fm_callback="createCompanyCallback",
                     css_class="btn-success fm-create",
                     id="fm-create-company",

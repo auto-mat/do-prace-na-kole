@@ -296,7 +296,7 @@ class TestTypeString(TestCase):
             competition_type="length",
             city=[self.city],
         )
-        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost společností  ve městě Testing city ")
+        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost organizací  ve městě Testing city ")
 
     def test_team_length_city_sex(self):
         competition = mommy.make(

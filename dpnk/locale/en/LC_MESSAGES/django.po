@@ -607,11 +607,11 @@ msgid "Zvolený tým není dostupný v aktuální kampani"
 msgstr "The selected team is not available in this campaign."
 
 #: forms.py:318
-msgid "Přidat společnost"
+msgid "Přidat organizaci"
 msgstr "Create company"
 
 #: forms.py:320
-msgid "Vytvořit novou společnost"
+msgid "Vytvořit novou organizaci"
 msgstr "Create new company"
 
 #: forms.py:329
@@ -1130,7 +1130,7 @@ msgstr ""
 "Karlova"
 
 #: models/company.py:47
-msgid "Pokud má vaše společnost IČO, prosím vyplňte, jinak nechte prázdné."
+msgid "Pokud má vaše organizace IČO, prosím vyplňte, jinak nechte prázdné."
 msgstr ""
 "If your company has IČO number, please fill it in, otherwise left blank"
 
@@ -1460,7 +1460,7 @@ msgid "týmů"
 msgstr "for teams"
 
 #: models/competition.py:397 templates/registration/competitions.html:29
-msgid "společností"
+msgid "organizací"
 msgstr "for companies"
 
 #: models/competition.py:400
@@ -2405,10 +2405,6 @@ msgstr "Create competition"
 msgid "Osobní údaje"
 msgstr "Personal details"
 
-#: templates/base_generic_registration_form.html:15
-msgid "Společnost"
-msgstr "Company"
-
 #: templates/base_generic_registration_form.html:17
 msgid "Triko"
 msgstr "T-shirt"
@@ -2548,7 +2544,7 @@ msgid "Zaplacení nepotvrzeno"
 msgstr "Payment unconfirmed"
 
 #: templates/company_admin/related_competitions.html:20
-msgid "výsledky za mojí společnost"
+msgid "výsledky za mojí organizaci"
 msgstr "results in my organisation"
 
 #: templates/company_admin/structure.html:39
@@ -2715,7 +2711,7 @@ msgid "do"
 msgstr "to"
 
 #: templates/registration/competition_results_table.html:33
-msgid "Společnost:"
+msgid "Organizace:"
 msgstr "Company:"
 
 #: templates/registration/competition_results_table.html:57
