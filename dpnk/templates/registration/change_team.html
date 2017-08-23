@@ -3,12 +3,6 @@
 {% load static %}
 
 {% block messages %}
-{% blocktrans %}
-Na této stránce zvolte váš tým.
-Každý tým musí být registrovaný pod nějakou organizací a její pobočkou.
-Do pole organizace napište několik začátečních písmen názvu vaší organizace a pokud již existuje, nabídne se vám k výběru.
-{% endblocktrans %}
-<br/>
 <br/>
    {% trans "Pokud název organizace nebo adresa pobočky v seznamu je, ale údaje jsou chybné, nezakládejte novou pobočku. Žádejte o opravu:" %}
    {% include "registration/request_change_company_coordinator_part.html" %}
