@@ -251,10 +251,7 @@ class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, FormView):
 
     def form_valid(self, form):
         email = form.cleaned_data['email']
-        user_exists = models.User.objects.filter(email=email).exists()
-        if not user_exists:
-            user_exists = models.User.objects.filter(username=email).exists()
-        if user_exists:
+        if models.User.objects.filter(Q(email=email) | Q(username=email)).exists():
             return redirect(reverse('login', kwargs={'initial_email': email}))
         else:
             return redirect(reverse('registrace', kwargs={'initial_email': email}))
