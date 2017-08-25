@@ -367,6 +367,17 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
         help_text=_(u"Zadejte váš e-mail. Pokud jste se účastnili v minulém roce, zadejte stejný e-mail jako v minulém roce."),
     )
 
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'email',
+            Submit('submit', _('Odeslat')),
+            HTML('<br/><br/>'),
+            HTML(_('Případně se můžete přímo přihlásit pomocí účtů na sociálních sítích:')),
+            social_html,
+        )
+
 
 class EmailUsernameMixin(object):
     def clean_username(self):
