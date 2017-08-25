@@ -65,7 +65,7 @@ django-related-admin==0.5.0
 django-rosetta==0.7.13
 django-scribbler==0.8.0
 django-secretballot==0.7.0
--e git+https://github.com/mlavin/django-selectable.git@66ed38326cbd8ffa611c9648f58343a899cc1e41#egg=django_selectable
+-e git+https://github.com/PetrDlouhy/django-selectable.git@7078d4d1652d87e1430ab00acb17e80e816d3a1f#egg=django_selectable
 django-ses==0.8.2
 django-settings-context-processor==0.2
 -e git+https://github.com/PetrDlouhy/django-smart-selects@1fb0639756b1eb565caf1013f667bf2e85a6c071#egg=django_smart_selects

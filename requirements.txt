@@ -50,7 +50,7 @@ django-cors-headers
 django-wysiwyg-redactor
 sqlparse
 django-appconf
--e git+https://github.com/mlavin/django-selectable.git#egg=django-selectable  # For the Django 1.11 fixes
+-e git+https://github.com/PetrDlouhy/django-selectable.git#egg=django-selectable  # For the Django 1.11 fixes, for search splitted by whitespaces
 pypdf2
 django-extra-views
 raven
