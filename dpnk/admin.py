@@ -1392,10 +1392,14 @@ class InvoiceForm(forms.ModelForm):
     class Meta:
         model = models.Invoice
         fields = "__all__"
+        widgets = {
+            'note': forms.Textarea(attrs={'rows': 2}),
+        }
 
     def __init__(self, *args, **kwargs):
         super(InvoiceForm, self).__init__(*args, **kwargs)
-        self.fields['sequence_number'].required = False
+        if 'sequence_number' in self.fields:
+            self.fields['sequence_number'].required = False
 
 
 class InvoiceResource(resources.ModelResource):
@@ -1458,6 +1462,9 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'note',
         'company_admin_emails',
     ]
+    list_editable = (
+        'note',
+    )
     readonly_fields = [
         'created',
         'author',
@@ -1475,6 +1482,9 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
     list_max_show_all = 10000
     form = InvoiceForm
     resource_class = InvoiceResource
+
+    def get_changelist_form(self, request, **kwargs):
+        return InvoiceForm
 
     def invoice_count(self, obj):
         return obj.payment_set.count()
