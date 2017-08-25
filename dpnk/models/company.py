@@ -20,6 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from .address import Address, get_address_string
@@ -74,3 +75,7 @@ class Company(models.Model):
     def admin_emails(self, campaign):
         admins = self.company_admin.filter(campaign=campaign)
         return ", ".join([a.userprofile.user.email for a in admins])
+
+    def clean(self):
+        if Company.objects.filter(name__unaccent__iexact=self.name):
+            raise ValidationError({'name': _('Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, vyberte tu stávající.')})
