@@ -92,3 +92,5 @@ try:
     ]
 except ImportError:
     pass
+
+handler403 = 'dpnk.exceptions.permission_denied_view'

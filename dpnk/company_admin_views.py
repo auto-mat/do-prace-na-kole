@@ -24,7 +24,6 @@ from braces.views import LoginRequiredMixin
 
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext_lazy as _
@@ -34,6 +33,7 @@ from django.views.generic.edit import CreateView, FormView, UpdateView
 from registration.backends.simple.views import RegistrationView
 
 from . import company_admin_forms
+from . import exceptions
 from . import models
 from .company_admin_forms import (
     CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
@@ -102,7 +102,10 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeInPaymentPha
         ret_val = super().dispatch(request, *args, **kwargs)
         if request.user_attendance:
             if not self.company_admin.can_confirm_payments:
-                raise PermissionDenied(_("Potvrzování plateb nemáte povoleno"))
+                raise exceptions.TemplatePermissionDenied(
+                    _("Potvrzování plateb nemáte povoleno"),
+                    self.template_name,
+                )
         return ret_val
 
     def get_success_message(self, cleaned_data):
@@ -283,9 +286,13 @@ class InvoicesView(TitleViewMixin, MustBeInInvoicesPhaseMixin, MustBeCompanyAdmi
         ret_val = super().dispatch(request, *args, **kwargs)
         if request.user_attendance:
             if not self.company_admin.administrated_company.has_filled_contact_information():
-                raise PermissionDenied(
+                raise exceptions.TemplatePermissionDenied(
                     mark_safe_lazy(_("Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>") % reverse('edit_company')),
+                    self.template_name,
                 )
             if not self.company_admin.can_confirm_payments:
-                raise PermissionDenied(_("Vystavování faktur nemáte povoleno"))
+                raise exceptions.TemplatePermissionDenied(
+                    _("Vystavování faktur nemáte povoleno"),
+                    self.template_name,
+                )
         return ret_val

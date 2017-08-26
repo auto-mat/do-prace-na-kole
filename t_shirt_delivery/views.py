@@ -21,12 +21,12 @@
 
 from braces.views import LoginRequiredMixin
 
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.edit import UpdateView
 
+from dpnk import exceptions
 from dpnk.models import UserAttendance
 from dpnk.views import RegistrationViewMixin
 
@@ -49,9 +49,9 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance:
             if not request.user_attendance.team_complete():
-                raise PermissionDenied(_("Velikost trička nemůžete měnit, dokud nemáte zvolený tým."))
+                raise exceptions.TemplatePermissionDenied(_("Velikost trička nemůžete měnit, dokud nemáte zvolený tým."), self.template_name)
             if request.user_attendance.package_shipped():
-                raise PermissionDenied(_("Vaše tričko již je na cestě k vám, už se na něj můžete těšit."))
+                raise exceptions.TemplatePermissionDenied(_("Vaše tričko již je na cestě k vám, už se na něj můžete těšit."), self.template_name)
 
             if not request.user_attendance.campaign.has_any_tshirt:
                 if request.user_attendance.has_admission_fee():

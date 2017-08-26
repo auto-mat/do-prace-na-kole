@@ -46,7 +46,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 from django.db.models import Case, Count, F, FloatField, IntegerField, Q, Sum, When
@@ -72,6 +71,7 @@ from registration.backends.simple.views import RegistrationView as SimpleRegistr
 from unidecode import unidecode
 # Local imports
 from . import draw
+from . import exceptions
 from . import forms
 from . import models
 from . import results
@@ -185,7 +185,10 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
                 request.user_attendance.team.member_count == 1 and
                 request.user_attendance.team.unapproved_member_count > 0
         ):
-                raise PermissionDenied(_("Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."))
+                raise exceptions.TemplatePermissionDenied(
+                    _("Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."),
+                    self.template_name,
+                )
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -333,7 +336,10 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
 
     def dispatch(self, request, *args, **kwargs):
         if Team.objects.filter(invitation_token=kwargs['token']).count() != 1:
-            raise PermissionDenied(_("Tým nenalezen"))
+            raise exceptions.TemplatePermissionDenied(
+                _("Tým nenalezen"),
+                self.template_name,
+            )
 
         initial_email = kwargs['initial_email']
         if request.user.email != initial_email:
@@ -370,9 +376,15 @@ class PaymentTypeView(
                     message = _("Již máte účastnický poplatek zaplacen.")
                 else:
                     message = _("Účastnický poplatek se neplatí.")
-                raise PermissionDenied(mark_safe_lazy(message + " " + _("Pokračujte na <a href='%s'>zadávání jízd</a>.") % reverse("profil")))
+                raise exceptions.TemplatePermissionDenied(
+                    mark_safe_lazy(message + " " + _("Pokračujte na <a href='%s'>zadávání jízd</a>.") % reverse("profil")),
+                    self.template_name,
+                )
             if not request.user_attendance.t_shirt_size:
-                raise PermissionDenied(_("Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"))
+                raise exceptions.TemplatePermissionDenied(
+                    _("Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"),
+                    self.template_name,
+                )
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

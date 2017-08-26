@@ -81,7 +81,7 @@ class MustBeInPhaseMixinTest(TestCase):
     def test_isnt_in_phase(self):
         self.request.campaign = mommy.make("Campaign")
         mixin = MustBeInPhase()
-        with self.assertRaisesRegex(PermissionDenied, "Tato stránka nemůže být v této kampani zobrazena. Neexistuje v ní soutěžní fáze."):
+        with self.assertRaisesRegex(PermissionDenied, "Tato stránka nemůže být v této kampani zobrazena. Neexistuje v ní fáze soutěžní."):
             mixin.dispatch(self.request)
 
 
