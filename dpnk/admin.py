@@ -1413,7 +1413,7 @@ class InvoiceResource(resources.ModelResource):
             'payback_date',
             'paid_date',
             'total_amount',
-            'invoice_count',
+            'payments_count',
             'campaign__name',
             'sequence_number',
             'order_number',
@@ -1426,19 +1426,14 @@ class InvoiceResource(resources.ModelResource):
             'company__address_district',
             'company__address_psc',
             'company__address_city',
+            'company_admin_telephones',
             'company_admin_emails',
         )
         export_order = fields
 
-    invoice_count = fields.Field(readonly=True)
-
-    def dehydrate_invoice_count(self, obj):
-        return obj.payment_set.count()
-
-    company_admin_emails = fields.Field(readonly=True)
-
-    def dehydrate_company_admin_emails(self, obj):
-        return obj.company.admin_emails(obj.campaign)
+    payments_count = fields.Field(readonly=True, attribute='payments_count')
+    company_admin_emails = fields.Field(readonly=True, attribute='company_admin_emails')
+    company_admin_telephones = fields.Field(readonly=True, attribute='company_admin_telephones')
 
 
 @admin.register(models.Invoice)
@@ -1450,7 +1445,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'paid_date',
         'variable_symbol',
         'total_amount',
-        'invoice_count',
+        'payments_count',
         'invoice_pdf_url',
         'campaign',
         'sequence_number',
@@ -1460,6 +1455,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'company_pais_benefitial_fee',
         'company_address_street',
         'note',
+        'company_admin_telephones',
         'company_admin_emails',
     ]
     list_editable = (
@@ -1469,7 +1465,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'created',
         'author',
         'updated_by',
-        'invoice_count',
+        'payments_count',
     ]
     list_filter = [
         CampaignFilter,
@@ -1486,15 +1482,8 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
     def get_changelist_form(self, request, **kwargs):
         return InvoiceForm
 
-    def invoice_count(self, obj):
-        return obj.payment_set.count()
-    invoice_count.short_description = _(u"Počet plateb")
-
     def invoice_pdf_url(self, obj):
         return format_html("<a href='{}'>invoice.pdf</a>", obj.invoice_pdf.url)
-
-    def company_admin_emails(self, obj):
-        return obj.company.admin_emails(obj.campaign)
 
 
 @admin.register(models.GpxFile)

@@ -76,6 +76,10 @@ class Company(models.Model):
         admins = self.company_admin.filter(campaign=campaign)
         return ", ".join([a.userprofile.user.email for a in admins])
 
+    def admin_telephones(self, campaign):
+        admins = self.company_admin.filter(campaign=campaign)
+        return ", ".join([a.userprofile.telephone for a in admins])
+
     def clean(self):
         if Company.objects.filter(name__unaccent__iexact=self.name):
             raise ValidationError({'name': _('Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, vyberte tu stávající.')})
