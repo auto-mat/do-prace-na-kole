@@ -806,6 +806,7 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
         context_data['map_city_slug'] = 'mapa' if city_slug == 'praha' else city_slug
         context_data['competition_phase'] = campaign.phase("competition")
         context_data['commute_modes'] = models.CommuteMode.objects.all()
+        context_data['today'] = util.today()
         return context_data
 
     def get(self, request, *args, **kwargs):

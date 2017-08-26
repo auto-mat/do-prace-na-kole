@@ -113,7 +113,11 @@
 </table>
 {% else %}
 <div class="alert alert-info">
-{% trans "Zde budete zadávat vaše jízdy" %}
+   {% if today < competition_phase.date_from %}
+   {% blocktrans with date_from=competition_phase.date_from %}Zde si budete od {{ date_from }} zadávat vaše jízdy.{% endblocktrans %}
+   {% else %}
+   {% trans "Zde jste si zadávali vaše jízdy." %}
+   {% endif %}
 </div>
 {% endif %}
 </form>

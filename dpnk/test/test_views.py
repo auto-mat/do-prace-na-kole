@@ -233,7 +233,7 @@ class CompetitionsViewTests(ViewsLogon):
 
         address = reverse('profil')
         response = self.client.get(address)
-        self.assertContains(response, '<div class="alert alert-info">Zde budete zadávat vaše jízdy</div>', html=True)
+        self.assertContains(response, '<div class="alert alert-info">Zde jste si zadávali vaše jízdy.</div>', html=True)
 
     @patch('slumber.API')
     def test_registration_access(self, slumber_api):
@@ -1866,7 +1866,7 @@ class RegistrationMixinTests(ViewsLogon):
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
         self.assertContains(response, "Jste sám/sama v týmu")
-        self.assertContains(response, "Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.")
+        self.assertContains(response, '<a href="/upravit_trasu/">Vyplnit typickou trasu</a>', html=True)
 
     def test_dpnk_registration_unapproved_users(self):
         for team_member in self.user_attendance.team.all_members():
