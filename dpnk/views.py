@@ -119,7 +119,15 @@ from .views_permission_mixins import (
 logger = logging.getLogger(__name__)
 
 
-class DPNKLoginView(CampaignFormKwargsMixin, TitleViewMixin, LoginView):
+class ProfileRedirectMixin(object):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return redirect(reverse('profil'))
+        else:
+            return super().get(request, *args, **kwargs)
+
+
+class DPNKLoginView(CampaignFormKwargsMixin, TitleViewMixin, ProfileRedirectMixin, LoginView):
     def get_title(self, *args, **kwargs):
         return _("Přihlášení do soutěže %s") % self.campaign.name
 
@@ -129,12 +137,6 @@ class DPNKLoginView(CampaignFormKwargsMixin, TitleViewMixin, LoginView):
             return {'username': self.kwargs['initial_email']}
         else:
             return {}
-
-    def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            return redirect(reverse('profil'))
-        else:
-            return super().get(request, *args, **kwargs)
 
 
 class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
@@ -239,18 +241,12 @@ class RegisterSubsidiaryView(CampaignFormKwargsMixin, UserAttendanceViewMixin, L
         }
 
 
-class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, FormView):
+class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, ProfileRedirectMixin, FormView):
     template_name = 'base_generic_form.html'
     form_class = RegistrationAccessFormDPNK
 
     def get_title(self, *args, **kwargs):
         return _("Registrujte se do soutěže %s") % self.campaign.name
-
-    def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            return redirect(reverse('profil'))
-        else:
-            return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
         email = form.cleaned_data['email']
@@ -260,7 +256,7 @@ class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, FormView):
             return redirect(reverse('registrace', kwargs={'initial_email': email}))
 
 
-class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrationPhaseMixin, SimpleRegistrationView):
+class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrationPhaseMixin, ProfileRedirectMixin, SimpleRegistrationView):
     template_name = 'base_generic_form.html'
     form_class = RegistrationFormDPNK
     model = UserProfile
