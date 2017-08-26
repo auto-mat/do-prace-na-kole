@@ -185,6 +185,11 @@ class Campaign(Pricable, models.Model):
         null=True,
         blank=True,
     )
+    wp_api_date_from = models.DateField(
+        verbose_name=_("Datum, od kterého se zobrazují příspěvky z Wordpress API se články"),
+        null=True,
+        blank=True,
+    )
 
     LANGUAGE_PREFIXES = [
         ('dpnk', _("Do práce na kole")),
