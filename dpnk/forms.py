@@ -84,7 +84,7 @@ class SubmitMixin(object):
     def __init__(self, url_name="", *args, **kwargs):
         self.helper = FormHelper()
         super().__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        self.helper.add_input(Submit('submit', _('Odeslat')))
 
 
 class PrevNextMixin(object):
@@ -98,7 +98,7 @@ class PrevNextMixin(object):
                 Button('prev', _('Předchozí'), css_class="btn-default form-actions", onclick='window.location.href="{}"'.format(reverse(prev_url))),
             )
         if not hasattr(self, 'no_next'):
-            self.helper.add_input(Submit('next', _(u'Další'), css_class="form-actions"))
+            self.helper.add_input(Submit('next', _('Další'), css_class="form-actions"))
         return super().__init__(*args, **kwargs)
 
 
@@ -142,7 +142,7 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
             ),
             HTML('<br/><br/>'),
         )
-        self.fields['username'].label = _(u"E-mail (uživatelské jméno)")
+        self.fields['username'].label = _("E-mail (uživatelské jméno)")
         return ret_val
 
 
@@ -160,8 +160,8 @@ class AddressForm(CampaignMixin, forms.ModelForm):
     error_css_class = 'error'
 
     address_psc = forms.CharField(
-        label=_(u"PSČ"),
-        help_text=_(u"Např.: „130 00“"),
+        label=_("PSČ"),
+        help_text=_("Např.: „130 00“"),
     )
 
     def clean_address_psc(self):
@@ -233,7 +233,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         chained_model_field="company",
         show_all=False,
         auto_choose=True,
-        label=_(u"Adresa pobočky/organizace"),
+        label=_("Adresa pobočky/organizace"),
         foreign_key_app_name="dpnk",
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
@@ -250,7 +250,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         foreign_key_app_name="dpnk",
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
-        label=_(u"Tým"),
+        label=_("Tým"),
         queryset=models.Team.objects.all(),
         required=True,
     )
@@ -355,8 +355,8 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
     email = forms.CharField(
         required=True,
-        label=_(u"E-mail (uživatelské jméno)"),
-        help_text=_(u"Zadejte váš e-mail. Pokud jste se účastnili v minulém roce, zadejte stejný e-mail jako v minulém roce."),
+        label=_("E-mail (uživatelské jméno)"),
+        help_text=_("Zadejte váš e-mail. Pokud jste se účastnili v minulém roce, zadejte stejný e-mail jako v minulém roce."),
     )
 
     def __init__(self, request=None, *args, **kwargs):
@@ -436,22 +436,22 @@ class InviteForm(SubmitMixin, forms.Form):
     error_css_class = 'error'
 
     email1 = forms.EmailField(
-        label=_(u"E-mail kolegy 1"),
+        label=_("E-mail kolegy 1"),
         required=False,
     )
 
     email2 = forms.EmailField(
-        label=_(u"E-mail kolegy 2"),
+        label=_("E-mail kolegy 2"),
         required=False,
     )
 
     email3 = forms.EmailField(
-        label=_(u"E-mail kolegy 3"),
+        label=_("E-mail kolegy 3"),
         required=False,
     )
 
     email4 = forms.EmailField(
-        label=_(u"E-mail kolegy 4"),
+        label=_("E-mail kolegy 4"),
         required=False,
     )
 
@@ -501,7 +501,7 @@ class TeamAdminForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm):
 class PaymentTypeForm(PrevNextMixin, forms.Form):
     no_dirty = True
     payment_type = forms.ChoiceField(
-        label=_(u"Typ platby"),
+        label=_("Typ platby"),
         widget=forms.RadioSelect(),
     )
 
@@ -599,7 +599,7 @@ class AnswerForm(forms.ModelForm):
 class ConfirmTeamInvitationForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm):
     initial_fields = ('team', 'campaign')
     question = forms.BooleanField(
-        label=_(u"Chci být zařazen do nového týmu"),
+        label=_("Chci být zařazen do nového týmu"),
     )
 
     class Meta:
@@ -609,12 +609,12 @@ class ConfirmTeamInvitationForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm
 
 class BikeRepairForm(SubmitMixin, forms.ModelForm):
     user_attendance = forms.CharField(
-        label=_(u"Uživatelské jméno zákazníka"),
-        help_text=_(u"Uživatelské jméno, které vám sdělí zákazník"),
+        label=_("Uživatelské jméno zákazníka"),
+        help_text=_("Uživatelské jméno, které vám sdělí zákazník"),
         max_length=100,
     )
     description = forms.CharField(
-        label=_(u"Poznámka"),
+        label=_("Poznámka"),
         max_length=500,
         required=False,
     )
@@ -628,12 +628,12 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
                 campaign=campaign,
             )
         except models.UserAttendance.DoesNotExist:
-            raise forms.ValidationError(_(u"Takový uživatel neexistuje"))
+            raise forms.ValidationError(_("Takový uživatel neexistuje"))
 
         other_user_attendances = user_attendance.other_user_attendances(campaign)
         if other_user_attendances.count() > 0:
             raise forms.ValidationError(
-                _(u"Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s") %
+                _("Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s") %
                 ", ".join([u.campaign.name for u in other_user_attendances]),
             )
 
@@ -650,7 +650,7 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
         if transaction:
             created_formated_date = formats.date_format(transaction.created, "SHORT_DATETIME_FORMAT")
             raise forms.ValidationError(
-                _(u"Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: %(note)s).") % {
+                _("Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: %(note)s).") % {
                     'time': created_formated_date,
                     'bike_shop': transaction.author.get_full_name(),
                     'note': transaction.description,
@@ -737,7 +737,7 @@ class UserUpdateForm(CampaignMixin, forms.ModelForm):
 
 class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
     dont_show_name = forms.BooleanField(
-        label=_(u"Nechci, aby moje skutečné jméno bylo veřejně zobrazováno"),
+        label=_("Nechci, aby moje skutečné jméno bylo veřejně zobrazováno"),
         required=False,
     )
 
@@ -747,13 +747,13 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
             if nickname:
                 return nickname
             else:
-                raise forms.ValidationError(_(u"Pokud si nepřejete zobrazovat své jméno, zadejte, co se má zobrazovat místo něj"))
+                raise forms.ValidationError(_("Pokud si nepřejete zobrazovat své jméno, zadejte, co se má zobrazovat místo něj"))
         else:
             return None
 
     def clean_sex(self):
         if self.cleaned_data['sex'] == 'unknown':
-            raise forms.ValidationError(_(u"Zadejte pohlaví"))
+            raise forms.ValidationError(_("Zadejte pohlaví"))
         else:
             return self.cleaned_data['sex']
 
@@ -870,7 +870,7 @@ class GpxFileForm(InitialFieldsMixin, forms.ModelForm):
         try:
             self.trip_date = self.instance.trip_date or datetime.datetime.strptime(self.initial['trip_date'], "%Y-%m-%d").date()
             if util.day_active(self.trip_date, self.user_attendance.campaign):
-                self.helper.add_input(Submit('submit', _(u'Odeslat')))
+                self.helper.add_input(Submit('submit', _('Odeslat')))
                 self.day_active = True
             else:
                 self.day_active = False

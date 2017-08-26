@@ -298,7 +298,7 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
     form_class = forms.ConfirmTeamInvitationForm
     success_url = reverse_lazy('zmenit_tym')
     registration_phase = 'zmenit_tym'
-    title = _(u"Pozvánka do týmu")
+    title = _("Pozvánka do týmu")
 
     def get_initial(self):
         return {
@@ -319,7 +319,7 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
 
         if self.user_attendance.campaign != self.new_team.campaign:
             return {
-                'fullpage_error_message': _(u"Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku)."),
+                'fullpage_error_message': _("Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku)."),
                 'title': _("Chyba přihlášení"),
             }
         return context
@@ -358,7 +358,7 @@ class PaymentTypeView(
         FormView,
 ):
     template_name = 'registration/payment_type.html'
-    title = _(u"Platba")
+    title = _("Platba")
     registration_phase = "typ_platby"
     next_url = "profil"
     prev_url = "zmenit_triko"
@@ -428,7 +428,7 @@ class PaymentTypeView(
                 extra={'request': self.request, 'payment_type': payment_type},
             )
             return HttpResponse(
-                _(u"Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."),
+                _("Pokud jste se dostali sem, tak to může být způsobené tím, že používáte zastaralý prohlížeč nebo máte vypnutý JavaScript."),
                 status=500,
             )
         else:
@@ -582,7 +582,7 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
                     'request': self.request,
                 },
             )
-            context_data['payment_message'] = _(u"Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
+            context_data['payment_message'] = _("Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou platbu.")
         context_data['registration_phase'] = self.registration_phase
         return context_data
 
@@ -704,7 +704,7 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
     fields = ('commute_mode', 'distance', 'direction', 'user_attendance', 'date')
     extra = 0
     uncreated_trips = []
-    success_message = _(u"Tabulka jízd úspěšně změněna")
+    success_message = _("Tabulka jízd úspěšně změněna")
     title = _("Jízdy")
 
     @method_decorator(never_cache)
@@ -775,7 +775,7 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
             form.fields['commute_mode'].queryset = qs
         return formset
 
-    title = _(u'Moje jízdy')
+    title = _('Moje jízdy')
     registration_phase = 'profile_view'
     template_name = 'registration/competition_profile.html'
 
@@ -862,7 +862,7 @@ class UserAttendanceView(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredM
 
 class PackageView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
     template_name = "registration/package.html"
-    title = _(u"Sledování balíčku")
+    title = _("Sledování balíčku")
     registration_phase = "zmenit_tym"
 
 
@@ -874,7 +874,7 @@ class ApplicationView(RegistrationViewMixin, LoginRequiredMixin, TemplateView):
 
 class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/team_members.html'
-    title = _(u"Výsledky členů týmu")
+    title = _("Výsledky členů týmu")
 
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
@@ -918,7 +918,7 @@ class CompetitionsRulesView(CampaignFormKwargsMixin, TitleViewMixin, TemplateVie
 
 
 class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin, TemplateView):
-    title = _(u"Výsledky soutěží")
+    title = _("Výsledky soutěží")
     success_url = reverse_lazy("competitions")
     competition_types = None
 
@@ -982,10 +982,10 @@ class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginReq
     template_name = 'submenu_personal.html'
     form_class = ProfileUpdateForm
     model = UserProfile
-    success_message = _(u"Osobní údaje úspěšně upraveny")
+    success_message = _("Osobní údaje úspěšně upraveny")
     next_url = "zmenit_tym"
     registration_phase = "upravit_profil"
-    title = _(u"Osobní údaje")
+    title = _("Osobní údaje")
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -1002,7 +1002,7 @@ class UpdateTrackView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'registration/change_track.html'
     form_class = TrackUpdateForm
     model = UserAttendance
-    success_message = _(u"Trasa/vzdálenost úspěšně upravena")
+    success_message = _("Trasa/vzdálenost úspěšně upravena")
     success_url = 'profil'
     registration_phase = "upravit_profil"
     title = _("Upravit typickou trasu")
@@ -1014,7 +1014,7 @@ class UpdateTrackView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/questionaire.html'
     success_url = reverse_lazy('questionnaire_competitions')
-    title = _(u"Vyplňte odpovědi")
+    title = _("Vyplňte odpovědi")
     form_class = forms.AnswerForm
 
     def dispatch(self, request, *args, **kwargs):
@@ -1058,7 +1058,7 @@ class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         if not self.is_actual:
-            return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž již nelze vyplňovat"), "</div>"))
+            return HttpResponse(string_concat("<div class='text-warning'>", _("Soutěž již nelze vyplňovat"), "</div>"))
 
         invalid_count = 0
         for question in self.questions:
@@ -1110,7 +1110,7 @@ class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
 
 class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
     template_name = 'registration/questionnaire_answers_all.html'
-    title = _(u"Výsledky všech soutěží")
+    title = _("Výsledky všech soutěží")
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
@@ -1122,8 +1122,8 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
                 not self.request.user.is_superuser and
                 self.request.user.userprofile.competition_edition_allowed(competition)
         ):
-            context_data['fullpage_error_message'] = _(u"Tato soutěž nemá povolené prohlížení odpovědí.")
-            context_data['title'] = _(u"Odpovědi nejsou dostupné")
+            context_data['fullpage_error_message'] = _("Tato soutěž nemá povolené prohlížení odpovědí.")
+            context_data['title'] = _("Odpovědi nejsou dostupné")
             return context_data
 
         competitors = competition.get_results()
@@ -1170,7 +1170,7 @@ def questionnaire_results(
         competition_slug=None,):
     competition = Competition.objects.get(slug=competition_slug)
     if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(competition):
-        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve městě, pro které nemáte oprávnění."), "</div>"))
+        return HttpResponse(string_concat("<div class='text-warning'>", _("Soutěž je vypsána ve městě, pro které nemáte oprávnění."), "</div>"))
 
     competitors = competition.get_results()
     return render(
@@ -1191,12 +1191,12 @@ def questionnaire_answers(
         competition_slug=None,):
     competition = Competition.objects.get(slug=competition_slug)
     if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(competition):
-        return HttpResponse(string_concat("<div class='text-warning'>", _(u"Soutěž je vypsána ve městě, pro které nemáte oprávnění."), "</div>"))
+        return HttpResponse(string_concat("<div class='text-warning'>", _("Soutěž je vypsána ve městě, pro které nemáte oprávnění."), "</div>"))
 
     try:
         competitor_result = competition.get_results().get(pk=request.GET['uid'])
     except models.CompetitionResult.DoesNotExist:
-        return HttpResponse(_(u'<div class="text-danger">Nesprávně zadaný soutěžící.</div>'), status=401)
+        return HttpResponse(_('<div class="text-danger">Nesprávně zadaný soutěžící.</div>'), status=401)
     answers = Answer.objects.filter(
         user_attendance__in=competitor_result.user_attendances(),
         question__competition__slug=competition_slug,
@@ -1221,7 +1221,7 @@ def answers(request):
     question = Question.objects.get(id=question_id)
     if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(question.competition):
         return HttpResponse(
-            string_concat("<div class='text-warning'>", _(u"Otázka je položená ve městě, pro které nemáte oprávnění."), "</div>"),
+            string_concat("<div class='text-warning'>", _("Otázka je položená ve městě, pro které nemáte oprávnění."), "</div>"),
             status=401,
         )
 
@@ -1298,7 +1298,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
             messages.add_message(
                 request,
                 messages.ERROR,
-                _(u"Při zamítnutí člena týmu musíte vyplnit zprávu."),
+                _("Při zamítnutí člena týmu musíte vyplnit zprávu."),
                 extra_tags="user_attendance_%s" % user_attendance.pk,
                 fail_silently=True,
             )
@@ -1309,7 +1309,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         messages.add_message(
             request,
             messages.SUCCESS,
-            _(u"Členství uživatele %s ve vašem týmu bylo zamítnuto" % user_attendance),
+            _("Členství uživatele %s ve vašem týmu bylo zamítnuto" % user_attendance),
             extra_tags="user_attendance_%s" % user_attendance.pk,
             fail_silently=True,
         )
@@ -1319,7 +1319,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
             messages.add_message(
                 request,
                 messages.ERROR,
-                _(u"Tým je již plný, další člen již nemůže být potvrzen."),
+                _("Tým je již plný, další člen již nemůže být potvrzen."),
                 extra_tags="user_attendance_%s" % user_attendance.pk,
                 fail_silently=True,
             )
@@ -1330,7 +1330,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         messages.add_message(
             request,
             messages.SUCCESS,
-            _(u"Členství uživatele %(user)s v týmu %(team)s bylo odsouhlaseno.") %
+            _("Členství uživatele %(user)s v týmu %(team)s bylo odsouhlaseno.") %
             {"user": user_attendance, "team": user_attendance.team.name},
             extra_tags="user_attendance_%s" % user_attendance.pk,
             fail_silently=True,
@@ -1340,7 +1340,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
 
 class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/request_team_approval.html'
-    title = _(u"Znovu odeslat žádost o členství")
+    title = _("Znovu odeslat žádost o členství")
     registration_phase = "zmenit_tym"
 
     def dispatch(self, request, *args, **kwargs):
@@ -1352,7 +1352,7 @@ class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequired
 class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, FormView):
     template_name = "submenu_team.html"
     form_class = InviteForm
-    title = _(u'Pozvětě své kolegy do týmu')
+    title = _('Pozvětě své kolegy do týmu')
     registration_phase = "zmenit_tym"
     success_url = reverse_lazy('pozvanky')
 
@@ -1379,7 +1379,7 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamM
                         messages.add_message(
                             self.request,
                             messages.SUCCESS,
-                            _(u"Uživatel %(user)s byl přijat do vašeho týmu.") % {"user": invited_user_attendance, "email": email},
+                            _("Uživatel %(user)s byl přijat do vašeho týmu.") % {"user": invited_user_attendance, "email": email},
                             fail_silently=True,
                         )
                     else:
@@ -1387,12 +1387,12 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamM
                         messages.add_message(
                             self.request,
                             messages.SUCCESS,
-                            _(u"Odeslána pozvánka uživateli %(user)s na e-mail %(email)s") % {"user": invited_user_attendance, "email": email},
+                            _("Odeslána pozvánka uživateli %(user)s na e-mail %(email)s") % {"user": invited_user_attendance, "email": email},
                             fail_silently=True,
                         )
                 except models.User.DoesNotExist:
                     invitation_mail(self.user_attendance, email)
-                    messages.add_message(self.request, messages.SUCCESS, _(u"Odeslána pozvánka na e-mail %s") % email, fail_silently=True)
+                    messages.add_message(self.request, messages.SUCCESS, _("Odeslána pozvánka na e-mail %s") % email, fail_silently=True)
 
         invite_success_url = self.request.session.get('invite_success_url')
         self.request.session['invite_success_url'] = None
@@ -1403,9 +1403,9 @@ class UpdateTeam(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMix
     template_name = 'submenu_team.html'
     form_class = TeamAdminForm
     success_url = reverse_lazy('edit_team')
-    title = _(u"Upravit název týmu")
+    title = _("Upravit název týmu")
     registration_phase = 'zmenit_tym'
-    success_message = _(u"Název týmu úspěšně změněn na %(name)s")
+    success_message = _("Název týmu úspěšně změněn na %(name)s")
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
@@ -1431,11 +1431,11 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, MustBeApprovedForTeam
             try:
                 action, approve_id = request.POST['approve'].split('-')
             except ValueError:
-                logger.exception(u'Can\'t split POST approve parameter', extra={'request': request})
+                logger.exception('Can\'t split POST approve parameter', extra={'request': request})
                 messages.add_message(
                     request,
                     messages.ERROR,
-                    _(u"Nastala chyba při přijímání uživatele, patrně používáte zastaralý internetový prohlížeč."),
+                    _("Nastala chyba při přijímání uživatele, patrně používáte zastaralý internetový prohlížeč."),
                 )
 
             if approve_id:
@@ -1476,7 +1476,7 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, MustBeApprovedForTeam
         team = self.user_attendance.team
         if not team:
             return {
-                'fullpage_error_message': _(u"Další členové vašeho týmu se zobrazí, jakmile budete mít vybraný tým"),
+                'fullpage_error_message': _("Další členové vašeho týmu se zobrazí, jakmile budete mít vybraný tým"),
                 'title': _("Není vybraný tým"),
             }
 
@@ -1487,11 +1487,11 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, MustBeApprovedForTeam
                 ('state', None, self.user_attendance.approved_for_team),
                 ('id', None, str(self.user_attendance.id)),
                 ('class', None, self.user_attendance.payment_class()),
-                ('name', _(u"Jméno"), str(userprofile)),
-                ('email', _(u"E-mail"), userprofile.user.email),
-                ('payment_description', _(u"Platba"), self.user_attendance.get_payment_status_display()),
-                ('telephone', _(u"Telefon"), userprofile.telephone),
-                ('state_name', _(u"Stav"), str(self.user_attendance.get_approved_for_team_display())),
+                ('name', _("Jméno"), str(userprofile)),
+                ('email', _("E-mail"), userprofile.user.email),
+                ('payment_description', _("Platba"), self.user_attendance.get_payment_status_display()),
+                ('telephone', _("Telefon"), userprofile.telephone),
+                ('state_name', _("Stav"), str(self.user_attendance.get_approved_for_team_display())),
             ])
         context_data['unapproved_users'] = unapproved_users
         context_data['registration_phase'] = self.registration_phase
@@ -1663,7 +1663,7 @@ class BikeRepairView(CampaignParameterMixin, TitleViewMixin, GroupRequiredRespon
     template_name = 'base_generic_form.html'
     form_class = forms.BikeRepairForm
     success_url = 'bike_repair'
-    success_message = _(u"%(user_attendance)s je nováček a právě si zažádal o opravu kola")
+    success_message = _("%(user_attendance)s je nováček a právě si zažádal o opravu kola")
     model = models.CommonTransaction
     title = _("Cykloservis")
 
@@ -1710,7 +1710,7 @@ class UpdateGpxFileView(TitleViewMixin, UserAttendanceParameterMixin, SuccessMes
     model = models.GpxFile
     template_name = "registration/gpx_file.html"
     success_url = reverse_lazy("profil")
-    title = _(u"Zadat trasu")
+    title = _("Zadat trasu")
 
     def get_initial(self):
         return {'user_attendance': self.user_attendance}
@@ -1724,7 +1724,7 @@ class CreateGpxFileView(TitleViewMixin, UserAttendanceParameterMixin, SuccessMes
     model = models.GpxFile
     template_name = "registration/gpx_file.html"
     success_url = reverse_lazy("profil")
-    title = _(u"Zadat trasu")
+    title = _("Zadat trasu")
 
     def get_initial(self):
         if self.user_attendance.track:
