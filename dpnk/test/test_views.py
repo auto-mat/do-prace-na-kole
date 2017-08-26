@@ -1998,6 +1998,14 @@ class TrackViewTests(ViewsLogon):
         response = self.client.get(address)
         self.assertContains(response, "Datum vykonání cesty")
 
+    def test_dpnk_views_gpx_file_no_trip_city(self):
+        """ Test, that the location is changed accordingly to the user's city. """
+        self.user_attendance.team.subsidiary.city = mommy.make("City", location="POINT(14.42 50.08)")
+        self.user_attendance.team.subsidiary.save()
+        address = reverse('gpx_file', kwargs={"id": 2})
+        response = self.client.get(address)
+        self.assertContains(response, '"center": [50.08, 14.42]')
+
     def test_dpnk_company_structure(self):
         util.rebuild_denorm_models([self.user_attendance])
         address = reverse("company_structure")
