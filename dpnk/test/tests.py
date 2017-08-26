@@ -654,6 +654,11 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         gpxfile = models.GpxFile.objects.get(trip_date=date, direction=direction, user_attendance=self.user_attendance)
         self.assertEquals(gpxfile.trip.distance, 13.32)
 
+    def test_dpnk_views_create_gpx_file_error(self):
+        address = reverse('gpx_file_create', kwargs={"date": "foo bad date", "direction": "trip_from"})
+        response = self.client.get(address)
+        self.assertContains(response, "Stránka nenalezena", status_code=404)
+
     def test_dpnk_views_create_gpx_file_inactive_day(self):
         date = datetime.date(year=2010, month=12, day=1)
         direction = "trip_from"
