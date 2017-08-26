@@ -165,12 +165,12 @@ class CompanyMergeForm(DontValidateCompnayFieldsMixin, merge.MergeForm):
 class CompanyResource(resources.ModelResource):
     class Meta:
         model = models.Company
-        fields = (
+        fields = [
             'id',
             'name',
             'ico',
             'dic',
-        )
+        ]
         export_order = fields
 
 
@@ -256,17 +256,8 @@ def create_subsidiary_resource(campaign_slugs):
             ] + campaign_fields
             export_order = fields
 
-        name = fields.Field(readonly=True)
-
-        def dehydrate_name(self, obj):
-            return obj.name()
-
-        team_count = fields.Field(readonly=True)
-
-        def dehydrate_team_count(self, obj):
-            if hasattr(obj, 'team_count'):
-                return obj.team_count
-
+        name = fields.Field(readonly=True, attribute='name')
+        team_count = fields.Field(readonly=True, attribute='team_count')
         user_count = fields.Field(readonly=True)
 
         def dehydrate_user_count(self, obj):
@@ -549,23 +540,9 @@ def create_userprofile_resource(campaign_slugs):  # noqa: C901
             ] + campaign_fields
             export_order = fields
 
-        name = fields.Field(readonly=True)
-
-        def dehydrate_name(self, obj):
-            if hasattr(obj, 'user'):
-                return obj.name()
-
-        email = fields.Field(readonly=True)
-
-        def dehydrate_email(self, obj):
-            if hasattr(obj, 'user'):
-                return obj.user.email
-
-        occupation_name = fields.Field(readonly=True)
-
-        def dehydrate_occupation_name(self, obj):
-            if getattr(obj, 'occupation'):
-                return obj.occupation.name
+        name = fields.Field(readonly=True, attribute='name')
+        email = fields.Field(readonly=True, attribute='user__email')
+        occupation_name = fields.Field(readonly=True, attribute='occupation__name')
 
         for slug in campaign_slugs:
             vars()['user_attended_%s' % slug] = fields.Field(readonly=True)
@@ -717,7 +694,7 @@ class TripAdminInline(admin.TabularInline):
 class UserAttendanceResource(resources.ModelResource):
     class Meta:
         model = models.UserAttendance
-        fields = (
+        fields = [
             'id',
             'campaign',
             'campaign__slug',
@@ -748,47 +725,15 @@ class UserAttendanceResource(resources.ModelResource):
             'payment_status',
             'payment_type',
             'payment_amount',
-        )
+        ]
         export_order = fields
 
-    subsidiary_name = fields.Field(readonly=True)
-
-    def dehydrate_subsidiary_name(self, obj):
-        if obj.team and obj.team.subsidiary:
-            return obj.team.subsidiary.name()
-
-    payment_date = fields.Field(readonly=True)
-
-    def dehydrate_payment_date(self, obj):
-        payment = obj.representative_payment
-        if payment:
-            return payment.realized or payment.created
-
-    payment_status = fields.Field(readonly=True)
-
-    def dehydrate_payment_status(self, obj):
-        return obj.payment_status
-
-    payment_type = fields.Field(readonly=True)
-
-    def dehydrate_payment_type(self, obj):
-        payment = obj.representative_payment
-        if payment:
-            return payment.pay_type
-
-    payment_amount = fields.Field(readonly=True)
-
-    def dehydrate_payment_amount(self, obj):
-        payment = obj.representative_payment
-        if payment:
-            return payment.amount
-
-    company_admin_emails = fields.Field(readonly=True)
-
-    def dehydrate_company_admin_emails(self, obj):
-        if obj.team:
-            admins = obj.team.subsidiary.company.company_admin.filter(campaign=obj.campaign)
-            return ", ".join([a.userprofile.user.email for a in admins])
+    subsidiary_name = fields.Field(readonly=True, attribute='team__subsidiary__name')
+    payment_date = fields.Field(readonly=True, attribute='representative_payment__payment_complete_date')
+    payment_status = fields.Field(readonly=True, attribute='payment_status')
+    payment_type = fields.Field(readonly=True, attribute='representative_payment__pay_type')
+    payment_amount = fields.Field(readonly=True, attribute='representative_payment__amount')
+    company_admin_emails = fields.Field(readonly=True, attribute='company_admin_emails')
 
 
 @admin.register(models.UserAttendance)
@@ -1065,7 +1010,7 @@ class ChoiceTypeAdmin(admin.ModelAdmin):
 class AnswerResource(resources.ModelResource):
     class Meta:
         model = models.Answer
-        fields = (
+        fields = [
             'id',
             'user_attendance__userprofile__user__first_name',
             'user_attendance__userprofile__user__last_name',
@@ -1090,14 +1035,10 @@ class AnswerResource(resources.ModelResource):
             'choices',
             'str_choices',
             'comment',
-        )
+        ]
         export_order = fields
 
-    str_choices = fields.Field(readonly=True)
-
-    def dehydrate_str_choices(self, obj):
-        if obj.id:
-            return obj.str_choices()
+    str_choices = fields.Field(readonly=True, attribute='str_choices')
 
 
 class AnswerForm(forms.ModelForm):
@@ -1190,7 +1131,7 @@ class GpxFileInline(LeafletGeoAdminMixin, admin.TabularInline):
 class TripResource(resources.ModelResource):
     class Meta:
         model = models.Trip
-        fields = (
+        fields = [
             'id',
             'user_attendance__userprofile__user__id',
             'user_attendance',
@@ -1198,7 +1139,7 @@ class TripResource(resources.ModelResource):
             'direction',
             'commute_mode',
             'distance',
-        )
+        ]
         export_order = fields
 
 
@@ -1329,7 +1270,7 @@ class CampaignAdmin(admin.ModelAdmin):
 class CompanyAdminResource(resources.ModelResource):
     class Meta:
         model = models.CompanyAdmin
-        fields = (
+        fields = [
             'userprofile__user',
             'userprofile__user__email',
             'userprofile',
@@ -1343,7 +1284,7 @@ class CompanyAdminResource(resources.ModelResource):
             'note',
             'motivation_company_admin',
             'campaign',
-        )
+        ]
 
 
 @admin.register(models.CompanyAdmin)
@@ -1405,7 +1346,7 @@ class InvoiceForm(forms.ModelForm):
 class InvoiceResource(resources.ModelResource):
     class Meta:
         model = models.Invoice
-        fields = (
+        fields = [
             'company__name',
             'created',
             'exposure_date',
@@ -1428,7 +1369,7 @@ class InvoiceResource(resources.ModelResource):
             'company__address_city',
             'company_admin_telephones',
             'company_admin_emails',
-        )
+        ]
         export_order = fields
 
     payments_count = fields.Field(readonly=True, attribute='payments_count')

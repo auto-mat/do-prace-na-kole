@@ -405,6 +405,10 @@ class UserAttendance(models.Model):
         days = list(util.days(self.campaign.phase("competition"), day))
         return self.get_trips(days)
 
+    def company_admin_emails(self):
+        if self.team:
+            return self.team.subsidiary.company.admin_emails(self.campaign)
+
     def get_trips(self, days):
         """
         Return trips in given days, return days without any trip
