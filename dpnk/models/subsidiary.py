@@ -31,7 +31,7 @@ from .company import Company
 
 class ActiveManager(models.Manager):
     def get_queryset(self):
-        return super(ActiveManager, self).get_queryset().filter(active=True)
+        return super().get_queryset().filter(active=True)
 
 
 class Subsidiary(models.Model):

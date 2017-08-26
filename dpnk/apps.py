@@ -32,7 +32,7 @@ class DPNKConfig(AppConfig):
         def get_team_in_campaign_manager(campaign_slug):
             class TeamInCampaignManager(models.Manager):
                 def get_queryset(self):
-                    return super(TeamInCampaignManager, self).get_queryset().filter(campaign__slug=campaign_slug)
+                    return super().get_queryset().filter(campaign__slug=campaign_slug)
 
             class TeamInCampaign(dpnk_models.Team):
                 objects = TeamInCampaignManager()

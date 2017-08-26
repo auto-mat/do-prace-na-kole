@@ -70,7 +70,7 @@ class UserLeafletWidget(LeafletWidget):
             settings_overrides['DEFAULT_CENTER'] = (user_attendance.team.subsidiary.city.location.y, user_attendance.team.subsidiary.city.location.x)
             settings_overrides['DEFAULT_ZOOM'] = 13
 
-        super(UserLeafletWidget, self).__init__(
+        super().__init__(
             attrs={
                 "geom_type": 'MULTILINESTRING',
                 "map_height": "500px",
@@ -83,7 +83,7 @@ class UserLeafletWidget(LeafletWidget):
 class SubmitMixin(object):
     def __init__(self, url_name="", *args, **kwargs):
         self.helper = FormHelper()
-        super(SubmitMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', _(u'Odeslat')))
 
 
@@ -99,7 +99,7 @@ class PrevNextMixin(object):
             )
         if not hasattr(self, 'no_next'):
             self.helper.add_input(Submit('next', _(u'Další'), css_class="form-actions"))
-        return super(PrevNextMixin, self).__init__(*args, **kwargs)
+        return super().__init__(*args, **kwargs)
 
 
 class CampaignMixin(object):
@@ -125,7 +125,7 @@ social_html = HTML(
 
 class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
     def __init__(self, *args, **kwargs):
-        ret_val = super(AuthenticationFormDPNK, self).__init__(*args, **kwargs)
+        ret_val = super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             'username', 'password',
@@ -175,7 +175,7 @@ class AddressForm(CampaignMixin, forms.ModelForm):
         return address_psc
 
     def __init__(self, *args, **kwargs):
-        super(AddressForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if 'city' in self.fields:
             self.fields['city'].queryset = models.City.objects.filter(cityincampaign__campaign=self.campaign)
 
@@ -256,7 +256,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     )
 
     def clean(self):
-        cleaned_data = super(ChangeTeamForm, self).clean()
+        cleaned_data = super().clean()
 
         if 'subsidiary' in cleaned_data:
             subsidiary = cleaned_data['subsidiary']
@@ -298,7 +298,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         return user_attendance
 
     def __init__(self, *args, **kwargs):
-        super(ChangeTeamForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields["team"].widget.manager = 'team_in_campaign_%s' % self.instance.campaign.slug
 
@@ -406,7 +406,7 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
             ),
         )
 
-        super(RegistrationFormDPNK, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['email'].help_text = _("Tento e-mail bude použit pro zasílání informací v průběhu kampaně a k zaslání zapomenutého hesla.")
 
@@ -547,7 +547,7 @@ class AnswerForm(forms.ModelForm):
         question = kwargs.pop('question')
         show_points = kwargs.pop('show_points')
         is_actual = kwargs.pop('is_actual')
-        ret_val = super(AnswerForm, self).__init__(*args, **kwargs)
+        ret_val = super().__init__(*args, **kwargs)
         if question.comment_type:
             if question.comment_type == 'link':
                 self.fields['comment'] = forms.URLField(
@@ -656,11 +656,11 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
                     'note': transaction.description,
                 },
             )
-        return super(BikeRepairForm, self).clean()
+        return super().clean()
 
     def save(self, *args, **kwargs):
         self.instance.status = models.Status.BIKE_REPAIR
-        return super(BikeRepairForm, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     class Meta:
         model = models.CommonTransaction
@@ -681,7 +681,7 @@ class TrackUpdateForm(SubmitMixin, forms.ModelForm):
     )
 
     def clean(self):
-        cleaned_data = super(TrackUpdateForm, self).clean()
+        cleaned_data = super().clean()
 
         if cleaned_data['gpx_file']:
             try:
@@ -703,7 +703,7 @@ class TrackUpdateForm(SubmitMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']
-        super(TrackUpdateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['track'].widget = UserLeafletWidget(user_attendance=instance)
 
@@ -864,7 +864,7 @@ class GpxFileForm(InitialFieldsMixin, forms.ModelForm):
         return self.cleaned_data['file']
 
     def __init__(self, *args, **kwargs):
-        super(GpxFileForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.user_attendance = self.initial['user_attendance']
         try:

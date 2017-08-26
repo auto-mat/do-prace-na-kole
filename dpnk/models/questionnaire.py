@@ -63,7 +63,7 @@ class ChoiceType(models.Model):
 
 class QuestionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(QuestionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if hasattr(self, 'request') and not self.request.user.is_superuser:
             administrated_cities = self.request.user.userprofile.administrated_cities.all()
             campaign_slug = self.request.subdomain

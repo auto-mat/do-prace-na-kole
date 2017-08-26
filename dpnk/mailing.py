@@ -192,7 +192,7 @@ class MailingThread(threading.Thread):
     def __init__(self, user_attendance, ignore_hash, **kwargs):
         self.user_attendance = user_attendance
         self.ignore_hash = ignore_hash
-        super(MailingThread, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def run(self):
         add_or_update_user_synchronous(self.user_attendance, self.ignore_hash)

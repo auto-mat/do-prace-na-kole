@@ -214,7 +214,7 @@ class Invoice(models.Model):
                 self.sequence_number = last_transaction.sequence_number + 1
             else:
                 self.sequence_number = first
-        super(Invoice, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def payments_to_add(self):
         if hasattr(self, 'campaign'):

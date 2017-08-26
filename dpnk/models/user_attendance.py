@@ -499,7 +499,7 @@ class UserAttendance(models.Model):
                     'team_campaign': self.team.campaign,
                 },
             )
-        return super(UserAttendance, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
 
 @receiver(post_save, sender=UserAttendance)

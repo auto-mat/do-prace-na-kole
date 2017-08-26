@@ -122,7 +122,7 @@ class CompanyAdmin(models.Model):
         status_before_update = None
         if self.id:
             status_before_update = CompanyAdmin.objects.get(pk=self.id).company_admin_approved
-        super(CompanyAdmin, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         if status_before_update != self.company_admin_approved:
             if self.company_admin_approved == 'approved':

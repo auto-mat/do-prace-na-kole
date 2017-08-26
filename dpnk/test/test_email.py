@@ -279,6 +279,6 @@ class TestEmails(TestCase):
 
 class TestEmailsEn(TestEmails):
     def setUp(self):
-        super(TestEmailsEn, self).setUp()
+        super().setUp()
         self.userprofile.language = "en"
         self.company_admin.userprofile.language = "en"

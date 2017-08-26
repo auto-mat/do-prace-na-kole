@@ -326,7 +326,7 @@ class DeliveryBatchForm(forms.ModelForm):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        ret_val = super(DeliveryBatchForm, self).__init__(*args, **kwargs)
+        ret_val = super().__init__(*args, **kwargs)
         if hasattr(self, 'request'):
             self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
         return ret_val

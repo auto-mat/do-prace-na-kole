@@ -217,7 +217,7 @@ class UserProfile(models.Model):
         if self.pk is None:
             self.ecc_password = User.objects.make_random_password()
             self.ecc_email = "%s@dopracenakole.cz" % User.objects.make_random_password()
-        super(UserProfile, self).save(force_insert, force_update, *args, **kwargs)
+        super().save(force_insert, force_update, *args, **kwargs)
 
 
 @receiver(post_save, sender=UserProfile)

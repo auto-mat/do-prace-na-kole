@@ -176,7 +176,7 @@ class Team(models.Model):
                     self.invitation_token = invitation_token
                     break
 
-        super(Team, self).save(force_insert, force_update, *args, **kwargs)
+        super().save(force_insert, force_update, *args, **kwargs)
 
 
 class TeamName(Team):

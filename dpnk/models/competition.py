@@ -481,7 +481,7 @@ class CompetitionForm(forms.ModelForm):
             self.fields["company_competitors"].queryset = Company.objects.none()
 
     def __init__(self, *args, **kwargs):
-        super(CompetitionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if not hasattr(self.instance, 'campaign'):
             self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
 

@@ -464,7 +464,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
 
         if db_field.name == "company_competitors":
             kwargs["queryset"] = models.Company.objects.none()
-        return super(CompetitionAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 
 class UserAttendanceForm(forms.ModelForm):
@@ -473,7 +473,7 @@ class UserAttendanceForm(forms.ModelForm):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(UserAttendanceForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if 't_shirt_size' in self.fields:
             if hasattr(self.instance, 'campaign'):
                 self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign)
@@ -505,7 +505,7 @@ class UserProfileForm(forms.ModelForm):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(UserProfileForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['telephone'].required = False
 
 
@@ -853,7 +853,7 @@ class UserAttendanceAdmin(
     user_link.short_description = _('Uživatel')
 
     def get_queryset(self, request):
-        queryset = super(UserAttendanceAdmin, self).get_queryset(request)
+        queryset = super().get_queryset(request)
         return queryset.select_related(
             'team__subsidiary__city',
             'team__subsidiary__company',
@@ -1338,7 +1338,7 @@ class InvoiceForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super(InvoiceForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if 'sequence_number' in self.fields:
             self.fields['sequence_number'].required = False
 

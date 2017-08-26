@@ -186,7 +186,7 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
                 request.user_attendance.team.unapproved_member_count > 0
         ):
                 raise PermissionDenied(_("Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."))
-        return super(ChangeTeamView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class RegisterTeamView(UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateView):
@@ -247,7 +247,7 @@ class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, FormView):
         if request.user.is_authenticated():
             return redirect(reverse('profil'))
         else:
-            return super(RegistrationAccessView, self).get(request, *args, **kwargs)
+            return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
         email = form.cleaned_data['email']
@@ -270,7 +270,7 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrat
         return {'email': self.kwargs.get('initial_email', '')}
 
     def register(self, registration_form):
-        new_user = super(RegistrationView, self).register(registration_form)
+        new_user = super().register(registration_form)
         userprofile = UserProfile.objects.create(user=new_user)
 
         invitation_token = self.kwargs.get('token', None)
@@ -307,7 +307,7 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
         }
 
     def get_context_data(self, **kwargs):
-        context = super(ConfirmTeamInvitationView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['old_team'] = self.user_attendance.team
         context['new_team'] = self.new_team
 
@@ -329,7 +329,7 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
 
     def form_valid(self, form):
         approve_for_team(self.request, self.user_attendance, "", True, False)
-        return super(ConfirmTeamInvitationView, self).form_valid(form)
+        return super().form_valid(form)
 
     def dispatch(self, request, *args, **kwargs):
         if Team.objects.filter(invitation_token=kwargs['token']).count() != 1:
@@ -346,7 +346,7 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
             return redirect("%s?next=%s" % (reverse("login", kwargs={"initial_email": initial_email}), request.get_full_path()))
         invitation_token = self.kwargs['token']
         self.new_team = Team.objects.get(invitation_token=invitation_token)
-        return super(ConfirmTeamInvitationView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class PaymentTypeView(
@@ -376,7 +376,7 @@ class PaymentTypeView(
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(PaymentTypeView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         profile = self.user_attendance.userprofile
         context['user_attendance'] = self.user_attendance
         context['firstname'] = profile.user.first_name  # firstname
@@ -388,7 +388,7 @@ class PaymentTypeView(
         return context
 
     def get_form(self, form_class=PaymentTypeForm):
-        form = super(PaymentTypeView, self).get_form(form_class)
+        form = super().get_form(form_class)
         form.user_attendance = self.user_attendance
         return form
 
@@ -443,7 +443,7 @@ class PaymentTypeView(
                 messages.add_message(self.request, messages.WARNING, payment_choice['message'], fail_silently=True)
                 logger.info('Inserting payment', extra={'payment_type': payment_type, 'username': self.user_attendance.userprofile.user.username})
 
-        return super(PaymentTypeView, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class PaymentView(UserAttendanceViewMixin, MustHaveTeamMixin, LoginRequiredMixin, TemplateView):
@@ -451,7 +451,7 @@ class PaymentView(UserAttendanceViewMixin, MustHaveTeamMixin, LoginRequiredMixin
     template_name = 'registration/payment.html'
 
     def get_context_data(self, **kwargs):
-        context = super(PaymentView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         if self.user_attendance.payment_status == 'no_admission':
             return redirect(reverse('profil'))
@@ -530,7 +530,7 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
 
     @transaction.atomic
     def get_context_data(self, success, trans_id, session_id, pay_type, error=None):
-        context_data = super(PaymentResult, self).get_context_data()
+        context_data = super().get_context_data()
         logger.info(
             u'Payment result: success: %s, trans_id: %s, session_id: %s, pay_type: %s, error: %s, user: %s (%s)' %
             (
@@ -879,10 +879,10 @@ class OtherTeamMembers(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedFo
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
     def dispatch(self, request, *args, **kwargs):
-        return super(OtherTeamMembers, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(OtherTeamMembers, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         team_members = []
         if self.user_attendance.team:
             team_members = self.user_attendance.team.all_members().annotate(length=Length('track'))
@@ -925,10 +925,10 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
     def dispatch(self, request, *args, **kwargs):
-        return super(AdmissionsView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(AdmissionsView, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         context_data['competitions'] = self.user_attendance.get_competitions(competition_types=self.competition_types)
         context_data['registration_phase'] = "competitions"
         return context_data
@@ -955,7 +955,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
     title = _("Výsledky soutěže")
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(CompetitionResultsView, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         competition_slug = kwargs.get('competition_slug')
 
         try:
@@ -1051,7 +1051,7 @@ class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
                 show_points=self.show_points,
                 is_actual=self.is_actual,
             )
-        return super(QuestionnaireView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, self.get_context_data())
@@ -1097,7 +1097,7 @@ class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
         return render(request, self.template_name, context_data)
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(QuestionnaireView, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
 
         context_data.update({
             'questions': self.questions,
@@ -1113,7 +1113,7 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
     title = _(u"Výsledky všech soutěží")
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(QuestionnaireAnswersAllView, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
 
         competition_slug = kwargs.get('competition_slug')
         competition = Competition.objects.get(slug=competition_slug)
@@ -1346,7 +1346,7 @@ class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequired
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance:
             approval_request_mail(request.user_attendance)
-        return super(TeamApprovalRequest, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, FormView):
@@ -1357,7 +1357,7 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamM
     success_url = reverse_lazy('pozvanky')
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(InviteView, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         context_data['registration_phase'] = self.registration_phase
         return context_data
 
@@ -1408,7 +1408,7 @@ class UpdateTeam(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMix
     success_message = _(u"Název týmu úspěšně změněn na %(name)s")
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(UpdateTeam, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         context_data['registration_phase'] = self.registration_phase
         return context_data
 
@@ -1423,7 +1423,7 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, MustBeApprovedForTeam
 
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):
-        return super(TeamMembers, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         if 'approve' in request.POST:
@@ -1472,7 +1472,7 @@ class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, MustBeApprovedForTeam
         return render(request, self.template_name, self.get_context_data())
 
     def get_context_data(self, *args, **kwargs):
-        context_data = super(TeamMembers, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         team = self.user_attendance.team
         if not team:
             return {
@@ -1671,7 +1671,7 @@ class BikeRepairView(CampaignParameterMixin, TitleViewMixin, GroupRequiredRespon
         return {'campaign': self.campaign}
 
     def form_valid(self, form):
-        super(BikeRepairView, self).form_valid(form)
+        super().form_valid(form)
         return redirect(reverse(self.success_url))
 
 
@@ -1680,7 +1680,7 @@ class DrawResultsView(TitleViewMixin, TemplateView):
     title = _("Losování")
 
     def get_context_data(self, city_slug=None, *args, **kwargs):
-        context_data = super(DrawResultsView, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         competition_slug = kwargs.get('competition_slug')
         context_data['results'] = draw.draw(competition_slug)
         return context_data
@@ -1693,10 +1693,10 @@ class CombinedTracksKMLView(TemplateView):
     @method_decorator(never_cache)              # don't cache KML in browsers
     @method_decorator(cache_page(24 * 60 * 60))  # cache in memcached for 24h
     def dispatch(self, request, *args, **kwargs):
-        return super(CombinedTracksKMLView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, city_slug=None, *args, **kwargs):
-        context_data = super(CombinedTracksKMLView, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         filter_params = {}
         if city_slug:
             filter_params['team__subsidiary__city__slug'] = city_slug

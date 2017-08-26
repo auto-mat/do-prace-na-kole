@@ -79,7 +79,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
             'userprofile__user__first_name',
         )
 
-        ret_val = super(SelectUsersPayForm, self).__init__(*args, **kwargs)
+        ret_val = super().__init__(*args, **kwargs)
         self.fields['paing_for'].queryset = queryset
         self.helper.form_class = "dirty-check"
         self.helper.layout = Layout(
@@ -97,7 +97,7 @@ class CompanyForm(SubmitMixin, AddressForm):
         fields = ('name', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city', 'ico', 'dic')
 
     def __init__(self, request=None, *args, **kwargs):
-        ret_val = super(CompanyForm, self).__init__(*args, **kwargs)
+        ret_val = super().__init__(*args, **kwargs)
         self.fields['address_recipient'].label = _(u"Adresát na faktuře")
         self.fields['address_recipient'].help_text = _(u"Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova")
         return ret_val
