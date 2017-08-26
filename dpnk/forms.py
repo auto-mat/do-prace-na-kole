@@ -150,14 +150,6 @@ class RegisterCompanyForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
-    def clean_ico(self):
-        ico = self.cleaned_data['ico']
-        if ico and models.Company.objects.filter(
-            ico=ico,
-            active=True,
-        ).exists():
-            raise ValidationError('Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu')
-
     class Meta:
         model = models.Company
         fields = ('name', 'ico')

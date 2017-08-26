@@ -64,7 +64,7 @@ class Company(models.Model):
 
     def has_filled_contact_information(self):
         address_complete = self.address.street and self.address.street_number and self.address.psc and self.address.city
-        return self.name and address_complete and self.ico
+        return bool(self.name and address_complete and self.ico)
 
     def __str__(self):
         return "%s" % self.name
@@ -81,5 +81,11 @@ class Company(models.Model):
         return ", ".join([a.userprofile.telephone for a in admins])
 
     def clean(self):
-        if Company.objects.filter(name__unaccent__iexact=self.name):
+        if Company.objects.filter(name__unaccent__iexact=self.name).exists():
             raise ValidationError({'name': _('Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, vyberte tu stávající.')})
+
+        if self.ico and Company.objects.filter(
+            ico=self.ico,
+            active=True,
+        ).exists():
+            raise ValidationError({'ico': 'Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu'})
