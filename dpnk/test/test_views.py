@@ -1993,6 +1993,11 @@ class TrackViewTests(ViewsLogon):
             status_code=403,
         )
 
+    def test_dpnk_views_gpx_file_error(self):
+        address = reverse('gpx_file', kwargs={"id": 5})
+        response = self.client.get(address)
+        self.assertContains(response, "Stránka nenalezena", status_code=404)
+
     def test_dpnk_views_gpx_file_no_trip(self):
         address = reverse('gpx_file', kwargs={"id": 2})
         response = self.client.get(address)
