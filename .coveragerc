@@ -9,7 +9,9 @@ omit =
    dpnk/migrations*,
    t_shirt_delivery/migrations*,
    psc/migrations*,
-   coupons/migrations*
+   coupons/migrations*,
+   project/settings_dev.py,
+   project/non_html_debug.py
 plugins =
     django_coverage_plugin
 branch = True
