@@ -50,7 +50,7 @@ import settings
 
 from t_shirt_delivery.models import PackageTransaction
 
-from .mommy_recipes import CampaignRecipe, PriceLevelRecipe, UserAttendancePaidRecipe, UserAttendanceRecipe, testing_campaign
+from .mommy_recipes import CampaignRecipe, PriceLevelRecipe, UserAttendancePaidRecipe, UserAttendanceRecipe, campaign_get_or_create, testing_campaign
 
 
 @override_settings(
@@ -234,6 +234,17 @@ class CompetitionsViewTests(ViewsLogon):
         address = reverse('profil')
         response = self.client.get(address)
         self.assertContains(response, '<div class="alert alert-info">Zde jste si zadávali vaše jízdy.</div>', html=True)
+
+    @override_settings(
+        FAKE_DATE=datetime.date(2000, 11, 20),
+    )
+    @patch('slumber.API')
+    def test_rides_before_time(self, slumber_api):
+        slumber_instance = slumber_api.return_value
+        slumber_instance.feed.get.return_value = self.feed_value
+
+        response = self.client.get(reverse('profil'))
+        self.assertContains(response, '<div class="alert alert-info">Zde si budete od 1. listopadu 2010 zadávat vaše jízdy.</div>', html=True)
 
     @patch('slumber.API')
     def test_registration_access(self, slumber_api):
@@ -960,11 +971,60 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
 
 
 class ViewsLogonMommy(TestCase):
+    def get_user_attendance(self):
+        return UserAttendanceRecipe.make()
+
     def setUp(self):
         super().setUp()
-        self.user_attendance = UserAttendanceRecipe.make()
+        self.user_attendance = self.get_user_attendance()
         self.client = Client(HTTP_HOST="testing-campaign.example.com")
         self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+
+
+@override_settings(
+    FAKE_DATE=datetime.date(2010, 11, 20),
+)
+class TestRidesView(ViewsLogonMommy):
+    def get_user_attendance(self):
+        testing_campaing = campaign_get_or_create(
+            slug="testing-campaign",
+            name='Testing campaign',
+            minimum_rides_base=10000,
+            track_required=False,
+        )
+        user_attendance = UserAttendanceRecipe.make(
+            campaign=testing_campaing,
+            userprofile__sex='male',
+            userprofile__user__first_name='Foo',
+            userprofile__user__last_name='User',
+            userprofile__user__email='foo@bar.cz',
+            userprofile__telephone='12345',
+            userprofile__personal_data_opt_in=True,
+            team__name="Foo team",
+            approved_for_team='approved',
+        )
+        mommy.make(
+            'CityInCampaign',
+            campaign=testing_campaing,
+            city=user_attendance.team.subsidiary.city,
+        )
+        return user_attendance
+
+    @patch('slumber.API')
+    def test_dpnk_minimum_rides_base(self, slumber_api):
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_api.return_value = m
+
+        response = self.client.get(reverse('profil'), follow=True)
+        self.assertContains(
+            response,
+            "<small>"
+            "*Do konce soutěže je potřeba urazit alespoň 10000 cest. "
+            "Počet vašich cest byl tedy zvýšen poměrově k tomuto číslu na 886 cest."
+            "</small>",
+            html=True,
+        )
 
 
 class TestRegisterCompanyView(ViewsLogonMommy):
