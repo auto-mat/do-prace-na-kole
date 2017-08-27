@@ -29,18 +29,18 @@ class DPNKConfig(AppConfig):
     verbose_name = "Do práce na kole"
 
     def ready(self):
+
         def get_team_in_campaign_manager(campaign_slug):
+            """ This is hacky manager, that enagles filter by campaign for chained team field in ChangeTeamView. """
             class TeamInCampaignManager(models.Manager):
+                def __init__(self):
+                    ret_val = super().__init__()
+                    self.model = dpnk_models.Team
+                    return ret_val
+
                 def get_queryset(self):
                     return super().get_queryset().filter(campaign__slug=campaign_slug)
-
-            class TeamInCampaign(dpnk_models.Team):
-                objects = TeamInCampaignManager()
-
-                class Meta:
-                    proxy = True
-
-            return TeamInCampaign
+            return TeamInCampaignManager()
 
         from . import models as dpnk_models
         from fieldsignals import post_save_changed, pre_save_changed
@@ -51,8 +51,8 @@ class DPNKConfig(AppConfig):
         try:
             slugs = dpnk_models.Campaign.objects.values_list('slug', flat=True)
             for campaign_slug in slugs:
-                setattr(dpnk_models.Team, 'team_in_campaign_%s' % campaign_slug, get_team_in_campaign_manager(campaign_slug).objects)
-            setattr(dpnk_models.Team, 'team_in_campaign_testing-campaign', get_team_in_campaign_manager('testing-campaign').objects)
+                setattr(dpnk_models.Team, 'team_in_campaign_%s' % campaign_slug, get_team_in_campaign_manager(campaign_slug))
+            setattr(dpnk_models.Team, 'team_in_campaign_testing-campaign', get_team_in_campaign_manager('testing-campaign'))
         except ProgrammingError:
             pass
 
