@@ -1,9 +1,10 @@
 [run]
-include =
-   dpnk*,
-   t_shirt_delivery*,
-   psc*,
-   coupons*
+source =
+   dpnk,
+   t_shirt_delivery,
+   psc,
+   project,
+   coupons
 omit =
    dpnk/migrations*,
    t_shirt_delivery/migrations*,
