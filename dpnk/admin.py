@@ -165,12 +165,12 @@ class CompanyMergeForm(DontValidateCompnayFieldsMixin, merge.MergeForm):
 class CompanyResource(resources.ModelResource):
     class Meta:
         model = models.Company
-        fields = (
+        fields = [
             'id',
             'name',
             'ico',
             'dic',
-        )
+        ]
         export_order = fields
 
 
@@ -256,17 +256,8 @@ def create_subsidiary_resource(campaign_slugs):
             ] + campaign_fields
             export_order = fields
 
-        name = fields.Field(readonly=True)
-
-        def dehydrate_name(self, obj):
-            return obj.name()
-
-        team_count = fields.Field(readonly=True)
-
-        def dehydrate_team_count(self, obj):
-            if hasattr(obj, 'team_count'):
-                return obj.team_count
-
+        name = fields.Field(readonly=True, attribute='name')
+        team_count = fields.Field(readonly=True, attribute='team_count')
         user_count = fields.Field(readonly=True)
 
         def dehydrate_user_count(self, obj):
@@ -473,7 +464,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
 
         if db_field.name == "company_competitors":
             kwargs["queryset"] = models.Company.objects.none()
-        return super(CompetitionAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 
 class UserAttendanceForm(forms.ModelForm):
@@ -482,22 +473,13 @@ class UserAttendanceForm(forms.ModelForm):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(UserAttendanceForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if 't_shirt_size' in self.fields:
             if hasattr(self.instance, 'campaign'):
                 self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign)
 
     def clean(self):
         new_team = self.cleaned_data['team']
-        new_approved_for_team = self.cleaned_data['approved_for_team']
-        if new_team:
-            new_member_count = new_team.members().exclude(pk=self.instance.pk).count()
-            if new_approved_for_team == 'approved':
-                new_member_count += 1
-            if self.instance.campaign.too_much_members(new_member_count):
-                message = _("Tento tým není možné zvolit, protože by měl příliš mnoho odsouhlasených členů.")
-                self.add_error("team", message)
-                self.add_error("approved_for_team", message)
 
         if self.instance.payment_status == 'done' and new_team is None:
             self.add_error(
@@ -523,7 +505,7 @@ class UserProfileForm(forms.ModelForm):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        super(UserProfileForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['telephone'].required = False
 
 
@@ -558,23 +540,9 @@ def create_userprofile_resource(campaign_slugs):  # noqa: C901
             ] + campaign_fields
             export_order = fields
 
-        name = fields.Field(readonly=True)
-
-        def dehydrate_name(self, obj):
-            if hasattr(obj, 'user'):
-                return obj.name()
-
-        email = fields.Field(readonly=True)
-
-        def dehydrate_email(self, obj):
-            if hasattr(obj, 'user'):
-                return obj.user.email
-
-        occupation_name = fields.Field(readonly=True)
-
-        def dehydrate_occupation_name(self, obj):
-            if getattr(obj, 'occupation'):
-                return obj.occupation.name
+        name = fields.Field(readonly=True, attribute='name')
+        email = fields.Field(readonly=True, attribute='user__email')
+        occupation_name = fields.Field(readonly=True, attribute='occupation__name')
 
         for slug in campaign_slugs:
             vars()['user_attended_%s' % slug] = fields.Field(readonly=True)
@@ -726,7 +694,7 @@ class TripAdminInline(admin.TabularInline):
 class UserAttendanceResource(resources.ModelResource):
     class Meta:
         model = models.UserAttendance
-        fields = (
+        fields = [
             'id',
             'campaign',
             'campaign__slug',
@@ -753,47 +721,19 @@ class UserAttendanceResource(resources.ModelResource):
             'team__subsidiary__company__name',
             'company_admin_emails',
             'created',
-        )
+            'payment_date',
+            'payment_status',
+            'payment_type',
+            'payment_amount',
+        ]
         export_order = fields
 
-    subsidiary_name = fields.Field(readonly=True)
-
-    def dehydrate_subsidiary_name(self, obj):
-        if obj.team and obj.team.subsidiary:
-            return obj.team.subsidiary.name()
-
-    payment_date = fields.Field(readonly=True)
-
-    def dehydrate_payment_date(self, obj):
-        payment = obj.representative_payment
-        if payment:
-            return payment.realized or payment.created
-
-    payment_status = fields.Field(readonly=True)
-
-    def dehydrate_payment_status(self, obj):
-        return obj.payment_status
-
-    payment_type = fields.Field(readonly=True)
-
-    def dehydrate_payment_type(self, obj):
-        payment = obj.representative_payment
-        if payment:
-            return payment.pay_type
-
-    payment_amount = fields.Field(readonly=True)
-
-    def dehydrate_payment_amount(self, obj):
-        payment = obj.representative_payment
-        if payment:
-            return payment.amount
-
-    company_admin_emails = fields.Field(readonly=True)
-
-    def dehydrate_company_admin_emails(self, obj):
-        if obj.team:
-            admins = obj.team.subsidiary.company.company_admin.filter(campaign=obj.campaign)
-            return ", ".join([a.userprofile.user.email for a in admins])
+    subsidiary_name = fields.Field(readonly=True, attribute='team__subsidiary__name')
+    payment_date = fields.Field(readonly=True, attribute='representative_payment__payment_complete_date')
+    payment_status = fields.Field(readonly=True, attribute='payment_status')
+    payment_type = fields.Field(readonly=True, attribute='representative_payment__pay_type')
+    payment_amount = fields.Field(readonly=True, attribute='representative_payment__amount')
+    company_admin_emails = fields.Field(readonly=True, attribute='company_admin_emails')
 
 
 @admin.register(models.UserAttendance)
@@ -913,7 +853,7 @@ class UserAttendanceAdmin(
     user_link.short_description = _('Uživatel')
 
     def get_queryset(self, request):
-        queryset = super(UserAttendanceAdmin, self).get_queryset(request)
+        queryset = super().get_queryset(request)
         return queryset.select_related(
             'team__subsidiary__city',
             'team__subsidiary__company',
@@ -988,7 +928,7 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
     def members(self, obj):
         return admin_links(
             [
-                (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), u, u.approved_for_team)
+                (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), "%s - %s" % (u, u.approved_for_team))
                 for u in models.UserAttendance.objects.filter(team=obj)
             ],
         )
@@ -1070,7 +1010,7 @@ class ChoiceTypeAdmin(admin.ModelAdmin):
 class AnswerResource(resources.ModelResource):
     class Meta:
         model = models.Answer
-        fields = (
+        fields = [
             'id',
             'user_attendance__userprofile__user__first_name',
             'user_attendance__userprofile__user__last_name',
@@ -1095,14 +1035,10 @@ class AnswerResource(resources.ModelResource):
             'choices',
             'str_choices',
             'comment',
-        )
+        ]
         export_order = fields
 
-    str_choices = fields.Field(readonly=True)
-
-    def dehydrate_str_choices(self, obj):
-        if obj.id:
-            return obj.str_choices()
+    str_choices = fields.Field(readonly=True, attribute='str_choices')
 
 
 class AnswerForm(forms.ModelForm):
@@ -1135,7 +1071,12 @@ class AnswerAdmin(FormRequestMixin, ImportExportMixin, RelatedFieldAdmin):
         'question__name',
         'question__competition__name',
         'user_attendance__team__subsidiary__company__name')
-    list_filter = (campaign_filter_generator('question__competition__campaign'), HasReactionFilter, 'question__competition__city', 'question__competition')
+    list_filter = (
+        campaign_filter_generator('question__competition__campaign'),
+        HasReactionFilter,
+        'question__competition__city',
+        'question__competition',
+    )
     filter_horizontal = ('choices',)
     list_max_show_all = 100000
     raw_id_fields = ('user_attendance', 'question')
@@ -1190,7 +1131,7 @@ class GpxFileInline(LeafletGeoAdminMixin, admin.TabularInline):
 class TripResource(resources.ModelResource):
     class Meta:
         model = models.Trip
-        fields = (
+        fields = [
             'id',
             'user_attendance__userprofile__user__id',
             'user_attendance',
@@ -1198,7 +1139,7 @@ class TripResource(resources.ModelResource):
             'direction',
             'commute_mode',
             'distance',
-        )
+        ]
         export_order = fields
 
 
@@ -1329,7 +1270,7 @@ class CampaignAdmin(admin.ModelAdmin):
 class CompanyAdminResource(resources.ModelResource):
     class Meta:
         model = models.CompanyAdmin
-        fields = (
+        fields = [
             'userprofile__user',
             'userprofile__user__email',
             'userprofile',
@@ -1343,7 +1284,7 @@ class CompanyAdminResource(resources.ModelResource):
             'note',
             'motivation_company_admin',
             'campaign',
-        )
+        ]
 
 
 @admin.register(models.CompanyAdmin)
@@ -1392,16 +1333,20 @@ class InvoiceForm(forms.ModelForm):
     class Meta:
         model = models.Invoice
         fields = "__all__"
+        widgets = {
+            'note': forms.Textarea(attrs={'rows': 2}),
+        }
 
     def __init__(self, *args, **kwargs):
-        super(InvoiceForm, self).__init__(*args, **kwargs)
-        self.fields['sequence_number'].required = False
+        super().__init__(*args, **kwargs)
+        if 'sequence_number' in self.fields:
+            self.fields['sequence_number'].required = False
 
 
 class InvoiceResource(resources.ModelResource):
     class Meta:
         model = models.Invoice
-        fields = (
+        fields = [
             'company__name',
             'created',
             'exposure_date',
@@ -1409,7 +1354,7 @@ class InvoiceResource(resources.ModelResource):
             'payback_date',
             'paid_date',
             'total_amount',
-            'invoice_count',
+            'payments_count',
             'campaign__name',
             'sequence_number',
             'order_number',
@@ -1422,19 +1367,14 @@ class InvoiceResource(resources.ModelResource):
             'company__address_district',
             'company__address_psc',
             'company__address_city',
+            'company_admin_telephones',
             'company_admin_emails',
-        )
+        ]
         export_order = fields
 
-    invoice_count = fields.Field(readonly=True)
-
-    def dehydrate_invoice_count(self, obj):
-        return obj.payment_set.count()
-
-    company_admin_emails = fields.Field(readonly=True)
-
-    def dehydrate_company_admin_emails(self, obj):
-        return obj.company.admin_emails(obj.campaign)
+    payments_count = fields.Field(readonly=True, attribute='payments_count')
+    company_admin_emails = fields.Field(readonly=True, attribute='company_admin_emails')
+    company_admin_telephones = fields.Field(readonly=True, attribute='company_admin_telephones')
 
 
 @admin.register(models.Invoice)
@@ -1446,7 +1386,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'paid_date',
         'variable_symbol',
         'total_amount',
-        'invoice_count',
+        'payments_count',
         'invoice_pdf_url',
         'campaign',
         'sequence_number',
@@ -1456,13 +1396,17 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'company_pais_benefitial_fee',
         'company_address_street',
         'note',
+        'company_admin_telephones',
         'company_admin_emails',
     ]
+    list_editable = (
+        'note',
+    )
     readonly_fields = [
         'created',
         'author',
         'updated_by',
-        'invoice_count',
+        'payments_count',
     ]
     list_filter = [
         CampaignFilter,
@@ -1476,15 +1420,11 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
     form = InvoiceForm
     resource_class = InvoiceResource
 
-    def invoice_count(self, obj):
-        return obj.payment_set.count()
-    invoice_count.short_description = _(u"Počet plateb")
+    def get_changelist_form(self, request, **kwargs):
+        return InvoiceForm
 
     def invoice_pdf_url(self, obj):
         return format_html("<a href='{}'>invoice.pdf</a>", obj.invoice_pdf.url)
-
-    def company_admin_emails(self, obj):
-        return obj.company.admin_emails(obj.campaign)
 
 
 @admin.register(models.GpxFile)

@@ -84,6 +84,7 @@ class GetCompetitorsWithoutAdmissionTests(TestCase):
             'approved_for_team': 'approved',
             'campaign': self.campaign,
             'userprofile__user__is_active': True,
+            'payment_status__in': ('done', 'no_admission'),
             'team__subsidiary__company': competition.company,
             'userprofile__sex': 'male',
         }

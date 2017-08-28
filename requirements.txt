@@ -1,7 +1,7 @@
 six
 Django
 django-import-export
-django-smart-selects
+-e git+https://github.com/PetrDlouhy/django-smart-selects@fix_css_class#egg=django-smart-selects
 psycopg2
 python-memcached
 django-chart-tools
@@ -13,7 +13,7 @@ django-registration-redux
 -e git+https://github.com/PetrDlouhy/django-nested-inline@dpnk-master#egg=django-nested-inline  # for forms-nested.css fix
 django-su
 unidecode
--e git+https://github.com/PetrDlouhy/createsend-python.git@python3#egg=createsend
+createsend
 ordereddict
 django-author
 django-fieldsignals
@@ -29,12 +29,12 @@ easy_thumbnails
 django-crispy-forms
 django-class-based-auth-views
 django-subdomains
--e git+https://github.com/PetrDlouhy/django-adminfilters.git@develop#egg=django-adminfilters  # for empty variable fix
+django-adminfilters
 -e git+https://github.com/PetrDlouhy/django-advanced-filters.git@develop#egg=django-advanced-filters  # for empty variable fix
--e git+https://github.com/PetrDlouhy/slumber.git@ordereddict#egg=slumber  # news should be ordered by date
+slumber
 django-bleach
 gunicorn
--e git+https://github.com/Thermondo/django-cache-utils.git#egg=django-cache-utils
+djcacheutils
 django-settings-context-processor
 django-rosetta
 django-oauth-toolkit
@@ -50,7 +50,7 @@ django-cors-headers
 django-wysiwyg-redactor
 sqlparse
 django-appconf
-django-selectable
+-e git+https://github.com/PetrDlouhy/django-selectable.git#egg=django-selectable  # For the Django 1.11 fixes, for search splitted by whitespaces
 pypdf2
 django-extra-views
 raven
@@ -64,12 +64,11 @@ django-model-utils
 django-price-level
 django-datatables-view
 django-rank-query
--e git+https://github.com/saxix/django-adminactions@develop#egg=django-adminactions  # for fixes of merge action
+django-adminactions
 boto
 django-google-tag-manager
 django-ses
 whitenoise
-django-sslify-admin
 django-favicon
 django-modeltranslation
 -e git+https://github.com/burke-software/django-mass-edit.git#egg=django-mass-edit  # for the removal of onclick_attrib
@@ -82,8 +81,12 @@ redis
 django-scribbler
 django-isnull-list-filter
 django-redis
--e git+https://github.com/PetrDlouhy/django-admin-view-permission.git#egg=django-admin-view-permission  # For fix of compatibility with django-advanced-filters
+django-admin-view-permission
 coreapi
 django-celery-email
--e git+https://github.com/PetrDlouhy/django-likes.git#egg=django-likes  # For fixes for Django 1.10 and static files
+-e git+https://github.com/PetrDlouhy/django-likes.git@develop#egg=django-likes  # For static template tag fix
 social-auth-app-django
+django-fm
+django-braces
+django-initial-field
+django-betterforms

@@ -20,6 +20,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from .address import Address, get_address_string
@@ -44,7 +45,7 @@ class Company(models.Model):
     ico = models.PositiveIntegerField(
         default=None,
         verbose_name=_(u"IČO"),
-        help_text=_("Pokud má vaše společnost IČO, prosím vyplňte, jinak nechte prázdné."),
+        help_text=_("Pokud má vaše organizace IČO, prosím vyplňte, jinak nechte prázdné."),
         null=True,
         blank=True,
     )
@@ -63,7 +64,7 @@ class Company(models.Model):
 
     def has_filled_contact_information(self):
         address_complete = self.address.street and self.address.street_number and self.address.psc and self.address.city
-        return self.name and address_complete and self.ico
+        return bool(self.name and address_complete and self.ico)
 
     def __str__(self):
         return "%s" % self.name
@@ -74,3 +75,17 @@ class Company(models.Model):
     def admin_emails(self, campaign):
         admins = self.company_admin.filter(campaign=campaign)
         return ", ".join([a.userprofile.user.email for a in admins])
+
+    def admin_telephones(self, campaign):
+        admins = self.company_admin.filter(campaign=campaign)
+        return ", ".join([a.userprofile.telephone for a in admins])
+
+    def clean(self):
+        if Company.objects.filter(name__unaccent__iexact=self.name).exists():
+            raise ValidationError({'name': _('Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, vyberte tu stávající.')})
+
+        if self.ico and Company.objects.filter(
+            ico=self.ico,
+            active=True,
+        ).exists():
+            raise ValidationError({'ico': 'Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu'})

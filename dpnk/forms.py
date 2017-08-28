@@ -20,6 +20,11 @@
 import datetime
 import logging
 
+from collections import OrderedDict
+
+from betterforms.multiform import MultiModelForm
+
+from crispy_forms.bootstrap import FieldWithButtons, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Button, Div, Field, HTML, Layout, Submit
 
@@ -29,37 +34,32 @@ from django.contrib.auth.models import User
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
-from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models import Q
 from django.forms.widgets import HiddenInput
 from django.http import Http404
 from django.utils import formats
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat, ugettext_lazy as _
 
 from django_gpxpy import gpx_parse
+
+from initial_field import InitialFieldsMixin
 
 from leaflet.forms.widgets import LeafletWidget
 
 import registration.forms
 
+from selectable.forms.widgets import AutoCompleteSelectWidget
+
 from smart_selects.form_fields import ChainedModelChoiceField
 
-from . import models, util
+from . import email, models, util
 from .fields import CommaFloatField, ShowPointsMultipleModelChoiceField
 from .string_lazy import format_html_lazy, mark_safe_lazy
-from .widgets import CommuteModeSelect, SelectChainedOrCreate, SelectOrCreateAutoComplete
+from .widgets import CommuteModeSelect
 
 logger = logging.getLogger(__name__)
-
-
-def team_full(team):
-    if team.campaign.too_much_members(
-            models.UserAttendance.objects.
-            filter(Q(approved_for_team='approved') | Q(approved_for_team='undecided'), team=team, userprofile__user__is_active=True).
-            count(),):
-        raise forms.ValidationError(_(u"Tento tým již má plný počet členů"))
 
 
 class UserLeafletWidget(LeafletWidget):
@@ -70,7 +70,7 @@ class UserLeafletWidget(LeafletWidget):
             settings_overrides['DEFAULT_CENTER'] = (user_attendance.team.subsidiary.city.location.y, user_attendance.team.subsidiary.city.location.x)
             settings_overrides['DEFAULT_ZOOM'] = 13
 
-        super(UserLeafletWidget, self).__init__(
+        super().__init__(
             attrs={
                 "geom_type": 'MULTILINESTRING',
                 "map_height": "500px",
@@ -83,8 +83,8 @@ class UserLeafletWidget(LeafletWidget):
 class SubmitMixin(object):
     def __init__(self, url_name="", *args, **kwargs):
         self.helper = FormHelper()
-        super(SubmitMixin, self).__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', _(u'Odeslat')))
+        super().__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', _('Odeslat')))
 
 
 class PrevNextMixin(object):
@@ -98,72 +98,70 @@ class PrevNextMixin(object):
                 Button('prev', _('Předchozí'), css_class="btn-default form-actions", onclick='window.location.href="{}"'.format(reverse(prev_url))),
             )
         if not hasattr(self, 'no_next'):
-            self.helper.add_input(Submit('next', _(u'Další'), css_class="form-actions"))
-        return super(PrevNextMixin, self).__init__(*args, **kwargs)
+            self.helper.add_input(Submit('next', _('Další'), css_class="form-actions"))
+        return super().__init__(*args, **kwargs)
 
 
-class AuthenticationFormDPNK(AuthenticationForm):
+class CampaignMixin(object):
+    """ set self.campaign parameter from kwargs """
     def __init__(self, *args, **kwargs):
-        campaign = kwargs.pop('campaign')
-        ret_val = super(AuthenticationFormDPNK, self).__init__(*args, **kwargs)
+        self.campaign = kwargs.pop('campaign', None)
+        return super().__init__(*args, **kwargs)
+
+
+social_html = HTML(
+    format_html_lazy(
+        '<a class="btn btn-block btn-social btn-google" href="{{% url "social:begin" "google-oauth2" %}}">'
+        '  <span class="fa fa-google"></span>{}'
+        '</a>'
+        '<a class="btn btn-block btn-social btn-facebook" href="{{% url "social:begin" "facebook" %}}">'
+        '  <span class="fa fa-facebook"></span>{}'
+        '</a>',
+        _("Přihlásit se pomocí Google"),
+        _("Přihlásit se pomocí Facebooku"),
+    ),
+)
+
+
+class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             'username', 'password',
+            Submit('submit', _('Přihlásit')),
+            HTML('<br/><br/>'),
+            social_html,
+            HTML('<br/>'),
+            HTML('<a href="{%% url "password_reset" %%}">%s</a>' % _("Zapomněli jste své přihlašovací údaje?")),
+            HTML('<br/><br/>'),
+            HTML(_('Ještě nemáte účet?')),
             HTML(
-                format_html_lazy(
-                    '<a class="btn btn-block btn-social btn-google" href="{{% url "social:begin" "google-oauth2" %}}">'
-                    '  <span class="fa fa-google"></span>{}'
-                    '</a>'
-                    '<a class="btn btn-block btn-social btn-facebook" href="{{% url "social:begin" "facebook" %}}">'
-                    '  <span class="fa fa-facebook"></span>{}'
-                    '</a>'
-                    '<br/><br/>',
-                    _("Přihlásit se pomocí Google"),
-                    _("Přihlásit se pomocí Facebooku"),
-                ),
+                ' <a href="{%% url "registration_access" %%}">%s.</a>' %
+                (_('Registrujte se do soutěže %s') % self.campaign.name),
             ),
-            HTML(
-                _(
-                    '<a href="{%% url "password_reset" %%}">Zapomněli jste své přihlašovací údaje?</a>'
-                    '<br/><br/>'
-                    'Ještě nemáte účet? <a href="{%% url "registration_access" %%}">Registrujte se</a> do soutěže %(campaign)s.'
-                    '<br/><br/>'
-                ) % {
-                    'campaign': campaign,
-                },
-            ),
+            HTML('<br/><br/>'),
         )
-        self.helper.add_input(Submit('submit', _(u'Přihlásit')))
-        self.fields['username'].label = _(u"E-mail (uživatelské jméno)")
+        self.fields['username'].label = _("E-mail (uživatelské jméno)")
         return ret_val
 
 
 class RegisterCompanyForm(forms.ModelForm):
-    use_required_attribute = False
     required_css_class = 'required'
     error_css_class = 'error'
-
-    def clean_ico(self):
-        ico = self.cleaned_data['ico']
-        if ico and models.Company.objects.filter(
-            ico=ico,
-            active=True,
-        ).exists():
-            raise ValidationError('Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu výše')
 
     class Meta:
         model = models.Company
         fields = ('name', 'ico')
 
 
-class AdressForm(forms.ModelForm):
-    use_required_attribute = False
+class AddressForm(CampaignMixin, forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
     address_psc = forms.CharField(
-        label=_(u"PSČ"),
-        help_text=_(u"Např.: „130 00“"),
+        label=_("PSČ"),
+        help_text=_("Např.: „130 00“"),
     )
 
     def clean_address_psc(self):
@@ -177,50 +175,57 @@ class AdressForm(forms.ModelForm):
         return address_psc
 
     def __init__(self, *args, **kwargs):
-        campaign = kwargs.pop('campaign', None)
-        super(AdressForm, self).__init__(*args, **kwargs)
-        if campaign:
-            self.fields['city'].queryset = models.City.objects.filter(cityincampaign__campaign=campaign)
+        super().__init__(*args, **kwargs)
+        if 'city' in self.fields:
+            self.fields['city'].queryset = models.City.objects.filter(cityincampaign__campaign=self.campaign)
 
     class Meta:
         model = models.Subsidiary
         fields = ('city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
 
 
-class RegisterSubsidiaryForm(AdressForm):
-    pass
+company_field = forms.ModelChoiceField(
+    label=_("Organizace"),
+    queryset=models.Company.objects.filter(active=True),
+    widget=AutoCompleteSelectWidget(lookup_class='dpnk.lookups.CompanyLookup'),
+    required=True,
+    help_text=_(
+        "Napište několik začátečních písmen názvu svého zaměstnavatele a pokud již existuje, nabídne se vám k výběru. "
+        "Vyberte ji kliknutím na položku v seznamu.",
+    ),
+)
 
 
-class RegisterTeamForm(forms.ModelForm):
-    use_required_attribute = False
+class RegisterSubsidiaryForm(AddressForm):
+    company = company_field
+
+    class Meta:
+        model = models.Subsidiary
+        fields = ('company', 'city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
+
+
+class RegisterTeamForm(InitialFieldsMixin, forms.ModelForm):
+    initial_fields = ('campaign',)
     required_css_class = 'required'
     error_css_class = 'error'
 
-    campaign = forms.ModelChoiceField(
-        label=_(u"Kampaň"),
-        queryset=models.Campaign.objects.all(),
-        widget=HiddenInput(),
+    subsidiary = forms.ModelChoiceField(
+        queryset=models.Subsidiary.objects.filter(active=True),
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['subsidiary'].queryset = kwargs['initial']['subsidiary'].company.subsidiaries.filter(active=True)
+        self.fields['subsidiary'].empty_label = None
 
     class Meta:
         model = models.Team
-        fields = ('name', 'campaign')
+        fields = ('subsidiary', 'name', 'campaign')
 
 
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
-    use_required_attribute = False
-    company = forms.ModelChoiceField(
-        label=_(u"Organizace"),
-        queryset=models.Company.objects.filter(active=True),
-        widget=SelectOrCreateAutoComplete(
-            'companies',
-            RegisterCompanyForm,
-            prefix="company",
-            new_description=_("Organizace v seznamu není, chci vyplnit novou."),
-            help_text=_("Napište část názvu organizace a vyberte ji ze seznamu."),
-        ),
-        required=True,
-    )
+    company = company_field
+
     subsidiary = ChainedModelChoiceField(
         chained_field="company_1",
         to_app_name="dpnk",
@@ -228,27 +233,10 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         chained_model_field="company",
         show_all=False,
         auto_choose=True,
-        label=_(u"Adresa pobočky/organizace"),
+        label=_("Adresa pobočky/organizace"),
         foreign_key_app_name="dpnk",
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
-        widget=SelectChainedOrCreate(
-            RegisterSubsidiaryForm,
-            view_name='',
-            prefix="subsidiary",
-            new_description=_("Adresa pobočky/organizace v seznamu není, chci vyplnit novou."),
-            chained_field="company_1",
-            chained_model_field="company",
-            to_app_name="dpnk",
-            foreign_key_app_name="dpnk",
-            foreign_key_model_name="Subsidiary",
-            foreign_key_field_name="company",
-            to_model_name="Subsidiary",
-            to_model_field="company",
-            manager="active_objects",
-            show_all=False,
-            auto_choose=True,
-        ),
         queryset=models.Subsidiary.objects.filter(active=True),
         required=True,
     )
@@ -262,93 +250,102 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         foreign_key_app_name="dpnk",
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
-        widget=SelectChainedOrCreate(
-            RegisterTeamForm,
-            view_name='',
-            prefix="team",
-            new_description=_("Můj tým v seznamu není, chci vytvořit nový."),
-            chained_field="subsidiary",
-            chained_model_field="subsidiary",
-            to_app_name="dpnk",
-            foreign_key_app_name="dpnk",
-            foreign_key_model_name="Subsidiary",
-            foreign_key_field_name="company",
-            to_model_name="Team",
-            to_model_field="subsidiary",
-            show_all=False,
-            auto_choose=False,
-        ),
-        label=_(u"Tým"),
+        label=_("Tým"),
         queryset=models.Team.objects.all(),
         required=True,
     )
 
     def clean(self):
-        cleaned_data = super(ChangeTeamForm, self).clean()
-        if self.instance.payment_status == 'done' and self.instance.team:
-            if 'team' in cleaned_data and cleaned_data['team'].subsidiary != self.instance.team.subsidiary:
-                raise forms.ValidationError(_(u"Po zaplacení není možné měnit tým mimo pobočku"))
+        cleaned_data = super().clean()
 
         if 'subsidiary' in cleaned_data:
             subsidiary = cleaned_data['subsidiary']
-            if subsidiary and not models.CityInCampaign.objects.filter(city=subsidiary.city, campaign__slug=self.request.subdomain).exists():
-                logger.error("Subsidiary in city that doesn't belong to this campaign", extra={'request': self.request, 'subsidiary': subsidiary})
+            if subsidiary and not models.CityInCampaign.objects.filter(city=subsidiary.city, campaign__slug=self.instance.campaign.slug).exists():
+                logger.error("Subsidiary in city that doesn't belong to this campaign", extra={'subsidiary': subsidiary})
                 raise forms.ValidationError(
                     _(
                         "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží. "
                         "Prosím žádejte změnu po vašem vnitrofiremním koordinátorovi."
                     ),
                 )
+
+            if not self.instance.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
+                team = cleaned_data['team']
+                team.subsidiary = subsidiary
+                team.save()
+                self.instance.team = team
+                self.instance.approved_for_team = 'approved'
+                self.instance.save()
+
         return cleaned_data
 
     def clean_team(self):
-        data = self.cleaned_data['team']
-        if not data:
-            return self.instance.team
+        if self.instance.campaign.competitors_choose_team():  # We ask only for team
+            team = self.cleaned_data['team']
+            if team.campaign.slug != self.instance.campaign.slug:
+                logger.error("Team not in campaign", extra={'team': team.pk, 'subdomain': self.instance.campaign.slug})
+                raise forms.ValidationError(_("Zvolený tým není dostupný v aktuální kampani"))
+        elif not self.instance.team:
+                team = models.Team(campaign=self.instance.campaign)
         else:
-            if data.campaign.slug != self.request.subdomain:
-                logger.error("Team not in campaign", extra={'request': self.request, 'team': data.pk, 'subdomain': self.request.subdomain})
-                raise forms.ValidationError(_(u"Zvolený tým není dostupný v aktuální kampani"))
-        if type(data) != RegisterTeamForm:
-            if data != self.instance.team:
-                team_full(data)
-        return data
+            team = self.instance.team
+        return team
 
-    def __init__(self, request=None, *args, **kwargs):
-        self.request = request
-        initial = kwargs.get('initial', {})
-        instance = kwargs.get('instance', False)
+    def save(self, *args, **kwargs):
+        user_attendance = super().save(*args, **kwargs)
+        if user_attendance.approved_for_team != 'approved':
+            email.approval_request_mail(user_attendance)
+        return user_attendance
 
-        if instance:
-            previous_user_attendance = instance.previous_user_attendance()
-            if previous_user_attendance and previous_user_attendance.team:
-                initial['subsidiary'] = previous_user_attendance.team.subsidiary
-                initial['company'] = previous_user_attendance.team.subsidiary.company.pk
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-            if instance.team:
-                initial['team'] = instance.team
-                initial['subsidiary'] = instance.team.subsidiary
-                initial['company'] = instance.team.subsidiary.company.pk
+        self.fields["team"].widget.manager = 'team_in_campaign_%s' % self.instance.campaign.slug
 
-        if request and 'team' in request.GET:
-                initial['team'] = request.GET['team']
+        company = self.initial.get('company')
+        subsidiary = self.initial.get('subsidiary')
+        self.helper.layout = Layout(
+            FieldWithButtons(
+                'company',
+                StrictButton(
+                    string_concat('<span class="glyphicon glyphicon-plus"></span> ', _('Přidat organizaci')),
+                    href=reverse("register_company"),
+                    data_fm_head=_("Vytvořit novou organizaci"),
+                    data_fm_callback="createCompanyCallback",
+                    css_class="btn-success fm-create",
+                    id="fm-create-company",
+                ),
+            ),
+            FieldWithButtons(
+                'subsidiary',
+                StrictButton(
+                    string_concat('<span class="glyphicon glyphicon-plus"></span> ', _('Přidat pobočku')),
+                    href=reverse("register_subsidiary", args=(company.id,)) if company else "",
+                    data_fm_head=_("Vytvořit novou pobočku"),
+                    data_fm_callback="createSubsidiaryCallback",
+                    css_class="btn-success fm-create",
+                    id="fm-create-subsidiary",
+                    **({'disabled': True} if company is None else {}),  # Disable button if no company is selected
+                ),
+            ),
+            FieldWithButtons(
+                'team',
+                StrictButton(
+                    string_concat('<span class="glyphicon glyphicon-plus"></span> ', _('Přidat tým')),
+                    href=reverse("register_team", args=(subsidiary.id,)) if subsidiary else "",
+                    data_fm_head=_("Vytvořit nový tým"),
+                    data_fm_callback="createTeamCallback",
+                    css_class="btn-success fm-create",
+                    id="fm-create-team",
+                    **({'disabled': True} if subsidiary is None else {}),  # Disable button if no subsidiary is selected
+                ),
+            ),
+        )
 
-        kwargs['initial'] = initial
-
-        super(ChangeTeamForm, self).__init__(*args, **kwargs)
-
-        if request:
-            self.fields["team"].widget.manager = 'team_in_campaign_%s' % request.subdomain
-
-        if instance and 'team' not in initial:
-            previous_user_attendance = instance.previous_user_attendance()
-            if previous_user_attendance:
-                self.fields["team"].widget.create = True
-
-        if self.instance.payment_status == 'done' and self.instance.team:
-            self.fields["subsidiary"].widget = HiddenInput()
-            self.fields["company"].widget = HiddenInput()
-            self.fields["team"].queryset = models.Team.objects.filter(subsidiary__company=self.instance.team.subsidiary.company)
+        if not self.instance.campaign.competitors_choose_team():  # We ask only for comapny and subsidiary
+            self.fields["team"].widget = HiddenInput()
+            self.fields["team"].required = False
+            del self.helper.layout.fields[2]
 
     class Meta:
         model = models.UserAttendance
@@ -358,12 +355,23 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
     email = forms.CharField(
         required=True,
-        label=_(u"E-mail (uživatelské jméno)"),
-        help_text=_(u"Zadejte váš e-mail. Pokud jste se účastnili v minulém roce, zadejte stejný e-mail jako v minulém roce."),
+        label=_("E-mail (uživatelské jméno)"),
+        help_text=_("Zadejte váš e-mail. Pokud jste se účastnili v minulém roce, zadejte stejný e-mail jako v minulém roce."),
     )
 
+    def __init__(self, request=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            'email',
+            Submit('submit', _('Odeslat')),
+            HTML('<br/><br/>'),
+            HTML(_('Případně se můžete přímo přihlásit pomocí účtů na sociálních sítích:')),
+            social_html,
+        )
 
-class EmailUsernameMixin():
+
+class EmailUsernameMixin(object):
     def clean_username(self):
         "This function is required to overwrite an inherited username clean"
         return self.cleaned_data['username']
@@ -382,21 +390,23 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
 
     def __init__(self, request=None, *args, **kwargs):
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', _(u'Odeslat')))
         self.helper.layout = Layout(
             'email', 'password1', 'password2', 'username',
+            Submit('submit', _('Odeslat')),
+            HTML('<br/><br/>'),
+            HTML(_('Případně se můžete přímo přihlásit pomocí účtů na sociálních sítích:')),
+            social_html,
+            HTML('<br/>'),
             HTML(
-                _(
-                    'Chcete se stát firemním koordinátorem a nechcete soutěžit?'
-                    ' <a href="%(company_admin_registration)s">Využijte registraci firemního koordinátora</a>.'
-                    '<br/><br/>'
-                ) % {
-                    'company_admin_registration': reverse("register_admin"),
-                },
+                '%s <a href="{%% url "register_admin" %%}">%s</a>.'
+                '<br/><br/>' % (
+                    _("Chcete se stát firemním koordinátorem a nechcete soutěžit?"),
+                    _("Využijte registraci firemního koordinátora"),
+                ),
             ),
         )
 
-        super(RegistrationFormDPNK, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['email'].help_text = _("Tento e-mail bude použit pro zasílání informací v průběhu kampaně a k zaslání zapomenutého hesla.")
 
@@ -426,22 +436,22 @@ class InviteForm(SubmitMixin, forms.Form):
     error_css_class = 'error'
 
     email1 = forms.EmailField(
-        label=_(u"E-mail kolegy 1"),
+        label=_("E-mail kolegy 1"),
         required=False,
     )
 
     email2 = forms.EmailField(
-        label=_(u"E-mail kolegy 2"),
+        label=_("E-mail kolegy 2"),
         required=False,
     )
 
     email3 = forms.EmailField(
-        label=_(u"E-mail kolegy 3"),
+        label=_("E-mail kolegy 3"),
         required=False,
     )
 
     email4 = forms.EmailField(
-        label=_(u"E-mail kolegy 4"),
+        label=_("E-mail kolegy 4"),
         required=False,
     )
 
@@ -478,14 +488,10 @@ class InviteForm(SubmitMixin, forms.Form):
         return ret_val
 
 
-class TeamAdminForm(SubmitMixin, forms.ModelForm):
+class TeamAdminForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm):
+    initial_fields = ("campaign",)
     required_css_class = 'required'
     error_css_class = 'error'
-    campaign = forms.ModelChoiceField(
-        label=_(u"Kampaň"),
-        queryset=models.Campaign.objects.all(),
-        widget=HiddenInput(),
-    )
 
     class Meta:
         model = models.Team
@@ -495,7 +501,7 @@ class TeamAdminForm(SubmitMixin, forms.ModelForm):
 class PaymentTypeForm(PrevNextMixin, forms.Form):
     no_dirty = True
     payment_type = forms.ChoiceField(
-        label=_(u"Typ platby"),
+        label=_("Typ platby"),
         widget=forms.RadioSelect(),
     )
 
@@ -535,13 +541,13 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
 
 
 class AnswerForm(forms.ModelForm):
-    choices = ShowPointsMultipleModelChoiceField(queryset=(), label="", help_text="")
+    choices = ShowPointsMultipleModelChoiceField(queryset=models.Choice.objects.none(), label="", help_text="")
 
     def __init__(self, *args, **kwargs):
         question = kwargs.pop('question')
         show_points = kwargs.pop('show_points')
         is_actual = kwargs.pop('is_actual')
-        ret_val = super(AnswerForm, self).__init__(*args, **kwargs)
+        ret_val = super().__init__(*args, **kwargs)
         if question.comment_type:
             if question.comment_type == 'link':
                 self.fields['comment'] = forms.URLField(
@@ -590,20 +596,25 @@ class AnswerForm(forms.ModelForm):
         fields = ('choices', 'comment', 'attachment')
 
 
-class ConfirmTeamInvitationForm(SubmitMixin, forms.Form):
+class ConfirmTeamInvitationForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm):
+    initial_fields = ('team', 'campaign')
     question = forms.BooleanField(
-        label=_(u"Chci být zařazen do nového týmu"),
+        label=_("Chci být zařazen do nového týmu"),
     )
+
+    class Meta:
+        model = models.UserAttendance
+        fields = ('team', 'question', 'campaign')
 
 
 class BikeRepairForm(SubmitMixin, forms.ModelForm):
     user_attendance = forms.CharField(
-        label=_(u"Uživatelské jméno zákazníka"),
-        help_text=_(u"Uživatelské jméno, které vám sdělí zákazník"),
+        label=_("Uživatelské jméno zákazníka"),
+        help_text=_("Uživatelské jméno, které vám sdělí zákazník"),
         max_length=100,
     )
     description = forms.CharField(
-        label=_(u"Poznámka"),
+        label=_("Poznámka"),
         max_length=500,
         required=False,
     )
@@ -617,12 +628,12 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
                 campaign=campaign,
             )
         except models.UserAttendance.DoesNotExist:
-            raise forms.ValidationError(_(u"Takový uživatel neexistuje"))
+            raise forms.ValidationError(_("Takový uživatel neexistuje"))
 
         other_user_attendances = user_attendance.other_user_attendances(campaign)
         if other_user_attendances.count() > 0:
             raise forms.ValidationError(
-                _(u"Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s") %
+                _("Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s") %
                 ", ".join([u.campaign.name for u in other_user_attendances]),
             )
 
@@ -630,23 +641,26 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
 
     def clean(self):
         try:
-            transaction = models.CommonTransaction.objects.get(user_attendance=self.cleaned_data.get('user_attendance'), status=models.Status.BIKE_REPAIR)
+            transaction = models.CommonTransaction.objects.get(
+                user_attendance=self.cleaned_data.get('user_attendance'),
+                status=models.Status.BIKE_REPAIR,
+            )
         except models.CommonTransaction.DoesNotExist:
             transaction = None
         if transaction:
             created_formated_date = formats.date_format(transaction.created, "SHORT_DATETIME_FORMAT")
             raise forms.ValidationError(
-                _(u"Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: %(note)s).") % {
+                _("Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: %(note)s).") % {
                     'time': created_formated_date,
                     'bike_shop': transaction.author.get_full_name(),
                     'note': transaction.description,
                 },
             )
-        return super(BikeRepairForm, self).clean()
+        return super().clean()
 
     def save(self, *args, **kwargs):
         self.instance.status = models.Status.BIKE_REPAIR
-        return super(BikeRepairForm, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     class Meta:
         model = models.CommonTransaction
@@ -659,14 +673,15 @@ class TrackUpdateForm(SubmitMixin, forms.ModelForm):
         help_text=mark_safe_lazy(
             _(
                 "Zadat trasu nahráním souboru GPX. "
-                "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší <a href='http://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
+                "Pro vytvoření GPX souboru s trasou můžete použít vyhledávání na naší "
+                "<a href='http://mapa.prahounakole.cz/#hledani' target='_blank'>mapě</a>."
             ),
         ),
         required=False,
     )
 
     def clean(self):
-        cleaned_data = super(TrackUpdateForm, self).clean()
+        cleaned_data = super().clean()
 
         if cleaned_data['gpx_file']:
             try:
@@ -688,60 +703,43 @@ class TrackUpdateForm(SubmitMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']
-        super(TrackUpdateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['track'].widget = UserLeafletWidget(user_attendance=instance)
 
 
-class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
-    no_prev = True
+class UserUpdateForm(CampaignMixin, forms.ModelForm):
+    def clean_email(self):
+        """
+        Validate that the email is not already in use.
+        """
+        if User.objects.filter(email__iexact=self.cleaned_data['email']).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError(_("Tento e-mail již je v našem systému zanesen."))
+        else:
+            return self.cleaned_data['email']
 
-    first_name = forms.CharField(
-        label=_(u"Jméno"),
-        max_length=30,
-        required=True,
-    )
-    last_name = forms.CharField(
-        label=_(u"Příjmení"),
-        max_length=30,
-        required=True,
-    )
+    def __init__(self, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
+        self.fields['email'].required = True
+        return ret_val
 
-    email = forms.EmailField(
-        label=_("E-mail"),
-        help_text=_(u"E-mail slouží jako přihlašovací jméno"),
-        required=True,
-    )
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'first_name',
+            'last_name',
+        )
+        help_texts = {
+            'email': _("E-mail slouží jako přihlašovací jméno"),
+        }
+
+
+class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
     dont_show_name = forms.BooleanField(
-        label=_(u"Nechci, aby moje skutečné jméno bylo veřejně zobrazováno"),
+        label=_("Nechci, aby moje skutečné jméno bylo veřejně zobrazováno"),
         required=False,
     )
-    personal_data_opt_in = forms.BooleanField(
-        required=True,
-    )
-    mailing_opt_in = forms.ChoiceField(
-        label=_(u"Soutěžní e-maily"),
-        help_text=_(u"Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
-        choices=[
-            (True, _("Přeji si dostávat e-mailem informace o akcích, událostech a dalších záležitostech souvisejících se soutěží.")),
-            (False, _("Nechci dostávat e-maily (a beru na vědomí, že mi mohou uniknout důležité informace o průběhu soutěže).")),
-        ],
-        widget=forms.RadioSelect(),
-    )
-    telephone = forms.CharField(
-        label=_(u"Telefon"),
-        validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
-        help_text=_("Telefonní číslo slouží jako kontakt pro help desk a pro kurýra, který vám přiveze soutěžní triko."),
-        max_length=30,
-    )
-
-    def save(self, *args, **kwargs):
-        ret_val = super(ProfileUpdateForm, self).save(*args, **kwargs)
-        self.instance.user.email = self.cleaned_data.get('email')
-        self.instance.user.first_name = self.cleaned_data.get('first_name')
-        self.instance.user.last_name = self.cleaned_data.get('last_name')
-        self.instance.user.save()
-        return ret_val
 
     def clean_nickname(self):
         nickname = self.cleaned_data['nickname']
@@ -749,59 +747,61 @@ class ProfileUpdateForm(PrevNextMixin, forms.ModelForm):
             if nickname:
                 return nickname
             else:
-                raise forms.ValidationError(_(u"Pokud si nepřejete zobrazovat své jméno, zadejte, co se má zobrazovat místo něj"))
+                raise forms.ValidationError(_("Pokud si nepřejete zobrazovat své jméno, zadejte, co se má zobrazovat místo něj"))
         else:
             return None
 
-    def clean_email(self):
-        """
-        Validate that the email is not already in use.
-        """
-        if User.objects.filter(email__iexact=self.cleaned_data['email']).exclude(pk=self.instance.user.pk).exists():
-            raise forms.ValidationError(_(u"Tento e-mail již je v našem systému zanesen."))
-        else:
-            return self.cleaned_data['email']
-
     def clean_sex(self):
         if self.cleaned_data['sex'] == 'unknown':
-            raise forms.ValidationError(_(u"Zadejte pohlaví"))
+            raise forms.ValidationError(_("Zadejte pohlaví"))
         else:
             return self.cleaned_data['sex']
 
     def __init__(self, *args, **kwargs):
-        campaign = kwargs.pop('campaign')
-        ret_val = super(ProfileUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['email'].initial = self.instance.user.email
-        self.fields['first_name'].initial = self.instance.user.first_name
-        self.fields['last_name'].initial = self.instance.user.last_name
+        ret_val = super().__init__(*args, **kwargs)
         self.fields['dont_show_name'].initial = self.instance.nickname is not None
         self.fields['mailing_opt_in'].initial = None
+        self.fields['mailing_opt_in'].choices = [
+            (True, _("Přeji si dostávat e-mailem informace o akcích, událostech a dalších záležitostech souvisejících se soutěží.")),
+            (False, _("Nechci dostávat e-maily (a beru na vědomí, že mi mohou uniknout důležité informace o průběhu soutěže).")),
+        ]
+        self.fields['personal_data_opt_in'].required = True
         self.fields['personal_data_opt_in'].label = _(
             "Souhlasím se zpracováním osobních údajů podle "
             "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
             "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>.",
-        ) % campaign
+        ) % self.campaign
         return ret_val
 
     class Meta:
         model = models.UserProfile
         fields = (
-            'sex',
-            'first_name',
-            'last_name',
             'dont_show_name',
             'nickname',
+            'sex',
             'occupation',
             'age_group',
             'mailing_opt_in',
-            'email',
             'language',
             'telephone',
             'personal_data_opt_in',
         )
+        widgets = {
+            'mailing_opt_in': forms.RadioSelect(),
+        }
 
 
-class TripForm(forms.ModelForm):
+class ProfileUpdateForm(PrevNextMixin, MultiModelForm):
+    no_prev = True
+
+    form_classes = OrderedDict([
+        ('user', UserUpdateForm),
+        ('userprofile', UserProfileUpdateForm),
+    ])
+
+
+class TripForm(InitialFieldsMixin, forms.ModelForm):
+    initial_fields = ('direction', 'date')
     distance = CommaFloatField(
         label=_("Vzdálenost (km)"),
         required=False,
@@ -818,16 +818,6 @@ class TripForm(forms.ModelForm):
 
     def clean_user_attendance(self):
         return self.instance.user_attendance or self.initial['user_attendance']
-
-    def clean_direction(self):
-        return self.initial['direction']
-
-    def clean_date(self):
-        return self.initial['date']
-
-    def __repr__(self):
-        # This is here for debugging reasons
-        return "<TripForm initial: %s>" % (self.initial)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -850,15 +840,12 @@ class TripForm(forms.ModelForm):
         fields = ('commute_mode', 'distance', 'direction', 'user_attendance', 'date')
         widgets = {
             'user_attendance': forms.HiddenInput(),
-            'direction': HiddenInput(),
-            'date': HiddenInput(),
             'commute_mode': CommuteModeSelect(),
         }
 
 
-class GpxFileForm(forms.ModelForm):
-    def clean_user_attendance(self):
-        return self.initial['user_attendance']
+class GpxFileForm(InitialFieldsMixin, forms.ModelForm):
+    initial_fields = ('user_attendance',)
 
     def clean_trip_date(self):
         return self.initial['trip_date']
@@ -877,13 +864,13 @@ class GpxFileForm(forms.ModelForm):
         return self.cleaned_data['file']
 
     def __init__(self, *args, **kwargs):
-        super(GpxFileForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.user_attendance = self.initial['user_attendance']
         try:
             self.trip_date = self.instance.trip_date or datetime.datetime.strptime(self.initial['trip_date'], "%Y-%m-%d").date()
             if util.day_active(self.trip_date, self.user_attendance.campaign):
-                self.helper.add_input(Submit('submit', _(u'Odeslat')))
+                self.helper.add_input(Submit('submit', _('Odeslat')))
                 self.day_active = True
             else:
                 self.day_active = False
@@ -900,7 +887,6 @@ class GpxFileForm(forms.ModelForm):
         model = models.GpxFile
         fields = ('trip_date', 'direction', 'user_attendance', 'track', 'file')
         widgets = {
-            'user_attendance': HiddenInput(),
             'trip_date': forms.TextInput(attrs={'readonly': 'readonly', 'disabled': 'disabled'}),
             'direction': forms.Select(attrs={'readonly': 'readonly', 'disabled': 'disabled'}),
         }

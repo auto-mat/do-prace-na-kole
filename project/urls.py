@@ -85,8 +85,12 @@ if 'rosetta' in settings.INSTALLED_APPS:
         url(r'^rosetta/', include('rosetta.urls')),
     ]
 
-if settings.DEBUG:
+try:
     import debug_toolbar
     urlpatterns += [
         url(r'^__debug__/', include(debug_toolbar.urls)),
     ]
+except ImportError:
+    pass
+
+handler403 = 'dpnk.exceptions.permission_denied_view'

@@ -17,42 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-import datetime
-
 import denorm
 
-from django.core.management import call_command
 from django.test import TestCase
 
-from dpnk import models, util
-
-
-class Tests(TestCase):
-    def setUp(self):
-        call_command('denorm_init')
-        util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
-
-    def tearDown(self):
-        call_command('denorm_drop')
-
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'invoices', 'company_competition', 'batches']
-
-    def test_change_invoice_payments_status(self):
-        payment = models.Payment.objects.get(pk=3)
-        invoice = models.Invoice.objects.get(pk=1)
-        payment.invoice = invoice
-        payment.save()
-        self.assertEquals(invoice.payment_set.get().status, 0)
-        invoice.paid_date = datetime.date(year=2010, month=11, day=20)
-        invoice.save()
-        self.assertEquals(invoice.payment_set.get().status, 1007)
-        invoice.delete()
-        payment = models.Payment.objects.get(pk=3)
-        self.assertEquals(payment.status, 1005)
+from dpnk import models
 
 
 class TestMethods(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'invoices', 'company_competition', 'batches']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'company_competition', 'batches']
 
     def test_too_much_members(self):
         campaign = models.Campaign(max_team_members=None)
@@ -86,30 +59,6 @@ class TestMethods(TestCase):
         user = models.User.objects.create(first_name="Test", last_name="Name")
         userprofile = models.UserProfile.objects.create(user=user, nickname="Nick")
         self.assertEqual(userprofile.name_for_trusted(), "Test Name (Nick)")
-
-    def test_invoice_raises_sequence_number_overrun(self):
-        campaign = models.Campaign.objects.create(
-            invoice_sequence_number_first=1,
-            invoice_sequence_number_last=1,
-            slug="camp",
-        )
-        models.Phase.objects.create(
-            phase_type="competition",
-            campaign=campaign,
-            date_from="2016-1-1",
-            date_to="2016-1-1",
-        )
-        company = models.Company.objects.create()
-        invoice = models.Invoice.objects.create(
-            campaign=campaign,
-            company=company,
-        )
-        self.assertEqual(invoice.sequence_number, 1)
-        with self.assertRaisesRegexp(Exception, "Došla číselná řada faktury"):
-            models.Invoice.objects.create(
-                campaign=campaign,
-                company=company,
-            )
 
     def test_answer_post_save_single_user(self):
         competition = models.Competition.objects.create(

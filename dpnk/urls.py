@@ -19,19 +19,32 @@
 
 from django.conf.urls import url
 from django.contrib.auth import views as django_views
-from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _
 
 from . import auth
 from . import company_admin_views
 from . import views, views_results
-from .decorators import must_be_in_group
 from .forms import AuthenticationFormDPNK
 urlpatterns = [
     url(
         r'^tym/$',
         views.ChangeTeamView.as_view(),
         name="zmenit_tym",
+    ),
+    url(
+        r'^registrovat_spolecnost/$',
+        views.RegisterCompanyView.as_view(),
+        name="register_company",
+    ),
+    url(
+        r'^registrovat_pobocku/(?P<company_id>\d*)$',
+        views.RegisterSubsidiaryView.as_view(),
+        name="register_subsidiary",
+    ),
+    url(
+        r'^registrovat_tym/(?P<subsidiary_id>\d*)$',
+        views.RegisterTeamView.as_view(),
+        name="register_team",
     ),
     url(
         r'^upravit_tym/$',
@@ -41,7 +54,7 @@ urlpatterns = [
     url(
         r'^tym/(?P<token>[0-9A-Za-z]+)/(?P<initial_email>[^&]+)/$$',
         views.ConfirmTeamInvitationView.as_view(),
-        name="zmenit_tym",
+        name="change_team_invitation",
     ),
     url(
         r'^registrace/$',
@@ -151,12 +164,12 @@ urlpatterns = [
     ),
     url(
         r'^upravit_profil/$',
-        login_required(views.UpdateProfileView.as_view()),
+        views.UpdateProfileView.as_view(),
         name="upravit_profil",
     ),
     url(
         r'^upravit_trasu/$',
-        login_required(views.UpdateTrackView.as_view()),
+        views.UpdateTrackView.as_view(),
         name="upravit_trasu",
     ),
     url(
@@ -197,7 +210,7 @@ urlpatterns = [
     ),
     url(
         r'^cykloservis/$',
-        login_required(must_be_in_group('cykloservis')(views.BikeRepairView.as_view())),
+        views.BikeRepairView.as_view(),
         name="bike_repair",
     ),
     url(
@@ -350,7 +363,7 @@ urlpatterns = [
         name='password_reset_done',
     ),
     url(
-        r'^zapomenute_heslo/zmena/(?P<uidb64>[0-9A-Za-z_]+)-(?P<token>.+)/$',
+        r'^zapomenute_heslo/zmena/(?P<uidb64>[=0-9A-Za-z_]+)-(?P<token>.+)/$',
         django_views.password_reset_confirm,
         {'set_password_form': auth.SetPasswordForm},
         name='password_reset_confirm',

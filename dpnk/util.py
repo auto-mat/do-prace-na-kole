@@ -25,7 +25,6 @@ import denorm
 
 from django.conf import settings
 from django.contrib import contenttypes
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils import six
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
@@ -174,23 +173,3 @@ def get_emissions(distance):
         'solid': round(distance * 35.0, 1),
         'pb': round(distance * 0.011, 1),
     }
-
-
-def get_company_admin(user, campaign):
-    """
-    Get CompanyAdmin object for given @user in given @campaign.
-    """
-    try:
-        return user.userprofile.company_admin.get(campaign=campaign, company_admin_approved='approved')
-    except ObjectDoesNotExist:
-        return None
-
-
-def is_competitor(user):
-    try:
-        if user.is_authenticated:
-            return True
-        else:
-            return False
-    except ObjectDoesNotExist:
-        return False

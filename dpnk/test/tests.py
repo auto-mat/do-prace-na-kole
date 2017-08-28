@@ -35,9 +35,13 @@ from dpnk.test.util import print_response  # noqa
 
 from freezegun import freeze_time
 
+from model_mommy import mommy
+
 from price_level import models as price_level_models
 
 import settings
+
+from .mommy_recipes import testing_campaign
 
 
 class PaymentSuccessTests(ClearCacheMixin, TestCase):
@@ -129,6 +133,7 @@ class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
         self.assertEquals(str(user.get_payment_status_display()), 'neznámý')
 
     def test_payment_unknown_none(self):
+        models.Payment.objects.all().delete()
         util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[1, 3]))
         util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1016))
         user = models.UserAttendance.objects.get(pk=1016)
@@ -243,16 +248,20 @@ class PayuTests(ClearCacheMixin, TestCase):
         self.assertEquals(payment.amount, 151)
 
 
-def create_get_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):
+def create_get_request(factory, user_attendance, post_data={}, address="", subdomain="testing-campaign"):
     request = factory.get(address, post_data)
-    request.user = user
+    request.user = user_attendance.userprofile.user
+    request.user_attendance = user_attendance
+    request.campaign = user_attendance.campaign
     request.subdomain = subdomain
     return request
 
 
-def create_post_request(factory, user, post_data={}, address="", subdomain="testing-campaign"):
+def create_post_request(factory, user_attendance, post_data={}, address="", subdomain="testing-campaign"):
     request = factory.post(address, post_data)
-    request.user = user
+    request.user = user_attendance.userprofile.user
+    request.user_attendance = user_attendance
+    request.campaign = user_attendance.campaign
     request.subdomain = subdomain
     return request
 
@@ -262,11 +271,23 @@ def create_post_request(factory, user, post_data={}, address="", subdomain="test
     FAKE_DATE=datetime.date(year=2010, month=12, day=1),
 )
 class TestCompanyAdminViews(ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'company_competition']
-
     def setUp(self):
         self.factory = RequestFactory()
-        self.user_attendance = models.UserAttendance.objects.get(pk=1115)
+        self.company = mommy.make("Company")
+        self.user_attendance = mommy.make(
+            "UserAttendance",
+            userprofile__company_admin__campaign=testing_campaign,
+            userprofile__company_admin__administrated_company=self.company,
+            campaign=testing_campaign,
+            team__campaign=testing_campaign,
+        )
+        mommy.make(
+            "Competition",
+            name='Pravidelnost společnosti',
+            slug='FA-testing-campaign-pravidelnost-spolecnosti',
+            company=self.company,
+            campaign=testing_campaign,
+        )
 
     def test_dpnk_company_admin_create_competition(self):
         post_data = {
@@ -275,25 +296,28 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
             'competitor_type': 'single_user',
             'submit': 'Odeslat',
         }
-        request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
+        request = create_post_request(self.factory, self.user_attendance, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
         self.assertEquals(response.url, reverse('company_admin_competitions'))
-        competition = models.Competition.objects.get(
-            company=self.user_attendance.get_asociated_company_admin().first().administrated_company,
-            competition_type='length',
-        )
-        self.assertEquals(competition.name, 'testing company competition')
+        competition = models.Competition.objects.get(name='testing company competition')
+        self.assertEquals(competition.slug, 'FA-testing-campaign-testing-company-competition')
 
-        slug = competition.slug
-        post_data['name'] = 'testing company competition fixed'
-        request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
-        response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug=slug)
-        self.assertEquals(response.url, reverse('company_admin_competitions'))
-        competition = models.Competition.objects.get(
-            company=self.user_attendance.get_asociated_company_admin().first().administrated_company,
-            competition_type='length',
+    def test_dpnk_company_admin_edit_competition(self):
+        post_data = {
+            'name': 'testing company competition fixed',
+            'competition_type': 'length',
+            'competitor_type': 'single_user',
+            'submit': 'Odeslat',
+        }
+        request = create_post_request(self.factory, self.user_attendance, post_data)
+        response = company_admin_views.CompanyCompetitionView.as_view()(
+            request,
+            success=True,
+            competition_slug='FA-testing-campaign-pravidelnost-spolecnosti',
         )
-        self.assertEquals(competition.name, 'testing company competition fixed')
+        self.assertEquals(response.url, reverse('company_admin_competitions'))
+        competition = models.Competition.objects.get(name='testing company competition fixed')
+        self.assertEquals(competition.slug, 'FA-testing-campaign-pravidelnost-spolecnosti')
 
     def test_dpnk_company_admin_create_competition_name_exists(self):
         post_data = {
@@ -302,7 +326,7 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
             'competitor_type': 'single_user',
             'submit': 'Odeslat',
         }
-        request = create_post_request(self.factory, self.user_attendance.userprofile.user, post_data)
+        request = create_post_request(self.factory, self.user_attendance, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
         self.assertContains(response, "<strong>Položka Soutěžní kategorie s touto hodnotou v poli Jméno soutěže již existuje.</strong>", html=True)
 
@@ -310,19 +334,20 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         MAX_COMPETITIONS_PER_COMPANY=0,
     )
     def test_dpnk_company_admin_create_competition_max_competitions(self):
-        request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        request = create_get_request(self.factory, self.user_attendance)
         request.resolver_match = {"url_name": "company_admin_competition"}
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
         self.assertContains(response, "Překročen maximální počet soutěží pro organizaci.")
 
     def test_dpnk_company_admin_create_competition_no_permission(self):
-        request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        mommy.make("Competition", slug="FQ-LB")
+        request = create_get_request(self.factory, self.user_attendance)
         request.resolver_match = {"url_name": "company_admin_competition"}
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True, competition_slug="FQ-LB")
         self.assertContains(response, "K editování této soutěže nemáte oprávnění.")
 
     def test_dpnk_company_admin_competitions_view(self):
-        request = create_get_request(self.factory, self.user_attendance.userprofile.user)
+        request = create_get_request(self.factory, self.user_attendance)
         request.resolver_match = {"url_name": "company_admin_competitions"}
         response = company_admin_views.CompanyCompetitionsShowView.as_view()(request, success=True)
         self.assertContains(response, "Pravidelnost společnosti")
@@ -341,7 +366,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1115))
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
         self.user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.assertTrue(self.user_attendance.entered_competition())
 
@@ -496,6 +521,37 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             html=True,
         )
 
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=1),
+    )
+    @patch('slumber.API')
+    def test_dpnk_rides_view_key_error_not_enough_km_by_foot(self, slumber_api):
+        """ Test, that if user sends "1,2 km", it is too few when choosen type by foot. """
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_api.return_value = m
+        post_data = {
+            'form-TOTAL_FORMS': '1',
+            'form-INITIAL_FORMS': '1',
+            'form-MIN_NUM_FORMS': '0',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-id': 101,
+            'form-0-commute_mode': 2,
+            'form-0-distance': '1,2',
+            'form-0-direction': 'trip_from',
+            'form-0-user_attendance': 1115,
+            'form-0-date': '2010-11-01',
+            'initial-form-0-date': '2010-11-01',
+            'initial-form-1-date': '2010-11-01',
+            'submit': 'Uložit jízdy',
+        }
+        response = self.client.post(reverse('profil'), post_data, follow=True)
+        self.assertContains(
+            response,
+            '<button class="close" type="button" data-dismiss="alert" aria-hidden="true">&#215;</button>',
+            html=True,
+        )
+
     @patch('slumber.API')
     def test_dpnk_rides_view(self, slumber_api):
         m = MagicMock()
@@ -598,6 +654,11 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         gpxfile = models.GpxFile.objects.get(trip_date=date, direction=direction, user_attendance=self.user_attendance)
         self.assertEquals(gpxfile.trip.distance, 13.32)
 
+    def test_dpnk_views_create_gpx_file_error(self):
+        address = reverse('gpx_file_create', kwargs={"date": "foo bad date", "direction": "trip_from"})
+        response = self.client.get(address)
+        self.assertContains(response, "Stránka nenalezena", status_code=404)
+
     def test_dpnk_views_create_gpx_file_inactive_day(self):
         date = datetime.date(year=2010, month=12, day=1)
         direction = "trip_from"
@@ -625,7 +686,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         competition.get().recalculate_results()
         response = self.client.get(reverse('competitions'))
         self.assertContains(response, 'vnitrofiremní soutěž na pravidelnost jednotlivců organizace Testing company')
-        self.assertContains(response, '<p>1. místo z 1 společností</p>', html=True)
+        self.assertContains(response, '<p>1. místo z 1 organizací</p>', html=True)
         self.assertContains(response, 'soutěž na vzdálenost jednotlivců  ve městě Testing city')
 
     def test_dpnk_competitions_page_change(self):
@@ -636,7 +697,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             html=True,
         )
         self.assertContains(response, '<h4>Výkonnost společností</h4>', html=True)
-        self.assertContains(response, '<a href="/vysledky_souteze/FQ-LB/#row-1">Výsledky</a>', html=True)
+        self.assertContains(response, '<a href="/vysledky_souteze/FQ-LB/#row-0">Výsledky</a>', html=True)
 
     def test_dpnk_questionnaire_competitions_page_change(self):
         response = self.client.get(reverse('questionnaire_competitions'))
@@ -670,18 +731,17 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, "<p>1. místo z 1 týmů</p>", html=True)
         self.assertContains(response, "<p>1,4&nbsp;%</p>", html=True)
         self.assertContains(response, "<p>1 z 69 jízd</p>", html=True)
-        self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
+        self.assertContains(response, "<p>1. místo z 2 jednotlivců</p>", html=True)
         self.assertContains(response, "<p>5,0&nbsp;km</p>", html=True)
-        self.assertContains(response, "<p>1. místo z 1 jednotlivců</p>", html=True)
 
 
 class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions']
 
     def setUp(self):
         super().setUp()
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1115))
 
     def test_member_count_update(self):
         team = models.Team.objects.get(id=1)
@@ -689,7 +749,8 @@ class TestTeams(DenormMixin, ClearCacheMixin, TestCase):
         campaign = models.Campaign.objects.get(pk=339)
         user = models.User.objects.create(first_name="Third", last_name="User", username="third_user")
         userprofile = models.UserProfile.objects.create(user=user)
-        models.UserAttendance.objects.create(team=team, campaign=campaign, userprofile=userprofile, approved_for_team='approved')
+        user_attendance = models.UserAttendance.objects.create(team=team, campaign=campaign, userprofile=userprofile, approved_for_team='approved')
+        models.Payment.objects.create(status=99, amount=1, user_attendance=user_attendance)
         denorm.flush()
         team = models.Team.objects.get(id=1)
         self.assertEqual(team.member_count, 4)
@@ -736,11 +797,11 @@ class DenormTests(DenormMixin, ClearCacheMixin, TestCase):
     def test_name_with_members_delete_userattendance(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.team.save()
-        models.Payment.objects.all().delete()
         call_command('denorm_flush')
         self.assertEquals(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
         self.assertEquals(user_attendance.team.unapproved_member_count, 0)
         self.assertEquals(user_attendance.team.member_count, 3)
+        user_attendance.payments().delete()
         user_attendance.delete()
         call_command('denorm_flush')
         team = models.Team.objects.get(pk=1)

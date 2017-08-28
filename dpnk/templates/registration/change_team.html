@@ -1,15 +1,8 @@
 {% extends "submenu_team.html" %}
-{% load crispy_forms_tags %}
 {% load i18n %}
 {% load static %}
 
 {% block messages %}
-{% blocktrans %}
-Na této stránce zvolte váš tým.
-Každý tým musí být registrovaný pod nějakou organizací a její pobočkou.
-Do pole organizace napište několik začátečních písmen názvu vaší organizace a pokud již existuje, nabídne se vám k výběru.
-{% endblocktrans %}
-<br/>
 <br/>
    {% trans "Pokud název organizace nebo adresa pobočky v seznamu je, ale údaje jsou chybné, nezakládejte novou pobočku. Žádejte o opravu:" %}
    {% include "registration/request_change_company_coordinator_part.html" %}
@@ -17,52 +10,43 @@ Do pole organizace napište několik začátečních písmen názvu vaší organ
 {% endblock %}
 
 {% block container_header %}
-<style>
-   #id_company_div:disabled,
-   #id_company:disabled,
-   #id_subsidiary:disabled,
-   #id_team:disabled {
-      visibility: hidden;
-   }
-</style>
-
-<script>
-   function activateOnclick(){
-      eval($("#id_team_selected").attr("onClick"));
-      eval($("#id_subsidiary_selected").attr("onClick"));
-      eval($("#id_company_selected").attr("onClick"));
-   }
-
-   function switchCompanyForm(){
-      if ($('#id_company_selected').is(':checked')) {
-         $("#id_team_selected").prop("checked", true);
-         $("#id_subsidiary_selected").prop("checked", true);
-      }
-      activateOnclick();
-   }
-
-   function switchSubsidiaryForm(){
-      if ($('#id_subsidiary_selected').is(':checked')) {
-         $("#id_team_selected").prop("checked", true);
-      } else {
-         $("#id_company_selected").prop("checked", false);
-      } 
-      activateOnclick();
-   }
-
-   function switchTeamForm(){
-      if (! $('#id_team_selected').is(':checked')) {
-         $("#id_subsidiary_selected").prop("checked", false);
-         $("#id_company_selected").prop("checked", false);
-      }
-      activateOnclick();
-   }
-
-   $(function() {
-      $("#id_company_selected").on("click", switchCompanyForm);
-      $("#id_subsidiary_selected").on("click", switchSubsidiaryForm);
-      $("#id_team_selected").on("click", switchTeamForm);
-   });
+{% include "fm/modal.html" %}
+<script type="text/javascript">
+    $(function() {
+        updateSubsidiary = function(event, ui) {
+           $("#fm-create-subsidiary").attr('href', "{% url 'register_subsidiary' "" %}" + $('#id_company_1').val());
+           $("#fm-create-subsidiary").prop('disabled', $('#id_company_1').val() == "");
+        }
+        $.fm({
+            debug: true,
+            custom_callbacks: {
+                "createCompanyCallback": function(data, options) {
+                    $('#id_company_0').attr('value', data.name);
+                    $('#id_company_1').attr('value', data.id);
+                    updateSubsidiary();
+                },
+                "createSubsidiaryCallback": function(data, options) {
+                    $('#id_company_1').change();
+                    $('#id_subsidiary').one('change', function(event, ui) {
+                       $('#id_subsidiary').val(data.id);
+                       $('#id_subsidiary').change();
+                    });
+                },
+                "createTeamCallback": function(data, options) {
+                    $('#id_subsidiary').change();
+                    $('#id_team').one('change', function(event, ui) {
+                       $('#id_team').val(data.id);
+                    });
+                }
+            }
+        });
+        $('#id_company_0').on('djselectablechange', updateSubsidiary);
+        $('#id_company_1').change(updateSubsidiary);
+        $('#id_subsidiary').change(function(event, ui) {
+           $("#fm-create-team").attr('href', "{% url 'register_team' "" %}" + $('#id_subsidiary').val());
+           $("#fm-create-team").prop('disabled', $('#id_subsidiary').val() == "");
+        });
+    });
 </script>
 {{ block.super }}
 {% endblock %}

@@ -1,9 +1,9 @@
 
 $(function(){
     //UserProfile update form:
-    $("#div_id_nickname").toggle($("#id_dont_show_name").prop("checked"));
-    $("#id_dont_show_name").change(function(){
-        $("#div_id_nickname").toggle();
+    $("#div_id_userprofile-nickname").toggle($("#id_userprofile-dont_show_name").prop("checked"));
+    $("#id_userprofile-dont_show_name").change(function(){
+        $("#div_id_userprofile-nickname").toggle();
     });
 
     //UserProfile update form:
@@ -28,7 +28,7 @@ $(function(){
    });
 
    $('.upravit_profil form').submit(function (){
-      if($('#id_mailing_opt_in_2').prop('checked') == true){
+      if($('#id_userprofile-mailing_opt_in_2').prop('checked') == true){
          return window.confirm("Skutečně nechcete dostávat žádné soutěžní emaily? Můžete tak například přijít o některé akce v průběhu soutěže.");
       } else {
          return true;

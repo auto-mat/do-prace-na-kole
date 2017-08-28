@@ -19,21 +19,21 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-from django.contrib.auth.decorators import login_required as login_required_simple
+from braces.views import LoginRequiredMixin
+
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.edit import UpdateView
 
-from dpnk.decorators import user_attendance_has
+from dpnk import exceptions
 from dpnk.models import UserAttendance
 from dpnk.views import RegistrationViewMixin
 
 from .forms import TShirtUpdateForm
 
 
-class ChangeTShirtView(RegistrationViewMixin, UpdateView):
+class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'registration/change_tshirt.html'
     form_class = TShirtUpdateForm
     model = UserAttendance
@@ -46,14 +46,16 @@ class ChangeTShirtView(RegistrationViewMixin, UpdateView):
     def get_object(self):
         return self.user_attendance
 
-    @method_decorator(login_required_simple)
-    @user_attendance_has(lambda ua: not ua.team_complete(), _(u"Velikost trička nemůžete měnit, dokud nemáte zvolený tým."))
-    @user_attendance_has(lambda ua: ua.package_shipped(), _(u"Vaše tričko již je na cestě k vám, už se na něj můžete těšit."))
     def dispatch(self, request, *args, **kwargs):
-        if kwargs["user_attendance"].campaign.has_any_tshirt:
-            return super().dispatch(request, *args, **kwargs)
-        else:
-            if kwargs["user_attendance"].has_admission_fee():
-                return redirect(reverse('typ_platby'))
-            else:
-                return redirect(reverse('profil'))
+        if request.user_attendance:
+            if not request.user_attendance.team_complete():
+                raise exceptions.TemplatePermissionDenied(_("Velikost trička nemůžete měnit, dokud nemáte zvolený tým."), self.template_name)
+            if request.user_attendance.package_shipped():
+                raise exceptions.TemplatePermissionDenied(_("Vaše tričko již je na cestě k vám, už se na něj můžete těšit."), self.template_name)
+
+            if not request.user_attendance.campaign.has_any_tshirt:
+                if request.user_attendance.has_admission_fee():
+                    return redirect(reverse('typ_platby'))
+                else:
+                    return redirect(reverse('profil'))
+        return super().dispatch(request, *args, **kwargs)

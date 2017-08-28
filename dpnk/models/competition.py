@@ -161,7 +161,10 @@ class Competition(models.Model):
     )
     sex = models.CharField(
         verbose_name=_(u"Soutěž pouze pro pohlaví"),
-        help_text=_(u"Pokud chcete oddělit výsledky pro muže a ženy, je potřeba vypsat dvě soutěže - jednu pro muže a druhou pro ženy. Jinak nechte prázdné."),
+        help_text=_(
+            "Pokud chcete oddělit výsledky pro muže a ženy, je potřeba vypsat dvě soutěže - jednu pro muže a druhou pro ženy. "
+            "Jinak nechte prázdné.",
+        ),
         choices=UserProfile.GENDER,
         default=None,
         max_length=50,
@@ -311,30 +314,6 @@ class Competition(models.Model):
         elif self.competitor_type == 'company':
             return 'company'
 
-    def can_admit(self, user_attendance):
-        """
-        Returns True if user can admit for this competition, othervise it returns the reason why user can't admit.
-        """
-        if self.without_admission:
-            return 'without_admission'
-        if not util.get_company_admin(user_attendance.userprofile.user, self.campaign) and self.competitor_type == 'company':
-            return 'not_company_admin'
-        if self.competition_type == 'questionnaire' and not self.has_started():
-            return 'before_beginning'
-        if self.competition_type == 'questionnaire' and self.has_finished():
-            return 'after_end'
-        if self.competition_type != 'questionnaire' and self.has_entry_not_opened():
-            return 'after_beginning'
-
-        if self.competitor_type == 'liberos' and not user_attendance.is_libero():
-            return 'not_libero'
-        if self.company and self.company != user_attendance.team.subsidiary.company:
-            return 'not_for_company'
-        if self.city.exists() and not self.city.filter(pk=user_attendance.team.subsidiary.city.pk).exists():
-            return 'not_for_city'
-
-        return True
-
     def get_columns(self):
         columns = [('result_order', 'get_sequence_range', _("Po&shy;řa&shy;dí"))]
 
@@ -387,52 +366,23 @@ class Competition(models.Model):
         columns.append(('city', 'get_city', _("Měs&shy;to")))
         return columns
 
-    def has_admission(self, userprofile):
-        if not userprofile.entered_competition():
+    def has_admission(self, user_attendance):
+        if not user_attendance.entered_competition():
             return False
-        if self.competitor_type == 'liberos' and not userprofile.is_libero():
+        if self.competitor_type == 'liberos' and not user_attendance.is_libero():
             return False
-        if self.company and userprofile.team and self.company != userprofile.team.subsidiary.company:
+        if self.company and user_attendance.team and self.company != user_attendance.team.subsidiary.company:
             return False
-        if userprofile.team and self.city.exists() and not self.city.filter(pk=userprofile.team.subsidiary.city.pk).exists():
+        if user_attendance.team and self.city.exists() and not self.city.filter(pk=user_attendance.team.subsidiary.city.pk).exists():
             return False
 
-        if self.without_admission:
-            return True
-        else:
-            if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
-                return self.user_attendance_competitors.filter(pk=userprofile.pk).exists()
-            elif self.competitor_type == 'team' and userprofile.team:
-                return self.team_competitors.filter(pk=userprofile.team.pk).exists()
-            elif self.competitor_type == 'company' and userprofile.company():
-                return self.company_competitors.filter(pk=userprofile.company().pk).exists()
-            return True
+        return True
 
     def commute_modes_list(self):
         return ", ".join([str(c) for c in self.commute_modes.all()])
 
     def city_list(self):
         return ", ".join([str(c) for c in self.city.all()])
-
-    def make_admission(self, userprofile, admission=True):
-        if not self.without_admission and self.can_admit(userprofile):
-            if self.competitor_type == 'single_user' or self.competitor_type == 'liberos':
-                if admission:
-                    self.user_attendance_competitors.add(userprofile)
-                else:
-                    self.user_attendance_competitors.remove(userprofile)
-            elif self.competitor_type == 'team':
-                if admission:
-                    self.team_competitors.add(userprofile.team)
-                else:
-                    self.team_competitors.remove(userprofile.team)
-            elif self.competitor_type == 'company':
-                if admission:
-                    self.company_competitors.add(userprofile.company())
-                else:
-                    self.company_competitors.remove(userprofile.company())
-        from .. import results
-        results.recalculate_result_competitor_nothread(userprofile)
 
     def type_string(self):
         CTYPES_STRINGS = {
@@ -444,7 +394,7 @@ class Competition(models.Model):
             'single_user': _('jednotlivců'),
             'liberos': _('liberos'),
             'team': _('týmů'),
-            'company': _('společností'),
+            'company': _('organizací'),
         }
         SEX_STRINGS = {
             'male': _('pro muže'),
@@ -531,7 +481,7 @@ class CompetitionForm(forms.ModelForm):
             self.fields["company_competitors"].queryset = Company.objects.none()
 
     def __init__(self, *args, **kwargs):
-        super(CompetitionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if not hasattr(self.instance, 'campaign'):
             self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
 

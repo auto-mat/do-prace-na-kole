@@ -24,7 +24,7 @@ from rest_framework import permissions, routers, serializers, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.reverse import reverse
 
-from .models import Campaign, City, CommuteMode, Company, Competition, CompetitionResult, GpxFile, Subsidiary, Team, Trip, UserAttendance
+from .models import City, CommuteMode, Company, Competition, CompetitionResult, GpxFile, Subsidiary, Team, Trip, UserAttendance
 
 
 class DuplicateGPX(APIException):
@@ -35,11 +35,6 @@ class DuplicateGPX(APIException):
 class GPXParsingFail(APIException):
     status_code = 400
     default_detail = "Can't parse GPX file"
-
-
-class CampaignDoesNotExist(APIException):
-    status_code = 404
-    default_detail = "Campaign with this slug not found"
 
 
 class CompetitionDoesNotExist(APIException):
@@ -75,23 +70,7 @@ class GpxFileSerializer(serializers.ModelSerializer):
     )
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        subdomain = self.context['request'].subdomain
-        try:
-            campaign = Campaign.objects.get(slug=subdomain)
-        except Campaign.DoesNotExist:
-            raise CampaignDoesNotExist
-
-        try:
-            user_attendance = UserAttendance.objects.get(userprofile__user=user, campaign=campaign)
-        except UserAttendance.DoesNotExist:
-            user_attendance = UserAttendance(
-                userprofile=user.userprofile,
-                campaign=campaign,
-                approved_for_team='undecided',
-            )
-            user_attendance.save()
-        validated_data['user_attendance'] = user_attendance
+        validated_data['user_attendance'] = self.context['request'].user_attendance
         try:
             instance = GpxFile(**validated_data)
             instance.clean()

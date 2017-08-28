@@ -92,7 +92,9 @@ Raven.setUserContext({
            {% if user.is_authenticated %}
                         <li class="{% block rides_link_class %}{% endblock %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'profil' %}">{% trans "Jízdy" %}</a></li>
                         <li class="{% block competitions_link_class %}{% endblock %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'competitions' %}">{% trans "Soutěže" %}</a></li>
+                        {% if user_attendance.campaign.competitors_choose_team %}
                         <li class="{% if request.resolver_match.url_name == 'other_team_members_results' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'other_team_members_results' %}">{% trans "Kolegové" %}</a></li>
+                        {% endif %}
                         <li class="{% block settings_link_class %}{% endblock %}"><a href="{% url 'upravit_profil' %}">{% trans "Soutěžní údaje" %}</a></li>
                         {% if user_attendance.related_company_admin.is_approved %}
                         <li class="{% block company_admin_link_class %}{% endblock %}"><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Firemní koordinátor" %}</a></li>
@@ -142,7 +144,8 @@ Raven.setUserContext({
           {% scribble 'before_right_panel' current_language_code %}{% endscribble %}
           <ul class="user_info">
                  <li>{% trans "Uživatel: " %}{{ user_attendance }}</li>
-                 {% if user_attendance.team %}<li>{% trans "Tým: " %}{{ user_attendance.team.name }}</li>{% endif %}
+                 {% if user_attendance.userprofile.user.email %}<li>{% trans "E-mail: " %}{{ user_attendance.userprofile.user.email }}</li>{% endif %}
+                 {% if user_attendance.team and user_attendance.campaign.competitors_choose_team %}<li>{% trans "Tým: " %}{{ user_attendance.team.name }}</li>{% endif %}
                  <li><a href="{% url 'password_change' %}">{% trans "Změnit heslo" %}</a></li>
                  <li>{% scribble 'inside_right_panel' current_language_code %}{% endscribble %}</li>
                  <li class="logout_django"><a class="btn btn-warning logout" href="{% url 'logout' %}" title="Log out">{% trans "Odhlásit" %}</a></li>

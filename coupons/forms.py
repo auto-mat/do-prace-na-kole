@@ -37,7 +37,10 @@ class DiscountCouponForm(PrevNextMixin, forms.Form):
         label=_("Kód voucheru"),
         max_length=10,
         required=True,
-        validators=[RegexValidator(r'^[a-zA-Z]+-[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ]+$', _('Nesprávný formát voucheru')), MinLengthValidator(9)],
+        validators=[
+            RegexValidator(r'^[a-zA-Z]+-[abcdefghjklmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ]+$', _('Nesprávný formát voucheru')),
+            MinLengthValidator(9),
+        ],
     )
 
     def clean(self):

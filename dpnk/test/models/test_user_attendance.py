@@ -22,26 +22,21 @@ import datetime
 from unittest.mock import ANY, patch
 
 from django.contrib.gis.db.models.functions import Length
-from django.test import TestCase
+from django.core.exceptions import ValidationError
+from django.test import TestCase, TransactionTestCase
 from django.test.utils import override_settings
 
 from dpnk import models
+from dpnk import util
 
 from model_mommy import mommy
+
+from ..mommy_recipes import PriceLevelRecipe, UserAttendancePaidRecipe
 
 
 class TestFrequencyPercentage(TestCase):
     def setUp(self):
-        phase = mommy.make(
-            'dpnk.Phase',
-            phase_type="competition",
-            date_from=datetime.date(year=2017, month=11, day=1),
-            date_to=datetime.date(year=2017, month=12, day=12),
-        )
-        self.user_attendance = mommy.make(
-            'dpnk.UserAttendance',
-            campaign=phase.campaign,
-        )
+        self.user_attendance = mommy.make('dpnk.UserAttendance')
 
     def test_without_day(self):
         """
@@ -70,13 +65,6 @@ class TestEnteredCompetitionReason(TestCase):
         )
         self.campaign = tshirt_size.campaign
         self.campaign.has_any_tshirt = True
-        mommy.make(
-            'dpnk.Phase',
-            phase_type="competition",
-            date_from=datetime.date(year=2017, month=11, day=1),
-            date_to=datetime.date(year=2017, month=12, day=12),
-            campaign=self.campaign,
-        )
         self.user_attendance = mommy.make(
             'dpnk.UserAttendance',
             campaign=self.campaign,
@@ -234,17 +222,11 @@ class TestAdmissionFee(TestCase):
 
 class TestGetDistance(TestCase):
     def setUp(self):
-        phase = mommy.make(
-            'dpnk.Phase',
-            phase_type="competition",
-            date_from=datetime.date(year=2017, month=11, day=1),
-            date_to=datetime.date(year=2017, month=12, day=12),
-        )
-        self.campaign = phase.campaign
+        self.campaign = mommy.make('dpnk.Campaign')
         mommy.make(
             'dpnk.UserAttendance',
             track="MULTILINESTRING((0 0,-1 1))",
-            campaign=phase.campaign,
+            campaign=self.campaign,
             distance=123,
             pk=1115,
         )
@@ -273,3 +255,99 @@ class TestGetDistance(TestCase):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.assertEqual(user_attendance.get_distance(), 0)
         mock_logger.error.assert_called_with("length not available", extra={'request': None, 'username': ANY})
+
+
+class TestIsLibero(TransactionTestCase):
+    # This is here, because creating Payment messes up with indexes and other subsequent tests will fail.
+    reset_sequences = True
+
+    def setUp(self):
+        PriceLevelRecipe.make()
+        self.user_attendance = UserAttendancePaidRecipe.make(approved_for_team='approved')
+        util.rebuild_denorm_models([self.user_attendance])
+        util.rebuild_denorm_models([self.user_attendance.team])
+        self.user_attendance.refresh_from_db()
+        self.user_attendance.team.refresh_from_db()
+
+    def test_true(self):
+        self.user_attendance.campaign.max_team_members = 2
+        self.assertTrue(self.user_attendance.is_libero())
+
+    def test_false(self):
+        self.user_attendance.campaign.max_team_members = 1
+        self.assertFalse(self.user_attendance.is_libero())
+
+
+class TestClean(TestCase):
+    def setUp(self):
+        self.campaign = mommy.make(
+            'dpnk.campaign',
+            name="Foo campaign",
+            max_team_members=1,
+        )
+
+    def test_clean_team_none(self):
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team=None,
+        )
+        user_attendance.clean()
+
+    def test_clean_team(self):
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team__name='Foo team',
+            team__campaign=self.campaign,
+        )
+        user_attendance.clean()
+
+    def test_too_much_team_members(self):
+        team = mommy.make('Team', campaign=self.campaign)
+        mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team=team,
+            approved_for_team='approved',
+        )
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team=team,
+            approved_for_team='undecided',
+        )
+        with self.assertRaisesRegex(ValidationError, r"{'team': \['Tento tým již má plný počet členů'\]}"):
+            user_attendance.clean()
+
+    def test_campaign_mismatch(self):
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=mommy.make("Campaign", name="Bar campaign"),
+            team=mommy.make('Team', campaign=self.campaign),
+        )
+        with self.assertRaisesRegex(
+            ValidationError,
+            r"'campaign': \['Zvolená kampaň \(Bar campaign\) musí být shodná s kampaní týmu \(Foo campaign\)'\]",
+        ):
+            user_attendance.clean()
+
+    @patch('dpnk.models.user_attendance.logger')
+    def test_campaign_mismatch_logger(self, mock_logger):
+        team = mommy.make('Team', campaign=self.campaign)
+        user_attendance = mommy.make(
+            'dpnk.UserAttendance',
+            campaign=self.campaign,
+            team=team,
+        )
+        user_attendance.team = mommy.make('Team', campaign__name="Bar campaign")
+        user_attendance.save()
+        mock_logger.error.assert_called_with(
+            "UserAttendance campaign doesn't match team campaign",
+            extra={
+                'user_attendance': user_attendance,
+                'campaign': user_attendance.campaign,
+                'new_team': user_attendance.team,
+                'team_campaign': user_attendance.team.campaign,
+            },
+        )

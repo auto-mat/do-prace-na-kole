@@ -19,10 +19,13 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
-from django.test import TestCase
+from django.core import mail
+from django.test import TestCase, TransactionTestCase
 from django.test.utils import override_settings
 
 from model_mommy import mommy
+
+from ..mommy_recipes import PhaseRecipe, testing_campaign
 
 
 class TestDates(TestCase):
@@ -101,3 +104,68 @@ class TestDates(TestCase):
         self.assertEqual(str(invoice.taxable_date), "2010-01-01")
         self.assertEqual(str(invoice.payback_date), "2010-01-01")
         self.assertEqual(str(invoice.exposure_date), "2010-01-01")
+
+
+class TestClean(TestCase):
+    def test_clean_exception(self):
+        invoice = mommy.prepare("Invoice", campaign=testing_campaign)
+        with self.assertRaisesRegexp(Exception, "Neexistuje žádná nefakturovaná platba"):
+            invoice.clean()
+
+
+class TestSave(TransactionTestCase):
+    # This is here, because creating Payment messes up with indexes and other subsequent tests will fail.
+    reset_sequences = True
+
+    def test_change_invoice_payments_status(self):
+        invoice = mommy.make("Invoice", campaign=testing_campaign)
+        payment = mommy.make(
+            "Payment",
+            user_attendance__campaign=testing_campaign,
+            invoice=invoice,
+            user_attendance__team__name="Foo team",
+            user_attendance__userprofile__user__email="test@email.cz",
+        )
+        PhaseRecipe.make()
+        self.assertEquals(invoice.payment_set.get().status, 0)
+        invoice.paid_date = datetime.date(year=2010, month=11, day=20)
+        invoice.save()
+        self.assertEquals(invoice.payment_set.get().status, 1007)
+        invoice.delete()
+        payment.refresh_from_db()
+        self.assertEquals(payment.status, 1005)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['test@email.cz'])
+        self.assertEqual(str(msg.subject), 'Testing campaign - přijetí platby')
+
+    def test_invoice_raises_sequence_number_overrun(self):
+        campaign = mommy.make(
+            "Campaign",
+            invoice_sequence_number_first=1,
+            invoice_sequence_number_last=2,
+            slug="camp",
+        )
+        mommy.make(
+            "Phase",
+            phase_type="competition",
+            campaign=campaign,
+            date_from="2016-1-1",
+            date_to="2016-1-1",
+        )
+        company = mommy.make("Company")
+        invoice = mommy.make(
+            "Invoice",
+            campaign=campaign,
+            company=company,
+            sequence_number=None,
+            _quantity=2,
+        )
+        self.assertEqual(invoice[0].sequence_number, 1)
+        self.assertEqual(invoice[1].sequence_number, 2)
+        with self.assertRaisesRegexp(Exception, "Došla číselná řada faktury"):
+            mommy.make(
+                "Invoice",
+                campaign=campaign,
+                company=company,
+                sequence_number=None,
+            )

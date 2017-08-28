@@ -29,6 +29,7 @@ def _filter_query_single_user(competition):
     filter_query['campaign'] = competition.campaign
     filter_query['userprofile__user__is_active'] = True
     filter_query['approved_for_team'] = 'approved'
+    filter_query['payment_status__in'] = ('done', 'no_admission')
     if competition.city:
         cities = competition.city.all()
         if cities:
@@ -206,7 +207,11 @@ def get_working_trips_count(user_attendance, competition=None, day=None):
         commute_mode__does_count=True,
         date__in=non_working_days,
     ).count()
-    non_working_rides_in_working_day = Trip.objects.filter(user_attendance=user_attendance, commute_mode__does_count=False, date__in=working_days).count()
+    non_working_rides_in_working_day = Trip.objects.filter(
+        user_attendance=user_attendance,
+        commute_mode__does_count=False,
+        date__in=working_days,
+    ).count()
     working_days_count = len(util.working_days(competition))
     working_trips_count = working_days_count * 2 + trips_in_non_working_day - non_working_rides_in_working_day
     return max(working_trips_count, get_minimum_rides_base_proportional(competition, day))
@@ -319,7 +324,11 @@ def recalculate_result(competition, competitor):  # noqa
 
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
         user_attendance = competitor
-        if not (competition.has_admission(user_attendance) and user_attendance.userprofile.user.is_active and user_attendance.approved_for_team == 'approved'):
+        if not (
+                competition.has_admission(user_attendance) and
+                user_attendance.userprofile.user.is_active and
+                user_attendance.approved_for_team == 'approved'
+        ):
             CompetitionResult.objects.filter(user_attendance=user_attendance, competition=competition).delete()
             return
 

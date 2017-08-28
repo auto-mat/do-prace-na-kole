@@ -17,11 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-import datetime
-
 from django.test import TestCase
 
 from model_mommy import mommy
+
+from ..mommy_recipes import CampaignRecipe
 
 
 class TestCompetitionResult(TestCase):
@@ -29,13 +29,7 @@ class TestCompetitionResult(TestCase):
         self.campaign = mommy.make(
             'dpnk.Campaign',
         )
-        mommy.make(
-            "dpnk.Phase",
-            phase_type="competition",
-            campaign=self.campaign,
-            date_from=datetime.date(year=2010, month=1, day=1),
-            date_to=datetime.date(year=2019, month=12, day=12),
-        )
+        self.campaign = CampaignRecipe.make()
 
     def test_str_team(self):
         """

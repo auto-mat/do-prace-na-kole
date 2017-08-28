@@ -48,14 +48,14 @@ class SetPasswordForm(SetPasswordForm):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', _(u'Odeslat')))
-        super(SetPasswordForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class PasswordResetForm(PasswordResetForm):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', _(u'Odeslat')))
-        super(PasswordResetForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_email(self):
         """
@@ -68,7 +68,7 @@ class PasswordResetForm(PasswordResetForm):
 
     def save(self, *args, **kwargs):
         kwargs['extra_email_context'] = {'subdomain': kwargs['request'].subdomain}
-        super(PasswordResetForm, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class PasswordChangeForm(SubmitMixin, PasswordChangeForm):

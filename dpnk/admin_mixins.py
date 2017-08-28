@@ -39,6 +39,6 @@ def city_admin_mixin_generator(queryset_city):
 
 class FormRequestMixin(object):
     def get_form(self, request, *args, **kwargs):
-        form = super(FormRequestMixin, self).get_form(request, *args, **kwargs)
+        form = super().get_form(request, *args, **kwargs)
         form.request = request
         return form

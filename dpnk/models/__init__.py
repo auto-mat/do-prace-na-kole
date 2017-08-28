@@ -39,10 +39,10 @@ from .competition_result import CompetitionResult
 from .gpxfile import GpxFile, normalize_gpx_filename
 from .invoice import Invoice, change_invoice_payments_status, payments_to_invoice
 from .occupation import Occupation
-from .phase import Phase
+from .phase import PHASE_TYPE_DICT, Phase
 from .questionnaire import Answer, Choice, ChoiceType, Question, QuestionForm, questionnaire_filename
 from .subsidiary import Subsidiary
-from .team import Team, post_user_team_changed, pre_user_team_changed, validate_length
+from .team import Team, post_user_team_changed, pre_user_team_changed
 from .transactions import (
     COMPETITION_STATUSES, CommonTransaction, PACKAGE_STATUSES, PAYMENT_STATUSES, Payment, STATUS, Status, Transaction, UserActionTransaction
 )
@@ -68,6 +68,7 @@ __all__ = (
     Invoice,
     Occupation,
     Phase,
+    PHASE_TYPE_DICT,
     ChoiceType,
     QuestionForm,
     Question,
@@ -89,7 +90,6 @@ __all__ = (
     questionnaire_filename,
     normalize_gpx_filename,
     get_address_string,
-    validate_length,
     STATUS,
     COMPETITION_STATUSES,
     PACKAGE_STATUSES,

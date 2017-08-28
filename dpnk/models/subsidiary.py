@@ -22,6 +22,8 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from smart_selects.db_fields import ChainedForeignKey
+
 from .address import Address, get_address_string
 from .city import City
 from .company import Company
@@ -29,7 +31,7 @@ from .company import Company
 
 class ActiveManager(models.Manager):
     def get_queryset(self):
-        return super(ActiveManager, self).get_queryset().filter(active=True)
+        return super().get_queryset().filter(active=True)
 
 
 class Subsidiary(models.Model):
@@ -40,7 +42,7 @@ class Subsidiary(models.Model):
         verbose_name_plural = _(u"Pobočky organizací")
 
     address = Address()
-    company = models.ForeignKey(
+    company = ChainedForeignKey(
         Company,
         related_name="subsidiaries",
         null=False,

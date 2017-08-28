@@ -49,7 +49,7 @@ class NullUserAttendanceListFilter(SimpleListFilter):
             kwargs = {
                 '{0}__isnull'.format(self.parameter_name): self.value() == 'True',
             }
-            return queryset.filter(**kwargs)
+            return queryset.filter(**kwargs).distinct()
         return queryset
 
 
@@ -66,6 +66,7 @@ class DiscountCouponAdmin(ImportExportMixin, RelatedFieldAdmin):
         'note',
         'receiver',
         'attached_user_attendances_list',
+        'attached_user_attendances_count',
         'sent',
     )
     readonly_fields = ('token', 'created', 'updated', 'author', 'updated_by')

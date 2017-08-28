@@ -26,7 +26,6 @@ import createsend
 
 from django.conf import settings
 
-from . import util
 logger = logging.getLogger(__name__)
 
 
@@ -84,11 +83,12 @@ def get_custom_fields(user_attendance):
     team_member_count = user_attendance.team_member_count()
     mailing_approval = user_attendance.userprofile.mailing_opt_in and user_attendance.userprofile.personal_data_opt_in
 
-    company_admin = util.get_company_admin(user, user_attendance.campaign) is not None
+    company_admin = user_attendance.related_company_admin
+    company_admin_approved = company_admin.company_admin_approved if company_admin else False
 
     custom_fields = [
         OrderedDict((('Key', "Mesto"), ('Value', city))),
-        OrderedDict((('Key', "Firemni_spravce"), ('Value', company_admin))),
+        OrderedDict((('Key', "Firemni_spravce"), ('Value', company_admin_approved))),
         OrderedDict((('Key', "Stav_platby"), ('Value', payment_status))),
         OrderedDict((('Key', "Aktivni"), ('Value', user.is_active))),
         OrderedDict((('Key', "Auth_token"), ('Value', user.auth_token.key))),
@@ -178,7 +178,7 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
 
     try:
         if user.is_active and userprofile.mailing_opt_in and userprofile.personal_data_opt_in:
-            if util.is_competitor(user_attendance.get_userprofile().user) and user_attendance.get_userprofile().mailing_id:
+            if user_attendance.get_userprofile().mailing_id:
                 update_user(user_attendance, ignore_hash)
             else:
                 add_user(user_attendance)
@@ -192,7 +192,7 @@ class MailingThread(threading.Thread):
     def __init__(self, user_attendance, ignore_hash, **kwargs):
         self.user_attendance = user_attendance
         self.ignore_hash = ignore_hash
-        super(MailingThread, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def run(self):
         add_or_update_user_synchronous(self.user_attendance, self.ignore_hash)

@@ -26,6 +26,8 @@ from PyPDF2 import PdfFileReader
 
 import createsend
 
+from ddt import data, ddt
+
 import denorm
 
 from django.contrib.gis.db.models.functions import Length
@@ -48,7 +50,7 @@ import settings
 
 from t_shirt_delivery.models import PackageTransaction
 
-from .mommy_recipes import CampaignRecipe, PriceLevelRecipe, UserAttendancePaidRecipe, UserAttendanceRecipe, testing_campaign
+from .mommy_recipes import CampaignRecipe, PriceLevelRecipe, UserAttendancePaidRecipe, UserAttendanceRecipe, campaign_get_or_create, testing_campaign
 
 
 @override_settings(
@@ -62,8 +64,8 @@ class ViewsLogon(DenormMixin, ClearCacheMixin, TestCase):
         super().setUp()
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
         self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1015, 1115, 2115, 1016]))
         util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115]))
         self.user_attendance = models.UserAttendance.objects.get(pk=1115)
 
 
@@ -231,7 +233,18 @@ class CompetitionsViewTests(ViewsLogon):
 
         address = reverse('profil')
         response = self.client.get(address)
-        self.assertContains(response, '<div class="alert alert-info">Zde budete zadávat vaše jízdy</div>', html=True)
+        self.assertContains(response, '<div class="alert alert-info">Zde jste si zadávali vaše jízdy.</div>', html=True)
+
+    @override_settings(
+        FAKE_DATE=datetime.date(2000, 11, 20),
+    )
+    @patch('slumber.API')
+    def test_rides_before_time(self, slumber_api):
+        slumber_instance = slumber_api.return_value
+        slumber_instance.feed.get.return_value = self.feed_value
+
+        response = self.client.get(reverse('profil'))
+        self.assertContains(response, '<div class="alert alert-info">Zde si budete od 1. listopadu 2010 zadávat vaše jízdy.</div>', html=True)
 
     @patch('slumber.API')
     def test_registration_access(self, slumber_api):
@@ -245,24 +258,8 @@ class CompetitionsViewTests(ViewsLogon):
 @override_settings(
     SITE_ID=2,
 )
-class InvoiceTests(ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'invoices']
-
-    def setUp(self):
-        self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(models.User.objects.get(username='test'), settings.AUTHENTICATION_BACKENDS[0])
-
-    def test_invoices(self):
-        address = reverse('invoices')
-        response = self.client.get(address)
-        self.assertContains(response, '<td>10. října 2010</td>', html=True)
-
-
-@override_settings(
-    SITE_ID=2,
-)
 class BaseViewsTests(ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions']
 
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.testserver")
@@ -270,13 +267,17 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
 
     @patch('slumber.API')
     def test_registration_access(self, slumber_api):
+        user_attendance = models.UserAttendance.objects.get(pk=1115)
+        user_attendance.payments().delete()
+        util.rebuild_denorm_models([user_attendance])
         slumber_instance = slumber_api.return_value
-        slumber_instance.feed.get = {}
+        slumber_instance.feed.get.return_value = []
         address = reverse('profil')
         response = self.client.get(address)
         self.assertRedirects(response, reverse('typ_platby'))
 
     def test_chaining(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
         util.rebuild_denorm_models(models.Team.objects.filter(pk__in=(1, 4)))
         denorm.flush()
         kwargs = {
@@ -296,6 +297,29 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
             [{'value': 4, 'display': 'Empty team ()'}, {'value': 1, 'display': 'Testing team 1 (Nick, Testing User 1, Registered User 1)'}],
         )
 
+    def test_chaining_subsidiary(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1115, 2115, 1015]))
+        util.rebuild_denorm_models(models.Team.objects.filter(pk__in=(1, 4)))
+        denorm.flush()
+        kwargs = {
+            'app': 'dpnk',
+            'model': 'Subsidiary',
+            'field': 'company',
+            'foreign_key_app_name': 'dpnk',
+            'foreign_key_model_name': 'Subsidiary',
+            'foreign_key_field_name': 'company',
+            'value': '1',
+        }
+        address = reverse('chained_filter', kwargs=kwargs)
+        response = self.client.get(address)
+        self.assertJSONEqual(
+            response.content.decode(),
+            [
+                {'display': 'Ulice 1, 111 11 Praha - Testing city', 'value': 1},
+                {'display': 'Ulice 2, 222 22 Brno - Other city', 'value': 2},
+            ],
+        )
+
 
 @override_settings(
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
@@ -310,7 +334,7 @@ class PaymentTypeViewTests(TestCase):
             campaign=self.campaign,
             name="Foo t-shirt-size",
         )
-        mommy.make(
+        self.price_level = mommy.make(
             "price_level.PriceLevel",
             takes_effect_on=datetime.date(year=2010, month=2, day=1),
             price=100,
@@ -347,6 +371,17 @@ class PaymentTypeViewTests(TestCase):
             status_code=403,
         )
 
+    def test_dpnk_payment_type_no_admission_fee(self):
+        self.price_level.delete()
+        self.user_attendance.save()
+        response = self.client.get(reverse('typ_platby'))
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Účastnický poplatek se neplatí. Pokračujte na <a href="/">zadávání jízd</a>.</div>',
+            html=True,
+            status_code=403,
+        )
+
     def test_dpnk_payment_type_company(self):
         mommy.make(
             "CompanyAdmin",
@@ -363,7 +398,9 @@ class PaymentTypeViewTests(TestCase):
         self.assertRedirects(response, reverse("upravit_profil"))
         self.assertContains(
             response,
-            '<div class="alert alert-warning">Platbu ještě musí schválit koordinátor vaší organizace <a href="mailto:foo@email.com">foo@email.com</a></div>',
+            '<div class="alert alert-warning">'
+            'Platbu ještě musí schválit koordinátor vaší organizace '
+            '<a href="mailto:foo@email.com">foo@email.com</a></div>',
             html=True,
         )
         self.assertEquals(models.Payment.objects.get().pay_type, 'fc')
@@ -436,6 +473,10 @@ class DistanceTests(TestCase):
 class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'company_competition', 'test_results_data', 'trips']
 
+    def setUp(self):
+        super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+
     @patch('dpnk.views.logger')
     def test_dpnk_competition_results_unknown(self, mock_logger):
         address = reverse('competition_results', kwargs={'competition_slug': 'unexistent_competition'})
@@ -507,7 +548,11 @@ class ViewsTestsMommy(ClearCacheMixin, TestCase):
             "</tr>",
             html=True,
         )
-        self.assertContains(response, "<tr><td>bez vybraného města</td><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>", html=True)
+        self.assertContains(
+            response,
+            "<tr><td>bez vybraného města</td><td>1</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>",
+            html=True,
+        )
         self.assertContains(
             response,
             "<tr>"
@@ -665,28 +710,9 @@ class ViewsTests(DenormMixin, TestCase):
         self.assertEqual(user_attendance.userprofile.user.pk, 1041)
         self.assertEqual(user_attendance.get_distance(), 156.9)
 
-    def test_password_recovery(self):
-        address = reverse('password_reset')
-        post_data = {
-            'email': 'test@test.cz',
-        }
-        response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('password_reset_done'))
-        msg = mail.outbox[0]
-        self.assertEqual(msg.recipients(), ['test@test.cz'])
-        self.assertEqual(msg.subject, 'Zapomenuté heslo Do práce na kole')
-        self.assertTrue('http://testing-campaign.testserver/zapomenute_heslo/zmena/' in msg.body)
-
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2010, month=10, day=1),
-    )
-    def test_dpnk_registration_out_of_phase(self):
-        address = reverse('registrace')
-        response = self.client.get(address)
-        self.assertEqual(response.status_message, "out_of_phase")
-        self.assertEqual(response.status_code, 403)
-
     def test_dpnk_mailing_list(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1115))
+        util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         Token.objects.filter(user=user_attendance.userprofile.user).update(key='d201a3c9e88ecd433fdbbc3a2e451cbd3f80c4ba')
         ret_mailing_id = "344ass"
@@ -694,25 +720,25 @@ class ViewsTests(DenormMixin, TestCase):
         mailing.add_or_update_user_synchronous(user_attendance)
         custom_fields = [
             OrderedDict((('Key', 'Mesto'), ('Value', 'testing-city'))),
-            OrderedDict((('Key', 'Firemni_spravce'), ('Value', True))),
-            OrderedDict((('Key', 'Stav_platby'), ('Value', None))),
+            OrderedDict((('Key', 'Firemni_spravce'), ('Value', 'approved'))),
+            OrderedDict((('Key', 'Stav_platby'), ('Value', 'done'))),
             OrderedDict((('Key', 'Aktivni'), ('Value', True))),
             OrderedDict((('Key', 'Auth_token'), ('Value', 'd201a3c9e88ecd433fdbbc3a2e451cbd3f80c4ba'))),
             OrderedDict((('Key', 'Id'), ('Value', 1128))),
             OrderedDict((('Key', 'Novacek'), ('Value', False))),
             OrderedDict((('Key', 'Kampan'), ('Value', 'testing-campaign'))),
-            OrderedDict((('Key', 'Vstoupil_do_souteze'), ('Value', False))),
+            OrderedDict((('Key', 'Vstoupil_do_souteze'), ('Value', True))),
             OrderedDict((('Key', 'Pocet_lidi_v_tymu'), ('Value', 3))),
             OrderedDict((('Key', 'Povoleni_odesilat_emaily'), ('Value', True))),
         ]
         createsend.Subscriber.add.assert_called_once_with('12345abcde', 'test@test.cz', 'Testing User 1', custom_fields, True)
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '2ddd65f5dc0ca3755885e23fefc956f1')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '82ca8d77c8ffba798961b3f4fe20c3c8')
 
         createsend.Subscriber.update = MagicMock()
         mailing.add_or_update_user_synchronous(user_attendance)
         self.assertFalse(createsend.Subscriber.update.called)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '2ddd65f5dc0ca3755885e23fefc956f1')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '82ca8d77c8ffba798961b3f4fe20c3c8')
 
         custom_fields[0] = OrderedDict((('Key', 'Mesto'), ('Value', 'other-city')))
         user_attendance.team.subsidiary.city = models.City.objects.get(slug="other-city")
@@ -722,7 +748,7 @@ class ViewsTests(DenormMixin, TestCase):
         mailing.add_or_update_user_synchronous(user_attendance)
         createsend.Subscriber.get.assert_called_once_with('12345abcde', ret_mailing_id)
         createsend.Subscriber.update.assert_called_once_with('test@test.cz', 'Testing User 1', custom_fields, True)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '264683d74013ab0fa8619ba7bbdefec6')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '367f900844fe84e2d019f139f49fccfb')
 
         user_attendance.userprofile.user.is_active = False
         user_attendance.userprofile.user.save()
@@ -733,6 +759,60 @@ class ViewsTests(DenormMixin, TestCase):
         createsend.Subscriber.delete.assert_called_once_with()
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
         self.assertEqual(user_attendance.userprofile.mailing_hash, None)
+
+
+class RegistrationPhaseTests(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.client = Client(HTTP_HOST="testing-campaign.example.com")
+        self.campaign = mommy.make("dpnk.campaign", slug="testing-campaign")
+
+    def test_dpnk_registration_no_phase(self):
+        response = self.client.get(reverse('registrace'))
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Tato stránka nemůže být v této kampani zobrazena. Neexistuje v ní fáze registrační.</div>',
+            html=True,
+            status_code=403,
+        )
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2020, month=10, day=1),
+    )
+    def test_dpnk_registration_after_phase(self):
+        mommy.make(
+            "dpnk.Phase",
+            phase_type="registration",
+            date_from="2011-01-01",
+            date_to="2011-02-01",
+            campaign=self.campaign,
+        )
+        response = self.client.get(reverse('registrace'))
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Již skončil čas, kdy se tato stránka zobrazuje.</div>',
+            html=True,
+            status_code=403,
+        )
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=10, day=1),
+    )
+    def test_dpnk_registration_before_phase(self):
+        mommy.make(
+            "dpnk.Phase",
+            phase_type="registration",
+            date_from="2011-01-01",
+            date_to="2011-02-01",
+            campaign=self.campaign,
+        )
+        response = self.client.get(reverse('registrace'))
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Ještě nenastal čas, kdy by se měla tato stránka zobrazit.<br>Stránka se zobrazí až 01.01.2011</div>',
+            html=True,
+            status_code=403,
+        )
 
 
 @override_settings(
@@ -890,34 +970,208 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         self.assertContains(response, "Soutěž již nelze vyplňovat")
 
 
-class ViewsTestsLogonMommy(ViewsLogon):
+class ViewsLogonMommy(TestCase):
+    def get_user_attendance(self):
+        return UserAttendanceRecipe.make()
+
     def setUp(self):
         super().setUp()
-        user_attendance = UserAttendanceRecipe.make()
-        self.client = Client(HTTP_HOST="testing-campaign.testserver")
-        self.client.force_login(user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
+        self.user_attendance = self.get_user_attendance()
+        self.client = Client(HTTP_HOST="testing-campaign.example.com")
+        self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
 
-    def test_dpnk_team_view_create_duplicate_ico(self):
+
+@override_settings(
+    FAKE_DATE=datetime.date(2010, 11, 20),
+)
+class TestRidesView(ViewsLogonMommy):
+    def get_user_attendance(self):
+        testing_campaing = campaign_get_or_create(
+            slug="testing-campaign",
+            name='Testing campaign',
+            minimum_rides_base=10000,
+            track_required=False,
+        )
+        user_attendance = UserAttendanceRecipe.make(
+            campaign=testing_campaing,
+            userprofile__sex='male',
+            userprofile__user__first_name='Foo',
+            userprofile__user__last_name='User',
+            userprofile__user__email='foo@bar.cz',
+            userprofile__telephone='12345',
+            userprofile__personal_data_opt_in=True,
+            team__name="Foo team",
+            approved_for_team='approved',
+        )
+        mommy.make(
+            'CityInCampaign',
+            campaign=testing_campaing,
+            city=user_attendance.team.subsidiary.city,
+        )
+        return user_attendance
+
+    @patch('slumber.API')
+    def test_dpnk_minimum_rides_base(self, slumber_api):
+        m = MagicMock()
+        m.feed.get.return_value = []
+        slumber_api.return_value = m
+
+        response = self.client.get(reverse('profil'), follow=True)
+        self.assertContains(
+            response,
+            "<small>"
+            "*Do konce soutěže je potřeba urazit alespoň 10000 cest. "
+            "Počet vašich cest byl tedy zvýšen poměrově k tomuto číslu na 886 cest."
+            "</small>",
+            html=True,
+        )
+
+
+class TestRegisterCompanyView(ViewsLogonMommy):
+    def test_get(self):
+        response = self.client.get(
+            reverse('register_company'),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
+        self.assertContains(
+            response,
+            '<label for="id_name" class="control-label  requiredField">'
+            'Název organizace'
+            '<span class="asteriskField">*</span>'
+            '</label>',
+            html=True,
+        )
+
+    def test_create(self):
+        post_data = {
+            'ico': '1234',
+            'name': 'Foo name',
+        }
+        response = self.client.post(
+            reverse('register_company'),
+            post_data,
+            follow=True,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
+        company = models.Company.objects.get(name="Foo name")
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"status": "ok", "name": "Foo name", "id": company.id},
+        )
+
+    def test_duplicate_ico(self):
         """ Test, that duplicate IČO error is reported to the user """
         mommy.make('Company', ico='1234')
         post_data = {
-            'company-ico': '1234',
-            'id_company_selected': 'on',
-            'id_subsidiary_selected': 'on',
-            'id_team_selected': 'on',
+            'ico': '1234',
         }
-        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        response = self.client.post(
+            reverse('register_company'),
+            post_data,
+            follow=True,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
         self.assertContains(
             response,
-            "<strong>Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu výše</strong>",
+            "<strong>Toto pole je vyžadováno.</strong>",
             html=True,
+        )
+        self.assertContains(
+            response,
+            "<strong>Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu</strong>",
+            html=True,
+        )
+
+
+class TestRegisterSubsidiaryView(ViewsLogonMommy):
+    def test_create(self):
+        city = mommy.make('City')
+        mommy.make('CityInCampaign', city=city, campaign=self.user_attendance.campaign)
+        company = mommy.make('Company')
+        post_data = {
+            "company_0": 'Foo',
+            "company_1": company.id,
+            "city": city.id,
+            "address_recipient": "Foo recipient",
+            "address_street": "Foo street",
+            "address_street_number": "123",
+            "address_psc": "12345",
+            "address_city": "Foo city",
+        }
+        response = self.client.post(
+            reverse('register_subsidiary', args=(company.id,)),
+            post_data,
+            follow=True,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
+        subsidiary = models.Subsidiary.objects.get(company=company)
+        self.assertEquals(subsidiary.address.street_number, "123")
+        self.assertEquals(subsidiary.address.recipient, "Foo recipient")
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"status": "ok", "id": subsidiary.id},
+        )
+
+    def test_psc_failing(self):
+        company = mommy.make('Company')
+        post_data = {
+            "address_psc": "123",
+        }
+        response = self.client.post(
+            reverse('register_subsidiary', args=(company.id,)),
+            post_data,
+            follow=True,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
+        self.assertContains(
+            response,
+            "<strong>PSČ musí být pěticiferné číslo</strong>",
+            html=True,
+        )
+
+    def test_psc_failing_no_integer(self):
+        company = mommy.make('Company')
+        post_data = {
+            "address_psc": "FOO",
+        }
+        response = self.client.post(
+            reverse('register_subsidiary', args=(company.id,)),
+            post_data,
+            follow=True,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
+        self.assertContains(
+            response,
+            "<strong>PSČ musí být pěticiferné číslo</strong>",
+            html=True,
+        )
+
+
+class TestRegisterTeamView(ViewsLogonMommy):
+    def test_create(self):
+        subsidiary = mommy.make('Subsidiary')
+        post_data = {
+            'name': 'Foo name',
+            'subsidiary': subsidiary.id,
+            'campaign': self.user_attendance.campaign.id,
+        }
+        response = self.client.post(
+            reverse('register_team', args=(subsidiary.id,)),
+            post_data,
+            follow=True,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
+        team = models.Team.objects.get(name="Foo name")
+        self.assertJSONEqual(
+            response.content.decode(),
+            {"status": "ok", "name": "Foo name", "id": team.id},
         )
 
 
 class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_team_view(self):
         response = self.client.get(reverse('zmenit_tym'))
-        self.assertNotContains(response, "Testing company")
+        self.assertContains(response, "Testing company")
         self.assertContains(response, "Testing team 1")
 
     def test_dpnk_team_view_no_payment(self):
@@ -939,7 +1193,7 @@ class ViewsTestsLogon(ViewsLogon):
                     {"value": "Testing company without admin", "label": "Testing company without admin", "id": 2},
                 ],
                 "meta": {
-                    "more": "Show more results",
+                    "more": "Zobrazit další výsledky",
                     "page": 1,
                     "term": "",
                     "limit": 25,
@@ -952,17 +1206,17 @@ class ViewsTestsLogon(ViewsLogon):
         self.user_attendance.team = None
         self.user_attendance.save()
         email = self.user_attendance.userprofile.user.email
-        address = reverse('zmenit_tym', kwargs={'token': token, 'initial_email': email})
+        address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
         response = self.client.get(address)
-        self.assertContains(response, "<div>Přejete si být zařazeni do týmu Testing team 1 (Nick, Testing User 1, Registered User 1)?</div>", html=True)
-
-    def test_dpnk_team_invitation_admission_payed(self):
-        email = self.user_attendance.userprofile.user.email
-        address = reverse('zmenit_tym', kwargs={'token': "token123215", 'initial_email': email})
-        response = self.client.get(address)
-        self.assertContains(response, '<div class="alert alert-danger">Již máte zaplaceno, nemůžete měnit tým mimo svoji pobočku.</div>', html=True)
+        self.assertContains(
+            response,
+            "<div>Přejete si být zařazeni do týmu Testing team 1 (Nick, Testing User 1, Registered User 1)?</div>",
+            html=True,
+        )
 
     def test_dpnk_team_invitation_full(self):
+        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk__in=[1016]))
+        util.rebuild_denorm_models(models.Team.objects.filter(pk=3))
         self.user_attendance.campaign.max_team_members = 1
         self.user_attendance.campaign.save()
         token = "token123215"
@@ -970,7 +1224,7 @@ class ViewsTestsLogon(ViewsLogon):
         team.save()
         denorm.flush()
         email = self.user_attendance.userprofile.user.email
-        address = reverse('zmenit_tym', kwargs={'token': token, 'initial_email': email})
+        address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
         response = self.client.get(address)
         self.assertContains(
             response,
@@ -982,7 +1236,7 @@ class ViewsTestsLogon(ViewsLogon):
         models.Payment.objects.all().delete()
         denorm.flush()
         email = self.user_attendance.userprofile.user.email
-        address = reverse('zmenit_tym', kwargs={'token': "token123214", 'initial_email': email})
+        address = reverse('change_team_invitation', kwargs={'token': "token123214", 'initial_email': email})
         response = self.client.get(address)
         self.assertContains(
             response,
@@ -995,58 +1249,50 @@ class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_team_invitation(self):
         token = self.user_attendance.team.invitation_token
         email = self.user_attendance.userprofile.user.email
-        address = reverse('zmenit_tym', kwargs={'token': token, 'initial_email': email})
+        address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
         response = self.client.get(address)
         self.assertContains(response, "<h2>Pozvánka do týmu</h2>", html=True)
 
         post_data = {
             "question": "on",
             "submit": "Odeslat",
+            "team": self.user_attendance.team.id,
+            "campaign": self.user_attendance.campaign.id,
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, "Vybrat/změnit tým")
+        self.assertContains(response, "Změnit tým")
+
+    def test_dpnk_team_invitation_confirmation_unchecked(self):
+        token = self.user_attendance.team.invitation_token
+        email = self.user_attendance.userprofile.user.email
+        address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
+
+        post_data = {
+            "submit": "Odeslat",
+        }
+        response = self.client.post(address, post_data, follow=True)
+        self.assertContains(
+            response,
+            '<span id="error_1_id_question" class="help-block"><strong>Toto pole je vyžadováno.</strong></span>',
+            html=True,
+        )
 
     def test_dpnk_team_invitation_bad_email(self):
         token = self.user_attendance.team.invitation_token
-        response = self.client.get(reverse('zmenit_tym', kwargs={'token': token, 'initial_email': 'invitation_test@email.com'}), follow=True)
+        response = self.client.get(
+            reverse('change_team_invitation', kwargs={'token': token, 'initial_email': 'invitation_test@email.com'}),
+            follow=True,
+        )
         self.assertRedirects(response, "/login/invitation_test@email.com/?next=/tym/token123213/invitation_test@email.com/")
         self.assertContains(response, "invitation_test@email.com")
 
     def test_dpnk_team_invitation_unknown_team(self):
-        response = self.client.get(reverse('zmenit_tym', kwargs={'token': 'asdf', 'initial_email': 'invitation_test@email.com'}))
+        response = self.client.get(reverse('change_team_invitation', kwargs={'token': 'asdf', 'initial_email': 'invitation_test@email.com'}))
         self.assertContains(response, "Tým nenalezen", status_code=403)
 
-    @patch('slumber.API')
-    def test_dpnk_team_view_choose(self, slumber_api):
-        m = MagicMock()
-        m.feed.get.return_value = []
-        slumber_api.return_value = m
-        PackageTransaction.objects.all().delete()
-        models.Payment.objects.all().delete()
-        util.rebuild_denorm_models(models.Team.objects.filter(pk=3))
-        self.user_attendance.save()
-        response = self.client.get(reverse('zmenit_tym'))
-        self.assertContains(
-            response,
-            '<label for="id_company-name" class="control-label  requiredField">'
-            'Název organizace'
-            '<span class="asteriskField">*</span>'
-            '</label>',
-            html=True,
-        )
-        self.assertContains(response, "id_subsidiary")
-
-        post_data = {
-            'company_1': '1',
-            'subsidiary': '1',
-            'team': '3',
-            'next': 'Next',
-        }
-        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
-        self.assertRedirects(response, reverse("zmenit_triko"))
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(models.UserAttendance.objects.get(pk=1115).approved_for_team, "undecided")
-
+    @override_settings(
+        DEBUG=True,
+    )
     def test_dpnk_team_view_choose_empty_team(self):
         util.rebuild_denorm_models(models.Team.objects.all())
         PackageTransaction.objects.all().delete()
@@ -1067,16 +1313,16 @@ class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_update_profile_view(self):
         util.rebuild_denorm_models(models.Team.objects.filter(pk=2))
         post_data = {
-            'sex': 'male',
-            'first_name': 'Testing',
-            'last_name': 'Name',
-            'nickname': 'My super nick',
-            'mailing_opt_in': 'True',
-            'email': 'testing@email.cz',
-            'language': 'cs',
-            'telephone': '111222333',
-            'dont_show_name': True,
-            'personal_data_opt_in': 'True',
+            'user-email': 'testing@email.cz',
+            'user-first_name': 'Testing',
+            'user-last_name': 'Name',
+            'userprofile-dont_show_name': True,
+            'userprofile-language': 'cs',
+            'userprofile-mailing_opt_in': 'True',
+            'userprofile-nickname': 'My super nick',
+            'userprofile-personal_data_opt_in': 'True',
+            'userprofile-sex': 'male',
+            'userprofile-telephone': '111222333',
             'next': 'Další',
         }
         address = reverse('upravit_profil')
@@ -1086,7 +1332,7 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_update_profile_view_no_nick(self):
         post_data = {
-            'dont_show_name': True,
+            'userprofile-dont_show_name': True,
             'next': 'Další',
         }
         address = reverse('upravit_profil')
@@ -1095,7 +1341,7 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_update_profile_view_no_sex(self):
         post_data = {
-            'sex': 'unknown',
+            'userprofile-sex': 'unknown',
             'next': 'Další',
         }
         address = reverse('upravit_profil')
@@ -1104,108 +1350,17 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_dpnk_update_profile_view_email_exists(self):
         post_data = {
-            'email': 'test2@test.cz',
+            'user-email': 'test2@test.cz',
             'next': 'Další',
         }
         address = reverse('upravit_profil')
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, "Tento e-mail již je v našem systému zanesen.")
 
-    @patch('dpnk.models.team.logger')
-    def test_dpnk_team_view_choose_team_full(self, mock_logger):
-        campaign = models.Campaign.objects.get(pk=339)
-        campaign.max_team_members = 0
-        campaign.save()
-        post_data = {
-            'company': '1',
-            'subsidiary': '1',
-            'team': '3',
-            'next': 'Next',
-        }
-        PackageTransaction.objects.all().delete()
-        models.Payment.objects.all().delete()
-        self.user_attendance.save()
-        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
-        mock_logger.error.assert_called_with("Too many members in team", extra={'team': ANY})
-        self.assertContains(response, "Tento tým již má plný počet členů")
-
-    @patch('dpnk.forms.logger')
-    def test_dpnk_team_view_choose_team_out_of_campaign(self, mock_logger):
-        post_data = {
-            'company_1': '1',
-            'subsidiary': '2',
-            'team': '2',
-            'next': 'Next',
-        }
-        PackageTransaction.objects.all().delete()
-        models.Payment.objects.all().delete()
-        self.user_attendance.save()
-        response = self.client.post(reverse('zmenit_tym'), post_data)
-        assert mock_logger.error.mock_calls == [
-            call("Team not in campaign", extra={'request': ANY, 'team': ANY, 'subdomain': ANY}),
-            call("Subsidiary in city that doesn't belong to this campaign", extra={'request': ANY, 'subsidiary': ANY}),
-        ]
-        self.assertContains(response, "Zvolený tým není dostupný v aktuální kampani")
-
-    def test_dpnk_team_view_choose_team_after_payment(self):
-        post_data = {
-            'company_1': '1',
-            'subsidiary': '2',
-            'team': '3',
-            'next': 'Next',
-        }
-        response = self.client.post(reverse('zmenit_tym'), post_data)
-        self.assertContains(response, "Po zaplacení není možné měnit tým mimo pobočku")
-
-    @patch('dpnk.forms.logger')
-    def test_dpnk_team_view_choose_nonexistent_city(self, mock_logger):
-        post_data = {
-            'company_1': '1',
-            'subsidiary': '2',
-            'id_team_selected': 'on',
-            'team-name': 'Testing team last campaign',
-            'team-campaign': 339,
-            'next': 'Next',
-        }
-        PackageTransaction.objects.all().delete()
-        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
-        mock_logger.error.assert_called_with("Subsidiary in city that doesn't belong to this campaign", extra={'request': ANY, 'subsidiary': ANY})
-        self.assertContains(response, "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží.")
-
-    def test_dpnk_team_view_create(self):
-        self.user_attendance.team = None
-        self.user_attendance.save()
-        response = self.client.get(reverse('zmenit_tym'))
-        self.assertContains(response, "Testing team last campaign")
-        post_data = {
-            'company-name': 'Created company',
-            'id_company_selected': 'on',
-            'subsidiary-city': '1',
-            'subsidiary-address_recipient': 'Created name',
-            'subsidiary-address_street': 'Created street',
-            'subsidiary-address_street_number': '99',
-            'subsidiary-address_psc': '99 999',
-            'subsidiary-address_city': 'Testing city',
-            'id_subsidiary_selected': 'on',
-            'team-name': 'Created team',
-            'company_1': '1',
-            'subsidiary': '1',
-            'team-campaign': '339',
-            'id_team_selected': 'on',
-            'next': 'Další',
-        }
-        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
-
-        self.assertRedirects(response, reverse("pozvanky"))
-        self.assertContains(response, "Tým Created team úspěšně vytvořen")
-        user = models.UserAttendance.objects.get(pk=1115)
-        self.assertEquals(user.team.name, "Created team")
-        self.assertEquals(user.team.subsidiary.address.street, "Created street")
-        self.assertEquals(user.team.subsidiary.company.name, "Created company")
-        self.assertEquals(models.UserAttendance.objects.get(pk=1115).approved_for_team, "approved")
-
     @patch('slumber.API')
     def company_payment(self, slumber_api, amount, amount_tax, beneficiary=False):
+        models.Payment.objects.get(id=17).delete()
+        denorm.flush()
         slumber_instance = slumber_api.return_value
         slumber_instance.feed.get.return_value = [{"content": "Emission calculator description text"}]
         response = self.client.get(reverse('company_admin_pay_for_users'))
@@ -1281,17 +1436,6 @@ class ViewsTestsLogon(ViewsLogon):
 
     def test_company_payment_beneficiary(self):
         self.company_payment(beneficiary=True, amount=130.0, amount_tax=544)
-
-    def test_dpnk_team_view_no_team_set(self):
-        post_data = {
-            'company_1': '1',
-            'subsidiary': '',
-            'team': '',
-            'next': 'Next',
-        }
-        response = self.client.post(reverse('zmenit_tym'), post_data)
-        self.assertContains(response, 'error_1_id_team')
-        self.assertContains(response, 'var value = undefined;')
 
     def test_dpnk_team_approval(self):
         ua = models.UserAttendance.objects.get(pk=1015)
@@ -1408,26 +1552,47 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.get(reverse('company_admin_application'))
         self.assertContains(
             response,
-            '<label for="id_motivation_company_admin" class="control-label  requiredField"> Pár vět o vaší pozici<span class="asteriskField">*</span> </label>',
+            '<label for="id_motivation_company_admin" class="control-label  requiredField">'
+            'Pár vět o vaší pozici'
+            '<span class="asteriskField">*</span>'
+            '</label>',
             html=True,
         )
 
 
 class ChangeTeamViewTests(TestCase):
+    blank_team_html = """<select
+        name="team"
+        name="team"
+        data-value="null"
+        data-url="/chaining/filter/dpnk/Team/team_in_campaign_testing-campaign/subsidiary/dpnk/Subsidiary/company"
+        data-empty_label="--------"
+        data-auto_choose="false"
+        id="id_team"
+        class="chainedselect form-control chained-fk"
+        data-chainfield="subsidiary"
+        required>
+        </select>"""
+
     def setUp(self):
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
-        self.campaign = testing_campaign
+        self.campaign = testing_campaign()
         self.team = mommy.make(
             "Team",
+            name="Foo name",
             campaign=self.campaign,
+            subsidiary__city__name="Foo city",
         )
+        mommy.make('CityInCampaign', city=self.team.subsidiary.city, campaign=self.campaign)
+        self.user_attendance = UserAttendanceRecipe.make(campaign=self.campaign, team=self.team)
+        self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
 
     def test_dpnk_team_change_me_undecided(self):
         """ If I my team membership is undecided, I have to be able to leave the team """
+        self.user_attendance.approved_for_team = 'undecided'
+        self.user_attendance.save()
         UserAttendanceRecipe.make(approved_for_team='approved', campaign=self.campaign, team=self.team)
-        user_attendance = UserAttendanceRecipe.make(approved_for_team='undecided', campaign=self.campaign, team=self.team)
         self.team.save()
-        self.client.force_login(user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
         self.assertEquals(self.team.member_count, 1)
         self.assertEquals(self.team.unapproved_member_count, 1)
         response = self.client.get(reverse('zmenit_tym'))
@@ -1435,10 +1600,10 @@ class ChangeTeamViewTests(TestCase):
 
     def test_dpnk_team_undecided(self):
         """ If I am olny approved team member of team where all others are undicided, I can't leave the team """
+        self.user_attendance.approved_for_team = 'approved'
+        self.user_attendance.save()
         UserAttendanceRecipe.make(approved_for_team='undecided', campaign=self.campaign, team=self.team)
-        user_attendance = UserAttendanceRecipe.make(approved_for_team='approved', campaign=self.campaign, team=self.team)
         self.team.save()
-        self.client.force_login(user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
         self.assertEquals(self.team.member_count, 1)
         self.assertEquals(self.team.unapproved_member_count, 1)
         response = self.client.get(reverse('zmenit_tym'))
@@ -1451,9 +1616,9 @@ class ChangeTeamViewTests(TestCase):
 
     def test_dpnk_team_change_alone_undecided(self):
         """ If I am in the team alone, I can leave the team if I am undecided """
-        user_attendance = UserAttendanceRecipe.make(approved_for_team='undecided', campaign=self.campaign, team=self.team)
+        self.user_attendance.approved_for_team = 'undecided'
+        self.user_attendance.save()
         self.team.save()
-        self.client.force_login(user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
         self.assertEquals(self.team.member_count, 0)
         self.assertEquals(self.team.unapproved_member_count, 1)
         response = self.client.get(reverse('zmenit_tym'))
@@ -1461,13 +1626,293 @@ class ChangeTeamViewTests(TestCase):
 
     def test_dpnk_team_change_alone_approved(self):
         """ If I am in the team alone, I can leave the team if I am approved """
-        user_attendance = UserAttendanceRecipe.make(approved_for_team='approved', campaign=self.campaign, team=self.team)
+        self.user_attendance.approved_for_team = 'approved'
+        self.user_attendance.save()
         self.team.save()
-        self.client.force_login(user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
         self.assertEquals(self.team.member_count, 1)
         self.assertEquals(self.team.unapproved_member_count, 0)
         response = self.client.get(reverse('zmenit_tym'))
         self.assertEquals(response.status_code, 200)
+
+    def test_get(self):
+        response = self.client.get(reverse('zmenit_tym'))
+        self.assertContains(
+            response,
+            '<option value="%s" selected>Foo name ()</option>' % self.team.id,
+            html=True,
+        )
+
+    def test_get_one_team_member(self):
+        """ Test that user chooses only subsidiary when in campaign with 1 team member """
+        self.campaign.max_team_members = 1
+        self.campaign.save()
+        response = self.client.get(reverse('zmenit_tym'))
+        self.assertNotContains(
+            response,
+            '<option value="%s" selected>Foo name ()</option>' % self.team.id,
+            html=True,
+        )
+        self.assertNotContains(
+            response,
+            '<option value="%s" selected=""> - Foo city</option>' % self.team.subsidiary.id,
+            html=True,
+        )
+
+    def test_get_blank(self):
+        self.user_attendance.team = None
+        self.user_attendance.save()
+        response = self.client.get(reverse('zmenit_tym'))
+        self.assertContains(  # Test blank select
+            response,
+            self.blank_team_html,
+            html=True,
+        )
+
+    def test_get_previous(self):
+        """ Test that team with same name as in last year is preselected """
+        previous_campaign = CampaignRecipe.make()
+        self.campaign.previous_campaign = previous_campaign
+        self.campaign.save()
+        UserAttendanceRecipe.make(
+            campaign=previous_campaign,
+            userprofile=self.user_attendance.userprofile,
+            team__subsidiary__company__name="Foo company lasts",
+            team__campaign=previous_campaign,
+        )
+        self.user_attendance.team = None
+        self.user_attendance.save()
+        address = reverse('zmenit_tym')
+        response = self.client.get(address)
+
+        self.assertContains(
+            response,
+            '<input type="text" name="company_0" value="Foo company lasts" '
+            'data-selectable-allow-new="false" id="id_company_0" '
+            'class="autocompletewidget form-control" data-selectable-type="text" '
+            'required data-selectable-url="/selectable/dpnk-companylookup/" />',
+            html=True,
+        )
+
+    def test_get_previous_none_team(self):
+        """ Test that team with same name asi in last year doesn't exist, no team is preselected """
+        previous_campaign = CampaignRecipe.make()
+        self.campaign.previous_campaign = previous_campaign
+        self.campaign.save()
+        UserAttendanceRecipe.make(
+            campaign=previous_campaign,
+            userprofile=self.user_attendance.userprofile,
+            team__name="Foo team lasts",
+            team__campaign=previous_campaign,
+        )
+        self.user_attendance.team = None
+        self.user_attendance.save()
+        address = reverse('zmenit_tym')
+        response = self.client.get(address)
+
+        self.assertContains(  # No team is preselected
+            response,
+            self.blank_team_html,
+            html=True,
+        )
+
+    def test_get_previous_different_company(self):
+        """ Test that team with same name asi in last year exists, but is in different company, no team is preselected """
+        previous_campaign = CampaignRecipe.make()
+        previous_campaign = CampaignRecipe.make()
+        self.campaign.previous_campaign = previous_campaign
+        self.campaign.save()
+        UserAttendanceRecipe.make(
+            campaign=previous_campaign,
+            userprofile=self.user_attendance.userprofile,
+            team__name="Foo team lasts",
+            team__campaign=previous_campaign,
+        )
+        mommy.make(
+            "Team",
+            name="Foo team lasts",
+            campaign=self.campaign,
+            subsidiary__company=mommy.make("Company"),
+        )
+        self.user_attendance.team = None
+        self.user_attendance.save()
+        address = reverse('zmenit_tym')
+        response = self.client.get(address)
+
+        self.assertContains(  # No team is preselected
+            response,
+            self.blank_team_html,
+            html=True,
+        )
+
+    def test_change(self):
+        city = mommy.make('City')
+        mommy.make('CityInCampaign', city=city, campaign=self.campaign)
+        new_team = mommy.make('Team', campaign=self.campaign, subsidiary__city=city)
+        post_data = {
+            "team": new_team.id,
+            "subsidiary": new_team.subsidiary.id,
+            "company_0": "Foo",
+            "company_1": new_team.subsidiary.company.id,
+            'next': 'Další',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+
+        self.assertRedirects(response, reverse('pozvanky'))
+        self.user_attendance.refresh_from_db()
+        self.assertEquals(self.user_attendance.team, new_team)
+        self.assertEqual(self.user_attendance.approved_for_team, "approved")
+
+    def test_change_one_team_member(self):
+        """ Test that user chooses only subsidiary when in campaign with 1 team member """
+        self.campaign.max_team_members = 1
+        self.campaign.save()
+        new_subsidiary = mommy.make('Subsidiary', address_street="Foo street", city=self.team.subsidiary.city)
+        post_data = {
+            "subsidiary": new_subsidiary.id,
+            "company_0": "Foo",
+            "company_1": new_subsidiary.company.id,
+            'next': 'Další',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+
+        self.assertRedirects(response, reverse('zmenit_triko'))
+        self.team.refresh_from_db()
+        self.assertEquals(self.team, self.team)
+        self.assertEquals(self.team.subsidiary, new_subsidiary)
+
+    def test_change_one_team_member_without_team(self):
+        """ Test that user chooses only subsidiary when in campaign with 1 team member """
+        self.user_attendance.team = None
+        self.user_attendance.save()
+        self.campaign.max_team_members = 1
+        self.campaign.save()
+        new_subsidiary = mommy.make('Subsidiary', address_street="Foo street", city=self.team.subsidiary.city)
+        post_data = {
+            "subsidiary": new_subsidiary.id,
+            "company_0": "Foo",
+            "company_1": new_subsidiary.company.id,
+            'next': 'Další',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+
+        self.assertRedirects(response, reverse('zmenit_triko'))
+        self.user_attendance.refresh_from_db()
+        self.assertNotEquals(self.team, self.user_attendance.team)  # User is in new team
+        self.assertEquals(self.user_attendance.team.subsidiary, new_subsidiary)
+
+    def test_change_team_has_users(self):
+        city = mommy.make('City')
+        mommy.make('CityInCampaign', city=city, campaign=self.campaign)
+        new_team = mommy.make(
+            'Team',
+            campaign=self.campaign,
+            subsidiary__city=city,
+            users=[UserAttendancePaidRecipe.make(userprofile__user__email="test@email.cz")],
+        )
+        new_team.save()
+        post_data = {
+            "team": new_team.id,
+            "subsidiary": new_team.subsidiary.id,
+            "company_0": "Foo",
+            "company_1": new_team.subsidiary.company.id,
+            'next': 'Další',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+
+        self.assertRedirects(response, reverse('upravit_profil'))
+        self.assertEqual(self.user_attendance.approved_for_team, "undecided")
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['test@email.cz'])
+        self.assertEqual(str(msg.subject), 'Testing campaign - žádost o ověření členství')
+
+    @patch('dpnk.forms.logger')
+    def test_team_out_of_campaign(self, mock_logger):
+        city = mommy.make('City')
+        other_campaign = mommy.make("Campaign")
+        mommy.make('CityInCampaign', city=city, campaign=other_campaign)
+        new_team = mommy.make('Team', campaign=other_campaign, subsidiary__city=city)
+        post_data = {
+            "team": new_team.id,
+            "subsidiary": new_team.subsidiary.id,
+            "company_0": "Foo",
+            "company_1": new_team.subsidiary.company.id,
+            'next': 'Další',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data)
+        assert mock_logger.error.mock_calls == [
+            call("Team not in campaign", extra={'team': new_team.id, 'subdomain': 'testing-campaign'}),
+            call("Subsidiary in city that doesn't belong to this campaign", extra={'subsidiary': new_team.subsidiary}),
+        ]
+        self.assertContains(response, "Zvolený tým není dostupný v aktuální kampani")
+
+    @patch('dpnk.forms.logger')
+    def test_choose_nonexistent_city(self, mock_logger):
+        city = mommy.make('City')
+        other_campaign = mommy.make("Campaign")
+        mommy.make('CityInCampaign', city=city, campaign=other_campaign)
+        new_team = mommy.make('Team', campaign=self.campaign, subsidiary__city=city)
+        post_data = {
+            "team": new_team.id,
+            "subsidiary": new_team.subsidiary.id,
+            "company_0": "Foo",
+            "company_1": new_team.subsidiary.company.id,
+            'next': 'Další',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        mock_logger.error.assert_called_with("Subsidiary in city that doesn't belong to this campaign", extra={'subsidiary': ANY})
+        self.assertContains(response, "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží.")
+
+    def test_no_team_set(self):
+        company = mommy.make('Company')
+        post_data = {
+            'company_1': company.id,
+            'subsidiary': '',
+            'team': '',
+            'next': 'Další',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data)
+        self.assertContains(response, 'error_1_id_team')
+        self.assertContains(
+            response,
+            '<select '
+            'class="chainedselect form-control form-control-danger chained-fk"'
+            'data-auto_choose="false" '
+            'data-chainfield="subsidiary" '
+            'data-empty_label="--------"'
+            'data-url="/chaining/filter/dpnk/Team/team_in_campaign_testing-campaign/subsidiary/dpnk/Subsidiary/company"'
+            'data-value="null" '
+            'id="id_team" '
+            'name="team"'
+            'name="team"'
+            'required'
+            '> </select>',
+            html=True,
+        )
+
+    @patch('dpnk.models.team.logger')
+    def test_choose_full_team(self, mock_logger):
+        self.campaign.max_team_members = 2
+        self.campaign.save()
+        city = mommy.make('City')
+        mommy.make('CityInCampaign', city=city, campaign=self.campaign)
+        new_team = mommy.make(
+            'Team',
+            subsidiary__city=city,
+            campaign=self.campaign,
+            users=UserAttendancePaidRecipe.make(_quantity=3),
+        )
+        new_team.save()
+        post_data = {
+            "team": new_team.id,
+            "subsidiary": new_team.subsidiary.id,
+            "company_0": "Foo",
+            "company_1": new_team.subsidiary.company.id,
+            'next': 'Další',
+        }
+        response = self.client.post(reverse('zmenit_tym'), post_data, follow=True)
+        mock_logger.error.assert_called_with("Too many members in team", extra={'team': ANY})
+        self.assertContains(response, "Tento tým již má plný počet členů")
 
 
 class RegistrationMixinTests(ViewsLogon):
@@ -1481,7 +1926,7 @@ class RegistrationMixinTests(ViewsLogon):
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
         self.assertContains(response, "Jste sám/sama v týmu")
-        self.assertContains(response, "Nemáte vyplněnou vaši typickou trasu ani vzdálenost do práce.")
+        self.assertContains(response, '<a href="/upravit_trasu/">Vyplnit typickou trasu</a>', html=True)
 
     def test_dpnk_registration_unapproved_users(self):
         for team_member in self.user_attendance.team.all_members():
@@ -1597,10 +2042,34 @@ class TrackViewTests(ViewsLogon):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(models.GpxFile.objects.get(pk=gpxfile.pk).trip, trip)
 
+    def test_other_user_object(self):
+        gpxfile = mommy.make("GpxFile")
+        address = reverse('gpx_file', kwargs={"id": gpxfile.pk})
+        response = self.client.get(address)
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Nemůžete vidět cizí objekt</div>',
+            html=True,
+            status_code=403,
+        )
+
+    def test_dpnk_views_gpx_file_error(self):
+        address = reverse('gpx_file', kwargs={"id": 5})
+        response = self.client.get(address)
+        self.assertContains(response, "Stránka nenalezena", status_code=404)
+
     def test_dpnk_views_gpx_file_no_trip(self):
         address = reverse('gpx_file', kwargs={"id": 2})
         response = self.client.get(address)
         self.assertContains(response, "Datum vykonání cesty")
+
+    def test_dpnk_views_gpx_file_no_trip_city(self):
+        """ Test, that the location is changed accordingly to the user's city. """
+        self.user_attendance.team.subsidiary.city = mommy.make("City", location="POINT(14.42 50.08)")
+        self.user_attendance.team.subsidiary.save()
+        address = reverse('gpx_file', kwargs={"id": 2})
+        response = self.client.get(address)
+        self.assertContains(response, '"center": [50.08, 14.42]')
 
     def test_dpnk_company_structure(self):
         util.rebuild_denorm_models([self.user_attendance])
@@ -1748,8 +2217,12 @@ class TrackViewTests(ViewsLogon):
             'direction': 'trip_to',
         }
         response = self.client.post('/rest/gpx/', post_data, HTTP_HOST='noncampaign.testserver', format='multipart', follow=True)
-        self.assertJSONEqual(response.content.decode(), {'detail': 'Campaign with this slug not found'})
-        self.assertEqual(response.status_code, 404)
+        self.assertContains(
+            response,
+            '<div class="alert alert-danger">Kampaň s identifikátorem noncampaign neexistuje. Zadejte prosím správnou adresu.</div>',
+            html=True,
+            status_code=404,
+        )
 
     def test_dpnk_rest_gpx(self):
         with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
@@ -1819,8 +2292,8 @@ class StatisticsTests(ViewsLogon):
         self.assertJSONEqual(
             response.content.decode(),
             {
-                "pocet-zaplacenych": 1,
-                "pocet-soutezicich": 1,
+                "pocet-zaplacenych": 4,
+                "pocet-soutezicich": 4,
                 "pocet-cest": 3,
                 "pocet-cest-kolo": 2,
                 "pocet-cest-pesky": 1,
@@ -1847,3 +2320,68 @@ class RidesDetailsTests(ViewsLogon):
         self.assertContains(response, 'Chůze/běh')
         self.assertContains(response, 'Podrobný přehled jízd')
         self.assertContains(response, '1. listopadu 2009')
+
+
+@ddt
+class TestNotLoggedIn(TestCase):
+    """ Test, that views in which user must be logged on redirects to login page. """
+    def setUp(self):
+        self.client = Client(HTTP_HOST="testing-campaign.example.com")
+        self.campaign = testing_campaign()
+
+    @data(
+        "application",
+        "bike_repair",
+        "company_admin_application",
+        "company_admin_competition",
+        "company_admin_competitions",
+        "company_admin_related_competitions",
+        "company_structure",
+        "competitions",
+        "edit_company",
+        "edit_team",
+        "emission_calculator",
+        "other_team_members_results",
+        "package",
+        "pozvanky",
+        "profil",
+        "questionnaire_competitions",
+        "register_company",
+        "registration_uncomplete",
+        "rides_details",
+        "team_members",
+        "upravit_profil",
+        "upravit_trasu",
+        "zaslat_zadost_clenstvi",
+        "zmenit_tym",
+    )
+    def test_not_logged_in(self, view):
+        response = self.client.get(reverse(view))
+        self.assertRedirects(response, '/login?next=%s' % reverse(view))
+
+    def test_invoices(self):
+        mommy.make(
+            "dpnk.Phase",
+            campaign=testing_campaign,
+            phase_type="invoices",
+            date_from="2010-1-1",
+        )
+        view = 'invoices'
+        response = self.client.get(reverse(view))
+        self.assertRedirects(response, '/login?next=%s' % reverse(view))
+
+    @data(
+        "company_admin_pay_for_users",
+        "payment",
+        "payment_beneficiary",
+        "typ_platby",
+    )
+    def test_not_logged_in_payment_phase(self, view):
+        mommy.make(
+            "dpnk.Phase",
+            campaign=testing_campaign,
+            phase_type="payment",
+            date_from="2010-1-1",
+        )
+        response = self.client.get(reverse(view))
+        self.assertRedirects(response, '/login?next=%s' % reverse(view))

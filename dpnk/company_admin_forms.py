@@ -29,14 +29,14 @@ from selectable.forms.widgets import AutoCompleteSelectWidget
 
 from table_select_widget import TableSelectMultiple
 
-from .forms import AdressForm, EmailUsernameMixin, SubmitMixin
+from .forms import AddressForm, EmailUsernameMixin, SubmitMixin
 from .models import Campaign, City, Company, CompanyAdmin, Competition, Invoice, Subsidiary, UserAttendance
 from .util import slugify
 
 
 class SelectUsersPayForm(SubmitMixin, forms.Form):
     paing_for = forms.ModelMultipleChoiceField(
-        [],
+        UserAttendance.objects.none(),
         label=_("Vyberte soutěžící, za které zaplatíte fakturou"),
         required=False,
         help_text=string_concat(
@@ -79,7 +79,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
             'userprofile__user__first_name',
         )
 
-        ret_val = super(SelectUsersPayForm, self).__init__(*args, **kwargs)
+        ret_val = super().__init__(*args, **kwargs)
         self.fields['paing_for'].queryset = queryset
         self.helper.form_class = "dirty-check"
         self.helper.layout = Layout(
@@ -91,19 +91,19 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
         return ret_val
 
 
-class CompanyForm(SubmitMixin, AdressForm):
+class CompanyForm(SubmitMixin, AddressForm):
     class Meta:
         model = Company
         fields = ('name', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city', 'ico', 'dic')
 
     def __init__(self, request=None, *args, **kwargs):
-        ret_val = super(CompanyForm, self).__init__(*args, **kwargs)
+        ret_val = super().__init__(*args, **kwargs)
         self.fields['address_recipient'].label = _(u"Adresát na faktuře")
         self.fields['address_recipient'].help_text = _(u"Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova")
         return ret_val
 
 
-class SubsidiaryForm(SubmitMixin, AdressForm):
+class SubsidiaryForm(SubmitMixin, AddressForm):
     class Meta:
         model = Subsidiary
         fields = (
@@ -173,6 +173,7 @@ class CompanyAdminApplicationForm(EmailUsernameMixin, CompanyAdminForm, registra
         ),
         queryset=Company.objects.all(),
         required=True,
+        help_text=_("Napište část názvu organizace a vyberte ji ze seznamu."),
     )
     telephone = forms.CharField(
         label="Telefon",

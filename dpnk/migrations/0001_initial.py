@@ -290,7 +290,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=50, verbose_name='Team name')),
-                ('invitation_token', models.CharField(default=b'', unique=True, max_length=100, verbose_name='Invitation token', validators=[dpnk.models.validate_length])),
+                ('invitation_token', models.CharField(default=b'', unique=True, max_length=100, verbose_name='Invitation token')),
                 ('member_count', models.IntegerField(default=0, verbose_name='Number of authorized team members', db_index=True)),
                 ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
             ],

@@ -67,7 +67,6 @@ for mid in UNUSED_MIDDLEWARES:
     except ValueError:
         pass
 
-SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  # XXX
 SITE_URL = 'localhost:8000'
 DJANGO_URL = 'http://localhost:8000'
 
@@ -82,7 +81,11 @@ class InvalidStringError(str):
         return ""
 
 
-ALLOWED_HOSTS = ['testing-campaign.testserver', 'testing-campaign-unknown.testserver']
+ALLOWED_HOSTS = [
+    '.testserver',
+    'example.com',
+    '.example.com',
+]
 
 TEMPLATES[0]['OPTIONS']['string_if_invalid'] = InvalidStringError("%s")
 TEMPLATES[0]['OPTIONS']['debug'] = True
@@ -90,6 +93,8 @@ TEMPLATES[0]['OPTIONS']['debug'] = True
 LOGGING['handlers']['logfile']['filename'] = "test-dpnk.log"
 
 CRISPY_FAIL_SILENTLY = False
+
+SECURE_SSL_REDIRECT = False
 
 # import local test_settings
 try:

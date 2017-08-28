@@ -185,6 +185,16 @@ class Invoice(models.Model):
             self.campaign.phase("competition").date_to + datetime.timedelta(days=14),
         )
 
+    def company_admin_emails(self):
+        return self.company.admin_emails(self.campaign)
+
+    def company_admin_telephones(self):
+        return self.company.admin_telephones(self.campaign)
+
+    def payments_count(self):
+        return self.payment_set.count()
+    payments_count.short_description = _("Počet plateb")
+
     @transaction.atomic
     def save(self, *args, **kwargs):
         if not self.sequence_number:
@@ -204,7 +214,7 @@ class Invoice(models.Model):
                 self.sequence_number = last_transaction.sequence_number + 1
             else:
                 self.sequence_number = first
-        super(Invoice, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def payments_to_add(self):
         if hasattr(self, 'campaign'):

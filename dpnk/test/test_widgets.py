@@ -25,17 +25,19 @@ from dpnk import widgets
 class CommuteModeRendererTests(TestCase):
     def test_render(self):
         """ Test render method """
-        renderer = widgets.CommuteModeRenderer(
-            "test_name",
-            1,
+        renderer = widgets.CommuteModeSelect(
             {},
             [
                 (1, 'Item 1'),
                 (2, 'Item 2'),
             ],
         )
+        rendered_html = renderer.render(
+            "test_name",
+            1,
+        )
         self.assertHTMLEqual(
-            renderer.render(),
+            rendered_html,
             '<fieldset class="controls btn-group" role="group">'
             '    <div class="radio btn">'
             '        <input type="radio" checked="checked" name="test_name" id="id_test_name_1" value="1">'
@@ -50,14 +52,16 @@ class CommuteModeRendererTests(TestCase):
 
     def test_render_str(self):
         """ Test render method if the value is string and item int """
-        renderer = widgets.CommuteModeRenderer(
-            "test name",
-            '1',
+        renderer = widgets.CommuteModeSelect(
             {},
             [(1, 'Item 1')],
         )
+        rendered_html = renderer.render(
+            "test name",
+            '1',
+        )
         self.assertHTMLEqual(
-            renderer.render(),
+            rendered_html,
             '<fieldset class="controls btn-group" role="group">'
             '    <div class="radio btn">'
             '        <input type="radio" checked="checked" name="test name" id="id_test name_1" value="1">'

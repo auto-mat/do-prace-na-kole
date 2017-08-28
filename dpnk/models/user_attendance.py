@@ -26,12 +26,14 @@ from denorm import denormalized, depend_on_related
 
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Length
+from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html_join
 from django.utils.translation import ugettext_lazy as _
 
 from .company_admin import CompanyAdmin
+from .phase import Phase
 from .transactions import Payment, Transaction
 from .trip import Trip
 from .util import MAP_DESCRIPTION
@@ -253,7 +255,10 @@ class UserAttendance(models.Model):
 
     def get_rides_count(self):
         from .. import results
-        return results.get_rides_count(self, self.campaign.phase("competition"))
+        try:
+            return results.get_rides_count(self, self.campaign.phase("competition"))
+        except Phase.DoesNotExist:
+            return 0
 
     @denormalized(models.IntegerField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
@@ -262,7 +267,10 @@ class UserAttendance(models.Model):
 
     def get_frequency(self, day=None):
         from .. import results
-        return results.get_userprofile_frequency(self, self.campaign.phase("competition"), day)[2]
+        try:
+            return results.get_userprofile_frequency(self, self.campaign.phase("competition"), day)[2]
+        except Phase.DoesNotExist:
+            return 0
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('Trip')
@@ -279,7 +287,10 @@ class UserAttendance(models.Model):
     @depend_on_related('Trip')
     def trip_length_total(self):
         from .. import results
-        return results.get_userprofile_length([self], self.campaign.phase("competition"))
+        try:
+            return results.get_userprofile_length([self], self.campaign.phase("competition"))
+        except Phase.DoesNotExist:
+            return 0
 
     def trip_length_total_rounded(self):
         return round(self.trip_length_total, 2)
@@ -315,7 +326,7 @@ class UserAttendance(models.Model):
         return self.userprofile
 
     def is_libero(self):
-        if self.team and self.team_member_count():
+        if self.team and self.team_member_count() and self.campaign.competitors_choose_team():
             return self.team_member_count() <= 1
         else:
             return False
@@ -339,14 +350,14 @@ class UserAttendance(models.Model):
     def entered_competition_reason(self):
         if not self.userprofile.profile_complete():
             return 'profile_uncomplete'
-        if not self.team_waiting():
+        if not self.is_team_approved():
             if self.team_complete():
                 return 'team_waiting'
             else:
                 return 'team_uncomplete'
         if not self.tshirt_complete():
             return 'tshirt_uncomplete'
-        if not self.payment_waiting():
+        if not self.has_paid():
             if self.payment_complete():
                 return 'payment_waiting'
             else:
@@ -357,8 +368,8 @@ class UserAttendance(models.Model):
 
     def entered_competition(self):
         return self.tshirt_complete() and\
-            self.team_waiting() and\
-            self.payment_waiting() and\
+            self.is_team_approved() and\
+            self.has_paid() and\
             self.userprofile.profile_complete()
 
     def team_member_count(self):
@@ -374,13 +385,13 @@ class UserAttendance(models.Model):
     def team_complete(self):
         return self.team
 
-    def team_waiting(self):
+    def is_team_approved(self):
         return self.team and self.approved_for_team == 'approved'
 
     def payment_complete(self):
         return self.payment_status not in ('none', None)
 
-    def payment_waiting(self):
+    def has_paid(self):
         return self.payment_status in ('done', 'no_admission') or (not self.has_admission_fee())
 
     def get_emissions(self, distance=None):
@@ -393,6 +404,10 @@ class UserAttendance(models.Model):
     def get_all_trips(self, day=None):
         days = list(util.days(self.campaign.phase("competition"), day))
         return self.get_trips(days)
+
+    def company_admin_emails(self):
+        if self.team:
+            return self.team.subsidiary.company.admin_emails(self.campaign)
 
     def get_trips(self, days):
         """
@@ -412,8 +427,7 @@ class UserAttendance(models.Model):
     def related_company_admin(self):
         """ Get company coordinator profile for this user attendance """
         try:
-            ca = CompanyAdmin.objects.get(userprofile=self.userprofile, campaign=self.campaign)
-            return ca
+            return CompanyAdmin.objects.get(userprofile=self.userprofile, campaign=self.campaign)
         except CompanyAdmin.DoesNotExist:
             return None
 
@@ -449,6 +463,21 @@ class UserAttendance(models.Model):
         except UserAttendance.DoesNotExist:
             return None
 
+    def clean(self):
+        if self.team and self.approved_for_team != 'denied':
+            team_members_count = self.team.undenied_members().exclude(pk=self.pk).count() + 1
+            if self.team.campaign.too_much_members(team_members_count):
+                raise ValidationError({'team': _("Tento tým již má plný počet členů")})
+
+        if self.team and self.team.campaign != self.campaign:
+            message = _(
+                "Zvolená kampaň (%(campaign)s) musí být shodná s kampaní týmu (%(team)s)" % {
+                    'campaign': self.campaign,
+                    'team': self.team.campaign,
+                },
+            )
+            raise ValidationError({'team': message, 'campaign': message})
+
     def save(self, *args, **kwargs):
         if self.pk is None:
             previous_user_attendance = self.previous_user_attendance()
@@ -460,7 +489,17 @@ class UserAttendance(models.Model):
                     t_shirt_size = self.campaign.tshirtsize_set.filter(name=previous_user_attendance.t_shirt_size.name)
                     if t_shirt_size.count() == 1:
                         self.t_shirt_size = t_shirt_size.first()
-        return super(UserAttendance, self).save(*args, **kwargs)
+        if self.team and self.team.campaign != self.campaign:
+            logger.error(
+                "UserAttendance campaign doesn't match team campaign",
+                extra={
+                    'user_attendance': self,
+                    'new_team': self.team,
+                    'campaign': self.campaign,
+                    'team_campaign': self.team.campaign,
+                },
+            )
+        return super().save(*args, **kwargs)
 
 
 @receiver(post_save, sender=UserAttendance)

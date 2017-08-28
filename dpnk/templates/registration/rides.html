@@ -48,11 +48,13 @@
       {% endwith %}
    </td>
 </tr>
+{% if user_attendance.campaign.competitors_choose_team %}
 <tr class="info">
    <td>
       {% trans "Pravidelnost vašeho týmu" %}: {{ user_attendance.team.get_frequency_percentage|floatformat|intcomma }}&nbsp;% (<a href="{% url "other_team_members_results" %}">{% trans "Přehled o vašem týmu" %}</a>)
    </td>
 </tr>
+{% endif %}
 <tr class="info">
    <td>
       {% trans "Ušetřené množství oxidu uhličitého" %}: {{ user_attendance.get_emissions.co2|intcomma }}&nbsp;g  (<a href="{% url 'emission_calculator' %}">{% trans "Emisní kalkulačka" %}</a>)
@@ -111,7 +113,11 @@
 </table>
 {% else %}
 <div class="alert alert-info">
-{% trans "Zde budete zadávat vaše jízdy" %}
+   {% if today < competition_phase.date_from %}
+   {% blocktrans with date_from=competition_phase.date_from %}Zde si budete od {{ date_from }} zadávat vaše jízdy.{% endblocktrans %}
+   {% else %}
+   {% trans "Zde jste si zadávali vaše jízdy." %}
+   {% endif %}
 </div>
 {% endif %}
 </form>

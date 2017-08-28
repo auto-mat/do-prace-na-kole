@@ -215,7 +215,7 @@
            "competition": 3
         },
         "model": "dpnk.competitionresult",
-        "pk": 1
+        "pk": 0
     },
     {
         "fields": {

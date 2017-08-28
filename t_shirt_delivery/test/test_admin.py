@@ -205,7 +205,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
             response,
             "<div>"
             "<label>Trik k odeslání:</label>"
-            "<p>0</p>"
+            "<div class='readonly'>0</div>"
             "</div>",
             html=True,
         )
@@ -213,7 +213,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
             response,
             "<div>"
             "<label>Velikosti trik:</label>"
-            "<p></p>"
+            "<div class='readonly'></div>"
             "</div>",
             html=True,
         )
@@ -232,7 +232,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
             response,
             "<div>"
             "<label>Trik k odeslání:</label>"
-            "<p>1</p>"
+            "<div class='readonly'>1</div>"
             "</div>",
             html=True,
         )
@@ -240,7 +240,7 @@ class DeliveryBatchAdminTests(AdminTestBase):
             response,
             "<div>"
             "<label>Velikosti trik:</label>"
-            "<p>Testing t-shirt size: 1</p>"
+            "<div class='readonly'>Testing t-shirt size: 1</div>"
             "</div>",
             html=True,
         )
@@ -281,7 +281,7 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
         response = self.client.get(address, follow=True)
         self.assertContains(
             response,
-            "<div><label>Tým:</label><p>Testing team ()</p></div>",
+            "<div><label>Tým:</label><div class='readonly'>Testing team ()</div></div>",
             html=True,
         )
 

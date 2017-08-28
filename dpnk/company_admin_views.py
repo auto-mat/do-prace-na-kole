@@ -20,12 +20,12 @@
 import datetime
 import logging
 
+from braces.views import LoginRequiredMixin
+
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, render
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
@@ -33,29 +33,26 @@ from django.views.generic.edit import CreateView, FormView, UpdateView
 from registration.backends.simple.views import RegistrationView
 
 from . import company_admin_forms
+from . import exceptions
 from . import models
-from .company_admin_forms import CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
-from .decorators import must_be_company_admin, must_be_competitor, must_be_in_phase, must_have_team, request_condition
+from .company_admin_forms import (
+    CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
+)
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
-from .string_lazy import format_lazy
-from .util import mark_safe_lazy
+from .string_lazy import mark_safe_lazy
 from .views import AdmissionsView, RegistrationViewMixin, TitleViewMixin
+from .views_mixins import CompanyAdminMixin
+from .views_permission_mixins import MustBeCompanyAdminMixin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
 logger = logging.getLogger(__name__)
 
 
-class CompanyStructure(TitleViewMixin, TemplateView):
+class CompanyStructure(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, TemplateView):
     template_name = 'company_admin/structure.html'
     title = _("Struktura organizace")
 
-    @method_decorator(login_required)
-    @must_be_company_admin
-    def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(CompanyStructure, self).dispatch(request, *args, **kwargs)
-
     def get_context_data(self, *args, **kwargs):
-        context_data = super(CompanyStructure, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         context_data['company'] = self.company_admin.administrated_company
         context_data['subsidiaries'] = context_data['company'].subsidiaries.prefetch_related(
             'teams__users__userprofile__user',
@@ -70,16 +67,11 @@ class CompanyStructure(TitleViewMixin, TemplateView):
         return context_data
 
 
-class RelatedCompetitionsView(AdmissionsView):
+class RelatedCompetitionsView(MustBeCompanyAdminMixin, AdmissionsView):
     template_name = "company_admin/related_competitions.html"
 
-    @method_decorator(login_required)
-    @must_be_company_admin
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
-
-class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, FormView):
+class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeInPaymentPhaseMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, FormView):
     template_name = 'company_admin/select_users_pay_for.html'
     form_class = SelectUsersPayForm
     success_url = reverse_lazy('company_admin_pay_for_users')
@@ -104,59 +96,31 @@ class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, FormView):
                     payment.save()
                     break
         logger.info("Company admin %s is paing for following users: %s" % (self.request.user, map(lambda x: x, paing_for)))
-        return super(SelectUsersPayView, self).form_valid(form)
+        return super().form_valid(form)
 
-    @method_decorator(login_required)
-    @must_be_company_admin
-    @must_be_in_phase("payment")
-    @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, _(u"Potvrzování plateb nemáte povoleno"))
     def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(SelectUsersPayView, self).dispatch(request, *args, **kwargs)
+        ret_val = super().dispatch(request, *args, **kwargs)
+        if request.user_attendance:
+            if not self.company_admin.can_confirm_payments:
+                raise exceptions.TemplatePermissionDenied(
+                    _("Potvrzování plateb nemáte povoleno"),
+                    self.template_name,
+                )
+        return ret_val
 
     def get_success_message(self, cleaned_data):
         return self.success_message % self.confirmed_count
 
 
-class CompanyEditView(TitleViewMixin, UpdateView):
+class CompanyEditView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyForm
     model = Company
     success_url = reverse_lazy('company_structure')
     title = _("Změna adresy organizace")
 
-    @method_decorator(login_required)
-    @must_be_company_admin
-    def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(CompanyEditView, self).dispatch(request, *args, **kwargs)
-
     def get_object(self, queryset=None):
         return self.company_admin.administrated_company
-
-
-class CompanyAdminMixin(SuccessMessageMixin):
-    success_message = _("Byla vytvořena žádost o funkci firemního koordinátora. Vyčkejte, než dojde ke schválení této funkce.")
-    opening_message = mark_safe_lazy(
-        _(
-            "<p>"
-            "Vaše organizace ještě nemá zvoleného firemního koordinátora. "
-            "</p>"
-            "<p>"
-            "Tato role není pro soutěž povinná, ale usnadní ostatním ostatním kolegům účast v soutěži. "
-            "Hlavní úkol pro firemního koordinátora je pokusit se zaměstnavatelem domluvit, aby uhradil účastnický poplatek za zaměstnance."
-            "</p>"
-            "<p>"
-            "V případě, že zaměstnavatel přislíbí účastnické poplatky uhradit,"
-            "pak firemní koordinátor zajistí hromadnou platbu účastnického poplatku přes fakturu."
-            "Odměnou mu za to budou speciální slevy pro firemní koordinátory."
-            "</p>"
-            "<p>"
-            "Návod jak provést hromadnou platbu, slevy pro koordinátory a další informace pro koordinátory najdete "
-            "<a href='http://www.dopracenakole.cz/firemni-koordinator'>zde</a>."
-            "<p>"
-        ),
-    )
 
 
 class CompanyAdminApplicationView(TitleViewMixin, CompanyAdminMixin, RegistrationView):
@@ -192,7 +156,7 @@ class CompanyAdminApplicationView(TitleViewMixin, CompanyAdminMixin, Registratio
         return ret_val
 
 
-class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, UpdateView):
+class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, MustHaveTeamMixin, LoginRequiredMixin, UpdateView):
     template_name = 'submenu_payment.html'
     form_class = CompanyAdminForm
     model = CompanyAdmin
@@ -200,14 +164,8 @@ class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, UpdateView):
     registration_phase = "typ_platby"
     title = _("Chci se stát firemním koordinátorem")
 
-    @method_decorator(login_required)
-    @must_be_competitor
-    @must_have_team
-    def dispatch(self, request, *args, **kwargs):
-        return super(CompanyAdminView, self).dispatch(request, *args, **kwargs)
-
     def get_context_data(self, *args, **kwargs):
-        context_data = super(CompanyAdminView, self).get_context_data(*args, **kwargs)
+        context_data = super().get_context_data(*args, **kwargs)
         old_company_admin = self.user_attendance.team.subsidiary.company.company_admin.\
             filter(campaign=self.user_attendance.campaign, company_admin_approved='approved').\
             exclude(pk=self.company_admin.pk)
@@ -228,12 +186,12 @@ class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, UpdateView):
         return self.company_admin
 
     def form_valid(self, form):
-        ret_val = super(CompanyAdminView, self).form_valid(form)
+        ret_val = super().form_valid(form)
         company_admin_register_competitor_mail(self.user_attendance)
         return ret_val
 
 
-class EditSubsidiaryView(TitleViewMixin, UpdateView):
+class EditSubsidiaryView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = SubsidiaryForm
     success_url = reverse_lazy('company_structure')
@@ -245,36 +203,24 @@ class EditSubsidiaryView(TitleViewMixin, UpdateView):
             'company_admin': self.company_admin,
         }
 
-    @method_decorator(login_required)
-    @must_be_company_admin
-    def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(EditSubsidiaryView, self).dispatch(request, *args, **kwargs)
-
     def get_queryset(self):
-        return super(EditSubsidiaryView, self).get_queryset().filter(company=self.company_admin.administrated_company)
+        return super().get_queryset().filter(company=self.company_admin.administrated_company)
 
 
 class CompanyViewException(Exception):
     pass
 
 
-class CompanyCompetitionView(TitleViewMixin, UpdateView):
+class CompanyCompetitionView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_company_admin_form.html'
     form_class = CompanyCompetitionForm
     model = Competition
     success_url = reverse_lazy('company_admin_competitions')
     title = _("Vypsat/upravit vnitrofiremní soutěž")
 
-    @method_decorator(login_required)
-    @must_be_company_admin
-    def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(CompanyCompetitionView, self).dispatch(request, *args, **kwargs)
-
     def get(self, *args, **kwargs):
         try:
-            return super(CompanyCompetitionView, self).get(*args, **kwargs)
+            return super().get(*args, **kwargs)
         except CompanyViewException as e:
             return render(self.request, self.template_name, context={'fullpage_error_message': e.args[0], 'title': e.args[1]})
 
@@ -298,23 +244,17 @@ class CompanyCompetitionView(TitleViewMixin, UpdateView):
             return {'commute_modes': models.competition.default_commute_modes()}
 
 
-class CompanyCompetitionsShowView(TitleViewMixin, TemplateView):
+class CompanyCompetitionsShowView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, TemplateView):
     template_name = 'company_admin/competitions.html'
     title = _("Vnitrofiremní soutěže")
 
-    @method_decorator(login_required)
-    @must_be_company_admin
-    def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(CompanyCompetitionsShowView, self).dispatch(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
-        context_data = super(CompanyCompetitionsShowView, self).get_context_data(**kwargs)
+        context_data = super().get_context_data(**kwargs)
         context_data['competitions'] = self.company_admin.administrated_company.competition_set.filter(campaign=self.company_admin.campaign)
         return context_data
 
 
-class InvoicesView(TitleViewMixin, CreateView):
+class InvoicesView(TitleViewMixin, MustBeInInvoicesPhaseMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, CreateView):
     template_name = 'company_admin/create_invoice.html'
     form_class = company_admin_forms.CreateInvoiceForm
     success_url = reverse_lazy('invoices')
@@ -331,10 +271,10 @@ class InvoicesView(TitleViewMixin, CreateView):
         self.object.company = self.company_admin.administrated_company
         self.object.campaign = self.company_admin.campaign
         self.object.save()
-        return super(InvoicesView, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_context_data(self, *args, **kwargs):
-        context = super(InvoicesView, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         payments = models.payments_to_invoice(self.company_admin.administrated_company, self.company_admin.campaign)
         context['payments'] = payments
         context['company'] = self.company_admin.administrated_company
@@ -342,19 +282,17 @@ class InvoicesView(TitleViewMixin, CreateView):
         context['invoices'] = self.company_admin.administrated_company.invoice_set.filter(campaign=self.company_admin.campaign)
         return context
 
-    @method_decorator(login_required)
-    @must_be_in_phase("invoices")
-    @must_be_company_admin
-    @request_condition(
-        lambda r, a, k: not k['company_admin'].administrated_company.has_filled_contact_information(),
-        mark_safe_lazy(
-            format_lazy(
-                _(u"Před vystavením faktury prosím <a href='{addr}'>vyplňte údaje o vaší firmě</a>"),
-                addr=reverse_lazy('edit_company'),
-            ),
-        )
-    )
-    @request_condition(lambda r, a, k: not k['company_admin'].can_confirm_payments, _(u"Vystavování faktur nemáte povoleno"))
     def dispatch(self, request, *args, **kwargs):
-        self.company_admin = kwargs['company_admin']
-        return super(InvoicesView, self).dispatch(request, *args, **kwargs)
+        ret_val = super().dispatch(request, *args, **kwargs)
+        if request.user_attendance:
+            if not self.company_admin.administrated_company.has_filled_contact_information():
+                raise exceptions.TemplatePermissionDenied(
+                    mark_safe_lazy(_("Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>") % reverse('edit_company')),
+                    self.template_name,
+                )
+            if not self.company_admin.can_confirm_payments:
+                raise exceptions.TemplatePermissionDenied(
+                    _("Vystavování faktur nemáte povoleno"),
+                    self.template_name,
+                )
+        return ret_val

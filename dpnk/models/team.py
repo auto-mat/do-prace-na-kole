@@ -25,18 +25,13 @@ import string
 from denorm import denormalized, depend_on_related
 
 from django.contrib.gis.db import models
-from django.core.exceptions import ValidationError
+from django.core.validators import MinLengthValidator
 from django.utils.translation import ugettext_lazy as _
 
+from .phase import Phase
 from .subsidiary import Subsidiary
 
 logger = logging.getLogger(__name__)
-
-
-def validate_length(value, min_length=25):
-    str_len = len(str(value))
-    if str_len < min_length:
-        raise ValidationError(_(u"Řetězec by neměl být kratší než %(min)s znaků a delší než %(max)s znaků") % {'min': min_length, 'max': str_len})
 
 
 class Team(models.Model):
@@ -50,7 +45,7 @@ class Team(models.Model):
 
     name = models.CharField(
         verbose_name=_(u"Název týmu"),
-        max_length=50, null=False,
+        max_length=50, null=True,
         unique=False,
     )
     subsidiary = models.ForeignKey(
@@ -67,7 +62,7 @@ class Team(models.Model):
         null=False,
         blank=False,
         unique=True,
-        validators=[validate_length],
+        validators=[MinLengthValidator(25)],
     )
     campaign = models.ForeignKey(
         "Campaign",
@@ -115,9 +110,21 @@ class Team(models.Model):
         """ Return all members of this team, including unapproved. """
         return self.users.filter(userprofile__user__is_active=True)
 
+    def undenied_members(self):
+        """ Return approved members of this team. """
+        return self.users.filter(
+            userprofile__user__is_active=True,
+        ).exclude(
+            approved_for_team='denied',
+        )
+
     def members(self):
         """ Return approved members of this team. """
-        return self.users.filter(approved_for_team='approved', userprofile__user__is_active=True).order_by("id")
+        return self.users.filter(
+            approved_for_team='approved',
+            payment_status__in=('done', 'no_admission'),
+            userprofile__user__is_active=True,
+        ).order_by("id")
 
     @denormalized(models.IntegerField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
@@ -136,7 +143,10 @@ class Team(models.Model):
 
     def get_frequency(self):
         from .. import results
-        return results.get_team_frequency(self.members(), self.campaign.phase("competition"))[2]
+        try:
+            return results.get_team_frequency(self.members(), self.campaign.phase("competition"))[2]
+        except Phase.DoesNotExist:
+            return 0
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
@@ -166,7 +176,7 @@ class Team(models.Model):
                     self.invitation_token = invitation_token
                     break
 
-        super(Team, self).save(force_insert, force_update, *args, **kwargs)
+        super().save(force_insert, force_update, *args, **kwargs)
 
 
 class TeamName(Team):
@@ -180,8 +190,7 @@ class TeamName(Team):
 def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
     field, (old, new) = next(iter(changed_fields.items()))
     new_team = Team.objects.get(pk=new) if new else None
-    if new_team and new_team.campaign != instance.campaign:
-        logger.error(u"UserAttendance %s campaign doesn't match team campaign" % instance)
+    # TODO: rewrite this as a UserAttendance.is_approved() function
     if instance.team and new_team.member_count == 0:
         instance.approved_for_team = 'approved'
     else:

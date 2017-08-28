@@ -326,7 +326,7 @@ class DeliveryBatchForm(forms.ModelForm):
         fields = "__all__"
 
     def __init__(self, *args, **kwargs):
-        ret_val = super(DeliveryBatchForm, self).__init__(*args, **kwargs)
+        ret_val = super().__init__(*args, **kwargs)
         if hasattr(self, 'request'):
             self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
         return ret_val
@@ -348,7 +348,17 @@ class SubsidiaryBoxInline(NestedTabularInline):
 
 @admin.register(models.DeliveryBatch)
 class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
-    list_display = ['id', 'campaign', 'created', 'dispatched', 'package_transaction_count', 'box_count', 'author', 'customer_sheets__url', 'csv_data_url']
+    list_display = [
+        'id',
+        'campaign',
+        'created',
+        'dispatched',
+        'package_transaction_count',
+        'box_count',
+        'author',
+        'customer_sheets__url',
+        'csv_data_url',
+    ]
     readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 'box_count', 't_shirt_sizes')
     inlines = [SubsidiaryBoxInline, ]
     list_filter = (CampaignFilter,)

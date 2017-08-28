@@ -26,7 +26,7 @@
       {% elif competition.competitor_type == 'team' %}
          {% trans "týmů" %}
       {% elif competition.competitor_type == 'company' %}
-         {% trans "společností" %}
+         {% trans "organizací" %}
       {% endif %}
       </p>
       <p>
@@ -50,37 +50,26 @@
    <div class="text-info">{% trans "Tato soutěž ještě nezačala" %}</div>
 {% endif %}
 
-   {% if competition.competitor_can_admit == True %}
-      {% if competition.competition_type == 'questionnaire' %}
+   {% if competition.competition_type == 'questionnaire' %}
+      {% if competition.is_actual %}
          <a href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">{% trans "Vyplnit odpovědi" %}</a>
          <br/>
       {% endif %}
-   {% endif %}
 
-   {% if competition.competition_type == 'questionnaire' %}
       {% if competition.public_answers %}
          <a href="{% url 'questionnaire_answers_all' competition_slug=competition.slug %}">{% trans "Všechny odpovědi" %}</a>
          <br/>
       {% endif %}
-   {% endif %}
 
-   {% if competition.competitor_can_admit == 'without_admission' %}
-      {% if competition.competition_type == 'questionnaire' %}
-         <a href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">{% trans "Zobrazit informace" %}</a>
+      {% if competition.has_finished %}
+         <a href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">{% trans "Zobrazit vyhodnocení" %}</a>
          <br/>
       {% endif %}
    {% endif %}
 
-   {% if competition.competitor_can_admit == 'after_end' %}
-      <a href="{% url 'questionnaire' questionnaire_slug=competition.slug %}">{% trans "Zobrazit vyhodnocení" %}</a>
-      <br/>
-   {% endif %}
-
-   {% if competition.has_started %}
-   {% if competition.show_competition_results %}
+   {% if competition.has_started and competition.show_competition_results %}
       <a href="{% url 'competition_results' competition_slug=competition.slug %}{% if competition.my_results %}#row-{{ competition.my_results.id }}{% endif %}">{% trans "Výsledky" %}</a>
       <br/>
-   {% endif %}
    {% endif %}
 {% if competition.url %}
    <a href="{{ competition.url }}" target="_blank">{% trans "Další informace o soutěži" %}</a>

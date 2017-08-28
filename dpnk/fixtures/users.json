@@ -176,6 +176,7 @@
             "team": 1,
             "track":  "MULTILINESTRING((0 0,-1 1))",
             "updated": "2015-11-12T18:18:40.223",
+            "payment_status": "done",
             "userprofile": 1117
         },
         "model": "dpnk.userattendance",
@@ -270,6 +271,7 @@
             "team": 1,
             "track": "MULTILINESTRING((0 0,-1 1))",
             "updated": "2015-11-12T18:18:40.223",
+            "payment_status": "done",
             "userprofile": 1017
         },
         "model": "dpnk.userattendance",
@@ -450,6 +452,7 @@
             "team": 1,
             "track":  "MULTILINESTRING((0 0,-1 1))",
             "updated": "2015-11-12T18:18:40.223",
+            "payment_status": "done",
             "userprofile": 2117
         },
         "model": "dpnk.userattendance",

@@ -12,7 +12,13 @@
       <li>
          {{ forloop.counter }}. tah: Tým {{ result }} {% if result.team %}z organizace {{ result.team.subsidiary.company }}{% endif %}
          <br/>
+         {% if result.competition.competition_type == 'frequency' %}
          pravidelnost jízd {{ result.get_result_percentage|floatformat:-1|intcomma }}&nbsp;%
+         {% elif result.competition.competition_type == 'length' %}
+         ujetá vzdálenost {{ result.get_result_percentage|floatformat:-1|intcomma }}&nbsp;km
+         {% elif result.competition.competition_type == 'questionnaire' %}
+         {{ result.get_result_percentage|floatformat:-1|intcomma }}&nbsp;bodů
+         {% endif %}
          {% if result.competition.competitor_type == 'team' %}
             <br/>
             Členové:

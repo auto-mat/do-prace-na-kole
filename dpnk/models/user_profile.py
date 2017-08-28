@@ -24,6 +24,7 @@ from denorm import denormalized, depend_on_related
 
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
+from django.core.validators import MinLengthValidator, RegexValidator
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
@@ -75,6 +76,8 @@ class UserProfile(models.Model):
         verbose_name=_(u"Telefon"),
         max_length=30,
         null=False,
+        validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
+        help_text=_("Telefonní číslo slouží jako kontakt pro help desk."),
     )
     language = models.CharField(
         verbose_name=_(u"Jazyk e-mailové komunikace"),
@@ -118,7 +121,7 @@ class UserProfile(models.Model):
         blank=True,
     )
     mailing_opt_in = models.NullBooleanField(
-        verbose_name=_("Přeji si dostávat e-mailem informace o akcích, událostech a dalších záležitostech souvisejících se soutěží."),
+        verbose_name=_("Soutěžní e-maily"),
         help_text=_(u"Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
         default=None,
     )
@@ -214,7 +217,7 @@ class UserProfile(models.Model):
         if self.pk is None:
             self.ecc_password = User.objects.make_random_password()
             self.ecc_email = "%s@dopracenakole.cz" % User.objects.make_random_password()
-        super(UserProfile, self).save(force_insert, force_update, *args, **kwargs)
+        super().save(force_insert, force_update, *args, **kwargs)
 
 
 @receiver(post_save, sender=UserProfile)

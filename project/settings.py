@@ -130,12 +130,11 @@ STATICFILES_FINDERS = (
 
 SECRET_KEY = os.environ.get('DPNK_SECRET_KEY')
 MIDDLEWARE_CLASSES = [
-    # 'django.middleware.security.SecurityMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
-    'sslifyadmin.middleware.SSLifyAdminMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'subdomains.middleware.SubdomainMiddleware',
@@ -159,11 +158,6 @@ AUTHENTICATION_BACKENDS = (
     "django_su.backends.SuBackend",
 )
 ROOT_URLCONF = 'urls'
-
-# CSRF_COOKIE_HTTPONLY = True
-# SECURE_BROWSER_XSS_FILTER = True
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-# X_FRAME_OPTIONS = 'DENY'
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('DPNK_SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', '')
@@ -296,6 +290,7 @@ INSTALLED_APPS = (
     'secretballot',
     'likes',
     'social_django',
+    'fm',
     # 'cachalot',
 )
 
@@ -316,7 +311,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'oauth2_provider.ext.rest_framework.OAuth2Authentication',
+        'oauth2_provider.contrib.rest_framework.authentication.OAuth2Authentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
@@ -329,8 +324,34 @@ REDACTOR_OPTIONS = {
     'imageResizable': 'true',
     'imagePosition': 'true',
 }
-BLEACH_ALLOWED_TAGS = ['p', 'b', 'i', 'u', 'em', 'strong', 'a', 'br', 'span', 'div', 'h4', 'h5', 'pre', 'blockquote', 'ol', 'li', 'ul', 'figure', 'img']
-BLEACH_ALLOWED_ATTRIBUTES = ['href', 'src', 'height', 'width', 'style']
+BLEACH_ALLOWED_TAGS = [
+    'a',
+    'b',
+    'blockquote',
+    'br',
+    'div',
+    'em',
+    'figure',
+    'h4',
+    'h5',
+    'i',
+    'img',
+    'li',
+    'ol',
+    'p',
+    'pre',
+    'span',
+    'strong',
+    'u',
+    'ul',
+]
+BLEACH_ALLOWED_ATTRIBUTES = [
+    'height',
+    'href',
+    'src',
+    'style',
+    'width',
+]
 BLEACH_ALLOWED_STYLES = ['height', 'width']
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
@@ -340,6 +361,8 @@ LOGIN_REDIRECT_URL = reverse_lazy("profil")
 LOGOUT_NEXT_PAGE = reverse_lazy('profil')
 DJANGO_URL = ''
 SMART_SELECTS_URL_PREFIX = ""
+USE_DJANGO_JQUERY = True
+JQUERY_URL = None
 if PRODUCTION_ENVIRONMENT:
     AKLUB_URL = "https://klub.auto-mat.cz"
 else:
@@ -495,7 +518,16 @@ MIGRATION_MODULES = {
     'price_level': 'price_level_migrations',
 }
 
+CSRF_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_HSTS_SECONDS = 60
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+SECURE_REDIRECT_EXEMPT = [r"version\.txt"]
+X_FRAME_OPTIONS = 'DENY'
+
 
 MESSAGE_TAGS = {
     message_constants.DEBUG: 'debug',

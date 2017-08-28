@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from cache_utils.decorators import cached
+
 from denorm import denormalized, depend_on_related
 
 from django.contrib.gis.db import models
@@ -183,6 +185,11 @@ class Campaign(Pricable, models.Model):
         null=True,
         blank=True,
     )
+    wp_api_date_from = models.DateField(
+        verbose_name=_("Datum, od kterého se zobrazují příspěvky z Wordpress API se články"),
+        null=True,
+        blank=True,
+    )
 
     LANGUAGE_PREFIXES = [
         ('dpnk', _("Do práce na kole")),
@@ -206,17 +213,13 @@ class Campaign(Pricable, models.Model):
     def __str__(self):
         return self.name
 
+    def competitors_choose_team(self):
+        return self.max_team_members > 1
+
     def too_much_members(self, member_count):
         if self.max_team_members is None:
             return False
         return member_count > self.max_team_members
-
-    def late_admission_phase_actual(self):
-        late_admission_phase = self.phase("late_admission")
-        if late_admission_phase:
-            return late_admission_phase.is_actual()
-        else:
-            return True
 
     def user_attendances_for_delivery(self):
         from t_shirt_delivery.models import PackageTransaction
@@ -239,17 +242,10 @@ class Campaign(Pricable, models.Model):
     def has_any_tshirt(self):
         return self.tshirtsize_set.exists()
 
+    @cached(60)
     def phase(self, phase_type):
         """
         Return phase of given type from this campaign.
         @phase_type Type of phase.
         """
-        if not hasattr(self, "_phases"):
-            self._phases = {}
-        if phase_type not in self._phases:
-            from .phase import Phase
-            try:
-                self._phases[phase_type] = self.phase_set.get(phase_type=phase_type)
-            except Phase.DoesNotExist:
-                self._phases[phase_type] = None
-        return self._phases[phase_type]
+        return self.phase_set.get(phase_type=phase_type)

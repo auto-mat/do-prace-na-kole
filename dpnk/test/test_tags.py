@@ -26,6 +26,8 @@ from django.template import Context, Template
 from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 
+from dpnk.templatetags import dpnk_tags
+
 from model_mommy import mommy
 
 import slumber
@@ -37,7 +39,7 @@ import slumber
 class DpnkTagsTests(TestCase):
     def setUp(self):
         super().setUp()
-        self.campaign = mommy.make("Campaign")
+        self.campaign = mommy.make("Campaign", wp_api_date_from="2017-01-01")
         self.city = mommy.make("City", name="City", slug="test_city")
         self.factory = RequestFactory()
 
@@ -56,7 +58,8 @@ class DpnkTagsTests(TestCase):
             _post_type="post",
             order="DESC",
             orderby="DATE",
-            _year=2016,
+            _from='2017-01-01',
+            _to=datetime.date(2016, 11, 20),
         )
         self.assertHTMLEqual(response, '')
 
@@ -77,7 +80,8 @@ class DpnkTagsTests(TestCase):
             _post_type="post",
             order="DESC",
             orderby="DATE",
-            _year=2016,
+            _from='2017-01-01',
+            _to=datetime.date(2016, 11, 20),
         )
         self.assertHTMLEqual(response, '<div></div>')
 
@@ -97,7 +101,8 @@ class DpnkTagsTests(TestCase):
             _post_type="post",
             order="DESC",
             orderby="DATE",
-            _year=2016,
+            _from='2017-01-01',
+            _to=datetime.date(2016, 11, 20),
         )
         mock_logger.exception.assert_called_with("Error encoding wp news format", extra={'wp_feed': {'Test1': 'Test'}})
         self.assertHTMLEqual('<div/>', response)
@@ -126,7 +131,8 @@ class DpnkTagsTests(TestCase):
             _post_type="post",
             order="DESC",
             orderby="DATE",
-            _year=2016,
+            _from='2017-01-01',
+            _to=datetime.date(2016, 11, 20),
             _global_news=1,
         )
         self.assertHTMLEqual(
@@ -171,7 +177,8 @@ class DpnkTagsTests(TestCase):
             _connected_to="test_city",
             order="DESC",
             orderby="DATE",
-            _year=2016,
+            _from='2017-01-01',
+            _to=datetime.date(2016, 11, 20),
         )
         self.assertHTMLEqual(
             response,
@@ -217,7 +224,8 @@ class DpnkTagsTests(TestCase):
             _post_type="locations",
             _post_parent="test_city",
             orderby="start_date",
-            _year=2016,
+            _from='2017-01-01',
+            _to=datetime.date(2016, 11, 20),
         )
         self.assertHTMLEqual(
             response,
@@ -266,6 +274,8 @@ class DpnkTagsTests(TestCase):
             _post_parent="test_city",
             order="ASC",
             orderby='menu_order',
+            _from='2017-01-01',
+            _to=datetime.date(2016, 11, 20),
         )
         self.assertHTMLEqual(
             response,
@@ -336,10 +346,18 @@ class DpnkTagsTests(TestCase):
         )
 
 
+class UnquoteHtmlTests(TestCase):
+    def test_direct(self):
+        self.assertEqual(dpnk_tags.unquote_html('&lt;&gt;'), '<>')
+
+
 class ChangeLangTests(TestCase):
     def setUp(self):
         super().setUp()
         self.factory = RequestFactory()
+
+    def test_direct(self):
+        self.assertEqual(dpnk_tags.change_lang(Context(), lang='en'), '/en')
 
     def test_change_lang(self):
         template = Template("{% load dpnk_tags %}{% change_lang 'en' %}")
@@ -376,6 +394,9 @@ class RoundNumberTests(TestCase):
     def setUp(self):
         super().setUp()
         self.factory = RequestFactory()
+
+    def test_direct(self):
+        self.assertEqual(dpnk_tags.round_number(2.123456), 2.1)
 
     def test_without_parameters(self):
         template = Template("{% load dpnk_tags %}{{ i|round_number }}")

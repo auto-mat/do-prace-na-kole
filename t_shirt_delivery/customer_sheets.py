@@ -101,7 +101,9 @@ def make_sheet(subsidiary_box, canvas):
 #     canvas.drawString(second_column * cm, (page_height - offset - 2 * 0.5) * cm, "%s" % subsidiary.address_recipient)
 #
 #     canvas.drawString(first_column * cm, (page_height - offset - 3 * 0.5) * cm, "Ulice:")
-#     canvas.drawString(second_column * cm, (page_height - offset - 3 * 0.5) * cm, "%s %s" % (subsidiary.address_street, subsidiary.address_street_number))
+#     canvas.drawString(
+#         second_column * cm, (page_height - offset - 3 * 0.5) * cm, "%s %s" % (subsidiary.address_street, subsidiary.address_street_number)
+#     )
 #
 #     canvas.drawString(first_column * cm, (page_height - offset - 4 * 0.5) * cm, "PSČ:")
 #     canvas.drawString(second_column * cm, (page_height - offset - 4 * 0.5) * cm, "%s" % subsidiary.address_psc)
@@ -120,7 +122,7 @@ def make_team_sheet(team_package, canvas, package_counter):
     canvas.drawString(4.5 * cm, (page_height - 1.8) * cm, package_counter)
     canvas.setFont('DejaVu', 8)
     canvas.drawString(first_column * cm, (page_height - 2.3) * cm, "Tým: ")
-    canvas.drawString(second_column * cm, (page_height - 2.3) * cm, team_package.team.name)
+    canvas.drawString(second_column * cm, (page_height - 2.3) * cm, team_package.team.name or "")
     canvas.drawString(first_column * cm, (page_height - 2.65) * cm, "ID krab.: ")
     canvas.drawString(second_column * cm, (page_height - 2.65) * cm, "%s" % team_package.box.id)
     canvas.drawString(first_column * cm, (page_height - 3.0) * cm, "Spol.:")
