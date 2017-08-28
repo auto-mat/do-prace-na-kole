@@ -72,7 +72,7 @@ class TShirtSize(models.Model):
         verbose_name_plural = _(u"Velikosti trička")
         unique_together = (("name", "campaign"),)
         db_table = 't_shirt_delivery_tshirtsize'
-        ordering = ["campaign", "order"]
+        ordering = ["order"]
 
     def user_string(self):
         if self.price == 0:
