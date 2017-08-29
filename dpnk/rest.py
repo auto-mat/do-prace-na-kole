@@ -24,6 +24,8 @@ from rest_framework import permissions, routers, serializers, viewsets
 from rest_framework.exceptions import APIException
 from rest_framework.reverse import reverse
 
+from .middleware import get_or_create_userattendance
+
 from .models import City, CommuteMode, Company, Competition, CompetitionResult, GpxFile, Subsidiary, Team, Trip, UserAttendance
 
 
@@ -70,7 +72,12 @@ class GpxFileSerializer(serializers.ModelSerializer):
     )
 
     def create(self, validated_data):
-        validated_data['user_attendance'] = self.context['request'].user_attendance
+        request = self.context['request']
+        user_attendance = request.user_attendance
+        if not user_attendance:
+            user_attendance = get_or_create_userattendance(request, request.subdomain)
+        validated_data['user_attendance'] = user_attendance
+
         try:
             instance = GpxFile(**validated_data)
             instance.clean()
@@ -128,7 +135,10 @@ class GpxFileSet(viewsets.ModelViewSet):
     """
 
     def get_queryset(self):
-        return GpxFile.objects.filter(user_attendance__userprofile__user=self.request.user)
+        return GpxFile.objects.filter(
+            user_attendance__userprofile__user=self.request.user,
+            user_attendance__campaign=self.request.campaign,
+        )
 
     def get_serializer_class(self):
         return GpxFileDetailSerializer if self.action == 'retrieve' else GpxFileSerializer
