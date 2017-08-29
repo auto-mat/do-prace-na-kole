@@ -202,6 +202,17 @@ company_field = forms.ModelChoiceField(
 class RegisterSubsidiaryForm(AddressForm):
     company = company_field
 
+    def clean_company(self):
+        return self.company
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.company = kwargs['initial']['company']
+        self.fields['company'].widget.attrs['readonly'] = True
+        self.fields['company'].widget.attrs['disabled'] = True
+        self.fields['company'].required = False
+        self.fields['company'].help_text = ""
+
     class Meta:
         model = models.Subsidiary
         fields = ('company', 'city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
@@ -216,10 +227,17 @@ class RegisterTeamForm(InitialFieldsMixin, forms.ModelForm):
         queryset=models.Subsidiary.objects.filter(active=True),
     )
 
+    def clean_subsidiary(self):
+        return self.subsidiary
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['subsidiary'].queryset = kwargs['initial']['subsidiary'].company.subsidiaries.filter(active=True)
+        self.subsidiary = kwargs['initial']['subsidiary']
+        self.fields['subsidiary'].queryset = self.subsidiary.company.subsidiaries.filter(active=True)
         self.fields['subsidiary'].empty_label = None
+        self.fields['subsidiary'].widget.attrs['readonly'] = True
+        self.fields['subsidiary'].widget.attrs['disabled'] = True
+        self.fields['subsidiary'].required = False
 
     class Meta:
         model = models.Team
