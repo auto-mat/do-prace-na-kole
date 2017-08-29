@@ -187,7 +187,10 @@ class AddressForm(CampaignMixin, forms.ModelForm):
 company_field = forms.ModelChoiceField(
     label=_("Organizace"),
     queryset=models.Company.objects.filter(active=True),
-    widget=AutoCompleteSelectWidget(lookup_class='dpnk.lookups.CompanyLookup'),
+    widget=AutoCompleteSelectWidget(
+        lookup_class='dpnk.lookups.CompanyLookup',
+        attrs={'autocomplete': 'off'},
+    ),
     required=True,
     help_text=_(
         "Napište několik začátečních písmen názvu svého zaměstnavatele a pokud již existuje, nabídne se vám k výběru. "
