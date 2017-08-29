@@ -24,6 +24,31 @@ from django.utils.translation import ugettext_lazy as _
 from .models import Campaign, UserAttendance
 
 
+def get_or_create_userattendance(request, campaign_slug):
+    if request.user and request.user.is_authenticated():
+        try:
+            return UserAttendance.objects.select_related(
+                'campaign',
+                'team__subsidiary__city',
+                't_shirt_size',
+                'userprofile__user',
+                'representative_payment',
+                'related_company_admin',
+            ).annotate(
+                length=Length('track'),
+            ).get(
+                userprofile__user=request.user,
+                campaign__slug=campaign_slug,
+            )
+        except UserAttendance.DoesNotExist:
+            if hasattr(request.user, 'userprofile') and request.campaign:
+                return UserAttendance.objects.create(
+                    userprofile=request.user.userprofile,
+                    campaign=request.campaign,
+                    approved_for_team='undecided',
+                )
+
+
 class UserAttendanceMiddleware:
     def process_request(self, request):
         campaign_slug = request.subdomain
@@ -36,27 +61,4 @@ class UserAttendanceMiddleware:
             else:
                 request.campaign = None
 
-        if request.user and request.user.is_authenticated():
-            try:
-                request.user_attendance = UserAttendance.objects.select_related(
-                    'campaign',
-                    'team__subsidiary__city',
-                    't_shirt_size',
-                    'userprofile__user',
-                    'representative_payment',
-                    'related_company_admin',
-                ).annotate(
-                    length=Length('track'),
-                ).get(
-                    userprofile__user=request.user,
-                    campaign__slug=campaign_slug,
-                )
-            except UserAttendance.DoesNotExist:
-                if hasattr(request.user, 'userprofile') and request.campaign:
-                    request.user_attendance = UserAttendance.objects.create(
-                        userprofile=request.user.userprofile,
-                        campaign=request.campaign,
-                        approved_for_team='undecided',
-                    )
-        else:
-            request.user_attendance = None
+        request.user_attendance = get_or_create_userattendance(request, campaign_slug)

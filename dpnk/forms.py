@@ -187,7 +187,10 @@ class AddressForm(CampaignMixin, forms.ModelForm):
 company_field = forms.ModelChoiceField(
     label=_("Organizace"),
     queryset=models.Company.objects.filter(active=True),
-    widget=AutoCompleteSelectWidget(lookup_class='dpnk.lookups.CompanyLookup'),
+    widget=AutoCompleteSelectWidget(
+        lookup_class='dpnk.lookups.CompanyLookup',
+        attrs={'autocomplete': 'off'},
+    ),
     required=True,
     help_text=_(
         "Napište několik začátečních písmen názvu svého zaměstnavatele a pokud již existuje, nabídne se vám k výběru. "
@@ -198,6 +201,17 @@ company_field = forms.ModelChoiceField(
 
 class RegisterSubsidiaryForm(AddressForm):
     company = company_field
+
+    def clean_company(self):
+        return self.company
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.company = kwargs['initial']['company']
+        self.fields['company'].widget.attrs['readonly'] = True
+        self.fields['company'].widget.attrs['disabled'] = True
+        self.fields['company'].required = False
+        self.fields['company'].help_text = ""
 
     class Meta:
         model = models.Subsidiary
@@ -213,10 +227,17 @@ class RegisterTeamForm(InitialFieldsMixin, forms.ModelForm):
         queryset=models.Subsidiary.objects.filter(active=True),
     )
 
+    def clean_subsidiary(self):
+        return self.subsidiary
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['subsidiary'].queryset = kwargs['initial']['subsidiary'].company.subsidiaries.filter(active=True)
+        self.subsidiary = kwargs['initial']['subsidiary']
+        self.fields['subsidiary'].queryset = self.subsidiary.company.subsidiaries.filter(active=True)
         self.fields['subsidiary'].empty_label = None
+        self.fields['subsidiary'].widget.attrs['readonly'] = True
+        self.fields['subsidiary'].widget.attrs['disabled'] = True
+        self.fields['subsidiary'].required = False
 
     class Meta:
         model = models.Team

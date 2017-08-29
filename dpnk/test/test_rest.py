@@ -34,6 +34,8 @@ from model_mommy import mommy
 
 import settings
 
+from .mommy_recipes import UserAttendanceRecipe
+
 
 @freeze_time("2016-01-14")
 @override_settings(
@@ -122,6 +124,45 @@ class RestTests(TestCase):
             )
             self.assertEqual(response.status_code, 409)
 
+
+@override_settings(
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+)
+class TokenAuthenticationTests(TestCase):
+
+    def setUp(self):
+        self.user_attendance = UserAttendanceRecipe.make()
+        self.client = Client(
+            HTTP_HOST="testing-campaign.example.com",
+            HTTP_REFERER="test-referer",
+            HTTP_AUTHORIZATION="Token %s" % self.user_attendance.userprofile.user.auth_token,
+        )
+
+    def test_track_post(self):
+        response = self.client.post(
+            reverse("gpxfile-list"),
+            {
+                'trip_date': "2010-12-02",
+                'direction': 'trip_to',
+                "track": '{"type": "MultiLineString", "coordinates": [[[14.0, 50.0], [14.0, 51.0]]]}',
+            },
+        )
+        self.assertEquals(response.status_code, 201)
+        gpx_file = models.GpxFile.objects.get(trip_date=datetime.date(2010, 12, 2))
+        self.assertEquals(gpx_file.length(), 111.24)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "id": gpx_file.id,
+                "trip_date": "2010-12-02",
+                "direction": "trip_to",
+                "file": None,
+                "commuteMode": "bicycle",
+                "durationSeconds": None,
+                "distanceMeters": None,
+                "sourceApplication": None,
+            },
+        )
 
 # @override_settings(
 #     SITE_ID=2,

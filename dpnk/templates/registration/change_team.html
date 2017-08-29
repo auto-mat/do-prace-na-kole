@@ -23,7 +23,7 @@
                 "createCompanyCallback": function(data, options) {
                     $('#id_company_0').attr('value', data.name);
                     $('#id_company_1').attr('value', data.id);
-                    updateSubsidiary();
+                    $('#id_company_1').change();
                 },
                 "createSubsidiaryCallback": function(data, options) {
                     $('#id_company_1').change();
