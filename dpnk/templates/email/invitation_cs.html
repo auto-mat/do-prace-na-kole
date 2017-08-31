@@ -13,14 +13,14 @@ Váš kolega/kolegyně {{ inviting.userprofile }} Vás zve, abyste se zúčastni
 Jdete do toho? Přidejte se doplněním inforamcí na odkazu
 {% block register_link %}
 {% if not invited %}
-http://{{ inviting.campaign.slug }}.{{ SITE_URL }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email %}
+https://{{ inviting.campaign.slug }}.{{ SITE_URL }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email %}
 {% else %}
-http://{{ invited.campaign.slug }}.{{ SITE_URL }}{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email %}
+https://{{ invited.campaign.slug }}.{{ SITE_URL }}{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email %}
 {% endif %}
 {% endblock %}
 (Pokud Vám odkaz nefunguje, zkopírujte ho do svého webového prohlížeče.)
 
-Chcete vědět víc? Zeptejte se {{ inviting.userprofile }} na e-mailu {{ inviting.userprofile.user.email }} nebo se podívejte na stránky http://www.dopracenakole.cz
+Chcete vědět víc? Zeptejte se {{ inviting.userprofile }} na e-mailu {{ inviting.userprofile.user.email }} nebo se podívejte na stránky https://www.dopracenakole.cz
 
 
 Hodně šťastných kilometrů!
