@@ -249,3 +249,7 @@ class Campaign(Pricable, models.Model):
         @phase_type Type of phase.
         """
         return self.phase_set.get(phase_type=phase_type)
+
+    @cached(60)
+    def competition_phase(self):
+        return self.phase('competition')
