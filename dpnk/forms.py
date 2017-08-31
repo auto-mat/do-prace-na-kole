@@ -116,9 +116,11 @@ social_html = HTML(
         '</a>'
         '<a class="btn btn-block btn-social btn-facebook" href="{{% url "social:begin" "facebook" %}}">'
         '  <span class="fa fa-facebook"></span>{}'
-        '</a>',
+        '</a>'
+        '{}<br/>',
         _("Přihlásit se pomocí Google"),
         _("Přihlásit se pomocí Facebooku"),
+        _("Pokud již v systému máte účet, přihlašujte se pokud možno pomocí účtu se stále stejným e-mailem."),
     ),
 )
 
