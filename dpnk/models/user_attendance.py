@@ -130,6 +130,11 @@ class UserAttendance(models.Model):
         auto_now=True,
         null=True,
     )
+    personal_data_opt_in = models.BooleanField(
+        verbose_name=_(u"Souhlas se zpracováním osobních údajů."),
+        blank=False,
+        default=False,
+    )
 
     def payments(self):
         return self.transactions.instance_of(Payment)
@@ -348,7 +353,7 @@ class UserAttendance(models.Model):
             return None
 
     def entered_competition_reason(self):
-        if not self.userprofile.profile_complete():
+        if not self.userprofile.profile_complete() or not self.personal_data_opt_in:
             return 'profile_uncomplete'
         if not self.is_team_approved():
             if self.team_complete():
@@ -370,7 +375,8 @@ class UserAttendance(models.Model):
         return self.tshirt_complete() and\
             self.is_team_approved() and\
             self.has_paid() and\
-            self.userprofile.profile_complete()
+            self.userprofile.profile_complete() and\
+            self.personal_data_opt_in
 
     def team_member_count(self):
         if self.team:

@@ -788,12 +788,6 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
             (True, _("Přeji si dostávat e-mailem informace o akcích, událostech a dalších záležitostech souvisejících se soutěží.")),
             (False, _("Nechci dostávat e-maily (a beru na vědomí, že mi mohou uniknout důležité informace o průběhu soutěže).")),
         ]
-        self.fields['personal_data_opt_in'].required = True
-        self.fields['personal_data_opt_in'].label = _(
-            "Souhlasím se zpracováním osobních údajů podle "
-            "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
-            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>.",
-        ) % self.campaign
         return ret_val
 
     class Meta:
@@ -807,11 +801,29 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
             'mailing_opt_in',
             'language',
             'telephone',
-            'personal_data_opt_in',
         )
         widgets = {
             'mailing_opt_in': forms.RadioSelect(),
         }
+
+
+class UserAttendanceUpdateForm(CampaignMixin, forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
+        self.fields['personal_data_opt_in'].required = True
+        self.fields['personal_data_opt_in'].label = _(
+            "Souhlasím se zpracováním osobních údajů podle "
+            "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
+            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>.",
+        ) % self.campaign
+        return ret_val
+
+    class Meta:
+        model = models.UserAttendance
+        fields = (
+            'personal_data_opt_in',
+        )
 
 
 class ProfileUpdateForm(PrevNextMixin, MultiModelForm):
@@ -820,6 +832,7 @@ class ProfileUpdateForm(PrevNextMixin, MultiModelForm):
     form_classes = OrderedDict([
         ('user', UserUpdateForm),
         ('userprofile', UserProfileUpdateForm),
+        ('userattendance', UserAttendanceUpdateForm),
     ])
 
 

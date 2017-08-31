@@ -61,7 +61,7 @@ class ViewsTestsLogon(TestCase):
             userprofile__user__first_name="Testing",
             userprofile__user__last_name="User",
             userprofile__user__email="testing.user@email.com",
-            userprofile__personal_data_opt_in=True,
+            personal_data_opt_in=True,
             distance=5,
         )
         self.user_attendance.campaign.save()

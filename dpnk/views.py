@@ -1002,6 +1002,7 @@ class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginReq
             instance={
                 'user': self.user_attendance.userprofile.user,
                 'userprofile': self.user_attendance.userprofile,
+                'userattendance': self.user_attendance,
             },
         )
         return kwargs

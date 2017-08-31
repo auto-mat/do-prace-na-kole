@@ -125,11 +125,6 @@ class UserProfile(models.Model):
         help_text=_(u"Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."),
         default=None,
     )
-    personal_data_opt_in = models.BooleanField(
-        verbose_name=_(u"Souhlas se zpracováním osobních údajů."),
-        blank=False,
-        default=False,
-    )
     occupation = models.ForeignKey(
         Occupation,
         verbose_name=_("Profese"),
@@ -208,7 +203,7 @@ class UserProfile(models.Model):
         return not competition.city.exists() or not self.administrated_cities.filter(pk__in=competition.city.values_list("pk", flat=True)).exists()
 
     def profile_complete(self):
-        return self.sex and self.first_name() and self.last_name() and self.user.email and self.personal_data_opt_in
+        return self.sex and self.first_name() and self.last_name() and self.user.email
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
         if self.mailing_id and UserProfile.objects.exclude(pk=self.pk).filter(mailing_id=self.mailing_id).count() > 0:
