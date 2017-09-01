@@ -110,7 +110,7 @@ class TestEmails(TestCase):
         else:
             self.assertEqual(msg.subject, "Testing campaign 1 - registration confirmation")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'http://testing_campaign_1.localhost:8000%s/tym/%s/user1@email.com/' % (
+        link = 'https://testing_campaign_1.localhost:8000%s/tym/%s/user1@email.com/' % (
             language_url_infix(self.userprofile.language),
             self.user_attendance.team.invitation_token,
         )
@@ -125,7 +125,7 @@ class TestEmails(TestCase):
         else:
             self.assertEqual(msg.subject, "Testing campaign 1 - registration confirmation")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'http://testing_campaign_1.localhost:8000%s/' % language_url_infix(self.userprofile.language)
+        link = 'https://testing_campaign_1.localhost:8000%s/' % language_url_infix(self.userprofile.language)
         self.assertTrue(link in msg.body)
 
     def test_unfilled_rides_notification(self):
@@ -168,7 +168,7 @@ class TestEmails(TestCase):
         else:
             self.assertEqual(msg.subject, "Testing campaign 1 - Team membership DENIED")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'http://testing_campaign_1.localhost:8000%s/tym/' % language_url_infix(self.userprofile.language)
+        link = 'https://testing_campaign_1.localhost:8000%s/tym/' % language_url_infix(self.userprofile.language)
         self.assertTrue(link in msg.body)
 
     def test_send_team_created_mail(self):
@@ -180,7 +180,7 @@ class TestEmails(TestCase):
         else:
             self.assertEqual(msg.subject, "Testing campaign 1 - team creation confirmation")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'http://testing_campaign_1.localhost:8000%s/pozvanky/' % language_url_infix(self.userprofile.language)
+        link = 'https://testing_campaign_1.localhost:8000%s/pozvanky/' % language_url_infix(self.userprofile.language)
         self.assertTrue(link in msg.body)
 
     def test_send_invitation_mail(self):
@@ -193,9 +193,9 @@ class TestEmails(TestCase):
             self.assertEqual(msg.subject, "Testing campaign 1 - invitation to a team (pozvánka do týmu)")
         self.assertEqual(msg.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(msg.to[0], "email@email.com")
-        link_cs = 'http://testing_campaign_1.localhost:8000/registrace/%s/email@email.com/' % self.user_attendance.team.invitation_token
+        link_cs = 'https://testing_campaign_1.localhost:8000/registrace/%s/email@email.com/' % self.user_attendance.team.invitation_token
         self.assertTrue(link_cs in msg.body)
-        link_en = 'http://testing_campaign_1.localhost:8000/en/registrace/%s/email@email.com/' % self.user_attendance.team.invitation_token
+        link_en = 'https://testing_campaign_1.localhost:8000/en/registrace/%s/email@email.com/' % self.user_attendance.team.invitation_token
         self.assertTrue(link_en in msg.body)
 
     def test_send_payment_confirmation_mail(self):
@@ -253,7 +253,7 @@ class TestEmails(TestCase):
             self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - Company Coordinator - company administration approval")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
         msg = mail.outbox[0]
-        link = 'http://testing_campaign_1.localhost:8000%s/spolecnost/zadost_admina/' % language_url_infix(self.userprofile.language)
+        link = 'https://testing_campaign_1.localhost:8000%s/spolecnost/zadost_admina/' % language_url_infix(self.userprofile.language)
         self.assertTrue(link in msg.body)
         if self.userprofile.language == 'cs':
             message = "Zpráva pro Testing User, firemního koordinátora v organizaci Testing Company v soutěži Testing campaign 1"

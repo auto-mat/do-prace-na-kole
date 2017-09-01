@@ -81,7 +81,7 @@ def get_custom_fields(user_attendance):
     is_new_user = user_attendance.other_user_attendances(user_attendance.campaign).count() < 0
     entered_competition = user_attendance.entered_competition()
     team_member_count = user_attendance.team_member_count()
-    mailing_approval = user_attendance.userprofile.mailing_opt_in and user_attendance.userprofile.personal_data_opt_in
+    mailing_approval = user_attendance.userprofile.mailing_opt_in and user_attendance.personal_data_opt_in
 
     company_admin = user_attendance.related_company_admin
     company_admin_approved = company_admin.company_admin_approved if company_admin else False
@@ -177,7 +177,7 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
     user = userprofile.user
 
     try:
-        if user.is_active and userprofile.mailing_opt_in and userprofile.personal_data_opt_in:
+        if user.is_active and userprofile.mailing_opt_in and user_attendance.personal_data_opt_in:
             if user_attendance.get_userprofile().mailing_id:
                 update_user(user_attendance, ignore_hash)
             else:

@@ -177,6 +177,7 @@
             "track":  "MULTILINESTRING((0 0,-1 1))",
             "updated": "2015-11-12T18:18:40.223",
             "payment_status": "done",
+            "personal_data_opt_in": true,
             "userprofile": 1117
         },
         "model": "dpnk.userattendance",
@@ -194,6 +195,7 @@
             "team": 2,
             "track":  "MULTILINESTRING((0 0,-1 1))",
             "updated": "2015-11-12T18:18:40.223",
+            "personal_data_opt_in": true,
             "userprofile": 1117
         },
         "model": "dpnk.userattendance",
@@ -209,7 +211,6 @@
             "note": "",
             "sex": "male",
             "telephone": "",
-            "personal_data_opt_in": true,
             "mailing_opt_in": true,
             "ecc_password": "secret",
             "ecc_email": "email1128@dopracenakole.cz",
@@ -272,6 +273,7 @@
             "track": "MULTILINESTRING((0 0,-1 1))",
             "updated": "2015-11-12T18:18:40.223",
             "payment_status": "done",
+            "personal_data_opt_in": true,
             "userprofile": 1017
         },
         "model": "dpnk.userattendance",
@@ -453,6 +455,7 @@
             "track":  "MULTILINESTRING((0 0,-1 1))",
             "updated": "2015-11-12T18:18:40.223",
             "payment_status": "done",
+            "personal_data_opt_in": true,
             "userprofile": 2117
         },
         "model": "dpnk.userattendance",
@@ -468,7 +471,6 @@
             "note": "",
             "sex": "male",
             "telephone": "",
-            "personal_data_opt_in": true,
             "ecc_password": "secret",
             "ecc_email": "email2@dopracenakole.cz",
             "user": 2
@@ -486,7 +488,6 @@
             "note": "",
             "sex": "male",
             "telephone": "",
-            "personal_data_opt_in": true,
             "ecc_password": "secret",
             "ecc_email": "email2117@dopracenakole.cz",
             "user": 2128

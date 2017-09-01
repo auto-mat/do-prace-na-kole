@@ -70,7 +70,7 @@ class TestEnteredCompetitionReason(TestCase):
             campaign=self.campaign,
             team__campaign=self.campaign,
             userprofile__sex='male',
-            userprofile__personal_data_opt_in=True,
+            personal_data_opt_in=True,
             userprofile__user__first_name='foo',
             userprofile__user__last_name='user',
             userprofile__user__email='foo@user',
@@ -82,7 +82,7 @@ class TestEnteredCompetitionReason(TestCase):
         """
         Test that entered_competition_reason function works properly for uncomplete profile
         """
-        self.user_attendance.userprofile.personal_data_opt_in = False
+        self.user_attendance.personal_data_opt_in = False
         reason = self.user_attendance.entered_competition_reason()
         self.assertEqual(reason, 'profile_uncomplete')
 

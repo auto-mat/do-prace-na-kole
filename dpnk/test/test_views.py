@@ -999,7 +999,7 @@ class TestRidesView(ViewsLogonMommy):
             userprofile__user__last_name='User',
             userprofile__user__email='foo@bar.cz',
             userprofile__telephone='12345',
-            userprofile__personal_data_opt_in=True,
+            personal_data_opt_in=True,
             team__name="Foo team",
             approved_for_team='approved',
         )
@@ -1320,7 +1320,7 @@ class ViewsTestsLogon(ViewsLogon):
             'userprofile-language': 'cs',
             'userprofile-mailing_opt_in': 'True',
             'userprofile-nickname': 'My super nick',
-            'userprofile-personal_data_opt_in': 'True',
+            'userattendance-personal_data_opt_in': 'True',
             'userprofile-sex': 'male',
             'userprofile-telephone': '111222333',
             'next': 'Další',
