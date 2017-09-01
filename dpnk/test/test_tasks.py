@@ -68,6 +68,7 @@ class TestSendUnfilledRidesNotification(TestCase):
             ],
         )
         self.user_attendance.save()
+        mail.outbox = []
         mail_count = tasks.send_unfilled_rides_notification(campaign_slug="testing-campaign")
         self.assertEqual(mail_count, 1)
         self.assertEqual(len(mail.outbox), 1)

@@ -122,10 +122,12 @@ class TestSave(TransactionTestCase):
         payment = mommy.make(
             "Payment",
             user_attendance__campaign=testing_campaign,
+            user_attendance__team__campaign=testing_campaign,
             invoice=invoice,
             user_attendance__team__name="Foo team",
             user_attendance__userprofile__user__email="test@email.cz",
         )
+        mail.outbox = []
         PhaseRecipe.make()
         self.assertEquals(invoice.payment_set.get().status, 0)
         invoice.paid_date = datetime.date(year=2010, month=11, day=20)

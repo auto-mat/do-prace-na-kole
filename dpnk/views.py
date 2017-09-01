@@ -80,7 +80,6 @@ from .email import (
     approval_request_mail,
     invitation_mail,
     invitation_register_mail,
-    register_mail,
     team_created_mail,
     team_membership_approval_mail,
     team_membership_denial_mail,
@@ -287,8 +286,6 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrat
         )
         if team:
             approve_for_team(self.request, user_attendance, "", True, False)
-
-        register_mail(user_attendance)
         return new_user
 
 
