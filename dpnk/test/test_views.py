@@ -233,7 +233,7 @@ class CompetitionsViewTests(ViewsLogon):
 
         address = reverse('profil')
         response = self.client.get(address)
-        self.assertContains(response, '<div class="alert alert-info">Zde jste si zadávali vaše jízdy.</div>', html=True)
+        self.assertContains(response, '<div class="alert alert-info">Zde jste si zadávali své jízdy.</div>', html=True)
 
     @override_settings(
         FAKE_DATE=datetime.date(2000, 11, 20),
@@ -244,7 +244,7 @@ class CompetitionsViewTests(ViewsLogon):
         slumber_instance.feed.get.return_value = self.feed_value
 
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, '<div class="alert alert-info">Zde si budete od 1. listopadu 2010 zadávat vaše jízdy.</div>', html=True)
+        self.assertContains(response, '<div class="alert alert-info">Zde si budete od 1. listopadu 2010 zadávat své jízdy.</div>', html=True)
 
     @patch('slumber.API')
     def test_registration_access(self, slumber_api):
