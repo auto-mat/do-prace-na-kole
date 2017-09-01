@@ -59,7 +59,6 @@ class DpnkTagsTests(TestCase):
             order="DESC",
             orderby="DATE",
             _from='2017-01-01',
-            _to=datetime.date(2016, 11, 20),
         )
         self.assertHTMLEqual(response, '')
 
@@ -81,7 +80,6 @@ class DpnkTagsTests(TestCase):
             order="DESC",
             orderby="DATE",
             _from='2017-01-01',
-            _to=datetime.date(2016, 11, 20),
         )
         self.assertHTMLEqual(response, '<div></div>')
 
@@ -102,7 +100,6 @@ class DpnkTagsTests(TestCase):
             order="DESC",
             orderby="DATE",
             _from='2017-01-01',
-            _to=datetime.date(2016, 11, 20),
         )
         mock_logger.exception.assert_called_with("Error encoding wp news format", extra={'wp_feed': {'Test1': 'Test'}})
         self.assertHTMLEqual('<div/>', response)
@@ -132,7 +129,6 @@ class DpnkTagsTests(TestCase):
             order="DESC",
             orderby="DATE",
             _from='2017-01-01',
-            _to=datetime.date(2016, 11, 20),
             _global_news=1,
         )
         self.assertHTMLEqual(
@@ -178,7 +174,6 @@ class DpnkTagsTests(TestCase):
             order="DESC",
             orderby="DATE",
             _from='2017-01-01',
-            _to=datetime.date(2016, 11, 20),
         )
         self.assertHTMLEqual(
             response,
@@ -225,7 +220,6 @@ class DpnkTagsTests(TestCase):
             _post_parent="test_city",
             orderby="start_date",
             _from='2017-01-01',
-            _to=datetime.date(2016, 11, 20),
         )
         self.assertHTMLEqual(
             response,
@@ -275,7 +269,6 @@ class DpnkTagsTests(TestCase):
             order="ASC",
             orderby='menu_order',
             _from='2017-01-01',
-            _to=datetime.date(2016, 11, 20),
         )
         self.assertHTMLEqual(
             response,
