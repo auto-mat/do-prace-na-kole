@@ -3128,12 +3128,12 @@ msgstr "Fill in track in map or upload GPX file"
 #: templates/registration/rides.html:117
 #, python-format
 #| msgid "Zde budete zadávat vaše jízdy"
-msgid "Zde si budete od %(date_from)s zadávat vaše jízdy."
+msgid "Zde si budete od %(date_from)s zadávat své jízdy."
 msgstr "Here you will be filling in your rides since %(date_from)s"
 
 #: templates/registration/rides.html:119
 #| msgid "Zde budete zadávat vaše jízdy"
-msgid "Zde jste si zadávali vaše jízdy."
+msgid "Zde jste si zadávali své jízdy."
 msgstr "Here you were filling in your rides"
 
 #: templates/registration/rides_details.html:38

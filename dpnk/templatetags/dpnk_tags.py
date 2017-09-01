@@ -29,8 +29,6 @@ import requests
 
 import slumber
 
-from .. import util
-
 register = template.Library()
 logger = logging.getLogger(__name__)
 
@@ -58,7 +56,6 @@ def wp_news(campaign, city=None):
         orderby="DATE",
         count=5,
         _from=campaign.wp_api_date_from,
-        _to=util.today(),
         header=_("Novinky"),
         city=city,
         **({} if city else {'_global_news': 1}),
@@ -76,7 +73,6 @@ def wp_actions(campaign, city=None):
         _post_parent=city.slug if city else None,
         orderby='start_date',
         _from=campaign.wp_api_date_from,
-        _to=util.today(),
         count=5,
         header=_("Akce"),
         city=city,
@@ -95,7 +91,6 @@ def wp_prize(campaign, city=None):
         _page_subtype="prize",
         _post_parent=city.slug if city else None,
         _from=campaign.wp_api_date_from,
-        _to=util.today(),
         order="ASC",
         orderby="menu_order",
         header=_("Ceny"),
