@@ -81,11 +81,11 @@ class Company(models.Model):
         return ", ".join([a.userprofile.telephone for a in admins])
 
     def clean(self):
-        if Company.objects.filter(name__unaccent__iexact=self.name).exists():
+        if Company.objects.filter(name__unaccent__iexact=self.name).exclude(pk=self.pk).exists():
             raise ValidationError({'name': _('Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, vyberte tu stávající.')})
 
         if self.ico and Company.objects.filter(
             ico=self.ico,
             active=True,
-        ).exists():
+        ).exclude(pk=self.pk).exists():
             raise ValidationError({'ico': 'Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu'})

@@ -88,6 +88,7 @@ class TestEmails(TestCase):
             campaign=self.campaign,
             company_admin_approved='undecided',
         )
+        mail.outbox = []
 
     def test_send_approval_request_mail(self):
         email.approval_request_mail(self.user_attendance)
