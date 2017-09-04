@@ -213,6 +213,8 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
         'address_psc',
         'address_city',
         'address_district',
+        'ico',
+        'dic',
     )
     list_max_show_all = 10000
     form = CompanyForm
