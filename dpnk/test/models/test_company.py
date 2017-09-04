@@ -59,6 +59,13 @@ class TestCompany(TestCase):
         with self.assertRaisesRegex(ValidationError, "Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, vyberte tu stávající."):
             company.clean()
 
+    def test_clean_name_self(self):
+        """
+        Test that clean method doesn't raise error if company with similar name is self.
+        """
+        company = models.Company.objects.create(name="Foo company")
+        company.clean()
+
     def test_clean_ico_error(self):
         """
         Test that clean method raises error if company with same ico exists.
@@ -70,6 +77,13 @@ class TestCompany(TestCase):
             "Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu",
         ):
             company.clean()
+
+    def test_clean_ico_self(self):
+        """
+        Test that clean method doesn't raise error if company with same ico is self.
+        """
+        company = models.Company.objects.create(name="Foo", ico=12345)
+        company.clean()
 
     def test_has_filled_contact_information_false(self):
         """
