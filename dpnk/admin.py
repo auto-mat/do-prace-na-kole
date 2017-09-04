@@ -153,6 +153,10 @@ class CompanyForm(DontValidateCompnayFieldsMixin, forms.ModelForm):
     class Meta:
         model = models.Company
         fields = "__all__"
+        error_messages = {
+            'ico': {'stdnum_format': models.company.ICO_ERROR_MESSAGE},
+            'dic': {'stdnum_format': models.company.DIC_ERROR_MESSAGE},
+        }
 
 
 class CompanyMergeForm(DontValidateCompnayFieldsMixin, merge.MergeForm):

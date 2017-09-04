@@ -1044,7 +1044,7 @@ class TestRegisterCompanyView(ViewsLogonMommy):
 
     def test_create(self):
         post_data = {
-            'ico': '1234',
+            'ico': '12345679',
             'name': 'Foo name',
         }
         response = self.client.post(
@@ -1060,6 +1060,29 @@ class TestRegisterCompanyView(ViewsLogonMommy):
         )
 
     def test_duplicate_ico(self):
+        """ Test, that duplicate IČO error is reported to the user """
+        mommy.make('Company', ico='12345679')
+        post_data = {
+            'ico': '12345679',
+        }
+        response = self.client.post(
+            reverse('register_company'),
+            post_data,
+            follow=True,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
+        self.assertContains(
+            response,
+            "<strong>Toto pole je vyžadováno.</strong>",
+            html=True,
+        )
+        self.assertContains(
+            response,
+            "<strong>Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu</strong>",
+            html=True,
+        )
+
+    def test_invalid_ico(self):
         """ Test, that duplicate IČO error is reported to the user """
         mommy.make('Company', ico='1234')
         post_data = {
@@ -1078,7 +1101,7 @@ class TestRegisterCompanyView(ViewsLogonMommy):
         )
         self.assertContains(
             response,
-            "<strong>Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu</strong>",
+            "<strong>IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva.</strong>",
             html=True,
         )
 
