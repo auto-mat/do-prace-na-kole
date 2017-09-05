@@ -103,3 +103,6 @@ class Subsidiary(models.Model):
                 return "%s (%s)" % (self.address_recipient, self.company.name)
             else:
                 return self.company.name
+
+    def clean(self):
+        Address.clean(self.address, self, Subsidiary)

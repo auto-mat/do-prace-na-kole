@@ -1110,6 +1110,7 @@ class TestRegisterSubsidiaryView(ViewsLogonMommy):
     def test_create(self):
         city = mommy.make('City')
         mommy.make('CityInCampaign', city=city, campaign=self.user_attendance.campaign)
+        mommy.make('PSC', psc=12345)
         company = mommy.make('Company')
         post_data = {
             "company_0": 'Foo',

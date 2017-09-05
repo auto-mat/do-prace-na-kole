@@ -106,3 +106,5 @@ class Company(models.Model):
             active=True,
         ).exclude(pk=self.pk).exists():
             raise ValidationError({'ico': 'Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu'})
+
+        Address.clean(self.address, self, Company)

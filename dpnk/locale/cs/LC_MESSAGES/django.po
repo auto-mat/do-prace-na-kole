@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-05 11:33+0200\n"
+"POT-Creation-Date: 2017-09-06 10:37+0200\n"
 "PO-Revision-Date: 2017-04-19 14:59+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -257,7 +257,7 @@ msgstr ""
 msgid "E-mail"
 msgstr ""
 
-#: company_admin_forms.py:52 models/address.py:92 models/city.py:30
+#: company_admin_forms.py:52 models/address.py:95 models/city.py:30
 #: templates/registration/competitor_count.html:40
 msgid "Město"
 msgstr ""
@@ -509,7 +509,7 @@ msgstr ""
 msgid "Obsahuje odpověď"
 msgstr ""
 
-#: filters.py:170 forms.py:165 models/address.py:81
+#: filters.py:170 forms.py:165 models/address.py:84
 msgid "PSČ"
 msgstr ""
 
@@ -565,7 +565,7 @@ msgstr ""
 msgid "E-mail (uživatelské jméno)"
 msgstr ""
 
-#: forms.py:166 models/address.py:82
+#: forms.py:166 models/address.py:85
 msgid "Např.: „130 00“"
 msgstr ""
 
@@ -838,38 +838,44 @@ msgstr ""
 msgid "Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu."
 msgstr ""
 
-#: models/address.py:47
+#: models/address.py:50
 msgid "Ulice"
 msgstr ""
 
-#: models/address.py:48
+#: models/address.py:51
 msgid "Např. „Šeříková“ nebo „Nám. W. Churchilla“"
 msgstr ""
 
-#: models/address.py:55
+#: models/address.py:58
 msgid "Číslo domu"
 msgstr ""
 
-#: models/address.py:56
+#: models/address.py:59
 msgid "Např. „2965/12“ nebo „156“"
 msgstr ""
 
-#: models/address.py:63
+#: models/address.py:66
 msgid "Název pobočky (závodu, kanceláře, fakulty), nepovinné pole"
 msgstr ""
 
-#: models/address.py:65
+#: models/address.py:68
 msgid ""
 "Např. „odštěpný závod Brno“, „oblastní pobočka Liberec“, „Přírodovědecká "
 "fakulta“ atp. Nemá-li vaše organizace pobočky, pak nechte pole prázdné."
 msgstr ""
 
-#: models/address.py:74
+#: models/address.py:77
 msgid "Městská část"
 msgstr ""
 
-#: models/address.py:93
+#: models/address.py:96
 msgid "Např. „Jablonec n. N.“ nebo „Praha 3, Žižkov“"
+msgstr ""
+
+#: models/address.py:109
+msgid ""
+"Toto PSČ neexistuje v databázi všech směrovacích čísel České Republiky. "
+"Prosím zadejte platné PSČ"
 msgstr ""
 
 #: models/campaign.py:39
@@ -1088,7 +1094,7 @@ msgstr ""
 msgid "IČO musí být číslo"
 msgstr ""
 
-#: models/company.py:54 models/company.py:63
+#: models/company.py:54
 msgid ""
 "IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a "
 "případně ho doplňte nulami zleva."
