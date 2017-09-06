@@ -197,8 +197,8 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
         'address_street',
         'address_street_number',
         'address_recipient',
-        'address_psc',
         'address_city',
+        'address_psc',
         'id',
     )
     inlines = [SubsidiaryInline, CompanyAdminInline]
@@ -214,9 +214,8 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
         'address_street',
         'address_street_number',
         'address_recipient',
-        'address_psc',
         'address_city',
-        'address_district',
+        'address_psc',
         'ico',
         'dic',
     )
@@ -252,9 +251,8 @@ def create_subsidiary_resource(campaign_slugs):
                 'address_street',
                 'address_street_number',
                 'address_recipient',
-                'address_psc',
                 'address_city',
-                'address_district',
+                'address_psc',
                 'company__name',
                 'city__name',
                 'user_count',
@@ -288,10 +286,9 @@ class SubsidiaryAdmin(AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMix
         'address_recipient',
         'address_street',
         'address_street_number',
-        'address_psc',
         'address_city',
-        'address_district',
         'city',
+        'address_psc',
         'user_count',
         'team_count',
     )
@@ -310,19 +307,17 @@ class SubsidiaryAdmin(AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMix
         'company__name',
         'address_street',
         'address_street_number',
-        'address_psc',
         'address_city',
-        'address_district',
+        'address_psc',
     )
     advanced_filter_fields = (
         'company__name',
         'address_recipient',
         'address_street',
         'address_street_number',
-        'address_psc',
         'address_city',
-        'address_district',
         'city',
+        'address_psc',
     )
     raw_id_fields = ('company',)
     list_max_show_all = 10000
@@ -830,7 +825,6 @@ class UserAttendanceAdmin(
         'team__subsidiary__address_psc',
         'team__subsidiary__address_recipient',
         'team__subsidiary__address_city',
-        'team__subsidiary__address_district',
         'team__subsidiary__company__name',
     )
     readonly_fields = (
@@ -1028,7 +1022,6 @@ class AnswerResource(resources.ModelResource):
             'user_attendance__team__subsidiary__address_street',
             'user_attendance__team__subsidiary__address_street_number',
             'user_attendance__team__subsidiary__address_recipient',
-            'user_attendance__team__subsidiary__address_district',
             'user_attendance__team__subsidiary__address_psc',
             'user_attendance__team__subsidiary__address_city',
             'user_attendance__team__subsidiary__company__name',
@@ -1370,7 +1363,6 @@ class InvoiceResource(resources.ModelResource):
             'company__address_street',
             'company__address_street_number',
             'company__address_recipient',
-            'company__address_district',
             'company__address_psc',
             'company__address_city',
             'company_admin_telephones',

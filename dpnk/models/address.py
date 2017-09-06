@@ -73,13 +73,6 @@ def address_generator(null_blank=False):
             null=True,
             blank=True,
         )
-        district = models.CharField(
-            verbose_name=_(u"Městská část"),
-            default="",
-            max_length=50,
-            null=True,
-            blank=True,
-        )
         psc = models.IntegerField(
             verbose_name=_(u"PSČ"),
             help_text=_(u"Např.: „130 00“"),
