@@ -41,3 +41,7 @@ class PSCAdmin(ImportExportMixin, admin.ModelAdmin):
         'post_name',
         'code',
     )
+    readonly_fields = (
+        'author',
+        'updated_by',
+    )
