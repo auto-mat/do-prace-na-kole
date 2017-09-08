@@ -29,6 +29,7 @@ from selectable.forms.widgets import AutoCompleteSelectWidget
 
 from table_select_widget import TableSelectMultiple
 
+from . import models
 from .forms import AddressForm, EmailUsernameMixin, SubmitMixin
 from .models import Campaign, City, Company, CompanyAdmin, Competition, Invoice, Subsidiary, UserAttendance
 from .util import slugify
@@ -95,11 +96,14 @@ class CompanyForm(SubmitMixin, AddressForm):
     class Meta:
         model = Company
         fields = ('name', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city', 'ico', 'dic')
+        error_messages = {
+            'ico': {'stdnum_format': models.company.ICO_ERROR_MESSAGE},
+            'dic': {'stdnum_format': models.company.DIC_ERROR_MESSAGE},
+        }
 
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['address_recipient'].label = _(u"Adresát na faktuře")
-        self.fields['address_recipient'].help_text = _(u"Např. Výrobna, a.s., Příspěvková, p.o., Nevládka, o.s., Univerzita Karlova")
         return ret_val
 
 

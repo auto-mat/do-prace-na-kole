@@ -90,3 +90,4 @@ django-fm
 django-braces
 django-initial-field
 django-betterforms
+django-stdnumfield

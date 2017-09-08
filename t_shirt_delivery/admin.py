@@ -168,7 +168,6 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, NestedMod
         'subsidiary__address_psc',
         'subsidiary__address_recipient',
         'subsidiary__address_city',
-        'subsidiary__address_district',
         'subsidiary__company__name',
     )
     advanced_filter_fields = (
@@ -434,7 +433,6 @@ class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
         'team__subsidiary__address_psc',
         'team__subsidiary__address_recipient',
         'team__subsidiary__address_city',
-        'team__subsidiary__address_district',
         'team__subsidiary__company__name',
     )
     actions = (actions.create_batch, )

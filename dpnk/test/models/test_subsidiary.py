@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from model_mommy import mommy
@@ -110,3 +111,14 @@ class TestSubsidiaryMethods(TestCase):
             subsidiary.get_recipient_string(),
             "Foo company",
         )
+
+    def test_invalid_psc(self):
+        """
+        Test that clean with invalid PSČ throws ValidationError
+        """
+        subsidiary = mommy.make(
+            "Subsidiary",
+            address_psc=12345,
+        )
+        with self.assertRaises(ValidationError):
+            subsidiary.clean()

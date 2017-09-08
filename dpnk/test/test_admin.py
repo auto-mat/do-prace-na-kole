@@ -161,7 +161,7 @@ class AdminModulesTests(DenormMixin, TestCase):
             'file_format': 0,
         }
         response = self.client.post(address, post_data)
-        self.assertContains(response, '1,"Ulice 1, 111 11 Praha",Ulice,1,,11111,Praha,,Testing company,Testing city')
+        self.assertContains(response, '1,"Ulice 1, 111 11 Praha",Ulice,1,,Praha,11111,Testing company,Testing city')
 
     def test_userprofile_export(self):
         address = "/admin/dpnk/userprofile/export/"
@@ -182,7 +182,7 @@ class AdminModulesTests(DenormMixin, TestCase):
         response = self.client.post(address, post_data)
         self.assertContains(
             response,
-            "5,Testing,User 1,test@test.cz,1128,,1117,Testing team 1,Ulice,1,,,11111,"
+            "5,Testing,User 1,test@test.cz,1128,,1117,Testing team 1,Ulice,1,,11111,"
             "Praha,Testing company,Testing city,1115,,2,,,1,yes,Answer without attachment",
         )
 
@@ -192,7 +192,7 @@ class AdminModulesTests(DenormMixin, TestCase):
             'file_format': 0,
         }
         response = self.client.post(address, post_data)
-        self.assertContains(response, "0.0,0,Testing campaign,1,,11111,CZ1234567890,0,Ulice,1,,,11111,Praha")
+        self.assertContains(response, "0.0,0,Testing campaign,1,,11111,CZ1234567890,0,Ulice,1,,11111,Praha")
 
     def test_competition_masschange(self):
         address = reverse('admin:dpnk_competition_changelist')

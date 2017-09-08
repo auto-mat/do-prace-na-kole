@@ -1044,7 +1044,7 @@ class TestRegisterCompanyView(ViewsLogonMommy):
 
     def test_create(self):
         post_data = {
-            'ico': '1234',
+            'ico': '12345679',
             'name': 'Foo name',
         }
         response = self.client.post(
@@ -1061,9 +1061,9 @@ class TestRegisterCompanyView(ViewsLogonMommy):
 
     def test_duplicate_ico(self):
         """ Test, that duplicate IČO error is reported to the user """
-        mommy.make('Company', ico='1234')
+        mommy.make('Company', ico='12345679')
         post_data = {
-            'ico': '1234',
+            'ico': '12345679',
         }
         response = self.client.post(
             reverse('register_company'),
@@ -1082,11 +1082,35 @@ class TestRegisterCompanyView(ViewsLogonMommy):
             html=True,
         )
 
+    def test_invalid_ico(self):
+        """ Test, that duplicate IČO error is reported to the user """
+        mommy.make('Company', ico='1234')
+        post_data = {
+            'ico': '1234',
+        }
+        response = self.client.post(
+            reverse('register_company'),
+            post_data,
+            follow=True,
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
+        self.assertContains(
+            response,
+            "<strong>Toto pole je vyžadováno.</strong>",
+            html=True,
+        )
+        self.assertContains(
+            response,
+            "<strong>IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva.</strong>",
+            html=True,
+        )
+
 
 class TestRegisterSubsidiaryView(ViewsLogonMommy):
     def test_create(self):
         city = mommy.make('City')
         mommy.make('CityInCampaign', city=city, campaign=self.user_attendance.campaign)
+        mommy.make('PSC', psc=12345)
         company = mommy.make('Company')
         post_data = {
             "company_0": 'Foo',

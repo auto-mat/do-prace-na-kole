@@ -22,8 +22,11 @@
 from composite_field import CompositeField
 
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import ugettext_lazy as _
+
+from psc.models import PSC
 
 from .. import util
 
@@ -70,13 +73,6 @@ def address_generator(null_blank=False):
             null=True,
             blank=True,
         )
-        district = models.CharField(
-            verbose_name=_(u"Městská část"),
-            default="",
-            max_length=50,
-            null=True,
-            blank=True,
-        )
         psc = models.IntegerField(
             verbose_name=_(u"PSČ"),
             help_text=_(u"Např.: „130 00“"),
@@ -99,6 +95,12 @@ def address_generator(null_blank=False):
 
         def __str__(self):
             return get_address_string(self)
+
+        def clean(self, value, model):
+            if self.psc and not PSC.objects.filter(psc=self.psc).exists():
+                raise ValidationError(
+                    {'address_psc': _('Toto PSČ neexistuje v databázi všech směrovacích čísel České Republiky. Prosím zadejte platné PSČ')},
+                )
 
     return AddressField
 

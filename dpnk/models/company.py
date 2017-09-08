@@ -21,9 +21,20 @@
 
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
 
+from stdnumfield.models import StdNumField
+
 from .address import Address, get_address_string
+
+
+ICO_ERROR_MESSAGE = _("IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva.")
+DIC_ERROR_MESSAGE = _(
+    "DIČ není zadáno ve správném formátu. "
+    "Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva. "
+    "Číslu musí předcházet dvě písmena identifikátoru země (např. CZ)",
+)
 
 
 class Company(models.Model):
@@ -42,19 +53,25 @@ class Company(models.Model):
         null=False,
     )
     address = Address()
-    ico = models.PositiveIntegerField(
+    ico = StdNumField(
+        'cz.dic',
         default=None,
         verbose_name=_(u"IČO"),
         help_text=_("Pokud má vaše organizace IČO, prosím vyplňte, jinak nechte prázdné."),
-        null=True,
-        blank=True,
+        validators=[RegexValidator(r'^[0-9]*$', _('IČO musí být číslo'))],
+        error_messages={'stdnum_format': ICO_ERROR_MESSAGE},
+        blank=False,
+        null=False,
     )
-    dic = models.CharField(
+    dic = StdNumField(
+        'cz.dic',
         verbose_name=_(u"DIČ"),
         max_length=15,
         default="",
-        null=True,
-        blank=True,
+        validators=[RegexValidator(r'^[a-zA-Z]{2}[0-9]*$', _('DIČ musí být číslo uvozené dvoupísmeným identifikátorem státu.'))],
+        error_messages={'stdnum_format': DIC_ERROR_MESSAGE},
+        blank=False,
+        null=False,
     )
     active = models.BooleanField(
         verbose_name=_(u"Aktivní"),
@@ -89,3 +106,5 @@ class Company(models.Model):
             active=True,
         ).exclude(pk=self.pk).exists():
             raise ValidationError({'ico': 'Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu'})
+
+        Address.clean(self.address, self, Company)

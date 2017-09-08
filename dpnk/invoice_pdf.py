@@ -31,7 +31,7 @@ def make_invoice_sheet_pdf(outfile, invoice):
         address="%s %s" % (invoice.company_address_street, invoice.company_address_street_number),
         zip=invoice.company_address_psc or "",
         city=invoice.company_address_city,
-        ir="%08d" % invoice.company_ico if invoice.company_ico else "",
+        ir=invoice.company_ico,
         vat_id=invoice.company_dic,
     )
 

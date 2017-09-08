@@ -155,6 +155,7 @@ class RegisterCompanyForm(forms.ModelForm):
     class Meta:
         model = models.Company
         fields = ('name', 'ico')
+        error_messages = {'ico': {'stdnum_format': models.company.ICO_ERROR_MESSAGE}}
 
 
 class AddressForm(CampaignMixin, forms.ModelForm):

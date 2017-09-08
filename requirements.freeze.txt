@@ -70,6 +70,7 @@ django-ses==0.8.2
 django-settings-context-processor==0.2
 -e git+https://github.com/PetrDlouhy/django-smart-selects@1fb0639756b1eb565caf1013f667bf2e85a6c071#egg=django_smart_selects
 django-softhyphen==1.1.0
+-e git+https://github.com/PetrDlouhy/django-stdnumfield.git@40d7d109c05399847f4c83dff36a99645ba57e6b#egg=django_stdnumfield  # git version is for exception_text parameter
 django-storages==1.6.3
 django-su==0.5.2
 django-subdomains==2.1.0
@@ -106,6 +107,7 @@ psycopg2==2.7.1
 PyJWT==1.5.2
 PyPDF2==1.26.0
 python-memcached==1.58
+python-stdnum==1.5
 python3-openid==3.1.0
 pytz==2017.2
 PyYAML==3.12
