@@ -39,7 +39,7 @@ from unidecode import unidecode
 from .address import AddressOptional
 from .company import Company
 from .transactions import Payment, Status
-from .. import invoice_pdf, util
+from .. import invoice_gen, util
 
 
 @with_author
@@ -93,6 +93,13 @@ class Invoice(models.Model):
     invoice_pdf = models.FileField(
         verbose_name=_(u"PDF faktury"),
         upload_to=u'invoices',
+        max_length=512,
+        blank=True,
+        null=True,
+    )
+    invoice_xml = models.FileField(
+        verbose_name=_("XML faktury"),
+        upload_to='invoices',
         max_length=512,
         blank=True,
         null=True,
@@ -281,17 +288,19 @@ def create_invoice_files(sender, instance, created, **kwargs):
     if created:
         instance.add_payments()
 
-    if not instance.invoice_pdf:
-        temp = NamedTemporaryFile()
-        invoice_pdf.make_invoice_sheet_pdf(temp, instance)
-        filename = "%s/invoice_%s_%s_%s_%s.pdf" % (
+    if not instance.invoice_pdf or not instance.invoice_xml:
+        temp_pdf = NamedTemporaryFile()
+        temp_xml = NamedTemporaryFile()
+        invoice_gen.make_invoice_files(temp_pdf, temp_xml, instance)
+        filename = "%s/invoice_%s_%s_%s_%s" % (
             instance.campaign.slug,
             instance.sequence_number,
             unidecode(instance.company.name[0:40]),
             instance.exposure_date.strftime("%Y-%m-%d"),
             hash(str(instance.pk) + settings.SECRET_KEY)
         )
-        instance.invoice_pdf.save(filename, File(temp))
+        instance.invoice_pdf.save("%s.pdf" % filename, File(temp_pdf), save=False)
+        instance.invoice_xml.save("%s.xml" % filename, File(temp_xml), save=False)
         instance.save()
 
 

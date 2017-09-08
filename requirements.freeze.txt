@@ -87,7 +87,7 @@ gpxpy==1.1.2
 gunicorn==19.7.1
 html5lib==0.999999999
 idna==2.5
--e git+https://github.com/PetrDlouhy/InvoiceGenerator.git@65337953a5f8b0feeef33ef2804f08868bce0269#egg=InvoiceGenerator
+-e git+https://github.com/PetrDlouhy/InvoiceGenerator.git@a5bdef98cf729e70bbac840aedf406469cace4bb#egg=InvoiceGenerator
 itypes==1.1.0
 jdcal==1.3
 Jinja2==2.9.6

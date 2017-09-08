@@ -1386,6 +1386,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'total_amount',
         'payments_count',
         'invoice_pdf_url',
+        'invoice_xml_url',
         'campaign',
         'sequence_number',
         'order_number',
@@ -1422,7 +1423,12 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         return InvoiceForm
 
     def invoice_pdf_url(self, obj):
-        return format_html("<a href='{}'>invoice.pdf</a>", obj.invoice_pdf.url)
+        if obj.invoice_pdf:
+            return format_html("<a href='{}'>invoice.pdf</a>", obj.invoice_pdf.url)
+
+    def invoice_xml_url(self, obj):
+        if obj.invoice_xml:
+            return format_html("<a href='{}'>invoice.xml</a>", obj.invoice_xml.url)
 
 
 @admin.register(models.GpxFile)

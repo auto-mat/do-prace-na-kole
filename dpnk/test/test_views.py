@@ -1459,7 +1459,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.company_payment(amount=230.0, amount_tax=278)
 
     def test_company_payment_beneficiary(self):
-        self.company_payment(beneficiary=True, amount=130.0, amount_tax=544)
+        self.company_payment(beneficiary=True, amount=130.0, amount_tax=545)
 
     def test_dpnk_team_approval(self):
         ua = models.UserAttendance.objects.get(pk=1015)
