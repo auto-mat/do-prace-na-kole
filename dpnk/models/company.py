@@ -60,8 +60,8 @@ class Company(models.Model):
         help_text=_("Pokud má vaše organizace IČO, prosím vyplňte, jinak nechte prázdné."),
         validators=[RegexValidator(r'^[0-9]*$', _('IČO musí být číslo'))],
         error_messages={'stdnum_format': ICO_ERROR_MESSAGE},
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
     dic = StdNumField(
         'cz.dic',
@@ -70,8 +70,8 @@ class Company(models.Model):
         default="",
         validators=[RegexValidator(r'^[a-zA-Z]{2}[0-9]*$', _('DIČ musí být číslo uvozené dvoupísmeným identifikátorem státu.'))],
         error_messages={'stdnum_format': DIC_ERROR_MESSAGE},
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
     )
     active = models.BooleanField(
         verbose_name=_(u"Aktivní"),
