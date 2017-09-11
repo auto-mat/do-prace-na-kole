@@ -289,9 +289,8 @@ def create_invoice_files(sender, instance, created, **kwargs):
         instance.add_payments()
 
     if not instance.invoice_pdf or not instance.invoice_xml:
-        temp_pdf = NamedTemporaryFile()
-        temp_xml = NamedTemporaryFile()
-        invoice_gen.make_invoice_files(temp_pdf, temp_xml, instance)
+        invoice_data = invoice_gen.generate_invoice(instance)
+        instance.total_amount = invoice_data.price_tax
         filename = "%s/invoice_%s_%s_%s_%s" % (
             instance.campaign.slug,
             instance.sequence_number,
@@ -299,8 +298,17 @@ def create_invoice_files(sender, instance, created, **kwargs):
             instance.exposure_date.strftime("%Y-%m-%d"),
             hash(str(instance.pk) + settings.SECRET_KEY)
         )
-        instance.invoice_pdf.save("%s.pdf" % filename, File(temp_pdf), save=False)
-        instance.invoice_xml.save("%s.xml" % filename, File(temp_xml), save=False)
+
+        if not instance.invoice_pdf:
+            temp_pdf = NamedTemporaryFile()
+            invoice_gen.make_invoice_pdf(temp_pdf, invoice_data)
+            instance.invoice_pdf.save("%s.pdf" % filename, File(temp_pdf), save=False)
+
+        if not instance.invoice_xml:
+            temp_xml = NamedTemporaryFile()
+            invoice_gen.make_invoice_xml(temp_xml, invoice_data)
+            instance.invoice_xml.save("%s.xml" % filename, File(temp_xml), save=False)
+
         instance.save()
 
 

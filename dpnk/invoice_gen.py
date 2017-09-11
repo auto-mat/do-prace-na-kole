@@ -85,12 +85,11 @@ def generate_invoice(invoice):
     return invoice_gen
 
 
-def make_invoice_files(outfile_pdf, outfile_xml, invoice):
-    invoice_gen = generate_invoice(invoice)
-    invoice.total_amount = invoice_gen.price_tax
-
+def make_invoice_pdf(outfile_pdf, invoice_gen):
     pdf_file = pdf.SimpleInvoice(invoice_gen)
     pdf_file.gen(outfile_pdf, generate_qr_code=True)
 
+
+def make_invoice_xml(outfile_xml, invoice_gen):
     xml_file = pohoda.SimpleInvoice(invoice_gen)
     xml_file.gen(outfile_xml)
