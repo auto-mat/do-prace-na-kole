@@ -726,19 +726,19 @@ class ViewsTests(DenormMixin, TestCase):
             OrderedDict((('Key', 'Auth_token'), ('Value', 'd201a3c9e88ecd433fdbbc3a2e451cbd3f80c4ba'))),
             OrderedDict((('Key', 'Id'), ('Value', 1128))),
             OrderedDict((('Key', 'Novacek'), ('Value', False))),
-            OrderedDict((('Key', 'Kampan'), ('Value', 'testing-campaign'))),
+            OrderedDict((('Key', 'Kampan'), ('Value', 339))),
             OrderedDict((('Key', 'Vstoupil_do_souteze'), ('Value', True))),
             OrderedDict((('Key', 'Pocet_lidi_v_tymu'), ('Value', 3))),
             OrderedDict((('Key', 'Povoleni_odesilat_emaily'), ('Value', True))),
         ]
         createsend.Subscriber.add.assert_called_once_with('12345abcde', 'test@test.cz', 'Testing User 1', custom_fields, True)
         self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '82ca8d77c8ffba798961b3f4fe20c3c8')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '0ef7bf8842d0f25db6a7e108b8d46228')
 
         createsend.Subscriber.update = MagicMock()
         mailing.add_or_update_user_synchronous(user_attendance)
         self.assertFalse(createsend.Subscriber.update.called)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '82ca8d77c8ffba798961b3f4fe20c3c8')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '0ef7bf8842d0f25db6a7e108b8d46228')
 
         custom_fields[0] = OrderedDict((('Key', 'Mesto'), ('Value', 'other-city')))
         user_attendance.team.subsidiary.city = models.City.objects.get(slug="other-city")
@@ -748,7 +748,7 @@ class ViewsTests(DenormMixin, TestCase):
         mailing.add_or_update_user_synchronous(user_attendance)
         createsend.Subscriber.get.assert_called_once_with('12345abcde', ret_mailing_id)
         createsend.Subscriber.update.assert_called_once_with('test@test.cz', 'Testing User 1', custom_fields, True)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '367f900844fe84e2d019f139f49fccfb')
+        self.assertEqual(user_attendance.userprofile.mailing_hash, '1e57792f94b9a95f1d6c812429873b40')
 
         user_attendance.userprofile.user.is_active = False
         user_attendance.userprofile.user.save()

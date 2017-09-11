@@ -94,7 +94,7 @@ def get_custom_fields(user_attendance):
         OrderedDict((('Key', "Auth_token"), ('Value', user.auth_token.key))),
         OrderedDict((('Key', "Id"), ('Value', user.pk))),
         OrderedDict((('Key', "Novacek"), ('Value', is_new_user))),
-        OrderedDict((('Key', "Kampan"), ('Value', user_attendance.campaign.slug))),
+        OrderedDict((('Key', "Kampan"), ('Value', user_attendance.campaign.pk))),
         OrderedDict((('Key', "Vstoupil_do_souteze"), ('Value', entered_competition))),
         OrderedDict((('Key', "Pocet_lidi_v_tymu"), ('Value', team_member_count))),
         OrderedDict((('Key', "Povoleni_odesilat_emaily"), ('Value', mailing_approval))),
