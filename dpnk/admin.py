@@ -97,8 +97,8 @@ class PaymentInline(NestedTabularInline):
     model = models.Payment
     extra = 0
     form = transaction_forms.PaymentForm
-    readonly_fields = ['user_attendance', 'order_id', 'session_id', 'trans_id', 'error', 'author', 'updated_by']
-    raw_id_fields = ['invoice', ]
+    readonly_fields = ['order_id', 'session_id', 'trans_id', 'error', 'author', 'updated_by']
+    raw_id_fields = ['invoice', 'user_attendance']
     formfield_overrides = {
         TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
     }
@@ -973,7 +973,9 @@ class PaymentAdmin(ImportExportMixin, RelatedFieldAdmin):
         'error',
         'order_id',
         'author',
-        'user_attendance__team__subsidiary__company__name')
+        'invoice',
+        'user_attendance__team__subsidiary__company__name',
+    )
     search_fields = (
         'user_attendance__userprofile__nickname',
         'user_attendance__userprofile__user__first_name',
