@@ -42,7 +42,7 @@ from .email import company_admin_register_competitor_mail, company_admin_registe
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
 from .string_lazy import mark_safe_lazy
 from .views import AdmissionsView, RegistrationViewMixin, TitleViewMixin
-from .views_mixins import CompanyAdminMixin
+from .views_mixins import CompanyAdminMixin, RequestFormMixin
 from .views_permission_mixins import MustBeCompanyAdminMixin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
 logger = logging.getLogger(__name__)
 
@@ -71,7 +71,14 @@ class RelatedCompetitionsView(MustBeCompanyAdminMixin, AdmissionsView):
     template_name = "company_admin/related_competitions.html"
 
 
-class SelectUsersPayView(SuccessMessageMixin, TitleViewMixin, MustBeInPaymentPhaseMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, FormView):
+class SelectUsersPayView(
+        SuccessMessageMixin,
+        TitleViewMixin,
+        MustBeInPaymentPhaseMixin,
+        MustBeCompanyAdminMixin,
+        LoginRequiredMixin,
+        RequestFormMixin,
+        FormView):
     template_name = 'company_admin/select_users_pay_for.html'
     form_class = SelectUsersPayForm
     success_url = reverse_lazy('company_admin_pay_for_users')

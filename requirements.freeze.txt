@@ -74,7 +74,7 @@ django-softhyphen==1.1.0
 django-storages==1.6.3
 django-su==0.5.2
 django-subdomains==2.1.0
-django-table-select-widget==1.1.0
+-e git+https://github.com/PetrDlouhy/DjangoTableSelectMultipleWidget.git@1096c65f3dbc7c5112e20205d1d7e5b3f32a1b24#egg=django-table-select-widget  # for datatable_options parameter
 django-wysiwyg-redactor==0.5.1
 djangorestframework==3.6.3
 djangorestframework-gis==0.11.2
