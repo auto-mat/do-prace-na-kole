@@ -86,6 +86,7 @@ def generate_invoice(invoice):
 
 
 def make_invoice_pdf(outfile_pdf, invoice_gen):
+    os.environ["INVOICE_LANG"] = "cs"
     pdf_file = pdf.SimpleInvoice(invoice_gen)
     pdf_file.gen(outfile_pdf, generate_qr_code=True)
 
