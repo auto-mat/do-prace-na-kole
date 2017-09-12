@@ -1409,6 +1409,9 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'updated_by',
         'payments_count',
     ]
+    raw_id_fields = [
+        'company',
+    ]
     list_filter = [
         CampaignFilter,
         isnull_filter('paid_date', _("Nezaplacené faktury")),
