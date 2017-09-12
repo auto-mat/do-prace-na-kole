@@ -201,6 +201,7 @@ class Invoice(models.Model):
     def payments_count(self):
         return self.payment_set.count()
     payments_count.short_description = _("Počet plateb")
+    payments_count.admin_order_field = "payments_count"
 
     @transaction.atomic
     def save(self, *args, **kwargs):

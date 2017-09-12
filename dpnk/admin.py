@@ -1421,6 +1421,12 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
     form = InvoiceForm
     resource_class = InvoiceResource
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.annotate(
+            payments_count=Count('payment_set'),
+        )
+
     def get_changelist_form(self, request, **kwargs):
         return InvoiceForm
 
