@@ -29,11 +29,10 @@ from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils.safestring import mark_safe
+from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
 from django_gpxpy import gpx_parse
-
-from unidecode import unidecode
 
 from .commute_mode import CommuteMode
 from .trip import Trip
@@ -44,9 +43,9 @@ from .. import util
 
 def normalize_gpx_filename(instance, filename):
     return '-'.join([
-        'gpx_tracks/%s/track' % instance.user_attendance.campaign.slug,
+        'gpx_tracks/dpnk-%s/track' % instance.user_attendance.campaign.pk,
         datetime.datetime.now().strftime("%Y-%m-%d"),
-        unidecode(filename),
+        slugify(filename),
     ])
 
 

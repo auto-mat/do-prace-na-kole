@@ -22,6 +22,7 @@ from crispy_forms.layout import HTML, Layout
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.utils.text import slugify
 from django.utils.translation import string_concat, ugettext_lazy as _
 
 import registration.forms
@@ -33,7 +34,6 @@ from table_select_widget import TableSelectMultiple
 from . import models
 from .forms import AddressForm, EmailUsernameMixin, SubmitMixin
 from .models import Campaign, City, Company, CompanyAdmin, Competition, Invoice, Subsidiary, UserAttendance
-from .util import slugify
 
 
 class SelectUsersPayForm(SubmitMixin, forms.Form):
@@ -253,7 +253,7 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
 
     def clean_name(self):
         if not self.instance.pk:
-            self.instance.slug = 'FA-%s-%s' % (self.instance.campaign.slug, slugify(self.cleaned_data['name'])[0:30])
+            self.instance.slug = 'FA-%s-%s' % (self.instance.campaign.pk, slugify(self.cleaned_data['name'])[0:30])
             if Competition.objects.filter(slug=self.instance.slug).exists():
                 raise forms.ValidationError(
                     _(u"%(model_name)s with this %(field_label)s already exists.") % {

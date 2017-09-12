@@ -32,9 +32,8 @@ from django.core.files.temp import NamedTemporaryFile
 from django.db import transaction
 from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
+from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
-
-from unidecode import unidecode
 
 from .address import AddressOptional
 from .company import Company
@@ -292,12 +291,16 @@ def create_invoice_files(sender, instance, created, **kwargs):
     if not instance.invoice_pdf or not instance.invoice_xml:
         invoice_data = invoice_gen.generate_invoice(instance)
         instance.total_amount = invoice_data.price_tax
-        filename = "%s/invoice_%s_%s_%s_%s" % (
-            instance.campaign.slug,
-            instance.sequence_number,
-            unidecode(instance.company.name[0:40]),
-            instance.exposure_date.strftime("%Y-%m-%d"),
-            hash(str(instance.pk) + settings.SECRET_KEY)
+        filename = "dpnk-%s/%s" % (
+            instance.campaign.pk,
+            slugify(
+                "invoice_%s_%s_%s_%s" % (
+                    instance.sequence_number,
+                    instance.company.name[0:40],
+                    instance.exposure_date.strftime("%Y-%m-%d"),
+                    hash(str(instance.pk) + settings.SECRET_KEY)
+                ),
+            ),
         )
 
         if not instance.invoice_pdf:

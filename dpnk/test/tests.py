@@ -284,7 +284,7 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         mommy.make(
             "Competition",
             name='Pravidelnost společnosti',
-            slug='FA-testing-campaign-pravidelnost-spolecnosti',
+            slug='FA-%s-pravidelnost-spolecnosti' % testing_campaign().pk,
             company=self.company,
             campaign=testing_campaign,
         )
@@ -300,7 +300,7 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
         self.assertEquals(response.url, reverse('company_admin_competitions'))
         competition = models.Competition.objects.get(name='testing company competition')
-        self.assertEquals(competition.slug, 'FA-testing-campaign-testing-company-competition')
+        self.assertEquals(competition.slug, 'FA-%s-testing-company-competition' % competition.campaign.pk)
 
     def test_dpnk_company_admin_edit_competition(self):
         post_data = {
@@ -313,11 +313,11 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         response = company_admin_views.CompanyCompetitionView.as_view()(
             request,
             success=True,
-            competition_slug='FA-testing-campaign-pravidelnost-spolecnosti',
+            competition_slug='FA-%s-pravidelnost-spolecnosti' % testing_campaign().pk,
         )
         self.assertEquals(response.url, reverse('company_admin_competitions'))
         competition = models.Competition.objects.get(name='testing company competition fixed')
-        self.assertEquals(competition.slug, 'FA-testing-campaign-pravidelnost-spolecnosti')
+        self.assertEquals(competition.slug, 'FA-%s-pravidelnost-spolecnosti' % testing_campaign().pk)
 
     def test_dpnk_company_admin_create_competition_name_exists(self):
         post_data = {
