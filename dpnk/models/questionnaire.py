@@ -24,11 +24,10 @@ from django.contrib.gis.db import models
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
 import secretballot
-
-from unidecode import unidecode
 
 from .competition import Competition
 from .user_attendance import UserAttendance
@@ -199,7 +198,7 @@ class Choice(models.Model):
 
 
 def questionnaire_filename(instance, filename):
-    return 'questionaire/%s/%s/%s' % (instance.question.competition.campaign.slug, instance.question.competition.slug, unidecode(filename))
+    return 'questionaire/dpnk-%s/%s/%s' % (instance.question.competition.campaign.pk, instance.question.competition.slug, slugify(filename))
 
 
 class Answer(models.Model):

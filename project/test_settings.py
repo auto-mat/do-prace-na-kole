@@ -51,7 +51,6 @@ PASSWORD_HASHERS = (
 )
 
 UNUSED_MIDDLEWARES = [
-    'django.middleware.locale.LocaleMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'corsheaders.middleware.CorsMiddleware',

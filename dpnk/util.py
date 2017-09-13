@@ -19,7 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import datetime
-import re
 
 import denorm
 
@@ -31,7 +30,6 @@ from django.utils.safestring import mark_safe
 
 from ipware.ip import get_real_ip
 
-import unidecode
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
@@ -96,11 +94,6 @@ def _today():
 
 def today():
     return _today()
-
-
-def slugify(slug_str):
-    slug_str = unidecode.unidecode(slug_str).lower()
-    return re.sub(r'\W+', '-', slug_str)
 
 
 def get_client_ip(request):

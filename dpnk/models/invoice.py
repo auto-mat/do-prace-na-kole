@@ -32,14 +32,13 @@ from django.core.files.temp import NamedTemporaryFile
 from django.db import transaction
 from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
+from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
-
-from unidecode import unidecode
 
 from .address import AddressOptional
 from .company import Company
 from .transactions import Payment, Status
-from .. import invoice_pdf, util
+from .. import invoice_gen, util
 
 
 @with_author
@@ -93,6 +92,13 @@ class Invoice(models.Model):
     invoice_pdf = models.FileField(
         verbose_name=_(u"PDF faktury"),
         upload_to=u'invoices',
+        max_length=512,
+        blank=True,
+        null=True,
+    )
+    invoice_xml = models.FileField(
+        verbose_name=_("XML faktury"),
+        upload_to='invoices',
         max_length=512,
         blank=True,
         null=True,
@@ -194,6 +200,7 @@ class Invoice(models.Model):
     def payments_count(self):
         return self.payment_set.count()
     payments_count.short_description = _("Počet plateb")
+    payments_count.admin_order_field = "payments_count"
 
     @transaction.atomic
     def save(self, *args, **kwargs):
@@ -281,17 +288,31 @@ def create_invoice_files(sender, instance, created, **kwargs):
     if created:
         instance.add_payments()
 
-    if not instance.invoice_pdf:
-        temp = NamedTemporaryFile()
-        invoice_pdf.make_invoice_sheet_pdf(temp, instance)
-        filename = "%s/invoice_%s_%s_%s_%s.pdf" % (
-            instance.campaign.slug,
-            instance.sequence_number,
-            unidecode(instance.company.name[0:40]),
-            instance.exposure_date.strftime("%Y-%m-%d"),
-            hash(str(instance.pk) + settings.SECRET_KEY)
+    if not instance.invoice_pdf or not instance.invoice_xml:
+        invoice_data = invoice_gen.generate_invoice(instance)
+        instance.total_amount = invoice_data.price_tax
+        filename = "dpnk-%s/%s" % (
+            instance.campaign.pk,
+            slugify(
+                "invoice_%s_%s_%s_%s" % (
+                    instance.sequence_number,
+                    instance.company.name[0:40],
+                    instance.exposure_date.strftime("%Y-%m-%d"),
+                    hash(str(instance.pk) + settings.SECRET_KEY)
+                ),
+            ),
         )
-        instance.invoice_pdf.save(filename, File(temp))
+
+        if not instance.invoice_pdf:
+            temp_pdf = NamedTemporaryFile()
+            invoice_gen.make_invoice_pdf(temp_pdf, invoice_data)
+            instance.invoice_pdf.save("%s.pdf" % filename, File(temp_pdf), save=False)
+
+        if not instance.invoice_xml:
+            temp_xml = NamedTemporaryFile()
+            invoice_gen.make_invoice_xml(temp_xml, invoice_data)
+            instance.invoice_xml.save("%s.xml" % filename, File(temp_xml), save=False)
+
         instance.save()
 
 

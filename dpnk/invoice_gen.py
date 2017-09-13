@@ -17,19 +17,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import decimal
 import os
 
+from InvoiceGenerator import pdf, pohoda
 from InvoiceGenerator.api import Client, Creator, Invoice, Item, Provider
-from InvoiceGenerator.pdf import SimpleInvoice
 
 
-def make_invoice_sheet_pdf(outfile, invoice):
+def generate_invoice(invoice):
     DIR = os.path.dirname(__file__)
 
     client = Client(
         invoice.company_name,
         address="%s %s" % (invoice.company_address_street, invoice.company_address_street_number),
-        zip=invoice.company_address_psc or "",
+        zip_code=invoice.company_address_psc or "",
         city=invoice.company_address_city,
         ir=invoice.company_ico,
         vat_id=invoice.company_dic,
@@ -42,10 +43,11 @@ def make_invoice_sheet_pdf(outfile, invoice):
         "Auto*Mat, z.s.",
         email="kontakt@dopracenakole.cz",
         address="Bořivojova 694/108",
-        zip="130 00",
+        zip_code="130 00",
         city="Praha 3",
         bank_name="Fio banka",
-        bank_account='2601085491 / 2010',
+        bank_account='2601085491',
+        bank_code='2010',
         vat_id="CZ22670319",
         ir="22670319",
         phone="212 240 666",
@@ -64,10 +66,11 @@ def make_invoice_sheet_pdf(outfile, invoice):
     invoice_gen.title = u"Faktura %s/%03d" % (invoice.exposure_date.year, invoice.sequence_number)
     invoice_gen.variable_symbol = invoice.variable_symbol
     invoice_gen.number = invoice.document_number()
-    invoice_gen.date = invoice.exposure_date.strftime("%d.%m.%Y")
-    invoice_gen.payback = invoice.payback_date.strftime("%d.%m.%Y")
-    invoice_gen.taxable_date = invoice.taxable_date.strftime("%d.%m.%Y")
+    invoice_gen.date = invoice.exposure_date
+    invoice_gen.payback = invoice.payback_date
+    invoice_gen.taxable_date = invoice.taxable_date
     invoice_gen.rounding_result = True
+    invoice_gen.rounding_strategy = decimal.ROUND_HALF_UP
     invoice_gen.use_tax = True
     invoice_gen.currency_locale = u"cs_CZ.UTF-8"
     invoice_gen.paytype = u"bankovním převodem"
@@ -77,14 +80,17 @@ def make_invoice_sheet_pdf(outfile, invoice):
             amount = invoice.campaign.benefitial_admission_fee_company
         else:
             amount = payment.amount
-        invoice_gen.add_item(
-            Item(
-                1,
-                amount,
-                description="Platba za soutěžící/ho %s" % ("" if invoice.anonymize else payment.user_attendance.name_for_trusted()),
-                tax=21,
-            ),
-        )
-    invoice.total_amount = invoice_gen.price_tax
-    pdf = SimpleInvoice(invoice_gen)
-    pdf.gen(outfile, generate_qr_code=True)
+        description = "Platba za soutěžící/ho %s" % ("" if invoice.anonymize else payment.user_attendance.name_for_trusted())
+        invoice_gen.add_item(Item(1, amount, description=description, tax=21))
+    return invoice_gen
+
+
+def make_invoice_pdf(outfile_pdf, invoice_gen):
+    os.environ["INVOICE_LANG"] = "cs"
+    pdf_file = pdf.SimpleInvoice(invoice_gen)
+    pdf_file.gen(outfile_pdf, generate_qr_code=True)
+
+
+def make_invoice_xml(outfile_xml, invoice_gen):
+    xml_file = pohoda.SimpleInvoice(invoice_gen)
+    xml_file.gen(outfile_xml)

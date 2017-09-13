@@ -128,7 +128,7 @@ class TestPasswordForms(TestCase):
         invoice.refresh_from_db()
         self.assertEquals(invoice.paid_date, datetime.date(2017, 1, 1))
 
-    @patch('dpnk.statement.logger')
+    @patch('builtins.print', autospec=True, side_effect=print)
     @patch('fiobank.FioBank')
     def test_parse_no_match(self, fiobank, mock_logger):
         m = MagicMock()
@@ -155,12 +155,12 @@ class TestPasswordForms(TestCase):
             },
         ]
         parse()
-        mock_logger.warn.assert_called_with(
+        mock_logger.assert_called_with(
             "'124', '125', 'type', '112233', '123', 'message', 'type', '2017-01-01', "
             "'126', '127', '128', '129', '130', '130', 'CZK', '234234', 'Foo User'",
         )
 
-    @patch('dpnk.statement.logger')
+    @patch('builtins.print', autospec=True, side_effect=print)
     @patch('fiobank.FioBank')
     def test_parse_no_czk(self, fiobank, mock_logger):
         invoice = mommy.make("Invoice", variable_symbol="112233", campaign=CampaignRecipe.make())
@@ -190,7 +190,7 @@ class TestPasswordForms(TestCase):
             },
         ]
         parse()
-        mock_logger.warn.assert_called_with(
+        mock_logger.assert_called_with(
             "'124', '125', 'type', '112233', '123', 'message', 'type', '2017-01-01', "
             "'126', '127', '128', '129', '130', '130', 'USD', '234234', 'Foo User'",
         )

@@ -51,11 +51,11 @@ columns = [
 
 
 def print_missing_payment(payment):
-    logger.warn(", ".join(["'%s'" % str(payment[column]) for column in columns]))
+    print(", ".join(["'%s'" % str(payment[column]) for column in columns]))
 
 
 def parse(days_back=7):
-    logger.warn(", ".join(["'%s'" % column for column in columns]))
+    print(", ".join(["'%s'" % column for column in columns]))
     client = fiobank.FioBank(token=settings.FIO_TOKEN)
     gen = client.period(
         datetime.datetime.now() - datetime.timedelta(days=days_back),

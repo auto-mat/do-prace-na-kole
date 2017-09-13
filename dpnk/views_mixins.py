@@ -234,3 +234,10 @@ class CampaignFormKwargsMixin(CampaignParameterMixin):
         kwargs = super().get_form_kwargs()
         kwargs['campaign'] = self.campaign
         return kwargs
+
+
+class RequestFormMixin(CampaignParameterMixin):
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs

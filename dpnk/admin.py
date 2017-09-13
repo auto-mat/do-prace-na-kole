@@ -97,8 +97,8 @@ class PaymentInline(NestedTabularInline):
     model = models.Payment
     extra = 0
     form = transaction_forms.PaymentForm
-    readonly_fields = ['user_attendance', 'order_id', 'session_id', 'trans_id', 'error', 'author', 'updated_by']
-    raw_id_fields = ['invoice', ]
+    readonly_fields = ['order_id', 'session_id', 'trans_id', 'error', 'author', 'updated_by']
+    raw_id_fields = ['invoice', 'user_attendance']
     formfield_overrides = {
         TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 40})},
     }
@@ -973,7 +973,9 @@ class PaymentAdmin(ImportExportMixin, RelatedFieldAdmin):
         'error',
         'order_id',
         'author',
-        'user_attendance__team__subsidiary__company__name')
+        'invoice',
+        'user_attendance__team__subsidiary__company__name',
+    )
     search_fields = (
         'user_attendance__userprofile__nickname',
         'user_attendance__userprofile__user__first_name',
@@ -1386,6 +1388,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'total_amount',
         'payments_count',
         'invoice_pdf_url',
+        'invoice_xml_url',
         'campaign',
         'sequence_number',
         'order_number',
@@ -1406,6 +1409,9 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'updated_by',
         'payments_count',
     ]
+    raw_id_fields = [
+        'company',
+    ]
     list_filter = [
         CampaignFilter,
         isnull_filter('paid_date', _("Nezaplacené faktury")),
@@ -1418,11 +1424,22 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
     form = InvoiceForm
     resource_class = InvoiceResource
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.annotate(
+            payments_count=Count('payment_set'),
+        )
+
     def get_changelist_form(self, request, **kwargs):
         return InvoiceForm
 
     def invoice_pdf_url(self, obj):
-        return format_html("<a href='{}'>invoice.pdf</a>", obj.invoice_pdf.url)
+        if obj.invoice_pdf:
+            return format_html("<a href='{}'>invoice.pdf</a>", obj.invoice_pdf.url)
+
+    def invoice_xml_url(self, obj):
+        if obj.invoice_xml:
+            return format_html("<a href='{}'>invoice.xml</a>", obj.invoice_xml.url)
 
 
 @admin.register(models.GpxFile)
