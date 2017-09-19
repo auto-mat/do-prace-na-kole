@@ -62,6 +62,16 @@ from .widgets import CommuteModeSelect
 logger = logging.getLogger(__name__)
 
 
+class RequiredFieldsMixin():
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        fields_required = getattr(self.Meta, 'fields_required', None)
+        if fields_required:
+            for key in self.fields:
+                if key in fields_required:
+                    self.fields[key].required = True
+
+
 class UserLeafletWidget(LeafletWidget):
     def __init__(self, *args, **kwargs):
         user_attendance = kwargs['user_attendance']
@@ -732,7 +742,7 @@ class TrackUpdateForm(SubmitMixin, forms.ModelForm):
         self.fields['track'].widget = UserLeafletWidget(user_attendance=instance)
 
 
-class UserUpdateForm(CampaignMixin, forms.ModelForm):
+class UserUpdateForm(CampaignMixin, RequiredFieldsMixin, forms.ModelForm):
     def clean_email(self):
         """
         Validate that the email is not already in use.
@@ -742,14 +752,14 @@ class UserUpdateForm(CampaignMixin, forms.ModelForm):
         else:
             return self.cleaned_data['email']
 
-    def __init__(self, *args, **kwargs):
-        ret_val = super().__init__(*args, **kwargs)
-        self.fields['email'].required = True
-        return ret_val
-
     class Meta:
         model = User
         fields = (
+            'email',
+            'first_name',
+            'last_name',
+        )
+        fields_required = (
             'email',
             'first_name',
             'last_name',
@@ -785,6 +795,7 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['dont_show_name'].initial = self.instance.nickname is not None
         self.fields['mailing_opt_in'].initial = None
+        self.fields['mailing_opt_in'].required = True
         self.fields['mailing_opt_in'].choices = [
             (True, _("Přeji si dostávat e-mailem informace o akcích, událostech a dalších záležitostech souvisejících se soutěží.")),
             (False, _("Nechci dostávat e-maily (a beru na vědomí, že mi mohou uniknout důležité informace o průběhu soutěže).")),
