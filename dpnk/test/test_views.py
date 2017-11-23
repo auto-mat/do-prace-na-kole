@@ -19,7 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 from collections import OrderedDict
-
 from unittest.mock import ANY, MagicMock, call, patch
 
 from PyPDF2 import PdfFileReader
@@ -70,7 +69,7 @@ class ViewsLogon(DenormMixin, ClearCacheMixin, TestCase):
 
 
 @override_settings(
-    PAYU_POS_ID="123321"
+    PAYU_POS_ID="123321",
 )
 class CompetitionsViewTests(ViewsLogon):
     def test_competition_rules(self):

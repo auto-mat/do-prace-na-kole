@@ -28,11 +28,8 @@ import json
 import logging
 import math
 import time
-
 from fm.views import AjaxCreateView
-
 from http.client import HTTPSConnection
-
 from urllib.parse import urlencode
 
 # Django imports

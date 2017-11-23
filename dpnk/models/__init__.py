@@ -44,13 +44,12 @@ from .questionnaire import Answer, Choice, ChoiceType, Question, QuestionForm, q
 from .subsidiary import Subsidiary
 from .team import Team, post_user_team_changed, pre_user_team_changed
 from .transactions import (
-    COMPETITION_STATUSES, CommonTransaction, PACKAGE_STATUSES, PAYMENT_STATUSES, Payment, STATUS, Status, Transaction, UserActionTransaction
+    COMPETITION_STATUSES, CommonTransaction, PACKAGE_STATUSES, PAYMENT_STATUSES, Payment, STATUS, Status, Transaction, UserActionTransaction,
 )
 from .trip import Trip
 from .user_attendance import UserAttendance
 from .user_profile import UserProfile
 from .voucher import Voucher
-
 from .. import mailing
 
 __all__ = (

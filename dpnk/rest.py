@@ -25,7 +25,6 @@ from rest_framework.exceptions import APIException
 from rest_framework.reverse import reverse
 
 from .middleware import get_or_create_userattendance
-
 from .models import City, CommuteMode, Company, Competition, CompetitionResult, GpxFile, Subsidiary, Team, Trip, UserAttendance
 
 
