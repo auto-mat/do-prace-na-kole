@@ -18,15 +18,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
-
 from itertools import cycle
 
 from django.test import TestCase
 from django.test.utils import override_settings
 
 from dpnk import models, results, util
-from dpnk.test.util import print_response  # noqa
 from dpnk.test.util import ClearCacheMixin, DenormMixin
+from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
 

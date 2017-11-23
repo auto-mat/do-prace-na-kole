@@ -36,7 +36,7 @@ from . import company_admin_forms
 from . import exceptions
 from . import models
 from .company_admin_forms import (
-    CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm
+    CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm,
 )
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
@@ -78,7 +78,8 @@ class SelectUsersPayView(
         MustBeCompanyAdminMixin,
         LoginRequiredMixin,
         RequestFormMixin,
-        FormView):
+        FormView,
+):
     template_name = 'company_admin/select_users_pay_for.html'
     form_class = SelectUsersPayForm
     success_url = reverse_lazy('company_admin_pay_for_users')
