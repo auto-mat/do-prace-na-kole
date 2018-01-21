@@ -51,6 +51,8 @@ def daterange(start_date, end_date):
 
 
 def working_day(day):
+    if day.day in (1, 8) and day.month == 5:
+        return False
     return day not in DAYS_EXCLUDE and day.weekday() not in (5, 6)
 
 

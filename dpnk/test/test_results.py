@@ -387,13 +387,13 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         self.assertEquals(result, 0.0625)
 
         result = self.user_attendance.team.frequency
-        self.assertEquals(result, 0.0306122448979592)
+        self.assertEquals(result, 0.03125)
 
         result = self.user_attendance.team.get_rides_count_denorm
         self.assertEquals(result, 3)
 
         result = self.user_attendance.team.get_working_trips_count()
-        self.assertEquals(result, 98)
+        self.assertEquals(result, 96)
 
         result = results.get_working_trips_count(self.user_attendance, competition)
         self.assertEquals(result, 48)
@@ -402,7 +402,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         self.assertEquals(result, (3, 48, 3 / 48.0))
 
         result = results.get_team_frequency(self.user_attendance.team.members(), competition)
-        self.assertEquals(result, (3, 98, 3 / 98.0))
+        self.assertEquals(result, (3, 96, 3 / 96.0))
 
     def test_get_userprofile_length_by_foot(self):
         competition = mommy.make(
