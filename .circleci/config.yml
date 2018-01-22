@@ -81,9 +81,8 @@ jobs:
             fi
 
       - run: docker cp dpnk-test:/home/aplikace/reports /tmp/reports
-      - run: cp /tmp/reports/.coverage .
+      - run: cp /tmp/reports/* . -R
       - run: coveralls
-      - run: pip freeze > /tmp/reports/requirements.freeze.txt
 
       - store_artifacts:
           path: /tmp/reports
