@@ -2,7 +2,7 @@
 
 # Start Gunicorn processes
 echo Starting tests
-pip install -r requirements-test.txt
+pip install -r requirements-test.freeze.txt
 flake8
 ./runtests.sh $TEST_PARAMS
 mkdir reports -p
