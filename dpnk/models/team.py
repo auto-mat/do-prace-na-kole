@@ -78,7 +78,8 @@ class Team(models.Model):
         blank=False,
         db_index=True,
         default=None,
-        skip={'invitation_token'})
+        skip={'invitation_token'},
+    )
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def member_count(self):
         member_count = self.members().count()
@@ -97,7 +98,8 @@ class Team(models.Model):
         blank=False,
         db_index=True,
         default=None,
-        skip={'invitation_token'})
+        skip={'invitation_token'},
+    )
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def unapproved_member_count(self):
         member_count = self.unapproved_members().count()

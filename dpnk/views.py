@@ -66,6 +66,7 @@ from extra_views import ModelFormSetView
 from registration.backends.simple.views import RegistrationView as SimpleRegistrationView
 
 from unidecode import unidecode
+
 # Local imports
 from . import draw
 from . import exceptions
