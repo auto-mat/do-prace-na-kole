@@ -29,8 +29,6 @@ from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
 
-from .mommy_recipes import UserAttendanceRecipe, testing_campaign
-
 
 class RidesBaseTests(TestCase):
     def test_get_minimum_rides_base_proportional(self):
@@ -293,14 +291,29 @@ class GetCompetitorsTests(TestCase):
 class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
     def setUp(self):
         super().setUp()
-        team = mommy.make('Team', campaign=testing_campaign)
-        UserAttendanceRecipe.make(
-            approved_for_team='approved',
-            team=team,
+        competition_phase = mommy.make(
+            "Phase",
+            phase_type="competition",
+            date_from="2017-4-2",
+            date_to="2017-5-20",
         )
-        self.user_attendance = UserAttendanceRecipe.make(
+        self.testing_campaign = competition_phase.campaign
+        team = mommy.make('Team', campaign=self.testing_campaign)
+        mommy.make(
+            "UserAttendance",
             approved_for_team='approved',
             team=team,
+            campaign=self.testing_campaign,
+            t_shirt_size__campaign=self.testing_campaign,
+            team__campaign=self.testing_campaign,
+        )
+        self.user_attendance = mommy.make(
+            "UserAttendance",
+            approved_for_team='approved',
+            team=team,
+            campaign=self.testing_campaign,
+            t_shirt_size__campaign=self.testing_campaign,
+            team__campaign=self.testing_campaign,
         )
         mommy.make(
             'Trip',
@@ -334,21 +347,13 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
             date='2017-05-03',
             user_attendance=self.user_attendance,
         )
-        self.user_attendance.campaign.phase_set.filter(
-            phase_type='competition',
-        ).update(
-            date_from=datetime.date(2017, 4, 2),
-            date_to=datetime.date(2017, 5, 20),
-        )
-        self.user_attendance.campaign.phase('competition').refresh_from_db()
-        self.user_attendance.team.campaign.phase('competition').refresh_from_db()
 
     def test_get_userprofile_length(self):
         competition = mommy.make(
             'Competition',
             competition_type='length',
             competitor_type='single_user',
-            campaign=testing_campaign,
+            campaign=self.testing_campaign,
             date_from=datetime.date(2017, 4, 3),
             date_to=datetime.date(2017, 5, 23),
             commute_modes=models.CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot')),
@@ -367,7 +372,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
             'Competition',
             competition_type='frequency',
             competitor_type='team',
-            campaign=testing_campaign,
+            campaign=self.testing_campaign,
             date_from=datetime.date(2017, 4, 3),
             date_to=datetime.date(2017, 5, 23),
             commute_modes=models.CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot')),
@@ -409,7 +414,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
             'Competition',
             competition_type='length',
             competitor_type='single_user',
-            campaign=testing_campaign,
+            campaign=self.testing_campaign,
             date_from=datetime.date(2017, 4, 1),
             date_to=datetime.date(2017, 5, 31),
             commute_modes=models.CommuteMode.objects.filter(slug__in=('by_foot',)),
