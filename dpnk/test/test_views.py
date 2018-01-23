@@ -32,7 +32,10 @@ import denorm
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings

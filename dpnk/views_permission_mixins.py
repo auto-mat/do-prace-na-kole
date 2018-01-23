@@ -20,7 +20,10 @@
 from braces.views import GroupRequiredMixin
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse, reverse_lazy
+try:
+    from django.urls import reverse, reverse_lazy
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils import formats
 from django.utils.translation import ugettext_lazy as _
 

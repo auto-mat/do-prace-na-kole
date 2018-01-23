@@ -19,7 +19,10 @@
 
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.urlresolvers import reverse, reverse_lazy
+try:
+    from django.urls import reverse, reverse_lazy
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils.decorators import classonlymethod
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe

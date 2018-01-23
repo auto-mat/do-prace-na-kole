@@ -24,7 +24,10 @@ import re
 import sys
 
 from django.contrib.messages import constants as message_constants
-from django.core.urlresolvers import reverse_lazy
+try:
+    from django.urls import reverse_lazy
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 
 from model_utils import Choices

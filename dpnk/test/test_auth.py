@@ -22,7 +22,10 @@ import base64
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core import mail
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 
 from dpnk.test.test_views import ViewsLogonMommy

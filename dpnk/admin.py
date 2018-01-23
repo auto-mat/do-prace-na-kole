@@ -37,7 +37,10 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.sessions.models import Session
-from django.core.urlresolvers import reverse
+try:  # Django<2.0
+    from django.core.urlresolvers import reverse
+except ImportError:
+    from django.urls import reverse
 from django.db.models import Count, Sum, TextField
 from django.forms import Textarea
 from django.utils.html import format_html, format_html_join
