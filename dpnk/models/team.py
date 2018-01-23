@@ -54,6 +54,7 @@ class Team(models.Model):
         related_name='teams',
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     invitation_token = models.CharField(
         verbose_name=_(u"Token pro pozvánky"),
@@ -69,6 +70,7 @@ class Team(models.Model):
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
 
     @denormalized(

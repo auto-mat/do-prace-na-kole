@@ -44,6 +44,7 @@ class ChoiceType(models.Model):
         Competition,
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     name = models.CharField(
         verbose_name=_(u"Jméno"),
@@ -140,6 +141,7 @@ class Question(models.Model):
         verbose_name=_(u"Soutěž"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     choice_type = models.ForeignKey(
         ChoiceType,
@@ -147,6 +149,7 @@ class Question(models.Model):
         default=None,
         null=True,
         blank=True,
+        on_delete=models.CASCADE,
     )
     required = models.BooleanField(
         verbose_name=_(u"Povinná otázka"),
@@ -174,6 +177,7 @@ class Choice(models.Model):
         verbose_name=_(u"Typ volby"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     text = models.CharField(
         verbose_name=_(u"Nabídka"),
@@ -209,8 +213,17 @@ class Answer(models.Model):
         ordering = ('user_attendance__team__subsidiary__city', 'pk')
         unique_together = (("user_attendance", "question"),)
 
-    user_attendance = models.ForeignKey(UserAttendance, null=True, blank=True)
-    question = models.ForeignKey(Question, null=False)
+    user_attendance = models.ForeignKey(
+        UserAttendance,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
+    question = models.ForeignKey(
+        Question,
+        null=False,
+        on_delete=models.CASCADE,
+    )
     choices = models.ManyToManyField(
         Choice,
         blank=True,

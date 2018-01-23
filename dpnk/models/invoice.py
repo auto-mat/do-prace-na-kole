@@ -108,12 +108,14 @@ class Invoice(models.Model):
         verbose_name=_(u"Organizace"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     campaign = models.ForeignKey(
         'Campaign',
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     sequence_number = models.PositiveIntegerField(
         verbose_name=_(u"Pořadové číslo faktury"),

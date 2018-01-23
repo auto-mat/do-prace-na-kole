@@ -55,6 +55,7 @@ class Campaign(Pricable, models.Model):
         verbose_name=_(u"Předchozí kampaň"),
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
     email_footer = models.TextField(
         verbose_name=_(u"Patička uživatelských e-mailů"),

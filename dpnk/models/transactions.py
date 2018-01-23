@@ -115,6 +115,7 @@ class Transaction(PolymorphicModel):
         null=True,
         blank=False,
         default=None,
+        on_delete=models.CASCADE,
     )
     created = models.DateTimeField(
         verbose_name=_(u"Vytvoření"),

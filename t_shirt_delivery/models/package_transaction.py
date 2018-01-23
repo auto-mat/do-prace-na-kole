@@ -32,6 +32,7 @@ class PackageTransaction(Transaction):
         verbose_name=_(u"Velikost trička"),
         null=True,
         blank=False,
+        on_delete=models.SET_NULL,
     )
     tracking_number = models.PositiveIntegerField(
         verbose_name=_(u"Tracking number"),
@@ -45,6 +46,7 @@ class PackageTransaction(Transaction):
         verbose_name=_("Týmový balíček"),
         null=True,
         blank=False,
+        on_delete=models.SET_NULL,
     )
 
     shipped_statuses = [

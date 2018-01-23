@@ -40,6 +40,7 @@ class CompetitionResult(models.Model):
         null=True,
         blank=True,
         default=None,
+        on_delete=models.CASCADE,
     )
     team = models.ForeignKey(
         Team,
@@ -47,6 +48,7 @@ class CompetitionResult(models.Model):
         null=True,
         blank=True,
         default=None,
+        on_delete=models.CASCADE,
     )
     company = models.ForeignKey(
         Company,
@@ -54,12 +56,14 @@ class CompetitionResult(models.Model):
         null=True,
         blank=True,
         default=None,
+        on_delete=models.CASCADE,
     )
     competition = models.ForeignKey(
         'Competition',
         related_name="results",
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     result = models.DecimalField(
         verbose_name=_(u"Výsledek"),

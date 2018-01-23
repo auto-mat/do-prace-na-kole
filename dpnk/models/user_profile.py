@@ -64,6 +64,7 @@ class UserProfile(models.Model):
         unique=True,
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     nickname = models.CharField(
         _(u'Zobrazené jméno'),
@@ -131,6 +132,7 @@ class UserProfile(models.Model):
         help_text=_("Nepovinné, bude použito pro účely žebříčků dle jednotlivých profesí"),
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
     age_group = models.PositiveIntegerField(
         verbose_name=_("Ročník narození"),

@@ -52,6 +52,7 @@ class Trip(models.Model):
         null=True,
         blank=False,
         default=None,
+        on_delete=models.CASCADE,
     )
     direction = models.CharField(
         verbose_name=_(u"Směr cesty"),

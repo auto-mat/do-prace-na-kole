@@ -36,6 +36,7 @@ class TShirtSize(models.Model):
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     order = models.PositiveIntegerField(
         default=0,
