@@ -1,7 +1,7 @@
 six
 Django
 django-import-export
--e git+https://github.com/PetrDlouhy/django-smart-selects@fix_css_class#egg=django-smart-selects
+django-smart-selects
 psycopg2
 python-memcached
 django-chart-tools
@@ -28,9 +28,9 @@ newrelic
 easy_thumbnails
 django-crispy-forms
 django-class-based-auth-views
-django-subdomains
+-e git+https://github.com/PetrDlouhy/django-subdomains@django20#egg=django-subdomains  # for Django 2.0 fix
 django-adminfilters
--e git+https://github.com/PetrDlouhy/django-advanced-filters.git@develop#egg=django-advanced-filters  # for empty variable fix
+-e git+https://github.com/PetrDlouhy/django-advanced-filters.git#egg=django_advanced_filters  # For Django 2.0 fix
 slumber
 django-bleach
 gunicorn
@@ -46,11 +46,11 @@ django-gpxpy
 django-cachalot
 django-bulk-update
 django-cors-headers
--e git+https://github.com/PetrDlouhy/django-denorm.git@develop#egg=django-denorm
-django-wysiwyg-redactor
+django-denorm
+-e git+https://github.com/adilkhash/django-wysiwyg-redactor#egg=django-wysiwyg-redactor  # For Django 2.0 fix
 sqlparse
 django-appconf
--e git+https://github.com/PetrDlouhy/django-selectable.git#egg=django-selectable  # For the Django 1.11 fixes, for search splitted by whitespaces
+-e git+https://github.com/PetrDlouhy/django-selectable.git@mergeup#egg=django-selectable  # For the Django 2.0 fixes, for search splitted by whitespaces
 pypdf2
 django-extra-views
 raven
@@ -70,15 +70,15 @@ django-google-tag-manager
 django-ses
 whitenoise
 django-favicon
-django-modeltranslation
--e git+https://github.com/burke-software/django-mass-edit.git#egg=django-mass-edit  # for the removal of onclick_attrib
+-e git+https://github.com/abdolhosein/django-modeltranslation@patch-the-issue-with-django2#egg=django-modeltranslation  # For Django 2.0 fix
+django-mass-edit
 fiobank
 django-ipware
 django-celery-beat
 djangorestframework-gis
 django-table-select-widget
 redis
-django-scribbler
+-e git+https://github.com/PetrDlouhy/django-scribbler.git@mergeup#egg=django-scribbler  # For Django 2.0 fixes, for unicode URLs fix
 django-isnull-list-filter
 django-redis
 django-admin-view-permission
@@ -87,7 +87,7 @@ django-celery-email
 -e git+https://github.com/PetrDlouhy/django-likes.git@develop#egg=django-likes  # For static template tag fix
 social-auth-app-django
 django-fm
-django-braces
+-e git+https://github.com/founders4schools/django-braces.git@django-2.0#egg=django-braces  # Fix for Django 2.0
 django-initial-field
 django-betterforms
-django-stdnumfield
+-e git+https://github.com/PetrDlouhy/django-stdnumfield.git@mergeup#egg=django_stdnumfield  # git version is for exception_text parameter, for Django 2.0 update
