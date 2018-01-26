@@ -232,7 +232,7 @@ class Invoice(models.Model):
     @transaction.atomic
     def add_payments(self):
         payments = self.payments_to_add()
-        self.payment_set = payments
+        self.payment_set.set(payments)
         for payment in payments:
             payment.status = Status.INVOICE_MADE
             payment.save()
