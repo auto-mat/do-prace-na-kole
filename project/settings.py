@@ -132,7 +132,7 @@ STATICFILES_FINDERS = (
 
 
 SECRET_KEY = os.environ.get('DPNK_SECRET_KEY')
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
