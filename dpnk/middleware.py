@@ -26,7 +26,7 @@ from .models import Campaign, UserAttendance
 
 
 def get_or_create_userattendance(request, campaign_slug):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         try:
             return UserAttendance.objects.select_related(
                 'campaign',

@@ -121,7 +121,7 @@ logger = logging.getLogger(__name__)
 
 class ProfileRedirectMixin(object):
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return redirect(reverse('profil'))
         else:
             return super().get(request, *args, **kwargs)
@@ -1144,7 +1144,7 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
             ).select_related('question')
         context_data['show_points'] = (
             competition.has_finished() or
-            (self.request.user.is_authenticated() and
+            (self.request.user.is_authenticated and
              self.request.user.userprofile.user.is_superuser)
         )
         context_data['competitors'] = competitors

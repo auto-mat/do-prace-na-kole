@@ -74,7 +74,7 @@ class MustBeInInvoicesPhaseMixin(MustBeInPhaseMixin):
 
 class GroupRequiredResponseMixin(GroupRequiredMixin):
     def no_permissions_fail(self, request):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             raise exceptions.TemplatePermissionDenied(
                 _("Pro přístup k této stránce musíte být ve skupině %s") % self.group_required,
                 template_name=getattr(self, 'template_name', None),
