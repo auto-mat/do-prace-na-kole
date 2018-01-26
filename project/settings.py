@@ -146,7 +146,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'denorm.middleware.DenormMiddleware',
     'author.middlewares.AuthorDefaultBackendMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',
     'dpnk.votes.SecretBallotUserMiddleware',
     'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
