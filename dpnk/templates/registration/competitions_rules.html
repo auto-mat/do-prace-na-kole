@@ -12,7 +12,9 @@
 <p>
 <i> {{ competition.type_string | safe }} </i>
 </p>
-{{ competition.rules | bleach }}
+{% if competition.rules %}
+   {{ competition.rules | bleach }}
+{% endif %}
 {% endfor %}
 {% endif %}
 {% endcache %}
