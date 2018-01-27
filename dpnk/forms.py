@@ -204,7 +204,10 @@ company_field = forms.ModelChoiceField(
     queryset=models.Company.objects.filter(active=True),
     widget=AutoCompleteSelectWidget(
         lookup_class='dpnk.lookups.CompanyLookup',
-        attrs={'autocomplete': 'off'},
+        attrs={
+            'autocomplete': 'off',
+            'class': "autocompletewidget form-control",
+        },
     ),
     required=True,
     help_text=_(
