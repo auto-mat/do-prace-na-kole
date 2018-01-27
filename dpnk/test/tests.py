@@ -516,10 +516,11 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         response = self.client.post(reverse('profil'), post_data, follow=True)
         self.assertContains(
             response,
-            '<div class="alert alert-danger alert-dismissable alert-link">'
-            '    <button class="close" type="button" data-dismiss="alert" aria-hidden="true">&#215;</button>'
-            '    Zadejte číslo.<br>'
-            '    Musíte vyplnit vzdálenost'
+            '<div class="form-group has-error">'
+            '<label class="control-label" for="id_form-0-distance">Vzdálenost (km)</label>'
+            '<input type="number" name="form-0-distance" value="6,0 km" step="any" class="form-control" '
+            'placeholder="Vzdálenost (km)" title="" id="id_form-0-distance" />'
+            '<div class="help-block">Zadejte číslo.</div >'
             '</div>',
             html=True,
         )
