@@ -613,8 +613,8 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('register_admin')
         post_data = {
             'email': 'testadmin@test.cz',
-            'password1': 'test11',
-            'password2': 'test11',
+            'password1': 'password11',
+            'password2': 'password11',
             'motivation_company_admin': 'some motivation',
             'telephone': 123456789,
             'first_name': 'Company',
@@ -658,8 +658,8 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('registrace')
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'test11',
-            'password2': 'test11',
+            'password1': 'password11',
+            'password2': 'password11',
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('upravit_profil'))
@@ -690,8 +690,8 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('registrace')
         post_data = {
             'email': 'test@test.cz',
-            'password1': 'test11',
-            'password2': 'test11',
+            'password1': 'password11',
+            'password2': 'password11',
         }
         response = self.client.post(address, post_data)
         self.assertContains(response, "Tato e-mailová adresa se již používá.")
@@ -839,8 +839,8 @@ class RegistrationViewTests(TestCase):
         address = reverse('registrace', kwargs=kwargs)
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'test11',
-            'password2': 'test11',
+            'password1': 'password11',
+            'password2': 'password11',
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('upravit_profil'))
@@ -865,8 +865,8 @@ class RegistrationViewTests(TestCase):
         address = reverse('registrace', kwargs=kwargs)
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'test11',
-            'password2': 'test11',
+            'password1': 'password11',
+            'password2': 'password11',
         }
         response = self.client.post(address, post_data, follow=True)
         self.assertRedirects(response, reverse('upravit_profil'))
