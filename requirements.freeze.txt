@@ -54,7 +54,7 @@ django-leaflet==0.23.0
 -e git+https://github.com/burke-software/django-mass-edit.git@92467f1ec4b2b7fd11615d311ba747e8cc5472ed#egg=django_mass_edit
 django-model-utils==3.1.1
 -e git+https://github.com/abdolhosein/django-modeltranslation@patch-the-issue-with-django2#egg=django-modeltranslation
--e git+https://github.com/PetrDlouhy/django-nested-inline@c80551d3a2adde1ab4c3050310dbc51fe295d0e1#egg=django_nested_inline
+django-nested-admin==3.0.21
 django-oauth-toolkit==1.0.0
 django-polymorphic==2.0
 django-price-level==1.0.0

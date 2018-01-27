@@ -232,7 +232,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.sessions',
-    'nested_inline',
+    'nested_admin',
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'django.contrib.humanize',

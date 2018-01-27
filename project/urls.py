@@ -59,6 +59,7 @@ urlpatterns = [
     url(r'^selectable/', include('selectable.urls')),
     url(r'^oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^redactor/', include('redactor.urls')),
+    url(r'^nested_admin/', include('nested_admin.urls')),
     url(r'^rest/', include(router.urls)),
     url(r'^scribbler/', include('scribbler.urls')),
     url(r'^likes/', include('likes.urls')),

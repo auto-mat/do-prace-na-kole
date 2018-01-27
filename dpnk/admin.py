@@ -59,7 +59,7 @@ from massadmin.massadmin import mass_change_selected
 
 from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 
-from nested_inline.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
+from nested_admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 
 from polymorphic.admin import PolymorphicChildModelAdmin
 
@@ -96,7 +96,7 @@ def admin_links(args_generator):
     )
 
 
-class PaymentInline(NestedTabularInline):
+class PaymentInline(admin.TabularInline):
     model = models.Payment
     extra = 0
     form = transaction_forms.PaymentForm
@@ -107,7 +107,7 @@ class PaymentInline(NestedTabularInline):
     }
 
 
-class UserActionTransactionInline(NestedTabularInline):
+class UserActionTransactionInline(admin.TabularInline):
     model = models.UserActionTransaction
     extra = 0
     readonly_fields = ['user_attendance', 'author', 'updated_by']
@@ -123,7 +123,7 @@ class TeamInline(admin.TabularInline):
     readonly_fields = ['invitation_token', ]
 
 
-class SubsidiaryInline(admin.TabularInline):
+class SubsidiaryInline(NestedTabularInline):
     model = models.Subsidiary
     extra = 0
 
@@ -191,7 +191,7 @@ class CompanyAdminInline(NestedTabularInline):
 
 
 @admin.register(models.Company)
-class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportMixin, admin.ModelAdmin):
+class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportMixin, NestedModelAdmin):
     list_display = (
         'name',
         'subsidiaries_text',
@@ -562,7 +562,7 @@ def create_userprofile_resource(campaign_slugs):  # noqa: C901
 
 
 @admin.register(models.UserProfile)
-class UserProfileAdmin(ImportExportMixin, admin.ModelAdmin):
+class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
     list_display = (
         'user',
         '__str__',
