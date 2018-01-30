@@ -91,3 +91,4 @@ django-fm
 django-initial-field
 django-betterforms
 -e git+https://github.com/PetrDlouhy/django-stdnumfield.git@mergeup#egg=django_stdnumfield  # git version is for exception_text parameter, for Django 2.0 update
+django-sitetree
