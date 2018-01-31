@@ -4,6 +4,7 @@
 {% load dpnk_tags %}
 {% load raven %}
 {% load scribbler_tags %}
+{% load sitetree %}
 <!DOCTYPE html>
 {% get_available_languages as languages %}
 {% get_current_language as current_language_code %}
@@ -66,12 +67,20 @@ Raven.setUserContext({
             </a>
          </div>
             <div class="col-md-10">
-               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapsing_menu">
-                 <span class="sr-only">Toggle navigation</span>
-                 <span class="icon-bar"></span>
-                 <span class="icon-bar"></span>
-                 <span class="icon-bar"></span>
-               </button>
+               <nav class="navbar navbar-default">
+                  <div class="container-fluid">
+                    <ul class="nav navbar-nav" >
+                       {% sitetree_menu from "maintree" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                       {% if user_attendance.related_company_admin.is_approved %}
+                          {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                       {% endif %}
+                       {% if user.is_staff %}
+                          {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                       {% endif %}
+                    </ul>
+                  </div>
+               </nav>
+
                <nav>
                 <div class="lang_switch">
                    <ul>
