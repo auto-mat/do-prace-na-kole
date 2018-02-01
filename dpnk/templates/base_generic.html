@@ -71,7 +71,11 @@ Raven.setUserContext({
                <nav class="navbar navbar-default">
                   <div class="container-fluid">
                     <ul class="nav navbar-nav" >
-                       {% sitetree_menu from "maintree" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                       {% if user.is_authenticated %}
+                          {% sitetree_menu from "maintree" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                       {% else %}
+                          <li ><a href="{% url 'login' %}">{% trans "Přihlásit" %}</a></li>
+                       {% endif %}
                        {% if user_attendance.related_company_admin.is_approved %}
                           {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                        {% endif %}
@@ -81,6 +85,12 @@ Raven.setUserContext({
                     </ul>
                   </div>
                </nav>
+               <div class="col-md-10">
+                  <div id="collapsing_menu" class="collapse navbar-collapse">
+                        {% block second_menu %}
+                        {% endblock %}
+                  </div>
+               </div>
 
                <div class="col-md-10">
                        {% sitetree_breadcrumbs from "maintree"  template "sitetree/breadcrumbs-title.html" %}
@@ -101,33 +111,6 @@ Raven.setUserContext({
                          {% endblock %}
                    </ul>
                 </div>
-                  <div id="collapsing_menu" class="collapse navbar-collapse">
-                   
-                    <ul class="navbar nav navbar-nav" id="the_menu" >
-           {% if user.is_authenticated %}
-                        <li class="{% block rides_link_class %}{% endblock %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'profil' %}">{% trans "Jízdy" %}</a></li>
-                        <li class="{% block competitions_link_class %}{% endblock %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'competitions' %}">{% trans "Soutěže" %}</a></li>
-                        {% if user_attendance.campaign.competitors_choose_team %}
-                        <li class="{% if request.resolver_match.url_name == 'other_team_members_results' %}active{% endif %} {% if not user_attendance.entered_competition %}disabled{% endif %}"><a href="{% url 'other_team_members_results' %}">{% trans "Kolegové" %}</a></li>
-                        {% endif %}
-                        <li class="{% block settings_link_class %}{% endblock %}"><a href="{% url 'upravit_profil' %}">{% trans "Soutěžní údaje" %}</a></li>
-                        {% if user_attendance.related_company_admin.is_approved %}
-                        <li class="{% block company_admin_link_class %}{% endblock %}"><a href="{% url 'company_admin_pay_for_users' %}">{% trans "Firemní koordinátor" %}</a></li>
-                        {% endif %}
-                        {% if user.is_staff %}
-                        <li><a href="{% url 'admin:index' %}">{% trans "Administrace" %}</a></li>
-                        {% endif %}
-           {% else %}
-                        <li ><a href="{% url 'login' %}">{% trans "Přihlásit" %}</a></li>
-           {% endif %}
-                    </ul>
-                        {% block second_menu %}  
-                        {% endblock %}
-
-                        {% block third_menu %}  
-                        {% endblock %}
-                        
-                  </div>
                </nav>
               
             </div>

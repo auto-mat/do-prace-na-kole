@@ -986,7 +986,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
 
 
 class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'submenu_personal.html'
+    template_name = 'base_generic_registration_form.html'
     form_class = ProfileUpdateForm
     model = UserProfile
     success_message = _("Osobní údaje úspěšně upraveny")
@@ -1358,7 +1358,7 @@ class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequired
 
 
 class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, FormView):
-    template_name = "submenu_team.html"
+    template_name = 'base_generic_registration_form.html'
     form_class = InviteForm
     title = _('Pozvětě své kolegy do týmu')
     registration_phase = "zmenit_tym"
@@ -1408,7 +1408,7 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamM
 
 
 class UpdateTeam(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'submenu_team.html'
+    template_name = 'base_generic_form.html'
     form_class = TeamAdminForm
     success_url = reverse_lazy('edit_team')
     title = _("Upravit název týmu")
