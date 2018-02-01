@@ -30,7 +30,7 @@ django-crispy-forms
 django-class-based-auth-views
 -e git+https://github.com/PetrDlouhy/django-subdomains@django20#egg=django-subdomains  # for Django 2.0 fix
 django-adminfilters
--e git+https://github.com/PetrDlouhy/django-advanced-filters.git#egg=django_advanced_filters  # For Django 2.0 fix
+-e git+https://github.com/PetrDlouhy/django-advanced-filters.git@develop#egg=django_advanced_filters  # For Django 2.0 fix
 slumber
 django-bleach
 gunicorn

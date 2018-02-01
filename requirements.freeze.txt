@@ -18,7 +18,7 @@ django-admin-sortable2==0.6.19
 django-admin-view-permission==1.4
 -e git+https://github.com/saxix/django-adminactions@ef32750d82250490c7ef95a2efbc531b514618ac#egg=django_adminactions
 -e git+https://github.com/PetrDlouhy/django-adminfilters.git@981d64dec5a653e6afba54a44adc65f7d653367e#egg=django_adminfilters
--e git+https://github.com/PetrDlouhy/django-advanced-filters.git@956a02b55e0c8c216cf0b31525decf43e1086e19#egg=django_advanced_filters
+-e git+https://github.com/PetrDlouhy/django-advanced-filters.git@develop#egg=django_advanced_filters
 django-appconf==1.0.2
 django-author==1.0.2
 django-betterforms==1.1.4
