@@ -68,6 +68,7 @@ Raven.setUserContext({
             </a>
          </div>
             <div class="col-md-10">
+               {% if request %}
                <nav class="navbar navbar-default">
                   <div class="container-fluid">
                     <ul class="nav navbar-nav" >
@@ -96,6 +97,7 @@ Raven.setUserContext({
                        {% sitetree_breadcrumbs from "maintree"  template "sitetree/breadcrumbs-title.html" %}
                        {% sitetree_breadcrumbs from "company_coordinator_menu"  template "sitetree/breadcrumbs-title.html" %}
                </div>
+               {% endif %}
 
                <nav>
                 <div class="lang_switch">
