@@ -211,7 +211,8 @@ TEMPLATES = [
                 'dpnk.context_processors.site',
                 'dpnk.context_processors.user_attendance',
                 'settings_context_processor.context_processors.settings',
-                'social_django.context_processors.backends',
+                # This is causing lots of database hits on every request and probaly isn't needed:
+                # 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
             ),
             'loaders': [
