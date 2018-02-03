@@ -22,6 +22,8 @@
 import pprint
 import types
 
+from admin_views.admin import AdminViews
+
 from adminactions import actions as admin_actions, merge
 
 from adminfilters.filters import AllValuesComboFilter, RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
@@ -1094,7 +1096,11 @@ class AnswerAdmin(FormRequestMixin, ImportExportMixin, RelatedFieldAdmin):
 
 
 @admin.register(models.Question)
-class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ImportExportMixin, admin.ModelAdmin):
+class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ImportExportMixin, AdminViews, admin.ModelAdmin):
+    admin_views = (
+        (_('Spravovat otázky'), '/admin/questions'),
+    )
+
     form = models.QuestionForm
     list_display = ('__str__', 'text', 'question_type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
     ordering = ('order', 'date',)

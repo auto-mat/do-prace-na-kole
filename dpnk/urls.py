@@ -25,6 +25,7 @@ from . import auth
 from . import company_admin_views
 from . import views, views_results
 from .forms import AuthenticationFormDPNK
+from .views import answers, questionnaire_answers, questionnaire_results, questions
 urlpatterns = [
     url(
         r'^tym/$',
@@ -383,5 +384,32 @@ urlpatterns = [
         r'^zmena_hesla_hotovo/$',
         django_views.password_change_done,
         name='password_change_done',
+    ),
+
+    # admin urls
+    url(
+        r'^admin/answers/$',
+        answers,
+        name='admin_answers',
+    ),
+    url(
+        r'^admin/questions/$',
+        questions,
+        name='admin_questions',
+    ),
+    url(
+        r'^admin/dotaznik_odpovedi/(?P<competition_slug>[0-9A-Za-z_\-]+)$',
+        questionnaire_answers,
+        name='admin_questionnaire_answers',
+    ),
+    url(
+        r'^admin/dotaznik/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        questionnaire_results,
+        name='admin_questionnaire_results',
+    ),
+    url(
+        r'^admin/losovani/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        views.DrawResultsView.as_view(),
+        name="admin_draw_results",
     ),
 ]

@@ -19,6 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import re
 
+from admin_views.admin import AdminViews
+
 from adminactions import actions as admin_actions
 
 from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
@@ -142,7 +144,11 @@ class TeamPackageInline(NestedTabularInline):
 
 
 @admin.register(models.SubsidiaryBox)
-class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFieldAdmin, NestedModelAdmin):
+class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFieldAdmin, AdminViews, NestedModelAdmin):
+    admin_views = (
+        (_('Označit balíky/krabice jako vyřízené'), '/admin/dispatch'),
+    )
+
     list_display = (
         'identifier',
         'dispatched',
