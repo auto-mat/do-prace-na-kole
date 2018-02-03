@@ -39,12 +39,14 @@
             "insitetree": true,
             "parent": null,
             "sort_order": 4,
-            "title": "Jizdy",
+            "title": "Jízdy",
+            "title_en": "Rides",
             "tree": 2,
             "url": "/",
+            "url_en": "/en/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 4
     },
     {
@@ -64,11 +66,13 @@
             "parent": null,
             "sort_order": 5,
             "title": "Sout\u011b\u017ee",
+            "title_en": "Competitions",
             "tree": 2,
             "url": "/souteze",
+            "url_en": "/en/souteze",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 5
     },
     {
@@ -88,11 +92,13 @@
             "parent": null,
             "sort_order": 7,
             "title": "Sout\u011b\u017en\u00ed \u00fadaje",
+            "title_en": "Competition details",
             "tree": 2,
             "url": "/upravit_profil",
+            "url_en": "/en/upravit_profil",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 6
     },
     {
@@ -112,11 +118,13 @@
             "parent": 4,
             "sort_order": 8,
             "title": "P\u0159ehled",
+            "title_en": "Overview",
             "tree": 2,
             "url": "/",
+            "url_en": "/en/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 8
     },
     {
@@ -136,11 +144,13 @@
             "parent": 4,
             "sort_order": 9,
             "title": "Podrobn\u00fd p\u0159ehled j\u00edzd",
+            "title_en": "Detailed overview of trips",
             "tree": 2,
             "url": "/jizdy-podrobne/",
+            "url_en": "/en/jizdy-podrobne/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 9
     },
     {
@@ -160,11 +170,13 @@
             "parent": 4,
             "sort_order": 10,
             "title": "Aplikace",
+            "title_en": "Application",
             "tree": 2,
             "url": "/aplikace/",
+            "url_en": "/en/aplikace/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 10
     },
     {
@@ -182,13 +194,15 @@
             "inmenu": true,
             "insitetree": true,
             "parent": 5,
-            "sort_order": 12,
+            "sort_order": 11,
             "title": "Pravidelnostn\u00ed/v\u00fdkonnostn\u00ed",
+            "title_en": "Regularity/performance",
             "tree": 2,
             "url": "/souteze/",
+            "url_en": "/en/souteze/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 11
     },
     {
@@ -206,13 +220,15 @@
             "inmenu": true,
             "insitetree": true,
             "parent": 5,
-            "sort_order": 11,
+            "sort_order": 12,
             "title": "Dotazn\u00edkov\u00e9/kreativn\u00ed",
+            "title_en": "Questionnaire/creative",
             "tree": 2,
             "url": "/dotaznikove_souteze/",
+            "url_en": "/en/dotaznikove_souteze/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 12
     },
     {
@@ -232,11 +248,13 @@
             "parent": 6,
             "sort_order": 13,
             "title": "Osobn\u00ed \u00fadaje",
+            "title_en": "Personal details",
             "tree": 2,
             "url": "/upravit_profil",
+            "url_en": "/en/upravit_profil",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 13
     },
     {
@@ -256,11 +274,13 @@
             "parent": 6,
             "sort_order": 14,
             "title": "T\u00fdm",
+            "title_en": "Team",
             "tree": 2,
             "url": "/tym",
+            "url_en": "/en/tym",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 14
     },
     {
@@ -280,11 +300,13 @@
             "parent": 6,
             "sort_order": 15,
             "title": "Triko",
+            "title_en": "T-shirt",
             "tree": 2,
             "url": "/zmenit_triko/",
+            "url_en": "/en/zmenit_triko/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 15
     },
     {
@@ -304,11 +326,13 @@
             "parent": 6,
             "sort_order": 16,
             "title": "\u00da\u010dastnick\u00fd poplatek",
+            "title_en": "Participant fee",
             "tree": 2,
             "url": "/typ_platby/",
+            "url_en": "/en/typ_platby/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 16
     },
     {
@@ -328,11 +352,13 @@
             "parent": 13,
             "sort_order": 17,
             "title": "Z\u00e1kladn\u00ed \u00fadaje",
+            "title_en": "Basic details",
             "tree": 2,
             "url": "/upravit_profil/",
+            "url_en": "/en/upravit_profil/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 17
     },
     {
@@ -352,11 +378,13 @@
             "parent": 13,
             "sort_order": 18,
             "title": "Typick\u00e1 trasa",
+            "title_en": "Typical track",
             "tree": 2,
             "url": "/upravit_trasu/",
+            "url_en": "/en/upravit_trasu/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 18
     },
     {
@@ -376,11 +404,13 @@
             "parent": 14,
             "sort_order": 19,
             "title": "Zm\u011bnit",
+            "title_en": "Edit",
             "tree": 2,
             "url": "/tym/",
+            "url_en": "/en/tym/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 19
     },
     {
@@ -400,11 +430,13 @@
             "parent": 14,
             "sort_order": 20,
             "title": "\u010clenov\u00e9",
+            "title_en": "Members",
             "tree": 2,
             "url": "/dalsi_clenove/",
+            "url_en": "/en/dalsi_clenove/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 20
     },
     {
@@ -424,11 +456,13 @@
             "parent": 14,
             "sort_order": 21,
             "title": "Upravit n\u00e1zev",
+            "title_en": "Edit name",
             "tree": 2,
             "url": "/upravit_tym/",
+            "url_en": "/en/upravit_tym/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 21
     },
     {
@@ -448,11 +482,13 @@
             "parent": 14,
             "sort_order": 22,
             "title": "Pozvat kolegy",
+            "title_en": "Invite colleagues",
             "tree": 2,
             "url": "/pozvanky/",
+            "url_en": "/en/pozvanky/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 22
     },
     {
@@ -472,11 +508,13 @@
             "parent": 16,
             "sort_order": 23,
             "title": "Platba",
+            "title_en": "Payment",
             "tree": 2,
             "url": "/typ_platby/",
+            "url_en": "/en/typ_platby/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 23
     },
     {
@@ -496,11 +534,13 @@
             "parent": 16,
             "sort_order": 24,
             "title": "Chci se st\u00e1t koordin\u00e1torem organizace",
+            "title_en": "I want to be the Company Coordinator for my organization",
             "tree": 2,
             "url": "/spolecnost/zadost_admina/",
+            "url_en": "/en/spolecnost/zadost_admina/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 24
     },
     {
@@ -520,11 +560,13 @@
             "parent": null,
             "sort_order": 6,
             "title": "Kolegov\u00e9",
+            "title_en": "Colleagues",
             "tree": 2,
             "url": "/dalsi_clenove_vysledky/",
+            "url_en": "/en/dalsi_clenove_vysledky/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 25
     },
     {
@@ -544,11 +586,13 @@
             "parent": 27,
             "sort_order": 26,
             "title": "Zaplatit za sout\u011b\u017e\u00edc\u00ed",
+            "title_en": "Pay for competitors",
             "tree": 1,
             "url": "/zaplatit_za_uzivatele/",
+            "url_en": "/en/zaplatit_za_uzivatele/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 26
     },
     {
@@ -568,11 +612,13 @@
             "parent": null,
             "sort_order": 27,
             "title": "Firemn\u00ed koordin\u00e1tor",
+            "title_en": "Company coordinator",
             "tree": 1,
             "url": "/zaplatit_za_uzivatele/",
+            "url_en": "/en/zaplatit_za_uzivatele/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 27
     },
     {
@@ -592,11 +638,13 @@
             "parent": 27,
             "sort_order": 28,
             "title": "Struktura",
+            "title_en": "Company structure",
             "tree": 1,
             "url": "/struktura_spolecnosti/",
+            "url_en": "/en/struktura_spolecnosti/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 28
     },
     {
@@ -616,11 +664,13 @@
             "parent": 27,
             "sort_order": 29,
             "title": "Adresa",
+            "title_en": "Address",
             "tree": 1,
             "url": "/spolecnost/editovat_spolecnost/",
+            "url_en": "/en/spolecnost/editovat_spolecnost/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 29
     },
     {
@@ -640,11 +690,13 @@
             "parent": 27,
             "sort_order": 30,
             "title": "Ofici\u00e1ln\u00ed sout\u011b\u017ee",
+            "title_en": "Official competitions",
             "tree": 1,
             "url": "/spolecnost/oficialni_souteze/",
+            "url_en": "/en/spolecnost/oficialni_souteze/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 30
     },
     {
@@ -664,11 +716,13 @@
             "parent": 27,
             "sort_order": 31,
             "title": "Vypsan\u00e9 sout\u011b\u017ee",
+            "title_en": "Your competitions",
             "tree": 1,
             "url": "/spolecnost/souteze/",
+            "url_en": "/en/spolecnost/souteze/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 31
     },
     {
@@ -688,11 +742,13 @@
             "parent": 27,
             "sort_order": 32,
             "title": "Vypsat sout\u011b\u017e",
+            "title_en": "Create competition",
             "tree": 1,
             "url": "/spolecnost/soutez/",
+            "url_en": "/en/spolecnost/soutez/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 32
     },
     {
@@ -712,11 +768,13 @@
             "parent": 27,
             "sort_order": 33,
             "title": "Faktury",
+            "title_en": "Invoices",
             "tree": 1,
             "url": "/faktury/",
+            "url_en": "/en/faktury/",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 33
     },
     {
@@ -736,11 +794,13 @@
             "parent": null,
             "sort_order": 34,
             "title": "Administrace",
+            "title_en": "Administration",
             "tree": 3,
             "url": "/admin",
+            "url_en": "/admin",
             "urlaspattern": false
         },
-        "model": "sitetree.treeitem",
+        "model": "sitetree_modeltranslation.ModeltranslationTreeItem",
         "pk": 34
     }
 ]

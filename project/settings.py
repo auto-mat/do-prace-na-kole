@@ -293,6 +293,7 @@ INSTALLED_APPS = (
     'django_celery_beat',
     'secretballot',
     'sitetree',
+    'sitetree_modeltranslation',
     'likes',
     'social_django',
     'fm',
@@ -572,6 +573,8 @@ FAVICON_PATH = STATIC_URL + 'img/favicon/favicon.ico'
 PRICE_LEVEL_MODEL = 'dpnk.Campaign'
 PRICE_LEVEL_CATEGORY_CHOICES = Choices(('basic', _('Základní')), ('company', _('Pro firmy')))
 PRICE_LEVEL_CATEGORY_DEFAULT = 'basic'
+
+SITETREE_MODEL_TREE_ITEM = 'sitetree_modeltranslation.ModeltranslationTreeItem'
 
 # We have large inline fields, so it is necesarry to set this
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
