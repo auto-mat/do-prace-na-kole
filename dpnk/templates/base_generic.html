@@ -68,12 +68,12 @@ Raven.setUserContext({
             </a>
          </div>
             <div class="col-md-10">
-               {% if request %}
+               {% if request and campaign %}
                <nav class="navbar navbar-default">
                   <div class="container-fluid">
                     <ul class="nav navbar-nav" >
                        {% if user.is_authenticated %}
-                          {% sitetree_menu from "maintree" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                          {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                        {% else %}
                           <li ><a href="{% url 'login' %}">{% trans "Přihlásit" %}</a></li>
                        {% endif %}
@@ -94,7 +94,7 @@ Raven.setUserContext({
                </div>
 
                <div class="col-md-10">
-                       {% sitetree_breadcrumbs from "maintree"  template "sitetree/breadcrumbs-title.html" %}
+                       {% sitetree_breadcrumbs from campaign.sitetree_postfix_maintree  template "sitetree/breadcrumbs-title.html" %}
                        {% sitetree_breadcrumbs from "company_coordinator_menu"  template "sitetree/breadcrumbs-title.html" %}
                </div>
                {% endif %}
