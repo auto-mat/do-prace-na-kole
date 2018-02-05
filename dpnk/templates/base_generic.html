@@ -48,7 +48,7 @@ Raven.setUserContext({
 <link rel='stylesheet' id='family-css'  href='https://fonts.googleapis.com/css?family=Open+Sans%3A400italic%2C300%2C600%2C400&#038;subset=latin%2Clatin-ext&#038;ver=4.1.1' type='text/css' media='all' />
 <link href="{% static "bow/font-awesome/css/font-awesome.css"%}" rel="stylesheet">
 <link href="{% static "css/style.css"%}" type="text/css" rel="stylesheet" media="screen">
-<link href="{% static "css/submenu.css"%}" type="text/css" rel="stylesheet" media="screen">
+<link href="{% static "css/sitetree_bootstrap_submenu.css"%}" type="text/css" rel="stylesheet" media="screen">
 <style>
   .navbar-top{
     border-top: 3px solid {% if HEADER_COLOR %}{{ HEADER_COLOR }}{% endif %};
@@ -73,15 +73,15 @@ Raven.setUserContext({
                   <div class="container-fluid">
                     <ul class="nav navbar-nav" >
                        {% if user.is_authenticated %}
-                          {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                          {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk,topmenu" template "sitetree/menu_bootstrap3_deep.html" %}
                        {% else %}
                           <li ><a href="{% url 'login' %}">{% trans "Přihlásit" %}</a></li>
                        {% endif %}
                        {% if user_attendance.related_company_admin.is_approved %}
-                          {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                          {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3_deep.html" %}
                        {% endif %}
                        {% if user.is_staff %}
-                          {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                          {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3_deep.html" %}
                        {% endif %}
                     </ul>
                   </div>

@@ -67,7 +67,7 @@ django-rosetta==0.8.1
 -e git+https://github.com/PetrDlouhy/django-scribbler.git@983ebf287f5d1ce371019c7aa4c3364d47a808ea#egg=django_scribbler
 django-secretballot==1.0.0
 -e git+https://github.com/PetrDlouhy/django-selectable.git@mergeup#egg=django_selectable
-django-sitetree==1.9.0
+-e git+https://github.com/PetrDlouhy/django-sitetree#egg=django-sitetree
 django-ses==0.8.5
 django-settings-context-processor==0.2
 django-smart-selects==1.5.3
