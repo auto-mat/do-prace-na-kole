@@ -18,7 +18,13 @@
          <li class="{% if not user_attendance.team_complete %}disabled{% endif %}{% if registration_phase == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}">3. {% trans "Triko" %}</a></li>
       {% endif %}
       {% if user_attendance.has_admission_fee %}
-         <li class="{% if registration_phase == 'typ_platby' %}active{% endif %} {% if not user_attendance.payment_complete %}un{% endif %}fulfilled"><a href="{% url 'typ_platby' %}">4. {% trans "Účastnický poplatek" %}</a></li>
+         <li class="
+            {% if not user_attendance.tshirt_complete %}disabled{% endif %}
+            {% if registration_phase == 'typ_platby' %}active{% endif %}
+            {% if not user_attendance.payment_complete %}un{% endif %}fulfilled
+         ">
+            <a href="{% url 'typ_platby' %}">4. {% trans "Účastnický poplatek" %}</a>
+         </li>
       {% endif %}
    </ul>
    {% endif %}
