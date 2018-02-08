@@ -29,6 +29,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from .util import mark_safe_lazy
+from .views_permission_mixins import MustBeInRegistrationPhaseMixin
 
 
 class CompanyAdminMixin(SuccessMessageMixin):
@@ -193,7 +194,7 @@ class TitleViewMixin(object):
         return context_data
 
 
-class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAttendanceViewMixin):
+class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin):
     template_name = 'base_generic_registration_form.html'
 
     def get_context_data(self, *args, **kwargs):

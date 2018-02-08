@@ -1357,7 +1357,7 @@ class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequired
         return super().dispatch(request, *args, **kwargs)
 
 
-class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, FormView):
+class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, FormView):
     template_name = 'base_generic_registration_form.html'
     form_class = InviteForm
     title = _('Pozvětě své kolegy do týmu')
@@ -1407,7 +1407,15 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamM
         return redirect(invite_success_url or self.success_url)
 
 
-class UpdateTeam(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, UpdateView):
+class UpdateTeam(
+        TitleViewMixin,
+        UserAttendanceParameterMixin,
+        MustBeInRegistrationPhaseMixin,
+        SuccessMessageMixin,
+        MustBeApprovedForTeamMixin,
+        LoginRequiredMixin,
+        UpdateView,
+):
     template_name = 'base_generic_form.html'
     form_class = TeamAdminForm
     success_url = reverse_lazy('edit_team')
@@ -1424,7 +1432,14 @@ class UpdateTeam(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMix
         return self.user_attendance.team
 
 
-class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, TemplateView):
+class TeamMembers(
+        TitleViewMixin,
+        UserAttendanceViewMixin,
+        MustBeInRegistrationPhaseMixin,
+        MustBeApprovedForTeamMixin,
+        LoginRequiredMixin,
+        TemplateView,
+):
     template_name = 'registration/team_admin_members.html'
     registration_phase = "zmenit_tym"
     title = _("Schvalování členů týmu")
