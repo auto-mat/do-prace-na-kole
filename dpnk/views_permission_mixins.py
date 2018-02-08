@@ -71,7 +71,7 @@ class MustBeInRegistrationPhaseMixin(PhaseMixin):
     def dispatch(self, request, *args, **kwargs):
         phase = self.get_phase(request)
 
-        if phase.is_actual() or (self.user_attendance and self.user_attendance.entered_competition()):
+        if phase.is_actual() or (getattr(self, 'user_attendance', False) and self.user_attendance.entered_competition()):
             return super().dispatch(request, *args, **kwargs)
 
         if phase.has_started():

@@ -39,12 +39,17 @@ import settings
 class DiscountCouponViewTests(TestCase):
     def setUp(self):
         super().setUp()
-        payment_phase = mommy.make(
+        self.campaign = mommy.make("dpnk.Campaign", slug="testing-campaign")
+        mommy.make(
+            "dpnk.Phase",
+            phase_type="registration",
+            campaign=self.campaign,
+        )
+        mommy.make(
             "dpnk.Phase",
             phase_type="payment",
-            campaign__slug="testing-campaign",
+            campaign=self.campaign,
         )
-        self.campaign = payment_phase.campaign
         mommy.make(
             'price_level.PriceLevel',
             price=120,

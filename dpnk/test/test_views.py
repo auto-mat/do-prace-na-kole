@@ -259,6 +259,7 @@ class CompetitionsViewTests(ViewsLogon):
 
 @override_settings(
     SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class BaseViewsTests(ClearCacheMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions']
@@ -792,7 +793,7 @@ class RegistrationPhaseTests(TestCase):
         response = self.client.get(reverse('registrace'))
         self.assertContains(
             response,
-            '<div class="alert alert-danger">Již skončil čas, kdy se tato stránka zobrazuje.</div>',
+            '<div class="alert alert-danger">Registrace již byla ukončena.</div>',
             html=True,
             status_code=403,
         )
@@ -811,7 +812,7 @@ class RegistrationPhaseTests(TestCase):
         response = self.client.get(reverse('registrace'))
         self.assertContains(
             response,
-            '<div class="alert alert-danger">Ještě nenastal čas, kdy by se měla tato stránka zobrazit.<br>Stránka se zobrazí až 01.01.2011</div>',
+            '<div class="alert alert-danger">Registrace ještě nezačala.<br/>Registrovat se budete moct od 01.01.2011</div>',
             html=True,
             status_code=403,
         )
