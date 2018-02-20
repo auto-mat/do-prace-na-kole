@@ -11,7 +11,7 @@ def set_default_commute_modes(apps, schema_editor):
     Competition = apps.get_model("dpnk", "Competition")
     CommuteMode = apps.get_model("dpnk", "CommuteMode")
     for competition in Competition.objects.all():
-        competition.commute_modes=CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot'))
+        competition.commute_modes.set(CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot')))
         competition.save()
 
 
