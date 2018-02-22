@@ -211,7 +211,7 @@ company_field = forms.ModelChoiceField(
     ),
     required=True,
     help_text=_(
-        "Napište několik začátečních písmen názvu svého zaměstnavatele a pokud již existuje, nabídne se vám k výběru. "
+        "Napište několik začátečních písmen celého názvu svého zaměstnavatele a pokud již existuje, nabídne se vám k výběru. "
         "Vyberte ji kliknutím na položku v seznamu.",
     ),
 )
