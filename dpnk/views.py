@@ -153,7 +153,7 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
             action_text = _('Vybrat')
 
         if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():
-            subject_text = _('tým')
+            subject_text = _('organizaci, pobočku a tým')
         else:
             subject_text = _('organizaci')
         return "%s %s" % (action_text, subject_text)
