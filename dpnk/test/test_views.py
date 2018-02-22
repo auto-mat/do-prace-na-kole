@@ -403,7 +403,9 @@ class PaymentTypeViewTests(TestCase):
             response,
             '<div class="alert alert-warning">'
             'Platbu ještě musí schválit koordinátor vaší organizace '
-            '<a href="mailto:foo@email.com">foo@email.com</a></div>',
+            '<a href="mailto:foo@email.com">foo@email.com</a>. '
+            'Po schválení koordinátorem bude registrace dokončena '
+            'a my vám tuto skutečnost potvrdíme e-mailem.</div>',
             html=True,
         )
         self.assertEquals(models.Payment.objects.get().pay_type, 'fc')
@@ -1287,7 +1289,7 @@ class ViewsTestsLogon(ViewsLogon):
             "campaign": self.user_attendance.campaign.id,
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, "Změnit tým")
+        self.assertContains(response, "Změnit organizaci, pobočku a tým")
 
     def test_dpnk_team_invitation_confirmation_unchecked(self):
         token = self.user_attendance.team.invitation_token
