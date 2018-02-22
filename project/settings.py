@@ -23,6 +23,7 @@ import os
 import re
 import sys
 
+import django.conf.locale
 from django.contrib.messages import constants as message_constants
 from django.utils.translation import ugettext_lazy as _
 try:
@@ -93,7 +94,7 @@ LANGUAGES = (
 )
 LANGUAGE_CODE = 'cs'
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'cs'
-MODELTRANSLATION_LANGUAGES = ('en', 'cs')
+MODELTRANSLATION_LANGUAGES = ('en', 'cs', 'dsnkcs')
 SITE_ID = os.environ.get('DPNK_SITE_ID', 1)
 USE_I18N = True
 USE_L10N = True
@@ -587,3 +588,16 @@ except ImportError:
     pass
 
 DATABASE_CONFIGURED = DATABASES['default']['NAME'] != ''
+
+
+EXTRA_LANG_INFO = {
+    'dsnkcs': {
+        'bidi': False,
+        'code': 'dsnkcs',
+        'name': 'Do Školy na kole',
+        'name_local': u'Do skoly na kole',
+    },
+}
+
+LANG_INFO = {**django.conf.locale.LANG_INFO, **EXTRA_LANG_INFO}
+django.conf.locale.LANG_INFO = LANG_INFO
