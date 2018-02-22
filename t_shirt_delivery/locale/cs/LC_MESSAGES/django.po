@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-06 09:48+0200\n"
+"POT-Creation-Date: 2018-02-22 21:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,23 +27,39 @@ msgstr ""
 msgid "Vytvořit dávku z vybraných uživatelů"
 msgstr ""
 
-#: admin.py:266
+#: admin.py:149
+msgid "Označit balíky/krabice jako vyřízené"
+msgstr ""
+
+#: admin.py:237
+msgid "ID krabice"
+msgstr ""
+
+#: admin.py:238 models/team_package.py:43
+msgid "Tým"
+msgstr ""
+
+#: admin.py:239 models/team_package.py:36
+msgid "Krabice"
+msgstr ""
+
+#: admin.py:393
 msgid "Trik k odeslání"
 msgstr ""
 
-#: admin.py:279
+#: admin.py:406
 msgid "Velikosti trik"
 msgstr ""
 
-#: admin.py:292
+#: admin.py:426
 msgid "Uživatel na dávku objednávek"
 msgstr ""
 
-#: admin.py:293
+#: admin.py:427
 msgid "Uživatelé na dávku objednávek"
 msgstr ""
 
-#: admin_forms.py:32
+#: admin_forms.py:35
 msgid "Balík/krabice s tímto číslem byl sestaven"
 msgstr ""
 
@@ -72,7 +88,7 @@ msgstr ""
 msgid "Zařadit balíky k sestavení"
 msgstr ""
 
-#: filters.py:26 models/subsidiary_box.py:110
+#: filters.py:26 models/subsidiary_box.py:143
 msgid "Všechny balíčky vyřízeny"
 msgstr ""
 
@@ -92,82 +108,93 @@ msgstr ""
 msgid "Kampaň"
 msgstr ""
 
-#: models/delivery_batch.py:57 models/subsidiary_box.py:50
+#: models/delivery_batch.py:58 models/subsidiary_box.py:68
 msgid "Zákaznické listy"
 msgstr ""
 
-#: models/delivery_batch.py:63
+#: models/delivery_batch.py:65
 msgid "CSV objednávka"
 msgstr ""
 
-#: models/delivery_batch.py:69 models/subsidiary_box.py:62
-#: models/team_package.py:47
+#: models/delivery_batch.py:72
 msgid "Vyřízeno"
 msgstr ""
 
-#: models/delivery_batch.py:76 models/subsidiary_box.py:45
+#: models/delivery_batch.py:79 models/subsidiary_box.py:62
 msgid "Dávka objednávek"
 msgstr ""
 
-#: models/delivery_batch.py:77
+#: models/delivery_batch.py:80
 msgid "Dávky objednávek"
 msgstr ""
 
 #: models/package_transaction.py:32 models/t_shirt_size.py:30
-#: models/t_shirt_size.py:70
+#: models/t_shirt_size.py:72
 msgid "Velikost trička"
 msgstr ""
 
-#: models/package_transaction.py:37
+#: models/package_transaction.py:38
 msgid "Tracking number"
 msgstr ""
 
-#: models/package_transaction.py:45
+#: models/package_transaction.py:46
 msgid "Týmový balíček"
 msgstr ""
 
-#: models/package_transaction.py:59 models/package_transaction.py:60
+#: models/package_transaction.py:61 models/package_transaction.py:62
 msgid "Transakce trika"
 msgstr ""
 
-#: models/subsidiary_box.py:40
+#: models/subsidiary_box.py:56
 msgid "Krabice pro pobočku"
 msgstr ""
 
-#: models/subsidiary_box.py:41
+#: models/subsidiary_box.py:57
 msgid "Krabice pro pobočky"
 msgstr ""
 
-#: models/subsidiary_box.py:57
+#: models/subsidiary_box.py:76
 msgid "Pobočka"
 msgstr ""
 
-#: models/subsidiary_box.py:73
+#: models/subsidiary_box.py:82
+msgid "Krabice vyřízena"
+msgstr ""
+
+#: models/subsidiary_box.py:88
+msgid "Identifikace u dopravce"
+msgstr ""
+
+#: models/subsidiary_box.py:100
 #, python-format
 msgid "Krabice pro pobočku %s"
 msgstr ""
 
-#: models/t_shirt_size.py:46
+#: models/subsidiary_box.py:153
+msgid "Počet vyřízených balíků"
+msgstr ""
+
+#: models/t_shirt_size.py:47
 msgid "Posílá se?"
 msgstr ""
 
-#: models/t_shirt_size.py:51
+#: models/t_shirt_size.py:52
 msgid "Je dostupné?"
 msgstr ""
 
-#: models/t_shirt_size.py:52
+#: models/t_shirt_size.py:53
 msgid "Zobrazuje se v nabídce trik"
 msgstr ""
 
-#: models/t_shirt_size.py:57
+#: models/t_shirt_size.py:58
 msgid "Náhled trika"
 msgstr ""
 
-#: models/t_shirt_size.py:63
+#: models/t_shirt_size.py:65
 msgid "Cena"
 msgstr ""
 
-#: models/t_shirt_size.py:71
+#: models/t_shirt_size.py:73
 msgid "Velikosti trička"
 msgstr ""
 
@@ -179,39 +206,46 @@ msgstr ""
 msgid "týmové balíčky"
 msgstr ""
 
-#: models/team_package.py:36
-msgid "Krabice"
+#: models/team_package.py:49
+msgid "Balíek vyřízen"
 msgstr ""
 
-#: models/team_package.py:42
-msgid "Tým"
-msgstr ""
-
-#: models/team_package.py:59
+#: models/team_package.py:62
 #, python-format
 msgid "Balíček pro tým %s"
 msgstr ""
 
-#: models/team_package.py:61
+#: models/team_package.py:64
 msgid "Balíček bez týmu"
 msgstr ""
 
-#: templates/admin/index.html:10
-msgid "Označit balíky/krabice jako vyřízené"
+#: templates/registration/change_tshirt.html:6
+msgid ""
+"Startovní balíček bude doručen na adresu pobočky vaší organizace, kterou "
+"jste zvolili v předchozím kroku. Před výběrem trika prosím zkontrolujte, že "
+"je adresa pobočky správně. Pokud správně není, žádejte změnu:"
 msgstr ""
 
-#: views.py:40
+#: templates/registration/change_tshirt.html:9
+msgid "Jméno: "
+msgstr ""
+
+#: templates/registration/change_tshirt.html:11
+msgid "Adresa: "
+msgstr ""
+
+#: views.py:43
 msgid "Velikost trička úspěšně nastavena"
 msgstr ""
 
-#: views.py:44
+#: views.py:47
 msgid "Upravit velikost trička"
 msgstr ""
 
-#: views.py:50
+#: views.py:55
 msgid "Velikost trička nemůžete měnit, dokud nemáte zvolený tým."
 msgstr ""
 
-#: views.py:51
+#: views.py:57
 msgid "Vaše tričko již je na cestě k vám, už se na něj můžete těšit."
 msgstr ""
