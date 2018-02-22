@@ -63,7 +63,7 @@ Raven.setUserContext({
    <div class="container">
       <div class="row">
          <div class="col-md-2 logo_holder">
-            <a class="logo" href="http://www.dopracenakole.cz/">
+            <a class="logo" href="{% url "profil" %}">
                <img src="{% static "img/dpnk_logo.png"%}" alt="Logo Do práce na kole" />
             </a>
          </div>
@@ -73,15 +73,15 @@ Raven.setUserContext({
                   <div class="container-fluid">
                     <ul class="nav navbar-nav" >
                        {% if user.is_authenticated %}
-                          {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk,topmenu" template "sitetree/menu_bootstrap3_deep.html" %}
+                          {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                        {% else %}
-                          <li ><a href="{% url 'login' %}">{% trans "Přihlásit" %}</a></li>
+                          {% sitetree_menu from "unlogged_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                        {% endif %}
                        {% if user_attendance.related_company_admin.is_approved %}
-                          {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3_deep.html" %}
+                          {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                        {% endif %}
                        {% if user.is_staff %}
-                          {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3_deep.html" %}
+                          {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                        {% endif %}
                     </ul>
                   </div>
