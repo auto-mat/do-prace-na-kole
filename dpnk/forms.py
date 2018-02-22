@@ -524,6 +524,8 @@ class InviteForm(SubmitMixin, forms.Form):
         self.helper.add_input(
             Button('submit', _('Neposílat, přeskočit'), css_class="btn-default", onclick='window.location.href="{}"'.format(reverse("zmenit_triko"))),
         )
+        for field in self.fields.values():
+            field.widget.attrs['autocomplete'] = 'false'
         return ret_val
 
 
