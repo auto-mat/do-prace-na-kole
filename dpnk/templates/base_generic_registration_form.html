@@ -23,7 +23,7 @@
             {% if registration_phase == 'typ_platby' %}active{% endif %}
             {% if not user_attendance.payment_complete %}un{% endif %}fulfilled
          ">
-            <a href="{% url 'typ_platby' %}">4. {% trans "Účastnický poplatek" %}</a>
+            <a href="{% url 'typ_platby' %}">4. {% trans "Platba" %}</a>
          </li>
       {% endif %}
    </ul>

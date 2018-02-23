@@ -2510,10 +2510,6 @@ msgstr "Personal details"
 msgid "Triko"
 msgstr "T-shirt"
 
-#: templates/base_generic_registration_form.html:26
-msgid "Účastnický poplatek"
-msgstr "Participant fee"
-
 #: templates/company_admin/competitions.html:9
 msgid "Typ soutěžících"
 msgstr "Competitor type"
