@@ -60,7 +60,7 @@
             "tree": 1,
             "url": "/zaplatit_za_uzivatele/",
             "url_cs": "/zaplatit_za_uzivatele/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/zaplatit_za_uzivatele/",
             "url_en": "/en/zaplatit_za_uzivatele/",
             "urlaspattern": false
         },
@@ -96,7 +96,7 @@
             "tree": 1,
             "url": "/spolecnost/editovat_spolecnost/",
             "url_cs": "/spolecnost/editovat_spolecnost/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/spolecnost/editovat_spolecnost/",
             "url_en": "/en/spolecnost/editovat_spolecnost/",
             "urlaspattern": false
         },
@@ -132,7 +132,7 @@
             "tree": 1,
             "url": "/spolecnost/oficialni_souteze/",
             "url_cs": "/spolecnost/oficialni_souteze/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/spolecnost/oficialni_souteze/",
             "url_en": "/en/spolecnost/oficialni_souteze/",
             "urlaspattern": false
         },
@@ -168,7 +168,7 @@
             "tree": 1,
             "url": "/spolecnost/souteze/",
             "url_cs": "/spolecnost/souteze/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/spolecnost/souteze/",
             "url_en": "/en/spolecnost/souteze/",
             "urlaspattern": false
         },
@@ -204,7 +204,7 @@
             "tree": 1,
             "url": "/spolecnost/soutez/",
             "url_cs": "/spolecnost/soutez/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/spolecnost/soutez/",
             "url_en": "/en/spolecnost/soutez/",
             "urlaspattern": false
         },
@@ -240,7 +240,7 @@
             "tree": 1,
             "url": "/faktury/",
             "url_cs": "/faktury/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/faktury/",
             "url_en": "/en/faktury/",
             "urlaspattern": false
         },
@@ -276,7 +276,7 @@
             "tree": 1,
             "url": "/struktura_spolecnosti/",
             "url_cs": "/struktura_spolecnosti/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/struktura_spolecnosti/",
             "url_en": "/en/struktura_spolecnosti/",
             "urlaspattern": false
         },
@@ -312,7 +312,7 @@
             "tree": 1,
             "url": "/zaplatit_za_uzivatele/",
             "url_cs": "/zaplatit_za_uzivatele/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/zaplatit_za_uzivatele/",
             "url_en": "/en/zaplatit_za_uzivatele/",
             "urlaspattern": false
         },
@@ -348,7 +348,7 @@
             "tree": 3,
             "url": "/admin",
             "url_cs": "/admin",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/admin",
             "url_en": "/admin",
             "urlaspattern": false
         },
@@ -384,7 +384,7 @@
             "tree": 2,
             "url": "/jizdy-podrobne/",
             "url_cs": "/jizdy-podrobne/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/jizdy-podrobne/",
             "url_en": "/en/jizdy-podrobne/",
             "urlaspattern": false
         },
@@ -420,7 +420,7 @@
             "tree": 2,
             "url": "/",
             "url_cs": "/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/",
             "url_en": "/en/",
             "urlaspattern": false
         },
@@ -456,7 +456,7 @@
             "tree": 2,
             "url": "/souteze/",
             "url_cs": "/souteze/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/souteze/",
             "url_en": "/en/souteze/",
             "urlaspattern": false
         },
@@ -492,7 +492,7 @@
             "tree": 2,
             "url": "/dotaznikove_souteze/",
             "url_cs": "/dotaznikove_souteze/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/dotaznikove_souteze/",
             "url_en": "/en/dotaznikove_souteze/",
             "urlaspattern": false
         },
@@ -528,7 +528,7 @@
             "tree": 2,
             "url": "/upravit_profil/",
             "url_cs": "/upravit_profil/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/upravit_profil/",
             "url_en": "/en/upravit_profil/",
             "urlaspattern": false
         },
@@ -564,7 +564,7 @@
             "tree": 2,
             "url": "/typ_platby/",
             "url_cs": "/typ_platby/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/typ_platby/",
             "url_en": "/en/typ_platby/",
             "urlaspattern": false
         },
@@ -600,7 +600,7 @@
             "tree": 2,
             "url": "/zmenit_triko/",
             "url_cs": "/zmenit_triko/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/zmenit_triko/",
             "url_en": "/en/zmenit_triko/",
             "urlaspattern": false
         },
@@ -636,7 +636,7 @@
             "tree": 2,
             "url": "/tym/",
             "url_cs": "/tym/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/tym/",
             "url_en": "/en/tym/",
             "urlaspattern": false
         },
@@ -672,8 +672,8 @@
             "tree": 2,
             "url": "/upravit_trasu/",
             "url_cs": "/upravit_trasu/",
-            "url_dsnkcs": null,
-            "url_en": "en/upravit_trasu/",
+            "url_dsnkcs": "/dsnkcs/upravit_trasu/",
+            "url_en": "/en/upravit_trasu/",
             "urlaspattern": false
         },
         "model": "sitetree_modeltranslation.modeltranslationtreeitem",
@@ -708,7 +708,7 @@
             "tree": 2,
             "url": "/dalsi_clenove/",
             "url_cs": "/dalsi_clenove/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/dalsi_clenove/",
             "url_en": "/en/dalsi_clenove/",
             "urlaspattern": false
         },
@@ -744,7 +744,7 @@
             "tree": 2,
             "url": "/dalsi_clenove_vysledky/",
             "url_cs": "/dalsi_clenove_vysledky/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/dalsi_clenove_vysledky/",
             "url_en": "/en/dalsi_clenove_vysledky/",
             "urlaspattern": false
         },
@@ -780,7 +780,7 @@
             "tree": 2,
             "url": "/pozvanky/",
             "url_cs": "/pozvanky/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/pozvanky/",
             "url_en": "/en/pozvanky/",
             "urlaspattern": false
         },
@@ -816,7 +816,7 @@
             "tree": 2,
             "url": "/upravit_tym/",
             "url_cs": "/upravit_tym/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/upravit_tym/",
             "url_en": "/en/upravit_tym/",
             "urlaspattern": false
         },
@@ -852,7 +852,7 @@
             "tree": 2,
             "url": "/aplikace/",
             "url_cs": "/aplikace/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/aplikace/",
             "url_en": "/en/aplikace/",
             "urlaspattern": false
         },
@@ -888,7 +888,7 @@
             "tree": 2,
             "url": "/spolecnost/zadost_admina/",
             "url_cs": "/spolecnost/zadost_admina/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/spolecnost/zadost_admina/",
             "url_en": "/en/spolecnost/zadost_admina/",
             "urlaspattern": false
         },
@@ -924,7 +924,7 @@
             "tree": 2,
             "url": "/",
             "url_cs": "/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/",
             "url_en": "/en/",
             "urlaspattern": false
         },
@@ -960,7 +960,7 @@
             "tree": 2,
             "url": "/tym",
             "url_cs": "/tym",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/tym",
             "url_en": "/en/tym",
             "urlaspattern": false
         },
@@ -996,7 +996,7 @@
             "tree": 2,
             "url": "/souteze",
             "url_cs": "/souteze",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/souteze",
             "url_en": "/en/souteze",
             "urlaspattern": false
         },
@@ -1032,7 +1032,7 @@
             "tree": 2,
             "url": "/upravit_profil",
             "url_cs": "/upravit_profil",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/upravit_profil",
             "url_en": "/en/upravit_profil",
             "urlaspattern": false
         },
@@ -1068,7 +1068,7 @@
             "tree": 2,
             "url": "/nastaveni",
             "url_cs": "/nastaveni",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/nastaveni",
             "url_en": "/en/nastaveni",
             "urlaspattern": false
         },
@@ -1104,7 +1104,7 @@
             "tree": 4,
             "url": "/login/",
             "url_cs": "/login/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/login/",
             "url_en": "/en/login/",
             "urlaspattern": false
         },
@@ -1140,7 +1140,7 @@
             "tree": 4,
             "url": "/spolecnost/registrace_admina/",
             "url_cs": "/spolecnost/registrace_admina/",
-            "url_dsnkcs": null,
+            "url_dsnkcs": "/dsnkcs/spolecnost/registrace_admina/",
             "url_en": "/en/spolecnost/registrace_admina/",
             "urlaspattern": false
         },
