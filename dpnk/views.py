@@ -423,7 +423,6 @@ class PaymentTypeView(
                 'message': format_html(
                     _(
                         "Platbu ještě musí schválit koordinátor vaší organizace {email}. "
-                        "Po schválení koordinátorem bude registrace dokončena a my vám tuto skutečnost potvrdíme e-mailem.",
                     ),
                     email=company_admin_email_string,
                 ),
