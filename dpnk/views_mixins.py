@@ -33,7 +33,10 @@ from .views_permission_mixins import MustBeInRegistrationPhaseMixin
 
 
 class CompanyAdminMixin(SuccessMessageMixin):
-    success_message = _("Byla vytvořena žádost o funkci firemního koordinátora. Vyčkejte, než dojde ke schválení této funkce.")
+    success_message = _(
+        "Byli jste úspěšně zaregistrování jako firemní koordinátor. "
+        "Vaší organizaci můžete spravovat v menu \"Firemní koordinátor\".",
+    )
     opening_message = mark_safe_lazy(
         _(
             "<p>"
