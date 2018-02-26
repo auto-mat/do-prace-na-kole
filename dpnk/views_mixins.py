@@ -37,9 +37,6 @@ class CompanyAdminMixin(SuccessMessageMixin):
     opening_message = mark_safe_lazy(
         _(
             "<p>"
-            "Vaše organizace ještě nemá zvoleného firemního koordinátora. "
-            "</p>"
-            "<p>"
             "Tato role není pro soutěž povinná, ale usnadní ostatním ostatním kolegům účast v soutěži. "
             "Hlavní úkol pro firemního koordinátora je pokusit se zaměstnavatelem domluvit, aby uhradil účastnický poplatek za zaměstnance."
             "</p>"
