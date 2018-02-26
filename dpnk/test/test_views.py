@@ -32,13 +32,13 @@ import denorm
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
+from django.db import transaction
+from django.test import Client, RequestFactory, TestCase
+from django.test.utils import override_settings
 try:
     from django.urls import reverse
 except ImportError:  # Django<2.0
     from django.core.urlresolvers import reverse
-from django.db import transaction
-from django.test import Client, RequestFactory, TestCase
-from django.test.utils import override_settings
 
 from dpnk import actions, mailing, models, util, views
 from dpnk.test.util import ClearCacheMixin, DenormMixin
@@ -403,9 +403,7 @@ class PaymentTypeViewTests(TestCase):
             response,
             '<div class="alert alert-warning">'
             'Platbu ještě musí schválit koordinátor vaší organizace '
-            '<a href="mailto:foo@email.com">foo@email.com</a>. '
-            'Po schválení koordinátorem bude registrace dokončena '
-            'a my vám tuto skutečnost potvrdíme e-mailem.</div>',
+            '<a href="mailto:foo@email.com">foo@email.com</a>.',
             html=True,
         )
         self.assertEquals(models.Payment.objects.get().pay_type, 'fc')
