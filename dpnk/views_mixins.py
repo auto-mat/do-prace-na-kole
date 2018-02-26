@@ -141,11 +141,12 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                 messages.info(
                     request,
                     format_html(
-                        _('Vaše platba typu {payment_type} ještě nebyla vyřízena. '
-                          'Počkejte prosím na její schválení. '
-                          'Pokud schválení není možné, můžete <a href="{url}">zadat jiný typ platby</a>. '
-                          'Po schválení bude registrace dokončena a my vám tuto skutečnost potvrdíme e-mailem.',
-                          ),
+                        _(
+                            'Vaše platba typu {payment_type} ještě nebyla vyřízena. '
+                            'Počkejte prosím na její schválení. '
+                            'Pokud schválení není možné, můžete <a href="{url}">zadat jiný typ platby</a>. '
+                            'Po schválení bude registrace dokončena a my vám tuto skutečnost potvrdíme e-mailem.',
+                        ),
                         payment_type=self.user_attendance.payment_type_string(), url=reverse('typ_platby'),
                     ),
                 )
