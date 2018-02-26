@@ -22,6 +22,8 @@ from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import ugettext_lazy as _
 
+from dpnk.filters import CampaignFilter, campaign_filter_generator
+
 from import_export.admin import ImportExportMixin
 
 from related_admin import RelatedFieldAdmin
@@ -31,7 +33,8 @@ from . import models
 
 @admin.register(models.DiscountCouponType)
 class DiscountCouponTypeAdmin(ImportExportMixin, admin.ModelAdmin):
-    list_display = ('name', 'prefix',)
+    list_display = ('name', 'campaign', 'valid_until', 'prefix')
+    list_filter = (CampaignFilter,)
 
 
 class NullUserAttendanceListFilter(SimpleListFilter):
@@ -71,5 +74,11 @@ class DiscountCouponAdmin(ImportExportMixin, RelatedFieldAdmin):
     )
     readonly_fields = ('token', 'created', 'updated', 'author', 'updated_by')
     list_editable = ('note', 'receiver', 'discount', 'user_attendance_number', 'sent')
-    list_filter = ('coupon_type__name', 'sent', 'user_attendance_number', NullUserAttendanceListFilter)
+    list_filter = (
+        campaign_filter_generator('coupon_type__campaign'),
+        'coupon_type__name',
+        'sent',
+        'user_attendance_number',
+        NullUserAttendanceListFilter,
+    )
     search_fields = ('token', 'note', 'receiver')
