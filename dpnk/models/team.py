@@ -188,7 +188,10 @@ class TeamName(Team):
         proxy = True
 
     def __str__(self):
-        return self.name
+        if self.name:
+            return self.name
+        else:
+            return "[%s]" % self.subsidiary.__str__()
 
 
 def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
