@@ -164,6 +164,10 @@ class RegisterCompanyForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs['autocomplete'] = 'organization'
+
     class Meta:
         model = models.Company
         fields = ('name', 'ico')
@@ -230,6 +234,7 @@ class RegisterSubsidiaryForm(AddressForm):
         self.fields['company'].widget.attrs['disabled'] = True
         self.fields['company'].required = False
         self.fields['company'].help_text = ""
+        self.fields['address_recipient'].widget.attrs['autocomplete'] = 'subsidiary'
 
     class Meta:
         model = models.Subsidiary
@@ -525,7 +530,7 @@ class InviteForm(SubmitMixin, forms.Form):
             Button('submit', _('Neposílat, přeskočit'), css_class="btn-default", onclick='window.location.href="{}"'.format(reverse("zmenit_triko"))),
         )
         for field in self.fields.values():
-            field.widget.attrs['autocomplete'] = 'false'
+            field.widget.attrs['autocomplete'] = 'new-password'
         return ret_val
 
 
