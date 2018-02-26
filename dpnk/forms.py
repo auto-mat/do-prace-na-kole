@@ -507,12 +507,12 @@ class InviteForm(SubmitMixin, forms.Form):
             HTML(
                 format_html_lazy(
                     _(
-                        "Můžete pozvat kolegy do týmu přes náš rozesílač - stačí napsat níže e-maily "
+                        "Můžete pozvat kolegy do týmu přes náš rozesílač - stačí níže napsat níže e-maily "
                         "kolegů, které chcete do svého týmu (samozřejmě je můžete pozvat jakkoliv, "
                         "třeba osobně).<br/>"
                         "Následně vyčkejte, až se k vám někdo do týmu připojí "
                         "(tato informace vám přijde e-mailem, stav vašeho týmu můžete sledovat na <a "
-                        "href=\"{}\">stránce vašeho týmu</a>, tamtéž můžete i potvrdit členství "
+                        "href=\"{}\">stránce se členy vašeho týmu</a>, tamtéž můžete i potvrdit členství "
                         "vašich kolegů).<br/>"
                         "Tým může mít maximálně 5 členů."
                         "<br/><br/>"
