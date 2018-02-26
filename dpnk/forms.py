@@ -553,10 +553,10 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
 
     def clean_payment_type(self):
         payment_type = self.cleaned_data['payment_type']
-        if payment_type == 'company' and not self.user_attendance.get_asociated_company_admin().exists():
+        if payment_type == 'company' and not self.user_attendance.get_asociated_company_admin().filter(can_confirm_payments=True).exists():
             raise forms.ValidationError(
                 format_html(
-                    _("Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora."
+                    _("Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora, který by mohl schvalovat platby. "
                       "Vaše organizace bude muset nejprve ustanovit zástupce, který za ní bude schvalovat platby ve vaší organizaci."
                       "<ul><li><a href='{url}'>Chci se stát firemním koordinátorem</a></li></ul>"),
                     employer=self.user_attendance.team.subsidiary.company,
@@ -574,7 +574,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 _("Podpořím soutěž benefičním poplatkem %s Kč. <i class='fa fa-heart'></i>") %
                 intcomma(self.user_attendance.beneficiary_admission_fee()),
             )),
-            ('company', _("Učastnický poplatek mi platí zaměstnavatel.")),
+            ('company', _("Účastnický poplatek mi platí zaměstnavatel.")),
             ('member_wannabe', mark_safe_lazy(
                 _(
                     "Chci účastnický poplatek zdarma (pro ty, kteří chtějí trvale podporovat udržitelnou mobilitu). "
