@@ -424,7 +424,10 @@ class PaymentTypeViewTests(TestCase):
             'next': 'Next',
         }
         response = self.client.post(reverse('typ_platby'), post_data)
-        self.assertContains(response, "Váš zaměstnavatel Testing company nemá zvoleného firemního koordinátora, který by mohl schvalovat platby.")
+        self.assertContains(
+            response,
+            "Váš zaměstnavatel Testing company nemá zvoleného firemního koordinátora nebo neumožňuje platbu za zaměstnance.",
+        )
 
     def test_dpnk_payment_type_discount_coupon(self):
         post_data = {

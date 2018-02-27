@@ -556,7 +556,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         if payment_type == 'company' and not self.user_attendance.get_asociated_company_admin().filter(can_confirm_payments=True).exists():
             raise forms.ValidationError(
                 format_html(
-                    _("Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora, který by mohl schvalovat platby. "
+                    _("Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora nebo neumožňuje platbu za zaměstnance. "
                       "Vaše organizace bude muset nejprve ustanovit zástupce, který za ní bude schvalovat platby ve vaší organizaci."
                       "<ul><li><a href='{url}'>Chci se stát firemním koordinátorem</a></li></ul>"),
                     employer=self.user_attendance.team.subsidiary.company,
