@@ -1026,7 +1026,7 @@ class UpdateTrackView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 
 class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/questionaire.html'
-    success_url = reverse_lazy('questionnaire_competitions')
+    success_url = reverse_lazy('profil')
     title = _("Vyplňte odpovědi")
     form_class = forms.AnswerForm
 
