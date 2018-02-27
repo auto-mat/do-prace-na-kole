@@ -713,7 +713,10 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
     extra = 0
     uncreated_trips = []
     success_message = _("Tabulka jízd úspěšně změněna")
-    title = _("Jízdy")
+    registration_phase = 'profile_view'
+    template_name = 'registration/competition_profile.html'
+    title = _('Stav registrace')
+    opening_message = mark_safe(_("<b class='text-success'>Vaše registrace je kompletní.</b><br/>"))
 
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
@@ -782,10 +785,6 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
         for form in formset.forms:
             form.fields['commute_mode'].queryset = qs
         return formset
-
-    title = _('Moje jízdy')
-    registration_phase = 'profile_view'
-    template_name = 'registration/competition_profile.html'
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
@@ -857,7 +856,10 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredM
 class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
     template_name = 'base_generic_form.html'
     title = _('Stav registrace')
-    opening_message = _("Před tím, než budete moct zadávat jízdy, bude ještě nutné vyřešit pár věcí:")
+    opening_message = mark_safe(_(
+        "<b class='text-warning'>Vaše registrace není kompletní.</b><br/>"
+        "K dokončení registrace bude ještě nutné vyřešit několik věcí:",
+    ))
     registration_phase = 'registration_uncomplete'
 
     def get(self, request, *args, **kwargs):
