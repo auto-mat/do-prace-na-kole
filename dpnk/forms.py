@@ -553,7 +553,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
 
     def clean_payment_type(self):
         payment_type = self.cleaned_data['payment_type']
-        if payment_type == 'company' and not self.user_attendance.get_asociated_company_admin().filter(can_confirm_payments=True).exists():
+        if payment_type == 'company' and not self.user_attendance.get_asociated_company_admin_with_payments().exists():
             raise forms.ValidationError(
                 format_html(
                     _("Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora nebo neumožňuje platbu za zaměstnance. "

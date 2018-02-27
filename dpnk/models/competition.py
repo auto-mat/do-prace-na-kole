@@ -221,6 +221,11 @@ class Competition(models.Model):
         blank=True,
         null=True,
     )
+    mandatory = models.BooleanField(
+        verbose_name=_("Povinný dotazník"),
+        default=False,
+        null=False,
+    )
 
     def get_minimum_rides_base(self):
         return self.minimum_rides_base

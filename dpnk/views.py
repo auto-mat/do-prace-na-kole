@@ -811,7 +811,10 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
 
     def get(self, request, *args, **kwargs):
         reason = self.user_attendance.entered_competition_reason()
+        questionnaire = self.user_attendance.unanswered_questionnaires().filter(mandatory=True)
         if reason is True:
+            if questionnaire:
+                return redirect(reverse_lazy("questionnaire", kwargs={"questionnaire_slug": questionnaire.first().slug}))
             return super().get(request, *args, **kwargs)
         else:
             redirect_view = {

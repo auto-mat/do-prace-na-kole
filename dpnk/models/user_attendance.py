@@ -458,6 +458,9 @@ class UserAttendance(models.Model):
             company_admin_approved='approved',
         )
 
+    def get_asociated_company_admin_with_payments(self):
+        return self.get_asociated_company_admin().filter(can_confirm_payments=True)
+
     def company_coordinator_emails(self):
         company_admins = self.get_asociated_company_admin()
         if company_admins:
