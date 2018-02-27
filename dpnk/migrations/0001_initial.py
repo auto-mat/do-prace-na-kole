@@ -99,8 +99,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('admission_fee', models.PositiveIntegerField(default=180, verbose_name='Starting fee')),
                 ('admission_fee_company', models.FloatField(default=179.34, verbose_name='Company starting fee')),
-                ('campaign', models.ForeignKey(to='dpnk.Campaign')),
-                ('city', models.ForeignKey(to='dpnk.City')),
+                ('campaign', models.ForeignKey(to='dpnk.Campaign', on_delete=models.CASCADE)),
+                ('city', models.ForeignKey(to='dpnk.City', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('campaign', 'city__name'),
@@ -138,9 +138,9 @@ class Migration(migrations.Migration):
                 ('motivation_company_admin', models.TextField(default=b'', max_length=5000, blank=True, help_text='Please, write us, which position you occupy in your company', null=True, verbose_name='Occupied position')),
                 ('note', models.TextField(max_length=500, null=True, verbose_name='Internal note', blank=True)),
                 ('can_confirm_payments', models.BooleanField(default=False, verbose_name='Can confirm payments')),
-                ('administrated_company', models.ForeignKey(related_name=b'company_admin', verbose_name='Administrated company', to='dpnk.Company', null=True)),
-                ('campaign', models.ForeignKey(to='dpnk.Campaign')),
-                ('user', models.ForeignKey(related_name=b'company_admin', verbose_name='U\u017eivatel', to=settings.AUTH_USER_MODEL)),
+                ('administrated_company', models.ForeignKey(related_name=b'company_admin', verbose_name='Administrated company', to='dpnk.Company', null=True, on_delete=models.CASCADE)),
+                ('campaign', models.ForeignKey(to='dpnk.Campaign', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(related_name=b'company_admin', verbose_name='U\u017eivatel', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Company administrator',
@@ -165,9 +165,9 @@ class Migration(migrations.Migration):
                 ('is_public', models.BooleanField(default=True, verbose_name='Competition is public')),
                 ('entry_after_beginning_days', models.IntegerField(default=7, help_text='Days from begining, when it is still possible to admit the competition.', verbose_name='Prolonged admissions')),
                 ('rules', models.TextField(default=None, null=True, verbose_name='Competition rules', blank=True)),
-                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
-                ('city', models.ForeignKey(verbose_name='Competition is only for cities', blank=True, to='dpnk.City', null=True)),
-                ('company', models.ForeignKey(verbose_name='Competition is only for companies', blank=True, to='dpnk.Company', null=True)),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign', on_delete=models.CASCADE)),
+                ('city', models.ForeignKey(verbose_name='Competition is only for cities', blank=True, to='dpnk.City', null=True, on_delete=models.CASCADE)),
+                ('company', models.ForeignKey(verbose_name='Competition is only for companies', blank=True, to='dpnk.Company', null=True, on_delete=models.CASCADE)),
                 ('company_competitors', models.ManyToManyField(related_name=b'competitions', null=True, to='dpnk.Company', blank=True)),
             ],
             options={
@@ -182,8 +182,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('result', models.FloatField(default=None, null=True, verbose_name='Result', db_index=True, blank=True)),
-                ('company', models.ForeignKey(related_name=b'company_results', default=None, blank=True, to='dpnk.Company', null=True)),
-                ('competition', models.ForeignKey(related_name=b'results', to='dpnk.Competition')),
+                ('company', models.ForeignKey(related_name=b'company_results', default=None, blank=True, to='dpnk.Company', null=True, on_delete=models.CASCADE)),
+                ('competition', models.ForeignKey(related_name=b'results', to='dpnk.Competition', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Competition result',
@@ -198,9 +198,9 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(default=datetime.datetime.now, verbose_name='Created')),
                 ('customer_sheets', models.FileField(upload_to=b'customer_sheets', null=True, verbose_name='Customer sheets', blank=True)),
                 ('tnt_order', models.FileField(upload_to=b'tnt_order', null=True, verbose_name='TNT order', blank=True)),
-                ('author', models.ForeignKey(related_name=b'deliverybatch_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
-                ('updated_by', models.ForeignKey(related_name=b'deliverybatch_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('author', models.ForeignKey(related_name=b'deliverybatch_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign', on_delete=models.SET_NULL)),
+                ('updated_by', models.ForeignKey(related_name=b'deliverybatch_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)),
             ],
             options={
                 'verbose_name': 'Delivery batch',
@@ -219,10 +219,10 @@ class Migration(migrations.Migration):
                 ('invoice_pdf', models.FileField(upload_to=b'invoices', null=True, verbose_name='PDF invoice', blank=True)),
                 ('sequence_number', models.PositiveIntegerField(unique=True, verbose_name='Invoice sequence number')),
                 ('order_number', models.BigIntegerField(null=True, verbose_name='Order number', blank=True)),
-                ('author', models.ForeignKey(related_name=b'invoice_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
-                ('company', models.ForeignKey(verbose_name='Company', to='dpnk.Company')),
-                ('updated_by', models.ForeignKey(related_name=b'invoice_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('author', models.ForeignKey(related_name=b'invoice_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign', on_delete=models.CASCADE)),
+                ('company', models.ForeignKey(verbose_name='Company', to='dpnk.Company', on_delete=models.CASCADE)),
+                ('updated_by', models.ForeignKey(related_name=b'invoice_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Invoice',
@@ -237,7 +237,7 @@ class Migration(migrations.Migration):
                 ('type', models.CharField(default=b'registration', max_length=16, verbose_name='Phase type', choices=[(b'registration', 'registration'), (b'compet_entry', 'main competition entry'), (b'competition', 'competition'), (b'results', 'results'), (b'admissions', 'apply for competitions')])),
                 ('date_from', models.DateField(default=None, null=True, verbose_name='Phase beginning date', blank=True)),
                 ('date_to', models.DateField(default=None, null=True, verbose_name='Phase end date', blank=True)),
-                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'champaign phase',
@@ -256,8 +256,8 @@ class Migration(migrations.Migration):
                 ('with_comment', models.BooleanField(default=True, verbose_name='Allow comment')),
                 ('with_attachment', models.BooleanField(default=False, verbose_name='Allow attachment')),
                 ('order', models.IntegerField(null=True, verbose_name='Order', blank=True)),
-                ('choice_type', models.ForeignKey(default=None, blank=True, to='dpnk.ChoiceType', null=True, verbose_name='Choice type')),
-                ('competition', models.ForeignKey(verbose_name='Competition', to='dpnk.Competition')),
+                ('choice_type', models.ForeignKey(default=None, blank=True, to='dpnk.ChoiceType', null=True, verbose_name='Choice type', on_delete=models.CASCADE)),
+                ('competition', models.ForeignKey(verbose_name='Competition', to='dpnk.Competition', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('order',),
@@ -276,8 +276,8 @@ class Migration(migrations.Migration):
                 ('address_district', models.CharField(default=b'', max_length=50, null=True, verbose_name='City part', blank=True)),
                 ('address_psc', models.IntegerField(default=0, help_text='For example 130 00', verbose_name='ZIP code (PS\u010c)', validators=[django.core.validators.MaxValueValidator(99999), django.core.validators.MinValueValidator(10000)])),
                 ('address_city', models.CharField(default=b'', help_text='For example Jablonec n.N. or Praha 3-\u017di\u017ekov', max_length=50, verbose_name='Town')),
-                ('city', models.ForeignKey(verbose_name='Competing town', to='dpnk.City', help_text="Rozhoduje o tom, kde budete sout\u011b\u017eit - vizte <a href='/~petr/dpnk-wp//pravidla' target='_blank'>pravidla sout\u011b\u017ee</a>")),
-                ('company', models.ForeignKey(related_name=b'subsidiaries', to='dpnk.Company')),
+                ('city', models.ForeignKey(verbose_name='Competing town', to='dpnk.City', help_text="Rozhoduje o tom, kde budete sout\u011b\u017eit - vizte <a href='/~petr/dpnk-wp//pravidla' target='_blank'>pravidla sout\u011b\u017ee</a>", on_delete=models.CASCADE)),
+                ('company', models.ForeignKey(related_name=b'subsidiaries', to='dpnk.Company', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Subdivision',
@@ -292,7 +292,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=50, verbose_name='Team name')),
                 ('invitation_token', models.CharField(default=b'', unique=True, max_length=100, verbose_name='Invitation token')),
                 ('member_count', models.IntegerField(default=0, verbose_name='Number of authorized team members', db_index=True)),
-                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('name',),
@@ -319,7 +319,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Payment',
             fields=[
-                ('transaction_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='dpnk.Transaction')),
+                ('transaction_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='dpnk.Transaction', on_delete=models.CASCADE)),
                 ('order_id', models.CharField(default=b'', max_length=50, null=True, verbose_name=b'Order ID', blank=True)),
                 ('session_id', models.CharField(default=b'', max_length=50, null=True, verbose_name=b'Session ID', blank=True)),
                 ('trans_id', models.CharField(max_length=50, null=True, verbose_name=b'Transaction ID', blank=True)),
@@ -337,9 +337,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PackageTransaction',
             fields=[
-                ('transaction_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='dpnk.Transaction')),
+                ('transaction_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='dpnk.Transaction', on_delete=models.CASCADE)),
                 ('tracking_number', models.PositiveIntegerField(unique=True, verbose_name='TNT tracking number')),
-                ('delivery_batch', models.ForeignKey(verbose_name='Delivery batch', to='dpnk.DeliveryBatch')),
+                ('delivery_batch', models.ForeignKey(verbose_name='Delivery batch', to='dpnk.DeliveryBatch', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Package transaction',
@@ -350,7 +350,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CommonTransaction',
             fields=[
-                ('transaction_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='dpnk.Transaction')),
+                ('transaction_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='dpnk.Transaction', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Common transaction',
@@ -384,7 +384,7 @@ class Migration(migrations.Migration):
                 ('ship', models.BooleanField(default=True, verbose_name='Ships?')),
                 ('available', models.BooleanField(default=True, help_text='Is shown in the t-shirt sizes', verbose_name='Is available?')),
                 ('t_shirt_preview', models.FileField(upload_to=b't_shirt_preview', null=True, verbose_name='T-shirt preview', blank=True)),
-                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['order'],
@@ -396,7 +396,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserActionTransaction',
             fields=[
-                ('transaction_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='dpnk.Transaction')),
+                ('transaction_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='dpnk.Transaction', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'User action',
@@ -410,9 +410,9 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('distance', models.PositiveIntegerField(default=None, help_text='Average distance from home to work (in km in one direction)', null=True, verbose_name='Distance', blank=True)),
                 ('approved_for_team', models.CharField(default=b'undecided', max_length=16, verbose_name='Team approval', choices=[(b'approved', 'Confirmed'), (b'undecided', 'Unconfirmed'), (b'denied', 'Denied')])),
-                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign')),
-                ('t_shirt_size', models.ForeignKey(verbose_name='T-shirt size', to='dpnk.TShirtSize', null=True)),
-                ('team', models.ForeignKey(related_name=b'users', default=None, blank=True, to='dpnk.Team', null=True, verbose_name='Team')),
+                ('campaign', models.ForeignKey(verbose_name='Campaign', to='dpnk.Campaign', on_delete=models.CASCADE)),
+                ('t_shirt_size', models.ForeignKey(verbose_name='T-shirt size', to='dpnk.TShirtSize', null=True, on_delete=models.CASCADE)),
+                ('team', models.ForeignKey(related_name=b'users', default=None, blank=True, to='dpnk.Team', null=True, verbose_name='Team', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'Campaign attendance',
@@ -431,7 +431,7 @@ class Migration(migrations.Migration):
                 ('sex', models.CharField(default=b'unknown', max_length=50, verbose_name='Pohlav\xed', choices=[(b'male', 'Mu\u017e'), (b'female', '\u017dena'), (b'unknown', 'Nezn\xe1m\xe9')])),
                 ('note', models.TextField(null=True, verbose_name='Internal note', blank=True)),
                 ('administrated_cities', models.ManyToManyField(related_name=b'city_admins', null=True, to='dpnk.CityInCampaign', blank=True)),
-                ('user', models.OneToOneField(related_name=b'userprofile', to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(related_name=b'userprofile', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['user__last_name', 'user__first_name'],
@@ -443,7 +443,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userattendance',
             name='userprofile',
-            field=models.ForeignKey(verbose_name='User profile', to='dpnk.UserProfile'),
+            field=models.ForeignKey(verbose_name='User profile', to='dpnk.UserProfile', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -457,7 +457,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='trip',
             name='user_attendance',
-            field=models.ForeignKey(related_name=b'user_trips', default=None, blank=True, to='dpnk.UserAttendance', null=True),
+            field=models.ForeignKey(related_name=b'user_trips', default=None, blank=True, to='dpnk.UserAttendance', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -467,37 +467,37 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='transaction',
             name='author',
-            field=models.ForeignKey(related_name=b'transaction_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name=b'transaction_create', verbose_name='author', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='transaction',
             name='polymorphic_ctype',
-            field=models.ForeignKey(related_name=b'polymorphic_dpnk.transaction_set', editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(related_name=b'polymorphic_dpnk.transaction_set', editable=False, to='contenttypes.ContentType', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='transaction',
             name='updated_by',
-            field=models.ForeignKey(related_name=b'transaction_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name=b'transaction_update', verbose_name='last updated by', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='transaction',
             name='user_attendance',
-            field=models.ForeignKey(related_name=b'transactions', default=None, to='dpnk.UserAttendance', null=True),
+            field=models.ForeignKey(related_name=b'transactions', default=None, to='dpnk.UserAttendance', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='team',
             name='coordinator_campaign',
-            field=models.OneToOneField(related_name=b'coordinated_team', null=True, verbose_name='Team coordinator', to='dpnk.UserAttendance'),
+            field=models.OneToOneField(related_name=b'coordinated_team', null=True, verbose_name='Team coordinator', to='dpnk.UserAttendance', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='team',
             name='subsidiary',
-            field=models.ForeignKey(related_name=b'teams', verbose_name='Subdivision', to='dpnk.Subsidiary'),
+            field=models.ForeignKey(related_name=b'teams', verbose_name='Subdivision', to='dpnk.Subsidiary', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -511,19 +511,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='packagetransaction',
             name='t_shirt_size',
-            field=models.ForeignKey(verbose_name='T-shirt size', to='dpnk.TShirtSize', null=True),
+            field=models.ForeignKey(verbose_name='T-shirt size', to='dpnk.TShirtSize', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='competitionresult',
             name='team',
-            field=models.ForeignKey(related_name=b'competitions_results', default=None, blank=True, to='dpnk.Team', null=True),
+            field=models.ForeignKey(related_name=b'competitions_results', default=None, blank=True, to='dpnk.Team', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='competitionresult',
             name='user_attendance',
-            field=models.ForeignKey(related_name=b'competitions_results', default=None, blank=True, to='dpnk.UserAttendance', null=True),
+            field=models.ForeignKey(related_name=b'competitions_results', default=None, blank=True, to='dpnk.UserAttendance', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -553,7 +553,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='choicetype',
             name='competition',
-            field=models.ForeignKey(to='dpnk.Competition'),
+            field=models.ForeignKey(to='dpnk.Competition', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -563,7 +563,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='choice',
             name='choice_type',
-            field=models.ForeignKey(related_name=b'choices', verbose_name='Choice type', to='dpnk.ChoiceType'),
+            field=models.ForeignKey(related_name=b'choices', verbose_name='Choice type', to='dpnk.ChoiceType', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -579,13 +579,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='answer',
             name='question',
-            field=models.ForeignKey(to='dpnk.Question'),
+            field=models.ForeignKey(to='dpnk.Question', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='answer',
             name='user_attendance',
-            field=models.ForeignKey(blank=True, to='dpnk.UserAttendance', null=True),
+            field=models.ForeignKey(blank=True, to='dpnk.UserAttendance', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(

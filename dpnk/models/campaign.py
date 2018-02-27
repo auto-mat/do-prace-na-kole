@@ -55,6 +55,7 @@ class Campaign(Pricable, models.Model):
         verbose_name=_(u"Předchozí kampaň"),
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
     email_footer = models.TextField(
         verbose_name=_(u"Patička uživatelských e-mailů"),
@@ -190,6 +191,13 @@ class Campaign(Pricable, models.Model):
         null=True,
         blank=True,
     )
+    sitetree_postfix = models.CharField(
+        verbose_name=_("Postfix pro menu"),
+        max_length=60,
+        null=False,
+        blank=True,
+        default="",
+    )
 
     LANGUAGE_PREFIXES = [
         ('dpnk', _("Do práce na kole")),
@@ -209,6 +217,12 @@ class Campaign(Pricable, models.Model):
         blank=True,
         null=True,
     )
+
+    def sitetree_postfix_maintree(self):
+        if self.sitetree_postfix:
+            return "maintree_%s" % self.sitetree_postfix
+        else:
+            return "maintree"
 
     def __str__(self):
         return self.name

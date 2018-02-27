@@ -86,6 +86,7 @@ class GpxFile(models.Model):
         Trip,
         null=True,
         blank=True,
+        on_delete=models.CASCADE,
     )
     track = models.MultiLineStringField(
         verbose_name=_(u"trasa"),
@@ -115,6 +116,7 @@ class GpxFile(models.Model):
         UserAttendance,
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     commute_mode = models.ForeignKey(
         'CommuteMode',

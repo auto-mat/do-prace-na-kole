@@ -19,6 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import re
 
+from admin_views.admin import AdminViews
+
 from adminactions import actions as admin_actions
 
 from adminfilters.filters import RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
@@ -42,7 +44,7 @@ from dpnk.models import Campaign, UserAttendance
 from import_export import fields, resources
 from import_export.admin import ExportMixin, ImportExportMixin
 
-from nested_inline.admin import NestedModelAdmin, NestedTabularInline
+from nested_admin import NestedModelAdmin, NestedTabularInline
 
 from related_admin import RelatedFieldAdmin, getter_for_related_field
 
@@ -114,7 +116,7 @@ class PackageTransactionResource(resources.ModelResource):
             return ""
 
 
-class PackageTransactionInline(NestedTabularInline):
+class PackageTransactionInline(admin.TabularInline):
     model = models.PackageTransaction
     extra = 0
     readonly_fields = ['author', 'updated_by', 't_shirt_size']
@@ -128,17 +130,25 @@ class PackageTransactionInline(NestedTabularInline):
     form = PackageTransactionForm
 
 
+class NestedPackageTransactionInline(NestedTabularInline, PackageTransactionInline):
+    pass  # Nested version can't be used for dpnk.UserAttendanceAdmin
+
+
 class TeamPackageInline(NestedTabularInline):
     model = models.TeamPackage
     extra = 0
     raw_id_fields = ('team',)
     inlines = (
-        PackageTransactionInline,
+        NestedPackageTransactionInline,
     )
 
 
 @admin.register(models.SubsidiaryBox)
-class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, NestedModelAdmin, RelatedFieldAdmin):
+class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFieldAdmin, AdminViews, NestedModelAdmin):
+    admin_views = (
+        (_('Označit balíky/krabice jako vyřízené'), '/admin/dispatch'),
+    )
+
     list_display = (
         'identifier',
         'dispatched',
@@ -210,7 +220,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, NestedMod
 
 
 @admin.register(models.TeamPackage)
-class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
+class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin, NestedModelAdmin):
     list_display = (
         'identifier',
         'dispatched',
@@ -247,7 +257,7 @@ class TeamPackageAdmin(ExportMixin, RelatedFieldAdmin):
         'box__carrier_identification',
     )
     inlines = (
-        PackageTransactionInline,
+        NestedPackageTransactionInline,
     )
 
     def get_queryset(self, request):
@@ -346,7 +356,7 @@ class SubsidiaryBoxInline(NestedTabularInline):
 
 
 @admin.register(models.DeliveryBatch)
-class DeliveryBatchAdmin(FormRequestMixin, admin.ModelAdmin):
+class DeliveryBatchAdmin(FormRequestMixin, NestedModelAdmin):
     list_display = [
         'id',
         'campaign',
@@ -419,7 +429,7 @@ class UserAttendanceToBatch(UserAttendance):
 
 
 @admin.register(UserAttendanceToBatch)
-class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin):
+class UserAttendanceToBatchAdmin(ReadOnlyModelAdminMixin, RelatedFieldAdmin, NestedModelAdmin):
     list_display = ('name', 't_shirt_size', 'team__subsidiary', 'team__subsidiary__city', 'payment_created', 'representative_payment__realized')
     list_filter = (('team__subsidiary__city', RelatedFieldCheckBoxFilter), ('t_shirt_size', RelatedFieldComboFilter), 'transactions__status')
     search_fields = (

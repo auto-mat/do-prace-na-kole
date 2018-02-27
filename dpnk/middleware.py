@@ -19,13 +19,14 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.contrib.gis.db.models.functions import Length
 from django.http import Http404
+from django.utils.deprecation import MiddlewareMixin
 from django.utils.translation import ugettext_lazy as _
 
 from .models import Campaign, UserAttendance
 
 
 def get_or_create_userattendance(request, campaign_slug):
-    if request.user and request.user.is_authenticated():
+    if request.user and request.user.is_authenticated:
         try:
             return UserAttendance.objects.select_related(
                 'campaign',
@@ -49,7 +50,7 @@ def get_or_create_userattendance(request, campaign_slug):
                 )
 
 
-class UserAttendanceMiddleware:
+class UserAttendanceMiddleware(MiddlewareMixin):
     def process_request(self, request):
         campaign_slug = request.subdomain
 

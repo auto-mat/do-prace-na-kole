@@ -43,6 +43,7 @@ class DiscountCoupon(models.Model):
         null=False,
         blank=False,
         default='',
+        on_delete=models.CASCADE,
     )
     token = models.TextField(
         verbose_name=_("token"),

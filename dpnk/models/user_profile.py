@@ -64,6 +64,7 @@ class UserProfile(models.Model):
         unique=True,
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     nickname = models.CharField(
         _(u'Zobrazené jméno'),
@@ -77,7 +78,7 @@ class UserProfile(models.Model):
         max_length=30,
         null=False,
         validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
-        help_text=_("Telefonní číslo slouží jako kontakt pro help desk."),
+        help_text=_("Telefonní číslo slouží jako kontakt pro help desk a případně pro kurýra, který Vám bude doručovat zásilku."),
     )
     language = models.CharField(
         verbose_name=_(u"Jazyk e-mailové komunikace"),
@@ -131,6 +132,7 @@ class UserProfile(models.Model):
         help_text=_("Nepovinné, bude použito pro účely žebříčků dle jednotlivých profesí"),
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
     age_group = models.PositiveIntegerField(
         verbose_name=_("Ročník narození"),

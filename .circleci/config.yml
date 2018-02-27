@@ -39,8 +39,9 @@ jobs:
          name: Start RabbitMQ container
          command: |
             docker run -d --hostname dpnk-rabbit --name dpnk-rabbit rabbitmq
+
       - run:
-         name: Test Docker container
+         name: Test Docker container in Django 2.0
          command: |
             sleep 10
             docker run \
@@ -51,9 +52,27 @@ jobs:
                --env DPNK_DB_USER=postgres \
                --env DPNK_DB_PASSWORD=password \
                --env DPNK_BROKER_URL="amqp://rabbit" \
+               --env DJANGO_VERSION="Django<2.1>=2.0" \
                --link dpnk-rabbit:rabbit \
                --link dpnk-postgres:postgres \
                --name dpnk-test \
+               dopracenakole
+      - run:
+         name: Test Docker container in Django 1.11
+         command: |
+            sleep 10
+            docker run \
+               --entrypoint="/home/aplikace/docker-test-entrypoint.sh" \
+               --env DPNK_DB_HOST=postgres \
+               --env DPNK_SECRET_KEY=secret \
+               --env DPNK_DB_NAME=postgres \
+               --env DPNK_DB_USER=postgres \
+               --env DPNK_DB_PASSWORD=password \
+               --env DPNK_BROKER_URL="amqp://rabbit" \
+               --env DJANGO_VERSION="Django<2.0>=1.11" \
+               --link dpnk-rabbit:rabbit \
+               --link dpnk-postgres:postgres \
+               --name dpnk-test-dj111 \
                dopracenakole
 
       - deploy:
@@ -81,9 +100,8 @@ jobs:
             fi
 
       - run: docker cp dpnk-test:/home/aplikace/reports /tmp/reports
-      - run: cp /tmp/reports/.coverage .
+      - run: cp /tmp/reports/* . -R
       - run: coveralls
-      - run: pip freeze > /tmp/reports/requirements.freeze.txt
 
       - store_artifacts:
           path: /tmp/reports

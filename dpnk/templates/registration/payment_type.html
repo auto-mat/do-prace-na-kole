@@ -1,6 +1,7 @@
-{% extends "submenu_payment.html" %}
+{% extends "base_generic_registration_form.html" %}
 {% load crispy_forms_tags %}
 {% load static %}
+{% load scribbler_tags %}
 {% load i18n %}
 
 {% block extrahead %}
@@ -98,7 +99,10 @@ $(function(){
 <div class="description_switcher_div description pay_description pay_beneficiary_description">
    <h3>{% trans "Platba účastnického poplatku" %}</h3>
    <div id="beneficiary-motivation" style="display:none">
+   {% scribble 'beneficiary_payment' %}
+   {% load i18n %}
    {% trans "Platbou benefičního startovného podpoříte Auto*Mat ve zlepšování dopravních návyků obyvatel měst, v rozšíření kampaně Do práce na kole do nových lokalit a ve zlepšování podmínek pro městské městské cyklisty." %}
+   {% endscribble %}
    </div>
    <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform" class="submit-once-form">
    {% trans "Soutěžící:" %} {{ user_attendance.userprofile.user.get_full_name }}<br/>

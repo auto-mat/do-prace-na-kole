@@ -35,6 +35,7 @@ class DiscountCouponType(models.Model):
         verbose_name=_("Kampaň"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     valid_until = models.DateField(
         verbose_name=_("Platný do"),

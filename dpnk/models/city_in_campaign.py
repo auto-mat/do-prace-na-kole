@@ -38,11 +38,13 @@ class CityInCampaign(models.Model):
         null=False,
         blank=False,
         related_name="cityincampaign",
+        on_delete=models.CASCADE,
     )
     campaign = models.ForeignKey(
         "Campaign",
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     allow_adding_rides = models.BooleanField(
         verbose_name=_(u"povolit zapisování jízd"),

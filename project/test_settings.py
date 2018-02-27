@@ -20,7 +20,7 @@
 import os
 
 from .settings import *  # noqa
-from .settings import INSTALLED_APPS, LOGGING, MIDDLEWARE_CLASSES, TEMPLATES
+from .settings import INSTALLED_APPS, LOGGING, MIDDLEWARE, TEMPLATES
 
 ADMINS = (
     ('', ''),
@@ -62,7 +62,7 @@ INSTALLED_APPS += (
 
 for mid in UNUSED_MIDDLEWARES:
     try:
-        MIDDLEWARE_CLASSES.remove(mid)
+        MIDDLEWARE.remove(mid)
     except ValueError:
         pass
 

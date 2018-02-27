@@ -77,6 +77,7 @@ class Competition(models.Model):
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     slug = models.SlugField(
         unique=True,
@@ -158,6 +159,7 @@ class Competition(models.Model):
         verbose_name=_(u"Soutěž pouze pro organizace"),
         null=True,
         blank=True,
+        on_delete=models.CASCADE,
     )
     sex = models.CharField(
         verbose_name=_(u"Soutěž pouze pro pohlaví"),

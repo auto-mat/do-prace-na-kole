@@ -59,6 +59,7 @@ class Subsidiary(models.Model):
         ),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     active = models.BooleanField(
         verbose_name=_(u"Aktivní"),

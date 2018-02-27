@@ -32,10 +32,13 @@ import denorm
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
-from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
+try:
+    from django.urls import reverse
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse
 
 from dpnk import actions, mailing, models, util, views
 from dpnk.test.util import ClearCacheMixin, DenormMixin
@@ -256,6 +259,7 @@ class CompetitionsViewTests(ViewsLogon):
 
 @override_settings(
     SITE_ID=2,
+    FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class BaseViewsTests(ClearCacheMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions']
@@ -399,7 +403,7 @@ class PaymentTypeViewTests(TestCase):
             response,
             '<div class="alert alert-warning">'
             'Platbu ještě musí schválit koordinátor vaší organizace '
-            '<a href="mailto:foo@email.com">foo@email.com</a></div>',
+            '<a href="mailto:foo@email.com">foo@email.com</a>.',
             html=True,
         )
         self.assertEquals(models.Payment.objects.get().pay_type, 'fc')
@@ -420,7 +424,10 @@ class PaymentTypeViewTests(TestCase):
             'next': 'Next',
         }
         response = self.client.post(reverse('typ_platby'), post_data)
-        self.assertContains(response, "Váš zaměstnavatel Testing company nemá zvoleného firemního koordinátora.")
+        self.assertContains(
+            response,
+            "Váš zaměstnavatel Testing company nemá zvoleného firemního koordinátora nebo neumožňuje platbu za zaměstnance.",
+        )
 
     def test_dpnk_payment_type_discount_coupon(self):
         post_data = {
@@ -610,8 +617,8 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('register_admin')
         post_data = {
             'email': 'testadmin@test.cz',
-            'password1': 'test11',
-            'password2': 'test11',
+            'password1': 'password11',
+            'password2': 'password11',
             'motivation_company_admin': 'some motivation',
             'telephone': 123456789,
             'first_name': 'Company',
@@ -655,8 +662,8 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('registrace')
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'test11',
-            'password2': 'test11',
+            'password1': 'password11',
+            'password2': 'password11',
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('upravit_profil'))
@@ -687,8 +694,8 @@ class ViewsTests(DenormMixin, TestCase):
         address = reverse('registrace')
         post_data = {
             'email': 'test@test.cz',
-            'password1': 'test11',
-            'password2': 'test11',
+            'password1': 'password11',
+            'password2': 'password11',
         }
         response = self.client.post(address, post_data)
         self.assertContains(response, "Tato e-mailová adresa se již používá.")
@@ -789,7 +796,7 @@ class RegistrationPhaseTests(TestCase):
         response = self.client.get(reverse('registrace'))
         self.assertContains(
             response,
-            '<div class="alert alert-danger">Již skončil čas, kdy se tato stránka zobrazuje.</div>',
+            '<div class="alert alert-danger">Registrace již byla ukončena.</div>',
             html=True,
             status_code=403,
         )
@@ -808,7 +815,7 @@ class RegistrationPhaseTests(TestCase):
         response = self.client.get(reverse('registrace'))
         self.assertContains(
             response,
-            '<div class="alert alert-danger">Ještě nenastal čas, kdy by se měla tato stránka zobrazit.<br>Stránka se zobrazí až 01.01.2011</div>',
+            '<div class="alert alert-danger">Registrace ještě nezačala.<br/>Registrovat se budete moct od 01.01.2011</div>',
             html=True,
             status_code=403,
         )
@@ -836,8 +843,8 @@ class RegistrationViewTests(TestCase):
         address = reverse('registrace', kwargs=kwargs)
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'test11',
-            'password2': 'test11',
+            'password1': 'password11',
+            'password2': 'password11',
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('upravit_profil'))
@@ -862,8 +869,8 @@ class RegistrationViewTests(TestCase):
         address = reverse('registrace', kwargs=kwargs)
         post_data = {
             'email': 'test1@test.cz',
-            'password1': 'test11',
-            'password2': 'test11',
+            'password1': 'password11',
+            'password2': 'password11',
         }
         response = self.client.post(address, post_data, follow=True)
         self.assertRedirects(response, reverse('upravit_profil'))
@@ -1283,7 +1290,7 @@ class ViewsTestsLogon(ViewsLogon):
             "campaign": self.user_attendance.campaign.id,
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, "Změnit tým")
+        self.assertContains(response, "Změnit organizaci, pobočku a tým")
 
     def test_dpnk_team_invitation_confirmation_unchecked(self):
         token = self.user_attendance.team.invitation_token

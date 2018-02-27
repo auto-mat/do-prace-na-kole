@@ -21,7 +21,10 @@ import datetime
 import random
 
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
 
@@ -76,7 +79,7 @@ class LocalAdminModulesTests(DenormMixin, TestCase):
         competition = models.Competition.objects.filter(slug="FQ-LB")
         actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
-        cr = models.CompetitionResult.objects.get(competition=competition)
+        cr = models.CompetitionResult.objects.get(competition=competition.get())
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "FQ-LB"}), cr.id)
         response = self.client.get(address)
         self.assertContains(response, "Soutěž je vypsána ve městě, pro které nemáte oprávnění.")
@@ -339,7 +342,7 @@ class AdminTests(TestCase):
         competition = models.Competition.objects.filter(slug="quest")
         actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
-        cr = models.CompetitionResult.objects.get(competition=competition)
+        cr = models.CompetitionResult.objects.get(competition=competition.get())
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "quest"}), cr.id)
         response = self.client.get(address)
         self.assertContains(response, "%s/DSC00002.JPG" % settings.MEDIA_URL)
@@ -350,7 +353,7 @@ class AdminTests(TestCase):
         competition = models.Competition.objects.filter(slug="FQ-LB")
         actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
-        cr = models.CompetitionResult.objects.get(competition=competition)
+        cr = models.CompetitionResult.objects.get(competition=competition.get())
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "FQ-LB"}), cr.id)
         response = self.client.get(address)
         self.assertContains(response, "Soutěžící: Testing team 1")
@@ -360,7 +363,7 @@ class AdminTests(TestCase):
         competition = models.Competition.objects.filter(slug="dotaznik-spolecnosti")
         actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
-        cr = models.CompetitionResult.objects.get(competition=competition)
+        cr = models.CompetitionResult.objects.get(competition=competition.get())
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "dotaznik-spolecnosti"}), cr.id)
         response = self.client.get(address)
         self.assertContains(response, "Soutěžící: Testing company")

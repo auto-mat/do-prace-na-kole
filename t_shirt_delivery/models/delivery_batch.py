@@ -52,6 +52,7 @@ class DeliveryBatch(models.Model):
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     customer_sheets = models.FileField(
         verbose_name=_(u"Zákaznické listy"),

@@ -32,7 +32,10 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.forms.widgets import HiddenInput
 from django.http import Http404
@@ -161,6 +164,10 @@ class RegisterCompanyForm(forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs['autocomplete'] = 'organization'
+
     class Meta:
         model = models.Company
         fields = ('name', 'ico')
@@ -201,11 +208,14 @@ company_field = forms.ModelChoiceField(
     queryset=models.Company.objects.filter(active=True),
     widget=AutoCompleteSelectWidget(
         lookup_class='dpnk.lookups.CompanyLookup',
-        attrs={'autocomplete': 'off'},
+        attrs={
+            'autocomplete': 'off',
+            'class': "autocompletewidget form-control",
+        },
     ),
     required=True,
     help_text=_(
-        "Napište několik začátečních písmen názvu svého zaměstnavatele a pokud již existuje, nabídne se vám k výběru. "
+        "Napište několik začátečních písmen celého názvu svého zaměstnavatele a pokud již existuje, nabídne se vám k výběru. "
         "Vyberte ji kliknutím na položku v seznamu.",
     ),
 )
@@ -224,6 +234,7 @@ class RegisterSubsidiaryForm(AddressForm):
         self.fields['company'].widget.attrs['disabled'] = True
         self.fields['company'].required = False
         self.fields['company'].help_text = ""
+        self.fields['address_recipient'].widget.attrs['autocomplete'] = 'subsidiary'
 
     class Meta:
         model = models.Subsidiary
@@ -496,12 +507,12 @@ class InviteForm(SubmitMixin, forms.Form):
             HTML(
                 format_html_lazy(
                     _(
-                        "Můžete pozvat kolegy do týmu přes náš rozesílač - stačí napsat níže e-maily "
+                        "Můžete pozvat kolegy do týmu přes náš rozesílač - stačí níže napsat níže e-maily "
                         "kolegů, které chcete do svého týmu (samozřejmě je můžete pozvat jakkoliv, "
                         "třeba osobně).<br/>"
                         "Následně vyčkejte, až se k vám někdo do týmu připojí "
                         "(tato informace vám přijde e-mailem, stav vašeho týmu můžete sledovat na <a "
-                        "href=\"{}\">stránce vašeho týmu</a>, tamtéž můžete i potvrdit členství "
+                        "href=\"{}\">stránce se členy vašeho týmu</a>, tamtéž můžete i potvrdit členství "
                         "vašich kolegů).<br/>"
                         "Tým může mít maximálně 5 členů."
                         "<br/><br/>"
@@ -518,6 +529,8 @@ class InviteForm(SubmitMixin, forms.Form):
         self.helper.add_input(
             Button('submit', _('Neposílat, přeskočit'), css_class="btn-default", onclick='window.location.href="{}"'.format(reverse("zmenit_triko"))),
         )
+        for field in self.fields.values():
+            field.widget.attrs['autocomplete'] = 'new-password'
         return ret_val
 
 
@@ -540,10 +553,10 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
 
     def clean_payment_type(self):
         payment_type = self.cleaned_data['payment_type']
-        if payment_type == 'company' and not self.user_attendance.get_asociated_company_admin().exists():
+        if payment_type == 'company' and not self.user_attendance.get_asociated_company_admin().filter(can_confirm_payments=True).exists():
             raise forms.ValidationError(
                 format_html(
-                    _("Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora."
+                    _("Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora nebo neumožňuje platbu za zaměstnance. "
                       "Vaše organizace bude muset nejprve ustanovit zástupce, který za ní bude schvalovat platby ve vaší organizaci."
                       "<ul><li><a href='{url}'>Chci se stát firemním koordinátorem</a></li></ul>"),
                     employer=self.user_attendance.team.subsidiary.company,
@@ -561,7 +574,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 _("Podpořím soutěž benefičním poplatkem %s Kč. <i class='fa fa-heart'></i>") %
                 intcomma(self.user_attendance.beneficiary_admission_fee()),
             )),
-            ('company', _("Učastnický poplatek mi platí zaměstnavatel.")),
+            ('company', _("Účastnický poplatek mi platí zaměstnavatel.")),
             ('member_wannabe', mark_safe_lazy(
                 _(
                     "Chci účastnický poplatek zdarma (pro ty, kteří chtějí trvale podporovat udržitelnou mobilitu). "

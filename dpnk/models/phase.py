@@ -48,6 +48,7 @@ class Phase(models.Model):
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     phase_type = models.CharField(
         verbose_name=_(u"Typ fáze"),

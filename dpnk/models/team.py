@@ -54,6 +54,7 @@ class Team(models.Model):
         related_name='teams',
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     invitation_token = models.CharField(
         verbose_name=_(u"Token pro pozvánky"),
@@ -69,6 +70,7 @@ class Team(models.Model):
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
 
     @denormalized(
@@ -78,7 +80,8 @@ class Team(models.Model):
         blank=False,
         db_index=True,
         default=None,
-        skip={'invitation_token'})
+        skip={'invitation_token'},
+    )
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def member_count(self):
         member_count = self.members().count()
@@ -97,7 +100,8 @@ class Team(models.Model):
         blank=False,
         db_index=True,
         default=None,
-        skip={'invitation_token'})
+        skip={'invitation_token'},
+    )
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def unapproved_member_count(self):
         member_count = self.unapproved_members().count()
@@ -184,7 +188,10 @@ class TeamName(Team):
         proxy = True
 
     def __str__(self):
-        return self.name
+        if self.name:
+            return self.name
+        else:
+            return "[%s]" % self.subsidiary.__str__()
 
 
 def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):

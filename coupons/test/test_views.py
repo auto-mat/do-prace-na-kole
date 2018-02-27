@@ -19,7 +19,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 from django.test.utils import override_settings
 
@@ -36,12 +39,17 @@ import settings
 class DiscountCouponViewTests(TestCase):
     def setUp(self):
         super().setUp()
-        payment_phase = mommy.make(
+        self.campaign = mommy.make("dpnk.Campaign", slug="testing-campaign")
+        mommy.make(
+            "dpnk.Phase",
+            phase_type="registration",
+            campaign=self.campaign,
+        )
+        mommy.make(
             "dpnk.Phase",
             phase_type="payment",
-            campaign__slug="testing-campaign",
+            campaign=self.campaign,
         )
-        self.campaign = payment_phase.campaign
         mommy.make(
             'price_level.PriceLevel',
             price=120,

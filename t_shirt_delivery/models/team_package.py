@@ -36,12 +36,14 @@ class TeamPackage(TimeStampedModel, models.Model):
         verbose_name=_("Krabice"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     team = models.ForeignKey(
         'dpnk.Team',
         verbose_name=_("Tým"),
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
     dispatched = models.BooleanField(
         verbose_name=_("Balíek vyřízen"),

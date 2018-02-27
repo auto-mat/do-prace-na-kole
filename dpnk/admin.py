@@ -22,6 +22,8 @@
 import pprint
 import types
 
+from admin_views.admin import AdminViews
+
 from adminactions import actions as admin_actions, merge
 
 from adminfilters.filters import AllValuesComboFilter, RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
@@ -37,7 +39,10 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.sessions.models import Session
-from django.core.urlresolvers import reverse
+try:  # Django<2.0
+    from django.core.urlresolvers import reverse
+except ImportError:
+    from django.urls import reverse
 from django.db.models import Count, Sum, TextField
 from django.forms import Textarea
 from django.utils.html import format_html, format_html_join
@@ -56,7 +61,7 @@ from massadmin.massadmin import mass_change_selected
 
 from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 
-from nested_inline.admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
+from nested_admin import NestedModelAdmin, NestedStackedInline, NestedTabularInline
 
 from polymorphic.admin import PolymorphicChildModelAdmin
 
@@ -93,7 +98,7 @@ def admin_links(args_generator):
     )
 
 
-class PaymentInline(NestedTabularInline):
+class PaymentInline(admin.TabularInline):
     model = models.Payment
     extra = 0
     form = transaction_forms.PaymentForm
@@ -104,7 +109,7 @@ class PaymentInline(NestedTabularInline):
     }
 
 
-class UserActionTransactionInline(NestedTabularInline):
+class UserActionTransactionInline(admin.TabularInline):
     model = models.UserActionTransaction
     extra = 0
     readonly_fields = ['user_attendance', 'author', 'updated_by']
@@ -120,7 +125,7 @@ class TeamInline(admin.TabularInline):
     readonly_fields = ['invitation_token', ]
 
 
-class SubsidiaryInline(admin.TabularInline):
+class SubsidiaryInline(NestedTabularInline):
     model = models.Subsidiary
     extra = 0
 
@@ -188,7 +193,7 @@ class CompanyAdminInline(NestedTabularInline):
 
 
 @admin.register(models.Company)
-class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportMixin, admin.ModelAdmin):
+class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportMixin, NestedModelAdmin):
     list_display = (
         'name',
         'subsidiaries_text',
@@ -559,7 +564,7 @@ def create_userprofile_resource(campaign_slugs):  # noqa: C901
 
 
 @admin.register(models.UserProfile)
-class UserProfileAdmin(ImportExportMixin, admin.ModelAdmin):
+class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
     list_display = (
         'user',
         '__str__',
@@ -1091,7 +1096,11 @@ class AnswerAdmin(FormRequestMixin, ImportExportMixin, RelatedFieldAdmin):
 
 
 @admin.register(models.Question)
-class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ImportExportMixin, admin.ModelAdmin):
+class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__city__in'), ImportExportMixin, AdminViews, admin.ModelAdmin):
+    admin_views = (
+        (_('Spravovat otázky'), '/admin/questions'),
+    )
+
     form = models.QuestionForm
     list_display = ('__str__', 'text', 'question_type', 'order', 'date', 'competition', 'choice_type', 'answers_link', 'id', )
     ordering = ('order', 'date',)

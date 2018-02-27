@@ -24,7 +24,10 @@ from braces.views import LoginRequiredMixin
 
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.urlresolvers import reverse, reverse_lazy
+try:
+    from django.urls import reverse, reverse_lazy
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, render
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView
@@ -121,7 +124,7 @@ class SelectUsersPayView(
 
 
 class CompanyEditView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'base_generic_company_admin_form.html'
+    template_name = 'base_generic_form.html'
     form_class = CompanyForm
     model = Company
     success_url = reverse_lazy('company_structure')
@@ -132,7 +135,7 @@ class CompanyEditView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixi
 
 
 class CompanyAdminApplicationView(TitleViewMixin, CompanyAdminMixin, RegistrationView):
-    template_name = 'base_generic_company_admin_form.html'
+    template_name = 'base_generic_form.html'
     form_class = CompanyAdminApplicationForm
     model = CompanyAdmin
     success_url = reverse_lazy('company_structure')
@@ -165,7 +168,7 @@ class CompanyAdminApplicationView(TitleViewMixin, CompanyAdminMixin, Registratio
 
 
 class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, MustHaveTeamMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'submenu_payment.html'
+    template_name = 'base_generic_registration_form.html'
     form_class = CompanyAdminForm
     model = CompanyAdmin
     success_url = 'profil'
@@ -200,7 +203,7 @@ class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, MustHaveTeamMix
 
 
 class EditSubsidiaryView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'base_generic_company_admin_form.html'
+    template_name = 'base_generic_form.html'
     form_class = SubsidiaryForm
     success_url = reverse_lazy('company_structure')
     model = Subsidiary
@@ -220,7 +223,7 @@ class CompanyViewException(Exception):
 
 
 class CompanyCompetitionView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'base_generic_company_admin_form.html'
+    template_name = 'base_generic_form.html'
     form_class = CompanyCompetitionForm
     model = Competition
     success_url = reverse_lazy('company_admin_competitions')

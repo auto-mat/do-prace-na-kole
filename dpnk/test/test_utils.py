@@ -67,6 +67,13 @@ class UtilTests(TestCase):
         self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2016, 5, 31), campaign))
         self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2016, 6, 8), campaign))
 
+    def test_working_day(self):
+        self.assertTrue(util.working_day(datetime.date(2016, 6, 1)))
+        self.assertFalse(util.working_day(datetime.date(2020, 5, 1)))
+        self.assertFalse(util.working_day(datetime.date(2034, 5, 8)))
+        self.assertFalse(util.working_day(datetime.date(2018, 1, 20)))
+        self.assertTrue(util.working_day(datetime.date(2018, 1, 19)))
+
 
 class TodayTests(TestCase):
     def test_today(self):

@@ -62,6 +62,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         verbose_name=_("Dávka objednávek"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     customer_sheets = models.FileField(
         verbose_name=_(u"Zákaznické listy"),
@@ -75,6 +76,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         verbose_name=_("Pobočka"),
         null=True,
         blank=True,
+        on_delete=models.SET_NULL,
     )
     dispatched = models.BooleanField(
         verbose_name=_("Krabice vyřízena"),

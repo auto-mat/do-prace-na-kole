@@ -48,6 +48,7 @@ class CompanyAdmin(models.Model):
         related_name='company_admin',
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
 
     company_admin_approved = models.CharField(
@@ -73,12 +74,14 @@ class CompanyAdmin(models.Model):
         verbose_name=_(u"Koordinovaná organizace"),
         null=True,
         blank=False,
+        on_delete=models.CASCADE,
     )
 
     campaign = models.ForeignKey(
         'Campaign',
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
 
     note = models.TextField(

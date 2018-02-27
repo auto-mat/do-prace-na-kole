@@ -23,9 +23,13 @@ import os
 import re
 import sys
 
+import django.conf.locale
 from django.contrib.messages import constants as message_constants
-from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
+try:
+    from django.urls import reverse_lazy
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse_lazy
 
 from model_utils import Choices
 
@@ -90,7 +94,7 @@ LANGUAGES = (
 )
 LANGUAGE_CODE = 'cs'
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'cs'
-MODELTRANSLATION_LANGUAGES = ('en', 'cs')
+MODELTRANSLATION_LANGUAGES = ('en', 'cs', 'dsnkcs')
 SITE_ID = os.environ.get('DPNK_SITE_ID', 1)
 USE_I18N = True
 USE_L10N = True
@@ -129,7 +133,7 @@ STATICFILES_FINDERS = (
 
 
 SECRET_KEY = os.environ.get('DPNK_SECRET_KEY')
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -143,7 +147,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'denorm.middleware.DenormMiddleware',
     'author.middlewares.AuthorDefaultBackendMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'dpnk.middleware.UserAttendanceMiddleware',
     'dpnk.votes.SecretBallotUserMiddleware',
     'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
@@ -209,7 +212,8 @@ TEMPLATES = [
                 'dpnk.context_processors.site',
                 'dpnk.context_processors.user_attendance',
                 'settings_context_processor.context_processors.settings',
-                'social_django.context_processors.backends',
+                # This is causing lots of database hits on every request and probaly isn't needed:
+                # 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
             ),
             'loaders': [
@@ -224,13 +228,14 @@ TEMPLATES = [
 INSTALLED_APPS = (
     'modeltranslation',
     'admin_view_permission',
+    'admin_views',
 
     'django_su',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.sessions',
-    'nested_inline',
+    'nested_admin',
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
@@ -288,6 +293,8 @@ INSTALLED_APPS = (
     'djcelery_email',
     'django_celery_beat',
     'secretballot',
+    'sitetree',
+    'sitetree_modeltranslation',
     'likes',
     'social_django',
     'fm',
@@ -568,6 +575,8 @@ PRICE_LEVEL_MODEL = 'dpnk.Campaign'
 PRICE_LEVEL_CATEGORY_CHOICES = Choices(('basic', _('Základní')), ('company', _('Pro firmy')))
 PRICE_LEVEL_CATEGORY_DEFAULT = 'basic'
 
+SITETREE_MODEL_TREE_ITEM = 'sitetree_modeltranslation.ModeltranslationTreeItem'
+
 # We have large inline fields, so it is necesarry to set this
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
@@ -579,3 +588,16 @@ except ImportError:
     pass
 
 DATABASE_CONFIGURED = DATABASES['default']['NAME'] != ''
+
+
+EXTRA_LANG_INFO = {
+    'dsnkcs': {
+        'bidi': False,
+        'code': 'dsnkcs',
+        'name': 'Do Školy na kole',
+        'name_local': u'Do skoly na kole',
+    },
+}
+
+LANG_INFO = {**django.conf.locale.LANG_INFO, **EXTRA_LANG_INFO}
+django.conf.locale.LANG_INFO = LANG_INFO

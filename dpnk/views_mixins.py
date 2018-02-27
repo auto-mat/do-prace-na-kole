@@ -19,22 +19,26 @@
 
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils.decorators import classonlymethod
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+try:
+    from django.urls import reverse, reverse_lazy
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse, reverse_lazy
 
 from .util import mark_safe_lazy
+from .views_permission_mixins import MustBeInRegistrationPhaseMixin
 
 
 class CompanyAdminMixin(SuccessMessageMixin):
-    success_message = _("Byla vytvořena žádost o funkci firemního koordinátora. Vyčkejte, než dojde ke schválení této funkce.")
+    success_message = _(
+        "Byli jste úspěšně zaregistrování jako firemní koordinátor. "
+        "Vaší organizaci můžete spravovat v menu \"Firemní koordinátor\".",
+    )
     opening_message = mark_safe_lazy(
         _(
-            "<p>"
-            "Vaše organizace ještě nemá zvoleného firemního koordinátora. "
-            "</p>"
             "<p>"
             "Tato role není pro soutěž povinná, ale usnadní ostatním ostatním kolegům účast v soutěži. "
             "Hlavní úkol pro firemního koordinátora je pokusit se zaměstnavatelem domluvit, aby uhradil účastnický poplatek za zaměstnance."
@@ -140,9 +144,12 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                 messages.info(
                     request,
                     format_html(
-                        _('Vaše platba typu {payment_type} ještě nebyla vyřízena. '
-                          'Počkejte prosím na její schválení. '
-                          'Pokud schválení není možné, můžete <a href="{url}">zadat jiný typ platby</a>.'),
+                        _(
+                            'Vaše platba typu {payment_type} ještě nebyla vyřízena. '
+                            'Počkejte prosím na její schválení. '
+                            'Pokud schválení není možné, můžete <a href="{url}">zadat jiný typ platby</a>. '
+                            'Po schválení bude registrace dokončena a my vám tuto skutečnost potvrdíme e-mailem.',
+                        ),
                         payment_type=self.user_attendance.payment_type_string(), url=reverse('typ_platby'),
                     ),
                 )
@@ -190,7 +197,7 @@ class TitleViewMixin(object):
         return context_data
 
 
-class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAttendanceViewMixin):
+class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin):
     template_name = 'base_generic_registration_form.html'
 
     def get_context_data(self, *args, **kwargs):

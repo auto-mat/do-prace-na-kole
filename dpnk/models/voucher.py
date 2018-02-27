@@ -48,11 +48,13 @@ class Voucher(models.Model):
         UserAttendance,
         null=True,
         blank=True,
+        on_delete=models.CASCADE,
     )
     campaign = models.ForeignKey(
         Campaign,
         null=True,
         blank=True,
+        on_delete=models.CASCADE,
     )
 
     class Meta:

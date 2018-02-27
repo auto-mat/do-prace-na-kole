@@ -62,6 +62,7 @@ class UserAttendance(models.Model):
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     userprofile = models.ForeignKey(
         "UserProfile",
@@ -70,6 +71,7 @@ class UserAttendance(models.Model):
         unique=False,
         null=False,
         blank=False,
+        on_delete=models.CASCADE,
     )
     distance = models.FloatField(
         verbose_name=_(u"Vzdálenost"),

@@ -20,7 +20,10 @@
 from braces.views import GroupRequiredMixin
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse, reverse_lazy
+try:
+    from django.urls import reverse, reverse_lazy
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse, reverse_lazy
 from django.utils import formats
 from django.utils.translation import ugettext_lazy as _
 
@@ -30,15 +33,20 @@ from dpnk.models import PHASE_TYPE_DICT
 from .string_lazy import format_html_lazy, mark_safe_lazy
 
 
-class MustBeInPhaseMixin(object):
-    def dispatch(self, request, *args, **kwargs):
+class PhaseMixin(object):
+    def get_phase(self, request):
         try:
-            phase = request.campaign.phase_set.get(phase_type=self.must_be_in_phase)
+            return request.campaign.phase_set.get(phase_type=self.must_be_in_phase)
         except ObjectDoesNotExist:
             raise exceptions.TemplatePermissionDenied(
                 _("Tato stránka nemůže být v této kampani zobrazena. Neexistuje v ní fáze %s." % PHASE_TYPE_DICT[self.must_be_in_phase]),
                 template_name=getattr(self, 'template_name', None),
             )
+
+
+class MustBeInPhaseMixin(PhaseMixin):
+    def dispatch(self, request, *args, **kwargs):
+        phase = self.get_phase(request)
 
         if phase.is_actual():
             return super().dispatch(request, *args, **kwargs)
@@ -57,8 +65,27 @@ class MustBeInPhaseMixin(object):
         )
 
 
-class MustBeInRegistrationPhaseMixin(MustBeInPhaseMixin):
+class MustBeInRegistrationPhaseMixin(PhaseMixin):
     must_be_in_phase = "registration"
+
+    def dispatch(self, request, *args, **kwargs):
+        phase = self.get_phase(request)
+
+        if phase.is_actual() or (getattr(self, 'user_attendance', False) and self.user_attendance.entered_competition()):
+            return super().dispatch(request, *args, **kwargs)
+
+        if phase.has_started():
+            raise exceptions.TemplatePermissionDenied(
+                _("Registrace již byla ukončena."),
+                template_name=getattr(self, 'template_name', None),
+            )
+        raise exceptions.TemplatePermissionDenied(
+            mark_safe_lazy(
+                _("Registrace ještě nezačala.<br/>Registrovat se budete moct od %s")
+                % formats.date_format(phase.date_from, "SHORT_DATE_FORMAT"),
+            ),
+            template_name=getattr(self, 'template_name', None),
+        )
 
 
 class MustBeInPaymentPhaseMixin(MustBeInPhaseMixin):
@@ -71,7 +98,7 @@ class MustBeInInvoicesPhaseMixin(MustBeInPhaseMixin):
 
 class GroupRequiredResponseMixin(GroupRequiredMixin):
     def no_permissions_fail(self, request):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             raise exceptions.TemplatePermissionDenied(
                 _("Pro přístup k této stránce musíte být ve skupině %s") % self.group_required,
                 template_name=getattr(self, 'template_name', None),

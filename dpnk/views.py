@@ -43,7 +43,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.urlresolvers import reverse, reverse_lazy
+try:
+    from django.urls import reverse, reverse_lazy
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 from django.db.models import Case, Count, F, FloatField, IntegerField, Q, Sum, When
 from django.db.models.functions import Coalesce
@@ -66,6 +69,7 @@ from extra_views import ModelFormSetView
 from registration.backends.simple.views import RegistrationView as SimpleRegistrationView
 
 from unidecode import unidecode
+
 # Local imports
 from . import draw
 from . import exceptions
@@ -117,7 +121,7 @@ logger = logging.getLogger(__name__)
 
 class ProfileRedirectMixin(object):
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return redirect(reverse('profil'))
         else:
             return super().get(request, *args, **kwargs)
@@ -149,7 +153,7 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
             action_text = _('Vybrat')
 
         if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():
-            subject_text = _('tým')
+            subject_text = _('organizaci, pobočku a tým')
         else:
             subject_text = _('organizaci')
         return "%s %s" % (action_text, subject_text)
@@ -417,7 +421,9 @@ class PaymentTypeView(
             'company': {
                 'type': 'fc',
                 'message': format_html(
-                    _("Platbu ještě musí schválit koordinátor vaší organizace {email}"),
+                    _(
+                        "Platbu ještě musí schválit koordinátor vaší organizace {email}. "
+                    ),
                     email=company_admin_email_string,
                 ),
                 'amount': self.user_attendance.company_admission_fee(),
@@ -982,7 +988,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
 
 
 class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'submenu_personal.html'
+    template_name = 'base_generic_registration_form.html'
     form_class = ProfileUpdateForm
     model = UserProfile
     success_message = _("Osobní údaje úspěšně upraveny")
@@ -1140,7 +1146,7 @@ class QuestionnaireAnswersAllView(TitleViewMixin, TemplateView):
             ).select_related('question')
         context_data['show_points'] = (
             competition.has_finished() or
-            (self.request.user.is_authenticated() and
+            (self.request.user.is_authenticated and
              self.request.user.userprofile.user.is_superuser)
         )
         context_data['competitors'] = competitors
@@ -1353,8 +1359,8 @@ class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequired
         return super().dispatch(request, *args, **kwargs)
 
 
-class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, FormView):
-    template_name = "submenu_team.html"
+class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, FormView):
+    template_name = 'base_generic_registration_form.html'
     form_class = InviteForm
     title = _('Pozvětě své kolegy do týmu')
     registration_phase = "zmenit_tym"
@@ -1403,8 +1409,16 @@ class InviteView(UserAttendanceViewMixin, TitleViewMixin, MustBeApprovedForTeamM
         return redirect(invite_success_url or self.success_url)
 
 
-class UpdateTeam(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'submenu_team.html'
+class UpdateTeam(
+        TitleViewMixin,
+        UserAttendanceParameterMixin,
+        MustBeInRegistrationPhaseMixin,
+        SuccessMessageMixin,
+        MustBeApprovedForTeamMixin,
+        LoginRequiredMixin,
+        UpdateView,
+):
+    template_name = 'base_generic_form.html'
     form_class = TeamAdminForm
     success_url = reverse_lazy('edit_team')
     title = _("Upravit název týmu")
@@ -1420,7 +1434,14 @@ class UpdateTeam(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMix
         return self.user_attendance.team
 
 
-class TeamMembers(TitleViewMixin, UserAttendanceViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, TemplateView):
+class TeamMembers(
+        TitleViewMixin,
+        UserAttendanceViewMixin,
+        MustBeInRegistrationPhaseMixin,
+        MustBeApprovedForTeamMixin,
+        LoginRequiredMixin,
+        TemplateView,
+):
     template_name = 'registration/team_admin_members.html'
     registration_phase = "zmenit_tym"
     title = _("Schvalování členů týmu")
