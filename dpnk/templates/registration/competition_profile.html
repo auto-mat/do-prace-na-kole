@@ -45,9 +45,6 @@
       {% wp_news user_attendance.campaign %}
    </div>
    <div class="dpnk-content-box">
-      {% wp_news user_attendance.campaign user_attendance.team.subsidiary.city %}
-   </div>
-   <div class="dpnk-content-box">
       {% wp_actions user_attendance.campaign user_attendance.team.subsidiary.city %}
    </div>
    {% with questionnaire_answer.first as answer %}
@@ -75,18 +72,6 @@
    </div>
    {% endif %}
    {% endwith %}
-   <div class="dpnk-content-box">
-      <h3>{% trans "Cyklisté sobě" %}</h3>
-      <a href="https://www.cyklistesobe.cz/issues/new" target="_blank">{% trans "Dali jste Cyklistům sobě vědět o problémech na vaši trase?" %}</a>
-      {% cyklistesobe user_attendance.team.subsidiary.city.cyklistesobe_slug %}
-   </div>
-   <div class="dpnk-content-box">
-      <h3>{% trans "Cyklistická mapa" %}</h3>
-      <p>
-      {% trans "Nevíte jakou zvolit cestu? Využijte naší cyklistické mapy a vyhledávače." %}
-      </p>
-      <a href="http://{{ map_city_slug }}.dopracenakole.net" target="_blank"><img src="{% static "img/mapa_upoutavka.png" %}" alt="{% trans "mapa Prahou na kole" %}"/></a>
-   </div>
 </div>
 <div class="row base">
    <div class="col-md-12 prizes">
