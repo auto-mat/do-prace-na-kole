@@ -66,53 +66,52 @@ Raven.setUserContext({
                <img src="{% static "img/dpnk_logo.png"%}" alt="Logo Do práce na kole" />
             </a>
          </div>
-            <div class="col-md-9 col-sm-8 col-xs-6">
-               {% if request and campaign %}
-               <nav class="navbar navbar-default">
-                  <div class="container">
-                    <h1>
-                        Do práce na kole
-                    </h1>
-                    <ul class="nav navbar-nav main_menu" >
-                       {% if user.is_authenticated %}
-                          {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
-                       {% else %}
-                          {% sitetree_menu from "unlogged_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
-                       {% endif %}
-                       {% if user_attendance.related_company_admin.is_approved %}
-                          {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
-                       {% endif %}
-                       {% if user.is_staff %}
-                          {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
-                       {% endif %}
-                    </ul>
+         <div class="col-md-9 col-sm-8 col-xs-6">
+            {% if request and campaign %}
+            <nav class="navbar navbar-default">
+               <div class="container">
+                 <h1>
+                     Do práce na kole
+                 </h1>
+                 <ul class="nav navbar-nav main_menu" >
+                    {% if user.is_authenticated %}
+                       {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                    {% else %}
+                       {% sitetree_menu from "unlogged_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                    {% endif %}
+                    {% if user_attendance.related_company_admin.is_approved %}
+                       {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                    {% endif %}
+                    {% if user.is_staff %}
+                       {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                    {% endif %}
+                 </ul>
 
-                  <div id="collapsing_menu" class="collapse navbar-collapse">
-                     {% block second_menu %}
-                     {% endblock %}
-                  </div>
-                  </div>
-               </nav>
+                 <div id="collapsing_menu" class="collapse navbar-collapse">
+                    {% block second_menu %}
+                    {% endblock %}
+                 </div>
                </div>
-               {% endif %}
+            </nav>
+            {% endif %}
 
-               <nav class="col-md-2">
-                <div class="lang_switch">
-                   <ul>
-                         {% block langchanger %}
-                         {% for lang_code, lang_name in languages %}
-                         {% if campaign.language_prefixes in lang_code or campaign.language_prefixes == "dpnk" and lang_code|length == 2 %}
-                           <li class="{% if lang_code == current_language_code %}active{% endif %}">
-                             <a href="{% change_lang lang_code %}" class="switch-{{ lang_code }}" title="{{ lang_name }}">{{ lang_code|cut:campaign.language_prefixes|upper }}</a>
-                           </li>
-                         {% endif %}
-                         {% endfor %}
-                         {% endblock %}
-                   </ul>
-                </div>
-               </nav>
+            <nav class="col-md-2">
+             <div class="lang_switch">
+                <ul>
+                      {% block langchanger %}
+                      {% for lang_code, lang_name in languages %}
+                      {% if campaign.language_prefixes in lang_code or campaign.language_prefixes == "dpnk" and lang_code|length == 2 %}
+                        <li class="{% if lang_code == current_language_code %}active{% endif %}">
+                          <a href="{% change_lang lang_code %}" class="switch-{{ lang_code }}" title="{{ lang_name }}">{{ lang_code|cut:campaign.language_prefixes|upper }}</a>
+                        </li>
+                      {% endif %}
+                      {% endfor %}
+                      {% endblock %}
+                </ul>
+             </div>
+            </nav>
 
-            </div>
+         </div>
       </div>
    </div>
 </div>
