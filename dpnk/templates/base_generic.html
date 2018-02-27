@@ -44,7 +44,6 @@ Raven.setUserContext({
 <link href="{% static "bow/jquery-ui/themes/base/jquery-ui.min.css"%}" rel="stylesheet" media="screen">
 <link href="{% static "bow/bootstrap-social/bootstrap-social.css"%}" rel="stylesheet" media="screen">
 <link href="{% static "css/bootstrap_mod.css"%}" rel="stylesheet" media="screen">
-<link href="https://www.dopracenakole.cz/style.css" rel="stylesheet" media="screen">
 <link rel='stylesheet' id='family-css'  href='https://fonts.googleapis.com/css?family=Open+Sans%3A400italic%2C300%2C600%2C400&#038;subset=latin%2Clatin-ext&#038;ver=4.1.1' type='text/css' media='all' />
 <link href="{% static "bow/font-awesome/css/font-awesome.css"%}" rel="stylesheet">
 <link href="{% static "css/style.css"%}" type="text/css" rel="stylesheet" media="screen">
@@ -62,16 +61,19 @@ Raven.setUserContext({
 <div class="navbar navbar-top" role="navigation">
    <div class="container">
       <div class="row">
-         <div class="col-md-2 logo_holder">
+         <div class="col-md-1 col-sm-2 col-xs-6 logo_holder">
             <a class="logo" href="{% url "profil" %}">
                <img src="{% static "img/dpnk_logo.png"%}" alt="Logo Do práce na kole" />
             </a>
          </div>
-            <div class="col-md-10">
+            <div class="col-md-9 col-sm-8 col-xs-6">
                {% if request and campaign %}
                <nav class="navbar navbar-default">
-                  <div class="container-fluid">
-                    <ul class="nav navbar-nav" >
+                  <div class="container">
+                    <h1>
+                        Do práce na kole
+                    </h1>
+                    <ul class="nav navbar-nav main_menu" >
                        {% if user.is_authenticated %}
                           {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                        {% else %}
@@ -84,17 +86,17 @@ Raven.setUserContext({
                           {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                        {% endif %}
                     </ul>
+
+                  <div id="collapsing_menu" class="collapse navbar-collapse">
+                     {% block second_menu %}
+                     {% endblock %}
+                  </div>
                   </div>
                </nav>
-               <div class="col-md-10">
-                  <div id="collapsing_menu" class="collapse navbar-collapse">
-                        {% block second_menu %}
-                        {% endblock %}
-                  </div>
                </div>
                {% endif %}
 
-               <nav>
+               <nav class="col-md-2">
                 <div class="lang_switch">
                    <ul>
                          {% block langchanger %}
@@ -109,14 +111,14 @@ Raven.setUserContext({
                    </ul>
                 </div>
                </nav>
-              
+
             </div>
       </div>
    </div>
 </div>
 <div class="base container">
    <div class="row">
-      <div class="col-md-8 col-sm-7 col-md-offset-2">
+      <div class="main_content col-md-8 col-sm-7 col-md-offset-1 col-sm-offset-1">
          <!--[if lte IE 8]>
             <p class="alert alert-warning browsehappy">{% trans 'Bohužel používáte <strong>zastaralý</strong> prohlížeč internetu. Přes naši snahu nemusí některé části webu dobře fungovat. Pokud můžete, <a href="http://www.whatbrowser.org/intl/cs">nainstalujte si novější prohlížeč' %}</a>.
          <![endif]-->
@@ -134,7 +136,7 @@ Raven.setUserContext({
             {% endif %}
          {% endblock %}
       </div>
-      <div class="col-md-2 col-sm-3">
+      <div class="col-md-3 col-sm-3">
           {% if user.is_authenticated %}
           {% scribble 'before_right_panel' current_language_code %}{% endscribble %}
           <ul class="user_info">
@@ -147,26 +149,12 @@ Raven.setUserContext({
           </ul>
           {% scribble 'after_right_panel' current_language_code %}{% endscribble %}
           {% endif %}
-            
+
       </div>
    </div>
 </div>
  <script>
       jQuery(document).ready(function($) {
-        // help menu not to cover content
-        function equal_cols()
-        {
-          
-          setTimeout(function() {
-            $('.base').css("margin-top" , $(".navbar-fixed-top").height()+1 + "px")
-          }, 50);
-            
-        }
-        // equlize height of the boxes
-        equal_cols()
-        $(window).resize(function(event) {
-          equal_cols()
-        });
         // deactivate unfulfilled links
         $('.disabled a').click(function (e) {
           e.preventDefault();
