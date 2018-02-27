@@ -43,10 +43,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
-try:
-    from django.urls import reverse, reverse_lazy
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 from django.db.models import Case, Count, F, FloatField, IntegerField, Q, Sum, When
 from django.db.models.functions import Coalesce
@@ -63,6 +59,10 @@ from django.views.decorators.cache import cache_control, cache_page, never_cache
 from django.views.decorators.gzip import gzip_page
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
+try:
+    from django.urls import reverse, reverse_lazy
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse, reverse_lazy
 
 from extra_views import ModelFormSetView
 
@@ -856,10 +856,12 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredM
 class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
     template_name = 'base_generic_form.html'
     title = _('Stav registrace')
-    opening_message = mark_safe(_(
-        "<b class='text-warning'>Vaše registrace není kompletní.</b><br/>"
-        "K dokončení registrace bude ještě nutné vyřešit několik věcí:",
-    ))
+    opening_message = mark_safe(
+        _(
+            "<b class='text-warning'>Vaše registrace není kompletní.</b><br/>"
+            "K dokončení registrace bude ještě nutné vyřešit několik věcí:",
+        ),
+    )
     registration_phase = 'registration_uncomplete'
 
     def get(self, request, *args, **kwargs):
