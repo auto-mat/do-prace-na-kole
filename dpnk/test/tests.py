@@ -25,12 +25,12 @@ import denorm
 
 import django
 from django.core.management import call_command
+from django.test import Client, RequestFactory, TestCase
+from django.test.utils import override_settings
 try:
     from django.urls import reverse
 except ImportError:  # Django<2.0
     from django.core.urlresolvers import reverse
-from django.test import Client, RequestFactory, TestCase
-from django.test.utils import override_settings
 
 from dpnk import actions, company_admin_views, models, util, views
 from dpnk.test.util import ClearCacheMixin, DenormMixin
@@ -406,7 +406,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             html=True,
         )
         self.assertContains(response, '<a href="http://www.dopracenakole.cz/locations/testing-city">Testing city</a>', html=True)
-        self.assertContains(response, 'Novinky ve městě')
+        self.assertContains(response, 'Akce ve městě')
         self.assertContains(response, 'Testing title')
         self.assertContains(response, 'Testing excerpt')
 
