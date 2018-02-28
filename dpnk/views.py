@@ -43,10 +43,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
-try:
-    from django.urls import reverse, reverse_lazy
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse, reverse_lazy
+from django.contrib.sites.shortcuts import get_current_site
 from django.db import transaction
 from django.db.models import Case, Count, F, FloatField, IntegerField, Q, Sum, When
 from django.db.models.functions import Coalesce
@@ -63,6 +60,10 @@ from django.views.decorators.cache import cache_control, cache_page, never_cache
 from django.views.decorators.gzip import gzip_page
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
+try:
+    from django.urls import reverse, reverse_lazy
+except ImportError:  # Django<2.0
+    from django.core.urlresolvers import reverse, reverse_lazy
 
 from extra_views import ModelFormSetView
 
@@ -536,6 +537,20 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
     registration_phase = 'typ_platby'
     template_name = 'registration/payment_result.html'
 
+    def get(self, request, *args, **kwargs):
+        ret_val = super().get(request, *args, **kwargs)
+        if hasattr(self.request, 'campaign'):
+            if self.payment.user_attendance.campaign != self.request.campaign:
+                return redirect(
+                    '%s://%s.%s%s' % (
+                        request.scheme,
+                        self.payment.user_attendance.campaign.slug,
+                        get_current_site(request).domain,
+                        request.path,
+                    ),
+                )
+        return ret_val
+
     @transaction.atomic
     def get_context_data(self, success, trans_id, session_id, pay_type, error=None):
         context_data = super().get_context_data()
@@ -553,19 +568,19 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
         )
 
         if session_id and session_id != "":
-            p = Payment.objects.select_for_update().get(session_id=session_id)
-            if p.status not in Payment.done_statuses:
+            self.payment = Payment.objects.select_for_update().get(session_id=session_id)
+            if self.payment.status not in Payment.done_statuses:
                 if success:
-                    p.status = models.Status.COMMENCED
+                    self.payment.status = models.Status.COMMENCED
                 else:
-                    p.status = models.Status.REJECTED
-            if not p.trans_id:
-                p.trans_id = trans_id
-            if not p.pay_type:
-                p.pay_type = pay_type
-            if not p.error:
-                p.error = error
-            p.save()
+                    self.payment.status = models.Status.REJECTED
+            if not self.payment.trans_id:
+                self.payment.trans_id = trans_id
+            if not self.payment.pay_type:
+                self.payment.pay_type = pay_type
+            if not self.payment.error:
+                self.payment.error = error
+            self.payment.save()
 
         context_data['pay_type'] = pay_type
         context_data['success'] = success
@@ -713,7 +728,10 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
     extra = 0
     uncreated_trips = []
     success_message = _("Tabulka jízd úspěšně změněna")
-    title = _("Jízdy")
+    registration_phase = 'profile_view'
+    template_name = 'registration/competition_profile.html'
+    title = _('Stav registrace')
+    opening_message = mark_safe(_("<b class='text-success'>Vaše registrace je kompletní.</b><br/>"))
 
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
@@ -783,10 +801,6 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
             form.fields['commute_mode'].queryset = qs
         return formset
 
-    title = _('Moje jízdy')
-    registration_phase = 'profile_view'
-    template_name = 'registration/competition_profile.html'
-
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         city_slug = self.user_attendance.team.subsidiary.city.get_wp_slug()
@@ -811,7 +825,10 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
 
     def get(self, request, *args, **kwargs):
         reason = self.user_attendance.entered_competition_reason()
+        questionnaire = self.user_attendance.unanswered_questionnaires().filter(mandatory=True)
         if reason is True:
+            if questionnaire:
+                return redirect(reverse_lazy("questionnaire", kwargs={"questionnaire_slug": questionnaire.first().slug}))
             return super().get(request, *args, **kwargs)
         else:
             redirect_view = {
@@ -854,7 +871,12 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredM
 class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
     template_name = 'base_generic_form.html'
     title = _('Stav registrace')
-    opening_message = _("Před tím, než budete moct zadávat jízdy, bude ještě nutné vyřešit pár věcí:")
+    opening_message = mark_safe(
+        _(
+            "<b class='text-warning'>Vaše registrace není kompletní.</b><br/>"
+            "K dokončení registrace bude ještě nutné vyřešit několik věcí:",
+        ),
+    )
     registration_phase = 'registration_uncomplete'
 
     def get(self, request, *args, **kwargs):
@@ -1023,7 +1045,7 @@ class UpdateTrackView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 
 class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
     template_name = 'registration/questionaire.html'
-    success_url = reverse_lazy('questionnaire_competitions')
+    success_url = reverse_lazy('profil')
     title = _("Vyplňte odpovědi")
     form_class = forms.AnswerForm
 

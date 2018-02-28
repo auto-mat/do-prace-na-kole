@@ -75,13 +75,13 @@ $(function(){
       {% trans "Účastnický poplatek za mě platí zaměstnavatel, mám to s ním nebo jeho koordinátorem domluvené." %}
       <br/><br/>
       {% trans "Zaměstnavatel: " %} {{ user_attendance.team.subsidiary.company }}<br/>
-      {% for company_admin in user_attendance.get_asociated_company_admin %}
+      {% for company_admin in user_attendance.get_asociated_company_admin_with_payments %}
          {% trans "Firmní koordinátor: " %} {{ company_admin|default:"Není" }}<br/>
          {% trans "E-mail na koordinátora: " %}<a href='mailto:{{ company_admin.userprofile.user.email|default:"Není" }}'>{{ company_admin.userprofile.user.email|default:"Není" }}</a><br/>
       {% empty %}
          <strong>
          <hr/>
-         {% trans "Váš zaměstnavatel ještě nemá zvoleného firemního koordinátora. Pokud chcete zvolit tento typ platby, je potřeba, aby byla platba účastnického poplatku fakturou dohodnutá s vaším zaměstnavatelem." %}
+         {% trans "Váš zaměstnavatel ještě nemá zvoleného firemního koordinátora nebo neumožňuje platbu za zaměstnance. Pokud chcete zvolit tento typ platby, je potřeba, aby byla platba účastnického poplatku fakturou dohodnutá s vaším zaměstnavatelem." %}
          </strong>
          <br/>
          <a href='{% url "company_admin_application" %}'>{% trans "Chci se sám stát koordinátorem mé organizace." %}</a>
