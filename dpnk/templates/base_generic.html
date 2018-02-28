@@ -10,7 +10,7 @@
 {% get_current_language as current_language_code %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ current_language_code }}" lang="{{ current_language_code }}">
 <head>
-<title>{% block title %}{% trans "Do práce na kole" %}{% if title %} - {{ title }}{% endif %}{% endblock %}</title>
+<title>{% block title %}{% if campaign %}{{ campaign.name }}{% endif %}{% if title %} - {{ title }}{% endif %}{% endblock %}</title>
 <link rel="apple-touch-icon" sizes="180x180" href="{% static "img/favicon/apple-touch-icon.png" %}">
 <link rel="icon" type="image/png" href="{% static "img/favicon/favicon-32x32.png" %}" sizes="32x32">
 <link rel="icon" type="image/png" href="{% static "img/favicon/favicon-16x16.png" %}" sizes="16x16">
@@ -63,14 +63,14 @@ Raven.setUserContext({
       <div class="row">
          <div class="col-md-1 col-sm-1 col-xs-2 logo_holder">
             <a class="logo" href="{% url "profil" %}">
-               <img src="{% static "img/dpnk_logo.png" %}" alt="Logo Do práce na kole" />
+               <img src="{% static "img/dpnk_logo.png" %}" alt="Logo soutěže" />
             </a>
          </div>
          <div class="col-md-9 col-sm-9 col-xs-10">
             {% if request and campaign %}
             <nav class="navbar navbar-default">
                  <h1>
-                     Do práce na kole
+                    {{ campaign.name }}
                  </h1>
 
                   {% if user.is_authenticated %}
