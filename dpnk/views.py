@@ -43,6 +43,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.sites.shortcuts import get_current_site
 from django.db import transaction
 from django.db.models import Case, Count, F, FloatField, IntegerField, Q, Sum, When
 from django.db.models.functions import Coalesce
@@ -536,6 +537,20 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
     registration_phase = 'typ_platby'
     template_name = 'registration/payment_result.html'
 
+    def get(self, request, *args, **kwargs):
+        ret_val = super().get(request, *args, **kwargs)
+        if hasattr(self.request, 'campaign'):
+            if self.payment.user_attendance.campaign != self.request.campaign:
+                return redirect(
+                    '%s://%s.%s%s' % (
+                        request.scheme,
+                        self.payment.user_attendance.campaign.slug,
+                        get_current_site(request).domain,
+                        request.path,
+                    ),
+                )
+        return ret_val
+
     @transaction.atomic
     def get_context_data(self, success, trans_id, session_id, pay_type, error=None):
         context_data = super().get_context_data()
@@ -553,19 +568,19 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
         )
 
         if session_id and session_id != "":
-            p = Payment.objects.select_for_update().get(session_id=session_id)
-            if p.status not in Payment.done_statuses:
+            self.payment = Payment.objects.select_for_update().get(session_id=session_id)
+            if self.payment.status not in Payment.done_statuses:
                 if success:
-                    p.status = models.Status.COMMENCED
+                    self.payment.status = models.Status.COMMENCED
                 else:
-                    p.status = models.Status.REJECTED
-            if not p.trans_id:
-                p.trans_id = trans_id
-            if not p.pay_type:
-                p.pay_type = pay_type
-            if not p.error:
-                p.error = error
-            p.save()
+                    self.payment.status = models.Status.REJECTED
+            if not self.payment.trans_id:
+                self.payment.trans_id = trans_id
+            if not self.payment.pay_type:
+                self.payment.pay_type = pay_type
+            if not self.payment.error:
+                self.payment.error = error
+            self.payment.save()
 
         context_data['pay_type'] = pay_type
         context_data['success'] = success

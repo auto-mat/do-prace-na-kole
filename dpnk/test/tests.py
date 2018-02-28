@@ -84,6 +84,19 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         self.assertEquals(payment.pay_type, "kb")
         self.assertEquals(payment.error, 123)
 
+    def test_payment_redirect(self):
+        kwargs = {"trans_id": self.trans_id, "session_id": self.session_id, "pay_type": "kb", "error": 123}
+        address = reverse('payment_unsuccessfull', kwargs=kwargs)
+        request = self.factory.get(address)
+        request.user = self.user_attendance.userprofile.user
+        request.user_attendance = self.user_attendance
+        request.campaign = models.Campaign.objects.get(pk=338)
+        response = views.PaymentResult.as_view()(request, success=False, **kwargs)
+        self.assertEquals(response.url, 'http://testing-campaign.localhost:8000/platba_neuspesna/2055/2075-1J1455206457/kb/123/')
+        payment = models.Payment.objects.get(session_id=self.session_id)
+        self.assertEquals(payment.pay_type, "kb")
+        self.assertEquals(payment.error, 123)
+
 
 class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
