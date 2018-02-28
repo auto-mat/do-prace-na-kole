@@ -57,6 +57,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import string_concat
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_control, cache_page, never_cache
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.gzip import gzip_page
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
@@ -625,6 +626,7 @@ def check_sig(sig, values):
 
 
 @transaction.atomic
+@csrf_exempt
 def payment_status(request):
     # Read notification parameters
     pos_id = request.POST['pos_id']
