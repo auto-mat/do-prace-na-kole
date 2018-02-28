@@ -162,6 +162,8 @@ h3, h4{
 	// 	border-bottom:1px solid lighten(@links, 10%);
 	// }
 	li{
+		// display:inline-block;
+		// float:initial;
 		a{	
 			padding:5px 10px;
 			text-decoration: none;
@@ -261,9 +263,6 @@ h3, h4{
 }
 .steps{
 	li{
-		background:url(../img/next.png) 100% 50% no-repeat;
-		// border-top: 1px solid #333;
-		// border-bottom: 1px solid #333;
 		padding-right: 0.3em;
 		&:last-child{
 			background-image: none;
@@ -357,7 +356,7 @@ input:disabled+label{
 	margin-bottom: 1.3rem;
     display: inline-block;
     img{
-    	filter: brightness();
+    	filter: brightness(0);
     }
 }
 .lang_switch{
@@ -429,7 +428,67 @@ form{
 		width:100%;
 	}
 }
+.navbar{
+	.container{
+		width:100%;
+	}
+}
+.navbar-default .navbar-toggle, .navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus{
+	background-color:transparent;
+	border:0;
+}
+.navbar-collapse{
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0);
+}
+@-moz-document url-prefix() {
+    .caret {
+        margin-top: -.5rem;
+    }
+}
+
 @media (max-width: 768px){
+	.logo{
+		margin-top:1.3rem;
+	}
+	.navbar-nav .open .dropdown-menu{
+		margin:0;
+		padding:0;
+	}
+	.navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus{
+		background-color:transparent;
+		text-decoration:underline;
+	}
+	.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
+		color:@links;
+		background-color:transparent;
+	}
+	.navbar h1, .navbar-default .navbar-nav h1{
+		margin:2.7rem 0 .7rem 1.2rem;
+		display:inline-block;
+	}
+	.navbar-default .navbar-toggle{
+		margin-top: 2.1rem;
+		margin-right: 5px;
+	}
+	.navbar-nav {
+	    margin: 7.5px 0 0 -0.4rem;
+	}
+	.navbar ul li a{
+		padding-left: 0;
+	}
+	.navbar-default .navbar-collapse, .navbar-default .navbar-form{
+		border:0;
+	}
+	.navbar.main_menu, .typ_platby .navbar.main_menu, .upravit_profil .navbar-default .navbar-nav.main_menu, .zmenit_tym .navbar-default .navbar-nav.main_menu, .pozvanky .navbar-default .navbar-nav.main_menu, .typ_platby .navbar-default .navbar-nav.main_menu {
+	    border-bottom: 0;
+	    margin-left: 0.9rem;
+	}
+	.lang_switch{
+		position: absolute;
+		top: 0;
+		right: 1rem;
+		margin-top: -1rem;
+	}
 	.logo_holder{
 		float: left;
 	}
@@ -438,15 +497,7 @@ form{
 	}
 	.the_submenu{
 		margin-top:0.5em;
-		padding-top: 1em;
-		border-top: 1px solid @c;
 	}
-	.navbar ul li a{
-		padding-left: 0;
-	}
-	.lang_switch{
-   	margin-top:0.8rem;
-   }
 
    #rides{
 		.btn-group{

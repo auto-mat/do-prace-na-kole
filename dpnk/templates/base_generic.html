@@ -61,19 +61,26 @@ Raven.setUserContext({
 <div class="navbar navbar-top" role="navigation">
    <div class="container">
       <div class="row">
-         <div class="col-md-1 col-sm-2 col-xs-6 logo_holder">
+         <div class="col-md-1 col-sm-1 col-xs-2 logo_holder">
             <a class="logo" href="{% url "profil" %}">
-               <img src="{% static "img/dpnk_logo.png"%}" alt="Logo Do práce na kole" />
+               <img src="{% static "img/dpnk_logo.png" %}" alt="Logo Do práce na kole" />
             </a>
          </div>
-         <div class="col-md-9 col-sm-8 col-xs-6">
+         <div class="col-md-9 col-sm-9 col-xs-10">
             {% if request and campaign %}
             <nav class="navbar navbar-default">
-               <div class="container">
                  <h1>
                      Do práce na kole
                  </h1>
-                 <ul class="nav navbar-nav main_menu" >
+
+                  {% if user.is_authenticated %}
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapsible_menu" aria-expanded="false">
+                      <span class="sr-only">Toggle navigation</span>
+                      &#9776;
+                    </button>
+                  {% endif %}
+
+                 <div class="nav navbar-nav main_menu collapse navbar-collapse" id="collapsible_menu">
                     {% if user.is_authenticated %}
                        {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                     {% else %}
@@ -85,33 +92,33 @@ Raven.setUserContext({
                     {% if user.is_staff %}
                        {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                     {% endif %}
-                 </ul>
+                 </div>
 
                  <div id="collapsing_menu" class="collapse navbar-collapse">
                     {% block second_menu %}
                     {% endblock %}
                  </div>
-               </div>
+
             </nav>
             {% endif %}
 
-            <nav class="col-md-2">
-             <div class="lang_switch">
-                <ul>
-                      {% block langchanger %}
-                      {% for lang_code, lang_name in languages %}
-                      {% if campaign.language_prefixes in lang_code or campaign.language_prefixes == "dpnk" and lang_code|length == 2 %}
-                        <li class="{% if lang_code == current_language_code %}active{% endif %}">
-                          <a href="{% change_lang lang_code %}" class="switch-{{ lang_code }}" title="{{ lang_name }}">{{ lang_code|cut:campaign.language_prefixes|upper }}</a>
-                        </li>
-                      {% endif %}
-                      {% endfor %}
-                      {% endblock %}
-                </ul>
-             </div>
-            </nav>
 
+        </div>
+        <nav class="col-md-2">
+         <div class="lang_switch">
+            <ul>
+                  {% block langchanger %}
+                  {% for lang_code, lang_name in languages %}
+                  {% if campaign.language_prefixes in lang_code or campaign.language_prefixes == "dpnk" and lang_code|length == 2 %}
+                    <li class="{% if lang_code == current_language_code %}active{% endif %}">
+                      <a href="{% change_lang lang_code %}" class="switch-{{ lang_code }}" title="{{ lang_name }}">{{ lang_code|cut:campaign.language_prefixes|upper }}</a>
+                    </li>
+                  {% endif %}
+                  {% endfor %}
+                  {% endblock %}
+            </ul>
          </div>
+        </nav>
       </div>
    </div>
 </div>
