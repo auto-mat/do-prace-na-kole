@@ -809,7 +809,10 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
         self.fields['mailing_opt_in'].initial = None
         self.fields['mailing_opt_in'].required = True
         self.fields['mailing_opt_in'].choices = [
-            (True, _("Přeji si dostávat e-mailem informace o akcích, událostech a dalších záležitostech souvisejících se soutěží.")),
+            (True, _(
+                "Přeji si dostávat e-mailem informace o akcích, událostech a dalších záležitostech souvisejících se soutěží, "
+                "včetně pozvánek do dalších ročníků soutěže.",
+            )),
             (False, _("Nechci dostávat e-maily (a beru na vědomí, že mi mohou uniknout důležité informace o průběhu soutěže).")),
         ]
         return ret_val
