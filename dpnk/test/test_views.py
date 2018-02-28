@@ -78,7 +78,7 @@ class CompetitionsViewTests(ViewsLogon):
     def test_competition_rules(self):
         address = reverse('competition-rules-city', kwargs={'city_slug': "testing-city"})
         response = self.client.get(address)
-        self.assertContains(response, "Do práce na kole - Pravidla soutěží - Testing city")
+        self.assertContains(response, "Testing campaign - Pravidla soutěží - Testing city")
         self.assertContains(response, "Competition vykonnostr rules")
         self.assertContains(response, "soutěž na vzdálenost jednotlivců  ve městě Testing city")
         self.assertContains(response, "soutěž na vzdálenost týmů  ve městě Testing city pro muže")
@@ -86,7 +86,7 @@ class CompetitionsViewTests(ViewsLogon):
     def test_competition_results(self):
         address = reverse('competition-results-city', kwargs={'city_slug': "testing-city"})
         response = self.client.get(address)
-        self.assertContains(response, "Do práce na kole - Výsledky soutěží - Testing city")
+        self.assertContains(response, "Testing campaign - Výsledky soutěží - Testing city")
         self.assertContains(response, "soutěž na vzdálenost jednotlivců  ve městě Testing city")
 
     def test_payment(self):
