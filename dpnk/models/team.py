@@ -24,6 +24,7 @@ import string
 
 from denorm import denormalized, depend_on_related
 
+from django import forms
 from django.contrib.gis.db import models
 from django.core.validators import MinLengthValidator
 from django.utils.translation import ugettext_lazy as _
@@ -45,7 +46,8 @@ class Team(models.Model):
 
     name = models.CharField(
         verbose_name=_(u"Název týmu"),
-        max_length=50, null=True,
+        max_length=50,
+        null=True,
         unique=False,
     )
     subsidiary = models.ForeignKey(
@@ -192,6 +194,19 @@ class TeamName(Team):
             return self.name
         else:
             return "[%s]" % self.subsidiary.__str__()
+
+
+class TeamAdminForm(forms.ModelForm):
+    """Form for team in admin"""
+
+    def __init__(self, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
+        self.fields['name'].required = False
+        return ret_val
+
+    class Meta:
+        model = Team
+        exclude = ()
 
 
 def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):

@@ -1436,6 +1436,7 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
 
 class UpdateTeam(
         TitleViewMixin,
+        CampaignParameterMixin,
         UserAttendanceParameterMixin,
         MustBeInRegistrationPhaseMixin,
         SuccessMessageMixin,
@@ -1457,6 +1458,9 @@ class UpdateTeam(
 
     def get_object(self):
         return self.user_attendance.team
+
+    def get_initial(self):
+        return {'campaign': self.campaign}
 
 
 class TeamMembers(

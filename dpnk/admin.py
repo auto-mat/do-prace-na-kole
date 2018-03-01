@@ -39,16 +39,16 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.sessions.models import Session
-try:  # Django<2.0
-    from django.core.urlresolvers import reverse
-except ImportError:
-    from django.urls import reverse
 from django.db.models import Count, Sum, TextField
 from django.forms import Textarea
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import string_concat
 from django.utils.translation import ugettext_lazy as _
+try:  # Django<2.0
+    from django.core.urlresolvers import reverse
+except ImportError:
+    from django.urls import reverse
 
 from import_export import fields, resources
 from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
@@ -121,6 +121,7 @@ class UserActionTransactionInline(admin.TabularInline):
 
 class TeamInline(admin.TabularInline):
     model = models.Team
+    form = models.team.TeamAdminForm
     extra = 0
     readonly_fields = ['invitation_token', ]
 
@@ -927,6 +928,7 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
     actions = (
         actions.touch_items,
     )
+    form = models.team.TeamAdminForm
 
     readonly_fields = ['members', 'invitation_token', 'member_count']
 
