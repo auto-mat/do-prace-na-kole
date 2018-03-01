@@ -445,7 +445,7 @@ class UserAttendance(models.Model):
         return results.get_unanswered_questionnaires(self)
 
     @denormalized(models.NullBooleanField, default=None, skip={'created', 'updated'})
-    @depend_on_related('UserProfile', skip={'mailing_hash'})
+    @depend_on_related('Answer')
     def has_unanswered_questionnaires(self):
         return self.unanswered_questionnaires().exists()
 
