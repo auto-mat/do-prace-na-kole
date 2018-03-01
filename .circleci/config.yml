@@ -57,23 +57,23 @@ jobs:
                --link dpnk-postgres:postgres \
                --name dpnk-test \
                dopracenakole
-      - run:
-         name: Test Docker container in Django 1.11
-         command: |
-            sleep 10
-            docker run \
-               --entrypoint="/home/aplikace/docker-test-entrypoint.sh" \
-               --env DPNK_DB_HOST=postgres \
-               --env DPNK_SECRET_KEY=secret \
-               --env DPNK_DB_NAME=postgres \
-               --env DPNK_DB_USER=postgres \
-               --env DPNK_DB_PASSWORD=password \
-               --env DPNK_BROKER_URL="amqp://rabbit" \
-               --env DJANGO_VERSION="Django<2.0>=1.11" \
-               --link dpnk-rabbit:rabbit \
-               --link dpnk-postgres:postgres \
-               --name dpnk-test-dj111 \
-               dopracenakole
+#       - run:
+#          name: Test Docker container in Django 1.11
+#          command: |
+#             sleep 10
+#             docker run \
+#                --entrypoint="/home/aplikace/docker-test-entrypoint.sh" \
+#                --env DPNK_DB_HOST=postgres \
+#                --env DPNK_SECRET_KEY=secret \
+#                --env DPNK_DB_NAME=postgres \
+#                --env DPNK_DB_USER=postgres \
+#                --env DPNK_DB_PASSWORD=password \
+#                --env DPNK_BROKER_URL="amqp://rabbit" \
+#                --env DJANGO_VERSION="Django<2.0>=1.11" \
+#                --link dpnk-rabbit:rabbit \
+#                --link dpnk-postgres:postgres \
+#                --name dpnk-test-dj111 \
+#                dopracenakole
 
       - deploy:
           name: Deploy master branch
