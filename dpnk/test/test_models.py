@@ -64,7 +64,6 @@ class TestMethods(TestCase):
         competition = models.Competition.objects.create(
             competitor_type="single_user",
             competition_type="questionnaire",
-            without_admission=True,
             campaign_id=339,
         )
         question = models.Question.objects.create(competition=competition)
@@ -81,7 +80,6 @@ class TestMethods(TestCase):
         competition = models.Competition.objects.create(
             competitor_type="company",
             competition_type="questionnaire",
-            without_admission=True,
             campaign=campaign,
         )
         question = models.Question.objects.create(competition=competition)

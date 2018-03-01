@@ -40,7 +40,7 @@ try:
 except ImportError:  # Django<2.0
     from django.core.urlresolvers import reverse
 
-from dpnk import actions, mailing, models, util, views
+from dpnk import mailing, models, util, views
 from dpnk.test.util import ClearCacheMixin, DenormMixin
 from dpnk.test.util import print_response  # noqa
 
@@ -505,7 +505,6 @@ class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
     def test_dpnk_competition_results_quest_not_finished(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
         competition = models.Competition.objects.filter(slug="quest")
-        actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         address = reverse('competition_results', kwargs={'competition_slug': 'quest'})
         response = self.client.get(address)
