@@ -66,7 +66,6 @@
             "campaign": 339,
             "city": [],
             "company": null,
-            "company_competitors": [],
             "competitor_type": "team",
             "date_from": "2010-11-01",
             "date_to": "2010-11-15",
@@ -77,13 +76,10 @@
             "rules": null,
             "sex": null,
             "slug": "FQ-LB",
-            "team_competitors": [],
             "competition_type": "frequency",
             "minimum_rides_base": 23,
             "url": "http://www.dopracenakole.net/url/",
-            "user_attendance_competitors": [],
-            "commute_modes": [1, 2],
-            "without_admission": true
+            "commute_modes": [1, 2]
         },
         "model": "dpnk.competition",
         "pk": 3
@@ -93,7 +89,6 @@
             "campaign": 339,
             "city": [],
             "company": 1,
-            "company_competitors": [],
             "competitor_type": "single_user",
             "date_from": "2010-11-01",
             "date_to": "2010-11-15",
@@ -104,13 +99,10 @@
             "rules": null,
             "sex": null,
             "slug": "pravidelnost-jednotlivcu",
-            "team_competitors": [],
             "competition_type": "frequency",
             "minimum_rides_base": 23,
             "url": "http://www.dopracenakole.net/url/",
-            "user_attendance_competitors": [],
-            "commute_modes": [1, 2],
-            "without_admission": true
+            "commute_modes": [1, 2]
         },
         "model": "dpnk.competition",
         "pk": 12
@@ -222,7 +214,6 @@
             "campaign": 339,
             "city": [],
             "company": null,
-            "company_competitors": [],
             "competitor_type": "single_user",
             "date_from": "2010-11-01",
             "date_to": "2010-12-02",
@@ -233,11 +224,8 @@
             "rules": null,
             "sex": null,
             "slug": "quest",
-            "team_competitors": [],
             "competition_type": "questionnaire",
-            "url": "http://www.dopracenakole.net/url/",
-            "user_attendance_competitors": [],
-            "without_admission": false
+            "url": "http://www.dopracenakole.net/url/"
         },
         "model": "dpnk.competition",
         "pk": 4
@@ -247,7 +235,6 @@
             "campaign": 339,
             "city": [1],
             "company": null,
-            "company_competitors": [],
             "competitor_type": "team",
             "date_from": "2010-11-01",
             "date_to": "2010-12-02",
@@ -258,11 +245,8 @@
             "rules": null,
             "sex": null,
             "slug": "team-questionnaire",
-            "team_competitors": [1],
             "competition_type": "questionnaire",
-            "url": "http://www.dopracenakole.net/url/",
-            "user_attendance_competitors": [],
-            "without_admission": false
+            "url": "http://www.dopracenakole.net/url/"
         },
         "model": "dpnk.competition",
         "pk": 13
@@ -272,7 +256,6 @@
             "campaign": 339,
             "city": [1],
             "company": null,
-            "company_competitors": [],
             "competitor_type": "single_user",
             "date_from": "2010-11-01",
             "date_to": "2010-12-30",
@@ -283,12 +266,9 @@
             "rules": null,
             "sex": "male",
             "slug": "vykonnost",
-            "team_competitors": [],
             "competition_type": "length",
             "url": "http://www.dopracenakole.net/url/",
-            "user_attendance_competitors": [],
-            "commute_modes": [1, 2],
-            "without_admission": true
+            "commute_modes": [1, 2]
         },
         "model": "dpnk.competition",
         "pk": 5
@@ -298,7 +278,6 @@
             "campaign": 339,
             "city": [1],
             "company": null,
-            "company_competitors": [],
             "competitor_type": "team",
             "date_from": "2010-11-01",
             "date_to": "2010-12-30",
@@ -309,12 +288,9 @@
             "rules": null,
             "sex": "male",
             "slug": "vykonnost-tymu",
-            "team_competitors": [],
             "competition_type": "length",
             "url": "http://www.dopracenakole.net/url/",
-            "user_attendance_competitors": [],
-            "commute_modes": [1, 2],
-            "without_admission": true
+            "commute_modes": [1, 2]
         },
         "model": "dpnk.competition",
         "pk": 9
@@ -324,7 +300,6 @@
             "campaign": 339,
             "city": [1],
             "company": null,
-            "company_competitors": [],
             "competitor_type": "single_user",
             "date_from": "2010-11-01",
             "date_to": "2010-12-30",
@@ -335,12 +310,9 @@
             "rules": "Competition vykonnostr rules",
             "sex": null,
             "slug": "vykonnost-mesto",
-            "team_competitors": [],
             "competition_type": "length",
             "url": "http://www.dopracenakole.net/url/",
-            "user_attendance_competitors": [],
-            "commute_modes": [1, 2],
-            "without_admission": true
+            "commute_modes": [1, 2]
         },
         "model": "dpnk.competition",
         "pk": 6
@@ -350,7 +322,6 @@
             "campaign": 339,
             "city": [1],
             "company": null,
-            "company_competitors": [],
             "competitor_type": "company",
             "date_from": "2010-11-01",
             "date_to": "2010-12-30",
@@ -361,12 +332,9 @@
             "rules": "Competition rules",
             "sex": null,
             "slug": "vykonnost-spolecnosti",
-            "team_competitors": [],
             "competition_type": "length",
             "url": "http://www.dopracenakole.net/url/",
-            "user_attendance_competitors": [],
-            "commute_modes": [1, 2],
-            "without_admission": true
+            "commute_modes": [1, 2]
         },
         "model": "dpnk.competition",
         "pk": 8
@@ -376,7 +344,6 @@
             "campaign": 339,
             "city": [1],
             "company": 1,
-            "company_competitors": [],
             "competitor_type": "company",
             "date_from": "2010-11-01",
             "date_to": "2010-12-30",
@@ -387,12 +354,9 @@
             "rules": "Competition rules",
             "sex": null,
             "slug": "pravidelnost-spolecnosti",
-            "team_competitors": [],
             "competition_type": "frequency",
             "url": "http://www.dopracenakole.net/url/",
-            "user_attendance_competitors": [],
-            "commute_modes": [1, 2],
-            "without_admission": true
+            "commute_modes": [1, 2]
         },
         "model": "dpnk.competition",
         "pk": 10
@@ -402,7 +366,6 @@
             "campaign": 339,
             "city": [],
             "company": null,
-            "company_competitors": [1],
             "competitor_type": "company",
             "date_from": "2010-11-01",
             "date_to": "2010-12-30",
@@ -413,11 +376,8 @@
             "rules": "Competition rules",
             "sex": null,
             "slug": "dotaznik-spolecnosti",
-            "team_competitors": [],
             "competition_type": "questionnaire",
-            "url": "http://www.dopracenakole.net/url/",
-            "user_attendance_competitors": [],
-            "without_admission": false
+            "url": "http://www.dopracenakole.net/url/"
         },
         "model": "dpnk.competition",
         "pk": 11

@@ -73,17 +73,9 @@ def _get_competitors_without_admission(competition):
         return Company.objects.filter(**_filter_query_company(competition))
 
 
-def get_competitors(competition, potencial_competitors=False):
+def get_competitors(competition):
     """ Return query with competitors attending given competition """
-    if competition.without_admission or potencial_competitors:
-        query = _get_competitors_without_admission(competition)
-    else:
-        if competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
-            query = competition.user_attendance_competitors.all()
-        elif competition.competitor_type == 'team':
-            query = competition.team_competitors.all()
-        elif competition.competitor_type == 'company':
-            query = competition.company_competitors.all()
+    query = _get_competitors_without_admission(competition)
 
     if competition.competitor_type == 'liberos':
         query = query.filter(team__member_count__lte=1)
