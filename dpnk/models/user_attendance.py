@@ -442,10 +442,10 @@ class UserAttendance(models.Model):
 
     def unanswered_questionnaires(self):
         from .. import results
-        return results.get_competitions_without_admission(self).filter(competition_type='questionnaire')
+        return results.get_unanswered_questionnaires(self)
 
     @denormalized(models.NullBooleanField, default=None, skip={'created', 'updated'})
-    @depend_on_related('UserProfile', skip={'mailing_hash'})
+    @depend_on_related('Answer')
     def has_unanswered_questionnaires(self):
         return self.unanswered_questionnaires().exists()
 

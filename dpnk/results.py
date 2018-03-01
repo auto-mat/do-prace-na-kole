@@ -129,14 +129,12 @@ def get_competitions(user_attendance):
     return competitions
 
 
-def get_competitions_without_admission(user_attendance):
+def get_unanswered_questionnaires(user_attendance):
     competitions = get_competitions(user_attendance).filter(
-        Q(without_admission=False) & ~(
-            Q(user_attendance_competitors=user_attendance) |
-            Q(team_competitors=user_attendance.team) |
-            Q(company_competitors=user_attendance.company())
-        ),
-    ).distinct()
+        competition_type='questionnaire',
+    ).exclude(
+        question__answer__user_attendance=user_attendance,
+    )
     return competitions
 
 
