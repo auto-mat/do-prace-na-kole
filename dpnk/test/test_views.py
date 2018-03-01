@@ -2005,7 +2005,12 @@ class RegistrationMixinTests(ViewsLogon):
         m.feed.get.return_value = []
         slumber_api.return_value = m
         response = self.client.get(reverse('profil'))
-        self.assertContains(response, "Nezapomeňte vyplnit odpovědi v následujících soutěžích: <a href='/otazka/quest/'>Dotazník</a>!")
+        self.assertContains(
+            response,
+            "Nezapomeňte vyplnit odpovědi v následujících soutěžích: "
+            "<a href='/otazka/dotaznik-spolecnosti/'>Dotazník společností</a>, "
+            "<a href='/otazka/team-questionnaire/'>Dotazník týmů</a>!",
+        )
 
     @patch('slumber.API')
     def test_dpnk_registration_vouchers(self, slumber_api):
