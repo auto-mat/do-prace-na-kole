@@ -223,6 +223,7 @@ class Competition(models.Model):
     )
     mandatory = models.BooleanField(
         verbose_name=_("Povinný dotazník"),
+        help_text=_("Dotazník je potřeba vyplnit před tím, než je možné zadávat jízdy"),
         default=False,
         null=False,
     )

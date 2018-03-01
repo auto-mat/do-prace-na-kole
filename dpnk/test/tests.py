@@ -94,8 +94,8 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         response = views.PaymentResult.as_view()(request, success=False, **kwargs)
         self.assertEquals(response.url, 'http://testing-campaign.localhost:8000/platba_neuspesna/2055/2075-1J1455206457/kb/123/')
         payment = models.Payment.objects.get(session_id=self.session_id)
-        self.assertEquals(payment.pay_type, "kb")
-        self.assertEquals(payment.error, 123)
+        self.assertEquals(payment.pay_type, None)
+        self.assertEquals(payment.error, None)
 
 
 class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
