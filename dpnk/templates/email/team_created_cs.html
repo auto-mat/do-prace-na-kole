@@ -2,11 +2,11 @@
 {% autoescape off %}
 
 {% language user.userprofile.language %}
-Zpráva pro soutěžící/ho {{ user.userprofile }}, zakladatele/ku týmu {{user.team.name}} v soutěži {{ user.campaign }}.
+Zpráva pro soutěžící/ho {{ user.userprofile }}, zakladatele/ku týmu {{team_name}} v soutěži {{ user.campaign }}.
 
 Dobrý den,
 
-Váš tým {{user.team.name}} byl právě vytvořen. 
+Váš tým {{team_name}} byl právě vytvořen.
 
 Na adrese 
 {% block invite_link %}

@@ -118,12 +118,13 @@ def team_membership_denial_mail(user_attendance, denier, reason):
     send_mail(subject, message, None, [email], fail_silently=False)
 
 
-def team_created_mail(user_attendance):
+def team_created_mail(user_attendance, team_name):
     language = user_attendance.userprofile.language
     template = get_template('email/team_created_%s.html' % language)
     email = user_attendance.userprofile.user.email
     message = template.render({
         'user': user_attendance,
+        'team_name': team_name,
         'SITE_URL': settings.SITE_URL,
     })
     subject = _("%s - potvrzení vytvoření týmu", language) % user_attendance.campaign

@@ -173,7 +173,7 @@ class TestEmails(TestCase):
         self.assertTrue(link in msg.body)
 
     def test_send_team_created_mail(self):
-        email.team_created_mail(self.user_attendance)
+        email.team_created_mail(self.user_attendance, 'Foo team')
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         if self.userprofile.language == 'cs':

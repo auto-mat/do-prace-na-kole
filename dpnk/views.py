@@ -201,7 +201,7 @@ class RegisterTeamView(UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateVi
     model = models.Team
 
     def get_success_result(self):
-        team_created_mail(self.user_attendance)
+        team_created_mail(self.user_attendance, self.object.name)
         return {
             'status': 'ok',
             'name': self.object.name,
