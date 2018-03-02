@@ -148,13 +148,13 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
             social_html,
             HTML('<br/>'),
             HTML('<a href="{%% url "password_reset" %%}">%s</a>' % _("Zapomněli jste své přihlašovací údaje?")),
-            HTML('<br/><br/>'),
+            HTML('<br/>'),
             HTML(_('Ještě nemáte účet?')),
             HTML(
                 ' <a href="{%% url "registration_access" %%}">%s.</a>' %
                 (_('Registrujte se do soutěže %s') % self.campaign.name),
             ),
-            HTML('<br/><br/>'),
+            HTML('<br/>'),
         )
         self.fields['username'].label = _("E-mail (uživatelské jméno)")
         return ret_val
