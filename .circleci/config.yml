@@ -100,7 +100,7 @@ jobs:
             fi
 
       - run: docker cp dpnk-test:/home/aplikace/reports /tmp/reports
-      - run: cp /tmp/reports/* . -R
+      - run: cp /tmp/reports/ . -R
       - run: coveralls
 
       - store_artifacts:
