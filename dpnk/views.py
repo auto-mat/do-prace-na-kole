@@ -213,7 +213,7 @@ class RegisterTeamView(UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateVi
         return {
             'subsidiary': models.Subsidiary.objects.get(pk=self.kwargs['subsidiary_id']),
             'campaign': self.user_attendance.campaign,
-            'name': previous_user_attendance.team.name if previous_user_attendance else None,
+            'name': previous_user_attendance.team.name if previous_user_attendance and previous_user_attendance.team else None,
         }
 
 
