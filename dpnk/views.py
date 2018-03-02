@@ -1398,10 +1398,13 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
         context_data['registration_phase'] = self.registration_phase
         return context_data
 
-    def form_valid(self, form):
-        emails = [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4']]
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user_attendance'] = self.user_attendance
+        return kwargs
 
-        for email in emails:
+    def form_valid(self, form):
+        for email in form.cleaned_data.values():
             if email:
                 try:
                     invited_user = models.User.objects.get(is_active=True, email=email)

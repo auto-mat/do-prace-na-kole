@@ -479,51 +479,52 @@ class InviteForm(SubmitMixin, forms.Form):
     required_css_class = 'required'
     error_css_class = 'error'
 
-    email1 = forms.EmailField(
-        label=_("E-mail kolegy 1"),
-        required=False,
-    )
-
-    email2 = forms.EmailField(
-        label=_("E-mail kolegy 2"),
-        required=False,
-    )
-
-    email3 = forms.EmailField(
-        label=_("E-mail kolegy 3"),
-        required=False,
-    )
-
-    email4 = forms.EmailField(
-        label=_("E-mail kolegy 4"),
-        required=False,
-    )
-
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user_attendance, *args, **kwargs):
+        self.user_attendance = user_attendance
+        if self.user_attendance.campaign.max_team_members:
+            self.free_capacity = self.user_attendance.campaign.max_team_members - self.user_attendance.team.member_count
+        else:
+            self.free_capacity = 0
         ret_val = super().__init__(*args, **kwargs)
+        fields = []
+        for i in range(1, self.free_capacity + 1):
+            field_name = 'email%s' % i
+            self.fields[field_name] = forms.EmailField(
+                label=_("E-mail kolegy %s") % i,
+                required=False,
+            )
+            fields.append(field_name)
         self.helper = FormHelper()
         self.helper.form_class = "dirty-check"
         self.helper.layout = Layout(
             HTML(
+                _(
+                    "Můžete pozvat kolegy do týmu přes náš rozesílač - stačí níže napsat níže e-maily "
+                    "kolegů, které chcete do svého týmu (samozřejmě je můžete pozvat jakkoliv, "
+                    "třeba osobně)."
+                ),
+            ),
+            HTML("<br/>"),
+            HTML(
                 format_html_lazy(
                     _(
-                        "Můžete pozvat kolegy do týmu přes náš rozesílač - stačí níže napsat níže e-maily "
-                        "kolegů, které chcete do svého týmu (samozřejmě je můžete pozvat jakkoliv, "
-                        "třeba osobně).<br/>"
                         "Následně vyčkejte, až se k vám někdo do týmu připojí "
                         "(tato informace vám přijde e-mailem, stav vašeho týmu můžete sledovat na <a "
                         "href=\"{}\">stránce se členy vašeho týmu</a>, tamtéž můžete i potvrdit členství "
-                        "vašich kolegů).<br/>"
-                        "Tým může mít maximálně 5 členů."
-                        "<br/><br/>"
+                        "vašich kolegů)."
                     ),
                     reverse("team_members"),
                 ),
             ),
-            'email1',
-            'email2',
-            'email3',
-            'email4',
+            HTML("<br/>"),
+            HTML(
+                format_html_lazy(
+                    _("Do vašeho tým je možné doplnit ještě {} členů."),
+                    self.free_capacity,
+                ),
+            ),
+            HTML("<br/><br/>"),
+            *fields,
         )
         self.helper.add_input(Submit('submit', _('Odeslat pozvánky')))
         self.helper.add_input(
