@@ -1364,6 +1364,12 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.get(reverse('change_team_invitation', kwargs={'token': 'asdf', 'initial_email': 'invitation_test@email.com'}))
         self.assertContains(response, "Tým nenalezen", status_code=403)
 
+    def test_dpnk_team_invitation_logout(self):
+        self.client.logout()
+        token = self.user_attendance.team.invitation_token
+        response = self.client.get(reverse('change_team_invitation', kwargs={'token': token, 'initial_email': 'invitation_test@email.com'}))
+        self.assertRedirects(response, "%s?next=/tym/%s/invitation_test%%40email.com/" % (reverse('login'), token))
+
     @override_settings(
         DEBUG=True,
     )

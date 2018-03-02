@@ -338,7 +338,7 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
             )
 
         initial_email = kwargs['initial_email']
-        if request.user.email != initial_email:
+        if request.user.is_authenticated and request.user.email != initial_email:
             logout(request)
             messages.add_message(
                 self.request,
