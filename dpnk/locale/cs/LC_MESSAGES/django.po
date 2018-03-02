@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-02 17:32+0100\n"
+"POT-Creation-Date: 2018-03-02 18:15+0100\n"
 "PO-Revision-Date: 2017-04-19 14:59+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -140,7 +140,7 @@ msgstr ""
 msgid "Není vnitrofiremní soutěž?"
 msgstr ""
 
-#: admin.py:448 views.py:991
+#: admin.py:448 views.py:999
 msgid "Výsledky soutěže"
 msgstr ""
 
@@ -152,7 +152,7 @@ msgstr ""
 msgid "Dotazník"
 msgstr ""
 
-#: admin.py:463 views.py:1736
+#: admin.py:463 views.py:1747
 msgid "Losování"
 msgstr ""
 
@@ -220,7 +220,7 @@ msgstr ""
 msgid "Nemá účast v kampani"
 msgstr ""
 
-#: auth.py:50 auth.py:57 forms.py:99 forms.py:411 forms.py:439 forms.py:936
+#: auth.py:50 auth.py:57 forms.py:99 forms.py:411 forms.py:439 forms.py:937
 #: templates/registration/questionaire.html:42
 msgid "Odeslat"
 msgstr ""
@@ -245,7 +245,7 @@ msgstr ""
 #: company_admin_forms.py:50 company_admin_forms.py:193 models/city.py:35
 #: models/questionnaire.py:50 models/questionnaire.py:99
 #: models/user_attendance.py:154 models/user_attendance.py:159
-#: templates/company_admin/competitions.html:7 views.py:1546
+#: templates/company_admin/competitions.html:7 views.py:1557
 msgid "Jméno"
 msgstr ""
 
@@ -257,7 +257,7 @@ msgstr ""
 msgid "Přezdívka"
 msgstr ""
 
-#: company_admin_forms.py:53 filters.py:136 views.py:1547
+#: company_admin_forms.py:53 filters.py:136 views.py:1558
 msgid "E-mail"
 msgstr ""
 
@@ -290,7 +290,7 @@ msgid ""
 "jejichž platbu schválím."
 msgstr ""
 
-#: company_admin_forms.py:170 forms.py:843
+#: company_admin_forms.py:170 forms.py:844
 #, python-format
 msgid ""
 "Souhlasím se zpracováním osobních údajů podle <a target='_blank' "
@@ -655,46 +655,42 @@ msgid ""
 "hesla</a>."
 msgstr ""
 
-#: forms.py:483
-msgid "E-mail kolegy 1"
-msgstr ""
-
-#: forms.py:488
-msgid "E-mail kolegy 2"
-msgstr ""
-
 #: forms.py:493
-msgid "E-mail kolegy 3"
+#, python-format
+msgid "E-mail kolegy %s"
 msgstr ""
 
-#: forms.py:498
-msgid "E-mail kolegy 4"
-msgstr ""
-
-#: forms.py:510
+#: forms.py:502
 msgid ""
 "Můžete pozvat kolegy do týmu přes náš rozesílač - stačí níže napsat níže e-"
 "maily kolegů, které chcete do svého týmu (samozřejmě je můžete pozvat "
-"jakkoliv, třeba osobně).<br/>Následně vyčkejte, až se k vám někdo do týmu "
-"připojí (tato informace vám přijde e-mailem, stav vašeho týmu můžete "
-"sledovat na <a href=\"{}\">stránce se členy vašeho týmu</a>, tamtéž můžete i "
-"potvrdit členství vašich kolegů).<br/>Tým může mít maximálně 5 členů.<br/"
-"><br/>"
+"jakkoliv, třeba osobně)."
 msgstr ""
 
-#: forms.py:528
+#: forms.py:511
+msgid ""
+"Následně vyčkejte, až se k vám někdo do týmu připojí (tato informace vám "
+"přijde e-mailem, stav vašeho týmu můžete sledovat na <a href=\"{}\">stránce "
+"se členy vašeho týmu</a>, tamtéž můžete i potvrdit členství vašich kolegů)."
+msgstr ""
+
+#: forms.py:522
+msgid "Do vašeho tým je možné doplnit ještě {} členů."
+msgstr ""
+
+#: forms.py:529
 msgid "Odeslat pozvánky"
 msgstr ""
 
-#: forms.py:530
+#: forms.py:531
 msgid "Neposílat, přeskočit"
 msgstr ""
 
-#: forms.py:550 models/transactions.py:254
+#: forms.py:551 models/transactions.py:254
 msgid "Typ platby"
 msgstr ""
 
-#: forms.py:559
+#: forms.py:560
 #, python-brace-format
 msgid ""
 "Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora nebo "
@@ -703,134 +699,134 @@ msgid ""
 "<ul><li><a href='{url}'>Chci se stát firemním koordinátorem</a></li></ul>"
 msgstr ""
 
-#: forms.py:572
+#: forms.py:573
 #, python-format
 msgid "Zaplatím běžný účastnický poplatek %s Kč."
 msgstr ""
 
-#: forms.py:574
+#: forms.py:575
 #, python-format
 msgid "Podpořím soutěž benefičním poplatkem %s Kč. <i class='fa fa-heart'></i>"
 msgstr ""
 
-#: forms.py:577
+#: forms.py:578
 msgid "Účastnický poplatek mi platí zaměstnavatel."
 msgstr ""
 
-#: forms.py:580
+#: forms.py:581
 msgid ""
 "Chci účastnický poplatek zdarma (pro ty, kteří chtějí trvale podporovat "
 "udržitelnou mobilitu). <i class='fa fa-heart'></i>"
 msgstr ""
 
-#: forms.py:584
+#: forms.py:585
 msgid ""
 "Chci uplatnit voucher (sleva či účastnický poplatek zdarma, např. pro Klub "
 "přátel)."
 msgstr ""
 
-#: forms.py:600
+#: forms.py:601
 msgid "Adresa URL včetně úvodního http:// nebo https://"
 msgstr ""
 
-#: forms.py:648
+#: forms.py:649
 msgid "Chci být zařazen do nového týmu"
 msgstr ""
 
-#: forms.py:658
+#: forms.py:659
 msgid "Uživatelské jméno zákazníka"
 msgstr ""
 
-#: forms.py:659
+#: forms.py:660
 msgid "Uživatelské jméno, které vám sdělí zákazník"
 msgstr ""
 
-#: forms.py:663
+#: forms.py:664
 msgid "Poznámka"
 msgstr ""
 
-#: forms.py:677
+#: forms.py:678
 msgid "Takový uživatel neexistuje"
 msgstr ""
 
-#: forms.py:682
+#: forms.py:683
 #, python-format
 msgid ""
 "Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s"
 msgstr ""
 
-#: forms.py:699
+#: forms.py:700
 #, python-format
 msgid ""
 "Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: "
 "%(note)s)."
 msgstr ""
 
-#: forms.py:718 models/gpxfile.py:55 models/gpxfile.py:151
+#: forms.py:719 models/gpxfile.py:55 models/gpxfile.py:151
 msgid "GPX soubor"
 msgstr ""
 
-#: forms.py:721
+#: forms.py:722
 msgid ""
 "Zadat trasu nahráním souboru GPX. Pro vytvoření GPX souboru s trasou můžete "
 "použít vyhledávání na naší <a href='http://mapa.prahounakole.cz/#hledani' "
 "target='_blank'>mapě</a>."
 msgstr ""
 
-#: forms.py:736 models/gpxfile.py:173
+#: forms.py:737 models/gpxfile.py:173
 msgid "Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?"
 msgstr ""
 
-#: forms.py:743
+#: forms.py:744
 msgid ""
 "Nezadali jste žádnou trasu. Zadejte trasu, nebo zaškrtněte, že trasu "
 "nechcete zadávat."
 msgstr ""
 
-#: forms.py:763
+#: forms.py:764
 msgid "Tento e-mail již je v našem systému zanesen."
 msgstr ""
 
-#: forms.py:780
+#: forms.py:781
 msgid "E-mail slouží jako přihlašovací jméno"
 msgstr ""
 
-#: forms.py:786
+#: forms.py:787
 msgid "Nechci, aby moje skutečné jméno bylo veřejně zobrazováno"
 msgstr ""
 
-#: forms.py:796
+#: forms.py:797
 msgid ""
 "Pokud si nepřejete zobrazovat své jméno, zadejte, co se má zobrazovat místo "
 "něj"
 msgstr ""
 
-#: forms.py:802
+#: forms.py:803
 msgid "Zadejte pohlaví"
 msgstr ""
 
-#: forms.py:813
+#: forms.py:814
 msgid ""
 "Přeji si dostávat e-mailem informace o akcích, událostech a dalších "
 "záležitostech souvisejících se soutěží, včetně pozvánek do dalších ročníků "
 "soutěže."
 msgstr ""
 
-#: forms.py:816
+#: forms.py:817
 msgid ""
 "Nechci dostávat e-maily (a beru na vědomí, že mi mohou uniknout důležité "
 "informace o průběhu soutěže)."
 msgstr ""
 
-#: forms.py:869
+#: forms.py:870
 msgid "Vzdálenost (km)"
 msgstr ""
 
-#: forms.py:891
+#: forms.py:892
 msgid "Musíte vyplnit vzdálenost"
 msgstr ""
 
-#: forms.py:894
+#: forms.py:895
 msgid "Pěší cesta musí mít minimálně jeden a půl kilometru"
 msgstr ""
 
@@ -1467,7 +1463,7 @@ msgstr[1] ""
 msgid "Výsledek soutěže"
 msgstr ""
 
-#: models/competition_result.py:34 urls.py:141 views.py:957
+#: models/competition_result.py:34 urls.py:141 views.py:965
 msgid "Výsledky soutěží"
 msgstr ""
 
@@ -2126,7 +2122,7 @@ msgid ""
 "jméno, podle kterého vás vaši kolegové poznají"
 msgstr ""
 
-#: models/user_profile.py:77 views.py:1549
+#: models/user_profile.py:77 views.py:1560
 msgid "Telefon"
 msgstr ""
 
@@ -2296,7 +2292,7 @@ msgstr ""
 msgid "Odhlásit"
 msgstr ""
 
-#: templates/base_generic_registration_form.html:15 views.py:1024
+#: templates/base_generic_registration_form.html:15 views.py:1032
 msgid "Osobní údaje"
 msgstr ""
 
@@ -2304,7 +2300,7 @@ msgstr ""
 msgid "Triko"
 msgstr ""
 
-#: templates/base_generic_registration_form.html:26 views.py:365 views.py:1548
+#: templates/base_generic_registration_form.html:26 views.py:365 views.py:1559
 msgid "Platba"
 msgstr ""
 
@@ -2859,7 +2855,7 @@ msgstr ""
 msgid "Uražená započítaná vzdálenost"
 msgstr ""
 
-#: templates/registration/rides.html:29 views.py:852
+#: templates/registration/rides.html:29 views.py:858
 msgid "Podrobný přehled jízd"
 msgstr ""
 
@@ -3170,82 +3166,82 @@ msgstr ""
 msgid "Tabulka jízd úspěšně změněna"
 msgstr ""
 
-#: views.py:737 views.py:878
+#: views.py:737 views.py:884
 msgid "Stav registrace"
 msgstr ""
 
-#: views.py:738
+#: views.py:741
 msgid "Vaše registrace je kompletní."
 msgstr ""
 
-#: views.py:862
+#: views.py:868
 msgid "Jinak"
 msgstr ""
 
-#: views.py:862
+#: views.py:868
 msgid "Žádná cesta"
 msgstr ""
 
-#: views.py:881
+#: views.py:888
 msgid "Vaše registrace není kompletní."
 msgstr ""
 
-#: views.py:882
+#: views.py:890
 msgid "K dokončení registrace bude ještě nutné vyřešit několik věcí:"
 msgstr ""
 
-#: views.py:901
+#: views.py:909
 msgid "Sledování balíčku"
 msgstr ""
 
-#: views.py:907
+#: views.py:915
 msgid "Aplikace"
 msgstr ""
 
-#: views.py:913
+#: views.py:921
 msgid "Výsledky členů týmu"
 msgstr ""
 
-#: views.py:936
+#: views.py:944
 msgid "Pravidla soutěží"
 msgstr ""
 
-#: views.py:978
+#: views.py:986
 msgid "Výsledky pravidelnostních a výkonnostních soutěží"
 msgstr ""
 
-#: views.py:984
+#: views.py:992
 msgid "Výsledky dotazníkových soutěží a soutěží na kreativitu"
 msgstr ""
 
-#: views.py:1004
+#: views.py:1012
 msgid ""
 "Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky "
 "nějaké soutěže, napište prosím na <a href=\"mailto:kontakt@dopracenakole.cz?"
 "subject=Neexistující soutěž\">kontakt@dopracenakole.cz</a>"
 msgstr ""
 
-#: views.py:1008 views.py:1536
+#: views.py:1016 views.py:1547
 msgid "Není vybraný tým"
 msgstr ""
 
-#: views.py:1021
+#: views.py:1029
 msgid "Osobní údaje úspěšně upraveny"
 msgstr ""
 
-#: views.py:1042
+#: views.py:1050
 msgid "Trasa/vzdálenost úspěšně upravena"
 msgstr ""
 
-#: views.py:1045
+#: views.py:1053
 msgid "Upravit typickou trasu"
 msgstr ""
 
-#: views.py:1054
+#: views.py:1062
 msgid "Vyplňte odpovědi"
 msgstr ""
 
-#: views.py:1067
+#: views.py:1075
 msgid ""
 "<div class=\"text-danger\">Tento dotazník v systému nemáme. Pokud si "
 "myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na <a href="
@@ -3253,142 +3249,142 @@ msgid ""
 "\">kontakt@dopracenakole.cz</a></div>"
 msgstr ""
 
-#: views.py:1098
+#: views.py:1106
 msgid "Soutěž již nelze vyplňovat"
 msgstr ""
 
-#: views.py:1130
+#: views.py:1138
 msgid "Odpovědi byly úspěšně zadány"
 msgstr ""
 
-#: views.py:1150
+#: views.py:1158
 msgid "Výsledky všech soutěží"
 msgstr ""
 
-#: views.py:1162
+#: views.py:1170
 msgid "Tato soutěž nemá povolené prohlížení odpovědí."
 msgstr ""
 
-#: views.py:1163
+#: views.py:1171
 msgid "Odpovědi nejsou dostupné"
 msgstr ""
 
-#: views.py:1198
+#: views.py:1206
 msgid "Otázky v dotaznících"
 msgstr ""
 
-#: views.py:1210 views.py:1231
+#: views.py:1218 views.py:1239
 msgid "Soutěž je vypsána ve městě, pro které nemáte oprávnění."
 msgstr ""
 
-#: views.py:1220
+#: views.py:1228
 msgid "Výsledky odpovědí na dotazník"
 msgstr ""
 
-#: views.py:1236
+#: views.py:1244
 msgid "<div class=\"text-danger\">Nesprávně zadaný soutěžící.</div>"
 msgstr ""
 
-#: views.py:1249
+#: views.py:1257
 msgid "Odpovědi na dotazník"
 msgstr ""
 
-#: views.py:1261
+#: views.py:1269
 msgid "Otázka je položená ve městě, pro které nemáte oprávnění."
 msgstr ""
 
-#: views.py:1326
+#: views.py:1334
 msgid "Odpověd na dotazník"
 msgstr ""
 
-#: views.py:1338
+#: views.py:1346
 msgid "Při zamítnutí člena týmu musíte vyplnit zprávu."
 msgstr ""
 
-#: views.py:1349
+#: views.py:1357
 #, python-format
 msgid "Členství uživatele %s ve vašem týmu bylo zamítnuto"
 msgstr ""
 
-#: views.py:1359
+#: views.py:1367
 msgid "Tým je již plný, další člen již nemůže být potvrzen."
 msgstr ""
 
-#: views.py:1370
+#: views.py:1378
 #, python-format
 msgid "Členství uživatele %(user)s v týmu %(team)s bylo odsouhlaseno."
 msgstr ""
 
-#: views.py:1380
+#: views.py:1388
 msgid "Znovu odeslat žádost o členství"
 msgstr ""
 
-#: views.py:1392
+#: views.py:1400
 msgid "Pozvětě své kolegy do týmu"
 msgstr ""
 
-#: views.py:1419
+#: views.py:1430
 #, python-format
 msgid "Uživatel %(user)s byl přijat do vašeho týmu."
 msgstr ""
 
-#: views.py:1427
+#: views.py:1438
 #, python-format
 msgid "Odeslána pozvánka uživateli %(user)s na e-mail %(email)s"
 msgstr ""
 
-#: views.py:1432
+#: views.py:1443
 #, python-format
 msgid "Odeslána pozvánka na e-mail %s"
 msgstr ""
 
-#: views.py:1452
+#: views.py:1463
 msgid "Upravit název týmu"
 msgstr ""
 
-#: views.py:1454
+#: views.py:1465
 #, python-format
 msgid "Název týmu úspěšně změněn na %(name)s"
 msgstr ""
 
-#: views.py:1478
+#: views.py:1489
 msgid "Schvalování členů týmu"
 msgstr ""
 
-#: views.py:1494
+#: views.py:1505
 msgid ""
 "Nastala chyba při přijímání uživatele, patrně používáte zastaralý "
 "internetový prohlížeč."
 msgstr ""
 
-#: views.py:1516
+#: views.py:1527
 msgid ""
 "Tento uživatel již byl přijat do týmu. Pravděpodobně jste dvakrát odeslali "
 "formulář."
 msgstr ""
 
-#: views.py:1535
+#: views.py:1546
 msgid "Další členové vašeho týmu se zobrazí, jakmile budete mít vybraný tým"
 msgstr ""
 
-#: views.py:1550
+#: views.py:1561
 msgid "Stav"
 msgstr ""
 
-#: views.py:1682
+#: views.py:1693
 msgid "Počty soutěžících"
 msgstr ""
 
-#: views.py:1722
+#: views.py:1733
 #, python-format
 msgid "%(user_attendance)s je nováček a právě si zažádal o opravu kola"
 msgstr ""
 
-#: views.py:1724
+#: views.py:1735
 msgid "Cykloservis"
 msgstr ""
 
-#: views.py:1769 views.py:1783
+#: views.py:1780 views.py:1794
 msgid "Zadat trasu"
 msgstr ""
 

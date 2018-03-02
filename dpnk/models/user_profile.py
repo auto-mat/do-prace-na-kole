@@ -78,7 +78,7 @@ class UserProfile(models.Model):
         max_length=30,
         null=False,
         validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
-        help_text=_("Telefonní číslo slouží jako kontakt pro help desk a případně pro kurýra, který Vám bude doručovat zásilku."),
+        help_text=_("Telefonní číslo slouží jako kontakt pro help desk a případně pro kurýra, který vám bude doručovat zásilku."),
     )
     language = models.CharField(
         verbose_name=_(u"Jazyk e-mailové komunikace"),

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-22 21:22+0100\n"
-"PO-Revision-Date: 2018-02-22 21:35+0058\n"
+"POT-Creation-Date: 2018-03-02 18:21+0100\n"
+"PO-Revision-Date: 2018-03-02 18:22+0058\n"
 "Last-Translator: b'Petr Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -32,7 +32,6 @@ msgid "Označit balíky/krabice jako vyřízené"
 msgstr "Mark packages/boxes as done"
 
 #: admin.py:237
-#| msgid "Krabice"
 msgid "ID krabice"
 msgstr "Box ID"
 
@@ -211,7 +210,6 @@ msgid "týmové balíčky"
 msgstr "team packages"
 
 #: models/team_package.py:49
-#| msgid "Všechny balíčky vyřízeny"
 msgid "Balíek vyřízen"
 msgstr "Package was processed"
 
@@ -225,22 +223,26 @@ msgid "Balíček bez týmu"
 msgstr "Package without team"
 
 #: templates/registration/change_tshirt.html:6
+msgid "Doručovací adresa"
+msgstr "Delivery address"
+
+#: templates/registration/change_tshirt.html:7
 msgid ""
-"Startovní balíček bude doručen na adresu pobočky vaší organizace, kterou "
-"jste zvolili v předchozím kroku. Před výběrem trika prosím zkontrolujte, že "
-"je adresa pobočky správně. Pokud správně není, žádejte změnu:"
+"Startovní balíček bude hromadně doručen na následující adresu pobočky vaší "
+"organizace:"
 msgstr ""
-"The starting package will be delivered to the subsidiary address, You have "
-"chosen in the previous step. Before selecting the t-shirt size, please check"
-" the subsidiary address. If it is wrong, please request it to be changed by:"
+"The starter pack with a T-shirt is delivered to following subsidiary of your"
+" organisation:"
 
-#: templates/registration/change_tshirt.html:9
-msgid "Jméno: "
-msgstr "Name: "
+#: templates/registration/change_tshirt.html:13
+msgid "Před výběrem trika prosím zkontrolujte, že je adresa pobočky správně."
+msgstr ""
+"Before you choose your T-shirt, please check whether the subsidiary address "
+"is correct."
 
-#: templates/registration/change_tshirt.html:11
-msgid "Adresa: "
-msgstr "Address: "
+#: templates/registration/change_tshirt.html:14
+msgid "Pokud adresa správně není, žádejte změnu:"
+msgstr "If the address is not correct, request a correction:"
 
 #: views.py:43
 msgid "Velikost trička úspěšně nastavena"
@@ -258,3 +260,18 @@ msgstr ""
 #: views.py:57
 msgid "Vaše tričko již je na cestě k vám, už se na něj můžete těšit."
 msgstr "Your t-shirt is being delivered to you. You can look forward to it."
+
+#~ msgid ""
+#~ "Startovní balíček bude doručen na adresu pobočky vaší organizace, kterou "
+#~ "jste zvolili v předchozím kroku. Před výběrem trika prosím zkontrolujte, že "
+#~ "je adresa pobočky správně. Pokud správně není, žádejte změnu:"
+#~ msgstr ""
+#~ "The starting package will be delivered to the subsidiary address, You have "
+#~ "chosen in the previous step. Before selecting the t-shirt size, please check"
+#~ " the subsidiary address. If it is wrong, please request it to be changed by:"
+
+#~ msgid "Jméno: "
+#~ msgstr "Name: "
+
+#~ msgid "Adresa: "
+#~ msgstr "Address: "
