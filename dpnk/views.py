@@ -292,12 +292,13 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrat
         return new_user
 
 
-class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, LoginRequiredMixin, FormView):
+class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = 'registration/team_invitation.html'
     form_class = forms.ConfirmTeamInvitationForm
     success_url = reverse_lazy('zmenit_tym')
     registration_phase = 'zmenit_tym'
     title = _("Pozvánka do týmu")
+    success_message = _("Tým úspěšně změněn")
 
     def get_initial(self):
         return {
@@ -327,6 +328,7 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
         return self.success_url
 
     def form_valid(self, form):
+        self.user_attendance.team = self.new_team
         approve_for_team(self.request, self.user_attendance, "", True, False)
         return super().form_valid(form)
 

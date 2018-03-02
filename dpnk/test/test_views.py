@@ -1336,6 +1336,27 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, "Změnit organizaci, pobočku a tým")
 
+    def test_dpnk_team_invitation_post_no_last_team(self):
+        token = self.user_attendance.team.invitation_token
+        self.user_attendance.team = None
+        self.user_attendance.save()
+        email = self.user_attendance.userprofile.user.email
+        address = reverse('change_team_invitation', kwargs={'token': token, 'initial_email': email})
+        response = self.client.get(address)
+        self.assertContains(response, "<h2>Pozvánka do týmu</h2>", html=True)
+
+        post_data = {
+            "question": "on",
+            "submit": "Odeslat",
+            "campaign": self.user_attendance.campaign.id,
+        }
+        response = self.client.post(address, post_data, follow=True)
+        self.assertContains(
+            response,
+            '<div class="alert alert-success">Tým úspěšně změněn</div>',
+            html=True,
+        )
+
     def test_dpnk_team_invitation_confirmation_unchecked(self):
         token = self.user_attendance.team.invitation_token
         email = self.user_attendance.userprofile.user.email
