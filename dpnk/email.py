@@ -69,13 +69,26 @@ def invitation_register_mail(inviting, invited):
 
 def register_mail(user_attendance):
     language = user_attendance.userprofile.language
-    template = get_template('email/registration_%s.html' % language)
-    email = user_attendance.userprofile.user.email
-    message = template.render({
-        'user': user_attendance,
-        'SITE_URL': settings.SITE_URL,
-    })
     subject = _("%s - potvrzení registrace", language) % user_attendance.campaign
+    templates = {
+        "cs": get_template('email/registration_cs.html'),
+        "en": get_template('email/registration_en.html'),
+    }
+    email = user_attendance.userprofile.user.email
+    if language == "cs":
+        languages = ("cs", "en")
+    else:
+        languages = ("en", "cs")
+    message = ""
+    for language in languages:
+        template = templates[language]
+        message += template.render({
+            'user': user_attendance,
+            'language': language,
+            'SITE_URL': settings.SITE_URL,
+        })
+        message += "\n --- \n"
+    message += user_attendance.campaign.email_footer
     send_mail(subject, message, None, [email], fail_silently=False)
 
 

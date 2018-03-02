@@ -1,7 +1,7 @@
 {% load i18n %}
 {% autoescape off %}
 
-{% language user.userprofile.language %}
+{% language language %}
 A message for {{ user.userprofile }}, participating in the {{ user.campaign }} competition.
 
 Welcome to the Bike to Work competition! You've just registered in the {{ user.campaign }} competition. Before you head off, please check all the steps on: {% block profile_link %}
@@ -17,10 +17,6 @@ https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}
 
 Thank you for your interest and we look forward to seeing you during the competition!
 
-Your {{ user.campaign }}organization team
-
----
-{{ user.campaign.email_footer }}
+Your {{ user.campaign }} organization team
 {% endlanguage %}
-
 {% endautoescape %}
