@@ -130,8 +130,8 @@ social_html = HTML(
         '  <span class="fa fa-facebook"></span>{}'
         '</a>'
         '{}<br/>',
-        _("Přihlásit se pomocí Google"),
-        _("Přihlásit se pomocí Facebooku"),
+        _("Přihlásit/registrovat se pomocí Google"),
+        _("Přihlásit/registrovat se pomocí Facebooku"),
         _("Pokud již v systému máte účet, přihlašujte se pokud možno pomocí účtu se stále stejným e-mailem."),
     ),
 )
