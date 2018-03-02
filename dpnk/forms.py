@@ -410,7 +410,6 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
             'email',
             Submit('submit', _('Odeslat')),
             HTML('<br/><br/>'),
-            HTML(_('Případně se můžete přímo přihlásit pomocí účtů na sociálních sítích:')),
             social_html,
         )
 
@@ -438,7 +437,6 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
             'email', 'password1', 'password2', 'username',
             Submit('submit', _('Odeslat')),
             HTML('<br/><br/>'),
-            HTML(_('Případně se můžete přímo přihlásit pomocí účtů na sociálních sítích:')),
             social_html,
             HTML('<br/>'),
             HTML(
