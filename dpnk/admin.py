@@ -1247,9 +1247,6 @@ class CityInCampaignInline(admin.TabularInline):
 
 class TShirtSizeInline(SortableInlineAdminMixin, TranslationTabularInline):
     model = TShirtSize
-    readonly_fields = (
-        'order',
-    )
     extra = 0
 
 
