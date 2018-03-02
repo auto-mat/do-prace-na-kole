@@ -41,7 +41,6 @@ urlpatterns = [
     url(r'^coupons/', include("coupons.urls")),
     url(r'^t_shirt/', include("t_shirt_delivery.urls")),
     url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nAllow:", content_type="text/plain")),
-    url('social/', include('social_django.urls', namespace='social')),
     url(r'^', include('favicon.urls')),
     url(r'^cs/.*$', OldLanguageRedirectView.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
@@ -50,6 +49,7 @@ urlpatterns += i18n_patterns(
     url(r'^', include("dpnk.urls")),
     url(r'^', include("t_shirt_delivery.urls")),
     url(r'^', include("coupons.urls")),
+    url('social/', include('social_django.urls', namespace='social')),
     prefix_default_language=False,
 )
 

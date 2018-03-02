@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-22 21:22+0100\n"
+"POT-Creation-Date: 2018-03-02 18:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -220,18 +220,21 @@ msgid "Balíček bez týmu"
 msgstr ""
 
 #: templates/registration/change_tshirt.html:6
+msgid "Doručovací adresa"
+msgstr ""
+
+#: templates/registration/change_tshirt.html:7
 msgid ""
-"Startovní balíček bude doručen na adresu pobočky vaší organizace, kterou "
-"jste zvolili v předchozím kroku. Před výběrem trika prosím zkontrolujte, že "
-"je adresa pobočky správně. Pokud správně není, žádejte změnu:"
+"Startovní balíček bude hromadně doručen na následující adresu pobočky vaší "
+"organizace:"
 msgstr ""
 
-#: templates/registration/change_tshirt.html:9
-msgid "Jméno: "
+#: templates/registration/change_tshirt.html:13
+msgid "Před výběrem trika prosím zkontrolujte, že je adresa pobočky správně."
 msgstr ""
 
-#: templates/registration/change_tshirt.html:11
-msgid "Adresa: "
+#: templates/registration/change_tshirt.html:14
+msgid "Pokud adresa správně není, žádejte změnu:"
 msgstr ""
 
 #: views.py:43

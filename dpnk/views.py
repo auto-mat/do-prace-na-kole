@@ -201,7 +201,7 @@ class RegisterTeamView(UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateVi
     model = models.Team
 
     def get_success_result(self):
-        team_created_mail(self.user_attendance)
+        team_created_mail(self.user_attendance, self.object.name)
         return {
             'status': 'ok',
             'name': self.object.name,
@@ -735,7 +735,13 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
     registration_phase = 'profile_view'
     template_name = 'registration/competition_profile.html'
     title = _('Stav registrace')
-    opening_message = mark_safe(_("<b class='text-success'>Vaše registrace je kompletní.</b><br/>"))
+    opening_message = mark_safe_lazy(
+        string_concat(
+            '<b class="text-success">',
+            _("Vaše registrace je kompletní."),
+            '</b><br/>',
+        ),
+    )
 
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
@@ -876,10 +882,12 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredM
 class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
     template_name = 'base_generic_form.html'
     title = _('Stav registrace')
-    opening_message = mark_safe(
-        _(
-            "<b class='text-warning'>Vaše registrace není kompletní.</b><br/>"
-            "K dokončení registrace bude ještě nutné vyřešit několik věcí:",
+    opening_message = mark_safe_lazy(
+        string_concat(
+            '<b class="text-warning">',
+            _("Vaše registrace není kompletní."),
+            '</b><br/>',
+            _("K dokončení registrace bude ještě nutné vyřešit několik věcí:"),
         ),
     )
     registration_phase = 'registration_uncomplete'
@@ -1398,10 +1406,13 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
         context_data['registration_phase'] = self.registration_phase
         return context_data
 
-    def form_valid(self, form):
-        emails = [form.cleaned_data['email1'], form.cleaned_data['email2'], form.cleaned_data['email3'], form.cleaned_data['email4']]
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user_attendance'] = self.user_attendance
+        return kwargs
 
-        for email in emails:
+    def form_valid(self, form):
+        for email in form.cleaned_data.values():
             if email:
                 try:
                     invited_user = models.User.objects.get(is_active=True, email=email)
