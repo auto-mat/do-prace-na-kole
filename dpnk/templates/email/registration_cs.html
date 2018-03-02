@@ -1,7 +1,7 @@
 {% load i18n %}
 {% autoescape off %}
 
-{% language user.userprofile.language %}
+{% language language %}
 Zpráva pro soutěžící/ho {{ user.userprofile }} v soutěži {{ user.campaign }}.
 
 Vítejte!
@@ -11,7 +11,7 @@ Právě jste se zaregistroval/a do soutěže {{ user.campaign }}.
 Váš e-mail, kterým se budete přihlašovat do vašeho profilu je {{ user.userprofile.user.email }}. Vaše heslo zde kvůli bezpečnosti neuvádíme, ale můžete si ho kdykoli nechat zaslat obnovit na stránce https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'password_change' %}
 
 Soutěž začíná {{ user.campaign.competition_phase.date_from }} a končí {{ user.campaign.competition_phase.date_to }}.
-Než vyrazíte a začnete zaznamenávat své jízdy ve svém profilu https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}:
+Než vyrazíte a začnete zaznamenávat své jízdy ve svém profilu https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}
 • zkontrolujte si, že máte v týmu dost kolegů, a případně pozvěte další,
 • stáhněte si do svého chytrého telefonu aplikaci Urban Cyclers (https://www.dopracenakole.cz/aplikace), která vám jízdy do naší soutěže zapíše sama,
 • pokud chytrý telefon nemáte, nastavte si ve svém profilu svou typickou trasu, kterou budete jezdit. Usnadníte si tak každodenní zapisování jízd,
@@ -23,9 +23,5 @@ Pokud si něčím nejste jistí, ozvěte se na kontakt@dopracenakole.cz.
 
 Děkujeme Vám za zájem a těšíme se na viděnou během soutěže!
 Váš organizační tým soutěže {{ user.campaign }}
-
----
-{{ user.campaign.email_footer }}
 {% endlanguage %}
-
 {% endautoescape %}
