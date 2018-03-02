@@ -1178,15 +1178,18 @@ class TestRegisterSubsidiaryView(ViewsLogonMommy):
 
 
 class TestRegisterTeamView(ViewsLogonMommy):
+    def setUp(self):
+        self.subsidiary = mommy.make('Subsidiary')
+        super().setUp()
+
     def test_create(self):
-        subsidiary = mommy.make('Subsidiary')
         post_data = {
             'name': 'Foo name',
-            'subsidiary': subsidiary.id,
+            'subsidiary': self.subsidiary.id,
             'campaign': self.user_attendance.campaign.id,
         }
         response = self.client.post(
-            reverse('register_team', args=(subsidiary.id,)),
+            reverse('register_team', args=(self.subsidiary.id,)),
             post_data,
             follow=True,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest',
@@ -1195,6 +1198,47 @@ class TestRegisterTeamView(ViewsLogonMommy):
         self.assertJSONEqual(
             response.content.decode(),
             {"status": "ok", "name": "Foo name", "id": team.id},
+        )
+
+    def test_get(self):
+        response = self.client.get(reverse('register_team', args=(self.subsidiary.id,)))
+        self.assertContains(
+            response,
+            '<input type="text" name="name" maxlength="50" class="textinput textInput form-control" required id="id_name" />',
+            html=True,
+        )
+
+    def test_get_previous_team(self):
+        self.user_attendance.campaign.previous_campaign = mommy.make('Campaign')
+        self.user_attendance.campaign.save()
+        mommy.make(
+            'UserAttendance',
+            campaign=self.user_attendance.campaign.previous_campaign,
+            userprofile=self.user_attendance.userprofile,
+            team__name='Previous foo team',
+            team__campaign=self.user_attendance.campaign.previous_campaign,
+        )
+        response = self.client.get(reverse('register_team', args=(self.subsidiary.id,)))
+        self.assertContains(
+            response,
+            '<input type="text" name="name" value="Previous foo team" maxlength="50" '
+            'class="textinput textInput form-control" required id="id_name" />',
+            html=True,
+        )
+
+    def test_get_previous_no_team(self):
+        self.user_attendance.campaign.previous_campaign = mommy.make('Campaign')
+        self.user_attendance.campaign.save()
+        mommy.make(
+            'UserAttendance',
+            campaign=self.user_attendance.campaign.previous_campaign,
+            userprofile=self.user_attendance.userprofile,
+        )
+        response = self.client.get(reverse('register_team', args=(self.subsidiary.id,)))
+        self.assertContains(
+            response,
+            '<input type="text" name="name" maxlength="50" class="textinput textInput form-control" required id="id_name" />',
+            html=True,
         )
 
 
@@ -1319,6 +1363,12 @@ class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_team_invitation_unknown_team(self):
         response = self.client.get(reverse('change_team_invitation', kwargs={'token': 'asdf', 'initial_email': 'invitation_test@email.com'}))
         self.assertContains(response, "Tým nenalezen", status_code=403)
+
+    def test_dpnk_team_invitation_logout(self):
+        self.client.logout()
+        token = self.user_attendance.team.invitation_token
+        response = self.client.get(reverse('change_team_invitation', kwargs={'token': token, 'initial_email': 'invitation_test@email.com'}))
+        self.assertRedirects(response, "%s?next=/tym/%s/invitation_test%%40email.com/" % (reverse('login'), token))
 
     @override_settings(
         DEBUG=True,

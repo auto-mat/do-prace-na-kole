@@ -213,7 +213,7 @@ class RegisterTeamView(UserAttendanceViewMixin, LoginRequiredMixin, AjaxCreateVi
         return {
             'subsidiary': models.Subsidiary.objects.get(pk=self.kwargs['subsidiary_id']),
             'campaign': self.user_attendance.campaign,
-            'name': previous_user_attendance.team.name if previous_user_attendance else None,
+            'name': previous_user_attendance.team.name if previous_user_attendance and previous_user_attendance.team else None,
         }
 
 
@@ -338,7 +338,7 @@ class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, L
             )
 
         initial_email = kwargs['initial_email']
-        if request.user.email != initial_email:
+        if request.user.is_authenticated and request.user.email != initial_email:
             logout(request)
             messages.add_message(
                 self.request,
@@ -1436,6 +1436,7 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
 
 class UpdateTeam(
         TitleViewMixin,
+        CampaignParameterMixin,
         UserAttendanceParameterMixin,
         MustBeInRegistrationPhaseMixin,
         SuccessMessageMixin,
@@ -1457,6 +1458,9 @@ class UpdateTeam(
 
     def get_object(self):
         return self.user_attendance.team
+
+    def get_initial(self):
+        return {'campaign': self.campaign}
 
 
 class TeamMembers(
