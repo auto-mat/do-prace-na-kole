@@ -479,7 +479,7 @@ class InviteForm(SubmitMixin, forms.Form):
 
     def __init__(self, user_attendance, *args, **kwargs):
         self.user_attendance = user_attendance
-        if self.user_attendance.campaign.max_team_members:
+        if self.user_attendance.campaign.max_team_members and self.user_attendance.team:
             self.free_capacity = self.user_attendance.campaign.max_team_members - self.user_attendance.team.member_count
         else:
             self.free_capacity = 0
@@ -495,6 +495,7 @@ class InviteForm(SubmitMixin, forms.Form):
         self.helper = FormHelper()
         self.helper.form_class = "dirty-check"
         self.helper.layout = Layout(
+            HTML("<p>"),
             HTML(
                 _(
                     "Můžete pozvat kolegy do týmu přes náš rozesílač - stačí níže napsat níže e-maily "
@@ -502,7 +503,7 @@ class InviteForm(SubmitMixin, forms.Form):
                     "třeba osobně)."
                 ),
             ),
-            HTML("<br/>"),
+            HTML("</p><p>"),
             HTML(
                 format_html_lazy(
                     _(
@@ -514,14 +515,14 @@ class InviteForm(SubmitMixin, forms.Form):
                     reverse("team_members"),
                 ),
             ),
-            HTML("<br/>"),
+            HTML("</p><p>"),
             HTML(
                 format_html_lazy(
-                    _("Do vašeho tým je možné doplnit ještě {} členů."),
+                    _("Do vašeho týmu je možné doplnit ještě {} členů."),
                     self.free_capacity,
                 ),
             ),
-            HTML("<br/><br/>"),
+            HTML("</p>"),
             *fields,
         )
         self.helper.add_input(Submit('submit', _('Odeslat pozvánky')))
