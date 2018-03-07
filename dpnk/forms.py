@@ -277,6 +277,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         chained_model_field="company",
         show_all=False,
         auto_choose=True,
+        manager='active_objects',
         label=_("Adresa pobočky/organizace"),
         foreign_key_app_name="dpnk",
         foreign_key_model_name="Subsidiary",

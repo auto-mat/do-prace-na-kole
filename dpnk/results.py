@@ -78,15 +78,15 @@ def get_competitors(competition):
     query = _get_competitors_without_admission(competition)
 
     if competition.competitor_type == 'liberos':
-        query = query.filter(team__member_count__lte=1)
+        query = query.filter(team__paid_member_count__lte=1)
     if competition.competitor_type == 'team':
-        query = query.filter(member_count__gt=1)
+        query = query.filter(paid_member_count__gt=1)
 
     return query
 
 
 def get_results(self):
-    competitors = self.results.exclude(result=None).order_by('-result', '-team__member_count', '-id')
+    competitors = self.results.exclude(result=None).order_by('-result', '-team__paid_member_count', '-id')
     return competitors
 
 
@@ -232,12 +232,12 @@ def get_userprofile_frequency(user_attendance, competition=None, day=None):
 
 
 def get_team_length(team, competition):
-    member_count = team.member_count
-    members = team.members().all()
+    member_count = team.paid_member_count
+    members = team.paid_members().all()
 
     if member_count == 0:
         return None, None, None
-    members = team.members().all()
+    members = team.paid_members().all()
     # distance_from = Trip.objects.filter(user__in=members).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
     # distance_to   = Trip.objects.filter(user__in=members).aggregate(Sum('distance_to'))['distance_to__sum'] or 0
     distance = 0
@@ -268,7 +268,7 @@ def recalculate_result_competitor(user_attendance):
 
 def recalculate_results_team(team):
     # TODO: it's enough to recalculate just team competitions
-    for team_member in team.members():
+    for team_member in team.paid_members():
         recalculate_result_competitor(team_member)
 
 
@@ -293,8 +293,8 @@ def recalculate_result(competition, competitor):  # noqa
 
         competition_result, created = CompetitionResult.objects.get_or_create(team=team, competition=competition)
 
-        member_count = team.member_count
-        members = team.members()
+        member_count = team.paid_member_count
+        members = team.paid_members()
 
         if member_count == 0:
             competition_result.result = None
@@ -310,7 +310,7 @@ def recalculate_result(competition, competitor):  # noqa
                 competition_result.result_divident,
                 competition_result.result_divisor,
                 competition_result.result,
-            ) = get_team_frequency(team.members(), competition)
+            ) = get_team_frequency(team.paid_members(), competition)
 
     elif competition.competitor_type == 'single_user' or competition.competitor_type == 'liberos':
         user_attendance = competitor

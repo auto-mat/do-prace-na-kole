@@ -86,8 +86,8 @@ class Subsidiary(models.Model):
         blank=True,
     )
 
-    active_objects = ActiveManager()
     objects = models.Manager()
+    active_objects = ActiveManager()
 
     def __str__(self):
         return "%s - %s" % (get_address_string(self.address), self.city)

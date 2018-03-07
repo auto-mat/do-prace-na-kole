@@ -120,7 +120,11 @@ class CompetitionsViewTests(ViewsLogon):
     def test_other_team_members(self):
         address = reverse('other_team_members_results')
         response = self.client.get(address)
-        self.assertContains(response, 'Ještě nezačal/a soutěžit')
+        self.assertContains(
+            response,
+            '<td colspan="5">Registrace nebyla dokončena, nepočítá se do výsledků.</td>',
+            html=True,
+        )
         self.assertContains(response, '30')
         self.assertContains(response, '156,9&nbsp;km')
 
