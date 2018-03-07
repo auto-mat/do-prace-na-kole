@@ -897,13 +897,14 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
         'subsidiary__city',
         'subsidiary__company',
         'member_count',
+        'paid_member_count',
         'campaign',
         'get_length',
         'get_frequency',
         'id',
     )
     search_fields = ['name', 'subsidiary__address_street', 'subsidiary__company__name']
-    list_filter = [CampaignFilter, 'subsidiary__city', 'member_count']
+    list_filter = [CampaignFilter, 'subsidiary__city', 'member_count', 'paid_member_count']
     list_max_show_all = 10000
     raw_id_fields = ['subsidiary', ]
     actions = (
@@ -911,7 +912,7 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
     )
     form = models.team.TeamAdminForm
 
-    readonly_fields = ['members', 'invitation_token', 'member_count']
+    readonly_fields = ['members', 'invitation_token', 'member_count', 'paid_member_count']
 
     def members(self, obj):
         return admin_links(

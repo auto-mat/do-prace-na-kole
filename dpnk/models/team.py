@@ -77,7 +77,7 @@ class Team(models.Model):
 
     @denormalized(
         models.IntegerField,
-        verbose_name=_(u"Počet právoplatných členů týmu"),
+        verbose_name=_("Počet přihlášených členů týmu"),
         null=True,
         blank=False,
         db_index=True,
@@ -89,6 +89,20 @@ class Team(models.Model):
         member_count = self.members().count()
         if self.campaign.too_much_members(member_count):
             logger.error("Too many members in team", extra={'team': self})
+        return member_count
+
+    @denormalized(
+        models.IntegerField,
+        verbose_name=_("Počet zaplacených členů týmu"),
+        null=True,
+        blank=False,
+        db_index=True,
+        default=None,
+        skip={'invitation_token'},
+    )
+    @depend_on_related('UserAttendance', skip={'created', 'updated'})
+    def paid_member_count(self):
+        member_count = self.paid_members().count()
         return member_count
 
     def is_full(self):
@@ -128,9 +142,14 @@ class Team(models.Model):
         """ Return approved members of this team. """
         return self.users.filter(
             approved_for_team='approved',
-            payment_status__in=('done', 'no_admission'),
             userprofile__user__is_active=True,
         ).order_by("id")
+
+    def paid_members(self):
+        """ Return approved members of this team. """
+        return self.members().filter(
+            payment_status__in=('done', 'no_admission'),
+        )
 
     @denormalized(models.IntegerField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
