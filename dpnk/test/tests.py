@@ -32,7 +32,7 @@ try:
 except ImportError:  # Django<2.0
     from django.core.urlresolvers import reverse
 
-from dpnk import actions, company_admin_views, models, util, views
+from dpnk import company_admin_views, models, util, views
 from dpnk.test.util import ClearCacheMixin, DenormMixin
 from dpnk.test.util import print_response  # noqa
 
@@ -388,7 +388,6 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
 
     def test_dpnk_questionnaire_answers(self):
         competition = models.Competition.objects.filter(slug="quest")
-        actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         address = reverse('questionnaire_answers_all', kwargs={'competition_slug': "quest"})
         response = self.client.get(address)
@@ -699,7 +698,6 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         for competition in models.Competition.objects.all():
             competition.recalculate_results()
         competition = models.Competition.objects.filter(slug="quest")
-        actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         response = self.client.get(reverse('competitions'))
         self.assertContains(response, 'vnitrofiremní soutěž na pravidelnost jednotlivců organizace Testing company')
@@ -739,7 +737,6 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         for competition in models.Competition.objects.all():
             competition.recalculate_results()
         competition = models.Competition.objects.filter(slug="quest")
-        actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         response = self.client.get(reverse('questionnaire_competitions'))
         self.assertContains(response, '<i>dotazník jednotlivců</i>', html=True)

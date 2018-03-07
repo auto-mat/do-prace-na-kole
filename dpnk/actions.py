@@ -34,22 +34,6 @@ def recalculate_competitions_results(modeladmin, request, queryset):
 recalculate_competitions_results.short_description = _(u"Přepočítat výsledku vybraných soutěží")
 
 
-def normalize_questionnqire_admissions(modeladmin, request, queryset):
-    queryset = queryset.filter(competition_type='questionnaire', competitor_type='single_user')
-    for competition in queryset.all():
-        competition.user_attendance_competitors.clear()
-        for question in competition.question_set.all():
-            for answer in question.answer_set.all():
-                if answer.has_any_answer():
-                    competition.user_attendance_competitors.add(answer.user_attendance)
-        competition.save()
-    if request:
-        modeladmin.message_user(request, _(u"Úspěšně obnoveno %s přihlášek podle odpovědí na dotazník" % (queryset.count())))
-
-
-normalize_questionnqire_admissions.short_description = _(u"Obnovit přihlášky podle odpovědí na dotazník")
-
-
 # ---- USER_ATTENDANCE -----
 
 def touch_items(modeladmin, request, queryset):

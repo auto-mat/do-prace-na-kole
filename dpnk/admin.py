@@ -378,7 +378,6 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
         'slug',
         'competition_type',
         'competitor_type',
-        'without_admission',
         'is_public',
         'public_answers',
         'show_results',
@@ -397,15 +396,12 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
         'url',
         'id')
     filter_horizontal = (
-        'team_competitors',
-        'company_competitors',
-        'user_attendance_competitors',
-        'city')
+        'city',
+    )
     search_fields = ('name', 'company__name', 'slug')
     list_filter = (
         CampaignFilter,
         'city',
-        'without_admission',
         'is_public',
         'public_answers',
         'show_results',
@@ -415,7 +411,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
         isnull_filter('company', _("Není vnitrofiremní soutěž?")),
         'sex')
     save_as = True
-    actions = [actions.recalculate_competitions_results, actions.normalize_questionnqire_admissions]
+    actions = [actions.recalculate_competitions_results]
     inlines = [QuestionInline, ]
     prepopulated_fields = {'slug': ('name',)}
     list_max_show_all = 10000
@@ -432,13 +428,9 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
             'date_to',
             'date_from',
             'company',
-            'without_admission',
             'public_answers',
             'is_public',
             'entry_after_beginning_days',
-            'team_competitors',
-            'company_competitors',
-            'user_attendance_competitors',
             'campaign',
         ]
 
@@ -461,17 +453,6 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
         if obj.competition_type == 'frequency' and obj.competitor_type == 'team' and obj.slug:
             return format_html(u'<a href="{}">losovani</a>', (reverse('admin_draw_results', kwargs={'competition_slug': obj.slug})))
     draw_link.short_description = _(u"Losování")
-
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
-        if db_field.name == "team_competitors":
-            kwargs["queryset"] = models.Team.objects.none()
-
-        if db_field.name == "user_attendance_competitors":
-            kwargs["queryset"] = models.UserAttendance.objects.none()
-
-        if db_field.name == "company_competitors":
-            kwargs["queryset"] = models.Company.objects.none()
-        return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 
 class UserAttendanceForm(forms.ModelForm):

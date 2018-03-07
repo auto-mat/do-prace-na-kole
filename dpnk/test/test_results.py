@@ -199,24 +199,23 @@ class GetCompetitorsTests(TestCase):
         competition = mommy.make(
             "dpnk.Competition",
             competitor_type="team",
-            without_admission=True,
             campaign=self.campaign,
         )
         query = results.get_competitors(competition)
         self.assertQuerysetEqual(query.all(), ['<Team: Foo team (Foo user, Bar user)>'])
 
     def test_get_competitors_with_admission_single(self):
-        user_attendance = mommy.make(
+        mommy.make(
             "dpnk.UserAttendance",
             userprofile__nickname="Foo user",
             campaign=self.campaign,
+            transactions=[mommy.make('Payment', status=99)],
+            approved_for_team='approved',
         )
         competition = mommy.make(
             "dpnk.Competition",
             competitor_type="single_user",
-            without_admission=False,
             campaign=self.campaign,
-            user_attendance_competitors=[user_attendance],
         )
         query = results.get_competitors(competition)
         self.assertQuerysetEqual(query.all(), ['<UserAttendance: Foo user>'])
@@ -239,24 +238,20 @@ class GetCompetitorsTests(TestCase):
         competition = mommy.make(
             "dpnk.Competition",
             competitor_type="team",
-            without_admission=False,
             campaign=self.campaign,
-            team_competitors=[team],
         )
         query = results.get_competitors(competition)
         self.assertQuerysetEqual(query.all(), ['<Team: Foo team (Foo user, Bar user)>'])
 
     def test_get_competitors_with_admission_company(self):
-        company = mommy.make(
+        mommy.make(
             "dpnk.Company",
             name="Foo company",
         )
         competition = mommy.make(
             "dpnk.Competition",
             competitor_type="company",
-            without_admission=False,
             campaign=self.campaign,
-            company_competitors=[company],
         )
         query = results.get_competitors(competition)
         self.assertQuerysetEqual(query.all(), ['<Company: Foo company>'])
@@ -278,7 +273,6 @@ class GetCompetitorsTests(TestCase):
         competition = mommy.make(
             "dpnk.Competition",
             competitor_type="liberos",
-            without_admission=True,
             campaign=self.campaign,
         )
         query = results.get_competitors(competition)
@@ -306,6 +300,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
             campaign=self.testing_campaign,
             t_shirt_size__campaign=self.testing_campaign,
             team__campaign=self.testing_campaign,
+            transactions=[mommy.make('Payment', status=99)],
         )
         self.user_attendance = mommy.make(
             "UserAttendance",
@@ -314,6 +309,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
             campaign=self.testing_campaign,
             t_shirt_size__campaign=self.testing_campaign,
             team__campaign=self.testing_campaign,
+            transactions=[mommy.make('Payment', status=99)],
         )
         mommy.make(
             'Trip',

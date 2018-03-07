@@ -40,7 +40,7 @@ try:
 except ImportError:  # Django<2.0
     from django.core.urlresolvers import reverse
 
-from dpnk import actions, mailing, models, util, views
+from dpnk import mailing, models, util, views
 from dpnk.test.util import ClearCacheMixin, DenormMixin
 from dpnk.test.util import print_response  # noqa
 
@@ -505,7 +505,6 @@ class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
     def test_dpnk_competition_results_quest_not_finished(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
         competition = models.Competition.objects.filter(slug="quest")
-        actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         address = reverse('competition_results', kwargs={'competition_slug': 'quest'})
         response = self.client.get(address)
@@ -1618,6 +1617,26 @@ class ViewsTestsLogon(ViewsLogon):
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test-unknown@email.cz'])
         self.assertEqual(str(msg.subject), 'Testing campaign - pozvánka do týmu (invitation to a team)')
+
+    def test_dpnk_team_no_team(self):
+        """ Test, that invitation page doesn't fail if user has no team set """
+        self.user_attendance.team = None
+        self.user_attendance.save()
+        response = self.client.get(reverse('pozvanky'))
+        self.assertContains(
+            response,
+            "<p>Do vašeho týmu je možné doplnit ještě 0 členů.</p>",
+            html=True,
+        )
+
+    def test_dpnk_team_get(self):
+        """ Test number of team members for invitation """
+        response = self.client.get(reverse('pozvanky'))
+        self.assertContains(
+            response,
+            "<p>Do vašeho týmu je možné doplnit ještě 2 členů.</p>",
+            html=True,
+        )
 
     def test_dpnk_company_admin_application(self):
         util.rebuild_denorm_models(models.Team.objects.filter(pk=2))

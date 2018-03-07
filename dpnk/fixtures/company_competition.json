@@ -4,7 +4,6 @@
             "campaign": 339,
             "city": [],
             "company": 1,
-            "company_competitors": [],
             "competitor_type": "team",
             "date_from": "2013-05-01",
             "date_to": "2013-06-02",
@@ -15,11 +14,8 @@
             "rules": null,
             "sex": null,
             "slug": "FA-testing-campaign-pravidelnost-spolecnosti",
-            "team_competitors": [],
             "competition_type": "frequency",
-            "url": "http://www.dopracenakole.net/url/",
-            "user_attendance_competitors": [],
-            "without_admission": true
+            "url": "http://www.dopracenakole.net/url/"
         },
         "model": "dpnk.competition",
         "pk": 7

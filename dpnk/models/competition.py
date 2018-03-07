@@ -36,8 +36,6 @@ from .campaign import Campaign
 from .city import City
 from .commute_mode import CommuteMode
 from .company import Company
-from .team import Team, TeamName
-from .user_attendance import UserAttendance
 from .user_profile import UserProfile
 from .. import util
 
@@ -130,24 +128,6 @@ class Competition(models.Model):
         blank=True,
         default=default_commute_modes,
     )
-    user_attendance_competitors = models.ManyToManyField(
-        UserAttendance,
-        verbose_name=_(u"Přihlášení soutěžící jednotlivci"),
-        related_name="competitions",
-        blank=True,
-    )
-    team_competitors = models.ManyToManyField(
-        Team,
-        verbose_name=_(u"Přihlášené soutěžící týmy"),
-        related_name="competitions",
-        blank=True,
-    )
-    company_competitors = models.ManyToManyField(
-        Company,
-        verbose_name=_(u"Přihlášené soutěžící organizace"),
-        related_name="competitions",
-        blank=True,
-    )
     city = models.ManyToManyField(
         City,
         verbose_name=_(u"Soutěž pouze pro města"),
@@ -178,12 +158,6 @@ class Competition(models.Model):
         help_text=_("Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout 100% jízd"),
         default=28,
         blank=False,
-        null=False,
-    )
-    without_admission = models.BooleanField(
-        verbose_name=_(u"Soutěž bez přihlášek (pro všechny)"),
-        help_text=_(u"Dotazník je obvykle na přihlášky, výkonnost také a pravidelnost bez nich."),
-        default=True,
         null=False,
     )
     public_answers = models.BooleanField(
@@ -236,9 +210,9 @@ class Competition(models.Model):
             return False
         return self.show_results
 
-    def get_competitors(self, potencial_competitors=False):
+    def get_competitors(self):
         from .. import results
-        return results.get_competitors(self, potencial_competitors)
+        return results.get_competitors(self)
 
     def get_competitors_count(self):
         return self.get_competitors().count()
@@ -459,35 +433,6 @@ class CompetitionForm(forms.ModelForm):
             'rules': RedactorEditor(),
         }
 
-    def set_fields_queryset_on_update(self):
-        if hasattr(self.instance, 'campaign') and 'user_attendance_competitors' in self.fields:
-            if self.instance.competitor_type in ['liberos', 'single_user']:
-                queryset = self.instance.get_competitors(potencial_competitors=True)
-            else:
-                queryset = self.instance.user_attendance_competitors
-            queryset = queryset.select_related('userprofile__user', 'campaign')
-            self.fields['user_attendance_competitors'].queryset = queryset
-
-        if 'team_competitors' in self.fields:
-            if self.instance.competitor_type == 'team':
-                self.fields['team_competitors'].queryset = TeamName.objects.all()
-            else:
-                self.fields['team_competitors'].queryset = self.instance.team_competitors.all()
-
-        if 'company_competitors' in self.fields:
-            if self.instance.competitor_type == 'company':
-                self.fields["company_competitors"].queryset = Company.objects.all()
-            else:
-                self.fields['company_competitors'].queryset = self.instance.company_competitors.all()
-
-    def set_fields_queryset_on_create(self):
-        if 'team_competitors' in self.fields:
-            self.fields["team_competitors"].queryset = Team.objects.none()
-        if 'user_attendance_competitors' in self.fields:
-            self.fields["user_attendance_competitors"].queryset = UserAttendance.objects.none()
-        if 'company_competitors' in self.fields:
-            self.fields["company_competitors"].queryset = Company.objects.none()
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not hasattr(self.instance, 'campaign'):
@@ -496,11 +441,6 @@ class CompetitionForm(forms.ModelForm):
         if hasattr(self, "request") and not self.request.user.is_superuser:
             self.fields["city"].queryset = self.request.user.userprofile.administrated_cities
             self.fields["city"].required = True
-
-        if self.instance.id:
-            self.set_fields_queryset_on_update()
-        else:
-            self.set_fields_queryset_on_create()
 
 
 @receiver(post_save, sender=Competition)

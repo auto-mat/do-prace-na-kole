@@ -28,7 +28,7 @@ except ImportError:  # Django<2.0
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
 
-from dpnk import actions, filters, models, util
+from dpnk import filters, models, util
 from dpnk.models import Team, UserAttendance
 from dpnk.test.util import DenormMixin
 from dpnk.test.util import print_response  # noqa
@@ -77,7 +77,6 @@ class LocalAdminModulesTests(DenormMixin, TestCase):
     def test_admin_questionnaire_answers_no_permission(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=2115))
         competition = models.Competition.objects.filter(slug="FQ-LB")
-        actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         cr = models.CompetitionResult.objects.get(competition=competition.get())
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "FQ-LB"}), cr.id)
@@ -86,7 +85,6 @@ class LocalAdminModulesTests(DenormMixin, TestCase):
 
     def test_admin_questionnaire_answers_bad_user(self):
         competition = models.Competition.objects.filter(slug="team-questionnaire")
-        actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "team-questionnaire"}), 999)
         response = self.client.get(address)
@@ -332,7 +330,6 @@ class AdminTests(TestCase):
 
     def test_admin_questionnaire_results(self):
         competition = models.Competition.objects.filter(slug="quest")
-        actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         address = reverse('admin_questionnaire_results', kwargs={'competition_slug': "quest"})
         response = self.client.get(address)
@@ -340,9 +337,8 @@ class AdminTests(TestCase):
 
     def test_admin_questionnaire_answers(self):
         competition = models.Competition.objects.filter(slug="quest")
-        actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
-        cr = models.CompetitionResult.objects.get(competition=competition.get())
+        cr = models.CompetitionResult.objects.get(competition=competition.get(), user_attendance__pk=1115)
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "quest"}), cr.id)
         response = self.client.get(address)
         self.assertContains(response, "%s/DSC00002.JPG" % settings.MEDIA_URL)
@@ -351,7 +347,6 @@ class AdminTests(TestCase):
 
     def test_admin_questionnaire_answers_FB_LQ(self):
         competition = models.Competition.objects.filter(slug="FQ-LB")
-        actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         cr = models.CompetitionResult.objects.get(competition=competition.get())
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "FQ-LB"}), cr.id)
@@ -361,7 +356,6 @@ class AdminTests(TestCase):
 
     def test_admin_questionnaire_answers_dotaznik_spolecnosti(self):
         competition = models.Competition.objects.filter(slug="dotaznik-spolecnosti")
-        actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         cr = models.CompetitionResult.objects.get(competition=competition.get())
         address = "%s?uid=%s" % (reverse('admin_questionnaire_answers', kwargs={'competition_slug': "dotaznik-spolecnosti"}), cr.id)
@@ -434,8 +428,8 @@ class AdminTests(TestCase):
         )
 
     def test_admin_draw_results_quest(self):
+        random.seed(1)
         competition = models.Competition.objects.filter(slug="quest")
-        actions.normalize_questionnqire_admissions(None, None, competition)
         competition.get().recalculate_results()
         address = reverse('admin_draw_results', kwargs={'competition_slug': "quest"})
         response = self.client.get(address)
@@ -444,6 +438,14 @@ class AdminTests(TestCase):
             "<li> 1. tah: Tým Testing User 1"
             "<br/>"
             "1 620&nbsp;bodů"
+            "</li>",
+            html=True,
+        )
+        self.assertContains(
+            response,
+            "<li> 2. tah: Tým Registered User 1"
+            "<br/>"
+            "0&nbsp;bodů"
             "</li>",
             html=True,
         )

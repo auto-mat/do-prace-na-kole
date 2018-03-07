@@ -163,12 +163,6 @@ class TestActions(TestCase):
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEquals(str(message), "Zadáno přepočítání 11 výsledků")
 
-    def test_normalize_questionnqire_admissions(self):
-        queryset = models.Competition.objects.all()
-        actions.normalize_questionnqire_admissions(self.modeladmin, self.request, queryset)
-        message = get_messages(self.request)._queued_messages[0].message
-        self.assertEquals(str(message), "Úspěšně obnoveno 1 přihlášek podle odpovědí na dotazník")
-
     def test_remove_mailing_id(self):
         self.assertEquals(models.UserProfile.objects.get(pk=1026).mailing_id, "")
         queryset = models.UserProfile.objects.all()

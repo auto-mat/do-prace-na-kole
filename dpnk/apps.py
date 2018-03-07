@@ -31,7 +31,7 @@ class DPNKConfig(AppConfig):
     def ready(self):
 
         def get_team_in_campaign_manager(campaign_slug):
-            """ This is hacky manager, that enagles filter by campaign for chained team field in ChangeTeamView. """
+            """ This is hacky manager, that enables filter by campaign for chained team field in ChangeTeamView. """
             class TeamInCampaignManager(models.Manager):
                 def __init__(self):
                     ret_val = super().__init__()
