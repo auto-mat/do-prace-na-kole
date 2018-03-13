@@ -1279,7 +1279,7 @@ class CompanyAdminResource(resources.ModelResource):
 
 
 @admin.register(models.CompanyAdmin)
-class CompanyAdminAdmin(ImportExportMixin, city_admin_mixin_generator('administrated_company__subsidiaries__city'), RelatedFieldAdmin):
+class CompanyAdminAdmin(ImportExportMixin, city_admin_mixin_generator('administrated_company__subsidiaries__city__in'), RelatedFieldAdmin):
     list_display = [
         'userprofile__user',
         'userprofile__user__email',
