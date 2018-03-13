@@ -901,6 +901,13 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         self.session_id = "2075-1J1455206457"
         self.trans_id = "2055"
 
+    def test_questionnaire_view_unauthenticated(self):
+        self.client = Client(HTTP_HOST="testing-campaign.testserver")
+        kwargs = {'questionnaire_slug': 'quest'}
+        address = reverse('questionnaire', kwargs=kwargs)
+        response = self.client.get(address)
+        self.assertRedirects(response, '/login?next=/otazka/quest/')
+
     def test_questionnaire_view(self):
         kwargs = {'questionnaire_slug': 'quest'}
         address = reverse('questionnaire', kwargs=kwargs)

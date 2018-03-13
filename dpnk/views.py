@@ -1064,6 +1064,8 @@ class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         questionaire_slug = kwargs['questionnaire_slug']
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
         self.user_attendance = request.user_attendance
         self.userprofile = request.user.userprofile
         try:
