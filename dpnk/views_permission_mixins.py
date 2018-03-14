@@ -117,7 +117,7 @@ class MustHaveTeamMixin(object):
         return super().dispatch(request, *args, **kwargs)
 
 
-class MustBeApprovedForTeamMixin(object):
+class MustBeApprovedForTeamMixin(MustHaveTeamMixin):
     def dispatch(self, request, *args, **kwargs):
         if (
                 request.user_attendance and

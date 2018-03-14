@@ -253,7 +253,8 @@ class MustBeApprovedForTeamMixinTest(TestCase):
             team=None,
         )
         mixin = MustBeApprovedForTeam()
-        self.assertEquals(mixin.dispatch(self.request), 'superdispatch')
+        with self.assertRaisesRegex(PermissionDenied, "Napřed musíte mít"):
+            mixin.dispatch(self.request)
 
     def test_team_approved(self):
         self.request.user_attendance = mommy.make(

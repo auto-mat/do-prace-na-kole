@@ -1630,14 +1630,15 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(str(msg.subject), 'Testing campaign - pozvánka do týmu (invitation to a team)')
 
     def test_dpnk_team_no_team(self):
-        """ Test, that invitation page doesn't fail if user has no team set """
+        """ Test, that invitation shows warning if the team is not set """
         self.user_attendance.team = None
         self.user_attendance.save()
         response = self.client.get(reverse('pozvanky'))
         self.assertContains(
             response,
-            "<p>Do vašeho týmu je možné doplnit ještě 0 členů.</p>",
+            '<div class="alert alert-danger">Napřed musíte mít <a href="/tym/">vybraný tým</a>.</div>',
             html=True,
+            status_code=403,
         )
 
     def test_dpnk_team_get(self):
