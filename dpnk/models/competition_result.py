@@ -150,6 +150,18 @@ class CompetitionResult(models.Model):
         """ Get result in kilometers rounded to reasonable number of decimal places. """
         return round(self.result, 1)
 
+    def get_result_divisor(self):
+        if self.competition.competition_type == 'frequency':
+            return int(round(self.result_divisor))
+        else:
+            return round(self.result_divisor, 1)
+
+    def get_result_divident(self):
+        if self.competition.competition_type == 'frequency':
+            return int(round(self.result_divident))
+        else:
+            return round(self.result_divident, 1)
+
     def get_result_percentage(self):
         """
         Get result as percentage of all rides.

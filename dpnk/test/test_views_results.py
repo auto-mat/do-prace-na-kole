@@ -164,8 +164,8 @@ class CompetitionResultListJsonSingleTests(TestCase):
         mommy.make(
             'dpnk.CompetitionResult',
             result="1",
-            result_divident="1.3",
-            result_divisor="1.1",
+            result_divident="3",
+            result_divisor="1",
             competition=self.single_frequency_competition,
             user_attendance__userprofile__nickname="foo user",
             user_attendance__userprofile__user__first_name="Adam",
@@ -181,8 +181,8 @@ class CompetitionResultListJsonSingleTests(TestCase):
         mommy.make(
             'dpnk.CompetitionResult',
             result="1",
-            result_divident="1.2",
-            result_divisor="1.1",
+            result_divident="2",
+            result_divisor="1",
             competition=self.single_frequency_competition,
             user_attendance__userprofile__sex="female",
             user_attendance__userprofile__nickname=None,
@@ -205,8 +205,8 @@ class CompetitionResultListJsonSingleTests(TestCase):
         expected_json = {
             "recordsTotal": 2,
             "data": [
-                ["1.&nbsp;-&nbsp;2.", "100,0", "1,3", "1,1", "foo user", "foo team", "foo company", "-", "---------", "foo city"],
-                ["1.&nbsp;-&nbsp;2.", "100,0", "1,2", "1,1", "Jan Novák", "bar team", "bar company", "-", "Žena", "bar city"],
+                ["1.&nbsp;-&nbsp;2.", "100,0", "3", "1", "foo user", "foo team", "foo company", "-", "---------", "foo city"],
+                ["1.&nbsp;-&nbsp;2.", "100,0", "2", "1", "Jan Novák", "bar team", "bar company", "-", "Žena", "bar city"],
             ],
             "draw": 0,
             "result": "ok",
@@ -223,8 +223,8 @@ class CompetitionResultListJsonSingleTests(TestCase):
         mommy.make(
             'dpnk.CompetitionResult',
             result="1",
-            result_divident="1.2",
-            result_divisor="1.1",
+            result_divident="2",
+            result_divisor="1",
             competition=self.single_frequency_competition,
             user_attendance__userprofile__nickname="baz user",
             user_attendance__userprofile__occupation__name='Foo ocupation',
@@ -246,7 +246,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
         expected_json = {
             "recordsTotal": 3,
             "data": [
-                ["1.&nbsp;-&nbsp;3.", "100,0", "1,2", "1,1", "baz user", "baz team", "baz company", "Foo ocupation", "---------", "baz city"],
+                ["1.&nbsp;-&nbsp;3.", "100,0", "2", "1", "baz user", "baz team", "baz company", "Foo ocupation", "---------", "baz city"],
             ],
             "draw": 0,
             "result": "ok",
@@ -263,7 +263,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
         expected_json = {
             "recordsTotal": 2,
             "data": [
-                ["1.&nbsp;-&nbsp;2.", "100,0", "1,3", "1,1", "foo user", "foo team", "foo company", "-", "---------", "foo city"],
+                ["1.&nbsp;-&nbsp;2.", "100,0", "3", "1", "foo user", "foo team", "foo company", "-", "---------", "foo city"],
             ],
             "draw": 0,
             "result": "ok",
@@ -280,7 +280,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
         expected_json = {
             "recordsTotal": 2,
             "data": [
-                ["1.&nbsp;-&nbsp;2.", "100,0", "1,2", "1,1", "Jan Novák", "bar team", "bar company", "-", "Žena", "bar city"],
+                ["1.&nbsp;-&nbsp;2.", "100,0", "2", "1", "Jan Novák", "bar team", "bar company", "-", "Žena", "bar city"],
             ],
             "draw": 0,
             "result": "ok",
@@ -297,7 +297,7 @@ class CompetitionResultListJsonSingleTests(TestCase):
         expected_json = {
             "recordsTotal": 2,
             "data": [
-                ["1.&nbsp;-&nbsp;2.", "100,0", "1,2", "1,1", "Jan Novák", "bar team", "bar company", "-", "Žena", "bar city"],
+                ["1.&nbsp;-&nbsp;2.", "100,0", "2", "1", "Jan Novák", "bar team", "bar company", "-", "Žena", "bar city"],
             ],
             "draw": 0,
             "result": "ok",

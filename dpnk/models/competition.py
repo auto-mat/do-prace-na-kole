@@ -313,10 +313,10 @@ class Competition(models.Model):
         )
 
         if self.competition_type == 'frequency':
-            columns.append(('result_divident', 'result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd")))
-            columns.append(('result_divisor', 'result_divisor', _("Cel&shy;ko&shy;vý po&shy;čet cest")))
+            columns.append(('result_divident', 'get_result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd")))
+            columns.append(('result_divisor', 'get_result_divisor', _("Cel&shy;ko&shy;vý po&shy;čet cest")))
         elif self.competition_type == 'length' and self.competitor_type == 'team':
-            columns.append(('result_divident', 'result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů")))
+            columns.append(('result_divident', 'get_result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů")))
 
         if self.competitor_type not in ('single_user', 'liberos', 'company'):
             where = {

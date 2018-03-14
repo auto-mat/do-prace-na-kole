@@ -48,10 +48,8 @@ class CompetitionResultListJson(BaseDatatableView):
                 return "%s.&nbsp;-&nbsp;%s." % sequence_range
         if column in ('get_company', 'get_city', 'get_street', 'get_subsidiary', 'get_occupation', 'get_sex'):
             return str(getattr(row, column)())
-        if column in ('get_result_percentage'):
+        if column in ('get_result', 'get_result_percentage', 'get_result_divident', 'get_result_divisor'):
             return intcomma(getattr(row, column)())
-        if column in ('result_divident', 'result_divisor'):
-            return intcomma(getattr(row, column))
         if column == 'get_team':
             team = row.get_team()
             if team:
