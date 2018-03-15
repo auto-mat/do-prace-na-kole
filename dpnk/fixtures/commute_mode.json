@@ -1,0 +1,70 @@
+[
+{
+    "model": "dpnk.commutemode",
+    "pk": 1,
+    "fields": {
+        "name": "Kolo",
+        "name_en": "Bicycle",
+        "name_cs": "Kolo",
+        "name_dsnkcs": null,
+        "slug": "bicycle",
+        "order": 0,
+        "tooltip": "Cesta byla vykon\u00e1na na kole, kolob\u011b\u017ece, skateboardu...\nDopravn\u00ed prost\u0159edky se mohou kombinovat,\npo\u010d\u00edt\u00e1 se v\u0161ak pouze ujet\u00e1 vzd\u00e1lenost.",
+        "tooltip_en": "Trip was made on bicycle, kick scooter, skateboard...\n traffic modes can be combined,\nbut only ridden distanc can be filled in.",
+        "tooltip_cs": "Cesta byla vykon\u00e1na na kole, kolob\u011b\u017ece, skateboardu...\nDopravn\u00ed prost\u0159edky se mohou kombinovat,\npo\u010d\u00edt\u00e1 se v\u0161ak pouze ujet\u00e1 vzd\u00e1lenost.",
+        "tooltip_dsnkcs": null,
+        "does_count": true
+    }
+},
+{
+    "model": "dpnk.commutemode",
+    "pk": 2,
+    "fields": {
+        "name": "Ch\u016fze/b\u011bh",
+        "name_en": "Walk/run",
+        "name_cs": "Ch\u016fze/b\u011bh",
+        "name_dsnkcs": null,
+        "slug": "by_foot",
+        "order": 2,
+        "tooltip": "Cesta byla vykon\u00e1na p\u011b\u0161ky, nebo b\u011bhem.\nPo\u010d\u00edt\u00e1 se minim\u00e1ln\u00ed vzd\u00e1lenost 1,5 km.",
+        "tooltip_en": "Trip was made by walking or running.\nTrip must be at least 1,5 km long.",
+        "tooltip_cs": "Cesta byla vykon\u00e1na p\u011b\u0161ky, nebo b\u011bhem.\nPo\u010d\u00edt\u00e1 se minim\u00e1ln\u00ed vzd\u00e1lenost 1,5 km.",
+        "tooltip_dsnkcs": null,
+        "does_count": true
+    }
+},
+{
+    "model": "dpnk.commutemode",
+    "pk": 3,
+    "fields": {
+        "name": "Jinak",
+        "name_en": "Other",
+        "name_cs": "Jinak",
+        "name_dsnkcs": null,
+        "slug": "by_other_vehicle",
+        "order": 3,
+        "tooltip": "Cesta byla vykon\u00e1na autem,\nhromadnou dopravou, tax\u00edkem...",
+        "tooltip_en": "Trip was made by car,\n public transport, taxi...",
+        "tooltip_cs": "Cesta byla vykon\u00e1na autem,\nhromadnou dopravou, tax\u00edkem...",
+        "tooltip_dsnkcs": null,
+        "does_count": true
+    }
+},
+{
+    "model": "dpnk.commutemode",
+    "pk": 4,
+    "fields": {
+        "name": "\u017d\u00e1dn\u00e1 cesta",
+        "name_en": "No trip",
+        "name_cs": "\u017d\u00e1dn\u00e1 cesta",
+        "name_dsnkcs": null,
+        "slug": "no_work",
+        "order": 4,
+        "tooltip": "Tato cesta nebyla v\u016fbec vykon\u00e1na.\nSout\u011b\u017e\u00edc\u00ed dan\u00fd den tedy v\u016fbec nepracoval,\nnebo cestu z jin\u00e9ho d\u016fvodu nevykonal.",
+        "tooltip_en": "This trip was not done at all.\nCompetitor did not work that day,\n or did not make the trip for other reason.",
+        "tooltip_cs": "Tato cesta nebyla v\u016fbec vykon\u00e1na.\nSout\u011b\u017e\u00edc\u00ed dan\u00fd den tedy v\u016fbec nepracoval,\nnebo cestu z jin\u00e9ho d\u016fvodu nevykonal.",
+        "tooltip_dsnkcs": null,
+        "does_count": false
+    }
+}
+]
