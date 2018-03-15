@@ -418,7 +418,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
     form = models.CompetitionForm
 
     def get_readonly_fields(self, request, obj=None):
-        if request.user.is_superuser:
+        if request.user.has_perm('dpnk.can_edit_all_cities'):
             return ['competition_results_link', 'questionnaire_results_link', 'draw_link']
         return [
             'competition_results_link',

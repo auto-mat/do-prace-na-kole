@@ -438,7 +438,7 @@ class CompetitionForm(forms.ModelForm):
         if not hasattr(self.instance, 'campaign'):
             self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
 
-        if hasattr(self, "request") and not self.request.user.is_superuser:
+        if hasattr(self, "request") and not self.request.user.has_perm('dpnk.can_edit_all_cities'):
             self.fields["city"].queryset = self.request.user.userprofile.administrated_cities
             self.fields["city"].required = True
 
