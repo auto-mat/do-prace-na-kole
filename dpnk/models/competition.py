@@ -328,7 +328,7 @@ class Competition(models.Model):
             columns.append(('member_count', 'team__member_count', _("Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch %s") % where))
 
         competitor = {
-            'team': 'get_team',
+            'team': 'get_team_name',
             'single_user': 'user_attendance',
             'liberos': 'user_attendance',
             'company': 'get_company',
@@ -336,7 +336,7 @@ class Competition(models.Model):
         columns.append(('competitor', competitor, _("Sou&shy;tě&shy;ží&shy;cí")))
 
         if self.competitor_type not in ('team', 'company'):
-            columns.append(('team', 'get_team', _("Tým")))
+            columns.append(('team', 'get_team_name', _("Tým")))
 
         if self.competitor_type != 'company':
             columns.append(('company', 'get_company', _("Spo&shy;leč&shy;nost")))

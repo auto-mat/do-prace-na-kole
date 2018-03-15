@@ -126,6 +126,9 @@ class CompetitionResult(models.Model):
         if self.competition.competitor_type == 'team':
             return self.team
 
+    def get_team_name(self):
+        return self.get_team().name
+
     def get_company(self):
         if self.competition.competitor_type == 'company':
             return self.company
