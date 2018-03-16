@@ -26,6 +26,7 @@ from denorm import denormalized, depend_on_related
 
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Length
+from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -193,6 +194,9 @@ class UserAttendance(models.Model):
 
     def company_admission_fee(self):
         return self.admission_fee_for_category('company')
+
+    def company_admission_fee_intcomma(self):
+        return intcomma(self.company_admission_fee())
 
     @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
     @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})

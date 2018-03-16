@@ -1488,7 +1488,7 @@ class ViewsTestsLogon(ViewsLogon):
             '<td></td>'
             '<td>test-registered@test.cz</td>'
             '<td>Testing city</td>'
-            '</tr>' % amount,
+            '</tr>' % (str(amount).replace(".", ",")),
             html=True,
         )
         post_data = {

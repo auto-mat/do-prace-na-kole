@@ -46,7 +46,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
         ),
         widget=TableSelectMultiple(
             item_attrs=[
-                ('company_admission_fee', _("Částka")),
+                ('company_admission_fee_intcomma', _("Částka")),
                 ('userprofile__user__first_name', _("Jméno")),
                 ('userprofile__user__last_name', _("Příjmení")),
                 ('userprofile__nickname', _("Přezdívka")),
