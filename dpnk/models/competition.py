@@ -313,10 +313,10 @@ class Competition(models.Model):
         )
 
         if self.competition_type == 'frequency':
-            columns.append(('result_divident', 'result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd")))
-            columns.append(('result_divisor', 'result_divisor', _("Cel&shy;ko&shy;vý po&shy;čet cest")))
+            columns.append(('result_divident', 'get_result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd")))
+            columns.append(('result_divisor', 'get_result_divisor', _("Cel&shy;ko&shy;vý po&shy;čet cest")))
         elif self.competition_type == 'length' and self.competitor_type == 'team':
-            columns.append(('result_divident', 'result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů")))
+            columns.append(('result_divident', 'get_result_divident', _("Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů")))
 
         if self.competitor_type not in ('single_user', 'liberos', 'company'):
             where = {
@@ -328,7 +328,7 @@ class Competition(models.Model):
             columns.append(('member_count', 'team__member_count', _("Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch %s") % where))
 
         competitor = {
-            'team': 'get_team',
+            'team': 'get_team_name',
             'single_user': 'user_attendance',
             'liberos': 'user_attendance',
             'company': 'get_company',
@@ -336,7 +336,7 @@ class Competition(models.Model):
         columns.append(('competitor', competitor, _("Sou&shy;tě&shy;ží&shy;cí")))
 
         if self.competitor_type not in ('team', 'company'):
-            columns.append(('team', 'get_team', _("Tým")))
+            columns.append(('team', 'get_team_name', _("Tým")))
 
         if self.competitor_type != 'company':
             columns.append(('company', 'get_company', _("Spo&shy;leč&shy;nost")))
@@ -438,7 +438,7 @@ class CompetitionForm(forms.ModelForm):
         if not hasattr(self.instance, 'campaign'):
             self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
 
-        if hasattr(self, "request") and not self.request.user.is_superuser:
+        if hasattr(self, "request") and not self.request.user.has_perm('dpnk.can_edit_all_cities'):
             self.fields["city"].queryset = self.request.user.userprofile.administrated_cities
             self.fields["city"].required = True
 

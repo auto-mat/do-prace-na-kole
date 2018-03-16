@@ -2,11 +2,11 @@
 {% autoescape off %}
 
 {% language user.userprofile.language %}
-A message for {{ user.userprofile }}, the founder of the {{user.team.name}} team in the {{ user.campaign }} competition.
+A message for {{ user.userprofile }}, the founder of the {{team_name}} team in the {{ user.campaign }} competition.
 
 Hello,
 
-Your team {{user.team.name}} has just been created.
+Your team {{team_name}} has just been created.
 
 You can invite your colleagues to join your team on
 {% block invite_link %}
@@ -32,4 +32,5 @@ P.S. It's really worth it to engage your employer in the competition - it means 
 ---
 {{ user.campaign.email_footer }}
 {% endlanguage %}
+
 {% endautoescape %}

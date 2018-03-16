@@ -126,6 +126,9 @@ class CompetitionResult(models.Model):
         if self.competition.competitor_type == 'team':
             return self.team
 
+    def get_team_name(self):
+        return self.get_team().name
+
     def get_company(self):
         if self.competition.competitor_type == 'company':
             return self.company
@@ -149,6 +152,18 @@ class CompetitionResult(models.Model):
     def get_result(self):
         """ Get result in kilometers rounded to reasonable number of decimal places. """
         return round(self.result, 1)
+
+    def get_result_divisor(self):
+        if self.competition.competition_type == 'frequency':
+            return int(round(self.result_divisor))
+        else:
+            return round(self.result_divisor, 1)
+
+    def get_result_divident(self):
+        if self.competition.competition_type == 'frequency':
+            return int(round(self.result_divident))
+        else:
+            return round(self.result_divident, 1)
 
     def get_result_percentage(self):
         """

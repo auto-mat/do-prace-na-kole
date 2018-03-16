@@ -491,7 +491,7 @@ class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
     def test_dpnk_competition_results_unknown(self, mock_logger):
         address = reverse('competition_results', kwargs={'competition_slug': 'unexistent_competition'})
         response = self.client.get(address)
-        mock_logger.exception.assert_called_with("Unknown competition", extra={'slug': 'unexistent_competition', 'request': ANY})
+        mock_logger.info.assert_called_with("Unknown competition", extra={'slug': 'unexistent_competition', 'request': ANY})
         self.assertContains(response, "Tuto soutěž v systému nemáme.")
 
     def test_dpnk_competition_results_vykonnost_tymu(self):
@@ -1630,14 +1630,15 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(str(msg.subject), 'Testing campaign - pozvánka do týmu (invitation to a team)')
 
     def test_dpnk_team_no_team(self):
-        """ Test, that invitation page doesn't fail if user has no team set """
+        """ Test, that invitation shows warning if the team is not set """
         self.user_attendance.team = None
         self.user_attendance.save()
         response = self.client.get(reverse('pozvanky'))
         self.assertContains(
             response,
-            "<p>Do vašeho týmu je možné doplnit ještě 0 členů.</p>",
+            '<div class="alert alert-danger">Napřed musíte mít <a href="/tym/">vybraný tým</a>.</div>',
             html=True,
+            status_code=403,
         )
 
     def test_dpnk_team_get(self):

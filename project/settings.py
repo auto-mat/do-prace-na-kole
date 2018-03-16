@@ -515,6 +515,12 @@ RAVEN_CONFIG = {
     'dsn': os.environ.get('DPNK_RAVEN_DNS', ''),
 }
 
+try:
+    with open('static/version.txt') as f:
+        RAVEN_CONFIG['release'] = f.readline().strip()
+except FileNotFoundError:
+    pass
+
 GOOGLE_TAG_ID = os.environ.get('DPNK_GOOGLE_TAG_ID', '')
 
 ALLOWED_HOSTS = os.environ.get('DPNK_ALLOWED_HOSTS', '').split(',')
@@ -567,6 +573,7 @@ IGNORABLE_404_URLS = [
     re.compile(r'^/.well-known/dnt-policy.txt$'),
     re.compile(r'^/blog/robots.txt$'),
     re.compile(r'^xmlrpc.php$'),
+    re.compile(r'^android-chrome-.*\.png$'),
 ]
 
 FAVICON_PATH = STATIC_URL + 'img/favicon/favicon.ico'

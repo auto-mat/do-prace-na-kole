@@ -18,7 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
-from unittest.mock import ANY, patch
+from unittest.mock import patch
 
 from django.contrib.gis.db.models.functions import Length
 from django.core.exceptions import ValidationError
@@ -253,7 +253,6 @@ class TestGetDistance(TestCase):
         user_attendance.save()
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         self.assertEqual(user_attendance.get_distance(), 0)
-        mock_logger.error.assert_called_with("length not available", extra={'request': None, 'username': ANY})
 
 
 class TestIsLibero(TransactionTestCase):

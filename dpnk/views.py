@@ -1005,7 +1005,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
         try:
             context_data['competition'] = Competition.objects.get(slug=competition_slug)
         except Competition.DoesNotExist:
-            logger.exception('Unknown competition', extra={'slug': competition_slug, 'request': self.request})
+            logger.info('Unknown competition', extra={'slug': competition_slug, 'request': self.request})
             return {
                 'fullpage_error_message': mark_safe(
                     _(

@@ -322,7 +322,7 @@ class UserAttendance(models.Model):
             else:
                 length = UserAttendance.objects.annotate(length=Length('track')).only('track').get(id=self.id).length
             if not length:
-                logger.error("length not available", extra={'request': request, 'username': self.userprofile.user.username})
+                # Track is not valid geometry
                 return 0
             return round(length.km, round_digits)
         else:
