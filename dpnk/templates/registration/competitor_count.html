@@ -24,13 +24,13 @@ $(document).ready(function() {
       },
       "columns": [
           { "type": "html" },
-          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 0, '' ) },
-          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 1, '' ) },
-          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 1, '' ) },
-          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 1, '' ) },
-          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 1, '' ) },
-          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 1, '' ) },
-          { "type": "num-fmt", render: $.fn.dataTable.render.number( '&nbsp;', ',', 1, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '{% thousand_separator %}', '{% decimal_separator %}', 0, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '{% thousand_separator %}', '{% decimal_separator %}', 1, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '{% thousand_separator %}', '{% decimal_separator %}', 1, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '{% thousand_separator %}', '{% decimal_separator %}', 1, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '{% thousand_separator %}', '{% decimal_separator %}', 1, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '{% thousand_separator %}', '{% decimal_separator %}', 1, '' ) },
+          { "type": "num-fmt", render: $.fn.dataTable.render.number( '{% thousand_separator %}', '{% decimal_separator %}', 1, '' ) },
         ],
    } );
 } );
@@ -53,13 +53,13 @@ $(document).ready(function() {
 {% for city in cities %}
 <tr>
    <td>{{ city.name }}</td>
-   <td>{{ city.competitor_count|unlocalize }}</td>
-   <td>{{ city.distances.distance_bicycle|unlocalize }}</td>
-   <td>{{ city.distances.distance_foot|unlocalize }}</td>
-   <td>{{ city.distances.distance__sum|unlocalize }}</td>
-   <td>{{ city.distances.count_bicycle|unlocalize }}</td>
-   <td>{{ city.distances.count_foot|unlocalize }}</td>
-   <td>{{ city.emissions.co2|unlocalize }}</td>
+   <td>{{ city.competitor_count|default:0|unlocalize }}</td>
+   <td>{{ city.distances.distance_bicycle|default:0|unlocalize }}</td>
+   <td>{{ city.distances.distance_foot|default:0|unlocalize }}</td>
+   <td>{{ city.distances.distance__sum|default:0|unlocalize }}</td>
+   <td>{{ city.distances.count_bicycle|default:0|unlocalize }}</td>
+   <td>{{ city.distances.count_foot|default:0|unlocalize }}</td>
+   <td>{{ city.emissions.co2|default:0|unlocalize }}</td>
 </tr>
 {% endfor %}
 </tbody>
