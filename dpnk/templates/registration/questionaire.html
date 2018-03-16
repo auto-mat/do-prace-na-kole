@@ -28,7 +28,9 @@
 <p class="question-text">{{ question.text|safe }}</p>
 {% crispy question.form %}
 {% if show_points %}
-   ({% if question.points_given != None %} {{question.points_given}} {% else %} - {% endif %} {% trans "b" %})
+   {% if question.points_given %}
+   ({{question.points_given}} {% trans "b" %})
+   {% endif %}
    {% if question.comment_given %}
    <br/>
    <strong>{% trans "Komentář hodnotitele" %}</strong>
