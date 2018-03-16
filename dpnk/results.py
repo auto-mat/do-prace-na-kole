@@ -235,7 +235,7 @@ def get_team_length(team, competition):
     member_count = team.paid_member_count
     members = team.paid_members().all()
 
-    if member_count == 0:
+    if member_count == 0 or member_count is None:
         return None, None, None
     members = team.paid_members().all()
     # distance_from = Trip.objects.filter(user__in=members).aggregate(Sum('distance_from'))['distance_from__sum'] or 0
