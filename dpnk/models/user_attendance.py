@@ -44,6 +44,11 @@ from ..email import register_mail
 logger = logging.getLogger(__name__)
 
 
+class UserAttendanceManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().annotate(length=Length('track'))
+
+
 class UserAttendance(models.Model):
     """Účast uživatele v kampani"""
 
@@ -321,10 +326,7 @@ class UserAttendance(models.Model):
 
     def get_distance(self, round_digits=2, request=None):
         if self.track:
-            if hasattr(self, 'length') and self.length:
-                length = self.length
-            else:
-                length = UserAttendance.objects.annotate(length=Length('track')).only('track').get(id=self.id).length
+            length = self.length
             if not length:
                 # Track is not valid geometry
                 return 0
@@ -518,6 +520,8 @@ class UserAttendance(models.Model):
                 },
             )
         return super().save(*args, **kwargs)
+
+    objects = UserAttendanceManager()
 
 
 @receiver(post_save, sender=UserAttendance)
