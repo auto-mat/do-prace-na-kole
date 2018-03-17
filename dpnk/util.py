@@ -24,6 +24,7 @@ import denorm
 
 from django.conf import settings
 from django.contrib import contenttypes
+from django.contrib.sites.shortcuts import get_current_site
 from django.utils import six
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
@@ -168,3 +169,15 @@ def get_emissions(distance):
         'solid': round(distance * 35.0, 1),
         'pb': round(distance * 0.011, 1),
     }
+
+
+def get_base_url(request, slug=None):
+    return '%s://%s.%s' % (
+        request.scheme,
+        slug if slug is not None else request.campaign.slug,
+        get_current_site(request).domain,
+    )
+
+
+def get_redirect(request, slug=None):
+    return get_base_url(request, slug=slug) + request.path

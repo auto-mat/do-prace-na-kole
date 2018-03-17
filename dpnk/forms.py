@@ -953,3 +953,19 @@ class GpxFileForm(InitialFieldsMixin, forms.ModelForm):
             'trip_date': forms.TextInput(attrs={'readonly': 'readonly', 'disabled': 'disabled'}),
             'direction': forms.Select(attrs={'readonly': 'readonly', 'disabled': 'disabled'}),
         }
+
+
+class FullGpxFileForm(forms.ModelForm):
+    class Meta:
+        model = models.GpxFile
+        fields = (
+            'track',
+            'distance',
+            'duration',
+            'source_application',
+            'commute_mode',
+            'from_application',
+            'user_attendance',
+            'trip_date',
+            'direction',
+        )

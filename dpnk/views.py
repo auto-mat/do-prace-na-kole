@@ -43,7 +43,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.sites.shortcuts import get_current_site
 from django.db import transaction
 from django.db.models import Case, Count, F, FloatField, IntegerField, Q, Sum, When
 from django.db.models.functions import Coalesce
@@ -541,14 +540,7 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
         payment = Payment.objects.get(session_id=kwargs['session_id'])
         if hasattr(self.request, 'campaign') and payment.user_attendance:
             if payment.user_attendance.campaign != self.request.campaign:
-                return redirect(
-                    '%s://%s.%s%s' % (
-                        request.scheme,
-                        payment.user_attendance.campaign.slug,
-                        get_current_site(request).domain,
-                        request.path,
-                    ),
-                )
+                return redirect(util.get_redirect(request, slug=payment.user_attendance.campaign.slug))
         return super().dispatch(request, *args, **kwargs)
 
     @transaction.atomic

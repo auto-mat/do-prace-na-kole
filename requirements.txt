@@ -22,6 +22,7 @@ reportlab
 -e git+https://github.com/aquavitae/svg2rlg.git#egg=svg2rlg
 django-dbbackup
 pillow
+polyline
 -e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator  # For changes in variable symbol label and Pohoda XML export
 django-related-admin
 newrelic
@@ -32,6 +33,7 @@ django-class-based-auth-views
 django-adminfilters
 -e git+https://github.com/PetrDlouhy/django-advanced-filters.git@develop#egg=django_advanced_filters  # For Django 2.0 fix
 slumber
+stravalib
 django-bleach
 gunicorn
 djcacheutils

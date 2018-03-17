@@ -70,6 +70,28 @@ class Phase(models.Model):
         blank=True,
     )
 
+    @classmethod
+    def get_active(cls, when=None):
+        if when is None:
+            when = util.today()
+        return cls.objects.filter(date_from__lte=when, date_to__gte=when)
+
+    def get_active_range(phase_type, when=None):
+        """
+        Returns the start of the earliest starting active phase of a given type,
+        and the end of the latest ending active phase of the given type.
+        """
+        if when is None:
+            when = util.today()
+        earliest_start_date = when  # Earliest date from all competions
+        latest_end_date = when      # Latest date from all competions
+        for competition_phase in Phase.get_active(when=when).filter(phase_type='competition'):
+            if competition_phase.date_from < earliest_start_date:
+                earliest_start_date = competition_phase.date_from
+            if competition_phase.date_to > latest_end_date:
+                latest_end_date = competition_phase.date_to
+        return earliest_start_date, latest_end_date
+
     def get_minimum_rides_base(self):
         return self.campaign.minimum_rides_base
 
