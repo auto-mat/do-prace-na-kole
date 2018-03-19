@@ -29,6 +29,7 @@ try:
 except ImportError:  # Django<2.0
     from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, render
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
@@ -115,6 +116,17 @@ class SelectUsersPayView(
             if not self.company_admin.can_confirm_payments:
                 raise exceptions.TemplatePermissionDenied(
                     _("Potvrzování plateb nemáte povoleno"),
+                    self.template_name,
+                )
+            if not self.company_admin.administrated_company.ico:
+                raise exceptions.TemplatePermissionDenied(
+                    mark_safe(
+                        _("Před tím, než budete moci schvalovat platby za vaše zaměstnantce, %s") %
+                        "<a href='%s'>%s</a>." % (
+                            reverse('edit_company'),
+                            _("prosím vyplňte IČO vaší organizace"),
+                        ),
+                    ),
                     self.template_name,
                 )
         return ret_val
