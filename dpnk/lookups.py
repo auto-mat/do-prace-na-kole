@@ -18,7 +18,10 @@ class CompanyLookup(ModelLookup):
 
     def get_item_label(self, company):
         if company.ico:
-            return _("%s (IČO: %s)") % (company.name, company.ico)
+            return _("%(name)s (IČO: %(ico)s)") % {
+                "name": company.name,
+                "ico": company.ico,
+            }
         else:
             return company.name
 

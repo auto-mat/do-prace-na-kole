@@ -1,4 +1,4 @@
-{% extends "base_generic.html" %}
+{% extends "base_generic_form.html" %}
 {% load crispy_forms_tags %}
 {% load i18n %}
 {% load scribbler_tags %}
@@ -10,11 +10,27 @@
 
 {% if payments.count > 0 %}
 <h2>{% trans "Vystavit novou fakturu" %}</h2>
+
+<h3>{% trans "Adresa organizace" %}</h3>
+{{ company }}
+<br/>
+{{ company.address.street }}
+{{ company.address.street_number }}
+<br/>
+{{ company.address.psc }} {{ company.address.city }}
+<br/>
+{% trans "IČO: " %}{{ company.ico }}
+<br/>
+{% trans "DIČ: " %}{{ company.dic }}
+<br/>
+{% trans "Pokud jsou údaje nesprávné, můžete" %} <a href="{% url 'edit_company' %}">{% trans "změnit adresu organizace" %}</a>.
+
+<h3>{% trans "Benefiční startovné" %}</h3>
 <p>
    {% scribble 'before_invoice' %}
    {% load i18n %}
    {% blocktrans %}
-   Do práce na kole pořádá pátým rokem nezisková organizace <a title="Auto-Mat" href="http://www.auto-mat.cz/" target="_blank">Auto*Mat</a>, která se již více než 10 let snaží o zlepšení kvality života v našich městech.
+   Do práce na kole pořádá již od roku 2010 nezisková organizace <a title="Auto-Mat" href="http://www.auto-mat.cz/" target="_blank">Auto*Mat</a>, která se již více než 10 let snaží o zlepšení kvality života v našich městech.
    Protože věříme, že jedním ze zásadních faktorů ovliňujících kvalitu života ve městě je organizace a plánování dopravy, snažíme se naše město a život v něm měnit právě skrze tuto sféru.
    <br/>
    <strong>Nabízíme všem firmám, které se zapojují do soutěže, možnost zaplatit benefiční startovné</strong>, kterým podpoří přímo činnost Auto*Matu.
@@ -25,12 +41,14 @@
    {% endscribble %}
 </p>
 <p>
+</p>
+
+<h3>{% trans "Seznam soutěžících na faktuře" %}</h3>
 {% blocktrans count competitors_count=payments.count %}
 Vytvořit fakturu pro následujícho soutěžícího:
 {% plural %}
 Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících:
 {% endblocktrans %}
-</p>
 <table id="pay_for" class="table table-bordered table-hover table-condensed">
    <thead>
       <tr>
@@ -45,21 +63,9 @@ Vytvořit fakturu pro následujících {{ competitors_count }} soutěžících:
    </tr>
    {% endfor %}
 </table>
-<br/>
-{{ company }}
-<br/>
-{{ company.address.street }}
-{{ company.address.street_number }}
-<br/>
-{{ company.address.psc }} {{ company.address.city }}
-<br/>
-{% trans "IČO: " %}{{ company.ico }}
-<br/>
-{% trans "DIČ: " %}{{ company.dic }}
-<br/>
-<a class="btn btn-primary" href="{% url 'edit_company' %}">{% trans "Změnit adresu organizace" %}</a>
-<hr/>
-{{ block.super }}
+
+<h3>{% trans "Faktura" %}</h3>
+{% crispy form %}
 {% else %}
 <div class="alert alert-info">{% trans "Nemáte žádné další soutěžící, pro které by bylo možné vytvořit fakturu" %}</div>
 {% endif %}
