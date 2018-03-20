@@ -1273,8 +1273,8 @@ class ViewsTestsLogon(ViewsLogon):
             response.content.decode(),
             {
                 "data": [
-                    {"value": "Testing company", "label": "Testing company (ičo: 11111)", "id": 1},
-                    {"value": "Testing company without admin", "label": "Testing company without admin (ičo: 11111)", "id": 2},
+                    {"value": "Testing company", "label": "Testing company (IČO: 11111)", "id": 1},
+                    {"value": "Testing company without admin", "label": "Testing company without admin (IČO: 11111)", "id": 2},
                 ],
                 "meta": {
                     "more": "Zobrazit další výsledky",
