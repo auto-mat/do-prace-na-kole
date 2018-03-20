@@ -86,7 +86,7 @@ Raven.setUserContext({
                     {% else %}
                        {% sitetree_menu from "unlogged_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                     {% endif %}
-                    {% if user_attendance.related_company_admin.is_approved %}
+                    {% if user.is_authenticated and user_attendance.related_company_admin.is_approved %}
                        {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                     {% endif %}
                     {% if user.is_staff %}

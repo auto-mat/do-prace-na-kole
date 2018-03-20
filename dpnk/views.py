@@ -1705,6 +1705,7 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
         for city in cities:
             city.distances = distance_all_modes(
                 models.Trip.objects.filter(
+                    user_attendance__payment_status='done',
                     user_attendance__team__subsidiary__city=city,
                     user_attendance__campaign__slug=campaign_slug,
                 ),

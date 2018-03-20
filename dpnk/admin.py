@@ -80,6 +80,7 @@ from t_shirt_delivery.models import TShirtSize
 from . import actions, models, transaction_forms
 from .admin_mixins import CityAdminMixin, FormRequestMixin, city_admin_mixin_generator
 from .filters import (
+    BadTrackFilter,
     CampaignFilter,
     CityCampaignFilter,
     EmailFilter,
@@ -774,7 +775,7 @@ class UserAttendanceAdmin(
         ('userprofile__sex', AllValuesComboFilter),
         'discount_coupon__coupon_type__name',
         'discount_coupon__discount',
-        isnull_filter('track', _("Nemá nahranou trasu?")),
+        BadTrackFilter,
         isnull_filter('voucher', _("Nemá přiřazené vouchery?")),
         isnull_filter('user_trips', _("Nemá žádné cesty?")),
         isnull_filter('team', _("Uživatel nemá zvolený tým?")),

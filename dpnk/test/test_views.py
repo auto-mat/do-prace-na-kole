@@ -1273,8 +1273,8 @@ class ViewsTestsLogon(ViewsLogon):
             response.content.decode(),
             {
                 "data": [
-                    {"value": "Testing company", "label": "Testing company", "id": 1},
-                    {"value": "Testing company without admin", "label": "Testing company without admin", "id": 2},
+                    {"value": "Testing company", "label": "Testing company (IČO: 11111)", "id": 1},
+                    {"value": "Testing company without admin", "label": "Testing company without admin (IČO: 11111)", "id": 2},
                 ],
                 "meta": {
                     "more": "Zobrazit další výsledky",
@@ -1488,7 +1488,7 @@ class ViewsTestsLogon(ViewsLogon):
             '<td></td>'
             '<td>test-registered@test.cz</td>'
             '<td>Testing city</td>'
-            '</tr>' % amount,
+            '</tr>' % (str(amount).replace(".", ",")),
             html=True,
         )
         post_data = {

@@ -22,6 +22,7 @@ from crispy_forms.layout import HTML, Layout
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.utils.html import format_html
 from django.utils.text import slugify
 from django.utils.translation import string_concat, ugettext_lazy as _
 
@@ -46,7 +47,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
         ),
         widget=TableSelectMultiple(
             item_attrs=[
-                ('company_admission_fee', _("Částka")),
+                ('company_admission_fee_intcomma', _("Částka")),
                 ('userprofile__user__first_name', _("Jméno")),
                 ('userprofile__user__last_name', _("Příjmení")),
                 ('userprofile__nickname', _("Přezdívka")),
@@ -109,6 +110,7 @@ class CompanyForm(SubmitMixin, AddressForm):
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['address_recipient'].label = _(u"Adresát na faktuře")
+        self.fields['ico'].required = True
         return ret_val
 
 
@@ -264,14 +266,19 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
 
 
 class CreateInvoiceForm(SubmitMixin, forms.ModelForm):
+    submit_text = _('Vystavit fakturu')
+
     create_invoice = forms.BooleanField(
-        label=_(u"Údaje jsou správné, v mé organizaci již nepřibudou žádní další soutěžící. Chci vytvořit fakturu"),
+        label=_("Údaje jsou správné. Chci vytvořit fakturu"),
     )
 
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         amount = kwargs['initial']['campaign'].benefitial_admission_fee_company
-        self.fields['company_pais_benefitial_fee'].help_text = _(u"Benefiční startovné je %i Kč za osobu bez DPH." % amount)
+        self.fields['company_pais_benefitial_fee'].help_text = format_html(
+            _("Benefiční startovné je {amount} Kč za osobu bez DPH."),
+            amount=amount,
+        )
         return ret_val
 
     class Meta:

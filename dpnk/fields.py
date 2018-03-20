@@ -18,14 +18,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 
 
 class ShowPointsMultipleModelChoiceField(forms.ModelMultipleChoiceField):
     show_points = False
 
     def label_from_instance(self, obj):
-        if self.show_points:
-            return u"%s (%s b)" % (obj.text, obj.points)
+        if self.show_points and obj.points:
+            return u"%s (%s %s)" % (obj.text, obj.points, _("b"))
         else:
             return u"%s" % (obj.text)
 

@@ -21,12 +21,13 @@ import html.parser
 import logging
 
 from django import template
+from django.utils.formats import get_format
+from django.utils.translation import activate, get_language
+from django.utils.translation import ugettext_lazy as _
 try:
     from django.urls import NoReverseMatch, Resolver404, resolve, reverse
 except ImportError:  # Django<2.0
     from django.core.urlresolvers import NoReverseMatch, Resolver404, resolve, reverse
-from django.utils.translation import activate, get_language
-from django.utils.translation import ugettext_lazy as _
 
 import requests
 
@@ -168,6 +169,16 @@ def change_lang(context, lang=None, *args, **kwargs):
         activate(cur_language)
 
     return "%s" % url
+
+
+@register.simple_tag(takes_context=False)
+def thousand_separator():
+    return get_format('THOUSAND_SEPARATOR', get_language())
+
+
+@register.simple_tag(takes_context=False)
+def decimal_separator():
+    return get_format('DECIMAL_SEPARATOR', get_language())
 
 
 @register.filter

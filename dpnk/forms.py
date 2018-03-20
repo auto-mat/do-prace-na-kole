@@ -93,10 +93,12 @@ class UserLeafletWidget(LeafletWidget):
 
 
 class SubmitMixin(object):
+    submit_text = _('Odeslat')
+
     def __init__(self, url_name="", *args, **kwargs):
         self.helper = FormHelper()
         super().__init__(*args, **kwargs)
-        self.helper.add_input(Submit('submit', _('Odeslat')))
+        self.helper.add_input(Submit('submit', self.submit_text))
 
 
 class PrevNextMixin(object):

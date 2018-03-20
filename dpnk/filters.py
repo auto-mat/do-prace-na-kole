@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.contrib.admin import SimpleListFilter
 from django.contrib.auth.models import User
+from django.contrib.gis.db.models.functions import Length
 from django.db.models import Count, Q
 from django.utils.translation import ugettext_lazy as _
 
@@ -138,6 +139,32 @@ class EmailFilter(DuplicateFilter):
     filter_field = 'email'
     filter_model = User
     blank_value = ''
+
+
+class BadTrackFilter(SimpleListFilter):
+    title = _("Trasa")
+    parameter_name = 'track'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('blank', _('Prázdná')),
+            ('valid', _('Platná')),
+            ('invalid', _('Neplatná')),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'blank':
+            queryset = queryset.filter(track__isnull=True)
+            return queryset
+
+        if self.value() in ('valid', 'invalid'):
+            queryset = queryset.annotate(length=Length('track'))
+            if self.value() == 'valid':
+                queryset = queryset.filter(length__gt=0)
+            else:
+                queryset = queryset.filter(length__lte=0)
+            return queryset
+        return queryset
 
 
 class ICOFilter(DuplicateFilter):

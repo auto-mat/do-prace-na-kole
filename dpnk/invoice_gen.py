@@ -42,9 +42,9 @@ def generate_invoice(invoice):
     provider = Provider(
         "Auto*Mat, z.s.",
         email="kontakt@dopracenakole.cz",
-        address="Vodičkova 704/36",
-        zip_code="110 00",
-        city="Praha 1",
+        address="Bořivojova 694/108",
+        zip_code="130 00",
+        city="Praha 3",
         bank_name="Fio banka",
         bank_account='2601085491',
         bank_code='2010',
