@@ -44,9 +44,9 @@ class PackageTransaction(Transaction):
     team_package = models.ForeignKey(
         't_shirt_delivery.TeamPackage',
         verbose_name=_("Týmový balíček"),
-        null=True,
+        null=False,
         blank=False,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
 
     shipped_statuses = [

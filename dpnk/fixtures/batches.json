@@ -19,7 +19,29 @@
     },
     {
         "fields": {
+           "campaign": 339
+        },
+        "model": "t_shirt_delivery.deliverybatch",
+        "pk": 7
+    },
+    {
+        "fields": {
+           "delivery_batch": 7
+        },
+        "model": "t_shirt_delivery.subsidiarybox",
+        "pk": 7
+    },
+    {
+        "fields": {
+           "box": 7
+        },
+        "model": "t_shirt_delivery.teampackage",
+        "pk": 7
+    },
+    {
+        "fields": {
            "transaction_ptr": 7,
+           "team_package_id": 7,
            "tracking_number": 11112117
         },
         "model": "t_shirt_delivery.packagetransaction",
@@ -38,6 +60,7 @@
     {
         "fields": {
            "transaction_ptr": 6,
+           "team_package_id": 7,
            "tracking_number": 11111117
         },
         "model": "t_shirt_delivery.packagetransaction",
