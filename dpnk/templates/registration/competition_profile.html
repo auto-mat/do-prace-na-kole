@@ -13,6 +13,7 @@
 
 {% get_current_language as current_language_code %}
 
+{% scribble 'profile_after_rides' %}{% endscribble %}
 {% cache 3600 "profile_voucher" user_attendance.id %}
 {% endcache %}
 {% for voucher in user_attendance.voucher_set.all %}
