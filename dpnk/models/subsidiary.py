@@ -97,13 +97,13 @@ class Subsidiary(models.Model):
 
     def get_recipient_string(self):
         """ makes recipient from address_recipient and company name """
-        if self.address_recipient.lower().strip() == self.company.name.lower().strip():
-            return self.address_recipient
-        else:
-            if self.address_recipient:
-                return "%s (%s)" % (self.address_recipient, self.company.name)
+        if self.address_recipient:
+            if self.address_recipient.lower().strip() == self.company.name.lower().strip():
+                return self.address_recipient
             else:
-                return self.company.name
+                return "%s (%s)" % (self.address_recipient, self.company.name)
+        else:
+            return self.company.name
 
     def clean(self):
         Address.clean(self.address, self, Subsidiary)
