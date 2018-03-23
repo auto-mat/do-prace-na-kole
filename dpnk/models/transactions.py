@@ -23,6 +23,8 @@ import logging
 
 from author.decorators import with_author
 
+from denorm import denormalized, depend_on_related
+
 from django.contrib.gis.db import models
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
@@ -268,6 +270,20 @@ class Payment(Transaction):
         on_delete=models.SET_NULL,
         related_name=("payment_set"),
     )
+
+    # TODO: This is hack which allows making denorms dependend only on Payment and not on any other type of transaction.
+    # Better would be to add some kind of conditions ti denorms
+    @denormalized(models.ForeignKey, 'UserAttendance', null=True, blank=False, default=None, on_delete=models.CASCADE)
+    @depend_on_related('Transaction', foreign_key='transaction_ptr', skip={'updated', 'created'})
+    def payment_user_attendance(self):
+        return self.user_attendance
+
+    # TODO: This is hack which allows making denorms dependend only on Payment and not on any other type of transaction.
+    # Better would be to add some kind of conditions ti denorms
+    @denormalized(models.PositiveIntegerField, default=0, choices=STATUS, null=True, blank=True)
+    @depend_on_related('Transaction', foreign_key='transaction_ptr', skip={'updated', 'created'})
+    def payment_status(self):
+        return self.status
 
     def payment_complete_date(self):
         if self.pay_type in ('am', 'amw'):
