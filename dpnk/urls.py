@@ -285,9 +285,14 @@ urlpatterns = [
         name="company_admin_competition",
     ),
     url(
-        r'^struktura_spolecnosti/$',
+        r'^spolecnost/struktura/$',
         company_admin_views.CompanyStructure.as_view(),
         name="company_structure",
+    ),
+    url(
+        r'^spolecnost/struktura/export$',
+        company_admin_views.UserAttendanceExportView.as_view(),
+        name="company_export",
     ),
     url(
         r'^spolecnost/souteze/$',
