@@ -1167,12 +1167,12 @@ msgstr ""
 
 #: models/company.py:34
 msgid ""
-"DIČ není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a "
+"DIČ není zadáno ve správném formátu. Zkontrolujte že číslo má 8 až 10 číslic a "
 "případně ho doplňte nulami zleva. Číslu musí předcházet dvě písmena "
 "identifikátoru země (např. CZ)"
 msgstr ""
 "Company VAT number is not entered in correct format. Please check, that it "
-"has eight ciphers, if not prepend it with leading zeros. Before the number "
+"has 8 to 10 ciphers, if not prepend it with leading zeros. Before the number "
 "must be two letter country code (e.g. CZ)"
 
 #: models/company.py:50 models/invoice.py:130

@@ -204,7 +204,7 @@ class UserAttendance(models.Model):
         return intcomma(self.company_admission_fee())
 
     @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
-    @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
+    @depend_on_related('Payment', foreign_key='payment_user_attendance', skip={'updated', 'created'})
     def representative_payment(self):
         if self.team and self.team.subsidiary and not self.has_admission_fee():
             return None
@@ -235,7 +235,7 @@ class UserAttendance(models.Model):
     )
 
     @denormalized(models.CharField, choices=PAYMENT_CHOICES, max_length=20, null=True, skip={'updated', 'created'})
-    @depend_on_related('Transaction', foreign_key='user_attendance', skip={'updated', 'created'})
+    @depend_on_related('Payment', foreign_key='payment_user_attendance', skip={'updated', 'created'})
     def payment_status(self):
         if self.team and self.team.subsidiary and not self.has_admission_fee():
             return 'no_admission'

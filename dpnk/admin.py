@@ -110,6 +110,10 @@ class PaymentInline(admin.TabularInline):
     }
 
 
+class PaymentInlineUserAttendance(PaymentInline):
+    fk_name = "user_attendance"
+
+
 class UserActionTransactionInline(admin.TabularInline):
     model = models.UserActionTransaction
     extra = 0
@@ -820,6 +824,7 @@ class UserAttendanceAdmin(
         'userprofile__user__email',
         'created',
         'updated',
+        'payment_status',
     )
     actions = (
         actions.update_mailing,
@@ -831,7 +836,7 @@ class UserAttendanceAdmin(
         actions.send_notifications,
     )
     form = UserAttendanceForm
-    inlines = [PaymentInline, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
+    inlines = [PaymentInlineUserAttendance, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
     list_max_show_all = 10000
     list_per_page = 100
     resource_class = UserAttendanceResource

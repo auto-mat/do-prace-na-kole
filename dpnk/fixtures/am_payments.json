@@ -12,6 +12,7 @@
     {
         "fields": {
            "transaction_ptr": 8,
+           "team_package_id": 7,
            "tracking_number": 13112117
         },
         "model": "t_shirt_delivery.packagetransaction",

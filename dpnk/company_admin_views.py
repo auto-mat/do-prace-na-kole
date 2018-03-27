@@ -28,10 +28,11 @@ try:
     from django.urls import reverse, reverse_lazy
 except ImportError:  # Django<2.0
     from django.core.urlresolvers import reverse, reverse_lazy
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import CreateView, FormView, UpdateView
 
 from registration.backends.simple.views import RegistrationView
@@ -39,6 +40,7 @@ from registration.backends.simple.views import RegistrationView
 from . import company_admin_forms
 from . import exceptions
 from . import models
+from .admin import UserAttendanceResource
 from .company_admin_forms import (
     CompanyAdminApplicationForm, CompanyAdminForm, CompanyCompetitionForm, CompanyForm, SelectUsersPayForm, SubsidiaryForm,
 )
@@ -69,6 +71,20 @@ class CompanyStructure(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMix
         context_data['campaign'] = self.company_admin.campaign
         context_data['Status'] = models.Status
         return context_data
+
+
+class UserAttendanceExportView(MustBeCompanyAdminMixin, View):
+
+    def dispatch(self, request, *args, **kwargs):
+        super().dispatch(request, *args, **kwargs)
+        queryset = models.UserAttendance.objects.filter(
+            team__subsidiary__company=self.company_admin.administrated_company,
+            campaign=request.campaign,
+        )
+        export_data = UserAttendanceResource().export(queryset)
+        response = HttpResponse(export_data.csv, content_type="text/csv")
+        response['Content-Disposition'] = 'attachment; filename=user_export.csv'
+        return response
 
 
 class RelatedCompetitionsView(MustBeCompanyAdminMixin, AdmissionsView):

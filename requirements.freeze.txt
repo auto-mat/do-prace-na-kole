@@ -17,7 +17,7 @@ Django<2.1
 django-admin-sortable2==0.6.19
 django-admin-view-permission==1.4
 django-admin-views==0.8.0
--e git+https://github.com/saxix/django-adminactions@ef32750d82250490c7ef95a2efbc531b514618ac#egg=django_adminactions
+-e git+https://github.com/saxix/django-adminactions@b509e28281316999f3dbc6f27c9e4b0e1ee1efc8#egg=django_adminactions
 -e git+https://github.com/PetrDlouhy/django-adminfilters.git@981d64dec5a653e6afba54a44adc65f7d653367e#egg=django_adminfilters
 -e git+https://github.com/PetrDlouhy/django-advanced-filters.git@develop#egg=django_advanced_filters
 django-appconf==1.0.2
@@ -109,7 +109,7 @@ psycopg2==2.7.3.2
 PyJWT==1.5.3
 PyPDF2==1.26.0
 python-memcached==1.59
-python-stdnum==1.5
+python-stdnum==1.8.1
 python3-openid==3.1.0
 pytz==2017.3
 PyYAML==3.12

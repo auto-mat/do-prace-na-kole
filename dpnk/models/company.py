@@ -32,7 +32,7 @@ from .address import Address, get_address_string
 ICO_ERROR_MESSAGE = _("IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva.")
 DIC_ERROR_MESSAGE = _(
     "DIČ není zadáno ve správném formátu. "
-    "Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva. "
+    "Zkontrolujte že číslo má 8 až 10 číslic a případně ho doplňte nulami zleva. "
     "Číslu musí předcházet dvě písmena identifikátoru země (např. CZ)",
 )
 
