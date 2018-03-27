@@ -109,7 +109,7 @@ psycopg2==2.7.3.2
 PyJWT==1.5.3
 PyPDF2==1.26.0
 python-memcached==1.59
-python-stdnum==1.5
+python-stdnum==1.8.1
 python3-openid==3.1.0
 pytz==2017.3
 PyYAML==3.12
