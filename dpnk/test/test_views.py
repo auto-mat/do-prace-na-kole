@@ -60,6 +60,7 @@ from .mommy_recipes import CampaignRecipe, PriceLevelRecipe, UserAttendancePaidR
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsLogon(DenormMixin, ClearCacheMixin, TestCase):
+    """ Tests in which the user is logged in """
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):
