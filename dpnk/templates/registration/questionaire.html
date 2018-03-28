@@ -5,7 +5,9 @@
 {% block form %}
 <h2>{{ questionaire.name }}</h2>
 {{ questionaire.rules|safe }}
-<a class="btn btn-block btn-info" href="{{ questionaire.url }}" target="_blank">{% trans "Další informace o soutěži" %}</a>
+{% if questionaire.url %}
+<a href="{{ questionaire.url }}" target="_blank">{% trans "Další informace o soutěži" %}</a>
+{% endif %}
 <br/>
 {% if invalid_count > 0 %}
 <div class="alert alert-danger">
