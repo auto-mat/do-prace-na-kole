@@ -573,7 +573,7 @@ IGNORABLE_404_URLS = [
     re.compile(r'^/.well-known/dnt-policy.txt$'),
     re.compile(r'^/blog/robots.txt$'),
     re.compile(r'^xmlrpc.php$'),
-    re.compile(r'^android-chrome-.*\.png$'),
+    re.compile(r'^/android-chrome-.*\.png$'),
 ]
 
 FAVICON_PATH = STATIC_URL + 'img/favicon/favicon.ico'
