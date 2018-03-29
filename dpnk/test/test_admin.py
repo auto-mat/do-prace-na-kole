@@ -21,12 +21,9 @@ import datetime
 import random
 
 from django.contrib.auth.models import User
-try:
-    from django.urls import reverse
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
 
 from dpnk import filters, models, util
 from dpnk.models import Team, UserAttendance

@@ -25,11 +25,8 @@ import sys
 
 import django.conf.locale
 from django.contrib.messages import constants as message_constants
+from django.urls import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
-try:
-    from django.urls import reverse_lazy
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse_lazy
 
 from model_utils import Choices
 

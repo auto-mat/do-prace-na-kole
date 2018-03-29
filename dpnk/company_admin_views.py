@@ -24,12 +24,9 @@ from braces.views import LoginRequiredMixin
 
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
-try:
-    from django.urls import reverse, reverse_lazy
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse, reverse_lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView, View

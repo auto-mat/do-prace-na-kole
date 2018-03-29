@@ -35,10 +35,7 @@ from django.core import mail
 from django.db import transaction
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
-try:
-    from django.urls import reverse
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from dpnk import mailing, models, util, views
 from dpnk.test.util import ClearCacheMixin, DenormMixin

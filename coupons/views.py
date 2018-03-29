@@ -22,10 +22,7 @@
 
 import logging
 
-try:
-    from django.urls import reverse_lazy
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.edit import FormView
 

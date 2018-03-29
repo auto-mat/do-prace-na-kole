@@ -21,11 +21,8 @@ from unittest.mock import MagicMock
 
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
-try:
-    from django.urls import reverse
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse
 from django.test import RequestFactory, TestCase
+from django.urls import reverse
 
 from dpnk.views_permission_mixins import (
     GroupRequiredResponseMixin,

@@ -21,13 +21,10 @@ import html.parser
 import logging
 
 from django import template
+from django.urls import NoReverseMatch, Resolver404, resolve, reverse
 from django.utils.formats import get_format
 from django.utils.translation import activate, get_language
 from django.utils.translation import ugettext_lazy as _
-try:
-    from django.urls import NoReverseMatch, Resolver404, resolve, reverse
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import NoReverseMatch, Resolver404, resolve, reverse
 
 import requests
 
