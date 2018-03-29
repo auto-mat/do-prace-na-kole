@@ -406,6 +406,14 @@ class UserAttendance(models.Model):
     def payment_complete(self):
         return self.payment_status not in ('none', None)
 
+    def payment_complete_date(self):
+        if self.representative_payment is not None:
+            if self.representative_payment.realized:
+                return self.representative_payment.realized
+            else:
+                return self.representative_payment.created
+        return self.created
+
     def has_paid(self):
         return self.payment_status in ('done', 'no_admission') or (not self.has_admission_fee())
 

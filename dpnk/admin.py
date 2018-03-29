@@ -719,7 +719,7 @@ class UserAttendanceResource(resources.ModelResource):
         export_order = fields
 
     subsidiary_name = fields.Field(readonly=True, attribute='team__subsidiary__name')
-    payment_date = fields.Field(readonly=True, attribute='representative_payment__payment_complete_date')
+    payment_date = fields.Field(readonly=True, attribute='payment_complete_date')
     payment_status = fields.Field(readonly=True, attribute='payment_status')
     payment_type = fields.Field(readonly=True, attribute='representative_payment__pay_type')
     payment_amount = fields.Field(readonly=True, attribute='representative_payment__amount')
