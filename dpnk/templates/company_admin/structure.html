@@ -51,5 +51,8 @@
 {% endfor %}
 </ul>
 <br/>
-<a href="{% url "company_export" %}">Exportovat účastníky za mojí společnost</a>
+{% trans "Exportovat účastníky za mojí společnost" %}
+<a href="{% url "company_export" extension="csv" %}">CSV</a>
+<a href="{% url "company_export" extension="ods" %}">ODS</a>
+<a href="{% url "company_export" extension="xls" %}">XLS</a>
 {% endblock %}
