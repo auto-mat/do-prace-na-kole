@@ -33,10 +33,20 @@ import slumber
 register = template.Library()
 logger = logging.getLogger(__name__)
 
+# https://stackoverflow.com/questions/41295142/is-there-a-way-to-globally-override-requests-timeout-setting/47384155#47384155
+HTTP_TIMEOUT = 0.300
+
+
+class TimeoutRequestsSession(requests.Session):
+    def request(self, *args, **kwargs):
+        if kwargs.get('timeout') is None:
+            kwargs['timeout'] = HTTP_TIMEOUT
+        return super(TimeoutRequestsSession, self).request(*args, **kwargs)
+
 
 @register.inclusion_tag("templatetags/cyklistesobe.html")
 def cyklistesobe(city_slug, order="created_at"):
-    api = slumber.API("http://www.cyklistesobe.cz/api/")
+    api = slumber.API("http://www.cyklistesobe.cz/api/", session=TimeoutRequestsSession())
     kwargs = {}
     if city_slug:
         kwargs['group'] = city_slug
@@ -119,7 +129,7 @@ def _wp_news(
     get_params['orderby'] = orderby
     get_params.update(other_args)
     url = campaign.wp_api_url
-    api = slumber.API(url)
+    api = slumber.API(url, session=TimeoutRequestsSession())
     try:
         wp_feed = api.feed.get(**get_params)
     except (slumber.exceptions.SlumberBaseException, requests.exceptions.ConnectionError) as e:
