@@ -9,9 +9,9 @@ from celery import shared_task
 from django.conf import settings
 from django.contrib.gis.geos import (LineString, MultiLineString)
 
-from dpnk.forms import FullGpxFileForm
-from dpnk.models.gpxfile import GpxFile
+from dpnk.forms import FullTripForm
 from dpnk.models.phase import Phase
+from dpnk.models.trip import Trip
 from dpnk.models.user_attendance import UserAttendance
 
 import polyline

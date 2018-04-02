@@ -33,5 +33,6 @@ class ShowPointsMultipleModelChoiceField(forms.ModelMultipleChoiceField):
 
 class CommaFloatField(forms.FloatField):
     def to_python(self, value):
-        value = value.replace(",", ".")
+        if type(value) not in (int, float):
+             value = value.replace(",", ".")
         return super().to_python(value)

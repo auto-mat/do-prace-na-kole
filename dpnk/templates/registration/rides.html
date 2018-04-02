@@ -93,15 +93,13 @@
    {% endif %}
       <td class="{% if not trip_form.instance.id %}un{% endif %}changed">
          {% bootstrap_form trip_form %}
-         {% if trip_form.instance.has_gpxfile %}
-            <a class="pin" href="{% url "gpx_file" id=trip_form.instance.gpxfile.id %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zobrazit trasu nebo zadat novou' %}">
-               <span class="glyphicon glyphicon-edit"></span>
-            </a>
-         {% else %}
-            <a class="pin" href="{% url "gpx_file_create" date=trip_form.get_date direction=trip_form.get_direction %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zadat trasu v mapě nebo nahrát GPX soubor' %}">
-               <span class="glyphicon glyphicon-map-marker"></span>
-            </a>
-         {% endif %}
+         <a class="pin" href="{% url "trip" date=trip_form.get_date direction=trip_form.get_direction %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zadat trasu v mapě nebo nahrát GPX soubor' %}">
+            {% if not trip_form.instance.track %}
+            <span class="glyphicon glyphicon-map-marker"></span>
+            {% else %}
+            <span class="glyphicon glyphicon-edit"></span>
+            {% endif %}
+         </a>
       </td>
    {% if forloop.counter|divisibleby:2 %}
    </tr>

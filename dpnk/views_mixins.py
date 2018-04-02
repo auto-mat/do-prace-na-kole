@@ -98,11 +98,13 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                         city=self.user_attendance.team.subsidiary.city.slug,
                     ),
                 )
-            if not self.user_attendance.track and not self.user_attendance.distance:
+            if not self.user_attendance.track_complete():
                 messages.info(
                     request,
                     mark_safe(
-                        _('Na této stránce si každý den zapište jízdy nebo zkontrolujte správné zapsání jízdy z mobilní aplikace. '
+                        _('<b>Vyplňte typickou trasu</b>'
+                          '<br>'
+                          'Na této stránce si každý den zapište jízdy nebo zkontrolujte správné zapsání jízdy z mobilní aplikace. '
                           ' Pokud budete zadávat jízdy ručně, doporučujeme Vám pro usnadnění vyplnit si typickou trasu.'
                           ' Na základě typické trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty. '
                           ' Vaše vyplněná trasa se objeví na '

@@ -35,6 +35,7 @@ django-adminfilters
 slumber
 stravalib
 django-bleach
+geopy
 gunicorn
 djcacheutils
 django-settings-context-processor

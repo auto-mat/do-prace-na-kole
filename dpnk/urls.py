@@ -239,14 +239,14 @@ urlpatterns = [
         views.CombinedTracksKMLView.as_view(),
     ),
     url(
-        r'^gpx_file/(?P<id>\d+)$',
-        views.UpdateGpxFileView.as_view(),
-        name="gpx_file",
+        r'^trip/(?P<date>[^&]+)/(?P<direction>[^&]+)$',
+        views.view_edit_trip,
+        name="trip",
     ),
     url(
-        r'^gpx_file_create/(?P<date>[^&]+)/(?P<direction>[^&]+)$',
-        views.CreateGpxFileView.as_view(),
-        name="gpx_file_create",
+        r'^trip_geojson/(?P<date>[^&]+)/(?P<direction>[^&]+)$',
+        views.TripGeoJsonView.as_view(),
+        name="trip_geojson",
     ),
     url(
         r'^emisni_kalkulacka/$',

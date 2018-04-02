@@ -20,9 +20,9 @@
 
 # Standard library imports
 
-
 import codecs
 import collections
+import datetime
 import hashlib
 import json
 import logging
@@ -59,7 +59,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_control, cache_page, never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.gzip import gzip_page
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import CreateView, FormView, UpdateView
 
 from extra_views import ModelFormSetView
@@ -110,7 +110,6 @@ from .views_permission_mixins import (
     MustBeApprovedForTeamMixin,
     MustBeInPaymentPhaseMixin,
     MustBeInRegistrationPhaseMixin,
-    MustBeOwnerMixin,
     MustHaveTeamMixin,
 )
 
@@ -748,12 +747,12 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
     def get_queryset(self):
         if self.has_allow_adding_rides():
             self.trips, self.uncreated_trips = self.user_attendance.get_active_trips()
-            return self.trips.select_related('gpxfile')
+            return self.trips
         else:
             return models.Trip.objects.none()
 
     def get_initial(self):
-        distance = self.user_attendance.get_distance(request=self.request)
+        distance = self.user_attendance.get_distance()
         no_work = models.CommuteMode.objects.get(slug='no_work')
         by_other_vehicle = models.CommuteMode.objects.get(slug='by_other_vehicle')
         return [
@@ -854,17 +853,17 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredM
             (
                 trip[0],
                 models.Trip.DIRECTIONS_DICT[trip[1]],
-                _("Jinak") if util.working_day(trip[0]) else _("Žádná cesta"),
+                _("Nezadáno"),
+                trip[1],
+                util.day_active(trip[0], self.user_attendance.campaign)
             ) for trip in uncreated_trips
         ]
         trips = list(trips) + uncreated_trips
         trips = sorted(trips, key=lambda trip: trip.direction if type(trip) == Trip else trip[1], reverse=True)
         trips = sorted(trips, key=lambda trip: trip.date if type(trip) == Trip else trip[0])
-        days = list(util.days(self.user_attendance.campaign.phase("competition"), util.today()))
 
         context_data = super().get_context_data(*args, **kwargs)
         context_data['trips'] = trips
-        context_data['other_gpx_files'] = models.GpxFile.objects.filter(user_attendance=self.user_attendance).exclude(trip__date__in=days)
         return context_data
 
 
@@ -1768,36 +1767,83 @@ class CombinedTracksKMLView(TemplateView):
         return context_data
 
 
-class UpdateGpxFileView(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, MustBeOwnerMixin, LoginRequiredMixin, UpdateView):
-    form_class = forms.GpxFileForm
-    model = models.GpxFile
-    template_name = "registration/gpx_file.html"
-    success_url = reverse_lazy("profil")
+def view_edit_trip(request, date, direction):
+    parse_error = False
+    try:
+        date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+    except ValueError:
+        parse_error = True
+    if parse_error:
+        raise exceptions.TemplatePermissionDenied(_("Nemůžete editovat cesty ke starším datům."))
+    if not util.day_active(date, request.user_attendance.campaign):
+        return TripView.as_view()(request, date=date, direction=direction)
+    if models.Trip.objects.filter(date=date, direction=direction).exists():
+        return UpdateTripView.as_view()(request, date=date, direction=direction)
+    else:
+        return CreateTripView.as_view()(request, date=date, direction=direction)
+
+
+class EditTripView(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, LoginRequiredMixin):
+    form_class = forms.TripForm
+    model = models.Trip
+    template_name = "registration/trip.html"
     title = _("Zadat trasu")
 
-    def get_initial(self):
-        return {'user_attendance': self.user_attendance}
+    def get_initial(self, initial):
+        initial['origin'] = self.request.META.get('HTTP_REFERER', reverse_lazy("profil"))
+        initial['user_attendance'] = self.user_attendance
+        return initial
 
+    def form_valid(self, form):
+        self.success_url = form.data['origin']
+        return super().form_valid(form)
+
+
+class WithTripMixin():
     def get_object(self, queryset=None):
-        return get_object_or_404(models.GpxFile, id=self.kwargs['id'])
+        return get_object_or_404(
+            models.Trip,
+            user_attendance=self.request.user_attendance,
+            direction=self.kwargs['direction'],
+            date=self.kwargs['date'],
+        )
 
 
-class CreateGpxFileView(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, LoginRequiredMixin, CreateView):
-    form_class = forms.GpxFileForm
-    model = models.GpxFile
-    template_name = "registration/gpx_file.html"
-    success_url = reverse_lazy("profil")
-    title = _("Zadat trasu")
+class UpdateTripView(EditTripView, WithTripMixin, UpdateView):
+    def get_initial(self):
+        initial = {}
+        if self.get_object().track is None:
+            if self.user_attendance.track:
+                initial['track'] = self.user_attendance.track
+        return super().get_initial(initial)
 
+
+class CreateTripView(EditTripView, CreateView):
     def get_initial(self):
         if self.user_attendance.track:
             track = self.user_attendance.track
         else:
             track = None
-
-        return {
-            'user_attendance': self.user_attendance,
+        initial = {
             'direction': self.kwargs['direction'],
-            'trip_date': self.kwargs['date'],
+            'date': self.kwargs['date'],
             'track': track,
         }
+        return super().get_initial(initial)
+
+
+
+class TripView(TitleViewMixin, LoginRequiredMixin, WithTripMixin, TemplateView):
+    template_name = 'registration/view_trip.html'
+    title = _("Prohlédnout trasu")
+
+    def get_context_data(self, *args, **kwargs):
+        trip = self.get_object()
+        context = {"title": self.title
+                  ,"days_active": trip.user_attendance.campaign.days_active}
+        context["trip"] = trip
+        return context
+
+class TripGeoJsonView(LoginRequiredMixin, WithTripMixin, View):
+    def get(self, *args, **kwargs):
+        return HttpResponse(self.get_object().track.geojson)

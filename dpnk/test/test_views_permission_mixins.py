@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from unittest.mock import MagicMock
-
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase
@@ -29,7 +27,6 @@ from dpnk.views_permission_mixins import (
     MustBeApprovedForTeamMixin,
     MustBeCompanyAdminMixin,
     MustBeInPhaseMixin,
-    MustBeOwnerMixin,
     MustHaveTeamMixin,
 )
 
@@ -167,37 +164,6 @@ class GroupRequiredResponseMixinTest(TestCase):
         self.request.user = mommy.make("User", groups=[mommy.make("auth.Group", name='cykloservis')])
         mixin = GroupRequiredResponse()
         self.assertEquals(mixin.dispatch(self.request), 'superdispatch')
-
-
-class MustBeOwner(MustBeOwnerMixin, FakeViewClass):
-    def get_object(self):
-        obj = MagicMock()
-        obj.user_attendance = 'fake_user_attendance'
-        return obj
-
-
-class MustBeOwnerMixinTest(TestCase):
-    def setUp(self):
-        super().setUp()
-        self.factory = RequestFactory()
-        self.request = self.factory.get("/")
-
-    def test_no_user_attendance(self):
-        self.request.user_attendance = None
-        mixin = MustBeOwner()
-        with self.assertRaisesRegex(PermissionDenied, "Nemůžete vidět cizí objekt"):
-            mixin.dispatch(self.request)
-
-    def test_is_owner(self):
-        self.request.user_attendance = 'fake_user_attendance'
-        mixin = MustBeOwner()
-        self.assertEquals(mixin.dispatch(self.request), 'superdispatch')
-
-    def test_isnt_owner(self):
-        self.request.user_attendance = 'other_user_attendance'
-        mixin = MustBeOwner()
-        with self.assertRaisesRegex(PermissionDenied, "Nemůžete vidět cizí objekt"):
-            mixin.dispatch(self.request)
 
 
 class MustHaveTeam(MustHaveTeamMixin, FakeViewClass):

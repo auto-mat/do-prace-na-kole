@@ -131,18 +131,6 @@ class MustBeApprovedForTeamMixin(MustHaveTeamMixin):
         return super().dispatch(request, *args, **kwargs)
 
 
-class MustBeOwnerMixin(object):
-    def dispatch(self, request, *args, **kwargs):
-        view_object = self.get_object()
-        if request.user_attendance and view_object and request.user_attendance == view_object.user_attendance:
-            return super().dispatch(request, *args, **kwargs)
-
-        raise exceptions.TemplatePermissionDenied(
-            _("Nemůžete vidět cizí objekt"),
-            template_name=getattr(self, 'template_name', None),
-        )
-
-
 class MustBeCompanyAdminMixin(object):
     """
     Tests if user is company admin.

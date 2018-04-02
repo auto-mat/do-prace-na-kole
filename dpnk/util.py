@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import datetime
+from itertools import tee
 
 import denorm
 
@@ -29,8 +30,9 @@ from django.utils import six
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
 
-from ipware.ip import get_real_ip
+import geopy.distance
 
+from ipware.ip import get_real_ip
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
@@ -181,3 +183,22 @@ def get_base_url(request, slug=None):
 
 def get_redirect(request, slug=None):
     return get_base_url(request, slug=slug) + request.path
+
+
+# https://docs.python.org/3/library/itertools.html#itertools-recipes
+def pairwise(iterable):
+    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
+    a, b = tee(iterable)
+    next(b, None)
+    return zip(a, b)
+
+
+def get_multilinestring_length(mls):
+    """
+    Returns the length of a multiline string in kilometers.
+    """
+    length = 0
+    for linestring in mls:
+        for (start_long, start_lat), (end_long, end_lat) in pairwise(linestring):
+            length += geopy.distance.vincenty((start_lat, start_long), (end_lat, end_long)).km
+    return length
