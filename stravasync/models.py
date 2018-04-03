@@ -9,10 +9,10 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class StravaAccount(models.Model):
-    """Strava účet"""
+    """Účet Strava"""
     class Meta:
-        verbose_name = _("Strava účet")
-        verbose_name_plural = _("Strava účty")
+        verbose_name = _("Účet Strava")
+        verbose_name_plural = _("Účty Strava")
 
     user = models.OneToOneField(
         get_user_model(),

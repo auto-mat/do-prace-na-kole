@@ -6,7 +6,7 @@
 <div  class="card card-block card-outline-primary">
 <p class="card-text">
 {% if account %}
-    {% trans "Jste propojené s účtem " %}{{account.first_name}} {{account.last_name}} ({{account.username}}).
+    {% trans "Jste propojeni s účtem " %}{{account.first_name}} {{account.last_name}} ({{account.username}}).
     <br/>
     <br/>
     {% if sync_outcome %}
@@ -14,15 +14,15 @@
         Bylo přidano {{sync_outcome.new_trips}}
         z celkém {{sync_outcome.synced_trips}} cest.
         {% if not sync_outcome.synced_trips %}
-        {% trans "Mate ve Stravě " %}{{sync_outcome.synced_activities}} {% trans "activites ale žadné nejsou označené s haštagem. Davejte haštagy " %}{{campaign_slug}}{% trans "tam nebo #" %}{{campaign_slug}}{% trans "zpet do názvy activity aby se počitali jako jizdy do praci a domu." %}
+        {% trans "Ve Stravě máte " %}{{sync_outcome.synced_activities}} {% trans "aktivit ale žadné nejsou označené s hashtagem. Přidejte hashtagy " %}{{campaign_slug}}{% trans "tam nebo #" %}{{campaign_slug}}{% trans "zpět do názvu aktivity aby se počitali jako jizdy do práce a z práce." %}
         {% endif %}
     {% elif sync_failed %}
         Synchronizaze selhalo {{sync_failed}}
     {% else %}
         {% if account.last_sync_time %}
-            {% trans "Poslední synchronizace proběhlo " %}{{account.last_sync_time}}.<br/>
+            {% trans "Poslední synchronizace proběhla " %}{{account.last_sync_time}}.<br/>
         {% else %}
-            {% trans "Synchronizace neproběhlo. Tohle je chyba." %}
+            {% trans "Nastala chyba, synchronizace neproběhla." %}
         {% endif %}
     {% endif %}
     <br/>
@@ -45,12 +45,12 @@
         <input type="submit" class="btn btn-default float-right" value="{% trans "Odpojit" %}" />
     </form>
 {% else %}
-    {% trans "Ještě nejste propojené se Stravou " %}
+    {% trans "Ještě nejste propojeni se Stravou " %}
     <a href="{{authorize_href}}"  class="btn btn-default float-right">
     <img src="{% static "img/connect_with_strava.png" %}" alt="{% trans "Propojit se Stravou" %}" /></a></p>
 {% endif %}
 </div>
 <h2>{% trans "Jak to funguje" %}</h2>
-{% trans "V aplikace stravě, napíšte do nazvé svých aktivit haštag #" %}{{campaign_slug}}{% trans "tam nebo #" %}{{campaign_slug}}{% trans "zpet. Automatické se bude poté synchronizovat." %}
+{% trans "V aplikace stravě, napište do nazvu svých aktivit hashtag #" %}{{campaign_slug}}{% trans "tam nebo #" %}{{campaign_slug}}{% trans "zpět. Poté se jízdy budou automaticky synchronizovat." %}
 {% endblock %}
 

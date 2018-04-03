@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-22 15:06+0000\n"
+"POT-Creation-Date: 2018-04-16 17:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,42 +18,86 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: models.py:13
-msgid "Strava účet"
+#: models.py:14
+msgid "Účet Strava"
 msgstr ""
 
-#: models.py:14
-msgid "Strava účty"
+#: models.py:15
+msgid "Účty Strava"
 msgstr ""
 
 #: templates/stravasync/about.html:9
+msgid "Jste propojeni s účtem "
+msgstr ""
+
+#: templates/stravasync/about.html:17
+msgid "Ve Stravě máte "
+msgstr ""
+
+#: templates/stravasync/about.html:17
+msgid "aktivit ale žadné nejsou označené s hashtagem. Přidejte hashtagy "
+msgstr ""
+
+#: templates/stravasync/about.html:17 templates/stravasync/about.html:54
+msgid "tam nebo #"
+msgstr ""
+
+#: templates/stravasync/about.html:17
+msgid "zpět do názvu aktivity aby se počitali jako jizdy do práce a z práce."
+msgstr ""
+
+#: templates/stravasync/about.html:23
+msgid "Poslední synchronizace proběhla "
+msgstr ""
+
+#: templates/stravasync/about.html:25
+msgid "Nastala chyba, synchronizace neproběhla."
+msgstr ""
+
+#: templates/stravasync/about.html:31
+msgid ""
+"\n"
+"    Zlobí Vám synchronizace? Pokud potřebujete pomoc <a href=\"https://www."
+"dopracenakole.cz/kontakt\">volejte na helpdesk</a>.\n"
+"    "
+msgstr ""
+
+#: templates/stravasync/about.html:39
 msgid "Synchronizovat"
 msgstr ""
 
-#: templates/stravasync/about.html:13
-msgid "Jak to funguje"
-msgstr ""
-
-#: views.py:21
-msgid "Propojení se Stravou"
-msgstr ""
-
-#: views.py:27
-msgid "Poslední synchronizace proběhlo "
-msgstr ""
-
-#: views.py:30
-msgid "Jste propojené s účtem "
-msgstr ""
-
-#: views.py:32
+#: templates/stravasync/about.html:45
 msgid "Odpojit"
 msgstr ""
 
-#: views.py:36
-msgid "Ještě nejste propojené"
+#: templates/stravasync/about.html:48
+msgid "Ještě nejste propojeni se Stravou "
 msgstr ""
 
-#: views.py:39
-msgid "Propojit"
+#: templates/stravasync/about.html:50
+msgid "Propojit se Stravou"
+msgstr ""
+
+#: templates/stravasync/about.html:53
+msgid "Jak to funguje"
+msgstr ""
+
+#: templates/stravasync/about.html:54
+msgid "V aplikace stravě, napište do nazvu svých aktivit hashtag #"
+msgstr ""
+
+#: templates/stravasync/about.html:54
+msgid "zpět. Poté se jízdy budou automaticky synchronizovat."
+msgstr ""
+
+#: views.py:26
+msgid "Propojení se Stravou"
+msgstr ""
+
+#: views.py:46
+msgid "Aplikace Strava není dostupná."
+msgstr ""
+
+#: views.py:48
+msgid "API limit vyčerpan."
 msgstr ""

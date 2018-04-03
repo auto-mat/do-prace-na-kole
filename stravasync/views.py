@@ -43,9 +43,9 @@ class AboutStrava(TemplateView, LoginRequiredMixin):
                 try:
                     context["sync_outcome"] = tasks.sync(self.request.user.stravaaccount.id)
                 except requests.exceptions.ConnectionError:
-                    context["sync_failed"] = _("Strava není dostupné.")
+                    context["sync_failed"] = _("Aplikace Strava není dostupná.")
                 except RateLimitExceeded:
-                    context["sync_failed"] = _("API limit vyčerpano.")
+                    context["sync_failed"] = _("API limit vyčerpan.")
             context["account"] = {
                 "username": stravaaccount.strava_username,
                 "first_name": stravaaccount.first_name,
