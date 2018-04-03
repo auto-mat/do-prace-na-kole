@@ -142,7 +142,7 @@ class AdminModulesTests(DenormMixin, TestCase):
             response,
             '1015,339,testing-campaign,,,,1,Testing team 1,approved,,,Testing city,1017,cs,,'
             '1031,Testing,User,test1,test2@test.cz,,,"Ulice 1, 111 11 Praha",Testing company,'
-            '"test_wa@email.cz, test@email.cz, test@test.cz",2015-11-12 18:18:40,,done,,',
+            '"test_wa@email.cz, test@email.cz, test@test.cz",2015-11-12 18:18:40,2015-11-12 18:18:40.223000,done,,',
         )
 
     def test_company_export(self):
