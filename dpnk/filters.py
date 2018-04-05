@@ -211,3 +211,23 @@ class PSCFilter(SimpleListFilter):
             else:
                 return queryset.exclude(address_psc__in=psc_list)
         return queryset
+
+
+class ActiveCityFilter(SimpleListFilter):
+    title = _("Město aktivní")
+    parameter_name = 'city_active'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('yes', _('Ano')),
+            ('no', _('Ne')),
+        ]
+
+    def queryset(self, request, queryset):
+        if request.hasattr('campaign'):
+            campaign = request.campaign
+            active_city_kwargs = {"city__cityincampaign__in": campaign.cityincampaign_set.all()}
+            if self.value() == 'yes':
+                return queryset.filter(**active_city_kwargs)
+            if self.value() == 'no':
+                return queryset.exclude(**active_city_kwargs)

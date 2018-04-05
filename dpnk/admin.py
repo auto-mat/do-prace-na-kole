@@ -77,6 +77,7 @@ from t_shirt_delivery.models import TShirtSize
 from . import actions, models, transaction_forms
 from .admin_mixins import CityAdminMixin, FormRequestMixin, city_admin_mixin_generator
 from .filters import (
+    ActiveCityFilter,
     BadTrackFilter,
     CampaignFilter,
     CityCampaignFilter,
@@ -309,6 +310,7 @@ class SubsidiaryAdmin(AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMix
         PSCFilter,
         'city',
         'active',
+        ActiveCityFilter,
     )
     search_fields = (
         'address_recipient',
