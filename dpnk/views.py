@@ -1691,6 +1691,10 @@ class CompetitorCountView(TitleViewMixin, TemplateView):
     template_name = 'registration/competitor_count.html'
     title = _("Počty soutěžících")
 
+    @method_decorator(cache_page(60))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         campaign_slug = self.request.subdomain
