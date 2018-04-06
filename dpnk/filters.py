@@ -224,7 +224,7 @@ class ActiveCityFilter(SimpleListFilter):
         ]
 
     def queryset(self, request, queryset):
-        if request.hasattr('campaign'):
+        if hasattr(request, 'campaign'):
             campaign = request.campaign
             active_city_kwargs = {"city__cityincampaign__in": campaign.cityincampaign_set.all()}
             if self.value() == 'yes':
