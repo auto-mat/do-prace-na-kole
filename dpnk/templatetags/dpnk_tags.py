@@ -52,7 +52,7 @@ def cyklistesobe(city_slug, order="created_at"):
         kwargs['group'] = city_slug
     try:
         cyklistesobe = api.issues.get(order=order, per_page=5, page=0, **kwargs)
-    except (slumber.exceptions.SlumberBaseException, requests.exceptions.ConnectionError) as e:
+    except (slumber.exceptions.SlumberBaseException, requests.exceptions.RequestException) as e:
         logger.exception(u'Error fetching cyklistesobe page')
         cyklistesobe = None
     return {'cyklistesobe': cyklistesobe}
@@ -132,7 +132,7 @@ def _wp_news(
     api = slumber.API(url, session=TimeoutRequestsSession())
     try:
         wp_feed = api.feed.get(**get_params)
-    except (slumber.exceptions.SlumberBaseException, requests.exceptions.ConnectionError) as e:
+    except (slumber.exceptions.SlumberBaseException, requests.exceptions.RequestException) as e:
         logger.exception(u'Error fetching wp news')
         return {}
     if not isinstance(wp_feed, list) and not isinstance(wp_feed, tuple):
