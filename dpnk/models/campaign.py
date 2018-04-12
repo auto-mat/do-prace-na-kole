@@ -50,6 +50,12 @@ class Campaign(Pricable, models.Model):
         verbose_name=u"Doména v URL",
         blank=False,
     )
+    slug_identifier = models.SlugField(
+        unique=True,
+        verbose_name="Identifikátor kampaně",
+        blank=True,
+        null=True,
+    )
     previous_campaign = models.ForeignKey(
         'Campaign',
         verbose_name=_(u"Předchozí kampaň"),
