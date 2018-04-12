@@ -1,20 +1,15 @@
 #!/bin/bash
 
-# Usage: ./generate_delivery_batch_pdf.sh in.pdf in.csv ids.txt
+# Usage: ./generate_delivery_batch_pdf.sh in.pdf gls.csv delivery_batch.csv
 
 pdftk $1 burst output pdf_output/pg_%04d.pdf
 
-mkdir pdf_output
-
-file_ids=`cat $3 | sed s/\.pdf//`
-OIFS=$IFS
-IFS=';'
+file_ids=`cat "$3" | cut -d";" -f15 | grep -v "Variabilní symbol"`
 i=0
 for id in $file_ids
 do
    i=$((i+1))
-   out_id=`cat $2 | cut -d\; -f 1,8 | tr \; " " | sed 's/"//g' | grep "^$id " | cut -d " " -f 2`
-   mv `printf "pdf_output/pg_%04d" $i`.pdf pdf_output/customer_sheets_$out_id.a.pdf
+   mv `printf "pdf_output/pg_%04d" $i`.pdf pdf_output/customer_sheets_$id.a.pdf
 done
 
 
