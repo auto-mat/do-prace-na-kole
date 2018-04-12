@@ -159,7 +159,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         'delivery_batch__id',
         'delivery_batch__created',
         'subsidiary__company__name',
-        'subsidiary__name',
+        'subsidiary',
         'subsidiary__city',
         'customer_sheets',
         'created',
