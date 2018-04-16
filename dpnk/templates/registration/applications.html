@@ -1,15 +1,14 @@
 {% extends "base_generic_form.html" %}
-{% load scribbler_tags %}
+{% load i18n %}
 
 {% block form %}
-{% scribble 'app_links' %}
-{% load i18n %}
-   <a target="_blank" href="https://p29ek.app.goo.gl/?link=http://urbancyclers.com/competitions.php?c%3D{{ campaign.slug_identifier }}%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.bikeapp&utm_source=dpnk&amv=104&isi=1213867271&ibi=com.umotional.bikeapp&at={{ campaign.slug_identifier }}">
-      {% trans "Propojit s" %} UrbanCyclers
-   </a>
-   <br/>
-   <a target="_blank" href="https://p29ek.app.goo.gl/?link=http://nakoleprahou.cz/competitions.php?c%3D{{ campaign.slug_identifier }}%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.ucpraha&utm_source=dpnk&amv=104&isi=1213867293&ibi=com.umotional.ucpraha&at={{ campaign.slug_identifier }}">
-      {% trans "Propojit s" %} Na kole Prahou
-   </a>
-{% endscribble %}
+   {% if campaign.show_application_links or perms.dpnk.can_see_application_links %}
+      <a target="_blank" href="https://p29ek.app.goo.gl/?link=http://urbancyclers.com/competitions.php?c%3D{{ campaign.slug_identifier }}%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.bikeapp&utm_source=dpnk&amv=104&isi=1213867271&ibi=com.umotional.bikeapp&at={{ campaign.slug_identifier }}">
+         {% trans "Propojit s" %} UrbanCyclers
+      </a>
+      <br/>
+      <a target="_blank" href="https://p29ek.app.goo.gl/?link=http://nakoleprahou.cz/competitions.php?c%3D{{ campaign.slug_identifier }}%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.ucpraha&utm_source=dpnk&amv=104&isi=1213867293&ibi=com.umotional.ucpraha&at={{ campaign.slug_identifier }}">
+         {% trans "Propojit s" %} Na kole Prahou
+      </a>
+   {% endif %}
 {% endblock %}
