@@ -2,7 +2,7 @@
 # import datetime
 
 from settings import *  # noqa
-from settings import INSTALLED_APPS, LOGGING, MIDDLEWARE, TEMPLATES
+from settings import LOGGING, TEMPLATES  # , INSTALLED_APPS, MIDDLEWARE
 
 ADMINS = (
     ('Your name', 'your.name@email.com'),
@@ -11,31 +11,11 @@ DEBUG = True
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
+SECURE_BROWSER_XSS_FILTER = False
+SECURE_CONTENT_TYPE_NOSNIFF = False
+X_FRAME_OPTIONS = ''
 DEFAULT_FROM_EMAIL = 'Do práce na kole <your.name@email.com>'
 SERVER_EMAIL = 'Do práce na kole <your.name@email.com>'
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'dpnk',
-        'USER': 'dpnk',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '',
-    },
-}
-
-INSTALLED_APPS += (
-    'rosetta',
-    'debug_toolbar',
-    'template_timings_panel',
-)
-
-
-MIDDLEWARE += [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
-]
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/dpnk-emails'
@@ -55,12 +35,23 @@ ALLOWED_HOSTS = [
     '.testserver',
     'example.com',
     '.example.com',
+    '*',
 ]
 
+# Uncomment to add support for debug toolbar
+"""
+INSTALLED_APPS += (
+    'rosetta',
+    'debug_toolbar',
+    'template_timings_panel',
+)
 
-SECRET_KEY = 'CHANGE_ME'
 
-LOGGING['handlers']['logfile']['filename'] = "dpnk.log"
+MIDDLEWARE += [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
+]
+
 
 DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.versions.VersionsPanel',
@@ -76,6 +67,11 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
+"""
+
+SECRET_KEY = 'CHANGE_ME'
+
+LOGGING['handlers']['logfile']['filename'] = "dpnk.log"
 
 
 def custom_show_toolbar(request):
@@ -107,6 +103,6 @@ GOOGLE_TAG_ID = ""
 
 FIO_TOKEN = ''
 
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+BROKER_URL = 'amqp://@rabbit'
+CELERY_BROKER_URL = 'amqp://guest:**@rabbit:5672//'
+BROKER_BACKEND = "librabbitmq"
