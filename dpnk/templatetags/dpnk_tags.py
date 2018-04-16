@@ -34,7 +34,7 @@ register = template.Library()
 logger = logging.getLogger(__name__)
 
 # https://stackoverflow.com/questions/41295142/is-there-a-way-to-globally-override-requests-timeout-setting/47384155#47384155
-HTTP_TIMEOUT = 0.300
+HTTP_TIMEOUT = 1.000
 
 
 class TimeoutRequestsSession(requests.Session):
