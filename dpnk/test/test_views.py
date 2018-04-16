@@ -35,10 +35,7 @@ from django.core import mail
 from django.db import transaction
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
-try:
-    from django.urls import reverse
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from dpnk import mailing, models, util, views
 from dpnk.test.util import ClearCacheMixin, DenormMixin
@@ -60,6 +57,7 @@ from .mommy_recipes import CampaignRecipe, PriceLevelRecipe, UserAttendancePaidR
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class ViewsLogon(DenormMixin, ClearCacheMixin, TestCase):
+    """ Tests in which the user is logged in """
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches']
 
     def setUp(self):

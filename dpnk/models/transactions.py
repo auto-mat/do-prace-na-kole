@@ -285,12 +285,6 @@ class Payment(Transaction):
     def payment_status(self):
         return self.status
 
-    def payment_complete_date(self):
-        if self.pay_type in ('am', 'amw'):
-            return self.created
-        else:
-            return self.realized
-
     def save(self, *args, **kwargs):
         status_before_update = None
         if self.id:

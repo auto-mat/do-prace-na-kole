@@ -20,11 +20,8 @@
 import datetime
 from unittest.mock import MagicMock, patch
 
-try:
-    from django.urls import reverse
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
+from django.urls import reverse
 
 from dpnk.test.mommy_recipes import UserAttendanceRecipe, testing_campaign
 from dpnk.test.util import print_response  # noqa

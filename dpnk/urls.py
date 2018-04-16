@@ -290,7 +290,7 @@ urlpatterns = [
         name="company_structure",
     ),
     url(
-        r'^spolecnost/struktura/export$',
+        r'^spolecnost/struktura/export/(?P<extension>csv|xls|ods)/$',
         company_admin_views.UserAttendanceExportView.as_view(),
         name="company_export",
     ),

@@ -20,12 +20,9 @@
 import datetime
 
 from django.core.files.uploadedfile import SimpleUploadedFile
-try:
-    from django.urls import reverse
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
 
 from dpnk.test.mommy_recipes import UserAttendanceRecipe, testing_campaign
 from dpnk.test.util import print_response  # noqa

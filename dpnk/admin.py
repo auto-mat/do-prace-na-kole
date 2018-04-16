@@ -41,14 +41,11 @@ from django.contrib.auth.forms import UserChangeForm
 from django.contrib.sessions.models import Session
 from django.db.models import Count, Sum, TextField
 from django.forms import Textarea
+from django.urls import reverse
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
 from django.utils.translation import string_concat
 from django.utils.translation import ugettext_lazy as _
-try:  # Django<2.0
-    from django.core.urlresolvers import reverse
-except ImportError:
-    from django.urls import reverse
 
 from import_export import fields, resources
 from import_export.admin import ExportMixin, ImportExportMixin, ImportMixin
@@ -80,6 +77,7 @@ from t_shirt_delivery.models import TShirtSize
 from . import actions, models, transaction_forms
 from .admin_mixins import CityAdminMixin, FormRequestMixin, city_admin_mixin_generator
 from .filters import (
+    ActiveCityFilter,
     BadTrackFilter,
     CampaignFilter,
     CityCampaignFilter,
@@ -312,6 +310,7 @@ class SubsidiaryAdmin(AdminAdvancedFiltersMixin, CityAdminMixin, ImportExportMix
         PSCFilter,
         'city',
         'active',
+        ActiveCityFilter,
     )
     search_fields = (
         'address_recipient',
@@ -722,7 +721,7 @@ class UserAttendanceResource(resources.ModelResource):
         export_order = fields
 
     subsidiary_name = fields.Field(readonly=True, attribute='team__subsidiary__name')
-    payment_date = fields.Field(readonly=True, attribute='representative_payment__payment_complete_date')
+    payment_date = fields.Field(readonly=True, attribute='payment_complete_date')
     payment_status = fields.Field(readonly=True, attribute='payment_status')
     payment_type = fields.Field(readonly=True, attribute='representative_payment__pay_type')
     payment_amount = fields.Field(readonly=True, attribute='representative_payment__amount')

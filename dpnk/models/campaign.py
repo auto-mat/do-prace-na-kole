@@ -38,6 +38,9 @@ class Campaign(Pricable, models.Model):
     class Meta:
         verbose_name = _(u"kampaň")
         verbose_name_plural = _(u"kampaně")
+        permissions = (
+            ("can_see_application_links", "Can see application links"),
+        )
 
     name = models.CharField(
         unique=True,
@@ -49,6 +52,12 @@ class Campaign(Pricable, models.Model):
         unique=True,
         verbose_name=u"Doména v URL",
         blank=False,
+    )
+    slug_identifier = models.SlugField(
+        unique=True,
+        verbose_name="Identifikátor kampaně",
+        blank=True,
+        null=True,
     )
     previous_campaign = models.ForeignKey(
         'Campaign',
@@ -69,6 +78,11 @@ class Campaign(Pricable, models.Model):
         max_length=60,
         default="",
         blank=True,
+        null=False,
+    )
+    show_application_links = models.BooleanField(
+        verbose_name=_("Ukázat odkazy na aplikace"),
+        default=False,
         null=False,
     )
     mailing_list_enabled = models.BooleanField(

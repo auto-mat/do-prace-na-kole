@@ -21,13 +21,10 @@ import html.parser
 import logging
 
 from django import template
+from django.urls import NoReverseMatch, Resolver404, resolve, reverse
 from django.utils.formats import get_format
 from django.utils.translation import activate, get_language
 from django.utils.translation import ugettext_lazy as _
-try:
-    from django.urls import NoReverseMatch, Resolver404, resolve, reverse
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import NoReverseMatch, Resolver404, resolve, reverse
 
 import requests
 
@@ -36,16 +33,26 @@ import slumber
 register = template.Library()
 logger = logging.getLogger(__name__)
 
+# https://stackoverflow.com/questions/41295142/is-there-a-way-to-globally-override-requests-timeout-setting/47384155#47384155
+HTTP_TIMEOUT = 1.000
+
+
+class TimeoutRequestsSession(requests.Session):
+    def request(self, *args, **kwargs):
+        if kwargs.get('timeout') is None:
+            kwargs['timeout'] = HTTP_TIMEOUT
+        return super(TimeoutRequestsSession, self).request(*args, **kwargs)
+
 
 @register.inclusion_tag("templatetags/cyklistesobe.html")
 def cyklistesobe(city_slug, order="created_at"):
-    api = slumber.API("http://www.cyklistesobe.cz/api/")
+    api = slumber.API("http://www.cyklistesobe.cz/api/", session=TimeoutRequestsSession())
     kwargs = {}
     if city_slug:
         kwargs['group'] = city_slug
     try:
         cyklistesobe = api.issues.get(order=order, per_page=5, page=0, **kwargs)
-    except (slumber.exceptions.SlumberBaseException, requests.exceptions.ConnectionError) as e:
+    except (slumber.exceptions.SlumberBaseException, requests.exceptions.RequestException) as e:
         logger.exception(u'Error fetching cyklistesobe page')
         cyklistesobe = None
     return {'cyklistesobe': cyklistesobe}
@@ -122,10 +129,10 @@ def _wp_news(
     get_params['orderby'] = orderby
     get_params.update(other_args)
     url = campaign.wp_api_url
-    api = slumber.API(url)
+    api = slumber.API(url, session=TimeoutRequestsSession())
     try:
         wp_feed = api.feed.get(**get_params)
-    except (slumber.exceptions.SlumberBaseException, requests.exceptions.ConnectionError) as e:
+    except (slumber.exceptions.SlumberBaseException, requests.exceptions.RequestException) as e:
         logger.exception(u'Error fetching wp news')
         return {}
     if not isinstance(wp_feed, list) and not isinstance(wp_feed, tuple):

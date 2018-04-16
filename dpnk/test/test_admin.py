@@ -21,12 +21,9 @@ import datetime
 import random
 
 from django.contrib.auth.models import User
-try:
-    from django.urls import reverse
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
 
 from dpnk import filters, models, util
 from dpnk.models import Team, UserAttendance
@@ -145,7 +142,7 @@ class AdminModulesTests(DenormMixin, TestCase):
             response,
             '1015,339,testing-campaign,,,,1,Testing team 1,approved,,,Testing city,1017,cs,,'
             '1031,Testing,User,test1,test2@test.cz,,,"Ulice 1, 111 11 Praha",Testing company,'
-            '"test_wa@email.cz, test@email.cz, test@test.cz",2015-11-12 18:18:40,,done,,',
+            '"test_wa@email.cz, test@email.cz, test@test.cz",2015-11-12 18:18:40,2015-11-12 18:18:40.223000,done,,',
         )
 
     def test_company_export(self):

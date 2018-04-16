@@ -20,10 +20,7 @@
 from braces.views import StaffuserRequiredMixin
 
 from django.core.exceptions import ObjectDoesNotExist
-try:
-    from django.urls import reverse, reverse_lazy
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.edit import FormView

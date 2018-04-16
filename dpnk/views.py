@@ -51,6 +51,7 @@ from django.forms.models import BaseModelFormSet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.shortcuts import redirect
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -61,10 +62,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.gzip import gzip_page
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
-try:
-    from django.urls import reverse, reverse_lazy
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse, reverse_lazy
 
 from extra_views import ModelFormSetView
 
@@ -1693,6 +1690,10 @@ def daily_distance_extra_json(
 class CompetitorCountView(TitleViewMixin, TemplateView):
     template_name = 'registration/competitor_count.html'
     title = _("Počty soutěžících")
+
+    @method_decorator(cache_page(60))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)

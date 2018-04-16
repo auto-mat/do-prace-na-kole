@@ -24,12 +24,9 @@ from braces.views import LoginRequiredMixin
 
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
-try:
-    from django.urls import reverse, reverse_lazy
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse, reverse_lazy
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView, View
@@ -75,15 +72,33 @@ class CompanyStructure(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMix
 
 class UserAttendanceExportView(MustBeCompanyAdminMixin, View):
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, extension="csv", **kwargs):
         super().dispatch(request, *args, **kwargs)
         queryset = models.UserAttendance.objects.filter(
             team__subsidiary__company=self.company_admin.administrated_company,
             campaign=request.campaign,
         )
         export_data = UserAttendanceResource().export(queryset)
-        response = HttpResponse(export_data.csv, content_type="text/csv")
-        response['Content-Disposition'] = 'attachment; filename=user_export.csv'
+        formats = {
+            "csv": {
+                "export": export_data.csv,
+                "content_type": "text/csv; encoding=utf-8",
+                "filename_extension": "csv",
+            },
+            "ods": {
+                "export": export_data.ods,
+                "content_type": "text/xml; encoding=utf-8",
+                "filename_extension": "ods",
+            },
+            "xls": {
+                "export": export_data.xls,
+                "content_type": "application/vnd.ms-excel",
+                "filename_extension": "xls",
+            },
+        }[extension]
+
+        response = HttpResponse(formats["export"], content_type=formats["content_type"])
+        response['Content-Disposition'] = 'attachment; filename=user_export.%s' % formats["filename_extension"]
         return response
 
 

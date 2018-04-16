@@ -36,7 +36,8 @@ from .statement import parse
 def recalculate_competitor_task(self, user_attendance_pk):
     from . import results
     user_attendance = UserAttendance.objects.get(pk=user_attendance_pk)
-    util.rebuild_denorm_models([user_attendance.team])
+    if user_attendance.team is not None:
+        util.rebuild_denorm_models([user_attendance.team])
     denorm.flush()
     results.recalculate_result_competitor_nothread(user_attendance)
 

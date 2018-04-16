@@ -81,7 +81,7 @@ class PackageTransactionResource(resources.ModelResource):
 
     def dehydrate_payment_complete_date(self, obj):
         if obj.user_attendance.representative_payment:
-            return obj.user_attendance.representative_payment.payment_complete_date()
+            return obj.user_attendance.payment_complete_date()
 
     user_attendance__name = fields.Field()
 
@@ -159,7 +159,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         'delivery_batch__id',
         'delivery_batch__created',
         'subsidiary__company__name',
-        'subsidiary__name',
+        'subsidiary',
         'subsidiary__city',
         'customer_sheets',
         'created',

@@ -19,11 +19,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
-try:
-    from django.urls import reverse
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
+from django.urls import reverse
 
 from dpnk.test.test_views import ViewsLogon
 from dpnk.test.util import ClearCacheMixin

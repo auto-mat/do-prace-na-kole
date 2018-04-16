@@ -20,13 +20,10 @@
 import datetime
 from unittest.mock import MagicMock, patch
 
-try:
-    from django.urls import reverse
-except ImportError:  # Django<2.0
-    from django.core.urlresolvers import reverse
 from django.template import Context, Template
 from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
 
 from dpnk.templatetags import dpnk_tags
 
