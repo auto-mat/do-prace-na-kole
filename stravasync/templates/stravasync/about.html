@@ -10,14 +10,18 @@
     <br/>
     <br/>
     {% if sync_outcome %}
+        {% blocktrans with new_trips=sync_outcome.new_trips synced_trips=sync_outcome.synced_trips %}
         Synchronizace proběhla uspěšně.<br/>
-        Bylo přidano {{sync_outcome.new_trips}}
-        z celkém {{sync_outcome.synced_trips}} cest.
+        Bylo přidano {{new_trips}}
+        z celkém {{synced_trips}} cest.
+        {% endblocktrans %}
         {% if not sync_outcome.synced_trips %}
-        {% trans "Ve Stravě máte " %}{{sync_outcome.synced_activities}} {% trans "aktivit ale žadné nejsou označené s hashtagem. Přidejte hashtagy " %}{{campaign_slug}}{% trans "tam nebo #" %}{{campaign_slug}}{% trans "zpět do názvu aktivity aby se počitali jako jizdy do práce a z práce." %}
+        {% blocktrans with synced_activities=sync_outcome.synced_activities %}
+        Ve Stravě máte  {{synced_activities}} aktivit ale žadné nejsou označené s hashtagem. Přidejte hashtagy {{hashtag_to}} nebo {{hashtag_from}} do názvu aktivity aby se počítaly jako jízdy do práce a z práce.
+        {% endblocktrans %}
         {% endif %}
     {% elif sync_failed %}
-        Synchronizaze selhalo {{sync_failed}}
+        {% trans "Synchronizace selhala" %} {{sync_failed}}
     {% else %}
         {% if account.last_sync_time %}
             {% trans "Poslední synchronizace proběhla " %}{{account.last_sync_time}}.<br/>
@@ -51,6 +55,8 @@
 {% endif %}
 </div>
 <h2>{% trans "Jak to funguje" %}</h2>
-{% trans "V aplikace stravě, napište do nazvu svých aktivit hashtag #" %}{{campaign_slug}}{% trans "tam nebo #" %}{{campaign_slug}}{% trans "zpět. Poté se jízdy budou automaticky synchronizovat." %}
+{% blocktrans %}
+V aplikace stravě, napište do nazvu svých aktivit hashtag {{hashtag_to}} nebo {{hashtag_from}}. Poté se jízdy budou automaticky synchronizovat.
+{% endblocktrans %}
 {% endblock %}
 

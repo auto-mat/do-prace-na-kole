@@ -17,6 +17,7 @@ import requests.exceptions
 import stravalib
 from stravalib.exc import (AccessUnauthorized, RateLimitExceeded)
 
+from . import hashtags
 from . import models
 from . import tasks
 
@@ -36,7 +37,12 @@ class AboutStrava(TemplateView, LoginRequiredMixin):
 
     def get_context_data(self, *args, **kwargs):
         sclient = stravalib.Client()
-        context = {"title": self.title, "campaign_slug": self.request.subdomain}
+        context = {
+            "title": self.title,
+            "campaign_slug": self.request.subdomain,
+            "hashtag_to": hashtags.get_hashtag_to(self.request.subdomain, self.request.LANGUAGE_CODE),
+            "hashtag_from": hashtags.get_hashtag_from(self.request.subdomain, self.request.LANGUAGE_CODE),
+        }
         try:
             stravaaccount = self.request.user.stravaaccount
             if (self.sync or (stravaaccount.last_sync_time is None)) and stravaaccount.user_sync_count < settings.STRAVA_MAX_USER_SYNC_COUNT:

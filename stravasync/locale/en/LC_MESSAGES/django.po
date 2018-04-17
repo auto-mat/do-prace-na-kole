@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-16 17:24+0200\n"
+"POT-Creation-Date: 2018-04-17 18:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,86 +18,112 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: models.py:14
+#: stravasync/models.py:14
 msgid "Účet Strava"
-msgstr ""
+msgstr "Strava account"
 
-#: models.py:15
+#: stravasync/models.py:15
 msgid "Účty Strava"
-msgstr ""
+msgstr "Strava accounts"
 
-#: templates/stravasync/about.html:9
+#: stravasync/templates/stravasync/about.html:9
 msgid "Jste propojeni s účtem "
 msgstr "You are connected to the account "
 
-#: templates/stravasync/about.html:17
-msgid "Ve Stravě máte "
+#: stravasync/templates/stravasync/about.html:13
+#, python-format
+msgid ""
+"\n"
+"        Synchronizace proběhla uspěšně.<br/>\n"
+"        Bylo přidano %(new_trips)s\n"
+"        z celkém %(synced_trips)s cest.\n"
+"        "
 msgstr ""
+"\n"
+"        Synchronization succeeded.<br/>\n"
+"        %(new_trips)s new trips were added \n"
+"        from a total of %(synced_trips)s trips.\n"
+"        "
 
-#: templates/stravasync/about.html:17
-msgid "aktivit ale žadné nejsou označené s hashtagem. Přidejte hashtagy "
+#: stravasync/templates/stravasync/about.html:19
+#, python-format
+msgid ""
+"\n"
+"        Ve Stravě máte  %(synced_activities)s aktivit ale žadné nejsou "
+"označené s hashtagem. Přidejte hashtagy %(hashtag_to)s nebo %(hashtag_from)s "
+"do názvu aktivity aby se počítaly jako jízdy do práce a z práce.\n"
+"        "
 msgstr ""
+"\n"
+"        You have  %(synced_activities)s activities in Strava but none of "
+"them are marked with our hashtag. Add the hashtags %(hashtag_to)s or "
+"%(hashtag_from)s to the title of your Strava activities.\n"
+"        "
 
-#: templates/stravasync/about.html:17 templates/stravasync/about.html:54
-msgid "tam nebo #"
-msgstr ""
+#: stravasync/templates/stravasync/about.html:24
+msgid "Synchronizace selhala"
+msgstr "Synchronization failed"
 
-#: templates/stravasync/about.html:17
-msgid "zpět do názvu aktivity aby se počitali jako jizdy do práce a z práce."
-msgstr ""
-
-#: templates/stravasync/about.html:23
+#: stravasync/templates/stravasync/about.html:27
 msgid "Poslední synchronizace proběhla "
 msgstr "Last synchronization time "
 
-#: templates/stravasync/about.html:25
+#: stravasync/templates/stravasync/about.html:29
 msgid "Nastala chyba, synchronizace neproběhla."
-msgstr ""
+msgstr "An error occurred, synchronization failed."
 
-#: templates/stravasync/about.html:31
+#: stravasync/templates/stravasync/about.html:35
 msgid ""
 "\n"
 "    Zlobí Vám synchronizace? Pokud potřebujete pomoc <a href=\"https://www."
 "dopracenakole.cz/kontakt\">volejte na helpdesk</a>.\n"
 "    "
 msgstr ""
+"\n"
+"    Are you having trouble synchronizing? If you need help <a href=\"https://"
+"www.dopracenakole.cz/en/contact\">call the helpdesk</a>.\n"
+"    "
 
-#: templates/stravasync/about.html:39
+#: stravasync/templates/stravasync/about.html:43
 msgid "Synchronizovat"
 msgstr "Synchronize"
 
-#: templates/stravasync/about.html:45
+#: stravasync/templates/stravasync/about.html:49
 msgid "Odpojit"
 msgstr "Disconnect"
 
-#: templates/stravasync/about.html:48
+#: stravasync/templates/stravasync/about.html:52
 msgid "Ještě nejste propojeni se Stravou "
-msgstr ""
+msgstr "You haven't connected your account with Strava "
 
-#: templates/stravasync/about.html:50
+#: stravasync/templates/stravasync/about.html:54
 msgid "Propojit se Stravou"
 msgstr "Connect to Strava"
 
-#: templates/stravasync/about.html:53
+#: stravasync/templates/stravasync/about.html:57
 msgid "Jak to funguje"
 msgstr "How it works"
 
-#: templates/stravasync/about.html:54
-msgid "V aplikace stravě, napište do nazvu svých aktivit hashtag #"
+#: stravasync/templates/stravasync/about.html:58
+#, python-format
+msgid ""
+"\n"
+"V aplikace stravě, napište do nazvu svých aktivit hashtag %(hashtag_to)s "
+"nebo %(hashtag_from)s. Poté se jízdy budou automaticky synchronizovat.\n"
 msgstr ""
+"\n"
+"Put the hashtag %(hashtag_to)s or %(hashtag_from)s in the title of your "
+"Strava activities. After that, your Trips will be synchronized "
+"automatically.\n"
 
-#: templates/stravasync/about.html:54
-msgid "zpět. Poté se jízdy budou automaticky synchronizovat."
-msgstr ""
-
-#: views.py:26
+#: stravasync/views.py:27
 msgid "Propojení se Stravou"
 msgstr "Connect to Strava"
 
-#: views.py:46
+#: stravasync/views.py:52
 msgid "Aplikace Strava není dostupná."
-msgstr ""
+msgstr "Strava is down."
 
-#: views.py:48
+#: stravasync/views.py:54
 msgid "API limit vyčerpan."
-msgstr ""
+msgstr "API limit exceeded."

@@ -1,41 +1,59 @@
 # -*- coding: utf-8 -*-
 # Author: Timothy Hobbs <timothy <at> hobbs.cz>
-from dpnk.models.campaign import Campaign
 
 directions = {
     'tam': 'trip_to',
     'zpet': 'trip_from',
+    'zpět': 'trip_from',
     'there': 'trip_to',
     'back': 'trip_from',
 }
 
+hashtag_to_by_lang = {
+    'cs': 'tam',
+    'en': 'to',
+}
+
+hashtag_from_by_lang = {
+    'cs': 'zpět',
+    'en': 'from',
+}
+
+
+def get_hashtag_to(campaign_slug, lang):
+    return build_hashtag(campaign_slug, hashtag_to_by_lang[lang])
+
+
+def get_hashtag_from(campaign_slug, lang):
+    return build_hashtag(campaign_slug, hashtag_from_by_lang[lang])
+
+
+def build_hashtag(campaign_slug, direction):
+    return '#' + campaign_slug + direction
+
+
+class HashtagTable():
+    def __init__(self, campaigns):
+        self.hashtag_dict = {}
+        for campaign in campaigns:
+            for direction, dir_slug in directions.items():
+                self.hashtag_dict[build_hashtag(campaign.slug, direction)] = (campaign, dir_slug)
+
+    def get_campaign_and_direction(self, text):
+        for hashtag, cdt in self.hashtag_dict.items():
+            if hashtag in text:
+                return cdt
+        raise NoValidHashtagException()
+
+    def get_campaign_and_direction_for_activity(self, activity):
+        try:
+            return self.get_campaign_and_direction(activity.name)
+        except NoValidHashtagException as e:
+            if activity.description:
+                return self.get_campaign_and_direction(activity.description)
+            else:
+                raise NoValidHashtagException()
+
 
 class NoValidHashtagException(Exception):
     pass
-
-
-def get_hashtags(title):
-    words = title.split()
-    broken_words = [x.split("#") for x in words]
-    hash_tag_clumps = [x[1:] for x in broken_words if len(x) > 1]
-    return [x for y in hash_tag_clumps for x in y]
-
-
-def get_campaign_slug_and_direction(title):
-    try:
-        for hashtag in get_hashtags(title):
-            for text, dir_slug in directions.items():
-                if hashtag.endswith(text):
-                    return hashtag[:-(len(text))], dir_slug
-    except IndexError:
-        raise NoValidHashtagException("No hashtags found.")
-    raise NoValidHashtagException("No hashtags found.")
-
-
-def get_campaign_and_direction(activity_title):
-    campaing_slug, direction = get_campaign_slug_and_direction(activity_title)
-    try:
-        campaign = Campaign.objects.get(slug=campaing_slug)
-    except Campaign.DoesNotExist:
-        raise NoValidHashtagException("Campaign " + campaing_slug + " specified in hashtag does not exist.")
-    return campaign, direction
