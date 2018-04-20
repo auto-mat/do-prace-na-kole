@@ -1,0 +1,109 @@
+{% extends "base_generic_form.html" %}
+{% load i18n %}
+{% load l10n %}
+
+{% block form %}
+<link rel='stylesheet' href='/static/bow/fullcalendar/dist/fullcalendar.css' />
+<script src='/static/bow/moment/moment.js'></script>
+<script src='/static/bow/fullcalendar/dist/fullcalendar.js'></script>
+<script src='/static/bow/fullcalendar/dist/locale-all.js'></script>
+{% blocktrans %}
+Označte dovolená kliknutím na budoucí data.
+<br/>
+{% endblocktrans %}
+{% get_current_language as LANGUAGE_CODE %}
+<div id='calendar'></div>
+<script>
+var possible_vacation_days = {{possible_vacation_days|safe}};
+var vid = {{first_vid}};
+
+function events_overlap(event1, event2) {
+     if(event1.end && event2.end) {
+         return ((event1.start >= event2.start && event1.start < event2.end) ||
+                    (event1.end > event2.start && event1.end <= event2.end));
+     } else {
+         return false;
+     }
+}
+
+$(function() {
+  var calendar = $('#calendar').fullCalendar({
+      events: {{events|safe}},
+      eventOrder: 'order',
+      selectable: true,
+      lang: '{{ LANGUAGE_CODE }}',
+      locale: '{{ LANGUAGE_CODE }}',
+      firstDay: 1,
+      select: function(startDate, endDate) {
+          if(possible_vacation_days.indexOf(startDate.format('YYYY-MM-DD')) >= 0 && possible_vacation_days.indexOf(endDate.format('YYYY-MM-DD')) >= 0){
+              new_event = {
+                  title: "{% trans "Dovolená" %}",
+                  start: startDate,
+                  end: endDate,
+                  allDay: true,
+                  id: vid++,
+              }
+              events = $('#calendar').fullCalendar( 'clientEvents');
+              for (eid in events) {
+                  if (events_overlap(new_event, events[eid])) {
+                      e2 = events[eid]
+                      return;
+                  }
+              }
+              $('#calendar').fullCalendar('renderEvent', new_event);
+              $.post('/dovolena/', {
+                  on_vacation: true,
+                  start_date: startDate.format('YYYY-MM-DD'),
+                  end_date: endDate.format('YYYY-MM-DD'),
+                  csrfmiddlewaretoken: "{{ csrf_token }}",
+                  },
+                  function(returnedData){
+                  }
+              ).fail(function(jqXHR, textStatus, errorThrown) {
+                  console.log(jqXHR.responseText);
+              });
+          }
+      },
+      eventRender: function(event, element) {
+          var icon = null;
+          if (event.commute_mode == 'bicycle'){
+              icon = document.createElement("i");
+              icon.className='fa fa-bicycle';
+          } else if (event.commute_mode == 'by_foot') {
+              icon = document.createElement("i");
+              icon.className='fa fa-child';
+          }
+          if (icon) {
+              element.prepend(icon);
+          }
+          if (event.id) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
+              element.append( '<div style="position:absolute;bottom:3px;right:4px; z-index:200;" class="fc-transparent"><button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button></div>');
+              element.find(".closeon").click(function() {
+                  $('#calendar').fullCalendar( 'removeEvents', event.id );
+                  $.post('/dovolena/', {
+                      on_vacation: false,
+                      start_date: event.start.format('YYYY-MM-DD'),
+                      end_date: event.end.format('YYYY-MM-DD'),
+                      csrfmiddlewaretoken: "{{ csrf_token }}",
+                      },
+                      function(returnedData){}
+                  ).fail(function(jqXHR, textStatus, errorThrown) {
+                      console.log(jqXHR.responseText);
+                  });
+              });
+              element.append("<br/>");
+          }
+      },
+      dayRender: function (date, cell) {
+         if (possible_vacation_days.indexOf(date.format('YYYY-MM-DD')) <= -1) {
+             cell.css("background-color", "grey");
+         }
+      },
+      eventClick: function(event, jsEvent, view) {
+          if (event.id) {
+          }
+      },
+  });
+});
+</script>
+{% endblock %}
