@@ -75,7 +75,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         'dpnk.Subsidiary',
         verbose_name=_("Pobočka"),
         null=True,
-        blank=True,
+        blank=False,
         on_delete=models.SET_NULL,
     )
     dispatched = models.BooleanField(
