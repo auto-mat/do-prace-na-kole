@@ -3,11 +3,11 @@
 
 {% block form %}
    {% if campaign.show_application_links or perms.dpnk.can_see_application_links %}
-      <a target="_blank" href="https://p29ek.app.goo.gl/?link=http://urbancyclers.com/competitions.php?c%3D{{ campaign.slug_identifier }}%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.bikeapp&utm_source=dpnk&amv=104&isi=1213867271&ibi=com.umotional.bikeapp&at={{ campaign.slug_identifier }}">
+      <a target="_blank" href="https://p29ek.app.goo.gl/?link=http://urbancyclers.com/competitions.php?c%3D{{ campaign.slug_identifier }}%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.bikeapp&utm_source={{ campaign.slug_identifier }}&amv=202&isi=1213867271&ibi=com.umotional.bikeapp&at={{ campaign.slug_identifier }}">
          {% trans "Propojit s" %} UrbanCyclers
       </a>
       <br/>
-      <a target="_blank" href="https://p29ek.app.goo.gl/?link=http://nakoleprahou.cz/competitions.php?c%3D{{ campaign.slug_identifier }}%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.ucpraha&utm_source=dpnk&amv=104&isi=1213867293&ibi=com.umotional.ucpraha&at={{ campaign.slug_identifier }}">
+      <a target="_blank" href="https://p29ek.app.goo.gl/?link=http://nakoleprahou.cz/competitions.php?c%3D{{ campaign.slug_identifier }}%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.ucpraha&utm_source={{ campaign.slug_identifier }}&amv=202&isi=1213867293&ibi=com.umotional.ucpraha&at={{ campaign.slug_identifier }}">
          {% trans "Propojit s" %} Na kole Prahou
       </a>
       </a>
