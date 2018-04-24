@@ -83,7 +83,7 @@ class TripSerializer(serializers.ModelSerializer):
         source='date',
         help_text='Date of the trip e.g. "1970-01-23"',
     )
-    file = serializers.CharField(
+    file = serializers.FileField(
         required=False,
         source='gpx_file',
         help_text='GPX file with the track',
