@@ -1775,6 +1775,8 @@ def view_edit_trip(request, date, direction):
         parse_error = True
     if parse_error:
         raise exceptions.TemplatePermissionDenied(_("Nemůžete editovat cesty ke starším datům."))
+    if direction not in ["trip_to", "trip_from"]:
+        raise exceptions.TemplatePermissionDenied(_("Neplatný směr cesty."))
     if not util.day_active(date, request.user_attendance.campaign):
         return TripView.as_view()(request, date=date, direction=direction)
     if models.Trip.objects.filter(date=date, direction=direction).exists():

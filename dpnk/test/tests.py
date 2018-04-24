@@ -650,44 +650,46 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertEquals(user_attendance.trip_length_total, 31.23)
         self.assertEquals(user_attendance.team.get_length(), 10.41)
 
-    def test_dpnk_views_create_gpx_file(self):
-        date = datetime.date(year=2010, month=11, day=1)
-        direction = "trip_from"
-        address = reverse('gpx_file_create', kwargs={"date": date, "direction": direction})
+    def test_dpnk_views_create_trip(self):
+        date = datetime.date(year=2010, month=11, day=2)
+        direction = "trip_to"
+        address = reverse('trip', kwargs={"date": str(date), "direction": direction})
         with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
-                'file': gpxfile,
+                'gpx_file': gpxfile,
                 'direction': direction,
-                'trip_date': date,
+                'date': date,
+                'commute_mode': 1,
                 'user_attendance': self.user_attendance.pk,
+                'origin': reverse('profil'),
                 'submit': 'Odeslat',
             }
             response = self.client.post(address, post_data)
-            self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        gpxfile = models.GpxFile.objects.get(trip_date=date, direction=direction, user_attendance=self.user_attendance)
-        self.assertEquals(gpxfile.trip.distance, 13.32)
+        self.assertRedirects(response, reverse("profil"))
+        trip = models.Trip.objects.get(date=date, direction=direction, user_attendance=self.user_attendance)
+        self.assertEquals(trip.distance, 13.32)
 
-    def test_dpnk_views_create_gpx_file_error(self):
-        address = reverse('gpx_file_create', kwargs={"date": "foo bad date", "direction": "trip_from"})
+    def test_dpnk_views_create_trip_error(self):
+        address = reverse('trip', kwargs={"date": "foo bad date", "direction": "trip_from"})
         response = self.client.get(address)
-        self.assertContains(response, "Stránka nenalezena", status_code=404)
+        self.assertEquals(response.status_code, 403)
 
-    def test_dpnk_views_create_gpx_file_inactive_day(self):
+    def test_dpnk_views_create_trip_inactive_day(self):
         date = datetime.date(year=2010, month=12, day=1)
         direction = "trip_from"
-        address = reverse('gpx_file_create', kwargs={"date": date, "direction": direction})
+        address = reverse('trip', kwargs={"date": date, "direction": direction})
         with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
-                'file': gpxfile,
+                'gpx_file': gpxfile,
                 'direction': direction,
-                'trip_date': date,
+                'date': date,
                 'user_attendance': self.user_attendance.pk,
                 'submit': 'Odeslat',
             }
             response = self.client.post(address, post_data)
-            self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        gpxfile = models.GpxFile.objects.get(trip_date=date, direction=direction, user_attendance=self.user_attendance)
-        self.assertEquals(gpxfile.trip.distance, None)
+            self.assertEquals(response.status_code, 405)
+        exists = models.Trip.objects.filter(date=date, direction=direction, user_attendance=self.user_attendance).exists()
+        self.assertEquals(exists, False)
 
     def test_dpnk_competitions_page(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
@@ -740,10 +742,10 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, "<p>16,2b.</p>", html=True)
         response = self.client.get(reverse('competitions'))
         self.assertContains(response, "<p>1. místo z 1 týmů</p>", html=True)
-        self.assertContains(response, "<p>1,4&nbsp;%</p>", html=True)
-        self.assertContains(response, "<p>1 z 69 jízd</p>", html=True)
+        self.assertContains(response, "<p>2,9&nbsp;%</p>", html=True)
+        self.assertContains(response, "<p>2 z 69 jízd</p>", html=True)
         self.assertContains(response, "<p>1. místo z 2 jednotlivců</p>", html=True)
-        self.assertContains(response, "<p>5,0&nbsp;km</p>", html=True)
+        self.assertContains(response, "<p>161,9&nbsp;km</p>", html=True)
 
 
 class TestTeams(DenormMixin, ClearCacheMixin, TestCase):

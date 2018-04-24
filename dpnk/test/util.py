@@ -21,9 +21,13 @@ from django.core.cache import cache
 from django.core.management import call_command
 
 
-def print_response(response):
-    with open("response.html", "w") as f:  # pragma: no cover
-        f.write(response.content.decode())  # pragma: no cover
+def print_response(response, stdout=False):
+    content = response.content.decode()
+    if stdout:
+        print(content)
+    else:
+        with open("response.html", "w") as f:  # pragma: no cover
+            f.write(content)  # pragma: no cover
 
 
 class DenormMixin(object):

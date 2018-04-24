@@ -82,7 +82,7 @@ class RestTests(TestCase):
                 "file": "http://testing-campaign.testserver%smodranska-rokle.gpx" % settings.MEDIA_URL,
                 "commuteMode": "bicycle",
                 "durationSeconds": None,
-                "distanceMeters": None,
+                "distanceMeters": 156900,
                 'track': {
                     'coordinates': [[[0.0, 0.0], [-1.0, 1.0]]],
                     'type': 'MultiLineString',
@@ -176,7 +176,7 @@ class TokenAuthenticationTests(TestCase):
         )
         self.assertEquals(response.status_code, 201)
         trip = models.Trip.objects.get(date=datetime.date(2010, 12, 2))
-        self.assertEquals(trip.length(), 111.24)
+        self.assertEquals(trip.distance, 111.24)
         self.assertJSONEqual(
             response.content.decode(),
             {
@@ -186,7 +186,7 @@ class TokenAuthenticationTests(TestCase):
                 "file": None,
                 "commuteMode": "bicycle",
                 "durationSeconds": None,
-                "distanceMeters": None,
+                "distanceMeters": 111240,
                 "sourceApplication": None,
             },
         )

@@ -48,24 +48,5 @@
    </tr>
    {% endfor %}
 </table>
-
-
-{% if other_gpx_files %}
-   <h3>{% trans "Další nahrané jízdy" %}</h3>
-   <table class="table">
-      {% for gpx_file in other_gpx_files %}
-      <tr>
-         <td>{{ gpx_file.trip_date }}</td>
-         <td>{{ gpx_file.get_direction_display }}</td>
-         <td>{% if gpx_file.length %}{{ gpx_file.length|floatformat:1 }}&nbsp;Km{% endif %}</td>
-         <td>
-         <a href="{% url "gpx_file" id=gpx_file.id %}">
-            <i class="fa fa-eye"></i>
-         </a>
-         </td>
-      </tr>
-      {% endfor %}
-   </table>
-{% endif %}
 <div></div>
 {% endblock %}

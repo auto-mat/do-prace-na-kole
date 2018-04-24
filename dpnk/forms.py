@@ -715,19 +715,18 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
 
 class FormWithTrackMixin():
     def clean_parse_and_calculate_track(self):
-        if 'gpx_file' in self.changed_data:
-            if self.cleaned_data['gpx_file']:
-                if self.cleaned_data['gpx_file'].name.endswith(".gz"):
-                    track_file = gzip.open(self.cleaned_data['gpx_file'])
-                else:
-                    track_file = self.cleaned_data['gpx_file']
-                try:
-                    track_file = track_file.read().decode("utf-8")
-                except UnicodeDecodeError:
-                    raise ValidationError({'gpx_file': _('Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?')})
-                self.cleaned_data['track'] = gpx_parse.parse_gpx(track_file)
-                self.changed_data.append('track')
-        if 'track' in self.changed_data or (self.cleaned_data.get('track', None) and not self.cleaned_data['distance']):
+        if 'gpx_file' in self.changed_data and self.cleaned_data['gpx_file']:
+            if self.cleaned_data['gpx_file'].name.endswith(".gz"):
+                track_file = gzip.open(self.cleaned_data['gpx_file'])
+            else:
+                track_file = self.cleaned_data['gpx_file']
+            try:
+                track_file = track_file.read().decode("utf-8")
+            except UnicodeDecodeError:
+                raise ValidationError({'gpx_file': _('Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?')})
+            self.cleaned_data['track'] = gpx_parse.parse_gpx(track_file)
+            self.changed_data.append('track')
+        if self.cleaned_data.get('track', None) and ('track' in self.changed_data or not self.cleaned_data['distance']):
             self.cleaned_data['distance'] = round(util.get_multilinestring_length(self.cleaned_data['track']), 2)
         return self.cleaned_data
 
@@ -747,12 +746,14 @@ class TrackUpdateForm(SubmitMixin, FormWithTrackMixin, forms.ModelForm):
 
     def clean(self):
         self.cleaned_data = super().clean()
+
+        self.clean_parse_and_calculate_track()
         if self.cleaned_data['dont_want_insert_track']:
             self.cleaned_data['track'] = None
         else:
             if self.cleaned_data['track'] is None:
                 raise forms.ValidationError({'track': _("Nezadali jste žádnou trasu. Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat.")})
-        self.clean_parse_and_calculate_track()
+
         return self.cleaned_data
 
     class Meta:

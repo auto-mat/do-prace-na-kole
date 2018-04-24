@@ -47,7 +47,8 @@
         "fields": {
             "date": "2009-11-1",
             "user_attendance": 1115,
-            "direction": "trip_to"
+            "direction": "trip_to",
+            "commute_mode": 3
         },
         "model": "dpnk.trip",
         "pk": 3
