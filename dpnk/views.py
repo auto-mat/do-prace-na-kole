@@ -1832,17 +1832,19 @@ class CreateTripView(EditTripView, CreateView):
         return super().get_initial(initial)
 
 
-
 class TripView(TitleViewMixin, LoginRequiredMixin, WithTripMixin, TemplateView):
     template_name = 'registration/view_trip.html'
     title = _("Prohlédnout trasu")
 
     def get_context_data(self, *args, **kwargs):
         trip = self.get_object()
-        context = {"title": self.title
-                  ,"days_active": trip.user_attendance.campaign.days_active}
+        context = {
+            "title": self.title,
+            "days_active": trip.user_attendance.campaign.days_active,
+        }
         context["trip"] = trip
         return context
+
 
 class TripGeoJsonView(LoginRequiredMixin, WithTripMixin, View):
     def get(self, *args, **kwargs):

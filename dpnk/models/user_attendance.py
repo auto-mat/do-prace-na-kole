@@ -25,7 +25,6 @@ from coupons.models import DiscountCoupon
 from denorm import denormalized, depend_on_related
 
 from django.contrib.gis.db import models
-from django.contrib.gis.db.models.functions import Length
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save

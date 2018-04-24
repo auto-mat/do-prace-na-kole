@@ -713,6 +713,7 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
         model = models.CommonTransaction
         fields = ('user_attendance', 'description')
 
+
 class FormWithTrackMixin():
     def clean_parse_and_calculate_track(self):
         if 'gpx_file' in self.changed_data:
@@ -930,7 +931,7 @@ class TripForm(InitialFieldsMixin, FormWithTrackMixin, forms.ModelForm):
             raise Http404
         self.helper.add_input(Submit('submit', _('Odeslat')))
 
-        try: #TODO why the try?
+        try:  # TODO why the try?
             self.fields['track'].widget = UserLeafletWidget(user_attendance=self.user_attendance)
             self.fields['track'].widget.attrs['geom_type'] = 'MULTILINESTRING'
         except KeyError:
