@@ -1784,7 +1784,7 @@ def view_edit_trip(request, date, direction):
 
 
 class EditTripView(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, LoginRequiredMixin):
-    form_class = forms.TripForm
+    form_class = forms.TrackTripForm
     model = models.Trip
     template_name = "registration/trip.html"
     title = _("Zadat trasu")
