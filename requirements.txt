@@ -33,7 +33,7 @@ django-class-based-auth-views
 django-adminfilters
 -e git+https://github.com/PetrDlouhy/django-advanced-filters.git@develop#egg=django_advanced_filters  # For Django 2.0 fix
 slumber
-stravalib
+-e git+https://github.com/hozn/stravalib@master#egg=stravalib  # for pip 10 compatibility
 django-bleach
 geopy
 gunicorn

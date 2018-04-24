@@ -131,7 +131,7 @@ social-auth-app-django==2.1.0
 social-auth-core==1.6.0
 SQLAlchemy==1.2.1
 sqlparse==0.2.4
-stravalib==0.9.1
+-e git+https://github.com/hozn/stravalib@f6b0d05d7be47e26b455af85112fa050c35c58ee#egg=stravalib  # for pip 10 compatibility
 -e git+https://github.com/aquavitae/svg2rlg.git@0ba12ebc519597b02999cf7938eacf5eee344ebb#egg=svg2rlg
 tablib==0.12.1
 tornado==4.5.3
