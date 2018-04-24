@@ -78,7 +78,7 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):
     stats["synced_trips"] += 1
     user_attendance = UserAttendance.objects.get(campaign=campaign, userprofile=strava_account.user.userprofile)
     trip_date = activity.start_date.date()
-    exists = GpxFile.objects.filter(
+    exists = Trip.objects.filter(
         trip_date=trip_date,
         direction=direction,
         user_attendance=user_attendance,
@@ -88,26 +88,27 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):
     if activity.map.summary_polyline and (not exists) and settings.STRAVA_FINE_POLYLINES:
         activity = sclient.get_activity(activity.id)
     form_data = {
-        'trip_date': trip_date,
+        'date': trip_date,
         'direction': direction,
         'user_attendance': user_attendance.id,
         'commute_mode': get_commute_mode(activity.type).id,
-        'distance': round(stravalib.unithelper.meters(activity.distance).get_num()),
+        'distance': round(stravalib.unithelper.kilometers(activity.distance).get_num(), 2),
         'duration': activity.elapsed_time.total_seconds(),
         'source_application': 'strava',
+        'source_id': activity.id,
         'from_application': True,
     }
     if activity.map.summary_polyline and (not exists):
         form_data['track'] = get_track(activity.map.summary_polyline)
     if activity.map.polyline:
         form_data['track'] = get_track(activity.map.polyline)
-    gpx_file_form = FullGpxFileForm(data=form_data)
+    trip_form = FullTripForm(data=form_data)
 
-    if gpx_file_form.is_valid():
-        gpx_file_form.save()
+    if trip_form.is_valid():
+        trip_form.save()
     else:
         logger.error("Form error:")
-        logger.error(gpx_file_form.errors)
+        logger.error(trip_form.errors)
 
 
 @shared_task(bind=False)
