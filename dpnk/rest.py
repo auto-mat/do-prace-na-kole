@@ -45,10 +45,12 @@ class CompetitionDoesNotExist(APIException):
 
 class DistanceMetersSerializer(serializers.IntegerField):
     def to_internal_value(self, data):
-        return data / 1000
+        value = super().to_internal_value(data)
+        return value / 1000
 
     def to_representation(self, data):
-        return round(data * 1000)
+        value = round(data * 1000)
+        return super().to_representation(value)
 
 
 class TripSerializer(serializers.ModelSerializer):
