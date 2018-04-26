@@ -35,7 +35,6 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms.widgets import HiddenInput
-from django.http import Http404
 from django.urls import reverse
 from django.utils import formats
 from django.utils.html import format_html
@@ -713,21 +712,21 @@ class BikeRepairForm(SubmitMixin, forms.ModelForm):
         model = models.CommonTransaction
         fields = ('user_attendance', 'description')
 
+
 class FormWithTrackMixin():
     def clean_parse_and_calculate_track(self):
-        if 'gpx_file' in self.changed_data:
-            if self.cleaned_data['gpx_file']:
-                if self.cleaned_data['gpx_file'].name.endswith(".gz"):
-                    track_file = gzip.open(self.cleaned_data['gpx_file'])
-                else:
-                    track_file = self.cleaned_data['gpx_file']
-                try:
-                    track_file = track_file.read().decode("utf-8")
-                except UnicodeDecodeError:
-                    raise ValidationError({'gpx_file': _('Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?')})
-                self.cleaned_data['track'] = gpx_parse.parse_gpx(track_file)
-                self.changed_data.append('track')
-        if 'track' in self.changed_data or (self.cleaned_data.get('track', None) and not self.cleaned_data['distance']):
+        if 'gpx_file' in self.changed_data and self.cleaned_data['gpx_file']:
+            if self.cleaned_data['gpx_file'].name.endswith(".gz"):
+                track_file = gzip.open(self.cleaned_data['gpx_file'])
+            else:
+                track_file = self.cleaned_data['gpx_file']
+            try:
+                track_file = track_file.read().decode("utf-8")
+            except UnicodeDecodeError:
+                raise ValidationError({'gpx_file': _('Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?')})
+            self.cleaned_data['track'] = gpx_parse.parse_gpx(track_file)
+            self.changed_data.append('track')
+        if self.cleaned_data.get('track', None) and ('track' in self.changed_data or not self.cleaned_data['distance']):
             self.cleaned_data['distance'] = round(util.get_multilinestring_length(self.cleaned_data['track']), 2)
         return self.cleaned_data
 
@@ -747,12 +746,14 @@ class TrackUpdateForm(SubmitMixin, FormWithTrackMixin, forms.ModelForm):
 
     def clean(self):
         self.cleaned_data = super().clean()
+
+        self.clean_parse_and_calculate_track()
         if self.cleaned_data['dont_want_insert_track']:
             self.cleaned_data['track'] = None
         else:
             if self.cleaned_data['track'] is None:
                 raise forms.ValidationError({'track': _("Nezadali jste žádnou trasu. Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat.")})
-        self.clean_parse_and_calculate_track()
+
         return self.cleaned_data
 
     class Meta:
@@ -875,16 +876,54 @@ class ProfileUpdateForm(PrevNextMixin, MultiModelForm):
     ])
 
 
-class TripForm(InitialFieldsMixin, FormWithTrackMixin, forms.ModelForm):
-    initial_fields = ('user_attendance', 'direction', 'date')
+class TripForm(InitialFieldsMixin, forms.ModelForm):
+    initial_fields = ('direction', 'date')
     distance = CommaFloatField(
         label=_("Vzdálenost (km)"),
         required=False,
     )
-    origin = forms.CharField(required=False)
+
+    def working_day(self):
+        return util.working_day(self.initial['date'])
+
+    def get_direction(self):
+        return self.initial['direction'] or self.instance.direction
+
+    def get_date(self):
+        return self.initial['date'] or self.instance.date
+
+    def clean_user_attendance(self):
+        return self.instance.user_attendance or self.initial['user_attendance']
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if 'commute_mode' in cleaned_data:
+            commute_mode_slug = cleaned_data['commute_mode'].slug
+            if commute_mode_slug in ('bicycle', 'by_foot') and not cleaned_data.get('distance', False):
+                raise forms.ValidationError(_("Musíte vyplnit vzdálenost"))
+
+            if commute_mode_slug == 'by_foot' and cleaned_data['distance'] < 1.5:
+                raise forms.ValidationError(_("Pěší cesta musí mít minimálně jeden a půl kilometru"))
+        return cleaned_data
+
+    def has_changed(self, *args, **kwargs):
+        return True
 
     class Meta:
         model = models.Trip
+        fields = ('commute_mode', 'distance', 'direction', 'user_attendance', 'date')
+        widgets = {
+            'user_attendance': forms.HiddenInput(),
+            'commute_mode': CommuteModeSelect(),
+        }
+
+
+class TrackTripForm(FormWithTrackMixin, SubmitMixin, TripForm):
+    initial_fields = ('user_attendance', 'direction', 'date')
+    origin = forms.CharField(required=False)
+
+    class Meta(TripForm.Meta):
         fields = (
             'commute_mode',
             'distance',
@@ -896,46 +935,26 @@ class TripForm(InitialFieldsMixin, FormWithTrackMixin, forms.ModelForm):
             'origin'
         )
         widgets = {
-            'user_attendance': forms.HiddenInput(),
-            'commute_mode': CommuteModeSelect(),
-            'date': forms.TextInput(attrs={'readonly': 'readonly', 'disabled': 'disabled'}),
-            'direction': forms.Select(attrs={'readonly': 'readonly', 'disabled': 'disabled'}),
+            **TripForm.Meta.widgets,
+            **{
+                'date': forms.TextInput(attrs={'readonly': 'readonly', 'disabled': 'disabled'}),
+                'direction': forms.Select(attrs={'readonly': 'readonly', 'disabled': 'disabled'}),
+            },
         }
-
-    def working_day(self):
-        return util.working_day(self.initial['date'])
-
-    def get_direction(self):
-        return self.initial['direction'] or self.instance.direction
-
-    def get_date(self):
-        return self.initial['date'] or self.instance.date
 
     def clean(self):
         self.cleaned_data['user_attendance'] = self.instance.user_attendance or self.initial['user_attendance']
         self.clean_parse_and_calculate_track()
-        if 'commute_mode' in self.cleaned_data:
-            commute_mode_slug = self.cleaned_data['commute_mode'].slug
-            if commute_mode_slug == 'by_foot' and self.cleaned_data['distance'] < 1.5:
-                raise forms.ValidationError(_("Pěší cesta musí mít minimálně jeden a půl kilometru"))
+        super().clean()
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        super().__init__(*args, **kwargs)
         self.user_attendance = self.initial['user_attendance']
-        self.user_attendance = models.UserAttendance.objects.get(id=self.user_attendance) if type(self.user_attendance) is int else self.user_attendance  # noqa
-        try:
-            self.date = self.instance.date or datetime.datetime.strptime(self.initial['date'], "%Y-%m-%d").date()
-        except ValueError:
-            raise Http404
-        self.helper.add_input(Submit('submit', _('Odeslat')))
+        self.date = self.instance.date or datetime.datetime.strptime(self.initial['date'], "%Y-%m-%d").date()
 
-        try: #TODO why the try?
-            self.fields['track'].widget = UserLeafletWidget(user_attendance=self.user_attendance)
-            self.fields['track'].widget.attrs['geom_type'] = 'MULTILINESTRING'
-        except KeyError:
-            print("Oops, no field track")
-            print(self.fields)
+        self.fields['track'].widget = UserLeafletWidget(user_attendance=self.user_attendance)
+        self.fields['track'].widget.attrs['geom_type'] = 'MULTILINESTRING'
         self.fields['origin'].widget = forms.HiddenInput()
 
 

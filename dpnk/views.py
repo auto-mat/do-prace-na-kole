@@ -44,7 +44,7 @@ from django.contrib.auth import logout
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
-from django.db.models import Case, Count, F, FloatField, IntegerField, Q, Sum, When
+from django.db.models import BooleanField, Case, Count, F, FloatField, IntegerField, Q, Sum, When
 from django.db.models.functions import Coalesce
 from django.forms.models import BaseModelFormSet
 from django.http import HttpResponse
@@ -747,7 +747,10 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
     def get_queryset(self):
         if self.has_allow_adding_rides():
             self.trips, self.uncreated_trips = self.user_attendance.get_active_trips()
-            return self.trips
+            trips = self.trips.annotate(  # fetch only needed fields
+                track_isnull=Case(When(track__isnull=True, then=True), default=False, output_field=BooleanField()),
+            ).defer('track', 'gpx_file')
+            return trips
         else:
             return models.Trip.objects.none()
 
@@ -864,6 +867,8 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredM
 
         context_data = super().get_context_data(*args, **kwargs)
         context_data['trips'] = trips
+        days = list(util.days(self.user_attendance.campaign.phase("competition"), util.today()))
+        context_data['other_trips'] = models.Trip.objects.filter(user_attendance=self.user_attendance).exclude(date__in=days)
         return context_data
 
 
@@ -1775,6 +1780,8 @@ def view_edit_trip(request, date, direction):
         parse_error = True
     if parse_error:
         raise exceptions.TemplatePermissionDenied(_("Nemůžete editovat cesty ke starším datům."))
+    if direction not in ["trip_to", "trip_from"]:
+        raise exceptions.TemplatePermissionDenied(_("Neplatný směr cesty."))
     if not util.day_active(date, request.user_attendance.campaign):
         return TripView.as_view()(request, date=date, direction=direction)
     if models.Trip.objects.filter(date=date, direction=direction).exists():
@@ -1784,12 +1791,14 @@ def view_edit_trip(request, date, direction):
 
 
 class EditTripView(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageMixin, LoginRequiredMixin):
-    form_class = forms.TripForm
+    form_class = forms.TrackTripForm
     model = models.Trip
     template_name = "registration/trip.html"
     title = _("Zadat trasu")
 
-    def get_initial(self, initial):
+    def get_initial(self, initial=None):
+        if initial is None:
+            initial = {}
         initial['origin'] = self.request.META.get('HTTP_REFERER', reverse_lazy("profil"))
         initial['user_attendance'] = self.user_attendance
         return initial
@@ -1810,12 +1819,7 @@ class WithTripMixin():
 
 
 class UpdateTripView(EditTripView, WithTripMixin, UpdateView):
-    def get_initial(self):
-        initial = {}
-        if self.get_object().track is None:
-            if self.user_attendance.track:
-                initial['track'] = self.user_attendance.track
-        return super().get_initial(initial)
+    pass
 
 
 class CreateTripView(EditTripView, CreateView):
@@ -1832,17 +1836,19 @@ class CreateTripView(EditTripView, CreateView):
         return super().get_initial(initial)
 
 
-
 class TripView(TitleViewMixin, LoginRequiredMixin, WithTripMixin, TemplateView):
     template_name = 'registration/view_trip.html'
     title = _("Prohlédnout trasu")
 
     def get_context_data(self, *args, **kwargs):
         trip = self.get_object()
-        context = {"title": self.title
-                  ,"days_active": trip.user_attendance.campaign.days_active}
+        context = {
+            "title": self.title,
+            "days_active": trip.user_attendance.campaign.days_active,
+        }
         context["trip"] = trip
         return context
+
 
 class TripGeoJsonView(LoginRequiredMixin, WithTripMixin, View):
     def get(self, *args, **kwargs):

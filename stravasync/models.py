@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Author: Timothy Hobbs <timothy <at> hobbs.cz>
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -47,5 +47,5 @@ class StravaAccount(models.Model):
 
     @classmethod
     def get_stale_accounts(cls, min_time_between_syncs=60 * 60 * 12):
-        stale_cutoff = datetime.now() - min_time_between_syncs
-        return cls.filter(last_sync_time__lte=stale_cutoff)
+        stale_cutoff = datetime.now() - timedelta(seconds=min_time_between_syncs)
+        return cls.objects.filter(last_sync_time__lte=stale_cutoff)

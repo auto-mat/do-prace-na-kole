@@ -464,11 +464,11 @@ class DistanceTests(TestCase):
         self.assertEquals(
             distance,
             {
-                'distance__sum': 10.3,
-                'distance_bicycle': 5.3,
+                'distance__sum': 167.2,
+                'distance_bicycle': 162.2,
                 'distance_foot': 5.0,
-                'count__sum': 2,
-                'count_bicycle': 1,
+                'count__sum': 3,
+                'count_bicycle': 2,
                 'count_foot': 1,
             },
         )
@@ -2155,10 +2155,10 @@ class RegistrationMixinTests(ViewsLogon):
         self.assertContains(response, "Vaše žádost o funkci koordinátora organizace byla zamítnuta.")
 
 
-class TrackViewTests(ViewsLogon):
+class TripViewTests(ViewsLogon):
     fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
 
-    def test_dpnk_views_gpx_file(self):
+    def test_trip_view(self):
         trip = mommy.make(
             models.Trip,
             user_attendance=self.user_attendance,
@@ -2166,44 +2166,45 @@ class TrackViewTests(ViewsLogon):
             direction='trip_from',
             commute_mode_id=1,
         )
-        gpxfile = mommy.make(
-            models.GpxFile,
-            user_attendance=self.user_attendance,
-            trip_date=datetime.date(year=2010, month=11, day=20),
-            direction='trip_from',
-        )
 
-        address = reverse('gpx_file', kwargs={"id": gpxfile.pk})
+        address = reverse('trip', kwargs={"date": trip.date, "direction": trip.direction})
         response = self.client.get(address)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(models.GpxFile.objects.get(pk=gpxfile.pk).trip, trip)
 
-    def test_other_user_object(self):
-        gpxfile = mommy.make("GpxFile")
-        address = reverse('gpx_file', kwargs={"id": gpxfile.pk})
+    def test_trip_create(self):
+        address = reverse('trip', kwargs={"date": datetime.date(year=2010, month=11, day=20), "direction": 'trip_from'})
         response = self.client.get(address)
-        self.assertContains(
-            response,
-            '<div class="alert alert-danger">Nemůžete vidět cizí objekt</div>',
-            html=True,
-            status_code=403,
-        )
+        self.assertEqual(response.status_code, 200)
 
-    def test_dpnk_views_gpx_file_error(self):
-        address = reverse('gpx_file', kwargs={"id": 5})
+    def test_trip_invalid_date(self):
+        address = reverse('trip', kwargs={"date": "foo", 'direction': 'trip_to'})
         response = self.client.get(address)
-        self.assertContains(response, "Stránka nenalezena", status_code=404)
+        self.assertEqual(response.status_code, 403)
 
-    def test_dpnk_views_gpx_file_no_trip(self):
-        address = reverse('gpx_file', kwargs={"id": 2})
+    def test_trip_inactive_date(self):
+        address = reverse('trip', kwargs={"date": datetime.date(year=2000, month=11, day=20), 'direction': 'trip_to'})
         response = self.client.get(address)
-        self.assertContains(response, "Datum vykonání cesty")
+        self.assertEqual(response.status_code, 404)
 
-    def test_dpnk_views_gpx_file_no_trip_city(self):
+    def test_trip_invalid_direction(self):
+        address = reverse('trip', kwargs={"date": datetime.date(year=2010, month=11, day=20), 'direction': 'foo'})
+        response = self.client.get(address)
+        self.assertEqual(response.status_code, 403)
+
+    def test_dpnk_views_trip_no_track_city(self):
         """ Test, that the location is changed accordingly to the user's city. """
         self.user_attendance.team.subsidiary.city = mommy.make("City", location="POINT(14.42 50.08)")
         self.user_attendance.team.subsidiary.save()
-        address = reverse('gpx_file', kwargs={"id": 2})
+
+        trip = mommy.make(
+            models.Trip,
+            user_attendance=self.user_attendance,
+            date=datetime.date(year=2010, month=11, day=20),
+            direction='trip_from',
+            commute_mode_id=1,
+        )
+
+        address = reverse('trip', kwargs={"date": trip.date, "direction": trip.direction})
         response = self.client.get(address)
         self.assertContains(response, '"center": [50.08, 14.42]')
 
@@ -2227,8 +2228,8 @@ class TrackViewTests(ViewsLogon):
                 'submit': 'Odeslat',
             }
             response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
+        self.assertEquals(response.status_code, 302)
+        user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
         self.assertEquals(user_attendance.get_distance(), 13.32)
 
     def test_dpnk_views_track_gpx_file_route(self):
@@ -2241,8 +2242,8 @@ class TrackViewTests(ViewsLogon):
                 'submit': 'Odeslat',
             }
             response = self.client.post(address, post_data)
-        self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
+        self.assertEquals(response.status_code, 302)
+        user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
         self.assertEquals(user_attendance.get_distance(), 6.72)
 
     def test_dpnk_views_track_gpx_file_parsing_error(self):
@@ -2275,7 +2276,7 @@ class TrackViewTests(ViewsLogon):
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
+        user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
         self.assertEquals(user_attendance.get_distance(), 0.74)
 
     def test_dpnk_views_track_only_distance(self):
@@ -2288,7 +2289,7 @@ class TrackViewTests(ViewsLogon):
         }
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
-        user_attendance = models.UserAttendance.objects.annotate(length=Length('track')).get(pk=1115)
+        user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
         self.assertEquals(user_attendance.track, None)
         self.assertEquals(user_attendance.get_distance(), 12)
 
@@ -2312,9 +2313,9 @@ class TrackViewTests(ViewsLogon):
             }
             response = self.client.post("/rest/gpx/", post_data, format='multipart', follow=True)
             self.assertEquals(response.status_code, 201)
-        gpx_file = models.GpxFile.objects.get(trip_date=datetime.date(year=2010, month=11, day=3))
-        self.assertEquals(gpx_file.direction, 'trip_to')
-        self.assertEquals(gpx_file.length(), 13.32)
+        trip = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=3))
+        self.assertEquals(trip.direction, 'trip_to')
+        self.assertEquals(trip.distance, 13.32)
 
     def test_dpnk_rest_gpx_gz_parse_error(self):
         with open('dpnk/test_files/DSC00002.JPG', 'rb') as gpxfile:
@@ -2369,9 +2370,9 @@ class TrackViewTests(ViewsLogon):
             }
             response = self.client.post("/rest/gpx/", post_data, format='multipart', follow=True)
             self.assertEquals(response.status_code, 201)
-        gpx_file = models.GpxFile.objects.get(trip_date=datetime.date(year=2010, month=11, day=3))
-        self.assertEquals(gpx_file.direction, 'trip_to')
-        self.assertEquals(gpx_file.length(), 13.32)
+        trip = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=3))
+        self.assertEquals(trip.direction, 'trip_to')
+        self.assertEquals(trip.distance, 13.32)
 
     def test_emission_calculator(self):
         address = reverse('emission_calculator')
@@ -2451,11 +2452,11 @@ class RidesDetailsTests(ViewsLogon):
 
     def test_dpnk_rides_details(self):
         response = self.client.get(reverse('rides_details'))
-        self.assertContains(response, '/gpx_file/1')
+        self.assertContains(response, '/trip/2010-11-14/trip_from')
         self.assertContains(response, '5,0')
         self.assertContains(response, 'Chůze/běh')
         self.assertContains(response, 'Podrobný přehled jízd')
-        self.assertContains(response, '1. listopadu 2009')
+        self.assertContains(response, '1. listopadu 2010')
 
 
 @ddt

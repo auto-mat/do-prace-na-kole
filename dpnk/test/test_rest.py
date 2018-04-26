@@ -52,18 +52,43 @@ class RestTests(TestCase):
         util.rebuild_denorm_models(Team.objects.filter(pk=1))
         util.rebuild_denorm_models(UserAttendance.objects.filter(pk=1115))
 
-    def test_gpx_get(self):
-        address = reverse("gpxfile-list")
+    def test_gpx_get101(self):
+        address = reverse("gpxfile-detail", kwargs={'pk': 101})
         response = self.client.get(address)
-        self.assertContains(
-            response,
-            '{"id":1,"trip_date":"2010-11-01","direction":"trip_to","file":null,"commuteMode":"bicycle",'
-            '"durationSeconds":null,"distanceMeters":null,"sourceApplication":null}',
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "id": 101,
+                "trip_date": "2010-11-01",
+                "direction": "trip_to",
+                "file": None,
+                "commuteMode": "by_foot",
+                "durationSeconds": None,
+                "distanceMeters": 5000,
+                "track": None,
+                "sourceApplication": None,
+            },
         )
-        self.assertContains(
-            response,
-            '{"id":2,"trip_date":"2010-11-14","direction":"trip_from","file":"http://testing-campaign.testserver%smodranska-rokle.gpx",'
-            '"commuteMode":"bicycle","durationSeconds":null,"distanceMeters":null,"sourceApplication":null}' % settings.MEDIA_URL,
+
+    def test_gpx_get2(self):
+        address = reverse("gpxfile-detail", kwargs={'pk': 2})
+        response = self.client.get(address)
+        self.assertJSONEqual(
+            response.content.decode(),
+            {
+                "id": 2,
+                "trip_date": "2010-11-14",
+                "direction": "trip_from",
+                "file": "http://testing-campaign.testserver%smodranska-rokle.gpx" % settings.MEDIA_URL,
+                "commuteMode": "bicycle",
+                "durationSeconds": None,
+                "distanceMeters": 156900,
+                'track': {
+                    'coordinates': [[[0.0, 0.0], [-1.0, 1.0]]],
+                    'type': 'MultiLineString',
+                },
+                "sourceApplication": None,
+            },
         )
 
     def test_gpx_post(self):
@@ -85,8 +110,8 @@ class RestTests(TestCase):
                 ),
                 status_code=201,
             )
-            gpx_file = models.GpxFile.objects.get(trip_date=datetime.date(2010, 12, 2))
-            self.assertEquals(gpx_file.direction, "trip_to")
+            trip = models.Trip.objects.get(date=datetime.date(2010, 12, 2))
+            self.assertEquals(trip.direction, "trip_to")
 
     def test_gpx_unknown_campaign(self):
         self.client = Client(HTTP_HOST="testing-campaign-unknown.testserver", HTTP_REFERER="test-referer")
@@ -150,18 +175,18 @@ class TokenAuthenticationTests(TestCase):
             },
         )
         self.assertEquals(response.status_code, 201)
-        gpx_file = models.GpxFile.objects.get(trip_date=datetime.date(2010, 12, 2))
-        self.assertEquals(gpx_file.length(), 111.24)
+        trip = models.Trip.objects.get(date=datetime.date(2010, 12, 2))
+        self.assertEquals(trip.distance, 111.24)
         self.assertJSONEqual(
             response.content.decode(),
             {
-                "id": gpx_file.id,
+                "id": trip.id,
                 "trip_date": "2010-12-02",
                 "direction": "trip_to",
                 "file": None,
                 "commuteMode": "bicycle",
                 "durationSeconds": None,
-                "distanceMeters": None,
+                "distanceMeters": 111240,
                 "sourceApplication": None,
             },
         )

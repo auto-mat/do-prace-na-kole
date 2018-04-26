@@ -19,18 +19,22 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
+import gzip
 
 from author.decorators import with_author
 
 from bulk_update.manager import BulkUpdateManager
 
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_save, post_save  # noqa
 from django.dispatch import receiver
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
+
+from django_gpxpy import gpx_parse
 
 from .util import MAP_DESCRIPTION
 from .. import util
@@ -156,6 +160,23 @@ class Trip(models.Model):
 
     def active(self):
         return util.day_active(self.date, self.user_attendance.campaign)
+
+
+@receiver(pre_save, sender=Trip)
+def trip_pre_save(sender, instance, **kwargs):
+    if instance.gpx_file and not instance.track:
+        if instance.gpx_file.name.endswith(".gz"):
+            track_file = gzip.open(instance.gpx_file)
+        else:
+            track_file = instance.gpx_file
+        try:
+            track_file = track_file.read().decode("utf-8")
+        except UnicodeDecodeError:
+            raise ValidationError({'gpx_file': _('Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?')})
+        instance.track = gpx_parse.parse_gpx(track_file)
+    track = instance.track
+    if not instance.distance and track:
+        instance.distance = round(util.get_multilinestring_length(track), 2)
 
 
 @receiver(post_save, sender=Trip)

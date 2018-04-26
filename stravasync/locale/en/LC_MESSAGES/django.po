@@ -108,11 +108,11 @@ msgstr "How it works"
 #, python-format
 msgid ""
 "\n"
-"V aplikace stravě, napište do nazvu svých aktivit hashtag %(hashtag_to)s "
+"V aplikace stravě, napište do názvu (nikoliv do popisu) svých aktivit hashtag %(hashtag_to)s "
 "nebo %(hashtag_from)s. Poté se jízdy budou automaticky synchronizovat.\n"
 msgstr ""
 "\n"
-"Put the hashtag %(hashtag_to)s or %(hashtag_from)s in the title of your "
+"Put the hashtag %(hashtag_to)s or %(hashtag_from)s in the title (not description) of your "
 "Strava activities. After that, your Trips will be synchronized "
 "automatically.\n"
 

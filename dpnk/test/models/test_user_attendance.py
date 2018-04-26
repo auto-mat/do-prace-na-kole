@@ -239,10 +239,11 @@ class TestGetDistance(TestCase):
 
     def test_user_attendance_get_distance(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEquals(user_attendance.get_distance(), 156.9)
+        self.assertEquals(user_attendance.get_distance(), 123)
 
     def test_user_attendance_get_distance_no_length(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
+        user_attendance.distance = 0
         self.assertEquals(user_attendance.get_distance(), 156.9)
 
     @patch('dpnk.models.user_attendance.logger')
@@ -251,7 +252,7 @@ class TestGetDistance(TestCase):
         user_attendance.track = "MULTILINESTRING((0 0, 0 0))"
         user_attendance.save()
         user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEqual(user_attendance.get_distance(), 0)
+        self.assertEqual(user_attendance.get_distance(), 123)
 
 
 class TestIsLibero(TransactionTestCase):

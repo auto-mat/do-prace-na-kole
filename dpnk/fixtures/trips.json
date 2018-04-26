@@ -23,13 +23,13 @@
     },
     {
         "fields": {
-            "trip_date": "2010-11-14",
+            "date": "2010-11-14",
             "user_attendance": 1115,
-            "file": "modranska-rokle.gpx",
+            "gpx_file": "modranska-rokle.gpx",
             "track": "MULTILINESTRING((0 0,-1 1))",
             "direction": "trip_from"
         },
-        "model": "dpnk.gpxfile",
+        "model": "dpnk.trip",
         "pk": 2
     },
     {
@@ -45,21 +45,12 @@
     },
     {
         "fields": {
-            "trip": 101,
-            "trip_date": "2010-11-1",
+            "date": "2009-11-1",
             "user_attendance": 1115,
-            "direction": "trip_to"
+            "direction": "trip_to",
+            "commute_mode": 3
         },
-        "model": "dpnk.gpxfile",
-        "pk": 1
-    },
-    {
-        "fields": {
-            "trip_date": "2009-11-1",
-            "user_attendance": 1115,
-            "direction": "trip_to"
-        },
-        "model": "dpnk.gpxfile",
+        "model": "dpnk.trip",
         "pk": 3
     }
 ]

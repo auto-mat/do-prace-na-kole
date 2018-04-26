@@ -45,10 +45,12 @@ class CompetitionDoesNotExist(APIException):
 
 class DistanceMetersSerializer(serializers.IntegerField):
     def to_internal_value(self, data):
-        return data / 1000
+        value = super().to_internal_value(data)
+        return value / 1000
 
     def to_representation(self, data):
-        return round(data * 1000)
+        value = round(data * 1000)
+        return super().to_representation(value)
 
 
 class TripSerializer(serializers.ModelSerializer):
@@ -83,7 +85,7 @@ class TripSerializer(serializers.ModelSerializer):
         source='date',
         help_text='Date of the trip e.g. "1970-01-23"',
     )
-    file = serializers.CharField(
+    file = serializers.FileField(
         required=False,
         source='gpx_file',
         help_text='GPX file with the track',
