@@ -864,6 +864,8 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredM
 
         context_data = super().get_context_data(*args, **kwargs)
         context_data['trips'] = trips
+        days = list(util.days(self.user_attendance.campaign.phase("competition"), util.today()))
+        context_data['other_trips'] = models.Trip.objects.filter(user_attendance=self.user_attendance).exclude(date__in=days)
         return context_data
 
 
@@ -1791,7 +1793,9 @@ class EditTripView(TitleViewMixin, UserAttendanceParameterMixin, SuccessMessageM
     template_name = "registration/trip.html"
     title = _("Zadat trasu")
 
-    def get_initial(self, initial):
+    def get_initial(self, initial=None):
+        if initial is None:
+            initial = {}
         initial['origin'] = self.request.META.get('HTTP_REFERER', reverse_lazy("profil"))
         initial['user_attendance'] = self.user_attendance
         return initial
@@ -1812,12 +1816,7 @@ class WithTripMixin():
 
 
 class UpdateTripView(EditTripView, WithTripMixin, UpdateView):
-    def get_initial(self):
-        initial = {}
-        if self.get_object().track is None:
-            if self.user_attendance.track:
-                initial['track'] = self.user_attendance.track
-        return super().get_initial(initial)
+    pass
 
 
 class CreateTripView(EditTripView, CreateView):
