@@ -77,9 +77,9 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):
         return
     stats["synced_trips"] += 1
     user_attendance = UserAttendance.objects.get(campaign=campaign, userprofile=strava_account.user.userprofile)
-    trip_date = activity.start_date.date()
+    date = activity.start_date.date()
     exists = Trip.objects.filter(
-        trip_date=trip_date,
+        date=date,
         direction=direction,
         user_attendance=user_attendance,
     ).exists()
@@ -88,7 +88,7 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):
     if activity.map.summary_polyline and (not exists) and settings.STRAVA_FINE_POLYLINES:
         activity = sclient.get_activity(activity.id)
     form_data = {
-        'date': trip_date,
+        'date': date,
         'direction': direction,
         'user_attendance': user_attendance.id,
         'commute_mode': get_commute_mode(activity.type).id,
@@ -121,8 +121,8 @@ def sync_stale(min_time_between_syncs=60 * 60 * 12, max_batch_size=300):
 
     The sync_stale task will either consume 1 request per stale account as well as 1 request per new trip if STRAVA_FINE_POLYLINES is True.
     """
-    for account in StravaAccount.stale_accounts(min_time_between_syncs).all():
+    for account in StravaAccount.get_stale_accounts(min_time_between_syncs).all():
         if max_batch_size <= 0:
             return
-        sync(account.id)
+        sync(account.id, manual_sync=False)
         max_batch_size -= 1
