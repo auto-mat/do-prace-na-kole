@@ -55,7 +55,7 @@
       <tr>
          <td>{{ trip.date }}</td>
          <td>{{ trip.get_direction_display }}</td>
-         <td>{% if trip.distance %}{{ gpx_file.distance|floatformat:1 }}&nbsp;Km{% endif %}</td>
+         <td>{% if trip.distance %}{{ trip.distance|floatformat:1 }}&nbsp;Km{% endif %}</td>
          <td>
          <a href="{% url "trip" date=trip.date direction=trip.direction %}">
             <i class="fa fa-eye"></i>
