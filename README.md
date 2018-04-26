@@ -80,6 +80,8 @@ Launching celery
     $ sudo docker run -it --rm --env-file=docker.env --link dpnk-rabbit:rabbit --volume=<PATH_TO_SOURCE_DIR>/do-prace-na-kole:/dpnk-v:rw --workdir=/dpnk-v --entrypoint=/bin/bash --user=1000 petrdlouhy/dopracenakol
     # celery worker -A project.celery -l info -b amqp://@rabbit
 
+TODO: Add celery beat instructions
+
 Launching dpnk server
 ---------------------
 
