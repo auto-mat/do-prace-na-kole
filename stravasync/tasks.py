@@ -102,7 +102,12 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):
         form_data['track'] = get_track(activity.map.summary_polyline)
     if activity.map.polyline:
         form_data['track'] = get_track(activity.map.polyline)
-    trip_form = FullTripForm(data=form_data)
+
+    try:
+        trip = Trip.objects.get(user_attendance=user_attendance, direction=direction, date=date)
+        trip_form = FullTripForm(data=form_data, instance=trip)
+    except Trip.DoesNotExist:
+        trip_form = FullTripForm(data=form_data)
 
     if trip_form.is_valid():
         trip_form.save()
