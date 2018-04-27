@@ -677,7 +677,12 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
 
 
 class TripAdminInline(admin.TabularInline):
-    list_display = ('user_attendance', 'date', 'distance', 'direction', 'commute_mode', 'id')
+    fields = (
+        'direction',
+        'date',
+        'commute_mode',
+        'distance',
+    )
     raw_id_fields = ('user_attendance',)
     extra = 0
     model = models.Trip
