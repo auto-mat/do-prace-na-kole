@@ -75,6 +75,7 @@ from . import forms
 from . import models
 from . import results
 from . import util
+from . import vacations
 from .email import (
     approval_request_mail,
     invitation_mail,
@@ -870,6 +871,57 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredM
         days = list(util.days(self.user_attendance.campaign.phase("competition"), util.today()))
         context_data['other_trips'] = models.Trip.objects.filter(user_attendance=self.user_attendance).exclude(date__in=days)
         return context_data
+
+
+class VacationsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
+    title = _("Dovolená")
+    template_name = 'registration/vacations.html'
+    registration_phase = 'profile_view'
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data.update({
+            "possible_vacation_days": json.dumps([str(day) for day in util.possible_vacation_days(self.user_attendance.campaign)]),
+            "first_vid": vacations.get_vacations(self.user_attendance)[1],
+            "events": json.dumps(vacations.get_events(self.request)),
+        })
+        return context_data
+
+    def post(self, request, *args, **kwargs):
+        on_vacation = request.POST.get('on_vacation', False)
+        on_vacation = on_vacation == 'true'
+        start_date = util.parse_date(request.POST.get('start_date', None))
+        end_date = util.parse_date(request.POST.get('end_date', None))
+        possible_vacation_days = util.possible_vacation_days(self.user_attendance.campaign)
+        if not start_date < end_date:
+            raise exceptions.TemplatePermissionDenied(_("Data musí byt chronologické"))
+        end_date = end_date - datetime.timedelta(days=1)
+        if not set([start_date, end_date]).issubset(possible_vacation_days):  # noqa
+            raise exceptions.TemplatePermissionDenied(_("Nepovolený datum"))
+        existing_trips = Trip.objects.filter(
+            user_attendance=self.user_attendance,
+            date__gte=start_date,
+            date__lte=end_date,
+        )
+        no_work = models.CommuteMode.objects.get(slug='no_work')
+        if on_vacation:
+            trips = []
+            for trip in existing_trips:
+                trips.append([trip.date, trip.direction])
+                trip.commute_mode = no_work
+                trip.save()
+            for date in util.daterange(start_date, end_date):
+                for direction in ['trip_to', 'trip_from']:
+                    if [date, direction] not in trips:
+                        Trip.objects.create(
+                            user_attendance=self.user_attendance,
+                            date=date,
+                            direction=direction,
+                            commute_mode=no_work,
+                        )
+        else:
+            existing_trips.delete()
+        return HttpResponse("OK")
 
 
 class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):

@@ -29,10 +29,13 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils import six
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext as _
 
 import geopy.distance
 
 from ipware.ip import get_real_ip
+
+from . import exceptions
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
@@ -146,6 +149,21 @@ def day_active_last_cut_after_may(day, campaign):
         (day > date_from)
     )
 
+
+def vacation_day_active(day, campaign):
+    day_today = _today()
+    last_day = campaign.competition_phase().date_to
+    return (
+        (day <= last_day) and
+        (day > day_today)
+    )
+
+
+def possible_vacation_days(campaign):
+    competition_phase = campaign.competition_phase()
+    return [d for d in daterange(competition_phase.date_from, competition_phase.date_to) if vacation_day_active(d, campaign)]
+
+
 # def day_active_last_week(day):
 #     day_today = _today()
 #     return (
@@ -157,6 +175,13 @@ def day_active_last_cut_after_may(day, campaign):
 
 
 day_active = day_active_last_cut_after_may
+
+
+def parse_date(date):
+    try:
+        return datetime.datetime.strptime(date, "%Y-%m-%d").date()
+    except ValueError:
+        raise exceptions.TemplatePermissionDenied(_("Datum není platný."))
 
 
 def get_emissions(distance):
