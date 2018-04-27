@@ -31,6 +31,37 @@ function events_overlap(event1, event2) {
      }
 }
 
+function add_vacation(startDate, endDate) {
+    if(possible_vacation_days.indexOf(startDate.format('YYYY-MM-DD')) >= 0 && possible_vacation_days.indexOf(endDate.format('YYYY-MM-DD')) >= 0){
+        new_event = {
+            title: "{% trans "Dovolená" %}",
+            start: startDate,
+            end: endDate,
+            allDay: true,
+            id: vid++,
+        }
+        events = $('#calendar').fullCalendar( 'clientEvents');
+        for (eid in events) {
+            if (events_overlap(new_event, events[eid])) {
+                e2 = events[eid]
+                return;
+            }
+        }
+        $('#calendar').fullCalendar('renderEvent', new_event);
+        $.post('{% url "vacations" %}', {
+            on_vacation: true,
+            start_date: startDate.format('YYYY-MM-DD'),
+            end_date: endDate.format('YYYY-MM-DD'),
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+            },
+            function(returnedData){
+            }
+        ).fail(function(jqXHR, textStatus, errorThrown) {
+            window.alert('{% trans "Propojení selhalo" %}');
+        });
+    }
+}
+
 $(function() {
   var calendar = $('#calendar').fullCalendar({
       events: {{events|safe}},
@@ -38,36 +69,15 @@ $(function() {
       selectable: true,
       lang: '{{ LANGUAGE_CODE }}',
       locale: '{{ LANGUAGE_CODE }}',
+      height: 'auto',
       firstDay: 1,
       select: function(startDate, endDate) {
-          if(possible_vacation_days.indexOf(startDate.format('YYYY-MM-DD')) >= 0 && possible_vacation_days.indexOf(endDate.format('YYYY-MM-DD')) >= 0){
-              new_event = {
-                  title: "{% trans "Dovolená" %}",
-                  start: startDate,
-                  end: endDate,
-                  allDay: true,
-                  id: vid++,
-              }
-              events = $('#calendar').fullCalendar( 'clientEvents');
-              for (eid in events) {
-                  if (events_overlap(new_event, events[eid])) {
-                      e2 = events[eid]
-                      return;
-                  }
-              }
-              $('#calendar').fullCalendar('renderEvent', new_event);
-              $.post('{% url "vacations" %}', {
-                  on_vacation: true,
-                  start_date: startDate.format('YYYY-MM-DD'),
-                  end_date: endDate.format('YYYY-MM-DD'),
-                  csrfmiddlewaretoken: "{{ csrf_token }}",
-                  },
-                  function(returnedData){
-                  }
-              ).fail(function(jqXHR, textStatus, errorThrown) {
-                  console.log(jqXHR.responseText);
-              });
+          if (moment(startDate, "DD-MM-YYYY").add(1, 'days').format('YYYY-MM-DD') != endDate.format('YYYY-MM-DD')) {
+              add_vacation(startDate, endDate);
           }
+      },
+      dayClick: function(date) {
+          add_vacation(date, moment(date, "DD-MM-YYYY").add(1, 'days'));
       },
       eventRender: function(event, element) {
           var icon = null;
@@ -82,7 +92,13 @@ $(function() {
               element.prepend(icon);
           }
           if (event.id) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
-              element.append( '<div style="position:absolute;bottom:3px;right:4px; z-index:200;" class="fc-transparent"><button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button></div>');
+              if (moment(event.start, "DD-MM-YYYY").add(1, 'days').format('YYYY-MM-DD') == event.end.format('YYYY-MM-DD')) {
+                  setTimeout(function(){ // Without this, the button gets clicked by the same event that created the event on mobile.
+                      element.append('<button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button>');
+                  }, 10);
+              } else {
+                  element.append('<div style="position:absolute;bottom:3px;right:4px; z-index:200;" class="fc-transparent"><button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button></div>');
+              }
               element.find(".closeon").click(function() {
                   $('#calendar').fullCalendar( 'removeEvents', event.id );
                   $.post("{% url 'vacations' %}", {
@@ -91,9 +107,10 @@ $(function() {
                       end_date: event.end.format('YYYY-MM-DD'),
                       csrfmiddlewaretoken: "{{ csrf_token }}",
                       },
-                      function(returnedData){}
+                      function(returnedData){
+                      }
                   ).fail(function(jqXHR, textStatus, errorThrown) {
-                      console.log(jqXHR.responseText);
+                      window.alert('{% trans "Propojení selhalo" %}');
                   });
               });
               element.append("<br/>");
@@ -103,10 +120,6 @@ $(function() {
          if (possible_vacation_days.indexOf(date.format('YYYY-MM-DD')) <= -1) {
              cell.css("background-color", "grey");
          }
-      },
-      eventClick: function(event, jsEvent, view) {
-          if (event.id) {
-          }
       },
   });
 });

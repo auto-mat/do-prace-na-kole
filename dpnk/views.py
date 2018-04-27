@@ -46,6 +46,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db import transaction
 from django.db.models import BooleanField, Case, Count, F, FloatField, IntegerField, Q, Sum, When
 from django.db.models.functions import Coalesce
+from django.db.utils import IntegrityError
 from django.forms.models import BaseModelFormSet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -906,19 +907,17 @@ class VacationsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixi
         no_work = models.CommuteMode.objects.get(slug='no_work')
         if on_vacation:
             trips = []
-            for trip in existing_trips:
-                trips.append([trip.date, trip.direction])
-                trip.commute_mode = no_work
-                trip.save()
             for date in util.daterange(start_date, end_date):
                 for direction in ['trip_to', 'trip_from']:
-                    if [date, direction] not in trips:
+                    try:
                         Trip.objects.create(
                             user_attendance=self.user_attendance,
                             date=date,
                             direction=direction,
                             commute_mode=no_work,
                         )
+                    except IntegrityError:
+                        pass
         else:
             existing_trips.delete()
         return HttpResponse("OK")
