@@ -1170,6 +1170,7 @@ class TripAdmin(ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
         ('date', DateRangeFilter),
         'user_attendance__team__subsidiary__city',
     )
+    readonly_fields = ('created', 'author', 'updated_by')
     actions = (actions.show_distance_trips,)
     list_max_show_all = 100000
     inlines = [GpxFileInline, ]
