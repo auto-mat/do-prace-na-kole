@@ -94,7 +94,7 @@
       <td class="{% if not trip_form.instance.id %}un{% endif %}changed">
          {% bootstrap_form trip_form %}
          <a class="pin" href="{% url "trip" date=trip_form.get_date direction=trip_form.get_direction %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zadat trasu v mapě nebo nahrát GPX soubor' %}">
-            {% if trip_form.instance.track_isnull %}
+            {% if trip_form.instance.track_isnull or not trip_form.instance.distance %}
             <span class="glyphicon glyphicon-map-marker"></span>
             {% else %}
             <span class="glyphicon glyphicon-edit"></span>
