@@ -6,6 +6,22 @@
 {% block extrahead %}
 {% leaflet_js %}
 {% leaflet_css %}
+{% endblock %}
+{% block content %}
+<p align="center">
+Podle pravidla soutěže, nemůžete zadavat ani změnit jízdy starší {{days_active}} dnů.
+</p>
+<h3>{% trans "Den" %}</h3>
+{{ trip.date }}
+<h3>{% trans "Směr" %}</h3>
+{{ trip.get_direction_display }}
+<h3>{% trans "Dopravní prostředek" %}</h3>
+{{ trip.commute_mode }}
+{% if trip.commute_mode.eco and trip.commute_mode.does_count %}
+<h3>{% trans "Vzdálenost" %}</h3>
+{{ trip.distance }} km
+<h3>{% trans "Trasa" %}</h3>
+{% leaflet_map "track_map" callback="window.load_track" %}
 <script type="text/javascript">
 // https://gis.stackexchange.com/questions/68489/loading-external-geojson-file-into-leaflet-map#98411
 var track_geojson = L.geoJson();
@@ -20,22 +36,6 @@ function load_track (map, options) {
  }
  }).error(function() {});
 }
-
-
 </script>
-{% endblock %}
-{% block content %}
-<p align="center">
-Podle pravidla soutěže, nemůžete zadavat ani změnit jízdy starší {{days_active}} dnů.
-</p>
-<h3>{% trans "Den" %}</h3>
-{{ trip.date }}
-<h3>{% trans "Směr" %}</h3>
-{{ trip.get_direction_display }}
-<h3>{% trans "Dopravní prostředek" %}</h3>
-{{ trip.commute_mode }}
-<h3>{% trans "Vzdálenost" %}</h3>
-{{ trip.distance }} km
-<h3>{% trans "Trasa" %}</h3>
-{% leaflet_map "track_map" callback="window.load_track" %}
+{% endif %}
 {% endblock %}
