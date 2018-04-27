@@ -25,13 +25,11 @@ from django.urls import reverse
 from django.utils.translation import ugettext as _
 
 # Local imports
-from . import models
 from . import util
 
 
 def get_vacations(user_attendance):
-    trips = models.Trip.objects.filter(
-        user_attendance=user_attendance,
+    trips = user_attendance.user_trips.filter(
         commute_mode__slug='no_work',
     ).order_by('date')
     vacations = []

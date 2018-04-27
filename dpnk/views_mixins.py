@@ -119,7 +119,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                             ),
                             heatmap_link=format_html(
                                 '<a target="_blank" href="https://mapa.prahounakole.cz/?layers=_Wgt">{}</a>',
-                                _("cyklistické dopravní heatmapě")
+                                _("cyklistické dopravní heatmapě"),
                             ),
                         ),
                         track_link_url=reverse('upravit_trasu'),
