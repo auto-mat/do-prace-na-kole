@@ -30,10 +30,9 @@ from . import util
 
 
 def get_vacations(user_attendance):
-    no_work = models.CommuteMode.objects.get(slug='no_work')
     trips = models.Trip.objects.filter(
         user_attendance=user_attendance,
-        commute_mode=no_work,
+        commute_mode__slug='no_work',
     ).order_by('date')
     vacations = []
     this_day = None
@@ -60,7 +59,7 @@ def get_vacations(user_attendance):
     return vacations, vid
 
 
-def get_events(request):  # noqa
+def get_events(request):
     events = []
 
     def add_event(title, date, end=None, commute_mode=None, order=0, url=None, eid=None):
@@ -82,29 +81,29 @@ def get_events(request):  # noqa
             event['id'] = eid
         events.append(event)
 
-    for phase in models.Phase.objects.filter(campaign=request.user_attendance.campaign, phase_type="competition"):
-        add_event("Začatek soutěže", phase.date_from)
-        add_event("Konec soutěže", phase.date_to)
-    trips = models.Trip.objects.filter(user_attendance=request.user_attendance)
-    commute_modes = ['by_foot', 'bicycle']
+    phase = request.campaign.phase("competition")
+    add_event("Začatek soutěže", phase.date_from)
+    add_event("Konec soutěže", phase.date_to)
+    trips = request.user_attendance.user_trips.filter(
+        commute_mode__slug__in=('by_foot', 'bicycle'),
+    )
     for trip in trips:
-        if trip.commute_mode.slug in commute_modes:
-            distance = str(trip.distance)
-            if trip.direction == 'trip_to':
-                title = _(" Do práce ") + distance + "km"
-                order = 1
-                commute_mode = trip.commute_mode.slug
-            if trip.direction == 'trip_from':
-                title = _(" Domu ") + distance + "km"
-                order = 2
-                commute_mode = trip.commute_mode.slug
-            add_event(
-                title,
-                trip.date,
-                order=order,
-                commute_mode=commute_mode,
-                url=reverse('trip', kwargs={'date': trip.date, 'direction': trip.direction}),
-            )
+        distance = str(trip.distance)
+        if trip.direction == 'trip_to':
+            title = " " + _("Do práce") + " " + distance + " km"
+            order = 1
+            commute_mode = trip.commute_mode.slug
+        if trip.direction == 'trip_from':
+            title = " " + _("Domů") + " " + distance + " km"
+            order = 2
+            commute_mode = trip.commute_mode.slug
+        add_event(
+            title,
+            trip.date,
+            order=order,
+            commute_mode=commute_mode,
+            url=reverse('trip', kwargs={'date': trip.date, 'direction': trip.direction}),
+        )
     for vacation in get_vacations(request.user_attendance)[0]:
         add_event(
             _('Dovolená'),

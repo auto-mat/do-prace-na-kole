@@ -142,7 +142,7 @@ class Trip(models.Model):
         blank=True,
     )
     source_id = models.CharField(
-        verbose_name=_("Identifikátor v původnem aplikaci"),
+        verbose_name=_("Identifikátor v původní aplikaci"),
         max_length=255,
         null=True,
         blank=True,

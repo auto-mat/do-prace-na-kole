@@ -101,18 +101,29 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
             if not self.user_attendance.track_complete():
                 messages.info(
                     request,
-                    mark_safe(
-                        _('<b>Vyplňte typickou trasu</b>'
-                          '<br>'
-                          'Na této stránce si každý den zapište jízdy nebo zkontrolujte správné zapsání jízdy z mobilní aplikace. '
-                          ' Pokud budete zadávat jízdy ručně, doporučujeme Vám pro usnadnění vyplnit si typickou trasu.'
-                          ' Na základě typické trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty. '
-                          ' Vaše vyplněná trasa se objeví na '
-                          '<a target="_blank" href="https://mapa.prahounakole.cz/?layers=_Wgt">cyklistické dopravní heatmapě</a>'
-                          ' a pomůže při plánování cyklistické infrastruktury ve vašem městě.'
-                          '<br>'
-                          '<br>'
-                          ' <a href="%s">Vyplnit typickou trasu</a>') % reverse('upravit_trasu'),
+                    format_html(
+                        "<b>{header}</b>"
+                        "<br>"
+                        "{body}"
+                        "<br>"
+                        "<br>"
+                        "<a href='{track_link_url}'>{track_link_description}</a>",
+                        header=_('Vyplňte typickou trasu'),
+                        body=format_html(
+                            _(
+                                'Na této stránce si každý den zapište jízdy nebo zkontrolujte správné zapsání jízdy z mobilní aplikace. '
+                                ' Pokud budete zadávat jízdy ručně, doporučujeme Vám pro usnadnění vyplnit si typickou trasu.'
+                                ' Na základě typické trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty. '
+                                ' Vaše vyplněná trasa se objeví na {heatmap_link}'
+                                ' a pomůže při plánování cyklistické infrastruktury ve vašem městě.',
+                            ),
+                            heatmap_link=format_html(
+                                '<a target="_blank" href="https://mapa.prahounakole.cz/?layers=_Wgt">{}</a>',
+                                _("cyklistické dopravní heatmapě")
+                            ),
+                        ),
+                        track_link_url=reverse('upravit_trasu'),
+                        track_link_description=_('Vyplnit typickou trasu'),
                     ),
                 )
 

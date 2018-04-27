@@ -181,7 +181,7 @@ def parse_date(date):
     try:
         return datetime.datetime.strptime(date, "%Y-%m-%d").date()
     except ValueError:
-        raise exceptions.TemplatePermissionDenied(_("Datum není platný."))
+        raise exceptions.TemplatePermissionDenied(_("Datum není platné."))
 
 
 def get_emissions(distance):

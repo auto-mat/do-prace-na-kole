@@ -85,7 +85,7 @@ $(function() {
               element.append( '<div style="position:absolute;bottom:3px;right:4px; z-index:200;" class="fc-transparent"><button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button></div>');
               element.find(".closeon").click(function() {
                   $('#calendar').fullCalendar( 'removeEvents', event.id );
-                  $.post('/dovolena/', {
+                  $.post("{% url 'vacations' %}", {
                       on_vacation: false,
                       start_date: event.start.format('YYYY-MM-DD'),
                       end_date: event.end.format('YYYY-MM-DD'),
