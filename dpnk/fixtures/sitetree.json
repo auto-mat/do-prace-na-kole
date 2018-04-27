@@ -392,6 +392,42 @@
         "pk": 16
     },
     {
+        "model": "sitetree_modeltranslation.modeltranslationtreeitem",
+        "pk": 37,
+        "fields": {
+            "title": "Dovolen\u00e1",
+            "title_en": "Vacations",
+            "title_cs": "Dovolen\u00e1",
+            "title_dsnkcs": "Dovolen\u00e1",
+            "hint": "",
+            "hint_en": null,
+            "hint_cs": null,
+            "hint_dsnkcs": null,
+            "url": "/dovolena/",
+            "url_en": "/dovolena/",
+            "url_cs": "/dovolena/",
+            "url_dsnkcs": "/dovolena/",
+            "urlaspattern": false,
+            "tree": 2,
+            "hidden": false,
+            "alias": null,
+            "description": "",
+            "description_en": "",
+            "description_cs": "",
+            "description_dsnkcs": "",
+            "inmenu": true,
+            "inbreadcrumbs": true,
+            "insitetree": true,
+            "access_loggedin": false,
+            "access_guest": false,
+            "access_restricted": false,
+            "access_perm_type": 1,
+            "parent": 9,
+            "sort_order": 37,
+            "access_permissions": []
+        }
+    },
+    {
         "fields": {
             "access_guest": false,
             "access_loggedin": false,

@@ -1,16 +1,21 @@
 {% extends "base_generic_form.html" %}
 {% load i18n %}
 {% load l10n %}
+{% load static %}
 
+
+{% block extrahead %}
+<link rel='stylesheet' href='{% static "bow/fullcalendar/dist/fullcalendar.css"%}' />
+<script src='{% static "bow/moment/moment.js"%}'></script>
+<script src='{% static "bow/fullcalendar/dist/fullcalendar.js"%}'></script>
+<script src='{% static "bow/fullcalendar/dist/locale-all.js"%}'></script>
+{{ block.super }}
+{% endblock %}
 {% block form %}
-<link rel='stylesheet' href='/static/bow/fullcalendar/dist/fullcalendar.css' />
-<script src='/static/bow/moment/moment.js'></script>
-<script src='/static/bow/fullcalendar/dist/fullcalendar.js'></script>
-<script src='/static/bow/fullcalendar/dist/locale-all.js'></script>
 {% blocktrans %}
-Označte dovolená kliknutím na budoucí data.
-<br/>
+Označte dovolenou kliknutím na budoucí data.
 {% endblocktrans %}
+<br/>
 {% get_current_language as LANGUAGE_CODE %}
 <div id='calendar'></div>
 <script>
@@ -51,7 +56,7 @@ $(function() {
                   }
               }
               $('#calendar').fullCalendar('renderEvent', new_event);
-              $.post('/dovolena/', {
+              $.post('{% url "vacations" %}', {
                   on_vacation: true,
                   start_date: startDate.format('YYYY-MM-DD'),
                   end_date: endDate.format('YYYY-MM-DD'),
