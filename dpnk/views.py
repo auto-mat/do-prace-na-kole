@@ -1836,7 +1836,7 @@ def view_edit_trip(request, date, direction):
         raise exceptions.TemplatePermissionDenied(_("Neplatný směr cesty."))
     if not util.day_active(date, request.user_attendance.campaign):
         return TripView.as_view()(request, date=date, direction=direction)
-    if models.Trip.objects.filter(date=date, direction=direction).exists():
+    if models.Trip.objects.filter(user_attendance=request.user_attendance, date=date, direction=direction).exists():
         return UpdateTripView.as_view()(request, date=date, direction=direction)
     else:
         return CreateTripView.as_view()(request, date=date, direction=direction)
@@ -1871,7 +1871,14 @@ class WithTripMixin():
 
 
 class UpdateTripView(EditTripView, WithTripMixin, UpdateView):
-    pass
+    def get_initial(self):
+        initial = {}
+        instance = self.get_object()
+        if instance.track is None and (not instance.distance or instance.distance == self.user_attendance.get_distance()):
+            if self.user_attendance.track:
+                initial['track'] = self.user_attendance.track
+                initial['distance'] = self.user_attendance.get_distance()
+        return super().get_initial(initial)
 
 
 class CreateTripView(EditTripView, CreateView):
@@ -1884,6 +1891,7 @@ class CreateTripView(EditTripView, CreateView):
             'direction': self.kwargs['direction'],
             'date': self.kwargs['date'],
             'track': track,
+            'distance': self.user_attendance.distance,
         }
         return super().get_initial(initial)
 
