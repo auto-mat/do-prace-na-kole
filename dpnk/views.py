@@ -906,7 +906,6 @@ class VacationsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixi
         )
         no_work = models.CommuteMode.objects.get(slug='no_work')
         if on_vacation:
-            trips = []
             for date in util.daterange(start_date, end_date):
                 for direction in ['trip_to', 'trip_from']:
                     try:
