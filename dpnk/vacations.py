@@ -21,6 +21,7 @@
 
 import datetime
 
+from django.contrib.humanize.templatetags.humanize import intcomma
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
@@ -60,7 +61,7 @@ def get_vacations(user_attendance):
 def get_events(request):
     events = []
 
-    def add_event(title, date, end=None, commute_mode=None, order=0, url=None, eid=None):
+    def add_event(title, date, end=None, commute_mode=None, direction=None, order=0, url=None, eid=None):
         event = {
             "title": title,
             "start": str(date),
@@ -68,6 +69,7 @@ def get_events(request):
             "editable": False,
             "allDay": True,
             "commute_mode": commute_mode,
+            "direction": direction,
         }
         if end:
             event["end"] = str(end)
@@ -86,20 +88,16 @@ def get_events(request):
         commute_mode__slug__in=('by_foot', 'bicycle'),
     )
     for trip in trips:
-        distance = str(trip.distance)
-        if trip.direction == 'trip_to':
-            title = " " + _("Do práce") + " " + distance + " km"
-            order = 1
-            commute_mode = trip.commute_mode.slug
-        if trip.direction == 'trip_from':
-            title = " " + _("Domů") + " " + distance + " km"
-            order = 2
-            commute_mode = trip.commute_mode.slug
+        distance = intcomma(round(trip.distance, 1))
+        title = distance + " km"
+        commute_mode = trip.commute_mode.slug
+        order = 2 if trip.direction == 'trip_from' else 1
         add_event(
             title,
             trip.date,
             order=order,
             commute_mode=commute_mode,
+            direction=trip.direction,
             url=reverse('trip', kwargs={'date': trip.date, 'direction': trip.direction}),
         )
     for vacation in get_vacations(request.user_attendance)[0]:

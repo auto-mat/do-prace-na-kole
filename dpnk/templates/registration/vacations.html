@@ -101,16 +101,28 @@ $(function() {
           add_vacation(date, moment(date, "DD-MM-YYYY").add(1, 'days'));
       },
       eventRender: function(event, element) {
-          var icon = null;
-          if (event.commute_mode == 'bicycle'){
-              icon = document.createElement("i");
-              icon.className='fa fa-bicycle';
-          } else if (event.commute_mode == 'by_foot') {
-              icon = document.createElement("i");
-              icon.className='fa fa-child';
+          var direction_icon = null;
+          if (event.direction == 'trip_to'){
+              direction_icon = document.createElement("i");
+              direction_icon.className='fa fa-industry';
+          } else if (event.direction == 'trip_from') {
+              direction_icon = document.createElement("i");
+              direction_icon.className='fa fa-home';
           }
-          if (icon) {
-              element.prepend(icon);
+          if (direction_icon) {
+              element.children(1).prepend(direction_icon);
+          }
+          var mode_icon = null;
+          if (event.commute_mode == 'bicycle'){
+              mode_icon = document.createElement("i");
+              mode_icon.className='fa fa-bicycle';
+          } else if (event.commute_mode == 'by_foot') {
+              mode_icon = document.createElement("i");
+              mode_icon.className='fa fa-child';
+          }
+          if (mode_icon) {
+              element.children(1).prepend("→");
+              element.children(1).prepend(mode_icon);
           }
           if (event.id) { // https://stackoverflow.com/questions/26530076/fullcalendar-js-deleting-event-on-button-click#26530819
               if (moment(event.start, "DD-MM-YYYY").add(1, 'days').format('YYYY-MM-DD') == event.end.format('YYYY-MM-DD')) {
