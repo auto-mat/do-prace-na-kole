@@ -1125,6 +1125,7 @@ class GpxFileInline(LeafletGeoAdminMixin, admin.TabularInline):
     readonly_fields = (
         'author',
         'created',
+        'updated_by',
     )
     exclude = (
         'ecc_last_upload',
