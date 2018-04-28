@@ -87,7 +87,8 @@ def days_count(competition, day=None):
 
 
 def days_active(competition):
-    return [d for d in days(competition) if day_active(d, competition.campaign)]
+    """ Get editable days for this competition/campaign """
+    return [d for d in days(competition) if competition.campaign.day_active(d)]
 
 
 def _today():
@@ -124,53 +125,6 @@ def rebuild_denorm_models(models):
             object_id=model.pk,
         )
         denorm.flush()
-
-
-def day_active_last(day, campaign):
-    day_today = _today()
-    return (
-        (day <= day_today) and
-        (day > day_today - datetime.timedelta(days=campaign.days_active))
-    )
-
-
-def day_active_last_cut_after_may(day, campaign):
-    day_today = _today()
-    if day_today > datetime.date(2016, 6, 2) and day_today < datetime.date(2016, 6, 8):
-        date_from = datetime.date(2016, 5, 31)
-    else:
-        date_from = day_today - datetime.timedelta(days=campaign.days_active)
-    return (
-        (day <= day_today) and
-        (day > date_from)
-    )
-
-
-def vacation_day_active(day, campaign):
-    day_today = _today()
-    last_day = campaign.competition_phase().date_to
-    return (
-        (day <= last_day) and
-        (day > day_today)
-    )
-
-
-def possible_vacation_days(campaign):
-    competition_phase = campaign.competition_phase()
-    return [d for d in daterange(competition_phase.date_from, competition_phase.date_to) if vacation_day_active(d, campaign)]
-
-
-# def day_active_last_week(day):
-#     day_today = _today()
-#     return (
-#         (day <= day_today) and
-#         ((day.isocalendar()[1] == day_today.isocalendar()[1]) or
-#             (day_today.weekday() == 0 and
-#                 day.isocalendar()[1] + 1 == day_today.isocalendar()[1]))
-#     )
-
-
-day_active = day_active_last_cut_after_may
 
 
 def parse_date(date):

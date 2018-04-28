@@ -20,13 +20,15 @@
 import datetime
 
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from dpnk import models
+from dpnk.test.util import ClearCacheMixin
 
 from model_mommy import mommy
 
 
-class TestCampaignMethods(TestCase):
+class TestCampaignMethods(ClearCacheMixin, TestCase):
     def test_phase(self):
         """
         Test that phase caching works properly
@@ -38,6 +40,27 @@ class TestCampaignMethods(TestCase):
         campaign1 = models.Campaign.objects.create(name="Campaign 1", slug="campaign1")
         phase1 = models.Phase.objects.create(campaign=campaign1, phase_type="competition")
         self.assertEqual(campaign1.phase("competition"), phase1)
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    )
+    def test_day_active(self):
+        campaign = mommy.make("Campaign")
+        self.assertTrue(campaign.day_active(datetime.date(2010, 11, 14)))
+        self.assertTrue(campaign.day_active(datetime.date(2010, 11, 20)))
+        self.assertFalse(campaign.day_active(datetime.date(2010, 11, 13)))
+        self.assertFalse(campaign.day_active(datetime.date(2010, 11, 21)))
+
+    @override_settings(
+        FAKE_DATE=datetime.date(year=2010, month=11, day=20),
+    )
+    def test_vacation_day_active(self):
+        phase = mommy.make("Phase", phase_type="competition", date_to="2010-12-14")
+        campaign = phase.campaign
+        self.assertFalse(campaign.vacation_day_active(datetime.date(2010, 11, 14)))
+        self.assertFalse(campaign.vacation_day_active(datetime.date(2010, 11, 20)))
+        self.assertTrue(campaign.vacation_day_active(datetime.date(2010, 11, 25)))
+        self.assertFalse(campaign.vacation_day_active(datetime.date(2010, 12, 17)))
 
 
 class TestMethods(TestCase):

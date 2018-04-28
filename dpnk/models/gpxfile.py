@@ -38,7 +38,6 @@ from .commute_mode import CommuteMode
 from .trip import Trip
 from .user_attendance import UserAttendance
 from .util import MAP_DESCRIPTION
-from .. import util
 
 
 def normalize_gpx_filename(instance, filename):
@@ -183,7 +182,7 @@ def set_trip(sender, instance, *args, **kwargs):
             date=instance.trip_date,
             direction=instance.direction,
             defaults={
-                'commute_mode': instance.commute_mode if util.day_active(instance.trip_date, instance.user_attendance.campaign) else by_other_vehicle,
+                'commute_mode': instance.commute_mode if instance.user_attendance.campaign.day_active(instance.trip_date) else by_other_vehicle,
             },
         )
         instance.trip = trip

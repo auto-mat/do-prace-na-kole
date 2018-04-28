@@ -159,7 +159,7 @@ class Trip(models.Model):
     )
 
     def active(self):
-        return util.day_active(self.date, self.user_attendance.campaign)
+        return self.user_attendance.campaign.day_active(self.date)
 
 
 @receiver(pre_save, sender=Trip)

@@ -859,7 +859,7 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredM
                 models.Trip.DIRECTIONS_DICT[trip[1]],
                 _("Nezadáno"),
                 trip[1],
-                util.day_active(trip[0], self.user_attendance.campaign)
+                self.user_attendance.campaign.day_active(trip[0])
             ) for trip in uncreated_trips
         ]
         trips = list(trips) + uncreated_trips
@@ -881,7 +881,7 @@ class VacationsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixi
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         context_data.update({
-            "possible_vacation_days": json.dumps([str(day) for day in util.possible_vacation_days(self.user_attendance.campaign)]),
+            "possible_vacation_days": json.dumps([str(day) for day in self.user_attendance.campaign.possible_vacation_days()]),
             "first_vid": vacations.get_vacations(self.user_attendance)[1],
             "events": json.dumps(vacations.get_events(self.request)),
         })
@@ -892,7 +892,7 @@ class VacationsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixi
         on_vacation = on_vacation == 'true'
         start_date = util.parse_date(request.POST.get('start_date', None))
         end_date = util.parse_date(request.POST.get('end_date', None))
-        possible_vacation_days = util.possible_vacation_days(self.user_attendance.campaign)
+        possible_vacation_days = self.user_attendance.campaign.possible_vacation_days()
         if not start_date <= end_date:
             raise exceptions.TemplatePermissionDenied(_("Data musí být seřazena chronologicky"))
         if not {start_date, end_date}.issubset(possible_vacation_days):
@@ -1827,7 +1827,7 @@ def view_edit_trip(request, date, direction):
         raise exceptions.TemplatePermissionDenied(_("Nemůžete editovat cesty ke starším datům."))
     if direction not in ["trip_to", "trip_from"]:
         raise exceptions.TemplatePermissionDenied(_("Neplatný směr cesty."))
-    if not util.day_active(date, request.user_attendance.campaign):
+    if not request.user_attendance.campaign.day_active(date):
         return TripView.as_view()(request, date=date, direction=direction)
     if models.Trip.objects.filter(user_attendance=request.user_attendance, date=date, direction=direction).exists():
         return UpdateTripView.as_view()(request, date=date, direction=direction)

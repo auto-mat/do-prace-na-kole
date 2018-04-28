@@ -35,7 +35,7 @@ def get_vacations(user_attendance):
     vacations = []
     this_day = None
     current_vacation = None
-    possible_vacation_days = util.possible_vacation_days(user_attendance.campaign)
+    possible_vacation_days = user_attendance.campaign.possible_vacation_days()
     vid = 1
     for trip in trips:
         if this_day and trip.date <= (this_day + datetime.timedelta(days=1)):
