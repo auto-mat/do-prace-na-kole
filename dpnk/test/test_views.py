@@ -456,7 +456,7 @@ class PaymentTypeViewTests(TestCase):
 
 
 class DistanceTests(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'trips', 'commute_mode']
 
     def test_distance(self):
         trips = models.Trip.objects.all()
@@ -2156,7 +2156,7 @@ class RegistrationMixinTests(ViewsLogon):
 
 
 class TripViewTests(ViewsLogon):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'commute_mode']
 
     def test_trip_view(self):
         trip = mommy.make(
@@ -2420,7 +2420,7 @@ class TripViewTests(ViewsLogon):
 
 
 class StatisticsTests(ViewsLogon):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'commute_mode']
 
     def test_statistics(self):
         address = reverse(views.statistics)
