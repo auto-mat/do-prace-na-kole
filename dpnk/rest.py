@@ -28,6 +28,11 @@ from .middleware import get_or_create_userattendance
 from .models import City, CommuteMode, Company, Competition, CompetitionResult, Subsidiary, Team, Trip, UserAttendance
 
 
+class InactiveDayGPX(APIException):
+    status_code = 410
+    default_detail = "Trip for this day cannot be created/updated. This day is not active for edition"
+
+
 class DuplicateGPX(APIException):
     status_code = 409
     default_detail = "GPX for this day and trip already uploaded"
@@ -91,6 +96,13 @@ class TripSerializer(serializers.ModelSerializer):
         help_text='GPX file with the track',
     )
 
+    def validate(self, data):
+        validated_data = super().validate(data)
+        request = self.context['request']
+        if 'date' in validated_data and not request.user_attendance.campaign.day_active(validated_data['date']):
+            raise InactiveDayGPX
+        return validated_data
+
     def create(self, validated_data):
         request = self.context['request']
         user_attendance = request.user_attendance
@@ -138,6 +150,19 @@ class TripDetailSerializer(TripSerializer):
         extra_kwargs = {}
 
 
+class TripUpdateSerializer(TripSerializer):
+    class Meta(TripSerializer.Meta):
+        fields = (
+            'id',
+            'file',
+            'track',
+            'commuteMode',
+            'durationSeconds',
+            'distanceMeters',
+            'sourceApplication',
+        )
+
+
 class TripSet(viewsets.ModelViewSet):
     """
     Documentation: https://www.dopracenakole.cz/rest-docs/
@@ -159,6 +184,8 @@ class TripSet(viewsets.ModelViewSet):
         )
 
     def get_serializer_class(self):
+        if self.request.method == 'PUT':
+            return TripUpdateSerializer
         return TripDetailSerializer if self.action == 'retrieve' else TripSerializer
 
     permission_classes = [permissions.IsAuthenticated]
