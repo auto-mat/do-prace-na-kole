@@ -112,8 +112,3 @@ def update_mailing_user(sender, instance, created, **kwargs):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
-
-
-def set_track(sender, instance, changed_fields=None, **kwargs):
-    if hasattr(instance, 'track_clean'):
-        instance.track = instance.track_clean

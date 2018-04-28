@@ -59,4 +59,3 @@ class DPNKConfig(AppConfig):
         post_save_changed.connect(dpnk_models.change_invoice_payments_status, sender=dpnk_models.Invoice, fields=['paid_date'])
         pre_save_changed.connect(dpnk_models.pre_user_team_changed, sender=dpnk_models.UserAttendance, fields=['team'])
         post_save_changed.connect(dpnk_models.post_user_team_changed, sender=dpnk_models.UserAttendance, fields=['team'])
-        pre_save_changed.connect(dpnk_models.set_track, sender=dpnk_models.GpxFile, fields=['file'])

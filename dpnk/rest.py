@@ -115,8 +115,6 @@ class TripSerializer(serializers.ModelSerializer):
         try:
             instance = Trip(**validated_data)
             instance.clean()
-            if hasattr(instance, 'track_clean'):
-                instance.track = instance.track_clean
             instance.from_application = True
             instance.save()
         except IntegrityError:
