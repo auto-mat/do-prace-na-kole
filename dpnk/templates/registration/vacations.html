@@ -32,7 +32,9 @@ function events_overlap(event1, event2) {
 }
 
 function add_vacation(startDate, endDate) {
-    if(possible_vacation_days.indexOf(startDate.format('YYYY-MM-DD')) >= 0 && possible_vacation_days.indexOf(endDate.format('YYYY-MM-DD')) >= 0){
+    startDateString = startDate.format('YYYY-MM-DD')
+    endDateString = moment(endDate, "DD-MM-YYYY").subtract(1, 'days').format('YYYY-MM-DD')
+    if(possible_vacation_days.indexOf(startDateString) >= 0 && possible_vacation_days.indexOf(endDateString) >= 0){
         new_event = {
             title: "{% trans "Dovolená" %}",
             start: startDate,
@@ -42,16 +44,18 @@ function add_vacation(startDate, endDate) {
         }
         events = $('#calendar').fullCalendar( 'clientEvents');
         for (eid in events) {
-            if (events_overlap(new_event, events[eid])) {
-                e2 = events[eid]
-                return;
+            if (events[eid].id) {
+                if (events_overlap(new_event, events[eid])) {
+                    e2 = events[eid]
+                    return;
+                }
             }
         }
         $('#calendar').fullCalendar('renderEvent', new_event);
         $.post('{% url "vacations" %}', {
             on_vacation: true,
-            start_date: startDate.format('YYYY-MM-DD'),
-            end_date: endDate.format('YYYY-MM-DD'),
+            start_date: startDateString,
+            end_date: endDateString,
             csrfmiddlewaretoken: "{{ csrf_token }}",
             },
             function(returnedData){
@@ -60,6 +64,23 @@ function add_vacation(startDate, endDate) {
             window.alert('{% trans "Propojení selhalo" %}');
         });
     }
+}
+
+function remove_vacation(event) {
+    $('#calendar').fullCalendar( 'removeEvents', event.id );
+    startDateString = event.start.format('YYYY-MM-DD')
+    endDateString = moment(event.end, "DD-MM-YYYY").subtract(1, 'days').format('YYYY-MM-DD')
+    $.post("{% url 'vacations' %}", {
+        on_vacation: false,
+        start_date: startDateString,
+        end_date: endDateString,
+        csrfmiddlewaretoken: "{{ csrf_token }}",
+        },
+        function(returnedData){
+        }
+    ).fail(function(jqXHR, textStatus, errorThrown) {
+        window.alert('{% trans "Propojení selhalo" %}');
+    });
 }
 
 $(function() {
@@ -95,25 +116,13 @@ $(function() {
               if (moment(event.start, "DD-MM-YYYY").add(1, 'days').format('YYYY-MM-DD') == event.end.format('YYYY-MM-DD')) {
                   setTimeout(function(){ // Without this, the button gets clicked by the same event that created the event on mobile.
                       element.append('<button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button>');
+                      element.find(".closeon").click(function(){remove_vacation(event)});
                   }, 10);
               } else {
                   element.append('<div style="position:absolute;bottom:3px;right:4px; z-index:200;" class="fc-transparent"><button class="btn btn-default btn-xs closeon" ><i class="fa fa-trash"></i></button></div>');
+                  element.find(".closeon").click(function(){remove_vacation(event)});
+                  element.append("<br/>");
               }
-              element.find(".closeon").click(function() {
-                  $('#calendar').fullCalendar( 'removeEvents', event.id );
-                  $.post("{% url 'vacations' %}", {
-                      on_vacation: false,
-                      start_date: event.start.format('YYYY-MM-DD'),
-                      end_date: event.end.format('YYYY-MM-DD'),
-                      csrfmiddlewaretoken: "{{ csrf_token }}",
-                      },
-                      function(returnedData){
-                      }
-                  ).fail(function(jqXHR, textStatus, errorThrown) {
-                      window.alert('{% trans "Propojení selhalo" %}');
-                  });
-              });
-              element.append("<br/>");
           }
       },
       dayRender: function (date, cell) {

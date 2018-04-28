@@ -893,9 +893,8 @@ class VacationsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixi
         start_date = util.parse_date(request.POST.get('start_date', None))
         end_date = util.parse_date(request.POST.get('end_date', None))
         possible_vacation_days = util.possible_vacation_days(self.user_attendance.campaign)
-        if not start_date < end_date:
+        if not start_date <= end_date:
             raise exceptions.TemplatePermissionDenied(_("Data musí být seřazena chronologicky"))
-        end_date = end_date - datetime.timedelta(days=1)
         if not {start_date, end_date}.issubset(possible_vacation_days):
             raise exceptions.TemplatePermissionDenied(_("Není povoleno editovat toto datum"))
         existing_trips = Trip.objects.filter(
