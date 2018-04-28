@@ -1867,9 +1867,9 @@ class UpdateTripView(EditTripView, WithTripMixin, UpdateView):
     def get_initial(self):
         initial = {}
         instance = self.get_object()
-        if instance.track is None:
-            if self.user_attendance.track:
+        if instance.track is None and self.user_attendance.track:
                 initial['track'] = self.user_attendance.track
+        if not instance.distance:
                 initial['distance'] = self.user_attendance.get_distance()
         return super().get_initial(initial)
 
