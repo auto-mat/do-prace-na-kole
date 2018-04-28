@@ -102,7 +102,7 @@ def get_events(request):
         )
     for vacation in get_vacations(request.user_attendance)[0]:
         add_event(
-            _('Dovolená'),
+            _('Žádná cesta') if vacation['date'] <= util.today() else _('Dovolená'),
             vacation["date"],
             end=vacation["end"],
             eid=vacation.get("id", None),
