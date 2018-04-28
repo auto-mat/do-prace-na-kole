@@ -81,7 +81,7 @@ class TripSerializer(serializers.ModelSerializer):
         help_text='Transport mode of the trip',
     )
     sourceApplication = serializers.CharField(
-        required=False,
+        required=True,
         source='source_application',
         help_text='Any string identifiing the source application of the track',
     )
@@ -96,19 +96,21 @@ class TripSerializer(serializers.ModelSerializer):
         help_text='GPX file with the track',
     )
 
+    def is_valid(self, *args, **kwargs):
+        request = self.context['request']
+        self.user_attendance = request.user_attendance
+        if not self.user_attendance:
+            self.user_attendance = get_or_create_userattendance(request, request.subdomain)
+        return super().is_valid(*args, **kwargs)
+
     def validate(self, data):
         validated_data = super().validate(data)
-        request = self.context['request']
-        if 'date' in validated_data and not request.user_attendance.campaign.day_active(validated_data['date']):
+        if 'date' in validated_data and not self.user_attendance.campaign.day_active(validated_data['date']):
             raise InactiveDayGPX
         return validated_data
 
     def create(self, validated_data):
-        request = self.context['request']
-        user_attendance = request.user_attendance
-        if not user_attendance:
-            user_attendance = get_or_create_userattendance(request, request.subdomain)
-        validated_data['user_attendance'] = user_attendance
+        validated_data['user_attendance'] = self.user_attendance
 
         try:
             instance = Trip(**validated_data)

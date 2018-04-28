@@ -32,7 +32,6 @@ import denorm
 from django.contrib.gis.db.models.functions import Length
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
-from django.db import transaction
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
@@ -2303,76 +2302,6 @@ class TripViewTests(ViewsLogon):
         }
         response = self.client.post(address, post_data, follow=True)
         self.assertContains(response, "Zadejte trasu, nebo zaškrtněte, že trasu nechcete zadávat.")
-
-    def test_dpnk_rest_gpx_gz(self):
-        with open('dpnk/test_files/modranska-rokle.gpx.gz', 'rb') as gpxfile:
-            post_data = {
-                'trip_date': '2010-11-3',
-                'direction': 'trip_to',
-                'file': gpxfile,
-            }
-            response = self.client.post("/rest/gpx/", post_data, format='multipart', follow=True)
-            self.assertEquals(response.status_code, 201)
-        trip = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=3))
-        self.assertEquals(trip.direction, 'trip_to')
-        self.assertEquals(trip.distance, 13.32)
-
-    def test_dpnk_rest_gpx_gz_parse_error(self):
-        with open('dpnk/test_files/DSC00002.JPG', 'rb') as gpxfile:
-            post_data = {
-                'trip_date': '2010-11-06',
-                'direction': 'trip_to',
-                'file': gpxfile,
-            }
-            response = self.client.post('/rest/gpx/', post_data, format='multipart', follow=True)
-            self.assertJSONEqual(response.content.decode(), {"detail": "Can't parse GPX file"})
-            self.assertEqual(response.status_code, 400)
-
-    def test_dpnk_rest_gpx_gz_duplicate_error(self):
-        post_data = {
-            'trip_date': '2010-11-01',
-            'direction': 'trip_to',
-        }
-        with transaction.atomic():
-            response = self.client.post('/rest/gpx/', post_data, format='multipart', follow=True)
-        self.assertJSONEqual(response.content.decode(), {'detail': 'GPX for this day and trip already uploaded'})
-        self.assertEqual(response.status_code, 409)
-
-    def test_dpnk_rest_gpx_gz_no_login(self):
-        post_data = {
-            'trip_date': '2010-11-01',
-            'direction': 'trip_to',
-        }
-        self.client.logout()
-        response = self.client.post('/rest/gpx/', post_data, format='multipart', follow=True)
-        self.assertJSONEqual(response.content.decode(), {'detail': 'Nebyly zadány přihlašovací údaje.'})
-        self.assertEqual(response.status_code, 401)
-
-    def test_dpnk_rest_gpx_gz_campaign_error(self):
-        post_data = {
-            'trip_date': '2010-11-01',
-            'direction': 'trip_to',
-        }
-        response = self.client.post('/rest/gpx/', post_data, HTTP_HOST='noncampaign.testserver', format='multipart', follow=True)
-        self.assertContains(
-            response,
-            '<div class="alert alert-danger">Kampaň s identifikátorem noncampaign neexistuje. Zadejte prosím správnou adresu.</div>',
-            html=True,
-            status_code=404,
-        )
-
-    def test_dpnk_rest_gpx(self):
-        with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
-            post_data = {
-                'trip_date': '2010-11-3',
-                'direction': 'trip_to',
-                'file': gpxfile,
-            }
-            response = self.client.post("/rest/gpx/", post_data, format='multipart', follow=True)
-            self.assertEquals(response.status_code, 201)
-        trip = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=3))
-        self.assertEquals(trip.direction, 'trip_to')
-        self.assertEquals(trip.distance, 13.32)
 
     def test_emission_calculator(self):
         address = reverse('emission_calculator')
