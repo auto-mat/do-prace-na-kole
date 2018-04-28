@@ -73,6 +73,8 @@ class UtilTests(TestCase):
         self.assertFalse(util.working_day(datetime.date(2034, 5, 8)))
         self.assertFalse(util.working_day(datetime.date(2018, 1, 20)))
         self.assertTrue(util.working_day(datetime.date(2018, 1, 19)))
+        self.assertFalse(util.working_day(datetime.date(2018, 5, 8)))
+        self.assertFalse(util.working_day(datetime.date(2018, 5, 1)))
 
 
 class TodayTests(TestCase):

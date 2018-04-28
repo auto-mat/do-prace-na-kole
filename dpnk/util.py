@@ -40,10 +40,6 @@ from . import exceptions
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 DAYS_EXCLUDE = (
-    datetime.date(year=2014, day=8, month=5),
-    datetime.date(year=2015, day=8, month=5),
-    datetime.date(year=2016, day=1, month=5),
-    datetime.date(year=2016, day=8, month=5),
     datetime.date(year=2016, day=5, month=7),
     datetime.date(year=2016, day=6, month=7),
     datetime.date(year=2016, day=28, month=9),
@@ -57,7 +53,7 @@ def daterange(start_date, end_date):
 
 
 def working_day(day):
-    if day.day in (1, 8) and day.month == 5:
+    if day.day in (1, 8) and day.month == 5:  # Public holiday at may
         return False
     return day not in DAYS_EXCLUDE and day.weekday() not in (5, 6)
 
