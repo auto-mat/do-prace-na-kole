@@ -13,7 +13,6 @@ from dpnk.forms import FullTripForm
 from dpnk.models.phase import Phase
 from dpnk.models.trip import Trip
 from dpnk.models.user_attendance import UserAttendance
-from dpnk.util import days_active
 
 import polyline
 
@@ -70,7 +69,7 @@ def sync(strava_account_id, manual_sync=True):
     return stats
 
 
-def sync_activity(activity, hashtag_table, strava_account, sclient, stats):
+def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # noqa
     stats["synced_activities"] += 1
     try:
         campaign, direction = hashtag_table.get_campaign_and_direction_for_activity(activity)
