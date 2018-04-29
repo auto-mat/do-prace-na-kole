@@ -63,7 +63,7 @@ def get_vacations(user_attendance):
 def get_events(request):
     events = []
 
-    def add_event(title, date, end=None, commute_mode=None, direction=None, order=0, url=None, eid=None):
+    def add_event(title, date, end=None, commute_mode=None, direction=None, order=0, url=None, eid=None, css_class=None):
         event = {
             "title": title,
             "start": str(date),
@@ -72,6 +72,7 @@ def get_events(request):
             "allDay": True,
             "commute_mode": commute_mode,
             "direction": direction,
+            "className": css_class,
         }
         if end:
             event["end"] = str(end)
@@ -84,8 +85,8 @@ def get_events(request):
         events.append(event)
 
     phase = request.campaign.phase("competition")
-    add_event("Začatek soutěže", phase.date_from)
-    add_event("Konec soutěže", phase.date_to)
+    add_event(_("Začatek soutěže"), phase.date_from, css_class="vc-competition-beginning")
+    add_event(_("Konec soutěže"), phase.date_to, css_class="vc-competition-end")
     trips = request.user_attendance.user_trips.filter(
         commute_mode__slug__in=('by_foot', 'bicycle'),
     )
@@ -104,6 +105,7 @@ def get_events(request):
             commute_mode=commute_mode,
             direction=trip.direction,
             url=reverse('trip', kwargs={'date': trip.date, 'direction': trip.direction}),
+            css_class="vc-" + trip.direction.replace("_", "-"),
         )
     for vacation in get_vacations(request.user_attendance)[0]:
         add_event(
@@ -111,6 +113,7 @@ def get_events(request):
             vacation["date"],
             end=vacation["end"],
             eid=vacation.get("id", None),
+            css_class='no-trip' if vacation['date'] <= util.today() else 'vc-vacation',
         )
-    add_event(_('Dnes'), util.today())
+    add_event(_('Dnes'), util.today(), css_class="vc-today")
     return events
