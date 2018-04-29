@@ -116,7 +116,7 @@ class Trip(models.Model):
         max_length=512,
     )
     distance = models.FloatField(
-        verbose_name=_(u"Ujetá vzdálenost (Km)"),
+        verbose_name=_(u"Ujetá vzdálenost (km)"),
         null=True,
         blank=True,
         default=None,
