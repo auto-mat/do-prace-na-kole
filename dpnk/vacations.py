@@ -88,8 +88,11 @@ def get_events(request):
         commute_mode__slug__in=('by_foot', 'bicycle'),
     )
     for trip in trips:
-        distance = intcomma(round(trip.distance, 1))
-        title = distance + " km"
+        if trip.distance:
+            distance = intcomma(round(trip.distance, 1))
+            title = distance + " km"
+        else:
+            title = ""
         commute_mode = trip.commute_mode.slug
         order = 2 if trip.direction == 'trip_from' else 1
         add_event(
