@@ -1176,6 +1176,7 @@ class TripAdmin(ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
     list_max_show_all = 100000
     inlines = [GpxFileInline, ]
     resource_class = TripResource
+    save_as = True
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
