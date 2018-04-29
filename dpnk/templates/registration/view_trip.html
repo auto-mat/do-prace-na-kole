@@ -21,6 +21,7 @@
 <h3>{% trans "Vzdálenost" %}</h3>
 {{ trip.distance }} km
 <h3>{% trans "Trasa" %}</h3>
+{% if trip.track %}
 {% leaflet_map "track_map" callback="window.load_track" %}
 <script type="text/javascript">
 // https://gis.stackexchange.com/questions/68489/loading-external-geojson-file-into-leaflet-map#98411
@@ -37,5 +38,8 @@ function load_track (map, options) {
  }).error(function() {});
 }
 </script>
+{% else %}
+{% trans 'Žádná trasa nebyla zadána' %}
+{% endif %}
 {% endif %}
 {% endblock %}

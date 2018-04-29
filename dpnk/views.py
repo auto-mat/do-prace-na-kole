@@ -1905,4 +1905,8 @@ class TripView(TitleViewMixin, LoginRequiredMixin, WithTripMixin, TemplateView):
 
 class TripGeoJsonView(LoginRequiredMixin, WithTripMixin, View):
     def get(self, *args, **kwargs):
-        return HttpResponse(self.get_object().track.geojson)
+        if self.get_object().track:
+            track_json = self.get_object().track.geojson
+        else:
+            track_json = {}
+        return HttpResponse(track_json)
