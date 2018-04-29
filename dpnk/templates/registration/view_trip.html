@@ -9,7 +9,7 @@
 {% endblock %}
 {% block content %}
 <p align="center">
-Podle pravidla soutěže, nemůžete zadavat ani změnit jízdy starší {{days_active}} dnů.
+{% blocktrans %}Podle pravidel soutěže, nemůžete zadavat ani změnit jízdy starší než {{days_active}} dnů.{% endblocktrans %}
 </p>
 <h3>{% trans "Den" %}</h3>
 {{ trip.date }}
