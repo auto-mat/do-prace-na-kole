@@ -46,6 +46,7 @@ def get_vacations(user_attendance):
             if current_vacation:
                 vacations.append(current_vacation)
             current_vacation = {
+                "title": str(trip.get_commute_mode_display()),
                 "date": trip.date,
                 "end": trip.date + datetime.timedelta(days=1),
                 "editable": trip.date in possible_vacation_days,
@@ -106,7 +107,7 @@ def get_events(request):
         )
     for vacation in get_vacations(request.user_attendance)[0]:
         add_event(
-            _('Žádná cesta') if vacation['date'] <= util.today() else _('Dovolená'),
+            vacation["title"],
             vacation["date"],
             end=vacation["end"],
             eid=vacation.get("id", None),

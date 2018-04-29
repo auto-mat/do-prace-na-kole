@@ -161,6 +161,11 @@ class Trip(models.Model):
     def active(self):
         return self.user_attendance.campaign.day_active(self.date)
 
+    def get_commute_mode_display(self):
+        if self.commute_mode.slug == 'no_work' and self.date > util.today():
+            return _('Dovolená')
+        return str(self.commute_mode)
+
 
 @receiver(pre_save, sender=Trip)
 def trip_pre_save(sender, instance, **kwargs):

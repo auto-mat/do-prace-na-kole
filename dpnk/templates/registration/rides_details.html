@@ -16,7 +16,7 @@
       {% if trip.date %}
       <td>{{ trip.date }}</td>
       <td>{{ trip.get_direction_display }}</td>
-      <td>{{ trip.commute_mode }}</td>
+      <td>{{ trip.get_commute_mode_display }}</td>
       {% if trip.distance %}
       <td>
       {% if trip.distance %}{{ trip.distance|floatformat:1 }}&nbsp;{% trans 'km' %}{% endif %}
@@ -54,7 +54,7 @@
       <tr>
          <td>{{ trip.date }}</td>
          <td>{{ trip.get_direction_display }}</td>
-         <td>{{ trip.commute_mode }}</td>
+         <td>{{ trip.get_commute_mode_display }}</td>
          <td>{% if trip.distance %}{{ trip.distance|floatformat:1 }}&nbsp;{% trans 'km' %}{% endif %}</td>
          <td>
          <a href="{% url "trip" date=trip.date direction=trip.direction %}">
