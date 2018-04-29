@@ -28,7 +28,7 @@ from bulk_update.manager import BulkUpdateManager
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db.models.signals import pre_save, post_save  # noqa
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
