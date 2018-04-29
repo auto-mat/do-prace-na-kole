@@ -92,7 +92,7 @@ class TestActionsMommy(TestCase):
     FAKE_DATE=datetime.date(year=2010, month=11, day=20),
 )
 class TestActions(TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'test_results_data', 'invoices']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'test_results_data', 'invoices', 'commute_mode']
 
     def setUp(self):
         self.modeladmin = admin.ModelAdmin(models.UserAttendance, "")

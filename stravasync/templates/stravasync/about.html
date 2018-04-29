@@ -1,0 +1,62 @@
+{% extends "base_generic_form.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block messages %}
+<div  class="card card-block card-outline-primary">
+<p class="card-text">
+{% if account %}
+    {% trans "Jste propojeni s účtem " %}{{account.first_name}} {{account.last_name}} ({{account.username}}).
+    <br/>
+    <br/>
+    {% if sync_outcome %}
+        {% blocktrans with new_trips=sync_outcome.new_trips synced_trips=sync_outcome.synced_trips %}
+        Synchronizace proběhla uspěšně.<br/>
+        Bylo přidano {{new_trips}}
+        z celkém {{synced_trips}} cest.
+        {% endblocktrans %}
+        {% if not sync_outcome.synced_trips %}
+        {% blocktrans with synced_activities=sync_outcome.synced_activities %}
+        Ve Stravě máte  {{synced_activities}} aktivit ale žadné nejsou označené s hashtagem. Přidejte hashtagy {{hashtag_to}} nebo {{hashtag_from}} do názvu aktivity aby se počítaly jako jízdy do práce a z práce.
+        {% endblocktrans %}
+        {% endif %}
+    {% elif sync_failed %}
+        {% trans "Synchronizace selhala" %} {{sync_failed}}
+    {% else %}
+        {% if account.last_sync_time %}
+            {% trans "Poslední synchronizace proběhla " %}{{account.last_sync_time}}.<br/>
+        {% else %}
+            {% trans "Nastala chyba, synchronizace neproběhla." %}
+        {% endif %}
+    {% endif %}
+    <br/>
+    <br/>
+    {% if account.user_sync_count > warn_user_sync_count %}
+    {% blocktrans %}
+    Zlobí Vám synchronizace? Pokud potřebujete pomoc <a href="https://www.dopracenakole.cz/kontakt">volejte na helpdesk</a>.
+    {% endblocktrans %}
+    {% endif %}
+    {% if account.user_sync_count < max_user_sync_count %}
+    <form action="." method="post">
+        {% csrf_token %}
+        <input name="sync" value=1 hidden=1/>
+        <input type="submit" class="btn btn-default float-right" value="{% trans "Synchronizovat" %}" />
+    </form>
+    {% endif %}
+    <br/>
+    <form action="{% url "strava_deauth" %}" method="post">
+        {% csrf_token %}
+        <input type="submit" class="btn btn-default float-right" value="{% trans "Odpojit" %}" />
+    </form>
+{% else %}
+    {% trans "Ještě nejste propojeni se Stravou " %}
+    <a href="{{authorize_href}}"  class="btn btn-default float-right">
+    <img src="{% static "img/connect_with_strava.png" %}" alt="{% trans "Propojit se Stravou" %}" /></a></p>
+{% endif %}
+</div>
+<h2>{% trans "Jak to funguje" %}</h2>
+{% blocktrans %}
+V aplikace stravě, napište do názvu (nikoliv do popisu) svých aktivit hashtag {{hashtag_to}} nebo {{hashtag_from}}. Poté se jízdy budou automaticky synchronizovat.
+{% endblocktrans %}
+{% endblock %}
+

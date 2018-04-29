@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from datetime import timedelta
 
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -69,6 +70,32 @@ class Phase(models.Model):
         null=True,
         blank=True,
     )
+
+    @classmethod
+    def get_active(cls, when=None):
+        if when is None:
+            when = util.today()
+        return cls.objects.filter(date_from__lte=when, date_to__gte=when)
+
+    @staticmethod
+    def get_active_range(phase_type, when=None):
+        """
+        Returns the earliest active day of the earliest starting active phase of a given type,
+        and last active day of the latest ending active phase of the given type.
+        """
+        if when is None:
+            when = util.today()
+        earliest_start_date = when  # Earliest date from all competions
+        for competition_phase in Phase.get_active(when=when).filter(phase_type='competition'):
+            if competition_phase.get_earliest_active_day() < earliest_start_date:
+                earliest_start_date = competition_phase.get_earliest_active_day()
+        return earliest_start_date, util.today()
+
+    def get_earliest_active_day(self):
+        if util.today() - self.date_from <= timedelta(self.campaign.days_active):
+            return self.date_from
+        else:
+            return util.today() - timedelta(days=self.campaign.days_active)
 
     def get_minimum_rides_base(self):
         return self.campaign.minimum_rides_base

@@ -27,8 +27,7 @@ import denorm
 from django.contrib import contenttypes
 
 from . import email, mailing, util
-from .models import Campaign, Competition, GpxFile, Team, UserAttendance
-from .rest_ecc import gpx_files_post
+from .models import Campaign, Competition, Team, UserAttendance
 from .statement import parse
 
 
@@ -40,20 +39,6 @@ def recalculate_competitor_task(self, user_attendance_pk):
         util.rebuild_denorm_models([user_attendance.team])
     denorm.flush()
     results.recalculate_result_competitor_nothread(user_attendance)
-
-
-@shared_task(bind=True)
-def send_ecc_tracks(self, campaign_slug=''):
-    gpx_files = GpxFile.objects.filter(
-        trip__commute_mode='bicycle',
-        ecc_last_upload__isnull=True,
-        user_attendance__team__subsidiary__city__slug='praha',
-        user_attendance__payment_status='done',
-        user_attendance__campaign__slug=campaign_slug,
-    )
-
-    count = gpx_files_post(gpx_files)
-    return count
 
 
 @shared_task(bind=True)

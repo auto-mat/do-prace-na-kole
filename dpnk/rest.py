@@ -21,32 +21,48 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
 from rest_framework import permissions, routers, serializers, viewsets
-from rest_framework.exceptions import APIException
 from rest_framework.reverse import reverse
 
 from .middleware import get_or_create_userattendance
-from .models import City, CommuteMode, Company, Competition, CompetitionResult, GpxFile, Subsidiary, Team, Trip, UserAttendance
+from .models import City, CommuteMode, Company, Competition, CompetitionResult, Subsidiary, Team, Trip, UserAttendance
 
 
-class DuplicateGPX(APIException):
+class InactiveDayGPX(serializers.ValidationError):
+    status_code = 410
+    default_code = 'invalid_date'
+    default_detail = {'date': "Trip for this day cannot be created/updated. This day is not active for edition"}
+
+
+class DuplicateGPX(serializers.ValidationError):
     status_code = 409
-    default_detail = "GPX for this day and trip already uploaded"
+    default_detail = {'detail': 'GPX for this day and trip already uploaded'}
 
 
-class GPXParsingFail(APIException):
+class GPXParsingFail(serializers.ValidationError):
     status_code = 400
-    default_detail = "Can't parse GPX file"
+    default_detail = {"file": "Can't parse GPX file"}
 
 
-class CompetitionDoesNotExist(APIException):
+class CompetitionDoesNotExist(serializers.ValidationError):
     status_code = 405
-    default_detail = "Competition with this slug not found"
+    default_detail = {'competition': "Competition with this slug not found"}
 
 
-class GpxFileSerializer(serializers.ModelSerializer):
-    distanceMeters = serializers.IntegerField(
+class DistanceMetersSerializer(serializers.IntegerField):
+    def to_internal_value(self, data):
+        value = super().to_internal_value(data)
+        return value / 1000
+
+    def to_representation(self, data):
+        value = round(data * 1000)
+        return super().to_representation(value)
+
+
+class TripSerializer(serializers.ModelSerializer):
+    distanceMeters = DistanceMetersSerializer(
         required=False,
         min_value=0,
+        max_value=1000 * 1000,
         source='distance',
         help_text='Distance in meters. If not set, distance will be calculated from the track',
     )
@@ -65,23 +81,40 @@ class GpxFileSerializer(serializers.ModelSerializer):
         help_text='Transport mode of the trip',
     )
     sourceApplication = serializers.CharField(
-        required=False,
+        required=True,
         source='source_application',
         help_text='Any string identifiing the source application of the track',
     )
+    trip_date = serializers.DateField(
+        required=False,
+        source='date',
+        help_text='Date of the trip e.g. "1970-01-23"',
+    )
+    file = serializers.FileField(
+        required=False,
+        source='gpx_file',
+        help_text='GPX file with the track',
+    )
+
+    def is_valid(self, *args, **kwargs):
+        request = self.context['request']
+        self.user_attendance = request.user_attendance
+        if not self.user_attendance:
+            self.user_attendance = get_or_create_userattendance(request, request.subdomain)
+        return super().is_valid(*args, **kwargs)
+
+    def validate(self, data):
+        validated_data = super().validate(data)
+        if 'date' in validated_data and not self.user_attendance.campaign.day_active(validated_data['date']):
+            raise InactiveDayGPX
+        return validated_data
 
     def create(self, validated_data):
-        request = self.context['request']
-        user_attendance = request.user_attendance
-        if not user_attendance:
-            user_attendance = get_or_create_userattendance(request, request.subdomain)
-        validated_data['user_attendance'] = user_attendance
+        validated_data['user_attendance'] = self.user_attendance
 
         try:
-            instance = GpxFile(**validated_data)
+            instance = Trip(**validated_data)
             instance.clean()
-            if hasattr(instance, 'track_clean'):
-                instance.track = instance.track_clean
             instance.from_application = True
             instance.save()
         except IntegrityError:
@@ -91,7 +124,7 @@ class GpxFileSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        model = GpxFile
+        model = Trip
         fields = (
             'id',
             'trip_date',
@@ -108,18 +141,29 @@ class GpxFileSerializer(serializers.ModelSerializer):
                 'write_only': True,
                 'help_text': 'Track in GeoJSON MultiLineString format',
             },
-            'file': {'help_text': 'GPX file with the track'},
-            'trip_date': {'help_text': 'Date of the trip e.g. "1970-01-23"'},
             'direction': {'help_text': 'Direction of the trip "trip_to" for trip to work, "trip_from" for trip from work'},
         }
 
 
-class GpxFileDetailSerializer(GpxFileSerializer):
-    class Meta(GpxFileSerializer.Meta):
+class TripDetailSerializer(TripSerializer):
+    class Meta(TripSerializer.Meta):
         extra_kwargs = {}
 
 
-class GpxFileSet(viewsets.ModelViewSet):
+class TripUpdateSerializer(TripSerializer):
+    class Meta(TripSerializer.Meta):
+        fields = (
+            'id',
+            'file',
+            'track',
+            'commuteMode',
+            'durationSeconds',
+            'distanceMeters',
+            'sourceApplication',
+        )
+
+
+class TripSet(viewsets.ModelViewSet):
     """
     Documentation: https://www.dopracenakole.cz/rest-docs/
 
@@ -134,13 +178,15 @@ class GpxFileSet(viewsets.ModelViewSet):
     """
 
     def get_queryset(self):
-        return GpxFile.objects.filter(
+        return Trip.objects.filter(
             user_attendance__userprofile__user=self.request.user,
             user_attendance__campaign=self.request.campaign,
         )
 
     def get_serializer_class(self):
-        return GpxFileDetailSerializer if self.action == 'retrieve' else GpxFileSerializer
+        if self.request.method == 'PUT':
+            return TripUpdateSerializer
+        return TripDetailSerializer if self.action == 'retrieve' else TripSerializer
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -160,19 +206,6 @@ class CompetitionSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return Competition.objects.filter(campaign__slug=self.request.subdomain)
     serializer_class = CompetitionSerializer
-    permission_classes = [permissions.AllowAny]
-
-
-class TripSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Trip
-        fields = ('id', 'date', 'direction', 'commute_mode', 'distance')
-
-
-class TripSet(viewsets.ReadOnlyModelViewSet):
-    def get_queryset(self):
-        return Trip.objects.filter(user_attendance__campaign__slug=self.request.subdomain)
-    serializer_class = TripSerializer
     permission_classes = [permissions.AllowAny]
 
 
@@ -266,7 +299,7 @@ class CompetitionResultSet(viewsets.ReadOnlyModelViewSet):
 
 
 router = routers.DefaultRouter()
-router.register(r'gpx', GpxFileSet, base_name="gpxfile")
+router.register(r'gpx', TripSet, base_name="gpxfile")
 # This is disabled, because Abra doesn't cooperate anymore
 # router.register(r'competition', CompetitionSet, base_name="competition")
 # router.register(r'team', TeamSet, base_name="team")

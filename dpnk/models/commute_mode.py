@@ -56,6 +56,10 @@ class CommuteMode(models.Model):
         default=True,
         null=False,
     )
+    eco = models.BooleanField(
+        verbose_name=_("Ekologický"),
+        default=True,
+    )
 
     def __str__(self):
         return self.name

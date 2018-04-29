@@ -24,7 +24,6 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from dpnk import util
-from dpnk.models import Campaign
 
 
 @override_settings(
@@ -33,46 +32,14 @@ from dpnk.models import Campaign
 class UtilTests(TestCase):
     fixtures = ['sites', 'campaign', 'auth_user', 'users']
 
-    def test_day_active_last(self):
-        campaign = Campaign.objects.get(pk=339)
-        self.assertTrue(util.day_active_last(datetime.date(2010, 11, 14), campaign))
-        self.assertTrue(util.day_active_last(datetime.date(2010, 11, 20), campaign))
-        self.assertFalse(util.day_active_last(datetime.date(2010, 11, 13), campaign))
-        self.assertFalse(util.day_active_last(datetime.date(2010, 11, 21), campaign))
-
-    def test_day_active_last_cut_after_may(self):
-        campaign = Campaign.objects.get(pk=339)
-        self.assertTrue(util.day_active_last_cut_after_may(datetime.date(2010, 11, 14), campaign))
-        self.assertTrue(util.day_active_last_cut_after_may(datetime.date(2010, 11, 20), campaign))
-        self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2010, 11, 13), campaign))
-        self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2010, 11, 21), campaign))
-
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2016, month=6, day=3),
-    )
-    def test_day_active_last_cut_after_may_may(self):
-        campaign = Campaign.objects.get(pk=339)
-        self.assertTrue(util.day_active_last_cut_after_may(datetime.date(2016, 6, 1), campaign))
-        self.assertTrue(util.day_active_last_cut_after_may(datetime.date(2016, 6, 3), campaign))
-        self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2016, 5, 31), campaign))
-        self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2016, 6, 4), campaign))
-
-    @override_settings(
-        FAKE_DATE=datetime.date(year=2016, month=6, day=7),
-    )
-    def test_day_active_last_cut_after_may_may9(self):
-        campaign = Campaign.objects.get(pk=339)
-        self.assertTrue(util.day_active_last_cut_after_may(datetime.date(2016, 6, 1), campaign))
-        self.assertTrue(util.day_active_last_cut_after_may(datetime.date(2016, 6, 7), campaign))
-        self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2016, 5, 31), campaign))
-        self.assertFalse(util.day_active_last_cut_after_may(datetime.date(2016, 6, 8), campaign))
-
     def test_working_day(self):
         self.assertTrue(util.working_day(datetime.date(2016, 6, 1)))
         self.assertFalse(util.working_day(datetime.date(2020, 5, 1)))
         self.assertFalse(util.working_day(datetime.date(2034, 5, 8)))
         self.assertFalse(util.working_day(datetime.date(2018, 1, 20)))
         self.assertTrue(util.working_day(datetime.date(2018, 1, 19)))
+        self.assertFalse(util.working_day(datetime.date(2018, 5, 8)))
+        self.assertFalse(util.working_day(datetime.date(2018, 5, 1)))
 
 
 class TodayTests(TestCase):

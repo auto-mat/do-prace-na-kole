@@ -677,7 +677,12 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
 
 
 class TripAdminInline(admin.TabularInline):
-    list_display = ('user_attendance', 'date', 'distance', 'direction', 'commute_mode', 'id')
+    fields = (
+        'direction',
+        'date',
+        'commute_mode',
+        'distance',
+    )
     raw_id_fields = ('user_attendance',)
     extra = 0
     model = models.Trip
@@ -1120,6 +1125,7 @@ class GpxFileInline(LeafletGeoAdminMixin, admin.TabularInline):
     readonly_fields = (
         'author',
         'created',
+        'updated_by',
     )
     exclude = (
         'ecc_last_upload',
@@ -1143,7 +1149,7 @@ class TripResource(resources.ModelResource):
 
 
 @admin.register(models.Trip)
-class TripAdmin(ExportMixin, RelatedFieldAdmin):
+class TripAdmin(ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
     list_display = (
         'user_attendance__name_for_trusted',
         'date',
@@ -1165,10 +1171,12 @@ class TripAdmin(ExportMixin, RelatedFieldAdmin):
         ('date', DateRangeFilter),
         'user_attendance__team__subsidiary__city',
     )
+    readonly_fields = ('created', 'author', 'updated_by')
     actions = (actions.show_distance_trips,)
     list_max_show_all = 100000
     inlines = [GpxFileInline, ]
     resource_class = TripResource
+    save_as = True
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -1437,6 +1445,29 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
             return format_html("<a href='{}'>invoice.xml</a>", obj.invoice_xml.url)
 
 
+def merge_gpx_into_trip(modeladmin, request, queryset):
+    fields_to_copy = [
+        'author',
+        'created',
+        'duration',
+        'from_application',
+        'source_application',
+        ('file', 'gpx_file'),
+        'track',
+        'updated',
+        'updated_by',
+    ]
+    fields_to_copy = [(x, x) if not type(x) is tuple else x for x in fields_to_copy]
+    for gpxfile in queryset:
+        for (ftc_from, ftc_to) in fields_to_copy:
+            gpxattr = gpxfile.__getattribute__(ftc_from)
+            if gpxattr and not gpxfile.trip.__getattribute__(ftc_to):
+                gpxfile.trip.__setattr__(ftc_to, gpxattr)
+        if gpxfile.distance and not gpxfile.trip.distance:
+            gpxfile.trip.distance = gpxfile.distance / 1000
+        gpxfile.trip.save()
+
+
 @admin.register(models.GpxFile)
 class GpxFileAdmin(CityAdminMixin, LeafletGeoAdmin):
     queryset_city_param = 'user_attendance__team__subsidiary__city__in'
@@ -1475,6 +1506,7 @@ class GpxFileAdmin(CityAdminMixin, LeafletGeoAdmin):
         'source_application',
         'user_attendance__team__subsidiary__city'
     )
+    actions = [merge_gpx_into_trip, ]
 
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = super().get_readonly_fields(request, obj)

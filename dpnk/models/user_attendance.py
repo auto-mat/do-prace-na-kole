@@ -25,7 +25,6 @@ from coupons.models import DiscountCoupon
 from denorm import denormalized, depend_on_related
 
 from django.contrib.gis.db import models
-from django.contrib.gis.db.models.functions import Length
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
@@ -42,11 +41,6 @@ from .. import mailing, util
 from ..email import register_mail
 
 logger = logging.getLogger(__name__)
-
-
-class UserAttendanceManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().annotate(length=Length('track'))
 
 
 class UserAttendance(models.Model):
@@ -80,7 +74,7 @@ class UserAttendance(models.Model):
         on_delete=models.CASCADE,
     )
     distance = models.FloatField(
-        verbose_name=_(u"Vzdálenost"),
+        verbose_name=_(u"Vzdálenost (km)"),
         help_text=_(u"Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"),
         default=None,
         blank=True,
@@ -324,16 +318,14 @@ class UserAttendance(models.Model):
         from .. import results
         return results.get_minimum_rides_base_proportional(self.campaign.phase("competition"), util.today())
 
-    def get_distance(self, round_digits=2, request=None):
-        if self.track:
-            length = self.length
-            if not length:
-                # Track is not valid geometry
-                return 0
-            return round(length.km, round_digits)
-        else:
+    def get_distance(self, round_digits=2):
+        if self.distance:
             return self.distance
-    get_distance.short_description = _('Vzdálenost do práce')
+        elif self.track:
+            return round(util.get_multilinestring_length(self.track), round_digits)
+        else:
+            return 0
+    get_distance.short_description = _('Vzdálenost (km) do práce')
     get_distance.admin_order_field = 'length'
 
     def get_userprofile(self):
@@ -528,8 +520,6 @@ class UserAttendance(models.Model):
                 },
             )
         return super().save(*args, **kwargs)
-
-    objects = UserAttendanceManager()
 
 
 @receiver(post_save, sender=UserAttendance)

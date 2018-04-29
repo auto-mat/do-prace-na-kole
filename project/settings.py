@@ -82,6 +82,7 @@ LOCALE_PATHS = (
     normpath(PROJECT_ROOT, 'dpnk/locale'),
     normpath(PROJECT_ROOT, 'coupons/locale'),
     normpath(PROJECT_ROOT, 't_shirt_delivery/locale'),
+    normpath(PROJECT_ROOT, 'stravasync/locale'),
 )
 TIME_ZONE = 'Europe/Prague'
 LANGUAGES = (
@@ -246,6 +247,7 @@ INSTALLED_APPS = (
     'coupons',
     'dpnk',
     't_shirt_delivery',
+    'stravasync',
     'psc',
 
     'smart_selects',
@@ -528,16 +530,15 @@ MIGRATION_MODULES = {
     'price_level': 'price_level_migrations',
 }
 
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = os.environ.get("DPNK_CSRF_COOKIE_SECURE", True)
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_HSTS_SECONDS = 60
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = os.environ.get("DPNK_SECURE_SSL_REDIRECT", True)
+SESSION_COOKIE_SECURE = os.environ.get("DPNK_SESSION_COOKIE_SECURE", True)
 SECURE_REDIRECT_EXEMPT = [r"version\.txt"]
 X_FRAME_OPTIONS = 'DENY'
-
 
 MESSAGE_TAGS = {
     message_constants.DEBUG: 'debug',
@@ -605,3 +606,8 @@ EXTRA_LANG_INFO = {
 
 LANG_INFO = {**django.conf.locale.LANG_INFO, **EXTRA_LANG_INFO}
 django.conf.locale.LANG_INFO = LANG_INFO
+
+STRAVA_FINE_POLYLINES = os.environ.get('STRAVA_FINE_POLYLINES', True)
+STRAVA_CLIENT_ID = os.environ.get('STRAVA_CLIENT_ID', None)
+STRAVA_CLIENT_SECRET = os.environ.get('STRAVA_CLIENT_SECRET', None)
+STRAVA_MAX_USER_SYNC_COUNT = 16

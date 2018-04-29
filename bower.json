@@ -23,7 +23,8 @@
     "datatables.net": "~1.10.13",
     "datatables.net-bs": "~1.10.13",
     "bootstrap-social": "~5.1.1",
-    "jquery-ui": "~1.11.4"
+    "jquery-ui": "~1.11.4",
+    "fullcalendar": "~3.9"
   },
   "resolutions": {
     "jquery": "2.2.0"

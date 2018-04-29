@@ -1,0 +1,45 @@
+{% extends "base_generic.html" %}
+{% load i18n %}
+{% load dpnk_tags %}
+{% load leaflet_tags %}
+
+{% block extrahead %}
+{% leaflet_js %}
+{% leaflet_css %}
+{% endblock %}
+{% block content %}
+<p align="center">
+{% blocktrans %}Podle pravidel soutěže, nemůžete zadavat ani změnit jízdy starší než {{days_active}} dnů.{% endblocktrans %}
+</p>
+<h3>{% trans "Den" %}</h3>
+{{ trip.date }}
+<h3>{% trans "Směr" %}</h3>
+{{ trip.get_direction_display }}
+<h3>{% trans "Dopravní prostředek" %}</h3>
+{{ trip.commute_mode }}
+{% if trip.commute_mode.eco and trip.commute_mode.does_count %}
+<h3>{% trans "Vzdálenost" %}</h3>
+{{ trip.distance }} km
+<h3>{% trans "Trasa" %}</h3>
+{% if trip.track %}
+{% leaflet_map "track_map" callback="window.load_track" %}
+<script type="text/javascript">
+// https://gis.stackexchange.com/questions/68489/loading-external-geojson-file-into-leaflet-map#98411
+var track_geojson = L.geoJson();
+function load_track (map, options) {
+ track_geojson.addTo(map);
+ $.ajax({
+ dataType: "json",
+ url: "{% url "trip_geojson" date=trip.date direction=trip.direction %}",
+ success: function(data) {
+    track_geojson.addData(data);
+    map.fitBounds(track_geojson.getBounds())
+ }
+ }).error(function() {});
+}
+</script>
+{% else %}
+{% trans 'Žádná trasa nebyla zadána' %}
+{% endif %}
+{% endif %}
+{% endblock %}

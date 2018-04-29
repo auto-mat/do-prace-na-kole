@@ -18,6 +18,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import datetime
+
 from cache_utils.decorators import cached
 
 from denorm import denormalized, depend_on_related
@@ -30,6 +32,7 @@ from django.utils.translation import ugettext_lazy as _
 from price_level.models import Pricable
 
 from .user_attendance import UserAttendance
+from .. import util
 
 
 class Campaign(Pricable, models.Model):
@@ -248,6 +251,28 @@ class Campaign(Pricable, models.Model):
         if self.max_team_members is None:
             return False
         return member_count > self.max_team_members
+
+    def day_active(self, day):
+        """ Return if this day can be changed by user """
+        day_today = util.today()
+        return (
+            (day <= day_today) and
+            (day > day_today - datetime.timedelta(days=self.days_active))
+        )
+
+    def vacation_day_active(self, day):
+        """ Return if this day can be added as vacation """
+        day_today = util.today()
+        last_day = self.competition_phase().date_to
+        return (
+            (day <= last_day) and
+            (day > day_today)
+        )
+
+    def possible_vacation_days(self):
+        """ Return days, that can be added as vacation """
+        competition_phase = self.competition_phase()
+        return [d for d in util.daterange(competition_phase.date_from, competition_phase.date_to) if self.vacation_day_active(d)]
 
     def user_attendances_for_delivery(self):
         from t_shirt_delivery.models import PackageTransaction

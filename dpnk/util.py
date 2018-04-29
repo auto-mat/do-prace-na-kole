@@ -19,25 +19,27 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import datetime
+from itertools import tee
 
 import denorm
 
 from django.conf import settings
 from django.contrib import contenttypes
+from django.contrib.sites.shortcuts import get_current_site
 from django.utils import six
 from django.utils.functional import lazy
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext as _
+
+import geopy.distance
 
 from ipware.ip import get_real_ip
 
+from . import exceptions
 
 mark_safe_lazy = lazy(mark_safe, six.text_type)
 
 DAYS_EXCLUDE = (
-    datetime.date(year=2014, day=8, month=5),
-    datetime.date(year=2015, day=8, month=5),
-    datetime.date(year=2016, day=1, month=5),
-    datetime.date(year=2016, day=8, month=5),
     datetime.date(year=2016, day=5, month=7),
     datetime.date(year=2016, day=6, month=7),
     datetime.date(year=2016, day=28, month=9),
@@ -51,7 +53,7 @@ def daterange(start_date, end_date):
 
 
 def working_day(day):
-    if day.day in (1, 8) and day.month == 5:
+    if day.day in (1, 8) and day.month == 5:  # Public holiday at may
         return False
     return day not in DAYS_EXCLUDE and day.weekday() not in (5, 6)
 
@@ -85,7 +87,8 @@ def days_count(competition, day=None):
 
 
 def days_active(competition):
-    return [d for d in days(competition) if day_active(d, competition.campaign)]
+    """ Get editable days for this competition/campaign """
+    return [d for d in days(competition) if competition.campaign.day_active(d)]
 
 
 def _today():
@@ -124,36 +127,11 @@ def rebuild_denorm_models(models):
         denorm.flush()
 
 
-def day_active_last(day, campaign):
-    day_today = _today()
-    return (
-        (day <= day_today) and
-        (day > day_today - datetime.timedelta(days=campaign.days_active))
-    )
-
-
-def day_active_last_cut_after_may(day, campaign):
-    day_today = _today()
-    if day_today > datetime.date(2016, 6, 2) and day_today < datetime.date(2016, 6, 8):
-        date_from = datetime.date(2016, 5, 31)
-    else:
-        date_from = day_today - datetime.timedelta(days=campaign.days_active)
-    return (
-        (day <= day_today) and
-        (day > date_from)
-    )
-
-# def day_active_last_week(day):
-#     day_today = _today()
-#     return (
-#         (day <= day_today) and
-#         ((day.isocalendar()[1] == day_today.isocalendar()[1]) or
-#             (day_today.weekday() == 0 and
-#                 day.isocalendar()[1] + 1 == day_today.isocalendar()[1]))
-#     )
-
-
-day_active = day_active_last_cut_after_may
+def parse_date(date):
+    try:
+        return datetime.datetime.strptime(date, "%Y-%m-%d").date()
+    except ValueError:
+        raise exceptions.TemplatePermissionDenied(_("Datum není platné."))
 
 
 def get_emissions(distance):
@@ -168,3 +146,34 @@ def get_emissions(distance):
         'solid': round(distance * 35.0, 1),
         'pb': round(distance * 0.011, 1),
     }
+
+
+def get_base_url(request, slug=None):
+    return '%s://%s.%s' % (
+        request.scheme,
+        slug if slug is not None else request.campaign.slug,
+        get_current_site(request).domain,
+    )
+
+
+def get_redirect(request, slug=None):
+    return get_base_url(request, slug=slug) + request.path
+
+
+# https://docs.python.org/3/library/itertools.html#itertools-recipes
+def pairwise(iterable):
+    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
+    a, b = tee(iterable)
+    next(b, None)
+    return zip(a, b)
+
+
+def get_multilinestring_length(mls):
+    """
+    Returns the length of a multiline string in kilometers.
+    """
+    length = 0
+    for linestring in mls:
+        for (start_long, start_lat), (end_long, end_lat) in pairwise(linestring):
+            length += geopy.distance.vincenty((start_lat, start_long), (end_lat, end_long)).km
+    return length

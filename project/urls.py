@@ -50,6 +50,7 @@ urlpatterns += i18n_patterns(
     url(r'^', include("t_shirt_delivery.urls")),
     url(r'^', include("coupons.urls")),
     url('social/', include('social_django.urls', namespace='social')),
+    url(r'^strava/', include("stravasync.urls")),
     prefix_default_language=False,
 )
 
