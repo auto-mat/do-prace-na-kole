@@ -13,6 +13,7 @@ from dpnk.forms import FullTripForm
 from dpnk.models.phase import Phase
 from dpnk.models.trip import Trip
 from dpnk.models.user_attendance import UserAttendance
+from dpnk.util import days_active
 
 import polyline
 
@@ -78,6 +79,8 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):
     stats["synced_trips"] += 1
     user_attendance = UserAttendance.objects.get(campaign=campaign, userprofile=strava_account.user.userprofile)
     date = activity.start_date.date()
+    if not campaign.day_active(date):
+        return
     exists = Trip.objects.filter(
         date=date,
         direction=direction,
