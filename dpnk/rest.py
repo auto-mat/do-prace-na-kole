@@ -21,31 +21,31 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
 from rest_framework import permissions, routers, serializers, viewsets
-from rest_framework.exceptions import APIException
 from rest_framework.reverse import reverse
 
 from .middleware import get_or_create_userattendance
 from .models import City, CommuteMode, Company, Competition, CompetitionResult, Subsidiary, Team, Trip, UserAttendance
 
 
-class InactiveDayGPX(APIException):
+class InactiveDayGPX(serializers.ValidationError):
     status_code = 410
-    default_detail = "Trip for this day cannot be created/updated. This day is not active for edition"
+    default_code = 'invalid_date'
+    default_detail = {'date': "Trip for this day cannot be created/updated. This day is not active for edition"}
 
 
-class DuplicateGPX(APIException):
+class DuplicateGPX(serializers.ValidationError):
     status_code = 409
-    default_detail = "GPX for this day and trip already uploaded"
+    default_detail = {'detail': 'GPX for this day and trip already uploaded'}
 
 
-class GPXParsingFail(APIException):
+class GPXParsingFail(serializers.ValidationError):
     status_code = 400
-    default_detail = "Can't parse GPX file"
+    default_detail = {"file": "Can't parse GPX file"}
 
 
-class CompetitionDoesNotExist(APIException):
+class CompetitionDoesNotExist(serializers.ValidationError):
     status_code = 405
-    default_detail = "Competition with this slug not found"
+    default_detail = {'competition': "Competition with this slug not found"}
 
 
 class DistanceMetersSerializer(serializers.IntegerField):

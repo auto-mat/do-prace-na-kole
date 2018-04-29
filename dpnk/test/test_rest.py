@@ -74,7 +74,7 @@ class RestTests(TestCase):
                 'file': gpxfile,
             }
             response = self.client.post('/rest/gpx/', post_data, format='multipart', follow=True)
-            self.assertJSONEqual(response.content.decode(), {"detail": "Can't parse GPX file"})
+            self.assertJSONEqual(response.content.decode(), {"file": "Can't parse GPX file"})
             self.assertEqual(response.status_code, 400)
 
     def test_gpx_get101(self):
@@ -228,9 +228,9 @@ class RestTests(TestCase):
             response = self.client.post(reverse("gpxfile-list"), post_data)
             self.assertJSONEqual(
                 response.content.decode(),
-                {"detail": "Trip for this day cannot be created/updated. This day is not active for edition"},
+                {"date": ["Trip for this day cannot be created/updated. This day is not active for edition"]},
             )
-            self.assertEqual(response.status_code, 410)
+            self.assertEqual(response.status_code, 400)
 
 
 @override_settings(
