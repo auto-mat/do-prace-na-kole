@@ -854,17 +854,18 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredM
     def get_context_data(self, *args, **kwargs):
         trips, uncreated_trips = self.user_attendance.get_all_trips(util.today())
         uncreated_trips = [
-            (
-                trip[0],
-                models.Trip.DIRECTIONS_DICT[trip[1]],
-                _("Nezadáno"),
-                trip[1],
-                self.user_attendance.campaign.day_active(trip[0])
-            ) for trip in uncreated_trips
+            {
+                'date': trip[0],
+                'get_direction_display': models.Trip.DIRECTIONS_DICT[trip[1]],
+                'get_commute_mode_display': _('Jinak') if util.working_day(trip[0]) else _('Žádná cesta'),
+                'distance': None,
+                'direction': trip[1],
+                'active': self.user_attendance.campaign.day_active(trip[0]),
+            } for trip in uncreated_trips
         ]
         trips = list(trips) + uncreated_trips
-        trips = sorted(trips, key=lambda trip: trip.direction if type(trip) == Trip else trip[1], reverse=True)
-        trips = sorted(trips, key=lambda trip: trip.date if type(trip) == Trip else trip[0])
+        trips = sorted(trips, key=lambda trip: trip.direction if type(trip) == Trip else trip['get_direction_display'], reverse=True)
+        trips = sorted(trips, key=lambda trip: trip.date if type(trip) == Trip else trip['date'])
 
         context_data = super().get_context_data(*args, **kwargs)
         context_data['trips'] = trips

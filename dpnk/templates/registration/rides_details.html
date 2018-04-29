@@ -13,7 +13,6 @@
    <tr><th colspan="5">{% trans "Soutěžní jízdy" %}</th></tr>
    {% for trip in trips %}
    <tr>
-      {% if trip.date %}
       <td>{{ trip.date }}</td>
       <td>{{ trip.get_direction_display }}</td>
       <td>{{ trip.get_commute_mode_display }}</td>
@@ -21,10 +20,11 @@
       {% if trip.distance %}
       {{ trip.distance|floatformat:1 }}&nbsp;{% trans 'km' %}
       {% else %}
-      {% trans "Nezadáno" %}
+      -
       {% endif %}
       </td>
       <td>
+         {% if trip.id %}
          <a href="{% url "trip" date=trip.date direction=trip.direction %}">
             {% if trip.active %}
                 <i class="fa fa-edit"></i>
@@ -32,20 +32,8 @@
                 <i class="fa fa-eye"></i>
             {% endif %}
          </a>
-      </td>
-      {% else %}
-      <td>{{ trip.0 }}</td>
-      <td>{{ trip.1 }}</td>
-      <td></td>
-      <td>{{ trip.2 }}</td>
-      <td>
-         {% if trip.4 %}
-         <a href="{% url "trip" date=trip.0 direction=trip.3 %}">
-            <i class="fa fa-edit"></i>
-         </a>
          {% endif %}
       </td>
-      {% endif %}
    </tr>
    {% endfor %}
 {% if other_trips %}
