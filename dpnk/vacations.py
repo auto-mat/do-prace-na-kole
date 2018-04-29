@@ -39,7 +39,8 @@ def get_vacations(user_attendance):
     possible_vacation_days = user_attendance.campaign.possible_vacation_days()
     vid = 1
     for trip in trips:
-        if this_day and trip.date <= (this_day + datetime.timedelta(days=1)) and (current_vacation["editable"] or trip.date not in possible_vacation_days):
+        if (this_day and trip.date <= (this_day + datetime.timedelta(days=1)) and
+                (current_vacation["editable"] or trip.date not in possible_vacation_days)):
             current_vacation["end"] = trip.date + datetime.timedelta(days=1)
         else:
             if current_vacation:
