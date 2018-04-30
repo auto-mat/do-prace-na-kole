@@ -15,6 +15,7 @@ jobs:
       - run: cd dpnk && django-admin compilemessages
       - run: cd t_shirt_delivery && django-admin compilemessages
       - run: cd coupons && django-admin compilemessages
+      - run: cd stravasync && django-admin compilemessages
       - run: cd dpnk/static/css && lessc style.less style.css
       - run: echo "${CIRCLE_BRANCH} 2017.${CIRCLE_BUILD_NUM}" > dpnk/static/version.txt
       - run: git rev-parse HEAD >> dpnk/static/version.txt
