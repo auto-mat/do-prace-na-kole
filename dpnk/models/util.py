@@ -34,7 +34,7 @@ MAP_DESCRIPTION = format_lazy(
 <strong><a href="{help_url}" target="_blank">Nápověda k editace tras</a></strong>
 <br/>
 
-Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybuících se ve městě na kole.
+Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybujících se ve městě na kole.
 <br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na <a href="{pnk_map_url}">mapě Prahou na kole</a>.
 """),
     **urls,
