@@ -75,11 +75,11 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
     except hashtags.NoValidHashtagException:
         return
     stats["synced_trips"] += 1
-    user_attendance = strava_account.user.userprofile.user_attendance.get(campaign=campaign)
+    user_attendance = strava_account.user.userprofile.userattendance_set.get(campaign=campaign)
     date = activity.start_date.date()
     if not campaign.day_active(date):
         return
-    trip = user_attendance.user_trips.get(direction=direction, date=date)
+    trip = user_attendance.user_trips.filter(direction=direction, date=date)
     if not trip.exists():
         stats["new_trips"] += 1
         if activity.map.summary_polyline and settings.STRAVA_FINE_POLYLINES:
@@ -101,7 +101,7 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
         form_data['track'] = get_track(activity.map.polyline)
 
     try:
-        trip_form = FullTripForm(data=form_data, instance=trip)
+        trip_form = FullTripForm(data=form_data, instance=trip.get())
     except Trip.DoesNotExist:
         trip_form = FullTripForm(data=form_data)
 

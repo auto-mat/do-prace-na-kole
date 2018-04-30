@@ -81,9 +81,9 @@ class StravaAuth(generic.View, LoginRequiredMixin):
         )
         models.StravaAccount.objects.create(
             user_id=request.user.id,
-            strava_username=sclient.get_athlete().username,
-            first_name=sclient.get_athlete().firstname,
-            last_name=sclient.get_athlete().lastname,
+            strava_username=sclient.get_athlete().username or "",
+            first_name=sclient.get_athlete().firstname or "",
+            last_name=sclient.get_athlete().lastname or "",
             access_token=access_token,
         )
         return http.HttpResponseRedirect(reverse('about_strava'))
