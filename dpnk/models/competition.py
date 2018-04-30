@@ -22,6 +22,7 @@ import datetime
 
 from django import forms
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import escape
@@ -91,18 +92,18 @@ class Competition(models.Model):
         blank=True,
     )
     date_from = models.DateField(
-        verbose_name=_(u"Datum začátku soutěže"),
-        help_text=_(u"Od tohoto data se počítají jízdy"),
+        verbose_name=_("Datum začátku soutěže"),
+        help_text=_("Od tohoto data (včetně) se počítají jízdy a je možné vyplňovat dotazník"),
         default=None,
         null=True,
-        blank=True,
+        blank=False,
     )
     date_to = models.DateField(
-        verbose_name=_(u"Datum konce soutěže"),
-        help_text=_(u"Po tomto datu nebude možné soutěžit (vyplňovat dotazník)"),
+        verbose_name=_("Datum konce soutěže"),
+        help_text=_("Do tohoto data (včetně) se počítají jízdy a je možné vyplňovat dotazník"),
         default=None,
         null=True,
-        blank=True,
+        blank=False,
     )
     competition_type = models.CharField(
         verbose_name=_(u"Typ"),
@@ -423,6 +424,11 @@ class Competition(models.Model):
 
     def __str__(self):
         return "%s" % self.name
+
+    def clean(self):
+        if self.date_to and self.date_from:
+            if self.date_to < self.date_from:
+                raise ValidationError({'date_from': _("Datum začátku soutěže musí být menší, než datum konce soutěže")})
 
 
 class CompetitionForm(forms.ModelForm):
