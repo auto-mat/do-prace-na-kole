@@ -6,7 +6,7 @@ from braces.views import LoginRequiredMixin
 from django import http
 from django.conf import settings
 from django.urls import reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.views import generic
 from django.views.generic.base import TemplateView
 
@@ -81,9 +81,9 @@ class StravaAuth(generic.View, LoginRequiredMixin):
         )
         models.StravaAccount.objects.create(
             user_id=request.user.id,
-            strava_username=sclient.get_athlete().username,
-            first_name=sclient.get_athlete().firstname,
-            last_name=sclient.get_athlete().lastname,
+            strava_username=sclient.get_athlete().username or "",
+            first_name=sclient.get_athlete().firstname or "",
+            last_name=sclient.get_athlete().lastname or "",
             access_token=access_token,
         )
         return http.HttpResponseRedirect(reverse('about_strava'))
