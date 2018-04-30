@@ -1,0 +1,51 @@
+{% extends "base_generic.html" %}
+{% load scribbler_tags %}
+{% block extrahead %}
+{% include "registration/leaflet_include.html" %}
+{% endblock %}
+
+{% block content %}
+{% scribble 'help_page' %}
+{% load i18n %}
+<div class="section" id="change-default-track" >
+  <h1>{% trans "Změnit vychozí trasu" %}</h1>
+  {% blocktrans %}
+  Výchozí trasu můžete změnit kliknutím na "Můj profil" a poté "Typická trasa". Případně kliknutím na odkaz zde:
+  {% endblocktrans %} <a href="{% url "upravit_trasu" %}">Změnit typickou trasu</a>
+</div>
+<div class="section" id="edit-tracks">
+  <h1>{% trans "Editace tras" %}</h1>
+  {% blocktrans %}
+  <ul>
+   <li><strong>Zadávání trasy zahájíte kliknutím na tlačítko <span style="display: inline-block;" class="leaflet-draw-toolbar leaflet-bar leaflet-draw-toolbar-top"><a class="leaflet-draw-draw-polyline"></a></span>.</strong></li>
+   <li>Další body zadáváte kliknutím do mapy, <strong>cílový bod zadáte dvojklikem na koncový bod</strong> nebo kliknutí na tlačítko "Finish".</li>
+   <video width="640" height="480" controls>
+    <source src="http://thobbs.cz/create.webm" type="video/webm">
+   </video>
+   <li>Změnu trasy provedete po přepnutí do režimu úprav (<span style="display: inline-block;" class="leaflet-draw-toolbar leaflet-bar"><a class="leaflet-draw-edit-edit"></a></span>) a kliknutím na trasu.</li>
+   <video width="640" height="480" controls>
+    <source src="http://thobbs.cz/edit.webm" type="video/webm">
+   </video>
+   <li>Trasa se dá taky smazat.</li>
+   <video width="640" height="480" controls>
+    <source src="http://thobbs.cz/delete.webm" type="video/webm">
+   </video>
+   <li>Trasu stačí zadat tak, že bude zřejmé, kterými ulicemi vede.
+   (Zadání přesnějšího průběhu nám však může pomoci lépe zjistit, jak se lidé na kole pohybují.)</li>
+   <li>Trasu bude možné změnit nebo upřesnit i později v průběhu soutěže.
+   (Trasy za jednotlivé dny však jen 7 dní nazpět.)</li>
+   <li>Polohu začátku a konce trasy stačí zadávat se 100m přesností.</li>
+  </ul>
+  Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybujících se ve městě na kole.
+  <br/>Trasy všech účastníků budou v anonymizované podobě zobrazené na <a href="https://mapa.prahounakole.cz/?zoom=13&lat=50.08741&lon=14.4211&layers=_Wgt">mapě Prahou na kole</a>.
+
+  {% endblocktrans %}
+</div>
+<div class="section" id="helpdesk">
+  <h1>{% trans "Další pomoc" %}</h1>
+  {% blocktrans %}
+  Chcete mluvit s živým člověkem? <a href="https://www.dopracenakole.cz/kontakt">volejte na helpdesk</a>.
+  {% endblocktrans %}
+</div>
+{% endscribble %}
+{% endblock %}

@@ -261,6 +261,14 @@ urlpatterns = [
         ),
         name="emission_calculator",
     ),
+    url(
+        r'^help/$',
+        views.UserAttendanceView.as_view(
+            template_name="registration/help.html",
+            title=_("Nápověda"),
+        ),
+        name="help",
+    ),
 
 
     # company admin:
