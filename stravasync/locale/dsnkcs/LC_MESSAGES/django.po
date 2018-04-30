@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-17 18:53+0200\n"
+"POT-Creation-Date: 2018-04-30 14:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,21 +16,20 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: stravasync/models.py:14
+#: models.py:14
 msgid "Účet Strava"
 msgstr ""
 
-#: stravasync/models.py:15
+#: models.py:15
 msgid "Účty Strava"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:9
+#: templates/stravasync/about.html:9
 msgid "Jste propojeni s účtem "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:13
+#: templates/stravasync/about.html:13
 #, python-format
 msgid ""
 "\n"
@@ -40,7 +39,7 @@ msgid ""
 "        "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:19
+#: templates/stravasync/about.html:19
 #, python-format
 msgid ""
 "\n"

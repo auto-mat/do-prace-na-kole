@@ -11,11 +11,13 @@ directions = {
 
 hashtag_to_by_lang = {
     'cs': 'tam',
+    'dsnkcs': 'tam',
     'en': 'to',
 }
 
 hashtag_from_by_lang = {
     'cs': 'zpět',
+    'dsnkcs': 'zpět',
     'en': 'from',
 }
 
