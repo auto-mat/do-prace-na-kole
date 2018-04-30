@@ -108,7 +108,7 @@ msgstr "How it works"
 #, python-format
 msgid ""
 "\n"
-"V aplikace stravě, napište do názvu (nikoliv do popisu) svých aktivit hashtag %(hashtag_to)s "
+"V aplikaci Strava napište do názvu (nikoliv do popisu) svých aktivit hashtag %(hashtag_to)s "
 "nebo %(hashtag_from)s. Poté se jízdy budou automaticky synchronizovat.\n"
 msgstr ""
 "\n"

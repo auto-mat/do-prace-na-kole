@@ -6,7 +6,7 @@ from braces.views import LoginRequiredMixin
 from django import http
 from django.conf import settings
 from django.urls import reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.views import generic
 from django.views.generic.base import TemplateView
 
