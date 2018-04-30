@@ -265,7 +265,7 @@ urlpatterns = [
         r'^help/$',
         views.UserAttendanceView.as_view(
             template_name="registration/help.html",
-            title=_(u"Nápověda"),
+            title=_("Nápověda"),
         ),
         name="help",
     ),
