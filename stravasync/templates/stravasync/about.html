@@ -6,7 +6,7 @@
 <div  class="card card-block card-outline-primary">
 <p class="card-text">
 {% if account %}
-    {% trans "Jste propojeni s účtem " %}{{account.first_name}} {{account.last_name}} ({{account.username}}).
+    {% trans "Jste propojeni s účtem " %}{{account.first_name}} {{account.last_name}}{% if account.username %} ({{account.username}}) {% endif %}.
     <br/>
     <br/>
     {% if sync_outcome %}
