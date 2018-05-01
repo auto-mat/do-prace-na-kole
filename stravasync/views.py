@@ -66,6 +66,7 @@ class AboutStrava(TemplateView, LoginRequiredMixin):
             context["authorize_href"] = sclient.authorization_url(
                 client_id=settings.STRAVA_CLIENT_ID,
                 redirect_uri=get_base_url(self.request) + '/' + reverse('strava_auth')[1:],
+                scope='view_private',
             )
         return context
 
