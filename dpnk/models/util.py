@@ -31,7 +31,7 @@ urls = {
 MAP_DESCRIPTION = format_lazy(
     _("""
 <br/>
-<strong><a href="{help_url}" target="_blank">Nápověda k editace tras</a></strong>
+<strong><a href="{help_url}" target="_blank">Klikněte zde pro nápovědu k editaci tras.</a></strong>
 <br/>
 
 Trasa slouží k výpočtu vzdálenosti a pomůže nám lépe určit potřeby lidí pohybujících se ve městě na kole.
