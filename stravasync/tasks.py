@@ -38,32 +38,35 @@ def sync_task(strava_account_id):
 def sync(strava_account_id, manual_sync=True):
     """
     Sync with a specific strava account.
-
-    May raise stravalib.exc.RateLimitExceeded
     """
     strava_account = StravaAccount.objects.get(id=strava_account_id)
-    if manual_sync:
-        strava_account.user_sync_count += 1
-    else:
-        strava_account.user_sync_count = 0
-    sclient = stravalib.Client(access_token=strava_account.access_token)
-    earliest_start_date, latest_end_date = Phase.get_active_range('competition')
-    campaigns = []
-    for competition_phase in Phase.get_active().filter(phase_type='competition'):
-        campaigns.append(competition_phase.campaign)
-    hashtag_table = hashtags.HashtagTable(campaigns)
-    activities = sclient.get_activities(
-        after=datetime.combine(earliest_start_date, datetime.min.time()),
-        before=datetime.combine(latest_end_date, datetime.max.time()),
-    )
-    strava_account.last_sync_time = datetime.now()
-    stats = {
-        "new_trips": 0,
-        "synced_trips": 0,
-        "synced_activities": 0,
-    }
-    for activity in activities:
-        sync_activity(activity, hashtag_table, strava_account, sclient, stats)
+    try:
+        if manual_sync:
+            strava_account.user_sync_count += 1
+        else:
+            strava_account.user_sync_count = 0
+        sclient = stravalib.Client(access_token=strava_account.access_token)
+        earliest_start_date, latest_end_date = Phase.get_active_range('competition')
+        campaigns = []
+        for competition_phase in Phase.get_active().filter(phase_type='competition'):
+            campaigns.append(competition_phase.campaign)
+        hashtag_table = hashtags.HashtagTable(campaigns)
+        activities = sclient.get_activities(
+            after=datetime.combine(earliest_start_date, datetime.min.time()),
+            before=datetime.combine(latest_end_date, datetime.max.time()),
+        )
+        strava_account.last_sync_time = datetime.now()
+        stats = {
+            "new_trips": 0,
+            "synced_trips": 0,
+            "synced_activities": 0,
+        }
+        for activity in activities:
+            sync_activity(activity, hashtag_table, strava_account, sclient, stats)
+        strava_account.errors = ""
+    except Exception as e:
+        strava_account.errors = str(e)
+        logger.error(e)
     strava_account.save()
     return stats
 
@@ -122,7 +125,7 @@ def sync_stale(min_time_between_syncs=60 * 60 * 12, max_batch_size=300):
 
     The sync_stale task will either consume 1 request per stale account as well as 1 request per new trip if STRAVA_FINE_POLYLINES is True.
     """
-    for account in StravaAccount.get_stale_accounts(min_time_between_syncs).all():
+    for account in StravaAccount.get_stale_accounts(min_time_between_syncs).filter(errors=""):
         if max_batch_size <= 0:
             return
         sync(account.id, manual_sync=False)

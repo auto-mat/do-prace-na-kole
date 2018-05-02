@@ -29,8 +29,7 @@ class TestStravaAuth(ViewsLogon):
         response = self.client.get(reverse('about_strava'))
         self.assertContains(
             response,
-            '<a href="https://strava.com/authorize/url.html" class="btn btn-default float-right">' +
-            '<img src="/static/img/connect_with_strava.png" alt="Propojit se Stravou" /></a>',
+            '<input type="image" src="/static/img/connect_with_strava.png" alt="Propojit se Stravou" class="btn btn-default float-right"/>',
             html=True,
             status_code=200,
         )
