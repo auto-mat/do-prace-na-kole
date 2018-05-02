@@ -36,7 +36,6 @@ class AboutStrava(TemplateView, LoginRequiredMixin):
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        sclient = stravalib.Client()
         context = {
             "title": self.title,
             "campaign_slug": self.request.subdomain,
@@ -90,14 +89,16 @@ class StravaConnect(generic.View, LoginRequiredMixin):
     def post(self, request, *args, **kwargs):
         sclient = stravalib.Client()
         if request.POST.get('private', False):
-            scope='view_private'
+            scope = 'view_private'
         else:
-            scope=None
-        return http.HttpResponseRedirect(sclient.authorization_url(
+            scope = None
+        return http.HttpResponseRedirect(
+            sclient.authorization_url(
                 client_id=settings.STRAVA_CLIENT_ID,
                 redirect_uri=get_base_url(self.request) + '/' + reverse('strava_auth')[1:],
                 scope=scope,
-            ))
+            ),
+        )
 
 
 class StravaDisconnect(generic.View, LoginRequiredMixin):
