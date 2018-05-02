@@ -23,6 +23,13 @@ class StravaAccountAdmin(admin.ModelAdmin):
         'last_sync_time',
         'user_sync_count',
         'access_token',
+        'get_failed',
     )
+
+    def get_failed(self, obj):
+        if obj.errors:
+            return "❌Failed"
+        else:
+            return "Synced"
 
     actions = [sync, ]

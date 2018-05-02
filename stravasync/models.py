@@ -45,6 +45,11 @@ class StravaAccount(models.Model):
         default=0,
     )
 
+    errors = models.TextField(
+        default="",
+        blank=True,
+    )
+
     @classmethod
     def get_stale_accounts(cls, min_time_between_syncs=60 * 60 * 12):
         stale_cutoff = datetime.now() - timedelta(seconds=min_time_between_syncs)
