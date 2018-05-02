@@ -9,6 +9,12 @@ def sync(modeladmin, request, queryset):
         tasks.sync(stravaaccount.id, manual_sync=False)
 
 
+def clear_errors(modeladmin, request, queryset):
+    for stravaaccount in queryset:
+        stravaaccount.errors = ""
+        stravaaccount.save()
+
+
 @admin.register(models.StravaAccount)
 class StravaAccountAdmin(admin.ModelAdmin):
     raw_id_fields = (
@@ -33,3 +39,5 @@ class StravaAccountAdmin(admin.ModelAdmin):
             return "Synced"
 
     actions = [sync, ]
+
+    list_filter = ('errors',)

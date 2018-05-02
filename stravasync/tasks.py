@@ -63,6 +63,7 @@ def sync(strava_account_id, manual_sync=True):
         }
         for activity in activities:
             sync_activity(activity, hashtag_table, strava_account, sclient, stats)
+        strava_account.errors = ""
     except Exception as e:
         strava_account.errors = str(e)
         logger.error(e)
