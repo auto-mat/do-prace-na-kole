@@ -38,8 +38,6 @@ def sync_task(strava_account_id):
 def sync(strava_account_id, manual_sync=True):
     """
     Sync with a specific strava account.
-
-    May raise stravalib.exc.RateLimitExceeded
     """
     strava_account = StravaAccount.objects.get(id=strava_account_id)
     try:
@@ -67,6 +65,7 @@ def sync(strava_account_id, manual_sync=True):
             sync_activity(activity, hashtag_table, strava_account, sclient, stats)
     except Exception as e:
         strava_account.errors = str(e)
+        logger.error(e)
     strava_account.save()
     return stats
 
