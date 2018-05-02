@@ -36,7 +36,6 @@ class AboutStrava(TemplateView, LoginRequiredMixin):
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
-        sclient = stravalib.Client()
         context = {
             "title": self.title,
             "campaign_slug": self.request.subdomain,
@@ -63,10 +62,7 @@ class AboutStrava(TemplateView, LoginRequiredMixin):
             context["max_user_sync_count"] = settings.STRAVA_MAX_USER_SYNC_COUNT
         except models.StravaAccount.DoesNotExist:
             context["account"] = {}
-            context["authorize_href"] = sclient.authorization_url(
-                client_id=settings.STRAVA_CLIENT_ID,
-                redirect_uri=get_base_url(self.request) + '/' + reverse('strava_auth')[1:],
-            )
+            context["authorize_href"] = reverse('strava_connect')
         return context
 
 
@@ -87,6 +83,22 @@ class StravaAuth(generic.View, LoginRequiredMixin):
             access_token=access_token,
         )
         return http.HttpResponseRedirect(reverse('about_strava'))
+
+
+class StravaConnect(generic.View, LoginRequiredMixin):
+    def post(self, request, *args, **kwargs):
+        sclient = stravalib.Client()
+        if request.POST.get('private', False):
+            scope = 'view_private'
+        else:
+            scope = None
+        return http.HttpResponseRedirect(
+            sclient.authorization_url(
+                client_id=settings.STRAVA_CLIENT_ID,
+                redirect_uri=get_base_url(self.request) + '/' + reverse('strava_auth')[1:],
+                scope=scope,
+            ),
+        )
 
 
 class StravaDisconnect(generic.View, LoginRequiredMixin):

@@ -49,9 +49,16 @@
         <input type="submit" class="btn btn-default float-right" value="{% trans "Odpojit" %}" />
     </form>
 {% else %}
-    {% trans "Ještě nejste propojeni se Stravou " %}
-    <a href="{{authorize_href}}"  class="btn btn-default float-right">
-    <img src="{% static "img/connect_with_strava.png" %}" alt="{% trans "Propojit se Stravou" %}" /></a></p>
+    {% trans "Ještě nejste propojeni se Stravou " %}<br/>
+    <form action="{{authorize_href}}" method="post">
+        {% csrf_token %}
+        <input type="checkbox" name="private" value=1 checked>{% trans "Synchronizovat i soukromé jízdy a zóny" %}</input><br/>
+        {% blocktrans %}
+        Doporučujeme buď zadávat jízdy jako soukromé nebo <a href="https://support.strava.com/hc/en-us/articles/115000173384-Privacy-Zones">používat privátní zóny</a> ve Stravě, aby nedocházelo ke zveřejnění vašeho místa bydliště.
+        {% endblocktrans %}
+        <br/>
+        <input type="image" src="{% static "img/connect_with_strava.png" %}" alt="{% trans "Propojit se Stravou" %}" class="btn btn-default float-right"/>
+    </form>
 {% endif %}
 </div>
 <h2>{% trans "Jak to funguje" %}</h2>

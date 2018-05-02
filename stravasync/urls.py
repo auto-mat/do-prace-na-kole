@@ -17,6 +17,11 @@ urlpatterns = [
         name='strava_auth',
     ),
     url(
+        r'^connect/$',
+        views.StravaConnect.as_view(),
+        name='strava_connect',
+    ),
+    url(
         r'^de-auth/$',
         views.StravaDisconnect.as_view(),
         name='strava_deauth',
