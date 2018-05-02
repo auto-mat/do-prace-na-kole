@@ -52,7 +52,7 @@
     {% trans "Ještě nejste propojeni se Stravou " %}<br/>
     <form action="{{authorize_href}}" method="post">
         {% csrf_token %}
-        <input type="checkbox" name="private" value=1 checked>{% trans "Synchronizovat i soukromé jízdy a zóny" %}</input><br/>
+        <label><input type="checkbox" name="private" value=1 checked/>{% trans "Synchronizovat i soukromé jízdy a zóny" %}</label><br/>
         {% blocktrans %}
         Doporučujeme buď zadávat jízdy jako soukromé nebo <a href="https://support.strava.com/hc/en-us/articles/115000173384-Privacy-Zones">používat privátní zóny</a> ve Stravě, aby nedocházelo ke zveřejnění vašeho místa bydliště.
         {% endblocktrans %}
