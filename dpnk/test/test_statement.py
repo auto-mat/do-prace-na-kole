@@ -40,7 +40,7 @@ class TestPasswordForms(TestCase):
         m.period.return_value = [
             {
                 'amount': 123,
-                'variable_symbol': '112233',
+                'variable_symbol': '000112/233',
                 'specific_symbol': '124',
                 'account_number_full': '125',
                 'constant_symbol': '126',
@@ -87,7 +87,7 @@ class TestPasswordForms(TestCase):
                 'type': 'type',
                 'account_name': 'type',
                 'date': '2017-01-01',
-                'recipient_message': 'D112233',
+                'recipient_message': 'D00112/233',
                 'user_identification': 'Foo User',
             },
         ]
