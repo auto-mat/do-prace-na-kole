@@ -17,14 +17,14 @@
       <td>{{ trip.get_direction_display }}</td>
       <td>{{ trip.get_commute_mode_display }}</td>
       <td>
-      {% if trip.distance %}
+      {% if trip.distance and trip.commute_mode.does_count %}
       {{ trip.distance|floatformat:1 }}&nbsp;{% trans 'km' %}
       {% else %}
       -
       {% endif %}
       </td>
       <td>
-         {% if trip.id %}
+         {% if trip.id or trip.active %}
          <a href="{% url "trip" date=trip.date direction=trip.direction %}">
             {% if trip.active %}
                 <i class="fa fa-edit"></i>
