@@ -11,9 +11,9 @@
     <br/>
     {% if sync_outcome %}
         {% blocktrans with new_trips=sync_outcome.new_trips synced_trips=sync_outcome.synced_trips %}
-        Synchronizace proběhla uspěšně.<br/>
-        Bylo přidano {{new_trips}}
-        z celkém {{synced_trips}} cest.
+        Synchronizace proběhla úspěšně.<br/>
+        Bylo přidáno {{new_trips}}
+        z celkem {{synced_trips}} cest.
         {% endblocktrans %}
         {% if not sync_outcome.synced_trips %}
         {% blocktrans with synced_activities=sync_outcome.synced_activities %}
