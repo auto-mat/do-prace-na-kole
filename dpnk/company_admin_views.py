@@ -44,7 +44,7 @@ from .company_admin_forms import (
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
 from .string_lazy import mark_safe_lazy
-from .views import AdmissionsView, RegistrationViewMixin, TitleViewMixin
+from .views import RegistrationViewMixin, TitleViewMixin
 from .views_mixins import CompanyAdminMixin, RequestFormMixin
 from .views_permission_mixins import MustBeCompanyAdminMixin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
 logger = logging.getLogger(__name__)
@@ -102,8 +102,14 @@ class UserAttendanceExportView(MustBeCompanyAdminMixin, View):
         return response
 
 
-class RelatedCompetitionsView(MustBeCompanyAdminMixin, AdmissionsView):
+class RelatedCompetitionsView(MustBeCompanyAdminMixin, LoginRequiredMixin, TemplateView):
     template_name = "company_admin/related_competitions.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data['competitions'] = self.company_admin.administrated_company.get_related_competitions(self.company_admin.campaign)
+        context_data['registration_phase'] = "competitions"
+        return context_data
 
 
 class SelectUsersPayView(
