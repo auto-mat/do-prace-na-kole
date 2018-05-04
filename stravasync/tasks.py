@@ -27,6 +27,8 @@ logger = logging.getLogger(__name__)
 def get_track(polyline_data):
     coords = polyline.decode(polyline_data)
     coords = [(x, y) for (y, x) in coords]
+    if len(coords) == 1:
+        coords = []
     return MultiLineString([LineString(coords, srid=4326)], srid=4326)
 
 

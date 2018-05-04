@@ -22,6 +22,7 @@
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from stdnumfield.models import StdNumField
@@ -106,3 +107,13 @@ class Company(models.Model):
             active=True,
         ).exclude(pk=self.pk).exists():
             raise ValidationError({'ico': 'Organizace s tímto IČO již existuje, nezakládemte prosím novou, ale vyberte jí prosím ze seznamu'})
+
+    def get_related_competitions(self, campaign):
+        """ Get all competitions where this company is involved filtered by given campaign """
+        from .competition import Competition
+        cities = self.subsidiaries.values('city')
+        competitions = Competition.objects.filter(company__isnull=True).filter(
+            Q(city__in=cities, campaign=campaign) |
+            Q(city__isnull=True, campaign=campaign),
+        )
+        return competitions

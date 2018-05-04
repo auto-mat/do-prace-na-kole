@@ -13,6 +13,7 @@ strava_commute_modes = {
     "inline skate": 'bicycle',
     "nordic ski": 'by_foot',
     "inlineskate": 'by_foot',
+    "ebikeride": 'bicycle',
 }
 
 

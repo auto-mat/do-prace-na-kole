@@ -66,9 +66,13 @@ def parse(days_back=7):
             variable_symbol = payment['variable_symbol']
             recipient_message = payment['recipient_message']
             if recipient_message:
-                recipient_message_without_d = recipient_message.replace("D", "")
+                recipient_message_without_d = recipient_message.replace("D", "").replace("/", "").lstrip("0")
             else:
                 recipient_message_without_d = ""
+            if variable_symbol:
+                variable_symbol = variable_symbol.replace("/", "").lstrip("0")
+            else:
+                variable_symbol = ""
             try:
                 invoice = Invoice.objects.get(
                     variable_symbol__in=(variable_symbol, recipient_message, recipient_message_without_d),
