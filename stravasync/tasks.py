@@ -85,36 +85,36 @@ def sync_activity(activity, hashtag_table, strava_account, sclient, stats):  # n
     if not campaign.day_active(date):
         return
     trip = user_attendance.user_trips.filter(direction=direction, date=date)
-    if not trip.exists():
+    if (not trip.exists()) or (not trip.get().source_id):
         stats["new_trips"] += 1
         if activity.map.summary_polyline and settings.STRAVA_FINE_POLYLINES:
             activity = sclient.get_activity(activity.id)
-    form_data = {
-        'date': date,
-        'direction': direction,
-        'user_attendance': user_attendance.id,
-        'commute_mode': get_commute_mode(activity.type).id,
-        'distance': round(stravalib.unithelper.kilometers(activity.distance).get_num(), 2),
-        'duration': activity.elapsed_time.total_seconds(),
-        'source_application': 'strava',
-        'source_id': activity.id,
-        'from_application': True,
-    }
-    if activity.map.summary_polyline and (not trip.exists()):
-        form_data['track'] = get_track(activity.map.summary_polyline)
-    if activity.map.polyline:
-        form_data['track'] = get_track(activity.map.polyline)
+        form_data = {
+            'date': date,
+            'direction': direction,
+            'user_attendance': user_attendance.id,
+            'commute_mode': get_commute_mode(activity.type).id,
+            'distance': round(stravalib.unithelper.kilometers(activity.distance).get_num(), 2),
+            'duration': activity.elapsed_time.total_seconds(),
+            'source_application': 'strava',
+            'source_id': activity.id,
+            'from_application': True,
+        }
+        if activity.map.summary_polyline:
+            form_data['track'] = get_track(activity.map.summary_polyline)
+        if activity.map.polyline:
+            form_data['track'] = get_track(activity.map.polyline)
 
-    try:
-        trip_form = FullTripForm(data=form_data, instance=trip.get())
-    except Trip.DoesNotExist:
-        trip_form = FullTripForm(data=form_data)
+        try:
+            trip_form = FullTripForm(data=form_data, instance=trip.get())
+        except Trip.DoesNotExist:
+            trip_form = FullTripForm(data=form_data)
 
-    if trip_form.is_valid():
-        trip_form.save()
-    else:
-        logger.error("Form error:")
-        logger.error(trip_form.errors)
+        if trip_form.is_valid():
+            trip_form.save()
+        else:
+            logger.error("Form error:")
+            logger.error(trip_form.errors)
 
 
 @shared_task(bind=False)
