@@ -46,6 +46,21 @@ class TestPasswordForms(ViewsLogonMommy):
         self.assertEqual(msg.subject, 'Zapomenuté heslo Do práce na kole')
         self.assertTrue('http://testing-campaign.example.com/zapomenute_heslo/zmena/' in msg.body)
 
+    def test_password_recovery_no_password(self):
+        """ Test, that sending password works also for users without password thorough Social auth """
+        self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
+        mommy.make("User", email='test@test.cz', password='')
+        address = reverse('password_reset')
+        post_data = {
+            'email': 'test@test.cz',
+        }
+        response = self.client.post(address, post_data, follow=True)
+        self.assertRedirects(response, reverse('password_reset_done'))
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['test@test.cz'])
+        self.assertEqual(msg.subject, 'Zapomenuté heslo Do práce na kole')
+        self.assertTrue('http://testing-campaign.example.com/zapomenute_heslo/zmena/' in msg.body)
+
     def test_password_recovery_unknown_email(self):
         address = reverse('password_reset')
         post_data = {
