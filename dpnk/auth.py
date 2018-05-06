@@ -57,6 +57,9 @@ class PasswordResetForm(PasswordResetForm):
         self.helper.add_input(Submit('submit', _(u'Odeslat')))
         super().__init__(*args, **kwargs)
 
+    def get_users(self, email):
+        return User.objects.filter(email__iexact=email, is_active=True)
+
     def clean_email(self):
         """
         Validate that the email is not already in use.
