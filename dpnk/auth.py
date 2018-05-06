@@ -18,9 +18,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
-
 from django import forms
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm, SetPasswordForm
@@ -44,18 +41,13 @@ class EmailModelBackend(ModelBackend):
             return user
 
 
-class SetPasswordForm(SetPasswordForm):
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', _(u'Odeslat')))
-        super().__init__(*args, **kwargs)
+class SetPasswordForm(SubmitMixin, SetPasswordForm):
+    pass
 
 
-class PasswordResetForm(PasswordResetForm):
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', _(u'Odeslat')))
-        super().__init__(*args, **kwargs)
+class PasswordResetForm(SubmitMixin, PasswordResetForm):
+    def get_users(self, email):
+        return User.objects.filter(email__iexact=email, is_active=True)
 
     def clean_email(self):
         """
@@ -72,4 +64,13 @@ class PasswordResetForm(PasswordResetForm):
 
 
 class PasswordChangeForm(SubmitMixin, PasswordChangeForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['old_password'].required = False
+        self.fields['old_password'].help_text = _("V případě, že se dosud přihlašujete pouze přes sociální sítě, nechte prázdné")
+
+    def clean_old_password(self):
+        # Allow to set password if not set yet
+        if self.user.password == '':
+            return self.cleaned_data["old_password"]
+        super().clean_old_password()

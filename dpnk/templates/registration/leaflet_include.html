@@ -14,8 +14,28 @@
       var originalOnTouch = L.Draw.Polyline.prototype._onTouch;
       L.Draw.Polyline.prototype._onTouch = function( e ) {
          if( e.originalEvent.pointerType != 'mouse' ) {
-            return originalOnTouch.call(this, e);
+            if(this._calculateFinishDistance(e.latlng) > 10){ // dissables https://github.com/Leaflet/Leaflet.draw/blob/6e4e2c3806dcaeab2e569a82d5c6d2081b2e51db/src/draw/handler/Draw.Polyline.js#L305
+                return originalOnTouch.call(this, e);
+            }
          }
+      }
+
+      // https://github.com/Leaflet/Leaflet.draw/issues/789
+      L.Draw.Polyline.prototype._updateFinishHandler = function( e ) {
+       var markerCount = this._markers.length;
+       // The last marker should have a click handler to close the polyline
+       if (markerCount > 2) {
+           setTimeout(function(){
+                  if ( this._markers === undefined ) {
+                      return;
+                  }
+                  this._markers[this._markers.length - 1].on('click', this._finishShape, this);
+          }.bind(this), 300);
+       }
+       // Remove the old marker click handler (as only the last point should close the polyline)
+       if (markerCount > 2) {
+           this._markers[markerCount - 2].off('click', this._finishShape, this);
+       }
       }
    })();
 </script>

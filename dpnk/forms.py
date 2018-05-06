@@ -92,14 +92,14 @@ class UserLeafletWidget(LeafletWidget):
 class SubmitMixin(object):
     submit_text = _('Odeslat')
 
-    def __init__(self, url_name="", *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         super().__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', self.submit_text))
 
 
 class PrevNextMixin(object):
-    def __init__(self, url_name="", *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         if not hasattr(self, 'no_prev'):
             prev_url = kwargs.pop('prev_url', None)
