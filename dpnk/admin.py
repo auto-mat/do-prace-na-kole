@@ -1162,7 +1162,9 @@ class TripAdmin(ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
         'user_attendance__userprofile__user__first_name',
         'user_attendance__userprofile__user__last_name',
         'user_attendance__userprofile__user__username',
-        'user_attendance__team__subsidiary__company__name')
+        'user_attendance__userprofile__user__email',
+        'user_attendance__team__subsidiary__company__name',
+    )
     raw_id_fields = ('user_attendance',)
     list_filter = (
         campaign_filter_generator('user_attendance__campaign'),
