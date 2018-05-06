@@ -6,6 +6,7 @@ directions = {
     'zpet': 'trip_from',
     'zpět': 'trip_from',
     'there': 'trip_to',
+    'to': 'trip_to',
     'back': 'trip_from',
 }
 
