@@ -64,4 +64,13 @@ class PasswordResetForm(SubmitMixin, PasswordResetForm):
 
 
 class PasswordChangeForm(SubmitMixin, PasswordChangeForm):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['old_password'].required = False
+        self.fields['old_password'].help_text = _("V případě, že se dosud přihlašujete pouze přes sociální sítě, nechte prázdné")
+
+    def clean_old_password(self):
+        # Allow to set password if not set yet
+        if self.user.password == '':
+            return self.cleaned_data["old_password"]
+        super().clean_old_password()
