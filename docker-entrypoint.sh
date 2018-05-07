@@ -1,7 +1,9 @@
 #!/bin/bash
-python manage.py migrate --noinput                # Apply database migrations
-python manage.py denorm_drop
-python manage.py denorm_init
+if python manage.py showmigrations | grep '\[ \]\|^[a-z]' | grep '[  ]' -B 1; then
+   python manage.py migrate --noinput                # Apply database migrations
+   python manage.py denorm_drop
+   python manage.py denorm_init
+fi
 
 # Prepare log files and start outputting logs to stdout
 tail -n 0 -f logs/*.log &
