@@ -15,6 +15,7 @@ strava_commute_modes = {
     "inlineskate": 'by_foot',
     "ebikeride": 'bicycle',
     "rollerski": 'by_foot',
+    "canoeing": 'by_other_vehicle',
 }
 
 
