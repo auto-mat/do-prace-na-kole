@@ -250,7 +250,7 @@ def recalculate_result_competition(competition):
     CompetitionResult.objects.filter(competition=competition).delete()
     for competitor in competition.get_competitors():
         if (competition.competition_type == 'questionnaire' and
-                type(competition) == UserAttendance and
+                type(competitor) == UserAttendance and
                 not Answer.objects.filter(user_attendance=competitor, question__competition=competition).exists()):
             continue
         recalculate_result(competition, competitor)
