@@ -179,12 +179,14 @@ class RestTests(TestCase):
             )
 
     def test_gpx_duplicate_gpx(self):
-        mommy.make(
-            'GpxFile',
-            trip_date=datetime.date(2010, 11, 19),
+        """ Test, that if trip exists, it gets modified """
+        trip = mommy.make(
+            'Trip',
+            date=datetime.date(2010, 11, 19),
             direction="trip_to",
             user_attendance=UserAttendance.objects.get(pk=1115),
         )
+        trip_id = trip.id
         with open('dpnk/test_files/modranska-rokle.gpx', 'rb') as gpxfile:
             post_data = {
                 'trip_date': "2010-11-19",
@@ -192,7 +194,6 @@ class RestTests(TestCase):
                 'sourceApplication': 'test_app',
                 'file': gpxfile,
             }
-            trip_id = models.Trip.objects.get(date=datetime.date(2010, 11, 19)).id
             response = self.client.post(reverse("gpxfile-list"), post_data)
             trip = models.Trip.objects.get(date=datetime.date(2010, 11, 19))
             self.assertJSONEqual(
