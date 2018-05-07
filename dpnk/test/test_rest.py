@@ -192,12 +192,26 @@ class RestTests(TestCase):
                 'sourceApplication': 'test_app',
                 'file': gpxfile,
             }
+            trip_id = models.Trip.objects.get(date=datetime.date(2010, 11, 19)).id
             response = self.client.post(reverse("gpxfile-list"), post_data)
+            trip = models.Trip.objects.get(date=datetime.date(2010, 11, 19))
             self.assertJSONEqual(
                 response.content.decode(),
-                {"detail": "GPX for this day and trip already uploaded"},
+                {
+                    'commuteMode': 'bicycle',
+                    'direction': 'trip_to',
+                    'distanceMeters': 13320,
+                    'durationSeconds': None,
+                    "file": "http://testing-campaign.testserver%s%s" % (
+                        settings.MEDIA_URL,
+                        trip.gpx_file.name,
+                    ),
+                    'id': trip_id,
+                    'sourceApplication': 'test_app',
+                    'trip_date': '2010-11-19',
+                },
             )
-            self.assertEqual(response.status_code, 409)
+            self.assertEqual(response.status_code, 201)
 
     def test_gpx_put(self):
         trip = mommy.make(

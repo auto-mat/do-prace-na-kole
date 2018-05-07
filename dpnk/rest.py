@@ -18,7 +18,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
 
 from rest_framework import permissions, routers, serializers, viewsets
 from rest_framework.reverse import reverse
@@ -31,11 +30,6 @@ class InactiveDayGPX(serializers.ValidationError):
     status_code = 410
     default_code = 'invalid_date'
     default_detail = {'date': "Trip for this day cannot be created/updated. This day is not active for edition"}
-
-
-class DuplicateGPX(serializers.ValidationError):
-    status_code = 409
-    default_detail = {'detail': 'GPX for this day and trip already uploaded'}
 
 
 class GPXParsingFail(serializers.ValidationError):
@@ -110,15 +104,15 @@ class TripSerializer(serializers.ModelSerializer):
         return validated_data
 
     def create(self, validated_data):
-        validated_data['user_attendance'] = self.user_attendance
-
         try:
-            instance = Trip(**validated_data)
-            instance.clean()
+            instance, _ = Trip.objects.update_or_create(
+                user_attendance=self.user_attendance,
+                date=validated_data['date'],
+                direction=validated_data['direction'],
+                defaults=validated_data,
+            )
             instance.from_application = True
             instance.save()
-        except IntegrityError:
-            raise DuplicateGPX
         except ValidationError:
             raise GPXParsingFail
         return instance
