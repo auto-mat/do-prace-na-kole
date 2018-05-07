@@ -27,6 +27,7 @@ import hashlib
 import json
 import logging
 import math
+import socket
 import time
 from fm.views import AjaxCreateView
 from http.client import HTTPSConnection
@@ -1911,3 +1912,9 @@ class TripGeoJsonView(LoginRequiredMixin, WithTripMixin, View):
         else:
             track_json = {}
         return HttpResponse(track_json)
+
+
+def status(request):
+    status_page = str(datetime.datetime.now()) + '\n'
+    status_page += socket.gethostname()
+    return HttpResponse(status_page)
