@@ -14,6 +14,7 @@ HOST_NAME=${HOST_NAME:-"dpnk.dopracenakole.cz"}
 PORT=${PORT:-"443"}
 RESOLVE_URL=${RESOLVE_URL:-"dpnk.dopracenakole.cz"}
 RESOLVE_PORT=${RESOLVE_PORT:-"80"}
+HOST_PROTO=${HOST_PROTO:-"https"}
 
 function call_dpnk {
     OUTPUT=output.html
@@ -21,10 +22,11 @@ function call_dpnk {
     curl\
      --cookie cookies.txt\
      --cookie-jar cookies.txt\
+     -H "$EXTRAHEADER"\
      -o $OUTPUT\
      --resolve "$HOST_NAME:$RESOLVE_PORT:$RESOLVE_URL"\
      $2\
-     "$HOST_NAME/$1"
+     "$HOST_PROTO://$HOST_NAME/$1"
 }
 
 

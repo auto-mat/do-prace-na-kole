@@ -269,6 +269,10 @@ urlpatterns = [
         ),
         name="help",
     ),
+    url(
+        r'^status/$',
+        views.status,
+    ),
 
 
     # company admin:

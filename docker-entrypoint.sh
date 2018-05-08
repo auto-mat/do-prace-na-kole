@@ -8,13 +8,15 @@ tail -n 0 -f logs/*.log &
 
 service memcached restart
 
+GUNICORN_TIMEOUT=${GUNICORN_TIMEOUT:-"60"}
+
 # Start Gunicorn processes
 echo Starting Gunicorn.
 exec gunicorn wsgi:application \
 	 --name dpnk \
 	 --bind 0.0.0.0:8000 \
 	 --workers $GUNICORN_NUM_WORKERS \
-	 --timeout 6000 \
+	 --timeout $GUNICORN_TIMEOUT \
 	 --log-level=debug \
 	 --log-file=- \
 	 --access-logfile=- \
