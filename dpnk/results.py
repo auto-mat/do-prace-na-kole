@@ -249,10 +249,6 @@ def get_team_length(team, competition):
 def recalculate_result_competition(competition):
     CompetitionResult.objects.filter(competition=competition).delete()
     for competitor in competition.get_competitors():
-        if (competition.competition_type == 'questionnaire' and
-                type(competitor) == UserAttendance and
-                not Answer.objects.filter(user_attendance=competitor, question__competition=competition).exists()):
-            continue
         recalculate_result(competition, competitor)
 
 
@@ -289,6 +285,11 @@ def points_questionnaire(user_attendances, competition):
 
 
 def recalculate_result(competition, competitor):  # noqa
+    if (competition.competition_type == 'questionnaire' and
+            type(competitor) == UserAttendance and
+            not Answer.objects.filter(user_attendance=competitor, question__competition=competition).exists()):
+        return
+
     if competitor is None:
         return
 
