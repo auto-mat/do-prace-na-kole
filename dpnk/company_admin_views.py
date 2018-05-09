@@ -102,8 +102,9 @@ class UserAttendanceExportView(MustBeCompanyAdminMixin, View):
         return response
 
 
-class RelatedCompetitionsView(MustBeCompanyAdminMixin, LoginRequiredMixin, TemplateView):
+class RelatedCompetitionsView(MustBeCompanyAdminMixin, LoginRequiredMixin, TitleViewMixin, TemplateView):
     template_name = "company_admin/related_competitions.html"
+    title = _("Oficiální soutěže")
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
