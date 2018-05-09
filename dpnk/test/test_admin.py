@@ -438,14 +438,6 @@ class AdminTests(TestCase):
             "</li>",
             html=True,
         )
-        self.assertContains(
-            response,
-            "<li> 2. tah: Tým Registered User 1"
-            "<br/>"
-            "0&nbsp;bodů"
-            "</li>",
-            html=True,
-        )
 
     def test_admin_draw_results_tf(self):
         competition = models.Competition.objects.filter(slug="TF")
