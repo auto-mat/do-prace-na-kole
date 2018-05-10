@@ -79,7 +79,7 @@ class SubsidiaryBox(TimeStampedModel, models.Model):
         on_delete=models.SET_NULL,
     )
     dispatched = models.BooleanField(
-        verbose_name=_("Krabice vyřízena"),
+        verbose_name=_("Krabice evidována u dopravce"),
         blank=False,
         null=False,
         default=False,

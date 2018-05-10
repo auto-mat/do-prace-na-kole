@@ -125,6 +125,7 @@ requests==2.18.4
 requests-oauthlib==0.8.0
 setuptools-git==1.2
 simplejson==3.6.5
+single-beat==0.2.1
 six==1.11.0
 -e git+https://github.com/PetrDlouhy/slumber.git@6327c9d58bc9b832277295af0b4ea2ea5a9c2324#egg=slumber
 social-auth-app-django==2.1.0

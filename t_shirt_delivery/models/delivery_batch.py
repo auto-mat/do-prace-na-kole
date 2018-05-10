@@ -72,6 +72,12 @@ class DeliveryBatch(models.Model):
         null=False,
         default=False,
     )
+    note = models.CharField(
+        verbose_name=_("Krátká poznámka"),
+        max_length=255,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = _(u"Dávka objednávek")
