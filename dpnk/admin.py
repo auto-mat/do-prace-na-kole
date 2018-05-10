@@ -471,13 +471,14 @@ class UserAttendanceForm(forms.ModelForm):
                 self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign)
 
     def clean(self):
-        new_team = self.cleaned_data['team']
+        if 'team' in self.cleaned_data:  # if not in merge form
+            new_team = self.cleaned_data['team']
 
-        if self.instance.payment_status == 'done' and new_team is None:
-            self.add_error(
-                "team",
-                _("Není možné odstranit tým učastníkovi kampaně, který již zaplatil"),
-            )
+            if self.instance.payment_status == 'done' and new_team is None:
+                self.add_error(
+                    "team",
+                    _("Není možné odstranit tým učastníkovi kampaně, který již zaplatil"),
+                )
         return super().clean()
 
 
@@ -1067,6 +1068,7 @@ class AnswerAdmin(FormRequestMixin, ImportExportMixin, RelatedFieldAdmin):
         'user_attendance__userprofile__nickname',
         'user_attendance__userprofile__user__first_name',
         'user_attendance__userprofile__user__last_name',
+        'user_attendance__userprofile__user__email',
         'question__text',
         'question__name',
         'question__competition__name',
@@ -1216,6 +1218,7 @@ class CompetitionResultAdmin(ImportExportMixin, admin.ModelAdmin):
         'user_attendance__userprofile__user__first_name',
         'user_attendance__userprofile__user__last_name',
         'user_attendance__userprofile__user__username',
+        'user_attendance__userprofile__user__email',
         'team__name',
         'competition__name')
     raw_id_fields = ('user_attendance', 'team')
@@ -1422,7 +1425,14 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         isnull_filter('paid_date', _("Nezaplacené faktury")),
         'company_pais_benefitial_fee',
     ]
-    search_fields = ['company__name', ]
+    search_fields = [
+        'company__name',
+        'variable_symbol',
+        'company_ico',
+        'company_dic',
+        'sequence_number',
+        'total_amount',
+    ]
     inlines = [PaymentInline]
     actions = [actions.mark_invoices_paid]
     list_max_show_all = 10000
@@ -1571,6 +1581,7 @@ TokenAdmin.search_fields = (
     'user__first_name',
     'user__last_name',
     'user__username',
+    'key',
 )
 
 

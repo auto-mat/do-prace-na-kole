@@ -362,6 +362,7 @@ class DeliveryBatchAdmin(FormRequestMixin, NestedModelAdmin):
         'campaign',
         'created',
         'dispatched',
+        'note',
         'package_transaction_count',
         'box_count',
         'author',

@@ -326,7 +326,7 @@ class UserAttendance(models.Model):
         else:
             return 0
     get_distance.short_description = _('Vzdálenost (km) do práce')
-    get_distance.admin_order_field = 'length'
+    get_distance.admin_order_field = 'distance'
 
     def get_userprofile(self):
         return self.userprofile
