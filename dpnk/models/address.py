@@ -44,7 +44,32 @@ def get_address_string(address):
     )
 
 
-def address_generator(null_blank=False):
+def address_generator(
+    null_blank=False,
+    recipient_name=_("Název pobočky (závodu, kanceláře, fakulty), nepovinné pole"),
+    char_psc=False,
+):
+    if char_psc:
+        psc_field = models.CharField(
+            verbose_name=_(u"PSČ"),
+            help_text=_(u"Např.: „130 00“"),
+            max_length=50,
+            null=True,
+            blank=True,
+        )
+    else:
+        psc_field = models.IntegerField(
+            verbose_name=_(u"PSČ"),
+            help_text=_(u"Např.: „130 00“"),
+            validators=[
+                MaxValueValidator(99999),
+                MinValueValidator(10000),
+            ],
+            default=None,
+            null=True,
+            blank=null_blank,
+        )
+
     class AddressField(CompositeField):
         street = models.CharField(
             verbose_name=_(u"Ulice"),
@@ -63,7 +88,7 @@ def address_generator(null_blank=False):
             blank=null_blank,
         )
         recipient = models.CharField(
-            verbose_name=_("Název pobočky (závodu, kanceláře, fakulty), nepovinné pole"),
+            verbose_name=recipient_name,
             help_text=_(
                 "Např. „odštěpný závod Brno“, „oblastní pobočka Liberec“, „Přírodovědecká fakulta“ atp. "
                 "Nemá-li vaše organizace pobočky, pak nechte pole prázdné.",
@@ -73,17 +98,7 @@ def address_generator(null_blank=False):
             null=True,
             blank=True,
         )
-        psc = models.IntegerField(
-            verbose_name=_(u"PSČ"),
-            help_text=_(u"Např.: „130 00“"),
-            validators=[
-                MaxValueValidator(99999),
-                MinValueValidator(10000),
-            ],
-            default=None,
-            null=True,
-            blank=null_blank,
-        )
+        psc = psc_field
         city = models.CharField(
             verbose_name=_(u"Město"),
             help_text=_(u"Např. „Jablonec n. N.“ nebo „Praha 3, Žižkov“"),
@@ -107,3 +122,13 @@ def address_generator(null_blank=False):
 
 Address = address_generator()
 AddressOptional = address_generator(True)
+addressee_string = _("Adresát na faktuře")
+CompanyAddress = address_generator(
+    False,
+    recipient_name=addressee_string,
+)
+InvoiceAddress = address_generator(
+    True,
+    recipient_name=addressee_string,
+    char_psc=True,
+)

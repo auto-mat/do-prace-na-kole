@@ -27,7 +27,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from stdnumfield.models import StdNumField
 
-from .address import Address, get_address_string
+from .address import CompanyAddress, get_address_string
 
 
 ICO_ERROR_MESSAGE = _("IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a případně ho doplňte nulami zleva.")
@@ -53,7 +53,7 @@ class Company(models.Model):
         max_length=60,
         null=False,
     )
-    address = Address()
+    address = CompanyAddress()
     ico = StdNumField(
         'cz.dic',
         default=None,
