@@ -31,7 +31,7 @@ from daterange_filter.filter import DateRangeFilter
 
 from django import forms
 from django.contrib import admin
-from django.db.models import Count, TextField
+from django.db.models import Case, CharField, Count, TextField, When
 from django.forms import Textarea
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
@@ -373,12 +373,22 @@ class DeliveryBatchAdmin(FormRequestMixin, NestedModelAdmin):
         'dispatched',
         'note',
         'package_transaction_count',
+        'dispatched_count',
         'box_count',
         'author',
         'customer_sheets__url',
         'csv_data_url',
     ]
-    readonly_fields = ('campaign', 'author', 'created', 'updated_by', 'package_transaction_count', 'box_count', 't_shirt_sizes')
+    readonly_fields = (
+        'campaign',
+        'author',
+        'created',
+        'updated_by',
+        'package_transaction_count',
+        'box_count',
+        'dispatched_count',
+        't_shirt_sizes',
+    )
     inlines = [SubsidiaryBoxInline, ]
     list_filter = (CampaignFilter,)
     form = DeliveryBatchForm
@@ -423,11 +433,21 @@ class DeliveryBatchAdmin(FormRequestMixin, NestedModelAdmin):
         if obj.tnt_order:
             return format_html("<a href='{}'>csv_data</a>", obj.tnt_order.url)
 
+    def dispatched_count(self, obj):
+        return obj.dispatched_count
+
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         return queryset.select_related(
             'author',
             'campaign',
+        ).annotate(
+            dispatched_count=Count(
+                Case(
+                    When(subsidiarybox__dispatched=True, then=1),
+                    output_field=CharField(),
+                ),
+            ),
         )
 
 
