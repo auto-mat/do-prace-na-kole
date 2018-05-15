@@ -35,7 +35,7 @@ from django.dispatch import receiver
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
-from .address import AddressOptional
+from .address import InvoiceAddress
 from .company import Company
 from .transactions import Payment, Status
 from .. import invoice_gen, util
@@ -133,7 +133,35 @@ class Invoice(models.Model):
         null=True,
         blank=True,
     )
-    company_address = AddressOptional()
+    company_address = InvoiceAddress()
+    country = models.CharField(
+        verbose_name=_("Země"),
+        max_length=60,
+        null=False,
+        blank=True,
+        default="",
+    )
+    telephone = models.CharField(
+        max_length=255,
+        blank=True,
+        null=False,
+        default="",
+        verbose_name=_("Telefon"),
+    )
+    email = models.CharField(
+        max_length=255,
+        blank=True,
+        null=False,
+        default="",
+        verbose_name=_("E-mail"),
+    )
+    client_note = models.TextField(
+        max_length=255,
+        blank=True,
+        null=False,
+        default="",
+        verbose_name=_("Poznámka k adresátovi"),
+    )
     company_ico = models.PositiveIntegerField(
         default=None,
         verbose_name=_("IČO organizace"),
