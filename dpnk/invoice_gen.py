@@ -32,7 +32,7 @@ def generate_invoice(invoice):
         division=invoice.company_address_recipient,
         country=invoice.country,
         address=" ".join(filter(None, (invoice.company_address_street, invoice.company_address_street_number))),
-        zip_code=invoice.company_address_psc or "",
+        zip_code=str(invoice.company_address_psc or ""),
         city=invoice.company_address_city,
         ir=invoice.company_ico,
         vat_id=invoice.company_dic,
