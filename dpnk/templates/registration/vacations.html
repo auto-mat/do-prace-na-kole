@@ -12,8 +12,9 @@
 {{ block.super }}
 {% endblock %}
 {% block form %}
+{% url "profil" as profile %}
 {% blocktrans %}
-Označte dovolenou kliknutím na budoucí data.
+Označte dovolenou kliknutím na datum. Tento kalendář slouží k označování dovolené do budoucna, chcete-li zaznamenat dovolenou zpětně, označte <a href="{{profile}}">dané jízdy</a> jako "žádná cesta."
 {% endblocktrans %}
 <br/>
 {% get_current_language as LANGUAGE_CODE %}

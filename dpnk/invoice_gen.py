@@ -29,15 +29,20 @@ def generate_invoice(invoice):
 
     client = Client(
         invoice.company_name,
-        address="%s %s" % (invoice.company_address_street, invoice.company_address_street_number),
-        zip_code=invoice.company_address_psc or "",
+        division=invoice.company_address_recipient,
+        country=invoice.country,
+        address=" ".join(filter(None, (invoice.company_address_street, invoice.company_address_street_number))),
+        zip_code=str(invoice.company_address_psc or ""),
         city=invoice.company_address_city,
         ir=invoice.company_ico,
         vat_id=invoice.company_dic,
+        phone=invoice.telephone,
+        email=invoice.email,
+        note=invoice.client_note,
     )
 
     if invoice.order_number:
-        client.note = u"Číslo objednávky: %s" % invoice.order_number
+        client.note += "\nČíslo objednávky: %s" % invoice.order_number
 
     provider = Provider(
         "Auto*Mat, z.s.",
@@ -52,9 +57,9 @@ def generate_invoice(invoice):
         ir="22670319",
         phone="212 240 666",
         logo_filename=os.path.join(DIR, "static/img/logo.jpg"),
-        note="Spolek je veden u Městského soudu v Praze pod spisovou značkou L 18119.\n"
-             "Auto*mat - společně s vámi tvoříme město, ve kterém chceme žít.\n"
-             "                                       http://www.auto-mat.cz",
+        note="Spolek je veden u Městského soudu v Praze pod spisovou značkou L 18119. "
+             "Auto*mat - společně s vámi tvoříme město, ve kterém chceme žít."
+             "\nhttps://www.auto-mat.cz",
     )
 
     creator = Creator(
