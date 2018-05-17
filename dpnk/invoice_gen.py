@@ -57,9 +57,9 @@ def generate_invoice(invoice):
         ir="22670319",
         phone="212 240 666",
         logo_filename=os.path.join(DIR, "static/img/logo.jpg"),
-        note="Spolek je veden u Městského soudu v Praze pod spisovou značkou L 18119."
+        note="Spolek je veden u Městského soudu v Praze pod spisovou značkou L 18119. "
              "Auto*mat - společně s vámi tvoříme město, ve kterém chceme žít."
-             "https://www.auto-mat.cz",
+             "\nhttps://www.auto-mat.cz",
     )
 
     creator = Creator(
