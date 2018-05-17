@@ -67,5 +67,8 @@ class PackageTransaction(Transaction):
             self.t_shirt_size = self.user_attendance.t_shirt_size
         super().save(*args, **kwargs)
 
+    def box_tracking_link(self):
+        return self.team_package.box.tracking_link()
+
     def __str__(self):
         return "Package transaction for user %s" % self.user_attendance
