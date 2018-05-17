@@ -1434,7 +1434,11 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         'total_amount',
     ]
     inlines = [PaymentInline]
-    actions = [actions.mark_invoices_paid]
+    actions = [
+        actions.mark_invoices_paid,
+        actions.invoice_pdf_batch_download,
+        actions.invoice_xml_batch_download,
+    ]
     list_max_show_all = 10000
     form = InvoiceForm
     resource_class = InvoiceResource

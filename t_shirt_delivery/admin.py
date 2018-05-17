@@ -119,7 +119,15 @@ class PackageTransactionResource(resources.ModelResource):
 class PackageTransactionInline(admin.TabularInline):
     model = models.PackageTransaction
     extra = 0
-    readonly_fields = ['author', 'updated_by', 't_shirt_size']
+    readonly_fields = [
+        'author',
+        'updated_by',
+        't_shirt_size',
+        'box_tracking_link',
+    ]
+    exclude = [
+        'tracking_number',
+    ]
     raw_id_fields = [
         'user_attendance',
         'team_package',
@@ -189,6 +197,7 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
         'customer_sheets',
         'created',
     )
+    actions = [actions.delivery_box_batch_download]
     list_filter = [
         campaign_filter_generator('delivery_batch__campaign'),
         'dispatched',
