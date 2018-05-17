@@ -23,7 +23,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 
-from . import mailing, models, results, tasks, util, views
+from . import mailing, models, results, tasks, views
 
 
 def recalculate_competitions_results(modeladmin, request, queryset):
@@ -41,7 +41,7 @@ def batch_download_action_generator(field):
         for q in queryset:
             file_field = getattr(q, field)
             if file_field:
-                links.append(util.get_base_url(request) + file_field.url)
+                links.append(file_field.url)
         return HttpResponse("\n".join(links), content_type='text/plain')
     return batch_download
 
