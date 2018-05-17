@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 from django.utils.translation import ugettext_lazy as _
 
+from dpnk import actions
 from dpnk.models import Campaign
 
 from t_shirt_delivery.models import DeliveryBatch
@@ -37,3 +38,6 @@ def create_batch(modeladmin, request, queryset):
 
 
 create_batch.short_description = _(u"Vytvořit dávku z vybraných uživatelů")
+
+delivery_box_batch_download = actions.batch_download_action_generator("customer_sheets")
+delivery_box_batch_download.short_description = _("Hromadně stáhnout PDF")

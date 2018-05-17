@@ -20,9 +20,10 @@
 import datetime
 
 from django.contrib import messages
+from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 
-from . import mailing, models, results, tasks, views
+from . import mailing, models, results, tasks, util, views
 
 
 def recalculate_competitions_results(modeladmin, request, queryset):
@@ -32,6 +33,25 @@ def recalculate_competitions_results(modeladmin, request, queryset):
 
 
 recalculate_competitions_results.short_description = _(u"Přepočítat výsledku vybraných soutěží")
+
+
+def batch_download_action_generator(field):
+    def batch_download(modeladmin, request, queryset):
+        links = []
+        for q in queryset:
+            file_field = getattr(q, field)
+            if file_field:
+                links.append(util.get_base_url(request) + file_field.url)
+        return HttpResponse("\n".join(links), content_type='text/plain')
+    return batch_download
+
+
+invoice_pdf_batch_download = batch_download_action_generator("invoice_pdf")
+invoice_pdf_batch_download.short_description = _("Hromadně stáhnout PDF")
+invoice_pdf_batch_download.__name__ = "invoice_pdf_batch_download"  # to distingush it for Django admin
+
+invoice_xml_batch_download = batch_download_action_generator("invoice_xml")
+invoice_xml_batch_download.short_description = _("Hromadně stáhnout XML")
 
 
 # ---- USER_ATTENDANCE -----
