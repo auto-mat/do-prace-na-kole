@@ -91,7 +91,7 @@ gpxpy==1.1.2
 gunicorn==19.7.1
 html5lib==1.0.1
 idna==2.6
--e git+https://github.com/PetrDlouhy/InvoiceGenerator.git@feature/more-address-details#egg=InvoiceGenerator
+-e git+https://github.com/creckx/InvoiceGenerator.git@v1.0.0#egg=InvoiceGenerator
 itypes==1.1.0
 jdcal==1.3
 Jinja2==2.10
