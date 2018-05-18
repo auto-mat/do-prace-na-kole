@@ -380,6 +380,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
     list_display = (
         'name',
         'slug',
+        'priority',
         'competition_type',
         'competitor_type',
         'is_public',
