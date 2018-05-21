@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 # Author: Timothy Hobbs <timothy <at> hobbs.cz>
 
-from datetime import datetime, timedelta
 
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from stale_notifications.model_mixins import StaleSyncMixin
 
-class StravaAccount(models.Model):
+
+class StravaAccount(StaleSyncMixin, models.Model):
     """Účet Strava"""
     class Meta:
         verbose_name = _("Účet Strava")
@@ -21,12 +22,6 @@ class StravaAccount(models.Model):
 
     access_token = models.CharField(
         max_length=64,
-    )
-
-    last_sync_time = models.DateTimeField(
-        "Poslední synchronizace",
-        null=True,
-        default=None,
     )
 
     strava_username = models.CharField(
@@ -49,8 +44,3 @@ class StravaAccount(models.Model):
         default="",
         blank=True,
     )
-
-    @classmethod
-    def get_stale_accounts(cls, min_time_between_syncs=60 * 60 * 12):
-        stale_cutoff = datetime.now() - timedelta(seconds=min_time_between_syncs)
-        return cls.objects.filter(last_sync_time__lte=stale_cutoff)

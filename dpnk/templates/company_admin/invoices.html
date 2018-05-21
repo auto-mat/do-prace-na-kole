@@ -2,13 +2,15 @@
 {% load i18n %}
 
    <p>
-   <b>{% trans "Upozornění: Během odeslílání platby je potřeba zadat variabilní symbol a číslo účtu přesně podle faktury. Pokud máte faktur více, vytvořte pro každou z nich samostatný převod." %}</b>
+   <b style="color:red">{% trans "Upozornění: Během odeslílání platby je potřeba zadat variabilní symbol a číslo účtu přesně podle faktury. Pokud máte faktur více, vytvořte pro každou z nich samostatný převod." %}</b>
    </p>
    <table class="table table-bordered" id="company_competition_table">
    <tr>
    <th>{% trans "Den vystavení daňového dokladu" %}</th>
    <th>{% trans "Soubor s fakturou" %}</th>
    <th>{% trans "Počet plateb" %}</th>
+   <th>{% trans "Povinný variabilní symbol" %}</th>
+   <th>{% trans "Částka" %}</th>
    <th>{% trans "Datum potvrzení zaplacení" %}</th>
    </tr>
    {% for invoice in invoices %}
@@ -16,6 +18,8 @@
       <td>{{ invoice.exposure_date }}</td>
       <td><a href="{{ invoice.invoice_pdf.url }}">{% trans "soubor" %}</a></td>
       <td>{{ invoice.payment_set.count }}</td>
+      <td>{{ invoice.variable_symbol }}</td>
+      <td>{{ invoice.total_amount }}</td>
       {% if invoice.paid %}
       <td>{{ invoice.paid_date }}</td>
       {% else %}

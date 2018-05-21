@@ -19,6 +19,7 @@
 
 import datetime
 import logging
+import re
 
 from django.conf import settings
 
@@ -66,17 +67,18 @@ def parse(days_back=7):
             variable_symbol = payment['variable_symbol']
             recipient_message = payment['recipient_message']
             if recipient_message:
-                recipient_message_without_d = recipient_message.replace("D", "").replace("/", "").lstrip("0")
+                recipient_message_without_d = re.sub("\D", "", recipient_message).lstrip("0")
             else:
                 recipient_message_without_d = ""
             if variable_symbol:
-                variable_symbol = variable_symbol.replace("/", "").lstrip("0")
+                variable_symbol = variable_symbol.lstrip("0")
             else:
                 variable_symbol = ""
             try:
                 invoice = Invoice.objects.get(
                     variable_symbol__in=(variable_symbol, recipient_message, recipient_message_without_d),
-                    total_amount=payment['amount'],
+                    total_amount__lte=payment['amount'] + 1,
+                    total_amount__gte=payment['amount'] - 1,
                 )
                 if 'CZK' == payment['currency']:
                     invoice.paid_date = payment['date']

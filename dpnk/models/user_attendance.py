@@ -32,6 +32,8 @@ from django.dispatch import receiver
 from django.utils.html import format_html_join
 from django.utils.translation import ugettext_lazy as _
 
+from stale_notifications.model_mixins import StaleSyncMixin
+
 from .company_admin import CompanyAdmin
 from .phase import Phase
 from .transactions import Payment, Transaction
@@ -43,8 +45,10 @@ from ..email import register_mail
 logger = logging.getLogger(__name__)
 
 
-class UserAttendance(models.Model):
+class UserAttendance(StaleSyncMixin, models.Model):
     """Účast uživatele v kampani"""
+
+    last_sync_string = _("Poslední odeslání notifikačního e-mailu")
 
     class Meta:
         verbose_name = _(u"Účastník kampaně")

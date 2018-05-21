@@ -127,7 +127,7 @@ def sync_stale(min_time_between_syncs=60 * 60 * 12, max_batch_size=300):
 
     The sync_stale task will either consume 1 request per stale account as well as 1 request per new trip if STRAVA_FINE_POLYLINES is True.
     """
-    for account in StravaAccount.get_stale_accounts(min_time_between_syncs).filter(errors=""):
+    for account in StravaAccount.get_stale_objects(min_time_between_syncs).filter(errors=""):
         if max_batch_size <= 0:
             return
         sync(account.id, manual_sync=False)
