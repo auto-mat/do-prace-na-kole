@@ -249,6 +249,7 @@ INSTALLED_APPS = (
     't_shirt_delivery',
     'stravasync',
     'psc',
+    'stale_notifications',
 
     'smart_selects',
     'composite_field',

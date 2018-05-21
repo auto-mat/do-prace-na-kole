@@ -40,7 +40,7 @@ class TestPasswordForms(TestCase):
         m.period.return_value = [
             {
                 'amount': 123,
-                'variable_symbol': '000112/233',
+                'variable_symbol': '000112233',
                 'specific_symbol': '124',
                 'account_number_full': '125',
                 'constant_symbol': '126',
@@ -61,6 +61,76 @@ class TestPasswordForms(TestCase):
         parse()
         invoice.refresh_from_db()
         self.assertEquals(invoice.paid_date, datetime.date(2017, 1, 1))
+
+    @patch('fiobank.FioBank')
+    def test_parse_match_ammount_difference(self, fiobank):
+        """ Test math if the ammount is within 1 CZK margin """
+        invoice = mommy.make("Invoice", variable_symbol="112233", campaign=CampaignRecipe.make())
+        invoice.total_amount = 123
+        invoice.save()
+        m = MagicMock()
+        fiobank.return_value = m
+        m.period.return_value = [
+            {
+                'amount': 123.9,
+                'variable_symbol': '000112233',
+                'specific_symbol': '124',
+                'account_number_full': '125',
+                'constant_symbol': '126',
+                'instruction_id': '127',
+                'transaction_id': '128',
+                'comment': '129',
+                'bank_name': '130',
+                'account_number': '130',
+                'currency': 'CZK',
+                'bank_code': '234234',
+                'type': 'type',
+                'account_name': 'type',
+                'date': '2017-01-01',
+                'recipient_message': 'message',
+                'user_identification': 'Foo User',
+            },
+        ]
+        parse()
+        invoice.refresh_from_db()
+        self.assertEquals(invoice.paid_date, datetime.date(2017, 1, 1))
+
+    @patch('builtins.print', autospec=True, side_effect=print)
+    @patch('fiobank.FioBank')
+    def test_parse_no_match_ammount_difference(self, fiobank, mock_logger):
+        """ Test no math if the ammount is out of 1 CZK margin """
+        invoice = mommy.make("Invoice", variable_symbol="112233", campaign=CampaignRecipe.make())
+        invoice.total_amount = 123
+        invoice.save()
+        m = MagicMock()
+        fiobank.return_value = m
+        for ammount in (121.9, 124.1):
+            m.period.return_value = [
+                {
+                    'amount': ammount,
+                    'variable_symbol': '000112233',
+                    'specific_symbol': '124',
+                    'account_number_full': '125',
+                    'constant_symbol': '126',
+                    'instruction_id': '127',
+                    'transaction_id': '128',
+                    'comment': '129',
+                    'bank_name': '130',
+                    'account_number': '130',
+                    'currency': 'CZK',
+                    'bank_code': '234234',
+                    'type': 'type',
+                    'account_name': 'type',
+                    'date': '2017-01-01',
+                    'recipient_message': 'message',
+                    'user_identification': 'Foo User',
+                },
+            ]
+            parse()
+            mock_logger.assert_called_with(
+                "'124', '125', 'type', '000112233', '%s', 'message', 'type', '2017-01-01', "
+                "'126', '127', '128', '129', '130', '130', 'CZK', '234234', 'Foo User'" % ammount,
+            )
 
     @patch('fiobank.FioBank')
     def test_parse_match_recipient_message(self, fiobank):

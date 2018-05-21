@@ -149,6 +149,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             company=self.user_attendance.team.subsidiary.company,
             campaign=testing_campaign,
             exposure_date=datetime.date(2010, 10, 10),
+            variable_symbol=2010111,
         )
         response = self.client.get(reverse('invoices'))
         self.assertContains(
@@ -157,6 +158,8 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             '<td>10. října 2010</td>'
             '<td><a href="/media/upload/%s">soubor</a></td>'
             '<td>0</td>'
+            '<td>2010111</td>'
+            '<td>0,0</td>'
             '<td>Zaplacení nepotvrzeno</td>'
             '</tr>' % invoice.invoice_pdf,
             html=True,
@@ -169,6 +172,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             campaign=testing_campaign,
             exposure_date=datetime.date(2010, 10, 10),
             paid_date=datetime.date(2010, 10, 10),
+            variable_symbol=2010111,
         )
         response = self.client.get(reverse('invoices'))
         self.assertContains(
@@ -177,6 +181,8 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             '<td>10. října 2010</td>'
             '<td><a href="/media/upload/%s">soubor</a></td>'
             '<td>0</td>'
+            '<td>2010111</td>'
+            '<td>0,0</td>'
             '<td>10. října 2010</td>'
             '</tr>' % invoice.invoice_pdf,
             html=True,

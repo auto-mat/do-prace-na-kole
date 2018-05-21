@@ -95,17 +95,20 @@ def send_unfilled_rides_notification(self, pks=None, campaign_slug=''):
     campaign = Campaign.objects.get(slug=campaign_slug)
     date = util.today()
     days_unfilled = campaign.days_active - 2
-    date = date - timedelta(days=days_unfilled)
+    min_trip_date = date - timedelta(days=days_unfilled)
+    queryset = UserAttendance.get_stale_objects(days_unfilled * 24 * 60)
     if not pks:
-        queryset = UserAttendance.objects.filter(campaign=campaign)
+        queryset = queryset.filter(campaign=campaign)
     else:
-        queryset = UserAttendance.objects.filter(pk__in=pks, campaign=campaign)
+        queryset = queryset.filter(pk__in=pks, campaign=campaign)
     queryset = queryset.filter(
-        payment_status='done',
+        payment_status__in=('done', 'no_admission'),
         approved_for_team='approved',
     ).exclude(
-        user_trips__date__gte=date,
+        user_trips__date__gte=min_trip_date,
     )
     for user_attendance in queryset:
         email.unfilled_rides_mail(user_attendance, days_unfilled)
-    return len(queryset)
+    len_queryset = len(queryset)
+    UserAttendance.update_sync_time(queryset)
+    return len_queryset

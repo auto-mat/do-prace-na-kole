@@ -380,6 +380,7 @@ class CompetitionAdmin(FormRequestMixin, CityAdminMixin, ImportExportMixin, Rela
     list_display = (
         'name',
         'slug',
+        'priority',
         'competition_type',
         'competitor_type',
         'is_public',
@@ -679,10 +680,14 @@ class UserAdmin(RelatedFieldAdmin, ImportExportMixin, NestedModelAdmin, UserAdmi
 
 class TripAdminInline(admin.TabularInline):
     fields = (
-        'direction',
         'date',
+        'direction',
         'commute_mode',
+        'source_application',
+        'from_application',
+        'source_id',
         'distance',
+        'duration',
     )
     raw_id_fields = ('user_attendance',)
     extra = 0
@@ -898,6 +903,12 @@ class UserAttendanceAdmin(
             'userprofile__user__last_name',
             'userprofile__user__username',
         )
+
+    def get_fieldsets(self, request, obj=None):
+        #  Move last_sync_time to the end
+        res = super().get_fieldsets(request, obj)
+        res[0][1]['fields'].append(res[0][1]['fields'].pop(0))
+        return res
 
 
 @admin.register(models.Team)
@@ -1141,11 +1152,19 @@ class TripResource(resources.ModelResource):
         fields = [
             'id',
             'user_attendance__userprofile__user__id',
+            'user_attendance__userprofile__user__first_name',
+            'user_attendance__userprofile__user__last_name',
+            'user_attendance__userprofile__user__email',
             'user_attendance',
+            'source_application',
+            'source_id',
             'date',
             'direction',
             'commute_mode',
+            'commute_mode__slug',
             'distance',
+            'duration',
+            'from_application',
         ]
         export_order = fields
 
@@ -1157,7 +1176,11 @@ class TripAdmin(ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
         'date',
         'direction',
         'commute_mode',
+        'source_application',
+        'from_application',
+        'source_id',
         'distance',
+        'duration',
         'id')
     search_fields = (
         'user_attendance__userprofile__nickname',
@@ -1174,6 +1197,9 @@ class TripAdmin(ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
         'commute_mode',
         ('date', DateRangeFilter),
         'user_attendance__team__subsidiary__city',
+        'from_application',
+        'source_application',
+        'user_attendance__payment_status',
     )
     readonly_fields = ('created', 'author', 'updated_by')
     actions = (actions.show_distance_trips,)

@@ -64,7 +64,7 @@ class Competition(models.Model):
     class Meta:
         verbose_name = _(u"Soutěžní kategorie")
         verbose_name_plural = _(u"Soutěžní kategorie")
-        ordering = ('-campaign', 'name')
+        ordering = ('-campaign', '-priority', 'name')
 
     name = models.CharField(
         unique=False,
@@ -200,6 +200,13 @@ class Competition(models.Model):
         verbose_name=_("Povinný dotazník"),
         help_text=_("Dotazník je potřeba vyplnit před tím, než je možné zadávat jízdy"),
         default=False,
+        null=False,
+    )
+    priority = models.IntegerField(
+        _("Prorita v řazení"),
+        help_text=_("Vyšší priorita -> řadí se dřív"),
+        default=0,
+        blank=False,
         null=False,
     )
 
