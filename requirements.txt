@@ -23,7 +23,7 @@ reportlab
 django-dbbackup
 pillow
 polyline
--e git+https://github.com/PetrDlouhy/InvoiceGenerator.git#egg=InvoiceGenerator  # For changes in variable symbol label and Pohoda XML export
+InvoiceGenerator
 django-related-admin
 newrelic
 easy_thumbnails
