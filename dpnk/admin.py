@@ -940,7 +940,7 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
         return admin_links(
             [
                 (reverse('admin:dpnk_userattendance_change', args=(u.pk,)), "%s - %s" % (u, u.approved_for_team))
-                for u in models.UserAttendance.objects.filter(team=obj)
+                for u in obj.users.all()
             ],
         )
     members.short_description = _('Členové')

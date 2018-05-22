@@ -13,6 +13,7 @@ class StaleSyncMixin(models.Model):
         last_sync_string,
         null=True,
         default=None,
+        blank=True,
     )
 
     class Meta:
