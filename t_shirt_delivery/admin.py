@@ -316,6 +316,7 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
     list_filter = [
         campaign_filter_generator('user_attendance__campaign'),
         'status',
+        'team_package__box__dispatched',
     ]
     raw_id_fields = [
         'user_attendance',
