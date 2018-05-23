@@ -772,6 +772,7 @@ class UserAttendanceAdmin(
         'get_rides_count_denorm',
         'created',
         'updated',
+        'last_sync_time',
     )
     list_filter = (
         CampaignFilter,
