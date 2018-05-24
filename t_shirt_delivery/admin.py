@@ -74,6 +74,10 @@ class PackageTransactionResource(resources.ModelResource):
             'company_admin_email',
             't_shirt_size__name',
             'author__username',
+            'team_package__box__delivery_batch__id',
+            'team_package__box__id',
+            'team_package__box__carrier_identification',
+            'team_package__id',
         )
         export_order = fields
 
@@ -304,7 +308,10 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
         'user_attendance__team__subsidiary',
         'user_attendance__team__subsidiary__company__name',
         't_shirt_size__name',
+        'team_package__box__delivery_batch__id',
+        'team_package__box__tracking_link',
     )
+    team_package__box__delivery_batch__id = getter_for_related_field('team_package__box__delivery_batch__id', short_description=_('ID krabice'))
     search_fields = (
         'id',
         'user_attendance__userprofile__nickname',
@@ -316,6 +323,7 @@ class PackageTransactionAdmin(ExportMixin, RelatedFieldAdmin):
     list_filter = [
         campaign_filter_generator('user_attendance__campaign'),
         'status',
+        'team_package__box__delivery_batch__id',
         'team_package__box__dispatched',
     ]
     raw_id_fields = [
