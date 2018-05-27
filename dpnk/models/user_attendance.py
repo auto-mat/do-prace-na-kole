@@ -35,6 +35,7 @@ from django.utils.translation import ugettext_lazy as _
 from stale_notifications.model_mixins import StaleSyncMixin
 
 from .company_admin import CompanyAdmin
+from .diploma import Diploma
 from .phase import Phase
 from .transactions import Payment, Transaction
 from .trip import Trip
@@ -142,6 +143,11 @@ class UserAttendance(StaleSyncMixin, models.Model):
         blank=False,
         default=False,
     )
+
+    sandwich_model = Diploma
+
+    def get_sandwich_type(self):
+        return self.campaign.sandwich_type
 
     def payments(self):
         return self.transactions.instance_of(Payment)

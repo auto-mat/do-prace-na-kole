@@ -70,6 +70,9 @@ from rest_framework.authtoken.admin import TokenAdmin
 
 from scribbler import models as scribbler_models
 
+from smmapdfs.actions import make_pdfsandwich
+from smmapdfs.admin_abcs import PdfSandwichAdmin, PdfSandwichFieldAdmin
+
 from t_shirt_delivery.admin import PackageTransactionInline
 from t_shirt_delivery.forms import PackageTransactionForm
 from t_shirt_delivery.models import TShirtSize
@@ -845,6 +848,7 @@ class UserAttendanceAdmin(
         actions.assign_vouchers,
         actions.touch_items,
         actions.send_notifications,
+        make_pdfsandwich,
     )
     form = UserAttendanceForm
     inlines = [PaymentInlineUserAttendance, PackageTransactionInline, UserActionTransactionInline, TripAdminInline]
@@ -1621,3 +1625,13 @@ admin.site.add_action(admin_actions.merge)
 
 # This is fix for massadmin not adding itself automatically
 admin.site.add_action(mass_change_selected)
+
+
+@admin.register(models.Diploma)
+class DiplomaAdmin(PdfSandwichAdmin):
+    pass
+
+
+@admin.register(models.DiplomaField)
+class DiplomaFieldAdmin(PdfSandwichFieldAdmin):
+    pass
