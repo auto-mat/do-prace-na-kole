@@ -16,6 +16,13 @@
    })
 </script>
 {% endcache %}
+<script type="text/javascript">
+   {% if formset.errors %}
+      $(function () {
+         $('#rides-form').trigger('checkform.areYouSure');
+      })
+   {% endif %}
+</script>
 <table class="table table-condensed table-bordered">
 <tr class="info">
    <th>
@@ -75,6 +82,12 @@
 {{ formset.management_form }}
 {% if formset.0 %}
 <input type="submit" name="submit" value="{% trans "Uložit jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-top">
+{% if formset.errors %}
+   <br/>
+   <div class="alert alert-danger alert-dismissable alert-link">
+      {% trans "Jízdy nebyli zadány správně. Prosím zkontrolujte chyby níže v tabulce." %}
+   </div>
+{% endif %}
 <table id="rides" class="table table-condensed">
 <thead>
    <tr class="info">
