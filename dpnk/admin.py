@@ -87,6 +87,7 @@ from .filters import (
     PSCFilter,
     campaign_filter_generator,
 )
+from .views_results import CompetitionResultResource
 
 
 def admin_links(args_generator):
@@ -1249,6 +1250,7 @@ class CompetitionResultAdmin(ImportExportMixin, admin.ModelAdmin):
         'team__name',
         'competition__name')
     raw_id_fields = ('user_attendance', 'team')
+    resource_class = CompetitionResultResource
 
 
 @admin.register(models.Occupation)

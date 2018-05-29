@@ -21,10 +21,129 @@ import re
 
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.db.models import Case, CharField, Q, Value, When
+from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext_lazy as _
+from django.views.generic.base import TemplateView, View
 
 from django_datatables_view.base_datatable_view import BaseDatatableView
 
+from import_export import resources
+from import_export.fields import Field
+
 from . import models
+from .views_mixins import (
+    ExportViewMixin,
+    TitleViewMixin,
+    UserAttendanceParameterMixin,
+)
+
+
+class WithCompetitionMixin(UserAttendanceParameterMixin):
+    def get_object(self):
+        competition_slug = self.kwargs.get('competition_slug')
+        return get_object_or_404(
+            models.Competition,
+            slug=competition_slug,
+        )
+
+
+class CompetitionResultsView(WithCompetitionMixin, TitleViewMixin, TemplateView):
+    template_name = 'registration/competition_results.html'
+    title = _("Výsledky soutěže")
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data['competition'] = self.get_object()
+        return context_data
+
+    # This is here for NewRelic to distinguish from TemplateView.get
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+
+class CompetitionResultResource(resources.ModelResource):
+    public_name = Field(column_name=_("Přezdívka"))
+    first_name = Field(column_name=_("Jméno"))
+    last_name = Field(column_name=_("Příjmení"))
+    competition__name = Field(column_name=_("Soutěž"), attribute="competition__name")
+    team = Field(column_name=_("Tým"))
+    company = Field(column_name=_("Organizace"))
+    subsidiary = Field(column_name=_("Pobočka"))
+    sequence_range = Field(column_name=_("Rozmezí sekvence"))
+
+    class Meta:
+        model = models.CompetitionResult
+        fields = [
+            'public_name',
+            'first_name',
+            'last_name',
+            'competition__name',
+            'team',
+            'subsidiary',
+            'company',
+            'result',
+            'result_divident',
+            'result_divisor',
+            'sequence_range',
+        ]
+        export_order = ('competition', 'result', 'company')
+        export_order = fields
+
+    def __init__(self, include_personal_info=False):
+        self.include_personal_info = include_personal_info
+        super().__init__()
+
+    def dehydrate_public_name(self, result):
+        return result.user_attendance.name()
+
+    def dehydrate_first_name(self, result):
+        if self.include_personal_info:
+            return result.user_attendance.first_name()
+
+    def dehydrate_last_name(self, result):
+        if self.include_personal_info:
+            return result.user_attendance.last_name()
+
+    def dehydrate_team(self, result):
+        return result.user_attendance.team.name
+
+    def dehydrate_subsidiary(self, result):
+        if self.include_personal_info:
+            return result.user_attendance.team.subsidiary.name()
+
+    def dehydrate_company(self, result):
+        return result.user_attendance.team.subsidiary.company.name
+
+    def dehydrate_sequence_range(self, result):
+        return str(result.get_sequence_range())
+
+    def get_export_headers(self):
+        headers = []
+        for field in self.get_fields():
+            model_fields = self.Meta.model._meta.get_fields()
+            header = next((x.verbose_name for x in model_fields if x.name == field.column_name), field.column_name)
+            headers.append(str(header))
+        return headers
+
+
+def should_include_personal_info(request, organization):
+    company_admin = request.user_attendance.related_company_admin
+    if request.user.is_superuser or (company_admin and company_admin.administrated_company == organization):
+        return True
+    return False
+
+
+class ExportCompetitionResults(WithCompetitionMixin, ExportViewMixin, View):
+    def dispatch(self, request, *args, extension="csv", organization=None, **kwargs):
+        super().dispatch(request, *args, **kwargs)
+        queryset = models.CompetitionResult.objects.filter(
+            competition=self.get_object(),
+        )
+        if organization:
+            organization = models.Company.objects.get(pk=organization)
+            queryset = queryset.filter(user_attendance__team__subsidiary__company=organization)
+        export_data = CompetitionResultResource(should_include_personal_info(request, organization)).export(queryset)
+        return self.generate_export(export_data, extension)
 
 
 class CompetitionResultListJson(BaseDatatableView):
