@@ -19,6 +19,7 @@
 
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import classonlymethod
 from django.utils.html import format_html, format_html_join
@@ -258,3 +259,27 @@ class RequestFormMixin(CampaignParameterMixin):
         kwargs = super().get_form_kwargs()
         kwargs['request'] = self.request
         return kwargs
+
+
+class ExportViewMixin():
+    def generate_export(self, export_data, extension):
+        fformat = {
+            "csv": {
+                "export": export_data.csv,
+                "content_type": "text/csv; encoding=utf-8",
+                "filename_extension": "csv",
+            },
+            "ods": {
+                "export": export_data.ods,
+                "content_type": "text/xml; encoding=utf-8",
+                "filename_extension": "ods",
+            },
+            "xls": {
+                "export": export_data.xls,
+                "content_type": "application/vnd.ms-excel",
+                "filename_extension": "xls",
+            },
+        }[extension]
+        response = HttpResponse(fformat["export"], content_type=fformat["content_type"])
+        response['Content-Disposition'] = 'attachment; filename=results.%s' % fformat["filename_extension"]
+        return response

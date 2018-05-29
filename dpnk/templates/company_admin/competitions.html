@@ -24,7 +24,7 @@
    <td>{{ competition.get_sex_display|default_if_none:"Všechna" }}</td>
    <td>{{ competition.commute_modes_list }}</td>
    <td><a href="{% url 'company_admin_competition' competition_slug=competition.slug %}">{% trans "upravit" %}</a></td>
-   <td><a href="{% url 'competition_results' competition_slug=competition.slug %}">{% trans "výsledky" %}</a></td>
+   <td><a href="{% url 'competition_results' competition_slug=competition.slug %}">{% trans "výsledky" %}</a>&nbsp;(<i class="fa fa-download"></i>&nbsp;<a href="{% url 'export_competition_results' competition_slug=competition.slug extension="csv" organization=user_attendance.related_company_admin.administrated_company.pk %}">csv</a>, <a href="{% url 'export_competition_results' competition_slug=competition.slug extension="xls" organization=user_attendance.related_company_admin.administrated_company.pk %}">xls</a>, <a href="{% url 'export_competition_results' competition_slug=competition.slug extension="ods"  organization=user_attendance.related_company_admin.administrated_company.pk %}">ods</a>)</td>
    </tr>
 {% endfor %}
 </table>

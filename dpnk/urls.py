@@ -150,8 +150,23 @@ urlpatterns = [
     ),
     url(
         r'^vysledky_souteze/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
-        views.CompetitionResultsView.as_view(),
+        views_results.CompetitionResultsView.as_view(),
         name="competition_results",
+    ),
+    url(
+        r'^vysledky_souteze_json/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',
+        views_results.CompetitionResultListJson.as_view(),
+        name='competition_result_list_json',
+    ),
+    url(
+        r'^export_vysledky_souteze/(?P<competition_slug>[0-9A-Za-z_\-]+)/(?P<extension>[0-9A-Za-z_\-]+)$',
+        views_results.ExportCompetitionResults.as_view(),
+        name='export_competition_results',
+    ),
+    url(
+        r'^export_vysledky_souteze/(?P<competition_slug>[0-9A-Za-z_\-]+)/(?P<extension>[0-9A-Za-z_\-]+)/(?P<organization>[0-9]+)$',
+        views_results.ExportCompetitionResults.as_view(),
+        name='export_competition_results',
     ),
     url(
         r'^vysledky_souteze_json/(?P<competition_slug>[0-9A-Za-z_\-]+)/$',

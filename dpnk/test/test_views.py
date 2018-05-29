@@ -488,8 +488,7 @@ class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
     def test_dpnk_competition_results_unknown(self, mock_logger):
         address = reverse('competition_results', kwargs={'competition_slug': 'unexistent_competition'})
         response = self.client.get(address)
-        mock_logger.info.assert_called_with("Unknown competition", extra={'slug': 'unexistent_competition', 'request': ANY})
-        self.assertContains(response, "Tuto soutěž v systému nemáme.")
+        self.assertEquals(response.status_code, 404)
 
     def test_dpnk_competition_results_vykonnost_tymu(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())

@@ -24,7 +24,6 @@ from braces.views import LoginRequiredMixin
 
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.utils.safestring import mark_safe
@@ -45,7 +44,7 @@ from .email import company_admin_register_competitor_mail, company_admin_registe
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
 from .string_lazy import mark_safe_lazy
 from .views import RegistrationViewMixin, TitleViewMixin
-from .views_mixins import CompanyAdminMixin, RequestFormMixin
+from .views_mixins import CompanyAdminMixin, ExportViewMixin, RequestFormMixin
 from .views_permission_mixins import MustBeCompanyAdminMixin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
 logger = logging.getLogger(__name__)
 
@@ -70,7 +69,7 @@ class CompanyStructure(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMix
         return context_data
 
 
-class UserAttendanceExportView(MustBeCompanyAdminMixin, View):
+class UserAttendanceExportView(MustBeCompanyAdminMixin, ExportViewMixin, View):
 
     def dispatch(self, request, *args, extension="csv", **kwargs):
         super().dispatch(request, *args, **kwargs)
@@ -79,27 +78,7 @@ class UserAttendanceExportView(MustBeCompanyAdminMixin, View):
             campaign=request.campaign,
         )
         export_data = UserAttendanceResource().export(queryset)
-        formats = {
-            "csv": {
-                "export": export_data.csv,
-                "content_type": "text/csv; encoding=utf-8",
-                "filename_extension": "csv",
-            },
-            "ods": {
-                "export": export_data.ods,
-                "content_type": "text/xml; encoding=utf-8",
-                "filename_extension": "ods",
-            },
-            "xls": {
-                "export": export_data.xls,
-                "content_type": "application/vnd.ms-excel",
-                "filename_extension": "xls",
-            },
-        }[extension]
-
-        response = HttpResponse(formats["export"], content_type=formats["content_type"])
-        response['Content-Disposition'] = 'attachment; filename=user_export.%s' % formats["filename_extension"]
-        return response
+        return self.generate_export(export_data, extension)
 
 
 class RelatedCompetitionsView(MustBeCompanyAdminMixin, LoginRequiredMixin, TitleViewMixin, TemplateView):

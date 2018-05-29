@@ -19,7 +19,7 @@
       </td>
    <td>{{ competition.city_list }}</td>
    <td>{{ competition.type_string }}</td>
-   <td><a href="{% url 'competition_results' competition_slug=competition.slug %}#search_company={{user_attendance.related_company_admin.administrated_company}}">{% trans "výsledky za mojí organizaci" %}</a></td>
+   <td><a href="{% url 'competition_results' competition_slug=competition.slug %}#search_company={{user_attendance.related_company_admin.administrated_company}}">{% trans "výsledky za mojí organizaci" %}</a>&nbsp;(<i class="fa fa-download"></i>&nbsp;<a href="{% url 'export_competition_results' competition_slug=competition.slug extension="csv" organization=user_attendance.related_company_admin.administrated_company.pk %}">csv</a>, <a href="{% url 'export_competition_results' competition_slug=competition.slug extension="xls" organization=user_attendance.related_company_admin.administrated_company.pk %}">xls</a>, <a href="{% url 'export_competition_results' competition_slug=competition.slug extension="ods"  organization=user_attendance.related_company_admin.administrated_company.pk %}">ods</a>)</td>
    </tr>
 {% endfor %}
 </table>
