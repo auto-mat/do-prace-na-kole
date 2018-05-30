@@ -28,5 +28,11 @@
 /dpnk/test_files/cache
 /dpnk/test_files/csv_delivery
 /dpnk/test_files/gpx_tracks
+dpnk/test_files/coupons
+dpnk/test_files/customer_sheets/
+dpnk/test_files/invoices/
+dpnk/test_files/t_shirt_preview/
 /media/
 docker.env
+graph.png
+graph.pdf
