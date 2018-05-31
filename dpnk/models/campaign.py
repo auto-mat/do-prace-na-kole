@@ -31,6 +31,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from price_level.models import Pricable
 
+from smmapdfs.models import PdfSandwichType
+
 from .user_attendance import UserAttendance
 from .. import util
 
@@ -233,6 +235,14 @@ class Campaign(Pricable, models.Model):
         default=5,
         blank=True,
         null=True,
+    )
+
+    sandwich_type = models.ForeignKey(
+        PdfSandwichType,
+        null=True,
+        blank=False,
+        default='',
+        on_delete=models.CASCADE,
     )
 
     def sitetree_postfix_maintree(self):
