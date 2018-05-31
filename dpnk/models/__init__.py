@@ -36,6 +36,7 @@ from .company import Company
 from .company_admin import CompanyAdmin
 from .competition import Competition, CompetitionForm
 from .competition_result import CompetitionResult
+from .diploma import Diploma, DiplomaField
 from .gpxfile import GpxFile, normalize_gpx_filename
 from .invoice import Invoice, change_invoice_payments_status, payments_to_invoice
 from .occupation import Occupation
@@ -63,6 +64,8 @@ __all__ = (
     Competition,
     CompetitionForm,
     CompetitionResult,
+    Diploma,
+    DiplomaField,
     GpxFile,
     Invoice,
     Occupation,

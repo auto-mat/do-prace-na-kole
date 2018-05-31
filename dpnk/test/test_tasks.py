@@ -25,6 +25,8 @@ from django.test.utils import override_settings
 
 from dpnk import tasks
 
+from freezegun import freeze_time
+
 from model_mommy import mommy
 
 from .mommy_recipes import UserAttendanceRecipe, testing_campaign
@@ -33,6 +35,7 @@ from .mommy_recipes import UserAttendanceRecipe, testing_campaign
 @override_settings(
     FAKE_DATE=datetime.date(2017, 5, 8),
 )
+@freeze_time("2017-05-08")
 class TestSendUnfilledRidesNotification(TestCase):
     def setUp(self):
         super().setUp()
@@ -123,6 +126,42 @@ class TestSendUnfilledRidesNotification(TestCase):
         mail_count = tasks.send_unfilled_rides_notification(campaign_slug="testing-campaign")
         self.assertEqual(mail_count, 0)
         self.assertEqual(len(mail.outbox), 0)
+
+    def test_notification_not_stale(self):
+        """ Test that email is not send, if the user is not stale. """
+        self.user_attendance = UserAttendanceRecipe.make(
+            campaign=testing_campaign,
+            team__campaign=testing_campaign,
+            approved_for_team='approved',
+            userprofile__user__email='test@test.cz',
+            last_sync_time='2017-05-03 12:00:00',
+            user_trips=[
+                mommy.make(
+                    'Trip',
+                    date='2017-05-02',
+                    commute_mode_id=1,
+                    direction='trip_to',
+                ),
+            ],
+            transactions=[
+                mommy.make(
+                    "Payment",
+                    status=99,
+                    realized=datetime.date(2017, 2, 1),
+                    amount=100,
+                ),
+            ],
+        )
+        self.user_attendance.save()
+        mail.outbox = []
+        mail_count = tasks.send_unfilled_rides_notification(campaign_slug="testing-campaign")
+        self.assertEqual(mail_count, 0)
+        self.assertEqual(len(mail.outbox), 0)
+        self.user_attendance.last_sync_time = datetime.datetime(2017, 5, 2, 12, 0, 0)
+        self.user_attendance.save()
+        mail_count = tasks.send_unfilled_rides_notification(campaign_slug="testing-campaign")
+        self.assertEqual(mail_count, 1)
+        self.assertEqual(len(mail.outbox), 1)
 
     def test_notification_pks(self):
         """ Test that email is send, if the user has't got rides in last 5 days """

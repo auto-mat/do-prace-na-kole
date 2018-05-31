@@ -96,7 +96,7 @@ def send_unfilled_rides_notification(self, pks=None, campaign_slug=''):
     date = util.today()
     days_unfilled = campaign.days_active - 2
     min_trip_date = date - timedelta(days=days_unfilled)
-    queryset = UserAttendance.get_stale_objects(days_unfilled * 24 * 60)
+    queryset = UserAttendance.get_stale_objects(days_unfilled * 24 * 60 * 60)
     if not pks:
         queryset = queryset.filter(campaign=campaign)
     else:
