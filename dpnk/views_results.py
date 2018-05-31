@@ -22,6 +22,7 @@ import re
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.db.models import Case, CharField, Q, Value, When
 from django.shortcuts import get_object_or_404
+from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.base import TemplateView, View
 
@@ -158,7 +159,7 @@ class CompetitionResultListJson(BaseDatatableView):
         if column == 'team__member_count':
             return str(row.team.member_count)
         if column == 'user_attendance':
-            return str(row.user_attendance)
+            return escape(row.user_attendance)
         if column == 'get_sequence_range':
             sequence_range = self.rank_dict[row.id]
             if sequence_range[0] == sequence_range[1]:
@@ -166,7 +167,7 @@ class CompetitionResultListJson(BaseDatatableView):
             else:
                 return "%s.&nbsp;-&nbsp;%s." % sequence_range
         if column in ('get_company', 'get_city', 'get_street', 'get_subsidiary', 'get_occupation', 'get_sex', 'get_team_name'):
-            return str(getattr(row, column)())
+            return escape(getattr(row, column)())
         if column in ('get_result', 'get_result_percentage', 'get_result_divident', 'get_result_divisor'):
             return intcomma(getattr(row, column)())
         else:
