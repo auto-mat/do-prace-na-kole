@@ -101,10 +101,10 @@ class SubmitMixin(object):
 class PrevNextMixin(object):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
+        if not hasattr(self, 'no_dirty'):
+            self.helper.form_class = "dirty-check"
         if not hasattr(self, 'no_prev'):
             prev_url = kwargs.pop('prev_url', None)
-            if not hasattr(self, 'no_dirty'):
-                self.helper.form_class = "dirty-check"
             self.helper.add_input(
                 Button('prev', _('Předchozí'), css_class="btn-default form-actions", onclick='window.location.href="{}"'.format(reverse(prev_url))),
             )
