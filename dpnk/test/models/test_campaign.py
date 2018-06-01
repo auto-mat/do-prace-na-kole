@@ -46,6 +46,12 @@ class TestCampaignMethods(ClearCacheMixin, TestCase):
     )
     def test_day_active(self):
         campaign = mommy.make("Campaign")
+        models.Phase.objects.create(
+            campaign=campaign,
+            phase_type="entry_enabled",
+            date_from=datetime.date(year=2010, month=11, day=13),
+            date_to=datetime.date(year=2010, month=11, day=20),
+        )
         self.assertTrue(campaign.day_active(datetime.date(2010, 11, 14)))
         self.assertTrue(campaign.day_active(datetime.date(2010, 11, 20)))
         self.assertFalse(campaign.day_active(datetime.date(2010, 11, 13)))

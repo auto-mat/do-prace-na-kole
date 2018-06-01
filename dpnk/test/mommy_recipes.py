@@ -30,6 +30,12 @@ PhaseRecipe = Recipe(
     date_from="2010-1-1",
     date_to="2020-1-1",
 )
+EntryPhaseRecipe = Recipe(
+    "dpnk.Phase",
+    phase_type="entry_enabled",
+    date_from="2010-1-1",
+    date_to="2020-1-1",
+)
 RegistrationPhaseRecipe = Recipe(
     "dpnk.Phase",
     phase_type="registration",
@@ -38,7 +44,7 @@ RegistrationPhaseRecipe = Recipe(
 )
 CampaignRecipe = Recipe(
     "Campaign",
-    phase_set=related(PhaseRecipe, RegistrationPhaseRecipe),
+    phase_set=related(PhaseRecipe, EntryPhaseRecipe, RegistrationPhaseRecipe),
 )
 
 
