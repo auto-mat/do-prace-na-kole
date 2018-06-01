@@ -26,13 +26,13 @@ from django.utils.translation import ugettext_lazy as _
 from .. import util
 
 TYPE = [
-    ('registration', _(u"registrační")),
-    ('payment', _(u"placení startovného")),
-    ('competition', _(u"soutěžní")),
-    ('entry_enabled', _(u"zapis jízd umožněná")),
-    ('results', _(u"výsledková")),
-    ('admissions', _(u"přihlašovací do soutěží")),
-    ('invoices', _(u"vytváření faktur")),
+    ('registration', _("registrační")),
+    ('payment', _("placení startovného")),
+    ('competition', _("soutěžní")),
+    ('entry_enabled', _("zápis jízd umožněn")),
+    ('results', _("výsledková")),
+    ('admissions', _("přihlašovací do soutěží")),
+    ('invoices', _("vytváření faktur")),
 ]
 PHASE_TYPE_DICT = dict(TYPE)
 
