@@ -1290,6 +1290,7 @@ class CampaignAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'slug',
+        'slug_identifier',
         'mailing_list_id',
         'previous_campaign',
         'minimum_rides_base',
