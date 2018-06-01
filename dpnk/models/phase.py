@@ -29,6 +29,7 @@ TYPE = [
     ('registration', _(u"registrační")),
     ('payment', _(u"placení startovného")),
     ('competition', _(u"soutěžní")),
+    ('entry_enabled', _(u"zapis jízd umožněná")),
     ('results', _(u"výsledková")),
     ('admissions', _(u"přihlašovací do soutěží")),
     ('invoices', _(u"vytváření faktur")),
@@ -86,9 +87,9 @@ class Phase(models.Model):
         if when is None:
             when = util.today()
         earliest_start_date = when  # Earliest date from all competions
-        for competition_phase in Phase.get_active(when=when).filter(phase_type='competition'):
-            if competition_phase.get_earliest_active_day() < earliest_start_date:
-                earliest_start_date = competition_phase.get_earliest_active_day()
+        for phase in Phase.get_active(when=when).filter(phase_type=phase_type):
+            if phase.get_earliest_active_day() < earliest_start_date:
+                earliest_start_date = phase.get_earliest_active_day()
         return earliest_start_date, util.today()
 
     def get_earliest_active_day(self):
