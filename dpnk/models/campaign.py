@@ -33,6 +33,7 @@ from price_level.models import Pricable
 
 from smmapdfs.models import PdfSandwichType
 
+from .phase import Phase
 from .user_attendance import UserAttendance
 from .. import util
 
@@ -265,6 +266,12 @@ class Campaign(Pricable, models.Model):
     def day_active(self, day):
         """ Return if this day can be changed by user """
         day_today = util.today()
+        try:
+            entry_phase = self.phase('entry_enabled')
+            if entry_phase.date_from > day_today or entry_phase.date_to < day_today:
+                return False
+        except Phase.DoesNotExist:
+            pass
         return (
             (day <= day_today) and
             (day > day_today - datetime.timedelta(days=self.days_active))

@@ -593,7 +593,7 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 SITE_URL = 'dopracenakole.cz'
 # import local settings
 try:
-    from settings_local import *  # noqa
+    from .settings_local import *  # noqa
 except ImportError:
     pass
 
@@ -618,3 +618,5 @@ STRAVA_CLIENT_SECRET = os.environ.get('STRAVA_CLIENT_SECRET', None)
 STRAVA_MAX_USER_SYNC_COUNT = 16
 
 SMMAPDFS_CELERY = True
+
+DENORM_MAX_PROCESS_COUNT = os.environ.get('DENORM_MAX_PROCESS_COUNT', 100)

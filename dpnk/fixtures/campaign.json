@@ -457,5 +457,25 @@
         },
         "model": "dpnk.phase",
         "pk": 6
+    },
+    {
+        "fields": {
+            "campaign": 339,
+            "date_from": "2010-11-01",
+            "date_to": "2010-11-30",
+            "phase_type": "entry_enabled"
+        },
+        "model": "dpnk.phase",
+        "pk": 7
+    },
+    {
+        "fields": {
+            "campaign": 338,
+            "date_from": "2009-12-01",
+            "date_to": "2009-12-30",
+            "phase_type": "entry_enabled"
+        },
+        "model": "dpnk.phase",
+        "pk": 8
     }
 ]

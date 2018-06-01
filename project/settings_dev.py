@@ -18,8 +18,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from settings import *  # noqa
-from settings import LOGGING
+import os
+
+from .settings import *  # noqa
+from .settings import CORS_ORIGIN_WHITELIST, INSTALLED_APPS, LOGGING, MIDDLEWARE, PROJECT_ROOT, STATIC_URL, TEMPLATES, normpath
 
 ADMINS = (
     ('', ''),
@@ -31,15 +33,25 @@ SERVER_EMAIL = 'Do práce na kole <>'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'dpnk',
-        'USER': 'dpnk',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': os.environ.get('DPNK_DB_NAME', 'dpnk'),
+        'USER': os.environ.get('DPNK_DB_USER', 'dpnk'),
+        'PASSWORD': os.environ.get('DPNK_DB_PASSWORD', ''),
+        'HOST': os.environ.get('DPNK_DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DPNK_DB_PORT', ''),
+        'CONN_MAX_AGE': 0,
     },
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+CELERY_RESULT_BACKEND = "db+postgresql://dpnk:@localhost/dpnk"
+
+INSTALLED_APPS += (
+    'rosetta',
+    'debug_toolbar',
+    'debug_toolbar_line_profiler',
+    'template_timings_panel',
+)
+
+CELERY_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/dpnk-emails'
 
 SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  # XXX
@@ -68,6 +80,53 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.logger.LoggingPanel',
 )
 
+ALLOWED_HOSTS = [
+    'localhost',
+    '.localhost',
+    '127.0.0.1',
+    '.testserver',
+    'example.com',
+    '.example.com',
+    '.dopracenakole.cz',
+    '.lvh.me',
+]
+
+CORS_ORIGIN_WHITELIST += [
+    "dpnk2016.localhost:8000",
+    "dpnk.localhost:8000",
+]
+
+MIDDLEWARE += [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
+]
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TEMPLATE_CONTEXT': True,
+    'JQUERY_URL': STATIC_URL + "bow/jquery/dist/jquery.js",
+    'SHOW_TOOLBAR_CALLBACK': 'project.settings_local.custom_show_toolbar',
+}
+
+DEBUG_TOOLBAR_PANELS = [
+    'ddt_request_history.panels.request_history.RequestHistoryPanel',
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.signals.SignalsPanel',
+    'debug_toolbar.panels.logging.LoggingPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+    'debug_toolbar.panels.profiling.ProfilingPanel',
+    'debug_toolbar_line_profiler.panel.ProfilingPanel',
+    # 'cachalot.panels.CachalotPanel',
+    'template_timings_panel.panels.TemplateTimings.TemplateTimings',
+]
+
 
 def custom_show_toolbar(request):
     return True  # Always show toolbar, for example purposes only.
@@ -80,3 +139,16 @@ DEBUG_TOOLBAR_CONFIG = {
     'HIDE_DJANGO_SQL': False,
     'TAG': 'div',
 }
+
+TEMPLATES[0]['OPTIONS']['debug'] = True
+TEMPLATES[0]['OPTIONS']['loaders'] = [
+    ('django.template.loaders.filesystem.Loader'),
+    ('django.template.loaders.app_directories.Loader'),
+]
+
+MEDIA_ROOT = normpath(PROJECT_ROOT, 'media/upload')
+MEDIA_URL = '/media/upload/'
+
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False

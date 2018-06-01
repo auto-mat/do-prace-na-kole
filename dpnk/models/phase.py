@@ -26,12 +26,13 @@ from django.utils.translation import ugettext_lazy as _
 from .. import util
 
 TYPE = [
-    ('registration', _(u"registrační")),
-    ('payment', _(u"placení startovného")),
-    ('competition', _(u"soutěžní")),
-    ('results', _(u"výsledková")),
-    ('admissions', _(u"přihlašovací do soutěží")),
-    ('invoices', _(u"vytváření faktur")),
+    ('registration', _("registrační")),
+    ('payment', _("placení startovného")),
+    ('competition', _("soutěžní")),
+    ('entry_enabled', _("zápis jízd umožněn")),
+    ('results', _("výsledková")),
+    ('admissions', _("přihlašovací do soutěží")),
+    ('invoices', _("vytváření faktur")),
 ]
 PHASE_TYPE_DICT = dict(TYPE)
 
@@ -86,9 +87,9 @@ class Phase(models.Model):
         if when is None:
             when = util.today()
         earliest_start_date = when  # Earliest date from all competions
-        for competition_phase in Phase.get_active(when=when).filter(phase_type='competition'):
-            if competition_phase.get_earliest_active_day() < earliest_start_date:
-                earliest_start_date = competition_phase.get_earliest_active_day()
+        for phase in Phase.get_active(when=when).filter(phase_type=phase_type):
+            if phase.get_earliest_active_day() < earliest_start_date:
+                earliest_start_date = phase.get_earliest_active_day()
         return earliest_start_date, util.today()
 
     def get_earliest_active_day(self):
