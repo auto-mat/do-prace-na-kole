@@ -18,7 +18,15 @@
         {% if not sync_outcome.synced_trips %}
         {% blocktrans with synced_activities=sync_outcome.synced_activities %}
         Ve Stravě máte  {{synced_activities}} aktivit ale žadné nejsou označené s hashtagem. Přidejte hashtagy {{hashtag_to}} nebo {{hashtag_from}} do názvu aktivity aby se počítaly jako jízdy do práce a z práce.
+        <br/>
+        <br/>
+        Našli jsme nasledujici aktivit:
         {% endblocktrans %}
+        <ul>
+        {% for title in sync_outcome.activities %}
+        <li>{{title}}</li>
+        {% endfor %}
+        </ul>
         {% endif %}
     {% elif sync_failed %}
         {% trans "Synchronizace selhala" %} {{sync_failed}}
