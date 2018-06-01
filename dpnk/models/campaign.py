@@ -265,6 +265,9 @@ class Campaign(Pricable, models.Model):
     def day_active(self, day):
         """ Return if this day can be changed by user """
         day_today = util.today()
+        entry_phase = self.phase('entry_enabled')
+        if entry_phase.date_from > day_today or entry_phase.date_to < day_today:
+            return False
         return (
             (day <= day_today) and
             (day > day_today - datetime.timedelta(days=self.days_active))
