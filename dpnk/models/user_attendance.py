@@ -207,7 +207,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def company_admission_fee_intcomma(self):
         return intcomma(self.company_admission_fee())
 
-    @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
+    @denormalized(models.ForeignKey, to='Payment', null=True, on_delete=models.SET_NULL, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Payment', foreign_key='payment_user_attendance', skip={'updated', 'created'})
     def representative_payment(self):
         if self.team and self.team.subsidiary and not self.has_admission_fee():
@@ -238,7 +238,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         ('unknown', _(u'neznámý')),
     )
 
-    @denormalized(models.CharField, choices=PAYMENT_CHOICES, max_length=20, null=True, skip={'updated', 'created'})
+    @denormalized(models.CharField, choices=PAYMENT_CHOICES, max_length=20, null=True, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Payment', foreign_key='payment_user_attendance', skip={'updated', 'created'})
     def payment_status(self):
         if self.team and self.team.subsidiary and not self.has_admission_fee():
@@ -281,7 +281,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         except Phase.DoesNotExist:
             return 0
 
-    @denormalized(models.IntegerField, null=True, skip={'updated', 'created'})
+    @denormalized(models.IntegerField, null=True, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Trip')
     def get_rides_count_denorm(self):
         return self.get_rides_count()
@@ -293,7 +293,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         except Phase.DoesNotExist:
             return 0
 
-    @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
+    @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Trip')
     def frequency(self):
         return self.get_frequency()
@@ -304,7 +304,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         else:
             return self.frequency * 100
 
-    @denormalized(models.FloatField, null=True, skip={'updated', 'created'})
+    @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Trip')
     def trip_length_total(self):
         from .. import results
@@ -447,7 +447,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         uncreated_trips = sorted(list(set(expected_trip_days) - set(trip_days)))
         return trips, uncreated_trips
 
-    @denormalized(models.ForeignKey, to='CompanyAdmin', null=True, on_delete=models.SET_NULL, skip={'updated', 'created'})
+    @denormalized(models.ForeignKey, to='CompanyAdmin', null=True, on_delete=models.SET_NULL, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('UserProfile', skip={'mailing_hash'})
     def related_company_admin(self):
         """ Get company coordinator profile for this user attendance """
@@ -460,7 +460,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
         from .. import results
         return results.get_unanswered_questionnaires(self)
 
-    @denormalized(models.NullBooleanField, default=None, skip={'created', 'updated'})
+    @denormalized(models.NullBooleanField, default=None, skip={'created', 'updated', 'last_sync_time'})
     @depend_on_related('Answer')
     def has_unanswered_questionnaires(self):
         return self.unanswered_questionnaires().exists()
