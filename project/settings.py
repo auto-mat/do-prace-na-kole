@@ -593,7 +593,7 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 SITE_URL = 'dopracenakole.cz'
 # import local settings
 try:
-    from settings_local import *  # noqa
+    from .settings_local import *  # noqa
 except ImportError:
     pass
 
