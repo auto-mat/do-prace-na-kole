@@ -113,6 +113,8 @@ from .views_permission_mixins import (
     MustBeInPaymentPhaseMixin,
     MustBeInRegistrationPhaseMixin,
     MustHaveTeamMixin,
+    RegistrationCompleteMixin,
+    registration_complete_gate,
 )
 
 logger = logging.getLogger(__name__)
@@ -714,7 +716,7 @@ class RidesFormSet(BaseModelFormSet):
         return [form for form in self.forms if form.instance.pk is None]
 
 
-class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, LoginRequiredMixin, ModelFormSetView):
+class RidesView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, ModelFormSetView):
     model = Trip
     form_class = forms.TripForm
     formset_class = RidesFormSet
@@ -826,28 +828,8 @@ class RidesView(TitleViewMixin, RegistrationMessagesMixin, SuccessMessageMixin, 
         context_data['today'] = util.today()
         return context_data
 
-    def get(self, request, *args, **kwargs):
-        reason = self.user_attendance.entered_competition_reason()
-        if reason is True:
-            if self.user_attendance.has_unanswered_questionnaires:
-                questionnaire = self.user_attendance.unanswered_questionnaires().filter(mandatory=True)
-                if questionnaire:
-                    return redirect(reverse_lazy("questionnaire", kwargs={"questionnaire_slug": questionnaire.first().slug}))
-            return super().get(request, *args, **kwargs)
-        else:
-            redirect_view = {
-                'tshirt_uncomplete': 'zmenit_triko',
-                'team_uncomplete': 'zmenit_tym',
-                'payment_uncomplete': 'typ_platby',
-                'profile_uncomplete': 'upravit_profil',
-                'team_waiting': 'registration_uncomplete',
-                'payment_waiting': 'registration_uncomplete',
-                'track_uncomplete': 'registration_uncomplete',
-            }
-            return redirect(reverse(redirect_view[reason]))
 
-
-class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
+class RidesDetailsView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesMixin, TemplateView):
     title = _("Podrobný přehled jízd")
     template_name = 'registration/rides_details.html'
     registration_phase = 'profile_view'
@@ -875,7 +857,7 @@ class RidesDetailsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredM
         return context_data
 
 
-class VacationsView(TitleViewMixin, RegistrationMessagesMixin, LoginRequiredMixin, TemplateView):
+class VacationsView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesMixin, TemplateView):
     title = _("Dovolená")
     template_name = 'registration/vacations.html'
     registration_phase = 'profile_view'
@@ -1820,6 +1802,9 @@ class CombinedTracksKMLView(TemplateView):
 
 
 def view_edit_trip(request, date, direction):
+    incomplete = registration_complete_gate(request.user_attendance)
+    if incomplete is not None:
+        return incomplete
     parse_error = False
     try:
         date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
