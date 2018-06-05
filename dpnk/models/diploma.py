@@ -31,8 +31,11 @@ class Diploma(PdfSandwichABC):
     def get_email(self):
         return self.obj.userprofile.user.email
 
-    def get_name(self):
-        return self.obj.name()
+    def get_context(self):
+        return {
+            'name': self.obj.name(),
+            'name_vokativ': self.obj.name(cs_vokativ=True),
+        }
 
     def get_language(self):
         return self.obj.userprofile.language

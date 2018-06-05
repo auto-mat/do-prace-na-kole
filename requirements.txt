@@ -98,3 +98,4 @@ django-betterforms
 django-sitetree
 django-admin-views
 single-beat
+vokativ
