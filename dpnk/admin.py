@@ -1631,7 +1631,10 @@ admin.site.add_action(mass_change_selected)
 
 @admin.register(models.Diploma)
 class DiplomaAdmin(PdfSandwichAdmin):
-    pass
+    search_fields = (
+        'obj__userprofile__user__first_name',
+        'obj__userprofile__user__last_name',
+    )
 
 
 @admin.register(models.DiplomaField)

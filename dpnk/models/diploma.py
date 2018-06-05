@@ -8,8 +8,9 @@ from smmapdfs.model_abcs import PdfSandwichABC, PdfSandwichFieldABC
 class DiplomaField(PdfSandwichFieldABC):
     fields = {
         _("Jméno"): (lambda ua: ua.name()),
-        _("Pravidelnost"): (lambda ua: intcomma(round(ua.get_frequency_percentage(), 2)) + '%'),
-        _("Újetych kilometrů"): (lambda ua: intcomma(round(ua.trip_length_total_rounded(), 2)) + " Km"),
+        _("Jméno vokativ"): (lambda ua: ua.name(cs_vokativ=True)),
+        _("Pravidelnost"): (lambda ua: intcomma(round(ua.get_frequency_percentage(), 0)) + '%'),
+        _("Újetych kilometrů"): (lambda ua: str(round(ua.trip_length_total_rounded()))),
         _("Ušetřené oxidu uhličitého"): (lambda ua: intcomma(ua.get_emissions()["co2"]) + " CO2"),
         _("Počet eko cest"): (lambda ua: intcomma(ua.get_rides_count_denorm)),
         _("Pravidelnost týmu"): (lambda ua: (intcomma(round(ua.team.get_frequency_percentage(), 2)) + '%') if ua.team else ""),
@@ -34,7 +35,7 @@ class Diploma(PdfSandwichABC):
     def get_context(self):
         return {
             'name': self.obj.name(),
-            'name_vokativ': self.obj.name(cs_vokativ=True),
+            'name_vocative': self.obj.name(cs_vokativ=True),
         }
 
     def get_language(self):
