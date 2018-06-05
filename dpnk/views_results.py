@@ -95,7 +95,8 @@ class CompetitionResultResource(resources.ModelResource):
         super().__init__()
 
     def dehydrate_public_name(self, result):
-        return result.user_attendance.name()
+        if result.user_attendance:
+            return result.user_attendance.name()
 
     def dehydrate_first_name(self, result):
         if self.include_personal_info:
