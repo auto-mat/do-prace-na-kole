@@ -1,22 +1,22 @@
 {% load i18n %}
 {% autoescape off %}
 
-{% language language %}
-A message for {{ user.userprofile }}, participating in the {{ user.campaign }} competition.
+{% language lang_code %}
+A message for {{ user_attendance.userprofile }}, participating in the {{ user_attendance.campaign }} competition.
 
-Welcome to the Bike to Work competition! You've just registered in the {{ user.campaign }} competition. Before you head off, please check all the steps on: {% block profile_link %}
-https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'upravit_profil' %}
+Welcome to the Bike to Work competition! You've just registered in the {{ user_attendance.campaign }} competition. Before you head off, please check all the steps on: {% block profile_link %}
+https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'upravit_profil' %}
 {% endblock %}
 
-Competition begins at {{ user.campaign.competition_phase.date_from }} and finishes at {{ user.campaign.competition_phase.date_to }}.
-Your log-in e-mail is {{ user.userprofile.user.email }}. We don't mention your password here for security reasons but you can renew it anytime on https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'password_change' %} Have you already got an opponent? The competition will be more interesting for you if people you know also join in. Who would you like to challenge? Colleagues from your or another team? Your suppliers or customers? Or will you challenge your business competitors?
+Competition begins at {{ user_attendance.campaign.competition_phase.date_from }} and finishes at {{ user_attendance.campaign.competition_phase.date_to }}.
+Your log-in e-mail is {{ email }}. We don't mention your password here for security reasons but you can renew it anytime on https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'password_change' %} Have you already got an opponent? The competition will be more interesting for you if people you know also join in. Who would you like to challenge? Colleagues from your or another team? Your suppliers or customers? Or will you challenge your business competitors?
 
-We will send you an update on a weekly basis to inform you about the registration stage (by the end of April) as well as the competition stage (in May). Please, check your personal profile from time to time on 
-https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}
-, which will serve as your personal guidepost until the end of the competition - you can modify your personal details there, select your competition categories and track your bike trips. If there is anything you are unsure about, please contact us at <kontakt@dopracenakole.cz>. 
+We will send you an update on a weekly basis to inform you about the registration stage (by the end of April) as well as the competition stage (in May). Please, check your personal profile from time to time on
+https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}
+, which will serve as your personal guidepost until the end of the competition - you can modify your personal details there, select your competition categories and track your bike trips. If there is anything you are unsure about, please contact us at <kontakt@dopracenakole.cz>.
 
 Thank you for your interest and we look forward to seeing you during the competition!
 
-Your {{ user.campaign }} organization team
+Your {{ user_attendance.campaign }} organization team
 {% endlanguage %}
 {% endautoescape %}

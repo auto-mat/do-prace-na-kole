@@ -1,0 +1,19 @@
+{% load i18n %}
+{% autoescape off %}
+
+{% language lang_code %}
+A message for company coordinators from {{ user_attendance.team.subsidiary.company.name }} taking part in {{ user_attendance.campaign }}.
+
+Dear coordinator,
+
+according to our records, you have yet to pay the following invoice (due date {{invoice.taxable_date}}):
+
+{{ invoice_url }}
+
+Greetings from the entire Auto*Mat team and wishes for a happy journey.
+
+---
+{{ user_attendance.campaign.email_footer }}
+
+{% endlanguage %}
+{% endautoescape %}

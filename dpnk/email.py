@@ -25,7 +25,9 @@ from django.core.mail import send_mail
 from django.template.loader import get_template
 
 
-def _(string, locale):
+def _(string, locale=None):
+    if locale is None:
+        return string
     return gettext.translation(
         'django',
         os.path.join(os.path.dirname(__file__), 'locale'),
@@ -40,213 +42,226 @@ def approval_request_mail(user_attendance):
     for team_member in user_attendance.team.members():
         if user_attendance == team_member:
             continue
-        language = user_attendance.userprofile.language
-        template = get_template('email/approval_request_%s.html' % language)
-        email = team_member.userprofile.user.email
-        message = template.render({
+        context = {
             'team_member': team_member,
             'new_user': user_attendance,
-            'SITE_URL': settings.SITE_URL,
-        })
-        subject = _("%s - žádost o ověření členství", language) % user_attendance.campaign
-        send_mail(subject, message, None, [email], fail_silently=False)
+        }
+        campaign_mail(
+            team_member,
+            _("žádost o ověření členství"),
+            'approval_request_%s.html',
+            context,
+        )
 
 
 def invitation_register_mail(inviting, invited):
-    language = invited.userprofile.language
-    template = get_template('email/invitation_%s.html' % language)
-    email = invited.userprofile.user.email
-    message = template.render({
+    context = {
         'inviting': inviting,
         'invited': invited,
-        'lang_code': language,
-        'email': email,
-        'SITE_URL': settings.SITE_URL,
-    })
-    subject = _("%s - potvrzení registrace", language) % inviting.campaign
-    send_mail(subject, message, None, [email], fail_silently=False)
+    }
+    campaign_mail(
+        invited,
+        _("potvrzení registrace"),
+        'invitation_%s.html',
+        context,
+    )
 
 
 def register_mail(user_attendance):
-    language = user_attendance.userprofile.language
-    subject = _("%s - potvrzení registrace", language) % user_attendance.campaign
-    templates = {
-        "cs": get_template('email/registration_cs.html'),
-        "en": get_template('email/registration_en.html'),
-    }
-    email = user_attendance.userprofile.user.email
-    if language == "cs":
-        languages = ("cs", "en")
-    else:
-        languages = ("en", "cs")
-    message = ""
-    for language in languages:
-        template = templates[language]
-        message += template.render({
-            'user': user_attendance,
-            'language': language,
-            'SITE_URL': settings.SITE_URL,
-        })
-        message += "\n --- \n"
-    message += user_attendance.campaign.email_footer
-    send_mail(subject, message, None, [email], fail_silently=False)
+    campaign_mail(
+        user_attendance,
+        _("potvrzení registrace"),
+        'registration_%s.html',
+        all_langs=True,
+    )
 
 
 def team_membership_approval_mail(user_attendance):
-    language = user_attendance.userprofile.language
-    template = get_template('email/team_membership_approval_%s.html' % language)
-    email = user_attendance.userprofile.user.email
-    message = template.render({
-        'user': user_attendance,
-        'SITE_URL': settings.SITE_URL,
-    })
-    subject = _("%s - potvrzení ověření členství v týmu", language) % user_attendance.campaign
-    send_mail(subject, message, None, [email], fail_silently=False)
+    campaign_mail(
+        user_attendance,
+        _("potvrzení ověření členství v týmu"),
+        'team_membership_approval_%s.html',
+    )
 
 
 def team_membership_denial_mail(user_attendance, denier, reason):
-    language = user_attendance.userprofile.language
-    template = get_template('email/team_membership_denial_%s.html' % language)
-    email = user_attendance.userprofile.user.email
-    message = template.render({
-        'user': user_attendance,
+    context = {
         'denier': denier,
-        'SITE_URL': settings.SITE_URL,
         'reason': reason,
-    })
-    subject = _("%s - ZAMÍTNUTÍ členství v týmu", language) % user_attendance.campaign
-    send_mail(subject, message, None, [email], fail_silently=False)
+    }
+    campaign_mail(
+        user_attendance,
+        _("ZAMÍTNUTÍ členství v týmu"),
+        'team_membership_denial_%s.html',
+        context,
+    )
 
 
 def team_created_mail(user_attendance, team_name):
-    language = user_attendance.userprofile.language
-    template = get_template('email/team_created_%s.html' % language)
-    email = user_attendance.userprofile.user.email
-    message = template.render({
-        'user': user_attendance,
+    context = {
         'team_name': team_name,
-        'SITE_URL': settings.SITE_URL,
-    })
-    subject = _("%s - potvrzení vytvoření týmu", language) % user_attendance.campaign
-    send_mail(subject, message, None, [email], fail_silently=False)
+    }
+    campaign_mail(
+        user_attendance,
+        _("potvrzení vytvoření týmu"),
+        'team_created_%s.html',
+        context,
+    )
 
 
 def invitation_mail(user_attendance, email):
-    templates = {
-        "cs": get_template('email/invitation_cs.html'),
-        "en": get_template('email/invitation_en.html'),
+    context = {
+        'inviting': user_attendance,
     }
-
-    if user_attendance.userprofile.language == "cs":
-        languages = ("cs", "en")
-    else:
-        languages = ("en", "cs")
-    message = ""
-    for language in languages:
-        template = templates[language]
-        message += template.render({
-            'inviting': user_attendance,
-            'lang_code': language,
-            'SITE_URL': settings.SITE_URL,
-            'email': email,
-        })
-    if user_attendance.userprofile.language == "cs":
-        subject = "%s - pozvánka do týmu (invitation to a team)" % user_attendance.campaign
-    else:
-        subject = "%s - invitation to a team (pozvánka do týmu)" % user_attendance.campaign
-    send_mail(subject, message, None, [email], fail_silently=False)
+    campaign_mail(
+        user_attendance,
+        _("pozvánka do týmu"),
+        'invitation_%s.html',
+        context,
+        all_langs=True,
+        email=email,
+    )
 
 
 def payment_confirmation_mail(user_attendance):
-    language = user_attendance.userprofile.language
-    template = get_template('email/payment_confirmation_%s.html' % language)
-    email = user_attendance.userprofile.user.email
-    message = template.render(
-        {
-            'user': user_attendance,
-            'SITE_URL': settings.SITE_URL,
-        },
+    campaign_mail(
+        user_attendance,
+        _("přijetí platby"),
+        'payment_confirmation_%s.html',
     )
-    subject = _("%s - přijetí platby", language) % user_attendance.campaign
-    send_mail(subject, message, None, [email], fail_silently=False)
 
 
 def payment_confirmation_company_mail(user_attendance):
-    language = user_attendance.userprofile.language
-    template = get_template('email/payment_comfirmation_company_%s.html' % language)
-    email = user_attendance.userprofile.user.email
-    message = template.render(
-        {
-            'user': user_attendance,
-            'company': user_attendance.team.subsidiary.company if user_attendance.team else _(u"(není vybraná)", language),
-            'SITE_URL': settings.SITE_URL,
-        },
+    context = {
+        'company': user_attendance.team.subsidiary.company if user_attendance.team else _(u"(není vybraná)", user_attendance.userprofile.language),
+    }
+    campaign_mail(
+        user_attendance,
+        _("přijetí platby"),
+        'payment_confirmation_company_%s.html',
+        context,
     )
-    subject = _("%s - přijetí platby", language) % user_attendance.campaign
-    send_mail(subject, message, None, [email], fail_silently=False)
 
 
 def company_admin_register_competitor_mail(user_attendance):
-    language = user_attendance.userprofile.language
-    template = get_template('email/company_admin_register_competitor_%s.html' % language)
-    email = user_attendance.userprofile.user.email
-    message = template.render({
-        'user': user_attendance,
+    context = {
         'company': user_attendance.team.subsidiary.company,
-        'SITE_URL': settings.SITE_URL,
-    })
-    subject = _("%s - firemní koordinátor - potvrzení registrace", language) % user_attendance.campaign
-    send_mail(subject, message, None, [email], fail_silently=False)
+    }
+    campaign_mail(
+        user_attendance,
+        _("firemní koordinátor - potvrzení registrace"),
+        'company_admin_register_competitor_%s.html',
+        context,
+    )
 
 
-def company_admin_register_no_competitor_mail(company_admin, company):
-    language = company_admin.get_userprofile().language
-    template = get_template('email/company_admin_register_no_competitor_%s.html' % language)
-    email = company_admin.userprofile.user.email
-    message = template.render({
+def company_admin_mail(company_admin, subject, template):
+    context = {
         'company_admin': company_admin,
-        'company': company,
-        'SITE_URL': settings.SITE_URL,
-    })
-    subject = _("%s - firemní koordinátor - potvrzení registrace", language) % company_admin.campaign
-    send_mail(subject, message, None, [email], fail_silently=False)
+        'company': company_admin.administrated_company,
+    }
+    campaign_mail(
+        company_admin.user_attendance(),
+        subject,
+        template,
+        context,
+        userprofile=company_admin.userprofile,
+        campaign=company_admin.campaign,
+    )
+
+
+def company_admin_register_no_competitor_mail(company_admin):
+    company_admin_mail(
+        company_admin,
+        _("firemní koordinátor - potvrzení registrace"),
+        'company_admin_register_no_competitor_%s.html',
+    )
 
 
 def company_admin_approval_mail(company_admin):
-    language = company_admin.get_userprofile().language
-    template = get_template('email/company_admin_approval_%s.html' % language)
-    email = company_admin.userprofile.user.email
-    message = template.render({
-        'company_admin': company_admin,
-        'company': company_admin.administrated_company,
-        'SITE_URL': settings.SITE_URL,
-    })
-    subject = _("%s - firemní koordinátor - schválení správcovství organizace", language) % company_admin.campaign
-    send_mail(subject, message, None, [email], fail_silently=False)
+    company_admin_mail(
+        company_admin,
+        _("firemní koordinátor - schválení správcovství organizace"),
+        'company_admin_approval_%s.html',
+    )
 
 
 def company_admin_rejected_mail(company_admin):
-    language = company_admin.get_userprofile().language
-    template = get_template('email/company_admin_rejected_%s.html' % language)
-    email = company_admin.userprofile.user.email
-    message = template.render({
-        'company_admin': company_admin,
-        'company': company_admin.administrated_company,
-        'SITE_URL': settings.SITE_URL,
-    })
-    subject = _("%s - firemní koordinátor - zamítnutí správcovství organizace", language) % company_admin.campaign
-    send_mail(subject, message, None, [email], fail_silently=False)
+    company_admin_mail(
+        company_admin,
+        _("firemní koordinátor - zamítnutí správcovství organizace"),
+        'company_admin_rejected_%s.html',
+    )
 
 
 def unfilled_rides_mail(user_attendance, days_unfilled):
-    language = user_attendance.userprofile.language
-    template = get_template('email/unfilled_rides_notification_%s.html' % language)
-    email = user_attendance.userprofile.user.email
-    message = template.render({
+    campaign_mail(
+        user_attendance,
+        _("připomenutí nevyplněných jízd"),
+        'unfilled_rides_notification_%s.html',
+        {'days_unfilled': days_unfilled},
+    )
+
+
+def new_invoice_mail(invoice):
+    invoice_mail(
+        invoice,
+        _("bylo Vám vystavena faktura"),
+        'new_invoice_notification_%s.html',
+    )
+
+
+def unpaid_invoice_mail(invoice):
+    invoice_mail(
+        invoice,
+        _("připomenutí nezaplaceného faktura"),
+        'unpaid_invoice_notification_%s.html',
+    )
+
+
+def invoice_mail(invoice, subject, template):
+    extra_context = {
+        'invoice_url': invoice.invoice_pdf.url,
+        'invoice': invoice,
+    }
+    if not invoice.paid():
+        for admin in invoice.company.company_admin.all():
+            campaign_mail(
+                admin.user_attendance(),
+                subject,
+                template,
+                extra_context,
+            )
+
+
+def campaign_mail(user_attendance, subject, template_path, extra_context=None, all_langs=False, email=None, userprofile=None, campaign=None):
+    if extra_context is None:
+        extra_context = {}
+    if userprofile is None:
+        userprofile = user_attendance.userprofile
+    if campaign is None:
+        campaign = user_attendance.campaign
+    if email is None:
+        email = userprofile.user.email
+    context = {
         'user_attendance': user_attendance,
-        'days_unfilled': days_unfilled,
-        'lang_code': language,
         'SITE_URL': settings.SITE_URL,
-    })
-    subject = _("%s - připomenutí nevyplněných jízd", language) % user_attendance.campaign
+        'email': email,
+    }
+    context.update(extra_context)
+    included_langs = set()
+    if all_langs:
+        langs = [userprofile.language, 'cs', 'en']
+    else:
+        langs = [userprofile.language]
+    message = ""
+    subjects = []
+    for language in langs:
+        if language not in included_langs:
+            included_langs.add(language)
+            subjects.append(_(subject, language))
+            template = get_template('email/' + template_path % language)
+            context['lang_code'] = language
+            message += template.render(context)
+    subject = str(campaign) + " - " + " / ".join(subjects)
     send_mail(subject, message, None, [email], fail_silently=False)

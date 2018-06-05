@@ -1,23 +1,23 @@
 {% load i18n %}
 {% autoescape off %}
 
-{% language user.userprofile.language %}
-A message for {{ user.userprofile }}, participating in the {{ user.campaign }} competition.
+{% language user_attendance.userprofile.language %}
+A message for {{ user_attendance.userprofile }}, participating in the {{ user_attendance.campaign }} competition.
 
 Hello,
 
-unfortunately, your membership in the {{user.team.name}} team has just been DECLINED by {{ denier }} for the following reason: {{reason}}
+unfortunately, your membership in the {{user_attendance.team.name}} team has just been DECLINED by {{ denier }} for the following reason: {{reason}}
 You will have to sign in to edit your profile on
 {% block profile_link %}
-https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'zmenit_tym' %}
+https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'zmenit_tym' %}
 {% endblock %}
 and choose another team or set up your own. So cheer up and come on!
 
 Thank you for your interest and we look forward to seeing you during the competition!
 
-Your {{ user.campaign }} organization team
+Your {{ user_attendance.campaign }} organization team
 
 ---
-{{ user.campaign.email_footer }}
+{{ user_attendance.campaign.email_footer }}
 {% endlanguage %}
 {% endautoescape %}

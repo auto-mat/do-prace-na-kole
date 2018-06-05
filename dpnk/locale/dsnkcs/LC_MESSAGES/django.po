@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-14 08:44+0200\n"
+"POT-Creation-Date: 2018-06-10 10:00+0200\n"
 "PO-Revision-Date: 2018-02-26 15:01+0058\n"
 "Last-Translator: b'Petr1 Dlouhy <petr.dlouhy@email.cz>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,254 +18,267 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Translated-Using: django-rosetta 0.8.1\n"
 
-#: dpnk/actions.py:31
+#: actions.py:32
 #, python-format
 msgid "Zadáno přepočítání %s výsledků"
 msgstr ""
 
-#: dpnk/actions.py:34
+#: actions.py:35
 msgid "Přepočítat výsledku vybraných soutěží"
 msgstr ""
 
-#: dpnk/actions.py:47
+#: actions.py:50
+msgid "Hromadně stáhnout PDF"
+msgstr ""
+
+#: actions.py:54
+msgid "Hromadně stáhnout XML"
+msgstr ""
+
+#: actions.py:67
 #, python-format
 msgid "Obnova %s denormalizovaných položek byla zadána ke zpracování"
 msgstr ""
 
-#: dpnk/actions.py:50
+#: actions.py:70
 msgid "Obnovit denormalizované sloupce"
 msgstr ""
 
-#: dpnk/actions.py:56
+#: actions.py:76
 msgid "Výsledky přepočítány"
 msgstr ""
 
-#: dpnk/actions.py:59
+#: actions.py:79
 msgid "Přepočítat výsledky soutěží pro vybrané účasti v kampani"
 msgstr ""
 
-#: dpnk/actions.py:69 dpnk/actions.py:137
+#: actions.py:89 actions.py:157
 msgid "Ukázat ujetou vzdálenost"
 msgstr ""
 
-#: dpnk/actions.py:79
+#: actions.py:99
 msgid "Není dost volných voucherů"
 msgstr ""
 
-#: dpnk/actions.py:84
+#: actions.py:104
 #, python-format
 msgid "Úspěšně přiřazeno %s voucherů"
 msgstr ""
 
-#: dpnk/actions.py:87
+#: actions.py:107
 msgid "Přiřadit vouchery"
 msgstr ""
 
-#: dpnk/actions.py:93
+#: actions.py:113
 #, python-format
 msgid "Aktualizace mailing listu byla úspěšne zadána pro %s uživatelů"
 msgstr ""
 
-#: dpnk/actions.py:96 dpnk/actions.py:151
+#: actions.py:116 actions.py:171
 msgid "Aktualizovat mailing list"
 msgstr ""
 
-#: dpnk/actions.py:114
+#: actions.py:134
 msgid "Platby potvrzeny"
 msgstr ""
 
-#: dpnk/actions.py:117
+#: actions.py:137
 msgid "Potvrdit platbu"
 msgstr ""
 
-#: dpnk/actions.py:125
+#: actions.py:145
 #, python-format
 msgid "Mailing ID a hash byl úspěšne odebrán %s profilům"
 msgstr ""
 
-#: dpnk/actions.py:128
+#: actions.py:148
 msgid "Odstranit mailing ID a hash"
 msgstr ""
 
-#: dpnk/actions.py:148
+#: actions.py:168
 #, python-format
 msgid "Úspěšně aktualizován mailing pro %s koordinátorů"
 msgstr ""
 
-#: dpnk/actions.py:158
+#: actions.py:178
 #, python-format
 msgid "%s faktur označeno jako 'zaplaceno'"
 msgstr ""
 
-#: dpnk/actions.py:161
+#: actions.py:181
 msgid "Označit faktury jako zaplacené"
 msgstr ""
 
-#: dpnk/actions.py:171
+#: actions.py:191 actions.py:204
 #, python-format
 msgid "Odeslání %s notifikačních emailů bylo zadáno"
 msgstr ""
 
-#: dpnk/actions.py:174
+#: actions.py:194
+msgid "Odeslat notifikaci nezaplacených faktur"
+msgstr ""
+
+#: actions.py:207
 msgid "Odeslat notifikaci nevyplněných jízd"
 msgstr ""
 
-#: dpnk/admin.py:239 dpnk/admin.py:248
+#: admin.py:243 admin.py:252
 msgid "Pobočky"
 msgstr ""
 
-#: dpnk/admin.py:354
+#: admin.py:358
 msgid "Počet týmů ve všech kampaních"
 msgstr "Počet tříd ve všech kampaních"
 
-#: dpnk/admin.py:360
+#: admin.py:364
 msgid "Počet soutěžících ve vyfiltrované kampani"
 msgstr ""
 
-#: dpnk/admin.py:369 dpnk/models/competition.py:60 dpnk/models/team.py:43
+#: admin.py:373 models/competition.py:60 models/team.py:43
 msgid "Týmy"
 msgstr "Třídy"
 
-#: dpnk/admin.py:415
+#: admin.py:420
 msgid "Není vnitrofiremní soutěž?"
 msgstr ""
 
-#: dpnk/admin.py:444 dpnk/views.py:1039
+#: admin.py:449 views.py:1039 views_results.py:53
 msgid "Výsledky soutěže"
 msgstr ""
 
-#: dpnk/admin.py:449 dpnk/models/questionnaire.py:212
+#: admin.py:454 models/questionnaire.py:212
 msgid "Odpovědi"
 msgstr ""
 
-#: dpnk/admin.py:454 dpnk/models/competition.py:54
+#: admin.py:459 models/competition.py:54
 msgid "Dotazník"
 msgstr ""
 
-#: dpnk/admin.py:459 dpnk/views.py:1794
+#: admin.py:464 views.py:1794
 msgid "Losování"
 msgstr ""
 
-#: dpnk/admin.py:480
+#: admin.py:485
 msgid "Není možné odstranit tým učastníkovi kampaně, který již zaplatil"
 msgstr ""
 
-#: dpnk/admin.py:632
+#: admin.py:637
 msgid "Tento e-mail je již v systému použit."
 msgstr ""
 
-#: dpnk/admin.py:665
+#: admin.py:670
 msgid "Nemá uživatelský profil?"
 msgstr ""
 
-#: dpnk/admin.py:788
+#: admin.py:798
 msgid "Nemá přiřazené vouchery?"
 msgstr ""
 
-#: dpnk/admin.py:789
+#: admin.py:799
 msgid "Nemá žádné cesty?"
 msgstr ""
 
-#: dpnk/admin.py:790
+#: admin.py:800
 msgid "Uživatel nemá zvolený tým?"
 msgstr ""
 
-#: dpnk/admin.py:802
+#: admin.py:812
 msgid "Datum realizace platby"
 msgstr ""
 
-#: dpnk/admin.py:805
+#: admin.py:815
 msgid "Posílá se triko?"
 msgstr ""
 
-#: dpnk/admin.py:851
+#: admin.py:862
 msgid "Uživatel"
 msgstr ""
 
-#: dpnk/admin.py:935
+#: admin.py:952
 msgid "Členové"
 msgstr "Spolužáci"
 
-#: dpnk/admin.py:1097
+#: admin.py:1114
 msgid "Spravovat otázky"
 msgstr ""
 
-#: dpnk/admin.py:1118
+#: admin.py:1135
 msgid "vyhodnocení odpovědí"
 msgstr ""
 
-#: dpnk/admin.py:1319
+#: admin.py:1352
 msgid "Nemá účast v kampani?"
 msgstr ""
 
-#: dpnk/admin.py:1425
+#: admin.py:1458
 msgid "Nezaplacené faktury"
 msgstr ""
 
-#: dpnk/admin.py:1555
+#: admin.py:1593
 msgid "Nemá účast v kampani"
 msgstr ""
 
-#: dpnk/auth.py:59
+#: auth.py:59
 msgid "Tento e-mail v systému není zanesen."
 msgstr ""
 
-#: dpnk/auth.py:70
+#: auth.py:70
 msgid ""
 "V případě, že se dosud přihlašujete pouze přes sociální sítě, nechte prázdné"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:43
+#: company_admin_forms.py:43
 msgid "Vyberte soutěžící, za které zaplatíte fakturou"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:46
+#: company_admin_forms.py:46
 msgid "Ceny jsou uváděny bez DPH"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:50 dpnk/models/transactions.py:252
-#: dpnk/templates/company_admin/create_invoice.html:56
+#: company_admin_forms.py:50 models/transactions.py:252
+#: templates/company_admin/create_invoice.html:56
 msgid "Částka"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:51 dpnk/company_admin_forms.py:195
-#: dpnk/models/city.py:35 dpnk/models/questionnaire.py:50
-#: dpnk/models/questionnaire.py:99 dpnk/models/user_attendance.py:154
-#: dpnk/models/user_attendance.py:159
-#: dpnk/templates/company_admin/competitions.html:7 dpnk/views.py:1599
+#: company_admin_forms.py:51 company_admin_forms.py:195 models/city.py:35
+#: models/diploma.py:10 models/questionnaire.py:50 models/questionnaire.py:99
+#: models/user_attendance.py:164 models/user_attendance.py:169
+#: templates/company_admin/competitions.html:7 views.py:1599
+#: views_results.py:67
 msgid "Jméno"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:52 dpnk/company_admin_forms.py:200
+#: company_admin_forms.py:52 company_admin_forms.py:200 views_results.py:68
 msgid "Příjmení"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:53
+#: company_admin_forms.py:53 views_results.py:66
 msgid "Přezdívka"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:54 dpnk/filters.py:137 dpnk/views.py:1600
+#: company_admin_forms.py:54 filters.py:137 models/invoice.py:158
+#: views.py:1600
 msgid "E-mail"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:55 dpnk/models/address.py:88
-#: dpnk/models/city.py:30 dpnk/templates/registration/competitor_count.html:40
+#: company_admin_forms.py:55 models/address.py:103 models/city.py:30
+#: templates/registration/competitor_count.html:40
 msgid "Město"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:90
+#: company_admin_forms.py:90
 msgid "Tip: Použijte shift pro výběr rozsahu položek."
 msgstr ""
 
-#: dpnk/company_admin_forms.py:112
+#: company_admin_forms.py:112 models/address.py:125
 msgid "Adresát na faktuře"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:142
+#: company_admin_forms.py:142
 msgid "Pár vět o vaší pozici"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:144
+#: company_admin_forms.py:144
 msgid ""
 "Napište nám prosím, jakou zastáváte u vašeho zaměstnavatele pozici, podle "
 "kterých můžeme ověřit, že vám funkci firemního koordinátora můžeme svěřit."
@@ -273,13 +286,13 @@ msgstr ""
 "Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici, podle "
 "kterých můžeme ověřit, že vám funkci koordinátora školy můžeme svěřit."
 
-#: dpnk/company_admin_forms.py:151
+#: company_admin_forms.py:151
 msgid ""
 "Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance "
 "jejichž platbu schválím."
 msgstr ""
 
-#: dpnk/company_admin_forms.py:172 dpnk/forms.py:856
+#: company_admin_forms.py:172 forms.py:856
 #, python-format
 msgid ""
 "Souhlasím se zpracováním osobních údajů podle <a target='_blank' "
@@ -288,401 +301,416 @@ msgid ""
 "obchodni-podminky'>Obchodními podmínkami soutěže %s</a>."
 msgstr ""
 
-#: dpnk/company_admin_forms.py:181 dpnk/models/company_admin.py:74
+#: company_admin_forms.py:181 models/company_admin.py:74
 msgid "Koordinovaná organizace"
 msgstr "Koordinovaná škola"
 
-#: dpnk/company_admin_forms.py:187
+#: company_admin_forms.py:187
 msgid "Napište část názvu organizace a vyberte ji ze seznamu."
 msgstr ""
 
-#: dpnk/company_admin_forms.py:191
+#: company_admin_forms.py:191
 msgid "Pro možnost kontaktování firemního koordinátora"
 msgstr "Pro možnost kontaktování koordinátora školy"
 
-#: dpnk/company_admin_forms.py:218
+#: company_admin_forms.py:218
 msgid "Tato organizace již má svého firemního koordinátora."
 msgstr "Tato škola již má svého koordinátora"
 
-#: dpnk/company_admin_forms.py:241
-#: dpnk/templates/company_admin/competitions.html:8
-#: dpnk/templates/company_admin/related_competitions.html:10
+#: company_admin_forms.py:241 templates/company_admin/competitions.html:8
+#: templates/company_admin/related_competitions.html:10
 msgid "Typ soutěže"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:247 dpnk/models/competition.py:119
+#: company_admin_forms.py:247 models/competition.py:119
 msgid "Typ soutěžícího"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:261
+#: company_admin_forms.py:261
 #, python-format
 msgid "%(model_name)s with this %(field_label)s already exists."
 msgstr ""
 
-#: dpnk/company_admin_forms.py:269
+#: company_admin_forms.py:269
 msgid "Vystavit fakturu"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:272
+#: company_admin_forms.py:272
 msgid "Údaje jsou správné. Chci vytvořit fakturu"
 msgstr ""
 
-#: dpnk/company_admin_forms.py:279
+#: company_admin_forms.py:279
 #, python-brace-format
 msgid "Benefiční startovné je {amount} Kč za osobu bez DPH."
 msgstr ""
 
-#: dpnk/company_admin_views.py:55
+#: company_admin_views.py:54
 msgid "Struktura organizace"
 msgstr "Struktura školy"
 
-#: dpnk/company_admin_views.py:107
+#: company_admin_views.py:86
 msgid "Oficiální soutěže"
 msgstr ""
 
-#: dpnk/company_admin_views.py:128
+#: company_admin_views.py:107
 #, python-format
 msgid ""
 "Potvrzena platba za %s soutěžících, kteří od teď mohou bez obav soutěžit."
 msgstr ""
 
-#: dpnk/company_admin_views.py:129
+#: company_admin_views.py:108
 msgid "Platba za soutěžící"
 msgstr ""
 
-#: dpnk/company_admin_views.py:156
+#: company_admin_views.py:135
 msgid "Potvrzování plateb nemáte povoleno"
 msgstr ""
 
-#: dpnk/company_admin_views.py:162
+#: company_admin_views.py:141
 #, python-format
 msgid "Před tím, než budete moci schvalovat platby za vaše zaměstnantce, %s"
 msgstr ""
 
-#: dpnk/company_admin_views.py:165
+#: company_admin_views.py:144
 #, fuzzy
 #| msgid "Faktury vaší organizace"
 msgid "prosím vyplňte IČO vaší organizace"
 msgstr "Faktury vaší školy"
 
-#: dpnk/company_admin_views.py:181
+#: company_admin_views.py:160
 msgid "Změna adresy organizace"
 msgstr "Změna adresy školy"
 
-#: dpnk/company_admin_views.py:192
+#: company_admin_views.py:171
 msgid "Registrace nesoutěžícího firemního koordinátora"
 msgstr "Registrace nesoutěžícího koordinátora školy"
 
-#: dpnk/company_admin_views.py:226
+#: company_admin_views.py:205
 msgid "Chci se stát firemním koordinátorem"
 msgstr "Chci se stát koordinátorem školy"
 
-#: dpnk/company_admin_views.py:235
+#: company_admin_views.py:214
 #, python-format
 msgid "Vaše organizce již svého koordinátora má: %s."
 msgstr ""
 
-#: dpnk/company_admin_views.py:236
+#: company_admin_views.py:215
 msgid "Organizace firemního koordinátora má"
 msgstr "Škola koordinátora má"
 
-#: dpnk/company_admin_views.py:260
+#: company_admin_views.py:239
 msgid "Upravit adresu pobočky"
 msgstr ""
 
-#: dpnk/company_admin_views.py:280
+#: company_admin_views.py:259
 msgid "Vypsat/upravit vnitrofiremní soutěž"
 msgstr ""
 
-#: dpnk/company_admin_views.py:295
+#: company_admin_views.py:274
 msgid "K editování této soutěže nemáte oprávnění."
 msgstr ""
 
-#: dpnk/company_admin_views.py:295
+#: company_admin_views.py:274
 msgid "Nedostatečné oprávnění"
 msgstr ""
 
-#: dpnk/company_admin_views.py:298
+#: company_admin_views.py:277
 msgid "Překročen maximální počet soutěží pro organizaci."
 msgstr ""
 
-#: dpnk/company_admin_views.py:298
+#: company_admin_views.py:277
 msgid "Dosažen maximální počet soutěží"
 msgstr ""
 
-#: dpnk/company_admin_views.py:310
+#: company_admin_views.py:289
 msgid "Vnitrofiremní soutěže"
 msgstr ""
 
-#: dpnk/company_admin_views.py:322
+#: company_admin_views.py:301
 msgid "Faktury vaší organizace"
 msgstr "Faktury vaší školy"
 
-#: dpnk/company_admin_views.py:351
+#: company_admin_views.py:330
 #, python-format
 msgid ""
 "Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>"
 msgstr ""
 
-#: dpnk/company_admin_views.py:356
+#: company_admin_views.py:335
 msgid "Vystavování faktur nemáte povoleno"
 msgstr ""
 
-#: dpnk/email.py:51
-#, python-format
-msgid "%s - žádost o ověření členství"
-msgstr ""
-
-#: dpnk/email.py:66 dpnk/email.py:72
-#, python-format
-msgid "%s - potvrzení registrace"
-msgstr ""
-
-#: dpnk/email.py:103
-#, python-format
-msgid "%s - potvrzení ověření členství v týmu"
+#: email.py:51
+#, fuzzy
+#| msgid "%s - potvrzení ověření členství v týmu"
+msgid "žádost o ověření členství"
 msgstr "%s - potvrzení ověření členství ve třídě"
 
-#: dpnk/email.py:117
-#, python-format
-msgid "%s - ZAMÍTNUTÍ členství v týmu"
-msgstr "%s - ZAMÍTNUTÍ členství ve třídě"
-
-#: dpnk/email.py:130
-#, python-format
-msgid "%s - potvrzení vytvoření týmu"
-msgstr "%s - potvrzení vytvoření třídy"
-
-#: dpnk/email.py:170 dpnk/email.py:185
-#, python-format
-msgid "%s - přijetí platby"
+#: email.py:64 email.py:73
+msgid "potvrzení registrace"
 msgstr ""
 
-#: dpnk/email.py:181
+#: email.py:82
+#, fuzzy
+#| msgid "%s - potvrzení ověření členství v týmu"
+msgid "potvrzení ověření členství v týmu"
+msgstr "%s - potvrzení ověření členství ve třídě"
+
+#: email.py:94
+#, fuzzy
+#| msgid "%s - ZAMÍTNUTÍ členství v týmu"
+msgid "ZAMÍTNUTÍ členství v týmu"
+msgstr "%s - ZAMÍTNUTÍ členství ve třídě"
+
+#: email.py:106
+#, fuzzy
+#| msgid "%s - potvrzení vytvoření týmu"
+msgid "potvrzení vytvoření týmu"
+msgstr "%s - potvrzení vytvoření třídy"
+
+#: email.py:118
+#, fuzzy
+#| msgid "Pozvánka do týmu"
+msgid "pozvánka do týmu"
+msgstr "Pozvánka do třídy"
+
+#: email.py:129 email.py:140
+msgid "přijetí platby"
+msgstr ""
+
+#: email.py:136
 msgid "(není vybraná)"
 msgstr ""
 
-#: dpnk/email.py:198 dpnk/email.py:211
-#, python-format
-msgid "%s - firemní koordinátor - potvrzení registrace"
+#: email.py:152 email.py:174
+#, fuzzy
+#| msgid "%s - firemní koordinátor - potvrzení registrace"
+msgid "firemní koordinátor - potvrzení registrace"
 msgstr "%s - koordinátor školy - potvrzení registrace"
 
-#: dpnk/email.py:224
-#, python-format
-msgid "%s - firemní koordinátor - schválení správcovství organizace"
+#: email.py:182
+#, fuzzy
+#| msgid "%s - firemní koordinátor - schválení správcovství organizace"
+msgid "firemní koordinátor - schválení správcovství organizace"
 msgstr "%s - koordinátor školy - schválení správcovství školy"
 
-#: dpnk/email.py:237
-#, python-format
-msgid "%s - firemní koordinátor - zamítnutí správcovství organizace"
+#: email.py:190
+#, fuzzy
+#| msgid "%s - firemní koordinátor - zamítnutí správcovství organizace"
+msgid "firemní koordinátor - zamítnutí správcovství organizace"
 msgstr "%s - koordinátor školy - zamítnutí správcovství školy"
 
-#: dpnk/email.py:251
-#, python-format
-msgid "%s - připomenutí nevyplněných jízd"
+#: email.py:198
+msgid "připomenutí nevyplněných jízd"
 msgstr ""
 
-#: dpnk/exceptions.py:46
+#: email.py:207
+msgid "bylo Vám vystavena faktura"
+msgstr ""
+
+#: email.py:215
+msgid "připomenutí nezaplaceného faktura"
+msgstr ""
+
+#: exceptions.py:46
 msgid "Přístup odepřen"
 msgstr ""
 
-#: dpnk/fields.py:29 dpnk/templates/registration/questionaire.html:34
+#: fields.py:29 templates/registration/questionaire.html:34
 msgid "b"
 msgstr ""
 
-#: dpnk/filters.py:32 dpnk/models/competition.py:76 dpnk/models/invoice.py:115
-#: dpnk/models/phase.py:49 dpnk/models/team.py:72
-#: dpnk/models/user_attendance.py:62
+#: filters.py:32 models/competition.py:76 models/invoice.py:117
+#: models/phase.py:50 models/team.py:72 models/user_attendance.py:67
 msgid "Kampaň"
 msgstr ""
 
-#: dpnk/filters.py:49 dpnk/filters.py:52
+#: filters.py:49 filters.py:52
 msgid "All"
 msgstr ""
 
-#: dpnk/filters.py:50 dpnk/filters.py:53
+#: filters.py:50 filters.py:53
 msgid "None"
 msgstr ""
 
-#: dpnk/filters.py:104
+#: filters.py:104
 msgid "Duplicitní"
 msgstr ""
 
-#: dpnk/filters.py:105
+#: filters.py:105
 msgid "Prázdný"
 msgstr ""
 
-#: dpnk/filters.py:145 dpnk/templates/registration/view_trip.html:23
+#: filters.py:145 templates/registration/view_trip.html:23
 msgid "Trasa"
 msgstr ""
 
-#: dpnk/filters.py:150
+#: filters.py:150
 msgid "Prázdná"
 msgstr ""
 
-#: dpnk/filters.py:151 dpnk/filters.py:202
+#: filters.py:151 filters.py:202
 msgid "Platná"
 msgstr ""
 
-#: dpnk/filters.py:152 dpnk/filters.py:203
+#: filters.py:152 filters.py:203
 msgid "Neplatná"
 msgstr ""
 
-#: dpnk/filters.py:171 dpnk/models/company.py:60
+#: filters.py:171 models/company.py:60
 msgid "IČO"
 msgstr ""
 
-#: dpnk/filters.py:179
+#: filters.py:179
 msgid "Obsahuje odpověď"
 msgstr ""
 
-#: dpnk/filters.py:197 dpnk/forms.py:181 dpnk/models/address.py:77
-#: psc/models/psc.py:47
+#: filters.py:197 forms.py:181 models/address.py:54 models/address.py:62
 msgid "PSČ"
 msgstr ""
 
-#: dpnk/filters.py:217
+#: filters.py:217
 msgid "Město aktivní"
 msgstr ""
 
-#: dpnk/filters.py:222
+#: filters.py:222
 msgid "Ano"
 msgstr ""
 
-#: dpnk/filters.py:223
+#: filters.py:223
 msgid "Ne"
 msgstr ""
 
-#: dpnk/forms.py:93 dpnk/forms.py:411 dpnk/forms.py:438
-#: dpnk/templates/registration/questionaire.html:46
+#: forms.py:93 forms.py:411 forms.py:438
+#: templates/registration/questionaire.html:46
 msgid "Odeslat"
 msgstr ""
 
-#: dpnk/forms.py:109 dpnk/templates/registration/payment_type.html:114
+#: forms.py:109 templates/registration/payment_type.html:114
 msgid "Předchozí"
 msgstr ""
 
-#: dpnk/forms.py:112
+#: forms.py:112
 msgid "Další"
 msgstr ""
 
-#: dpnk/forms.py:132
+#: forms.py:132
 msgid "Přihlásit/registrovat se pomocí Google"
 msgstr ""
 
-#: dpnk/forms.py:133
+#: forms.py:133
 msgid "Přihlásit/registrovat se pomocí Facebooku"
 msgstr ""
 
-#: dpnk/forms.py:134
+#: forms.py:134
 msgid ""
 "Pokud již v systému máte účet, přihlašujte se pokud možno pomocí účtu se "
 "stále stejným e-mailem."
 msgstr ""
 
-#: dpnk/forms.py:145 dpnk/templates/registration/logged_out.html:5
+#: forms.py:145 templates/registration/logged_out.html:5
 msgid "Přihlásit"
 msgstr ""
 
-#: dpnk/forms.py:149
+#: forms.py:149
 msgid "Zapomněli jste své přihlašovací údaje?"
 msgstr ""
 
-#: dpnk/forms.py:151
+#: forms.py:151
 msgid "Ještě nemáte účet?"
 msgstr ""
 
-#: dpnk/forms.py:154 dpnk/views.py:248 dpnk/views.py:265
+#: forms.py:154 views.py:248 views.py:265
 #, python-format
 msgid "Registrujte se do soutěže %s"
 msgstr ""
 
-#: dpnk/forms.py:158 dpnk/forms.py:402
+#: forms.py:158 forms.py:402
 msgid "E-mail (uživatelské jméno)"
 msgstr ""
 
-#: dpnk/forms.py:182 dpnk/models/address.py:78 psc/models/psc.py:48
+#: forms.py:182 models/address.py:55 models/address.py:63
 msgid "Např.: „130 00“"
 msgstr ""
 
-#: dpnk/forms.py:206 dpnk/models/company.py:45 dpnk/models/company.py:46
-#: dpnk/models/invoice.py:108
-#: dpnk/templates/base_generic_registration_form.html:16
+#: forms.py:206 models/company.py:45 models/company.py:46
+#: models/invoice.py:110 templates/base_generic_registration_form.html:16
+#: views_results.py:71
 msgid "Organizace"
 msgstr "Škola"
 
-#: dpnk/forms.py:217
+#: forms.py:217
 msgid ""
 "Napište několik začátečních písmen celého názvu svého zaměstnavatele a pokud "
 "již existuje, nabídne se vám k výběru. Vyberte ji kliknutím na položku v "
 "seznamu."
 msgstr ""
 
-#: dpnk/forms.py:280
+#: forms.py:280
 msgid "Adresa pobočky/organizace"
 msgstr "Adresa fakulty (školy)"
 
-#: dpnk/forms.py:297 dpnk/models/competition.py:340 dpnk/models/team.py:42
-#: dpnk/models/user_attendance.py:99
-#: dpnk/templates/base_generic_registration_form.html:16
+#: forms.py:297 models/competition.py:347 models/team.py:42
+#: models/user_attendance.py:104
+#: templates/base_generic_registration_form.html:16 views_results.py:70
 msgid "Tým"
 msgstr ""
 
-#: dpnk/forms.py:311
+#: forms.py:311
 msgid ""
 "Zvolená pobočka je registrována ve městě, které v aktuální kampani "
 "nesoutěží. Prosím žádejte změnu po vašem vnitrofiremním koordinátorovi."
 msgstr ""
 
-#: dpnk/forms.py:331
+#: forms.py:331
 msgid "Zvolený tým není dostupný v aktuální kampani"
 msgstr ""
 
-#: dpnk/forms.py:355
+#: forms.py:355
 msgid "Přidat organizaci"
 msgstr "Přidat školu"
 
-#: dpnk/forms.py:357
+#: forms.py:357
 msgid "Vytvořit novou organizaci"
 msgstr "Vytvořit novou školu"
 
-#: dpnk/forms.py:366
+#: forms.py:366
 msgid "Přidat pobočku"
 msgstr "Přidat fakultu (školu)"
 
-#: dpnk/forms.py:368
+#: forms.py:368
 msgid "Vytvořit novou pobočku"
 msgstr "Vytvořit novou fakultu (školu)"
 
-#: dpnk/forms.py:378
+#: forms.py:378
 msgid "Přidat tým"
 msgstr ""
 
-#: dpnk/forms.py:380
+#: forms.py:380
 msgid "Vytvořit nový tým"
 msgstr ""
 
-#: dpnk/forms.py:403
+#: forms.py:403
 msgid ""
 "Zadejte váš e-mail. Pokud jste se účastnili v minulém roce, zadejte stejný e-"
 "mail jako v minulém roce."
 msgstr ""
 
-#: dpnk/forms.py:445
+#: forms.py:445
 msgid "Chcete se stát firemním koordinátorem a nechcete soutěžit?"
 msgstr "Chcete se stát koordinátorem školy a nechcete soutěžit?"
 
-#: dpnk/forms.py:446
+#: forms.py:446
 msgid "Využijte registraci firemního koordinátora"
 msgstr "Využijte registraci koordinátora školy"
 
-#: dpnk/forms.py:453
+#: forms.py:453
 msgid ""
 "Tento e-mail bude použit pro zasílání informací v průběhu kampaně a k "
 "zaslání zapomenutého hesla."
 msgstr ""
 
-#: dpnk/forms.py:460
+#: forms.py:460
 #, python-format
 msgid ""
 "Tato e-mailová adresa se již používá. Pokud je vaše, buď se rovnou <a "
@@ -690,20 +718,20 @@ msgid ""
 "hesla</a>."
 msgstr ""
 
-#: dpnk/forms.py:491
+#: forms.py:491
 #, fuzzy, python-format
 #| msgid "E-mail kolegy 1"
 msgid "E-mail kolegy %s"
 msgstr "E-mail spolužáka 1"
 
-#: dpnk/forms.py:501
+#: forms.py:501
 msgid ""
 "Můžete pozvat kolegy do týmu přes náš rozesílač - stačí níže napsat níže e-"
 "maily kolegů, které chcete do svého týmu (samozřejmě je můžete pozvat "
 "jakkoliv, třeba osobně)."
 msgstr ""
 
-#: dpnk/forms.py:510
+#: forms.py:510
 #, fuzzy
 #| msgid ""
 #| "Můžete pozvat kolegy do týmu přes náš rozesílač - stačí napsat níže e-"
@@ -725,23 +753,23 @@ msgstr ""
 "sledovat na <a href=\"{}\">stránce vašeho týmu</a>, tamtéž můžete i potvrdit "
 "členství vašich spolužáků).<br/>Tým může mít maximálně 5 členů.<br/><br/>"
 
-#: dpnk/forms.py:521
+#: forms.py:521
 msgid "Do vašeho týmu je možné doplnit ještě {} členů."
 msgstr ""
 
-#: dpnk/forms.py:528
+#: forms.py:528
 msgid "Odeslat pozvánky"
 msgstr ""
 
-#: dpnk/forms.py:530
+#: forms.py:530
 msgid "Neposílat, přeskočit"
 msgstr ""
 
-#: dpnk/forms.py:550 dpnk/models/transactions.py:256
+#: forms.py:550 models/transactions.py:256
 msgid "Typ platby"
 msgstr ""
 
-#: dpnk/forms.py:559
+#: forms.py:559
 #, python-brace-format
 msgid ""
 "Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora nebo "
@@ -750,1093 +778,1133 @@ msgid ""
 "<ul><li><a href='{url}'>Chci se stát firemním koordinátorem</a></li></ul>"
 msgstr ""
 
-#: dpnk/forms.py:572
+#: forms.py:572
 #, python-format
 msgid "Zaplatím běžný účastnický poplatek %s Kč."
 msgstr ""
 
-#: dpnk/forms.py:574
+#: forms.py:574
 #, python-format
 msgid "Podpořím soutěž benefičním poplatkem %s Kč. <i class='fa fa-heart'></i>"
 msgstr ""
 
-#: dpnk/forms.py:577
+#: forms.py:577
 #, fuzzy
 #| msgid "Učastnický poplatek mi platí zaměstnavatel."
 msgid "Účastnický poplatek mi platí zaměstnavatel."
 msgstr "Účastnický poplatek mi platí škola."
 
-#: dpnk/forms.py:580
+#: forms.py:580
 msgid ""
 "Chci účastnický poplatek zdarma (pro ty, kteří chtějí trvale podporovat "
 "udržitelnou mobilitu). <i class='fa fa-heart'></i>"
 msgstr ""
 
-#: dpnk/forms.py:584
+#: forms.py:584
 msgid ""
 "Chci uplatnit voucher (sleva či účastnický poplatek zdarma, např. pro Klub "
 "přátel)."
 msgstr ""
 
-#: dpnk/forms.py:600
+#: forms.py:600
 msgid "Adresa URL včetně úvodního http:// nebo https://"
 msgstr ""
 
-#: dpnk/forms.py:648
+#: forms.py:648
 msgid "Chci být zařazen do nového týmu"
 msgstr "Chci být zařazen do nové třídy"
 
-#: dpnk/forms.py:658
+#: forms.py:658
 msgid "Uživatelské jméno zákazníka"
 msgstr ""
 
-#: dpnk/forms.py:659
+#: forms.py:659
 msgid "Uživatelské jméno, které vám sdělí zákazník"
 msgstr ""
 
-#: dpnk/forms.py:663
+#: forms.py:663
 msgid "Poznámka"
 msgstr ""
 
-#: dpnk/forms.py:677
+#: forms.py:677
 msgid "Takový uživatel neexistuje"
 msgstr ""
 
-#: dpnk/forms.py:682
+#: forms.py:682
 #, python-format
 msgid ""
 "Tento uživatel není nováček, soutěžil již v předcházejících kampaních: %s"
 msgstr ""
 
-#: dpnk/forms.py:699
+#: forms.py:699
 #, python-format
 msgid ""
 "Tento uživatel byl již %(time)s v cykloservisu %(bike_shop)s (poznámka: "
 "%(note)s)."
 msgstr ""
 
-#: dpnk/forms.py:726 dpnk/models/gpxfile.py:172 dpnk/models/trip.py:180
+#: forms.py:726 models/gpxfile.py:172 models/trip.py:180
 msgid "Chyba při načítání GPX souboru. Jste si jistí, že jde o GPX soubor?"
 msgstr ""
 
-#: dpnk/forms.py:736 dpnk/models/gpxfile.py:54 dpnk/models/gpxfile.py:150
-#: dpnk/models/trip.py:105
+#: forms.py:736 models/gpxfile.py:54 models/gpxfile.py:150 models/trip.py:105
 msgid "GPX soubor"
 msgstr ""
 
-#: dpnk/forms.py:739
+#: forms.py:739
 msgid ""
 "Zadat trasu nahráním souboru GPX. Pro vytvoření GPX souboru s trasou můžete "
 "použít vyhledávání na naší <a href='http://mapa.prahounakole.cz/#hledani' "
 "target='_blank'>mapě</a>."
 msgstr ""
 
-#: dpnk/forms.py:755
+#: forms.py:755
 msgid ""
 "Nezadali jste žádnou trasu. Zadejte trasu, nebo zaškrtněte, že trasu "
 "nechcete zadávat."
 msgstr ""
 
-#: dpnk/forms.py:776
+#: forms.py:776
 msgid "Tento e-mail již je v našem systému zanesen."
 msgstr ""
 
-#: dpnk/forms.py:793
+#: forms.py:793
 msgid "E-mail slouží jako přihlašovací jméno"
 msgstr ""
 
-#: dpnk/forms.py:799
+#: forms.py:799
 msgid "Nechci, aby moje skutečné jméno bylo veřejně zobrazováno"
 msgstr ""
 
-#: dpnk/forms.py:809
+#: forms.py:809
 msgid ""
 "Pokud si nepřejete zobrazovat své jméno, zadejte, co se má zobrazovat místo "
 "něj"
 msgstr ""
 
-#: dpnk/forms.py:815
+#: forms.py:815
 msgid "Zadejte pohlaví"
 msgstr ""
 
-#: dpnk/forms.py:826
+#: forms.py:826
 msgid ""
 "Přeji si dostávat e-mailem informace o akcích, událostech a dalších "
 "záležitostech souvisejících se soutěží, včetně pozvánek do dalších ročníků "
 "soutěže."
 msgstr ""
 
-#: dpnk/forms.py:829
+#: forms.py:829
 msgid ""
 "Nechci dostávat e-maily (a beru na vědomí, že mi mohou uniknout důležité "
 "informace o průběhu soutěže)."
 msgstr ""
 
-#: dpnk/forms.py:882 dpnk/models/user_attendance.py:77
+#: forms.py:882 models/user_attendance.py:82
 msgid "Vzdálenost (km)"
 msgstr ""
 
-#: dpnk/forms.py:904
+#: forms.py:904
 msgid "Musíte vyplnit vzdálenost"
 msgstr ""
 
-#: dpnk/forms.py:907
+#: forms.py:907
 msgid "Pěší cesta musí mít minimálně jeden a půl kilometru"
 msgstr ""
 
-#: dpnk/lookups.py:21
+#: lookups.py:21
 #, python-format
 msgid "%(name)s (IČO: %(ico)s)"
 msgstr ""
 
-#: dpnk/middleware.py:58
+#: middleware.py:58
 #, python-format
 msgid "Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu."
 msgstr ""
 
-#: dpnk/models/address.py:50
-msgid "Ulice"
-msgstr ""
-
-#: dpnk/models/address.py:51
-msgid "Např. „Šeříková“ nebo „Nám. W. Churchilla“"
-msgstr ""
-
-#: dpnk/models/address.py:58
-msgid "Číslo domu"
-msgstr ""
-
-#: dpnk/models/address.py:59
-msgid "Např. „2965/12“ nebo „156“"
-msgstr ""
-
-#: dpnk/models/address.py:66
+#: models/address.py:49
 msgid "Název pobočky (závodu, kanceláře, fakulty), nepovinné pole"
 msgstr "Název fakulty (školy), nepovinné pole"
 
-#: dpnk/models/address.py:68
+#: models/address.py:75
+msgid "Ulice"
+msgstr ""
+
+#: models/address.py:76
+msgid "Např. „Šeříková“ nebo „Nám. W. Churchilla“"
+msgstr ""
+
+#: models/address.py:83
+msgid "Číslo domu"
+msgstr ""
+
+#: models/address.py:84
+msgid "Např. „2965/12“ nebo „156“"
+msgstr ""
+
+#: models/address.py:93
 msgid ""
 "Např. „odštěpný závod Brno“, „oblastní pobočka Liberec“, „Přírodovědecká "
 "fakulta“ atp. Nemá-li vaše organizace pobočky, pak nechte pole prázdné."
 msgstr "Např. „Fakulta stavební“"
 
-#: dpnk/models/address.py:89
+#: models/address.py:104
 msgid "Např. „Jablonec n. N.“ nebo „Praha 3, Žižkov“"
 msgstr ""
 
-#: dpnk/models/address.py:102
+#: models/address.py:117
 msgid ""
 "Toto PSČ neexistuje v databázi všech směrovacích čísel České Republiky. "
 "Prosím zadejte platné PSČ"
 msgstr ""
 
-#: dpnk/models/campaign.py:42
+#: models/campaign.py:45
 msgid "kampaň"
 msgstr ""
 
-#: dpnk/models/campaign.py:43
+#: models/campaign.py:46
 msgid "kampaně"
 msgstr ""
 
-#: dpnk/models/campaign.py:50
+#: models/campaign.py:53
 msgid "Jméno kampaně"
 msgstr ""
 
-#: dpnk/models/campaign.py:67
+#: models/campaign.py:70
 msgid "Předchozí kampaň"
 msgstr ""
 
-#: dpnk/models/campaign.py:73
+#: models/campaign.py:76
 msgid "Patička uživatelských e-mailů"
 msgstr ""
 
-#: dpnk/models/campaign.py:80
+#: models/campaign.py:83
 msgid "ID mailing listu"
 msgstr ""
 
-#: dpnk/models/campaign.py:87
+#: models/campaign.py:90
 msgid "Ukázat odkazy na aplikace"
 msgstr ""
 
-#: dpnk/models/campaign.py:92
+#: models/campaign.py:95
 msgid "Povolit mailing list"
 msgstr ""
 
-#: dpnk/models/campaign.py:97
+#: models/campaign.py:100
 msgid "Počet minulých dní, které jdou zapisovat"
 msgstr ""
 
-#: dpnk/models/campaign.py:103 dpnk/models/competition.py:158
+#: models/campaign.py:106 models/competition.py:158
 msgid "Minimální základ počtu jízd"
 msgstr ""
 
-#: dpnk/models/campaign.py:104 dpnk/models/competition.py:159
+#: models/campaign.py:107 models/competition.py:159
 msgid ""
 "Minimální počet jízd, které je nutné si zapsat, aby bylo možné dosáhnout "
 "100% jízd"
 msgstr ""
 
-#: dpnk/models/campaign.py:110
+#: models/campaign.py:113
 msgid "Minimální procento pro kvalifikaci do pravidelnostní soutěže"
 msgstr ""
 
-#: dpnk/models/campaign.py:116
+#: models/campaign.py:119
 msgid "Maximální navýšení vzdálenosti"
 msgstr ""
 
-#: dpnk/models/campaign.py:117
+#: models/campaign.py:120
 msgid "Počet kilometrů, o které je možné prodloužit si jednu jízdu"
 msgstr ""
 
-#: dpnk/models/campaign.py:123
+#: models/campaign.py:126
 msgid "První číslo řady pro doručování balíčků"
 msgstr ""
 
-#: dpnk/models/campaign.py:129
+#: models/campaign.py:132
 msgid "Poslední číslo řady pro doručování balíčků"
 msgstr ""
 
-#: dpnk/models/campaign.py:135
+#: models/campaign.py:138
 msgid "Výška balíku"
 msgstr ""
 
-#: dpnk/models/campaign.py:141
+#: models/campaign.py:144
 msgid "Šířka balíku"
 msgstr ""
 
-#: dpnk/models/campaign.py:147
+#: models/campaign.py:150
 msgid "Hloubka balíku"
 msgstr ""
 
-#: dpnk/models/campaign.py:153
+#: models/campaign.py:156
 msgid "Maximální počet triček v krabici"
 msgstr ""
 
-#: dpnk/models/campaign.py:159
+#: models/campaign.py:162
 msgid "Váha balíku"
 msgstr ""
 
-#: dpnk/models/campaign.py:169
+#: models/campaign.py:172
 msgid "První číslo řady pro faktury"
 msgstr ""
 
-#: dpnk/models/campaign.py:175
+#: models/campaign.py:178
 msgid "Poslední číslo řady pro faktury"
 msgstr ""
 
-#: dpnk/models/campaign.py:181
-#: dpnk/templates/company_admin/create_invoice.html:28
+#: models/campaign.py:184 templates/company_admin/create_invoice.html:28
 msgid "Benefiční startovné"
 msgstr ""
 
-#: dpnk/models/campaign.py:186
+#: models/campaign.py:189
 msgid "Benefiční startovné pro organizace"
 msgstr ""
 
-#: dpnk/models/campaign.py:191
+#: models/campaign.py:194
 msgid "Případy, kdy je startovné zdarma"
 msgstr ""
 
-#: dpnk/models/campaign.py:196
+#: models/campaign.py:199
 msgid "Je povinné zadávat trasu"
 msgstr ""
 
-#: dpnk/models/campaign.py:202
+#: models/campaign.py:205
 msgid "Adresa pro Wordpress API se články"
 msgstr ""
 
-#: dpnk/models/campaign.py:207
+#: models/campaign.py:210
 msgid "Datum, od kterého se zobrazují příspěvky z Wordpress API se články"
 msgstr ""
 
-#: dpnk/models/campaign.py:212
+#: models/campaign.py:215
 msgid "Postfix pro menu"
 msgstr ""
 
-#: dpnk/models/campaign.py:220
+#: models/campaign.py:223
 msgid "Do práce na kole"
 msgstr ""
 
-#: dpnk/models/campaign.py:221
+#: models/campaign.py:224
 msgid "Do školy na kole"
 msgstr ""
 
-#: dpnk/models/campaign.py:224
+#: models/campaign.py:227
 msgid "Jazyková sada"
 msgstr ""
 
-#: dpnk/models/campaign.py:232
+#: models/campaign.py:235
 msgid "Počet lidí v týmu"
 msgstr ""
 
-#: dpnk/models/city.py:31
-#: dpnk/templates/company_admin/related_competitions.html:9
+#: models/city.py:31 templates/company_admin/related_competitions.html:9
 msgid "Města"
 msgstr ""
 
-#: dpnk/models/city.py:42
+#: models/city.py:42
 msgid "Subdoména v URL"
 msgstr ""
 
-#: dpnk/models/city.py:47
+#: models/city.py:47
 msgid "Subdoména na WordPressu"
 msgstr ""
 
-#: dpnk/models/city.py:48
+#: models/city.py:48
 msgid "Pokud není vyplněno, použije se slug"
 msgstr ""
 
-#: dpnk/models/city.py:53
+#: models/city.py:53
 msgid "Jméno skupiny na webu Cyklisté sobě"
 msgstr ""
 
-#: dpnk/models/city.py:58
+#: models/city.py:58
 msgid "poloha města"
 msgstr ""
 
-#: dpnk/models/city_in_campaign.py:32
+#: models/city_in_campaign.py:32
 msgid "Město v kampani"
 msgstr ""
 
-#: dpnk/models/city_in_campaign.py:33
+#: models/city_in_campaign.py:33
 msgid "Města v kampani"
 msgstr ""
 
-#: dpnk/models/city_in_campaign.py:50
+#: models/city_in_campaign.py:50
 msgid "povolit zapisování jízd"
 msgstr ""
 
-#: dpnk/models/commute_mode.py:26 dpnk/models/gpxfile.py:122
+#: models/commute_mode.py:26 models/gpxfile.py:122
 msgid "Mód dopravy"
 msgstr ""
 
-#: dpnk/models/commute_mode.py:27
-#: dpnk/templates/company_admin/competitions.html:11
+#: models/commute_mode.py:27 templates/company_admin/competitions.html:11
 msgid "Módy dopravy"
 msgstr ""
 
-#: dpnk/models/commute_mode.py:31
+#: models/commute_mode.py:31
 msgid "Název módu dopravy"
 msgstr ""
 
-#: dpnk/models/commute_mode.py:37
+#: models/commute_mode.py:37
 msgid "Identifikátor"
 msgstr ""
 
-#: dpnk/models/commute_mode.py:43 dpnk/models/questionnaire.py:135
+#: models/commute_mode.py:43 models/questionnaire.py:135
 msgid "Pořadí"
 msgstr ""
 
-#: dpnk/models/commute_mode.py:48
+#: models/commute_mode.py:48
 msgid "Vysvětlivka módu"
 msgstr ""
 
-#: dpnk/models/commute_mode.py:54
+#: models/commute_mode.py:54
 msgid "Počítá se"
 msgstr ""
 
-#: dpnk/models/commute_mode.py:55
+#: models/commute_mode.py:55
 msgid "Počítá se jako jízda do práce/z práce."
 msgstr ""
 
-#: dpnk/models/commute_mode.py:60
+#: models/commute_mode.py:60
 msgid "Ekologický"
 msgstr ""
 
-#: dpnk/models/company.py:33
+#: models/company.py:33
 msgid ""
 "IČO není zadáno ve správném formátu. Zkontrolujte že číslo má osm číslic a "
 "případně ho doplňte nulami zleva."
 msgstr ""
 
-#: dpnk/models/company.py:35
+#: models/company.py:35
 msgid ""
 "DIČ není zadáno ve správném formátu. Zkontrolujte že číslo má 8 až 10 číslic "
 "a případně ho doplňte nulami zleva. Číslu musí předcházet dvě písmena "
 "identifikátoru země (např. CZ)"
 msgstr ""
 
-#: dpnk/models/company.py:51 dpnk/models/invoice.py:130
+#: models/company.py:51 models/invoice.py:132
 msgid "Název organizace"
 msgstr "Název školy"
 
-#: dpnk/models/company.py:52
+#: models/company.py:52
 msgid ""
 "Např. „Výrobna, a.s.“, „Příspěvková, p.o.“, „Nevládka, z.s.“, „Univerzita "
 "Karlova“"
 msgstr "Např. „Z.Š. Jižní“"
 
-#: dpnk/models/company.py:61
+#: models/company.py:61
 msgid "Pokud má vaše organizace IČO, prosím vyplňte, jinak nechte prázdné."
 msgstr ""
 
-#: dpnk/models/company.py:62
+#: models/company.py:62
 msgid "IČO musí být číslo"
 msgstr ""
 
-#: dpnk/models/company.py:69
+#: models/company.py:69
 msgid "DIČ"
 msgstr ""
 
-#: dpnk/models/company.py:72
+#: models/company.py:72
 msgid "DIČ musí být číslo uvozené dvoupísmeným identifikátorem státu."
 msgstr ""
 
-#: dpnk/models/company.py:78 dpnk/models/subsidiary.py:65
+#: models/company.py:78 models/subsidiary.py:65
 msgid "Aktivní"
 msgstr ""
 
-#: dpnk/models/company.py:103
+#: models/company.py:103
 msgid ""
 "Organizace s tímto názvem již existuje. Nemusíte tedy zakládat novou, "
 "vyberte tu stávající."
 msgstr ""
 
-#: dpnk/models/company_admin.py:33 dpnk/models/user_attendance.py:55
+#: models/company_admin.py:33 models/user_attendance.py:60
 msgid "Odsouhlasený"
 msgstr ""
 
-#: dpnk/models/company_admin.py:34 dpnk/models/user_attendance.py:56
+#: models/company_admin.py:34 models/user_attendance.py:61
 msgid "Nerozhodnuto"
 msgstr ""
 
-#: dpnk/models/company_admin.py:35 dpnk/models/user_attendance.py:57
+#: models/company_admin.py:35 models/user_attendance.py:62
 msgid "Zamítnutý"
 msgstr ""
 
-#: dpnk/models/company_admin.py:39
+#: models/company_admin.py:39
 msgid "Firemní koordinátor"
 msgstr "Koordinátor školy"
 
-#: dpnk/models/company_admin.py:40
+#: models/company_admin.py:40
 msgid "Firemní koordinátoři"
 msgstr ""
 
-#: dpnk/models/company_admin.py:47 dpnk/models/user_attendance.py:69
-#: dpnk/models/user_profile.py:42
+#: models/company_admin.py:47 models/user_attendance.py:74
+#: models/user_profile.py:42
 msgid "Uživatelský profil"
 msgstr ""
 
-#: dpnk/models/company_admin.py:55
+#: models/company_admin.py:55
 msgid "Schválena funkce firemního koordinátora"
 msgstr "Schválena funkce koordinátora školy"
 
-#: dpnk/models/company_admin.py:63
+#: models/company_admin.py:63
 msgid "Zaměstnanecká pozice"
 msgstr ""
 
-#: dpnk/models/company_admin.py:64
+#: models/company_admin.py:64
 msgid "Napište nám prosím, jakou zastáváte u vašeho zaměstnavatele pozici"
 msgstr "Napište nám prosím, jakou zastáváte u vašeho zaměstnavatele pozici"
 
-#: dpnk/models/company_admin.py:88 dpnk/models/invoice.py:144
-#: dpnk/models/user_profile.py:115
+#: models/company_admin.py:88 models/invoice.py:174 models/user_profile.py:115
 msgid "Interní poznámka"
 msgstr ""
 
-#: dpnk/models/company_admin.py:95
+#: models/company_admin.py:95
 msgid "Může potvrzovat platby"
 msgstr ""
 
-#: dpnk/models/company_admin.py:100
+#: models/company_admin.py:100
 msgid "Uživatel potvrdil, že bude plati za zaměstnance."
 msgstr ""
 
-#: dpnk/models/competition.py:52
+#: models/competition.py:52
 msgid "Výkonnost"
 msgstr ""
 
-#: dpnk/models/competition.py:53 dpnk/templates/registration/rides.html:34
+#: models/competition.py:53 models/diploma.py:11
+#: templates/registration/rides.html:41
 msgid "Pravidelnost"
 msgstr ""
 
-#: dpnk/models/competition.py:58
+#: models/competition.py:58
 msgid "Jednotliví soutěžící"
 msgstr ""
 
-#: dpnk/models/competition.py:59
+#: models/competition.py:59
 msgid "Liberos"
 msgstr ""
 
-#: dpnk/models/competition.py:61
+#: models/competition.py:61
 msgid "Soutěž organizací"
 msgstr ""
 
-#: dpnk/models/competition.py:65 dpnk/models/competition.py:66
+#: models/competition.py:65 models/competition.py:66
 msgid "Soutěžní kategorie"
 msgstr ""
 
-#: dpnk/models/competition.py:71
-#: dpnk/templates/company_admin/related_competitions.html:8
+#: models/competition.py:71
+#: templates/company_admin/related_competitions.html:8
 msgid "Jméno soutěže"
 msgstr ""
 
-#: dpnk/models/competition.py:89
+#: models/competition.py:89
 msgid "Odkaz na stránku soutěže"
 msgstr ""
 
-#: dpnk/models/competition.py:90
+#: models/competition.py:90
 msgid "Odkaz na stránku, kde budou pravidla a podrobné informace o soutěži"
 msgstr ""
 
-#: dpnk/models/competition.py:95
+#: models/competition.py:95
 msgid "Datum začátku soutěže"
 msgstr ""
 
-#: dpnk/models/competition.py:96
+#: models/competition.py:96
 msgid "Od tohoto data (včetně) se počítají jízdy a je možné vyplňovat dotazník"
 msgstr ""
 
-#: dpnk/models/competition.py:102
+#: models/competition.py:102
 msgid "Datum konce soutěže"
 msgstr ""
 
-#: dpnk/models/competition.py:103
+#: models/competition.py:103
 msgid "Do tohoto data (včetně) se počítají jízdy a je možné vyplňovat dotazník"
 msgstr ""
 
-#: dpnk/models/competition.py:109 dpnk/models/questionnaire.py:115
+#: models/competition.py:109 models/questionnaire.py:115
 msgid "Typ"
 msgstr ""
 
-#: dpnk/models/competition.py:111
+#: models/competition.py:111
 msgid ""
 "Určuje, zdali bude soutěž výkonnostní (na ujetou vzdálenost), nebo na "
 "pravidelnost. Volba \"Dotazník\" slouží pro kreativní soutěže, "
 "cyklozaměstnavatele roku a další dotazníky; je nutné definovat otázky."
 msgstr ""
 
-#: dpnk/models/competition.py:120
+#: models/competition.py:120
 msgid ""
 "Určuje, zdali bude soutěž týmová, nebo pro jednotlivce. Ostatní volby "
 "vybírejte jen pokud víte, k čemu slouží."
 msgstr ""
 
-#: dpnk/models/competition.py:127
+#: models/competition.py:127
 msgid "Počítané módy dopravy"
 msgstr ""
 
-#: dpnk/models/competition.py:128
+#: models/competition.py:128
 msgid ""
 "Můžete vybrat víc položek pomocí klávesy shift. Většina soutěží je vypsána "
 "jako kolo + chůze/běh"
 msgstr ""
 
-#: dpnk/models/competition.py:134
+#: models/competition.py:134
 msgid "Soutěž pouze pro města"
 msgstr ""
 
-#: dpnk/models/competition.py:135
+#: models/competition.py:135
 msgid ""
 "Soutěž bude probíhat ve vybraných městech. Pokud zůstane prázdné, soutěž "
 "probíhá ve všech městech."
 msgstr ""
 
-#: dpnk/models/competition.py:140
+#: models/competition.py:140
 msgid "Soutěž pouze pro organizace"
 msgstr ""
 
-#: dpnk/models/competition.py:146
+#: models/competition.py:146
 msgid "Soutěž pouze pro pohlaví"
 msgstr ""
 
-#: dpnk/models/competition.py:148
+#: models/competition.py:148
 msgid ""
 "Pokud chcete oddělit výsledky pro muže a ženy, je potřeba vypsat dvě soutěže "
 "- jednu pro muže a druhou pro ženy. Jinak nechte prázdné."
 msgstr ""
 
-#: dpnk/models/competition.py:165
+#: models/competition.py:165
 msgid "Zveřejňovat soutěžní odpovědi"
 msgstr ""
 
-#: dpnk/models/competition.py:170
+#: models/competition.py:170
 msgid "Soutěž je veřejná"
 msgstr ""
 
-#: dpnk/models/competition.py:171
+#: models/competition.py:171
 msgid "Zobrazovat v přehledech soutěží a výsledků?"
 msgstr ""
 
-#: dpnk/models/competition.py:176
+#: models/competition.py:176
 msgid "Zobrazovat výsledky soutěže"
 msgstr ""
 
-#: dpnk/models/competition.py:177
+#: models/competition.py:177
 msgid "Povolit možnost prohlížet výsledky soutěže."
 msgstr ""
 
-#: dpnk/models/competition.py:182
+#: models/competition.py:182
 msgid "Povolit likování příspěvků dotazníku"
 msgstr ""
 
-#: dpnk/models/competition.py:187
+#: models/competition.py:187
 msgid "Prodloužené přihlášky"
 msgstr ""
 
-#: dpnk/models/competition.py:188
+#: models/competition.py:188
 msgid "Počet dní po začátku soutěže, kdy je ještě možné se přihlásit"
 msgstr ""
 
-#: dpnk/models/competition.py:194
+#: models/competition.py:194
 msgid "Pravidla soutěže"
 msgstr ""
 
-#: dpnk/models/competition.py:200
+#: models/competition.py:200
 msgid "Povinný dotazník"
 msgstr ""
 
-#: dpnk/models/competition.py:201
+#: models/competition.py:201
 msgid "Dotazník je potřeba vyplnit před tím, než je možné zadávat jízdy"
 msgstr ""
 
-#: dpnk/models/competition.py:301
+#: models/competition.py:206
+msgid "Prorita v řazení"
+msgstr ""
+
+#: models/competition.py:207
+msgid "Vyšší priorita -> řadí se dřív"
+msgstr ""
+
+#: models/competition.py:308
 msgid "Po&shy;řa&shy;dí"
 msgstr ""
 
-#: dpnk/models/competition.py:304
+#: models/competition.py:311
 msgid " prů&shy;měr&shy;ně"
 msgstr ""
 
-#: dpnk/models/competition.py:310
+#: models/competition.py:317
 #, python-format
 msgid "Ki&shy;lo&shy;me&shy;trů%s"
 msgstr ""
 
-#: dpnk/models/competition.py:311
+#: models/competition.py:318
 #, python-format
 msgid "%% jízd%s"
 msgstr ""
 
-#: dpnk/models/competition.py:312
+#: models/competition.py:319
 #, python-format
 msgid "Bo&shy;dů%s"
 msgstr ""
 
-#: dpnk/models/competition.py:317
+#: models/competition.py:324
 msgid "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných jí&shy;zd"
 msgstr ""
 
-#: dpnk/models/competition.py:318
+#: models/competition.py:325
 msgid "Cel&shy;ko&shy;vý po&shy;čet cest"
 msgstr ""
 
-#: dpnk/models/competition.py:320
+#: models/competition.py:327
 msgid "Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů"
 msgstr ""
 
-#: dpnk/models/competition.py:324
+#: models/competition.py:331
 msgid "v&nbsp;tý&shy;mu"
 msgstr ""
 
-#: dpnk/models/competition.py:327
+#: models/competition.py:334
 msgid "ve&nbsp;fir&shy;mě"
 msgstr ""
 
-#: dpnk/models/competition.py:329
+#: models/competition.py:336
 #, python-format
 msgid "Po&shy;čet sou&shy;tě&shy;ží&shy;cí&shy;ch %s"
 msgstr ""
 
-#: dpnk/models/competition.py:337
+#: models/competition.py:344
 msgid "Sou&shy;tě&shy;ží&shy;cí"
 msgstr ""
 
-#: dpnk/models/competition.py:343
+#: models/competition.py:350
 msgid "Spo&shy;leč&shy;nost"
 msgstr ""
 
-#: dpnk/models/competition.py:346
+#: models/competition.py:353
 msgid "Pro&shy;fe&shy;se"
 msgstr ""
 
-#: dpnk/models/competition.py:347
+#: models/competition.py:354
 msgid "Po&shy;hla&shy;ví"
 msgstr ""
 
-#: dpnk/models/competition.py:349
+#: models/competition.py:356
 msgid "Měs&shy;to"
 msgstr ""
 
-#: dpnk/models/competition.py:372
+#: models/competition.py:379
 msgid "dotazník"
 msgstr ""
 
-#: dpnk/models/competition.py:373
+#: models/competition.py:380
 msgid "soutěž na pravidelnost"
 msgstr ""
 
-#: dpnk/models/competition.py:374
+#: models/competition.py:381
 msgid "soutěž na vzdálenost"
 msgstr ""
 
-#: dpnk/models/competition.py:377
-#: dpnk/templates/registration/competitions.html:23
+#: models/competition.py:384 templates/registration/competitions.html:23
 msgid "jednotlivců"
 msgstr ""
 
-#: dpnk/models/competition.py:378
-#: dpnk/templates/registration/competitions.html:25
+#: models/competition.py:385 templates/registration/competitions.html:25
 msgid "liberos"
 msgstr ""
 
-#: dpnk/models/competition.py:379
-#: dpnk/templates/registration/competitions.html:27
+#: models/competition.py:386 templates/registration/competitions.html:27
 msgid "týmů"
 msgstr "tříd"
 
-#: dpnk/models/competition.py:380
-#: dpnk/templates/registration/competitions.html:29
+#: models/competition.py:387 templates/registration/competitions.html:29
 msgid "organizací"
 msgstr "škol"
 
-#: dpnk/models/competition.py:383
+#: models/competition.py:390
 msgid "pro muže"
 msgstr ""
 
-#: dpnk/models/competition.py:384
+#: models/competition.py:391
 msgid "pro ženy"
 msgstr ""
 
-#: dpnk/models/competition.py:387
+#: models/competition.py:394
 msgid "vnitrofiremní"
 msgstr ""
 
-#: dpnk/models/competition.py:388
+#: models/competition.py:395
 #, python-format
 msgid "organizace %s"
 msgstr ""
 
-#: dpnk/models/competition.py:396
+#: models/competition.py:403
 #, python-format
 msgid "ve městě %(cities)s"
 msgid_plural "ve městech %(cities)s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: dpnk/models/competition.py:431
+#: models/competition.py:438
 msgid "Datum začátku soutěže musí být menší, než datum konce soutěže"
 msgstr ""
 
-#: dpnk/models/competition_result.py:33
+#: models/competition_result.py:33
 msgid "Výsledek soutěže"
 msgstr ""
 
-#: dpnk/models/competition_result.py:34 dpnk/urls.py:146 dpnk/views.py:1005
+#: models/competition_result.py:34 urls.py:146 views.py:1005
 msgid "Výsledky soutěží"
 msgstr ""
 
-#: dpnk/models/competition_result.py:69
+#: models/competition_result.py:69
 msgid "Výsledek"
 msgstr ""
 
-#: dpnk/models/competition_result.py:78
+#: models/competition_result.py:78
 msgid "Dělenec"
 msgstr ""
 
-#: dpnk/models/competition_result.py:84
+#: models/competition_result.py:84
 msgid "Dělitel"
 msgstr ""
 
-#: dpnk/models/competition_result.py:90 dpnk/models/gpxfile.py:134
-#: dpnk/models/invoice.py:54 dpnk/models/trip.py:151
-#: dpnk/models/user_attendance.py:127
+#: models/competition_result.py:90 models/gpxfile.py:134 models/invoice.py:56
+#: models/trip.py:151 models/user_attendance.py:132
 msgid "Datum vytvoření"
 msgstr ""
 
-#: dpnk/models/competition_result.py:95 dpnk/models/gpxfile.py:139
-#: dpnk/models/trip.py:156 dpnk/models/user_attendance.py:132
+#: models/competition_result.py:95 models/gpxfile.py:139 models/trip.py:156
+#: models/user_attendance.py:137
 msgid "Datum poslední změny"
 msgstr ""
 
-#: dpnk/models/gpxfile.py:68 dpnk/models/trip.py:55
+#: models/diploma.py:12
+msgid "Újetych kilometrů"
+msgstr ""
+
+#: models/diploma.py:13
+msgid "Ušetřené oxidu uhličitého"
+msgstr ""
+
+#: models/diploma.py:14
+msgid "Počet eko cest"
+msgstr ""
+
+#: models/diploma.py:15
+#, fuzzy
+#| msgid "Pravidelnost vašeho týmu"
+msgid "Pravidelnost týmu"
+msgstr "Pravidelnost vaší třídy"
+
+#: models/diploma.py:16
+#, fuzzy
+#| msgid "Název týmu"
+msgid "Nazev týmu"
+msgstr "Název třídy"
+
+#: models/diploma.py:17
+msgid "Nazev firmy"
+msgstr ""
+
+#: models/gpxfile.py:68 models/trip.py:55
 msgid "Tam"
 msgstr ""
 
-#: dpnk/models/gpxfile.py:69 dpnk/models/trip.py:56
+#: models/gpxfile.py:69 models/trip.py:56
 msgid "Zpět"
 msgstr ""
 
-#: dpnk/models/gpxfile.py:73
+#: models/gpxfile.py:73
 msgid "Datum vykonání cesty"
 msgstr ""
 
-#: dpnk/models/gpxfile.py:78 dpnk/models/trip.py:76
+#: models/gpxfile.py:78 models/trip.py:76
 msgid "Směr cesty"
 msgstr ""
 
-#: dpnk/models/gpxfile.py:91 dpnk/models/trip.py:97
-#: dpnk/models/user_attendance.py:84
+#: models/gpxfile.py:91 models/trip.py:97 models/user_attendance.py:89
 msgid "trasa"
 msgstr ""
 
-#: dpnk/models/gpxfile.py:99
+#: models/gpxfile.py:99
 msgid "Vzdálenost v metrech"
 msgstr ""
 
-#: dpnk/models/gpxfile.py:104 dpnk/models/trip.py:129
+#: models/gpxfile.py:104 models/trip.py:129
 msgid "Doba v sekundách"
 msgstr ""
 
-#: dpnk/models/gpxfile.py:109 dpnk/models/trip.py:139
+#: models/gpxfile.py:109 models/trip.py:139
 msgid "Zdrojová aplikace"
 msgstr ""
 
-#: dpnk/models/gpxfile.py:129 dpnk/models/trip.py:134
+#: models/gpxfile.py:129 models/trip.py:134
 msgid "Nahráno z aplikace"
 msgstr ""
 
-#: dpnk/models/gpxfile.py:144
+#: models/gpxfile.py:144
 msgid "Datum posledního nahrátí do ECC"
 msgstr ""
 
-#: dpnk/models/gpxfile.py:151
+#: models/gpxfile.py:151
 msgid "GPX soubory"
 msgstr ""
 
-#: dpnk/models/invoice.py:48
-#: dpnk/templates/company_admin/create_invoice.html:67
+#: models/invoice.py:50 templates/company_admin/create_invoice.html:67
 msgid "Faktura"
 msgstr ""
 
-#: dpnk/models/invoice.py:49
+#: models/invoice.py:51
 msgid "Faktury"
 msgstr ""
 
-#: dpnk/models/invoice.py:59 dpnk/templates/company_admin/invoices.html:9
+#: models/invoice.py:61 templates/company_admin/invoices.html:9
 msgid "Den vystavení daňového dokladu"
 msgstr ""
 
-#: dpnk/models/invoice.py:64
+#: models/invoice.py:66
 msgid "Den uskutečnění zdanitelného plnění"
 msgstr ""
 
-#: dpnk/models/invoice.py:69
+#: models/invoice.py:71
 msgid "Datum splatnosti"
 msgstr ""
 
-#: dpnk/models/invoice.py:74
+#: models/invoice.py:76
 msgid "Datum zaplacení"
 msgstr ""
 
-#: dpnk/models/invoice.py:80
+#: models/invoice.py:82
 msgid ""
 "Moje organizace si přeje podpořit Auto*Mat a zaplatit benefiční startovné."
 msgstr ""
 
-#: dpnk/models/invoice.py:84
+#: models/invoice.py:86
 msgid "Anonimizovat položky na faktuře"
 msgstr ""
 
-#: dpnk/models/invoice.py:88
+#: models/invoice.py:90
 msgid "Celková částka"
 msgstr ""
 
-#: dpnk/models/invoice.py:93
+#: models/invoice.py:95
 msgid "PDF faktury"
 msgstr ""
 
-#: dpnk/models/invoice.py:100
+#: models/invoice.py:102
 msgid "XML faktury"
 msgstr ""
 
-#: dpnk/models/invoice.py:121
+#: models/invoice.py:123
 msgid "Pořadové číslo faktury"
 msgstr ""
 
-#: dpnk/models/invoice.py:125
+#: models/invoice.py:127
 msgid "Číslo objednávky (nepovinné)"
 msgstr ""
 
-#: dpnk/models/invoice.py:131
+#: models/invoice.py:133
 msgid ""
 "Název organizace. Pokud je prázdné, vyplní se všechny údaje podle nastavené "
 "organizace."
 msgstr ""
 
-#: dpnk/models/invoice.py:139
+#: models/invoice.py:140
+msgid "Země"
+msgstr ""
+
+#: models/invoice.py:151 models/user_profile.py:77 views.py:1602
+msgid "Telefon"
+msgstr ""
+
+#: models/invoice.py:165
+msgid "Poznámka k adresátovi"
+msgstr ""
+
+#: models/invoice.py:169
 msgid "IČO organizace"
 msgstr "IČO školy"
 
-#: dpnk/models/invoice.py:149
+#: models/invoice.py:179
 msgid "DIČ organizace"
 msgstr "DIČ školy"
 
-#: dpnk/models/invoice.py:160
+#: models/invoice.py:190
 msgid "Variabilní symbol"
 msgstr ""
 
-#: dpnk/models/invoice.py:161
+#: models/invoice.py:191
 msgid "Variabilní symbol faktury"
 msgstr ""
 
-#: dpnk/models/invoice.py:204 dpnk/templates/company_admin/invoices.html:11
+#: models/invoice.py:234 templates/company_admin/invoices.html:11
 msgid "Počet plateb"
 msgstr ""
 
-#: dpnk/models/invoice.py:222
+#: models/invoice.py:252
 msgid "Došla číselná řada faktury"
 msgstr ""
 
-#: dpnk/models/invoice.py:250
+#: models/invoice.py:280
 msgid "Neexistuje žádná nefakturovaná platba"
 msgstr ""
 
-#: dpnk/models/occupation.py:29
+#: models/occupation.py:29
 msgid "Název povolání"
 msgstr ""
 
-#: dpnk/models/occupation.py:40 dpnk/models/occupation.py:41
+#: models/occupation.py:40 models/occupation.py:41
 msgid "Povolání"
 msgstr ""
 
-#: dpnk/models/phase.py:29
+#: models/phase.py:29
 msgid "registrační"
 msgstr ""
 
-#: dpnk/models/phase.py:30
+#: models/phase.py:30
 msgid "placení startovného"
 msgstr ""
 
-#: dpnk/models/phase.py:31
+#: models/phase.py:31
 msgid "soutěžní"
 msgstr ""
 
-#: dpnk/models/phase.py:32
+#: models/phase.py:32
+msgid "zápis jízd umožněn"
+msgstr ""
+
+#: models/phase.py:33
 msgid "výsledková"
 msgstr ""
 
-#: dpnk/models/phase.py:33
+#: models/phase.py:34
 msgid "přihlašovací do soutěží"
 msgstr ""
 
-#: dpnk/models/phase.py:34
+#: models/phase.py:35
 msgid "vytváření faktur"
 msgstr ""
 
-#: dpnk/models/phase.py:43 dpnk/models/phase.py:44
+#: models/phase.py:44 models/phase.py:45
 msgid "fáze kampaně"
 msgstr ""
 
-#: dpnk/models/phase.py:55
+#: models/phase.py:56
 msgid "Typ fáze"
 msgstr ""
 
-#: dpnk/models/phase.py:62
+#: models/phase.py:63
 msgid "Datum začátku fáze"
 msgstr ""
 
-#: dpnk/models/phase.py:68
+#: models/phase.py:69
 msgid "Datum konce fáze"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:39 dpnk/models/questionnaire.py:40
-#: dpnk/models/questionnaire.py:148 dpnk/models/questionnaire.py:177
+#: models/questionnaire.py:39 models/questionnaire.py:40
+#: models/questionnaire.py:148 models/questionnaire.py:177
 msgid "Typ volby"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:56
+#: models/questionnaire.py:56
 msgid "Typ volby je použitelný pro víc otázek"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:81
+#: models/questionnaire.py:81
 msgid "Anketní otázka"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:82
+#: models/questionnaire.py:82
 msgid "Anketní otázky"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:86 dpnk/models/questionnaire.py:93
+#: models/questionnaire.py:86 models/questionnaire.py:93
 msgid "Text"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:87
+#: models/questionnaire.py:87
 msgid "Výběr odpovědi"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:88
+#: models/questionnaire.py:88
 msgid "Výběr z více odpovědí"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:92
+#: models/questionnaire.py:92
 msgid "Nic"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:94
+#: models/questionnaire.py:94
 msgid "Odkaz"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:95
+#: models/questionnaire.py:95
 msgid "Jeden řádek textu"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:105
+#: models/questionnaire.py:105
 msgid "Otázka"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:110
-#: dpnk/templates/registration/view_trip.html:14
+#: models/questionnaire.py:110 templates/registration/view_trip.html:14
 msgid "Den"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:122
+#: models/questionnaire.py:122
 msgid "Typ komentáře"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:130
+#: models/questionnaire.py:130
 msgid "Povolit přílohu"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:141
+#: models/questionnaire.py:141 views_results.py:69
 msgid "Soutěž"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:155
+#: models/questionnaire.py:155
 msgid "Povinná otázka"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:170
+#: models/questionnaire.py:170
 msgid "Nabídka k anketním otázce"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:171
+#: models/questionnaire.py:171
 msgid "Nabídky k anketním otázkám"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:183
+#: models/questionnaire.py:183
 msgid "Nabídka"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:189
+#: models/questionnaire.py:189
 msgid "Body"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:211
+#: models/questionnaire.py:211
 msgid "Odpověď"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:232
+#: models/questionnaire.py:232
 msgid "Komentář"
 msgstr ""
 
-#: dpnk/models/questionnaire.py:240
+#: models/questionnaire.py:240
 msgid "Hodnotitelský komentář"
 msgstr ""
 
-#: dpnk/models/subsidiary.py:41
+#: models/subsidiary.py:41
 msgid "Pobočka organizace"
 msgstr ""
 
-#: dpnk/models/subsidiary.py:42
+#: models/subsidiary.py:42
 msgid "Pobočky organizací"
 msgstr ""
 
-#: dpnk/models/subsidiary.py:53
+#: models/subsidiary.py:53
 msgid "Spádové město"
 msgstr ""
 
-#: dpnk/models/subsidiary.py:55
+#: models/subsidiary.py:55
 msgid ""
 "Vyberte nejbližší soutěžní město. Vaše pobočka bude zařazena do žebříčků za "
 "vybrané město a případnou výhru si přeberete na závěrečném večírku pořádaném "
@@ -1844,432 +1912,430 @@ msgid ""
 "target='_blank'>pravidla soutěže</a> svého města."
 msgstr ""
 
-#: dpnk/models/subsidiary.py:71
+#: models/subsidiary.py:71
 msgid "Jméno adresáta krabice pro pobočku"
 msgstr ""
 
-#: dpnk/models/subsidiary.py:72
+#: models/subsidiary.py:72
 msgid ""
 "Jmené osoby, která převezme krabici s tričky a zajistí jeich rozdělení na "
 "této pobočce. Nemusí se účastnit soutěže."
 msgstr ""
 
-#: dpnk/models/subsidiary.py:78
+#: models/subsidiary.py:78
 msgid "Telefon adresáta krabice pro pobočku"
 msgstr ""
 
-#: dpnk/models/subsidiary.py:84
+#: models/subsidiary.py:84
 msgid "Email adresáta krabice pro pobočku"
 msgstr ""
 
-#: dpnk/models/team.py:48
+#: models/team.py:48
 msgid "Název týmu"
 msgstr "Název třídy"
 
-#: dpnk/models/team.py:55
+#: models/team.py:55 views_results.py:72
 msgid "Pobočka"
 msgstr ""
 
-#: dpnk/models/team.py:62
+#: models/team.py:62
 msgid "Token pro pozvánky"
 msgstr ""
 
-#: dpnk/models/team.py:80
+#: models/team.py:80
 #, fuzzy
 #| msgid "Počet neschválených členů týmu"
 msgid "Počet přihlášených členů týmu"
 msgstr "Počet neschválených členů třídy"
 
-#: dpnk/models/team.py:96
+#: models/team.py:96
 #, fuzzy
 #| msgid "Počet právoplatných členů týmu"
 msgid "Počet zaplacených členů týmu"
 msgstr "Počet právoplatných členů třídy"
 
-#: dpnk/models/team.py:114
+#: models/team.py:114
 msgid "Počet neschválených členů týmu"
 msgstr "Počet neschválených členů třídy"
 
-#: dpnk/models/transactions.py:79
+#: models/transactions.py:79
 msgid "Nová"
 msgstr ""
 
-#: dpnk/models/transactions.py:80
+#: models/transactions.py:80
 msgid "Zrušena"
 msgstr ""
 
-#: dpnk/models/transactions.py:81
+#: models/transactions.py:81
 msgid "Odmítnuta"
 msgstr ""
 
-#: dpnk/models/transactions.py:82
+#: models/transactions.py:82
 msgid "Zahájena"
 msgstr ""
 
-#: dpnk/models/transactions.py:83
+#: models/transactions.py:83
 msgid "Očekává potvrzení"
 msgstr ""
 
-#: dpnk/models/transactions.py:84
+#: models/transactions.py:84
 msgid "Platba zamítnuta, prostředky nemožno vrátit, řeší PayU"
 msgstr ""
 
-#: dpnk/models/transactions.py:85
+#: models/transactions.py:85
 msgid "Platba přijata"
 msgstr ""
 
-#: dpnk/models/transactions.py:86
+#: models/transactions.py:86
 msgid "Nesprávný status -- kontaktovat PayU"
 msgstr ""
 
-#: dpnk/models/transactions.py:87
+#: models/transactions.py:87
 msgid "Platba akceptována organizací"
 msgstr ""
 
-#: dpnk/models/transactions.py:88
+#: models/transactions.py:88
 msgid "Partner má startovné zdarma"
 msgstr ""
 
-#: dpnk/models/transactions.py:89
+#: models/transactions.py:89
 msgid "Faktura vystavena"
 msgstr ""
 
-#: dpnk/models/transactions.py:90
+#: models/transactions.py:90
 msgid "Faktura zaplacena"
 msgstr ""
 
-#: dpnk/models/transactions.py:108
+#: models/transactions.py:108
 msgid "Status"
 msgstr ""
 
-#: dpnk/models/transactions.py:123
+#: models/transactions.py:123
 msgid "Vytvoření"
 msgstr ""
 
-#: dpnk/models/transactions.py:128
+#: models/transactions.py:128
 msgid "Popis"
 msgstr ""
 
-#: dpnk/models/transactions.py:134
+#: models/transactions.py:134
 msgid "Realizace"
 msgstr ""
 
-#: dpnk/models/transactions.py:139 dpnk/models/transactions.py:140
+#: models/transactions.py:139 models/transactions.py:140
 msgid "Transakce"
 msgstr ""
 
-#: dpnk/models/transactions.py:147
+#: models/transactions.py:147
 msgid "Obecná transakce"
 msgstr ""
 
-#: dpnk/models/transactions.py:148
+#: models/transactions.py:148
 msgid "Obecné transakce"
 msgstr ""
 
-#: dpnk/models/transactions.py:155
+#: models/transactions.py:155
 msgid "Uživatelská akce"
 msgstr ""
 
-#: dpnk/models/transactions.py:156
+#: models/transactions.py:156
 msgid "Uživatelské akce"
 msgstr ""
 
-#: dpnk/models/transactions.py:176
+#: models/transactions.py:176
 msgid "mPenize - mBank"
 msgstr ""
 
-#: dpnk/models/transactions.py:177
+#: models/transactions.py:177
 msgid "MojePlatba"
 msgstr ""
 
-#: dpnk/models/transactions.py:178
+#: models/transactions.py:178
 msgid "ePlatby pro eKonto"
 msgstr ""
 
-#: dpnk/models/transactions.py:179
+#: models/transactions.py:179
 msgid "GE Money Bank"
 msgstr ""
 
-#: dpnk/models/transactions.py:180
+#: models/transactions.py:180
 msgid "Sberbank (Volksbank)"
 msgstr ""
 
-#: dpnk/models/transactions.py:181
+#: models/transactions.py:181
 msgid "Fio banka"
 msgstr ""
 
-#: dpnk/models/transactions.py:182
+#: models/transactions.py:182
 msgid "PLATBA 24 – Česká spořitelna"
 msgstr ""
 
-#: dpnk/models/transactions.py:183
+#: models/transactions.py:183
 msgid "Era - Poštovní spořitelna"
 msgstr ""
 
-#: dpnk/models/transactions.py:184
+#: models/transactions.py:184
 msgid "ČSOB"
 msgstr ""
 
-#: dpnk/models/transactions.py:185
+#: models/transactions.py:185
 msgid "Kreditní karta přes GPE"
 msgstr ""
 
-#: dpnk/models/transactions.py:186
+#: models/transactions.py:186
 msgid "bankovní převod"
 msgstr ""
 
-#: dpnk/models/transactions.py:187
+#: models/transactions.py:187
 msgid "převod přes poštu"
 msgstr ""
 
-#: dpnk/models/transactions.py:188
+#: models/transactions.py:188
 msgid "superCASH"
 msgstr ""
 
-#: dpnk/models/transactions.py:189
+#: models/transactions.py:189
 msgid "PaySec"
 msgstr ""
 
-#: dpnk/models/transactions.py:190
+#: models/transactions.py:190
 msgid "Mobito"
 msgstr ""
 
-#: dpnk/models/transactions.py:191
+#: models/transactions.py:191
 msgid "UniCredit"
 msgstr ""
 
-#: dpnk/models/transactions.py:192
+#: models/transactions.py:192
 msgid "testovací platba"
 msgstr ""
 
-#: dpnk/models/transactions.py:194
+#: models/transactions.py:194
 msgid "faktura mimo PayU"
 msgstr ""
 
-#: dpnk/models/transactions.py:195
+#: models/transactions.py:195
 msgid "organizace platí fakturou"
 msgstr ""
 
-#: dpnk/models/transactions.py:196
+#: models/transactions.py:196
 msgid "člen Klubu přátel Auto*Matu"
 msgstr ""
 
-#: dpnk/models/transactions.py:197
+#: models/transactions.py:197
 msgid "kandidát na členství v Klubu přátel Auto*Matu"
 msgstr ""
 
-#: dpnk/models/transactions.py:198
+#: models/transactions.py:198
 msgid "neplatí účastnický poplatek "
 msgstr ""
 
-#: dpnk/models/transactions.py:229 dpnk/models/transactions.py:230
+#: models/transactions.py:229 models/transactions.py:230
 msgid "Platební transakce"
 msgstr ""
 
-#: dpnk/models/transactions.py:262
+#: models/transactions.py:262
 msgid "Chyba"
 msgstr ""
 
-#: dpnk/models/trip.py:61
+#: models/trip.py:61
 msgid "Jízda"
 msgstr ""
 
-#: dpnk/models/trip.py:62
+#: models/trip.py:62
 msgid "Jízdy"
 msgstr ""
 
-#: dpnk/models/trip.py:84
+#: models/trip.py:84
 msgid "Datum cesty"
 msgstr ""
 
-#: dpnk/models/trip.py:90 dpnk/templates/registration/view_trip.html:18
+#: models/trip.py:90 templates/registration/view_trip.html:18
 msgid "Dopravní prostředek"
 msgstr ""
 
-#: dpnk/models/trip.py:119
+#: models/trip.py:119
 msgid "Ujetá vzdálenost (km)"
 msgstr ""
 
-#: dpnk/models/trip.py:145
+#: models/trip.py:145
 msgid "Identifikátor v původní aplikaci"
 msgstr ""
 
-#: dpnk/models/trip.py:166 dpnk/templates/registration/vacations.html:40
-#: dpnk/views.py:879
+#: models/trip.py:166 templates/registration/vacations.html:40 views.py:879
 msgid "Dovolená"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:50
+#: models/user_attendance.py:52
+msgid "Poslední odeslání notifikačního e-mailu"
+msgstr ""
+
+#: models/user_attendance.py:55
 msgid "Účastník kampaně"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:51
+#: models/user_attendance.py:56
 msgid "Účastníci kampaně"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:78
+#: models/user_attendance.py:83
 msgid "Průměrná ujetá vzdálenost z domova do práce (v km v jednom směru)"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:92
+#: models/user_attendance.py:97
 msgid "Nepřeji si zadávat svoji trasu."
 msgstr ""
 
-#: dpnk/models/user_attendance.py:106
+#: models/user_attendance.py:111
 msgid "Souhlas týmu"
 msgstr "Souhlas třídy"
 
-#: dpnk/models/user_attendance.py:114
+#: models/user_attendance.py:119
 msgid "Velikost trika"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:121
+#: models/user_attendance.py:126
 msgid "Slevový kupón"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:137
+#: models/user_attendance.py:142
 msgid "Souhlas se zpracováním osobních údajů."
 msgstr ""
 
-#: dpnk/models/user_attendance.py:224
+#: models/user_attendance.py:234
 msgid "neplatí se"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:225
+#: models/user_attendance.py:235
 msgid "žádné platby"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:226
+#: models/user_attendance.py:236
 msgid "zaplaceno"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:227
+#: models/user_attendance.py:237
 msgid "nepotvrzeno"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:228
+#: models/user_attendance.py:238
 msgid "neznámý"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:328
+#: models/user_attendance.py:338
 msgid "Vzdálenost (km) do práce"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:488
+#: models/user_attendance.py:498
 msgid "Tento tým již má plný počet členů"
 msgstr ""
 
-#: dpnk/models/user_attendance.py:492
+#: models/user_attendance.py:502
 #, python-format
 msgid "Zvolená kampaň (%(campaign)s) musí být shodná s kampaní týmu (%(team)s)"
 msgstr ""
 
-#: dpnk/models/user_profile.py:43
+#: models/user_profile.py:43
 msgid "Uživatelské profily"
 msgstr ""
 
-#: dpnk/models/user_profile.py:47
+#: models/user_profile.py:47
 msgid "Může editovat všechna města"
 msgstr ""
 
-#: dpnk/models/user_profile.py:51
+#: models/user_profile.py:51
 msgid "Muž"
 msgstr ""
 
-#: dpnk/models/user_profile.py:52
+#: models/user_profile.py:52
 msgid "Žena"
 msgstr ""
 
-#: dpnk/models/user_profile.py:57
+#: models/user_profile.py:57
 msgid "Čeština"
 msgstr ""
 
-#: dpnk/models/user_profile.py:58
+#: models/user_profile.py:58
 msgid "Angličtna"
 msgstr ""
 
-#: dpnk/models/user_profile.py:70
+#: models/user_profile.py:70
 msgid "Zobrazené jméno"
 msgstr ""
 
-#: dpnk/models/user_profile.py:71
+#: models/user_profile.py:71
 msgid ""
 "Zobrazí se ve všech veřejných výpisech místo vašeho jména. Zadávejte takové "
 "jméno, podle kterého vás vaši kolegové poznají"
 msgstr ""
 
-#: dpnk/models/user_profile.py:77 dpnk/views.py:1602
-msgid "Telefon"
-msgstr ""
-
-#: dpnk/models/user_profile.py:80
+#: models/user_profile.py:80
 msgid "Telefon musí být složen s čísel, mezer a znaku plus."
 msgstr ""
 
-#: dpnk/models/user_profile.py:81
+#: models/user_profile.py:81
 msgid ""
 "Telefonní číslo slouží jako kontakt pro help desk a případně pro kurýra, "
 "který vám bude doručovat zásilku."
 msgstr ""
 
-#: dpnk/models/user_profile.py:84
+#: models/user_profile.py:84
 msgid "Jazyk e-mailové komunikace"
 msgstr ""
 
-#: dpnk/models/user_profile.py:85
+#: models/user_profile.py:85
 msgid "V tomto jazyce vám budou přicházet e-maily z registračního systému"
 msgstr ""
 
-#: dpnk/models/user_profile.py:92
+#: models/user_profile.py:92
 msgid "ID uživatele v mailing listu"
 msgstr ""
 
-#: dpnk/models/user_profile.py:102
+#: models/user_profile.py:102
 msgid "Hash poslední synchronizace s mailingem"
 msgstr ""
 
-#: dpnk/models/user_profile.py:108
-#: dpnk/templates/company_admin/competitions.html:10
+#: models/user_profile.py:108 templates/company_admin/competitions.html:10
 msgid "Pohlaví"
 msgstr ""
 
-#: dpnk/models/user_profile.py:109
+#: models/user_profile.py:109
 msgid "Slouží k zařazení do výkonnostních kategorií"
 msgstr ""
 
-#: dpnk/models/user_profile.py:125
+#: models/user_profile.py:125
 msgid "Soutěžní e-maily"
 msgstr ""
 
-#: dpnk/models/user_profile.py:126
+#: models/user_profile.py:126
 msgid "Odběr e-mailů můžete kdykoliv v průběhu soutěže zrušit."
 msgstr ""
 
-#: dpnk/models/user_profile.py:131
+#: models/user_profile.py:131
 msgid "Profese"
 msgstr ""
 
-#: dpnk/models/user_profile.py:132
+#: models/user_profile.py:132
 msgid "Nepovinné, bude použito pro účely žebříčků dle jednotlivých profesí"
 msgstr ""
 
-#: dpnk/models/user_profile.py:138
+#: models/user_profile.py:138
 msgid "Ročník narození"
 msgstr ""
 
-#: dpnk/models/user_profile.py:139
+#: models/user_profile.py:139
 msgid "Nepovinné, slouží pouze pro účely statistky"
 msgstr ""
 
-#: dpnk/models/user_profile.py:145
+#: models/user_profile.py:145
 msgid "E-mail v ECC"
 msgstr ""
 
-#: dpnk/models/user_profile.py:154
+#: models/user_profile.py:154
 msgid "Heslo v ECC"
 msgstr ""
 
-#: dpnk/models/util.py:32
+#: models/util.py:32
 #, python-brace-format
 msgid ""
 "\n"
@@ -2284,47 +2350,46 @@ msgid ""
 "\"{pnk_map_url}\">mapě Prahou na kole</a>.\n"
 msgstr ""
 
-#: dpnk/models/voucher.py:31
+#: models/voucher.py:31
 msgid "ReKola"
 msgstr ""
 
-#: dpnk/models/voucher.py:32
+#: models/voucher.py:32
 msgid "SportLife"
 msgstr ""
 
-#: dpnk/models/voucher.py:35
+#: models/voucher.py:35
 msgid "typ voucheru"
 msgstr ""
 
-#: dpnk/models/voucher.py:43
+#: models/voucher.py:43
 msgid "token"
 msgstr ""
 
-#: dpnk/models/voucher.py:61
+#: models/voucher.py:61
 msgid "Voucher třetí strany"
 msgstr ""
 
-#: dpnk/models/voucher.py:62
+#: models/voucher.py:62
 msgid "Vouchery třetích stran"
 msgstr ""
 
-#: dpnk/templates/403.html:6 dpnk/templates/404.html:6
-#: dpnk/templates/500.html:4
+#: templates/403.html:6 templates/404.html:6 templates/500.html:4
 msgid "DPNK"
 msgstr ""
 
-#: dpnk/templates/403.html:11
+#: templates/403.html:11
 msgid "Na tuto stránku nemáte povolený přístup."
 msgstr ""
 
-#: dpnk/templates/404.html:11
+#: templates/404.html:11
 msgid ""
 "Omlouváme se, ale taková stránka zde neexistuje. Pokud si myslíte, že by zde "
 "být měla, prosím kontaktujte <a href='mailto:kontakt@dopracenakole.cz?"
 "subject=Neexistující stránka'>kontakt@dopracenakole.cz</a>"
 msgstr ""
 
-#: dpnk/templates/500.html:9
+#: templates/500.html:9
 msgid ""
 "Došlo k chybě. O této události jsme dostali hlášení, takže se je možné, že "
 "se v tuto chvíli už pokoušíme problém opravit. Je také možné, že problém je "
@@ -2334,98 +2399,97 @@ msgid ""
 "a> s podrobným popisem, jak tato chyba nastala."
 msgstr ""
 
-#: dpnk/templates/base_generic.html:129
+#: templates/base_generic.html:129
 msgid ""
 "Bohužel používáte <strong>zastaralý</strong> prohlížeč internetu. Přes naši "
 "snahu nemusí některé části webu dobře fungovat. Pokud můžete, <a href="
 "\"http://www.whatbrowser.org/intl/cs\">nainstalujte si novější prohlížeč"
 msgstr ""
 
-#: dpnk/templates/base_generic.html:149
+#: templates/base_generic.html:149
 msgid "Uživatel: "
 msgstr ""
 
-#: dpnk/templates/base_generic.html:150
+#: templates/base_generic.html:150
 msgid "E-mail: "
 msgstr "E-mail:"
 
-#: dpnk/templates/base_generic.html:151
+#: templates/base_generic.html:151
 msgid "Tým: "
 msgstr ""
 
-#: dpnk/templates/base_generic.html:152
+#: templates/base_generic.html:152
 msgid "Změnit heslo"
 msgstr ""
 
-#: dpnk/templates/base_generic.html:154
+#: templates/base_generic.html:154
 msgid "Odhlásit"
 msgstr ""
 
-#: dpnk/templates/base_generic_registration_form.html:15 dpnk/views.py:1072
+#: templates/base_generic_registration_form.html:15 views.py:1072
 msgid "Osobní údaje"
 msgstr ""
 
-#: dpnk/templates/base_generic_registration_form.html:18
+#: templates/base_generic_registration_form.html:18
 msgid "Triko"
 msgstr ""
 
-#: dpnk/templates/base_generic_registration_form.html:26 dpnk/views.py:362
-#: dpnk/views.py:1601
+#: templates/base_generic_registration_form.html:26 views.py:362 views.py:1601
 msgid "Platba"
 msgstr ""
 
-#: dpnk/templates/company_admin/competitions.html:9
+#: templates/company_admin/competitions.html:9
 msgid "Typ soutěžících"
 msgstr ""
 
-#: dpnk/templates/company_admin/competitions.html:12
+#: templates/company_admin/competitions.html:12
 msgid "Upravit"
 msgstr ""
 
-#: dpnk/templates/company_admin/competitions.html:13
-#: dpnk/templates/company_admin/related_competitions.html:11
-#: dpnk/templates/registration/competitions.html:71
+#: templates/company_admin/competitions.html:13
+#: templates/company_admin/related_competitions.html:11
+#: templates/registration/competitions.html:71
 msgid "Výsledky"
 msgstr ""
 
-#: dpnk/templates/company_admin/competitions.html:26
-#: dpnk/templates/company_admin/structure.html:10
+#: templates/company_admin/competitions.html:26
+#: templates/company_admin/structure.html:10
 msgid "upravit"
 msgstr ""
 
-#: dpnk/templates/company_admin/competitions.html:27
+#: templates/company_admin/competitions.html:27
 msgid "výsledky"
 msgstr ""
 
-#: dpnk/templates/company_admin/create_invoice.html:12
+#: templates/company_admin/create_invoice.html:12
 msgid "Vystavit novou fakturu"
 msgstr ""
 
-#: dpnk/templates/company_admin/create_invoice.html:14
+#: templates/company_admin/create_invoice.html:14
 #, fuzzy
 #| msgid "Adresa pobočky/organizace"
 msgid "Adresa organizace"
 msgstr "Adresa fakulty (školy)"
 
-#: dpnk/templates/company_admin/create_invoice.html:22
+#: templates/company_admin/create_invoice.html:22
 msgid "IČO: "
 msgstr ""
 
-#: dpnk/templates/company_admin/create_invoice.html:24
+#: templates/company_admin/create_invoice.html:24
 msgid "DIČ: "
 msgstr ""
 
-#: dpnk/templates/company_admin/create_invoice.html:26
+#: templates/company_admin/create_invoice.html:26
 msgid "Pokud jsou údaje nesprávné, můžete"
 msgstr ""
 
-#: dpnk/templates/company_admin/create_invoice.html:26
+#: templates/company_admin/create_invoice.html:26
 #, fuzzy
 #| msgid "Změna adresy organizace"
 msgid "změnit adresu organizace"
 msgstr "Změna adresy školy"
 
-#: dpnk/templates/company_admin/create_invoice.html:32
+#: templates/company_admin/create_invoice.html:32
 msgid ""
 "\n"
 "   Do práce na kole pořádá již od roku 2010 nezisková organizace <a title="
@@ -2448,11 +2512,11 @@ msgid ""
 "   "
 msgstr ""
 
-#: dpnk/templates/company_admin/create_invoice.html:46
+#: templates/company_admin/create_invoice.html:46
 msgid "Seznam soutěžících na faktuře"
 msgstr ""
 
-#: dpnk/templates/company_admin/create_invoice.html:47
+#: templates/company_admin/create_invoice.html:47
 #, python-format
 msgid ""
 "\n"
@@ -2463,99 +2527,107 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: dpnk/templates/company_admin/create_invoice.html:55
+#: templates/company_admin/create_invoice.html:55
 msgid "Účastník"
 msgstr ""
 
-#: dpnk/templates/company_admin/create_invoice.html:70
+#: templates/company_admin/create_invoice.html:70
 msgid "Nemáte žádné další soutěžící, pro které by bylo možné vytvořit fakturu"
 msgstr ""
 
-#: dpnk/templates/company_admin/invoices.html:5
+#: templates/company_admin/invoices.html:5
 msgid ""
 "Upozornění: Během odeslílání platby je potřeba zadat variabilní symbol a "
 "číslo účtu přesně podle faktury. Pokud máte faktur více, vytvořte pro každou "
 "z nich samostatný převod."
 msgstr ""
 
-#: dpnk/templates/company_admin/invoices.html:10
+#: templates/company_admin/invoices.html:10
 msgid "Soubor s fakturou"
 msgstr ""
 
-#: dpnk/templates/company_admin/invoices.html:12
+#: templates/company_admin/invoices.html:12
+msgid "Povinný variabilní symbol"
+msgstr ""
+
+#: templates/company_admin/invoices.html:13
+msgid "Částka včetně DPH"
+msgstr ""
+
+#: templates/company_admin/invoices.html:14
 msgid "Datum potvrzení zaplacení"
 msgstr ""
 
-#: dpnk/templates/company_admin/invoices.html:17
+#: templates/company_admin/invoices.html:19
 msgid "soubor"
 msgstr ""
 
-#: dpnk/templates/company_admin/invoices.html:22
+#: templates/company_admin/invoices.html:26
 msgid "Zaplacení nepotvrzeno"
 msgstr ""
 
-#: dpnk/templates/company_admin/related_competitions.html:22
+#: templates/company_admin/related_competitions.html:22
 msgid "výsledky za mojí organizaci"
 msgstr ""
 
-#: dpnk/templates/company_admin/structure.html:39
+#: templates/company_admin/structure.html:39
 msgid "žádná platba"
 msgstr ""
 
-#: dpnk/templates/company_admin/structure.html:42
+#: templates/company_admin/structure.html:42
 msgid "neschválené členství v týmu"
 msgstr "neschválené členství ve třídě"
 
-#: dpnk/templates/company_admin/structure.html:54
+#: templates/company_admin/structure.html:54
 msgid "Exportovat účastníky za mojí společnost"
 msgstr ""
 
-#: dpnk/templates/likes/inclusion_tags/likes.html:12
+#: templates/likes/inclusion_tags/likes.html:12
 msgid "Hlasů"
 msgstr ""
 
-#: dpnk/templates/likes/inclusion_tags/likes.html:14
+#: templates/likes/inclusion_tags/likes.html:14
 msgid "Dát hlas"
 msgstr ""
 
-#: dpnk/templates/registration/address.html:5
+#: templates/registration/address.html:5
 msgid ""
 "Před výběrem trika, prosím, zkontrolujte následující adresu pobočky, na "
 "kterou bude doručen startovní balíček. V případě, že je špatně, napište na "
 msgstr ""
 
-#: dpnk/templates/registration/address.html:7
+#: templates/registration/address.html:7
 msgid "Jméno: "
 msgstr ""
 
-#: dpnk/templates/registration/address.html:9
-#: dpnk/templates/registration/package.html:11
+#: templates/registration/address.html:9
+#: templates/registration/package.html:11
 msgid "Adresa: "
 msgstr ""
 
-#: dpnk/templates/registration/address.html:11
+#: templates/registration/address.html:11
 msgid ""
 "Nemáte vybraný tým a tím pádem ani přidělenou adresu pobočky, na kterou bude "
 "doručen balíček. Prosím, zkontrolujte si při výběru týmu, jestli adresa vaší "
 "pobočky odpovídá realitě. V případě, že je šapatně napište na "
 msgstr ""
 
-#: dpnk/templates/registration/applications.html:7
-#: dpnk/templates/registration/applications.html:11
+#: templates/registration/applications.html:7
+#: templates/registration/applications.html:11
 msgid "Propojit s"
 msgstr ""
 
-#: dpnk/templates/registration/applications.html:16
+#: templates/registration/applications.html:16
 msgid "Propojit se Stravou"
 msgstr ""
 
-#: dpnk/templates/registration/change_team.html:7
+#: templates/registration/change_team.html:7
 msgid ""
 "Pokud název organizace nebo adresa pobočky v seznamu je, ale údaje jsou "
 "chybné, nezakládejte novou pobočku. Žádejte o opravu:"
 msgstr ""
 
-#: dpnk/templates/registration/change_track.html:11
+#: templates/registration/change_track.html:11
 #, python-format
 msgid ""
 "\n"
@@ -2570,163 +2642,163 @@ msgid ""
 "\">mobilních aplikací</a>.\n"
 msgstr ""
 
-#: dpnk/templates/registration/competition_profile.html:11
+#: templates/registration/competition_profile.html:11
 msgid "Moje jízdy"
 msgstr ""
 
-#: dpnk/templates/registration/competition_profile.html:20
+#: templates/registration/competition_profile.html:20
 msgid "Vouchery"
 msgstr ""
 
-#: dpnk/templates/registration/competition_profile.html:23
+#: templates/registration/competition_profile.html:23
 msgid "Zde můžete nalézt vouchery"
 msgstr ""
 
-#: dpnk/templates/registration/competition_profile.html:56
+#: templates/registration/competition_profile.html:56
 msgid "Příspěvky z kreativních soutěží"
 msgstr ""
 
-#: dpnk/templates/registration/competition_profile.html:58
+#: templates/registration/competition_profile.html:58
 msgid "Nahrát vlastní příspěvek"
 msgstr ""
 
-#: dpnk/templates/registration/competition_profile.html:61
-#: dpnk/templates/registration/competition_profile.html:67
-#: dpnk/templates/registration/competition_profile.html:68
+#: templates/registration/competition_profile.html:61
+#: templates/registration/competition_profile.html:67
+#: templates/registration/competition_profile.html:68
 msgid "Všechny příspěvky z této soutěže"
 msgstr ""
 
-#: dpnk/templates/registration/competition_profile.html:62
+#: templates/registration/competition_profile.html:62
 msgid "Příspěvek do kreativní soutěže"
 msgstr ""
 
-#: dpnk/templates/registration/competition_results.html:14
+#: templates/registration/competition_results.html:14
 msgid "Výsledky v soutěži "
 msgstr ""
 
-#: dpnk/templates/registration/competition_results.html:20
+#: templates/registration/competition_results.html:20
 msgid "Soutěž trvá"
 msgstr ""
 
-#: dpnk/templates/registration/competition_results.html:20
-#: dpnk/templates/registration/competitions.html:13
-#: dpnk/templates/registration/rides.html:23
+#: templates/registration/competition_results.html:20
+#: templates/registration/competitions.html:13
+#: templates/registration/rides.html:30
 msgid "od"
 msgstr ""
 
-#: dpnk/templates/registration/competition_results.html:21
-#: dpnk/templates/registration/competitions.html:14
-#: dpnk/templates/registration/rides.html:24
+#: templates/registration/competition_results.html:21
+#: templates/registration/competitions.html:14
+#: templates/registration/rides.html:31
 msgid "do"
 msgstr ""
 
-#: dpnk/templates/registration/competition_results_table.html:33
+#: templates/registration/competition_results_table.html:33
 msgid "Organizace:"
 msgstr "Škola:"
 
-#: dpnk/templates/registration/competition_results_table.html:57
+#: templates/registration/competition_results_table.html:57
 msgid "Výsledky této soutěže se nezobrazují"
 msgstr ""
 
-#: dpnk/templates/registration/competitions.html:21
+#: templates/registration/competitions.html:21
 msgid " místo z "
 msgstr ""
 
-#: dpnk/templates/registration/competitions.html:37
+#: templates/registration/competitions.html:37
 msgid "ve"
 msgstr ""
 
-#: dpnk/templates/registration/competitions.html:37
+#: templates/registration/competitions.html:37
 msgid "lidech"
 msgstr ""
 
-#: dpnk/templates/registration/competitions.html:42
-#: dpnk/templates/registration/rides.html:40
+#: templates/registration/competitions.html:42
+#: templates/registration/rides.html:47
 msgid "z"
 msgstr ""
 
-#: dpnk/templates/registration/competitions.html:42
+#: templates/registration/competitions.html:42
 msgid "jízd"
 msgstr ""
 
-#: dpnk/templates/registration/competitions.html:50
+#: templates/registration/competitions.html:50
 msgid "Tato soutěž ještě nezačala"
 msgstr ""
 
-#: dpnk/templates/registration/competitions.html:55
+#: templates/registration/competitions.html:55
 msgid "Vyplnit odpovědi"
 msgstr ""
 
-#: dpnk/templates/registration/competitions.html:60
+#: templates/registration/competitions.html:60
 msgid "Všechny odpovědi"
 msgstr ""
 
-#: dpnk/templates/registration/competitions.html:65
+#: templates/registration/competitions.html:65
 msgid "Zobrazit vyhodnocení"
 msgstr ""
 
-#: dpnk/templates/registration/competitions.html:75
-#: dpnk/templates/registration/questionaire.html:9
+#: templates/registration/competitions.html:75
+#: templates/registration/questionaire.html:9
 msgid "Další informace o soutěži"
 msgstr ""
 
-#: dpnk/templates/registration/competitions.html:80
+#: templates/registration/competitions.html:80
 msgid "Momentálně nejsou vypsány žádné soutěže."
 msgstr ""
 
-#: dpnk/templates/registration/competitor_count.html:41
+#: templates/registration/competitor_count.html:41
 msgid "Počet soutěžících"
 msgstr ""
 
-#: dpnk/templates/registration/competitor_count.html:42
+#: templates/registration/competitor_count.html:42
 msgid "Vzdálenost na kole (km)"
 msgstr ""
 
-#: dpnk/templates/registration/competitor_count.html:43
+#: templates/registration/competitor_count.html:43
 msgid "Vzdálenost pěšky (km)"
 msgstr ""
 
-#: dpnk/templates/registration/competitor_count.html:44
+#: templates/registration/competitor_count.html:44
 msgid "Celková vzdálenost (km)"
 msgstr ""
 
-#: dpnk/templates/registration/competitor_count.html:45
+#: templates/registration/competitor_count.html:45
 msgid "Počet cest na kole"
 msgstr ""
 
-#: dpnk/templates/registration/competitor_count.html:46
+#: templates/registration/competitor_count.html:46
 msgid "Počet cest pěšky"
 msgstr ""
 
-#: dpnk/templates/registration/competitor_count.html:47
+#: templates/registration/competitor_count.html:47
 msgid "Ušetřené emise CO<sub>2</sub> (g)"
 msgstr ""
 
-#: dpnk/templates/registration/competitor_count.html:66
+#: templates/registration/competitor_count.html:66
 msgid "bez vybraného města"
 msgstr ""
 
-#: dpnk/templates/registration/competitor_count.html:76
+#: templates/registration/competitor_count.html:76
 msgid "celkem"
 msgstr ""
 
-#: dpnk/templates/registration/emission_calculator.html:10
+#: templates/registration/emission_calculator.html:10
 msgid "Ujetá vzdálenost"
 msgstr ""
 
-#: dpnk/templates/registration/emission_calculator.html:31
+#: templates/registration/emission_calculator.html:31
 msgid "Pevné částice"
 msgstr ""
 
-#: dpnk/templates/registration/emission_calculator.html:34
+#: templates/registration/emission_calculator.html:34
 msgid "Olovo"
 msgstr ""
 
-#: dpnk/templates/registration/emission_calculator.html:41
+#: templates/registration/emission_calculator.html:41
 msgid "Popis emisní kalkulačky"
 msgstr ""
 
-#: dpnk/templates/registration/emission_calculator.html:42
+#: templates/registration/emission_calculator.html:42
 msgid ""
 "V kalkulačce je metoda přepočtu celkových udávaných emisí z individuální "
 "automobilové dopravy (IAD) v ČR na její výkon. Výsledkem jsou hmotnostní "
@@ -2734,19 +2806,18 @@ msgid ""
 "2013."
 msgstr ""
 
-#: dpnk/templates/registration/gpx_file.html:11
-#: dpnk/templates/registration/trip.html:11
+#: templates/registration/gpx_file.html:11 templates/registration/trip.html:11
 #, python-format
 msgid ""
 "Tip: Trasy všech svých cest můžete nahrávat pomocí <a href="
 "\"%(application_url)s\">mobilních aplikací</a>."
 msgstr ""
 
-#: dpnk/templates/registration/help.html:11
+#: templates/registration/help.html:11
 msgid "Změnit vychozí trasu"
 msgstr ""
 
-#: dpnk/templates/registration/help.html:12
+#: templates/registration/help.html:12
 msgid ""
 "\n"
 "  Výchozí trasu můžete změnit kliknutím na \"Můj profil\" a poté \"Typická "
@@ -2754,11 +2825,11 @@ msgid ""
 "  "
 msgstr ""
 
-#: dpnk/templates/registration/help.html:17
+#: templates/registration/help.html:17
 msgid "Editace tras"
 msgstr ""
 
-#: dpnk/templates/registration/help.html:18
+#: templates/registration/help.html:18
 msgid ""
 "\n"
 "  <ul>\n"
@@ -2798,11 +2869,11 @@ msgid ""
 "  "
 msgstr ""
 
-#: dpnk/templates/registration/help.html:45
+#: templates/registration/help.html:45
 msgid "Další pomoc"
 msgstr ""
 
-#: dpnk/templates/registration/help.html:46
+#: templates/registration/help.html:46
 msgid ""
 "\n"
 "  Chcete mluvit s živým člověkem? <a href=\"https://www.dopracenakole.cz/"
@@ -2810,112 +2881,112 @@ msgid ""
 "  "
 msgstr ""
 
-#: dpnk/templates/registration/logged_out.html:5
+#: templates/registration/logged_out.html:5
 msgid "Nyní jste odhlášeni."
 msgstr ""
 
-#: dpnk/templates/registration/package.html:7
+#: templates/registration/package.html:7
 msgid "Datum přijetí k sestavení: "
 msgstr ""
 
-#: dpnk/templates/registration/package.html:9
+#: templates/registration/package.html:9
 msgid "Triko: "
 msgstr ""
 
-#: dpnk/templates/registration/package.html:14
+#: templates/registration/package.html:14
 #, python-format
 msgid ""
 "\n"
 "Balíček můžete <a href=\"%(tnt_href)s\">sledovat pomocí TNT</a>\n"
 msgstr ""
 
-#: dpnk/templates/registration/password_change_done.html:5
+#: templates/registration/password_change_done.html:5
 msgid "Heslo bylo změněno."
 msgstr ""
 
-#: dpnk/templates/registration/password_change_done.html:5
+#: templates/registration/password_change_done.html:5
 msgid "Zpět na úpravu profilu"
 msgstr ""
 
-#: dpnk/templates/registration/password_reset_complete.html:5
+#: templates/registration/password_reset_complete.html:5
 msgid "Vaše nové heslo bylo nastaveno. Nyní se můžete"
 msgstr ""
 
-#: dpnk/templates/registration/password_reset_complete.html:5
+#: templates/registration/password_reset_complete.html:5
 msgid "přihlásit"
 msgstr ""
 
-#: dpnk/templates/registration/password_reset_confirm.html:8
+#: templates/registration/password_reset_confirm.html:8
 msgid "Vložte nové heslo"
 msgstr ""
 
-#: dpnk/templates/registration/password_reset_confirm.html:10
+#: templates/registration/password_reset_confirm.html:10
 msgid "Zvolte si nové heslo a zapište jej pro kontrolu dvakrát pod sebe."
 msgstr ""
 
-#: dpnk/templates/registration/password_reset_confirm.html:17
+#: templates/registration/password_reset_confirm.html:17
 msgid "Obnovení hesla nebylo úspěšné"
 msgstr ""
 
-#: dpnk/templates/registration/password_reset_confirm.html:19
+#: templates/registration/password_reset_confirm.html:19
 msgid ""
 "Tento odkaz na obnovení hesla není platný, možná proto, že již byl použit. "
 "Požádejte prosím o obnovení hesla znovu."
 msgstr ""
 
-#: dpnk/templates/registration/password_reset_done.html:5
+#: templates/registration/password_reset_done.html:5
 msgid "Obnova hesla"
 msgstr ""
 
-#: dpnk/templates/registration/password_reset_done.html:7
+#: templates/registration/password_reset_done.html:7
 msgid ""
 "Právě jsme vám zaslali e-mailem instrukce, jak si nastavit nové heslo. E-"
 "mail byste měli brzy obdržet na vámi zadanou adresu."
 msgstr ""
 
-#: dpnk/templates/registration/password_reset_done.html:9
+#: templates/registration/password_reset_done.html:9
 msgid ""
 "Pokud jste e-mail nedostali, prosím zkontrolujte, jestli jste zadali e-mail, "
 "se kterým jste se zalogovali a jestli neskončil ve spamu."
 msgstr ""
 
-#: dpnk/templates/registration/password_reset_form.html:6
+#: templates/registration/password_reset_form.html:6
 msgid ""
 "Zapoměli jste přihlašovací jméno nebo heslo? Vyplňte níže svou e-mailovou "
 "adresu a my vám zašleme instrukce, jak pokračovat."
 msgstr ""
 
-#: dpnk/templates/registration/payment_result.html:12
+#: templates/registration/payment_result.html:12
 msgid "Pokračujte na stránku jízd"
 msgstr ""
 
-#: dpnk/templates/registration/payment_result.html:14
+#: templates/registration/payment_result.html:14
 msgid "Zkuste zadat platbu znovu"
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:74
+#: templates/registration/payment_type.html:74
 msgid "Účastnický poplatek platí zaměstnavatel"
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:75
+#: templates/registration/payment_type.html:75
 msgid ""
 "Účastnický poplatek za mě platí zaměstnavatel, mám to s ním nebo jeho "
 "koordinátorem domluvené."
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:77
+#: templates/registration/payment_type.html:77
 msgid "Zaměstnavatel: "
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:79
+#: templates/registration/payment_type.html:79
 msgid "Firmní koordinátor: "
 msgstr "Koordinátor školy: "
 
-#: dpnk/templates/registration/payment_type.html:80
+#: templates/registration/payment_type.html:80
 msgid "E-mail na koordinátora: "
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:84
+#: templates/registration/payment_type.html:84
 msgid ""
 "Váš zaměstnavatel ještě nemá zvoleného firemního koordinátora nebo "
 "neumožňuje platbu za zaměstnance. Pokud chcete zvolit tento typ platby, je "
@@ -2923,48 +2994,48 @@ msgid ""
 "zaměstnavatelem."
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:87
+#: templates/registration/payment_type.html:87
 msgid "Chci se sám stát koordinátorem mé organizace."
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:91
+#: templates/registration/payment_type.html:91
 msgid "Slevový voucher"
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:92
+#: templates/registration/payment_type.html:92
 msgid ""
 "Pokud jste obdrželi voucher, v následujícím kroku můžete uplatnit slevu, "
 "nebo nárok na soutěž zdarma."
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:95
+#: templates/registration/payment_type.html:95
 msgid "Vstup do Klubu přátel"
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:100
+#: templates/registration/payment_type.html:100
 msgid "Platba účastnického poplatku"
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:104
+#: templates/registration/payment_type.html:104
 msgid ""
 "Platbou benefičního startovného podpoříte Auto*Mat ve zlepšování dopravních "
 "návyků obyvatel měst, v rozšíření kampaně Do práce na kole do nových lokalit "
 "a ve zlepšování podmínek pro městské městské cyklisty."
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:108
+#: templates/registration/payment_type.html:108
 msgid "Soutěžící:"
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:109
+#: templates/registration/payment_type.html:109
 msgid "Účastnický poplatek:"
 msgstr ""
 
-#: dpnk/templates/registration/payment_type.html:115
+#: templates/registration/payment_type.html:115
 msgid "Zaplatit"
 msgstr ""
 
-#: dpnk/templates/registration/questionaire.html:14
+#: templates/registration/questionaire.html:14
 #, python-format
 msgid ""
 "\n"
@@ -2979,197 +3050,200 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: dpnk/templates/registration/questionaire.html:38
-#: dpnk/templates/registration/questionnaire_answers_all.html:37
+#: templates/registration/questionaire.html:38
+#: templates/registration/questionnaire_answers_all.html:37
 msgid "Komentář hodnotitele"
 msgstr ""
 
-#: dpnk/templates/registration/questionnaire_answers_all.html:31
+#: templates/registration/questionnaire_answers_all.html:31
 msgid "Bez přílohy"
 msgstr ""
 
-#: dpnk/templates/registration/request_change_company_coordinator_part.html:5
+#: templates/registration/request_change_company_coordinator_part.html:5
 msgid "Po koordinátorovi vaší organizace na e-mailové adrese"
 msgstr ""
 
-#: dpnk/templates/registration/request_change_company_coordinator_part.html:9
+#: templates/registration/request_change_company_coordinator_part.html:9
 msgid "Po naší podpoře na e-mailové adrese"
 msgstr ""
 
-#: dpnk/templates/registration/request_change_company_coordinator_part.html:9
+#: templates/registration/request_change_company_coordinator_part.html:9
 msgid "Žádost o změnu adresy organizace, pobočky nebo týmu"
 msgstr ""
 
-#: dpnk/templates/registration/request_team_approval.html:5
+#: templates/registration/request_team_approval.html:5
 msgid "Žádost o ověření členství byla odeslána."
 msgstr ""
 
-#: dpnk/templates/registration/request_team_approval.html:7
+#: templates/registration/request_team_approval.html:7
 msgid "Pokračujte na "
 msgstr ""
 
-#: dpnk/templates/registration/request_team_approval.html:7
+#: templates/registration/request_team_approval.html:7
 msgid "zadávání jízd"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:22
+#: templates/registration/rides.html:29
 msgid "Celkem"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:29
+#: templates/registration/rides.html:36
 msgid "Uražená započítaná vzdálenost"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:29 dpnk/views.py:851
+#: templates/registration/rides.html:36 views.py:851
 msgid "Podrobný přehled jízd"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:40
+#: templates/registration/rides.html:47
 msgid "Počet započítaných cest"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:44
-#: dpnk/templates/registration/team_members_results.html:49
+#: templates/registration/rides.html:51
+#: templates/registration/team_members_results.html:49
 #, python-format
 msgid "Do konce soutěže je potřeba urazit alespoň %(minimum_rides_base)s cest."
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:45
+#: templates/registration/rides.html:52
 #, python-format
 msgid ""
 "Počet vašich cest byl tedy zvýšen poměrově k tomuto číslu na "
 "%(get_minimum_rides_base_proportional)s cest."
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:54
+#: templates/registration/rides.html:61
 msgid "Pravidelnost vašeho týmu"
 msgstr "Pravidelnost vaší třídy"
 
-#: dpnk/templates/registration/rides.html:54
+#: templates/registration/rides.html:61
 msgid "Přehled o vašem týmu"
 msgstr "Přehled o vaší třídě"
 
-#: dpnk/templates/registration/rides.html:60
+#: templates/registration/rides.html:67
 msgid "Ušetřené množství oxidu uhličitého"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:60 dpnk/urls.py:260
+#: templates/registration/rides.html:67 urls.py:275
 msgid "Emisní kalkulačka"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:67
+#: templates/registration/rides.html:74
 msgid "Podrobné výsledky naleznete na stránce"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:68
+#: templates/registration/rides.html:75
 msgid "výsledků jednotlivých soutěží"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:77
-#: dpnk/templates/registration/rides.html:109
+#: templates/registration/rides.html:84 templates/registration/rides.html:122
 msgid "Uložit jízdy"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:81
+#: templates/registration/rides.html:88
+msgid "Jízdy nebyli zadány správně. Prosím zkontrolujte chyby níže v tabulce."
+msgstr ""
+
+#: templates/registration/rides.html:94
 msgid "Do práce"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:82
+#: templates/registration/rides.html:95
 msgid "Z práce"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:96
+#: templates/registration/rides.html:109
 msgid "Zadat trasu v mapě nebo nahrát GPX soubor"
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:115
+#: templates/registration/rides.html:128
 #, python-format
 msgid "Zde si budete od %(date_from)s zadávat své jízdy."
 msgstr ""
 
-#: dpnk/templates/registration/rides.html:117
+#: templates/registration/rides.html:130
 msgid "Zde jste si zadávali své jízdy."
 msgstr ""
 
-#: dpnk/templates/registration/rides_details.html:13
+#: templates/registration/rides_details.html:13
 msgid "Soutěžní jízdy"
 msgstr ""
 
-#: dpnk/templates/registration/rides_details.html:21
-#: dpnk/templates/registration/rides_details.html:46
+#: templates/registration/rides_details.html:21
+#: templates/registration/rides_details.html:46
 msgid "km"
 msgstr ""
 
-#: dpnk/templates/registration/rides_details.html:40
+#: templates/registration/rides_details.html:40
 msgid "Další nahrané jízdy"
 msgstr ""
 
-#: dpnk/templates/registration/team_admin_members.html:38
+#: templates/registration/team_admin_members.html:38
 msgid "Přijmout do týmu"
 msgstr "Přijmout do třídy"
 
-#: dpnk/templates/registration/team_admin_members.html:41
+#: templates/registration/team_admin_members.html:41
 msgid "Důvod odmítnutí"
 msgstr ""
 
-#: dpnk/templates/registration/team_admin_members.html:43
+#: templates/registration/team_admin_members.html:43
 msgid "Zamítnout"
 msgstr ""
 
-#: dpnk/templates/registration/team_members.html:10
-#: dpnk/templates/registration/team_members_results.html:10
+#: templates/registration/team_members.html:10
+#: templates/registration/team_members_results.html:10
 msgid "Jmé&shy;no"
 msgstr ""
 
-#: dpnk/templates/registration/team_members.html:11
+#: templates/registration/team_members.html:11
 msgid "E&shy;mail"
 msgstr ""
 
-#: dpnk/templates/registration/team_members.html:12
+#: templates/registration/team_members.html:12
 msgid "Člen&shy;ství v tý&shy;mu"
 msgstr ""
 
-#: dpnk/templates/registration/team_members.html:13
+#: templates/registration/team_members.html:13
 msgid "Pla&shy;tba"
 msgstr ""
 
-#: dpnk/templates/registration/team_members_results.html:7
+#: templates/registration/team_members_results.html:7
 msgid "Výsledky týmu"
 msgstr "Výsledky třídy"
 
-#: dpnk/templates/registration/team_members_results.html:11
+#: templates/registration/team_members_results.html:11
 msgid "Po&shy;čet jízd"
 msgstr ""
 
-#: dpnk/templates/registration/team_members_results.html:12
+#: templates/registration/team_members_results.html:12
 msgid "Počet zapo&shy;čí&shy;ta&shy;ných cest do/z práce"
 msgstr "Počet zapo&shy;čí&shy;ta&shy;ných cest do/ze školy"
 
-#: dpnk/templates/registration/team_members_results.html:13
+#: templates/registration/team_members_results.html:13
 msgid "Pro&shy;cen&shy;to jízd"
 msgstr ""
 
-#: dpnk/templates/registration/team_members_results.html:14
+#: templates/registration/team_members_results.html:14
 msgid "U&shy;je&shy;tá vzdá&shy;le&shy;nost"
 msgstr ""
 
-#: dpnk/templates/registration/team_members_results.html:15
+#: templates/registration/team_members_results.html:15
 msgid "Na&shy;sta&shy;ve&shy;ná vzdá&shy;le&shy;nost ce&shy;sty"
 msgstr ""
 
-#: dpnk/templates/registration/team_members_results.html:23
+#: templates/registration/team_members_results.html:23
 msgid "Registrace nebyla dokončena, nepočítá se do výsledků."
 msgstr ""
 
-#: dpnk/templates/registration/team_members_results.html:47
+#: templates/registration/team_members_results.html:47
 msgid "Pravidelnost celkem"
 msgstr ""
 
-#: dpnk/templates/registration/team_members_results.html:50
+#: templates/registration/team_members_results.html:50
 msgid "Počet cest u označených soutěžících byl zvýšen poměrově k tomuto číslu."
 msgstr ""
 
-#: dpnk/templates/registration/vacations.html:16
+#: templates/registration/vacations.html:16
 #, python-format
 msgid ""
 "\n"
@@ -3178,31 +3252,31 @@ msgid ""
 "\"%(profile)s\">dané jízdy</a> jako \"žádná cesta.\"\n"
 msgstr ""
 
-#: dpnk/templates/registration/vacations.html:65
-#: dpnk/templates/registration/vacations.html:83
+#: templates/registration/vacations.html:65
+#: templates/registration/vacations.html:83
 msgid "Propojení selhalo"
 msgstr ""
 
-#: dpnk/templates/registration/view_trip.html:12
+#: templates/registration/view_trip.html:12
 #, python-format
 msgid ""
 "Podle pravidel soutěže, nemůžete zadavat ani změnit jízdy starší než "
 "%(days_active)s dnů."
 msgstr ""
 
-#: dpnk/templates/registration/view_trip.html:16
+#: templates/registration/view_trip.html:16
 msgid "Směr"
 msgstr ""
 
-#: dpnk/templates/registration/view_trip.html:21
+#: templates/registration/view_trip.html:21
 msgid "Vzdálenost"
 msgstr ""
 
-#: dpnk/templates/registration/view_trip.html:42
+#: templates/registration/view_trip.html:42
 msgid "Žádná trasa nebyla zadána"
 msgstr ""
 
-#: dpnk/templates/registration/working_schedule.html:5
+#: templates/registration/working_schedule.html:5
 msgid ""
 "\n"
 "<strong>\n"
@@ -3217,80 +3291,80 @@ msgid ""
 "<br/>\n"
 msgstr ""
 
-#: dpnk/templates/templatetags/cyklistesobe.html:14
+#: templates/templatetags/cyklistesobe.html:14
 msgid "Obrázek k podnětu"
 msgstr ""
 
-#: dpnk/templates/templatetags/wp_news.html:8
+#: templates/templatetags/wp_news.html:8
 msgid " ve městě "
 msgstr ""
 
-#: dpnk/templatetags/dpnk_tags.py:70
+#: templatetags/dpnk_tags.py:70
 msgid "Novinky"
 msgstr ""
 
-#: dpnk/templatetags/dpnk_tags.py:81
+#: templatetags/dpnk_tags.py:81
 msgid "akce"
 msgstr ""
 
-#: dpnk/templatetags/dpnk_tags.py:88
+#: templatetags/dpnk_tags.py:88
 msgid "Akce"
 msgstr ""
 
-#: dpnk/templatetags/dpnk_tags.py:98
+#: templatetags/dpnk_tags.py:98
 msgid "cena"
 msgstr ""
 
-#: dpnk/templatetags/dpnk_tags.py:107
+#: templatetags/dpnk_tags.py:107
 msgid "Ceny"
 msgstr ""
 
-#: dpnk/templatetags/dpnk_tags.py:115
+#: templatetags/dpnk_tags.py:115
 msgid "novinka"
 msgstr ""
 
-#: dpnk/urls.py:268
+#: urls.py:283
 msgid "Nápověda"
 msgstr ""
 
-#: dpnk/util.py:134
+#: util.py:134
 msgid "Datum není platné."
 msgstr ""
 
-#: dpnk/vacations.py:88
+#: vacations.py:88
 msgid "Začatek soutěže"
 msgstr ""
 
-#: dpnk/vacations.py:89
+#: vacations.py:89
 msgid "Konec soutěže"
 msgstr ""
 
-#: dpnk/vacations.py:118
+#: vacations.py:118
 msgid "Dnes"
 msgstr ""
 
-#: dpnk/views.py:131
+#: views.py:131
 #, python-format
 msgid "Přihlášení do soutěže %s"
 msgstr ""
 
-#: dpnk/views.py:150
+#: views.py:150
 msgid "Změnit"
 msgstr ""
 
-#: dpnk/views.py:152
+#: views.py:152
 msgid "Vybrat"
 msgstr ""
 
-#: dpnk/views.py:155
+#: views.py:155
 msgid "organizaci, pobočku a tým"
 msgstr ""
 
-#: dpnk/views.py:157
+#: views.py:157
 msgid "organizaci"
 msgstr "školu"
 
-#: dpnk/views.py:190
+#: views.py:190
 msgid ""
 "Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho "
 "schvalte a pak změňte tým."
@@ -3298,187 +3372,187 @@ msgstr ""
 "Nemůžete opustit třídu, ve které jsou samí neschválení členové. Napřed "
 "někoho schvalte a pak změňte třídu."
 
-#: dpnk/views.py:278 dpnk/views.py:313
+#: views.py:278 views.py:313
 msgid ""
 "Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo "
 "vytvořit jiný tým."
 msgstr ""
 
-#: dpnk/views.py:297
+#: views.py:297
 msgid "Pozvánka do týmu"
 msgstr "Pozvánka do třídy"
 
-#: dpnk/views.py:298
+#: views.py:298
 #, fuzzy
 #| msgid "Název týmu úspěšně změněn na %(name)s"
 msgid "Tým úspěšně změněn"
 msgstr "Název třídy úspěšně změněn na %(name)s"
 
-#: dpnk/views.py:314
+#: views.py:314
 msgid "Tým je plný"
 msgstr ""
 
-#: dpnk/views.py:319
+#: views.py:319
 msgid ""
 "Přihlašujete se do týmu ze špatné kampaně (pravděpodobně z minulého roku)."
 msgstr ""
 "Přihlašujete se do třídy ze špatné kampaně (pravděpodobně z minulého roku)."
 
-#: dpnk/views.py:320
+#: views.py:320
 msgid "Chyba přihlášení"
 msgstr ""
 
-#: dpnk/views.py:335
+#: views.py:335
 msgid "Tým nenalezen"
 msgstr ""
 
-#: dpnk/views.py:345
+#: views.py:345
 #, python-format
 msgid ""
 "Pozvánka je určena jinému uživateli, než je aktuálně přihlášen. Přihlašte se "
 "jako uživatel %s."
 msgstr ""
 
-#: dpnk/views.py:371
+#: views.py:371
 msgid "Již máte účastnický poplatek zaplacen."
 msgstr ""
 
-#: dpnk/views.py:373
+#: views.py:373
 msgid "Účastnický poplatek se neplatí."
 msgstr ""
 
-#: dpnk/views.py:375
+#: views.py:375
 #, python-format
 msgid "Pokračujte na <a href='%s'>zadávání jízd</a>."
 msgstr ""
 
-#: dpnk/views.py:380
+#: views.py:380
 msgid "Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"
 msgstr ""
 
-#: dpnk/views.py:421
+#: views.py:421
 msgid "Vaše členství v klubu přátel ještě bude muset být schváleno."
 msgstr ""
 
-#: dpnk/views.py:426
+#: views.py:426
 #, python-brace-format
 msgid "Platbu ještě musí schválit koordinátor vaší organizace {email}. "
 msgstr ""
 
-#: dpnk/views.py:440
+#: views.py:440
 msgid ""
 "Pokud jste se dostali sem, tak to může být způsobené tím, že používáte "
 "zastaralý prohlížeč nebo máte vypnutý JavaScript."
 msgstr ""
 
-#: dpnk/views.py:582
+#: views.py:582
 msgid "Platba úspěšná"
 msgstr ""
 
-#: dpnk/views.py:584
+#: views.py:584
 msgid ""
 "Vaše platba byla úspěšně zadána. Až platbu obdržíme, dáme vám vědět na e-"
 "mail. Tím bude vaše registrace úspěšně dokončena."
 msgstr ""
 
-#: dpnk/views.py:589
+#: views.py:589
 msgid "Platba neúspěšná"
 msgstr ""
 
-#: dpnk/views.py:601
+#: views.py:601
 msgid ""
 "Vaše platba se nezdařila. Po přihlášení do svého profilu můžete zadat novou "
 "platbu."
 msgstr ""
 
-#: dpnk/views.py:724
+#: views.py:724
 msgid "Tabulka jízd úspěšně změněna"
 msgstr ""
 
-#: dpnk/views.py:727 dpnk/views.py:924
+#: views.py:727 views.py:924
 msgid "Stav registrace"
 msgstr ""
 
-#: dpnk/views.py:731
+#: views.py:731
 msgid "Vaše registrace je kompletní."
 msgstr ""
 
-#: dpnk/views.py:861
+#: views.py:861
 msgid "Jinak"
 msgstr ""
 
-#: dpnk/views.py:861
+#: views.py:861
 msgid "Žádná cesta"
 msgstr ""
 
-#: dpnk/views.py:899
+#: views.py:899
 msgid "Data musí být seřazena chronologicky"
 msgstr ""
 
-#: dpnk/views.py:901
+#: views.py:901
 msgid "Není povoleno editovat toto datum"
 msgstr ""
 
-#: dpnk/views.py:928
+#: views.py:928
 msgid "Vaše registrace není kompletní."
 msgstr ""
 
-#: dpnk/views.py:930
+#: views.py:930
 msgid "K dokončení registrace bude ještě nutné vyřešit několik věcí:"
 msgstr ""
 
-#: dpnk/views.py:949
+#: views.py:949
 msgid "Sledování balíčku"
 msgstr ""
 
-#: dpnk/views.py:955
+#: views.py:955
 msgid "Aplikace"
 msgstr ""
 
-#: dpnk/views.py:961
+#: views.py:961
 msgid "Výsledky členů týmu"
 msgstr "Výsledky spolužáků"
 
-#: dpnk/views.py:984
+#: views.py:984
 msgid "Pravidla soutěží"
 msgstr ""
 
-#: dpnk/views.py:1026
+#: views.py:1026
 msgid "Výsledky pravidelnostních a výkonnostních soutěží"
 msgstr ""
 
-#: dpnk/views.py:1032
+#: views.py:1032
 msgid "Výsledky dotazníkových soutěží a soutěží na kreativitu"
 msgstr ""
 
-#: dpnk/views.py:1052
+#: views.py:1052
 msgid ""
 "Tuto soutěž v systému nemáme. Pokud si myslíte, že by zde měly být výsledky "
 "nějaké soutěže, napište prosím na <a href=\"mailto:kontakt@dopracenakole.cz?"
 "subject=Neexistující soutěž\">kontakt@dopracenakole.cz</a>"
 msgstr ""
 
-#: dpnk/views.py:1056 dpnk/views.py:1589
+#: views.py:1056 views.py:1589
 msgid "Není vybraný tým"
 msgstr ""
 
-#: dpnk/views.py:1069
+#: views.py:1069
 msgid "Osobní údaje úspěšně upraveny"
 msgstr ""
 
-#: dpnk/views.py:1090
+#: views.py:1090
 msgid "Trasa/vzdálenost úspěšně upravena"
 msgstr ""
 
-#: dpnk/views.py:1093
+#: views.py:1093
 msgid "Upravit typickou trasu"
 msgstr ""
 
-#: dpnk/views.py:1102
+#: views.py:1102
 msgid "Vyplňte odpovědi"
 msgstr ""
 
-#: dpnk/views.py:1117
+#: views.py:1117
 msgid ""
 "<div class=\"text-danger\">Tento dotazník v systému nemáme. Pokud si "
 "myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na <a href="
@@ -3486,115 +3560,115 @@ msgid ""
 "\">kontakt@dopracenakole.cz</a></div>"
 msgstr ""
 
-#: dpnk/views.py:1148
+#: views.py:1148
 msgid "Soutěž již nelze vyplňovat"
 msgstr ""
 
-#: dpnk/views.py:1180
+#: views.py:1180
 msgid "Odpovědi byly úspěšně zadány"
 msgstr ""
 
-#: dpnk/views.py:1200
+#: views.py:1200
 msgid "Výsledky všech soutěží"
 msgstr ""
 
-#: dpnk/views.py:1212
+#: views.py:1212
 msgid "Tato soutěž nemá povolené prohlížení odpovědí."
 msgstr ""
 
-#: dpnk/views.py:1213
+#: views.py:1213
 msgid "Odpovědi nejsou dostupné"
 msgstr ""
 
-#: dpnk/views.py:1248
+#: views.py:1248
 msgid "Otázky v dotaznících"
 msgstr ""
 
-#: dpnk/views.py:1260 dpnk/views.py:1281
+#: views.py:1260 views.py:1281
 msgid "Soutěž je vypsána ve městě, pro které nemáte oprávnění."
 msgstr ""
 
-#: dpnk/views.py:1270
+#: views.py:1270
 msgid "Výsledky odpovědí na dotazník"
 msgstr ""
 
-#: dpnk/views.py:1286
+#: views.py:1286
 msgid "<div class=\"text-danger\">Nesprávně zadaný soutěžící.</div>"
 msgstr ""
 
-#: dpnk/views.py:1299
+#: views.py:1299
 msgid "Odpovědi na dotazník"
 msgstr ""
 
-#: dpnk/views.py:1311
+#: views.py:1311
 msgid "Otázka je položená ve městě, pro které nemáte oprávnění."
 msgstr ""
 
-#: dpnk/views.py:1376
+#: views.py:1376
 msgid "Odpověd na dotazník"
 msgstr ""
 
-#: dpnk/views.py:1388
+#: views.py:1388
 msgid "Při zamítnutí člena týmu musíte vyplnit zprávu."
 msgstr "Při zamítnutí spolužáka musíte vyplnit zprávu."
 
-#: dpnk/views.py:1399
+#: views.py:1399
 #, python-format
 msgid "Členství uživatele %s ve vašem týmu bylo zamítnuto"
 msgstr "Členství spolužáka %s ve vaší třídě bylo zamítnuto"
 
-#: dpnk/views.py:1409
+#: views.py:1409
 msgid "Tým je již plný, další člen již nemůže být potvrzen."
 msgstr ""
 
-#: dpnk/views.py:1420
+#: views.py:1420
 #, python-format
 msgid "Členství uživatele %(user)s v týmu %(team)s bylo odsouhlaseno."
 msgstr "Členství spolužáka %(user)s ve třídě %(team)s bylo odsouhlaseno."
 
-#: dpnk/views.py:1430
+#: views.py:1430
 msgid "Znovu odeslat žádost o členství"
 msgstr ""
 
-#: dpnk/views.py:1442
+#: views.py:1442
 msgid "Pozvětě své kolegy do týmu"
 msgstr "Pozvěte své spolužáky do třídního týmu"
 
-#: dpnk/views.py:1472
+#: views.py:1472
 #, python-format
 msgid "Uživatel %(user)s byl přijat do vašeho týmu."
 msgstr "Spolužák %(user)s byl přijat do vaší třídy."
 
-#: dpnk/views.py:1480
+#: views.py:1480
 #, python-format
 msgid "Odeslána pozvánka uživateli %(user)s na e-mail %(email)s"
 msgstr ""
 
-#: dpnk/views.py:1485
+#: views.py:1485
 #, python-format
 msgid "Odeslána pozvánka na e-mail %s"
 msgstr ""
 
-#: dpnk/views.py:1505
+#: views.py:1505
 msgid "Upravit název týmu"
 msgstr "Upravit název třídy"
 
-#: dpnk/views.py:1507
+#: views.py:1507
 #, python-format
 msgid "Název týmu úspěšně změněn na %(name)s"
 msgstr "Název třídy úspěšně změněn na %(name)s"
 
-#: dpnk/views.py:1531
+#: views.py:1531
 msgid "Schvalování členů týmu"
 msgstr "Schvalování členů třídy"
 
-#: dpnk/views.py:1547
+#: views.py:1547
 msgid ""
 "Nastala chyba při přijímání uživatele, patrně používáte zastaralý "
 "internetový prohlížeč."
 msgstr ""
 
-#: dpnk/views.py:1569
+#: views.py:1569
 msgid ""
 "Tento uživatel již byl přijat do týmu. Pravděpodobně jste dvakrát odeslali "
 "formulář."
@@ -3602,50 +3676,50 @@ msgstr ""
 "Tento soutěžící již byl přijat do třídy. Pravděpodobně jste dvakrát odeslali "
 "formulář."
 
-#: dpnk/views.py:1588
+#: views.py:1588
 msgid "Další členové vašeho týmu se zobrazí, jakmile budete mít vybraný tým"
 msgstr "Další členové vaší třídy se zobrazí, jakmile budete mít vybranou třídu"
 
-#: dpnk/views.py:1603
+#: views.py:1603
 msgid "Stav"
 msgstr ""
 
-#: dpnk/views.py:1735
+#: views.py:1735
 msgid "Počty soutěžících"
 msgstr ""
 
-#: dpnk/views.py:1780
+#: views.py:1780
 #, python-format
 msgid "%(user_attendance)s je nováček a právě si zažádal o opravu kola"
 msgstr ""
 
-#: dpnk/views.py:1782
+#: views.py:1782
 msgid "Cykloservis"
 msgstr ""
 
-#: dpnk/views.py:1829
+#: views.py:1829
 msgid "Nemůžete editovat cesty ke starším datům."
 msgstr ""
 
-#: dpnk/views.py:1831
+#: views.py:1831
 msgid "Neplatný směr cesty."
 msgstr ""
 
-#: dpnk/views.py:1844
+#: views.py:1844
 msgid "Zadat trasu"
 msgstr ""
 
-#: dpnk/views.py:1896
+#: views.py:1896
 msgid "Prohlédnout trasu"
 msgstr ""
 
-#: dpnk/views_mixins.py:34
+#: views_mixins.py:35
 msgid ""
 "Byli jste úspěšně zaregistrování jako firemní koordinátor. Vaší organizaci "
 "můžete spravovat v menu \"Firemní koordinátor\"."
 msgstr ""
 
-#: dpnk/views_mixins.py:39
+#: views_mixins.py:40
 msgid ""
 "<p>Tato role není pro soutěž povinná, ale usnadní ostatním ostatním kolegům "
 "účast v soutěži. Hlavní úkol pro firemního koordinátora je pokusit se "
@@ -3658,7 +3732,7 @@ msgid ""
 "firemni-koordinator'>zde</a>.<p>"
 msgstr ""
 
-#: dpnk/views_mixins.py:80
+#: views_mixins.py:81
 #, python-format
 msgid ""
 "Ve vašem týmu jsou neschválení členové, prosíme, <a href=\"%s\">posuďte "
@@ -3667,7 +3741,7 @@ msgstr ""
 "Ve vaší třídě jsou neschválení členové, prosíme, <a href=\"%s\">posuďte "
 "jejich členství</a>."
 
-#: dpnk/views_mixins.py:89
+#: views_mixins.py:90
 #, python-brace-format
 msgid ""
 "Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích "
@@ -3679,11 +3753,11 @@ msgid ""
 "{city}/seznamka\" target=\"_blank\">najděte si cykloparťáka</a>.</li></ul>"
 msgstr ""
 
-#: dpnk/views_mixins.py:111
+#: views_mixins.py:112
 msgid "Vyplňte typickou trasu"
 msgstr ""
 
-#: dpnk/views_mixins.py:114
+#: views_mixins.py:115
 #, python-brace-format
 msgid ""
 "Na této stránce si každý den zapište jízdy nebo zkontrolujte správné zapsání "
@@ -3694,15 +3768,15 @@ msgid ""
 "cyklistické infrastruktury ve vašem městě."
 msgstr ""
 
-#: dpnk/views_mixins.py:122
+#: views_mixins.py:123
 msgid "cyklistické dopravní heatmapě"
 msgstr ""
 
-#: dpnk/views_mixins.py:126
+#: views_mixins.py:127
 msgid "Vyplnit typickou trasu"
 msgstr ""
 
-#: dpnk/views_mixins.py:137
+#: views_mixins.py:138
 #, python-brace-format
 msgid ""
 "Vaši kolegové v týmu {team} ještě musí potvrdit vaše členství. Pokud to trvá "
@@ -3713,7 +3787,7 @@ msgstr ""
 "trvá podezřele dlouho, můžete zkusit <a href='{address}'>znovu požádat o "
 "ověření členství</a>."
 
-#: dpnk/views_mixins.py:148
+#: views_mixins.py:149
 #, python-format
 msgid ""
 "Vaše členství v týmu bylo bohužel zamítnuto, budete si muset <a href=\"%s"
@@ -3722,7 +3796,7 @@ msgstr ""
 "Vaše členství ve třídě bylo bohužel zamítnuto, budete si muset <a href=\"%s"
 "\">zvolit jinou třídu</a>"
 
-#: dpnk/views_mixins.py:158
+#: views_mixins.py:159
 #, python-brace-format
 msgid ""
 "Vaše platba typu {payment_type} ještě nebyla vyřízena. Počkejte prosím na "
@@ -3731,55 +3805,55 @@ msgid ""
 "skutečnost potvrdíme e-mailem."
 msgstr ""
 
-#: dpnk/views_mixins.py:177
+#: views_mixins.py:178
 msgid "Nezapomeňte vyplnit odpovědi v následujících soutěžích: {}!"
 msgstr ""
 
-#: dpnk/views_mixins.py:181
+#: views_mixins.py:182
 msgid "Vaše žádost o funkci koordinátora organizace čeká na vyřízení."
 msgstr ""
 
-#: dpnk/views_mixins.py:183
+#: views_mixins.py:184
 msgid "Vaše žádost o funkci koordinátora organizace byla zamítnuta."
 msgstr ""
 
-#: dpnk/views_permission_mixins.py:39
+#: views_permission_mixins.py:39
 #, python-format
 msgid ""
 "Tato stránka nemůže být v této kampani zobrazena. Neexistuje v ní fáze %s."
 msgstr ""
 
-#: dpnk/views_permission_mixins.py:53
+#: views_permission_mixins.py:53
 msgid "Již skončil čas, kdy se tato stránka zobrazuje."
 msgstr ""
 
-#: dpnk/views_permission_mixins.py:58
+#: views_permission_mixins.py:58
 #, python-format
 msgid ""
 "Ještě nenastal čas, kdy by se měla tato stránka zobrazit.<br/>Stránka se "
 "zobrazí až %s"
 msgstr ""
 
-#: dpnk/views_permission_mixins.py:76
+#: views_permission_mixins.py:76
 msgid "Registrace již byla ukončena."
 msgstr ""
 
-#: dpnk/views_permission_mixins.py:81
+#: views_permission_mixins.py:81
 #, python-format
 msgid "Registrace ještě nezačala.<br/>Registrovat se budete moct od %s"
 msgstr ""
 
-#: dpnk/views_permission_mixins.py:100
+#: views_permission_mixins.py:100
 #, python-format
 msgid "Pro přístup k této stránce musíte být ve skupině %s"
 msgstr ""
 
-#: dpnk/views_permission_mixins.py:110
+#: views_permission_mixins.py:110
 #, python-format
 msgid "Napřed musíte mít <a href='%s'>vybraný tým</a>."
 msgstr "Napřed musíte mít <a href='%s'>vybranou třídu</a>."
 
-#: dpnk/views_permission_mixins.py:126
+#: views_permission_mixins.py:126
 #, python-brace-format
 msgid ""
 "Vaše členství v týmu {team} nebylo odsouhlaseno. <a href='{address}'>Znovu "
@@ -3788,67 +3862,24 @@ msgstr ""
 "Vaše členství ve třídě {team} nebylo odsouhlaseno. <a href='{address}'>Znovu "
 "požádat o ověření členství</a>."
 
-#: project/settings.py:89
-msgid "Do školy na kole - czech"
+#: views_results.py:73
+msgid "Rozmezí sekvence"
 msgstr ""
 
-#: project/settings.py:90
-msgid "Czech"
-msgstr ""
-
-#: project/settings.py:91
-msgid "English"
-msgstr ""
-
-#: project/settings.py:381
-msgid "cyklomapa"
-msgstr ""
-
-#: project/settings.py:385
-msgid "Všeobecná mapa"
-msgstr ""
-
-#: project/settings.py:580
-msgid "Základní"
-msgstr ""
-
-#: project/settings.py:580
-msgid "Pro firmy"
-msgstr ""
-
-#: psc/models/psc.py:31
-msgid "Poštovní směrovací číslo"
-msgstr ""
-
-#: psc/models/psc.py:32
-msgid "Poštovní směrovací čísla"
-msgstr ""
-
-#: psc/models/psc.py:35
 #, fuzzy
-#| msgid "Název organizace"
-msgid "Název obce"
-msgstr "Název školy"
+#~| msgid "Název organizace"
+#~ msgid "Název obce"
+#~ msgstr "Název školy"
 
-#: psc/models/psc.py:39
-msgid "Název části obce"
-msgstr ""
-
-#: psc/models/psc.py:43
 #, fuzzy
-#| msgid "Název organizace"
-msgid "Název okresu"
-msgstr "Název školy"
+#~| msgid "Název organizace"
+#~ msgid "Název okresu"
+#~ msgstr "Název školy"
 
-#: psc/models/psc.py:55
 #, fuzzy
-#| msgid "Název týmu"
-msgid "Název pošty"
-msgstr "Název třídy"
-
-#: psc/models/psc.py:59
-msgid "Kód"
-msgstr ""
+#~| msgid "Název týmu"
+#~ msgid "Název pošty"
+#~ msgstr "Název třídy"
 
 #~ msgid "Přihlášené soutěžící týmy"
 #~ msgstr "Přihlášené soutěžící třídy"
