@@ -72,7 +72,7 @@ django-secretballot==1.0.0
 django-ses==0.8.5
 django-settings-context-processor==0.2
 django-smart-selects==1.5.3
-django-smmapdfs==0.0.3
+django-smmapdfs==0.0.7
 django-softhyphen==1.1.0
 -e git+https://github.com/PetrDlouhy/django-stdnumfield.git@mergeup#egg=django_stdnumfield  # git version is for exception_text parameter
 django-storages==1.6.5
@@ -143,6 +143,7 @@ uritemplate==3.0.0
 units==0.07
 urllib3==1.22
 vine==1.1.4
+vokativ==1.1.0
 webencodings==0.5.1
 whitenoise==3.3.1
 xlrd==1.1.0

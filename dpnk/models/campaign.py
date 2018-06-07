@@ -241,9 +241,9 @@ class Campaign(Pricable, models.Model):
     sandwich_type = models.ForeignKey(
         PdfSandwichType,
         null=True,
-        blank=False,
+        blank=True,
         default='',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
     )
 
     def sitetree_postfix_maintree(self):

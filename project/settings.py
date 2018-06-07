@@ -618,5 +618,9 @@ STRAVA_CLIENT_SECRET = os.environ.get('STRAVA_CLIENT_SECRET', None)
 STRAVA_MAX_USER_SYNC_COUNT = 16
 
 SMMAPDFS_CELERY = True
+SMMAPDFS_EMAIL_CONTEXT_HELP = """<br/>
+{{name}} - Name of User<br/>
+{{name_vocative}} - Vocative case of name of user<br/>
+"""
 
 DENORM_MAX_PROCESS_COUNT = os.environ.get('DENORM_MAX_PROCESS_COUNT', 100)

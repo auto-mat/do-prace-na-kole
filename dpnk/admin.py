@@ -1232,6 +1232,11 @@ class TripAdmin(ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
         )
 
 
+class AdminCompetitionResultResource(CompetitionResultResource):
+    def __init__(self):
+        return super().__init__(include_personal_info=True)
+
+
 @admin.register(models.CompetitionResult)
 class CompetitionResultAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
@@ -1256,7 +1261,7 @@ class CompetitionResultAdmin(ImportExportMixin, admin.ModelAdmin):
         'team__name',
         'competition__name')
     raw_id_fields = ('user_attendance', 'team')
-    resource_class = CompetitionResultResource
+    resource_class = AdminCompetitionResultResource
 
 
 @admin.register(models.Occupation)
@@ -1634,7 +1639,10 @@ admin.site.add_action(mass_change_selected)
 
 @admin.register(models.Diploma)
 class DiplomaAdmin(PdfSandwichAdmin):
-    pass
+    search_fields = (
+        'obj__userprofile__user__first_name',
+        'obj__userprofile__user__last_name',
+    )
 
 
 @admin.register(models.DiplomaField)

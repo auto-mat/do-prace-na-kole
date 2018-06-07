@@ -29,6 +29,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
+from vokativ import vokativ
+
 from .occupation import Occupation
 from .. import mailing, util
 
@@ -171,11 +173,17 @@ class UserProfile(models.Model):
     def last_name(self):
         return self.user.last_name
 
-    def name(self):
+    def name(self, cs_vokativ=False):
         if self.nickname:
             return self.nickname
         else:
-            full_name = self.user.get_full_name()
+            if cs_vokativ:
+                woman = self.sex != "male"
+                full_name = vokativ(self.first_name(), last_name=False, woman=woman).title()
+                full_name += " "
+                full_name += vokativ(self.last_name(), last_name=True, woman=woman).title()
+            else:
+                full_name = self.user.get_full_name()
             email = self.user.email
             if full_name:
                 return full_name

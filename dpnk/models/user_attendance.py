@@ -158,8 +158,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def last_name(self):
         return self.userprofile.user.last_name
 
-    def name(self):
-        return self.userprofile.name()
+    def name(self, cs_vokativ=False):
+        return self.userprofile.name(cs_vokativ=cs_vokativ)
     name.admin_order_field = 'userprofile__user__last_name'
     name.short_description = _(u"Jméno")
 

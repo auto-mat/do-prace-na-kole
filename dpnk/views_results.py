@@ -95,25 +95,26 @@ class CompetitionResultResource(resources.ModelResource):
         super().__init__()
 
     def dehydrate_public_name(self, result):
-        return result.user_attendance.name()
+        if result.user_attendance:
+            return result.user_attendance.name()
 
     def dehydrate_first_name(self, result):
-        if self.include_personal_info:
+        if self.include_personal_info and result.user_attendance:
             return result.user_attendance.first_name()
 
     def dehydrate_last_name(self, result):
-        if self.include_personal_info:
+        if self.include_personal_info and result.user_attendance:
             return result.user_attendance.last_name()
 
     def dehydrate_team(self, result):
-        return result.user_attendance.team.name
+        return result.get_team().name
 
     def dehydrate_subsidiary(self, result):
         if self.include_personal_info:
-            return result.user_attendance.team.subsidiary.name()
+            return result.get_team().subsidiary.name()
 
     def dehydrate_company(self, result):
-        return result.user_attendance.team.subsidiary.company.name
+        return result.get_team().subsidiary.company.name
 
     def dehydrate_sequence_range(self, result):
         return str(result.get_sequence_range())
@@ -142,7 +143,10 @@ class ExportCompetitionResults(WithCompetitionMixin, ExportViewMixin, View):
         )
         if organization:
             organization = models.Company.objects.get(pk=organization)
-            queryset = queryset.filter(user_attendance__team__subsidiary__company=organization)
+            queryset = queryset.filter(
+                Q(user_attendance__team__subsidiary__company=organization) |
+                Q(team__subsidiary__company=organization),
+            )
         export_data = CompetitionResultResource(should_include_personal_info(request, organization)).export(queryset)
         return self.generate_export(export_data, extension)
 
