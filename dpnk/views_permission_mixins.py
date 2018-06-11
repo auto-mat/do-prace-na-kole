@@ -17,9 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-from braces.views import GroupRequiredMixin
+from braces.views import GroupRequiredMixin, LoginRequiredMixin
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import formats
 from django.utils.translation import ugettext_lazy as _
@@ -154,3 +155,34 @@ class MustBeCompanyAdminMixin(object):
             ),
             template_name=getattr(self, 'template_name', None),
         )
+
+
+def registration_complete_gate(user_attendance):
+    if user_attendance is None:
+        return None
+    reason = user_attendance.entered_competition_reason()
+    if reason is True:
+        if user_attendance.has_unanswered_questionnaires:
+            questionnaire = user_attendance.unanswered_questionnaires().filter(mandatory=True)
+            if questionnaire:
+                return redirect(reverse_lazy("questionnaire", kwargs={"questionnaire_slug": questionnaire.first().slug}))
+        return None
+    else:
+        redirect_view = {
+            'tshirt_uncomplete': 'zmenit_triko',
+            'team_uncomplete': 'zmenit_tym',
+            'payment_uncomplete': 'typ_platby',
+            'profile_uncomplete': 'upravit_profil',
+            'team_waiting': 'registration_uncomplete',
+            'payment_waiting': 'registration_uncomplete',
+            'track_uncomplete': 'registration_uncomplete',
+        }
+        return redirect(reverse(redirect_view[reason]))
+
+
+class RegistrationCompleteMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        incomplete = registration_complete_gate(request.user_attendance)
+        if incomplete is not None:
+            return incomplete
+        return super().dispatch(request, *args, **kwargs)
