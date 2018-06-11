@@ -209,6 +209,11 @@ urlpatterns = [
         name="payment_beneficiary",
     ),
     url(
+        r'^diplomas/$',
+        views.DiplomasView.as_view(),
+        name="diplomas",
+    ),
+    url(
         r'^statistika/$',
         views.statistics,
     ),
