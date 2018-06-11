@@ -1,21 +1,21 @@
 {% load i18n %}
 {% autoescape off %}
 
-{% language user.userprofile.language %}
-Zpráva pro soutěžící/ho {{ user.userprofile }} v soutěži {{ user.campaign }}.
+{% language user_attendance.userprofile.language %}
+Zpráva pro soutěžící/ho {{ user_attendance.userprofile }} v soutěži {{ user_attendance.campaign }}.
 
 Dobrý den,
 
-vaše členství v týmu {{user.team.name}} bylo právě odsouhlaseno. Můžete se přihlásit ke svému profilu pomocí adresy
+vaše členství v týmu {{user_attendance.team.name}} bylo právě odsouhlaseno. Můžete se přihlásit ke svému profilu pomocí adresy
 {% block profile_link %}
-https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
+https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
 {% endblock %}
 
 Děkujeme Vám za přízeň a těšíme se na viděnou během soutěže!
-Váš organizační tým soutěže {{ user.campaign }}
+Váš organizační tým soutěže {{ user_attendance.campaign }}
 
 ---
-{{ user.campaign.email_footer }}
+{{ user_attendance.campaign.email_footer }}
 {% endlanguage %}
 
 

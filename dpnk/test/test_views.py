@@ -1623,7 +1623,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test-unknown@email.cz'])
-        self.assertEqual(str(msg.subject), 'Testing campaign - pozvánka do týmu (invitation to a team)')
+        self.assertEqual(str(msg.subject), "Testing campaign - pozvánka do týmu / you've been invited to join a team")
 
     def test_dpnk_team_no_team(self):
         """ Test, that invitation shows warning if the team is not set """

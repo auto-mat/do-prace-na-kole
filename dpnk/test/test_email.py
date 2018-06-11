@@ -65,7 +65,7 @@ class TestEmails(TestCase):
         )
 
         self.user_tm1 = User.objects.create(first_name="Team", last_name="Member 1", username="user2", email="user2@email.com")
-        self.userprofile_tm1 = UserProfile.objects.create(user=self.user_tm1)
+        self.userprofile_tm1 = UserProfile.objects.create(user=self.user_tm1, language='cs')
         self.user_attendance_tm1 = UserAttendance.objects.create(
             userprofile=self.userprofile_tm1,
             campaign=self.campaign,
@@ -74,7 +74,7 @@ class TestEmails(TestCase):
         )
 
         self.user_tm2 = User.objects.create(first_name="Team", last_name="Member 2", username="user3", email="user3@email.com")
-        self.userprofile_tm2 = UserProfile.objects.create(user=self.user_tm2)
+        self.userprofile_tm2 = UserProfile.objects.create(user=self.user_tm2, language='en')
         self.user_attendance_tm2 = UserAttendance.objects.create(
             userprofile=self.userprofile_tm2,
             campaign=self.campaign,
@@ -93,12 +93,8 @@ class TestEmails(TestCase):
     def test_send_approval_request_mail(self):
         email.approval_request_mail(self.user_attendance)
         self.assertEqual(len(mail.outbox), 2)
-        if self.userprofile.language == 'cs':
-            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - žádost o ověření členství")
-            self.assertEqual(mail.outbox[1].subject, "Testing campaign 1 - žádost o ověření členství")
-        else:
-            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - membership verification request")
-            self.assertEqual(mail.outbox[1].subject, "Testing campaign 1 - membership verification request")
+        self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - žádost o ověření členství")
+        self.assertEqual(mail.outbox[1].subject, "Testing campaign 1 - membership verification request")
         self.assertEqual(mail.outbox[0].to[0], "user2@email.com")
         self.assertEqual(mail.outbox[1].to[0], "user3@email.com")
 
@@ -111,7 +107,8 @@ class TestEmails(TestCase):
         else:
             self.assertEqual(msg.subject, "Testing campaign 1 - registration confirmation")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'https://testing_campaign_1.localhost:8000%s/tym/%s/user1@email.com/' % (
+        link = 'https://testing_campaign_1.%s%s/tym/%s/user1@email.com/' % (
+            settings.SITE_URL,
             language_url_infix(self.userprofile.language),
             self.user_attendance.team.invitation_token,
         )
@@ -122,11 +119,14 @@ class TestEmails(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
-            self.assertEqual(msg.subject, "Testing campaign 1 - potvrzení registrace")
+            self.assertEqual(msg.subject, "Testing campaign 1 - potvrzení registrace / registration confirmation")
         else:
-            self.assertEqual(msg.subject, "Testing campaign 1 - registration confirmation")
+            self.assertEqual(msg.subject, "Testing campaign 1 - registration confirmation / potvrzení registrace")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'https://testing_campaign_1.localhost:8000%s/' % language_url_infix(self.userprofile.language)
+        link = 'https://testing_campaign_1.%s%s/' % (
+            settings.SITE_URL,
+            language_url_infix(self.userprofile.language),
+        )
         self.assertTrue(link in msg.body)
 
     def test_unfilled_rides_notification(self):
@@ -136,9 +136,12 @@ class TestEmails(TestCase):
         if self.userprofile.language == 'cs':
             self.assertEqual(str(msg.subject), "Testing campaign 1 - připomenutí nevyplněných jízd")
         else:
-            self.assertEqual(str(msg.subject), "Testing campaign 1 - reminder of unfilled rides")
+            self.assertEqual(str(msg.subject), "Testing campaign 1 - Unfilled rides notification")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'https://testing_campaign_1.localhost:8000%s/' % language_url_infix(self.userprofile.language)
+        link = 'https://testing_campaign_1.%s%s/' % (
+            settings.SITE_URL,
+            language_url_infix(self.userprofile.language),
+        )
         self.assertTrue(link in msg.body)
         if self.userprofile.language == 'cs':
             message = "za posledních 5 dní jste si nevyplnil/a jízdy"
@@ -169,7 +172,10 @@ class TestEmails(TestCase):
         else:
             self.assertEqual(msg.subject, "Testing campaign 1 - Team membership DENIED")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'https://testing_campaign_1.localhost:8000%s/tym/' % language_url_infix(self.userprofile.language)
+        link = 'https://testing_campaign_1.%s%s/tym/' % (
+            settings.SITE_URL,
+            language_url_infix(self.userprofile.language),
+        )
         self.assertTrue(link in msg.body)
 
     def test_send_team_created_mail(self):
@@ -181,7 +187,10 @@ class TestEmails(TestCase):
         else:
             self.assertEqual(msg.subject, "Testing campaign 1 - team creation confirmation")
         self.assertEqual(msg.to[0], "user1@email.com")
-        link = 'https://testing_campaign_1.localhost:8000%s/pozvanky/' % language_url_infix(self.userprofile.language)
+        link = 'https://testing_campaign_1.%s%s/pozvanky/' % (
+            settings.SITE_URL,
+            language_url_infix(self.userprofile.language),
+        )
         self.assertTrue(link in msg.body)
 
     def test_send_invitation_mail(self):
@@ -189,14 +198,20 @@ class TestEmails(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
-            self.assertEqual(msg.subject, "Testing campaign 1 - pozvánka do týmu (invitation to a team)")
+            self.assertEqual(msg.subject, "Testing campaign 1 - pozvánka do týmu / you've been invited to join a team")
         else:
-            self.assertEqual(msg.subject, "Testing campaign 1 - invitation to a team (pozvánka do týmu)")
+            self.assertEqual(msg.subject, "Testing campaign 1 - you've been invited to join a team / pozvánka do týmu")
         self.assertEqual(msg.from_email, settings.DEFAULT_FROM_EMAIL)
         self.assertEqual(msg.to[0], "email@email.com")
-        link_cs = 'https://testing_campaign_1.localhost:8000/registrace/%s/email@email.com/' % self.user_attendance.team.invitation_token
+        link_cs = 'https://testing_campaign_1.%s/registrace/%s/email@email.com/' % (
+            settings.SITE_URL,
+            self.user_attendance.team.invitation_token,
+        )
         self.assertTrue(link_cs in msg.body)
-        link_en = 'https://testing_campaign_1.localhost:8000/en/registrace/%s/email@email.com/' % self.user_attendance.team.invitation_token
+        link_en = 'https://testing_campaign_1.%s/en/registrace/%s/email@email.com/' % (
+            settings.SITE_URL,
+            self.user_attendance.team.invitation_token,
+        )
         self.assertTrue(link_en in msg.body)
 
     def test_send_payment_confirmation_mail(self):
@@ -205,7 +220,7 @@ class TestEmails(TestCase):
         if self.userprofile.language == 'cs':
             self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - přijetí platby")
         else:
-            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - payment acceptation")
+            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - payment received")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
     def test_send_payment_confirmation_company_mail(self):
@@ -214,7 +229,7 @@ class TestEmails(TestCase):
         if self.userprofile.language == 'cs':
             self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - přijetí platby")
         else:
-            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - payment acceptation")
+            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - payment received")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
 
     def test_send_company_admin_register_competitor_mail(self):
@@ -228,7 +243,7 @@ class TestEmails(TestCase):
         self.assertEqual(msg.to[0], "user1@email.com")
 
     def test_send_company_admin_register_no_competitor_mail(self):
-        email.company_admin_register_no_competitor_mail(self.company_admin, self.company)
+        email.company_admin_register_no_competitor_mail(self.company_admin)
         self.assertEqual(len(mail.outbox), 1)
         if self.userprofile.language == 'cs':
             self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - potvrzení registrace")
@@ -254,7 +269,10 @@ class TestEmails(TestCase):
             self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - Company Coordinator - company administration approval")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
         msg = mail.outbox[0]
-        link = 'https://testing_campaign_1.localhost:8000%s/spolecnost/editovat_spolecnost/' % language_url_infix(self.userprofile.language)
+        link = 'https://testing_campaign_1.%s%s/spolecnost/editovat_spolecnost/' % (
+            settings.SITE_URL,
+            language_url_infix(self.userprofile.language),
+        )
         self.assertTrue(link in msg.body)
         if self.userprofile.language == 'cs':
             message = "Zpráva pro Testing User, firemního koordinátora v organizaci Testing Company v soutěži Testing campaign 1"
@@ -268,7 +286,7 @@ class TestEmails(TestCase):
         if self.userprofile.language == 'cs':
             self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - firemní koordinátor - zamítnutí správcovství organizace")
         else:
-            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - Company Coordinator - company administration denial")
+            self.assertEqual(mail.outbox[0].subject, "Testing campaign 1 - Company Coordinator - administrative role denied")
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
         msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
@@ -283,3 +301,5 @@ class TestEmailsEn(TestEmails):
         super().setUp()
         self.userprofile.language = "en"
         self.company_admin.userprofile.language = "en"
+        self.userprofile.save()
+        self.company_admin.userprofile.save()

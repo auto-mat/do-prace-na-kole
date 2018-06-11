@@ -1,8 +1,8 @@
 {% autoescape off %}
 
-Zpráva pro soutěžící/ho {{ user }} {% if user.team %}z týmu {{user.team.name}}{% endif %} v soutěži {{ user.campaign }}.
+Zpráva pro soutěžící/ho {{ user_attendance }} {% if user_attendance.team %}z týmu {{user_attendance.team.name}}{% endif %} v soutěži {{ user_attendance.campaign }}.
 
-Vážená/ý účastnice/íku soutěže {{ user.campaign }},
+Vážená/ý účastnice/íku soutěže {{ user_attendance.campaign }},
 
 Vaše platba startovného byla potvrzena. Ať už jste hradil/a startovné sám/sama nebo jste členem/členkou Klubu přátel, považujte otázku startovného za vyřešenou.
 
@@ -15,9 +15,9 @@ Máme pro Vás proto pár tipů:
 Nyní se také můžete těšit na startovní balíček s trikem!
 
 Vážíme si vašeho rozhodnutí účastnit se soutěže a těšíme se na viděnou v ulicích města se soutěžním trikem!
-Váš organizační tým soutěže {{ user.campaign }}
+Váš organizační tým soutěže {{ user_attendance.campaign }}
 
 ---
-{{ user.campaign.email_footer }}
+{{ user_attendance.campaign.email_footer }}
 
 {% endautoescape %}

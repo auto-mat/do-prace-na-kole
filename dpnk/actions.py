@@ -181,6 +181,19 @@ def mark_invoices_paid(modeladmin, request, queryset):
 mark_invoices_paid.short_description = _("Označit faktury jako zaplacené")
 
 
+def send_invoice_notifications(modeladmin, request, queryset):
+    tasks.send_unpaid_invoice_notification.apply_async(
+        kwargs={
+            'pks': list(queryset.values_list('pk', flat=True)),
+            'campaign_slug': request.subdomain,
+        },
+    )
+    modeladmin.message_user(request, _("Odeslání %s notifikačních emailů bylo zadáno" % queryset.count()))
+
+
+send_invoice_notifications.short_description = _("Odeslat notifikaci nezaplacených faktur")
+
+
 def send_notifications(modeladmin, request, queryset):
     tasks.send_unfilled_rides_notification.apply_async(
         kwargs={

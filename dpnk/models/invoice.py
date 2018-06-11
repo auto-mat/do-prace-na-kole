@@ -35,6 +35,8 @@ from django.dispatch import receiver
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
+from stale_notifications.model_mixins import StaleSyncMixin
+
 from .address import InvoiceAddress
 from .company import Company
 from .transactions import Payment, Status
@@ -42,7 +44,7 @@ from .. import invoice_gen, util
 
 
 @with_author
-class Invoice(models.Model):
+class Invoice(StaleSyncMixin, models.Model):
     """Faktura"""
     class Meta:
         verbose_name = _(u"Faktura")
@@ -314,9 +316,11 @@ def fill_invoice_parameters(sender, instance, **kwargs):
 
 
 @receiver(post_save, sender=Invoice)
-def create_invoice_files(sender, instance, created, **kwargs):
+def create_and_send_invoice_files(sender, instance, created, **kwargs):
     if created:
         instance.add_payments()
+        from dpnk.tasks import send_new_invoice_notification
+        send_new_invoice_notification.delay(pks=[instance.pk], campaign_slug=instance.campaign.slug)
 
     if not instance.invoice_pdf or not instance.invoice_xml:
         invoice_data = invoice_gen.generate_invoice(instance)
