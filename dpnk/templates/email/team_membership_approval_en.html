@@ -1,21 +1,21 @@
 {% load i18n %}
 {% autoescape off %}
 
-{% language user.userprofile.language %}
-A message for {{ user.userprofile }}, participating in the {{ user.campaign }} competition.
+{% language user_attendance.userprofile.language %}
+A message for {{ user_attendance.userprofile }}, participating in the {{ user_attendance.campaign }} competition.
 
 Hello,
 
-your membership in the {{user.team.name}} team has just been approved. You can sign in to your profile using
+your membership in the {{user_attendance.team.name}} team has just been approved. You can sign in to your profile using
 {% block profile_link %}
-https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
+https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
 {% endblock %}
 
 Thank you for your interest and we look forward to seeing you during the competition!
 
-Your {{ user.campaign }} organization team
+Your {{ user_attendance.campaign }} organization team
 
 ---
-{{ user.campaign.email_footer }}
+{{ user_attendance.campaign.email_footer }}
 {% endlanguage %}
 {% endautoescape %}

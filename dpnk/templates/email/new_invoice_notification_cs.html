@@ -1,0 +1,19 @@
+{% load i18n %}
+{% autoescape off %}
+
+{% language lang_code %}
+Zpráva pro firemního koordinatora {{ user_attendance.team.subsidiary.company.name }} v soutěži {{ user_attendance.campaign }}.
+
+Dobrý den,
+
+právě jsme vám vystavili faktoru se splatnost {{invoice.taxable_date}}):
+
+{{ invoice_url }}
+
+Celý tým Auto*Matu zdraví a přeje šťastnou cestu.
+
+---
+{{ user_attendance.campaign.email_footer }}
+
+{% endlanguage %}
+{% endautoescape %}

@@ -30,6 +30,7 @@ from freezegun import freeze_time
 from model_mommy import mommy
 
 from .mommy_recipes import UserAttendanceRecipe, testing_campaign
+from ..models.transactions import Status as PaymentStatus
 
 
 @override_settings(
@@ -193,3 +194,92 @@ class TestSendUnfilledRidesNotification(TestCase):
             campaign_slug="testing-campaign",
         )
         self.assertEqual(mail_count, 1)
+
+
+@override_settings(
+    FAKE_DATE=datetime.date(2017, 5, 16),
+)
+@freeze_time("2017-05-16")
+class TestSendUnpaidInvoiceNotification(TestCase):
+    def setUp(self):
+        super().setUp()
+        mommy.make(
+            "price_level.PriceLevel",
+            takes_effect_on=datetime.date(year=2010, month=2, day=1),
+            price=100,
+            pricable=testing_campaign,
+        )
+        self.company = mommy.make("Company")
+        self.user_attendance = UserAttendanceRecipe.make(
+            campaign=testing_campaign,
+            team__campaign=testing_campaign,
+            approved_for_team='approved',
+            userprofile__user__email='test@test.cz',
+            transactions=[
+                mommy.make(
+                    "Payment",
+                    status=PaymentStatus.COMPANY_ACCEPTS,
+                    amount=100,
+                ),
+            ],
+        )
+        self.company_admin = mommy.make(
+            "CompanyAdmin",
+            campaign=testing_campaign,
+            administrated_company=self.company,
+            company_admin_approved="approved",
+            userprofile=self.user_attendance.userprofile,
+        )
+        self.user_attendance.save()
+
+    def test_notification(self):
+        """ Test that email is sent, if the invoice hasn't been paid in 14 days """
+        mommy.make(
+            "Invoice",
+            campaign=testing_campaign,
+            company=self.company,
+            sequence_number=None,
+            campaign__phase_set=[testing_campaign().phase("competition")],
+            last_sync_time=datetime.datetime(2017, 5, 1, 12, 0, 0),
+        )
+        mail.outbox = []
+        mail_count = tasks.send_unpaid_invoice_notification(campaign_slug=testing_campaign().slug)
+        self.assertEqual(mail_count, 1)
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['test@test.cz'])
+        self.assertEqual(str(mail.outbox[0].subject), "Testing campaign - připomenutí nezaplaceného faktura")
+
+    def test_english_notification(self):
+        """ Test that email is sent, if the invoice hasn't been paid in 14 days """
+        mommy.make(
+            "Invoice",
+            campaign=testing_campaign,
+            company=self.company,
+            sequence_number=None,
+            campaign__phase_set=[testing_campaign().phase("competition")],
+            last_sync_time=datetime.datetime(2017, 5, 1, 12, 0, 0),
+        )
+        self.user_attendance.userprofile.language = "en"
+        self.user_attendance.userprofile.save()
+        mail.outbox = []
+        mail_count = tasks.send_unpaid_invoice_notification(campaign_slug=testing_campaign().slug)
+        self.assertEqual(mail_count, 1)
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.recipients(), ['test@test.cz'])
+        self.assertEqual(str(mail.outbox[0].subject), "Testing campaign - reminder about unpaid invoice")
+
+    def test_notification_not_set_when_not_stale(self):
+        """ Test that email is not sent, if 14 days hasn't passed"""
+        mommy.make(
+            "Invoice",
+            campaign=testing_campaign,
+            company=self.company,
+            sequence_number=None,
+            campaign__phase_set=[testing_campaign().phase("competition")],
+            last_sync_time=datetime.datetime(2017, 5, 2, 12, 0, 0),
+        )
+        mail.outbox = []
+        mail_count = tasks.send_unpaid_invoice_notification(campaign_slug=testing_campaign().slug)
+        self.assertEqual(mail_count, 0)

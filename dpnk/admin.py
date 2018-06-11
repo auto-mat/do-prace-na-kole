@@ -1479,6 +1479,7 @@ class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
         actions.mark_invoices_paid,
         actions.invoice_pdf_batch_download,
         actions.invoice_xml_batch_download,
+        actions.send_invoice_notifications,
     ]
     list_max_show_all = 10000
     form = InvoiceForm

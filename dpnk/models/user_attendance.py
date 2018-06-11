@@ -146,6 +146,12 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     sandwich_model = Diploma
 
+    def diploma(self):
+        try:
+            return Diploma.objects.get(obj=self)
+        except Diploma.DoesNotExist:
+            return None
+
     def get_sandwich_type(self):
         return self.campaign.sandwich_type
 

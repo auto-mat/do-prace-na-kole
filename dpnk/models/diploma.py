@@ -1,5 +1,6 @@
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from smmapdfs.model_abcs import PdfSandwichABC, PdfSandwichFieldABC
@@ -32,10 +33,11 @@ class Diploma(PdfSandwichABC):
     def get_email(self):
         return self.obj.userprofile.user.email
 
-    def get_context(self):
+    def get_context(self, base_url=""):
         return {
             'name': self.obj.name(),
             'name_vocative': self.obj.name(cs_vokativ=True),
+            'diplomas_page': base_url + reverse('diplomas'),
         }
 
     def get_language(self):

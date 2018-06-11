@@ -1,0 +1,30 @@
+{% extends "base_generic_form.html" %}
+{% load i18n %}
+{% load l10n %}
+{% load humanize %}
+
+{% block form %}
+<table class="table table-hover">
+   <tr><th colspan="4">{% trans "Diplomas" %}</th></tr>
+   <tr>
+      <td>{% trans "Kampaně" %}</td>
+      <td>{% trans "Pravidenost" %}</td>
+      <td>{% trans "Újetych kilometrů" %}</td>
+      <td>{% trans "Diplom" %}</td>
+   </tr>
+   {% for ua in user_attendances %}
+   <tr>
+      <td>{{ ua.campaign }}</td>
+      <td>{{ ua.get_frequency_percentage|floatformat|intcomma }}%</td>
+      <td>{{ ua.trip_length_total_rounded }} Km</td>
+      <td>
+         {% if ua.diploma %}
+         <a href="{{ ua.diploma.pdf.url }}">
+             <i class="fa fa-download"></i> {% trans "diploma" %} pdf
+         </a>
+         {% endif %}
+      </td>
+   </tr>
+   {% endfor %}
+</table>
+{% endblock %}

@@ -1,16 +1,16 @@
 {% load i18n %}
 {% autoescape off %}
 
-{% language user.userprofile.language %}
-Zpráva pro soutěžící/ho {{ user.userprofile }}, zakladatele/ku týmu {{team_name}} v soutěži {{ user.campaign }}.
+{% language user_attendance.userprofile.language %}
+Zpráva pro soutěžící/ho {{ user_attendance.userprofile }}, zakladatele/ku týmu {{team_name}} v soutěži {{ user_attendance.campaign }}.
 
 Dobrý den,
 
 Váš tým {{team_name}} byl právě vytvořen.
 
-Na adrese 
+Na adrese
 {% block invite_link %}
-https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'pozvanky' %}
+https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'pozvanky' %}
 {% endblock %}
 můžete pozvat své kolegy k přihlášení do vašeho týmu.
 
@@ -18,18 +18,18 @@ Pokud chcete své kolegy/ně vyzvat k vytvoření jejich vlastního týmu, odka�
 
 Ke svému profilu se můžete přihlásit pomocí adresy
 {% block profile_link %}
-https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
+https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
 {% endblock %}
 
-Vašemu týmu může vyjádřit podporu Váš zaměstnavatel tím, že za Vás uhradí startovné, nebo dokonce že vyhlásí celofiremní kampaň {{ user.campaign }}. Soutěžit pak budete nejen v soutěžním městě, ale také se všemi zaměstnanci Vaší organizace, ať už pracují kdekoli. Jak na to? Kontaktujte osobu, do jejíž kompetence podobné věci patří (vedoucí CSR oddělení, vedoucí vnitřní komunikace, vedoucí PR, ředitel/ka atd.) a nabídněte jí tyto možnosti nebo odkaz na stránku https://{{ user.campaign.slug }}.{{ SITE_URL }}{% url 'company_admin_application' %}
+Vašemu týmu může vyjádřit podporu Váš zaměstnavatel tím, že za Vás uhradí startovné, nebo dokonce že vyhlásí celofiremní kampaň {{ user_attendance.campaign }}. Soutěžit pak budete nejen v soutěžním městě, ale také se všemi zaměstnanci Vaší organizace, ať už pracují kdekoli. Jak na to? Kontaktujte osobu, do jejíž kompetence podobné věci patří (vedoucí CSR oddělení, vedoucí vnitřní komunikace, vedoucí PR, ředitel/ka atd.) a nabídněte jí tyto možnosti nebo odkaz na stránku https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'company_admin_application' %}
 
 Děkujeme Vám za přízeň a těšíme se na viděnou během soutěže!
-Váš organizační tým soutěže {{ user.campaign }}
+Váš organizační tým soutěže {{ user_attendance.campaign }}
 
 P.S. Zapojit do soutěže Vašeho zaměstnavatele se fakt vyplatí - víc soutěžících, ideální teambuilding, účast hrazená zaměstnavatelem a skvělé PR!
 
 ---
-{{ user.campaign.email_footer }}
+{{ user_attendance.campaign.email_footer }}
 {% endlanguage %}
 
 {% endautoescape %}

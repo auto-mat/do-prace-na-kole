@@ -1,17 +1,17 @@
 {% autoescape off %}
 
-Zpráva pro soutěžící/ho {{ user }} z týmu {{user.team.name}} v soutěži {{ user.campaign }} z organizace {{ company }}.
+Zpráva pro soutěžící/ho {{ user_attendance }} z týmu {{user_attendance.team.name}} v soutěži {{ user_attendance.campaign }} z organizace {{ company }}.
 
 Dobrý den,
-firemní koordinátor organizace {{ company }}, právě potvrdil/a uhrazení Vašeho účastnického poplatku v soutěži {{ user.campaign }}.
+firemní koordinátor organizace {{ company }}, právě potvrdil/a uhrazení Vašeho účastnického poplatku v soutěži {{ user_attendance.campaign }}.
 Od této chvíle se o účastnický poplatek nemusíte starat, protože jej organizace {{ company }} uhradí fakturou hromadně za několik účastníků naráz. I kdyby k úhradě faktury nedošlo do termínu oficiálního ukončení registrací, budeme s Vámi počítat jako s právoplatnou/ým soutěžící/m.
 
 Nyní se můžete těšit na startovní balíček s trikem!
 
 Děkujeme Vám za registraci do soutěže a držíme palce nejen v samotné soutěži, ale zejména při pravidelném a dlouhodobém využívání kola na cestách do práce a zpět.
-Váš organizační tým soutěže {{ user.campaign }}
+Váš organizační tým soutěže {{ user_attendance.campaign }}
 
 ---
-{{ user.campaign.email_footer }}
+{{ user_attendance.campaign.email_footer }}
 
 {% endautoescape %}

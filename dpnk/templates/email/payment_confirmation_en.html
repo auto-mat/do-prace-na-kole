@@ -1,8 +1,8 @@
 {% autoescape off %}
 
-A message for {{ user }} {% if user.team %}from the {{user.team.name}}{% endif %} team in the {{ user.campaign }}competition.
+A message for {{ user_attendance }} {% if user_attendance.team %}from the {{user_attendance.team.name}}{% endif %} team in the {{ user_attendance.campaign }}competition.
 
-Dear {{ user.campaign }} participant,
+Dear {{ user_attendance.campaign }} participant,
 
 your start fee payment has been confirmed. Whether you paid yourself or are a member of the Friends Club, you can consider this sorted. You can now focus on preparations for the competition and so we have some tips for you:
 - If it is your first time cycling in the city, please make use of our advice for urban cycling.
@@ -13,8 +13,8 @@ You can also look forward to our start pack with a T-shirt!
 
 We really appreciate your decision to participate in the competition and we look forward to seeing you in the streets of your city with the competition T-shirt on!
 
-Your {{ user.campaign }}organization team
+Your {{ user_attendance.campaign }}organization team
 
 ---
-{{ user.campaign.email_footer }}
+{{ user_attendance.campaign.email_footer }}
 {% endautoescape %}

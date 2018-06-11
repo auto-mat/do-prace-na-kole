@@ -27,7 +27,7 @@ import denorm
 from django.contrib import contenttypes
 
 from . import email, mailing, util
-from .models import Campaign, Competition, Team, UserAttendance
+from .models import Campaign, Competition, Invoice, Team, UserAttendance
 from .statement import parse
 
 
@@ -90,17 +90,27 @@ def parse_statement(self, days_back=7):
     parse(days_back=days_back)
 
 
+def get_notification_queryset(model, days_between_notifications, pks=None, campaign_slug=''):
+    campaign = Campaign.objects.get(slug=campaign_slug)
+    queryset = model.get_stale_objects(days_between_notifications * 24 * 60 * 60)
+    if not pks:
+        return queryset.filter(campaign=campaign)
+    else:
+        return queryset.filter(pk__in=pks, campaign=campaign)
+
+
 @shared_task(bind=True)
 def send_unfilled_rides_notification(self, pks=None, campaign_slug=''):
     campaign = Campaign.objects.get(slug=campaign_slug)
-    date = util.today()
     days_unfilled = campaign.days_active - 2
+    date = util.today()
     min_trip_date = date - timedelta(days=days_unfilled)
-    queryset = UserAttendance.get_stale_objects(days_unfilled * 24 * 60 * 60)
-    if not pks:
-        queryset = queryset.filter(campaign=campaign)
-    else:
-        queryset = queryset.filter(pk__in=pks, campaign=campaign)
+    queryset = get_notification_queryset(
+        UserAttendance,
+        days_unfilled,
+        pks=pks,
+        campaign_slug=campaign_slug,
+    )
     queryset = queryset.filter(
         payment_status__in=('done', 'no_admission'),
         approved_for_team='approved',
@@ -112,3 +122,28 @@ def send_unfilled_rides_notification(self, pks=None, campaign_slug=''):
     len_queryset = len(queryset)
     UserAttendance.update_sync_time(queryset)
     return len_queryset
+
+
+@shared_task(bind=True)
+def send_unpaid_invoice_notification(self, pks=None, campaign_slug=''):
+    days_unpaid = 14
+    queryset = get_notification_queryset(
+        Invoice,
+        days_unpaid,
+        pks=pks,
+        campaign_slug=campaign_slug,
+    )
+    for invoice in queryset:
+        email.unpaid_invoice_mail(invoice)
+    len_queryset = len(queryset)
+    Invoice.update_sync_time(queryset)
+    return len_queryset
+
+
+@shared_task(bind=True)
+def send_new_invoice_notification(self, pks=None, campaign_slug=''):
+    campaign = Campaign.objects.get(slug=campaign_slug)
+    queryset = Invoice.objects.filter(pk__in=pks, campaign=campaign)
+    for invoice in queryset:
+        email.new_invoice_mail(invoice)
+    Invoice.update_sync_time(queryset)

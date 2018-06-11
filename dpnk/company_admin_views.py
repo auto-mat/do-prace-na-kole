@@ -192,7 +192,7 @@ class CompanyAdminApplicationView(TitleViewMixin, CompanyAdminMixin, Registratio
             userprofile=userprofile,
         )
         admin.save()
-        company_admin_register_no_competitor_mail(admin, form.cleaned_data['administrated_company'])
+        company_admin_register_no_competitor_mail(admin)
         return ret_val
 
 
