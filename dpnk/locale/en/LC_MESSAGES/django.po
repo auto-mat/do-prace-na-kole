@@ -1638,11 +1638,11 @@ msgid "Datum poslední změny"
 msgstr "Last change date"
 
 #: models/diploma.py:12
-msgid "Újetych kilometrů"
+msgid "Ujetých kilometrů"
 msgstr ""
 
 #: models/diploma.py:13
-msgid "Ušetřené oxidu uhličitého"
+msgid "Ušetřeno oxidu uhličitého"
 msgstr "CO2 saved"
 
 #: models/diploma.py:14
@@ -1653,12 +1653,8 @@ msgstr "Number of low carbon trips"
 msgid "Pravidelnost týmu"
 msgstr "Team diligence"
 
-#: models/diploma.py:16
-msgid "Nazev týmu"
-msgstr "Team name"
-
 #: models/diploma.py:17
-msgid "Nazev firmy"
+msgid "Název firmy"
 msgstr "Company name"
 
 #: models/gpxfile.py:68 models/trip.py:55
