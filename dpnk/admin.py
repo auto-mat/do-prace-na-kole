@@ -1178,7 +1178,8 @@ class TripResource(resources.ModelResource):
 
 
 @admin.register(models.Trip)
-class TripAdmin(ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
+class TripAdmin(CityAdminMixin, ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
+    queryset_city_param = 'user_attendance__team__subsidiary__city__in'
     list_display = (
         'user_attendance__name_for_trusted',
         'date',
@@ -1218,12 +1219,20 @@ class TripAdmin(ExportMixin, RelatedFieldAdmin, LeafletGeoAdmin):
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        return queryset.select_related('user_attendance__userprofile__user').only(
-            'user_attendance',
+        return queryset.select_related(
+            'commute_mode',
+            'user_attendance__userprofile__user',
+        ).only(
+            'commute_mode',
             'date',
             'direction',
-            'commute_mode',
             'distance',
+            'duration',
+            'from_application',
+            'source_application',
+            'source_id',
+            'user_attendance',
+            'user_attendance__team',
             'user_attendance__userprofile__nickname',
             'user_attendance__userprofile__user__email',
             'user_attendance__userprofile__user__first_name',
