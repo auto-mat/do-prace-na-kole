@@ -5,22 +5,21 @@
 
 {% block form %}
 <table class="table table-hover">
-   <tr><th colspan="4">{% trans "Diplomas" %}</th></tr>
    <tr>
-      <td>{% trans "Kampaně" %}</td>
-      <td>{% trans "Pravidenost" %}</td>
-      <td>{% trans "Újetych kilometrů" %}</td>
-      <td>{% trans "Diplom" %}</td>
+      <th>{% trans "Kampaň" %}</th>
+      <th>{% trans "Pravidenost" %}</th>
+      <th>{% trans "Ujetých kilometrů" %}</th>
+      <th>{% trans "Diplom" %}</th>
    </tr>
    {% for ua in user_attendances %}
    <tr>
       <td>{{ ua.campaign }}</td>
-      <td>{{ ua.get_frequency_percentage|floatformat|intcomma }}%</td>
-      <td>{{ ua.trip_length_total_rounded }} Km</td>
+      <td>{{ ua.get_frequency_percentage|floatformat|intcomma }} %</td>
+      <td>{{ ua.trip_length_total_rounded }} km</td>
       <td>
          {% if ua.diploma %}
          <a href="{{ ua.diploma.pdf.url }}">
-             <i class="fa fa-download"></i> {% trans "diploma" %} pdf
+             <i class="fa fa-download"></i>{% trans "PDF s diplomem" %}
          </a>
          {% endif %}
       </td>

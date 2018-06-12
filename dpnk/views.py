@@ -902,7 +902,7 @@ class VacationsView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessa
 
 
 class DiplomasView(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
-    title = _("Váše diplomy")
+    title = _("Váše diplomy a výsledky v minulých ročnících")
     template_name = 'registration/diplomas.html'
     registration_phase = 'profile_view'
 
