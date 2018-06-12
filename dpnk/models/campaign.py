@@ -268,7 +268,7 @@ class Campaign(Pricable, models.Model):
         day_today = util.today()
         try:
             entry_phase = self.phase('entry_enabled')
-            if entry_phase.date_from > day_today or entry_phase.date_to < day_today:
+            if not entry_phase.is_actual():
                 return False
         except Phase.DoesNotExist:
             pass
