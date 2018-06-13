@@ -349,7 +349,7 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
 
     if created:
         from dpnk.tasks import send_new_invoice_notification
-        send_new_invoice_notification(pks=[instance.pk], campaign_slug=instance.campaign.slug)
+        send_new_invoice_notification.delay(pks=[instance.pk], campaign_slug=instance.campaign.slug)
 
 
 @receiver(pre_delete, sender=Invoice)
