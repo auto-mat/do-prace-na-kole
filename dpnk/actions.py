@@ -194,6 +194,18 @@ def send_invoice_notifications(modeladmin, request, queryset):
 send_invoice_notifications.short_description = _("Odeslat notifikaci nezaplacených faktur")
 
 
+def create_invoices(modeladmin, request, queryset, celery=True):
+    campaign = request.user_attendance.campaign
+    for company in queryset:
+        if celery:
+            tasks.create_invoice_if_needed.delay(company.pk, campaign.slug)
+        else:
+            tasks.create_invoice_if_needed(company.pk, campaign.slug)
+
+
+create_invoices.short_description = _("Vytvořit faktury pro neplacené platby")
+
+
 def send_notifications(modeladmin, request, queryset):
     tasks.send_unfilled_rides_notification.apply_async(
         kwargs={
