@@ -8,7 +8,10 @@ Dear coordinator,
 
 your invoice has been created. Please pay it by the due date {{invoice.taxable_date}}:
 
-{{ invoice_url }}
+You will find complete invoice overview at https://{{ invoice.campaign.slug }}.{{ SITE_URL }}{% url 'invoices' %}
+
+Direct download link is {{ invoice_url }}
+
 
 Greetings from the entire Auto*Mat team and wishes for a happy journey.
 

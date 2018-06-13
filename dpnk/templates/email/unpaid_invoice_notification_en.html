@@ -8,7 +8,9 @@ Dear coordinator,
 
 according to our records, you have yet to pay the following invoice (due date {{invoice.taxable_date}}):
 
-{{ invoice_url }}
+You will find complete invoice overview at https://{{ invoice.campaign.slug }}.{{ SITE_URL }}{% url 'invoices' %}
+
+Direct download link is {{ invoice_url }}
 
 Greetings from the entire Auto*Mat team and wishes for a happy journey.
 

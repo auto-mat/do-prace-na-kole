@@ -52,6 +52,8 @@ class Invoice(StaleSyncMixin, models.Model):
         unique_together = (("sequence_number", "campaign"),)
         ordering = ('sequence_number', 'campaign', )
 
+    last_sync_string = _("Poslední odeslání upomínky")
+
     created = models.DateTimeField(
         verbose_name=_(u"Datum vytvoření"),
         default=datetime.datetime.now,
