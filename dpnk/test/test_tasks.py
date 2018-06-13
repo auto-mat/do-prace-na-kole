@@ -248,7 +248,7 @@ class TestSendUnpaidInvoiceNotification(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@test.cz'])
-        self.assertEqual(str(mail.outbox[0].subject), "Testing campaign - připomenutí nezaplaceného faktura")
+        self.assertEqual(str(mail.outbox[0].subject), "Testing campaign - připomenutí nezaplacené faktury")
 
     def test_english_notification(self):
         """ Test that email is sent, if the invoice hasn't been paid in 14 days """

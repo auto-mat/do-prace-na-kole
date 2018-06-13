@@ -499,11 +499,11 @@ msgid "připomenutí nevyplněných jízd"
 msgstr "Unfilled rides notification"
 
 #: email.py:207
-msgid "bylo Vám vystavena faktura"
+msgid "byla Vám vystavena faktura"
 msgstr "Your invoice has been prepared"
 
 #: email.py:215
-msgid "připomenutí nezaplaceného faktura"
+msgid "připomenutí nezaplacené faktury"
 msgstr "reminder about unpaid invoice"
 
 #: exceptions.py:46

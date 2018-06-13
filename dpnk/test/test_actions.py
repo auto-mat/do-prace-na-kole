@@ -31,6 +31,7 @@ from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 
 from dpnk import actions, models, util
+from dpnk.models.transactions import Status
 
 from model_mommy import mommy
 
@@ -188,3 +189,24 @@ class TestActions(TestCase):
         actions.mark_invoices_paid(self.modeladmin, self.request, queryset)
         message = get_messages(self.request)._queued_messages[0].message
         self.assertEquals(message, "1 faktur označeno jako 'zaplaceno'")
+
+    def test_create_invoices(self):
+        queryset = models.Company.objects.all()
+        num_invoices = len(models.Invoice.objects.all())
+        self.assertEquals(num_invoices, 1)
+        ua0 = models.UserAttendance.objects.all()[0]
+        ua1 = mommy.make(
+            "UserAttendance",
+            team__subsidiary__company=ua0.company(),
+            campaign=ua0.campaign,
+        )
+        mommy.make(
+            "Payment",
+            pay_type='fc',
+            status=Status.COMPANY_ACCEPTS,
+            user_attendance=ua1,
+        ).save()
+        self.request.user_attendance = ua0
+        actions.create_invoices(self.modeladmin, self.request, queryset, celery=False)
+        num_invoices = len(models.Invoice.objects.all())
+        self.assertEquals(num_invoices, 2)

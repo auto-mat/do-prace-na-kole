@@ -18,10 +18,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import logging
+
 from django.db.models import Q, Sum
 
 from . import models, tasks, util
 from .models import Answer, Choice, City, Company, Competition, CompetitionResult, Team, Trip, UserAttendance
+
+logger = logging.getLogger(__name__)
 
 
 def _filter_query_single_user(competition):
@@ -212,6 +216,11 @@ def get_team_frequency(user_attendancies, competition=None, day=None):
     rides_count = 0
 
     for user_attendance in user_attendancies:
+        if user_attendance.campaign != competition.campaign:
+            logger.error(
+                "Campaign mismatch while recalculating results",
+                extra={'user_attendance': user_attendance, 'competition': competition},
+            )
         working_trips_count += get_working_trips_count(user_attendance, competition, day)
         rides_count += get_rides_count(user_attendance, competition, day)
     if working_trips_count == 0:

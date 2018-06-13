@@ -312,14 +312,15 @@ class Campaign(Pricable, models.Model):
     def has_any_tshirt(self):
         return self.tshirtsize_set.exists()
 
-    @cached(60)
     def phase(self, phase_type):
         """
         Return phase of given type from this campaign.
         @phase_type Type of phase.
         """
-        return self.phase_set.get(phase_type=phase_type)
+        @cached(60)
+        def get_phase(pk, phase_type):
+            return self.phase_set.get(phase_type=phase_type)
+        return get_phase(self.pk, phase_type)
 
-    @cached(60)
     def competition_phase(self):
         return self.phase('competition')

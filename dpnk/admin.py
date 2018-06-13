@@ -236,6 +236,9 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportM
     form = CompanyForm
     merge_form = CompanyMergeForm
     resource_class = CompanyResource
+    actions = (
+        actions.create_invoices,
+    )
 
     def subsidiaries_text(self, obj):
         return " | ".join(

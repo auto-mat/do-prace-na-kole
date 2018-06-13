@@ -206,7 +206,7 @@ def unfilled_rides_mail(user_attendance, days_unfilled):
 def new_invoice_mail(invoice):
     invoice_mail(
         invoice,
-        _("bylo Vám vystavena faktura"),
+        _("byla Vám vystavena faktura"),
         'new_invoice_notification_%s.html',
     )
 
@@ -214,7 +214,7 @@ def new_invoice_mail(invoice):
 def unpaid_invoice_mail(invoice):
     invoice_mail(
         invoice,
-        _("připomenutí nezaplaceného faktura"),
+        _("připomenutí nezaplacené faktury"),
         'unpaid_invoice_notification_%s.html',
     )
 
@@ -225,7 +225,7 @@ def invoice_mail(invoice, subject, template):
         'invoice': invoice,
     }
     if not invoice.paid():
-        for admin in invoice.company.company_admin.all():
+        for admin in invoice.company.company_admin.filter(campaign=invoice.campaign):
             campaign_mail(
                 admin.user_attendance(),
                 subject,

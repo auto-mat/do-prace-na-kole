@@ -27,7 +27,7 @@ import denorm
 from django.contrib import contenttypes
 
 from . import email, mailing, util
-from .models import Campaign, Competition, Invoice, Team, UserAttendance
+from .models import Campaign, Company, Competition, Invoice, Team, UserAttendance, payments_to_invoice
 from .statement import parse
 
 
@@ -147,3 +147,18 @@ def send_new_invoice_notification(self, pks=None, campaign_slug=''):
     for invoice in queryset:
         email.new_invoice_mail(invoice)
     Invoice.update_sync_time(queryset)
+
+
+@shared_task(bind=True)
+def create_invoice_if_needed(self, pk=None, campaign_slug=''):
+    company = Company.objects.get(pk=pk)
+    campaign = Campaign.objects.get(slug=campaign_slug)
+    payments = payments_to_invoice(company, campaign)
+    if payments:
+        invoice = Invoice.objects.create(
+            company=company,
+            campaign=campaign,
+        )
+        invoice.add_payments()
+        invoice.fill_company_details()
+        invoice.save()
