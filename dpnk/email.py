@@ -225,7 +225,7 @@ def invoice_mail(invoice, subject, template):
         'invoice': invoice,
     }
     if not invoice.paid():
-        for admin in invoice.company.company_admin.all():
+        for admin in invoice.company.company_admin.filter(campaign=invoice.campaign):
             campaign_mail(
                 admin.user_attendance(),
                 subject,

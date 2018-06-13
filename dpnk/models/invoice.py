@@ -319,8 +319,6 @@ def fill_invoice_parameters(sender, instance, **kwargs):
 def create_and_send_invoice_files(sender, instance, created, **kwargs):
     if created:
         instance.add_payments()
-        from dpnk.tasks import send_new_invoice_notification
-        send_new_invoice_notification.delay(pks=[instance.pk], campaign_slug=instance.campaign.slug)
 
     if not instance.invoice_pdf or not instance.invoice_xml:
         invoice_data = invoice_gen.generate_invoice(instance)
@@ -348,6 +346,10 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
             instance.invoice_xml.save("%s.xml" % filename, File(temp_xml), save=False)
 
         instance.save()
+
+    if created:
+        from dpnk.tasks import send_new_invoice_notification
+        send_new_invoice_notification(pks=[instance.pk], campaign_slug=instance.campaign.slug)
 
 
 @receiver(pre_delete, sender=Invoice)
