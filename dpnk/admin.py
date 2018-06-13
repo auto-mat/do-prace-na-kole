@@ -73,6 +73,8 @@ from scribbler import models as scribbler_models
 from smmapdfs.actions import make_pdfsandwich
 from smmapdfs.admin_abcs import PdfSandwichAdmin, PdfSandwichFieldAdmin
 
+from stale_notifications.admin_mixins import StaleSyncMixin
+
 from t_shirt_delivery.admin import PackageTransactionInline
 from t_shirt_delivery.forms import PackageTransactionForm
 from t_shirt_delivery.models import TShirtSize
@@ -748,6 +750,7 @@ class UserAttendanceResource(resources.ModelResource):
 
 @admin.register(models.UserAttendance)
 class UserAttendanceAdmin(
+    StaleSyncMixin,
     AdminAdvancedFiltersMixin,
     RelatedFieldAdmin,
     ImportExportMixin,
@@ -914,12 +917,6 @@ class UserAttendanceAdmin(
             'userprofile__user__last_name',
             'userprofile__user__username',
         )
-
-    def get_fieldsets(self, request, obj=None):
-        #  Move last_sync_time to the end
-        res = super().get_fieldsets(request, obj)
-        res[0][1]['fields'].append(res[0][1]['fields'].pop(0))
-        return res
 
 
 @admin.register(models.Team)
@@ -1439,7 +1436,7 @@ class InvoiceResource(resources.ModelResource):
 
 
 @admin.register(models.Invoice)
-class InvoiceAdmin(ExportMixin, RelatedFieldAdmin):
+class InvoiceAdmin(StaleSyncMixin, ExportMixin, RelatedFieldAdmin):
     list_display = [
         'company',
         'exposure_date',

@@ -8,7 +8,9 @@ Dobrý den,
 
 právě jsme vám vystavili faktoru se splatností do {{invoice.taxable_date}}):
 
-{{ invoice_url }}
+Kompletní přehled faktur naleznete na adrese https://{{ invoice.campaign.slug }}.{{ SITE_URL }}{% url 'invoices' %}
+
+Přímý odkaz na stažení faktury je {{ invoice_url }}
 
 Celý tým Auto*Matu zdraví a přeje šťastnou cestu.
 
