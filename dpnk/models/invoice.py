@@ -263,6 +263,7 @@ class Invoice(StaleSyncMixin, models.Model):
 
     @transaction.atomic
     def add_payments(self):
+        assert len(self.payment_set.all()) == 0
         payments = self.payments_to_add()
         self.payment_set.set(payments)
         for payment in payments:

@@ -155,10 +155,7 @@ def create_invoice_if_needed(self, pk=None, campaign_slug=''):
     campaign = Campaign.objects.get(slug=campaign_slug)
     payments = payments_to_invoice(company, campaign)
     if payments:
-        invoice = Invoice.objects.create(
+        Invoice.objects.create(
             company=company,
             campaign=campaign,
         )
-        invoice.add_payments()
-        invoice.fill_company_details()
-        invoice.save()
