@@ -16,7 +16,11 @@
    {% for invoice in invoices %}
       <tr>
       <td>{{ invoice.exposure_date }}</td>
-      <td><a href="{{ invoice.invoice_pdf.url }}">{% trans "soubor" %}</a></td>
+      <td>
+         <a href="{{ invoice.invoice_pdf.url }}">{% trans "PDF soubor" %}</a>
+         <br/>
+         (<a href="{{ invoice.invoice_xml.url }}" download="faktura_{{invoice.campaign.slug_identifier}}_{{invoice.id}}_pohoda.xml">{% trans "Pohoda&nbsp;XML" %}</a>)
+      </td>
       <td>{{ invoice.payment_set.count }}</td>
       <td>{{ invoice.variable_symbol }}</td>
       <td>{{ invoice.total_amount }}</td>
