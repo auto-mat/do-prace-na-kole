@@ -156,12 +156,16 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             response,
             '<tr>'
             '<td>10. října 2010</td>'
-            '<td><a href="/media/upload/%s">soubor</a></td>'
+            '<td>'
+            '<a href="/media/upload/%s">PDF soubor</a>'
+            '<br/>'
+            '(<a href="/media/upload/%s" download="faktura_None_%s_pohoda.xml">Pohoda&nbsp;XML</a>)'
+            '</td>'
             '<td>0</td>'
             '<td>2010111</td>'
             '<td>0,0</td>'
             '<td>Zaplacení nepotvrzeno</td>'
-            '</tr>' % invoice.invoice_pdf,
+            '</tr>' % (invoice.invoice_pdf, invoice.invoice_xml, invoice.id),
             html=True,
         )
 
@@ -179,12 +183,16 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             response,
             '<tr>'
             '<td>10. října 2010</td>'
-            '<td><a href="/media/upload/%s">soubor</a></td>'
+            '<td>'
+            '<a href="/media/upload/%s">PDF soubor</a>'
+            '<br/>'
+            '(<a href="/media/upload/%s" download="faktura_None_%s_pohoda.xml">Pohoda&nbsp;XML</a>)'
+            '</td>'
             '<td>0</td>'
             '<td>2010111</td>'
             '<td>0,0</td>'
             '<td>10. října 2010</td>'
-            '</tr>' % invoice.invoice_pdf,
+            '</tr>' % (invoice.invoice_pdf, invoice.invoice_xml, invoice.id),
             html=True,
         )
 
