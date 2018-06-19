@@ -47,6 +47,7 @@ class Campaign(Pricable, models.Model):
         permissions = (
             ("can_see_application_links", "Can see application links"),
         )
+        ordering = ('-id', )
 
     name = models.CharField(
         unique=True,
