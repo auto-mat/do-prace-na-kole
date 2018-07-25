@@ -485,7 +485,7 @@ class InviteForm(SubmitMixin, forms.Form):
             self.free_capacity = 0
         ret_val = super().__init__(*args, **kwargs)
         fields = []
-        for i in range(1, self.free_capacity + 1):
+        for i in range(1, min(self.free_capacity + 1, 11)):
             field_name = 'email%s' % i
             self.fields[field_name] = forms.EmailField(
                 label=_("E-mail kolegy %s") % i,
