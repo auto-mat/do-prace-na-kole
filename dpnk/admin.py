@@ -1341,8 +1341,10 @@ class CompanyAdminResource(resources.ModelResource):
             'can_confirm_payments',
             'will_pay_opt_in',
             'note',
+            'sitetree_postfix',
             'motivation_company_admin',
             'campaign',
+            'tracks',
         ]
 
 

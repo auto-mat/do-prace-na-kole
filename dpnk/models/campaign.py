@@ -200,6 +200,10 @@ class Campaign(Pricable, models.Model):
         default=True,
         null=False,
     )
+    tracks = models.BooleanField(
+        verbose_name=_("Uloží se trasu"),
+        default=True,
+    )
     wp_api_url = models.URLField(
         default="http://www.dopracenakole.cz",
         verbose_name=_("Adresa pro Wordpress API se články"),
