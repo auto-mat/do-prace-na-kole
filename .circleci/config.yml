@@ -7,9 +7,9 @@ jobs:
 
     steps:
       - checkout
-      - run: apt-get -qq update; apt-get -y install npm gettext libgettextpo-dev
+      - run: curl -sL https://deb.nodesource.com/setup_10.x | bash -
+      - run: apt-get -qq update; apt-get -y install nodejs gettext libgettextpo-dev
       - run: npm install -g less bower
-      - run: ln -s /usr/bin/nodejs /usr/bin/node
       - run: bower --allow-root install
       - run: pip install Django coveralls django_coverage_plugin
       - run: cd dpnk && django-admin compilemessages
