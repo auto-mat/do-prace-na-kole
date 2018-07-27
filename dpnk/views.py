@@ -377,7 +377,7 @@ class PaymentTypeView(
                     mark_safe_lazy(message + " " + _("Pokračujte na <a href='%s'>zadávání jízd</a>.") % reverse("profil")),
                     self.template_name,
                 )
-            if not request.user_attendance.t_shirt_size:
+            if request.user_attendance.campaign.has_any_tshirt and not request.user_attendance.t_shirt_size:
                 raise exceptions.TemplatePermissionDenied(
                     _("Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"),
                     self.template_name,
