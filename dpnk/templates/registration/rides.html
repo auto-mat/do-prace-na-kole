@@ -93,12 +93,15 @@
    <tr class="info">
       <th scope="col">{% trans "Do práce" %}</th>
       <th scope="col">{% trans "Z práce" %}</th>
+      {% if user_attendance.campaign.recreational %}
+      <th scope="col">{% trans "Výlety" %}</th>
+      {% endif %}
    </tr>
 </thead>
 {% for trip_form in formset %}
-   {% if forloop.counter0|divisibleby:2 %}
+   {% if forloop.counter0|divisibleby:num_columns %}
       <tr class="info">
-         <th colspan="2" scope="row" class="date{% if not trip_form.working_day %} weekend-day{% endif %}">
+         <th colspan="{{num_columns}}" scope="row" class="date{% if not trip_form.working_day %} weekend-day{% endif %}">
             {{ trip_form.initial.date|naturalday:"D j. n. \<\s\p\a\n\>Y\<\/\s\p\a\n\>"|safe }}
          </th>
       </tr>
@@ -116,11 +119,11 @@
          </a>
          {% endif %}
       </td>
-   {% if forloop.counter|divisibleby:2 %}
+   {% if forloop.counter|divisibleby:num_columns %}
    </tr>
    {% endif %}
 {% endfor %}
-<tr><td colspan="2">
+<tr><td colspan="{{num_columns}}">
 <input type="submit" name="submit" value="{% trans "Uložit jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-bottom">
 </td></tr>
 </table>

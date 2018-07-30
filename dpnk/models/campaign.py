@@ -204,6 +204,10 @@ class Campaign(Pricable, models.Model):
         verbose_name=_("Uloží se trasu"),
         default=True,
     )
+    recreational = models.BooleanField(
+        verbose_name=_("Lze zadávat i výlety"),
+        default=False,
+    )
     wp_api_url = models.URLField(
         default="http://www.dopracenakole.cz",
         verbose_name=_("Adresa pro Wordpress API se články"),
@@ -310,6 +314,12 @@ class Campaign(Pricable, models.Model):
         ).order_by(
             'payment_created',
         ).distinct()
+
+    def get_directions(self):
+        if self.recreational:
+            return ('trip_to', 'trip_from', 'recreational')
+        else:
+            return ('trip_to', 'trip_from')
 
     @depend_on_related('TShirtSize', foreign_key='tshirtsize_set')
     @denormalized(models.BooleanField, default=True)

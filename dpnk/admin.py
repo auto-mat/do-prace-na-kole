@@ -1345,6 +1345,7 @@ class CompanyAdminResource(resources.ModelResource):
             'motivation_company_admin',
             'campaign',
             'tracks',
+            'recreational',
         ]
 
 
