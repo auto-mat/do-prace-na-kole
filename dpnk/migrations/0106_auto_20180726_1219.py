@@ -10,10 +10,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='diplomafield',
-            name='alignment',
-        ),
         migrations.AddField(
             model_name='campaign',
             name='tracks',
