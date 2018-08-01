@@ -203,7 +203,7 @@ class CompanyAdminInline(NestedTabularInline):
 
 
 @admin.register(models.Company)
-class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportMixin, NestedModelAdmin):
+class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportExportMixin, NestedModelAdmin):
     list_display = (
         'name',
         'subsidiaries_text',
