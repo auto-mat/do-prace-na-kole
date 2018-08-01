@@ -2461,7 +2461,7 @@ class TestNotLoggedIn(TestCase):
     MEDIA_ROOT="dpnk/test_files",
 )
 class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'commute_mode']
 
     def setUp(self):
         super().setUp()
