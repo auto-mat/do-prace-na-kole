@@ -81,7 +81,7 @@ class ViewsTestsLogon(TestCase):
         TShirtSize.objects.all().delete()
         self.user_attendance.campaign.save()
         response = self.client.get(reverse('zmenit_triko'))
-        self.assertRedirects(response, reverse("typ_platby"), target_status_code=403)
+        self.assertRedirects(response, reverse("typ_platby"), target_status_code=200)
 
     def test_dpnk_t_shirt_size_shipped(self):
         mommy.make("PackageTransaction", status=20002, t_shirt_size=self.t_shirt_size, user_attendance=self.user_attendance)

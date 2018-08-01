@@ -321,8 +321,8 @@ class Campaign(Pricable, models.Model):
         else:
             return ('trip_to', 'trip_from')
 
-    @depend_on_related('TShirtSize', foreign_key='tshirtsize_set')
     @denormalized(models.BooleanField, default=True)
+    @depend_on_related('t_shirt_delivery.TShirtSize', type='backward', foreign_key='campaign')
     def has_any_tshirt(self):
         return self.tshirtsize_set.exists()
 
