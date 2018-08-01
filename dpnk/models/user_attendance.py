@@ -313,6 +313,9 @@ class UserAttendance(StaleSyncMixin, models.Model):
     @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Trip')
     def trip_length_total(self):
+        """
+        Total trip length NOT including recreational trips.
+        """
         from .. import results
         try:
             return results.get_userprofile_length([self], self.campaign.phase("competition"))
@@ -325,6 +328,18 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def get_nonreduced_length(self):
         from .. import results
         return results.get_userprofile_nonreduced_length([self], self.campaign.phase("competition"))
+
+    @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
+    @depend_on_related('Trip')
+    def total_trip_length_including_recreational(self):
+        from .. import results
+        try:
+            return results.get_userprofile_length([self], self.campaign.phase("competition"), recreational=True)
+        except Phase.DoesNotExist:
+            return 0
+
+    def trip_length_total_including_recreational_rounded(self):
+        return round(self.total_trip_length_including_recreational, 2)
 
     def get_working_rides_base_count(self):
         from .. import results

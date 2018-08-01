@@ -31,6 +31,13 @@
       {% if competition_phase.date_to %}{% trans "do" %} {{ competition_phase.date_to }}{% endif %}
    </th>
 </tr>
+{% if user_attendance.campaign.recreational %}
+<tr class="info">
+   <td>
+      {% trans "Celková uražená vzdálenost" %}: {{ user_attendance.trip_length_total_including_recreational_rounded|intcomma }}&nbsp;km
+   </td>
+</tr>
+{% endif %}
 <tr class="info">
    <td>
       {% trans "Uražená započítaná vzdálenost" %}: {{ user_attendance.trip_length_total_rounded|intcomma }}&nbsp;km (<a href="{% url "rides_details" %}">{% trans "Podrobný přehled jízd" %}</a>)

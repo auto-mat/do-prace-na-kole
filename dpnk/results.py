@@ -166,23 +166,25 @@ def get_competitions_with_info(user_attendance, competition_types=None):
     return competitions
 
 
-def get_trips(user_attendances, competition, day=None):
+def get_trips(user_attendances, competition, day=None, recreational=False):
     if not day:
         day = util.today()
     days = util.days(competition, day)
     trip_query = Trip.objects.all()
     if isinstance(competition, models.Phase):
-        trip_query = trip_query.filter(commute_mode__slug__in=('bicycle', 'by_foot'))
+        trip_query = trip_query.filter(commute_mode__eco=True, commute_mode__does_count=True)
     else:
         trip_query = trip_query.filter(commute_mode__in=competition.commute_modes.all())
+    if not recreational:
+        trip_query = trip_query.filter(direction__in=('trip_to', 'trip_from'))
     return trip_query.filter(
         user_attendance__in=user_attendances,
         date__in=days,
     )
 
 
-def get_rides_count(user_attendance, competition, day=None):
-    return get_trips([user_attendance], competition, day).count()
+def get_rides_count(user_attendance, competition, day=None, recreational=False):
+    return get_trips([user_attendance], competition, day, recreational=recreational).count()
 
 
 def get_minimum_rides_base_proportional(competition, day):
@@ -228,12 +230,12 @@ def get_team_frequency(user_attendancies, competition=None, day=None):
     return rides_count, working_trips_count, float(rides_count) / working_trips_count
 
 
-def get_userprofile_nonreduced_length(user_attendances, competition):
-    return get_trips(user_attendances, competition).aggregate(Sum('distance'))['distance__sum'] or 0
+def get_userprofile_nonreduced_length(user_attendances, competition, recreational=False):
+    return get_trips(user_attendances, competition, recreational=recreational).aggregate(Sum('distance'))['distance__sum'] or 0
 
 
-def get_userprofile_length(user_attendances, competition):
-    return get_userprofile_nonreduced_length(user_attendances, competition)
+def get_userprofile_length(*args, **kwargs):
+    return get_userprofile_nonreduced_length(*args, **kwargs)
 
 
 def get_userprofile_frequency(user_attendance, competition=None, day=None):
