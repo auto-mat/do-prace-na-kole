@@ -11,7 +11,7 @@ jobs:
       - run: apt-get -qq update; apt-get -y install nodejs gettext libgettextpo-dev
       - run: npm install -g less bower
       - run: bower --allow-root install
-      - run: pip install Django coveralls django_coverage_plugin
+      - run: pip install 'Django<2.1' coveralls django_coverage_plugin
       - run: cd dpnk && django-admin compilemessages
       - run: cd t_shirt_delivery && django-admin compilemessages
       - run: cd coupons && django-admin compilemessages
