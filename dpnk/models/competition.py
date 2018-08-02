@@ -209,6 +209,10 @@ class Competition(models.Model):
         blank=False,
         null=False,
     )
+    recreational = models.BooleanField(
+        verbose_name=_("Započítá se i rekreační jízdy?"),
+        default=False,
+    )
 
     def get_minimum_rides_base(self):
         return self.minimum_rides_base

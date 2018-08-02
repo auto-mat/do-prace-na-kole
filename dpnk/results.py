@@ -175,6 +175,8 @@ def get_trips(user_attendances, competition, day=None, recreational=False):
         trip_query = trip_query.filter(commute_mode__eco=True, commute_mode__does_count=True)
     else:
         trip_query = trip_query.filter(commute_mode__in=competition.commute_modes.all())
+        if competition.recreational:
+            recreational = True
     if not recreational:
         trip_query = trip_query.filter(direction__in=('trip_to', 'trip_from'))
     return trip_query.filter(
