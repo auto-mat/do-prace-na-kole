@@ -195,6 +195,10 @@ class Campaign(Pricable, models.Model):
         null=True,
         blank=True,
     )
+    club_membership_integration = models.BooleanField(
+        verbose_name=_("Integrace s klubem přátel"),
+        default=True,
+    )
     track_required = models.BooleanField(
         verbose_name=_("Je povinné zadávat trasu"),
         default=True,

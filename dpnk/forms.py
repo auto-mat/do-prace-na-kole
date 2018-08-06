@@ -575,14 +575,20 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 intcomma(self.user_attendance.beneficiary_admission_fee()),
             )),
             ('company', _("Účastnický poplatek mi platí zaměstnavatel.")),
-            ('member_wannabe', mark_safe_lazy(
-                _(
-                    "Chci účastnický poplatek zdarma (pro ty, kteří chtějí trvale podporovat udržitelnou mobilitu). "
-                    "<i class='fa fa-heart'></i>",
-                ),
-            )),
-            ('coupon', _("Chci uplatnit voucher (sleva či účastnický poplatek zdarma, např. pro Klub přátel).")),
         ]
+        if self.user_attendance.campaign.club_membership_integration:
+            self.fields['payment_type'].choices.extend([('member_wannabe', mark_safe_lazy(
+                    _(
+                        "Chci účastnický poplatek zdarma (pro ty, kteří chtějí trvale podporovat udržitelnou mobilitu). "
+                        "<i class='fa fa-heart'></i>",
+                    ),
+                )),
+                ('coupon', _("Chci uplatnit voucher (sleva či účastnický poplatek zdarma, např. pro Klub přátel).")),
+           ])
+        else:
+            self.fields['payment_type'].choices.extend([
+                ('coupon', _("Chci uplatnit voucher (sleva či účastnický poplatek zdarma).")),
+            ])
         return ret_val
 
 
