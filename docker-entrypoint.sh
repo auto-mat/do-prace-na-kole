@@ -1,6 +1,7 @@
 #!/bin/bash
 if python manage.py showmigrations | grep '\[ \]\|^[a-z]' | grep '[  ]' -B 1; then
    python manage.py migrate --noinput                # Apply database migrations
+   python manage.py update_translation_fields
    python manage.py denorm_drop
    python manage.py denorm_init
 fi
