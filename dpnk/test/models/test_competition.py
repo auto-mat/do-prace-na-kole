@@ -132,7 +132,6 @@ class TestGetColumns(TestCase):
             ('result_order', 'get_sequence_range', 'Po&shy;řa&shy;dí'),
             ('result_value', 'get_result', 'Ki&shy;lo&shy;me&shy;trů prů&shy;měr&shy;ně'),
             ('competitor', 'get_company', 'Sou&shy;tě&shy;ží&shy;cí'),
-            ('city', 'get_city', 'Měs&shy;to'),
         ]
         self.assertListEqual(columns, expected_columns)
 
