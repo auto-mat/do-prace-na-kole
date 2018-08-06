@@ -96,6 +96,12 @@ class Campaign(Pricable, models.Model):
         default=False,
         null=False,
     )
+    extra_agreement_text = models.TextField(
+        verbose_name=_("Další text pro uživatelské souhlas"),
+        null=True,
+        blank=True,
+        default="",
+    )
     days_active = models.PositiveIntegerField(
         verbose_name=_("Počet minulých dní, které jdou zapisovat"),
         default=7,

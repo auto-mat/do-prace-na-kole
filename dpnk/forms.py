@@ -577,14 +577,15 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
             ('company', _("Účastnický poplatek mi platí zaměstnavatel.")),
         ]
         if self.user_attendance.campaign.club_membership_integration:
-            self.fields['payment_type'].choices.extend([('member_wannabe', mark_safe_lazy(
+            self.fields['payment_type'].choices.extend([
+                ('member_wannabe', mark_safe_lazy(
                     _(
                         "Chci účastnický poplatek zdarma (pro ty, kteří chtějí trvale podporovat udržitelnou mobilitu). "
                         "<i class='fa fa-heart'></i>",
                     ),
                 )),
                 ('coupon', _("Chci uplatnit voucher (sleva či účastnický poplatek zdarma, např. pro Klub přátel).")),
-           ])
+            ])
         else:
             self.fields['payment_type'].choices.extend([
                 ('coupon', _("Chci uplatnit voucher (sleva či účastnický poplatek zdarma).")),
@@ -862,7 +863,7 @@ class UserAttendanceUpdateForm(CampaignMixin, forms.ModelForm):
             "Souhlasím se zpracováním osobních údajů podle "
             "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
             "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>.",
-        ) % self.campaign
+        ) % self.campaign + self.campaign.extra_agreement_text
         return ret_val
 
     class Meta:
