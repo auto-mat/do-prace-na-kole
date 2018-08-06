@@ -148,6 +148,8 @@ class CompetitionResult(models.Model):
         team = self.get_team()
         if team:
             return team.subsidiary.city
+        if self.company:
+            return self.company.city
 
     def get_result(self):
         """ Get result in kilometers rounded to reasonable number of decimal places. """

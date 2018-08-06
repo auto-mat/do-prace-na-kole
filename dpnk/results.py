@@ -355,7 +355,7 @@ def recalculate_result(competition, competitor):  # noqa
 
     elif competition.competitor_type == 'company':
         company = competitor
-        user_attendances = UserAttendance.objects.filter(related_company_admin__administrated_company=company, campaign=competition.campaign)
+        user_attendances = UserAttendance.objects.filter(team__subsidiary__company=company, campaign=competition.campaign)
         if not user_attendances:
             CompetitionResult.objects.filter(company=company, competition=competition).delete()
             return
