@@ -377,7 +377,7 @@ class PaymentTypeView(
                     mark_safe_lazy(message + " " + _("Pokračujte na <a href='%s'>zadávání jízd</a>.") % reverse("profil")),
                     self.template_name,
                 )
-            if not request.user_attendance.t_shirt_size:
+            if request.user_attendance.campaign.has_any_tshirt and not request.user_attendance.t_shirt_size:
                 raise exceptions.TemplatePermissionDenied(
                     _("Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"),
                     self.template_name,
@@ -826,6 +826,7 @@ class RidesView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesM
         context_data['competition_phase'] = campaign.phase("competition")
         context_data['commute_modes'] = models.CommuteMode.objects.all()
         context_data['today'] = util.today()
+        context_data['num_columns'] = 3 if campaign.recreational else 2
         return context_data
 
 
@@ -1824,7 +1825,7 @@ def view_edit_trip(request, date, direction):
         parse_error = True
     if parse_error:
         raise exceptions.TemplatePermissionDenied(_("Nemůžete editovat cesty ke starším datům."))
-    if direction not in ["trip_to", "trip_from"]:
+    if direction not in ["trip_to", "trip_from", "recreational"]:
         raise exceptions.TemplatePermissionDenied(_("Neplatný směr cesty."))
     if not request.user_attendance.campaign.day_active(date):
         return TripView.as_view()(request, date=date, direction=direction)

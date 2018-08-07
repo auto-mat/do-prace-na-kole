@@ -22,6 +22,8 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from dpnk.models import Campaign
+
 
 class TShirtSize(models.Model):
     """Velikost trička"""
@@ -32,7 +34,7 @@ class TShirtSize(models.Model):
         null=False,
     )
     campaign = models.ForeignKey(
-        'dpnk.Campaign',
+        Campaign,
         verbose_name=_(u"Kampaň"),
         null=False,
         blank=False,

@@ -56,6 +56,11 @@ class CommuteMode(models.Model):
         default=True,
         null=False,
     )
+    # The difference between eco and does_count is that
+    # does_count is also set for car trips and other
+    # non-ecological modes of transportation.
+    # does_count is not set only for the commute mode
+    # "No trip".
     eco = models.BooleanField(
         verbose_name=_("Ekologický"),
         default=True,

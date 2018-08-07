@@ -31,6 +31,13 @@
       {% if competition_phase.date_to %}{% trans "do" %} {{ competition_phase.date_to }}{% endif %}
    </th>
 </tr>
+{% if user_attendance.campaign.recreational %}
+<tr class="info">
+   <td>
+      {% trans "Celková uražená vzdálenost" %}: {{ user_attendance.trip_length_total_including_recreational_rounded|intcomma }}&nbsp;km
+   </td>
+</tr>
+{% endif %}
 <tr class="info">
    <td>
       {% trans "Uražená započítaná vzdálenost" %}: {{ user_attendance.trip_length_total_rounded|intcomma }}&nbsp;km (<a href="{% url "rides_details" %}">{% trans "Podrobný přehled jízd" %}</a>)
@@ -93,12 +100,15 @@
    <tr class="info">
       <th scope="col">{% trans "Do práce" %}</th>
       <th scope="col">{% trans "Z práce" %}</th>
+      {% if user_attendance.campaign.recreational %}
+      <th scope="col">{% trans "Výlety" %}</th>
+      {% endif %}
    </tr>
 </thead>
 {% for trip_form in formset %}
-   {% if forloop.counter0|divisibleby:2 %}
+   {% if forloop.counter0|divisibleby:num_columns %}
       <tr class="info">
-         <th colspan="2" scope="row" class="date{% if not trip_form.working_day %} weekend-day{% endif %}">
+         <th colspan="{{num_columns}}" scope="row" class="date{% if not trip_form.working_day %} weekend-day{% endif %}">
             {{ trip_form.initial.date|naturalday:"D j. n. \<\s\p\a\n\>Y\<\/\s\p\a\n\>"|safe }}
          </th>
       </tr>
@@ -106,6 +116,7 @@
    {% endif %}
       <td class="{% if not trip_form.instance.id %}un{% endif %}changed">
          {% bootstrap_form trip_form %}
+         {% if user_attendance.campaign.tracks %}
          <a class="pin" href="{% url "trip" date=trip_form.get_date direction=trip_form.get_direction %}" data-toggle="tooltip" data-placement="top" title="{% trans 'Zadat trasu v mapě nebo nahrát GPX soubor' %}">
             {% if trip_form.instance.track_isnull or not trip_form.instance.distance %}
             <span class="glyphicon glyphicon-map-marker"></span>
@@ -113,12 +124,13 @@
             <span class="glyphicon glyphicon-edit"></span>
             {% endif %}
          </a>
+         {% endif %}
       </td>
-   {% if forloop.counter|divisibleby:2 %}
+   {% if forloop.counter|divisibleby:num_columns %}
    </tr>
    {% endif %}
 {% endfor %}
-<tr><td colspan="2">
+<tr><td colspan="{{num_columns}}">
 <input type="submit" name="submit" value="{% trans "Uložit jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-bottom">
 </td></tr>
 </table>

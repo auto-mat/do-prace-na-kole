@@ -283,7 +283,7 @@ class GetCompetitorsTests(TestCase):
     FAKE_DATE=datetime.date(year=2017, month=5, day=5),
 )
 class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
-    def setUp(self):
+    def setUp(self, recreational=False):
         super().setUp()
         competition_phase = mommy.make(
             "Phase",
@@ -292,6 +292,9 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
             date_to="2017-5-20",
         )
         self.testing_campaign = competition_phase.campaign
+        if recreational:
+            self.testing_campaign.recreational = True
+            self.testing_campaign.save()
         team = mommy.make('Team', campaign=self.testing_campaign)
         mommy.make(
             "UserAttendance",
@@ -417,3 +420,35 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         )
         result = results.get_userprofile_length([self.user_attendance], competition)
         self.assertEquals(result, 1.0)
+
+
+class RecreationalResultsTests(ResultsTests):
+    def setUp(self):
+        super().setUp(recreational=True)
+        mommy.make(
+            'Trip',
+            commute_mode_id=2,
+            distance='3',
+            direction='recreational',
+            date='2017-05-04',
+            user_attendance=self.user_attendance,
+        )
+
+    def test_get_userprofile_length_recreational(self):
+        competition = mommy.make(
+            'Competition',
+            competition_type='length',
+            competitor_type='single_user',
+            campaign=self.testing_campaign,
+            date_from=datetime.date(2017, 4, 3),
+            date_to=datetime.date(2017, 5, 23),
+            commute_modes=models.CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot')),
+        )
+        result = results.get_userprofile_length([self.user_attendance], competition, recreational=True)
+        self.assertEquals(result, 8.0)
+
+        util.rebuild_denorm_models([self.user_attendance])
+        self.user_attendance.refresh_from_db()
+
+        result = self.user_attendance.total_trip_length_including_recreational
+        self.assertEquals(result, 8.0)

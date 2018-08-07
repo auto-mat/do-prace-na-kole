@@ -209,6 +209,10 @@ class Competition(models.Model):
         blank=False,
         null=False,
     )
+    recreational = models.BooleanField(
+        verbose_name=_("Započítávají se i rekreační jízdy?"),
+        default=False,
+    )
 
     def get_minimum_rides_base(self):
         return self.minimum_rides_base
@@ -353,7 +357,9 @@ class Competition(models.Model):
             columns.append(('occupation', 'get_occupation', _("Pro&shy;fe&shy;se")))
             columns.append(('sex', 'get_sex', _("Po&shy;hla&shy;ví")))
 
-        columns.append(('city', 'get_city', _("Měs&shy;to")))
+        if self.competitor_type != 'company':
+            columns.append(('city', 'get_city', _("Měs&shy;to")))
+
         return columns
 
     def has_admission(self, user_attendance):

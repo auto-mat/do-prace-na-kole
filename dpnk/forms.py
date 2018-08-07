@@ -485,7 +485,7 @@ class InviteForm(SubmitMixin, forms.Form):
             self.free_capacity = 0
         ret_val = super().__init__(*args, **kwargs)
         fields = []
-        for i in range(1, self.free_capacity + 1):
+        for i in range(1, min(self.free_capacity + 1, 11)):
             field_name = 'email%s' % i
             self.fields[field_name] = forms.EmailField(
                 label=_("E-mail kolegy %s") % i,
@@ -575,14 +575,21 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 intcomma(self.user_attendance.beneficiary_admission_fee()),
             )),
             ('company', _("Účastnický poplatek mi platí zaměstnavatel.")),
-            ('member_wannabe', mark_safe_lazy(
-                _(
-                    "Chci účastnický poplatek zdarma (pro ty, kteří chtějí trvale podporovat udržitelnou mobilitu). "
-                    "<i class='fa fa-heart'></i>",
-                ),
-            )),
-            ('coupon', _("Chci uplatnit voucher (sleva či účastnický poplatek zdarma, např. pro Klub přátel).")),
         ]
+        if self.user_attendance.campaign.club_membership_integration:
+            self.fields['payment_type'].choices.extend([
+                ('member_wannabe', mark_safe_lazy(
+                    _(
+                        "Chci účastnický poplatek zdarma (pro ty, kteří chtějí trvale podporovat udržitelnou mobilitu). "
+                        "<i class='fa fa-heart'></i>",
+                    ),
+                )),
+                ('coupon', _("Chci uplatnit voucher (sleva či účastnický poplatek zdarma, např. pro Klub přátel).")),
+            ])
+        else:
+            self.fields['payment_type'].choices.extend([
+                ('coupon', _("Chci uplatnit voucher (sleva či účastnický poplatek zdarma).")),
+            ])
         return ret_val
 
 
@@ -855,8 +862,8 @@ class UserAttendanceUpdateForm(CampaignMixin, forms.ModelForm):
         self.fields['personal_data_opt_in'].label = _(
             "Souhlasím se zpracováním osobních údajů podle "
             "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
-            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>.",
-        ) % self.campaign
+            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>. %s",
+        ) % (self.campaign, self.campaign.extra_agreement_text)
         return ret_val
 
     class Meta:

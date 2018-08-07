@@ -96,6 +96,11 @@ class Campaign(Pricable, models.Model):
         default=False,
         null=False,
     )
+    extra_agreement_text = models.TextField(
+        verbose_name=_("Další text pro uživatelské souhlas"),
+        blank=True,
+        default="",
+    )
     days_active = models.PositiveIntegerField(
         verbose_name=_("Počet minulých dní, které jdou zapisovat"),
         default=7,
@@ -195,10 +200,22 @@ class Campaign(Pricable, models.Model):
         null=True,
         blank=True,
     )
+    club_membership_integration = models.BooleanField(
+        verbose_name=_("Povolit integraci s klubem přátel?"),
+        default=True,
+    )
     track_required = models.BooleanField(
         verbose_name=_("Je povinné zadávat trasu"),
         default=True,
         null=False,
+    )
+    tracks = models.BooleanField(
+        verbose_name=_("Umožnit soutěžícím uložit trasu?"),
+        default=True,
+    )
+    recreational = models.BooleanField(
+        verbose_name=_("Lze zadávat i výlety"),
+        default=False,
     )
     wp_api_url = models.URLField(
         default="http://www.dopracenakole.cz",
@@ -307,8 +324,14 @@ class Campaign(Pricable, models.Model):
             'payment_created',
         ).distinct()
 
-    @depend_on_related('TShirtSize', foreign_key='tshirtsize_set')
+    def get_directions(self):
+        if self.recreational:
+            return ('trip_to', 'trip_from', 'recreational')
+        else:
+            return ('trip_to', 'trip_from')
+
     @denormalized(models.BooleanField, default=True)
+    @depend_on_related('t_shirt_delivery.TShirtSize', type='backward', foreign_key='campaign')
     def has_any_tshirt(self):
         return self.tshirtsize_set.exists()
 

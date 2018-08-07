@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from dpnk.models import Campaign
 from dpnk.models import CommuteMode
 
 from modeltranslation.translator import TranslationOptions, register
@@ -32,3 +33,13 @@ class CommuteModeTranslationOptions(TranslationOptions):
         'name': None,
         'tooltip': None,
     }
+
+
+@register(Campaign)
+class CampaignTranslationOptions(TranslationOptions):
+    fields = (
+        'name',
+        'email_footer',
+        'free_entry_cases_html',
+        'extra_agreement_text',
+    )
