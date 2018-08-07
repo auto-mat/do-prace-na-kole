@@ -210,7 +210,7 @@ class Competition(models.Model):
         null=False,
     )
     recreational = models.BooleanField(
-        verbose_name=_("Započítá se i rekreační jízdy?"),
+        verbose_name=_("Započítávají se i rekreační jízdy?"),
         default=False,
     )
 

@@ -98,7 +98,6 @@ class Campaign(Pricable, models.Model):
     )
     extra_agreement_text = models.TextField(
         verbose_name=_("Další text pro uživatelské souhlas"),
-        null=True,
         blank=True,
         default="",
     )
@@ -202,7 +201,7 @@ class Campaign(Pricable, models.Model):
         blank=True,
     )
     club_membership_integration = models.BooleanField(
-        verbose_name=_("Integrace s klubem přátel"),
+        verbose_name=_("Povolit integraci s klubem přátel?"),
         default=True,
     )
     track_required = models.BooleanField(
@@ -211,7 +210,7 @@ class Campaign(Pricable, models.Model):
         null=False,
     )
     tracks = models.BooleanField(
-        verbose_name=_("Uloží se trasu"),
+        verbose_name=_("Umožnit soutěžícím uložit trasu?"),
         default=True,
     )
     recreational = models.BooleanField(

@@ -232,12 +232,8 @@ def get_team_frequency(user_attendancies, competition=None, day=None):
     return rides_count, working_trips_count, float(rides_count) / working_trips_count
 
 
-def get_userprofile_nonreduced_length(user_attendances, competition, recreational=False):
+def get_userprofile_length(user_attendances, competition, recreational=False):
     return get_trips(user_attendances, competition, recreational=recreational).aggregate(Sum('distance'))['distance__sum'] or 0
-
-
-def get_userprofile_length(*args, **kwargs):
-    return get_userprofile_nonreduced_length(*args, **kwargs)
 
 
 def get_userprofile_frequency(user_attendance, competition=None, day=None):

@@ -325,10 +325,6 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def trip_length_total_rounded(self):
         return round(self.trip_length_total, 2)
 
-    def get_nonreduced_length(self):
-        from .. import results
-        return results.get_userprofile_nonreduced_length([self], self.campaign.phase("competition"))
-
     @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Trip')
     def total_trip_length_including_recreational(self):

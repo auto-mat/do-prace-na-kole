@@ -7,7 +7,7 @@
 {% with user_attendance.get_emissions as emissions %}
 <table class="table">
 <tr>
-   <td>{% trans "Ujetá vzdálenost" %}</td><td>{{ user_attendance.get_nonreduced_length|floatformat:1 }}&nbsp;km</td>
+   <td>{% trans "Ujetá vzdálenost" %}</td><td>{{ user_attendance.trip_length_total|floatformat:1 }}&nbsp;km</td>
 </tr>
 <tr>
    <td>CO<sub>2</sub></td><td>{{ emissions.co2|intcomma }}&nbsp;g</td>
