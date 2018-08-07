@@ -908,7 +908,7 @@ class DiplomasView(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, 
     registration_phase = 'profile_view'
 
     def get_context_data(self, *args, **kwargs):
-        user_attendances = self.user_attendance.userprofile.userattendance_set.all()
+        user_attendances = self.user_attendance.userprofile.userattendance_set.all().order_by('-id')
         context_data = super().get_context_data(*args, **kwargs)
         context_data['user_attendances'] = user_attendances
         return context_data
