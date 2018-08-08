@@ -4,7 +4,7 @@
   "timeout": 120000,
   "registry": {
     "search": [
-      "https://bower.herokuapp.com"
+      "https://registry.bower.io"
     ]
   }
 }

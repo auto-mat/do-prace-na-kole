@@ -99,7 +99,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                         city=self.user_attendance.team.subsidiary.city.slug,
                     ),
                 )
-            if not self.user_attendance.track_complete():
+            if not self.user_attendance.track_complete() and self.user_attendance.campaign.tracks:
                 messages.info(
                     request,
                     format_html(

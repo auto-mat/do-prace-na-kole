@@ -358,6 +358,7 @@ class PaymentTypeViewTests(TestCase):
             team__subsidiary__company__name="Testing company",
             team__campaign=self.campaign,
         )
+        self.user_attendance.campaign.save()
         self.client.force_login(self.user_attendance.userprofile.user, settings.AUTHENTICATION_BACKENDS[0])
 
     def test_dpnk_payment_type_with_discount_coupon(self):
@@ -416,6 +417,7 @@ class PaymentTypeViewTests(TestCase):
         }
         self.user_attendance.t_shirt_size = None
         self.user_attendance.save()
+        self.assertTrue(self.user_attendance.campaign.has_any_tshirt)
         response = self.client.post(reverse('typ_platby'), post_data, follow=True)
         self.assertContains(response, "Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko", status_code=403)
 
@@ -2459,7 +2461,7 @@ class TestNotLoggedIn(TestCase):
     MEDIA_ROOT="dpnk/test_files",
 )
 class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
-    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips']
+    fixtures = ['sites', 'campaign', 'auth_user', 'users', 'transactions', 'batches', 'trips', 'commute_mode']
 
     def setUp(self):
         super().setUp()

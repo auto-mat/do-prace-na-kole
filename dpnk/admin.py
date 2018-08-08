@@ -203,7 +203,7 @@ class CompanyAdminInline(NestedTabularInline):
 
 
 @admin.register(models.Company)
-class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ExportMixin, NestedModelAdmin):
+class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportExportMixin, NestedModelAdmin):
     list_display = (
         'name',
         'subsidiaries_text',
@@ -1341,8 +1341,11 @@ class CompanyAdminResource(resources.ModelResource):
             'can_confirm_payments',
             'will_pay_opt_in',
             'note',
+            'sitetree_postfix',
             'motivation_company_admin',
             'campaign',
+            'tracks',
+            'recreational',
         ]
 
 

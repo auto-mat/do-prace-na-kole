@@ -54,6 +54,7 @@ class Trip(models.Model):
     DIRECTIONS = [
         ('trip_to', _(u"Tam")),
         ('trip_from', _(u"Zpět")),
+        ('recreational', _(u"Výlet")),
     ]
     DIRECTIONS_DICT = dict(DIRECTIONS)
 

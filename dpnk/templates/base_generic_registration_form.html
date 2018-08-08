@@ -10,23 +10,22 @@
 {% block second_menu %}
 {{ block.super }}
 {% if not user_attendance.entered_competition %}
-   <ul class="navbar nav navbar-nav steps the_submenu">
-
-      <li class="{% if registration_phase == 'upravit_profil' %}active{% endif %} {% if not user_attendance.userprofile.profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' %}">1. {% trans "Osobní údaje" %}</a></li>
-      <li class="{% if registration_phase == 'zmenit_tym' %}active{% endif %} {% if not user_attendance.team_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_tym' %}">2. {% if user_attendance.campaign.competitors_choose_team %}{% trans "Tým" %}{% else %}{% trans "Organizace" %}{% endif %}</a></li>
+   <ol class="navbar nav navbar-nav steps the_submenu" style="list-style: decimal inside;">
+      <li class="{% if registration_phase == 'upravit_profil' %}active{% endif %} {% if not user_attendance.userprofile.profile_complete %}un{% endif %}fulfilled"><a href="{% url 'upravit_profil' %}" style="display: list-item;"> {% trans "Osobní údaje" %}</a></li>
+      <li class="{% if registration_phase == 'zmenit_tym' %}active{% endif %} {% if not user_attendance.team_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_tym' %}" style="display: list-item;"> {% if user_attendance.campaign.competitors_choose_team %}{% trans "Tým" %}{% else %}{% trans "Organizace" %}{% endif %}</a></li>
       {% if user_attendance.campaign.has_any_tshirt %}
-         <li class="{% if not user_attendance.team_complete %}disabled{% endif %}{% if registration_phase == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}">3. {% trans "Triko" %}</a></li>
+         <li class="{% if not user_attendance.team_complete %}disabled{% endif %}{% if registration_phase == 'zmenit_triko' %}active{% endif %} {% if not user_attendance.tshirt_complete %}un{% endif %}fulfilled"><a href="{% url 'zmenit_triko' %}" style="display: list-item;"> {% trans "Triko" %}</a></li>
       {% endif %}
       {% if user_attendance.has_admission_fee %}
          <li class="
             {% if not user_attendance.tshirt_complete %}disabled{% endif %}
             {% if registration_phase == 'typ_platby' %}active{% endif %}
             {% if not user_attendance.payment_complete %}un{% endif %}fulfilled
-         ">
-            <a href="{% url 'typ_platby' %}">4. {% trans "Platba" %}</a>
+            ">
+            <a href="{% url 'typ_platby' %}"  style="display: list-item;"> {% trans "Platba" %}</a>
          </li>
       {% endif %}
-   </ul>
+   </ol>
    {% endif %}
 {% endblock %}
 

@@ -210,3 +210,4 @@ class TestActions(TestCase):
         actions.create_invoices(self.modeladmin, self.request, queryset, celery=False)
         num_invoices = len(models.Invoice.objects.all())
         self.assertEquals(num_invoices, 2)
+        self.assertEquals(len(models.Invoice.objects.get(pk=2).payment_set.all()), 1)
