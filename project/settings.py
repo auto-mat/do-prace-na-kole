@@ -397,12 +397,8 @@ LEAFLET_CONFIG = {
     'SPATIAL_EXTENT': [11.953, 48.517, 19.028, 51.097],
 }
 
-CORS_ORIGIN_WHITELIST = [
-    "dpnk.dopracenakole.cz",
-    "dpnk2016.dopracenakole.cz",
-    "skoly2016.dopracenakole.cz",
-    "www.dopracenakole.cz",
-    "dopracenakole.cz",
+CORS_ORIGIN_REGEX = [
+    r'^(https?://)?(\w+\.)?dopracenakole\.cz$',
 ]
 
 DBBACKUP_BACKUP_DIRECTORY = normpath(PROJECT_ROOT, 'db_backup')

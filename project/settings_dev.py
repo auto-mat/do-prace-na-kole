@@ -21,7 +21,7 @@
 import os
 
 from .settings import *  # noqa
-from .settings import CORS_ORIGIN_WHITELIST, INSTALLED_APPS, LOGGING, MIDDLEWARE, PROJECT_ROOT, STATIC_URL, TEMPLATES, normpath
+from .settings import CORS_ORIGIN_REGEX, INSTALLED_APPS, LOGGING, MIDDLEWARE, PROJECT_ROOT, STATIC_URL, TEMPLATES, normpath
 
 ADMINS = (
     ('', ''),
@@ -91,9 +91,9 @@ ALLOWED_HOSTS = [
     '.lvh.me',
 ]
 
-CORS_ORIGIN_WHITELIST += [
-    "dpnk2016.localhost:8000",
-    "dpnk.localhost:8000",
+CORS_ORIGIN_REGEX += [
+    r'^(https?://)?(\w+\.)?localhost$',
+    r'^(https?://)?(\w+\.)?lvh.me$',
 ]
 
 MIDDLEWARE += [
