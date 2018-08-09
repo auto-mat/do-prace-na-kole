@@ -229,6 +229,17 @@ class Campaign(Pricable, models.Model):
         null=True,
         blank=True,
     )
+    web = models.URLField(
+        verbose_name=_("Web kampáně"),
+        default="http://www.dopracenakole.cz",
+        blank=True,
+    )
+    contact_email = models.CharField(
+        verbose_name=_("Kontaktní e-mail"),
+        default="kontakt@dopracenakole.cz",
+        max_length=80,
+        blank=False,
+    )
     sitetree_postfix = models.CharField(
         verbose_name=_("Postfix pro menu"),
         max_length=60,
