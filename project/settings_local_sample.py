@@ -1,108 +1,16 @@
 # -*- coding: utf-8 -*-
-# import datetime
+from .settings import LOGGING
+from .settings_dev import *  # noqa
 
-from settings import *  # noqa
-from settings import LOGGING, TEMPLATES  # , INSTALLED_APPS, MIDDLEWARE
-
-ADMINS = (
-    ('Your name', 'your.name@email.com'),
-)
-DEBUG = True
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SECURE_BROWSER_XSS_FILTER = False
-SECURE_CONTENT_TYPE_NOSNIFF = False
-X_FRAME_OPTIONS = ''
-DEFAULT_FROM_EMAIL = 'Do práce na kole <your.name@email.com>'
-SERVER_EMAIL = 'Do práce na kole <your.name@email.com>'
-
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = '/tmp/dpnk-emails'
-
-TEMPLATES[0]["OPTIONS"]["loaders"] = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-TEMPLATES[0]["OPTIONS"]["debug"] = True
-
-AKLUB_URL = "http://localhost:8001"
-
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    '.localhost',
-    '.dopracenakole.cz',
-    '.testserver',
-    'example.com',
-    '.example.com',
-    '*',
-]
-
-# Uncomment to add support for debug toolbar
-"""
-INSTALLED_APPS += (
-    'rosetta',
-    'debug_toolbar',
-    'template_timings_panel',
-)
-
-
-MIDDLEWARE += [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
-]
-
-
-DEBUG_TOOLBAR_PANELS = [
-    'debug_toolbar.panels.versions.VersionsPanel',
-    'debug_toolbar.panels.timer.TimerPanel',
-    'debug_toolbar.panels.settings.SettingsPanel',
-    'debug_toolbar.panels.headers.HeadersPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-    'debug_toolbar.panels.templates.TemplatesPanel',
-    'debug_toolbar.panels.cache.CachePanel',
-    'debug_toolbar.panels.signals.SignalsPanel',
-    'debug_toolbar.panels.logging.LoggingPanel',
-    'debug_toolbar.panels.redirects.RedirectsPanel',
-]
-"""
-
-SECRET_KEY = 'CHANGE_ME'
-
-LOGGING['handlers']['logfile']['filename'] = "dpnk.log"
-
-
-def custom_show_toolbar(request):
-    if request.META['SERVER_NAME'] != 'testserver':
-        return True  # Always show toolbar, for example purposes only.
-
-
-DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TEMPLATE_CONTEXT': True,
-    'INTERCEPT_REDIRECTS': False,
-    'SHOW_TOOLBAR_CALLBACK': 'project.settings_local.custom_show_toolbar',
-    'HIDE_DJANGO_SQL': False,
-    'TAG': 'div',
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': os.environ.get('DPNK_DB_NAME', 'dpnk'),
+        'USER': os.environ.get('DPNK_DB_USER', 'dpnk'),
+        'PASSWORD': os.environ.get('DPNK_DB_PASSWORD', ''),
+        'HOST': os.environ.get('DPNK_DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DPNK_DB_PORT', ''),
+        'CONN_MAX_AGE': 0,
+    },
 }
-
-MAILING_API_KEY = ''
-
-PAYU_KEY_1 = ''
-PAYU_KEY_2 = ''
-PAYU_POS_AUTH_KEY = ''
-PAYU_POS_ID = ''
-HEADER_COLOR = "#000000"
-# FAKE_DATE = datetime.date(year=2017, month=5, day=5)
-
-COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = False
-
-GOOGLE_TAG_ID = ""
-
-FIO_TOKEN = ''
-
-BROKER_URL = 'amqp://@rabbit'
-CELERY_BROKER_URL = 'amqp://guest:**@rabbit:5672//'
-BROKER_BACKEND = "librabbitmq"
+SECRET_KEY = 'CHANGE_ME'
