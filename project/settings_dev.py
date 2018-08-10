@@ -54,8 +54,7 @@ INSTALLED_APPS += (
 CELERY_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/dpnk-emails'
 
-SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  # XXX
-SITE_URL = 'http://localhost/~petr/dpnk-wp/'
+SITE_URL = 'localhost:8000'
 DJANGO_URL = 'http://localhost:8000'
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
