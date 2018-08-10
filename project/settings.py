@@ -41,8 +41,6 @@ sys.path.append(normpath(PROJECT_ROOT, "project"))
 
 DEBUG = False
 
-PRODUCTION_ENVIRONMENT = os.environ.get('DPNK_PRODUCTION_ENVIRONMENT', False)
-
 ADMINS = (
     ('Petr Dlouhý', 'petr.dlouhy@auto-mat.cz'),
 )
@@ -93,6 +91,8 @@ LANGUAGES = (
 LANGUAGE_CODE = 'cs'
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'cs'
 MODELTRANSLATION_LANGUAGES = ('en', 'cs', 'dsnkcs')
+MODELTRANSLATION_FALLBACK_LANGUAGES = ('cs', 'dsnkcs', 'en')
+MODELTRANSLATION_ENABLE_FALLBACKS = True
 SITE_ID = os.environ.get('DPNK_SITE_ID', 1)
 USE_I18N = True
 USE_L10N = True
@@ -371,13 +371,9 @@ LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy("profil")
 LOGOUT_NEXT_PAGE = reverse_lazy('profil')
 DJANGO_URL = ''
-SMART_SELECTS_URL_PREFIX = ""
 USE_DJANGO_JQUERY = True
 JQUERY_URL = None
-if PRODUCTION_ENVIRONMENT:
-    AKLUB_URL = "https://klub.auto-mat.cz"
-else:
-    AKLUB_URL = "https://devel-klub.auto-mat.cz"
+AKLUB_URL = os.environ.get('DPNK_AKLUB_URL', "https://klub.auto-mat.cz")
 
 LEAFLET_CONFIG = {
     'DEFAULT_CENTER': (50.0866699218750000, 14.4387817382809995),
@@ -397,12 +393,8 @@ LEAFLET_CONFIG = {
     'SPATIAL_EXTENT': [11.953, 48.517, 19.028, 51.097],
 }
 
-CORS_ORIGIN_WHITELIST = [
-    "dpnk.dopracenakole.cz",
-    "dpnk2016.dopracenakole.cz",
-    "skoly2016.dopracenakole.cz",
-    "www.dopracenakole.cz",
-    "dopracenakole.cz",
+CORS_ORIGIN_REGEX = [
+    r'^(https?://)?(\w+\.)?dopracenakole\.cz$',
 ]
 
 DBBACKUP_BACKUP_DIRECTORY = normpath(PROJECT_ROOT, 'db_backup')
@@ -555,10 +547,7 @@ MESSAGE_TAGS = {
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-if PRODUCTION_ENVIRONMENT:
-    HEADER_COLOR = "red"
-else:
-    HEADER_COLOR = "blue"
+HEADER_COLOR = os.environ.get('DPNK_HEADER_COLOR', "red")
 
 IGNORABLE_404_URLS = [
     re.compile(r'^/apple-touch-icon.*\.png$'),

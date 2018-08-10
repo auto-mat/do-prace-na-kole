@@ -21,7 +21,7 @@
 import os
 
 from .settings import *  # noqa
-from .settings import CORS_ORIGIN_WHITELIST, INSTALLED_APPS, LOGGING, MIDDLEWARE, PROJECT_ROOT, STATIC_URL, TEMPLATES, normpath
+from .settings import CORS_ORIGIN_REGEX, INSTALLED_APPS, LOGGING, MIDDLEWARE, PROJECT_ROOT, STATIC_URL, TEMPLATES, normpath
 
 ADMINS = (
     ('', ''),
@@ -54,8 +54,7 @@ INSTALLED_APPS += (
 CELERY_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/dpnk-emails'
 
-SMART_SELECTS_URL_PREFIX = "http://localhost:8000"  # XXX
-SITE_URL = 'http://localhost/~petr/dpnk-wp/'
+SITE_URL = 'localhost:8000'
 DJANGO_URL = 'http://localhost:8000'
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
@@ -91,9 +90,9 @@ ALLOWED_HOSTS = [
     '.lvh.me',
 ]
 
-CORS_ORIGIN_WHITELIST += [
-    "dpnk2016.localhost:8000",
-    "dpnk.localhost:8000",
+CORS_ORIGIN_REGEX += [
+    r'^(https?://)?(\w+\.)?localhost$',
+    r'^(https?://)?(\w+\.)?lvh.me$',
 ]
 
 MIDDLEWARE += [

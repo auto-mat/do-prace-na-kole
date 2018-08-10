@@ -6,7 +6,7 @@ A message for {{ user_attendance.userprofile }}, participating in the {{ user_at
 
 Hello,
 
-unfortunately, your membership in the {{user_attendance.team.name}} team has just been DECLINED by {{ denier }} for the following reason: {{reason}}
+unfortunately, your membership in the {{user_attendance.team.name}} team has just been declined by {{ denier }} for the following reason: {{reason}}
 You will have to sign in to edit your profile on
 {% block profile_link %}
 https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'zmenit_tym' %}
