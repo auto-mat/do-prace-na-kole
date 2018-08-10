@@ -41,8 +41,6 @@ sys.path.append(normpath(PROJECT_ROOT, "project"))
 
 DEBUG = False
 
-PRODUCTION_ENVIRONMENT = os.environ.get('DPNK_PRODUCTION_ENVIRONMENT', False)
-
 ADMINS = (
     ('Petr Dlouhý', 'petr.dlouhy@auto-mat.cz'),
 )
@@ -375,10 +373,7 @@ LOGOUT_NEXT_PAGE = reverse_lazy('profil')
 DJANGO_URL = ''
 USE_DJANGO_JQUERY = True
 JQUERY_URL = None
-if PRODUCTION_ENVIRONMENT:
-    AKLUB_URL = "https://klub.auto-mat.cz"
-else:
-    AKLUB_URL = "https://devel-klub.auto-mat.cz"
+AKLUB_URL = os.environ.get('DPNK_AKLUB_URL', "https://klub.auto-mat.cz")
 
 LEAFLET_CONFIG = {
     'DEFAULT_CENTER': (50.0866699218750000, 14.4387817382809995),
@@ -552,10 +547,7 @@ MESSAGE_TAGS = {
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-if PRODUCTION_ENVIRONMENT:
-    HEADER_COLOR = "red"
-else:
-    HEADER_COLOR = "blue"
+HEADER_COLOR = os.environ.get('DPNK_HEADER_COLOR', "red")
 
 IGNORABLE_404_URLS = [
     re.compile(r'^/apple-touch-icon.*\.png$'),
