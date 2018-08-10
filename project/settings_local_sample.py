@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from .settings import LOGGING
+import os
+
 from .settings_dev import *  # noqa
 
 DATABASES = {
