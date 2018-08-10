@@ -12,18 +12,12 @@ Váš e-mail, kterým se budete přihlašovat do vašeho profilu je {{ email }}.
 
 Soutěž začíná {{ user_attendance.campaign.competition_phase.date_from }} a končí {{ user_attendance.campaign.competition_phase.date_to }}.
 Než vyrazíte a začnete zaznamenávat své jízdy ve svém profilu https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}
-{% if user_attendance.campaign.competitors_choose_team %}
-• zkontrolujte si, že máte v týmu dost kolegů, a případně pozvěte další,
-{% endif %}
-{% if user_attendance.campaign.show_application_links %}
-• stáhněte si do svého chytrého telefonu aplikaci Urban Cyclers (https://www.dopracenakole.cz/aplikace), která vám jízdy do naší soutěže zapíše sama,
-{% endif %}
-{% if user_attendance.campaign.tracks %}
-• pokud chytrý telefon nemáte, nastavte si ve svém profilu svou typickou trasu, kterou budete jezdit. Usnadníte si tak každodenní zapisování jízd,
-{% endif %}
+{% if user_attendance.campaign.competitors_choose_team %}• zkontrolujte si, že máte v týmu dost kolegů, a případně pozvěte další,{% endif %}
+{% if user_attendance.campaign.show_application_links %}• stáhněte si do svého chytrého telefonu aplikaci Urban Cyclers (https://www.dopracenakole.cz/aplikace), která vám jízdy do naší soutěže zapíše sama,{% endif %}
+{% if user_attendance.campaign.tracks %}• pokud chytrý telefon nemáte, nastavte si ve svém profilu svou typickou trasu, kterou budete jezdit. Usnadníte si tak každodenní zapisování jízd,{% endif %}
 • sledujte novinky na našem webu ({{user_attendance.campaign.web}}) a podstránky vašeho města, pod kterým jste přihlášeni. Dozvíte se tak více o akcích ve vašem městě.
 
-Máte už spolujezdce? Soutěž bude pro Vás zábavnější, když se do ní zapojí i vaši známí. Koho byste rádi přizvali? Kolegy z vašeho nebo jiného oddělení? Vaše dodavatele nebo klienty? Rodinné příslučníky? Oslovte je a řekněte jim o soutěži.
+Máte už spolujezdce? Soutěž bude pro Vás zábavnější, když se do ní zapojí i vaši známí. Koho byste rádi přizvali? Kolegy z vašeho nebo jiného oddělení? Vaše dodavatele nebo klienty? Rodinné příslušníky? Oslovte je a řekněte jim o soutěži.
 
 Pokud si něčím nejste jistí, ozvěte se na <{{user_attendance.campaign.contact_email}}>.
 

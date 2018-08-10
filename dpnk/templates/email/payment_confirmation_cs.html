@@ -8,16 +8,14 @@ Vaše platba startovného byla potvrzena. {% if user_attendance.campaign.club_me
 
 Nyní se můžete soustředit na přípravu k soutěži.
 Máme pro Vás proto pár tipů:
-{% if user_attendance.campaign.show_application_links %}
-- stáhněte si aplikaci Urban Cyclers do Vašeho mobilního telefonu, šetrné kilometry, které se spuštěnou aplikací cestou do práce překonáte, se vám nahrajou automaticky do registračního systému.
-{% endif %}
-- Jste-li soutěživí, poohlédněte se po dobrých soupeřích a přesvědčte je k účasti v soutěži.
+{% if user_attendance.campaign.show_application_links %}• stáhněte si aplikaci Urban Cyclers do Vašeho mobilního telefonu, šetrné kilometry, které se spuštěnou aplikací cestou do práce překonáte, se vám nahrají automaticky do registračního systému.{% endif %}
+• Jste-li soutěživí, poohlédněte se po dobrých soupeřích a přesvědčte je k účasti v soutěži.
 
 {% if user_attendance.campaign.has_any_tshirt %}
 Nyní se také můžete těšit na startovní balíček s trikem!
 {% endif %}
 
-Vážíme si vašeho rozhodnutí účastnit se soutěže a těšíme se na viděnou v ulicích města se soutěžním trikem!
+Vážíme si vašeho rozhodnutí účastnit se soutěže a těšíme se na viděnou v ulicích města{% if user_attendance.campaign.has_any_tshirt %} se soutěžním trikem{% endif %}!
 Váš organizační tým soutěže {{ user_attendance.campaign }}
 
 ---
