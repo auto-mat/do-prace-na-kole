@@ -909,8 +909,13 @@ class DiplomasView(TitleViewMixin, UserAttendanceViewMixin, LoginRequiredMixin, 
 
     def get_context_data(self, *args, **kwargs):
         user_attendances = self.user_attendance.userprofile.userattendance_set.all().order_by('-id')
+        teams = []
+        for ua in self.user_attendance.userprofile.userattendance_set.all():
+            if ua.team:
+                teams.append(ua.team)
         context_data = super().get_context_data(*args, **kwargs)
         context_data['user_attendances'] = user_attendances
+        context_data['teams'] = teams
         return context_data
 
 

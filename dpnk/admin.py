@@ -939,6 +939,7 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
     raw_id_fields = ['subsidiary', ]
     actions = (
         actions.touch_items,
+        make_pdfsandwich,
     )
     form = models.team.TeamAdminForm
 
@@ -1660,4 +1661,16 @@ class DiplomaAdmin(PdfSandwichAdmin):
 
 @admin.register(models.DiplomaField)
 class DiplomaFieldAdmin(PdfSandwichFieldAdmin):
+    pass
+
+
+@admin.register(models.TeamDiploma)
+class TeamDiplomaAdmin(PdfSandwichAdmin):
+    search_fields = (
+        'obj__name',
+    )
+
+
+@admin.register(models.TeamDiplomaField)
+class TeamDiplomaFieldAdmin(PdfSandwichFieldAdmin):
     pass

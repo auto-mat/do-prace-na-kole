@@ -274,6 +274,14 @@ class Campaign(Pricable, models.Model):
         default='',
         on_delete=models.SET_NULL,
     )
+    team_diploma_sandwich_type = models.ForeignKey(
+        PdfSandwichType,
+        related_name='team_diploma_campaign',
+        null=True,
+        blank=True,
+        default='',
+        on_delete=models.SET_NULL,
+    )
 
     def sitetree_postfix_maintree(self):
         if self.sitetree_postfix:
