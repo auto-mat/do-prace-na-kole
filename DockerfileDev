@@ -1,0 +1,11 @@
+FROM petrdlouhy/dopracenakole
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get -qq update; apt-get -y install nodejs gettext libgettextpo-dev
+RUN npm install -g less bower
+ADD requirements-dev.txt requirements-dev.txt
+RUN pip3 install -r requirements-dev.txt
+ADD requirements-test.freeze.txt requirements-test.freeze.txt
+RUN pip3 install -r requirements-test.freeze.txt
+RUN useradd test
+RUN chsh test -s /bin/bash
+RUN mkdir /home/test ; chown test /home/test ; chgrp test /home/test
