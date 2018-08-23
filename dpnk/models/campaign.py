@@ -281,6 +281,9 @@ class Campaign(Pricable, models.Model):
         else:
             return "maintree"
 
+    def web(self):
+        return self.wp_api_url
+
     def __str__(self):
         return self.name
 
