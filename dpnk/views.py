@@ -648,7 +648,7 @@ def payment_status(request):
     )
     raw_response = codecs.decode(c.getresponse().read(), "utf-8")
     r = {}
-    for i in [i.split(':', 1) for i in raw_response.split('\n') if i != '']:
+    for i in [i.split(':', 1) for i in raw_response.split('\n') if i.strip() != '']:
         r[i[0]] = i[1].strip()
     check_sig(
         r['trans_sig'],
