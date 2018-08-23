@@ -31,6 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from .phase import Phase
 from .subsidiary import Subsidiary
+from .team_diploma import TeamDiploma
 
 logger = logging.getLogger(__name__)
 
@@ -189,6 +190,17 @@ class Team(models.Model):
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def name_with_members(self):
         return u"%s (%s)" % (self.name, u", ".join([u.userprofile.name() for u in self.members()]))
+
+    sandwich_model = TeamDiploma
+
+    def get_sandwich_type(self):
+        return self.campaign.team_diploma_sandwich_type
+
+    def diploma(self):
+        try:
+            return TeamDiploma.objects.get(obj=self)
+        except TeamDiploma.DoesNotExist:
+            return None
 
     def __str__(self):
         return "%s" % self.name_with_members
