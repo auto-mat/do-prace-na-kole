@@ -862,8 +862,9 @@ class UserAttendanceUpdateForm(CampaignMixin, forms.ModelForm):
         self.fields['personal_data_opt_in'].label = _(
             "Souhlasím se zpracováním osobních údajů podle "
             "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
-            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>. %s",
-        ) % (self.campaign, self.campaign.extra_agreement_text)
+            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže {campaign}</a>."
+            " {extra_agreement_text}",
+        ).format(campaign=self.campaign, extra_agreement_text=self.campaign.extra_agreement_text)
         return ret_val
 
     class Meta:
