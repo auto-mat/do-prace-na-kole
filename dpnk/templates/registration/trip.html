@@ -10,4 +10,5 @@
 {% url "application" as application_url %}
 <div class="text-info">{% blocktrans %}Tip: Trasy všech svých cest můžete nahrávat pomocí <a href="{{ application_url }}">mobilních aplikací</a>.{% endblocktrans %}</div>
 {{ block.super }}
+{% include "registration/application_link.html" %}
 {% endblock %}
