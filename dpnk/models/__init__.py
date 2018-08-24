@@ -44,6 +44,7 @@ from .phase import PHASE_TYPE_DICT, Phase
 from .questionnaire import Answer, Choice, ChoiceType, Question, QuestionForm, questionnaire_filename
 from .subsidiary import Subsidiary
 from .team import Team, post_user_team_changed, pre_user_team_changed
+from .team_diploma import TeamDiploma, TeamDiplomaField
 from .transactions import (
     COMPETITION_STATUSES, CommonTransaction, PACKAGE_STATUSES, PAYMENT_STATUSES, Payment, STATUS, Status, Transaction, UserActionTransaction,
 )
@@ -78,6 +79,8 @@ __all__ = (
     Answer,
     Subsidiary,
     Team,
+    TeamDiploma,
+    TeamDiplomaField,
     Transaction,
     CommonTransaction,
     Payment,

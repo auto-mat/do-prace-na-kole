@@ -7,6 +7,7 @@
 <table class="table table-hover">
    <tr>
       <th>{% trans "Kampaň" %}</th>
+      <th></th>
       <th>{% trans "Pravidenost" %}</th>
       <th>{% trans "Ujetých kilometrů" %}</th>
       <th>{% trans "Diplom" %}</th>
@@ -14,12 +15,36 @@
    {% for ua in user_attendances %}
    <tr>
       <td>{{ ua.campaign }}</td>
+      <td></td>
       <td>{{ ua.get_frequency_percentage|floatformat|intcomma }} %</td>
       <td>{{ ua.trip_length_total_rounded }} km</td>
       <td>
          {% if ua.diploma %}
          <a href="{{ ua.diploma.pdf.url }}">
-             <i class="fa fa-download"></i>{% trans "PDF s diplomem" %}
+             <i class="fa fa-download"></i> {% trans "PDF s diplomem" %}
+         </a>
+         {% endif %}
+      </td>
+   </tr>
+   {% endfor %}
+   <tr><th colspan="5">{% trans "Týmové výsledky" %}</th></tr>
+   <tr>
+      <th>{% trans "Kampaně" %}</th>
+      <th>{% trans "Jméno tymu" %}</th>
+      <th>{% trans "Pravidenost" %}</th>
+      <th>{% trans "Újetych kilometrů" %}</th>
+      <th>{% trans "Diplom" %}</th>
+   </tr>
+   {% for team in teams %}
+   <tr>
+      <td>{{ team.campaign }}</td>
+      <td>{{ team.name }}</td>
+      <td>{{ team.get_frequency_percentage|floatformat|intcomma }}%</td>
+      <td>{{ team.get_length|floatformat|intcomma }} Km</td>
+      <td>
+         {% if team.diploma %}
+         <a href="{{ team.diploma.pdf.url }}">
+             <i class="fa fa-download"></i> {% trans "PDF s diplomem" %}
          </a>
          {% endif %}
       </td>

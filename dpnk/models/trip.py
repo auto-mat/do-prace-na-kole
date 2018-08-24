@@ -167,6 +167,20 @@ class Trip(models.Model):
             return _('Dovolená')
         return str(self.commute_mode)
 
+    def get_application_link(self):
+        app_links = {
+            "strava": "https://www.strava.com/",
+            "urbancyclers": "https://play.google.com/store/apps/details?id=com.umotional.bikeapp",
+            "SuperLife": "https://play.google.com/store/apps/details?id=cz.cncenter.superlife",
+        }
+        if self.source_application in app_links:
+            return app_links[self.source_application]
+
+    def get_trip_link(self):
+        if self.source_application == 'strava':
+            return "<a href='%sactivities/%s'>View on Strava</a>" % (self.get_application_link(), self.source_id)
+        return ""
+
 
 @receiver(pre_save, sender=Trip)
 def trip_pre_save(sender, instance, **kwargs):

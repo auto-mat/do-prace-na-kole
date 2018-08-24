@@ -1,0 +1,8 @@
+{% load i18n %}
+{% if trip.get_application_link %}
+{% trans "Tato jízda byla nahrána z aplikace" %} <a href='{{trip.get_application_link}}'>{{trip.source_application}}</a>.
+{% endif %}
+{% if trip.get_trip_link %}
+{{trip.get_trip_link | safe}}
+{% endif %}
+
