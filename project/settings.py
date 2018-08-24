@@ -509,6 +509,7 @@ LOGGING = {
 
 RAVEN_CONFIG = {
     'dsn': os.environ.get('DPNK_RAVEN_DNS', ''),
+    'string_max_length': 10000,
 }
 
 try:
