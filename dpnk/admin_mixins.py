@@ -26,9 +26,9 @@ class CityAdminMixin(object):
     def get_queryset(self, request):
         queryset = super(admin.ModelAdmin, self).get_queryset(request)
         if request.user.has_perm('dpnk.can_edit_all_cities'):
-            return queryset.distinct()
+            return queryset
         kwargs = {self.queryset_city_param: request.user.userprofile.administrated_cities.all()}
-        return queryset.filter(**kwargs).distinct()
+        return queryset.filter(**kwargs)  # .distinct()
 
 
 def city_admin_mixin_generator(queryset_city):
