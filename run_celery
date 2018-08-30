@@ -1,0 +1,2 @@
+#!/bin/bash
+celery worker -A project.celery -l info -b amqp://@rabbit

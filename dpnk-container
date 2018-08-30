@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo docker run -it --env-file=docker.env --link dpnk-rabbit:rabbit --link dpnk-postgres:postgres --volume=$PWD:/dpnk-v:rw --entrypoint=/bin/bash --workdir=/dpnk-v -p 8000:8000 dpnk-test
