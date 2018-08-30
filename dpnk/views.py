@@ -1116,8 +1116,8 @@ class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
                 _(
                     '<div class="text-danger">Tento dotazník v systému nemáme.'
                     ' Pokud si myslíte, že by zde mělo jít vyplnit dotazník, napište prosím na'
-                    ' <a href="mailto:kontakt@dopracenakole.cz?subject=Neexistující dotazník">kontakt@dopracenakole.cz</a></div>'
-                ),
+                    ' <a href="mailto:{contact_email}?subject=Neexistující dotazník">{contact_email}</a></div>'
+                ).format(contact_email=request.user_attendance.campaign.contact_email),
                 status=401,
             )
         self.show_points = self.competition.has_finished() or self.userprofile.user.is_superuser
