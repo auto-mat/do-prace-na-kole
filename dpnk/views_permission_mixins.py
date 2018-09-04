@@ -147,11 +147,15 @@ class MustBeCompanyAdminMixin(object):
 
         raise exceptions.TemplatePermissionDenied(
             mark_safe_lazy(
-                "Tato stránka je určená pouze ověřeným firemním koordinátorům. "
-                "K této funkci se musíte nejdříve <a href='%s'>přihlásit</a>, a vyčkat na naše ověření. "
-                "Pokud na ověření čekáte příliš dlouho, kontaktujte naši podporu na "
-                "<a href='mailto:kontakt@dopracenakole.cz?subject=Neexistující soutěž'>kontakt@dopracenakole.cz</a>." %
-                reverse("company_admin_application"),
+                _(
+                    "Tato stránka je určená pouze ověřeným firemním koordinátorům. "
+                    "K této funkci se musíte nejdříve <a href='{admin_application}'>přihlásit</a>, a vyčkat na naše ověření. "
+                    "Pokud na ověření čekáte příliš dlouho, kontaktujte naši podporu na "
+                    "<a href='mailto:{contact_email}?subject=Přihlásit koordinátora'>{contact_email}</a>."
+                ).format(
+                    admin_application=reverse("company_admin_application"),
+                    contact_email=request.user_attendance.campaign.contact_email,
+                ),
             ),
             template_name=getattr(self, 'template_name', None),
         )

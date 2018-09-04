@@ -125,8 +125,7 @@ def send_unfilled_rides_notification(self, pks=None, campaign_slug=''):
 
 
 @shared_task(bind=True)
-def send_unpaid_invoice_notification(self, pks=None, campaign_slug=''):
-    days_unpaid = 14
+def send_unpaid_invoice_notification(self, pks=None, campaign_slug='', days_unpaid=7):
     queryset = get_notification_queryset(
         Invoice,
         days_unpaid,

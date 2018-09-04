@@ -278,7 +278,7 @@ class TestSendUnpaidInvoiceNotification(TestCase):
             company=self.company,
             sequence_number=None,
             campaign__phase_set=[testing_campaign().phase("competition")],
-            last_sync_time=datetime.datetime(2017, 5, 2, 12, 0, 0),
+            last_sync_time=datetime.datetime(2017, 5, 9, 12, 0, 0),
         )
         mail.outbox = []
         mail_count = tasks.send_unpaid_invoice_notification(campaign_slug=testing_campaign().slug)

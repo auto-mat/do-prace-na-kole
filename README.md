@@ -10,27 +10,17 @@ Dependencies
 
  - Docker
 
-Step 0: Check out and setup repo
---------------------------------
+Running the dev env
+===================
+
+Check out and setup repo
+------------------------
 
     $ git clone https://bitbucket.org/pdlouhy/do-prace-na-kole.git
     $ cd do-prace-na-kole
-    $ bower install
 
-Step 1: Create your database
-----------------------------
-
-    $ sudo su postgres
-    $ psql
-    # CREATE USER dpnk WITH PASSWORD 'foobar';
-    # CREATE DATABASE dpnk;
-    # grant all privileges on database dpnk to dpnk;
-    # create extension postgis;
-    # ALTER USER dpnk WITH SUPERUSER;
-    # \q
-
-Step 2: Create a docker.env file
---------------------------------
+Create a docker.env file
+------------------------
 
     DPNK_SECRET_KEY=lkjkljfdseioj
     DPNK_DB_NAME=dpnk
@@ -49,45 +39,51 @@ Step 2: Create a docker.env file
     STRAVA_CLIENT_ID=<some-id>
     STRAVA_CLIENT_SECRET=<some-secret>
 
-Step 3: Create `settings_local.py` by copying settings_local_sample.py
---------------------------------------------------------------------------
+Create `settings_local.py` by copying settings_local_sample_docker.py
+-------------------------------------------------------------------
 
     $ cd project
-    $ cp settings_local_sample.py settings_local.py
+    $ cp settings_local_sample_docker.py settings_local.py
     $ cd ..
 
-Now you're set up and you can run your test environment.
+Build the dev docker image
+--------------------------
 
-Step 4: Setup and launch postgis
---------------------------------
+    $ sudo docker build . -f DockerfileDev -t dpnk-test
+
+Setup and launch postgis
+------------------------
 
     $ sudo docker volume create dpnk-pgdata
     $ sudo docker run -v dpnk-pgdata:/var/lib/postgresql/data --hostname dpnk-postgres --name dpnk-postgres -e POSTGRES_PASSWORD=foobar -e POSTGRES_USER=dpnk -e PGDATA=/var/lib/postgresql/data/pgdata mdillon/postgis:9.6
 
 Relaunching the container:
 
-    $ docker start -a dpnk-postgres
+    $ ./postgres-container
 
 Note: By using multiple container names you can have multiple postgres containers and dbs and switch between the dbs for testing purposes. Perhaps have one db per git branch.
 
 Launching rabbitmq
 -----------------
 
-    $ sudo docker run --hostname dpnk-rabbit --name dpnk-rabbit --rm rabbitmq
+    $ ./rabbit-container
 
 Launching celery
 ----------------
-    $ sudo docker run -it --rm --env-file=docker.env --link dpnk-rabbit:rabbit --volume=<PATH_TO_SOURCE_DIR>/do-prace-na-kole:/dpnk-v:rw --workdir=/dpnk-v --entrypoint=/bin/bash --user=1000 petrdlouhy/dopracenakol
-    # celery worker -A project.celery -l info -b amqp://@rabbit
+    $ ./celery_container
 
 TODO: Add celery beat instructions
 
 Launching dpnk server
 ---------------------
 
-    $ sudo docker run -it --rm --env-file=docker.env --link dpnk-rabbit:rabbit --link dpnk-postgres:postgres --name dpnk-test --volume=<PATH_TO_SOURCE_DIR>/do-prace-na-kole:/dpnk-v:rw --workdir=/dpnk-v --entrypoint=/bin/bash --user=1000 -p 8000:8000 petrdlouhy/dopracenakole
+    $ ./dpnk_container
 
-    $ # The first time you launch you need to do migrations and load some fixtures...
+    $ # The first time you launch you need to do migrations and load some fixtures, get static files ect...
+    $ su test
+
+    $ bower install
+    $ python3 manage.py collectstatic
     $ python3 manage.py migrate
     $ python3 manage.py createsuperuser
     $ python3 manage.py loaddata dpnk/fixtures/commute_mode.json
