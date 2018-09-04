@@ -92,10 +92,12 @@ class Campaign(Pricable, models.Model):
         default=False,
         null=False,
     )
-    mailing_list_enabled = models.BooleanField(
+    mailing_list_enabled = models.NullBooleanField(
         verbose_name=_(u"Povolit mailing list"),
-        default=False,
-        null=False,
+        default=None,
+        null=True,
+        blank=True,
+        unique=True,  # Enabling mailing lists on more campaigns cause problems. This prevents it until it is fixed.
     )
     extra_agreement_text = models.TextField(
         verbose_name=_("Další text pro uživatelské souhlas"),
