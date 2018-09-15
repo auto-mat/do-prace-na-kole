@@ -27,8 +27,8 @@ ADMINS = (
     ('', ''),
 )
 DEBUG = True
-DEFAULT_FROM_EMAIL = 'Do práce na kole <>'
-SERVER_EMAIL = 'Do práce na kole <>'
+DEFAULT_FROM_EMAIL = 'Do práce na kole <contact@example.com>'
+SERVER_EMAIL = 'Do práce na kole <contact@example.com>'
 
 db_name = os.environ.get('DPNK_DB_NAME', 'dpnk')
 db_user = os.environ.get('DPNK_DB_USER', 'dpnk')
