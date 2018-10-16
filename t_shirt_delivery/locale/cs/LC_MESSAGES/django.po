@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-14 08:44+0200\n"
+"POT-Creation-Date: 2018-10-16 17:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,44 +18,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: t_shirt_delivery/actions.py:36
+#: t_shirt_delivery/actions.py:37
 #, python-format
 msgid "Vytvořena nová dávka obsahující %s položek"
 msgstr ""
 
-#: t_shirt_delivery/actions.py:39
+#: t_shirt_delivery/actions.py:40
 msgid "Vytvořit dávku z vybraných uživatelů"
 msgstr ""
 
-#: t_shirt_delivery/admin.py:149
+#: t_shirt_delivery/actions.py:43
+msgid "Hromadně stáhnout PDF"
+msgstr ""
+
+#: t_shirt_delivery/admin.py:161
 msgid "Označit balíky/krabice jako vyřízené"
 msgstr ""
 
-#: t_shirt_delivery/admin.py:237
+#: t_shirt_delivery/admin.py:250 t_shirt_delivery/admin.py:314
 msgid "ID krabice"
 msgstr ""
 
-#: t_shirt_delivery/admin.py:238 t_shirt_delivery/models/team_package.py:43
+#: t_shirt_delivery/admin.py:251 t_shirt_delivery/models/team_package.py:43
 msgid "Tým"
 msgstr ""
 
-#: t_shirt_delivery/admin.py:239 t_shirt_delivery/models/team_package.py:36
+#: t_shirt_delivery/admin.py:252 t_shirt_delivery/models/team_package.py:36
 msgid "Krabice"
 msgstr ""
 
-#: t_shirt_delivery/admin.py:394
+#: t_shirt_delivery/admin.py:422
 msgid "Trik k odeslání"
 msgstr ""
 
-#: t_shirt_delivery/admin.py:407
+#: t_shirt_delivery/admin.py:435
 msgid "Velikosti trik"
 msgstr ""
 
-#: t_shirt_delivery/admin.py:427
+#: t_shirt_delivery/admin.py:465
 msgid "Uživatel na dávku objednávek"
 msgstr ""
 
-#: t_shirt_delivery/admin.py:428
+#: t_shirt_delivery/admin.py:466
 msgid "Uživatelé na dávku objednávek"
 msgstr ""
 
@@ -88,8 +92,7 @@ msgstr ""
 msgid "Zařadit balíky k sestavení"
 msgstr ""
 
-#: t_shirt_delivery/filters.py:26
-#: t_shirt_delivery/models/subsidiary_box.py:143
+#: t_shirt_delivery/filters.py:26 t_shirt_delivery/models/subsidiary_box.py:143
 msgid "Všechny balíčky vyřízeny"
 msgstr ""
 
@@ -106,7 +109,7 @@ msgid "Datum vytvoření"
 msgstr ""
 
 #: t_shirt_delivery/models/delivery_batch.py:50
-#: t_shirt_delivery/models/t_shirt_size.py:36
+#: t_shirt_delivery/models/t_shirt_size.py:38
 msgid "Kampaň"
 msgstr ""
 
@@ -137,8 +140,8 @@ msgid "Dávky objednávek"
 msgstr ""
 
 #: t_shirt_delivery/models/package_transaction.py:32
-#: t_shirt_delivery/models/t_shirt_size.py:30
-#: t_shirt_delivery/models/t_shirt_size.py:72
+#: t_shirt_delivery/models/t_shirt_size.py:32
+#: t_shirt_delivery/models/t_shirt_size.py:74
 msgid "Velikost trička"
 msgstr ""
 
@@ -184,27 +187,27 @@ msgstr ""
 msgid "Počet vyřízených balíků"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:47
+#: t_shirt_delivery/models/t_shirt_size.py:49
 msgid "Posílá se?"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:52
+#: t_shirt_delivery/models/t_shirt_size.py:54
 msgid "Je dostupné?"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:53
+#: t_shirt_delivery/models/t_shirt_size.py:55
 msgid "Zobrazuje se v nabídce trik"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:58
+#: t_shirt_delivery/models/t_shirt_size.py:60
 msgid "Náhled trika"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:65
+#: t_shirt_delivery/models/t_shirt_size.py:67
 msgid "Cena"
 msgstr ""
 
-#: t_shirt_delivery/models/t_shirt_size.py:73
+#: t_shirt_delivery/models/t_shirt_size.py:75
 msgid "Velikosti trička"
 msgstr ""
 
