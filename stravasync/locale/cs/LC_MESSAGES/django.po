@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-14 08:44+0200\n"
+"POT-Creation-Date: 2018-10-16 17:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: stravasync/models.py:14
+#: stravasync/models.py:15
 msgid "Účet Strava"
 msgstr ""
 
-#: stravasync/models.py:15
+#: stravasync/models.py:16
 msgid "Účty Strava"
 msgstr ""
 
@@ -51,18 +51,22 @@ msgid ""
 msgstr ""
 
 #: stravasync/templates/stravasync/about.html:24
+msgid "Našli jsme následující aktivity:"
+msgstr ""
+
+#: stravasync/templates/stravasync/about.html:32
 msgid "Synchronizace selhala"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:27
+#: stravasync/templates/stravasync/about.html:35
 msgid "Poslední synchronizace proběhla "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:29
+#: stravasync/templates/stravasync/about.html:37
 msgid "Nastala chyba, synchronizace neproběhla."
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:35
+#: stravasync/templates/stravasync/about.html:43
 msgid ""
 "\n"
 "    Zlobí Vám synchronizace? Pokud potřebujete pomoc <a href=\"https://www."
@@ -70,23 +74,23 @@ msgid ""
 "    "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:43
+#: stravasync/templates/stravasync/about.html:51
 msgid "Synchronizovat"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:49
+#: stravasync/templates/stravasync/about.html:57
 msgid "Odpojit"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:52
+#: stravasync/templates/stravasync/about.html:60
 msgid "Ještě nejste propojeni se Stravou "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:55
+#: stravasync/templates/stravasync/about.html:63
 msgid "Synchronizovat i soukromé jízdy a zóny"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:56
+#: stravasync/templates/stravasync/about.html:64
 msgid ""
 "\n"
 "        Doporučujeme buď zadávat jízdy jako soukromé nebo <a href=\"https://"
@@ -96,15 +100,15 @@ msgid ""
 "        "
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:60
+#: stravasync/templates/stravasync/about.html:68
 msgid "Propojit se Stravou"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:64
+#: stravasync/templates/stravasync/about.html:72
 msgid "Jak to funguje"
 msgstr ""
 
-#: stravasync/templates/stravasync/about.html:65
+#: stravasync/templates/stravasync/about.html:73
 #, python-format
 msgid ""
 "\n"

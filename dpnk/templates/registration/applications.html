@@ -3,7 +3,7 @@
 
 {% block form %}
    {% if perms.dpnk.can_see_application_links and not campaign.show_application_links %}
-      <div class="alert alert-danger"> {% trans "Odkazy zobrazené jen pro testovaci učeli. Umožnět přistup k odkazům přes nastavení kampáňě:" %} {% trans "Ukázat odkazy na aplikace" %} </div><br/>
+      <div class="alert alert-danger"> {% trans "Odkazy zobrazené jen pro testovací účely. Umožnit přistup k odkazům přes nastavení kampaně:" %} {% trans "Ukázat odkazy na aplikace" %} </div><br/>
    {% endif %}
    {% if campaign.show_application_links or perms.dpnk.can_see_application_links %}
       <a target="_blank" href="https://p29ek.app.goo.gl/?link=http://urbancyclers.com/competitions.php?c%3D{{ campaign.slug_identifier }}%26u%3D{{ user_attendance.userprofile.user.auth_token}}&apn=com.umotional.bikeapp&utm_source={{ campaign.slug_identifier }}&amv=202&isi=1213867271&ibi=com.umotional.bikeapp&at={{ campaign.slug_identifier }}">
