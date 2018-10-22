@@ -126,7 +126,7 @@ class RestTests(TestCase):
                 'file': gpxfile,
             }
             response = self.client.post(address, post_data)
-            self.assertEquals(response.status_code, 201)
+            self.assertEqual(response.status_code, 201)
             trip = models.Trip.objects.get(date=datetime.date(2010, 11, 19))
             self.assertJSONEqual(
                 response.content.decode(),
@@ -144,7 +144,7 @@ class RestTests(TestCase):
                     ),
                 },
             )
-            self.assertEquals(trip.direction, "trip_to")
+            self.assertEqual(trip.direction, "trip_to")
 
     def test_dpnk_rest_gpx_gz(self):
         with open('dpnk/test_files/modranska-rokle.gpx.gz', 'rb') as gpxfile:
@@ -155,10 +155,10 @@ class RestTests(TestCase):
                 'file': gpxfile,
             }
             response = self.client.post("/rest/gpx/", post_data, format='multipart', follow=True)
-        self.assertEquals(response.status_code, 201)
+        self.assertEqual(response.status_code, 201)
         trip = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=17))
-        self.assertEquals(trip.direction, 'trip_to')
-        self.assertEquals(trip.distance, 13.32)
+        self.assertEqual(trip.direction, 'trip_to')
+        self.assertEqual(trip.distance, 13.32)
 
     def test_gpx_unknown_campaign(self):
         self.client = APIClient(HTTP_HOST="testing-campaign-unknown.testserver", HTTP_REFERER="test-referer")
@@ -271,9 +271,9 @@ class TokenAuthenticationTests(TestCase):
                 "track": '{"type": "MultiLineString", "coordinates": [[[14.0, 50.0], [14.0, 51.0]]]}',
             },
         )
-        self.assertEquals(response.status_code, 201)
+        self.assertEqual(response.status_code, 201)
         trip = models.Trip.objects.get(date=datetime.date(2010, 11, 20))
-        self.assertEquals(trip.distance, 111.24)
+        self.assertEqual(trip.distance, 111.24)
         self.assertJSONEqual(
             response.content.decode(),
             {

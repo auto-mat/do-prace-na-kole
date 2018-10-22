@@ -39,7 +39,7 @@ from django.urls import reverse
 from django.utils import formats
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import string_concat, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 from django_gpxpy import gpx_parse
 
@@ -352,7 +352,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             FieldWithButtons(
                 'company',
                 StrictButton(
-                    string_concat('<span class="glyphicon glyphicon-plus"></span> ', _('Přidat organizaci')),
+                    format_html('<span class="glyphicon glyphicon-plus"></span> {}', _('Přidat organizaci')),
                     href=reverse("register_company"),
                     data_fm_head=_("Vytvořit novou organizaci"),
                     data_fm_callback="createCompanyCallback",
@@ -363,7 +363,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             FieldWithButtons(
                 'subsidiary',
                 StrictButton(
-                    string_concat('<span class="glyphicon glyphicon-plus"></span> ', _('Přidat pobočku')),
+                    format_html('<span class="glyphicon glyphicon-plus"></span> {}', _('Přidat pobočku')),
                     href=reverse("register_subsidiary", args=(company.id,)) if company else "",
                     data_fm_head=_("Vytvořit novou pobočku"),
                     data_fm_callback="createSubsidiaryCallback",
@@ -375,7 +375,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             FieldWithButtons(
                 'team',
                 StrictButton(
-                    string_concat('<span class="glyphicon glyphicon-plus"></span> ', _('Přidat tým')),
+                    format_html('<span class="glyphicon glyphicon-plus"></span> {}', _('Přidat tým')),
                     href=reverse("register_team", args=(subsidiary.id,)) if subsidiary else "",
                     data_fm_head=_("Vytvořit nový tým"),
                     data_fm_callback="createTeamCallback",

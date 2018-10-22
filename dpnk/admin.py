@@ -44,7 +44,6 @@ from django.forms import Textarea
 from django.urls import reverse
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
-from django.utils.translation import string_concat
 from django.utils.translation import ugettext_lazy as _
 
 from import_export import fields, resources
@@ -1135,7 +1134,7 @@ class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__c
 
     def answers_link(self, obj):
         if obj.pk:
-            return format_html(string_concat('<a href="{}?question={}">', _('vyhodnocení odpovědí'), '</a>'), reverse('admin_answers'), obj.pk)
+            return format_html('<a href="{}?question={}">{}</a>', reverse('admin_answers') ,_('vyhodnocení odpovědí'), obj.pk)
 
 
 class GpxFileInline(LeafletGeoAdminMixin, admin.TabularInline):

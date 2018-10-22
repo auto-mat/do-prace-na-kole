@@ -56,7 +56,7 @@ class MustBeInPhaseMixinTest(TestCase):
     def test_is_in_phase(self):
         self.request.campaign = testing_campaign()
         mixin = MustBeInPhase()
-        self.assertEquals(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
 
     @freeze_time("2009-01-01")
     def test_is_phase_hasnt_started(self):
@@ -95,7 +95,7 @@ class MustBeCompanyAdminMixinTest(TestCase):
     def test_no_user_attendance(self):
         self.request.user_attendance = None
         mixin = MustBeCompanyAdmin()
-        self.assertEquals(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
 
     def test_is_admin_approved(self):
         self.request.user_attendance = mommy.make(
@@ -105,7 +105,7 @@ class MustBeCompanyAdminMixinTest(TestCase):
         )
         self.request.user_attendance.save()
         mixin = MustBeCompanyAdmin()
-        self.assertEquals(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
 
     def test_is_admin_undecided(self):
         self.request.user_attendance = mommy.make(
@@ -150,8 +150,8 @@ class GroupRequiredResponseMixinTest(TestCase):
         self.request.user = AnonymousUser()
         mixin = GroupRequiredResponse()
         response = mixin.dispatch(self.request)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(response.url, "/login?next=/")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/login?next=/")
 
     def test_no_group(self):
         self.request.user = mommy.make("User")
@@ -163,7 +163,7 @@ class GroupRequiredResponseMixinTest(TestCase):
         self.request = self.factory.get(reverse("team_members"))
         self.request.user = mommy.make("User", groups=[mommy.make("auth.Group", name='cykloservis')])
         mixin = GroupRequiredResponse()
-        self.assertEquals(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
 
 
 class MustHaveTeam(MustHaveTeamMixin, FakeViewClass):
@@ -192,12 +192,12 @@ class MustHaveTeamMixinTest(TestCase):
             campaign=testing_campaign,
         )
         mixin = MustHaveTeam()
-        self.assertEquals(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
 
     def test_no_user_attendance(self):
         self.request.user_attendance = None
         mixin = MustHaveTeam()
-        self.assertEquals(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
 
 
 class MustBeApprovedForTeam(MustBeApprovedForTeamMixin, FakeViewClass):
@@ -227,7 +227,7 @@ class MustBeApprovedForTeamMixinTest(TestCase):
             approved_for_team='approved',
         )
         mixin = MustBeApprovedForTeam()
-        self.assertEquals(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')
 
     def test_team_undecided(self):
         self.request.user_attendance = mommy.make(
@@ -256,4 +256,4 @@ class MustBeApprovedForTeamMixinTest(TestCase):
     def test_no_user_attendance(self):
         self.request.user_attendance = None
         mixin = MustHaveTeam()
-        self.assertEquals(mixin.dispatch(self.request), 'superdispatch')
+        self.assertEqual(mixin.dispatch(self.request), 'superdispatch')

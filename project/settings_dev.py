@@ -143,11 +143,9 @@ def custom_show_toolbar(request):
 
 
 DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS': False,
     'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
     # 'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
-    'HIDE_DJANGO_SQL': False,
-    'TAG': 'div',
+    'INSERT_BEFORE': '<div>',
 }
 
 TEMPLATES[0]['OPTIONS']['debug'] = True

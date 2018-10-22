@@ -26,7 +26,8 @@ from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import escape
-from django.utils.translation import string_concat, ungettext_lazy
+from django.utils.text import format_lazy
+from django.utils.translation import ungettext_lazy
 from django.utils.translation import ugettext_lazy as _
 
 from rank import Rank, UpperRank
@@ -425,12 +426,12 @@ class Competition(models.Model):
         else:
             commute_modes_string = ""
 
-        return string_concat(
-            company_string_before, " ",
-            CTYPES_STRINGS[self.competition_type], " ",
-            CCOMPETITORTYPES_STRINGS[self.competitor_type], " ",
-            company_string_after, " ",
-            city_string, " ",
+        return format_lazy("{} {} {} {} {} {}{}",
+            company_string_before,
+            CTYPES_STRINGS[self.competition_type],
+            CCOMPETITORTYPES_STRINGS[self.competitor_type],
+            company_string_after,
+            city_string,
             sex_string,
             commute_modes_string,
         )
