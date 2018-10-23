@@ -396,8 +396,7 @@ urlpatterns = [
     ),
     url(
         r'^zapomenute_heslo/$',
-        django_views.PasswordResetView.as_view(),
-        {'password_reset_form': auth.PasswordResetForm},
+        django_views.PasswordResetView.as_view(form_class=auth.PasswordResetForm),
         name='password_reset',
     ),
     url(
@@ -407,8 +406,7 @@ urlpatterns = [
     ),
     url(
         r'^zapomenute_heslo/zmena/(?P<uidb64>[=0-9A-Za-z_]+)-(?P<token>.+)/$',
-        django_views.PasswordResetConfirmView.as_view(),
-        {'set_password_form': auth.SetPasswordForm},
+        django_views.PasswordResetConfirmView.as_view(form_class=auth.SetPasswordForm),
         name='password_reset_confirm',
     ),
     url(
@@ -418,8 +416,7 @@ urlpatterns = [
     ),
     url(
         r'^zmena_hesla/$',
-        django_views.PasswordChangeView.as_view(),
-        {'password_change_form': auth.PasswordChangeForm},
+        django_views.PasswordChangeView.as_view(form_class=auth.PasswordChangeForm),
         name='password_change',
     ),
     url(

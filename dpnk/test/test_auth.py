@@ -75,7 +75,7 @@ class TestPasswordForms(ViewsLogonMommy):
         token = token_generator.make_token(user)
         uidb64 = base64.b64encode(bytes(str(user.id), "utf-8")).decode("utf-8")
         address = reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
-        response = self.client.get(address)
+        response = self.client.get(address, follow=True)
         self.assertContains(
             response,
             '<label for="id_new_password2" class="control-label  requiredField">'
@@ -95,7 +95,9 @@ class TestPasswordForms(ViewsLogonMommy):
         token = token_generator.make_token(user)
         uidb64 = base64.b64encode(bytes(str(user.id), "utf-8")).decode("utf-8")
         address = reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
-        response = self.client.post(address, {"new_password1": "a", "new_password2": "a"})
+        response1 = self.client.get(address)
+        response = self.client.post(response1.url, {"new_password1": "a", "new_password2": "a"})
+        print_response(response)
         self.assertContains(
             response,
             '<strong>Heslo je příliš krátké. Musí mít délku aspoň 6 znaků.</strong>',
