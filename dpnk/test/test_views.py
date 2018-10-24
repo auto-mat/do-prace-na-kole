@@ -1729,7 +1729,7 @@ class ChangeTeamViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_dpnk_team_undecided(self):
-        """ If I am olny approved team member of team where all others are undicided, I can't leave the team """
+        """ If I am the only approved team member of a team where all others are undicided, I can't leave the team """
         self.user_attendance.approved_for_team = 'approved'
         self.user_attendance.save()
         UserAttendanceRecipe.make(approved_for_team='undecided', campaign=self.campaign, team=self.team)
@@ -1792,6 +1792,7 @@ class ChangeTeamViewTests(TestCase):
         self.user_attendance.team = None
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_tym'))
+        print_response(response)
         self.assertContains(  # Test blank select
             response,
             self.blank_team_html,
