@@ -27,8 +27,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.text import format_lazy
-from django.utils.translation import ungettext_lazy
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ungettext_lazy
 
 from rank import Rank, UpperRank
 
@@ -426,7 +426,8 @@ class Competition(models.Model):
         else:
             commute_modes_string = ""
 
-        return format_lazy("{} {} {} {} {} {}{}",
+        return format_lazy(
+            "{} {} {} {} {} {}{}",
             company_string_before,
             CTYPES_STRINGS[self.competition_type],
             CCOMPETITORTYPES_STRINGS[self.competitor_type],

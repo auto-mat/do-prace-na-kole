@@ -1134,7 +1134,7 @@ class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__c
 
     def answers_link(self, obj):
         if obj.pk:
-            return format_html('<a href="{}?question={}">{}</a>', reverse('admin_answers') ,_('vyhodnocení odpovědí'), obj.pk)
+            return format_html('<a href="{}?question={}">{}</a>', reverse('admin_answers'), _('vyhodnocení odpovědí'), obj.pk)
 
 
 class GpxFileInline(LeafletGeoAdminMixin, admin.TabularInline):
