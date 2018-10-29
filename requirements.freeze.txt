@@ -79,7 +79,7 @@ django-storages==1.6.5
 django-su==0.6.0
 -e git+https://github.com/PetrDlouhy/django-subdomains@django20#egg=django-subdomains  # for Django 2.0 fix
 -e git+https://github.com/PetrDlouhy/DjangoTableSelectMultipleWidget.git@1096c65f3dbc7c5112e20205d1d7e5b3f32a1b24#egg=django_table_select_widget  # for datatable_options parameter
--e git+https://github.com/adilkhash/django-wysiwyg-redactor@64d808ef58dfe23e476da2225cd3b83ff4d2cb7b#egg=django_wysiwyg_redactor
+-e git+https://github.com/adilkhash/django-wysiwyg-redactor@b2c4ca33909ced447f3c1ee9bd01dab14d3a5ac2#egg=django_wysiwyg_redactor
 djangorestframework==3.7.7
 djangorestframework-gis==0.12
 djcacheutils==3.0.0
