@@ -79,7 +79,7 @@ jobs:
       - run: docker cp dpnk-test:/home/aplikace/reports /tmp/reports
       - run: cp /tmp/reports/ . -R
       - run: cp /tmp/reports/.coverage .
-      - run: coveralls
+      - run: COVERALLS_REPO_TOKEN=XXCDfbmzbtPfglWzD8llHBM5TM9HTUmVJ coveralls
 
       - store_artifacts:
           path: /tmp/reports
