@@ -60,7 +60,7 @@ class TestPasswordForms(TestCase):
         ]
         parse()
         invoice.refresh_from_db()
-        self.assertEquals(invoice.paid_date, datetime.date(2017, 1, 1))
+        self.assertEqual(invoice.paid_date, datetime.date(2017, 1, 1))
 
     @patch('fiobank.FioBank')
     def test_parse_match_ammount_difference(self, fiobank):
@@ -93,7 +93,7 @@ class TestPasswordForms(TestCase):
         ]
         parse()
         invoice.refresh_from_db()
-        self.assertEquals(invoice.paid_date, datetime.date(2017, 1, 1))
+        self.assertEqual(invoice.paid_date, datetime.date(2017, 1, 1))
 
     @patch('builtins.print', autospec=True, side_effect=print)
     @patch('fiobank.FioBank')
@@ -163,7 +163,7 @@ class TestPasswordForms(TestCase):
         ]
         parse()
         invoice.refresh_from_db()
-        self.assertEquals(invoice.paid_date, datetime.date(2017, 1, 1))
+        self.assertEqual(invoice.paid_date, datetime.date(2017, 1, 1))
 
     @patch('fiobank.FioBank')
     def test_parse_match_no_recipient_message(self, fiobank):
@@ -195,7 +195,7 @@ class TestPasswordForms(TestCase):
         ]
         parse()
         invoice.refresh_from_db()
-        self.assertEquals(invoice.paid_date, datetime.date(2017, 1, 1))
+        self.assertEqual(invoice.paid_date, datetime.date(2017, 1, 1))
 
     @patch('builtins.print', autospec=True, side_effect=print)
     @patch('fiobank.FioBank')

@@ -41,10 +41,10 @@ class RidesBaseTests(TestCase):
             minimum_rides_base=23,
         )
 
-        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 1)), 1)
-        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 7)), 10)
-        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 15)), 23)
-        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 30)), 23)
+        self.assertEqual(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 1)), 1)
+        self.assertEqual(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 7)), 10)
+        self.assertEqual(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 15)), 23)
+        self.assertEqual(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 30)), 23)
 
     def test_get_minimum_rides_base_proportional_phase(self):
         competition = mommy.make(
@@ -53,10 +53,10 @@ class RidesBaseTests(TestCase):
             date_from=datetime.date(year=2010, month=11, day=1),
             date_to=datetime.date(year=2010, month=11, day=30),
         )
-        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 1)), 0)
-        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 7)), 5)
-        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 15)), 12)
-        self.assertEquals(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 30)), 25)
+        self.assertEqual(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 1)), 0)
+        self.assertEqual(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 7)), 5)
+        self.assertEqual(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 15)), 12)
+        self.assertEqual(results.get_minimum_rides_base_proportional(competition, datetime.date(2010, 11, 30)), 25)
 
 
 class GetCompetitorsWithoutAdmissionTests(TestCase):
@@ -358,13 +358,13 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
             commute_modes=models.CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot')),
         )
         result = results.get_userprofile_length([self.user_attendance], competition)
-        self.assertEquals(result, 5.0)
+        self.assertEqual(result, 5.0)
 
         util.rebuild_denorm_models([self.user_attendance])
         self.user_attendance.refresh_from_db()
 
         result = self.user_attendance.trip_length_total
-        self.assertEquals(result, 5.0)
+        self.assertEqual(result, 5.0)
 
     def test_get_userprofile_frequency(self):
         competition = mommy.make(
@@ -382,31 +382,31 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
         self.user_attendance.team.refresh_from_db()
 
         result = self.user_attendance.get_rides_count_denorm
-        self.assertEquals(result, 3)
+        self.assertEqual(result, 3)
 
         result = self.user_attendance.get_working_rides_base_count()
-        self.assertEquals(result, 48)
+        self.assertEqual(result, 48)
 
         result = self.user_attendance.frequency
-        self.assertEquals(result, 0.0625)
+        self.assertEqual(result, 0.0625)
 
         result = self.user_attendance.team.frequency
-        self.assertEquals(result, 0.03125)
+        self.assertEqual(result, 0.03125)
 
         result = self.user_attendance.team.get_rides_count_denorm
-        self.assertEquals(result, 3)
+        self.assertEqual(result, 3)
 
         result = self.user_attendance.team.get_working_trips_count()
-        self.assertEquals(result, 96)
+        self.assertEqual(result, 96)
 
         result = results.get_working_trips_count(self.user_attendance, competition)
-        self.assertEquals(result, 48)
+        self.assertEqual(result, 48)
 
         result = results.get_userprofile_frequency(self.user_attendance, competition)
-        self.assertEquals(result, (3, 48, 3 / 48.0))
+        self.assertEqual(result, (3, 48, 3 / 48.0))
 
         result = results.get_team_frequency(self.user_attendance.team.members(), competition)
-        self.assertEquals(result, (3, 96, 3 / 96.0))
+        self.assertEqual(result, (3, 96, 3 / 96.0))
 
     def test_get_userprofile_length_by_foot(self):
         competition = mommy.make(
@@ -419,7 +419,7 @@ class ResultsTests(DenormMixin, ClearCacheMixin, TestCase):
             commute_modes=models.CommuteMode.objects.filter(slug__in=('by_foot',)),
         )
         result = results.get_userprofile_length([self.user_attendance], competition)
-        self.assertEquals(result, 1.0)
+        self.assertEqual(result, 1.0)
 
 
 class RecreationalResultsTests(ResultsTests):
@@ -445,10 +445,10 @@ class RecreationalResultsTests(ResultsTests):
             commute_modes=models.CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot')),
         )
         result = results.get_userprofile_length([self.user_attendance], competition, recreational=True)
-        self.assertEquals(result, 8.0)
+        self.assertEqual(result, 8.0)
 
         util.rebuild_denorm_models([self.user_attendance])
         self.user_attendance.refresh_from_db()
 
         result = self.user_attendance.total_trip_length_including_recreational
-        self.assertEquals(result, 8.0)
+        self.assertEqual(result, 8.0)

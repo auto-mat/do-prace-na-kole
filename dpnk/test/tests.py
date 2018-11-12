@@ -65,7 +65,7 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         request.subdomain = "testing-campaign"
         views.PaymentResult.as_view()(request, success=True, **kwargs)
         payment = models.Payment.objects.get(session_id=self.session_id)
-        self.assertEquals(payment.pay_type, "kb")
+        self.assertEqual(payment.pay_type, "kb")
 
     def test_payment_unsuccesfull(self):
         kwargs = {"trans_id": self.trans_id, "session_id": self.session_id, "pay_type": "kb", "error": 123}
@@ -76,8 +76,8 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         request.subdomain = "testing-campaign"
         views.PaymentResult.as_view()(request, success=False, **kwargs)
         payment = models.Payment.objects.get(session_id=self.session_id)
-        self.assertEquals(payment.pay_type, "kb")
-        self.assertEquals(payment.error, 123)
+        self.assertEqual(payment.pay_type, "kb")
+        self.assertEqual(payment.error, 123)
 
     def test_payment_redirect(self):
         kwargs = {"trans_id": self.trans_id, "session_id": self.session_id, "pay_type": "kb", "error": 123}
@@ -87,10 +87,10 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         request.user_attendance = self.user_attendance
         request.campaign = models.Campaign.objects.get(pk=338)
         response = views.PaymentResult.as_view()(request, success=False, **kwargs)
-        self.assertEquals(response.url, 'http://testing-campaign.localhost:8000/platba_neuspesna/2055/2075-1J1455206457/kb/123/')
+        self.assertEqual(response.url, 'http://testing-campaign.localhost:8000/platba_neuspesna/2055/2075-1J1455206457/kb/123/')
         payment = models.Payment.objects.get(session_id=self.session_id)
-        self.assertEquals(payment.pay_type, None)
-        self.assertEquals(payment.error, None)
+        self.assertEqual(payment.pay_type, None)
+        self.assertEqual(payment.error, None)
 
 
 class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
@@ -108,10 +108,10 @@ class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
         models.UserAttendance.objects.get(pk=1115).save()
         denorm.flush()
         user = models.UserAttendance.objects.get(pk=1115)
-        self.assertEquals(user.payment_status, 'no_admission')
-        self.assertEquals(user.representative_payment, None)
-        self.assertEquals(user.payment_class(), 'success')
-        self.assertEquals(str(user.get_payment_status_display()), 'neplatí se')
+        self.assertEqual(user.payment_status, 'no_admission')
+        self.assertEqual(user.representative_payment, None)
+        self.assertEqual(user.payment_class(), 'success')
+        self.assertEqual(str(user.get_payment_status_display()), 'neplatí se')
 
     def test_payment_waiting(self):
         payment = models.Payment.objects.get(pk=4)
@@ -119,18 +119,18 @@ class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
         payment.save()
         denorm.flush()
         user = models.UserAttendance.objects.get(pk=1115)
-        self.assertEquals(user.payment_status, 'waiting')
-        self.assertEquals(user.representative_payment, payment)
-        self.assertEquals(user.payment_class(), 'warning')
-        self.assertEquals(str(user.get_payment_status_display()), 'nepotvrzeno')
+        self.assertEqual(user.payment_status, 'waiting')
+        self.assertEqual(user.representative_payment, payment)
+        self.assertEqual(user.payment_class(), 'warning')
+        self.assertEqual(str(user.get_payment_status_display()), 'nepotvrzeno')
 
     def test_payment_done(self):
         user = models.UserAttendance.objects.get(pk=1115)
         payment = models.Payment.objects.get(pk=4)
-        self.assertEquals(user.payment_status, 'done')
-        self.assertEquals(user.representative_payment, payment)
-        self.assertEquals(user.payment_class(), 'success')
-        self.assertEquals(str(user.get_payment_status_display()), 'zaplaceno')
+        self.assertEqual(user.payment_status, 'done')
+        self.assertEqual(user.representative_payment, payment)
+        self.assertEqual(user.payment_class(), 'success')
+        self.assertEqual(str(user.get_payment_status_display()), 'zaplaceno')
 
     def test_payment_unknown(self):
         payment = models.Payment.objects.get(pk=4)
@@ -138,20 +138,20 @@ class PaymentTests(DenormMixin, ClearCacheMixin, TestCase):
         payment.save()
         denorm.flush()
         user = models.UserAttendance.objects.get(pk=1115)
-        self.assertEquals(user.payment_status, 'unknown')
-        self.assertEquals(user.representative_payment, payment)
-        self.assertEquals(user.payment_class(), 'warning')
-        self.assertEquals(str(user.get_payment_status_display()), 'neznámý')
+        self.assertEqual(user.payment_status, 'unknown')
+        self.assertEqual(user.representative_payment, payment)
+        self.assertEqual(user.payment_class(), 'warning')
+        self.assertEqual(str(user.get_payment_status_display()), 'neznámý')
 
     def test_payment_unknown_none(self):
         models.Payment.objects.all().delete()
         util.rebuild_denorm_models(models.Team.objects.filter(pk__in=[1, 3]))
         util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1016))
         user = models.UserAttendance.objects.get(pk=1016)
-        self.assertEquals(user.payment_status, 'none')
-        self.assertEquals(user.representative_payment, None)
-        self.assertEquals(user.payment_class(), 'error')
-        self.assertEquals(str(user.get_payment_status_display()), 'žádné platby')
+        self.assertEqual(user.payment_status, 'none')
+        self.assertEqual(user.representative_payment, None)
+        self.assertEqual(user.payment_class(), 'error')
+        self.assertEqual(str(user.get_payment_status_display()), 'žádné platby')
 
 
 @override_settings(
@@ -212,18 +212,18 @@ class PayuTests(ClearCacheMixin, TestCase):
         response = self.payment_status_view()
         self.assertContains(response, "OK")
         payment = models.Payment.objects.get(pk=3)
-        self.assertEquals(payment.pay_type, "kb")
-        self.assertEquals(payment.amount, 150)
-        self.assertEquals(payment.status, 99)
+        self.assertEqual(payment.pay_type, "kb")
+        self.assertEqual(payment.amount, 150)
+        self.assertEqual(payment.status, 99)
 
     @patch('dpnk.views.logger')
     def test_dpnk_payment_status_bad_amount(self, mock_logger):
         response = self.payment_status_view(amount="15300", trans_sig='ae18ec7f141c252e692d470f4c1744c9')
         self.assertContains(response, "Bad amount", status_code=400)
         payment = models.Payment.objects.get(pk=3)
-        self.assertEquals(payment.pay_type, None)
-        self.assertEquals(payment.amount, 150)
-        self.assertEquals(payment.status, 0)
+        self.assertEqual(payment.pay_type, None)
+        self.assertEqual(payment.amount, 150)
+        self.assertEqual(payment.status, 0)
         mock_logger.error.assert_called_with(
             "Payment amount doesn't match",
             extra={
@@ -244,8 +244,8 @@ class PayuTests(ClearCacheMixin, TestCase):
         )
         self.assertContains(response, "OK")
         payment = models.Payment.objects.get(session_id='2075-1J1455206434')
-        self.assertEquals(payment.pay_type, "kb")
-        self.assertEquals(payment.amount, 151)
+        self.assertEqual(payment.pay_type, "kb")
+        self.assertEqual(payment.amount, 151)
 
     def test_dpnk_payment_status_view_create(self):
         response = self.payment_status_view(
@@ -255,8 +255,8 @@ class PayuTests(ClearCacheMixin, TestCase):
         )
         self.assertContains(response, "OK")
         payment = models.Payment.objects.get(session_id='2075-1J1455206434')
-        self.assertEquals(payment.pay_type, "kb")
-        self.assertEquals(payment.amount, 151)
+        self.assertEqual(payment.pay_type, "kb")
+        self.assertEqual(payment.amount, 151)
 
 
 def create_get_request(factory, user_attendance, post_data={}, address="", subdomain="testing-campaign"):
@@ -309,9 +309,9 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         }
         request = create_post_request(self.factory, self.user_attendance, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
-        self.assertEquals(response.url, reverse('company_admin_competitions'))
+        self.assertEqual(response.url, reverse('company_admin_competitions'))
         competition = models.Competition.objects.get(name='testing company competition')
-        self.assertEquals(competition.slug, 'FA-%s-testing-company-competition' % competition.campaign.pk)
+        self.assertEqual(competition.slug, 'FA-%s-testing-company-competition' % competition.campaign.pk)
 
     def test_dpnk_company_admin_edit_competition(self):
         post_data = {
@@ -326,9 +326,9 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
             success=True,
             competition_slug='FA-%s-pravidelnost-spolecnosti' % testing_campaign().pk,
         )
-        self.assertEquals(response.url, reverse('company_admin_competitions'))
+        self.assertEqual(response.url, reverse('company_admin_competitions'))
         competition = models.Competition.objects.get(name='testing company competition fixed')
-        self.assertEquals(competition.slug, 'FA-%s-pravidelnost-spolecnosti' % testing_campaign().pk)
+        self.assertEqual(competition.slug, 'FA-%s-pravidelnost-spolecnosti' % testing_campaign().pk)
 
     def test_dpnk_company_admin_create_competition_name_exists(self):
         post_data = {
@@ -396,12 +396,12 @@ class ModelTests(DenormMixin, ClearCacheMixin, TestCase):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.save()
         call_command('denorm_flush')
-        self.assertEquals(user_attendance.payment_type_string(), "ORGANIZACE PLATÍ FAKTUROU")
+        self.assertEqual(user_attendance.payment_type_string(), "ORGANIZACE PLATÍ FAKTUROU")
 
     def test_payment_type_string_none_type(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.representative_payment = models.Payment(pay_type=None)
-        self.assertEquals(user_attendance.payment_type_string(), None)
+        self.assertEqual(user_attendance.payment_type_string(), None)
 
 
 class DenormTests(DenormMixin, ClearCacheMixin, TestCase):
@@ -412,39 +412,39 @@ class DenormTests(DenormMixin, ClearCacheMixin, TestCase):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.team.save()
         call_command('denorm_flush')
-        self.assertEquals(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
-        self.assertEquals(user_attendance.team.unapproved_member_count, 0)
-        self.assertEquals(user_attendance.team.member_count, 3)
+        self.assertEqual(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
+        self.assertEqual(user_attendance.team.unapproved_member_count, 0)
+        self.assertEqual(user_attendance.team.member_count, 3)
         user_attendance.userprofile.nickname = "Testing nick"
         user_attendance.userprofile.save()
         call_command('denorm_flush')
         user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEquals(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing nick, Registered User 1)")
-        self.assertEquals(user_attendance.team.unapproved_member_count, 0)
-        self.assertEquals(user_attendance.team.member_count, 3)
+        self.assertEqual(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing nick, Registered User 1)")
+        self.assertEqual(user_attendance.team.unapproved_member_count, 0)
+        self.assertEqual(user_attendance.team.member_count, 3)
 
     def test_name_with_members_delete_userattendance(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.team.save()
         call_command('denorm_flush')
-        self.assertEquals(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
-        self.assertEquals(user_attendance.team.unapproved_member_count, 0)
-        self.assertEquals(user_attendance.team.member_count, 3)
+        self.assertEqual(user_attendance.team.name_with_members, "Testing team 1 (Nick, Testing User 1, Registered User 1)")
+        self.assertEqual(user_attendance.team.unapproved_member_count, 0)
+        self.assertEqual(user_attendance.team.member_count, 3)
         user_attendance.payments().delete()
         user_attendance.delete()
         call_command('denorm_flush')
         team = models.Team.objects.get(pk=1)
-        self.assertEquals(team.name_with_members, "Testing team 1 (Nick, Registered User 1)")
-        self.assertEquals(team.unapproved_member_count, 0)
-        self.assertEquals(team.member_count, 2)
+        self.assertEqual(team.name_with_members, "Testing team 1 (Nick, Registered User 1)")
+        self.assertEqual(team.unapproved_member_count, 0)
+        self.assertEqual(team.member_count, 2)
 
     def test_related_company_admin(self):
         user_attendance = models.UserAttendance.objects.get(pk=1027)
         company_admin = models.CompanyAdmin.objects.create(userprofile=user_attendance.userprofile, campaign_id=338)
-        self.assertEquals(user_attendance.related_company_admin, None)
+        self.assertEqual(user_attendance.related_company_admin, None)
         call_command('denorm_flush')
         user_attendance = models.UserAttendance.objects.get(pk=1027)
-        self.assertEquals(user_attendance.related_company_admin, company_admin)
+        self.assertEqual(user_attendance.related_company_admin, company_admin)
 
 
 class RunChecksTestCase(ClearCacheMixin, TestCase):

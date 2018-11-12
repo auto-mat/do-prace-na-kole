@@ -28,7 +28,7 @@ from .forms import SubmitMixin
 
 
 class EmailModelBackend(ModelBackend):
-    def authenticate(self, username=None, password=None):
+    def authenticate(self, request, username=None, password=None):
         try:
             user = User.objects.get(is_active=True, username__iexact=username)
         except User.DoesNotExist:

@@ -183,7 +183,7 @@ class CompetitionsViewTests(ViewsLogon):
         response = self.client.post(address, post_data)
         self.assertContains(response, 'Tento uživatel byl již')
         self.assertContains(response, 'v cykloservisu Testing User 1 (poznámka: Bike repair note).')
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_bike_repair_post_nonexistent_user(self):
         address = reverse('bike_repair')
@@ -194,7 +194,7 @@ class CompetitionsViewTests(ViewsLogon):
         }
         response = self.client.post(address, post_data)
         self.assertContains(response, 'Takový uživatel neexistuje')
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_bike_repair_post_last_campaign(self):
         address = reverse('bike_repair')
@@ -205,7 +205,7 @@ class CompetitionsViewTests(ViewsLogon):
         }
         response = self.client.post(address, post_data)
         self.assertContains(response, 'Tento uživatel není nováček, soutěžil již v předcházejících kampaních: Testing campaign - last year')
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     feed_value = (
         {
@@ -408,7 +408,7 @@ class PaymentTypeViewTests(TestCase):
             '<a href="mailto:foo@email.com">foo@email.com</a>.',
             html=True,
         )
-        self.assertEquals(models.Payment.objects.get().pay_type, 'fc')
+        self.assertEqual(models.Payment.objects.get().pay_type, 'fc')
 
     def test_dpnk_payment_type_no_t_shirt(self):
         post_data = {
@@ -462,7 +462,7 @@ class DistanceTests(TestCase):
     def test_distance(self):
         trips = models.Trip.objects.all()
         distance = views.distance_all_modes(trips)
-        self.assertEquals(
+        self.assertEqual(
             distance,
             {
                 'distance__sum': 167.2,
@@ -490,7 +490,7 @@ class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
     def test_dpnk_competition_results_unknown(self, mock_logger):
         address = reverse('competition_results', kwargs={'competition_slug': 'unexistent_competition'})
         response = self.client.get(address)
-        self.assertEquals(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
     def test_dpnk_competition_results_vykonnost_tymu(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())
@@ -632,9 +632,9 @@ class ViewsTests(DenormMixin, TestCase):
         response = self.client.post(address, post_data, follow=True)
         self.assertRedirects(response, reverse('company_structure'))
         user = models.User.objects.get(email='testadmin@test.cz')
-        self.assertEquals(user.get_full_name(), "Company Admin")
-        self.assertEquals(models.UserProfile.objects.get(user=user).telephone, '123456789')
-        self.assertEquals(models.CompanyAdmin.objects.get(userprofile=user.userprofile).administrated_company.pk, 2)
+        self.assertEqual(user.get_full_name(), "Company Admin")
+        self.assertEqual(models.UserProfile.objects.get(user=user).telephone, '123456789')
+        self.assertEqual(models.CompanyAdmin.objects.get(userprofile=user.userprofile).administrated_company.pk, 2)
         self.assertEqual(len(mail.outbox), 3)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['testadmin@test.cz'])
@@ -669,9 +669,9 @@ class ViewsTests(DenormMixin, TestCase):
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('upravit_profil'))
         user = models.User.objects.get(email='test1@test.cz')
-        self.assertNotEquals(user, None)
-        self.assertNotEquals(models.UserProfile.objects.get(user=user), None)
-        self.assertNotEquals(models.UserAttendance.objects.get(userprofile__user=user), None)
+        self.assertNotEqual(user, None)
+        self.assertNotEqual(models.UserProfile.objects.get(user=user), None)
+        self.assertNotEqual(models.UserAttendance.objects.get(userprofile__user=user), None)
 
     def test_dpnk_registration_access(self):
         address = reverse('registration_access')
@@ -850,11 +850,11 @@ class RegistrationViewTests(TestCase):
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('upravit_profil'))
         user = models.User.objects.get(email='test1@test.cz')
-        self.assertNotEquals(user, None)
-        self.assertNotEquals(models.UserProfile.objects.get(user=user), None)
+        self.assertNotEqual(user, None)
+        self.assertNotEqual(models.UserProfile.objects.get(user=user), None)
         ua = models.UserAttendance.objects.get(userprofile__user=user)
-        self.assertNotEquals(ua, None)
-        self.assertEquals(ua.team.pk, 1)
+        self.assertNotEqual(ua, None)
+        self.assertEqual(ua.team.pk, 1)
 
     def test_dpnk_registration_token_team_full(self):
         mommy.make(
@@ -882,7 +882,7 @@ class RegistrationViewTests(TestCase):
         )
         user = models.User.objects.get(email='test1@test.cz')
         ua = models.UserAttendance.objects.get(userprofile__user=user)
-        self.assertEquals(ua.team, None)
+        self.assertEqual(ua.team, None)
 
 
 @override_settings(
@@ -934,7 +934,7 @@ class RequestFactoryViewTests(ClearCacheMixin, TestCase):
         request.user_attendance = self.user_attendance
         request.subdomain = "testing-campaign"
         response = views.QuestionnaireView.as_view()(request, **kwargs)
-        self.assertEquals(response.url, reverse("profil"))
+        self.assertEqual(response.url, reverse("profil"))
 
     @patch('dpnk.views.logger')
     def test_questionnaire_view_unknown(self, mock_logger):
@@ -1143,8 +1143,8 @@ class TestRegisterSubsidiaryView(ViewsLogonMommy):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest',
         )
         subsidiary = models.Subsidiary.objects.get(company=company)
-        self.assertEquals(subsidiary.address.street_number, "123")
-        self.assertEquals(subsidiary.address.recipient, "Foo recipient")
+        self.assertEqual(subsidiary.address.street_number, "123")
+        self.assertEqual(subsidiary.address.recipient, "Foo recipient")
         self.assertJSONEqual(
             response.content.decode(),
             {"status": "ok", "id": subsidiary.id},
@@ -1496,7 +1496,7 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(reverse('company_admin_pay_for_users'), post_data, follow=True)
         self.assertRedirects(response, reverse('company_admin_pay_for_users'))
         p = models.UserAttendance.objects.get(id=2115).representative_payment
-        self.assertEquals(p.status, models.Status.COMPANY_ACCEPTS)
+        self.assertEqual(p.status, models.Status.COMPANY_ACCEPTS)
 
         response = self.client.get(reverse('invoices'))
         self.assertContains(response, "<td>Registered User 1</td>", html=True)
@@ -1513,8 +1513,8 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertContains(response, "<td>Zaplacení nepotvrzeno</td>", html=True)
         self.assertRedirects(response, reverse('invoices'))
         p = models.UserAttendance.objects.get(id=2115).representative_payment
-        self.assertEquals(p.status, 1006)
-        self.assertEquals(p.invoice.total_amount, amount_tax)
+        self.assertEqual(p.status, 1006)
+        self.assertEqual(p.invoice.total_amount, amount_tax)
         pdf = PdfFileReader(p.invoice.invoice_pdf)
         pdf_string = pdf.pages[0].extractText()
         self.assertTrue("2010D001" in pdf_string)
@@ -1660,7 +1660,7 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.post(reverse('company_admin_application'), post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         company_admin = models.CompanyAdmin.objects.get(userprofile__user__username='test')
-        self.assertEquals(company_admin.motivation_company_admin, 'Testing position')
+        self.assertEqual(company_admin.motivation_company_admin, 'Testing position')
 
     def test_dpnk_company_admin_application_existing_admin(self):
         user = models.User.objects.get(username='test1')
@@ -1723,19 +1723,19 @@ class ChangeTeamViewTests(TestCase):
         self.user_attendance.save()
         UserAttendanceRecipe.make(approved_for_team='approved', campaign=self.campaign, team=self.team)
         self.team.save()
-        self.assertEquals(self.team.member_count, 1)
-        self.assertEquals(self.team.unapproved_member_count, 1)
+        self.assertEqual(self.team.member_count, 1)
+        self.assertEqual(self.team.unapproved_member_count, 1)
         response = self.client.get(reverse('zmenit_tym'))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_dpnk_team_undecided(self):
-        """ If I am olny approved team member of team where all others are undicided, I can't leave the team """
+        """ If I am the only approved team member of a team where all others are undicided, I can't leave the team """
         self.user_attendance.approved_for_team = 'approved'
         self.user_attendance.save()
         UserAttendanceRecipe.make(approved_for_team='undecided', campaign=self.campaign, team=self.team)
         self.team.save()
-        self.assertEquals(self.team.member_count, 1)
-        self.assertEquals(self.team.unapproved_member_count, 1)
+        self.assertEqual(self.team.member_count, 1)
+        self.assertEqual(self.team.unapproved_member_count, 1)
         response = self.client.get(reverse('zmenit_tym'))
         self.assertContains(
             response,
@@ -1749,20 +1749,20 @@ class ChangeTeamViewTests(TestCase):
         self.user_attendance.approved_for_team = 'undecided'
         self.user_attendance.save()
         self.team.save()
-        self.assertEquals(self.team.member_count, 0)
-        self.assertEquals(self.team.unapproved_member_count, 1)
+        self.assertEqual(self.team.member_count, 0)
+        self.assertEqual(self.team.unapproved_member_count, 1)
         response = self.client.get(reverse('zmenit_tym'))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_dpnk_team_change_alone_approved(self):
         """ If I am in the team alone, I can leave the team if I am approved """
         self.user_attendance.approved_for_team = 'approved'
         self.user_attendance.save()
         self.team.save()
-        self.assertEquals(self.team.member_count, 1)
-        self.assertEquals(self.team.unapproved_member_count, 0)
+        self.assertEqual(self.team.member_count, 1)
+        self.assertEqual(self.team.unapproved_member_count, 0)
         response = self.client.get(reverse('zmenit_tym'))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_get(self):
         response = self.client.get(reverse('zmenit_tym'))
@@ -1792,6 +1792,7 @@ class ChangeTeamViewTests(TestCase):
         self.user_attendance.team = None
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_tym'))
+        print_response(response)
         self.assertContains(  # Test blank select
             response,
             self.blank_team_html,
@@ -1889,7 +1890,7 @@ class ChangeTeamViewTests(TestCase):
 
         self.assertRedirects(response, reverse('pozvanky'))
         self.user_attendance.refresh_from_db()
-        self.assertEquals(self.user_attendance.team, new_team)
+        self.assertEqual(self.user_attendance.team, new_team)
         self.assertEqual(self.user_attendance.approved_for_team, "approved")
 
     def test_change_one_team_member(self):
@@ -1907,8 +1908,8 @@ class ChangeTeamViewTests(TestCase):
 
         self.assertRedirects(response, reverse('zmenit_triko'))
         self.team.refresh_from_db()
-        self.assertEquals(self.team, self.team)
-        self.assertEquals(self.team.subsidiary, new_subsidiary)
+        self.assertEqual(self.team, self.team)
+        self.assertEqual(self.team.subsidiary, new_subsidiary)
 
     def test_change_one_team_member_without_team(self):
         """ Test that user chooses only subsidiary when in campaign with 1 team member """
@@ -1927,8 +1928,8 @@ class ChangeTeamViewTests(TestCase):
 
         self.assertRedirects(response, reverse('zmenit_triko'))
         self.user_attendance.refresh_from_db()
-        self.assertNotEquals(self.team, self.user_attendance.team)  # User is in new team
-        self.assertEquals(self.user_attendance.team.subsidiary, new_subsidiary)
+        self.assertNotEqual(self.team, self.user_attendance.team)  # User is in new team
+        self.assertEqual(self.user_attendance.team.subsidiary, new_subsidiary)
 
     def test_change_team_has_users(self):
         city = mommy.make('City')
@@ -2228,9 +2229,9 @@ class TripViewTests(ViewsLogon):
                 'submit': 'Odeslat',
             }
             response = self.client.post(address, post_data)
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
-        self.assertEquals(user_attendance.get_distance(), 13.32)
+        self.assertEqual(user_attendance.get_distance(), 13.32)
 
     def test_dpnk_views_track_gpx_file_route(self):
         address = reverse('upravit_trasu')
@@ -2242,9 +2243,9 @@ class TripViewTests(ViewsLogon):
                 'submit': 'Odeslat',
             }
             response = self.client.post(address, post_data)
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
-        self.assertEquals(user_attendance.get_distance(), 6.72)
+        self.assertEqual(user_attendance.get_distance(), 6.72)
 
     def test_dpnk_views_track_gpx_file_parsing_error(self):
         """ Test that error message is shown to the user where non-gpx file is submitted """
@@ -2277,7 +2278,7 @@ class TripViewTests(ViewsLogon):
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
-        self.assertEquals(user_attendance.get_distance(), 0.74)
+        self.assertEqual(user_attendance.get_distance(), 0.74)
 
     def test_dpnk_views_track_only_distance(self):
         address = reverse('upravit_trasu')
@@ -2290,8 +2291,8 @@ class TripViewTests(ViewsLogon):
         response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse('profil'), fetch_redirect_response=False)
         user_attendance = models.UserAttendance.objects.get(pk=self.user_attendance.pk)
-        self.assertEquals(user_attendance.track, None)
-        self.assertEquals(user_attendance.get_distance(), 12)
+        self.assertEqual(user_attendance.track, None)
+        self.assertEqual(user_attendance.get_distance(), 12)
 
     def test_dpnk_views_track_no_track_distance(self):
         address = reverse('upravit_trasu')
@@ -2321,7 +2322,7 @@ class TripViewTests(ViewsLogon):
     def test_daily_distance_extra_json(self):
         address = reverse(views.daily_distance_extra_json)
         response = self.client.get(address)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode(),
             {
@@ -2355,7 +2356,7 @@ class StatisticsTests(ViewsLogon):
     def test_statistics(self):
         address = reverse(views.statistics)
         response = self.client.get(address)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode(),
             {
@@ -2572,14 +2573,14 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'form-3-commute_mode')
         self.assertContains(response, '<th colspan="2" scope="row" class="date"> út 2. 11. <span>2010</span> </th>', html=True)
         self.assertContains(response, '<th colspan="2" scope="row" class="date"> st 3. 11. <span>2010</span></th>', html=True)
-        self.assertEquals(self.user_attendance.user_trips.count(), 5)
-        self.assertEquals(models.Trip.objects.get(pk=101).distance, 5)
-        self.assertEquals(models.Trip.objects.get(pk=103).distance, 34)
+        self.assertEqual(self.user_attendance.user_trips.count(), 5)
+        self.assertEqual(models.Trip.objects.get(pk=101).distance, 5)
+        self.assertEqual(models.Trip.objects.get(pk=103).distance, 34)
 
         denorm.flush()
         user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEquals(user_attendance.trip_length_total, 39.0)
-        self.assertEquals(user_attendance.team.get_length(), 13.0)
+        self.assertEqual(user_attendance.trip_length_total, 39.0)
+        self.assertEqual(user_attendance.team.get_length(), 13.0)
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2010, month=11, day=1),
@@ -2662,7 +2663,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         response = self.client.get(reverse('profil'))
         self.assertContains(response, 'form-0-commute_mode')
         self.assertContains(response, 'form-1-commute_mode')
-        self.assertEquals(self.user_attendance.user_trips.count(), 5)
+        self.assertEqual(self.user_attendance.user_trips.count(), 5)
         post_data = {
             'form-TOTAL_FORMS': '4',
             'form-INITIAL_FORMS': '2',
@@ -2715,29 +2716,29 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             '<td>Ušetřené množství oxidu uhličitého: 4 028,7&nbsp;g (<a href="/emisni_kalkulacka/">Emisní kalkulačka</a>)</td>',
             html=True,
         )
-        self.assertEquals(self.user_attendance.user_trips.count(), 7)
-        self.assertEquals(models.Trip.objects.get(pk=101).distance, 28.89)
+        self.assertEqual(self.user_attendance.user_trips.count(), 7)
+        self.assertEqual(models.Trip.objects.get(pk=101).distance, 28.89)
 
         trip1 = models.Trip.objects.get(pk=103)
-        self.assertEquals(trip1.distance, 3)
-        self.assertEquals(trip1.user_attendance.pk, 1115)
-        self.assertEquals(trip1.commute_mode.slug, "by_other_vehicle")
-        self.assertEquals(trip1.date, datetime.date(year=2010, month=11, day=2))
+        self.assertEqual(trip1.distance, 3)
+        self.assertEqual(trip1.user_attendance.pk, 1115)
+        self.assertEqual(trip1.commute_mode.slug, "by_other_vehicle")
+        self.assertEqual(trip1.date, datetime.date(year=2010, month=11, day=2))
 
         trip2 = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=1), direction='trip_from')
-        self.assertEquals(trip2.commute_mode.slug, 'bicycle')
-        self.assertEquals(trip2.user_attendance.pk, 1115)
-        self.assertEquals(trip2.distance, 2.34)
+        self.assertEqual(trip2.commute_mode.slug, 'bicycle')
+        self.assertEqual(trip2.user_attendance.pk, 1115)
+        self.assertEqual(trip2.distance, 2.34)
 
         trip3 = models.Trip.objects.get(date=datetime.date(year=2010, month=11, day=2), direction='trip_to')
-        self.assertEquals(trip3.commute_mode.slug, 'no_work')
-        self.assertEquals(trip3.user_attendance.pk, 1115)
-        self.assertEquals(trip3.distance, None)
+        self.assertEqual(trip3.commute_mode.slug, 'no_work')
+        self.assertEqual(trip3.user_attendance.pk, 1115)
+        self.assertEqual(trip3.distance, None)
 
         denorm.flush()
         user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEquals(user_attendance.trip_length_total, 31.23)
-        self.assertEquals(user_attendance.team.get_length(), 10.41)
+        self.assertEqual(user_attendance.trip_length_total, 31.23)
+        self.assertEqual(user_attendance.team.get_length(), 10.41)
 
     def test_dpnk_views_create_trip(self):
         date = datetime.date(year=2010, month=11, day=2)
@@ -2756,12 +2757,12 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
             response = self.client.post(address, post_data)
         self.assertRedirects(response, reverse("profil"))
         trip = models.Trip.objects.get(date=date, direction=direction, user_attendance=self.user_attendance)
-        self.assertEquals(trip.distance, 13.32)
+        self.assertEqual(trip.distance, 13.32)
 
     def test_dpnk_views_create_trip_error(self):
         address = reverse('trip', kwargs={"date": "foo bad date", "direction": "trip_from"})
         response = self.client.get(address)
-        self.assertEquals(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_dpnk_views_create_trip_inactive_day(self):
         date = datetime.date(year=2010, month=12, day=1)
@@ -2776,9 +2777,9 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
                 'submit': 'Odeslat',
             }
             response = self.client.post(address, post_data)
-            self.assertEquals(response.status_code, 405)
+            self.assertEqual(response.status_code, 405)
         exists = models.Trip.objects.filter(date=date, direction=direction, user_attendance=self.user_attendance).exists()
-        self.assertEquals(exists, False)
+        self.assertEqual(exists, False)
 
     def test_dpnk_competitions_page(self):
         util.rebuild_denorm_models(models.UserAttendance.objects.all())

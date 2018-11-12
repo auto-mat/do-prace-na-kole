@@ -55,7 +55,6 @@ from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.translation import string_concat
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import cache_control, cache_page, never_cache
 from django.views.decorators.csrf import csrf_exempt
@@ -728,10 +727,9 @@ class RidesView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesM
     template_name = 'registration/competition_profile.html'
     title = _('Stav registrace')
     opening_message = mark_safe_lazy(
-        string_concat(
-            '<b class="text-success">',
+        format_html(
+            '<b class="text-success">{}</b><br/>',
             _("Vaše registrace je kompletní."),
-            '</b><br/>',
         ),
     )
 
@@ -923,10 +921,9 @@ class RegistrationUncompleteForm(TitleViewMixin, RegistrationMessagesMixin, Logi
     template_name = 'base_generic_form.html'
     title = _('Stav registrace')
     opening_message = mark_safe_lazy(
-        string_concat(
-            '<b class="text-warning">',
+        format_html(
+            '<b class="text-warning">{}</b><br/>{}',
             _("Vaše registrace není kompletní."),
-            '</b><br/>',
             _("K dokončení registrace bude ještě nutné vyřešit několik věcí:"),
         ),
     )
@@ -1145,7 +1142,7 @@ class QuestionnaireView(TitleViewMixin, LoginRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         if not self.is_actual:
-            return HttpResponse(string_concat("<div class='text-warning'>", _("Soutěž již nelze vyplňovat"), "</div>"))
+            return HttpResponse(format_html("<div class='text-warning'>{}</div>", _("Soutěž již nelze vyplňovat")))
 
         invalid_count = 0
         for question in self.questions:
@@ -1257,7 +1254,7 @@ def questionnaire_results(
         competition_slug=None,):
     competition = Competition.objects.get(slug=competition_slug)
     if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(competition):
-        return HttpResponse(string_concat("<div class='text-warning'>", _("Soutěž je vypsána ve městě, pro které nemáte oprávnění."), "</div>"))
+        return HttpResponse(format_html("<div class='text-warning'>{}</div>", _("Soutěž je vypsána ve městě, pro které nemáte oprávnění.")))
 
     competitors = competition.get_results()
     return render(
@@ -1278,7 +1275,7 @@ def questionnaire_answers(
         competition_slug=None,):
     competition = Competition.objects.get(slug=competition_slug)
     if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(competition):
-        return HttpResponse(string_concat("<div class='text-warning'>", _("Soutěž je vypsána ve městě, pro které nemáte oprávnění."), "</div>"))
+        return HttpResponse(format_html("<div class='text-warning'>{}</div>", _("Soutěž je vypsána ve městě, pro které nemáte oprávnění.")))
 
     try:
         competitor_result = competition.get_results().get(pk=request.GET['uid'])
@@ -1308,7 +1305,7 @@ def answers(request):
     question = Question.objects.get(id=question_id)
     if not request.user.is_superuser and request.user.userprofile.competition_edition_allowed(question.competition):
         return HttpResponse(
-            string_concat("<div class='text-warning'>", _("Otázka je položená ve městě, pro které nemáte oprávnění."), "</div>"),
+            format_html("<div class='text-warning'>{}</div>", _("Otázka je položená ve městě, pro které nemáte oprávnění.")),
             status=401,
         )
 

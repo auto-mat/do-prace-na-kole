@@ -70,9 +70,6 @@ DJANGO_URL = 'http://localhost:8000'
 
 ACCESS_CONTROL_ALLOW_ORIGIN = ("http://localhost", )
 
-LOGIN_URL = '/dpnk/login/'
-LOGOUT_NEXT_PAGE = '/dpnk/profil_pristup/'
-
 SECRET_KEY = 'bt@kl##och59s((u!88iny_c^4p#en@o28w3g57$ys-sgw$4$5'
 
 LOGGING['handlers']['logfile']['filename'] = "dpnk.log"
@@ -143,11 +140,9 @@ def custom_show_toolbar(request):
 
 
 DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS': False,
     'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
     # 'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
-    'HIDE_DJANGO_SQL': False,
-    'TAG': 'div',
+    'INSERT_BEFORE': '<div>',
 }
 
 TEMPLATES[0]['OPTIONS']['debug'] = True

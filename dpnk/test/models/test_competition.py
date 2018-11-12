@@ -241,7 +241,7 @@ class TestTypeString(TestCase):
             competitor_type="team",
             competition_type="frequency",
         )
-        self.assertEquals(str(competition.type_string()), " soutěž na pravidelnost týmů   ")
+        self.assertEqual(str(competition.type_string()), " soutěž na pravidelnost týmů   ")
 
     def test_single_questionnaire(self):
         competition = mommy.make(
@@ -249,7 +249,7 @@ class TestTypeString(TestCase):
             competitor_type="single_user",
             competition_type="questionnaire",
         )
-        self.assertEquals(str(competition.type_string()), " dotazník jednotlivců   ")
+        self.assertEqual(str(competition.type_string()), " dotazník jednotlivců   ")
 
     def test_single_length_city_sex(self):
         competition = mommy.make(
@@ -259,7 +259,7 @@ class TestTypeString(TestCase):
             city=[self.city],
             sex="male",
         )
-        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost jednotlivců  ve městě Testing city pro muže")
+        self.assertEqual(str(competition.type_string()), " soutěž na vzdálenost jednotlivců  ve městě Testing city pro muže")
 
     def test_single_length_city(self):
         competition = mommy.make(
@@ -268,7 +268,7 @@ class TestTypeString(TestCase):
             competition_type="length",
             city=[self.city],
         )
-        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost jednotlivců  ve městě Testing city ")
+        self.assertEqual(str(competition.type_string()), " soutěž na vzdálenost jednotlivců  ve městě Testing city ")
 
     def test_team_frequency_company(self):
         competition = mommy.make(
@@ -277,7 +277,7 @@ class TestTypeString(TestCase):
             competition_type="frequency",
             company__name="Testing company",
         )
-        self.assertEquals(str(competition.type_string()), "vnitrofiremní soutěž na pravidelnost týmů organizace Testing company  ")
+        self.assertEqual(str(competition.type_string()), "vnitrofiremní soutěž na pravidelnost týmů organizace Testing company  ")
 
     def test_team_frequency_commute_modes(self):
         competition = mommy.make(
@@ -286,7 +286,7 @@ class TestTypeString(TestCase):
             competition_type="frequency",
             commute_modes=models.CommuteMode.objects.filter(slug__in=('bicycle', 'by_foot')),
         )
-        self.assertEquals(str(competition.type_string()), " soutěž na pravidelnost týmů    pro cesty s prostředky Kolo, Chůze/běh")
+        self.assertEqual(str(competition.type_string()), " soutěž na pravidelnost týmů    pro cesty s prostředky Kolo, Chůze/běh")
 
     def test_company_length_city(self):
         competition = mommy.make(
@@ -295,7 +295,7 @@ class TestTypeString(TestCase):
             competition_type="length",
             city=[self.city],
         )
-        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost organizací  ve městě Testing city ")
+        self.assertEqual(str(competition.type_string()), " soutěž na vzdálenost organizací  ve městě Testing city ")
 
     def test_team_length_city_sex(self):
         competition = mommy.make(
@@ -305,7 +305,7 @@ class TestTypeString(TestCase):
             city=[self.city],
             sex="male",
         )
-        self.assertEquals(str(competition.type_string()), " soutěž na vzdálenost týmů  ve městě Testing city pro muže")
+        self.assertEqual(str(competition.type_string()), " soutěž na vzdálenost týmů  ve městě Testing city pro muže")
 
 
 class GetResultsIdRankDictTests(TestCase):

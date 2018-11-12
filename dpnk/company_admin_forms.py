@@ -24,7 +24,7 @@ from django.contrib.auth.models import User
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.utils.html import format_html
 from django.utils.text import slugify
-from django.utils.translation import string_concat, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 import registration.forms
 
@@ -42,9 +42,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
         UserAttendance.objects.none(),
         label=_("Vyberte soutěžící, za které zaplatíte fakturou"),
         required=False,
-        help_text=string_concat(
-            _("Ceny jsou uváděny bez DPH"),
-        ),
+        help_text=_("Ceny jsou uváděny bez DPH"),
         widget=TableSelectMultiple(
             item_attrs=[
                 ('company_admission_fee_intcomma', _("Částka")),

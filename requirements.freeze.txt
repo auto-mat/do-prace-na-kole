@@ -14,7 +14,7 @@ coreschema==0.0.4
 createsend==4.2.7
 defusedxml==0.5.0
 diff-match-patch==20121119
-Django<2.1
+Django==2.0.8
 django-admin-sortable2==0.6.19
 django-admin-view-permission==1.4
 django-admin-views==0.8.0
@@ -53,7 +53,7 @@ django-ipware==2.0.1
 django-isnull-list-filter==0.1.0
 django-leaflet==0.23.0
 -e git+https://github.com/PetrDlouhy/django-likes.git@ffe8a2b421415d0e1ff29dc84b3db997dd3f1e24#egg=django_likes
--e git+https://github.com/burke-software/django-mass-edit.git@92467f1ec4b2b7fd11615d311ba747e8cc5472ed#egg=django_mass_edit
+django-mass-edit==3.2.0
 django-model-utils==3.1.1
 -e git+https://github.com/abdolhosein/django-modeltranslation@patch-the-issue-with-django2#egg=django-modeltranslation
 django-nested-admin==3.0.21
@@ -65,13 +65,13 @@ django-redis==4.8.0
 django-registration-redux==2.1
 django-related-admin==0.5.0
 django-rosetta==0.8.1
-django-scribbler-django2.0
+-e git+https://github.com/PetrDlouhy/django-scribbler.git@e087167be4087d65b061c122afccf1cd8b34fdcf#egg=django-scribbler-django2.0
 django-secretballot==1.0.0
 -e git+https://github.com/PetrDlouhy/django-selectable.git@mergeup#egg=django_selectable
--e git+https://github.com/PetrDlouhy/django-sitetree#egg=django-sitetree
+django-sitetree==1.12.0
 django-ses==0.8.5
 django-settings-context-processor==0.2
-django-smart-selects==1.5.3
+django-smart-selects==1.5.4
 django-smmapdfs==0.1.0
 django-softhyphen==1.1.0
 -e git+https://github.com/PetrDlouhy/django-stdnumfield.git@mergeup#egg=django_stdnumfield  # git version is for exception_text parameter
@@ -79,7 +79,7 @@ django-storages==1.6.5
 django-su==0.6.0
 -e git+https://github.com/PetrDlouhy/django-subdomains@django20#egg=django-subdomains  # for Django 2.0 fix
 -e git+https://github.com/PetrDlouhy/DjangoTableSelectMultipleWidget.git@1096c65f3dbc7c5112e20205d1d7e5b3f32a1b24#egg=django_table_select_widget  # for datatable_options parameter
--e git+https://github.com/adilkhash/django-wysiwyg-redactor@64d808ef58dfe23e476da2225cd3b83ff4d2cb7b#egg=django_wysiwyg_redactor
+-e git+https://github.com/adilkhash/django-wysiwyg-redactor@b2c4ca33909ced447f3c1ee9bd01dab14d3a5ac2#egg=django_wysiwyg_redactor
 djangorestframework==3.7.7
 djangorestframework-gis==0.12
 djcacheutils==3.0.0

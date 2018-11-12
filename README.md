@@ -5,6 +5,8 @@ The DPNK django application was developed to power the [Do Práce na Kole](https
 
 This readme file is intended to document how to develop and deploy the code.
 
+Do práce na kole is designed to use Python 3.4+ and Django 2.1
+
 Dependencies
 ------------
 

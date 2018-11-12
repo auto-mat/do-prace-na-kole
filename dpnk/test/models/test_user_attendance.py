@@ -200,22 +200,22 @@ class TestAdmissionFee(TestCase):
         )
 
     def test_company_admission_fee(self):
-        self.assertEquals(self.user_attendance.company_admission_fee(), 200)
+        self.assertEqual(self.user_attendance.company_admission_fee(), 200)
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2017, month=2, day=1),
     )
     def test_company_admission_fee_second(self):
-        self.assertEquals(self.user_attendance.company_admission_fee(), 250)
+        self.assertEqual(self.user_attendance.company_admission_fee(), 250)
 
     def test_admission_fee(self):
-        self.assertEquals(self.user_attendance.admission_fee(), 100)
+        self.assertEqual(self.user_attendance.admission_fee(), 100)
 
     @override_settings(
         FAKE_DATE=datetime.date(year=2017, month=2, day=1),
     )
     def test_admission_fee_second(self):
-        self.assertEquals(self.user_attendance.admission_fee(), 150)
+        self.assertEqual(self.user_attendance.admission_fee(), 150)
 
 
 class TestGetDistance(TestCase):
@@ -235,16 +235,16 @@ class TestGetDistance(TestCase):
             campaign=self.campaign,
             distance=123,
         )
-        self.assertEquals(user_attendance.get_distance(), 123)
+        self.assertEqual(user_attendance.get_distance(), 123)
 
     def test_user_attendance_get_distance(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
-        self.assertEquals(user_attendance.get_distance(), 123)
+        self.assertEqual(user_attendance.get_distance(), 123)
 
     def test_user_attendance_get_distance_no_length(self):
         user_attendance = models.UserAttendance.objects.get(pk=1115)
         user_attendance.distance = 0
-        self.assertEquals(user_attendance.get_distance(), 156.9)
+        self.assertEqual(user_attendance.get_distance(), 156.9)
 
     @patch('dpnk.models.user_attendance.logger')
     def test_user_attendance_get_distance_fail(self, mock_logger):

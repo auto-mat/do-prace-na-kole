@@ -72,8 +72,8 @@ class TestMethods(TestCase):
         denorm.flush()
         self.assertFalse(models.CompetitionResult.objects.exists())
         models.Answer.objects.create(question=question, user_attendance_id=1115)
-        self.assertEquals(models.CompetitionResult.objects.get().result, 0.0)
-        self.assertEquals(models.CompetitionResult.objects.get().user_attendance_id, 1115)
+        self.assertEqual(models.CompetitionResult.objects.get().result, 0.0)
+        self.assertEqual(models.CompetitionResult.objects.get().user_attendance_id, 1115)
 
     def test_answer_post_save_company(self):
         campaign = models.Campaign.objects.get(pk=339)
@@ -88,8 +88,8 @@ class TestMethods(TestCase):
         denorm.flush()
         self.assertFalse(models.CompetitionResult.objects.exists())
         models.Answer.objects.create(question=question, user_attendance_id=1115)
-        self.assertEquals(models.CompetitionResult.objects.get().result, 0.0)
-        self.assertEquals(models.CompetitionResult.objects.get().company_id, 1)
+        self.assertEqual(models.CompetitionResult.objects.get().result, 0.0)
+        self.assertEqual(models.CompetitionResult.objects.get().company_id, 1)
 
     def test_answer_post_save_team(self):
         campaign = models.Campaign.objects.create()
@@ -101,5 +101,5 @@ class TestMethods(TestCase):
         models.CompetitionResult.objects.filter().delete()
         self.assertFalse(models.CompetitionResult.objects.exists())
         models.Answer.objects.create(question=question, user_attendance_id=1115)
-        self.assertEquals(models.CompetitionResult.objects.get().result, None)
-        self.assertEquals(models.CompetitionResult.objects.get().team_id, 1)
+        self.assertEqual(models.CompetitionResult.objects.get().result, None)
+        self.assertEqual(models.CompetitionResult.objects.get().team_id, 1)

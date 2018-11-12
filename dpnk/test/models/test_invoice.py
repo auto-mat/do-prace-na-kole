@@ -109,7 +109,7 @@ class TestDates(TestCase):
 class TestClean(TestCase):
     def test_clean_exception(self):
         invoice = mommy.prepare("Invoice", campaign=testing_campaign)
-        with self.assertRaisesRegexp(Exception, "Neexistuje žádná nefakturovaná platba"):
+        with self.assertRaisesRegex(Exception, "Neexistuje žádná nefakturovaná platba"):
             invoice.clean()
 
 
@@ -129,13 +129,13 @@ class TestSave(TransactionTestCase):
         )
         mail.outbox = []
         PhaseRecipe.make()
-        self.assertEquals(invoice.payment_set.get().status, 0)
+        self.assertEqual(invoice.payment_set.get().status, 0)
         invoice.paid_date = datetime.date(year=2010, month=11, day=20)
         invoice.save()
-        self.assertEquals(invoice.payment_set.get().status, 1007)
+        self.assertEqual(invoice.payment_set.get().status, 1007)
         invoice.delete()
         payment.refresh_from_db()
-        self.assertEquals(payment.status, 1005)
+        self.assertEqual(payment.status, 1005)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@email.cz'])
         self.assertEqual(str(msg.subject), 'Testing campaign - přijetí platby')
