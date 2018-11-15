@@ -1185,6 +1185,39 @@ class TestRegisterSubsidiaryView(ViewsLogonMommy):
         )
 
 
+class TestDiplomasView(ViewsLogonMommy):
+    def setUp(self):
+        super().setUp()
+
+    def shared_checks(self, response):
+        self.assertNotContains(
+            response,
+            "None",
+        )
+        self.assertContains(
+            response,
+            "Testing campaign",
+        )
+
+    def test_basic(self):
+        self.team = mommy.make(
+            "Team",
+            name="Foo team",
+            campaign=self.user_attendance.campaign,
+            subsidiary__city__name="Foo city",
+        )
+        self.user_attendance.team = self.team
+        self.user_attendance.save()
+        response = self.client.get(reverse('diplomas'))
+        self.shared_checks(response)
+        self.assertContains(response, "Foo team")
+
+    def test_no_team(self):
+        response = self.client.get(reverse('diplomas'))
+        print_response(response)
+        self.shared_checks(response)
+
+
 class TestRegisterTeamView(ViewsLogonMommy):
     def setUp(self):
         self.subsidiary = mommy.make('Subsidiary')

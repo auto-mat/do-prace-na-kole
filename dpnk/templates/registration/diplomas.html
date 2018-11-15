@@ -27,6 +27,7 @@
       </td>
    </tr>
    {% endfor %}
+   {% if teams %}
    <tr><th colspan="5">{% trans "Týmové výsledky" %}</th></tr>
    <tr>
       <th>{% trans "Kampaně" %}</th>
@@ -50,5 +51,6 @@
       </td>
    </tr>
    {% endfor %}
+   {% endif %}
 </table>
 {% endblock %}
