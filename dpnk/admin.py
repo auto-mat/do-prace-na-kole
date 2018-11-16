@@ -509,6 +509,7 @@ class UserProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['telephone'].required = False
+        self.fields['sex'].required = False
 
 
 class UserProfileAdminInline(NestedStackedInline):
@@ -561,6 +562,7 @@ def create_userprofile_resource(campaign_slugs):  # noqa: C901
 
 @admin.register(models.UserProfile)
 class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
+    form = UserProfileForm
     list_display = (
         'user',
         '__str__',

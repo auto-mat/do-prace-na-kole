@@ -817,12 +817,6 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
         else:
             return None
 
-    def clean_sex(self):
-        if self.cleaned_data['sex'] == 'unknown':
-            raise forms.ValidationError(_("Zadejte pohlaví"))
-        else:
-            return self.cleaned_data['sex']
-
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['dont_show_name'].initial = self.instance.nickname is not None

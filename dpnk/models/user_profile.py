@@ -53,7 +53,6 @@ class UserProfile(models.Model):
         ('male', _(u'Muž')),
         ('female', _(u'Žena')),
     ]
-    GENDER_PLUS_UNKNOWN = [('unknown', '---------')] + GENDER
 
     LANGUAGE = [
         ('cs', _(u"Čeština")),
@@ -109,8 +108,7 @@ class UserProfile(models.Model):
     sex = models.CharField(
         verbose_name=_(u"Pohlaví"),
         help_text=_(u"Slouží k zařazení do výkonnostních kategorií"),
-        choices=GENDER_PLUS_UNKNOWN,
-        default='unknown',
+        choices=GENDER,
         max_length=50,
     )
     note = models.TextField(
