@@ -817,18 +817,22 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
         else:
             return None
 
+    def clean_mailing_opt_in(self):
+        if self.cleaned_data['mailing_opt_in'] is None:
+            raise forms.ValidationError(_("Zvolte jednu možnost"))
+        else:
+            return self.cleaned_data['mailing_opt_in']
+
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['dont_show_name'].initial = self.instance.nickname is not None
         self.fields['mailing_opt_in'].initial = None
         self.fields['mailing_opt_in'].required = True
-        self.fields['mailing_opt_in'].choices = [
-            (True, _(
-                "Přeji si dostávat e-mailem informace o akcích, událostech a dalších záležitostech souvisejících se soutěží, "
-                "včetně pozvánek do dalších ročníků soutěže.",
-            )),
-            (False, _("Nechci dostávat e-maily (a beru na vědomí, že mi mohou uniknout důležité informace o průběhu soutěže).")),
-        ]
+        self.fields['mailing_opt_in'].choices = [(True, _("Ano")), (False, _("Ne"))]
+        self.fields['mailing_opt_in'].label = _("Přeji si dostávat e-mailem informace")
+        self.fields['mailing_opt_in'].help_text = _(
+            "Chci dostávat soutěžní informace, informace o akcích a pozvánky do dalších ročníků soutěže.",
+        )
         return ret_val
 
     class Meta:
