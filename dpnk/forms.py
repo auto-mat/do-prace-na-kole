@@ -845,9 +845,9 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
             'sex',
             'occupation',
             'age_group',
-            'mailing_opt_in',
             'language',
             'telephone',
+            'mailing_opt_in',
         )
         widgets = {
             'mailing_opt_in': forms.RadioSelect(),
