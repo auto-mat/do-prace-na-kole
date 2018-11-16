@@ -189,7 +189,11 @@ class Team(models.Model):
     @denormalized(models.TextField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def name_with_members(self):
-        return u"%s (%s)" % (self.name, u", ".join([u.userprofile.name() for u in self.members()]))
+        members = self.members()
+        if members:
+            return "%s (%s)" % (self.name, u", ".join([u.userprofile.name() for u in self.members()]))
+        else:
+            return self.name
 
     sandwich_model = TeamDiploma
 
