@@ -35,7 +35,7 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.forms.widgets import HiddenInput
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils import formats
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -120,42 +120,53 @@ class CampaignMixin(object):
         return super().__init__(*args, **kwargs)
 
 
-social_html = HTML(
-    format_html_lazy(
-        '<a class="btn btn-block btn-social btn-google" href="{{% url "social:begin" "google-oauth2" %}}">'
-        '  <span class="fa fa-google"></span>{}'
-        '</a>'
-        '<a class="btn btn-block btn-social btn-facebook" href="{{% url "social:begin" "facebook" %}}">'
-        '  <span class="fa fa-facebook"></span>{}'
-        '</a>'
-        '{}<br/>',
-        _("Přihlásit/registrovat se pomocí Google"),
-        _("Přihlásit/registrovat se pomocí Facebooku"),
-        _("Pokud již v systému máte účet, přihlašujte se pokud možno pomocí účtu se stále stejným e-mailem."),
-    ),
-)
+def social_html(login=True):
+    action_word = _("Přihlásit") if login else _("Registrovat")
+    return HTML(
+        format_html_lazy(
+            '<a class="btn btn-social" href="{{% url "social:begin" "google-oauth2" %}}">'
+            '  <span class="fa fa-google"></span>{}'
+            '</a>'
+            '<a class="btn btn-social" href="{{% url "social:begin" "facebook" %}}">'
+            '  <span class="fa fa-facebook"></span>{}'
+            '</a>'
+            '<br/>',
+            _("%s se přes Google") % action_word,
+            _("%s se přes Facebook") % action_word,
+        ),
+    )
 
 
 class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
+    error_messages = {
+        'invalid_login': format_html_lazy(
+            "{}"
+            "<br/>"
+            '<a href="{}">{}</a>',
+            _(
+                "Problém na trase! Sesedněte z kola a zkontrolujte si svůj e-mail a heslo. "
+                "Dejte pozor na malá a velká písmena.",
+            ),
+            reverse_lazy("password_reset"),
+            _("Nepamatujete si heslo?"),
+        ),
+        'inactive': _("This account is inactive."),
+    }
+
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.form_class = "noAsterisks"
         self.helper.layout = Layout(
+            HTML(_('Pro přihlášení zadejte své uživatelské jméno a heslo.')),
+            HTML('<br/>'),
+            HTML('<br/>'),
             'username', 'password',
+            social_html(True),
+            HTML('<br/>'),
             Submit('submit', _('Přihlásit')),
-            HTML('<br/><br/>'),
-            social_html,
-            HTML('<br/>'),
-            HTML('<a href="{%% url "password_reset" %%}">%s</a>' % _("Zapomněli jste své přihlašovací údaje?")),
-            HTML('<br/>'),
-            HTML(_('Ještě nemáte účet?')),
-            HTML(
-                ' <a href="{%% url "registration_access" %%}">%s.</a>' %
-                (_('Registrujte se do soutěže %s') % self.campaign.name),
-            ),
-            HTML('<br/>'),
         )
-        self.fields['username'].label = _("E-mail (uživatelské jméno)")
+        self.fields['username'].label = _("E-mail")
         return ret_val
 
 
@@ -399,7 +410,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
     email = forms.CharField(
         required=True,
-        label=_("E-mail (uživatelské jméno)"),
+        label=_("E-mail"),
         help_text=_("Zadejte váš e-mail. Pokud jste se účastnili v minulém roce, zadejte stejný e-mail jako v minulém roce."),
     )
 
@@ -410,7 +421,7 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
             'email',
             Submit('submit', _('Odeslat')),
             HTML('<br/><br/>'),
-            social_html,
+            social_html(False),
         )
 
 
@@ -437,7 +448,7 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
             'email', 'password1', 'password2', 'username',
             Submit('submit', _('Odeslat')),
             HTML('<br/><br/>'),
-            social_html,
+            social_html(False),
             HTML('<br/>'),
             HTML(
                 '%s <a href="{%% url "register_admin" %%}">%s</a>.'
