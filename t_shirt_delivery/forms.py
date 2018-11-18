@@ -17,16 +17,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from collections import OrderedDict
+
+from betterforms.multiform import MultiModelForm
 
 from django import forms
 
 from dpnk.forms import PrevNextMixin
-from dpnk.models import PACKAGE_STATUSES, UserAttendance
+from dpnk.models import PACKAGE_STATUSES, UserAttendance, UserProfile
 
 from .models import PackageTransaction, TShirtSize
 
 
-class TShirtUpdateForm(PrevNextMixin, forms.ModelForm):
+class ShirtUserAttendanceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['t_shirt_size'].required = True
@@ -37,6 +40,21 @@ class TShirtUpdateForm(PrevNextMixin, forms.ModelForm):
     class Meta:
         model = UserAttendance
         fields = ('t_shirt_size', )
+
+
+class TelephoneUpdateForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = (
+            'telephone',
+        )
+
+
+class TShirtUpdateForm(PrevNextMixin, MultiModelForm):
+    form_classes = OrderedDict([
+        ('userprofile', TelephoneUpdateForm),
+        ('userattendance', ShirtUserAttendanceForm),
+    ])
 
 
 class PackageTransactionForm(forms.ModelForm):

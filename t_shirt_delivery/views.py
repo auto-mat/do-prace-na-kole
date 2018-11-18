@@ -44,7 +44,10 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     title = _(u"Upravit velikost trička")
 
     def get_object(self):
-        return self.user_attendance
+        return {
+            'userprofile': self.user_attendance.userprofile,
+            'userattendance': self.user_attendance,
+        }
 
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance:
