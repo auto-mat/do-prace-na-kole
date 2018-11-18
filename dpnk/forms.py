@@ -844,7 +844,7 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
             'mailing_opt_in',
         )
         widgets = {
-            'mailing_opt_in': forms.RadioSelect(),
+            'mailing_opt_in': forms.RadioSelect(attrs={'required': True}),
         }
 
 
