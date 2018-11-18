@@ -841,10 +841,6 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
             'dont_show_name',
             'nickname',
             'sex',
-            'occupation',
-            'age_group',
-            'language',
-            'telephone',
             'mailing_opt_in',
         )
         widgets = {
