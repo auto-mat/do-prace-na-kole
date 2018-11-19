@@ -68,8 +68,8 @@ class UserProfile(models.Model):
         on_delete=models.CASCADE,
     )
     nickname = models.CharField(
-        _(u'Zobrazené jméno'),
-        help_text=_(u'Zobrazí se ve všech veřejných výpisech místo vašeho jména. Zadávejte takové jméno, podle kterého vás vaši kolegové poznají'),
+        _('Přezdívka'),
+        help_text=_('Nechcete soutěžit pod svým skutečným jménem? Napište nám přezdívku, podle které Vás kolegové poznají.'),
         max_length=60,
         blank=True,
         null=True,
@@ -111,7 +111,7 @@ class UserProfile(models.Model):
     )
     sex = models.CharField(
         verbose_name=_(u"Pohlaví"),
-        help_text=_(u"Slouží k zařazení do výkonnostních kategorií"),
+        help_text=_("Tato informace se nám bude hodit při rozřazování do výkonnostních kategorií"),
         choices=GENDER,
         max_length=50,
     )

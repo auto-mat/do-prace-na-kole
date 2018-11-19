@@ -236,7 +236,7 @@ class AddressForm(CampaignMixin, forms.ModelForm):
 
 
 company_field = forms.ModelChoiceField(
-    label=_("Organizace"),
+    label=_("Společnost"),
     queryset=models.Company.objects.filter(active=True),
     widget=AutoCompleteSelectWidget(
         lookup_class='dpnk.lookups.CompanyLookup',
@@ -247,8 +247,7 @@ company_field = forms.ModelChoiceField(
     ),
     required=True,
     help_text=_(
-        "Napište několik začátečních písmen celého názvu svého zaměstnavatele a pokud již existuje, nabídne se vám k výběru. "
-        "Vyberte ji kliknutím na položku v seznamu.",
+        "Začněte psát jméno organizace a pak si vyberte z nabídky, nebo založte novou pobočku."
     ),
 )
 
@@ -310,7 +309,8 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         show_all=False,
         auto_choose=True,
         manager='active_objects',
-        label=_("Adresa pobočky/organizace"),
+        label=_("Adresa pobočky nebo organizace"),
+        help_text=_("Pokud má společnost více poboček, vyhledejte prosím svoji pobočku, ve které pracujete každý den."),
         foreign_key_app_name="dpnk",
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
@@ -376,6 +376,8 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.helper.form_class = "noAsterisks"
 
         self.fields["team"].widget.manager = 'team_in_campaign_%s' % self.instance.campaign.slug
 

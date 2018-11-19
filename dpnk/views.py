@@ -148,14 +148,14 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 
     def get_title(self, *args, **kwargs):
         if self.user_attendance.team:
-            action_text = _('Změnit')
+            action_text = _('Změňte')
         else:
-            action_text = _('Vybrat')
+            action_text = _('Založte')
 
         if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():
-            subject_text = _('organizaci, pobočku a tým')
+            subject_text = _('svůj tým')
         else:
-            subject_text = _('organizaci')
+            subject_text = _('svoji organizaci')
         return "%s %s" % (action_text, subject_text)
 
     def get_next_url(self):
@@ -1063,10 +1063,10 @@ class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginReq
     template_name = 'base_generic_registration_form.html'
     form_class = ProfileUpdateForm
     model = UserProfile
-    success_message = _("Osobní údaje úspěšně upraveny")
+    success_message = _("Soutěžní údaje úspěšně upraveny")
     next_url = "zmenit_tym"
     registration_phase = "upravit_profil"
-    title = _("Osobní údaje")
+    title = _("Vyplňte soutěžní údaje")
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
