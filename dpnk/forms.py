@@ -110,7 +110,7 @@ class PrevNextMixin(object):
                 Button('prev', _('Předchozí'), css_class="btn-default form-actions", onclick='window.location.href="{}"'.format(reverse(prev_url))),
             )
         if not hasattr(self, 'no_next'):
-            self.helper.add_input(Submit('next', _('Další'), css_class="form-actions"))
+            self.helper.add_input(Submit('next', _('Pokračovat'), css_class="form-actions"))
         return super().__init__(*args, **kwargs)
 
 
@@ -817,6 +817,10 @@ class UserUpdateForm(CampaignMixin, RequiredFieldsMixin, forms.ModelForm):
         else:
             return self.cleaned_data['email']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['first_name'].label = _("Jméno")
+
     class Meta:
         model = User
         fields = (
@@ -836,7 +840,7 @@ class UserUpdateForm(CampaignMixin, RequiredFieldsMixin, forms.ModelForm):
 
 class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
     dont_show_name = forms.BooleanField(
-        label=_("Nechci, aby moje skutečné jméno bylo veřejně zobrazováno"),
+        label=_("Nechci, aby moje skutečné jméno bylo veřejné."),
         required=False,
     )
 
@@ -861,11 +865,12 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
         self.fields['dont_show_name'].initial = self.instance.nickname is not None
         self.fields['mailing_opt_in'].initial = None
         self.fields['mailing_opt_in'].required = True
-        self.fields['mailing_opt_in'].choices = [(True, _("Ano")), (False, _("Ne"))]
-        self.fields['mailing_opt_in'].label = _("Přeji si dostávat e-mailem informace")
-        self.fields['mailing_opt_in'].help_text = _(
-            "Chci dostávat soutěžní informace, informace o akcích a pozvánky do dalších ročníků soutěže.",
-        )
+        self.fields['mailing_opt_in'].choices = [
+            (True, _("Ano, chci dostávat soutěžní novinky, informace o akcích a pozvánky do dalších ročníků soutěže.")),
+            (False, _("Ne, děkuji")),
+        ]
+        self.fields['mailing_opt_in'].label = _("Přejete si dostávat informační e-maily?")
+        self.fields['mailing_opt_in'].help_text = None
         return ret_val
 
     class Meta:
