@@ -1,6 +1,8 @@
 {% extends "base_generic.html" %}
 {% load i18n %}
 
+{% block caption %}<h2>Děkujeme za dnešní luxusní jízdu!</h2>{% endblock %}
+
 {% block content %}
-{% trans "Nyní jste odhlášeni." %} <a href="{% url 'login' %}">{% trans "Přihlásit" %}</a>
+{% trans "Naleštěte si pedály, uvidíme se zase zítra na startovací čáře." %}
 {% endblock %}

@@ -44,7 +44,7 @@ from .email import company_admin_register_competitor_mail, company_admin_registe
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
 from .string_lazy import mark_safe_lazy
 from .views import RegistrationViewMixin, TitleViewMixin
-from .views_mixins import CompanyAdminMixin, ExportViewMixin, RequestFormMixin
+from .views_mixins import CampaignFormKwargsMixin, CompanyAdminMixin, ExportViewMixin, RequestFormMixin
 from .views_permission_mixins import MustBeCompanyAdminMixin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
 logger = logging.getLogger(__name__)
 
@@ -163,7 +163,7 @@ class CompanyEditView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixi
         return self.company_admin.administrated_company
 
 
-class CompanyAdminApplicationView(TitleViewMixin, CompanyAdminMixin, RegistrationView):
+class CompanyAdminApplicationView(CampaignFormKwargsMixin, TitleViewMixin, CompanyAdminMixin, RegistrationView):
     template_name = 'base_generic_form.html'
     form_class = CompanyAdminApplicationForm
     model = CompanyAdmin
@@ -196,7 +196,7 @@ class CompanyAdminApplicationView(TitleViewMixin, CompanyAdminMixin, Registratio
         return ret_val
 
 
-class CompanyAdminView(RegistrationViewMixin, CompanyAdminMixin, MustHaveTeamMixin, LoginRequiredMixin, UpdateView):
+class CompanyAdminView(CampaignFormKwargsMixin, RegistrationViewMixin, CompanyAdminMixin, MustHaveTeamMixin, LoginRequiredMixin, UpdateView):
     template_name = 'base_generic_registration_form.html'
     form_class = CompanyAdminForm
     model = CompanyAdmin

@@ -93,7 +93,8 @@ class SubmitMixin(object):
     submit_text = _('Odeslat')
 
     def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
+        if not hasattr(self, 'helper'):
+            self.helper = FormHelper()
         super().__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', self.submit_text))
 
@@ -444,7 +445,7 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
             HTML('<br/>'),
             HTML('<br/>'),
             'email',
-            social_html(True),
+            social_html(False),
             HTML('<br/>'),
             Submit('submit', _('Pokračovat')),
         )
@@ -462,8 +463,9 @@ class EmailUsernameMixin(object):
         return cleaned_data
 
 
-class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFormUniqueEmail):
+class RegistrationFormDPNK(SubmitMixin, EmailUsernameMixin, registration.forms.RegistrationFormUniqueEmail):
     required_css_class = 'required'
+    add_social_login = True
 
     username = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -471,10 +473,9 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
         self.helper = FormHelper()
         self.helper.form_class = "noAsterisks"
         self.helper.layout = Layout(
-            'email', 'password1', 'password2', 'username',
-            social_html(True),
+            *self._meta.fields,
+            social_html(True) if self.add_social_login else None,
             HTML('<br/>'),
-            Submit('submit', _('Odeslat')),
         )
 
         super().__init__(*args, **kwargs)
@@ -888,7 +889,7 @@ class UserAttendanceUpdateForm(CampaignMixin, forms.ModelForm):
         self.fields['personal_data_opt_in'].label = _(
             "Souhlasím se zpracováním osobních údajů podle "
             "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
-            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže {campaign}</a>."
+            "a <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže {campaign}</a>."
             " {extra_agreement_text}",
         ).format(campaign=self.campaign, extra_agreement_text=self.campaign.extra_agreement_text)
         return ret_val
