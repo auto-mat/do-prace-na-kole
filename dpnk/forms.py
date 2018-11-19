@@ -139,19 +139,40 @@ def social_html(login=True):
 
 class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
     error_messages = {
-        'invalid_login': format_html_lazy(
-            "{}"
-            "<br/>"
-            '<a href="{}">{}</a>',
-            _(
-                "Problém na trase! Sesedněte z kola a zkontrolujte si svůj e-mail a heslo. "
-                "Dejte pozor na malá a velká písmena.",
+        'invalid_login': {
+            'password': format_html_lazy(
+                "{}"
+                "<br/>"
+                '<a href="{}">{}</a>',
+                _(
+                    "Problém na trase! Sesedněte z kola a zkontrolujte si heslo. "
+                    "Dejte pozor na malá a velká písmena.",
+                ),
+                reverse_lazy("password_reset"),
+                _("Nepamatujete si heslo?"),
             ),
-            reverse_lazy("password_reset"),
-            _("Nepamatujete si heslo?"),
-        ),
+        },
         'inactive': _("This account is inactive."),
     }
+
+    def clean_username(self):
+        """
+        Validate that the email is not already in use.
+        """
+        username = self.cleaned_data['username']
+        if User.objects.filter(Q(email__iexact=username) or Q(username=username)).exists():
+            return username
+        else:
+            error_text = format_html(
+                "{text}"
+                "<br/>"
+                "<a href='{regitster}'>{register_text}</a>",
+                text=_("Problém na trase! Tento e-mail neznáme, zkontrolujte jeho formát. "),
+                password=reverse('password_reset'),
+                regitster=reverse('registrace', args=(username,)),
+                register_text=_("Jsem tu poprvé a chci se registrovat."),
+            )
+            raise forms.ValidationError(error_text)
 
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
@@ -410,18 +431,22 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
     email = forms.CharField(
         required=True,
-        label=_("E-mail"),
-        help_text=_("Zadejte váš e-mail. Pokud jste se účastnili v minulém roce, zadejte stejný e-mail jako v minulém roce."),
+        label=_("Zadejte svůj e-mail"),
+        help_text=_("Na tento e-mail budeme posílat všechny důležité informace v průběhu kampaně."),
     )
 
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.form_class = "noAsterisks"
         self.helper.layout = Layout(
+            HTML("Zadejte váš e-mail. Pokud jste se účastnili v minulém roce, zadejte stejný e-mail jako v minulém roce."),
+            HTML('<br/>'),
+            HTML('<br/>'),
             'email',
-            Submit('submit', _('Odeslat')),
-            HTML('<br/><br/>'),
-            social_html(False),
+            social_html(True),
+            HTML('<br/>'),
+            Submit('submit', _('Pokračovat')),
         )
 
 
@@ -444,24 +469,20 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
 
     def __init__(self, request=None, *args, **kwargs):
         self.helper = FormHelper()
+        self.helper.form_class = "noAsterisks"
         self.helper.layout = Layout(
             'email', 'password1', 'password2', 'username',
-            Submit('submit', _('Odeslat')),
-            HTML('<br/><br/>'),
-            social_html(False),
+            social_html(True),
             HTML('<br/>'),
-            HTML(
-                '%s <a href="{%% url "register_admin" %%}">%s</a>.'
-                '<br/><br/>' % (
-                    _("Chcete se stát firemním koordinátorem a nechcete soutěžit?"),
-                    _("Využijte registraci firemního koordinátora"),
-                ),
-            ),
+            Submit('submit', _('Odeslat')),
         )
 
         super().__init__(*args, **kwargs)
 
-        self.fields['email'].help_text = _("Tento e-mail bude použit pro zasílání informací v průběhu kampaně a k zaslání zapomenutého hesla.")
+        self.fields['email'].help_text = _("Na tento e-mail budeme posílat všechny důležité informace v průběhu kampaně.")
+        self.fields['password1'].label = _("Vyberte heslo")
+        self.fields['password1'].help_text = _("Heslo musí mít minimálně 6 znaků a obsahovat alespoň jedno písmeno.")
+        self.fields['password2'].help_text = _("Zadejte vybrané heslo ještě jednou. Teď máte jistotu, že je napsané správně.")
 
     def clean_email(self):
         if User.objects.filter(email__iexact=self.cleaned_data['email']):

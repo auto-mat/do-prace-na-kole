@@ -246,7 +246,7 @@ class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, ProfileRedi
     form_class = RegistrationAccessFormDPNK
 
     def get_title(self, *args, **kwargs):
-        return _("Registrujte se do soutěže %s") % self.campaign.name
+        return _("Registrace %s") % self.campaign.name
 
     def form_valid(self, form):
         email = form.cleaned_data['email']
@@ -263,7 +263,7 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrat
     success_url = 'upravit_profil'
 
     def get_title(self, *args, **kwargs):
-        return _("Registrujte se do soutěže %s") % self.campaign.name
+        return _("Registrace %s") % self.campaign.name
 
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}
