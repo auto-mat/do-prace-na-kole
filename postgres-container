@@ -1,2 +1,0 @@
-#!/bin/bash
-sudo docker start -ia dpnk-postgres
