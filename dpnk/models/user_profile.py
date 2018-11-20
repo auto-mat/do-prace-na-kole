@@ -74,10 +74,6 @@ class UserProfile(models.Model):
         blank=True,
         null=True,
     )
-    dont_show_name = models.BooleanField(
-        _('Nezobrazovat skutečné jméno veřejně'),
-        default=False,
-    )
     telephone = models.CharField(
         verbose_name=_("Telefonní číslo"),
         max_length=30,
@@ -176,8 +172,8 @@ class UserProfile(models.Model):
         return self.user.last_name
 
     def name(self, cs_vokativ=False):
-        if self.dont_show_name:
-            return self.nickname or ""
+        if self.nickname:
+            return self.nickname
         else:
             if cs_vokativ:
                 woman = self.sex != "male"
@@ -185,7 +181,14 @@ class UserProfile(models.Model):
                 full_name += " "
                 full_name += vokativ(self.last_name(), last_name=True, woman=woman).title()
             else:
-                return self.name_for_trusted()
+                full_name = self.user.get_full_name()
+            email = self.user.email
+            if full_name:
+                return full_name
+            elif email:
+                return email
+            else:
+                return self.user.username
 
     def name_for_trusted(self):
         if self.nickname:

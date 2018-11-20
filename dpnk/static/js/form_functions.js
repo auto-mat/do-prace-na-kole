@@ -1,9 +1,9 @@
 
 $(function(){
     //UserProfile update form:
-    $("#id_userprofile-nickname").prop('required', $("#id_userprofile-dont_show_name").prop("checked"));
+    $("#div_id_userprofile-nickname").toggle($("#id_userprofile-dont_show_name").prop("checked"));
     $("#id_userprofile-dont_show_name").change(function(){
-        $("#id_userprofile-nickname").prop('required', $("#id_userprofile-dont_show_name").prop("checked"));
+        $("#div_id_userprofile-nickname").toggle();
     });
 
     //UserProfile update form:
