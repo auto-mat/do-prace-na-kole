@@ -111,7 +111,7 @@ class UserProfile(models.Model):
         choices=GENDER,
         max_length=50,
         null=True,
-        blank=False,
+        blank=True,
         default=None,
     )
     note = models.TextField(

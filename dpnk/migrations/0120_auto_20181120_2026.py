@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='userprofile',
             name='sex',
-            field=models.CharField(choices=[('male', 'Muž'), ('female', 'Žena')], default=None, help_text='Tato informace se nám bude hodit při rozřazování do výkonnostních kategorií', max_length=50, null=True, verbose_name='Pohlaví'),
+            field=models.CharField(choices=[('male', 'Muž'), ('female', 'Žena')], default=None, help_text='Tato informace se nám bude hodit při rozřazování do výkonnostních kategorií', max_length=50, null=True, blank=True, verbose_name='Pohlaví'),
         ),
         migrations.AlterField(
             model_name='userprofile',
