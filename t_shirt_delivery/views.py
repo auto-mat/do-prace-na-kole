@@ -41,7 +41,7 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     next_url = 'typ_platby'
     prev_url = 'zmenit_tym'
     registration_phase = "zmenit_triko"
-    title = _(u"Upravit velikost trička")
+    title = _("Vyberte si soutěžní tričko")
 
     def get_object(self):
         return {

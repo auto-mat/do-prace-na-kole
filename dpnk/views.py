@@ -357,13 +357,16 @@ class PaymentTypeView(
         MustBeInPaymentPhaseMixin,
         MustHaveTeamMixin,
         LoginRequiredMixin,
+        CampaignParameterMixin,
         FormView,
 ):
     template_name = 'registration/payment_type.html'
-    title = _("Platba")
     registration_phase = "typ_platby"
     next_url = "profil"
     prev_url = "zmenit_triko"
+
+    def get_title(self, *args, **kwargs):
+        return _("Děkujeme, že s námi chcete jezdit %s!") % self.campaign.name
 
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance:

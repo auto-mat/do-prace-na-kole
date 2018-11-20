@@ -100,6 +100,8 @@ class SubmitMixin(object):
 
 
 class PrevNextMixin(object):
+    next_text = _('Pokračovat')
+
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         if not hasattr(self, 'no_dirty'):
@@ -110,7 +112,7 @@ class PrevNextMixin(object):
                 Button('prev', _('Předchozí'), css_class="btn-default form-actions", onclick='window.location.href="{}"'.format(reverse(prev_url))),
             )
         if not hasattr(self, 'no_next'):
-            self.helper.add_input(Submit('next', _('Pokračovat'), css_class="form-actions"))
+            self.helper.add_input(Submit('next', self.next_text, css_class="form-actions"))
         return super().__init__(*args, **kwargs)
 
 
@@ -580,8 +582,9 @@ class TeamAdminForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm):
 
 class PaymentTypeForm(PrevNextMixin, forms.Form):
     no_dirty = True
+    next_text = _('Zaplatit')
     payment_type = forms.ChoiceField(
-        label=_("Typ platby"),
+        label=_(""),
         widget=forms.RadioSelect(),
     )
 
@@ -602,28 +605,52 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
     def __init__(self, *args, **kwargs):
         self.user_attendance = kwargs.pop('user_attendance')
         ret_val = super().__init__(*args, **kwargs)
+        self.helper.form_class = "noAsterisks"
         self.fields['payment_type'].choices = [
-            ('pay', _("Zaplatím běžný účastnický poplatek %s Kč.") % intcomma(self.user_attendance.admission_fee())),
-            ('pay_beneficiary', mark_safe_lazy(
-                _("Podpořím soutěž benefičním poplatkem %s Kč. <i class='fa fa-heart'></i>") %
-                intcomma(self.user_attendance.beneficiary_admission_fee()),
-            )),
-            ('company', _("Účastnický poplatek mi platí zaměstnavatel.")),
+            (
+                'pay',
+                format_html(
+                    '{} Kč<br/>{}',
+                    intcomma(self.user_attendance.admission_fee()),
+                    _("Zaplatím běžný účastnický poplatek."),
+                ),
+            ), (
+                'pay_beneficiary',
+                format_html(
+                    '<strong>{} Kč<br/>{}</strong>',
+                    intcomma(self.user_attendance.beneficiary_admission_fee()),
+                    _("Podpořím soutěž benefičním poplatkem %s Kč.") % (
+                        intcomma(self.user_attendance.beneficiary_admission_fee() - self.user_attendance.admission_fee())
+                    ),
+                ),
+            ), (
+                'company',
+                format_html(
+                    '0 Kč<br/>{}',
+                    _("Účastnický poplatek mi platí zaměstnavatel."),
+                ),
+            ),
         ]
         if self.user_attendance.campaign.club_membership_integration:
-            self.fields['payment_type'].choices.extend([
-                ('member_wannabe', mark_safe_lazy(
-                    _(
-                        "Chci účastnický poplatek zdarma (pro ty, kteří chtějí trvale podporovat udržitelnou mobilitu). "
-                        "<i class='fa fa-heart'></i>",
+            self.fields['payment_type'].choices.append(
+                (
+                    'member_wannabe',
+                    format_html(
+                        '0 Kč<br/>{}',
+                        _("Chci se stát členem Klubu přátel organizace Auto*Mat a podpořit rozvoj udržitelné mobility. "),
                     ),
-                )),
-                ('coupon', _("Chci uplatnit voucher (sleva či účastnický poplatek zdarma, např. pro Klub přátel).")),
-            ])
-        else:
-            self.fields['payment_type'].choices.extend([
-                ('coupon', _("Chci uplatnit voucher (sleva či účastnický poplatek zdarma).")),
-            ])
+                ),
+            )
+
+        self.fields['payment_type'].choices.append(
+            (
+                'coupon',
+                format_html(
+                    '? Kč<br/>{}',
+                    _("Chci uplatnit voucher."),
+                ),
+            ),
+        )
         return ret_val
 
 
