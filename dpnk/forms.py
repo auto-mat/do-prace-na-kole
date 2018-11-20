@@ -161,7 +161,7 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
         Validate that the email is not already in use.
         """
         username = self.cleaned_data['username']
-        if User.objects.filter(Q(email__iexact=username) or Q(username=username)).exists():
+        if User.objects.filter(Q(email__iexact=username) | Q(username=username)).exists():
             return username
         else:
             error_text = format_html(
