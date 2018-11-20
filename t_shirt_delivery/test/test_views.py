@@ -69,7 +69,8 @@ class ViewsTestsLogon(TestCase):
 
     def test_dpnk_t_shirt_size(self):
         post_data = {
-            't_shirt_size': '1',
+            'userprofile-telephone': '123456789',
+            'userattendance-t_shirt_size': '1',
             'next': 'Next',
         }
         response = self.client.post(reverse('zmenit_triko'), post_data, follow=True)
@@ -109,8 +110,8 @@ class ViewsTestsLogon(TestCase):
         response = self.client.get(reverse('zmenit_triko'))
         self.assertContains(
             response,
-            '<label for="id_t_shirt_size" class="control-label  requiredField">'
-            'Velikost trika'
+            '<label for="id_userattendance-t_shirt_size" class="control-label  requiredField">'
+            'Vyplňte velikost trika'
             '<span class="asteriskField">*</span>'
             '</label>',
             html=True,

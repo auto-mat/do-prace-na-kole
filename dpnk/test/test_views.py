@@ -1792,7 +1792,6 @@ class ChangeTeamViewTests(TestCase):
         self.user_attendance.team = None
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_tym'))
-        print_response(response)
         self.assertContains(  # Test blank select
             response,
             self.blank_team_html,
