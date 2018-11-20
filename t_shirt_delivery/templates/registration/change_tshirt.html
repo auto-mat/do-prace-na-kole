@@ -3,15 +3,15 @@
 {% load dpnk_tags %}
 
 {% block form_intro %}
-<h3>{% trans "Doručovací adresa" %}</h3>
-{% trans "Startovní balíček bude hromadně doručen na následující adresu pobočky vaší organizace:" %}
+<h3>{% trans "Zkontrolujte doručovací adresu společnosti" %}</h3>
+{% trans "Startovní balíček, který obsahuje týmová trička a mnoho dalšího hromadně zasíláme na adresu Vaší společnosti, nebo její vybranou pobočku." %}
 <br/>
 <pre>
 {{ user_attendance.team.subsidiary.company }}
 {{ user_attendance.team.subsidiary }}
 </pre>
-{% trans "Před výběrem trika prosím zkontrolujte, že je adresa pobočky správně." %}
-{% trans "Pokud adresa správně není, žádejte změnu:" %}
-{% include "registration/request_change_company_coordinator_part.html" %}
+{% blocktrans with emails=user_attendance.company_coordinator_emails %}
+Zkontrolujte prosím adresu společnosti, případnou chybu nahlašte na {{ emails }}.
+{% endblocktrans %}
 {{ block.super }}
 {% endblock %}

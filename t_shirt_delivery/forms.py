@@ -22,6 +22,7 @@ from collections import OrderedDict
 from betterforms.multiform import MultiModelForm
 
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 
 from dpnk.forms import PrevNextMixin
 from dpnk.models import PACKAGE_STATUSES, UserAttendance, UserProfile
@@ -35,6 +36,7 @@ class ShirtUserAttendanceForm(forms.ModelForm):
         self.fields['t_shirt_size'].required = True
         self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
         self.fields['t_shirt_size'].label_from_instance = lambda i: i.user_string()
+        self.fields['t_shirt_size'].label = _("Vyplňte velikost trika")
         return ret_val
 
     class Meta:
@@ -43,6 +45,10 @@ class ShirtUserAttendanceForm(forms.ModelForm):
 
 
 class TelephoneUpdateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['telephone'].label = _("Vyplňte telefonní číslo")
+
     class Meta:
         model = UserProfile
         fields = (

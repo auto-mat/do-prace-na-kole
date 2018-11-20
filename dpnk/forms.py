@@ -309,8 +309,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         show_all=False,
         auto_choose=True,
         manager='active_objects',
-        label=_("Adresa pobočky nebo organizace"),
-        help_text=_("Pokud má společnost více poboček, vyhledejte prosím svoji pobočku, ve které pracujete každý den."),
+        label=_("Adresa společnosti nebo pobočky"),
         foreign_key_app_name="dpnk",
         foreign_key_model_name="Subsidiary",
         foreign_key_field_name="company",
@@ -380,6 +379,12 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         self.helper.form_class = "noAsterisks"
 
         self.fields["team"].widget.manager = 'team_in_campaign_%s' % self.instance.campaign.slug
+        self.fields["subsidiary"].help_text += format_html(
+            "{}<br/><br/>{}<br/>{}",
+            _("Pokud má společnost více poboček, vyhledejte prosím svoji pobočku, ve které pracujete každý den."),
+            _("Pokud název a adresa společnosti nebo pobočky jsou v seznamu, ale údaje jsou chybné, nezakládejte novou pobočku."),
+            self.instance.company_coordinator_mail_text(),
+        )
 
         company = self.initial.get('company')
         subsidiary = self.initial.get('subsidiary')

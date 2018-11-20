@@ -152,7 +152,7 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
         else:
             action_text = _('Založte')
 
-        if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():
+        if self.user_attendance.campaign.competitors_choose_team():
             subject_text = _('svůj tým')
         else:
             subject_text = _('svoji organizaci')
@@ -1060,7 +1060,7 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
 
 
 class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'base_generic_registration_form.html'
+    template_name = 'registration/profile_update.html'
     form_class = ProfileUpdateForm
     model = UserProfile
     success_message = _("Soutěžní údaje úspěšně upraveny")

@@ -1,0 +1,8 @@
+{% extends "base_generic_registration_form.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block messages %}
+{% trans "Vyplňte prosím své osobní údaje a zkontrolujte údaje, které jsou již předvyplněné." %}
+{{ block.super }}
+{% endblock %}

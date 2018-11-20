@@ -79,11 +79,11 @@ class UserProfile(models.Model):
         default=False,
     )
     telephone = models.CharField(
-        verbose_name=_(u"Telefon"),
+        verbose_name=_("Telefonní číslo"),
         max_length=30,
         null=False,
-        validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
-        help_text=_("Telefonní číslo slouží jako kontakt pro help desk a případně pro kurýra, který vám bude doručovat zásilku."),
+        validators=[RegexValidator(r'^[0-9+ ]*$', _('Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
+        help_text=_("Ozveme se, až bude balíček nachystaný."),
     )
     language = models.CharField(
         verbose_name=_(u"Jazyk e-mailové komunikace"),
