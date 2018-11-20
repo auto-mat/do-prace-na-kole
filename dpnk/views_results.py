@@ -171,7 +171,7 @@ class CompetitionResultListJson(BaseDatatableView):
             else:
                 return "%s.&nbsp;-&nbsp;%s." % sequence_range
         if column in ('get_company', 'get_city', 'get_street', 'get_subsidiary', 'get_occupation', 'get_sex', 'get_team_name'):
-            return escape(getattr(row, column)())
+            return escape(getattr(row, column)() or '')
         if column in ('get_result', 'get_result_percentage', 'get_result_divident', 'get_result_divisor'):
             return intcomma(getattr(row, column)())
         else:

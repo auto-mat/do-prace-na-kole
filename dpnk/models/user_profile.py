@@ -110,6 +110,9 @@ class UserProfile(models.Model):
         help_text=_("Tato informace se nám bude hodit při rozřazování do výkonnostních kategorií"),
         choices=GENDER,
         max_length=50,
+        null=True,
+        blank=False,
+        default=None,
     )
     note = models.TextField(
         verbose_name=_(u"Interní poznámka"),
