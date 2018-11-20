@@ -148,15 +148,15 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 
     def get_title(self, *args, **kwargs):
         if self.user_attendance.team:
-            action_text = _('Změňte')
+            if self.user_attendance.campaign.competitors_choose_team():
+                return _('Vyberte jiný tým')
+            else:
+                return _('Přidejte se k týmu')
         else:
-            action_text = _('Založte')
-
-        if self.user_attendance.campaign.competitors_choose_team():
-            subject_text = _('svůj tým')
-        else:
-            subject_text = _('svoji organizaci')
-        return "%s %s" % (action_text, subject_text)
+            if self.user_attendance.campaign.competitors_choose_team():
+                return _('Vyberte jinou společnost')
+            else:
+                return _('Vyhledejte svoji společnost')
 
     def get_next_url(self):
         if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():
@@ -1436,7 +1436,7 @@ class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequired
 class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, FormView):
     template_name = 'base_generic_registration_form.html'
     form_class = InviteForm
-    title = _('Pozvětě své kolegy do týmu')
+    title = _('Pozvěte další kolegy do svého týmu')
     registration_phase = "zmenit_tym"
     success_url = reverse_lazy('pozvanky')
 

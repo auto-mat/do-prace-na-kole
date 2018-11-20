@@ -2,6 +2,11 @@
 {% load i18n %}
 {% load dpnk_tags %}
 
+{% block messages %}
+{% trans "Vyberte si správnou velikost soutěžního trička a šlápněte do pedálů!" %}
+{{ block.super }}
+{% endblock %}
+
 {% block form_intro %}
 <h3>{% trans "Zkontrolujte doručovací adresu společnosti" %}</h3>
 {% trans "Startovní balíček, který obsahuje týmová trička a mnoho dalšího hromadně zasíláme na adresu Vaší společnosti, nebo její vybranou pobočku." %}

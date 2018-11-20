@@ -62,6 +62,10 @@ class TShirtUpdateForm(PrevNextMixin, MultiModelForm):
         ('userattendance', ShirtUserAttendanceForm),
     ])
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.form_class = "noAsterisks"
+
 
 class PackageTransactionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

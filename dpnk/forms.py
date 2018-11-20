@@ -528,7 +528,7 @@ class InviteForm(SubmitMixin, forms.Form):
         for i in range(1, min(self.free_capacity + 1, 11)):
             field_name = 'email%s' % i
             self.fields[field_name] = forms.EmailField(
-                label=_("E-mail kolegy %s") % i,
+                label=_("E-mail kolegy"),
                 required=False,
             )
             fields.append(field_name)
@@ -537,37 +537,31 @@ class InviteForm(SubmitMixin, forms.Form):
         self.helper.layout = Layout(
             HTML("<p>"),
             HTML(
-                _(
-                    "Můžete pozvat kolegy do týmu přes náš rozesílač - stačí níže napsat níže e-maily "
-                    "kolegů, které chcete do svého týmu (samozřejmě je můžete pozvat jakkoliv, "
-                    "třeba osobně)."
-                ),
-            ),
-            HTML("</p><p>"),
-            HTML(
                 format_html_lazy(
                     _(
-                        "Následně vyčkejte, až se k vám někdo do týmu připojí "
-                        "(tato informace vám přijde e-mailem, stav vašeho týmu můžete sledovat na <a "
-                        "href=\"{}\">stránce se členy vašeho týmu</a>, tamtéž můžete i potvrdit členství "
-                        "vašich kolegů)."
+                        "Pozvěte přátele z práce, aby podpořili Váš tým. Napište nám jejich e-mail a "
+                        "my jim pošlete oficiální pozvánku. Až se přátelé připojí k týmu, nezapomeňte {invitation_link}",
                     ),
-                    reverse("team_members"),
+                    invitation_link=format_html_lazy(
+                        "<a href=\"{}\">{}</a>",
+                        reverse("team_members"),
+                        _("potvrdit jejich členství na Vašem profilu."),
+                    ),
                 ),
             ),
             HTML("</p><p>"),
             HTML(
                 format_html_lazy(
-                    _("Do vašeho týmu je možné doplnit ještě {} členů."),
+                    _("Do vašeho týmu můžete pozvat ještě {} členů."),
                     self.free_capacity,
                 ),
             ),
             HTML("</p>"),
             *fields,
         )
-        self.helper.add_input(Submit('submit', _('Odeslat pozvánky')))
+        self.helper.add_input(Submit('submit', _('Odeslat')))
         self.helper.add_input(
-            Button('submit', _('Neposílat, přeskočit'), css_class="btn-default", onclick='window.location.href="{}"'.format(reverse("zmenit_triko"))),
+            Button('submit', _('Přeskočit'), css_class="btn-default", onclick='window.location.href="{}"'.format(reverse("zmenit_triko"))),
         )
         for field in self.fields.values():
             field.widget.attrs['autocomplete'] = 'new-password'
