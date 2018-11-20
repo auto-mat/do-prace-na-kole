@@ -298,7 +298,7 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
         response = self.client.get(address)
         self.assertJSONEqual(
             response.content.decode(),
-            [{'value': 4, 'display': 'Empty team ()'}, {'value': 1, 'display': 'Testing team 1 (Nick, Testing User 1, Registered User 1)'}],
+            [{'value': 4, 'display': 'Empty team'}, {'value': 1, 'display': 'Testing team 1 (Nick, Testing User 1, Registered User 1)'}],
         )
 
     def test_chaining_subsidiary(self):
@@ -676,7 +676,7 @@ class ViewsTests(DenormMixin, TestCase):
     def test_dpnk_registration_access(self):
         address = reverse('registration_access')
         response = self.client.get(address)
-        self.assertContains(response, "E-mail")
+        self.assertContains(response, "Zadejte svůj e-mail")
         post_data = {
             'email': 'test@test.cz',
         }
@@ -1768,7 +1768,7 @@ class ChangeTeamViewTests(TestCase):
         response = self.client.get(reverse('zmenit_tym'))
         self.assertContains(
             response,
-            '<option value="%s" selected>Foo name ()</option>' % self.team.id,
+            '<option value="%s" selected>Foo name</option>' % self.team.id,
             html=True,
         )
 
@@ -1779,7 +1779,7 @@ class ChangeTeamViewTests(TestCase):
         response = self.client.get(reverse('zmenit_tym'))
         self.assertNotContains(
             response,
-            '<option value="%s" selected>Foo name ()</option>' % self.team.id,
+            '<option value="%s" selected>Foo name</option>' % self.team.id,
             html=True,
         )
         self.assertNotContains(

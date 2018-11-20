@@ -281,7 +281,7 @@ class UserAttendanceToBatchAdminTests(AdminTestBase):
         response = self.client.get(address, follow=True)
         self.assertContains(
             response,
-            "<div><label>Tým:</label><div class='readonly'>Testing team ()</div></div>",
+            "<div><label>Tým:</label><div class='readonly'>Testing team</div></div>",
             html=True,
         )
 
