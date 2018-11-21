@@ -893,6 +893,7 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
         self.fields['dont_show_name'].initial = self.instance.nickname is not None
         self.fields['mailing_opt_in'].initial = None
         self.fields['mailing_opt_in'].required = True
+        self.fields['sex'].required = True
         self.fields['mailing_opt_in'].choices = [
             (True, _("Ano, chci dostávat soutěžní novinky, informace o akcích a pozvánky do dalších ročníků soutěže.")),
             (False, _("Ne, děkuji")),
