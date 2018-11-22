@@ -506,7 +506,7 @@ class UserAttendance(StaleSyncMixin, models.Model):
 
     def company_coordinator_mail_text(self):
         return format_html(
-            _("Napište prosím svému firemnímu koordinátorovi na {email_link}.") if
+            _("Napište svému firemnímu koordinátorovi na e-mail {email_link}.") if
             self.get_asociated_company_admin() else _("Napište nám prosím na {email_link}."),
             email_link=self.company_coordinator_emails(),
         )

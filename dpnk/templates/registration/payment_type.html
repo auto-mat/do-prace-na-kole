@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block messages %}
-{% trans "Ještě vyberte způsob platby a můžete vyrazit." %}
+{% trans "Vyberte způsob platby a můžete vyrazit." %}
 {{ block.super }}
 {% endblock %}
 
@@ -33,10 +33,10 @@ function switch_description(){
       $(".form-actions").show();
 
    if(sel_val == 'pay_beneficiary') {
-      $("#payment_amount").text("{{ beneficiary_amount }} Kč");
+      $("#payment_amount").text("{{ beneficiary_amount|floatformat }} Kč");
       $("#beneficiary-motivation").show()
    } else {
-      $("#payment_amount").text("{{ amount }} Kč");
+      $("#payment_amount").text("{{ amount|floatformat }} Kč");
       $("#beneficiary-motivation").hide()
    }
 };
@@ -109,7 +109,7 @@ $(function(){
    </div>
    <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform" class="submit-once-form">
    {% trans "Soutěžící:" %} {{ user_attendance.userprofile.user.get_full_name }}<br/>
-   {% trans "Účastnický poplatek:" %} <span id="payment_amount">{{ amount }} Kč</span><br/>
+   {% trans "Účastnický poplatek:" %} <span id="payment_amount">{{ amount|floatformat:"0" }} Kč</span><br/>
    <div id="payu-hidden-values"></div>
    <script language="JavaScript" type="text/javascript">
    PlnPrintTemplate();

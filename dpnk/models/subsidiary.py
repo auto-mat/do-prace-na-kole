@@ -50,13 +50,8 @@ class Subsidiary(models.Model):
     )
     city = models.ForeignKey(
         City,
-        verbose_name=_(u"Spádové město"),
-        help_text=_(
-            "Vyberte nejbližší soutěžní město. "
-            "Vaše pobočka bude zařazena do žebříčků za vybrané město "
-            "a případnou výhru si přeberete na závěrečném večírku pořádaném tímto městem. "
-            "Sledujte <a href='http://www.dopracenakole.cz/pravidla' target='_blank'>pravidla soutěže</a> svého města.",
-        ),
+        verbose_name=_("Soutěžní město"),
+        help_text=_("Váš tým se zařadí do žebříčků za nejbližší soutěžní město."),
         null=False,
         blank=False,
         on_delete=models.CASCADE,

@@ -36,7 +36,7 @@ class ShirtUserAttendanceForm(forms.ModelForm):
         self.fields['t_shirt_size'].required = True
         self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
         self.fields['t_shirt_size'].label_from_instance = lambda i: i.user_string()
-        self.fields['t_shirt_size'].label = _("Vyplňte velikost trika")
+        self.fields['t_shirt_size'].label = _("Vyberte velikost trika")
         return ret_val
 
     class Meta:

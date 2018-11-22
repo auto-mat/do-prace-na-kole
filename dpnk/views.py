@@ -128,8 +128,7 @@ class ProfileRedirectMixin(object):
 
 
 class DPNKLoginView(CampaignFormKwargsMixin, TitleViewMixin, ProfileRedirectMixin, LoginView):
-    def get_title(self, *args, **kwargs):
-        return _("Přihláška %s") % self.campaign.name
+    title = _("Přihlaste se prosím")
 
     def get_initial(self):
         initial_email = self.kwargs.get('initial_email')
@@ -151,10 +150,10 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
             if self.user_attendance.campaign.competitors_choose_team():
                 return _('Vyberte jiný tým')
             else:
-                return _('Přidejte se k týmu')
+                return _('Vyberte jinou společnost')
         else:
             if self.user_attendance.campaign.competitors_choose_team():
-                return _('Vyberte jinou společnost')
+                return _('Přidejte se k týmu')
             else:
                 return _('Vyhledejte svoji společnost')
 
@@ -244,9 +243,7 @@ class RegisterSubsidiaryView(CampaignFormKwargsMixin, UserAttendanceViewMixin, L
 class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, ProfileRedirectMixin, FormView):
     template_name = 'base_generic_form.html'
     form_class = RegistrationAccessFormDPNK
-
-    def get_title(self, *args, **kwargs):
-        return _("Registrace %s") % self.campaign.name
+    title = _("Registrujte se prosím")
 
     def form_valid(self, form):
         email = form.cleaned_data['email']
@@ -261,9 +258,7 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrat
     form_class = RegistrationFormDPNK
     model = UserProfile
     success_url = 'upravit_profil'
-
-    def get_title(self, *args, **kwargs):
-        return _("Registrace %s") % self.campaign.name
+    title = _("Registrujte se prosím")
 
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}
@@ -364,9 +359,7 @@ class PaymentTypeView(
     registration_phase = "typ_platby"
     next_url = "profil"
     prev_url = "zmenit_triko"
-
-    def get_title(self, *args, **kwargs):
-        return _("Děkujeme, že s námi chcete jezdit %s!") % self.campaign.name
+    title = _("Děkujeme, že s námi chcete jezdit Do práce na kole!")
 
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance:
