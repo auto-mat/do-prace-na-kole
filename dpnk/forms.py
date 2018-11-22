@@ -253,23 +253,27 @@ company_field = forms.ModelChoiceField(
 
 
 class RegisterSubsidiaryForm(AddressForm):
-    company = company_field
-
     def clean_company(self):
         return self.company
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.company = kwargs['initial']['company']
-        self.fields['company'].widget.attrs['readonly'] = True
-        self.fields['company'].widget.attrs['disabled'] = True
-        self.fields['company'].required = False
-        self.fields['company'].help_text = ""
         self.fields['address_recipient'].widget.attrs['autocomplete'] = 'subsidiary'
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML('<div class="form-group"> <label class="control-label">'),
+            HTML(_('Společnost')),
+            HTML('</label>'),
+            HTML(self.company),
+            HTML('</div>'),
+            *self._meta.fields,
+        )
 
     class Meta:
         model = models.Subsidiary
         fields = ('company', 'city', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city')
+        widgets = {'company': forms.HiddenInput()}
 
 
 class RegisterTeamForm(InitialFieldsMixin, forms.ModelForm):
@@ -277,28 +281,27 @@ class RegisterTeamForm(InitialFieldsMixin, forms.ModelForm):
     required_css_class = 'required'
     error_css_class = 'error'
 
-    subsidiary = forms.ModelChoiceField(
-        queryset=models.Subsidiary.objects.filter(active=True),
-    )
-
     def clean_subsidiary(self):
         return self.subsidiary
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.subsidiary = kwargs['initial']['subsidiary']
-        self.fields['subsidiary'].queryset = self.subsidiary.company.subsidiaries.filter(active=True)
-        self.fields['subsidiary'].empty_label = None
-        self.fields['subsidiary'].widget.attrs['readonly'] = True
-        self.fields['subsidiary'].widget.attrs['disabled'] = True
-        self.fields['subsidiary'].required = False
-        self.fields['subsidiary'].label = _("Adresa")
         self.fields['name'].label = _("Jméno")
         self.fields['name'].help_text = _("Zvolte jméno, pod kterým bude váš tým bojovat.")
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            HTML('<div class="form-group"> <label class="control-label">Adresa</label>'),
+            HTML(self.subsidiary),
+            HTML('</div>'),
+            *self._meta.fields,
+        )
 
     class Meta:
         model = models.Team
         fields = ('subsidiary', 'name', 'campaign')
+        widgets = {'subsidiary': forms.HiddenInput()}
 
 
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
@@ -398,6 +401,8 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
                     format_html('<span class="glyphicon glyphicon-plus"></span> {}', _('Nová společnost')),
                     href=reverse("register_company"),
                     data_fm_head=_("Přidejte novou společnost"),
+                    data_fm_ok=_("Přidat"),
+                    data_fm_cancel=_("Zpět"),
                     data_fm_callback="createCompanyCallback",
                     css_class="btn fm-create",
                     id="fm-create-company",
@@ -409,6 +414,8 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
                     format_html('<span class="glyphicon glyphicon-plus"></span> {}', _('Přidat adresu')),
                     href=reverse("register_subsidiary", args=(company.id,)) if company else "",
                     data_fm_head=_("Přidejte novou adresu"),
+                    data_fm_ok=_("Přidat"),
+                    data_fm_cancel=_("Zpět"),
                     data_fm_callback="createSubsidiaryCallback",
                     css_class="btn fm-create",
                     id="fm-create-subsidiary",
@@ -421,6 +428,8 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
                     format_html('<span class="glyphicon glyphicon-plus"></span> {}', _('Založit tým')),
                     href=reverse("register_team", args=(subsidiary.id,)) if subsidiary else "",
                     data_fm_head=_("Založte nový tým"),
+                    data_fm_ok=_("Založit"),
+                    data_fm_cancel=_("Zpět"),
                     data_fm_callback="createTeamCallback",
                     css_class="btn fm-create",
                     id="fm-create-team",
