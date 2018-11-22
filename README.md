@@ -51,7 +51,7 @@ Create `settings_local.py` by copying settings_local_sample_docker.py
 Building the docker images
 --------------------------
 
-    $ sudo docker-compose -f docker-compose-dev.yml build
+    $ make docker-compose
 
 Launching the docker-compose containers
 ---------------------------------------
@@ -71,7 +71,7 @@ Launching the development webserver
 
     $ sudo docker exec -it dopracenakole_web_1 bash
     # su test
-    $ python3 manage.py runserver 0.0.0.0:8000
+    $ python3 manage.py runserver 0.0.0.0:8021
 
 
 Setting up the server for the first time
@@ -79,15 +79,15 @@ Setting up the server for the first time
 
 On your first visit you should go to the URL:
 
-Go to <http://test.localhost:8000/admin/dpnk/campaign/>
+Go to <http://test.localhost:8021/admin/dpnk/campaign/>
 
 Log in.
 
 Add a campaign named Test and individual phases.
 
-Add a user profile for your user <http://test.localhost:8000/admin/dpnk/userprofile/>
+Add a user profile for your user <http://test.localhost:8021/admin/dpnk/userprofile/>
 
-Now you can go to 'http://test.localhost:8000/' and start to play around.
+Now you can go to 'http://test.localhost:8021/' and start to play around.
 
 Backing up your database
 ------------------------
