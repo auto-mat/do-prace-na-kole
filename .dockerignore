@@ -14,6 +14,7 @@ scripts
 htmlcov
 htmlcov-max
 sql
+db
 run
 dpnk.log*
 project/settings_local.py

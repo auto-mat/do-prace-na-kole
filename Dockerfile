@@ -29,9 +29,10 @@ run apt-get update && apt-get install -y \
 run mkdir /home/aplikace -p
 WORKDIR "/home/aplikace"
 
-copy requirements.freeze.txt ./
-run pip install six
-run pip install -r requirements.freeze.txt
+run pip3 install pipenv
+copy Pipfile /home/aplikace/Pipfile
+copy Pipfile.lock /home/aplikace/Pipfile.lock
+run pipenv install --system --deploy --ignore-pipfile --verbose
 
 copy . .
 

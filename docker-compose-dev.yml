@@ -6,7 +6,7 @@ services:
    dockerfile: DockerfileDev
   entrypoint: /bin/bash
   ports:
-   - "8000:8000"
+   - "8021:8000"
   links:
    - postgres
    - redis
