@@ -222,7 +222,11 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportE
         'active',
         ICOFilter,
     ]
-    readonly_fields = ['subsidiary_links']
+    readonly_fields = [
+        'subsidiary_links',
+        'author',
+        'updated_by',
+    ]
     search_fields = (
         'name',
         'address_street',
@@ -944,7 +948,14 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
     )
     form = models.team.TeamAdminForm
 
-    readonly_fields = ['members', 'invitation_token', 'member_count', 'paid_member_count']
+    readonly_fields = [
+        'members',
+        'invitation_token',
+        'member_count',
+        'paid_member_count',
+        'author',
+        'updated_by',
+    ]
 
     def members(self, obj):
         return admin_links(

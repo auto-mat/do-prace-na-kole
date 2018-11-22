@@ -19,6 +19,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from author.decorators import with_author
+
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -38,6 +40,7 @@ DIC_ERROR_MESSAGE = _(
 )
 
 
+@with_author
 class Company(models.Model):
     """Organizace"""
 
