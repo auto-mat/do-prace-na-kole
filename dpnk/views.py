@@ -1439,6 +1439,9 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         context_data['registration_phase'] = self.registration_phase
+        context_data['introduction_message'] = _(
+            "Pozvěte přátele z práce, aby podpořili Váš tým, který může mít až %s členů."
+        ) % self.user_attendance.campaign.max_team_members
         return context_data
 
     def get_form_kwargs(self):

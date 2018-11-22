@@ -547,35 +547,10 @@ class InviteForm(SubmitMixin, forms.Form):
             fields.append(field_name)
         self.helper = FormHelper()
         self.helper.form_class = "dirty-check"
-        self.helper.layout = Layout(
-            HTML("<p>"),
-            HTML(
-                format_html_lazy(
-                    _(
-                        "Pozvěte přátele z práce, aby podpořili Váš tým. Napište jejich e-mail a "
-                        "my jim pošlete oficiální pozvánku. Až se přátelé připojí k týmu, nezapomeňte {invitation_link}",
-                    ),
-                    invitation_link=format_html_lazy(
-                        "<a href=\"{}\">{}</a>",
-                        reverse("team_members"),
-                        _("potvrdit jejich členství na Vašem profilu."),
-                    ),
-                ),
-            ),
-            HTML("</p><p>"),
-            HTML(
-                format_html_lazy(
-                    _("Do vašeho týmu můžete pozvat ještě {} členů."),
-                    self.free_capacity,
-                ),
-            ),
-            HTML("</p>"),
-            *fields,
-        )
         self.helper.add_input(
             Button('submit', _('Přeskočit'), css_class="btn-default", onclick='window.location.href="{}"'.format(reverse("zmenit_triko"))),
         )
-        self.helper.add_input(Submit('submit', _('Odeslat')))
+        self.helper.add_input(Submit('submit', _('Odeslat pozvánku')))
         for field in self.fields.values():
             field.widget.attrs['autocomplete'] = 'new-password'
         return ret_val
