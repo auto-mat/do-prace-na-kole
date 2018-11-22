@@ -41,8 +41,8 @@ class ViewsTestsLogon(TestCase):
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
         self.t_shirt_size = mommy.make(
             "TShirtSize",
-            id=1,
             campaign=testing_campaign,
+            name="Foo t-shirt size",
         )
         mommy.make(
             "price_level.PriceLevel",
@@ -60,6 +60,7 @@ class ViewsTestsLogon(TestCase):
             userprofile__user__first_name="Testing",
             userprofile__user__last_name="User",
             userprofile__user__email="testing.user@email.com",
+            userprofile__sex='male',
             personal_data_opt_in=True,
             distance=5,
         )
@@ -69,13 +70,14 @@ class ViewsTestsLogon(TestCase):
 
     def test_dpnk_t_shirt_size(self):
         post_data = {
-            't_shirt_size': '1',
+            'userprofile-telephone': '123456789',
+            'userattendance-t_shirt_size': self.t_shirt_size.pk,
             'next': 'Next',
         }
         response = self.client.post(reverse('zmenit_triko'), post_data, follow=True)
         self.assertRedirects(response, reverse("typ_platby"))
         self.user_attendance.refresh_from_db()
-        self.assertTrue(self.user_attendance.t_shirt_size.pk, 1)
+        self.assertTrue(self.user_attendance.t_shirt_size.name, "Foo t-shirt size")
 
     def test_dpnk_t_shirt_size_no_sizes(self):
         TShirtSize.objects.all().delete()
@@ -109,8 +111,8 @@ class ViewsTestsLogon(TestCase):
         response = self.client.get(reverse('zmenit_triko'))
         self.assertContains(
             response,
-            '<label for="id_t_shirt_size" class="control-label  requiredField">'
-            'Velikost trika'
+            '<label for="id_userattendance-t_shirt_size" class="control-label  requiredField">'
+            'Vyplňte velikost trika'
             '<span class="asteriskField">*</span>'
             '</label>',
             html=True,

@@ -139,7 +139,7 @@ class CompetitionsViewTests(ViewsLogon):
     def test_update_team(self):
         address = reverse('zmenit_tym')
         response = self.client.get(address)
-        self.assertContains(response, 'Po koordinátorovi vaší organizace na e-mailové adrese')
+        self.assertContains(response, 'Napište prosím svému firemnímu koordinátorovi na')
         self.assertContains(response, 'test_wa@email.cz')
         self.assertContains(response, 'test@email.cz')
         self.assertContains(response, 'test@test.cz')
@@ -298,7 +298,7 @@ class BaseViewsTests(ClearCacheMixin, TestCase):
         response = self.client.get(address)
         self.assertJSONEqual(
             response.content.decode(),
-            [{'value': 4, 'display': 'Empty team ()'}, {'value': 1, 'display': 'Testing team 1 (Nick, Testing User 1, Registered User 1)'}],
+            [{'value': 4, 'display': 'Empty team'}, {'value': 1, 'display': 'Testing team 1 (Nick, Testing User 1, Registered User 1)'}],
         )
 
     def test_chaining_subsidiary(self):
@@ -592,11 +592,11 @@ class ViewsTests(DenormMixin, TestCase):
     def test_login_view(self):
         address = reverse('login')
         response = self.client.get(address)
-        self.assertContains(response, "E-mail (uživatelské jméno)")
+        self.assertContains(response, "E-mail")
 
         address = reverse('login', kwargs={'initial_email': "test@test.cz"})
         response = self.client.get(address)
-        self.assertContains(response, "E-mail (uživatelské jméno)")
+        self.assertContains(response, "E-mail")
         self.assertContains(response, "test@test.cz")
 
     def test_admin_views_competition(self):
@@ -676,7 +676,7 @@ class ViewsTests(DenormMixin, TestCase):
     def test_dpnk_registration_access(self):
         address = reverse('registration_access')
         response = self.client.get(address)
-        self.assertContains(response, "E-mail (uživatelské jméno)")
+        self.assertContains(response, "Zadejte svůj e-mail")
         post_data = {
             'email': 'test@test.cz',
         }
@@ -1375,7 +1375,7 @@ class ViewsTestsLogon(ViewsLogon):
             "campaign": self.user_attendance.campaign.id,
         }
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, "Změnit organizaci, pobočku a tým")
+        self.assertContains(response, "<h2>Vyberte jiný tým</h2>", html=True)
 
     def test_dpnk_team_invitation_post_no_last_team(self):
         token = self.user_attendance.team.invitation_token
@@ -1488,7 +1488,7 @@ class ViewsTestsLogon(ViewsLogon):
         }
         address = reverse('upravit_profil')
         response = self.client.post(address, post_data, follow=True)
-        self.assertContains(response, "Zadejte pohlaví")
+        self.assertContains(response, "Pohlaví")
 
     def test_dpnk_update_profile_view_email_exists(self):
         post_data = {
@@ -1677,7 +1677,7 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.get(reverse('pozvanky'))
         self.assertContains(
             response,
-            "<p>Do vašeho týmu je možné doplnit ještě 2 členů.</p>",
+            "<p>Do vašeho týmu můžete pozvat ještě 2 členů.</p>",
             html=True,
         )
 
@@ -1716,7 +1716,7 @@ class ViewsTestsLogon(ViewsLogon):
         self.assertContains(
             response,
             '<label for="id_motivation_company_admin" class="control-label  requiredField">'
-            'Pár vět o vaší pozici'
+            'S kým máme tu čest?'
             '<span class="asteriskField">*</span>'
             '</label>',
             html=True,
@@ -1801,7 +1801,7 @@ class ChangeTeamViewTests(TestCase):
         response = self.client.get(reverse('zmenit_tym'))
         self.assertContains(
             response,
-            '<option value="%s" selected>Foo name ()</option>' % self.team.id,
+            '<option value="%s" selected>Foo name</option>' % self.team.id,
             html=True,
         )
 
@@ -1812,7 +1812,7 @@ class ChangeTeamViewTests(TestCase):
         response = self.client.get(reverse('zmenit_tym'))
         self.assertNotContains(
             response,
-            '<option value="%s" selected>Foo name ()</option>' % self.team.id,
+            '<option value="%s" selected>Foo name</option>' % self.team.id,
             html=True,
         )
         self.assertNotContains(
@@ -1825,7 +1825,6 @@ class ChangeTeamViewTests(TestCase):
         self.user_attendance.team = None
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_tym'))
-        print_response(response)
         self.assertContains(  # Test blank select
             response,
             self.blank_team_html,

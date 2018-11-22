@@ -3,9 +3,9 @@
 {% load static %}
 
 {% block messages %}
+{% trans "Nejprve nám řekněte, odkud pocházíte." %}
 <br/>
-   {% trans "Pokud název organizace nebo adresa pobočky v seznamu je, ale údaje jsou chybné, nezakládejte novou pobočku. Žádejte o opravu:" %}
-   {% include "registration/request_change_company_coordinator_part.html" %}
+{% trans "Zadejte prosím, v jaké společnosti Váš tým pracuje." %}
 {{ block.super }}
 {% endblock %}
 

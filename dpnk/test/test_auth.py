@@ -148,6 +148,6 @@ class TestEmailBackend(TestCase):
         )
         self.assertContains(
             response,
-            '<li>Zadejte správnou hodnotu pole uživatelské jméno a heslo. Pozor, obě pole mohou rozlišovat malá a velká písmena.</li>',
+            '<a href="/registrace/test@test.cz/">Jsem tu poprvé a chci se registrovat.</a>',
             html=True,
         )

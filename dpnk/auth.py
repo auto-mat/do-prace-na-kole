@@ -46,6 +46,8 @@ class SetPasswordForm(SubmitMixin, SetPasswordForm):
 
 
 class PasswordResetForm(SubmitMixin, PasswordResetForm):
+    submit_text = _('Obnovit heslo')
+
     def get_users(self, email):
         return User.objects.filter(email__iexact=email, is_active=True)
 
@@ -57,6 +59,11 @@ class PasswordResetForm(SubmitMixin, PasswordResetForm):
             return self.cleaned_data['email']
         else:
             raise forms.ValidationError(_(u"Tento e-mail v systému není zanesen."))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.form_class = "noAsterisks"
+        self.fields['email'].label = _("Zadejte e-mail")
 
     def save(self, *args, **kwargs):
         kwargs['extra_email_context'] = {'subdomain': kwargs['request'].subdomain}

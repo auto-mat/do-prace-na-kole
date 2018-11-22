@@ -26,14 +26,12 @@ from django.utils.html import format_html
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
-import registration.forms
-
 from selectable.forms.widgets import AutoCompleteSelectWidget
 
 from table_select_widget import TableSelectMultiple
 
 from . import models
-from .forms import AddressForm, EmailUsernameMixin, SubmitMixin
+from .forms import AddressForm, RegistrationFormDPNK, SubmitMixin, UserAttendanceUpdateForm
 from .models import Campaign, City, Company, CompanyAdmin, Competition, Invoice, Subsidiary, UserAttendance
 
 
@@ -135,18 +133,17 @@ class SubsidiaryForm(SubmitMixin, AddressForm):
         return ret_val
 
 
-class CompanyAdminForm(SubmitMixin, forms.ModelForm):
+class CompanyAdminForm(SubmitMixin, UserAttendanceUpdateForm):
     motivation_company_admin = forms.CharField(
-        label=_("Pár vět o vaší pozici"),
+        label=_("S kým máme tu čest?"),
         help_text=_(
-            "Napište nám prosím, jakou zastáváte u vašeho zaměstnavatele pozici, "
-            "podle kterých můžeme ověřit, že vám funkci firemního koordinátora můžeme svěřit."
+            "Řekněte nám něco o pozici, kterou ve společnosti zastupujete."
         ),
         max_length=100,
         required=True,
     )
     will_pay_opt_in = forms.BooleanField(
-        label=_("Zavazuji se, že já, resp. moje organizace, uhradí startovné za zaměstnance jejichž platbu schválím."),
+        label=_("Zajistím, aby společnost uhradila startovné za náš zaměstnanecký tým."),
         required=True,
     )
     personal_data_opt_in = forms.BooleanField(
@@ -165,28 +162,27 @@ class CompanyAdminForm(SubmitMixin, forms.ModelForm):
         return self.instance.campaign
 
     def __init__(self, request=None, *args, **kwargs):
-        ret_val = super().__init__(*args, **kwargs)
-        self.fields['personal_data_opt_in'].label = _(
-            "Souhlasím se zpracováním osobních údajů podle "
-            "<a target='_blank' href='http://www.auto-mat.cz/zasady'>Zásad o ochraně a zpracování údajů Auto*Mat z.s.</a> "
-            "a s <a target='_blank' href='http://www.dopracenakole.cz/obchodni-podminky'>Obchodními podmínkami soutěže %s</a>.",
-        ) % self.get_campaign()
-        return ret_val
+        super().__init__(*args, **kwargs)
+        self.helper.form_class = "noAsterisks"
 
 
-class CompanyAdminApplicationForm(EmailUsernameMixin, CompanyAdminForm, registration.forms.RegistrationFormUniqueEmail):
+class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationFormDPNK):
+    add_social_login = False
+
     administrated_company = forms.ModelChoiceField(
-        label=_(u"Koordinovaná organizace"),
+        label=_("Název společnosti"),
         widget=AutoCompleteSelectWidget(
             lookup_class='dpnk.lookups.CompanyLookup',
+            attrs={
+                'class': "autocompletewidget form-control textinput textInput form-control",
+            },
         ),
         queryset=Company.objects.all(),
         required=True,
-        help_text=_("Napište část názvu organizace a vyberte ji ze seznamu."),
+        help_text=_("Začnete psát název organizace a vyberte si z nabídky."),
     )
     telephone = forms.CharField(
         label="Telefon",
-        help_text=_("Pro možnost kontaktování firemního koordinátora"),
         max_length=30,
     )
     first_name = forms.CharField(

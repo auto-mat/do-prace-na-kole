@@ -12,7 +12,10 @@
 {{ block.super }}
 {% endblock %}
 
-
+{% block messages %}
+{% trans "Ještě vyberte způsob platby a můžete vyrazit." %}
+{{ block.super }}
+{% endblock %}
 
 {% block container_footer %}
 <script>

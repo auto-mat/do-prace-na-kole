@@ -129,7 +129,7 @@ class ProfileRedirectMixin(object):
 
 class DPNKLoginView(CampaignFormKwargsMixin, TitleViewMixin, ProfileRedirectMixin, LoginView):
     def get_title(self, *args, **kwargs):
-        return _("Přihlášení do soutěže %s") % self.campaign.name
+        return _("Přihláška %s") % self.campaign.name
 
     def get_initial(self):
         initial_email = self.kwargs.get('initial_email')
@@ -148,15 +148,15 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
 
     def get_title(self, *args, **kwargs):
         if self.user_attendance.team:
-            action_text = _('Změnit')
+            if self.user_attendance.campaign.competitors_choose_team():
+                return _('Vyberte jiný tým')
+            else:
+                return _('Přidejte se k týmu')
         else:
-            action_text = _('Vybrat')
-
-        if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():
-            subject_text = _('organizaci, pobočku a tým')
-        else:
-            subject_text = _('organizaci')
-        return "%s %s" % (action_text, subject_text)
+            if self.user_attendance.campaign.competitors_choose_team():
+                return _('Vyberte jinou společnost')
+            else:
+                return _('Vyhledejte svoji společnost')
 
     def get_next_url(self):
         if self.user_attendance.approved_for_team == 'approved' and self.user_attendance.campaign.competitors_choose_team():
@@ -246,7 +246,7 @@ class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, ProfileRedi
     form_class = RegistrationAccessFormDPNK
 
     def get_title(self, *args, **kwargs):
-        return _("Registrujte se do soutěže %s") % self.campaign.name
+        return _("Registrace %s") % self.campaign.name
 
     def form_valid(self, form):
         email = form.cleaned_data['email']
@@ -263,7 +263,7 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrat
     success_url = 'upravit_profil'
 
     def get_title(self, *args, **kwargs):
-        return _("Registrujte se do soutěže %s") % self.campaign.name
+        return _("Registrace %s") % self.campaign.name
 
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}
@@ -357,13 +357,16 @@ class PaymentTypeView(
         MustBeInPaymentPhaseMixin,
         MustHaveTeamMixin,
         LoginRequiredMixin,
+        CampaignParameterMixin,
         FormView,
 ):
     template_name = 'registration/payment_type.html'
-    title = _("Platba")
     registration_phase = "typ_platby"
     next_url = "profil"
     prev_url = "zmenit_triko"
+
+    def get_title(self, *args, **kwargs):
+        return _("Děkujeme, že s námi chcete jezdit %s!") % self.campaign.name
 
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance:
@@ -1060,13 +1063,13 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
 
 
 class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'base_generic_registration_form.html'
+    template_name = 'registration/profile_update.html'
     form_class = ProfileUpdateForm
     model = UserProfile
-    success_message = _("Osobní údaje úspěšně upraveny")
+    success_message = _("Soutěžní údaje úspěšně upraveny")
     next_url = "zmenit_tym"
     registration_phase = "upravit_profil"
-    title = _("Osobní údaje")
+    title = _("Vyplňte soutěžní údaje")
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -1436,7 +1439,7 @@ class TeamApprovalRequest(TitleViewMixin, UserAttendanceViewMixin, LoginRequired
 class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleViewMixin, MustBeApprovedForTeamMixin, LoginRequiredMixin, FormView):
     template_name = 'base_generic_registration_form.html'
     form_class = InviteForm
-    title = _('Pozvětě své kolegy do týmu')
+    title = _('Pozvěte další kolegy do svého týmu')
     registration_phase = "zmenit_tym"
     success_url = reverse_lazy('pozvanky')
 

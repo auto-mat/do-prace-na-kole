@@ -127,7 +127,7 @@ a{
 // 	float: left;
 // }
 // 
-#rides .asteriskField{
+#rides .asteriskField, .noAsterisks .asteriskField{
 	display: none;
 }
 a{
@@ -227,6 +227,7 @@ h3, h4{
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus{
 	background-color:transparent;
 	text-decoration:underline;
+	color:#000;
 }
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
 	background-color:@links;
@@ -370,7 +371,7 @@ input:disabled+label{
 		}
 		&.active{
 			a{
-				color:lighten(@links, 30%)
+				text-decoration:underline;
 			}
 		}
 	}
