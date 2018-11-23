@@ -56,7 +56,14 @@ class UserAttendanceMiddleware(MiddlewareMixin):
         except Campaign.DoesNotExist:
             if '/admin/' not in request.path:  # We want to make admin accessible to be able to set campaigns.
                 if campaign_slug is None:
-                    raise Http404(_("Could not read subdomain. Ensure that you have DPNK_SITE_ID set correctly. For more info see https://django-subdomains.readthedocs.io/en/latest/ . You need to create a site object in the admin in order to do this: ex http://localhost:8000/admin/sites/site/"))
+                    raise Http404(
+                        _(
+                            """Could not read subdomain.
+Ensure that you have DPNK_SITE_ID set correctly.
+For more info see https://django-subdomains.readthedocs.io/en/latest/ .
+You need to create a site object in the admin in order to do this: ex http://localhost:8000/admin/sites/site/""",
+                        ),
+                    )
 
                 raise Http404(_("Kampaň s identifikátorem %s neexistuje. Zadejte prosím správnou adresu.") % campaign_slug)
             else:
