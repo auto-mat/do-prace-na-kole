@@ -32,7 +32,9 @@ WORKDIR "/home/aplikace"
 run pip3 install pipenv
 copy Pipfile /home/aplikace/Pipfile
 copy Pipfile.lock /home/aplikace/Pipfile.lock
-run pipenv install --system --deploy --ignore-pipfile --verbose
+run pipenv install --system --ignore-pipfile --verbose
+run pip3 uninstall -y django
+run pip3 install django==2.0.9 # Due to the way pipenv works it just installs packages in a more or less random order without actually garanteeing version constraints in the Pipfile are fulfilled in case those packages are installed as dependencies of other packages. If we really want to have a specific django version we have to install it manually.
 
 copy . .
 
