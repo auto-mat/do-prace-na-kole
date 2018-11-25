@@ -177,11 +177,15 @@ class CompetitionResultListJson(BaseDatatableView):
         else:
             return super().render_column(row, column)
 
-    def get_initial_queryset(self):
-        if not hasattr(self, 'competition'):
-            self.competition = models.Competition.objects.get(
+    @property
+    def competition(self):
+        if not hasattr(self, '_competition'):
+            self._competition = models.Competition.objects.get(
                 slug=self.kwargs['competition_slug'],
             )
+        return self._competition
+
+    def get_initial_queryset(self):
         results = self.competition.get_results()
         return self.competition.select_related_results(results)
 
