@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "102230d4cf23dd4378857392565ff29c96da91189011924e5e10435b9eb33f9c"
+            "sha256": "aa6bddb5d6b9ab5b200bb66921e3d25abd998f3e8427669dc0cd01f1432c53df"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -126,11 +126,11 @@
         },
         "django": {
             "hashes": [
-                "sha256:0c5b65847d00845ee404bbc0b4a85686f15eb3001ffddda3db4e9baa265bf136",
-                "sha256:68aeea369a8130259354b6ba1fa9babe0c5ee6bced505dea4afcd00f765ae38b"
+                "sha256:25df265e1fdb74f7e7305a1de620a84681bcc9c05e84a3ed97e4a1a63024f18d",
+                "sha256:d6d94554abc82ca37e447c3d28958f5ac39bd7d4adaa285543ae97fb1129fd69"
             ],
             "index": "pypi",
-            "version": "==2.0.8"
+            "version": "==2.0.9"
         },
         "django-admin-sortable2": {
             "hashes": [
@@ -140,11 +140,9 @@
             "version": "==0.6.21"
         },
         "django-admin-view-permission": {
-            "hashes": [
-                "sha256:786695f57bef513f804066996b0693573753f49a1f7786c188f0d2d399769bae"
-            ],
-            "index": "pypi",
-            "version": "==1.8"
+            "editable": true,
+            "git": "https://github.com/auto-mat/django-admin-view-permission.git",
+            "ref": "0f687001689ca8d73fdcee434dc888ed78c09e77"
         },
         "django-admin-views": {
             "hashes": [
@@ -1340,11 +1338,11 @@
         },
         "django": {
             "hashes": [
-                "sha256:0c5b65847d00845ee404bbc0b4a85686f15eb3001ffddda3db4e9baa265bf136",
-                "sha256:68aeea369a8130259354b6ba1fa9babe0c5ee6bced505dea4afcd00f765ae38b"
+                "sha256:25df265e1fdb74f7e7305a1de620a84681bcc9c05e84a3ed97e4a1a63024f18d",
+                "sha256:d6d94554abc82ca37e447c3d28958f5ac39bd7d4adaa285543ae97fb1129fd69"
             ],
             "index": "pypi",
-            "version": "==2.0.8"
+            "version": "==2.0.9"
         },
         "django-admin-smoke-tests": {
             "hashes": [
