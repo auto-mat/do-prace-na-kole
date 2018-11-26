@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "aa6bddb5d6b9ab5b200bb66921e3d25abd998f3e8427669dc0cd01f1432c53df"
+            "sha256": "bc097cc966b9a5a3165ecfe2712e70d94ab790a41e071c4163e2364939da6e0a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1513,12 +1513,9 @@
             "version": "==0.6.1"
         },
         "model-mommy": {
-            "hashes": [
-                "sha256:0e42c8f4a37c874dd81675ef8a385d3a25877082565e0d213022898c637f6f25",
-                "sha256:8313c253617255060de474cdfcc0f7517e42deafc5619fec832a6c04b292b5d7"
-            ],
-            "index": "pypi",
-            "version": "==1.6.0"
+            "editable": true,
+            "git": "https://github.com/auto-mat/model_mommy.git",
+            "ref": "da80a03217c3fbab4c90b73bc00274fe67dc6c5a"
         },
         "nose": {
             "hashes": [
@@ -1610,10 +1607,10 @@
         },
         "pygments": {
             "hashes": [
-                "sha256:78f3f434bcc5d6ee09020f92ba487f95ba50f1e3ef83ae96b9d5ffa1bab25c5d",
-                "sha256:dbae1046def0efb574852fab9e90209b23f556367b5a320c0bcb871c77c3e8cc"
+                "sha256:6301ecb0997a52d2d31385e62d0a4a4cf18d2f2da7054a5ddad5c366cd39cee7",
+                "sha256:82666aac15622bd7bb685a4ee7f6625dd716da3ef7473620c192c0168aae64fc"
             ],
-            "version": "==2.2.0"
+            "version": "==2.3.0"
         },
         "python-dateutil": {
             "hashes": [
