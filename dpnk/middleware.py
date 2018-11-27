@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from django.contrib.sites.models import Site
 from django.http import Http404
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.translation import ugettext_lazy as _
@@ -56,12 +57,24 @@ class UserAttendanceMiddleware(MiddlewareMixin):
         except Campaign.DoesNotExist:
             if '/admin/' not in request.path:  # We want to make admin accessible to be able to set campaigns.
                 if campaign_slug is None:
+                    from django.conf import settings
+                    current_site = Site.objects.get(pk=int(settings.SITE_ID))
                     raise Http404(
                         _(
                             """Could not read subdomain.
 Ensure that you have DPNK_SITE_ID set correctly.
+
+Current SITE_ID is %s. Which points to site %s.
+
 For more info see https://django-subdomains.readthedocs.io/en/latest/ .
-You need to create a site object in the admin in order to do this: ex http://localhost:8000/admin/sites/site/""",
+You need to create a site object in the admin in order to do this: ex http://localhost:8000/admin/sites/site/
+Current sites are
+
+%s
+
+Note: after updating the sites list in the admin interface, server
+restart is requried.
+""" % (settings.SITE_ID, str(current_site), "\n\n".join(["domain: %s id: %s" % (site.domain, str(site.id)) for site in Site.objects.all()])),
                         ),
                     )
 
