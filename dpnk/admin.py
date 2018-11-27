@@ -26,7 +26,7 @@ from admin_views.admin import AdminViews
 
 from adminactions import actions as admin_actions, merge
 
-from adminfilters.filters import AllValuesComboFilter, RelatedFieldCheckBoxFilter, RelatedFieldComboFilter
+from adminfilters.filters import AllValuesComboFilter, RelatedFieldComboFilter
 
 from adminsortable2.admin import SortableAdminMixin, SortableInlineAdminMixin
 
@@ -787,7 +787,6 @@ class UserAttendanceAdmin(
     )
     list_filter = (
         CampaignFilter,
-        ('team__subsidiary__city', RelatedFieldCheckBoxFilter),
         ('approved_for_team', AllValuesComboFilter),
         't_shirt_size__name',
         'userprofile__user__is_active',
