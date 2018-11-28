@@ -36,3 +36,8 @@ dpnk/test_files/t_shirt_preview/
 docker.env
 graph.png
 graph.pdf
+pipenv/
+src/
+celerybeat.pid
+celerybeat-schedule
+test-dpnk.log

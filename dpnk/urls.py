@@ -23,10 +23,15 @@ from django.utils.translation import ugettext_lazy as _
 
 from . import auth
 from . import company_admin_views
-from . import views, views_results
+from . import views, views_results, models
 from .forms import AuthenticationFormDPNK
 from .views import answers, questionnaire_answers, questionnaire_results, questions
 urlpatterns = [
+    url(
+        '^linked_subsidiaries/$',
+        views.LinkedSubsidiariesView.as_view(model=models.Subsidiary),
+        name='linked_subsidiaries'
+    ),
     url(
         r'^tym/$',
         views.ChangeTeamView.as_view(),

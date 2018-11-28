@@ -38,7 +38,7 @@ run pip3 install django==2.0.9 # Due to the way pipenv works it just installs pa
 
 copy . .
 
-run DPNK_SECRET_KEY="fake_key" python manage.py collectstatic --noinput
+run DPNK_SECRET_KEY="fake_key" python3 manage.py collectstatic --noinput
 
 EXPOSE 8000
 RUN mkdir media logs

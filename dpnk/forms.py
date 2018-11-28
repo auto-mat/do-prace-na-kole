@@ -28,6 +28,8 @@ from crispy_forms.bootstrap import FieldWithButtons, StrictButton
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Button, Div, Field, HTML, Layout, Submit
 
+from dal import autocomplete
+
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
@@ -50,8 +52,6 @@ from leaflet.forms.widgets import LeafletWidget
 import registration.forms
 
 from selectable.forms.widgets import AutoCompleteSelectWidget
-
-from smart_selects.form_fields import ChainedModelChoiceField
 
 from . import email, models, util
 from .fields import CommaFloatField, ShowPointsMultipleModelChoiceField
@@ -303,33 +303,23 @@ class RegisterTeamForm(InitialFieldsMixin, forms.ModelForm):
 class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
     company = company_field
 
-    subsidiary = ChainedModelChoiceField(
-        chained_field="company_1",
-        to_app_name="dpnk",
-        to_model_name="Subsidiary",
-        chained_model_field="company",
-        show_all=False,
-        auto_choose=True,
-        manager='active_objects',
-        label=_("Adresa společnosti nebo pobočky"),
-        foreign_key_app_name="dpnk",
-        foreign_key_model_name="Subsidiary",
-        foreign_key_field_name="company",
-        queryset=models.Subsidiary.objects.filter(active=True),
+    widgets = {
+        'subsidiary': autocomplete.ModelSelect2(url='linked_subsidiaries',
+                                                forward=('company',))
+    }
+
+    class Media:
+        js = (
+            'js/linked_data.js',
+        )
+
+
+    subsidiary = forms.ChoiceField(
+        label=_("Adresa pobočky/organizace"),
         required=True,
     )
-    team = ChainedModelChoiceField(
-        chained_field="subsidiary",
-        to_app_name="dpnk",
-        to_model_name="Team",
-        chained_model_field="subsidiary",
-        show_all=False,
-        auto_choose=False,
-        foreign_key_app_name="dpnk",
-        foreign_key_model_name="Subsidiary",
-        foreign_key_field_name="company",
+    team = forms.ChoiceField(
         label=_("Tým"),
-        queryset=models.Team.objects.all(),
         required=True,
     )
 
@@ -390,6 +380,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
         company = self.initial.get('company')
         subsidiary = self.initial.get('subsidiary')
+        """
         self.helper.layout = Layout(
             FieldWithButtons(
                 'company',
@@ -432,7 +423,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
             self.fields["team"].widget = HiddenInput()
             self.fields["team"].required = False
             del self.helper.layout.fields[2]
-
+    """
     class Meta:
         model = models.UserAttendance
         fields = ('company', 'subsidiary', 'team')

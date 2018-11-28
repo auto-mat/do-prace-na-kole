@@ -33,6 +33,8 @@ from fm.views import AjaxCreateView
 from http.client import HTTPSConnection
 from urllib.parse import urlencode
 
+from dal import autocomplete
+
 # Django imports
 from braces.views import LoginRequiredMixin
 
@@ -1920,3 +1922,13 @@ def status(request):
     status_page = str(datetime.datetime.now()) + '\n'
     status_page += socket.gethostname()
     return HttpResponse(status_page)
+
+class LinkedSubsidiariesView(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = super().get_queryset()
+        company = self.forwarded.get('company', None)
+
+        if company:
+            qs = qs.filter(company_id=company)
+
+        return qs

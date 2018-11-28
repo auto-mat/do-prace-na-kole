@@ -230,6 +230,8 @@ INSTALLED_APPS = (
     'modeltranslation',
     'admin_view_permission',
     'admin_views',
+    'dal',
+    'dal_select2',
 
     'django_su',
     'django.contrib.auth',
@@ -254,7 +256,6 @@ INSTALLED_APPS = (
     'psc',
     'stale_notifications',
 
-    'smart_selects',
     'composite_field',
     'softhyphen',
     'django_extensions',
