@@ -1513,7 +1513,7 @@ class UpdateTeam(
 ):
     template_name = 'base_generic_form.html'
     form_class = TeamAdminForm
-    success_url = reverse_lazy('edit_team')
+    success_url = reverse_lazy('team_members')
     title = _("Upravit název týmu")
     registration_phase = 'zmenit_tym'
     success_message = _("Název týmu úspěšně změněn na %(name)s")
@@ -1540,7 +1540,9 @@ class TeamMembers(
 ):
     template_name = 'registration/team_admin_members.html'
     registration_phase = "zmenit_tym"
-    title = _("Schvalování členů týmu")
+
+    def get_title(self, *args, **kwargs):
+        return _("Tým %s") % self.user_attendance.team.name
 
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):

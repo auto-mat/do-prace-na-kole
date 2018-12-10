@@ -2,6 +2,10 @@
 {% load dpnk_tags %}
 {% load i18n %}
 
+{% block form_intro %}
+<a href="{% url "edit_team" %}">{% trans "Změnit název týmu" %}</a>
+{% endblock %}
+
 {% block form %}
 <form method="post" class="submit-once-form form-inline" id="members-form" action="{% url 'team_members' %}">{% csrf_token %}
 {% for user in unapproved_users %}
@@ -46,4 +50,5 @@
    </div>
 {% endfor %}
 </form>
+<a class="btn btn-default" href="{% url "pozvanky" %}">{% trans "Pozvat nové členy" %}</a>
 {% endblock %}
