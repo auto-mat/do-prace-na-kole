@@ -134,7 +134,7 @@ Raven.setUserContext({
          {% endif %}
          {% block error %}
             {% if fullpage_error_message %}
-            <div class="alert alert-danger">{{ fullpage_error_message }}</div>
+            <div class="alert alert-{% if fullpage_error_level %}{{ fullpage_error_level }}{% else %}danger{% endif %}">{{ fullpage_error_message }}</div>
             {% else %}
             {% scribble 'before_content' %}{% endscribble %}
             {% block content %}{% endblock %}
@@ -162,9 +162,6 @@ Raven.setUserContext({
  <script>
       jQuery(document).ready(function($) {
         // deactivate unfulfilled links
-        $('.disabled a').click(function (e) {
-          e.preventDefault();
-        });
         $('.readonly').click(function (e) {
           e.preventDefault();
         });

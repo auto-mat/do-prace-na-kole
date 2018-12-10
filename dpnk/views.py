@@ -365,17 +365,33 @@ class PaymentTypeView(
         if request.user_attendance:
             if request.user_attendance.has_paid():
                 if request.user_attendance.payment_status == 'done':
-                    message = _("Již máte účastnický poplatek zaplacen.")
+                    message = _("Vaši platbu jsme úspěšně přijali.")
                 else:
                     message = _("Účastnický poplatek se neplatí.")
                 raise exceptions.TemplatePermissionDenied(
-                    mark_safe_lazy(message + " " + _("Pokračujte na <a href='%s'>zadávání jízd</a>.") % reverse("profil")),
+                    message,
                     self.template_name,
+                    title=_("Děkujeme!"),
+                    error_level="success",
                 )
             if request.user_attendance.campaign.has_any_tshirt and not request.user_attendance.t_shirt_size:
                 raise exceptions.TemplatePermissionDenied(
-                    _("Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"),
+                    format_html(
+                        _("Zatím není co platit. Nejdříve se {join_team} a {choose_shirt}."),
+                        join_team=format_html(
+                            "<a href='{}'>{}</a>",
+                            reverse("zmenit_tym"),
+                            _('přidejte k týmu'),
+                        ),
+                        choose_shirt=format_html(
+                            "<a href='{}'>{}</a>",
+                            reverse("zmenit_triko"),
+                            _('vyberte tričko'),
+                        ),
+                    ),
                     self.template_name,
+                    title=_("Dobrá hospodyňka pro kolo i přes plot skočí."),
+                    error_level="warning",
                 )
         return super().dispatch(request, *args, **kwargs)
 

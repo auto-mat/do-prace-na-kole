@@ -23,6 +23,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import formats
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 
 from dpnk import exceptions
@@ -108,8 +109,16 @@ class MustHaveTeamMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance and not request.user_attendance.team:
             raise exceptions.TemplatePermissionDenied(
-                mark_safe_lazy(_("Napřed musíte mít <a href='%s'>vybraný tým</a>.") % reverse_lazy("zmenit_tym")),
+                format_html(
+                    _("Pokud jeli napřed tak je dohoňte a {join_team}."),
+                    join_team=format_html(
+                        "<a href='{}'>{}</a>",
+                        reverse("zmenit_tym"),
+                        _('přidejte se k týmu'),
+                    ),
+                ),
                 template_name=getattr(self, 'template_name', None),
+                title=_("Kde jsou ostatní?"),
             )
 
         return super().dispatch(request, *args, **kwargs)
