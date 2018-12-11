@@ -68,7 +68,7 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
                 )
             if request.user_attendance.package_shipped():
                 raise exceptions.TemplatePermissionDenied(
-                    _("Vaše tričko již je na cestě k vám, už se na něj můžete těšit."),
+                    _("Vaše tričko již je na cestě k Vám, už se na něj můžete těšit."),
                     self.template_name,
                     title=_("Hurá!"),
                     error_level="success",
