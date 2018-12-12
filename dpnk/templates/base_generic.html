@@ -93,6 +93,9 @@ Raven.setUserContext({
                        {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                     {% endif %}
                  </div>
+                 <div class="nav navbar-nav main_menu collapse navbar-collapse navbar-right" id="collapsible_menu">
+                    {% sitetree_menu from "about_us" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                 </div>
 
                  <div id="collapsing_menu" class="collapse navbar-collapse">
                     {% block second_menu %}
