@@ -833,7 +833,8 @@ class UserUpdateForm(CampaignMixin, RequiredFieldsMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['first_name'].label = _("Jméno")
+        if 'first_name' in self.fields:
+            self.fields['first_name'].label = _("Jméno")
 
     class Meta:
         model = User
@@ -852,7 +853,22 @@ class UserUpdateForm(CampaignMixin, RequiredFieldsMixin, forms.ModelForm):
         }
 
 
-class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
+class UserEmailUpdateForm(UserUpdateForm):
+    class Meta(UserUpdateForm.Meta):
+        fields = (
+            'email',
+        )
+
+
+class UserNameUpdateForm(UserUpdateForm):
+    class Meta(UserUpdateForm.Meta):
+        fields = (
+            'first_name',
+            'last_name',
+        )
+
+
+class RegistrationUserProfileUpdateForm(CampaignMixin, forms.ModelForm):
     dont_show_name = forms.BooleanField(
         label=_("Nechci, aby moje skutečné jméno bylo veřejné."),
         required=False,
@@ -877,9 +893,9 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['dont_show_name'].initial = self.instance.nickname is not None
+        self.fields['sex'].required = True
         self.fields['mailing_opt_in'].initial = None
         self.fields['mailing_opt_in'].required = True
-        self.fields['sex'].required = True
         self.fields['mailing_opt_in'].choices = [
             (True, _("Ano, chci dostávat soutěžní novinky, informace o akcích a pozvánky do dalších ročníků soutěže.")),
             (False, _("Ne, děkuji")),
@@ -899,6 +915,14 @@ class UserProfileUpdateForm(CampaignMixin, forms.ModelForm):
         widgets = {
             'mailing_opt_in': forms.RadioSelect(attrs={'required': True}),
         }
+
+
+class UserProfileUpdateForm(RegistrationUserProfileUpdateForm):
+    class Meta(RegistrationUserProfileUpdateForm.Meta):
+        fields = RegistrationUserProfileUpdateForm.Meta.fields + (
+            'occupation',
+            'age_group',
+        )
 
 
 class UserAttendanceUpdateForm(CampaignMixin, forms.ModelForm):
@@ -921,13 +945,27 @@ class UserAttendanceUpdateForm(CampaignMixin, forms.ModelForm):
         )
 
 
-class ProfileUpdateForm(PrevNextMixin, MultiModelForm):
+class RegistrationProfileUpdateForm(PrevNextMixin, MultiModelForm):
     no_prev = True
 
     form_classes = OrderedDict([
         ('user', UserUpdateForm),
-        ('userprofile', UserProfileUpdateForm),
+        ('userprofile', RegistrationUserProfileUpdateForm),
         ('userattendance', UserAttendanceUpdateForm),
+    ])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.form_class = "noAsterisks"
+
+
+class ProfileUpdateForm(SubmitMixin, MultiModelForm):
+    submit_text = _('Hotovo')
+
+    form_classes = OrderedDict([
+        ('user', UserNameUpdateForm),
+        ('userprofile', UserProfileUpdateForm),
+        ('usermail', UserEmailUpdateForm),
     ])
 
     def __init__(self, *args, **kwargs):

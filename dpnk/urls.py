@@ -184,9 +184,14 @@ urlpatterns = [
         name="questionnaire",
     ),
     url(
+        r'^vytvorit_profil/$',
+        views.RegistrationProfileView.as_view(),
+        name="upravit_profil",
+    ),
+    url(
         r'^upravit_profil/$',
         views.UpdateProfileView.as_view(),
-        name="upravit_profil",
+        name="edit_profile_detailed",
     ),
     url(
         r'^upravit_trasu/$',

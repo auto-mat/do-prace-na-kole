@@ -91,6 +91,7 @@ from .forms import (
     ProfileUpdateForm,
     RegistrationAccessFormDPNK,
     RegistrationFormDPNK,
+    RegistrationProfileUpdateForm,
     TeamAdminForm,
     TrackUpdateForm,
 )
@@ -1071,9 +1072,9 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, UpdateView):
+class RegistrationProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'registration/profile_update.html'
-    form_class = ProfileUpdateForm
+    form_class = RegistrationProfileUpdateForm
     model = UserProfile
     success_message = _("Soutěžní údaje úspěšně upraveny")
     next_url = "zmenit_tym"
@@ -1085,11 +1086,18 @@ class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginReq
         kwargs.update(
             instance={
                 'user': self.user_attendance.userprofile.user,
+                'usermail': self.user_attendance.userprofile.user,
                 'userprofile': self.user_attendance.userprofile,
                 'userattendance': self.user_attendance,
             },
         )
         return kwargs
+
+
+class UpdateProfileView(RegistrationProfileView):
+    form_class = ProfileUpdateForm
+    success_url = "edit_profile_detailed"
+    template_name = 'registration/profile_update_detailed.html'
 
 
 class UpdateTrackView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
