@@ -139,7 +139,7 @@ class CompetitionsViewTests(ViewsLogon):
     def test_update_team(self):
         address = reverse('zmenit_tym')
         response = self.client.get(address)
-        self.assertContains(response, 'Napište prosím svému firemnímu koordinátorovi na')
+        self.assertContains(response, 'Napište svému firemnímu koordinátorovi na e-mail ')
         self.assertContains(response, 'test_wa@email.cz')
         self.assertContains(response, 'test@email.cz')
         self.assertContains(response, 'test@test.cz')
@@ -371,7 +371,7 @@ class PaymentTypeViewTests(TestCase):
         response = self.client.get(reverse('typ_platby'))
         self.assertContains(
             response,
-            '<div class="alert alert-danger">Již máte účastnický poplatek zaplacen. Pokračujte na <a href="/">zadávání jízd</a>.</div>',
+            '<div class="alert alert-success">Vaši platbu jsme úspěšně přijali.</div>',
             html=True,
             status_code=403,
         )
@@ -382,7 +382,7 @@ class PaymentTypeViewTests(TestCase):
         response = self.client.get(reverse('typ_platby'))
         self.assertContains(
             response,
-            '<div class="alert alert-danger">Účastnický poplatek se neplatí. Pokračujte na <a href="/">zadávání jízd</a>.</div>',
+            '<div class="alert alert-success">Účastnický poplatek se neplatí.</div>',
             html=True,
             status_code=403,
         )
@@ -419,7 +419,13 @@ class PaymentTypeViewTests(TestCase):
         self.user_attendance.save()
         self.assertTrue(self.user_attendance.campaign.has_any_tshirt)
         response = self.client.post(reverse('typ_platby'), post_data, follow=True)
-        self.assertContains(response, "Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko", status_code=403)
+        self.assertContains(
+            response,
+            "<div class=\"alert alert-warning\">Zatím není co platit. "
+            "Nejdříve se <a href='/tym/'>přidejte k týmu</a> a <a href='/zmenit_triko/'>vyberte tričko</a>.</div>",
+            status_code=403,
+            html=True,
+        )
 
     def test_dpnk_payment_type_without_company_admin(self):
         post_data = {
@@ -1050,7 +1056,7 @@ class TestRegisterCompanyView(ViewsLogonMommy):
         self.assertContains(
             response,
             '<label for="id_name" class="control-label  requiredField">'
-            'Název organizace'
+            'Název společnosti'
             '<span class="asteriskField">*</span>'
             '</label>',
             html=True,
@@ -1127,8 +1133,7 @@ class TestRegisterSubsidiaryView(ViewsLogonMommy):
         mommy.make('PSC', psc=12345)
         company = mommy.make('Company')
         post_data = {
-            "company_0": 'Foo',
-            "company_1": company.id,
+            "company": company.id,
             "city": city.id,
             "address_recipient": "Foo recipient",
             "address_street": "Foo street",
@@ -1214,7 +1219,6 @@ class TestDiplomasView(ViewsLogonMommy):
 
     def test_no_team(self):
         response = self.client.get(reverse('diplomas'))
-        print_response(response)
         self.shared_checks(response)
 
 
@@ -1667,7 +1671,7 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.get(reverse('pozvanky'))
         self.assertContains(
             response,
-            '<div class="alert alert-danger">Napřed musíte mít <a href="/tym/">vybraný tým</a>.</div>',
+            '<div class="alert alert-danger">Pokud jeli napřed tak je dohoňte a <a href="/tym/">přidejte se k týmu</a>.</div>',
             html=True,
             status_code=403,
         )
@@ -1677,7 +1681,7 @@ class ViewsTestsLogon(ViewsLogon):
         response = self.client.get(reverse('pozvanky'))
         self.assertContains(
             response,
-            "<p>Do vašeho týmu můžete pozvat ještě 2 členů.</p>",
+            "<p>Pozvěte přátele z práce, aby podpořili Váš tým, který může mít až 5 členů.</p>",
             html=True,
         )
 

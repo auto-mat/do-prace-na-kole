@@ -596,7 +596,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
             (
                 'pay',
                 format_html(
-                    '{} Kč<br/>{}',
+                    '<span id="payment_amount">{} Kč</span><br/>{}',
                     round(self.user_attendance.admission_fee()),
                     _("Zaplatím běžný účastnický poplatek."),
                 ),

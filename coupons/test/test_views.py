@@ -117,7 +117,7 @@ class DiscountCouponViewTests(TestCase):
             'next': 'Next',
         }
         response = self.client.post(reverse('discount_coupon'), post_data, follow=True)
-        self.assertContains(response, '<span id="payment_amount">60,0 Kč</span>', html=True)
+        self.assertContains(response, '<span id="payment_amount">60 Kč</span>', html=True)
         self.assertRedirects(response, reverse('typ_platby'))
 
     def test_discount_coupon_view_expired(self):
