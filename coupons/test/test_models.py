@@ -36,7 +36,7 @@ class DiscountCouponTests(TestCase):
             token="",
         )
         self.assertRegex(discount_coupon.name(), r"AA-[A-Z]{6}")
-        self.assertRegex(discount_coupon.coupon_pdf.name, r"coupon_[-]?[0-9]+\.pdf")
+        self.assertRegex(discount_coupon.coupon_pdf.name, r"coupon_[0123456789abcdef-]*\.pdf")
         pdf = PdfFileReader(discount_coupon.coupon_pdf)
         pdf_string = pdf.pages[0].extractText()
         self.assertTrue(discount_coupon.name() in pdf_string)

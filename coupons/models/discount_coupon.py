@@ -18,11 +18,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+import uuid
+
 from author.decorators import with_author
 
 from coupons.models.discount_coupon_type import DiscountCouponType
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.core.files import File
@@ -145,7 +146,7 @@ def create_coupon_file(sender, instance, created, **kwargs):
         )
         filename = "%s/coupon_%s.pdf" % (
             instance.coupon_type.campaign.slug,
-            hash(str(instance.pk) + settings.SECRET_KEY)
+            uuid.uuid4()
         )
         instance.coupon_pdf.save(filename, File(temp))
         instance.save()
