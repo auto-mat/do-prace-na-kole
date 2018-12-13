@@ -354,7 +354,7 @@ class DeliveryBatchForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
-        if hasattr(self, 'request'):
+        if hasattr(self, 'request') and hasattr(self.request, 'campaign'):
             self.instance.campaign = self.request.campaign
         return ret_val
 
