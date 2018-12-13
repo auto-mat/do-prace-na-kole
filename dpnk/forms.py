@@ -101,8 +101,13 @@ class SubmitMixin(object):
 class PrevNextMixin(object):
     next_text = _('Pokračovat')
 
+    def show_only_submit(self):
+        return False
+
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
+        if self.show_only_submit():
+            return super().__init__(*args, **kwargs)
         if not hasattr(self, 'no_dirty'):
             self.helper.form_class = "dirty-check"
         if not hasattr(self, 'no_prev'):
