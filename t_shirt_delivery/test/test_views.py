@@ -88,7 +88,7 @@ class ViewsTestsLogon(TestCase):
     def test_dpnk_t_shirt_size_shipped(self):
         mommy.make("PackageTransaction", status=20002, t_shirt_size=self.t_shirt_size, user_attendance=self.user_attendance)
         response = self.client.get(reverse('zmenit_triko'))
-        self.assertContains(response, "Vaše tričko již je na cestě k vám, už se na něj můžete těšit.", status_code=403)
+        self.assertContains(response, "Vaše tričko již je na cestě k Vám, už se na něj můžete těšit.", status_code=403)
 
     @patch('slumber.API')
     def test_dpnk_t_shirt_size_no_sizes_no_admission(self, slumber_mock):
@@ -105,14 +105,19 @@ class ViewsTestsLogon(TestCase):
         self.user_attendance.team = None
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_triko'))
-        self.assertContains(response, "Velikost trička nemůžete měnit, dokud nemáte zvolený tým.", status_code=403)
+        self.assertContains(
+            response,
+            "<div class=\"alert alert-warning\">Nejdříve se <a href='/tym/'>přidejte k týmu</a> a pak si vyberte tričko.</div>",
+            html=True,
+            status_code=403,
+        )
 
     def test_dpnk_t_shirt_size_get(self):
         response = self.client.get(reverse('zmenit_triko'))
         self.assertContains(
             response,
             '<label for="id_userattendance-t_shirt_size" class="control-label  requiredField">'
-            'Vyplňte velikost trika'
+            'Vyberte velikost trika'
             '<span class="asteriskField">*</span>'
             '</label>',
             html=True,

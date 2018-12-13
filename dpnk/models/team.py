@@ -22,6 +22,8 @@ import logging
 import random
 import string
 
+from author.decorators import with_author
+
 from denorm import denormalized, depend_on_related
 
 from django import forms
@@ -36,6 +38,7 @@ from .team_diploma import TeamDiploma
 logger = logging.getLogger(__name__)
 
 
+@with_author
 class Team(models.Model):
     """Profil týmu"""
 

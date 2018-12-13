@@ -128,8 +128,7 @@ class ProfileRedirectMixin(object):
 
 
 class DPNKLoginView(CampaignFormKwargsMixin, TitleViewMixin, ProfileRedirectMixin, LoginView):
-    def get_title(self, *args, **kwargs):
-        return _("Přihláška %s") % self.campaign.name
+    title = _("Přihlaste se prosím")
 
     def get_initial(self):
         initial_email = self.kwargs.get('initial_email')
@@ -151,10 +150,10 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
             if self.user_attendance.campaign.competitors_choose_team():
                 return _('Vyberte jiný tým')
             else:
-                return _('Přidejte se k týmu')
+                return _('Vyberte jinou společnost')
         else:
             if self.user_attendance.campaign.competitors_choose_team():
-                return _('Vyberte jinou společnost')
+                return _('Přidejte se k týmu')
             else:
                 return _('Vyhledejte svoji společnost')
 
@@ -244,9 +243,7 @@ class RegisterSubsidiaryView(CampaignFormKwargsMixin, UserAttendanceViewMixin, L
 class RegistrationAccessView(CampaignParameterMixin, TitleViewMixin, ProfileRedirectMixin, FormView):
     template_name = 'base_generic_form.html'
     form_class = RegistrationAccessFormDPNK
-
-    def get_title(self, *args, **kwargs):
-        return _("Registrace %s") % self.campaign.name
+    title = _("Registrujte se prosím")
 
     def form_valid(self, form):
         email = form.cleaned_data['email']
@@ -261,9 +258,7 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrat
     form_class = RegistrationFormDPNK
     model = UserProfile
     success_url = 'upravit_profil'
-
-    def get_title(self, *args, **kwargs):
-        return _("Registrace %s") % self.campaign.name
+    title = _("Registrujte se prosím")
 
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}
@@ -364,25 +359,39 @@ class PaymentTypeView(
     registration_phase = "typ_platby"
     next_url = "profil"
     prev_url = "zmenit_triko"
-
-    def get_title(self, *args, **kwargs):
-        return _("Děkujeme, že s námi chcete jezdit %s!") % self.campaign.name
+    title = _("Děkujeme, že s námi chcete jezdit Do práce na kole!")
 
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance:
             if request.user_attendance.has_paid():
                 if request.user_attendance.payment_status == 'done':
-                    message = _("Již máte účastnický poplatek zaplacen.")
+                    message = _("Vaši platbu jsme úspěšně přijali.")
                 else:
                     message = _("Účastnický poplatek se neplatí.")
                 raise exceptions.TemplatePermissionDenied(
-                    mark_safe_lazy(message + " " + _("Pokračujte na <a href='%s'>zadávání jízd</a>.") % reverse("profil")),
+                    message,
                     self.template_name,
+                    title=_("Děkujeme!"),
+                    error_level="success",
                 )
             if request.user_attendance.campaign.has_any_tshirt and not request.user_attendance.t_shirt_size:
                 raise exceptions.TemplatePermissionDenied(
-                    _("Před tím, než zaplatíte účastnický poplatek, musíte mít vybrané triko"),
+                    format_html(
+                        _("Zatím není co platit. Nejdříve se {join_team} a {choose_shirt}."),
+                        join_team=format_html(
+                            "<a href='{}'>{}</a>",
+                            reverse("zmenit_tym"),
+                            _('přidejte k týmu'),
+                        ),
+                        choose_shirt=format_html(
+                            "<a href='{}'>{}</a>",
+                            reverse("zmenit_triko"),
+                            _('vyberte tričko'),
+                        ),
+                    ),
                     self.template_name,
+                    title=_("Dobrá hospodyňka pro kolo i přes plot skočí."),
+                    error_level="warning",
                 )
         return super().dispatch(request, *args, **kwargs)
 
@@ -1446,6 +1455,9 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
         context_data['registration_phase'] = self.registration_phase
+        context_data['introduction_message'] = _(
+            "Pozvěte přátele z práce, aby podpořili Váš tým, který může mít až %s členů."
+        ) % self.user_attendance.campaign.max_team_members
         return context_data
 
     def get_form_kwargs(self):
@@ -1501,7 +1513,7 @@ class UpdateTeam(
 ):
     template_name = 'base_generic_form.html'
     form_class = TeamAdminForm
-    success_url = reverse_lazy('edit_team')
+    success_url = reverse_lazy('team_members')
     title = _("Upravit název týmu")
     registration_phase = 'zmenit_tym'
     success_message = _("Název týmu úspěšně změněn na %(name)s")
@@ -1528,7 +1540,9 @@ class TeamMembers(
 ):
     template_name = 'registration/team_admin_members.html'
     registration_phase = "zmenit_tym"
-    title = _("Schvalování členů týmu")
+
+    def get_title(self, *args, **kwargs):
+        return _("Tým %s") % self.user_attendance.team.name
 
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):

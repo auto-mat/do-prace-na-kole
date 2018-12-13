@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block messages %}
-{% trans "Ještě vyberte způsob platby a můžete vyrazit." %}
+{% trans "Vyberte způsob platby a můžete vyrazit." %}
 {{ block.super }}
 {% endblock %}
 
@@ -33,11 +33,11 @@ function switch_description(){
       $(".form-actions").show();
 
    if(sel_val == 'pay_beneficiary') {
-      $("#payment_amount").text("{{ beneficiary_amount }} Kč");
-      $("#beneficiary-motivation").show()
+      $("#payment_amount").text("{{ beneficiary_amount|floatformat }} Kč");
+      $(".beneficiary-show").show()
    } else {
-      $("#payment_amount").text("{{ amount }} Kč");
-      $("#beneficiary-motivation").hide()
+      $("#payment_amount").text("{{ amount|floatformat }} Kč");
+      $(".beneficiary-show").hide()
    }
 };
 $("#div_id_payment_type").change(function() {
@@ -74,42 +74,43 @@ $(function(){
 </script>
 <div id="description_switcher">
    <div class="description_switcher_div description company_description" style="display:none">
-      <h3>{% trans "Účastnický poplatek platí zaměstnavatel" %}</h3>
-      {% trans "Účastnický poplatek za mě platí zaměstnavatel, mám to s ním nebo jeho koordinátorem domluvené." %}
-      <br/><br/>
-      {% trans "Zaměstnavatel: " %} {{ user_attendance.team.subsidiary.company }}<br/>
+      <h3>{% trans "Platba účastnického poplatku zaměstnavatelem" %}</h3>
       {% for company_admin in user_attendance.get_asociated_company_admin_with_payments %}
-         {% trans "Firmní koordinátor: " %} {{ company_admin|default:"Není" }}<br/>
+         {% if forloop.first %}
+            {% trans "Účastnický poplatek za mě platí: " %} {{ user_attendance.team.subsidiary.company }}<br/>
+         {% endif %}
+         <br/>
+         {% trans "Můj firemní koordinátor: " %} {{ company_admin|default:"Není" }}<br/>
          {% trans "E-mail na koordinátora: " %}<a href='mailto:{{ company_admin.userprofile.user.email|default:"Není" }}'>{{ company_admin.userprofile.user.email|default:"Není" }}</a><br/>
       {% empty %}
-         <strong>
-         <hr/>
-         {% trans "Váš zaměstnavatel ještě nemá zvoleného firemního koordinátora nebo neumožňuje platbu za zaměstnance. Pokud chcete zvolit tento typ platby, je potřeba, aby byla platba účastnického poplatku fakturou dohodnutá s vaším zaměstnavatelem." %}
-         </strong>
          <br/>
+         {% trans "Je nám líto. Váš zaměstnavatel buď nemá zvoleného firemního koordinátora nebo neumožňuje platbu účastnického poplatku." %}
          <a href='{% url "company_admin_application" %}'>{% trans "Chci se sám stát koordinátorem mé organizace." %}</a>
       {% endfor %}
    </div>
    <div class="description_switcher_div description coupon_description" style="display:none">
-      <h3>{% trans "Slevový voucher" %}</h3>
-      {% trans "Pokud jste obdrželi voucher, v následujícím kroku můžete uplatnit slevu, nebo nárok na soutěž zdarma." %}
+      <h3>{% trans "Platba účastnického poplatku pomocí voucheru" %}</h3>
+      {% trans "Uplatněte slevu z účastnického poplatku." %}
    </div>
    <div class="description_switcher_div description member_wannabe_description" style="display:none">
-      <h3>{% trans "Vstup do Klubu přátel" %}</h3>
+      <h3>{% trans "Vstupte do Klubu přátel" %}</h3>
       <div id="aklub-form-container"></div>
    </div>
 </div>
-<div class="description_switcher_div description pay_description pay_beneficiary_description">
+<span class="description_switcher_div description pay_description">
    <h3>{% trans "Platba účastnického poplatku" %}</h3>
-   <div id="beneficiary-motivation" style="display:none">
+</span>
+<span class="description_switcher_div description pay_beneficiary_description">
+   <h3>{% trans "Platba benefičního účastnického poplatku" %}</h3>
+</span>
+<div class="description_switcher_div description pay_description pay_beneficiary_description">
+   <div id="beneficiary-motivation" class="beneficiary-show" style="display:none">
    {% scribble 'beneficiary_payment' %}
    {% load i18n %}
-   {% trans "Platbou benefičního startovného podpoříte Auto*Mat ve zlepšování dopravních návyků obyvatel měst, v rozšíření kampaně Do práce na kole do nových lokalit a ve zlepšování podmínek pro městské městské cyklisty." %}
+   {% trans "Děkujeme, že nám pomáháte zlepšovat cyklistické podmínky ve městech." %}
    {% endscribble %}
    </div>
    <form action="https://secure.payu.com/paygw/UTF/NewPayment" method="POST" name="payform" class="submit-once-form">
-   {% trans "Soutěžící:" %} {{ user_attendance.userprofile.user.get_full_name }}<br/>
-   {% trans "Účastnický poplatek:" %} <span id="payment_amount">{{ amount }} Kč</span><br/>
    <div id="payu-hidden-values"></div>
    <script language="JavaScript" type="text/javascript">
    PlnPrintTemplate();

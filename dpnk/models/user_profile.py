@@ -69,7 +69,7 @@ class UserProfile(models.Model):
     )
     nickname = models.CharField(
         _('Přezdívka'),
-        help_text=_('Nechcete soutěžit pod svým skutečným jménem? Napište nám přezdívku, podle které Vás kolegové poznají.'),
+        help_text=_('Nechcete soutěžit pod svým skutečným jménem? Napište přezdívku, podle které Vás kolegové poznají.'),
         max_length=60,
         blank=True,
         null=True,

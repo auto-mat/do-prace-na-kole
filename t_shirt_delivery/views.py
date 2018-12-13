@@ -23,6 +23,7 @@ from braces.views import LoginRequiredMixin
 
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.edit import UpdateView
 
@@ -41,7 +42,7 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     next_url = 'typ_platby'
     prev_url = 'zmenit_tym'
     registration_phase = "zmenit_triko"
-    title = _("Vyberte si soutěžní tričko")
+    title = _("Vyberte soutěžní tričko")
 
     def get_object(self):
         return {
@@ -52,9 +53,26 @@ class ChangeTShirtView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     def dispatch(self, request, *args, **kwargs):
         if request.user_attendance:
             if not request.user_attendance.team_complete():
-                raise exceptions.TemplatePermissionDenied(_("Velikost trička nemůžete měnit, dokud nemáte zvolený tým."), self.template_name)
+                raise exceptions.TemplatePermissionDenied(
+                    format_html(
+                        _("Nejdříve se {join_team} a pak si vyberte tričko."),
+                        join_team=format_html(
+                            "<a href='{}'>{}</a>",
+                            reverse("zmenit_tym"),
+                            _('přidejte k týmu'),
+                        ),
+                    ),
+                    self.template_name,
+                    title=_("Buďte týmovým hráčem!"),
+                    error_level="warning",
+                )
             if request.user_attendance.package_shipped():
-                raise exceptions.TemplatePermissionDenied(_("Vaše tričko již je na cestě k vám, už se na něj můžete těšit."), self.template_name)
+                raise exceptions.TemplatePermissionDenied(
+                    _("Vaše tričko již je na cestě k Vám, už se na něj můžete těšit."),
+                    self.template_name,
+                    title=_("Hurá!"),
+                    error_level="success",
+                )
 
             if not request.user_attendance.campaign.has_any_tshirt:
                 if request.user_attendance.has_admission_fee():

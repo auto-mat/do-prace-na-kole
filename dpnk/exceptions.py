@@ -25,9 +25,13 @@ from django.views import defaults
 
 
 class TemplatePermissionDenied(PermissionDenied):
-    def __init__(self, message, template_name='403.html'):
+    def __init__(self, message, template_name='403.html', title=None, error_level=None):
         self.template_name = template_name
         self.message = message
+        if title:
+            self.title = title
+        if error_level:
+            self.error_level = error_level
         return super().__init__(self, message)
 
     def __str__(self):
@@ -43,7 +47,8 @@ def permission_denied_view(request, exception, template_name=defaults.ERROR_403_
                 request=request,
                 context={
                     'fullpage_error_message': str(exception),
-                    'title': _('Přístup odepřen'),
+                    'fullpage_error_level': getattr(exception, 'error_level', "danger"),
+                    'title': getattr(exception, 'title', _('Přístup odepřen')),
                 },
             ),
         )

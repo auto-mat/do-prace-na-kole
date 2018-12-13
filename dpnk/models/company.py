@@ -19,6 +19,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from author.decorators import with_author
+
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
@@ -38,6 +40,7 @@ DIC_ERROR_MESSAGE = _(
 )
 
 
+@with_author
 class Company(models.Model):
     """Organizace"""
 
@@ -48,8 +51,8 @@ class Company(models.Model):
 
     name = models.CharField(
         unique=True,
-        verbose_name=_(u"Název organizace"),
-        help_text=_(u"Např. „Výrobna, a.s.“, „Příspěvková, p.o.“, „Nevládka, z.s.“, „Univerzita Karlova“"),
+        verbose_name=_("Název společnosti"),
+        help_text=_("Například Výrobna a.s., Příspěvková p.o., Nevládka z.s., Univerzita Karlova"),
         max_length=60,
         null=False,
     )
@@ -58,7 +61,7 @@ class Company(models.Model):
         'cz.dic',
         default=None,
         verbose_name=_(u"IČO"),
-        help_text=_("Pokud má vaše organizace IČO, prosím vyplňte, jinak nechte prázdné."),
+        help_text=_("Prosím zadejte IČO splečnosti."),
         validators=[RegexValidator(r'^[0-9]*$', _('IČO musí být číslo'))],
         error_messages={'stdnum_format': ICO_ERROR_MESSAGE},
         blank=True,

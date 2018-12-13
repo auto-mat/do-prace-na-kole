@@ -182,7 +182,7 @@ class MustHaveTeamMixinTest(TestCase):
             team=None,
         )
         mixin = MustHaveTeam()
-        with self.assertRaisesRegex(PermissionDenied, "Napřed musíte mít"):
+        with self.assertRaisesRegex(PermissionDenied, "Pokud jeli napřed tak je dohoňte a <a href='/tym/'>přidejte se k týmu</a>."):
             mixin.dispatch(self.request)
 
     def test_team_exists(self):
@@ -216,7 +216,7 @@ class MustBeApprovedForTeamMixinTest(TestCase):
             team=None,
         )
         mixin = MustBeApprovedForTeam()
-        with self.assertRaisesRegex(PermissionDenied, "Napřed musíte mít"):
+        with self.assertRaisesRegex(PermissionDenied, "Pokud jeli napřed tak je dohoňte a <a href='/tym/'>přidejte se k týmu</a>."):
             mixin.dispatch(self.request)
 
     def test_team_approved(self):
