@@ -48,12 +48,22 @@ class TelephoneUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['telephone'].label = _("Vyplňte telefonní číslo")
+        self.fields['telephone'].help_text = None
+        self.fields['telephone_opt_in'].choices = [
+            (True, _("Chci dostávat informace také ohledně podpory cyklistů ve městech.")),
+            (False, _("Chci dostávat informace pouze o stavu balíčku a registrace.")),
+        ]
+        self.fields['telephone_opt_in'].label = ""
 
     class Meta:
         model = UserProfile
         fields = (
             'telephone',
+            'telephone_opt_in',
         )
+        widgets = {
+            'telephone_opt_in': forms.RadioSelect(attrs={'required': True}),
+        }
 
 
 class TShirtUpdateForm(PrevNextMixin, MultiModelForm):

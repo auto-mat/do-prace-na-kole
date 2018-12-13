@@ -81,6 +81,10 @@ class UserProfile(models.Model):
         validators=[RegexValidator(r'^[0-9+ ]*$', _('Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
         help_text=_("Ozveme se, až bude balíček nachystaný."),
     )
+    telephone_opt_in = models.NullBooleanField(
+        verbose_name=_("Povolení telefonovat"),
+        default=None,
+    )
     language = models.CharField(
         verbose_name=_(u"Jazyk e-mailové komunikace"),
         help_text=_("V tomto jazyce vám budou přicházet e-maily z registračního systému"),
