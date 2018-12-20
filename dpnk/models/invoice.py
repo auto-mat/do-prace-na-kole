@@ -19,12 +19,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
+import uuid
 
 from author.decorators import with_author
 
 import denorm
 
-from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.files import File
@@ -333,7 +333,7 @@ def create_and_send_invoice_files(sender, instance, created, **kwargs):
                     instance.sequence_number,
                     instance.company.name[0:40],
                     instance.exposure_date.strftime("%Y-%m-%d"),
-                    hash(str(instance.pk) + settings.SECRET_KEY)
+                    uuid.uuid4()
                 ),
             ),
         )
