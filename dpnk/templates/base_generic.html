@@ -110,6 +110,7 @@ Raven.setUserContext({
 
 
         </div>
+        {% if user.is_authenticated and user_attendance %}
         <nav class="col-md-2">
          <div class="lang_switch">
            <a href="{% url 'edit_profile_detailed' %}">
@@ -118,6 +119,7 @@ Raven.setUserContext({
            </a>
          </div>
         </nav>
+        {% endif %}
         <nav class="col-md-2">
          <div class="lang_switch">
             <ul>
