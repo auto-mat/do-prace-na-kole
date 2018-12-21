@@ -129,7 +129,7 @@ Raven.setUserContext({
 </div>
 <div class="base container">
    <div class="row">
-      <div class="main_content col-md-8 col-sm-7 col-md-offset-1 col-sm-offset-1">
+      <div class="main_content col-md-10 col-sm-10 col-md-offset-1 col-sm-offset-1">
          <!--[if lte IE 8]>
             <p class="alert alert-warning browsehappy">{% trans 'Bohužel používáte <strong>zastaralý</strong> prohlížeč internetu. Přes naši snahu nemusí některé části webu dobře fungovat. Pokud můžete, <a href="http://www.whatbrowser.org/intl/cs">nainstalujte si novější prohlížeč' %}</a>.
          <![endif]-->
@@ -146,21 +146,6 @@ Raven.setUserContext({
             {% scribble 'after_content' %}{% endscribble %}
             {% endif %}
          {% endblock %}
-      </div>
-      <div class="col-md-3 col-sm-3">
-          {% if user.is_authenticated %}
-          {% scribble 'before_right_panel' current_language_code %}{% endscribble %}
-          <ul class="user_info">
-                 <li>{% trans "Uživatel: " %}{{ user_attendance }}</li>
-                 {% if user_attendance.userprofile.user.email %}<li>{% trans "E-mail: " %}{{ user_attendance.userprofile.user.email }}</li>{% endif %}
-                 {% if user_attendance.team and user_attendance.team.name and user_attendance.campaign.competitors_choose_team %}<li>{% trans "Tým: " %}{{ user_attendance.team.name }}</li>{% endif %}
-                 <li><a href="{% url 'password_change' %}">{% trans "Změnit heslo" %}</a></li>
-                 <li>{% scribble 'inside_right_panel' current_language_code %}{% endscribble %}</li>
-                 <li class="logout_django"><a class="btn btn-warning logout" href="{% url 'logout' %}" title="Log out">{% trans "Odhlásit" %}</a></li>
-          </ul>
-          {% scribble 'after_right_panel' current_language_code %}{% endscribble %}
-          {% endif %}
-
       </div>
    </div>
 </div>

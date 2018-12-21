@@ -426,7 +426,7 @@ urlpatterns = [
     ),
     url(
         r'^zmena_hesla/$',
-        django_views.PasswordChangeView.as_view(form_class=auth.PasswordChangeForm),
+        auth.PasswordChangeView.as_view(),
         name='password_change',
     ),
     url(

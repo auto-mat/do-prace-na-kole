@@ -37,6 +37,13 @@
             </tr>
          {% endif %}
       {% endfor %}
+      {% if user.4.2 == request.user.email %}
+         <tr>
+            <td colspan="2">
+               <a href="{% url 'company_admin_application' %}">Chci se stát firemním koordinátorem</a>
+            </td>
+         </tr>
+      {% endif %}
    </table>
    {% if user.0.2 == 'undecided' or user.0.2 == 'denied' %}
          <button class="submit submit_once btn btn-primary" type="submit" id="approve-{{user.1.2}}" name="approve" value="approve-{{user.1.2}}">{% trans "Přijmout do týmu" %}</button>

@@ -738,13 +738,7 @@ class RidesView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesM
     success_message = _("Tabulka jízd úspěšně změněna")
     registration_phase = 'profile_view'
     template_name = 'registration/competition_profile.html'
-    title = _('Stav registrace')
-    opening_message = mark_safe_lazy(
-        format_html(
-            '<b class="text-success">{}</b><br/>',
-            _("Vaše registrace je kompletní."),
-        ),
-    )
+    title = _('')
 
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
@@ -1093,6 +1087,7 @@ class RegistrationProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, Lo
             instance={
                 'user': self.user_attendance.userprofile.user,
                 'usermail': self.user_attendance.userprofile.user,
+                'userprofiledontshowname': self.user_attendance.userprofile,
                 'userprofile': self.user_attendance.userprofile,
                 'userattendance': self.user_attendance,
             },
@@ -1103,6 +1098,7 @@ class RegistrationProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, Lo
 class UpdateProfileView(RegistrationProfileView):
     form_class = ProfileUpdateForm
     success_url = "edit_profile_detailed"
+    title = _("Můj profil")
     template_name = 'registration/profile_update_detailed.html'
 
 

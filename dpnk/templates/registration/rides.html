@@ -83,12 +83,28 @@
       {% endscribble %}
    </th>
 </tr>
+<tr class="info">
+   <td>
+      <a href="{% url "upravit_trasu" %}">{% trans "Změnit typickou trasu" %}</a>
+   </td>
+</tr>
+<tr class="info">
+   <td>
+      <a href="{% url "application" %}">{% trans "Aplikace" %}</a>
+   </td>
+</tr>
+<tr class="info">
+   <td>
+      <a href="{% url 'vacations' %}">{% trans "Dovolená" %}</a>
+   </td>
+</tr>
 </table>
 <form id="rides-form" name="calendar" method="POST" class="dirty-check submit-once-form">
 {% csrf_token %}
 {{ formset.management_form }}
 {% if formset.0 %}
-<input type="submit" name="submit" value="{% trans "Uložit jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-top">
+<a class="btn btn-default btn-block" href="{% url 'rides_details' %}">{% trans "Moje jízdy" %}</a>
+<input type="submit" name="submit" value="{% trans "Zapsat jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-top">
 {% if formset.errors %}
    <br/>
    <div class="alert alert-danger alert-dismissable alert-link">
@@ -131,7 +147,7 @@
    {% endif %}
 {% endfor %}
 <tr><td colspan="{{num_columns}}">
-<input type="submit" name="submit" value="{% trans "Uložit jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-bottom">
+<input type="submit" name="submit" value="{% trans "Zapsat jízdy" %}" class="btn btn-primary btn-block" id="submit-id-submit-bottom">
 </td></tr>
 </table>
 {% else %}

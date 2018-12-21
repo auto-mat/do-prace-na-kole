@@ -1,14 +1,6 @@
 
 $(function(){
     //UserProfile update form:
-    $("#div_id_userprofile-nickname").toggle($("#id_userprofile-dont_show_name").prop("checked"));
-    $("#id_userprofile-nickname").prop('required', $("#id_userprofile-dont_show_name").prop("checked"));
-    $("#id_userprofile-dont_show_name").change(function(){
-        $("#div_id_userprofile-nickname").toggle();
-        $("#id_userprofile-nickname").prop('required', $("#id_userprofile-dont_show_name").prop("checked"));
-    });
-
-    //UserProfile update form:
     $("#id_dont_want_insert_track").change(function(){
         $("#div_id_track").toggle(! $("#id_dont_want_insert_track").prop("checked"));
         $("#div_id_distance").toggle($("#id_dont_want_insert_track").prop("checked"));

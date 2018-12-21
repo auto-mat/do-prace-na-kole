@@ -100,24 +100,27 @@ class SubmitMixin(object):
 
 class PrevNextMixin(object):
     next_text = _('Pokračovat')
+    submit_text = _('Hotovo')
 
-    def show_only_submit(self):
+    def show_edit_form(self):
         return False
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
-        if self.show_only_submit():
+        prev_url = kwargs.pop('prev_url', None)
+        ret_val = super().__init__(*args, **kwargs)
+        if self.show_edit_form():
+            self.helper.add_input(Submit('next', self.submit_text, css_class="form-actions"))
             return super().__init__(*args, **kwargs)
         if not hasattr(self, 'no_dirty'):
             self.helper.form_class = "dirty-check"
         if not hasattr(self, 'no_prev'):
-            prev_url = kwargs.pop('prev_url', None)
             self.helper.add_input(
                 Button('prev', _('Zpět'), css_class="btn-default form-actions", onclick='window.location.href="{}"'.format(reverse(prev_url))),
             )
         if not hasattr(self, 'no_next'):
             self.helper.add_input(Submit('next', self.next_text, css_class="form-actions"))
-        return super().__init__(*args, **kwargs)
+        return ret_val
 
 
 class CampaignMixin(object):
@@ -341,6 +344,9 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
         queryset=models.Team.objects.all(),
         required=True,
     )
+
+    def show_edit_form(self):
+        return self.instance.team_complete()
 
     def clean(self):
         cleaned_data = super().clean()
@@ -840,6 +846,8 @@ class UserUpdateForm(CampaignMixin, RequiredFieldsMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         if 'first_name' in self.fields:
             self.fields['first_name'].label = _("Jméno")
+        if 'email' in self.fields:
+            self.fields['email'].label = _("E-mail")
 
     class Meta:
         model = User
@@ -863,6 +871,9 @@ class UserEmailUpdateForm(UserUpdateForm):
         fields = (
             'email',
         )
+        help_texts = {
+            'email': None
+        }
 
 
 class UserNameUpdateForm(UserUpdateForm):
@@ -874,21 +885,6 @@ class UserNameUpdateForm(UserUpdateForm):
 
 
 class RegistrationUserProfileUpdateForm(CampaignMixin, forms.ModelForm):
-    dont_show_name = forms.BooleanField(
-        label=_("Nechci, aby moje skutečné jméno bylo veřejné."),
-        required=False,
-    )
-
-    def clean_nickname(self):
-        nickname = self.cleaned_data['nickname']
-        if self.cleaned_data['dont_show_name']:
-            if nickname:
-                return nickname
-            else:
-                raise forms.ValidationError(_("Pokud si nepřejete zobrazovat své jméno, zadejte, co se má zobrazovat místo něj"))
-        else:
-            return None
-
     def clean_mailing_opt_in(self):
         if self.cleaned_data['mailing_opt_in'] is None:
             raise forms.ValidationError(_("Zvolte jednu možnost"))
@@ -897,22 +893,22 @@ class RegistrationUserProfileUpdateForm(CampaignMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
-        self.fields['dont_show_name'].initial = self.instance.nickname is not None
-        self.fields['sex'].required = True
-        self.fields['mailing_opt_in'].initial = None
-        self.fields['mailing_opt_in'].required = True
-        self.fields['mailing_opt_in'].choices = [
-            (True, _("Ano, chci dostávat soutěžní novinky, informace o akcích a pozvánky do dalších ročníků soutěže.")),
-            (False, _("Ne, děkuji")),
-        ]
-        self.fields['mailing_opt_in'].label = _("Přejete si dostávat informační e-maily?")
-        self.fields['mailing_opt_in'].help_text = None
+        if 'sex' in self.fields:
+            self.fields['sex'].required = True
+        if 'mailing_opt_in' in self.fields:
+            self.fields['mailing_opt_in'].initial = None
+            self.fields['mailing_opt_in'].required = True
+            self.fields['mailing_opt_in'].choices = [
+                (True, _("Ano, chci dostávat soutěžní novinky, informace o akcích a pozvánky do dalších ročníků soutěže.")),
+                (False, _("Ne, mám zájem pouze o informační e-maily.")),
+            ]
+            self.fields['mailing_opt_in'].label = _("Přejete si dostávat náš newsletter?")
+            self.fields['mailing_opt_in'].help_text = None
         return ret_val
 
     class Meta:
         model = models.UserProfile
         fields = (
-            'dont_show_name',
             'nickname',
             'sex',
             'mailing_opt_in',
@@ -924,9 +920,25 @@ class RegistrationUserProfileUpdateForm(CampaignMixin, forms.ModelForm):
 
 class UserProfileUpdateForm(RegistrationUserProfileUpdateForm):
     class Meta(RegistrationUserProfileUpdateForm.Meta):
-        fields = RegistrationUserProfileUpdateForm.Meta.fields + (
+        fields = (
             'occupation',
             'age_group',
+            'mailing_opt_in',
+        )
+        widgets = {
+            'mailing_opt_in': forms.CheckboxInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        ret_val = super().__init__(*args, **kwargs)
+        self.fields['mailing_opt_in'].label = _("Chci dostávat e-mailem soutěžní novinky, informace o akcích a pozvánky do dalších ročníků soutěže.")
+        return ret_val
+
+
+class UserProfileDontShowNameUpdateForm(RegistrationUserProfileUpdateForm):
+    class Meta(RegistrationUserProfileUpdateForm.Meta):
+        fields = (
+            'nickname',
         )
 
 
@@ -969,13 +981,17 @@ class ProfileUpdateForm(SubmitMixin, MultiModelForm):
 
     form_classes = OrderedDict([
         ('user', UserNameUpdateForm),
-        ('userprofile', UserProfileUpdateForm),
+        ('userprofiledontshowname', UserProfileDontShowNameUpdateForm),
         ('usermail', UserEmailUpdateForm),
+        ('userprofile', UserProfileUpdateForm),
+        ('userattendance', UserAttendanceUpdateForm),
     ])
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper.form_class = "noAsterisks"
+        self.helper.form_class = 'noAsterisks form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
 
 
 class TripForm(InitialFieldsMixin, forms.ModelForm):
