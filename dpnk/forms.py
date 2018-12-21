@@ -872,7 +872,7 @@ class UserEmailUpdateForm(UserUpdateForm):
             'email',
         )
         help_texts = {
-            'email': None
+            'email': None,
         }
 
 
