@@ -272,7 +272,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'adminfilters',
     'django_bleach',
-    'django_gravatar',
+    'avatar',
     'gtm',
     'leaflet',
     'settings_context_processor',

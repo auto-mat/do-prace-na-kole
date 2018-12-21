@@ -99,4 +99,4 @@ django-sitetree
 django-admin-views
 single-beat
 vokativ
-django-gravatar
+django-avatar

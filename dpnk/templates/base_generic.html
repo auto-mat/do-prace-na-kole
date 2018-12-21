@@ -5,6 +5,7 @@
 {% load raven %}
 {% load scribbler_tags %}
 {% load sitetree %}
+{% load avatar_tags %}
 <!DOCTYPE html>
 {% get_available_languages as languages %}
 {% get_current_language as current_language_code %}
@@ -109,6 +110,14 @@ Raven.setUserContext({
 
 
         </div>
+        <nav class="col-md-2">
+         <div class="lang_switch">
+           <a href="{% url 'edit_profile_detailed' %}">
+           {% avatar user_attendance.userprofile.user 30 %}
+           {{ user_attendance }}
+           </a>
+         </div>
+        </nav>
         <nav class="col-md-2">
          <div class="lang_switch">
             <ul>

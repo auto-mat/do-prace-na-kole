@@ -1,7 +1,7 @@
 {% extends "base_generic_registration_form.html" %}
 {% load i18n %}
 {% load static %}
-{% load gravatar %}
+{% load avatar_tags %}
 
 {% block form %}
 <div class="container">
@@ -9,7 +9,9 @@
       {{ block.super }}
    </div>
    <div class="col-md-3">
-      {% gravatar request.user.email 150 %}
+      {% avatar request.user 150 %}
+      <br/>
+      <a href="{% url 'avatar_change' %}">Change your avatar</a>
    </div>
 </div>
 {% endblock %}
