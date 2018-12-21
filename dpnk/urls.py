@@ -124,8 +124,13 @@ urlpatterns = [
         name="other_team_members_results",
     ),
     url(
-        r'^souteze/$',
-        views.CompetitionsView.as_view(),
+        r'^souteze_vykonnostni/$',
+        views.LengthCompetitionsView.as_view(),
+        name="length_competitions",
+    ),
+    url(
+        r'^souteze_pravidelnostni/$',
+        views.FrequencyCompetitionsView.as_view(),
         name="competitions",
     ),
     url(

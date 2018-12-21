@@ -82,12 +82,12 @@ Raven.setUserContext({
 
                  <div class="nav navbar-nav main_menu collapse navbar-collapse" id="collapsible_menu">
                     {% if user.is_authenticated %}
-                       {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                       {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk" template "sitetree/menu_bootstrap3_flat.html" %}
                     {% else %}
                        {% sitetree_menu from "unlogged_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                     {% endif %}
                     {% if user.is_authenticated and user_attendance.related_company_admin.is_approved %}
-                       {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                       {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3_flat.html" %}
                     {% endif %}
                     {% if user.is_staff %}
                        {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
@@ -97,8 +97,10 @@ Raven.setUserContext({
                     {% sitetree_menu from "about_us" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                  </div>
 
-                 <div id="collapsing_menu" class="collapse navbar-collapse">
+                 <div id="collapsing_menu" class="collapse navbar-collapse the_submenu">
                     {% block second_menu %}
+                       {% sitetree_menu from campaign.sitetree_postfix_maintree include "this-parent-siblings" template "sitetree/menu_bootstrap3.html" %}
+                       {% sitetree_menu from "company_coordinator_menu" include "this-parent-siblings" template "sitetree/menu_bootstrap3.html" %}
                     {% endblock %}
                  </div>
 

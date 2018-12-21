@@ -1032,9 +1032,15 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin
         return super().get(request, *args, **kwargs)
 
 
-class CompetitionsView(AdmissionsView):
+class LengthCompetitionsView(AdmissionsView):
     title = _("Výsledky pravidelnostních a výkonnostních soutěží")
-    competition_types = ('length', 'frequency')
+    competition_types = ('length',)
+    template_name = "registration/competitions.html"
+
+
+class FrequencyCompetitionsView(AdmissionsView):
+    title = _("Výsledky pravidelnostních a výkonnostních soutěží")
+    competition_types = ('frequency',)
     template_name = "registration/competitions.html"
 
 
