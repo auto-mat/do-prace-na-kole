@@ -9,9 +9,10 @@
       {{ block.super }}
    </div>
    <div class="col-md-3">
+      <a href="{% url 'avatar_change' %}">
       {% avatar request.user 150 %}
       <br/>
-      <a href="{% url 'avatar_change' %}">Change your avatar</a>
+      <i class="fa fa-edit"></i> {% trans "Změnit" %}</a></a>
    </div>
 </div>
 {% endblock %}
