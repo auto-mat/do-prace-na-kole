@@ -2509,60 +2509,6 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         self.assertContains(response, 'Answer without attachment')
         self.assertContains(response, 'Bez přílohy')
 
-    @patch('slumber.API')
-    def test_dpnk_profile_page(self, slumber_mock):
-        models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
-        m = MagicMock()
-        m.feed.get.return_value = (
-            {
-                'published': '2010-01-01',
-                'start_date': '2010-01-01',
-                'url': 'http://www.test.cz',
-                'title': 'Testing title',
-                'excerpt': 'Testing excerpt',
-                'image': 'http://www.test.cz',
-            },
-        )
-        slumber_mock.return_value = m
-        response = self.client.get(reverse('profil'))
-        self.assertContains(
-            response,
-            '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270" alt="Příspěvek do kreativní soutěže">' % settings.MEDIA_URL,
-            html=True,
-        )
-        self.assertContains(response, '<a href="http://www.dopracenakole.cz/locations/testing-city">Testing city</a>', html=True)
-        self.assertContains(response, 'Akce ve městě')
-        self.assertContains(response, 'Testing title')
-        self.assertContains(response, 'Testing excerpt')
-
-    @patch('slumber.API')
-    def test_dpnk_profile_page_blank_feed(self, slumber_mock):
-        models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
-        m = MagicMock()
-        m.feed.get.return_value = []
-        slumber_mock.return_value = m
-        response = self.client.get(reverse('profil'))
-        self.assertContains(
-            response,
-            '<div class="dpnk-content-box"></div>',
-            html=True,
-        )
-
-    @patch('slumber.API')
-    def test_dpnk_profile_page_link(self, slumber_api):
-        models.Answer.objects.filter(pk__in=(2, 3, 4)).delete()
-        m = MagicMock()
-        m.feed.get.return_value = []
-        slumber_api.return_value = m
-        response = self.client.get(reverse('profil'))
-        self.assertContains(
-            response,
-            '<a href="/questionnaire_answers/quest/" title="Všechny příspěvky z této soutěže">'
-            '<img src="%sDSC00002.JPG.360x360_q85.jpg" width="360" height="270" alt="Příspěvek do kreativní soutěže">'
-            '</a>' % settings.MEDIA_URL,
-            html=True,
-        )
-
     @override_settings(
         FAKE_DATE=datetime.date(year=2010, month=11, day=8),
     )
