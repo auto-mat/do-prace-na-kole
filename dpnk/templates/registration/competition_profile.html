@@ -39,45 +39,4 @@
 {% endcache %}
 
 {% scribble 'profile_before_news' %}{% endscribble %}
-
-{% cache 3600 "profile_news" city_slug current_language_code user_attendance.campaign.slug %}
-<div class="row base news-row">
-   <div class="dpnk-content-box">
-      {% wp_news user_attendance.campaign %}
-   </div>
-   <div class="dpnk-content-box">
-      {% wp_actions user_attendance.campaign user_attendance.team.subsidiary.city %}
-   </div>
-   {% with questionnaire_answer.first as answer %}
-   {% if answer %}
-   <div class="dpnk-content-box">
-      <h3>{% trans "Příspěvky z kreativních soutěží" %}</h3>
-      {{ answer.question.competition }}<br/>
-      <a href="{% url "questionnaire" questionnaire_slug=answer.question.competition.slug %}">{% trans "Nahrát vlastní příspěvek" %}</a>
-      {% thumbnail answer.attachment "360x360" as foto_thumb %}
-      {% if foto_thumb %}
-         <a href="{% url "questionnaire_answers_all" competition_slug=answer.question.competition.slug %}" title="{% trans "Všechny příspěvky z této soutěže" %}">
-         <img src="{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}" alt="{% trans "Příspěvek do kreativní soutěže" %}"></a>
-      {% else %}
-         <br/>
-         <a href="{{ answer.attachment.url }}" target="_blank">{{ answer.attachment }}</a>
-         <br/>
-         <a href="{% url "questionnaire_answers_all" competition_slug=answer.question.competition.slug %}" title="{% trans "Všechny příspěvky z této soutěže" %}">
-            {% trans "Všechny příspěvky z této soutěže" %}
-         </a>
-      {% endif %}
-      <br/>
-      {% if answer.comment %}
-         {{ answer.comment|linebreaksbr|urlize}}
-      {% endif %}
-   </div>
-   {% endif %}
-   {% endwith %}
-</div>
-<div class="row base">
-   <div class="col-md-12 prizes">
-      {% wp_prize user_attendance.campaign user_attendance.team.subsidiary.city %}
-   </div>
-</div>
-{% endcache %}
 {% endblock %}
