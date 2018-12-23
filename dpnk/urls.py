@@ -124,8 +124,13 @@ urlpatterns = [
         name="other_team_members_results",
     ),
     url(
-        r'^souteze/$',
-        views.CompetitionsView.as_view(),
+        r'^souteze_vykonnostni/$',
+        views.LengthCompetitionsView.as_view(),
+        name="length_competitions",
+    ),
+    url(
+        r'^souteze_pravidelnostni/$',
+        views.FrequencyCompetitionsView.as_view(),
         name="competitions",
     ),
     url(
@@ -184,9 +189,14 @@ urlpatterns = [
         name="questionnaire",
     ),
     url(
+        r'^vytvorit_profil/$',
+        views.RegistrationProfileView.as_view(),
+        name="upravit_profil",
+    ),
+    url(
         r'^upravit_profil/$',
         views.UpdateProfileView.as_view(),
-        name="upravit_profil",
+        name="edit_profile_detailed",
     ),
     url(
         r'^upravit_trasu/$',
@@ -416,7 +426,7 @@ urlpatterns = [
     ),
     url(
         r'^zmena_hesla/$',
-        django_views.PasswordChangeView.as_view(form_class=auth.PasswordChangeForm),
+        auth.PasswordChangeView.as_view(),
         name='password_change',
     ),
     url(

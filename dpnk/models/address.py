@@ -46,7 +46,7 @@ def get_address_string(address):
 
 def address_generator(
     null_blank=False,
-    recipient_name=_("Název pobočky"),
+    recipient_name=_("Pracoviště"),
     char_psc=False,
 ):
     if char_psc:
@@ -85,7 +85,7 @@ def address_generator(
         )
         recipient = models.CharField(
             verbose_name=recipient_name,
-            help_text=_("Nezadávejte adresu jako název pobočky."),
+            help_text=_("Vyplňte pouze pokud má Vaše pobočka kromě vlastní adresy také své oficiální jméno, které se liší od názvu společnosti."),
             default="",
             max_length=50,
             null=True,

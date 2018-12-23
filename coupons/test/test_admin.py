@@ -34,7 +34,7 @@ import settings
 )
 class AdminSmokeTests(smoke_tests.AdminSiteSmokeTest):
     fixtures = []
-    exclude_apps = ['djcelery', 'dpnk', 't_shirt_delivery']
+    exclude_apps = ['djcelery', 'dpnk', 't_shirt_delivery', 'avatar']
 
     def setUp(self):
         super().setUp()

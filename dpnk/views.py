@@ -91,6 +91,7 @@ from .forms import (
     ProfileUpdateForm,
     RegistrationAccessFormDPNK,
     RegistrationFormDPNK,
+    RegistrationProfileUpdateForm,
     TeamAdminForm,
     TrackUpdateForm,
 )
@@ -737,13 +738,7 @@ class RidesView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesM
     success_message = _("Tabulka jízd úspěšně změněna")
     registration_phase = 'profile_view'
     template_name = 'registration/competition_profile.html'
-    title = _('Stav registrace')
-    opening_message = mark_safe_lazy(
-        format_html(
-            '<b class="text-success">{}</b><br/>',
-            _("Vaše registrace je kompletní."),
-        ),
-    )
+    title = _('')
 
     @method_decorator(never_cache)
     @method_decorator(cache_control(max_age=0, no_cache=True, no_store=True))
@@ -1031,9 +1026,15 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin
         return super().get(request, *args, **kwargs)
 
 
-class CompetitionsView(AdmissionsView):
+class LengthCompetitionsView(AdmissionsView):
     title = _("Výsledky pravidelnostních a výkonnostních soutěží")
-    competition_types = ('length', 'frequency')
+    competition_types = ('length',)
+    template_name = "registration/competitions.html"
+
+
+class FrequencyCompetitionsView(AdmissionsView):
+    title = _("Výsledky pravidelnostních a výkonnostních soutěží")
+    competition_types = ('frequency',)
     template_name = "registration/competitions.html"
 
 
@@ -1071,9 +1072,9 @@ class CompetitionResultsView(TitleViewMixin, TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, UpdateView):
+class RegistrationProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginRequiredMixin, UpdateView):
     template_name = 'registration/profile_update.html'
-    form_class = ProfileUpdateForm
+    form_class = RegistrationProfileUpdateForm
     model = UserProfile
     success_message = _("Soutěžní údaje úspěšně upraveny")
     next_url = "zmenit_tym"
@@ -1085,11 +1086,20 @@ class UpdateProfileView(CampaignFormKwargsMixin, RegistrationViewMixin, LoginReq
         kwargs.update(
             instance={
                 'user': self.user_attendance.userprofile.user,
+                'usermail': self.user_attendance.userprofile.user,
+                'userprofiledontshowname': self.user_attendance.userprofile,
                 'userprofile': self.user_attendance.userprofile,
                 'userattendance': self.user_attendance,
             },
         )
         return kwargs
+
+
+class UpdateProfileView(RegistrationProfileView):
+    form_class = ProfileUpdateForm
+    success_url = "edit_profile_detailed"
+    title = _("Můj profil")
+    template_name = 'registration/profile_update_detailed.html'
 
 
 class UpdateTrackView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):

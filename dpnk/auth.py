@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django import forms
+from django.contrib.auth import views as django_views
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth.models import User
@@ -73,11 +74,18 @@ class PasswordResetForm(SubmitMixin, PasswordResetForm):
 class PasswordChangeForm(SubmitMixin, PasswordChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.helper.form_class = "noAsterisks"
         self.fields['old_password'].required = False
-        self.fields['old_password'].help_text = _("V případě, že se dosud přihlašujete pouze přes sociální sítě, nechte prázdné")
+        self.fields['old_password'].help_text = _("V případě registrace přes sociální sítě nechte pole prázdné.")
+        self.fields['new_password1'].help_text = _("Heslo musí mít minimálně 6 znaků a obsahovat alespoň jedno písmeno.")
 
     def clean_old_password(self):
         # Allow to set password if not set yet
         if self.user.password == '':
             return self.cleaned_data["old_password"]
         super().clean_old_password()
+
+
+class PasswordChangeView(django_views.PasswordChangeView):
+    template_name = 'base_generic_registration_form.html'
+    form_class = PasswordChangeForm
