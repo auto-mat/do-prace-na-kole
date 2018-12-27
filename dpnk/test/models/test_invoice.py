@@ -140,7 +140,7 @@ class TestSave(TransactionTestCase):
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@email.cz'])
         self.assertEqual(str(msg.subject), 'Testing campaign - přijetí platby')
-        ContentType.objects.clear_cache() # https://groups.google.com/forum/#!topic/django-users/g88m9u8-ozs
+        ContentType.objects.clear_cache()  # https://groups.google.com/forum/#!topic/django-users/g88m9u8-ozs
 
     def test_invoice_raises_sequence_number_overrun(self):
         campaign = mommy.make(
@@ -173,4 +173,4 @@ class TestSave(TransactionTestCase):
                 company=company,
                 sequence_number=None,
             )
-        ContentType.objects.clear_cache() # https://groups.google.com/forum/#!topic/django-users/g88m9u8-ozs
+        ContentType.objects.clear_cache()  # https://groups.google.com/forum/#!topic/django-users/g88m9u8-ozs

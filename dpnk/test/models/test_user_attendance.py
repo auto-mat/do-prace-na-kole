@@ -267,7 +267,7 @@ class TestIsLibero(TransactionTestCase):
         util.rebuild_denorm_models([self.user_attendance.team])
         self.user_attendance.refresh_from_db()
         self.user_attendance.team.refresh_from_db()
-        ContentType.objects.clear_cache() # https://groups.google.com/forum/#!topic/django-users/g88m9u8-ozs
+        ContentType.objects.clear_cache()  # https://groups.google.com/forum/#!topic/django-users/g88m9u8-ozs
 
     def test_true(self):
         self.user_attendance.campaign.max_team_members = 2
