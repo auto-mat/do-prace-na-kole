@@ -24,6 +24,7 @@ from unittest.mock import ANY, patch
 import denorm
 
 import django
+from django.conf import settings
 from django.core.management import call_command
 from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
@@ -87,7 +88,7 @@ class PaymentSuccessTests(ClearCacheMixin, TestCase):
         request.user_attendance = self.user_attendance
         request.campaign = models.Campaign.objects.get(pk=338)
         response = views.PaymentResult.as_view()(request, success=False, **kwargs)
-        self.assertEqual(response.url, 'http://testing-campaign.localhost:8000/platba_neuspesna/2055/2075-1J1455206457/kb/123/')
+        self.assertEqual(response.url, 'http://testing-campaign.%s/platba_neuspesna/2055/2075-1J1455206457/kb/123/' % settings.SITE_URL)
         payment = models.Payment.objects.get(session_id=self.session_id)
         self.assertEqual(payment.pay_type, None)
         self.assertEqual(payment.error, None)
