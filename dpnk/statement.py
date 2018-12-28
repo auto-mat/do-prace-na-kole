@@ -67,7 +67,8 @@ def parse(days_back=7):
             variable_symbol = payment['variable_symbol']
             recipient_message = payment['recipient_message']
             if recipient_message:
-                recipient_message_without_d = re.sub("\D", "", recipient_message).lstrip("0")
+                # Replace all non-letter characters and leading zeros from VS
+                recipient_message_without_d = re.sub("\D", "", recipient_message).lstrip("0") # noqa
             else:
                 recipient_message_without_d = ""
             if variable_symbol:

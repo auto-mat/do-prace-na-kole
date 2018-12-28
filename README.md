@@ -48,85 +48,57 @@ Create `settings_local.py` by copying settings_local_sample_docker.py
     $ cp settings_local_sample_docker.py settings_local.py
     $ cd ..
 
-Build the dev docker image
+Building the docker images
 --------------------------
 
-    $ sudo docker build . -f DockerfileDev -t dpnk-test
+    $ make docker-compose
 
-Setup and launch postgis
-------------------------
+Launching the docker-compose containers
+---------------------------------------
 
-    $ sudo docker volume create dpnk-pgdata
-    $ sudo docker run -v dpnk-pgdata:/var/lib/postgresql/data --hostname dpnk-postgres --name dpnk-postgres -e POSTGRES_PASSWORD=foobar -e POSTGRES_USER=dpnk -e PGDATA=/var/lib/postgresql/data/pgdata mdillon/postgis:9.6
+    $ sudo docker-compose -f docker-compose-dev.yml up
 
-Relaunching the container:
-
-    $ ./postgres-container
-
-Note: By using multiple container names you can have multiple postgres containers and dbs and switch between the dbs for testing purposes. Perhaps have one db per git branch.
-
-Launching rabbitmq
------------------
-
-    $ ./rabbit-container
-
-Launching celery
-----------------
-    $ ./celery_container
-
-TODO: Add celery beat instructions
-
-Launching dpnk server
+Setting up the database
 ---------------------
 
-    $ ./dpnk_container
+    $ sudo docker exec -it dopracenakole_web_1 bash
 
-    $ # The first time you launch you need to do migrations and load some fixtures, get static files ect...
-    $ su test
-
-    $ bower install
-    $ python3 manage.py collectstatic
-    $ python3 manage.py migrate
+    # su test
+    $ ./setup.sh
     $ python3 manage.py createsuperuser
-    $ python3 manage.py loaddata dpnk/fixtures/commute_mode.json
-    $ python3 manage.py loaddata dpnk/fixtures/sitetree.json
-    $ python3 manage.py loaddata dpnk/fixtures/sites.json
-    $ python3 manage.py import_czech_psc
-    $ python3 manage.py loaddata dpnk/fixtures/occupation.json
 
-    $ # Once the fixtures have been loaded once, you only need to run the server.
-    $ python3 manage.py runserver 0.0.0.0:8000
+Launching the development webserver
+
+    $ sudo docker exec -it dopracenakole_web_1 bash
+    # su test
+    $ python3 manage.py runserver 0.0.0.0:8021
+
 
 Setting up the server for the first time
 ----------------------------------------
 
 On your first visit you should go to the URL:
 
-Go to <http://test.localhost:8000/admin/dpnk/campaign/>
+Go to <http://test.localhost:8021/admin/dpnk/campaign/>
 
 Log in.
 
 Add a campaign named Test and individual phases.
 
-Add a user profile for your user <http://test.localhost:8000/admin/dpnk/userprofile/>
+Add a user profile for your user <http://test.localhost:8021/admin/dpnk/userprofile/>
 
-Now you can go to 'http://test.localhost:8000/' and start to play around.
+Now you can go to 'http://test.localhost:8021/' and start to play around.
 
 Backing up your database
 ------------------------
 
 Once you have your test environment working, it's a good idea to back up your database.
 
-First stop postgres
+First stop docker compose
 
-    $ docker stop dpnk-postgres
+    $ docker-compose -f docker-compose-dev.yml down
 
-Then export the db
+Then copy db folder
 
-    $ docker run --volumes-from dpnk-postgres busybox tar -cO /var/lib/postgresql/data | gzip -c > sql/dpnk-db-template.tgz
-
-You can reset your database to the "good" version by running
-
-    $  docker run --rm --volumes-from dpnk-postgres busybox rm -rf /var/lib/postgresql/data/pgdata
-    $  docker run --rm --volumes-from dpnk-postgres -v $(pwd)/sql:/backup busybox tar xvf /backup/dpnk-db-template.tgz var/lib/postgresql/data/pgdata
+    $ cp -r ./db ./db-bk
 

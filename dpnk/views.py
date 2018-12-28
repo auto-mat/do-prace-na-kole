@@ -733,7 +733,6 @@ class RidesView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesM
     form_class = forms.TripForm
     formset_class = RidesFormSet
     fields = ('commute_mode', 'distance', 'direction', 'user_attendance', 'date')
-    extra = 0
     uncreated_trips = []
     success_message = _("Tabulka jízd úspěšně změněna")
     registration_phase = 'profile_view'
