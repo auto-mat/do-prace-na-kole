@@ -106,6 +106,7 @@ SQLAlchemy = "*"
 django_celery_beat = "*"
 django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.git", ref = "mergeup", editable = true}
 "PyPDF2" = "*"
+"django-scribbler-django2.0" = "*"
 
 [requires]
 python_version = "3.5"
