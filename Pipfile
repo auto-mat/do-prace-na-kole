@@ -94,7 +94,6 @@ django-advanced-filters = {git = "https://github.com/PetrDlouhy/django-advanced-
 stravalib = {git = "https://github.com/hozn/stravalib", ref = "master", editable = true}
 django-wysiwyg-redactor = {git = "https://github.com/adilkhash/django-wysiwyg-redactor", editable = true}
 django-selectable = {git = "https://github.com/PetrDlouhy/django-selectable.git", ref = "mergeup", editable = true}  # For the Django 2.0 fixes, for search splitted by whitespaces
-django-scribbler = {git = "https://github.com/PetrDlouhy/django-scribbler.git", ref = "mergeup", editable = true}
 django-likes = {git = "https://github.com/PetrDlouhy/django-likes.git", ref = "develop", editable = true}
 django-braces = {git = "https://github.com/PetrDlouhy/django-braces.git", ref = "2.0", editable = true}
 django-modeltranslation = {git = "https://github.com/abdolhosein/django-modeltranslation", ref = "patch-the-issue-with-django2", editable = true}

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5971a262cf9c5c9227ab1f178e177aee57500255527b4248c1beaf047cfcbac4"
+            "sha256": "90ddc140dd395a8030faab87c535c459abe285dc4d76580bbbaf013d52714992"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -497,11 +497,6 @@
             ],
             "index": "pypi",
             "version": "==0.9.0"
-        },
-        "django-scribbler": {
-            "editable": true,
-            "git": "https://github.com/PetrDlouhy/django-scribbler.git",
-            "ref": "mergeup"
         },
         "django-scribbler-django2.0": {
             "hashes": [
