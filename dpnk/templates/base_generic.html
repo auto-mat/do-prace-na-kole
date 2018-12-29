@@ -96,6 +96,16 @@ Raven.setUserContext({
                  </div>
                  <div class="nav navbar-nav main_menu collapse navbar-collapse navbar-right" id="collapsible_menu">
                     {% sitetree_menu from "about_us" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+                    {% if user.is_authenticated and user_attendance %}
+                    <ul class="nav navbar-nav">
+                     <div class="profile_menu">
+                       <a href="{% url 'edit_profile_detailed' %}">
+                       {% avatar user_attendance.userprofile.user 30 %}
+                       {{ user_attendance }}
+                       </a>
+                     </div>
+                    </ul>
+                    {% endif %}
                  </div>
 
                  <div id="collapsing_menu" class="collapse navbar-collapse the_submenu">
@@ -110,16 +120,6 @@ Raven.setUserContext({
 
 
         </div>
-        {% if user.is_authenticated and user_attendance %}
-        <nav class="col-md-2">
-         <div class="lang_switch">
-           <a href="{% url 'edit_profile_detailed' %}">
-           {% avatar user_attendance.userprofile.user 30 %}
-           {{ user_attendance }}
-           </a>
-         </div>
-        </nav>
-        {% endif %}
         <nav class="col-md-2">
          <div class="lang_switch">
             <ul>
