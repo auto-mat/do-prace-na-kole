@@ -1,6 +1,7 @@
 {% extends "base_generic_form.html" %}
 {% load dpnk_tags %}
 {% load i18n %}
+{% load avatar_tags %}
 
 {% block form_intro %}
 <a href="{% url "edit_team" %}">{% trans "Změnit název týmu" %}</a>
@@ -10,11 +11,14 @@
 <form method="post" class="submit-once-form form-inline" id="members-form" action="{% url 'team_members' %}">{% csrf_token %}
 {% for user in unapproved_users %}
    <div id="id-{{ user.4.2 }}-team-member">
-   <h2>{{ user.3.2 }}</h2>
+   <h2>
+      {% avatar user.4.2 30 %}
+      {{ user.3.2 }}
+   </h2>
    {% include "messages_include.html" with required_tag="user_attendance_"|add:user.1.2 %}
    <table class="table table-condensed">
       {% for field in user %}
-         {% if forloop.counter > 4 %}
+         {% if forloop.counter > 5 %}
             {% if field.0 == 'state_name' %}
                <tr class="
                {% if user.0.2 == "undecided" %}

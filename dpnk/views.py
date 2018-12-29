@@ -1620,6 +1620,7 @@ class TeamMembers(
                 ('id', None, str(self.user_attendance.id)),
                 ('class', None, self.user_attendance.payment_class()),
                 ('name', _("Jméno"), str(userprofile)),
+                ('user', None, userprofile.user),
                 ('email', _("E-mail"), userprofile.user.email),
                 ('payment_description', _("Platba"), self.user_attendance.get_payment_status_display()),
                 ('telephone', _("Telefon"), userprofile.telephone),
