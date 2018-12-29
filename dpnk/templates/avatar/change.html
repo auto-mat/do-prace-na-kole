@@ -1,0 +1,12 @@
+{% extends "avatar/base.html" %}
+{% load i18n avatar_tags %}
+{% load bootstrap3 %}
+
+{% block content %}
+    <p>{% trans "Your current avatar: " %}</p>
+    {% avatar user %}
+    <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
+        {% bootstrap_form upload_avatar_form %}
+        <p>{% csrf_token %}<input class="btn btn-primary" type="submit" value="{% trans "Upload New Image" %}" /></p>
+    </form>
+{% endblock %}
