@@ -231,7 +231,10 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
         if 'next' in self.request.POST:
             return reverse(self.get_next_url())
         elif 'submit' in self.request.POST:
-            return reverse(self.success_url)
+            if self.success_url:
+                return reverse(self.success_url)
+            else:
+                return reverse(self.registration_phase)
         else:
             return reverse(self.prev_url)
 

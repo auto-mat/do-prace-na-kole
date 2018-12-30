@@ -110,7 +110,7 @@ class PrevNextMixin(object):
         prev_url = kwargs.pop('prev_url', None)
         ret_val = super().__init__(*args, **kwargs)
         if self.show_edit_form():
-            self.helper.add_input(Submit('next', self.submit_text, css_class="form-actions"))
+            self.helper.add_input(Submit('submit', self.submit_text, css_class="form-actions"))
             return super().__init__(*args, **kwargs)
         if not hasattr(self, 'no_dirty'):
             self.helper.form_class = "dirty-check"
