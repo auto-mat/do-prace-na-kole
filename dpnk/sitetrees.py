@@ -23,6 +23,24 @@ sitetrees = (
         ],
     ),
     tree(
+        'maintree_vyzva', 'Hlavní menu - výzvy', items=[
+            item('Zapsat jízdu!', 'profil', title_en='Enter ride!'),
+            item(
+                'Profil', 'edit_profile_detailed', title_en='Profile', children=[
+                    item('Změnit heslo', 'password_change', title_en='Change password'),
+                    item('Změnit společnost', 'zmenit_tym', title_en='Change company'),
+                ],
+            ),
+            item(
+                'Výsledky', 'competitions', title_en='Results', children=[
+                    item('Pravidelnostní soutěže', 'competitions', title_en='Regularity competitions'),
+                    item('Výkonnostní soutěže', 'length_competitions', title_en='Performance competitions'),
+                    item('Ostatní', 'questionnaire_competitions', title_en='Other'),
+                ],
+            ),
+        ],
+    ),
+    tree(
         'about_us', 'O nás', items=[
             item('Odhlásit', 'logout', title_en='Logout'),
             item(
