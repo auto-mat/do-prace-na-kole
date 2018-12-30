@@ -41,6 +41,11 @@ sitetrees = (
         ],
     ),
     tree(
+        'admin_menu', 'Administrace', items=[
+            item('Administrace', 'admin:index', title_en='Admininstration'),
+        ],
+    ),
+    tree(
         'about_us', 'O nás', items=[
             item('Odhlásit', 'logout', title_en='Logout'),
             item(
