@@ -17,26 +17,67 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+from collections import OrderedDict
+
+from betterforms.multiform import MultiModelForm
 
 from django import forms
+from django.utils.translation import ugettext_lazy as _
 
 from dpnk.forms import PrevNextMixin
-from dpnk.models import PACKAGE_STATUSES, UserAttendance
+from dpnk.models import PACKAGE_STATUSES, UserAttendance, UserProfile
 
 from .models import PackageTransaction, TShirtSize
 
 
-class TShirtUpdateForm(PrevNextMixin, forms.ModelForm):
+class ShirtUserAttendanceForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['t_shirt_size'].required = True
         self.fields['t_shirt_size'].queryset = TShirtSize.objects.filter(campaign=self.instance.campaign, available=True)
         self.fields['t_shirt_size'].label_from_instance = lambda i: i.user_string()
+        self.fields['t_shirt_size'].label = _("Vyberte velikost trika")
         return ret_val
 
     class Meta:
         model = UserAttendance
         fields = ('t_shirt_size', )
+
+
+class TelephoneUpdateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['telephone'].label = _("Vyplňte telefonní číslo")
+        self.fields['telephone'].help_text = None
+        self.fields['telephone_opt_in'].choices = [
+            (True, _("Chci vědět vše. Včetně novinek ohledně podpory cyklistů ve městech.")),
+            (False, _("Chci pouze dostat zprávu o stavu balíčku a registrace.")),
+        ]
+        self.fields['telephone_opt_in'].label = ""
+
+    class Meta:
+        model = UserProfile
+        fields = (
+            'telephone',
+            'telephone_opt_in',
+        )
+        widgets = {
+            'telephone_opt_in': forms.RadioSelect(attrs={'required': True}),
+        }
+
+
+class TShirtUpdateForm(PrevNextMixin, MultiModelForm):
+    form_classes = OrderedDict([
+        ('userprofile', TelephoneUpdateForm),
+        ('userattendance', ShirtUserAttendanceForm),
+    ])
+
+    def show_edit_form(self):
+        return self.instances['userattendance'].tshirt_complete()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.form_class = "noAsterisks"
 
 
 class PackageTransactionForm(forms.ModelForm):

@@ -46,13 +46,12 @@ def get_address_string(address):
 
 def address_generator(
     null_blank=False,
-    recipient_name=_("Název pobočky (závodu, kanceláře, fakulty), nepovinné pole"),
+    recipient_name=_("Pracoviště"),
     char_psc=False,
 ):
     if char_psc:
         psc_field = models.CharField(
             verbose_name=_(u"PSČ"),
-            help_text=_(u"Např.: „130 00“"),
             max_length=50,
             null=True,
             blank=True,
@@ -60,7 +59,6 @@ def address_generator(
     else:
         psc_field = models.IntegerField(
             verbose_name=_(u"PSČ"),
-            help_text=_(u"Např.: „130 00“"),
             validators=[
                 MaxValueValidator(99999),
                 MinValueValidator(10000),
@@ -73,7 +71,6 @@ def address_generator(
     class AddressField(CompositeField):
         street = models.CharField(
             verbose_name=_(u"Ulice"),
-            help_text=_(u"Např. „Šeříková“ nebo „Nám. W. Churchilla“"),
             default="",
             max_length=50,
             null=null_blank,
@@ -81,7 +78,6 @@ def address_generator(
         )
         street_number = models.CharField(
             verbose_name=_(u"Číslo domu"),
-            help_text=_(u"Např. „2965/12“ nebo „156“"),
             default="",
             max_length=10,
             null=null_blank,
@@ -89,10 +85,7 @@ def address_generator(
         )
         recipient = models.CharField(
             verbose_name=recipient_name,
-            help_text=_(
-                "Např. „odštěpný závod Brno“, „oblastní pobočka Liberec“, „Přírodovědecká fakulta“ atp. "
-                "Nemá-li vaše organizace pobočky, pak nechte pole prázdné.",
-            ),
+            help_text=_("Vyplňte pouze pokud má Vaše pobočka kromě vlastní adresy také své oficiální jméno, které se liší od názvu společnosti."),
             default="",
             max_length=50,
             null=True,
@@ -101,7 +94,6 @@ def address_generator(
         psc = psc_field
         city = models.CharField(
             verbose_name=_(u"Město"),
-            help_text=_(u"Např. „Jablonec n. N.“ nebo „Praha 3, Žižkov“"),
             default="",
             max_length=50,
             null=null_blank,

@@ -77,6 +77,7 @@ else:
     }
 
 LOCALE_PATHS = (
+    normpath(PROJECT_ROOT, 'avatar_locale/locale'),
     normpath(PROJECT_ROOT, 'dpnk/locale'),
     normpath(PROJECT_ROOT, 'coupons/locale'),
     normpath(PROJECT_ROOT, 't_shirt_delivery/locale'),
@@ -232,12 +233,12 @@ INSTALLED_APPS = (
     'admin_views',
 
     'django_su',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.admin',
+    'django.contrib.auth',
     'django.contrib.messages',
     'django.contrib.sessions',
     'nested_admin',
-    'django.contrib.admin',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.postgres',
@@ -272,6 +273,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'adminfilters',
     'django_bleach',
+    'avatar',
     'gtm',
     'leaflet',
     'settings_context_processor',
@@ -615,3 +617,18 @@ SMMAPDFS_EMAIL_CONTEXT_HELP = """<br/>
 """
 
 DENORM_MAX_PROCESS_COUNT = os.environ.get('DENORM_MAX_PROCESS_COUNT', 100)
+
+
+AVATAR_CACHE_ENABLED = False
+AVATAR_AUTO_GENERATE_SIZES = (30, 80, 150)
+AVATAR_FACEBOOK_GET_ID = 'dpnk.avatar.get_facebook_id'
+AVATAR_DEFAULT_URL = 'img/default-avatar.png'
+AVATAR_MAX_AVATARS_PER_USER = 1
+AVATAR_GRAVATAR_DEFAULT = 'mp'
+AVATAR_MAX_SIZE = 10 * 1024 * 1024
+AVATAR_PROVIDERS = (
+    'avatar.providers.PrimaryAvatarProvider',
+    'avatar.providers.FacebookAvatarProvider',
+    'avatar.providers.GravatarAvatarProvider',
+    'avatar.providers.DefaultAvatarProvider',
+)

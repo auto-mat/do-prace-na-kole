@@ -32,6 +32,8 @@ from adminsortable2.admin import SortableAdminMixin, SortableInlineAdminMixin
 
 from advanced_filters.admin import AdminAdvancedFiltersMixin
 
+from avatar.templatetags.avatar_tags import avatar
+
 from daterange_filter.filter import DateRangeFilter
 
 from django import forms
@@ -44,7 +46,6 @@ from django.forms import Textarea
 from django.urls import reverse
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
-from django.utils.translation import string_concat
 from django.utils.translation import ugettext_lazy as _
 
 from import_export import fields, resources
@@ -223,7 +224,11 @@ class CompanyAdmin(city_admin_mixin_generator('subsidiaries__city__in'), ImportE
         'active',
         ICOFilter,
     ]
-    readonly_fields = ['subsidiary_links']
+    readonly_fields = [
+        'subsidiary_links',
+        'author',
+        'updated_by',
+    ]
     search_fields = (
         'name',
         'address_street',
@@ -510,6 +515,7 @@ class UserProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['telephone'].required = False
+        self.fields['sex'].required = False
 
 
 class UserProfileAdminInline(NestedStackedInline):
@@ -562,6 +568,7 @@ def create_userprofile_resource(campaign_slugs):  # noqa: C901
 
 @admin.register(models.UserProfile)
 class UserProfileAdmin(ImportExportMixin, NestedModelAdmin):
+    form = UserProfileForm
     list_display = (
         'user',
         '__str__',
@@ -758,6 +765,7 @@ class UserAttendanceAdmin(
     LeafletGeoAdmin,
 ):
     list_display = (
+        'avatar_small',
         'id',
         'name_for_trusted',
         'userprofile__user__email',
@@ -841,6 +849,7 @@ class UserAttendanceAdmin(
         'team__subsidiary__company__name',
     )
     readonly_fields = (
+        'avatar_large',
         'user_link',
         'userprofile__user__email',
         'created',
@@ -862,6 +871,12 @@ class UserAttendanceAdmin(
     list_max_show_all = 10000
     list_per_page = 100
     resource_class = UserAttendanceResource
+
+    def avatar_small(self, obj):
+        return avatar(obj.userprofile.user, 30)
+
+    def avatar_large(self, obj):
+        return avatar(obj.userprofile.user, 150)
 
     def user_link(self, obj):
         return format_html('<a href="{}">{}</a>', reverse('admin:auth_user_change', args=(obj.userprofile.user.pk,)), obj.userprofile.user)
@@ -943,7 +958,14 @@ class TeamAdmin(ImportExportMixin, RelatedFieldAdmin):
     )
     form = models.team.TeamAdminForm
 
-    readonly_fields = ['members', 'invitation_token', 'member_count', 'paid_member_count']
+    readonly_fields = [
+        'members',
+        'invitation_token',
+        'member_count',
+        'paid_member_count',
+        'author',
+        'updated_by',
+    ]
 
     def members(self, obj):
         return admin_links(
@@ -1135,7 +1157,7 @@ class QuestionAdmin(FormRequestMixin, city_admin_mixin_generator('competition__c
 
     def answers_link(self, obj):
         if obj.pk:
-            return format_html(string_concat('<a href="{}?question={}">', _('vyhodnocení odpovědí'), '</a>'), reverse('admin_answers'), obj.pk)
+            return format_html('<a href="{}?question={}">{}</a>', reverse('admin_answers'), _('vyhodnocení odpovědí'), obj.pk)
 
 
 class GpxFileInline(LeafletGeoAdminMixin, admin.TabularInline):

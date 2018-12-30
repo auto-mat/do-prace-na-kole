@@ -1,0 +1,62 @@
+version: '2'
+services:
+ web:
+  build:
+   context: .
+   dockerfile: DockerfileDev
+  entrypoint: /bin/bash
+  ports:
+   - "8021:8000"
+  links:
+   - postgres
+   - redis
+  tty: true
+  stdin_open: true
+  working_dir: /app-v/
+  user: test
+  volumes:
+   - ./:/app-v/
+   - ./pipenv:/home/test
+  env_file: docker.env
+ celery:
+  build:
+   context: .
+   dockerfile: DockerfileDev
+  entrypoint: celery worker -A project.celery -ldebug
+  links:
+   - postgres
+   - redis
+  tty: true
+  stdin_open: true
+  working_dir: /klub-v/
+  user: test
+  volumes:
+   - ./:/klub-v/
+   - ./pipenv:/home/test
+  env_file: docker.env
+ celery-beat:
+  build:
+   context: .
+   dockerfile: DockerfileDev
+  entrypoint: celery beat -A project.celery -ldebug
+  links:
+   - postgres
+   - redis
+  tty: true
+  stdin_open: true
+  working_dir: /app-v/
+  user: test
+  volumes:
+   - ./:/app-v/
+   - ./pipenv:/home/test
+  env_file: docker.env
+ redis:
+  image: redis
+ postgres:
+  image: mdillon/postgis:9.6-alpine
+  volumes:
+   - ./db:/var/lib/postgresql/data
+  environment:
+   POSTGRES_PASSWORD: foobar
+   POSTGRES_USER: dpnk
+   PGDATA: /var/lib/postgresql/data

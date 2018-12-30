@@ -53,7 +53,6 @@ class UserProfile(models.Model):
         ('male', _(u'Muž')),
         ('female', _(u'Žena')),
     ]
-    GENDER_PLUS_UNKNOWN = [('unknown', '---------')] + GENDER
 
     LANGUAGE = [
         ('cs', _(u"Čeština")),
@@ -69,18 +68,25 @@ class UserProfile(models.Model):
         on_delete=models.CASCADE,
     )
     nickname = models.CharField(
-        _(u'Zobrazené jméno'),
-        help_text=_(u'Zobrazí se ve všech veřejných výpisech místo vašeho jména. Zadávejte takové jméno, podle kterého vás vaši kolegové poznají'),
+        _('Přezdívka'),
+        help_text=_('Chcete zůstat inkognito? Soutěžní přezdívka se zobrazuje ve veřejných výsledcích místo Vašeho jména.'),
         max_length=60,
         blank=True,
         null=True,
     )
     telephone = models.CharField(
-        verbose_name=_(u"Telefon"),
+        verbose_name=_("Telefonní číslo"),
         max_length=30,
         null=False,
-        validators=[RegexValidator(r'^[0-9+ ]*$', _(u'Telefon musí být složen s čísel, mezer a znaku plus.')), MinLengthValidator(9)],
-        help_text=_("Telefonní číslo slouží jako kontakt pro help desk a případně pro kurýra, který vám bude doručovat zásilku."),
+        validators=[
+            RegexValidator(r'^[0-9+ ]*$', _('Jak se do lesa volá, když nemáme správné číslo? Zkontrolujte si prosím vyplněný telefon.')),
+            MinLengthValidator(9, message='Opravdu má váš telefon %(show_value)s cifer?'),
+        ],
+        help_text=_("Ozveme se, až bude balíček nachystaný."),
+    )
+    telephone_opt_in = models.NullBooleanField(
+        verbose_name=_("Povolení telefonovat"),
+        default=None,
     )
     language = models.CharField(
         verbose_name=_(u"Jazyk e-mailové komunikace"),
@@ -108,10 +114,12 @@ class UserProfile(models.Model):
     )
     sex = models.CharField(
         verbose_name=_(u"Pohlaví"),
-        help_text=_(u"Slouží k zařazení do výkonnostních kategorií"),
-        choices=GENDER_PLUS_UNKNOWN,
-        default='unknown',
+        help_text=_("Tato informace se nám bude hodit při rozřazování do výkonnostních kategorií"),
+        choices=GENDER,
         max_length=50,
+        null=True,
+        blank=True,
+        default=None,
     )
     note = models.TextField(
         verbose_name=_(u"Interní poznámka"),
@@ -130,15 +138,13 @@ class UserProfile(models.Model):
     )
     occupation = models.ForeignKey(
         Occupation,
-        verbose_name=_("Profese"),
-        help_text=_("Nepovinné, bude použito pro účely žebříčků dle jednotlivých profesí"),
+        verbose_name=_("Povolání"),
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
     )
     age_group = models.PositiveIntegerField(
         verbose_name=_("Ročník narození"),
-        help_text=_("Nepovinné, slouží pouze pro účely statistky"),
         null=True,
         blank=True,
         choices=[(i, i) for i in range(util.today().year, util.today().year - 100, -1)],

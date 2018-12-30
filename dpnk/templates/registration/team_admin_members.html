@@ -1,16 +1,24 @@
 {% extends "base_generic_form.html" %}
 {% load dpnk_tags %}
 {% load i18n %}
+{% load avatar_tags %}
+
+{% block form_intro %}
+<a href="{% url "edit_team" %}">{% trans "Změnit název týmu" %}</a>
+{% endblock %}
 
 {% block form %}
 <form method="post" class="submit-once-form form-inline" id="members-form" action="{% url 'team_members' %}">{% csrf_token %}
 {% for user in unapproved_users %}
    <div id="id-{{ user.4.2 }}-team-member">
-   <h2>{{ user.3.2 }}</h2>
+   <h2>
+      {% avatar user.4.2 30 %}
+      {{ user.3.2 }}
+   </h2>
    {% include "messages_include.html" with required_tag="user_attendance_"|add:user.1.2 %}
    <table class="table table-condensed">
       {% for field in user %}
-         {% if forloop.counter > 4 %}
+         {% if forloop.counter > 5 %}
             {% if field.0 == 'state_name' %}
                <tr class="
                {% if user.0.2 == "undecided" %}
@@ -33,6 +41,13 @@
             </tr>
          {% endif %}
       {% endfor %}
+      {% if user.4.2 == request.user.email %}
+         <tr>
+            <td colspan="2">
+               <a href="{% url 'company_admin_application' %}">Chci se stát firemním koordinátorem</a>
+            </td>
+         </tr>
+      {% endif %}
    </table>
    {% if user.0.2 == 'undecided' or user.0.2 == 'denied' %}
          <button class="submit submit_once btn btn-primary" type="submit" id="approve-{{user.1.2}}" name="approve" value="approve-{{user.1.2}}">{% trans "Přijmout do týmu" %}</button>
@@ -46,4 +61,5 @@
    </div>
 {% endfor %}
 </form>
+<a class="btn btn-default" href="{% url "pozvanky" %}">{% trans "Pozvat nové členy" %}</a>
 {% endblock %}

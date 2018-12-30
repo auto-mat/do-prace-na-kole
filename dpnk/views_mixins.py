@@ -38,18 +38,20 @@ class CompanyAdminMixin(SuccessMessageMixin):
     opening_message = mark_safe_lazy(
         _(
             "<p>"
-            "Tato role není pro soutěž povinná, ale usnadní ostatním ostatním kolegům účast v soutěži. "
-            "Hlavní úkol pro firemního koordinátora je pokusit se zaměstnavatelem domluvit, aby uhradil účastnický poplatek za zaměstnance."
+            "Chcete se stát velitelem svého firemního týmu? "
+            "Nemusíte aktivně soutěžit, staňte se firemním koordinátorem. "
             "</p>"
             "<p>"
-            "V případě, že zaměstnavatel přislíbí účastnické poplatky uhradit,"
-            "pak firemní koordinátor zajistí hromadnou platbu účastnického poplatku přes fakturu."
-            "Odměnou mu za to budou speciální slevy pro firemní koordinátory."
+            "Pomáhejte kolegům ze svého týmu se všemi náležitostmi ohledně uhrazení členského poplatku."
             "</p>"
             "<p>"
-            "Návod jak provést hromadnou platbu, slevy pro koordinátory a další informace pro koordinátory najdete "
-            "<a href='http://www.dopracenakole.cz/firemni-koordinator'>zde</a>."
+            "Vaší úlohou bude požádat zaměstnavatele, aby členský poplatek za Váš tým uhradil. "
+            "Poté zajistíte hromadnou platbu přes fakturu. <a href='http://www.dopracenakole.cz/firemni-koordinator'>Jak na to?</a>."
+            "</p>"
             "<p>"
+            "Nezůstanete bez odměny. Těšit se můžete na vděk svých kolegů a naše speciální slevy pro "
+            "<a href='http://www.dopracenakole.cz/firemni-koordinator'>firemní koordinátory</a>."
+            "</p>"
         ),
     )
 
@@ -229,7 +231,10 @@ class RegistrationViewMixin(RegistrationMessagesMixin, TitleViewMixin, UserAtten
         if 'next' in self.request.POST:
             return reverse(self.get_next_url())
         elif 'submit' in self.request.POST:
-            return reverse(self.success_url)
+            if self.success_url:
+                return reverse(self.success_url)
+            else:
+                return reverse(self.registration_phase)
         else:
             return reverse(self.prev_url)
 

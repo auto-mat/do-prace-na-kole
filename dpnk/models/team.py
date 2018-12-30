@@ -22,6 +22,8 @@ import logging
 import random
 import string
 
+from author.decorators import with_author
+
 from denorm import denormalized, depend_on_related
 
 from django import forms
@@ -36,6 +38,7 @@ from .team_diploma import TeamDiploma
 logger = logging.getLogger(__name__)
 
 
+@with_author
 class Team(models.Model):
     """Profil týmu"""
 
@@ -189,7 +192,11 @@ class Team(models.Model):
     @denormalized(models.TextField, null=True, skip={'invitation_token'})
     @depend_on_related('UserAttendance', skip={'created', 'updated'})
     def name_with_members(self):
-        return u"%s (%s)" % (self.name, u", ".join([u.userprofile.name() for u in self.members()]))
+        members = self.members()
+        if members:
+            return "%s (%s)" % (self.name, u", ".join([u.userprofile.name() for u in self.members()]))
+        else:
+            return self.name
 
     sandwich_model = TeamDiploma
 

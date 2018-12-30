@@ -41,8 +41,8 @@ class ViewsTestsLogon(TestCase):
         self.client = Client(HTTP_HOST="testing-campaign.example.com", HTTP_REFERER="test-referer")
         self.t_shirt_size = mommy.make(
             "TShirtSize",
-            id=1,
             campaign=testing_campaign,
+            name="Foo t-shirt size",
         )
         mommy.make(
             "price_level.PriceLevel",
@@ -60,6 +60,7 @@ class ViewsTestsLogon(TestCase):
             userprofile__user__first_name="Testing",
             userprofile__user__last_name="User",
             userprofile__user__email="testing.user@email.com",
+            userprofile__sex='male',
             personal_data_opt_in=True,
             distance=5,
         )
@@ -69,13 +70,14 @@ class ViewsTestsLogon(TestCase):
 
     def test_dpnk_t_shirt_size(self):
         post_data = {
-            't_shirt_size': '1',
+            'userprofile-telephone': '123456789',
+            'userattendance-t_shirt_size': self.t_shirt_size.pk,
             'next': 'Next',
         }
         response = self.client.post(reverse('zmenit_triko'), post_data, follow=True)
         self.assertRedirects(response, reverse("typ_platby"))
         self.user_attendance.refresh_from_db()
-        self.assertTrue(self.user_attendance.t_shirt_size.pk, 1)
+        self.assertTrue(self.user_attendance.t_shirt_size.name, "Foo t-shirt size")
 
     def test_dpnk_t_shirt_size_no_sizes(self):
         TShirtSize.objects.all().delete()
@@ -86,7 +88,7 @@ class ViewsTestsLogon(TestCase):
     def test_dpnk_t_shirt_size_shipped(self):
         mommy.make("PackageTransaction", status=20002, t_shirt_size=self.t_shirt_size, user_attendance=self.user_attendance)
         response = self.client.get(reverse('zmenit_triko'))
-        self.assertContains(response, "Vaše tričko již je na cestě k vám, už se na něj můžete těšit.", status_code=403)
+        self.assertContains(response, "Vaše tričko již je na cestě k Vám, už se na něj můžete těšit.", status_code=403)
 
     @patch('slumber.API')
     def test_dpnk_t_shirt_size_no_sizes_no_admission(self, slumber_mock):
@@ -103,14 +105,19 @@ class ViewsTestsLogon(TestCase):
         self.user_attendance.team = None
         self.user_attendance.save()
         response = self.client.get(reverse('zmenit_triko'))
-        self.assertContains(response, "Velikost trička nemůžete měnit, dokud nemáte zvolený tým.", status_code=403)
+        self.assertContains(
+            response,
+            "<div class=\"alert alert-warning\">Nejdříve se <a href='/tym/'>přidejte k týmu</a> a pak si vyberte tričko.</div>",
+            html=True,
+            status_code=403,
+        )
 
     def test_dpnk_t_shirt_size_get(self):
         response = self.client.get(reverse('zmenit_triko'))
         self.assertContains(
             response,
-            '<label for="id_t_shirt_size" class="control-label  requiredField">'
-            'Velikost trika'
+            '<label for="id_userattendance-t_shirt_size" class="control-label  requiredField">'
+            'Vyberte velikost trika'
             '<span class="asteriskField">*</span>'
             '</label>',
             html=True,

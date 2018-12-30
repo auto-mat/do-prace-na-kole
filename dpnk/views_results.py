@@ -171,17 +171,21 @@ class CompetitionResultListJson(BaseDatatableView):
             else:
                 return "%s.&nbsp;-&nbsp;%s." % sequence_range
         if column in ('get_company', 'get_city', 'get_street', 'get_subsidiary', 'get_occupation', 'get_sex', 'get_team_name'):
-            return escape(getattr(row, column)())
+            return escape(getattr(row, column)() or '')
         if column in ('get_result', 'get_result_percentage', 'get_result_divident', 'get_result_divisor'):
             return intcomma(getattr(row, column)())
         else:
             return super().render_column(row, column)
 
-    def get_initial_queryset(self):
-        if not hasattr(self, 'competition'):
-            self.competition = models.Competition.objects.get(
+    @property
+    def competition(self):
+        if not hasattr(self, '_competition'):
+            self._competition = models.Competition.objects.get(
                 slug=self.kwargs['competition_slug'],
             )
+        return self._competition
+
+    def get_initial_queryset(self):
         results = self.competition.get_results()
         return self.competition.select_related_results(results)
 

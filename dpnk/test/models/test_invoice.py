@@ -19,6 +19,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
 
+from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.test import TestCase, TransactionTestCase
 from django.test.utils import override_settings
@@ -109,7 +110,7 @@ class TestDates(TestCase):
 class TestClean(TestCase):
     def test_clean_exception(self):
         invoice = mommy.prepare("Invoice", campaign=testing_campaign)
-        with self.assertRaisesRegexp(Exception, "Neexistuje žádná nefakturovaná platba"):
+        with self.assertRaisesRegex(Exception, "Neexistuje žádná nefakturovaná platba"):
             invoice.clean()
 
 
@@ -129,16 +130,17 @@ class TestSave(TransactionTestCase):
         )
         mail.outbox = []
         PhaseRecipe.make()
-        self.assertEquals(invoice.payment_set.get().status, 0)
+        self.assertEqual(invoice.payment_set.get().status, 0)
         invoice.paid_date = datetime.date(year=2010, month=11, day=20)
         invoice.save()
-        self.assertEquals(invoice.payment_set.get().status, 1007)
+        self.assertEqual(invoice.payment_set.get().status, 1007)
         invoice.delete()
         payment.refresh_from_db()
-        self.assertEquals(payment.status, 1005)
+        self.assertEqual(payment.status, 1005)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test@email.cz'])
         self.assertEqual(str(msg.subject), 'Testing campaign - přijetí platby')
+        ContentType.objects.clear_cache()  # https://groups.google.com/forum/#!topic/django-users/g88m9u8-ozs
 
     def test_invoice_raises_sequence_number_overrun(self):
         campaign = mommy.make(
@@ -171,3 +173,4 @@ class TestSave(TransactionTestCase):
                 company=company,
                 sequence_number=None,
             )
+        ContentType.objects.clear_cache()  # https://groups.google.com/forum/#!topic/django-users/g88m9u8-ozs

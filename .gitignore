@@ -3,6 +3,7 @@
 *.mo
 *.pyc
 *.swp
+*.swo
 *~
 *.orig
 *__pycache__

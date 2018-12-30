@@ -6,6 +6,11 @@
 {% block form_container %}
 
 {% block container_header %}
+{% if introduction_message %}
+<p>
+{{ introduction_message }}
+</p>
+{% endif %}
 {% endblock %}
 
 {% block messages %}

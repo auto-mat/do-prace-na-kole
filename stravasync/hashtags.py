@@ -55,7 +55,7 @@ class HashtagTable():
             if activity.description:
                 return self.get_campaign_and_direction(activity.description)
             else:
-                raise NoValidHashtagException()
+                raise e
 
 
 class NoValidHashtagException(Exception):

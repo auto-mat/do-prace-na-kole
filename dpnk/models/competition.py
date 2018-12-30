@@ -26,8 +26,9 @@ from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import escape
-from django.utils.translation import string_concat, ungettext_lazy
+from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ungettext_lazy
 
 from rank import Rank, UpperRank
 
@@ -425,12 +426,13 @@ class Competition(models.Model):
         else:
             commute_modes_string = ""
 
-        return string_concat(
-            company_string_before, " ",
-            CTYPES_STRINGS[self.competition_type], " ",
-            CCOMPETITORTYPES_STRINGS[self.competitor_type], " ",
-            company_string_after, " ",
-            city_string, " ",
+        return format_lazy(
+            "{} {} {} {} {} {}{}",
+            company_string_before,
+            CTYPES_STRINGS[self.competition_type],
+            CCOMPETITORTYPES_STRINGS[self.competitor_type],
+            company_string_after,
+            city_string,
             sex_string,
             commute_modes_string,
         )
@@ -455,7 +457,8 @@ class CompetitionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not hasattr(self.instance, 'campaign'):
-            self.instance.campaign = Campaign.objects.get(slug=self.request.subdomain)
+            if hasattr(self, 'request') and hasattr(self.request, 'campaign'):
+                self.initial['campaign'] = self.request.campaign
 
         if hasattr(self, "request") and not self.request.user.has_perm('dpnk.can_edit_all_cities'):
             self.fields["city"].queryset = self.request.user.userprofile.administrated_cities

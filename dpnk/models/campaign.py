@@ -209,7 +209,7 @@ class Campaign(Pricable, models.Model):
     )
     track_required = models.BooleanField(
         verbose_name=_("Je povinné zadávat trasu"),
-        default=True,
+        default=False,
         null=False,
     )
     tracks = models.BooleanField(
@@ -364,8 +364,14 @@ class Campaign(Pricable, models.Model):
         """
         @cached(60)
         def get_phase(pk, phase_type):
-            return self.phase_set.get(phase_type=phase_type)
-        return get_phase(self.pk, phase_type)
+            try:
+                return self.phase_set.get(phase_type=phase_type)
+            except Phase.DoesNotExist:
+                return False
+        result = get_phase(self.pk, phase_type)
+        if not result:
+            raise Phase.DoesNotExist
+        return result
 
     def competition_phase(self):
         return self.phase('competition')

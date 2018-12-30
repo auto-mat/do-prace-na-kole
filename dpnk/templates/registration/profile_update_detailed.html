@@ -1,0 +1,19 @@
+{% extends "base_generic_form.html" %}
+{% load i18n %}
+{% load static %}
+{% load avatar_tags %}
+
+{% block form %}
+<div class="container">
+   <div class="col-md-6">
+      {{ block.super }}
+   </div>
+   <div class="col-md-3">
+      <a href="{% url 'avatar_change' %}">{% avatar request.user 150 %}</a>
+      <br/>
+      <a href="{% url 'avatar_change' %}"><i class="fa fa-edit"></i></a>
+      <a href="{% url 'avatar_change' %}">{% trans "Změnit" %}</a>
+      </a>
+   </div>
+</div>
+{% endblock %}

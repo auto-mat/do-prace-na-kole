@@ -1,2 +1,0 @@
-#!/bin/bash
-sudo docker run --hostname dpnk-rabbit --name dpnk-rabbit --rm rabbitmq

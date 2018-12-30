@@ -29,7 +29,7 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.html import format_html_join
+from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _
 
 from stale_notifications.model_mixins import StaleSyncMixin
@@ -497,9 +497,19 @@ class UserAttendance(StaleSyncMixin, models.Model):
     def company_coordinator_emails(self):
         company_admins = self.get_asociated_company_admin()
         if company_admins:
-            return format_html_join(", ", '<a href="mailto:{0}">{0}</a>', ((ca.userprofile.user.email,) for ca in company_admins))
+            return format_html_join(" nebo ", '<a href="mailto:{0}">{0}</a>', ((ca.userprofile.user.email,) for ca in company_admins))
         else:
-            return None
+            return format_html(
+                '<a href="mailto:kontakt@dopracenakole.cz?subject={subject}">kontakt@dopracenakole.cz</a>',
+                subject=_("Žádost o změnu adresy organizace, pobočky nebo týmu"),
+            )
+
+    def company_coordinator_mail_text(self):
+        return format_html(
+            _("Napište svému firemnímu koordinátorovi na e-mail {email_link}.") if
+            self.get_asociated_company_admin() else _("Napište nám prosím na {email_link}."),
+            email_link=self.company_coordinator_emails(),
+        )
 
     def previous_user_attendance(self):
         previous_campaign = self.campaign.previous_campaign

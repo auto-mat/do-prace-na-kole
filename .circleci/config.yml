@@ -12,10 +12,7 @@ jobs:
       - run: npm install -g less bower
       - run: bower --allow-root install
       - run: pip install 'Django<2.1' coveralls django_coverage_plugin
-      - run: cd dpnk && django-admin compilemessages
-      - run: cd t_shirt_delivery && django-admin compilemessages
-      - run: cd coupons && django-admin compilemessages
-      - run: cd stravasync && django-admin compilemessages
+      - run: django-admin compilemessages
       - run: cd dpnk/static/css && lessc style.less style.css
       - run: echo "${CIRCLE_BRANCH} 2017.${CIRCLE_BUILD_NUM}" > dpnk/static/version.txt
       - run: git rev-parse HEAD >> dpnk/static/version.txt
@@ -63,30 +60,23 @@ jobs:
           name: Deploy master branch
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              TAG="2017.${CIRCLE_BUILD_NUM}"
-              docker tag dopracenakole:latest petrdlouhy/dopracenakole:$TAG
-              docker tag dopracenakole:latest petrdlouhy/dopracenakole:latest
-              docker login -u $DOCKER_USER -p $DOCKER_PASS
-              docker push petrdlouhy/dopracenakole:$TAG
-              docker push petrdlouhy/dopracenakole:latest
+              POST_FIX=""
+            else
+              POST_FIX="-testing"
             fi
-
-      - deploy:
-          name: Deploy development branch
-          command: |
-            if [ "${CIRCLE_BRANCH}" != "master" ]; then
-              TAG="2017.${CIRCLE_BUILD_NUM}"
-              docker tag dopracenakole:latest petrdlouhy/dopracenakole-testing:$TAG
-              docker tag dopracenakole:latest petrdlouhy/dopracenakole-testing:latest
+            if [ "$DOCKER_USER" != "" ] ; then
+              TAG="$(date +Y).${CIRCLE_BUILD_NUM}"
+              docker tag dopracenakole:latest petrdlouhy/dopracenakole$POST_FIX:$TAG
+              docker tag dopracenakole:latest petrdlouhy/dopracenakole$POST_FIX:latest
               docker login -u $DOCKER_USER -p $DOCKER_PASS
-              docker push petrdlouhy/dopracenakole-testing:$TAG
-              docker push petrdlouhy/dopracenakole-testing:latest
+              docker push petrdlouhy/dopracenakole$POST_FIX:$TAG
+              docker push petrdlouhy/dopracenakole$POST_FIX:latest
             fi
 
       - run: docker cp dpnk-test:/home/aplikace/reports /tmp/reports
       - run: cp /tmp/reports/ . -R
       - run: cp /tmp/reports/.coverage .
-      - run: coveralls
+      - run: COVERALLS_REPO_TOKEN=XXCDfbmzbtPfglWzD8llHBM5TM9HTUmVJ coveralls
 
       - store_artifacts:
           path: /tmp/reports

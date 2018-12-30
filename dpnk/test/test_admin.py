@@ -500,61 +500,61 @@ class FilterTests(TestCase):
     def test_email_filter_blank(self):
         f = filters.EmailFilter(self.request, {"email_state": "duplicate"}, User, None)
         q = f.queryset(self.request, User.objects.all())
-        self.assertEquals(q.count(), 0)
+        self.assertEqual(q.count(), 0)
 
     def test_email_filter_duplicate(self):
         f = filters.EmailFilter(self.request, {"email_state": "blank"}, User, None)
         q = f.queryset(self.request, User.objects.all())
-        self.assertEquals(q.count(), 0)
+        self.assertEqual(q.count(), 0)
 
     def test_email_filter_null(self):
         f = filters.EmailFilter(self.request, {}, User, None)
         q = f.queryset(self.request, User.objects.all())
-        self.assertEquals(q.count(), 9)
+        self.assertEqual(q.count(), 9)
 
     def test_campaign_filter_campaign(self):
         f = filters.CampaignFilter(self.request, {"campaign": "testing-campaign"}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 6)
+        self.assertEqual(q.count(), 6)
 
     def test_campaign_filter_none(self):
         f = filters.CampaignFilter(self.request, {"campaign": "none"}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 0)
+        self.assertEqual(q.count(), 0)
 
     def test_campaign_filter_without_subdomain(self):
         self.request.subdomain = None
         f = filters.CampaignFilter(self.request, {"campaign": "none"}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 0)
+        self.assertEqual(q.count(), 0)
 
     def test_campaign_filter_unknown_campaign(self):
         self.request.subdomain = "asdf"
         f = filters.CampaignFilter(self.request, {}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 0)
+        self.assertEqual(q.count(), 0)
 
     def test_campaign_filter_all(self):
         f = filters.CampaignFilter(self.request, {"campaign": "all"}, models.UserAttendance, None)
         q = f.queryset(self.request, models.UserAttendance.objects.all())
-        self.assertEquals(q.count(), 8)
+        self.assertEqual(q.count(), 8)
 
     def test_city_campaign_filter_all(self):
         f = filters.CityCampaignFilter(self.request, {"campaign": "all"}, models.City, None)
         q = f.queryset(self.request, models.City.objects.all())
-        self.assertEquals(q.count(), 2)
+        self.assertEqual(q.count(), 2)
 
     def test_has_reaction_filter_yes(self):
         f = filters.HasReactionFilter(self.request, {"has_reaction": "yes"}, models.Answer, None)
         q = f.queryset(self.request, models.Answer.objects.all())
-        self.assertEquals(q.count(), 4)
+        self.assertEqual(q.count(), 4)
 
     def test_has_reaction_filter_no(self):
         f = filters.HasReactionFilter(self.request, {"has_reaction": "no"}, models.Answer, None)
         q = f.queryset(self.request, models.Answer.objects.all())
-        self.assertEquals(q.count(), 1)
+        self.assertEqual(q.count(), 1)
 
     def test_has_reaction_filter_null(self):
         f = filters.HasReactionFilter(self.request, {}, models.Answer, None)
         q = f.queryset(self.request, models.Answer.objects.all())
-        self.assertEquals(q.count(), 5)
+        self.assertEqual(q.count(), 5)

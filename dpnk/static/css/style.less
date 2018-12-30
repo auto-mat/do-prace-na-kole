@@ -127,7 +127,7 @@ a{
 // 	float: left;
 // }
 // 
-#rides .asteriskField{
+#rides .asteriskField, .noAsterisks .asteriskField{
 	display: none;
 }
 a{
@@ -161,6 +161,11 @@ h3, h4{
 	// &.main_menu{
 	// 	border-bottom:1px solid lighten(@links, 10%);
 	// }
+	h1{
+		a{
+			text-decoration: none !important;
+		}
+	}
 	li{
 		// display:inline-block;
 		// float:initial;
@@ -171,6 +176,9 @@ h3, h4{
 			&.active, &:hover{
 				text-decoration: none;
 			}
+		}
+		a::first-letter{	
+			text-transform: uppercase;
 		}
 		ul{
 			li{
@@ -186,16 +194,6 @@ h3, h4{
 	ul{
 		margin-bottom: 0;
 		li{
-		
-			&.fulfilled{
-				a{
-					&:after{
-						content:  "\2713";
-						margin-left:.2rem;
-						text-decoration:none;
-					}
-				}
-			}
 			&.unfulfilled{	
 				a{
 					&:hover{
@@ -217,16 +215,10 @@ h3, h4{
 		}
 	}
 }
-.upravit_profil, .zmenit_tym, .pozvanky, .typ_platby{
-	.navbar, .navbar-default .navbar-nav{
-		&.main_menu{
-			border-bottom:1px solid lighten(@links, 10%);
-		}
-	}
-}
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus{
 	background-color:transparent;
 	text-decoration:underline;
+	color:#000;
 }
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
 	background-color:@links;
@@ -300,7 +292,6 @@ h3, h4{
 		}
 	}
 	img{
-		width:100%;
 		height:auto;
 	}
 }
@@ -323,7 +314,7 @@ input[type=checkbox]{
 }
 
 .controls{
-	margin-bottom: 1em;
+	// margin-bottom: 1em;
 	// display:inline-block;
 	// border: 1px solid #ddd;
 	// border-radius: 7px;
@@ -370,7 +361,7 @@ input:disabled+label{
 		}
 		&.active{
 			a{
-				color:lighten(@links, 30%)
+				text-decoration:underline;
 			}
 		}
 	}
@@ -554,6 +545,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 #payu_ img,
 .zmenit_triko img,
+.gravatar,
 .questionnaire-image img {
    width:auto !important;
 }
