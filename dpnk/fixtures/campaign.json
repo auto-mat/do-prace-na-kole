@@ -20,6 +20,7 @@
             "slug": "testing-campaign-ly",
             "tracking_number_first": 0,
             "tracking_number_last": 999999999,
+            "track_required": true,
             "trip_plus_distance": 5
         },
         "model": "dpnk.campaign",
@@ -46,6 +47,7 @@
             "slug": "testing-campaign",
             "tracking_number_first": 1111111,
             "tracking_number_last": 999999999,
+            "track_required": true,
             "trip_plus_distance": 5
         },
         "model": "dpnk.campaign",
