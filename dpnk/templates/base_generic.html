@@ -71,7 +71,7 @@ Raven.setUserContext({
             {% if request and campaign %}
             <nav class="navbar navbar-default">
                  <h1>
-                    {{ campaign.name }}
+                    <a href="{% url 'profil' %}">{{ campaign.name }}</a>
                  </h1>
 
                   {% if user.is_authenticated %}
