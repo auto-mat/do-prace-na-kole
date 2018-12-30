@@ -32,6 +32,8 @@ from adminsortable2.admin import SortableAdminMixin, SortableInlineAdminMixin
 
 from advanced_filters.admin import AdminAdvancedFiltersMixin
 
+from avatar.templatetags.avatar_tags import avatar
+
 from daterange_filter.filter import DateRangeFilter
 
 from django import forms
@@ -763,6 +765,7 @@ class UserAttendanceAdmin(
     LeafletGeoAdmin,
 ):
     list_display = (
+        'avatar_small',
         'id',
         'name_for_trusted',
         'userprofile__user__email',
@@ -846,6 +849,7 @@ class UserAttendanceAdmin(
         'team__subsidiary__company__name',
     )
     readonly_fields = (
+        'avatar_large',
         'user_link',
         'userprofile__user__email',
         'created',
@@ -867,6 +871,12 @@ class UserAttendanceAdmin(
     list_max_show_all = 10000
     list_per_page = 100
     resource_class = UserAttendanceResource
+
+    def avatar_small(self, obj):
+        return avatar(obj.userprofile.user, 30)
+
+    def avatar_large(self, obj):
+        return avatar(obj.userprofile.user, 150)
 
     def user_link(self, obj):
         return format_html('<a href="{}">{}</a>', reverse('admin:auth_user_change', args=(obj.userprofile.user.pk,)), obj.userprofile.user)
