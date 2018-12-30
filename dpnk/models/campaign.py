@@ -209,7 +209,7 @@ class Campaign(Pricable, models.Model):
     )
     track_required = models.BooleanField(
         verbose_name=_("Je povinné zadávat trasu"),
-        default=True,
+        default=False,
         null=False,
     )
     tracks = models.BooleanField(
