@@ -7,8 +7,22 @@
 <link href="{% static "css/progress_tracker.css"%}" rel="stylesheet" media="screen">
 {% endblock %}
 
+{% block main_menu %}
+   {% if user_attendance.entered_competition %}
+      {{ block.super }}
+   {% else %}
+   <ul class="nav navbar-nav">
+      <li>
+         <a href="{% url 'upravit_profil' %}">
+            {% trans "Registrace" %}
+         </a>
+      </li>
+   </ul>
+   {% endif %}
+{% endblock %}
+
 {% block second_menu %}
-   {% if user_attendance.userprofile.profile_complete %}
+   {% if user_attendance.entered_competition %}
       {{ block.super }}
    {% else %}
    <ul class="navbar nav navbar-nav steps the_submenu">

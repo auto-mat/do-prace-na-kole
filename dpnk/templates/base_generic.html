@@ -83,7 +83,9 @@ Raven.setUserContext({
 
                  <div class="nav navbar-nav main_menu collapse navbar-collapse" id="collapsible_menu">
                     {% if user.is_authenticated %}
-                       {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk" template "sitetree/menu_bootstrap3_flat.html" %}
+                       {% block main_menu %}
+                          {% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk" template "sitetree/menu_bootstrap3_flat.html" %}
+                       {% endblock %}
                     {% else %}
                        {% sitetree_menu from "unlogged_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                     {% endif %}
