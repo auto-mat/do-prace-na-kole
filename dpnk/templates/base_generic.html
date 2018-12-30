@@ -99,9 +99,8 @@ Raven.setUserContext({
                     {% sitetree_menu from "about_us" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
                     <ul class="nav navbar-nav">
                      <div class="profile_menu">
-                       <a href="{% url 'edit_profile_detailed' %}">
-                       {% avatar user_attendance.userprofile.user 30 %}
-                       {{ user_attendance }}
+                       <a href="{% url 'edit_profile_detailed' %}">{% avatar user_attendance.userprofile.user 30 %}</a>
+                       <a href="{% url 'edit_profile_detailed' %}">{{ user_attendance }}</a>
                        </a>
                      </div>
                     </ul>
