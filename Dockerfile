@@ -1,4 +1,4 @@
-from python:3.5
+from python:3.6
 
 maintainer Automat
 

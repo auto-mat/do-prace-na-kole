@@ -244,7 +244,7 @@ class TeamAdminForm(forms.ModelForm):
 
     class Meta:
         model = Team
-        exclude = ()
+        fields = ("name", "subsidiary", "campaign")  # Required for fast loading after @with_author was added
 
 
 def pre_user_team_changed(sender, instance, changed_fields=None, **kwargs):
