@@ -626,6 +626,7 @@ AVATAR_DEFAULT_URL = 'img/default-avatar.png'
 AVATAR_MAX_AVATARS_PER_USER = 1
 AVATAR_GRAVATAR_DEFAULT = 'mp'
 AVATAR_MAX_SIZE = 10 * 1024 * 1024
+AVATAR_THUMB_FORMAT = 'PNG'
 AVATAR_PROVIDERS = (
     'avatar.providers.PrimaryAvatarProvider',
     'avatar.providers.FacebookAvatarProvider',
