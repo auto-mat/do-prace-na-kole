@@ -368,7 +368,7 @@ class PaymentTypeView(
                 if request.user_attendance.payment_status == 'done':
                     message = _("Vaši platbu jsme úspěšně přijali.")
                 else:
-                    message = _("Účastnický poplatek se neplatí.")
+                    message = _("Startovné se neplatí.")
                 raise exceptions.TemplatePermissionDenied(
                     message,
                     self.template_name,

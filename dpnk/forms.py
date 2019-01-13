@@ -611,14 +611,14 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 format_html(
                     '<span id="payment_amount">{} Kč</span><br/>{}',
                     round(self.user_attendance.admission_fee()),
-                    _("Zaplatím běžný účastnický poplatek."),
+                    _("Zaplatím běžné startovné."),
                 ),
             ), (
                 'pay_beneficiary',
                 format_html(
                     '{} Kč<br/>{}',
                     round(self.user_attendance.beneficiary_admission_fee()),
-                    _("Podpořím soutěž benefičním poplatkem %s Kč.") % (
+                    _("Podpořím soutěž benefičním startovným %s Kč.") % (
                         round(self.user_attendance.beneficiary_admission_fee() - self.user_attendance.admission_fee())
                     ),
                 ),
@@ -626,7 +626,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
                 'company',
                 format_html(
                     '0 Kč<br/>{}',
-                    _("Účastnický poplatek mi platí zaměstnavatel."),
+                    _("Startovné mi platí zaměstnavatel."),
                 ),
             ),
         ]
