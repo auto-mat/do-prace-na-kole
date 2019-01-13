@@ -934,6 +934,7 @@ class UserProfileUpdateForm(RegistrationUserProfileUpdateForm):
     def __init__(self, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['mailing_opt_in'].label = _("Chci dostávat e-mailem soutěžní novinky, informace o akcích a pozvánky do dalších ročníků soutěže.")
+        self.fields['mailing_opt_in'].required = False
         return ret_val
 
 
