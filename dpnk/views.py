@@ -1026,13 +1026,13 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin
 
 
 class LengthCompetitionsView(AdmissionsView):
-    title = _("Výsledky pravidelnostních a výkonnostních soutěží")
+    title = _("Výsledky výkonnostních soutěží")
     competition_types = ('length',)
     template_name = "registration/competitions.html"
 
 
 class FrequencyCompetitionsView(AdmissionsView):
-    title = _("Výsledky pravidelnostních a výkonnostních soutěží")
+    title = _("Výsledky pravidelnostních soutěží")
     competition_types = ('frequency',)
     template_name = "registration/competitions.html"
 
