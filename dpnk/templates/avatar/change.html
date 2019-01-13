@@ -7,6 +7,11 @@
     {% avatar user %}
     <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
         {% bootstrap_form upload_avatar_form %}
-        <p>{% csrf_token %}<input class="btn btn-primary" type="submit" value="{% trans "Upload New Image" %}" /></p>
+        <input type="hidden" id="nextId" name="next" value="{% url 'edit_profile_detailed' %}">
+        <p>
+        {% csrf_token %}
+        <a class="btn btn-default" href="{% url 'edit_profile_detailed' %}">{% trans "Zrušit" %}</a>
+        <input class="btn btn-primary" type="submit" value="{% trans "Upload New Image" %}" />
+        </p>
     </form>
 {% endblock %}
