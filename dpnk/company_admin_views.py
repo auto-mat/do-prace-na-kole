@@ -42,7 +42,6 @@ from .company_admin_forms import (
 )
 from .email import company_admin_register_competitor_mail, company_admin_register_no_competitor_mail
 from .models import Campaign, Company, CompanyAdmin, Competition, Subsidiary, UserProfile
-from .string_lazy import mark_safe_lazy
 from .views import RegistrationViewMixin, TitleViewMixin
 from .views_mixins import CampaignFormKwargsMixin, CompanyAdminMixin, ExportViewMixin, RequestFormMixin
 from .views_permission_mixins import MustBeCompanyAdminMixin, MustBeInInvoicesPhaseMixin, MustBeInPaymentPhaseMixin, MustHaveTeamMixin
@@ -51,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 class CompanyStructure(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, TemplateView):
     template_name = 'company_admin/structure.html'
-    title = _("Struktura organizace")
+    title = _("Společnost")
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
@@ -105,7 +104,7 @@ class SelectUsersPayView(
     form_class = SelectUsersPayForm
     success_url = reverse_lazy('company_admin_pay_for_users')
     success_message = _("Potvrzena platba za %s soutěžících, kteří od teď mohou bez obav soutěžit.")
-    title = _("Platba za soutěžící")
+    title = _("Startovné")
 
     def get_initial(self):
         return {
@@ -138,13 +137,14 @@ class SelectUsersPayView(
             if not self.company_admin.administrated_company.ico:
                 raise exceptions.TemplatePermissionDenied(
                     mark_safe(
-                        _("Před tím, než budete moci schvalovat platby za Vaše zaměstnantce, %s") %
-                        "<a href='%s'>%s</a>." % (
+                        _("Než schválíte startovné za Vaše zaměstnance, %s.") %
+                        "<a href='%s'>%s</a>" % (
                             reverse('edit_company'),
-                            _("prosím vyplňte IČO Vaší organizace"),
+                            _("vyplňte prosím IČO společnosti"),
                         ),
                     ),
                     self.template_name,
+                    title=_("Podělíte se o firemní IČO?"),
                 )
         return ret_val
 
@@ -157,7 +157,7 @@ class CompanyEditView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixi
     form_class = CompanyForm
     model = Company
     success_url = reverse_lazy('company_structure')
-    title = _("Změna adresy organizace")
+    title = _("Adresa společnosti")
 
     def get_object(self, queryset=None):
         return self.company_admin.administrated_company
@@ -256,7 +256,7 @@ class CompanyCompetitionView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequi
     form_class = CompanyCompetitionForm
     model = Competition
     success_url = reverse_lazy('company_admin_competitions')
-    title = _("Vypsat/upravit vnitrofiremní soutěž")
+    title = _("Vypsat firemní soutěž")
 
     def get(self, *args, **kwargs):
         try:
@@ -286,7 +286,7 @@ class CompanyCompetitionView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequi
 
 class CompanyCompetitionsShowView(TitleViewMixin, MustBeCompanyAdminMixin, LoginRequiredMixin, TemplateView):
     template_name = 'company_admin/competitions.html'
-    title = _("Vnitrofiremní soutěže")
+    title = _("Firemní soutěže")
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -298,7 +298,7 @@ class InvoicesView(TitleViewMixin, MustBeInInvoicesPhaseMixin, MustBeCompanyAdmi
     template_name = 'company_admin/create_invoice.html'
     form_class = company_admin_forms.CreateInvoiceForm
     success_url = reverse_lazy('invoices')
-    title = _("Faktury Vaší organizace")
+    title = _("Faktury")
 
     def get_initial(self):
         campaign = Campaign.objects.get(slug=self.request.subdomain)
@@ -327,8 +327,15 @@ class InvoicesView(TitleViewMixin, MustBeInInvoicesPhaseMixin, MustBeCompanyAdmi
         if request.user_attendance:
             if not self.company_admin.administrated_company.has_filled_contact_information():
                 raise exceptions.TemplatePermissionDenied(
-                    mark_safe_lazy(_("Před vystavením faktury prosím <a href='%s'>vyplňte údaje o Vaší firmě</a>") % reverse('edit_company')),
+                    mark_safe(
+                        _("Před vystavením faktury %s.") %
+                        "<a href='%s'>%s</a>" % (
+                            reverse('edit_company'),
+                            _("prosím vyplňte údaje o Vaší společnosti"),
+                        ),
+                    ),
                     self.template_name,
+                    title=_("Řekněte nám něco o sobě"),
                 )
             if not self.company_admin.can_confirm_payments:
                 raise exceptions.TemplatePermissionDenied(

@@ -340,7 +340,7 @@ class TestCompanyAdminViews(ClearCacheMixin, TestCase):
         }
         request = create_post_request(self.factory, self.user_attendance, post_data)
         response = company_admin_views.CompanyCompetitionView.as_view()(request, success=True)
-        self.assertContains(response, "<strong>Položka Soutěžní kategorie s touto hodnotou v poli Jméno soutěže již existuje.</strong>", html=True)
+        self.assertContains(response, "<strong>Položka Soutěžní kategorie s touto hodnotou v poli Název soutěže již existuje.</strong>", html=True)
 
     @override_settings(
         MAX_COMPETITIONS_PER_COMPANY=0,

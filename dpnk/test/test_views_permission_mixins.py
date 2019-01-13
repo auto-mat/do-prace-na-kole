@@ -72,7 +72,10 @@ class MustBeInPhaseMixinTest(TestCase):
     def test_is_phase_after_end(self):
         self.request.campaign = testing_campaign()
         mixin = MustBeInPhase()
-        with self.assertRaisesRegex(PermissionDenied, "Již skončil čas, kdy se tato stránka zobrazuje."):
+        with self.assertRaisesRegex(
+            PermissionDenied,
+            "Pro jahody ke dvanácti měsíčkům na kole dojedete i mimo sezónu, ale na novou soutěž musíte ještě chvilku počkat.",
+        ):
             mixin.dispatch(self.request)
 
     def test_isnt_in_phase(self):
