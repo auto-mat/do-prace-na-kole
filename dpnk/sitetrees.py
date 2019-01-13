@@ -65,4 +65,19 @@ sitetrees = (
             item('Zapomenuté heslo', 'password_reset', title_en='Forgotten password'),
         ],
     ),
+    tree(
+        'company_coordinator_menu', 'Menu firemního koordinátora', items=[
+            item(
+                'Firemní koordinátor', 'company_admin_pay_for_users', title_en='Company coordinator', children=[
+                    item('Společnost', 'company_structure'),
+                    item('Adresa společnosti', 'edit_company'),
+                    item('Startovné', 'company_admin_pay_for_users'),
+                    item('Faktury', 'invoices'),
+                    item('Soutěže', 'company_admin_related_competitions'),
+                    item('Firemní soutěže', 'company_admin_competitions'),
+                    item('Vypsat soutěž', 'company_admin_competition'),
+                ],
+            ),
+        ],
+    ),
 )
