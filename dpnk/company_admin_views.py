@@ -138,10 +138,10 @@ class SelectUsersPayView(
             if not self.company_admin.administrated_company.ico:
                 raise exceptions.TemplatePermissionDenied(
                     mark_safe(
-                        _("Před tím, než budete moci schvalovat platby za vaše zaměstnantce, %s") %
+                        _("Před tím, než budete moci schvalovat platby za Vaše zaměstnantce, %s") %
                         "<a href='%s'>%s</a>." % (
                             reverse('edit_company'),
-                            _("prosím vyplňte IČO vaší organizace"),
+                            _("prosím vyplňte IČO Vaší organizace"),
                         ),
                     ),
                     self.template_name,
@@ -298,7 +298,7 @@ class InvoicesView(TitleViewMixin, MustBeInInvoicesPhaseMixin, MustBeCompanyAdmi
     template_name = 'company_admin/create_invoice.html'
     form_class = company_admin_forms.CreateInvoiceForm
     success_url = reverse_lazy('invoices')
-    title = _("Faktury vaší organizace")
+    title = _("Faktury Vaší organizace")
 
     def get_initial(self):
         campaign = Campaign.objects.get(slug=self.request.subdomain)
@@ -327,7 +327,7 @@ class InvoicesView(TitleViewMixin, MustBeInInvoicesPhaseMixin, MustBeCompanyAdmi
         if request.user_attendance:
             if not self.company_admin.administrated_company.has_filled_contact_information():
                 raise exceptions.TemplatePermissionDenied(
-                    mark_safe_lazy(_("Před vystavením faktury prosím <a href='%s'>vyplňte údaje o vaší firmě</a>") % reverse('edit_company')),
+                    mark_safe_lazy(_("Před vystavením faktury prosím <a href='%s'>vyplňte údaje o Vaší firmě</a>") % reverse('edit_company')),
                     self.template_name,
                 )
             if not self.company_admin.can_confirm_payments:

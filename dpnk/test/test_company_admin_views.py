@@ -123,7 +123,7 @@ class InvoiceTests(ClearCacheMixin, TestCase):
             response,
             "<div class='alert alert-danger'>"
             "Před vystavením faktury prosím"
-            "<a href='/spolecnost/editovat_spolecnost/'>vyplňte údaje o vaší firmě</a>"
+            "<a href='/spolecnost/editovat_spolecnost/'>vyplňte údaje o Vaší firmě</a>"
             "</div>",
             html=True,
             status_code=403,

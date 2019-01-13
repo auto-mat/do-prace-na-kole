@@ -80,7 +80,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                 messages.warning(
                     request,
                     mark_safe(
-                        _('Ve vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members'),
+                        _('Ve Vašem týmu jsou neschválení členové, prosíme, <a href="%s">posuďte jejich členství</a>.') % reverse('team_members'),
                     ),
                 )
             elif self.user_attendance.is_libero():
@@ -90,7 +90,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                     format_html(
                         _(
                             'Jste sám/sama v týmu, znamená to že budete moci soutěžit pouze v kategoriích určených pro jednotlivce!'
-                            ' <ul><li><a href="{invite_url}">Pozvěte</a> své kolegy do vašeho týmu, pokud jste tak již učinil/a, '
+                            ' <ul><li><a href="{invite_url}">Pozvěte</a> své kolegy do Vašeho týmu, pokud jste tak již učinil/a, '
                             'vyčkejte na potvrzující e-mail a schvalte jejich členství v týmu.</li>'
                             '<li>Můžete se pokusit <a href="{join_team_url}">přidat se k jinému týmu</a>.</li>'
                             '<li>Pokud nemůžete sehnat spolupracovníky, '
@@ -116,9 +116,9 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                             _(
                                 'Na této stránce si každý den zapište jízdy nebo zkontrolujte správné zapsání jízdy z mobilní aplikace. '
                                 ' Pokud budete zadávat jízdy ručně, doporučujeme Vám pro usnadnění vyplnit si typickou trasu.'
-                                ' Na základě typické trasy se v průběhu soutěže předvyplní vaše denní trasa a vzdálenost vaší cesty. '
+                                ' Na základě typické trasy se v průběhu soutěže předvyplní Vaše denní trasa a vzdálenost Vaší cesty. '
                                 ' Vaše vyplněná trasa se objeví na {heatmap_link}'
-                                ' a pomůže při plánování cyklistické infrastruktury ve vašem městě.',
+                                ' a pomůže při plánování cyklistické infrastruktury ve Vašem městě.',
                             ),
                             heatmap_link=format_html(
                                 '<a target="_blank" href="https://mapa.prahounakole.cz/?layers=_Wgt">{}</a>',
@@ -137,7 +137,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                         request,
                         format_html(
                             _(
-                                "Vaši kolegové v týmu {team} ještě musí potvrdit vaše členství."
+                                "Vaši kolegové v týmu {team} ještě musí potvrdit Vaše členství."
                                 " Pokud to trvá podezřele dlouho, můžete zkusit"
                                 " <a href='{address}'>znovu požádat o ověření členství</a>."),
                             team=self.user_attendance.team.name, address=reverse("zaslat_zadost_clenstvi"),
@@ -161,7 +161,7 @@ class RegistrationMessagesMixin(UserAttendanceParameterMixin):
                             'Vaše platba typu {payment_type} ještě nebyla vyřízena. '
                             'Počkejte prosím na její schválení. '
                             'Pokud schválení není možné, můžete <a href="{url}">zadat jiný typ platby</a>. '
-                            'Po schválení bude registrace dokončena a my vám tuto skutečnost potvrdíme e-mailem.',
+                            'Po schválení bude registrace dokončena a my Vám tuto skutečnost potvrdíme e-mailem.',
                         ),
                         payment_type=self.user_attendance.payment_type_string(), url=reverse('typ_platby'),
                     ),

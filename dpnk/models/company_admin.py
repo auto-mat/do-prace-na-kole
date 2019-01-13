@@ -61,7 +61,7 @@ class CompanyAdmin(models.Model):
 
     motivation_company_admin = models.TextField(
         verbose_name=_(u"Zaměstnanecká pozice"),
-        help_text=_("Napište nám prosím, jakou zastáváte u vašeho zaměstnavatele pozici"),
+        help_text=_("Napište nám prosím, jakou zastáváte u Vašeho zaměstnavatele pozici"),
         default="",
         max_length=5000,
         null=True,
