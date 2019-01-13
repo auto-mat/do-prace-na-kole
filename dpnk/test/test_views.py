@@ -382,7 +382,7 @@ class PaymentTypeViewTests(TestCase):
         response = self.client.get(reverse('typ_platby'))
         self.assertContains(
             response,
-            '<div class="alert alert-success">Účastnický poplatek se neplatí.</div>',
+            '<div class="alert alert-success">Startovné se neplatí.</div>',
             html=True,
             status_code=403,
         )
