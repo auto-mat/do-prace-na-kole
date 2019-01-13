@@ -80,7 +80,7 @@ class UserProfile(models.Model):
         null=False,
         validators=[
             RegexValidator(r'^[0-9+ ]*$', _('Jak se do lesa volá, když nemáme správné číslo? Zkontrolujte si prosím vyplněný telefon.')),
-            MinLengthValidator(9, message='Opravdu má váš telefon %(show_value)s cifer?'),
+            MinLengthValidator(9, message='Opravdu má Váš telefon %(show_value)s cifer?'),
         ],
         help_text=_("Ozveme se, až bude balíček nachystaný."),
     )
@@ -90,7 +90,7 @@ class UserProfile(models.Model):
     )
     language = models.CharField(
         verbose_name=_(u"Jazyk e-mailové komunikace"),
-        help_text=_("V tomto jazyce vám budou přicházet e-maily z registračního systému"),
+        help_text=_("V tomto jazyce Vám budou přicházet e-maily z registračního systému"),
         choices=LANGUAGE,
         max_length=16,
         null=False,

@@ -296,7 +296,7 @@ class RegisterTeamForm(InitialFieldsMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.subsidiary = kwargs['initial']['subsidiary']
         self.fields['name'].label = _("Jméno")
-        self.fields['name'].help_text = _("Zvolte jméno, pod kterým bude váš tým bojovat.")
+        self.fields['name'].help_text = _("Zvolte jméno, pod kterým bude Váš tým bojovat.")
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -358,7 +358,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
                 raise forms.ValidationError(
                     _(
                         "Zvolená pobočka je registrována ve městě, které v aktuální kampani nesoutěží. "
-                        "Prosím žádejte změnu po vašem vnitrofiremním koordinátorovi."
+                        "Prosím žádejte změnu po Vašem vnitrofiremním koordinátorovi."
                     ),
                 )
 
@@ -522,7 +522,7 @@ class RegistrationFormDPNK(SubmitMixin, EmailUsernameMixin, registration.forms.R
                 mark_safe(
                     _(
                         "Tato e-mailová adresa se již používá. "
-                        "Pokud je vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, "
+                        "Pokud je Vaše, buď se rovnou <a href='%(login)s'>přihlašte</a>, "
                         "nebo použijte <a href='%(password)s'> obnovu hesla</a>."
                     ) % {
                         'password': reverse('password_reset'),
@@ -591,7 +591,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
             raise forms.ValidationError(
                 format_html(
                     _("Váš zaměstnavatel {employer} nemá zvoleného firemního koordinátora nebo neumožňuje platbu za zaměstnance. "
-                      "Vaše organizace bude muset nejprve ustanovit zástupce, který za ní bude schvalovat platby ve vaší organizaci."
+                      "Vaše organizace bude muset nejprve ustanovit zástupce, který za ní bude schvalovat platby ve Vaší organizaci."
                       "<ul><li><a href='{url}'>Chci se stát firemním koordinátorem</a></li></ul>"),
                     employer=self.user_attendance.team.subsidiary.company,
                     url=reverse('company_admin_application'),
@@ -721,7 +721,7 @@ class ConfirmTeamInvitationForm(InitialFieldsMixin, SubmitMixin, forms.ModelForm
 class BikeRepairForm(SubmitMixin, forms.ModelForm):
     user_attendance = forms.CharField(
         label=_("Uživatelské jméno zákazníka"),
-        help_text=_("Uživatelské jméno, které vám sdělí zákazník"),
+        help_text=_("Uživatelské jméno, které Vám sdělí zákazník"),
         max_length=100,
     )
     description = forms.CharField(
