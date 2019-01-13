@@ -167,7 +167,7 @@ class CompetitionsViewTests(ViewsLogon):
         response = self.client.get(address)
         self.assertContains(response, 'Cykloservis')
         self.assertContains(response, 'Uživatelské jméno zákazníka')
-        self.assertContains(response, 'Uživatelské jméno, které vám sdělí zákazník')
+        self.assertContains(response, 'Uživatelské jméno, které Vám sdělí zákazník')
         self.assertContains(response, 'Poznámka')
 
     def test_bike_repair_post(self):
@@ -404,7 +404,7 @@ class PaymentTypeViewTests(TestCase):
         self.assertContains(
             response,
             '<div class="alert alert-warning">'
-            'Platbu ještě musí schválit koordinátor vaší organizace '
+            'Platbu ještě musí schválit koordinátor Vaší organizace '
             '<a href="mailto:foo@email.com">foo@email.com</a>.',
             html=True,
         )
@@ -1041,7 +1041,7 @@ class TestRidesView(ViewsLogonMommy):
             response,
             "<small>"
             "*Do konce soutěže je potřeba urazit alespoň 10000 cest. "
-            "Počet vašich cest byl tedy zvýšen poměrově k tomuto číslu na 886 cest."
+            "Počet Vašich cest byl tedy zvýšen poměrově k tomuto číslu na 886 cest."
             "</small>",
             html=True,
         )
@@ -1593,7 +1593,7 @@ class ViewsTestsLogon(ViewsLogon):
             'reason-1015': 'reason',
         }
         response = self.client.post(reverse('team_members'), post_data)
-        self.assertContains(response, 'Členství uživatele Nick ve vašem týmu bylo zamítnuto')
+        self.assertContains(response, 'Členství uživatele Nick ve Vašem týmu bylo zamítnuto')
 
     def test_dpnk_team_denial_no_message(self):
         ua = models.UserAttendance.objects.get(pk=1015)
@@ -1636,7 +1636,7 @@ class ViewsTestsLogon(ViewsLogon):
             'submit': 'odeslat',
         }
         response = self.client.post(reverse('pozvanky'), post_data, follow=True)
-        self.assertContains(response, 'Uživatel Nick byl přijat do vašeho týmu.')
+        self.assertContains(response, 'Uživatel Nick byl přijat do Vašeho týmu.')
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.recipients(), ['test2@test.cz'])
@@ -2095,7 +2095,7 @@ class RegistrationMixinTests(ViewsLogon):
         self.user_attendance.save()
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
-        self.assertContains(response, "Ve vašem týmu jsou neschválení členové")
+        self.assertContains(response, "Ve Vašem týmu jsou neschválení členové")
 
     def test_dpnk_registration_unapproved(self):
         self.user_attendance.approved_for_team = 'undecided'
@@ -2104,7 +2104,7 @@ class RegistrationMixinTests(ViewsLogon):
         self.user_attendance.save()
         denorm.flush()
         response = self.client.get(reverse('registration_uncomplete'))
-        self.assertNotContains(response, "Ve vašem týmu jsou neschválení členové")
+        self.assertNotContains(response, "Ve Vašem týmu jsou neschválení členové")
         self.assertContains(response, "Vaši kolegové v týmu Testing team 1")
 
     def test_dpnk_registration_denied(self):

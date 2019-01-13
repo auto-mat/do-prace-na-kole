@@ -437,7 +437,7 @@ class PaymentTypeView(
                 'type': 'fc',
                 'message': format_html(
                     _(
-                        "Platbu ještě musí schválit koordinátor vaší organizace {email}. "
+                        "Platbu ještě musí schválit koordinátor Vaší organizace {email}. "
                     ),
                     email=company_admin_email_string,
                 ),
@@ -596,8 +596,8 @@ class PaymentResult(UserAttendanceViewMixin, LoginRequiredMixin, TemplateView):
             context_data['title'] = _("Platba úspěšná")
             context_data['payment_message'] = _(
                 "Vaše platba byla úspěšně zadána. "
-                "Až platbu obdržíme, dáme vám vědět na e-mail. "
-                "Tím bude vaše registrace úspěšně dokončena.",
+                "Až platbu obdržíme, dáme Vám vědět na e-mail. "
+                "Tím bude Vaše registrace úspěšně dokončena.",
             )
         else:
             context_data['title'] = _("Platba neúspěšná")
@@ -1026,13 +1026,13 @@ class AdmissionsView(UserAttendanceViewMixin, TitleViewMixin, LoginRequiredMixin
 
 
 class LengthCompetitionsView(AdmissionsView):
-    title = _("Výsledky pravidelnostních a výkonnostních soutěží")
+    title = _("Výsledky výkonnostních soutěží")
     competition_types = ('length',)
     template_name = "registration/competitions.html"
 
 
 class FrequencyCompetitionsView(AdmissionsView):
-    title = _("Výsledky pravidelnostních a výkonnostních soutěží")
+    title = _("Výsledky pravidelnostních soutěží")
     competition_types = ('frequency',)
     template_name = "registration/competitions.html"
 
@@ -1414,7 +1414,7 @@ def approve_for_team(request, user_attendance, reason="", approve=False, deny=Fa
         messages.add_message(
             request,
             messages.SUCCESS,
-            _("Členství uživatele %s ve vašem týmu bylo zamítnuto" % user_attendance),
+            _("Členství uživatele %s ve Vašem týmu bylo zamítnuto" % user_attendance),
             extra_tags="user_attendance_%s" % user_attendance.pk,
             fail_silently=True,
         )
@@ -1490,7 +1490,7 @@ class InviteView(UserAttendanceViewMixin, MustBeInRegistrationPhaseMixin, TitleV
                         messages.add_message(
                             self.request,
                             messages.SUCCESS,
-                            _("Uživatel %(user)s byl přijat do vašeho týmu.") % {"user": invited_user_attendance, "email": email},
+                            _("Uživatel %(user)s byl přijat do Vašeho týmu.") % {"user": invited_user_attendance, "email": email},
                             fail_silently=True,
                         )
                     else:
@@ -1608,7 +1608,7 @@ class TeamMembers(
         team = self.user_attendance.team
         if not team:
             return {
-                'fullpage_error_message': _("Další členové vašeho týmu se zobrazí, jakmile budete mít vybraný tým"),
+                'fullpage_error_message': _("Další členové Vašeho týmu se zobrazí, jakmile budete mít vybraný tým"),
                 'title': _("Není vybraný tým"),
             }
 
