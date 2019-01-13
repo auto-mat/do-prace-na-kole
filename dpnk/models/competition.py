@@ -69,7 +69,7 @@ class Competition(models.Model):
 
     name = models.CharField(
         unique=False,
-        verbose_name=_(u"Jméno soutěže"),
+        verbose_name=_("Název soutěže"),
         max_length=160, null=False,
     )
     campaign = models.ForeignKey(
@@ -87,8 +87,8 @@ class Competition(models.Model):
     )
     url = models.URLField(
         default="",
-        verbose_name=_("Odkaz na stránku soutěže"),
-        help_text=_(u"Odkaz na stránku, kde budou pravidla a podrobné informace o soutěži"),
+        verbose_name=_("Odkaz na web soutěže"),
+        help_text=_("Na webu budou podrobná pravidla o soutěži."),
         null=True,
         blank=True,
     )
@@ -117,7 +117,7 @@ class Competition(models.Model):
         null=False,
     )
     competitor_type = models.CharField(
-        verbose_name=_(u"Typ soutěžícího"),
+        verbose_name=_("Počet soutěžících"),
         help_text=_(u"Určuje, zdali bude soutěž týmová, nebo pro jednotlivce. Ostatní volby vybírejte jen pokud víte, k čemu slouží."),
         choices=CCOMPETITORTYPES,
         max_length=16,
@@ -125,8 +125,8 @@ class Competition(models.Model):
     )
     commute_modes = models.ManyToManyField(
         CommuteMode,
-        verbose_name=_("Počítané módy dopravy"),
-        help_text=_("Můžete vybrat víc položek pomocí klávesy shift. Většina soutěží je vypsána jako kolo + chůze/běh"),
+        verbose_name=_("Způsoby dopravy"),
+        help_text=_("Můžete vybrat víc položek pomocí klávesy control. Většina soutěží je vypsána jako kolo + pěšky"),
         blank=True,
         default=default_commute_modes,
     )
@@ -144,7 +144,7 @@ class Competition(models.Model):
         on_delete=models.CASCADE,
     )
     sex = models.CharField(
-        verbose_name=_(u"Soutěž pouze pro pohlaví"),
+        verbose_name=_("Pohlaví soutěžících"),
         help_text=_(
             "Pokud chcete oddělit výsledky pro muže a ženy, je potřeba vypsat dvě soutěže - jednu pro muže a druhou pro ženy. "
             "Jinak nechte prázdné.",

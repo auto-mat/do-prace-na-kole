@@ -52,8 +52,9 @@ class MustBeInPhaseMixin(PhaseMixin):
 
         if phase.has_started():
             raise exceptions.TemplatePermissionDenied(
-                _("Již skončil čas, kdy se tato stránka zobrazuje."),
+                _("Pro jahody ke dvanácti měsíčkům na kole dojedete i mimo sezónu, ale na novou soutěž musíte ještě chvilku počkat."),
                 template_name=getattr(self, 'template_name', None),
+                title=_("Ještě je příliš brzy"),
             )
         raise exceptions.TemplatePermissionDenied(
             mark_safe_lazy(

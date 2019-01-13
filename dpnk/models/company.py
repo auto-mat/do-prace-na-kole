@@ -52,7 +52,6 @@ class Company(models.Model):
     name = models.CharField(
         unique=True,
         verbose_name=_("Název společnosti"),
-        help_text=_("Například Výrobna a.s., Příspěvková p.o., Nevládka z.s., Univerzita Karlova"),
         max_length=60,
         null=False,
     )
@@ -61,7 +60,6 @@ class Company(models.Model):
         'cz.dic',
         default=None,
         verbose_name=_(u"IČO"),
-        help_text=_("Prosím zadejte IČO splečnosti."),
         validators=[RegexValidator(r'^[0-9]*$', _('IČO musí být číslo'))],
         error_messages={'stdnum_format': ICO_ERROR_MESSAGE},
         blank=True,

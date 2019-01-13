@@ -36,9 +36,10 @@ from .models import Campaign, City, Company, CompanyAdmin, Competition, Invoice,
 
 
 class SelectUsersPayForm(SubmitMixin, forms.Form):
+    submit_text = _('Vybrat')
     paing_for = forms.ModelMultipleChoiceField(
         UserAttendance.objects.none(),
-        label=_("Vyberte soutěžící, za které zaplatíte fakturou"),
+        label=_("Vyberte týmové hráče, za které Vaše společnost zaplatí startovné."),
         required=False,
         help_text=_("Ceny jsou uváděny bez DPH"),
         widget=TableSelectMultiple(
@@ -95,6 +96,8 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
 
 
 class CompanyForm(SubmitMixin, AddressForm):
+    submit_text = _('Hotovo')
+
     class Meta:
         model = Company
         fields = ('name', 'address_recipient', 'address_street', 'address_street_number', 'address_psc', 'address_city', 'ico', 'dic')
@@ -106,6 +109,7 @@ class CompanyForm(SubmitMixin, AddressForm):
     def __init__(self, request=None, *args, **kwargs):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['address_recipient'].label = _(u"Adresát na faktuře")
+        self.fields['address_recipient'].help_text = _("Zadejte pokud potřebujete mít na faktuře jiného adresáta, než název společnosti")
         self.fields['ico'].required = True
         return ret_val
 
@@ -231,6 +235,7 @@ class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationFormDPNK):
 
 
 class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
+    submit_text = _('Vypsat')
     competition_type = forms.ChoiceField(
         label=_(u"Typ soutěže"),
         choices=[x for x in Competition.CTYPES if x[0] != 'questionnaire'],
@@ -245,7 +250,7 @@ class CompanyCompetitionForm(SubmitMixin, forms.ModelForm):
 
     class Meta:
         model = Competition
-        fields = ('name', 'url', 'competition_type', 'competitor_type', 'commute_modes', 'sex', )
+        fields = ('name', 'url', 'competition_type', 'competitor_type', 'commute_modes')
 
     def clean_name(self):
         if not self.instance.pk:
