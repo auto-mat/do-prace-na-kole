@@ -43,7 +43,7 @@ class CompanyAdminViewTests(ViewsLogon):
     def test_edit_company(self):
         address = reverse('edit_company')
         response = self.client.get(address)
-        self.assertContains(response, "Změna adresy organizace")
+        self.assertContains(response, "Adresa společnosti")
         self.assertContains(response, "11111")
         self.assertContains(response, "CZ1234567890")
 
@@ -122,8 +122,8 @@ class InvoiceTests(ClearCacheMixin, TestCase):
         self.assertContains(
             response,
             "<div class='alert alert-danger'>"
-            "Před vystavením faktury prosím"
-            "<a href='/spolecnost/editovat_spolecnost/'>vyplňte údaje o Vaší firmě</a>"
+            "Před vystavením faktury "
+            "<a href='/spolecnost/editovat_spolecnost/'>prosím vyplňte údaje o Vaší společnosti</a>."
             "</div>",
             html=True,
             status_code=403,
