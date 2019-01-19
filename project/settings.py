@@ -39,7 +39,8 @@ PROJECT_ROOT = normpath(__file__, "..", "..")
 
 sys.path.append(normpath(PROJECT_ROOT, "project"))
 
-DEBUG = False
+DEBUG = os.environ.get('DPNK_DEBUG', False) in (True, "True")
+TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     ('Petr Dlouhý', 'petr.dlouhy@auto-mat.cz'),
