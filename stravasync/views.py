@@ -90,9 +90,9 @@ class StravaConnect(generic.View, LoginRequiredMixin):
     def post(self, request, *args, **kwargs):
         sclient = stravalib.Client()
         if request.POST.get('private', False):
-            scope = 'view_private'
+            scope = 'activity:read_all'
         else:
-            scope = None
+            scope = 'activity:read'
         return http.HttpResponseRedirect(
             sclient.authorization_url(
                 client_id=settings.STRAVA_CLIENT_ID,
