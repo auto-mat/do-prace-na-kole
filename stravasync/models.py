@@ -21,7 +21,11 @@ class StravaAccount(StaleSyncMixin, models.Model):
     )
 
     access_token = models.CharField(
-        max_length=64,
+        max_length=256,
+    )
+
+    refresh_token = models.CharField(
+        max_length=256,
     )
 
     strava_username = models.CharField(
