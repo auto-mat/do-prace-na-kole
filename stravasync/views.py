@@ -70,7 +70,7 @@ class StravaAuth(generic.View, LoginRequiredMixin):
     def get(self, request, *args, **kwargs):
         sclient = stravalib.Client()
         code = request.GET.get("code", None)
-        access_token = sclient.exchange_code_for_token(
+        token_response = sclient.exchange_code_for_token(
             client_id=settings.STRAVA_CLIENT_ID,
             client_secret=settings.STRAVA_CLIENT_SECRET,
             code=code,
@@ -80,7 +80,8 @@ class StravaAuth(generic.View, LoginRequiredMixin):
             strava_username=sclient.get_athlete().username or "",
             first_name=sclient.get_athlete().firstname or "",
             last_name=sclient.get_athlete().lastname or "",
-            access_token=access_token,
+            access_token=token_response['access_token'],
+            refresh_token=token_response['refresh_token'],
         )
         return http.HttpResponseRedirect(reverse('about_strava'))
 

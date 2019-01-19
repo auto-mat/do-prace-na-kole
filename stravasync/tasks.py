@@ -47,7 +47,12 @@ def sync(strava_account_id, manual_sync=True):
             strava_account.user_sync_count += 1
         else:
             strava_account.user_sync_count = 0
-        sclient = stravalib.Client(access_token=strava_account.access_token)
+        sclient = stravalib.Client(access_token=strava_account.access_token, refresh_token=strava_account.refresh_token)
+        strava_account.access_token = sclient.refresh_access_token(
+            client_id=settings.STRAVA_CLIENT_ID,
+            client_secret=settings.STRAVA_CLIENT_SECRET,
+            refresh_token=strava_account.refresh_token,
+        )
         earliest_start_date, latest_end_date = Phase.get_active_range('entry_enabled')
         campaigns = []
         for competition_phase in Phase.get_active().filter(phase_type='entry_enabled'):
