@@ -25,7 +25,7 @@ class TestStravaAuth(ViewsLogon):
     def test_strava_auth(self, mock_strava_client):
         msc = mock_strava_client()
         msc.exchange_code_for_token.return_value = mock_token_response
-        msc.refresh_access_token.return_value = "1234"
+        msc.refresh_access_token.return_value = mock_token_response
         msc.get_athlete.return_value = MockAthlete()
         response = self.client.get(reverse('strava_auth'))
         self.assertRedirects(response, reverse('about_strava'), status_code=302)
@@ -46,7 +46,7 @@ class TestStravaAuth(ViewsLogon):
     def test_about_strava_logged_in(self, mock_strava_client):
         msc = mock_strava_client()
         msc.exchange_code_for_token.return_value = mock_token_response
-        msc.refresh_access_token.return_value = "1234"
+        msc.refresh_access_token.return_value = mock_token_response
         msc.get_athlete.return_value = MockAthlete()
         self.client.get(reverse('strava_auth'))
         response = self.client.get(reverse('about_strava'))
