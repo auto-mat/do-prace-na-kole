@@ -17,6 +17,7 @@ sitetrees = (
                 'Výsledky', 'other_team_members_results', title_en='Results', children=[
                     item('Pravidelnostní soutěže', 'competitions', title_en='Regularity competitions'),
                     item('Výkonnostní soutěže', 'length_competitions', title_en='Performance competitions'),
+                    item('Diplomy', 'diplomas', title_en='Diplomas'),
                     item('Ostatní', 'questionnaire_competitions', title_en='Other'),
                 ],
             ),
@@ -35,6 +36,7 @@ sitetrees = (
                 'Výsledky', 'competitions', title_en='Results', children=[
                     item('Pravidelnostní soutěže', 'competitions', title_en='Regularity competitions'),
                     item('Výkonnostní soutěže', 'length_competitions', title_en='Performance competitions'),
+                    item('Diplomy', 'diplomas', title_en='Diplomas'),
                     item('Ostatní', 'questionnaire_competitions', title_en='Other'),
                 ],
             ),
