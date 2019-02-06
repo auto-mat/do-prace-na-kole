@@ -300,6 +300,12 @@ urlpatterns = [
         name="help",
     ),
     url(
+        r'^helpdesk/$',
+        views.HelpdeskRedirectView.as_view(
+        ),
+        name="helpdesk",
+    ),
+    url(
         r'^status/$',
         views.status,
     ),
