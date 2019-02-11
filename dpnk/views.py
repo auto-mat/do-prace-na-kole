@@ -1945,3 +1945,11 @@ def status(request):
     status_page = str(datetime.datetime.now()) + '\n'
     status_page += socket.gethostname()
     return HttpResponse(status_page)
+
+
+class HelpdeskRedirectView(View):
+    def get(self, *args, **kwargs):
+        try:
+            return redirect("https://klub.auto-mat.cz/desk/?queue=automat-helpdesk;submitter_email=%s" % self.request.user.email)
+        except AttributeError:
+            return redirect("https://klub.auto-mat.cz/desk/?queue=automat-helpdesk")
