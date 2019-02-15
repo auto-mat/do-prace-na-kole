@@ -68,10 +68,18 @@ Setting up the database
     $ python3 manage.py createsuperuser
 
 Launching the development webserver
+------------------------------------
+
+In one window launch the livereload server
 
     $ sudo docker exec -it dopracenakole_web_1 bash
-    # su test
+    $ python manage.py livereload --host 0.0.0.0
+    
+And in another window launch the development webserver
+
+    $ sudo docker exec -it dopracenakole_web_1 bash
     $ python3 manage.py runserver 0.0.0.0:8021
+    
 
 
 Setting up the server for the first time

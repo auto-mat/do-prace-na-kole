@@ -106,6 +106,7 @@ django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.gi
 "PyPDF2" = "*"
 "django-scribbler-django2.0" = "*"
 "django-bootstrap4" = "*"
+tornado = "<6"
 
 [requires]
 python_version = "3.5"
@@ -134,3 +135,4 @@ ddt = "*"
 model_mommy = {git = "https://github.com/auto-mat/model_mommy.git", ref = "issue-377", editable = true} # Remove after https://github.com/vandersonmota/model_mommy/pull/378 is fixed
 django_coverage_plugin = "*"
 "flake8_strict" = "*"
+django-livereload-server="*"
