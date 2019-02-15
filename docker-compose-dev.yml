@@ -7,6 +7,7 @@ services:
   entrypoint: /bin/bash
   ports:
    - "8021:8000"
+   - "35729:35729"
   links:
    - postgres
    - redis

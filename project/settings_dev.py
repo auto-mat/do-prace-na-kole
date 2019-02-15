@@ -60,6 +60,7 @@ INSTALLED_APPS += (
     'debug_toolbar',
     'debug_toolbar_line_profiler',
     'template_timings_panel',
+    'livereload',
 )
 
 CELERY_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -94,6 +95,7 @@ CORS_ORIGIN_REGEX += [
 MIDDLEWARE += [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'project.non_html_debug.NonHtmlDebugToolbarMiddleware',
+    'livereload.middleware.LiveReloadScript',
 ]
 
 
