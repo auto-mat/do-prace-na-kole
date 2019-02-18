@@ -4,51 +4,51 @@
 {% load softhyphen_tags %}
 
 {% block form %}
-{% if competitions %}
-{% for competition in competitions %}
-<h4>{{ competition.name }}</h4>
-<i> {{ competition.type_string | safe }} </i>
-<br/>
-<i>
-   {% if competition.date_from %}{% trans "od" %} {{ competition.date_from }}{% endif %}
-   {% if competition.date_to %}{% trans "do" %} {{ competition.date_to }}{% endif %}
-</i>
-<br/>
-{% if competition.has_started %}
-   {% if competition.competition_type != 'questionnaire' or competition.has_finished %}
-   {% if competition.my_results.result %}
-      <p>
-      {{ competition.my_results.position|ordinal }}{% trans " místo z " %}{{ competition.competitor_count|intcomma }}
-      {% if competition.competitor_type == 'single_user' %}
-         {% trans "jednotlivců" %}
-      {% elif competition.competitor_type == 'liberos' %}
-         {% trans "liberos" %}
-      {% elif competition.competitor_type == 'team' %}
-         {% trans "týmů" %}
-      {% elif competition.competitor_type == 'company' %}
-         {% trans "organizací" %}
-      {% endif %}
-      </p>
-      <p>
-      {% if competition.competition_type == 'length' %}
-        {{ competition.my_results.get_result|intcomma }}&nbsp;km
-        {% if competition.competitor_type == 'team' %}
-           </p><p>
-           {{ competition.my_results.result_divident|floatformat:0 }}&nbsp;km {% trans "ve" %} {{ competition.my_results.result_divisor|floatformat:0 }} {% trans "lidech" %}
-        {% endif %}
-      {% elif competition.competition_type == 'frequency' %}
-        {{ competition.my_results.get_result_percentage |intcomma }}&nbsp;%
-         </p><p>
-        {{ competition.my_results.result_divident|floatformat:0 }} {% trans "z" %} {{ competition.my_results.result_divisor|floatformat:0 }} {% trans "jízd" %}
-      {% elif competition.competition_type == 'questionnaire' %}
-        {{ competition.my_results.get_result|intcomma }}b.
-      {% endif %}
-      </p>
-   {% endif %}
-   {% endif %}
-{% else %}
-   <div class="text-info">{% trans "Tato soutěž ještě nezačala" %}</div>
-{% endif %}
+  {% if competitions %}
+  {% for competition in competitions %}
+    <h4>{{ competition.name }}</h4>
+    <i> {{ competition.type_string | safe }} </i>
+    <br/>
+    <i>
+       {% if competition.date_from %}{% trans "od" %} {{ competition.date_from }}{% endif %}
+       {% if competition.date_to %}{% trans "do" %} {{ competition.date_to }}{% endif %}
+    </i>
+    <br/>
+    {% if competition.has_started %}
+       {% if competition.competition_type != 'questionnaire' or competition.has_finished %}
+         {% if competition.my_results.result %}
+            <p>
+            {{ competition.my_results.position|ordinal }}{% trans " místo z " %}{{ competition.competitor_count|intcomma }}
+            {% if competition.competitor_type == 'single_user' %}
+               {% trans "jednotlivců" %}
+            {% elif competition.competitor_type == 'liberos' %}
+               {% trans "liberos" %}
+            {% elif competition.competitor_type == 'team' %}
+               {% trans "týmů" %}
+            {% elif competition.competitor_type == 'company' %}
+               {% trans "organizací" %}
+            {% endif %}
+            </p>
+            <p>
+            {% if competition.competition_type == 'length' %}
+              {{ competition.my_results.get_result|intcomma }}&nbsp;km
+              {% if competition.competitor_type == 'team' %}
+                 </p><p>
+                 {{ competition.my_results.result_divident|floatformat:0 }}&nbsp;km {% trans "ve" %} {{ competition.my_results.result_divisor|floatformat:0 }} {% trans "lidech" %}
+              {% endif %}
+            {% elif competition.competition_type == 'frequency' %}
+              {{ competition.my_results.get_result_percentage |intcomma }}&nbsp;%
+               </p><p>
+              {{ competition.my_results.result_divident|floatformat:0 }} {% trans "z" %} {{ competition.my_results.result_divisor|floatformat:0 }} {% trans "jízd" %}
+            {% elif competition.competition_type == 'questionnaire' %}
+              {{ competition.my_results.get_result|intcomma }}b.
+            {% endif %}
+            </p>
+         {% endif %}
+       {% endif %}
+    {% else %}
+       <div class="text-info">{% trans "Tato soutěž ještě nezačala" %}</div>
+    {% endif %}
 
    {% if competition.competition_type == 'questionnaire' %}
       {% if competition.is_actual %}
@@ -71,12 +71,18 @@
       <a href="{% url 'competition_results' competition_slug=competition.slug %}{% if competition.my_results %}#row-{{ competition.my_results.id }}{% endif %}">{% trans "Výsledky" %}</a>
       <br/>
    {% endif %}
-{% if competition.url %}
-   <a href="{{ competition.url }}" target="_blank">{% trans "Další informace o soutěži" %}</a>
-{% endif %}
-<br/>
-{% endfor %}
-{% else %}
-<div class="text-info">{% trans "Momentálně nejsou vypsány žádné soutěže." %}</div>
-{% endif %}
+
+    {% if competition.url %}
+      <a href="{{ competition.url }}" target="_blank">
+        {% trans "Další informace o soutěži" %}
+      </a>
+    {% endif %}
+    <br/>
+  {% endfor %}
+
+  {% else %}
+    <div class="text-info">
+      {% trans "Momentálně nejsou vypsány žádné soutěže." %}
+    </div>
+  {% endif %}
 {% endblock %}

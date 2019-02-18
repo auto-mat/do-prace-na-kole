@@ -2,20 +2,23 @@
 {% load i18n %}
 
 {% block extrahead %}
-{% include "datatables_header.html" %}
-{{ block.super }}
+	{% include "datatables_header.html" %}
+	{{ block.super }}
 {% endblock %}
 
 {% block content %}
-{% get_current_language as current_language_code %}
-{% if competitions %}
-{% for competition in competitions %}
-   <h3>{{ competition.name }}</h3>
-   <p>
-   <i> {{ competition.type_string | safe }} </i>
-   {% if competition.show_competition_results %}
-      {% include "registration/competition_results_table.html" %}
-   {% endif %}
-{% endfor %}
-{% endif %}
+	{% get_current_language as current_language_code %}
+	{% if competitions %}
+		{% for competition in competitions %}
+		   <h3>
+			   {{ competition.name }}
+			</h3>
+		   <i>
+			   {{ competition.type_string | safe }}
+			</i>
+		   {% if competition.show_competition_results %}
+		      {% include "registration/competition_results_table.html" %}
+		   {% endif %}
+		{% endfor %}
+	{% endif %}
 {% endblock %}

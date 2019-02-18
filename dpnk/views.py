@@ -129,7 +129,7 @@ class ProfileRedirectMixin(object):
 
 
 class DPNKLoginView(CampaignFormKwargsMixin, TitleViewMixin, ProfileRedirectMixin, LoginView):
-    title = _("Přihlaste se prosím")
+    title = _("")
 
     def get_initial(self):
         initial_email = self.kwargs.get('initial_email')

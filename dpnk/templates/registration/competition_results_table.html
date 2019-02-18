@@ -4,54 +4,58 @@
 {% get_current_language as current_language_code %}
 
 {% if competition.show_competition_results %}
-<script>
-$(document).ready(function() {
-    var searchHash = location.hash.substr(1),
-        searchString = searchHash.substr(searchHash.indexOf('search_company='))
-                                 .split('&')[0]
-                                 .split('=')[1];
-    if(searchString === undefined){
-       searchString = "";
-    }
-    searchString = decodeURIComponent(searchString);
-    var oTable = $('#results-table-{{ competition.slug }}').DataTable({
-        "processing": true,
-        "serverSide": true,
-        "ordering": false,
-        "searching": true,
-        "searchCols": [
-            { "search": searchString },
-        ],
-        "dom": "<'row'<'col-md-4'l><'col-md-4 search-company-div-{{ competition.id }}'><'col-md-4'f>>" +
-            "<'row'<'col-sm-12'tr>>" +
-            "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-        "language": {
-            "url": "{% static "js/datatables-plugins/i18n/" %}{{ current_language_code }}.json"
-        },
-        "initComplete": function(settings, json) {
-            $("div.search-company-div-{{ competition.id }}").html(
-               '<div class="dataTables_filter"><label>{% trans "Organizace:" %} <input id="search-company-{{ competition.id }}" class="form-control input-sm" type="text" placeholder="" value="' + searchString + '" /></label></div>'
-            );
-            $('#search-company-{{ competition.id }}').keyup(function () {
-                oTable.column(0).search($(this).val()).draw();
-            } );
-        },
-        "ajax": "{% url 'competition_result_list_json' competition.slug %}"
+    <script>
+    $(document).ready(function() {
+        var searchHash = location.hash.substr(1),
+            searchString = searchHash.substr(searchHash.indexOf('search_company='))
+                                     .split('&')[0]
+                                     .split('=')[1];
+        if(searchString === undefined){
+           searchString = "";
+        }
+        searchString = decodeURIComponent(searchString);
+        var oTable = $('#results-table-{{ competition.slug }}').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ordering": false,
+            "searching": true,
+            "searchCols": [
+                { "search": searchString },
+            ],
+            "dom": "<'row'<'col-md-4'l><'col-md-4 search-company-div-{{ competition.id }}'><'col-md-4'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+            "language": {
+                "url": "{% static "js/datatables-plugins/i18n/" %}{{ current_language_code }}.json"
+            },
+            "initComplete": function(settings, json) {
+                $("div.search-company-div-{{ competition.id }}").html(
+                   '<div class="dataTables_filter"><label>{% trans "Organizace:" %} <input id="search-company-{{ competition.id }}" class="form-control input-sm" type="text" placeholder="" value="' + searchString + '" /></label></div>'
+                );
+                $('#search-company-{{ competition.id }}').keyup(function () {
+                    oTable.column(0).search($(this).val()).draw();
+                } );
+            },
+            "ajax": "{% url 'competition_result_list_json' competition.slug %}"
+        });
+
     });
+    </script>
 
-});
-</script>
+    <table id="results-table-{{ competition.slug }}" class="table datatable table-condensed table-striped table-bordered">
+        <thead>
+            <tr>
+                {% for col in competition.get_columns %}
+                   <th scope="col" id="{{ col.0 }}-{{ competition.id }}>{{ col.2|safe }}"></th>
+                {% endfor %}
+            </tr>
+        </thead>
 
-<table id="results-table-{{ competition.slug }}" class="table datatable table-condensed table-striped table-bordered">
-<thead>
-<tr>
-{% for col in competition.get_columns %}
-   <th scope="col" id={{ col.0 }}-{{ competition.id }}>{{ col.2|safe }}</th>
-{% endfor %}
-</thead>
-<tbody>
-</tbody>
-</table>
+        <tbody>
+        </tbody>
+
+    </table>
+
 {% else %}
    <p>
    {% trans "Výsledky této soutěže se nezobrazují" %}

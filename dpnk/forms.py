@@ -131,18 +131,15 @@ class CampaignMixin(object):
 
 
 def social_html(login=True):
-    action_word = _("Přihlásit") if login else _("Registrovat")
+    # action_word = _("Přihlásit") if login else _("Registrovat")
     return HTML(
         format_html_lazy(
-            '<a class="btn btn-social" href="{{% url "social:begin" "google-oauth2" %}}">'
-            '  <span class="fa fa-google"></span>{}'
+            '<label class="socialLabel">Přihlásit přes</label><a class="btn google" href="{{% url "social:begin" "google-oauth2" %}}">'
+            'Google'
             '</a>'
-            '<a class="btn btn-social" href="{{% url "social:begin" "facebook" %}}">'
-            '  <span class="fa fa-facebook"></span>{}'
+            '<a class="btn facebook" href="{{% url "social:begin" "facebook" %}}">'
+            'Facebook'
             '</a>'
-            '<br/>',
-            _("%s se přes Google") % action_word,
-            _("%s se přes Facebook") % action_word,
         ),
     )
 
@@ -176,7 +173,7 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
             error_text = format_html(
                 "{text}"
                 "<br/>"
-                "<a href='{regitster}'>{register_text}</a>",
+                "<a href='{regitster}'>{register_text}</a>", # regitster .. opravdu?
                 text=_("Problém na trase! Tento e-mail neznáme, zkontrolujte jeho formát. "),
                 password=reverse('password_reset'),
                 regitster=reverse('registrace', args=(username,)),
@@ -189,13 +186,10 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
         self.helper = FormHelper()
         self.helper.form_class = "noAsterisks"
         self.helper.layout = Layout(
-            HTML(_('Zadejte svůj e-mail a heslo.')),
-            HTML('<br/>'),
-            HTML('<br/>'),
             'username', 'password',
-            social_html(True),
-            HTML('<br/>'),
+            # HTML('<br/>'),
             Submit('submit', _('Přihlásit')),
+            social_html(True),
         )
         self.fields['username'].label = _("E-mail")
         return ret_val

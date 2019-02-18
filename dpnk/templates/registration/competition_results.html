@@ -4,22 +4,22 @@
 {% load humanize %}
 
 {% block extrahead %}
-{% include "datatables_header.html" %}
-{{ block.super }}
+	{% include "datatables_header.html" %}
+	{{ block.super }}
 {% endblock %}
 
 {% block content %}
-{{ block.super }}
-{% get_current_language as current_language_code %}
-<h4>{% trans "Výsledky v soutěži " %}{{ competition }}:</h4>
-<i> {{ competition.type_string|safe }} </i>
+	{{ block.super }}
+	{% get_current_language as current_language_code %}
+	<h4>{% trans "Výsledky v soutěži " %}{{ competition }}:</h4>
+	<i> {{ competition.type_string|safe }} </i>
 
-{% if competition.rules %}
-{% endif %}
-<div>
-   {% if competition.date_from %}{% trans "Soutěž trvá" %} {% trans "od" %} {{ competition.date_from }}{% endif %}
-   {% if competition.date_to %}{% trans "do" %} {{ competition.date_to }}{% endif %}
-</div>
+	{% if competition.rules %}
+	{% endif %}
+	<div>
+	   {% if competition.date_from %}{% trans "Soutěž trvá" %} {% trans "od" %} {{ competition.date_from }}{% endif %}
+	   {% if competition.date_to %}{% trans "do" %} {{ competition.date_to }}{% endif %}
+	</div>
 
-{% include "registration/competition_results_table.html" %}
+	{% include "registration/competition_results_table.html" %}
 {% endblock %}

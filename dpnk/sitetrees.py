@@ -49,7 +49,6 @@ sitetrees = (
     ),
     tree(
         'about_us', 'O nás', items=[
-            item('Odhlásit', 'logout', title_en='Logout'),
             item(
                 'O nás', 'https://www.auto-mat.cz/', title_en='About us', children=[
                     item('O Auto*Matu', 'https://www.auto-mat.cz/', title_en='About Auto*Mat', url_as_pattern=False),
@@ -57,6 +56,7 @@ sitetrees = (
                     item('Svobodný Software', 'https://github.com/auto-mat/do-prace-na-kole', title_en='Free software', url_as_pattern=False),
                 ],
             ),
+            item('Odhlásit', 'logout', title_en='Logout'),
         ],
     ),
     tree(

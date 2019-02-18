@@ -15,44 +15,44 @@
 {% endblock %}
 
 {% block container_header %}
-{% include "fm/modal.html" %}
-<script type="text/javascript">
-    $(function() {
-        updateSubsidiary = function(event, ui) {
-           $("#fm-create-subsidiary").attr('href', "{% url 'register_subsidiary' "" %}" + $('#id_company_1').val());
-           $("#fm-create-subsidiary").prop('disabled', $('#id_company_1').val() == "");
-        }
-        $.fm({
-            debug: true,
-            custom_callbacks: {
-                "createCompanyCallback": function(data, options) {
-                    $('#id_company_0').attr('value', data.name);
-                    $('#id_company_1').attr('value', data.id);
-                    $('#id_company_1').change();
-                },
-                "createSubsidiaryCallback": function(data, options) {
-                    $('#id_company_1').change();
-                    $('#id_subsidiary').one('change', function(event, ui) {
-                       $('#id_subsidiary').val(data.id);
-                       $('#id_subsidiary').change();
-                       $('#id_team').val();
-                    });
-                },
-                "createTeamCallback": function(data, options) {
-                    $('#id_subsidiary').change();
-                    $('#id_team').one('change', function(event, ui) {
-                       $('#id_team').val(data.id);
-                    });
-                }
-            }
-        });
-        $('#id_company_0').on('djselectablechange', updateSubsidiary);
-        $('#id_company_1').change(updateSubsidiary);
-        $('#id_subsidiary').change(function(event, ui) {
-           $("#fm-create-team").attr('href', "{% url 'register_team' "" %}" + $('#id_subsidiary').val());
-           $("#fm-create-team").prop('disabled', $('#id_subsidiary').val() == "");
-        });
-    });
-</script>
-{{ block.super }}
+  {% include "fm/modal.html" %}
+  <script type="text/javascript">
+      $(function() {
+          updateSubsidiary = function(event, ui) {
+             $("#fm-create-subsidiary").attr('href', "{% url 'register_subsidiary' "" %}" + $('#id_company_1').val());
+             $("#fm-create-subsidiary").prop('disabled', $('#id_company_1').val() == "");
+          }
+          $.fm({
+              debug: true,
+              custom_callbacks: {
+                  "createCompanyCallback": function(data, options) {
+                      $('#id_company_0').attr('value', data.name);
+                      $('#id_company_1').attr('value', data.id);
+                      $('#id_company_1').change();
+                  },
+                  "createSubsidiaryCallback": function(data, options) {
+                      $('#id_company_1').change();
+                      $('#id_subsidiary').one('change', function(event, ui) {
+                         $('#id_subsidiary').val(data.id);
+                         $('#id_subsidiary').change();
+                         $('#id_team').val();
+                      });
+                  },
+                  "createTeamCallback": function(data, options) {
+                      $('#id_subsidiary').change();
+                      $('#id_team').one('change', function(event, ui) {
+                         $('#id_team').val(data.id);
+                      });
+                  }
+              }
+          });
+          $('#id_company_0').on('djselectablechange', updateSubsidiary);
+          $('#id_company_1').change(updateSubsidiary);
+          $('#id_subsidiary').change(function(event, ui) {
+             $("#fm-create-team").attr('href', "{% url 'register_team' "" %}" + $('#id_subsidiary').val());
+             $("#fm-create-team").prop('disabled', $('#id_subsidiary').val() == "");
+          });
+      });
+  </script>
+  {{ block.super }}
 {% endblock %}

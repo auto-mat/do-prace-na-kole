@@ -9,9 +9,9 @@
         {% bootstrap_form upload_avatar_form %}
         <input type="hidden" id="nextId" name="next" value="{% url 'edit_profile_detailed' %}">
         <p>
-        {% csrf_token %}
-        <a class="btn btn-default" href="{% url 'edit_profile_detailed' %}">{% trans "Zrušit" %}</a>
-        <input class="btn btn-primary" type="submit" value="{% trans "Upload New Image" %}" />
+            {% csrf_token %}
+            <a class="btn btn-default" href="{% url 'edit_profile_detailed' %}">{% trans "Zrušit" %}</a>
+            <input class="btn btn-primary" type="submit" value="{% trans "Upload New Image" %}" />
         </p>
     </form>
 {% endblock %}

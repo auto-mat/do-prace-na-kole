@@ -1,24 +1,25 @@
 {% load i18n %}
 {% load bleach_tags %}
-{% if cyklistesobe %}
-<div class="cyklistesobe">
-{% for feature in cyklistesobe.features %}
-<h4>
-	<a href="{{ feature.properties.cyclescape_url }}" target="_blank">
-		{{ feature.properties.title }}
-      <span class="vote">{{ feature.properties.vote_count }}</span>
-	</a>
-</h4>
-{% if forloop.first %}
-{% if feature.properties.photo_thumb_url %}
-<img src="https://www.cyklistesobe.cz{{ feature.properties.photo_thumb_url }}" alt="{% trans "Obrázek k podnětu" %}">
-{% endif %}
-{{ feature.properties.description|bleach }}
 
-{% comment %}
-<!-- {% trans "Vytvořil:" %} {{ feature.properties.created_by }} -->
-{% endcomment %}
-{% endif %}
-{% endfor %}
-</div>
+{% if cyklistesobe %}
+	<div class="cyklistesobe">
+	{% for feature in cyklistesobe.features %}
+		<h4>
+			<a href="{{ feature.properties.cyclescape_url }}" target="_blank">
+				{{ feature.properties.title }}
+		      <span class="vote">{{ feature.properties.vote_count }}</span>
+			</a>
+		</h4>
+		{% if forloop.first %}
+			{% if feature.properties.photo_thumb_url %}
+				<img src="https://www.cyklistesobe.cz{{ feature.properties.photo_thumb_url }}" alt="{% trans "Obrázek k podnětu" %}">
+			{% endif %}
+			{{ feature.properties.description|bleach }}
+
+			{% comment %}
+			<!-- {% trans "Vytvořil:" %} {{ feature.properties.created_by }} -->
+			{% endcomment %}
+		{% endif %}
+	{% endfor %}
+	</div>
 {% endif %}

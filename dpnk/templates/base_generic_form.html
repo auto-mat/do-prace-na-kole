@@ -3,35 +3,38 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% block form_container %}
+	{% block form_container %}
 
-{% block container_header %}
-{% if introduction_message %}
-<p>
-{{ introduction_message }}
-</p>
-{% endif %}
-{% endblock %}
+		{% block container_header %}
+			{% if introduction_message %}
+				<p>
+					{{ introduction_message }}
+				</p>
+			{% endif %}
+		{% endblock %}
 
-{% block messages %}
-{% include "messages_include.html" %}
-{% if message %}
-{{ message }}
-{% endif %}
-{% endblock %}
+		{% block messages %}
+			{% include "messages_include.html" %}
+			{% if message %}
+				{{ message }}
+			{% endif %}
+		{% endblock %}
 
-{% block form_intro %}
-{% endblock %}
+		{% block form_intro %}
+		{% endblock %}
 
-{% block form %}
-{% if form %}
-{% crispy form %}
-{% endif %}
-{% endblock %}
-{% block error %}{{ block.super }}{% endblock %}
+		{% block form %}
+			{% if form %}
+				{% crispy form %}
+			{% endif %}
+		{% endblock %}
 
-{% block container_footer %}
-{% endblock %}
+		{% block error %}
+			{{ block.super }}
+		{% endblock %}
 
-{% endblock %}
+		{% block container_footer %}
+		{% endblock %}
+
+	{% endblock %}
 {% endblock %}
