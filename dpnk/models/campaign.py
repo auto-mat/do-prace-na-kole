@@ -48,6 +48,7 @@ class Campaign(Pricable, models.Model):
             ("can_see_application_links", "Can see application links"),
         )
         ordering = ('-id', )
+        unique_together = ('mailing_list_type', 'mailing_list_id')
 
     name = models.CharField(
         unique=True,
@@ -86,6 +87,18 @@ class Campaign(Pricable, models.Model):
         default="",
         blank=True,
         null=False,
+    )
+    mailing_list_type = models.CharField(
+        verbose_name=_(u"ID mailing listu"),
+        choices=[
+            (None, _("Disabled")),
+            ('campaign_monitor', _("Campaign monitor")),
+            ('ecomail', _("EcoMail")),
+        ],
+        max_length=60,
+        default=None,
+        blank=True,
+        null=True,
     )
     show_application_links = models.BooleanField(
         verbose_name=_("Ukázat odkazy na aplikace"),

@@ -18,12 +18,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import datetime
-from collections import OrderedDict
 from unittest.mock import ANY, MagicMock, call, patch
 
 from PyPDF2 import PdfFileReader
-
-import createsend
 
 from ddt import data, ddt
 
@@ -36,13 +33,11 @@ from django.test import Client, RequestFactory, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 
-from dpnk import mailing, models, util, views
+from dpnk import models, util, views
 from dpnk.test.util import ClearCacheMixin, DenormMixin
 from dpnk.test.util import print_response  # noqa
 
 from model_mommy import mommy
-
-from rest_framework.authtoken.models import Token
 
 import settings
 
@@ -722,56 +717,6 @@ class ViewsTests(DenormMixin, TestCase):
         )
         self.assertEqual(user_attendance.userprofile.user.pk, 1041)
         self.assertEqual(user_attendance.get_distance(), 156.9)
-
-    def test_dpnk_mailing_list(self):
-        util.rebuild_denorm_models(models.UserAttendance.objects.filter(pk=1115))
-        util.rebuild_denorm_models(models.Team.objects.filter(pk=1))
-        user_attendance = models.UserAttendance.objects.get(pk=1115)
-        Token.objects.filter(user=user_attendance.userprofile.user).update(key='d201a3c9e88ecd433fdbbc3a2e451cbd3f80c4ba')
-        ret_mailing_id = "344ass"
-        createsend.Subscriber.add = MagicMock(return_value=ret_mailing_id)
-        mailing.add_or_update_user_synchronous(user_attendance)
-        custom_fields = [
-            OrderedDict((('Key', 'Mesto'), ('Value', 'testing-city'))),
-            OrderedDict((('Key', 'Firemni_spravce'), ('Value', 'approved'))),
-            OrderedDict((('Key', 'Stav_platby'), ('Value', 'done'))),
-            OrderedDict((('Key', 'Aktivni'), ('Value', True))),
-            OrderedDict((('Key', 'Auth_token'), ('Value', 'd201a3c9e88ecd433fdbbc3a2e451cbd3f80c4ba'))),
-            OrderedDict((('Key', 'Id'), ('Value', 1128))),
-            OrderedDict((('Key', 'Novacek'), ('Value', False))),
-            OrderedDict((('Key', 'Kampan'), ('Value', 339))),
-            OrderedDict((('Key', 'Vstoupil_do_souteze'), ('Value', True))),
-            OrderedDict((('Key', 'Pocet_lidi_v_tymu'), ('Value', 3))),
-            OrderedDict((('Key', 'Povoleni_odesilat_emaily'), ('Value', True))),
-        ]
-        createsend.Subscriber.add.assert_called_once_with('12345abcde', 'test@test.cz', 'Testing User 1', custom_fields, True)
-        self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '0ef7bf8842d0f25db6a7e108b8d46228')
-
-        createsend.Subscriber.update = MagicMock()
-        mailing.add_or_update_user_synchronous(user_attendance)
-        self.assertFalse(createsend.Subscriber.update.called)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '0ef7bf8842d0f25db6a7e108b8d46228')
-
-        custom_fields[0] = OrderedDict((('Key', 'Mesto'), ('Value', 'other-city')))
-        user_attendance.team.subsidiary.city = models.City.objects.get(slug="other-city")
-        user_attendance.team.subsidiary.save()
-        createsend.Subscriber.get = MagicMock()
-        createsend.Subscriber.update = MagicMock()
-        mailing.add_or_update_user_synchronous(user_attendance)
-        createsend.Subscriber.get.assert_called_once_with('12345abcde', ret_mailing_id)
-        createsend.Subscriber.update.assert_called_once_with('test@test.cz', 'Testing User 1', custom_fields, True)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, '1e57792f94b9a95f1d6c812429873b40')
-
-        user_attendance.userprofile.user.is_active = False
-        user_attendance.userprofile.user.save()
-        createsend.Subscriber.get = MagicMock()
-        createsend.Subscriber.delete = MagicMock(return_value=ret_mailing_id)
-        mailing.add_or_update_user_synchronous(user_attendance)
-        createsend.Subscriber.get.assert_called_once_with('12345abcde', ret_mailing_id)
-        createsend.Subscriber.delete.assert_called_once_with()
-        self.assertEqual(user_attendance.userprofile.mailing_id, ret_mailing_id)
-        self.assertEqual(user_attendance.userprofile.mailing_hash, None)
 
 
 class RegistrationPhaseTests(TestCase):

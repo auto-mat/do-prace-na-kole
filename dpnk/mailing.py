@@ -26,44 +26,125 @@ import createsend
 
 from django.conf import settings
 
+import slumber
+
 logger = logging.getLogger(__name__)
 
 
-class Mailing:
+class CampaignMonitor:
 
-    def __init__(self, api_key):
+    def __init__(self, api_key, list_id):
         self.api_key = api_key
+        self.list_id = list_id
 
-    def add(self, list_id, name, surname, email, custom_fields):
+    @classmethod
+    def translate_fields(cls, custom_fields):
+        ret_custom_fields = []
+        for key, value in custom_fields.items():
+            if key in ('first_name', 'last_name', 'email'):
+                continue
+            ret_custom_fields.append(OrderedDict((('Key', key), ('Value', value))))
+        return ret_custom_fields
+
+    def add(self, email, custom_fields):
         subscriber = createsend.Subscriber({'api_key': self.api_key})
         r = subscriber.add(
-            list_id,
+            self.list_id,
             email,
-            " ".join([name, surname]),
-            custom_fields,
+            " ".join([custom_fields['first_name'], custom_fields['last_name']]),
+            self.translate_fields(custom_fields),
             True,
         )
         return r
 
-    def update(self, list_id, mailing_id, name, surname, email, custom_fields):
-        subscriber = createsend.Subscriber({'api_key': self.api_key}, list_id, mailing_id)
-        subscriber.get(list_id, mailing_id)
+    def update(self, mailing_id, email, custom_fields):
+        subscriber = createsend.Subscriber({'api_key': self.api_key}, self.list_id, mailing_id)
+        subscriber.get(self.list_id, mailing_id)
         subscriber.update(
             email,
-            " ".join([name, surname]),
-            custom_fields,
+            " ".join([custom_fields['first_name'], custom_fields['last_name']]),
+            self.translate_fields(custom_fields),
             True,
         )
         return subscriber.email_address
 
-    def delete(self, list_id, mailing_id):
-        subscriber = createsend.Subscriber({'api_key': self.api_key}, list_id, mailing_id)
-        subscriber.get(list_id, mailing_id)
+    def delete(self, mailing_id):
+        subscriber = createsend.Subscriber({'api_key': self.api_key}, self.list_id, mailing_id)
+        subscriber.get(self.list_id, mailing_id)
         r = subscriber.delete()
         return r
 
 
-mailing = Mailing(api_key=settings.MAILING_API_KEY)
+class TOKENAPI(slumber.API):
+    def __init__(self, *args, **kwargs):
+        token = kwargs.pop('token', None)
+        super(TOKENAPI, self).__init__(*args, **kwargs)
+        if token is None:
+            data = dict(
+                zip(
+                    ["username", "password"],
+                    self._store["session"].auth,
+                ),
+            )
+            token = self.token.post(data=data)["token"]
+        self._store['session'].auth = None
+        self._store['session'].headers['key'] = token
+
+    def _get_resource(self, **kwargs):
+        return self.resource_class(**kwargs)
+
+
+class EcoMailing:
+    def __init__(self, api_key, list_id):
+        self.api_key = api_key
+        self.list_id = list_id
+        self.api = TOKENAPI("http://api2.ecomailapp.cz/", token=api_key, append_slash=False)
+
+    @classmethod
+    def translate_fields(cls, custom_fields):
+        new_custom_fields = {i: custom_fields[i] for i in custom_fields if i not in ('first_name', 'last_name', 'email')}
+        ret_custom_fields = {}
+        ret_custom_fields['name'] = custom_fields.pop('first_name')
+        ret_custom_fields['surname'] = custom_fields.pop('last_name')
+        ret_custom_fields['email'] = custom_fields.pop('email')
+        ret_custom_fields['city'] = custom_fields.pop('city')
+        ret_custom_fields['custom_fields'] = new_custom_fields
+        return ret_custom_fields
+
+    def update(self, mailing_id, email, custom_fields):
+        print(email)
+        print(custom_fields)
+        try:
+            print("update")
+            return_data = getattr(self.api.lists(self.list_id), "update-subscriber").put(
+                {
+                    "email": email,
+                    "subscriber_data": self.translate_fields(custom_fields),
+                },
+            )
+        except Exception as e:
+            print(e)
+            print(e.response.content)
+        print(return_data)
+        return return_data['id']
+
+    def add(self, email, custom_fields):
+        print("add")
+        try:
+            return_data = self.api.lists(self.list_id).subscribe.post(
+                {
+                    "subscriber_data": self.translate_fields(custom_fields),
+                },
+            )
+        except Exception as e:
+            print(e)
+            print(e.response.content)
+        print(return_data)
+        return return_data['id']
+
+    def delete(self, mailing_id):
+        r = self.api.lists(self.list_id).unsubscribe.delete()
+        return r
 
 
 def get_custom_fields(user_attendance):
@@ -86,19 +167,22 @@ def get_custom_fields(user_attendance):
     company_admin = user_attendance.related_company_admin
     company_admin_approved = company_admin.company_admin_approved if company_admin else False
 
-    custom_fields = [
-        OrderedDict((('Key', "Mesto"), ('Value', city))),
-        OrderedDict((('Key', "Firemni_spravce"), ('Value', company_admin_approved))),
-        OrderedDict((('Key', "Stav_platby"), ('Value', payment_status))),
-        OrderedDict((('Key', "Aktivni"), ('Value', user.is_active))),
-        OrderedDict((('Key', "Auth_token"), ('Value', user.auth_token.key))),
-        OrderedDict((('Key', "Id"), ('Value', user.pk))),
-        OrderedDict((('Key', "Novacek"), ('Value', is_new_user))),
-        OrderedDict((('Key', "Kampan"), ('Value', user_attendance.campaign.pk))),
-        OrderedDict((('Key', "Vstoupil_do_souteze"), ('Value', entered_competition))),
-        OrderedDict((('Key', "Pocet_lidi_v_tymu"), ('Value', team_member_count))),
-        OrderedDict((('Key', "Povoleni_odesilat_emaily"), ('Value', mailing_approval))),
-    ]
+    custom_fields = OrderedDict([
+        ('first_name', user.first_name),
+        ('last_name', user.last_name),
+        ('email', user.email),
+        ('Mesto', city),
+        ('Firemni_spravce', company_admin_approved),
+        ('Stav_platby', payment_status),
+        ('Aktivni', user.is_active),
+        ('Auth_token', user.auth_token.key),
+        ('Id', user.pk),
+        ('Novacek', is_new_user),
+        ('Kampan', user_attendance.campaign.pk),
+        ('Vstoupil_do_souteze', entered_competition),
+        ('Pocet_lidi_v_tymu', team_member_count),
+        ('Povoleni_odesilat_emaily', mailing_approval),
+    ])
     return custom_fields
 
 
@@ -111,15 +195,36 @@ def update_mailing_id(user_attendance, mailing_id, mailing_hash):
     userprofile.don_save_mailing = False
 
 
+def get_mailing(user_attendance):
+    if user_attendance.campaign.mailing_list_type == 'ecomail':
+        Mailing = EcoMailing
+    elif user_attendance.campaign.mailing_list_type == 'campaign_monitor':
+        Mailing = CampaignMonitor
+    else:
+        return
+    return Mailing(api_key=settings.MAILING_API_KEY, list_id=user_attendance.campaign.mailing_list_id)
+
+
+def get_hash(user_attendance, custom_fields):
+    user = user_attendance.get_userprofile().user
+    list_id = user_attendance.campaign.mailing_list_id
+    return hashlib.md5(
+        str((list_id, user.first_name, user.last_name, user.email, CampaignMonitor.translate_fields(custom_fields))).encode('utf-8'),
+    ).hexdigest()
+
+
 def add_user(user_attendance):
     user = user_attendance.get_userprofile().user
     custom_fields = get_custom_fields(user_attendance)
 
+    mailing = get_mailing(user_attendance)
+    if mailing is None:
+        return
+
     # Register into mailing list
     try:
-        list_id = user_attendance.campaign.mailing_list_id
-        mailing_id = mailing.add(list_id, user.first_name, user.last_name, user.email, custom_fields)
-        mailing_hash = hashlib.md5(str((list_id, user.first_name, user.last_name, user.email, custom_fields)).encode('utf-8')).hexdigest()
+        mailing_id = mailing.add(user.email, custom_fields)
+        mailing_hash = get_hash(user_attendance, custom_fields)
     except Exception:
         update_mailing_id(user_attendance, None, None)
         raise
@@ -134,12 +239,15 @@ def update_user(user_attendance, ignore_hash):
     custom_fields = get_custom_fields(user_attendance)
     mailing_id = userprofile.mailing_id
 
+    mailing = get_mailing(user_attendance)
+    if mailing is None:
+        return
+
     # Register into mailing list
     try:
-        list_id = user_attendance.campaign.mailing_list_id
-        mailing_hash = hashlib.md5(str((list_id, user.first_name, user.last_name, user.email, custom_fields)).encode('utf-8')).hexdigest()
+        mailing_hash = get_hash(user_attendance, custom_fields)
         if ignore_hash or userprofile.mailing_hash != mailing_hash:
-            new_mailing_id = mailing.update(list_id, mailing_id, user.first_name, user.last_name, user.email, custom_fields)
+            new_mailing_id = mailing.update(mailing_id, user.email, custom_fields)
             logger.info(
                 u'User %s (%s) with email %s updated in mailing list with id %s, custom_fields: %s' %
                 (userprofile, userprofile.user, user.email, mailing_id, custom_fields),
@@ -157,13 +265,16 @@ def delete_user(user_attendance):
     user = user_attendance.get_userprofile().user
     mailing_id = user_attendance.get_userprofile().mailing_id
 
+    mailing = get_mailing(user_attendance)
+    if mailing is None:
+        return
+
     if not mailing_id:
         return
 
     # Unregister from mailing list
     try:
-        list_id = user_attendance.campaign.mailing_list_id
-        new_mailing_id = mailing.delete(list_id, mailing_id)
+        new_mailing_id = mailing.delete(mailing_id)
     except Exception:
         update_mailing_id(user_attendance, None, None)
         raise

@@ -109,7 +109,7 @@ assign_vouchers.short_description = _(u"Přiřadit vouchery")
 
 def update_mailing(modeladmin, request, queryset):
     pk_list = list(queryset.values_list('pk', flat=True))
-    tasks.update_mailing.apply_async(args=(pk_list,))
+    tasks.update_mailing(pk_list,)
     modeladmin.message_user(request, _("Aktualizace mailing listu byla úspěšne zadána pro %s uživatelů") % queryset.count())
 
 
