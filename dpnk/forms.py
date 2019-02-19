@@ -233,9 +233,10 @@ class AddressForm(CampaignMixin, forms.ModelForm):
         if 'city' in self.fields:
             self.fields['city'].queryset = models.City.objects.filter(cityincampaign__campaign=self.campaign)
         self.helper.layout = Layout(
-            Fieldset('', 'city', 'address_recipient'),
+            'city' if 'city' in self.fields else None,
+            'address_recipient',
             Fieldset('', 'address_street', 'address_street_number'),
-            Fieldset('', 'address_psc', 'address_city'),
+            Fieldset('', 'address_city', 'address_psc')
         )
 
     class Meta:
@@ -991,8 +992,8 @@ class ProfileUpdateForm(SubmitMixin, MultiModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper.form_class = 'noAsterisks form-horizontal'
-        self.helper.label_class = 'col-lg-2'
-        self.helper.field_class = 'col-lg-8'
+        self.helper.label_class = 'col-12'
+        self.helper.field_class = 'col-12'
 
 
 class TripForm(InitialFieldsMixin, forms.ModelForm):
