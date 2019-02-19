@@ -103,11 +103,6 @@
 
 
 				  	{% if request and campaign %}
-						{% block second_menu %}
-							 {# {% sitetree_menu from campaign.sitetree_postfix_maintree include "this-parent-siblings" template "sitetree/menu_bootstrap4.html" %} #}
-							 {% sitetree_menu from "company_coordinator_menu" include "this-parent-siblings" template "sitetree/menu_bootstrap4.html" %}
-						{% endblock %}
-
 						{% if user.is_authenticated and user_attendance.related_company_admin.is_approved %}
 							 {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
 						{% endif %}
