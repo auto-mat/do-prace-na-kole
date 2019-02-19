@@ -289,7 +289,7 @@ INSTALLED_APPS = (
     'scribbler',
     'selectable',
     'raven.contrib.django.raven_compat',
-    'bootstrap3',
+    'bootstrap4',
     'daterange_filter',
     'storages',
     'favicon',
@@ -368,7 +368,7 @@ BLEACH_ALLOWED_ATTRIBUTES = [
 ]
 BLEACH_ALLOWED_STYLES = ['height', 'width']
 
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 SERVER_EMAIL = 'kontakt@dopracenakole.cz'
 LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy("profil")

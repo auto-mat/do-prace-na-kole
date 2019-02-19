@@ -49,7 +49,6 @@ django-denorm = "*"
 django-extra-views = "*"
 raven = "*"
 celery = "*"
-django-bootstrap3 = "*"
 flower = "*"
 django-daterange-filter = "*"
 django-smmapdfs = "*"
@@ -106,6 +105,7 @@ django_celery_beat = "*"
 django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.git", ref = "mergeup", editable = true}
 "PyPDF2" = "*"
 "django-scribbler-django2.0" = "*"
+"django-bootstrap4" = "*"
 
 [requires]
 python_version = "3.5"

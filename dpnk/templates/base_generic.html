@@ -96,28 +96,28 @@
 						{% endif %}
 
 						{% block main_menu %}
-							{% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk" template "sitetree/menu_bootstrap3_flat.html" %}
+							{% sitetree_menu from campaign.sitetree_postfix_maintree include "trunk" template "sitetree/menu_bootstrap4.html" %}
 						{% endblock %}
 
-						{# {% sitetree_menu from "unlogged_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %} #}
+						{# {% sitetree_menu from "unlogged_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %} #}
 
 
 					  	{% if request and campaign %}
 							{% block second_menu %}
-								 {% sitetree_menu from campaign.sitetree_postfix_maintree include "this-parent-siblings" template "sitetree/menu_bootstrap3.html" %}
-								 {% sitetree_menu from "company_coordinator_menu" include "this-parent-siblings" template "sitetree/menu_bootstrap3.html" %}
+								 {% sitetree_menu from campaign.sitetree_postfix_maintree include "this-parent-siblings" template "sitetree/menu_bootstrap4.html" %}
+								 {% sitetree_menu from "company_coordinator_menu" include "this-parent-siblings" template "sitetree/menu_bootstrap4.html" %}
 							{% endblock %}
 
 							{% if user.is_authenticated and user_attendance.related_company_admin.is_approved %}
-								 {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3_flat.html" %}
+								 {% sitetree_menu from "company_coordinator_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
 							{% endif %}
 
 							{% if user.is_staff %}
-								 {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap3.html" %}
+								 {% sitetree_menu from "admin_menu" include "trunk,topmenu" template "sitetree/menu_bootstrap4.html" %}
 							{% endif %}
 
 							{% if user.is_authenticated and user_attendance %}
-								{% sitetree_menu from "about_us" include "trunk,topmenu" template "sitetree/menu_bootstrap3_blank.html" %}
+								{% sitetree_menu from "about_us" include "trunk,topmenu" template "sitetree/menu_bootstrap4_blank.html" %}
 							{% endif %}
 						{% endif %}
 
