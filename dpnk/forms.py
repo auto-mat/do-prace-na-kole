@@ -229,6 +229,7 @@ class AddressForm(CampaignMixin, forms.ModelForm):
         return address_psc
 
     def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
         super().__init__(*args, **kwargs)
         if 'city' in self.fields:
             self.fields['city'].queryset = models.City.objects.filter(cityincampaign__campaign=self.campaign)

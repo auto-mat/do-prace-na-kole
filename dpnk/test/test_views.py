@@ -1055,7 +1055,7 @@ class TestRegisterCompanyView(ViewsLogonMommy):
         )
         self.assertContains(
             response,
-            '<label for="id_name" class="control-label  requiredField">'
+            '<label for="id_name" class="col-form-label  requiredField">'
             'Název společnosti'
             '<span class="asteriskField">*</span>'
             '</label>',
@@ -1411,9 +1411,10 @@ class ViewsTestsLogon(ViewsLogon):
             "submit": "Odeslat",
         }
         response = self.client.post(address, post_data, follow=True)
+
         self.assertContains(
             response,
-            '<span id="error_1_id_question" class="help-block"><strong>Toto pole je vyžadováno.</strong></span>',
+            '<span id="error_1_id_question" class="invalid-feedback"><strong>Toto pole je vyžadováno.</strong></span>',
             html=True,
         )
 
@@ -1707,9 +1708,10 @@ class ViewsTestsLogon(ViewsLogon):
     def test_dpnk_company_admin_application_create(self):
         models.CompanyAdmin.objects.all().delete()
         response = self.client.get(reverse('company_admin_application'))
+
         self.assertContains(
             response,
-            '<label for="id_motivation_company_admin" class="control-label  requiredField">'
+            '<label for="id_motivation_company_admin" class="col-form-label  requiredField">'
             'S kým máme tu čest?'
             '<span class="asteriskField">*</span>'
             '</label>',
