@@ -185,6 +185,7 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
         ret_val = super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = "noAsterisks"
+        self.helper.form_id = "authentication-form"
         self.helper.layout = Layout(
             'username', 'password',
             Submit('submit', _('Přihlásit')),
@@ -271,6 +272,7 @@ class RegisterSubsidiaryForm(AddressForm):
         self.company = kwargs['initial']['company']
         self.fields['address_recipient'].widget.attrs['autocomplete'] = 'subsidiary'
         self.helper = FormHelper()
+        self.helper.form_id = "register-subsidiary-form"
         self.helper.layout = Layout(
             HTML('<div class="form-group"> <label class="control-label">'),
             HTML(_('Společnost')),
@@ -301,6 +303,7 @@ class RegisterTeamForm(InitialFieldsMixin, forms.ModelForm):
         self.fields['name'].help_text = _("Zvolte jméno, pod kterým bude Váš tým bojovat.")
 
         self.helper = FormHelper()
+        self.helper.form_id = "register-team-form"
         self.helper.layout = Layout(
             HTML('<div class="form-group"> <label class="control-label">Adresa</label>'),
             HTML(self.subsidiary),
@@ -407,6 +410,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
 
         company = self.initial.get('company')
         subsidiary = self.initial.get('subsidiary')
+        self.helper.form_id = "change-team-form"
         self.helper.layout = Layout(
             FieldWithButtons(
                 'company',
@@ -472,6 +476,7 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = "noAsterisks"
+        self.helper.form_id = "registration-access-form"
         self.helper.layout = Layout(
             HTML("Děkujeme že se chcete účastnit soutěže. Začněte registraci zadáním e-mailu."),
             HTML('<br/>'),
@@ -505,6 +510,7 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
     def __init__(self, request=None, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_class = "noAsterisks"
+        self.helper.form_id = "registration-form"
         self.helper.layout = Layout(
             *self._meta.fields,
             Submit('submit', _('Registrovat')),
@@ -560,6 +566,7 @@ class InviteForm(SubmitMixin, forms.Form):
             fields.append(field_name)
         self.helper = FormHelper()
         self.helper.form_class = "dirty-check"
+        self.helper.form_id = "invite-form"
         self.helper.add_input(
             Button('submit', _('Přeskočit'), css_class="btn-default", onclick='window.location.href="{}"'.format(reverse("zmenit_triko"))),
         )
@@ -605,6 +612,7 @@ class PaymentTypeForm(PrevNextMixin, forms.Form):
         self.user_attendance = kwargs.pop('user_attendance')
         ret_val = super().__init__(*args, **kwargs)
         self.helper.form_class = "noAsterisks"
+        self.helper.form_id = "payment-type-form"
         self.fields['payment_type'].choices = [
             (
                 'pay',
@@ -693,6 +701,7 @@ class AnswerForm(forms.ModelForm):
             del self.fields['attachment']
 
         self.helper = FormHelper()
+        self.helper.form_id = "answers-form"
         self.helper.layout = Layout(
             Div(
                 choices_layout if question.question_type != 'text' else None,
@@ -977,6 +986,7 @@ class RegistrationProfileUpdateForm(PrevNextMixin, MultiModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper.form_class = "noAsterisks"
+        self.helper.form_id = "personal-data-form"
 
 
 class ProfileUpdateForm(SubmitMixin, MultiModelForm):
@@ -995,6 +1005,7 @@ class ProfileUpdateForm(SubmitMixin, MultiModelForm):
         self.helper.form_class = 'noAsterisks form-horizontal'
         self.helper.label_class = 'col-12'
         self.helper.field_class = 'col-12'
+        self.helper.form_id = "profile-update-form"
 
 
 class TripForm(InitialFieldsMixin, forms.ModelForm):
@@ -1070,6 +1081,7 @@ class TrackTripForm(FormWithTrackMixin, SubmitMixin, TripForm):
 
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
+        self.helper.form_id = "track-trip-form"
         super().__init__(*args, **kwargs)
         self.user_attendance = self.initial['user_attendance']
         self.date = self.instance.date or datetime.datetime.strptime(self.initial['date'], "%Y-%m-%d").date()

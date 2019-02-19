@@ -82,6 +82,7 @@ class SelectUsersPayForm(SubmitMixin, forms.Form):
         ret_val = super().__init__(*args, **kwargs)
         self.fields['paing_for'].queryset = queryset
         self.helper.form_class = "dirty-check"
+        self.helper.form_id = "fa-select-users-pay-form"
         self.helper.layout = Layout(
             HTML("<div class='text-info'>"),
             HTML(_("Tip: Použijte shift pro výběr rozsahu položek.")),
@@ -113,6 +114,7 @@ class CompanyForm(SubmitMixin, AddressForm):
         self.fields['ico'].required = True
         self.helper.layout.append('ico')
         self.helper.layout.append('dic')
+        self.helper.form_id = "fa-company-address-form"
         return ret_val
 
 
@@ -170,6 +172,7 @@ class CompanyAdminForm(SubmitMixin, UserAttendanceUpdateForm):
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper.form_class = "noAsterisks"
+        self.helper.form_id = "fa-company-admin-form"
 
 
 class CompanyAdminApplicationForm(CompanyAdminForm, RegistrationFormDPNK):
