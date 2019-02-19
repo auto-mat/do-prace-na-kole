@@ -236,7 +236,7 @@ class AddressForm(CampaignMixin, forms.ModelForm):
             'city' if 'city' in self.fields else None,
             'address_recipient',
             Fieldset('', 'address_street', 'address_street_number'),
-            Fieldset('', 'address_city', 'address_psc')
+            Fieldset('', 'address_city', 'address_psc'),
         )
 
     class Meta:
