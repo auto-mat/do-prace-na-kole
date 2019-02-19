@@ -26,7 +26,7 @@ from betterforms.multiform import MultiModelForm
 
 from crispy_forms.bootstrap import FieldWithButtons, StrictButton
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Button, Div, Field, HTML, Layout, Submit
+from crispy_forms.layout import Button, Div, Field, Fieldset, HTML, Layout, Submit
 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
@@ -232,6 +232,11 @@ class AddressForm(CampaignMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         if 'city' in self.fields:
             self.fields['city'].queryset = models.City.objects.filter(cityincampaign__campaign=self.campaign)
+        self.helper.layout = Layout(
+            Fieldset('', 'city', 'address_recipient'),
+            Fieldset('', 'address_street', 'address_street_number'),
+            Fieldset('', 'address_psc', 'address_city'),
+        )
 
     class Meta:
         model = models.Subsidiary
