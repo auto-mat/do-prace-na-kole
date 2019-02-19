@@ -173,7 +173,7 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
             error_text = format_html(
                 "{text}"
                 "<br/>"
-                "<a href='{regitster}'>{register_text}</a>", # regitster .. opravdu?
+                "<a href='{regitster}'>{register_text}</a>",  # regitster .. opravdu?
                 text=_("Problém na trase! Tento e-mail neznáme, zkontrolujte jeho formát. "),
                 password=reverse('password_reset'),
                 regitster=reverse('registrace', args=(username,)),
@@ -187,9 +187,10 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
         self.helper.form_class = "noAsterisks"
         self.helper.layout = Layout(
             'username', 'password',
-            # HTML('<br/>'),
             Submit('submit', _('Přihlásit')),
             social_html(True),
+            HTML('<a href="{%% url "registration_access" %%}">%s</a>' % _("registrovat")),
+            HTML('<a href="{%% url "password_reset" %%}">%s</a>' % _("obnovit heslo")),
         )
         self.fields['username'].label = _("E-mail")
         return ret_val
@@ -471,9 +472,8 @@ class RegistrationAccessFormDPNK(SubmitMixin, forms.Form):
             HTML('<br/>'),
             HTML('<br/>'),
             'email',
-            social_html(False),
-            HTML('<br/>'),
             Submit('submit', _('Pokračovat')),
+            social_html(False),
         )
 
 
@@ -489,10 +489,9 @@ class EmailUsernameMixin(object):
         return cleaned_data
 
 
-class RegistrationFormDPNK(SubmitMixin, EmailUsernameMixin, registration.forms.RegistrationFormUniqueEmail):
+class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFormUniqueEmail):
     required_css_class = 'required'
     add_social_login = True
-    submit_text = _('Registrovat')
 
     username = forms.CharField(widget=forms.HiddenInput, required=False)
 
@@ -501,8 +500,8 @@ class RegistrationFormDPNK(SubmitMixin, EmailUsernameMixin, registration.forms.R
         self.helper.form_class = "noAsterisks"
         self.helper.layout = Layout(
             *self._meta.fields,
+            Submit('submit', _('Registrovat')),
             social_html(False) if self.add_social_login else None,
-            HTML('<br/>'),
         )
 
         super().__init__(*args, **kwargs)
