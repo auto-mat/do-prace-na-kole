@@ -26,7 +26,7 @@ from .models import UserProfile
 def create_userprofile(strategy, details, response, user=None, *args, **kwargs):
     """Update user details using data from provider."""
     if user and kwargs['is_new']:
-            UserProfile.objects.create(
-                user=user,
-                sex=response.get('gender', 'unknown'),
-            )
+        UserProfile.objects.create(
+            user=user,
+            sex=response.get('gender', 'unknown'),
+        )

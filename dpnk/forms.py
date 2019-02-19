@@ -374,7 +374,7 @@ class ChangeTeamForm(PrevNextMixin, forms.ModelForm):
                 logger.error("Team not in campaign", extra={'team': team.pk, 'subdomain': self.instance.campaign.slug})
                 raise forms.ValidationError(_("Zvolený tým není dostupný v aktuální kampani"))
         elif not self.instance.team:
-                team = models.Team(campaign=self.instance.campaign)
+            team = models.Team(campaign=self.instance.campaign)
         else:
             team = self.instance.team
         return team

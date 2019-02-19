@@ -187,10 +187,10 @@ class ChangeTeamView(RegistrationViewMixin, LoginRequiredMixin, UpdateView):
                 request.user_attendance.team.member_count == 1 and
                 request.user_attendance.team.unapproved_member_count > 0
         ):
-                raise exceptions.TemplatePermissionDenied(
-                    _("Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."),
-                    self.template_name,
-                )
+            raise exceptions.TemplatePermissionDenied(
+                _("Nemůžete opustit tým, ve kterém jsou samí neschválení členové. Napřed někoho schvalte a pak změňte tým."),
+                self.template_name,
+            )
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -1897,9 +1897,9 @@ class UpdateTripView(EditTripView, WithTripMixin, UpdateView):
         initial = {}
         instance = self.get_object()
         if instance.track is None and self.user_attendance.track:
-                initial['track'] = self.user_attendance.track
+            initial['track'] = self.user_attendance.track
         if not instance.distance:
-                initial['distance'] = self.user_attendance.get_distance()
+            initial['distance'] = self.user_attendance.get_distance()
         return super().get_initial(initial)
 
 

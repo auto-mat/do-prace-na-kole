@@ -225,8 +225,8 @@ class SubsidiaryBoxAdmin(AdminAdvancedFiltersMixin, ImportExportMixin, RelatedFi
     def get_search_results(self, request, queryset, search_term):
         search_term = search_term.strip()
         if re.match(IDENTIFIER_REGEXP, search_term) and search_term[0] == 'S':
-                queryset = queryset.filter(id=search_term[1:])
-                use_distinct = True
+            queryset = queryset.filter(id=search_term[1:])
+            use_distinct = True
         else:
             queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         return queryset, use_distinct
