@@ -506,7 +506,7 @@ class CompetitionResultsViewTests(ClearCacheMixin, DenormMixin, TestCase):
         self.assertContains(response, "Výsledky v soutěži Výkonnost týmů:")
         self.assertContains(
             response,
-            '<th scope="col" id=result_divident-9>Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů</th>',
+            '<th scope="col" id="result_divident-9">Po&shy;čet za&shy;po&shy;čí&shy;ta&shy;ných ki&shy;lo&shy;me&shy;trů</th>',
             html=True,
         )
 
@@ -2036,15 +2036,15 @@ class ChangeTeamViewTests(TestCase):
         self.assertContains(
             response,
             '<select '
-            'class="chainedselect form-control form-control-danger chained-fk"'
+            'class="chainedselect form-control is-invalid chained-fk" '
             'data-auto_choose="false" '
             'data-chainfield="subsidiary" '
-            'data-empty_label="--------"'
-            'data-url="/chaining/filter/dpnk/Team/team_in_campaign_testing-campaign/subsidiary/dpnk/Subsidiary/company"'
+            'data-empty_label="--------" '
+            'data-url="/chaining/filter/dpnk/Team/team_in_campaign_testing-campaign/subsidiary/dpnk/Subsidiary/company" '
             'data-value="null" '
             'id="id_team" '
-            'name="team"'
-            'name="team"'
+            'name="team" '
+            'name="team" '
             'required'
             '> </select>',
             html=True,
@@ -2589,11 +2589,11 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         response = self.client.post(reverse('profil'), post_data, follow=True)
         self.assertContains(
             response,
-            '<div class="form-group has-error">'
-            '<label class="control-label" for="id_form-0-distance">Vzdálenost (km)</label>'
-            '<input type="number" name="form-0-distance" value="6,0 km" step="any" class="form-control" '
+            '<div class="form-group is-invalid">'
+            '<label for="id_form-0-distance">Vzdálenost (km)</label>'
+            '<input type="number" name="form-0-distance" value="6,0 km" step="any" class="form-control is-invalid" '
             'placeholder="Vzdálenost (km)" title="" id="id_form-0-distance" />'
-            '<div class="help-block">Zadejte číslo.</div >'
+            '<div class="invalid-feedback">Zadejte číslo.</div >'
             '</div>',
             html=True,
         )
@@ -2625,7 +2625,7 @@ class ViewsTestsRegistered(DenormMixin, ClearCacheMixin, TestCase):
         response = self.client.post(reverse('profil'), post_data, follow=True)
         self.assertContains(
             response,
-            '<button class="close" type="button" data-dismiss="alert" aria-hidden="true">&#215;</button>',
+            '<button class="close" type="button" data-dismiss="alert" aria-label="close">&#215;</button>',
             html=True,
         )
 

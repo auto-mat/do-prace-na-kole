@@ -78,7 +78,7 @@ class TestPasswordForms(ViewsLogonMommy):
         response = self.client.get(address, follow=True)
         self.assertContains(
             response,
-            '<label for="id_new_password2" class="control-label  requiredField">'
+            '<label for="id_new_password2" class="col-form-label  requiredField">'
             'Potvrzení nového hesla<span class="asteriskField">*</span> </label>',
             html=True,
         )

@@ -46,7 +46,7 @@
         <thead>
             <tr>
                 {% for col in competition.get_columns %}
-                   <th scope="col" id="{{ col.0 }}-{{ competition.id }}>{{ col.2|safe }}"></th>
+                   <th scope="col" id="{{ col.0 }}-{{ competition.id }}">{{ col.2|safe }}</th>
                 {% endfor %}
             </tr>
         </thead>

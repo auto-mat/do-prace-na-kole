@@ -116,7 +116,7 @@ class ViewsTestsLogon(TestCase):
         response = self.client.get(reverse('zmenit_triko'))
         self.assertContains(
             response,
-            '<label for="id_userattendance-t_shirt_size" class="control-label  requiredField">'
+            '<label for="id_userattendance-t_shirt_size" class="col-form-label  requiredField">'
             'Vyberte velikost trika'
             '<span class="asteriskField">*</span>'
             '</label>',
