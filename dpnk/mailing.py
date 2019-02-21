@@ -33,8 +33,8 @@ logger = logging.getLogger(__name__)
 
 class CampaignMonitor:
 
-    def __init__(self, api_key, list_id):
-        self.api_key = api_key
+    def __init__(self, list_id):
+        self.api_key = settings.MAILING_API_KEY
         self.list_id = list_id
 
     @classmethod
@@ -68,7 +68,7 @@ class CampaignMonitor:
         )
         return subscriber.email_address
 
-    def delete(self, mailing_id):
+    def delete(self, mailing_id, email):
         subscriber = createsend.Subscriber({'api_key': self.api_key}, self.list_id, mailing_id)
         subscriber.get(self.list_id, mailing_id)
         r = subscriber.delete()
@@ -95,56 +95,55 @@ class TOKENAPI(slumber.API):
 
 
 class EcoMailing:
-    def __init__(self, api_key, list_id):
-        self.api_key = api_key
+    def __init__(self, list_id):
+        self.api_key = settings.ECOMAIL_MAILING_API_KEY
         self.list_id = list_id
-        self.api = TOKENAPI("http://api2.ecomailapp.cz/", token=api_key, append_slash=False)
+        self.api = TOKENAPI("http://api2.ecomailapp.cz/", token=self.api_key, append_slash=False)
 
     @classmethod
     def translate_fields(cls, custom_fields):
         new_custom_fields = {i: custom_fields[i] for i in custom_fields if i not in ('first_name', 'last_name', 'email')}
+        uid = new_custom_fields.pop('Id')
         ret_custom_fields = {}
-        ret_custom_fields['name'] = custom_fields.pop('first_name')
-        ret_custom_fields['surname'] = custom_fields.pop('last_name')
-        ret_custom_fields['email'] = custom_fields.pop('email')
-        ret_custom_fields['city'] = custom_fields.pop('city')
+        for k, v in (
+            ('name', 'first_name'),
+            ('surname', 'last_name'),
+            ('email', 'email'),
+            ('city', 'city'),
+        ):
+            if v in custom_fields:
+                ret_custom_fields[k] = custom_fields.pop(v)
+
         ret_custom_fields['custom_fields'] = new_custom_fields
+        ret_custom_fields['custom_fields']['Uid'] = uid
         return ret_custom_fields
 
     def update(self, mailing_id, email, custom_fields):
-        print(email)
-        print(custom_fields)
-        try:
-            print("update")
-            return_data = getattr(self.api.lists(self.list_id), "update-subscriber").put(
-                {
-                    "email": email,
-                    "subscriber_data": self.translate_fields(custom_fields),
-                },
-            )
-        except Exception as e:
-            print(e)
-            print(e.response.content)
-        print(return_data)
+        return_data = self.api.lists(self.list_id).__call__("update-subscriber").put(
+            {
+                "email": email,
+                "subscriber_data": self.translate_fields(custom_fields),
+            },
+        )
         return return_data['id']
 
     def add(self, email, custom_fields):
-        print("add")
-        try:
-            return_data = self.api.lists(self.list_id).subscribe.post(
-                {
-                    "subscriber_data": self.translate_fields(custom_fields),
-                },
-            )
-        except Exception as e:
-            print(e)
-            print(e.response.content)
-        print(return_data)
+        return_data = self.api.lists(self.list_id).subscribe.post(
+            {
+                "subscriber_data": self.translate_fields(custom_fields),
+                "resubscribe": True,
+            },
+        )
         return return_data['id']
 
-    def delete(self, mailing_id):
-        r = self.api.lists(self.list_id).unsubscribe.delete()
-        return r
+    def delete(self, mailing_id, email):
+        resp = self.api.lists(self.list_id).unsubscribe._request(
+            "DELETE",
+            data={"email": email},
+        )
+        if not 200 <= resp.status_code <= 299:
+            raise Exception("Not unsubscribed")
+        return None
 
 
 def get_custom_fields(user_attendance):
@@ -202,7 +201,7 @@ def get_mailing(user_attendance):
         Mailing = CampaignMonitor
     else:
         return
-    return Mailing(api_key=settings.MAILING_API_KEY, list_id=user_attendance.campaign.mailing_list_id)
+    return Mailing(list_id=user_attendance.campaign.mailing_list_id)
 
 
 def get_hash(user_attendance, custom_fields):
@@ -256,7 +255,10 @@ def update_user(user_attendance, ignore_hash):
     except createsend.BadRequest as e:
         if e.data.Code == 203:
             add_user(user_attendance)
+    except slumber.exceptions.HttpNotFoundError:
+        add_user(user_attendance)
     except Exception:
+        logger.exception("Problem occured during mailing list record actualization")
         update_mailing_id(user_attendance, None, None)
         raise
 
@@ -274,8 +276,9 @@ def delete_user(user_attendance):
 
     # Unregister from mailing list
     try:
-        new_mailing_id = mailing.delete(mailing_id)
+        new_mailing_id = mailing.delete(mailing_id, user.email)
     except Exception:
+        logger.exception("Problem occured during mailing list record actualization")
         update_mailing_id(user_attendance, None, None)
         raise
     else:
@@ -295,7 +298,7 @@ def add_or_update_user_synchronous(user_attendance, ignore_hash=False):
                 add_user(user_attendance)
         else:
             delete_user(user_attendance)
-    except:  # noqa
+    except Exception:
         logger.exception("Problem occured during mailing list record actualization")
 
 
