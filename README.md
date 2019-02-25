@@ -65,7 +65,6 @@ Setting up the database
 
     # su test
     $ ./setup.sh
-    $ python3 manage.py createsuperuser
 
 Launching the development webserver
 ------------------------------------
