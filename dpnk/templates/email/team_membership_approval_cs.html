@@ -8,7 +8,7 @@ Dobrý den,
 
 vaše členství v týmu {{user_attendance.team.name}} bylo právě odsouhlaseno. Můžete se přihlásit ke svému profilu pomocí adresy
 {% block profile_link %}
-https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
+{{ absolute_uri }}{% url 'login' %}
 {% endblock %}
 
 Děkujeme Vám za přízeň a těšíme se na viděnou během soutěže!

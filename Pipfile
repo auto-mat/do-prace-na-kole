@@ -106,6 +106,7 @@ django-stdnumfield = {git = "https://github.com/PetrDlouhy/django-stdnumfield.gi
 "PyPDF2" = "*"
 "django-scribbler-django2.0" = "*"
 "django-bootstrap4" = "*"
+"html2text" = "*"
 
 [requires]
 python_version = "3.5"

@@ -20,9 +20,12 @@
 import gettext
 import os
 
-from django.conf import settings
-from django.core.mail import send_mail
+import html2text
+
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
+
+from . import util
 
 
 def _(string, locale=None):
@@ -245,23 +248,21 @@ def campaign_mail(user_attendance, subject, template_path, extra_context=None, a
         email = userprofile.user.email
     context = {
         'user_attendance': user_attendance,
-        'SITE_URL': settings.SITE_URL,
+        'absolute_uri': util.get_base_url(slug=user_attendance.campaign.slug),
         'email': email,
+        'lang_code': userprofile.language,
     }
     context.update(extra_context)
-    included_langs = set()
-    if all_langs:
-        langs = [userprofile.language, 'cs', 'en']
-    else:
-        langs = [userprofile.language]
-    message = ""
-    subjects = []
-    for language in langs:
-        if language not in included_langs:
-            included_langs.add(language)
-            subjects.append(_(subject, language))
-            template = get_template('email/' + template_path % language)
-            context['lang_code'] = language
-            message += template.render(context)
-    subject = str(campaign) + " - " + " / ".join(subjects)
-    send_mail(subject, message, None, [email], fail_silently=False)
+    template = get_template('email/' + template_path % userprofile.language)
+    message = template.render(context)
+    subject = str(campaign) + " - " + _(subject, userprofile.language)
+
+    txt_summary = html2text.html2text(message)
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body=txt_summary,
+        from_email='Klub pratel Auto*Matu <kp@auto-mat.cz>',
+        to=[email],
+    )
+    email.attach_alternative(message, "text/html")
+    email.send(fail_silently=False)

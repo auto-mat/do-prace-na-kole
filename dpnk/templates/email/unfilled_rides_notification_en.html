@@ -9,7 +9,7 @@ Hello,
 we found out, that you didn't fill in any ride in last {{ days_unfilled }} days.
 We want to remind you that rides can only be filled in for {{ user_attendance.campaign.days_active }} days back.
 If you have forgotten to fill in your rides, you can do so in your profile
-https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}
+{{ absolute_uri }}{% url 'profil' %}
 
 Greetings from the entire Auto*Mat team and wishes for a happy journey.
 

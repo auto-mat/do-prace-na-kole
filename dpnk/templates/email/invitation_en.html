@@ -13,9 +13,9 @@ Your colleague {{ inviting.userprofile }} would like to have you in the {{inviti
 Are you in? This link takes you to a simple pre-filled form.
 {% block register_link %}
 {% if not invited %}
-https://{{ inviting.campaign.slug }}.{{ SITE_URL }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email %}
+{{ absolute_url }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email %}
 {% else %}
-https://{{ invited.campaign.slug }}.{{ SITE_URL }}{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email %}
+{{ absolute_url }}{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email %}
 {% endif %}
 {% endblock %}
 (If the link isn't working, paste and copy it into your favourite browser.)

@@ -9,7 +9,7 @@ Hello,
 unfortunately, your membership in the {{user_attendance.team.name}} team has just been declined by {{ denier }} for the following reason: {{reason}}
 You will have to sign in to edit your profile on
 {% block profile_link %}
-https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'zmenit_tym' %}
+{{ absolute_uri }}{% url 'zmenit_tym' %}
 {% endblock %}
 and choose another team or set up your own. So cheer up and come on!
 

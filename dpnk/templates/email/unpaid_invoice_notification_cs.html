@@ -8,7 +8,7 @@ Dobrý den,
 
 zjistili jsme, jste ještě nezaplatili fakturu (splatnou do {{invoice.taxable_date}}):
 
-Kompletní přehled faktur naleznete na adrese https://{{ invoice.campaign.slug }}.{{ SITE_URL }}{% url 'invoices' %}
+Kompletní přehled faktur naleznete na adrese {{ absolute_url }}{% url 'invoices' %}
 
 Přímý odkaz na stažení faktury je {{ invoice_url }}
 

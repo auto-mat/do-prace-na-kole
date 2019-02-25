@@ -317,7 +317,6 @@ TEMPLATE_VISIBLE_SETTINGS = (
     'PAYU_KEY_1',
     'HEADER_COLOR',
     'AKLUB_URL',
-    'SITE_URL',
 )
 
 REST_FRAMEWORK = {
@@ -584,7 +583,6 @@ SITETREE_MODEL_TREE_ITEM = 'sitetree_modeltranslation.ModeltranslationTreeItem'
 # We have large inline fields, so it is necesarry to set this
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
-SITE_URL = 'dopracenakole.cz'
 # import local settings
 try:
     from .settings_local import *  # noqa

@@ -5,14 +5,14 @@
 A message for {{ user_attendance.userprofile }}, participating in the {{ user_attendance.campaign }} competition.
 
 Welcome to the {{user_attendance.campaign.name}} competition! Before you head off, please check all the steps on: {% block profile_link %}
-https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'upravit_profil' %}
+{{ absolute_uri }}{% url 'upravit_profil' %}
 {% endblock %}
 
 Competition begins at {{ user_attendance.campaign.competition_phase.date_from }} and finishes at {{ user_attendance.campaign.competition_phase.date_to }}.
-Your log-in e-mail is {{ email }}. We don't mention your password here for security reasons but you can renew it anytime on https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'password_change' %} Have you already got an opponent? The competition will be more interesting for you if people you know also join in. Who would you like to challenge? Colleagues from your or another team? Your suppliers or customers? Or will you challenge your business competitors?
+Your log-in e-mail is {{ email }}. We don't mention your password here for security reasons but you can renew it anytime on {{ absolute_uri }}{% url 'password_change' %} Have you already got an opponent? The competition will be more interesting for you if people you know also join in. Who would you like to challenge? Colleagues from your or another team? Your suppliers or customers? Or will you challenge your business competitors?
 
 Please, check your personal profile from time to time on
-https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'profil' %}
+{{ absolute_uri }}{% url 'profil' %}
 , which will serve as your personal guidepost until the end of the competition - you can modify your personal details there, select your competition categories and track your bike trips. If there is anything you are unsure about, please contact us at <{{user_attendance.campaign.contact_email}}>.
 
 Thank you for your interest and we look forward to seeing you during the competition!

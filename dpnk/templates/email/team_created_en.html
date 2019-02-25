@@ -10,18 +10,18 @@ Your team {{team_name}} has just been created.
 
 You can invite your colleagues to join your team on
 {% block invite_link %}
-https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'pozvanky' %}
+{{ absolute_uri }}{% url 'pozvanky' %}
 {% endblock %}
 
-If you'd like to ask your colleagues to set up their own team, refer them to {{ SITE_URL}}.
+If you'd like to ask your colleagues to set up their own team, refer them to {{ absolute_url }}.
 
 You can sign in to your profile through
 {% block profile_link %}
-https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'login' %}
+{{ absolute_uri }}{% url 'login' %}
 {% endblock %}
 
 Your employer can support your team by paying the start fee for you or even by announcing the Bike to Work campaign for your whole company. This means that you will compete with participants not only in the participating city but also with all the employees of your organization irrespective of their location. How to do this? Please contact the responsible person (head of the CSR department, head of internal communications, head of PR, director etc.) and suggest these option or refer them to the following website:
-https://{{ user_attendance.campaign.slug }}.{{ SITE_URL }}{% url 'company_admin_application' %}
+{{ absolute_uri }}{% url 'company_admin_application' %}
 
 Thank you for your interest and we look forward to seeing you during the competition!
 

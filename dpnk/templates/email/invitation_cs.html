@@ -1,33 +1,40 @@
+{% extends "email/base.html" %}
 {% load i18n %}
 {% autoescape off %}
 
 {% language lang_code %}
+{% block header %}
 {% if invited %}
 Zpráva pro soutěžící/ho {{ invited.userprofile }} {% if invited.team %}z týmu {{invited.team.name}} {% endif %}v soutěži {{ invited.campaign }}.
 {% endif %}
-
-Dobrý den,
-
-Váš kolega/kolegyně {{ inviting.userprofile }} Vás zve, abyste se zúčastnil/a soutěže {{ inviting.campaign }} a stal/a se členem soutěžního týmu {{inviting.team.name}}.
-
-Jdete do toho? Přidejte se doplněním inforamcí na odkazu
-{% block register_link %}
-{% if not invited %}
-https://{{ inviting.campaign.slug }}.{{ SITE_URL }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email %}
-{% else %}
-https://{{ invited.campaign.slug }}.{{ SITE_URL }}{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email %}
-{% endif %}
 {% endblock %}
-(Pokud Vám odkaz nefunguje, zkopírujte ho do svého webového prohlížeče.)
 
-Chcete vědět víc? Zeptejte se {{ inviting.userprofile }} na e-mailu {{ inviting.userprofile.user.email }} nebo se podívejte na stránky {{ inviting.campaign.web }}
+{% block content %}
+Hezký den,
 
+<p>
+{{ inviting.userprofile.name }} si myslí, že je dnes perfektní den pro jízdu na kole.
+Proto Vám posílá pozvánku do svého týmu {{inviting.team.name}} v soutěži {{ inviting.campaign }}.
+</p>
 
-Hodně šťastných kilometrů!
-Váš tým soutěže {{ inviting.campaign }}
+{% if not invited %}
+{{ absolute_url }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email as button_link %}
+{% else %}
+{{ absolute_url }}{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email as button_link %}
+{% endif %}
+{% include "./button.html" with button_text="Chci šlápnout do pedálů" %}
 
----
-{{ inviting.campaign.email_footer }}
+<p>
+Více o soutěži se dozvíte na <a href="{{ inviting.campaign.web }}">našem webu</a> nebo od svých nových týmových parťáků.
+</p>
+<p><b>
+Děkujeme za podporu udržitelné mobility ve městech a přejeme hodně radosti z jízdy na kole!
+</b></p>
+<p>
+Organizační tým soutěže {{ user_attendance.campaign.name }}
+</p>
+<p>
+{% endblock %}
 {% endlanguage %}
 
 {% endautoescape %}

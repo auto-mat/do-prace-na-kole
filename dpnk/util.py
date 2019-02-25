@@ -148,9 +148,9 @@ def get_emissions(distance):
     }
 
 
-def get_base_url(request, slug=None):
+def get_base_url(request=None, slug=None):
     return '%s://%s.%s' % (
-        request.scheme,
+        request.scheme if request else "https",
         slug if slug is not None else request.campaign.slug,
         get_current_site(request).domain,
     )

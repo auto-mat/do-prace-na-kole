@@ -9,8 +9,8 @@ Hello,
 you've just become a {{ company }} company coordinator. 
 You can sign in to the {{ company_admin.campaign }} registration system.
 
-First, please fill in the organisation billing details on URL https://{{ company_admin.campaign.slug }}.{{ SITE_URL }}{% url 'edit_company' %} These details will be used to send your company an invoice when the registration is completed.
-Than you will be able to accept payments for participants from your organisation who you should include in the joint invoice. This will be done at https://{{ company_admin.campaign.slug }}.{{ SITE_URL }}{% url 'company_admin_pay_for_users' %}
+First, please fill in the organisation billing details on URL {{ absolute_url }}{% url 'edit_company' %} These details will be used to send your company an invoice when the registration is completed.
+Than you will be able to accept payments for participants from your organisation who you should include in the joint invoice. This will be done at {{ absolute_url }}{% url 'company_admin_pay_for_users' %}
 During the registration process, more and more participants will sign in so you will have to check the status several times. 
 
 Thank you for your support of {{ company_admin.campaign }} and we look forward to further cooperation.

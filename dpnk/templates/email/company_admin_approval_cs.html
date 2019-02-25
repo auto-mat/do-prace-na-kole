@@ -8,8 +8,8 @@ Dobrý den,
 právě jste se stali firemním koordinátorem {{ company }}.
 Nyní se můžete přihlásit do registračního systému {{ company_admin.campaign }}.
 
-Nejprve na adrese https://{{ company_admin.campaign.slug }}.{{ SITE_URL }}{% url 'edit_company' %} vyplňte fakturační údaje vaší organizace, které nám po skončení registrací poslouží pro vystavení faktury.
-Potom budete moci schvalovat platby za soutěžící na stránce https://{{ company_admin.campaign.slug }}.{{ SITE_URL }}{% url 'company_admin_pay_for_users' %} s tím, že je zahrnete na společnou fakturu.
+Nejprve na adrese {{ absolute_url }}{% url 'edit_company' %} vyplňte fakturační údaje vaší organizace, které nám po skončení registrací poslouží pro vystavení faktury.
+Potom budete moci schvalovat platby za soutěžící na stránce {{ absolute_url }}{% url 'company_admin_pay_for_users' %} s tím, že je zahrnete na společnou fakturu.
 V průběhu registrací budou přibývat další a další soutěžící, tuto kontrolu proto provedete několikrát.
 Děkujeme Vám za podporu soutěže {{ company_admin.campaign }} a těšíme se na spolupráci.
 Váš organizační tým soutěže {{ company_admin.campaign }}

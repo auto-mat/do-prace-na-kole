@@ -12,7 +12,7 @@ Vzhledem k otevřenému charakteru soutěže se další soutěžící z Vaší o
 
 Členství kandidáta/ky ve Vašem týmu můžete potvrdit nebo zamítnout pomocí tohoto odkazu:
 {% block approval_link %}
-https://{{ new_user.campaign.slug }}.{{ SITE_URL }}{% url 'team_members' %}
+{{ absolute_url }}{% url 'team_members' %}
 {% endblock %}
 
 Ujištění pro Vás: Zamítnutím kandidáta/ku nediskvalifikujete ze soutěže. Pokud si do začátku soutěže vytvoří vlastní tým nebo se připojí do jiného týmu, bude vše v pořádku.

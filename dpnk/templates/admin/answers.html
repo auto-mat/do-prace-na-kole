@@ -39,8 +39,8 @@
    <td>
       {% thumbnail a.attachment "250x250" as foto_thumb %}
       {% if foto_thumb %}
-         <a href="{{ settings.SITE_URL}}{{ a.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
-         <img src="{{ settings.SITE_URL}}{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
+         <a href="{{ a.attachment.url }}" title="Fotka v plném rozlišení" target="_blank">
+         <img src="{{ foto_thumb.url }}" width="{{ foto_thumb.width }}" height="{{ foto_thumb.height }}"></a>
       {% else %}
          <a href="{{ media }}/{{ a.attachment }}" target="_blank">{{ a.attachment }}</a>
       {% endif %}
