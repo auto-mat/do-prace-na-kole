@@ -28,4 +28,7 @@
       <img src="https://www.dopracenakole.cz/wp-content/uploads/homo-cykliens-logo-coral.svg" alt="Homo cykliens"/>
     {% endscribble %}
 </div>
+{% with user_attendance.get_frequency_icons as frequency_icons %}
+<img src="{{frequency_icons.main}}"/>
+{% endwith %}
 {% endblock %}

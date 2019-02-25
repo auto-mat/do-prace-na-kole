@@ -39,6 +39,7 @@ from .diploma import Diploma
 from .phase import Phase
 from .transactions import Payment, Transaction
 from .trip import Trip
+from .landingpageicon import LandingPageIcon
 from .util import MAP_DESCRIPTION
 from .. import mailing, util
 # from ..email import register_mail
@@ -311,6 +312,14 @@ class UserAttendance(StaleSyncMixin, models.Model):
         else:
             frequency = self.frequency if self.frequency is not None else 0
             return frequency * 100
+
+    def get_frequency_icons(self):
+        frequency = self.frequency
+        roles = {}
+        for icon in LandingPageIcon.objects.filter(max_frequency__gte=frequency, min_frequency__lte=frequency):
+            roles[icon.role] = icon.file.url
+
+        return roles
 
     @denormalized(models.FloatField, null=True, skip={'updated', 'created', 'last_sync_time'})
     @depend_on_related('Trip')

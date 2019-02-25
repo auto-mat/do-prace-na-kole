@@ -1655,6 +1655,11 @@ class VoucherAdmin(ImportMixin, admin.ModelAdmin):
     list_filter = [CampaignFilter, 'voucher_type', isnull_filter('user_attendance', _("Nemá účast v kampani"))]
 
 
+@admin.register(models.LandingPageIcon)
+class LandingPageIconAdmin(admin.ModelAdmin):
+    list_display = ('role', 'file', 'min_frequency', 'max_frequency')
+
+
 @admin.register(models.CommuteMode)
 class CommuteModeAdmin(SortableAdminMixin, TranslationAdmin):
     list_display = (

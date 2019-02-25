@@ -39,6 +39,7 @@ from .competition import Competition, CompetitionForm
 from .competition_result import CompetitionResult
 from .diploma import Diploma, DiplomaField
 from .gpxfile import GpxFile, normalize_gpx_filename
+from .landingpageicon import LandingPageIcon
 from .invoice import Invoice, change_invoice_payments_status, payments_to_invoice
 from .occupation import Occupation
 from .phase import PHASE_TYPE_DICT, Phase
@@ -91,6 +92,7 @@ __all__ = (
     UserAttendance,
     UserProfile,
     Voucher,
+    LandingPageIcon,
     change_invoice_payments_status,
     pre_user_team_changed,
     post_user_team_changed,
