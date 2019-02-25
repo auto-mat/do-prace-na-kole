@@ -1,0 +1,13 @@
+{% extends "base_generic.html" %}
+{% load i18n %}
+{% load l10n %}
+{% load scribbler_tags %}
+
+{% block content %}
+<div id="landing_page_intro">
+    {% scribble 'landing_page_before_start' %}
+    {% load i18n %}
+    <p>{% trans "blah blah blah." %}</p>
+    {% endscribble %}
+</div>
+{% endblock %}
