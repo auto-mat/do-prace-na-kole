@@ -862,7 +862,7 @@ class RidesDetailsView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMe
 
 
 class VacationsView(RegistrationCompleteMixin, TitleViewMixin, RegistrationMessagesMixin, TemplateView):
-    title = _("Dovolená")
+    title = _("Kalendář jízd")
     template_name = 'registration/vacations.html'
     registration_phase = 'profile_view'
 

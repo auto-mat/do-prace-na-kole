@@ -102,9 +102,9 @@ urlpatterns = [
         name="rides_details",
     ),
     url(
-        r'^dovolena/$',
+        r'^kalendar/$',
         views.VacationsView.as_view(),
-        name="vacations",
+        name="calendar",
     ),
     url(
         r'^nekompletni$',

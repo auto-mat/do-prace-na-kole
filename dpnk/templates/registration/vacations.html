@@ -14,6 +14,8 @@
 {% block form %}
 {% url "profil" as profile %}
 {% blocktrans %}
+Zde budete zadávát svoje jízdy. Zatím můžete naznačit dovolena, kdy víte že jezdít do práce nebudete.
+
 Označte dovolenou kliknutím na datum. Tento kalendář slouží k označování dovolené do budoucna, chcete-li zaznamenat dovolenou zpětně, označte <a href="{{profile}}">dané jízdy</a> jako "žádná cesta."
 {% endblocktrans %}
 <br/>
@@ -53,7 +55,7 @@ function add_vacation(startDate, endDate) {
             }
         }
         $('#calendar').fullCalendar('renderEvent', new_event);
-        $.post('{% url "vacations" %}', {
+        $.post('{% url "calendar" %}', {
             on_vacation: true,
             start_date: startDateString,
             end_date: endDateString,
@@ -71,7 +73,7 @@ function remove_vacation(event) {
     $('#calendar').fullCalendar( 'removeEvents', event.id );
     startDateString = event.start.format('YYYY-MM-DD')
     endDateString = moment(event.end, "DD-MM-YYYY").subtract(1, 'days').format('YYYY-MM-DD')
-    $.post("{% url 'vacations' %}", {
+    $.post("{% url 'calendar' %}", {
         on_vacation: false,
         start_date: startDateString,
         end_date: endDateString,

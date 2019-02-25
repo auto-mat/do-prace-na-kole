@@ -2386,7 +2386,7 @@ class TestNotLoggedIn(TestCase):
         "package",
         "pozvanky",
         "profil",
-        "vacations",
+        "calendar",
         "questionnaire_competitions",
         "register_company",
         "registration_uncomplete",
@@ -2793,7 +2793,7 @@ class ViewsTestsUnregistered(DenormMixin, ClearCacheMixin, TestCase):
     @data(
         ('profil', {}),
         ('rides_details', {}),
-        ('vacations', {}),
+        ('calendar', {}),
         # New trip
         ('trip', {"date": "2010-11-2", "direction": "trip_to"}),
         # Existing trip
