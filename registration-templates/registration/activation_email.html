@@ -1,0 +1,43 @@
+{% extends "email/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<p>
+Vítejte mezi námi!
+</p><p>
+Registrace do soutěže {{ campaign }} vypadá dobře. Jízda Vašeho života už je na spadnutí. Máte o ni zájem? <b>Potvrďte!</b>
+</p>
+
+{% url 'registration_activate' activation_key as button_link %}
+{% include "email/button.html" with button_text="Potvrdit emailovou adresu" %}
+
+<p>
+Až si potvrdíme adresu, prosím udělejte si chvilku a vyslechněte Desatero doporučení před startem:
+</p>
+
+<ul>
+   <li>
+ Vypucujte kolo. Kdo řetěz maže, ten jede.
+   </li><li>
+ Nastartujte fyzičku. Připravte svá stehna na pravidelnou ranní jízdu.
+   </li><li>
+      Zapamatujte si svůj přihlašovací e-mail <b>{{ user.email }}</b>.
+   </li><li>
+ Zapamatujte si, že soutěž začíná {{ campaign.competition_phase.date_from }} a končí {{ campaign.competition_phase.date_to }}.
+   </li><li>
+ Své jízdy si pravidelně zaznamenávejte v <a href="{{ absolute_uri }}{% url 'profil' %}">profilu</a>.
+   </li><li>
+ Nastavte si v profilu svou typickou trasu a zapisování bude rychlejší než jízda Jana Kavalíra.
+   </li><li>
+ Nezapomeňte <a href="{{ absolute_uri }}{% url 'pozvanky' %}">pozvat kolegy</a> do svého týmu.
+   </li><li>
+ Zapisování jízd s chytrým telefonem je úplný jahodový pudink, když si stáhnete jednu z doporučených <a href="{{campaign.web}}/aplikace">aplikací</a>.
+   </li><li>
+ Pokud jste opravdu soutěživý typ, sledujte pečlivě novinky a čerstvě vypsané soutěže z Vašeho města na našem <a href="{{campaign.web}}">webu</a>.
+   </li>
+</ul>
+
+<p>
+   Jakékoliv další otázky rádi zodpovíme na e-mailu <a href="mailto:{{campaign.contact_email}}">{{campaign.contact_email}}</a>.
+</p>
+{% endblock %}

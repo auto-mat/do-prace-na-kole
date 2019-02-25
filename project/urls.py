@@ -45,6 +45,7 @@ urlpatterns = [
     url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nAllow:", content_type="text/plain")),
     url(r'^', include('favicon.urls')),
     url(r'^cs/.*$', OldLanguageRedirectView.as_view()),
+    url(r'^register/', include('registration.backends.default.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += i18n_patterns(

@@ -64,7 +64,7 @@ from django.views.generic.edit import CreateView, FormView, UpdateView
 
 from extra_views import ModelFormSetView
 
-from registration.backends.simple.views import RegistrationView as SimpleRegistrationView
+from registration.backends.default.views import RegistrationView as SimpleRegistrationView
 
 from unidecode import unidecode
 
@@ -258,32 +258,16 @@ class RegistrationView(CampaignParameterMixin, TitleViewMixin, MustBeInRegistrat
     template_name = 'base_generic_form.html'
     form_class = RegistrationFormDPNK
     model = UserProfile
-    success_url = 'upravit_profil'
     title = _("")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['invitation_token'] = self.kwargs.get('token', None)
+        kwargs['campaign'] = self.campaign
+        return kwargs
 
     def get_initial(self):
         return {'email': self.kwargs.get('initial_email', '')}
-
-    def register(self, registration_form):
-        new_user = super().register(registration_form)
-        userprofile = UserProfile.objects.create(user=new_user)
-
-        invitation_token = self.kwargs.get('token', None)
-        try:
-            team = Team.objects.get(invitation_token=invitation_token)
-            if team.is_full():
-                messages.error(self.request, _('Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo vytvořit jiný tým.'))
-                team = None
-        except Team.DoesNotExist:
-            team = None
-        user_attendance = UserAttendance.objects.create(
-            userprofile=userprofile,
-            campaign=self.campaign,
-            team=team,
-        )
-        if team:
-            approve_for_team(self.request, user_attendance, "", True, False)
-        return new_user
 
 
 class ConfirmTeamInvitationView(CampaignParameterMixin, RegistrationViewMixin, LoginRequiredMixin, SuccessMessageMixin, FormView):

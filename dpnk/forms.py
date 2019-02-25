@@ -29,6 +29,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Button, Div, Field, Fieldset, HTML, Layout, Submit
 
 from django import forms
+from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -54,7 +55,7 @@ from selectable.forms.widgets import AutoCompleteSelectWidget
 
 from smart_selects.form_fields import ChainedModelChoiceField
 
-from . import email, models, util
+from . import email, models, util, views
 from .fields import CommaFloatField, ShowPointsMultipleModelChoiceField
 from .string_lazy import format_html_lazy, mark_safe_lazy
 from .widgets import CommuteModeSelect
@@ -515,7 +516,10 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
 
     username = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    def __init__(self, request=None, *args, **kwargs):
+    def __init__(self, request=None, invitation_token=None, campaign=None, *args, **kwargs):
+        self.campaign = campaign
+        self.invitation_token = invitation_token
+        self.request = request
         self.helper = FormHelper()
         self.helper.form_class = "noAsterisks"
         self.helper.form_id = "registration-form"
@@ -547,6 +551,26 @@ class RegistrationFormDPNK(EmailUsernameMixin, registration.forms.RegistrationFo
                 ),
             )
         return self.cleaned_data['email']
+
+    def save(self):
+        new_user = super().save()
+        userprofile = models.UserProfile.objects.create(user=new_user)
+
+        try:
+            team = models.Team.objects.get(invitation_token=self.invitation_token)
+            if team.is_full():
+                messages.error(self.request, _('Tým do kterého jste byli pozváni je již plný, budete si muset vybrat nebo vytvořit jiný tým.'))
+                team = None
+        except models.Team.DoesNotExist:
+            team = None
+        user_attendance = models.UserAttendance.objects.create(
+            userprofile=userprofile,
+            campaign=self.campaign,
+            team=team,
+        )
+        if team:
+            views.approve_for_team(self.request, user_attendance, "", True, False)
+        return new_user
 
     class Meta:
         model = User

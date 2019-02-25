@@ -41,7 +41,7 @@ from .transactions import Payment, Transaction
 from .trip import Trip
 from .util import MAP_DESCRIPTION
 from .. import mailing, util
-from ..email import register_mail
+# from ..email import register_mail
 
 logger = logging.getLogger(__name__)
 
@@ -545,7 +545,8 @@ class UserAttendance(StaleSyncMixin, models.Model):
                     if t_shirt_size.count() == 1:
                         self.t_shirt_size = t_shirt_size.first()
 
-            register_mail(self)
+            # if self.userprofile.user.is_active:
+            #     register_mail(self)
         if self.team and self.team.campaign != self.campaign:
             logger.error(
                 "UserAttendance campaign doesn't match team campaign",

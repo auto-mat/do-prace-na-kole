@@ -1,0 +1,26 @@
+{% extends "registration/registration_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Account Activated" %}{% endblock %}
+
+{% block regcaption %}
+<p>
+    {% trans "Váš účet je nyní aktivní." %}
+    {% if not user.is_authenticated %}
+    <div class="holder">
+      <a class="btn" href="/login">
+         Přihlásit
+      </a>
+    </div>
+    {% endif %}
+</p>
+{% endblock %}
+
+
+{% comment %}
+**registration/activation_complete.html**
+
+Used after successful account activation. This template has no context
+variables of its own, and should simply inform the user that their
+account is now active.
+{% endcomment %}

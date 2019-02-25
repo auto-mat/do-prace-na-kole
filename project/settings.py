@@ -205,6 +205,7 @@ TEMPLATES = [
             normpath(PROJECT_ROOT, 'templates'),
             normpath(PROJECT_ROOT, 'dpnk/templates'),
             normpath(PROJECT_ROOT, 't_shirt_delivery/templates'),
+            normpath(PROJECT_ROOT, 'registration-templates/'),
         ],
         'OPTIONS': {
             'string_if_invalid': InvalidStringShowWarning("%s"),
@@ -414,6 +415,8 @@ PAYU_KEY_1 = os.environ.get('DPNK_PAYU_KEY_1', '')
 PAYU_KEY_2 = os.environ.get('DPNK_PAYU_KEY_2', '')
 PAYU_POS_AUTH_KEY = os.environ.get('DPNK_PAYU_POS_AUTH_KEY', '')
 PAYU_POS_ID = os.environ.get('DPNK_PAYU_POS_ID', '')
+
+ACCOUNT_ACTIVATION_DAYS = 5
 
 AUTH_PASSWORD_VALIDATORS = [
     {

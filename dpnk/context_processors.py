@@ -18,9 +18,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from . import util
+
 
 def user_attendance(request):
+    user_attendance = getattr(request, 'user_attendance', None)
+    campaign = getattr(request, 'campaign', None)
     return {
-        'user_attendance': getattr(request, 'user_attendance', None),
-        'campaign': getattr(request, 'campaign', None),
+        'user_attendance': user_attendance,
+        'campaign': campaign,
+        'absolute_uri': util.get_base_url(slug=campaign.slug),
     }
