@@ -179,15 +179,20 @@ class UserProfile(models.Model):
     def last_name(self):
         return self.user.last_name
 
+    def first_name_vokativ(self):
+        woman = self.sex != "male"
+        return vokativ(self.first_name(), last_name=False, woman=woman).title()
+
+    def last_name_vokativ(self):
+        woman = self.sex != "male"
+        return vokativ(self.last_name(), last_name=True, woman=woman).title()
+
     def name(self, cs_vokativ=False):
         if self.nickname:
             return self.nickname
         else:
             if cs_vokativ:
-                woman = self.sex != "male"
-                full_name = vokativ(self.first_name(), last_name=False, woman=woman).title()
-                full_name += " "
-                full_name += vokativ(self.last_name(), last_name=True, woman=woman).title()
+                full_name = self.first_name_vokativ() + " " + self.last_name_vokativ()
             else:
                 full_name = self.user.get_full_name()
             email = self.user.email

@@ -1,35 +1,29 @@
+{% extends "email/base.html" %}
 {% load i18n %}
 {% autoescape off %}
 
-{% language user_attendance.userprofile.language %}
-Zpráva pro soutěžící/ho {{ user_attendance.userprofile }}, zakladatele/ku týmu {{team_name}} v soutěži {{ user_attendance.campaign }}.
+{% language lang_code %}
+{% block content %}
+<p>
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+tým {{team_name}} stojí na startovní čáře a čeká na Váš povel.
+</p>
 
-Dobrý den,
+{{ absolute_uri }}{% url 'pozvanky' as button_link %}
+{% include "./button.html" with button_text="Pozvat kolegy do týmu" %}
 
-Váš tým {{team_name}} byl právě vytvořen.
+<p><h4>
+Máte <a href="{{ absolute_uri }}{% url 'company_admin_application' %}">firemního koordinátora</a>?
+</h4></p><p>
+Zapojte do soutěže vedení společnosti a nechte si od něj uhradit startovné.
+</p><p>
+Když se zaměstnavatel nadchne pro vaši věc, může vyhlásit dokonce <b>celofiremní kampaň</b> {{ user_attendance.campaign }} a Vy budete mít příležitost porovnat své síly s kolegy ze všech firemním poboček. To zní lépe než malé pivo a šunkové chlebíčky na pravidelném pátečním teambuildingu, co myslíte?
+</p><p>
+Přihlaste se o funkci firemního koordinátora a domluvte se s vedením na podpoře Vašeho týmu v soutěži.
+</p>
 
-Na adrese
-{% block invite_link %}
-{{ absolute_uri }}{% url 'pozvanky' %}
+{{ absolute_uri }}{% url 'company_admin_application' as button_link %}
+{% include "./button.html" with button_text="Chci se stát firemním koordinátorem" %}
 {% endblock %}
-můžete pozvat své kolegy k přihlášení do vašeho týmu.
-
-Pokud chcete své kolegy/ně vyzvat k vytvoření jejich vlastního týmu, odkažte je na adresu {{ absolute_url }}.
-
-Ke svému profilu se můžete přihlásit pomocí adresy
-{% block profile_link %}
-{{ absolute_uri }}{% url 'login' %}
-{% endblock %}
-
-Vašemu týmu může vyjádřit podporu Váš zaměstnavatel tím, že za Vás uhradí startovné, nebo dokonce že vyhlásí celofiremní kampaň {{ user_attendance.campaign }}. Soutěžit pak budete nejen v soutěžním městě, ale také se všemi zaměstnanci Vaší organizace, ať už pracují kdekoli. Jak na to? Kontaktujte osobu, do jejíž kompetence podobné věci patří (vedoucí CSR oddělení, vedoucí vnitřní komunikace, vedoucí PR, ředitel/ka atd.) a nabídněte jí tyto možnosti nebo odkaz na stránku {{ absolute_uri }}{% url 'company_admin_application' %}
-
-Děkujeme Vám za přízeň a těšíme se na viděnou během soutěže!
-Váš organizační tým soutěže {{ user_attendance.campaign }}
-
-P.S. Zapojit do soutěže Vašeho zaměstnavatele se fakt vyplatí - víc soutěžících, ideální teambuilding, účast hrazená zaměstnavatelem a skvělé PR!
-
----
-{{ user_attendance.campaign.email_footer }}
 {% endlanguage %}
-
-{% endautoescape %}

@@ -1,12 +1,9 @@
 {% extends "email/base.html" %}
 {% load i18n %}
-{% autoescape off %}
 
 {% language lang_code %}
 {% block header %}
-{% if invited %}
-Zpráva pro soutěžící/ho {{ invited.userprofile }} {% if invited.team %}z týmu {{invited.team.name}} {% endif %}v soutěži {{ invited.campaign }}.
-{% endif %}
+Pozvánka do soutěže
 {% endblock %}
 
 {% block content %}
@@ -18,23 +15,14 @@ Proto Vám posílá pozvánku do svého týmu {{inviting.team.name}} v soutěž
 </p>
 
 {% if not invited %}
-{{ absolute_url }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email as button_link %}
+{{ absolute_uri }}{% url 'registrace' token=inviting.team.invitation_token initial_email=email as button_link %}
 {% else %}
-{{ absolute_url }}{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email as button_link %}
+{{ absolute_uri }}{% url 'change_team_invitation' token=inviting.team.invitation_token initial_email=email as button_link %}
 {% endif %}
 {% include "./button.html" with button_text="Chci šlápnout do pedálů" %}
 
 <p>
 Více o soutěži se dozvíte na <a href="{{ inviting.campaign.web }}">našem webu</a> nebo od svých nových týmových parťáků.
 </p>
-<p><b>
-Děkujeme za podporu udržitelné mobility ve městech a přejeme hodně radosti z jízdy na kole!
-</b></p>
-<p>
-Organizační tým soutěže {{ user_attendance.campaign.name }}
-</p>
-<p>
 {% endblock %}
 {% endlanguage %}
-
-{% endautoescape %}

@@ -1,24 +1,18 @@
-{% autoescape off %}
+{% extends "email/base.html" %}
+{% block content %}
+<p>
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+Vaše startovné v soutěži {{ user_attendance.campaign }} je oficiálně zaplaceno!
+</p><p>
+Je načase začít s přípravami:
+</p>
 
-Zpráva pro soutěžící/ho {{ user_attendance }} {% if user_attendance.team %}z týmu {{user_attendance.team.name}}{% endif %} v soutěži {{ user_attendance.campaign }}.
-
-Vážená/ý účastnice/íku soutěže {{ user_attendance.campaign }},
-
-Vaše platba startovného byla potvrzena. {% if user_attendance.campaign.club_membership_integration %}Ať už jste hradil/a startovné sám/sama nebo jste členem/členkou Klubu přátel, považujte otázku startovného za vyřešenou. {% endif %}
-
-Nyní se můžete soustředit na přípravu k soutěži.
-Máme pro Vás proto pár tipů:
-{% if user_attendance.campaign.show_application_links %}• stáhněte si aplikaci Urban Cyclers do Vašeho mobilního telefonu, šetrné kilometry, které se spuštěnou aplikací cestou do práce překonáte, se vám nahrají automaticky do registračního systému.{% endif %}
-• Jste-li soutěživí, poohlédněte se po dobrých soupeřích a přesvědčte je k účasti v soutěži.
-
-{% if user_attendance.campaign.has_any_tshirt %}
-Nyní se také můžete těšit na startovní balíček s trikem!
-{% endif %}
-
-Vážíme si vašeho rozhodnutí účastnit se soutěže a těšíme se na viděnou v ulicích města{% if user_attendance.campaign.has_any_tshirt %} se soutěžním trikem{% endif %}!
-Váš organizační tým soutěže {{ user_attendance.campaign }}
-
----
-{{ user_attendance.campaign.email_footer }}
-
-{% endautoescape %}
+<ul>
+   <li>
+      Nemáte v týmu plný počet jezdců? <a href="{{ absolute_uri }}{% url 'pozvanky' %}">Pozvěte své kolegy</a>.
+   </li><li>
+      Chcete si hlídat kilometry pomocí mobilního telefonu? Stáhněte si vhodnou <a href="{{user_attendance.campaign.web}}/aplikace">aplikaci</a>
+   </li>
+</ul>
+{% endblock %}

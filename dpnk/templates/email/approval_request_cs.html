@@ -1,27 +1,19 @@
+{% extends "email/base.html" %}
 {% load i18n %}
-{% autoescape off %}
-
 {% language new_user.userprofile.language %}
-Zpráva pro soutěžící/ho {{ team_member.userprofile }}, člena/členku týmu {{new_user.team.name}} v soutěži {{ new_user.campaign }}.
-
-Dobrý den,
-
-soutěžící {{ new_user.userprofile }} Vás žádá o zapojení do Vašeho týmu {{new_user.team.name}}.
-
-Vzhledem k otevřenému charakteru soutěže se další soutěžící z Vaší organizace mohou hlásit do Vašeho týmu. Rozhodnutí, zda s nimi budete společně v jízdě do práce na kole, je ale na Vás.
-
-Členství kandidáta/ky ve Vašem týmu můžete potvrdit nebo zamítnout pomocí tohoto odkazu:
-{% block approval_link %}
-{{ absolute_url }}{% url 'team_members' %}
+{% block content %}
+Žádost o schválení člena týmu
 {% endblock %}
 
-Ujištění pro Vás: Zamítnutím kandidáta/ku nediskvalifikujete ze soutěže. Pokud si do začátku soutěže vytvoří vlastní tým nebo se připojí do jiného týmu, bude vše v pořádku.
-
-Děkujeme Vám za založení týmu a přejeme Vám hodně radosti z jízdy na kole!
-Váš organizační tým soutěže {{ new_user.campaign }}
-
----
-{{ new_user.campaign.email_footer }}
+{% block content %}
+<p>
+Hezký den, {{ team_member.userprofile.first_name_vokativ }}
+</p><p>
+Váš tým v soutěži {{ new_user.campaign.name }} začíná být velmi populární.
+</p><p>
+Právě teď {{ new_user.userprofile.name }} pošilhává po volném místečku ve Vašem pelotonu {{ new_user.team.name }}.
+</p><p>
+Pokud chcete, aby Váš tým měl o dvě kolečka navíc, potvrďte členství nováčka v <a href="{{ absolute_uri }}{% url 'team_members' %}">profilu</a>.
+</p>
+{% endblock %}
 {% endlanguage %}
-
-{% endautoescape %}

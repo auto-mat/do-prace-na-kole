@@ -1,20 +1,23 @@
+{% extends "email/base.html" %}
 {% load i18n %}
-{% autoescape off %}
-
 {% language lang_code %}
-Zpráva pro soutěžící/ho {{ user_attendance.userprofile }} v soutěži {{ user_attendance.campaign }}.
+{% block content %}
+<p>
+{{ user_attendance.userprofile.first_name_vokativ }}, vyrazte do vedení!
+</p><p>
+Už je to {{ days_unfilled }} dní a žádná nová jízda.
+Vaši kolegové si zatím brousí řídítka na vítězství.
+Nezapomeňte: s pravidelností nejdál dojedeš.
+</p>
 
-Dobrý den,
+{{ absolute_uri }}{% url 'pozvanky' as button_link %}
+{% include "./button.html" with button_text="Pozvat kolegy do týmu" %}
 
-zjistili jsme, že za posledních {{ days_unfilled }} dní jste si nevyplnil/a jízdy ve svém profilu.
-Chceme vám připomenout, že jízdy lze vyplňovat pouze {{ user_attendance.campaign.days_active }} dní zpětně.
-Pokud jste si jízdy zapomněl/a vyplnit, můžete tak učinit ve svém profilu
-{{ absolute_uri }}{% url 'profil' %}
+<p>
+Jízdy můžete vyplňovat pouze {{ user_attendance.campaign.days_active }} dní zpětně, tak hurá do kalendáře.
+potvrzujeme Vaše členství v týmu {{user_attendance.team.name}}.
+Můžete společně šlápnout do pedálů.
+</p>
 
-Celý tým Auto*Matu zdraví a přeje šťastnou cestu.
-
----
-{{ user_attendance.campaign.email_footer }}
-
+{% endblock %}
 {% endlanguage %}
-{% endautoescape %}
