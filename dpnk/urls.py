@@ -300,6 +300,14 @@ urlpatterns = [
         name="help",
     ),
     url(
+        r'^landing_page/$',
+        views.UserAttendanceView.as_view(
+            template_name="registration/landing.html",
+            title=_("Zakladní stranka"),
+        ),
+        name="landing_page",
+    ),
+    url(
         r'^status/$',
         views.status,
     ),
