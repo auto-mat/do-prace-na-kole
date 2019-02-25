@@ -20,10 +20,10 @@
 import gettext
 import os
 
-import html2text
-
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
+
+import html2text
 
 from . import util
 
@@ -177,7 +177,7 @@ def company_admin_register_no_competitor_mail(company_admin):
     company_admin_mail(
         company_admin,
         _("firemní koordinátor - potvrzení registrace"),
-        'company_admin_register_no_competitor_%s.html',
+        'company_admin_register_competitor_%s.html',
     )
 
 

@@ -1,21 +1,31 @@
+{% extends "email/base.html" %}
 {% load i18n %}
-{% autoescape off %}
 
-{% language company_admin.userprofile.language %}
-Zpráva pro {{ company_admin.userprofile }}, firemního koordinátora v organizaci {{ company }} v soutěži {{ company_admin.campaign }}.
+{% language user_attendance.userprofile.language %}
 
-Dobrý den,
-právě jste se stali firemním koordinátorem {{ company }}.
-Nyní se můžete přihlásit do registračního systému {{ company_admin.campaign }}.
+{% block content %}
+<p>
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+gratulujeme!
+Nyní zastupujete společnost {{ company }} jako firemní koordinátor.
+Nezapomeňte, s velkou mocí přichází velká zodpovědnost. Vaši lidé na Vás spoléhají.
+</p>
 
-Nejprve na adrese {{ absolute_uri }}{% url 'edit_company' %} vyplňte fakturační údaje vaší organizace, které nám po skončení registrací poslouží pro vystavení faktury.
-Potom budete moci schvalovat platby za soutěžící na stránce {{ absolute_uri }}{% url 'company_admin_pay_for_users' %} s tím, že je zahrnete na společnou fakturu.
-V průběhu registrací budou přibývat další a další soutěžící, tuto kontrolu proto provedete několikrát.
-Děkujeme Vám za podporu soutěže {{ company_admin.campaign }} a těšíme se na spolupráci.
-Váš organizační tým soutěže {{ company_admin.campaign }}
+{{ absolute_uri }}{% url 'profil' as button_link %}
+{% include "./button.html" with button_text="Chci se přihlásit jako firemní koordinátor" %}
 
----
-{{ company_admin.campaign.email_footer }}
+<p>
+Až se přihlásíte, čekají Vás hlavní dva úkoly:
+</p>
+
+<ul>
+   <li>
+      <a href="{{ absolute_uri }}{% url 'edit_company' %}">Vyplnit fakturační údaje organizace.</a>
+   </li><li>
+      <a href="{{ absolute_uri }}{% url 'company_admin_pay_for_users' %}">Schvalovat platby za soutěžící.</a>
+   </li>
+</ul>
+
+{% endblock %}
 {% endlanguage %}
-
-{% endautoescape %}

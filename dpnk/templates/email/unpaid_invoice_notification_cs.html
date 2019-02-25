@@ -1,21 +1,19 @@
+{% extends "email/base.html" %}
 {% load i18n %}
-{% autoescape off %}
+{% language lang_code %}
+{% block content %}
 
 {% language lang_code %}
-Zpráva pro firemní koordinatora {{ user_attendance.team.subsidiary.company.name }} v soutěži {{ user_attendance.campaign }}.
+<p>
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+udělejte si prosím čas na zpracování faktury {{ invoice_url }}. Její splatnost je pouze do {{invoice.taxable_date}}.
+</p>
 
-Dobrý den,
+{% include "./button.html" with button_text="Vyřídit fakturu" button_link=invoice_url %}
 
-zjistili jsme, jste ještě nezaplatili fakturu (splatnou do {{invoice.taxable_date}}):
-
-Kompletní přehled faktur naleznete na adrese {{ absolute_uri }}{% url 'invoices' %}
-
-Přímý odkaz na stažení faktury je {{ invoice_url }}
-
-Celý tým Auto*Matu zdraví a přeje šťastnou cestu.
-
----
-{{ user_attendance.campaign.email_footer }}
-
+<p>
+Všechny faktury můžete zkontrolovat na Vašem <a href="https://{{ invoice.campaign.slug }}.{{ SITE_URL }}{% url 'invoices' %}">profilu</a>.
+</p>
+{% endblock %}
 {% endlanguage %}
-{% endautoescape %}

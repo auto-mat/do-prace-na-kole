@@ -1,16 +1,16 @@
-{% autoescape off %}
+{% extends "email/base.html" %}
+{% load i18n %}
 
-Zpráva pro kandidáta {{ user_attendance }} na funkci firemního koordinátora v organizaci {{ company }} v soutěži {{ user_attendance.campaign }}.
+{% language user_attendance.userprofile.language %}
 
-Dobrý den,
-právě jste zažádal/a o funkci firemního koordinátora {{ company }}. Pokud se tak stalo bez Vašeho vědomí, dejte nám prosím neprodleně vědět.
-Vzhledem k otevřenému charakteru soutěže nám může žádost o funkci koordinátora přijít od kohokoli z Vaší firmy/organizace, proto prosím vyčkejte na schválení práve Vaší žádosti. Po schválení Vaší žádosti Vás budeme informovat e-mailem.
-
-Pro účely ověření Vaší identity se Vám mohou ozvat zástupci hlavního organizátora, spolku Auto*Mat.
-Děkujeme Vám za podporu Vašich kolegů v soutěži {{ user_attendance.campaign }} a těšíme se na další spolupráci.
-Váš organizační tým soutěže {{ user_attendance.campaign }}
-
----
-{{ user_attendance.campaign.email_footer }}
-
-{% endautoescape %}
+{% block content %}
+<p>
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+přišla nám zpráva, že se chcete stát firemním koordinátorem organizace {{ company }}.
+Radostí nám spadl řetěz.
+</p><p>
+Teď chvilku posečkejte. Mrkneme se, jestli Vás někdo se žádostí nepředběhl a dáme vědět e-mailem další informace co nejdříve.
+</p>
+{% endblock %}
+{% endlanguage %}

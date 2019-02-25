@@ -1,27 +1,15 @@
+{% extends "email/base.html" %}
+{% block content %}
 {% load i18n %}
-{% autoescape off %}
 
 {% language user_attendance.userprofile.language %}
-Zpráva pro soutěžící/ho {{ user_attendance.userprofile }} v soutěži {{ user_attendance.campaign }}.
-
-Dobrý den,
-
-bohužel Vaše členství v týmu {{user_attendance.team.name}} bylo právě zamítnuto členem týmu {{ denier }} z důvodu: {{reason}}
-
-Budete se muset přihlásit do editace profilu na adrese
-{% block profile_link %}
-{{ absolute_uri }}{% url 'zmenit_tym' %}
-{% endblock %}
-a vybrat si jiný tým, nebo si založit tým vlastní! :-).
-
-Tak nevěšte hlavu a pojďte do toho!
-
-Děkujeme Vám za přízeň a těšíme se na viděnou během soutěže!
-Váš organizační tým soutěže {{ user_attendance.campaign }}
-
----
-{{ user_attendance.campaign.email_footer }}
+<p>
+Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
+</p><p>
+sesedněte na chvíli z kola, máme smutné zprávy.
+Vaše členství v týmu {{user_attendance.team.name}} bylo právě zamítnuto členem týmu {{ denier }} z důvodu: {{reason}}
+</p><p>
+Ale pro jeden tým slunce nesvítí. Přihlaste se do svého profilu a <a href="{{ absolute_uri }}{% url 'zmenit_tym' %}" >vyberte si jiný tým</a>.
+Nebo pořádně šlápněte do pedálů a založte si svůj vlastní!
+</p>
 {% endlanguage %}
-
-
-{% endautoescape %}
