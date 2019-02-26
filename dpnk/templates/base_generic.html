@@ -82,7 +82,7 @@
 
 					{% if user.is_authenticated and user_attendance %}
 						<div class="avatar_holder" id="_{{ user_attendance.id }}">
-							<a href="{% url 'landing_page' %}">{% avatar user_attendance.userprofile.user 200 %}</a>
+							<a href="{% url 'profil' %}">{% avatar user_attendance.userprofile.user 200 %}</a>
 						</div>
 						{# dynamic progress circle #}
 						<style>
