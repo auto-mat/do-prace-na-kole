@@ -37,16 +37,35 @@ def language_url_infix(language):
         return "/en"
 
 
-# Uncoment this to check to generate email files in /tmp/dpnk-test-messages
 @override_settings(
-    # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend',
-    # EMAIL_FILE_PATH = '/tmp/dpnk-test-messages',
     SITE_ID=123,
 )
 class TestEmails(TestCase):
     def setUp(self):
         Site.objects.create(domain="dopracenakole.cz", id=123)
-        self.campaign = Campaign.objects.create(name="Testing campaign 1", slug="dpnk")
+        self.campaign = Campaign.objects.create(name="Testing campaign 1", slug="dpnk", email_footer="""
+        <p>
+Soutěž Do práce na kole 2019 pořádá spolek Auto*Mat ve spolupráci s Pavel Bednařík/Olomouc, Brdonoš/Příbram,
+BajkAzyl/Hradec Králové, Cyklisté Liberecka, CykloBudějovice, Cykloklub Kučera/Znojmo, CykloZlín, HAGA Pardubice,
+Hranická rozvojová agentura, Plzeň na kole, z.s., SlibyChyby/Jihlava, Nadace Partnerství/Brno,
+O-KOLO Hradiště a dále městskými úřady: Břeclav, Hradec Králové, Ostrava, Jihlava, Jindřichův Hradec, Karviná, Most,
+Nový Jičín, Říčany, Třebíč, Rožnov pod Radhoštěm, Ústí nad Labem, Znojmo a Žďár nad Sázavou.
+</p><p>
+Za finanční a mediální podporu děkujeme generálnímu logistickému partnerovi společnosti GLS CZ, Magistrátu hlavního města Prahy,
+Velvyslanectví Nizozemského království, společnostem OP TIGER, CK Kudrna, Ortlieb, Hello bank! a mediálnímu partnerům RunCzech,
+Běhej․com, Kolo pro život, Dopravní Jednička, Radio Wave, iVelo, Wavemaker,Youradio a Cykloserver,  Urban cyclers,
+Kondice, Superlife, Prazdroj Lidem
+</p><p>
+Přihlášení do vašeho profilu: <a href="https://dpnk.dopracenakole.cz/">https://dpnk.dopracenakole.cz/</a>
+<br/>
+Uživatelská podpora: kontakt@dopracenakole.cz
+</p>
+
+             <strong>Auto*Mat, z. s.</strong> <br />
+            <a href="https://auto-mat.cz">www.auto-mat.cz</a><br />
+            telefon: 212 240 666<br />
+            Vodičkova 36, 110 00 Praha 1<br />
+        """)
         self.phase = Phase.objects.create(
             date_from=datetime.date(year=2010, month=10, day=20),
             date_to=datetime.date(year=2010, month=11, day=20),

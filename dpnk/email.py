@@ -259,7 +259,8 @@ def campaign_mail(user_attendance, subject, template_path, extra_context=None, a
     message = template.render(context)
     subject = str(campaign) + " - " + subject
 
-    # with open('dpnk-test-messages/%s.html' % subject, "w") as f:
+    # Uncoment this to check to generate email files in dpnk-test-messages
+    # with open('dpnk-test-messages/%s.html' % template_path % userprofile.language, "w") as f:
     #     f.write(message)
     txt_summary = html2text.html2text(message)
     email = EmailMultiAlternatives(
