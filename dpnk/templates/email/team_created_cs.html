@@ -1,8 +1,8 @@
 {% extends "email/base.html" %}
 {% load i18n %}
 
-{% language lang_code %}
 {% block content %}
+{% language lang_code %}
 <p>
 Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
 </p><p>
@@ -24,5 +24,5 @@ Přihlaste se o funkci firemního koordinátora a domluvte se s vedením na pod
 
 {% url 'company_admin_application' as button_link %}
 {% include "./button.html" with button_text="Chci se stát firemním koordinátorem" %}
-{% endblock %}
 {% endlanguage %}
+{% endblock %}

@@ -1,8 +1,8 @@
 {% extends "email/base.html" %}
 {% load i18n %}
 
-{% language lang_code %}
 {% block content %}
+{% language lang_code %}
 <p>
 Vítejte mezi námi!
 </p><p>
@@ -36,5 +36,5 @@ Desatero doporučení před startem.
 <p>
    Jakékoliv další otázky rádi zodpovíme na e-mailu <a href="{{user_attendance.campaign.contact_email}}">{{user_attendance.campaign.contact_email}}</a>.
 </p>
-{% endblock %}
 {% endlanguage %}
+{% endblock %}

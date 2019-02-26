@@ -1,8 +1,8 @@
 {% extends "email/base.html" %}
 {% load i18n %}
 
-{% language lang_code %}
 {% block content %}
+{% language lang_code %}
 <p>
 Congratulations, {{ user_attendance.userprofile.first_name }}
 </p><p>
@@ -21,5 +21,5 @@ Second, please <a href="{{ absolute_uri }}{% url 'company_admin_pay_for_users' %
 </p><p>
 These days, more and more participants will be signing in so try to check the status several times.
 </p>
-{% endblock %}
 {% endlanguage %}
+{% endblock %}

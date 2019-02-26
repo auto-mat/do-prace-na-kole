@@ -1,9 +1,8 @@
 {% extends "email/base.html" %}
 {% load i18n %}
 
-{% language lang_code %}
-
 {% block content %}
+{% language lang_code %}
 <p>
 Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
 </p><p>
@@ -27,5 +26,5 @@ Až se přihlásíte, čekají Vás hlavní dva úkoly:
    </li>
 </ul>
 
-{% endblock %}
 {% endlanguage %}
+{% endblock %}

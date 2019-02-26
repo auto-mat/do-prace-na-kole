@@ -1,8 +1,8 @@
 {% extends "email/base.html" %}
 {% load i18n %}
 
-{% language lang_code %}
 {% block content %}
+{% language lang_code %}
 <p>
 Welcome to the {{user_attendance.campaign.name}} competition!
 </p><p>
@@ -25,5 +25,5 @@ That could be much more interesting if You compare Your results with fellow cowo
 <p>
 Do You have some questions? Let us know at <a href="mailto:{{user_attendance.campaign.contact_email}}" >{{user_attendance.campaign.contact_email}}</a>.
 </p>
-{% endblock %}
 {% endlanguage %}
+{% endblock %}

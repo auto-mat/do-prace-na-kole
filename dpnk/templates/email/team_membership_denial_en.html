@@ -1,8 +1,8 @@
 {% extends "email/base.html" %}
 {% load i18n %}
 
-{% language lang_code %}
 {% block content %}
+{% language lang_code %}
 <p>
 Sad news, {{user_attendance.campaign.name}}
 </p><p>
@@ -16,5 +16,5 @@ Just pick another team or create Your own instead.
 {% url 'zmenit_tym' as button_link %}
 {% include "./button.html" with button_text="Change team" %}
 
-{% endblock %}
 {% endlanguage %}
+{% endblock %}

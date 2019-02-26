@@ -1,9 +1,8 @@
 {% extends "email/base.html" %}
 {% load i18n %}
 
-{% language lang_code %}
-
 {% block content %}
+{% language lang_code %}
 <p>
 Hello, brave {{ user_attendance.userprofile.first_name }}
 </p><p>
@@ -12,5 +11,6 @@ thank You for applying. We wish Your dream will come true and You will become th
 First, we want to know You better. Maybe somebody from our team will contact You so keep the phone fully charged.
 </p><p>
 Please be patient. In the end of the process we will send You a resolution e-mail.
-{% endblock %}
+</p>
 {% endlanguage %}
+{% endblock %}

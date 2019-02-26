@@ -1,8 +1,8 @@
 {% extends "email/base.html" %}
 {% load i18n %}
 
-{% language lang_code %}
 {% block header %}
+{% language lang_code %}
 <p>
 Hello, {{ user_attendance.userprofile.first_name }}
 </p><p>
@@ -14,5 +14,5 @@ Your (company) company invoice {{ invoice_url }} for the (soutěž) competition 
 <p>
 All invoices are guarded in Your <a href="{{ absolute_uri }}{% url 'invoices' %}">profile</a>.
 </p>
-{% endblock %}
 {% endlanguage %}
+{% endblock %}

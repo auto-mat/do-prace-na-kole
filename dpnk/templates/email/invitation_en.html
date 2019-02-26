@@ -1,12 +1,8 @@
 {% extends "email/base.html" %}
 {% load i18n %}
 
-{% language lang_code %}
-{% block header %}
-Pozvánka do soutěže
-{% endblock %}
-
 {% block content %}
+{% language lang_code %}
 Good news!
 </p><p>
 Fellow colleague {{ inviting.userprofile }} wants to ride the bicycle with You in the {{inviting.team.name}} team.
@@ -22,5 +18,5 @@ Fellow colleague {{ inviting.userprofile }} wants to ride the bicycle with You i
 <p>
 Need more information? Respond directly to Your fellow colleague at <a href="mailto:{{ inviting.userprofile.user.email }}" >{{ inviting.userprofile.user.email }}</a>.
 </p>
-{% endblock %}
 {% endlanguage %}
+{% endblock %}

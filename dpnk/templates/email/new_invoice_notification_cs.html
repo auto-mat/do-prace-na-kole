@@ -1,8 +1,8 @@
 {% extends "email/base.html" %}
 {% load i18n %}
 
+{% block content %}
 {% language lang_code %}
-{% block header %}
 <p>
 Dobrý den, {{ user_attendance.userprofile.first_name_vokativ }}
 </p><p>
@@ -16,5 +16,5 @@ Připravili jsme účastnickou fakturu pro Vaši společnost {{ user_attendance.
 <p>
 Kompletní přehled faktur najdete ve svém <a href="{{ absolute_uri }}{% url 'invoices' %}">profilu</a>.
 </p>
-{% endblock %}
 {% endlanguage %}
+{% endblock %}

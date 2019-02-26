@@ -1,15 +1,13 @@
 {% extends "email/base.html" %}
 {% load i18n %}
 
-{% language lang_code %}
-
 {% block content %}
+{% language lang_code %}
 <p>
 Sad news, {{ user_attendance.userprofile.first_name }}
 </p><p>
-as You already know, we cannot make You a (company) company coordinator.
+as You already know, we cannot make You a {{ company_admin.campaign }} company coordinator.
 Nobody have told you about that? Please contact us for futher details.
 </p>
-</p>
-{% endblock %}
 {% endlanguage %}
+{% endblock %}

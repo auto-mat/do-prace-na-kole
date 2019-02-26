@@ -1,7 +1,7 @@
 {% extends "email/base.html" %}
 {% load i18n %}
-{% language lang_code %}
 {% block content %}
+{% language lang_code %}
 <p>
 Don't let them win, {{user_attendance.campaign.name}}
 </p><p>
@@ -13,5 +13,5 @@ Don't forget. Every day is a new challenge.
 
 {% url 'profil' as button_link %}
 {% include "./button.html" with button_text="Get back on track" %}
-{% endblock %}
 {% endlanguage %}
+{% endblock %}

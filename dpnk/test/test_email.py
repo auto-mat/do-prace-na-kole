@@ -142,14 +142,14 @@ class TestEmails(TestCase):
         link = 'https://dpnk.dopracenakole.cz%s/' % (language_url_infix(self.userprofile.language))
         self.assertTrue(link in msg.body)
         if self.userprofile.language == 'cs':
-            message = "za posledních 5 dní jste si nevyplnil/a jízdy"
+            message = "Už je to 5 dní a žádná nová jízda."
         else:
-            message = "in last 5 days"
+            message = "it's been 5 days since You last updated your rides."
         self.assertTrue(message in msg.body)
         if self.userprofile.language == 'cs':
-            message = "že jízdy lze vyplňovat pouze 7 dní zpětně"
+            message = "Jízdy můžete vyplňovat pouze 7 dní zpětně,"
         else:
-            message = "filled in for 7 days back"
+            message = "You can fill in the rides only for 7 days"
         self.assertTrue(message in msg.body)
 
     def test_send_team_membership_approval_mail(self):
@@ -242,12 +242,9 @@ class TestEmails(TestCase):
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
         msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
-            message = "Zpráva pro kandidáta Testing User na funkci firemního koordinátora v organizaci Testing Company v soutěži Testing campaign 1."
+            message = "Dobrý den, Teste\n\npřišla nám zpráva, že se chcete stát firemním koordinátorem organizace Testing\nCompany."
         else:
-            message = (
-                "A message for Testing User, "
-                "a candidate for the company coordinator role in Testing Company in the Testing campaign 1 competition."
-            )
+            message = "Hello, brave Test\n\nthank You for applying. We wish Your dream will come true and You will become"
         self.assertTrue(message in msg.body)
 
     def test_send_company_admin_approval_mail(self):
@@ -262,9 +259,9 @@ class TestEmails(TestCase):
         link = 'https://dpnk.dopracenakole.cz%s/spolecnost/editovat_spolecnost/' % (language_url_infix(self.userprofile.language))
         self.assertTrue(link in msg.body)
         if self.userprofile.language == 'cs':
-            message = "Zpráva pro Testing User, firemního koordinátora v organizaci Testing Company v soutěži Testing campaign 1"
+            message = "Dobrý den, Teste\n\ngratulujeme! Nyní zastupujete společnost Testing Company jako firemní"
         else:
-            message = "A message for Testing User, a company coordinator in Testing Company in the Testing campaign 1 competition."
+            message = "Congratulations, Test\n\nYou are the Testing Company company coordinator."
         self.assertTrue(message in msg.body)
 
     def test_send_company_admin_rejected_mail(self):
@@ -277,9 +274,9 @@ class TestEmails(TestCase):
         self.assertEqual(mail.outbox[0].to[0], "user1@email.com")
         msg = mail.outbox[0]
         if self.userprofile.language == 'cs':
-            message = "Dobrý den, Teste"
+            message = "Dobrý den, Teste\n\nsesedněte z kola, máme pro Vás důležitou zprávu. Nemohli jsme potvrdit Vaši"
         else:
-            message = "A message for Testing User from the Testing campaign 1 competition."
+            message = "Sad news, Test\n\nas You already know, we cannot make You a Testing campaign 1 company"
         self.assertTrue(message in msg.body)
 
 
