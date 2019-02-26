@@ -4,7 +4,7 @@
 {% load avatar_tags %}
 
 {% block form_intro %}
-<a href="{% url "edit_team" %}">{% trans "Změnit název týmu" %}</a>
+<a class="btn btn-default" href="{% url "edit_team" %}">{% trans "Změnit název týmu" %}</a>
 {% endblock %}
 
 {% block form %}
@@ -43,7 +43,7 @@
                {% endif %}
                 id="id-{{ user.4.2 }}-{{ field.0 }}">
                   <div>
-                     {% if field.1 != None %}<b>{{ field.1 }}</b>: {% endif %}{{ field.2 }}
+                     {% if field.1 != None %}<b>{{ field.1 }}</b>: {{ field.2 }}{% endif %}
                   </div>
                </div>
             {% endfor %}

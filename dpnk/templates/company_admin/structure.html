@@ -5,54 +5,64 @@
 {% block form %}
 <b>{{ company }}</b><br/>
 {{ company_address }}
-<ul>
-{% for subsidiary in subsidiaries.all %}
-   <li>{{ subsidiary }} (<a href="{% url 'edit_subsidiary' subsidiary.pk %}">{% trans "upravit" %}</a>)</li>
-   <ul>
-   {% for team in subsidiary.teams.all %}
-      {% if team.campaign == campaign %}
-      <li>{{ team.name }}</li>
-      <ul>
-      {% for user in team.users.all %}
-      {% if user.userprofile.user.is_active %}
-      <li>
-         {{ user.userprofile.name_for_trusted }} <i>{{ user.userprofile.user.email }}</i> -
-            {% if user.representative_payment %}
-            {% if user.representative_payment.pay_type == 'fc' %}
-               <span class="
-               {% if user.representative_payment.status == Status.NEW %}
-                  text-danger
-               {% elif user.representative_payment.status == Status.COMPANY_ACCEPTS %}
-                  text-warning
-               {% elif user.representative_payment.status == Status.INVOICE_MADE %}
-                  text-warning
-               {% elif user.representative_payment.status == Status.INVOICE_PAID %}
-                  text-success
+<div class="_subsidiary">
+   {% for subsidiary in subsidiaries.all %}
+      <div>
+         {{ subsidiary }}
+      </div>
+      <a class="btn btn-default btn-sm" href="{% url 'edit_subsidiary' subsidiary.pk %}">
+         {% trans "upravit" %}
+      </a>
+      <div>
+         {% for team in subsidiary.teams.all %}
+            <div class="_team">
+               {% if team.campaign == campaign %}
+                  <h5>
+                     {{ team.name }}
+                  </h5>
+                  <div>
+                  {% for user in team.users.all %}
+                     {% if user.userprofile.user.is_active %}
+                        <div class="_user">
+                           <b class="_name">
+                              {{ user.userprofile.name_for_trusted }}
+                           </b>
+                           {{ user.userprofile.user.email }} -
+                           {% if user.representative_payment %}
+                              {% if user.representative_payment.pay_type == 'fc' %}
+                                 <div class="
+                                 {% if user.representative_payment.status == Status.NEW %}
+                                    text-danger
+                                 {% elif user.representative_payment.status == Status.COMPANY_ACCEPTS %}
+                                    text-warning
+                                 {% elif user.representative_payment.status == Status.INVOICE_MADE %}
+                                    text-warning
+                                 {% elif user.representative_payment.status == Status.INVOICE_PAID %}
+                                    text-success
+                                 {% endif %}
+                                 ">
+                                    {{ user.representative_payment.get_pay_type_display }} ({{ user.representative_payment.get_status_display }})
+                                 </div>
+                              {% else %}
+                                 {{ user.representative_payment.get_pay_type_display }} ({{ user.representative_payment.get_status_display }})
+                              {% endif %}
+                           {% else %}
+                              {% trans "žádná platba" %}
+                           {% endif %}
+                           {% if user.approved_for_team != 'approved' %}
+                              - <span class="text-danger">{% trans "neschválené členství v týmu" %}</span>
+                           {% endif %}
+                        </div>
+                     {% endif %}
+                  {% endfor %}
                {% endif %}
-               ">
-               {{ user.representative_payment.get_pay_type_display }} ({{ user.representative_payment.get_status_display }})
-               </span>
-            {% else %}
-               {{ user.representative_payment.get_pay_type_display }} ({{ user.representative_payment.get_status_display }})
-            {% endif %}
-         {% else %}
-            {% trans "žádná platba" %}
-         {% endif %}
-         {% if user.approved_for_team != 'approved' %}
-            - <span class="text-danger">{% trans "neschválené členství v týmu" %}</span>
-         {% endif %}
-      </li>
-      {% endif %}
-      {% endfor %}
-      </ul>
-      {% endif %}
+            </div>
+         {% endfor %}
+      </div>
    {% endfor %}
-   </ul>
-{% endfor %}
-</ul>
-<br/>
-{% trans "Exportovat účastníky za mojí společnost" %}
-<a href="{% url "company_export" extension="csv" %}">CSV</a>
-<a href="{% url "company_export" extension="ods" %}">ODS</a>
-<a href="{% url "company_export" extension="xls" %}">XLS</a>
+</div>
+{% trans "Exportovat účastníky za mojí společnost" %}: <br>
+<a class="btn btn-default btn-sm" href="{% url "company_export" extension="csv" %}">CSV</a>
+<a class="btn btn-default btn-sm" href="{% url "company_export" extension="ods" %}">ODS</a>
+<a class="btn btn-default btn-sm" href="{% url "company_export" extension="xls" %}">XLS</a>
 {% endblock %}

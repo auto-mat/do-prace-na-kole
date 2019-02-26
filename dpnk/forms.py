@@ -190,8 +190,8 @@ class AuthenticationFormDPNK(CampaignMixin, AuthenticationForm):
             'username', 'password',
             Submit('submit', _('Přihlásit')),
             social_html(True),
-            HTML('<a href="{%% url "registration_access" %%}">%s</a>' % _("registrovat")),
-            HTML('<a href="{%% url "password_reset" %%}">%s</a>' % _("obnovit heslo")),
+            HTML('<a class="registerme" href="{%% url "registration_access" %%}">%s</a>' % _("registrovat")),
+            HTML('<a class="remindme" href="{%% url "password_reset" %%}">%s</a>' % _("obnovit heslo")),
         )
         self.fields['username'].label = _("E-mail")
         return ret_val

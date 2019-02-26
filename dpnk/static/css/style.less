@@ -2,6 +2,7 @@
 @secondary:#EF3231;
 @ternary:#EF423B;
 @grey: #565656;
+@lightgrey:#c3c3c3;
 @quartus: #1e2d29;
 @quintus: #00201F;
 @white: #fff;
@@ -27,7 +28,9 @@ a{
     .anim;
   }
 }
-
+b, .strong{
+      letter-spacing: 0.01rem;
+}
 // ratio perfect forth / 1.33
 @ratio: 1.1;
 @elements: h1, h2, h3, h4, h5, h6;
@@ -47,13 +50,16 @@ a{
 h1, h2, h3, h5, h5{
   font-weight: 800;
 }
+h2:empty{
+  display:none;
+}
 .btn, input, textarea, .form-control{
   border-radius:0;
   border:0;
 }
 input[type="text"], input[type="password"], input[type="email"], textarea, select, .form-control{
   background:darken(#fff, 5%);
-  border: 3px solid #c3c3c3;
+  border: 3px solid @lightgrey;
 }
 input[type="radio"], input[type="checkbox"]{
   margin-right:.3rem;
@@ -63,7 +69,6 @@ input[type="radio"], input[type="checkbox"]{
   box-shadow: 0 0 0 0 transparent;
 }
 form{
-  width:66.66%;
   // display: flex;
   // flex-wrap: wrap;
   input + .input-group-btn{
@@ -72,11 +77,52 @@ form{
   select.form-control:not([size]):not([multiple]) {
     height:auto;
   }
-  .form-group{
-    width: 50%;
-    padding:0 @wg/2;
+  .fm-create{
+    border: 2px solid @lightgrey;
+    border-bottom: 3px solid @lightgrey;
+    .anim;
+    &:hover, &:active{
+      background:#fff;
+      .anim;
+    }
   }
 }
+._subsidiary{
+  margin-top:@wg;
+  h5{
+    margin-top:@wg;
+  }
+  ._user{
+    margin-bottom:@wg/2;
+    padding: @wg;
+    background: darken(#fff, 5%);
+    border-radius:3px;
+    ._name{
+      display:block;
+      color:@primary;
+    }
+  }
+}
+.login.notAuthetificated, .password_change, .zmenit_tym, .zmenit_triko, .edit_company, .company_admin_competition{
+  form{
+    width:66.66%;
+  }
+}
+.registerme, .remindme{
+  margin:@wg @wg 0 0;
+  display:inline-block;
+  opacity:.5;
+  text-decoration:none;
+  &:hover{
+    opacity:1;
+    color:#000;
+  }
+}
+  // .form-group{
+  //   width: 50%;
+  //   padding:0 @wg/2;
+  // }
+
 .homepage.profil, .team_members{
   form{
     width: 100%;
@@ -113,6 +159,9 @@ label{
   padding:@wg;
 }
 .notAuthetificated{
+  .inner{
+    padding:0;
+  }
   .content{
     display:flex;
     align-items: flex-start;
@@ -140,8 +189,7 @@ label{
     background-repeat:no-repeat;
     background-position:center @wg*2;
     background-size: 60%;
-    width:100%;
-    // margin-left: 16.665%;
+    margin-left: @wg;
     padding:@wg*6 @wg*3 @wg*2 @wg*3;
     color:#fff;
     label{
@@ -182,7 +230,7 @@ label{
       text-transform: capitalize;
       font-weight:100;
       padding:@wg/4 @wg;
-      &:hover, &[aria-expanded="true"]{
+      &:hover, &[aria-expanded="true"], &.active{
         color:@primary;
         background-color:transparent;
       }
@@ -341,10 +389,16 @@ label{
   width: 100%;
   padding:@wg/2 @wg;
   margin-top: 0;
-  background-color:#c3c3c3;
-  color:#505050;
+  background-color:@lightgrey;
+  color:darken(@grey, 20%);
   display:inline-block;
   font-size:@fsize*.8;
+}
+.invalid-feedback{
+  margin:0;
+  background:darken(@primary, 10%);
+  padding:@wg;
+  color:#fff;
 }
 .col-form-label {
   margin-left:@wg/2;
@@ -359,9 +413,11 @@ label{
     background-color:@secondary;
   }
   &.btn-primary, &.btn-default{
+    .anim2;
     &:hover{
+      .anim;
       color:#000;
-      background-color:@primary;
+      background-color:darken(@primary, 5%);
     }
   }
   &.google, &.facebook{
@@ -370,6 +426,12 @@ label{
     color:#fff;
     text-decoration:none;
     width:49%;
+    .anim2;
+    &:hover{
+      .anim;
+      color:#000;
+      background-color:darken(@primary, 5%);
+    }
   }
   &.google{
     margin-right: 1%;
@@ -378,7 +440,10 @@ label{
     margin-left: 1%;
   }
 }
-
+.holder{
+  text-align:center;
+  margin-top:@wg;
+}
 
 
 .noanim {
@@ -390,12 +455,24 @@ label{
 .anim2 {
   transition: all 0.8s;
 }
-
+.container{
+  max-width:956px;
+}
 
 @media all and (max-width: 769px) {
   .container{
     width:100%;
   }
 }
-
+@media all and (max-width: 480px) {
+  .login.notAuthetificated, .password_change, .zmenit_tym, .zmenit_triko, .edit_company, .company_admin_competition{
+    form{
+      width:100%;
+      margin:0;
+    }
+  }
+  .login.notAuthetificated form{
+    min-height:100vh;
+  }
+}
 

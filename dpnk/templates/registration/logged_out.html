@@ -3,10 +3,14 @@
 
 {% block content %}
 	<div class="logoutmessage">
-		<h2>Děkujeme za dnešní luxusní jízdu!</h2>
-		{% trans "Naleštěte si pedály, uvidíme se zase zítra na startovní čáře." %}
-		<a href="/login">
-            {% trans "Přihlásit" %}
-        </a>
+		<div class="inner">
+			<h2>Děkujeme za dnešní luxusní jízdu!</h2>
+			{% trans "Naleštěte si pedály, uvidíme se zase zítra na startovní čáře." %}
+			<div class="holder">
+				<a class="btn" href="/login">
+		            {% trans "Přihlásit" %}
+		        </a>
+	        </div>
+        </div>
 	</div>
 {% endblock %}

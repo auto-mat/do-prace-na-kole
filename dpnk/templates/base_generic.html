@@ -120,9 +120,11 @@
 			<div class="col-12 col-md-9 content">
 				<div class="inner">
 					{% block caption %}
-					 	<h2>
-					 		{{ title }}
-					 	</h2>
+						{% if title %}
+						 	<h2>
+						 		{{ title }}
+						 	</h2>
+						{% endif %}
 					{% endblock %}
 
 					{% if opening_message %}
