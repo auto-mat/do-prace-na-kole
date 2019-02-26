@@ -92,11 +92,6 @@ urlpatterns = [
         name="zaslat_zadost_clenstvi",
     ),
     url(
-        r'^$',
-        views.RidesView.as_view(),
-        name="profil",
-    ),
-    url(
         r'^jizdy-podrobne/$',
         views.RidesDetailsView.as_view(),
         name="rides_details",
@@ -300,12 +295,12 @@ urlpatterns = [
         name="help",
     ),
     url(
-        r'^landing_page/$',
+        r'^$',
         views.UserAttendanceView.as_view(
             template_name="registration/landing.html",
             title=_("Zakladní stranka"),
         ),
-        name="landing_page",
+        name="profil",
     ),
     url(
         r'^status/$',

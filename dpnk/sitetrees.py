@@ -25,7 +25,7 @@ sitetrees = (
     ),
     tree(
         'maintree_vyzva', 'Hlavní menu - výzvy', items=[
-            item('Zapsat jízdu!', 'profil', title_en='Enter ride!'),
+            item('Zapsat jízdu!', 'calendar', title_en='Enter ride!'),
             item(
                 'Profil', 'edit_profile_detailed', title_en='Profile', children=[
                     item('Změnit společnost', 'zmenit_tym', title_en='Change company'),
